@@ -11,17 +11,23 @@
   "exports": {
     "./components/*": "./components/*",
     "./constants/*": "./constants/*",
-    "./types/*": "./types/*"
+    "./types/*": "./types/*",
+    "./lib/*": "./lib/*"
   },
   "types": "",
   "files": [
     "components/",
     "constants/",
-    "types/"
+    "types/",
+    "lib/"
   ],
   "dependencies": {
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "react": "^19.1.0"
+    "lucide-react": "^0.510.0",
+    "react": "^19.1.0",
+    "tailwind-merge": "^3.3.0",
+    "tw-animate-css": "^1.2.9"
   },
   "devDependencies": {
     "@eslint/js": "^9.26.0",

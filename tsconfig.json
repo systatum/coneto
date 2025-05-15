@@ -10,8 +10,9 @@
     "paths": {
       "@/components/*": ["components/*"],
       "@/types/*": ["types/*"],
-      "@/constants/*": ["constants/*"]
+      "@/constants/*": ["constants/*"],
+      "@/lib/*": ["lib/*"]
     }
   },
-  "include": ["components/**/*", "constants/**/*", "types/**/*", "*.d.ts"]
+  "include": ["**/*"]
 }
