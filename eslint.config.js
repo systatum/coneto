@@ -5,7 +5,6 @@ import js from '@eslint/js';
 import globals from 'globals';
 
 export default [
-  // Global linting configurations
   js.configs.recommended,
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
@@ -21,8 +20,6 @@ export default [
       reportUnusedDisableDirectives: true,
     },
   },
-  
-  // TypeScript and React configuration
   {
     files: ['**/*.{ts,tsx}'],
     plugins: {
@@ -40,14 +37,11 @@ export default [
       react: { version: 'detect' }
     },
     rules: {
-      // Basic and TypeScript rules
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': 'warn',
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/ban-ts-comment': 'warn',
-      
-      // React rules
       'react/prop-types': 'off',
       'react/react-in-jsx-scope': 'off',
     }

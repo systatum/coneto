@@ -54,7 +54,7 @@ function Button({
       data-slot="button"
       className={cn(
         buttonVariants({ variant, size }),
-        "relative", // required for white overlay
+        "relative", 
         className,
       )}
       disabled={isLoading || props.disabled}
