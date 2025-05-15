@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/components/*": ["components/*"],
+      "@/types/*": ["types/*"],
+      "@/constants/*": ["constants/*"]
+    }
+  },
+  "include": ["components/**/*", "constants/**/*", "types/**/*", "*.d.ts"]
+}
