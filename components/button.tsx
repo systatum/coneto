@@ -31,7 +31,7 @@ const buttonVariants = cva(
       variant: "default",
       size: "default",
     },
-  },
+  }
 );
 
 function Button({
@@ -40,23 +40,14 @@ function Button({
   children,
   isLoading,
   size,
-  asChild = false,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
-    asChild?: boolean;
     isLoading?: boolean;
   }) {
-  const Comp = asChild ? Slot : "button";
-
   return (
-    <Comp
-      data-slot="button"
-      className={cn(
-        buttonVariants({ variant, size }),
-        "relative", // required for white overlay
-        className,
-      )}
+    <button
+      className={cn(buttonVariants({ variant, size }), "relative", className)}
       disabled={isLoading || props.disabled}
       {...props}
     >
@@ -86,7 +77,7 @@ function Button({
           />
         </svg>
       )}
-    </Comp>
+    </button>
   );
 }
 
