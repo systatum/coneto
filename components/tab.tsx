@@ -95,6 +95,7 @@ export default function Tab({ fields, view, setView }: TabProps) {
   return (
     <div
       ref={containerRef}
+      role="tablist"
       className="relative flex w-fit flex-row items-center justify-center overflow-hidden rounded-xl border border-gray-100 px-1 shadow-sm"
     >
       <motion.div
@@ -124,6 +125,7 @@ export default function Tab({ fields, view, setView }: TabProps) {
 
         return (
           <div
+            role="tab"
             key={index}
             ref={setTabRef(index)}
             className={`relative z-10 cursor-pointer px-4 py-1 text-center font-medium transition-colors duration-200 ${textColor}`}
