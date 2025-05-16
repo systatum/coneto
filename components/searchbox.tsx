@@ -19,9 +19,9 @@ export default function Searchbox({
   const inputId = `textbox-${name}`;
 
   const inputClass = clsx(
-    "rounded-3xl text-black px-9 bg-white text-xs w-full py-3 outline-none",
+    "rounded-3xl text-black px-9 bg-white text-xs w-full py-[8px] outline-none",
     "border border-gray-300 border-2 focus:ring-[#61A9F9] focus:border-[#61A9F9]",
-    className,
+    className
   );
 
   return (

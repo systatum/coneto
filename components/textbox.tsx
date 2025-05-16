@@ -1,6 +1,6 @@
 import clsx from "clsx";
-import { AlertCircle, Eye, EyeOff } from "lucide-react";
-import  {
+import { AlertCircle, Eye, EyeOff, Send } from "lucide-react";
+import {
   ChangeEvent,
   InputHTMLAttributes,
   TextareaHTMLAttributes,
@@ -9,13 +9,14 @@ import  {
 } from "react";
 
 interface BaseTextboxProps extends InputHTMLAttributes<HTMLInputElement> {
-  label: string;
+  label?: string;
   name: string;
   value: string;
   showError?: boolean;
   errorMessage?: string;
   className?: string;
   classNameParent?: string;
+  onSendClick?: () => void;
   onChange: (data: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }
 
@@ -36,10 +37,12 @@ export default function Textbox({
   rows,
   name,
   onChange,
+  onSendClick,
   value,
   className,
   classNameParent,
   type = "text",
+
   ...props
 }: TextboxProps) {
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -61,58 +64,103 @@ export default function Textbox({
     showError
       ? "border border-red-500 focus:border-red-500 focus:ring-red-500 text-red-800"
       : "border border-gray-300 focus:ring-blue-500 focus:border-blue-500",
-    className,
+    className
   );
 
-  const inputElement = rows ? (
-    <div className="relative w-full ring-0">
-      <textarea
+  const inputElement =
+    type === "message" ? (
+      <div
         id={inputId}
-        name={name}
-        value={value}
-        onChange={onChange}
-        rows={rows}
-        className={inputClass}
-        {...(props as TextareaHTMLAttributes<HTMLTextAreaElement>)}
-      />
-      {showError && (
-        <AlertCircle
-          size={18}
-          className="absolute top-1/2 right-3 -translate-y-1/2 rounded-full bg-red-600 text-white"
+        className={clsx("relative flex w-full items-center", className)}
+      >
+        <input
+          type="text"
+          className={clsx(
+            "bg-background ring-offset-background placeholder:text-muted-foreground flex h-10 w-full rounded-sm border px-3 py-2 pr-10 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus:border-blue-600 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+          )}
+          placeholder={props.placeholder || "Type a message..."}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              props.onKeyDown?.(e);
+            }
+          }}
+          {...props}
         />
-      )}
-    </div>
-  ) : (
-    <div className="relative w-full ring-0">
-      <input
-        id={inputId}
-        name={name}
-        value={value}
-        onChange={onChange}
-        className={inputClass}
-        type={type === "password" && showPassword ? "text" : type}
-        {...(props as InputHTMLAttributes<HTMLInputElement>)}
-      />
-
-      {type === "password" && !showError && (
         <button
-          type="button"
-          onClick={() => setShowPassword((prev) => !prev)}
-          className="absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer text-gray-500"
-          tabIndex={-1}
-        >
-          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-        </button>
-      )}
+          type="submit"
+          className="text-muted-foreground absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer"
+          onClick={(e) => {
+            e.preventDefault();
 
-      {showError && (
-        <AlertCircle
-          size={18}
-          className="absolute top-1/2 right-3 -translate-y-1/2 rounded-full bg-red-600 text-white"
+            const customEvent = new KeyboardEvent("keydown", {
+              key: "Enter",
+              code: "Enter",
+              bubbles: true,
+              cancelable: true,
+            });
+
+            const inputElement = (e.target as HTMLElement).closest("input");
+
+            if (inputElement) {
+              inputElement.dispatchEvent(customEvent);
+            }
+
+            onSendClick();
+          }}
+        >
+          <Send className="mr-1" size={20} />
+        </button>
+      </div>
+    ) : rows ? (
+      <div className="relative w-full ring-0">
+        <textarea
+          id={inputId}
+          name={name}
+          value={value}
+          onChange={onChange}
+          rows={rows}
+          className={inputClass}
+          {...(props as TextareaHTMLAttributes<HTMLTextAreaElement>)}
         />
-      )}
-    </div>
-  );
+        {showError && (
+          <AlertCircle
+            size={18}
+            className="absolute top-1/2 right-3 -translate-y-1/2 rounded-full bg-red-600 text-white"
+          />
+        )}
+      </div>
+    ) : (
+      <div className="relative w-full ring-0">
+        <input
+          id={inputId}
+          name={name}
+          value={value}
+          onChange={onChange}
+          className={inputClass}
+          type={type === "password" && showPassword ? "text" : type}
+          {...(props as InputHTMLAttributes<HTMLInputElement>)}
+        />
+
+        {type === "password" && !showError && (
+          <button
+            type="button"
+            onClick={() => setShowPassword((prev) => !prev)}
+            className="absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer text-gray-500"
+            tabIndex={-1}
+          >
+            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+          </button>
+        )}
+
+        {showError && (
+          <AlertCircle
+            size={18}
+            className="absolute top-1/2 right-3 -translate-y-1/2 rounded-full bg-red-600 text-white"
+          />
+        )}
+      </div>
+    );
 
   return (
     <div

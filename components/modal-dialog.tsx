@@ -1,12 +1,12 @@
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 import {
   Dialog,
   DialogContent,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from "@/components/dialog";
 import type { VariantProps } from "class-variance-authority";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/button";
 
 interface ModalButtonProps
   extends Pick<VariantProps<typeof buttonVariants>, "variant"> {
