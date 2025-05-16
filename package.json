@@ -12,7 +12,7 @@
   "exports": {
     "./components/*": "./components/*",
     "./constants/*": "./constants/*",
-    "./types/*": "./types/*",
+    "./type/*": "./type/*",
     "./lib/*": "./lib/*"
   },
   "types": "",
