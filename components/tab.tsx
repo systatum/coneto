@@ -1,4 +1,4 @@
-import  { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { TabFieldsProps } from "../type/Tab";
 
@@ -15,7 +15,7 @@ export default function Tab({ fields, view, setView }: TabProps) {
   const activeIndex = fields.findIndex((item) => item.id === activeId);
   const tabRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [tabSizes, setTabSizes] = useState<{ width: number; left: number }[]>(
-    [],
+    []
   );
   const [isInitialized, setIsInitialized] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
