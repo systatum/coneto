@@ -1,10 +1,10 @@
 import { ChangeEvent, useRef, useState, useEffect } from "react";
 import { ChevronDown, ChevronUp, Search } from "lucide-react";
 import clsx from "clsx";
-import { CountryCodeProps } from "@/type/Phonebox";
+import { CountryCodeProps } from "../type/phonebox";
 import { CountryCode } from "libphonenumber-js";
-import { formatPhoneNumber, trimPhone } from "../constants/Phonebox";
-import { COUNTRY_CODES } from "../constants/CountryCode";
+import { formatPhoneNumber, trimPhone } from "../constants/phonebox";
+import { COUNTRY_CODES } from "../constants/countries";
 
 interface PhoneboxProps {
   label: string;
