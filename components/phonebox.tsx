@@ -1,10 +1,10 @@
 import { ChangeEvent, useRef, useState, useEffect } from "react";
 import { ChevronDown, ChevronUp, Search } from "lucide-react";
 import clsx from "clsx";
-import { countryCodesWithFlags } from "@/constants/CountryCode";
 import { CountryCodeProps } from "@/type/Phonebox";
 import { CountryCode } from "libphonenumber-js";
 import { formatPhoneNumber, trimPhone } from "../constants/Phonebox";
+import { COUNTRY_CODES } from "../constants/CountryCode";
 
 interface PhoneboxProps {
   label: string;
@@ -32,16 +32,18 @@ export default function Phonebox({
   error = false,
   helperText,
 }: PhoneboxProps) {
+  const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find((data) => data.id === "US");
+
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCountry, setSelectedCountry] = useState<CountryCodeProps>(
-    countryCodesWithFlags[205]
+    DEFAULT_COUNTRY_CODES
   );
   const [phoneNumber, setPhoneNumber] = useState("");
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const filteredCountries = countryCodesWithFlags.filter(
+  const filteredCountries = COUNTRY_CODES.filter(
     (country) =>
       country.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       country.code.includes(searchTerm)
@@ -65,7 +67,7 @@ export default function Phonebox({
       setPhoneNumber("");
       return;
     }
-    const country = countryCodesWithFlags.find((c) => value.startsWith(c.code));
+    const country = COUNTRY_CODES.find((c) => value.startsWith(c.code));
     if (country) {
       setSelectedCountry(country);
       const raw = value.substring(country.code.length);

@@ -1,4 +1,4 @@
-export const countryCodesWithFlags = [
+export const COUNTRY_CODES = [
   { id: "AF", code: "+93", name: "Afghanistan", flag: "🇦🇫" },
   { id: "AL", code: "+355", name: "Albania", flag: "🇦🇱" },
   { id: "DZ", code: "+213", name: "Algeria", flag: "🇩🇿" },

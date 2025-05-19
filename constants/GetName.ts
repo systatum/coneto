@@ -3,7 +3,7 @@ interface BackgroundColorProps {
   hex: string;
 }
 
-const backgroundColors: BackgroundColorProps[] = [
+const BACKGROUND_COLORS: BackgroundColorProps[] = [
   { name: "Soft Red", hex: "#F4C2C2" },
   { name: "Warm Orange", hex: "#FFD8B1" },
   { name: "Pastel Yellow", hex: "#FFF3B0" },
@@ -31,13 +31,13 @@ export function getCode(fullname: string): number {
 }
 
 export function getBackground(code: number): string {
-  const pos = code % backgroundColors.length;
-  return backgroundColors[pos].hex;
+  const pos = code % BACKGROUND_COLORS.length;
+  return BACKGROUND_COLORS[pos].hex;
 }
 
 export function getInitials(
   firstName: string,
-  lastName?: string | null | undefined,
+  lastName?: string | null | undefined
 ): string {
   const firstInitial = firstName.charAt(0).toUpperCase();
   const firstOptionInitial = firstName.slice(0, 2).toUpperCase();
