@@ -9,7 +9,7 @@
     "baseUrl": ".",
     "paths": {
       "@/components/*": ["components/*"],
-      "@/types/*": ["types/*"],
+      "@/type/*": ["type/*"],
       "@/constants/*": ["constants/*"],
       "@/lib/*": ["lib/*"]
     }
