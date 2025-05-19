@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { TabFieldsProps } from "../type/Tab";
+
+export interface TabFieldsProps {
+  id: string;
+  title: string;
+}
 
 interface TabProps {
   view: string | null;
