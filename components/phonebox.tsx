@@ -5,7 +5,7 @@ import { CountryCodeProps } from "../type/phonebox";
 import { COUNTRY_CODES } from "../constants/countries";
 import { AsYouType, CountryCode } from "libphonenumber-js/max";
 
-interface PhoneboxProps {
+export interface PhoneboxProps {
   label: string;
   name?: string;
   className?: string;
@@ -16,8 +16,8 @@ interface PhoneboxProps {
   ) => void;
   placeholder?: string;
   disabled?: boolean;
-  error?: boolean;
-  helperText?: string;
+  showError?: boolean;
+  errorMessage?: string;
   phoneNumber: string;
 }
 
@@ -28,8 +28,8 @@ export default function Phonebox({
   onChange,
   placeholder,
   disabled = false,
-  error = false,
-  helperText,
+  showError = false,
+  errorMessage,
 }: PhoneboxProps) {
   const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find((data) => data.id === "US");
 
@@ -42,7 +42,7 @@ export default function Phonebox({
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const filteredCountries = COUNTRY_CODES.filter(
+  const FILTERED_COUNTRIES = COUNTRY_CODES.filter(
     (country) =>
       country.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       country.code.includes(searchTerm)
@@ -106,8 +106,8 @@ export default function Phonebox({
       </label>
       <div
         className={clsx(
-          "flex w-full rounded-xs border border-gray-300",
-          error ? "border-red-500" : "focus-within:border-blue-600",
+          "flex w-full min-w-[350px] md:min-w-[400px] rounded-xs border border-gray-300",
+          showError ? "border-red-500" : "focus-within:border-blue-600",
           disabled ? "opacity-50" : "",
           className
         )}
@@ -117,7 +117,7 @@ export default function Phonebox({
           <button
             type="button"
             className={clsx(
-              "flex flex-row items-center gap-1 rounded-l-xs border-r px-2 py-[7px] text-xs",
+              "flex flex-row items-center gap-1 rounded-l-xs border-gray-300 border-r px-2 py-[7px] text-xs",
               disabled
                 ? "cursor-not-allowed"
                 : "cursor-pointer hover:bg-gray-50"
@@ -140,14 +140,14 @@ export default function Phonebox({
                 msOverflowStyle: "none",
                 scrollbarWidth: "none",
               }}
-              className="absolute left-0 z-10 mt-1 max-h-60 w-full min-w-[350px] overflow-auto rounded-sm border  bg-white shadow-xl md:min-w-[400px]"
+              className="absolute left-0 z-10 mt-1 max-h-60 w-full min-w-[350px] overflow-auto rounded-sm border border-gray-300 bg-white shadow-xl md:min-w-[400px]"
             >
               <div className="sticky top-0 bg-white p-2">
                 <div className="relative">
                   <Search className="absolute top-2 left-2 h-4 w-4 text-gray-400" />
                   <input
                     type="text"
-                    className="w-full rounded-xs border  py-2 pr-2 pl-8 text-xs focus:border-blue-600 focus:outline-none"
+                    className="w-full rounded-xs border border-gray-300 py-2 pr-2 pl-8 text-xs focus:border-blue-600 focus:outline-none"
                     placeholder="Search your country..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -156,8 +156,8 @@ export default function Phonebox({
               </div>
 
               <div className="scrollbar-thin max-h-52 w-full overflow-y-auto">
-                {filteredCountries.length > 0 ? (
-                  filteredCountries.map((country) => (
+                {FILTERED_COUNTRIES.length > 0 ? (
+                  FILTERED_COUNTRIES.map((country) => (
                     <div
                       key={`${country.name}`}
                       className={clsx(
@@ -194,8 +194,8 @@ export default function Phonebox({
         />
       </div>
 
-      {error && helperText && (
-        <p className="mt-1 text-xs text-red-500">{helperText}</p>
+      {showError && errorMessage && (
+        <p className="mt-1 text-xs text-red-500">{errorMessage}</p>
       )}
     </div>
   );

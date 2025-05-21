@@ -38,6 +38,8 @@ export default function Searchbox({
       />
 
       <X
+        role="button"
+        aria-label="Clear search input"
         onClick={() => {
           const event = {
             target: {

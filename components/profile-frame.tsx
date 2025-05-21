@@ -1,6 +1,7 @@
+"use client";
+
 import { BackgroundColorProps, ProfileFrameProps } from "@/type/profile-frame";
 import clsx from "clsx";
-import Image from "next/image";
 
 const BACKGROUND_COLORS: BackgroundColorProps[] = [
   { name: "Soft Red", hex: "#F4C2C2" },
@@ -66,9 +67,11 @@ export default function ProfileFrame({
       style={!isImageValid ? { backgroundColor: backgroundColor } : {}}
     >
       {isImageValid ? (
-        <Image
+        <img
+          width={30}
+          height={30}
           className="h-full w-full object-contain"
-          alt={`Image profile for account ${fullName} on superapp Workaty`}
+          alt={`${fullName} profile image on the Systatum superapp`}
           src={profileImageUrl}
         />
       ) : (

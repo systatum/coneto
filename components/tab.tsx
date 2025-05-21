@@ -9,7 +9,7 @@ export interface TabFieldsProps {
 interface TabProps {
   view: string | null;
   fields: TabFieldsProps[];
-  setView: (data: string | null) => void;
+  setView: (data: string) => void;
 }
 
 export default function Tab({ fields, view, setView }: TabProps) {

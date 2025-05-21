@@ -31,8 +31,8 @@ export function Combobox({
 
   const listRef = useRef<(HTMLLIElement | null)[]>([]);
 
-  const filteredOptions = options.filter((opt) =>
-    opt.toLowerCase().includes(inputValue.toLowerCase()),
+  const FILTERED_OPTIONS = options.filter((opt) =>
+    opt.toLowerCase().includes(inputValue.toLowerCase())
   );
 
   const { refs, floatingStyles, context } = useFloating({
@@ -60,7 +60,7 @@ export function Combobox({
         setIsOpen(true);
       }
       setHighlightedIndex((prev) =>
-        Math.min(prev + 1, filteredOptions.length - 1),
+        Math.min(prev + 1, FILTERED_OPTIONS.length - 1)
       );
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
@@ -70,7 +70,7 @@ export function Combobox({
       setHighlightedIndex((prev) => Math.max(prev - 1, 0));
     } else if (e.key === "Enter") {
       e.preventDefault();
-      const selected = filteredOptions[highlightedIndex];
+      const selected = FILTERED_OPTIONS[highlightedIndex];
       if (selected) {
         setInputValue(selected);
         setIsOpen(false);
@@ -111,7 +111,7 @@ export function Combobox({
         }}
         aria-autocomplete="list"
         placeholder={placeholder || "Search your item..."}
-        className="w-full rounded-xs border px-3 py-2 outline-none focus:border-blue-500 focus:ring-0 focus:ring-blue-500"
+        className="w-full rounded-xs border border-gray-100 px-3 py-2 outline-none focus:border-blue-500 focus:ring-0 focus:ring-blue-500"
       />
 
       {inputValue !== "" && (
@@ -166,10 +166,10 @@ export function Combobox({
             width: refs.reference.current?.getBoundingClientRect().width,
             zIndex: 1000,
           }}
-          className="mt-1 max-h-60 overflow-y-auto rounded-xs border bg-white shadow-lg"
+          className="mt-1 max-h-60 overflow-y-auto rounded-xs border border-gray-100 bg-white shadow-lg"
         >
-          {filteredOptions.length > 0 ? (
-            filteredOptions.map((option, index) => (
+          {FILTERED_OPTIONS.length > 0 ? (
+            FILTERED_OPTIONS.map((option, index) => (
               <li
                 key={option}
                 id={`option-${index}`}
@@ -178,6 +178,9 @@ export function Combobox({
                 onMouseDown={() => {
                   setInputValue(option);
                   setIsOpen(false);
+                }}
+                onMouseEnter={() => {
+                  setHighlightedIndex(index);
                 }}
                 className={`cursor-pointer px-3 py-2 ${
                   highlightedIndex === index ? "bg-blue-100" : ""
