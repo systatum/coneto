@@ -6,6 +6,7 @@
   "scripts": {
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
+    "test-storybook": "test-storybook",
     "type-check": "tsc --noEmit",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "format": "prettier --write ."
@@ -57,6 +58,7 @@
     "@storybook/addon-onboarding": "^8.6.14",
     "@storybook/blocks": "^8.6.14",
     "@storybook/experimental-addon-test": "^8.6.14",
+    "@storybook/preview-api": "^8.6.14",
     "@storybook/react": "^8.6.14",
     "@storybook/react-vite": "^8.6.14",
     "@storybook/test": "^8.6.14",
@@ -66,6 +68,7 @@
     "@typescript-eslint/parser": "^8.32.1",
     "@vitejs/plugin-react": "^4.4.1",
     "autoprefixer": "^10.4.21",
+    "chromatic": "^11.28.2",
     "eslint": "^9.26.0",
     "eslint-plugin-react": "^7.37.5",
     "globals": "^15.15.0",
