@@ -1,6 +1,7 @@
 import type { StorybookConfig } from "@storybook/react-vite";
 
 const config: StorybookConfig = {
+  staticDirs: ["../public"],
   stories: [
     "../components/**/*.mdx",
     "../components/**/*.stories.@(js|jsx|mjs|ts|tsx)",
@@ -16,7 +17,6 @@ const config: StorybookConfig = {
     options: {},
   },
   viteFinal: async (config) => {
-    console.log(config);
     return config;
   },
 };
