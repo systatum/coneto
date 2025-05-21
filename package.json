@@ -4,6 +4,8 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
     "type-check": "tsc --noEmit",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "format": "prettier --write ."
@@ -44,18 +46,40 @@
     "shadcn": "^2.5.0",
     "tailwind-merge": "^3.3.0",
     "tw-animate-css": "^1.2.9",
+    "vitest": "^3.1.3",
     "zod": "^3.24.4",
     "zustand": "^5.0.4"
   },
   "devDependencies": {
+    "@chromatic-com/storybook": "^3.2.6",
     "@eslint/js": "^9.26.0",
+    "@storybook/addon-essentials": "^8.6.14",
+    "@storybook/addon-onboarding": "^8.6.14",
+    "@storybook/blocks": "^8.6.14",
+    "@storybook/experimental-addon-test": "^8.6.14",
+    "@storybook/react": "^8.6.14",
+    "@storybook/react-vite": "^8.6.14",
+    "@storybook/test": "^8.6.14",
+    "@storybook/test-runner": "^0.22.0",
+    "@tailwindcss/postcss": "^4",
     "@typescript-eslint/eslint-plugin": "^8.32.1",
     "@typescript-eslint/parser": "^8.32.1",
+    "@vitejs/plugin-react": "^4.4.1",
+    "autoprefixer": "^10.4.21",
     "eslint": "^9.26.0",
     "eslint-plugin-react": "^7.37.5",
     "globals": "^15.15.0",
+    "postcss": "^8.5.3",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
-    "typescript": "^5.4.0"
+    "storybook": "^8.6.14",
+    "tailwindcss": "^4.1.7",
+    "typescript": "^5.4.0",
+    "vite": "^6.3.5"
+  },
+  "eslintConfig": {
+    "extends": [
+      "plugin:storybook/recommended"
+    ]
   }
 }
