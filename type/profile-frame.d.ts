@@ -1,9 +1,7 @@
-import { StaticImageData } from "next/image";
-
 export interface ProfileFrameProps {
   firstName: string;
   lastName?: string;
-  profileImageUrl?: string | null | undefined | StaticImageData;
+  profileImageUrl?: string | null | undefined;
 }
 
 export interface BackgroundColorProps {
