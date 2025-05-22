@@ -25,7 +25,7 @@ const Frame: React.FC<FrameProps> = ({
       className={clsx(
         backgroundClass,
         className,
-        `relative w-full min-w-[500px] pt-5 rounded-xs border border-gray-300 p-4 shadow-xs  `
+        `relative w-full min-w-[500px] py-[30px] rounded-xs border border-gray-300 p-4 shadow-xs  `
       )}
     >
       {title && (
@@ -33,7 +33,7 @@ const Frame: React.FC<FrameProps> = ({
           className={clsx(
             backgroundClassTitle,
             classNameTitle,
-            "absolute -top-[14px] mb-2 text-base px-[6px] font-medium"
+            "absolute -top-[11px] text-[#999b9d] text-[0.95em] left-3 text-base px-[6px]"
           )}
         >
           <span
