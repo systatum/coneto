@@ -114,7 +114,7 @@ export default function Textbox({
         <textarea
           id={inputId}
           onChange={onChange}
-          rows={rows}
+          rows={rows ?? 3}
           className={inputClass}
           {...(props as TextareaHTMLAttributes<HTMLTextAreaElement>)}
         />
