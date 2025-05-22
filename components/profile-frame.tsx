@@ -3,6 +3,25 @@
 import { BackgroundColorProps, ProfileFrameProps } from "@/type/profile-frame";
 import clsx from "clsx";
 
+const BACKGROUND_COLORS: BackgroundColorProps[] = [
+  { name: "Soft Red", hex: "#F4C2C2" },
+  { name: "Warm Orange", hex: "#FFD8B1" },
+  { name: "Pastel Yellow", hex: "#FFF3B0" },
+  { name: "Mint Green", hex: "#D0F0C0" },
+  { name: "Soft Teal", hex: "#B2DFDB" },
+  { name: "Sky Blue", hex: "#B3E5FC" },
+  { name: "Lavender", hex: "#E3E4FA" },
+  { name: "Pale Purple", hex: "#DCC6E0" },
+  { name: "Blush Pink", hex: "#FADADD" },
+  { name: "Peach", hex: "#FFDAB9" },
+  { name: "Light Coral", hex: "#F08080" },
+  { name: "Light Cyan", hex: "#E0FFFF" },
+  { name: "Lilac Mist", hex: "#D8BFD8" },
+  { name: "Powder Blue", hex: "#B0E0E6" },
+  { name: "Spring Green", hex: "#C1E1C1" },
+  { name: "Misty Rose", hex: "#FFE4E1" },
+];
+
 export default function ProfileFrame({
   firstName,
   lastName,
@@ -45,25 +64,6 @@ export default function ProfileFrame({
     </div>
   );
 }
-
-const BACKGROUND_COLORS: BackgroundColorProps[] = [
-  { name: "Soft Red", hex: "#F4C2C2" },
-  { name: "Warm Orange", hex: "#FFD8B1" },
-  { name: "Pastel Yellow", hex: "#FFF3B0" },
-  { name: "Mint Green", hex: "#D0F0C0" },
-  { name: "Soft Teal", hex: "#B2DFDB" },
-  { name: "Sky Blue", hex: "#B3E5FC" },
-  { name: "Lavender", hex: "#E3E4FA" },
-  { name: "Pale Purple", hex: "#DCC6E0" },
-  { name: "Blush Pink", hex: "#FADADD" },
-  { name: "Peach", hex: "#FFDAB9" },
-  { name: "Light Coral", hex: "#F08080" },
-  { name: "Light Cyan", hex: "#E0FFFF" },
-  { name: "Lilac Mist", hex: "#D8BFD8" },
-  { name: "Powder Blue", hex: "#B0E0E6" },
-  { name: "Spring Green", hex: "#C1E1C1" },
-  { name: "Misty Rose", hex: "#FFE4E1" },
-];
 
 export function getCode(fullname: string): number {
   let code = 0;
