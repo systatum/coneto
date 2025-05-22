@@ -50,7 +50,20 @@ export const ProfileWithImage: Story = {
   args: {
     firstName: "John",
     lastName: "Doe",
+    changeable: true,
     profileImageUrl: "/avatar-1.jpg",
+    onChange: () => {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "image/*";
+      input.click();
+      input.onchange = () => {
+        const file = input.files?.[0];
+        if (file) {
+          console.log("Selected file:", file.name);
+        }
+      };
+    },
   },
   render: (args: ProfileFrameProps) => {
     return <ProfileFrame {...args} />;

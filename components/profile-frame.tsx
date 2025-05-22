@@ -51,6 +51,8 @@ export default function ProfileFrame({
   firstName,
   lastName,
   profileImageUrl,
+  changeable,
+  ...props
 }: ProfileFrameProps) {
   const fullName = `${firstName} ${lastName}`;
   const code = getCode(fullName);
@@ -61,8 +63,11 @@ export default function ProfileFrame({
 
   return (
     <div
+      {...props}
+      onClick={changeable ? props.onChange : undefined}
       className={clsx(
-        "group relative flex h-[70px] w-[70px] cursor-pointer items-center justify-center overflow-hidden rounded-full border border-gray-100 font-bold"
+        "group relative flex h-[70px] w-[70px]  items-center justify-center overflow-hidden rounded-full border border-gray-100 font-bold",
+        changeable ? "cursor-pointer" : "cursor-default"
       )}
       style={!isImageValid ? { backgroundColor: backgroundColor } : {}}
     >
@@ -77,9 +82,11 @@ export default function ProfileFrame({
       ) : (
         <div>{initials}</div>
       )}
-      <div className="bg-opacity-50 absolute inset-0 flex items-center justify-center bg-black opacity-0 transition-opacity group-hover:opacity-80">
-        <span className="text-sm text-white">📷</span>
-      </div>
+      {changeable ? (
+        <div className="bg-opacity-50 absolute inset-0 flex items-center justify-center bg-black opacity-0 transition-opacity group-hover:opacity-80">
+          <span className="text-sm text-white">📷</span>
+        </div>
+      ) : null}
     </div>
   );
 }
