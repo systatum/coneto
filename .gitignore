@@ -48,3 +48,5 @@ coverage
 .cursor
 
 .nuxt
+
+storybook-static
