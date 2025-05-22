@@ -34,6 +34,7 @@ export const ProfileWithoutImage: Story = {
   args: {
     firstName: "John",
     lastName: "",
+    changeable: true,
   },
   render: (args: ProfileFrameProps) => {
     return <ProfileFrame {...args} />;
