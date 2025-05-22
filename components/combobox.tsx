@@ -127,10 +127,10 @@ export function Combobox({
                 return newState;
               });
             }}
-            size={16}
-            className="absolute top-[9px] right-9 cursor-pointer"
+            size={12}
+            className="absolute top-[11px] right-9 cursor-pointer text-gray-400"
           />
-          <span className="absolute top-2 right-7 font-semibold text-gray-400">
+          <span className="absolute top-0.5 right-7 font-extralight text-lg text-gray-400">
             |
           </span>
         </>
@@ -149,9 +149,15 @@ export function Combobox({
         }}
       >
         {isOpen ? (
-          <ChevronUp size={18} className="absolute top-2 right-2" />
+          <ChevronUp
+            size={18}
+            className="absolute text-gray-400 top-2 right-2"
+          />
         ) : (
-          <ChevronDown size={18} className="absolute top-2 right-2" />
+          <ChevronDown
+            size={18}
+            className="absolute text-gray-400 top-2 right-2"
+          />
         )}
       </div>
 
@@ -166,7 +172,7 @@ export function Combobox({
             width: refs.reference.current?.getBoundingClientRect().width,
             zIndex: 1000,
           }}
-          className="mt-1 max-h-60 overflow-y-auto rounded-xs border border-gray-100 bg-white shadow-lg"
+          className="max-h-60 overflow-y-auto rounded-xs border border-gray-100 bg-white shadow-lg"
         >
           {FILTERED_OPTIONS.length > 0 ? (
             FILTERED_OPTIONS.map((option, index) => (
