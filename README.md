@@ -27,7 +27,7 @@ Each main component consists of two parts:
 1. Open Chromatic on your desktop
 2. Make any necessary changes to your component
 3. Commit and push your changes
-4. Publish the changes to Chromatic: `npx chromatic --project-token={{your token}}`
+4. Publish the changes to Chromatic: `npx chromatic --project-token={{your token}}` or `pnpm build-chromatic`
 5. View your updates in the Chromatic app
 
 ---
