@@ -3,6 +3,49 @@
 import { BackgroundColorProps, ProfileFrameProps } from "@/type/profile-frame";
 import clsx from "clsx";
 
+export default function ProfileFrame({
+  firstName,
+  lastName,
+  profileImageUrl,
+  changeable,
+  ...props
+}: ProfileFrameProps) {
+  const fullName = `${firstName} ${lastName}`;
+  const code = getCode(fullName);
+  const backgroundColor = getBackground(code);
+  const initials = getInitials(firstName, lastName);
+
+  const isImageValid = profileImageUrl && profileImageUrl !== "";
+
+  return (
+    <div
+      {...props}
+      className={clsx(
+        "group relative flex h-[70px] w-[70px]  items-center justify-center overflow-hidden rounded-full border border-gray-100 font-bold",
+        changeable ? "cursor-pointer" : "cursor-default"
+      )}
+      style={!isImageValid ? { backgroundColor: backgroundColor } : {}}
+    >
+      {isImageValid ? (
+        <img
+          width={30}
+          height={30}
+          className="h-full w-full object-contain"
+          alt={`${fullName} profile image on the Systatum superapp`}
+          src={profileImageUrl}
+        />
+      ) : (
+        <div>{initials}</div>
+      )}
+      {changeable ? (
+        <div className="bg-opacity-50 absolute inset-0 flex items-center justify-center bg-black opacity-0 transition-opacity group-hover:opacity-80">
+          <span className="text-sm text-white">📷</span>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 const BACKGROUND_COLORS: BackgroundColorProps[] = [
   { name: "Soft Red", hex: "#F4C2C2" },
   { name: "Warm Orange", hex: "#FFD8B1" },
@@ -45,48 +88,4 @@ export function getInitials(
   return lastName !== "" && lastName
     ? `${firstInitial}${lastInitial}`
     : `${firstOptionInitial}`;
-}
-
-export default function ProfileFrame({
-  firstName,
-  lastName,
-  profileImageUrl,
-  changeable,
-  ...props
-}: ProfileFrameProps) {
-  const fullName = `${firstName} ${lastName}`;
-  const code = getCode(fullName);
-  const backgroundColor = getBackground(code);
-  const initials = getInitials(firstName, lastName);
-
-  const isImageValid = profileImageUrl && profileImageUrl !== "";
-
-  return (
-    <div
-      {...props}
-      onClick={changeable ? props.onChange : undefined}
-      className={clsx(
-        "group relative flex h-[70px] w-[70px]  items-center justify-center overflow-hidden rounded-full border border-gray-100 font-bold",
-        changeable ? "cursor-pointer" : "cursor-default"
-      )}
-      style={!isImageValid ? { backgroundColor: backgroundColor } : {}}
-    >
-      {isImageValid ? (
-        <img
-          width={30}
-          height={30}
-          className="h-full w-full object-contain"
-          alt={`${fullName} profile image on the Systatum superapp`}
-          src={profileImageUrl}
-        />
-      ) : (
-        <div>{initials}</div>
-      )}
-      {changeable ? (
-        <div className="bg-opacity-50 absolute inset-0 flex items-center justify-center bg-black opacity-0 transition-opacity group-hover:opacity-80">
-          <span className="text-sm text-white">📷</span>
-        </div>
-      ) : null}
-    </div>
-  );
 }
