@@ -1,6 +1,16 @@
-import { ChangeEvent, useRef, useState, useEffect } from "react";
-import { ChevronDown, ChevronUp, Search } from "lucide-react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
+import {
+  useFloating,
+  offset,
+  flip,
+  shift,
+  autoUpdate,
+  useDismiss,
+  useInteractions,
+  Placement,
+} from "@floating-ui/react";
 import clsx from "clsx";
+import { ChevronDown, ChevronUp, Search } from "lucide-react";
 import { CountryCodeProps } from "../type/phonebox";
 import { COUNTRY_CODES } from "../constants/countries";
 import { AsYouType, CountryCode } from "libphonenumber-js/max";
@@ -31,7 +41,7 @@ export default function Phonebox({
   showError = false,
   errorMessage,
 }: PhoneboxProps) {
-  const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find((data) => data.id === "US");
+  const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find((data) => data.id === "US")!;
 
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -39,8 +49,10 @@ export default function Phonebox({
     DEFAULT_COUNTRY_CODES
   );
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
 
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const phoneInputRef = useRef<HTMLInputElement>(null);
 
   const FILTERED_COUNTRIES = COUNTRY_CODES.filter(
     (country) =>
@@ -48,18 +60,23 @@ export default function Phonebox({
       country.code.includes(searchTerm)
   );
 
+  const { refs, floatingStyles, context } = useFloating({
+    placement: "bottom-start" as Placement,
+    open: isOpen,
+    onOpenChange: setIsOpen,
+    middleware: [offset(4), flip(), shift()],
+    whileElementsMounted: autoUpdate,
+  });
+
+  const dismiss = useDismiss(context);
+  const { getFloatingProps, getReferenceProps } = useInteractions([dismiss]);
+
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    if (!isOpen) {
+      setSearchTerm("");
+      setHighlightedIndex(0);
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     if (!value) {
@@ -81,6 +98,37 @@ export default function Phonebox({
     }
   }, [value]);
 
+  const listRef = useRef<(HTMLDivElement | null)[]>([]);
+  useEffect(() => {
+    if (isOpen && listRef.current[highlightedIndex]) {
+      listRef.current[highlightedIndex]?.scrollIntoView({ block: "nearest" });
+    }
+  }, [highlightedIndex, isOpen]);
+
+  const handleDropdownKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (disabled) return;
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      if (!isOpen) setIsOpen(true);
+      setHighlightedIndex((prev) =>
+        Math.min(prev + 1, FILTERED_COUNTRIES.length - 1)
+      );
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      if (!isOpen) setIsOpen(true);
+      setHighlightedIndex((prev) => Math.max(prev - 1, 0));
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      const selected = FILTERED_COUNTRIES[highlightedIndex];
+      if (selected) {
+        handleSelectCountry(selected);
+      }
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      setIsOpen(false);
+    }
+  };
+
   const handlePhoneChange = (e: ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
     const trimmed = trimPhone(raw);
@@ -96,7 +144,20 @@ export default function Phonebox({
     setSelectedCountry(country);
     setIsOpen(false);
     setSearchTerm("");
+    setHighlightedIndex(0);
     if (onChange) onChange("country_code", country);
+    phoneInputRef.current?.focus();
+  };
+
+  const handleToggleDropdown = () => {
+    if (disabled) return;
+    setIsOpen((prev) => {
+      const newState = !prev;
+      if (newState) {
+        setTimeout(() => searchInputRef.current?.focus(), 0);
+      }
+      return newState;
+    });
   };
 
   return (
@@ -107,81 +168,49 @@ export default function Phonebox({
       <div
         className={clsx(
           "flex w-full min-w-[350px] md:min-w-[400px] rounded-xs border border-gray-300",
-          showError ? "border-red-500" : "focus-within:border-blue-600",
+          showError
+            ? "border-red-500"
+            : isOpen
+              ? "border-gray-300"
+              : "border-gray-300 focus-within:border-blue-600",
           disabled ? "opacity-50" : "",
           className
         )}
-        ref={dropdownRef}
+        {...getReferenceProps({
+          ref: refs.setReference,
+          onKeyDown: handleDropdownKeyDown,
+          tabIndex: -1,
+          "aria-expanded": isOpen,
+          "aria-haspopup": "listbox",
+          role: "combobox",
+          "aria-controls": "country-listbox",
+          "aria-activedescendant": isOpen
+            ? `country-option-${highlightedIndex}`
+            : undefined,
+        })}
       >
-        <div className={clsx("relative")}>
-          <button
-            type="button"
-            className={clsx(
-              "flex flex-row items-center gap-1 rounded-l-xs border-gray-300 border-r px-2 py-[7px] text-xs",
-              disabled
-                ? "cursor-not-allowed"
-                : "cursor-pointer hover:bg-gray-50"
-            )}
-            onClick={() => !disabled && setIsOpen(!isOpen)}
-            disabled={disabled}
-          >
-            <span className="text-xs">{selectedCountry.flag}</span>
-            <span className="">{selectedCountry.code}</span>
-            {isOpen ? (
-              <ChevronUp className="h-4 w-4 text-gray-500" />
-            ) : (
-              <ChevronDown className="h-4 w-4 text-gray-500" />
-            )}
-          </button>
-
-          {isOpen && (
-            <div
-              style={{
-                msOverflowStyle: "none",
-                scrollbarWidth: "none",
-              }}
-              className="absolute left-0 z-10 mt-1 max-h-60 w-full min-w-[350px] overflow-auto rounded-sm border border-gray-300 bg-white shadow-xl md:min-w-[400px]"
-            >
-              <div className="sticky top-0 bg-white p-2">
-                <div className="relative">
-                  <Search className="absolute top-2 left-2 h-4 w-4 text-gray-400" />
-                  <input
-                    type="text"
-                    className="w-full rounded-xs border border-gray-300 py-2 pr-2 pl-8 text-xs focus:border-blue-600 focus:outline-none"
-                    placeholder="Search your country..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="scrollbar-thin max-h-52 w-full overflow-y-auto">
-                {FILTERED_COUNTRIES.length > 0 ? (
-                  FILTERED_COUNTRIES.map((country) => (
-                    <div
-                      key={`${country.name}`}
-                      className={clsx(
-                        "flex w-full cursor-pointer items-center px-3 py-2 text-xs hover:bg-gray-100",
-                        selectedCountry.id === country.id ? "bg-blue-50" : ""
-                      )}
-                      onClick={() => handleSelectCountry(country)}
-                    >
-                      <span className="mr-2">{country.flag}</span>
-                      <span>{country.name}</span>
-                      <span className="ml-2 text-gray-500">{country.code}</span>
-                    </div>
-                  ))
-                ) : (
-                  <div className="px-3 py-4 text-center text-gray-500">
-                    Country not found
-                  </div>
-                )}
-              </div>
-            </div>
+        <button
+          type="button"
+          onClick={handleToggleDropdown}
+          disabled={disabled}
+          className={clsx(
+            "flex flex-row items-center gap-1 rounded-l-xs border-gray-300 border-r px-2 py-[7px] text-xs",
+            disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-gray-50"
           )}
-        </div>
+          aria-label="Select country code"
+          tabIndex={0}
+        >
+          <span className="text-xs">{selectedCountry.flag}</span>
+          <span>{selectedCountry.code}</span>
+          {isOpen ? (
+            <ChevronUp className="h-4 w-4 text-gray-500" />
+          ) : (
+            <ChevronDown className="h-4 w-4 text-gray-500" />
+          )}
+        </button>
 
         <input
+          ref={phoneInputRef}
           type="tel"
           className={clsx(
             "h-full w-full flex-1 rounded-xs px-3 py-[7px] text-xs focus:outline-none text-black",
@@ -191,11 +220,80 @@ export default function Phonebox({
           value={phoneNumber}
           onChange={handlePhoneChange}
           disabled={disabled}
+          aria-label="Phone number input"
         />
       </div>
 
+      {isOpen && (
+        <div
+          {...getFloatingProps({
+            ref: refs.setFloating,
+            id: "country-listbox",
+            role: "listbox",
+            style: {
+              ...floatingStyles,
+              width: refs.reference.current?.getBoundingClientRect().width,
+              zIndex: 1000,
+              maxHeight: 240,
+              overflowY: "auto",
+            },
+            tabIndex: -1,
+          })}
+          className="absolute left-0 scrollbar-thin rounded-xs border border-gray-300 bg-white shadow-xl md:min-w-[400px]"
+        >
+          <div className="sticky top-0 bg-white p-2">
+            <div className="relative">
+              <Search className="absolute top-2 left-2 h-4 w-4 text-gray-400" />
+              <input
+                type="text"
+                ref={searchInputRef}
+                className="w-full rounded-xs border border-gray-300 py-2 pr-2 pl-8 text-xs focus:border-blue-600 focus:outline-none"
+                placeholder="Search your country..."
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setHighlightedIndex(0);
+                }}
+                onKeyDown={handleDropdownKeyDown}
+                aria-label="Search countries"
+                autoComplete="off"
+              />
+            </div>
+          </div>
+
+          {FILTERED_COUNTRIES.length > 0 ? (
+            FILTERED_COUNTRIES.map((country, index) => (
+              <div
+                key={country.id}
+                id={`country-option-${index}`}
+                role="option"
+                aria-selected={highlightedIndex === index}
+                tabIndex={-1}
+                ref={(el) => {
+                  listRef.current[index] = el;
+                }}
+                onMouseDown={() => handleSelectCountry(country)}
+                onMouseEnter={() => setHighlightedIndex(index)}
+                className={clsx(
+                  "flex cursor-pointer items-center px-3 py-2 text-xs",
+                  highlightedIndex === index ? "bg-blue-100" : ""
+                )}
+              >
+                <span className="mr-2">{country.flag}</span>
+                <span>{country.name}</span>
+                <span className="ml-auto text-gray-500">{country.code}</span>
+              </div>
+            ))
+          ) : (
+            <div className="p-3 text-center text-xs text-gray-500">
+              No country found.
+            </div>
+          )}
+        </div>
+      )}
+
       {showError && errorMessage && (
-        <p className="mt-1 text-xs text-red-500">{errorMessage}</p>
+        <p className="text-xs text-red-500">{errorMessage}</p>
       )}
     </div>
   );
