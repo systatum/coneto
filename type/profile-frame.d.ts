@@ -1,9 +1,11 @@
-export interface ProfileFrameProps {
+import { ChangeEvent, HTMLAttributes } from "react";
+
+export interface ProfileFrameProps extends HTMLAttributes<HTMLDivElement> {
   firstName: string;
   lastName?: string;
   profileImageUrl?: string | null | undefined;
   changeable: boolean;
-  onChange?: () => void;
+  onChange?: (e: ChangeEvent<HTMLInputElement>, file?: File) => void;
 }
 
 export interface BackgroundColorProps {

@@ -2,6 +2,7 @@
 
 import { BackgroundColorProps, ProfileFrameProps } from "@/type/profile-frame";
 import clsx from "clsx";
+import { ChangeEvent, useRef } from "react";
 
 const BACKGROUND_COLORS: BackgroundColorProps[] = [
   { name: "Soft Red", hex: "#F4C2C2" },
@@ -27,8 +28,13 @@ export default function ProfileFrame({
   lastName,
   profileImageUrl,
   changeable,
+  onChange,
   ...props
 }: ProfileFrameProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const isClickable = changeable || !!onChange || !!props.onClick;
+
   const fullName = `${firstName} ${lastName}`;
   const code = getCode(fullName);
   const backgroundColor = getBackground(code);
@@ -36,12 +42,27 @@ export default function ProfileFrame({
 
   const isImageValid = profileImageUrl && profileImageUrl !== "";
 
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (onChange) {
+      onChange(e, file);
+    }
+  };
+
+  const handleClick = () => {
+    if (changeable && fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
   return (
     <div
       {...props}
+      onClick={changeable ? handleClick : props.onClick}
+      onChange={changeable ? handleFileChange : onChange}
       className={clsx(
         "group relative flex h-[70px] w-[70px]  items-center justify-center overflow-hidden rounded-full border border-gray-100 font-bold",
-        changeable ? "cursor-pointer" : "cursor-default"
+        isClickable ? "cursor-pointer" : "cursor-default"
       )}
       style={!isImageValid ? { backgroundColor: backgroundColor } : {}}
     >
@@ -58,6 +79,14 @@ export default function ProfileFrame({
       )}
       {changeable ? (
         <div className="bg-opacity-50 absolute inset-0 flex items-center justify-center bg-black opacity-0 transition-opacity group-hover:opacity-80">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleFileChange}
+            data-testid="profile-file-input"
+          />
           <span className="text-sm text-white">📷</span>
         </div>
       ) : null}
