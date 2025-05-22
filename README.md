@@ -4,8 +4,6 @@
 
 Coneto is a shared component library used across all applications at Systatum — including Workaty, Dashtomer, and others.
 
----
-
 ## Component Structure
 
 Each main component consists of two parts:
@@ -13,14 +11,10 @@ Each main component consists of two parts:
 1. `[component].tsx` – the React component
 2. `[component].stories.tsx` – the Storybook file to display the component
 
----
-
 ## How to run:
 
 1. Install dependencies: `pnpm install`
 2. Start Storybook locally: `pnpm storybook`
-
----
 
 ## How to Make Changes
 
@@ -29,8 +23,6 @@ Each main component consists of two parts:
 3. Commit and push your changes
 4. Publish the changes to Chromatic: `npx chromatic --project-token={{your token}}` or `pnpm build-chromatic`
 5. View your updates in the Chromatic app
-
----
 
 ## Tech Stack
 
@@ -42,14 +34,18 @@ This repository uses:
 - `@chromatic-com/storybook` – integrates Chromatic, which automates UI testing and visual reviews of your components
 - `@storybook/experimental-addon-test` – an experimental addon for running component tests directly inside Storybook
 
----
-
 ## Code Quality Checks
 
 1. Run unit tests: `pnpm test-storybook`
 2. Run the linter to check for unused code and issues: `pnpm lint`
 
-## How to deploy your code?
+## Coding convention
+
+1. Constants should always be in SNAKE_CASE_CAPITALS
+2. Helper functions, when they're not likely to be re-usable, should be put in the same file of the component, but located after the component's function declaration.
+3. Constants, when they're not likely to be re-usable, should be put in the same file of the compoennt.
+
+## How to deploy
 
 1. Build Storybook: `pnpm build-storybook`
 2. Push the build output
