@@ -12,11 +12,13 @@ interface TabProps {
   setView: (data: string) => void;
 }
 
-export default function Tab({ fields, view, setView }: TabProps) {
+export default function CapsuleTab({ fields, view, setView }: TabProps) {
   const [hovered, setHovered] = useState<string | null>(null);
 
   const activeId = hovered || view;
-  const activeIndex = fields.findIndex((item) => item.id === activeId);
+  const activeIndex = fields.findIndex((item) => item.id === view);
+  const hoverIndex = fields.findIndex((item) => item.id === activeId);
+
   const tabRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [tabSizes, setTabSizes] = useState<{ width: number; left: number }[]>(
     []
@@ -94,6 +96,24 @@ export default function Tab({ fields, view, setView }: TabProps) {
     return { left: 4, width: 60 };
   };
 
+  const getHoverPosition = () => {
+    if (!isInitialized && fields.length > 0) {
+      if (hoverIndex === 0) {
+        return { left: 4, width: 60 };
+      }
+    }
+
+    if (isInitialized && hoverIndex !== -1 && tabSizes[hoverIndex]) {
+      return {
+        left: tabSizes[hoverIndex].left,
+        width: tabSizes[hoverIndex].width - 3,
+      };
+    }
+
+    return { left: 4, width: 60 };
+  };
+
+  const hoverPosition = getHoverPosition();
   const initialPosition = getInitialPosition();
 
   return (
@@ -104,7 +124,7 @@ export default function Tab({ fields, view, setView }: TabProps) {
     >
       <motion.div
         layout
-        className="absolute top-1 bottom-1 z-0 h-[25px] rounded-xl bg-blue-600"
+        className="absolute top-1 bottom-1 z-10 h-[25px] rounded-xl bg-blue-600"
         initial={{
           left: initialPosition.left,
           width: initialPosition.width,
@@ -120,13 +140,28 @@ export default function Tab({ fields, view, setView }: TabProps) {
         }}
       />
 
+      <motion.div
+        layout
+        className="absolute top-1 bottom-1 z-0 h-[25px] rounded-xl border-2 border-blue-600"
+        initial={{
+          left: hoverPosition.left,
+          width: hoverPosition.width,
+        }}
+        animate={{
+          left: hoverPosition.left,
+          width: hoverPosition.width,
+        }}
+        transition={{
+          type: "spring",
+          stiffness: 250,
+          damping: 30,
+        }}
+      />
+
       {fields.map((data, index) => {
-        const isHovered = hovered === data.id;
         const isActive = view === data.id;
 
-        const textColor =
-          isHovered || (!hovered && isActive) ? "text-white" : "text-gray-900";
-
+        const textColor = isActive ? "text-white" : "text-gray-900";
         return (
           <div
             role="tab"
