@@ -6,6 +6,8 @@ export interface AvatarProps extends HTMLAttributes<HTMLDivElement> {
   profileImageUrl?: string | null | undefined;
   changeable: boolean;
   onChange?: (e: ChangeEvent<HTMLInputElement>, file?: File) => void;
+  frameSize: number;
+  fontSize: number;
 }
 
 export interface BackgroundColorProps {

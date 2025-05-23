@@ -29,6 +29,8 @@ export default function Avatar({
   profileImageUrl,
   changeable,
   onChange,
+  frameSize,
+  fontSize,
   ...props
 }: AvatarProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -61,10 +63,16 @@ export default function Avatar({
       onClick={changeable ? handleClick : props.onClick}
       onChange={changeable ? handleFileChange : onChange}
       className={clsx(
-        "group relative flex h-[70px] w-[70px]  items-center justify-center overflow-hidden rounded-full border border-gray-100 font-bold",
+        "group relative flex items-center justify-center overflow-hidden rounded-full border border-gray-100 font-bold",
+
         isClickable ? "cursor-pointer" : "cursor-default"
       )}
-      style={!isImageValid ? { backgroundColor: backgroundColor } : {}}
+      style={{
+        backgroundColor: !isImageValid ? backgroundColor : undefined,
+        fontSize: `${fontSize}px`,
+        width: `${frameSize}px`,
+        height: `${frameSize}px`,
+      }}
     >
       {isImageValid ? (
         <img
