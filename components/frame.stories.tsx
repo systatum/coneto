@@ -3,7 +3,7 @@ import { expect, within } from "@storybook/test";
 import Frame from "./frame";
 
 const meta: Meta<typeof Frame> = {
-  title: "Components Reusable/Frame",
+  title: "Stage/Frame",
   component: Frame,
   parameters: {
     layout: "centered",
