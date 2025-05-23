@@ -5,7 +5,7 @@ import { useArgs } from "@storybook/preview-api";
 import { expect, userEvent, within } from "@storybook/test";
 
 const meta: Meta<typeof ModalDialog> = {
-  title: "Components Reusable/Modal Dialog",
+  title: "Stage/Modal Dialog",
   component: ModalDialog,
   parameters: {
     layout: "centered",

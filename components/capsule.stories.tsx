@@ -4,7 +4,7 @@ import { useArgs } from "@storybook/preview-api";
 import { expect, userEvent, within } from "@storybook/test";
 
 const meta: Meta<typeof Capsule> = {
-  title: "Components Reusable/Capsule",
+  title: "Controls/Capsule",
   component: Capsule,
   parameters: {
     layout: "centered",

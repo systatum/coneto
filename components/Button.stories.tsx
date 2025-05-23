@@ -4,7 +4,7 @@ import { Button } from "./button";
 import { ProjectorIcon } from "lucide-react";
 
 const meta = {
-  title: "Components Reusable/Button",
+  title: "Controls/Button",
   component: Button,
   parameters: {
     layout: "centered",

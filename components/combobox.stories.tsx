@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Combobox } from "./combobox";
 
 const meta: Meta<typeof Combobox> = {
-  title: "Components Reusable/Combobox",
+  title: "Input Elements/Combobox",
   component: Combobox,
   parameters: {
     layout: "centered",

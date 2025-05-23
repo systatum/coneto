@@ -1,11 +1,11 @@
 import { Meta, StoryObj } from "@storybook/react";
 import Phonebox, { PhoneboxProps } from "./phonebox";
-import { CountryCodeProps } from "../type/phonebox";
+import { CountryCodeProps } from "./phonebox";
 import { expect, userEvent, within } from "@storybook/test";
 import { useArgs } from "@storybook/preview-api";
 
 const meta: Meta = {
-  title: "Components Reusable/Phonebox",
+  title: "Input Elements/Phonebox",
   component: Phonebox,
   parameters: {
     layout: "centered",

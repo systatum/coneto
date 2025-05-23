@@ -5,7 +5,7 @@ import { useArgs } from "@storybook/preview-api";
 import { useEffect, type ChangeEvent } from "react";
 
 const meta: Meta<typeof Textbox> = {
-  title: "Components Reusable/Textbox",
+  title: "Input Elements/Textbox",
   component: Textbox,
   argTypes: {
     name: {
