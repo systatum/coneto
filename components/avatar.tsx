@@ -7,7 +7,7 @@ export interface AvatarProps extends HTMLAttributes<HTMLDivElement> {
   firstName: string;
   lastName?: string;
   profileImageUrl?: string | null | undefined;
-  changeable: boolean;
+  changeable?: boolean;
   onChange?: (e: ChangeEvent<HTMLInputElement>, file?: File) => void;
   frameSize: number;
   fontSize: number;
