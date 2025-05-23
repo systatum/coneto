@@ -1,8 +1,22 @@
 "use client";
 
-import { AvatarProps, BackgroundColorProps } from "../type/avatar";
 import clsx from "clsx";
-import { ChangeEvent, useRef } from "react";
+import { ChangeEvent, HTMLAttributes, useRef } from "react";
+
+export interface AvatarProps extends HTMLAttributes<HTMLDivElement> {
+  firstName: string;
+  lastName?: string;
+  profileImageUrl?: string | null | undefined;
+  changeable: boolean;
+  onChange?: (e: ChangeEvent<HTMLInputElement>, file?: File) => void;
+  frameSize: number;
+  fontSize: number;
+}
+
+export interface BackgroundColorProps {
+  name: string;
+  hex: string;
+}
 
 const BACKGROUND_COLORS: BackgroundColorProps[] = [
   { name: "Soft Red", hex: "#F4C2C2" },

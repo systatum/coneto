@@ -11,9 +11,15 @@ import {
 } from "@floating-ui/react";
 import clsx from "clsx";
 import { ChevronDown, ChevronUp, Search } from "lucide-react";
-import { CountryCodeProps } from "../type/phonebox";
 import { COUNTRY_CODES } from "../constants/countries";
 import { AsYouType, CountryCode } from "libphonenumber-js/max";
+
+export interface CountryCodeProps {
+  id: string;
+  code: string;
+  name: string;
+  flag: string;
+}
 
 export interface PhoneboxProps {
   label: string;
