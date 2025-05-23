@@ -5,7 +5,7 @@ import { useArgs } from "@storybook/preview-api";
 import { ChangeEvent } from "react";
 
 const meta: Meta<typeof Searchbox> = {
-  title: "Components Reusable/Searchbox",
+  title: "Input Elements/Searchbox",
   component: Searchbox,
   argTypes: {
     name: {
