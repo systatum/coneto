@@ -1,6 +1,6 @@
 import { ChangeEvent, HTMLAttributes } from "react";
 
-export interface ProfileFrameProps extends HTMLAttributes<HTMLDivElement> {
+export interface AvatarProps extends HTMLAttributes<HTMLDivElement> {
   firstName: string;
   lastName?: string;
   profileImageUrl?: string | null | undefined;

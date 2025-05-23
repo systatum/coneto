@@ -1,13 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect, within } from "@storybook/test";
-import ProfileFrame from "./profile-frame";
-import { ProfileFrameProps } from "@/type/profile-frame";
-import { useState } from "react";
+import { AvatarProps } from "../type/avatar";
+import { ChangeEvent, useState } from "react";
 import ModalDialog, { ModalButtonProps } from "./modal-dialog";
+import Avatar from "./avatar";
 
-const meta: Meta<typeof ProfileFrame> = {
-  title: "Components Reusable/Profile Frame",
-  component: ProfileFrame,
+const meta: Meta<typeof Avatar> = {
+  title: "Components Reusable/Avatar",
+  component: Avatar,
   parameters: {
     layout: "centered",
   },
@@ -30,7 +30,7 @@ const meta: Meta<typeof ProfileFrame> = {
 
 export default meta;
 
-type Story = StoryObj<typeof ProfileFrame>;
+type Story = StoryObj<typeof Avatar>;
 
 export const ProfileDefault: Story = {
   args: {
@@ -38,8 +38,8 @@ export const ProfileDefault: Story = {
     lastName: "",
     changeable: false,
   },
-  render: (args: ProfileFrameProps) => {
-    return <ProfileFrame {...args} />;
+  render: (args: AvatarProps) => {
+    return <Avatar {...args} />;
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -54,7 +54,7 @@ export const ProfileWithFunction: Story = {
     lastName: "",
     changeable: false,
   },
-  render: (args: ProfileFrameProps) => {
+  render: (args: AvatarProps) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const BUTTONS: ModalButtonProps[] = [
@@ -72,7 +72,7 @@ export const ProfileWithFunction: Story = {
 
     return (
       <div className="flex flex-col items-center gap-4">
-        <ProfileFrame {...args} onClick={() => setIsOpen(!isOpen)} />
+        <Avatar {...args} onClick={() => setIsOpen(!isOpen)} />
         <ModalDialog
           open={isOpen}
           onOpenChange={setIsOpen}
@@ -104,15 +104,12 @@ export const ProfileWithImage: Story = {
     changeable: true,
     profileImageUrl: "/avatar-1.jpg",
   },
-  render: (args: ProfileFrameProps) => {
+  render: (args: AvatarProps) => {
     const [selectedFileName, setSelectedFileName] = useState<string | null>(
       null
     );
 
-    const handleChange = (
-      e: React.ChangeEvent<HTMLInputElement>,
-      file?: File
-    ) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement>, file?: File) => {
       if (file) {
         setSelectedFileName(file.name);
       }
@@ -120,7 +117,7 @@ export const ProfileWithImage: Story = {
 
     return (
       <div className="flex flex-col items-center">
-        <ProfileFrame onChange={handleChange} {...args} />
+        <Avatar onChange={handleChange} {...args} />
         {selectedFileName && (
           <div className="text-xs" data-testid="selected-file-name">
             Selected: {selectedFileName}

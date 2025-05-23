@@ -1,6 +1,6 @@
 "use client";
 
-import { BackgroundColorProps, ProfileFrameProps } from "@/type/profile-frame";
+import { AvatarProps, BackgroundColorProps } from "../type/avatar";
 import clsx from "clsx";
 import { ChangeEvent, useRef } from "react";
 
@@ -23,14 +23,14 @@ const BACKGROUND_COLORS: BackgroundColorProps[] = [
   { name: "Misty Rose", hex: "#FFE4E1" },
 ];
 
-export default function ProfileFrame({
+export default function Avatar({
   firstName,
   lastName,
   profileImageUrl,
   changeable,
   onChange,
   ...props
-}: ProfileFrameProps) {
+}: AvatarProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const isClickable = changeable || !!onChange || !!props.onClick;
