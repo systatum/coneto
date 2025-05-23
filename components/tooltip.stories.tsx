@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import Tooltip from "./tooltip";
 import { expect, fireEvent, waitFor, within } from "@storybook/test";
-import { delay } from "framer-motion";
 
 const meta: Meta<typeof Tooltip> = {
   title: "Content/Tooltip",

@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { cn } from "../lib/utils";
 import clsx from "clsx";
 
 type TooltipProps = {
-  children: React.ReactNode;
+  children: ReactNode;
   text: string;
   openOn?: "hover" | "click";
   className?: string;
