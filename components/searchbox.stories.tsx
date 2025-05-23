@@ -48,13 +48,14 @@ export const Default: Story = {
     const canvas = within(canvasElement);
 
     const input = await canvas.getByRole("textbox");
-    const clearButton = await canvas.getByRole("button", {
-      name: /clear search input/i,
-    });
 
     await userEvent.clear(input);
     await userEvent.type(input, "Hello world", { delay: 40 });
     await expect(input).toHaveValue("Hello world");
+
+    const clearButton = await canvas.getByRole("button", {
+      name: /clear search input/i,
+    });
 
     await userEvent.click(clearButton);
     await expect(input).toHaveValue("");
