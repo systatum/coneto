@@ -6,7 +6,7 @@ import {
   useState,
 } from "react";
 import Checkbox from "./checkbox";
-import clsx from "clsx";
+import { cn } from "./../lib/utils";
 
 export type RowData = (string | ReactNode)[];
 
@@ -16,6 +16,7 @@ interface TableProps {
   onItemsSelected?: (data: RowData[]) => void;
   children: ReactNode;
   isLoading?: boolean;
+  className?: string;
 }
 
 interface TableRowProps {
@@ -23,6 +24,7 @@ interface TableRowProps {
   isSelected?: boolean;
   selectable?: boolean;
   handleSelect?: (data: RowData) => void;
+  className?: string;
 }
 
 interface TableRowCellProps {
@@ -36,6 +38,7 @@ function Table({
   onItemsSelected,
   children,
   isLoading,
+  className,
 }: TableProps) {
   const [selectedData, setSelectedData] = useState<RowData[]>([]);
 
@@ -85,8 +88,14 @@ function Table({
     });
   });
 
+  const tableClass = cn(
+    "flex flex-col relative",
+    className,
+    selectable ? "mt-10" : ""
+  );
+
   return (
-    <div className={clsx("flex flex-col relative", selectable ? "mt-10" : "")}>
+    <div className={tableClass}>
       {selectedData.length > 0 && (
         <div className="absolute -top-10 z-20 w-full py-2 text-white bg-blue-500 px-6">
           {selectedData.length} items selected
@@ -123,6 +132,7 @@ function TableRow({
   selectable = false,
   isSelected = false,
   handleSelect,
+  className,
   ...props
 }: TableRowProps) {
   return (
@@ -149,8 +159,9 @@ function TableRow({
 }
 
 function TableRowCell({ col, className }: TableRowCellProps) {
-  return <div className={clsx("flex-1 px-2", className)}>{col}</div>;
+  return <div className={cn("flex-1 px-2", className)}>{col}</div>;
 }
 
+Table.RowCell = TableRowCell;
 Table.Row = TableRow;
 export { Table };
