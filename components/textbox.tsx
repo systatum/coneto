@@ -8,10 +8,9 @@ import {
   useState,
 } from "react";
 
-interface BaseTextboxProps extends InputHTMLAttributes<HTMLInputElement> {
+export interface BaseTextboxProps
+  extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
-  name: string;
-  value: string;
   showError?: boolean;
   errorMessage?: string;
   className?: string;
@@ -20,7 +19,7 @@ interface BaseTextboxProps extends InputHTMLAttributes<HTMLInputElement> {
   onChange: (data: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }
 
-type TextboxProps =
+export type TextboxProps =
   | (BaseTextboxProps &
       InputHTMLAttributes<HTMLInputElement> & {
         rows?: undefined;
@@ -35,14 +34,11 @@ export default function Textbox({
   showError,
   errorMessage,
   rows,
-  name,
   onChange,
   onSendClick,
-  value,
   className,
   classNameParent,
   type = "text",
-
   ...props
 }: TextboxProps) {
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -53,7 +49,7 @@ export default function Textbox({
     }
   }, [showError]);
 
-  const inputId = `textbox-${name}`;
+  const inputId = `textbox-${props.name}`;
 
   if (type === "hidden") {
     return <input {...props} className="hidden" />;
@@ -74,12 +70,10 @@ export default function Textbox({
         className={clsx("relative flex w-full items-center", className)}
       >
         <input
-          name={name}
-          value={value}
           onChange={onChange}
           type="text"
           className={clsx(
-            "bg-background ring-offset-background placeholder:text-muted-foreground flex h-10 w-full rounded-sm border px-3 py-2 pr-10 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus:border-blue-600 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+            "bg-background ring-offset-background placeholder:text-muted-foreground flex h-10 w-full rounded-xs border-gray-300 border px-3 py-2 pr-10 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus:border-blue-600 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
           )}
           placeholder={props.placeholder || "Type a message..."}
           onKeyDown={(e) => {
@@ -112,17 +106,15 @@ export default function Textbox({
             onSendClick();
           }}
         >
-          <Send className="mr-1" size={20} />
+          <Send className="mr-1" size={18} />
         </button>
       </div>
     ) : rows ? (
       <div className="relative w-full ring-0">
         <textarea
           id={inputId}
-          name={name}
-          value={value}
           onChange={onChange}
-          rows={rows}
+          rows={rows ?? 3}
           className={inputClass}
           {...(props as TextareaHTMLAttributes<HTMLTextAreaElement>)}
         />
@@ -137,8 +129,6 @@ export default function Textbox({
       <div className="relative w-full ring-0">
         <input
           id={inputId}
-          name={name}
-          value={value}
           onChange={onChange}
           className={inputClass}
           type={type === "password" && showPassword ? "text" : type}

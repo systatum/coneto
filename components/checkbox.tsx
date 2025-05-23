@@ -10,12 +10,13 @@ interface BaseCheckboxesProps extends InputHTMLAttributes<HTMLInputElement> {
   classNameParent?: string;
 }
 
-export default function Checkboxes({
+export default function Checkbox({
   label,
   name,
   showError,
   className,
   classNameParent,
+  errorMessage,
   ...props
 }: BaseCheckboxesProps) {
   const inputId = `checkbox-${name}`;
@@ -25,23 +26,26 @@ export default function Checkboxes({
     showError
       ? "border border-red-500 focus:border-red-500 focus:ring-red-500 text-red-800"
       : "border border-gray-300 focus:ring-blue-500 focus:border-blue-500",
-    className,
+    className
   );
 
   return (
-    <label
-      htmlFor={inputId}
-      className={clsx(
-        "flex items-center gap-[6px] py-[7px] text-xs",
-        classNameParent,
+    <div className={clsx(classNameParent)}>
+      <label
+        htmlFor={inputId}
+        className="flex items-center gap-[6px] py-[7px] text-xs"
+      >
+        <input
+          type="checkbox"
+          id={inputId}
+          className={inputClass}
+          {...(props as InputHTMLAttributes<HTMLInputElement>)}
+        />
+        <span>{label}</span>
+      </label>
+      {showError && errorMessage && (
+        <p className="mt-1 text-xs text-red-600">{errorMessage}</p>
       )}
-    >
-      <input
-        id={inputId}
-        className={inputClass}
-        {...(props as InputHTMLAttributes<HTMLInputElement>)}
-      />
-      <span className="pt-[1px]">{label}</span>
-    </label>
+    </div>
   );
 }

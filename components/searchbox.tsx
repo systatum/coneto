@@ -24,9 +24,14 @@ export default function Searchbox({
     className
   );
 
+  const valueLengthChecker = value.length > 0;
+
   return (
     <div className="relative w-full ring-0">
-      <Search size={14} className="absolute top-1/2 left-3 -translate-y-1/2" />
+      <Search
+        size={14}
+        className="absolute top-1/2 text-gray-400 left-3 -translate-y-1/2"
+      />
 
       <input
         id={inputId}
@@ -37,19 +42,23 @@ export default function Searchbox({
         {...(props as InputHTMLAttributes<HTMLInputElement>)}
       />
 
-      <X
-        onClick={() => {
-          const event = {
-            target: {
-              name,
-              value: "",
-            },
-          } as ChangeEvent<HTMLInputElement>;
-          onChange(event);
-        }}
-        size={14}
-        className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer"
-      />
+      {valueLengthChecker && (
+        <X
+          role="button"
+          aria-label="Clear search input"
+          onClick={() => {
+            const event = {
+              target: {
+                name,
+                value: "",
+              },
+            } as ChangeEvent<HTMLInputElement>;
+            onChange(event);
+          }}
+          size={14}
+          className="absolute top-1/2 right-3 text-gray-400 -translate-y-1/2 cursor-pointer"
+        />
+      )}
     </div>
   );
 }

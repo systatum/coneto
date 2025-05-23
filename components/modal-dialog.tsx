@@ -1,14 +1,11 @@
-import { ReactNode } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/dialog";
-import type { VariantProps } from "class-variance-authority";
-import { Button, buttonVariants } from "@/components/button";
+"use client";
 
-interface ModalButtonProps
+import { ReactNode } from "react";
+import { Dialog, DialogContent, DialogTitle } from "./dialog";
+import type { VariantProps } from "class-variance-authority";
+import { Button, buttonVariants } from "./button";
+
+export interface ModalButtonProps
   extends Pick<VariantProps<typeof buttonVariants>, "variant"> {
   id: string;
   caption: string;
@@ -16,7 +13,7 @@ interface ModalButtonProps
   disabled?: boolean;
 }
 
-interface ModalDialogProps {
+export interface ModalDialogProps {
   open: boolean;
   onOpenChange: (data: boolean) => void;
   title: string;
@@ -41,9 +38,8 @@ export default function ModalDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogTrigger>test</DialogTrigger>
       <DialogContent
-        className="flex max-w-[500px] flex-col justify-center rounded-none p-0 sm:max-w-[500px]"
+        className="flex max-w-[500px] overflow-hidden flex-col justify-center rounded-none p-0 sm:max-w-[500px]"
         hideClose={!hasCloseButton}
       >
         <div className="p-3 px-4">
@@ -52,7 +48,9 @@ export default function ModalDialog({
             <h3 className="text-[11px] text-gray-500">{subTitle}</h3>
           </div>
           <div className="h-[1px] w-full border border-blue-500"></div>
-          <div className="h-full min-h-[400px] w-full pt-2">{children}</div>
+          <div className="h-full min-h-[250px] text-xs w-full pt-2">
+            {children}
+          </div>
         </div>
         <div className="flex w-full flex-row justify-end">
           {buttons.map((data, index) => (
