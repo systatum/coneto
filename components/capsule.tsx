@@ -12,7 +12,7 @@ interface TabProps {
   setView: (data: string) => void;
 }
 
-export default function CapsuleTab({ fields, view, setView }: TabProps) {
+export default function Capsule({ fields, view, setView }: TabProps) {
   const [hovered, setHovered] = useState<string | null>(null);
 
   const activeId = hovered || view;

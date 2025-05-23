@@ -1,11 +1,11 @@
 import { Meta, StoryObj } from "@storybook/react";
-import CapsuleTab from "./capsule-tab";
+import Capsule from "./capsule";
 import { useArgs } from "@storybook/preview-api";
 import { expect, userEvent, within } from "@storybook/test";
 
-const meta: Meta<typeof CapsuleTab> = {
-  title: "Components Reusable/Capsule Tab",
-  component: CapsuleTab,
+const meta: Meta<typeof Capsule> = {
+  title: "Components Reusable/Capsule",
+  component: Capsule,
   parameters: {
     layout: "centered",
   },
@@ -14,7 +14,7 @@ const meta: Meta<typeof CapsuleTab> = {
 
 export default meta;
 
-type Story = StoryObj<typeof CapsuleTab>;
+type Story = StoryObj<typeof Capsule>;
 
 const VIEW_MODES = [
   {
@@ -36,7 +36,7 @@ export const Default: Story = {
     const [{ view }, setUpdateArgs] = useArgs();
 
     return (
-      <CapsuleTab
+      <Capsule
         {...args}
         view={view}
         setView={(prev: string) => setUpdateArgs({ view: prev })}
