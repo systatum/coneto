@@ -8,6 +8,7 @@ import {
 import Checkbox from "./checkbox";
 import { cn } from "./../lib/utils";
 import LoadingSpinner from "./loading-spinner";
+import clsx from "clsx";
 
 export type RowData = (string | ReactNode)[];
 
@@ -18,6 +19,7 @@ interface TableProps {
   children: ReactNode;
   isLoading?: boolean;
   className?: string;
+  classNameTableRow?: string;
 }
 
 interface TableRowProps {
@@ -41,8 +43,13 @@ function Table({
   children,
   isLoading,
   className,
+  classNameTableRow,
 }: TableProps) {
   const [selectedData, setSelectedData] = useState<RowData[]>([]);
+  const classTableRow = clsx(
+    "flex flex-col overflow-scroll scrollbar-thin",
+    classNameTableRow
+  );
 
   const rowCount = Children.count(children);
 
@@ -105,7 +112,7 @@ function Table({
         </div>
       )}
       <div className="border flex flex-col border-gray-300 relative rounded-xs">
-        <div className="flex flex-row bg-gray-100 items-center font-semibold text-gray-700 p-3">
+        <div className="flex flex-row bg-blue-500 items-center font-semibold text-white p-3">
           {selectable && (
             <div className="w-8 flex justify-center cursor-pointer pointer-events-auto items-center">
               <Checkbox
@@ -119,7 +126,7 @@ function Table({
             <TableRowCell key={i} col={col} />
           ))}
         </div>
-        <div>{rowChildren}</div>
+        <div className={classTableRow}>{rowChildren}</div>
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-white/60 z-30">
             <LoadingSpinner size={24} />
@@ -141,7 +148,13 @@ function TableRow({
 }: TableRowProps) {
   const tableRowClass = cn(
     "flex relative p-3 items-center border-b border-gray-200 cursor-default",
-    isSelected ? "bg-blue-100" : index % 2 === 0 ? "bg-white" : "bg-gray-50"
+    isSelected && index % 2 === 0
+      ? "bg-blue-50"
+      : isSelected
+        ? "bg-blue-100"
+        : index % 2 === 0
+          ? "bg-white hover:bg-[rgb(217,231,251)]"
+          : "bg-gray-50 hover:bg-[rgb(217,231,251)]"
   );
 
   return (

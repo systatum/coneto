@@ -14,14 +14,20 @@ export default meta;
 
 type Story = StoryObj<typeof Table>;
 
+const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
+
+const sampleRows = Array.from({ length: 20 }, (_, i) => {
+  const type = TYPES_DATA[i % TYPES_DATA.length];
+  return <Table.Row key={i} content={[`Load Balancer ${i + 1}`, type]} />;
+});
+
 export const TableDefault: Story = {
   render: () => {
     const columns = ["Name", "Type"];
 
     return (
-      <Table columns={columns}>
-        <Table.Row content={["Load Balancer 3", "HTTP"]} />
-        <Table.Row content={["Load Balancer 1", "HTTP"]} />
+      <Table classNameTableRow="max-h-[400px]" columns={columns}>
+        {sampleRows}
       </Table>
     );
   },
@@ -37,9 +43,7 @@ export const TableSelectable: Story = {
 
     return (
       <Table selectable columns={columns} onItemsSelected={handleItemsSelected}>
-        <Table.Row content={["Load Balancer 3", "HTTP"]} />
-        <Table.Row content={["Load Balancer 1", "HTTP"]} />
-        <Table.Row content={["Load Balancer 2", "HTTP"]} />
+        {sampleRows}
       </Table>
     );
   },
@@ -60,9 +64,7 @@ export const TableWithLoading: Story = {
         columns={columns}
         onItemsSelected={handleItemsSelected}
       >
-        <Table.Row content={["Load Balancer 3", "HTTP"]} />
-        <Table.Row content={["Load Balancer 1", "HTTP"]} />
-        <Table.Row content={["Load Balancer 2", "HTTP"]} />
+        {sampleRows}
       </Table>
     );
   },
