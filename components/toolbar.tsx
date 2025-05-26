@@ -19,21 +19,28 @@ interface ToolbarProps {
 }
 
 interface ToolbarMenuProps {
-  caption: string;
-  icon: LucideIcon;
+  caption?: string;
+  icon?: LucideIcon;
   iconColor?: string;
-  openOn?: "hover" | "click";
   subMenuList: TipMenuItemProps[];
   isOpen?: boolean;
   setIsOpen?: (data?: boolean) => void;
+  onClick?: () => void;
   className?: string;
   variant?: "default" | "primary" | "danger";
 }
 
 const VARIANT_CLASS_MAP = {
-  default: "hover:border border bg-white border-transparent hover:bg-gray-100",
-  primary: "bg-[rgb(86,154,236)] hover:bg-[rgb(64,142,232)] text-white",
-  danger: "bg-[rgb(206,55,93)] hover:bg-[rgb(200,53,50)] text-white",
+  hover: {
+    default: "hover:bg-gray-100",
+    primary: "hover:bg-[rgb(64,142,232)] text-white",
+    danger: "hover:bg-[rgb(200,53,50)] text-white",
+  },
+  default: {
+    default: "border bg-white border-transparent",
+    primary: "bg-[rgb(86,154,236)] text-white",
+    danger: "bg-[rgb(206,55,93)] text-white",
+  },
 };
 
 function Toolbar({ children, className }: ToolbarProps) {
@@ -82,34 +89,49 @@ function ToolbarMenu({
   caption,
   icon: Icon,
   iconColor = "gray",
-  openOn = "click",
   subMenuList,
   isOpen,
   setIsOpen,
+  onClick,
   className,
   variant = "default",
 }: ToolbarMenuProps) {
-  const handleClick = () => {
-    if (openOn === "click") {
-      setIsOpen?.();
-    }
+  const [hovered, setHovered] = useState<"main" | "original" | "dropdown">(
+    "original"
+  );
+
+  const handleClickOpen = () => {
+    setIsOpen?.();
+  };
+
+  const handleMainClick = () => {
+    onClick?.();
   };
 
   const toolbarMenuClass = cn(
-    "flex items-center rounded-xs relative gap-3 overflow-hidden cursor-pointer text-gray-700 hover:border border border-transparent p-2 rounded-xs",
-    VARIANT_CLASS_MAP[variant]
+    "flex items-center w-full relative border overflow-hidden cursor-pointer text-gray-700 hover:border border border-transparent rounded-xs",
+    VARIANT_CLASS_MAP.default[variant]
   );
+  const toolbarMenuHoverClass = VARIANT_CLASS_MAP.hover[variant];
 
   return (
-    <div
-      className="relative flex flex-col "
-      onMouseEnter={() => openOn === "hover" && setIsOpen(true)}
-      onMouseLeave={() => openOn === "hover" && setIsOpen(false)}
-    >
-      <div onClick={handleClick} className={toolbarMenuClass}>
-        <div className="flex flex-row items-center gap-2">
-          <Icon size={20} className={cn(COLOR_CLASS_MAP[iconColor])} />
-          <span className="text-sm sm:flex hidden px-2">{caption}</span>
+    <div className="relative flex flex-col ">
+      <div className={toolbarMenuClass}>
+        <div
+          onMouseEnter={() => setHovered("main")}
+          onMouseLeave={() => setHovered("original")}
+          onClick={handleMainClick}
+          className={cn(
+            `flex flex-row items-center gap-2 p-2`,
+            hovered === "main" && toolbarMenuHoverClass
+          )}
+        >
+          {Icon && (
+            <Icon size={20} className={cn(COLOR_CLASS_MAP[iconColor])} />
+          )}
+          {caption && (
+            <span className="text-sm sm:flex hidden px-2">{caption}</span>
+          )}
         </div>
         <span
           className={cn(
@@ -117,21 +139,35 @@ function ToolbarMenu({
             variant === "default" ? "text-[#ececec]" : ""
           )}
         ></span>
-        {isOpen ? (
-          <ChevronUp
-            className={variant === "default" ? "text-gray-400" : ""}
-            size={20}
-          />
-        ) : (
-          <ChevronDown
-            className={variant === "default" ? "text-gray-400" : ""}
-            size={20}
-          />
-        )}
+        <div
+          onMouseEnter={() => setHovered("dropdown")}
+          onMouseLeave={() => setHovered("original")}
+          className={cn(
+            "flex p-2 relative",
+            hovered === "dropdown" && toolbarMenuHoverClass
+          )}
+          onClick={handleClickOpen}
+        >
+          {isOpen ? (
+            <ChevronUp
+              className={variant === "default" ? "text-gray-400" : ""}
+              size={20}
+            />
+          ) : (
+            <ChevronDown
+              className={variant === "default" ? "text-gray-400" : ""}
+              size={20}
+            />
+          )}
+        </div>
       </div>
       {isOpen && (
         <div className="absolute top-full mt-[1px] z-10">
-          <TipMenu className={className} subMenuList={subMenuList} />
+          <TipMenu
+            setIsOpen={() => setIsOpen(false)}
+            className={className}
+            subMenuList={subMenuList}
+          />
         </div>
       )}
     </div>

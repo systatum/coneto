@@ -94,19 +94,29 @@ export const ToolbarDefault: Story = {
     return (
       <Toolbar>
         <Toolbar.Menu
-          className="min-w-[210px]"
-          openOn="hover"
-          caption="Toolbar Hover Mode"
+          className="min-w-[235px]"
+          onClick={() => {
+            console.log("test");
+          }}
+          caption="Toolbar Default Mode"
           icon={MessageCircleCode}
           iconColor="red"
           subMenuList={subMenuList}
         />
         <Toolbar.Menu
-          className="min-w-[210px]"
-          caption="Toolbar Click Mode"
+          className="min-w-[235px]"
+          caption="Toolbar Primary Mode"
           icon={MessageCircleCode}
           iconColor="white"
           variant="primary"
+          subMenuList={subMenuList}
+        />
+        <Toolbar.Menu
+          className="min-w-[235px]"
+          caption="Toolbar Danger Mode"
+          icon={MessageCircleCode}
+          iconColor="white"
+          variant="danger"
           subMenuList={subMenuList}
         />
       </Toolbar>
