@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import ModalDialog, { ModalButtonProps } from "./modal-dialog";
 
-const TOOLTIP_MENU_ITEMS = [
+const TIP_MENU_ITEMS = [
   {
     caption: "Report Phishing",
     icon: Ban,
@@ -89,10 +89,10 @@ const BUTTONS: ModalButtonProps[] = [
 ];
 
 const meta: Meta<typeof TipMenu> = {
-  title: "Controls/Tooltip Menu",
+  title: "Controls/Tip Menu",
   component: TipMenu,
   args: {
-    subMenuList: TOOLTIP_MENU_ITEMS,
+    subMenuList: TIP_MENU_ITEMS,
   },
   parameters: {
     layout: "centered",
@@ -100,7 +100,7 @@ const meta: Meta<typeof TipMenu> = {
   tags: ["autodocs"],
   argTypes: {
     children: {
-      description: "Content of tooltip menu",
+      description: "Content of tip menu",
       control: "text",
     },
   },
@@ -110,7 +110,7 @@ export default meta;
 
 type Story = StoryObj<typeof TipMenu>;
 
-export const TooltipDefault: Story = {
+export const TipDefault: Story = {
   render: ({ subMenuList }) => {
     const [isOpen, setIsOpen] = useState(false);
     return (

@@ -51,8 +51,8 @@ function TipMenuItem({
   const tipClass = clsx(
     "flex items-center gap-3 cursor-pointer hover:border-[2px] border-[2px] border-transparent p-2 rounded-[0px]",
     isDangerous
-      ? "bg-red-500 hover:border-red-700 text-white"
-      : "bg-white hover:border-gray-500"
+      ? "bg-red-500 hover:border-red-700 text-white hover:bg-[#e71f29]"
+      : "bg-white hover:border-gray-500 hover:bg-[#f2f2f2]"
   );
 
   const isIconValid = iconUrl && iconUrl !== "";
@@ -76,11 +76,7 @@ function TipMenuItem({
         />
       )}
 
-      <span
-        className={`text-sm ${isDangerous ? "text-white" : "text-gray-700"}`}
-      >
-        {caption}
-      </span>
+      <span className={`text-sm`}>{caption}</span>
     </div>
   );
 }

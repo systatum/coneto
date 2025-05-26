@@ -31,7 +31,7 @@ interface ToolbarMenuProps {
 }
 
 const VARIANT_CLASS_MAP = {
-  default: "hover:border border border-transparent",
+  default: "hover:border border bg-white border-transparent hover:bg-[#f2f2f2]",
   primary: "bg-[rgb(86,154,236)] hover:bg-[rgb(64,142,232)] text-white",
   danger: "bg-[rgb(206,55,93)] hover:bg-[rgb(200,53,50)] text-white",
 };
@@ -87,7 +87,7 @@ function ToolbarMenu({
   isOpen,
   setIsOpen,
   className,
-  variant,
+  variant = "default",
 }: ToolbarMenuProps) {
   const handleClick = () => {
     if (openOn === "click") {
@@ -96,23 +96,39 @@ function ToolbarMenu({
   };
 
   const toolbarMenuClass = cn(
-    "flex items-center shadow-xs rounded-xs relative gap-3 cursor-pointer text-gray-700 hover:border border border-transparent p-2 rounded-xs",
+    "flex items-center rounded-xs relative gap-3 overflow-hidden cursor-pointer text-gray-700 hover:border border border-transparent p-2 rounded-xs",
     VARIANT_CLASS_MAP[variant]
   );
 
   return (
     <div
-      className="relative flex flex-col"
+      className="relative flex flex-col "
       onMouseEnter={() => openOn === "hover" && setIsOpen(true)}
       onMouseLeave={() => openOn === "hover" && setIsOpen(false)}
     >
       <div onClick={handleClick} className={toolbarMenuClass}>
-        <Icon size={20} className={cn(COLOR_CLASS_MAP[iconColor])} />
-        <span className="text-sm sm:flex hidden">{caption}</span>
+        <div className="flex flex-row items-center gap-2">
+          <Icon size={20} className={cn(COLOR_CLASS_MAP[iconColor])} />
+          <span className="text-sm sm:flex hidden px-2">{caption}</span>
+        </div>
+        <span
+          className={cn(
+            `absolute -top-5 right-8 font-thin text-[44px]`,
+            variant === "default" ? "text-gray-400" : ""
+          )}
+        >
+          |
+        </span>
         {isOpen ? (
-          <ChevronUp className="text-gray-400" size={20} />
+          <ChevronUp
+            className={variant === "default" ? "text-gray-400" : ""}
+            size={20}
+          />
         ) : (
-          <ChevronDown className="text-gray-400" size={20} />
+          <ChevronDown
+            className={variant === "default" ? "text-gray-400" : ""}
+            size={20}
+          />
         )}
       </div>
       {isOpen && (
