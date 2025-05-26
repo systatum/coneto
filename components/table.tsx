@@ -107,7 +107,7 @@ function Table({
   return (
     <div className={tableClass}>
       {selectedData.length > 0 && (
-        <div className="absolute -top-10 z-20 w-full py-2 text-white bg-blue-500 px-6">
+        <div className="absolute -top-10 z-20 w-full py-2 text-white bg-gray-600 px-6">
           {selectedData.length} items selected
         </div>
       )}
@@ -148,6 +148,7 @@ function TableRow({
 }: TableRowProps) {
   const tableRowClass = cn(
     "flex relative p-3 items-center border-b border-gray-200 cursor-default",
+    className,
     isSelected && index % 2 === 0
       ? "bg-blue-50"
       : isSelected
