@@ -31,7 +31,8 @@ interface ToolbarMenuProps {
 }
 
 const VARIANT_CLASS_MAP = {
-  default: "hover:border border bg-white border-transparent hover:bg-[#f2f2f2]",
+  default:
+    "hover:border border bg-white border-transparent hover:border-gray-200 hover:bg-gray-100",
   primary: "bg-[rgb(86,154,236)] hover:bg-[rgb(64,142,232)] text-white",
   danger: "bg-[rgb(206,55,93)] hover:bg-[rgb(200,53,50)] text-white",
 };
@@ -113,12 +114,10 @@ function ToolbarMenu({
         </div>
         <span
           className={cn(
-            `absolute -top-5 right-[30px] md:right-8 font-thin text-[44px]`,
-            variant === "default" ? "text-gray-400" : ""
+            `absolute top-1 right-[30px] md:right-9 text-[44px] h-full max-h-[28px] w-fit border-[0.5px]`,
+            variant === "default" ? "text-[#ececec]" : ""
           )}
-        >
-          |
-        </span>
+        ></span>
         {isOpen ? (
           <ChevronUp
             className={variant === "default" ? "text-gray-400" : ""}
