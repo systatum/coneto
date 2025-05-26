@@ -19,7 +19,10 @@ export interface TipMenuItemProps {
 }
 
 function TipMenu({ children, subMenuList, className }: TipMenuProps) {
-  const tipMenuClass = clsx("flex flex-col border border-gray-100", className);
+  const tipMenuClass = clsx(
+    "flex flex-col border border-gray-100 overflow-hidden shadow-xs rounded-xs",
+    className
+  );
   return (
     <div className={tipMenuClass}>
       {subMenuList.map((data, index) => (

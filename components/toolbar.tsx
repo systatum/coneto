@@ -116,7 +116,7 @@ function ToolbarMenu({
         )}
       </div>
       {isOpen && (
-        <div className="absolute top-full mt-[2px] z-10">
+        <div className="absolute top-full mt-[1px] z-10">
           <TipMenu className={className} subMenuList={subMenuList} />
         </div>
       )}

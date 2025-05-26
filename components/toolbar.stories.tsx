@@ -106,7 +106,7 @@ export const ToolbarDefault: Story = {
           caption="Toolbar Click Mode"
           icon={MessageCircleCode}
           iconColor="white"
-          variant="danger"
+          variant="primary"
           subMenuList={subMenuList}
         />
       </Toolbar>
