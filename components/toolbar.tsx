@@ -1,5 +1,4 @@
 import { COLOR_CLASS_MAP } from "./../constants/color-map";
-import clsx from "clsx";
 import { ChevronDown, ChevronUp, LucideIcon } from "lucide-react";
 import {
   Children,
@@ -11,7 +10,8 @@ import {
   useRef,
   useState,
 } from "react";
-import { TooltipMenu, TooltipMenuItemProps } from "./tooltip-menu";
+import { TipMenu, TipMenuItemProps } from "./tip-menu";
+import { cn } from "./../lib/utils";
 
 interface ToolbarProps {
   children: ReactNode;
@@ -23,11 +23,18 @@ interface ToolbarMenuProps {
   icon: LucideIcon;
   iconColor?: string;
   openOn?: "hover" | "click";
-  subMenuList: TooltipMenuItemProps[];
+  subMenuList: TipMenuItemProps[];
   isOpen?: boolean;
   setIsOpen?: (data?: boolean) => void;
   className?: string;
+  variant?: "default" | "primary" | "danger";
 }
+
+const VARIANT_CLASS_MAP = {
+  default: "hover:border border border-transparent",
+  primary: "bg-[rgb(86,154,236)] hover:bg-[rgb(64,142,232)] text-white",
+  danger: "bg-[rgb(206,55,93)] hover:bg-[rgb(200,53,50)] text-white",
+};
 
 function Toolbar({ children, className }: ToolbarProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -62,7 +69,7 @@ function Toolbar({ children, className }: ToolbarProps) {
     }
     return child;
   });
-  const toolbarClass = clsx("flex flex-row cursor-pointer", className);
+  const toolbarClass = cn("flex w-full flex-row cursor-pointer", className);
 
   return (
     <div ref={toolbarRef} className={toolbarClass}>
@@ -80,6 +87,7 @@ function ToolbarMenu({
   isOpen,
   setIsOpen,
   className,
+  variant,
 }: ToolbarMenuProps) {
   const handleClick = () => {
     if (openOn === "click") {
@@ -87,18 +95,20 @@ function ToolbarMenu({
     }
   };
 
+  const toolbarMenuClass = cn(
+    "flex items-center shadow-xs rounded-xs relative gap-3 cursor-pointer text-gray-700 hover:border border border-transparent p-2 rounded-xs",
+    VARIANT_CLASS_MAP[variant]
+  );
+
   return (
     <div
       className="relative flex flex-col"
       onMouseEnter={() => openOn === "hover" && setIsOpen(true)}
       onMouseLeave={() => openOn === "hover" && setIsOpen(false)}
     >
-      <div
-        onClick={handleClick}
-        className="flex items-center relative gap-3 cursor-pointer hover:border-blue-400 hover:border border border-transparent p-2 rounded-xs"
-      >
-        <Icon size={20} className={clsx(COLOR_CLASS_MAP[iconColor])} />
-        <span className="text-sm sm:flex hidden text-gray-700">{caption}</span>
+      <div onClick={handleClick} className={toolbarMenuClass}>
+        <Icon size={20} className={cn(COLOR_CLASS_MAP[iconColor])} />
+        <span className="text-sm sm:flex hidden">{caption}</span>
         {isOpen ? (
           <ChevronUp className="text-gray-400" size={20} />
         ) : (
@@ -107,7 +117,7 @@ function ToolbarMenu({
       </div>
       {isOpen && (
         <div className="absolute top-full mt-[2px] z-10">
-          <TooltipMenu className={className} subMenuList={subMenuList} />
+          <TipMenu className={className} subMenuList={subMenuList} />
         </div>
       )}
     </div>

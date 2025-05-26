@@ -13,9 +13,9 @@ import {
   Send,
   ShieldOff,
 } from "lucide-react";
-import { TooltipMenu } from "./tooltip-menu";
+import { TipMenu } from "./tip-menu";
 
-const TOOLTIP_MENU_ITEMS = [
+const TIP_MENU_ITEMS = [
   {
     caption: "Report Phishing",
     icon: Ban,
@@ -78,7 +78,7 @@ const meta: Meta<typeof Toolbar.Menu> = {
   title: "Controls/Toolbar",
   component: Toolbar.Menu,
   args: {
-    subMenuList: TOOLTIP_MENU_ITEMS,
+    subMenuList: TIP_MENU_ITEMS,
   },
 
   tags: ["autodocs"],
@@ -87,12 +87,12 @@ const meta: Meta<typeof Toolbar.Menu> = {
 
 export default meta;
 
-type Story = StoryObj<typeof TooltipMenu>;
+type Story = StoryObj<typeof TipMenu>;
 
 export const ToolbarDefault: Story = {
   render: ({ subMenuList }) => {
     return (
-      <Toolbar className="min-w-[500px] w-full">
+      <Toolbar>
         <Toolbar.Menu
           className="min-w-[210px]"
           openOn="hover"
@@ -105,7 +105,8 @@ export const ToolbarDefault: Story = {
           className="min-w-[210px]"
           caption="Toolbar Click Mode"
           icon={MessageCircleCode}
-          iconColor="blue"
+          iconColor="white"
+          variant="danger"
           subMenuList={subMenuList}
         />
       </Toolbar>
