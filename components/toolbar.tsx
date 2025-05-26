@@ -113,7 +113,7 @@ function ToolbarMenu({
         </div>
         <span
           className={cn(
-            `absolute -top-5 right-8 font-thin text-[44px]`,
+            `absolute -top-5 right-[30px] md:right-8 font-thin text-[44px]`,
             variant === "default" ? "text-gray-400" : ""
           )}
         >
