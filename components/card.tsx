@@ -46,7 +46,7 @@ const RADIUS_MAP: Record<NonNullable<CardProps["radius"]>, string> = {
 
 const PADDING_MAP: Record<NonNullable<CardProps["padding"]>, string> = {
   none: "p-0",
-  sm: "p-2",
+  sm: "p-1",
   md: "p-4",
   lg: "p-6",
   xl: "p-8",
