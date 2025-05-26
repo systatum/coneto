@@ -7,6 +7,7 @@ import {
 } from "react";
 import Checkbox from "./checkbox";
 import { cn } from "./../lib/utils";
+import LoadingSpinner from "./loading-spinner";
 
 export type RowData = (string | ReactNode)[];
 
@@ -25,6 +26,7 @@ interface TableRowProps {
   selectable?: boolean;
   handleSelect?: (data: RowData) => void;
   className?: string;
+  index?: number;
 }
 
 interface TableRowCellProps {
@@ -76,7 +78,7 @@ function Table({
   const allSelected = selectedData.length === rowCount;
   const someSelected = selectedData.length > 0 && !allSelected;
 
-  const rowChildren = Children.map(children, (child) => {
+  const rowChildren = Children.map(children, (child, index) => {
     if (!isValidElement<TableRowProps>(child)) return null;
     const isSelected = selectedData.some(
       (d) => JSON.stringify(d) === JSON.stringify(child.props.content)
@@ -85,6 +87,7 @@ function Table({
       selectable,
       isSelected,
       handleSelect,
+      index,
     });
   });
 
@@ -102,13 +105,13 @@ function Table({
         </div>
       )}
       <div className="border flex flex-col border-gray-300 relative rounded-xs">
-        <div className="flex flex-row bg-gray-100 items-center font-semibold text-gray-700 p-4">
+        <div className="flex flex-row bg-gray-100 items-center font-semibold text-gray-700 p-3">
           {selectable && (
             <div className="w-8 flex justify-center cursor-pointer pointer-events-auto items-center">
               <Checkbox
                 onChange={handleSelectAll}
-                checked={someSelected}
-                indeterminate={allSelected}
+                checked={allSelected}
+                indeterminate={someSelected}
               />
             </div>
           )}
@@ -117,11 +120,7 @@ function Table({
           ))}
         </div>
         <div>{rowChildren}</div>
-        {isLoading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-white/60 z-30">
-            <div className="w-6 h-6 border-4 border-gray-500 border-t-transparent rounded-full animate-spin" />
-          </div>
-        )}
+        {isLoading && <LoadingSpinner />}
       </div>
     </div>
   );
@@ -133,13 +132,16 @@ function TableRow({
   isSelected = false,
   handleSelect,
   className,
+  index = 0,
   ...props
 }: TableRowProps) {
+  const tableRowClass = cn(
+    "flex relative p-3 items-center border-b border-gray-200 cursor-default",
+    isSelected ? "bg-blue-100" : index % 2 === 0 ? "bg-white" : "bg-gray-50"
+  );
+
   return (
-    <div
-      className={`flex relative p-4 items-center border-b border-gray-200 cursor-default
-          ${isSelected ? "bg-blue-100" : "hover:bg-gray-50"}`}
-    >
+    <div className={tableRowClass}>
       {selectable && (
         <div
           onClick={(e) => {
