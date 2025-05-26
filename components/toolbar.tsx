@@ -31,8 +31,7 @@ interface ToolbarMenuProps {
 }
 
 const VARIANT_CLASS_MAP = {
-  default:
-    "hover:border border bg-white border-transparent hover:border-gray-200 hover:bg-gray-100",
+  default: "hover:border border bg-white border-transparent hover:bg-gray-100",
   primary: "bg-[rgb(86,154,236)] hover:bg-[rgb(64,142,232)] text-white",
   danger: "bg-[rgb(206,55,93)] hover:bg-[rgb(200,53,50)] text-white",
 };

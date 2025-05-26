@@ -98,20 +98,21 @@ function Table({
     });
   });
 
-  const tableClass = cn(
-    "flex flex-col relative",
-    className,
-    selectable ? "mt-10" : ""
-  );
+  const tableClass = cn("flex flex-col relative rounded-xs", className);
 
   return (
     <div className={tableClass}>
       {selectedData.length > 0 && (
-        <div className="absolute -top-10 z-20 w-full py-2 text-white bg-gray-600 px-6">
+        <div className="w-full py-2 text-white bg-gray-600 border-gray-300 border border-b-[0.5px] px-6">
           {selectedData.length} items selected
         </div>
       )}
-      <div className="border flex flex-col border-gray-300 relative rounded-xs">
+      <div
+        className={cn(
+          "border flex flex-col border-gray-300 relative",
+          selectedData.length > 0 ? "border-t-[0.5]" : ""
+        )}
+      >
         <div className="flex flex-row bg-blue-500 items-center font-semibold text-white p-3">
           {selectable && (
             <div className="w-8 flex justify-center cursor-pointer pointer-events-auto items-center">
