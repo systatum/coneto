@@ -1,15 +1,15 @@
-import { COLOR_CLASS_MAP } from "./../constants/color-map";
+import { COLOR_CLASS_MAP } from "../constants/color-map";
 import clsx from "clsx";
 import { LucideIcon } from "lucide-react";
 import { ReactNode } from "react";
 
-interface TooltipMenuProps {
+interface TipMenuProps {
   children?: ReactNode;
-  subMenuList?: TooltipMenuItemProps[];
+  subMenuList?: TipMenuItemProps[];
   className?: string;
 }
 
-export interface TooltipMenuItemProps {
+export interface TipMenuItemProps {
   caption: string;
   icon: LucideIcon;
   onClick?: () => void;
@@ -18,15 +18,12 @@ export interface TooltipMenuItemProps {
   iconUrl?: string | null | undefined;
 }
 
-function TooltipMenu({ children, subMenuList, className }: TooltipMenuProps) {
-  const tooltipMenuClass = clsx(
-    "flex flex-col border border-gray-100",
-    className
-  );
+function TipMenu({ children, subMenuList, className }: TipMenuProps) {
+  const tipMenuClass = clsx("flex flex-col border border-gray-100", className);
   return (
-    <div className={tooltipMenuClass}>
+    <div className={tipMenuClass}>
       {subMenuList.map((data, index) => (
-        <TooltipMenuItem
+        <TipMenuItem
           caption={data.caption}
           icon={data.icon}
           iconColor={data.iconColor}
@@ -40,23 +37,25 @@ function TooltipMenu({ children, subMenuList, className }: TooltipMenuProps) {
   );
 }
 
-function TooltipMenuItem({
+function TipMenuItem({
   caption,
   icon: Icon,
   onClick,
   iconColor = "gray",
   isDangerous = false,
   iconUrl,
-}: TooltipMenuItemProps) {
-  const tooltipClass = clsx(
-    "flex items-center gap-3 cursor-pointer hover:border-blue-500 hover:border-[2px] border-[2px] border-transparent p-2 rounded-[0px]",
-    isDangerous ? "bg-red-500 text-white" : "bg-white"
+}: TipMenuItemProps) {
+  const tipClass = clsx(
+    "flex items-center gap-3 cursor-pointer hover:border-[2px] border-[2px] border-transparent p-2 rounded-[0px]",
+    isDangerous
+      ? "bg-red-500 hover:border-red-700 text-white"
+      : "bg-white hover:border-gray-500"
   );
 
   const isIconValid = iconUrl && iconUrl !== "";
 
   return (
-    <div className={tooltipClass} onClick={onClick}>
+    <div className={tipClass} onClick={onClick}>
       {isIconValid ? (
         <img
           width={30}
@@ -83,5 +82,5 @@ function TooltipMenuItem({
   );
 }
 
-TooltipMenu.Item = TooltipMenuItem;
-export { TooltipMenu };
+TipMenu.Item = TipMenuItem;
+export { TipMenu };

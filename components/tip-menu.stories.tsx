@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect, within } from "@storybook/test";
-import { TooltipMenu } from "./tooltip-menu";
+import { TipMenu } from "./tip-menu";
 import { useState } from "react";
 import {
   Archive,
@@ -88,9 +88,9 @@ const BUTTONS: ModalButtonProps[] = [
   },
 ];
 
-const meta: Meta<typeof TooltipMenu> = {
+const meta: Meta<typeof TipMenu> = {
   title: "Controls/Tooltip Menu",
-  component: TooltipMenu,
+  component: TipMenu,
   args: {
     subMenuList: TOOLTIP_MENU_ITEMS,
   },
@@ -108,21 +108,21 @@ const meta: Meta<typeof TooltipMenu> = {
 
 export default meta;
 
-type Story = StoryObj<typeof TooltipMenu>;
+type Story = StoryObj<typeof TipMenu>;
 
 export const TooltipDefault: Story = {
   render: ({ subMenuList }) => {
     const [isOpen, setIsOpen] = useState(false);
     return (
       <>
-        <TooltipMenu subMenuList={subMenuList}>
-          <TooltipMenu.Item
+        <TipMenu subMenuList={subMenuList}>
+          <TipMenu.Item
             caption="Delete"
             icon={Trash}
             iconColor="red"
             onClick={() => setIsOpen(!isOpen)}
           />
-        </TooltipMenu>
+        </TipMenu>
         <ModalDialog
           open={isOpen}
           onOpenChange={setIsOpen}
