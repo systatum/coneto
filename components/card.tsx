@@ -69,7 +69,7 @@ export default function Card({
   className,
 }: CardProps) {
   const cardClass = cn(
-    "border border-gray-100 bg-white",
+    "border border-gray-100 bg-white w-fit",
     PADDING_MAP[padding],
     RADIUS_MAP[radius],
     SHADOW_MAP[shadow],

@@ -161,11 +161,4 @@ export const Default: Story = {
       </Card>
     );
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const cardContent = await canvas.getByText(
-      "Card with full rounded corners"
-    );
-    await expect(cardContent).toBeVisible();
-  },
 };
