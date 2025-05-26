@@ -37,9 +37,9 @@ const VARIANT_CLASS_MAP = {
     danger: "hover:bg-[rgb(200,53,50)] text-white",
   },
   default: {
-    default: "border bg-white border-transparent",
-    primary: "bg-[rgb(86,154,236)] text-white",
-    danger: "bg-[rgb(206,55,93)] text-white",
+    default: "border bg-white border-transparent hover:border-[#ececec]",
+    primary: "bg-[rgb(86,154,236)] text-white border-transparent hover:border-[#5286c9]",
+    danger: "bg-[rgb(206,55,93)] text-white border-transparent hover:border-[#c00000]",
   },
 };
 
@@ -109,13 +109,13 @@ function ToolbarMenu({
   };
 
   const toolbarMenuClass = cn(
-    "flex items-center w-full relative border overflow-hidden cursor-pointer text-gray-700 hover:border border border-transparent rounded-xs",
+    "flex items-center w-full relative border border-transparent select-none overflow-hidden cursor-pointer text-gray-700 hover:border rounded-sm",
     VARIANT_CLASS_MAP.default[variant]
   );
   const toolbarMenuHoverClass = VARIANT_CLASS_MAP.hover[variant];
 
   return (
-    <div className="relative flex flex-col ">
+    <div className="relative flex flex-col mr-1">
       <div className={toolbarMenuClass}>
         <div
           onMouseEnter={() => setHovered("main")}
