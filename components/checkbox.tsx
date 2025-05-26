@@ -32,9 +32,10 @@ export default function Checkbox({
 
   const inputClass = clsx(
     "h-4 w-4 border border-gray-300 rounded-none bg-white outline-none cursor-pointer",
+    "accent-gray-500",
     showError
       ? "border border-red-500 focus:border-red-500 focus:ring-red-500 text-red-800"
-      : "border border-gray-300 focus:ring-blue-500 focus:border-blue-500",
+      : "border border-gray-300 focus:ring-gray-500 focus:border-gray-500",
     className
   );
 
@@ -48,7 +49,7 @@ export default function Checkbox({
           className={inputClass}
           {...(props as InputHTMLAttributes<HTMLInputElement>)}
         />
-        <span>{label}</span>
+        {label && <span>{label}</span>}
       </label>
       {showError && errorMessage && (
         <p className="mt-1 text-xs text-red-600">{errorMessage}</p>
