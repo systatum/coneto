@@ -1,11 +1,13 @@
-export default function LoadingSpinner() {
+export default function LoadingSpinner({ size = 16 }) {
   return (
     <svg
       data-testid="circle"
-      className="mr-2 h-4 w-4 animate-spin text-blue-500"
+      className="mr-2 animate-spin text-blue-500"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
+      height={size}
+      width={size}
     >
       <circle
         className="opacity-25"

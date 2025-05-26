@@ -120,7 +120,11 @@ function Table({
           ))}
         </div>
         <div>{rowChildren}</div>
-        {isLoading && <LoadingSpinner />}
+        {isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-white/60 z-30">
+            <LoadingSpinner size={24} />
+          </div>
+        )}
       </div>
     </div>
   );
