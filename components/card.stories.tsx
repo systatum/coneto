@@ -1,6 +1,5 @@
 import Card from "./card";
 import { Meta, StoryObj } from "@storybook/react";
-import { expect, within } from "@storybook/test";
 import {
   Archive,
   Ban,
@@ -142,19 +141,29 @@ export const Default: Story = {
       <Card>
         <Toolbar>
           <Toolbar.Menu
-            className="min-w-[210px]"
-            openOn="hover"
-            caption="Toolbar Hover Mode"
+            className="min-w-[235px]"
+            onClick={() => {
+              console.log("test");
+            }}
+            caption="Toolbar Default Mode"
             icon={MessageCircleCode}
             iconColor="red"
             subMenuList={TIP_MENU_ITEMS}
           />
           <Toolbar.Menu
-            className="min-w-[210px]"
-            caption="Toolbar Click Mode"
+            className="min-w-[235px]"
+            caption="Toolbar Primary Mode"
             icon={MessageCircleCode}
             iconColor="white"
             variant="primary"
+            subMenuList={TIP_MENU_ITEMS}
+          />
+          <Toolbar.Menu
+            className="min-w-[235px]"
+            caption="Toolbar Danger Mode"
+            icon={MessageCircleCode}
+            iconColor="white"
+            variant="danger"
             subMenuList={TIP_MENU_ITEMS}
           />
         </Toolbar>

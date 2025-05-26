@@ -7,6 +7,7 @@ interface TipMenuProps {
   children?: ReactNode;
   subMenuList?: TipMenuItemProps[];
   className?: string;
+  setIsOpen?: () => void;
 }
 
 export interface TipMenuItemProps {
@@ -18,13 +19,23 @@ export interface TipMenuItemProps {
   iconUrl?: string | null | undefined;
 }
 
-function TipMenu({ children, subMenuList, className }: TipMenuProps) {
+function TipMenu({
+  children,
+  subMenuList,
+  className,
+  setIsOpen,
+}: TipMenuProps) {
   const tipMenuClass = clsx(
-    "flex flex-col border border-gray-100 overflow-hidden shadow-xs rounded-xs",
+    "flex flex-col border border-gray-100 overflow-hidden p-1 bg-white shadow-xs rounded-xs",
     className
   );
   return (
-    <div className={tipMenuClass}>
+    <div
+      onClick={() => {
+        setIsOpen?.();
+      }}
+      className={tipMenuClass}
+    >
       {subMenuList.map((data, index) => (
         <TipMenuItem
           caption={data.caption}
@@ -49,7 +60,7 @@ function TipMenuItem({
   iconUrl,
 }: TipMenuItemProps) {
   const tipClass = clsx(
-    "flex items-center gap-3 cursor-pointer hover:border-[2px] border-[2px] border-transparent p-2 rounded-[0px]",
+    "flex items-center gap-3 cursor-pointer hover:border-[2px] border-[2px] border-transparent p-2 rounded-sm",
     isDangerous
       ? "bg-red-500 text-white hover:bg-[#e71f29]"
       : "bg-white hover:bg-[#f2f2f2]"
