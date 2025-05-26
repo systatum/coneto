@@ -1,5 +1,5 @@
 interface LoadingSpinnerProps {
-  size: number;
+  size?: number;
   label?: string;
 }
 
