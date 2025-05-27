@@ -125,17 +125,10 @@ export const ToolbarDefault: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const hoverMenuButton = await canvas
-      .getByText("Toolbar Hover Mode")
-      .closest("div");
-    expect(hoverMenuButton).toBeTruthy();
-
-    await userEvent.hover(hoverMenuButton);
-
     const clickMenuButton = await canvas
-      .getByText("Toolbar Click Mode")
+      .getByText("Toolbar Default Mode")
       .closest("div");
-    expect(hoverMenuButton).toBeTruthy();
+    await expect(clickMenuButton).toBeTruthy();
 
     await userEvent.click(clickMenuButton);
   },
