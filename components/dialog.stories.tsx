@@ -13,7 +13,7 @@ import { Button } from "./button";
 import { expect, userEvent, within } from "@storybook/test";
 
 const meta: Meta = {
-  title: "Components Reusable/Dialog",
+  title: "Stage/Dialog",
   component: Dialog,
   parameters: {
     layout: "centered",
