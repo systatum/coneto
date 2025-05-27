@@ -1,17 +1,16 @@
 import Card from "./card";
 import { Meta, StoryObj } from "@storybook/react";
 import {
-  Archive,
-  Ban,
-  CheckCircle,
-  Download,
-  Link,
-  MessageCircleCode,
-  OctagonMinus,
-  Pencil,
-  Send,
-  ShieldOff,
-} from "lucide-react";
+  RiSpam2Line,
+  RiErrorWarningLine,
+  RiShieldLine,
+  RiCheckDoubleLine,
+  RiInboxArchiveLine,
+  RiDownload2Line,
+  RiLinkM,
+  RiSendPlane2Line,
+  RiEdit2Line,
+} from "@remixicon/react";
 import { Toolbar } from "./toolbar";
 
 const meta: Meta<typeof Card> = {
@@ -73,57 +72,57 @@ export default meta;
 const TIP_MENU_ITEMS = [
   {
     caption: "Report Phishing",
-    icon: Ban,
+    icon: RiSpam2Line,
     iconColor: "blue",
-    onClick: () => console.log("Junk reported"),
+    onClick: () => console.log("Phishing reported"),
   },
   {
     caption: "Report Junk",
-    icon: OctagonMinus,
+    icon: RiErrorWarningLine,
     iconColor: "red",
     onClick: () => console.log("Junk reported"),
   },
   {
     caption: "Block Sender",
-    icon: ShieldOff,
+    icon: RiShieldLine,
     iconColor: "orange",
     isDangerous: true,
     onClick: () => console.log("Sender blocked"),
   },
   {
     caption: "Mark as Read",
-    icon: CheckCircle,
+    icon: RiCheckDoubleLine,
     iconColor: "green",
     onClick: () => console.log("Marked as read"),
   },
   {
     caption: "Move to Spam",
-    icon: Archive,
+    icon: RiInboxArchiveLine,
     iconColor: "purple",
     onClick: () => console.log("Moved to spam"),
   },
   {
     caption: "Download Attachment",
-    icon: Download,
+    icon: RiDownload2Line,
     iconColor: "teal",
     onClick: () => console.log("Downloading"),
   },
   {
     caption: "Copy Link",
-    icon: Link,
+    icon: RiLinkM,
     iconColor: "gray",
     onClick: () => console.log("Link copied"),
   },
   {
     caption: "Share",
-    icon: Send,
+    icon: RiSendPlane2Line,
     iconColor: "indigo",
     isDangerous: true,
     onClick: () => console.log("Shared"),
   },
   {
     caption: "Edit",
-    icon: Pencil,
+    icon: RiEdit2Line,
     iconColor: "yellow",
     onClick: () => console.log("Edit mode"),
   },
@@ -146,14 +145,14 @@ export const Default: Story = {
               console.log("test");
             }}
             caption="Toolbar Default Mode"
-            icon={MessageCircleCode}
+            icon={RiSpam2Line}
             iconColor="red"
             subMenuList={TIP_MENU_ITEMS}
           />
           <Toolbar.Menu
             className="min-w-[235px]"
             caption="Toolbar Primary Mode"
-            icon={MessageCircleCode}
+            icon={RiSpam2Line}
             iconColor="white"
             variant="primary"
             subMenuList={TIP_MENU_ITEMS}
@@ -161,7 +160,7 @@ export const Default: Story = {
           <Toolbar.Menu
             className="min-w-[235px]"
             caption="Toolbar Danger Mode"
-            icon={MessageCircleCode}
+            icon={RiSpam2Line}
             iconColor="white"
             variant="danger"
             subMenuList={TIP_MENU_ITEMS}

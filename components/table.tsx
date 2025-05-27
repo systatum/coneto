@@ -10,8 +10,8 @@ import { cn } from "./../lib/utils";
 import LoadingSpinner from "./loading-spinner";
 import clsx from "clsx";
 import { Toolbar } from "./toolbar";
-import { Ellipsis } from "lucide-react";
 import { TipMenuItemProps } from "./tip-menu";
+import { RiMoreFill } from "@remixicon/react";
 
 export type RowData = (string | ReactNode)[];
 
@@ -146,8 +146,8 @@ function Table({
               {col.sortable && (
                 <Toolbar className="w-full justify-end">
                   <Toolbar.Menu
-                    closedIcon={Ellipsis}
-                    openedIcon={Ellipsis}
+                    closedIcon={RiMoreFill}
+                    openedIcon={RiMoreFill}
                     isOpen={isOpen}
                     setIsOpen={setIsOpen}
                     className="min-w-[235px]"

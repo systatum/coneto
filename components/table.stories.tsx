@@ -1,8 +1,12 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { RowData, Table } from "./table";
-import { ArrowDown, ArrowUp, RefreshCw } from "lucide-react";
 import { useState } from "react";
 import { TipMenuItemProps } from "./tip-menu";
+import {
+  RiArrowDownSLine,
+  RiArrowUpSLine,
+  RiRefreshLine,
+} from "@remixicon/react";
 
 const meta: Meta<typeof Table> = {
   title: "Content/Table",
@@ -120,7 +124,7 @@ export const TableSelectableWithSorting: Story = {
       return [
         {
           caption: "Sort Ascending",
-          icon: ArrowDown,
+          icon: RiArrowUpSLine,
           iconColor: "gray",
           onClick: () => {
             handleSortingRequested({ mode: "asc", column });
@@ -128,7 +132,7 @@ export const TableSelectableWithSorting: Story = {
         },
         {
           caption: "Sort Descending",
-          icon: ArrowUp,
+          icon: RiArrowDownSLine,
           iconColor: "gray",
           onClick: () => {
             handleSortingRequested({ mode: "desc", column });
@@ -136,7 +140,7 @@ export const TableSelectableWithSorting: Story = {
         },
         {
           caption: "Reset Sorting",
-          icon: RefreshCw,
+          icon: RiRefreshLine,
           iconColor: "gray",
           onClick: () => {
             handleSortingRequested({ mode: "original", column });

@@ -1,5 +1,10 @@
 import clsx from "clsx";
-import { AlertCircle, Eye, EyeOff, Send } from "lucide-react";
+import {
+  RiErrorWarningLine,
+  RiEyeLine,
+  RiEyeOffLine,
+  RiSendPlaneFill,
+} from "@remixicon/react";
 import {
   ChangeEvent,
   InputHTMLAttributes,
@@ -106,7 +111,7 @@ export default function Textbox({
             onSendClick();
           }}
         >
-          <Send className="mr-1" size={18} />
+          <RiSendPlaneFill className="mr-1" size={18} />
         </button>
       </div>
     ) : rows ? (
@@ -119,7 +124,7 @@ export default function Textbox({
           {...(props as TextareaHTMLAttributes<HTMLTextAreaElement>)}
         />
         {showError && (
-          <AlertCircle
+          <RiErrorWarningLine
             size={18}
             className="absolute top-1/2 right-3 -translate-y-1/2 rounded-full bg-red-600 text-white"
           />
@@ -142,12 +147,16 @@ export default function Textbox({
             className="absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer text-gray-500"
             tabIndex={-1}
           >
-            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            {showPassword ? (
+              <RiEyeOffLine size={18} />
+            ) : (
+              <RiEyeLine size={18} />
+            )}
           </button>
         )}
 
         {showError && (
-          <AlertCircle
+          <RiErrorWarningLine
             size={18}
             className="absolute top-1/2 right-3 -translate-y-1/2 rounded-full bg-red-600 text-white"
           />

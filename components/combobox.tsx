@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, ChangeEvent, KeyboardEvent } from "react";
 import {
   useFloating,
   offset,
@@ -9,7 +9,11 @@ import {
   useDismiss,
   useInteractions,
 } from "@floating-ui/react";
-import { ChevronDown, ChevronUp, X } from "lucide-react";
+import {
+  RiArrowDownSLine,
+  RiArrowUpSLine,
+  RiCloseLine,
+} from "@remixicon/react";
 
 interface ComboboxProps {
   options: string[];
@@ -46,14 +50,14 @@ export function Combobox({
   const dismiss = useDismiss(context);
   const { getFloatingProps, getReferenceProps } = useInteractions([dismiss]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setInputValue(value);
     setIsOpen(value.length > 0);
     setHighlightedIndex(0);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
       if (!isOpen) {
@@ -116,7 +120,7 @@ export function Combobox({
 
       {inputValue !== "" && (
         <>
-          <X
+          <RiCloseLine
             onClick={() => {
               setInputValue("");
               setIsOpen((prev) => {
@@ -149,12 +153,12 @@ export function Combobox({
         }}
       >
         {isOpen ? (
-          <ChevronUp
+          <RiArrowDownSLine
             size={18}
             className="absolute text-gray-400 top-2 right-2"
           />
         ) : (
-          <ChevronDown
+          <RiArrowUpSLine
             size={18}
             className="absolute text-gray-400 top-2 right-2"
           />
