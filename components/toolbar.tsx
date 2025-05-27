@@ -40,11 +40,25 @@ const VARIANT_CLASS_MAP = {
     danger: "hover:bg-[rgb(200,53,50)] text-white",
   },
   default: {
-    default: "border bg-white border-transparent hover:border-[#ececec]",
+    default:
+      "border bg-white border-transparent hover:border hover:border-[#ececec]",
     primary:
-      "bg-[rgb(86,154,236)] text-white border-transparent hover:border-[#5286c9]",
+      "bg-[rgb(86,154,236)] text-white border-transparent hover:border hover:border-[#5286c9]",
     danger:
-      "bg-[rgb(206,55,93)] text-white border-transparent hover:border-[#c00000]",
+      "bg-[rgb(206,55,93)] text-white border-transparent hover:border hover:border-[#c00000]",
+  },
+};
+
+const VARIANT_HOVER = {
+  background: {
+    default: "bg-gray-100",
+    primary: "bg-[rgb(64,142,232)] text-white",
+    danger: "bg-[rgb(200,53,50)] text-white",
+  },
+  border: {
+    default: "border-[#ececec]",
+    primary: "border-[#5286c9]",
+    danger: "border-[#c00000]",
   },
 };
 
@@ -146,14 +160,21 @@ function ToolbarMenu({
 
   const handleMainClick = () => {
     onClick?.();
+    if (isOpen) {
+      setIsOpen(false);
+    }
   };
 
+  const toolbarMenuHoverClass = VARIANT_CLASS_MAP.hover[variant];
+  const toolbarMenuContainerActiveClass = VARIANT_HOVER.border[variant];
+  const toolbarMenuHoverActiveClass = VARIANT_HOVER.background[variant];
+
   const toolbarMenuClass = cn(
-    "flex items-center w-full relative border border-transparent select-none overflow-hidden cursor-pointer text-gray-700 hover:border rounded-sm",
+    "flex items-center w-full relative border select-none overflow-hidden cursor-pointer text-gray-700 rounded-sm",
     VARIANT_CLASS_MAP.default[variant],
+    isOpen ? toolbarMenuContainerActiveClass : "border-transparent",
     classNameContainer
   );
-  const toolbarMenuHoverClass = VARIANT_CLASS_MAP.hover[variant];
 
   return (
     <div ref={containerRef} className="relative flex flex-col mr-1">
@@ -166,7 +187,8 @@ function ToolbarMenu({
               onClick={handleMainClick}
               className={cn(
                 `flex flex-row items-center gap-2 p-2`,
-                hovered === "main" && toolbarMenuHoverClass
+                hovered === "main" && toolbarMenuHoverClass,
+                isOpen && toolbarMenuContainerActiveClass
               )}
             >
               {Icon && (
@@ -180,7 +202,7 @@ function ToolbarMenu({
               className={cn(
                 `absolute  right-[30px] md:right-9 text-[44px] h-full  w-fit border-[0.5px]`,
                 variant === "default" ? "text-[#ececec]" : "",
-                hovered === "original"
+                hovered === "original" && !isOpen
                   ? "max-h-[28px] top-1"
                   : "top-0 max-h-[40px]"
               )}
@@ -196,7 +218,9 @@ function ToolbarMenu({
           }}
           className={cn(
             "flex p-2 relative",
-            hovered === "dropdown" && toolbarMenuHoverClass
+            hovered === "dropdown" && toolbarMenuHoverClass,
+            isOpen && toolbarMenuHoverActiveClass,
+            isOpen && toolbarMenuContainerActiveClass
           )}
           onClick={handleClickOpen}
         >
@@ -216,9 +240,18 @@ function ToolbarMenu({
       <div className="absolute top-8 border w-full right-0 max-w-[40px] min-h-[10px] border-transparent z-20"></div>
 
       {isOpen && (
-        <div className={cn("absolute top-full z-10", positionClass)}>
+        <div
+          onMouseEnter={() => setHovered("dropdown")}
+          onMouseLeave={() => {
+            setHovered("original");
+          }}
+          className={cn("absolute top-full z-10", positionClass)}
+        >
           <TipMenu
-            setIsOpen={() => setIsOpen(false)}
+            setIsOpen={() => {
+              setIsOpen(false);
+              setHovered("original");
+            }}
             className={className}
             subMenuList={subMenuList}
           />
