@@ -150,9 +150,10 @@ function Table({
                     openedIcon={Ellipsis}
                     isOpen={isOpen}
                     setIsOpen={setIsOpen}
-                    className="min-w-[235px] bg-transparent"
-                    subMenuList={subMenuList(`${col.caption}`)}
+                    className="min-w-[235px]"
+                    classNameContainer="bg-transparent"
                     variant="primary"
+                    subMenuList={subMenuList(`${col.caption}`)}
                   />
                 </Toolbar>
               )}
