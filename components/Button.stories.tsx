@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect, fn, within } from "@storybook/test";
 import { Button } from "./button";
-import { ProjectorIcon } from "lucide-react";
+import { RiMovie2Fill } from "@remixicon/react";
 
 const meta = {
   title: "Controls/Button",
@@ -99,16 +99,16 @@ export const DefaultSmall: Story = {
 export const DefaultIcon: Story = {
   args: {
     size: "icon",
-    children: <ProjectorIcon aria-label="Projector" />,
+    children: <RiMovie2Fill aria-label="Movie" />,
   },
 
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const button = canvas.getByRole("button", { name: /Projector/i });
+    const button = canvas.getByRole("button", { name: /Movie/i });
     await expect(button).toBeInTheDocument();
     await expect(button).toHaveClass("size-9");
 
-    await canvas.getByRole("button", { name: /Projector/i }).click();
+    await canvas.getByRole("button", { name: /Movie/i }).click();
     await expect(meta.args.onClick).toHaveBeenCalled();
   },
 };

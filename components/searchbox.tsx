@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { Search, X } from "lucide-react";
+import { RiSearchLine, RiCloseLine } from "@remixicon/react";
 import { ChangeEvent, InputHTMLAttributes } from "react";
 
 interface BaseSearchBoxProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -28,7 +28,7 @@ export default function Searchbox({
 
   return (
     <div className="relative w-full ring-0">
-      <Search
+      <RiSearchLine
         size={14}
         className="absolute top-1/2 text-gray-400 left-3 -translate-y-1/2"
       />
@@ -43,7 +43,7 @@ export default function Searchbox({
       />
 
       {valueLengthChecker && (
-        <X
+        <RiCloseLine
           role="button"
           aria-label="Clear search input"
           onClick={() => {

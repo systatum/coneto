@@ -2,78 +2,77 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { expect, userEvent, within } from "@storybook/test";
 import { Toolbar } from "./toolbar";
 import {
-  Archive,
-  Ban,
-  CheckCircle,
-  Download,
-  Link,
-  MessageCircleCode,
-  OctagonMinus,
-  Pencil,
-  Send,
-  ShieldOff,
-} from "lucide-react";
+  RiSpam2Line,
+  RiForbid2Line,
+  RiShieldLine,
+  RiCheckLine,
+  RiInboxArchiveLine,
+  RiDownloadLine,
+  RiLink,
+  RiShareLine,
+  RiEditLine,
+  RiMessage2Line,
+} from "@remixicon/react";
 import { TipMenu } from "./tip-menu";
 
 const TIP_MENU_ITEMS = [
   {
     caption: "Report Phishing",
-    icon: Ban,
+    icon: RiSpam2Line,
     iconColor: "blue",
-    onClick: () => console.log("Junk reported"),
+    onClick: () => console.log("Phishing reported"),
   },
   {
     caption: "Report Junk",
-    icon: OctagonMinus,
+    icon: RiForbid2Line,
     iconColor: "red",
     onClick: () => console.log("Junk reported"),
   },
   {
     caption: "Block Sender",
-    icon: ShieldOff,
+    icon: RiShieldLine,
     iconColor: "orange",
     isDangerous: true,
     onClick: () => console.log("Sender blocked"),
   },
   {
     caption: "Mark as Read",
-    icon: CheckCircle,
+    icon: RiCheckLine,
     iconColor: "green",
     onClick: () => console.log("Marked as read"),
   },
   {
     caption: "Move to Spam",
-    icon: Archive,
+    icon: RiInboxArchiveLine,
     iconColor: "purple",
     onClick: () => console.log("Moved to spam"),
   },
   {
     caption: "Download Attachment",
-    icon: Download,
+    icon: RiDownloadLine,
     iconColor: "teal",
     onClick: () => console.log("Downloading"),
   },
   {
     caption: "Copy Link",
-    icon: Link,
+    icon: RiLink,
     iconColor: "gray",
     onClick: () => console.log("Link copied"),
   },
   {
     caption: "Share",
-    icon: Send,
+    icon: RiShareLine,
     iconColor: "indigo",
     isDangerous: true,
     onClick: () => console.log("Shared"),
   },
   {
     caption: "Edit",
-    icon: Pencil,
+    icon: RiEditLine,
     iconColor: "yellow",
     onClick: () => console.log("Edit mode"),
   },
 ];
-
 const meta: Meta<typeof Toolbar.Menu> = {
   title: "Controls/Toolbar",
   component: Toolbar.Menu,
@@ -99,14 +98,14 @@ export const ToolbarDefault: Story = {
             console.log("test");
           }}
           caption="Toolbar Default Mode"
-          icon={MessageCircleCode}
+          icon={RiMessage2Line}
           iconColor="red"
           subMenuList={subMenuList}
         />
         <Toolbar.Menu
           className="min-w-[235px]"
           caption="Toolbar Primary Mode"
-          icon={MessageCircleCode}
+          icon={RiMessage2Line}
           iconColor="white"
           variant="primary"
           subMenuList={subMenuList}
@@ -114,7 +113,7 @@ export const ToolbarDefault: Story = {
         <Toolbar.Menu
           className="min-w-[235px]"
           caption="Toolbar Danger Mode"
-          icon={MessageCircleCode}
+          icon={RiMessage2Line}
           iconColor="white"
           variant="danger"
           subMenuList={subMenuList}

@@ -3,73 +3,73 @@ import { expect, within } from "@storybook/test";
 import { TipMenu } from "./tip-menu";
 import { useState } from "react";
 import {
-  Archive,
-  Ban,
-  CheckCircle,
-  Download,
-  Link,
-  OctagonMinus,
-  Pencil,
-  Send,
-  ShieldOff,
-  Trash,
-} from "lucide-react";
+  RiSpam2Line,
+  RiForbid2Line,
+  RiShieldLine,
+  RiCheckLine,
+  RiInboxArchiveLine,
+  RiDownloadLine,
+  RiLink,
+  RiShareLine,
+  RiEditLine,
+  RiDeleteBinLine,
+} from "@remixicon/react";
 import ModalDialog, { ModalButtonProps } from "./modal-dialog";
 
 const TIP_MENU_ITEMS = [
   {
     caption: "Report Phishing",
-    icon: Ban,
+    icon: RiSpam2Line,
     iconColor: "blue",
-    onClick: () => console.log("Junk reported"),
+    onClick: () => console.log("Phishing reported"),
   },
   {
     caption: "Report Junk",
-    icon: OctagonMinus,
+    icon: RiForbid2Line,
     iconColor: "red",
     onClick: () => console.log("Junk reported"),
   },
   {
     caption: "Block Sender",
-    icon: ShieldOff,
+    icon: RiShieldLine,
     iconColor: "orange",
     isDangerous: true,
     onClick: () => console.log("Sender blocked"),
   },
   {
     caption: "Mark as Read",
-    icon: CheckCircle,
+    icon: RiCheckLine,
     iconColor: "green",
     onClick: () => console.log("Marked as read"),
   },
   {
     caption: "Move to Spam",
-    icon: Archive,
+    icon: RiInboxArchiveLine,
     iconColor: "purple",
     onClick: () => console.log("Moved to spam"),
   },
   {
     caption: "Download Attachment",
-    icon: Download,
+    icon: RiDownloadLine,
     iconColor: "teal",
     onClick: () => console.log("Downloading"),
   },
   {
     caption: "Copy Link",
-    icon: Link,
+    icon: RiLink,
     iconColor: "gray",
     onClick: () => console.log("Link copied"),
   },
   {
     caption: "Share",
-    icon: Send,
+    icon: RiShareLine,
     iconColor: "indigo",
     isDangerous: true,
     onClick: () => console.log("Shared"),
   },
   {
     caption: "Edit",
-    icon: Pencil,
+    icon: RiEditLine,
     iconColor: "yellow",
     onClick: () => console.log("Edit mode"),
   },
@@ -118,7 +118,7 @@ export const TipDefault: Story = {
         <TipMenu subMenuList={subMenuList}>
           <TipMenu.Item
             caption="Delete"
-            icon={Trash}
+            icon={RiDeleteBinLine}
             iconColor="red"
             onClick={() => setIsOpen(!isOpen)}
           />

@@ -1,6 +1,6 @@
+import { RemixiconComponentType } from "@remixicon/react";
 import { COLOR_CLASS_MAP } from "../constants/color-map";
 import clsx from "clsx";
-import { LucideIcon } from "lucide-react";
 import { ReactNode } from "react";
 
 interface TipMenuProps {
@@ -12,7 +12,7 @@ interface TipMenuProps {
 
 export interface TipMenuItemProps {
   caption: string;
-  icon: LucideIcon;
+  icon: RemixiconComponentType;
   onClick?: () => void;
   iconColor?: string;
   isDangerous?: boolean;

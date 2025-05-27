@@ -1,5 +1,5 @@
 import { COLOR_CLASS_MAP } from "./../constants/color-map";
-import { ChevronDown, ChevronUp, LucideIcon } from "lucide-react";
+import { RiArrowDownSLine, RiArrowUpSLine } from "@remixicon/react";
 import {
   Children,
   cloneElement,
@@ -12,6 +12,7 @@ import {
 } from "react";
 import { TipMenu, TipMenuItemProps } from "./tip-menu";
 import { cn } from "./../lib/utils";
+import { RemixiconComponentType } from "@remixicon/react";
 
 interface ToolbarProps {
   children: ReactNode;
@@ -20,9 +21,9 @@ interface ToolbarProps {
 
 interface ToolbarMenuProps {
   caption?: string;
-  icon?: LucideIcon;
-  openedIcon?: LucideIcon;
-  closedIcon?: LucideIcon;
+  icon?: RemixiconComponentType;
+  openedIcon?: RemixiconComponentType;
+  closedIcon?: RemixiconComponentType;
   iconColor?: string;
   subMenuList: TipMenuItemProps[];
   isOpen?: boolean;
@@ -102,8 +103,8 @@ function Toolbar({ children, className }: ToolbarProps) {
 function ToolbarMenu({
   caption,
   icon: Icon,
-  openedIcon: OpenedIcon = ChevronDown,
-  closedIcon: ClosedIcon = ChevronUp,
+  openedIcon: OpenedIcon = RiArrowDownSLine,
+  closedIcon: ClosedIcon = RiArrowUpSLine,
   iconColor = "gray",
   subMenuList,
   isOpen,

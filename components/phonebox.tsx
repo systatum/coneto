@@ -10,7 +10,11 @@ import {
   Placement,
 } from "@floating-ui/react";
 import clsx from "clsx";
-import { ChevronDown, ChevronUp, Search } from "lucide-react";
+import {
+  RiArrowDownSLine,
+  RiArrowUpSLine,
+  RiSearchLine,
+} from "@remixicon/react";
 import { COUNTRY_CODES } from "../constants/countries";
 import { AsYouType, CountryCode } from "libphonenumber-js/max";
 
@@ -209,9 +213,9 @@ export default function Phonebox({
           <span className="text-xs">{selectedCountry.flag}</span>
           <span>{selectedCountry.code}</span>
           {isOpen ? (
-            <ChevronUp className="h-4 w-4 text-gray-500" />
+            <RiArrowUpSLine className="h-4 w-4 text-gray-500" />
           ) : (
-            <ChevronDown className="h-4 w-4 text-gray-500" />
+            <RiArrowDownSLine className="h-4 w-4 text-gray-500" />
           )}
         </button>
 
@@ -249,7 +253,7 @@ export default function Phonebox({
         >
           <div className="sticky top-0 bg-white p-2">
             <div className="relative">
-              <Search className="absolute top-2 left-2 h-4 w-4 text-gray-400" />
+              <RiSearchLine className="absolute top-2 left-2 h-4 w-4 text-gray-400" />
               <input
                 type="text"
                 ref={searchInputRef}
