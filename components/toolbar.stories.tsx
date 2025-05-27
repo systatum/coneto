@@ -98,7 +98,6 @@ export const ToolbarDefault: Story = {
           onClick={() => {
             console.log("test");
           }}
-          openOn="hover"
           caption="Toolbar Default Mode"
           icon={MessageCircleCode}
           iconColor="red"
