@@ -63,7 +63,7 @@ function TipMenuItem({
     "flex items-center gap-3 cursor-pointer hover:border-[2px] border-[2px] border-transparent p-2 rounded-sm",
     isDangerous
       ? "bg-red-500 text-white hover:bg-[#e71f29]"
-      : "bg-white hover:bg-[#f2f2f2]"
+      : "bg-white hover:bg-[#f2f2f2] text-black"
   );
 
   const isIconValid = iconUrl && iconUrl !== "";
