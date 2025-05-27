@@ -9,17 +9,28 @@ import Checkbox from "./checkbox";
 import { cn } from "./../lib/utils";
 import LoadingSpinner from "./loading-spinner";
 import clsx from "clsx";
+import { Toolbar } from "./toolbar";
+import { Ellipsis } from "lucide-react";
+import { TipMenuItemProps } from "./tip-menu";
 
 export type RowData = (string | ReactNode)[];
 
+interface ColumnTableProps {
+  caption: string;
+  sortable?: boolean;
+}
+
 interface TableProps {
   selectable?: boolean;
-  columns: string[];
+  columns: ColumnTableProps[];
   onItemsSelected?: (data: RowData[]) => void;
   children: ReactNode;
   isLoading?: boolean;
   className?: string;
   classNameTableRow?: string;
+  isOpen?: boolean;
+  setIsOpen?: () => void;
+  subMenuList?: (columnCaption: string) => TipMenuItemProps[];
 }
 
 interface TableRowProps {
@@ -44,10 +55,13 @@ function Table({
   isLoading,
   className,
   classNameTableRow,
+  isOpen,
+  setIsOpen,
+  subMenuList,
 }: TableProps) {
   const [selectedData, setSelectedData] = useState<RowData[]>([]);
   const classTableRow = clsx(
-    "flex flex-col overflow-scroll scrollbar-thin",
+    "flex flex-col overflow-scroll w-full",
     classNameTableRow
   );
 
@@ -124,7 +138,25 @@ function Table({
             </div>
           )}
           {columns.map((col, i) => (
-            <TableRowCell key={i} col={col} />
+            <div
+              key={i}
+              className="flex flex-row w-full flex-1 justify-between items-center"
+            >
+              <TableRowCell col={col.caption} />
+              {col.sortable && (
+                <Toolbar className="w-full justify-end">
+                  <Toolbar.Menu
+                    closedIcon={Ellipsis}
+                    openedIcon={Ellipsis}
+                    isOpen={isOpen}
+                    setIsOpen={setIsOpen}
+                    className="min-w-[235px] bg-transparent"
+                    subMenuList={subMenuList(`${col.caption}`)}
+                    variant="primary"
+                  />
+                </Toolbar>
+              )}
+            </div>
           ))}
         </div>
         <div className={classTableRow}>{rowChildren}</div>
@@ -148,7 +180,7 @@ function TableRow({
   ...props
 }: TableRowProps) {
   const tableRowClass = cn(
-    "flex relative p-3 items-center border-b border-gray-200 cursor-default",
+    "flex relative p-3 items-center border-b w-full border-gray-200 cursor-default",
     className,
     isSelected && index % 2 === 0
       ? "bg-blue-50"
@@ -180,7 +212,7 @@ function TableRow({
 }
 
 function TableRowCell({ col, className }: TableRowCellProps) {
-  return <div className={cn("flex-1 px-2", className)}>{col}</div>;
+  return <div className={cn("px-2 flex-1", className)}>{col}</div>;
 }
 
 Table.RowCell = TableRowCell;

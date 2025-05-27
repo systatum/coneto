@@ -1,8 +1,8 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { RowData, Table } from "./table";
-import { Toolbar } from "./toolbar";
 import { ArrowDown, ArrowUp, RefreshCw } from "lucide-react";
 import { useState } from "react";
+import { TipMenuItemProps } from "./tip-menu";
 
 const meta: Meta<typeof Table> = {
   title: "Content/Table",
@@ -31,7 +31,16 @@ const rawRows = Array.from({ length: 20 }, (_, i) => ({
 
 export const TableDefault: Story = {
   render: () => {
-    const columns = ["Name", "Type"];
+    const columns = [
+      {
+        caption: "Name",
+        sortable: false,
+      },
+      {
+        caption: "Type",
+        sortable: false,
+      },
+    ];
 
     return (
       <Table classNameTableRow="max-h-[400px]" columns={columns}>
@@ -43,7 +52,16 @@ export const TableDefault: Story = {
 
 export const TableSelectable: Story = {
   render: () => {
-    const columns = ["Name", "Type"];
+    const columns = [
+      {
+        caption: "Name",
+        sortable: false,
+      },
+      {
+        caption: "Type",
+        sortable: false,
+      },
+    ];
 
     const handleItemsSelected = (data: RowData[]) => {
       console.log("Selected rows:", data);
@@ -60,52 +78,72 @@ export const TableSelectable: Story = {
 export const TableSelectableWithSorting: Story = {
   render: () => {
     const [rows, setRows] = useState(rawRows);
-    const [isOpen, setIsOpen] = useState<boolean | null>(false);
 
-    const handleSortAsc = () => {
-      const sorted = [...rows].sort((a, b) => a.type.localeCompare(b.type));
+    const handleSortingRequested = ({
+      mode,
+      column,
+    }: {
+      mode: "asc" | "desc" | "original";
+      column: keyof (typeof rawRows)[0];
+    }) => {
+      if (mode === "original") {
+        setRows([...rawRows]);
+        return;
+      }
+
+      const sorted = [...rows].sort((a, b) => {
+        const aVal = a[column];
+        const bVal = b[column];
+        return typeof aVal === "string" && typeof bVal === "string"
+          ? mode === "asc"
+            ? aVal.localeCompare(bVal)
+            : bVal.localeCompare(aVal)
+          : 0;
+      });
+
       setRows(sorted);
     };
 
-    const handleSortDesc = () => {
-      const sorted = [...rows].sort((a, b) => b.type.localeCompare(a.type));
-      setRows(sorted);
-    };
-
-    const originalRows = [...rawRows];
-
-    const handleResetSort = () => {
-      setRows(originalRows);
-      setIsOpen(null);
-    };
-
-    const columns = ["Name", "Type"];
-    const TIP_MENU_ACTION = [
+    const columns = [
       {
-        caption: "Sort Ascending",
-        icon: ArrowDown,
-        iconColor: "gray",
-        onClick: () => {
-          handleSortAsc();
-          setIsOpen(null);
-        },
+        caption: "Name",
+        sortable: true,
       },
       {
-        caption: "Sort Descending",
-        icon: ArrowUp,
-        iconColor: "gray",
-        onClick: () => {
-          handleSortDesc();
-          setIsOpen(null);
-        },
-      },
-      {
-        caption: "Reset Sorting",
-        icon: RefreshCw,
-        iconColor: "gray",
-        onClick: handleResetSort,
+        caption: "Type",
+        sortable: true,
       },
     ];
+
+    const TIP_MENU_ACTION = (columnCaption: string): TipMenuItemProps[] => {
+      const column = columnCaption.toLowerCase() as keyof (typeof rawRows)[0];
+      return [
+        {
+          caption: "Sort Ascending",
+          icon: ArrowDown,
+          iconColor: "gray",
+          onClick: () => {
+            handleSortingRequested({ mode: "asc", column });
+          },
+        },
+        {
+          caption: "Sort Descending",
+          icon: ArrowUp,
+          iconColor: "gray",
+          onClick: () => {
+            handleSortingRequested({ mode: "desc", column });
+          },
+        },
+        {
+          caption: "Reset Sorting",
+          icon: RefreshCw,
+          iconColor: "gray",
+          onClick: () => {
+            handleSortingRequested({ mode: "original", column });
+          },
+        },
+      ];
+    };
 
     const handleItemsSelected = (data: RowData[]) => {
       console.log("Selected rows:", data);
@@ -116,25 +154,12 @@ export const TableSelectableWithSorting: Story = {
         <h3 className="font-semibold text-xl font-mono">
           Data Load Balancer 2025
         </h3>
-        <Toolbar className="w-fit">
-          <Toolbar.Menu
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-            className="min-w-[235px]"
-            onClick={() => {
-              console.log("good for click");
-              alert("Your button clickked!");
-            }}
-            caption="Sorted by"
-            iconColor="red"
-            subMenuList={TIP_MENU_ACTION}
-          />
-        </Toolbar>
 
         <Table
           selectable
           columns={columns}
           onItemsSelected={handleItemsSelected}
+          subMenuList={TIP_MENU_ACTION}
         >
           {rows?.map((data, index) => (
             <Table.Row key={index} content={[data.name, data.type]} />
@@ -147,7 +172,16 @@ export const TableSelectableWithSorting: Story = {
 
 export const TableWithLoading: Story = {
   render: () => {
-    const columns = ["Name", "Type"];
+    const columns = [
+      {
+        caption: "Name",
+        sortable: false,
+      },
+      {
+        caption: "Type",
+        sortable: false,
+      },
+    ];
 
     const handleItemsSelected = (data: RowData[]) => {
       console.log("Selected rows:", data);
