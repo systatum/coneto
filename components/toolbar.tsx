@@ -21,6 +21,8 @@ interface ToolbarProps {
 interface ToolbarMenuProps {
   caption?: string;
   icon?: LucideIcon;
+  openedIcon?: LucideIcon;
+  closedIcon?: LucideIcon;
   iconColor?: string;
   subMenuList: TipMenuItemProps[];
   isOpen?: boolean;
@@ -28,6 +30,7 @@ interface ToolbarMenuProps {
   onClick?: () => void;
   className?: string;
   variant?: "default" | "primary" | "danger";
+  openOn?: "hover" | "click";
 }
 
 const VARIANT_CLASS_MAP = {
@@ -38,8 +41,10 @@ const VARIANT_CLASS_MAP = {
   },
   default: {
     default: "border bg-white border-transparent hover:border-[#ececec]",
-    primary: "bg-[rgb(86,154,236)] text-white border-transparent hover:border-[#5286c9]",
-    danger: "bg-[rgb(206,55,93)] text-white border-transparent hover:border-[#c00000]",
+    primary:
+      "bg-[rgb(86,154,236)] text-white border-transparent hover:border-[#5286c9]",
+    danger:
+      "bg-[rgb(206,55,93)] text-white border-transparent hover:border-[#c00000]",
   },
 };
 
@@ -53,10 +58,8 @@ function Toolbar({ children, className }: ToolbarProps) {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        toolbarRef.current &&
-        !toolbarRef.current.contains(event.target as Node)
-      ) {
+      const target = event.target as Node;
+      if (toolbarRef.current && !toolbarRef.current.contains(target)) {
         setOpenIndex(null);
       }
     };
@@ -76,7 +79,7 @@ function Toolbar({ children, className }: ToolbarProps) {
     }
     return child;
   });
-  const toolbarClass = cn("flex w-full flex-row cursor-pointer", className);
+  const toolbarClass = cn("flex w-full flex-row", className);
 
   return (
     <div ref={toolbarRef} className={toolbarClass}>
@@ -88,17 +91,54 @@ function Toolbar({ children, className }: ToolbarProps) {
 function ToolbarMenu({
   caption,
   icon: Icon,
+  openedIcon: OpenedIcon = ChevronDown,
+  closedIcon: ClosedIcon = ChevronUp,
   iconColor = "gray",
   subMenuList,
   isOpen,
   setIsOpen,
   onClick,
   className,
+  openOn = "click",
   variant = "default",
 }: ToolbarMenuProps) {
   const [hovered, setHovered] = useState<"main" | "original" | "dropdown">(
     "original"
   );
+  const [positionClass, setPositionClass] = useState<"left-0" | "right-0">(
+    "left-0"
+  );
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (containerRef.current && !containerRef.current.contains(target)) {
+        setIsOpen?.(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (isOpen && containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      const halfWindowWidth = window.innerWidth / 2;
+
+      if (rect.left > halfWindowWidth) {
+        setPositionClass("right-0");
+      } else {
+        setPositionClass("left-0");
+      }
+    }
+  }, [isOpen]);
 
   const handleClickOpen = () => {
     setIsOpen?.();
@@ -115,24 +155,26 @@ function ToolbarMenu({
   const toolbarMenuHoverClass = VARIANT_CLASS_MAP.hover[variant];
 
   return (
-    <div className="relative flex flex-col mr-1">
+    <div ref={containerRef} className="relative flex flex-col mr-1">
       <div className={toolbarMenuClass}>
-        <div
-          onMouseEnter={() => setHovered("main")}
-          onMouseLeave={() => setHovered("original")}
-          onClick={handleMainClick}
-          className={cn(
-            `flex flex-row items-center gap-2 p-2`,
-            hovered === "main" && toolbarMenuHoverClass
-          )}
-        >
-          {Icon && (
-            <Icon size={20} className={cn(COLOR_CLASS_MAP[iconColor])} />
-          )}
-          {caption && (
-            <span className="text-sm sm:flex hidden px-2">{caption}</span>
-          )}
-        </div>
+        {(Icon || caption) && (
+          <div
+            onMouseEnter={() => setHovered("main")}
+            onMouseLeave={() => setHovered("original")}
+            onClick={handleMainClick}
+            className={cn(
+              `flex flex-row items-center gap-2 p-2`,
+              hovered === "main" && toolbarMenuHoverClass
+            )}
+          >
+            {Icon && (
+              <Icon size={20} className={cn(COLOR_CLASS_MAP[iconColor])} />
+            )}
+            {caption && (
+              <span className="text-sm sm:flex hidden px-2">{caption}</span>
+            )}
+          </div>
+        )}
         <span
           className={cn(
             `absolute top-1 right-[30px] md:right-9 text-[44px] h-full max-h-[28px] w-fit border-[0.5px]`,
@@ -140,8 +182,18 @@ function ToolbarMenu({
           )}
         ></span>
         <div
-          onMouseEnter={() => setHovered("dropdown")}
-          onMouseLeave={() => setHovered("original")}
+          onMouseEnter={() => {
+            setHovered("dropdown");
+            if (openOn === "hover") {
+              setIsOpen(true);
+            }
+          }}
+          onMouseLeave={() => {
+            setHovered("original");
+            if (openOn === "hover") {
+              setIsOpen(false);
+            }
+          }}
           className={cn(
             "flex p-2 relative",
             hovered === "dropdown" && toolbarMenuHoverClass
@@ -149,20 +201,46 @@ function ToolbarMenu({
           onClick={handleClickOpen}
         >
           {isOpen ? (
-            <ChevronUp
+            <OpenedIcon
               className={variant === "default" ? "text-gray-400" : ""}
               size={20}
             />
           ) : (
-            <ChevronDown
+            <ClosedIcon
               className={variant === "default" ? "text-gray-400" : ""}
               size={20}
             />
           )}
         </div>
       </div>
+      <div
+        className="absolute top-8 border w-full right-0 max-w-[40px] min-h-[10px] border-transparent z-20"
+        onMouseEnter={() => {
+          if (openOn === "hover") {
+            setIsOpen(true);
+          }
+        }}
+        onMouseLeave={() => {
+          if (openOn === "hover") {
+            setIsOpen(false);
+          }
+        }}
+      ></div>
+
       {isOpen && (
-        <div className="absolute top-full mt-[1px] z-10">
+        <div
+          onMouseEnter={() => {
+            if (openOn === "hover") {
+              setIsOpen(true);
+            }
+          }}
+          onMouseLeave={() => {
+            if (openOn === "hover") {
+              setIsOpen(false);
+            }
+          }}
+          className={cn("absolute top-full z-10", positionClass)}
+        >
           <TipMenu
             setIsOpen={() => setIsOpen(false)}
             className={className}
