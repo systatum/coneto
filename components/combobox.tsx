@@ -115,7 +115,7 @@ export function Combobox({
         }}
         aria-autocomplete="list"
         placeholder={placeholder || "Search your item..."}
-        className="w-full rounded-xs border border-gray-100 px-3 py-2 outline-none focus:border-blue-500 focus:ring-0 focus:ring-blue-500"
+        className="w-full rounded-xs border border-gray-100 px-3 py-2 outline-none focus:border-[#61A9F9] focus:ring-0 focus:ring-[#61A9F9]"
       />
 
       {inputValue !== "" && (
