@@ -45,13 +45,8 @@ export const Default: Story = {
     variant: "default",
     children: "Button",
   },
-  parameters: {
-    docs: {
-      source: {
-        code: `<Button variant="default">Button</Button>`,
-        language: "tsx",
-      },
-    },
+  render: (args) => {
+    return <Button {...args} />;
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -70,15 +65,9 @@ export const DefaultLarge: Story = {
     size: "lg",
     children: "Button",
   },
-  parameters: {
-    docs: {
-      source: {
-        code: `<Button size="lg">Button</Button>`,
-        language: "tsx",
-      },
-    },
+  render: (args) => {
+    return <Button {...args} />;
   },
-
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const button = canvas.getByRole("button", { name: /Button/i });
@@ -97,15 +86,9 @@ export const DefaultSmall: Story = {
     size: "sm",
     children: "Button",
   },
-  parameters: {
-    docs: {
-      source: {
-        code: `<Button size="sm">Button</Button>`,
-        language: "tsx",
-      },
-    },
+  render: (args) => {
+    return <Button {...args} />;
   },
-
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const button = canvas.getByRole("button", { name: /Button/i });
@@ -124,15 +107,9 @@ export const DefaultIcon: Story = {
     size: "icon",
     children: <RiMovie2Fill aria-label="Movie" />,
   },
-  parameters: {
-    docs: {
-      source: {
-        code: `<Button size="icon"><RiMovie2Fill aria-label="Movie" /></Button>`,
-        language: "tsx",
-      },
-    },
+  render: (args) => {
+    return <Button {...args} />;
   },
-
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const button = canvas.getByRole("button", { name: /Movie/i });
@@ -149,15 +126,9 @@ export const Primary: Story = {
     variant: "primary",
     children: "Button",
   },
-  parameters: {
-    docs: {
-      source: {
-        code: `<Button variant="primary">Button</Button>`,
-        language: "tsx",
-      },
-    },
+  render: (args) => {
+    return <Button {...args} />;
   },
-
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const button = canvas.getByRole("button", { name: /Button/i });
@@ -175,15 +146,9 @@ export const Secondary: Story = {
     variant: "secondary",
     children: "Button",
   },
-  parameters: {
-    docs: {
-      source: {
-        code: `<Button variant="secondary">Button</Button>`,
-        language: "tsx",
-      },
-    },
+  render: (args) => {
+    return <Button {...args} />;
   },
-
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const button = canvas.getByRole("button", { name: /Button/i });
@@ -204,15 +169,9 @@ export const Danger: Story = {
     variant: "danger",
     children: "Button",
   },
-  parameters: {
-    docs: {
-      source: {
-        code: `<Button variant="danger">Button</Button>`,
-        language: "tsx",
-      },
-    },
+  render: (args) => {
+    return <Button {...args} />;
   },
-
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const button = canvas.getByRole("button", { name: /Button/i });
@@ -230,15 +189,9 @@ export const Outline: Story = {
     variant: "outline",
     children: "Button",
   },
-  parameters: {
-    docs: {
-      source: {
-        code: `<Button variant="outline">Button</Button>`,
-        language: "tsx",
-      },
-    },
+  render: (args) => {
+    return <Button {...args} />;
   },
-
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -258,15 +211,9 @@ export const WithLoading: Story = {
     isLoading: true,
     children: "Button",
   },
-  parameters: {
-    docs: {
-      source: {
-        code: `<Button variant="default" isLoading>Button</Button>`,
-        language: "tsx",
-      },
-    },
+  render: (args) => {
+    return <Button {...args} />;
   },
-
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 

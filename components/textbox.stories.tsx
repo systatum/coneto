@@ -57,27 +57,6 @@ export default meta;
 
 type Story = StoryObj<typeof Textbox>;
 
-const renderTextbox = (args: TextboxProps) => {
-  const [, setUpdateArgs] = useArgs();
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setUpdateArgs({ value: "" });
-    }, 100);
-    return () => clearTimeout(timer);
-  }, [setUpdateArgs]);
-
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const newValue = e.target.value;
-    setUpdateArgs({ value: newValue });
-    args.onChange?.(e);
-  };
-
-  return <Textbox {...args} value={args.value} onChange={handleChange} />;
-};
-
 export const Input: Story = {
   args: {
     name: "input",
@@ -87,21 +66,25 @@ export const Input: Story = {
     type: "text",
     className: "min-w-[400px]",
   },
-  render: renderTextbox,
-  parameters: {
-    docs: {
-      source: {
-        code: `
-        <Textbox
-          name="input"
-          label="Input"
-          placeholder="Type here..."
-          value=""
-          type="text"
-          onChange={() => {}}
-        />`,
-      },
-    },
+  render: (args: TextboxProps) => {
+    const [, setUpdateArgs] = useArgs();
+
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        setUpdateArgs({ value: "" });
+      }, 100);
+      return () => clearTimeout(timer);
+    }, [setUpdateArgs]);
+
+    const handleChange = (
+      e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+      const newValue = e.target.value;
+      setUpdateArgs({ value: newValue });
+      args.onChange?.(e);
+    };
+
+    return <Textbox {...args} value={args.value} onChange={handleChange} />;
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -121,23 +104,25 @@ export const Textarea: Story = {
     rows: 3,
     className: "min-w-[400px]",
   },
-  render: renderTextbox,
-  parameters: {
-    docs: {
-      source: {
-        code: `
-        <Textbox
-          name="textarea"
-          label="Textarea"
-          placeholder="Type your message..."
-          value=""
-          type="textarea"
-          rows={3}
-          onChange={() => {}}
-        />
-        `,
-      },
-    },
+  render: (args: TextboxProps) => {
+    const [, setUpdateArgs] = useArgs();
+
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        setUpdateArgs({ value: "" });
+      }, 100);
+      return () => clearTimeout(timer);
+    }, [setUpdateArgs]);
+
+    const handleChange = (
+      e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+      const newValue = e.target.value;
+      setUpdateArgs({ value: newValue });
+      args.onChange?.(e);
+    };
+
+    return <Textbox {...args} value={args.value} onChange={handleChange} />;
   },
 
   play: async ({ canvasElement }) => {
@@ -159,24 +144,26 @@ export const InputMessage: Story = {
     type: "message",
     className: "min-w-[400px]",
   },
-  render: renderTextbox,
-  parameters: {
-    docs: {
-      source: {
-        code: `
-        <Textbox
-          name="message"
-          label="Message"
-          placeholder="Type a message..."
-          value=""
-          type="message"
-          onChange={() => {}}
-        />
-        `,
-      },
-    },
-  },
+  render: (args: TextboxProps) => {
+    const [, setUpdateArgs] = useArgs();
 
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        setUpdateArgs({ value: "" });
+      }, 100);
+      return () => clearTimeout(timer);
+    }, [setUpdateArgs]);
+
+    const handleChange = (
+      e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+      const newValue = e.target.value;
+      setUpdateArgs({ value: newValue });
+      args.onChange?.(e);
+    };
+
+    return <Textbox {...args} value={args.value} onChange={handleChange} />;
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const message = await canvas.getByRole("textbox");
@@ -194,24 +181,26 @@ export const Password: Story = {
     type: "password",
     className: "min-w-[400px]",
   },
-  render: renderTextbox,
-  parameters: {
-    docs: {
-      source: {
-        code: `
-        <Textbox
-          name="password"
-          label="Password"
-          placeholder="Enter password..."
-          value=""
-          type="password"
-          onChange={() => {}}
-        />
-        `,
-      },
-    },
-  },
+  render: (args: TextboxProps) => {
+    const [, setUpdateArgs] = useArgs();
 
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        setUpdateArgs({ value: "" });
+      }, 100);
+      return () => clearTimeout(timer);
+    }, [setUpdateArgs]);
+
+    const handleChange = (
+      e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+      const newValue = e.target.value;
+      setUpdateArgs({ value: newValue });
+      args.onChange?.(e);
+    };
+
+    return <Textbox {...args} value={args.value} onChange={handleChange} />;
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const password = await canvas.getByPlaceholderText("Enter password...");
@@ -231,25 +220,27 @@ export const WithErrorMessage: Story = {
     errorMessage: "This field is required",
     className: "min-w-[400px]",
   },
-  render: renderTextbox,
-  parameters: {
-    docs: {
-      source: {
-        code: `
-        <Textbox
-          name="error"
-          label="With Error"
-          placeholder="Type with error..."
-          value=""
-          type="text"
-          showError
-          errorMessage="This field is required"
-          onChange={() => {}}
-        />
-        `,
-      },
-    },
+  render: (args: TextboxProps) => {
+    const [, setUpdateArgs] = useArgs();
+
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        setUpdateArgs({ value: "" });
+      }, 100);
+      return () => clearTimeout(timer);
+    }, [setUpdateArgs]);
+
+    const handleChange = (
+      e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+      const newValue = e.target.value;
+      setUpdateArgs({ value: newValue });
+      args.onChange?.(e);
+    };
+
+    return <Textbox {...args} value={args.value} onChange={handleChange} />;
   },
+
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const input = await canvas.getByRole("textbox");
