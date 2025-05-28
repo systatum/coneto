@@ -36,6 +36,7 @@ export default function Checkbox({
       "bg-[#61A9F9] border-[#61A9F9]": indeterminate || props.checked,
       "bg-white border-gray-500": !indeterminate && !props.checked,
     },
+    showError && "border-red-500 focus:border-red-500 focus:ring-red-500",
     className
   );
   return (
