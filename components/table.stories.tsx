@@ -21,20 +21,15 @@ export default meta;
 
 type Story = StoryObj<typeof Table>;
 
-const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
-
-const sampleRows = Array.from({ length: 20 }, (_, i) => {
-  const type = TYPES_DATA[i % TYPES_DATA.length];
-  return <Table.Row key={i} content={[`Load Balancer ${i + 1}`, type]} />;
-});
-
-const rawRows = Array.from({ length: 20 }, (_, i) => ({
-  name: `Load Balancer ${i + 1}`,
-  type: TYPES_DATA[i % TYPES_DATA.length],
-}));
-
 export const TableDefault: Story = {
   render: () => {
+    const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
+
+    const sampleRows = Array.from({ length: 20 }, (_, i) => {
+      const type = TYPES_DATA[i % TYPES_DATA.length];
+      return <Table.Row key={i} content={[`Load Balancer ${i + 1}`, type]} />;
+    });
+
     const columns = [
       {
         caption: "Name",
@@ -56,6 +51,13 @@ export const TableDefault: Story = {
 
 export const TableSelectable: Story = {
   render: () => {
+    const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
+
+    const sampleRows = Array.from({ length: 20 }, (_, i) => {
+      const type = TYPES_DATA[i % TYPES_DATA.length];
+      return <Table.Row key={i} content={[`Load Balancer ${i + 1}`, type]} />;
+    });
+
     const columns = [
       {
         caption: "Name",
@@ -81,6 +83,12 @@ export const TableSelectable: Story = {
 
 export const TableSelectableWithSorting: Story = {
   render: () => {
+    const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
+
+    const rawRows = Array.from({ length: 20 }, (_, i) => ({
+      name: `Load Balancer ${i + 1}`,
+      type: TYPES_DATA[i % TYPES_DATA.length],
+    }));
     const [rows, setRows] = useState(rawRows);
 
     const handleSortingRequested = ({
@@ -176,6 +184,12 @@ export const TableSelectableWithSorting: Story = {
 
 export const TableWithLoading: Story = {
   render: () => {
+    const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
+
+    const sampleRows = Array.from({ length: 20 }, (_, i) => {
+      const type = TYPES_DATA[i % TYPES_DATA.length];
+      return <Table.Row key={i} content={[`Load Balancer ${i + 1}`, type]} />;
+    });
     const columns = [
       {
         caption: "Name",

@@ -45,7 +45,9 @@ export const Default: Story = {
     variant: "default",
     children: "Button",
   },
-
+  render: (args) => {
+    return <Button {...args} />;
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const button = canvas.getByRole("button", { name: /Button/i });
@@ -63,7 +65,9 @@ export const DefaultLarge: Story = {
     size: "lg",
     children: "Button",
   },
-
+  render: (args) => {
+    return <Button {...args} />;
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const button = canvas.getByRole("button", { name: /Button/i });
@@ -82,7 +86,9 @@ export const DefaultSmall: Story = {
     size: "sm",
     children: "Button",
   },
-
+  render: (args) => {
+    return <Button {...args} />;
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const button = canvas.getByRole("button", { name: /Button/i });
@@ -101,7 +107,9 @@ export const DefaultIcon: Story = {
     size: "icon",
     children: <RiMovie2Fill aria-label="Movie" />,
   },
-
+  render: (args) => {
+    return <Button {...args} />;
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const button = canvas.getByRole("button", { name: /Movie/i });
@@ -118,7 +126,9 @@ export const Primary: Story = {
     variant: "primary",
     children: "Button",
   },
-
+  render: (args) => {
+    return <Button {...args} />;
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const button = canvas.getByRole("button", { name: /Button/i });
@@ -136,7 +146,9 @@ export const Secondary: Story = {
     variant: "secondary",
     children: "Button",
   },
-
+  render: (args) => {
+    return <Button {...args} />;
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const button = canvas.getByRole("button", { name: /Button/i });
@@ -157,7 +169,9 @@ export const Danger: Story = {
     variant: "danger",
     children: "Button",
   },
-
+  render: (args) => {
+    return <Button {...args} />;
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const button = canvas.getByRole("button", { name: /Button/i });
@@ -174,6 +188,9 @@ export const Outline: Story = {
   args: {
     variant: "outline",
     children: "Button",
+  },
+  render: (args) => {
+    return <Button {...args} />;
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -193,6 +210,9 @@ export const WithLoading: Story = {
     variant: "default",
     isLoading: true,
     children: "Button",
+  },
+  render: (args) => {
+    return <Button {...args} />;
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

@@ -33,12 +33,6 @@ type OnChangeHandler = (
   value: string | CountryCodeProps
 ) => void;
 
-const PhoneboxContent = (
-  args: PhoneboxProps & { onChange: OnChangeHandler }
-) => {
-  return <Phonebox {...args} />;
-};
-
 export const DefaultPhonebox: Story = {
   args: {
     label: "Phone Number",
@@ -63,7 +57,7 @@ export const DefaultPhonebox: Story = {
       }
     };
     return (
-      <PhoneboxContent
+      <Phonebox
         {...args}
         phoneNumber={args.phoneNumber}
         onChange={handleChange}
@@ -87,13 +81,13 @@ export const DefaultPhonebox: Story = {
 };
 
 export const DisablePhonebox: Story = {
-  render: PhoneboxContent,
   args: {
     label: "Phone Number",
     placeholder: "Can't edit",
     phoneNumber: "+1234567890",
     disabled: true,
   },
+  render: (args) => <Phonebox {...args} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const input = canvas.getByPlaceholderText("Can't edit");
@@ -102,7 +96,6 @@ export const DisablePhonebox: Story = {
 };
 
 export const PhoneboxWithError: Story = {
-  render: PhoneboxContent,
   args: {
     label: "Phone Number",
     placeholder: "Enter phone number",
@@ -110,6 +103,7 @@ export const PhoneboxWithError: Story = {
     showError: true,
     errorMessage: "Invalid phone number",
   },
+  render: (args) => <Phonebox {...args} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const input = canvas.getByPlaceholderText("Enter phone number");

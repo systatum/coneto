@@ -38,6 +38,9 @@ export const DefaultFrame: Story = {
     className: "text-sm",
     children: <>This is inside the frame.</>,
   },
+  render: (args) => {
+    return <Frame {...args} />;
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(
@@ -51,6 +54,9 @@ export const FrameWithTitle: Story = {
     title: "Frame Title",
     className: "text-sm",
     children: <>This frame has a title.</>,
+  },
+  render: (args) => {
+    return <Frame {...args} />;
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -67,6 +73,9 @@ export const FrameWithClass: Story = {
     className: "bg-blue-50 text-sm",
     classNameTitle: "bg-blue-50",
     children: <>This frame has a custom background color.</>,
+  },
+  render: (args) => {
+    return <Frame {...args} />;
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

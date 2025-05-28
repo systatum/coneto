@@ -44,6 +44,9 @@ export const Hover: Story = {
     children: "This tooltip appears on hover",
     classNameParent: "text-sm underline",
   },
+  render: (args) => {
+    return <Tooltip {...args} />;
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const trigger = canvas.getByText("Hover Tooltip");
@@ -61,6 +64,9 @@ export const Click: Story = {
     children: "This tooltip appears on click",
     classNameParent: "text-blue-600 text-sm cursor-pointer",
     className: "bg-blue-600 text-white",
+  },
+  render: (args) => {
+    return <Tooltip {...args} />;
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -99,6 +105,9 @@ export const StyledTooltip: Story = {
     classNameParent: "text-green-600 text-sm underline decoration-wavy",
     className: "bg-green-700 text-white shadow-lg rounded px-3 py-1 text-sm",
   },
+  render: (args) => {
+    return <Tooltip {...args} />;
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const trigger = canvas.getByText("Styled Tooltip");
@@ -124,6 +133,9 @@ export const DottedUnderlineTooltip: Story = {
     classNameParent: "text-sm",
     className: "bg-gray-800 text-white",
   },
+  render: (args) => {
+    return <Tooltip {...args} />;
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const trigger = canvas.getByText("Dotted Underline Tooltip");
@@ -144,6 +156,9 @@ export const NoUnderlineTooltip: Story = {
     underline: "transparent",
     classNameParent: "font-semibold text-sm text-red-500",
     className: "bg-red-600 text-white",
+  },
+  render: (args) => {
+    return <Tooltip {...args} />;
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -170,6 +185,9 @@ export const BlueUnderlineTooltip: Story = {
     classNameParent: "text-sm",
     children: "Clicked tooltip with blue underline",
     className: "bg-blue-700 text-white",
+  },
+  render: (args) => {
+    return <Tooltip {...args} />;
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

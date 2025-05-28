@@ -16,7 +16,9 @@ export default meta;
 type Story = StoryObj<typeof LoadingSpinner>;
 
 export const Default: Story = {
-  render: () => <LoadingSpinner size={30} />,
+  render: () => {
+    return <LoadingSpinner size={30} />;
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const spinner = canvas.getByTestId("circle");
