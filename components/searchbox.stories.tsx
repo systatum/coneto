@@ -34,6 +34,20 @@ export const Default: Story = {
     value: "",
     placeholder: "Search here...",
   },
+  parameters: {
+    docs: {
+      source: {
+        code: `
+        <Searchbox
+          name="search"
+          onChange={() => {}}
+          placeholder="Search here..."
+          value=""
+        />`,
+      },
+    },
+  },
+
   render: (args) => {
     const [{ value }, setUpdateArgs] = useArgs();
 

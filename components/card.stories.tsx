@@ -16,6 +16,7 @@ import { Toolbar } from "./toolbar";
 const meta: Meta<typeof Card> = {
   title: "Content/Card",
   component: Card,
+  tags: ["autodocs"],
   argTypes: {
     shadow: {
       control: {
