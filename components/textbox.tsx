@@ -64,7 +64,7 @@ export default function Textbox({
     "rounded-xs text-black px-2 w-full py-[7px] outline-none",
     showError
       ? "border border-red-500 focus:border-red-500 focus:ring-red-500 text-red-800"
-      : "border border-gray-300 focus:ring-blue-500 focus:border-blue-500",
+      : "border border-gray-300 focus:ring-[#61A9F9] focus:border-[#61A9F9]",
     className
   );
 

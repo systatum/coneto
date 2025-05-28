@@ -31,24 +31,51 @@ export default function Checkbox({
   }, [indeterminate]);
 
   const inputClass = clsx(
-    "h-4 w-4 border border-gray-300 rounded-none bg-white outline-none cursor-pointer",
-    "accent-gray-500",
-    showError
-      ? "border border-red-500 focus:border-red-500 focus:ring-red-500 text-red-800"
-      : "border border-gray-300 focus:ring-gray-500 focus:border-gray-500",
+    "peer appearance-none border h-4 w-4 rounded-none outline-none cursor-pointer",
+    {
+      "bg-[#61A9F9] border-[#61A9F9]": indeterminate || props.checked,
+      "bg-white border-gray-500": !indeterminate && !props.checked,
+    },
     className
   );
-
   return (
     <div className={clsx(classNameParent)}>
-      <label htmlFor={inputId} className="flex items-center gap-[6px] text-xs">
+      <label
+        htmlFor={inputId}
+        className="flex items-center gap-[6px] text-xs relative"
+      >
         <input
           ref={inputRef}
           type="checkbox"
           id={inputId}
-          className={inputClass}
           {...(props as InputHTMLAttributes<HTMLInputElement>)}
+          className={inputClass}
         />
+        {indeterminate ? (
+          <svg
+            className="absolute left-[2px] top-[2px] h-3 w-3 text-white transition-transform duration-150 pointer-events-none"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <line x1="6" y1="12" x2="18" y2="12" />
+          </svg>
+        ) : (
+          <svg
+            className="absolute left-[2px] top-[2px] h-3 w-3 text-white scale-0 peer-checked:scale-100 transition-transform duration-150 pointer-events-none"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        )}
         {label && <span>{label}</span>}
       </label>
       {showError && errorMessage && (

@@ -182,7 +182,7 @@ export default function Phonebox({
             ? "border-red-500"
             : isOpen
               ? "border-gray-300"
-              : "border-gray-300 focus-within:border-blue-600",
+              : "border-gray-300 focus-within:border-[#61A9F9]",
           disabled ? "opacity-50" : "",
           className
         )}
@@ -249,7 +249,7 @@ export default function Phonebox({
             },
             tabIndex: -1,
           })}
-          className="absolute left-0 scrollbar-thin rounded-xs border border-gray-300 bg-white shadow-xl md:min-w-[400px]"
+          className="absolute left-0 scrollbar-thin rounded-xs border border-gray-300 focus:border-[#61A9F9] bg-white shadow-xl md:min-w-[400px]"
         >
           <div className="sticky top-0 bg-white p-2">
             <div className="relative">
@@ -257,7 +257,7 @@ export default function Phonebox({
               <input
                 type="text"
                 ref={searchInputRef}
-                className="w-full rounded-xs border border-gray-300 py-2 pr-2 pl-8 text-xs focus:border-blue-600 focus:outline-none"
+                className="w-full rounded-xs border border-gray-300 py-2 pr-2 pl-8 text-xs focus:border-[#61A9F9] focus:outline-none"
                 placeholder="Search your country..."
                 value={searchTerm}
                 onChange={(e) => {
