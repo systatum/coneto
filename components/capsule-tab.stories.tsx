@@ -8,13 +8,6 @@ const meta: Meta<typeof CapsuleTab> = {
   title: "Content/Capsule Tab",
   component: CapsuleTab,
   tags: ["autodocs"],
-  decorators: [
-    (Story) => (
-      <div className="min-h-[600px] p-4">
-        <Story />
-      </div>
-    ),
-  ],
 };
 
 export default meta;
@@ -33,7 +26,7 @@ export const Default: Story = {
         setValue((prev) => ({ ...prev, [name]: value }));
       };
       return (
-        <div className="min-h-[400px] p-2 text-sm flex flex-col gap-2">
+        <div className="p-2 text-sm flex flex-col gap-2">
           <h3 className="font-medium">Write Tab</h3>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
@@ -53,7 +46,7 @@ export const Default: Story = {
 
     const ReviewTabContent = () => {
       return (
-        <div className="min-h-[400px] p-2 text-sm flex flex-col gap-2">
+        <div className="p-2 text-sm flex flex-col gap-2">
           <h3 className="font-medium">Review Tab</h3>
           <p>
             This tab is meant to review the content that has been submitted. It
