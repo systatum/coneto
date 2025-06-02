@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect, userEvent, within } from "@storybook/test";
 import { useState } from "react";
-import { Combobox } from "./combobox";
+import { Selectbox } from "./selectbox";
+import Combobox from "./combobox";
 
 const meta: Meta<typeof Combobox> = {
   title: "Input Elements/Combobox",
@@ -13,37 +14,39 @@ const meta: Meta<typeof Combobox> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof Combobox>;
 
-const FRUIT_OPTIONS = [
-  "Apple",
-  "Banana",
-  "Orange",
-  "Grape",
-  "Pineapple",
-  "Strawberry",
-  "Watermelon",
-];
+type Story = StoryObj<typeof Combobox>;
 
 export const Default: Story = {
   render: () => {
     const [value, setValue] = useState("");
 
+    const FRUIT_OPTIONS = [
+      "Apple",
+      "Banana",
+      "Orange",
+      "Grape",
+      "Pineapple",
+      "Strawberry",
+      "Watermelon",
+    ];
     return (
       <div className="w-64">
-        <Combobox
+        <Selectbox
+          options={FRUIT_OPTIONS}
           inputValue={value}
           setInputValue={setValue}
-          options={FRUIT_OPTIONS}
-          placeholder="Search fruit..."
-        />
+          placeholder="Select a fruit..."
+        >
+          {(props) => <Combobox {...props} />}
+        </Selectbox>
       </div>
     );
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const input = canvas.getByPlaceholderText("Search fruit...");
+    const input = canvas.getByPlaceholderText("Select a fruit...");
 
     await userEvent.type(input, "ap");
 
