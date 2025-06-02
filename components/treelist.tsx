@@ -25,7 +25,7 @@ function TreeList<T extends TreeListItemsProps>({
   empty,
   searchTerm,
 }: TreeListProps<T>) {
-  const treeListClass = cn("flex flex-col gap-2", classNameContainer);
+  const treeListClass = cn("flex flex-col gap-4", classNameContainer);
 
   return (
     <div className={treeListClass}>

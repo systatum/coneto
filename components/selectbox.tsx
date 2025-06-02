@@ -35,7 +35,7 @@ interface SelectboxProps {
   iconOpened?: RemixiconComponentType;
   iconClosed?: RemixiconComponentType;
   type?: "calendar" | "default";
-  drawer?: (props: {
+  children?: (props: {
     options: string[];
     highlightedIndex: number;
     setHighlightedIndex: (index: number) => void;
@@ -57,7 +57,7 @@ export function Selectbox({
   inputValue,
   options = [],
   placeholder,
-  drawer,
+  children,
   type = "default",
   iconOpened: IconOpened = RiArrowDownSLine,
   iconClosed: IconClosed = RiArrowUpSLine,
@@ -214,7 +214,7 @@ export function Selectbox({
       </div>
 
       {isOpen &&
-        drawer?.({
+        children?.({
           isOpen,
           options: FILTERED_OPTIONS,
           highlightedIndex,
