@@ -34,7 +34,7 @@ interface DateboxProps {
 type FormatProps = "mm/dd/yyyy" | "yyyy-mm-dd" | "dd/mm/yyyy";
 type DateModeProps = "day" | "month" | "year";
 
-export function DateboxDraw({
+export default function Datebox({
   highlightedIndex,
   setHighlightedIndex,
   setInputValue,
