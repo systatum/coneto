@@ -62,8 +62,6 @@ export default function FileDropBox({
   );
   const [errorMessage, setErrorMessage] = useState<string[]>([]);
 
-  console.log("error message tested", errorMessage);
-
   const handleBrowseClick = () => {
     fileInputRef.current?.click();
   };
