@@ -1,6 +1,18 @@
 import { CSSProperties, HTMLAttributes, MutableRefObject, Ref } from "react";
+import { Selectbox } from "./selectbox";
 
+interface ComboboxProps {
+  options: string[];
+  type?: "default" | "calendarItems";
+  classNameContainer?: string;
+  inputValue: string;
+  setInputValue: (data: string) => void;
+  clearable?: boolean;
+  placeholder?: string;
+  empty?: string;
+}
 interface ComboboxListProps {
+  empty?: string;
   options: string[];
   highlightedIndex: number;
   setHighlightedIndex: (index: number) => void;
@@ -18,6 +30,29 @@ interface ComboboxListProps {
 }
 
 export default function Combobox({
+  options,
+  inputValue,
+  setInputValue,
+  clearable = false,
+  placeholder,
+  classNameContainer,
+  empty = "Not available.",
+}: ComboboxProps) {
+  return (
+    <Selectbox
+      classNameContainer={classNameContainer}
+      options={options}
+      inputValue={inputValue}
+      setInputValue={setInputValue}
+      placeholder={placeholder}
+      clearable={clearable}
+    >
+      {(props) => <ComboboxDrawer empty={empty} {...props} />}
+    </Selectbox>
+  );
+}
+
+function ComboboxDrawer({
   floatingStyles,
   getFloatingProps,
   highlightedIndex,
@@ -27,6 +62,7 @@ export default function Combobox({
   setHighlightedIndex,
   setInputValue,
   setIsOpen,
+  empty = "Not Available.",
 }: ComboboxListProps) {
   return (
     <ul
@@ -66,9 +102,7 @@ export default function Combobox({
           </li>
         ))
       ) : (
-        <li className="py-2 text-center text-gray-500">
-          No content available.
-        </li>
+        <li className="py-2 text-center text-gray-500">{empty}</li>
       )}
     </ul>
   );

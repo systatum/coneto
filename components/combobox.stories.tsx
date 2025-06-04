@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect, userEvent, within } from "@storybook/test";
 import { useState } from "react";
-import { Selectbox } from "./selectbox";
 import Combobox from "./combobox";
 
 const meta: Meta<typeof Combobox> = {
@@ -32,14 +31,11 @@ export const Default: Story = {
     ];
     return (
       <div className="w-64">
-        <Selectbox
-          options={FRUIT_OPTIONS}
+        <Combobox
           inputValue={value}
+          options={FRUIT_OPTIONS}
           setInputValue={setValue}
-          placeholder="Select a fruit..."
-        >
-          {(props) => <Combobox {...props} />}
-        </Selectbox>
+        />
       </div>
     );
   },
