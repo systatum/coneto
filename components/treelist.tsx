@@ -10,7 +10,6 @@ interface TreeListProps<T extends TreeListItemsProps> {
   children?: ReactNode;
   empty?: ReactNode;
   searchTerm?: string;
-  value?: { label?: string };
 }
 
 interface TreeListItemsProps {
@@ -27,7 +26,6 @@ function TreeList<T extends TreeListItemsProps>({
   children,
   empty,
   searchTerm = "",
-  value,
 }: TreeListProps<T>) {
   const [isSelected, setIsSelected] = useState("");
 

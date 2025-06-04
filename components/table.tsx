@@ -163,7 +163,7 @@ function Table({
         <div className={classTableRow}>{rowChildren}</div>
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-white/60 z-30">
-            <LoadingSpinner size={24} />
+            <LoadingSpinner iconSize={24} />
           </div>
         )}
       </div>
