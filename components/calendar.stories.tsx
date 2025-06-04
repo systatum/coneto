@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { Calendar } from "./calendar";
 import { useState } from "react";
+import { Calendar } from "./calendar";
 
 const meta: Meta<typeof Calendar> = {
   title: "Input Elements/Calendar",
