@@ -22,15 +22,13 @@ function CapsuleTab({ tabs, className, activeTab = 1 }: CapsuleTabProps) {
   const activeContent = tabs.filter((data) => data.id === selected);
 
   const capsuleTabClass = cn(
-    "flex flex-col gap-1 border w-full border-gray-300 rounded-xs",
+    "flex flex-col gap-1 border w-full border-gray-300 rounded-xs ",
     className
   );
 
   return (
     <div className={capsuleTabClass}>
-      <div className="flex flex-row gap-2">
-        <Capsule fields={tabs} setView={setSelected} view={selected} />
-      </div>
+      <Capsule fields={tabs} setView={setSelected} view={selected} full />
 
       <div className="flex flex-col w-full">
         {activeContent.map((data, index) => (
