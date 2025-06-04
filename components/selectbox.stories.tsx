@@ -25,15 +25,65 @@ export const SelectboxDefault: Story = {
           inputValue={value}
           setInputValue={setValue}
           placeholder="click this place holder"
-          type="calendar"
         >
           {(props) => (
-            <p
+            <ul
+              {...(props.getFloatingProps?.() ?? {})}
+              ref={props.refs.setFloating ?? null}
+              style={{
+                ...(props.floatingStyles ?? {}),
+              }}
+              tabIndex={-1}
+              role="listbox"
+              aria-label="Calendar"
               {...props}
-              className="text-center border border-gray-300 mt-1 p-10"
+              className="text-center border border-gray-300 cursor-pointer hover:bg-blue-100 mt-1 p-10"
+              onClick={() => {
+                props.setInputValue("Selectbox content default.");
+                props.setIsOpen(false);
+              }}
             >
-              test, this is page for selectbox
-            </p>
+              Selectbox content default.
+            </ul>
+          )}
+        </Selectbox>
+      </div>
+    );
+  },
+};
+
+export const SelectboxWithClearable: Story = {
+  render: () => {
+    const [value, setValue] = useState("");
+    console.log(value);
+
+    return (
+      <div className="w-64">
+        <Selectbox
+          inputValue={value}
+          setInputValue={setValue}
+          placeholder="click this place holder"
+          clearable
+        >
+          {(props) => (
+            <ul
+              {...(props.getFloatingProps?.() ?? {})}
+              ref={props.refs.setFloating ?? null}
+              style={{
+                ...(props.floatingStyles ?? {}),
+              }}
+              tabIndex={-1}
+              role="listbox"
+              aria-label="Calendar"
+              {...props}
+              className="text-center border border-gray-300 cursor-pointer hover:bg-blue-100 mt-1 p-10"
+              onClick={() => {
+                props.setInputValue("Selectbox content with clearable.");
+                props.setIsOpen(false);
+              }}
+            >
+              Selectbox content with clearable.
+            </ul>
           )}
         </Selectbox>
       </div>

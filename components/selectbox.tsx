@@ -26,15 +26,18 @@ import {
   RiArrowUpSLine,
   RiCloseLine,
 } from "@remixicon/react";
+import { cn } from "./../lib/utils";
 
 interface SelectboxProps {
   options?: string[];
-  inputValue: string;
-  setInputValue: (data: string) => void;
+  inputValue?: string;
+  setInputValue?: (data: string) => void;
   placeholder?: string;
   iconOpened?: RemixiconComponentType;
   iconClosed?: RemixiconComponentType;
   type?: "calendar" | "default";
+  clearable?: boolean;
+  classNameContainer?: string;
   children?: (props: {
     options: string[];
     highlightedIndex: number;
@@ -61,6 +64,8 @@ export function Selectbox({
   type = "default",
   iconOpened: IconOpened = RiArrowDownSLine,
   iconClosed: IconClosed = RiArrowUpSLine,
+  clearable = false,
+  classNameContainer,
 }: SelectboxProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(0);
@@ -134,6 +139,11 @@ export function Selectbox({
     }
   }, [highlightedIndex, isOpen]);
 
+  const selectBoxClass = cn(
+    "relative w-full text-xs ring-0",
+    classNameContainer
+  );
+
   return (
     <div
       role="combobox"
@@ -142,7 +152,7 @@ export function Selectbox({
       aria-owns="combo-list"
       aria-controls="combo-list"
       aria-activedescendant={`option-${highlightedIndex}`}
-      className="relative w-full text-xs ring-0"
+      className={selectBoxClass}
     >
       <input
         {...getReferenceProps()}
@@ -166,21 +176,15 @@ export function Selectbox({
         className="w-full rounded-xs border border-gray-100 px-3 py-2 outline-none focus:border-[#61A9F9] focus:ring-0 focus:ring-[#61A9F9]"
       />
 
-      {inputValue !== "" && (
+      {clearable && inputValue !== "" && (
         <>
           <RiCloseLine
             onClick={() => {
               setInputValue("");
-              setIsOpen((prev) => {
-                const newState = !prev;
-                if (newState && inputRef.current) {
-                  inputRef.current.focus();
-                }
-                return newState;
-              });
+              setIsOpen(false);
             }}
             size={12}
-            className="absolute top-[11px] right-9 cursor-pointer text-gray-400"
+            className="absolute top-[11px] z-20 right-9 cursor-pointer text-gray-400"
           />
           <span className="absolute top-0.5 right-7 font-extralight text-lg text-gray-400">
             |
