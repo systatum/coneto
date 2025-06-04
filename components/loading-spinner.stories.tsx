@@ -17,7 +17,18 @@ type Story = StoryObj<typeof LoadingSpinner>;
 
 export const Default: Story = {
   render: () => {
-    return <LoadingSpinner size={30} />;
+    return <LoadingSpinner iconSize={30} />;
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const spinner = canvas.getByTestId("circle");
+    expect(spinner).toBeInTheDocument();
+  },
+};
+
+export const WithLabel: Story = {
+  render: () => {
+    return <LoadingSpinner label="Loading..." iconSize={30} textSize={20} />;
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
