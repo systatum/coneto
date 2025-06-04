@@ -279,7 +279,7 @@ function CalendarDrawer({
           className="font-semibold cursor-pointer w-full"
         >
           {!isBoxOpen.open ? (
-            <div className="rounded-xs hover:bg-gray-200 w-fit px-1">
+            <div className="rounded-xs hover:bg-gray-200 w-fit px-2 py-2">
               {currentDate
                 .toLocaleString("default", {
                   month: "short",
@@ -325,10 +325,10 @@ function CalendarDrawer({
           <div className="flex flex-row ml-2 w-full">
             <RiArrowLeftSLine
               onClick={prevMonth}
-              size={20}
+              size={24}
               aria-label="Previous Month"
               className={cn(
-                "rounded-xs  focus:outline-none focus:ring-2 focus:ring-[#61A9F9]",
+                "rounded-xs focus:outline-none focus:ring-2 focus:ring-[#61A9F9]",
                 isLimitedPrev
                   ? "text-gray-200"
                   : "cursor-pointer hover:bg-gray-200"
@@ -337,7 +337,7 @@ function CalendarDrawer({
 
             <RiArrowRightSLine
               onClick={nextMonth}
-              size={20}
+              size={24}
               aria-label="Next Month"
               className={cn(
                 "rounded-xs focus:outline-none focus:ring-2 focus:ring-[#61A9F9]",
@@ -352,7 +352,7 @@ function CalendarDrawer({
         <Button
           onClick={moveToToday}
           variant="outline"
-          className="border-gray-100 w-full shadow-none max-h-[34px] max-w-[60px] text-xs px-2"
+          className="border-gray-100 w-full hover:bg-gray-200 shadow-none max-h-[34px] max-w-[60px] text-xs px-2"
         >
           Today
         </Button>
@@ -417,7 +417,7 @@ function CalendarDrawer({
                 <span
                   className={cn(
                     "w-6 h-6 rounded-full relative border border-transparent",
-                    floatingStyles ? "p-1" : "p-[2px]",
+                    floatingStyles ? "p-[3px]" : "p-[2px]",
                     disableWeekend && isWeekend
                       ? "text-gray-300"
                       : isWeekend && "text-red-300",
@@ -432,8 +432,7 @@ function CalendarDrawer({
                       ? "bg-[#61A9F9] text-white"
                       : isToday && !isCurrentDate
                         ? "text-[#61A9F9]"
-                        : "",
-                    isToday && isHighlighted && "text-[#61A9F9]"
+                        : isToday && isHighlighted && "text-white"
                   )}
                 >
                   {date.getDate()}
