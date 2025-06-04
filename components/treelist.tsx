@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { cn } from "./../lib/utils";
 
 interface TreeListProps<T extends TreeListItemsProps> {
@@ -10,12 +10,15 @@ interface TreeListProps<T extends TreeListItemsProps> {
   children?: ReactNode;
   empty?: ReactNode;
   searchTerm?: string;
+  value?: { label?: string };
 }
 
 interface TreeListItemsProps {
   id: number;
   label: string;
   onClick: (item?: TreeListItemsProps) => void;
+  setIsSelected?: (item?: string) => void;
+  isSelected?: string;
 }
 
 function TreeList<T extends TreeListItemsProps>({
@@ -23,8 +26,11 @@ function TreeList<T extends TreeListItemsProps>({
   classNameContainer,
   children,
   empty,
-  searchTerm,
+  searchTerm = "",
+  value,
 }: TreeListProps<T>) {
+  const [isSelected, setIsSelected] = useState("");
+
   const treeListClass = cn("flex flex-col gap-4", classNameContainer);
 
   return (
@@ -32,10 +38,14 @@ function TreeList<T extends TreeListItemsProps>({
       {content.length > 0 ? (
         content.map((data, index) => (
           <div key={index} className="flex flex-col gap-1">
-            <h2 className="font-medium">{data.label}</h2>
-            <div className="flex flex-col gap-1">
+            <h2 className={"font-medium px-4 py-[2px]"}>{data.label}</h2>
+            <div className="flex flex-col">
               {data.items.map((val) => (
-                <TreeListItem item={val} key={val.id} searchTerm={searchTerm} />
+                <TreeListItem
+                  item={{ ...val, isSelected, setIsSelected }}
+                  key={val.id}
+                  searchTerm={searchTerm}
+                />
               ))}
             </div>
           </div>
@@ -47,6 +57,7 @@ function TreeList<T extends TreeListItemsProps>({
     </div>
   );
 }
+
 function TreeListItem<T extends TreeListItemsProps>({
   item,
   searchTerm = "",
@@ -57,15 +68,28 @@ function TreeListItem<T extends TreeListItemsProps>({
   const regex = new RegExp(`(${searchTerm})`, "i");
   const parts = item.label.split(regex);
 
+  const treeListItemClass = cn(
+    "cursor-pointer border-l-3 border-transparent hover:bg-gray-100 py-1 px-4",
+    item.isSelected === item.label
+      ? "bg-gray-100 border-blue-500"
+      : "border-transparent"
+  );
+
   return (
-    <div className="cursor-pointer" onClick={() => item.onClick(item)}>
+    <div
+      className={treeListItemClass}
+      onClick={() => {
+        item.onClick(item);
+        item.setIsSelected(item.label);
+      }}
+    >
       {parts.map((part, index) =>
         part.toLowerCase() === searchTerm?.toLowerCase() ? (
           <span key={index} className="bg-gray-200 font-semibold rounded-xs">
             {part}
           </span>
         ) : (
-          <span>{part}</span>
+          <span key={index}>{part}</span>
         )
       )}
     </div>
