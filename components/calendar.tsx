@@ -69,10 +69,10 @@ function CalendarDrawer({
   const STATE_DATE = inputValue !== "" ? new Date(inputValue) : new Date();
   const [currentDate, setCurrentDate] = useState(STATE_DATE);
 
-  const monthCurrent = currentDate.toLocaleString("default", {
+  const monthCurrent = STATE_DATE.toLocaleString("default", {
     month: "short",
   });
-  const yearCurrent = currentDate.toLocaleString("default", {
+  const yearCurrent = STATE_DATE.toLocaleString("default", {
     year: "numeric",
   });
 
@@ -178,12 +178,26 @@ function CalendarDrawer({
     if (isLimitedPrev) return;
     setCurrentDate(prevClickDate);
     setHighlightedIndexChange(0);
+    setIsBoxOpen((prev) => ({
+      ...prev,
+      month: prevClickDate
+        .toLocaleString("default", { month: "short" })
+        .toUpperCase(),
+      year: prevClickDate.getFullYear().toString(),
+    }));
   };
 
   const nextMonth = () => {
     if (isLimitedNext) return;
     setCurrentDate(nextClickDate);
     setHighlightedIndexChange(0);
+    setIsBoxOpen((prev) => ({
+      ...prev,
+      month: nextClickDate
+        .toLocaleString("default", { month: "short" })
+        .toUpperCase(),
+      year: nextClickDate.getFullYear().toString(),
+    }));
   };
 
   const handleSelect = (date: Date) => {
@@ -214,13 +228,25 @@ function CalendarDrawer({
       if (!isNaN(newDate.getTime())) {
         let validDate = newDate;
 
-        if (newDate < minDate) {
+        if (validDate < minDate) {
           validDate = minDate;
-        } else if (newDate > maxDate) {
+        } else if (validDate > maxDate) {
           validDate = maxDate;
         }
 
+        if (disableWeekend) {
+          const day = validDate.getDay();
+          if (day === 6) {
+            validDate.setDate(validDate.getDate() - 1);
+          } else if (day === 0) {
+            validDate.setDate(validDate.getDate() + 1);
+          }
+        }
+
         setCurrentDate(validDate);
+        if (inputValue.length > 9) {
+          setInputValue(formatDate(validDate, format));
+        }
       }
     }
   }, [inputValue, format]);
@@ -381,28 +407,33 @@ function CalendarDrawer({
                 }}
                 onMouseEnter={() => setHighlightedIndexChange(idx)}
                 tabIndex={isHighlighted ? 0 : -1}
-                className={`cursor-pointer flex self-center justify-center text-center`}
+                className={cn(
+                  `flex self-center justify-center text-center`,
+                  isHighlighted &&
+                    (!disableWeekend || !isWeekend) &&
+                    "cursor-pointer"
+                )}
               >
                 <span
                   className={cn(
-                    "w-6 h-6 rounded-full relative",
+                    "w-6 h-6 rounded-full relative border border-transparent",
                     floatingStyles ? "p-1" : "p-[2px]",
                     disableWeekend && isWeekend
                       ? "text-gray-300"
                       : isWeekend && "text-red-300",
                     isHighlighted
-                      ? "bg-[#61A9F9] text-white"
+                      ? "border-[#61A9F9] border text-[#61A9F9]"
                       : "hover:bg-blue-200 focus:outline-none focus:bg-blue-200",
                     isHighlighted &&
                       disableWeekend &&
                       isWeekend &&
-                      "bg-white text-gray-300 cursor-default",
+                      "bg-white text-gray-300 border-transparent select-none cursor-default",
                     isCurrentDate
                       ? "bg-[#61A9F9] text-white"
                       : isToday && !isCurrentDate
                         ? "text-[#61A9F9]"
                         : "",
-                    isToday && isHighlighted && "text-white"
+                    isToday && isHighlighted && "text-[#61A9F9]"
                   )}
                 >
                   {date.getDate()}
