@@ -1,7 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { Selectbox } from "./selectbox";
 import { useState } from "react";
-import { RiCalendar2Line } from "@remixicon/react";
 import Datebox from "./datebox";
 
 const meta: Meta<typeof Datebox> = {
@@ -39,25 +37,14 @@ export const DateboxDefault: Story = {
     const [value, setValue] = useState("");
 
     return (
-      <div className="w-64">
-        <Selectbox
+      <div className="w-[295px]">
+        <Datebox
+          options={DAYS_NAME_ITEMS}
           inputValue={value}
           setInputValue={setValue}
-          placeholder="mm/dd/yyyy"
-          iconClosed={RiCalendar2Line}
-          iconOpened={RiCalendar2Line}
-          type="calendar"
-        >
-          {(props) => (
-            <Datebox
-              dayNames={DAYS_NAME_ITEMS}
-              monthNames={MONTHS_NAME_ITEMS}
-              disableWeekend={true}
-              format="mm/dd/yyyy"
-              {...props}
-            />
-          )}
-        </Selectbox>
+          dayNames={DAYS_NAME_ITEMS}
+          monthNames={MONTHS_NAME_ITEMS}
+        />
       </div>
     );
   },
