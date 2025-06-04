@@ -35,6 +35,7 @@ export const Default: Story = {
           inputValue={value}
           options={FRUIT_OPTIONS}
           setInputValue={setValue}
+          placeholder="Select a fruit..."
         />
       </div>
     );
