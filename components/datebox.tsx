@@ -8,6 +8,7 @@ interface DateboxProps {
   setInputValue: (data: string) => void;
   dayNames: string[];
   monthNames: string[];
+  disableWeekend?: boolean;
 }
 
 export default function Datebox({
@@ -16,6 +17,7 @@ export default function Datebox({
   monthNames,
   setInputValue,
   options,
+  disableWeekend,
 }: DateboxProps) {
   return (
     <Selectbox
@@ -32,8 +34,8 @@ export default function Datebox({
         <Calendar
           dayNames={dayNames}
           monthNames={monthNames}
-          disableWeekend={true}
           format="mm/dd/yyyy"
+          disableWeekend={disableWeekend}
           {...props}
         />
       )}
