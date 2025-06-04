@@ -61,9 +61,9 @@ export default function FileInputBox({
   };
 
   const containerInputBoxClass = cn(
-    "p-3 border border-dotted border-gray-400 flex flex-row relative items-center rounded-xs justify-between text-gray-500",
+    "p-3 border border-dotted-customize flex flex-row relative items-center rounded-xs justify-between text-gray-500",
     selectedFile === "" &&
-      "cursor-pointer hover:border-blue-400 hover:text-[#61A9F9]",
+      "border-dotted-customize-blue cursor-pointer hover:text-[#61A9F9]",
     isDragging ? "bg-blue-50 border-blue-400" : "",
     classNameContainer
   );
