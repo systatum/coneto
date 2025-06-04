@@ -169,7 +169,7 @@ export default function FileDropBox({
         {currentIndex !== null && progress === "loading" ? (
           <div className="w-full text-sm rounded-xs p-4 text-black relative border border-gray-100">
             <div className="flex flex-row">
-              <LoadingSpinner size={20} />
+              <LoadingSpinner iconSize={20} />
               <span>{progressComponentLabel}</span>
             </div>
             <div className="h-[4px] left-0 bottom-0 absolute w-full bg-gray-300">
