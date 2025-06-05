@@ -1,3 +1,5 @@
+import { cn } from "./../lib/utils";
+
 interface LoadingSpinnerProps {
   iconSize?: number;
   textSize?: number;
@@ -13,7 +15,7 @@ export default function LoadingSpinner({
     <div className="flex flex-row items-center gap-2">
       <svg
         data-testid="circle"
-        className="mr-2 animate-spin text-blue-500"
+        className={cn("animate-spin text-blue-500", label && "mr-2")}
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
