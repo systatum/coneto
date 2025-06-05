@@ -1,10 +1,4 @@
-import {
-  CSSProperties,
-  HTMLAttributes,
-  MutableRefObject,
-  Ref,
-  useEffect,
-} from "react";
+import { Ref, useEffect } from "react";
 import { DrawerProps, OptionsProps, Selectbox } from "./selectbox";
 import { cn } from "./../lib/utils";
 
