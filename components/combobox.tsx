@@ -1,4 +1,10 @@
-import { CSSProperties, HTMLAttributes, MutableRefObject, Ref } from "react";
+import {
+  CSSProperties,
+  HTMLAttributes,
+  MutableRefObject,
+  Ref,
+  useEffect,
+} from "react";
 import { OptionsProps, Selectbox } from "./selectbox";
 import { cn } from "./../lib/utils";
 
@@ -9,14 +15,13 @@ interface ComboboxProps {
   setInputValue: (data: OptionsProps) => void;
   clearable?: boolean;
   placeholder?: string;
-  empty?: string;
-  selectedValue?: string | number;
+  emptySlate?: string;
 }
 interface ComboboxDrawerProps extends ComboboxProps {
-  empty?: string;
+  emptySlate?: string;
   highlightedIndex: number;
   setHighlightedIndex: (index: number) => void;
-  setIsOpen: (open: boolean) => void;
+  setIsOpen?: (open: boolean) => void;
   getFloatingProps: (
     userProps?: HTMLAttributes<HTMLUListElement>
   ) => HTMLAttributes<HTMLUListElement>;
@@ -35,8 +40,7 @@ export default function Combobox({
   clearable = false,
   placeholder,
   containerClassName,
-  selectedValue,
-  empty = "Not available.",
+  emptySlate = "Not available.",
 }: ComboboxProps) {
   return (
     <Selectbox
@@ -47,13 +51,7 @@ export default function Combobox({
       placeholder={placeholder}
       clearable={clearable}
     >
-      {(props) => (
-        <ComboboxDrawer
-          selectedValue={selectedValue}
-          empty={empty}
-          {...props}
-        />
-      )}
+      {(props) => <ComboboxDrawer emptySlate={emptySlate} {...props} />}
     </Selectbox>
   );
 }
@@ -68,9 +66,24 @@ function ComboboxDrawer({
   setHighlightedIndex,
   setInputValue,
   setIsOpen,
-  selectedValue,
-  empty = "Not Available.",
+  inputValue,
+  emptySlate = "Not Available.",
 }: ComboboxDrawerProps) {
+  useEffect(() => {
+    const selectedIndex = options.findIndex(
+      (option) => option.value === inputValue.value
+    );
+
+    if (selectedIndex !== -1) {
+      requestAnimationFrame(() => {
+        const selectedEl = listRef.current[selectedIndex];
+        if (selectedEl) {
+          selectedEl.scrollIntoView({ block: "center" });
+        }
+      });
+    }
+  }, [inputValue.value, options, listRef]);
+
   return (
     <ul
       {...getFloatingProps()}
@@ -91,7 +104,10 @@ function ComboboxDrawer({
               key={option.value}
               id={`option-${index}`}
               role="option"
-              aria-selected={highlightedIndex === index}
+              aria-selected={
+                option.value.toString() === inputValue.value.toString()
+              }
+              data-highlighted={highlightedIndex === index}
               onMouseDown={() => {
                 setInputValue(option);
                 setIsOpen(false);
@@ -102,7 +118,7 @@ function ComboboxDrawer({
               className={cn(
                 `cursor-pointer px-3 py-2`,
                 highlightedIndex === index ? "bg-blue-100" : "",
-                selectedValue === option.value
+                inputValue.value === option.value
                   ? "bg-[#61A9F9] font-semibold text-white"
                   : ""
               )}
@@ -115,7 +131,7 @@ function ComboboxDrawer({
           );
         })
       ) : (
-        <li className="py-2 text-center text-gray-500">{empty}</li>
+        <li className="py-2 text-center text-gray-500">{emptySlate}</li>
       )}
     </ul>
   );

@@ -29,7 +29,7 @@ export default function Datebox(props: DateboxProps) {
       type="calendar"
       clearable
     >
-      {(selectBoxProps) => <CalendarDrawer {...selectBoxProps} />}
+      {(selectBoxProps) => <CalendarDrawer {...props} {...selectBoxProps} />}
     </Selectbox>
   );
 }

@@ -33,6 +33,20 @@ export interface OptionsProps {
   value?: string | number;
 }
 
+export interface FloatingUIProps {
+  highlightedIndex?: number;
+  setHighlightedIndex?: (index: number) => void;
+  setIsOpen?: (open: boolean) => void;
+  isOpen?: boolean;
+  getFloatingProps?: (
+    userProps?: HTMLAttributes<HTMLUListElement>
+  ) => HTMLAttributes<HTMLUListElement>;
+  refs?: { setFloating: Ref<HTMLUListElement> };
+  floatingStyles?: CSSProperties;
+  listRef?: MutableRefObject<(HTMLLIElement | null)[]>;
+  className?: string;
+}
+
 interface SelectboxProps {
   options?: OptionsProps[];
   inputValue?: OptionsProps;
@@ -43,21 +57,13 @@ interface SelectboxProps {
   type?: "calendar" | "default";
   clearable?: boolean;
   containerClassName?: string;
-  children?: (props: {
-    options: OptionsProps[];
-    highlightedIndex: number;
-    setHighlightedIndex: (index: number) => void;
-    setInputValue: (value: OptionsProps) => void;
-    inputValue: OptionsProps;
-    setIsOpen: (open: boolean) => void;
-    getFloatingProps: (
-      userProps?: HTMLAttributes<HTMLUListElement>
-    ) => HTMLAttributes<HTMLUListElement>;
-    refs?: { setFloating: Ref<HTMLUListElement> };
-    floatingStyles: CSSProperties;
-    listRef: MutableRefObject<(HTMLLIElement | null)[]>;
-    isOpen: boolean;
-  }) => ReactNode;
+  children?: (
+    props: FloatingUIProps & {
+      options: OptionsProps[];
+      inputValue: OptionsProps;
+      setInputValue: (value: OptionsProps) => void;
+    }
+  ) => ReactNode;
 }
 
 export function Selectbox({
