@@ -9,6 +9,27 @@ const meta: Meta<typeof LoadingSpinner> = {
   },
   component: LoadingSpinner,
   tags: ["autodocs"],
+  argTypes: {
+    iconSize: {
+      control: { type: "number" },
+      defaultValue: 16,
+      description: "Size of the loading spinner icon (in pixels)",
+    },
+    textSize: {
+      control: { type: "number" },
+      defaultValue: 16,
+      description: "Font size of the label text (in pixels)",
+    },
+    label: {
+      control: { type: "text" },
+      description: "Optional label displayed next to the spinner",
+    },
+    gap: {
+      control: { type: "number" },
+      description:
+        "Optional label displayed gap on between text and spinner on pixel",
+    },
+  },
 };
 
 export default meta;
@@ -16,8 +37,11 @@ export default meta;
 type Story = StoryObj<typeof LoadingSpinner>;
 
 export const Default: Story = {
-  render: () => {
-    return <LoadingSpinner iconSize={30} />;
+  args: {
+    iconSize: 30,
+  },
+  render: (args) => {
+    return <LoadingSpinner {...args} />;
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -27,8 +51,14 @@ export const Default: Story = {
 };
 
 export const WithLabel: Story = {
-  render: () => {
-    return <LoadingSpinner label="Loading..." iconSize={30} textSize={20} />;
+  args: {
+    label: "Loading...",
+    iconSize: 30,
+    textSize: 20,
+    gap: 4,
+  },
+  render: (args) => {
+    return <LoadingSpinner {...args} />;
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

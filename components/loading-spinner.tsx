@@ -4,15 +4,22 @@ interface LoadingSpinnerProps {
   iconSize?: number;
   textSize?: number;
   label?: string;
+  gap?: number;
 }
 
 export default function LoadingSpinner({
   iconSize = 16,
   textSize = 16,
   label,
+  gap = 2,
 }: LoadingSpinnerProps) {
   return (
-    <div className="flex flex-row items-center gap-2">
+    <div
+      className="flex flex-row items-center"
+      style={{
+        gap: `${gap}px`,
+      }}
+    >
       <svg
         data-testid="circle"
         className={cn("animate-spin text-blue-500", label && "mr-2")}
