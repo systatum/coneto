@@ -1,9 +1,9 @@
-import { Meta, StoryObj } from "@storybook/react/";
+import { Meta, StoryObj } from "@storybook/react";
 import { useRef } from "react";
 import FileDropBox, {
-  HandleFileDroppedProps,
-  HandleOnCompleteProps,
-} from "./filedropbox";
+  OnCompleteFunctionProps,
+  OnFileDroppedFunctionProps,
+} from "./file-drop-box";
 
 const meta: Meta<typeof FileDropBox> = {
   title: "Input Elements/FileDropbox",
@@ -17,12 +17,12 @@ type Story = StoryObj<typeof FileDropBox>;
 
 export const Default: Story = {
   render: () => {
-    const handleFileDropped = async ({
+    const onFileDropped = async ({
       error,
       files,
       setProgressLabel,
       succeed,
-    }: HandleFileDroppedProps) => {
+    }: OnFileDroppedFunctionProps) => {
       const file = files[0];
       setProgressLabel(`Uploading ${file.name}`);
 
@@ -45,11 +45,11 @@ export const Default: Story = {
       });
     };
 
-    const handleOnComplete = ({
+    const onComplete = ({
       failedFiles,
       setProgressLabel,
       succeedFiles,
-    }: HandleOnCompleteProps) => {
+    }: OnCompleteFunctionProps) => {
       console.log(succeedFiles, "This is succeedFiles");
       console.log(failedFiles, "This is failedFiles");
       setProgressLabel(
@@ -58,10 +58,7 @@ export const Default: Story = {
     };
 
     return (
-      <FileDropBox
-        handleFileDropped={handleFileDropped}
-        handleOnComplete={handleOnComplete}
-      />
+      <FileDropBox onFileDropped={onFileDropped} onComplete={onComplete} />
     );
   },
 };
@@ -70,12 +67,12 @@ export const Error: Story = {
   render: () => {
     const allFilesRef = useRef<File[]>([]);
 
-    const handleFileDropped = async ({
+    const onFileDropped = async ({
       error,
       files,
       setProgressLabel,
       succeed,
-    }: HandleFileDroppedProps) => {
+    }: OnFileDroppedFunctionProps) => {
       const file = files[0];
 
       if (allFilesRef.current.length === 0) {
@@ -107,11 +104,11 @@ export const Error: Story = {
       });
     };
 
-    const handleOnComplete = ({
+    const onComplete = ({
       failedFiles,
       setProgressLabel,
       succeedFiles,
-    }: HandleOnCompleteProps) => {
+    }: OnCompleteFunctionProps) => {
       console.log(succeedFiles, "This is succeedFiles");
       console.log(failedFiles, "This is failedFiles");
 
@@ -123,10 +120,7 @@ export const Error: Story = {
     };
 
     return (
-      <FileDropBox
-        handleFileDropped={handleFileDropped}
-        handleOnComplete={handleOnComplete}
-      />
+      <FileDropBox onComplete={onComplete} onFileDropped={onFileDropped} />
     );
   },
 };

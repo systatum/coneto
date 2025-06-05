@@ -1,5 +1,5 @@
 import { RiFile2Line, RiFileUploadLine, RiImageLine } from "@remixicon/react";
-import { cn } from "./../lib/utils";
+import { cn } from "../lib/utils";
 import { ChangeEvent, DragEvent, useRef, useState } from "react";
 import LoadingSpinner from "./loading-spinner";
 
@@ -21,8 +21,8 @@ interface FileDropBoxProps {
   containerClassName?: string;
   placeholder?: string;
   accept?: string;
-  OnFileDropped?: (props: OnFileDroppedFunctionProps) => void;
-  OnComplete?: (props: OnCompleteFunctionProps) => void;
+  onFileDropped?: (props: OnFileDroppedFunctionProps) => void;
+  onComplete?: (props: OnCompleteFunctionProps) => void;
   setProgressPercentage?: (props: number) => void;
   progressPercentage?: number;
 }
@@ -33,8 +33,8 @@ export default function FileDropBox({
   containerClassName,
   placeholder = "Drag and Drop Your File",
   accept = "*",
-  OnFileDropped,
-  OnComplete,
+  onFileDropped,
+  onComplete,
 }: FileDropBoxProps) {
   const FILE_ICON = [
     {
@@ -96,7 +96,7 @@ export default function FileDropBox({
   };
 
   const handleUploadFile = async (files: File[]) => {
-    if (!OnFileDropped) return;
+    if (!onFileDropped) return;
 
     await setProgress("loading");
 
@@ -130,7 +130,7 @@ export default function FileDropBox({
 
     for (let i = 0; i < files.length; i++) {
       setCurrentIndex(i);
-      await OnFileDropped({
+      await onFileDropped({
         files: [files[i]],
         succeed,
         error,
@@ -139,7 +139,7 @@ export default function FileDropBox({
       });
     }
 
-    await OnComplete?.({
+    await onComplete?.({
       succeedFiles,
       failedFiles,
       setProgressLabel,

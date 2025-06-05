@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react/";
-import FileInputBox from "./fileinputbox";
 import { useState } from "react";
+import FileInputBox from "./file-input-box";
 
 const meta: Meta<typeof FileInputBox> = {
   title: "Input Elements/FileInputBox",
