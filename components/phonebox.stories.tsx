@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import Phonebox, { PhoneboxProps } from "./phonebox";
+import Phonebox from "./phonebox";
 import { CountryCodeProps } from "./phonebox";
 import { expect, userEvent, within } from "@storybook/test";
 import { useArgs } from "@storybook/preview-api";
@@ -27,11 +27,6 @@ const meta: Meta = {
 export default meta;
 
 type Story = StoryObj<typeof Phonebox>;
-
-type OnChangeHandler = (
-  field: "phone_number" | "country_code",
-  value: string | CountryCodeProps
-) => void;
 
 export const DefaultPhonebox: Story = {
   args: {

@@ -46,6 +46,7 @@ export default function Checkbox({
         className="flex items-center gap-[6px] text-xs relative"
       >
         <input
+          name={name}
           ref={inputRef}
           type="checkbox"
           id={inputId}

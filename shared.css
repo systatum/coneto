@@ -11,3 +11,91 @@
   background-color: #d1d5db;
   border-radius: 4px;
 }
+
+.border-dotted-customize {
+  border: 1px dotted transparent;
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      #9ca3af 0,
+      #9ca3af 8px,
+      transparent 8px,
+      transparent 12px
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      #9ca3af 0,
+      #9ca3af 8px,
+      transparent 8px,
+      transparent 12px
+    ),
+    repeating-linear-gradient(
+      to left,
+      #9ca3af 0,
+      #9ca3af 8px,
+      transparent 8px,
+      transparent 12px
+    ),
+    repeating-linear-gradient(
+      to top,
+      #9ca3af 0,
+      #9ca3af 8px,
+      transparent 8px,
+      transparent 12px
+    );
+  background-size:
+    100% 1px,
+    1px 100%,
+    100% 1px,
+    1px 100%;
+  background-position:
+    top left,
+    top right,
+    bottom right,
+    bottom left;
+  background-repeat: no-repeat;
+}
+
+.border-dotted-customize-blue {
+  border: 1px dotted transparent;
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      #60a5fa 0,
+      #60a5fa 8px,
+      transparent 8px,
+      transparent 12px
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      #60a5fa 0,
+      #60a5fa 8px,
+      transparent 8px,
+      transparent 12px
+    ),
+    repeating-linear-gradient(
+      to left,
+      #60a5fa 0,
+      #60a5fa 8px,
+      transparent 8px,
+      transparent 12px
+    ),
+    repeating-linear-gradient(
+      to top,
+      #60a5fa 0,
+      #60a5fa 8px,
+      transparent 8px,
+      transparent 12px
+    );
+  background-size:
+    100% 1px,
+    1px 100%,
+    100% 1px,
+    1px 100%;
+  background-position:
+    top left,
+    top right,
+    bottom right,
+    bottom left;
+  background-repeat: no-repeat;
+}

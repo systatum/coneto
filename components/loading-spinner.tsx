@@ -1,22 +1,33 @@
+import { cn } from "./../lib/utils";
+
 interface LoadingSpinnerProps {
-  size?: number;
+  iconSize?: number;
+  textSize?: number;
   label?: string;
+  gap?: number;
 }
 
 export default function LoadingSpinner({
-  size = 16,
+  iconSize = 16,
+  textSize = 16,
   label,
+  gap = 2,
 }: LoadingSpinnerProps) {
   return (
-    <div className="flex flex-row gap-2">
+    <div
+      className="flex flex-row items-center"
+      style={{
+        gap: `${gap}px`,
+      }}
+    >
       <svg
         data-testid="circle"
-        className="mr-2 animate-spin text-blue-500"
+        className={cn("animate-spin text-blue-500", label && "mr-2")}
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
-        height={size}
-        width={size}
+        height={iconSize}
+        width={iconSize}
       >
         <circle
           className="opacity-25"
@@ -35,7 +46,7 @@ export default function LoadingSpinner({
       {label && (
         <span
           style={{
-            fontSize: `${size}px`,
+            fontSize: `${textSize}px`,
           }}
         >
           {label}

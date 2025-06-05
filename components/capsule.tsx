@@ -1,19 +1,31 @@
-import { useEffect, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import { cn } from "./../lib/utils";
 
 export interface TabFieldsProps {
-  id: string;
+  id: string | number;
   title: string;
+  content?: ReactNode;
 }
 
 interface TabProps {
-  view: string | null;
+  view: string | null | number;
   fields: TabFieldsProps[];
-  setView: (data: string) => void;
+  setView: (data: string | number) => void;
+  containerClassName?: string;
+  classActiveTab?: string;
+  full?: boolean;
 }
 
-export default function Capsule({ fields, view, setView }: TabProps) {
-  const [hovered, setHovered] = useState<string | null>(null);
+export default function Capsule({
+  fields,
+  view,
+  setView,
+  containerClassName,
+  classActiveTab,
+  full,
+}: TabProps) {
+  const [hovered, setHovered] = useState<string | null | number>(null);
 
   const activeId = hovered || view;
   const activeIndex = fields.findIndex((item) => item.id === view);
@@ -116,15 +128,17 @@ export default function Capsule({ fields, view, setView }: TabProps) {
   const hoverPosition = getHoverPosition();
   const initialPosition = getInitialPosition();
 
+  const capsuleClass = cn(
+    "relative flex flex-row items-center justify-start overflow-hidden border border-gray-100 px-1 shadow-sm",
+    full ? "w-full" : "w-fit rounded-xl",
+    containerClassName
+  );
+
   return (
-    <div
-      ref={containerRef}
-      role="tablist"
-      className="relative flex w-fit flex-row items-center justify-center overflow-hidden rounded-xl border border-gray-100 px-1 shadow-sm"
-    >
+    <div ref={containerRef} role="tablist" className={capsuleClass}>
       <motion.div
         layout
-        className="absolute top-1 bottom-1 z-10 h-[25px] rounded-xl bg-blue-600"
+        className="absolute rounded-xl top-1 bottom-1 z-10 h-[25px] bg-blue-600"
         initial={{
           left: initialPosition.left,
           width: initialPosition.width,
@@ -142,7 +156,7 @@ export default function Capsule({ fields, view, setView }: TabProps) {
 
       <motion.div
         layout
-        className="absolute top-1 bottom-1 z-0 h-[25px] rounded-xl border-2 border-blue-600"
+        className="absolute top-1 rounded-xl bottom-1 z-0 h-[25px] border-2 border-blue-600"
         initial={{
           left: hoverPosition.left,
           width: hoverPosition.width,
@@ -161,13 +175,17 @@ export default function Capsule({ fields, view, setView }: TabProps) {
       {fields.map((data, index) => {
         const isActive = view === data.id;
 
-        const textColor = isActive ? "text-white" : "text-gray-900";
+        const tabClass = cn(
+          "z-10 cursor-pointer px-4 py-1 text-center font-medium transition-colors duration-200",
+          isActive ? "text-white" : `text-gray-900 ${classActiveTab}`
+        );
+
         return (
           <div
             role="tab"
             key={index}
             ref={setTabRef(index)}
-            className={`relative z-10 cursor-pointer px-4 py-1 text-center font-medium transition-colors duration-200 ${textColor}`}
+            className={tabClass}
             onMouseEnter={() => setHovered(data.id)}
             onMouseLeave={() => setHovered(null)}
             onClick={() => setView(data.id)}
