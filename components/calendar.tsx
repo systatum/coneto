@@ -3,19 +3,29 @@ import {
   RiArrowRightSLine,
   RiCheckLine,
 } from "@remixicon/react";
+import {} from "react";
 import { useState, useEffect } from "react";
 import { Button } from "./button";
 import { cn } from "../lib/utils";
 import Combobox from "./combobox";
-import { OptionsProps } from "./selectbox";
-import { CalendarDrawerProps } from "./datebox";
+import { DrawerProps, OptionsProps } from "./selectbox";
 
-export interface CalendarProps extends CalendarDrawerProps {
+export interface BaseCalendarProps {
+  options?: OptionsProps[];
+  inputValue?: OptionsProps;
+  setInputValue?: (data: OptionsProps) => void;
+  dayNames?: OptionsProps[];
+  monthNames?: OptionsProps[];
+  disableWeekend?: boolean;
+  format?: FormatProps;
+  containerClassName?: string;
   yearPastReach?: number;
   futurePastReach?: number;
 }
 
-interface OpenBoxProps {
+type CalendarProps = BaseCalendarProps & DrawerProps;
+
+interface CalendarStateProps {
   open: boolean;
   month: OptionsProps;
   year: OptionsProps;
@@ -82,7 +92,7 @@ export default function Calendar({
   );
   const currentYear = stateDate.getFullYear();
 
-  const [isBoxOpen, setIsBoxOpen] = useState<OpenBoxProps>({
+  const [calendarState, setCalendarState] = useState<CalendarStateProps>({
     open: false,
     month: currentMonth,
     year: { text: String(currentYear), value: currentYear },
@@ -109,7 +119,7 @@ export default function Calendar({
   };
 
   const handleChangeValueDate = (name: string, value: OptionsProps) => {
-    setIsBoxOpen((prev) => ({ ...prev, [name]: value }));
+    setCalendarState((prev) => ({ ...prev, [name]: value }));
 
     if (name === "month") {
       const monthIndex = Number(value.value) - 1;
@@ -127,15 +137,15 @@ export default function Calendar({
     }
   };
 
-  const getDatesInMonth = (dates: Date) => {
-    const year = dates.getFullYear();
-    const month = dates.getMonth();
-    const days: Date[] = [];
-    const lastDay = new Date(year, month + 1, 0).getDate();
-    for (let i = 1; i <= lastDay; i++) {
-      days.push(new Date(year, month, i));
+  const getDatesInMonth = (date: Date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const dates: Date[] = [];
+    const lastDate = new Date(year, month + 1, 0).getDate();
+    for (let i = 1; i <= lastDate; i++) {
+      dates.push(new Date(year, month, i));
     }
-    return days;
+    return dates;
   };
 
   const dates = getDatesInMonth(currentDate);
@@ -177,7 +187,7 @@ export default function Calendar({
   const handleClickPrevMonth = () => {
     setCurrentDate(prevMonth);
     setHighlightedIndexChange(0);
-    setIsBoxOpen((prev) => ({
+    setCalendarState((prev) => ({
       ...prev,
       month: {
         text: prevMonth
@@ -195,7 +205,7 @@ export default function Calendar({
   const handleClickNextMonth = () => {
     setCurrentDate(nextMonth);
     setHighlightedIndexChange(0);
-    setIsBoxOpen((prev) => ({
+    setCalendarState((prev) => ({
       ...prev,
       month: {
         text: nextMonth
@@ -218,7 +228,7 @@ export default function Calendar({
     });
 
     setHighlightedIndexChange(0);
-    setIsBoxOpen((prev) => ({
+    setCalendarState((prev) => ({
       ...prev,
       month: {
         value: currentMonth.value,
@@ -249,9 +259,9 @@ export default function Calendar({
 
   const handleClickMode = (data: DateBoxOpen) => {
     if (data === "open") {
-      setIsBoxOpen((prev) => ({
+      setCalendarState((prev) => ({
         ...prev,
-        open: !isBoxOpen.open,
+        open: !calendarState.open,
       }));
     }
   };
@@ -300,13 +310,13 @@ export default function Calendar({
       <div className={cn("flex flex-row items-center mb-2 px-2")}>
         <div
           onClick={() => {
-            if (!isBoxOpen.open) {
+            if (!calendarState.open) {
               handleClickMode("open");
             }
           }}
           className="font-semibold cursor-pointer w-full"
         >
-          {!isBoxOpen.open ? (
+          {!calendarState.open ? (
             <div className="rounded-xs hover:bg-gray-200 w-fit px-2 py-2">
               {currentDate
                 .toLocaleString("default", {
@@ -319,7 +329,7 @@ export default function Calendar({
             <div className="flex flex-row gap-1 w-full">
               <Combobox
                 options={monthNames}
-                inputValue={isBoxOpen.month}
+                inputValue={calendarState.month}
                 placeholder={monthNames[0].text}
                 containerClassName="min-w-[60px] max-w-[70px]"
                 setInputValue={(value) => {
@@ -330,7 +340,7 @@ export default function Calendar({
               />
               <Combobox
                 options={yearOptions}
-                inputValue={isBoxOpen.year}
+                inputValue={calendarState.year}
                 placeholder={String(currentYear)}
                 containerClassName="min-w-[70px] max-w-[80px]"
                 setInputValue={(value) => {
@@ -349,7 +359,7 @@ export default function Calendar({
             </div>
           )}
         </div>
-        {!isBoxOpen.open && (
+        {!calendarState.open && (
           <div className="flex flex-row ml-2 w-full">
             <RiArrowLeftSLine
               onClick={handleClickPrevMonth}

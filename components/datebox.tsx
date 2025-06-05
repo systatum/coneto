@@ -1,23 +1,10 @@
 import { RiCalendar2Line } from "@remixicon/react";
-import { FloatingUIProps, OptionsProps, Selectbox } from "./selectbox";
-import { HTMLAttributes, CSSProperties, MutableRefObject, Ref } from "react";
+import { DrawerProps, Selectbox } from "./selectbox";
 import { cn } from "./../lib/utils";
-import Calendar, { FormatProps } from "./calendar";
-
-export interface BaseCalendarProps {
-  options?: OptionsProps[];
-  inputValue?: OptionsProps;
-  setInputValue?: (data: OptionsProps) => void;
-  dayNames?: OptionsProps[];
-  monthNames?: OptionsProps[];
-  disableWeekend?: boolean;
-  format?: FormatProps;
-  containerClassName?: string;
-}
-
-export type CalendarDrawerProps = BaseCalendarProps & FloatingUIProps;
+import Calendar, { BaseCalendarProps } from "./calendar";
 
 type DateboxProps = BaseCalendarProps;
+type CalendarDrawerProps = BaseCalendarProps & DrawerProps;
 
 export default function Datebox(props: DateboxProps) {
   return (

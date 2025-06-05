@@ -5,7 +5,7 @@ import {
   Ref,
   useEffect,
 } from "react";
-import { OptionsProps, Selectbox } from "./selectbox";
+import { DrawerProps, OptionsProps, Selectbox } from "./selectbox";
 import { cn } from "./../lib/utils";
 
 interface ComboboxProps {
@@ -17,21 +17,14 @@ interface ComboboxProps {
   placeholder?: string;
   emptySlate?: string;
 }
-interface ComboboxDrawerProps extends ComboboxProps {
-  emptySlate?: string;
-  highlightedIndex: number;
-  setHighlightedIndex: (index: number) => void;
-  setIsOpen?: (open: boolean) => void;
-  getFloatingProps: (
-    userProps?: HTMLAttributes<HTMLUListElement>
-  ) => HTMLAttributes<HTMLUListElement>;
-  refs?: {
-    setFloating?: Ref<HTMLUListElement>;
-    reference?: Ref<HTMLElement> & { current?: HTMLElement | null };
+
+type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
+  ComboboxProps & {
+    refs?: {
+      setFloating?: Ref<HTMLUListElement>;
+      reference?: Ref<HTMLElement> & { current?: HTMLElement | null };
+    };
   };
-  floatingStyles: CSSProperties;
-  listRef: MutableRefObject<(HTMLLIElement | null)[]>;
-}
 
 export default function Combobox({
   options,

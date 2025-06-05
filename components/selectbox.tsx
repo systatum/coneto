@@ -28,12 +28,26 @@ import {
 } from "@remixicon/react";
 import { cn } from "./../lib/utils";
 
-export interface OptionsProps {
-  text: string;
-  value?: string | number;
+export interface SelectboxProps {
+  options?: OptionsProps[];
+  inputValue?: OptionsProps;
+  setInputValue?: (data: OptionsProps) => void;
+  placeholder?: string;
+  iconOpened?: RemixiconComponentType;
+  iconClosed?: RemixiconComponentType;
+  type?: "calendar" | "default";
+  clearable?: boolean;
+  containerClassName?: string;
+  children?: (
+    props: DrawerProps & {
+      options: OptionsProps[];
+      inputValue: OptionsProps;
+      setInputValue: (value: OptionsProps) => void;
+    }
+  ) => ReactNode;
 }
 
-export interface FloatingUIProps {
+export interface DrawerProps {
   highlightedIndex: number;
   setHighlightedIndex: (index: number) => void;
   setIsOpen: (open: boolean) => void;
@@ -47,23 +61,9 @@ export interface FloatingUIProps {
   className?: string;
 }
 
-export interface SelectboxProps {
-  options?: OptionsProps[];
-  inputValue?: OptionsProps;
-  setInputValue?: (data: OptionsProps) => void;
-  placeholder?: string;
-  iconOpened?: RemixiconComponentType;
-  iconClosed?: RemixiconComponentType;
-  type?: "calendar" | "default";
-  clearable?: boolean;
-  containerClassName?: string;
-  children?: (
-    props: FloatingUIProps & {
-      options: OptionsProps[];
-      inputValue: OptionsProps;
-      setInputValue: (value: OptionsProps) => void;
-    }
-  ) => ReactNode;
+export interface OptionsProps {
+  text: string;
+  value?: string | number;
 }
 
 export function Selectbox({
