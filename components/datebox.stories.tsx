@@ -129,7 +129,7 @@ export const WithDisableWeekend: Story = {
     const input = canvas.getByPlaceholderText("mm/dd/yyyy");
     await expect(input).toBeInTheDocument();
     await userEvent.click(input);
-    await userEvent.type(input, "12212002");
-    await expect(input).toHaveValue("12/20/2002");
+    await userEvent.type(input, "06172000");
+    await expect(input).toHaveValue("06/16/2000");
   },
 };

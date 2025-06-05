@@ -3,43 +3,16 @@ import {
   RiArrowRightSLine,
   RiCheckLine,
 } from "@remixicon/react";
-import {
-  HTMLAttributes,
-  CSSProperties,
-  MutableRefObject,
-  useState,
-  useEffect,
-  Ref,
-} from "react";
+import { useState, useEffect } from "react";
 import { Button } from "./button";
 import { cn } from "../lib/utils";
-
 import Combobox from "./combobox";
 import { OptionsProps } from "./selectbox";
+import { CalendarDrawerProps } from "./datebox";
 
-interface SelectboxChildrenProps {
-  options?: OptionsProps[];
-  highlightedIndex?: number;
-  setHighlightedIndex?: (index: number) => void;
-  setInputValue: (value: OptionsProps) => void;
-  inputValue: OptionsProps;
-  setIsOpen?: (open: boolean) => void;
-  getFloatingProps?: (
-    userProps?: HTMLAttributes<HTMLUListElement>
-  ) => HTMLAttributes<HTMLUListElement>;
-  refs?: { setFloating: Ref<HTMLUListElement> };
-  floatingStyles?: CSSProperties;
-  listRef?: MutableRefObject<(HTMLLIElement | null)[]>;
-}
-
-interface CalendarDrawerProps extends SelectboxChildrenProps {
-  dayNames: OptionsProps[];
-  monthNames: OptionsProps[];
-  disableWeekend?: boolean;
+export interface CalendarProps extends CalendarDrawerProps {
   yearPastReach?: number;
   futurePastReach?: number;
-  format?: FormatProps;
-  className?: string;
 }
 
 interface OpenBoxProps {
@@ -55,8 +28,8 @@ type CustomChangeEvent = {
   };
 };
 
-type FormatProps = "mm/dd/yyyy" | "yyyy-mm-dd" | "dd/mm/yyyy";
-type DateBoxOpen = "open" | "month" | "year";
+export type FormatProps = "mm/dd/yyyy" | "yyyy-mm-dd" | "dd/mm/yyyy";
+export type DateBoxOpen = "open" | "month" | "year";
 
 const DEFAULT_DAY_NAMES = [
   { text: "Su", value: 1 },
@@ -89,8 +62,6 @@ export default function Calendar({
   setInputValue,
   inputValue,
   setIsOpen,
-  getFloatingProps,
-  refs,
   floatingStyles,
   listRef,
   dayNames = DEFAULT_DAY_NAMES,
@@ -100,7 +71,7 @@ export default function Calendar({
   futurePastReach = 50,
   format = "mm/dd/yyyy",
   className,
-}: CalendarDrawerProps) {
+}: CalendarProps) {
   const parsedDate = inputValue?.text ? new Date(inputValue.text) : new Date();
   const stateDate = isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
   const today = new Date();
@@ -318,23 +289,14 @@ export default function Calendar({
   }, [inputValue.text, format]);
 
   const calendarClass = cn(
-    "flex flex-col gap-1 bg-white border border-gray-300 rounded-xs w-full shadow-xs list-none outline-none",
-    floatingStyles ? "p-2 z-[9999]" : "p-3 text-sm min-w-[300px]",
+    floatingStyles
+      ? ""
+      : "p-2 text-sm min-w-[300px] flex flex-col gap-2 bg-white border border-gray-300 rounded-xs w-full shadow-xs list-none outline-none",
     className
   );
 
   return (
-    <ul
-      {...(getFloatingProps?.() ?? {})}
-      ref={refs?.setFloating ?? null}
-      style={{
-        ...(floatingStyles ?? {}),
-      }}
-      tabIndex={-1}
-      role="listbox"
-      aria-label="Calendar"
-      className={calendarClass}
-    >
+    <div className={calendarClass}>
       <div className={cn("flex flex-row items-center mb-2 px-2")}>
         <div
           onClick={() => {
@@ -360,7 +322,6 @@ export default function Calendar({
                 inputValue={isBoxOpen.month}
                 placeholder={monthNames[0].text}
                 containerClassName="min-w-[60px] max-w-[70px]"
-                selectedValue={isBoxOpen.month.value}
                 setInputValue={(value) => {
                   onChangeValueDate({
                     target: { name: "month", value },
@@ -372,7 +333,6 @@ export default function Calendar({
                 inputValue={isBoxOpen.year}
                 placeholder={String(currentYear)}
                 containerClassName="min-w-[70px] max-w-[80px]"
-                selectedValue={isBoxOpen.year.value}
                 setInputValue={(value) => {
                   onChangeValueDate({
                     target: { name: "year", value },
@@ -505,7 +465,7 @@ export default function Calendar({
           })}
         </div>
       </>
-    </ul>
+    </div>
   );
 }
 
