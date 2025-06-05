@@ -34,20 +34,20 @@ export interface OptionsProps {
 }
 
 export interface FloatingUIProps {
-  highlightedIndex?: number;
-  setHighlightedIndex?: (index: number) => void;
-  setIsOpen?: (open: boolean) => void;
-  isOpen?: boolean;
-  getFloatingProps?: (
+  highlightedIndex: number;
+  setHighlightedIndex: (index: number) => void;
+  setIsOpen: (open: boolean) => void;
+  getFloatingProps: (
     userProps?: HTMLAttributes<HTMLUListElement>
   ) => HTMLAttributes<HTMLUListElement>;
-  refs?: { setFloating: Ref<HTMLUListElement> };
-  floatingStyles?: CSSProperties;
-  listRef?: MutableRefObject<(HTMLLIElement | null)[]>;
+  refs: { setFloating: Ref<HTMLUListElement>; setReference: Ref<HTMLElement> };
+  floatingStyles: CSSProperties;
+  listRef: MutableRefObject<(HTMLLIElement | null)[]>;
+  isOpen: boolean;
   className?: string;
 }
 
-interface SelectboxProps {
+export interface SelectboxProps {
   options?: OptionsProps[];
   inputValue?: OptionsProps;
   setInputValue?: (data: OptionsProps) => void;
