@@ -17,7 +17,7 @@ export const Default: Story = {
       console.log("Clicked person:", item.label);
     };
 
-    const DATA_TREE_LIST = [
+    const TREE_LIST_DATA = [
       {
         label: "Member of Technical Staff",
         items: [
@@ -37,7 +37,7 @@ export const Default: Story = {
 
     return (
       <div className="flex flex-col gap-1 max-w-[250px]">
-        <TreeList content={DATA_TREE_LIST} />
+        <TreeList content={TREE_LIST_DATA} />
       </div>
     );
   },

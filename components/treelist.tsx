@@ -6,7 +6,7 @@ interface TreeListProps<T extends TreeListItemsProps> {
     label: string;
     items: T[];
   }>;
-  classNameContainer?: string;
+  containerClassName?: string;
   children?: ReactNode;
   empty?: ReactNode;
   searchTerm?: string;
@@ -22,14 +22,14 @@ interface TreeListItemsProps {
 
 function TreeList<T extends TreeListItemsProps>({
   content,
-  classNameContainer,
+  containerClassName,
   children,
   empty,
   searchTerm = "",
 }: TreeListProps<T>) {
   const [isSelected, setIsSelected] = useState("");
 
-  const treeListClass = cn("flex flex-col gap-4", classNameContainer);
+  const treeListClass = cn("flex flex-col gap-4", containerClassName);
 
   return (
     <div className={treeListClass}>
