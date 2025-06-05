@@ -61,10 +61,11 @@ export default function FileInputBox({
   };
 
   const containerInputBoxClass = cn(
-    "p-3 border border-dotted-customize flex flex-row relative items-center rounded-xs justify-between text-gray-500",
-    selectedFile === "" &&
-      "border-dotted-customize-blue cursor-pointer hover:text-[#61A9F9]",
-    isDragging ? "bg-blue-50 border-blue-400" : "",
+    "p-3 border border-dotted-customize  flex flex-row relative items-center rounded-xs justify-between text-gray-500",
+    selectedFile === "" && "cursor-pointer",
+    isDragging
+      ? "bg-blue-50 border border-dotted-customize-blue text-blue-500"
+      : "",
     containerClassName
   );
 
@@ -84,13 +85,13 @@ export default function FileInputBox({
               e.stopPropagation();
               handleDeleteFile();
             }}
-            className="absolute top-[10px] cursor-pointer hover:text-[#61A9F9] right-4"
+            className="absolute top-[10px] cursor-pointer right-4"
           >
             x
           </div>
         </>
       ) : (
-        <h2 className="text-sm hover:text-[#61A9F9] w-full">{placeholder}</h2>
+        <h2 className="text-sm w-full">{placeholder}</h2>
       )}
 
       {selectedFile === "" && (

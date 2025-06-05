@@ -148,19 +148,20 @@ export default function FileDropBox({
   };
 
   const containerDropBoxClass = cn(
-    "p-3 flex flex-col gap-2 relative items-center rounded-xs justify-between text-gray-500",
+    "p-3 flex flex-col gap-2 cursor-pointer text-center relative items-center rounded-xs justify-between text-gray-500",
     progress === "idle"
       ? "border border-gray-400 border-dotted-customize"
       : progress === "succeed"
         ? "border border-gray-100"
         : "",
-    isDragging ? "bg-blue-50 border-blue-400 hover:text-[#61A9F9]" : "",
+    isDragging ? "bg-blue-50 text-[#61A9F9] border-dotted-customize-blue" : "",
     containerClassName
   );
 
   return (
     <>
       <div
+        onClick={handleBrowseClick}
         className={containerDropBoxClass}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
@@ -186,14 +187,16 @@ export default function FileDropBox({
                 <data.icon size={data.size} key={index} />
               ))}
             </div>
-            <h2 className="text-black font-semibold text-xl">{placeholder}</h2>
+            <h2
+              className={cn(
+                "font-semibold text-xl",
+                isDragging ? "text-blue-500" : "text-black"
+              )}
+            >
+              {placeholder}
+            </h2>
             <div>
-              <span
-                onClick={handleBrowseClick}
-                className="text-blue-500 underline cursor-pointer"
-              >
-                Select some files
-              </span>
+              <span className="text-blue-500 underline">Select some files</span>
               &nbsp;from your computer
             </div>
           </div>

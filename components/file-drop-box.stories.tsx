@@ -6,7 +6,7 @@ import FileDropBox, {
 } from "./file-drop-box";
 
 const meta: Meta<typeof FileDropBox> = {
-  title: "Input Elements/FileDropbox",
+  title: "Input Elements/FileDropBox",
   component: FileDropBox,
   tags: ["autodocs"],
 };
