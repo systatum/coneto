@@ -29,7 +29,7 @@ export const SidebarDefault: Story = {
       console.log("Clicked person:", item.label);
     };
 
-    const DATA_TREE_LIST = [
+    const TREE_LIST_DATA = [
       {
         label: "Member of Technical Staff",
         items: [
@@ -48,15 +48,15 @@ export const SidebarDefault: Story = {
     ];
 
     const FILTERED_CONTENT = useMemo(() => {
-      if (DATA_TREE_LIST.length === 0) return [];
+      if (TREE_LIST_DATA.length === 0) return [];
 
-      return DATA_TREE_LIST.map((data) => ({
+      return TREE_LIST_DATA.map((data) => ({
         ...data,
         items: data.items.filter((val) =>
           val.label.toLowerCase().includes(value.label.toLowerCase())
         ),
       })).filter((data) => data.items.length > 0);
-    }, [DATA_TREE_LIST, value]);
+    }, [TREE_LIST_DATA, value]);
 
     return (
       <div className="flex flex-row w-full justify-between">
@@ -103,7 +103,7 @@ export const SidebarPositionRight: Story = {
       console.log("Clicked person:", item.label);
     };
 
-    const DATA_TREE_LIST = [
+    const TREE_LIST_DATA = [
       {
         label: "Member of Technical Staff",
         items: [
@@ -122,15 +122,15 @@ export const SidebarPositionRight: Story = {
     ];
 
     const FILTERED_CONTENT = useMemo(() => {
-      if (DATA_TREE_LIST.length === 0) return [];
+      if (TREE_LIST_DATA.length === 0) return [];
 
-      return DATA_TREE_LIST.map((data) => ({
+      return TREE_LIST_DATA.map((data) => ({
         ...data,
         items: data.items.filter((val) =>
           val.label.toLowerCase().includes(value.label.toLowerCase())
         ),
       })).filter((data) => data.items.length > 0);
-    }, [DATA_TREE_LIST, value]);
+    }, [TREE_LIST_DATA, value]);
 
     return (
       <div className="flex flex-row w-full justify-between">

@@ -37,7 +37,7 @@ interface SelectboxProps {
   iconClosed?: RemixiconComponentType;
   type?: "calendar" | "default";
   clearable?: boolean;
-  classNameContainer?: string;
+  containerClassName?: string;
   children?: (props: {
     options: string[];
     highlightedIndex: number;
@@ -65,7 +65,7 @@ export function Selectbox({
   iconOpened: IconOpened = RiArrowDownSLine,
   iconClosed: IconClosed = RiArrowUpSLine,
   clearable = false,
-  classNameContainer,
+  containerClassName,
 }: SelectboxProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(0);
@@ -141,7 +141,7 @@ export function Selectbox({
 
   const selectBoxClass = cn(
     "relative w-full text-xs ring-0",
-    classNameContainer
+    containerClassName
   );
 
   return (

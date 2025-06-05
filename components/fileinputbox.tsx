@@ -2,14 +2,14 @@ import { ChangeEvent, DragEvent, useRef, useState } from "react";
 import { cn } from "./../lib/utils";
 
 interface FileInputBoxProps {
-  classNameContainer?: string;
+  containerClassName?: string;
   placeholder?: string;
   accept?: string;
   onFilesSelected?: (files: FileList) => void;
 }
 
 export default function FileInputBox({
-  classNameContainer,
+  containerClassName,
   placeholder = "Drop a file here or browse",
   accept = "*",
   onFilesSelected,
@@ -65,7 +65,7 @@ export default function FileInputBox({
     selectedFile === "" &&
       "border-dotted-customize-blue cursor-pointer hover:text-[#61A9F9]",
     isDragging ? "bg-blue-50 border-blue-400" : "",
-    classNameContainer
+    containerClassName
   );
 
   return (

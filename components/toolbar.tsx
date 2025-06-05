@@ -30,7 +30,7 @@ interface ToolbarMenuProps {
   setIsOpen?: (data?: boolean) => void;
   onClick?: () => void;
   className?: string;
-  classNameContainer?: string;
+  containerClassName?: string;
   variant?: "default" | "primary" | "danger";
 }
 
@@ -111,7 +111,7 @@ function ToolbarMenu({
   setIsOpen,
   onClick,
   className,
-  classNameContainer,
+  containerClassName,
   variant = "default",
 }: ToolbarMenuProps) {
   const [hovered, setHovered] = useState<"main" | "original" | "dropdown">(
@@ -174,7 +174,7 @@ function ToolbarMenu({
     toolbarMenuContainerClass,
     variant !== "default" ? "text-white" : "text-gray-700",
     isOpen && toolbarMenuBorderActiveClass,
-    classNameContainer
+    containerClassName
   );
 
   return (
