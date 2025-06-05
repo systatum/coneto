@@ -8,7 +8,7 @@ interface TreeListProps<T extends TreeListItemsProps> {
   }>;
   containerClassName?: string;
   children?: ReactNode;
-  empty?: ReactNode;
+  emptySlate?: ReactNode;
   searchTerm?: string;
 }
 
@@ -24,7 +24,7 @@ function TreeList<T extends TreeListItemsProps>({
   content,
   containerClassName,
   children,
-  empty,
+  emptySlate,
   searchTerm = "",
 }: TreeListProps<T>) {
   const [isSelected, setIsSelected] = useState("");
@@ -49,7 +49,7 @@ function TreeList<T extends TreeListItemsProps>({
           </div>
         ))
       ) : (
-        <div>{empty}</div>
+        <div>{emptySlate}</div>
       )}
       {children}
     </div>

@@ -37,7 +37,14 @@ export const Default: Story = {
 
     return (
       <div className="flex flex-col gap-1 max-w-[250px]">
-        <TreeList content={TREE_LIST_DATA} />
+        <TreeList
+          content={TREE_LIST_DATA}
+          emptySlate={
+            <div className="text-sm font-semibold w-full items-center flex">
+              Not found.
+            </div>
+          }
+        />
       </div>
     );
   },

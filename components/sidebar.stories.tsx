@@ -71,7 +71,7 @@ export const SidebarDefault: Story = {
           <Sidebar.Item>
             <TreeList
               content={FILTERED_CONTENT}
-              empty={
+              emptySlate={
                 <div className="text-sm font-semibold w-full items-center flex">
                   Not found.
                 </div>
@@ -148,7 +148,9 @@ export const SidebarPositionRight: Story = {
           <Sidebar.Item>
             <TreeList
               content={FILTERED_CONTENT}
-              empty={<div className="text-sm font-semibold">Not found.</div>}
+              emptySlate={
+                <div className="text-sm font-semibold">Not found.</div>
+              }
               searchTerm={value.label}
             />
           </Sidebar.Item>
