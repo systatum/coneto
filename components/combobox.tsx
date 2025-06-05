@@ -1,21 +1,21 @@
 import { CSSProperties, HTMLAttributes, MutableRefObject, Ref } from "react";
-import { Selectbox } from "./selectbox";
+import { OptionsProps, Selectbox } from "./selectbox";
+import { cn } from "./../lib/utils";
 
 interface ComboboxProps {
-  options: string[];
+  options: OptionsProps[];
   containerClassName?: string;
-  inputValue: string;
-  setInputValue: (data: string) => void;
+  inputValue: OptionsProps;
+  setInputValue: (data: OptionsProps) => void;
   clearable?: boolean;
   placeholder?: string;
   empty?: string;
+  selectedValue?: string | number;
 }
-interface ComboboxListProps {
+interface ComboboxDrawerProps extends ComboboxProps {
   empty?: string;
-  options: string[];
   highlightedIndex: number;
   setHighlightedIndex: (index: number) => void;
-  setInputValue: (value: string) => void;
   setIsOpen: (open: boolean) => void;
   getFloatingProps: (
     userProps?: HTMLAttributes<HTMLUListElement>
@@ -35,6 +35,7 @@ export default function Combobox({
   clearable = false,
   placeholder,
   containerClassName,
+  selectedValue,
   empty = "Not available.",
 }: ComboboxProps) {
   return (
@@ -46,7 +47,13 @@ export default function Combobox({
       placeholder={placeholder}
       clearable={clearable}
     >
-      {(props) => <ComboboxDrawer empty={empty} {...props} />}
+      {(props) => (
+        <ComboboxDrawer
+          selectedValue={selectedValue}
+          empty={empty}
+          {...props}
+        />
+      )}
     </Selectbox>
   );
 }
@@ -61,8 +68,9 @@ function ComboboxDrawer({
   setHighlightedIndex,
   setInputValue,
   setIsOpen,
+  selectedValue,
   empty = "Not Available.",
-}: ComboboxListProps) {
+}: ComboboxDrawerProps) {
   return (
     <ul
       {...getFloatingProps()}
@@ -77,29 +85,35 @@ function ComboboxDrawer({
       className="max-h-60 overflow-y-auto rounded-xs border border-gray-100 bg-white shadow-lg"
     >
       {options.length > 0 ? (
-        options.map((option, index) => (
-          <li
-            key={option}
-            id={`option-${index}`}
-            role="option"
-            aria-selected={highlightedIndex === index}
-            onMouseDown={() => {
-              setInputValue(option);
-              setIsOpen(false);
-            }}
-            onMouseEnter={() => {
-              setHighlightedIndex(index);
-            }}
-            className={`cursor-pointer px-3 py-2 ${
-              highlightedIndex === index ? "bg-blue-100" : ""
-            }`}
-            ref={(el) => {
-              listRef.current[index] = el;
-            }}
-          >
-            {option}
-          </li>
-        ))
+        options.map((option, index) => {
+          return (
+            <li
+              key={option.value}
+              id={`option-${index}`}
+              role="option"
+              aria-selected={highlightedIndex === index}
+              onMouseDown={() => {
+                setInputValue(option);
+                setIsOpen(false);
+              }}
+              onMouseEnter={() => {
+                setHighlightedIndex(index);
+              }}
+              className={cn(
+                `cursor-pointer px-3 py-2`,
+                highlightedIndex === index ? "bg-blue-100" : "",
+                selectedValue === option.value
+                  ? "bg-[#61A9F9] font-semibold text-white"
+                  : ""
+              )}
+              ref={(el) => {
+                listRef.current[index] = el;
+              }}
+            >
+              {option.text}
+            </li>
+          );
+        })
       ) : (
         <li className="py-2 text-center text-gray-500">{empty}</li>
       )}
