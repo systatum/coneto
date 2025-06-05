@@ -10,19 +10,19 @@ import {
   useState,
   useEffect,
   Ref,
-  ChangeEvent,
 } from "react";
 import { Button } from "./button";
 import { cn } from "../lib/utils";
 
 import Combobox from "./combobox";
+import { OptionsProps } from "./selectbox";
 
-interface CalendarDrawerProps {
-  options?: string[];
+interface SelectboxChildrenProps {
+  options?: OptionsProps[];
   highlightedIndex?: number;
   setHighlightedIndex?: (index: number) => void;
-  setInputValue: (value: string) => void;
-  inputValue: string;
+  setInputValue: (value: OptionsProps) => void;
+  inputValue: OptionsProps;
   setIsOpen?: (open: boolean) => void;
   getFloatingProps?: (
     userProps?: HTMLAttributes<HTMLUListElement>
@@ -30,25 +30,60 @@ interface CalendarDrawerProps {
   refs?: { setFloating: Ref<HTMLUListElement> };
   floatingStyles?: CSSProperties;
   listRef?: MutableRefObject<(HTMLLIElement | null)[]>;
-  dayNames: string[];
-  monthNames: string[];
+}
+
+interface CalendarDrawerProps extends SelectboxChildrenProps {
+  dayNames: OptionsProps[];
+  monthNames: OptionsProps[];
   disableWeekend?: boolean;
-  minDateOffset?: number;
-  maxDateOffset?: number;
+  yearPastReach?: number;
+  futurePastReach?: number;
   format?: FormatProps;
   className?: string;
 }
 
 interface OpenBoxProps {
   open: boolean;
-  month: string;
-  year: string;
+  month: OptionsProps;
+  year: OptionsProps;
 }
+
+type CustomChangeEvent = {
+  target: {
+    name: string;
+    value: OptionsProps;
+  };
+};
 
 type FormatProps = "mm/dd/yyyy" | "yyyy-mm-dd" | "dd/mm/yyyy";
 type DateBoxOpen = "open" | "month" | "year";
 
-function CalendarDrawer({
+const DEFAULT_DAY_NAMES = [
+  { text: "Su", value: 1 },
+  { text: "Mo", value: 2 },
+  { text: "Tu", value: 3 },
+  { text: "We", value: 4 },
+  { text: "Th", value: 5 },
+  { text: "Fr", value: 6 },
+  { text: "Sa", value: 7 },
+];
+
+const DEFAULT_MONTH_NAMES = [
+  { text: "January", value: 1 },
+  { text: "February", value: 2 },
+  { text: "March", value: 3 },
+  { text: "April", value: 4 },
+  { text: "May", value: 5 },
+  { text: "June", value: 6 },
+  { text: "July", value: 7 },
+  { text: "August", value: 8 },
+  { text: "September", value: 9 },
+  { text: "October", value: 10 },
+  { text: "November", value: 11 },
+  { text: "December", value: 12 },
+];
+
+export default function Calendar({
   highlightedIndex,
   setHighlightedIndex,
   setInputValue,
@@ -58,28 +93,28 @@ function CalendarDrawer({
   refs,
   floatingStyles,
   listRef,
-  dayNames,
-  monthNames,
+  dayNames = DEFAULT_DAY_NAMES,
+  monthNames = DEFAULT_MONTH_NAMES,
   disableWeekend,
-  minDateOffset = 80,
-  maxDateOffset = 50,
+  yearPastReach = 80,
+  futurePastReach = 50,
   format = "mm/dd/yyyy",
   className,
 }: CalendarDrawerProps) {
-  const STATE_DATE = inputValue !== "" ? new Date(inputValue) : new Date();
-  const [currentDate, setCurrentDate] = useState(STATE_DATE);
+  const parsedDate = inputValue?.text ? new Date(inputValue.text) : new Date();
+  const stateDate = isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
+  const today = new Date();
+  const [currentDate, setCurrentDate] = useState(stateDate);
 
-  const monthCurrent = STATE_DATE.toLocaleString("default", {
-    month: "short",
-  });
-  const yearCurrent = STATE_DATE.toLocaleString("default", {
-    year: "numeric",
-  });
+  const currentMonth = monthNames.find(
+    (data) => data.value === stateDate.getMonth() + 1
+  );
+  const currentYear = stateDate.getFullYear();
 
   const [isBoxOpen, setIsBoxOpen] = useState<OpenBoxProps>({
     open: false,
-    month: monthCurrent.toUpperCase(),
-    year: yearCurrent,
+    month: currentMonth,
+    year: { text: String(currentYear), value: currentYear },
   });
 
   const [highlightedIndexInternal, setHighlightedIndexInternal] = useState(0);
@@ -97,16 +132,19 @@ function CalendarDrawer({
     listRef.current = [];
   }
 
-  const onChangeValueDate = (e: ChangeEvent<HTMLInputElement>) => {
+  const onChangeValueDate = (e: CustomChangeEvent) => {
     const { name, value } = e.target;
+    handleChangeValueDate(name, value);
+  };
+
+  const handleChangeValueDate = (name: string, value: OptionsProps) => {
     setIsBoxOpen((prev) => ({ ...prev, [name]: value }));
+
     if (name === "month") {
-      const monthIndex = monthNames.findIndex(
-        (month) => month.toLowerCase() === value.toLowerCase()
-      );
+      const monthIndex = Number(value.value) - 1;
       setCurrentDate(new Date(currentDate.getFullYear(), monthIndex, 1));
     } else if (name === "year") {
-      const yearNumber = parseInt(value, 10);
+      const yearNumber = Number(value.value);
       if (!isNaN(yearNumber)) {
         const month = currentDate.getMonth();
         const day = Math.min(
@@ -118,9 +156,9 @@ function CalendarDrawer({
     }
   };
 
-  const getDaysInMonth = (date: Date) => {
-    const year = date.getFullYear();
-    const month = date.getMonth();
+  const getDatesInMonth = (dates: Date) => {
+    const year = dates.getFullYear();
+    const month = dates.getMonth();
     const days: Date[] = [];
     const lastDay = new Date(year, month + 1, 0).getDate();
     for (let i = 1; i <= lastDay; i++) {
@@ -129,79 +167,104 @@ function CalendarDrawer({
     return days;
   };
 
-  const days = getDaysInMonth(currentDate);
+  const dates = getDatesInMonth(currentDate);
 
-  const today = new Date();
   const minDate = new Date(
-    today.getFullYear() - (minDateOffset ?? 80),
+    today.getFullYear() - (yearPastReach ?? 80),
     today.getMonth(),
     today.getDate()
   );
   const maxDate = new Date(
-    today.getFullYear() + (maxDateOffset ?? 50),
+    today.getFullYear() + (futurePastReach ?? 50),
     today.getMonth(),
     today.getDate()
   );
 
   const yearOptions = Array.from(
     { length: maxDate.getFullYear() - minDate.getFullYear() + 1 },
-    (_, i) => String(minDate.getFullYear() + i)
+    (_, i) => {
+      const year = minDate.getFullYear() + i;
+      return {
+        text: String(year),
+        value: year,
+      };
+    }
   );
 
-  const moveToToday = () => {
-    setCurrentDate(today);
-    setInputValue(formatDate(today, format));
-    setHighlightedIndexChange(0);
-    setIsBoxOpen((prev) => ({
-      ...prev,
-      month: monthCurrent.toUpperCase(),
-      year: yearCurrent,
-    }));
-  };
-
-  const prevClickDate = new Date(
+  const prevMonth = new Date(
     currentDate.getFullYear(),
     currentDate.getMonth() - 1,
     1
   );
 
-  const nextClickDate = new Date(
+  const nextMonth = new Date(
     currentDate.getFullYear(),
     currentDate.getMonth() + 1,
     1
   );
 
-  const isLimitedPrev = prevClickDate < minDate;
-  const isLimitedNext = nextClickDate > maxDate;
-
-  const prevMonth = () => {
-    if (isLimitedPrev) return;
-    setCurrentDate(prevClickDate);
+  const handleClickPrevMonth = () => {
+    setCurrentDate(prevMonth);
     setHighlightedIndexChange(0);
     setIsBoxOpen((prev) => ({
       ...prev,
-      month: prevClickDate
-        .toLocaleString("default", { month: "short" })
-        .toUpperCase(),
-      year: prevClickDate.getFullYear().toString(),
+      month: {
+        text: prevMonth
+          .toLocaleString("default", { month: "short" })
+          .toUpperCase(),
+        value: prevMonth.getMonth() + 1,
+      },
+      year: {
+        text: prevMonth.getFullYear().toString(),
+        value: prevMonth.getFullYear(),
+      },
     }));
   };
 
-  const nextMonth = () => {
-    if (isLimitedNext) return;
-    setCurrentDate(nextClickDate);
+  const handleClickNextMonth = () => {
+    setCurrentDate(nextMonth);
     setHighlightedIndexChange(0);
     setIsBoxOpen((prev) => ({
       ...prev,
-      month: nextClickDate
-        .toLocaleString("default", { month: "short" })
-        .toUpperCase(),
-      year: nextClickDate.getFullYear().toString(),
+      month: {
+        text: nextMonth
+          .toLocaleString("default", { month: "short" })
+          .toUpperCase(),
+        value: nextMonth.getMonth() + 1,
+      },
+      year: {
+        text: nextMonth.getFullYear().toString(),
+        value: nextMonth.getFullYear(),
+      },
+    }));
+  };
+
+  const handleMoveToToday = () => {
+    setCurrentDate(today);
+    setInputValue({
+      text: formatDate(today, format),
+      value: formatDate(today, format),
+    });
+
+    setHighlightedIndexChange(0);
+    setIsBoxOpen((prev) => ({
+      ...prev,
+      month: {
+        value: currentMonth.value,
+        text: currentMonth.text.toUpperCase(),
+      },
+      year: {
+        text: String(currentYear),
+        value: currentYear,
+      },
     }));
   };
 
   const handleSelect = (date: Date) => {
-    setInputValue(formatDate(date, format));
+    setInputValue({
+      text: formatDate(date, format),
+      value: formatDate(date, format),
+    });
     if (setIsOpen) {
       setIsOpen(false);
     }
@@ -224,7 +287,7 @@ function CalendarDrawer({
 
   useEffect(() => {
     if (inputValue) {
-      const newDate = new Date(inputValue);
+      const newDate = new Date(inputValue.text);
       if (!isNaN(newDate.getTime())) {
         let validDate = newDate;
 
@@ -244,12 +307,15 @@ function CalendarDrawer({
         }
 
         setCurrentDate(validDate);
-        if (inputValue.length > 9) {
-          setInputValue(formatDate(validDate, format));
+        if (inputValue.text.length > 9) {
+          setInputValue({
+            text: formatDate(validDate, format),
+            value: formatDate(validDate, format),
+          });
         }
       }
     }
-  }, [inputValue, format]);
+  }, [inputValue.text, format]);
 
   const calendarClass = cn(
     "flex flex-col gap-1 bg-white border border-gray-300 rounded-xs w-full shadow-xs list-none outline-none",
@@ -292,28 +358,30 @@ function CalendarDrawer({
               <Combobox
                 options={monthNames}
                 inputValue={isBoxOpen.month}
-                placeholder="JAN"
-                classNameContainer="min-w-[60px] max-w-[70px]"
+                placeholder={monthNames[0].text}
+                containerClassName="min-w-[60px] max-w-[70px]"
+                selectedValue={isBoxOpen.month.value}
                 setInputValue={(value) => {
                   onChangeValueDate({
                     target: { name: "month", value },
-                  } as ChangeEvent<HTMLInputElement>);
+                  });
                 }}
               />
               <Combobox
                 options={yearOptions}
                 inputValue={isBoxOpen.year}
-                placeholder="2025"
-                classNameContainer="min-w-[70px] max-w-[80px]"
+                placeholder={String(currentYear)}
+                containerClassName="min-w-[70px] max-w-[80px]"
+                selectedValue={isBoxOpen.year.value}
                 setInputValue={(value) => {
                   onChangeValueDate({
                     target: { name: "year", value },
-                  } as ChangeEvent<HTMLInputElement>);
+                  });
                 }}
               />
               <Button
                 variant="outline"
-                className="border-gray-100 w-full shadow-none max-h-[34px] max-w-[38px] text-xs px-2"
+                className="border-gray-100 w-full hover:bg-gray-200 shadow-none max-h-[34px] max-w-[38px] text-xs px-2"
                 onClick={() => handleClickMode("open")}
               >
                 <RiCheckLine size={20} />
@@ -324,33 +392,23 @@ function CalendarDrawer({
         {!isBoxOpen.open && (
           <div className="flex flex-row ml-2 w-full">
             <RiArrowLeftSLine
-              onClick={prevMonth}
+              onClick={handleClickPrevMonth}
               size={24}
               aria-label="Previous Month"
-              className={cn(
-                "rounded-xs focus:outline-none focus:ring-2 focus:ring-[#61A9F9]",
-                isLimitedPrev
-                  ? "text-gray-200"
-                  : "cursor-pointer hover:bg-gray-200"
-              )}
+              className="rounded-xs focus:outline-none focus:ring-2 focus:ring-[#61A9F9] cursor-pointer hover:bg-gray-200"
             />
 
             <RiArrowRightSLine
-              onClick={nextMonth}
+              onClick={handleClickNextMonth}
               size={24}
               aria-label="Next Month"
-              className={cn(
-                "rounded-xs focus:outline-none focus:ring-2 focus:ring-[#61A9F9]",
-                isLimitedNext
-                  ? "text-gray-200"
-                  : "cursor-pointer hover:bg-gray-200"
-              )}
+              className="rounded-xs focus:outline-none focus:ring-2 focus:ring-[#61A9F9] cursor-pointer hover:bg-gray-200"
             />
           </div>
         )}
 
         <Button
-          onClick={moveToToday}
+          onClick={handleMoveToToday}
           variant="outline"
           className="border-gray-100 w-full hover:bg-gray-200 shadow-none max-h-[34px] max-w-[60px] text-xs px-2"
         >
@@ -362,7 +420,7 @@ function CalendarDrawer({
         <li>
           <div className="grid grid-cols-7 gap-1 text-center text-xs font-medium text-gray-500 mb-1 select-none pointer-events-none">
             {dayNames.map((data, index) => (
-              <div key={index}>{data}</div>
+              <div key={index}>{data.text}</div>
             ))}
           </div>
         </li>
@@ -372,10 +430,12 @@ function CalendarDrawer({
             .map((_, i) => (
               <li key={`empty-${i}`} />
             ))}
-          {days.map((date, i) => {
+          {dates.map((date, i) => {
             const idx = i + emptyCellsCount + 1;
             const isHighlighted = idx === highlightedIndexChange;
-            const selectedDate = inputValue ? new Date(inputValue) : new Date();
+            const selectedDate = inputValue.text
+              ? new Date(inputValue.text)
+              : new Date();
             const isCurrentDate =
               date.getDate() === selectedDate.getDate() &&
               date.getMonth() === selectedDate.getMonth() &&
@@ -464,6 +524,3 @@ function formatDate(date: Date, format: FormatProps) {
       return `${month}/${day}/${year}`;
   }
 }
-
-const Calendar = CalendarDrawer;
-export { Calendar, CalendarDrawer };
