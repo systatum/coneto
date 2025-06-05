@@ -1,13 +1,13 @@
 import { RiCalendar2Line } from "@remixicon/react";
-import { Selectbox } from "./selectbox";
-import { CalendarDrawer } from "./calendar";
+import { OptionsProps, Selectbox } from "./selectbox";
+import Calendar from "./calendar";
 
 interface DateboxProps {
-  options?: string[];
-  inputValue: string;
-  setInputValue: (data: string) => void;
-  dayNames: string[];
-  monthNames: string[];
+  options?: OptionsProps[];
+  inputValue: OptionsProps;
+  setInputValue: (data: OptionsProps) => void;
+  dayNames: OptionsProps[];
+  monthNames: OptionsProps[];
   disableWeekend?: boolean;
 }
 
@@ -31,7 +31,7 @@ export default function Datebox({
       clearable
     >
       {(props) => (
-        <CalendarDrawer
+        <Calendar
           dayNames={dayNames}
           monthNames={monthNames}
           format="mm/dd/yyyy"
