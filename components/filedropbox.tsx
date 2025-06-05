@@ -3,7 +3,7 @@ import { cn } from "./../lib/utils";
 import { ChangeEvent, DragEvent, useRef, useState } from "react";
 import LoadingSpinner from "./loading-spinner";
 
-export interface HandleFileDroppedProps {
+export interface OnFileDroppedFunctionProps {
   files: File[];
   succeed: (file: File) => void;
   error: (file: File, errorMessage: string) => void;
@@ -11,28 +11,30 @@ export interface HandleFileDroppedProps {
   progressPercentage?: number;
 }
 
-export interface HandleOnCompleteProps {
+export interface OnCompleteFunctionProps {
   succeedFiles: File[];
   failedFiles: File[];
   setProgressLabel: (label: string) => void;
 }
 
 interface FileDropBoxProps {
-  classNameContainer?: string;
+  containerClassName?: string;
   placeholder?: string;
   accept?: string;
-  handleFileDropped?: (props: HandleFileDroppedProps) => void;
-  handleOnComplete?: (props: HandleOnCompleteProps) => void;
+  OnFileDropped?: (props: OnFileDroppedFunctionProps) => void;
+  OnComplete?: (props: OnCompleteFunctionProps) => void;
   setProgressPercentage?: (props: number) => void;
   progressPercentage?: number;
 }
 
+type ProgressProps = "idle" | "loading" | "succeed";
+
 export default function FileDropBox({
-  classNameContainer,
+  containerClassName,
   placeholder = "Drag and Drop Your File",
   accept = "*",
-  handleFileDropped,
-  handleOnComplete,
+  OnFileDropped,
+  OnComplete,
 }: FileDropBoxProps) {
   const FILE_ICON = [
     {
@@ -57,17 +59,15 @@ export default function FileDropBox({
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const [progressComponentLabel, setProgressComponentLabel] = useState("");
   const [progressPercentage, setProgressPercentage] = useState(0);
-  const [progress, setProgress] = useState<"idle" | "loading" | "succeed">(
-    "idle"
-  );
-  const [errorMessage, setErrorMessage] = useState<string[]>([]);
+  const [progress, setProgress] = useState<ProgressProps>("idle");
+  const [errorMessages, setErrorMessages] = useState<string[]>([]);
 
   const handleBrowseClick = () => {
     fileInputRef.current?.click();
   };
 
   const handleErrorMessage = (data: string) => {
-    setErrorMessage((prev) => [...prev, data]);
+    setErrorMessages((prev) => [...prev, data]);
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -96,7 +96,7 @@ export default function FileDropBox({
   };
 
   const handleUploadFile = async (files: File[]) => {
-    if (!handleFileDropped) return;
+    if (!OnFileDropped) return;
 
     await setProgress("loading");
 
@@ -130,7 +130,7 @@ export default function FileDropBox({
 
     for (let i = 0; i < files.length; i++) {
       setCurrentIndex(i);
-      await handleFileDropped({
+      await OnFileDropped({
         files: [files[i]],
         succeed,
         error,
@@ -139,7 +139,7 @@ export default function FileDropBox({
       });
     }
 
-    await handleOnComplete?.({
+    await OnComplete?.({
       succeedFiles,
       failedFiles,
       setProgressLabel,
@@ -155,7 +155,7 @@ export default function FileDropBox({
         ? "border border-gray-100"
         : "",
     isDragging ? "bg-blue-50 border-blue-400 hover:text-[#61A9F9]" : "",
-    classNameContainer
+    containerClassName
   );
 
   return (
@@ -214,9 +214,9 @@ export default function FileDropBox({
           />
         )}
       </div>
-      {errorMessage.length > 0 && (
+      {errorMessages.length > 0 && (
         <ul className="list-disc text-sm text-gray-600 ml-10">
-          {errorMessage.map((data, index) => (
+          {errorMessages.map((data, index) => (
             <li key={index}>{data}</li>
           ))}
         </ul>

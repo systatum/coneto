@@ -18,9 +18,9 @@ type Story = StoryObj<typeof Datebox>;
 
 export const Default: Story = {
   render: () => {
-    const DAYS_NAME_ITEMS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+    const DAY_NAMES = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
-    const MONTHS_NAME_ITEMS = [
+    const MONTH_NAMES = [
       "JAN",
       "FEB",
       "MAR",
@@ -40,11 +40,11 @@ export const Default: Story = {
     return (
       <div className="w-[295px]">
         <Datebox
-          options={DAYS_NAME_ITEMS}
+          options={DAY_NAMES}
           inputValue={value}
           setInputValue={setValue}
-          dayNames={DAYS_NAME_ITEMS}
-          monthNames={MONTHS_NAME_ITEMS}
+          dayNames={DAY_NAMES}
+          monthNames={MONTH_NAMES}
         />
       </div>
     );
@@ -68,9 +68,9 @@ export const Default: Story = {
 
 export const WithDisableWeekend: Story = {
   render: () => {
-    const DAYS_NAME_ITEMS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+    const DAY_NAMES = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
-    const MONTHS_NAME_ITEMS = [
+    const MONTH_NAMES = [
       "JAN",
       "FEB",
       "MAR",
@@ -90,11 +90,11 @@ export const WithDisableWeekend: Story = {
     return (
       <div className="w-[295px]">
         <Datebox
-          options={DAYS_NAME_ITEMS}
+          options={DAY_NAMES}
           inputValue={value}
           setInputValue={setValue}
-          dayNames={DAYS_NAME_ITEMS}
-          monthNames={MONTHS_NAME_ITEMS}
+          dayNames={DAY_NAMES}
+          monthNames={MONTH_NAMES}
           disableWeekend
         />
       </div>

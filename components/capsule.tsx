@@ -12,7 +12,7 @@ interface TabProps {
   view: string | null | number;
   fields: TabFieldsProps[];
   setView: (data: string | number) => void;
-  classNameContainer?: string;
+  containerClassName?: string;
   classActiveTab?: string;
   full?: boolean;
 }
@@ -21,7 +21,7 @@ export default function Capsule({
   fields,
   view,
   setView,
-  classNameContainer,
+  containerClassName,
   classActiveTab,
   full,
 }: TabProps) {
@@ -131,7 +131,7 @@ export default function Capsule({
   const capsuleClass = cn(
     "relative flex flex-row items-center justify-start overflow-hidden border border-gray-100 px-1 shadow-sm",
     full ? "w-full" : "w-fit rounded-xl",
-    classNameContainer
+    containerClassName
   );
 
   return (

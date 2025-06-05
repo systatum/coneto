@@ -151,7 +151,7 @@ function Table({
                     isOpen={isOpen}
                     setIsOpen={setIsOpen}
                     className="min-w-[235px]"
-                    classNameContainer="bg-transparent"
+                    containerClassName="bg-transparent"
                     variant="primary"
                     subMenuList={subMenuList(`${col.caption}`)}
                   />

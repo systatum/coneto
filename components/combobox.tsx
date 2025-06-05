@@ -3,8 +3,7 @@ import { Selectbox } from "./selectbox";
 
 interface ComboboxProps {
   options: string[];
-  type?: "default" | "calendarItems";
-  classNameContainer?: string;
+  containerClassName?: string;
   inputValue: string;
   setInputValue: (data: string) => void;
   clearable?: boolean;
@@ -35,12 +34,12 @@ export default function Combobox({
   setInputValue,
   clearable = false,
   placeholder,
-  classNameContainer,
+  containerClassName,
   empty = "Not available.",
 }: ComboboxProps) {
   return (
     <Selectbox
-      classNameContainer={classNameContainer}
+      containerClassName={containerClassName}
       options={options}
       inputValue={inputValue}
       setInputValue={setInputValue}
