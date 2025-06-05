@@ -28,10 +28,15 @@ import {
 } from "@remixicon/react";
 import { cn } from "./../lib/utils";
 
+export interface OptionsProps {
+  text: string;
+  value?: string | number;
+}
+
 interface SelectboxProps {
-  options?: string[];
-  inputValue?: string;
-  setInputValue?: (data: string) => void;
+  options?: OptionsProps[];
+  inputValue?: OptionsProps;
+  setInputValue?: (data: OptionsProps) => void;
   placeholder?: string;
   iconOpened?: RemixiconComponentType;
   iconClosed?: RemixiconComponentType;
@@ -39,11 +44,11 @@ interface SelectboxProps {
   clearable?: boolean;
   containerClassName?: string;
   children?: (props: {
-    options: string[];
+    options: OptionsProps[];
     highlightedIndex: number;
     setHighlightedIndex: (index: number) => void;
-    setInputValue: (value: string) => void;
-    inputValue: string;
+    setInputValue: (value: OptionsProps) => void;
+    inputValue: OptionsProps;
     setIsOpen: (open: boolean) => void;
     getFloatingProps: (
       userProps?: HTMLAttributes<HTMLUListElement>
@@ -69,14 +74,16 @@ export function Selectbox({
 }: SelectboxProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(0);
+  const [hasInteracted, setHasInteracted] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
-
   const listRef = useRef<(HTMLLIElement | null)[]>([]);
 
-  const FILTERED_OPTIONS = options.filter((opt) =>
-    opt.toLowerCase().includes(inputValue.toLowerCase())
-  );
+  const FILTERED_OPTIONS = hasInteracted
+    ? options.filter((opt) =>
+        opt.text.toLowerCase().includes(inputValue.text.toLowerCase())
+      )
+    : options;
 
   const { refs, floatingStyles, context } = useFloating({
     placement: "bottom-start" as Placement,
@@ -90,6 +97,7 @@ export function Selectbox({
   const { getFloatingProps, getReferenceProps } = useInteractions([dismiss]);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setHasInteracted?.(true);
     let value = e.target.value;
     if (type === "calendar") {
       value = value.replace(/\D/g, "");
@@ -101,7 +109,9 @@ export function Selectbox({
           value.slice(0, 2) + "/" + value.slice(2, 4) + "/" + value.slice(4, 8);
       }
     }
-    setInputValue(value);
+
+    setInputValue({ ...inputValue, text: value });
+
     setIsOpen(value.length > 0);
     setHighlightedIndex(0);
   };
@@ -127,9 +137,11 @@ export function Selectbox({
       if (selected) {
         setInputValue(selected);
         setIsOpen(false);
+        setHasInteracted(false);
       }
     } else if (e.key === "Escape") {
       setIsOpen(false);
+      setHasInteracted(false);
     }
   };
 
@@ -161,7 +173,7 @@ export function Selectbox({
           inputRef.current = el;
         }}
         type="text"
-        value={inputValue}
+        value={inputValue.text}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
         onFocus={() => {
@@ -176,12 +188,16 @@ export function Selectbox({
         className="w-full rounded-xs border border-gray-100 px-3 py-2 outline-none focus:border-[#61A9F9] focus:ring-0 focus:ring-[#61A9F9]"
       />
 
-      {clearable && inputValue !== "" && (
+      {clearable && inputValue.text !== "" && (
         <>
           <RiCloseLine
             onClick={() => {
-              setInputValue("");
+              setInputValue({
+                text: "",
+                value: 0,
+              });
               setIsOpen(false);
+              setHasInteracted(false);
             }}
             size={12}
             className="absolute top-[11px] z-20 right-9 cursor-pointer text-gray-400"
