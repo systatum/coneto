@@ -37,7 +37,8 @@ export default function Colorbox({
           ? " border-red-500 focus:border-red-500 focus:ring-red-500 text-red-800"
           : hovered
             ? "ring-[#61A9F9] border-[#61A9F9]"
-            : "border border-gray-300 "
+            : "border border-gray-300 ",
+        className
       )}
     >
       <div>

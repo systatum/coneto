@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 import Colorbox, { ColorPickProps } from "./colorbox";
 import { useArgs } from "@storybook/preview-api";
-import { ChangeEvent, useEffect } from "react";
+import { ChangeEvent } from "react";
 
 const meta: Meta<typeof Colorbox> = {
   title: "Input Elements/Colorbox",
