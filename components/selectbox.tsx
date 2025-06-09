@@ -27,6 +27,7 @@ import {
   RiCloseLine,
 } from "@remixicon/react";
 import { cn } from "./../lib/utils";
+import { BadgeTypeProps } from "./badge";
 
 export interface SelectboxProps {
   options?: OptionsProps[];
@@ -38,6 +39,7 @@ export interface SelectboxProps {
   type?: "calendar" | "default";
   clearable?: boolean;
   containerClassName?: string;
+  childClassName?: string;
   children?: (
     props: DrawerProps & {
       options: OptionsProps[];
@@ -64,6 +66,9 @@ export interface DrawerProps {
 export interface OptionsProps {
   text: string;
   value?: string | number;
+  backgroundColor?: string;
+  textColor?: string;
+  variant?: BadgeTypeProps;
 }
 
 export function Selectbox({
