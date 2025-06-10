@@ -41,7 +41,7 @@ export default function Colorbox({
         className
       )}
     >
-      <div>
+      <div className="relative">
         <div
           tabIndex={0}
           className={cn(
@@ -55,16 +55,16 @@ export default function Colorbox({
           }}
           onBlur={() => setHovered(false)}
         ></div>
-      </div>
 
-      <input
-        {...props}
-        id={inputId}
-        type="color"
-        value={value?.startsWith("#") ? value : `#${value}`}
-        onChange={(e) => onChange(e, "color-pick")}
-        className="sr-only absolute border border-transparent -bottom-1"
-      />
+        <input
+          {...props}
+          id={inputId}
+          type="color"
+          value={value?.startsWith("#") ? value : `#${value}`}
+          onChange={(e) => onChange(e, "color-pick")}
+          className="sr-only absolute border border-transparent -bottom-1"
+        />
+      </div>
 
       <span
         className={cn(
@@ -108,7 +108,7 @@ export default function Colorbox({
     <div
       className={cn(`flex w-full flex-col gap-2 text-xs`, containerClassName)}
     >
-      {label && <label htmlFor={inputId}>{label}</label>}
+      {label && <label>{label}</label>}
       <div className="flex flex-col gap-1 text-xs">
         {inputElement}
         {showError && <span className="text-red-600">{errorMessage}</span>}
