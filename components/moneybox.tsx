@@ -1,5 +1,5 @@
 import { cn } from "../lib/utils";
-import { ChangeEvent, useMemo } from "react";
+import { ChangeEvent, useMemo, useState } from "react";
 
 type MoneyTypeProps = "dollar" | "euro" | "yen" | "pound" | "rupiah";
 type SeparatorTypeProps = "dot" | "comma";
@@ -31,6 +31,8 @@ export default function Moneybox({
   separator,
   className,
 }: MoneyboxProps) {
+  const [focus, setFocus] = useState(false);
+
   const currencySelected = CURRENCY_SYMBOL[type];
 
   const rawValue = typeof value === "number" ? String(value) : value;
@@ -41,22 +43,25 @@ export default function Moneybox({
   );
 
   const classMoneyBox = cn(
-    "w-full h-full border border-gray-300 text-sm rounded-xs py-[10px] px-3 items-center gap-3 justify-end flex",
+    "w-full h-full border text-sm rounded-xs py-[10px] px-3 items-center gap-3 justify-end flex",
+    focus ? "border-[#61A9F9]" : "border-gray-300",
     className
   );
 
   return (
     <div className={classMoneyBox}>
+      <span>{currencySelected}</span>
+
       <input
         name={name}
         value={formattedValue}
         onChange={onChange}
         placeholder={placeholder}
+        onFocus={() => setFocus(true)}
+        onBlur={() => setFocus(false)}
         className="bg-transparent outline-none text-right flex-1"
         type="text"
       />
-
-      <span>{currencySelected}</span>
     </div>
   );
 }
