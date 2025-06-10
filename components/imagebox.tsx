@@ -82,7 +82,7 @@ export default function Imagebox({
       onDragLeave={handleDragLeave}
     >
       {selectedFile === null ? (
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+        <div className="absolute top-1/2 left-1/2 text-[#c3c3c3] transform -translate-x-1/2 -translate-y-1/2">
           <RiImageLine size={SIZE_ICON[size]} />
         </div>
       ) : (
@@ -100,8 +100,8 @@ export default function Imagebox({
       />
       <div
         className={cn(
-          "border-gray-300 w-fit h-fit border rounded-xs absolute -bottom-1 -right-1",
-          isDragging ? "bg-[#60a5fa]" : "bg-gray-200"
+          "border-gray-300 text-[#c3c3c3] w-fit h-fit border rounded-xs absolute -bottom-1 -right-1 ",
+          isDragging ? "bg-[#60a5fa]" : "bg-white"
         )}
       >
         <RiAddLine size={SIZE_ICON[size]} />
