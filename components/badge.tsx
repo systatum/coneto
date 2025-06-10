@@ -61,8 +61,16 @@ export default function Badge({
         <span
           className="rounded-full w-[8px] h-[8px] border"
           style={{
-            borderColor: circleColor ? circleColor : color,
-            backgroundColor: circleColor ? circleColor : color,
+            borderColor: circleColor
+              ? circleColor
+              : textColor
+                ? textColor
+                : color,
+            backgroundColor: circleColor
+              ? circleColor
+              : textColor
+                ? textColor
+                : color,
           }}
         />
       )}
