@@ -2,8 +2,9 @@ import { RiAddBoxFill, RiAddLine, RiCloseLine } from "@remixicon/react";
 import { cn } from "./../lib/utils";
 import Badge, { BadgeProps } from "./badge";
 import Checkbox from "./checkbox";
-import React, {
+import {
   ChangeEvent,
+  CSSProperties,
   KeyboardEvent,
   useEffect,
   useRef,
@@ -11,6 +12,7 @@ import React, {
 } from "react";
 import {
   autoUpdate,
+  flip,
   offset,
   useClick,
   useDismiss,
@@ -39,7 +41,8 @@ export interface ChipsProps {
     type?: ColorPickProps
   ) => void;
   containerClassName?: string;
-  childClassName?: string;
+  chipClassName?: string;
+  chipsDrawerClassName?: string;
   filterPlaceholder?: string;
   newLabelPlaceholder?: string;
   addButtonLabel?: string;
@@ -59,7 +62,10 @@ export default function Chips(props: ChipsProps) {
   const { refs, floatingStyles, context } = useFloating({
     open,
     onOpenChange: setOpen,
-    middleware: [offset(6)],
+    middleware: [
+      offset(6),
+      flip({ fallbackPlacements: ["bottom-end", "top-start", "top-end"] }),
+    ],
     whileElementsMounted: autoUpdate,
     placement: "bottom-start",
   });
@@ -97,32 +103,30 @@ export default function Chips(props: ChipsProps) {
       )
     : getAllOptions();
 
-  const chipClass = cn(
+  const buttonAddClass = cn(
     "cursor-pointer border border-transparent rounded-full p-[1px] text-[#c3c3c3] hover:shadow-md hover:border-gray-300",
     open && "border-gray-300"
   );
 
   return (
     <>
-      <div className="flex flex-row gap-2 p-2">
-        <div className="w-fit flex flex-col flex-wrap gap-1">
-          {CLICKED_OPTIONS.map((data) => (
-            <Badge
-              variant={data.variant}
-              backgroundColor={data.backgroundColor}
-              circleColor={data.circleColor}
-              className={"rounded-sm border border-gray-100"}
-              textColor={data.textColor}
-              caption={data.caption}
-              withCircle
-            />
-          ))}
-        </div>
+      <div className="flex flex-row gap-2 flex-wrap p-2">
+        {CLICKED_OPTIONS.map((data) => (
+          <Badge
+            variant={data.variant}
+            backgroundColor={data.backgroundColor}
+            circleColor={data.circleColor}
+            className={"rounded-sm border border-gray-100"}
+            textColor={data.textColor}
+            caption={data.caption}
+            withCircle
+          />
+        ))}
 
         <RiAddLine
           ref={refs.setReference}
           {...getReferenceProps()}
-          className={chipClass}
+          className={buttonAddClass}
         />
       </div>
 
@@ -142,7 +146,7 @@ export default function Chips(props: ChipsProps) {
 
 type ChipsDrawerProps = ChipsProps & {
   getFloatingProps: ReturnType<typeof useInteractions>["getFloatingProps"];
-  floatingStyles: React.CSSProperties;
+  floatingStyles: CSSProperties;
   refs: ReturnType<typeof useFloating>["refs"];
   setHasInteracted: (data: boolean) => void;
 };
@@ -155,8 +159,8 @@ function ChipsDrawer({
   setHasInteracted,
   addButtonLabel = "Add Tag",
   cancelAddingLabel = "Cancel",
-  childClassName,
-  containerClassName,
+  chipClassName,
+  chipsDrawerClassName = "max-w-[250px]",
   filterPlaceholder = "Change or add labels...",
   inputValue,
   newLabelPlaceholder = "Create a new label:",
@@ -194,7 +198,7 @@ function ChipsDrawer({
 
   const chipsDrawerClass = cn(
     "flex flex-col bg-white border text-sm border-gray-300 rounded-xs w-full shadow-xs list-none outline-none z-[9999]",
-    containerClassName
+    chipsDrawerClassName
   );
 
   const filteredSearch = options.filter(
@@ -281,6 +285,13 @@ function ChipsDrawer({
               setHasInteracted?.(true);
               setInputValue(e);
               setIsTyping(true);
+              const inputNameTagEvent = {
+                target: {
+                  name: "name_tag",
+                  value: e.target.value,
+                },
+              } as ChangeEvent<HTMLInputElement>;
+              setInputValue(inputNameTagEvent);
               if (backgroundFiltered) {
                 const code = getCode(inputValue.search);
                 const backgroundColor = getBackground(code);
@@ -304,15 +315,8 @@ function ChipsDrawer({
               <div
                 onMouseEnter={() => setHovered(0)}
                 onClick={async () => {
-                  const inputNameTagEvent = {
-                    target: {
-                      name: "name_tag",
-                      value: inputValue.search,
-                    },
-                  } as ChangeEvent<HTMLInputElement>;
-                  await setInputValue(inputNameTagEvent);
                   await setMode("create");
-                  inputNameTagRef.current.focus();
+                  await inputNameTagRef.current.focus();
                 }}
                 className={cn(
                   "flex items-start cursor-pointer text-xs rounded-xs gap-1 text-black p-2",
@@ -357,7 +361,7 @@ function ChipsDrawer({
                         isClicked={isClicked}
                         setHovered={setHovered}
                         onOptionClicked={onOptionClicked}
-                        childClassName={childClassName}
+                        chipClassName={chipClassName}
                         deletable={deletable}
                         onDeleteRequested={onDeleteRequested}
                       />
@@ -474,7 +478,7 @@ function Chip({
   hovered,
   setHovered,
   onOptionClicked,
-  childClassName,
+  chipClassName,
   onDeleteRequested,
   deletable,
 }: {
@@ -483,7 +487,7 @@ function Chip({
   hovered: number | null;
   setHovered: (data: number) => void;
   onOptionClicked?: (data: BadgeProps) => void;
-  childClassName?: string;
+  chipClassName?: string;
   onDeleteRequested?: (data: BadgeProps) => void;
   deletable?: boolean;
 }) {
@@ -509,7 +513,7 @@ function Chip({
         variant={data.variant}
         backgroundColor={data.backgroundColor}
         circleColor={data.circleColor}
-        className={childClassName}
+        className={chipClassName}
         textColor={data.textColor}
         caption={data.caption}
         withCircle

@@ -137,8 +137,8 @@ export const Default: Story = {
       <Chips
         inputValue={inputValue}
         setInputValue={onChangeValue}
-        containerClassName="max-w-[250px]"
-        childClassName="w-full gap-2"
+        chipClassName="w-full gap-2"
+        chipsDrawerClassName="max-w-[250px]"
         onOptionClicked={handleOptionClicked}
         optionClicked={selected}
         onDeleteRequested={handleDeleteClicked}
