@@ -1,8 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 import Chips from "./chips";
-import { OptionsProps } from "./selectbox";
 import { ChangeEvent, useState } from "react";
-import Badge, { BadgeProps, BadgeVariantProps } from "./badge";
+import { BadgeProps } from "./badge";
 import { ColorPickProps } from "./colorbox";
 
 const meta: Meta<typeof Chips> = {
