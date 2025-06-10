@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import Badge from "./badge";
+import Badge, { BadgeProps, BadgeVariantProps } from "./badge";
 
 const meta: Meta<typeof Badge> = {
   title: "Content/Badge",
@@ -11,7 +11,7 @@ const meta: Meta<typeof Badge> = {
       options: ["neutral", "green", "yellow", "red"],
     },
     withCircle: { control: "boolean" },
-    children: { control: "text" },
+    caption: { control: "text" },
     className: { control: false },
   },
 };
@@ -24,70 +24,127 @@ export const Neutral: Story = {
   args: {
     variant: "neutral",
     withCircle: false,
-    children: "Neutral badge",
+    caption: "Neutral badge",
   },
-  render: (args) => <Badge {...args}>{args.children}</Badge>,
+  render: (args) => <Badge {...args} />,
 };
 
 export const NeutralWithCircle: Story = {
   args: {
     variant: "neutral",
     withCircle: true,
-    children: "Neutral badge with circle",
+    caption: "Neutral badge with circle",
   },
-  render: (args) => <Badge {...args}>{args.children}</Badge>,
+  render: (args) => <Badge {...args} />,
 };
 
 export const Green: Story = {
   args: {
     variant: "green",
     withCircle: false,
-    children: "Green badge",
+    caption: "Green badge",
   },
-  render: (args) => <Badge {...args}>{args.children}</Badge>,
+  render: (args) => <Badge {...args} />,
 };
 
 export const GreenWithCircle: Story = {
   args: {
     variant: "green",
     withCircle: true,
-    children: "Green badge with circle",
+    caption: "Green badge with circle",
   },
-  render: (args) => <Badge {...args}>{args.children}</Badge>,
+  render: (args) => <Badge {...args} />,
 };
 
 export const Yellow: Story = {
   args: {
     variant: "yellow",
     withCircle: false,
-    children: "Yellow badge",
+    caption: "Yellow badge",
   },
-  render: (args) => <Badge {...args}>{args.children}</Badge>,
+  render: (args) => <Badge {...args} />,
 };
 
 export const YellowWithCircle: Story = {
   args: {
     variant: "yellow",
     withCircle: true,
-    children: "Yellow badge with circle",
+    caption: "Yellow badge with circle",
   },
-  render: (args) => <Badge {...args}>{args.children}</Badge>,
+  render: (args) => <Badge {...args} />,
 };
 
 export const Red: Story = {
   args: {
     variant: "red",
     withCircle: false,
-    children: "Proceed with caution",
+    caption: "Proceed with caution",
   },
-  render: (args) => <Badge {...args}>{args.children}</Badge>,
+  render: (args) => <Badge {...args} />,
 };
 
 export const RedWithCircle: Story = {
   args: {
     variant: "red",
     withCircle: true,
-    children: "Proceed with caution",
+    caption: "Proceed with caution",
   },
-  render: (args) => <Badge {...args}>{args.children}</Badge>,
+  render: (args) => <Badge {...args} />,
+};
+
+export const VariantBadge: Story = {
+  render: () => {
+    const BADGE_OPTIONS = [
+      { id: 1, variant: "neutral", caption: "Anime" },
+      { id: 2, variant: "green", caption: "Manga" },
+      { id: 3, variant: "yellow", caption: "Comics" },
+      { id: 4, variant: "red", caption: "Movies" },
+      { id: 5, variant: "neutral", caption: "Podcasts" },
+      {
+        id: 6,
+        backgroundColor: "#4a5055",
+        textColor: "#eee",
+        caption: "TV Shows",
+      },
+      {
+        id: 7,
+        backgroundColor: "rgb(36, 123, 160)",
+        textColor: "#fff",
+        caption: "Novels",
+      },
+      {
+        id: 8,
+        backgroundColor: "#ff6f61",
+        textColor: "#3b0000",
+        caption: "Music",
+      },
+      {
+        id: 9,
+        backgroundColor: "rgb(94, 53, 177)",
+        textColor: "#fff",
+        caption: "Games",
+      },
+      {
+        id: 10,
+        backgroundColor: "#0b3d91",
+        textColor: "#e0e0e0",
+        caption: "Webtoons",
+      },
+    ];
+    return (
+      <div className="flex flex-col gap-1">
+        {BADGE_OPTIONS.map((data) => (
+          <Badge
+            className="w-full max-w-[150px]"
+            backgroundColor={data.backgroundColor}
+            textColor={data.textColor}
+            variant={data.variant as BadgeVariantProps}
+            key={data.id}
+            withCircle
+            caption={data.caption}
+          />
+        ))}
+      </div>
+    );
+  },
 };

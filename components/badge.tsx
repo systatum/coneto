@@ -1,15 +1,17 @@
 import { cn } from "./../lib/utils";
 import { ReactNode } from "react";
 
-export type BadgeTypeProps = "neutral" | "green" | "yellow" | "red";
+export type BadgeVariantProps = "neutral" | "green" | "yellow" | "red";
 
 export interface BadgeProps {
-  variant?: BadgeTypeProps;
+  id?: number;
+  variant?: BadgeVariantProps;
   withCircle?: boolean;
-  children: ReactNode;
+  caption?: string;
   className?: string;
-  bgColor?: string;
+  backgroundColor?: string;
   textColor?: string;
+  circleColor?: string;
 }
 
 const VARIANTS_BADGE = {
@@ -18,53 +20,54 @@ const VARIANTS_BADGE = {
     color: "#ffffff",
   },
   green: {
-    bg: "rgb(52, 243, 140)",
+    bg: "rgb(174 224 197)",
     color: "rgb(15, 19, 26)",
   },
   yellow: {
-    bg: "rgb(245, 184, 28)",
+    bg: "rgb(255 215 112)",
     color: "rgb(15, 19, 26)",
   },
   red: {
-    bg: "rgb(255, 29, 0)",
-    color: "#470707",
+    bg: "rgb(235 27 0)",
+    color: "#ffd4d4",
   },
 };
 
 export default function Badge({
   variant = "neutral",
-  children,
+  caption,
   withCircle = false,
   className,
-  bgColor,
+  backgroundColor,
   textColor,
+  circleColor,
 }: BadgeProps) {
   const { bg, color } = VARIANTS_BADGE[variant];
 
   const classBadge = cn(
-    `flex flex-row text-sm w-fit px-2 py-[2px] rounded-md items-center`,
-    withCircle && "gap-[6px]",
+    `flex flex-row text-xs w-fit px-2 py-[2px] rounded-md items-center  break-all`,
+    withCircle && "gap-2",
     className
   );
 
   return (
     <div
-      className={classBadge}
       style={{
-        background: bgColor ? bgColor : bg,
+        background: backgroundColor ? backgroundColor : bg,
         color: textColor ? textColor : color,
       }}
+      className={classBadge}
     >
       {withCircle && (
         <span
-          className="rounded-full w-[7px] h-[7px] border"
+          className="rounded-full w-[8px] h-[8px] border"
           style={{
-            borderColor: textColor ? textColor : color,
-            backgroundColor: textColor ? textColor : color,
+            borderColor: circleColor ? circleColor : color,
+            backgroundColor: circleColor ? circleColor : color,
           }}
         />
       )}
-      {children}
+      {caption}
     </div>
   );
 }
