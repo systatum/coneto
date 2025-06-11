@@ -23,7 +23,6 @@ import {
 import Textbox from "./textbox";
 import Colorbox, { ColorPickProps } from "./colorbox";
 import { Button } from "./button";
-import { getBackground, getCode } from "./avatar";
 
 type InputValueProps = {
   search: string;
@@ -40,7 +39,8 @@ export interface ChipsProps {
     data: ChangeEvent<HTMLInputElement>,
     type?: ColorPickProps
   ) => void;
-  containerClassName?: string;
+  chipsContainerClassName?: string;
+  chipContainerClassName?: string;
   chipClassName?: string;
   chipsDrawerClassName?: string;
   filterPlaceholder?: string;
@@ -49,7 +49,7 @@ export interface ChipsProps {
   cancelAddingLabel?: string;
   creatable?: boolean;
   onOptionClicked?: (data: BadgeProps) => void;
-  optionClicked?: BadgeProps[];
+  selectedOption?: number[];
   onDeleteRequested?: (data: BadgeProps) => void;
   deletable?: boolean;
   onNewTagCreated?: () => void;
@@ -81,19 +81,20 @@ export default function Chips(props: ChipsProps) {
   ]);
 
   const getAllOptions = () => {
-    const clickedOptions = props.options.filter((opt) =>
-      props.optionClicked.map((data) => data.id).includes(opt.id)
-    );
-    const unClickedOptions = props.options.filter(
-      (opt) => !props.optionClicked.map((data) => data.id).includes(opt.id)
-    );
+    const selectedIds = new Set(props.selectedOption);
 
+    const clickedOptions = props.selectedOption
+      .map((id) => props.options.find((opt) => opt.id === id))
+      .filter(Boolean);
+    const unClickedOptions = props.options.filter(
+      (opt) => !selectedIds.has(opt.id)
+    );
     return [...clickedOptions, ...unClickedOptions];
   };
 
-  const CLICKED_OPTIONS = props.options.filter((opt) =>
-    props.optionClicked.map((data) => data.id).includes(opt.id)
-  );
+  const CLICKED_OPTIONS = props.selectedOption
+    .map((id) => props.options.find((opt) => opt.id === id))
+    .filter(Boolean);
 
   const ALL_OPTIONS = hasInteracted
     ? getAllOptions().filter((opt) =>
@@ -108,15 +109,25 @@ export default function Chips(props: ChipsProps) {
     open && "border-gray-300"
   );
 
+  const chipsClassName = cn(
+    "flex flex-row gap-[3px] flex-wrap p-2",
+    props.chipsContainerClassName
+  );
+
   return (
     <>
-      <div className="flex flex-row gap-2 flex-wrap p-2">
+      <div className={chipsClassName}>
         {CLICKED_OPTIONS.map((data) => (
           <Badge
+            key={data.id}
+            onClick={(e) => {
+              e.stopPropagation();
+              dismiss;
+            }}
             variant={data.variant}
             backgroundColor={data.backgroundColor}
             circleColor={data.circleColor}
-            className={"rounded-sm border border-gray-100"}
+            className={"rounded-sm"}
             textColor={data.textColor}
             caption={data.caption}
             withCircle
@@ -125,8 +136,8 @@ export default function Chips(props: ChipsProps) {
 
         <RiAddLine
           ref={refs.setReference}
-          {...getReferenceProps()}
           className={buttonAddClass}
+          {...getReferenceProps()}
         />
       </div>
 
@@ -157,9 +168,10 @@ function ChipsDrawer({
   getFloatingProps,
   refs,
   setHasInteracted,
-  addButtonLabel = "Add Tag",
+  addButtonLabel = "Add",
   cancelAddingLabel = "Cancel",
   chipClassName,
+  chipContainerClassName,
   chipsDrawerClassName = "max-w-[250px]",
   filterPlaceholder = "Change or add labels...",
   inputValue,
@@ -168,13 +180,12 @@ function ChipsDrawer({
   setInputValue,
   creatable,
   onOptionClicked,
-  optionClicked,
+  selectedOption,
   deletable,
   onDeleteRequested,
 }: ChipsDrawerProps) {
   const [hovered, setHovered] = useState<number | null>(null);
   const [mode, setMode] = useState<"idle" | "create">("idle");
-  const [backgroundFiltered, setBackgroundFiltered] = useState(true);
   const [isTyping, setIsTyping] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -292,17 +303,6 @@ function ChipsDrawer({
                 },
               } as ChangeEvent<HTMLInputElement>;
               setInputValue(inputNameTagEvent);
-              if (backgroundFiltered) {
-                const code = getCode(inputValue.search);
-                const backgroundColor = getBackground(code);
-                const inputBackgroundColorEvent = {
-                  target: {
-                    name: "background_color",
-                    value: backgroundColor,
-                  },
-                } as ChangeEvent<HTMLInputElement>;
-                setInputValue(inputBackgroundColorEvent);
-              }
             }}
           />
           <div
@@ -337,16 +337,16 @@ function ChipsDrawer({
             {options && options.length > 0 ? (
               <>
                 {options.map((data, index) => {
-                  const isClicked = optionClicked?.some(
-                    (clicked) => clicked.id === data.id
+                  const isClicked = selectedOption?.some(
+                    (clicked) => clicked === data.id
                   );
 
                   return (
                     <div key={data.id}>
                       {index > 0 &&
                         options[index - 1] &&
-                        optionClicked?.some(
-                          (clicked) => clicked.id === options[index - 1].id
+                        selectedOption?.some(
+                          (clicked) => clicked === options[index - 1].id
                         ) &&
                         !isClicked && (
                           <div
@@ -357,6 +357,7 @@ function ChipsDrawer({
 
                       <Chip
                         data={data}
+                        chipContainerClassName={chipContainerClassName}
                         hovered={hovered}
                         isClicked={isClicked}
                         setHovered={setHovered}
@@ -384,7 +385,7 @@ function ChipsDrawer({
         <div className="flex flex-col">
           <div className="flex flex-row py-2 px-3 gap-2 text-xs items-center font-medium">
             <RiAddBoxFill size={18} />
-            <h2 className="pt-[2px]">Create a New Tag</h2>
+            <h2 className="pt-[2px]">Create a new tag</h2>
           </div>
           <div
             aria-label="divider"
@@ -399,33 +400,22 @@ function ChipsDrawer({
               autoComplete="off"
               onChange={(e) => {
                 setInputValue(e);
-                if (backgroundFiltered) {
-                  const code = getCode(inputValue.name_tag);
-                  const backgroundColor = getBackground(code);
-                  const inputBackgroundColorEvent = {
-                    target: {
-                      name: "background_color",
-                      value: backgroundColor,
-                    },
-                  } as ChangeEvent<HTMLInputElement>;
-                  setInputValue(inputBackgroundColorEvent);
-                }
               }}
             />
             <Colorbox
+              placeholder="Select background color..."
               name={"background_color"}
               value={inputValue.background_color}
-              onChange={(e) => {
-                setInputValue(e);
-                setBackgroundFiltered(false);
-              }}
+              onChange={setInputValue}
             />
             <Colorbox
+              placeholder="Select text color..."
               name={"text_color"}
               value={inputValue.text_color}
               onChange={setInputValue}
             />
             <Colorbox
+              placeholder="Select circle color..."
               name={"circle_color"}
               value={inputValue.circle_color}
               onChange={setInputValue}
@@ -478,6 +468,7 @@ function Chip({
   hovered,
   setHovered,
   onOptionClicked,
+  chipContainerClassName,
   chipClassName,
   onDeleteRequested,
   deletable,
@@ -488,6 +479,7 @@ function Chip({
   setHovered: (data: number) => void;
   onOptionClicked?: (data: BadgeProps) => void;
   chipClassName?: string;
+  chipContainerClassName?: string;
   onDeleteRequested?: (data: BadgeProps) => void;
   deletable?: boolean;
 }) {
@@ -495,7 +487,8 @@ function Chip({
     <div
       className={cn(
         "flex py-[4px] flex-row px-3 gap-[2px] items-center cursor-pointer justify-between relative",
-        hovered === data.id && "bg-blue-100"
+        hovered === data.id && "bg-blue-100",
+        chipContainerClassName
       )}
       onClick={() => onOptionClicked?.(data)}
       onMouseEnter={() => setHovered(data.id)}
@@ -527,7 +520,10 @@ function Chip({
             onDeleteRequested(data);
           }}
           size={14}
-          className="absolute top-1/2 right-3 text-gray-400 -translate-y-1/2 cursor-pointer"
+          className={cn(
+            "absolute top-1/2 right-4 -translate-y-1/2 cursor-pointer",
+            "text-gray-400"
+          )}
         />
       )}
     </div>
