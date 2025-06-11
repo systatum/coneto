@@ -5,7 +5,7 @@ import { ChangeEvent, useState } from "react";
 import { RiListCheck, RiNodeTree } from "@remixicon/react";
 
 const meta: Meta<typeof DrawerTab> = {
-  title: "Stage/Drawer Tab",
+  title: "Stage/DrawerTab",
   component: DrawerTab,
   tags: ["autodocs"],
   parameters: {
@@ -83,7 +83,7 @@ export const Default: Story = {
     return <DrawerTab position="left" tabs={tabs} />;
   },
 };
-export const LeftPosition: Story = {
+export const RightPosition: Story = {
   render: () => {
     const WriteTabContent = () => {
       const [value, setValue] = useState({
