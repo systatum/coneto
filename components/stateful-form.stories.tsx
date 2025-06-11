@@ -6,7 +6,7 @@ import { z } from "zod";
 import { Button } from "./button";
 
 const meta: Meta<typeof StatefulForm> = {
-  title: "Input Elements/Stateful Form",
+  title: "Input Elements/StatefulForm",
   component: StatefulForm,
   tags: ["autodocs"],
 };
