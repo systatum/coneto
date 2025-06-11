@@ -71,8 +71,8 @@ export default function DrawerTab({
       >
         <div
           className={cn(
-            "h-fit absolute z-10 flex flex-col border-gray-300 bg-white gap-[2px]",
-            position === "left" ? "left-[300px] top-8" : "right-[300px]",
+            "h-fit absolute z-10 flex flex-col top-8 border-gray-300 bg-white gap-[2px]",
+            position === "left" ? "left-[300px]" : "right-[300px]",
             tabClassName
           )}
         >
