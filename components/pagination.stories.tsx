@@ -15,17 +15,10 @@ type Story = StoryObj<typeof Pagination>;
 
 export const Default: Story = {
   render: () => {
-    const [currentPage, setCurrentPage] = useState<OptionsProps>({
-      text: "1",
-      value: 1,
-    });
+    const [page, setPage] = useState<number>(1);
 
     return (
-      <Pagination
-        currentPage={currentPage}
-        totalPages={10}
-        onPageChange={setCurrentPage}
-      />
+      <Pagination currentPage={page} totalPages={10} onPageChange={setPage} />
     );
   },
 };

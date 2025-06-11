@@ -2,11 +2,12 @@ import { RiArrowLeftSLine, RiArrowRightSLine } from "@remixicon/react";
 import { cn } from "./../lib/utils";
 import Combobox from "./combobox";
 import { OptionsProps } from "./selectbox";
+import { useState } from "react";
 
 type PaginationProps = {
-  currentPage: OptionsProps;
+  currentPage: number;
   totalPages: number;
-  onPageChange: (data: OptionsProps) => void;
+  onPageChange: (page: number) => void;
   showNumbers?: boolean;
   className?: string;
 };
@@ -18,19 +19,26 @@ export default function Pagination({
   showNumbers = true,
   className = "",
 }: PaginationProps) {
-  const currentPageNumber = Number(currentPage.value);
+  const [currentPageLocal, setCurrentPageLocal] = useState<OptionsProps>({
+    text: currentPage.toString(),
+    value: currentPage,
+  });
+
+  const currentPageNumber = Number(currentPageLocal.value);
 
   const handlePrevious = () => {
     if (currentPageNumber > 1) {
       const newValue = currentPageNumber - 1;
-      onPageChange({ value: newValue, text: newValue.toString() });
+      onPageChange(newValue);
+      setCurrentPageLocal({ value: newValue, text: newValue.toString() });
     }
   };
 
   const handleNext = () => {
     if (currentPageNumber < totalPages) {
       const newValue = currentPageNumber + 1;
-      onPageChange({ value: newValue, text: newValue.toString() });
+      onPageChange(newValue);
+      setCurrentPageLocal({ value: newValue, text: newValue.toString() });
     }
   };
 
@@ -47,9 +55,10 @@ export default function Pagination({
 
       {showNumbers && (
         <PaginationItem
-          currentPage={currentPage}
+          currentPage={currentPageLocal}
           onPageChange={onPageChange}
           totalPages={totalPages}
+          setCurrentPageLocal={setCurrentPageLocal}
         />
       )}
 
@@ -69,10 +78,12 @@ const PaginationItem = ({
   totalPages,
   currentPage,
   onPageChange,
+  setCurrentPageLocal,
 }: {
   totalPages: number;
   currentPage: OptionsProps;
-  onPageChange: (page: OptionsProps) => void;
+  onPageChange: (page: number) => void;
+  setCurrentPageLocal: (page: OptionsProps) => void;
 }) => {
   const threshold = 5;
 
@@ -104,7 +115,8 @@ const PaginationItem = ({
             options={comboBoxPages.map(formatOption)}
             inputValue={currentPage}
             setInputValue={(val) => {
-              onPageChange(val);
+              onPageChange(Number(val.value));
+              setCurrentPageLocal(val);
             }}
             containerClassName="w-[80px] text-sm"
           />
@@ -114,7 +126,10 @@ const PaginationItem = ({
             return (
               <button
                 key={page}
-                onClick={() => onPageChange(formatOption(page))}
+                onClick={() => {
+                  onPageChange(page);
+                  setCurrentPageLocal(formatOption(page));
+                }}
                 className={cn(
                   "w-[38px] h-[38px] rounded-xs cursor-pointer text-sm font-medium focus:outline-none border border-gray-100",
                   isActive
@@ -134,7 +149,10 @@ const PaginationItem = ({
             return (
               <button
                 key={page}
-                onClick={() => onPageChange(formatOption(page))}
+                onClick={() => {
+                  onPageChange(page);
+                  setCurrentPageLocal(formatOption(page));
+                }}
                 className={cn(
                   "w-[38px] h-[38px] rounded-xs text-sm cursor-pointer font-medium focus:outline-none border border-gray-100",
                   isActive
