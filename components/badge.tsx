@@ -1,6 +1,8 @@
 import { cn } from "./../lib/utils";
+import { ChangeEvent, MouseEvent } from "react";
+import { getBackground, getCode } from "./avatar";
 
-export type BadgeVariantProps = "neutral" | "green" | "yellow" | "red";
+export type BadgeVariantProps = "N/A" | "neutral" | "green" | "yellow" | "red";
 
 export interface BadgeProps {
   id?: number;
@@ -8,12 +10,19 @@ export interface BadgeProps {
   withCircle?: boolean;
   caption?: string;
   className?: string;
-  backgroundColor?: string;
-  textColor?: string;
-  circleColor?: string;
+  backgroundColor?: string | null;
+  textColor?: string | null;
+  circleColor?: string | null;
+  onClick?: (
+    e?: ChangeEvent<HTMLInputElement> | MouseEvent<HTMLDivElement>
+  ) => void;
 }
 
 const VARIANTS_BADGE = {
+  "N/A": {
+    bg: null,
+    color: null,
+  },
   neutral: {
     bg: "#363c41",
     color: "#ffffff",
@@ -33,27 +42,38 @@ const VARIANTS_BADGE = {
 };
 
 export default function Badge({
-  variant = "neutral",
+  variant = "N/A",
   caption,
   withCircle = false,
   className,
   backgroundColor,
   textColor,
   circleColor,
+  onClick,
 }: BadgeProps) {
-  const { bg, color } = VARIANTS_BADGE[variant];
+  const { bg: backgroundColorVariant, color: colorVariant } =
+    VARIANTS_BADGE[variant];
+
+  const code = getCode(caption);
+  const backgroundColorLocal = getBackground(code);
 
   const classBadge = cn(
-    `flex flex-row text-xs w-fit px-2 py-[2px] rounded-md items-center  break-all`,
+    `flex flex-row text-xs w-fit px-2 py-[2px] border border-gray-100 rounded-md items-center select-none break-all`,
+    caption.length === 0 && "min-h-[22px]",
     withCircle && "gap-2",
     className
   );
 
   return (
     <div
+      onClick={onClick}
       style={{
-        background: backgroundColor ? backgroundColor : bg,
-        color: textColor ? textColor : color,
+        background: backgroundColor
+          ? backgroundColor
+          : backgroundColorVariant
+            ? backgroundColorVariant
+            : "transparent",
+        color: textColor ? textColor : colorVariant ? colorVariant : "black",
       }}
       className={classBadge}
     >
@@ -65,12 +85,20 @@ export default function Badge({
               ? circleColor
               : textColor
                 ? textColor
-                : color,
+                : colorVariant
+                  ? colorVariant
+                  : backgroundColorLocal
+                    ? backgroundColorLocal
+                    : "black",
             backgroundColor: circleColor
               ? circleColor
               : textColor
                 ? textColor
-                : color,
+                : colorVariant
+                  ? colorVariant
+                  : backgroundColorLocal
+                    ? backgroundColorLocal
+                    : "black",
           }}
         />
       )}

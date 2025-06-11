@@ -8,7 +8,7 @@ const meta: Meta<typeof Badge> = {
   argTypes: {
     variant: {
       control: { type: "select" },
-      options: ["neutral", "green", "yellow", "red"],
+      options: ["neutral", "green", "yellow", "red", "N/A"],
     },
     withCircle: { control: "boolean" },
     caption: { control: "text" },
@@ -20,16 +20,16 @@ export default meta;
 
 type Story = StoryObj<typeof Badge>;
 
-export const Neutral: Story = {
+export const NotAvailable: Story = {
   args: {
-    variant: "neutral",
-    withCircle: false,
-    caption: "Neutral badge",
+    variant: "N/A",
+    caption: "Default badge",
+    withCircle: true,
   },
   render: (args) => <Badge {...args} />,
 };
 
-export const NeutralWithCircle: Story = {
+export const Neutral: Story = {
   args: {
     variant: "neutral",
     withCircle: true,
@@ -41,15 +41,6 @@ export const NeutralWithCircle: Story = {
 export const Green: Story = {
   args: {
     variant: "green",
-    withCircle: false,
-    caption: "Green badge",
-  },
-  render: (args) => <Badge {...args} />,
-};
-
-export const GreenWithCircle: Story = {
-  args: {
-    variant: "green",
     withCircle: true,
     caption: "Green badge with circle",
   },
@@ -59,15 +50,6 @@ export const GreenWithCircle: Story = {
 export const Yellow: Story = {
   args: {
     variant: "yellow",
-    withCircle: false,
-    caption: "Yellow badge",
-  },
-  render: (args) => <Badge {...args} />,
-};
-
-export const YellowWithCircle: Story = {
-  args: {
-    variant: "yellow",
     withCircle: true,
     caption: "Yellow badge with circle",
   },
@@ -75,15 +57,6 @@ export const YellowWithCircle: Story = {
 };
 
 export const Red: Story = {
-  args: {
-    variant: "red",
-    withCircle: false,
-    caption: "Proceed with caution",
-  },
-  render: (args) => <Badge {...args} />,
-};
-
-export const RedWithCircle: Story = {
   args: {
     variant: "red",
     withCircle: true,
