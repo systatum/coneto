@@ -11,12 +11,16 @@ interface DrawerTabProps {
     content: ReactNode;
   }>;
   containerClassName?: string;
+  tabClassName?: string;
+  drawerTabClassName?: string;
   position?: "left" | "right";
 }
 
 export default function DrawerTab({
   tabs,
   containerClassName,
+  drawerTabClassName,
+  tabClassName,
   position = "right",
 }: DrawerTabProps) {
   const [isDrawerTab, setIsDrawerTab] = useState(false);
@@ -54,7 +58,8 @@ export default function DrawerTab({
         animate={controls}
         className={cn(
           `absolute flex h-full min-h-screen w-64 min-w-[300px] gap-1 flex-col border border-gray-300 bg-white p-4 pt-0 top-10 shadow-lg md:static md:hidden md:translate-x-0 md:shadow-none`,
-          position === "left" ? "left-0 pl-12" : "right-0 pr-12"
+          position === "left" ? "left-0 pl-12" : "right-0 pr-12",
+          drawerTabClassName
         )}
       >
         {selectedTab && (
@@ -85,7 +90,10 @@ export default function DrawerTab({
       <div
         className={cn(
           "pt-10 h-full fixed z-10 flex flex-col border-gray-300 gap-1 bg-gray-100 min-h-screen",
-          position === "left" ? "left-0 border-r pl-1" : "right-0 border-l pr-1"
+          position === "left"
+            ? "left-0 border-r pl-1"
+            : "right-0 border-l pr-1",
+          tabClassName
         )}
       >
         {tabs.map((data) => (
