@@ -7,6 +7,7 @@ import {
 import {
   ChangeEvent,
   InputHTMLAttributes,
+  MutableRefObject,
   RefObject,
   TextareaHTMLAttributes,
   forwardRef,
@@ -69,6 +70,13 @@ const Textbox = forwardRef<
       return <input {...props} className="hidden" />;
     }
 
+    const autoResize = (el: HTMLTextAreaElement | null) => {
+      if (el) {
+        el.style.height = "auto";
+        el.style.height = `${el.scrollHeight}px`;
+      }
+    };
+
     const inputClass = cn(
       "rounded-xs border text-black px-2 w-full py-[7px] outline-none",
       showError
@@ -121,9 +129,24 @@ const Textbox = forwardRef<
       ) : rows ? (
         <div className="relative w-full ring-0">
           <textarea
+            style={{
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+            }}
             id={inputId}
-            ref={ref as RefObject<HTMLTextAreaElement>}
-            onChange={onChange}
+            ref={(el) => {
+              autoResize(el);
+              if (typeof ref === "function") {
+                ref(el);
+              } else if (ref) {
+                (ref as MutableRefObject<HTMLTextAreaElement | null>).current =
+                  el;
+              }
+            }}
+            onChange={(e) => {
+              autoResize(e.target);
+              onChange(e);
+            }}
             rows={rows ?? 3}
             className={inputClass}
             {...(props as TextareaHTMLAttributes<HTMLTextAreaElement>)}
