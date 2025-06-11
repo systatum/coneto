@@ -1,7 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 import Pagination from "./pagination";
 import { useState } from "react";
-import { OptionsProps } from "./selectbox";
 
 const meta: Meta<typeof Pagination> = {
   title: "Stage/Pagination",
