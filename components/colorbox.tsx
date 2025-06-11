@@ -23,6 +23,7 @@ export default function Colorbox({
   showError,
   className,
   containerClassName,
+  placeholder,
   ...props
 }: ColorboxProps) {
   const [hovered, setHovered] = useState(false);
@@ -76,7 +77,11 @@ export default function Colorbox({
               : "border-gray-300"
         )}
       >
-        <span className={showError ? "text-red-500" : "text-gray-600"}>#</span>
+        {value?.replace(/^#/, "").length > 0 && (
+          <span className={showError ? "text-red-500" : "text-gray-600"}>
+            #
+          </span>
+        )}
         <input
           {...props}
           type="text"
@@ -88,6 +93,7 @@ export default function Colorbox({
             "w-full outline-none bg-transparent",
             showError ? "text-red-500" : "text-gray-800"
           )}
+          placeholder={placeholder}
           onFocus={() => setHovered(true)}
           onBlur={() => setHovered(false)}
           maxLength={6}
