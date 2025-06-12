@@ -39,6 +39,7 @@ export interface SelectboxProps {
   clearable?: boolean;
   containerClassName?: string;
   childClassName?: string;
+  highlightOnMatch?: boolean;
   children?: (
     props: DrawerProps & {
       options: OptionsProps[];
@@ -78,6 +79,7 @@ export function Selectbox({
   iconClosed: IconClosed = RiArrowUpSLine,
   clearable = false,
   containerClassName,
+  highlightOnMatch,
 }: SelectboxProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(0);
@@ -91,6 +93,8 @@ export function Selectbox({
         opt.text.toLowerCase().includes(inputValue.text.toLowerCase())
       )
     : options;
+
+  const FILTERED_ACTIVE = options.filter((opt) => opt.text === inputValue.text);
 
   const { refs, floatingStyles, context } = useFloating({
     placement: "bottom-start" as Placement,
@@ -192,7 +196,12 @@ export function Selectbox({
         }}
         aria-autocomplete="list"
         placeholder={placeholder || "Search your item..."}
-        className="w-full rounded-xs border border-gray-100 px-3 py-2 outline-none focus:border-[#61A9F9] focus:ring-0 focus:ring-[#61A9F9]"
+        className={cn(
+          "w-full rounded-xs border border-gray-100 px-3 py-2 outline-none focus:border-[#61A9F9] focus:ring-0 focus:ring-[#61A9F9]",
+          highlightOnMatch &&
+            FILTERED_ACTIVE.length > 0 &&
+            "bg-[#61A9F9] text-white"
+        )}
       />
 
       {clearable && inputValue.text !== "" && (
@@ -207,7 +216,12 @@ export function Selectbox({
               setHasInteracted(false);
             }}
             size={12}
-            className="absolute top-[11px] z-20 right-9 cursor-pointer text-gray-400"
+            className={cn(
+              "absolute top-[11px] z-20 right-9 cursor-pointer text-gray-400",
+              highlightOnMatch &&
+                FILTERED_ACTIVE.length > 0 &&
+                "bg-[#61A9F9] text-white"
+            )}
           />
           <span className="absolute top-0.5 right-7 font-extralight text-lg text-gray-400">
             |
@@ -230,12 +244,22 @@ export function Selectbox({
         {isOpen ? (
           <IconOpened
             size={18}
-            className="absolute text-gray-400 top-2 right-2"
+            className={cn(
+              "absolute text-gray-400 top-[10px] right-2",
+              highlightOnMatch &&
+                FILTERED_ACTIVE.length > 0 &&
+                "bg-[#61A9F9] text-white"
+            )}
           />
         ) : (
           <IconClosed
             size={18}
-            className="absolute text-gray-400 top-2 right-2"
+            className={cn(
+              "absolute text-gray-400 top-[10px] right-2",
+              highlightOnMatch &&
+                FILTERED_ACTIVE.length > 0 &&
+                "bg-[#61A9F9] text-white"
+            )}
           />
         )}
       </div>
