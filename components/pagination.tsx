@@ -2,7 +2,7 @@ import { RiArrowLeftSLine, RiArrowRightSLine } from "@remixicon/react";
 import { cn } from "./../lib/utils";
 import Combobox from "./combobox";
 import { OptionsProps } from "./selectbox";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type PaginationProps = {
   currentPage: number;
@@ -24,28 +24,26 @@ export default function Pagination({
     value: currentPage,
   });
 
-  const currentPageNumber = Number(currentPageLocal.value);
-  const threshold = 5;
-  const lastPage = totalPages - 2;
+  const currentPageNumber = currentPage;
+  const comboboxPagesNumber = totalPages - 3;
 
   const handlePrevious = () => {
     if (currentPageNumber > 1) {
-      const newValue = currentPageNumber - 1;
+      const newValue = currentPage - 1;
       onPageChange(newValue);
-      setCurrentPageLocal({ value: newValue, text: newValue.toString() });
+      if (currentPage < 49) {
+        setCurrentPageLocal({ value: newValue, text: newValue.toString() });
+      }
     }
   };
 
   const handleNext = () => {
     if (currentPageNumber < totalPages) {
-      let newValue = 0;
-      if (currentPageNumber < lastPage && totalPages > threshold) {
-        newValue = lastPage;
-      } else {
-        newValue = currentPageNumber + 1;
-      }
+      const newValue = currentPage + 1;
       onPageChange(newValue);
-      setCurrentPageLocal({ value: newValue, text: newValue.toString() });
+      if (currentPage < comboboxPagesNumber) {
+        setCurrentPageLocal({ value: newValue, text: newValue.toString() });
+      }
     }
   };
 
@@ -53,11 +51,7 @@ export default function Pagination({
     <div className={cn("flex flex-row items-center gap-2", className)}>
       <button
         onClick={handlePrevious}
-        disabled={
-          totalPages > threshold
-            ? currentPageNumber <= lastPage
-            : currentPageNumber === 1
-        }
+        disabled={currentPage === 1}
         aria-label="Previous Page"
         className="w-[38px] h-[38px] flex justify-center items-center rounded-xs disabled:cursor-default border border-gray-100 disabled:hover:bg-transparent hover:bg-blue-100 focus:outline-none cursor-pointer disabled:opacity-50"
       >
@@ -66,7 +60,8 @@ export default function Pagination({
 
       {showNumbers && (
         <PaginationItem
-          currentPage={currentPageLocal}
+          currentPage={currentPage}
+          currentPageLocal={currentPageLocal}
           onPageChange={onPageChange}
           totalPages={totalPages}
           setCurrentPageLocal={setCurrentPageLocal}
@@ -75,7 +70,7 @@ export default function Pagination({
 
       <button
         onClick={handleNext}
-        disabled={currentPageNumber === totalPages}
+        disabled={currentPage === totalPages}
         aria-label="Next Page"
         className="w-[38px] h-[38px] flex justify-center items-center rounded-xs disabled:cursor-default border border-gray-100 disabled:hover:bg-transparent hover:bg-blue-100 focus:outline-none cursor-pointer disabled:opacity-50"
       >
@@ -88,14 +83,28 @@ export default function Pagination({
 const PaginationItem = ({
   totalPages,
   currentPage,
+  currentPageLocal,
   onPageChange,
   setCurrentPageLocal,
 }: {
   totalPages: number;
-  currentPage: OptionsProps;
+  currentPage: number;
+  currentPageLocal: OptionsProps;
   onPageChange: (page: number) => void;
   setCurrentPageLocal: (page: OptionsProps) => void;
 }) => {
+  const [highlightOnMatch, setHighlightOnMatch] = useState(false);
+
+  const comboboxPagesNumber = totalPages - 3;
+
+  useEffect(() => {
+    if (currentPage > comboboxPagesNumber) {
+      setHighlightOnMatch(false);
+    } else {
+      setHighlightOnMatch(true);
+    }
+  }, [currentPage, comboboxPagesNumber]);
+
   const threshold = 5;
 
   const lastPages =
@@ -123,9 +132,9 @@ const PaginationItem = ({
       {totalPages > threshold ? (
         <>
           <Combobox
-            highlightOnMatch
+            highlightOnMatch={highlightOnMatch}
             options={comboBoxPages.map(formatOption)}
-            inputValue={currentPage}
+            inputValue={currentPageLocal}
             setInputValue={(val) => {
               onPageChange(Number(val.value));
               setCurrentPageLocal(val);
@@ -134,13 +143,15 @@ const PaginationItem = ({
           />
 
           {lastPages.map((page) => {
-            const isActive = currentPage.value === page;
+            const isActive = currentPage === page;
             return (
               <button
                 key={page}
                 onClick={() => {
                   onPageChange(page);
-                  setCurrentPageLocal(formatOption(page));
+                  if (Number(currentPageLocal.value) > comboboxPagesNumber) {
+                    setCurrentPageLocal(formatOption(page));
+                  }
                 }}
                 className={cn(
                   "w-[38px] h-[38px] rounded-xs cursor-pointer text-sm font-medium focus:outline-none border border-gray-100",
@@ -157,7 +168,7 @@ const PaginationItem = ({
       ) : (
         <>
           {allPages.map((page) => {
-            const isActive = currentPage.value === page;
+            const isActive = currentPage === page;
             return (
               <button
                 key={page}
