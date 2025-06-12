@@ -4,7 +4,11 @@ const gridColCounts = Array.from({ length: 12 }, (_, i) => i + 1);
 const breakpoints = ["", "sm", "md", "lg", "xl"];
 
 module.exports = {
-  content: ["./.storybook/**/*.{js,ts}"],
+  content: [
+    "./.storybook/**/*.{js,ts,jsx,tsx}",
+    "./src/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
+  ],
   safelist: [
     ...breakpoints.flatMap((bp) =>
       gridColCounts.map((col) =>
