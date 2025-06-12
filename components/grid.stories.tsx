@@ -1,5 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { Grid } from "./grid";
+import { useState } from "react";
+import { expect, userEvent, within } from "@storybook/test";
 
 const meta: Meta<typeof Grid> = {
   title: "Content/Grid",
@@ -233,31 +235,57 @@ export const ThreeToFive: Story = {
 
 export const WithSelectable: Story = {
   render: () => {
+    interface ImageProps {
+      id: number;
+      image: string;
+      title: string;
+    }
+    const [value, setValue] = useState<number[]>([]);
+
     const data = Array.from({ length: 30 }, (_, i) => ({
       id: i + 1,
       image: `https://picsum.photos/200?random=${i + 1}`,
       title: `Card Heading ${i}`,
     }));
 
-    const handleSelect = (selectedData) => {
-      alert(`${selectedData.title} was selected`);
+    const handleSelect = (val: ImageProps) => {
+      const valId = val?.id;
+      const isAlreadySelected = value.some((data) => data === valId);
+      if (isAlreadySelected) {
+        setValue((prev) => prev.filter((data) => data !== valId));
+      } else {
+        setValue([...value, valId]);
+      }
     };
 
     return (
-      <Grid gap={8} preset="3-to-5">
-        {data.map((data) => (
-          <Grid.Card
-            key={data.id}
-            thumbnail={data.image}
-            selectable
-            onSelected={() => handleSelect(data)}
-          >
-            <div className="min-h-[30px] h-full w-full">
-              <h3>{data.title}</h3>
-            </div>
-          </Grid.Card>
-        ))}
+      <Grid gap={8} preset="1-to-3">
+        {data.map((data) => {
+          const dataId = data.id;
+          const isSelected = value.some((val) => val === dataId);
+
+          return (
+            <Grid.Card
+              key={data.id}
+              thumbnail={data.image}
+              onSelected={() => handleSelect(data)}
+              selectable
+              isSelected={isSelected}
+              data-testid={`card-${data.id}`}
+            >
+              <div className="min-h-[30px] h-full w-full">
+                <h3>{data.title}</h3>
+              </div>
+            </Grid.Card>
+          );
+        })}
       </Grid>
     );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const firstCard = await canvas.findByTestId("card-1");
+    await userEvent.click(firstCard);
+    expect(firstCard).toBeInTheDocument();
   },
 };

@@ -1,5 +1,6 @@
 import { cn } from "./../lib/utils";
 import { CSSProperties, ReactNode } from "react";
+import Checkbox from "./checkbox";
 
 interface GridProps {
   children?: ReactNode;
@@ -13,6 +14,7 @@ interface GridProps {
 interface GridCardProps {
   children?: ReactNode;
   thumbnail?: string;
+  isSelected?: boolean;
   containerClassName?: string;
   onSelected?: () => void;
   selectable?: boolean;
@@ -41,16 +43,19 @@ function GridCard({
   thumbnail,
   containerClassName,
   onSelected,
+  isSelected,
   selectable,
+  ...props
 }: GridCardProps) {
   const gridCardClass = cn(
-    "text-sm h-full flex flex-col items-center w-full h-full p-1 gap-2 rounded-xs shadow",
-    selectable && "cursor-pointer",
+    "text-sm h-full relative flex flex-col items-center w-full h-full p-1 gap-2 rounded-xs shadow",
+    selectable && "cursor-pointer hover:bg-gray-100",
     containerClassName
   );
 
   return (
     <div
+      {...props}
       className={gridCardClass}
       onClick={() => {
         if (selectable) {
@@ -58,6 +63,18 @@ function GridCard({
         }
       }}
     >
+      <div className="absolute top-4 left-4">
+        {selectable && (
+          <Checkbox
+            checked={isSelected}
+            classNameParent={cn(
+              "border-transparent w-[20px] h-[20px] rounded-xs"
+            )}
+            className="w-[16px] h-[16px]"
+            readOnly
+          />
+        )}
+      </div>
       <div className="bg-gray-200 w-full flex items-center justify-center">
         <img
           src={thumbnail}
