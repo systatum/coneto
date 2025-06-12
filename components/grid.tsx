@@ -15,6 +15,7 @@ interface GridCardProps {
   thumbnail?: string;
   containerClassName?: string;
   onSelected?: () => void;
+  selectable?: boolean;
 }
 
 function Grid({ children, gap = 8, containerClassName, preset }: GridProps) {
@@ -40,14 +41,23 @@ function GridCard({
   thumbnail,
   containerClassName,
   onSelected,
+  selectable,
 }: GridCardProps) {
   const gridCardClass = cn(
-    "text-sm cursor-pointer h-full flex flex-col items-center w-full h-full p-1 gap-2 rounded-xs shadow",
+    "text-sm h-full flex flex-col items-center w-full h-full p-1 gap-2 rounded-xs shadow",
+    selectable && "cursor-pointer",
     containerClassName
   );
 
   return (
-    <div className={gridCardClass} onClick={() => onSelected?.()}>
+    <div
+      className={gridCardClass}
+      onClick={() => {
+        if (selectable) {
+          onSelected?.();
+        }
+      }}
+    >
       <div className="bg-gray-200 w-full flex items-center justify-center">
         <img
           src={thumbnail}

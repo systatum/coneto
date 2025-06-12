@@ -310,3 +310,34 @@ export const ThreeToFive: Story = {
     );
   },
 };
+
+export const WithSelectable: Story = {
+  render: () => {
+    const data = Array.from({ length: 30 }, (_, i) => ({
+      id: i + 1,
+      image: `https://picsum.photos/200?random=${i + 1}`,
+      title: `Card Heading ${i}`,
+    }));
+
+    const handleSelect = (selectedData) => {
+      alert(`${selectedData.title} was selected`);
+    };
+
+    return (
+      <Grid gap={8} preset="3-to-5">
+        {data.map((data) => (
+          <Grid.Card
+            key={data.id}
+            thumbnail={data.image}
+            selectable
+            onSelected={() => handleSelect(data)}
+          >
+            <div className="min-h-[30px] h-full w-full">
+              <h3>{data.title}</h3>
+            </div>
+          </Grid.Card>
+        ))}
+      </Grid>
+    );
+  },
+};
