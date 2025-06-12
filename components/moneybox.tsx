@@ -10,17 +10,25 @@ interface MoneyboxProps {
   name?: string;
   placeholder?: string;
   separator?: SeparatorTypeProps;
+  showError?: boolean;
+  errorMessage?: string;
+  label?: string;
   className?: string;
+  containerClassName?: string;
 }
 
 export default function Moneybox({
   value,
   currency = "dollar",
   name,
+  label,
   onChange,
   placeholder,
   separator,
   className,
+  errorMessage,
+  showError,
+  containerClassName,
 }: MoneyboxProps) {
   const [focus, setFocus] = useState(false);
 
@@ -37,10 +45,9 @@ export default function Moneybox({
     className
   );
 
-  return (
+  const inputElement = (
     <div className={classMoneyBox}>
       <span>{currency}</span>
-
       <input
         name={name}
         value={formattedValue}
@@ -51,6 +58,18 @@ export default function Moneybox({
         className="bg-transparent outline-none text-right flex-1"
         type="text"
       />
+    </div>
+  );
+
+  return (
+    <div
+      className={cn(`flex w-full flex-col gap-2 text-xs`, containerClassName)}
+    >
+      {label && <label>{label}</label>}
+      <div className="flex flex-col gap-1 text-xs">
+        {inputElement}
+        {showError && <span className="text-red-600">{errorMessage}</span>}
+      </div>
     </div>
   );
 }

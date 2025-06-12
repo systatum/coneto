@@ -168,3 +168,35 @@ export const Rupiah: Story = {
     await userEvent.type(input, "3500");
   },
 };
+
+export const WithLabel: Story = {
+  args: {
+    value: "2000",
+    name: "value",
+    currency: "$",
+    separator: "dot",
+    label: "Money",
+  },
+  render: (args) => {
+    const [currentArgs, setUpdateArgs] = useArgs();
+    const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+      setUpdateArgs({ ...currentArgs, [name]: value });
+    };
+    return (
+      <Moneybox
+        {...args}
+        className="max-w-[300px]"
+        value={currentArgs.value}
+        onChange={onChangeValue}
+      />
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const input = await canvas.findByRole("textbox");
+
+    await userEvent.clear(input);
+    await userEvent.type(input, "3500");
+  },
+};
