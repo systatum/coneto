@@ -1,8 +1,8 @@
+import { getBackground, getCode } from "./../lib/code-color";
 import { cn } from "./../lib/utils";
 import { ChangeEvent, MouseEvent } from "react";
-import { getBackground, getCode } from "./avatar";
 
-export type BadgeVariantProps = "N/A" | "neutral" | "green" | "yellow" | "red";
+export type BadgeVariantProps = null | "neutral" | "green" | "yellow" | "red";
 
 export interface BadgeProps {
   id?: number;
@@ -18,8 +18,37 @@ export interface BadgeProps {
   ) => void;
 }
 
+const BADGE_BACKGROUND_COLORS: string[] = [
+  "#FF0000",
+  "#00cd00",
+  "#1d1dd0",
+  "#ce4118",
+  "#FF00FF",
+  "#60b1ac",
+  "#800000",
+  "#008000",
+  "#9a6969",
+  "#808000",
+  "#800080",
+  "#008080",
+  "#FF8000",
+  "#FF0080",
+  "#444444",
+  "#713609",
+  "#8000FF",
+  "#0080FF",
+  "#FF8080",
+  "#8080FF",
+  "#FF80FF",
+  "#80FFFF",
+  "#e4e473",
+  "#73738c",
+  "#FF4080",
+  "#48a467",
+];
+
 const VARIANTS_BADGE = {
-  "N/A": {
+  null: {
     bg: null,
     color: null,
   },
@@ -42,7 +71,7 @@ const VARIANTS_BADGE = {
 };
 
 export default function Badge({
-  variant = "N/A",
+  variant = null,
   caption,
   withCircle = false,
   className,
@@ -55,7 +84,7 @@ export default function Badge({
     VARIANTS_BADGE[variant];
 
   const code = getCode(caption);
-  const backgroundColorLocal = getBackground(code);
+  const backgroundColorLocal = getBackground(code, BADGE_BACKGROUND_COLORS);
 
   const classBadge = cn(
     `flex flex-row text-xs w-fit px-2 py-[2px] border border-gray-100 rounded-md items-center select-none break-all`,

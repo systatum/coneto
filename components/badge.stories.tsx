@@ -9,6 +9,13 @@ const meta: Meta<typeof Badge> = {
     variant: {
       control: { type: "select" },
       options: ["neutral", "green", "yellow", "red", "N/A"],
+      mapping: {
+        neutral: "neutral",
+        green: "green",
+        yellow: "yellow",
+        red: "red",
+        "N/A": null,
+      },
     },
     withCircle: { control: "boolean" },
     caption: { control: "text" },
@@ -22,7 +29,7 @@ type Story = StoryObj<typeof Badge>;
 
 export const NotAvailable: Story = {
   args: {
-    variant: "N/A",
+    variant: null,
     caption: "Default badge",
     withCircle: true,
   },
