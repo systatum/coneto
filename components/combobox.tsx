@@ -10,6 +10,7 @@ interface ComboboxProps {
   clearable?: boolean;
   placeholder?: string;
   emptySlate?: string;
+  highlightOnMatch?: boolean;
 }
 
 type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
@@ -27,10 +28,12 @@ export default function Combobox({
   clearable = false,
   placeholder,
   containerClassName,
+  highlightOnMatch = false,
   emptySlate = "Not available.",
 }: ComboboxProps) {
   return (
     <Selectbox
+      highlightOnMatch={highlightOnMatch}
       containerClassName={containerClassName}
       options={options}
       inputValue={inputValue}
