@@ -117,76 +117,76 @@ export const Default: Story = {
   },
 };
 
-export const WhiteBackground: Story = {
+export const DarkBackground: Story = {
   render: () => {
     const BADGE_OPTIONS = [
       {
         id: 1,
-        backgroundColor: "transparent",
-        textColor: "#000000",
+        backgroundColor: "#1c0f13",
+        textColor: "#ffffff",
         caption: "Anime",
         circleColor: "#ff6f61",
       },
       {
         id: 2,
-        backgroundColor: "transparent",
-        textColor: "#000000",
+        backgroundColor: "#120f1f",
+        textColor: "#ffffff",
         caption: "Manga",
         circleColor: "#6b5b95",
       },
       {
         id: 3,
-        backgroundColor: "transparent",
-        textColor: "#000000",
+        backgroundColor: "#0e1a0e",
+        textColor: "#ffffff",
         caption: "Comics",
         circleColor: "#88b04b",
       },
       {
         id: 4,
-        backgroundColor: "transparent",
-        textColor: "#000000",
+        backgroundColor: "#1a1212",
+        textColor: "#ffffff",
         caption: "Movies",
         circleColor: "#f7cac9",
       },
       {
         id: 5,
-        backgroundColor: "transparent",
-        textColor: "#000000",
+        backgroundColor: "#0e1626",
+        textColor: "#ffffff",
         caption: "Podcasts",
         circleColor: "#92a8d1",
       },
       {
         id: 6,
-        backgroundColor: "transparent",
-        textColor: "#000000",
+        backgroundColor: "#1b0d0d",
+        textColor: "#ffffff",
         caption: "TV Shows",
         circleColor: "#955251",
       },
       {
         id: 7,
-        backgroundColor: "transparent",
-        textColor: "#000000",
+        backgroundColor: "#160d18",
+        textColor: "#ffffff",
         caption: "Novels",
         circleColor: "#b565a7",
       },
       {
         id: 8,
-        backgroundColor: "transparent",
-        textColor: "#000000",
+        backgroundColor: "#0d1a17",
+        textColor: "#ffffff",
         caption: "Music",
         circleColor: "#009b77",
       },
       {
         id: 9,
-        backgroundColor: "transparent",
-        textColor: "#000000",
+        backgroundColor: "#1c0e0c",
+        textColor: "#ffffff",
         caption: "Games",
         circleColor: "#dd4124",
       },
       {
         id: 10,
-        backgroundColor: "transparent",
-        textColor: "#000000",
+        backgroundColor: "#0d1c1a",
+        textColor: "#ffffff",
         caption: "Webtoons",
         circleColor: "#45b8ac",
       },
@@ -196,8 +196,8 @@ export const WhiteBackground: Story = {
       search: "",
       name_tag: "",
       background_color: "",
-      text_color: "#000000",
-      circle_color: "#000000",
+      text_color: "",
+      circle_color: "",
     });
     const [selected, setSelected] = useState<number[]>([]);
 
@@ -241,8 +241,9 @@ export const WhiteBackground: Story = {
       <Chips
         inputValue={inputValue}
         setInputValue={onChangeValue}
-        chipClassName="w-full gap-2 border-transparent"
-        chipsDrawerClassName="max-w-[250px]"
+        chipClassName="gap-2 border-transparent"
+        chipContainerClassName="gap-2 justify-start"
+        chipsDrawerClassName="max-w-[150px]"
         onOptionClicked={handleOptionClicked}
         selectedOption={selected}
         onDeleteRequested={handleDeleteClicked}

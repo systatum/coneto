@@ -514,15 +514,15 @@ function Chip({
       {deletable && (
         <RiCloseLine
           role="button"
-          aria-label="Clear search input"
+          aria-label="Delete requested data"
           onClick={(e) => {
             e.stopPropagation();
             onDeleteRequested(data);
           }}
           size={14}
           className={cn(
-            "absolute top-1/2 right-4 -translate-y-1/2 cursor-pointer",
-            "text-gray-400"
+            "absolute top-1/2 right-4 -translate-y-1/2 text-transparent cursor-pointer",
+            hovered === data.id && "text-gray-400"
           )}
         />
       )}
