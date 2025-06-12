@@ -521,8 +521,8 @@ function Chip({
           }}
           size={14}
           className={cn(
-            "absolute top-1/2 right-4 -translate-y-1/2 text-transparent cursor-pointer",
-            hovered === data.id && "text-gray-400"
+            "absolute top-1/2 right-4 -translate-y-1/2 hover:bg-gray-300 text-transparent cursor-pointer",
+            hovered === data.id && "text-gray-400 hover:text-gray-600"
           )}
         />
       )}
