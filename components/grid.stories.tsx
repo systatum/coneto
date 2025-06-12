@@ -19,18 +19,10 @@ export const Fit200PX: Story = {
       title: `Card Heading ${i}`,
     }));
 
-    const handleSelect = (selectedData) => {
-      console.log(selectedData);
-    };
-
     return (
       <Grid gap={8} preset="auto-fit-200">
         {data.map((data) => (
-          <Grid.Card
-            key={data.id}
-            thumbnail={data.image}
-            onSelected={() => handleSelect(data)}
-          >
+          <Grid.Card key={data.id} thumbnail={data.image}>
             <div className="min-h-[30px] h-full w-full">
               <h3>{data.title}</h3>
             </div>
@@ -49,18 +41,10 @@ export const Fit250PX: Story = {
       title: `Card Heading ${i}`,
     }));
 
-    const handleSelect = (selectedData) => {
-      console.log(selectedData);
-    };
-
     return (
       <Grid gap={8} preset="auto-fit-250">
         {data.map((data) => (
-          <Grid.Card
-            key={data.id}
-            thumbnail={data.image}
-            onSelected={() => handleSelect(data)}
-          >
+          <Grid.Card key={data.id} thumbnail={data.image}>
             <div className="min-h-[30px] h-full w-full">
               <h3>{data.title}</h3>
             </div>
@@ -79,18 +63,10 @@ export const Fit300PX: Story = {
       title: `Card Heading ${i}`,
     }));
 
-    const handleSelect = (selectedData) => {
-      console.log(selectedData);
-    };
-
     return (
       <Grid gap={8} preset="auto-fit-300">
         {data.map((data) => (
-          <Grid.Card
-            key={data.id}
-            thumbnail={data.image}
-            onSelected={() => handleSelect(data)}
-          >
+          <Grid.Card key={data.id} thumbnail={data.image}>
             <div className="min-h-[30px] h-full w-full">
               <h3>{data.title}</h3>
             </div>
@@ -109,18 +85,10 @@ export const Fit350PX: Story = {
       title: `Card Heading ${i}`,
     }));
 
-    const handleSelect = (selectedData) => {
-      console.log(selectedData);
-    };
-
     return (
       <Grid gap={8} preset="auto-fit-350">
         {data.map((data) => (
-          <Grid.Card
-            key={data.id}
-            thumbnail={data.image}
-            onSelected={() => handleSelect(data)}
-          >
+          <Grid.Card key={data.id} thumbnail={data.image}>
             <div className="min-h-[30px] h-full w-full">
               <h3>{data.title}</h3>
             </div>
@@ -139,18 +107,10 @@ export const Fit400PX: Story = {
       title: `Card Heading ${i}`,
     }));
 
-    const handleSelect = (selectedData) => {
-      console.log(selectedData);
-    };
-
     return (
       <Grid gap={8} preset="auto-fit-400">
         {data.map((data) => (
-          <Grid.Card
-            key={data.id}
-            thumbnail={data.image}
-            onSelected={() => handleSelect(data)}
-          >
+          <Grid.Card key={data.id} thumbnail={data.image}>
             <div className="min-h-[30px] h-full w-full">
               <h3>{data.title}</h3>
             </div>
@@ -169,18 +129,10 @@ export const OneToThree: Story = {
       title: `Card Heading ${i}`,
     }));
 
-    const handleSelect = (selectedData) => {
-      console.log(selectedData);
-    };
-
     return (
       <Grid gap={8} preset="1-to-3">
         {data.map((data) => (
-          <Grid.Card
-            key={data.id}
-            thumbnail={data.image}
-            onSelected={() => handleSelect(data)}
-          >
+          <Grid.Card key={data.id} thumbnail={data.image}>
             <div className="min-h-[30px] h-full w-full">
               <h3>{data.title}</h3>
             </div>
@@ -199,18 +151,10 @@ export const OneToFour: Story = {
       title: `Card Heading ${i}`,
     }));
 
-    const handleSelect = (selectedData) => {
-      console.log(selectedData);
-    };
-
     return (
       <Grid gap={8} preset="1-to-4">
         {data.map((data) => (
-          <Grid.Card
-            key={data.id}
-            thumbnail={data.image}
-            onSelected={() => handleSelect(data)}
-          >
+          <Grid.Card key={data.id} thumbnail={data.image}>
             <div className="min-h-[30px] h-full w-full">
               <h3>{data.title}</h3>
             </div>
@@ -229,18 +173,10 @@ export const OneToSix: Story = {
       title: `Card Heading ${i}`,
     }));
 
-    const handleSelect = (selectedData) => {
-      console.log(selectedData);
-    };
-
     return (
       <Grid gap={8} preset="1-to-6">
         {data.map((data) => (
-          <Grid.Card
-            key={data.id}
-            thumbnail={data.image}
-            onSelected={() => handleSelect(data)}
-          >
+          <Grid.Card key={data.id} thumbnail={data.image}>
             <div className="min-h-[30px] h-full w-full">
               <h3>{data.title}</h3>
             </div>
@@ -259,18 +195,10 @@ export const TwoToFour: Story = {
       title: `Card Heading ${i}`,
     }));
 
-    const handleSelect = (selectedData) => {
-      console.log(selectedData);
-    };
-
     return (
       <Grid gap={8} preset="2-to-4">
         {data.map((data) => (
-          <Grid.Card
-            key={data.id}
-            thumbnail={data.image}
-            onSelected={() => handleSelect(data)}
-          >
+          <Grid.Card key={data.id} thumbnail={data.image}>
             <div className="min-h-[30px] h-full w-full">
               <h3>{data.title}</h3>
             </div>
@@ -289,18 +217,10 @@ export const ThreeToFive: Story = {
       title: `Card Heading ${i}`,
     }));
 
-    const handleSelect = (selectedData) => {
-      console.log(selectedData);
-    };
-
     return (
       <Grid gap={8} preset="3-to-5">
         {data.map((data) => (
-          <Grid.Card
-            key={data.id}
-            thumbnail={data.image}
-            onSelected={() => handleSelect(data)}
-          >
+          <Grid.Card key={data.id} thumbnail={data.image}>
             <div className="min-h-[30px] h-full w-full">
               <h3>{data.title}</h3>
             </div>
