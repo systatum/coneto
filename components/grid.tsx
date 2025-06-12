@@ -5,9 +5,9 @@ interface GridProps {
   children?: ReactNode;
   height?: number | string;
   width?: number | string;
-  columns?: ResponsiveColumnsProps;
   gap?: number | string;
   containerClassName?: string;
+  preset?: GridPresetKey;
 }
 
 interface GridCardProps {
@@ -17,17 +17,12 @@ interface GridCardProps {
   onSelected?: () => void;
 }
 
-interface ResponsiveColumnsProps {
-  base?: number;
-  sm?: number;
-  md?: number;
-  lg?: number;
-  xl?: number;
-}
-
-function Grid({ children, gap = 8, containerClassName, columns }: GridProps) {
-  const responsiveGridCols = getResponsiveGridCols(columns);
-  const gridClass = cn("grid w-full", responsiveGridCols, containerClassName);
+function Grid({ children, gap = 8, containerClassName, preset }: GridProps) {
+  const gridClass = cn(
+    "grid w-full",
+    GRID_PRESETS[preset]?.className,
+    containerClassName
+  );
 
   const style: CSSProperties = {
     gap: typeof gap === "number" ? `${gap}px` : gap,
@@ -64,22 +59,96 @@ function GridCard({
   );
 }
 
-function getResponsiveGridCols(columns?: ResponsiveColumnsProps): string {
-  if (!columns) return "";
-
-  const entries: [keyof ResponsiveColumnsProps, string][] = [
-    ["base", "grid-cols"],
-    ["sm", "sm:grid-cols"],
-    ["md", "md:grid-cols"],
-    ["lg", "lg:grid-cols"],
-    ["xl", "xl:grid-cols"],
-  ];
-
-  return entries
-    .map(([key, prefix]) => (columns[key] ? `${prefix}-${columns[key]}` : ""))
-    .filter(Boolean)
-    .join(" ");
+export interface GridPreset {
+  label: string;
+  className: string;
 }
+
+export const GRID_PRESETS = {
+  "1-col": {
+    label: "Single column",
+    className: "grid-cols-1",
+  },
+  "2-col": {
+    label: "2 columns fixed",
+    className: "grid-cols-2",
+  },
+  "3-col": {
+    label: "3 columns fixed",
+    className: "grid-cols-3",
+  },
+  "4-col": {
+    label: "4 columns fixed",
+    className: "grid-cols-4",
+  },
+  "5-col": {
+    label: "5 columns fixed",
+    className: "grid-cols-5",
+  },
+  "6-col": {
+    label: "6 columns fixed",
+    className: "grid-cols-6",
+  },
+  "1-to-3": {
+    label: "Responsive: 1 to 3 columns",
+    className: "grid-cols-1 sm:grid-cols-2 md:grid-cols-3",
+  },
+  "1-to-4": {
+    label: "Responsive: 1 to 6 columns",
+    className: "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4",
+  },
+  "1-to-6": {
+    label: "Responsive: 1 to 6 columns",
+    className:
+      "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6",
+  },
+  "2-to-4": {
+    label: "Responsive: 2 to 4 columns",
+    className: "grid-cols-2 sm:grid-cols-3 md:grid-cols-4",
+  },
+  "3-to-5": {
+    label: "Responsive: 3 to 5 columns",
+    className: "grid-cols-3 sm:grid-cols-4 md:grid-cols-5",
+  },
+  "3-to-6": {
+    label: "Responsive: 3 to 6 columns",
+    className: "grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6",
+  },
+  "auto-fit-400": {
+    label: "Auto-fit min 400px",
+    className: "grid-cols-[repeat(auto-fit,minmax(400px,1fr))]",
+  },
+  "auto-fit-350": {
+    label: "Auto-fit min 350px",
+    className: "grid-cols-[repeat(auto-fit,minmax(350px,1fr))]",
+  },
+  "auto-fit-300": {
+    label: "Auto-fit min 300px",
+    className: "grid-cols-[repeat(auto-fit,minmax(300px,1fr))]",
+  },
+  "auto-fit-250": {
+    label: "Auto-fit min 250px",
+    className: "grid-cols-[repeat(auto-fit,minmax(250px,1fr))]",
+  },
+  "auto-fit-200": {
+    label: "Auto-fit min 200px",
+    className: "grid-cols-[repeat(auto-fit,minmax(200px,1fr))]",
+  },
+  "auto-fit-150": {
+    label: "Auto-fit min 150px",
+    className: "grid-cols-[repeat(auto-fill,minmax(150px,1fr))]",
+  },
+  "13-col": {
+    label: "13 columns fixed",
+    className: "grid-cols-13",
+  },
+  "16-col": {
+    label: "16 columns fixed",
+    className: "grid-cols-16",
+  },
+} as const;
+
+type GridPresetKey = keyof typeof GRID_PRESETS;
 
 Grid.Card = GridCard;
 export { Grid };

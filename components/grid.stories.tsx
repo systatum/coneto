@@ -11,7 +11,7 @@ export default meta;
 
 type Story = StoryObj<typeof Grid>;
 
-export const Default: Story = {
+export const Fit200PX: Story = {
   render: () => {
     const data = Array.from({ length: 30 }, (_, i) => ({
       id: i + 1,
@@ -24,15 +24,277 @@ export const Default: Story = {
     };
 
     return (
-      <Grid
-        gap={8}
-        columns={{
-          base: 1,
-          sm: 2,
-          md: 3,
-          lg: 4,
-        }}
-      >
+      <Grid gap={8} preset="auto-fit-200">
+        {data.map((data) => (
+          <Grid.Card
+            key={data.id}
+            thumbnail={data.image}
+            onSelected={() => handleSelect(data)}
+          >
+            <div className="min-h-[30px] h-full w-full">
+              <h3>{data.title}</h3>
+            </div>
+          </Grid.Card>
+        ))}
+      </Grid>
+    );
+  },
+};
+
+export const Fit250PX: Story = {
+  render: () => {
+    const data = Array.from({ length: 30 }, (_, i) => ({
+      id: i + 1,
+      image: `https://picsum.photos/200?random=${i + 1}`,
+      title: `Card Heading ${i}`,
+    }));
+
+    const handleSelect = (selectedData) => {
+      console.log(selectedData);
+    };
+
+    return (
+      <Grid gap={8} preset="auto-fit-250">
+        {data.map((data) => (
+          <Grid.Card
+            key={data.id}
+            thumbnail={data.image}
+            onSelected={() => handleSelect(data)}
+          >
+            <div className="min-h-[30px] h-full w-full">
+              <h3>{data.title}</h3>
+            </div>
+          </Grid.Card>
+        ))}
+      </Grid>
+    );
+  },
+};
+
+export const Fit300PX: Story = {
+  render: () => {
+    const data = Array.from({ length: 30 }, (_, i) => ({
+      id: i + 1,
+      image: `https://picsum.photos/200?random=${i + 1}`,
+      title: `Card Heading ${i}`,
+    }));
+
+    const handleSelect = (selectedData) => {
+      console.log(selectedData);
+    };
+
+    return (
+      <Grid gap={8} preset="auto-fit-300">
+        {data.map((data) => (
+          <Grid.Card
+            key={data.id}
+            thumbnail={data.image}
+            onSelected={() => handleSelect(data)}
+          >
+            <div className="min-h-[30px] h-full w-full">
+              <h3>{data.title}</h3>
+            </div>
+          </Grid.Card>
+        ))}
+      </Grid>
+    );
+  },
+};
+
+export const Fit350PX: Story = {
+  render: () => {
+    const data = Array.from({ length: 30 }, (_, i) => ({
+      id: i + 1,
+      image: `https://picsum.photos/200?random=${i + 1}`,
+      title: `Card Heading ${i}`,
+    }));
+
+    const handleSelect = (selectedData) => {
+      console.log(selectedData);
+    };
+
+    return (
+      <Grid gap={8} preset="auto-fit-350">
+        {data.map((data) => (
+          <Grid.Card
+            key={data.id}
+            thumbnail={data.image}
+            onSelected={() => handleSelect(data)}
+          >
+            <div className="min-h-[30px] h-full w-full">
+              <h3>{data.title}</h3>
+            </div>
+          </Grid.Card>
+        ))}
+      </Grid>
+    );
+  },
+};
+
+export const Fit400PX: Story = {
+  render: () => {
+    const data = Array.from({ length: 30 }, (_, i) => ({
+      id: i + 1,
+      image: `https://picsum.photos/200?random=${i + 1}`,
+      title: `Card Heading ${i}`,
+    }));
+
+    const handleSelect = (selectedData) => {
+      console.log(selectedData);
+    };
+
+    return (
+      <Grid gap={8} preset="auto-fit-400">
+        {data.map((data) => (
+          <Grid.Card
+            key={data.id}
+            thumbnail={data.image}
+            onSelected={() => handleSelect(data)}
+          >
+            <div className="min-h-[30px] h-full w-full">
+              <h3>{data.title}</h3>
+            </div>
+          </Grid.Card>
+        ))}
+      </Grid>
+    );
+  },
+};
+
+export const OneToThree: Story = {
+  render: () => {
+    const data = Array.from({ length: 30 }, (_, i) => ({
+      id: i + 1,
+      image: `https://picsum.photos/200?random=${i + 1}`,
+      title: `Card Heading ${i}`,
+    }));
+
+    const handleSelect = (selectedData) => {
+      console.log(selectedData);
+    };
+
+    return (
+      <Grid gap={8} preset="1-to-3">
+        {data.map((data) => (
+          <Grid.Card
+            key={data.id}
+            thumbnail={data.image}
+            onSelected={() => handleSelect(data)}
+          >
+            <div className="min-h-[30px] h-full w-full">
+              <h3>{data.title}</h3>
+            </div>
+          </Grid.Card>
+        ))}
+      </Grid>
+    );
+  },
+};
+
+export const OneToFour: Story = {
+  render: () => {
+    const data = Array.from({ length: 30 }, (_, i) => ({
+      id: i + 1,
+      image: `https://picsum.photos/200?random=${i + 1}`,
+      title: `Card Heading ${i}`,
+    }));
+
+    const handleSelect = (selectedData) => {
+      console.log(selectedData);
+    };
+
+    return (
+      <Grid gap={8} preset="1-to-4">
+        {data.map((data) => (
+          <Grid.Card
+            key={data.id}
+            thumbnail={data.image}
+            onSelected={() => handleSelect(data)}
+          >
+            <div className="min-h-[30px] h-full w-full">
+              <h3>{data.title}</h3>
+            </div>
+          </Grid.Card>
+        ))}
+      </Grid>
+    );
+  },
+};
+
+export const OneToSix: Story = {
+  render: () => {
+    const data = Array.from({ length: 30 }, (_, i) => ({
+      id: i + 1,
+      image: `https://picsum.photos/200?random=${i + 1}`,
+      title: `Card Heading ${i}`,
+    }));
+
+    const handleSelect = (selectedData) => {
+      console.log(selectedData);
+    };
+
+    return (
+      <Grid gap={8} preset="1-to-6">
+        {data.map((data) => (
+          <Grid.Card
+            key={data.id}
+            thumbnail={data.image}
+            onSelected={() => handleSelect(data)}
+          >
+            <div className="min-h-[30px] h-full w-full">
+              <h3>{data.title}</h3>
+            </div>
+          </Grid.Card>
+        ))}
+      </Grid>
+    );
+  },
+};
+
+export const TwoToFour: Story = {
+  render: () => {
+    const data = Array.from({ length: 30 }, (_, i) => ({
+      id: i + 1,
+      image: `https://picsum.photos/200?random=${i + 1}`,
+      title: `Card Heading ${i}`,
+    }));
+
+    const handleSelect = (selectedData) => {
+      console.log(selectedData);
+    };
+
+    return (
+      <Grid gap={8} preset="2-to-4">
+        {data.map((data) => (
+          <Grid.Card
+            key={data.id}
+            thumbnail={data.image}
+            onSelected={() => handleSelect(data)}
+          >
+            <div className="min-h-[30px] h-full w-full">
+              <h3>{data.title}</h3>
+            </div>
+          </Grid.Card>
+        ))}
+      </Grid>
+    );
+  },
+};
+
+export const ThreeToFive: Story = {
+  render: () => {
+    const data = Array.from({ length: 30 }, (_, i) => ({
+      id: i + 1,
+      image: `https://picsum.photos/200?random=${i + 1}`,
+      title: `Card Heading ${i}`,
+    }));
+
+    const handleSelect = (selectedData) => {
+      console.log(selectedData);
+    };
+
+    return (
+      <Grid gap={8} preset="3-to-5">
         {data.map((data) => (
           <Grid.Card
             key={data.id}
