@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 import Moneybox from "./moneybox";
 import { useArgs } from "@storybook/preview-api";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useState } from "react";
 import { userEvent, within } from "@storybook/test";
 
 const meta: Meta<typeof Moneybox> = {
@@ -198,5 +198,45 @@ export const WithLabel: Story = {
 
     await userEvent.clear(input);
     await userEvent.type(input, "3500");
+  },
+};
+
+export const ErrorState: Story = {
+  args: {
+    name: "value",
+    currency: "$",
+    separator: "dot",
+    label: "Money",
+    value: "",
+    showError: true,
+    errorMessage: "Invalid amount",
+  },
+
+  render: (args) => {
+    const [currentArgs, setUpdateArgs] = useArgs();
+
+    const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+      const cleanedValue = value.toString().replace(/[.,]/g, "");
+      const isValid = cleanedValue.length >= 4;
+
+      setUpdateArgs({
+        ...currentArgs,
+        [name]: value,
+        showError: !isValid,
+        errorMessage: !isValid ? "Minimum numbers 4 digit are allowed" : "",
+      });
+    };
+
+    return (
+      <Moneybox {...args} className="max-w-[300px]" onChange={onChangeValue} />
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const input = await canvas.findByRole("textbox");
+
+    await userEvent.clear(input);
+    await userEvent.type(input, "abc");
   },
 };

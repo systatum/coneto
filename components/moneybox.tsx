@@ -41,7 +41,11 @@ export default function Moneybox({
 
   const classMoneyBox = cn(
     "w-full h-full border text-sm rounded-xs py-[10px] px-3 items-center gap-3 justify-end flex",
-    focus ? "border-[#61A9F9]" : "border-gray-300",
+    showError
+      ? "border-red-500 text-red-800"
+      : focus
+        ? "border-[#61A9F9]"
+        : "border-gray-300",
     className
   );
 
