@@ -1,7 +1,7 @@
 import { cn } from "./../lib/utils";
 import { RemixiconComponentType, RiCloseLine } from "@remixicon/react";
 import { useAnimation, motion } from "framer-motion";
-import { Fragment, ReactNode, useState } from "react";
+import { ReactNode, useState } from "react";
 
 interface DrawerTabProps {
   tabs: Array<{
@@ -27,20 +27,14 @@ export default function DrawerTab({
   const [selected, setSelected] = useState<number | null>(null);
 
   const controls = useAnimation();
+  const isLeft = position === "left";
 
   const handleToggleDrawer = (open: boolean) => {
     setIsDrawerTab(open);
-    if (position === "left") {
-      controls.start({
-        x: open ? 0 : "-100%",
-        transition: { type: "spring", stiffness: 300, damping: 30 },
-      });
-    } else if (position === "right") {
-      controls.start({
-        x: open ? 0 : "+100%",
-        transition: { type: "spring", stiffness: 300, damping: 30 },
-      });
-    }
+    controls.start({
+      x: open ? 0 : isLeft ? "-100%" : "+100%",
+      transition: { type: "spring", stiffness: 300, damping: 30 },
+    });
   };
 
   const containerDrawerTabClass = cn(
@@ -54,7 +48,7 @@ export default function DrawerTab({
     <div className={containerDrawerTabClass}>
       <motion.div
         initial={
-          position === "left"
+          isLeft
             ? {
                 x: "-100%",
               }
@@ -65,14 +59,14 @@ export default function DrawerTab({
         animate={controls}
         className={cn(
           `fixed flex w-64 min-w-[300px] gap-3 flex-col border border-gray-300 bg-white pb-4 top-10 shadow-lg md:translate-x-0 md:shadow-none`,
-          position === "left" ? "left-0" : "right-0",
+          isLeft ? "left-0" : "right-0",
           drawerTabClassName
         )}
       >
         <div
           className={cn(
-            "h-fit absolute z-10 flex flex-col top-8 border-gray-300 bg-white gap-[2px]",
-            position === "left" ? "left-[300px]" : "right-[300px]",
+            "h-fit absolute z-10 flex flex-col top-8 border-gray-300 bg-transparent gap-[2px]",
+            isLeft ? "left-[298px]" : "right-[298px]",
             tabClassName
           )}
         >
@@ -94,9 +88,15 @@ export default function DrawerTab({
                 }
               }}
               className={cn(
-                "hover:border cursor-pointer z-10 rounded-xs border hover:border-gray-300 border-gray-200 relative ",
-                data.id === selected && "border-gray-300 bg-gray-100",
-                position === "left" ? "p-2 rounded-r-xl" : "p-2 rounded-l-xl"
+                "cursor-pointer hover:bg-gray-100 bg-white border-gray-300 relative ",
+                data.id !== selected && "border hover:border",
+                data.id === selected &&
+                  isLeft &&
+                  "border-y border-r hover:border-y hover:border-r",
+                data.id === selected &&
+                  !isLeft &&
+                  "border-y border-l hover:border-y hover:border-l",
+                isLeft ? "p-2 rounded-r-xl" : "p-2 rounded-l-xl"
               )}
             >
               <data.icon size={20} />
@@ -106,8 +106,11 @@ export default function DrawerTab({
 
         {selectedTab &&
           selectedTab.map((data) => (
-            <Fragment key={data.id}>
-              <div className="flex flex-row justify-between pl-4 pr-2 bg-gray-100 items-center">
+            <div
+              key={data.id}
+              className="flex flex-col gap-3 relative z-30 bg-white"
+            >
+              <div className="flex flex-row relative justify-between pl-4 pr-2 bg-gray-100 items-center z-40">
                 <h2 className="font-medium py-[6px] text-sm">{data.title}</h2>
                 <div className="cursor-pointer flex justify-center items-center w-5 h-5 hover:bg-gray-300 text-gray-600 rounded-xs">
                   <RiCloseLine
@@ -124,8 +127,8 @@ export default function DrawerTab({
                 aria-label="divider"
                 className="border-b w-full absolute top-8 left-0 border-gray-200 h-px"
               />
-              <span className="px-4">{data.content}</span>
-            </Fragment>
+              <span className="px-4 relative z-40">{data.content}</span>
+            </div>
           ))}
       </motion.div>
     </div>
