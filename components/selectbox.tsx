@@ -84,6 +84,8 @@ export function Selectbox({
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(0);
   const [hasInteracted, setHasInteracted] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<(HTMLLIElement | null)[]>([]);
@@ -163,7 +165,7 @@ export function Selectbox({
   }, [highlightedIndex, isOpen]);
 
   const selectBoxClass = cn(
-    "relative w-full text-xs ring-0 hover:bg-gray-100",
+    "relative w-full text-xs ring-0",
     containerClassName
   );
 
@@ -187,20 +189,26 @@ export function Selectbox({
         value={inputValue.text}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
         onFocus={() => {
           if (type === "calendar") {
             setIsOpen(true);
           } else if (inputValue) {
             setIsOpen(true);
           }
+          setFocused(true);
         }}
+        onBlur={() => setFocused(false)}
         aria-autocomplete="list"
         placeholder={placeholder || "Search your item..."}
         className={cn(
-          "w-full rounded-xs border border-gray-100 px-3 py-2 outline-none focus:border-[#61A9F9] focus:ring-0 focus:ring-[#61A9F9]",
+          "w-full rounded-xs border border-gray-100 px-3 py-2 outline-none",
+          focused && "focus:border-[#61A9F9] focus:ring-0 focus:ring-[#61A9F9]",
+          hovered && "border-blue-200",
           highlightOnMatch &&
             FILTERED_ACTIVE.length > 0 &&
-            "bg-[#61A9F9] text-white"
+            "border-[#61A9F9] hover:border-[#61A9F9]"
         )}
       />
 
@@ -245,20 +253,23 @@ export function Selectbox({
           <IconOpened
             size={18}
             className={cn(
-              "absolute text-gray-400 top-[10px] right-2",
-              highlightOnMatch &&
-                FILTERED_ACTIVE.length > 0 &&
-                "bg-[#61A9F9] text-white"
+              "absolute text-gray-800 top-[10px] right-2",
+              focused && "text-[#61A9F9]",
+              highlightOnMatch && FILTERED_ACTIVE.length > 0 && "text-[#61A9F9]"
             )}
           />
         ) : (
           <IconClosed
+            onMouseEnter={() => setHovered(true)}
             size={18}
             className={cn(
               "absolute text-gray-400 top-[10px] right-2",
-              highlightOnMatch &&
-                FILTERED_ACTIVE.length > 0 &&
-                "bg-[#61A9F9] text-white"
+              hovered && highlightOnMatch && FILTERED_ACTIVE.length > 0
+                ? "hover:text-[#61A9F9]"
+                : hovered
+                  ? "text-blue-200"
+                  : "",
+              highlightOnMatch && FILTERED_ACTIVE.length > 0 && "text-[#61A9F9]"
             )}
           />
         )}
