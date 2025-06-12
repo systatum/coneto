@@ -2,7 +2,7 @@ import { RiArrowLeftSLine, RiArrowRightSLine } from "@remixicon/react";
 import { cn } from "./../lib/utils";
 import Combobox from "./combobox";
 import { OptionsProps } from "./selectbox";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 
 type PaginationProps = {
   currentPage: number;
@@ -49,14 +49,13 @@ export default function Pagination({
 
   return (
     <div className={cn("flex flex-row items-center gap-2", className)}>
-      <button
+      <PaginationButton
         onClick={handlePrevious}
         disabled={currentPage === 1}
         aria-label="Previous Page"
-        className="w-[38px] h-[38px] flex justify-center items-center rounded-xs disabled:cursor-default border border-gray-100 disabled:hover:bg-transparent hover:bg-blue-100 focus:outline-none cursor-pointer disabled:opacity-50"
       >
         <RiArrowLeftSLine size={20} />
-      </button>
+      </PaginationButton>
 
       {showNumbers && (
         <PaginationItem
@@ -68,14 +67,13 @@ export default function Pagination({
         />
       )}
 
-      <button
+      <PaginationButton
         onClick={handleNext}
         disabled={currentPage === totalPages}
         aria-label="Next Page"
-        className="w-[38px] h-[38px] flex justify-center items-center rounded-xs disabled:cursor-default border border-gray-100 disabled:hover:bg-transparent hover:bg-blue-100 focus:outline-none cursor-pointer disabled:opacity-50"
       >
         <RiArrowRightSLine size={20} />
-      </button>
+      </PaginationButton>
     </div>
   );
 }
@@ -139,13 +137,14 @@ const PaginationItem = ({
               onPageChange(Number(val.value));
               setCurrentPageLocal(val);
             }}
+            placeholder="1"
             containerClassName="w-[80px] text-sm"
           />
 
           {lastPages.map((page) => {
             const isActive = currentPage === page;
             return (
-              <button
+              <PaginationButton
                 key={page}
                 onClick={() => {
                   onPageChange(page);
@@ -153,15 +152,10 @@ const PaginationItem = ({
                     setCurrentPageLocal(formatOption(page));
                   }
                 }}
-                className={cn(
-                  "w-[38px] h-[38px] rounded-xs cursor-pointer text-sm font-medium focus:outline-none border border-gray-100",
-                  isActive
-                    ? "bg-[#61A9F9] text-white"
-                    : "hover:bg-blue-100 text-gray-700"
-                )}
+                isActive={isActive}
               >
                 {page}
-              </button>
+              </PaginationButton>
             );
           })}
         </>
@@ -170,25 +164,50 @@ const PaginationItem = ({
           {allPages.map((page) => {
             const isActive = currentPage === page;
             return (
-              <button
+              <PaginationButton
                 key={page}
                 onClick={() => {
                   onPageChange(page);
                   setCurrentPageLocal(formatOption(page));
                 }}
-                className={cn(
-                  "w-[38px] h-[38px] rounded-xs text-sm cursor-pointer font-medium focus:outline-none border border-gray-100",
-                  isActive
-                    ? "bg-[#61A9F9] text-white"
-                    : "hover:bg-blue-100 text-gray-700"
-                )}
+                isActive={isActive}
               >
                 {page}
-              </button>
+              </PaginationButton>
             );
           })}
         </>
       )}
     </div>
+  );
+};
+
+const PaginationButton = ({
+  onClick,
+  className,
+  children,
+  isActive,
+  disabled,
+  ...props
+}: {
+  onClick: () => void;
+  className?: string;
+  children: ReactNode;
+  isActive?: boolean;
+  disabled?: boolean;
+}) => {
+  return (
+    <button
+      {...props}
+      onClick={onClick}
+      disabled={disabled}
+      className={cn(
+        "w-[38px] h-[38px] rounded-xs flex justify-center items-center text-sm cursor-pointer font-medium focus:outline-none border border-gray-100 disabled:cursor-default disabled:hover:bg-transparent disabled:opacity-30",
+        isActive ? "border-[#61A9F9]" : "hover:border-blue-100 text-gray-700",
+        className
+      )}
+    >
+      {children}
+    </button>
   );
 };
