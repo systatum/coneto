@@ -25,6 +25,8 @@ export default function Pagination({
   });
 
   const currentPageNumber = Number(currentPageLocal.value);
+  const threshold = 5;
+  const lastPage = totalPages - 2;
 
   const handlePrevious = () => {
     if (currentPageNumber > 1) {
@@ -36,7 +38,12 @@ export default function Pagination({
 
   const handleNext = () => {
     if (currentPageNumber < totalPages) {
-      const newValue = currentPageNumber + 1;
+      let newValue = 0;
+      if (currentPageNumber < lastPage && totalPages > threshold) {
+        newValue = lastPage;
+      } else {
+        newValue = currentPageNumber + 1;
+      }
       onPageChange(newValue);
       setCurrentPageLocal({ value: newValue, text: newValue.toString() });
     }
@@ -46,7 +53,11 @@ export default function Pagination({
     <div className={cn("flex flex-row items-center gap-2", className)}>
       <button
         onClick={handlePrevious}
-        disabled={currentPageNumber === 1}
+        disabled={
+          totalPages > threshold
+            ? currentPageNumber <= lastPage
+            : currentPageNumber === 1
+        }
         aria-label="Previous Page"
         className="w-[38px] h-[38px] flex justify-center items-center rounded-xs disabled:cursor-default border border-gray-100 disabled:hover:bg-transparent hover:bg-blue-100 focus:outline-none cursor-pointer disabled:opacity-50"
       >
@@ -112,6 +123,7 @@ const PaginationItem = ({
       {totalPages > threshold ? (
         <>
           <Combobox
+            highlightOnMatch
             options={comboBoxPages.map(formatOption)}
             inputValue={currentPage}
             setInputValue={(val) => {

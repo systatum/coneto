@@ -17,7 +17,17 @@ export const Default: Story = {
     const [page, setPage] = useState<number>(1);
 
     return (
-      <Pagination currentPage={page} totalPages={10} onPageChange={setPage} />
+      <Pagination currentPage={page} totalPages={5} onPageChange={setPage} />
+    );
+  },
+};
+
+export const OverFivePage: Story = {
+  render: () => {
+    const [page, setPage] = useState<number>(1);
+
+    return (
+      <Pagination currentPage={page} totalPages={50} onPageChange={setPage} />
     );
   },
 };
