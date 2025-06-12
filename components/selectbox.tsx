@@ -163,7 +163,7 @@ export function Selectbox({
   }, [highlightedIndex, isOpen]);
 
   const selectBoxClass = cn(
-    "relative w-full text-xs ring-0",
+    "relative w-full text-xs ring-0 hover:bg-gray-100",
     containerClassName
   );
 
