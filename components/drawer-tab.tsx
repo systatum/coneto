@@ -72,6 +72,9 @@ export default function DrawerTab({
         >
           {tabs.map((data) => (
             <div
+              role="button"
+              aria-label={`Open ${data.title} tab`}
+              tabIndex={0}
               key={data.id}
               onClick={() => {
                 const isSame = selected === data.id;
@@ -115,6 +118,7 @@ export default function DrawerTab({
                 <div className="cursor-pointer flex justify-center items-center w-5 h-5 hover:bg-gray-300 text-gray-600 rounded-xs">
                   <RiCloseLine
                     size={16}
+                    role="button"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleToggleDrawer(false);
