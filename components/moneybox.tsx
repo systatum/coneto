@@ -1,12 +1,11 @@
 import { cn } from "../lib/utils";
 import { ChangeEvent, useMemo, useState } from "react";
 
-type MoneyTypeProps = "dollar" | "euro" | "yen" | "pound" | "rupiah";
 type SeparatorTypeProps = "dot" | "comma";
 
 interface MoneyboxProps {
   value: string;
-  type?: MoneyTypeProps;
+  currency?: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   name?: string;
   placeholder?: string;
@@ -14,17 +13,9 @@ interface MoneyboxProps {
   className?: string;
 }
 
-const CURRENCY_SYMBOL: Record<MoneyTypeProps, string> = {
-  dollar: "$",
-  euro: "€",
-  yen: "¥",
-  pound: "£",
-  rupiah: "Rp",
-};
-
 export default function Moneybox({
   value,
-  type = "dollar",
+  currency = "dollar",
   name,
   onChange,
   placeholder,
@@ -32,8 +23,6 @@ export default function Moneybox({
   className,
 }: MoneyboxProps) {
   const [focus, setFocus] = useState(false);
-
-  const currencySelected = CURRENCY_SYMBOL[type];
 
   const rawValue = typeof value === "number" ? String(value) : value;
   const cleaned = unformatNumber(rawValue);
@@ -50,7 +39,7 @@ export default function Moneybox({
 
   return (
     <div className={classMoneyBox}>
-      <span>{currencySelected}</span>
+      <span>{currency}</span>
 
       <input
         name={name}

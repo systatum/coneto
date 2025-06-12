@@ -18,7 +18,7 @@ export const Dollar: Story = {
   args: {
     value: "2000",
     name: "value",
-    type: "dollar",
+    currency: "$",
   },
   render: (args) => {
     const [currentArgs, setUpdateArgs] = useArgs();
@@ -49,7 +49,7 @@ export const Euro: Story = {
   args: {
     value: "2000",
     name: "value",
-    type: "euro",
+    currency: "€",
     separator: "comma",
   },
   render: (args) => {
@@ -80,7 +80,7 @@ export const Yen: Story = {
   args: {
     value: "2000",
     name: "value",
-    type: "yen",
+    currency: "¥",
     separator: "dot",
   },
   render: (args) => {
@@ -111,7 +111,7 @@ export const Pound: Story = {
   args: {
     value: "2000",
     name: "value",
-    type: "pound",
+    currency: "£",
     separator: "comma",
   },
   render: (args) => {
@@ -142,7 +142,7 @@ export const Rupiah: Story = {
   args: {
     value: "2000",
     name: "value",
-    type: "rupiah",
+    currency: "Rp",
     separator: "dot",
   },
   render: (args) => {
