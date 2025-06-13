@@ -272,6 +272,7 @@ export const WithSelectable: Story = {
               selectable
               isSelected={isSelected}
               data-testid={`card-${data.id}`}
+              data-selected={isSelected}
             >
               <div className="min-h-[30px] h-full w-full">
                 <h3>{data.title}</h3>
@@ -286,6 +287,8 @@ export const WithSelectable: Story = {
     const canvas = within(canvasElement);
     const firstCard = await canvas.findByTestId("card-1");
     await userEvent.click(firstCard);
-    expect(firstCard).toBeInTheDocument();
+    expect(firstCard).toHaveAttribute("data-selected", "true");
+    await userEvent.click(firstCard);
+    expect(firstCard).toHaveAttribute("data-selected", "false");
   },
 };
