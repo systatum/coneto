@@ -81,6 +81,11 @@ export function Selectbox({
   containerClassName,
   highlightOnMatch,
 }: SelectboxProps) {
+  const [inputValueLocal, setInputValueLocal] = useState<OptionsProps>({
+    text: "",
+    value: 0,
+  });
+
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(0);
   const [hasInteracted, setHasInteracted] = useState(false);
@@ -92,11 +97,13 @@ export function Selectbox({
 
   const FILTERED_OPTIONS = hasInteracted
     ? options.filter((opt) =>
-        opt.text.toLowerCase().includes(inputValue.text.toLowerCase())
+        opt.text.toLowerCase().includes(inputValueLocal.text.toLowerCase())
       )
     : options;
 
-  const FILTERED_ACTIVE = options.filter((opt) => opt.text === inputValue.text);
+  const FILTERED_ACTIVE = options.filter(
+    (opt) => opt.text === inputValueLocal.text
+  );
 
   const { refs, floatingStyles, context } = useFloating({
     placement: "bottom-start" as Placement,
@@ -122,8 +129,10 @@ export function Selectbox({
           value.slice(0, 2) + "/" + value.slice(2, 4) + "/" + value.slice(4, 8);
       }
     }
-
-    setInputValue({ ...inputValue, text: value });
+    if (setInputValue) {
+      setInputValue({ ...inputValue, text: value });
+    }
+    setInputValueLocal({ ...inputValueLocal, text: value });
 
     setIsOpen(value.length > 0);
     setHighlightedIndex(0);
@@ -148,7 +157,10 @@ export function Selectbox({
       e.preventDefault();
       const selected = FILTERED_OPTIONS[highlightedIndex];
       if (selected) {
-        setInputValue(selected);
+        if (setInputValue) {
+          setInputValue?.(selected);
+        }
+        setInputValueLocal(selected);
         setIsOpen(false);
         setHasInteracted(false);
       }
@@ -186,7 +198,7 @@ export function Selectbox({
           inputRef.current = el;
         }}
         type="text"
-        value={inputValue.text}
+        value={inputValueLocal.text}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
         onMouseEnter={() => setHovered(true)}
@@ -194,7 +206,7 @@ export function Selectbox({
         onFocus={() => {
           if (type === "calendar") {
             setIsOpen(true);
-          } else if (inputValue) {
+          } else if (inputValueLocal) {
             setIsOpen(true);
           }
           setFocused(true);
@@ -212,11 +224,17 @@ export function Selectbox({
         )}
       />
 
-      {clearable && inputValue.text !== "" && (
+      {clearable && inputValueLocal.text !== "" && (
         <>
           <RiCloseLine
             onClick={() => {
-              setInputValue({
+              if (setInputValue) {
+                setInputValue({
+                  text: "",
+                  value: 0,
+                });
+              }
+              setInputValueLocal({
                 text: "",
                 value: 0,
               });
@@ -253,7 +271,7 @@ export function Selectbox({
           <IconOpened
             size={18}
             className={cn(
-              "absolute text-gray-800 top-[10px] right-2",
+              "absolute text-gray-800 top-1/2 -translate-1/2 right-1",
               focused && "text-[#61A9F9]",
               highlightOnMatch && FILTERED_ACTIVE.length > 0 && "text-[#61A9F9]"
             )}
@@ -263,7 +281,7 @@ export function Selectbox({
             onMouseEnter={() => setHovered(true)}
             size={18}
             className={cn(
-              "absolute text-gray-400 top-[10px] right-2",
+              "absolute text-gray-400 top-1/2 -translate-1/2 right-1",
               hovered && highlightOnMatch && FILTERED_ACTIVE.length > 0
                 ? "hover:text-[#61A9F9]"
                 : hovered
@@ -281,8 +299,13 @@ export function Selectbox({
           options: FILTERED_OPTIONS,
           highlightedIndex,
           setHighlightedIndex,
-          setInputValue,
-          inputValue,
+          setInputValue: (e) => {
+            setInputValueLocal(e);
+            if (setInputValue) {
+              setInputValue(e);
+            }
+          },
+          inputValue: inputValueLocal,
           setIsOpen,
           getFloatingProps,
           refs,
