@@ -31,8 +31,9 @@ export interface PhoneboxProps {
   className?: string;
   value?: string;
   onChange?: (
-    field: "phone_number" | "country_code",
-    value: string | CountryCodeProps
+    e?:
+      | { target: { name: string; value: CountryCodeProps } }
+      | ChangeEvent<HTMLInputElement>
   ) => void;
   placeholder?: string;
   disabled?: boolean;
@@ -147,7 +148,15 @@ export default function Phonebox({
       selectedCountry.id as CountryCode
     );
     setPhoneNumber(formatted);
-    if (onChange) onChange("phone_number", trimmed);
+    if (onChange) {
+      const syntheticEvent = {
+        target: {
+          name: "phone",
+          value: trimmed,
+        },
+      } as ChangeEvent<HTMLInputElement>;
+      onChange?.(syntheticEvent);
+    }
   };
 
   const handleSelectCountry = (country: CountryCodeProps) => {
@@ -155,7 +164,15 @@ export default function Phonebox({
     setIsOpen(false);
     setSearchTerm("");
     setHighlightedIndex(0);
-    if (onChange) onChange("country_code", country);
+    if (onChange) {
+      const syntheticEvent = {
+        target: {
+          name: "country_code",
+          value: country,
+        },
+      };
+      onChange?.(syntheticEvent);
+    }
     phoneInputRef.current?.focus();
   };
 
