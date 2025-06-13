@@ -1,6 +1,6 @@
 "use client";
 
-import { getBackground, getCode } from "./../lib/code-color";
+import { strToColor } from "./../lib/code-color";
 import clsx from "clsx";
 import { ChangeEvent, HTMLAttributes, useRef } from "react";
 
@@ -48,8 +48,7 @@ export default function Avatar({
   const isClickable = changeable || !!onChange || !!props.onClick;
 
   const fullName = `${firstName} ${lastName}`;
-  const code = getCode(fullName);
-  const backgroundColor = getBackground(code, AVATAR_BACKGROUND_COLORS);
+  const backgroundColor = strToColor(fullName, AVATAR_BACKGROUND_COLORS);
   const initials = getInitials(firstName, lastName);
 
   const isImageValid = profileImageUrl && profileImageUrl !== "";
