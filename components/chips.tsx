@@ -32,7 +32,13 @@ type InputValueProps = {
   circle_color: string;
 };
 
-export interface ChipsProps {
+export type ChipsProps = BaseChipsProps & {
+  label?: string;
+  showError?: boolean;
+  errorMessage?: string;
+  type?: string;
+};
+interface BaseChipsProps {
   options?: BadgeProps[];
   inputValue?: InputValueProps;
   setInputValue?: (
@@ -46,11 +52,11 @@ export interface ChipsProps {
   filterPlaceholder?: string;
   newLabelPlaceholder?: string;
   addButtonLabel?: string;
-  cancelAddingLabel?: string;
+  cancelAddingButtonLabel?: string;
   creatable?: boolean;
-  onOptionClicked?: (data: BadgeProps) => void;
-  selectedOption?: number[];
-  onDeleteRequested?: (data: BadgeProps) => void;
+  onOptionClicked?: (badge: BadgeProps) => void;
+  selectedOptions?: number[];
+  onDeleteRequested?: (badge: BadgeProps) => void;
   deletable?: boolean;
   onNewTagCreated?: () => void;
 }
@@ -81,9 +87,9 @@ export default function Chips(props: ChipsProps) {
   ]);
 
   const getAllOptions = () => {
-    const selectedIds = new Set(props.selectedOption);
+    const selectedIds = new Set(props.selectedOptions);
 
-    const clickedOptions = props.selectedOption
+    const clickedOptions = props.selectedOptions
       .map((id) => props.options.find((opt) => opt.id === id))
       .filter(Boolean);
     const unClickedOptions = props.options.filter(
@@ -92,7 +98,7 @@ export default function Chips(props: ChipsProps) {
     return [...clickedOptions, ...unClickedOptions];
   };
 
-  const CLICKED_OPTIONS = props.selectedOption
+  const CLICKED_OPTIONS = props.selectedOptions
     .map((id) => props.options.find((opt) => opt.id === id))
     .filter(Boolean);
 
@@ -114,7 +120,7 @@ export default function Chips(props: ChipsProps) {
     props.chipsContainerClassName
   );
 
-  return (
+  const inputElement = (
     <>
       <div className={chipsClassName}>
         {CLICKED_OPTIONS.map((data) => (
@@ -153,6 +159,18 @@ export default function Chips(props: ChipsProps) {
       )}
     </>
   );
+
+  return (
+    <div className={cn(`flex w-full flex-col gap-2 text-xs`)}>
+      {props.label && <label>{props.label}</label>}
+      <div className="flex flex-col gap-1 text-xs">
+        {inputElement}
+        {props.showError && (
+          <span className="text-red-600">{props.errorMessage}</span>
+        )}
+      </div>
+    </div>
+  );
 }
 
 type ChipsDrawerProps = ChipsProps & {
@@ -169,7 +187,7 @@ function ChipsDrawer({
   refs,
   setHasInteracted,
   addButtonLabel = "Add",
-  cancelAddingLabel = "Cancel",
+  cancelAddingButtonLabel = "Cancel",
   chipClassName,
   chipContainerClassName,
   chipsDrawerClassName = "max-w-[250px]",
@@ -180,7 +198,7 @@ function ChipsDrawer({
   setInputValue,
   creatable,
   onOptionClicked,
-  selectedOption,
+  selectedOptions,
   deletable,
   onDeleteRequested,
 }: ChipsDrawerProps) {
@@ -288,6 +306,7 @@ function ChipsDrawer({
           <Textbox
             ref={inputRef}
             name="search"
+            type="text"
             placeholder={filterPlaceholder}
             value={inputValue.search}
             className="border-none rounded-none"
@@ -337,7 +356,7 @@ function ChipsDrawer({
             {options && options.length > 0 ? (
               <>
                 {options.map((data, index) => {
-                  const isClicked = selectedOption?.some(
+                  const isClicked = selectedOptions?.some(
                     (clicked) => clicked === data.id
                   );
 
@@ -345,7 +364,7 @@ function ChipsDrawer({
                     <div key={data.id}>
                       {index > 0 &&
                         options[index - 1] &&
-                        selectedOption?.some(
+                        selectedOptions?.some(
                           (clicked) => clicked === options[index - 1].id
                         ) &&
                         !isClicked && (
@@ -356,7 +375,7 @@ function ChipsDrawer({
                         )}
 
                       <Chip
-                        data={data}
+                        badge={data}
                         chipContainerClassName={chipContainerClassName}
                         hovered={hovered}
                         isClicked={isClicked}
@@ -444,7 +463,7 @@ function ChipsDrawer({
                 size="sm"
                 className="text-xs"
               >
-                {cancelAddingLabel}
+                {cancelAddingButtonLabel}
               </Button>
               <Button
                 onClick={onNewTagCreated}
@@ -463,7 +482,7 @@ function ChipsDrawer({
 }
 
 function Chip({
-  data,
+  badge,
   isClicked,
   hovered,
   setHovered,
@@ -473,42 +492,42 @@ function Chip({
   onDeleteRequested,
   deletable,
 }: {
-  data: BadgeProps;
+  badge: BadgeProps;
   isClicked: boolean;
   hovered: number | null;
-  setHovered: (data: number) => void;
-  onOptionClicked?: (data: BadgeProps) => void;
+  setHovered: (number: number) => void;
+  onOptionClicked?: (badge: BadgeProps) => void;
   chipClassName?: string;
   chipContainerClassName?: string;
-  onDeleteRequested?: (data: BadgeProps) => void;
+  onDeleteRequested?: (badge: BadgeProps) => void;
   deletable?: boolean;
 }) {
   return (
     <div
       className={cn(
         "flex py-[4px] flex-row px-3 gap-[2px] items-center cursor-pointer justify-between relative",
-        hovered === data.id && "bg-blue-100",
+        hovered === badge.id && "bg-blue-100",
         chipContainerClassName
       )}
-      onClick={() => onOptionClicked?.(data)}
-      onMouseEnter={() => setHovered(data.id)}
+      onClick={() => onOptionClicked?.(badge)}
+      onMouseEnter={() => setHovered(badge.id)}
     >
       <Checkbox
         checked={isClicked}
         classNameParent={cn(
           "border-transparent w-[14px] h-[14px] rounded-xs",
-          hovered === data.id && "border-[#61A9F9]"
+          hovered === badge.id && "border-[#61A9F9]"
         )}
         className="w-[10px] h-[10px]"
         readOnly
       />
       <Badge
-        variant={data.variant}
-        backgroundColor={data.backgroundColor}
-        circleColor={data.circleColor}
+        variant={badge.variant}
+        backgroundColor={badge.backgroundColor}
+        circleColor={badge.circleColor}
         className={chipClassName}
-        textColor={data.textColor}
-        caption={data.caption}
+        textColor={badge.textColor}
+        caption={badge.caption}
         withCircle
       />
       {deletable && (
@@ -517,12 +536,12 @@ function Chip({
           aria-label="Delete requested data"
           onClick={(e) => {
             e.stopPropagation();
-            onDeleteRequested(data);
+            onDeleteRequested(badge);
           }}
           size={14}
           className={cn(
             "absolute top-1/2 right-4 -translate-y-1/2 hover:bg-gray-300 text-transparent cursor-pointer",
-            hovered === data.id && "text-gray-400 hover:text-gray-600"
+            hovered === badge.id && "text-gray-400 hover:text-gray-600"
           )}
         />
       )}

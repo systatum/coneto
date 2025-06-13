@@ -66,7 +66,7 @@ export const Default: Story = {
       text_color: "",
       circle_color: "",
     });
-    const [selected, setSelected] = useState<number[]>([]);
+    const [selectedOptions, setSelectedOptions] = useState<number[]>([]);
 
     const onChangeValue = (
       e: ChangeEvent<HTMLInputElement>,
@@ -87,12 +87,12 @@ export const Default: Story = {
 
     const handleOptionClicked = (val: BadgeProps) => {
       const valId = val?.id;
-      const isAlreadySelected = selected.some((data) => data === valId);
+      const isAlreadySelected = selectedOptions.some((data) => data === valId);
 
       if (isAlreadySelected) {
-        setSelected((prev) => prev.filter((data) => data !== valId));
+        setSelectedOptions((prev) => prev.filter((data) => data !== valId));
       } else {
-        setSelected([...selected, valId]);
+        setSelectedOptions([...selectedOptions, valId]);
       }
     };
 
@@ -108,7 +108,7 @@ export const Default: Story = {
         chipContainerClassName="gap-1"
         chipsDrawerClassName="max-w-[250px]"
         onOptionClicked={handleOptionClicked}
-        selectedOption={selected}
+        selectedOptions={selectedOptions}
         options={BADGE_OPTIONS as BadgeProps[]}
         onNewTagCreated={handleNewTagClicked}
         creatable
@@ -199,7 +199,7 @@ export const DarkBackground: Story = {
       text_color: "",
       circle_color: "",
     });
-    const [selected, setSelected] = useState<number[]>([]);
+    const [selectedOptions, setSelectedOptions] = useState<number[]>([]);
 
     const onChangeValue = (
       e: ChangeEvent<HTMLInputElement>,
@@ -220,12 +220,12 @@ export const DarkBackground: Story = {
 
     const handleOptionClicked = (val: BadgeProps) => {
       const valId = val?.id;
-      const isAlreadySelected = selected.some((data) => data === valId);
+      const isAlreadySelected = selectedOptions.some((data) => data === valId);
 
       if (isAlreadySelected) {
-        setSelected((prev) => prev.filter((data) => data !== valId));
+        setSelectedOptions((prev) => prev.filter((data) => data !== valId));
       } else {
-        setSelected([...selected, valId]);
+        setSelectedOptions([...selectedOptions, valId]);
       }
     };
 
@@ -245,7 +245,7 @@ export const DarkBackground: Story = {
         chipContainerClassName="gap-2 justify-start"
         chipsDrawerClassName="max-w-[150px]"
         onOptionClicked={handleOptionClicked}
-        selectedOption={selected}
+        selectedOptions={selectedOptions}
         onDeleteRequested={handleDeleteClicked}
         options={BADGE_OPTIONS as BadgeProps[]}
         onNewTagCreated={handleNewTagClicked}
@@ -307,7 +307,7 @@ export const Deletable: Story = {
       text_color: "",
       circle_color: "",
     });
-    const [selected, setSelected] = useState<number[]>([]);
+    const [selectedOptions, setSelectedOptions] = useState<number[]>([]);
 
     const onChangeValue = (
       e: ChangeEvent<HTMLInputElement>,
@@ -328,12 +328,12 @@ export const Deletable: Story = {
 
     const handleOptionClicked = (val: BadgeProps) => {
       const valId = val?.id;
-      const isAlreadySelected = selected.some((data) => data === valId);
+      const isAlreadySelected = selectedOptions.some((data) => data === valId);
 
       if (isAlreadySelected) {
-        setSelected((prev) => prev.filter((data) => data !== valId));
+        setSelectedOptions((prev) => prev.filter((data) => data !== valId));
       } else {
-        setSelected([...selected, valId]);
+        setSelectedOptions([...selectedOptions, valId]);
       }
     };
 
@@ -353,7 +353,7 @@ export const Deletable: Story = {
         chipContainerClassName="gap-1"
         chipsDrawerClassName="max-w-[250px]"
         onOptionClicked={handleOptionClicked}
-        selectedOption={selected}
+        selectedOptions={selectedOptions}
         options={BADGE_OPTIONS as BadgeProps[]}
         onNewTagCreated={handleNewTagClicked}
         onDeleteRequested={handleDeleteClicked}
