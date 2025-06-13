@@ -3,10 +3,10 @@ import { ChangeEvent, useMemo, useState } from "react";
 
 type SeparatorTypeProps = "dot" | "comma";
 
-interface MoneyboxProps {
-  value: string;
+export interface MoneyboxProps {
+  value?: string;
   currency?: string;
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   name?: string;
   placeholder?: string;
   separator?: SeparatorTypeProps;
@@ -19,7 +19,7 @@ interface MoneyboxProps {
 
 export default function Moneybox({
   value,
-  currency = "dollar",
+  currency = "$",
   name,
   label,
   onChange,
@@ -40,7 +40,7 @@ export default function Moneybox({
   );
 
   const classMoneyBox = cn(
-    "w-full h-full border text-sm rounded-xs py-[10px] px-3 items-center gap-3 justify-end flex",
+    "w-full h-full border text-xs rounded-xs py-[10px] px-3 items-center gap-3 justify-end flex",
     showError
       ? "border-red-500 text-red-800"
       : focus

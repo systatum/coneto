@@ -6,6 +6,10 @@ interface ImageboxProps {
   containerClassName?: string;
   onFilesSelected?: (files: FileList) => void;
   size?: "xs" | "sm" | "md" | "lg";
+  label?: string;
+  showError?: boolean;
+  errorMessage?: string;
+  name?: string;
 }
 
 const SIZE_CLASSES = {
@@ -26,6 +30,10 @@ export default function Imagebox({
   containerClassName,
   onFilesSelected,
   size = "md",
+  label,
+  errorMessage,
+  showError,
+  name,
 }: ImageboxProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
@@ -39,7 +47,7 @@ export default function Imagebox({
     if (e.target.files) {
       const file = e.target.files;
       if (onFilesSelected) {
-        onFilesSelected(file);
+        onFilesSelected?.(file);
       }
       setSelectedFile(URL.createObjectURL(file[0]));
     }
@@ -73,7 +81,7 @@ export default function Imagebox({
     containerClassName
   );
 
-  return (
+  const inputElement = (
     <div
       className={classInputBox}
       onClick={handleBrowseClick}
@@ -92,6 +100,7 @@ export default function Imagebox({
         />
       )}
       <input
+        name={name}
         ref={fileInputRef}
         type="file"
         accept="image/*"
@@ -105,6 +114,16 @@ export default function Imagebox({
         )}
       >
         <RiAddLine size={SIZE_ICON[size]} />
+      </div>
+    </div>
+  );
+
+  return (
+    <div className={cn(`flex w-full flex-col gap-2 text-xs`)}>
+      {label && <label>{label}</label>}
+      <div className="flex flex-col gap-1 text-xs">
+        {inputElement}
+        {showError && <span className="text-red-600">{errorMessage}</span>}
       </div>
     </div>
   );

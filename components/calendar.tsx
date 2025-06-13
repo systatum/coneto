@@ -23,7 +23,12 @@ export interface BaseCalendarProps {
   futurePastReach?: number;
 }
 
-type CalendarProps = BaseCalendarProps & DrawerProps;
+type CalendarProps = BaseCalendarProps &
+  Partial<DrawerProps> & {
+    label?: string;
+    showError?: boolean;
+    errorMessage?: string;
+  };
 
 interface CalendarStateProps {
   open: boolean;
@@ -81,6 +86,9 @@ export default function Calendar({
   futurePastReach = 50,
   format = "mm/dd/yyyy",
   className,
+  label,
+  showError,
+  errorMessage,
 }: CalendarProps) {
   const parsedDate = inputValue?.text ? new Date(inputValue.text) : new Date();
   const stateDate = isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
@@ -305,7 +313,7 @@ export default function Calendar({
     className
   );
 
-  return (
+  const inputElement = (
     <div className={calendarClass}>
       <div className={cn("flex flex-row items-center mb-2 px-2")}>
         <div
@@ -475,6 +483,16 @@ export default function Calendar({
           })}
         </div>
       </>
+    </div>
+  );
+
+  return (
+    <div className={cn(`flex w-full flex-col gap-2 text-xs`)}>
+      {label && <label>{label}</label>}
+      <div className="flex flex-col gap-1 text-xs">
+        {inputElement}
+        {showError && <span className="text-red-600">{errorMessage}</span>}
+      </div>
     </div>
   );
 }

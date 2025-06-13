@@ -2,7 +2,13 @@ import { Ref, useEffect } from "react";
 import { DrawerProps, OptionsProps, Selectbox } from "./selectbox";
 import { cn } from "./../lib/utils";
 
-interface ComboboxProps {
+export type ComboboxProps = Partial<BaseComboboxProps> & {
+  label?: string;
+  showError?: boolean;
+  errorMessage?: string;
+};
+
+interface BaseComboboxProps {
   options: OptionsProps[];
   containerClassName?: string;
   inputValue: OptionsProps;
@@ -14,7 +20,7 @@ interface ComboboxProps {
 }
 
 type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
-  ComboboxProps & {
+  BaseComboboxProps & {
     refs?: {
       setFloating?: Ref<HTMLUListElement>;
       reference?: Ref<HTMLElement> & { current?: HTMLElement | null };
@@ -23,26 +29,33 @@ type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
 
 export default function Combobox({
   options,
-  inputValue,
   setInputValue,
   clearable = false,
   placeholder,
   containerClassName,
   highlightOnMatch = false,
   emptySlate = "Not available.",
+  errorMessage,
+  label,
+  showError,
 }: ComboboxProps) {
   return (
-    <Selectbox
-      highlightOnMatch={highlightOnMatch}
-      containerClassName={containerClassName}
-      options={options}
-      inputValue={inputValue}
-      setInputValue={setInputValue}
-      placeholder={placeholder}
-      clearable={clearable}
-    >
-      {(props) => <ComboboxDrawer emptySlate={emptySlate} {...props} />}
-    </Selectbox>
+    <div className={cn(`flex w-full flex-col gap-2 text-xs`)}>
+      {label && <label>{label}</label>}
+      <div className="flex flex-col gap-1 text-xs"></div>
+      <Selectbox
+        highlightOnMatch={highlightOnMatch}
+        containerClassName={containerClassName}
+        options={options}
+        setInputValue={setInputValue}
+        placeholder={placeholder}
+        clearable={clearable}
+      >
+        {(props) => <ComboboxDrawer emptySlate={emptySlate} {...props} />}
+      </Selectbox>
+
+      {showError && <span className="text-red-600">{errorMessage}</span>}
+    </div>
   );
 }
 

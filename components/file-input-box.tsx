@@ -1,11 +1,15 @@
 import { ChangeEvent, DragEvent, useRef, useState } from "react";
 import { cn } from "./../lib/utils";
+import { RiCloseLine } from "@remixicon/react";
 
 interface FileInputBoxProps {
   containerClassName?: string;
   placeholder?: string;
   accept?: string;
   onFilesSelected?: (files: FileList) => void;
+  label?: string;
+  showError?: boolean;
+  errorMessage?: string;
 }
 
 export default function FileInputBox({
@@ -13,6 +17,9 @@ export default function FileInputBox({
   placeholder = "Drop a file here or browse",
   accept = "*",
   onFilesSelected,
+  label,
+  errorMessage,
+  showError,
 }: FileInputBoxProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -69,7 +76,7 @@ export default function FileInputBox({
     containerClassName
   );
 
-  return (
+  const inputElement = (
     <div
       className={containerInputBoxClass}
       onClick={handleBrowseClick}
@@ -79,15 +86,15 @@ export default function FileInputBox({
     >
       {selectedFile !== "" ? (
         <>
-          <div className="text-sm text-gray-700 w-full">{selectedFile}</div>
+          <div className="text-sm text-gray-700 w-[90%]">{selectedFile}</div>
           <div
             onClick={(e) => {
               e.stopPropagation();
               handleDeleteFile();
             }}
-            className="absolute top-[10px] cursor-pointer right-4"
+            className="absolute p-1 rounded-xs hover:bg-gray-200 top-1/2  -translate-y-1/2 cursor-pointer right-4"
           >
-            x
+            <RiCloseLine size={16} />
           </div>
         </>
       ) : (
@@ -103,6 +110,16 @@ export default function FileInputBox({
           hidden
         />
       )}
+    </div>
+  );
+
+  return (
+    <div className={cn(`flex w-full flex-col gap-2 text-xs`)}>
+      {label && <label>{label}</label>}
+      <div className="flex flex-col gap-1 text-xs">
+        {inputElement}
+        {showError && <span className="text-red-600">{errorMessage}</span>}
+      </div>
     </div>
   );
 }
