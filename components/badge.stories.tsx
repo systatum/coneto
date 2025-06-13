@@ -116,15 +116,15 @@ export const VariantBadge: Story = {
     ];
     return (
       <div className="flex flex-col gap-1">
-        {BADGE_OPTIONS.map((data) => (
+        {BADGE_OPTIONS.map((badge) => (
           <Badge
             className="w-full max-w-[150px]"
-            backgroundColor={data.backgroundColor}
-            textColor={data.textColor}
-            variant={data.variant as BadgeVariantProps}
-            key={data.id}
+            backgroundColor={badge.backgroundColor}
+            textColor={badge.textColor}
+            variant={badge.variant as BadgeVariantProps}
+            key={badge.id}
             withCircle
-            caption={data.caption}
+            caption={badge.caption}
           />
         ))}
       </div>

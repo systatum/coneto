@@ -1,4 +1,4 @@
-import { getBackground, getCode } from "./../lib/code-color";
+import { strToColor } from "./../lib/code-color";
 import { cn } from "./../lib/utils";
 import { ChangeEvent, MouseEvent } from "react";
 
@@ -83,8 +83,7 @@ export default function Badge({
   const { bg: backgroundColorVariant, color: colorVariant } =
     VARIANTS_BADGE[variant];
 
-  const code = getCode(caption);
-  const backgroundColorLocal = getBackground(code, BADGE_BACKGROUND_COLORS);
+  const circleColorLocal = strToColor(caption, BADGE_BACKGROUND_COLORS);
 
   const classBadge = cn(
     `flex flex-row text-xs w-fit px-2 py-[2px] border border-gray-100 rounded-md items-center select-none break-all`,
@@ -92,17 +91,33 @@ export default function Badge({
     withCircle && "gap-2",
     className
   );
+  const badgeBackgroundColor = backgroundColor
+    ? backgroundColor
+    : backgroundColorVariant
+      ? backgroundColorVariant
+      : "transparent";
+
+  const badgeTextColor = textColor
+    ? textColor
+    : colorVariant
+      ? colorVariant
+      : "black";
+  const badgeCircleColor = circleColor
+    ? circleColor
+    : textColor
+      ? textColor
+      : colorVariant
+        ? colorVariant
+        : circleColorLocal
+          ? circleColorLocal
+          : "black";
 
   return (
     <div
       onClick={onClick}
       style={{
-        background: backgroundColor
-          ? backgroundColor
-          : backgroundColorVariant
-            ? backgroundColorVariant
-            : "transparent",
-        color: textColor ? textColor : colorVariant ? colorVariant : "black",
+        background: badgeBackgroundColor,
+        color: badgeTextColor,
       }}
       className={classBadge}
     >
@@ -110,24 +125,8 @@ export default function Badge({
         <span
           className="rounded-full w-[8px] h-[8px] border"
           style={{
-            borderColor: circleColor
-              ? circleColor
-              : textColor
-                ? textColor
-                : colorVariant
-                  ? colorVariant
-                  : backgroundColorLocal
-                    ? backgroundColorLocal
-                    : "black",
-            backgroundColor: circleColor
-              ? circleColor
-              : textColor
-                ? textColor
-                : colorVariant
-                  ? colorVariant
-                  : backgroundColorLocal
-                    ? backgroundColorLocal
-                    : "black",
+            borderColor: badgeCircleColor,
+            backgroundColor: badgeCircleColor,
           }}
         />
       )}
