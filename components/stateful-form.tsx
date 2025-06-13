@@ -13,36 +13,44 @@ import {
 import Phonebox from "./phonebox";
 import Checkbox from "./checkbox";
 import Textbox from "./textbox";
+import Colorbox from "./colorbox";
+import FileDropBox, { FileDropBoxProps } from "./file-drop-box";
+import FileInputBox from "./file-input-box";
+import Imagebox from "./imagebox";
+import Moneybox, { MoneyboxProps } from "./moneybox";
+import Datebox, { DateboxProps } from "./datebox";
+import { OptionsProps } from "./selectbox";
+import Combobox, { ComboboxProps } from "./combobox";
+import Chips, { ChipsProps } from "./chips";
 
 interface StatefulFormProps<Z extends ZodTypeAny> {
   fields: FormFieldProps[];
   formValues: TypeOf<Z>;
   validationSchema: Z;
   mode?: "onChange" | "onBlur" | "onSubmit";
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  onValidityChange: (e: boolean) => void;
-}
-
-export interface FieldNameProps {
-  email: string;
-  password?: string;
-  first_name: string;
-  last_name?: string;
-  organization_name?: string;
-  phone_number?: number;
-  note?: string;
-  access?: boolean;
-  division_name?: string;
-  country_code?: CountryCodeProps;
+  onValidityChange?: (e: boolean) => void;
 }
 
 export interface FormFieldProps {
-  name: keyof FieldNameProps;
+  name: string;
   title: string;
   required: boolean;
   type?: string;
   placeholder?: string;
   rows?: number;
+  onChange?: (
+    e?:
+      | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+      | { target: { name: string; value: CountryCodeProps } }
+      | FileList
+      | OptionsProps,
+    type?: string
+  ) => void;
+  moneyProps?: MoneyboxProps;
+  fileDropBoxProps?: FileDropBoxProps;
+  dateProps?: DateboxProps;
+  comboboxProps?: ComboboxProps;
+  chipsProps?: ChipsProps;
 }
 
 export interface CountryCodeProps {
@@ -54,7 +62,6 @@ export interface CountryCodeProps {
 
 export default function StatefulForm<Z extends ZodTypeAny>({
   fields,
-  onChange,
   validationSchema,
   formValues,
   mode = "onChange",
@@ -67,6 +74,7 @@ export default function StatefulForm<Z extends ZodTypeAny>({
   } = useForm<TypeOf<Z>>({
     resolver: zodResolver(validationSchema),
     mode,
+    defaultValues: formValues,
   });
 
   useEffect(() => {
@@ -91,7 +99,6 @@ export default function StatefulForm<Z extends ZodTypeAny>({
         control={control}
         fields={fields}
         formValues={formValues}
-        onChange={onChange}
         register={register}
         errors={errors}
         shouldShowError={(name) => shouldShowError(name as keyof TypeOf<Z>)}
@@ -103,7 +110,6 @@ export default function StatefulForm<Z extends ZodTypeAny>({
 interface FormFieldsProps<T extends FieldValues> {
   fields: FormFieldProps[];
   formValues: T;
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   register: UseFormRegister<T>;
   errors: FieldErrors<T>;
   shouldShowError: (name: string) => boolean;
@@ -113,7 +119,6 @@ interface FormFieldsProps<T extends FieldValues> {
 function FormFields<T extends FieldValues>({
   fields,
   formValues,
-  onChange,
   register,
   errors,
   shouldShowError,
@@ -122,20 +127,8 @@ function FormFields<T extends FieldValues>({
   return (
     <>
       {fields.map((field: FormFieldProps, index: number) => {
-        if (field.type === "hidden") {
-          return (
-            <input
-              key={index}
-              type={field.type}
-              value={formValues[field.name as keyof T] ?? ""}
-              required={field.required}
-              {...register(field.name as Path<T>, { onChange })}
-              className="hidden"
-            />
-          );
-        }
         return field.type === "text" ||
-          field.title === "message" ||
+          field.type === "message" ||
           field.type === "number" ||
           field.type === "email" ||
           field.type === "password" ||
@@ -147,7 +140,7 @@ function FormFields<T extends FieldValues>({
             rows={field.rows}
             value={formValues[field.name as keyof T] ?? ""}
             required={field.required}
-            {...register(field.name as Path<T>, { onChange })}
+            {...register(field.name as Path<T>, { onChange: field.onChange })}
             showError={shouldShowError(field.name)}
             errorMessage={
               errors[field.name as keyof T]?.message as string | undefined
@@ -163,41 +156,165 @@ function FormFields<T extends FieldValues>({
                 label={field.title}
                 name={field.name}
                 checked={controllerField.value ?? false}
-                onChange={(e) => {
-                  controllerField.onChange(e);
-                  onChange(e);
-                }}
+                {...register(field.name as Path<T>, {
+                  onChange: field.onChange,
+                })}
                 required={field.required}
                 showError={shouldShowError(field.name)}
               />
             )}
           />
-        ) : field.type === "tel" ? (
+        ) : field.type === "phone" ? (
           <Controller
             key={index}
             control={control}
-            name={field.name as Path<T>}
+            name={"phone" as Path<T>}
             render={({ field: controllerField }) => (
               <>
                 <Phonebox
                   phoneNumber={controllerField.value}
                   label={field.title}
                   value={controllerField.value}
-                  onChange={(field, value) => {
-                    onChange?.({
-                      target: {
-                        name: field,
-                        value,
-                        type: "text",
-                      },
-                    } as ChangeEvent<HTMLInputElement>);
+                  onChange={(e) => {
+                    if (e.target.name === "phone") {
+                      controllerField.onChange(e);
+                    }
+                    field.onChange?.(e);
                   }}
-                  showError={shouldShowError(field.name)}
-                  errorMessage={
-                    errors[field.name as keyof T]?.message as string | undefined
-                  }
+                  showError={!!errors["phone"]}
+                  errorMessage={errors["phone"]?.message as string}
                 />
               </>
+            )}
+          />
+        ) : field.type === "color" ? (
+          <Colorbox
+            key={index}
+            label={field.title}
+            type={field.type}
+            value={formValues[field.name as keyof T] ?? ""}
+            required={field.required}
+            {...register(field.name as Path<T>, { onChange: field.onChange })}
+            showError={shouldShowError(field.name)}
+            errorMessage={
+              errors[field.name as keyof T]?.message as string | undefined
+            }
+          />
+        ) : field.type === "file_drop_box" ? (
+          <FileDropBox
+            key={index}
+            label={field.title}
+            {...field.fileDropBoxProps}
+            {...register(field.name as Path<T>, { onChange: field.onChange })}
+          />
+        ) : field.type === "file" ? (
+          <FileInputBox
+            onFilesSelected={(e) => field.onChange(e, "file")}
+            key={index}
+            label={field.title}
+            {...register(field.name as Path<T>, { onChange: field.onChange })}
+            showError={shouldShowError(field.name)}
+            errorMessage={
+              errors[field.name as keyof T]?.message as string | undefined
+            }
+          />
+        ) : field.type === "image" ? (
+          <Imagebox
+            name={field.name}
+            onFilesSelected={(e) => field.onChange(e, "image")}
+            key={index}
+            label={field.title}
+            required={field.required}
+            {...register(field.name as Path<T>, { onChange: field.onChange })}
+            showError={shouldShowError(field.name)}
+            errorMessage={
+              errors[field.name as keyof T]?.message as string | undefined
+            }
+          />
+        ) : field.type === "money" ? (
+          <Moneybox
+            key={index}
+            label={field.title}
+            {...field.moneyProps}
+            value={formValues[field.name as keyof T] ?? ""}
+            required={field.required}
+            {...register(field.name as Path<T>, { onChange: field.onChange })}
+            showError={shouldShowError(field.name)}
+            errorMessage={
+              errors[field.name as keyof T]?.message as string | undefined
+            }
+          />
+        ) : field.type === "date" ? (
+          <Controller
+            key={index}
+            name={field.name as Path<T>}
+            control={control}
+            render={({ field: controllerField }) => (
+              <Datebox
+                key={index}
+                label={field.title}
+                showError={shouldShowError(field.name)}
+                errorMessage={
+                  (
+                    errors[field.name as keyof T] as {
+                      text?: {
+                        message?: string;
+                      };
+                    }
+                  )?.text?.message
+                }
+                setInputValue={(e) => {
+                  controllerField.onChange(e);
+                  field.onChange(e);
+                }}
+                inputValue={controllerField.value}
+              />
+            )}
+          />
+        ) : field.type === "combo" ? (
+          <Controller
+            key={index}
+            name={field.name as Path<T>}
+            control={control}
+            render={({ field: controllerField }) => (
+              <Combobox
+                key={index}
+                label={field.title}
+                showError={shouldShowError(field.name)}
+                {...field.comboboxProps}
+                errorMessage={
+                  (
+                    errors[field.name as keyof T] as {
+                      text?: {
+                        message?: string;
+                      };
+                    }
+                  )?.text?.message
+                }
+                setInputValue={(e) => {
+                  controllerField.onChange(e);
+                  field.onChange(e);
+                }}
+                inputValue={controllerField.value}
+              />
+            )}
+          />
+        ) : field.type === "chips" ? (
+          <Controller
+            key={index}
+            name={field.name as Path<T>}
+            control={control}
+            render={({ field: controllerField }) => (
+              <Chips
+                key={index}
+                label={field.title}
+                inputValue={controllerField.value}
+                {...field.chipsProps}
+                setInputValue={(e) => {
+                  controllerField.onChange(e);
+                  field.onChange(e, "chips");
+                }}
+              />
             )}
           />
         ) : null;
