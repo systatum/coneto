@@ -1,4 +1,4 @@
-export function getCode(str: string): number {
+function getCode(str: string): number {
   let code = 0;
   for (const char of str) {
     code += char.codePointAt(0) ?? 0;
