@@ -89,7 +89,7 @@ const BUTTONS: ModalButtonProps[] = [
 ];
 
 const meta: Meta<typeof TipMenu> = {
-  title: "Controls/Tip Menu",
+  title: "Controls/TipMenu",
   component: TipMenu,
   args: {
     subMenuList: TIP_MENU_ITEMS,

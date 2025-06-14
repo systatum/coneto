@@ -48,12 +48,12 @@ export const Default: Story = {
       text: "",
       value: 0,
     });
+    console.log(value);
 
     return (
       <div className="w-[295px]">
         <Datebox
           options={DAY_NAMES}
-          inputValue={value}
           setInputValue={setValue}
           dayNames={DAY_NAMES}
           monthNames={MONTH_NAMES}
@@ -110,11 +110,12 @@ export const WithDisableWeekend: Story = {
       value: 0,
     });
 
+    console.log(value);
+
     return (
       <div className="w-[295px]">
         <Datebox
           options={DAY_NAMES}
-          inputValue={value}
           setInputValue={setValue}
           dayNames={DAY_NAMES}
           monthNames={MONTH_NAMES}

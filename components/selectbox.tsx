@@ -28,12 +28,28 @@ import {
 } from "@remixicon/react";
 import { cn } from "./../lib/utils";
 
-export interface OptionsProps {
-  text: string;
-  value?: string | number;
+export interface SelectboxProps {
+  options?: OptionsProps[];
+  inputValue?: OptionsProps;
+  setInputValue?: (data: OptionsProps) => void;
+  placeholder?: string;
+  iconOpened?: RemixiconComponentType;
+  iconClosed?: RemixiconComponentType;
+  type?: "calendar" | "default";
+  clearable?: boolean;
+  containerClassName?: string;
+  childClassName?: string;
+  highlightOnMatch?: boolean;
+  children?: (
+    props: DrawerProps & {
+      options: OptionsProps[];
+      inputValue: OptionsProps;
+      setInputValue: (value: OptionsProps) => void;
+    }
+  ) => ReactNode;
 }
 
-export interface FloatingUIProps {
+export interface DrawerProps {
   highlightedIndex: number;
   setHighlightedIndex: (index: number) => void;
   setIsOpen: (open: boolean) => void;
@@ -47,23 +63,9 @@ export interface FloatingUIProps {
   className?: string;
 }
 
-export interface SelectboxProps {
-  options?: OptionsProps[];
-  inputValue?: OptionsProps;
-  setInputValue?: (data: OptionsProps) => void;
-  placeholder?: string;
-  iconOpened?: RemixiconComponentType;
-  iconClosed?: RemixiconComponentType;
-  type?: "calendar" | "default";
-  clearable?: boolean;
-  containerClassName?: string;
-  children?: (
-    props: FloatingUIProps & {
-      options: OptionsProps[];
-      inputValue: OptionsProps;
-      setInputValue: (value: OptionsProps) => void;
-    }
-  ) => ReactNode;
+export interface OptionsProps {
+  text: string;
+  value?: string | number;
 }
 
 export function Selectbox({
@@ -77,19 +79,31 @@ export function Selectbox({
   iconClosed: IconClosed = RiArrowUpSLine,
   clearable = false,
   containerClassName,
+  highlightOnMatch,
 }: SelectboxProps) {
+  const [inputValueLocal, setInputValueLocal] = useState<OptionsProps>({
+    text: "",
+    value: 0,
+  });
+
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(0);
   const [hasInteracted, setHasInteracted] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<(HTMLLIElement | null)[]>([]);
 
   const FILTERED_OPTIONS = hasInteracted
     ? options.filter((opt) =>
-        opt.text.toLowerCase().includes(inputValue.text.toLowerCase())
+        opt.text.toLowerCase().includes(inputValueLocal.text.toLowerCase())
       )
     : options;
+
+  const FILTERED_ACTIVE = options.filter(
+    (opt) => opt.text === inputValueLocal.text
+  );
 
   const { refs, floatingStyles, context } = useFloating({
     placement: "bottom-start" as Placement,
@@ -115,8 +129,10 @@ export function Selectbox({
           value.slice(0, 2) + "/" + value.slice(2, 4) + "/" + value.slice(4, 8);
       }
     }
-
-    setInputValue({ ...inputValue, text: value });
+    if (setInputValue) {
+      setInputValue({ ...inputValue, text: value });
+    }
+    setInputValueLocal({ ...inputValueLocal, text: value });
 
     setIsOpen(value.length > 0);
     setHighlightedIndex(0);
@@ -141,7 +157,10 @@ export function Selectbox({
       e.preventDefault();
       const selected = FILTERED_OPTIONS[highlightedIndex];
       if (selected) {
-        setInputValue(selected);
+        if (setInputValue) {
+          setInputValue?.(selected);
+        }
+        setInputValueLocal(selected);
         setIsOpen(false);
         setHasInteracted(false);
       }
@@ -179,26 +198,43 @@ export function Selectbox({
           inputRef.current = el;
         }}
         type="text"
-        value={inputValue.text}
+        value={inputValueLocal.text}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
         onFocus={() => {
           if (type === "calendar") {
             setIsOpen(true);
-          } else if (inputValue) {
+          } else if (inputValueLocal) {
             setIsOpen(true);
           }
+          setFocused(true);
         }}
+        onBlur={() => setFocused(false)}
         aria-autocomplete="list"
         placeholder={placeholder || "Search your item..."}
-        className="w-full rounded-xs border border-gray-100 px-3 py-2 outline-none focus:border-[#61A9F9] focus:ring-0 focus:ring-[#61A9F9]"
+        className={cn(
+          "w-full rounded-xs border border-gray-100 px-3 py-2 outline-none",
+          focused && "focus:border-[#61A9F9] focus:ring-0 focus:ring-[#61A9F9]",
+          hovered && "border-blue-200",
+          highlightOnMatch &&
+            FILTERED_ACTIVE.length > 0 &&
+            "border-[#61A9F9] hover:border-[#61A9F9]"
+        )}
       />
 
-      {clearable && inputValue.text !== "" && (
+      {clearable && inputValueLocal.text !== "" && (
         <>
           <RiCloseLine
             onClick={() => {
-              setInputValue({
+              if (setInputValue) {
+                setInputValue({
+                  text: "",
+                  value: 0,
+                });
+              }
+              setInputValueLocal({
                 text: "",
                 value: 0,
               });
@@ -206,7 +242,12 @@ export function Selectbox({
               setHasInteracted(false);
             }}
             size={12}
-            className="absolute top-[11px] z-20 right-9 cursor-pointer text-gray-400"
+            className={cn(
+              "absolute top-[11px] z-20 right-9 cursor-pointer text-gray-400",
+              highlightOnMatch &&
+                FILTERED_ACTIVE.length > 0 &&
+                "bg-[#61A9F9] text-white"
+            )}
           />
           <span className="absolute top-0.5 right-7 font-extralight text-lg text-gray-400">
             |
@@ -229,12 +270,25 @@ export function Selectbox({
         {isOpen ? (
           <IconOpened
             size={18}
-            className="absolute text-gray-400 top-2 right-2"
+            className={cn(
+              "absolute text-gray-800 top-1/2 -translate-1/2 right-1",
+              focused && "text-[#61A9F9]",
+              highlightOnMatch && FILTERED_ACTIVE.length > 0 && "text-[#61A9F9]"
+            )}
           />
         ) : (
           <IconClosed
+            onMouseEnter={() => setHovered(true)}
             size={18}
-            className="absolute text-gray-400 top-2 right-2"
+            className={cn(
+              "absolute text-gray-400 top-1/2 -translate-1/2 right-1",
+              hovered && highlightOnMatch && FILTERED_ACTIVE.length > 0
+                ? "hover:text-[#61A9F9]"
+                : hovered
+                  ? "text-blue-200"
+                  : "",
+              highlightOnMatch && FILTERED_ACTIVE.length > 0 && "text-[#61A9F9]"
+            )}
           />
         )}
       </div>
@@ -245,8 +299,13 @@ export function Selectbox({
           options: FILTERED_OPTIONS,
           highlightedIndex,
           setHighlightedIndex,
-          setInputValue,
-          inputValue,
+          setInputValue: (e) => {
+            setInputValueLocal(e);
+            if (setInputValue) {
+              setInputValue(e);
+            }
+          },
+          inputValue: inputValueLocal,
           setIsOpen,
           getFloatingProps,
           refs,

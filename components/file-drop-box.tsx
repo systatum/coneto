@@ -17,13 +17,13 @@ export interface OnCompleteFunctionProps {
   setProgressLabel: (label: string) => void;
 }
 
-interface FileDropBoxProps {
+export interface FileDropBoxProps {
   containerClassName?: string;
   placeholder?: string;
   accept?: string;
+  label?: string;
   onFileDropped?: (props: OnFileDroppedFunctionProps) => void;
   onComplete?: (props: OnCompleteFunctionProps) => void;
-  setProgressPercentage?: (props: number) => void;
   progressPercentage?: number;
 }
 
@@ -35,6 +35,7 @@ export default function FileDropBox({
   accept = "*",
   onFileDropped,
   onComplete,
+  label,
 }: FileDropBoxProps) {
   const FILE_ICON = [
     {
@@ -158,7 +159,7 @@ export default function FileDropBox({
     containerClassName
   );
 
-  return (
+  const inputElement = (
     <>
       <div
         onClick={handleBrowseClick}
@@ -225,5 +226,12 @@ export default function FileDropBox({
         </ul>
       )}
     </>
+  );
+
+  return (
+    <div className={cn(`flex w-full flex-col gap-2 text-xs`)}>
+      {label && <label>{label}</label>}
+      <div className="flex flex-col gap-1 text-xs">{inputElement}</div>
+    </div>
   );
 }
