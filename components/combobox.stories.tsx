@@ -66,3 +66,54 @@ export const Default: Story = {
     await expect((input as HTMLInputElement).value).toBe("Grape");
   },
 };
+
+export const WithClearable: Story = {
+  render: () => {
+    const [value, setValue] = useState<OptionsProps>({
+      text: "",
+      value: 0,
+    });
+
+    const FRUIT_OPTIONS = [
+      { text: "Apple", value: 1 },
+      { text: "Banana", value: 2 },
+      { text: "Orange", value: 3 },
+      { text: "Grape", value: 4 },
+      { text: "Pineapple", value: 5 },
+      { text: "Strawberry", value: 6 },
+      { text: "Watermelon", value: 7 },
+    ];
+
+    return (
+      <div className="w-64">
+        <Combobox
+          clearable
+          inputValue={value}
+          options={FRUIT_OPTIONS}
+          setInputValue={setValue}
+          placeholder="Select a fruit..."
+        />
+      </div>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const input = canvas.getByPlaceholderText("Select a fruit...");
+
+    await userEvent.type(input, "ap");
+
+    const appleOption = await canvas.findByRole("option", { name: "Apple" });
+    const grapeOption = await canvas.findByRole("option", {
+      name: "Grape",
+    });
+
+    await expect(appleOption).toBeVisible();
+    await expect(grapeOption).toBeVisible();
+
+    await userEvent.keyboard("{arrowdown}");
+    await userEvent.keyboard("{enter}");
+
+    await expect((input as HTMLInputElement).value).toBe("Grape");
+  },
+};

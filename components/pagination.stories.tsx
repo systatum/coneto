@@ -1,12 +1,22 @@
 import { Meta, StoryObj } from "@storybook/react";
 import Pagination from "./pagination";
-import { useState } from "react";
+import { useArgs } from "@storybook/preview-api";
 import { expect, userEvent, within } from "@storybook/test";
 
 const meta: Meta<typeof Pagination> = {
   title: "Stage/Pagination",
   component: Pagination,
   tags: ["autodocs"],
+  argTypes: {
+    currentPage: { control: { type: "number", min: 1 } },
+    totalPages: { control: { type: "number", min: 1 } },
+    showNumbers: { control: "boolean" },
+  },
+  args: {
+    currentPage: 1,
+    totalPages: 5,
+    showNumbers: true,
+  },
 };
 
 export default meta;
@@ -14,18 +24,23 @@ export default meta;
 type Story = StoryObj<typeof Pagination>;
 
 export const Default: Story = {
-  render: () => {
-    const [page, setPage] = useState<number>(1);
+  render: (args) => {
+    const [_, setUpdateArgs] = useArgs();
 
     return (
-      <Pagination currentPage={page} totalPages={5} onPageChange={setPage} />
+      <Pagination
+        {...args}
+        onPageChange={(page) => setUpdateArgs({ currentPage: page })}
+      />
     );
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const nextButton = await canvas.getByLabelText("Next Page");
     const prevButton = await canvas.getByLabelText("Previous Page");
-    expect(prevButton).toBeDisabled();
+
+    await expect(prevButton).toBeDisabled();
+
     await userEvent.click(nextButton);
     await userEvent.click(nextButton);
     await userEvent.click(prevButton);
@@ -33,18 +48,26 @@ export const Default: Story = {
 };
 
 export const OverFivePage: Story = {
-  render: () => {
-    const [page, setPage] = useState<number>(1);
+  args: {
+    totalPages: 50,
+  },
+  render: (args) => {
+    const [_, setUpdateArgs] = useArgs();
 
     return (
-      <Pagination currentPage={page} totalPages={50} onPageChange={setPage} />
+      <Pagination
+        {...args}
+        onPageChange={(page) => setUpdateArgs({ currentPage: page })}
+      />
     );
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const nextButton = await canvas.getByLabelText("Next Page");
     const prevButton = await canvas.getByLabelText("Previous Page");
-    expect(prevButton).toBeDisabled();
+
+    await expect(prevButton).toBeDisabled();
+
     await userEvent.click(nextButton);
     await userEvent.click(nextButton);
     await userEvent.click(prevButton);
