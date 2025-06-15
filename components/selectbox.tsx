@@ -82,8 +82,8 @@ export function Selectbox({
   highlightOnMatch,
 }: SelectboxProps) {
   const [inputValueLocal, setInputValueLocal] = useState<OptionsProps>({
-    text: "",
-    value: 0,
+    text: "1",
+    value: 1,
   });
 
   const [isOpen, setIsOpen] = useState(false);
@@ -198,7 +198,7 @@ export function Selectbox({
           inputRef.current = el;
         }}
         type="text"
-        value={inputValueLocal.text}
+        value={inputValue ? inputValue.text : inputValueLocal.text}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
         onMouseEnter={() => setHovered(true)}

@@ -38,15 +38,16 @@ export default function Combobox({
   errorMessage,
   label,
   showError,
+  inputValue,
 }: ComboboxProps) {
   return (
     <div className={cn(`flex w-full flex-col gap-2 text-xs`)}>
       {label && <label>{label}</label>}
-      <div className="flex flex-col gap-1 text-xs"></div>
       <Selectbox
         highlightOnMatch={highlightOnMatch}
         containerClassName={containerClassName}
         options={options}
+        inputValue={inputValue}
         setInputValue={setInputValue}
         placeholder={placeholder}
         clearable={clearable}

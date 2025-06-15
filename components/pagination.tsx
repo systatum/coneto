@@ -126,7 +126,7 @@ const PaginationItem = ({
   });
 
   return (
-    <div className="flex flex-row py-10 items-center gap-2">
+    <div className="flex flex-row items-center gap-2">
       {totalPages > threshold ? (
         <>
           <Combobox
@@ -202,7 +202,7 @@ const PaginationButton = ({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        "w-[38px] h-[38px] rounded-xs flex justify-center items-center text-sm cursor-pointer font-medium focus:outline-none border border-gray-100 disabled:cursor-default disabled:hover:bg-transparent disabled:opacity-30",
+        "min-w-[38px] min-h-[38px] max-w-[38px] max-h-[38px] rounded-xs flex justify-center items-center text-sm cursor-pointer font-medium focus:outline-none border border-gray-100 disabled:cursor-default disabled:hover:bg-transparent disabled:opacity-30",
         isActive ? "border-[#61A9F9]" : "hover:border-blue-100 text-gray-700",
         className
       )}
