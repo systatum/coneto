@@ -81,16 +81,20 @@ export function Selectbox({
   containerClassName,
   highlightOnMatch,
 }: SelectboxProps) {
-  const [inputValueLocal, setInputValueLocal] = useState<OptionsProps>({
-    text: "1",
-    value: 1,
-  });
+  const [inputValueLocal, setInputValueLocal] = useState<OptionsProps>(
+    inputValue
+      ? inputValue
+      : {
+          text: "",
+          value: 0,
+        }
+  );
 
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(0);
   const [hasInteracted, setHasInteracted] = useState(false);
-  const [hovered, setHovered] = useState(false);
-  const [focused, setFocused] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<(HTMLLIElement | null)[]>([]);
@@ -201,23 +205,24 @@ export function Selectbox({
         value={inputValue ? inputValue.text : inputValueLocal.text}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
         onFocus={() => {
           if (type === "calendar") {
             setIsOpen(true);
           } else if (inputValueLocal) {
             setIsOpen(true);
           }
-          setFocused(true);
+          setIsFocused(true);
         }}
-        onBlur={() => setFocused(false)}
+        onBlur={() => setIsFocused(false)}
         aria-autocomplete="list"
         placeholder={placeholder || "Search your item..."}
         className={cn(
           "w-full rounded-xs border border-gray-100 px-3 py-2 outline-none",
-          focused && "focus:border-[#61A9F9] focus:ring-0 focus:ring-[#61A9F9]",
-          hovered && "border-blue-200",
+          isFocused &&
+            "focus:border-[#61A9F9] focus:ring-0 focus:ring-[#61A9F9]",
+          isHovered && "border-blue-200",
           highlightOnMatch &&
             FILTERED_ACTIVE.length > 0 &&
             "border-[#61A9F9] hover:border-[#61A9F9]"
@@ -243,15 +248,16 @@ export function Selectbox({
             }}
             size={12}
             className={cn(
-              "absolute top-[11px] z-20 right-9 cursor-pointer text-gray-400",
+              "absolute top-[11px] z-20 right-9 hover:bg-gray-200 hover:rounded-xs cursor-pointer text-gray-400",
               highlightOnMatch &&
                 FILTERED_ACTIVE.length > 0 &&
                 "bg-[#61A9F9] text-white"
             )}
           />
-          <span className="absolute top-0.5 right-7 font-extralight text-lg text-gray-400">
-            |
-          </span>
+          <span
+            aria-label="divider"
+            className="absolute top-1/2 -translate-y-1/2 border-r border-gray-400 min-h-[15px] w-px right-[31px] font-extralight text-xs text-gray-400"
+          ></span>
         </>
       )}
 
@@ -271,22 +277,20 @@ export function Selectbox({
           <IconOpened
             size={18}
             className={cn(
-              "absolute text-gray-800 top-1/2 -translate-1/2 right-1",
-              focused && "text-[#61A9F9]",
+              "absolute text-gray-400 top-1/2 -translate-1/2 right-0.5",
+              highlightOnMatch && isFocused && "text-[#61A9F9]",
               highlightOnMatch && FILTERED_ACTIVE.length > 0 && "text-[#61A9F9]"
             )}
           />
         ) : (
           <IconClosed
-            onMouseEnter={() => setHovered(true)}
+            onMouseEnter={() => setIsHovered(true)}
             size={18}
             className={cn(
-              "absolute text-gray-400 top-1/2 -translate-1/2 right-1",
-              hovered && highlightOnMatch && FILTERED_ACTIVE.length > 0
+              "absolute text-gray-400 top-1/2 -translate-1/2 right-0.5",
+              isHovered && highlightOnMatch && FILTERED_ACTIVE.length > 0
                 ? "hover:text-[#61A9F9]"
-                : hovered
-                  ? "text-blue-200"
-                  : "",
+                : "",
               highlightOnMatch && FILTERED_ACTIVE.length > 0 && "text-[#61A9F9]"
             )}
           />
