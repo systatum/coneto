@@ -1,5 +1,5 @@
 import { cn } from "./../lib/utils";
-import { CSSProperties, ReactNode } from "react";
+import { CSSProperties, ReactNode, useState } from "react";
 import Checkbox from "./checkbox";
 
 interface GridProps {
@@ -47,6 +47,7 @@ function GridCard({
   selectable,
   ...props
 }: GridCardProps) {
+  const [isHovered, setIsHovered] = useState(false);
   const gridCardClass = cn(
     "text-sm h-full relative flex flex-col items-center w-full h-full p-1 gap-2 rounded-xs shadow",
     selectable && "cursor-pointer hover:bg-gray-100",
@@ -62,9 +63,11 @@ function GridCard({
           onSelected?.();
         }
       }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       <div className="absolute top-4 left-4">
-        {selectable && (
+        {selectable && (isSelected || isHovered) && (
           <Checkbox
             checked={isSelected}
             classNameParent={cn(
