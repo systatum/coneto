@@ -1,5 +1,6 @@
 "use client";
 
+import { strToColor } from "./../lib/code-color";
 import clsx from "clsx";
 import { ChangeEvent, HTMLAttributes, useRef } from "react";
 
@@ -13,28 +14,23 @@ export interface AvatarProps extends HTMLAttributes<HTMLDivElement> {
   fontSize: number;
 }
 
-export interface BackgroundColorProps {
-  name: string;
-  hex: string;
-}
-
-const BACKGROUND_COLORS: BackgroundColorProps[] = [
-  { name: "Soft Red", hex: "#F4C2C2" },
-  { name: "Warm Orange", hex: "#FFD8B1" },
-  { name: "Pastel Yellow", hex: "#FFF3B0" },
-  { name: "Mint Green", hex: "#D0F0C0" },
-  { name: "Soft Teal", hex: "#B2DFDB" },
-  { name: "Sky Blue", hex: "#B3E5FC" },
-  { name: "Lavender", hex: "#E3E4FA" },
-  { name: "Pale Purple", hex: "#DCC6E0" },
-  { name: "Blush Pink", hex: "#FADADD" },
-  { name: "Peach", hex: "#FFDAB9" },
-  { name: "Light Coral", hex: "#F08080" },
-  { name: "Light Cyan", hex: "#E0FFFF" },
-  { name: "Lilac Mist", hex: "#D8BFD8" },
-  { name: "Powder Blue", hex: "#B0E0E6" },
-  { name: "Spring Green", hex: "#C1E1C1" },
-  { name: "Misty Rose", hex: "#FFE4E1" },
+const AVATAR_BACKGROUND_COLORS: string[] = [
+  "#F4C2C2",
+  "#FFD8B1",
+  "#FFF3B0",
+  "#D0F0C0",
+  "#B2DFDB",
+  "#B3E5FC",
+  "#E3E4FA",
+  "#DCC6E0",
+  "#FADADD",
+  "#FFDAB9",
+  "#F08080",
+  "#E0FFFF",
+  "#D8BFD8",
+  "#B0E0E6",
+  "#C1E1C1",
+  "#FFE4E1",
 ];
 
 export default function Avatar({
@@ -52,8 +48,7 @@ export default function Avatar({
   const isClickable = changeable || !!onChange || !!props.onClick;
 
   const fullName = `${firstName} ${lastName}`;
-  const code = getCode(fullName);
-  const backgroundColor = getBackground(code);
+  const backgroundColor = strToColor(fullName, AVATAR_BACKGROUND_COLORS);
   const initials = getInitials(firstName, lastName);
 
   const isImageValid = profileImageUrl && profileImageUrl !== "";
@@ -114,19 +109,6 @@ export default function Avatar({
       ) : null}
     </div>
   );
-}
-
-export function getCode(fullname: string): number {
-  let code = 0;
-  for (const char of fullname) {
-    code += char.codePointAt(0) ?? 0;
-  }
-  return code;
-}
-
-export function getBackground(code: number): string {
-  const pos = code % BACKGROUND_COLORS.length;
-  return BACKGROUND_COLORS[pos].hex;
 }
 
 export function getInitials(

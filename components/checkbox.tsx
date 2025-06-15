@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import { cn } from "./../lib/utils";
 import { InputHTMLAttributes, useEffect, useRef } from "react";
 
 interface BaseCheckboxesProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -30,17 +30,17 @@ export default function Checkbox({
     }
   }, [indeterminate]);
 
-  const inputClass = clsx(
+  const inputClass = cn(
     "peer appearance-none border h-4 w-4 rounded-none outline-none cursor-pointer",
     {
       "bg-[#61A9F9] border-[#61A9F9]": indeterminate || props.checked,
       "bg-white border-gray-500": !indeterminate && !props.checked,
     },
     showError && "border-red-500 focus:border-red-500 focus:ring-red-500",
-    className
+    classNameParent
   );
   return (
-    <div className={clsx(classNameParent)}>
+    <div>
       <label
         htmlFor={inputId}
         className="flex items-center gap-[6px] text-xs relative"
@@ -55,7 +55,10 @@ export default function Checkbox({
         />
         {indeterminate ? (
           <svg
-            className="absolute left-[2px] top-[2px] h-3 w-3 text-white transition-transform duration-150 pointer-events-none"
+            className={cn(
+              "absolute left-[2px] top-[2px] h-3 w-3 text-white transition-transform duration-150 pointer-events-none",
+              className
+            )}
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -67,7 +70,10 @@ export default function Checkbox({
           </svg>
         ) : (
           <svg
-            className="absolute left-[2px] top-[2px] h-3 w-3 text-white scale-0 peer-checked:scale-100 transition-transform duration-150 pointer-events-none"
+            className={cn(
+              "absolute left-[2px] top-[2px] h-3 w-3 text-white scale-0 peer-checked:scale-100 transition-transform duration-150 pointer-events-none",
+              className
+            )}
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"

@@ -5,7 +5,7 @@ import Searchbox from "./searchbox";
 import { TreeList } from "./treelist";
 
 const meta: Meta<typeof Sidebar> = {
-  title: "Content/Sidebar",
+  title: "Stage/Sidebar",
   component: Sidebar,
   tags: ["autodocs"],
 };

@@ -1,14 +1,14 @@
-import {
-  CSSProperties,
-  HTMLAttributes,
-  MutableRefObject,
-  Ref,
-  useEffect,
-} from "react";
-import { OptionsProps, Selectbox } from "./selectbox";
+import { Ref, useEffect } from "react";
+import { DrawerProps, OptionsProps, Selectbox } from "./selectbox";
 import { cn } from "./../lib/utils";
 
-interface ComboboxProps {
+export type ComboboxProps = Partial<BaseComboboxProps> & {
+  label?: string;
+  showError?: boolean;
+  errorMessage?: string;
+};
+
+interface BaseComboboxProps {
   options: OptionsProps[];
   containerClassName?: string;
   inputValue: OptionsProps;
@@ -16,43 +16,47 @@ interface ComboboxProps {
   clearable?: boolean;
   placeholder?: string;
   emptySlate?: string;
+  highlightOnMatch?: boolean;
 }
-interface ComboboxDrawerProps extends ComboboxProps {
-  emptySlate?: string;
-  highlightedIndex: number;
-  setHighlightedIndex: (index: number) => void;
-  setIsOpen?: (open: boolean) => void;
-  getFloatingProps: (
-    userProps?: HTMLAttributes<HTMLUListElement>
-  ) => HTMLAttributes<HTMLUListElement>;
-  refs?: {
-    setFloating?: Ref<HTMLUListElement>;
-    reference?: Ref<HTMLElement> & { current?: HTMLElement | null };
+
+type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
+  BaseComboboxProps & {
+    refs?: {
+      setFloating?: Ref<HTMLUListElement>;
+      reference?: Ref<HTMLElement> & { current?: HTMLElement | null };
+    };
   };
-  floatingStyles: CSSProperties;
-  listRef: MutableRefObject<(HTMLLIElement | null)[]>;
-}
 
 export default function Combobox({
   options,
-  inputValue,
   setInputValue,
   clearable = false,
   placeholder,
   containerClassName,
+  highlightOnMatch = false,
   emptySlate = "Not available.",
+  errorMessage,
+  label,
+  showError,
+  inputValue,
 }: ComboboxProps) {
   return (
-    <Selectbox
-      containerClassName={containerClassName}
-      options={options}
-      inputValue={inputValue}
-      setInputValue={setInputValue}
-      placeholder={placeholder}
-      clearable={clearable}
-    >
-      {(props) => <ComboboxDrawer emptySlate={emptySlate} {...props} />}
-    </Selectbox>
+    <div className={cn(`flex w-full flex-col gap-2 text-xs`)}>
+      {label && <label>{label}</label>}
+      <Selectbox
+        highlightOnMatch={highlightOnMatch}
+        containerClassName={containerClassName}
+        options={options}
+        inputValue={inputValue}
+        setInputValue={setInputValue}
+        placeholder={placeholder}
+        clearable={clearable}
+      >
+        {(props) => <ComboboxDrawer emptySlate={emptySlate} {...props} />}
+      </Selectbox>
+
+      {showError && <span className="text-red-600">{errorMessage}</span>}
+    </div>
   );
 }
 
