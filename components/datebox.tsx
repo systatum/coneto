@@ -38,7 +38,7 @@ export default function Datebox(props: DateboxProps) {
 function CalendarDrawer(props: CalendarDrawerProps) {
   const calendarClass = cn(
     "flex flex-col gap-1 bg-white border border-gray-300 rounded-xs w-full shadow-xs list-none outline-none",
-    props.floatingStyles ? "p-2 z-[9999]" : "p-3 text-sm min-w-[300px]",
+    "p-2 z-[9999] p-2 text-sm max-w-[300px] flex flex-col gap-2 bg-white border border-gray-300 rounded-xs w-full shadow-xs list-none outline-none",
     props.containerClassName
   );
 
@@ -54,7 +54,7 @@ function CalendarDrawer(props: CalendarDrawerProps) {
       aria-label="Calendar"
       className={calendarClass}
     >
-      <Calendar {...props} />
+      <Calendar {...props} label={null} />
     </ul>
   );
 }

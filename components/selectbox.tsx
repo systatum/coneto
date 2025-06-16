@@ -81,14 +81,14 @@ export function Selectbox({
   containerClassName,
   highlightOnMatch,
 }: SelectboxProps) {
-  const [inputValueLocal, setInputValueLocal] = useState<OptionsProps>(
-    inputValue
-      ? inputValue
-      : {
-          text: "",
-          value: 0,
-        }
-  );
+  const selectboxState = inputValue
+    ? inputValue
+    : {
+        text: "",
+        value: 0,
+      };
+  const [inputValueLocal, setInputValueLocal] =
+    useState<OptionsProps>(selectboxState);
 
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(0);
@@ -309,7 +309,7 @@ export function Selectbox({
               setInputValue(e);
             }
           },
-          inputValue: inputValueLocal,
+          inputValue: inputValue ? inputValue : inputValueLocal,
           setIsOpen,
           getFloatingProps,
           refs,
