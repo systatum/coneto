@@ -5,7 +5,7 @@ import Textbox from "./textbox";
 import { ChangeEvent, useState } from "react";
 
 const meta: Meta<typeof CapsuleTab> = {
-  title: "Stage/Capsule Tab",
+  title: "Stage/CapsuleTab",
   component: CapsuleTab,
   tags: ["autodocs"],
 };

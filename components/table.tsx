@@ -202,7 +202,7 @@ function TableRow({
           }}
           className="w-8 flex justify-center cursor-pointer pointer-events-auto items-center"
         >
-          <Checkbox {...props} checked={isSelected} className="text-blue-600" />
+          <Checkbox {...props} checked={isSelected} />
         </div>
       )}
       {content.map((col, i) => (
