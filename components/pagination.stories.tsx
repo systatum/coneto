@@ -4,7 +4,7 @@ import { useArgs } from "@storybook/preview-api";
 import { expect, userEvent, within } from "@storybook/test";
 
 const meta: Meta<typeof Pagination> = {
-  title: "Stage/Pagination",
+  title: "Controls/Pagination",
   component: Pagination,
   tags: ["autodocs"],
   argTypes: {
@@ -25,7 +25,7 @@ type Story = StoryObj<typeof Pagination>;
 
 export const Default: Story = {
   render: (args) => {
-    const [_, setUpdateArgs] = useArgs();
+    const [, setUpdateArgs] = useArgs();
 
     return (
       <Pagination
@@ -52,7 +52,7 @@ export const OverFivePage: Story = {
     totalPages: 50,
   },
   render: (args) => {
-    const [_, setUpdateArgs] = useArgs();
+    const [, setUpdateArgs] = useArgs();
 
     return (
       <Pagination
