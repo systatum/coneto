@@ -1,7 +1,8 @@
 import { cn } from "./../lib/utils";
 import { InputHTMLAttributes, useEffect, useRef } from "react";
 
-interface BaseCheckboxesProps extends InputHTMLAttributes<HTMLInputElement> {
+export interface BaseCheckboxesProps
+  extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   name?: string;
   showError?: boolean;
@@ -9,6 +10,8 @@ interface BaseCheckboxesProps extends InputHTMLAttributes<HTMLInputElement> {
   className?: string;
   classNameParent?: string;
   indeterminate?: boolean;
+  description?: string;
+  highlightOnChecked?: boolean;
 }
 
 export default function Checkbox({
@@ -16,13 +19,15 @@ export default function Checkbox({
   name,
   showError,
   className,
+  description,
   classNameParent,
+  highlightOnChecked,
   errorMessage,
   indeterminate = false,
   ...props
 }: BaseCheckboxesProps) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const inputId = `checkbox-${name}`;
+  const inputId = `checkbox-${name}-${props.value}`;
 
   useEffect(() => {
     if (inputRef.current) {
@@ -39,52 +44,82 @@ export default function Checkbox({
     showError && "border-red-500 focus:border-red-500 focus:ring-red-500",
     classNameParent
   );
+
+  const checkIconClass = cn(
+    "absolute left-[3px] top-[3px] h-[10px] w-[10px] text-white transition-transform duration-150 pointer-events-none",
+    className
+  );
+
   return (
     <div>
       <label
         htmlFor={inputId}
-        className="flex items-center gap-[6px] text-xs relative"
-      >
-        <input
-          name={name}
-          ref={inputRef}
-          type="checkbox"
-          id={inputId}
-          {...(props as InputHTMLAttributes<HTMLInputElement>)}
-          className={inputClass}
-        />
-        {indeterminate ? (
-          <svg
-            className={cn(
-              "absolute left-[2px] top-[2px] h-3 w-3 text-white transition-transform duration-150 pointer-events-none",
-              className
-            )}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <line x1="6" y1="12" x2="18" y2="12" />
-          </svg>
-        ) : (
-          <svg
-            className={cn(
-              "absolute left-[2px] top-[2px] h-3 w-3 text-white scale-0 peer-checked:scale-100 transition-transform duration-150 pointer-events-none",
-              className
-            )}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <polyline points="20 6 9 17 4 12" />
-          </svg>
+        className={cn(
+          "flex gap-[6px] text-xs",
+          description ? "items-start" : "items-center",
+          highlightOnChecked && props.checked
+            ? "border-[rgb(64,142,232)] bg-blue-100"
+            : "hover:bg-[rgb(231,242,252)] bg-white border-transparent",
+          highlightOnChecked && "border py-3 px-3 gap-2 cursor-pointer"
         )}
-        {label && <span>{label}</span>}
+      >
+        <div
+          className={cn(
+            "relative max-w-[16px] max-h-[16px]",
+            highlightOnChecked && "mt-1"
+          )}
+        >
+          <input
+            name={name}
+            ref={inputRef}
+            type="checkbox"
+            id={inputId}
+            {...(props as InputHTMLAttributes<HTMLInputElement>)}
+            className={inputClass}
+          />
+          {indeterminate ? (
+            <svg
+              className={checkIconClass}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="6" y1="12" x2="18" y2="12" />
+            </svg>
+          ) : (
+            <svg
+              className={cn(checkIconClass, "scale-0 peer-checked:scale-100")}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          )}
+        </div>
+
+        {(label || description) && (
+          <div className="flex flex-col">
+            {label && (
+              <h2 className={cn(highlightOnChecked && "text-base font-medium")}>
+                {label}
+              </h2>
+            )}
+            {description && (
+              <span
+                className={cn(highlightOnChecked && "text-sm text-gray-600")}
+              >
+                {description}
+              </span>
+            )}
+          </div>
+        )}
       </label>
       {showError && errorMessage && (
         <p className="mt-1 text-xs text-red-600">{errorMessage}</p>
