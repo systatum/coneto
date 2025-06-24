@@ -7,6 +7,8 @@ import {
   RiArrowUpSLine,
   RiRefreshLine,
 } from "@remixicon/react";
+import EmptySlate from "./empty-slate";
+import { Button } from "./button";
 
 const meta: Meta<typeof Table> = {
   title: "Content/Table",
@@ -213,6 +215,56 @@ export const TableWithLoading: Story = {
         onItemsSelected={handleItemsSelected}
       >
         {sampleRows}
+      </Table>
+    );
+  },
+};
+
+export const TableWithEmptySlate: Story = {
+  render: () => {
+    const emptyRows = [];
+
+    const columns = [
+      {
+        caption: "Name",
+        sortable: false,
+      },
+      {
+        caption: "Type",
+        sortable: false,
+      },
+    ];
+
+    const handleItemsSelected = (data: RowData[]) => {
+      console.log("Selected rows:", data);
+    };
+
+    const TableEmptySlate = (
+      <EmptySlate
+        imageUrl="https://picsum.photos/200?random=1"
+        title="Manage your inventory transfers"
+        subtitle="Track and receive your incoming inventory from suppliers."
+        actions={
+          <>
+            <Button variant="default" className="text-xs">
+              Add Item
+            </Button>
+            <Button variant="primary" className="text-xs">
+              Learn More
+            </Button>
+          </>
+        }
+      />
+    );
+
+    return (
+      <Table
+        selectable
+        columns={columns}
+        onItemsSelected={handleItemsSelected}
+        emptySlate={TableEmptySlate}
+      >
+        {emptyRows}
       </Table>
     );
   },
