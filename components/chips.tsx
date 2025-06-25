@@ -515,7 +515,7 @@ function Chip({
       <Checkbox
         checked={isClicked}
         classNameParent={cn(
-          "border-transparent w-[14px] h-[14px] rounded-xs",
+          "border-transparent w-[16px] h-[16px] rounded-xs",
           hovered === badge.id && "border-[#61A9F9]"
         )}
         className="w-[10px] h-[10px]"
