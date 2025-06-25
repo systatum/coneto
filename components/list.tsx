@@ -19,6 +19,7 @@ import {
 import Searchbox from "./searchbox";
 import { cn } from "./../lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
+import LoadingSpinner from "./loading-spinner";
 
 export interface ListProps {
   searchable?: boolean;
@@ -86,6 +87,7 @@ function List({
   className,
   onDragged,
   draggable,
+  isLoading,
 }: ListProps) {
   const [dragItem, setDragItem] = useState(null);
   const [value, setValue] = useState("");
@@ -113,7 +115,16 @@ function List({
             draggable: draggable,
           });
 
-          return <Fragment key={`list-${index}`}>{modifiedChild}</Fragment>;
+          return (
+            <Fragment key={`list-${index}`}>
+              {modifiedChild}
+              {isLoading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-white/60 z-30">
+                  <LoadingSpinner iconSize={24} />
+                </div>
+              )}
+            </Fragment>
+          );
         })}
       </div>
     </DnDContext.Provider>
