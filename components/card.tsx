@@ -1,3 +1,4 @@
+import { RiCloseLine } from "@remixicon/react";
 import { cn } from "./../lib/utils";
 import { ReactNode } from "react";
 
@@ -20,7 +21,13 @@ interface CardProps {
     | "9"
     | "10";
   children: ReactNode;
-  className?: string;
+  containerClassName?: string;
+  titleClassName?: string;
+  title?: string;
+  rightSideActions?: ReactNode[];
+  leftSideActions?: ReactNode[];
+  closable?: boolean;
+  onClosableRequest?: () => void;
 }
 
 const SHADOW_MAP: Record<NonNullable<CardProps["shadow"]>, string> = {
@@ -66,14 +73,66 @@ export default function Card({
   shadow = "sm",
   radius = "xs",
   padding = "sm",
-  className,
+  containerClassName,
+  titleClassName,
+  title,
+  leftSideActions,
+  rightSideActions,
+  onClosableRequest,
+  closable = false,
 }: CardProps) {
   const cardClass = cn(
-    "border border-gray-100 bg-white w-fit",
+    "border border-gray-100 relative bg-white w-fit flex flex-col",
     PADDING_MAP[padding],
     RADIUS_MAP[radius],
     SHADOW_MAP[shadow],
-    className
+    containerClassName
   );
-  return <div className={cardClass}>{children}</div>;
+  return (
+    <div className={cardClass}>
+      {title && (
+        <h2
+          className={cn(
+            "relative py-3 text-base border-gray-300 px-6 border-b",
+            titleClassName
+          )}
+        >
+          {title}
+        </h2>
+      )}
+      {children}
+
+      {(leftSideActions || rightSideActions) && (
+        <div className="border-t border-gray-300">
+          <div className="flex flex-row px-6 py-2 justify-between">
+            {leftSideActions && (
+              <div className="flex flex-row gap-2">
+                {leftSideActions.map((action) => action)}
+              </div>
+            )}
+            {rightSideActions && (
+              <div className="flex flex-row gap-2">
+                {rightSideActions.map((action) => action)}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {closable && (
+        <RiCloseLine
+          role="button"
+          aria-label="Closable request"
+          onClick={(e) => {
+            e.stopPropagation();
+            onClosableRequest();
+          }}
+          size={18}
+          className={cn(
+            "absolute top-4 right-3 duration-300 transition-all hover:bg-gray-300 cursor-pointer"
+          )}
+        />
+      )}
+    </div>
+  );
 }
