@@ -1,52 +1,80 @@
 import { Meta, StoryObj } from "@storybook/react";
 import ChoiceGroup from "./choice-group";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, ComponentProps, useState } from "react";
 import Radio from "./radio";
 import Checkbox from "./checkbox";
+import { useArgs } from "@storybook/preview-api";
+
+const RADIO_OPTIONS = [
+  {
+    value: "comments",
+    label: "Comments",
+    description: "Get notified when someone posts a comment",
+  },
+  {
+    value: "mentions",
+    label: "Mentions",
+    description: "Get notified when someone mentions you",
+  },
+  {
+    value: "follows",
+    label: "Follows",
+    description: "Get notified when someone follows you",
+  },
+  {
+    value: "none",
+    label: "None",
+    description: "Don't notify me",
+  },
+];
 
 const meta: Meta<typeof ChoiceGroup> = {
   title: "Content/ChoiceGroup",
   component: ChoiceGroup,
   tags: ["autodocs"],
+  argTypes: {
+    children: {
+      control: "text",
+      description: "Content children on Choice Group",
+    },
+    className: {
+      control: "text",
+      description: "Style class with tailwind on Choice Group",
+    },
+  },
 };
 
 export default meta;
 
-type Story = StoryObj<typeof ChoiceGroup>;
+type ChoiceGroupProps = ComponentProps<typeof ChoiceGroup>;
+type StoryRadio = StoryObj<
+  ChoiceGroupProps & Partial<{ radioSelected?: string }>
+>;
+type StoryCheckbox = StoryObj<
+  ChoiceGroupProps & Partial<{ valueSelected?: string[] }>
+>;
 
-export const ChoiceRadioMode: Story = {
-  render: () => {
-    const RADIO_OPTIONS = [
-      {
-        value: "comments",
-        label: "Comments",
-        description: "Get notified when someone posts a comment",
-      },
-      {
-        value: "mentions",
-        label: "Mentions",
-        description: "Get notified when someone mentions you",
-      },
-      {
-        value: "follows",
-        label: "Follows",
-        description: "Get notified when someone follows you",
-      },
-      {
-        value: "none",
-        label: "None",
-        description: "Don't notify me",
-      },
-    ];
-    const [selected, setSelected] = useState({ radioSelected: "comments" });
+export const ChoiceRadioMode: StoryRadio = {
+  argTypes: {
+    radioSelected: {
+      control: "radio",
+      options: RADIO_OPTIONS.map((val) => val.value),
+    },
+  },
+  args: {
+    radioSelected: "comments",
+  },
+
+  render: (args) => {
+    const [, setUpdateArgs] = useArgs();
 
     const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
 
-      setSelected((prev) => ({
-        ...prev,
+      setUpdateArgs({
+        ...args,
         [name]: value,
-      }));
+      });
     };
 
     return (
@@ -59,7 +87,7 @@ export const ChoiceRadioMode: Story = {
               value={option.value}
               label={option.label}
               description={option.description}
-              checked={selected.radioSelected === option.value}
+              checked={args.radioSelected === option.value}
               onChange={onChangeValue}
             />
           );
@@ -69,11 +97,18 @@ export const ChoiceRadioMode: Story = {
   },
 };
 
-export const ChoiceGroupWithCheckboxes: Story = {
+export const ChoiceGroupWithCheckboxes: StoryCheckbox = {
+  args: {
+    valueSelected: [],
+  },
   render: () => {
-    const [selected, setSelected] = useState<string[]>([]);
+    interface CheckboxOptionsProps {
+      value: string;
+      label: string;
+      description: string;
+    }
 
-    const CHECKBOX_OPTIONS = [
+    const CHECKBOX_OPTIONS: CheckboxOptionsProps[] = [
       {
         value: "email",
         label: "Email",
@@ -91,12 +126,28 @@ export const ChoiceGroupWithCheckboxes: Story = {
       },
     ];
 
-    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-      const { value, checked } = e.target;
+    const [selected, setSelected] = useState({
+      checked: [] as CheckboxOptionsProps[],
+    });
 
-      setSelected((prev) =>
-        checked ? [...prev, value] : prev.filter((val) => val !== value)
-      );
+    console.log(selected);
+
+    const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
+      const { name, value: inputValue, checked, type } = e.target;
+
+      if (type === "checkbox") {
+        const parsed = JSON.parse(inputValue);
+        setSelected((prev) => ({
+          ...prev,
+          [name]: checked
+            ? [...prev[name], parsed]
+            : prev[name].filter(
+                (val: CheckboxOptionsProps) => val.value !== parsed.value
+              ),
+        }));
+      } else {
+        setSelected((prev) => ({ ...prev, [name]: inputValue }));
+      }
     };
 
     return (
@@ -104,12 +155,14 @@ export const ChoiceGroupWithCheckboxes: Story = {
         {CHECKBOX_OPTIONS.map((option, index) => (
           <Checkbox
             key={index}
-            name="notifications"
-            value={option.value}
+            name="checked"
+            value={JSON.stringify(option)}
             description={option.description}
             label={option.label}
-            checked={selected.includes(option.value)}
-            onChange={handleChange}
+            checked={selected.checked.some(
+              (item) => item.value === option.value
+            )}
+            onChange={onChangeValue}
           />
         ))}
       </ChoiceGroup>
