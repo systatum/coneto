@@ -8,7 +8,8 @@ export interface BaseCheckboxesProps
   showError?: boolean;
   errorMessage?: string;
   className?: string;
-  classNameParent?: string;
+  containerClassName?: string;
+  childClassName?: string;
   indeterminate?: boolean;
   description?: string;
   highlightOnChecked?: boolean;
@@ -20,7 +21,8 @@ export default function Checkbox({
   showError,
   className,
   description,
-  classNameParent,
+  containerClassName,
+  childClassName,
   highlightOnChecked,
   errorMessage,
   indeterminate = false,
@@ -42,12 +44,12 @@ export default function Checkbox({
       "bg-white border-gray-500": !indeterminate && !props.checked,
     },
     showError && "border-red-500 focus:border-red-500 focus:ring-red-500",
-    classNameParent
+    containerClassName
   );
 
   const checkIconClass = cn(
     "absolute left-[3px] top-[3px] h-[10px] w-[10px] text-white transition-transform duration-150 pointer-events-none",
-    className
+    childClassName
   );
 
   return (
@@ -66,7 +68,8 @@ export default function Checkbox({
         <div
           className={cn(
             "relative max-w-[16px] max-h-[16px]",
-            highlightOnChecked && "mt-1"
+            highlightOnChecked && "mt-1",
+            className
           )}
         >
           <input
