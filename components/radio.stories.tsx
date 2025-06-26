@@ -11,8 +11,8 @@ const meta: Meta<typeof Radio> = {
 
 export default meta;
 
-type ChoiceGroupProps = ComponentProps<typeof Radio>;
-type Story = StoryObj<ChoiceGroupProps & Partial<{ radioSelected?: string }>>;
+type RadioProps = ComponentProps<typeof Radio>;
+type Story = StoryObj<RadioProps & Partial<{ radioSelected?: string }>>;
 
 const RADIO_OPTIONS = [
   {

@@ -31,7 +31,7 @@ export default function Radio({
       className={cn(
         "flex items-start px-2 py-3 gap-2 cursor-pointer border border-transparent",
         highlightOnChecked && checked
-          ? "border-[rgb(64,142,232)] bg-blue-100"
+          ? "bg-blue-100"
           : "hover:bg-[rgb(231,242,252)] bg-white",
         containerClassName
       )}

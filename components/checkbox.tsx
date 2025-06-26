@@ -60,9 +60,10 @@ export default function Checkbox({
           "flex gap-[6px] text-xs",
           description ? "items-start" : "items-center",
           highlightOnChecked && props.checked
-            ? "border-[rgb(64,142,232)] bg-blue-100"
-            : "hover:bg-[rgb(231,242,252)] bg-white border-transparent",
-          highlightOnChecked && "border py-3 px-3 gap-2 cursor-pointer"
+            ? "bg-blue-100"
+            : "hover:bg-[rgb(231,242,252)] bg-white",
+          highlightOnChecked &&
+            "border border-transparent py-3 px-3 gap-2 cursor-pointer"
         )}
       >
         <div
