@@ -22,12 +22,13 @@ interface CardProps {
     | "10";
   children: ReactNode;
   containerClassName?: string;
-  titleClassName?: string;
+  headerClassName?: string;
+  footerClassName?: string;
   title?: string;
   rightSideActions?: ReactNode[];
   leftSideActions?: ReactNode[];
   closable?: boolean;
-  onClosableRequest?: () => void;
+  onCloseRequest?: () => void;
 }
 
 const SHADOW_MAP: Record<NonNullable<CardProps["shadow"]>, string> = {
@@ -74,11 +75,12 @@ export default function Card({
   radius = "xs",
   padding = "sm",
   containerClassName,
-  titleClassName,
+  headerClassName,
+  footerClassName,
   title,
   leftSideActions,
   rightSideActions,
-  onClosableRequest,
+  onCloseRequest,
   closable = false,
 }: CardProps) {
   const cardClass = cn(
@@ -94,7 +96,7 @@ export default function Card({
         <h2
           className={cn(
             "relative py-3 text-base border-gray-300 px-6 border-b",
-            titleClassName
+            headerClassName
           )}
         >
           {title}
@@ -103,18 +105,17 @@ export default function Card({
       {children}
 
       {(leftSideActions || rightSideActions) && (
-        <div className="border-t border-gray-300">
-          <div className="flex flex-row px-6 py-2 justify-between">
-            {leftSideActions && (
-              <div className="flex flex-row gap-2">
-                {leftSideActions.map((action) => action)}
-              </div>
-            )}
-            {rightSideActions && (
-              <div className="flex flex-row gap-2">
-                {rightSideActions.map((action) => action)}
-              </div>
-            )}
+        <div
+          className={cn(
+            "border-t border-gray-300 flex flex-row px-6 py-2 justify-between",
+            footerClassName
+          )}
+        >
+          <div className="flex flex-row gap-2">
+            {leftSideActions && leftSideActions.map((action) => action)}
+          </div>
+          <div className="flex flex-row gap-2">
+            {rightSideActions && rightSideActions.map((action) => action)}
           </div>
         </div>
       )}
@@ -125,7 +126,7 @@ export default function Card({
           aria-label="Closable request"
           onClick={(e) => {
             e.stopPropagation();
-            onClosableRequest();
+            onCloseRequest();
           }}
           size={18}
           className={cn(
