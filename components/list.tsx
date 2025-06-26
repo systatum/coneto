@@ -313,8 +313,6 @@ function ListItem({
     className
   );
 
-  console.log(rightSideContent);
-
   return (
     <div
       onClick={onClick}
