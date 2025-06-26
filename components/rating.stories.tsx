@@ -15,7 +15,7 @@ type Story = StoryObj<typeof Rating>;
 export const Default: Story = {
   args: {
     rating: 0,
-    withLabel: true,
+    withLabel: false,
   },
 
   render: (args) => {
@@ -48,7 +48,6 @@ export const WithLabel: Story = {
 export const Small: Story = {
   args: {
     rating: 4.5,
-    withLabel: true,
     size: "sm",
   },
   render: (args) => <Rating {...args} />,
@@ -57,7 +56,6 @@ export const Small: Story = {
 export const Medium: Story = {
   args: {
     rating: 4.5,
-    withLabel: true,
     size: "md",
   },
   render: (args) => <Rating {...args} />,
@@ -66,7 +64,6 @@ export const Medium: Story = {
 export const Large: Story = {
   args: {
     rating: 4.5,
-    withLabel: true,
     size: "lg",
   },
   render: (args) => <Rating {...args} />,
