@@ -20,6 +20,7 @@ import Searchbox from "./searchbox";
 import { cn } from "./../lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import LoadingSpinner from "./loading-spinner";
+import Checkbox from "./checkbox";
 
 export interface ListProps {
   searchable?: boolean;
@@ -28,6 +29,7 @@ export interface ListProps {
   className?: string;
   isLoading?: boolean;
   draggable?: boolean;
+  selectable?: boolean;
   onDragged?: (props: {
     id: number;
     oldGroupId: string;
@@ -44,16 +46,26 @@ export interface ListGroupProps {
   draggable?: boolean;
   containerClassName?: string;
   contentClassName?: string;
+  selectable?: boolean;
 }
 
 export interface ListItemProps {
   id?: number;
   title?: string;
   subtitle?: string;
+  imageUrl?: string;
   icon?: RemixiconComponentType;
   className?: string;
   draggable?: boolean;
   groupId?: string;
+  selectable?: boolean;
+  onSelected?: (selected: ChangeEvent<HTMLInputElement>) => void;
+  onClick?: () => void;
+  rightSideContent?: ReactNode[];
+  selectedOptions?: {
+    value?: string | number;
+    checked?: boolean;
+  };
 }
 
 const DnDContext = createContext<{
@@ -71,7 +83,8 @@ const DnDContext = createContext<{
       id: number;
       title: string;
       subtitle: string;
-      icon: RemixiconComponentType;
+      imageUrl?: string;
+      icon?: RemixiconComponentType;
     };
   }) => void;
   onDragged?: ListProps["onDragged"];
@@ -87,6 +100,7 @@ function List({
   className,
   onDragged,
   draggable,
+  selectable,
   isLoading,
 }: ListProps) {
   const [dragItem, setDragItem] = useState(null);
@@ -113,6 +127,7 @@ function List({
           const componentChild = child as ReactElement<ListItemProps>;
           const modifiedChild = cloneElement(componentChild, {
             draggable: draggable,
+            selectable: selectable,
           });
 
           return (
@@ -138,6 +153,7 @@ function ListGroup({
   containerClassName,
   contentClassName,
   draggable,
+  selectable,
 }: ListGroupProps) {
   const childArray = Children.toArray(children).filter(isValidElement);
   const [isOpen, setIsOpen] = useState(true);
@@ -187,6 +203,7 @@ function ListGroup({
 
           const modifiedChild = cloneElement(componentChild, {
             draggable: draggable,
+            selectable: selectable,
             groupId: id,
             index: index,
             groupLength: childArray.length,
@@ -266,6 +283,7 @@ function ListGroup({
 
 function ListItem({
   icon: Icon = RiFile2Fill,
+  imageUrl,
   subtitle,
   title,
   className,
@@ -274,6 +292,11 @@ function ListItem({
   onDropItem,
   groupId,
   groupLength,
+  selectable,
+  onSelected,
+  selectedOptions,
+  onClick,
+  rightSideContent,
 }: ListItemProps & {
   index?: number;
   onDropItem?: (position: number) => void;
@@ -286,19 +309,27 @@ function ListItem({
   );
 
   const listItemClass = cn(
-    "flex flex-row relative py-1 px-2 hover:bg-blue-100 duration-300 items-center cursor-pointer gap-2",
+    "flex flex-row items-center justify-between relative py-1 px-2 hover:bg-blue-100 duration-300 items-center cursor-pointer gap-2",
     className
   );
 
+  console.log(rightSideContent);
+
   return (
     <div
+      onClick={onClick}
       draggable={draggable}
       onDragStart={() =>
         setDragItem({
           id: index,
           oldGroupId: groupId!,
           oldPosition: index,
-          item: { id: index, title, subtitle, icon: Icon },
+          item: {
+            id: index,
+            title,
+            subtitle,
+            ...(imageUrl ? { imageUrl } : { icon: Icon }),
+          },
         })
       }
       onDragOver={(e) => {
@@ -337,23 +368,46 @@ function ListItem({
       }}
       className={listItemClass}
     >
-      <Icon size={22} className="text-gray-700" />
-      <div className="flex flex-col select-none ">
-        {title && (
-          <h3 className="font-medium text-sm text-gray-800">{title}</h3>
+      <div className="flex flex-row gap-2 items-center">
+        {selectable && (
+          <Checkbox
+            name="checked"
+            value={selectedOptions.value}
+            checked={selectedOptions.checked}
+            onChange={onSelected}
+          />
         )}
-        {subtitle && <span className="text-xs text-gray-600">{subtitle}</span>}
-      </div>
-      {draggable && (
-        <RiDraggable
-          role="button"
-          aria-label="Draggable request"
-          size={18}
-          className={cn(
-            "absolute top-1/2 cursor-grab -translate-y-1/2 right-2 rounded-xs"
+        {imageUrl ? (
+          <img
+            src={imageUrl}
+            className="w-10 h-10 rounded"
+            alt="Image from coneto, Systatum."
+          />
+        ) : (
+          <Icon size={22} className="text-gray-700" />
+        )}
+        <div className="flex flex-col select-none ">
+          {title && (
+            <h3 className="font-medium text-sm text-gray-800">{title}</h3>
           )}
-        />
-      )}
+          {subtitle && (
+            <span className="text-xs text-gray-600">{subtitle}</span>
+          )}
+        </div>
+      </div>
+
+      <div className="flex flex-row gap-2 items-center">
+        {rightSideContent &&
+          rightSideContent.map((content, id) => <div key={id}>{content}</div>)}
+        {draggable && (
+          <RiDraggable
+            role="button"
+            aria-label="Draggable request"
+            size={18}
+            className={cn("cursor-grab rounded-xs")}
+          />
+        )}
+      </div>
 
       {isOver && (
         <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-blue-500 rounded" />
