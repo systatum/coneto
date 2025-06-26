@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 import Radio from "./radio";
-import { ChangeEvent, ComponentProps, useState } from "react";
+import { ChangeEvent, ComponentProps } from "react";
 import { useArgs } from "@storybook/preview-api";
 
 const meta: Meta<typeof Radio> = {
