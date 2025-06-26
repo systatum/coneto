@@ -115,7 +115,7 @@ export const WithActionsAndClosable: Story = {
       },
     ],
     closable: true,
-    onClosableRequest: () => alert("Close Request Succeed"),
+    onCloseRequest: () => alert("Close Request Succeed"),
   },
   render: (args) => <Messagebox {...args} />,
 };

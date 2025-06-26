@@ -13,7 +13,7 @@ interface MessageboxProps {
   children: ReactNode;
   actionLinks?: ActionLinkProps[];
   closable?: boolean;
-  onClosableRequest?: () => void;
+  onCloseRequest?: () => void;
 }
 
 interface ActionLinkProps {
@@ -52,7 +52,7 @@ export default function Messagebox({
   icon: Icon = RiInformation2Fill,
   children,
   actionLinks,
-  onClosableRequest,
+  onCloseRequest,
   closable = false,
 }: MessageboxProps) {
   const messageBoxVariant = VARIANT_MESSAGEBOX_STYLES[variant];
@@ -60,7 +60,7 @@ export default function Messagebox({
   return (
     <div
       className={cn(
-        "flex flex-row p-3 py-5 w-full gap-3 relative border-t-2 rounded-xs overflow-hidden h-full",
+        "flex flex-row p-3 py-5 pt-[11px] w-full gap-3 relative border-t-2 rounded-xs overflow-hidden h-full",
         messageBoxVariant.container
       )}
     >
@@ -119,7 +119,7 @@ export default function Messagebox({
           aria-label="Closable request"
           onClick={(e) => {
             e.stopPropagation();
-            onClosableRequest();
+            onCloseRequest();
           }}
           size={18}
           className={cn(
