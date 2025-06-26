@@ -1,5 +1,5 @@
 import { cn } from "./../lib/utils";
-import { ChangeEvent } from "react";
+import { ChangeEvent, InputHTMLAttributes } from "react";
 
 export interface RadioProps {
   value: string;
@@ -21,6 +21,7 @@ export default function Radio({
   name,
   highlightOnChecked,
   containerClassName,
+  ...props
 }: RadioProps) {
   const id = `radio-${value}`;
 
@@ -40,10 +41,18 @@ export default function Radio({
         id={id}
         name={name}
         value={value}
-        checked={checked}
         onChange={onChange}
-        className="mt-[5px] appearance-none w-[14px] h-[14px] checked:border-[5px] border border-gray-600 rounded-full checked:accent-[#61A9F9] checked:border-[#61A9F9]"
+        className="sr-only peer"
+        {...(props as InputHTMLAttributes<HTMLInputElement>)}
+        checked={checked}
       />
+      <div
+        className={cn(
+          "mt-[5px] w-[14px] h-[14px] rounded-full border border-gray-600",
+          "peer-checked:border-[5px] peer-checked:border-[#61A9F9]"
+        )}
+      />
+
       <div className="flex flex-col">
         {label && <div className="font-medium">{label}</div>}
         {description && (

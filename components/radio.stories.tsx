@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 import Radio from "./radio";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, ComponentProps, useState } from "react";
+import { useArgs } from "@storybook/preview-api";
 
 const meta: Meta<typeof Radio> = {
   title: "Input Elements/Radio",
@@ -10,53 +11,97 @@ const meta: Meta<typeof Radio> = {
 
 export default meta;
 
-type Story = StoryObj<typeof Radio>;
+type ChoiceGroupProps = ComponentProps<typeof Radio>;
+type Story = StoryObj<ChoiceGroupProps & Partial<{ radioSelected?: string }>>;
+
+const RADIO_OPTIONS = [
+  {
+    value: "comments",
+    label: "Comments",
+    description: "Get notified when someone posts a comment",
+  },
+  {
+    value: "mentions",
+    label: "Mentions",
+    description: "Get notified when someone mentions you",
+  },
+  {
+    value: "follows",
+    label: "Follows",
+    description: "Get notified when someone follows you",
+  },
+  {
+    value: "none",
+    label: "None",
+    description: "Don't notify me",
+  },
+];
 
 export const Default: Story = {
-  render: () => {
-    const RADIO_OPTIONS = [
-      {
-        value: "comments",
-        label: "Comments",
-        description: "Get notified when someone posts a comment",
-      },
-      {
-        value: "mentions",
-        label: "Mentions",
-        description: "Get notified when someone mentions you",
-      },
-      {
-        value: "follows",
-        label: "Follows",
-        description: "Get notified when someone follows you",
-      },
-      {
-        value: "none",
-        label: "None",
-        description: "Don't notify me",
-      },
-    ];
-    const [selected, setSelected] = useState({ radioSelected: "comments" });
+  args: {
+    radioSelected: "comments",
+  },
+  render: (args) => {
+    const [, setUpdateArgs] = useArgs();
 
     const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
 
-      setSelected((prev) => ({
-        ...prev,
+      setUpdateArgs({
+        ...args,
         [name]: value,
-      }));
+      });
     };
 
     return (
-      <div className="flex flex-col">
-        {RADIO_OPTIONS.map((option) => (
+      <div>
+        {RADIO_OPTIONS.map((option, index) => (
           <Radio
-            key={option.value}
+            key={index}
+            name="radioSelected"
+            value={option.value}
+            label={option.label}
+            checked={args.radioSelected === option.value}
+            onChange={onChangeValue}
+          />
+        ))}
+      </div>
+    );
+  },
+};
+
+export const WithDescription: Story = {
+  argTypes: {
+    radioSelected: {
+      control: "radio",
+      options: RADIO_OPTIONS.map((val) => val.value),
+    },
+  },
+  args: {
+    radioSelected: "comments",
+  },
+  render: (args) => {
+    const [, setUpdateArgs] = useArgs();
+
+    const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+
+      setUpdateArgs({
+        ...args,
+        [name]: value,
+      });
+    };
+
+    return (
+      <div>
+        {RADIO_OPTIONS.map((option, index) => (
+          <Radio
+            key={index}
             name="radioSelected"
             value={option.value}
             label={option.label}
             description={option.description}
-            checked={selected.radioSelected === option.value}
+            checked={args.radioSelected === option.value}
             onChange={onChangeValue}
           />
         ))}
