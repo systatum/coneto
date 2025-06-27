@@ -186,10 +186,12 @@ function ListGroup({
           size={18}
         />
       </button>
-      <div
-        aria-label="divider"
-        className="border-b w-full border-gray-300 h-px"
-      />
+      {isOpen && (
+        <div
+          aria-label="divider"
+          className="border-b w-full border-gray-300 h-px"
+        />
+      )}
 
       <AnimatePresence initial={false}>
         {childArray.map((child, index) => {
