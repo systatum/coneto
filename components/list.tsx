@@ -54,7 +54,7 @@ export interface ListItemProps {
   title?: string;
   subtitle?: string;
   imageUrl?: string;
-  icon?: RemixiconComponentType;
+  iconUrl?: RemixiconComponentType;
   className?: string;
   draggable?: boolean;
   groupId?: string;
@@ -84,7 +84,7 @@ const DnDContext = createContext<{
       title: string;
       subtitle: string;
       imageUrl?: string;
-      icon?: RemixiconComponentType;
+      iconUrl?: RemixiconComponentType;
     };
   }) => void;
   onDragged?: ListProps["onDragged"];
@@ -284,7 +284,7 @@ function ListGroup({
 }
 
 function ListItem({
-  icon: Icon = RiFile2Fill,
+  iconUrl: Icon = RiFile2Fill,
   imageUrl,
   subtitle,
   title,
@@ -328,7 +328,7 @@ function ListItem({
             id: index,
             title,
             subtitle,
-            ...(imageUrl ? { imageUrl } : { icon: Icon }),
+            ...(imageUrl ? { imageUrl } : { iconUrl: Icon }),
           },
         })
       }

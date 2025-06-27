@@ -1,9 +1,9 @@
 import { cn } from "./../lib/utils";
-import React, { MouseEvent, useState } from "react";
+import { MouseEvent, useState } from "react";
 
 interface RatingProps {
   rating?: number;
-  setRating?: (rating: number) => void;
+  onChange?: (rating: number) => void;
   editable?: boolean;
   withLabel?: boolean;
   size?: "sm" | "md" | "lg";
@@ -11,7 +11,7 @@ interface RatingProps {
 
 export default function Rating({
   rating,
-  setRating,
+  onChange,
   editable,
   withLabel = false,
   size = "md",
@@ -33,8 +33,8 @@ export default function Rating({
     const isHalf = x < width / 2;
     const newRating = isHalf ? index + 0.5 : index + 1;
     setRatingLocal(newRating);
-    if (setRating) {
-      setRating(newRating);
+    if (onChange) {
+      onChange(newRating);
     }
   };
 

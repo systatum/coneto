@@ -23,7 +23,7 @@ interface ActionLinkProps {
   type: "button" | "link";
 }
 
-const VARIANT_MESSAGEBOX_STYLES = {
+const MESSAGEBOX_VARIATIONS = {
   primary: {
     container: "bg-[rgb(231,242,252)] text-[rgb(42,99,180)]",
     border: "border-[rgb(42,99,180)]",
@@ -55,7 +55,7 @@ export default function Messagebox({
   onCloseRequest,
   closable = false,
 }: MessageboxProps) {
-  const messageBoxVariant = VARIANT_MESSAGEBOX_STYLES[variant];
+  const messageBoxVariant = MESSAGEBOX_VARIATIONS[variant];
 
   return (
     <div

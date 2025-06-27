@@ -24,7 +24,7 @@ export const Default: Story = {
       <Rating
         {...args}
         editable
-        setRating={(e) => setUpdateArgs({ rating: e })}
+        onChange={(e) => setUpdateArgs({ rating: e })}
       />
     );
   },
