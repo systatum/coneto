@@ -29,7 +29,7 @@ export default function Radio({
     <label
       htmlFor={id}
       className={cn(
-        "flex items-start px-2 py-3 gap-2 cursor-pointer border border-transparent",
+        "flex items-start px-2 py-1 gap-2 cursor-pointer border border-transparent",
         highlightOnChecked && checked
           ? "bg-blue-100"
           : "hover:bg-[rgb(231,242,252)] bg-white",
