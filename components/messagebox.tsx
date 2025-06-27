@@ -76,13 +76,7 @@ export default function Messagebox({
             {actionLinks?.map((action, index) => {
               const sharedClasses = cn(
                 "text-sm cursor-pointer font-medium duration-300 transition-all w-fit",
-                messageBoxVariant.icon,
-                {
-                  primary: "hover:underline hover:decoration-[rgb(42,99,180)]",
-                  success: "hover:underline hover:decoration-[rgb(67,132,61)]",
-                  danger: "hover:underline hover:decoration-[rgb(185,44,37)]",
-                  warning: "hover:underline hover:decoration-[rgb(158,91,32)]",
-                }[variant]
+                messageBoxVariant.icon
               );
 
               if (action.type === "button") {
