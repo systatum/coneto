@@ -833,7 +833,7 @@ export const WithSelectable: Story = {
           selectable
           onDragged={onDragged}
           onSearchRequested={onChangeValue}
-          className="px-3 py-4"
+          className="px-3 py-4 min-w-[300px]"
         >
           {filteredContent.map((group, index) => {
             return (
@@ -841,7 +841,6 @@ export const WithSelectable: Story = {
                 {group.items.map((list, i) => (
                   <List.Item
                     key={i}
-                    className="min-w-[300px]"
                     id={list.id}
                     iconUrl={list.iconUrl}
                     subtitle={list.subtitle}
