@@ -7,7 +7,7 @@ import {
   ReactNode,
 } from "react";
 import { RadioProps } from "./radio";
-import { BaseCheckboxesProps } from "./checkbox";
+import { CheckboxProps } from "./checkbox";
 
 interface ChoiceGroupProps {
   children: ReactNode;
@@ -27,7 +27,7 @@ export default function ChoiceGroup({ children, className }: ChoiceGroupProps) {
       {childArray.map((child, index) => {
         const isLast = index === childArray.length - 1;
         const componentChild = child as ReactElement<
-          RadioProps | BaseCheckboxesProps
+          RadioProps | CheckboxProps
         >;
 
         const modifiedChild = cloneElement(componentChild, {

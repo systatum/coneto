@@ -1,8 +1,7 @@
 import { cn } from "./../lib/utils";
 import { InputHTMLAttributes, useEffect, useRef } from "react";
 
-export interface BaseCheckboxProps
-  extends InputHTMLAttributes<HTMLInputElement> {
+export interface CheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   name?: string;
   showError?: boolean;
@@ -27,7 +26,7 @@ export default function Checkbox({
   errorMessage,
   indeterminate = false,
   ...props
-}: BaseCheckboxProps) {
+}: CheckboxProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const inputId = `checkbox-${name}-${props.value}`;
 

@@ -33,6 +33,7 @@ export default function Radio({
         highlightOnChecked && checked
           ? "bg-blue-100"
           : "hover:bg-[rgb(231,242,252)] bg-white",
+        highlightOnChecked && "py-3 px-3",
         containerClassName
       )}
     >

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect, userEvent, within } from "@storybook/test";
-import Checkbox, { BaseCheckboxProps } from "./checkbox";
+import Checkbox, { CheckboxProps } from "./checkbox";
 import { ChangeEvent, useState } from "react";
 
 const meta: Meta<typeof Checkbox> = {
@@ -14,9 +14,9 @@ const meta: Meta<typeof Checkbox> = {
 };
 
 export default meta;
-type Story = StoryObj<BaseCheckboxProps>;
+type Story = StoryObj<CheckboxProps>;
 type StoryWithDescription = StoryObj<
-  BaseCheckboxProps & Partial<{ valueSelected?: string[] }>
+  CheckboxProps & Partial<{ valueSelected?: string[] }>
 >;
 
 export const Default: Story = {
