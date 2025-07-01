@@ -70,9 +70,7 @@ function GridCard({
         {selectable && (isSelected || isHovered) && (
           <Checkbox
             checked={isSelected}
-            classNameParent={cn(
-              "border-transparent w-[20px] h-[20px] rounded-xs"
-            )}
+            containerClassName={cn("rounded-xs")}
             className="w-[16px] h-[16px]"
             readOnly
           />

@@ -31,6 +31,7 @@ interface TableProps {
   isOpen?: boolean;
   setIsOpen?: () => void;
   subMenuList?: (columnCaption: string) => TipMenuItemProps[];
+  emptySlate?: ReactNode;
 }
 
 interface TableRowProps {
@@ -58,6 +59,7 @@ function Table({
   isOpen,
   setIsOpen,
   subMenuList,
+  emptySlate,
 }: TableProps) {
   const [selectedData, setSelectedData] = useState<RowData[]>([]);
   const classTableRow = clsx(
@@ -129,7 +131,7 @@ function Table({
       >
         <div className="flex flex-row bg-blue-500 items-center font-semibold text-white p-3">
           {selectable && (
-            <div className="w-8 flex justify-center cursor-pointer pointer-events-auto items-center">
+            <div className="w-8 bg-blue-500 flex justify-center cursor-pointer pointer-events-auto items-center">
               <Checkbox
                 onChange={handleSelectAll}
                 checked={allSelected}
@@ -160,7 +162,11 @@ function Table({
             </div>
           ))}
         </div>
-        <div className={classTableRow}>{rowChildren}</div>
+        {rowChildren.length > 0 ? (
+          <div className={classTableRow}>{rowChildren}</div>
+        ) : (
+          <>{emptySlate}</>
+        )}
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-white/60 z-30">
             <LoadingSpinner iconSize={24} />
