@@ -8,6 +8,7 @@ export interface CheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
   errorMessage?: string;
   className?: string;
   containerClassName?: string;
+  inputClassName?: string;
   titleClassName?: string;
   childClassName?: string;
   indeterminate?: boolean;
@@ -26,6 +27,7 @@ export default function Checkbox({
   childClassName,
   highlightOnChecked,
   errorMessage,
+  inputClassName,
   indeterminate = false,
   ...props
 }: CheckboxProps) {
@@ -45,7 +47,7 @@ export default function Checkbox({
       "bg-white border-gray-500": !indeterminate && !props.checked,
     },
     showError && "border-red-500 focus:border-red-500 focus:ring-red-500",
-    containerClassName
+    inputClassName
   );
 
   const checkIconClass = cn(
@@ -58,13 +60,14 @@ export default function Checkbox({
       <label
         htmlFor={inputId}
         className={cn(
-          "flex gap-[6px] text-xs px-2 py-1",
+          "flex gap-[6px] text-xs",
           description ? "items-start" : "items-center",
           highlightOnChecked && props.checked
             ? "bg-blue-100"
             : "hover:bg-[rgb(231,242,252)] bg-white",
           highlightOnChecked &&
-            "border border-transparent py-3 px-3 gap-2 cursor-pointer"
+            "border border-transparent py-3 px-3 gap-2 cursor-pointer",
+          containerClassName
         )}
       >
         <div

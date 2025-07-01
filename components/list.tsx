@@ -355,11 +355,16 @@ function ListItem({
         setIsOver(false);
 
         let position = 0;
+        const isSameGroup = dragItem?.oldGroupId === groupId;
 
-        if (dragItem?.oldGroupId === groupId) {
-          position = dropPosition === "top" ? index : index;
+        if (dropPosition === "top") {
+          position = index;
         } else {
-          position = dropPosition === "top" ? index : index + 1;
+          position = index + 1;
+        }
+
+        if (isSameGroup && dragItem?.oldPosition < position) {
+          position -= 1;
         }
 
         const clampedPosition = Math.min(position, groupLength ?? 0);
@@ -409,7 +414,10 @@ function ListItem({
         )}
       </div>
 
-      {isOver && (
+      {isOver && dropPosition === "top" && (
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-blue-500 rounded" />
+      )}
+      {isOver && dropPosition === "bottom" && (
         <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-blue-500 rounded" />
       )}
     </div>

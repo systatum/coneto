@@ -10,8 +10,6 @@ import {
 } from "@remixicon/react";
 import Card from "./card";
 import { ChangeEvent, useMemo, useState } from "react";
-import { Button } from "./button";
-import Checkbox from "./checkbox";
 
 const meta: Meta<typeof List> = {
   title: "Content/List",
@@ -30,31 +28,31 @@ export const Default: Story = {
         id: 1,
         title: "Home",
         subtitle: "Go to homepage",
-        icon: RiHome2Fill,
+        iconUrl: RiHome2Fill,
       },
       {
         id: 2,
         title: "Profile",
         subtitle: "View your profile",
-        icon: RiUser3Fill,
+        iconUrl: RiUser3Fill,
       },
       {
         id: 3,
         title: "Settings",
         subtitle: "Adjust preferences",
-        icon: RiSettings3Fill,
+        iconUrl: RiSettings3Fill,
       },
       {
         id: 4,
         title: "Messages",
         subtitle: "Check your inbox",
-        icon: RiMailFill,
+        iconUrl: RiMailFill,
       },
       {
         id: 5,
         title: "Notifications",
         subtitle: "View alerts",
-        icon: RiNotification3Fill,
+        iconUrl: RiNotification3Fill,
       },
     ];
 
@@ -65,7 +63,7 @@ export const Default: Story = {
             <List.Item
               key={index}
               id={index}
-              icon={item.icon}
+              iconUrl={item.iconUrl}
               subtitle={item.subtitle}
               title={item.title}
             />
@@ -83,31 +81,31 @@ export const WithSearch: Story = {
         id: 1,
         title: "Home",
         subtitle: "Go to homepage",
-        icon: RiHome2Fill,
+        iconUrl: RiHome2Fill,
       },
       {
         id: 2,
         title: "Profile",
         subtitle: "View your profile",
-        icon: RiUser3Fill,
+        iconUrl: RiUser3Fill,
       },
       {
         id: 3,
         title: "Settings",
         subtitle: "Adjust preferences",
-        icon: RiSettings3Fill,
+        iconUrl: RiSettings3Fill,
       },
       {
         id: 4,
         title: "Messages",
         subtitle: "Check your inbox",
-        icon: RiMailFill,
+        iconUrl: RiMailFill,
       },
       {
         id: 5,
         title: "Notifications",
         subtitle: "View alerts",
-        icon: RiNotification3Fill,
+        iconUrl: RiNotification3Fill,
       },
     ];
     const [value, setValue] = useState({
@@ -141,7 +139,7 @@ export const WithSearch: Story = {
               className="px-1"
               key={index}
               id={index}
-              icon={item.icon}
+              iconUrl={item.iconUrl}
               subtitle={item.subtitle}
               title={item.title}
             />
@@ -167,19 +165,19 @@ export const WithGroup: Story = {
             id: 1,
             title: "Messages",
             subtitle: "Check your inbox",
-            icon: RiMailFill,
+            iconUrl: RiMailFill,
           },
           {
             id: 2,
             title: "Notifications",
             subtitle: "View alerts",
-            icon: RiNotification3Fill,
+            iconUrl: RiNotification3Fill,
           },
           {
             id: 3,
             title: "Calendar",
             subtitle: "Upcoming events",
-            icon: RiCalendar2Fill,
+            iconUrl: RiCalendar2Fill,
           },
         ],
       },
@@ -191,19 +189,19 @@ export const WithGroup: Story = {
             id: 1,
             title: "Home",
             subtitle: "Go to homepage",
-            icon: RiHome2Fill,
+            iconUrl: RiHome2Fill,
           },
           {
             id: 2,
             title: "Profile",
             subtitle: "View your profile",
-            icon: RiUser3Fill,
+            iconUrl: RiUser3Fill,
           },
           {
             id: 3,
             title: "Settings",
             subtitle: "Adjust preferences",
-            icon: RiSettings3Fill,
+            iconUrl: RiSettings3Fill,
           },
         ],
       },
@@ -260,7 +258,7 @@ export const WithGroup: Story = {
                   key={i}
                   className="px-1"
                   id={list.id}
-                  icon={list.icon}
+                  iconUrl={list.iconUrl}
                   subtitle={list.subtitle}
                   title={list.title}
                 />
@@ -288,19 +286,19 @@ export const WithGroupAndDraggable: Story = {
             id: 1,
             title: "Messages",
             subtitle: "Check your inbox",
-            icon: RiMailFill,
+            iconUrl: RiMailFill,
           },
           {
             id: 2,
             title: "Notifications",
             subtitle: "View alerts",
-            icon: RiNotification3Fill,
+            iconUrl: RiNotification3Fill,
           },
           {
             id: 3,
             title: "Calendar",
             subtitle: "Upcoming events",
-            icon: RiCalendar2Fill,
+            iconUrl: RiCalendar2Fill,
           },
         ],
       },
@@ -312,19 +310,19 @@ export const WithGroupAndDraggable: Story = {
             id: 4,
             title: "Home",
             subtitle: "Go to homepage",
-            icon: RiHome2Fill,
+            iconUrl: RiHome2Fill,
           },
           {
             id: 5,
             title: "Profile",
             subtitle: "View your profile",
-            icon: RiUser3Fill,
+            iconUrl: RiUser3Fill,
           },
           {
             id: 6,
             title: "Settings",
             subtitle: "Adjust preferences",
-            icon: RiSettings3Fill,
+            iconUrl: RiSettings3Fill,
           },
         ],
       },
@@ -449,7 +447,7 @@ export const WithGroupAndDraggable: Story = {
                   <List.Item
                     key={i}
                     id={list.id}
-                    icon={list.icon}
+                    iconUrl={list.iconUrl}
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
@@ -479,19 +477,19 @@ export const WithLoading: Story = {
             id: 1,
             title: "Messages",
             subtitle: "Check your inbox",
-            icon: RiMailFill,
+            iconUrl: RiMailFill,
           },
           {
             id: 2,
             title: "Notifications",
             subtitle: "View alerts",
-            icon: RiNotification3Fill,
+            iconUrl: RiNotification3Fill,
           },
           {
             id: 3,
             title: "Calendar",
             subtitle: "Upcoming events",
-            icon: RiCalendar2Fill,
+            iconUrl: RiCalendar2Fill,
           },
         ],
       },
@@ -503,19 +501,19 @@ export const WithLoading: Story = {
             id: 4,
             title: "Home",
             subtitle: "Go to homepage",
-            icon: RiHome2Fill,
+            iconUrl: RiHome2Fill,
           },
           {
             id: 5,
             title: "Profile",
             subtitle: "View your profile",
-            icon: RiUser3Fill,
+            iconUrl: RiUser3Fill,
           },
           {
             id: 6,
             title: "Settings",
             subtitle: "Adjust preferences",
-            icon: RiSettings3Fill,
+            iconUrl: RiSettings3Fill,
           },
         ],
       },
@@ -641,7 +639,7 @@ export const WithLoading: Story = {
                   <List.Item
                     key={i}
                     id={list.id}
-                    icon={list.icon}
+                    iconUrl={list.iconUrl}
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
@@ -671,19 +669,19 @@ export const WithSelectable: Story = {
             id: 1,
             title: "Messages",
             subtitle: "Check your inbox",
-            icon: RiMailFill,
+            iconUrl: RiMailFill,
           },
           {
             id: 2,
             title: "Notifications",
             subtitle: "View alerts",
-            icon: RiNotification3Fill,
+            iconUrl: RiNotification3Fill,
           },
           {
             id: 3,
             title: "Calendar",
             subtitle: "Upcoming events",
-            icon: RiCalendar2Fill,
+            iconUrl: RiCalendar2Fill,
           },
         ],
       },
@@ -695,19 +693,19 @@ export const WithSelectable: Story = {
             id: 4,
             title: "Home",
             subtitle: "Go to homepage",
-            icon: RiHome2Fill,
+            iconUrl: RiHome2Fill,
           },
           {
             id: 5,
             title: "Profile",
             subtitle: "View your profile",
-            icon: RiUser3Fill,
+            iconUrl: RiUser3Fill,
           },
           {
             id: 6,
             title: "Settings",
             subtitle: "Adjust preferences",
-            icon: RiSettings3Fill,
+            iconUrl: RiSettings3Fill,
           },
         ],
       },
@@ -845,7 +843,7 @@ export const WithSelectable: Story = {
                     key={i}
                     className="min-w-[300px]"
                     id={list.id}
-                    icon={list.icon}
+                    iconUrl={list.iconUrl}
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
