@@ -1,7 +1,7 @@
 import { cn } from "./../lib/utils";
 import { InputHTMLAttributes, useEffect, useRef } from "react";
 
-export interface BaseCheckboxesProps
+export interface BaseCheckboxProps
   extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   name?: string;
@@ -27,7 +27,7 @@ export default function Checkbox({
   errorMessage,
   indeterminate = false,
   ...props
-}: BaseCheckboxesProps) {
+}: BaseCheckboxProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const inputId = `checkbox-${name}-${props.value}`;
 
@@ -57,7 +57,7 @@ export default function Checkbox({
       <label
         htmlFor={inputId}
         className={cn(
-          "flex gap-[6px] text-xs",
+          "flex gap-[6px] text-xs px-2 py-1",
           description ? "items-start" : "items-center",
           highlightOnChecked && props.checked
             ? "bg-blue-100"
