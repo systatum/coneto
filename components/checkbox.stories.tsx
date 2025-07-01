@@ -102,6 +102,7 @@ export const WithDescription: StoryWithDescription = {
             value={JSON.stringify(option)}
             description={option.description}
             label={option.label}
+            titleClassName="text-base font-medium"
             checked={selected.checked.some(
               (item) => item.value === option.value
             )}

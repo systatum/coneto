@@ -8,6 +8,7 @@ export interface CheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
   errorMessage?: string;
   className?: string;
   containerClassName?: string;
+  titleClassName?: string;
   childClassName?: string;
   indeterminate?: boolean;
   description?: string;
@@ -21,6 +22,7 @@ export default function Checkbox({
   className,
   description,
   containerClassName,
+  titleClassName,
   childClassName,
   highlightOnChecked,
   errorMessage,
@@ -68,7 +70,7 @@ export default function Checkbox({
         <div
           className={cn(
             "relative max-w-[16px] max-h-[16px]",
-            highlightOnChecked && "mt-1",
+            description && "mt-1",
             className
           )}
         >
@@ -110,7 +112,12 @@ export default function Checkbox({
         {(label || description) && (
           <div className="flex flex-col">
             {label && (
-              <h2 className={cn(highlightOnChecked && "text-base font-medium")}>
+              <h2
+                className={cn(
+                  highlightOnChecked && "text-base font-medium",
+                  titleClassName
+                )}
+              >
                 {label}
               </h2>
             )}
