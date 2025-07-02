@@ -12,6 +12,17 @@
   border-radius: 4px;
 }
 
+.scrollbar-thin-x::-webkit-scrollbar {
+  height: 6px;
+}
+.scrollbar-thin-x::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin-x::-webkit-scrollbar-thumb {
+  background-color: #d1d5db;
+  border-radius: 4px;
+}
+
 .border-dotted-customize {
   border: 1px dotted transparent;
   background-image:
@@ -98,4 +109,59 @@
     bottom right,
     bottom left;
   background-repeat: no-repeat;
+}
+
+.perspective {
+  perspective: 1000px;
+}
+
+.cube {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  transform-style: preserve-3d;
+  animation: rotateUp 6s infinite linear;
+  transform: rotateY(-20deg) rotateX(-20deg);
+}
+
+.face {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background-color: #3b82f6;
+  color: white;
+  font-size: 2.5rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #1e3a8a;
+}
+
+.front {
+  transform: translateZ(50px);
+}
+.back {
+  transform: rotateY(180deg) translateZ(50px);
+}
+.right {
+  transform: rotateY(90deg) translateZ(50px);
+}
+.left {
+  transform: rotateY(-90deg) translateZ(50px);
+}
+.top {
+  transform: rotateX(90deg) translateZ(50px);
+}
+.bottom {
+  transform: rotateX(-90deg) translateZ(50px);
+}
+
+@keyframes rotateUp {
+  from {
+    transform: rotateX(-20deg) rotateY(-20deg);
+  }
+  to {
+    transform: rotateX(340deg) rotateY(-20deg);
+  }
 }
