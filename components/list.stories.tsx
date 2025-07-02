@@ -656,14 +656,11 @@ export const WithLoading: Story = {
 
 export const WithSelectable: Story = {
   render: () => {
-    const LIST_GROUPS: {
-      id: string;
-      title: string;
-      items: ListItemProps[];
-    }[] = [
+    const LIST_GROUPS = [
       {
         id: "recent-content",
         title: "Recent Content",
+        subtitle: "Your latest activity",
         items: [
           {
             id: 1,
@@ -688,6 +685,7 @@ export const WithSelectable: Story = {
       {
         id: "all-content",
         title: "All Content",
+        subtitle: "Browse everything",
         items: [
           {
             id: 4,
@@ -837,7 +835,13 @@ export const WithSelectable: Story = {
         >
           {filteredContent.map((group, index) => {
             return (
-              <List.Group key={index} id={group.id} title={group.title}>
+              <List.Group
+                key={index}
+                id={group.id}
+                subtitle={group.subtitle}
+                title={group.title}
+                openerStyle="togglebox"
+              >
                 {group.items.map((list, i) => (
                   <List.Item
                     key={i}
