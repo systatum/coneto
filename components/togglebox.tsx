@@ -1,6 +1,6 @@
 import { ChangeEvent, InputHTMLAttributes } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { RemixiconComponentType, RiLock2Fill } from "@remixicon/react";
+import { RemixiconComponentType } from "@remixicon/react";
 import { cn } from "./../lib/utils";
 import LoadingSpinner from "./loading-spinner";
 
