@@ -43,6 +43,22 @@ type Story = StoryObj<typeof Togglebox>;
 export const Default: Story = {
   args: {
     checked: false,
+  },
+  render: (args) => {
+    const [, setUpdateArgs] = useArgs();
+
+    return (
+      <Togglebox
+        {...args}
+        onChange={(e) => setUpdateArgs({ checked: e.target.checked })}
+      />
+    );
+  },
+};
+
+export const WithIcon: Story = {
+  args: {
+    checked: false,
     icon: RemixIcons.RiLock2Fill,
   },
   render: (args) => {
@@ -50,15 +66,14 @@ export const Default: Story = {
 
     return (
       <Togglebox
-        checked={args.checked}
-        icon={args.icon}
+        {...args}
         onChange={(e) => setUpdateArgs({ checked: e.target.checked })}
       />
     );
   },
 };
 
-export const WithLoading: Story = {
+export const WithIconAndLoading: Story = {
   args: {
     checked: false,
     icon: RemixIcons.RiLock2Fill,
