@@ -62,11 +62,9 @@ export default function Checkbox({
         className={cn(
           "flex gap-[6px] text-xs",
           description ? "items-start" : "items-center",
-          highlightOnChecked && props.checked
-            ? "bg-blue-100"
-            : "hover:bg-[rgb(231,242,252)] bg-white",
+          highlightOnChecked && props.checked ? "bg-blue-100" : "bg-white",
           highlightOnChecked &&
-            "border border-transparent py-3 px-3 gap-2 cursor-pointer",
+            "border border-transparent py-3 px-3 gap-2 cursor-pointer hover:bg-[rgb(231,242,252)]",
           containerClassName
         )}
       >
