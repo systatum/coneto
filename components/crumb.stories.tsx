@@ -2,7 +2,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { Crumb } from "./crumb";
 
 const meta: Meta<typeof Crumb> = {
-  title: "Stage/Crumbs",
+  title: "Controls/Crumb",
   component: Crumb,
   tags: ["autodocs"],
 };

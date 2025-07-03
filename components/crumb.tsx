@@ -8,6 +8,7 @@ import {
   ReactNode,
   useState,
 } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface CrumbProps {
   children?: ReactNode;
@@ -53,35 +54,55 @@ function Crumb({
 
   return (
     <nav aria-label="crumb" className="flex flex-row">
-      {shownItems.map((data, index) => {
-        const isEllipsis = data === "ellipsis";
-        const isLast = index === shownItems.length - 1;
+      <AnimatePresence initial={false} mode="popLayout">
+        {shownItems.map((data, index) => {
+          const isEllipsis = data === "ellipsis";
+          const isLast = index === shownItems.length - 1;
 
-        if (isEllipsis) {
-          return (
-            <li key={index} className="flex items-center">
-              <button
-                onClick={() => setExpanded(true)}
-                className="px-1 text-gray-500 hover:text-[#61A9F9] cursor-pointer"
+          if (isEllipsis) {
+            return (
+              <motion.li
+                key="ellipsis"
+                className="flex items-center"
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
               >
-                ...
-              </button>
-              {!isLast && <Icon size={20} className="mx-2 text-gray-400" />}
-            </li>
-          );
-        }
+                <button
+                  onClick={() => setExpanded(true)}
+                  className="px-1 text-gray-500 hover:text-[#61A9F9] cursor-pointer"
+                >
+                  ...
+                </button>
+                {!isLast && <Icon size={20} className="mx-2 text-gray-400" />}
+              </motion.li>
+            );
+          }
 
-        if (isValidElement<CrumbItemProps>(data)) {
-          return (
-            <li key={index} className="flex items-center">
-              {cloneElement(data, { isLast, className })}
-              {!isLast && <Icon size={20} className="mx-2 text-gray-400" />}
-            </li>
-          );
-        }
+          if (isValidElement<CrumbItemProps>(data)) {
+            return (
+              <motion.li
+                key={
+                  (isValidElement(data) && data.key?.toString()) ||
+                  `crumb-${index}`
+                }
+                className="flex items-center"
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: -20, opacity: 0 }}
+                transition={{ duration: 0.25 }}
+              >
+                {cloneElement(data, {
+                  isLast,
+                  className,
+                })}
+                {!isLast && <Icon size={20} className="mx-2 text-gray-400" />}
+              </motion.li>
+            );
+          }
 
-        return null;
-      })}
+          return null;
+        })}
+      </AnimatePresence>
     </nav>
   );
 }
