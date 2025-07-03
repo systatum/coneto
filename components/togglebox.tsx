@@ -31,7 +31,7 @@ export default function Togglebox({
   const inputId = `togglebox-${name}-${props.value}`;
 
   return (
-    <div className="flex flex-row">
+    <div className={cn("flex flex-row gap-2", containerClassName)}>
       <AnimatePresence mode="wait" initial={false}>
         {isLoading ? (
           <motion.div
