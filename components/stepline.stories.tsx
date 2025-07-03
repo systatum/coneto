@@ -13,6 +13,18 @@ type Story = StoryObj<typeof Stepline>;
 
 export const Default: Story = {
   render: () => {
+    return (
+      <Stepline>
+        {Array.from({ length: 5 }).map((_, index) => {
+          return <Stepline.Item key={index} completed={index < 4} />;
+        })}
+      </Stepline>
+    );
+  },
+};
+
+export const Reversable: Story = {
+  render: () => {
     const STEPLINE_ITEMS = [
       {
         title: "Application Submitted",
@@ -40,7 +52,7 @@ export const Default: Story = {
     ];
 
     return (
-      <Stepline>
+      <Stepline reversable>
         {STEPLINE_ITEMS.map((data, index) => (
           <Stepline.Item
             title={data.title}
