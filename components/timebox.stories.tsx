@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Timebox } from "./timebox";
+import { useArgs } from "@storybook/preview-api";
+import { ChangeEvent, InputHTMLAttributes, useState } from "react";
 
 const meta: Meta<typeof Timebox> = {
   title: "Input Elements/Timebox",
@@ -19,7 +21,17 @@ export const Default: Story = {
     withSeconds: false,
   },
   render: (args) => {
-    return <Timebox {...args} />;
+    const [value, setValue] = useState({ timebox: "" });
+
+    const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+
+      setValue((prev) => ({ ...prev, [name]: value }));
+    };
+
+    console.log(value);
+
+    return <Timebox {...args} onChange={onChangeValue} />;
   },
 };
 
@@ -28,7 +40,17 @@ export const WithSeconds: Story = {
     withSeconds: true,
   },
   render: (args) => {
-    return <Timebox {...args} />;
+    const [value, setValue] = useState({ timebox: "" });
+
+    const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+
+      setValue((prev) => ({ ...prev, [name]: value }));
+    };
+
+    console.log(value);
+
+    return <Timebox {...args} onChange={onChangeValue} />;
   },
 };
 

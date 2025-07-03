@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { cn } from "./../lib/utils";
 import rawDayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -10,7 +10,7 @@ const dayjs = rawDayjs;
 
 interface TimeboxProps {
   withSeconds?: boolean;
-  onChange?: (value: string) => void;
+  onChange?: (value: ChangeEvent<HTMLInputElement>) => void;
   editable?: boolean;
   timezone?: string;
 }
@@ -73,7 +73,13 @@ export function Timebox({
       ...(withSeconds ? [ss.padStart(2, "0")] : []),
     ].join(":");
 
-    onChange?.(formatted);
+    const valueTime = {
+      target: {
+        name: "timebox",
+        value: formatted,
+      },
+    } as ChangeEvent<HTMLInputElement>;
+    onChange?.(valueTime);
   };
 
   const handleFocus = (setter: (v: string) => void) => () => setter("");
@@ -95,7 +101,7 @@ export function Timebox({
         onFocus={handleFocus(setHour)}
         min={0}
         max={24}
-        className={cn(inputClass)}
+        className={inputClass}
       />
       <span>:</span>
       <input
@@ -107,7 +113,7 @@ export function Timebox({
         onFocus={handleFocus(setMinute)}
         min={0}
         max={59}
-        className={cn(inputClass)}
+        className={inputClass}
       />
       {withSeconds && (
         <>
@@ -121,7 +127,7 @@ export function Timebox({
             onFocus={handleFocus(setSecond)}
             min={0}
             max={59}
-            className={cn(inputClass)}
+            className={inputClass}
           />
         </>
       )}
