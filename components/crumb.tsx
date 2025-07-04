@@ -2,7 +2,6 @@ import { cn } from "./../lib/utils";
 import {
   RemixiconComponentType,
   RiArrowRightSLine,
-  RiMoreFill,
   RiMoreLine,
 } from "@remixicon/react";
 import {
