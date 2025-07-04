@@ -1,5 +1,10 @@
 import { cn } from "./../lib/utils";
-import { RemixiconComponentType, RiArrowRightSLine } from "@remixicon/react";
+import {
+  RemixiconComponentType,
+  RiArrowRightSLine,
+  RiMoreFill,
+  RiMoreLine,
+} from "@remixicon/react";
 import {
   Children,
   cloneElement,
@@ -67,12 +72,11 @@ function Crumb({
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
               >
-                <button
+                <RiMoreLine
+                  size={20}
+                  className="text-gray-500 hover:text-[#61A9F9] cursor-pointer"
                   onClick={() => setExpanded(true)}
-                  className="px-1 text-gray-500 hover:text-[#61A9F9] cursor-pointer"
-                >
-                  ...
-                </button>
+                />
                 {!isLast && <Icon size={20} className="mx-2 text-gray-400" />}
               </motion.li>
             );
@@ -85,7 +89,7 @@ function Crumb({
                   (isValidElement(data) && data.key?.toString()) ||
                   `crumb-${index}`
                 }
-                className="flex items-center"
+                className="flex items-center min-h-[24px] max-h-[24px]"
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 exit={{ x: -20, opacity: 0 }}
