@@ -68,7 +68,7 @@ export default function Togglebox({
               layout
               transition={{ type: "spring", stiffness: 700, damping: 30 }}
               animate={{
-                x: checked ? 24 : 0,
+                x: checked ? 25 : 0,
               }}
             >
               {Icon && (
