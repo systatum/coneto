@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { Timeline } from "./timeline";
+import { Timeline, TimelineItemProps } from "./timeline";
 import Separator from "./separator";
 
 const meta: Meta<typeof Timeline> = {
@@ -14,7 +14,7 @@ type Story = StoryObj<typeof Timeline>;
 
 export const Default: Story = {
   render: () => {
-    const TIMELINE_ITEMS = [
+    const RAW_TIMELINE_ITEMS: TimelineItemProps[] = [
       {
         title: "Traveled to Japan",
         subtitle: [
@@ -22,26 +22,29 @@ export const Default: Story = {
           "- Tried authentic sushi and stayed in a ryokan",
         ],
         sidenote: [<span className="text-sm text-gray-700">Oct 2025</span>],
+        variant: "todo",
       },
       {
         title: "Started Daily Meditation Habit",
         subtitle: ["Practicing mindfulness for 10 minutes every morning"],
         sidenote: [<span className="text-sm text-gray-700">Jan 2023</span>],
-        completed: true,
+        variant: "error",
       },
       {
         title: "Ran First Half Marathon",
-        subtitle: ["Completed 21 km in under 2 hours"],
+        subtitle: ["variant 21 km in under 2 hours"],
         sidenote: [<span className="text-sm text-gray-700">Sep 2022</span>],
-        completed: true,
+        variant: "completed",
       },
       {
         title: "Adopted a Dog",
         subtitle: ["Golden Retriever named Mochi"],
         sidenote: [<span className="text-sm text-gray-700">Jun 2022</span>],
-        completed: true,
+        variant: "completed",
       },
-    ].reverse();
+    ];
+
+    const TIMELINE_ITEMS = [...RAW_TIMELINE_ITEMS].reverse();
 
     return (
       <Timeline>
@@ -50,7 +53,57 @@ export const Default: Story = {
             title={data.title}
             subtitle={data.subtitle}
             sidenote={data.sidenote}
-            completed={data.completed}
+            variant={data.variant}
+            key={index}
+          />
+        ))}
+      </Timeline>
+    );
+  },
+};
+
+export const WithClickable: Story = {
+  render: () => {
+    const RAW_TIMELINE_ITEMS: TimelineItemProps[] = [
+      {
+        title: "Traveled to Japan",
+        subtitle: [
+          "- Visited Tokyo, Kyoto, and Osaka",
+          "- Tried authentic sushi and stayed in a ryokan",
+        ],
+        sidenote: [<span className="text-sm text-gray-700">Oct 2025</span>],
+        variant: "todo",
+      },
+      {
+        title: "Started Daily Meditation Habit",
+        subtitle: ["Practicing mindfulness for 10 minutes every morning"],
+        sidenote: [<span className="text-sm text-gray-700">Jan 2023</span>],
+        variant: "error",
+      },
+      {
+        title: "Ran First Half Marathon",
+        subtitle: ["variant 21 km in under 2 hours"],
+        sidenote: [<span className="text-sm text-gray-700">Sep 2022</span>],
+        variant: "completed",
+      },
+      {
+        title: "Adopted a Dog",
+        subtitle: ["Golden Retriever named Mochi"],
+        sidenote: [<span className="text-sm text-gray-700">Jun 2022</span>],
+        variant: "completed",
+      },
+    ];
+
+    const TIMELINE_ITEMS = [...RAW_TIMELINE_ITEMS].reverse();
+
+    return (
+      <Timeline isClickable>
+        {TIMELINE_ITEMS.map((data, index) => (
+          <Timeline.Item
+            title={data.title}
+            subtitle={data.subtitle}
+            sidenote={data.sidenote}
+            variant={data.variant}
             key={index}
           />
         ))}
