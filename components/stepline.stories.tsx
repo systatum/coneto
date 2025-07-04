@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react/*";
-import { Stepline } from "./stepline";
+import { Stepline, SteplineItemProps } from "./stepline";
 
 const meta: Meta<typeof Stepline> = {
   title: "Controls/Stepline",
@@ -16,7 +16,7 @@ export const Default: Story = {
     return (
       <Stepline>
         {Array.from({ length: 5 }).map((_, index) => {
-          return <Stepline.Item key={index} completed={index < 4} />;
+          return <Stepline.Item key={index} variant={"todo"} />;
         })}
       </Stepline>
     );
@@ -25,21 +25,21 @@ export const Default: Story = {
 
 export const Reversable: Story = {
   render: () => {
-    const STEPLINE_ITEMS = [
+    const STEPLINE_ITEMS: SteplineItemProps[] = [
       {
         title: "Application Submitted",
         subtitle: ["Your application has been received"],
-        completed: true,
+        variant: "completed",
       },
       {
         title: "Initial Screening",
         subtitle: ["Resume and profile review"],
-        completed: true,
+        variant: "completed",
       },
       {
         title: "Technical Interview",
         subtitle: ["Assessment of technical skills"],
-        completed: true,
+        variant: "error",
       },
       {
         title: "Final Interview",
@@ -57,7 +57,7 @@ export const Reversable: Story = {
           <Stepline.Item
             title={data.title}
             subtitle={data.subtitle}
-            completed={data.completed}
+            variant={data.variant}
             key={index}
           />
         ))}

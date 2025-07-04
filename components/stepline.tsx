@@ -8,16 +8,16 @@ import {
   useState,
 } from "react";
 
-interface SteplineProps {
+export interface SteplineProps {
   children?: ReactNode;
   className?: string;
   reversable?: boolean;
 }
 
-interface SteplineItemProps {
+export interface SteplineItemProps {
   title?: string;
   subtitle?: ReactNode[];
-  completed?: boolean;
+  variant?: "current" | "todo" | "error" | "completed";
   className?: string;
   onClick?: () => void;
   id?: number;
@@ -45,14 +45,14 @@ function Stepline({ children, className, reversable }: SteplineProps) {
           >(child)
         )
           return null;
-        const completed = child.props.completed;
+        const variant = child.props.variant;
         const onClick = child.props.onClick;
 
         return (
           <div
             key={index}
             onClick={() => {
-              if (reversable && completed) {
+              if (reversable && variant) {
                 onClick();
               }
             }}
@@ -64,7 +64,7 @@ function Stepline({ children, className, reversable }: SteplineProps) {
             }}
             className={cn(
               "flex flex-row gap-2 relative",
-              reversable && completed && "cursor-pointer"
+              reversable && variant && "cursor-pointer"
             )}
           >
             <div className="flex flex-row w-full justify-between">
@@ -78,7 +78,9 @@ function Stepline({ children, className, reversable }: SteplineProps) {
                 <div
                   className={cn(
                     "flex-1 h-px min-w-[44px] bg-gray-400",
-                    completed && "bg-[rgb(55,130,112)]"
+                    variant === "error" && "bg-[#b60000]",
+                    (variant === "completed" || variant === "current") &&
+                      "bg-[#00b62e]"
                   )}
                 />
               )}
@@ -93,7 +95,7 @@ function Stepline({ children, className, reversable }: SteplineProps) {
 function SteplineItem({
   subtitle,
   title,
-  completed,
+  variant = "todo",
   className,
   id,
   hoveredIndex,
@@ -116,13 +118,15 @@ function SteplineItem({
           className={cn(
             "text-white absolute flex items-center justify-center min-w-[30px] min-h-[30px] max-w-[30px] max-h-[30px] transform duration-200 bg-gray-600 rounded-full -translate-y-1/2 top-1/2",
             hoveredIndex === id && "scale-[130%] bg-gray-400",
-            completed && "bg-[#4eb59c]"
+            variant === "error" && "bg-[#8f0751]",
+            (variant === "completed" || variant === "current") && "bg-[#2fe620]"
           )}
         />
         <div
           className={cn(
             "text-white flex relative items-center justify-center min-w-[30px] min-h-[30px] max-w-[30px] max-h-[30px] bg-gray-600 rounded-full",
-            completed && "bg-[rgb(55,130,112)]"
+            variant === "error" && "bg-[#b60000]",
+            (variant === "completed" || variant === "current") && "bg-[#00b62e]"
           )}
         >
           {id}
