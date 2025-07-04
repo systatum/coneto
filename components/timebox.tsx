@@ -24,6 +24,7 @@ export function Timebox({
   const [hour, setHour] = useState<string>("");
   const [minute, setMinute] = useState<string>("");
   const [second, setSecond] = useState<string>("");
+  const [isFocused, setIsFocused] = useState(false);
 
   const syncTime = (time: string) => {
     const now = dayjs().tz(time);
@@ -49,6 +50,7 @@ export function Timebox({
   }, [editable]);
 
   const handleChange = (type: "hour" | "minute" | "second", value: string) => {
+    const newDigit = value.slice(-1);
     if (value === "") {
       if (type === "hour") setHour("");
       if (type === "minute") setMinute("");
@@ -56,16 +58,35 @@ export function Timebox({
       return;
     }
 
-    const number = parseInt(value, 10);
-    if (isNaN(number)) return;
+    if (newDigit === "" || isNaN(Number(newDigit))) return;
 
-    if (type === "hour" && number <= 24) setHour(value);
-    if (type === "minute" && number <= 59) setMinute(value);
-    if (type === "second" && number <= 59) setSecond(value);
+    let newVal = "";
+    let max = 0;
 
-    const hh = type === "hour" ? value : hour;
-    const mm = type === "minute" ? value : minute;
-    const ss = type === "second" ? value : second;
+    if (type === "hour") {
+      newVal = hour.length >= 2 ? newDigit : hour + newDigit;
+      max = 24;
+      if (parseInt(newVal, 10) > max) return;
+      setHour(newVal);
+    }
+
+    if (type === "minute") {
+      newVal = minute.length >= 2 ? newDigit : minute + newDigit;
+      max = 59;
+      if (parseInt(newVal, 10) > max) return;
+      setMinute(newVal);
+    }
+
+    if (type === "second") {
+      newVal = second.length >= 2 ? newDigit : second + newDigit;
+      max = 59;
+      if (parseInt(newVal, 10) > max) return;
+      setSecond(newVal);
+    }
+
+    const hh = type === "hour" ? newVal : hour;
+    const mm = type === "minute" ? newVal : minute;
+    const ss = type === "second" ? newVal : second;
 
     const formatted = [
       hh.padStart(2, "0"),
@@ -82,23 +103,34 @@ export function Timebox({
     onChange?.(valueTime);
   };
 
-  const handleFocus = (setter: (v: string) => void) => () => setter("");
-
   const inputClass = cn(
-    "w-[50px] text-center border-none items-center px-1 py-1 bg-white border border-gray-300 focus:outline-none placeholder:text-center focus:bg-yellow-200 leading-[30px]",
+    "w-[50px] text-center border-none items-center px-1 py-1 text-sm bg-white border border-gray-300 focus:outline-none placeholder:text-center",
     "appearance-none [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
     editable && "hover:text-gray-500"
   );
 
+  console.log(hour);
+
   return (
-    <div className="flex border border-gray-300 w-fit rounded-xs  items-center flex-row gap-1">
+    <div
+      className={cn(
+        "flex border border-gray-300 w-fit rounded-xs  items-center flex-row",
+        isFocused && "ring-[#61A9F9] border-[#61A9F9]"
+      )}
+    >
       <input
         type="number"
         placeholder="HH"
         disabled={!editable}
         value={hour}
         onChange={(e) => handleChange("hour", e.target.value)}
-        onFocus={handleFocus(setHour)}
+        onFocus={() => {
+          setHour("");
+          setIsFocused(true);
+        }}
+        onBlur={() => {
+          setIsFocused(false);
+        }}
         min={0}
         max={24}
         className={inputClass}
@@ -110,7 +142,13 @@ export function Timebox({
         disabled={!editable}
         value={minute}
         onChange={(e) => handleChange("minute", e.target.value)}
-        onFocus={handleFocus(setMinute)}
+        onFocus={() => {
+          setMinute("");
+          setIsFocused(true);
+        }}
+        onBlur={() => {
+          setIsFocused(false);
+        }}
         min={0}
         max={59}
         className={inputClass}
@@ -124,7 +162,13 @@ export function Timebox({
             disabled={!editable}
             value={second}
             onChange={(e) => handleChange("second", e.target.value)}
-            onFocus={handleFocus(setSecond)}
+            onFocus={() => {
+              setSecond("");
+              setIsFocused(true);
+            }}
+            onBlur={() => {
+              setIsFocused(false);
+            }}
             min={0}
             max={59}
             className={inputClass}
