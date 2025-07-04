@@ -26,12 +26,7 @@ interface ErrorSlateProps {
   cubeFaceStyle?: CSSProperties;
 }
 
-function ErrorSlate({
-  code,
-  children,
-  title = "PageNotFound",
-  cubeFaceStyle,
-}: ErrorSlateProps) {
+function ErrorSlate({ code, children, title, cubeFaceStyle }: ErrorSlateProps) {
   const defaultFaceStyle: CSSProperties = {
     background: "#dd0b0b",
     borderWidth: "1px",
