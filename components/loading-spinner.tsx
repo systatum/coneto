@@ -5,6 +5,7 @@ interface LoadingSpinnerProps {
   textSize?: number;
   label?: string;
   gap?: number;
+  className?: string;
 }
 
 export default function LoadingSpinner({
@@ -12,10 +13,11 @@ export default function LoadingSpinner({
   textSize = 16,
   label,
   gap = 2,
+  className,
 }: LoadingSpinnerProps) {
   return (
     <div
-      className="flex flex-row items-center"
+      className={cn("flex flex-row items-center", className)}
       style={{
         gap: `${gap}px`,
       }}

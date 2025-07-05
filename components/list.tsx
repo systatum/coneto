@@ -21,6 +21,7 @@ import { cn } from "./../lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import LoadingSpinner from "./loading-spinner";
 import Checkbox from "./checkbox";
+import Togglebox from "./togglebox";
 
 export interface ListProps {
   searchable?: boolean;
@@ -42,11 +43,14 @@ export interface ListProps {
 export interface ListGroupProps {
   id: string;
   title: string;
+  subtitle?: string;
   children: ReactNode;
   draggable?: boolean;
   containerClassName?: string;
   contentClassName?: string;
   selectable?: boolean;
+  rightSideContent?: ReactNode[];
+  openerStyle?: "chevron" | "togglebox" | "none";
 }
 
 export interface ListItemProps {
@@ -154,6 +158,9 @@ function ListGroup({
   contentClassName,
   draggable,
   selectable,
+  subtitle,
+  rightSideContent,
+  openerStyle = "chevron",
 }: ListGroupProps) {
   const childArray = Children.toArray(children).filter(isValidElement);
   const [isOpen, setIsOpen] = useState(true);
@@ -176,15 +183,33 @@ function ListGroup({
         aria-expanded={isOpen}
         className="flex items-center cursor-pointer justify-between w-full py-2"
       >
-        <h2 className="text-sm font-medium select-none text-left">{title}</h2>
-
-        <RiArrowDownSLine
-          className={cn(
-            "transition-transform duration-200",
-            isOpen ? "rotate-0" : "-rotate-180"
+        <div className="flex flex-col">
+          <h2 className="text-sm font-medium select-none text-left">{title}</h2>
+          {subtitle && (
+            <span className="text-xs text-gray-500">{subtitle}</span>
           )}
-          size={18}
-        />
+        </div>
+
+        <div className="flex flex-row gap-2">
+          {rightSideContent &&
+            rightSideContent.map((data, index) => (
+              <Fragment key={index}>{data}</Fragment>
+            ))}
+          {openerStyle === "chevron" ? (
+            <RiArrowDownSLine
+              className={cn(
+                "transition-transform duration-200",
+                isOpen ? "rotate-0" : "-rotate-180"
+              )}
+              size={18}
+            />
+          ) : openerStyle === "togglebox" ? (
+            <Togglebox
+              checked={isOpen}
+              onChange={() => setIsOpen((prev) => !prev)}
+            />
+          ) : null}
+        </div>
       </button>
       {isOpen && (
         <div
