@@ -1,8 +1,13 @@
-# Coneto Repo!
+# Coneto
 
-## What is Coneto?
+Coneto is a shared component library used across all applications at Systatum — including Workaty, Dashtomer, and others, designed with modernity, simplicity, and usability in mind.
 
-Coneto is a shared component library used across all applications at Systatum — including Workaty, Dashtomer, and others.
+To start the storybook locally:
+
+```bash
+pnpm install
+pnpm storybook
+```
 
 ## Component Structure
 
