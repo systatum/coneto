@@ -40,7 +40,7 @@ export default function Avatar({
   changeable,
   onChange,
   frameSize,
-  fontSize,
+  fontSize = 23,
   ...props
 }: AvatarProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -73,7 +73,6 @@ export default function Avatar({
       onChange={changeable ? handleFileChange : onChange}
       className={clsx(
         "group relative flex items-center justify-center overflow-hidden rounded-full border border-gray-100 font-bold",
-
         isClickable ? "cursor-pointer" : "cursor-default"
       )}
       style={{
