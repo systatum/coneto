@@ -2,6 +2,12 @@ import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "./../lib/utils";
 import LoadingSpinner from "./loading-spinner";
+import {
+  RemixiconComponentType,
+  RiArrowDownSLine,
+  RiArrowUpSLine,
+} from "@remixicon/react";
+import { TipMenu, TipMenuItemProps } from "./tip-menu";
 
 const buttonVariants = cva(
   "inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-xs text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-60 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
@@ -39,23 +45,135 @@ function Button({
   children,
   isLoading,
   size,
+  tipMenu,
+  subMenuList,
+  dropdownClassName,
+  openedIcon: OpenedIcon = RiArrowDownSLine,
+  closedIcon: ClosedIcon = RiArrowUpSLine,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     isLoading?: boolean;
+    tipMenu?: boolean;
+    subMenuList?: TipMenuItemProps[];
+    dropdownClassName?: string;
+    openedIcon?: RemixiconComponentType;
+    closedIcon?: RemixiconComponentType;
   }) {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [hovered, setHovered] = React.useState<
+    "main" | "original" | "dropdown"
+  >("original");
+  const [positionClass, setPositionClass] = React.useState<
+    "left-0" | "right-0"
+  >("left-0");
+
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (containerRef.current && !containerRef.current.contains(target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  React.useEffect(() => {
+    if (isOpen && containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      const halfWindowWidth = window.innerWidth / 2;
+
+      if (rect.left > halfWindowWidth) {
+        setPositionClass("right-0");
+      } else {
+        setPositionClass("left-0");
+      }
+    }
+  }, [isOpen]);
+
   return (
-    <button
-      className={cn(buttonVariants({ variant, size }), "relative", className)}
-      disabled={isLoading || props.disabled}
-      {...props}
-    >
-      <span className="pointer-events-none absolute inset-0 rounded-xs bg-white opacity-0 active:opacity-10" />
+    <div ref={containerRef} className="flex flex-row relative items-center">
+      <button
+        onMouseEnter={() => setHovered("main")}
+        onMouseLeave={() => setHovered("original")}
+        className={cn(
+          buttonVariants({ variant, size }),
+          "relative",
+          tipMenu && "rounded-none",
+          className
+        )}
+        disabled={isLoading || props.disabled}
+        {...props}
+      >
+        <span className="pointer-events-none absolute inset-0 rounded-xs bg-white opacity-0 active:opacity-10" />
 
-      {children}
+        {children}
+        {isLoading && <LoadingSpinner />}
+      </button>
+      {tipMenu && (
+        <React.Fragment>
+          <span
+            aria-label="divider"
+            className={cn(
+              "absolute transform duration-200 right-[34%] h-full w-px border-[0.5px] top-1/2 -translate-y-1/2 text-gray-600 z-10",
+              hovered === "original" && !isOpen && "h-[80%]"
+            )}
+          />
+          <button
+            className={cn(
+              buttonVariants({ variant, size }),
+              "relative",
+              tipMenu && "rounded-none",
+              className
+            )}
+            onMouseEnter={() => {
+              setHovered("dropdown");
+            }}
+            onMouseLeave={() => {
+              setHovered("original");
+            }}
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            {isOpen ? (
+              <OpenedIcon
+                className={variant === "default" ? "text-gray-400" : ""}
+                size={20}
+              />
+            ) : (
+              <ClosedIcon
+                className={variant === "default" ? "text-gray-400" : ""}
+                size={20}
+              />
+            )}
+          </button>
+        </React.Fragment>
+      )}
 
-      {isLoading && <LoadingSpinner />}
-    </button>
+      {isOpen && (
+        <div
+          onMouseEnter={() => setHovered("dropdown")}
+          onMouseLeave={() => {
+            setHovered("original");
+          }}
+          className={cn("absolute top-full z-10", positionClass)}
+        >
+          <TipMenu
+            setIsOpen={() => {
+              setIsOpen(false);
+              setHovered("original");
+            }}
+            className={dropdownClassName}
+            subMenuList={subMenuList}
+          />
+        </div>
+      )}
+    </div>
   );
 }
 

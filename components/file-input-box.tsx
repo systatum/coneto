@@ -98,7 +98,7 @@ export default function FileInputBox({
           </div>
         </>
       ) : (
-        <h2 className="text-sm w-full">{placeholder}</h2>
+        <span className="text-sm w-full">{placeholder}</span>
       )}
 
       {selectedFile === "" && (

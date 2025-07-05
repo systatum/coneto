@@ -119,19 +119,19 @@ function Table({
   return (
     <div className={tableClass}>
       {selectedData.length > 0 && (
-        <div className="w-full py-2 text-white bg-gray-600 border-gray-300 border border-b-[0.5px] px-6">
+        <div className="w-full py-2 text-white bg-gray-600 border-b-[0.5px] px-6">
           {selectedData.length} items selected
         </div>
       )}
       <div
         className={cn(
-          "border flex flex-col border-gray-300 relative",
+          "flex flex-col relative",
           selectedData.length > 0 ? "border-t-[0.5]" : ""
         )}
       >
-        <div className="flex flex-row bg-blue-500 items-center font-semibold text-white p-3">
+        <div className="flex flex-row bg-[#0f3969] items-center font-semibold text-white p-3">
           {selectable && (
-            <div className="w-8 bg-blue-500 flex justify-center cursor-pointer pointer-events-auto items-center">
+            <div className="w-8 bg-[#0f3969] flex justify-center cursor-pointer pointer-events-auto items-center">
               <Checkbox
                 onChange={handleSelectAll}
                 checked={allSelected}
@@ -152,9 +152,10 @@ function Table({
                     openedIcon={RiMoreFill}
                     isOpen={isOpen}
                     setIsOpen={setIsOpen}
-                    className="min-w-[235px]"
-                    containerClassName="bg-transparent"
-                    variant="primary"
+                    dropdownClassName="min-w-[235px]"
+                    triggerClassName="hover:bg-[#002e54]"
+                    toggleActiveClassName="bg-[#002e54]"
+                    variant="none"
                     subMenuList={subMenuList(`${col.caption}`)}
                   />
                 </Toolbar>
@@ -187,15 +188,9 @@ function TableRow({
   ...props
 }: TableRowProps) {
   const tableRowClass = cn(
-    "flex relative p-3 items-center border-b w-full border-gray-200 cursor-default",
+    "flex relative p-3 items-center border-r border-l border-b w-full border-gray-200 cursor-default",
     className,
-    isSelected && index % 2 === 0
-      ? "bg-blue-50"
-      : isSelected
-        ? "bg-blue-100"
-        : index % 2 === 0
-          ? "bg-white hover:bg-[rgb(217,231,251)]"
-          : "bg-gray-50 hover:bg-[rgb(217,231,251)]"
+    isSelected ? "bg-blue-50" : "bg-gray-50 hover:bg-blue-100"
   );
 
   return (

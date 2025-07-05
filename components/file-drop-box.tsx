@@ -188,14 +188,14 @@ export default function FileDropBox({
                 <data.icon size={data.size} key={index} />
               ))}
             </div>
-            <h2
+            <span
               className={cn(
                 "font-semibold text-xl",
                 isDragging ? "text-blue-500" : "text-black"
               )}
             >
               {placeholder}
-            </h2>
+            </span>
             <div>
               <span className="text-blue-500 underline">Select some files</span>
               &nbsp;from your computer

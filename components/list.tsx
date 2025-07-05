@@ -184,7 +184,9 @@ function ListGroup({
         className="flex items-center cursor-pointer justify-between w-full py-2"
       >
         <div className="flex flex-col">
-          <h2 className="text-sm font-medium select-none text-left">{title}</h2>
+          <span className="text-sm font-medium select-none text-left">
+            {title}
+          </span>
           {subtitle && (
             <span className="text-xs text-gray-500">{subtitle}</span>
           )}

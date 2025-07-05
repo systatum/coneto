@@ -69,7 +69,7 @@ export default function Messagebox({
         <Icon className={cn("mt-1", messageBoxVariant.icon)} size={16} />
       )}
       <div className="flex flex-col gap-1">
-        <h2 className="font-semibold">{title}</h2>
+        <span className="font-semibold">{title}</span>
         <span className="text-sm">{children}</span>
         {actionLinks && (
           <div className="flex flex-row gap-2">

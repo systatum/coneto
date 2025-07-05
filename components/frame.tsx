@@ -29,7 +29,7 @@ const Frame: React.FC<FrameProps> = ({
       )}
     >
       {title && (
-        <h2
+        <span
           className={clsx(
             backgroundClassTitle,
             classNameTitle,
@@ -41,7 +41,7 @@ const Frame: React.FC<FrameProps> = ({
             aria-hidden="true"
           />
           <span className="relative">{title}</span>
-        </h2>
+        </span>
       )}
       {children}
     </div>

@@ -93,14 +93,14 @@ export default function Card({
   return (
     <div className={cardClass}>
       {title && (
-        <h2
+        <span
           className={cn(
             "relative py-3 text-base border-gray-300 px-6 border-b",
             headerClassName
           )}
         >
           {title}
-        </h2>
+        </span>
       )}
       {children}
 

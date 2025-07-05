@@ -36,7 +36,7 @@ function TreeList<T extends TreeListItemsProps>({
       {content.length > 0 ? (
         content.map((data, index) => (
           <div key={index} className="flex flex-col gap-1">
-            <h2 className={"font-medium px-4 py-[2px]"}>{data.label}</h2>
+            <span className={"font-medium px-4 py-[2px]"}>{data.label}</span>
             <div className="flex flex-col">
               {data.items.map((val) => (
                 <TreeListItem

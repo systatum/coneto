@@ -93,7 +93,7 @@ export const ToolbarDefault: Story = {
     return (
       <Toolbar>
         <Toolbar.Menu
-          className="min-w-[235px]"
+          dropdownClassName="min-w-[235px]"
           onClick={() => {
             console.log("test");
           }}
@@ -103,7 +103,7 @@ export const ToolbarDefault: Story = {
           subMenuList={subMenuList}
         />
         <Toolbar.Menu
-          className="min-w-[235px]"
+          dropdownClassName="min-w-[235px]"
           caption="Toolbar Primary Mode"
           icon={RiMessage2Line}
           iconColor="white"
@@ -111,7 +111,7 @@ export const ToolbarDefault: Story = {
           subMenuList={subMenuList}
         />
         <Toolbar.Menu
-          className="min-w-[235px]"
+          dropdownClassName="min-w-[235px]"
           caption="Toolbar Danger Mode"
           icon={RiMessage2Line}
           iconColor="white"
