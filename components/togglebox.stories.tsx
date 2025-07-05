@@ -87,7 +87,7 @@ export const WithIconAndLoading: Story = {
         setUpdateArgs({ isLoading: true });
         setTimeout(() => {
           setUpdateArgs({ isLoading: false });
-        }, 800);
+        }, 1200);
       }
     }, [args.checked]);
 
