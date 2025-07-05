@@ -6,7 +6,7 @@ import {
   RiThumbUpFill,
   RiThumbUpLine,
 } from "@remixicon/react";
-import { ChangeEvent, ReactElement, useState } from "react";
+import { ChangeEvent, ReactElement, useRef, useState } from "react";
 
 export interface ThumbFieldProps {
   value?: boolean | null;
@@ -45,23 +45,22 @@ export default function ThumbField({
   const [thumbValue, setThumbValue] =
     useState<ThumbFieldValue>(thumbStateValue);
 
+  const thumbInputRef = useRef<HTMLInputElement>(null);
+
   const handleChangeValue = (data: ThumbFieldValue) => {
     if (thumbValue !== data) {
       setThumbValue(data);
     }
 
     if (onChange) {
-      if (data === "up") {
-        const InputValueChecked = {
-          target: { name: name, checked: true },
-        } as ChangeEvent<HTMLInputElement>;
-        onChange(InputValueChecked);
-      } else {
-        const InputValueChecked = {
-          target: { name: name, checked: false },
-        } as ChangeEvent<HTMLInputElement>;
-        onChange(InputValueChecked);
-      }
+      const syntheticEvent = {
+        target: {
+          name,
+          value: data === "up" ? true : data === "down" ? false : "",
+        },
+      } as ChangeEvent<HTMLInputElement>;
+
+      onChange(syntheticEvent);
     }
   };
 
@@ -73,6 +72,14 @@ export default function ThumbField({
 
   const inputElement: ReactElement = (
     <div className={cn("flex flex-row gap-2 items-center", className)}>
+      <input
+        ref={thumbInputRef}
+        name={name}
+        type="hidden"
+        value={
+          thumbValue === "up" ? "true" : thumbValue === "down" ? "false" : ""
+        }
+      />
       <div
         onClick={() => {
           handleChangeValue("up");
@@ -129,6 +136,7 @@ export default function ThumbField({
       {label && <label htmlFor={id}>{label}</label>}
       <div className="flex flex-col gap-1 text-xs">
         {inputElement}
+
         {showError && <span className="text-red-600">{errorMessage}</span>}
       </div>
     </div>

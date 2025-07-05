@@ -22,8 +22,8 @@ export const Default: Story = {
     const [, setUpdateArgs] = useArgs();
 
     const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
-      const { name, checked } = e.target;
-      setUpdateArgs({ ...args, [name]: checked });
+      const { name, value } = e.target;
+      setUpdateArgs({ ...args, [name]: value });
     };
 
     return <ThumbField {...args} onChange={onChangeValue} />;
@@ -41,8 +41,8 @@ export const WithLabel: Story = {
     const [, setUpdateArgs] = useArgs();
 
     const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
-      const { name, checked } = e.target;
-      setUpdateArgs({ ...args, [name]: checked });
+      const { name, value } = e.target;
+      setUpdateArgs({ ...args, [name]: value });
     };
 
     return <ThumbField {...args} onChange={onChangeValue} />;
