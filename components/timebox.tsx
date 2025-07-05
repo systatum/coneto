@@ -1,131 +1,111 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, ReactElement, useEffect, useState } from "react";
 import { cn } from "./../lib/utils";
-import rawDayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone";
-
-rawDayjs.extend(utc);
-rawDayjs.extend(timezone);
-const dayjs = rawDayjs;
 
 interface TimeboxProps {
   withSeconds?: boolean;
   onChange?: (value: ChangeEvent<HTMLInputElement>) => void;
   editable?: boolean;
-  timezone?: string;
+  containerClassName?: string;
+  inputClassName?: string;
+  disabled?: boolean;
+  label?: string;
+  showError?: boolean;
+  errorMessage?: string;
+  value?: string;
+  name?: string;
 }
 
 export function Timebox({
   withSeconds = false,
-  timezone = "Asia/Jakarta",
   onChange,
   editable = true,
+  containerClassName,
+  inputClassName,
+  disabled,
+  label,
+  errorMessage,
+  showError,
+  value,
+  name,
 }: TimeboxProps) {
+  const stateValue = !editable ? value : "";
+
   const [hour, setHour] = useState<string>("");
   const [minute, setMinute] = useState<string>("");
   const [second, setSecond] = useState<string>("");
   const [isFocused, setIsFocused] = useState(false);
 
-  const syncTime = (time: string) => {
-    const now = dayjs().tz(time);
-    const hh = now.format("HH");
-    const mm = now.format("mm");
-    const ss = now.format("ss");
-
-    setHour(hh);
-    setMinute(mm);
-    setSecond(ss);
-  };
-
   useEffect(() => {
-    if (!editable) {
-      syncTime(timezone);
-
-      const interval = setInterval(() => {
-        syncTime(timezone);
-      }, 1000);
-
-      return () => clearInterval(interval);
+    if (stateValue) {
+      const [hh, mm, ss] = stateValue.split(":");
+      setHour(hh || "00");
+      setMinute(mm || "00");
+      setSecond(ss || "00");
     }
-  }, [editable]);
+  }, [stateValue]);
 
   const handleChange = (type: "hour" | "minute" | "second", value: string) => {
     const newDigit = value.slice(-1);
-    if (value === "") {
-      if (type === "hour") setHour("");
-      if (type === "minute") setMinute("");
-      if (type === "second") setSecond("");
+    const isDelete = value === "";
+    const isInvalid = newDigit === "" || isNaN(Number(newDigit));
+
+    const setters = { hour: setHour, minute: setMinute, second: setSecond };
+    const values = { hour, minute, second };
+    const maxValues = { hour: 24, minute: 59, second: 59 };
+
+    if (isDelete) {
+      setters[type]("");
+    } else if (!isInvalid) {
+      const oldVal = values[type];
+      const newVal = oldVal.length >= 2 ? newDigit : oldVal + newDigit;
+      if (parseInt(newVal, 10) > maxValues[type]) return;
+      setters[type](newVal);
+      values[type] = newVal;
+    } else {
       return;
     }
 
-    if (newDigit === "" || isNaN(Number(newDigit))) return;
-
-    let newVal = "";
-    let max = 0;
-
-    if (type === "hour") {
-      newVal = hour.length >= 2 ? newDigit : hour + newDigit;
-      max = 24;
-      if (parseInt(newVal, 10) > max) return;
-      setHour(newVal);
-    }
-
-    if (type === "minute") {
-      newVal = minute.length >= 2 ? newDigit : minute + newDigit;
-      max = 59;
-      if (parseInt(newVal, 10) > max) return;
-      setMinute(newVal);
-    }
-
-    if (type === "second") {
-      newVal = second.length >= 2 ? newDigit : second + newDigit;
-      max = 59;
-      if (parseInt(newVal, 10) > max) return;
-      setSecond(newVal);
-    }
-
-    const hh = type === "hour" ? newVal : hour;
-    const mm = type === "minute" ? newVal : minute;
-    const ss = type === "second" ? newVal : second;
+    const hh = type === "hour" ? (isDelete ? "" : values.hour) : hour;
+    const mm = type === "minute" ? (isDelete ? "" : values.minute) : minute;
+    const ss = type === "second" ? (isDelete ? "" : values.second) : second;
 
     const formatted = [
-      hh.padStart(2, "0"),
-      mm.padStart(2, "0"),
-      ...(withSeconds ? [ss.padStart(2, "0")] : []),
+      (hh || "0").padStart(2, "0"),
+      (mm || "0").padStart(2, "0"),
+      (ss || "0").padStart(2, "0"),
     ].join(":");
 
-    const valueTime = {
+    onChange?.({
       target: {
-        name: "timebox",
+        name,
         value: formatted,
       },
-    } as ChangeEvent<HTMLInputElement>;
-    onChange?.(valueTime);
+    } as ChangeEvent<HTMLInputElement>);
   };
 
   const inputClass = cn(
     "w-[50px] text-center border-none items-center px-1 py-1 text-sm bg-white border border-gray-300 focus:outline-none placeholder:text-center",
     "appearance-none [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
-    editable && "hover:text-gray-500"
+    disabled && "cursor-not-allowed opacity-50",
+    inputClassName
   );
 
-  console.log(hour);
-
-  return (
+  const inputElement: ReactElement = (
     <div
       className={cn(
-        "flex border border-gray-300 w-fit rounded-xs  items-center flex-row",
-        isFocused && "ring-[#61A9F9] border-[#61A9F9]"
+        "flex border border-gray-300 w-fit rounded-xs items-center flex-row",
+        isFocused && "ring-[#61A9F9] border-[#61A9F9]",
+        showError && "ring-red-600 border-red-600",
+        containerClassName
       )}
     >
       <input
         type="number"
         placeholder="HH"
-        disabled={!editable}
+        disabled={!editable || disabled}
         value={hour}
         onChange={(e) => handleChange("hour", e.target.value)}
         onFocus={() => {
-          setHour("");
           setIsFocused(true);
         }}
         onBlur={() => {
@@ -135,15 +115,14 @@ export function Timebox({
         max={24}
         className={inputClass}
       />
-      <span>:</span>
+      <span className="-translate-y-[1px]">:</span>
       <input
         type="number"
         placeholder="MM"
-        disabled={!editable}
+        disabled={!editable || disabled}
         value={minute}
         onChange={(e) => handleChange("minute", e.target.value)}
         onFocus={() => {
-          setMinute("");
           setIsFocused(true);
         }}
         onBlur={() => {
@@ -155,15 +134,14 @@ export function Timebox({
       />
       {withSeconds && (
         <>
-          <span>:</span>
+          <span className="-translate-y-[1px]">:</span>
           <input
             type="number"
             placeholder="SS"
-            disabled={!editable}
+            disabled={!editable || disabled}
             value={second}
             onChange={(e) => handleChange("second", e.target.value)}
             onFocus={() => {
-              setSecond("");
               setIsFocused(true);
             }}
             onBlur={() => {
@@ -175,6 +153,24 @@ export function Timebox({
           />
         </>
       )}
+    </div>
+  );
+
+  const inputId = `textbox-${name}`;
+
+  return (
+    <div
+      className={cn(
+        `flex w-full flex-col gap-2 text-xs`,
+        disabled && "cursor-not-allowed opacity-50",
+        containerClassName
+      )}
+    >
+      {label && <label htmlFor={inputId}>{label}</label>}
+      <div className="flex flex-col gap-1 text-xs">
+        {inputElement}
+        {showError && <span className="text-red-600">{errorMessage}</span>}
+      </div>
     </div>
   );
 }
