@@ -28,8 +28,6 @@ export default function Togglebox({
   titleClassName,
   ...props
 }: ToggleboxProps) {
-  const inputId = `togglebox-${name}-${props.value}`;
-
   return (
     <div className={cn("flex flex-row gap-2", containerClassName)}>
       <AnimatePresence mode="wait" initial={false}>
@@ -51,7 +49,7 @@ export default function Togglebox({
             className="relative flex flex-row items-center cursor-pointer w-12 h-6"
           >
             <input
-              id={inputId}
+              id={props.id}
               name={name}
               type="checkbox"
               className="sr-only"
