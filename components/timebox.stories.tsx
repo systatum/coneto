@@ -1,14 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Timebox } from "./timebox";
 import { ChangeEvent, useEffect, useState } from "react";
-import rawDayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone";
 import { useArgs } from "@storybook/preview-api";
-
-rawDayjs.extend(utc);
-rawDayjs.extend(timezone);
-const dayjs = rawDayjs;
 
 const meta: Meta<typeof Timebox> = {
   title: "Input Elements/Timebox",
@@ -85,47 +78,6 @@ export const WithLiveTime: Story = {
     }, []);
 
     return <Timebox {...args} value={time} />;
-  },
-};
-
-export const WithLiveTimeAndLocation: Story = {
-  args: {
-    withSeconds: true,
-    editable: false,
-    label: "Timezone Japan",
-  },
-  render: (args) => {
-    const [time, setTime] = useState("");
-
-    const syncTime = (tz: string) => {
-      const now = dayjs().tz(tz).format("HH:mm:ss");
-      setTime(now);
-    };
-
-    useEffect(() => {
-      if (!args.editable) syncTime("Asia/Tokyo");
-
-      const interval = setInterval(() => {
-        syncTime("Asia/Tokyo");
-      }, 100);
-
-      return () => clearInterval(interval);
-    }, [args.editable]);
-
-    return <Timebox {...args} value={time} />;
-  },
-};
-
-export const WithDisabled: Story = {
-  args: {
-    withSeconds: true,
-    editable: false,
-    disabled: true,
-    label: "Can't edit",
-    errorMessage: "This field is required",
-  },
-  render: (args) => {
-    return <Timebox {...args} />;
   },
 };
 
