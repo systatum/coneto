@@ -29,9 +29,11 @@ interface ToolbarMenuProps {
   isOpen?: boolean;
   setIsOpen?: (data?: boolean) => void;
   onClick?: () => void;
-  className?: string;
+  dropdownClassName?: string;
   containerClassName?: string;
-  variant?: "default" | "primary" | "danger";
+  triggerClassName?: string;
+  toggleActiveClassName?: string;
+  variant?: "default" | "primary" | "danger" | "none";
 }
 
 const VARIANT_CLASS_MAP = {
@@ -110,8 +112,10 @@ function ToolbarMenu({
   isOpen,
   setIsOpen,
   onClick,
-  className,
+  dropdownClassName,
   containerClassName,
+  triggerClassName,
+  toggleActiveClassName,
   variant = "default",
 }: ToolbarMenuProps) {
   const [hovered, setHovered] = useState<"main" | "original" | "dropdown">(
@@ -189,7 +193,8 @@ function ToolbarMenu({
               className={cn(
                 `flex flex-row items-center gap-2 p-2`,
                 hovered === "main" && toolbarMenuHoverClass,
-                isOpen && toolbarMenuBorderActiveClass
+                isOpen && toolbarMenuBorderActiveClass,
+                triggerClassName
               )}
             >
               {Icon && (
@@ -200,12 +205,10 @@ function ToolbarMenu({
               )}
             </div>
             <span
+              aria-label="divider"
               className={cn(
-                `absolute right-[30px] md:right-9 text-[44px] h-full  w-fit border-[0.5px]`,
-                variant === "default" ? "text-[#ececec]" : "",
-                hovered === "original" && !isOpen
-                  ? "max-h-[28px] top-1"
-                  : "top-0 max-h-[40px]"
+                "absolute transform duration-200 right-[35px] h-full w-px border-[0.5px] top-1/2 -translate-y-1/2 text-[#ececec] z-10",
+                hovered === "original" && !isOpen && "h-[80%]"
               )}
             ></span>
           </>
@@ -218,10 +221,12 @@ function ToolbarMenu({
             setHovered("original");
           }}
           className={cn(
-            "flex p-2 relative",
+            "flex p-2 relative h-full items-center max-w-[36px]",
             hovered === "dropdown" && toolbarMenuHoverClass,
             isOpen && toolbarMenuBackgroundActiveClass,
-            isOpen && toolbarMenuBorderActiveClass
+            isOpen && toolbarMenuBorderActiveClass,
+            triggerClassName,
+            isOpen && toggleActiveClassName
           )}
           onClick={handleClickOpen}
         >
@@ -253,7 +258,7 @@ function ToolbarMenu({
               setIsOpen(false);
               setHovered("original");
             }}
-            className={className}
+            className={dropdownClassName}
             subMenuList={subMenuList}
           />
         </div>
