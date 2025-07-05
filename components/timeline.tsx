@@ -6,21 +6,23 @@ import {
   ReactNode,
   useState,
 } from "react";
+import {
+  INNER_CIRCLE_VARIANT_CLASS,
+  OUTER_CIRCLE_VARIANT_CLASS,
+  SteplineItemState,
+  TEXT_VARIANT_CLASS,
+} from "./../constants/step-component-util";
 
 export interface TimelineProps {
   children?: ReactNode;
   isClickable?: boolean;
 }
 
-export interface TimelineItemProps {
-  title?: string;
-  sidenote?: ReactNode[];
-  subtitle?: ReactNode[];
-  variant?: "current" | "todo" | "error" | "completed";
-  className?: string;
-  onClick?: () => void;
-  id?: number;
-}
+export type TimelineItemProps = SteplineItemState &
+  Partial<{
+    sidenote?: ReactNode[];
+    isClickable?: boolean;
+  }>;
 
 function Timeline({ children, isClickable = false }: TimelineProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -32,7 +34,7 @@ function Timeline({ children, isClickable = false }: TimelineProps) {
       {childArray.map((child, index) => {
         if (
           !isValidElement<
-            TimelineItemProps &
+            SteplineItemState &
               Partial<{
                 isClickable?: boolean;
               }>
@@ -68,28 +70,22 @@ function Timeline({ children, isClickable = false }: TimelineProps) {
                 aria-label="outer-circle-timeline"
                 className={cn(
                   "w-1 h-1 bg-gray-600 transform duration-200 rounded-full absolute -translate-x-[0.5px]  translate-y-[2px]",
-                  hoveredIndex === index && "scale-[300%] bg-gray-400",
-                  variant === "error" && "bg-[#8f0751]",
-                  (variant === "completed" || variant === "current") &&
-                    "bg-[#2fe620]"
+                  OUTER_CIRCLE_VARIANT_CLASS[variant],
+                  hoveredIndex === index && "scale-[300%] bg-gray-400"
                 )}
               />
               <div
-                aria-label="circle-timeline"
+                aria-label="inner-circle-timeline"
                 className={cn(
                   "min-w-2 min-h-2 max-w-2 max-h-2 bg-gray-600 rounded-full -translate-x-[0.5px]",
-                  variant === "error" && "bg-[#b60000]",
-                  (variant === "completed" || variant === "current") &&
-                    "bg-[#00b62e]"
+                  INNER_CIRCLE_VARIANT_CLASS[variant]
                 )}
               />
               <div
                 aria-label="divider-timeline"
                 className={cn(
                   "h-full w-px bg-gray-400",
-                  variant === "error" && "bg-[#b60000]",
-                  (variant === "completed" || variant === "current") &&
-                    "bg-[#00b62e]",
+                  INNER_CIRCLE_VARIANT_CLASS[variant],
                   isLast && "h-[calc(100%-1.2rem)]"
                 )}
               />
@@ -121,11 +117,8 @@ function TimelineItem({
   id,
   onClick,
   isClickable,
-}: TimelineItemProps & {
-  isClickable?: boolean;
-}) {
-  const timelineItemId = `timeline-${id}`;
-
+  variant,
+}: TimelineItemProps) {
   return (
     <div
       onClick={() => {
@@ -133,19 +126,23 @@ function TimelineItem({
           onClick();
         }
       }}
-      id={timelineItemId}
+      id={String(id)}
       className={cn(
         "flex flex-row gap-10 justify-between items-start",
         isClickable && "cursor-pointer",
+        TEXT_VARIANT_CLASS[variant],
         className
       )}
     >
       <div className="flex flex-col w-full">
-        <h2 className="font-medium">{title}</h2>
-        <div className="flex flex-col text-sm">
-          {subtitle &&
-            subtitle.map((data, index) => <span key={index}>{data}</span>)}
-        </div>
+        <span className="font-medium">{title}</span>
+        {subtitle && (
+          <div className="flex flex-col text-sm">
+            {subtitle.map((data, index) => (
+              <span key={index}>{data}</span>
+            ))}
+          </div>
+        )}
       </div>
       {sidenote && (
         <div className="flex flex-col min-w-[100px]">
