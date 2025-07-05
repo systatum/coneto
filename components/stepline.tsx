@@ -1,3 +1,9 @@
+import {
+  INNER_CIRCLE_VARIANT_CLASS,
+  OUTER_CIRCLE_VARIANT_CLASS,
+  SteplineItemState,
+  TEXT_VARIANT_CLASS,
+} from "./../constants/step-component-util";
 import { cn } from "./../lib/utils";
 import {
   Children,
@@ -14,14 +20,10 @@ export interface SteplineProps {
   reversable?: boolean;
 }
 
-export interface SteplineItemProps {
-  title?: string;
-  subtitle?: ReactNode[];
-  variant?: "current" | "todo" | "error" | "completed";
-  className?: string;
-  onClick?: () => void;
-  id?: number;
-}
+export type SteplineItemProps = SteplineItemState &
+  Partial<{
+    hoveredIndex?: number | null;
+  }>;
 
 function Stepline({ children, className, reversable }: SteplineProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -38,7 +40,7 @@ function Stepline({ children, className, reversable }: SteplineProps) {
       {childArray.map((child, index) => {
         if (
           !isValidElement<
-            SteplineItemProps &
+            SteplineItemState &
               Partial<{
                 hoveredIndex?: number | null;
               }>
@@ -99,15 +101,10 @@ function SteplineItem({
   className,
   id,
   hoveredIndex,
-}: SteplineItemProps &
-  Partial<{
-    hoveredIndex?: number | null;
-  }>) {
-  const steplineItemId = `stepline-item-${id}`;
-
+}: SteplineItemProps) {
   return (
     <div
-      id={steplineItemId}
+      id={String(id)}
       className={cn(
         "flex flex-row w-full gap-2 items-center whitespace-nowrap",
         className
@@ -115,26 +112,26 @@ function SteplineItem({
     >
       <div className="flex relative">
         <div
+          aria-label="outer-circle"
           className={cn(
             "text-white absolute flex items-center justify-center min-w-[30px] min-h-[30px] max-w-[30px] max-h-[30px] transform duration-200 bg-gray-600 rounded-full -translate-y-1/2 top-1/2",
-            hoveredIndex === id && "scale-[130%] bg-gray-400",
-            variant === "error" && "bg-[#8f0751]",
-            (variant === "completed" || variant === "current") && "bg-[#2fe620]"
+            hoveredIndex === id && "scale-[130%]",
+            OUTER_CIRCLE_VARIANT_CLASS[variant]
           )}
         />
         <div
+          aria-label="inner-circle"
           className={cn(
             "text-white flex relative items-center justify-center min-w-[30px] min-h-[30px] max-w-[30px] max-h-[30px] bg-gray-600 rounded-full",
-            variant === "error" && "bg-[#b60000]",
-            (variant === "completed" || variant === "current") && "bg-[#00b62e]"
+            INNER_CIRCLE_VARIANT_CLASS[variant]
           )}
         >
           {id}
         </div>
       </div>
       {(title || subtitle) && (
-        <div className="flex flex-col">
-          {title && <h2 className="font-medium text-sm">{title}</h2>}
+        <div className={cn("flex flex-col", TEXT_VARIANT_CLASS[variant])}>
+          {title && <span className="font-medium text-sm">{title}</span>}
           {subtitle && (
             <span className="flex flex-col text-xs">
               {subtitle.map((data, index) => (
