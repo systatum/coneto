@@ -81,9 +81,9 @@ export default function Togglebox({
       {(label || description) && (
         <div className="flex flex-col">
           {label && (
-            <h2 className={cn("text-sm font-medium", titleClassName)}>
+            <span className={cn("text-sm font-medium", titleClassName)}>
               {label}
-            </h2>
+            </span>
           )}
           {description && <span className="text-xs">{description}</span>}
         </div>

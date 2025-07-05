@@ -114,7 +114,9 @@ export default function DrawerTab({
               className="flex flex-col gap-3 relative z-30 bg-white"
             >
               <div className="flex flex-row relative justify-between pl-4 pr-2 bg-gray-100 items-center z-40">
-                <h2 className="font-medium py-[6px] text-sm">{data.title}</h2>
+                <span className="font-medium py-[6px] text-sm">
+                  {data.title}
+                </span>
                 <div className="cursor-pointer flex justify-center items-center w-5 h-5 hover:bg-gray-300 text-gray-600 rounded-xs">
                   <RiCloseLine
                     size={16}

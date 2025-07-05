@@ -33,7 +33,7 @@ export default function EmptySlate({
         </div>
       )}
       <div className="flex flex-col gap-1 items-center">
-        <h2 className="font-semibold text-xl">{title}</h2>
+        <span className="font-semibold text-xl">{title}</span>
         <span className="text-sm">{subtitle}</span>
         <div className="flex flex-row gap-2 mt-2">{actions}</div>
       </div>
