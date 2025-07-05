@@ -1,13 +1,15 @@
 import {
+  RemixiconComponentType,
+  RiCheckLine,
   RiErrorWarningLine,
   RiEyeLine,
   RiEyeOffLine,
-  RiSendPlaneFill,
 } from "@remixicon/react";
 import {
   ChangeEvent,
   InputHTMLAttributes,
   MutableRefObject,
+  ReactElement,
   RefObject,
   TextareaHTMLAttributes,
   forwardRef,
@@ -22,9 +24,13 @@ export interface BaseTextboxProps
   showError?: boolean;
   errorMessage?: string;
   className?: string;
-  classNameParent?: string;
-  onSendClick?: () => void;
+  containerClassName?: string;
+  onActionClick?: () => void;
   onChange: (data: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  icon?: RemixiconComponentType;
+  dormanted?: boolean;
+  dormantedFontSize?: string;
+  actionIcon?: boolean;
 }
 
 export type TextboxProps =
@@ -48,14 +54,21 @@ const Textbox = forwardRef<
       errorMessage,
       rows,
       onChange,
-      onSendClick,
+      onActionClick,
       className,
-      classNameParent,
+      containerClassName,
+      actionIcon,
+      dormanted,
+      dormantedFontSize = 17,
+      icon: Icon = RiCheckLine,
       type = "text",
       ...props
     },
     ref
   ) => {
+    const dormantedState = dormanted ? dormanted : false;
+
+    const [dormantedLocal, setDormantedLocal] = useState(dormantedState);
     const [showPassword, setShowPassword] = useState<boolean>(false);
 
     useEffect(() => {
@@ -85,117 +98,139 @@ const Textbox = forwardRef<
       className
     );
 
-    const inputElement =
-      type === "message" ? (
-        <div
+    const inputElement: ReactElement = dormantedLocal ? (
+      <label
+        onClick={() => setDormantedLocal(false)}
+        className="cursor-pointer"
+        style={{
+          fontSize: dormantedFontSize,
+        }}
+      >
+        {props.value}
+      </label>
+    ) : rows ? (
+      <div className="relative w-full ring-0">
+        <textarea
+          style={{
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+          }}
           id={inputId}
-          className={cn("relative flex w-full items-center", className)}
-        >
-          <input
-            onChange={onChange}
-            type="text"
-            ref={ref as RefObject<HTMLInputElement>}
-            className="bg-background ring-offset-background placeholder:text-muted-foreground flex h-10 w-full rounded-xs border-gray-300 border px-3 py-2 pr-10 text-sm focus:border-blue-600 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-            placeholder={props.placeholder || "Type a message..."}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                props.onKeyDown?.(e);
-              }
-            }}
-            {...props}
-          />
+          ref={(el) => {
+            autoResize(el);
+            if (typeof ref === "function") {
+              ref(el);
+            } else if (ref) {
+              (ref as MutableRefObject<HTMLTextAreaElement | null>).current =
+                el;
+            }
+          }}
+          onChange={(e) => {
+            autoResize(e.target);
+            onChange(e);
+          }}
+          rows={rows ?? 3}
+          className={inputClass}
+          {...(props as TextareaHTMLAttributes<HTMLTextAreaElement>)}
+        />
+        {actionIcon && (
           <button
-            type="submit"
-            className="text-muted-foreground absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer"
+            type="button"
+            className="text-muted-foreground p-1 bg-gray-300 absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer"
             onClick={(e) => {
               e.preventDefault();
-              const customEvent = new KeyboardEvent("keydown", {
-                key: "Enter",
-                code: "Enter",
-                bubbles: true,
-                cancelable: true,
-              });
-              const inputElement = (e.target as HTMLElement).closest("input");
-              if (inputElement) {
-                inputElement.dispatchEvent(customEvent);
+              if (onActionClick) {
+                onActionClick();
               }
-              onSendClick?.();
+              if (dormanted) {
+                setDormantedLocal(true);
+              }
             }}
           >
-            <RiSendPlaneFill className="mr-1" size={18} />
+            <Icon className="mr-1 text-black" size={18} />
           </button>
-        </div>
-      ) : rows ? (
-        <div className="relative w-full ring-0">
-          <textarea
-            style={{
-              scrollbarWidth: "none",
-              msOverflowStyle: "none",
-            }}
-            id={inputId}
-            ref={(el) => {
-              autoResize(el);
-              if (typeof ref === "function") {
-                ref(el);
-              } else if (ref) {
-                (ref as MutableRefObject<HTMLTextAreaElement | null>).current =
-                  el;
+        )}
+        {showError && (
+          <RiErrorWarningLine
+            size={18}
+            className="absolute top-1/2 right-3 -translate-y-1/2 rounded-full bg-red-600 text-white"
+          />
+        )}
+      </div>
+    ) : (
+      <div className="relative w-full ring-0">
+        <input
+          id={inputId}
+          ref={ref as RefObject<HTMLInputElement>}
+          onChange={onChange}
+          className={inputClass}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              if (onActionClick) {
+                onActionClick();
+              }
+              if (dormanted) {
+                setDormantedLocal(true);
+              }
+            }
+          }}
+          type={type === "password" && showPassword ? "text" : type}
+          {...(props as InputHTMLAttributes<HTMLInputElement>)}
+        />
+        {actionIcon && (
+          <button
+            type="submit"
+            className={cn(
+              "text-muted-foreground p-[2px]  w-fit rounded-xs transition-all duration-200 mr-1 absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer",
+              !dormanted && "hover:bg-gray-300"
+            )}
+            onClick={(e) => {
+              e.preventDefault();
+              if (onActionClick) {
+                onActionClick();
+              }
+              if (dormanted) {
+                setDormantedLocal(true);
               }
             }}
-            onChange={(e) => {
-              autoResize(e.target);
-              onChange(e);
-            }}
-            rows={rows ?? 3}
-            className={inputClass}
-            {...(props as TextareaHTMLAttributes<HTMLTextAreaElement>)}
-          />
-          {showError && (
-            <RiErrorWarningLine
-              size={18}
-              className="absolute top-1/2 right-3 -translate-y-1/2 rounded-full bg-red-600 text-white"
-            />
-          )}
-        </div>
-      ) : (
-        <div className="relative w-full ring-0">
-          <input
-            id={inputId}
-            ref={ref as RefObject<HTMLInputElement>}
-            onChange={onChange}
-            className={inputClass}
-            type={type === "password" && showPassword ? "text" : type}
-            {...(props as InputHTMLAttributes<HTMLInputElement>)}
-          />
-          {type === "password" && !showError && (
-            <button
-              type="button"
-              onClick={() => setShowPassword((prev) => !prev)}
-              className="absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer text-gray-500"
-              tabIndex={-1}
-            >
-              {showPassword ? (
-                <RiEyeOffLine size={18} />
-              ) : (
-                <RiEyeLine size={18} />
+          >
+            <Icon
+              className={cn(
+                "hover:text-gray-800",
+                dormanted && "hover:text-[#61A9F9]"
               )}
-            </button>
-          )}
-          {showError && (
-            <RiErrorWarningLine
               size={18}
-              className="absolute top-1/2 right-3 -translate-y-1/2 rounded-full bg-red-600 text-white"
             />
-          )}
-        </div>
-      );
+          </button>
+        )}
+        {type === "password" && !showError && (
+          <button
+            type="button"
+            onClick={() => setShowPassword((prev) => !prev)}
+            className="absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer text-gray-500"
+            tabIndex={-1}
+          >
+            {showPassword ? (
+              <RiEyeOffLine className="hover:text-gray-600" size={18} />
+            ) : (
+              <RiEyeLine className="hover:text-gray-600" size={18} />
+            )}
+          </button>
+        )}
+        {showError && (
+          <RiErrorWarningLine
+            size={18}
+            className="absolute top-1/2 right-3 -translate-y-1/2 rounded-full bg-red-600 text-white"
+          />
+        )}
+      </div>
+    );
 
     return (
       <div
-        className={cn(`flex w-full flex-col gap-2 text-xs`, classNameParent)}
+        className={cn(`flex w-full flex-col gap-2 text-xs`, containerClassName)}
       >
-        {label && <label htmlFor={inputId}>{label}</label>}
+        {!dormanted && label && <label htmlFor={inputId}>{label}</label>}
         <div className="flex flex-col gap-1 text-xs">
           {inputElement}
           {showError && <span className="text-red-600">{errorMessage}</span>}
