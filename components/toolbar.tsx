@@ -207,7 +207,7 @@ function ToolbarMenu({
             <span
               aria-label="divider"
               className={cn(
-                "absolute transform duration-200 right-[35px] h-full w-px border-[0.5px] top-1/2 -translate-y-1/2 text-[#ececec] z-10",
+                "absolute transform duration-200 right-[35px] h-full w-px border-[0.5px] top-1/2 -translate-y-1/2 text-[#bdbdbd] z-10",
                 hovered === "original" && !isOpen && "h-[80%]"
               )}
             ></span>
