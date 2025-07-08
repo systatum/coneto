@@ -2,12 +2,12 @@ import { ReactNode, useEffect, useRef, useState } from "react";
 import { cn } from "../lib/utils";
 import clsx from "clsx";
 
-type TooltipProps = {
+export type TooltipProps = {
   children: ReactNode;
   text: string;
   openOn?: "hover" | "click";
   className?: string;
-  classNameParent?: string;
+  containerClassName?: string;
   underline?: "underline" | "underline-dot" | "transparent" | "blue" | "gray";
 };
 
@@ -16,13 +16,13 @@ export default function Tooltip({
   text,
   openOn = "hover",
   className = "",
-  classNameParent,
+  containerClassName,
   underline = "underline",
 }: TooltipProps) {
   const [isOpen, setIsOpen] = useState(false);
   const tooltipRef = useRef<HTMLSpanElement>(null);
 
-  const parentClassNameDefault = clsx(
+  const tooltipContainerClass = clsx(
     openOn === "hover" ? "cursor-default" : "cursor-pointer",
     underline === "underline"
       ? "underline decoration-black"
@@ -69,7 +69,7 @@ export default function Tooltip({
     <span ref={tooltipRef} className="relative inline-flex items-center">
       <span
         {...triggerProps}
-        className={cn(parentClassNameDefault, classNameParent)}
+        className={cn(tooltipContainerClass, containerClassName)}
       >
         {text}
       </span>
