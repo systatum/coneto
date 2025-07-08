@@ -12,7 +12,6 @@ import {
   RiLink,
   RiShareLine,
   RiEditLine,
-  RiMessage2Line,
 } from "@remixicon/react";
 
 const meta = {
