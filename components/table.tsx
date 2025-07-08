@@ -4,6 +4,8 @@ import {
   isValidElement,
   ReactElement,
   ReactNode,
+  useEffect,
+  useRef,
   useState,
 } from "react";
 import Checkbox from "./checkbox";
@@ -46,6 +48,7 @@ export interface TableProps {
   setIsOpen?: () => void;
   subMenuList?: (columnCaption: string) => TipMenuItemProps[];
   emptySlate?: ReactNode;
+  onLastRowReached?: () => void;
 }
 
 export interface TableRowProps {
@@ -84,6 +87,7 @@ function Table({
   subMenuList,
   emptySlate,
   actions,
+  onLastRowReached,
 }: TableProps) {
   const [selectedData, setSelectedData] = useState<string[]>([]);
   const classTableRow = clsx(
@@ -121,7 +125,7 @@ function Table({
   const allSelected = selectedData.length === rowCount;
   const someSelected = selectedData.length > 0 && !allSelected;
 
-  const rowChildren = Children.map(children, (child) => {
+  const rowChildren = Children.map(children, (child, index) => {
     if (!isValidElement<TableRowProps | TableRowGroupProps>(child)) return null;
 
     if (child.type === TableRowGroup) {
@@ -141,10 +145,14 @@ function Table({
         (d) => JSON.stringify(d) === JSON.stringify(props.dataId)
       );
 
+      const isLast = index === Children.count(children) - 1;
+
       return cloneElement(child, {
         selectable,
         isSelected,
         handleSelect,
+        isLast,
+        onLastRowReached,
       } as TableRowProps);
     }
 
@@ -234,9 +242,13 @@ function TableRowGroup({
   selectable = false,
   handleSelect,
   selectedData,
+  isLast,
+  onLastRowReached,
 }: TableRowGroupProps & {
   selectedData?: string[];
   handleSelect?: (data: string) => void;
+  onLastRowReached?: () => void;
+  isLast?: boolean;
 }) {
   const rowChildren = Children.map(children, (child) => {
     if (!isValidElement<TableRowProps>(child)) return null;
@@ -251,6 +263,8 @@ function TableRowGroup({
         selectable,
         isSelected,
         handleSelect,
+        isLast,
+        onLastRowReached,
       } as TableRowProps);
     }
   });
@@ -306,8 +320,32 @@ function TableRow({
   dataId,
   children,
   actions,
+  isLast,
+  onLastRowReached,
   ...props
-}: TableRowProps) {
+}: TableRowProps &
+  Partial<{
+    onLastRowReached?: () => void;
+    isLast?: boolean;
+  }>) {
+  const rowRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isLast || !onLastRowReached) return;
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        onLastRowReached();
+      }
+    });
+
+    if (rowRef.current) {
+      observer.observe(rowRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [isLast, onLastRowReached]);
+
   const [isOpen, setIsOpen] = useState<null | boolean>(true);
   const [isHovered, setIsHovered] = useState<null | string>(null);
 
@@ -319,12 +357,9 @@ function TableRow({
 
   return (
     <div
-      onMouseLeave={() => {
-        setIsHovered(null);
-      }}
-      onMouseEnter={() => {
-        setIsHovered(dataId);
-      }}
+      ref={rowRef}
+      onMouseLeave={() => setIsHovered(null)}
+      onMouseEnter={() => setIsHovered(dataId)}
       className={tableRowClass}
     >
       {selectable && (

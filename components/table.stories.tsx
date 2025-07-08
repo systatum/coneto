@@ -151,6 +151,7 @@ export const Appendable: Story = {
     });
 
     const [rows, setRows] = useState(emails);
+    console.log(rows);
 
     const handleSortingRequested = ({
       mode,
@@ -232,6 +233,15 @@ export const Appendable: Story = {
       ];
     };
 
+    const handleFetchData = () => {
+      const moreEmails = generate20RandomEmails({
+        senders: generate20RandomSender(),
+        subjects: generate20RandomSubject(),
+        contents: generate20RandomLoremIpsum(),
+      });
+      setRows((prev) => [...prev, ...moreEmails]);
+    };
+
     return (
       <Table
         selectable
@@ -239,6 +249,7 @@ export const Appendable: Story = {
         columns={columns}
         onItemsSelected={handleItemsSelected}
         subMenuList={TIP_MENU_ACTION}
+        onLastRowReached={handleFetchData}
       >
         {rows.map((rowValue, rowIndex) => (
           <Table.Row
@@ -246,8 +257,12 @@ export const Appendable: Story = {
             dataId={`${rowValue.from}-${rowValue.content}`}
             actions={ROW_ACTION}
           >
-            {[rowValue.from, rowValue.content]?.map((data, index) => (
-              <Table.Row.Cell key={index} col={data} className="pr-6" />
+            {[rowValue.from, rowValue.content]?.map((data, index, array) => (
+              <Table.Row.Cell
+                key={index}
+                col={data}
+                className={index === array.length - 1 ? "pr-8" : ""}
+              />
             ))}
           </Table.Row>
         ))}
