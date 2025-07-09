@@ -1,6 +1,7 @@
 import { Ref, useEffect } from "react";
 import { DrawerProps, OptionsProps, Selectbox } from "./selectbox";
 import { cn } from "./../lib/utils";
+import { RemixiconComponentType } from "@remixicon/react";
 
 export type ComboboxProps = Partial<BaseComboboxProps> & {
   label?: string;
@@ -17,6 +18,15 @@ interface BaseComboboxProps {
   placeholder?: string;
   emptySlate?: string;
   highlightOnMatch?: boolean;
+  strict?: boolean;
+  actions?: ComboboxActionProps[];
+}
+
+export interface ComboboxActionProps {
+  onClick?: () => void;
+  icon?: RemixiconComponentType;
+  title: string;
+  className?: string;
 }
 
 type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
@@ -39,6 +49,8 @@ export default function Combobox({
   label,
   showError,
   inputValue,
+  strict,
+  actions,
 }: ComboboxProps) {
   return (
     <div className={cn(`flex w-full flex-col gap-2 text-xs`)}>
@@ -51,8 +63,15 @@ export default function Combobox({
         setInputValue={setInputValue}
         placeholder={placeholder}
         clearable={clearable}
+        strict={strict}
       >
-        {(props) => <ComboboxDrawer emptySlate={emptySlate} {...props} />}
+        {(props) => (
+          <ComboboxDrawer
+            {...props}
+            emptySlate={emptySlate}
+            actions={actions}
+          />
+        )}
       </Selectbox>
 
       {showError && <span className="text-red-600">{errorMessage}</span>}
@@ -71,6 +90,7 @@ function ComboboxDrawer({
   setInputValue,
   setIsOpen,
   inputValue,
+  actions,
   emptySlate = "Not Available.",
 }: ComboboxDrawerProps) {
   useEffect(() => {
@@ -101,6 +121,39 @@ function ComboboxDrawer({
       }}
       className="max-h-60 overflow-y-auto rounded-xs border border-gray-100 bg-white shadow-lg"
     >
+      {actions && (
+        <div className="flex flex-col w-full">
+          {actions.map((data, index) => (
+            <div
+              key={index}
+              onMouseEnter={() => {
+                setHighlightedIndex(null);
+              }}
+              onClick={() => {
+                if (data.onClick) {
+                  data.onClick();
+                }
+                setIsOpen(false);
+              }}
+              className={cn(
+                "flex flex-row relative hover:bg-blue-100 w-full items-center cursor-pointer px-3 py-2 gap-2",
+                data.className
+              )}
+            >
+              <div>{data.title}</div>
+              {data.icon && (
+                <span className="absolute right-2 top-1/2 -translate-y-1/2">
+                  <data.icon size={16} />
+                </span>
+              )}
+            </div>
+          ))}
+          <div
+            aria-label="divider"
+            className="w-full h-px border-b my-[2px] border-gray-300"
+          ></div>
+        </div>
+      )}
       {options.length > 0 ? (
         options.map((option, index) => {
           return (

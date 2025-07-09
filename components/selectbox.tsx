@@ -40,6 +40,7 @@ export interface SelectboxProps {
   containerClassName?: string;
   childClassName?: string;
   highlightOnMatch?: boolean;
+  strict?: boolean;
   children?: (
     props: DrawerProps & {
       options: OptionsProps[];
@@ -80,6 +81,7 @@ export function Selectbox({
   clearable = false,
   containerClassName,
   highlightOnMatch,
+  strict,
 }: SelectboxProps) {
   const selectboxState = inputValue
     ? inputValue
@@ -95,6 +97,9 @@ export function Selectbox({
   const [hasInteracted, setHasInteracted] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [confirmedValue, setConfirmedValue] = useState<OptionsProps | null>(
+    null
+  );
 
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<(HTMLLIElement | null)[]>([]);
@@ -215,7 +220,27 @@ export function Selectbox({
           }
           setIsFocused(true);
         }}
-        onBlur={() => setIsFocused(false)}
+        onBlur={() => {
+          setIsFocused(false);
+          if (strict) {
+            const matched = options.find(
+              (opt) => opt.text === inputValueLocal.text
+            );
+
+            if (matched) {
+              setConfirmedValue(matched);
+              setInputValueLocal(matched);
+              setInputValue?.(matched);
+            } else if (confirmedValue) {
+              setInputValueLocal(confirmedValue);
+              setInputValue?.(confirmedValue);
+            } else {
+              const empty = { text: "", value: 0 };
+              setInputValueLocal(empty);
+              setInputValue?.(empty);
+            }
+          }
+        }}
         aria-autocomplete="list"
         placeholder={placeholder || "Search your item..."}
         className={cn(
