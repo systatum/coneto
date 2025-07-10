@@ -1,8 +1,8 @@
 import { Meta, StoryObj } from "@storybook/react";
-import PaperDialog from "./paper-dialog";
+import { PaperDialog, PaperDialogRef } from "./paper-dialog";
 import { Button } from "./button";
 import StatefulForm, { FormFieldProps } from "./stateful-form";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import { z } from "zod";
 import { COUNTRY_CODES } from "./../constants/countries";
 
@@ -21,6 +21,8 @@ type Story = StoryObj<typeof PaperDialog>;
 
 export const Default: Story = {
   render: () => {
+    const dialogRef = useRef<PaperDialogRef>(null);
+
     const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
       (data) => data.id === "US" || COUNTRY_CODES[206]
     );
@@ -116,33 +118,41 @@ export const Default: Story = {
     ];
 
     return (
-      <PaperDialog paperDialogClassName="p-6 gap-4">
-        <div className="flex flex-col gap-1">
-          <h2 className="text-2xl font-bold ">Add New Employee</h2>
-          <p className="text-sm text-gray-600">
-            Fill out the information below to add a new employee to your team.
-          </p>
-        </div>
-        <div className="max-w-[400px] flex flex-col gap-1">
-          <StatefulForm
-            fields={EMPLOYEE_FIELDS}
-            formValues={value}
-            validationSchema={employeeSchema}
-            onValidityChange={setIsFormValid}
-            mode="onChange"
-          />
+      <div className="flex flex-col gap-1">
+        <Button onClick={() => dialogRef.current?.openDialog()}>Open</Button>
+        <Button onClick={() => dialogRef.current?.closeDialog()}>Close</Button>
+        <PaperDialog ref={dialogRef}>
+          <PaperDialog.Trigger>Trigger</PaperDialog.Trigger>
+          <PaperDialog.Content className="p-6 gap-4">
+            <div className="flex flex-col gap-1">
+              <h2 className="text-2xl font-bold ">Add New Employee</h2>
+              <p className="text-sm text-gray-600">
+                Fill out the information below to add a new employee to your
+                team.
+              </p>
+            </div>
+            <div className="max-w-[400px] flex flex-col gap-1">
+              <StatefulForm
+                fields={EMPLOYEE_FIELDS}
+                formValues={value}
+                validationSchema={employeeSchema}
+                onValidityChange={setIsFormValid}
+                mode="onChange"
+              />
 
-          <div className="flex w-full flex-row justify-end">
-            <Button
-              disabled={!isFormValid}
-              className="w-full cursor-pointer md:max-w-[180px]"
-              type="submit"
-            >
-              Save
-            </Button>
-          </div>
-        </div>
-      </PaperDialog>
+              <div className="flex w-full flex-row justify-end">
+                <Button
+                  disabled={!isFormValid}
+                  className="w-full cursor-pointer md:max-w-[180px]"
+                  type="submit"
+                >
+                  Save
+                </Button>
+              </div>
+            </div>
+          </PaperDialog.Content>
+        </PaperDialog>
+      </div>
     );
   },
 };
@@ -244,32 +254,35 @@ export const WithClose: Story = {
     ];
 
     return (
-      <PaperDialog closable paperDialogClassName="p-6 gap-4">
-        <div className="flex flex-col gap-1">
-          <h2 className="text-2xl font-bold ">Add New Employee</h2>
-          <p className="text-sm text-gray-600">
-            Fill out the information below to add a new employee to your team.
-          </p>
-        </div>
-        <div className="max-w-[400px] flex flex-col gap-1">
-          <StatefulForm
-            fields={EMPLOYEE_FIELDS}
-            formValues={value}
-            validationSchema={employeeSchema}
-            onValidityChange={setIsFormValid}
-            mode="onChange"
-          />
-
-          <div className="flex w-full flex-row justify-end">
-            <Button
-              disabled={!isFormValid}
-              className="w-full cursor-pointer md:max-w-[180px]"
-              type="submit"
-            >
-              Save
-            </Button>
+      <PaperDialog closable>
+        <PaperDialog.Trigger>Trigger</PaperDialog.Trigger>
+        <PaperDialog.Content className="p-6 gap-4">
+          <div className="flex flex-col gap-1">
+            <h2 className="text-2xl font-bold ">Add New Employee</h2>
+            <p className="text-sm text-gray-600">
+              Fill out the information below to add a new employee to your team.
+            </p>
           </div>
-        </div>
+          <div className="max-w-[400px] flex flex-col gap-1">
+            <StatefulForm
+              fields={EMPLOYEE_FIELDS}
+              formValues={value}
+              validationSchema={employeeSchema}
+              onValidityChange={setIsFormValid}
+              mode="onChange"
+            />
+
+            <div className="flex w-full flex-row justify-end">
+              <Button
+                disabled={!isFormValid}
+                className="w-full cursor-pointer md:max-w-[180px]"
+                type="submit"
+              >
+                Save
+              </Button>
+            </div>
+          </div>
+        </PaperDialog.Content>
       </PaperDialog>
     );
   },
@@ -372,32 +385,35 @@ export const WithLeftPosition: Story = {
     ];
 
     return (
-      <PaperDialog closable position="left" paperDialogClassName="p-6 gap-4">
-        <div className="flex flex-col gap-1">
-          <h2 className="text-2xl font-bold ">Add New Employee</h2>
-          <p className="text-sm text-gray-600">
-            Fill out the information below to add a new employee to your team.
-          </p>
-        </div>
-        <div className="max-w-[400px] flex flex-col gap-1">
-          <StatefulForm
-            fields={EMPLOYEE_FIELDS}
-            formValues={value}
-            validationSchema={employeeSchema}
-            onValidityChange={setIsFormValid}
-            mode="onChange"
-          />
-
-          <div className="flex w-full flex-row justify-end">
-            <Button
-              disabled={!isFormValid}
-              className="w-full cursor-pointer md:max-w-[180px]"
-              type="submit"
-            >
-              Save
-            </Button>
+      <PaperDialog closable position="left">
+        <PaperDialog.Trigger>Trigger</PaperDialog.Trigger>
+        <PaperDialog.Content className="p-6 gap-4">
+          <div className="flex flex-col gap-1">
+            <h2 className="text-2xl font-bold ">Add New Employee</h2>
+            <p className="text-sm text-gray-600">
+              Fill out the information below to add a new employee to your team.
+            </p>
           </div>
-        </div>
+          <div className="max-w-[400px] flex flex-col gap-1">
+            <StatefulForm
+              fields={EMPLOYEE_FIELDS}
+              formValues={value}
+              validationSchema={employeeSchema}
+              onValidityChange={setIsFormValid}
+              mode="onChange"
+            />
+
+            <div className="flex w-full flex-row justify-end">
+              <Button
+                disabled={!isFormValid}
+                className="w-full cursor-pointer md:max-w-[180px]"
+                type="submit"
+              >
+                Save
+              </Button>
+            </div>
+          </div>
+        </PaperDialog.Content>
       </PaperDialog>
     );
   },
