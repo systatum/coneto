@@ -39,6 +39,16 @@ const buttonVariants = cva(
   }
 );
 
+const ButtonActiveVariant = {
+  default: "bg-[rgb(207,204,203)]",
+  primary: "bg-[rgb(64,142,232)]",
+  danger: "bg-[rgb(200,53,50)]",
+  outline: "bg-accent text-accent-foreground dark:bg-input/50",
+  secondary: "bg-secondary/80",
+  ghost: "bg-accent text-accent-foreground dark:bg-accent/50",
+  link: "underline",
+};
+
 function Button({
   className,
   variant,
@@ -121,7 +131,7 @@ function Button({
           <span
             aria-label="divider"
             className={cn(
-              "absolute transform duration-200 right-[34%] h-full w-px border-[0.5px] top-1/2 -translate-y-1/2 text-gray-600 z-10",
+              "absolute transform duration-200 right-[34%] h-full w-px border-l top-1/2 -translate-y-1/2 text-[#a5a0a0] z-10",
               hovered === "original" && !isOpen && "h-[80%]"
             )}
           />
@@ -130,6 +140,7 @@ function Button({
               buttonVariants({ variant, size }),
               "relative",
               tipMenu && "rounded-none",
+              isOpen && ButtonActiveVariant[variant],
               className
             )}
             onMouseEnter={() => {
@@ -161,7 +172,7 @@ function Button({
           onMouseLeave={() => {
             setHovered("original");
           }}
-          className={cn("absolute top-full z-10", positionClass)}
+          className={cn("absolute top-8 z-10", positionClass)}
         >
           <TipMenu
             setIsOpen={() => {
