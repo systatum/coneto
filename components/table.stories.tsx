@@ -5,9 +5,9 @@ import { TipMenuItemProps } from "./tip-menu";
 import {
   RiArrowDownSLine,
   RiArrowUpSLine,
+  RiClipboardFill,
   RiDeleteBin2Fill,
   RiDeleteBin2Line,
-  RiEdit2Line,
   RiRefreshLine,
 } from "@remixicon/react";
 import EmptySlate from "./empty-slate";
@@ -151,7 +151,6 @@ export const Appendable: Story = {
     });
 
     const [rows, setRows] = useState(emails);
-    console.log(rows);
 
     const handleSortingRequested = ({
       mode,
@@ -598,15 +597,17 @@ export const WithCustom: Story = {
 
     const TOP_ACTIONS = [
       {
+        title: "Delete",
         icon: RiDeleteBin2Line,
         onClick: () => {
           alert("Delete clicked");
         },
       },
       {
-        icon: RiEdit2Line,
+        title: "Copy",
+        icon: RiClipboardFill,
         onClick: () => {
-          alert("Edit clicked");
+          alert("Copy clicked");
         },
       },
     ];

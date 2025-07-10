@@ -164,16 +164,20 @@ function Table({
   return (
     <div className={tableClass}>
       {selectedData.length > 0 && (
-        <div className="w-full flex flex-row items-center justify-between py-2 text-white bg-gray-600 border-b-[0.5px] px-6">
+        <div className="w-full flex flex-row items-center justify-between py-2 text-white bg-gray-600 border-b-[0.5px] px-[14px]">
           {actions && (
             <div className="flex flex-row gap-1">
               {actions.map((data, index) => (
-                <data.icon
-                  onClick={data.onClick}
-                  className={cn("cursor-pointer", data.className)}
+                <div
                   key={index}
-                  size={16}
-                />
+                  className={cn(
+                    "flex flex-row cursor-pointer gap-1 border rounded-xl items-center hover:bg-[#5c626a] border-gray-500 py-1 px-2",
+                    data.className
+                  )}
+                >
+                  <data.icon onClick={data.onClick} size={14} />
+                  <span className="text-sm">{data.title}</span>
+                </div>
               ))}
             </div>
           )}
