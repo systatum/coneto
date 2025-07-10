@@ -158,26 +158,26 @@ export const Default: Story = {
       <Card>
         <Toolbar>
           <Toolbar.Menu
-            className="min-w-[235px]"
+            dropdownClassName="min-w-[235px]"
             onClick={() => {
               console.log("test");
             }}
-            caption="Toolbar Default Mode"
+            caption="Default"
             icon={RiSpam2Line}
             iconColor="red"
             subMenuList={TIP_MENU_ITEMS}
           />
           <Toolbar.Menu
-            className="min-w-[235px]"
-            caption="Toolbar Primary Mode"
+            dropdownClassName="min-w-[235px]"
+            caption="Primary"
             icon={RiSpam2Line}
             iconColor="white"
             variant="primary"
             subMenuList={TIP_MENU_ITEMS}
           />
           <Toolbar.Menu
-            className="min-w-[235px]"
-            caption="Toolbar Danger Mode"
+            dropdownClassName="min-w-[235px]"
+            caption="Danger"
             icon={RiSpam2Line}
             iconColor="white"
             variant="danger"
