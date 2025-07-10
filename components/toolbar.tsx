@@ -251,7 +251,10 @@ function ToolbarMenu({
           onMouseLeave={() => {
             setHovered("original");
           }}
-          className={cn("absolute top-full z-10", positionClass)}
+          className={cn(
+            "absolute top-full z-10 translate-y-[2px]",
+            positionClass
+          )}
         >
           <TipMenu
             setIsOpen={() => {
