@@ -78,11 +78,13 @@
     "eslint": "^9.26.0",
     "eslint-plugin-react": "^7.37.5",
     "globals": "^15.15.0",
+    "marked": "^16.0.0",
     "postcss": "^8.5.3",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "storybook": "^8.6.14",
     "tailwindcss": "^4.1.7",
+    "turndown": "^7.2.0",
     "typescript": "^5.4.0",
     "vite": "^6.3.5"
   },
