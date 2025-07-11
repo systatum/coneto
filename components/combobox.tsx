@@ -53,7 +53,9 @@ export default function Combobox({
   actions,
 }: ComboboxProps) {
   return (
-    <div className={cn(`flex w-full flex-col gap-2 text-xs`)}>
+    <div
+      className={cn(`flex w-full flex-col gap-2 text-xs`, containerClassName)}
+    >
       {label && <label>{label}</label>}
       <Selectbox
         highlightOnMatch={highlightOnMatch}

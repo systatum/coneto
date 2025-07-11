@@ -3,7 +3,7 @@ import {
   RiArrowRightSLine,
   RiCheckLine,
 } from "@remixicon/react";
-import {} from "react";
+import { Fragment } from "react";
 import { useState, useEffect } from "react";
 import { Button } from "./button";
 import { cn } from "../lib/utils";
@@ -315,58 +315,60 @@ export default function Calendar({
 
   const inputElement = (
     <div className={calendarClass}>
-      <div className={cn("flex flex-row items-center mb-2 px-2")}>
-        <div
-          onClick={() => {
-            if (!calendarState.open) {
-              handleClickMode("open");
-            }
-          }}
-          className="font-semibold cursor-pointer w-full"
-        >
-          {!calendarState.open ? (
-            <div className="rounded-xs hover:bg-gray-200 w-fit px-2 py-2">
-              {currentDate
-                .toLocaleString("default", {
-                  month: "short",
-                  year: "numeric",
-                })
-                .toUpperCase()}
-            </div>
-          ) : (
-            <div className="flex flex-row gap-1 w-full">
-              <Combobox
-                options={monthNames}
-                inputValue={calendarState.month}
-                placeholder={monthNames[0].text}
-                containerClassName="min-w-[60px] max-w-[70px]"
-                setInputValue={(value) => {
-                  onChangeValueDate({
-                    target: { name: "month", value },
-                  });
-                }}
-              />
-              <Combobox
-                options={yearOptions}
-                inputValue={calendarState.year}
-                placeholder={String(currentYear)}
-                containerClassName="min-w-[70px] max-w-[80px]"
-                setInputValue={(value) => {
-                  onChangeValueDate({
-                    target: { name: "year", value },
-                  });
-                }}
-              />
-              <Button
-                variant="outline"
-                className="border-gray-100 w-full hover:bg-gray-200 shadow-none max-h-[34px] max-w-[38px] text-xs px-2"
-                onClick={() => handleClickMode("open")}
-              >
-                <RiCheckLine size={20} />
-              </Button>
-            </div>
-          )}
-        </div>
+      <div
+        className={cn(
+          "flex flex-row font-semibold justify-between w-full items-center mb-2 px-2 gap-2"
+        )}
+      >
+        {!calendarState.open ? (
+          <div
+            className="rounded-xs w-full hover:bg-gray-200 px-2 py-2"
+            onClick={() => {
+              if (!calendarState.open) {
+                handleClickMode("open");
+              }
+            }}
+          >
+            {currentDate
+              .toLocaleString("default", {
+                month: "short",
+                year: "numeric",
+              })
+              .toUpperCase()}
+          </div>
+        ) : (
+          <Fragment>
+            <Combobox
+              options={monthNames}
+              inputValue={calendarState.month}
+              placeholder={monthNames[0].text}
+              containerClassName="min-w-[70px] max-w-[70px]"
+              setInputValue={(value) => {
+                onChangeValueDate({
+                  target: { name: "month", value },
+                });
+              }}
+            />
+            <Combobox
+              options={yearOptions}
+              inputValue={calendarState.year}
+              placeholder={String(currentYear)}
+              containerClassName="min-w-[75px] max-w-[75px]"
+              setInputValue={(value) => {
+                onChangeValueDate({
+                  target: { name: "year", value },
+                });
+              }}
+            />
+            <Button
+              variant="outline"
+              className="border-gray-100 w-full hover:bg-gray-200 shadow-none max-h-[34px] max-w-[38px] text-xs px-2"
+              onClick={() => handleClickMode("open")}
+            >
+              <RiCheckLine size={20} />
+            </Button>
+          </Fragment>
+        )}
         {!calendarState.open && (
           <div className="flex flex-row ml-2 w-full">
             <RiArrowLeftSLine
