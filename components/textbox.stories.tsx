@@ -115,15 +115,8 @@ export const Dormanted: Story = {
     dormanted: true,
     actionIcon: true,
   },
-  render: (args: TextboxProps) => {
+  render: (args) => {
     const [, setUpdateArgs] = useArgs();
-
-    useEffect(() => {
-      const timer = setTimeout(() => {
-        setUpdateArgs({ value: "" });
-      }, 100);
-      return () => clearTimeout(timer);
-    }, [setUpdateArgs]);
 
     const handleChange = (
       e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -136,7 +129,6 @@ export const Dormanted: Story = {
     return (
       <Textbox
         {...args}
-        value={args.value}
         onChange={handleChange}
         onActionClick={() => {
           alert("Input change succeed.");
