@@ -58,7 +58,7 @@ export interface TableRowProps {
   selectable?: boolean;
   handleSelect?: (data: string) => void;
   className?: string;
-  dataId?: string;
+  key?: string;
   children?: ReactNode;
   actions?: (columnCaption: string) => TipMenuItemProps[];
 }
@@ -143,7 +143,7 @@ function Table({
       const props = child.props as TableRowProps;
 
       const isSelected = selectedData.some(
-        (d) => JSON.stringify(d) === JSON.stringify(props.dataId)
+        (d) => JSON.stringify(d) === JSON.stringify(props.key)
       );
 
       const isLast = index === Children.count(children) - 1;
@@ -261,7 +261,7 @@ function TableRowGroup({
       const props = child.props as TableRowProps;
 
       const isSelected = selectedData.some(
-        (d) => JSON.stringify(d) === JSON.stringify(props.dataId)
+        (d) => JSON.stringify(d) === JSON.stringify(props.key)
       );
 
       return cloneElement(child, {
@@ -322,7 +322,7 @@ function TableRow({
   isSelected = false,
   handleSelect,
   className,
-  dataId,
+  key,
   children,
   actions,
   isLast,
@@ -364,15 +364,15 @@ function TableRow({
     <div
       ref={rowRef}
       onMouseLeave={() => setIsHovered(null)}
-      onMouseEnter={() => setIsHovered(dataId)}
+      onMouseEnter={() => setIsHovered(key)}
       className={tableRowClass}
     >
       {selectable && (
         <div
           onClick={(e) => {
             e.stopPropagation();
-            if (dataId) {
-              handleSelect?.(dataId);
+            if (key) {
+              handleSelect?.(key);
             }
           }}
           className="w-8 flex justify-center cursor-pointer pointer-events-auto items-center"
@@ -382,7 +382,7 @@ function TableRow({
       )}
       {content && content.map((col, i) => <TableRowCell key={i} col={col} />)}
 
-      {isHovered === dataId && actions && (
+      {isHovered === key && actions && (
         <Toolbar className="w-fit absolute right-2">
           <Toolbar.Menu
             closedIcon={RiMoreFill}
@@ -393,7 +393,7 @@ function TableRow({
             triggerClassName="hover:bg-blue-200 text-black"
             toggleActiveClassName="text-black bg-blue-200"
             variant="none"
-            subMenuList={actions(`${dataId}`)}
+            subMenuList={actions(`${key}`)}
           />
         </Toolbar>
       )}
@@ -424,8 +424,8 @@ function getAllRowContentsFromChildren(children: ReactNode): string[] {
       result.push(...getAllRowContentsFromChildren(groupChildren));
     }
 
-    if (TableRowProps.type === TableRow && TableRowProps.props.dataId) {
-      result.push(TableRowProps.props.dataId);
+    if (TableRowProps.type === TableRow && TableRowProps.props.key) {
+      result.push(TableRowProps.props.key);
     }
   });
 

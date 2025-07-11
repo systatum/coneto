@@ -58,7 +58,7 @@ const meta: Meta<typeof Table> = {
     },
     onItemsSelected: {
       description:
-        "Callback triggered with selected dataId array when selection changes.",
+        "Callback triggered with selected key array when selection changes.",
       action: "items selected",
       table: {
         type: { summary: "(data: string[]) => void" },
@@ -138,11 +138,7 @@ export const Default: Story = {
     const sampleRows = Array.from({ length: 20 }, (_, i) => {
       const type = TYPES_DATA[i % TYPES_DATA.length];
       return (
-        <Table.Row
-          dataId={`${type}`}
-          key={i}
-          content={[`Load Balancer ${i + 1}`, type]}
-        />
+        <Table.Row key={`${type}`} content={[`Load Balancer ${i + 1}`, type]} />
       );
     });
 
@@ -362,10 +358,9 @@ export const Appendable: Story = {
         subMenuList={TIP_MENU_ACTION}
         onLastRowReached={handleFetchData}
       >
-        {rows.map((rowValue, rowIndex) => (
+        {rows.map((rowValue) => (
           <Table.Row
-            key={rowIndex}
-            dataId={`${rowValue.from}-${rowValue.content}`}
+            key={`${rowValue.from}-${rowValue.content}`}
             actions={ROW_ACTION}
           >
             {[rowValue.from, rowValue.content]?.map((data, index, array) => (
@@ -476,8 +471,7 @@ export const WithSelectAndSorting: Story = {
         >
           {rows?.map((data, index) => (
             <Table.Row
-              key={index}
-              dataId={`${data.name}-${data.type}`}
+              key={`${data.name}-${data.type}`}
               content={[data.name, data.type]}
             />
           ))}
@@ -494,11 +488,7 @@ export const WithLoading: Story = {
     const sampleRows = Array.from({ length: 20 }, (_, i) => {
       const type = TYPES_DATA[i % TYPES_DATA.length];
       return (
-        <Table.Row
-          dataId={`${type}`}
-          key={i}
-          content={[`Load Balancer ${i + 1}`, type]}
-        />
+        <Table.Row key={`${type}`} content={[`Load Balancer ${i + 1}`, type]} />
       );
     });
     const columns: ColumnTableProps[] = [
@@ -859,10 +849,9 @@ export const WithCustom: Story = {
               title={groupValue.title}
               subtitle={groupValue.subtitle}
             >
-              {groupValue.items.map((rowValue, rowIndex) => (
+              {groupValue.items.map((rowValue) => (
                 <Table.Row
-                  key={rowIndex}
-                  dataId={`${groupValue.title}-${rowValue.title}`}
+                  key={`${groupValue.title}-${rowValue.title}`}
                   content={[rowValue.title, rowValue.category, rowValue.author]}
                   actions={ROW_ACTION}
                 />
