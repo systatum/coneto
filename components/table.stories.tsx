@@ -368,16 +368,8 @@ export const Appendable: Story = {
             key={rowIndex}
             rowId={`${rowValue.from}-${rowValue.content}`}
             actions={ROW_ACTION}
-          >
-            {[rowValue.from, rowValue.content]?.map((data, index, array) => (
-              <Table.Row.Cell
-                key={index}
-                col={data}
-                width={columns[index].width}
-                className={index === array.length - 1 ? "pr-8" : ""}
-              />
-            ))}
-          </Table.Row>
+            content={[rowValue.from, rowValue.content]}
+          />
         ))}
       </Table>
     );

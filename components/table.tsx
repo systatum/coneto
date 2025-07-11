@@ -1,9 +1,11 @@
 import {
   Children,
   cloneElement,
+  createContext,
   isValidElement,
   ReactElement,
   ReactNode,
+  useContext,
   useEffect,
   useRef,
   useState,
@@ -76,6 +78,9 @@ export interface TableRowCellProps {
   className?: string;
   width?: string;
 }
+
+const TableColumnContext = createContext<ColumnTableProps[]>([]);
+const useTableColumns = () => useContext(TableColumnContext);
 
 function Table({
   selectable = false,
@@ -165,92 +170,96 @@ function Table({
   const tableClass = cn("flex flex-col relative rounded-xs", className);
 
   return (
-    <div className={tableClass}>
-      {selectedData.length > 0 && (
-        <div className="w-full flex flex-row items-center justify-between py-2 text-white bg-gray-600 border-b-[0.5px] px-[14px]">
-          {actions && (
-            <div className="flex flex-row gap-1">
-              {actions.map((data, index) => (
-                <div
-                  key={index}
-                  className={cn(
-                    "flex flex-row cursor-pointer gap-1 border rounded-xl items-center hover:bg-[#5c626a] border-gray-500 py-1 px-2",
-                    data.className
-                  )}
-                >
-                  <data.icon onClick={data.onClick} size={14} />
-                  <span className="text-sm">{data.title}</span>
-                </div>
-              ))}
-            </div>
-          )}
-          {selectable && <span>{selectedData.length} items selected</span>}
-        </div>
-      )}
-      <div
-        className={cn(
-          "flex flex-col relative",
-          selectedData.length > 0 ? "border-t-[0.5]" : ""
-        )}
-      >
-        <div className="flex flex-row p-3 bg-[#0f3969] items-center font-semibold text-white">
-          {selectable && (
-            <div className="w-8 bg-[#0f3969] flex justify-center cursor-pointer pointer-events-auto items-center">
-              <Checkbox
-                onChange={handleSelectAll}
-                checked={allSelected}
-                indeterminate={someSelected}
-              />
-            </div>
-          )}
-          {columns.map((col, i) => {
-            return (
-              <div
-                className={cn(
-                  "flex relative items-center w-full",
-                  col.width ? "flex-row" : "flex-1"
-                )}
-                key={i}
-                style={{
-                  width: col.width,
-                }}
-              >
-                <TableRowCell
-                  col={col.caption}
-                  width={col.width}
-                  className={col.className}
-                />
-                {col.sortable && (
-                  <Toolbar className="w-fit absolute right-0 justify-end z-20">
-                    <Toolbar.Menu
-                      closedIcon={RiMoreFill}
-                      openedIcon={RiMoreFill}
-                      isOpen={isOpen}
-                      setIsOpen={setIsOpen}
-                      dropdownClassName="min-w-[235px]"
-                      triggerClassName="hover:bg-[#002e54]"
-                      toggleActiveClassName="bg-[#002e54]"
-                      variant="none"
-                      subMenuList={subMenuList(`${col.caption}`)}
-                    />
-                  </Toolbar>
-                )}
+    <TableColumnContext.Provider value={columns}>
+      <div className={tableClass}>
+        {selectedData.length > 0 && (
+          <div className="w-full flex flex-row items-center justify-between py-2 text-white bg-gray-600 border-b-[0.5px] px-[14px]">
+            {actions && (
+              <div className="flex flex-row gap-1">
+                {actions.map((data, index) => (
+                  <div
+                    key={index}
+                    className={cn(
+                      "flex flex-row cursor-pointer gap-1 border rounded-xl items-center hover:bg-[#5c626a] border-gray-500 py-1 px-2",
+                      data.className
+                    )}
+                  >
+                    <data.icon onClick={data.onClick} size={14} />
+                    <span className="text-sm">{data.title}</span>
+                  </div>
+                ))}
               </div>
-            );
-          })}
-        </div>
-        {rowChildren.length > 0 ? (
-          <div className={classTableRow}>{rowChildren}</div>
-        ) : (
-          <div className="border-b border-x border-gray-300">{emptySlate}</div>
-        )}
-        {isLoading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-white/60 z-30">
-            <LoadingSpinner iconSize={24} />
+            )}
+            {selectable && <span>{selectedData.length} items selected</span>}
           </div>
         )}
+        <div
+          className={cn(
+            "flex flex-col relative",
+            selectedData.length > 0 ? "border-t-[0.5]" : ""
+          )}
+        >
+          <div className="flex flex-row p-3 bg-[#0f3969] items-center font-semibold text-white">
+            {selectable && (
+              <div className="w-8 bg-[#0f3969] flex justify-center cursor-pointer pointer-events-auto items-center">
+                <Checkbox
+                  onChange={handleSelectAll}
+                  checked={allSelected}
+                  indeterminate={someSelected}
+                />
+              </div>
+            )}
+            {columns.map((col, i) => {
+              return (
+                <div
+                  className={cn(
+                    "flex relative items-center w-full",
+                    col.width ? "flex-row" : "flex-1"
+                  )}
+                  key={i}
+                  style={{
+                    width: col.width,
+                  }}
+                >
+                  <TableRowCell
+                    col={col.caption}
+                    width={col.width}
+                    className={col.className}
+                  />
+                  {col.sortable && (
+                    <Toolbar className="w-fit absolute right-0 justify-end z-20">
+                      <Toolbar.Menu
+                        closedIcon={RiMoreFill}
+                        openedIcon={RiMoreFill}
+                        isOpen={isOpen}
+                        setIsOpen={setIsOpen}
+                        dropdownClassName="min-w-[235px]"
+                        triggerClassName="hover:bg-[#002e54]"
+                        toggleActiveClassName="bg-[#002e54]"
+                        variant="none"
+                        subMenuList={subMenuList(`${col.caption}`)}
+                      />
+                    </Toolbar>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          {rowChildren.length > 0 ? (
+            <div className={classTableRow}>{rowChildren}</div>
+          ) : (
+            <div className="border-b border-x border-gray-300">
+              {emptySlate}
+            </div>
+          )}
+          {isLoading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-white/60 z-30">
+              <LoadingSpinner iconSize={24} />
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </TableColumnContext.Provider>
   );
 }
 
@@ -347,6 +356,7 @@ function TableRow({
     onLastRowReached?: () => void;
     isLast?: boolean;
   }>) {
+  const columns = useTableColumns();
   const rowRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -394,7 +404,19 @@ function TableRow({
           <Checkbox {...props} checked={isSelected} />
         </div>
       )}
-      {content && content.map((col, i) => <TableRowCell key={i} col={col} />)}
+      {content &&
+        content.map((col, i) => {
+          const column = columns[i];
+
+          return (
+            <TableRowCell
+              width={column?.width}
+              className={i === columns.length - 1 ? "pr-9" : ""}
+              key={i}
+              col={col}
+            />
+          );
+        })}
 
       {isHovered === rowId && actions && (
         <Toolbar className="w-fit absolute right-2">
