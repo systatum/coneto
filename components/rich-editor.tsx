@@ -6,8 +6,8 @@ import {
   RiListOrdered,
   RiListUnordered,
 } from "@remixicon/react";
-import TurndownService from "turndown";
-import { marked } from "marked";
+import TurndownService from "./../lib/turndown/turndown";
+import { marked } from "./../lib/marked/marked";
 import { cn } from "./../lib/utils";
 
 interface RichEditorProps {
