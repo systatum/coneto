@@ -22,7 +22,7 @@ function CapsuleTab({ tabs, className, activeTab = 1 }: CapsuleTabProps) {
   const activeContent = tabs.filter((data) => data.id === selected);
 
   const capsuleTabClass = cn(
-    "flex flex-col gap-1 border w-full border-gray-300 rounded-xs ",
+    "flex flex-col gap-1 border w-full border-[#ebebeb] shadow-[0_1px_4px_-3px_#5b5b5b] pb-[5px] rounded-xs ",
     className
   );
 

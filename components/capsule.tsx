@@ -131,7 +131,7 @@ export default function Capsule({
   const initialPosition = getInitialPosition();
 
   const capsuleClass = cn(
-    "relative flex flex-row items-center justify-start overflow-hidden border border-gray-100 px-1 shadow-sm",
+    "relative flex flex-row items-center justify-start overflow-hidden border border-[#ebebeb] px-1 shadow-sm",
     full ? "w-full" : "w-fit rounded-xl",
     containerClassName
   );
