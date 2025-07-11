@@ -1,10 +1,10 @@
 import { Meta, StoryObj } from "@storybook/react/*";
-import Slider from "./slider";
+import Boxbar from "./boxbar";
 import Badge from "./badge";
 
-const meta: Meta<typeof Slider> = {
-  title: "Content/Slider",
-  component: Slider,
+const meta: Meta<typeof Boxbar> = {
+  title: "Stage/Boxbar",
+  component: Boxbar,
   tags: ["autodocs"],
   argTypes: {
     containerClassName: {
@@ -26,7 +26,7 @@ const meta: Meta<typeof Slider> = {
     },
     minHeight: {
       control: { type: "number", min: 0, step: 10 },
-      description: "Minimum height of the slider (when collapsed).",
+      description: "Minimum height of the Boxbar (when collapsed).",
       table: {
         type: { summary: "number" },
         defaultValue: { summary: "40" },
@@ -34,7 +34,7 @@ const meta: Meta<typeof Slider> = {
     },
     maxHeight: {
       control: { type: "number", min: 0, step: 10 },
-      description: "Maximum height of the slider (when expanded).",
+      description: "Maximum height of the Boxbar (when expanded).",
       table: {
         type: { summary: "number" },
         defaultValue: { summary: "400" },
@@ -42,7 +42,7 @@ const meta: Meta<typeof Slider> = {
     },
     children: {
       control: false,
-      description: "Content to render inside the slider.",
+      description: "Content to render inside the Boxbar.",
       table: {
         type: { summary: "ReactNode" },
       },
@@ -99,7 +99,7 @@ export const Default: Story = {
       },
     ];
     return (
-      <Slider childClassName="gap-1" maxHeight={100}>
+      <Boxbar childClassName="gap-1" maxHeight={140}>
         {BADGE_OPTIONS.map((badge) => (
           <Badge
             className="w-full max-w-[120px]"
@@ -108,7 +108,7 @@ export const Default: Story = {
             withCircle
           />
         ))}
-      </Slider>
+      </Boxbar>
     );
   },
 };

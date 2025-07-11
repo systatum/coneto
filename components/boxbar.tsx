@@ -1,9 +1,9 @@
 import { ReactNode, useState } from "react";
-import { cn } from "./../lib/utils";
+import { cn } from "../lib/utils";
 import { RiArrowRightSLine } from "@remixicon/react";
 import { motion } from "framer-motion";
 
-interface SliderProps {
+interface BoxbarProps {
   children: ReactNode;
   containerClassName?: string;
   childClassName?: string;
@@ -11,20 +11,20 @@ interface SliderProps {
   maxHeight?: number;
 }
 
-export default function Slider({
+export default function Boxbar({
   childClassName,
   containerClassName,
   children,
   minHeight = 40,
   maxHeight = 400,
-}: SliderProps) {
+}: BoxbarProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <motion.div
       initial={{ height: minHeight }}
       animate={{ height: isOpen ? maxHeight : minHeight }}
-      transition={{ duration: 0.3, ease: "easeInOut" }}
+      transition={{ duration: 0.1, ease: "easeInOut" }}
       className={cn(
         "overflow-hidden flex flex-row justify-start items-start border rounded-xs relative border-gray-300 bg-white",
         containerClassName
