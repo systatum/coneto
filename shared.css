@@ -164,11 +164,20 @@
 }
 
 .rich-editor ol {
-  list-style-type: decimal;
-  padding-left: 1rem;
+  list-style-type: decimal !important;
+  list-style-position: outside !important;
+  padding-left: 2.6rem !important;
+  margin: 0 !important;
 }
 
 .rich-editor ul {
-  list-style-type: disc;
-  padding-left: 1rem;
+  list-style-type: disc !important;
+  list-style-position: outside !important;
+  padding-left: 2.6rem !important;
+  margin: 0 !important;
+}
+
+.rich-editor li {
+  padding-left: 0 !important;
+  display: list-item !important;
 }

@@ -1,23 +1,27 @@
-import { ReactNode, useEffect, useRef } from "react";
+import { KeyboardEvent, ReactNode, useEffect, useRef } from "react";
 import {
   RemixiconComponentType,
   RiBold,
   RiItalic,
-  RiNumber1,
+  RiListOrdered,
+  RiListUnordered,
 } from "@remixicon/react";
 import TurndownService from "turndown";
 import { marked } from "marked";
+import { cn } from "./../lib/utils";
 
 interface RichEditorProps {
   value?: string;
   onChange?: (value: string) => void;
   toolbarRightPanel?: ReactNode;
+  editorClassName?: string;
 }
 
 function RichEditor({
   value = "",
   onChange,
   toolbarRightPanel,
+  editorClassName,
 }: RichEditorProps) {
   const turndownService = new TurndownService();
   const editorRef = useRef<HTMLDivElement>(null);
@@ -29,7 +33,9 @@ function RichEditor({
     }
   }, [stateValue]);
 
-  const handleCommand = (command: "bold" | "italic" | "insertOrderedList") => {
+  const handleCommand = (
+    command: "bold" | "italic" | "insertOrderedList" | "insertUnorderedList"
+  ) => {
     if (!editorRef.current) return;
     editorRef.current.focus();
     document.execCommand(command);
@@ -38,7 +44,12 @@ function RichEditor({
     onChange?.(markdown);
   };
 
-  const handleOnKeyDown = (e) => {
+  const handleOnKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "u") {
+      e.preventDefault();
+      return;
+    }
+
     if (e.key === " ") {
       const sel = window.getSelection();
       if (!sel || !sel.rangeCount) return;
@@ -49,9 +60,12 @@ function RichEditor({
       if (node.nodeType === Node.TEXT_NODE) {
         const text = node.textContent ?? "";
 
-        const match = text.match(/^\d+\.$/);
-        if (match) {
+        const orderedMatch = text.match(/^(\d+)\.$/);
+        if (orderedMatch) {
           e.preventDefault();
+
+          const rawNumber = orderedMatch[1];
+          const parsedNumber = parseInt(rawNumber, 10);
 
           node.textContent = "";
 
@@ -59,6 +73,8 @@ function RichEditor({
           li.appendChild(document.createElement("br"));
 
           const ol = document.createElement("ol");
+
+          ol.setAttribute("start", parsedNumber.toString());
           ol.appendChild(li);
 
           const parent = node.parentNode;
@@ -70,6 +86,30 @@ function RichEditor({
           newRange.setStart(li, 0);
           newRange.collapse(true);
 
+          sel.removeAllRanges();
+          sel.addRange(newRange);
+        }
+
+        const unorderedMatch = text.match(/^[-*]$/);
+        if (unorderedMatch) {
+          e.preventDefault();
+
+          node.textContent = "";
+
+          const li = document.createElement("li");
+          li.appendChild(document.createElement("br"));
+
+          const ul = document.createElement("ul");
+          ul.appendChild(li);
+
+          const parent = node.parentNode;
+          if (parent) {
+            parent.replaceChild(ul, node);
+          }
+
+          const newRange = document.createRange();
+          newRange.setStart(li, 0);
+          newRange.collapse(true);
           sel.removeAllRanges();
           sel.addRange(newRange);
         }
@@ -87,8 +127,12 @@ function RichEditor({
             onClick={() => handleCommand("italic")}
           />
           <ToolbarButton
-            icon={RiNumber1}
+            icon={RiListOrdered}
             onClick={() => handleCommand("insertOrderedList")}
+          />
+          <ToolbarButton
+            icon={RiListUnordered}
+            onClick={() => handleCommand("insertUnorderedList")}
           />
         </div>
         {toolbarRightPanel && (
@@ -101,7 +145,10 @@ function RichEditor({
       <div
         ref={editorRef}
         contentEditable
-        className="min-h-[200px] p-2 outline-none rich-editor"
+        className={cn(
+          "min-h-[200px] p-2 outline-none rich-editor",
+          editorClassName
+        )}
         onInput={() => {
           const html = editorRef.current?.innerHTML || "";
           const markdown = turndownService.turndown(html);
