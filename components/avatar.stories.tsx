@@ -32,7 +32,7 @@ export default meta;
 
 type Story = StoryObj<typeof Avatar>;
 
-export const ProfileDefault: Story = {
+export const Default: Story = {
   args: {
     firstName: "John",
     lastName: "",
@@ -49,7 +49,7 @@ export const ProfileDefault: Story = {
     await expect(nameElement).toBeVisible();
   },
 };
-export const ProfileWithFunction: Story = {
+export const WithFunction: Story = {
   args: {
     firstName: "John",
     lastName: "",
@@ -99,7 +99,7 @@ export const ProfileWithFunction: Story = {
   },
 };
 
-export const ProfileWithImage: Story = {
+export const WithImage: Story = {
   args: {
     firstName: "John",
     lastName: "Doe",
