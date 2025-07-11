@@ -104,7 +104,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
               initial={{ x: isLeft ? "-100%" : "100%" }}
               animate={controls}
               className={cn(
-                `fixed top-0 flex w-64 min-w-[92vw] flex-col gap-3 border border-gray-300 bg-white pb-4 shadow-lg md:translate-x-0 md:shadow-none`,
+                `fixed top-0 flex w-64 min-w-[92vw] flex-col gap-3 border border-[#ebebeb] shadow-sm  bg-white pb-4 md:translate-x-0 md:shadow-none`,
                 isLeft ? "left-0" : "right-0",
                 className
               )}
@@ -112,7 +112,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
               {closable && (
                 <div
                   className={cn(
-                    "absolute top-1 z-10 flex h-fit flex-col border-gray-300",
+                    "absolute top-1 z-10 flex h-fit flex-col",
                     isLeft ? "left-[92vw]" : "right-[92vw]",
                     tabClassName
                   )}
@@ -121,7 +121,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                     aria-label="Button Close"
                     onClick={() => setIsOpen(null)}
                     className={cn(
-                      "relative w-fit cursor-pointer bg-white border-gray-300 hover:bg-gray-100",
+                      "relative w-fit cursor-pointer bg-white border-[#ebebeb] shadow-sm hover:bg-gray-100",
                       isLeft
                         ? "border-y border-r p-2 rounded-r-xl right-1"
                         : "border-y border-l p-2 rounded-l-xl left-1"
@@ -134,7 +134,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
 
               <div
                 className={cn(
-                  "absolute top-12 z-10 flex h-fit flex-col gap-[2px] border-gray-300",
+                  "absolute top-11 z-10 flex h-fit flex-col",
                   isLeft ? "left-[92vw]" : "right-[92vw]",
                   tabClassName
                 )}
@@ -143,7 +143,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                   aria-label="Toggle Expanded/Collapsed PaperDialog"
                   onClick={() => handleToggleDrawer(!isOpen)}
                   className={cn(
-                    "relative cursor-pointer bg-white border-gray-300 hover:bg-gray-100",
+                    "relative cursor-pointer bg-white border-[#ebebeb] shadow-sm hover:bg-gray-100",
                     isLeft
                       ? "border-y border-r p-2 rounded-r-xl right-1"
                       : "border-y border-l p-2 rounded-l-xl left-1"
