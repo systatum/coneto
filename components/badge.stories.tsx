@@ -30,7 +30,7 @@ export default meta;
 
 type Story = StoryObj<typeof Badge>;
 
-export const NotAvailable: Story = {
+export const Default: Story = {
   args: {
     variant: null,
     caption: "Default badge",
@@ -75,7 +75,7 @@ export const Red: Story = {
   render: (args) => <Badge {...args} />,
 };
 
-export const VariantBadge: Story = {
+export const Custom: Story = {
   render: () => {
     const BADGE_OPTIONS = [
       { id: 1, variant: "neutral", caption: "Anime" },
