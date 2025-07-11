@@ -17,6 +17,12 @@ interface RichEditorProps {
   editorClassName?: string;
 }
 
+export interface RichEditorToolbarButton {
+  icon?: RemixiconComponentType;
+  onClick?: () => void;
+  children?: ReactNode;
+}
+
 function RichEditor({
   value = "",
   onChange,
@@ -120,17 +126,20 @@ function RichEditor({
   return (
     <div className="border border-[#ececec] rounded-xs shadow-[0_1px_4px_-3px_#5b5b5b]">
       <div className="flex flex-row justify-between items-center border-b border-[#ececec] px-2 bg-white shadow-sm">
-        <div className="flex flex-row justify-start items-start gap-1 py-1">
-          <ToolbarButton icon={RiBold} onClick={() => handleCommand("bold")} />
-          <ToolbarButton
+        <div className="flex flex-row justify-start items-start gap-1 py-[6px]">
+          <RichEditorToolbarButton
+            icon={RiBold}
+            onClick={() => handleCommand("bold")}
+          />
+          <RichEditorToolbarButton
             icon={RiItalic}
             onClick={() => handleCommand("italic")}
           />
-          <ToolbarButton
+          <RichEditorToolbarButton
             icon={RiListOrdered}
             onClick={() => handleCommand("insertOrderedList")}
           />
-          <ToolbarButton
+          <RichEditorToolbarButton
             icon={RiListUnordered}
             onClick={() => handleCommand("insertUnorderedList")}
           />
@@ -160,24 +169,23 @@ function RichEditor({
   );
 }
 
-function ToolbarButton({
+function RichEditorToolbarButton({
   icon: Icon,
   onClick,
-}: {
-  icon: RemixiconComponentType;
-  onClick?: () => void;
-}) {
+  children,
+}: RichEditorToolbarButton) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="px-2 py-1 cursor-pointer text-sm hover:bg-gray-200 rounded-xs"
+      className="px-2 py-1 flex flex-row items-center gap-1 cursor-pointer text-sm hover:bg-gray-200 rounded-xs"
     >
-      <Icon size={16} />
+      {Icon && <Icon size={16} />}
+      {children && <span className="text-s,">{children}</span>}
     </button>
   );
 }
 
-RichEditor.ToolbarButton = ToolbarButton;
+RichEditor.ToolbarButton = RichEditorToolbarButton;
 
 export { RichEditor };
