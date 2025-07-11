@@ -25,7 +25,7 @@ export default function Capsule({
   containerClassName,
   classActiveTab,
   full,
-  activeBackgroundColor = "black",
+  activeBackgroundColor = "oklch(54.6% .245 262.881)",
 }: TabProps) {
   const [hovered, setHovered] = useState<string | null | number>(null);
 

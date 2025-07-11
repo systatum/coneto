@@ -28,7 +28,13 @@ function CapsuleTab({ tabs, className, activeTab = 1 }: CapsuleTabProps) {
 
   return (
     <div className={capsuleTabClass}>
-      <Capsule fields={tabs} setView={setSelected} view={selected} full />
+      <Capsule
+        fields={tabs}
+        setView={setSelected}
+        activeBackgroundColor="black"
+        view={selected}
+        full
+      />
 
       <div className="flex flex-col w-full">
         {activeContent.map((data, index) => (
