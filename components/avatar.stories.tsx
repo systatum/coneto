@@ -38,7 +38,6 @@ export const ProfileDefault: Story = {
     lastName: "",
     changeable: false,
     frameSize: 70,
-    fontSize: 16,
   },
   render: (args: AvatarProps) => {
     return <Avatar {...args} />;
@@ -56,7 +55,6 @@ export const ProfileWithFunction: Story = {
     lastName: "",
     changeable: false,
     frameSize: 70,
-    fontSize: 16,
   },
   render: (args: AvatarProps) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -108,7 +106,6 @@ export const ProfileWithImage: Story = {
     changeable: true,
     profileImageUrl: "/avatar-1.jpg",
     frameSize: 70,
-    fontSize: 16,
   },
   render: (args: AvatarProps) => {
     const [selectedFileName, setSelectedFileName] = useState<string | null>(
