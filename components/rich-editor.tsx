@@ -17,7 +17,7 @@ interface RichEditorProps {
   editorClassName?: string;
 }
 
-export interface RichEditorToolbarButton {
+export interface RichEditorToolbarButtonProps {
   icon?: RemixiconComponentType;
   onClick?: () => void;
   children?: ReactNode;
@@ -173,11 +173,15 @@ function RichEditorToolbarButton({
   icon: Icon,
   onClick,
   children,
-}: RichEditorToolbarButton) {
+}: RichEditorToolbarButtonProps) {
   return (
     <button
       type="button"
-      onClick={onClick}
+      onClick={() => {
+        if (onClick) {
+          onClick();
+        }
+      }}
       className="px-2 py-1 flex flex-row items-center gap-1 cursor-pointer text-sm hover:bg-gray-200 rounded-xs"
     >
       {Icon && <Icon size={16} />}
