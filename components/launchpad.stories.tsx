@@ -118,7 +118,7 @@ export const Default: Story = {
           <Launchpad.Section
             title={data.title}
             key={index}
-            childClassName="gap-4"
+            childClassName="gap-4 px-2"
           >
             {data.items.map((item, itemIndex) => (
               <Launchpad.Section.Item key={itemIndex} {...item} />

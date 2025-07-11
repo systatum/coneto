@@ -111,7 +111,7 @@ function Launchpad({ children, className, maxSection = 3 }: LaunchpadProps) {
           {groupedSections.map((group, index) => (
             <div
               key={index}
-              className="shrink-0 flex flex-col gap-6 px-4"
+              className="shrink-0 flex flex-col gap-6 pl-[1px] pr-3"
               style={{
                 width: containerWidth,
                 pointerEvents: "auto",
@@ -154,6 +154,7 @@ function LaunchpadSection({
     </div>
   );
 }
+
 function LaunchpadSectionItem({
   href,
   label,
