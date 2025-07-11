@@ -118,8 +118,8 @@ function RichEditor({
   };
 
   return (
-    <div className="border rounded-xs shadow-sm">
-      <div className="flex flex-row justify-between items-center border-b px-2 bg-gray-50">
+    <div className="border border-[#ececec] rounded-xs shadow-[0_1px_4px_-3px_#5b5b5b]">
+      <div className="flex flex-row justify-between items-center border-b border-[#ececec] px-2 bg-white shadow-sm">
         <div className="flex flex-row justify-start items-start gap-1 py-1">
           <ToolbarButton icon={RiBold} onClick={() => handleCommand("bold")} />
           <ToolbarButton
