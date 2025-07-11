@@ -49,7 +49,8 @@ export const Default: Story = {
     await expect(nameElement).toBeVisible();
   },
 };
-export const WithFunction: Story = {
+
+export const WithActions: Story = {
   args: {
     firstName: "John",
     lastName: "",
