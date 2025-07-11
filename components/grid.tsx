@@ -176,7 +176,7 @@ export const GRID_PRESETS = {
   },
 } as const;
 
-type GridPresetKey = keyof typeof GRID_PRESETS;
+export type GridPresetKey = keyof typeof GRID_PRESETS;
 
 Grid.Card = GridCard;
 export { Grid };
