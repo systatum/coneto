@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { Table } from "./table";
+import { ColumnTableProps, Table } from "./table";
 import { useState } from "react";
 import { TipMenuItemProps } from "./tip-menu";
 import {
@@ -16,10 +16,115 @@ import { Button } from "./button";
 const meta: Meta<typeof Table> = {
   title: "Content/Table",
   component: Table,
-  args: {},
-
   tags: ["autodocs"],
-  argTypes: {},
+  args: {
+    selectable: false,
+    isLoading: false,
+    columns: [],
+    actions: [],
+    emptySlate: "No data available.",
+  },
+  argTypes: {
+    selectable: {
+      description: "Enable row selection with checkboxes.",
+      control: "boolean",
+      table: {
+        type: { summary: "boolean" },
+        defaultValue: { summary: "false" },
+      },
+    },
+    isLoading: {
+      description: "Show loading overlay on the table.",
+      control: "boolean",
+      table: {
+        type: { summary: "boolean" },
+        defaultValue: { summary: "false" },
+      },
+    },
+    columns: {
+      description: "Defines the column headers of the table.",
+      control: "object",
+      table: {
+        type: { summary: "ColumnTableProps[]" },
+      },
+    },
+    actions: {
+      description:
+        "Array of actions displayed when one or more rows are selected.",
+      control: "object",
+      table: {
+        type: { summary: "TableActionsProps[]" },
+      },
+    },
+    onItemsSelected: {
+      description:
+        "Callback triggered with selected dataId array when selection changes.",
+      action: "items selected",
+      table: {
+        type: { summary: "(data: string[]) => void" },
+      },
+    },
+    children: {
+      description:
+        "Table rows (`Table.Row`) or groups (`TableRow.Group`) passed as children.",
+      control: false,
+      table: {
+        type: { summary: "ReactNode" },
+      },
+    },
+    className: {
+      description: "Class applied to the main container.",
+      control: "text",
+      table: {
+        type: { summary: "string" },
+      },
+    },
+    classNameTableRow: {
+      description: "Class applied to the container holding all table rows.",
+      control: "text",
+      table: {
+        type: { summary: "string" },
+      },
+    },
+    isOpen: {
+      description: "Open state for the sorting menu. Controlled externally.",
+      control: "boolean",
+      table: {
+        type: { summary: "boolean" },
+      },
+    },
+    setIsOpen: {
+      description:
+        "Function to toggle the sorting menu. Controlled externally.",
+      table: {
+        type: { summary: "() => void" },
+      },
+    },
+    subMenuList: {
+      description:
+        "Function to generate menu list for sorting options per column.",
+      table: {
+        type: {
+          summary: "(columnCaption: string) => TipMenuItemProps[]",
+        },
+      },
+    },
+    emptySlate: {
+      description:
+        "Fallback content shown when no rows are rendered (e.g., 'No data').",
+      control: "text",
+      table: {
+        type: { summary: "ReactNode" },
+      },
+    },
+    onLastRowReached: {
+      description:
+        "Callback fired when the last row becomes visible (used for infinite scrolling).",
+      table: {
+        type: { summary: "() => void" },
+      },
+    },
+  },
 };
 
 export default meta;
@@ -32,13 +137,20 @@ export const Default: Story = {
 
     const sampleRows = Array.from({ length: 20 }, (_, i) => {
       const type = TYPES_DATA[i % TYPES_DATA.length];
-      return <Table.Row key={i} content={[`Load Balancer ${i + 1}`, type]} />;
+      return (
+        <Table.Row
+          dataId={`${type}`}
+          key={i}
+          content={[`Load Balancer ${i + 1}`, type]}
+        />
+      );
     });
 
-    const columns = [
+    const columns: ColumnTableProps[] = [
       {
         caption: "Name",
         sortable: false,
+        className: "text-[20px]",
       },
       {
         caption: "Type",
@@ -56,7 +168,7 @@ export const Default: Story = {
 
 export const Appendable: Story = {
   render: () => {
-    const columns = [
+    const columns: ColumnTableProps[] = [
       {
         caption: "From",
         sortable: true,
@@ -305,7 +417,7 @@ export const WithSelectAndSorting: Story = {
       setRows(sorted);
     };
 
-    const columns = [
+    const columns: ColumnTableProps[] = [
       {
         caption: "Name",
         sortable: true,
@@ -363,7 +475,11 @@ export const WithSelectAndSorting: Story = {
           subMenuList={TIP_MENU_ACTION}
         >
           {rows?.map((data, index) => (
-            <Table.Row key={index} content={[data.name, data.type]} />
+            <Table.Row
+              key={index}
+              dataId={`${data.name}-${data.type}`}
+              content={[data.name, data.type]}
+            />
           ))}
         </Table>
       </div>
@@ -377,9 +493,15 @@ export const WithLoading: Story = {
 
     const sampleRows = Array.from({ length: 20 }, (_, i) => {
       const type = TYPES_DATA[i % TYPES_DATA.length];
-      return <Table.Row key={i} content={[`Load Balancer ${i + 1}`, type]} />;
+      return (
+        <Table.Row
+          dataId={`${type}`}
+          key={i}
+          content={[`Load Balancer ${i + 1}`, type]}
+        />
+      );
     });
-    const columns = [
+    const columns: ColumnTableProps[] = [
       {
         caption: "Name",
         sortable: false,
@@ -411,7 +533,7 @@ export const WithEmptySlate: Story = {
   render: () => {
     const emptyRows = [];
 
-    const columns = [
+    const columns: ColumnTableProps[] = [
       {
         caption: "Name",
         sortable: false,
@@ -614,7 +736,7 @@ export const WithCustom: Story = {
 
     const [rows, setRows] = useState(TABLE_ITEMS);
 
-    const columns = [
+    const columns: ColumnTableProps[] = [
       {
         caption: "Title",
         sortable: true,

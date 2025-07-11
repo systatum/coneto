@@ -23,9 +23,10 @@ import { AnimatePresence, motion } from "framer-motion";
 
 export type RowData = (string | ReactNode)[];
 
-interface ColumnTableProps {
+export interface ColumnTableProps {
   caption: string;
   sortable?: boolean;
+  className?: string;
 }
 
 export interface TableActionsProps {
@@ -205,7 +206,7 @@ function Table({
               key={i}
               className="flex flex-row w-full flex-1 justify-between items-center"
             >
-              <TableRowCell col={col.caption} />
+              <TableRowCell col={col.caption} className={col.className} />
               {col.sortable && (
                 <Toolbar className="w-full justify-end z-20">
                   <Toolbar.Menu
