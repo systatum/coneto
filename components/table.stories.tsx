@@ -58,7 +58,7 @@ const meta: Meta<typeof Table> = {
     },
     onItemsSelected: {
       description:
-        "Callback triggered with selected key array when selection changes.",
+        "Callback triggered with selected rowId array when selection changes.",
       action: "items selected",
       table: {
         type: { summary: "(data: string[]) => void" },
@@ -138,7 +138,11 @@ export const Default: Story = {
     const sampleRows = Array.from({ length: 20 }, (_, i) => {
       const type = TYPES_DATA[i % TYPES_DATA.length];
       return (
-        <Table.Row key={`${type}`} content={[`Load Balancer ${i + 1}`, type]} />
+        <Table.Row
+          rowId={`${type}`}
+          key={i}
+          content={[`Load Balancer ${i + 1}`, type]}
+        />
       );
     });
 
@@ -146,7 +150,6 @@ export const Default: Story = {
       {
         caption: "Name",
         sortable: false,
-        className: "text-[20px]",
       },
       {
         caption: "Type",
@@ -168,10 +171,12 @@ export const Appendable: Story = {
       {
         caption: "From",
         sortable: true,
+        width: "40%",
       },
       {
         caption: "Content",
         sortable: true,
+        width: "60%",
       },
     ];
 
@@ -358,15 +363,17 @@ export const Appendable: Story = {
         subMenuList={TIP_MENU_ACTION}
         onLastRowReached={handleFetchData}
       >
-        {rows.map((rowValue) => (
+        {rows.map((rowValue, rowIndex) => (
           <Table.Row
-            key={`${rowValue.from}-${rowValue.content}`}
+            key={rowIndex}
+            rowId={`${rowValue.from}-${rowValue.content}`}
             actions={ROW_ACTION}
           >
             {[rowValue.from, rowValue.content]?.map((data, index, array) => (
               <Table.Row.Cell
                 key={index}
                 col={data}
+                width={columns[index].width}
                 className={index === array.length - 1 ? "pr-8" : ""}
               />
             ))}
@@ -471,7 +478,8 @@ export const WithSelectAndSorting: Story = {
         >
           {rows?.map((data, index) => (
             <Table.Row
-              key={`${data.name}-${data.type}`}
+              key={index}
+              rowId={`${data.name}-${data.type}`}
               content={[data.name, data.type]}
             />
           ))}
@@ -488,7 +496,11 @@ export const WithLoading: Story = {
     const sampleRows = Array.from({ length: 20 }, (_, i) => {
       const type = TYPES_DATA[i % TYPES_DATA.length];
       return (
-        <Table.Row key={`${type}`} content={[`Load Balancer ${i + 1}`, type]} />
+        <Table.Row
+          rowId={`${type}`}
+          key={i}
+          content={[`Load Balancer ${i + 1}`, type]}
+        />
       );
     });
     const columns: ColumnTableProps[] = [
@@ -849,9 +861,10 @@ export const WithCustom: Story = {
               title={groupValue.title}
               subtitle={groupValue.subtitle}
             >
-              {groupValue.items.map((rowValue) => (
+              {groupValue.items.map((rowValue, rowIndex) => (
                 <Table.Row
-                  key={`${groupValue.title}-${rowValue.title}`}
+                  key={rowIndex}
+                  rowId={`${groupValue.title}-${rowValue.title}`}
                   content={[rowValue.title, rowValue.category, rowValue.author]}
                   actions={ROW_ACTION}
                 />

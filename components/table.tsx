@@ -27,6 +27,7 @@ export interface ColumnTableProps {
   caption: string;
   sortable?: boolean;
   className?: string;
+  width?: string;
 }
 
 export interface TableActionsProps {
@@ -58,7 +59,7 @@ export interface TableRowProps {
   selectable?: boolean;
   handleSelect?: (data: string) => void;
   className?: string;
-  key?: string;
+  rowId?: string;
   children?: ReactNode;
   actions?: (columnCaption: string) => TipMenuItemProps[];
 }
@@ -73,6 +74,7 @@ export interface TableRowGroupProps {
 export interface TableRowCellProps {
   col: string | ReactNode;
   className?: string;
+  width?: string;
 }
 
 function Table({
@@ -143,7 +145,7 @@ function Table({
       const props = child.props as TableRowProps;
 
       const isSelected = selectedData.some(
-        (d) => JSON.stringify(d) === JSON.stringify(props.key)
+        (d) => JSON.stringify(d) === JSON.stringify(props.rowId)
       );
 
       const isLast = index === Children.count(children) - 1;
@@ -191,7 +193,7 @@ function Table({
           selectedData.length > 0 ? "border-t-[0.5]" : ""
         )}
       >
-        <div className="flex flex-row bg-[#0f3969] items-center font-semibold text-white p-3">
+        <div className="flex flex-row p-3 bg-[#0f3969] items-center font-semibold text-white">
           {selectable && (
             <div className="w-8 bg-[#0f3969] flex justify-center cursor-pointer pointer-events-auto items-center">
               <Checkbox
@@ -201,29 +203,41 @@ function Table({
               />
             </div>
           )}
-          {columns.map((col, i) => (
-            <div
-              key={i}
-              className="flex flex-row w-full flex-1 justify-between items-center"
-            >
-              <TableRowCell col={col.caption} className={col.className} />
-              {col.sortable && (
-                <Toolbar className="w-full justify-end z-20">
-                  <Toolbar.Menu
-                    closedIcon={RiMoreFill}
-                    openedIcon={RiMoreFill}
-                    isOpen={isOpen}
-                    setIsOpen={setIsOpen}
-                    dropdownClassName="min-w-[235px]"
-                    triggerClassName="hover:bg-[#002e54]"
-                    toggleActiveClassName="bg-[#002e54]"
-                    variant="none"
-                    subMenuList={subMenuList(`${col.caption}`)}
-                  />
-                </Toolbar>
-              )}
-            </div>
-          ))}
+          {columns.map((col, i) => {
+            return (
+              <div
+                className={cn(
+                  "flex relative items-center w-full",
+                  col.width ? "flex-row" : "flex-1"
+                )}
+                key={i}
+                style={{
+                  width: col.width,
+                }}
+              >
+                <TableRowCell
+                  col={col.caption}
+                  width={col.width}
+                  className={col.className}
+                />
+                {col.sortable && (
+                  <Toolbar className="w-fit absolute right-0 justify-end z-20">
+                    <Toolbar.Menu
+                      closedIcon={RiMoreFill}
+                      openedIcon={RiMoreFill}
+                      isOpen={isOpen}
+                      setIsOpen={setIsOpen}
+                      dropdownClassName="min-w-[235px]"
+                      triggerClassName="hover:bg-[#002e54]"
+                      toggleActiveClassName="bg-[#002e54]"
+                      variant="none"
+                      subMenuList={subMenuList(`${col.caption}`)}
+                    />
+                  </Toolbar>
+                )}
+              </div>
+            );
+          })}
         </div>
         {rowChildren.length > 0 ? (
           <div className={classTableRow}>{rowChildren}</div>
@@ -261,7 +275,7 @@ function TableRowGroup({
       const props = child.props as TableRowProps;
 
       const isSelected = selectedData.some(
-        (d) => JSON.stringify(d) === JSON.stringify(props.key)
+        (d) => JSON.stringify(d) === JSON.stringify(props.rowId)
       );
 
       return cloneElement(child, {
@@ -322,7 +336,7 @@ function TableRow({
   isSelected = false,
   handleSelect,
   className,
-  key,
+  rowId,
   children,
   actions,
   isLast,
@@ -364,15 +378,15 @@ function TableRow({
     <div
       ref={rowRef}
       onMouseLeave={() => setIsHovered(null)}
-      onMouseEnter={() => setIsHovered(key)}
+      onMouseEnter={() => setIsHovered(rowId)}
       className={tableRowClass}
     >
       {selectable && (
         <div
           onClick={(e) => {
             e.stopPropagation();
-            if (key) {
-              handleSelect?.(key);
+            if (rowId) {
+              handleSelect?.(rowId);
             }
           }}
           className="w-8 flex justify-center cursor-pointer pointer-events-auto items-center"
@@ -382,7 +396,7 @@ function TableRow({
       )}
       {content && content.map((col, i) => <TableRowCell key={i} col={col} />)}
 
-      {isHovered === key && actions && (
+      {isHovered === rowId && actions && (
         <Toolbar className="w-fit absolute right-2">
           <Toolbar.Menu
             closedIcon={RiMoreFill}
@@ -393,7 +407,7 @@ function TableRow({
             triggerClassName="hover:bg-blue-200 text-black"
             toggleActiveClassName="text-black bg-blue-200"
             variant="none"
-            subMenuList={actions(`${key}`)}
+            subMenuList={actions(`${rowId}`)}
           />
         </Toolbar>
       )}
@@ -402,9 +416,15 @@ function TableRow({
   );
 }
 
-function TableRowCell({ col, className }: TableRowCellProps) {
+function TableRowCell({ col, className, width }: TableRowCellProps) {
+  console.log(col, width);
   return (
-    <div className={cn("px-2 flex-1", className)}>
+    <div
+      className={cn("px-2", width ? "flex flex-row" : "flex-1", className)}
+      style={{
+        width: width,
+      }}
+    >
       <div>{col}</div>
     </div>
   );
@@ -424,8 +444,8 @@ function getAllRowContentsFromChildren(children: ReactNode): string[] {
       result.push(...getAllRowContentsFromChildren(groupChildren));
     }
 
-    if (TableRowProps.type === TableRow && TableRowProps.props.key) {
-      result.push(TableRowProps.props.key);
+    if (TableRowProps.type === TableRow && TableRowProps.props.rowId) {
+      result.push(TableRowProps.props.rowId);
     }
   });
 
