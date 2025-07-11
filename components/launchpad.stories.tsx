@@ -113,13 +113,9 @@ export const Default: Story = {
     ];
 
     return (
-      <Launchpad className="max-w-[600px]">
+      <Launchpad className="max-w-[520px]">
         {LAUNCHPAD_SECTIONS.map((data, index) => (
-          <Launchpad.Section
-            title={data.title}
-            key={index}
-            childClassName="gap-4 px-2"
-          >
+          <Launchpad.Section title={data.title} key={index}>
             {data.items.map((item, itemIndex) => (
               <Launchpad.Section.Item key={itemIndex} {...item} />
             ))}

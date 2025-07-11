@@ -1,4 +1,3 @@
-import { cn } from "./../lib/utils";
 import {
   Children,
   isValidElement,
@@ -9,6 +8,8 @@ import {
 } from "react";
 import Separator from "./separator";
 import { motion } from "framer-motion";
+import { Grid, GridPresetKey } from "./grid";
+import { cn } from "./../lib/utils";
 
 interface LaunchpadProps {
   children: ReactNode;
@@ -21,6 +22,8 @@ interface LaunchpadSectionProps {
   title?: string;
   containerClassName?: string;
   childClassName?: string;
+  separatorClassName?: string;
+  gridPreset?: GridPresetKey;
 }
 
 interface LaunchpadSectionItemProps {
@@ -85,7 +88,7 @@ function Launchpad({ children, className, maxSection = 3 }: LaunchpadProps) {
     <div
       ref={containerRef}
       className={cn(
-        "flex flex-col cursor-grab active:cursor-grabbing p-4 px-1 gap-4 border border-gray-300 overflow-hidden relative",
+        "flex flex-col cursor-grab active:cursor-grabbing p-6 px-[6px] gap-4 border border-gray-300 overflow-hidden relative",
         className
       )}
     >
@@ -111,7 +114,7 @@ function Launchpad({ children, className, maxSection = 3 }: LaunchpadProps) {
           {groupedSections.map((group, index) => (
             <div
               key={index}
-              className="shrink-0 flex flex-col gap-6 pl-[1px] pr-3"
+              className="shrink-0 flex flex-col gap-6"
               style={{
                 width: containerWidth,
                 pointerEvents: "auto",
@@ -146,11 +149,23 @@ function LaunchpadSection({
   title,
   childClassName,
   containerClassName,
+  separatorClassName,
+  gridPreset = "2-to-4",
 }: LaunchpadSectionProps) {
   return (
     <div className={cn("flex flex-col gap-6", containerClassName)}>
-      <Separator title={title} />
-      <div className={cn("flex flex-wrap", childClassName)}>{children}</div>
+      <div className={cn("pr-10 sm:pr-16 md:pr-6 lg:pr-6", separatorClassName)}>
+        <Separator title={title} depth="0" />
+      </div>
+      <Grid
+        preset={gridPreset}
+        containerClassName={cn(
+          "-translate-x-2 md:translate-x-0 sm:pr-4",
+          childClassName
+        )}
+      >
+        {children}
+      </Grid>
     </div>
   );
 }
@@ -168,11 +183,11 @@ function LaunchpadSectionItem({
       href={href}
     >
       {iconUrl && (
-        <div className={cn("max-w-[80px]", iconClassName)}>
+        <div className={cn("max-w-[100px]", iconClassName)}>
           <img width={400} height={400} src={iconUrl} />
         </div>
       )}
-      {iconUrl && <span>{label}</span>}
+      {label && <span>{label}</span>}
     </a>
   );
 }
