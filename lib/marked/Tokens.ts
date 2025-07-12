@@ -1,7 +1,5 @@
-/* eslint-disable no-use-before-define */
-
-export type MarkedToken = (
-  Tokens.Blockquote
+export type MarkedToken =
+  | Tokens.Blockquote
   | Tokens.Br
   | Tokens.Code
   | Tokens.Codespan
@@ -21,23 +19,20 @@ export type MarkedToken = (
   | Tokens.Strong
   | Tokens.Table
   | Tokens.Tag
-  | Tokens.Text
-);
+  | Tokens.Text;
 
-export type Token = (
-  MarkedToken
-  | Tokens.Generic);
+export type Token = MarkedToken | Tokens.Generic;
 
 export namespace Tokens {
   export interface Blockquote {
-    type: 'blockquote';
+    type: "blockquote";
     raw: string;
     text: string;
     tokens: Token[];
   }
 
   export interface Br {
-    type: 'br';
+    type: "br";
     raw: string;
   }
 
@@ -46,22 +41,22 @@ export namespace Tokens {
   }
 
   export interface Code {
-    type: 'code';
+    type: "code";
     raw: string;
-    codeBlockStyle?: 'indented';
+    codeBlockStyle?: "indented";
     lang?: string;
     text: string;
     escaped?: boolean;
   }
 
   export interface Codespan {
-    type: 'codespan';
+    type: "codespan";
     raw: string;
     text: string;
   }
 
   export interface Def {
-    type: 'def';
+    type: "def";
     raw: string;
     tag: string;
     href: string;
@@ -69,21 +64,21 @@ export namespace Tokens {
   }
 
   export interface Del {
-    type: 'del';
+    type: "del";
     raw: string;
     text: string;
     tokens: Token[];
   }
 
   export interface Em {
-    type: 'em';
+    type: "em";
     raw: string;
     text: string;
     tokens: Token[];
   }
 
   export interface Escape {
-    type: 'escape';
+    type: "escape";
     raw: string;
     text: string;
   }
@@ -97,7 +92,7 @@ export namespace Tokens {
   }
 
   export interface Heading {
-    type: 'heading';
+    type: "heading";
     raw: string;
     depth: number;
     text: string;
@@ -105,12 +100,12 @@ export namespace Tokens {
   }
 
   export interface Hr {
-    type: 'hr';
+    type: "hr";
     raw: string;
   }
 
   export interface HTML {
-    type: 'html';
+    type: "html";
     raw: string;
     pre: boolean;
     text: string;
@@ -118,7 +113,7 @@ export namespace Tokens {
   }
 
   export interface Image {
-    type: 'image';
+    type: "image";
     raw: string;
     href: string;
     title: string | null;
@@ -127,7 +122,7 @@ export namespace Tokens {
   }
 
   export interface Link {
-    type: 'link';
+    type: "link";
     raw: string;
     href: string;
     title?: string | null;
@@ -136,16 +131,16 @@ export namespace Tokens {
   }
 
   export interface List {
-    type: 'list';
+    type: "list";
     raw: string;
     ordered: boolean;
-    start: number | '';
+    start: number | "";
     loose: boolean;
     items: ListItem[];
   }
 
   export interface ListItem {
-    type: 'list_item';
+    type: "list_item";
     raw: string;
     task: boolean;
     checked?: boolean;
@@ -155,7 +150,7 @@ export namespace Tokens {
   }
 
   export interface Paragraph {
-    type: 'paragraph';
+    type: "paragraph";
     raw: string;
     pre?: boolean;
     text: string;
@@ -163,21 +158,21 @@ export namespace Tokens {
   }
 
   export interface Space {
-    type: 'space';
+    type: "space";
     raw: string;
   }
 
   export interface Strong {
-    type: 'strong';
+    type: "strong";
     raw: string;
     text: string;
     tokens: Token[];
   }
 
   export interface Table {
-    type: 'table';
+    type: "table";
     raw: string;
-    align: Array<'center' | 'left' | 'right' | null>;
+    align: Array<"center" | "left" | "right" | null>;
     header: TableCell[];
     rows: TableCell[][];
   }
@@ -186,7 +181,7 @@ export namespace Tokens {
     text: string;
     tokens: Token[];
     header: boolean;
-    align: 'center' | 'left' | 'right' | null;
+    align: "center" | "left" | "right" | null;
   }
 
   export interface TableRow {
@@ -194,7 +189,7 @@ export namespace Tokens {
   }
 
   export interface Tag {
-    type: 'html';
+    type: "html";
     raw: string;
     inLink: boolean;
     inRawBlock: boolean;
@@ -203,7 +198,7 @@ export namespace Tokens {
   }
 
   export interface Text {
-    type: 'text';
+    type: "text";
     raw: string;
     text: string;
     tokens?: Token[];
@@ -211,7 +206,10 @@ export namespace Tokens {
   }
 }
 
-export type Links = Record<string, Pick<Tokens.Link | Tokens.Image, 'href' | 'title'>>;
+export type Links = Record<
+  string,
+  Pick<Tokens.Link | Tokens.Image, "href" | "title">
+>;
 
 export type TokensList = Token[] & {
   links: Links;

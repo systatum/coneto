@@ -13,37 +13,9 @@ import type { MaybePromise } from "./Instance";
 const markedInstance = new Marked();
 
 /**
- * Compiles markdown to HTML asynchronously.
- *
- * @param src String of markdown source to be compiled
- * @param options Hash of options, having async: true
- * @return Promise of string of compiled HTML
+ * Base function for compiling markdown to HTML
  */
-export function marked(
-  src: string,
-  options: MarkedOptions & { async: true }
-): Promise<string>;
-
-/**
- * Compiles markdown to HTML.
- *
- * @param src String of markdown source to be compiled
- * @param options Optional hash of options
- * @return String of compiled HTML. Will be a Promise of string if async is set to true by any extensions.
- */
-export function marked(
-  src: string,
-  options: MarkedOptions & { async: false }
-): string;
-export function marked(
-  src: string,
-  options: MarkedOptions & { async: true }
-): Promise<string>;
-export function marked(
-  src: string,
-  options?: MarkedOptions | null
-): string | Promise<string>;
-export function marked(
+function baseMarked(
   src: string,
   opt?: MarkedOptions | null
 ): string | Promise<string> {
@@ -51,68 +23,93 @@ export function marked(
 }
 
 /**
- * Sets the default options.
- *
- * @param options Hash of options
+ * Full marked object with attached utilities and methods
  */
-marked.options = marked.setOptions = function (options: MarkedOptions) {
-  markedInstance.setOptions(options);
-  marked.defaults = markedInstance.defaults;
-  changeDefaults(marked.defaults);
-  return marked;
-};
+const marked = Object.assign(baseMarked, {
+  /**
+   * Compiles markdown to HTML asynchronously.
+   */
+  async(
+    src: string,
+    options: MarkedOptions & { async: true }
+  ): Promise<string> {
+    return markedInstance.parse(src, options);
+  },
 
-/**
- * Gets the original marked default options.
- */
-marked.getDefaults = _getDefaults;
+  /**
+   * Sets the default options.
+   */
+  options(options: MarkedOptions) {
+    markedInstance.setOptions(options);
+    marked.defaults = markedInstance.defaults;
+    changeDefaults(marked.defaults);
+    return marked;
+  },
 
-marked.defaults = _defaults;
+  /**
+   * Alias for options()
+   */
+  setOptions(options: MarkedOptions) {
+    markedInstance.setOptions(options);
+    marked.defaults = markedInstance.defaults;
+    changeDefaults(marked.defaults);
+    return marked;
+  },
 
-/**
- * Use Extension
- */
+  /**
+   * Gets the original marked default options.
+   */
+  getDefaults: _getDefaults,
 
-marked.use = function (...args: MarkedExtension[]) {
-  markedInstance.use(...args);
-  marked.defaults = markedInstance.defaults;
-  changeDefaults(marked.defaults);
-  return marked;
-};
+  /**
+   * Current defaults in use.
+   */
+  defaults: _defaults,
 
-/**
- * Run callback for every token
- */
+  /**
+   * Use extension(s)
+   */
+  use(...args: MarkedExtension[]) {
+    markedInstance.use(...args);
+    marked.defaults = markedInstance.defaults;
+    changeDefaults(marked.defaults);
+    return marked;
+  },
 
-marked.walkTokens = function (
-  tokens: Token[] | TokensList,
-  callback: (token: Token) => MaybePromise | MaybePromise[]
-) {
-  return markedInstance.walkTokens(tokens, callback);
-};
+  /**
+   * Run callback for every token
+   */
+  walkTokens(
+    tokens: Token[] | TokensList,
+    callback: (token: Token) => MaybePromise | MaybePromise[]
+  ) {
+    return markedInstance.walkTokens(tokens, callback);
+  },
 
-/**
- * Compiles markdown to HTML without enclosing `p` tag.
- *
- * @param src String of markdown source to be compiled
- * @param options Hash of options
- * @return String of compiled HTML
- */
-marked.parseInline = markedInstance.parseInline;
+  /**
+   * Parse inline markdown (no enclosing <p> tag)
+   */
+  parseInline: markedInstance.parseInline,
 
-/**
- * Expose
- */
-marked.Parser = _Parser;
-marked.parser = _Parser.parse;
-marked.Renderer = _Renderer;
-marked.TextRenderer = _TextRenderer;
-marked.Lexer = _Lexer;
-marked.lexer = _Lexer.lex;
-marked.Tokenizer = _Tokenizer;
-marked.Hooks = _Hooks;
-marked.parse = marked;
+  /**
+   * Re-exports
+   */
+  Parser: _Parser,
+  parser: _Parser.parse,
+  Renderer: _Renderer,
+  TextRenderer: _TextRenderer,
+  Lexer: _Lexer,
+  lexer: _Lexer.lex,
+  Tokenizer: _Tokenizer,
+  Hooks: _Hooks,
+  parse: baseMarked,
+});
 
+// Export the full marked object
+export { marked };
+export default marked;
+
+// Named re-exports for all internals
 export const options = marked.options;
 export const setOptions = marked.setOptions;
 export const use = marked.use;

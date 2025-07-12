@@ -1,9 +1,9 @@
 import { _defaults } from "./defaults";
-import { cleanUrl, escape } from "./helpers";
+import { cleanUrl, escape } from "./helpers.js";
 import { other } from "./rules";
-import type { MarkedOptions } from "./MarkedOptions.ts";
-import type { Tokens } from "./Tokens.ts";
-import type { _Parser } from "./Parser.ts";
+import type { MarkedOptions } from "./MarkedOptions";
+import type { Tokens } from "./Tokens";
+import type { _Parser } from "./Parser";
 
 /**
  * Renderer
@@ -15,7 +15,7 @@ export class _Renderer {
     this.options = options || _defaults;
   }
 
-  space(token: Tokens.Space): string {
+  space(_token: Tokens.Space): string {
     return "";
   }
 
@@ -54,7 +54,7 @@ export class _Renderer {
     return `<h${depth}>${this.parser.parseInline(tokens)}</h${depth}>\n`;
   }
 
-  hr(token: Tokens.Hr): string {
+  hr(_token: Tokens.Hr): string {
     return "<hr>\n";
   }
 
@@ -173,7 +173,7 @@ export class _Renderer {
     return `<code>${escape(text, true)}</code>`;
   }
 
-  br(token: Tokens.Br): string {
+  br(_token: Tokens.Br): string {
     return "<br>";
   }
 

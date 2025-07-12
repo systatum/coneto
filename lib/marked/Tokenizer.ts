@@ -1,9 +1,9 @@
 import { _defaults } from "./defaults";
 import { rtrim, splitCells, findClosingBracket } from "./helpers";
-import type { Rules } from "./rules";
-import type { _Lexer } from "./Lexer";
-import type { Links, Tokens, Token } from "./Tokens";
-import type { MarkedOptions } from "./MarkedOptions";
+import type { Rules } from "./rules.ts";
+import type { _Lexer } from "./Lexer.ts";
+import type { Links, Tokens, Token } from "./Tokens.ts";
+import type { MarkedOptions } from "./MarkedOptions.ts";
 
 function outputLink(
   cap: string[],

@@ -305,24 +305,18 @@ export class Marked {
   }
 
   private parseMarkdown(blockType: boolean) {
-    type overloadedParse = {
-      (src: string, options: MarkedOptions & { async: true }): Promise<string>;
-      (src: string, options: MarkedOptions & { async: false }): string;
-      (src: string, options?: MarkedOptions | null): string | Promise<string>;
-    };
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const parse: overloadedParse = (
+    type ParseFn = (
       src: string,
-      options?: MarkedOptions | null
-    ): any => {
+      options?: (MarkedOptions & { async?: boolean }) | null
+    ) => string | Promise<string>;
+
+    const parse: ParseFn = (src, options) => {
       const origOpt = { ...options };
-      const opt = { ...this.defaults, ...origOpt };
+      const opt: MarkedOptions = { ...this.defaults, ...origOpt };
 
       const throwError = this.onError(!!opt.silent, !!opt.async);
 
-      // throw error if an extension set async to true but parse was called with async: false
-      if (this.defaults.async === true && origOpt.async === false) {
+      if (this.defaults.async === true && origOpt?.async === false) {
         return throwError(
           new Error(
             "marked(): The async option was set to true by an extension. Remove async: false from the parse options object to return a Promise."
@@ -330,12 +324,12 @@ export class Marked {
         );
       }
 
-      // throw error in case of non string input
       if (typeof src === "undefined" || src === null) {
         return throwError(
           new Error("marked(): input parameter is undefined or null")
         );
       }
+
       if (typeof src !== "string") {
         return throwError(
           new Error(
