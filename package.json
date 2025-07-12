@@ -8,7 +8,7 @@
     "build-storybook": "storybook build",
     "test-storybook": "test-storybook",
     "type-check": "tsc --noEmit",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint": "eslint '**/*.{ts,tsx}'",
     "format": "prettier --write .",
     "build-chromatic": "npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN"
   },
