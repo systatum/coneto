@@ -4,6 +4,8 @@ import { ChangeEvent, useMemo, useState } from "react";
 import Searchbox from "./searchbox";
 import { TreeList } from "./treelist";
 import { expect, userEvent, within } from "@storybook/test";
+import EmptySlate from "./empty-slate";
+import { Button } from "./button";
 
 const meta: Meta<typeof Sidebar> = {
   title: "Stage/Sidebar",
@@ -76,9 +78,22 @@ export const Default: Story = {
             <TreeList
               content={FILTERED_CONTENT}
               emptySlate={
-                <div className="text-sm font-semibold w-full items-center flex">
-                  Not found.
-                </div>
+                <EmptySlate
+                  imageUrl="https://picsum.photos/200?random=1"
+                  title="No Matches"
+                  subtitle="We couldn't find any person or team that matches your search."
+                  containerClassName="text-center items-center"
+                  actions={
+                    <>
+                      <Button variant="default" className="text-xs">
+                        Clear Search
+                      </Button>
+                      <Button variant="primary" className="text-xs">
+                        Add Member
+                      </Button>
+                    </>
+                  }
+                />
               }
               searchTerm={value.title}
             />
@@ -162,7 +177,22 @@ export const WithRightPosition: Story = {
             <TreeList
               content={FILTERED_CONTENT}
               emptySlate={
-                <div className="text-sm font-semibold">Not found.</div>
+                <EmptySlate
+                  imageUrl="https://picsum.photos/200?random=1"
+                  title="No Matches"
+                  subtitle="We couldn't find any person or team that matches your search."
+                  containerClassName="text-center items-center"
+                  actions={
+                    <>
+                      <Button variant="default" className="text-xs">
+                        Clear Search
+                      </Button>
+                      <Button variant="primary" className="text-xs">
+                        Add Member
+                      </Button>
+                    </>
+                  }
+                />
               }
               searchTerm={value.title}
             />
