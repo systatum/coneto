@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { ColumnTableProps, Table } from "./table";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { TipMenuItemProps } from "./tip-menu";
 import {
   RiArrowDownSLine,
@@ -376,15 +376,53 @@ export const Appendable: Story = {
   },
 };
 
-export const WithSelectAndSorting: Story = {
+export const WithPaginationAndSortable: Story = {
   render: () => {
+    const [page, setPage] = useState(1);
+    const itemsPerPage = 20;
+    const totalItems = 200;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+    const isDisabledPrev = page === 1;
+    const isDisabledNext = page === totalPages;
+
+    const handlePrevious = () => {
+      if (!isDisabledPrev) {
+        const newValue = page - 1;
+        setPage(newValue);
+      }
+    };
+
+    const handleNext = () => {
+      if (!isDisabledNext) {
+        const newValue = page + 1;
+        setPage(newValue);
+      }
+    };
+
     const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
 
-    const rawRows = Array.from({ length: 20 }, (_, i) => ({
-      name: `Load Balancer ${i + 1}`,
-      type: TYPES_DATA[i % TYPES_DATA.length],
-    }));
-    const [rows, setRows] = useState(rawRows);
+    const rawRows = useMemo(
+      () =>
+        Array.from({ length: totalItems }, (_, i) => ({
+          name: `Load Balancer ${i + 1}`,
+          type: TYPES_DATA[i % TYPES_DATA.length],
+        })),
+      []
+    );
+
+    const allRowIds = rawRows.map((r) => `${r.name}-${r.type}`);
+
+    const [pagedRows, setPagedRows] = useState(() => {
+      const start = 0;
+      return rawRows.slice(start, start + itemsPerPage);
+    });
+
+    useEffect(() => {
+      const start = (page - 1) * itemsPerPage;
+      const end = start + itemsPerPage;
+      setPagedRows(rawRows.slice(start, end));
+    }, [page, rawRows]);
 
     const handleSortingRequested = ({
       mode,
@@ -394,11 +432,13 @@ export const WithSelectAndSorting: Story = {
       column: keyof (typeof rawRows)[0];
     }) => {
       if (mode === "original") {
-        setRows([...rawRows]);
+        const start = (page - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        setPagedRows(rawRows.slice(start, end));
         return;
       }
 
-      const sorted = [...rows].sort((a, b) => {
+      const sorted = [...pagedRows].sort((a, b) => {
         const aVal = a[column];
         const bVal = b[column];
         return typeof aVal === "string" && typeof bVal === "string"
@@ -408,7 +448,7 @@ export const WithSelectAndSorting: Story = {
           : 0;
       });
 
-      setRows(sorted);
+      setPagedRows(sorted);
     };
 
     const columns: ColumnTableProps[] = [
@@ -464,16 +504,23 @@ export const WithSelectAndSorting: Story = {
 
         <Table
           selectable
+          showPagination
           columns={columns}
           onItemsSelected={handleItemsSelected}
           subMenuList={TIP_MENU_ACTION}
+          pageNumberText={page}
+          onPreviousPageRequested={handlePrevious}
+          onNextPageRequested={handleNext}
+          disableNextPageButton={isDisabledNext}
+          disablePreviousPageButton={isDisabledPrev}
+          allRowIds={allRowIds}
         >
-          {rows?.map((data, index) => (
-            <Table.Row
-              key={index}
-              rowId={`${data.name}-${data.type}`}
-              content={[data.name, data.type]}
-            />
+          {pagedRows?.map((dataRow, index) => (
+            <Table.Row key={index} rowId={`${dataRow.name}-${dataRow.type}`}>
+              {[dataRow.name, dataRow.type].map((dataCell) => (
+                <Table.Row.Cell col={dataCell} />
+              ))}
+            </Table.Row>
           ))}
         </Table>
       </div>

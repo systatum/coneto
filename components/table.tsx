@@ -2,6 +2,7 @@ import {
   Children,
   cloneElement,
   createContext,
+  Fragment,
   isValidElement,
   ReactElement,
   ReactNode,
@@ -19,6 +20,8 @@ import { TipMenuItemProps } from "./tip-menu";
 import {
   RemixiconComponentType,
   RiArrowDownSLine,
+  RiArrowLeftSLine,
+  RiArrowRightSLine,
   RiMoreFill,
 } from "@remixicon/react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -53,6 +56,13 @@ export interface TableProps {
   subMenuList?: (columnCaption: string) => TipMenuItemProps[];
   emptySlate?: ReactNode;
   onLastRowReached?: () => void;
+  showPagination?: boolean;
+  onNextPageRequested?: () => void;
+  onPreviousPageRequested?: () => void;
+  pageNumberText?: number;
+  disablePreviousPageButton?: boolean;
+  disableNextPageButton?: boolean;
+  allRowIds?: string[];
 }
 
 export interface TableRowProps {
@@ -74,7 +84,7 @@ export interface TableRowGroupProps {
 }
 
 export interface TableRowCellProps {
-  col: string | ReactNode;
+  col: ReactNode;
   className?: string;
   width?: string;
 }
@@ -96,6 +106,13 @@ function Table({
   emptySlate,
   actions,
   onLastRowReached,
+  showPagination,
+  disableNextPageButton = false,
+  disablePreviousPageButton = false,
+  onNextPageRequested,
+  onPreviousPageRequested,
+  pageNumberText = 1,
+  allRowIds,
 }: TableProps) {
   const [selectedData, setSelectedData] = useState<string[]>([]);
   const classTableRow = clsx(
@@ -103,20 +120,32 @@ function Table({
     classNameTableRow
   );
 
-  const allRow = getAllRowContentsFromChildren(children);
-  const rowCount = allRow.length;
-
   const handleSelectAll = () => {
-    const allSelected = selectedData.length === rowCount;
-    if (allSelected) {
-      setSelectedData([]);
-      onItemsSelected?.([]);
+    const currentPageIds = getAllRowContentsFromChildren(children);
+
+    const allPageSelected = currentPageIds.every((id) =>
+      selectedData.includes(id)
+    );
+
+    if (allPageSelected) {
+      const newSelected = selectedData.filter(
+        (id) => !currentPageIds.includes(id)
+      );
+      setSelectedData(newSelected);
+      onItemsSelected?.(newSelected);
     } else {
-      const newData = getAllRowContentsFromChildren(children);
-      setSelectedData(newData);
-      onItemsSelected?.(newData);
+      const newSelected = Array.from(
+        new Set([...selectedData, ...currentPageIds])
+      );
+      setSelectedData(newSelected);
+      onItemsSelected?.(newSelected);
     }
   };
+
+  const allRowSelected =
+    allRowIds?.every((id) => selectedData.includes(id)) ?? false;
+
+  const someSelected = selectedData.length > 0 && !allRowSelected;
 
   const handleSelect = (data: string) => {
     const isAlreadySelected = selectedData.some(
@@ -129,9 +158,6 @@ function Table({
     setSelectedData(newData);
     onItemsSelected?.(newData);
   };
-
-  const allSelected = selectedData.length === rowCount;
-  const someSelected = selectedData.length > 0 && !allSelected;
 
   const rowChildren = Children.map(children, (child, index) => {
     if (!isValidElement<TableRowProps | TableRowGroupProps>(child)) return null;
@@ -172,27 +198,83 @@ function Table({
   return (
     <TableColumnContext.Provider value={columns}>
       <div className={tableClass}>
-        {selectedData.length > 0 && (
+        {(selectedData.length > 0 || showPagination || actions) && (
           <div className="w-full flex flex-row items-center justify-between py-2 text-white bg-gray-600 border-b-[0.5px] px-[14px]">
-            {actions && (
+            {(actions || showPagination) && (
               <div className="flex flex-row gap-1">
-                {actions.map((data, index) => (
-                  <div
-                    key={index}
-                    className={cn(
-                      "flex flex-row cursor-pointer gap-1 border rounded-xl items-center hover:bg-[#5c626a] border-gray-500 py-1 px-2",
-                      data.className
-                    )}
-                  >
-                    <data.icon onClick={data.onClick} size={14} />
-                    <span className="text-sm">{data.title}</span>
-                  </div>
-                ))}
+                {showPagination && (
+                  <Fragment>
+                    <button
+                      disabled={disablePreviousPageButton}
+                      aria-label="previous-button-pagination"
+                      onClick={() => {
+                        if (onPreviousPageRequested) {
+                          onPreviousPageRequested();
+                        }
+                      }}
+                      className={cn(
+                        "flex cursor-pointer gap-1 border rounded-full items-center hover:bg-[#5c626a] border-gray-500 p-1",
+                        "disabled:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-60"
+                      )}
+                    >
+                      <RiArrowLeftSLine size={16} />
+                    </button>
+                    <button
+                      disabled={disableNextPageButton}
+                      aria-label="next-button-pagination"
+                      onClick={() => {
+                        if (onNextPageRequested) {
+                          onNextPageRequested();
+                        }
+                      }}
+                      className={cn(
+                        "flex cursor-pointer gap-1 border rounded-full items-center hover:bg-[#5c626a] border-gray-500 p-1",
+                        "disabled:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-60"
+                      )}
+                    >
+                      <RiArrowRightSLine size={16} />
+                    </button>
+                  </Fragment>
+                )}
+                {actions &&
+                  actions.map((data, index) => (
+                    <button
+                      key={index}
+                      onClick={() => {
+                        if (data.onClick) {
+                          data.onClick();
+                        }
+                      }}
+                      className={cn(
+                        "flex flex-row cursor-pointer gap-1 border rounded-xl items-center hover:bg-[#5c626a] border-gray-500 py-1 px-2",
+                        data.className
+                      )}
+                    >
+                      <data.icon size={14} />
+                      <span className="text-sm">{data.title}</span>
+                    </button>
+                  ))}
               </div>
             )}
-            {selectable && <span>{selectedData.length} items selected</span>}
+            {(selectable || showPagination) && (
+              <div className="flex flex-row gap-2">
+                {showPagination && (
+                  <div className="flex flex-row gap-2">
+                    <span>Pg. {pageNumberText}</span>
+                    <div
+                      aria-label="divider"
+                      className="w-[3px] h-full border-l border-white"
+                    />
+                  </div>
+                )}
+                {selectable && (
+                  <span>{selectedData.length} items selected</span>
+                )}
+              </div>
+            )}
           </div>
         )}
+
         <div
           className={cn(
             "flex flex-col relative",
@@ -204,7 +286,7 @@ function Table({
               <div className="w-8 bg-[#0f3969] flex justify-center cursor-pointer pointer-events-auto items-center">
                 <Checkbox
                   onChange={handleSelectAll}
-                  checked={allSelected}
+                  checked={allRowSelected}
                   indeterminate={someSelected}
                 />
               </div>
@@ -439,7 +521,6 @@ function TableRow({
 }
 
 function TableRowCell({ col, className, width }: TableRowCellProps) {
-  console.log(col, width);
   return (
     <div
       className={cn("px-2", width ? "flex flex-row" : "flex-1", className)}
