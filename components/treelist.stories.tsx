@@ -1,6 +1,9 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { TreeList, TreeListActionsProps } from "./treelist";
 import { RiAtLine, RiSearchLine } from "@remixicon/react";
+import { expect, userEvent, within } from "@storybook/test";
+import EmptySlate from "./empty-slate";
+import { Button } from "./button";
 
 const meta: Meta<typeof TreeList> = {
   title: "Content/TreeList",
@@ -30,7 +33,7 @@ export const Default: Story = {
         title: "Product Management Team",
         items: [
           { id: 1, title: "Samantha Lee", onClick: setPerson },
-          { id: 2, title: "Jason Kim", onClick: setPerson },
+          { id: 2, title: "alim Kim", onClick: setPerson },
           { id: 3, title: "Rina Patel", onClick: setPerson },
         ],
       },
@@ -41,13 +44,41 @@ export const Default: Story = {
         <TreeList
           content={TREE_LIST_DATA}
           emptySlate={
-            <div className="text-sm font-semibold w-full items-center flex">
-              Not found.
-            </div>
+            <EmptySlate
+              imageUrl="https://picsum.photos/200?random=1"
+              title="Manage your inventory transfers"
+              subtitle="Track and receive your incoming inventory from suppliers."
+              actions={
+                <>
+                  <Button variant="default" className="text-xs">
+                    Add Item
+                  </Button>
+                  <Button variant="primary" className="text-xs">
+                    Learn More
+                  </Button>
+                </>
+              }
+            />
           }
         />
       </div>
     );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const user = userEvent.setup();
+
+    const items = await canvas.findAllByTestId("tree-list-item");
+    expect(items.length).toBeGreaterThan(0);
+
+    const adam = items.find((item) =>
+      item.textContent?.includes("Adam Noto Hakarsa")
+    );
+    expect(adam).toBeInTheDocument();
+
+    await user.click(adam!);
+
+    expect(adam).toHaveClass("bg-gray-100");
   },
 };
 
@@ -69,7 +100,7 @@ export const WithActions: Story = {
         title: "Product Management Team",
         items: [
           { id: 1, title: "Samantha Lee", onClick: setPerson },
-          { id: 2, title: "Jason Kim", onClick: setPerson },
+          { id: 2, title: "alim Kim", onClick: setPerson },
           { id: 3, title: "Rina Patel", onClick: setPerson },
         ],
       },
@@ -98,12 +129,42 @@ export const WithActions: Story = {
           content={TREE_LIST_DATA}
           actions={TREE_LIST_ACTIONS}
           emptySlate={
-            <div className="text-sm font-semibold w-full items-center flex">
-              Not found.
-            </div>
+            <EmptySlate
+              imageUrl="https://picsum.photos/200?random=1"
+              title="Manage your inventory transfers"
+              subtitle="Track and receive your incoming inventory from suppliers."
+              actions={
+                <>
+                  <Button variant="default" className="text-xs">
+                    Add Item
+                  </Button>
+                  <Button variant="primary" className="text-xs">
+                    Learn More
+                  </Button>
+                </>
+              }
+            />
           }
         />
       </div>
     );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const user = userEvent.setup();
+
+    const discoverBtn = await canvas.getByLabelText("Discover");
+
+    expect(discoverBtn).toBeInTheDocument();
+
+    const items = await canvas.findAllByTestId("tree-list-item");
+    expect(items.length).toBeGreaterThan(0);
+    const alim = items.find((el) =>
+      el.textContent?.includes("Mohamad Naufal Alim")
+    );
+
+    expect(alim).toBeInTheDocument();
+    await user.click(alim!);
+    expect(alim).toHaveClass("bg-gray-100");
   },
 };
