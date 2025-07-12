@@ -181,3 +181,18 @@
   padding-left: 0 !important;
   display: list-item !important;
 }
+
+.rich-editor h1 {
+  font-size: 2em;
+  margin: 0.5em 0;
+}
+
+.rich-editor h2 {
+  font-size: 1.5em;
+  margin: 0.5em 0;
+}
+
+.rich-editor h3 {
+  font-size: 1.25em;
+  margin: 0.5em 0;
+}
