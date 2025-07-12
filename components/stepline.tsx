@@ -101,6 +101,7 @@ function SteplineItem({
   className,
   id,
   hoveredIndex,
+  active,
 }: SteplineItemProps) {
   return (
     <div
@@ -115,7 +116,7 @@ function SteplineItem({
           aria-label="outer-circle"
           className={cn(
             "text-white absolute flex items-center justify-center min-w-[30px] min-h-[30px] max-w-[30px] max-h-[30px] transform duration-200 bg-gray-600 rounded-full -translate-y-1/2 top-1/2",
-            hoveredIndex === id && "scale-[130%]",
+            (active || hoveredIndex === id) && "scale-[130%]",
             OUTER_CIRCLE_VARIANT_CLASS[variant]
           )}
         />

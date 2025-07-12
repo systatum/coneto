@@ -1,5 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react/*";
 import { Stepline, SteplineItemProps } from "./stepline";
+import { useState } from "react";
+import { userEvent, within } from "@storybook/test";
 
 const meta: Meta<typeof Stepline> = {
   title: "Controls/Stepline",
@@ -25,6 +27,8 @@ export const Default: Story = {
 
 export const Reversable: Story = {
   render: () => {
+    const [active, setActive] = useState(4);
+
     const STEPLINE_ITEMS: SteplineItemProps[] = [
       {
         title: "Application Submitted",
@@ -55,13 +59,29 @@ export const Reversable: Story = {
       <Stepline reversable>
         {STEPLINE_ITEMS.map((data, index) => (
           <Stepline.Item
-            title={data.title}
-            subtitle={data.subtitle}
-            variant={data.variant}
+            {...data}
+            onClick={() => setActive(index)}
+            active={active === index}
             key={index}
           />
         ))}
       </Stepline>
     );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const allTitles = [
+      "Application Submitted",
+      "Initial Screening",
+      "Technical Interview",
+      "Final Interview",
+      "Offer Sent",
+    ];
+
+    for (const title of allTitles) {
+      const step = await canvas.findByText(title);
+      await userEvent.click(step);
+    }
   },
 };
