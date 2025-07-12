@@ -112,9 +112,10 @@ function Table({
   onNextPageRequested,
   onPreviousPageRequested,
   pageNumberText = 1,
-  allRowIds,
 }: TableProps) {
   const [selectedData, setSelectedData] = useState<string[]>([]);
+  const [allRowsLocal, setAllRowsLocal] = useState<string[]>([]);
+
   const classTableRow = clsx(
     "flex flex-col overflow-auto relative w-full",
     classNameTableRow
@@ -142,10 +143,15 @@ function Table({
     }
   };
 
-  const allRowSelected =
-    allRowIds?.every((id) => selectedData.includes(id)) ?? false;
+  const allRowSelectedLocal =
+    allRowsLocal?.every((id) => selectedData.includes(id)) ?? false;
+  const someSelectedLocal = selectedData.length > 0 && !allRowSelectedLocal;
 
-  const someSelected = selectedData.length > 0 && !allRowSelected;
+  useEffect(() => {
+    const currentIds = getAllRowContentsFromChildren(children);
+
+    setAllRowsLocal((prev) => Array.from(new Set([...prev, ...currentIds])));
+  }, [children]);
 
   const handleSelect = (data: string) => {
     const isAlreadySelected = selectedData.some(
@@ -286,8 +292,8 @@ function Table({
               <div className="w-8 bg-[#0f3969] flex justify-center cursor-pointer pointer-events-auto items-center">
                 <Checkbox
                   onChange={handleSelectAll}
-                  checked={allRowSelected}
-                  indeterminate={someSelected}
+                  checked={allRowSelectedLocal}
+                  indeterminate={someSelectedLocal}
                 />
               </div>
             )}
