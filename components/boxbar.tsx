@@ -16,17 +16,20 @@ export default function Boxbar({
   containerClassName,
   children,
   minHeight = 40,
-  maxHeight = 400,
+  maxHeight,
 }: BoxbarProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <motion.div
       initial={{ height: minHeight }}
-      animate={{ height: isOpen ? maxHeight : minHeight }}
-      transition={{ duration: 0.1, ease: "easeInOut" }}
+      animate={{
+        height: isOpen ? (maxHeight ? maxHeight : "auto") : minHeight,
+      }}
+      transition={{ duration: 0.2, ease: "easeInOut" }}
       className={cn(
         "overflow-hidden flex flex-row justify-start items-start border rounded-xs relative border-gray-300 bg-white",
+        maxHeight ? "" : "max-h-fit",
         containerClassName
       )}
     >

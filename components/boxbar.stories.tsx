@@ -99,7 +99,7 @@ export const Default: Story = {
       },
     ];
     return (
-      <Boxbar childClassName="gap-1" maxHeight={140}>
+      <Boxbar childClassName="gap-1">
         {BADGE_OPTIONS.map((badge) => (
           <Badge
             className="w-full max-w-[120px]"
