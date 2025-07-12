@@ -5,6 +5,7 @@ import StatefulForm, { FormFieldProps } from "./stateful-form";
 import { ChangeEvent, useRef, useState } from "react";
 import { z } from "zod";
 import { COUNTRY_CODES } from "./../constants/countries";
+import { expect, userEvent, waitFor, within } from "@storybook/test";
 
 const meta: Meta<typeof PaperDialog> = {
   title: "Stage/PaperDialog",
@@ -155,6 +156,16 @@ export const Default: Story = {
       </div>
     );
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const openButton = await canvas.findByRole("button", { name: /open/i });
+    await userEvent.click(openButton);
+
+    await waitFor(() =>
+      expect(canvas.getByText("Add New Employee")).toBeInTheDocument()
+    );
+  },
 };
 
 export const WithClose: Story = {
@@ -286,6 +297,19 @@ export const WithClose: Story = {
       </PaperDialog>
     );
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const trigger = await canvas.findByRole("button", { name: /trigger/i });
+    await userEvent.click(trigger);
+
+    await waitFor(() =>
+      expect(canvas.getByText("Add New Employee")).toBeInTheDocument()
+    );
+
+    const closeButton = canvas.getByLabelText("Button Close");
+    await userEvent.click(closeButton);
+  },
 };
 
 export const WithLeftPosition: Story = {
@@ -416,5 +440,18 @@ export const WithLeftPosition: Story = {
         </PaperDialog.Content>
       </PaperDialog>
     );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const trigger = await canvas.findByRole("button", { name: /trigger/i });
+    await userEvent.click(trigger);
+
+    await waitFor(() =>
+      expect(canvas.getByText("Add New Employee")).toBeInTheDocument()
+    );
+
+    const closeButton = canvas.getByLabelText("Button Close");
+    await userEvent.click(closeButton);
   },
 };

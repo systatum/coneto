@@ -115,7 +115,7 @@ function List({
 
   return (
     <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
-      <div className={listClass}>
+      <div role="list" className={listClass}>
         {searchable && (
           <Searchbox
             name="search"
@@ -127,6 +127,12 @@ function List({
           />
         )}
 
+        {isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-white/60 z-30">
+            <LoadingSpinner iconSize={24} />
+          </div>
+        )}
+
         {childArray.map((child, index) => {
           const componentChild = child as ReactElement<ListItemProps>;
           const modifiedChild = cloneElement(componentChild, {
@@ -134,16 +140,7 @@ function List({
             selectable: selectable,
           });
 
-          return (
-            <Fragment key={`list-${index}`}>
-              {modifiedChild}
-              {isLoading && (
-                <div className="absolute inset-0 flex items-center justify-center bg-white/60 z-30">
-                  <LoadingSpinner iconSize={24} />
-                </div>
-              )}
-            </Fragment>
-          );
+          return <Fragment key={`list-${index}`}>{modifiedChild}</Fragment>;
         })}
       </div>
     </DnDContext.Provider>

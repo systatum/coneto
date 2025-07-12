@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { Launchpad } from "./launchpad";
+import { expect, within } from "@storybook/test";
 
 const meta: Meta<typeof Launchpad> = {
   title: "Content/Launchpad",
@@ -123,5 +124,14 @@ export const Default: Story = {
         ))}
       </Launchpad>
     );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const sigma = await canvas.findByText("Sigma 2");
+    const alpha = await canvas.findByText("Alpha 2");
+
+    expect(sigma).toBeInTheDocument();
+    expect(alpha).toBeInTheDocument();
   },
 };

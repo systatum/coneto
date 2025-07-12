@@ -44,6 +44,8 @@ export default function Togglebox({
           className="sr-only"
           checked={checked}
           onChange={onChange}
+          aria-label="togglebox"
+          data-testid="togglebox"
         />
         <div
           className={`w-full h-full rounded-full transition-colors duration-300 ${

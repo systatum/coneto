@@ -2,6 +2,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { Window } from "./window";
 import { RiCloseFill } from "@remixicon/react";
 import { useState } from "react";
+import { expect, within } from "@storybook/test";
 
 const meta: Meta<typeof Window> = {
   title: "Content/Window",
@@ -22,16 +23,32 @@ export const Default: Story = {
       </Window>
     );
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const cells = await canvas.findAllByTestId("window-cell");
+
+    await expect(cells).toHaveLength(2);
+    await expect(cells[0]).toHaveTextContent("left");
+    await expect(cells[1]).toHaveTextContent("Right");
+  },
 };
 
 export const WithHorizontal: Story = {
   render: () => {
     return (
       <Window orientation="horizontal" className="h-[400px]">
-        <Window.Cell className="bg-red-100 p-10">left</Window.Cell>
-        <Window.Cell className="bg-green-100 p-10">Right</Window.Cell>
+        <Window.Cell className="bg-red-100 p-10">Up</Window.Cell>
+        <Window.Cell className="bg-green-100 p-10">Down</Window.Cell>
       </Window>
     );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const cells = await canvas.findAllByTestId("window-cell");
+
+    await expect(cells).toHaveLength(2);
+    await expect(cells[0]).toHaveTextContent("Up");
+    await expect(cells[1]).toHaveTextContent("Down");
   },
 };
 

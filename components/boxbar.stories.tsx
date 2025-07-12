@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react/*";
 import Boxbar from "./boxbar";
 import Badge from "./badge";
+import { expect, fireEvent, within } from "@storybook/test";
 
 const meta: Meta<typeof Boxbar> = {
   title: "Stage/Boxbar",
@@ -110,5 +111,20 @@ export const Default: Story = {
         ))}
       </Boxbar>
     );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(canvas.getByText("Anime")).toBeInTheDocument();
+
+    const toggleButton =
+      canvas.getByRole("button", { hidden: true }) ||
+      canvas.getByTestId("boxbar-toggle");
+
+    fireEvent.click(toggleButton);
+
+    await new Promise((r) => setTimeout(r, 250));
+
+    await expect(canvas.getByText("Webtoons")).toBeInTheDocument();
   },
 };

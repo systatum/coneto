@@ -3,18 +3,22 @@ import { Sidebar } from "./sidebar";
 import { ChangeEvent, useMemo, useState } from "react";
 import Searchbox from "./searchbox";
 import { TreeList } from "./treelist";
+import { expect, userEvent, within } from "@storybook/test";
 
 const meta: Meta<typeof Sidebar> = {
   title: "Stage/Sidebar",
   component: Sidebar,
   tags: ["autodocs"],
+  parameters: {
+    layout: "fullscreen",
+  },
 };
 
 export default meta;
 
 type Story = StoryObj<typeof Sidebar>;
 
-export const SidebarDefault: Story = {
+export const Default: Story = {
   render: () => {
     const [value, setValue] = useState({
       title: "",
@@ -86,9 +90,18 @@ export const SidebarDefault: Story = {
       </div>
     );
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const searchInput = await canvas.findByRole("textbox");
+    await expect(searchInput).toBeInTheDocument();
+
+    await userEvent.clear(searchInput);
+    await userEvent.type(searchInput, "adam");
+  },
 };
 
-export const SidebarPositionRight: Story = {
+export const WithRightPosition: Story = {
   render: () => {
     const [value, setValue] = useState({
       title: "",
@@ -157,5 +170,14 @@ export const SidebarPositionRight: Story = {
         </Sidebar>
       </div>
     );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const searchInput = await canvas.findByRole("textbox");
+    await expect(searchInput).toBeInTheDocument();
+
+    await userEvent.clear(searchInput);
+    await userEvent.type(searchInput, "alim");
   },
 };

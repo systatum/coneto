@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 import Rating from "./rating";
 import { useArgs } from "@storybook/preview-api";
+import { expect, userEvent, within } from "@storybook/test";
 
 const meta: Meta<typeof Rating> = {
   title: "Input Elements/Rating",
@@ -28,6 +29,17 @@ export const Default: Story = {
       />
     );
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const stars = canvas.getAllByRole("img", { hidden: true });
+    expect(stars).toHaveLength(5);
+
+    await userEvent.click(stars[3]);
+
+    const updatedStars = canvas.getAllByRole("img", { hidden: true });
+    expect(updatedStars).toHaveLength(5);
+  },
 };
 
 export const NotEditable: Story = {
@@ -35,6 +47,12 @@ export const NotEditable: Story = {
     rating: 4.5,
   },
   render: (args) => <Rating {...args} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const stars = canvas.getAllByRole("img", { hidden: true });
+    expect(stars).toHaveLength(5);
+  },
 };
 
 export const WithLabel: Story = {
@@ -43,6 +61,11 @@ export const WithLabel: Story = {
     withLabel: true,
   },
   render: (args) => <Rating {...args} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const label = canvas.getByText(/4\.5 \/ 5/i);
+    expect(label).toBeInTheDocument();
+  },
 };
 
 export const Small: Story = {
@@ -51,6 +74,17 @@ export const Small: Story = {
     size: "sm",
   },
   render: (args) => <Rating {...args} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const stars = canvas.getAllByRole("img", { hidden: true });
+    expect(stars).toHaveLength(5);
+
+    await userEvent.click(stars[3]);
+
+    const updatedStars = canvas.getAllByRole("img", { hidden: true });
+    expect(updatedStars).toHaveLength(5);
+  },
 };
 
 export const Medium: Story = {
@@ -59,6 +93,17 @@ export const Medium: Story = {
     size: "md",
   },
   render: (args) => <Rating {...args} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const stars = canvas.getAllByRole("img", { hidden: true });
+    expect(stars).toHaveLength(5);
+
+    await userEvent.click(stars[3]);
+
+    const updatedStars = canvas.getAllByRole("img", { hidden: true });
+    expect(updatedStars).toHaveLength(5);
+  },
 };
 
 export const Large: Story = {
@@ -67,4 +112,15 @@ export const Large: Story = {
     size: "lg",
   },
   render: (args) => <Rating {...args} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const stars = canvas.getAllByRole("img", { hidden: true });
+    expect(stars).toHaveLength(5);
+
+    await userEvent.click(stars[3]);
+
+    const updatedStars = canvas.getAllByRole("img", { hidden: true });
+    expect(updatedStars).toHaveLength(5);
+  },
 };

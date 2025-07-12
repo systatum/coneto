@@ -81,6 +81,7 @@ export default function ThumbField({
         }
       />
       <div
+        aria-label="thumb-up"
         onClick={() => {
           handleChangeValue("up");
         }}
@@ -99,6 +100,7 @@ export default function ThumbField({
         )}
       </div>
       <div
+        aria-label="thumb-down"
         onClick={() => {
           handleChangeValue("down");
         }}

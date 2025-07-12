@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import Messagebox from "./messagebox";
 import * as RemixIcons from "@remixicon/react";
+import { expect, userEvent, waitFor, within } from "@storybook/test";
 
 const meta: Meta<typeof Messagebox> = {
   title: "Content/Messagebox",
@@ -37,6 +38,12 @@ export const Primary: Story = {
     children: "This is a primary message box.",
   },
   render: (args) => <Messagebox {...args} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    expect(
+      await canvas.findByText("This is a primary message box.")
+    ).toBeVisible();
+  },
 };
 
 export const Success: Story = {
@@ -46,6 +53,10 @@ export const Success: Story = {
     children: "This is a success message.",
   },
   render: (args) => <Messagebox {...args} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    expect(await canvas.findByText("This is a success message.")).toBeVisible();
+  },
 };
 
 export const Danger: Story = {
@@ -55,6 +66,10 @@ export const Danger: Story = {
     children: "This is a danger message.",
   },
   render: (args) => <Messagebox {...args} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    expect(await canvas.findByText("This is a danger message.")).toBeVisible();
+  },
 };
 
 export const Warning: Story = {
@@ -64,6 +79,10 @@ export const Warning: Story = {
     children: "This is a warning message.",
   },
   render: (args) => <Messagebox {...args} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    expect(await canvas.findByText("This is a warning message.")).toBeVisible();
+  },
 };
 
 export const WithCustomIcon: Story = {
@@ -74,6 +93,12 @@ export const WithCustomIcon: Story = {
     icon: RemixIcons.RiAlarmWarningFill,
   },
   render: (args) => <Messagebox {...args} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    expect(
+      await canvas.findByText("This message uses a custom RemixIcon.")
+    ).toBeVisible();
+  },
 };
 
 export const WithActions: Story = {
@@ -95,6 +120,16 @@ export const WithActions: Story = {
     ],
   },
   render: (args) => <Messagebox {...args} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const retryButton = await canvas.getByRole("button", { name: /retry/i });
+    await userEvent.click(retryButton);
+    expect(retryButton).toBeVisible();
+
+    const link = await canvas.getByRole("link", { name: /view website/i });
+    expect(link).toHaveAttribute("href", "https://systatum.com");
+  },
 };
 
 export const WithActionsAndClosable: Story = {
@@ -118,4 +153,19 @@ export const WithActionsAndClosable: Story = {
     onCloseRequest: () => alert("Close Request Succeed"),
   },
   render: (args) => <Messagebox {...args} />,
+
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const retryButton = await canvas.getByRole("button", { name: /retry/i });
+    await userEvent.click(retryButton);
+    expect(retryButton).toBeVisible();
+
+    const link = await canvas.getByRole("link", { name: /view website/i });
+    expect(link).toHaveAttribute("href", "https://systatum.com");
+
+    const closeButton = await canvas.getByLabelText("Closable request");
+    await userEvent.click(closeButton);
+    await waitFor(() => expect(closeButton).toBeVisible());
+  },
 };

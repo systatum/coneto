@@ -47,7 +47,10 @@ function TreeList<T extends TreeListItemsProps>({
         <div className="flex flex-col w-full gap-1">
           {actions.map((data, index) => (
             <div
+              role="button"
               key={index}
+              aria-label={data.title}
+              tabIndex={0}
               onClick={() => {
                 if (data.onClick) {
                   data.onClick();
@@ -70,6 +73,7 @@ function TreeList<T extends TreeListItemsProps>({
       )}
       {content && actions && (
         <div
+          role="separator"
           aria-label="divider"
           className="w-full h-px border-b border-gray-300"
         />
@@ -120,6 +124,8 @@ function TreeListItem<T extends TreeListItemsProps>({
 
   return (
     <div
+      role="button"
+      data-testid="tree-list-item"
       className={treeListItemClass}
       onClick={() => {
         item.onClick(item);

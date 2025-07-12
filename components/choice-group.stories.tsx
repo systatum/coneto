@@ -4,6 +4,7 @@ import { ChangeEvent, ComponentProps, useState } from "react";
 import Radio from "./radio";
 import Checkbox from "./checkbox";
 import { useArgs } from "@storybook/preview-api";
+import { userEvent, within } from "@storybook/test";
 
 const RADIO_OPTIONS = [
   {
@@ -95,6 +96,12 @@ export const ChoiceRadioMode: StoryRadio = {
       </ChoiceGroup>
     );
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const radios = await canvas.findAllByRole("radio");
+    await userEvent.click(radios[1]);
+  },
 };
 
 export const ChoiceGroupWithCheckboxes: StoryCheckbox = {
@@ -167,5 +174,13 @@ export const ChoiceGroupWithCheckboxes: StoryCheckbox = {
         ))}
       </ChoiceGroup>
     );
+  },
+
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const radios = await canvas.findAllByRole("checkbox");
+    await userEvent.click(radios[1]);
+    await userEvent.click(radios[2]);
   },
 };

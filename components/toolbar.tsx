@@ -187,6 +187,7 @@ function ToolbarMenu({
         {(Icon || caption) && (
           <>
             <div
+              aria-label="toolbar-menu-toggle"
               onMouseEnter={() => setHovered("main")}
               onMouseLeave={() => setHovered("original")}
               onClick={handleMainClick}

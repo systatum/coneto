@@ -36,7 +36,7 @@ export default function Boxbar({
       <span className={cn("p-2 w-full flex-wrap flex", childClassName)}>
         {children}
       </span>
-      <div
+      <button
         className="mt-2 mr-2 top-2 w-fit right-2 cursor-pointer hover:bg-gray-100 p-1 rounded"
         onClick={() => setIsOpen(!isOpen)}
       >
@@ -46,7 +46,7 @@ export default function Boxbar({
         >
           <RiArrowRightSLine size={14} />
         </motion.div>
-      </div>
+      </button>
     </motion.div>
   );
 }

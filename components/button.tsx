@@ -172,7 +172,7 @@ function Button({
           onMouseLeave={() => {
             setHovered("original");
           }}
-          className={cn("absolute top-8 z-10", positionClass)}
+          className={cn("absolute top-full -translate-y-1 z-10", positionClass)}
         >
           <TipMenu
             setIsOpen={() => {

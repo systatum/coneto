@@ -174,7 +174,10 @@ function Window({
 
 function WindowCell({ children, className, actions }: WindowCellProps) {
   return (
-    <div className={cn("flex flex-row relative w-full h-full", className)}>
+    <div
+      data-testid="window-cell"
+      className={cn("flex flex-row relative w-full h-full", className)}
+    >
       <div className="absolute right-4 top-4">
         {actions && (
           <div className="flex flex-row w-full">
