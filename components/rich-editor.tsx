@@ -1,7 +1,11 @@
-import { KeyboardEvent, ReactNode, useEffect, useRef } from "react";
+import { KeyboardEvent, ReactNode, useEffect, useRef, useState } from "react";
 import {
   RemixiconComponentType,
   RiBold,
+  RiH1,
+  RiH2,
+  RiH3,
+  RiHeading,
   RiItalic,
   RiListOrdered,
   RiListUnordered,
@@ -9,6 +13,7 @@ import {
 import TurndownService from "./../lib/turndown/turndown";
 import { marked } from "./../lib/marked/marked";
 import { cn } from "./../lib/utils";
+import { TipMenu } from "./tip-menu";
 
 interface RichEditorProps {
   value?: string;
@@ -30,8 +35,22 @@ function RichEditor({
   editorClassName,
 }: RichEditorProps) {
   const turndownService = new TurndownService();
+
+  turndownService.addRule("atxHeading", {
+    filter: ["h1", "h2", "h3", "h4", "h5", "h6"],
+    replacement: function (content, node) {
+      const hLevel = Number((node as HTMLElement).nodeName.charAt(1));
+      const prefix = "#".repeat(hLevel);
+      return `\n\n${prefix} ${content}\n\n`;
+    },
+  });
+
   const editorRef = useRef<HTMLDivElement>(null);
+  const savedSelection = useRef<Range | null>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+
   const stateValue = marked(value);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     if (editorRef.current && !editorRef.current.innerHTML) {
@@ -123,10 +142,112 @@ function RichEditor({
     }
   };
 
+  const handleHeading = (level: 1 | 2 | 3) => {
+    if (!editorRef.current) return;
+
+    editorRef.current.focus();
+
+    const sel = window.getSelection();
+
+    if (savedSelection.current) {
+      sel?.removeAllRanges();
+      sel?.addRange(savedSelection.current);
+    }
+
+    if (!sel || !sel.rangeCount) return;
+
+    const range = sel.getRangeAt(0);
+    let node = range.commonAncestorContainer as HTMLElement;
+
+    if (node.nodeType === Node.TEXT_NODE) {
+      node = node.parentElement!;
+    }
+
+    const headingTag = `h${level}` as keyof HTMLElementTagNameMap;
+
+    if (/^H[1-6]$/.test(node.tagName)) {
+      const newHeading = document.createElement(headingTag);
+      newHeading.innerHTML = node.innerHTML;
+
+      node.replaceWith(newHeading);
+
+      const newRange = document.createRange();
+      newRange.selectNodeContents(newHeading);
+      newRange.collapse(false);
+      sel.removeAllRanges();
+      sel.addRange;
+    } else {
+      const heading = document.createElement(headingTag);
+      heading.innerHTML = sel.toString();
+
+      range.deleteContents();
+      range.insertNode(heading);
+
+      const newRange = document.createRange();
+      newRange.selectNodeContents(heading);
+      newRange.collapse(false);
+      sel.removeAllRanges();
+      sel.addRange(newRange);
+    }
+
+    savedSelection.current = null;
+
+    const html = editorRef.current.innerHTML || "";
+    const markdown = turndownService.turndown(html);
+    onChange?.(markdown);
+  };
+
+  const TIP_MENU_RICH_EDITOR = [
+    {
+      caption: "Heading 1",
+      icon: RiH1,
+      iconColor: "black",
+      onClick: () => {
+        editorRef.current?.focus();
+        handleHeading(1);
+      },
+    },
+    {
+      caption: "Heading 2",
+      icon: RiH2,
+      iconColor: "black",
+      onClick: () => {
+        editorRef.current?.focus();
+        handleHeading(2);
+      },
+    },
+    {
+      caption: "Heading 3",
+      icon: RiH3,
+      iconColor: "black",
+      onClick: () => {
+        editorRef.current?.focus();
+        handleHeading(3);
+      },
+    },
+  ];
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(event.target as Node) &&
+        isOpen
+      ) {
+        setIsOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
+
   return (
     <div className="border border-[#ececec] rounded-xs shadow-[0_1px_4px_-3px_#5b5b5b]">
       <div className="flex flex-row justify-between items-center border-b border-[#ececec] px-2 bg-white shadow-sm">
-        <div className="flex flex-row justify-start items-start gap-1 py-[6px]">
+        <div className="flex flex-row relative justify-start items-start gap-1 py-[6px]">
           <RichEditorToolbarButton
             icon={RiBold}
             onClick={() => handleCommand("bold")}
@@ -141,8 +262,34 @@ function RichEditor({
           />
           <RichEditorToolbarButton
             icon={RiListUnordered}
-            onClick={() => handleCommand("insertUnorderedList")}
+            onClick={() => handleHeading(1)}
           />
+          <RichEditorToolbarButton
+            icon={RiHeading}
+            onClick={() => {
+              const sel = window.getSelection();
+              if (sel && sel.rangeCount > 0) {
+                savedSelection.current = sel.getRangeAt(0).cloneRange();
+              }
+              setIsOpen(true);
+            }}
+          />
+
+          {isOpen && (
+            <div
+              ref={menuRef}
+              className={cn(
+                "absolute top-full -right-[100px] translate-y-1 z-10"
+              )}
+            >
+              <TipMenu
+                setIsOpen={() => {
+                  setIsOpen(false);
+                }}
+                subMenuList={TIP_MENU_RICH_EDITOR}
+              />
+            </div>
+          )}
         </div>
         {toolbarRightPanel && (
           <div className="flex flex-row items-center gap-2">
@@ -153,6 +300,7 @@ function RichEditor({
 
       <div
         ref={editorRef}
+        role="textbox"
         contentEditable
         className={cn(
           "min-h-[200px] p-2 outline-none rich-editor",
@@ -177,7 +325,8 @@ function RichEditorToolbarButton({
   return (
     <button
       type="button"
-      onClick={() => {
+      onClick={(e) => {
+        e.preventDefault();
         if (onClick) {
           onClick();
         }
