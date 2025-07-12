@@ -118,13 +118,12 @@ export const WithError: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(canvas.getByText("Color")).toBeInTheDocument();
+    await expect(canvas.getByText("Invalid color value.")).toBeInTheDocument();
+    await expect(canvas.getByText("Color")).toBeInTheDocument();
 
     const input = canvas.getByRole("textbox");
     await userEvent.clear(input);
     await userEvent.type(input, "gggggg");
-
-    await expect(canvas.getByText("Invalid color value.")).toBeInTheDocument();
 
     await userEvent.clear(input);
     await userEvent.type(input, "00ff00");
