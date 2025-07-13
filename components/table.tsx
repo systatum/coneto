@@ -70,7 +70,8 @@ export interface TableRowProps {
   isSelected?: boolean;
   selectable?: boolean;
   handleSelect?: (data: string) => void;
-  className?: string;
+  rowClassName?: string;
+  rowCellClassName?: string;
   rowId?: string;
   children?: ReactNode;
   actions?: (columnCaption: string) => TipMenuItemProps[];
@@ -84,7 +85,7 @@ export interface TableRowGroupProps {
 }
 
 export interface TableRowCellProps {
-  col: ReactNode;
+  children: ReactNode;
   className?: string;
   width?: string;
 }
@@ -309,11 +310,9 @@ function Table({
                     width: col.width,
                   }}
                 >
-                  <TableRowCell
-                    col={col.caption}
-                    width={col.width}
-                    className={col.className}
-                  />
+                  <TableRowCell width={col.width} className={col.className}>
+                    {col.caption}
+                  </TableRowCell>
                   {col.sortable && (
                     <Toolbar className="w-fit absolute right-0 justify-end z-20">
                       <Toolbar.Menu
@@ -432,17 +431,20 @@ function TableRow({
   selectable = false,
   isSelected = false,
   handleSelect,
-  className,
+  rowClassName,
+  rowCellClassName,
   rowId,
   children,
   actions,
   isLast,
   onLastRowReached,
+  width,
   ...props
 }: TableRowProps &
   Partial<{
     onLastRowReached?: () => void;
     isLast?: boolean;
+    width?: string;
   }>) {
   const columns = useTableColumns();
   const rowRef = useRef<HTMLDivElement>(null);
@@ -468,9 +470,12 @@ function TableRow({
 
   const tableRowClass = cn(
     "flex relative p-3 items-center border-r border-l border-b w-full border-gray-200 cursor-default",
-    className,
-    isSelected ? "bg-blue-50" : "bg-gray-50 hover:bg-blue-100"
+    isSelected ? "bg-blue-50" : "bg-gray-50 hover:bg-blue-100",
+    rowClassName
   );
+
+  const childArray = Children.toArray(children).filter(isValidElement);
+  const lastIndex = childArray.length - 1;
 
   return (
     <div
@@ -492,19 +497,28 @@ function TableRow({
           <Checkbox {...props} checked={isSelected} />
         </div>
       )}
-      {content &&
-        content.map((col, i) => {
-          const column = columns[i];
+      {content
+        ? content.map((col, i) => {
+            const column = columns[i];
 
-          return (
-            <TableRowCell
-              width={column?.width}
-              className={i === columns.length - 1 ? "pr-9" : ""}
-              key={i}
-              col={col}
-            />
-          );
-        })}
+            return (
+              <TableRowCell
+                width={column?.width}
+                className={cn(rowCellClassName)}
+                key={i}
+              >
+                {col}
+              </TableRowCell>
+            );
+          })
+        : childArray.map((child, i) => {
+            if (!isValidElement<TableRowCellProps>(child)) return child;
+            const widthColumn = columns[i].width;
+
+            return cloneElement(child, {
+              width: child.props.width ?? widthColumn,
+            });
+          })}
 
       {isHovered === rowId && actions && (
         <Toolbar className="w-fit absolute right-2">
@@ -521,12 +535,11 @@ function TableRow({
           />
         </Toolbar>
       )}
-      {children}
     </div>
   );
 }
 
-function TableRowCell({ col, className, width }: TableRowCellProps) {
+function TableRowCell({ children, className, width }: TableRowCellProps) {
   return (
     <div
       className={cn("px-2", width ? "flex flex-row" : "flex-1", className)}
@@ -534,7 +547,7 @@ function TableRowCell({ col, className, width }: TableRowCellProps) {
         width: width,
       }}
     >
-      <div>{col}</div>
+      <div>{children}</div>
     </div>
   );
 }
