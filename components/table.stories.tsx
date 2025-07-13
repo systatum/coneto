@@ -252,7 +252,8 @@ export const Appendable: Story = {
         const content = contents[Math.floor(Math.random() * contents.length)];
         emails.push({
           from,
-          content: `${subject} — ${content}`,
+
+          content: `<strong>${subject}</strong> — ${content}`,
         });
       }
       return emails;
@@ -369,8 +370,17 @@ export const Appendable: Story = {
             key={rowIndex}
             rowId={`${rowValue.from}-${rowValue.content}`}
             actions={ROW_ACTION}
-            content={[rowValue.from, rowValue.content]}
-          />
+          >
+            {[rowValue.from, rowValue.content].map((rowCellValue, i) => (
+              <Table.Row.Cell
+                width={columns[i].width}
+                className={i === columns.length - 1 ? "pr-9" : ""}
+                key={`${rowValue.from}-${rowValue.content}-${rowCellValue}`}
+              >
+                <span dangerouslySetInnerHTML={{ __html: rowCellValue }} />
+              </Table.Row.Cell>
+            ))}
+          </Table.Row>
         ))}
       </Table>
     );
@@ -523,8 +533,13 @@ export const WithPaginationAndSortable: Story = {
         >
           {pagedRows?.map((dataRow, index) => (
             <Table.Row key={index} rowId={`${dataRow.name}-${dataRow.type}`}>
-              {[dataRow.name, dataRow.type].map((dataCell) => (
-                <Table.Row.Cell col={dataCell} />
+              {[dataRow.name, dataRow.type].map((dataCell, i) => (
+                <Table.Row.Cell
+                  key={`${dataRow.name}-${dataRow.type}-${dataCell}`}
+                  width={columns[i].width}
+                >
+                  {dataCell}
+                </Table.Row.Cell>
               ))}
             </Table.Row>
           ))}
@@ -815,14 +830,17 @@ export const WithCustom: Story = {
       {
         caption: "Title",
         sortable: true,
+        width: "45%",
       },
       {
         caption: "Category",
         sortable: true,
+        width: "30%",
       },
       {
         caption: "Author",
         sortable: true,
+        width: "25%",
       },
     ];
 
