@@ -1,2 +1,32 @@
-<title>Coneto Systatum</title>
-<link rel="icon" href="/favicon.ico" type="image/x-icon" />
+<head>
+  <meta charset="UTF-8" />
+  <title>Coneto Systatum – Design System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta
+    name="description"
+    content="UI components for the Coneto Systatum design system"
+  />
+  <meta name="robots" content="index,follow" />
+
+  <meta property="og:title" content="Coneto Systatum – Design System" />
+  <meta
+    property="og:description"
+    content="UI components for the Coneto Systatum design system"
+  />
+  <meta property="og:image" content="/favicon.ico" />
+  <meta property="og:url" content="https://coneto.systatum.com" />
+  <meta property="og:type" content="website" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+
+  <script>
+    window.addEventListener("message", (event) => {
+      if (
+        event.data?.type === "SET_TITLE" &&
+        typeof event.data.title === "string"
+      ) {
+        document.title = event.data.title;
+      }
+    });
+  </script>
+</head>
