@@ -321,20 +321,22 @@ export default function Calendar({
         )}
       >
         {!calendarState.open ? (
-          <div
-            className="rounded-xs w-full hover:bg-gray-200 px-2 py-2"
-            onClick={() => {
-              if (!calendarState.open) {
-                handleClickMode("open");
-              }
-            }}
-          >
-            {currentDate
-              .toLocaleString("default", {
-                month: "short",
-                year: "numeric",
-              })
-              .toUpperCase()}
+          <div className="rounded-xs w-full flex items-center">
+            <span
+              className="w-fit hover:bg-gray-200 cursor-pointer text-xs px-2 py-2"
+              onClick={() => {
+                if (!calendarState.open) {
+                  handleClickMode("open");
+                }
+              }}
+            >
+              {currentDate
+                .toLocaleString("default", {
+                  month: "short",
+                  year: "numeric",
+                })
+                .toUpperCase()}
+            </span>
           </div>
         ) : (
           <Fragment>
@@ -360,13 +362,12 @@ export default function Calendar({
                 });
               }}
             />
-            <Button
-              variant="outline"
-              className="border-gray-100 w-full hover:bg-gray-200 shadow-none max-h-[34px] max-w-[38px] text-xs px-2"
+            <button
               onClick={() => handleClickMode("open")}
+              className="bg-white text-black rounded-xs px-[6px] text-[10px] py-1 focus:outline-none max-h-[34px] font-extrabold focus:ring-2 focus:ring-[#61A9F9] cursor-pointer hover:bg-gray-200"
             >
-              <RiCheckLine size={20} />
-            </Button>
+              ✔
+            </button>
           </Fragment>
         )}
         {!calendarState.open && (
