@@ -74,7 +74,7 @@ export const WithRendered: Story = {
         renderer={{
           requestCreatedBy: (value) => (
             <div
-              onClick={() => alert("Email was sent")}
+              onClick={() => console.log("Email was sent")}
               className="font-medium cursor-pointer text-blue-500"
             >
               {value}

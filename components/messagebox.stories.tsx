@@ -110,7 +110,7 @@ export const WithActions: Story = {
       {
         caption: "Retry",
         type: "button",
-        onClick: () => alert("Test click"),
+        onClick: () => console.log("Test click"),
       },
       {
         caption: "View Website",
@@ -141,7 +141,7 @@ export const WithActionsAndClosable: Story = {
       {
         caption: "Retry",
         type: "button",
-        onClick: () => alert("Retry Succeed"),
+        onClick: () => console.log("Retry Succeed"),
       },
       {
         caption: "View Website",
@@ -150,7 +150,7 @@ export const WithActionsAndClosable: Story = {
       },
     ],
     closable: true,
-    onCloseRequest: () => alert("Close Request Succeed"),
+    onCloseRequest: () => console.log("Close Request Succeed"),
   },
   render: (args) => <Messagebox {...args} />,
 

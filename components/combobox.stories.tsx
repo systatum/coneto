@@ -140,7 +140,7 @@ export const WithActions: Story = {
       {
         title: "Add Fruit",
         onClick: () => {
-          alert(`New fruit added: ${value.text}`);
+          console.log(`New fruit added: ${value.text}`);
         },
         icon: RiAddLine,
       },

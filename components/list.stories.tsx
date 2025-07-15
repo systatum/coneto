@@ -52,7 +52,7 @@ export const Default: Story = {
       {
         id: 5,
         title: "Notifications",
-        subtitle: "View alerts",
+        subtitle: "View Alerts",
         iconUrl: RiNotification3Fill,
       },
     ];
@@ -110,7 +110,7 @@ export const WithSearch: Story = {
       {
         id: 5,
         title: "Notifications",
-        subtitle: "View alerts",
+        subtitle: "View Alerts",
         iconUrl: RiNotification3Fill,
       },
     ];
@@ -184,7 +184,7 @@ export const WithGroup: Story = {
           {
             id: 2,
             title: "Notifications",
-            subtitle: "View alerts",
+            subtitle: "View Alerts",
             iconUrl: RiNotification3Fill,
           },
           {
@@ -311,7 +311,7 @@ export const WithGroupAndDraggable: Story = {
           {
             id: 2,
             title: "Notifications",
-            subtitle: "View alerts",
+            subtitle: "View Alerts",
             iconUrl: RiNotification3Fill,
           },
           {
@@ -508,7 +508,7 @@ export const WithLoading: Story = {
           {
             id: 2,
             title: "Notifications",
-            subtitle: "View alerts",
+            subtitle: "View Alerts",
             iconUrl: RiNotification3Fill,
           },
           {
@@ -703,7 +703,7 @@ export const WithSelectable: Story = {
           {
             id: 2,
             title: "Notifications",
-            subtitle: "View alerts",
+            subtitle: "View Alerts",
             iconUrl: RiNotification3Fill,
           },
           {

@@ -131,7 +131,7 @@ export const Dormanted: Story = {
         {...args}
         onChange={handleChange}
         onActionClick={() => {
-          alert("Input change succeed.");
+          console.log("Input change succeed.");
         }}
       />
     );
@@ -214,7 +214,7 @@ export const InputMessage: Story = {
         value={args.value}
         onChange={handleChange}
         onActionClick={() => {
-          alert("Send message has been successful.");
+          console.log("Send message has been successful.");
         }}
       />
     );

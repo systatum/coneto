@@ -91,14 +91,14 @@ export const WithActions: Story = {
       {
         title: "Discover",
         onClick: () => {
-          alert("Discover clicked");
+          console.log("Discover clicked");
         },
         icon: RiSearchLine,
       },
       {
         title: "Mention",
         onClick: () => {
-          alert("Mention clicked");
+          console.log("Mention clicked");
         },
         icon: RiAtLine,
       },
@@ -146,14 +146,14 @@ export const WithEmptySlate: Story = {
       {
         title: "Discover",
         onClick: () => {
-          alert("Discover clicked");
+          console.log("Discover clicked");
         },
         icon: RiSearchLine,
       },
       {
         title: "Mention",
         onClick: () => {
-          alert("Mention clicked");
+          console.log("Mention clicked");
         },
         icon: RiAtLine,
       },
