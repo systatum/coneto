@@ -181,7 +181,7 @@ export const WithActions: Story = {
   },
 };
 
-export const WithStrictValue: Story = {
+export const StrictValue: Story = {
   render: () => {
     const [value, setValue] = useState<OptionsProps>({
       text: "",
