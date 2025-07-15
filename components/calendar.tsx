@@ -366,7 +366,7 @@ export default function Calendar({
             <RiCheckLine
               size={24}
               onClick={() => handleClickMode("open")}
-              className="rounded-xs focus:outline-none cursor-pointer hover:bg-gray-200"
+              className="rounded-xs focus:outline-none cursor-pointer p-1 hover:bg-gray-200"
               aria-label="Select date"
             />
           </Fragment>
