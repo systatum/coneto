@@ -49,7 +49,7 @@ export default function EmptySlate({
           childClassName
         )}
       >
-        <span className="font-semibold text-xl">{title}</span>
+        <h2 className="font-semibold text-xl">{title}</h2>
         <span className="text-sm">{subtitle}</span>
         <div className="flex flex-row gap-2 mt-2">{actions}</div>
       </div>
