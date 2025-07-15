@@ -552,7 +552,7 @@ function TableRow({
 function TableRowCell({ children, className, width }: TableRowCellProps) {
   return (
     <div
-      className={cn("px-2", width ? "flex flex-row" : "flex-1", className)}
+      className={cn("px-2", width ? "" : "flex-1", className)}
       style={{
         width: width ?? "100%",
       }}
