@@ -340,28 +340,30 @@ export default function Calendar({
           </div>
         ) : (
           <Fragment>
-            <Combobox
-              options={monthNames}
-              inputValue={calendarState.month}
-              placeholder={monthNames[0].text}
-              containerClassName="min-w-[70px] max-w-[70px]"
-              setInputValue={(value) => {
-                onChangeValueDate({
-                  target: { name: "month", value },
-                });
-              }}
-            />
-            <Combobox
-              options={yearOptions}
-              inputValue={calendarState.year}
-              placeholder={String(currentYear)}
-              containerClassName="min-w-[75px] max-w-[75px]"
-              setInputValue={(value) => {
-                onChangeValueDate({
-                  target: { name: "year", value },
-                });
-              }}
-            />
+            <div className="flex flex-row gap-1">
+              <Combobox
+                options={monthNames}
+                inputValue={calendarState.month}
+                placeholder={monthNames[0].text}
+                containerClassName="min-w-[90px] max-w-[90px]"
+                setInputValue={(value) => {
+                  onChangeValueDate({
+                    target: { name: "month", value },
+                  });
+                }}
+              />
+              <Combobox
+                options={yearOptions}
+                inputValue={calendarState.year}
+                placeholder={String(currentYear)}
+                containerClassName="min-w-[75px] max-w-[75px]"
+                setInputValue={(value) => {
+                  onChangeValueDate({
+                    target: { name: "year", value },
+                  });
+                }}
+              />
+            </div>
 
             <RiCheckLine
               size={24}
