@@ -41,26 +41,7 @@ export const Default: Story = {
 
     return (
       <div className="flex flex-col gap-1 max-w-[250px]">
-        <TreeList
-          content={TREE_LIST_DATA}
-          emptySlate={
-            <EmptySlate
-              imageUrl="https://picsum.photos/200?random=1"
-              title="Manage your inventory transfers"
-              subtitle="Track and receive your incoming inventory from suppliers."
-              actions={
-                <>
-                  <Button variant="default" className="text-xs">
-                    Add Item
-                  </Button>
-                  <Button variant="primary" className="text-xs">
-                    Learn More
-                  </Button>
-                </>
-              }
-            />
-          }
-        />
+        <TreeList content={TREE_LIST_DATA} emptySlate={<p>Not found.</p>} />
       </div>
     );
   },
@@ -128,23 +109,7 @@ export const WithActions: Story = {
         <TreeList
           content={TREE_LIST_DATA}
           actions={TREE_LIST_ACTIONS}
-          emptySlate={
-            <EmptySlate
-              imageUrl="https://picsum.photos/200?random=1"
-              title="Manage your inventory transfers"
-              subtitle="Track and receive your incoming inventory from suppliers."
-              actions={
-                <>
-                  <Button variant="default" className="text-xs">
-                    Add Item
-                  </Button>
-                  <Button variant="primary" className="text-xs">
-                    Learn More
-                  </Button>
-                </>
-              }
-            />
-          }
+          emptySlate={<p>Not found.</p>}
         />
       </div>
     );
@@ -166,5 +131,59 @@ export const WithActions: Story = {
     expect(alim).toBeInTheDocument();
     await user.click(alim!);
     expect(alim).toHaveClass("bg-gray-100");
+  },
+};
+
+export const WithEmptySlate: Story = {
+  render: () => {
+    const setPerson = (item: { id: number; title: string }) => {
+      console.log("Clicked person:", item.title);
+    };
+
+    const TREE_LIST_DATA = [];
+
+    const TREE_LIST_ACTIONS: TreeListActionsProps[] = [
+      {
+        title: "Discover",
+        onClick: () => {
+          alert("Discover clicked");
+        },
+        icon: RiSearchLine,
+      },
+      {
+        title: "Mention",
+        onClick: () => {
+          alert("Mention clicked");
+        },
+        icon: RiAtLine,
+      },
+    ];
+
+    return (
+      <div className="flex flex-col gap-1 max-w-[250px]">
+        <TreeList
+          content={TREE_LIST_DATA}
+          actions={TREE_LIST_ACTIONS}
+          emptySlate={
+            <EmptySlate
+              imageUrl="https://picsum.photos/200?random=1"
+              title="Manage your inventory transfers"
+              containerClassName="max-w-[200px] text-center mx-auto"
+              subtitle="Track and receive your incoming inventory from suppliers."
+              actions={
+                <>
+                  <Button variant="default" className="text-xs">
+                    Add Item
+                  </Button>
+                  <Button variant="primary" className="text-xs">
+                    Learn More
+                  </Button>
+                </>
+              }
+            />
+          }
+        />
+      </div>
+    );
   },
 };
