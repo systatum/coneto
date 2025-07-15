@@ -68,6 +68,6 @@ export const Default: Story = {
     await userEvent.type(editableDiv, "{selectall}");
 
     const italicButton = canvas.getAllByRole("button")[1];
-    await userEvent.click(italicButton);
+    await userEvent.dblClick(italicButton);
   },
 };

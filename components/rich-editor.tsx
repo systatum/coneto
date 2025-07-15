@@ -66,7 +66,9 @@ function RichEditor({
     document.execCommand(command);
     const html = editorRef.current.innerHTML || "";
     const markdown = turndownService.turndown(html);
-    onChange?.(markdown);
+    if (onChange) {
+      onChange(markdown);
+    }
   };
 
   const handleOnKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
@@ -140,6 +142,48 @@ function RichEditor({
         }
       }
     }
+
+    if (e.key === "Backspace") {
+      const sel = window.getSelection();
+      if (!sel || !sel.rangeCount) return;
+
+      const range = sel.getRangeAt(0);
+      const container = range.startContainer;
+
+      let li: HTMLElement | null = null;
+
+      if (container.nodeType === Node.ELEMENT_NODE) {
+        li = (container as Element).closest("li");
+      } else if (container.nodeType === Node.TEXT_NODE) {
+        li = (container.parentNode as HTMLElement)?.closest("li");
+      }
+
+      if (
+        li &&
+        li.innerHTML === "<br>" &&
+        li.parentElement &&
+        (li.parentElement.tagName === "OL" ||
+          li.parentElement.tagName === "UL") &&
+        li.parentElement.children.length === 1
+      ) {
+        e.preventDefault();
+
+        const parentList = li.parentElement;
+        const block = document.createElement("p");
+        block.innerHTML = "<br>";
+
+        parentList.replaceWith(block);
+
+        const newRange = document.createRange();
+        newRange.setStart(block, 0);
+        newRange.collapse(true);
+
+        sel.removeAllRanges();
+        sel.addRange(newRange);
+
+        return;
+      }
+    }
   };
 
   const handleHeading = (level: 1 | 2 | 3) => {
@@ -194,7 +238,9 @@ function RichEditor({
 
     const html = editorRef.current.innerHTML || "";
     const markdown = turndownService.turndown(html);
-    onChange?.(markdown);
+    if (onChange) {
+      onChange(markdown);
+    }
   };
 
   const TIP_MENU_RICH_EDITOR = [
@@ -262,7 +308,7 @@ function RichEditor({
           />
           <RichEditorToolbarButton
             icon={RiListUnordered}
-            onClick={() => handleHeading(1)}
+            onClick={() => handleCommand("insertUnorderedList")}
           />
           <RichEditorToolbarButton
             icon={RiHeading}
