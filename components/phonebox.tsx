@@ -31,7 +31,7 @@ export interface PhoneboxProps {
   className?: string;
   value?: string;
   onChange?: (
-    e?:
+    e:
       | { target: { name: string; value: CountryCodeProps } }
       | ChangeEvent<HTMLInputElement>
   ) => void;
