@@ -364,14 +364,14 @@ export default function Calendar({
             />
             <button
               onClick={() => handleClickMode("open")}
-              className="bg-white text-black rounded-xs px-[6px] text-[10px] py-1 focus:outline-none max-h-[34px] font-extrabold focus:ring-2 focus:ring-[#61A9F9] cursor-pointer hover:bg-gray-200"
+              className="bg-white text-black rounded-xs text-[10px] focus:outline-none max-h-[24px] font-extrabold focus:ring-2 focus:ring-[#61A9F9] cursor-pointer hover:bg-gray-200"
             >
-              ✔
+              <RiCheckLine size={24} aria-label="Select date" />
             </button>
           </Fragment>
         )}
         {!calendarState.open && (
-          <div className="flex flex-row ml-2 w-full">
+          <div className="flex flex-row w-full">
             <RiArrowLeftSLine
               onClick={handleClickPrevMonth}
               size={24}
