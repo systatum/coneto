@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from "@storybook/react/*";
+import { Meta, StoryObj } from "@storybook/react";
 import { Stepline, SteplineItemProps } from "./stepline";
 import { useState } from "react";
 import { userEvent, within } from "@storybook/test";

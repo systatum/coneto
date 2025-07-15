@@ -19,6 +19,9 @@ function baseMarked(
   src: string,
   opt?: MarkedOptions | null
 ): string | Promise<string> {
+  if (opt?.async) {
+    return Promise.resolve(markedInstance.parse(src, opt));
+  }
   return markedInstance.parse(src, opt);
 }
 
@@ -29,7 +32,7 @@ const marked = Object.assign(baseMarked, {
   /**
    * Compiles markdown to HTML asynchronously.
    */
-  async(
+  async async(
     src: string,
     options: MarkedOptions & { async: true }
   ): Promise<string> {
