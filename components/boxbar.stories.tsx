@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from "@storybook/react/*";
+import { Meta, StoryObj } from "@storybook/react";
 import Boxbar from "./boxbar";
 import Badge from "./badge";
 import { expect, fireEvent, within } from "@storybook/test";

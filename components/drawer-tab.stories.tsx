@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from "@storybook/react/*";
+import { Meta, StoryObj } from "@storybook/react";
 import DrawerTab from "./drawer-tab";
 import Textbox from "./textbox";
 import { ChangeEvent, useState } from "react";
