@@ -362,12 +362,13 @@ export default function Calendar({
                 });
               }}
             />
-            <button
+
+            <RiCheckLine
+              size={24}
               onClick={() => handleClickMode("open")}
-              className="bg-white text-black rounded-xs text-[10px] focus:outline-none max-h-[24px] font-extrabold focus:ring-2 focus:ring-[#61A9F9] cursor-pointer hover:bg-gray-200"
-            >
-              <RiCheckLine size={24} aria-label="Select date" />
-            </button>
+              className="rounded-xs focus:outline-none cursor-pointer hover:bg-gray-200"
+              aria-label="Select date"
+            />
           </Fragment>
         )}
         {!calendarState.open && (
@@ -376,14 +377,14 @@ export default function Calendar({
               onClick={handleClickPrevMonth}
               size={24}
               aria-label="Previous Month"
-              className="rounded-xs focus:outline-none focus:ring-2 focus:ring-[#61A9F9] cursor-pointer hover:bg-gray-200"
+              className="rounded-xs focus:outline-none cursor-pointer hover:bg-gray-200"
             />
 
             <RiArrowRightSLine
               onClick={handleClickNextMonth}
               size={24}
               aria-label="Next Month"
-              className="rounded-xs focus:outline-none focus:ring-2 focus:ring-[#61A9F9] cursor-pointer hover:bg-gray-200"
+              className="rounded-xs focus:outline-none cursor-pointer hover:bg-gray-200"
             />
           </div>
         )}
