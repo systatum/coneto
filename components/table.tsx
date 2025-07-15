@@ -59,10 +59,10 @@ export interface TableProps {
   showPagination?: boolean;
   onNextPageRequested?: () => void;
   onPreviousPageRequested?: () => void;
-  pageNumberText?: number;
   disablePreviousPageButton?: boolean;
   disableNextPageButton?: boolean;
-  allRowIds?: string[];
+  pageNumberText?: string | number;
+  totalSelectedItemText?: (count: number) => string;
 }
 
 export interface TableRowProps {
@@ -113,6 +113,7 @@ function Table({
   onNextPageRequested,
   onPreviousPageRequested,
   pageNumberText = 1,
+  totalSelectedItemText,
 }: TableProps) {
   const [selectedData, setSelectedData] = useState<string[]>([]);
   const [allRowsLocal, setAllRowsLocal] = useState<string[]>([]);
@@ -267,7 +268,11 @@ function Table({
               <div className="flex flex-row gap-2">
                 {showPagination && (
                   <div className="flex flex-row gap-2">
-                    <span>Pg. {pageNumberText}</span>
+                    <span>
+                      {typeof pageNumberText === "number"
+                        ? `Pg. ${pageNumberText}`
+                        : pageNumberText}
+                    </span>
                     <div
                       aria-label="divider"
                       className="w-[3px] h-full border-l border-white"
@@ -275,7 +280,11 @@ function Table({
                   </div>
                 )}
                 {selectable && (
-                  <span>{selectedData.length} items selected</span>
+                  <span>
+                    {totalSelectedItemText
+                      ? totalSelectedItemText(selectedData.length)
+                      : `${selectedData.length} items selected`}
+                  </span>
                 )}
               </div>
             )}
@@ -290,7 +299,7 @@ function Table({
         >
           <div className="flex flex-row p-3 bg-[#0f3969] items-center font-semibold text-white">
             {selectable && (
-              <div className="w-8 bg-[#0f3969] flex justify-center cursor-pointer pointer-events-auto items-center">
+              <div className="min-w-8 bg-[#0f3969] flex justify-center cursor-pointer pointer-events-auto items-center">
                 <Checkbox
                   onChange={handleSelectAll}
                   checked={allRowSelectedLocal}
@@ -300,21 +309,17 @@ function Table({
             )}
             {columns.map((col, i) => {
               return (
-                <div
+                <TableRowCell
+                  key={i}
+                  width={col.width}
                   className={cn(
                     "flex relative items-center w-full",
                     col.width ? "flex-row" : "flex-1"
                   )}
-                  key={i}
-                  style={{
-                    width: col.width,
-                  }}
                 >
-                  <TableRowCell width={col.width} className={col.className}>
-                    {col.caption}
-                  </TableRowCell>
+                  {col.caption}
                   {col.sortable && (
-                    <Toolbar className="w-fit absolute right-0 justify-end z-20">
+                    <Toolbar className="w-fit absolute right-2 z-20">
                       <Toolbar.Menu
                         closedIcon={RiMoreFill}
                         openedIcon={RiMoreFill}
@@ -328,7 +333,7 @@ function Table({
                       />
                     </Toolbar>
                   )}
-                </div>
+                </TableRowCell>
               );
             })}
           </div>
@@ -475,7 +480,6 @@ function TableRow({
   );
 
   const childArray = Children.toArray(children).filter(isValidElement);
-  const lastIndex = childArray.length - 1;
 
   return (
     <div
@@ -492,7 +496,7 @@ function TableRow({
               handleSelect?.(rowId);
             }
           }}
-          className="w-8 flex justify-center cursor-pointer pointer-events-auto items-center"
+          className="min-w-8 flex justify-center cursor-pointer pointer-events-auto items-center"
         >
           <Checkbox {...props} checked={isSelected} />
         </div>
@@ -500,12 +504,14 @@ function TableRow({
       {content
         ? content.map((col, i) => {
             const column = columns[i];
+            const isLast = actions && i === childArray.length - 1;
 
             return (
               <TableRowCell
-                width={column?.width}
-                className={cn(rowCellClassName)}
-                key={i}
+                width={column.width}
+                className={
+                  isLast ? cn("pr-9", rowCellClassName) : rowCellClassName
+                }
               >
                 {col}
               </TableRowCell>
@@ -514,9 +520,13 @@ function TableRow({
         : childArray.map((child, i) => {
             if (!isValidElement<TableRowCellProps>(child)) return child;
             const widthColumn = columns[i].width;
+            const isLast = actions && i === childArray.length - 1;
 
             return cloneElement(child, {
               width: child.props.width ?? widthColumn,
+              className: isLast
+                ? cn("pr-9", child.props.className)
+                : child.props.className,
             });
           })}
 
@@ -544,10 +554,10 @@ function TableRowCell({ children, className, width }: TableRowCellProps) {
     <div
       className={cn("px-2", width ? "flex flex-row" : "flex-1", className)}
       style={{
-        width: width,
+        width: width ?? "100%",
       }}
     >
-      <div>{children}</div>
+      {children}
     </div>
   );
 }

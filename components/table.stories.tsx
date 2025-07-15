@@ -252,8 +252,8 @@ export const Appendable: Story = {
         const content = contents[Math.floor(Math.random() * contents.length)];
         emails.push({
           from,
-
-          content: `<strong>${subject}</strong> — ${content}`,
+          subject,
+          content,
         });
       }
       return emails;
@@ -272,14 +272,14 @@ export const Appendable: Story = {
       column,
     }: {
       mode: "asc" | "desc" | "original";
-      column: keyof (typeof emails)[0];
+      column: "from" | "content";
     }) => {
       if (mode === "original") {
         setRows([...emails]);
         return;
       }
 
-      const sorted = [...emails].sort((a, b) => {
+      const sorted = [...rows].sort((a, b) => {
         const aVal = a[column];
         const bVal = b[column];
         return typeof aVal === "string" && typeof bVal === "string"
@@ -296,15 +296,16 @@ export const Appendable: Story = {
       console.log("Selected rows:", data);
     };
 
-    const TIP_MENU_ACTION = (columnCaption: string): TipMenuItemProps[] => {
-      const column = columnCaption.toLowerCase() as keyof (typeof emails)[0];
+    const TIP_MENU_ACTION = (
+      columnCaption: "from" | "content"
+    ): TipMenuItemProps[] => {
       return [
         {
           caption: "Sort Ascending",
           icon: RiArrowUpSLine,
           iconColor: "gray",
           onClick: () => {
-            handleSortingRequested({ mode: "asc", column });
+            handleSortingRequested({ mode: "asc", column: columnCaption });
           },
         },
         {
@@ -312,7 +313,7 @@ export const Appendable: Story = {
           icon: RiArrowDownSLine,
           iconColor: "gray",
           onClick: () => {
-            handleSortingRequested({ mode: "desc", column });
+            handleSortingRequested({ mode: "desc", column: columnCaption });
           },
         },
         {
@@ -320,7 +321,7 @@ export const Appendable: Story = {
           icon: RiRefreshLine,
           iconColor: "gray",
           onClick: () => {
-            handleSortingRequested({ mode: "original", column });
+            handleSortingRequested({ mode: "original", column: columnCaption });
           },
         },
       ];
@@ -333,7 +334,7 @@ export const Appendable: Story = {
           icon: RiArrowUpSLine,
           iconColor: "gray",
           onClick: () => {
-            alert(`${rowId} was edited`);
+            console.log(`${rowId} was edited`);
           },
         },
         {
@@ -341,7 +342,7 @@ export const Appendable: Story = {
           icon: RiDeleteBin2Fill,
           iconColor: "gray",
           onClick: () => {
-            alert(`${rowId} was deleted`);
+            console.log(`${rowId} was deleted`);
           },
         },
       ];
@@ -364,22 +365,18 @@ export const Appendable: Story = {
         onItemsSelected={handleItemsSelected}
         subMenuList={TIP_MENU_ACTION}
         onLastRowReached={handleFetchData}
+        totalSelectedItemText={(n) => `${n} Halaman Terpilih`}
       >
         {rows.map((rowValue, rowIndex) => (
           <Table.Row
             key={rowIndex}
-            rowId={`${rowValue.from}-${rowValue.content}`}
+            rowId={`${rowValue.from}-${rowValue.content}-${rowValue.subject}`}
             actions={ROW_ACTION}
           >
-            {[rowValue.from, rowValue.content].map((rowCellValue, i) => (
-              <Table.Row.Cell
-                width={columns[i].width}
-                className={i === columns.length - 1 ? "pr-9" : ""}
-                key={`${rowValue.from}-${rowValue.content}-${rowCellValue}`}
-              >
-                <span dangerouslySetInnerHTML={{ __html: rowCellValue }} />
-              </Table.Row.Cell>
-            ))}
+            <Table.Row.Cell>{rowValue.from}</Table.Row.Cell>
+            <Table.Row.Cell>
+              <strong>{rowValue.subject}</strong> — {rowValue.content}
+            </Table.Row.Cell>
           </Table.Row>
         ))}
       </Table>
@@ -812,14 +809,14 @@ export const WithCustom: Story = {
         title: "Delete",
         icon: RiDeleteBin2Line,
         onClick: () => {
-          alert("Delete clicked");
+          console.log("Delete clicked");
         },
       },
       {
         title: "Copy",
         icon: RiClipboardFill,
         onClick: () => {
-          alert("Copy clicked");
+          console.log("Copy clicked");
         },
       },
     ];
@@ -914,7 +911,7 @@ export const WithCustom: Story = {
           icon: RiArrowUpSLine,
           iconColor: "gray",
           onClick: () => {
-            alert(`${rowId} was edited`);
+            console.log(`${rowId} was edited`);
           },
         },
         {
@@ -922,7 +919,7 @@ export const WithCustom: Story = {
           icon: RiDeleteBin2Fill,
           iconColor: "gray",
           onClick: () => {
-            alert(`${rowId} was deleted`);
+            console.log(`${rowId} was deleted`);
           },
         },
       ];
