@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react/";
-import StatefulForm, { FormFieldProps } from "./stateful-form";
+import { StatefulForm, FormFieldProps } from "./stateful-form";
 import { ChangeEvent, useState } from "react";
 import { COUNTRY_CODES } from "./../constants/countries";
 import { z } from "zod";
