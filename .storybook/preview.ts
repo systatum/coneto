@@ -25,7 +25,7 @@ if (typeof window !== "undefined") {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
 
-    document.title = `Coneto Systatum – ${formattedTitle}`;
+    document.title = `Coneto – ${formattedTitle}`;
   });
 }
 

@@ -2,12 +2,12 @@ import { addons } from "@storybook/manager-api";
 import { create } from "@storybook/theming";
 
 addons.setConfig({
-  title: "Coneto Systatum",
+  title: "Systatum Coneto",
   theme: create({
     base: "dark",
     brandImage: "/systatum.png",
-    brandTitle: "Coneto Systatum",
+    brandTitle: "Systatum Coneto",
   }),
 });
 
-document.title = "Coneto Systatum";
+document.title = "Systatum Coneto";
