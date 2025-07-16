@@ -1,7 +1,7 @@
 import { RiAddBoxFill, RiAddLine, RiCloseLine } from "@remixicon/react";
 import { cn } from "./../lib/utils";
-import Badge, { BadgeProps } from "./badge";
-import Checkbox from "./checkbox";
+import { Badge, BadgeProps } from "./badge";
+import { Checkbox } from "./checkbox";
 import {
   ChangeEvent,
   CSSProperties,
@@ -20,8 +20,8 @@ import {
   useInteractions,
   useRole,
 } from "@floating-ui/react";
-import Textbox from "./textbox";
-import Colorbox, { ColorPickProps } from "./colorbox";
+import { Textbox } from "./textbox";
+import { Colorbox, ColorPickProps } from "./colorbox";
 import { Button } from "./button";
 
 type InputValueProps = {
@@ -61,7 +61,7 @@ interface BaseChipsProps {
   onNewTagCreated?: () => void;
 }
 
-export default function Chips(props: ChipsProps) {
+function Chips(props: ChipsProps) {
   const [open, setOpen] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
 
@@ -548,3 +548,5 @@ function Chip({
     </div>
   );
 }
+
+export { Chips, Chip };

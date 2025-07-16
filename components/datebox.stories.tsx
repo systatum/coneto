@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
-import Datebox from "./datebox";
+import { Datebox } from "./datebox";
 import { expect, userEvent, within } from "@storybook/test";
 import { OptionsProps } from "./selectbox";
 

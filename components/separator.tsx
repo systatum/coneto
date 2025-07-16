@@ -1,13 +1,13 @@
 import { cn } from "./../lib/utils";
 
-interface SeparatorProps {
+export interface SeparatorProps {
   title?: string;
   className?: string;
   textFloat?: "left" | "right";
   depth?: string;
 }
 
-export default function Separator({
+function Separator({
   title,
   className,
   textFloat = "left",
@@ -35,3 +35,5 @@ export default function Separator({
     </div>
   );
 }
+
+export { Separator };

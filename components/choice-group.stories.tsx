@@ -1,8 +1,8 @@
 import { Meta, StoryObj } from "@storybook/react";
-import ChoiceGroup from "./choice-group";
+import { ChoiceGroup } from "./choice-group";
 import { ChangeEvent, ComponentProps, useState } from "react";
-import Radio from "./radio";
-import Checkbox from "./checkbox";
+import { Radio } from "./radio";
+import { Checkbox } from "./checkbox";
 import { useArgs } from "@storybook/preview-api";
 import { userEvent, within } from "@storybook/test";
 

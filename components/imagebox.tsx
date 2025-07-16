@@ -2,7 +2,7 @@ import { ChangeEvent, DragEvent, useRef, useState } from "react";
 import { cn } from "../lib/utils";
 import { RiAddLine, RiImageLine } from "@remixicon/react";
 
-interface ImageboxProps {
+export interface ImageboxProps {
   containerClassName?: string;
   onFilesSelected?: (files: FileList) => void;
   size?: "xs" | "sm" | "md" | "lg";
@@ -26,7 +26,7 @@ const SIZE_ICON = {
   lg: 28,
 };
 
-export default function Imagebox({
+function Imagebox({
   containerClassName,
   onFilesSelected,
   size = "md",
@@ -128,3 +128,5 @@ export default function Imagebox({
     </div>
   );
 }
+
+export { Imagebox };

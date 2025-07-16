@@ -1,7 +1,7 @@
 import { RiCalendar2Line } from "@remixicon/react";
 import { DrawerProps, Selectbox } from "./selectbox";
 import { cn } from "./../lib/utils";
-import Calendar, { BaseCalendarProps } from "./calendar";
+import { Calendar, BaseCalendarProps } from "./calendar";
 
 export type DateboxProps = BaseCalendarProps & {
   label?: string;
@@ -10,7 +10,7 @@ export type DateboxProps = BaseCalendarProps & {
 };
 type CalendarDrawerProps = BaseCalendarProps & Partial<DrawerProps>;
 
-export default function Datebox(props: DateboxProps) {
+function Datebox(props: DateboxProps) {
   return (
     <div className={cn(`flex w-full flex-col gap-2 text-xs`)}>
       {props.label && <label>{props.label}</label>}
@@ -58,3 +58,5 @@ function CalendarDrawer(props: CalendarDrawerProps) {
     </ul>
   );
 }
+
+export { Datebox };

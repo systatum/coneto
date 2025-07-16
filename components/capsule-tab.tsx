@@ -1,6 +1,6 @@
 import { cn } from "./../lib/utils";
 import { ReactNode, useState } from "react";
-import Capsule from "./capsule";
+import { Capsule } from "./capsule";
 
 interface CapsuleTabProps {
   tabs: Array<{

@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import Chips from "./chips";
+import { Chips } from "./chips";
 import { ChangeEvent, useState } from "react";
 import { BadgeProps } from "./badge";
 import { ColorPickProps } from "./colorbox";
@@ -74,7 +74,7 @@ export const Default: Story = {
     ) => {
       const { name, value } = e.target;
 
-      if (type === "text") {
+      if (type === "color-text") {
         let val = value;
         if (!val.startsWith("#")) {
           val = "#" + val;
@@ -207,7 +207,7 @@ export const DarkBackground: Story = {
     ) => {
       const { name, value } = e.target;
 
-      if (type === "text") {
+      if (type === "color-text") {
         let val = value;
         if (!val.startsWith("#")) {
           val = "#" + val;
@@ -315,7 +315,7 @@ export const Deletable: Story = {
     ) => {
       const { name, value } = e.target;
 
-      if (type === "text") {
+      if (type === "color-text") {
         let val = value;
         if (!val.startsWith("#")) {
           val = "#" + val;

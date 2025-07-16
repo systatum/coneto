@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import EmptySlate from "./empty-slate";
+import { EmptySlate } from "./empty-slate";
 import { Button } from "./button";
 
 const meta: Meta<typeof EmptySlate> = {

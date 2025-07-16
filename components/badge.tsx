@@ -70,7 +70,7 @@ const VARIANTS_BADGE = {
   },
 };
 
-export default function Badge({
+function Badge({
   variant = null,
   caption,
   withCircle = false,
@@ -134,3 +134,5 @@ export default function Badge({
     </div>
   );
 }
+
+export { Badge };

@@ -42,7 +42,7 @@ export interface PhoneboxProps {
   phoneNumber: string;
 }
 
-export default function Phonebox({
+function Phonebox({
   label,
   className,
   value = "",
@@ -361,3 +361,5 @@ function formatPhoneNumber(
 
   return `${restWithDash}`;
 }
+
+export { Phonebox };

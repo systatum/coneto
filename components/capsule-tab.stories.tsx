@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { CapsuleTab } from "./capsule-tab";
 import { Button } from "./button";
-import Textbox from "./textbox";
+import { Textbox } from "./textbox";
 import { ChangeEvent, useState } from "react";
 import { expect, userEvent, waitFor, within } from "@storybook/test";
 

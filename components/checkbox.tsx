@@ -16,7 +16,7 @@ export interface CheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
   highlightOnChecked?: boolean;
 }
 
-export default function Checkbox({
+function Checkbox({
   label,
   name,
   showError,
@@ -138,3 +138,5 @@ export default function Checkbox({
     </div>
   );
 }
+
+export { Checkbox };

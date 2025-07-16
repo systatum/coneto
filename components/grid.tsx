@@ -1,6 +1,6 @@
 import { cn } from "./../lib/utils";
 import { CSSProperties, ReactNode, useState } from "react";
-import Checkbox from "./checkbox";
+import { Checkbox } from "./checkbox";
 
 interface GridProps {
   children?: ReactNode;

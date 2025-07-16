@@ -8,7 +8,7 @@ interface LoadingSpinnerProps {
   className?: string;
 }
 
-export default function LoadingSpinner({
+function LoadingSpinner({
   iconSize = 16,
   textSize = 16,
   label,
@@ -57,3 +57,5 @@ export default function LoadingSpinner({
     </div>
   );
 }
+
+export { LoadingSpinner };

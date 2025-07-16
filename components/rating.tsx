@@ -1,7 +1,7 @@
 import { cn } from "./../lib/utils";
 import { MouseEvent, useState } from "react";
 
-interface RatingProps {
+export interface RatingProps {
   rating?: number;
   onChange?: (rating: number) => void;
   editable?: boolean;
@@ -9,7 +9,7 @@ interface RatingProps {
   size?: "sm" | "md" | "lg";
 }
 
-export default function Rating({
+function Rating({
   rating,
   onChange,
   editable,
@@ -132,3 +132,5 @@ export default function Rating({
     </div>
   );
 }
+
+export { Rating };

@@ -12,7 +12,7 @@ interface FileInputBoxProps {
   errorMessage?: string;
 }
 
-export default function FileInputBox({
+function FileInputBox({
   containerClassName,
   placeholder = "Drop a file here or browse",
   accept = "*",
@@ -123,3 +123,5 @@ export default function FileInputBox({
     </div>
   );
 }
+
+export { FileInputBox };

@@ -1,10 +1,10 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { Sidebar } from "./sidebar";
 import { ChangeEvent, useMemo, useState } from "react";
-import Searchbox from "./searchbox";
+import { Searchbox } from "./searchbox";
 import { TreeList } from "./treelist";
 import { expect, userEvent, within } from "@storybook/test";
-import EmptySlate from "./empty-slate";
+import { EmptySlate } from "./empty-slate";
 import { Button } from "./button";
 
 const meta: Meta<typeof Sidebar> = {

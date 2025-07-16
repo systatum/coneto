@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { userEvent, within } from "@storybook/test";
-import Calendar from "./calendar";
+import { Calendar } from "./calendar";
 import { OptionsProps } from "./selectbox";
 
 const meta: Meta<typeof Calendar> = {

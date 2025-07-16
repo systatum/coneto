@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
-import Imagebox from "./imagebox";
+import { Imagebox } from "./imagebox";
 
 const meta: Meta<typeof Imagebox> = {
   title: "Input Elements/Imagebox",

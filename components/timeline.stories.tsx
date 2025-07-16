@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { Timeline, TimelineItemProps } from "./timeline";
-import Separator from "./separator";
+import { Separator } from "./separator";
 
 const meta: Meta<typeof Timeline> = {
   title: "Controls/Timeline",

@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode } from "react";
-import { Dialog, DialogContent, DialogTitle } from "./dialog";
+import { Dialog } from "./dialog";
 import { Button, ButtonVariants } from "./button";
 
 export interface ModalButtonProps extends Pick<ButtonVariants, "variant"> {
@@ -22,7 +22,7 @@ export interface ModalDialogProps {
   onClick?: (args: { id: string; closeDialog: () => void }) => void;
 }
 
-export default function ModalDialog({
+function ModalDialog({
   onOpenChange,
   open,
   hasCloseButton,
@@ -36,13 +36,15 @@ export default function ModalDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
+      <Dialog.Content
         className="flex max-w-[500px] overflow-hidden flex-col justify-center rounded-none p-0 sm:max-w-[500px]"
         hideClose={!hasCloseButton}
       >
         <div className="p-3 px-4">
           <div className="flex flex-col gap-[1px] p-2 pb-4">
-            <DialogTitle className="text-base font-medium">{title}</DialogTitle>
+            <Dialog.Title className="text-base font-medium">
+              {title}
+            </Dialog.Title>
             <h3 className="text-[11px] text-gray-500">{subTitle}</h3>
           </div>
           <div className="h-[1px] w-full border border-blue-500"></div>
@@ -64,7 +66,9 @@ export default function ModalDialog({
             </Button>
           ))}
         </div>
-      </DialogContent>
+      </Dialog.Content>
     </Dialog>
   );
 }
+
+export { ModalDialog };

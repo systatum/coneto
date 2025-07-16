@@ -37,7 +37,7 @@ type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
     };
   };
 
-export default function Combobox({
+function Combobox({
   options,
   setInputValue,
   clearable = false,
@@ -195,3 +195,5 @@ function ComboboxDrawer({
     </ul>
   );
 }
+
+export { Combobox };

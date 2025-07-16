@@ -48,4 +48,4 @@ const Frame: React.FC<FrameProps> = ({
   );
 };
 
-export default Frame;
+export { Frame };

@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import Radio from "./radio";
+import { Radio } from "./radio";
 import { ChangeEvent, ComponentProps } from "react";
 import { useArgs } from "@storybook/preview-api";
 import { userEvent, within } from "@storybook/test";

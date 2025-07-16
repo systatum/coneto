@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect, within } from "@storybook/test";
-import Frame from "./frame";
+import { Frame } from "./frame";
 
 const meta: Meta<typeof Frame> = {
   title: "Stage/Frame",

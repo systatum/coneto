@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import ThumbField from "./thumb-field";
+import { ThumbField } from "./thumb-field";
 import { useArgs } from "@storybook/preview-api";
 import { ChangeEvent } from "react";
 import { expect, userEvent, within } from "@storybook/test";

@@ -3,7 +3,7 @@ import { RemixiconComponentType, RiCloseLine } from "@remixicon/react";
 import { useAnimation, motion } from "framer-motion";
 import { ReactNode, useState } from "react";
 
-interface DrawerTabProps {
+export interface DrawerTabProps {
   tabs: Array<{
     id: number;
     title: string;
@@ -16,7 +16,7 @@ interface DrawerTabProps {
   position?: "left" | "right";
 }
 
-export default function DrawerTab({
+function DrawerTab({
   tabs,
   containerClassName,
   drawerTabClassName,
@@ -140,3 +140,4 @@ export default function DrawerTab({
     </div>
   );
 }
+export { DrawerTab };

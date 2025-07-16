@@ -16,7 +16,7 @@ export const Default: Story = {
   render: () => {
     const data = {
       modelType: "MXQ83700F3",
-      requestCreatedBy: "jane@doe@email.com",
+      requestCreatedBy: "adam@systatum.com",
       lastSynced: "2025-06-20",
       createdOn: "2025-06-19",
       desc: "Backup unit installed on site",

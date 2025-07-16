@@ -14,7 +14,7 @@ import {
   RiEditLine,
   RiDeleteBinLine,
 } from "@remixicon/react";
-import ModalDialog, { ModalButtonProps } from "./modal-dialog";
+import { ModalDialog, ModalButtonProps } from "./modal-dialog";
 
 const TIP_MENU_ITEMS = [
   {

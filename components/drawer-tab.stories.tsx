@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
-import DrawerTab from "./drawer-tab";
-import Textbox from "./textbox";
+import { DrawerTab } from "./drawer-tab";
+import { Textbox } from "./textbox";
 import { ChangeEvent, useState } from "react";
 import { RiListCheck, RiNodeTree } from "@remixicon/react";
 import { userEvent, within, expect } from "@storybook/test";

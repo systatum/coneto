@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { useRef } from "react";
-import FileDropBox, {
+import {
+  FileDropBox,
   OnCompleteFunctionProps,
   OnFileDroppedFunctionProps,
 } from "./file-drop-box";

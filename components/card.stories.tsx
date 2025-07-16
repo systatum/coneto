@@ -1,4 +1,4 @@
-import Card from "./card";
+import { Card } from "./card";
 import { Meta, StoryObj } from "@storybook/react";
 import {
   RiSpam2Line,
@@ -12,9 +12,9 @@ import {
   RiEdit2Line,
 } from "@remixicon/react";
 import { Toolbar } from "./toolbar";
-import Searchbox from "./searchbox";
+import { Searchbox } from "./searchbox";
 import { ChangeEvent, useMemo, useState } from "react";
-import Checkbox from "./checkbox";
+import { Checkbox } from "./checkbox";
 import { Button } from "./button";
 import { List, ListItemProps } from "./list";
 import { expect, userEvent, waitFor, within } from "@storybook/test";

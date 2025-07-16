@@ -10,7 +10,7 @@ import {
   RiDeleteBin2Line,
   RiRefreshLine,
 } from "@remixicon/react";
-import EmptySlate from "./empty-slate";
+import { EmptySlate } from "./empty-slate";
 import { Button } from "./button";
 import { expect, userEvent, waitFor, within } from "@storybook/test";
 
