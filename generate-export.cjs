@@ -14,7 +14,7 @@ function getFlatExportsFrom(dirPath, baseDistPath) {
     )
     .reduce((acc, file) => {
       const nameWithoutExt = path.basename(file, path.extname(file));
-      const subpath = `./${nameWithoutExt.toLowerCase()}`; // exposed as @systatum/coneto/button
+      const subpath = `./${nameWithoutExt.toLowerCase()}`;
 
       acc[subpath] = {
         import: `./dist/${baseDistPath}/${nameWithoutExt}.js`,
