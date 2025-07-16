@@ -3,7 +3,7 @@ import { expect, within } from "@storybook/test";
 import { AvatarProps } from "./avatar";
 import { ChangeEvent, useState } from "react";
 import ModalDialog, { ModalButtonProps } from "./modal-dialog";
-import Avatar from "./avatar";
+import { Avatar } from "./avatar";
 
 const meta: Meta<typeof Avatar> = {
   title: "Content/Avatar",

@@ -2,7 +2,7 @@ import { ReactNode, useState } from "react";
 import { cn } from "./../lib/utils";
 import { RemixiconComponentType } from "@remixicon/react";
 
-interface TreeListProps<T extends TreeListItemsProps> {
+export interface TreeListProps<T extends TreeListItemsProps> {
   content: Array<{
     title?: string;
     items: T[];

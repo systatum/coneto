@@ -4,7 +4,7 @@ import { RemixiconComponentType } from "@remixicon/react";
 import { cn } from "./../lib/utils";
 import LoadingSpinner from "./loading-spinner";
 
-interface ToggleboxProps extends InputHTMLAttributes<HTMLInputElement> {
+export interface ToggleboxProps extends InputHTMLAttributes<HTMLInputElement> {
   checked?: boolean;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   icon?: RemixiconComponentType | null;
@@ -16,7 +16,7 @@ interface ToggleboxProps extends InputHTMLAttributes<HTMLInputElement> {
   titleClassName?: string;
 }
 
-export default function Togglebox({
+function Togglebox({
   name,
   checked = false,
   onChange,
@@ -93,3 +93,5 @@ export default function Togglebox({
     </div>
   );
 }
+
+export { Togglebox };

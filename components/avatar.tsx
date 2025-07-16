@@ -10,8 +10,8 @@ export interface AvatarProps extends HTMLAttributes<HTMLDivElement> {
   profileImageUrl?: string | null | undefined;
   changeable?: boolean;
   onChange?: (e: ChangeEvent<HTMLInputElement>, file?: File) => void;
-  frameSize: number;
-  fontSize: number;
+  frameSize?: number;
+  fontSize?: number;
 }
 
 const AVATAR_BACKGROUND_COLORS: string[] = [
@@ -33,13 +33,13 @@ const AVATAR_BACKGROUND_COLORS: string[] = [
   "#FFE4E1",
 ];
 
-export default function Avatar({
+function Avatar({
   firstName,
   lastName,
   profileImageUrl,
   changeable,
   onChange,
-  frameSize,
+  frameSize = 70,
   fontSize = 23,
   ...props
 }: AvatarProps) {
@@ -121,3 +121,5 @@ export function getInitials(
     ? `${firstInitial}${lastInitial}`
     : `${firstOptionInitial}`;
 }
+
+export { Avatar };

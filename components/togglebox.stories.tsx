@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import Togglebox from "./togglebox";
+import { Togglebox } from "./togglebox";
 import { useEffect } from "react";
 import * as RemixIcons from "@remixicon/react";
 import { useArgs } from "@storybook/preview-api";

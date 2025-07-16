@@ -10,7 +10,7 @@ import {
   Path,
   UseFormRegister,
 } from "react-hook-form";
-import Phonebox from "./phonebox";
+import Phonebox, { CountryCodeProps } from "./phonebox";
 import Checkbox from "./checkbox";
 import Textbox from "./textbox";
 import Colorbox from "./colorbox";
@@ -53,14 +53,7 @@ export interface FormFieldProps {
   chipsProps?: ChipsProps;
 }
 
-export interface CountryCodeProps {
-  id: string;
-  code: string;
-  name: string;
-  flag: string;
-}
-
-export default function StatefulForm<Z extends ZodTypeAny>({
+function StatefulForm<Z extends ZodTypeAny>({
   fields,
   validationSchema,
   formValues,
@@ -322,3 +315,5 @@ function FormFields<T extends FieldValues>({
     </>
   );
 }
+
+export { StatefulForm };
