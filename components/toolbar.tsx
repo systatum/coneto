@@ -13,6 +13,13 @@ import {
 import { TipMenu, TipMenuItemProps } from "./tip-menu";
 import { cn } from "./../lib/utils";
 import { RemixiconComponentType } from "@remixicon/react";
+import {
+  useFloating,
+  offset,
+  flip,
+  shift,
+  autoUpdate,
+} from "@floating-ui/react";
 
 interface ToolbarProps {
   children: ReactNode;
@@ -121,10 +128,18 @@ function ToolbarMenu({
   const [hovered, setHovered] = useState<"main" | "original" | "dropdown">(
     "original"
   );
-  const [positionClass, setPositionClass] = useState<"left-0" | "right-0">(
-    "left-0"
-  );
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const { refs, floatingStyles, update } = useFloating({
+    open: isOpen,
+    whileElementsMounted: autoUpdate,
+    middleware: [offset(6), flip({ padding: 80 }), shift()],
+    placement: "bottom-start",
+  });
+
+  useEffect(() => {
+    if (isOpen) update();
+  }, [isOpen, update]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -133,33 +148,15 @@ function ToolbarMenu({
         setIsOpen?.(false);
       }
     };
-
     if (isOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isOpen]);
-
-  useEffect(() => {
-    if (isOpen && containerRef.current) {
-      const rect = containerRef.current.getBoundingClientRect();
-      const halfWindowWidth = window.innerWidth / 2;
-
-      if (rect.left > halfWindowWidth) {
-        setPositionClass("right-0");
-      } else {
-        setPositionClass("left-0");
-      }
-    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen]);
 
   const handleClickOpen = () => {
     setIsOpen?.();
   };
-
   const handleMainClick = () => {
     onClick?.();
     if (isOpen) {
@@ -169,7 +166,6 @@ function ToolbarMenu({
 
   const toolbarMenuContainerClass = VARIANT_CLASS_MAP.base[variant];
   const toolbarMenuHoverClass = VARIANT_CLASS_MAP.hover[variant];
-
   const toolbarMenuBorderActiveClass = VARIANT_ACTIVE.border[variant];
   const toolbarMenuBackgroundActiveClass = VARIANT_ACTIVE.background[variant];
 
@@ -215,12 +211,9 @@ function ToolbarMenu({
           </>
         )}
         <div
-          onMouseEnter={() => {
-            setHovered("dropdown");
-          }}
-          onMouseLeave={() => {
-            setHovered("original");
-          }}
+          ref={refs.setReference}
+          onMouseEnter={() => setHovered("dropdown")}
+          onMouseLeave={() => setHovered("original")}
           className={cn(
             "flex p-2 relative h-full items-center max-w-[36px]",
             hovered === "dropdown" && toolbarMenuHoverClass,
@@ -244,18 +237,13 @@ function ToolbarMenu({
           )}
         </div>
       </div>
-      <div className="absolute top-8 border w-full right-0 max-w-[40px] min-h-[10px] border-transparent z-20"></div>
 
       {isOpen && (
         <div
+          ref={refs.setFloating}
+          style={{ ...floatingStyles, zIndex: 9999 }}
           onMouseEnter={() => setHovered("dropdown")}
-          onMouseLeave={() => {
-            setHovered("original");
-          }}
-          className={cn(
-            "absolute top-full z-10 translate-y-[2px]",
-            positionClass
-          )}
+          onMouseLeave={() => setHovered("original")}
         >
           <TipMenu
             setIsOpen={() => {
@@ -276,5 +264,6 @@ function isToolbarMenuElement(
 ): element is ReactElement<ToolbarMenuProps> {
   return isValidElement(element) && typeof element.type !== "string";
 }
+
 Toolbar.Menu = ToolbarMenu;
 export { Toolbar };
