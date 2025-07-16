@@ -9,17 +9,233 @@
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
-    "./components/*": {
-      "import": "./dist/components/*.js",
-      "types": "./dist/components/*.d.ts"
+    "./avatar": {
+      "import": "./dist/components/avatar.js",
+      "types": "./dist/components/avatar.d.ts"
+    },
+    "./badge": {
+      "import": "./dist/components/badge.js",
+      "types": "./dist/components/badge.d.ts"
+    },
+    "./boxbar": {
+      "import": "./dist/components/boxbar.js",
+      "types": "./dist/components/boxbar.d.ts"
+    },
+    "./button": {
+      "import": "./dist/components/button.js",
+      "types": "./dist/components/button.d.ts"
+    },
+    "./calendar": {
+      "import": "./dist/components/calendar.js",
+      "types": "./dist/components/calendar.d.ts"
+    },
+    "./capsule-tab": {
+      "import": "./dist/components/capsule-tab.js",
+      "types": "./dist/components/capsule-tab.d.ts"
+    },
+    "./capsule": {
+      "import": "./dist/components/capsule.js",
+      "types": "./dist/components/capsule.d.ts"
+    },
+    "./card": {
+      "import": "./dist/components/card.js",
+      "types": "./dist/components/card.d.ts"
+    },
+    "./checkbox": {
+      "import": "./dist/components/checkbox.js",
+      "types": "./dist/components/checkbox.d.ts"
+    },
+    "./chips": {
+      "import": "./dist/components/chips.js",
+      "types": "./dist/components/chips.d.ts"
+    },
+    "./choice-group": {
+      "import": "./dist/components/choice-group.js",
+      "types": "./dist/components/choice-group.d.ts"
+    },
+    "./colorbox": {
+      "import": "./dist/components/colorbox.js",
+      "types": "./dist/components/colorbox.d.ts"
+    },
+    "./combobox": {
+      "import": "./dist/components/combobox.js",
+      "types": "./dist/components/combobox.d.ts"
+    },
+    "./crumb": {
+      "import": "./dist/components/crumb.js",
+      "types": "./dist/components/crumb.d.ts"
+    },
+    "./datebox": {
+      "import": "./dist/components/datebox.js",
+      "types": "./dist/components/datebox.d.ts"
+    },
+    "./dialog": {
+      "import": "./dist/components/dialog.js",
+      "types": "./dist/components/dialog.d.ts"
+    },
+    "./drawer-tab": {
+      "import": "./dist/components/drawer-tab.js",
+      "types": "./dist/components/drawer-tab.d.ts"
+    },
+    "./empty-slate": {
+      "import": "./dist/components/empty-slate.js",
+      "types": "./dist/components/empty-slate.d.ts"
+    },
+    "./error-slate": {
+      "import": "./dist/components/error-slate.js",
+      "types": "./dist/components/error-slate.d.ts"
+    },
+    "./file-drop-box": {
+      "import": "./dist/components/file-drop-box.js",
+      "types": "./dist/components/file-drop-box.d.ts"
+    },
+    "./file-input-box": {
+      "import": "./dist/components/file-input-box.js",
+      "types": "./dist/components/file-input-box.d.ts"
+    },
+    "./frame": {
+      "import": "./dist/components/frame.js",
+      "types": "./dist/components/frame.d.ts"
+    },
+    "./grid": {
+      "import": "./dist/components/grid.js",
+      "types": "./dist/components/grid.d.ts"
+    },
+    "./imagebox": {
+      "import": "./dist/components/imagebox.js",
+      "types": "./dist/components/imagebox.d.ts"
+    },
+    "./keynote": {
+      "import": "./dist/components/keynote.js",
+      "types": "./dist/components/keynote.d.ts"
+    },
+    "./launchpad": {
+      "import": "./dist/components/launchpad.js",
+      "types": "./dist/components/launchpad.d.ts"
+    },
+    "./list": {
+      "import": "./dist/components/list.js",
+      "types": "./dist/components/list.d.ts"
+    },
+    "./loading-spinner": {
+      "import": "./dist/components/loading-spinner.js",
+      "types": "./dist/components/loading-spinner.d.ts"
+    },
+    "./messagebox": {
+      "import": "./dist/components/messagebox.js",
+      "types": "./dist/components/messagebox.d.ts"
+    },
+    "./modal-dialog": {
+      "import": "./dist/components/modal-dialog.js",
+      "types": "./dist/components/modal-dialog.d.ts"
+    },
+    "./moneybox": {
+      "import": "./dist/components/moneybox.js",
+      "types": "./dist/components/moneybox.d.ts"
+    },
+    "./pagination": {
+      "import": "./dist/components/pagination.js",
+      "types": "./dist/components/pagination.d.ts"
+    },
+    "./paper-dialog": {
+      "import": "./dist/components/paper-dialog.js",
+      "types": "./dist/components/paper-dialog.d.ts"
+    },
+    "./phonebox": {
+      "import": "./dist/components/phonebox.js",
+      "types": "./dist/components/phonebox.d.ts"
+    },
+    "./radio": {
+      "import": "./dist/components/radio.js",
+      "types": "./dist/components/radio.d.ts"
+    },
+    "./rating": {
+      "import": "./dist/components/rating.js",
+      "types": "./dist/components/rating.d.ts"
+    },
+    "./rich-editor": {
+      "import": "./dist/components/rich-editor.js",
+      "types": "./dist/components/rich-editor.d.ts"
+    },
+    "./searchbox": {
+      "import": "./dist/components/searchbox.js",
+      "types": "./dist/components/searchbox.d.ts"
+    },
+    "./selectbox": {
+      "import": "./dist/components/selectbox.js",
+      "types": "./dist/components/selectbox.d.ts"
+    },
+    "./separator": {
+      "import": "./dist/components/separator.js",
+      "types": "./dist/components/separator.d.ts"
+    },
+    "./sidebar": {
+      "import": "./dist/components/sidebar.js",
+      "types": "./dist/components/sidebar.d.ts"
+    },
+    "./stateful-form": {
+      "import": "./dist/components/stateful-form.js",
+      "types": "./dist/components/stateful-form.d.ts"
+    },
+    "./stepline": {
+      "import": "./dist/components/stepline.js",
+      "types": "./dist/components/stepline.d.ts"
+    },
+    "./table": {
+      "import": "./dist/components/table.js",
+      "types": "./dist/components/table.d.ts"
+    },
+    "./textbox": {
+      "import": "./dist/components/textbox.js",
+      "types": "./dist/components/textbox.d.ts"
+    },
+    "./thumb-field": {
+      "import": "./dist/components/thumb-field.js",
+      "types": "./dist/components/thumb-field.d.ts"
+    },
+    "./timebox": {
+      "import": "./dist/components/timebox.js",
+      "types": "./dist/components/timebox.d.ts"
+    },
+    "./timeline": {
+      "import": "./dist/components/timeline.js",
+      "types": "./dist/components/timeline.d.ts"
+    },
+    "./tip-menu": {
+      "import": "./dist/components/tip-menu.js",
+      "types": "./dist/components/tip-menu.d.ts"
+    },
+    "./togglebox": {
+      "import": "./dist/components/togglebox.js",
+      "types": "./dist/components/togglebox.d.ts"
+    },
+    "./toolbar": {
+      "import": "./dist/components/toolbar.js",
+      "types": "./dist/components/toolbar.d.ts"
+    },
+    "./tooltip": {
+      "import": "./dist/components/tooltip.js",
+      "types": "./dist/components/tooltip.d.ts"
+    },
+    "./treelist": {
+      "import": "./dist/components/treelist.js",
+      "types": "./dist/components/treelist.d.ts"
+    },
+    "./window": {
+      "import": "./dist/components/window.js",
+      "types": "./dist/components/window.d.ts"
     },
     "./constants/*": {
       "import": "./dist/constants/*.js",
       "types": "./dist/constants/*.d.ts"
     },
-    "./lib/*": {
-      "import": "./dist/lib/*.js",
-      "types": "./dist/lib/*.d.ts"
+    "./code-color": {
+      "import": "./dist/lib/code-color.js",
+      "types": "./dist/lib/code-color.d.ts"
+    },
+    "./utils": {
+      "import": "./dist/lib/utils.js",
+      "types": "./dist/lib/utils.d.ts"
     }
   },
   "files": [
@@ -45,7 +261,7 @@
   "scripts": {
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "build": "pnpm build-css && pnpm build-ts && pnpm copyjs && node inject-style.js",
+    "build": "pnpm build-css && pnpm build-ts && pnpm copyjs && node postbuild-inject.js",
     "build-ts": "pnpm tsc -p tsconfig.build.json",
     "build-css": "pnpm exec tailwindcss -i ./shared.css -o ./dist/shared.css --minify",
     "copyjs": "rsync -avm --include='*/' --include='*.js' --exclude='*' lib/ dist/lib/",
