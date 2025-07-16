@@ -168,7 +168,7 @@ export const Default: Story = {
   },
 };
 
-export const WithClose: Story = {
+export const Closable: Story = {
   render: () => {
     const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
       (data) => data.id === "US" || COUNTRY_CODES[206]
@@ -312,7 +312,7 @@ export const WithClose: Story = {
   },
 };
 
-export const WithLeftPosition: Story = {
+export const FixedLeft: Story = {
   render: () => {
     const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
       (data) => data.id === "US" || COUNTRY_CODES[206]

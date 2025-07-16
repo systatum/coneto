@@ -55,7 +55,7 @@ type StoryCheckbox = StoryObj<
   ChoiceGroupProps & Partial<{ valueSelected?: string[] }>
 >;
 
-export const ChoiceRadioMode: StoryRadio = {
+export const WithRadio: StoryRadio = {
   argTypes: {
     radioSelected: {
       control: "radio",
@@ -104,7 +104,7 @@ export const ChoiceRadioMode: StoryRadio = {
   },
 };
 
-export const ChoiceGroupWithCheckboxes: StoryCheckbox = {
+export const WithCheckbox: StoryCheckbox = {
   args: {
     valueSelected: [],
   },

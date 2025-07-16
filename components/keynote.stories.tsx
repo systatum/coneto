@@ -44,7 +44,7 @@ export const Default: Story = {
   },
 };
 
-export const WithRendered: Story = {
+export const CustomRendering: Story = {
   render: () => {
     const data = {
       modelType: "MXQ83700F3",

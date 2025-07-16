@@ -15,7 +15,7 @@ export default meta;
 
 type Story = StoryObj<typeof Selectbox>;
 
-export const SelectboxDefault: Story = {
+export const Default: Story = {
   render: () => {
     const [value, setValue] = useState<OptionsProps>({
       text: "",
@@ -66,7 +66,7 @@ export const SelectboxDefault: Story = {
   },
 };
 
-export const SelectboxWithClearable: Story = {
+export const Clearable: Story = {
   render: () => {
     const [value, setValue] = useState<OptionsProps>({
       text: "",

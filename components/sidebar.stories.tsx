@@ -116,7 +116,7 @@ export const Default: Story = {
   },
 };
 
-export const WithRightPosition: Story = {
+export const FixedRight: Story = {
   render: () => {
     const [value, setValue] = useState({
       title: "",

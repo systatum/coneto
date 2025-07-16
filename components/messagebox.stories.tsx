@@ -132,7 +132,7 @@ export const WithActions: Story = {
   },
 };
 
-export const WithActionsAndClosable: Story = {
+export const ClosableWithActions: Story = {
   args: {
     variant: "success",
     title: "Success with Actions",

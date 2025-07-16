@@ -76,7 +76,7 @@ export const Default: Story = {
   },
 };
 
-export const DefaultWithHideclose: Story = {
+export const NoCloseButton: Story = {
   args: {
     title: "No Close Button",
     subTitle: "Close icon hidden",

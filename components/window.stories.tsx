@@ -33,7 +33,7 @@ export const Default: Story = {
   },
 };
 
-export const WithHorizontal: Story = {
+export const Horizontal: Story = {
   render: () => {
     return (
       <Window orientation="horizontal" className="h-[400px]">
@@ -52,7 +52,7 @@ export const WithHorizontal: Story = {
   },
 };
 
-export const WithActions: Story = {
+export const Closable: Story = {
   render: () => {
     const stateValue = [
       {

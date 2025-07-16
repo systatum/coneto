@@ -88,7 +88,7 @@ export default meta;
 
 type Story = StoryObj<typeof TipMenu>;
 
-export const ToolbarDefault: Story = {
+export const Default: Story = {
   render: ({ subMenuList }) => {
     return (
       <Toolbar>

@@ -49,7 +49,7 @@ export const DefaultFrame: Story = {
   },
 };
 
-export const FrameWithTitle: Story = {
+export const WithTitle: Story = {
   args: {
     title: "Frame Title",
     className: "text-sm",
@@ -67,7 +67,7 @@ export const FrameWithTitle: Story = {
   },
 };
 
-export const FrameWithClass: Story = {
+export const Custom: Story = {
   args: {
     title: "Frame w/ Class",
     className: "bg-blue-50 text-sm",

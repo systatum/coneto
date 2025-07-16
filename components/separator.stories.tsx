@@ -25,7 +25,7 @@ export const Default: Story = {
   },
 };
 
-export const WithLeftTitle: Story = {
+export const LeftSide: Story = {
   args: {
     textFloat: "left",
     title: "systatum.com",
@@ -44,7 +44,7 @@ export const WithLeftTitle: Story = {
   },
 };
 
-export const WithRightTitle: Story = {
+export const RightSide: Story = {
   args: {
     textFloat: "right",
     title: "systatum.com",

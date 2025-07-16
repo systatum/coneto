@@ -68,7 +68,7 @@ export const Default: Story = {
   },
 };
 
-export const WithClearable: Story = {
+export const Clearable: Story = {
   render: () => {
     const [value, setValue] = useState<OptionsProps>({
       text: "",

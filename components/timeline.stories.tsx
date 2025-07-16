@@ -62,7 +62,7 @@ export const Default: Story = {
   },
 };
 
-export const WithClickable: Story = {
+export const Clickable: Story = {
   render: () => {
     const RAW_TIMELINE_ITEMS: TimelineItemProps[] = [
       {

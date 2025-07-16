@@ -291,7 +291,7 @@ export const WithGroup: Story = {
   },
 };
 
-export const WithGroupAndDraggable: Story = {
+export const Draggable: Story = {
   render: () => {
     const LIST_GROUPS: {
       id: string;
@@ -686,7 +686,7 @@ export const WithLoading: Story = {
   },
 };
 
-export const WithSelectable: Story = {
+export const CusomOpener: Story = {
   render: () => {
     const LIST_GROUPS = [
       {

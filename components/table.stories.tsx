@@ -365,7 +365,7 @@ export const Appendable: Story = {
         onItemsSelected={handleItemsSelected}
         subMenuList={TIP_MENU_ACTION}
         onLastRowReached={handleFetchData}
-        totalSelectedItemText={(n) => `${n} EMAILS SELECTED`}
+        totalSelectedItemText={(n) => `${n} emails selected`}
       >
         {rows.map((rowValue, rowIndex) => (
           <Table.Row
@@ -392,7 +392,7 @@ export const Appendable: Story = {
   },
 };
 
-export const WithPaginationAndSortable: Story = {
+export const SortableWithPagination: Story = {
   render: () => {
     const [page, setPage] = useState(1);
     const itemsPerPage = 20;
@@ -665,7 +665,7 @@ export const WithEmptySlate: Story = {
   },
 };
 
-export const WithCustom: Story = {
+export const WithRowGroup: Story = {
   render: () => {
     interface TableItemProps {
       title: string;

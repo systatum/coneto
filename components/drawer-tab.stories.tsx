@@ -98,7 +98,7 @@ export const Default: Story = {
   },
 };
 
-export const RightPosition: Story = {
+export const FixedRight: Story = {
   render: () => {
     const WriteTabContent = () => {
       const [value, setValue] = useState({
