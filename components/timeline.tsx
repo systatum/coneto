@@ -70,8 +70,8 @@ function Timeline({ children, isClickable = false }: TimelineProps) {
                 aria-label="outer-circle-timeline"
                 className={cn(
                   "w-1 h-1 bg-gray-600 transform duration-200 rounded-full absolute -translate-x-[0.5px]  translate-y-[2px]",
-                  OUTER_CIRCLE_VARIANT_CLASS[variant],
-                  hoveredIndex === index && "scale-[300%] bg-gray-400"
+                  hoveredIndex === index && "scale-[300%] bg-gray-400",
+                  OUTER_CIRCLE_VARIANT_CLASS[variant]
                 )}
               />
               <div
