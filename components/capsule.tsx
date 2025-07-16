@@ -15,6 +15,7 @@ interface TabProps {
   containerClassName?: string;
   classActiveTab?: string;
   full?: boolean;
+  activeBackgroundColor?: string;
 }
 
 export default function Capsule({
@@ -24,6 +25,7 @@ export default function Capsule({
   containerClassName,
   classActiveTab,
   full,
+  activeBackgroundColor = "oklch(54.6% .245 262.881)",
 }: TabProps) {
   const [hovered, setHovered] = useState<string | null | number>(null);
 
@@ -129,8 +131,8 @@ export default function Capsule({
   const initialPosition = getInitialPosition();
 
   const capsuleClass = cn(
-    "relative flex flex-row items-center justify-start overflow-hidden border border-gray-100 px-1 shadow-sm",
-    full ? "w-full" : "w-fit rounded-xl",
+    "relative flex flex-row items-center justify-start overflow-hidden  border-[#ebebeb] shadow-[0_1px_4px_-3px_#5b5b5b] px-1 shadow-sm",
+    full ? "w-full border-b bg-white" : "w-fit border rounded-xl",
     containerClassName
   );
 
@@ -138,7 +140,10 @@ export default function Capsule({
     <div ref={containerRef} role="tablist" className={capsuleClass}>
       <motion.div
         layout
-        className="absolute rounded-xl top-1 bottom-1 z-10 h-[25px] bg-blue-600"
+        className="absolute rounded-xl top-1 bottom-1 z-10 h-[25px"
+        style={{
+          background: activeBackgroundColor,
+        }}
         initial={{
           left: initialPosition.left,
           width: initialPosition.width,
@@ -156,7 +161,10 @@ export default function Capsule({
 
       <motion.div
         layout
-        className="absolute top-1 rounded-xl bottom-1 z-0 h-[25px] border-2 border-blue-600"
+        className="absolute top-1 rounded-xl bottom-1 z-0 h-[25px] border-2"
+        style={{
+          borderColor: activeBackgroundColor,
+        }}
         initial={{
           left: hoverPosition.left,
           width: hoverPosition.width,

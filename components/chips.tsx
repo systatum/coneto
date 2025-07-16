@@ -404,7 +404,7 @@ function ChipsDrawer({
         <div className="flex flex-col">
           <div className="flex flex-row py-2 px-3 gap-2 text-xs items-center font-medium">
             <RiAddBoxFill size={18} />
-            <h2 className="pt-[2px]">Create a new tag</h2>
+            <span className="pt-[2px]">Create a new tag</span>
           </div>
           <div
             aria-label="divider"

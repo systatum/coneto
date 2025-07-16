@@ -3,6 +3,7 @@ import { within, userEvent, expect } from "@storybook/test";
 import Textbox, { TextboxProps } from "./textbox";
 import { useArgs } from "@storybook/preview-api";
 import { useEffect, type ChangeEvent } from "react";
+import * as RemixIcons from "@remixicon/react";
 
 const meta: Meta<typeof Textbox> = {
   title: "Input Elements/Textbox",
@@ -39,10 +40,18 @@ const meta: Meta<typeof Textbox> = {
     errorMessage: {
       control: "text",
     },
-    onSendClick: { action: "sendClicked" },
+    onActionClick: { action: "sendClicked" },
+    icon: {
+      control: {
+        type: "select",
+      },
+      options: Object.keys(RemixIcons),
+      mapping: RemixIcons,
+    },
     onChange: { action: "changed" },
     className: { control: false },
-    classNameParent: { control: false },
+    dormanted: { control: false },
+    containerClassName: { control: false },
   },
   args: {
     value: "",
@@ -94,6 +103,41 @@ export const Input: Story = {
   },
 };
 
+export const Dormanted: Story = {
+  args: {
+    name: "input",
+    label: "Input",
+    placeholder: "Type here...",
+    value: "This is a dormanted text",
+    type: "text",
+    containerClassName: "justify-start",
+    className: "min-w-[400px]",
+    dormanted: true,
+    actionIcon: true,
+  },
+  render: (args) => {
+    const [, setUpdateArgs] = useArgs();
+
+    const handleChange = (
+      e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+      const newValue = e.target.value;
+      setUpdateArgs({ value: newValue });
+      args.onChange?.(e);
+    };
+
+    return (
+      <Textbox
+        {...args}
+        onChange={handleChange}
+        onActionClick={() => {
+          console.log("Input change succeed.");
+        }}
+      />
+    );
+  },
+};
+
 export const Textarea: Story = {
   args: {
     name: "textarea",
@@ -141,8 +185,10 @@ export const InputMessage: Story = {
     label: "Message",
     placeholder: "Type a message...",
     value: "",
-    type: "message",
+    type: "text",
     className: "min-w-[400px]",
+    actionIcon: true,
+    icon: RemixIcons.RiSendPlaneFill,
   },
   render: (args: TextboxProps) => {
     const [, setUpdateArgs] = useArgs();
@@ -162,7 +208,16 @@ export const InputMessage: Story = {
       args.onChange?.(e);
     };
 
-    return <Textbox {...args} value={args.value} onChange={handleChange} />;
+    return (
+      <Textbox
+        {...args}
+        value={args.value}
+        onChange={handleChange}
+        onActionClick={() => {
+          console.log("Send message has been successful.");
+        }}
+      />
+    );
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

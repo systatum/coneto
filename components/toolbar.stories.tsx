@@ -88,12 +88,12 @@ export default meta;
 
 type Story = StoryObj<typeof TipMenu>;
 
-export const ToolbarDefault: Story = {
+export const Default: Story = {
   render: ({ subMenuList }) => {
     return (
       <Toolbar>
         <Toolbar.Menu
-          className="min-w-[235px]"
+          dropdownClassName="min-w-[235px]"
           onClick={() => {
             console.log("test");
           }}
@@ -103,7 +103,7 @@ export const ToolbarDefault: Story = {
           subMenuList={subMenuList}
         />
         <Toolbar.Menu
-          className="min-w-[235px]"
+          dropdownClassName="min-w-[235px]"
           caption="Toolbar Primary Mode"
           icon={RiMessage2Line}
           iconColor="white"
@@ -111,7 +111,7 @@ export const ToolbarDefault: Story = {
           subMenuList={subMenuList}
         />
         <Toolbar.Menu
-          className="min-w-[235px]"
+          dropdownClassName="min-w-[235px]"
           caption="Toolbar Danger Mode"
           icon={RiMessage2Line}
           iconColor="white"

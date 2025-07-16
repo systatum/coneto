@@ -62,7 +62,7 @@ export const Default: Story = {
   },
 };
 
-export const WithClickable: Story = {
+export const Clickable: Story = {
   render: () => {
     const RAW_TIMELINE_ITEMS: TimelineItemProps[] = [
       {
@@ -119,7 +119,7 @@ export const Custom: Story = {
         title: "Alim Naufal | 5 weeks ago",
         subtitle: [
           <div className="flex flex-col gap-1 w-full">
-            <h2 className="text-sm text-gray-800">to hr@systatum.com</h2>
+            <span className="text-sm text-gray-800">to hr@systatum.com</span>
             <Separator
               className="my-2"
               title="Jun 5, 2025"
@@ -140,7 +140,7 @@ export const Custom: Story = {
         title: "HR Team | 5 weeks ago",
         subtitle: [
           <div className="flex flex-col gap-1 w-full">
-            <h2 className="text-sm text-gray-800">to alim@systatum.com</h2>
+            <span className="text-sm text-gray-800">to alim@systatum.com</span>
             <Separator
               className="my-2"
               title="Jun 6, 2025"
@@ -161,7 +161,7 @@ export const Custom: Story = {
         title: "Adam Hakarsa | 3 weeks ago",
         subtitle: [
           <div className="flex flex-col gap-1 w-full">
-            <h2 className="text-sm text-gray-800">to alim@systatum.com</h2>
+            <span className="text-sm text-gray-800">to alim@systatum.com</span>
             <Separator
               className="my-2"
               title="Jun 14, 2025"
@@ -182,7 +182,7 @@ export const Custom: Story = {
         title: "HR Team | 2 weeks ago",
         subtitle: [
           <div className="flex flex-col gap-1 w-full">
-            <h2 className="text-sm text-gray-800">to alim@systatum.com</h2>
+            <span className="text-sm text-gray-800">to alim@systatum.com</span>
             <Separator
               className="my-2"
               title="Jun 24, 2025"
@@ -203,7 +203,7 @@ export const Custom: Story = {
         title: "Alim Naufal | 2 weeks ago",
         subtitle: [
           <div className="flex flex-col gap-1 w-full">
-            <h2 className="text-sm text-gray-800">to hr@systatum.com</h2>
+            <span className="text-sm text-gray-800">to hr@systatum.com</span>
             <Separator
               className="my-2"
               title="Jun 25, 2025"
@@ -224,7 +224,7 @@ export const Custom: Story = {
         title: "HR Team | 1 week ago",
         subtitle: [
           <div className="flex flex-col gap-1 w-full">
-            <h2 className="text-sm text-gray-800">to alim@systatum.com</h2>
+            <span className="text-sm text-gray-800">to alim@systatum.com</span>
             <Separator
               className="my-2"
               title="Jun 27, 2025"

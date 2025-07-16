@@ -13,6 +13,13 @@ import {
 import { TipMenu, TipMenuItemProps } from "./tip-menu";
 import { cn } from "./../lib/utils";
 import { RemixiconComponentType } from "@remixicon/react";
+import {
+  useFloating,
+  offset,
+  flip,
+  shift,
+  autoUpdate,
+} from "@floating-ui/react";
 
 interface ToolbarProps {
   children: ReactNode;
@@ -29,9 +36,11 @@ interface ToolbarMenuProps {
   isOpen?: boolean;
   setIsOpen?: (data?: boolean) => void;
   onClick?: () => void;
-  className?: string;
+  dropdownClassName?: string;
   containerClassName?: string;
-  variant?: "default" | "primary" | "danger";
+  triggerClassName?: string;
+  toggleActiveClassName?: string;
+  variant?: "default" | "primary" | "danger" | "none";
 }
 
 const VARIANT_CLASS_MAP = {
@@ -110,17 +119,27 @@ function ToolbarMenu({
   isOpen,
   setIsOpen,
   onClick,
-  className,
+  dropdownClassName,
   containerClassName,
+  triggerClassName,
+  toggleActiveClassName,
   variant = "default",
 }: ToolbarMenuProps) {
   const [hovered, setHovered] = useState<"main" | "original" | "dropdown">(
     "original"
   );
-  const [positionClass, setPositionClass] = useState<"left-0" | "right-0">(
-    "left-0"
-  );
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const { refs, floatingStyles, update } = useFloating({
+    open: isOpen,
+    whileElementsMounted: autoUpdate,
+    middleware: [offset(6), flip({ padding: 80 }), shift()],
+    placement: "bottom-start",
+  });
+
+  useEffect(() => {
+    if (isOpen) update();
+  }, [isOpen, update]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -129,33 +148,15 @@ function ToolbarMenu({
         setIsOpen?.(false);
       }
     };
-
     if (isOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isOpen]);
-
-  useEffect(() => {
-    if (isOpen && containerRef.current) {
-      const rect = containerRef.current.getBoundingClientRect();
-      const halfWindowWidth = window.innerWidth / 2;
-
-      if (rect.left > halfWindowWidth) {
-        setPositionClass("right-0");
-      } else {
-        setPositionClass("left-0");
-      }
-    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen]);
 
   const handleClickOpen = () => {
     setIsOpen?.();
   };
-
   const handleMainClick = () => {
     onClick?.();
     if (isOpen) {
@@ -165,7 +166,6 @@ function ToolbarMenu({
 
   const toolbarMenuContainerClass = VARIANT_CLASS_MAP.base[variant];
   const toolbarMenuHoverClass = VARIANT_CLASS_MAP.hover[variant];
-
   const toolbarMenuBorderActiveClass = VARIANT_ACTIVE.border[variant];
   const toolbarMenuBackgroundActiveClass = VARIANT_ACTIVE.background[variant];
 
@@ -183,13 +183,15 @@ function ToolbarMenu({
         {(Icon || caption) && (
           <>
             <div
+              aria-label="toolbar-menu-toggle"
               onMouseEnter={() => setHovered("main")}
               onMouseLeave={() => setHovered("original")}
               onClick={handleMainClick}
               className={cn(
                 `flex flex-row items-center gap-2 p-2`,
                 hovered === "main" && toolbarMenuHoverClass,
-                isOpen && toolbarMenuBorderActiveClass
+                isOpen && toolbarMenuBorderActiveClass,
+                triggerClassName
               )}
             >
               {Icon && (
@@ -200,28 +202,25 @@ function ToolbarMenu({
               )}
             </div>
             <span
+              aria-label="divider"
               className={cn(
-                `absolute right-[30px] md:right-9 text-[44px] h-full  w-fit border-[0.5px]`,
-                variant === "default" ? "text-[#ececec]" : "",
-                hovered === "original" && !isOpen
-                  ? "max-h-[28px] top-1"
-                  : "top-0 max-h-[40px]"
+                "absolute transform duration-200 right-[35px] h-full w-px border-[0.5px] top-1/2 -translate-y-1/2 text-[#bdbdbd] z-10",
+                hovered === "original" && !isOpen && "h-[80%]"
               )}
             ></span>
           </>
         )}
         <div
-          onMouseEnter={() => {
-            setHovered("dropdown");
-          }}
-          onMouseLeave={() => {
-            setHovered("original");
-          }}
+          ref={refs.setReference}
+          onMouseEnter={() => setHovered("dropdown")}
+          onMouseLeave={() => setHovered("original")}
           className={cn(
-            "flex p-2 relative",
+            "flex p-2 relative h-full items-center max-w-[36px]",
             hovered === "dropdown" && toolbarMenuHoverClass,
             isOpen && toolbarMenuBackgroundActiveClass,
-            isOpen && toolbarMenuBorderActiveClass
+            isOpen && toolbarMenuBorderActiveClass,
+            triggerClassName,
+            isOpen && toggleActiveClassName
           )}
           onClick={handleClickOpen}
         >
@@ -238,22 +237,20 @@ function ToolbarMenu({
           )}
         </div>
       </div>
-      <div className="absolute top-8 border w-full right-0 max-w-[40px] min-h-[10px] border-transparent z-20"></div>
 
       {isOpen && (
         <div
+          ref={refs.setFloating}
+          style={{ ...floatingStyles, zIndex: 9999 }}
           onMouseEnter={() => setHovered("dropdown")}
-          onMouseLeave={() => {
-            setHovered("original");
-          }}
-          className={cn("absolute top-full z-10", positionClass)}
+          onMouseLeave={() => setHovered("original")}
         >
           <TipMenu
             setIsOpen={() => {
               setIsOpen(false);
               setHovered("original");
             }}
-            className={className}
+            className={dropdownClassName}
             subMenuList={subMenuList}
           />
         </div>
@@ -267,5 +264,6 @@ function isToolbarMenuElement(
 ): element is ReactElement<ToolbarMenuProps> {
   return isValidElement(element) && typeof element.type !== "string";
 }
+
 Toolbar.Menu = ToolbarMenu;
 export { Toolbar };

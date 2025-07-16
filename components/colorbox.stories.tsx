@@ -2,6 +2,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import Colorbox, { ColorPickProps } from "./colorbox";
 import { useArgs } from "@storybook/preview-api";
 import { ChangeEvent } from "react";
+import { expect, userEvent, within } from "@storybook/test";
 
 const meta: Meta<typeof Colorbox> = {
   title: "Input Elements/Colorbox",
@@ -24,9 +25,9 @@ export const Default: Story = {
       data: ColorPickProps
     ) => {
       const { name, value } = e.target;
-      if (data === "color-pick") {
+      if (data === "color-picker") {
         setUpdateArgs({ ...currentArgs, [name]: value });
-      } else if (data === "text") {
+      } else if (data === "color-text") {
         let val = value;
         if (!val.startsWith("#")) {
           val = "#" + val;
@@ -45,6 +46,18 @@ export const Default: Story = {
         onChange={onChangeValue}
       />
     );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(canvas.getByText("Color")).toBeInTheDocument();
+
+    const input = canvas.getByRole("textbox");
+    await userEvent.clear(input);
+    await userEvent.type(input, "gggggg");
+
+    await userEvent.clear(input);
+    await userEvent.type(input, "00ff00");
   },
 };
 
@@ -68,7 +81,7 @@ export const WithError: Story = {
     ) => {
       const { name, value } = e.target;
 
-      if (data === "color-pick") {
+      if (data === "color-picker") {
         const isValidHex = isValidHexColor(value);
         setUpdateArgs({
           ...currentArgs,
@@ -76,7 +89,7 @@ export const WithError: Story = {
           showError: !isValidHex,
           errorMessage: isValidHex ? "" : "Invalid color value.",
         });
-      } else if (data === "text") {
+      } else if (data === "color-text") {
         let val = value;
         if (!val.startsWith("#")) {
           val = "#" + val;
@@ -101,5 +114,18 @@ export const WithError: Story = {
         onChange={onChangeValue}
       />
     );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(canvas.getByText("Invalid color value.")).toBeInTheDocument();
+    await expect(canvas.getByText("Color")).toBeInTheDocument();
+
+    const input = canvas.getByRole("textbox");
+    await userEvent.clear(input);
+    await userEvent.type(input, "gggggg");
+
+    await userEvent.clear(input);
+    await userEvent.type(input, "00ff00");
   },
 };

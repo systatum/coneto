@@ -110,7 +110,7 @@ export default meta;
 
 type Story = StoryObj<typeof TipMenu>;
 
-export const TipDefault: Story = {
+export const Default: Story = {
   render: ({ subMenuList }) => {
     const [isOpen, setIsOpen] = useState(false);
     return (

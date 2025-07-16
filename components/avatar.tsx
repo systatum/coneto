@@ -10,8 +10,8 @@ export interface AvatarProps extends HTMLAttributes<HTMLDivElement> {
   profileImageUrl?: string | null | undefined;
   changeable?: boolean;
   onChange?: (e: ChangeEvent<HTMLInputElement>, file?: File) => void;
-  frameSize: number;
-  fontSize: number;
+  frameSize?: number;
+  fontSize?: number;
 }
 
 const AVATAR_BACKGROUND_COLORS: string[] = [
@@ -33,14 +33,14 @@ const AVATAR_BACKGROUND_COLORS: string[] = [
   "#FFE4E1",
 ];
 
-export default function Avatar({
+function Avatar({
   firstName,
   lastName,
   profileImageUrl,
   changeable,
   onChange,
-  frameSize,
-  fontSize,
+  frameSize = 70,
+  fontSize = 23,
   ...props
 }: AvatarProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -73,7 +73,6 @@ export default function Avatar({
       onChange={changeable ? handleFileChange : onChange}
       className={clsx(
         "group relative flex items-center justify-center overflow-hidden rounded-full border border-gray-100 font-bold",
-
         isClickable ? "cursor-pointer" : "cursor-default"
       )}
       style={{
@@ -122,3 +121,5 @@ export function getInitials(
     ? `${firstInitial}${lastInitial}`
     : `${firstOptionInitial}`;
 }
+
+export { Avatar };

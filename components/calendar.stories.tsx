@@ -17,7 +17,7 @@ export default meta;
 
 type Story = StoryObj<typeof Calendar>;
 
-export const CalendarDefault: Story = {
+export const Default: Story = {
   render: () => {
     const DAY_NAMES = [
       { text: "Su", value: 1 },
@@ -70,7 +70,7 @@ export const CalendarDefault: Story = {
     await userEvent.click(dayButton);
   },
 };
-export const CalendarWithDisableWeekend: Story = {
+export const NoWeekends: Story = {
   render: () => {
     const DAY_NAMES = [
       { text: "Su", value: 1 },

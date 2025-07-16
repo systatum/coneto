@@ -2,7 +2,7 @@ import { RiErrorWarningLine } from "@remixicon/react";
 import { cn } from "./../lib/utils";
 import { ChangeEvent, InputHTMLAttributes, useState } from "react";
 
-export type ColorPickProps = "color-pick" | "text";
+export type ColorPickProps = "color-picker" | "color-text";
 
 interface ColorboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange"> {
@@ -62,7 +62,7 @@ export default function Colorbox({
           id={inputId}
           type="color"
           value={value?.startsWith("#") ? value : `#${value}`}
-          onChange={(e) => onChange(e, "color-pick")}
+          onChange={(e) => onChange(e, "color-picker")}
           className="sr-only absolute border border-transparent -bottom-1"
         />
       </div>
@@ -87,7 +87,7 @@ export default function Colorbox({
           type="text"
           value={value?.replace(/^#/, "")}
           onChange={(e) => {
-            onChange(e, "text");
+            onChange(e, "color-text");
           }}
           className={cn(
             "w-full outline-none bg-transparent",

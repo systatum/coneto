@@ -78,7 +78,7 @@ export const Default: Story = {
   },
 };
 
-export const WithDisableWeekend: Story = {
+export const NoWeekends: Story = {
   render: () => {
     const DAY_NAMES = [
       { text: "Su", value: 1 },

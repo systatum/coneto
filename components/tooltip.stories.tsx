@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import Tooltip from "./tooltip";
+import { Tooltip } from "./tooltip";
 import { expect, fireEvent, waitFor, within } from "@storybook/test";
 
 const meta: Meta<typeof Tooltip> = {
@@ -18,7 +18,7 @@ const meta: Meta<typeof Tooltip> = {
       control: "text",
       description: "Styling on your Tooltip",
     },
-    classNameParent: {
+    containerClassName: {
       control: "text",
       description: "Styling on your Parent Tooltip",
     },
@@ -42,7 +42,7 @@ export const Hover: Story = {
     text: "Hover Tooltip",
     openOn: "hover",
     children: "This tooltip appears on hover",
-    classNameParent: "text-sm underline",
+    containerClassName: "text-sm underline",
   },
   render: (args) => {
     return <Tooltip {...args} />;
@@ -62,7 +62,7 @@ export const Click: Story = {
     text: "Click Tooltip",
     openOn: "click",
     children: "This tooltip appears on click",
-    classNameParent: "text-blue-600 text-sm cursor-pointer",
+    containerClassName: "text-blue-600 text-sm cursor-pointer",
     className: "bg-blue-600 text-white",
   },
   render: (args) => {
@@ -102,7 +102,7 @@ export const StyledTooltip: Story = {
     text: "Styled Tooltip",
     openOn: "hover",
     children: "Tooltip with custom styling",
-    classNameParent: "text-green-600 text-sm underline decoration-wavy",
+    containerClassName: "text-green-600 text-sm underline decoration-wavy",
     className: "bg-green-700 text-white shadow-lg rounded px-3 py-1 text-sm",
   },
   render: (args) => {
@@ -130,7 +130,7 @@ export const DottedUnderlineTooltip: Story = {
     openOn: "hover",
     children: "Tooltip with dotted underline trigger",
     underline: "underline-dot",
-    classNameParent: "text-sm",
+    containerClassName: "text-sm",
     className: "bg-gray-800 text-white",
   },
   render: (args) => {
@@ -154,7 +154,7 @@ export const NoUnderlineTooltip: Story = {
     openOn: "hover",
     children: "Trigger text without underline",
     underline: "transparent",
-    classNameParent: "font-semibold text-sm text-red-500",
+    containerClassName: "font-semibold text-sm text-red-500",
     className: "bg-red-600 text-white",
   },
   render: (args) => {
@@ -182,7 +182,7 @@ export const BlueUnderlineTooltip: Story = {
     text: "Blue Underline Tooltip",
     openOn: "click",
     underline: "blue",
-    classNameParent: "text-sm",
+    containerClassName: "text-sm",
     children: "Clicked tooltip with blue underline",
     className: "bg-blue-700 text-white",
   },

@@ -1,8 +1,8 @@
 import { Meta, StoryObj } from "@storybook/react";
 import Phonebox from "./phonebox";
-import { CountryCodeProps } from "./phonebox";
 import { expect, userEvent, within } from "@storybook/test";
 import { useArgs } from "@storybook/preview-api";
+import { ChangeEvent } from "react";
 
 const meta: Meta = {
   title: "Input Elements/Phonebox",
@@ -35,22 +35,15 @@ export const DefaultPhonebox: Story = {
     phoneNumber: "",
   },
   render: (args) => {
-    const [currentArgs, setUpdateArgs] = useArgs();
+    const [_, setUpdateArgs] = useArgs();
 
-    const handleChange = (
-      field: "phone_number" | "country_code",
-      value: string | CountryCodeProps
-    ) => {
-      if (field === "phone_number") {
-        setUpdateArgs({ ...currentArgs, phoneNumber: value });
-      } else if (field === "country_code") {
-        setUpdateArgs({ ...currentArgs, selectedCountry: value });
-      }
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+      if (!e || !("target" in e)) return;
+      const { name, value } = e.target;
 
-      if (args.onChange) {
-        args.onChange(field, value);
-      }
+      setUpdateArgs({ [name]: value });
     };
+
     return (
       <Phonebox
         {...args}

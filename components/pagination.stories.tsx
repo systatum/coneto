@@ -47,7 +47,7 @@ export const Default: Story = {
   },
 };
 
-export const OverFivePage: Story = {
+export const OverFivePages: Story = {
   args: {
     totalPages: 50,
   },

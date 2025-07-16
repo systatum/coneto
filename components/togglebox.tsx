@@ -1,10 +1,10 @@
 import { ChangeEvent, InputHTMLAttributes } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { RemixiconComponentType } from "@remixicon/react";
 import { cn } from "./../lib/utils";
 import LoadingSpinner from "./loading-spinner";
 
-interface ToggleboxProps extends InputHTMLAttributes<HTMLInputElement> {
+export interface ToggleboxProps extends InputHTMLAttributes<HTMLInputElement> {
   checked?: boolean;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   icon?: RemixiconComponentType | null;
@@ -16,7 +16,7 @@ interface ToggleboxProps extends InputHTMLAttributes<HTMLInputElement> {
   titleClassName?: string;
 }
 
-export default function Togglebox({
+function Togglebox({
   name,
   checked = false,
   onChange,
@@ -44,6 +44,8 @@ export default function Togglebox({
           className="sr-only"
           checked={checked}
           onChange={onChange}
+          aria-label="togglebox"
+          data-testid="togglebox"
         />
         <div
           className={`w-full h-full rounded-full transition-colors duration-300 ${
@@ -81,9 +83,9 @@ export default function Togglebox({
       {(label || description) && (
         <div className="flex flex-col">
           {label && (
-            <h2 className={cn("text-sm font-medium", titleClassName)}>
+            <span className={cn("text-sm font-medium", titleClassName)}>
               {label}
-            </h2>
+            </span>
           )}
           {description && <span className="text-xs">{description}</span>}
         </div>
@@ -91,3 +93,5 @@ export default function Togglebox({
     </div>
   );
 }
+
+export { Togglebox };

@@ -10,6 +10,7 @@ import {
 } from "@remixicon/react";
 import Card from "./card";
 import { ChangeEvent, useMemo, useState } from "react";
+import { expect, userEvent, within } from "@storybook/test";
 
 const meta: Meta<typeof List> = {
   title: "Content/List",
@@ -51,7 +52,7 @@ export const Default: Story = {
       {
         id: 5,
         title: "Notifications",
-        subtitle: "View alerts",
+        subtitle: "View Alerts",
         iconUrl: RiNotification3Fill,
       },
     ];
@@ -71,6 +72,11 @@ export const Default: Story = {
         </List>
       </Card>
     );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    expect(canvas.getByText("Home")).toBeInTheDocument();
+    expect(canvas.getByText("View your profile")).toBeInTheDocument();
   },
 };
 
@@ -104,7 +110,7 @@ export const WithSearch: Story = {
       {
         id: 5,
         title: "Notifications",
-        subtitle: "View alerts",
+        subtitle: "View Alerts",
         iconUrl: RiNotification3Fill,
       },
     ];
@@ -148,6 +154,14 @@ export const WithSearch: Story = {
       </Card>
     );
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const input = canvas.getByRole("textbox");
+
+    await userEvent.type(input, "settings");
+
+    expect(canvas.getByText("Adjust preferences")).toBeInTheDocument();
+  },
 };
 
 export const WithGroup: Story = {
@@ -170,7 +184,7 @@ export const WithGroup: Story = {
           {
             id: 2,
             title: "Notifications",
-            subtitle: "View alerts",
+            subtitle: "View Alerts",
             iconUrl: RiNotification3Fill,
           },
           {
@@ -269,9 +283,15 @@ export const WithGroup: Story = {
       </Card>
     );
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    expect(canvas.getByText("Recent Content")).toBeInTheDocument();
+    expect(canvas.getByText("Messages")).toBeInTheDocument();
+    expect(canvas.getByText("All Content")).toBeInTheDocument();
+  },
 };
 
-export const WithGroupAndDraggable: Story = {
+export const Draggable: Story = {
   render: () => {
     const LIST_GROUPS: {
       id: string;
@@ -291,7 +311,7 @@ export const WithGroupAndDraggable: Story = {
           {
             id: 2,
             title: "Notifications",
-            subtitle: "View alerts",
+            subtitle: "View Alerts",
             iconUrl: RiNotification3Fill,
           },
           {
@@ -460,6 +480,12 @@ export const WithGroupAndDraggable: Story = {
       </Card>
     );
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const draggable = canvas.getAllByRole("button", { name: /draggable/i })[0];
+
+    expect(draggable).toBeVisible();
+  },
 };
 
 export const WithLoading: Story = {
@@ -482,7 +508,7 @@ export const WithLoading: Story = {
           {
             id: 2,
             title: "Notifications",
-            subtitle: "View alerts",
+            subtitle: "View Alerts",
             iconUrl: RiNotification3Fill,
           },
           {
@@ -652,9 +678,15 @@ export const WithLoading: Story = {
       </Card>
     );
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const list = await canvas.findByRole("list");
+    const spinner = within(list).getByTestId("circle");
+    expect(spinner).toBeInTheDocument();
+  },
 };
 
-export const WithSelectable: Story = {
+export const CusomOpener: Story = {
   render: () => {
     const LIST_GROUPS = [
       {
@@ -671,7 +703,7 @@ export const WithSelectable: Story = {
           {
             id: 2,
             title: "Notifications",
-            subtitle: "View alerts",
+            subtitle: "View Alerts",
             iconUrl: RiNotification3Fill,
           },
           {
@@ -869,5 +901,14 @@ export const WithSelectable: Story = {
         </List>
       </Card>
     );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const checkboxes = canvas.getAllByRole("checkbox");
+
+    expect(checkboxes.length).toBeGreaterThan(0);
+
+    await userEvent.click(checkboxes[0]);
+    expect(checkboxes[0]).toBeChecked();
   },
 };

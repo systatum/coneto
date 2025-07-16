@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from "@storybook/react/*";
+import { Meta, StoryObj } from "@storybook/react";
 import DrawerTab from "./drawer-tab";
 import Textbox from "./textbox";
 import { ChangeEvent, useState } from "react";
@@ -98,7 +98,7 @@ export const Default: Story = {
   },
 };
 
-export const RightPosition: Story = {
+export const FixedRight: Story = {
   render: () => {
     const WriteTabContent = () => {
       const [value, setValue] = useState({

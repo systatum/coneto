@@ -3,7 +3,7 @@ import { expect, within } from "@storybook/test";
 import { AvatarProps } from "./avatar";
 import { ChangeEvent, useState } from "react";
 import ModalDialog, { ModalButtonProps } from "./modal-dialog";
-import Avatar from "./avatar";
+import { Avatar } from "./avatar";
 
 const meta: Meta<typeof Avatar> = {
   title: "Content/Avatar",
@@ -32,13 +32,12 @@ export default meta;
 
 type Story = StoryObj<typeof Avatar>;
 
-export const ProfileDefault: Story = {
+export const Default: Story = {
   args: {
     firstName: "John",
     lastName: "",
     changeable: false,
     frameSize: 70,
-    fontSize: 16,
   },
   render: (args: AvatarProps) => {
     return <Avatar {...args} />;
@@ -50,13 +49,13 @@ export const ProfileDefault: Story = {
     await expect(nameElement).toBeVisible();
   },
 };
-export const ProfileWithFunction: Story = {
+
+export const WithActions: Story = {
   args: {
     firstName: "John",
     lastName: "",
     changeable: false,
     frameSize: 70,
-    fontSize: 16,
   },
   render: (args: AvatarProps) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -101,14 +100,13 @@ export const ProfileWithFunction: Story = {
   },
 };
 
-export const ProfileWithImage: Story = {
+export const WithImage: Story = {
   args: {
     firstName: "John",
     lastName: "Doe",
     changeable: true,
     profileImageUrl: "/avatar-1.jpg",
     frameSize: 70,
-    fontSize: 16,
   },
   render: (args: AvatarProps) => {
     const [selectedFileName, setSelectedFileName] = useState<string | null>(

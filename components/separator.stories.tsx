@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 import Separator from "./separator";
+import { expect, within } from "@storybook/test";
 
 const meta: Meta<typeof Separator> = {
   title: "Stage/Separator",
@@ -24,7 +25,7 @@ export const Default: Story = {
   },
 };
 
-export const WithLeftTitle: Story = {
+export const LeftSide: Story = {
   args: {
     textFloat: "left",
     title: "systatum.com",
@@ -32,14 +33,33 @@ export const WithLeftTitle: Story = {
   render: (args) => {
     return <Separator {...args} />;
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const label = await canvas.findByText("systatum.com");
+    expect(label).toBeInTheDocument();
+
+    const labelStyle = getComputedStyle(label);
+    expect(labelStyle.left).not.toBe("auto");
+  },
 };
 
-export const WithRightTitle: Story = {
+export const RightSide: Story = {
   args: {
     textFloat: "right",
     title: "systatum.com",
   },
   render: (args) => {
     return <Separator {...args} />;
+  },
+
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const label = await canvas.findByText("systatum.com");
+    expect(label).toBeInTheDocument();
+
+    const labelStyle = getComputedStyle(label);
+    expect(labelStyle.left).not.toBe("auto");
   },
 };

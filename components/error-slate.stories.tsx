@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from "@storybook/react/*";
+import { Meta, StoryObj } from "@storybook/react";
 import { ErrorSlate } from "./error-slate";
 
 const meta: Meta<typeof ErrorSlate> = {

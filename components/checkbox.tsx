@@ -113,14 +113,14 @@ export default function Checkbox({
         {(label || description) && (
           <div className="flex flex-col">
             {label && (
-              <h2
+              <span
                 className={cn(
                   highlightOnChecked && "text-base font-medium",
                   titleClassName
                 )}
               >
                 {label}
-              </h2>
+              </span>
             )}
             {description && (
               <span

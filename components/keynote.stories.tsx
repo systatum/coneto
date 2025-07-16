@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { Keynote } from "./keynote";
+import { userEvent, within } from "@storybook/test";
 
 const meta: Meta<typeof Keynote> = {
   title: "Content/Keynote",
@@ -43,7 +44,7 @@ export const Default: Story = {
   },
 };
 
-export const WithRendered: Story = {
+export const CustomRendering: Story = {
   render: () => {
     const data = {
       modelType: "MXQ83700F3",
@@ -73,7 +74,7 @@ export const WithRendered: Story = {
         renderer={{
           requestCreatedBy: (value) => (
             <div
-              onClick={() => alert("Email was sent")}
+              onClick={() => console.log("Email was sent")}
               className="font-medium cursor-pointer text-blue-500"
             >
               {value}
@@ -82,5 +83,11 @@ export const WithRendered: Story = {
         }}
       />
     );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const emailElement = await canvas.findByText("alim@systatum.com");
+    await userEvent.click(emailElement);
   },
 };

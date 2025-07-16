@@ -109,6 +109,7 @@ export default function Rating({
     <div className="flex flex-row gap-[2px] items-center">
       {Array.from({ length: 5 }).map((_, i) => (
         <span
+          role="img"
           key={i}
           onMouseMove={(e) => editable && handleMouseMove(e, i)}
           onMouseLeave={() => editable && setHoverRating(0)}
