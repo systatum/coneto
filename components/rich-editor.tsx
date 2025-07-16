@@ -77,6 +77,8 @@ function RichEditor({
       return;
     }
 
+    // this logic is to handle ordered and unordered lists, so when we type "1." or "-",
+    // it will automatically convert it to an ordered or unordered list
     if (e.key === " ") {
       const sel = window.getSelection();
       if (!sel || !sel.rangeCount) return;
