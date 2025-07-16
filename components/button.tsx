@@ -1,5 +1,4 @@
 import * as React from "react";
-import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "./../lib/utils";
 import LoadingSpinner from "./loading-spinner";
 import {
@@ -9,37 +8,22 @@ import {
 } from "@remixicon/react";
 import { TipMenu, TipMenuItemProps } from "./tip-menu";
 
-const buttonVariants = cva(
-  "inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-xs text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-60 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
-  {
-    variants: {
-      variant: {
-        default: "bg-[rgb(243,243,243)] text-black hover:bg-[rgb(207,204,203)]",
-        primary: "bg-[rgb(86,154,236)] text-white hover:bg-[rgb(64,142,232)]",
-        danger: "bg-[rgb(206,55,93)] text-white hover:bg-[rgb(200,53,50)]",
-        outline:
-          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
-        secondary:
-          "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
-        ghost:
-          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
-        link: "text-primary underline-offset-4 hover:underline",
-      },
-      size: {
-        default: "h-9 px-4 py-2 has-[>svg]:px-3",
-        sm: "h-8 rounded-xs gap-1.5 px-3 has-[>svg]:px-2.5",
-        lg: "h-10 rounded-xs px-6 has-[>svg]:px-4",
-        icon: "size-9",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-      size: "default",
-    },
-  }
-);
+export type ButtonVariants = {
+  variant?:
+    | "link"
+    | "outline"
+    | "default"
+    | "primary"
+    | "danger"
+    | "secondary"
+    | "ghost";
+  size?: "default" | "icon" | "sm" | "lg";
+};
 
-const ButtonActiveVariant = {
+const ButtonActiveVariant: Record<
+  NonNullable<ButtonVariants["variant"]>,
+  string
+> = {
   default: "bg-[rgb(207,204,203)]",
   primary: "bg-[rgb(64,142,232)]",
   danger: "bg-[rgb(200,53,50)]",
@@ -49,12 +33,66 @@ const ButtonActiveVariant = {
   link: "underline",
 };
 
+function getButtonClasses(
+  variant?: ButtonVariants["variant"],
+  size?: ButtonVariants["size"]
+) {
+  let base =
+    "inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-xs text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-60 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive";
+
+  let variantClass = "";
+  switch (variant) {
+    case "primary":
+      variantClass =
+        "bg-[rgb(86,154,236)] text-white hover:bg-[rgb(64,142,232)]";
+      break;
+    case "danger":
+      variantClass = "bg-[rgb(206,55,93)] text-white hover:bg-[rgb(200,53,50)]";
+      break;
+    case "outline":
+      variantClass =
+        "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50";
+      break;
+    case "secondary":
+      variantClass =
+        "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80";
+      break;
+    case "ghost":
+      variantClass =
+        "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50";
+      break;
+    case "link":
+      variantClass = "text-primary underline-offset-4 hover:underline";
+      break;
+    default:
+      variantClass =
+        "bg-[rgb(243,243,243)] text-black hover:bg-[rgb(207,204,203)]";
+  }
+
+  let sizeClass = "";
+  switch (size) {
+    case "sm":
+      sizeClass = "h-8 rounded-xs gap-1.5 px-3 has-[>svg]:px-2.5";
+      break;
+    case "lg":
+      sizeClass = "h-10 rounded-xs px-6 has-[>svg]:px-4";
+      break;
+    case "icon":
+      sizeClass = "size-9";
+      break;
+    default:
+      sizeClass = "h-9 px-4 py-2 has-[>svg]:px-3";
+  }
+
+  return `${base} ${variantClass} ${sizeClass}`;
+}
+
 function Button({
   className,
-  variant,
+  variant = "default",
   children,
   isLoading,
-  size,
+  size = "default",
   tipMenu,
   subMenuList,
   dropdownClassName,
@@ -62,7 +100,7 @@ function Button({
   closedIcon: ClosedIcon = RiArrowUpSLine,
   ...props
 }: React.ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
+  ButtonVariants & {
     isLoading?: boolean;
     tipMenu?: boolean;
     subMenuList?: TipMenuItemProps[];
@@ -99,11 +137,7 @@ function Button({
       const rect = containerRef.current.getBoundingClientRect();
       const halfWindowWidth = window.innerWidth / 2;
 
-      if (rect.left > halfWindowWidth) {
-        setPositionClass("right-0");
-      } else {
-        setPositionClass("left-0");
-      }
+      setPositionClass(rect.left > halfWindowWidth ? "right-0" : "left-0");
     }
   }, [isOpen]);
 
@@ -113,7 +147,7 @@ function Button({
         onMouseEnter={() => setHovered("main")}
         onMouseLeave={() => setHovered("original")}
         className={cn(
-          buttonVariants({ variant, size }),
+          getButtonClasses(variant, size),
           "relative",
           tipMenu && "rounded-none",
           className
@@ -122,12 +156,12 @@ function Button({
         {...props}
       >
         <span className="pointer-events-none absolute inset-0 rounded-xs bg-white opacity-0 active:opacity-10" />
-
         {children}
         {isLoading && <LoadingSpinner />}
       </button>
+
       {tipMenu && (
-        <React.Fragment>
+        <>
           <span
             aria-label="divider"
             className={cn(
@@ -137,18 +171,14 @@ function Button({
           />
           <button
             className={cn(
-              buttonVariants({ variant, size }),
+              getButtonClasses(variant, size),
               "relative",
               tipMenu && "rounded-none",
               isOpen && ButtonActiveVariant[variant],
               className
             )}
-            onMouseEnter={() => {
-              setHovered("dropdown");
-            }}
-            onMouseLeave={() => {
-              setHovered("original");
-            }}
+            onMouseEnter={() => setHovered("dropdown")}
+            onMouseLeave={() => setHovered("original")}
             onClick={() => setIsOpen(!isOpen)}
           >
             {isOpen ? (
@@ -163,15 +193,13 @@ function Button({
               />
             )}
           </button>
-        </React.Fragment>
+        </>
       )}
 
       {isOpen && (
         <div
           onMouseEnter={() => setHovered("dropdown")}
-          onMouseLeave={() => {
-            setHovered("original");
-          }}
+          onMouseLeave={() => setHovered("original")}
           className={cn("absolute top-full -translate-y-1 z-10", positionClass)}
         >
           <TipMenu
@@ -188,4 +216,4 @@ function Button({
   );
 }
 
-export { Button, buttonVariants };
+export { Button };

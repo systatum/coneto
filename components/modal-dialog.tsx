@@ -3,10 +3,9 @@
 import { ReactNode } from "react";
 import { Dialog, DialogContent, DialogTitle } from "./dialog";
 import type { VariantProps } from "class-variance-authority";
-import { Button, buttonVariants } from "./button";
+import { Button, ButtonVariants } from "./button";
 
-export interface ModalButtonProps
-  extends Pick<VariantProps<typeof buttonVariants>, "variant"> {
+export interface ModalButtonProps extends Pick<ButtonVariants, "variant"> {
   id: string;
   caption: string;
   isLoading?: boolean;

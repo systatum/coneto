@@ -21,7 +21,7 @@ import { cn } from "./../lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import LoadingSpinner from "./loading-spinner";
 import Checkbox from "./checkbox";
-import Togglebox from "./togglebox";
+import { Togglebox } from "./togglebox";
 
 export interface ListProps {
   searchable?: boolean;
