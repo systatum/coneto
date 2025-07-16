@@ -19,7 +19,9 @@ import {
 } from "react";
 import { Button } from "./button";
 
-interface PaperDialogProps {
+export type DialogState = "restored" | "closed" | "minimized";
+
+export interface PaperDialogProps {
   className?: string;
   tabClassName?: string;
   paperDialogClassName?: string;
@@ -30,7 +32,7 @@ interface PaperDialogProps {
 
 interface PaperDialogTriggerProps {
   children?: ReactNode;
-  setIsOpen?: (isOpen: boolean | null) => void;
+  setIsOpen?: (isOpen: DialogState) => void;
   icon?: RemixiconComponentType;
 }
 
@@ -40,8 +42,7 @@ interface PaperDialogContentProps {
 }
 
 export interface PaperDialogRef {
-  openDialog: () => void;
-  closeDialog: () => void;
+  setDialogState: (isOpen: DialogState) => void;
 }
 
 const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
@@ -49,24 +50,29 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
     { className, position = "right", tabClassName, children, closable },
     ref
   ) => {
-    const [isOpen, setIsOpen] = useState<boolean | null>(null);
+    const [isOpen, setIsOpen] = useState<DialogState>("closed");
     const controls = useAnimation();
     const isLeft = position === "left";
 
-    const handleToggleDrawer = (open: boolean) => {
+    const handleToggleDrawer = (open: DialogState) => {
       setIsOpen(open);
+
       controls.start({
-        x: open ? 0 : isLeft ? "-100%" : "+100%",
+        x:
+          open === "restored"
+            ? 0
+            : isLeft && isOpen === "minimized"
+              ? "-100%"
+              : "+100%",
         transition: { type: "spring", stiffness: 300, damping: 30 },
       });
     };
 
     useImperativeHandle(ref, () => ({
-      openDialog: async () => {
-        await setIsOpen(true);
-        await handleToggleDrawer(true);
+      setDialogState: async (isOpen: DialogState) => {
+        await setIsOpen(isOpen);
+        await handleToggleDrawer(isOpen);
       },
-      closeDialog: () => setIsOpen(null),
     }));
 
     const childArray = Children.toArray(children);
@@ -86,14 +92,14 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
         {trigger &&
           cloneElement(trigger, {
             setIsOpen: async () => {
-              await setIsOpen(true);
-              await handleToggleDrawer(true);
+              await setIsOpen("restored");
+              await handleToggleDrawer("restored");
             },
           })}
 
-        {isOpen !== null && (
-          <div className={cn("fixed z-40", isOpen && "inset-0")}>
-            {isOpen && (
+        {isOpen !== "closed" && (
+          <div className={cn("fixed z-40", isOpen === "restored" && "inset-0")}>
+            {isOpen === "restored" && (
               <div
                 className="absolute inset-0 bg-gray-100 opacity-70 transition-all duration-500 transform backdrop-blur-xs"
                 aria-hidden="true"
@@ -141,7 +147,11 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
               >
                 <button
                   aria-label="Toggle Expanded/Collapsed PaperDialog"
-                  onClick={() => handleToggleDrawer(!isOpen)}
+                  onClick={() =>
+                    handleToggleDrawer(
+                      isOpen === "minimized" ? "restored" : "minimized"
+                    )
+                  }
                   className={cn(
                     "relative cursor-pointer bg-white border-[#ebebeb] shadow-sm hover:bg-gray-100",
                     isLeft
@@ -153,7 +163,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                     <RiArrowRightSLine
                       className={cn(
                         "transition-transform duration-500 ease-in-out",
-                        isOpen ? "rotate-180" : "rotate-0"
+                        isOpen === "restored" ? "rotate-180" : "rotate-0"
                       )}
                       size={20}
                     />
@@ -161,7 +171,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                     <RiArrowLeftSLine
                       className={cn(
                         "transition-transform duration-500 ease-in-out",
-                        isOpen ? "rotate-180" : "rotate-0"
+                        isOpen === "restored" ? "rotate-180" : "rotate-0"
                       )}
                       size={20}
                     />
@@ -186,7 +196,7 @@ function PaperDialogTrigger({
   return (
     <Button
       onClick={() => {
-        setIsOpen(true);
+        setIsOpen("restored");
       }}
     >
       {Icon && <Icon size={20} />}
