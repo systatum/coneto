@@ -11,7 +11,7 @@ export type TooltipProps = {
   underline?: "underline" | "underline-dot" | "transparent" | "blue" | "gray";
 };
 
-export default function Tooltip({
+function Tooltip({
   children,
   text,
   openOn = "hover",
@@ -92,3 +92,5 @@ export default function Tooltip({
     </span>
   );
 }
+
+export { Tooltip };

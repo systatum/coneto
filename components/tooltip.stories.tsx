@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import Tooltip from "./tooltip";
+import { Tooltip } from "./tooltip";
 import { expect, fireEvent, waitFor, within } from "@storybook/test";
 
 const meta: Meta<typeof Tooltip> = {
