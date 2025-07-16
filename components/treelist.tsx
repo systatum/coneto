@@ -21,7 +21,7 @@ export interface TreeListActionsProps {
   className?: string;
 }
 
-interface TreeListItemsProps {
+export interface TreeListItemsProps {
   id: number;
   title: string;
   onClick: (item?: TreeListItemsProps) => void;
@@ -112,8 +112,9 @@ function TreeListItem<T extends TreeListItemsProps>({
   item: T;
   searchTerm?: string;
 }) {
-  const regex = new RegExp(`(${searchTerm})`, "i");
-  const parts = item.title.split(regex);
+  const escapedTerm = escapeRegExp(searchTerm.trim());
+  const regex = new RegExp(`(${escapedTerm})`, "gi");
+  const parts = escapedTerm ? item.title.split(regex) : [item.title];
 
   const treeListItemClass = cn(
     "cursor-pointer border-l-3 border-transparent hover:bg-gray-100 py-1 px-4",
@@ -143,6 +144,10 @@ function TreeListItem<T extends TreeListItemsProps>({
       )}
     </div>
   );
+}
+
+function escapeRegExp(string: string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 TreeList.Item = TreeListItem;
