@@ -19,7 +19,7 @@ import {
 } from "react";
 import { Button } from "./button";
 
-export type DialogStateProps = "restored" | "closed" | "minimized";
+type DialogState = "restored" | "closed" | "minimized";
 
 export interface PaperDialogProps {
   className?: string;
@@ -32,7 +32,7 @@ export interface PaperDialogProps {
 
 interface PaperDialogTriggerProps {
   children?: ReactNode;
-  setDialogState?: (dialogState: DialogStateProps) => void;
+  setDialogState?: (dialogState: DialogState) => void;
   icon?: RemixiconComponentType;
 }
 
@@ -52,11 +52,11 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
     { className, position = "right", tabClassName, children, closable },
     ref
   ) => {
-    const [dialogState, setDialogState] = useState<DialogStateProps>("closed");
+    const [dialogState, setDialogState] = useState<DialogState>("closed");
     const controls = useAnimation();
     const isLeft = position === "left";
 
-    const handleToggleDrawer = (open: DialogStateProps) => {
+    const handleToggleDrawer = (open: DialogState) => {
       setDialogState(open);
 
       controls.start({
