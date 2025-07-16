@@ -136,10 +136,6 @@ export const WithActions: Story = {
 
 export const WithEmptySlate: Story = {
   render: () => {
-    const setPerson = (item: { id: number; title: string }) => {
-      console.log("Clicked person:", item.title);
-    };
-
     const TREE_LIST_DATA = [];
 
     const TREE_LIST_ACTIONS: TreeListActionsProps[] = [

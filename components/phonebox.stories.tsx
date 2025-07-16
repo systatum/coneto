@@ -35,7 +35,7 @@ export const DefaultPhonebox: Story = {
     phoneNumber: "",
   },
   render: (args) => {
-    const [currentArgs, setUpdateArgs] = useArgs();
+    const [_, setUpdateArgs] = useArgs();
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
       if (!e || !("target" in e)) return;

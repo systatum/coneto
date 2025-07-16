@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "tw-animate-css";
 
 .scrollbar-thin::-webkit-scrollbar {
   width: 6px;

@@ -443,13 +443,11 @@ function TableRow({
   actions,
   isLast,
   onLastRowReached,
-  width,
   ...props
 }: TableRowProps &
   Partial<{
     onLastRowReached?: () => void;
     isLast?: boolean;
-    width?: string;
   }>) {
   const columns = useTableColumns();
   const rowRef = useRef<HTMLDivElement>(null);
