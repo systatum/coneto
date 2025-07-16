@@ -19,7 +19,7 @@ import {
 } from "react";
 import { Button } from "./button";
 
-export type DialogState = "restored" | "closed" | "minimized";
+export type DialogStateProps = "restored" | "closed" | "minimized";
 
 export interface PaperDialogProps {
   className?: string;
@@ -32,7 +32,7 @@ export interface PaperDialogProps {
 
 interface PaperDialogTriggerProps {
   children?: ReactNode;
-  setIsOpen?: (isOpen: DialogState) => void;
+  setDialogState?: (dialogState: DialogStateProps) => void;
   icon?: RemixiconComponentType;
 }
 
@@ -42,7 +42,9 @@ interface PaperDialogContentProps {
 }
 
 export interface PaperDialogRef {
-  setDialogState: (isOpen: DialogState) => void;
+  openDialog: () => void;
+  closeDialog: () => void;
+  minimizedDialog: () => void;
 }
 
 const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
@@ -50,18 +52,18 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
     { className, position = "right", tabClassName, children, closable },
     ref
   ) => {
-    const [isOpen, setIsOpen] = useState<DialogState>("closed");
+    const [dialogState, setDialogState] = useState<DialogStateProps>("closed");
     const controls = useAnimation();
     const isLeft = position === "left";
 
-    const handleToggleDrawer = (open: DialogState) => {
-      setIsOpen(open);
+    const handleToggleDrawer = (open: DialogStateProps) => {
+      setDialogState(open);
 
       controls.start({
         x:
           open === "restored"
             ? 0
-            : isLeft && isOpen === "minimized"
+            : isLeft && dialogState === "minimized"
               ? "-100%"
               : "+100%",
         transition: { type: "spring", stiffness: 300, damping: 30 },
@@ -69,9 +71,17 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
     };
 
     useImperativeHandle(ref, () => ({
-      setDialogState: async (isOpen: DialogState) => {
-        await setIsOpen(isOpen);
-        await handleToggleDrawer(isOpen);
+      openDialog: async () => {
+        await setDialogState("restored");
+        await handleToggleDrawer("restored");
+      },
+      closeDialog: async () => {
+        await setDialogState("closed");
+        await handleToggleDrawer("closed");
+      },
+      minimizedDialog: async () => {
+        await setDialogState("minimized");
+        await handleToggleDrawer("minimized");
       },
     }));
 
@@ -91,15 +101,20 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
       <Fragment>
         {trigger &&
           cloneElement(trigger, {
-            setIsOpen: async () => {
-              await setIsOpen("restored");
+            setDialogState: async () => {
+              await setDialogState("restored");
               await handleToggleDrawer("restored");
             },
           })}
 
-        {isOpen !== "closed" && (
-          <div className={cn("fixed z-40", isOpen === "restored" && "inset-0")}>
-            {isOpen === "restored" && (
+        {dialogState !== "closed" && (
+          <div
+            className={cn(
+              "fixed z-40",
+              dialogState === "restored" && "inset-0"
+            )}
+          >
+            {dialogState === "restored" && (
               <div
                 className="absolute inset-0 bg-gray-100 opacity-70 transition-all duration-500 transform backdrop-blur-xs"
                 aria-hidden="true"
@@ -125,7 +140,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                 >
                   <button
                     aria-label="Button Close"
-                    onClick={() => setIsOpen(null)}
+                    onClick={() => setDialogState(null)}
                     className={cn(
                       "relative w-fit cursor-pointer bg-white border-[#ebebeb] shadow-sm hover:bg-gray-100",
                       isLeft
@@ -149,7 +164,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                   aria-label="Toggle Expanded/Collapsed PaperDialog"
                   onClick={() =>
                     handleToggleDrawer(
-                      isOpen === "minimized" ? "restored" : "minimized"
+                      dialogState === "minimized" ? "restored" : "minimized"
                     )
                   }
                   className={cn(
@@ -163,7 +178,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                     <RiArrowRightSLine
                       className={cn(
                         "transition-transform duration-500 ease-in-out",
-                        isOpen === "restored" ? "rotate-180" : "rotate-0"
+                        dialogState === "restored" ? "rotate-180" : "rotate-0"
                       )}
                       size={20}
                     />
@@ -171,7 +186,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                     <RiArrowLeftSLine
                       className={cn(
                         "transition-transform duration-500 ease-in-out",
-                        isOpen === "restored" ? "rotate-180" : "rotate-0"
+                        dialogState === "restored" ? "rotate-180" : "rotate-0"
                       )}
                       size={20}
                     />
@@ -191,12 +206,12 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
 function PaperDialogTrigger({
   children,
   icon: Icon,
-  setIsOpen,
+  setDialogState,
 }: PaperDialogTriggerProps) {
   return (
     <Button
       onClick={() => {
-        setIsOpen("restored");
+        setDialogState("restored");
       }}
     >
       {Icon && <Icon size={20} />}

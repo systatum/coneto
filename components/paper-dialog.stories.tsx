@@ -120,15 +120,13 @@ export const Default: Story = {
 
     return (
       <div className="flex flex-col gap-1">
-        <Button onClick={() => dialogRef.current?.setDialogState("restored")}>
-          Open
-        </Button>
-        <Button onClick={() => dialogRef.current?.setDialogState("closed")}>
-          Close
-        </Button>
+        <Button onClick={() => dialogRef.current?.openDialog()}>Open</Button>
+        <Button onClick={() => dialogRef.current?.closeDialog()}>Close</Button>
         <PaperDialog ref={dialogRef}>
-          <PaperDialog.Trigger>Trigger</PaperDialog.Trigger>
           <PaperDialog.Content className="p-6 gap-4">
+            <Button onClick={() => dialogRef.current?.minimizedDialog()}>
+              Minimize here.
+            </Button>
             <div className="flex flex-col gap-1">
               <h2 className="text-2xl font-bold ">Add New Employee</h2>
               <p className="text-sm text-gray-600">
