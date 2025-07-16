@@ -181,17 +181,30 @@ function FormFields<T extends FieldValues>({
             )}
           />
         ) : field.type === "color" ? (
-          <Colorbox
-            key={index}
-            label={field.title}
-            type={field.type}
-            value={formValues[field.name as keyof T] ?? ""}
-            required={field.required}
-            {...register(field.name as Path<T>, { onChange: field.onChange })}
-            showError={shouldShowError(field.name)}
-            errorMessage={
-              errors[field.name as keyof T]?.message as string | undefined
-            }
+          <Controller
+            name={field.name as Path<T>}
+            control={control}
+            render={({ field: controllerField, fieldState }) => (
+              <Colorbox
+                key={index}
+                label={field.title}
+                required={field.required}
+                value={controllerField.value}
+                onChange={(e, kind) => {
+                  const newVal =
+                    kind === "color-text"
+                      ? e.target.value.startsWith("#")
+                        ? e.target.value
+                        : `#${e.target.value}`
+                      : e.target.value;
+
+                  field.onChange?.(e, kind);
+                  controllerField.onChange(newVal);
+                }}
+                showError={shouldShowError(field.name)}
+                errorMessage={fieldState.error?.message}
+              />
+            )}
           />
         ) : field.type === "file_drop_box" ? (
           <FileDropBox

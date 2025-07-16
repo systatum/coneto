@@ -10,6 +10,7 @@ import {
 } from "./file-drop-box";
 import { OptionsProps } from "./selectbox";
 import { BadgeProps } from "./badge";
+import { ColorPickProps } from "./colorbox";
 
 const meta: Meta<typeof StatefulForm> = {
   title: "Input Elements/StatefulForm",
@@ -295,7 +296,7 @@ export const AllCase: Story = {
         | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
         | FileList
         | OptionsProps,
-      type?: string
+      type?: string | ColorPickProps
     ) => {
       if (e instanceof FileList) {
         const file = e[0];
@@ -321,6 +322,7 @@ export const AllCase: Story = {
         if (target instanceof HTMLInputElement && target.type === "checkbox") {
           updatedValue = target.checked;
         }
+
         if (type === "chips") {
           setValue((prev) => ({
             ...prev,

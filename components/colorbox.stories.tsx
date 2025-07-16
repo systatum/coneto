@@ -25,9 +25,9 @@ export const Default: Story = {
       data: ColorPickProps
     ) => {
       const { name, value } = e.target;
-      if (data === "color-pick") {
+      if (data === "color-picker") {
         setUpdateArgs({ ...currentArgs, [name]: value });
-      } else if (data === "text") {
+      } else if (data === "color-text") {
         let val = value;
         if (!val.startsWith("#")) {
           val = "#" + val;
@@ -81,7 +81,7 @@ export const WithError: Story = {
     ) => {
       const { name, value } = e.target;
 
-      if (data === "color-pick") {
+      if (data === "color-picker") {
         const isValidHex = isValidHexColor(value);
         setUpdateArgs({
           ...currentArgs,
@@ -89,7 +89,7 @@ export const WithError: Story = {
           showError: !isValidHex,
           errorMessage: isValidHex ? "" : "Invalid color value.",
         });
-      } else if (data === "text") {
+      } else if (data === "color-text") {
         let val = value;
         if (!val.startsWith("#")) {
           val = "#" + val;
