@@ -4,6 +4,7 @@ import {
   RiErrorWarningLine,
   RiEyeLine,
   RiEyeOffLine,
+  RiPencilFill,
 } from "@remixicon/react";
 import {
   ChangeEvent,
@@ -29,7 +30,7 @@ export interface BaseTextboxProps
   onChange: (data: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   icon?: RemixiconComponentType;
   dormanted?: boolean;
-  dormantedFontSize?: string;
+  dormantedFontSize?: number;
   actionIcon?: boolean;
 }
 
@@ -70,6 +71,8 @@ const Textbox = forwardRef<
 
     const [dormantedLocal, setDormantedLocal] = useState(dormantedState);
     const [showPassword, setShowPassword] = useState<boolean>(false);
+    const [isHovered, setIsHovered] = useState(false);
+    const [labelHeight, setLabelHeight] = useState<number>(0);
 
     useEffect(() => {
       if (showError) {
@@ -91,22 +94,47 @@ const Textbox = forwardRef<
     };
 
     const inputClass = cn(
-      "rounded-xs border text-black px-2 w-full py-[7px] outline-none",
+      "rounded-xs border text-xs text-black px-2 w-full py-[7px] outline-none",
       showError
         ? "border-red-500 focus:border-red-500 focus:ring-red-500 text-red-800"
         : "border-gray-300 focus:ring-[#61A9F9] focus:border-[#61A9F9]",
       className
     );
 
+    const iconSizeDormanted = dormantedFontSize * 1.05;
+
+    const measureLabelHeight = (el: HTMLLabelElement | null) => {
+      if (el) {
+        const height = el.getBoundingClientRect().height;
+        setLabelHeight(height);
+      }
+    };
+
     const inputElement: ReactElement = dormantedLocal ? (
       <label
+        ref={measureLabelHeight}
         onClick={() => setDormantedLocal(false)}
-        className="cursor-pointer"
-        style={{
-          fontSize: dormantedFontSize,
-        }}
+        onMouseLeave={() => setIsHovered(false)}
+        onMouseEnter={() => setIsHovered(true)}
+        className={cn(
+          dormantedLocal
+            ? "p-2 rounded-xs cursor-pointer duration-100 transform transition-all flex flex-row justify-between items-center w-fit relative gap-1 hover:bg-[#e9e9e9] border hover:border-[#e9e9e9] border-transparent"
+            : ""
+        )}
+        style={
+          dormanted && {
+            fontSize: dormantedFontSize,
+          }
+        }
       >
         {props.value}
+        <RiPencilFill
+          className={cn(
+            "duration-100 transform transition-all",
+            isHovered ? "opacity-100" : "opacity-0 pointer-events-none"
+          )}
+          size={iconSizeDormanted}
+        />
       </label>
     ) : rows ? (
       <div className="relative w-full ring-0">
@@ -158,7 +186,17 @@ const Textbox = forwardRef<
         )}
       </div>
     ) : (
-      <div className="relative w-full ring-0">
+      <div
+        className={cn(
+          "relative w-full ring-0",
+          dormanted ? "h-full flex flex-col justify-center items-center" : ""
+        )}
+        style={
+          dormanted && {
+            minHeight: labelHeight,
+          }
+        }
+      >
         <input
           id={inputId}
           ref={ref as RefObject<HTMLInputElement>}

@@ -104,6 +104,9 @@ export const Input: Story = {
 };
 
 export const Dormanted: Story = {
+  parameters: {
+    layout: "padded",
+  },
   args: {
     name: "input",
     label: "Input",
@@ -114,6 +117,7 @@ export const Dormanted: Story = {
     className: "min-w-[400px]",
     dormanted: true,
     actionIcon: true,
+    dormantedFontSize: 30,
   },
   render: (args) => {
     const [, setUpdateArgs] = useArgs();
@@ -127,13 +131,15 @@ export const Dormanted: Story = {
     };
 
     return (
-      <Textbox
-        {...args}
-        onChange={handleChange}
-        onActionClick={() => {
-          console.log("Input change succeed.");
-        }}
-      />
+      <div className="flex max-w-[800px]">
+        <Textbox
+          {...args}
+          onChange={handleChange}
+          onActionClick={() => {
+            console.log("Input change succeed.");
+          }}
+        />
+      </div>
     );
   },
 };
