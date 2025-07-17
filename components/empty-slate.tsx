@@ -1,7 +1,7 @@
 import { cn } from "./../lib/utils";
 import { ReactNode } from "react";
 
-interface EmptySlateProps {
+export interface EmptySlateProps {
   imageUrl: string;
   title: string;
   subtitle?: string;
@@ -11,7 +11,7 @@ interface EmptySlateProps {
   actions?: ReactNode;
 }
 
-export default function EmptySlate({
+function EmptySlate({
   imageUrl,
   title,
   subtitle,
@@ -56,3 +56,5 @@ export default function EmptySlate({
     </div>
   );
 }
+
+export { EmptySlate };

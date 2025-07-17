@@ -125,15 +125,14 @@ function DialogDescription({
   );
 }
 
-export {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogOverlay,
-  DialogPortal,
-  DialogTitle,
-  DialogTrigger,
-};
+Dialog.Close = DialogClose;
+Dialog.Content = DialogContent;
+Dialog.Description = DialogDescription;
+Dialog.Footer = DialogFooter;
+Dialog.Header = DialogHeader;
+Dialog.Overlay = DialogOverlay;
+Dialog.Portal = DialogPortal;
+Dialog.Title = DialogTitle;
+Dialog.Trigger = DialogTrigger;
+
+export { Dialog };

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect, userEvent, within } from "@storybook/test";
 import { useState } from "react";
-import Combobox, { ComboboxActionProps } from "./combobox";
+import { Combobox, ComboboxActionProps } from "./combobox";
 import { OptionsProps } from "./selectbox";
 import { RiAddLine } from "@remixicon/react";
 

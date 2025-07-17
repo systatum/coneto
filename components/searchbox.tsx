@@ -2,20 +2,20 @@ import clsx from "clsx";
 import { RiSearchLine, RiCloseLine } from "@remixicon/react";
 import { ChangeEvent, InputHTMLAttributes } from "react";
 
-interface BaseSearchBoxProps extends InputHTMLAttributes<HTMLInputElement> {
+export interface SearchboxProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string;
   value: string;
   className?: string;
   onChange: (data: ChangeEvent<HTMLInputElement>) => void;
 }
 
-export default function Searchbox({
+function Searchbox({
   name,
   value,
   className,
   onChange,
   ...props
-}: BaseSearchBoxProps) {
+}: SearchboxProps) {
   const inputId = `textbox-${name}`;
 
   const inputClass = clsx(
@@ -62,3 +62,5 @@ export default function Searchbox({
     </div>
   );
 }
+
+export { Searchbox };

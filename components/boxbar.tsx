@@ -11,7 +11,7 @@ interface BoxbarProps {
   maxHeight?: number;
 }
 
-export default function Boxbar({
+function Boxbar({
   childClassName,
   containerClassName,
   children,
@@ -50,3 +50,5 @@ export default function Boxbar({
     </motion.div>
   );
 }
+
+export { Boxbar };

@@ -8,7 +8,7 @@ export interface TabFieldsProps {
   content?: ReactNode;
 }
 
-interface TabProps {
+export interface TabProps {
   view: string | null | number;
   fields: TabFieldsProps[];
   setView: (data: string | number) => void;
@@ -18,7 +18,7 @@ interface TabProps {
   activeBackgroundColor?: string;
 }
 
-export default function Capsule({
+function Capsule({
   fields,
   view,
   setView,
@@ -205,3 +205,5 @@ export default function Capsule({
     </div>
   );
 }
+
+export { Capsule };

@@ -26,7 +26,7 @@ export interface ThumbFieldProps {
 
 export type ThumbFieldValue = "up" | "down" | "blank";
 
-export default function ThumbField({
+function ThumbField({
   onChange,
   thumbsUpBackgroundColor = "#61A9F9",
   thumbsDownBackgroundColor = "RGB(206, 55, 93)",
@@ -144,3 +144,5 @@ export default function ThumbField({
     </div>
   );
 }
+
+export { ThumbField };

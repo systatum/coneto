@@ -2,7 +2,7 @@ import { RiCloseLine } from "@remixicon/react";
 import { cn } from "./../lib/utils";
 import { ReactNode } from "react";
 
-interface CardProps {
+export interface CardProps {
   shadow?: "none" | "sm" | "md" | "lg" | "xl" | "2xl";
   radius?: "none" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "full";
   padding?:
@@ -69,7 +69,7 @@ const PADDING_MAP: Record<NonNullable<CardProps["padding"]>, string> = {
   "10": "p-10",
 };
 
-export default function Card({
+function Card({
   children,
   shadow = "sm",
   radius = "xs",
@@ -137,3 +137,5 @@ export default function Card({
     </div>
   );
 }
+
+export { Card };

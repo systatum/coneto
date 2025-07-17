@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import Pagination from "./pagination";
+import { Pagination } from "./pagination";
 import { useArgs } from "@storybook/preview-api";
 import { expect, userEvent, within } from "@storybook/test";
 

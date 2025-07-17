@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import Rating from "./rating";
+import { Rating } from "./rating";
 import { useArgs } from "@storybook/preview-api";
 import { expect, userEvent, within } from "@storybook/test";
 

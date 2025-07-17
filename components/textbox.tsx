@@ -242,4 +242,4 @@ const Textbox = forwardRef<
 
 Textbox.displayName = "Textbox";
 
-export default Textbox;
+export { Textbox };

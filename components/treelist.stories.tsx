@@ -2,7 +2,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { TreeList, TreeListActionsProps } from "./treelist";
 import { RiAtLine, RiSearchLine } from "@remixicon/react";
 import { expect, userEvent, within } from "@storybook/test";
-import EmptySlate from "./empty-slate";
+import { EmptySlate } from "./empty-slate";
 import { Button } from "./button";
 
 const meta: Meta<typeof TreeList> = {

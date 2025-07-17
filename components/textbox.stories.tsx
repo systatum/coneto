@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { within, userEvent, expect } from "@storybook/test";
-import Textbox, { TextboxProps } from "./textbox";
+import { Textbox, TextboxProps } from "./textbox";
 import { useArgs } from "@storybook/preview-api";
 import { useEffect, type ChangeEvent } from "react";
 import * as RemixIcons from "@remixicon/react";

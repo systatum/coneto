@@ -1,0 +1,15 @@
+{
+  "directory": ".",
+  "barrelName": "index",
+  "delete": true,
+  "structure": "flat",
+  "include": ["components", "lib", "constants"],
+  "exclude": [
+    "**/lib/marked/**",
+    "**/lib/turndown/**",
+    "**/dist/**",
+    "**/node_modules/**",
+    "**/.storybook/**",
+    "storybook-static"
+  ]
+}

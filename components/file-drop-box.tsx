@@ -1,7 +1,7 @@
 import { RiFile2Line, RiFileUploadLine, RiImageLine } from "@remixicon/react";
 import { cn } from "../lib/utils";
 import { ChangeEvent, DragEvent, useRef, useState } from "react";
-import LoadingSpinner from "./loading-spinner";
+import { LoadingSpinner } from "./loading-spinner";
 
 export interface OnFileDroppedFunctionProps {
   files: File[];
@@ -29,7 +29,7 @@ export interface FileDropBoxProps {
 
 type ProgressProps = "idle" | "loading" | "succeed";
 
-export default function FileDropBox({
+function FileDropBox({
   containerClassName,
   placeholder = "Drag and Drop Your File",
   accept = "*",
@@ -235,3 +235,5 @@ export default function FileDropBox({
     </div>
   );
 }
+
+export { FileDropBox };

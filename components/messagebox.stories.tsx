@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import Messagebox from "./messagebox";
+import { Messagebox } from "./messagebox";
 import * as RemixIcons from "@remixicon/react";
 import { expect, userEvent, waitFor, within } from "@storybook/test";
 

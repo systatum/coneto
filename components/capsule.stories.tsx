@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import Capsule from "./capsule";
+import { Capsule } from "./capsule";
 import { useArgs } from "@storybook/preview-api";
 import { expect, userEvent, within } from "@storybook/test";
 

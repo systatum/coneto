@@ -11,9 +11,9 @@ import {
   useRef,
   useState,
 } from "react";
-import Checkbox from "./checkbox";
+import { Checkbox } from "./checkbox";
 import { cn } from "./../lib/utils";
-import LoadingSpinner from "./loading-spinner";
+import { LoadingSpinner } from "./loading-spinner";
 import clsx from "clsx";
 import { Toolbar } from "./toolbar";
 import { TipMenuItemProps } from "./tip-menu";

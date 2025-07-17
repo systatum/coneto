@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import Colorbox, { ColorPickProps } from "./colorbox";
+import { Colorbox, ColorPickProps } from "./colorbox";
 import { useArgs } from "@storybook/preview-api";
 import { ChangeEvent } from "react";
 import { expect, userEvent, within } from "@storybook/test";

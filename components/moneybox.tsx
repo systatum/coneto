@@ -17,7 +17,7 @@ export interface MoneyboxProps {
   containerClassName?: string;
 }
 
-export default function Moneybox({
+function Moneybox({
   value,
   currency = "$",
   name,
@@ -89,3 +89,5 @@ const formatNumber = (val: string, separator: SeparatorTypeProps): string => {
     num.replace(/\B(?=(\d{3})+(?!\d))/g, sep) + (parts[1] ? "." + parts[1] : "")
   );
 };
+
+export { Moneybox };

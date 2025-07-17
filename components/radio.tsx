@@ -12,7 +12,7 @@ export interface RadioProps {
   containerClassName?: string;
 }
 
-export default function Radio({
+function Radio({
   value,
   label,
   description,
@@ -61,3 +61,5 @@ export default function Radio({
     </label>
   );
 }
+
+export { Radio };

@@ -7,7 +7,7 @@ import { Fragment } from "react";
 import { useState, useEffect } from "react";
 import { Button } from "./button";
 import { cn } from "../lib/utils";
-import Combobox from "./combobox";
+import { Combobox } from "./combobox";
 import { DrawerProps, OptionsProps } from "./selectbox";
 
 export interface BaseCalendarProps {
@@ -71,7 +71,7 @@ const DEFAULT_MONTH_NAMES = [
   { text: "December", value: 12 },
 ];
 
-export default function Calendar({
+function Calendar({
   highlightedIndex,
   setHighlightedIndex,
   setInputValue,
@@ -518,3 +518,5 @@ function formatDate(date: Date, format: FormatProps) {
       return `${month}/${day}/${year}`;
   }
 }
+
+export { Calendar };

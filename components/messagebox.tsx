@@ -46,7 +46,7 @@ const MESSAGEBOX_VARIATIONS = {
   },
 };
 
-export default function Messagebox({
+function Messagebox({
   variant = "primary",
   title,
   icon: Icon = RiInformation2Fill,
@@ -124,3 +124,5 @@ export default function Messagebox({
     </div>
   );
 }
+
+export { Messagebox };

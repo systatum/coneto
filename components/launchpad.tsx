@@ -6,7 +6,7 @@ import {
   useRef,
   useState,
 } from "react";
-import Separator from "./separator";
+import { Separator } from "./separator";
 import { motion } from "framer-motion";
 import { Grid, GridPresetKey } from "./grid";
 import { cn } from "./../lib/utils";

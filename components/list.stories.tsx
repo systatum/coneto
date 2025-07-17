@@ -8,7 +8,7 @@ import {
   RiNotification3Fill,
   RiCalendar2Fill,
 } from "@remixicon/react";
-import Card from "./card";
+import { Card } from "./card";
 import { ChangeEvent, useMemo, useState } from "react";
 import { expect, userEvent, within } from "@storybook/test";
 

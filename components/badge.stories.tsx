@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import Badge, { BadgeVariantProps } from "./badge";
+import { Badge, BadgeVariantProps } from "./badge";
 import { expect, userEvent, within } from "@storybook/test";
 
 const meta: Meta<typeof Badge> = {

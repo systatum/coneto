@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { expect, within } from "@storybook/test";
 import { AvatarProps } from "./avatar";
 import { ChangeEvent, useState } from "react";
-import ModalDialog, { ModalButtonProps } from "./modal-dialog";
+import { ModalDialog, ModalButtonProps } from "./modal-dialog";
 import { Avatar } from "./avatar";
 
 const meta: Meta<typeof Avatar> = {

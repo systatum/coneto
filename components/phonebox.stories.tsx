@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import Phonebox from "./phonebox";
+import { Phonebox } from "./phonebox";
 import { expect, userEvent, within } from "@storybook/test";
 import { useArgs } from "@storybook/preview-api";
 import { ChangeEvent } from "react";

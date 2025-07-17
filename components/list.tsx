@@ -16,11 +16,11 @@ import {
   useContext,
   useState,
 } from "react";
-import Searchbox from "./searchbox";
+import { Searchbox } from "./searchbox";
 import { cn } from "./../lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
-import LoadingSpinner from "./loading-spinner";
-import Checkbox from "./checkbox";
+import { LoadingSpinner } from "./loading-spinner";
+import { Checkbox } from "./checkbox";
 import { Togglebox } from "./togglebox";
 
 export interface ListProps {

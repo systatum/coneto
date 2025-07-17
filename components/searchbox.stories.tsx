@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect, within, userEvent } from "@storybook/test";
-import Searchbox from "./searchbox";
+import { Searchbox } from "./searchbox";
 import { useArgs } from "@storybook/preview-api";
 import { ChangeEvent } from "react";
 

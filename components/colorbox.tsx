@@ -4,7 +4,7 @@ import { ChangeEvent, InputHTMLAttributes, useState } from "react";
 
 export type ColorPickProps = "color-picker" | "color-text";
 
-interface ColorboxProps
+export interface ColorboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange"> {
   onChange: (e: ChangeEvent<HTMLInputElement>, data: ColorPickProps) => void;
   value?: string;
@@ -15,7 +15,7 @@ interface ColorboxProps
   containerClassName?: string;
 }
 
-export default function Colorbox({
+function Colorbox({
   onChange,
   value,
   label,
@@ -122,3 +122,4 @@ export default function Colorbox({
     </div>
   );
 }
+export { Colorbox };

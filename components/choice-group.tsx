@@ -9,12 +9,12 @@ import {
 import { RadioProps } from "./radio";
 import { CheckboxProps } from "./checkbox";
 
-interface ChoiceGroupProps {
+export interface ChoiceGroupProps {
   children: ReactNode;
   className?: string;
 }
 
-export default function ChoiceGroup({ children, className }: ChoiceGroupProps) {
+function ChoiceGroup({ children, className }: ChoiceGroupProps) {
   const childArray = Children.toArray(children).filter(isValidElement);
 
   return (
@@ -49,3 +49,5 @@ export default function ChoiceGroup({ children, className }: ChoiceGroupProps) {
     </div>
   );
 }
+
+export { ChoiceGroup };

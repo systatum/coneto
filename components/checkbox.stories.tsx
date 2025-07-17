@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { expect, userEvent, within } from "@storybook/test";
-import Checkbox, { CheckboxProps } from "./checkbox";
+import { Checkbox, CheckboxProps } from "./checkbox";
 import { ChangeEvent, useState } from "react";
 
 const meta: Meta<typeof Checkbox> = {

@@ -1,6 +1,6 @@
 import { RiArrowLeftSLine, RiArrowRightSLine } from "@remixicon/react";
 import { cn } from "./../lib/utils";
-import Combobox from "./combobox";
+import { Combobox } from "./combobox";
 import { OptionsProps } from "./selectbox";
 import { ReactNode, useEffect, useState } from "react";
 
@@ -12,7 +12,7 @@ type PaginationProps = {
   className?: string;
 };
 
-export default function Pagination({
+function Pagination({
   currentPage,
   totalPages,
   onPageChange,
@@ -211,3 +211,5 @@ const PaginationButton = ({
     </button>
   );
 };
+
+export { Pagination };

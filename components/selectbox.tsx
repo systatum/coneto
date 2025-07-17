@@ -69,7 +69,7 @@ export interface OptionsProps {
   value?: string | number;
 }
 
-export function Selectbox({
+function Selectbox({
   setInputValue,
   inputValue,
   options = [],
@@ -344,3 +344,5 @@ export function Selectbox({
     </div>
   );
 }
+
+export { Selectbox };

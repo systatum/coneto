@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import Moneybox from "./moneybox";
+import { Moneybox } from "./moneybox";
 import { useArgs } from "@storybook/preview-api";
 import { ChangeEvent } from "react";
 import { userEvent, within } from "@storybook/test";

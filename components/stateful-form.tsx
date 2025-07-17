@@ -10,18 +10,18 @@ import {
   Path,
   UseFormRegister,
 } from "react-hook-form";
-import Phonebox, { CountryCodeProps } from "./phonebox";
-import Checkbox from "./checkbox";
-import Textbox from "./textbox";
-import Colorbox from "./colorbox";
-import FileDropBox, { FileDropBoxProps } from "./file-drop-box";
-import FileInputBox from "./file-input-box";
-import Imagebox from "./imagebox";
-import Moneybox, { MoneyboxProps } from "./moneybox";
-import Datebox, { DateboxProps } from "./datebox";
+import { Phonebox, CountryCodeProps } from "./phonebox";
+import { Checkbox } from "./checkbox";
+import { Textbox } from "./textbox";
+import { Colorbox } from "./colorbox";
+import { FileDropBox, FileDropBoxProps } from "./file-drop-box";
+import { FileInputBox } from "./file-input-box";
+import { Imagebox } from "./imagebox";
+import { Moneybox, MoneyboxProps } from "./moneybox";
+import { Datebox, DateboxProps } from "./datebox";
 import { OptionsProps } from "./selectbox";
-import Combobox, { ComboboxProps } from "./combobox";
-import Chips, { ChipsProps } from "./chips";
+import { Combobox, ComboboxProps } from "./combobox";
+import { Chips, ChipsProps } from "./chips";
 
 interface StatefulFormProps<Z extends ZodTypeAny> {
   fields: FormFieldProps[];

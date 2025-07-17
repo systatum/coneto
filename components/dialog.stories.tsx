@@ -1,14 +1,6 @@
 import { useArgs } from "@storybook/preview-api";
 import type { Args, Meta, StoryObj } from "@storybook/react";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogClose,
-} from "./dialog";
+import { Dialog } from "./dialog";
 import { Button } from "./button";
 import { expect, userEvent, within } from "@storybook/test";
 
@@ -43,20 +35,20 @@ export const BasicDialog: Story = {
         open={open}
         onOpenChange={(newOpen) => updateArgs({ open: newOpen })}
       >
-        <DialogTrigger asChild>
+        <Dialog.Trigger asChild>
           <Button>Basic Dialog</Button>
-        </DialogTrigger>
-        <DialogContent>
+        </Dialog.Trigger>
+        <Dialog.Content>
           <div className="flex flex-col gap-4 items-start">
             <div className="flex flex-col gap-1 items-start">
-              <DialogTitle>Basic Dialog</DialogTitle>
-              <DialogDescription>
+              <Dialog.Title>Basic Dialog</Dialog.Title>
+              <Dialog.Description>
                 This is a basic dialog example.
-              </DialogDescription>
+              </Dialog.Description>
             </div>
             <p className="text-xs">This is the dialog content.</p>
           </div>
-        </DialogContent>
+        </Dialog.Content>
       </Dialog>
     );
   },
@@ -91,16 +83,16 @@ export const DialogWithButton: Story = {
         open={open}
         onOpenChange={(newOpen) => updateArgs({ open: newOpen })}
       >
-        <DialogTrigger asChild>
+        <Dialog.Trigger asChild>
           <Button>Dialog With Button</Button>
-        </DialogTrigger>
-        <DialogContent className="p-3">
+        </Dialog.Trigger>
+        <Dialog.Content className="p-3">
           <div className="flex flex-col w-full gap-2 items-start">
             <div className="flex flex-col gap-1">
-              <DialogTitle>Dialog With Button</DialogTitle>
-              <DialogDescription>
+              <Dialog.Title>Dialog With Button</Dialog.Title>
+              <Dialog.Description>
                 Dialog with actions in the footer.
-              </DialogDescription>
+              </Dialog.Description>
             </div>
             <p className="text-xs py-4">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
@@ -112,15 +104,15 @@ export const DialogWithButton: Story = {
               sunt in culpa qui officia deserunt mollit anim id est laborum.
             </p>
             <div className="flex flex-row justify-end w-full mt-4 gap-2">
-              <DialogClose asChild>
+              <Dialog.Close asChild>
                 <Button>Cancel</Button>
-              </DialogClose>
-              <DialogClose asChild>
+              </Dialog.Close>
+              <Dialog.Close asChild>
                 <Button variant="primary">Confirm</Button>
-              </DialogClose>
+              </Dialog.Close>
             </div>
           </div>
-        </DialogContent>
+        </Dialog.Content>
       </Dialog>
     );
   },
@@ -157,19 +149,19 @@ export const HideCloseButton: Story = {
         open={open}
         onOpenChange={(newOpen) => updateArgs({ open: newOpen })}
       >
-        <DialogTrigger asChild>
+        <Dialog.Trigger asChild>
           <Button>Dialog (HideClose)</Button>
-        </DialogTrigger>
-        <DialogContent hideClose={args.hideClose}>
+        </Dialog.Trigger>
+        <Dialog.Content hideClose={args.hideClose}>
           <div className="flex flex-col gap-2 items-start">
-            <DialogHeader>
-              <DialogTitle>Dialog (HideClose)</DialogTitle>
-            </DialogHeader>
+            <Dialog.Header>
+              <Dialog.Title>Dialog (HideClose)</Dialog.Title>
+            </Dialog.Header>
             <p className="text-xs">
               This dialog does not include the close button in the top corner.
             </p>
           </div>
-        </DialogContent>
+        </Dialog.Content>
       </Dialog>
     );
   },

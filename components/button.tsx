@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cn } from "./../lib/utils";
-import LoadingSpinner from "./loading-spinner";
+import { LoadingSpinner } from "./loading-spinner";
 import {
   RemixiconComponentType,
   RiArrowDownSLine,
