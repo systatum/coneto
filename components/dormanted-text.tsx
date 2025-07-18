@@ -30,7 +30,7 @@ function DormantedText({
   const [labelHeight, setLabelHeight] = useState<number>(0);
   const [inputHeight, setInputHeight] = useState<number>(0);
 
-  const iconSizeDormanted = dormantedFontSize * 1.05;
+  const dormantPencilSize = dormantedFontSize * 1.05;
 
   const measureLabelHeight = (el: HTMLLabelElement | HTMLDivElement | null) => {
     if (el) {
@@ -68,7 +68,7 @@ function DormantedText({
           "duration-100 transform transition-all",
           isHovered ? "opacity-100" : "opacity-0 pointer-events-none"
         )}
-        size={iconSizeDormanted}
+        size={dormantPencilSize}
       />
     </label>
   ) : (
