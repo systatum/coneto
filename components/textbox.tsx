@@ -4,7 +4,6 @@ import {
   RiErrorWarningLine,
   RiEyeLine,
   RiEyeOffLine,
-  RiPencilFill,
 } from "@remixicon/react";
 import {
   ChangeEvent,
@@ -64,7 +63,6 @@ const Textbox = forwardRef<
     ref
   ) => {
     const [showPassword, setShowPassword] = useState<boolean>(false);
-    const [labelHeight, setLabelHeight] = useState<number>(0);
 
     useEffect(() => {
       if (showError) {
