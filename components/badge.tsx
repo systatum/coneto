@@ -123,7 +123,7 @@ function Badge({
     >
       {withCircle && (
         <span
-          className="rounded-full w-[8px] h-[8px] border"
+          className="rounded-full min-w-[8px] max-w-[8px] min-h-[8px] max-h-[8px] border"
           style={{
             borderColor: badgeCircleColor,
             backgroundColor: badgeCircleColor,
