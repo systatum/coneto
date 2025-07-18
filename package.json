@@ -73,6 +73,10 @@
       "import": "./dist/components/dialog.js",
       "types": "./dist/components/dialog.d.ts"
     },
+    "./dormanted-text": {
+      "import": "./dist/components/dormanted-text.js",
+      "types": "./dist/components/dormanted-text.d.ts"
+    },
     "./drawer-tab": {
       "import": "./dist/components/drawer-tab.js",
       "types": "./dist/components/drawer-tab.d.ts"
