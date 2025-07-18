@@ -104,11 +104,21 @@ function ComboboxDrawer({
       requestAnimationFrame(() => {
         const selectedEl = listRef.current[selectedIndex];
         if (selectedEl) {
-          selectedEl.scrollIntoView({ block: "center" });
+          const container = selectedEl.parentElement;
+          const containerRect = container?.getBoundingClientRect();
+          const itemRect = selectedEl.getBoundingClientRect();
+
+          const isVisible =
+            itemRect.top >= containerRect!.top &&
+            itemRect.bottom <= containerRect!.bottom;
+
+          if (!isVisible) {
+            selectedEl.scrollIntoView({ block: "center" });
+          }
         }
       });
     }
-  }, [inputValue.value, options, listRef]);
+  }, [inputValue, options, listRef]);
 
   return (
     <ul
