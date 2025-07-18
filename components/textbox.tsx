@@ -29,8 +29,6 @@ export interface BaseTextboxProps
   onActionClick?: () => void;
   onChange: (data: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   icon?: RemixiconComponentType;
-  dormanted?: boolean;
-  dormantedFontSize?: number;
   actionIcon?: boolean;
 }
 
@@ -59,19 +57,13 @@ const Textbox = forwardRef<
       className,
       containerClassName,
       actionIcon,
-      dormanted,
-      dormantedFontSize = 17,
       icon: Icon = RiCheckLine,
       type = "text",
       ...props
     },
     ref
   ) => {
-    const dormantedState = dormanted ? dormanted : false;
-
-    const [dormantedLocal, setDormantedLocal] = useState(dormantedState);
     const [showPassword, setShowPassword] = useState<boolean>(false);
-    const [isHovered, setIsHovered] = useState(false);
     const [labelHeight, setLabelHeight] = useState<number>(0);
 
     useEffect(() => {
@@ -101,42 +93,7 @@ const Textbox = forwardRef<
       className
     );
 
-    const iconSizeDormanted = dormantedFontSize * 1.05;
-
-    const measureLabelHeight = (el: HTMLLabelElement | null) => {
-      if (el) {
-        const height = el.getBoundingClientRect().height;
-        setLabelHeight(height);
-      }
-    };
-
-    const inputElement: ReactElement = dormantedLocal ? (
-      <label
-        ref={measureLabelHeight}
-        onClick={() => setDormantedLocal(false)}
-        onMouseLeave={() => setIsHovered(false)}
-        onMouseEnter={() => setIsHovered(true)}
-        className={cn(
-          dormantedLocal
-            ? "p-2 rounded-xs cursor-pointer duration-100 transform transition-all flex flex-row justify-between items-center w-fit relative gap-1 hover:bg-[#e9e9e9] border hover:border-[#e9e9e9] border-transparent"
-            : ""
-        )}
-        style={
-          dormanted && {
-            fontSize: dormantedFontSize,
-          }
-        }
-      >
-        {props.value}
-        <RiPencilFill
-          className={cn(
-            "duration-100 transform transition-all",
-            isHovered ? "opacity-100" : "opacity-0 pointer-events-none"
-          )}
-          size={iconSizeDormanted}
-        />
-      </label>
-    ) : rows ? (
+    const inputElement: ReactElement = rows ? (
       <div className="relative w-full ring-0">
         <textarea
           style={{
@@ -170,9 +127,6 @@ const Textbox = forwardRef<
               if (onActionClick) {
                 onActionClick();
               }
-              if (dormanted) {
-                setDormantedLocal(true);
-              }
             }}
           >
             <Icon className="mr-1 text-black" size={18} />
@@ -186,17 +140,7 @@ const Textbox = forwardRef<
         )}
       </div>
     ) : (
-      <div
-        className={cn(
-          "relative w-full ring-0",
-          dormanted ? "h-full flex flex-col justify-center items-center" : ""
-        )}
-        style={
-          dormanted && {
-            minHeight: labelHeight,
-          }
-        }
-      >
+      <div className="relative w-full ring-0">
         <input
           id={inputId}
           ref={ref as RefObject<HTMLInputElement>}
@@ -207,9 +151,6 @@ const Textbox = forwardRef<
               if (onActionClick) {
                 onActionClick();
               }
-              if (dormanted) {
-                setDormantedLocal(true);
-              }
             }
           }}
           type={type === "password" && showPassword ? "text" : type}
@@ -219,26 +160,16 @@ const Textbox = forwardRef<
           <button
             type="submit"
             className={cn(
-              "text-muted-foreground p-[2px]  w-fit rounded-xs transition-all duration-200 mr-1 absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer",
-              !dormanted && "hover:bg-gray-300"
+              "text-muted-foreground p-[2px]  w-fit rounded-xs transition-all duration-200 mr-1 absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer"
             )}
             onClick={(e) => {
               e.preventDefault();
               if (onActionClick) {
                 onActionClick();
               }
-              if (dormanted) {
-                setDormantedLocal(true);
-              }
             }}
           >
-            <Icon
-              className={cn(
-                "hover:text-gray-800",
-                dormanted && "hover:text-[#61A9F9]"
-              )}
-              size={18}
-            />
+            <Icon className="hover:text-gray-800" size={18} />
           </button>
         )}
         {type === "password" && !showError && (
@@ -268,7 +199,7 @@ const Textbox = forwardRef<
       <div
         className={cn(`flex w-full flex-col gap-2 text-xs`, containerClassName)}
       >
-        {!dormanted && label && <label htmlFor={inputId}>{label}</label>}
+        {label && <label htmlFor={inputId}>{label}</label>}
         <div className="flex flex-col gap-1 text-xs">
           {inputElement}
           {showError && <span className="text-red-600">{errorMessage}</span>}
