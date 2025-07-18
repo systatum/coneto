@@ -338,7 +338,7 @@ function ChipsDrawer({
                   await inputNameTagRef.current.focus();
                 }}
                 className={cn(
-                  "flex items-start cursor-pointer text-xs rounded-xs gap-1 text-black p-2",
+                  "flex items-start cursor-pointer text-xs rounded-xs gap-1 text-black p-2 w-full",
                   inputValue.search.length > 10 ? "flex-col" : "flex-row",
                   hovered === 0 && "bg-blue-100"
                 )}
@@ -347,7 +347,13 @@ function ChipsDrawer({
                   <RiAddLine size={14} />
                   <span>{newLabelPlaceholder}</span>
                 </div>
-                <span className="text-gray-600 w-full font-medium break-all">
+                <span
+                  className={cn(
+                    "text-gray-600 w-full font-medium break-all",
+
+                    inputValue.search.length <= 10 ? "truncate" : ""
+                  )}
+                >
                   "{inputValue.search}"
                 </span>
               </div>

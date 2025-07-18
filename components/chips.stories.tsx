@@ -106,7 +106,6 @@ export const Default: Story = {
         setInputValue={onChangeValue}
         chipClassName="w-full gap-2 border-transparent"
         chipContainerClassName="gap-1"
-        chipsDrawerClassName="max-w-[250px]"
         onOptionClicked={handleOptionClicked}
         selectedOptions={selectedOptions}
         options={BADGE_OPTIONS as BadgeProps[]}
