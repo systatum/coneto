@@ -96,29 +96,22 @@ function ComboboxDrawer({
   emptySlate = "Not Available.",
 }: ComboboxDrawerProps) {
   useEffect(() => {
-    const selectedIndex = options.findIndex(
-      (option) => option.value === inputValue.value
-    );
+    let hasScrolled = false;
 
-    if (selectedIndex !== -1) {
-      requestAnimationFrame(() => {
-        const selectedEl = listRef.current[selectedIndex];
-        if (selectedEl) {
-          const container = selectedEl.parentElement;
-          const containerRect = container?.getBoundingClientRect();
-          const itemRect = selectedEl.getBoundingClientRect();
+    if (!hasScrolled && inputValue?.value != null && options.length > 0) {
+      const selectedIndex = options.findIndex(
+        (option) => option.value === inputValue.value
+      );
 
-          const isVisible =
-            itemRect.top >= containerRect!.top &&
-            itemRect.bottom <= containerRect!.bottom;
-
-          if (!isVisible) {
-            selectedEl.scrollIntoView({ block: "center" });
-          }
-        }
-      });
+      const selectedEl = listRef.current[selectedIndex];
+      if (selectedEl) {
+        requestAnimationFrame(() => {
+          selectedEl.scrollIntoView({ block: "center" });
+        });
+        hasScrolled = true;
+      }
     }
-  }, [inputValue, options, listRef]);
+  }, []);
 
   return (
     <ul
