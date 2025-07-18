@@ -86,7 +86,7 @@ function DormantedText({
       </div>
       <div
         className={cn(
-          "text-muted-foreground flex min-w-[30px] min-h-[] border border-gray-300 p-[2px] relative rounded-xs transition-all duration-200 cursor-pointer hover:bg-gray-300"
+          "text-muted-foreground flex min-w-[30px] p-[2px] relative rounded-xs transition-all duration-200 cursor-pointer hover:bg-gray-300"
         )}
         style={{
           minHeight: 32.5 | inputHeight,
