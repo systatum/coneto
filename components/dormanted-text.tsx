@@ -43,6 +43,8 @@ function DormantedText({
     }
   };
 
+  console.log(inputHeight);
+
   return dormantedLocal ? (
     <label
       ref={measureLabelHeight}
@@ -84,10 +86,10 @@ function DormantedText({
       </div>
       <div
         className={cn(
-          "text-muted-foreground flex min-w-[30px] border-gray-300 p-[2px] relative rounded-xs transition-all duration-200 cursor-pointer hover:bg-gray-300"
+          "text-muted-foreground flex min-w-[30px] min-h-[] border border-gray-300 p-[2px] relative rounded-xs transition-all duration-200 cursor-pointer hover:bg-gray-300"
         )}
         style={{
-          minHeight: inputHeight,
+          minHeight: 32.5 | inputHeight,
         }}
         onClick={(e) => {
           e.preventDefault();
