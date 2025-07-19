@@ -6,10 +6,8 @@ import {
 import { ReactNode, useState } from "react";
 import { cn } from "../lib/utils";
 
-export interface DormantedTextProps {
-  label?: string;
+export interface DormantTextProps {
   className?: string;
-  containerClassName?: string;
   onActionClick?: () => void;
   icon?: RemixiconComponentType;
   dormantedFontSize?: number;
@@ -17,14 +15,14 @@ export interface DormantedTextProps {
   content?: string | number;
 }
 
-function DormantedText({
+function DormantText({
   onActionClick,
   className,
   dormantedFontSize = 17,
   icon: Icon = RiCheckLine,
   children,
   content,
-}: DormantedTextProps) {
+}: DormantTextProps) {
   const [dormantedLocal, setDormantedLocal] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
   const [labelHeight, setLabelHeight] = useState<number>(0);
@@ -42,8 +40,6 @@ function DormantedText({
       }
     }
   };
-
-  console.log(inputHeight);
 
   return dormantedLocal ? (
     <label
@@ -84,7 +80,7 @@ function DormantedText({
       <div ref={measureLabelHeight} className="w-full h-full">
         {children}
       </div>
-      <div
+      <button
         className={cn(
           "text-muted-foreground flex min-w-[30px] p-[2px] relative rounded-xs transition-all duration-200 cursor-pointer hover:bg-gray-300"
         )}
@@ -103,9 +99,9 @@ function DormantedText({
           className="top-1/2 -translate-y-1/2 left-[6px]  absolute"
           size={18}
         />
-      </div>
+      </button>
     </div>
   );
 }
 
-export { DormantedText };
+export { DormantText };

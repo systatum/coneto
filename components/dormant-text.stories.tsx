@@ -1,14 +1,15 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useArgs } from "@storybook/preview-api";
 import { useState, type ChangeEvent } from "react";
-import { DormantedText } from "./dormanted-text";
+import { DormantText } from "./dormant-text";
 import { Textbox } from "./textbox";
 import { OptionsProps } from "./selectbox";
 import { Combobox } from "./combobox";
+import { expect, userEvent, within } from "@storybook/test";
 
-const meta: Meta<typeof DormantedText> = {
-  title: "Stage/DormantedText",
-  component: DormantedText,
+const meta: Meta<typeof DormantText> = {
+  title: "Stage/DormantText",
+  component: DormantText,
   parameters: {
     layout: "centered",
   },
@@ -39,16 +40,32 @@ export const Default: Story = {
     };
 
     return (
-      <DormantedText
+      <DormantText
         {...args}
-        containerClassName="max-w-[800px]"
         onActionClick={() => {
           console.log(`The value is : ${args.content}`);
         }}
       >
         <Textbox value={args.content} onChange={handleChange} />
-      </DormantedText>
+      </DormantText>
     );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const dormantLabel = await canvas.findByText(
+      "Hello there, this is dormanted text"
+    );
+    await userEvent.click(dormantLabel);
+
+    const textbox = await canvas.findByRole("textbox");
+    await userEvent.clear(textbox);
+    await userEvent.type(textbox, "Updated content");
+
+    const checkButton = await canvas.findByRole("button");
+    await userEvent.click(checkButton);
+
+    await expect(textbox).toHaveValue("Updated content");
   },
 };
 
@@ -74,20 +91,47 @@ export const WithCombobox: Story = {
     ];
 
     return (
-      <DormantedText
+      <DormantText
         content={args.text}
-        containerClassName="max-w-[800px]"
         onActionClick={() => {
           console.log(`The value is : ${args.value}`);
         }}
       >
         <Combobox
+          placeholder="Select a fruit..."
           strict
           inputValue={args}
           options={FRUIT_OPTIONS}
           setInputValue={setArgs}
         />
-      </DormantedText>
+      </DormantText>
     );
+  },
+
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const dormantLabel = await canvas.findByText("Apple");
+    await userEvent.click(dormantLabel);
+
+    const input = await canvas.findByPlaceholderText("Select a fruit...");
+
+    await userEvent.click(input);
+
+    const appleOption = await canvas.findByRole("option", { name: "Apple" });
+    const grapeOption = await canvas.findByRole("option", {
+      name: "Grape",
+    });
+
+    await expect(appleOption).toBeVisible();
+    await expect(grapeOption).toBeVisible();
+
+    await userEvent.keyboard("{arrowdown}");
+    await userEvent.keyboard("{enter}");
+
+    await expect((input as HTMLInputElement).value).toBe("Banana");
+
+    const checkButton = await canvas.findByRole("button");
+    await userEvent.click(checkButton);
   },
 };
