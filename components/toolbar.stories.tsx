@@ -97,14 +97,14 @@ export const Default: Story = {
           onClick={() => {
             console.log("test");
           }}
-          caption="Toolbar Default Mode"
+          caption="Default Mode"
           icon={RiMessage2Line}
           iconColor="red"
           subMenuList={subMenuList}
         />
         <Toolbar.Menu
           dropdownClassName="min-w-[235px]"
-          caption="Toolbar Primary Mode"
+          caption="Primary Mode"
           icon={RiMessage2Line}
           iconColor="white"
           variant="primary"
@@ -112,7 +112,7 @@ export const Default: Story = {
         />
         <Toolbar.Menu
           dropdownClassName="min-w-[235px]"
-          caption="Toolbar Danger Mode"
+          caption="Danger Mode"
           icon={RiMessage2Line}
           iconColor="white"
           variant="danger"
@@ -125,7 +125,7 @@ export const Default: Story = {
     const canvas = within(canvasElement);
 
     const clickMenuButton = await canvas
-      .getByText("Toolbar Default Mode")
+      .getByText("Default Mode")
       .closest("div");
     await expect(clickMenuButton).toBeTruthy();
 
