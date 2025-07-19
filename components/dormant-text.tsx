@@ -3,7 +3,16 @@ import {
   RiCheckLine,
   RiPencilFill,
 } from "@remixicon/react";
-import { ReactNode, useState } from "react";
+import {
+  Children,
+  cloneElement,
+  isValidElement,
+  ReactElement,
+  ReactNode,
+  Ref,
+  useRef,
+  useState,
+} from "react";
 import { cn } from "../lib/utils";
 
 export interface DormantTextProps {
@@ -28,6 +37,7 @@ function DormantText({
   const [labelHeight, setLabelHeight] = useState<number>(0);
   const [inputHeight, setInputHeight] = useState<number>(0);
 
+  const inputRef = useRef<HTMLInputElement>(null);
   const dormantPencilSize = dormantedFontSize * 1.05;
 
   const measureLabelHeight = (el: HTMLLabelElement | HTMLDivElement | null) => {
@@ -41,12 +51,30 @@ function DormantText({
     }
   };
 
+  const dormantChildren = Children.map(children, (child) => {
+    if (!isValidElement(child)) return null;
+
+    const typedChild = child as ReactElement<
+      React.InputHTMLAttributes<HTMLInputElement> & {
+        ref?: Ref<HTMLInputElement>;
+      }
+    >;
+
+    return cloneElement(typedChild, {
+      ref: inputRef,
+    });
+  });
+
   return dormantedLocal ? (
     <label
       ref={measureLabelHeight}
       onClick={() => {
         setDormantedLocal(false);
         setIsHovered(false);
+
+        setTimeout(() => {
+          inputRef.current.focus();
+        }, 0);
       }}
       onMouseLeave={() => setIsHovered(false)}
       onMouseEnter={() => setIsHovered(true)}
@@ -78,7 +106,7 @@ function DormantText({
       }}
     >
       <div ref={measureLabelHeight} className="w-full h-full">
-        {children}
+        {dormantChildren}
       </div>
       <button
         className={cn(
