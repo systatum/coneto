@@ -35,16 +35,19 @@ function DormantText({
   const [dormantedLocal, setDormantedLocal] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
   const [labelHeight, setLabelHeight] = useState<number>(0);
+  const [labelWidth, setLabelWidth] = useState<number>(0);
   const [inputHeight, setInputHeight] = useState<number>(0);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const dormantPencilSize = dormantedFontSize * 1.05;
 
-  const measureLabelHeight = (el: HTMLLabelElement | HTMLDivElement | null) => {
+  const measureLabelSize = (el: HTMLLabelElement | HTMLDivElement | null) => {
     if (el) {
       const height = el.getBoundingClientRect().height;
+      const width = el.getBoundingClientRect().width;
       if (el instanceof HTMLLabelElement) {
         setLabelHeight(height);
+        setLabelWidth(width);
       } else {
         setInputHeight(height);
       }
@@ -67,7 +70,7 @@ function DormantText({
 
   return dormantedLocal ? (
     <label
-      ref={measureLabelHeight}
+      ref={measureLabelSize}
       onClick={() => {
         setDormantedLocal(false);
         setIsHovered(false);
@@ -103,9 +106,10 @@ function DormantText({
       )}
       style={{
         minHeight: labelHeight,
+        maxWidth: labelWidth,
       }}
     >
-      <div ref={measureLabelHeight} className="w-full h-full">
+      <div ref={measureLabelSize} className="w-full h-full">
         {dormantChildren}
       </div>
       <button
