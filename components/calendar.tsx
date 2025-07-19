@@ -280,12 +280,6 @@ function Calendar({
       if (!isNaN(newDate.getTime())) {
         let validDate = newDate;
 
-        if (validDate < minDate) {
-          validDate = minDate;
-        } else if (validDate > maxDate) {
-          validDate = maxDate;
-        }
-
         if (disableWeekend) {
           const day = validDate.getDay();
           if (day === 6) {
