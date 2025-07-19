@@ -88,14 +88,6 @@ function Window({
       newSizes[nextIndex] = newNextSize;
 
       setSizes(newSizes);
-
-      console.log("Dragging:", {
-        isVertical,
-        currentPosition,
-        delta,
-        deltaRatio,
-        currentIndex: draggingIndex.current,
-      });
     },
     [isVertical]
   );
