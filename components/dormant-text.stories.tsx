@@ -135,3 +135,53 @@ export const WithCombobox: Story = {
     await userEvent.click(checkButton);
   },
 };
+
+export const FullWidth: Story = {
+  parameters: {
+    layout: "padded",
+  },
+  args: {
+    content: "Hello there, this is dormanted text",
+    dormantedFontSize: 30,
+  },
+  render: (args) => {
+    const [, setUpdateArgs] = useArgs();
+
+    const handleChange = (
+      e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+      const newValue = e.target.value;
+      setUpdateArgs({ content: newValue });
+      args.onChange?.(e);
+    };
+
+    return (
+      <DormantText
+        {...args}
+        fullWidth
+        onActionClick={() => {
+          console.log(`The value is : ${args.content}`);
+        }}
+      >
+        <Textbox value={args.content} onChange={handleChange} />
+      </DormantText>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const dormantLabel = await canvas.findByText(
+      "Hello there, this is dormanted text"
+    );
+    await userEvent.click(dormantLabel);
+
+    const textbox = await canvas.findByRole("textbox");
+    await userEvent.clear(textbox);
+    await userEvent.type(textbox, "Updated content");
+
+    const checkButton = await canvas.findByRole("button");
+    await userEvent.click(checkButton);
+
+    await expect(textbox).toHaveValue("Updated content");
+  },
+};

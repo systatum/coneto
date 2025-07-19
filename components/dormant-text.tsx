@@ -22,6 +22,7 @@ export interface DormantTextProps {
   dormantedFontSize?: number;
   children?: ReactNode;
   content?: string | number;
+  fullWidth?: boolean;
 }
 
 function DormantText({
@@ -31,6 +32,7 @@ function DormantText({
   icon: Icon = RiCheckLine,
   children,
   content,
+  fullWidth,
 }: DormantTextProps) {
   const [dormantedLocal, setDormantedLocal] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
@@ -106,7 +108,7 @@ function DormantText({
       )}
       style={{
         minHeight: labelHeight,
-        maxWidth: labelWidth,
+        maxWidth: fullWidth ? "100%" : labelWidth,
       }}
     >
       <div ref={measureLabelSize} className="w-full h-full">
