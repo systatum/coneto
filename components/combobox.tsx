@@ -1,4 +1,4 @@
-import { Ref, useEffect } from "react";
+import { Ref, useEffect, useMemo, useState } from "react";
 import { DrawerProps, OptionsProps, Selectbox } from "./selectbox";
 import { cn } from "./../lib/utils";
 import { RemixiconComponentType } from "@remixicon/react";
@@ -95,20 +95,24 @@ function ComboboxDrawer({
   actions,
   emptySlate = "Not Available.",
 }: ComboboxDrawerProps) {
-  useEffect(() => {
-    const selectedIndex = options.findIndex(
-      (option) => option.value === inputValue.value
-    );
+  const [hasScrolled, setHasScrolled] = useState(false);
 
-    if (selectedIndex !== -1) {
-      requestAnimationFrame(() => {
-        const selectedEl = listRef.current[selectedIndex];
-        if (selectedEl) {
+  const selectedIndex = useMemo(
+    () => options.findIndex((option) => option.value === inputValue.value),
+    [options, inputValue.value]
+  );
+
+  useEffect(() => {
+    if (!hasScrolled && inputValue?.value != null && options.length > 0) {
+      const selectedEl = listRef.current[selectedIndex];
+      if (selectedEl) {
+        requestAnimationFrame(() => {
           selectedEl.scrollIntoView({ block: "center" });
-        }
-      });
+        });
+        setHasScrolled(true);
+      }
     }
-  }, [inputValue.value, options, listRef]);
+  }, [selectedIndex]);
 
   return (
     <ul
