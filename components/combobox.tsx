@@ -1,4 +1,4 @@
-import { Ref, useEffect } from "react";
+import { forwardRef, Ref, useEffect } from "react";
 import { DrawerProps, OptionsProps, Selectbox } from "./selectbox";
 import { cn } from "./../lib/utils";
 import { RemixiconComponentType } from "@remixicon/react";
@@ -37,49 +37,55 @@ type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
     };
   };
 
-function Combobox({
-  options,
-  setInputValue,
-  clearable = false,
-  placeholder,
-  containerClassName,
-  highlightOnMatch = false,
-  emptySlate = "Not available.",
-  errorMessage,
-  label,
-  showError,
-  inputValue,
-  strict,
-  actions,
-}: ComboboxProps) {
-  return (
-    <div
-      className={cn(`flex w-full flex-col gap-2 text-xs`, containerClassName)}
-    >
-      {label && <label>{label}</label>}
-      <Selectbox
-        highlightOnMatch={highlightOnMatch}
-        containerClassName={containerClassName}
-        options={options}
-        inputValue={inputValue}
-        setInputValue={setInputValue}
-        placeholder={placeholder}
-        clearable={clearable}
-        strict={strict}
+const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
+  (
+    {
+      options,
+      setInputValue,
+      clearable = false,
+      placeholder,
+      containerClassName,
+      highlightOnMatch = false,
+      emptySlate = "Not available.",
+      errorMessage,
+      label,
+      showError,
+      inputValue,
+      strict,
+      actions,
+    },
+    ref
+  ) => {
+    return (
+      <div
+        className={cn(`flex w-full flex-col gap-2 text-xs`, containerClassName)}
       >
-        {(props) => (
-          <ComboboxDrawer
-            {...props}
-            emptySlate={emptySlate}
-            actions={actions}
-          />
-        )}
-      </Selectbox>
+        {label && <label>{label}</label>}
+        <Selectbox
+          ref={ref}
+          highlightOnMatch={highlightOnMatch}
+          containerClassName={containerClassName}
+          options={options}
+          inputValue={inputValue}
+          setInputValue={setInputValue}
+          placeholder={placeholder}
+          clearable={clearable}
+          strict={strict}
+        >
+          {(props) => (
+            <ComboboxDrawer
+              {...props}
+              emptySlate={emptySlate}
+              actions={actions}
+            />
+          )}
+        </Selectbox>
 
-      {showError && <span className="text-red-600">{errorMessage}</span>}
-    </div>
-  );
-}
+        {showError && <span className="text-red-600">{errorMessage}</span>}
+      </div>
+    );
+  }
+);
 
 function ComboboxDrawer({
   floatingStyles,

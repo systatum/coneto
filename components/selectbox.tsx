@@ -9,6 +9,7 @@ import {
   MutableRefObject,
   Ref,
   CSSProperties,
+  forwardRef,
 } from "react";
 import {
   useFloating,
@@ -69,280 +70,298 @@ export interface OptionsProps {
   value?: string | number;
 }
 
-function Selectbox({
-  setInputValue,
-  inputValue,
-  options = [],
-  placeholder,
-  children,
-  type = "default",
-  iconOpened: IconOpened = RiArrowDownSLine,
-  iconClosed: IconClosed = RiArrowUpSLine,
-  clearable = false,
-  containerClassName,
-  highlightOnMatch,
-  strict,
-}: SelectboxProps) {
-  const selectboxState = inputValue
-    ? inputValue
-    : {
-        text: "",
-        value: 0,
-      };
-  const [inputValueLocal, setInputValueLocal] =
-    useState<OptionsProps>(selectboxState);
+const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
+  (
+    {
+      setInputValue,
+      inputValue,
+      options = [],
+      placeholder,
+      children,
+      type = "default",
+      iconOpened: IconOpened = RiArrowDownSLine,
+      iconClosed: IconClosed = RiArrowUpSLine,
+      clearable = false,
+      containerClassName,
+      highlightOnMatch,
+      strict,
+    },
+    ref
+  ) => {
+    const selectboxState = inputValue
+      ? inputValue
+      : {
+          text: "",
+          value: 0,
+        };
+    const [inputValueLocal, setInputValueLocal] =
+      useState<OptionsProps>(selectboxState);
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [highlightedIndex, setHighlightedIndex] = useState(0);
-  const [hasInteracted, setHasInteracted] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
-  const [isFocused, setIsFocused] = useState(false);
-  const [confirmedValue, setConfirmedValue] = useState<OptionsProps | null>(
-    null
-  );
+    const [isOpen, setIsOpen] = useState(false);
+    const [highlightedIndex, setHighlightedIndex] = useState(0);
+    const [hasInteracted, setHasInteracted] = useState(false);
+    const [isHovered, setIsHovered] = useState(false);
+    const [isFocused, setIsFocused] = useState(false);
+    const [confirmedValue, setConfirmedValue] = useState<OptionsProps | null>(
+      null
+    );
 
-  const inputRef = useRef<HTMLInputElement>(null);
-  const listRef = useRef<(HTMLLIElement | null)[]>([]);
+    const inputRef = useRef<HTMLInputElement>(null);
+    const listRef = useRef<(HTMLLIElement | null)[]>([]);
 
-  const FILTERED_OPTIONS = hasInteracted
-    ? options.filter((opt) =>
-        opt.text.toLowerCase().includes(inputValueLocal.text.toLowerCase())
-      )
-    : options;
+    const FILTERED_OPTIONS = hasInteracted
+      ? options.filter((opt) =>
+          opt.text.toLowerCase().includes(inputValueLocal.text.toLowerCase())
+        )
+      : options;
 
-  const FILTERED_ACTIVE = options.filter(
-    (opt) => opt.text === inputValueLocal.text
-  );
+    const FILTERED_ACTIVE = options.filter(
+      (opt) => opt.text === inputValueLocal.text
+    );
 
-  const { refs, floatingStyles, context } = useFloating({
-    placement: "bottom-start" as Placement,
-    open: isOpen,
-    onOpenChange: setIsOpen,
-    middleware: [offset(4), flip(), shift()],
-    whileElementsMounted: autoUpdate,
-  });
+    const { refs, floatingStyles, context } = useFloating({
+      placement: "bottom-start" as Placement,
+      open: isOpen,
+      onOpenChange: setIsOpen,
+      middleware: [offset(4), flip(), shift()],
+      whileElementsMounted: autoUpdate,
+    });
 
-  const dismiss = useDismiss(context);
-  const { getFloatingProps, getReferenceProps } = useInteractions([dismiss]);
+    const dismiss = useDismiss(context);
+    const { getFloatingProps, getReferenceProps } = useInteractions([dismiss]);
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setHasInteracted?.(true);
-    let value = e.target.value;
-    if (type === "calendar") {
-      value = value.replace(/\D/g, "");
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+      setHasInteracted?.(true);
+      let value = e.target.value;
+      if (type === "calendar") {
+        value = value.replace(/\D/g, "");
 
-      if (value.length > 2 && value.length <= 4) {
-        value = value.slice(0, 2) + "/" + value.slice(2);
-      } else if (value.length > 4) {
-        value =
-          value.slice(0, 2) + "/" + value.slice(2, 4) + "/" + value.slice(4, 8);
-      }
-    }
-    if (setInputValue) {
-      setInputValue({ ...inputValue, text: value });
-    }
-    setInputValueLocal({ ...inputValueLocal, text: value });
-
-    setIsOpen(value.length > 0);
-    setHighlightedIndex(0);
-  };
-
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      if (!isOpen) {
-        setIsOpen(true);
-      }
-      setHighlightedIndex((prev) =>
-        Math.min(prev + 1, FILTERED_OPTIONS.length - 1)
-      );
-    } else if (e.key === "ArrowUp") {
-      e.preventDefault();
-      if (!isOpen) {
-        setIsOpen(true);
-      }
-      setHighlightedIndex((prev) => Math.max(prev - 1, 0));
-    } else if (e.key === "Enter") {
-      e.preventDefault();
-      const selected = FILTERED_OPTIONS[highlightedIndex];
-      if (selected) {
-        if (setInputValue) {
-          setInputValue?.(selected);
+        if (value.length > 2 && value.length <= 4) {
+          value = value.slice(0, 2) + "/" + value.slice(2);
+        } else if (value.length > 4) {
+          value =
+            value.slice(0, 2) +
+            "/" +
+            value.slice(2, 4) +
+            "/" +
+            value.slice(4, 8);
         }
-        setInputValueLocal(selected);
+      }
+      if (setInputValue) {
+        setInputValue({ ...inputValue, text: value });
+      }
+      setInputValueLocal({ ...inputValueLocal, text: value });
+
+      setIsOpen(value.length > 0);
+      setHighlightedIndex(0);
+    };
+
+    const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        if (!isOpen) {
+          setIsOpen(true);
+        }
+        setHighlightedIndex((prev) =>
+          Math.min(prev + 1, FILTERED_OPTIONS.length - 1)
+        );
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        if (!isOpen) {
+          setIsOpen(true);
+        }
+        setHighlightedIndex((prev) => Math.max(prev - 1, 0));
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        const selected = FILTERED_OPTIONS[highlightedIndex];
+        if (selected) {
+          if (setInputValue) {
+            setInputValue?.(selected);
+          }
+          setInputValueLocal(selected);
+          setIsOpen(false);
+          setHasInteracted(false);
+        }
+      } else if (e.key === "Escape") {
         setIsOpen(false);
         setHasInteracted(false);
       }
-    } else if (e.key === "Escape") {
-      setIsOpen(false);
-      setHasInteracted(false);
-    }
-  };
+    };
 
-  useEffect(() => {
-    if (isOpen && listRef.current[highlightedIndex]) {
-      listRef.current[highlightedIndex]?.scrollIntoView({ block: "nearest" });
-    }
-  }, [highlightedIndex, isOpen]);
+    useEffect(() => {
+      if (isOpen && listRef.current[highlightedIndex]) {
+        listRef.current[highlightedIndex]?.scrollIntoView({ block: "nearest" });
+      }
+    }, [highlightedIndex, isOpen]);
 
-  const selectBoxClass = cn(
-    "relative w-full text-xs ring-0",
-    containerClassName
-  );
+    const selectBoxClass = cn(
+      "relative w-full text-xs ring-0",
+      containerClassName
+    );
 
-  return (
-    <div
-      role="combobox"
-      aria-expanded={isOpen}
-      aria-haspopup="listbox"
-      aria-owns="combo-list"
-      aria-controls="combo-list"
-      aria-activedescendant={`option-${highlightedIndex}`}
-      className={selectBoxClass}
-    >
-      <input
-        {...getReferenceProps()}
-        ref={(el) => {
-          refs.setReference(el);
-          inputRef.current = el;
-        }}
-        type="text"
-        value={inputValue ? inputValue.text : inputValueLocal.text}
-        onChange={handleInputChange}
-        onKeyDown={handleKeyDown}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        onFocus={() => {
-          if (type === "calendar") {
-            setIsOpen(true);
-          } else if (inputValueLocal) {
-            setIsOpen(true);
-          }
-          setIsFocused(true);
-        }}
-        onBlur={() => {
-          setIsFocused(false);
-          if (strict) {
-            const matched = options.find(
-              (opt) => opt.text === inputValueLocal.text
-            );
-
-            if (matched) {
-              setConfirmedValue(matched);
-              setInputValueLocal(matched);
-              setInputValue?.(matched);
-            } else if (confirmedValue) {
-              setInputValueLocal(confirmedValue);
-              setInputValue?.(confirmedValue);
-            } else {
-              const empty = { text: "", value: 0 };
-              setInputValueLocal(empty);
-              setInputValue?.(empty);
+    return (
+      <div
+        role="combobox"
+        aria-expanded={isOpen}
+        aria-haspopup="listbox"
+        aria-owns="combo-list"
+        aria-controls="combo-list"
+        aria-activedescendant={`option-${highlightedIndex}`}
+        className={selectBoxClass}
+      >
+        <input
+          {...getReferenceProps()}
+          ref={(el) => {
+            refs.setReference(el);
+            inputRef.current = el;
+            if (typeof ref === "function") {
+              ref(el);
+            } else if (ref) {
+              (ref as MutableRefObject<HTMLInputElement | null>).current = el;
             }
-          }
-        }}
-        aria-autocomplete="list"
-        placeholder={placeholder || "Search your item..."}
-        className={cn(
-          "w-full rounded-xs border border-gray-100 px-3 py-2 outline-none",
-          isFocused &&
-            "focus:border-[#61A9F9] focus:ring-0 focus:ring-[#61A9F9]",
-          isHovered && "border-blue-200",
-          highlightOnMatch &&
-            FILTERED_ACTIVE.length > 0 &&
-            "border-[#61A9F9] hover:border-[#61A9F9]"
-        )}
-      />
+          }}
+          type="text"
+          value={inputValue ? inputValue.text : inputValueLocal.text}
+          onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          onFocus={() => {
+            if (type === "calendar") {
+              setIsOpen(true);
+            } else if (inputValueLocal) {
+              setIsOpen(true);
+            }
+            setIsFocused(true);
+          }}
+          onBlur={() => {
+            setIsFocused(false);
+            if (strict) {
+              const matched = options.find(
+                (opt) => opt.text === inputValueLocal.text
+              );
 
-      {clearable && inputValueLocal.text !== "" && (
-        <>
-          <RiCloseLine
-            onClick={() => {
-              if (setInputValue) {
-                setInputValue({
+              if (matched) {
+                setConfirmedValue(matched);
+                setInputValueLocal(matched);
+                setInputValue?.(matched);
+              } else if (confirmedValue) {
+                setInputValueLocal(confirmedValue);
+                setInputValue?.(confirmedValue);
+              } else {
+                const empty = { text: "", value: 0 };
+                setInputValueLocal(empty);
+                setInputValue?.(empty);
+              }
+            }
+          }}
+          aria-autocomplete="list"
+          placeholder={placeholder || "Search your item..."}
+          className={cn(
+            "w-full rounded-xs border border-gray-100 px-3 py-2 outline-none",
+            isFocused &&
+              "focus:border-[#61A9F9] focus:ring-0 focus:ring-[#61A9F9]",
+            isHovered && "border-blue-200",
+            highlightOnMatch &&
+              FILTERED_ACTIVE.length > 0 &&
+              "border-[#61A9F9] hover:border-[#61A9F9]"
+          )}
+        />
+
+        {clearable && inputValueLocal.text !== "" && (
+          <>
+            <RiCloseLine
+              onClick={() => {
+                if (setInputValue) {
+                  setInputValue({
+                    text: "",
+                    value: 0,
+                  });
+                }
+                setInputValueLocal({
                   text: "",
                   value: 0,
                 });
-              }
-              setInputValueLocal({
-                text: "",
-                value: 0,
-              });
-              setIsOpen(false);
-              setHasInteracted(false);
-            }}
-            size={12}
-            className={cn(
-              "absolute top-[11px] z-20 right-9 hover:bg-gray-200 hover:rounded-xs cursor-pointer text-gray-400",
-              highlightOnMatch &&
-                FILTERED_ACTIVE.length > 0 &&
-                "bg-[#61A9F9] text-white"
-            )}
-          />
-          <span
-            aria-label="divider"
-            className="absolute top-1/2 -translate-y-1/2 border-r border-gray-400 min-h-[15px] w-px right-[31px] font-extralight text-xs text-gray-400"
-          ></span>
-        </>
-      )}
-
-      <div
-        className="cursor-pointer"
-        onClick={() => {
-          setIsOpen((prev) => {
-            const newState = !prev;
-            if (newState && inputRef.current) {
-              inputRef.current.focus();
-            }
-            return newState;
-          });
-        }}
-      >
-        {isOpen ? (
-          <IconOpened
-            size={18}
-            className={cn(
-              "absolute text-gray-400 top-1/2 -translate-1/2 right-0.5",
-              highlightOnMatch && isFocused && "text-[#61A9F9]",
-              highlightOnMatch && FILTERED_ACTIVE.length > 0 && "text-[#61A9F9]"
-            )}
-          />
-        ) : (
-          <IconClosed
-            onMouseEnter={() => setIsHovered(true)}
-            size={18}
-            className={cn(
-              "absolute text-gray-400 top-1/2 -translate-1/2 right-0.5",
-              isHovered && highlightOnMatch && FILTERED_ACTIVE.length > 0
-                ? "hover:text-[#61A9F9]"
-                : "",
-              highlightOnMatch && FILTERED_ACTIVE.length > 0 && "text-[#61A9F9]"
-            )}
-          />
+                setIsOpen(false);
+                setHasInteracted(false);
+              }}
+              size={12}
+              className={cn(
+                "absolute top-[11px] z-20 right-9 hover:bg-gray-200 hover:rounded-xs cursor-pointer text-gray-400",
+                highlightOnMatch &&
+                  FILTERED_ACTIVE.length > 0 &&
+                  "bg-[#61A9F9] text-white"
+              )}
+            />
+            <span
+              aria-label="divider"
+              className="absolute top-1/2 -translate-y-1/2 border-r border-gray-400 min-h-[15px] w-px right-[31px] font-extralight text-xs text-gray-400"
+            ></span>
+          </>
         )}
-      </div>
 
-      {isOpen &&
-        children?.({
-          isOpen,
-          options: FILTERED_OPTIONS,
-          highlightedIndex,
-          setHighlightedIndex,
-          setInputValue: (e) => {
-            setInputValueLocal(e);
-            if (setInputValue) {
-              setInputValue(e);
-            }
-          },
-          inputValue: inputValue ? inputValue : inputValueLocal,
-          setIsOpen,
-          getFloatingProps,
-          refs,
-          floatingStyles,
-          listRef,
-        })}
-    </div>
-  );
-}
+        <div
+          className="cursor-pointer"
+          onClick={() => {
+            setIsOpen((prev) => {
+              const newState = !prev;
+              if (newState && inputRef.current) {
+                inputRef.current.focus();
+              }
+              return newState;
+            });
+          }}
+        >
+          {isOpen ? (
+            <IconOpened
+              size={18}
+              className={cn(
+                "absolute text-gray-400 top-1/2 -translate-1/2 right-0.5",
+                highlightOnMatch && isFocused && "text-[#61A9F9]",
+                highlightOnMatch &&
+                  FILTERED_ACTIVE.length > 0 &&
+                  "text-[#61A9F9]"
+              )}
+            />
+          ) : (
+            <IconClosed
+              onMouseEnter={() => setIsHovered(true)}
+              size={18}
+              className={cn(
+                "absolute text-gray-400 top-1/2 -translate-1/2 right-0.5",
+                isHovered && highlightOnMatch && FILTERED_ACTIVE.length > 0
+                  ? "hover:text-[#61A9F9]"
+                  : "",
+                highlightOnMatch &&
+                  FILTERED_ACTIVE.length > 0 &&
+                  "text-[#61A9F9]"
+              )}
+            />
+          )}
+        </div>
+
+        {isOpen &&
+          children?.({
+            isOpen,
+            options: FILTERED_OPTIONS,
+            highlightedIndex,
+            setHighlightedIndex,
+            setInputValue: (e) => {
+              setInputValueLocal(e);
+              if (setInputValue) {
+                setInputValue(e);
+              }
+            },
+            inputValue: inputValue ? inputValue : inputValueLocal,
+            setIsOpen,
+            getFloatingProps,
+            refs,
+            floatingStyles,
+            listRef,
+          })}
+      </div>
+    );
+  }
+);
 
 export { Selectbox };
