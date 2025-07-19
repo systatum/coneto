@@ -60,12 +60,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
       setDialogState(open);
 
       controls.start({
-        x:
-          open === "restored"
-            ? 0
-            : isLeft && dialogState === "minimized"
-              ? "-100%"
-              : "+100%",
+        x: open === "minimized" ? (isLeft ? "-100%" : "100%") : 0,
         transition: { type: "spring", stiffness: 300, damping: 30 },
       });
     };
@@ -140,7 +135,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                 >
                   <button
                     aria-label="Button Close"
-                    onClick={() => setDialogState(null)}
+                    onClick={() => setDialogState("closed")}
                     className={cn(
                       "relative w-fit cursor-pointer bg-white border-[#ebebeb] shadow-sm hover:bg-gray-100",
                       isLeft

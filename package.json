@@ -1,6 +1,6 @@
 {
   "name": "@systatum/coneto",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -72,6 +72,10 @@
     "./dialog": {
       "import": "./dist/components/dialog.js",
       "types": "./dist/components/dialog.d.ts"
+    },
+    "./dormanted-text": {
+      "import": "./dist/components/dormanted-text.js",
+      "types": "./dist/components/dormanted-text.d.ts"
     },
     "./drawer-tab": {
       "import": "./dist/components/drawer-tab.js",
@@ -249,6 +253,7 @@
     "type": "git",
     "url": "https://github.com/systatum/coneto"
   },
+  "homepage": "https://systatum.com",
   "author": "Adam Noto Hakarsa",
   "license": "MIT",
   "keywords": [

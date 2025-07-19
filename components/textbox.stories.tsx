@@ -50,7 +50,6 @@ const meta: Meta<typeof Textbox> = {
     },
     onChange: { action: "changed" },
     className: { control: false },
-    dormanted: { control: false },
     containerClassName: { control: false },
   },
   args: {
@@ -100,41 +99,6 @@ export const Input: Story = {
     const input = await canvas.getByRole("textbox");
     await userEvent.type(input, "This is input text", { delay: 50 });
     await expect(input).toHaveValue("This is input text");
-  },
-};
-
-export const Dormanted: Story = {
-  args: {
-    name: "input",
-    label: "Input",
-    placeholder: "Type here...",
-    value: "This is a dormanted text",
-    type: "text",
-    containerClassName: "justify-start",
-    className: "min-w-[400px]",
-    dormanted: true,
-    actionIcon: true,
-  },
-  render: (args) => {
-    const [, setUpdateArgs] = useArgs();
-
-    const handleChange = (
-      e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
-      const newValue = e.target.value;
-      setUpdateArgs({ value: newValue });
-      args.onChange?.(e);
-    };
-
-    return (
-      <Textbox
-        {...args}
-        onChange={handleChange}
-        onActionClick={() => {
-          console.log("Input change succeed.");
-        }}
-      />
-    );
   },
 };
 
