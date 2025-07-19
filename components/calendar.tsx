@@ -96,9 +96,9 @@ function Calendar({
   const [currentDate, setCurrentDate] = useState(stateDate);
 
   const currentMonth = monthNames.find(
-    (data) => data.value === stateDate.getMonth() + 1
+    (data) => data.value === today.getMonth() + 1
   );
-  const currentYear = stateDate.getFullYear();
+  const currentYear = today.getFullYear();
 
   const [calendarState, setCalendarState] = useState<CalendarStateProps>({
     open: false,
