@@ -190,7 +190,7 @@ function ChipsDrawer({
   cancelAddingButtonLabel = "Cancel",
   chipClassName,
   chipContainerClassName,
-  chipsDrawerClassName = "max-w-[250px]",
+  chipsDrawerClassName,
   filterPlaceholder = "Change or add labels...",
   inputValue,
   newLabelPlaceholder = "Create a new label:",
@@ -226,8 +226,8 @@ function ChipsDrawer({
   }, [isTyping]);
 
   const chipsDrawerClass = cn(
-    "flex flex-col bg-white border text-sm border-gray-300 rounded-xs w-full shadow-xs list-none outline-none z-[9999]",
-    chipsDrawerClassName
+    "flex flex-col bg-white border text-sm border-gray-300 rounded-xs w-fit shadow-xs list-none outline-none z-[9999] max-w-[240px]",
+    mode === "idle" && chipsDrawerClassName
   );
 
   const filteredSearch = options.filter(
@@ -309,7 +309,7 @@ function ChipsDrawer({
             type="text"
             placeholder={filterPlaceholder}
             value={inputValue.search}
-            className="border-none rounded-none"
+            className="border-none min-h-[34px] rounded-none"
             autoComplete="off"
             onChange={(e) => {
               setHasInteracted?.(true);
@@ -338,17 +338,14 @@ function ChipsDrawer({
                   await inputNameTagRef.current.focus();
                 }}
                 className={cn(
-                  "flex items-start cursor-pointer text-xs rounded-xs gap-1 text-black p-2",
-                  inputValue.search.length > 10 ? "flex-col" : "flex-row",
+                  "flex flex-row items-start justify-start cursor-pointer text-xs rounded-xs gap-1 text-black p-2 w-full",
                   hovered === 0 && "bg-blue-100"
                 )}
               >
-                <div className="flex flex-row w-full min-w-[130px] gap-1">
-                  <RiAddLine size={14} />
-                  <span>{newLabelPlaceholder}</span>
-                </div>
-                <span className="text-gray-600 w-full font-medium break-all">
-                  "{inputValue.search}"
+                <RiAddLine size={14} className="min-w-[14px]" />
+                <span className={"w-fit font-medium truncate"}>
+                  {newLabelPlaceholder}&nbsp;
+                  <span className="text-gray-600">"{inputValue.search}"</span>
                 </span>
               </div>
             )}
@@ -401,7 +398,7 @@ function ChipsDrawer({
       )}
 
       {mode === "create" && (
-        <div className="flex flex-col">
+        <div className="flex flex-col min-w-[240px]">
           <div className="flex flex-row py-2 px-3 gap-2 text-xs items-center font-medium">
             <RiAddBoxFill size={18} />
             <span className="pt-[2px]">Create a new tag</span>
