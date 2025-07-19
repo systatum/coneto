@@ -190,7 +190,7 @@ function ChipsDrawer({
   cancelAddingButtonLabel = "Cancel",
   chipClassName,
   chipContainerClassName,
-  chipsDrawerClassName = "max-w-[250px]",
+  chipsDrawerClassName,
   filterPlaceholder = "Change or add labels...",
   inputValue,
   newLabelPlaceholder = "Create a new label:",
@@ -226,7 +226,7 @@ function ChipsDrawer({
   }, [isTyping]);
 
   const chipsDrawerClass = cn(
-    "flex flex-col bg-white border text-sm border-gray-300 rounded-xs w-full shadow-xs list-none outline-none z-[9999]",
+    "flex flex-col bg-white border text-sm border-gray-300 rounded-xs w-fit shadow-xs list-none outline-none z-[9999]",
     chipsDrawerClassName
   );
 
@@ -338,8 +338,7 @@ function ChipsDrawer({
                   await inputNameTagRef.current.focus();
                 }}
                 className={cn(
-                  "flex items-start cursor-pointer text-xs rounded-xs gap-1 text-black p-2 w-full",
-                  inputValue.search.length > 10 ? "flex-col" : "flex-row",
+                  "flex flex-row items-start cursor-pointer text-xs rounded-xs gap-1 text-black p-2 min-w-[240px] max-w-[240px]",
                   hovered === 0 && "bg-blue-100"
                 )}
               >
@@ -349,9 +348,7 @@ function ChipsDrawer({
                 </div>
                 <span
                   className={cn(
-                    "text-gray-600 w-full font-medium break-all",
-
-                    inputValue.search.length <= 10 ? "truncate" : ""
+                    "text-gray-600 w-full font-medium break-all truncate"
                   )}
                 >
                   "{inputValue.search}"
@@ -407,7 +404,7 @@ function ChipsDrawer({
       )}
 
       {mode === "create" && (
-        <div className="flex flex-col">
+        <div className="flex flex-col min-w-[240px] max-w-[240px]">
           <div className="flex flex-row py-2 px-3 gap-2 text-xs items-center font-medium">
             <RiAddBoxFill size={18} />
             <span className="pt-[2px]">Create a new tag</span>
