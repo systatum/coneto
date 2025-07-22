@@ -49,7 +49,12 @@ function Colorbox({
             "w-[24px] h-[24px] rounded-xs mx-[4px] my-[4px] border cursor-pointer overflow-hidden",
             showError ? "border-red-500" : "border-gray-300"
           )}
-          style={{ backgroundColor: value }}
+          style={{
+            backgroundColor:
+              !value || value.trim() === "#" || value.trim() === ""
+                ? "#ffffff"
+                : value,
+          }}
           onClick={() => {
             document.getElementById(inputId)?.click();
             setHovered(true);
