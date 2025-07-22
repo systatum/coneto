@@ -10,6 +10,7 @@ import {
   ReactElement,
   ReactNode,
   Ref,
+  useEffect,
   useRef,
   useState,
 } from "react";
@@ -42,6 +43,16 @@ function DormantText({
 
   const inputRef = useRef<HTMLInputElement>(null);
   const dormantPencilSize = dormantedFontSize * 1.05;
+
+  useEffect(() => {
+    if (!inputRef.current) return;
+
+    const type = inputRef.current.dataset.type;
+
+    if (type === "selectbox") {
+      setLabelWidth((prev) => prev + 30);
+    }
+  }, [dormantedLocal]);
 
   const measureLabelSize = (el: HTMLLabelElement | HTMLDivElement | null) => {
     if (el) {
@@ -88,6 +99,7 @@ function DormantText({
         className
       )}
       style={{
+        minWidth: fullWidth && "100%",
         fontSize: dormantedFontSize,
       }}
     >
@@ -103,15 +115,20 @@ function DormantText({
   ) : (
     <div
       className={cn(
-        "relative w-full flex gap-[2px] flex-row ring-0 h-full justify-center items-center",
+        "relative w-full flex gap-[2px] flex-row ring-0 h-full justify-start items-center",
         className
       )}
       style={{
         minHeight: labelHeight,
-        maxWidth: fullWidth ? "100%" : labelWidth,
       }}
     >
-      <div ref={measureLabelSize} className="w-full h-full">
+      <div
+        style={{
+          maxWidth: labelWidth,
+        }}
+        ref={measureLabelSize}
+        className="w-full h-full"
+      >
         {dormantChildren}
       </div>
       <button
