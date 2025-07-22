@@ -91,26 +91,29 @@ function Badge({
     withCircle && "gap-2",
     className
   );
-  const badgeBackgroundColor = backgroundColor
-    ? backgroundColor
-    : backgroundColorVariant
-      ? backgroundColorVariant
+
+  const isInvalidColor = (color?: string | null) =>
+    !color || color.trim() === "#";
+
+  const badgeBackgroundColor = !isInvalidColor(backgroundColor)
+    ? backgroundColor!
+    : !isInvalidColor(backgroundColorVariant)
+      ? backgroundColorVariant!
       : "transparent";
 
-  const badgeTextColor = textColor
-    ? textColor
-    : colorVariant
-      ? colorVariant
+  const badgeTextColor = !isInvalidColor(textColor)
+    ? textColor!
+    : !isInvalidColor(colorVariant)
+      ? colorVariant!
       : "black";
-  const badgeCircleColor = circleColor
-    ? circleColor
-    : textColor
-      ? textColor
+
+  const badgeCircleColor = !isInvalidColor(circleColor)
+    ? circleColor!
+    : !isInvalidColor(textColor)
+      ? textColor!
       : colorVariant
         ? colorVariant
-        : circleColorLocal
-          ? circleColorLocal
-          : "black";
+        : (circleColorLocal ?? "black");
 
   return (
     <div
