@@ -211,6 +211,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       >
         <input
           {...getReferenceProps()}
+          data-type="selectbox"
           ref={(el) => {
             refs.setReference(el);
             inputRef.current = el;
