@@ -83,6 +83,19 @@ export const Clearable: Story = {
       { text: "Pineapple", value: 5 },
       { text: "Strawberry", value: 6 },
       { text: "Watermelon", value: 7 },
+      { text: "Mango", value: 8 },
+      { text: "Blueberry", value: 9 },
+      { text: "Kiwi", value: 10 },
+      { text: "Papaya", value: 11 },
+      { text: "Cherry", value: 12 },
+      { text: "Peach", value: 13 },
+      { text: "Plum", value: 14 },
+      { text: "Guava", value: 15 },
+      { text: "Raspberry", value: 16 },
+      { text: "Lychee", value: 17 },
+      { text: "Coconut", value: 18 },
+      { text: "Pear", value: 19 },
+      { text: "Pomegranate", value: 20 },
     ];
 
     return (

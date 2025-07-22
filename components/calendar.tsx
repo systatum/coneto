@@ -96,9 +96,9 @@ function Calendar({
   const [currentDate, setCurrentDate] = useState(stateDate);
 
   const currentMonth = monthNames.find(
-    (data) => data.value === stateDate.getMonth() + 1
+    (data) => data.value === today.getMonth() + 1
   );
-  const currentYear = stateDate.getFullYear();
+  const currentYear = today.getFullYear();
 
   const [calendarState, setCalendarState] = useState<CalendarStateProps>({
     open: false,
@@ -279,12 +279,6 @@ function Calendar({
       const newDate = new Date(inputValue.text);
       if (!isNaN(newDate.getTime())) {
         let validDate = newDate;
-
-        if (validDate < minDate) {
-          validDate = minDate;
-        } else if (validDate > maxDate) {
-          validDate = maxDate;
-        }
 
         if (disableWeekend) {
           const day = validDate.getDay();

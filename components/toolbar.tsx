@@ -133,7 +133,7 @@ function ToolbarMenu({
   const { refs, floatingStyles, update } = useFloating({
     open: isOpen,
     whileElementsMounted: autoUpdate,
-    middleware: [offset(6), flip({ padding: 80 }), shift()],
+    middleware: [offset(6), flip({ padding: 40 }), shift()],
     placement: "bottom-start",
   });
 
@@ -179,7 +179,7 @@ function ToolbarMenu({
 
   return (
     <div ref={containerRef} className="relative flex flex-col mr-1">
-      <div className={toolbarMenuClass}>
+      <div ref={refs.setReference} className={toolbarMenuClass}>
         {(Icon || caption) && (
           <>
             <div
@@ -211,7 +211,6 @@ function ToolbarMenu({
           </>
         )}
         <div
-          ref={refs.setReference}
           onMouseEnter={() => setHovered("dropdown")}
           onMouseLeave={() => setHovered("original")}
           className={cn(
