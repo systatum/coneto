@@ -42,6 +42,8 @@ export interface SelectboxProps {
   childClassName?: string;
   highlightOnMatch?: boolean;
   strict?: boolean;
+  onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
+  onClick?: () => void;
   children?: (
     props: DrawerProps & {
       options: OptionsProps[];
@@ -63,6 +65,7 @@ export interface DrawerProps {
   listRef: MutableRefObject<(HTMLLIElement | null)[]>;
   isOpen: boolean;
   className?: string;
+  onClick?: () => void;
 }
 
 export interface OptionsProps {
@@ -85,6 +88,8 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       containerClassName,
       highlightOnMatch,
       strict,
+      onKeyDown,
+      onClick,
     },
     ref
   ) => {
@@ -157,6 +162,9 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
     };
 
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+      if (onKeyDown) {
+        onKeyDown(e);
+      }
       if (e.key === "ArrowDown") {
         e.preventDefault();
         if (!isOpen) {
@@ -284,6 +292,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
                   value: 0,
                 });
                 setIsOpen(false);
+
                 setHasInteracted(false);
               }}
               size={12}
@@ -354,6 +363,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
               }
             },
             inputValue: inputValue ? inputValue : inputValueLocal,
+            onClick,
             setIsOpen,
             getFloatingProps,
             refs,

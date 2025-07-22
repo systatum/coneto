@@ -1,4 +1,11 @@
-import {forwardRef, Ref, useEffect, useMemo, useState } from "react";
+import {
+  forwardRef,
+  KeyboardEvent,
+  Ref,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 import { DrawerProps, OptionsProps, Selectbox } from "./selectbox";
 import { cn } from "./../lib/utils";
@@ -8,6 +15,8 @@ export type ComboboxProps = Partial<BaseComboboxProps> & {
   label?: string;
   showError?: boolean;
   errorMessage?: string;
+  onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
+  onClick?: () => void;
 };
 
 interface BaseComboboxProps {
@@ -54,6 +63,8 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       inputValue,
       strict,
       actions,
+      onKeyDown,
+      onClick,
     },
     ref
   ) => {
@@ -72,12 +83,14 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
           placeholder={placeholder}
           clearable={clearable}
           strict={strict}
+          onKeyDown={onKeyDown}
         >
           {(props) => (
             <ComboboxDrawer
               {...props}
               emptySlate={emptySlate}
               actions={actions}
+              onClick={onClick}
             />
           )}
         </Selectbox>
@@ -100,6 +113,7 @@ function ComboboxDrawer({
   setIsOpen,
   inputValue,
   actions,
+  onClick,
   emptySlate = "Not Available.",
 }: ComboboxDrawerProps) {
   const [hasScrolled, setHasScrolled] = useState(false);
@@ -181,6 +195,9 @@ function ComboboxDrawer({
               onMouseDown={() => {
                 setInputValue(option);
                 setIsOpen(false);
+                if (onClick) {
+                  onClick();
+                }
               }}
               onMouseEnter={() => {
                 setHighlightedIndex(index);
