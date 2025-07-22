@@ -6,7 +6,9 @@ import {
 import {
   Children,
   cloneElement,
+  InputHTMLAttributes,
   isValidElement,
+  KeyboardEvent,
   ReactElement,
   ReactNode,
   Ref,
@@ -24,6 +26,12 @@ export interface DormantTextProps {
   children?: ReactNode;
   content?: string | number;
   fullWidth?: boolean;
+  enableKeyDown?: boolean;
+  enableClick?: boolean;
+}
+
+export interface DormantTextRef {
+  doneEditing: () => void;
 }
 
 function DormantText({
@@ -34,6 +42,8 @@ function DormantText({
   children,
   content,
   fullWidth,
+  enableKeyDown,
+  enableClick,
 }: DormantTextProps) {
   const [dormantedLocal, setDormantedLocal] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
@@ -43,6 +53,21 @@ function DormantText({
 
   const inputRef = useRef<HTMLInputElement>(null);
   const dormantPencilSize = dormantedFontSize * 1.05;
+
+  const combinedRef = useRef<{
+    input: HTMLInputElement | null;
+    doneEditing: () => void;
+  }>({
+    input: null,
+    doneEditing: () => {
+      if (onActionClick) onActionClick();
+      setDormantedLocal(true);
+    },
+  });
+
+  useEffect(() => {
+    combinedRef.current.input = inputRef.current;
+  }, [inputRef.current]);
 
   useEffect(() => {
     if (!inputRef.current) return;
@@ -71,13 +96,26 @@ function DormantText({
     if (!isValidElement(child)) return null;
 
     const typedChild = child as ReactElement<
-      React.InputHTMLAttributes<HTMLInputElement> & {
+      InputHTMLAttributes<HTMLInputElement> & {
         ref?: Ref<HTMLInputElement>;
       }
     >;
 
     return cloneElement(typedChild, {
-      ref: inputRef,
+      ref: (el: HTMLInputElement | null) => {
+        inputRef.current = el;
+        combinedRef.current.input = el;
+      },
+      onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter" && enableKeyDown) {
+          combinedRef.current.doneEditing();
+        }
+      },
+      onClick: () => {
+        if (enableClick) {
+          combinedRef.current.doneEditing();
+        }
+      },
     });
   });
 
@@ -131,26 +169,28 @@ function DormantText({
       >
         {dormantChildren}
       </div>
-      <button
-        className={cn(
-          "text-muted-foreground flex min-w-[30px] p-[2px] relative rounded-xs transition-all duration-200 cursor-pointer hover:bg-gray-300"
-        )}
-        style={{
-          minHeight: 32.5 | inputHeight,
-        }}
-        onClick={(e) => {
-          e.preventDefault();
-          if (onActionClick) {
-            onActionClick();
-          }
-          setDormantedLocal(true);
-        }}
-      >
-        <Icon
-          className="top-1/2 -translate-y-1/2 left-[6px]  absolute"
-          size={18}
-        />
-      </button>
+      {(!enableKeyDown || !enableClick) && (
+        <button
+          className={cn(
+            "text-muted-foreground flex min-w-[30px] p-[2px] relative rounded-xs transition-all duration-200 cursor-pointer hover:bg-gray-300"
+          )}
+          style={{
+            minHeight: 32.5 | inputHeight,
+          }}
+          onClick={(e) => {
+            e.preventDefault();
+            if (onActionClick) {
+              onActionClick();
+            }
+            setDormantedLocal(true);
+          }}
+        >
+          <Icon
+            className="top-1/2 -translate-y-1/2 left-[6px]  absolute"
+            size={18}
+          />
+        </button>
+      )}
     </div>
   );
 }
