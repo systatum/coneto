@@ -7,7 +7,11 @@ import { Combobox } from "./combobox";
 import { expect, userEvent, within } from "@storybook/test";
 import { Datebox } from "./datebox";
 import { Colorbox, ColorPickProps } from "./colorbox";
-import { formatNumber, Moneybox } from "./moneybox";
+import { formatMoneyboxNumber, Moneybox } from "./moneybox";
+import { CountryCodeProps, formatPhoneboxNumber, Phonebox } from "./phonebox";
+import { COUNTRY_CODES } from "./../constants/countries";
+import { CountryCode } from "libphonenumber-js/types.cjs";
+import { Timebox } from "./timebox";
 
 const meta: Meta<typeof DormantText> = {
   title: "Stage/DormantText",
@@ -462,14 +466,12 @@ export const WithMoneybox: Story = {
       setValue((prev) => ({ ...prev, [name]: value }));
     };
 
-    console.log(value);
-
     return (
       <div className="flex flex-col gap-3">
         <div className="flex flex-col">
           <span className="font-medium">Normal Width</span>
           <DormantText
-            content={`$ ${formatNumber(value.normal, "comma")}`}
+            content={`$ ${formatMoneyboxNumber(value.normal, "comma")}`}
             onActionClick={() => {
               console.log(`Selected value: ${value.normal}`);
             }}
@@ -487,7 +489,7 @@ export const WithMoneybox: Story = {
           <span className="font-medium">Full Width</span>
           <DormantText
             fullWidth
-            content={`$ ${formatNumber(value.full, "comma")}`}
+            content={`$ ${formatMoneyboxNumber(value.full, "comma")}`}
             onActionClick={() => {
               console.log(`Selected value: ${value.full}`);
             }}
@@ -506,7 +508,7 @@ export const WithMoneybox: Story = {
           <DormantText
             fullWidth
             enableKeyDown
-            content={`$ ${formatNumber(value.keydown || "0", "comma")}`}
+            content={`$ ${formatMoneyboxNumber(value.keydown || "0", "comma")}`}
             onActionClick={() => {
               console.log(`Selected value: ${value.keydown}`);
             }}
@@ -517,6 +519,172 @@ export const WithMoneybox: Story = {
               value={value.keydown}
               onChange={onChangeValue}
               separator="comma"
+            />
+          </DormantText>
+        </div>
+      </div>
+    );
+  },
+};
+
+export const WithPhonebox: Story = {
+  parameters: {
+    layout: "padded",
+  },
+
+  render: () => {
+    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
+      (data) => data.id === "US"
+    )!;
+    const [value, setValue] = useState({
+      normal: {
+        country_code: DEFAULT_COUNTRY_CODES,
+        phone: "8123457890",
+      },
+      full: {
+        country_code: DEFAULT_COUNTRY_CODES,
+        phone: "8123457890",
+      },
+      keydown: {
+        country_code: DEFAULT_COUNTRY_CODES,
+        phone: "8123457890",
+      },
+    });
+
+    const onChangeValue = (
+      e:
+        | ChangeEvent<HTMLInputElement>
+        | { target: { name: string; value: CountryCodeProps } },
+      type?: string
+    ) => {
+      const { name, value } = e.target;
+      setValue((prev) => ({
+        ...prev,
+        [type]: { ...prev[type], [name]: value },
+      }));
+    };
+
+    return (
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-col">
+          <span className="font-medium">Normal Width</span>
+          <DormantText
+            content={`${value.normal.country_code.code} ${formatPhoneboxNumber(value.normal.phone, value.normal.country_code.id as CountryCode)}`}
+            onActionClick={() => {
+              console.log(`Selected value: ${value.normal}`);
+            }}
+          >
+            <Phonebox
+              value={value.normal.phone}
+              placeholder="Enter your phone number"
+              onChange={(e) => onChangeValue(e, "normal")}
+            />
+          </DormantText>
+        </div>
+        <div className="flex flex-col">
+          <span className="font-medium">Full Width</span>
+          <DormantText
+            fullWidth
+            content={`${value.full.country_code.code} ${formatPhoneboxNumber(value.full.phone, value.full.country_code.id as CountryCode)}`}
+            onActionClick={() => {
+              console.log(`Selected value: ${value.full}`);
+            }}
+          >
+            <Phonebox
+              value={value.full.phone}
+              placeholder="Enter your phone number"
+              onChange={(e) => onChangeValue(e, "normal")}
+              countryCodeValue={value.full.country_code}
+            />
+          </DormantText>
+        </div>
+        <div className="flex flex-col">
+          <span className="font-medium">Enable Enter Keydown</span>
+          <DormantText
+            fullWidth
+            enableKeyDown
+            content={`${value.keydown.country_code.code} ${formatPhoneboxNumber(value.keydown.phone, value.keydown.country_code.id as CountryCode)}`}
+            onActionClick={() => {
+              console.log(`Selected value: ${value.keydown}`);
+            }}
+          >
+            <Phonebox
+              value={value.keydown.phone}
+              placeholder="Enter your phone number"
+              onChange={(e) => onChangeValue(e, "keydown")}
+              countryCodeValue={value.keydown.country_code}
+            />
+          </DormantText>
+        </div>
+      </div>
+    );
+  },
+};
+
+export const WithTimebox: Story = {
+  parameters: {
+    layout: "padded",
+  },
+
+  render: () => {
+    const [value, setValue] = useState({
+      normal: "12:00:00",
+      full: "12:00:00",
+      keydown: "12:00:00",
+    });
+
+    const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+      setValue((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    };
+
+    return (
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-col">
+          <span className="font-medium">Normal Width</span>
+          <DormantText
+            content={value.normal}
+            onActionClick={() => {
+              console.log(`Selected value: ${value.normal}`);
+            }}
+          >
+            <Timebox
+              onChange={onChangeValue}
+              value={value.normal}
+              name="normal"
+            />
+          </DormantText>
+        </div>
+        <div className="flex flex-col">
+          <span className="font-medium">Full Width</span>
+          <DormantText
+            fullWidth
+            content={value.full}
+            onActionClick={() => {
+              console.log(`Selected value: ${value.full}`);
+            }}
+          >
+            <Timebox onChange={onChangeValue} value={value.full} name="full" />
+          </DormantText>
+        </div>
+        <div className="flex flex-col">
+          <span className="font-medium">Enable Enter Keydown</span>
+          <DormantText
+            fullWidth
+            enableKeyDown
+            content={value.keydown}
+            onActionClick={() => {
+              console.log(`Selected value: ${value.keydown}`);
+            }}
+          >
+            <Timebox
+              onChange={onChangeValue}
+              value={value.keydown}
+              name="keydown"
+              withSeconds
             />
           </DormantText>
         </div>
