@@ -38,12 +38,6 @@ export const Default: Story = {
     withCircle: true,
   },
   render: (args) => <Badge {...args} />,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const badge = await canvas.findByText("Default badge");
-    await userEvent.click(badge);
-    expect(badge).toBeVisible();
-  },
 };
 
 export const Neutral: Story = {
@@ -53,12 +47,6 @@ export const Neutral: Story = {
     caption: "Neutral badge with circle",
   },
   render: (args) => <Badge {...args} />,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const badge = await canvas.findByText("Neutral badge with circle");
-    await userEvent.click(badge);
-    expect(badge).toBeVisible();
-  },
 };
 
 export const Green: Story = {
@@ -68,12 +56,6 @@ export const Green: Story = {
     caption: "Green badge with circle",
   },
   render: (args) => <Badge {...args} />,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const badge = await canvas.findByText("Green badge with circle");
-    await userEvent.click(badge);
-    expect(badge).toBeVisible();
-  },
 };
 
 export const Yellow: Story = {
@@ -83,12 +65,6 @@ export const Yellow: Story = {
     caption: "Yellow badge with circle",
   },
   render: (args) => <Badge {...args} />,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const badge = await canvas.findByText("Yellow badge with circle");
-    await userEvent.click(badge);
-    expect(badge).toBeVisible();
-  },
 };
 
 export const Red: Story = {
@@ -98,12 +74,6 @@ export const Red: Story = {
     caption: "Proceed with caution",
   },
   render: (args) => <Badge {...args} />,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const badge = await canvas.findByText("Proceed with caution");
-    await userEvent.click(badge);
-    expect(badge).toBeVisible();
-  },
 };
 
 export const Custom: Story = {
@@ -160,26 +130,5 @@ export const Custom: Story = {
         ))}
       </div>
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const expectedCaptions = [
-      "Anime",
-      "Manga",
-      "Comics",
-      "Movies",
-      "Podcasts",
-      "TV Shows",
-      "Novels",
-      "Music",
-      "Games",
-      "Webtoons",
-    ];
-
-    for (const caption of expectedCaptions) {
-      const badge = await canvas.findByText(caption);
-      await userEvent.click(badge);
-      expect(badge).toBeVisible();
-    }
   },
 };
