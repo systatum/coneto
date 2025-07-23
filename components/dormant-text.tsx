@@ -26,8 +26,7 @@ export interface DormantTextProps {
   children?: ReactNode;
   content?: string | number;
   fullWidth?: boolean;
-  enableKeyDown?: boolean;
-  enableClick?: boolean;
+  acceptChangeOn?: "enter" | "click" | "all";
 }
 
 export interface DormantTextRef {
@@ -42,8 +41,7 @@ function DormantText({
   children,
   content,
   fullWidth,
-  enableKeyDown,
-  enableClick,
+  acceptChangeOn,
 }: DormantTextProps) {
   const [dormantedLocal, setDormantedLocal] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
@@ -107,12 +105,15 @@ function DormantText({
         combinedRef.current.input = el;
       },
       onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter" && enableKeyDown) {
+        if (
+          e.key === "Enter" &&
+          (acceptChangeOn === "enter" || acceptChangeOn === "all")
+        ) {
           combinedRef.current.doneEditing();
         }
       },
       onClick: () => {
-        if (enableClick) {
+        if (acceptChangeOn === "click" || acceptChangeOn === "all") {
           combinedRef.current.doneEditing();
         }
       },
@@ -169,7 +170,7 @@ function DormantText({
       >
         {dormantChildren}
       </div>
-      {(!enableKeyDown || !enableClick) && (
+      {(acceptChangeOn === "click" || acceptChangeOn === "enter") && (
         <button
           className={cn(
             "text-muted-foreground flex min-w-[30px] p-[2px] relative rounded-xs transition-all duration-200 cursor-pointer hover:bg-gray-300"

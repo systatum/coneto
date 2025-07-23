@@ -81,7 +81,7 @@ export const Default: Story = {
           <span className="font-medium">Enable Enter KeyDown</span>
           <DormantText
             fullWidth
-            enableKeyDown
+            acceptChangeOn={"enter"}
             content={value.keydown}
             onActionClick={() => {
               console.log(`The value is : ${value.keydown}`);
@@ -199,8 +199,7 @@ export const WithCombobox: Story = {
           </span>
           <DormantText
             fullWidth
-            enableKeyDown
-            enableClick
+            acceptChangeOn={"all"}
             content={value.keydown.text}
             onActionClick={() => {
               console.log(`Selected value: ${value.keydown.value}`);
@@ -332,7 +331,7 @@ export const WithDatebox: Story = {
           <span className="font-medium">Enable Clicked</span>
           <DormantText
             fullWidth
-            enableClick
+            acceptChangeOn={"click"}
             content={value.keydown.text}
             onActionClick={() => {
               console.log(`Selected value: ${value.keydown.value}`);
@@ -430,8 +429,7 @@ export const WithColorbox: Story = {
           <span className="font-medium">Enable Click & Enter Keydown</span>
           <DormantText
             fullWidth
-            enableClick
-            enableKeyDown
+            acceptChangeOn={"all"}
             content={value.keydown}
             onActionClick={() => {
               console.log(`Selected value: ${value.keydown}`);
@@ -507,7 +505,7 @@ export const WithMoneybox: Story = {
           <span className="font-medium">Enable Enter Keydown</span>
           <DormantText
             fullWidth
-            enableKeyDown
+            acceptChangeOn={"enter"}
             content={`$ ${formatMoneyboxNumber(value.keydown || "0", "comma")}`}
             onActionClick={() => {
               console.log(`Selected value: ${value.keydown}`);
@@ -602,7 +600,7 @@ export const WithPhonebox: Story = {
           <span className="font-medium">Enable Enter Keydown</span>
           <DormantText
             fullWidth
-            enableKeyDown
+            acceptChangeOn={"enter"}
             content={`${value.keydown.country_code.code} ${formatPhoneboxNumber(value.keydown.phone, value.keydown.country_code.id as CountryCode)}`}
             onActionClick={() => {
               console.log(`Selected value: ${value.keydown}`);
@@ -674,7 +672,7 @@ export const WithTimebox: Story = {
           <span className="font-medium">Enable Enter Keydown</span>
           <DormantText
             fullWidth
-            enableKeyDown
+            acceptChangeOn={"enter"}
             content={value.keydown}
             onActionClick={() => {
               console.log(`Selected value: ${value.keydown}`);
