@@ -271,7 +271,8 @@
     "type-check": "tsc --noEmit",
     "lint": "eslint '**/*.{ts,tsx}'",
     "format": "prettier --write .",
-    "build-chromatic": "npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN"
+    "build-chromatic": "npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN",
+    "test-cypress": "cypress open"
   },
   "peerDependencies": {
     "react": "^19.1.0",
@@ -316,6 +317,8 @@
     "autoprefixer": "^10.4.21",
     "barrelsby": "^2.8.1",
     "chromatic": "^11.28.2",
+    "cypress": "^14.5.2",
+    "dotenv": "^17.2.0",
     "eslint": "^9.26.0",
     "eslint-plugin-react": "^7.37.5",
     "globals": "^15.15.0",
