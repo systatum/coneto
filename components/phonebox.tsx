@@ -174,6 +174,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
       await setIsOpen(false);
       await setSearchTerm("");
       await setHighlightedIndex(0);
+
       if (onChange) {
         const syntheticEvent = {
           target: {
@@ -183,6 +184,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
         };
         await onChange(syntheticEvent);
       }
+
       phoneInputRef.current?.focus();
     };
 
@@ -317,7 +319,10 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
                   ref={(el) => {
                     listRef.current[index] = el;
                   }}
-                  onMouseDown={() => handleSelectCountry(country)}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    handleSelectCountry(country);
+                  }}
                   onMouseEnter={() => setHighlightedIndex(index)}
                   className={clsx(
                     "flex cursor-pointer items-center px-3 py-2 text-xs",
