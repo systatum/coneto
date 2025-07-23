@@ -74,6 +74,8 @@ function DormantText({
 
     if (type === "selectbox") {
       setLabelWidth((prev) => prev + 30);
+    } else if (type === "timebox") {
+      setLabelWidth((prev) => prev + 50);
     }
   }, [dormantedLocal]);
 
@@ -170,28 +172,26 @@ function DormantText({
       >
         {dormantChildren}
       </div>
-      {(acceptChangeOn === "click" || acceptChangeOn === "enter") && (
-        <button
-          className={cn(
-            "text-muted-foreground flex min-w-[30px] p-[2px] relative rounded-xs transition-all duration-200 cursor-pointer hover:bg-gray-300"
-          )}
-          style={{
-            minHeight: 32.5 | inputHeight,
-          }}
-          onClick={(e) => {
-            e.preventDefault();
-            if (onActionClick) {
-              onActionClick();
-            }
-            setDormantedLocal(true);
-          }}
-        >
-          <Icon
-            className="top-1/2 -translate-y-1/2 left-[6px]  absolute"
-            size={18}
-          />
-        </button>
-      )}
+      <button
+        className={cn(
+          "text-muted-foreground flex min-w-[30px] p-[2px] relative rounded-xs transition-all duration-200 cursor-pointer hover:bg-gray-300"
+        )}
+        style={{
+          minHeight: 32.5 | inputHeight,
+        }}
+        onClick={(e) => {
+          e.preventDefault();
+          if (onActionClick) {
+            onActionClick();
+          }
+          setDormantedLocal(true);
+        }}
+      >
+        <Icon
+          className="top-1/2 -translate-y-1/2 left-[6px]  absolute"
+          size={18}
+        />
+      </button>
     </div>
   );
 }
