@@ -115,7 +115,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
     };
 
     const inputClass = cn(
-      "w-[50px] text-center border-none items-center px-1 min-h-[30px] text-sm bg-white border border-gray-300 focus:outline-none placeholder:text-center",
+      "min-w-[50px] text-center border-none items-center min-h-[30px] text-sm bg-white border border-gray-300 focus:outline-none placeholder:text-center",
       "appearance-none [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
       disabled && "cursor-not-allowed opacity-50",
       inputClassName
@@ -123,8 +123,6 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
 
     const inputElement: ReactElement = (
       <div
-        data-type="timebox"
-        ref={ref}
         onKeyDown={(e) => {
           if (onKeyDown) {
             onKeyDown(e);
@@ -199,6 +197,8 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
 
     return (
       <div
+        data-type="timebox"
+        ref={ref}
         className={cn(
           `flex w-full flex-col gap-2 text-xs`,
           disabled && "cursor-not-allowed opacity-50",
