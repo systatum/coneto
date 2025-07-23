@@ -45,13 +45,16 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
     const [focus, setFocus] = useState(false);
 
     const [inputValue, setInputValue] = useState(() =>
-      formatNumber(unformatNumber(value ?? "", separator), separator)
+      formatMoneyboxNumber(
+        unformatMoneyboxNumber(value ?? "", separator),
+        separator
+      )
     );
 
     useEffect(() => {
       if (!focus && value !== undefined) {
-        const formatted = formatNumber(
-          unformatNumber(value, separator),
+        const formatted = formatMoneyboxNumber(
+          unformatMoneyboxNumber(value, separator),
           separator
         );
         if (formatted !== inputValue) {
@@ -64,7 +67,7 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
       const raw = e.target.value;
       setInputValue(raw);
 
-      const cleaned = unformatNumber(raw, separator);
+      const cleaned = unformatMoneyboxNumber(raw, separator);
       if (onChange) {
         const syntheticEvent = {
           target: {
@@ -117,7 +120,10 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
   }
 );
 
-const unformatNumber = (val: string, separator: SeparatorTypeProps): string => {
+const unformatMoneyboxNumber = (
+  val: string,
+  separator: SeparatorTypeProps
+): string => {
   if (!val) return "";
 
   if (separator === "dot") {
@@ -151,7 +157,10 @@ const unformatNumber = (val: string, separator: SeparatorTypeProps): string => {
   }
 };
 
-const formatNumber = (val: string, separator: SeparatorTypeProps): string => {
+const formatMoneyboxNumber = (
+  val: string,
+  separator: SeparatorTypeProps
+): string => {
   if (!val) return "";
 
   const [intPart, decimalPart = ""] = val.split(".");
@@ -173,4 +182,4 @@ const formatNumber = (val: string, separator: SeparatorTypeProps): string => {
   }
 };
 
-export { Moneybox, formatNumber };
+export { Moneybox, formatMoneyboxNumber };
