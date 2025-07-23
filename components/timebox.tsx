@@ -194,10 +194,11 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
     );
 
     const inputId = `textbox-${name}`;
+    const dataType = withSeconds ? `timebox-with-second` : `timebox`;
 
     return (
       <div
-        data-type="timebox"
+        data-type={dataType}
         ref={ref}
         className={cn(
           `flex w-full flex-col gap-2 text-xs`,

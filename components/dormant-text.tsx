@@ -74,8 +74,12 @@ function DormantText({
 
     if (type === "selectbox") {
       setLabelWidth((prev) => prev + 30);
-    } else if (type === "timebox") {
-      setLabelWidth((prev) => prev + 54);
+    } else if (type.startsWith("timebox")) {
+      if (type === "timebox-with-second") {
+        setLabelWidth((prev) => prev + 52);
+      } else {
+        setLabelWidth((prev) => prev);
+      }
     }
   }, [dormantedLocal]);
 
