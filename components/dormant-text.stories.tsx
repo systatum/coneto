@@ -78,7 +78,7 @@ export const Default: Story = {
           </DormantText>
         </div>
         <div className="flex flex-col">
-          <span className="font-medium">Enable Enter KeyDown</span>
+          <span className="font-medium">Change accepted by pressing enter</span>
           <DormantText
             fullWidth
             acceptChangeOn={"enter"}
@@ -195,7 +195,7 @@ export const WithCombobox: Story = {
         </div>
         <div className="flex flex-col">
           <span className="font-medium">
-            Enable Enter KeyDown & Enable Click
+            Change accepted by pressing enter or clicking some values
           </span>
           <DormantText
             fullWidth
@@ -328,7 +328,9 @@ export const WithDatebox: Story = {
           </DormantText>
         </div>
         <div className="flex flex-col">
-          <span className="font-medium">Enable Clicked</span>
+          <span className="font-medium">
+            Change accepted by clicking some values
+          </span>
           <DormantText
             fullWidth
             acceptChangeOn={"click"}
@@ -426,7 +428,9 @@ export const WithColorbox: Story = {
           </DormantText>
         </div>
         <div className="flex flex-col">
-          <span className="font-medium">Enable Click & Enter Keydown</span>
+          <span className="font-medium">
+            Change accepted by pressing enter or clicking some values
+          </span>
           <DormantText
             fullWidth
             acceptChangeOn={"all"}
@@ -502,7 +506,7 @@ export const WithMoneybox: Story = {
           </DormantText>
         </div>
         <div className="flex flex-col">
-          <span className="font-medium">Enable Enter Keydown</span>
+          <span className="font-medium">Change accepted by pressing enter</span>
           <DormantText
             fullWidth
             acceptChangeOn={"enter"}
@@ -597,7 +601,7 @@ export const WithPhonebox: Story = {
           </DormantText>
         </div>
         <div className="flex flex-col">
-          <span className="font-medium">Enable Enter Keydown</span>
+          <span className="font-medium">Change accepted by pressing enter</span>
           <DormantText
             fullWidth
             acceptChangeOn={"enter"}
@@ -627,7 +631,6 @@ export const WithTimebox: Story = {
   render: () => {
     const [value, setValue] = useState({
       normal: "12:00:00",
-      full: "12:00:00",
       keydown: "12:00:00",
     });
 
@@ -657,21 +660,8 @@ export const WithTimebox: Story = {
           </DormantText>
         </div>
         <div className="flex flex-col">
-          <span className="font-medium">Full Width</span>
+          <span className="font-medium">Change accepted by pressing enter</span>
           <DormantText
-            fullWidth
-            content={value.full}
-            onActionClick={() => {
-              console.log(`Selected value: ${value.full}`);
-            }}
-          >
-            <Timebox onChange={onChangeValue} value={value.full} name="full" />
-          </DormantText>
-        </div>
-        <div className="flex flex-col">
-          <span className="font-medium">Enable Enter Keydown</span>
-          <DormantText
-            fullWidth
             acceptChangeOn={"enter"}
             content={value.keydown}
             onActionClick={() => {
