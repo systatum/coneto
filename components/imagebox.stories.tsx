@@ -14,12 +14,10 @@ type Story = StoryObj<typeof Imagebox>;
 
 export const ExtraSmall: Story = {
   render: () => {
-    const [value, setValue] = useState();
+    const [, setValue] = useState();
     const onChangeValue = (e) => {
       setValue(e);
     };
-
-    console.log(value);
 
     return <Imagebox size="xs" onFilesSelected={onChangeValue} />;
   },
@@ -27,12 +25,10 @@ export const ExtraSmall: Story = {
 
 export const Small: Story = {
   render: () => {
-    const [value, setValue] = useState();
+    const [, setValue] = useState();
     const onChangeValue = (e) => {
       setValue(e);
     };
-
-    console.log(value);
 
     return <Imagebox size="sm" onFilesSelected={onChangeValue} />;
   },
@@ -40,12 +36,10 @@ export const Small: Story = {
 
 export const Medium: Story = {
   render: () => {
-    const [value, setValue] = useState();
+    const [, setValue] = useState();
     const onChangeValue = (e) => {
       setValue(e);
     };
-
-    console.log(value);
 
     return <Imagebox size="md" onFilesSelected={onChangeValue} />;
   },
@@ -53,12 +47,10 @@ export const Medium: Story = {
 
 export const Large: Story = {
   render: () => {
-    const [value, setValue] = useState();
+    const [, setValue] = useState();
     const onChangeValue = (e) => {
       setValue(e);
     };
-
-    console.log(value);
 
     return <Imagebox size="lg" onFilesSelected={onChangeValue} />;
   },
