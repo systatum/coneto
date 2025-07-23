@@ -385,9 +385,11 @@ export const WithColorbox: Story = {
         }));
       } else if (data === "color-text") {
         let val = value;
+
         if (!val.startsWith("#")) {
           val = "#" + val;
         }
+
         const isValidHex = isValidHexColor(val);
         setValue((prev) => ({
           ...prev,
