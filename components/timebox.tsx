@@ -4,6 +4,7 @@ import {
   KeyboardEvent,
   ReactElement,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import { cn } from "./../lib/utils";
@@ -49,6 +50,8 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
     const [second, setSecond] = useState<string>("");
     const [isFocused, setIsFocused] = useState(false);
 
+    const inputRef = useRef<HTMLInputElement>(null);
+
     useEffect(() => {
       if (valueLocal) {
         const parts = valueLocal.split(":");
@@ -56,6 +59,15 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
         setHour(hh ?? "00");
         setMinute(mm ?? "00");
         setSecond(ss ?? "00");
+      }
+    }, []);
+
+    useEffect(() => {
+      let didFocusInitially = false;
+
+      if (!didFocusInitially) {
+        didFocusInitially = true;
+        inputRef.current?.focus();
       }
     }, []);
 
@@ -111,6 +123,8 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
 
     const inputElement: ReactElement = (
       <div
+        data-type="timebox"
+        ref={ref}
         onKeyDown={(e) => {
           if (onKeyDown) {
             onKeyDown(e);
@@ -124,7 +138,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
         )}
       >
         <input
-          ref={ref}
+          ref={inputRef}
           type="number"
           placeholder="HH"
           disabled={!editable || disabled}
