@@ -116,6 +116,15 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
       setPhoneNumber(formatted);
     }, [value]);
 
+    useEffect(() => {
+      let didFocusInitially = false;
+
+      if (!didFocusInitially) {
+        didFocusInitially = true;
+        phoneInputRef.current?.focus();
+      }
+    }, []);
+
     const listRef = useRef<(HTMLDivElement | null)[]>([]);
     useEffect(() => {
       if (isOpen && listRef.current[highlightedIndex]) {
