@@ -70,11 +70,11 @@ function DormantText({
   useEffect(() => {
     if (!inputRef.current) return;
 
-    const type = inputRef.current.dataset.type;
+    const type = String(inputRef.current.dataset.type);
 
     if (type === "selectbox") {
       setLabelWidth((prev) => prev + 30);
-    } else if (typeof type === "string" && type.startsWith("timebox")) {
+    } else if (type.startsWith("timebox")) {
       if (type === "timebox-with-second") {
         setLabelWidth((prev) => prev + 52);
       } else {
