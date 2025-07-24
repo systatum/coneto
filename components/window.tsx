@@ -149,6 +149,7 @@ function Window({
 
           {index < childrenArray.length - 1 && (
             <div
+              data-testid={`window-divider-${index}`}
               onMouseDown={startDrag(index)}
               className={cn(
                 "absolute z-10 bg-transparent transition-colors",
@@ -187,9 +188,12 @@ function WindowCell({ children, className, actions }: WindowCellProps) {
                 )}
               >
                 {data.icon && (
-                  <span className="absolute hover:bg-gray-400 transition-all duration-300 right-2 top-1/2 -translate-y-1/2">
+                  <button
+                    data-testid="window-button"
+                    className="absolute hover:bg-gray-400 transition-all duration-300 right-2 top-1/2 -translate-y-1/2"
+                  >
                     <data.icon size={16} />
-                  </span>
+                  </button>
                 )}
               </div>
             ))}

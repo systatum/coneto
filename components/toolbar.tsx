@@ -178,7 +178,11 @@ function ToolbarMenu({
   );
 
   return (
-    <div ref={containerRef} className="relative flex flex-col mr-1">
+    <div
+      data-testid={`toolbar-menu-${caption}`}
+      ref={containerRef}
+      className="relative flex flex-col mr-1"
+    >
       <div ref={refs.setReference} className={toolbarMenuClass}>
         {(Icon || caption) && (
           <>

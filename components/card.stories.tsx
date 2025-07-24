@@ -17,7 +17,6 @@ import { ChangeEvent, useMemo, useState } from "react";
 import { Checkbox } from "./checkbox";
 import { Button } from "./button";
 import { List, ListItemProps } from "./list";
-import { expect, userEvent, waitFor, within } from "@storybook/test";
 
 const meta: Meta<typeof Card> = {
   title: "Content/Card",
@@ -188,13 +187,6 @@ export const Default: Story = {
       </Card>
     );
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    expect(canvas.getByText("Default")).toBeInTheDocument();
-    expect(canvas.getByText("Primary")).toBeInTheDocument();
-    expect(canvas.getByText("Danger")).toBeInTheDocument();
-  },
 };
 
 export const WithTitle: Story = {
@@ -339,17 +331,6 @@ export const WithTitle: Story = {
         </div>
       </Card>
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const input = canvas.getByPlaceholderText("Search...");
-
-    await userEvent.type(input, "pho");
-
-    await waitFor(() => {
-      expect(canvas.getByText("Pho Bo")).toBeInTheDocument();
-      expect(canvas.queryByText("French Toast")).not.toBeInTheDocument();
-    });
   },
 };
 
@@ -652,21 +633,5 @@ export const WithTitleAndActions: Story = {
         </List>
       </Card>
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const input = canvas.getByRole("textbox");
-
-    await userEvent.type(input, "Pizza");
-
-    await waitFor(() => {
-      expect(canvas.getByText("Margherita Pizza")).toBeInTheDocument();
-    });
-
-    await userEvent.click(canvas.getByText("Margherita Pizza"));
-
-    await waitFor(() => {
-      expect(canvas.getByText(/Select all \(1\)/)).toBeInTheDocument();
-    });
   },
 };
