@@ -50,7 +50,9 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
     const [second, setSecond] = useState<string>("");
     const [isFocused, setIsFocused] = useState(false);
 
-    const inputRef = useRef<HTMLInputElement>(null);
+    const hourRef = useRef<HTMLInputElement>(null);
+    const minuteRef = useRef<HTMLInputElement>(null);
+    const secondRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
       if (valueLocal) {
@@ -67,7 +69,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
 
       if (!didFocusInitially) {
         didFocusInitially = true;
-        inputRef.current?.focus();
+        hourRef.current?.focus();
       }
     }, []);
 
@@ -115,7 +117,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
     };
 
     const inputClass = cn(
-      "min-w-[50px] text-center border-none items-center min-h-[30px] text-sm bg-white border border-gray-300 focus:outline-none placeholder:text-center",
+      "min-w-[50px] max-w-[50px] text-center border-none items-center min-h-[30px] text-sm bg-white border border-gray-300 focus:outline-none placeholder:text-center",
       "appearance-none [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
       disabled && "cursor-not-allowed opacity-50",
       inputClassName
@@ -136,8 +138,9 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
         )}
       >
         <input
-          ref={inputRef}
-          type="number"
+          ref={hourRef}
+          type="text"
+          inputMode="numeric"
           placeholder="HH"
           disabled={!editable || disabled}
           value={hour}
@@ -151,10 +154,27 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
           min={0}
           max={24}
           className={inputClass}
+          onKeyDown={(e) => {
+            if (
+              e.key === "ArrowRight" &&
+              e.currentTarget.selectionEnd !== null &&
+              e.currentTarget.selectionEnd === e.currentTarget.value.length
+            ) {
+              e.preventDefault();
+              minuteRef.current?.focus();
+            }
+
+            if (e.key === ":") {
+              e.preventDefault();
+              minuteRef.current?.focus();
+            }
+          }}
         />
         <span className="-translate-y-[1px]">:</span>
         <input
-          type="number"
+          ref={minuteRef}
+          type="text"
+          inputMode="numeric"
           placeholder="MM"
           disabled={!editable || disabled}
           value={minute}
@@ -168,12 +188,42 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
           min={0}
           max={59}
           className={inputClass}
+          onKeyDown={(e) => {
+            const { selectionStart, selectionEnd, value } = e.currentTarget;
+
+            if (
+              e.key === "ArrowRight" &&
+              selectionEnd !== null &&
+              selectionEnd === value.length
+            ) {
+              e.preventDefault();
+              if (withSeconds) {
+                secondRef.current?.focus();
+              }
+            }
+
+            if (
+              e.key === "ArrowLeft" &&
+              selectionStart !== null &&
+              selectionStart === 0
+            ) {
+              e.preventDefault();
+              hourRef.current?.focus();
+            }
+
+            if (e.key === ":") {
+              e.preventDefault();
+              secondRef.current?.focus();
+            }
+          }}
         />
         {withSeconds && (
           <>
             <span className="-translate-y-[1px]">:</span>
             <input
-              type="number"
+              ref={secondRef}
+              type="text"
+              inputMode="numeric"
               placeholder="SS"
               disabled={!editable || disabled}
               value={second}
@@ -187,6 +237,16 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
               min={0}
               max={59}
               className={inputClass}
+              onKeyDown={(e) => {
+                if (
+                  e.key === "ArrowLeft" &&
+                  e.currentTarget.selectionStart !== null &&
+                  e.currentTarget.selectionStart === 0
+                ) {
+                  e.preventDefault();
+                  minuteRef.current?.focus();
+                }
+              }}
             />
           </>
         )}
