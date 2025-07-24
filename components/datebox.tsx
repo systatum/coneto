@@ -12,7 +12,7 @@ type CalendarDrawerProps = BaseCalendarProps & Partial<DrawerProps>;
 
 function Datebox(props: DateboxProps) {
   return (
-    <div className={cn(`flex w-full flex-col gap-2 text-xs`)}>
+    <div className={cn(`flex w-full flex-col gap-2 text-xs `)}>
       {props.label && <label>{props.label}</label>}
       <div className="flex flex-col gap-1 text-xs">
         <Selectbox
@@ -38,7 +38,7 @@ function Datebox(props: DateboxProps) {
 function CalendarDrawer(props: CalendarDrawerProps) {
   const calendarClass = cn(
     "flex flex-col gap-1 bg-white border border-gray-300 rounded-xs w-full shadow-xs list-none outline-none",
-    "p-2 z-[9999] p-2 text-sm max-w-[300px] flex flex-col gap-2 bg-white border border-gray-300 rounded-xs w-full shadow-xs list-none outline-none",
+    "p-2 z-[9999] p-2 text-sm max-w-[300px] min-w-[295px] flex flex-col gap-2 bg-white border border-gray-300 rounded-xs w-full shadow-xs list-none outline-none",
     props.containerClassName
   );
 

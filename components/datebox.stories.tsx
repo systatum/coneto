@@ -44,11 +44,10 @@ export const Default: Story = {
       { text: "DEC", value: 12 },
     ];
 
-    const [value, setValue] = useState<OptionsProps>({
+    const [, setValue] = useState<OptionsProps>({
       text: "",
       value: 0,
     });
-    console.log(value);
 
     return (
       <div className="w-[295px]">
@@ -105,12 +104,10 @@ export const NoWeekends: Story = {
       { text: "DEC", value: 12 },
     ];
 
-    const [value, setValue] = useState<OptionsProps>({
+    const [, setValue] = useState<OptionsProps>({
       text: "",
       value: 0,
     });
-
-    console.log(value);
 
     return (
       <div className="w-[295px]">
