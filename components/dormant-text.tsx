@@ -44,7 +44,6 @@ function DormantText({
   acceptChangeOn,
 }: DormantTextProps) {
   const [dormantedLocal, setDormantedLocal] = useState(true);
-  const [isHovered, setIsHovered] = useState(false);
   const [labelHeight, setLabelHeight] = useState<number>(0);
   const [labelWidth, setLabelWidth] = useState<number>(0);
   const [inputHeight, setInputHeight] = useState<number>(0);
@@ -127,16 +126,12 @@ function DormantText({
       ref={measureLabelSize}
       onClick={() => {
         setDormantedLocal(false);
-        setIsHovered(false);
-
         setTimeout(() => {
           inputRef.current.focus();
         }, 0);
       }}
-      onMouseLeave={() => setIsHovered(false)}
-      onMouseEnter={() => setIsHovered(true)}
       className={cn(
-        "p-2 rounded-xs cursor-pointer duration-100 transform transition-all flex flex-row justify-between items-center w-fit relative gap-1 hover:bg-[#e9e9e9] border hover:border-[#e9e9e9] border-transparent",
+        "group p-2 rounded-xs cursor-pointer duration-100 transform transition-all flex flex-row justify-between items-center w-fit relative gap-1 hover:bg-[#e9e9e9] border hover:border-[#e9e9e9] border-transparent",
         className
       )}
       style={{
@@ -146,10 +141,9 @@ function DormantText({
     >
       {content}
       <RiPencilFill
-        className={cn(
-          "duration-100 transform transition-all",
-          isHovered ? "opacity-100" : "opacity-0 pointer-events-none"
-        )}
+        className={
+          "duration-100 transform transition-all opacity-0 group-hover:opacity-100"
+        }
         size={dormantPencilSize}
       />
     </label>
