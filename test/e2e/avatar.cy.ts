@@ -1,4 +1,4 @@
-import { getIdContent } from "cypress/support/commands";
+import { getIdContent } from "test/support/commands";
 
 describe("Avatar Component", () => {
   it("should render Default avatar and be visible", () => {

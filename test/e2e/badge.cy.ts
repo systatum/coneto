@@ -1,4 +1,4 @@
-import { getIdContent } from "cypress/support/commands";
+import { getIdContent } from "test/support/commands";
 
 describe("Badge Component", () => {
   it("should show and allow clicking the Default badge", () => {
