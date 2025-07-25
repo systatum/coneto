@@ -58,7 +58,6 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
 
     const handleToggleDrawer = (open: DialogState) => {
       setDialogState(open);
-
       controls.start({
         x:
           open === "restored"
@@ -139,7 +138,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                   )}
                 >
                   <button
-                    aria-label="Button Close"
+                    aria-label="button-close"
                     onClick={() => setDialogState(null)}
                     className={cn(
                       "relative w-fit cursor-pointer bg-white border-[#ebebeb] shadow-sm hover:bg-gray-100",
@@ -210,6 +209,7 @@ function PaperDialogTrigger({
 }: PaperDialogTriggerProps) {
   return (
     <Button
+      aria-label="paper-dialog-trigger"
       onClick={() => {
         setDialogState("restored");
       }}

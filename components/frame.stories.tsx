@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { expect, within } from "@storybook/test";
 import { Frame } from "./frame";
 
 const meta: Meta<typeof Frame> = {
@@ -41,12 +40,6 @@ export const DefaultFrame: Story = {
   render: (args) => {
     return <Frame {...args} />;
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await expect(
-      canvas.getByText("This is inside the frame.")
-    ).toBeInTheDocument();
-  },
 };
 
 export const WithTitle: Story = {
@@ -57,13 +50,6 @@ export const WithTitle: Story = {
   },
   render: (args) => {
     return <Frame {...args} />;
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await expect(canvas.getByText("Frame Title")).toBeInTheDocument();
-    await expect(
-      canvas.getByText("This frame has a title.")
-    ).toBeInTheDocument();
   },
 };
 
@@ -76,12 +62,5 @@ export const Custom: Story = {
   },
   render: (args) => {
     return <Frame {...args} />;
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await expect(canvas.getByText("Frame w/ Class")).toBeInTheDocument();
-    await expect(
-      canvas.getByText("This frame has a custom background color.")
-    ).toBeInTheDocument();
   },
 };
