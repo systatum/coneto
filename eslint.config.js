@@ -64,11 +64,12 @@ export default [
         ...globals.node,
         ...globals.mocha,
         cy: true,
+        expect: true,
       },
     },
     rules: {
       "no-undef": "error",
-      "cypress/no-unnecessary-waiting": "warn",
+      "cypress/no-unnecessary-waiting": "off",
     },
   },
   {
