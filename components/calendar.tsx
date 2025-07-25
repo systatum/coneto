@@ -21,6 +21,7 @@ export interface BaseCalendarProps {
   containerClassName?: string;
   yearPastReach?: number;
   futurePastReach?: number;
+  onClick?: () => void;
 }
 
 type CalendarProps = BaseCalendarProps &
@@ -89,6 +90,7 @@ function Calendar({
   label,
   showError,
   errorMessage,
+  onClick,
 }: CalendarProps) {
   const parsedDate = inputValue?.text ? new Date(inputValue.text) : new Date();
   const stateDate = isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
@@ -437,11 +439,14 @@ function Calendar({
                 role="option"
                 aria-selected={isHighlighted}
                 id={`option-${idx}`}
-                onClick={() => {
+                onClick={async () => {
                   if (isWeekend && disableWeekend) {
                     return;
                   }
-                  handleSelect(date);
+                  await handleSelect(date);
+                  if (onClick) {
+                    onClick();
+                  }
                 }}
                 onMouseEnter={() => setHighlightedIndexChange(idx)}
                 tabIndex={isHighlighted ? 0 : -1}

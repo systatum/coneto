@@ -165,7 +165,6 @@ function FormFields<T extends FieldValues>({
             render={({ field: controllerField }) => (
               <>
                 <Phonebox
-                  phoneNumber={controllerField.value}
                   label={field.title}
                   value={controllerField.value}
                   onChange={(e) => {

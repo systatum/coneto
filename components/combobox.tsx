@@ -1,4 +1,12 @@
-import { Ref, useEffect, useMemo, useState } from "react";
+import {
+  forwardRef,
+  KeyboardEvent,
+  Ref,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+
 import { DrawerProps, OptionsProps, Selectbox } from "./selectbox";
 import { cn } from "./../lib/utils";
 import { RemixiconComponentType } from "@remixicon/react";
@@ -7,6 +15,8 @@ export type ComboboxProps = Partial<BaseComboboxProps> & {
   label?: string;
   showError?: boolean;
   errorMessage?: string;
+  onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
+  onClick?: () => void;
 };
 
 interface BaseComboboxProps {
@@ -37,49 +47,59 @@ type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
     };
   };
 
-function Combobox({
-  options,
-  setInputValue,
-  clearable = false,
-  placeholder,
-  containerClassName,
-  highlightOnMatch = false,
-  emptySlate = "Not available.",
-  errorMessage,
-  label,
-  showError,
-  inputValue,
-  strict,
-  actions,
-}: ComboboxProps) {
-  return (
-    <div
-      className={cn(`flex w-full flex-col gap-2 text-xs`, containerClassName)}
-    >
-      {label && <label>{label}</label>}
-      <Selectbox
-        highlightOnMatch={highlightOnMatch}
-        containerClassName={containerClassName}
-        options={options}
-        inputValue={inputValue}
-        setInputValue={setInputValue}
-        placeholder={placeholder}
-        clearable={clearable}
-        strict={strict}
+const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
+  (
+    {
+      options,
+      setInputValue,
+      clearable = false,
+      placeholder,
+      containerClassName,
+      highlightOnMatch = false,
+      emptySlate = "Not available.",
+      errorMessage,
+      label,
+      showError,
+      inputValue,
+      strict,
+      actions,
+      onKeyDown,
+      onClick,
+    },
+    ref
+  ) => {
+    return (
+      <div
+        className={cn(`flex w-full flex-col gap-2 text-xs`, containerClassName)}
       >
-        {(props) => (
-          <ComboboxDrawer
-            {...props}
-            emptySlate={emptySlate}
-            actions={actions}
-          />
-        )}
-      </Selectbox>
+        {label && <label>{label}</label>}
+        <Selectbox
+          ref={ref}
+          highlightOnMatch={highlightOnMatch}
+          containerClassName={containerClassName}
+          options={options}
+          inputValue={inputValue}
+          setInputValue={setInputValue}
+          placeholder={placeholder}
+          clearable={clearable}
+          strict={strict}
+          onKeyDown={onKeyDown}
+        >
+          {(props) => (
+            <ComboboxDrawer
+              {...props}
+              emptySlate={emptySlate}
+              actions={actions}
+              onClick={onClick}
+            />
+          )}
+        </Selectbox>
 
-      {showError && <span className="text-red-600">{errorMessage}</span>}
-    </div>
-  );
-}
+        {showError && <span className="text-red-600">{errorMessage}</span>}
+      </div>
+    );
+  }
+);
 
 function ComboboxDrawer({
   floatingStyles,
@@ -93,6 +113,7 @@ function ComboboxDrawer({
   setIsOpen,
   inputValue,
   actions,
+  onClick,
   emptySlate = "Not Available.",
 }: ComboboxDrawerProps) {
   const [hasScrolled, setHasScrolled] = useState(false);
@@ -174,6 +195,9 @@ function ComboboxDrawer({
               onMouseDown={() => {
                 setInputValue(option);
                 setIsOpen(false);
+                if (onClick) {
+                  onClick();
+                }
               }}
               onMouseEnter={() => {
                 setHighlightedIndex(index);

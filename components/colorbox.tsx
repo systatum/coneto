@@ -13,6 +13,7 @@ export interface ColorboxProps
   errorMessage?: string;
   className?: string;
   containerClassName?: string;
+  onClick?: () => void;
 }
 
 function Colorbox({
@@ -24,6 +25,7 @@ function Colorbox({
   className,
   containerClassName,
   placeholder,
+  onClick,
   ...props
 }: ColorboxProps) {
   const [hovered, setHovered] = useState(false);
@@ -33,7 +35,7 @@ function Colorbox({
   const inputElement = (
     <div
       className={cn(
-        "relative flex flex-row rounded-xs h-full items-center border",
+        "relative w-full flex flex-row rounded-xs h-full items-center border",
         showError
           ? " border-red-500 focus:border-red-500 focus:ring-red-500 text-red-800"
           : hovered
@@ -59,7 +61,12 @@ function Colorbox({
             document.getElementById(inputId)?.click();
             setHovered(true);
           }}
-          onBlur={() => setHovered(false)}
+          onBlur={() => {
+            setHovered(false);
+            if (onClick) {
+              onClick();
+            }
+          }}
         ></div>
 
         <input
@@ -120,7 +127,7 @@ function Colorbox({
       className={cn(`flex w-full flex-col gap-2 text-xs`, containerClassName)}
     >
       {label && <label>{label}</label>}
-      <div className="flex flex-col gap-1 text-xs">
+      <div className="flex flex-col w-full gap-1 text-xs">
         {inputElement}
         {showError && <span className="text-red-600">{errorMessage}</span>}
       </div>

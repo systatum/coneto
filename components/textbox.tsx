@@ -28,8 +28,6 @@ export interface BaseTextboxProps
   onActionClick?: () => void;
   onChange: (data: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   icon?: RemixiconComponentType;
-  dormanted?: boolean;
-  dormantedFontSize?: string;
   actionIcon?: boolean;
 }
 
@@ -58,17 +56,12 @@ const Textbox = forwardRef<
       className,
       containerClassName,
       actionIcon,
-      dormanted,
-      dormantedFontSize = 17,
       icon: Icon = RiCheckLine,
       type = "text",
       ...props
     },
     ref
   ) => {
-    const dormantedState = dormanted ? dormanted : false;
-
-    const [dormantedLocal, setDormantedLocal] = useState(dormantedState);
     const [showPassword, setShowPassword] = useState<boolean>(false);
 
     useEffect(() => {
@@ -91,24 +84,14 @@ const Textbox = forwardRef<
     };
 
     const inputClass = cn(
-      "rounded-xs border text-black px-2 w-full py-[7px] outline-none",
+      "rounded-xs border text-xs text-black px-2 w-full py-[7px] outline-none",
       showError
         ? "border-red-500 focus:border-red-500 focus:ring-red-500 text-red-800"
         : "border-gray-300 focus:ring-[#61A9F9] focus:border-[#61A9F9]",
       className
     );
 
-    const inputElement: ReactElement = dormantedLocal ? (
-      <label
-        onClick={() => setDormantedLocal(false)}
-        className="cursor-pointer"
-        style={{
-          fontSize: dormantedFontSize,
-        }}
-      >
-        {props.value}
-      </label>
-    ) : rows ? (
+    const inputElement: ReactElement = rows ? (
       <div className="relative w-full ring-0">
         <textarea
           style={{
@@ -142,9 +125,6 @@ const Textbox = forwardRef<
               if (onActionClick) {
                 onActionClick();
               }
-              if (dormanted) {
-                setDormantedLocal(true);
-              }
             }}
           >
             <Icon className="mr-1 text-black" size={18} />
@@ -169,9 +149,6 @@ const Textbox = forwardRef<
               if (onActionClick) {
                 onActionClick();
               }
-              if (dormanted) {
-                setDormantedLocal(true);
-              }
             }
           }}
           type={type === "password" && showPassword ? "text" : type}
@@ -181,26 +158,16 @@ const Textbox = forwardRef<
           <button
             type="submit"
             className={cn(
-              "text-muted-foreground p-[2px]  w-fit rounded-xs transition-all duration-200 mr-1 absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer",
-              !dormanted && "hover:bg-gray-300"
+              "text-muted-foreground p-[2px]  w-fit rounded-xs transition-all duration-200 mr-1 absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer"
             )}
             onClick={(e) => {
               e.preventDefault();
               if (onActionClick) {
                 onActionClick();
               }
-              if (dormanted) {
-                setDormantedLocal(true);
-              }
             }}
           >
-            <Icon
-              className={cn(
-                "hover:text-gray-800",
-                dormanted && "hover:text-[#61A9F9]"
-              )}
-              size={18}
-            />
+            <Icon className="hover:text-gray-800" size={18} />
           </button>
         )}
         {type === "password" && !showError && (
@@ -230,7 +197,7 @@ const Textbox = forwardRef<
       <div
         className={cn(`flex w-full flex-col gap-2 text-xs`, containerClassName)}
       >
-        {!dormanted && label && <label htmlFor={inputId}>{label}</label>}
+        {label && <label htmlFor={inputId}>{label}</label>}
         <div className="flex flex-col gap-1 text-xs">
           {inputElement}
           {showError && <span className="text-red-600">{errorMessage}</span>}

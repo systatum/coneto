@@ -59,12 +59,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
     const handleToggleDrawer = (open: DialogState) => {
       setDialogState(open);
       controls.start({
-        x:
-          open === "restored"
-            ? 0
-            : isLeft && dialogState === "minimized"
-              ? "-100%"
-              : "+100%",
+        x: open === "minimized" ? (isLeft ? "-100%" : "100%") : 0,
         transition: { type: "spring", stiffness: 300, damping: 30 },
       });
     };

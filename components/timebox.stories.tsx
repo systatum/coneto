@@ -31,7 +31,7 @@ export const Default: Story = {
       setValue((prev) => ({ ...prev, [name]: value }));
     };
 
-    return <Timebox {...args} onChange={onChangeValue} />;
+    return <Timebox {...args} name="timebox" onChange={onChangeValue} />;
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
