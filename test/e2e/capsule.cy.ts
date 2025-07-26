@@ -1,7 +1,7 @@
 import { getIdContent } from "test/support/commands";
 
 context("Capsule Component", () => {
-  context("Default", () => {
+  describe("Default", () => {
     beforeEach(() => {
       cy.visit(getIdContent("controls-capsule--default"));
     });
