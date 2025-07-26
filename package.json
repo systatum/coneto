@@ -272,12 +272,12 @@
     "copyjs": "rsync -avm --include='*/' --include='*.js' --exclude='*' lib/ dist/lib/",
     "publish-coneto": "pnpm build && pnpm publish",
     "generate-barrel": "barrelsby --excludePattern \\.stories\\.",
-    "test-storybook": "playwright install chromium && test-storybook",
     "type-check": "tsc --noEmit",
     "lint": "eslint '**/*.{ts,tsx}'",
     "format": "prettier --write .",
-    "build-chromatic": "npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN",
-    "test-cypress": "cypress open"
+    "build-chromatic": "chromatic --project-token=$CHROMATIC_PROJECT_TOKEN",
+    "test-open": "cypress open",
+    "test-run": "cypress run"
   },
   "peerDependencies": {
     "react": "^19.1.0",
