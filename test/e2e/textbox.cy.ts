@@ -1,6 +1,6 @@
 import { getIdContent } from "test/support/commands";
 
-describe("Textbox Component", () => {
+context("Textbox Component", () => {
   describe("Input", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-textbox--input"));

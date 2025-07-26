@@ -311,7 +311,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
                     setHighlightedIndex(0);
                   }}
                   onKeyDown={handleDropdownKeyDown}
-                  aria-label="Search countries"
+                  aria-label="search-countries"
                   autoComplete="off"
                 />
               </div>
