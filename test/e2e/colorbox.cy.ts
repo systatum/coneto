@@ -22,7 +22,7 @@ context("Colorbox Component", () => {
     });
   });
 
-  describe("WithError", () => {
+  describe("With Error", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-colorbox--with-error"));
     });

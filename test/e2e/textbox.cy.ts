@@ -6,7 +6,7 @@ context("Textbox Component", () => {
       cy.visit(getIdContent("input-elements-textbox--input"));
     });
 
-    it("should type into the input", () => {
+    it("Should type into the input", () => {
       cy.findByPlaceholderText("Type here...")
         .clear()
         .type("This is input text");
@@ -18,7 +18,7 @@ context("Textbox Component", () => {
       cy.visit(getIdContent("input-elements-textbox--textarea"));
     });
 
-    it("should type into the textarea", () => {
+    it("Should type into the textarea", () => {
       cy.findByPlaceholderText("Type your message...")
         .clear()
         .type("This is Textarea");
@@ -30,7 +30,7 @@ context("Textbox Component", () => {
       cy.visit(getIdContent("input-elements-textbox--input-message"));
     });
 
-    it("should type message and trigger action icon", () => {
+    it("Should type message and trigger action icon", () => {
       cy.findByPlaceholderText("Type a message...")
         .clear()
         .type("This is a Input message");
@@ -44,7 +44,7 @@ context("Textbox Component", () => {
       cy.visit(getIdContent("input-elements-textbox--password"));
     });
 
-    it("should type a password and see password", () => {
+    it("Should type a password and see password", () => {
       cy.findByPlaceholderText("Enter password...")
         .clear()
         .type("mypassword123");
@@ -57,7 +57,7 @@ context("Textbox Component", () => {
       cy.visit(getIdContent("input-elements-textbox--with-error-message"));
     });
 
-    it("should show error message after typing", () => {
+    it("Should show error message after typing", () => {
       cy.findByPlaceholderText("Type with error...")
         .clear()
         .type("Error triggered");

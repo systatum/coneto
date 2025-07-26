@@ -6,7 +6,7 @@ context("Timebox Component", () => {
       cy.visit(getIdContent("input-elements-timebox--default"));
     });
 
-    it("should allow entering hours and minutes", () => {
+    it("Should allow entering hours and minutes", () => {
       cy.findByPlaceholderText("HH")
         .clear()
         .type("13")
@@ -18,12 +18,12 @@ context("Timebox Component", () => {
     });
   });
 
-  describe("WithSeconds", () => {
+  describe("With Seconds", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-timebox--with-seconds"));
     });
 
-    it("should allow entering hours, minutes, and seconds", () => {
+    it("Should allow entering hours, minutes, and seconds", () => {
       cy.findByPlaceholderText("HH")
         .clear()
         .type("13")
@@ -45,24 +45,24 @@ context("Timebox Component", () => {
     });
   });
 
-  describe("WithLiveTime", () => {
+  describe("With Live Time", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-timebox--with-live-time"));
     });
 
-    it("should render a non-editable timebox with current time", () => {
+    it("Should render a non-editable timebox with current time", () => {
       cy.findByPlaceholderText("HH").should("have.attr", "disabled");
       cy.findByPlaceholderText("MM").should("have.attr", "disabled");
       cy.findByPlaceholderText("SS").should("have.attr", "disabled");
     });
   });
 
-  describe("WithError", () => {
+  describe("With Error", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-timebox--with-error"));
     });
 
-    it("should show error initially and validate on input", () => {
+    it("Should show error initially and validate on input", () => {
       cy.contains("This field is required").should("exist");
 
       cy.findByPlaceholderText("HH").clear().type("13");

@@ -12,7 +12,7 @@ context("ThumbField Component", () => {
     });
   });
 
-  describe("WithLabel", () => {
+  describe("With Label", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-thumbfield--with-label"));
     });
@@ -24,7 +24,7 @@ context("ThumbField Component", () => {
     });
   });
 
-  describe("WithError", () => {
+  describe("With Error", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-thumbfield--with-error"));
     });

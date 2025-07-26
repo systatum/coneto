@@ -6,7 +6,7 @@ context("Capsule Component", () => {
       cy.visit(getIdContent("controls-capsule--default"));
     });
 
-    it("should allow clicking and changing active state", () => {
+    it("Should allow clicking and changing active state", () => {
       cy.findByText("List").should("be.visible").click();
       cy.wait(400);
       cy.findByText("New").should("be.visible").click();

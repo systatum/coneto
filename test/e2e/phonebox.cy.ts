@@ -1,7 +1,7 @@
 import { getIdContent } from "test/support/commands";
 
 context("Phonebox Component", () => {
-  describe("DefaultPhonebox", () => {
+  describe("Default Phonebox", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-phonebox--default-phonebox"));
     });
@@ -15,7 +15,7 @@ context("Phonebox Component", () => {
     });
   });
 
-  describe("DisablePhonebox", () => {
+  describe("Disable Phonebox", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-phonebox--disable-phonebox"));
     });
@@ -25,7 +25,7 @@ context("Phonebox Component", () => {
     });
   });
 
-  describe("PhoneboxWithError", () => {
+  describe("Phonebox With Error", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-phonebox--phonebox-with-error"));
     });

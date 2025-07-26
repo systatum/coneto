@@ -6,7 +6,7 @@ context("Searchbox Component", () => {
       cy.visit(getIdContent("input-elements-searchbox--default"));
     });
 
-    it("should type and clear input correctly", () => {
+    it("Should type and clear input correctly", () => {
       cy.findByPlaceholderText("Search here...")
         .should("exist")
         .type("Hello world")

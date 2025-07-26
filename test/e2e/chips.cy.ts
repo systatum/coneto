@@ -1,7 +1,7 @@
 import { getIdContent } from "test/support/commands";
 
 context("Chips Component", () => {
-  describe("Test case on chips at general", () => {
+  describe("Default", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-chips--default"));
     });

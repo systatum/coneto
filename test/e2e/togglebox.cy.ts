@@ -13,7 +13,7 @@ context("Togglebox Component", () => {
     });
   });
 
-  describe("WithIcon", () => {
+  describe("With Icon", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-togglebox--with-icon"));
     });
@@ -23,7 +23,7 @@ context("Togglebox Component", () => {
     });
   });
 
-  describe("WithIconAndLoading", () => {
+  describe("With Icon And Loading", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-togglebox--with-icon-and-loading"));
     });

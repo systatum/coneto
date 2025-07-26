@@ -6,7 +6,7 @@ context("Selectbox Component", () => {
       cy.visit(getIdContent("input-elements-selectbox--default"));
     });
 
-    it("should render placeholder and open options on click", () => {
+    it("Should render placeholder and open options on click", () => {
       cy.findByPlaceholderText("click this place holder")
         .should("exist")
         .click();
@@ -24,7 +24,7 @@ context("Selectbox Component", () => {
       cy.visit(getIdContent("input-elements-selectbox--clearable"));
     });
 
-    it("should allow selecting and clearing a value", () => {
+    it("Should allow selecting and clearing a value", () => {
       cy.findByPlaceholderText("click this place holder")
         .should("exist")
         .click();

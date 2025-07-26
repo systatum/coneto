@@ -34,7 +34,7 @@ context("Combobox Component", () => {
     });
   });
 
-  describe("WithActions", () => {
+  describe("With Actions", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-combobox--with-actions"));
     });
@@ -46,7 +46,7 @@ context("Combobox Component", () => {
     });
   });
 
-  describe("StrictValue", () => {
+  describe("Strict Value", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-combobox--strict-value"));
     });

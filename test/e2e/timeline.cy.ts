@@ -22,7 +22,7 @@ context("Timeline Component", () => {
       cy.visit(getIdContent("controls-timeline--default"));
     });
 
-    it("should display all timeline items", () => {
+    it("Should display all timeline items", () => {
       defaultData.forEach((content) => {
         cy.contains(content, { timeout: 10000 }).should("be.visible");
       });
@@ -34,13 +34,13 @@ context("Timeline Component", () => {
       cy.visit(getIdContent("controls-timeline--clickable"));
     });
 
-    it("should display all timeline items", () => {
+    it("Should display all timeline items", () => {
       defaultData.forEach((content) => {
         cy.contains(content, { timeout: 10000 }).should("be.visible");
       });
     });
 
-    it("should have clickable items", () => {
+    it("Should have clickable items", () => {
       Array.from({ length: 4 }).forEach((_, index) => {
         cy.findByLabelText(`timeline-item-${index}`).should("be.visible");
       });
@@ -52,7 +52,7 @@ context("Timeline Component", () => {
       cy.visit(getIdContent("controls-timeline--custom"));
     });
 
-    it("should display all custom timeline items", () => {
+    it("Should display all custom timeline items", () => {
       customData.forEach((content) => {
         cy.contains(content, { timeout: 10000 }).should("be.visible");
       });

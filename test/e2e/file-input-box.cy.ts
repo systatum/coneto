@@ -6,7 +6,7 @@ context("FileInputBox Component", () => {
       cy.visit(getIdContent("input-elements-fileinputbox--default")); // Adjust if your story ID is different
     });
 
-    it("should accept and display a single uploaded file", () => {
+    it("Should accept and display a single uploaded file", () => {
       cy.findByLabelText("fileinputbox").selectFile(
         ["test/fixtures/test-images/sample-1.jpg"],
         {
