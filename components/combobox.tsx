@@ -48,7 +48,6 @@ type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
     };
   };
 
-<<<<<<< HEAD
 const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
   (
     {
@@ -73,39 +72,6 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
     return (
       <div
         className={cn(`flex w-full flex-col gap-2 text-xs`, containerClassName)}
-=======
-function Combobox({
-  options,
-  setInputValue,
-  clearable = false,
-  placeholder,
-  containerClassName,
-  highlightOnMatch = false,
-  emptySlate = "Not available.",
-  errorMessage,
-  label,
-  showError,
-  inputValue,
-  strict,
-  actions,
-  name = "default",
-}: ComboboxProps) {
-  return (
-    <div
-      aria-label={`combobox-${name}`}
-      className={cn(`flex w-full flex-col gap-2 text-xs`, containerClassName)}
-    >
-      {label && <label>{label}</label>}
-      <Selectbox
-        highlightOnMatch={highlightOnMatch}
-        containerClassName={containerClassName}
-        options={options}
-        inputValue={inputValue}
-        setInputValue={setInputValue}
-        placeholder={placeholder}
-        clearable={clearable}
-        strict={strict}
->>>>>>> 5da3fcc (Update for calendar, button, etc.)
       >
         {label && <label>{label}</label>}
         <Selectbox
