@@ -37,6 +37,12 @@ context("Timebox Component", () => {
         .type("30")
         .should("have.value", "30");
     });
+
+    it("Should input time with new behaviour arrow and enter", () => {
+      cy.findByPlaceholderText("HH")
+        .clear()
+        .type("14{rightarrow}30{rightarrow}00{enter}");
+    });
   });
 
   describe("WithLiveTime", () => {
