@@ -32,7 +32,7 @@ export default meta;
 
 type Story = StoryObj<typeof Frame>;
 
-export const DefaultFrame: Story = {
+export const Default: Story = {
   args: {
     className: "text-sm",
     children: <>This is inside the frame.</>,
