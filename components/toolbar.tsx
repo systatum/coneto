@@ -186,8 +186,8 @@ function ToolbarMenu({
       <div ref={refs.setReference} className={toolbarMenuClass}>
         {(Icon || caption) && (
           <>
-            <div
-              aria-label="toolbar-menu-toggle"
+            <button
+              aria-label={`toolbar-menu-button-${caption}`}
               onMouseEnter={() => setHovered("main")}
               onMouseLeave={() => setHovered("original")}
               onClick={handleMainClick}
@@ -204,7 +204,7 @@ function ToolbarMenu({
               {caption && (
                 <span className="text-sm sm:flex hidden px-2">{caption}</span>
               )}
-            </div>
+            </button>
             <span
               aria-label="divider"
               className={cn(
@@ -214,7 +214,8 @@ function ToolbarMenu({
             ></span>
           </>
         )}
-        <div
+        <button
+          aria-label={`toolbar-menu-toggle-${caption}`}
           onMouseEnter={() => setHovered("dropdown")}
           onMouseLeave={() => setHovered("original")}
           className={cn(
@@ -238,7 +239,7 @@ function ToolbarMenu({
               size={20}
             />
           )}
-        </div>
+        </button>
       </div>
 
       {isOpen && (

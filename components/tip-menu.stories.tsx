@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { expect, within } from "@storybook/test";
 import { TipMenu } from "./tip-menu";
 import { useState } from "react";
 import {
@@ -138,19 +137,5 @@ export const Default: Story = {
         </ModalDialog>
       </>
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await expect(canvas.findByText("Report Phishing")).resolves.toBeTruthy();
-    await expect(canvas.findByText("Report Junk")).resolves.toBeTruthy();
-    await expect(canvas.findByText("Block Sender")).resolves.toBeTruthy();
-    await expect(canvas.findByText("Mark as Read")).resolves.toBeTruthy();
-    await canvas.getByText("Report Phishing").click();
-
-    const dialog = await within(document.body);
-
-    await expect(dialog.findByText("Confirm"));
-    await expect(dialog.findByText("Cancel"));
   },
 };

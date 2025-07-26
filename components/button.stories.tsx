@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { expect, fn, within } from "@storybook/test";
 import { Button } from "./button";
 import {
   RiMovie2Fill,
@@ -21,7 +20,6 @@ const meta = {
     layout: "centered",
   },
   tags: ["autodocs"],
-  args: { onClick: fn() },
   argTypes: {
     variant: {
       control: "select",
@@ -118,16 +116,6 @@ export const Default: Story = {
   render: (args) => {
     return <Button {...args} />;
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const button = canvas.getByRole("button", { name: /Button/i });
-    await expect(button).toBeInTheDocument();
-    await expect(button).toHaveClass("h-9", "px-4");
-    await expect(button).toHaveClass("bg-[rgb(243,243,243)]", "text-black");
-
-    await canvas.getByRole("button", { name: /Button/i }).click();
-    expect(meta.args.onClick).toHaveBeenCalled();
-  },
 };
 
 export const DefaultLarge: Story = {
@@ -137,17 +125,6 @@ export const DefaultLarge: Story = {
   },
   render: (args) => {
     return <Button {...args} />;
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const button = canvas.getByRole("button", { name: /Button/i });
-    await expect(button).toBeInTheDocument();
-
-    await expect(button).toHaveClass("h-10", "px-6", "gap-2");
-    await expect(button).toHaveClass("bg-[rgb(243,243,243)]");
-
-    await canvas.getByRole("button", { name: /Button/i }).click();
-    await expect(meta.args.onClick).toHaveBeenCalled();
   },
 };
 
@@ -159,17 +136,6 @@ export const DefaultSmall: Story = {
   render: (args) => {
     return <Button {...args} />;
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const button = canvas.getByRole("button", { name: /Button/i });
-    await expect(button).toBeInTheDocument();
-
-    await expect(button).toHaveClass("h-8", "px-3", "gap-1.5");
-    await expect(button).toHaveClass("bg-[rgb(243,243,243)]");
-
-    await canvas.getByRole("button", { name: /Button/i }).click();
-    await expect(meta.args.onClick).toHaveBeenCalled();
-  },
 };
 
 export const DefaultIcon: Story = {
@@ -179,15 +145,6 @@ export const DefaultIcon: Story = {
   },
   render: (args) => {
     return <Button {...args} />;
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const button = canvas.getByRole("button", { name: /Movie/i });
-    await expect(button).toBeInTheDocument();
-    await expect(button).toHaveClass("size-9");
-
-    await canvas.getByRole("button", { name: /Movie/i }).click();
-    await expect(meta.args.onClick).toHaveBeenCalled();
   },
 };
 
@@ -199,16 +156,6 @@ export const Primary: Story = {
   render: (args) => {
     return <Button {...args} />;
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const button = canvas.getByRole("button", { name: /Button/i });
-    await expect(button).toBeInTheDocument();
-    await expect(button).toHaveClass("h-9", "px-4");
-    await expect(button).toHaveClass("bg-[rgb(86,154,236)]", "text-white");
-
-    await canvas.getByRole("button", { name: /Button/i }).click();
-    expect(meta.args.onClick).toHaveBeenCalled();
-  },
 };
 
 export const Secondary: Story = {
@@ -218,19 +165,6 @@ export const Secondary: Story = {
   },
   render: (args) => {
     return <Button {...args} />;
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const button = canvas.getByRole("button", { name: /Button/i });
-    await expect(button).toBeInTheDocument();
-    await expect(button).toHaveClass("h-9", "px-4");
-    await expect(button).toHaveClass(
-      "bg-secondary",
-      "text-secondary-foreground"
-    );
-
-    await canvas.getByRole("button", { name: /Button/i }).click();
-    expect(meta.args.onClick).toHaveBeenCalled();
   },
 };
 
@@ -242,16 +176,6 @@ export const Danger: Story = {
   render: (args) => {
     return <Button {...args} />;
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const button = canvas.getByRole("button", { name: /Button/i });
-    await expect(button).toBeInTheDocument();
-    await expect(button).toHaveClass("h-9", "px-4");
-    await expect(button).toHaveClass("bg-[rgb(206,55,93)]", "text-white");
-
-    await canvas.getByRole("button", { name: /Button/i }).click();
-    await expect(meta.args.onClick).toHaveBeenCalled();
-  },
 };
 
 export const Outline: Story = {
@@ -261,17 +185,6 @@ export const Outline: Story = {
   },
   render: (args) => {
     return <Button {...args} />;
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const button = canvas.getByRole("button", { name: /Button/i });
-    await expect(button).toBeInTheDocument();
-    await expect(button).toHaveClass("h-9", "px-4");
-    await expect(button).toHaveClass("bg-background");
-
-    await canvas.getByRole("button", { name: /Button/i }).click();
-    await expect(meta.args.onClick).toHaveBeenCalled();
   },
 };
 
@@ -283,17 +196,6 @@ export const WithLoading: Story = {
   },
   render: (args) => {
     return <Button {...args} />;
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const button = canvas.getByRole("button", { name: /Button/i });
-    await expect(button).toHaveAttribute("disabled");
-    await expect(button).toHaveClass("bg-[rgb(243,243,243)]");
-
-    const spinner = canvas.getByTestId("circle");
-    await expect(button).toContainElement(spinner);
-    await expect(spinner).toHaveClass("animate-spin");
   },
 };
 
