@@ -318,7 +318,8 @@ function Calendar({
       >
         {!calendarState.open ? (
           <div className="rounded-xs w-full flex items-center">
-            <span
+            <button
+              aria-label="calendar-select-date"
               className="w-fit hover:bg-gray-200 cursor-pointer text-xs px-2 py-2"
               onClick={() => {
                 if (!calendarState.open) {
@@ -332,12 +333,13 @@ function Calendar({
                   year: "numeric",
                 })
                 .toUpperCase()}
-            </span>
+            </button>
           </div>
         ) : (
           <Fragment>
             <div className="flex flex-row gap-1">
               <Combobox
+                name="month"
                 options={monthNames}
                 inputValue={calendarState.month}
                 placeholder={monthNames[0].text}
@@ -349,6 +351,7 @@ function Calendar({
                 }}
               />
               <Combobox
+                name="year"
                 options={yearOptions}
                 inputValue={calendarState.year}
                 placeholder={String(currentYear)}
@@ -374,14 +377,14 @@ function Calendar({
             <RiArrowLeftSLine
               onClick={handleClickPrevMonth}
               size={24}
-              aria-label="Previous Month"
+              aria-label="previous-month"
               className="rounded-xs focus:outline-none cursor-pointer hover:bg-gray-200"
             />
 
             <RiArrowRightSLine
               onClick={handleClickNextMonth}
               size={24}
-              aria-label="Next Month"
+              aria-label="next-month"
               className="rounded-xs focus:outline-none cursor-pointer hover:bg-gray-200"
             />
           </div>

@@ -1,7 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { Pagination } from "./pagination";
 import { useArgs } from "@storybook/preview-api";
-import { expect, userEvent, within } from "@storybook/test";
 
 const meta: Meta<typeof Pagination> = {
   title: "Controls/Pagination",
@@ -34,17 +33,6 @@ export const Default: Story = {
       />
     );
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const nextButton = await canvas.getByLabelText("Next Page");
-    const prevButton = await canvas.getByLabelText("Previous Page");
-
-    await expect(prevButton).toBeDisabled();
-
-    await userEvent.click(nextButton);
-    await userEvent.click(nextButton);
-    await userEvent.click(prevButton);
-  },
 };
 
 export const OverFivePages: Story = {
@@ -60,16 +48,5 @@ export const OverFivePages: Story = {
         onPageChange={(page) => setUpdateArgs({ currentPage: page })}
       />
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const nextButton = await canvas.getByLabelText("Next Page");
-    const prevButton = await canvas.getByLabelText("Previous Page");
-
-    await expect(prevButton).toBeDisabled();
-
-    await userEvent.click(nextButton);
-    await userEvent.click(nextButton);
-    await userEvent.click(prevButton);
   },
 };

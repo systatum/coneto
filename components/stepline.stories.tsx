@@ -1,7 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { Stepline, SteplineItemProps } from "./stepline";
 import { useState } from "react";
-import { userEvent, within } from "@storybook/test";
 
 const meta: Meta<typeof Stepline> = {
   title: "Controls/Stepline",
@@ -67,21 +66,5 @@ export const Reversable: Story = {
         ))}
       </Stepline>
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const allTitles = [
-      "Application Submitted",
-      "Initial Screening",
-      "Technical Interview",
-      "Final Interview",
-      "Offer Sent",
-    ];
-
-    for (const title of allTitles) {
-      const step = await canvas.findByText(title);
-      await userEvent.click(step);
-    }
   },
 };

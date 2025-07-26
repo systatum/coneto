@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { within, userEvent, expect } from "@storybook/test";
 import { Textbox, TextboxProps } from "./textbox";
 import { useArgs } from "@storybook/preview-api";
 import { useEffect, type ChangeEvent } from "react";
@@ -94,12 +93,6 @@ export const Input: Story = {
 
     return <Textbox {...args} value={args.value} onChange={handleChange} />;
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const input = await canvas.getByRole("textbox");
-    await userEvent.type(input, "This is input text", { delay: 50 });
-    await expect(input).toHaveValue("This is input text");
-  },
 };
 
 export const Textarea: Story = {
@@ -131,15 +124,6 @@ export const Textarea: Story = {
     };
 
     return <Textbox {...args} value={args.value} onChange={handleChange} />;
-  },
-
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const textarea = await canvas.getByRole("textbox");
-    await userEvent.type(textarea, "This is Textarea", {
-      delay: 50,
-    });
-    await expect(textarea).toHaveValue("This is Textarea");
   },
 };
 
@@ -183,12 +167,6 @@ export const InputMessage: Story = {
       />
     );
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const message = await canvas.getByRole("textbox");
-    await userEvent.type(message, "This is a Input message", { delay: 50 });
-    await expect(message).toHaveValue("This is a Input message");
-  },
 };
 
 export const Password: Story = {
@@ -219,12 +197,6 @@ export const Password: Story = {
     };
 
     return <Textbox {...args} value={args.value} onChange={handleChange} />;
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const password = await canvas.getByPlaceholderText("Enter password...");
-    await userEvent.type(password, "mypassword123", { delay: 50 });
-    await expect(password).toHaveValue("mypassword123");
   },
 };
 
@@ -258,15 +230,5 @@ export const WithErrorMessage: Story = {
     };
 
     return <Textbox {...args} value={args.value} onChange={handleChange} />;
-  },
-
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const input = await canvas.getByRole("textbox");
-    await userEvent.type(input, "Error triggered", { delay: 50 });
-    await expect(input).toHaveValue("Error triggered");
-    await expect(
-      await canvas.findByText("This field is required")
-    ).toBeVisible();
   },
 };

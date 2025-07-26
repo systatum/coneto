@@ -1,7 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { Datebox } from "./datebox";
-import { expect, userEvent, within } from "@storybook/test";
 import { OptionsProps } from "./selectbox";
 
 const meta: Meta<typeof Datebox> = {
@@ -60,21 +59,6 @@ export const Default: Story = {
       </div>
     );
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const input = canvas.getByPlaceholderText("mm/dd/yyyy");
-    await expect(input).toBeInTheDocument();
-    await userEvent.click(input);
-
-    const rightChevron = await canvas.findByLabelText("Next Month");
-    await userEvent.click(rightChevron);
-    const leftChevron = await canvas.findByLabelText("Previous Month");
-    await userEvent.click(leftChevron);
-
-    const dayButton = await canvas.findByText("13");
-    await userEvent.click(dayButton);
-  },
 };
 
 export const NoWeekends: Story = {
@@ -120,14 +104,5 @@ export const NoWeekends: Story = {
         />
       </div>
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const input = canvas.getByPlaceholderText("mm/dd/yyyy");
-    await expect(input).toBeInTheDocument();
-    await userEvent.click(input);
-    await userEvent.type(input, "06172000");
-    await expect(input).toHaveValue("06/16/2000");
   },
 };

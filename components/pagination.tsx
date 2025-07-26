@@ -52,7 +52,7 @@ function Pagination({
       <PaginationButton
         onClick={handlePrevious}
         disabled={currentPage === 1}
-        aria-label="Previous Page"
+        aria-label="previous-page"
       >
         <RiArrowLeftSLine size={20} />
       </PaginationButton>
@@ -70,7 +70,7 @@ function Pagination({
       <PaginationButton
         onClick={handleNext}
         disabled={currentPage === totalPages}
-        aria-label="Next Page"
+        aria-label="next-page"
       >
         <RiArrowRightSLine size={20} />
       </PaginationButton>

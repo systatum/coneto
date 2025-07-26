@@ -3,7 +3,6 @@ import { DrawerTab } from "./drawer-tab";
 import { Textbox } from "./textbox";
 import { ChangeEvent, useState } from "react";
 import { RiListCheck, RiNodeTree } from "@remixicon/react";
-import { userEvent, within, expect } from "@storybook/test";
 
 const meta: Meta<typeof DrawerTab> = {
   title: "Stage/DrawerTab",
@@ -83,19 +82,6 @@ export const Default: Story = {
 
     return <DrawerTab position="left" tabs={tabs} />;
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const tabButtons = canvas.getAllByRole("button");
-    expect(tabButtons.length).toBeGreaterThan(0);
-
-    await userEvent.click(tabButtons[0]);
-
-    const drawerTitle = await canvas.findByText("File Attributes");
-    expect(drawerTitle).toBeInTheDocument();
-    await userEvent.click(tabButtons[1], { delay: 300 });
-    await userEvent.click(tabButtons[1], { delay: 200 });
-  },
 };
 
 export const FixedRight: Story = {
@@ -162,18 +148,5 @@ export const FixedRight: Story = {
     ];
 
     return <DrawerTab tabs={tabs} />;
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const tabButtons = canvas.getAllByRole("button");
-    expect(tabButtons.length).toBeGreaterThan(0);
-
-    await userEvent.click(tabButtons[0]);
-
-    const drawerTitle = await canvas.findByText("File Attributes");
-    expect(drawerTitle).toBeInTheDocument();
-    await userEvent.click(tabButtons[1], { delay: 300 });
-    await userEvent.click(tabButtons[1], { delay: 200 });
   },
 };

@@ -2,7 +2,6 @@ import { Meta, StoryObj } from "@storybook/react";
 import { Moneybox } from "./moneybox";
 import { useArgs } from "@storybook/preview-api";
 import { ChangeEvent } from "react";
-import { userEvent, within } from "@storybook/test";
 
 const meta: Meta<typeof Moneybox> = {
   title: "Input Elements/Moneybox",
@@ -36,13 +35,6 @@ export const Dollar: Story = {
       />
     );
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const input = await canvas.findByRole("textbox");
-
-    await userEvent.clear(input);
-    await userEvent.type(input, "3500");
-  },
 };
 
 export const Euro: Story = {
@@ -66,13 +58,6 @@ export const Euro: Story = {
         onChange={onChangeValue}
       />
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const input = await canvas.findByRole("textbox");
-
-    await userEvent.clear(input);
-    await userEvent.type(input, "3500");
   },
 };
 
@@ -98,13 +83,6 @@ export const Yen: Story = {
       />
     );
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const input = await canvas.findByRole("textbox");
-
-    await userEvent.clear(input);
-    await userEvent.type(input, "3500");
-  },
 };
 
 export const Pound: Story = {
@@ -128,13 +106,6 @@ export const Pound: Story = {
         onChange={onChangeValue}
       />
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const input = await canvas.findByRole("textbox");
-
-    await userEvent.clear(input);
-    await userEvent.type(input, "3500");
   },
 };
 
@@ -160,13 +131,6 @@ export const Rupiah: Story = {
       />
     );
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const input = await canvas.findByRole("textbox");
-
-    await userEvent.clear(input);
-    await userEvent.type(input, "3500");
-  },
 };
 
 export const WithLabel: Story = {
@@ -191,13 +155,6 @@ export const WithLabel: Story = {
         onChange={onChangeValue}
       />
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const input = await canvas.findByRole("textbox");
-
-    await userEvent.clear(input);
-    await userEvent.type(input, "3500");
   },
 };
 
@@ -231,12 +188,5 @@ export const ErrorState: Story = {
     return (
       <Moneybox {...args} className="max-w-[300px]" onChange={onChangeValue} />
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const input = await canvas.findByRole("textbox");
-
-    await userEvent.clear(input);
-    await userEvent.type(input, "abc");
   },
 };

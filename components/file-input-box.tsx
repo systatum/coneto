@@ -78,6 +78,7 @@ function FileInputBox({
 
   const inputElement = (
     <div
+      aria-label="fileinputbox"
       className={containerInputBoxClass}
       onClick={handleBrowseClick}
       onDrop={handleDrop}

@@ -143,6 +143,7 @@ function Chips(props: ChipsProps) {
         <RiAddLine
           ref={refs.setReference}
           className={buttonAddClass}
+          role="button"
           {...getReferenceProps()}
         />
       </div>
@@ -371,7 +372,7 @@ function ChipsDrawer({
                           />
                         )}
 
-                      <Chip
+                      <Chips.Item
                         badge={data}
                         chipContainerClassName={chipContainerClassName}
                         hovered={hovered}
@@ -478,7 +479,7 @@ function ChipsDrawer({
   );
 }
 
-function Chip({
+function ChipsItem({
   badge,
   isClicked,
   hovered,
@@ -546,4 +547,6 @@ function Chip({
   );
 }
 
-export { Chips, Chip };
+Chips.Item = ChipsItem;
+
+export { Chips };

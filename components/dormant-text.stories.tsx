@@ -4,7 +4,6 @@ import { DormantText } from "./dormant-text";
 import { Textbox } from "./textbox";
 import { OptionsProps } from "./selectbox";
 import { Combobox } from "./combobox";
-import { expect, userEvent, within } from "@storybook/test";
 import { Datebox } from "./datebox";
 import { Colorbox, ColorPickProps } from "./colorbox";
 import { formatMoneyboxNumber, Moneybox } from "./moneybox";
@@ -96,37 +95,6 @@ export const Default: Story = {
       </div>
     );
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const dormantLabel = await canvas.findByText(
-      "Hello there, this is dormanted text"
-    );
-    await userEvent.click(dormantLabel);
-
-    const textbox = await canvas.findByRole("textbox");
-    await userEvent.clear(textbox);
-    await userEvent.type(textbox, "Updated content");
-
-    const checkButton = await canvas.findByRole("button");
-    await userEvent.click(checkButton);
-
-    await expect(textbox).toHaveValue("Updated content");
-
-    const dormantFullWidthLabel = await canvas.findByText(
-      "Hello there, this is dormanted text with full width"
-    );
-    await userEvent.click(dormantFullWidthLabel);
-
-    const fullWidthTextbox = await canvas.findByRole("textbox");
-    await userEvent.clear(fullWidthTextbox);
-    await userEvent.type(fullWidthTextbox, "Updated content full");
-
-    const fullWidthCheckButton = await canvas.findByRole("button");
-    await userEvent.click(fullWidthCheckButton);
-
-    await expect(fullWidthTextbox).toHaveValue("Updated content full");
-  },
 };
 
 export const WithCombobox: Story = {
@@ -216,37 +184,6 @@ export const WithCombobox: Story = {
         </div>
       </div>
     );
-  },
-
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const normalLabel = await canvas.findByText("Apple");
-    await userEvent.click(normalLabel);
-
-    const input1 = await canvas.findByPlaceholderText("Select a fruit...");
-    await userEvent.click(input1);
-    await userEvent.keyboard("{arrowdown}");
-    await userEvent.keyboard("{arrowdown}");
-    await userEvent.keyboard("{enter}");
-    await expect(input1).toHaveValue("Orange");
-
-    const checkButton1 = await canvas.findByRole("button");
-    await userEvent.click(checkButton1);
-
-    const fullLabel = await canvas.findByText("Banana");
-    await userEvent.click(fullLabel);
-
-    const input2 = await canvas.findByPlaceholderText("Select a fruit full...");
-
-    await userEvent.click(input2);
-    await userEvent.keyboard("{arrowdown}");
-    await userEvent.keyboard("{arrowdown}");
-    await userEvent.keyboard("{enter}");
-    await expect(input2).toHaveValue("Orange");
-
-    const checkButton2 = await canvas.findByRole("button");
-    await userEvent.click(checkButton2);
   },
 };
 

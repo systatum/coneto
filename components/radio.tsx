@@ -37,6 +37,7 @@ function Radio({
     >
       <input
         type="radio"
+        role="radio"
         id={id}
         name={name}
         value={value}

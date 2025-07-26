@@ -2,7 +2,6 @@ import { useArgs } from "@storybook/preview-api";
 import type { Args, Meta, StoryObj } from "@storybook/react";
 import { Dialog } from "./dialog";
 import { Button } from "./button";
-import { expect, userEvent, within } from "@storybook/test";
 
 const meta: Meta = {
   title: "Stage/Dialog",
@@ -21,7 +20,7 @@ export default meta;
 
 type Story = StoryObj;
 
-export const BasicDialog: Story = {
+export const Default: Story = {
   args: {
     open: false,
   },
@@ -51,20 +50,6 @@ export const BasicDialog: Story = {
         </Dialog.Content>
       </Dialog>
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const button = await canvas.findByRole("button", {
-      name: /Basic Dialog/i,
-    });
-    await userEvent.click(button);
-
-    const dialog = await within(document.body);
-
-    await expect(
-      dialog.findByText(/This is the dialog content/i)
-    ).resolves.toBeInTheDocument();
   },
 };
 
@@ -116,20 +101,6 @@ export const DialogWithButton: Story = {
       </Dialog>
     );
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const button = await canvas.findByRole("button", {
-      name: /Dialog With Button/i,
-    });
-    await userEvent.click(button);
-
-    const dialog = await within(document.body);
-
-    await expect(
-      dialog.findByText(/You can put any content here./i)
-    ).resolves.toBeInTheDocument();
-  },
 };
 
 export const HideCloseButton: Story = {
@@ -164,23 +135,5 @@ export const HideCloseButton: Story = {
         </Dialog.Content>
       </Dialog>
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const button = await canvas.findByRole("button", {
-      name: /Dialog \(Hideclose\)/i,
-    });
-    await userEvent.click(button);
-
-    const dialog = await within(document.body);
-
-    await expect(
-      dialog.findByText(/does not include the close button/i)
-    ).resolves.toBeInTheDocument();
-
-    await expect(
-      dialog.queryByRole("button", { name: /close/i })
-    ).not.toBeInTheDocument();
   },
 };

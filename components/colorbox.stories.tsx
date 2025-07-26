@@ -2,7 +2,6 @@ import { Meta, StoryObj } from "@storybook/react";
 import { Colorbox, ColorPickProps } from "./colorbox";
 import { useArgs } from "@storybook/preview-api";
 import { ChangeEvent } from "react";
-import { expect, userEvent, within } from "@storybook/test";
 
 const meta: Meta<typeof Colorbox> = {
   title: "Input Elements/Colorbox",
@@ -46,18 +45,6 @@ export const Default: Story = {
         onChange={onChangeValue}
       />
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    expect(canvas.getByText("Color")).toBeInTheDocument();
-
-    const input = canvas.getByRole("textbox");
-    await userEvent.clear(input);
-    await userEvent.type(input, "gggggg");
-
-    await userEvent.clear(input);
-    await userEvent.type(input, "00ff00");
   },
 };
 
@@ -114,18 +101,5 @@ export const WithError: Story = {
         onChange={onChangeValue}
       />
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await expect(canvas.getByText("Invalid color value.")).toBeInTheDocument();
-    await expect(canvas.getByText("Color")).toBeInTheDocument();
-
-    const input = canvas.getByRole("textbox");
-    await userEvent.clear(input);
-    await userEvent.type(input, "gggggg");
-
-    await userEvent.clear(input);
-    await userEvent.type(input, "00ff00");
   },
 };

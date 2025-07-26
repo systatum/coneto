@@ -3,7 +3,6 @@ import { Sidebar } from "./sidebar";
 import { ChangeEvent, useMemo, useState } from "react";
 import { Searchbox } from "./searchbox";
 import { TreeList } from "./treelist";
-import { expect, userEvent, within } from "@storybook/test";
 import { EmptySlate } from "./empty-slate";
 import { Button } from "./button";
 
@@ -105,15 +104,6 @@ export const Default: Story = {
       </div>
     );
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const searchInput = await canvas.findByRole("textbox");
-    await expect(searchInput).toBeInTheDocument();
-
-    await userEvent.clear(searchInput);
-    await userEvent.type(searchInput, "adam");
-  },
 };
 
 export const FixedRight: Story = {
@@ -200,14 +190,5 @@ export const FixedRight: Story = {
         </Sidebar>
       </div>
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const searchInput = await canvas.findByRole("textbox");
-    await expect(searchInput).toBeInTheDocument();
-
-    await userEvent.clear(searchInput);
-    await userEvent.type(searchInput, "alim");
   },
 };

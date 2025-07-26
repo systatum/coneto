@@ -3,7 +3,6 @@ import { Togglebox } from "./togglebox";
 import { useEffect } from "react";
 import * as RemixIcons from "@remixicon/react";
 import { useArgs } from "@storybook/preview-api";
-import { expect, userEvent, within } from "@storybook/test";
 
 const meta: Meta<typeof Togglebox> = {
   title: "Input Elements/Togglebox",
@@ -55,13 +54,6 @@ export const Default: Story = {
       />
     );
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const toggle = await canvas.getByRole("checkbox");
-
-    await userEvent.click(toggle);
-  },
 };
 
 export const WithIcon: Story = {
@@ -78,13 +70,6 @@ export const WithIcon: Story = {
         onChange={(e) => setUpdateArgs({ checked: e.target.checked })}
       />
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const toggle = await canvas.getByRole("checkbox");
-
-    await userEvent.click(toggle);
   },
 };
 
@@ -112,18 +97,5 @@ export const WithIconAndLoading: Story = {
         onChange={(e) => setUpdateArgs({ checked: e.target.checked })}
       />
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const toggle = await canvas.getByRole("checkbox");
-
-    await userEvent.click(toggle);
-    const spinnerCircle = await canvas.findByTestId(
-      "circle",
-      {},
-      { timeout: 1500 }
-    );
-    await expect(spinnerCircle).toBeInTheDocument();
   },
 };

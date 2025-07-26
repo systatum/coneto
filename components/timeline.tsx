@@ -121,6 +121,7 @@ function TimelineItem({
 }: TimelineItemProps) {
   return (
     <div
+      aria-label={`timeline-item-${id}`}
       onClick={() => {
         if (isClickable) {
           onClick();

@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { expect, userEvent, within } from "@storybook/test";
 import { Toolbar } from "./toolbar";
 import {
   RiSpam2Line,
@@ -120,15 +119,5 @@ export const Default: Story = {
         />
       </Toolbar>
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const clickMenuButton = await canvas
-      .getByText("Default Mode")
-      .closest("div");
-    await expect(clickMenuButton).toBeTruthy();
-
-    await userEvent.click(clickMenuButton);
   },
 };

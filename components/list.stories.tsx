@@ -10,7 +10,6 @@ import {
 } from "@remixicon/react";
 import { Card } from "./card";
 import { ChangeEvent, useMemo, useState } from "react";
-import { expect, userEvent, within } from "@storybook/test";
 
 const meta: Meta<typeof List> = {
   title: "Content/List",
@@ -72,11 +71,6 @@ export const Default: Story = {
         </List>
       </Card>
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    expect(canvas.getByText("Home")).toBeInTheDocument();
-    expect(canvas.getByText("View your profile")).toBeInTheDocument();
   },
 };
 
@@ -153,14 +147,6 @@ export const WithSearch: Story = {
         </List>
       </Card>
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const input = canvas.getByRole("textbox");
-
-    await userEvent.type(input, "settings");
-
-    expect(canvas.getByText("Adjust preferences")).toBeInTheDocument();
   },
 };
 
@@ -282,12 +268,6 @@ export const WithGroup: Story = {
         </List>
       </Card>
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    expect(canvas.getByText("Recent Content")).toBeInTheDocument();
-    expect(canvas.getByText("Messages")).toBeInTheDocument();
-    expect(canvas.getByText("All Content")).toBeInTheDocument();
   },
 };
 
@@ -479,12 +459,6 @@ export const Draggable: Story = {
         </List>
       </Card>
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const draggable = canvas.getAllByRole("button", { name: /draggable/i })[0];
-
-    expect(draggable).toBeVisible();
   },
 };
 
@@ -678,15 +652,9 @@ export const WithLoading: Story = {
       </Card>
     );
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const list = await canvas.findByRole("list");
-    const spinner = within(list).getByTestId("circle");
-    expect(spinner).toBeInTheDocument();
-  },
 };
 
-export const CusomOpener: Story = {
+export const CustomOpener: Story = {
   render: () => {
     const LIST_GROUPS = [
       {
@@ -901,14 +869,5 @@ export const CusomOpener: Story = {
         </List>
       </Card>
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const checkboxes = canvas.getAllByRole("checkbox");
-
-    expect(checkboxes.length).toBeGreaterThan(0);
-
-    await userEvent.click(checkboxes[0]);
-    expect(checkboxes[0]).toBeChecked();
   },
 };

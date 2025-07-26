@@ -71,6 +71,9 @@ function Avatar({
       {...props}
       onClick={changeable ? handleClick : props.onClick}
       onChange={changeable ? handleFileChange : onChange}
+      data-testid="avatar-content"
+      role="button"
+      tabIndex={0}
       className={clsx(
         "group relative flex items-center justify-center overflow-hidden rounded-full border border-gray-100 font-bold",
         isClickable ? "cursor-pointer" : "cursor-default"
