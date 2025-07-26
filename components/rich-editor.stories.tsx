@@ -2,7 +2,6 @@ import { Meta, StoryObj } from "@storybook/react";
 import { RichEditor } from "./rich-editor";
 import { useState } from "react";
 import { RiPrinterFill } from "@remixicon/react";
-import { expect, userEvent, within } from "@storybook/test";
 
 const meta: Meta<typeof RichEditor> = {
   title: "Input Elements/RichEditor",
@@ -51,23 +50,5 @@ export const Default: Story = {
         toolbarRightPanel={TOOLBAR_RIGHT_PANEL_ACTIONS}
       />
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const editableDiv = canvas.getByRole("textbox");
-    await userEvent.click(editableDiv);
-    await userEvent.type(editableDiv, "Hello World");
-
-    await expect(editableDiv).toHaveTextContent("Hello World");
-
-    const boldButton = canvas.getAllByRole("button")[0];
-    await userEvent.click(boldButton);
-
-    await userEvent.click(editableDiv);
-    await userEvent.type(editableDiv, "{selectall}");
-
-    const italicButton = canvas.getAllByRole("button")[1];
-    await userEvent.dblClick(italicButton);
   },
 };

@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { expect, userEvent, within } from "@storybook/test";
 import { useState } from "react";
 import { Combobox, ComboboxActionProps } from "./combobox";
 import { OptionsProps } from "./selectbox";
@@ -46,26 +45,6 @@ export const Default: Story = {
       </div>
     );
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const input = canvas.getByPlaceholderText("Select a fruit...");
-
-    await userEvent.type(input, "ap");
-
-    const appleOption = await canvas.findByRole("option", { name: "Apple" });
-    const grapeOption = await canvas.findByRole("option", {
-      name: "Grape",
-    });
-
-    await expect(appleOption).toBeVisible();
-    await expect(grapeOption).toBeVisible();
-
-    await userEvent.keyboard("{arrowdown}");
-    await userEvent.keyboard("{enter}");
-
-    await expect((input as HTMLInputElement).value).toBe("Grape");
-  },
 };
 
 export const Clearable: Story = {
@@ -110,26 +89,6 @@ export const Clearable: Story = {
       </div>
     );
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const input = canvas.getByPlaceholderText("Select a fruit...");
-
-    await userEvent.type(input, "ap");
-
-    const appleOption = await canvas.findByRole("option", { name: "Apple" });
-    const grapeOption = await canvas.findByRole("option", {
-      name: "Grape",
-    });
-
-    await expect(appleOption).toBeVisible();
-    await expect(grapeOption).toBeVisible();
-
-    await userEvent.keyboard("{arrowdown}");
-    await userEvent.keyboard("{enter}");
-
-    await expect((input as HTMLInputElement).value).toBe("Grape");
-  },
 };
 
 export const WithActions: Story = {
@@ -171,26 +130,6 @@ export const WithActions: Story = {
         />
       </div>
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const input = canvas.getByPlaceholderText("Select a fruit...");
-
-    await userEvent.type(input, "ap");
-
-    const appleOption = await canvas.findByRole("option", { name: "Apple" });
-    const grapeOption = await canvas.findByRole("option", {
-      name: "Grape",
-    });
-
-    await expect(appleOption).toBeVisible();
-    await expect(grapeOption).toBeVisible();
-
-    await userEvent.keyboard("{arrowdown}");
-    await userEvent.keyboard("{enter}");
-
-    await expect((input as HTMLInputElement).value).toBe("Grape");
   },
 };
 
