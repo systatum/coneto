@@ -37,7 +37,6 @@ function Togglebox({
         transition={{ duration: 0.2 }}
         className="relative flex flex-row items-center cursor-pointer w-12 h-6"
         aria-label="togglebox"
-        data-testid="togglebox"
       >
         <input
           id={props.id}

@@ -270,7 +270,6 @@ export const WithSelectable: Story = {
               onSelected={() => handleSelect(data)}
               selectable
               isSelected={isSelected}
-              data-testid={`card-${data.id}`}
               data-selected={isSelected}
             >
               <div className="min-h-[30px] h-full w-full">

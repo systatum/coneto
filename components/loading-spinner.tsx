@@ -23,7 +23,7 @@ function LoadingSpinner({
       }}
     >
       <svg
-        data-testid="circle"
+        aria-label="circle"
         className={cn("animate-spin text-blue-500", label && "mr-2")}
         xmlns="http://www.w3.org/2000/svg"
         fill="none"

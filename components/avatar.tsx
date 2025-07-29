@@ -71,7 +71,7 @@ function Avatar({
       {...props}
       onClick={changeable ? handleClick : props.onClick}
       onChange={changeable ? handleFileChange : onChange}
-      data-testid="avatar-content"
+      aria-label="avatar-content"
       role="button"
       tabIndex={0}
       className={clsx(
@@ -104,7 +104,7 @@ function Avatar({
             accept="image/*"
             className="hidden"
             onChange={handleFileChange}
-            data-testid="profile-file-input"
+            aria-label="profile-file-input"
           />
           <span className="text-sm text-white">📷</span>
         </div>

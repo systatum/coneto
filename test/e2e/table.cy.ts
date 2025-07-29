@@ -14,7 +14,7 @@ context("Table Component", () => {
     });
 
     it("Should scroll to bottom, select and count", () => {
-      cy.findByTestId("table-scroll-container").scrollTo("bottom", {
+      cy.findByLabelText("table-scroll-container").scrollTo("bottom", {
         duration: 1000,
       });
 

@@ -110,9 +110,7 @@ export const WithImage: Story = {
       <div className="flex flex-col items-center">
         <Avatar onChange={handleChange} {...args} />
         {selectedFileName && (
-          <div className="text-xs" data-testid="selected-file-name">
-            Selected: {selectedFileName}
-          </div>
+          <div className="text-xs">Selected: {selectedFileName}</div>
         )}
       </div>
     );

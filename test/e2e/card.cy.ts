@@ -5,15 +5,15 @@ context("Card Component", () => {
     it("Renders card with toolbar menus", () => {
       cy.visit(getIdContent("content-card--default"));
 
-      cy.findByTestId("toolbar-menu-Default", { timeout: 10000 }).should(
-        "be.visible"
-      );
-      cy.findByTestId("toolbar-menu-Primary", { timeout: 10000 }).should(
-        "be.visible"
-      );
-      cy.findByTestId("toolbar-menu-Danger", { timeout: 10000 }).should(
-        "be.visible"
-      );
+      cy.findAllByLabelText("toolbar-menu", { timeout: 10000 })
+        .eq(0)
+        .should("be.visible");
+      cy.findAllByLabelText("toolbar-menu", { timeout: 10000 })
+        .eq(1)
+        .should("be.visible");
+      cy.findAllByLabelText("toolbar-menu", { timeout: 10000 })
+        .eq(2)
+        .should("be.visible");
     });
   });
 
@@ -31,7 +31,7 @@ context("Card Component", () => {
     it("searches and selects an item", () => {
       cy.visit(getIdContent("content-card--with-title-and-actions"));
 
-      cy.findByTestId("textbox-search", { timeout: 10000 })
+      cy.findByLabelText("textbox-search", { timeout: 10000 })
         .should("exist")
         .type("Pizza");
 

@@ -37,7 +37,7 @@ function Boxbar({
         {children}
       </span>
       <motion.button
-        data-testid="boxbar-toggle"
+        aria-label="boxbar-toggle"
         className="mt-2 mr-2 top-2 w-fit right-2 cursor-pointer hover:bg-gray-100 p-1 rounded"
         animate={{ rotate: isOpen ? 90 : 0 }}
         transition={{ duration: 0.2 }}

@@ -7,29 +7,34 @@ context("Grid Component", () => {
     });
 
     it("should select and unselect a card", () => {
-      const card = () => cy.get('[data-testid="card-1"]');
+      const card = () => cy.findAllByLabelText("grid-card").eq(0);
 
       card().click().should("have.attr", "data-selected", "true");
       card().click().should("have.attr", "data-selected", "false");
     });
 
     it("can select multiple cards", () => {
-      cy.get('[data-testid="card-1"]')
+      cy.findAllByLabelText("grid-card")
+        .eq(0)
         .click()
         .should("have.attr", "data-selected", "true");
-      cy.get('[data-testid="card-2"]')
+      cy.findAllByLabelText("grid-card")
+        .eq(2)
         .click()
         .should("have.attr", "data-selected", "true");
-      cy.get('[data-testid="card-3"]')
+      cy.findAllByLabelText("grid-card")
+        .eq(3)
         .click()
         .should("have.attr", "data-selected", "true");
     });
 
     it("should unselect when clicked again", () => {
-      cy.get('[data-testid="card-5"]')
+      cy.findAllByLabelText("grid-card")
+        .eq(4)
         .click()
         .should("have.attr", "data-selected", "true");
-      cy.get('[data-testid="card-5"]')
+      cy.findAllByLabelText("grid-card")
+        .eq(4)
         .click()
         .should("have.attr", "data-selected", "false");
     });

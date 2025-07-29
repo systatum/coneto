@@ -4,14 +4,14 @@ context("LoadingSpinner Component", () => {
   describe("Default", () => {
     it("should render the loading spinner", () => {
       cy.visit(getIdContent("content-loadingspinner--default"));
-      cy.findByTestId("circle").should("exist");
+      cy.findByLabelText("circle").should("exist");
     });
   });
 
   describe("With Label", () => {
     it("should render the spinner with label text", () => {
       cy.visit(getIdContent("content-loadingspinner--with-label"));
-      cy.get('[data-testid="circle"]').should("exist");
+      cy.findByLabelText("circle").should("exist");
       cy.contains("Loading...").should("exist");
     });
   });

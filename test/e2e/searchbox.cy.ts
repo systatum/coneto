@@ -14,9 +14,7 @@ context("Searchbox Component", () => {
 
       cy.wait(200);
 
-      cy.findByRole("button", { name: /clear search input/i })
-        .should("exist")
-        .click();
+      cy.findByLabelText("delete-input").should("exist").click();
 
       cy.findByPlaceholderText("Search here...").should("have.value", "");
     });

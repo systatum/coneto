@@ -179,7 +179,7 @@ function ToolbarMenu({
 
   return (
     <div
-      data-testid={`toolbar-menu-${caption}`}
+      aria-label={`toolbar-menu`}
       ref={containerRef}
       className="relative flex flex-col mr-1"
     >
@@ -215,7 +215,7 @@ function ToolbarMenu({
           </>
         )}
         <button
-          aria-label={`toolbar-menu-toggle-${caption}`}
+          aria-label={`toolbar-menu-toggle`}
           onMouseEnter={() => setHovered("dropdown")}
           onMouseLeave={() => setHovered("original")}
           className={cn(

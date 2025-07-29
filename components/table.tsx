@@ -338,7 +338,7 @@ function Table({
             })}
           </div>
           {rowChildren.length > 0 ? (
-            <div data-testid="table-scroll-container" className={classTableRow}>
+            <div aria-label="table-scroll-container" className={classTableRow}>
               {rowChildren}
             </div>
           ) : (

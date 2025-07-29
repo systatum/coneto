@@ -47,7 +47,7 @@ const Searchbox = forwardRef<HTMLInputElement, SearchboxProps>(
         <input
           ref={inputRef}
           id={inputId}
-          data-testid={"textbox-search"}
+          aria-label={"textbox-search"}
           name={name}
           value={value}
           onChange={onChange}
@@ -58,8 +58,7 @@ const Searchbox = forwardRef<HTMLInputElement, SearchboxProps>(
         {valueLengthChecker && (
           <RiCloseLine
             role="button"
-            data-testid="delete-input"
-            aria-label="Clear search input"
+            aria-label="delete-input"
             onClick={() => {
               const event = {
                 target: {

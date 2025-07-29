@@ -7,7 +7,7 @@ context("Treelist Component", () => {
 
       cy.contains("Adam Noto Hakarsa").click();
 
-      cy.get("[data-testid='tree-list-item']")
+      cy.findAllByLabelText("tree-list-item")
         .eq(0)
         .should("have.class", "border-blue-500");
     });
@@ -21,7 +21,7 @@ context("Treelist Component", () => {
 
       cy.contains("Mohamad Naufal Alim").click();
 
-      cy.get("[data-testid='tree-list-item']")
+      cy.findAllByLabelText("tree-list-item")
         .eq(1)
         .should("have.class", "border-blue-500");
     });

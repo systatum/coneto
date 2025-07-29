@@ -31,7 +31,7 @@ context("Togglebox Component", () => {
     it("should show loading state (circle) after toggle", () => {
       onClickToggle();
 
-      cy.findByTestId("circle", { timeout: 1500 }).should("exist");
+      cy.findByLabelText("circle", { timeout: 1500 }).should("exist");
     });
   });
 });

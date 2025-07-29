@@ -9,7 +9,7 @@ context("Boxbar Component", () => {
     it("Renders badges and toggles visibility", () => {
       cy.contains("Anime").should("exist");
 
-      cy.get('[data-testid="boxbar-toggle"]').click();
+      cy.findByLabelText("boxbar-toggle").click();
 
       cy.wait(120);
     });

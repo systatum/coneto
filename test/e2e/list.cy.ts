@@ -12,7 +12,7 @@ context("List Component", () => {
   describe("With Search", () => {
     it("Should filter items by search input", () => {
       cy.visit(getIdContent("content-list--with-search"));
-      cy.get("[data-testid='textbox-search']").type("settings");
+      cy.findByLabelText("textbox-search").type("settings");
       cy.contains("Adjust preferences").should("exist");
       cy.contains("Home").should("not.exist");
     });
@@ -47,9 +47,7 @@ context("List Component", () => {
   describe("With Loading", () => {
     it("Should show loading skeletons", () => {
       cy.visit(getIdContent("content-list--with-loading"));
-      cy.get("[data-testid='circle'], .animate-pulse, .skeleton").should(
-        "exist"
-      );
+      cy.findByLabelText("circle").should("exist");
     });
   });
 
