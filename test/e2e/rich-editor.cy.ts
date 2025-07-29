@@ -66,9 +66,13 @@ context("RichEditor Component", () => {
             "*   Stay consistent and avoid looking at the keyboard.",
           ];
 
-          expectedStrings.forEach((expected) => {
-            expect(text).to.contain(expected);
-          });
+          const escaped = expectedStrings.map((s) =>
+            s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+          );
+          const pattern = escaped.join("[\\s\\S]*");
+
+          const regex = new RegExp(pattern);
+          expect(text).to.match(regex);
         });
     });
 
