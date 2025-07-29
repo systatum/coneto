@@ -276,8 +276,8 @@
     "lint": "eslint '**/*.{ts,tsx}'",
     "format": "prettier --write .",
     "build-chromatic": "chromatic --project-token=$CHROMATIC_PROJECT_TOKEN",
-    "cypress-open": "cypress open",
-    "cypress-run": "cypress run"
+    "test-open": "cypress open",
+    "test-run": "cypress run"
   },
   "peerDependencies": {
     "react": "^19.1.0",
