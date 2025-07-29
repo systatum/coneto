@@ -89,8 +89,6 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
       className
     );
 
-    console.log(currency);
-
     return (
       <div
         className={cn("flex w-full flex-col gap-2 text-xs", containerClassName)}
