@@ -31,24 +31,31 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: () => {
     const [value, setValue] = useState("");
+    const [printValue, setPrintValue] = useState("");
 
     const TOOLBAR_RIGHT_PANEL_ACTIONS = (
       <RichEditor.ToolbarButton
         icon={RiPrinterFill}
         onClick={() => {
+          setPrintValue(value);
           console.log(value);
         }}
       >
-        Console
+        Print
       </RichEditor.ToolbarButton>
     );
 
     return (
-      <RichEditor
-        onChange={(e) => setValue(e)}
-        value={value}
-        toolbarRightPanel={TOOLBAR_RIGHT_PANEL_ACTIONS}
-      />
+      <div className="flex flex-col gap-4">
+        <RichEditor
+          onChange={(e) => setValue(e)}
+          value={value}
+          toolbarRightPanel={TOOLBAR_RIGHT_PANEL_ACTIONS}
+        />
+        {printValue !== "" && (
+          <pre className="p-4 bg-gray-100">{printValue}</pre>
+        )}
+      </div>
     );
   },
 };
