@@ -57,20 +57,18 @@ context("RichEditor Component", () => {
       cy.get("pre")
         .invoke("text")
         .then((text) => {
-          expect(text).to.contain("**Print content Test**");
-          expect(text).to.contain(
-            "The quick brown fox jumps over the lazy dog."
-          );
-          expect(text).to.contain(
-            "*   Pack my box with five dozen liquor jugs."
-          );
-          expect(text).to.contain(
-            "*   Typing skills improve with daily practice."
-          );
-          expect(text).to.contain("*   Accuracy is more important than speed.");
-          expect(text).to.contain(
-            "*   Stay consistent and avoid looking at the keyboard."
-          );
+          const expectedStrings = [
+            "**Print content Test**",
+            "The quick brown fox jumps over the lazy dog.",
+            "*   Pack my box with five dozen liquor jugs.",
+            "*   Typing skills improve with daily practice.",
+            "*   Accuracy is more important than speed.",
+            "*   Stay consistent and avoid looking at the keyboard.",
+          ];
+
+          expectedStrings.forEach((expected) => {
+            expect(text).to.contain(expected);
+          });
         });
     });
 
