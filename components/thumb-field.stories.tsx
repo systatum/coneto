@@ -2,7 +2,6 @@ import { Meta, StoryObj } from "@storybook/react";
 import { ThumbField } from "./thumb-field";
 import { useArgs } from "@storybook/preview-api";
 import { ChangeEvent } from "react";
-import { expect, userEvent, within } from "@storybook/test";
 
 const meta: Meta<typeof ThumbField> = {
   title: "Input Elements/ThumbField",
@@ -29,15 +28,6 @@ export const Default: Story = {
 
     return <ThumbField {...args} onChange={onChangeValue} />;
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const thumbUp = canvas.getByLabelText("thumb-up");
-    const thumbDown = canvas.getByLabelText("thumb-down");
-
-    await userEvent.click(thumbUp);
-    await userEvent.click(thumbDown);
-  },
 };
 
 export const WithLabel: Story = {
@@ -56,19 +46,6 @@ export const WithLabel: Story = {
     };
 
     return <ThumbField {...args} onChange={onChangeValue} />;
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await expect(
-      canvas.getByText("Would you recommend this employer?")
-    ).toBeInTheDocument();
-
-    const thumbUp = canvas.getByLabelText("thumb-up");
-    const thumbDown = canvas.getByLabelText("thumb-down");
-
-    await userEvent.click(thumbUp);
-    await userEvent.click(thumbDown);
   },
 };
 
@@ -96,22 +73,5 @@ export const WithError: Story = {
     };
 
     return <ThumbField {...args} onChange={onChangeValue} />;
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await expect(
-      canvas.getByText("This field is required")
-    ).toBeInTheDocument();
-
-    await expect(
-      canvas.getByText("How would you rate this employee’s performance?")
-    ).toBeInTheDocument();
-
-    const thumbUp = canvas.getByLabelText("thumb-up");
-    const thumbDown = canvas.getByLabelText("thumb-down");
-
-    await userEvent.click(thumbUp);
-    await userEvent.click(thumbDown);
   },
 };

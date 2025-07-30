@@ -1,6 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
-import { userEvent, within } from "@storybook/test";
 import { Calendar } from "./calendar";
 import { OptionsProps } from "./selectbox";
 
@@ -59,16 +58,6 @@ export const Default: Story = {
       />
     );
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const rightChevron = await canvas.findByLabelText("Next Month");
-    await userEvent.click(rightChevron);
-    const leftChevron = await canvas.findByLabelText("Previous Month");
-    await userEvent.click(leftChevron);
-
-    const dayButton = await canvas.findByText("13");
-    await userEvent.click(dayButton);
-  },
 };
 export const NoWeekends: Story = {
   render: () => {
@@ -112,15 +101,5 @@ export const NoWeekends: Story = {
         disableWeekend
       />
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const rightChevron = await canvas.findByLabelText("Next Month");
-    await userEvent.click(rightChevron);
-    const leftChevron = await canvas.findByLabelText("Previous Month");
-    await userEvent.click(leftChevron);
-
-    const dayButton = await canvas.findByText("13");
-    await userEvent.click(dayButton);
   },
 };

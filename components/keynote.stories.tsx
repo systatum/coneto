@@ -1,6 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { Keynote } from "./keynote";
-import { userEvent, within } from "@storybook/test";
 
 const meta: Meta<typeof Keynote> = {
   title: "Content/Keynote",
@@ -83,11 +82,5 @@ export const CustomRendering: Story = {
         }}
       />
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const emailElement = await canvas.findByText("alim@systatum.com");
-    await userEvent.click(emailElement);
   },
 };

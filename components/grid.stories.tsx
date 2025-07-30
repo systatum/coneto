@@ -1,7 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { Grid } from "./grid";
 import { useState } from "react";
-import { expect, userEvent, within } from "@storybook/test";
 
 const meta: Meta<typeof Grid> = {
   title: "Content/Grid",
@@ -271,7 +270,6 @@ export const WithSelectable: Story = {
               onSelected={() => handleSelect(data)}
               selectable
               isSelected={isSelected}
-              data-testid={`card-${data.id}`}
               data-selected={isSelected}
             >
               <div className="min-h-[30px] h-full w-full">
@@ -282,13 +280,5 @@ export const WithSelectable: Story = {
         })}
       </Grid>
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const firstCard = await canvas.findByTestId("card-1");
-    await userEvent.click(firstCard);
-    expect(firstCard).toHaveAttribute("data-selected", "true");
-    await userEvent.click(firstCard);
-    expect(firstCard).toHaveAttribute("data-selected", "false");
   },
 };

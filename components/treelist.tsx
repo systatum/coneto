@@ -126,7 +126,7 @@ function TreeListItem<T extends TreeListItemsProps>({
   return (
     <div
       role="button"
-      data-testid="tree-list-item"
+      aria-label="tree-list-item"
       className={treeListItemClass}
       onClick={() => {
         item.onClick(item);

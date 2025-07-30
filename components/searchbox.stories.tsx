@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { expect, within, userEvent } from "@storybook/test";
 import { Searchbox } from "./searchbox";
 import { useArgs } from "@storybook/preview-api";
 import { ChangeEvent } from "react";
@@ -43,21 +42,5 @@ export const Default: Story = {
     };
 
     return <Searchbox {...args} value={value} onChange={handleChange} />;
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const input = await canvas.getByRole("textbox");
-
-    await userEvent.clear(input);
-    await userEvent.type(input, "Hello world", { delay: 40 });
-    await expect(input).toHaveValue("Hello world");
-
-    const clearButton = await canvas.getByRole("button", {
-      name: /clear search input/i,
-    });
-
-    await userEvent.click(clearButton);
-    await expect(input).toHaveValue("");
   },
 };

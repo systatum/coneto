@@ -265,7 +265,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
             type="tel"
             className={clsx(
               "w-full rounded-xs px-3 text-xs focus:outline-none text-black",
-              disabled ? "cursor-not-allowed bg-gray-300" : "bg-white"
+              disabled ? "cursor-not-allowed" : "bg-white"
             )}
             placeholder={placeholder}
             value={phoneNumber}
@@ -311,7 +311,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
                     setHighlightedIndex(0);
                   }}
                   onKeyDown={handleDropdownKeyDown}
-                  aria-label="Search countries"
+                  aria-label="search-countries"
                   autoComplete="off"
                 />
               </div>

@@ -1,7 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { Capsule } from "./capsule";
 import { useArgs } from "@storybook/preview-api";
-import { expect, userEvent, within } from "@storybook/test";
 
 const meta: Meta<typeof Capsule> = {
   title: "Controls/Capsule",
@@ -42,16 +41,5 @@ export const Default: Story = {
         setView={(prev: string) => setUpdateArgs({ view: prev })}
       />
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const firstTabElement = await canvas.findByText("New");
-    const secondTabElement = await canvas.findByText("List");
-    await expect(firstTabElement).toBeVisible();
-    await expect(secondTabElement).toBeVisible();
-
-    await userEvent.click(secondTabElement, { delay: 300 });
-    await userEvent.click(firstTabElement, { delay: 300 });
   },
 };

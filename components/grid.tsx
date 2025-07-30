@@ -57,6 +57,7 @@ function GridCard({
   return (
     <div
       {...props}
+      aria-label="grid-card"
       className={gridCardClass}
       onClick={() => {
         if (selectable) {

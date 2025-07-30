@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Tooltip } from "./tooltip";
-import { expect, fireEvent, waitFor, within } from "@storybook/test";
 
 const meta: Meta<typeof Tooltip> = {
   title: "Content/Tooltip",
@@ -47,14 +46,6 @@ export const Hover: Story = {
   render: (args) => {
     return <Tooltip {...args} />;
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const trigger = canvas.getByText("Hover Tooltip");
-
-    await fireEvent.mouseEnter(trigger, { delay: 400 });
-
-    await fireEvent.mouseLeave(trigger);
-  },
 };
 
 export const Click: Story = {
@@ -68,33 +59,6 @@ export const Click: Story = {
   render: (args) => {
     return <Tooltip {...args} />;
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const trigger = canvas.getByText("Click Tooltip");
-
-    expect(trigger).toBeVisible();
-    expect(trigger).toHaveClass("text-blue-600", "cursor-pointer");
-    expect(
-      canvasElement.querySelector(".bg-blue-600.text-white")
-    ).not.toBeInTheDocument();
-
-    await fireEvent.click(trigger);
-
-    await waitFor(() => {
-      const tooltip = canvasElement.querySelector(".bg-blue-600.text-white");
-      expect(tooltip).toBeInTheDocument();
-      expect(tooltip?.textContent?.trim()).toBe(
-        "This tooltip appears on click"
-      );
-    });
-
-    await fireEvent.click(trigger);
-
-    await waitFor(() => {
-      const tooltip = canvasElement.querySelector(".bg-blue-600.text-white");
-      expect(tooltip).not.toBeInTheDocument();
-    });
-  },
 };
 
 export const StyledTooltip: Story = {
@@ -107,20 +71,6 @@ export const StyledTooltip: Story = {
   },
   render: (args) => {
     return <Tooltip {...args} />;
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const trigger = canvas.getByText("Styled Tooltip");
-
-    expect(trigger).toHaveClass(
-      "text-green-600",
-      "underline",
-      "decoration-wavy"
-    );
-
-    await fireEvent.mouseEnter(trigger);
-
-    await fireEvent.mouseLeave(trigger);
   },
 };
 
@@ -136,16 +86,6 @@ export const DottedUnderlineTooltip: Story = {
   render: (args) => {
     return <Tooltip {...args} />;
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const trigger = canvas.getByText("Dotted Underline Tooltip");
-
-    expect(trigger).toHaveClass("underline", "text-sm", "cursor-default");
-
-    await fireEvent.mouseEnter(trigger);
-
-    await fireEvent.mouseLeave(trigger);
-  },
 };
 
 export const NoUnderlineTooltip: Story = {
@@ -160,21 +100,6 @@ export const NoUnderlineTooltip: Story = {
   render: (args) => {
     return <Tooltip {...args} />;
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const trigger = canvas.getByText("No Underline Tooltip");
-
-    expect(trigger).toHaveClass(
-      "text-red-500",
-      "text-sm",
-      "font-semibold",
-      "cursor-default"
-    );
-
-    await fireEvent.mouseEnter(trigger);
-
-    await fireEvent.mouseLeave(trigger);
-  },
 };
 
 export const BlueUnderlineTooltip: Story = {
@@ -188,33 +113,5 @@ export const BlueUnderlineTooltip: Story = {
   },
   render: (args) => {
     return <Tooltip {...args} />;
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const trigger = canvas.getByText("Blue Underline Tooltip");
-
-    expect(trigger).toBeVisible();
-    expect(trigger).toHaveClass(
-      "decoration-blue-500",
-      "cursor-pointer",
-      "underline"
-    );
-
-    await fireEvent.click(trigger);
-
-    await waitFor(() => {
-      const tooltip = canvasElement.querySelector(".bg-blue-700.text-white");
-      expect(tooltip).toBeInTheDocument();
-      expect(tooltip?.textContent?.trim()).toBe(
-        "Clicked tooltip with blue underline"
-      );
-    });
-
-    await fireEvent.click(trigger);
-
-    await waitFor(() => {
-      const tooltip = canvasElement.querySelector(".bg-blue-600.text-white");
-      expect(tooltip).not.toBeInTheDocument();
-    });
   },
 };

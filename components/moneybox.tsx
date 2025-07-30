@@ -80,7 +80,7 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
     };
 
     const classMoneyBox = cn(
-      "w-full h-full border text-xs rounded-xs py-[10px] px-3 items-center gap-3 justify-end flex",
+      "w-full h-full relative border text-xs rounded-xs py-[10px] px-3 items-center gap-3 justify-end flex",
       showError
         ? "border-red-500 text-red-800"
         : focus

@@ -280,6 +280,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
         {clearable && inputValueLocal.text !== "" && (
           <>
             <RiCloseLine
+              aria-label="clearable-content"
               onClick={() => {
                 if (setInputValue) {
                   setInputValue({

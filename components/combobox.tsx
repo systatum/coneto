@@ -30,6 +30,7 @@ interface BaseComboboxProps {
   highlightOnMatch?: boolean;
   strict?: boolean;
   actions?: ComboboxActionProps[];
+  name?: string;
 }
 
 export interface ComboboxActionProps {
@@ -65,11 +66,13 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       actions,
       onKeyDown,
       onClick,
+      name,
     },
     ref
   ) => {
     return (
       <div
+        aria-label={`combobox-${name}`}
         className={cn(`flex w-full flex-col gap-2 text-xs`, containerClassName)}
       >
         {label && <label>{label}</label>}

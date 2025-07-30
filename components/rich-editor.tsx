@@ -45,6 +45,13 @@ function RichEditor({
     },
   });
 
+  turndownService.addRule("cleanListSpacing", {
+    filter: ["ul", "ol"],
+    replacement: function (content) {
+      return `\n${content}\n`;
+    },
+  });
+
   const editorRef = useRef<HTMLDivElement>(null);
   const savedSelection = useRef<Range | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
@@ -75,6 +82,43 @@ function RichEditor({
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "u") {
       e.preventDefault();
       return;
+    }
+
+    // This logic use for handle space for orderedlist/unorderedlist
+    if (e.key === "Enter") {
+      const sel = window.getSelection();
+      if (!sel || !sel.rangeCount) return;
+
+      const range = sel.getRangeAt(0);
+      let container = range.startContainer as HTMLElement;
+
+      let liParent: HTMLElement | null = null;
+      if (container.nodeType === Node.ELEMENT_NODE) {
+        liParent = (container as Element).closest("li");
+      } else if (container.nodeType === Node.TEXT_NODE) {
+        liParent = (container.parentNode as Element)?.closest("li");
+      }
+
+      if (liParent) {
+        return;
+      }
+
+      e.preventDefault();
+
+      const br = document.createElement("br");
+
+      range.deleteContents();
+      range.insertNode(br);
+
+      const newRange = document.createRange();
+      newRange.setStartAfter(br);
+      newRange.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(newRange);
+
+      const html = editorRef.current?.innerHTML || "";
+      const markdown = turndownService.turndown(html);
+      onChange?.(markdown);
     }
 
     // this logic is to handle ordered and unordered lists, so when we type "1." or "-",
@@ -357,6 +401,7 @@ function RichEditor({
         onInput={() => {
           const html = editorRef.current?.innerHTML || "";
           const markdown = turndownService.turndown(html);
+          console.log(html);
           onChange?.(markdown);
         }}
         onKeyDown={handleOnKeyDown}
@@ -380,9 +425,10 @@ function RichEditorToolbarButton({
         }
       }}
       className="px-2 py-1 flex flex-row items-center gap-1 cursor-pointer text-sm hover:bg-gray-200 rounded-xs"
+      aria-label="rich-editor-toolbar-button"
     >
       {Icon && <Icon size={16} />}
-      {children && <span className="text-s,">{children}</span>}
+      {children && <span>{children}</span>}
     </button>
   );
 }
