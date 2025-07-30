@@ -37,6 +37,12 @@ export const Default: Story = {
       keydown: "Hello there, this is dormanted text with enable keydown",
     });
 
+    const [oldValue, setOldValue] = useState({
+      normal: value.normal,
+      full: value.full,
+      keydown: value.keydown,
+    });
+
     const handleChange = (
       e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
       name: string
@@ -77,13 +83,22 @@ export const Default: Story = {
           </DormantText>
         </div>
         <div className="flex flex-col">
-          <span className="font-medium">Change accepted by pressing enter</span>
+          <span className="font-medium">
+            Change cancelable, and acceptable by pressing enter
+          </span>
           <DormantText
             fullWidth
             acceptChangeOn={"enter"}
             content={value.keydown}
             onActionClick={() => {
               console.log(`The value is : ${value.keydown}`);
+            }}
+            cancellable
+            onActive={() => {
+              setOldValue((prev) => ({ ...prev, ["keydown"]: value.keydown }));
+            }}
+            onCancelRequested={() => {
+              setValue((prev) => ({ ...prev, ["keydown"]: oldValue.keydown }));
             }}
           >
             <Textbox
@@ -107,6 +122,12 @@ export const WithCombobox: Story = {
       normal: { text: "Apple", value: 1 },
       full: { text: "Banana", value: 2 },
       keydown: { text: "Orange", value: 3 },
+    });
+
+    const [oldValue, setOldValue] = useState({
+      normal: value.normal,
+      full: value.full,
+      keydown: value.keydown,
     });
 
     const FRUIT_OPTIONS = [
@@ -163,7 +184,9 @@ export const WithCombobox: Story = {
         </div>
         <div className="flex flex-col">
           <span className="font-medium">
-            Change accepted by pressing enter or clicking some values
+            Change accepted by pressing enter/clicking some values and
+            cancelable by pressing escape Change cancelable, and acceptable by
+            pressing enter or click event
           </span>
           <DormantText
             fullWidth
@@ -171,6 +194,13 @@ export const WithCombobox: Story = {
             content={value.keydown.text}
             onActionClick={() => {
               console.log(`Selected value: ${value.keydown.value}`);
+            }}
+            cancellable
+            onActive={() => {
+              setOldValue((prev) => ({ ...prev, ["keydown"]: value.keydown }));
+            }}
+            onCancelRequested={() => {
+              setValue((prev) => ({ ...prev, ["keydown"]: oldValue.keydown }));
             }}
           >
             <Combobox
@@ -197,6 +227,12 @@ export const WithDatebox: Story = {
       normal: { text: "07/25/2025", value: "07/25/2025" },
       full: { text: "07/25/2025", value: "07/25/2025" },
       keydown: { text: "07/25/2025", value: "07/25/2025" },
+    });
+
+    const [oldValue, setOldValue] = useState({
+      normal: value.normal,
+      full: value.full,
+      keydown: value.keydown,
     });
 
     const DAY_NAMES = [
@@ -266,12 +302,19 @@ export const WithDatebox: Story = {
         </div>
         <div className="flex flex-col">
           <span className="font-medium">
-            Change accepted by clicking some values
+            Change cancelable, and acceptable by pressing click event
           </span>
           <DormantText
             fullWidth
             acceptChangeOn={"click"}
             content={value.keydown.text}
+            cancellable
+            onActive={() => {
+              setOldValue((prev) => ({ ...prev, ["keydown"]: value.keydown }));
+            }}
+            onCancelRequested={() => {
+              setValue((prev) => ({ ...prev, ["keydown"]: oldValue.keydown }));
+            }}
             onActionClick={() => {
               console.log(`Selected value: ${value.keydown.value}`);
             }}
@@ -299,6 +342,12 @@ export const WithColorbox: Story = {
       normal: "#zzzzzz",
       full: "#zzzzzz",
       keydown: "#zzzzzz",
+    });
+
+    const [oldValue, setOldValue] = useState({
+      normal: value.normal,
+      full: value.full,
+      keydown: value.keydown,
     });
 
     const onChangeValue = (
@@ -368,7 +417,7 @@ export const WithColorbox: Story = {
         </div>
         <div className="flex flex-col">
           <span className="font-medium">
-            Change accepted by pressing enter or clicking some values
+            Change cancelable, and acceptable by pressing enter or click event
           </span>
           <DormantText
             fullWidth
@@ -376,6 +425,13 @@ export const WithColorbox: Story = {
             content={value.keydown}
             onActionClick={() => {
               console.log(`Selected value: ${value.keydown}`);
+            }}
+            cancellable
+            onActive={() => {
+              setOldValue((prev) => ({ ...prev, ["keydown"]: value.keydown }));
+            }}
+            onCancelRequested={() => {
+              setValue((prev) => ({ ...prev, ["keydown"]: oldValue.keydown }));
             }}
           >
             <Colorbox
@@ -400,6 +456,12 @@ export const WithMoneybox: Story = {
       normal: "100000",
       full: "100000",
       keydown: "100000",
+    });
+
+    const [oldValue, setOldValue] = useState({
+      normal: value.normal,
+      full: value.full,
+      keydown: value.keydown,
     });
 
     const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
@@ -445,13 +507,22 @@ export const WithMoneybox: Story = {
           </DormantText>
         </div>
         <div className="flex flex-col">
-          <span className="font-medium">Change accepted by pressing enter</span>
+          <span className="font-medium">
+            Change cancelable, and acceptable by pressing enter
+          </span>
           <DormantText
             fullWidth
             acceptChangeOn={"enter"}
             content={`$ ${formatMoneyboxNumber(value.keydown || "0", "comma")}`}
             onActionClick={() => {
               console.log(`Selected value: ${value.keydown}`);
+            }}
+            cancellable
+            onActive={() => {
+              setOldValue((prev) => ({ ...prev, ["keydown"]: value.keydown }));
+            }}
+            onCancelRequested={() => {
+              setValue((prev) => ({ ...prev, ["keydown"]: oldValue.keydown }));
             }}
           >
             <Moneybox
@@ -490,6 +561,12 @@ export const WithPhonebox: Story = {
         country_code: DEFAULT_COUNTRY_CODES,
         phone: "8123457890",
       },
+    });
+
+    const [oldValue, setOldValue] = useState({
+      normal: value.normal,
+      full: value.full,
+      keydown: value.keydown,
     });
 
     const onChangeValue = (
@@ -540,13 +617,22 @@ export const WithPhonebox: Story = {
           </DormantText>
         </div>
         <div className="flex flex-col">
-          <span className="font-medium">Change accepted by pressing enter</span>
+          <span className="font-medium">
+            Change cancelable, and acceptable by pressing enter
+          </span>
           <DormantText
             fullWidth
             acceptChangeOn={"enter"}
             content={`${value.keydown.country_code.code} ${formatPhoneboxNumber(value.keydown.phone, value.keydown.country_code.id as CountryCode)}`}
             onActionClick={() => {
               console.log(`Selected value: ${value.keydown}`);
+            }}
+            cancellable
+            onActive={() => {
+              setOldValue((prev) => ({ ...prev, ["keydown"]: value.keydown }));
+            }}
+            onCancelRequested={() => {
+              setValue((prev) => ({ ...prev, ["keydown"]: oldValue.keydown }));
             }}
           >
             <Phonebox
@@ -571,6 +657,11 @@ export const WithTimebox: Story = {
     const [value, setValue] = useState({
       normal: "12:00:00",
       keydown: "12:00:00",
+    });
+
+    const [oldValue, setOldValue] = useState({
+      normal: value.normal,
+      keydown: value.keydown,
     });
 
     const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
@@ -599,12 +690,21 @@ export const WithTimebox: Story = {
           </DormantText>
         </div>
         <div className="flex flex-col">
-          <span className="font-medium">Change accepted by pressing enter</span>
+          <span className="font-medium">
+            Change cancelable, and acceptable by pressing enter
+          </span>
           <DormantText
             acceptChangeOn={"enter"}
             content={value.keydown}
             onActionClick={() => {
               console.log(`Selected value: ${value.keydown}`);
+            }}
+            cancellable
+            onActive={() => {
+              setOldValue((prev) => ({ ...prev, ["keydown"]: value.keydown }));
+            }}
+            onCancelRequested={() => {
+              setValue((prev) => ({ ...prev, ["keydown"]: oldValue.keydown }));
             }}
           >
             <Timebox
