@@ -1,6 +1,7 @@
 import {
   RemixiconComponentType,
   RiCheckLine,
+  RiCloseLine,
   RiPencilFill,
 } from "@remixicon/react";
 import {
@@ -27,10 +28,14 @@ export interface DormantTextProps {
   content?: string | number;
   fullWidth?: boolean;
   acceptChangeOn?: "enter" | "click" | "all";
+  cancellable?: boolean;
+  onActive?: () => void;
+  onCancelRequested?: () => void;
 }
 
 export interface DormantTextRef {
   doneEditing: () => void;
+  cancelEditing: () => void;
 }
 
 function DormantText({
@@ -42,8 +47,12 @@ function DormantText({
   content,
   fullWidth,
   acceptChangeOn,
+  cancellable,
+  onActive,
+  onCancelRequested,
 }: DormantTextProps) {
   const [dormantedLocal, setDormantedLocal] = useState(true);
+
   const [labelHeight, setLabelHeight] = useState<number>(0);
   const [labelWidth, setLabelWidth] = useState<number>(0);
   const [inputHeight, setInputHeight] = useState<number>(0);
@@ -54,11 +63,18 @@ function DormantText({
   const combinedRef = useRef<{
     input: HTMLInputElement | null;
     doneEditing: () => void;
+    cancelEditing: () => void;
   }>({
     input: null,
     doneEditing: () => {
       if (onActionClick) onActionClick();
       setDormantedLocal(true);
+    },
+    cancelEditing: () => {
+      setDormantedLocal(true);
+      if (onCancelRequested) {
+        onCancelRequested();
+      }
     },
   });
 
@@ -111,8 +127,14 @@ function DormantText({
           (acceptChangeOn === "enter" || acceptChangeOn === "all")
         ) {
           combinedRef.current.doneEditing();
+        } else if (e.key === "Escape" && cancellable) {
+          combinedRef.current.cancelEditing();
+          if (onCancelRequested) {
+            onCancelRequested();
+          }
         }
       },
+
       onClick: () => {
         if (acceptChangeOn === "click" || acceptChangeOn === "all") {
           combinedRef.current.doneEditing();
@@ -126,6 +148,9 @@ function DormantText({
       ref={measureLabelSize}
       onClick={() => {
         setDormantedLocal(false);
+        if (onActive) {
+          onActive();
+        }
         setTimeout(() => {
           inputRef.current.focus();
         }, 0);
@@ -186,6 +211,28 @@ function DormantText({
           size={18}
         />
       </button>
+      {cancellable && (
+        <button
+          className={cn(
+            "text-muted-foreground flex min-w-[30px] p-[2px] relative rounded-xs transition-all duration-200 cursor-pointer hover:bg-gray-300"
+          )}
+          style={{
+            minHeight: 32.5 | inputHeight,
+          }}
+          onClick={(e) => {
+            e.preventDefault();
+            setDormantedLocal(true);
+            if (onCancelRequested) {
+              onCancelRequested();
+            }
+          }}
+        >
+          <RiCloseLine
+            className="top-1/2 -translate-y-1/2 left-[6px]  absolute"
+            size={18}
+          />
+        </button>
+      )}
     </div>
   );
 }
