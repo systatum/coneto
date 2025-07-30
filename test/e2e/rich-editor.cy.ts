@@ -1,4 +1,7 @@
-import { getIdContent } from "test/support/commands";
+import {
+  expectTextIncludesOrderedLines,
+  getIdContent,
+} from "test/support/commands";
 
 context("RichEditor Component", () => {
   describe("Default", () => {
@@ -57,22 +60,14 @@ context("RichEditor Component", () => {
       cy.get("pre")
         .invoke("text")
         .then((text) => {
-          const expectedStrings = [
+          expectTextIncludesOrderedLines(text, [
             "**Print content Test**",
             "The quick brown fox jumps over the lazy dog.",
             "*   Pack my box with five dozen liquor jugs.",
             "*   Typing skills improve with daily practice.",
             "*   Accuracy is more important than speed.",
             "*   Stay consistent and avoid looking at the keyboard.",
-          ];
-
-          const escaped = expectedStrings.map((s) =>
-            s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
-          );
-          const pattern = escaped.join("[\\s\\S]*");
-
-          const regex = new RegExp(pattern);
-          expect(text).to.match(regex);
+          ]);
         });
     });
 

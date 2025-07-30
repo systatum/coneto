@@ -39,3 +39,10 @@
 export function getIdContent(string: string): string {
   return `/iframe.html?id=${string}`;
 }
+
+export function expectTextIncludesOrderedLines(text: string, lines: string[]) {
+  const escaped = lines.map((s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  const pattern = escaped.join("[\\s\\S]*");
+  const regex = new RegExp(pattern);
+  expect(text).to.match(regex);
+}
