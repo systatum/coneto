@@ -138,7 +138,7 @@ const Textbox = forwardRef<
         )}
       </div>
     ) : (
-      <div className="relative w-full ring-0">
+      <div className="relative flex flex-row w-full ring-0">
         <input
           id={inputId}
           ref={ref as RefObject<HTMLInputElement>}
@@ -158,7 +158,10 @@ const Textbox = forwardRef<
           <button
             type="submit"
             className={cn(
-              "text-muted-foreground p-[2px]  w-fit rounded-xs transition-all duration-200 mr-1 absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer"
+              "text-muted-foreground p-[2px]  w-fit rounded-xs transition-all duration-200 mr-1 absolute top-1/2 -translate-y-1/2 cursor-pointer",
+              showError
+                ? "right-[30px] text-red-500 hover:text-red-600"
+                : "right-2"
             )}
             onClick={(e) => {
               e.preventDefault();
@@ -170,25 +173,32 @@ const Textbox = forwardRef<
             <Icon className="hover:text-gray-800" size={18} />
           </button>
         )}
-        {type === "password" && !showError && (
+        {type === "password" && (
           <button
             type="button"
             onClick={() => setShowPassword((prev) => !prev)}
-            className="absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer text-gray-500"
+            className={cn(
+              "absolute top-1/2 -translate-y-1/2 cursor-pointer text-gray-500 hover:text-gray-600",
+              showError
+                ? "right-[30px] text-red-500 hover:text-red-600"
+                : "right-2"
+            )}
             tabIndex={-1}
           >
             {showPassword ? (
-              <RiEyeOffLine className="hover:text-gray-600" size={18} />
+              <RiEyeOffLine size={22} />
             ) : (
-              <RiEyeLine className="hover:text-gray-600" size={18} />
+              <RiEyeLine size={22} />
             )}
           </button>
         )}
         {showError && (
-          <RiErrorWarningLine
-            size={18}
-            className="absolute top-1/2 right-3 -translate-y-1/2 rounded-full bg-red-600 text-white"
-          />
+          <button className="absolute right-2 top-1/2 -translate-y-1/2">
+            <RiErrorWarningLine
+              size={17}
+              className=" rounded-full bg-red-600 text-white"
+            />
+          </button>
         )}
       </div>
     );
