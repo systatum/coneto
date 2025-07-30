@@ -1,5 +1,9 @@
 import { Meta, StoryObj } from "@storybook/react/";
-import { StatefulForm, FormFieldProps } from "./stateful-form";
+import {
+  StatefulForm,
+  FormFieldProps,
+  StatefulOnChangeType,
+} from "./stateful-form";
 import { ChangeEvent, useState } from "react";
 import { COUNTRY_CODES } from "./../constants/countries";
 import { z } from "zod";
@@ -11,6 +15,7 @@ import {
 import { OptionsProps } from "./selectbox";
 import { BadgeProps } from "./badge";
 import { ColorPickProps } from "./colorbox";
+import { CountryCodeProps } from "./phonebox";
 
 const meta: Meta<typeof StatefulForm> = {
   title: "Input Elements/StatefulForm",
@@ -222,13 +227,13 @@ export const AllCase: Story = {
       color: "",
       combo: {
         text: "",
-        value: 0,
+        value: 0 as number | string,
       },
       date: {
         text: "",
-        value: 0,
+        value: 0 as number | string,
       },
-      file_drop_box: [],
+      file_drop_box: [] as File[],
       file: "",
       image: "",
       phone: "",
@@ -237,7 +242,8 @@ export const AllCase: Story = {
     const [selectedChips, setSelectedChips] = useState<number[]>([]);
 
     const handleOptionClicked = (val: BadgeProps) => {
-      const valId = val?.id;
+      const valId = val.id ?? 0;
+
       const isAlreadySelected = selectedChips.some((data) => data === valId);
 
       if (isAlreadySelected) {
@@ -268,13 +274,13 @@ export const AllCase: Story = {
       color: z.string().optional(),
       combo: z
         .object({
-          value: z.number().optional(),
+          value: z.union([z.number(), z.string()]).optional(),
           text: z.string().optional(),
         })
         .optional(),
       date: z
         .object({
-          value: z.number().optional(),
+          value: z.union([z.number(), z.string()]).optional(),
           text: z.string().optional(),
         })
         .optional(),
@@ -285,29 +291,37 @@ export const AllCase: Story = {
       country_code: z
         .object({
           id: z.string(),
-          label: z.string(),
+          name: z.string(),
+          flag: z.string(),
           code: z.string(),
         })
         .optional(),
     });
 
     const onChangeForm = (
-      e?:
-        | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-        | FileList
-        | OptionsProps,
+      e?: StatefulOnChangeType,
       type?: string | ColorPickProps
     ) => {
       if (e instanceof FileList) {
         const file = e[0];
-        if (file) {
+        if (file && typeof type === "string") {
           setValue((prev) => ({ ...prev, [type]: file }));
         }
         return;
       }
 
-      if (e && typeof e === "object" && "value" in e && "text" in e) {
-        if (type) {
+      if (
+        e &&
+        typeof e === "object" &&
+        "value" in e &&
+        "text" in e &&
+        typeof type === "string"
+      ) {
+        const isOptionsProps =
+          (typeof e.value === "string" || typeof e.value === "number") &&
+          typeof e.text === "string";
+
+        if (isOptionsProps) {
           setValue((prev) => ({ ...prev, [type]: e }));
         }
         return;
@@ -317,7 +331,7 @@ export const AllCase: Story = {
         const target = e.target;
         const { name, value } = target;
 
-        let updatedValue: string | boolean | number = value;
+        let updatedValue: string | boolean | number | CountryCodeProps = value;
 
         if (target instanceof HTMLInputElement && target.type === "checkbox") {
           updatedValue = target.checked;
@@ -354,7 +368,7 @@ export const AllCase: Story = {
           if (progress >= 100) {
             clearInterval(interval);
             if (file === null) {
-              error(file, `file ${file.name} is not uploaded`);
+              error(file, `file ${files[0].name} is not uploaded`);
             } else {
               succeed(file);
             }
@@ -437,7 +451,9 @@ export const AllCase: Story = {
         title: "Combo",
         type: "combo",
         required: false,
-        onChange: onChangeForm,
+        onChange: (e) => {
+          onChangeForm(e, "combo");
+        },
         comboboxProps: {
           options: FRUIT_OPTIONS,
         },
@@ -447,7 +463,9 @@ export const AllCase: Story = {
         title: "Date",
         type: "date",
         required: false,
-        onChange: onChangeForm,
+        onChange: (e) => {
+          onChangeForm(e, "date");
+        },
       },
       {
         name: "file_drop_box",
