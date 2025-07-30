@@ -162,6 +162,7 @@ function FileDropBox({
   const inputElement = (
     <>
       <div
+        aria-label="filedropbox"
         onClick={handleBrowseClick}
         className={containerDropBoxClass}
         onDrop={handleDrop}

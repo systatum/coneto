@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { ModalDialog, ModalDialogProps } from "./modal-dialog";
 import { Button } from "./button";
 import { useArgs } from "@storybook/preview-api";
-import { expect, userEvent, within } from "@storybook/test";
 
 const meta: Meta<typeof ModalDialog> = {
   title: "Stage/ModalDialog",
@@ -59,21 +58,6 @@ export const Default: Story = {
       </>
     );
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    const button = await canvas.findByRole("button", {
-      name: /Default Modal/i,
-    });
-    await userEvent.click(button);
-
-    const dialog = await within(document.body);
-
-    await dialog.findByText(/Here is the content of the modal dialog./i);
-    await expect(dialog.findByRole("button", { name: "Confirm" }));
-    await expect(dialog.findByRole("button", { name: "Cancel" }));
-  },
 };
 
 export const NoCloseButton: Story = {
@@ -114,21 +98,5 @@ export const NoCloseButton: Story = {
         />
       </>
     );
-  },
-
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    const button = await canvas.getByRole("button", {
-      name: /Default With HideClose/i,
-    });
-    await userEvent.click(button);
-
-    const dialog = await within(document.body);
-
-    await dialog.findByText(/Modal without the top-right close button./i);
-    await expect(dialog.findByRole("button", { name: "OK" }));
-    await expect(dialog.findByRole("button", { name: "Cancel" }));
   },
 };

@@ -120,6 +120,7 @@ const Textbox = forwardRef<
           <button
             type="button"
             className="text-muted-foreground p-1 bg-gray-300 absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer"
+            aria-label="action-icon"
             onClick={(e) => {
               e.preventDefault();
               if (onActionClick) {
@@ -157,6 +158,7 @@ const Textbox = forwardRef<
         {actionIcon && (
           <button
             type="submit"
+            aria-label="action-icon"
             className={cn(
               "text-muted-foreground p-[2px]  w-fit rounded-xs transition-all duration-200 mr-1 absolute top-1/2 -translate-y-1/2 cursor-pointer",
               showError
@@ -184,6 +186,7 @@ const Textbox = forwardRef<
                 : "right-2"
             )}
             tabIndex={-1}
+            aria-label="action-icon"
           >
             {showPassword ? (
               <RiEyeOffLine size={22} />

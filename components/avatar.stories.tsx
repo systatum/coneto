@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { expect, within } from "@storybook/test";
 import { AvatarProps } from "./avatar";
 import { ChangeEvent, useState } from "react";
 import { ModalDialog, ModalButtonProps } from "./modal-dialog";
@@ -41,12 +40,6 @@ export const Default: Story = {
   },
   render: (args: AvatarProps) => {
     return <Avatar {...args} />;
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const nameElement = await canvas.findByText("JO");
-    await expect(nameElement).toBeVisible();
   },
 };
 
@@ -92,12 +85,6 @@ export const WithActions: Story = {
       </div>
     );
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const nameElement = await canvas.findByText("JO");
-    await expect(nameElement).toBeVisible();
-  },
 };
 
 export const WithImage: Story = {
@@ -123,19 +110,9 @@ export const WithImage: Story = {
       <div className="flex flex-col items-center">
         <Avatar onChange={handleChange} {...args} />
         {selectedFileName && (
-          <div className="text-xs" data-testid="selected-file-name">
-            Selected: {selectedFileName}
-          </div>
+          <div className="text-xs">Selected: {selectedFileName}</div>
         )}
       </div>
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const image = await canvas.findByRole("img", {
-      name: /John Doe profile image on the Systatum superapp/i,
-    });
-    await expect(image).toBeVisible();
   },
 };

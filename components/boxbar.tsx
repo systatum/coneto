@@ -36,17 +36,15 @@ function Boxbar({
       <span className={cn("p-2 w-full flex-wrap flex", childClassName)}>
         {children}
       </span>
-      <button
+      <motion.button
+        aria-label="boxbar-toggle"
         className="mt-2 mr-2 top-2 w-fit right-2 cursor-pointer hover:bg-gray-100 p-1 rounded"
+        animate={{ rotate: isOpen ? 90 : 0 }}
+        transition={{ duration: 0.2 }}
         onClick={() => setIsOpen(!isOpen)}
       >
-        <motion.div
-          animate={{ rotate: isOpen ? 90 : 0 }}
-          transition={{ duration: 0.2 }}
-        >
-          <RiArrowRightSLine size={14} />
-        </motion.div>
-      </button>
+        <RiArrowRightSLine size={14} />
+      </motion.button>
     </motion.div>
   );
 }

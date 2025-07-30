@@ -178,12 +178,16 @@ function ToolbarMenu({
   );
 
   return (
-    <div ref={containerRef} className="relative flex flex-col mr-1">
+    <div
+      aria-label={`toolbar-menu`}
+      ref={containerRef}
+      className="relative flex flex-col mr-1"
+    >
       <div ref={refs.setReference} className={toolbarMenuClass}>
         {(Icon || caption) && (
           <>
-            <div
-              aria-label="toolbar-menu-toggle"
+            <button
+              aria-label={`toolbar-menu-button-${caption}`}
               onMouseEnter={() => setHovered("main")}
               onMouseLeave={() => setHovered("original")}
               onClick={handleMainClick}
@@ -200,7 +204,7 @@ function ToolbarMenu({
               {caption && (
                 <span className="text-sm sm:flex hidden px-2">{caption}</span>
               )}
-            </div>
+            </button>
             <span
               aria-label="divider"
               className={cn(
@@ -210,7 +214,8 @@ function ToolbarMenu({
             ></span>
           </>
         )}
-        <div
+        <button
+          aria-label={`toolbar-menu-toggle`}
           onMouseEnter={() => setHovered("dropdown")}
           onMouseLeave={() => setHovered("original")}
           className={cn(
@@ -234,7 +239,7 @@ function ToolbarMenu({
               size={20}
             />
           )}
-        </div>
+        </button>
       </div>
 
       {isOpen && (

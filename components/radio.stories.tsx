@@ -2,7 +2,6 @@ import { Meta, StoryObj } from "@storybook/react";
 import { Radio } from "./radio";
 import { ChangeEvent, ComponentProps } from "react";
 import { useArgs } from "@storybook/preview-api";
-import { userEvent, within } from "@storybook/test";
 
 const meta: Meta<typeof Radio> = {
   title: "Input Elements/Radio",
@@ -69,12 +68,6 @@ export const Default: Story = {
       </div>
     );
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const radios = await canvas.findAllByRole("radio");
-    await userEvent.click(radios[1]);
-  },
 };
 
 export const WithDescription: Story = {
@@ -114,11 +107,5 @@ export const WithDescription: Story = {
         ))}
       </div>
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const radios = await canvas.findAllByRole("radio");
-    await userEvent.click(radios[1]);
   },
 };

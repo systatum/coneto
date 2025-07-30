@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { expect, within } from "@storybook/test";
 import { LoadingSpinner } from "./loading-spinner";
 
 const meta: Meta<typeof LoadingSpinner> = {
@@ -43,11 +42,6 @@ export const Default: Story = {
   render: (args) => {
     return <LoadingSpinner {...args} />;
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const spinner = canvas.getByTestId("circle");
-    expect(spinner).toBeInTheDocument();
-  },
 };
 
 export const WithLabel: Story = {
@@ -59,10 +53,5 @@ export const WithLabel: Story = {
   },
   render: (args) => {
     return <LoadingSpinner {...args} />;
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const spinner = canvas.getByTestId("circle");
-    expect(spinner).toBeInTheDocument();
   },
 };

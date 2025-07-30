@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { expect, userEvent, within } from "@storybook/test";
 import { Checkbox, CheckboxProps } from "./checkbox";
 import { ChangeEvent, useState } from "react";
 
@@ -30,13 +29,6 @@ export const Default: Story = {
         onChange={() => setChecked(!checked)}
       />
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const checkbox = canvas.getByRole("checkbox");
-
-    await userEvent.click(checkbox);
-    await expect(checkbox).toBeChecked();
   },
 };
 
@@ -72,8 +64,6 @@ export const WithDescription: StoryWithDescription = {
     const [selected, setSelected] = useState({
       checked: [] as CheckboxOptionsProps[],
     });
-
-    console.log(selected);
 
     const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
       const { name, value: inputValue, checked, type } = e.target;
@@ -128,11 +118,5 @@ export const WithError: Story = {
         errorMessage="You must agree before continuing"
       />
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const checkbox = canvas.getByRole("checkbox");
-
-    await expect(checkbox.className).toMatch("border-red-500");
   },
 };

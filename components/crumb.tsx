@@ -66,13 +66,14 @@ function Crumb({
           if (isEllipsis) {
             return (
               <motion.li
-                key="ellipsis"
+                key={index}
                 className="flex items-center"
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
               >
                 <RiMoreLine
                   size={20}
+                  aria-label="ellipsis"
                   className="text-gray-500 hover:text-[#61A9F9] cursor-pointer"
                   onClick={() => setExpanded(true)}
                 />

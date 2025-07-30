@@ -71,6 +71,9 @@ function Avatar({
       {...props}
       onClick={changeable ? handleClick : props.onClick}
       onChange={changeable ? handleFileChange : onChange}
+      aria-label="avatar-content"
+      role="button"
+      tabIndex={0}
       className={clsx(
         "group relative flex items-center justify-center overflow-hidden rounded-full border border-gray-100 font-bold",
         isClickable ? "cursor-pointer" : "cursor-default"
@@ -101,7 +104,7 @@ function Avatar({
             accept="image/*"
             className="hidden"
             onChange={handleFileChange}
-            data-testid="profile-file-input"
+            aria-label="profile-file-input"
           />
           <span className="text-sm text-white">📷</span>
         </div>

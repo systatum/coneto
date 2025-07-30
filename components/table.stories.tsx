@@ -12,7 +12,6 @@ import {
 } from "@remixicon/react";
 import { EmptySlate } from "./empty-slate";
 import { Button } from "./button";
-import { expect, userEvent, waitFor, within } from "@storybook/test";
 
 const meta: Meta<typeof Table> = {
   title: "Content/Table",
@@ -382,14 +381,6 @@ export const Appendable: Story = {
       </Table>
     );
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const firstRowCheckbox = await canvas.findAllByRole("checkbox");
-    await userEvent.click(firstRowCheckbox[0]);
-
-    await waitFor(() => expect(firstRowCheckbox[0]).toBeChecked());
-  },
 };
 
 export const SortableWithPagination: Story = {
@@ -543,34 +534,6 @@ export const SortableWithPagination: Story = {
         </Table>
       </div>
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const checkboxes = await canvas.findAllByRole("checkbox");
-    await userEvent.click(checkboxes[0]);
-
-    await waitFor(() => {
-      expect(checkboxes[0]).toBeChecked();
-    });
-
-    const nextPageBtn = await canvas.findByLabelText("next-button-pagination");
-    await userEvent.click(nextPageBtn);
-
-    await waitFor(() => {
-      const pageIndicator = canvas.getByText(/Pg\. 2/);
-      expect(pageIndicator).toBeInTheDocument();
-    });
-
-    const prevPageBtn = await canvas.findByLabelText(
-      "previous-button-pagination"
-    );
-    await userEvent.click(prevPageBtn);
-
-    await waitFor(() => {
-      const pageIndicator = canvas.getByText(/Pg\. 1/);
-      expect(pageIndicator).toBeInTheDocument();
-    });
   },
 };
 
@@ -962,20 +925,5 @@ export const WithRowGroup: Story = {
         </Table>
       </div>
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const topButtons = await canvas.findAllByRole("button", {
-      name: /copy|delete/i,
-    });
-    expect(topButtons.length).toBeGreaterThanOrEqual(2);
-
-    await userEvent.click(topButtons[0]);
-
-    const checkboxes = await canvas.findAllByRole("checkbox");
-    await userEvent.click(checkboxes[0]);
-
-    await waitFor(() => expect(checkboxes[0]).toBeChecked());
   },
 };

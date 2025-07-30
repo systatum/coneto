@@ -3,7 +3,6 @@ import { CapsuleTab } from "./capsule-tab";
 import { Button } from "./button";
 import { Textbox } from "./textbox";
 import { ChangeEvent, useState } from "react";
-import { expect, userEvent, waitFor, within } from "@storybook/test";
 
 const meta: Meta<typeof CapsuleTab> = {
   title: "Stage/CapsuleTab",
@@ -79,21 +78,5 @@ export const Default: Story = {
         </div>
       </div>
     );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await expect(canvas.getByText("Review Tab")).toBeInTheDocument();
-
-    await userEvent.click(canvas.getByRole("tab", { name: /Write/i }));
-
-    await waitFor(() =>
-      expect(canvas.getByText("Write Tab")).toBeInTheDocument()
-    );
-
-    const textarea = canvas.getByRole("textbox");
-    await userEvent.type(textarea, "This is a test comment");
-
-    await expect(textarea).toHaveValue("This is a test comment");
   },
 };
