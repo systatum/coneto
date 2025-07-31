@@ -179,11 +179,14 @@ function LaunchpadSectionItem({
 }: LaunchpadSectionItemProps) {
   return (
     <a
-      className={cn("flex flex-col gap-2 text-sm items-center", className)}
+      className={cn(
+        "flex flex-col border border-transparent p-1 mx-4 pt-3 duration-300 transition-all rounded-md hover:border-gray-200 hover:shadow-md gap-2 text-xs items-center",
+        className
+      )}
       href={href}
     >
       {iconUrl && (
-        <div className={cn("max-w-[100px]", iconClassName)}>
+        <div className={cn("max-w-[30px]", iconClassName)}>
           <img width={400} height={400} src={iconUrl} />
         </div>
       )}
