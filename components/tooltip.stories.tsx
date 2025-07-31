@@ -186,8 +186,8 @@ export const Custom: Story = {
         arrowClassName="bg-black border"
         drawerClassName="w-fit left-4 border border-gray-200 bg-white text-black"
         text={
-          <div className="flex flex-row">
-            <RiAddBoxLine />
+          <div className="flex flex-row items-center gap-1 text-sm">
+            <RiAddBoxLine size={16} />
             <span>New Division</span>
           </div>
         }
