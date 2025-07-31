@@ -180,7 +180,7 @@ function LaunchpadSectionItem({
   return (
     <a
       className={cn(
-        "flex flex-col border border-transparent p-1 mx-4 pt-3 duration-300 transition-all rounded-md hover:border-gray-200 hover:shadow-md gap-2 text-xs items-center",
+        "flex flex-col border border-transparent p-1 mx-4 py-2 duration-300 transition-all rounded-md hover:border-gray-200 hover:shadow-md gap-2 text-xs items-center",
         className
       )}
       href={href}
