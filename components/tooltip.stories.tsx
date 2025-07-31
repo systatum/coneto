@@ -183,7 +183,7 @@ export const Custom: Story = {
     return (
       <Tooltip
         containerClassName="w-fit px-3"
-        arrowClassName="bg-black border"
+        arrowClassName="bg-white border border-gray-200 bg-gray-200"
         drawerClassName="w-fit left-4 border border-gray-200 bg-white text-black"
         text={
           <div className="flex flex-row items-center gap-1 text-sm">
