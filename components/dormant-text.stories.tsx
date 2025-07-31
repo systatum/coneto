@@ -184,9 +184,7 @@ export const WithCombobox: Story = {
         </div>
         <div className="flex flex-col">
           <span className="font-medium">
-            Change accepted by pressing enter/clicking some values and
-            cancelable by pressing escape Change cancelable, and acceptable by
-            pressing enter or click event
+            Change cancelable, and acceptable by pressing enter or click event
           </span>
           <DormantText
             fullWidth
