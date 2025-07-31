@@ -28,7 +28,7 @@ export interface DormantTextProps {
   content?: string | number;
   fullWidth?: boolean;
   acceptChangeOn?: "enter" | "click" | "all";
-  cancellable?: boolean;
+  cancelable?: boolean;
   onActive?: () => void;
   onCancelRequested?: () => void;
 }
@@ -47,7 +47,7 @@ function DormantText({
   content,
   fullWidth,
   acceptChangeOn,
-  cancellable,
+  cancelable,
   onActive,
   onCancelRequested,
 }: DormantTextProps) {
@@ -127,7 +127,7 @@ function DormantText({
           (acceptChangeOn === "enter" || acceptChangeOn === "all")
         ) {
           combinedRef.current.doneEditing();
-        } else if (e.key === "Escape" && cancellable) {
+        } else if (e.key === "Escape" && cancelable) {
           combinedRef.current.cancelEditing();
           if (onCancelRequested) {
             onCancelRequested();
@@ -211,7 +211,7 @@ function DormantText({
           size={18}
         />
       </button>
-      {cancellable && (
+      {cancelable && (
         <button
           className={cn(
             "text-muted-foreground flex min-w-[30px] p-[2px] relative rounded-xs transition-all duration-200 cursor-pointer hover:bg-gray-300"

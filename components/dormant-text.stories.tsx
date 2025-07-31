@@ -93,7 +93,7 @@ export const Default: Story = {
             onActionClick={() => {
               console.log(`The value is : ${value.keydown}`);
             }}
-            cancellable
+            cancelable
             onActive={() => {
               setOldValue((prev) => ({ ...prev, ["keydown"]: value.keydown }));
             }}
@@ -193,7 +193,7 @@ export const WithCombobox: Story = {
             onActionClick={() => {
               console.log(`Selected value: ${value.keydown.value}`);
             }}
-            cancellable
+            cancelable
             onActive={() => {
               setOldValue((prev) => ({ ...prev, ["keydown"]: value.keydown }));
             }}
@@ -306,7 +306,7 @@ export const WithDatebox: Story = {
             fullWidth
             acceptChangeOn={"click"}
             content={value.keydown.text}
-            cancellable
+            cancelable
             onActive={() => {
               setOldValue((prev) => ({ ...prev, ["keydown"]: value.keydown }));
             }}
@@ -424,7 +424,7 @@ export const WithColorbox: Story = {
             onActionClick={() => {
               console.log(`Selected value: ${value.keydown}`);
             }}
-            cancellable
+            cancelable
             onActive={() => {
               setOldValue((prev) => ({ ...prev, ["keydown"]: value.keydown }));
             }}
@@ -515,7 +515,7 @@ export const WithMoneybox: Story = {
             onActionClick={() => {
               console.log(`Selected value: ${value.keydown}`);
             }}
-            cancellable
+            cancelable
             onActive={() => {
               setOldValue((prev) => ({ ...prev, ["keydown"]: value.keydown }));
             }}
@@ -625,7 +625,7 @@ export const WithPhonebox: Story = {
             onActionClick={() => {
               console.log(`Selected value: ${value.keydown}`);
             }}
-            cancellable
+            cancelable
             onActive={() => {
               setOldValue((prev) => ({ ...prev, ["keydown"]: value.keydown }));
             }}
@@ -697,7 +697,7 @@ export const WithTimebox: Story = {
             onActionClick={() => {
               console.log(`Selected value: ${value.keydown}`);
             }}
-            cancellable
+            cancelable
             onActive={() => {
               setOldValue((prev) => ({ ...prev, ["keydown"]: value.keydown }));
             }}
