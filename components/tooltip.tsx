@@ -53,14 +53,12 @@ function Tooltip({
     if (openOn !== "click" || !isOpen) return;
 
     function handleClickOutside(event: MouseEvent) {
-      setTimeout(() => {
-        if (
-          tooltipRef.current &&
-          !tooltipRef.current.contains(event.target as Node)
-        ) {
-          setIsOpen(false);
-        }
-      }, 0);
+      if (
+        tooltipRef.current &&
+        !tooltipRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
     }
 
     document.addEventListener("click", handleClickOutside);
