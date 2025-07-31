@@ -175,7 +175,7 @@ function Button({
           <button
             className={cn(
               getButtonClasses(variant, size),
-              "relative",
+              "relative max-w-[40px]",
               tipMenu && "rounded-none",
               isOpen && ButtonActiveVariant[variant],
               className
