@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 import { Separator } from "./separator";
-import { motion } from "framer-motion";
+import { motion, useDragControls, useMotionValue } from "framer-motion";
 import { Grid, GridPresetKey } from "./grid";
 import { cn } from "./../lib/utils";
 
@@ -84,48 +84,52 @@ function Launchpad({ children, className, maxSection = 3 }: LaunchpadProps) {
 
   const targetX = -page * containerWidth;
 
+  const x = useMotionValue(0);
+  const dragControls = useDragControls();
+
   return (
     <div
       ref={containerRef}
+      onPointerDown={(e) => dragControls.start(e)}
       className={cn(
-        "flex flex-col cursor-grab active:cursor-grabbing p-6 px-[6px] gap-4 border border-gray-300 overflow-hidden relative",
+        "flex flex-col cursor-grab active:cursor-grabbing p-6 px-[6px] gap-2 border border-gray-300 overflow-hidden relative",
         className
       )}
     >
-      <div className="relative">
-        <motion.div
-          drag={"x"}
-          dragElastic={0.2}
-          dragMomentum={false}
-          dragConstraints={{
-            left: -containerWidth * (totalPages - 1),
-            right: 0,
-          }}
-          animate={{ x: targetX }}
-          transition={{
-            type: "spring",
-            stiffness: 300,
-            damping: 30,
-            mass: 1,
-          }}
-          onDragEnd={handleDragEnd}
-          className="flex"
-        >
-          {groupedSections.map((group, index) => (
-            <div
-              key={index}
-              className="shrink-0 flex flex-col gap-6"
-              style={{
-                width: containerWidth,
-                pointerEvents: "auto",
-              }}
-            >
-              {group}
-            </div>
-          ))}
-        </motion.div>
-      </div>
-
+      <motion.div
+        drag={"x"}
+        dragElastic={0.2}
+        dragMomentum={false}
+        dragControls={dragControls}
+        dragListener={false}
+        style={{ x }}
+        dragConstraints={{
+          left: -containerWidth * (totalPages - 1),
+          right: 0,
+        }}
+        animate={{ x: targetX }}
+        transition={{
+          type: "spring",
+          stiffness: 400,
+          damping: 30,
+          mass: 1,
+        }}
+        onDragEnd={handleDragEnd}
+        className="flex"
+      >
+        {groupedSections.map((group, index) => (
+          <div
+            key={index}
+            className="shrink-0 flex flex-col gap-6"
+            style={{
+              width: containerWidth,
+              pointerEvents: "auto",
+            }}
+          >
+            {group}
+          </div>
+        ))}
+      </motion.div>
       {totalPages > 1 && (
         <div className="flex justify-center gap-2 mt-4">
           {Array.from({ length: totalPages }).map((_, index) => (
@@ -154,7 +158,7 @@ function LaunchpadSection({
 }: LaunchpadSectionProps) {
   return (
     <div className={cn("flex flex-col gap-6", containerClassName)}>
-      <div className={cn("pr-10 sm:pr-16 md:pr-6 lg:pr-6", separatorClassName)}>
+      <div className={cn("pr-6 sm:pr-16 md:pr-6 lg:pr-6", separatorClassName)}>
         <Separator title={title} depth="0" />
       </div>
       <Grid

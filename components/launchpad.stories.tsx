@@ -118,7 +118,7 @@ export const Default: Story = {
           <Launchpad.Section gridPreset="1-to-3" title={data.title} key={index}>
             {data.items.map((item, itemIndex) => (
               <Launchpad.Section.Item
-                className="sm:flex-col flex-row py-2 items-center sm:px-0 px-4"
+                className="sm:flex-col flex-row items-center sm:px-0 px-4"
                 key={itemIndex}
                 {...item}
               />
