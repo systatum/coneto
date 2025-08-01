@@ -23,6 +23,17 @@ import { OptionsProps } from "./selectbox";
 import { Combobox, ComboboxProps } from "./combobox";
 import { Chips, ChipsProps } from "./chips";
 
+export type StatefulOnChangeType =
+  | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  | FileList
+  | OptionsProps
+  | {
+      target: {
+        name: string;
+        value: CountryCodeProps;
+      };
+    };
+
 interface StatefulFormProps<Z extends ZodTypeAny> {
   fields: FormFieldProps[];
   formValues: TypeOf<Z>;

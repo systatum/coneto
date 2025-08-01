@@ -142,7 +142,10 @@ function Button({
   }, [isOpen]);
 
   return (
-    <div ref={containerRef} className="flex flex-row relative items-center">
+    <div
+      ref={containerRef}
+      className="flex flex-row h-fit w-fit relative items-center"
+    >
       <button
         onMouseEnter={() => setHovered("main")}
         onMouseLeave={() => setHovered("original")}
@@ -165,14 +168,14 @@ function Button({
           <span
             aria-label="divider"
             className={cn(
-              "absolute transform duration-200 right-[34%] h-full w-px border-l top-1/2 -translate-y-1/2 text-[#a5a0a0] z-10",
+              "absolute transform duration-200 right-[40px] h-full w-px border-l top-1/2 -translate-y-1/2 text-[#a5a0a0] z-10",
               hovered === "original" && !isOpen && "h-[80%]"
             )}
           />
           <button
             className={cn(
               getButtonClasses(variant, size),
-              "relative",
+              "relative max-w-[40px]",
               tipMenu && "rounded-none",
               isOpen && ButtonActiveVariant[variant],
               className
