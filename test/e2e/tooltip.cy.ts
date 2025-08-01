@@ -89,4 +89,21 @@ context("Tooltip Component", () => {
       cy.contains("Clicked tooltip with blue underline").should("not.exist");
     });
   });
+
+  describe("With Form Tooltip", () => {
+    it("Should open by pressing click, and then we input content ", () => {
+      cy.visit(getIdContent("content-tooltip--with-form"));
+
+      cy.contains("New Division").click();
+
+      cy.findAllByRole("textbox")
+        .should("be.visible")
+        .click()
+        .type("Hello there, this is custom tooltip");
+
+      cy.findAllByDisplayValue("Hello there, this is custom tooltip").should(
+        "exist"
+      );
+    });
+  });
 });

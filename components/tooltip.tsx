@@ -4,10 +4,11 @@ import clsx from "clsx";
 
 export type TooltipProps = {
   children: ReactNode;
-  text: string;
+  text: ReactNode;
   openOn?: "hover" | "click";
-  className?: string;
+  drawerClassName?: string;
   containerClassName?: string;
+  arrowClassName?: string;
   underline?: "underline" | "underline-dot" | "transparent" | "blue" | "gray";
 };
 
@@ -15,12 +16,13 @@ function Tooltip({
   children,
   text,
   openOn = "hover",
-  className = "",
+  drawerClassName,
   containerClassName,
+  arrowClassName,
   underline = "underline",
 }: TooltipProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const tooltipRef = useRef<HTMLSpanElement>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
 
   const tooltipContainerClass = clsx(
     openOn === "hover" ? "cursor-default" : "cursor-pointer",
@@ -59,37 +61,40 @@ function Tooltip({
       }
     }
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("click", handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("click", handleClickOutside);
     };
   }, [isOpen, openOn]);
 
   return (
-    <span ref={tooltipRef} className="relative inline-flex items-center">
-      <span
+    <div ref={tooltipRef} className="relative inline-flex items-center">
+      <div
         {...triggerProps}
         className={cn(tooltipContainerClass, containerClassName)}
       >
         {text}
-      </span>
+      </div>
       {isOpen && (
-        <div
-          className={cn(
-            "absolute left-[20%] -translate-x-[20%] top-full z-50 mt-2 w-max rounded-xs bg-gray-600 px-2 py-1 text-xs text-white shadow-lg",
-            className
-          )}
-        >
+        <>
           <div
+            aria-label="tooltip-arrow"
             className={cn(
-              "absolute z-10 -top-1 left-[25%] -translate-x-[25%] h-2 w-2 rotate-45 bg-gray-600",
-              className
+              "absolute z-10 top-full mt-1 bg-gray-600 left-[25%] -translate-x-[25%] h-2 w-2 rotate-45",
+              arrowClassName
             )}
           />
-          {children}
-        </div>
+          <div
+            className={cn(
+              "absolute left-0 top-full z-50 mt-2 w-max rounded-xs bg-gray-600 px-2 py-1 text-xs text-white shadow-lg",
+              drawerClassName
+            )}
+          >
+            {children}
+          </div>
+        </>
       )}
-    </span>
+    </div>
   );
 }
 
