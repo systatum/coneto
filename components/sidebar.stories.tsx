@@ -42,7 +42,6 @@ export const Default: Story = {
           { id: 2, title: "Mohamad Naufal Alim", onClick: setPerson },
         ],
       },
-
       {
         title: "Product Management Team",
         items: [
