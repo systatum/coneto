@@ -100,6 +100,7 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
               {currency}
             </span>
             <input
+              autoComplete="off"
               ref={ref}
               name={name}
               value={inputValue}
