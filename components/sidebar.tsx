@@ -104,8 +104,8 @@ function Sidebar({ children, className, position = "left" }: SidebarProps) {
         }
         animate={isMobile ? controls : { x: 0 }}
         className={cn(
-          `fixed z-40 flex h-full min-h-screen w-64 min-w-[300px] flex-col border-r shadow-lg border-gray-300 bg-white p-6 pt-10 md:static md:hidden md:translate-x-0 md:shadow-none`,
-          position === "left" ? "left-0" : "right-0",
+          `fixed z-40 flex h-full min-h-screen w-64 min-w-[300px] flex-col shadow-md border-gray-300 bg-white p-6 pt-10 md:static md:hidden md:translate-x-0`,
+          position === "left" ? "left-0 border-r" : "right-0 border-l",
           className
         )}
       >
@@ -117,7 +117,7 @@ function Sidebar({ children, className, position = "left" }: SidebarProps) {
           {...handlers}
           onClick={() => handleToggleSidebar(true)}
           className={cn(
-            "fixed top-0 z-30 block h-full cursor-pointer rounded-xs border border-gray-200 bg-white p-[2px] shadow-xl md:hidden",
+            "fixed top-0 z-30 block h-full cursor-pointer rounded-xs border border-gray-200 bg-white p-[2px] shadow-md md:hidden",
             position === "left" ? "left-0" : "right-0"
           )}
         >
@@ -127,7 +127,7 @@ function Sidebar({ children, className, position = "left" }: SidebarProps) {
 
       <div
         className={cn(
-          `fixed overflow-y-auto top-0 z-40 hidden h-full min-h-screen w-64 min-w-[300px] border-gray-200 bg-white p-6 pt-10 shadow-xl md:fixed md:flex md:translate-x-0 md:flex-col`,
+          `fixed overflow-y-auto top-0 z-40 hidden h-full min-h-screen w-64 min-w-[300px] border-gray-200 bg-white p-6 pt-10 shadow-md md:fixed md:flex md:translate-x-0 md:flex-col`,
           position === "left" ? "left-0 border-r" : "right-0 border-l",
           className
         )}
