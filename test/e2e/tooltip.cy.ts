@@ -92,7 +92,7 @@ context("Tooltip Component", () => {
 
   describe("Custom Tooltip", () => {
     it("Should open by pressing click, and then we input content ", () => {
-      cy.visit(getIdContent("content-tooltip--custom"));
+      cy.visit(getIdContent("content-tooltip--with-form"));
 
       cy.contains("New Division")
 
