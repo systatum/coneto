@@ -127,7 +127,7 @@ function Sidebar({ children, className, position = "left" }: SidebarProps) {
 
       <div
         className={cn(
-          `fixed top-0 z-40 hidden h-full min-h-screen w-64 min-w-[300px] border-gray-200 bg-white p-6 pt-10 shadow-xl md:static md:flex md:translate-x-0 md:flex-col`,
+          `fixed overflow-y-auto top-0 z-40 hidden h-full min-h-screen w-64 min-w-[300px] border-gray-200 bg-white p-6 pt-10 shadow-xl md:fixed md:flex md:translate-x-0 md:flex-col`,
           position === "left" ? "left-0 border-r" : "right-0 border-l",
           className
         )}
@@ -147,5 +147,10 @@ function SidebarItem({ isFixed, className, children }: SidebarItemProps) {
   return <div className={sidebarItemClass}>{children}</div>;
 }
 
+function SidebarSpacer() {
+  return <div className="hidden md:block md:min-w-[300px]" />;
+}
+
+Sidebar.Spacer = SidebarSpacer;
 Sidebar.Item = SidebarItem;
 export { Sidebar };

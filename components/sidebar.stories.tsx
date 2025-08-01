@@ -42,6 +42,7 @@ export const Default: Story = {
           { id: 2, title: "Mohamad Naufal Alim", onClick: setPerson },
         ],
       },
+
       {
         title: "Product Management Team",
         items: [
@@ -98,6 +99,7 @@ export const Default: Story = {
             />
           </Sidebar.Item>
         </Sidebar>
+        <Sidebar.Spacer />
         <div className="items-center justify-center flex w-full">
           Empty Content
         </div>
@@ -155,6 +157,7 @@ export const FixedRight: Story = {
         <div className="items-center justify-center flex w-full">
           Empty Content
         </div>
+        <Sidebar.Spacer />
         <Sidebar position="right">
           <Sidebar.Item>
             <Searchbox
