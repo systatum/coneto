@@ -92,7 +92,7 @@ function Launchpad({ children, className, maxSection = 3 }: LaunchpadProps) {
       ref={containerRef}
       onPointerDown={(e) => dragControls.start(e)}
       className={cn(
-        "flex flex-col cursor-grab active:cursor-grabbing p-6 px-[6px] gap-2 border border-gray-300 overflow-hidden relative",
+        "flex flex-col cursor-grab select-none active:cursor-grabbing p-6 px-[6px] gap-2 border border-gray-300 overflow-hidden relative",
         className
       )}
     >
@@ -184,7 +184,7 @@ function LaunchpadSectionItem({
   return (
     <a
       className={cn(
-        "flex flex-col border border-transparent p-1 mx-4 py-2 duration-300 transition-all rounded-md hover:border-gray-200 hover:shadow-md gap-2 text-xs items-center",
+        "flex flex-col border border-transparent p-1 mx-4 py-2 duration-200 transition-all rounded-md hover:border-gray-200 hover:shadow-md gap-2 text-xs items-center",
         className
       )}
       href={href}

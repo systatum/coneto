@@ -113,19 +113,26 @@ export const Default: Story = {
     ];
 
     return (
-      <Launchpad className="max-w-[520px]">
-        {LAUNCHPAD_SECTIONS.map((data, index) => (
-          <Launchpad.Section gridPreset="1-to-3" title={data.title} key={index}>
-            {data.items.map((item, itemIndex) => (
-              <Launchpad.Section.Item
-                className="sm:flex-col flex-row items-center sm:px-0 px-4"
-                key={itemIndex}
-                {...item}
-              />
-            ))}
-          </Launchpad.Section>
-        ))}
-      </Launchpad>
+      <div className="flex flex-row">
+        <Launchpad className="max-w-[520px] w-full">
+          {LAUNCHPAD_SECTIONS.map((data, index) => (
+            <Launchpad.Section
+              gridPreset="1-to-3"
+              title={data.title}
+              key={index}
+            >
+              {data.items.map((item, itemIndex) => (
+                <Launchpad.Section.Item
+                  className="sm:flex-col flex-row items-center sm:px-0 px-4"
+                  key={itemIndex}
+                  {...item}
+                />
+              ))}
+            </Launchpad.Section>
+          ))}
+        </Launchpad>
+        qweqwe
+      </div>
     );
   },
 };
