@@ -98,7 +98,8 @@ export const Default: Story = {
             />
           </Sidebar.Item>
         </Sidebar>
-        <div className="items-center justify-center flex w-full">
+        <Sidebar.Spacer />
+        <div className="items-center min-h-screen justify-center flex w-full">
           Empty Content
         </div>
       </div>
@@ -152,9 +153,10 @@ export const FixedRight: Story = {
 
     return (
       <div className="flex flex-row w-full justify-between">
-        <div className="items-center justify-center flex w-full">
+        <div className="items-center min-h-screen justify-center flex w-full">
           Empty Content
         </div>
+        <Sidebar.Spacer />
         <Sidebar position="right">
           <Sidebar.Item>
             <Searchbox
