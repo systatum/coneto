@@ -136,9 +136,12 @@ export const BlueUnderlineTooltip: Story = {
 
 export const Custom: Story = {
   render: () => {
-    const [value, setValue] = useState({
+    const [value, setValue] = useState<{
+      division_name: string;
+    }>({
       division_name: "",
     });
+
     const onChangeDivisionEmployeeForm = (
       e?:
         | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
