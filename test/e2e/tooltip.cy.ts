@@ -90,13 +90,11 @@ context("Tooltip Component", () => {
     });
   });
 
-  describe("Custom Tooltip", () => {
+  describe("With Form Tooltip", () => {
     it("Should open by pressing click, and then we input content ", () => {
       cy.visit(getIdContent("content-tooltip--with-form"));
 
-      cy.contains("New Division")
-
-        .click();
+      cy.contains("New Division").click();
 
       cy.findAllByRole("textbox")
         .should("be.visible")
