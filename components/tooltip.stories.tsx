@@ -1,10 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Tooltip } from "./tooltip";
 import { Button } from "./button";
-import { FormFieldProps, StatefulForm } from "./stateful-form";
-import { ChangeEvent, useState } from "react";
-import { OptionsProps } from "./selectbox";
-import { CountryCodeProps } from "./phonebox";
+import {
+  FormFieldProps,
+  StatefulForm,
+  StatefulOnChangeType,
+} from "./stateful-form";
+import { useState } from "react";
 import z from "zod";
 import { RiAddBoxLine } from "@remixicon/react";
 
@@ -142,13 +144,7 @@ export const Custom: Story = {
       division_name: "",
     });
 
-    const onChangeDivisionEmployeeForm = (
-      e?:
-        | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-        | FileList
-        | { target: { name: string; value: CountryCodeProps } }
-        | OptionsProps
-    ) => {
+    const onChangeDivisionEmployeeForm = (e?: StatefulOnChangeType) => {
       if (!e || typeof e !== "object") return;
 
       if ("target" in e && typeof e.target?.name === "string") {

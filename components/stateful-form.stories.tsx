@@ -12,7 +12,6 @@ import {
   OnCompleteFunctionProps,
   OnFileDroppedFunctionProps,
 } from "./file-drop-box";
-import { OptionsProps } from "./selectbox";
 import { BadgeProps } from "./badge";
 import { ColorPickProps } from "./colorbox";
 import { CountryCodeProps } from "./phonebox";
