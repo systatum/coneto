@@ -136,7 +136,7 @@ export const BlueUnderlineTooltip: Story = {
   },
 };
 
-export const Custom: Story = {
+export const WithForm: Story = {
   render: () => {
     const [value, setValue] = useState<{
       division_name: string;
