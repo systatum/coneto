@@ -119,11 +119,11 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
     useEffect(() => {
       let didFocusInitially = false;
 
-      if (!didFocusInitially) {
+      if (!didFocusInitially && ref) {
         didFocusInitially = true;
         phoneInputRef.current?.focus();
       }
-    }, []);
+    }, [ref]);
 
     const listRef = useRef<(HTMLDivElement | null)[]>([]);
     useEffect(() => {

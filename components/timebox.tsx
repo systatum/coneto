@@ -67,11 +67,11 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
     useEffect(() => {
       let didFocusInitially = false;
 
-      if (!didFocusInitially) {
+      if (!didFocusInitially && ref) {
         didFocusInitially = true;
         hourRef.current?.focus();
       }
-    }, []);
+    }, [ref]);
 
     const handleChange = (
       type: "hour" | "minute" | "second",
