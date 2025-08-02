@@ -18,7 +18,6 @@ export interface SearchboxProps extends InputHTMLAttributes<HTMLInputElement> {
 const Searchbox = forwardRef<HTMLInputElement, SearchboxProps>(
   ({ name, value, className, onChange, ...props }, ref) => {
     const inputId = `textbox-${name}`;
-    const inputRef = useRef<HTMLInputElement>(null);
 
     const inputClass = clsx(
       "rounded-3xl text-black px-9 bg-white text-xs w-full py-[8px] outline-none",
@@ -28,24 +27,15 @@ const Searchbox = forwardRef<HTMLInputElement, SearchboxProps>(
 
     const valueLengthChecker = value.length > 0;
 
-    useEffect(() => {
-      let didFocusInitially = false;
-
-      if (!didFocusInitially) {
-        didFocusInitially = true;
-        inputRef.current?.focus();
-      }
-    }, []);
-
     return (
-      <div ref={ref} className="relative w-full ring-0">
+      <div className="relative w-full ring-0">
         <RiSearchLine
           size={14}
           className="absolute top-1/2 text-gray-400 left-3 -translate-y-1/2"
         />
 
         <input
-          ref={inputRef}
+          ref={ref}
           id={inputId}
           aria-label={"textbox-search"}
           name={name}
