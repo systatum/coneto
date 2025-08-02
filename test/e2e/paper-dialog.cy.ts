@@ -28,6 +28,7 @@ context("PaperDialog Component", () => {
       cy.findByText("Add New Employee").should("exist");
 
       cy.findByLabelText("button-close").click();
+      cy.findByText("Add New Employee").should("not.exist");
     });
   });
 
@@ -40,6 +41,7 @@ context("PaperDialog Component", () => {
       cy.findByText("Add New Employee").should("exist");
 
       cy.findByLabelText("button-close").click();
+      cy.findByText("Add New Employee").should("not.exist");
     });
   });
 });

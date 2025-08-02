@@ -134,7 +134,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                 >
                   <button
                     aria-label="button-close"
-                    onClick={() => setDialogState(null)}
+                    onClick={() => setDialogState("closed")}
                     className={cn(
                       "relative w-fit cursor-pointer bg-white border-[#ebebeb] shadow-sm hover:bg-gray-100",
                       isLeft
