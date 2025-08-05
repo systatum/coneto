@@ -297,8 +297,7 @@
     "react-swipeable": "^7.0.2",
     "tailwind-merge": "^3.3.0",
     "zod": "^3.24.4",
-    "tailwindcss": "^4.1.11",
-    "styled-components": "^6.1.19"
+    "tailwindcss": "^4.1.11"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.6",
