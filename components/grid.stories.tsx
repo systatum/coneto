@@ -24,7 +24,13 @@ export const Fit200PX: Story = {
       <Grid gap={8} preset="auto-fit-200">
         {data.map((data) => (
           <Grid.Card key={data.id} thumbnail={data.image}>
-            <div className="min-h-[30px] h-full w-full">
+            <div
+              style={{
+                minHeight: "30px",
+                width: "100%",
+                height: "100%",
+              }}
+            >
               <h3>{data.title}</h3>
             </div>
           </Grid.Card>
@@ -46,7 +52,13 @@ export const Fit250PX: Story = {
       <Grid gap={8} preset="auto-fit-250">
         {data.map((data) => (
           <Grid.Card key={data.id} thumbnail={data.image}>
-            <div className="min-h-[30px] h-full w-full">
+            <div
+              style={{
+                minHeight: "30px",
+                width: "100%",
+                height: "100%",
+              }}
+            >
               <h3>{data.title}</h3>
             </div>
           </Grid.Card>
@@ -68,7 +80,13 @@ export const Fit300PX: Story = {
       <Grid gap={8} preset="auto-fit-300">
         {data.map((data) => (
           <Grid.Card key={data.id} thumbnail={data.image}>
-            <div className="min-h-[30px] h-full w-full">
+            <div
+              style={{
+                minHeight: "30px",
+                width: "100%",
+                height: "100%",
+              }}
+            >
               <h3>{data.title}</h3>
             </div>
           </Grid.Card>
@@ -90,7 +108,13 @@ export const Fit350PX: Story = {
       <Grid gap={8} preset="auto-fit-350">
         {data.map((data) => (
           <Grid.Card key={data.id} thumbnail={data.image}>
-            <div className="min-h-[30px] h-full w-full">
+            <div
+              style={{
+                minHeight: "30px",
+                width: "100%",
+                height: "100%",
+              }}
+            >
               <h3>{data.title}</h3>
             </div>
           </Grid.Card>
@@ -112,7 +136,13 @@ export const Fit400PX: Story = {
       <Grid gap={8} preset="auto-fit-400">
         {data.map((data) => (
           <Grid.Card key={data.id} thumbnail={data.image}>
-            <div className="min-h-[30px] h-full w-full">
+            <div
+              style={{
+                minHeight: "30px",
+                width: "100%",
+                height: "100%",
+              }}
+            >
               <h3>{data.title}</h3>
             </div>
           </Grid.Card>
@@ -134,7 +164,13 @@ export const OneToThree: Story = {
       <Grid gap={8} preset="1-to-3">
         {data.map((data) => (
           <Grid.Card key={data.id} thumbnail={data.image}>
-            <div className="min-h-[30px] h-full w-full">
+            <div
+              style={{
+                minHeight: "30px",
+                width: "100%",
+                height: "100%",
+              }}
+            >
               <h3>{data.title}</h3>
             </div>
           </Grid.Card>
@@ -156,7 +192,13 @@ export const OneToFour: Story = {
       <Grid gap={8} preset="1-to-4">
         {data.map((data) => (
           <Grid.Card key={data.id} thumbnail={data.image}>
-            <div className="min-h-[30px] h-full w-full">
+            <div
+              style={{
+                minHeight: "30px",
+                width: "100%",
+                height: "100%",
+              }}
+            >
               <h3>{data.title}</h3>
             </div>
           </Grid.Card>
@@ -178,7 +220,13 @@ export const OneToSix: Story = {
       <Grid gap={8} preset="1-to-6">
         {data.map((data) => (
           <Grid.Card key={data.id} thumbnail={data.image}>
-            <div className="min-h-[30px] h-full w-full">
+            <div
+              style={{
+                minHeight: "30px",
+                width: "100%",
+                height: "100%",
+              }}
+            >
               <h3>{data.title}</h3>
             </div>
           </Grid.Card>
@@ -200,7 +248,13 @@ export const TwoToFour: Story = {
       <Grid gap={8} preset="2-to-4">
         {data.map((data) => (
           <Grid.Card key={data.id} thumbnail={data.image}>
-            <div className="min-h-[30px] h-full w-full">
+            <div
+              style={{
+                minHeight: "30px",
+                width: "100%",
+                height: "100%",
+              }}
+            >
               <h3>{data.title}</h3>
             </div>
           </Grid.Card>
@@ -222,7 +276,13 @@ export const ThreeToFive: Story = {
       <Grid gap={8} preset="3-to-5">
         {data.map((data) => (
           <Grid.Card key={data.id} thumbnail={data.image}>
-            <div className="min-h-[30px] h-full w-full">
+            <div
+              style={{
+                minHeight: "30px",
+                width: "100%",
+                height: "100%",
+              }}
+            >
               <h3>{data.title}</h3>
             </div>
           </Grid.Card>
@@ -268,11 +328,16 @@ export const WithSelectable: Story = {
               key={data.id}
               thumbnail={data.image}
               onSelected={() => handleSelect(data)}
-              selectable
               isSelected={isSelected}
-              data-selected={isSelected}
+              selectable
             >
-              <div className="min-h-[30px] h-full w-full">
+              <div
+                style={{
+                  minHeight: "30px",
+                  width: "100%",
+                  height: "100%",
+                }}
+              >
                 <h3>{data.title}</h3>
               </div>
             </Grid.Card>
