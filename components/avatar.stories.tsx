@@ -14,15 +14,38 @@ const meta: Meta<typeof Avatar> = {
   argTypes: {
     firstName: {
       control: "text",
-      description: "First name of the profile",
+      description: "First name of the profile. Used to generate initials.",
     },
     lastName: {
       control: "text",
-      description: "Last name of the profile",
+      description:
+        "Optional last name of the profile. Used for more accurate initials.",
     },
     profileImageUrl: {
       control: "text",
-      description: "Image of the profile",
+      description:
+        "URL of the profile image. If not provided, initials are shown.",
+    },
+    changeable: {
+      control: "boolean",
+      description:
+        "Allows the avatar to be clickable for uploading a new image.",
+    },
+    onChange: {
+      action: "image changed",
+      description: "Callback triggered when a new image is selected.",
+    },
+    onClick: {
+      action: "avatar clicked",
+      description: "Optional callback when the avatar is clicked.",
+    },
+    frameSize: {
+      control: { type: "number", min: 30, max: 200, step: 1 },
+      description: "Size (in px) of the avatar circle. Default is 70.",
+    },
+    fontSize: {
+      control: { type: "number", min: 8, max: 60, step: 1 },
+      description: "Font size (in px) of the initials. Default is 23.",
     },
   },
 };
@@ -67,7 +90,14 @@ export const WithActions: Story = {
     ];
 
     return (
-      <div className="flex flex-col items-center gap-4">
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "1rem",
+        }}
+      >
         <Avatar {...args} onClick={() => setIsOpen(!isOpen)} />
         <ModalDialog
           open={isOpen}
@@ -107,7 +137,13 @@ export const WithImage: Story = {
     };
 
     return (
-      <div className="flex flex-col items-center">
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
         <Avatar onChange={handleChange} {...args} />
         {selectedFileName && (
           <div className="text-xs">Selected: {selectedFileName}</div>
