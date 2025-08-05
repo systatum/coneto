@@ -10,6 +10,7 @@ import {
 } from "@remixicon/react";
 import { Card } from "./card";
 import { ChangeEvent, useMemo, useState } from "react";
+import { css } from "styled-components";
 
 const meta: Meta<typeof List> = {
   title: "Content/List",
@@ -58,7 +59,12 @@ export const Default: Story = {
 
     return (
       <Card>
-        <List className="px-4 py-4 gap-2">
+        <List
+          containerStyle={css`
+            padding: 16px;
+            gap: 8px;
+          `}
+        >
           {LIST_ITEMS.map((item, index) => (
             <List.Item
               key={index}
@@ -132,11 +138,15 @@ export const WithSearch: Story = {
         <List
           searchable
           onSearchRequested={onChangeValue}
-          className="px-4 py-4"
+          containerStyle={css`
+            padding: 16px;
+          `}
         >
           {filteredContent.map((item, index) => (
             <List.Item
-              className="px-1"
+              containerStyle={css`
+                gap: 4px;
+              `}
               key={index}
               id={index}
               iconUrl={item.iconUrl}
@@ -244,11 +254,15 @@ export const WithGroup: Story = {
         <List
           searchable
           onSearchRequested={onChangeValue}
-          className="px-3 py-4"
+          containerStyle={css`
+            padding: 16px;
+          `}
         >
           {filteredContent.map((group, index) => (
             <List.Group
-              contentClassName="gap-2"
+              contentStyle={css`
+                padding-top: 4px;
+              `}
               key={index}
               id={group.id}
               title={group.title}
@@ -256,7 +270,10 @@ export const WithGroup: Story = {
               {group.items.map((list, i) => (
                 <List.Item
                   key={i}
-                  className="px-1"
+                  containerStyle={css`
+                    padding-right: 4px;
+                    padding-left: 4px;
+                  `}
                   id={list.id}
                   iconUrl={list.iconUrl}
                   subtitle={list.subtitle}
@@ -438,7 +455,9 @@ export const Draggable: Story = {
           draggable
           onDragged={onDragged}
           onSearchRequested={onChangeValue}
-          className="px-3 py-4"
+          containerStyle={css`
+            padding: 16px;
+          `}
         >
           {filteredContent.map((group, index) => {
             return (
@@ -630,7 +649,9 @@ export const WithLoading: Story = {
           isLoading
           onDragged={onDragged}
           onSearchRequested={onChangeValue}
-          className="px-3 py-4"
+          containerStyle={css`
+            padding: 16px;
+          `}
         >
           {filteredContent.map((group, index) => {
             return (
@@ -831,7 +852,10 @@ export const CustomOpener: Story = {
           selectable
           onDragged={onDragged}
           onSearchRequested={onChangeValue}
-          className="px-3 py-4 min-w-[300px]"
+          containerStyle={css`
+            padding: 16px;
+            min-width: 300px;
+          `}
         >
           {filteredContent.map((group, index) => {
             return (

@@ -17,17 +17,18 @@ import {
   useState,
 } from "react";
 import { Searchbox } from "./searchbox";
-import { cn } from "./../lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { LoadingSpinner } from "./loading-spinner";
 import { Checkbox } from "./checkbox";
 import { Togglebox } from "./togglebox";
+import styled, { CSSProp } from "styled-components";
 
 export interface ListProps {
   searchable?: boolean;
   onSearchRequested?: (search: ChangeEvent<HTMLInputElement>) => void;
   children: ReactNode;
-  className?: string;
+  containerStyle?: CSSProp;
+
   isLoading?: boolean;
   draggable?: boolean;
   selectable?: boolean;
@@ -46,8 +47,8 @@ export interface ListGroupProps {
   subtitle?: string;
   children: ReactNode;
   draggable?: boolean;
-  containerClassName?: string;
-  contentClassName?: string;
+  containerStyle?: CSSProp;
+  contentStyle?: CSSProp;
   selectable?: boolean;
   rightSideContent?: ReactNode[];
   openerStyle?: "chevron" | "togglebox" | "none";
@@ -59,13 +60,13 @@ export interface ListItemProps {
   subtitle?: string;
   imageUrl?: string;
   iconUrl?: RemixiconComponentType;
-  className?: string;
   draggable?: boolean;
   groupId?: string;
   selectable?: boolean;
   onSelected?: (selected: ChangeEvent<HTMLInputElement>) => void;
   onClick?: () => void;
   rightSideContent?: ReactNode[];
+  containerStyle?: CSSProp;
   selectedOptions?: {
     value?: string | number;
     checked?: boolean;
@@ -101,7 +102,7 @@ function List({
   searchable,
   onSearchRequested,
   children,
-  className,
+  containerStyle,
   onDragged,
   draggable,
   selectable,
@@ -111,11 +112,10 @@ function List({
   const [value, setValue] = useState("");
 
   const childArray = Children.toArray(children).filter(isValidElement);
-  const listClass = cn("flex flex-col gap-2", className);
 
   return (
     <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
-      <div role="list" className={listClass}>
+      <ListContainer role="list" $container_style={containerStyle}>
         {searchable && (
           <Searchbox
             name="search"
@@ -128,9 +128,9 @@ function List({
         )}
 
         {isLoading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-white/60 z-30">
+          <OverlayLoading>
             <LoadingSpinner iconSize={24} />
-          </div>
+          </OverlayLoading>
         )}
 
         {childArray.map((child, index) => {
@@ -142,17 +142,35 @@ function List({
 
           return <Fragment key={`list-${index}`}>{modifiedChild}</Fragment>;
         })}
-      </div>
+      </ListContainer>
     </DnDContext.Provider>
   );
 }
+
+const ListContainer = styled.div<{ $container_style?: CSSProp }>`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
+  ${(props) => props.$container_style}
+`;
+
+const OverlayLoading = styled.div`
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.6);
+  z-index: 30;
+`;
 
 function ListGroup({
   id,
   title,
   children,
-  containerClassName,
-  contentClassName,
+  containerStyle,
+  contentStyle,
   draggable,
   selectable,
   subtitle,
@@ -163,43 +181,28 @@ function ListGroup({
   const [isOpen, setIsOpen] = useState(true);
   const { dragItem, setDragItem, onDragged } = useContext(DnDContext);
 
-  const listGroupContainerClass = cn(
-    "flex flex-col relative",
-    containerClassName
-  );
-
-  const listGroupContentClass = cn(
-    "flex flex-col relative pt-[2px] overflow-hidden",
-    contentClassName
-  );
-
   return (
-    <div className={listGroupContainerClass}>
-      <button
+    <ListGroupContainer $container_style={containerStyle}>
+      <HeaderButton
         onClick={() => setIsOpen((prev) => !prev)}
         aria-expanded={isOpen}
-        className="flex items-center cursor-pointer justify-between w-full py-2"
       >
-        <div className="flex flex-col">
-          <span className="text-sm font-medium select-none text-left">
-            {title}
-          </span>
-          {subtitle && (
-            <span className="text-xs text-gray-500">{subtitle}</span>
-          )}
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <HeaderText>{title}</HeaderText>
+          {subtitle && <HeaderSubtext>{subtitle}</HeaderSubtext>}
         </div>
 
-        <div className="flex flex-row gap-2">
+        <div style={{ display: "flex", flexDirection: "row", gap: "8px" }}>
           {rightSideContent &&
             rightSideContent.map((data, index) => (
               <Fragment key={index}>{data}</Fragment>
             ))}
           {openerStyle === "chevron" ? (
             <RiArrowDownSLine
-              className={cn(
-                "transition-transform duration-200",
-                isOpen ? "rotate-0" : "-rotate-180"
-              )}
+              style={{
+                transition: "transform 200ms",
+                transform: isOpen ? "rotate(0deg)" : "rotate(-180deg)",
+              }}
               size={18}
             />
           ) : openerStyle === "togglebox" ? (
@@ -209,13 +212,9 @@ function ListGroup({
             />
           ) : null}
         </div>
-      </button>
-      {isOpen && (
-        <div
-          aria-label="divider"
-          className="border-b w-full border-gray-300 h-px"
-        />
-      )}
+      </HeaderButton>
+
+      {isOpen && <Divider aria-label="divider" />}
 
       <AnimatePresence initial={false}>
         {childArray.map((child, index) => {
@@ -249,9 +248,10 @@ function ListGroup({
               }
             },
           });
+
           return (
             isOpen && (
-              <motion.div
+              <ListGroupContent
                 key={`list-group-content-${index}`}
                 initial="collapsed"
                 animate="open"
@@ -261,16 +261,16 @@ function ListGroup({
                   collapsed: { opacity: 0, height: 0 },
                 }}
                 transition={{ duration: 0.2, ease: "easeInOut" }}
-                className={listGroupContentClass}
+                $content_style={contentStyle}
               >
                 {modifiedChild}
-              </motion.div>
+              </ListGroupContent>
             )
           );
         })}
 
         {childArray.length === 0 && (
-          <motion.div
+          <EmptyContent
             key="drop-here"
             initial="collapsed"
             animate="open"
@@ -280,7 +280,6 @@ function ListGroup({
               collapsed: { opacity: 0, height: 0 },
             }}
             transition={{ duration: 0.2, ease: "easeInOut" }}
-            className="h-2 mt-1 py-2 border border-dashed border-gray-300 rounded flex items-center justify-center text-sm text-gray-400"
             onDragOver={(e) => e.preventDefault()}
             onDrop={(e) => {
               e.preventDefault();
@@ -300,19 +299,79 @@ function ListGroup({
             }}
           >
             Empty Content
-          </motion.div>
+          </EmptyContent>
         )}
       </AnimatePresence>
-    </div>
+    </ListGroupContainer>
   );
 }
+
+const ListGroupContainer = styled.div<{
+  $container_style?: CSSProp;
+}>`
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  ${(props) => props.$container_style}
+`;
+
+const ListGroupContent = styled(motion.div)<{
+  $content_style?: CSSProp;
+}>`
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding-top: 2px;
+  overflow: hidden;
+  ${(props) => props.$content_style}
+`;
+
+const HeaderButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.5rem 0;
+  cursor: pointer;
+`;
+
+const HeaderText = styled.span`
+  font-size: 0.875rem;
+  font-weight: 500;
+  user-select: none;
+  text-align: left;
+`;
+
+const HeaderSubtext = styled.span`
+  font-size: 0.75rem;
+  color: #6b7280;
+`;
+
+const Divider = styled.div`
+  border-bottom: 1px solid #d1d5db;
+  width: 100%;
+  height: fit-content;
+`;
+
+const EmptyContent = styled(motion.div)`
+  height: 0.5rem;
+  margin-top: 0.25rem;
+  padding: 0.5rem 0;
+  border: 1px dashed #d1d5db;
+  border-radius: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  color: #9ca3af;
+`;
 
 function ListItem({
   iconUrl: Icon = RiFile2Fill,
   imageUrl,
   subtitle,
   title,
-  className,
+  containerStyle,
   draggable,
   index,
   onDropItem,
@@ -334,13 +393,9 @@ function ListItem({
     null
   );
 
-  const listItemClass = cn(
-    "flex flex-row items-center justify-between relative py-1 px-2 hover:bg-blue-100 duration-300 items-center cursor-pointer gap-2",
-    className
-  );
-
   return (
-    <div
+    <ListItemWrapper
+      $container_style={containerStyle}
       onClick={onClick}
       draggable={draggable}
       onDragStart={() =>
@@ -395,9 +450,8 @@ function ListItem({
 
         onDropItem?.(clampedPosition);
       }}
-      className={listItemClass}
     >
-      <div className="flex flex-row gap-2 items-center">
+      <ListItemLeft>
         {selectable && (
           <Checkbox
             name="checked"
@@ -407,46 +461,105 @@ function ListItem({
           />
         )}
         {imageUrl ? (
-          <img
-            src={imageUrl}
-            className="w-10 h-10 rounded"
-            alt="Image from coneto, Systatum."
-          />
+          <ImageStyle src={imageUrl} alt="Image from coneto, Systatum." />
         ) : (
-          <Icon size={22} className="text-gray-700" />
+          <Icon size={22} color="#4b5563" />
         )}
-        <div className="flex flex-col select-none ">
-          {title && (
-            <h3 className="font-medium text-sm text-gray-800">{title}</h3>
-          )}
-          {subtitle && (
-            <span className="text-xs text-gray-600">{subtitle}</span>
-          )}
-        </div>
-      </div>
+        <TextWrapper>
+          {title && <Title>{title}</Title>}
+          {subtitle && <Subtitle>{subtitle}</Subtitle>}
+        </TextWrapper>
+      </ListItemLeft>
 
-      <div className="flex flex-row gap-2 items-center">
+      <ListItemRight>
         {rightSideContent &&
           rightSideContent.map((content, id) => <div key={id}>{content}</div>)}
         {draggable && (
-          <RiDraggable
-            role="button"
-            aria-label="Draggable request"
-            size={18}
-            className={cn("cursor-grab rounded-xs")}
-          />
+          <div
+            aria-label="draggable-request"
+            style={{
+              cursor: "grab",
+              borderRadius: "2px",
+              color: "#4b5563",
+            }}
+          >
+            <RiDraggable size={18} />
+          </div>
         )}
-      </div>
+      </ListItemRight>
 
-      {isOver && dropPosition === "top" && (
-        <div className="absolute top-0 left-0 right-0 h-[2px] bg-blue-500 rounded" />
-      )}
-      {isOver && dropPosition === "bottom" && (
-        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-blue-500 rounded" />
-      )}
-    </div>
+      {isOver && dropPosition && <DragLine position={dropPosition} />}
+    </ListItemWrapper>
   );
 }
+
+const ListItemWrapper = styled.div<{
+  $container_style?: CSSProp;
+}>`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  gap: 0.5rem;
+  transition: background-color 300ms;
+
+  &:hover {
+    background-color: #dbeafe;
+  }
+
+  ${({ $container_style }) => $container_style}
+`;
+
+const ListItemLeft = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  align-items: center;
+`;
+
+const ListItemRight = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  align-items: center;
+`;
+
+const ImageStyle = styled.img`
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.25rem;
+`;
+
+const TextWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  user-select: none;
+`;
+
+const Title = styled.h3`
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: #1f2937;
+`;
+
+const Subtitle = styled.span`
+  font-size: 0.75rem;
+  color: #4b5563;
+`;
+
+const DragLine = styled.div<{ position: "top" | "bottom" }>`
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #3b82f6;
+  border-radius: 2px;
+  top: ${({ position }) => (position === "top" ? "0" : "auto")};
+  bottom: ${({ position }) => (position === "bottom" ? "0" : "auto")};
+`;
 
 List.Group = ListGroup;
 List.Item = ListItem;
