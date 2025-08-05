@@ -12,14 +12,14 @@ import {
 } from "@remixicon/react";
 import TurndownService from "./../lib/turndown/turndown";
 import { marked } from "./../lib/marked/marked";
-import { cn } from "./../lib/utils";
 import { TipMenu } from "./tip-menu";
+import styled, { css, CSSProp } from "styled-components";
 
 interface RichEditorProps {
   value?: string;
   onChange?: (value: string) => void;
   toolbarRightPanel?: ReactNode;
-  editorClassName?: string;
+  editorStyles?: CSSProp;
 }
 
 export interface RichEditorToolbarButtonProps {
@@ -32,7 +32,7 @@ function RichEditor({
   value = "",
   onChange,
   toolbarRightPanel,
-  editorClassName,
+  editorStyles,
 }: RichEditorProps) {
   const turndownService = new TurndownService();
 
@@ -337,9 +337,9 @@ function RichEditor({
   }, [isOpen]);
 
   return (
-    <div className="border border-[#ececec] rounded-xs shadow-[0_1px_4px_-3px_#5b5b5b]">
-      <div className="flex flex-row justify-between items-center border-b border-[#ececec] px-2 bg-white shadow-sm">
-        <div className="flex flex-row relative justify-start items-start gap-1 py-[6px]">
+    <Wrapper>
+      <Toolbar>
+        <ToolbarGroup>
           <RichEditorToolbarButton
             icon={RiBold}
             onClick={() => handleCommand("bold")}
@@ -368,45 +368,33 @@ function RichEditor({
           />
 
           {isOpen && (
-            <div
-              ref={menuRef}
-              className={cn(
-                "absolute top-full -right-[100px] translate-y-1 z-10"
-              )}
-            >
+            <MenuWrapper ref={menuRef}>
               <TipMenu
-                setIsOpen={() => {
-                  setIsOpen(false);
-                }}
+                setIsOpen={() => setIsOpen(false)}
                 subMenuList={TIP_MENU_RICH_EDITOR}
               />
-            </div>
+            </MenuWrapper>
           )}
-        </div>
+        </ToolbarGroup>
         {toolbarRightPanel && (
-          <div className="flex flex-row items-center gap-2">
-            {toolbarRightPanel}
-          </div>
+          <ToolbarRightPanel>{toolbarRightPanel}</ToolbarRightPanel>
         )}
-      </div>
+      </Toolbar>
 
-      <div
+      <EditorArea
         ref={editorRef}
         role="textbox"
         contentEditable
-        className={cn(
-          "min-h-[200px] p-2 outline-none rich-editor",
-          editorClassName
-        )}
+        className="rich-editor"
+        $editorStyles={editorStyles}
         onInput={() => {
           const html = editorRef.current?.innerHTML || "";
           const markdown = turndownService.turndown(html);
-          console.log(html);
           onChange?.(markdown);
         }}
         onKeyDown={handleOnKeyDown}
       />
-    </div>
+    </Wrapper>
   );
 }
 
@@ -416,22 +404,92 @@ function RichEditorToolbarButton({
   children,
 }: RichEditorToolbarButtonProps) {
   return (
-    <button
+    <ToolbarButton
       type="button"
       onClick={(e) => {
         e.preventDefault();
-        if (onClick) {
-          onClick();
-        }
+        onClick?.();
       }}
-      className="px-2 py-1 flex flex-row items-center gap-1 cursor-pointer text-sm hover:bg-gray-200 rounded-xs"
       aria-label="rich-editor-toolbar-button"
     >
       {Icon && <Icon size={16} />}
       {children && <span>{children}</span>}
-    </button>
+    </ToolbarButton>
   );
 }
+
+const Wrapper = styled.div`
+  border: 1px solid #ececec;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px -3px #5b5b5b;
+`;
+
+const Toolbar = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ececec;
+  padding: 0 8px;
+  background: white;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+`;
+
+const ToolbarGroup = styled.div`
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 6px 0;
+`;
+
+const ToolbarRightPanel = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+`;
+
+const MenuWrapper = styled.div`
+  position: absolute;
+  top: 100%;
+  right: -100px;
+  transform: translateY(4px);
+  z-index: 10;
+`;
+
+const EditorArea = styled.div<{
+  $editorStyles?: CSSProp;
+}>`
+  min-height: 200px;
+  padding: 8px;
+  outline: none;
+
+  ${({ $editorStyles }) =>
+    $editorStyles &&
+    css`
+      ${$editorStyles}
+    `}
+`;
+
+const ToolbarButton = styled.button`
+  padding: 4px 8px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  background: transparent;
+  border-color: transparent;
+  border-radius: 2px;
+  max-height: 28px;
+  &:hover {
+    background-color: #e5e7eb;
+  }
+`;
 
 RichEditor.ToolbarButton = RichEditorToolbarButton;
 
