@@ -1,4 +1,4 @@
-import { cn } from "./../lib/utils";
+import styled, { CSSProp } from "styled-components";
 import { ChangeEvent, InputHTMLAttributes } from "react";
 
 export interface RadioProps {
@@ -9,7 +9,7 @@ export interface RadioProps {
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
   name?: string;
   highlightOnChecked?: boolean;
-  containerClassName?: string;
+  containerStyle?: CSSProp;
 }
 
 function Radio({
@@ -20,47 +20,88 @@ function Radio({
   onChange,
   name,
   highlightOnChecked,
-  containerClassName,
+  containerStyle,
   ...props
-}: RadioProps) {
+}: RadioProps & InputHTMLAttributes<HTMLInputElement>) {
   const id = `radio-${value}`;
 
   return (
-    <label
+    <Label
       htmlFor={id}
-      className={cn(
-        "flex items-start p-0 gap-2 cursor-pointer border border-transparent",
-        highlightOnChecked && checked ? "bg-blue-100" : "bg-white",
-        highlightOnChecked && "p-3 hover:bg-[rgb(231,242,252)]",
-        containerClassName
-      )}
+      $highlight={highlightOnChecked}
+      $checked={checked}
+      $style={containerStyle}
     >
-      <input
+      <HiddenRadio
         type="radio"
-        role="radio"
         id={id}
         name={name}
         value={value}
         onChange={onChange}
-        className="sr-only peer"
-        {...(props as InputHTMLAttributes<HTMLInputElement>)}
         checked={checked}
+        {...props}
       />
-      <div
-        className={cn(
-          "mt-[5px] w-[14px] h-[14px] rounded-full border border-gray-600",
-          "peer-checked:border-[5px] peer-checked:border-[#61A9F9]"
-        )}
-      />
-
-      <div className="flex flex-col">
-        {label && <div className="font-medium">{label}</div>}
-        {description && (
-          <div className={cn("text-sm text-gray-600")}>{description}</div>
-        )}
-      </div>
-    </label>
+      <Circle />
+      <TextContainer>
+        {label && <LabelText>{label}</LabelText>}
+        {description && <DescriptionText>{description}</DescriptionText>}
+      </TextContainer>
+    </Label>
   );
 }
+
+const Label = styled.label<{
+  $highlight?: boolean;
+  $checked?: boolean;
+  $style?: CSSProp;
+}>`
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+  background-color: ${({ $highlight, $checked }) =>
+    $highlight && $checked ? "#DBEAFE" : "#fff"};
+  padding: ${({ $highlight }) => ($highlight ? "0.75rem" : "0")};
+
+  &:hover {
+    background-color: ${({ $highlight }) => ($highlight ? "#E7F2FC" : "none")};
+  }
+
+  ${({ $style }) => $style}
+`;
+
+const HiddenRadio = styled.input`
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+`;
+
+const Circle = styled.div`
+  margin-top: 5px;
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  border: 1px solid #4b5563;
+
+  input:checked + & {
+    border-width: 5px;
+    border-color: #61a9f9;
+  }
+`;
+
+const TextContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const LabelText = styled.div`
+  font-weight: 500;
+`;
+
+const DescriptionText = styled.div`
+  font-size: 0.875rem;
+  color: #4b5563;
+`;
 
 export { Radio };
