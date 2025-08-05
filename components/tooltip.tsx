@@ -1,43 +1,27 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
-import { cn } from "../lib/utils";
-import clsx from "clsx";
+import styled, { css, CSSProp } from "styled-components";
 
 export type TooltipProps = {
   children: ReactNode;
   text: ReactNode;
   openOn?: "hover" | "click";
-  drawerClassName?: string;
-  containerClassName?: string;
-  arrowClassName?: string;
+  drawerStyle?: CSSProp;
+  containerStyle?: CSSProp;
+  arrowStyle?: CSSProp;
   underline?: "underline" | "underline-dot" | "transparent" | "blue" | "gray";
 };
 
-function Tooltip({
+export function Tooltip({
   children,
   text,
   openOn = "hover",
-  drawerClassName,
-  containerClassName,
-  arrowClassName,
+  drawerStyle,
+  containerStyle,
+  arrowStyle,
   underline = "underline",
 }: TooltipProps) {
   const [isOpen, setIsOpen] = useState(false);
   const tooltipRef = useRef<HTMLDivElement>(null);
-
-  const tooltipContainerClass = clsx(
-    openOn === "hover" ? "cursor-default" : "cursor-pointer",
-    underline === "underline"
-      ? "underline decoration-black"
-      : underline === "underline-dot"
-        ? "underline decoration-dotted decoration-black"
-        : underline === "transparent"
-          ? "no-underline"
-          : underline === "blue"
-            ? "underline decoration-blue-500"
-            : underline === "gray"
-              ? "underline decoration-gray-500"
-              : ""
-  );
 
   const triggerProps =
     openOn === "hover"
@@ -68,34 +52,108 @@ function Tooltip({
   }, [isOpen, openOn]);
 
   return (
-    <div ref={tooltipRef} className="relative inline-flex items-center">
-      <div
+    <Wrapper ref={tooltipRef}>
+      <TextTrigger
         {...triggerProps}
-        className={cn(tooltipContainerClass, containerClassName)}
+        $underline={underline}
+        $open_on={openOn}
+        $container_Style={containerStyle}
       >
         {text}
-      </div>
+      </TextTrigger>
       {isOpen && (
         <>
-          <div
-            aria-label="tooltip-arrow"
-            className={cn(
-              "absolute z-10 top-full mt-1 bg-gray-600 left-[25%] -translate-x-[25%] h-2 w-2 rotate-45",
-              arrowClassName
-            )}
-          />
-          <div
-            className={cn(
-              "absolute left-0 top-full z-50 mt-2 w-max rounded-xs bg-gray-600 px-2 py-1 text-xs text-white shadow-lg",
-              drawerClassName
-            )}
-          >
-            {children}
-          </div>
+          <TooltipArrow aria-label="tooltip-arrow" $arrow_Style={arrowStyle} />
+          <TooltipDrawer $drawer_Style={drawerStyle}>{children}</TooltipDrawer>
         </>
       )}
-    </div>
+    </Wrapper>
   );
 }
 
-export { Tooltip };
+const Wrapper = styled.div`
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+`;
+
+const TextTrigger = styled.div<{
+  $underline: TooltipProps["underline"];
+  $open_on: TooltipProps["openOn"];
+  $container_Style?: CSSProp;
+}>`
+  ${({ $open_on }) =>
+    $open_on === "hover"
+      ? css`
+          cursor: default;
+        `
+      : css`
+          cursor: pointer;
+        `}
+
+  ${({ $underline }) => {
+    switch ($underline) {
+      case "underline":
+        return css`
+          text-decoration: underline;
+          text-decoration-color: black;
+        `;
+      case "underline-dot":
+        return css`
+          text-decoration: underline dotted;
+          text-decoration-color: black;
+        `;
+      case "transparent":
+        return css`
+          text-decoration: none;
+        `;
+      case "blue":
+        return css`
+          text-decoration: underline;
+          text-decoration-color: #3b82f6;
+        `;
+      case "gray":
+        return css`
+          text-decoration: underline;
+          text-decoration-color: #6b7280;
+        `;
+      default:
+        return null;
+    }
+  }}
+
+  ${({ $container_Style }) => $container_Style}
+`;
+
+const TooltipArrow = styled.div<{
+  $arrow_Style?: CSSProp;
+}>`
+  position: absolute;
+  top: 100%;
+  left: 25%;
+  margin-top: 4px;
+  width: 8px;
+  height: 8px;
+  background-color: #4b5563;
+  transform: translateX(-25%) rotate(45deg);
+  z-index: 10;
+  ${({ $arrow_Style }) => $arrow_Style}
+`;
+
+const TooltipDrawer = styled.div<{
+  $drawer_Style?: CSSProp;
+}>`
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 8px;
+  background-color: #4b5563;
+  color: white;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  z-index: 50;
+  white-space: nowrap;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  ${({ $drawer_Style }) => $drawer_Style}
+`;

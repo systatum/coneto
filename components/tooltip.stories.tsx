@@ -9,6 +9,7 @@ import {
 import { useState } from "react";
 import z from "zod";
 import { RiAddBoxLine } from "@remixicon/react";
+import { css } from "styled-components";
 
 const meta: Meta<typeof Tooltip> = {
   title: "Content/Tooltip",
@@ -17,36 +18,9 @@ const meta: Meta<typeof Tooltip> = {
     layout: "centered",
   },
   tags: ["autodocs"],
-  argTypes: {
-    children: {
-      control: "text",
-      description: "Value on your Tooltip",
-    },
-    drawerClassName: {
-      control: "text",
-      description: "Styling on your drawer content of Tooltip",
-    },
-    containerClassName: {
-      control: "text",
-      description: "Styling on your Parent Tooltip",
-    },
-    arrowClassName: {
-      control: "text",
-      description: "Styling on your arrow Tooltip",
-    },
-    openOn: {
-      control: "text",
-      options: ["hover", "click"],
-    },
-    text: {
-      control: "text",
-      description: "This is your text before have action on Tooltip",
-    },
-  },
 };
 
 export default meta;
-
 type Story = StoryObj<typeof Tooltip>;
 
 export const Hover: Story = {
@@ -54,10 +28,10 @@ export const Hover: Story = {
     text: "Hover Tooltip",
     openOn: "hover",
     children: "This tooltip appears on hover",
-    containerClassName: "text-sm underline",
-  },
-  render: (args) => {
-    return <Tooltip {...args} />;
+    containerStyle: css`
+      font-size: 0.875rem;
+      text-decoration: underline;
+    `,
   },
 };
 
@@ -66,12 +40,18 @@ export const Click: Story = {
     text: "Click Tooltip",
     openOn: "click",
     children: "This tooltip appears on click",
-    containerClassName: "text-blue-600 text-sm cursor-pointer",
-    drawerClassName: "bg-blue-600 text-white",
-    arrowClassName: "bg-blue-600 text-white",
-  },
-  render: (args) => {
-    return <Tooltip {...args} />;
+    containerStyle: css`
+      font-size: 0.875rem;
+      color: #2563eb;
+      cursor: pointer;
+    `,
+    drawerStyle: css`
+      background-color: #2563eb;
+      color: white;
+    `,
+    arrowStyle: css`
+      background-color: #2563eb;
+    `,
   },
 };
 
@@ -80,14 +60,22 @@ export const StyledTooltip: Story = {
     text: "Styled Tooltip",
     openOn: "hover",
     children: "Tooltip with custom styling",
-    containerClassName: "text-green-600 text-sm underline decoration-wavy",
-    drawerClassName:
-      "bg-green-700 text-white shadow-lg rounded px-3 py-1 text-sm",
-    arrowClassName:
-      "bg-green-700 text-white shadow-lg rounded px-3 py-1 text-sm",
-  },
-  render: (args) => {
-    return <Tooltip {...args} />;
+    containerStyle: css`
+      font-size: 0.875rem;
+      color: #16a34a;
+      text-decoration: underline wavy;
+    `,
+    drawerStyle: css`
+      background-color: #15803d;
+      color: white;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      border-radius: 4px;
+      padding: 4px 12px;
+      font-size: 0.875rem;
+    `,
+    arrowStyle: css`
+      background-color: #15803d;
+    `,
   },
 };
 
@@ -97,12 +85,16 @@ export const DottedUnderlineTooltip: Story = {
     openOn: "hover",
     children: "Tooltip with dotted underline trigger",
     underline: "underline-dot",
-    containerClassName: "text-sm",
-    drawerClassName: "bg-gray-800 text-white",
-    arrowClassName: "bg-gray-800 text-white",
-  },
-  render: (args) => {
-    return <Tooltip {...args} />;
+    containerStyle: css`
+      font-size: 0.875rem;
+    `,
+    drawerStyle: css`
+      background-color: #1f2937;
+      color: white;
+    `,
+    arrowStyle: css`
+      background-color: #1f2937;
+    `,
   },
 };
 
@@ -112,12 +104,18 @@ export const NoUnderlineTooltip: Story = {
     openOn: "hover",
     children: "Trigger text without underline",
     underline: "transparent",
-    containerClassName: "font-semibold text-sm text-red-500",
-    drawerClassName: "bg-red-600 text-white",
-    arrowClassName: "bg-red-600 text-white",
-  },
-  render: (args) => {
-    return <Tooltip {...args} />;
+    containerStyle: css`
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: #ef4444;
+    `,
+    drawerStyle: css`
+      background-color: #dc2626;
+      color: white;
+    `,
+    arrowStyle: css`
+      background-color: #dc2626;
+    `,
   },
 };
 
@@ -126,21 +124,23 @@ export const BlueUnderlineTooltip: Story = {
     text: "Blue Underline Tooltip",
     openOn: "click",
     underline: "blue",
-    containerClassName: "text-sm",
+    containerStyle: css`
+      font-size: 0.875rem;
+    `,
     children: "Clicked tooltip with blue underline",
-    drawerClassName: "bg-blue-700 text-white",
-    arrowClassName: "bg-blue-700 text-white",
-  },
-  render: (args) => {
-    return <Tooltip {...args} />;
+    drawerStyle: css`
+      background-color: #1d4ed8;
+      color: white;
+    `,
+    arrowStyle: css`
+      background-color: #1d4ed8;
+    `,
   },
 };
 
 export const WithForm: Story = {
   render: () => {
-    const [value, setValue] = useState<{
-      division_name: string;
-    }>({
+    const [value, setValue] = useState<{ division_name: string }>({
       division_name: "",
     });
 
@@ -181,27 +181,52 @@ export const WithForm: Story = {
 
     return (
       <Tooltip
-        containerClassName="w-fit px-3"
-        arrowClassName="bg-white border border-gray-200 bg-gray-200"
-        drawerClassName="w-fit left-4 border border-gray-200 bg-white text-black"
+        openOn="click"
+        underline="transparent"
         text={
-          <div className="flex flex-row items-center gap-1 text-sm">
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.25rem",
+              fontSize: "0.875rem",
+            }}
+          >
             <RiAddBoxLine size={16} />
             <span>New Division</span>
           </div>
         }
-        openOn="click"
-        underline="transparent"
+        containerStyle={css`
+          width: fit-content;
+          padding: 0 12px;
+        `}
+        arrowStyle={css`
+          background-color: #e5e7eb;
+          border: 1px solid #e5e7eb;
+        `}
+        drawerStyle={css`
+          width: fit-content;
+          left: 1rem;
+          background-color: white;
+          color: black;
+          border: 1px solid #e5e7eb;
+        `}
       >
-        <div className="min-w-[300px] px-2 pt-2 pb-1">
+        <div style={{ minWidth: 300, padding: "8px 8px 4px" }}>
           <StatefulForm
             fields={DIVISION_EMPLOYEE_FIELDS}
             formValues={value}
             validationSchema={divisionEmployeeSchema}
             mode="onChange"
           />
-          <div className="mt-1 flex justify-end">
-            <Button className="text-xs">Save</Button>
+          <div
+            style={{
+              marginTop: 4,
+              display: "flex",
+              justifyContent: "flex-end",
+            }}
+          >
+            <Button style={{ fontSize: "0.75rem" }}>Save</Button>
           </div>
         </div>
       </Tooltip>
