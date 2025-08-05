@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { Launchpad } from "./launchpad";
+import { css } from "styled-components";
 
 const meta: Meta<typeof Launchpad> = {
   title: "Content/Launchpad",
@@ -113,12 +114,24 @@ export const Default: Story = {
     ];
 
     return (
-      <Launchpad className="max-w-[520px] w-full">
+      <Launchpad>
         {LAUNCHPAD_SECTIONS.map((data, index) => (
           <Launchpad.Section gridPreset="1-to-3" title={data.title} key={index}>
             {data.items.map((item, itemIndex) => (
               <Launchpad.Section.Item
-                className="sm:flex-col flex-row items-center sm:px-0 px-4"
+                containerStyle={css`
+                  display: flex;
+                  flex-direction: row;
+                  align-items: center;
+                  padding-left: 1rem;
+                  padding-right: 1rem;
+
+                  @media (min-width: 640px) {
+                    flex-direction: column;
+                    padding-left: 0;
+                    padding-right: 0;
+                  }
+                `}
                 key={itemIndex}
                 {...item}
               />

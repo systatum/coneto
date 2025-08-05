@@ -9,20 +9,20 @@ import {
 import { Separator } from "./separator";
 import { motion, useDragControls, useMotionValue } from "framer-motion";
 import { Grid, GridPresetKey } from "./grid";
-import { cn } from "./../lib/utils";
+import styled, { CSSProp } from "styled-components";
 
 interface LaunchpadProps {
   children: ReactNode;
-  className?: string;
+  containerStyle?: CSSProp;
   maxSection?: number;
 }
 
 interface LaunchpadSectionProps {
   children: ReactNode;
   title?: string;
-  containerClassName?: string;
-  childClassName?: string;
-  separatorClassName?: string;
+  containerStyle?: CSSProp;
+  gridStyle?: CSSProp;
+  separatorStyle?: CSSProp;
   gridPreset?: GridPresetKey;
 }
 
@@ -30,11 +30,15 @@ interface LaunchpadSectionItemProps {
   href: string;
   iconUrl: string;
   label: string;
-  className?: string;
-  iconClassName?: string;
+  containerStyle?: CSSProp;
+  iconStyle?: CSSProp;
 }
 
-function Launchpad({ children, className, maxSection = 3 }: LaunchpadProps) {
+function Launchpad({
+  children,
+  containerStyle,
+  maxSection = 3,
+}: LaunchpadProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(0);
   const [page, setPage] = useState(0);
@@ -88,13 +92,10 @@ function Launchpad({ children, className, maxSection = 3 }: LaunchpadProps) {
   const dragControls = useDragControls();
 
   return (
-    <div
+    <LaunchpadContainer
       ref={containerRef}
       onPointerDown={(e) => dragControls.start(e)}
-      className={cn(
-        "flex flex-col cursor-grab select-none active:cursor-grabbing p-6 px-[6px] gap-2 border border-gray-300 overflow-hidden relative",
-        className
-      )}
+      $container_style={containerStyle}
     >
       <motion.div
         drag={"x"}
@@ -102,7 +103,7 @@ function Launchpad({ children, className, maxSection = 3 }: LaunchpadProps) {
         dragMomentum={false}
         dragControls={dragControls}
         dragListener={false}
-        style={{ x }}
+        style={{ x, display: "flex" }}
         dragConstraints={{
           left: -containerWidth * (totalPages - 1),
           right: 0,
@@ -115,62 +116,51 @@ function Launchpad({ children, className, maxSection = 3 }: LaunchpadProps) {
           mass: 1,
         }}
         onDragEnd={handleDragEnd}
-        className="flex"
       >
         {groupedSections.map((group, index) => (
-          <div
+          <LaunchpadSectionGroup
             key={index}
-            className="shrink-0 flex flex-col gap-6"
             style={{
               width: containerWidth,
               pointerEvents: "auto",
             }}
           >
             {group}
-          </div>
+          </LaunchpadSectionGroup>
         ))}
       </motion.div>
       {totalPages > 1 && (
-        <div className="flex justify-center gap-2 mt-4">
+        <PaginationDots>
           {Array.from({ length: totalPages }).map((_, index) => (
-            <button
+            <DotButton
               key={index}
               onClick={() => setPage(index)}
-              className={cn(
-                "w-2 h-2 rounded-full cursor-pointer transition-colors",
-                page === index ? "bg-gray-500" : "bg-gray-300"
-              )}
+              active={page === index}
             />
           ))}
-        </div>
+        </PaginationDots>
       )}
-    </div>
+    </LaunchpadContainer>
   );
 }
 
 function LaunchpadSection({
   children,
   title,
-  childClassName,
-  containerClassName,
-  separatorClassName,
+  gridStyle,
+  containerStyle,
+  separatorStyle,
   gridPreset = "2-to-4",
 }: LaunchpadSectionProps) {
   return (
-    <div className={cn("flex flex-col gap-6", containerClassName)}>
-      <div className={cn("pr-6 sm:pr-16 md:pr-6 lg:pr-6", separatorClassName)}>
+    <LaunchpadSectionContainer $container_style={containerStyle}>
+      <LaunchPadSectionSeparatorWrapper $separator_style={separatorStyle}>
         <Separator title={title} depth="0" />
-      </div>
-      <Grid
-        preset={gridPreset}
-        containerClassName={cn(
-          "-translate-x-2 md:translate-x-0 sm:pr-4",
-          childClassName
-        )}
-      >
+      </LaunchPadSectionSeparatorWrapper>
+      <Grid preset={gridPreset} containerStyle={gridStyle}>
         {children}
       </Grid>
-    </div>
+    </LaunchpadSectionContainer>
   );
 }
 
@@ -178,26 +168,124 @@ function LaunchpadSectionItem({
   href,
   label,
   iconUrl,
-  className,
-  iconClassName,
+  containerStyle,
+  iconStyle,
 }: LaunchpadSectionItemProps) {
   return (
-    <a
-      className={cn(
-        "flex flex-col border border-transparent p-1 mx-4 py-2 duration-200 transition-all rounded-md hover:border-gray-200 hover:shadow-md gap-2 text-xs items-center",
-        className
-      )}
-      href={href}
-    >
+    <LaunchpadSectionItemLink $container_style={containerStyle} href={href}>
       {iconUrl && (
-        <div className={cn("max-w-[30px]", iconClassName)}>
+        <LaunchpadSectionIconWrapper $icon_style={iconStyle}>
           <img width={400} height={400} src={iconUrl} />
-        </div>
+        </LaunchpadSectionIconWrapper>
       )}
       {label && <span>{label}</span>}
-    </a>
+    </LaunchpadSectionItemLink>
   );
 }
+
+const LaunchpadContainer = styled.div<{
+  $container_style?: CSSProp;
+}>`
+  display: flex;
+  flex-direction: column;
+  cursor: grab;
+  user-select: none;
+  padding: 1.5rem 6px;
+  gap: 0.5rem;
+  border: 1px solid #d1d5db;
+  overflow: hidden;
+  position: relative;
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  ${({ $container_style }) => $container_style}
+`;
+
+const LaunchpadSectionGroup = styled.div`
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+`;
+
+const PaginationDots = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+`;
+
+const DotButton = styled.button<{ active?: boolean }>`
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background-color: ${({ active }) => (active ? "#6b7280" : "#d1d5db")};
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+`;
+
+const LaunchpadSectionContainer = styled.div<{
+  $container_style?: CSSProp;
+}>`
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  ${({ $container_style }) => $container_style}
+`;
+
+const LaunchPadSectionSeparatorWrapper = styled.div<{
+  $separator_style?: CSSProp;
+}>`
+  padding-right: 1.5rem;
+
+  @media (min-width: 640px) {
+    padding-right: 4rem;
+  }
+
+  @media (min-width: 768px) {
+    padding-right: 1.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    padding-right: 1.5rem;
+  }
+
+  ${({ $separator_style }) => $separator_style}
+`;
+
+const LaunchpadSectionItemLink = styled.a<{
+  $container_style: CSSProp;
+}>`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0.5rem 1rem;
+  margin-right: 1.5rem;
+  margin-left: 0.5rem;
+  font-size: 0.75rem;
+  gap: 0.5rem;
+  border: 1px solid transparent;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    border-color: #e5e7eb;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  ${({ $container_style }) => $container_style}
+`;
+
+const LaunchpadSectionIconWrapper = styled.div<{
+  $icon_style: CSSProp;
+}>`
+  max-width: 30px;
+  ${({ $icon_style }) => $icon_style}
+`;
 
 Launchpad.Section = LaunchpadSection;
 LaunchpadSection.Item = LaunchpadSectionItem;
