@@ -28,17 +28,17 @@ context("List Component", () => {
   });
 
   describe("Draggable", () => {
-    it("Should support drag and drop", () => {
+    it("Should allow reordering items by dragging backward", () => {
       cy.visit(getIdContent("content-list--draggable"));
 
       const dataTransfer = new DataTransfer();
 
-      cy.get('[aria-label="Draggable request"]')
-        .eq(0)
+      cy.get('[aria-label="draggable-request"]')
+        .eq(2)
         .trigger("dragstart", { dataTransfer });
 
-      cy.get('[aria-label="Draggable request"]')
-        .eq(1)
+      cy.get('[aria-label="draggable-request"]')
+        .eq(0)
         .trigger("dragover", { dataTransfer })
         .trigger("drop", { dataTransfer });
     });

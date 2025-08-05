@@ -56,7 +56,7 @@ context("Messagebox Component", () => {
         .contains(/view website/i)
         .should("have.attr", "href", "https://systatum.com");
 
-      cy.get('[aria-label="Closable request"]').click().should("exist");
+      cy.findByLabelText("closable-request").click().should("exist");
     });
   });
 });

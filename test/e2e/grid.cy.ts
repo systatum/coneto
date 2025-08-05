@@ -7,35 +7,42 @@ context("Grid Component", () => {
     });
 
     it("should select and unselect a card", () => {
-      const card = () => cy.findAllByLabelText("grid-card").eq(0);
+      cy.findAllByLabelText("grid-card").eq(0).as("card");
 
-      card().click().should("have.attr", "data-selected", "true");
-      card().click().should("have.attr", "data-selected", "false");
+      cy.get("@card").should("have.attr", "data-selected", "false");
+
+      cy.get("@card").click();
+      cy.get("@card").should("have.attr", "data-selected", "true");
+
+      cy.get("@card").click();
+      cy.get("@card").should("have.attr", "data-selected", "false");
     });
 
     it("can select multiple cards", () => {
+      cy.findAllByLabelText("grid-card").eq(0).click();
       cy.findAllByLabelText("grid-card")
         .eq(0)
-        .click()
         .should("have.attr", "data-selected", "true");
+
+      cy.findAllByLabelText("grid-card").eq(2).click();
       cy.findAllByLabelText("grid-card")
         .eq(2)
-        .click()
         .should("have.attr", "data-selected", "true");
+
+      cy.findAllByLabelText("grid-card").eq(3).click();
       cy.findAllByLabelText("grid-card")
         .eq(3)
-        .click()
         .should("have.attr", "data-selected", "true");
     });
 
     it("should unselect when clicked again", () => {
+      cy.findAllByLabelText("grid-card").eq(4).click();
       cy.findAllByLabelText("grid-card")
         .eq(4)
-        .click()
         .should("have.attr", "data-selected", "true");
+      cy.findAllByLabelText("grid-card").eq(4).click();
       cy.findAllByLabelText("grid-card")
         .eq(4)
-        .click()
         .should("have.attr", "data-selected", "false");
     });
   });
