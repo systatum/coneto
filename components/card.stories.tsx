@@ -17,6 +17,7 @@ import { ChangeEvent, useMemo, useState } from "react";
 import { Checkbox } from "./checkbox";
 import { Button } from "./button";
 import { List, ListItemProps } from "./list";
+import { css } from "styled-components";
 
 const meta: Meta<typeof Card> = {
   title: "Content/Card",
@@ -62,15 +63,15 @@ const meta: Meta<typeof Card> = {
       description: "Padding size",
       defaultValue: "sm",
     },
-    containerClassName: {
+    containerStyle: {
       control: "text",
       description: "Additional custom container classes",
     },
-    headerClassName: {
+    headerStyle: {
       control: "text",
       description: "Additional custom title classes",
     },
-    footerClassName: {
+    footerStyle: {
       control: "text",
       description: "Additional custom footer classes",
     },
@@ -194,8 +195,6 @@ export const WithTitle: Story = {
     shadow: "sm",
     padding: "sm",
     title: "Import dishes",
-    containerClassName: "px-0",
-    headerClassName: "font-semibold text-sm",
   },
   render: (args) => {
     interface RestaurantDish {
@@ -299,7 +298,12 @@ export const WithTitle: Story = {
     }, [value.search]);
 
     return (
-      <Card {...args}>
+      <Card
+        {...args}
+        containerStyle={css`
+          padding: 0px;
+        `}
+      >
         <div className="px-8 py-4 min-w-[500px]">
           <Searchbox
             name="search"
@@ -570,9 +574,19 @@ export const WithTitleAndActions: Story = {
     return (
       <Card
         title="Systatum Corps Food."
-        containerClassName="px-0"
-        headerClassName="font-semibold px-3"
-        footerClassName="px-5"
+        containerStyle={css`
+          padding-left: 10px;
+          padding-right: 10px;
+        `}
+        headerStyle={css`
+          font-weight: 600;
+          padding-left: 10px;
+          padding-right: 10px;
+        `}
+        footerStyle={css`
+          padding-left: 20px;
+          padding-right: 20px;
+        `}
         leftSideActions={ContentCard.leftSideActions}
         rightSideActions={ContentCard.rightSideActions}
       >
@@ -581,7 +595,10 @@ export const WithTitleAndActions: Story = {
           selectable
           onDragged={onDragged}
           onSearchRequested={onChangeValue}
-          className="px-3 py-4 min-w-[450px]"
+          containerStyle={css`
+            padding: 16px;
+            min-width: 400px;
+          `}
         >
           {filteredContent.map((group, index) => {
             return (
@@ -590,7 +607,13 @@ export const WithTitleAndActions: Story = {
                   <List.Item
                     key={i}
                     groupId={group.id}
-                    className="min-w-[300px]"
+                    containerStyle={css`
+                      min-width: 300px;
+                      padding-right: 8px;
+                      padding-left: 8px;
+                      padding-top: 10px;
+                      padding-bottom: 10px;
+                    `}
                     id={list.id}
                     subtitle={list.subtitle}
                     title={list.title}

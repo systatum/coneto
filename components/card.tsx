@@ -1,6 +1,6 @@
 import { RiCloseLine } from "@remixicon/react";
-import { cn } from "./../lib/utils";
 import { ReactNode } from "react";
+import styled, { css, CSSProp } from "styled-components";
 
 export interface CardProps {
   shadow?: "none" | "sm" | "md" | "lg" | "xl" | "2xl";
@@ -21,9 +21,10 @@ export interface CardProps {
     | "9"
     | "10";
   children: ReactNode;
-  containerClassName?: string;
-  headerClassName?: string;
-  footerClassName?: string;
+  containerStyle?: CSSProp;
+  contentStyle?: CSSProp;
+  headerStyle?: CSSProp;
+  footerStyle?: CSSProp;
   title?: string;
   rightSideActions?: ReactNode[];
   leftSideActions?: ReactNode[];
@@ -31,42 +32,42 @@ export interface CardProps {
   onCloseRequest?: () => void;
 }
 
-const SHADOW_MAP: Record<NonNullable<CardProps["shadow"]>, string> = {
-  none: "shadow-none",
-  sm: "shadow-sm",
-  md: "shadow-md",
-  lg: "shadow-lg",
-  xl: "shadow-xl",
-  "2xl": "shadow-2xl",
+const SHADOW_MAP = {
+  none: "none",
+  sm: "0 1px 2px rgba(0, 0, 0, 0.05)",
+  md: "0 4px 6px rgba(0, 0, 0, 0.1)",
+  lg: "0 10px 15px rgba(0, 0, 0, 0.1)",
+  xl: "0 20px 25px rgba(0, 0, 0, 0.1)",
+  "2xl": "0 25px 50px rgba(0, 0, 0, 0.25)",
 };
 
-const RADIUS_MAP: Record<NonNullable<CardProps["radius"]>, string> = {
-  none: "rounded-none",
-  xs: "rounded-sm",
-  sm: "rounded-md",
-  md: "rounded-lg",
-  lg: "rounded-lg",
-  xl: "rounded-xl",
-  "2xl": "rounded-2xl",
-  "3xl": "rounded-3xl",
-  full: "rounded-full",
+const RADIUS_MAP = {
+  none: "0px",
+  xs: "0.125rem",
+  sm: "0.25rem",
+  md: "0.375rem",
+  lg: "0.5rem",
+  xl: "0.75rem",
+  "2xl": "1rem",
+  "3xl": "1.5rem",
+  full: "9999px",
 };
 
-const PADDING_MAP: Record<NonNullable<CardProps["padding"]>, string> = {
-  none: "p-0",
-  sm: "p-1",
-  md: "p-4",
-  lg: "p-6",
-  xl: "p-8",
-  "2xl": "p-10",
-  "3xl": "p-12",
-  "4": "p-4",
-  "5": "p-5",
-  "6": "p-6",
-  "7": "p-7",
-  "8": "p-8",
-  "9": "p-9",
-  "10": "p-10",
+const PADDING_MAP = {
+  none: "0rem",
+  sm: "0.25rem",
+  md: "1rem",
+  lg: "1.5rem",
+  xl: "2rem",
+  "2xl": "2.5rem",
+  "3xl": "3rem",
+  "4": "1rem",
+  "5": "1.25rem",
+  "6": "1.5rem",
+  "7": "1.75rem",
+  "8": "2rem",
+  "9": "2.25rem",
+  "10": "2.5rem",
 };
 
 function Card({
@@ -74,68 +75,117 @@ function Card({
   shadow = "sm",
   radius = "xs",
   padding = "sm",
-  containerClassName,
-  headerClassName,
-  footerClassName,
+  containerStyle,
+  contentStyle,
+  headerStyle,
+  footerStyle,
   title,
   leftSideActions,
   rightSideActions,
   onCloseRequest,
   closable = false,
 }: CardProps) {
-  const cardClass = cn(
-    "border border-gray-100 relative bg-white w-fit flex flex-col",
-    PADDING_MAP[padding],
-    RADIUS_MAP[radius],
-    SHADOW_MAP[shadow],
-    containerClassName
-  );
   return (
-    <div className={cardClass}>
-      {title && (
-        <span
-          className={cn(
-            "relative py-3 text-base border-gray-300 px-6 border-b",
-            headerClassName
-          )}
-        >
-          {title}
-        </span>
-      )}
-      {children}
+    <CardContainer
+      $shadow={shadow}
+      $radius={radius}
+      $padding={padding}
+      $container_style={containerStyle}
+    >
+      {title && <Header $header_style={headerStyle}>{title}</Header>}
+
+      <Contain $content_style={contentStyle}>{children}</Contain>
 
       {(leftSideActions || rightSideActions) && (
-        <div
-          className={cn(
-            "border-t border-gray-300 flex flex-row px-6 py-2 justify-between",
-            footerClassName
-          )}
-        >
-          <div className="flex flex-row gap-2">
-            {leftSideActions && leftSideActions.map((action) => action)}
-          </div>
-          <div className="flex flex-row gap-2">
-            {rightSideActions && rightSideActions.map((action) => action)}
-          </div>
-        </div>
+        <Footer $footer_style={footerStyle}>
+          <ActionGroup>
+            {leftSideActions &&
+              leftSideActions.map((action, i) => <span key={i}>{action}</span>)}
+          </ActionGroup>
+          <ActionGroup>
+            {rightSideActions &&
+              rightSideActions.map((action, i) => (
+                <span key={i}>{action}</span>
+              ))}
+          </ActionGroup>
+        </Footer>
       )}
 
       {closable && (
-        <RiCloseLine
+        <CloseIcon
           role="button"
-          aria-label="Closable request"
+          aria-label="Close"
+          size={18}
           onClick={(e) => {
             e.stopPropagation();
-            onCloseRequest();
+            onCloseRequest?.();
           }}
-          size={18}
-          className={cn(
-            "absolute top-4 right-3 duration-300 transition-all hover:bg-gray-300 cursor-pointer"
-          )}
         />
       )}
-    </div>
+    </CardContainer>
   );
 }
+
+const CardContainer = styled.div<{
+  $shadow: CardProps["shadow"];
+  $radius: CardProps["radius"];
+  $padding: CardProps["padding"];
+  $container_style?: CSSProp;
+}>`
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border: 1px solid #e5e7eb;
+  position: relative;
+  width: fit-content;
+  ${({ $shadow, $radius, $padding }) => css`
+    box-shadow: ${SHADOW_MAP[$shadow!]};
+    border-radius: ${RADIUS_MAP[$radius!]};
+    padding: ${PADDING_MAP[$padding!]};
+  `}
+  ${({ $container_style }) => $container_style}
+`;
+
+const Header = styled.span<{
+  $header_style?: CSSProp;
+}>`
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-bottom: 1px solid #d1d5db;
+  ${({ $header_style }) => $header_style}
+`;
+
+const Contain = styled.span<{
+  $content_style?: CSSProp;
+}>`
+  ${({ $content_style }) => $content_style}
+`;
+
+const Footer = styled.div<{
+  $footer_style?: CSSProp;
+}>`
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 1.5rem;
+  border-top: 1px solid #d1d5db;
+  ${({ $footer_style }) => $footer_style}
+`;
+
+const ActionGroup = styled.div`
+  display: flex;
+  gap: 0.5rem;
+`;
+
+const CloseIcon = styled(RiCloseLine)`
+  position: absolute;
+  top: 1rem;
+  right: 0.75rem;
+  cursor: pointer;
+  transition: background 0.3s;
+
+  &:hover {
+    background: #d1d5db;
+  }
+`;
 
 export { Card };
