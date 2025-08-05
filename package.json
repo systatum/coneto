@@ -266,8 +266,9 @@
   "scripts": {
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "build": "pnpm build-css && pnpm build-ts && pnpm copyjs && node postbuild-inject.js",
+    "build": "pnpm copy-css && pnpm build-ts && pnpm copyjs && node postbuild-inject.js",
     "build-ts": "pnpm tsc -p tsconfig.build.json",
+    "copy-css": "mkdir -p dist && cp ./shared.css ./dist/shared.css",
     "build-css": "pnpm exec tailwindcss -i ./shared.css -o ./dist/shared.css --minify",
     "copyjs": "rsync -avm --include='*/' --include='*.js' --exclude='*' lib/ dist/lib/",
     "publish-coneto": "pnpm build && pnpm publish",
@@ -295,7 +296,9 @@
     "react-responsive": "^10.0.1",
     "react-swipeable": "^7.0.2",
     "tailwind-merge": "^3.3.0",
-    "zod": "^3.24.4"
+    "zod": "^3.24.4",
+    "tailwindcss": "^4.1.11",
+    "styled-components": "^6.1.19"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.6",
@@ -334,8 +337,9 @@
     "postcss": "^8.5.3",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
-    "storybook": "^8.6.14",
     "tailwindcss": "^4.1.11",
+    "storybook": "^8.6.14",
+    "styled-components": "^6.1.19",
     "typescript": "^5.4.0",
     "vite": "^6.3.5"
   },
