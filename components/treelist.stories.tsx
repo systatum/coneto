@@ -3,6 +3,7 @@ import { TreeList, TreeListActionsProps } from "./treelist";
 import { RiAtLine, RiSearchLine } from "@remixicon/react";
 import { EmptySlate } from "./empty-slate";
 import { Button } from "./button";
+import { css } from "styled-components";
 
 const meta: Meta<typeof TreeList> = {
   title: "Content/TreeList",
@@ -39,7 +40,14 @@ export const Default: Story = {
     ];
 
     return (
-      <div className="flex flex-col gap-1 max-w-[250px]">
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "0.25rem",
+          maxWidth: "250px",
+        }}
+      >
         <TreeList content={TREE_LIST_DATA} emptySlate={<p>Not found.</p>} />
       </div>
     );
@@ -88,7 +96,14 @@ export const WithActions: Story = {
     ];
 
     return (
-      <div className="flex flex-col gap-1 max-w-[250px]">
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "0.25rem",
+          maxWidth: "250px",
+        }}
+      >
         <TreeList
           content={TREE_LIST_DATA}
           actions={TREE_LIST_ACTIONS}
@@ -121,7 +136,14 @@ export const WithEmptySlate: Story = {
     ];
 
     return (
-      <div className="flex flex-col gap-1 max-w-[250px]">
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "0.25rem",
+          maxWidth: "250px",
+        }}
+      >
         <TreeList
           content={TREE_LIST_DATA}
           actions={TREE_LIST_ACTIONS}
@@ -129,14 +151,30 @@ export const WithEmptySlate: Story = {
             <EmptySlate
               imageUrl="https://picsum.photos/200?random=1"
               title="Manage your inventory transfers"
-              containerClassName="max-w-[200px] text-center mx-auto"
+              containerStyle={css`
+                text-align: center;
+                margin: auto;
+              `}
+              imageStyle={css`
+                max-width: 200px;
+              `}
               subtitle="Track and receive your incoming inventory from suppliers."
               actions={
                 <>
-                  <Button variant="default" className="text-xs">
+                  <Button
+                    variant="default"
+                    style={{
+                      fontSize: "12px",
+                    }}
+                  >
                     Add Item
                   </Button>
-                  <Button variant="primary" className="text-xs">
+                  <Button
+                    variant="primary"
+                    style={{
+                      fontSize: "12px",
+                    }}
+                  >
                     Learn More
                   </Button>
                 </>
