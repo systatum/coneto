@@ -1,10 +1,12 @@
 import { Children, isValidElement, ReactNode } from "react";
+import styled, { CSSProp } from "styled-components";
 
 interface KeynoteProps<T extends Record<string, unknown>> {
   data?: T;
   keys?: (keyof T)[];
   keyLabels?: string[];
   children?: ReactNode;
+  style?: CSSProp;
   renderer?: Partial<Record<keyof T, (value: T[keyof T]) => ReactNode>>;
 }
 
@@ -19,12 +21,13 @@ function Keynote<T extends Record<string, unknown>>({
   keyLabels,
   children,
   renderer,
+  style,
 }: KeynoteProps<T>) {
   const shouldRenderFromData =
     data && keys && keyLabels && keys.length === keyLabels.length;
 
   return (
-    <div className="flex flex-col">
+    <KeynoteWrapper $style={style}>
       {shouldRenderFromData
         ? keys?.map((key, index) => {
             const value = data[key];
@@ -38,18 +41,43 @@ function Keynote<T extends Record<string, unknown>>({
         : Children.map(children, (child) =>
             isValidElement(child) ? child : null
           )}
-    </div>
+    </KeynoteWrapper>
   );
 }
 
 function KeynotePoint({ label, children }: KeynotePointProps) {
   return (
-    <div className="flex justify-between py-1">
-      <span className="text-gray-700 font-semibold">{label}</span>
-      <span className="text-gray-900">{children}</span>
-    </div>
+    <KeynotePointWrapper>
+      <Label>{label}</Label>
+      <Value>{children}</Value>
+    </KeynotePointWrapper>
   );
 }
+
+const KeynoteWrapper = styled.div<{
+  $style?: CSSProp;
+}>`
+  display: flex;
+  flex-direction: column;
+
+  ${({ $style }) => $style}
+`;
+
+const KeynotePointWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 4px 0;
+`;
+
+const Label = styled.span`
+  color: #374151;
+  font-weight: 600;
+`;
+
+const Value = styled.span`
+  color: #111827;
+`;
 
 Keynote.Point = KeynotePoint;
 export { Keynote };
