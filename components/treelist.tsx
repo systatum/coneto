@@ -40,7 +40,7 @@ function TreeList<T extends TreeListItemsProps>({
   const [isSelected, setIsSelected] = useState("");
 
   return (
-    <TreeListWrapper $container_style={containerStyle}>
+    <TreeListWrapper $containerStyle={containerStyle}>
       {actions && (
         <ActionsWrapper>
           {actions.map((data, index) => (
@@ -118,12 +118,12 @@ function TreeListItem<T extends TreeListItemsProps>({
 }
 
 const TreeListWrapper = styled.div<{
-  $container_style?: CSSProp;
+  $containerStyle?: CSSProp;
 }>`
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  ${(props) => props.$container_style}
+  ${(props) => props.$containerStyle}
 `;
 
 const ActionsWrapper = styled.div`
