@@ -1,6 +1,6 @@
-import { cn } from "./../lib/utils";
 import { ReactNode, useState } from "react";
 import { Capsule } from "./capsule";
+import styled, { CSSProp } from "styled-components";
 
 interface CapsuleTabProps {
   tabs: Array<{
@@ -9,10 +9,10 @@ interface CapsuleTabProps {
     content: ReactNode;
   }>;
   activeTab?: number;
-  className?: string;
+  style?: CSSProp;
 }
 
-function CapsuleTab({ tabs, className, activeTab = 1 }: CapsuleTabProps) {
+function CapsuleTab({ tabs, style, activeTab = 1 }: CapsuleTabProps) {
   const CONTENT_TABS = tabs.map((data) => data.id);
   const NUMBER_ACTIVE_TAB = activeTab - 1;
   const [selected, setSelected] = useState<string | number>(
@@ -21,13 +21,8 @@ function CapsuleTab({ tabs, className, activeTab = 1 }: CapsuleTabProps) {
 
   const activeContent = tabs.filter((data) => data.id === selected);
 
-  const capsuleTabClass = cn(
-    "flex flex-col gap-1 border w-full border-[#ebebeb] shadow-[0_1px_4px_-3px_#5b5b5b] pb-[5px] rounded-xs ",
-    className
-  );
-
   return (
-    <div className={capsuleTabClass}>
+    <CapsuleTabWrapper $containerStyle={style}>
       <Capsule
         fields={tabs}
         setView={setSelected}
@@ -36,15 +31,42 @@ function CapsuleTab({ tabs, className, activeTab = 1 }: CapsuleTabProps) {
         full
       />
 
-      <div className="flex flex-col w-full">
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          width: "100%",
+        }}
+      >
         {activeContent.map((data, index) => (
-          <div key={index} className="w-full h-full">
+          <div
+            key={index}
+            style={{
+              width: "100%",
+              height: "100%",
+            }}
+          >
             {data.content}
           </div>
         ))}
       </div>
-    </div>
+    </CapsuleTabWrapper>
   );
 }
+
+const CapsuleTabWrapper = styled.div<{
+  $containerStyle?: CSSProp;
+}>`
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  width: 100%;
+  padding-bottom: 5px;
+  border: 1px solid #ebebeb;
+  border-radius: 0.375rem;
+  box-shadow: 0 1px 4px -3px #5b5b5b;
+
+  ${({ $containerStyle }) => $containerStyle}
+`;
 
 export { CapsuleTab };

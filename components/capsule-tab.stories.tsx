@@ -26,8 +26,22 @@ export const Default: Story = {
         setValue((prev) => ({ ...prev, [name]: value }));
       };
       return (
-        <div className="p-2 text-sm flex flex-col gap-2">
-          <h3 className="font-medium">Write Tab</h3>
+        <div
+          style={{
+            padding: "0.5rem",
+            fontSize: "0.875rem",
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.5rem",
+          }}
+        >
+          <h3
+            style={{
+              fontWeight: 500,
+            }}
+          >
+            Write Tab
+          </h3>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
             malesuada, nisl a tincidunt scelerisque, velit sapien sollicitudin
@@ -46,8 +60,22 @@ export const Default: Story = {
 
     const ReviewTabContent = () => {
       return (
-        <div className="p-2 text-sm flex flex-col gap-2">
-          <h3 className="font-medium">Review Tab</h3>
+        <div
+          style={{
+            padding: "0.5rem",
+            fontSize: "0.875rem",
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.5rem",
+          }}
+        >
+          <h3
+            style={{
+              fontWeight: 500,
+            }}
+          >
+            Review Tab
+          </h3>
           <p>
             This tab is meant to review the content that has been submitted. It
             includes multiple paragraphs to simulate a longer layout.
@@ -68,9 +96,24 @@ export const Default: Story = {
     ];
 
     return (
-      <div className="flex flex-col gap-1 w-full">
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "4px",
+          width: "100%",
+        }}
+      >
         <CapsuleTab tabs={TABS_ITEMS} activeTab={2} />
-        <div className="flex flex-row w-full justify-end gap-1">
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            gap: "4px",
+            width: "100%",
+            justifyContent: "end",
+          }}
+        >
           <Button>Close</Button>
           <Button disabled variant="primary">
             Comment
