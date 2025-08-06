@@ -1,7 +1,6 @@
 import styled, { css, CSSProp } from "styled-components";
 import { CSSProperties, ReactNode, useState } from "react";
 import { Checkbox } from "./checkbox";
-import { cn } from "./../lib/utils";
 
 interface GridProps {
   children?: ReactNode;
@@ -70,10 +69,6 @@ function GridCard({
             checked={isSelected}
             containerStyle={css`
               border-radius: 2px;
-            `}
-            style={css`
-              width: 16px;
-              height: 16px;
             `}
             readOnly
           />
