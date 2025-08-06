@@ -1,19 +1,19 @@
 import { ReactNode, useState } from "react";
-import { cn } from "../lib/utils";
 import { RiArrowRightSLine } from "@remixicon/react";
 import { motion } from "framer-motion";
+import styled, { css, CSSProp } from "styled-components";
 
 interface BoxbarProps {
   children: ReactNode;
-  containerClassName?: string;
-  childClassName?: string;
+  containerStyle?: CSSProp;
+  childStyle?: CSSProp;
   minHeight?: number;
   maxHeight?: number;
 }
 
 function Boxbar({
-  childClassName,
-  containerClassName,
+  childStyle,
+  containerStyle,
   children,
   minHeight = 40,
   maxHeight,
@@ -21,32 +21,72 @@ function Boxbar({
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <motion.div
+    <BaseBoxbar
       initial={{ height: minHeight }}
-      animate={{
-        height: isOpen ? (maxHeight ? maxHeight : "auto") : minHeight,
-      }}
+      animate={{ height: isOpen ? (maxHeight ?? "auto") : minHeight }}
       transition={{ duration: 0.2, ease: "easeInOut" }}
-      className={cn(
-        "overflow-hidden flex flex-row justify-start items-start border rounded-xs relative border-gray-300 bg-white",
-        maxHeight ? "" : "max-h-fit",
-        containerClassName
-      )}
+      $containerStyle={containerStyle}
+      $maxHeight={maxHeight}
     >
-      <span className={cn("p-2 w-full flex-wrap flex", childClassName)}>
-        {children}
-      </span>
-      <motion.button
+      <ChildWrapper $childStyle={childStyle}>{children}</ChildWrapper>
+
+      <ToggleButton
         aria-label="boxbar-toggle"
-        className="mt-2 mr-2 top-2 w-fit right-2 cursor-pointer hover:bg-gray-100 p-1 rounded"
         animate={{ rotate: isOpen ? 90 : 0 }}
         transition={{ duration: 0.2 }}
         onClick={() => setIsOpen(!isOpen)}
       >
         <RiArrowRightSLine size={14} />
-      </motion.button>
-    </motion.div>
+      </ToggleButton>
+    </BaseBoxbar>
   );
 }
+
+const BaseBoxbar = styled(motion.div)<{
+  $containerStyle: CSSProp;
+  $maxHeight: number | undefined;
+}>`
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  background-color: white;
+  position: relative;
+
+  ${({ $maxHeight }) =>
+    $maxHeight &&
+    css`
+      max-height: fit-content;
+    `}
+  ${({ $containerStyle }) => $containerStyle}
+`;
+
+const ChildWrapper = styled.span<{ $childStyle: CSSProp }>`
+  padding: 0.5rem;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+
+  ${({ $childStyle }) => $childStyle}
+`;
+
+const ToggleButton = styled(motion.button)`
+  margin-top: 0.5rem;
+  margin-right: 0.5rem;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: fit-content;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  background-color: transparent;
+
+  &:hover {
+    background-color: #f3f4f6;
+  }
+`;
 
 export { Boxbar };
