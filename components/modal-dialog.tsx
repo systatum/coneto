@@ -3,7 +3,7 @@
 import { ReactNode } from "react";
 import { Dialog } from "./dialog";
 import { Button, ButtonVariants } from "./button";
-import styled from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
 
 export interface ModalButtonProps extends Pick<ButtonVariants, "variant"> {
   id: string;
@@ -19,6 +19,7 @@ export interface ModalDialogProps {
   subTitle: string;
   hasCloseButton: boolean;
   buttons: ModalButtonProps[];
+  style?: CSSProp;
   children?: ReactNode;
   onClick?: (args: { id: string; closeDialog: () => void }) => void;
 }
@@ -31,6 +32,7 @@ function ModalDialog({
   title,
   buttons,
   children,
+  style,
   onClick,
 }: ModalDialogProps) {
   const closeDialog = () => onOpenChange(false);
@@ -38,15 +40,16 @@ function ModalDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <Dialog.Content
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          overflow: "hidden",
-          maxWidth: "500px",
-          padding: 0,
-          borderRadius: 0,
-        }}
+        style={css`
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          overflow: hidden;
+          max-width: 500px;
+          padding: 0px;
+          border-radius: 0;
+          ${style}
+        `}
         hideClose={!hasCloseButton}
       >
         <Container>
