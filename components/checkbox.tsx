@@ -19,7 +19,6 @@ export interface CheckboxProps
   indeterminate?: boolean;
   description?: string;
   highlightOnChecked?: boolean;
-  style?: CSSProp;
   containerStyle?: CSSProp;
   inputStyle?: CSSProp;
   labelStyle?: CSSProp;
@@ -35,7 +34,6 @@ function Checkbox({
   highlightOnChecked,
   errorMessage,
   indeterminate = false,
-  style,
   containerStyle,
   inputStyle,
   labelStyle,
@@ -54,7 +52,7 @@ function Checkbox({
   }, [indeterminate]);
 
   return (
-    <Wrapper>
+    <div>
       <Label
         htmlFor={inputId}
         $hasDescription={!!description}
@@ -111,11 +109,9 @@ function Checkbox({
       </Label>
 
       {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
-    </Wrapper>
+    </div>
   );
 }
-
-const Wrapper = styled.div``;
 
 const Label = styled.label<{
   $hasDescription: boolean;
