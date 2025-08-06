@@ -20,7 +20,7 @@ const meta: Meta<typeof Badge> = {
     },
     withCircle: { control: "boolean" },
     caption: { control: "text" },
-    className: { control: false },
+    badgeStyle: { control: false },
     backgroundColor: { control: "color" },
     textColor: { control: "color" },
     circleColor: { control: "color" },

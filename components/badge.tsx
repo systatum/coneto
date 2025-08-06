@@ -9,7 +9,6 @@ export interface BadgeProps {
   variant?: BadgeVariantProps;
   withCircle?: boolean;
   caption?: string;
-  className?: string;
   backgroundColor?: string | null;
   textColor?: string | null;
   circleColor?: string | null;

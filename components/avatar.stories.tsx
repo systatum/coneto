@@ -146,7 +146,13 @@ export const WithImage: Story = {
       >
         <Avatar onChange={handleChange} {...args} />
         {selectedFileName && (
-          <div className="text-xs">Selected: {selectedFileName}</div>
+          <div
+            style={{
+              fontSize: "12px",
+            }}
+          >
+            Selected: {selectedFileName}
+          </div>
         )}
       </div>
     );
