@@ -310,17 +310,48 @@ export const WithTitle: Story = {
           padding: 0px;
         `}
       >
-        <div className="px-8 py-4 min-w-[500px]">
+        <div
+          style={{
+            paddingLeft: "2rem",
+            paddingRight: "2rem",
+            paddingTop: "1rem",
+            paddingBottom: "1rem",
+            minWidth: "500px",
+          }}
+        >
           <Searchbox
             name="search"
             onChange={onChangeValue}
             value={value.search}
             placeholder="Search..."
           />
-          <div className="flex flex-col gap-2 py-4">
+
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "0.5rem",
+              paddingTop: "1rem",
+              paddingBottom: "1rem",
+            }}
+          >
             {filteredContent.map((dish, index) => (
-              <div key={index} className="flex flex-row justify-between">
-                <div className="flex flex-row items-center gap-3">
+              <div
+                key={index}
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: "0.75rem",
+                  }}
+                >
                   <Checkbox
                     onChange={onChangeValue}
                     value={JSON.stringify(dish)}
@@ -329,7 +360,15 @@ export const WithTitle: Story = {
                     )}
                     name="checked"
                   />
-                  <div className="items-center w-[30px] rounded-sm overflow-hidden">
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      width: "30px",
+                      borderRadius: "0.125rem",
+                      overflow: "hidden",
+                    }}
+                  >
                     <img src={dish.image} />
                   </div>
                   <h3>{dish.name}</h3>
@@ -553,7 +592,14 @@ export const WithTitleAndActions: Story = {
 
     const ContentCard = {
       leftSideActions: [
-        <div className="flex flex-row items-center gap-2">
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: "8px",
+          }}
+        >
           <Checkbox
             onChange={(e) => {
               if (e.target.checked) {

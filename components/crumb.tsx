@@ -1,4 +1,3 @@
-import { cn } from "./../lib/utils";
 import {
   RemixiconComponentType,
   RiArrowRightSLine,
@@ -152,8 +151,6 @@ const CrumbEllipsisIcon = styled(RiMoreLine)`
     color: #61a9f9;
   }
 `;
-
-const CrumbSeparatorIcon = styled(RiArrowRightSLine)``;
 
 function CrumbItem({
   path,

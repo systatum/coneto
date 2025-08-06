@@ -81,7 +81,7 @@ function Button({
         display: "flex",
         position: "relative",
         alignItems: "center",
-        width: "100%",
+        width: "fit-content",
         height: "fit-content",
       }}
     >

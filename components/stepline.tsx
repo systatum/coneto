@@ -4,7 +4,6 @@ import {
   SteplineItemState,
   TEXT_VARIANT_COLOR,
 } from "./../constants/step-component-util";
-import { cn } from "./../lib/utils";
 import {
   Children,
   cloneElement,
