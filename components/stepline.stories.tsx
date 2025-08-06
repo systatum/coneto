@@ -26,7 +26,7 @@ export const Default: Story = {
 
 export const Reversable: Story = {
   render: () => {
-    const [active, setActive] = useState(4);
+    const [active, setActive] = useState(10);
 
     const STEPLINE_ITEMS: SteplineItemProps[] = [
       {

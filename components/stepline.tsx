@@ -1,8 +1,8 @@
 import {
-  INNER_CIRCLE_VARIANT_CLASS,
-  OUTER_CIRCLE_VARIANT_CLASS,
+  INNER_CIRCLE_VARIANT_COLOR,
+  OUTER_CIRCLE_VARIANT_COLOR,
   SteplineItemState,
-  TEXT_VARIANT_CLASS,
+  TEXT_VARIANT_COLOR,
 } from "./../constants/step-component-util";
 import { cn } from "./../lib/utils";
 import {
@@ -13,30 +13,27 @@ import {
   ReactNode,
   useState,
 } from "react";
+import styled, { css } from "styled-components";
+import type { CSSProp } from "styled-components";
 
 export interface SteplineProps {
   children?: ReactNode;
-  className?: string;
+  style?: CSSProp;
   reversable?: boolean;
 }
 
 export type SteplineItemProps = SteplineItemState &
   Partial<{
     hoveredIndex?: number | null;
+    containerStyle?: CSSProp;
   }>;
 
-function Stepline({ children, className, reversable }: SteplineProps) {
+function Stepline({ children, style, reversable }: SteplineProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-
   const childArray = Children.toArray(children).filter(isValidElement);
 
   return (
-    <div
-      className={cn(
-        "flex flex-row gap-2 py-2 px-2 relative overflow-x-auto scrollbar-thin-x",
-        className
-      )}
-    >
+    <SteplineWrapper $containerStyle={style}>
       {childArray.map((child, index) => {
         if (
           !isValidElement<
@@ -49,48 +46,25 @@ function Stepline({ children, className, reversable }: SteplineProps) {
           return null;
         const variant = child.props.variant;
         const onClick = child.props.onClick;
-
         return (
-          <div
+          <StepGroup
             key={index}
-            onClick={() => {
-              if (reversable && variant) {
-                onClick();
-              }
-            }}
-            onMouseEnter={() => {
-              setHoveredIndex(index + 1);
-            }}
-            onMouseLeave={() => {
-              setHoveredIndex(null);
-            }}
-            className={cn(
-              "flex flex-row gap-2 relative",
-              reversable && variant && "cursor-pointer"
-            )}
+            $clickable={!!(reversable && variant)}
+            onClick={() => reversable && variant && onClick?.()}
+            onMouseEnter={() => setHoveredIndex(index + 1)}
+            onMouseLeave={() => setHoveredIndex(null)}
           >
-            <div className="flex flex-row w-full justify-between">
+            <StepContent>
               {cloneElement(child, {
                 id: index + 1,
-                hoveredIndex: hoveredIndex,
+                hoveredIndex,
               })}
-            </div>
-            <div className="flex flex-row relative items-center w-full">
-              {index !== childArray.length - 1 && (
-                <div
-                  className={cn(
-                    "flex-1 h-px min-w-[44px] bg-gray-400",
-                    variant === "error" && "bg-[#b60000]",
-                    (variant === "completed" || variant === "current") &&
-                      "bg-[#00b62e]"
-                  )}
-                />
-              )}
-            </div>
-          </div>
+            </StepContent>
+            {index !== childArray.length - 1 && <StepLine $variant={variant} />}
+          </StepGroup>
         );
       })}
-    </div>
+    </SteplineWrapper>
   );
 }
 
@@ -98,53 +72,159 @@ function SteplineItem({
   subtitle,
   title,
   variant = "todo",
-  className,
+  containerStyle,
   id,
   hoveredIndex,
   active,
 }: SteplineItemProps) {
   return (
-    <div
-      id={String(id)}
-      className={cn(
-        "flex flex-row w-full gap-2 items-center whitespace-nowrap",
-        className
-      )}
-    >
-      <div className="flex relative">
-        <div
+    <StepItemWrapper id={String(id)} $style={containerStyle}>
+      <div style={{ position: "relative" }}>
+        <OuterCircle
           aria-label="outer-circle"
-          className={cn(
-            "text-white absolute flex items-center justify-center min-w-[30px] min-h-[30px] max-w-[30px] max-h-[30px] transform duration-200 bg-gray-600 rounded-full -translate-y-1/2 top-1/2",
-            (active || hoveredIndex === id) && "scale-[130%]",
-            OUTER_CIRCLE_VARIANT_CLASS[variant]
-          )}
+          $active={active || hoveredIndex === id}
+          $variant={variant}
         />
-        <div
-          aria-label="inner-circle"
-          className={cn(
-            "text-white flex relative items-center justify-center min-w-[30px] min-h-[30px] max-w-[30px] max-h-[30px] bg-gray-600 rounded-full",
-            INNER_CIRCLE_VARIANT_CLASS[variant]
-          )}
-        >
+        <InnerCircle aria-label="inner-circle" $variant={variant}>
           {id}
-        </div>
+        </InnerCircle>
       </div>
       {(title || subtitle) && (
-        <div className={cn("flex flex-col", TEXT_VARIANT_CLASS[variant])}>
-          {title && <span className="font-medium text-sm">{title}</span>}
+        <TextWrapper $variant={variant}>
+          {title && (
+            <span style={{ fontWeight: 500, fontSize: "0.875rem" }}>
+              {title}
+            </span>
+          )}
           {subtitle && (
-            <span className="flex flex-col text-xs">
+            <span
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                fontSize: "12px",
+              }}
+            >
               {subtitle.map((data, index) => (
                 <Fragment key={index}>{data}</Fragment>
               ))}
             </span>
           )}
-        </div>
+        </TextWrapper>
       )}
-    </div>
+    </StepItemWrapper>
   );
 }
+
+const SteplineWrapper = styled.div<{ $containerStyle?: CSSProp }>`
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  position: relative;
+  overflow-x: auto;
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+  ${({ $containerStyle }) => $containerStyle}
+`;
+
+const StepGroup = styled.div<{ $clickable?: boolean }>`
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  position: relative;
+  ${({ $clickable }) =>
+    $clickable &&
+    css`
+      cursor: pointer;
+    `}
+`;
+
+const StepContent = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+`;
+
+const StepLine = styled.div<{ $variant?: string }>`
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  align-items: center;
+  width: 100%;
+
+  &::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    min-width: 44px;
+    background-color: ${({ $variant }) =>
+      $variant === "error"
+        ? "#b60000"
+        : $variant === "completed" || $variant === "current"
+          ? "#00b62e"
+          : "#9ca3af"};
+  }
+`;
+
+const StepItemWrapper = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  width: 100%;
+  gap: 0.5rem;
+  align-items: center;
+  white-space: nowrap;
+  ${({ $style }) => $style}
+`;
+
+const OuterCircle = styled.div<{ $active?: boolean; $variant: string }>`
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  min-height: 30px;
+  max-width: 30px;
+  max-height: 30px;
+  border-radius: 9999px;
+  transform: translateY(-50%);
+  top: 50%;
+  transition: transform 0.2s;
+
+  ${({ $active }) =>
+    $active &&
+    css`
+      transform: scale(1.3) translateY(-40%);
+    `}
+  ${({ $variant }) => css`
+    background-color: ${OUTER_CIRCLE_VARIANT_COLOR[$variant]};
+  `}
+`;
+
+const InnerCircle = styled.div<{ $variant: string }>`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  min-height: 30px;
+  max-width: 30px;
+  max-height: 30px;
+  border-radius: 9999px;
+  color: white;
+  background-color: #4b5563;
+  ${({ $variant }) => css`
+    background-color: ${INNER_CIRCLE_VARIANT_COLOR[$variant]};
+  `}
+`;
+
+const TextWrapper = styled.div<{ $variant: string }>`
+  display: flex;
+  flex-direction: column;
+  ${({ $variant }) => TEXT_VARIANT_COLOR[$variant]}
+`;
 
 Stepline.Item = SteplineItem;
 export { Stepline };
