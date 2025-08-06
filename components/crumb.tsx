@@ -13,11 +13,12 @@ import {
   useState,
 } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import styled, { css, CSSProp } from "styled-components";
 
 interface CrumbProps {
   children?: ReactNode;
   maxShown?: number;
-  className?: string;
+  style?: CSSProp;
   iconSeparator?: RemixiconComponentType;
 }
 
@@ -25,7 +26,7 @@ interface CrumbItemProps {
   path?: string;
   children?: ReactNode;
   isLast?: boolean;
-  className?: string;
+  style?: CSSProp;
   onClick?: () => void;
 }
 
@@ -33,7 +34,7 @@ function Crumb({
   iconSeparator: Icon = RiArrowRightSLine,
   maxShown = 3,
   children,
-  className,
+  style,
 }: CrumbProps) {
   const [expanded, setExpanded] = useState(false);
 
@@ -57,7 +58,7 @@ function Crumb({
   }
 
   return (
-    <nav aria-label="crumb" className="flex flex-row">
+    <CrumbNav aria-label="crumb">
       <AnimatePresence initial={false} mode="popLayout">
         {shownItems.map((data, index) => {
           const isEllipsis = data === "ellipsis";
@@ -65,31 +66,38 @@ function Crumb({
 
           if (isEllipsis) {
             return (
-              <motion.li
+              <CrumbEllipsisLi
                 key={index}
-                className="flex items-center"
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
               >
-                <RiMoreLine
+                <CrumbEllipsisIcon
                   size={20}
                   aria-label="ellipsis"
-                  className="text-gray-500 hover:text-[#61A9F9] cursor-pointer"
                   onClick={() => setExpanded(true)}
                 />
-                {!isLast && <Icon size={20} className="mx-2 text-gray-400" />}
-              </motion.li>
+
+                {!isLast && (
+                  <Icon
+                    size={20}
+                    style={{
+                      marginLeft: "0.5rem",
+                      marginRight: "0.5rem",
+                      color: "#9ca3af",
+                    }}
+                  />
+                )}
+              </CrumbEllipsisLi>
             );
           }
 
           if (isValidElement<CrumbItemProps>(data)) {
             return (
-              <motion.li
+              <CrumbItemLi
                 key={
                   (isValidElement(data) && data.key?.toString()) ||
                   `crumb-${index}`
                 }
-                className="flex items-center min-h-[24px] max-h-[24px]"
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 exit={{ x: -20, opacity: 0 }}
@@ -97,51 +105,114 @@ function Crumb({
               >
                 {cloneElement(data, {
                   isLast,
-                  className,
+                  style,
                 })}
-                {!isLast && <Icon size={20} className="mx-2 text-gray-400" />}
-              </motion.li>
+                {!isLast && (
+                  <Icon
+                    size={20}
+                    style={{
+                      marginLeft: "0.5rem",
+                      marginRight: "0.5rem",
+                      color: "#9ca3af",
+                    }}
+                  />
+                )}
+              </CrumbItemLi>
             );
           }
 
           return null;
         })}
       </AnimatePresence>
-    </nav>
+    </CrumbNav>
   );
 }
+
+const CrumbNav = styled.nav`
+  display: flex;
+  flex-direction: row;
+`;
+
+const CrumbItemLi = styled(motion.li)`
+  display: flex;
+  align-items: center;
+  min-height: 24px;
+  max-height: 24px;
+`;
+
+const CrumbEllipsisLi = styled(motion.li)`
+  display: flex;
+  align-items: center;
+`;
+
+const CrumbEllipsisIcon = styled(RiMoreLine)`
+  color: #6b7280;
+  cursor: pointer;
+  &:hover {
+    color: #61a9f9;
+  }
+`;
+
+const CrumbSeparatorIcon = styled(RiArrowRightSLine)``;
 
 function CrumbItem({
   path,
   children,
   isLast = false,
-  className,
+  style,
   onClick,
 }: CrumbItemProps) {
   return path ? (
-    <a
-      href={path}
-      className={cn(
-        "text-gray-600 hover:text-[#61A9F9]",
-        isLast && "text-black font-medium",
-        className
-      )}
-    >
+    <CrumbItemLink href={path} $style={style} $isLast={isLast}>
       {children}
-    </a>
+    </CrumbItemLink>
   ) : (
-    <span
-      onClick={onClick}
-      className={cn(
-        "text-gray-600 hover:text-[#61A9F9]",
-        isLast && "text-black font-medium",
-        className
-      )}
-    >
+    <CrumbItemSpan $style={style} onClick={onClick} $isLast={isLast}>
       {children}
-    </span>
+    </CrumbItemSpan>
   );
 }
+
+const CrumbItemLink = styled.a<{
+  $isLast?: boolean;
+  $style?: CSSProp;
+}>`
+  color: #4b5563;
+  margin-bottom: 2px;
+  &:hover {
+    color: #61a9f9;
+  }
+
+  ${({ $isLast }) =>
+    $isLast &&
+    css`
+      color: #000;
+      font-weight: 500;
+    `}
+
+  ${({ $style }) => $style}
+`;
+
+const CrumbItemSpan = styled.span<{
+  $isLast?: boolean;
+  $style?: CSSProp;
+}>`
+  color: #4b5563;
+  cursor: pointer;
+
+  &:hover {
+    color: #61a9f9;
+  }
+
+  ${({ $isLast }) =>
+    $isLast &&
+    css`
+      color: #000;
+      font-weight: 500;
+    `}
+
+  ${({ $style }) => $style}
+`;
 
 Crumb.Item = CrumbItem;
 
