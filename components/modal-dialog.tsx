@@ -3,6 +3,7 @@
 import { ReactNode } from "react";
 import { Dialog } from "./dialog";
 import { Button, ButtonVariants } from "./button";
+import styled from "styled-components";
 
 export interface ModalButtonProps extends Pick<ButtonVariants, "variant"> {
   id: string;
@@ -37,38 +38,100 @@ function ModalDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <Dialog.Content
-        className="flex max-w-[500px] overflow-hidden flex-col justify-center rounded-none p-0 sm:max-w-[500px]"
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          overflow: "hidden",
+          maxWidth: "500px",
+          padding: 0,
+          borderRadius: 0,
+        }}
         hideClose={!hasCloseButton}
       >
-        <div className="p-3 px-4">
-          <div className="flex flex-col gap-[1px] p-2 pb-4">
-            <Dialog.Title className="text-base font-medium">
+        <Container>
+          <Header>
+            <Dialog.Title
+              style={{
+                fontSize: "16px",
+                fontWeight: 500,
+              }}
+            >
               {title}
             </Dialog.Title>
-            <h3 className="text-[11px] text-gray-500">{subTitle}</h3>
-          </div>
-          <div className="h-[1px] w-full border border-blue-500"></div>
-          <div className="h-full min-h-[250px] text-xs w-full pt-2">
-            {children}
-          </div>
-        </div>
-        <div className="flex w-full flex-row justify-end">
+            <Subtitle>{subTitle}</Subtitle>
+          </Header>
+
+          <Divider />
+
+          <Body>{children}</Body>
+        </Container>
+
+        <Footer>
           {buttons.map((data, index) => (
-            <Button
+            <StyledButton
+              key={index}
               isLoading={data.isLoading}
               disabled={data.disabled}
-              className="w-[140px] min-w-[100px] items-start pt-4 pr-20 pb-10 pl-4"
               variant={data.variant}
-              key={index}
               onClick={() => onClick?.({ id: data.id, closeDialog })}
             >
               {data.caption}
-            </Button>
+            </StyledButton>
           ))}
-        </div>
+        </Footer>
       </Dialog.Content>
     </Dialog>
   );
 }
+
+const Container = styled.div`
+  padding: 0.75rem 1rem;
+`;
+
+const Header = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 0.5rem;
+  padding-bottom: 1rem;
+`;
+
+const Subtitle = styled.h3`
+  font-size: 11px;
+  color: #6b7280;
+`;
+
+const Divider = styled.div`
+  height: 1px;
+  width: 100%;
+  border: 1px solid #3b82f6;
+`;
+
+const Body = styled.div`
+  height: 100%;
+  min-height: 250px;
+  font-size: 12px;
+  width: 100%;
+  padding-top: 0.5rem;
+`;
+
+const Footer = styled.div`
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: flex-end;
+`;
+
+const StyledButton = styled(Button)`
+  width: 140px;
+  min-width: 100px;
+  align-items: flex-start;
+  padding-top: 1rem;
+  padding-right: 5rem;
+  padding-bottom: 2.5rem;
+  padding-left: 1rem;
+  display: flex;
+`;
 
 export { ModalDialog };
