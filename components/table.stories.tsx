@@ -12,6 +12,7 @@ import {
 } from "@remixicon/react";
 import { EmptySlate } from "./empty-slate";
 import { Button } from "./button";
+import { css } from "styled-components";
 
 const meta: Meta<typeof Table> = {
   title: "Content/Table",
@@ -72,14 +73,14 @@ const meta: Meta<typeof Table> = {
         type: { summary: "ReactNode" },
       },
     },
-    className: {
+    containerStyle: {
       description: "Class applied to the main container.",
       control: "text",
       table: {
         type: { summary: "string" },
       },
     },
-    classNameTableRow: {
+    tableRowStyle: {
       description: "Class applied to the container holding all table rows.",
       control: "text",
       table: {
@@ -158,7 +159,12 @@ export const Default: Story = {
     ];
 
     return (
-      <Table classNameTableRow="max-h-[400px]" columns={columns}>
+      <Table
+        tableRowStyle={css`
+          max-height: 400px;
+        `}
+        columns={columns}
+      >
         {sampleRows}
       </Table>
     );
@@ -359,7 +365,9 @@ export const Appendable: Story = {
     return (
       <Table
         selectable
-        classNameTableRow="max-h-[400px]"
+        tableRowStyle={css`
+          max-height: 400px;
+        `}
         columns={columns}
         onItemsSelected={handleItemsSelected}
         subMenuList={TIP_MENU_ACTION}
@@ -900,7 +908,9 @@ export const WithRowGroup: Story = {
 
         <Table
           selectable
-          classNameTableRow="max-h-[400px]"
+          tableRowStyle={css`
+            max-height: 400px;
+          `}
           columns={columns}
           onItemsSelected={handleItemsSelected}
           subMenuList={TIP_MENU_ACTION}

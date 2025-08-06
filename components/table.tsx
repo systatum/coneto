@@ -2,7 +2,6 @@ import {
   Children,
   cloneElement,
   createContext,
-  Fragment,
   isValidElement,
   ReactElement,
   ReactNode,
@@ -12,9 +11,7 @@ import {
   useState,
 } from "react";
 import { Checkbox } from "./checkbox";
-import { cn } from "./../lib/utils";
 import { LoadingSpinner } from "./loading-spinner";
-import clsx from "clsx";
 import { Toolbar } from "./toolbar";
 import { TipMenuItemProps } from "./tip-menu";
 import {
@@ -25,13 +22,14 @@ import {
   RiMoreFill,
 } from "@remixicon/react";
 import { AnimatePresence, motion } from "framer-motion";
+import styled, { css, CSSProp } from "styled-components";
 
 export type RowData = (string | ReactNode)[];
 
 export interface ColumnTableProps {
   caption: string;
   sortable?: boolean;
-  className?: string;
+  style?: CSSProp;
   width?: string;
 }
 
@@ -39,7 +37,7 @@ export interface TableActionsProps {
   title?: string;
   icon?: RemixiconComponentType;
   onClick?: () => void;
-  className?: string;
+  style?: CSSProp;
 }
 
 export interface TableProps {
@@ -49,8 +47,8 @@ export interface TableProps {
   onItemsSelected?: (data: string[]) => void;
   children: ReactNode;
   isLoading?: boolean;
-  className?: string;
-  classNameTableRow?: string;
+  containerStyle?: CSSProp;
+  tableRowStyle?: CSSProp;
   isOpen?: boolean;
   setIsOpen?: () => void;
   subMenuList?: (columnCaption: string) => TipMenuItemProps[];
@@ -70,8 +68,8 @@ export interface TableRowProps {
   isSelected?: boolean;
   selectable?: boolean;
   handleSelect?: (data: string) => void;
-  rowClassName?: string;
-  rowCellClassName?: string;
+  rowStyle?: CSSProp;
+  rowCellStyle?: CSSProp;
   rowId?: string;
   children?: ReactNode;
   actions?: (columnCaption: string) => TipMenuItemProps[];
@@ -86,7 +84,7 @@ export interface TableRowGroupProps {
 
 export interface TableRowCellProps {
   children: ReactNode;
-  className?: string;
+  contentStyle?: CSSProp;
   width?: string;
 }
 
@@ -99,8 +97,8 @@ function Table({
   onItemsSelected,
   children,
   isLoading,
-  className,
-  classNameTableRow,
+  containerStyle,
+  tableRowStyle,
   isOpen,
   setIsOpen,
   subMenuList,
@@ -117,11 +115,6 @@ function Table({
 }: TableProps) {
   const [selectedData, setSelectedData] = useState<string[]>([]);
   const [allRowsLocal, setAllRowsLocal] = useState<string[]>([]);
-
-  const classTableRow = clsx(
-    "flex flex-col overflow-auto relative w-full",
-    classNameTableRow
-  );
 
   const handleSelectAll = () => {
     const currentPageIds = getAllRowContentsFromChildren(children);
@@ -201,83 +194,61 @@ function Table({
     return null;
   });
 
-  const tableClass = cn("flex flex-col relative rounded-xs", className);
-
   return (
     <TableColumnContext.Provider value={columns}>
-      <div className={tableClass}>
+      <Wrapper $containerStyle={containerStyle}>
         {(selectedData.length > 0 || showPagination || actions) && (
-          <div className="w-full flex flex-row items-center justify-between py-2 text-white bg-gray-600 border-b-[0.5px] px-[14px]">
+          <HeaderActions>
             {(actions || showPagination) && (
-              <div className="flex flex-row gap-1">
+              <ActionsWrapper>
                 {showPagination && (
-                  <Fragment>
-                    <button
+                  <>
+                    <PaginationButton
                       disabled={disablePreviousPageButton}
                       aria-label="previous-button-pagination"
-                      onClick={() => {
-                        if (onPreviousPageRequested) {
-                          onPreviousPageRequested();
-                        }
-                      }}
-                      className={cn(
-                        "flex cursor-pointer gap-1 border rounded-full items-center hover:bg-[#5c626a] border-gray-500 p-1",
-                        "disabled:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-60"
-                      )}
+                      onClick={onPreviousPageRequested}
                     >
                       <RiArrowLeftSLine size={16} />
-                    </button>
-                    <button
+                    </PaginationButton>
+                    <PaginationButton
                       disabled={disableNextPageButton}
                       aria-label="next-button-pagination"
-                      onClick={() => {
-                        if (onNextPageRequested) {
-                          onNextPageRequested();
-                        }
-                      }}
-                      className={cn(
-                        "flex cursor-pointer gap-1 border rounded-full items-center hover:bg-[#5c626a] border-gray-500 p-1",
-                        "disabled:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-60"
-                      )}
+                      onClick={onNextPageRequested}
                     >
                       <RiArrowRightSLine size={16} />
-                    </button>
-                  </Fragment>
+                    </PaginationButton>
+                  </>
                 )}
                 {actions &&
                   actions.map((data, index) => (
-                    <button
+                    <ActionButton
                       key={index}
-                      onClick={() => {
-                        if (data.onClick) {
-                          data.onClick();
-                        }
-                      }}
-                      className={cn(
-                        "flex flex-row cursor-pointer gap-1 border rounded-xl items-center hover:bg-[#5c626a] border-gray-500 py-1 px-2",
-                        data.className
-                      )}
+                      onClick={data.onClick}
+                      $style={data.style}
                     >
                       <data.icon size={14} />
-                      <span className="text-sm">{data.title}</span>
-                    </button>
+                      <span
+                        style={{
+                          fontSize: "14px",
+                        }}
+                      >
+                        {data.title}
+                      </span>
+                    </ActionButton>
                   ))}
-              </div>
+              </ActionsWrapper>
             )}
             {(selectable || showPagination) && (
-              <div className="flex flex-row gap-2">
+              <PaginationInfo>
                 {showPagination && (
-                  <div className="flex flex-row gap-2">
+                  <>
                     <span>
                       {typeof pageNumberText === "number"
                         ? `Pg. ${pageNumberText}`
                         : pageNumberText}
                     </span>
-                    <div
-                      aria-label="divider"
-                      className="w-[3px] h-full border-l border-white"
-                    />
-                  </div>
+                    <Divider aria-label="divider" />
+                  </>
                 )}
                 {selectable && (
                   <span>
@@ -286,76 +257,240 @@ function Table({
                       : `${selectedData.length} items selected`}
                   </span>
                 )}
-              </div>
+              </PaginationInfo>
             )}
-          </div>
+          </HeaderActions>
         )}
 
-        <div
-          className={cn(
-            "flex flex-col relative",
-            selectedData.length > 0 ? "border-t-[0.5]" : ""
-          )}
-        >
-          <div className="flex flex-row p-3 bg-[#0f3969] items-center font-semibold text-white">
+        <TableContainer hasSelected={selectedData.length > 0}>
+          <TableHeader>
             {selectable && (
-              <div className="min-w-8 bg-[#0f3969] flex justify-center cursor-pointer pointer-events-auto items-center">
+              <CheckboxWrapper>
                 <Checkbox
                   onChange={handleSelectAll}
                   checked={allRowSelectedLocal}
                   indeterminate={someSelectedLocal}
                 />
-              </div>
+              </CheckboxWrapper>
             )}
-            {columns.map((col, i) => {
-              return (
-                <TableRowCell
-                  key={i}
-                  width={col.width}
-                  className={cn(
-                    "flex relative items-center w-full",
-                    col.width ? "flex-row" : "flex-1"
-                  )}
-                >
-                  {col.caption}
-                  {col.sortable && (
-                    <Toolbar className="w-fit absolute right-2 z-20">
-                      <Toolbar.Menu
-                        closedIcon={RiMoreFill}
-                        openedIcon={RiMoreFill}
-                        isOpen={isOpen}
-                        setIsOpen={setIsOpen}
-                        dropdownClassName="min-w-[235px]"
-                        triggerClassName="hover:bg-[#002e54]"
-                        toggleActiveClassName="bg-[#002e54]"
-                        variant="none"
-                        subMenuList={subMenuList(`${col.caption}`)}
-                      />
-                    </Toolbar>
-                  )}
-                </TableRowCell>
-              );
-            })}
-          </div>
+            {columns.map((col, i) => (
+              <TableRowCell
+                key={i}
+                width={col.width}
+                contentStyle={css`
+                  display: flex;
+                  position: relative;
+                  align-items: center;
+                  width: ${col.width};
+                  ${col.width
+                    ? css`
+                        flex-direction: row;
+                      `
+                    : css`
+                        flex: 1;
+                      `}
+                `}
+              >
+                {col.caption}
+                {col.sortable && (
+                  <Toolbar
+                    style={css`
+                      width: fit-content;
+                      position: absolute;
+                      right: 0.5rem;
+                      z-index: 20;
+                    `}
+                  >
+                    <Toolbar.Menu
+                      closedIcon={RiMoreFill}
+                      openedIcon={RiMoreFill}
+                      isOpen={isOpen}
+                      setIsOpen={setIsOpen}
+                      dropdownStyle={css`
+                        min-width: 235px;
+                      `}
+                      triggerStyle={css`
+                        &:hover {
+                          background-color: #002e54;
+                        }
+                      `}
+                      toggleActiveStyle={css`
+                        background-color: #002e54;
+                      `}
+                      variant="none"
+                      subMenuList={subMenuList(`${col.caption}`)}
+                    />
+                  </Toolbar>
+                )}
+              </TableRowCell>
+            ))}
+          </TableHeader>
           {rowChildren.length > 0 ? (
-            <div aria-label="table-scroll-container" className={classTableRow}>
+            <TableRowContainer
+              aria-label="table-scroll-container"
+              $tableRowStyle={tableRowStyle}
+            >
               {rowChildren}
-            </div>
+            </TableRowContainer>
           ) : (
-            <div className="border-b border-x border-gray-300">
-              {emptySlate}
-            </div>
+            <EmptyState>{emptySlate}</EmptyState>
           )}
           {isLoading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-white/60 z-30">
+            <TableLoadingOverlay>
               <LoadingSpinner iconSize={24} />
-            </div>
+            </TableLoadingOverlay>
           )}
-        </div>
-      </div>
+        </TableContainer>
+      </Wrapper>
     </TableColumnContext.Provider>
   );
 }
+
+const Wrapper = styled.div<{
+  $containerStyle?: CSSProp;
+}>`
+  display: "flex";
+  flex-direction: "column";
+  position: "relative";
+  border-radius: "4px";
+  ${({ $containerStyle }) => $containerStyle}
+`;
+
+const HeaderActions = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 14px;
+  color: white;
+  background-color: #4b5563;
+  border-bottom: 0.5px solid #e5e7eb;
+`;
+
+const ActionsWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 0.25rem;
+`;
+
+const ActionButton = styled.button<{
+  $style?: CSSProp;
+}>`
+  display: flex;
+  flex-direction: row;
+  gap: 0.25rem;
+  align-items: center;
+  cursor: pointer;
+  border: 1px solid #6b7280;
+  border-radius: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  background-color: transparent;
+  color: inherit;
+
+  &:hover {
+    background-color: #5c626a;
+  }
+
+  &:disabled {
+    background-color: #4b5563;
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  ${({ $style }) => $style}
+`;
+
+const PaginationButton = styled.button`
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+  cursor: pointer;
+  border: 1px solid #6b7280;
+  border-radius: 9999px;
+  padding: 0.25rem;
+  background-color: transparent;
+  color: inherit;
+
+  &:hover {
+    background-color: #5c626a;
+  }
+
+  &:disabled {
+    background-color: #4b5563;
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+`;
+
+const PaginationInfo = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  align-items: center;
+`;
+
+const Divider = styled.div`
+  width: 3px;
+  height: 100%;
+  border-left: 1px solid white;
+`;
+
+const TableContainer = styled.div<{ hasSelected: boolean }>`
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  ${({ hasSelected }) =>
+    hasSelected &&
+    css`
+      border-top: 0.5px solid #e5e7eb;
+    `}
+`;
+
+const TableHeader = styled.div`
+  display: flex;
+  flex-direction: row;
+  padding: 0.75rem;
+  background-color: #0f3969;
+  align-items: center;
+  font-weight: 600;
+  color: white;
+`;
+
+const TableRowContainer = styled.div<{ $tableRowStyle?: CSSProp }>`
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  position: relative;
+  width: 100%;
+
+  ${({ $tableRowStyle }) => $tableRowStyle}
+`;
+
+const EmptyState = styled.div`
+  border-bottom: 1px solid #d1d5db;
+  border-left: 1px solid #d1d5db;
+  border-right: 1px solid #d1d5db;
+`;
+
+const TableLoadingOverlay = styled.div`
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.6);
+  z-index: 30;
+`;
+
+const CheckboxWrapper = styled.div`
+  min-width: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  pointer-events: auto;
+`;
 
 function TableRowGroup({
   children,
@@ -394,32 +529,42 @@ function TableRowGroup({
   const [isOpen, setIsOpen] = useState(true);
 
   return (
-    <div className="flex flex-col relative w-full h-full">
-      <div
+    <TableRowGroupContainer>
+      <TableRowGroupSticky
         onClick={() => {
           setIsOpen(!isOpen);
         }}
-        className="flex flex-row cursor-pointer px-3 p-3 z-10 sticky items-center w-full border-x border-gray-200 bg-gray-100 border-y gap-4 top-0"
       >
-        <span
-          className={cn("transition-transform duration-300 ml-[2px]", {
-            "-rotate-180": isOpen,
-          })}
-        >
+        <RotatingIcon $isOpen={isOpen}>
           <RiArrowDownSLine />
-        </span>
-        <div className="flex flex-col">
-          {title && <span className="">{title}</span>}
+        </RotatingIcon>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          {title && <span>{title}</span>}
           {subtitle && (
-            <span className="text-sm text-gray-800">{subtitle}</span>
+            <span
+              style={{
+                fontSize: "14px",
+                color: "#1f2937",
+              }}
+            >
+              {subtitle}
+            </span>
           )}
         </div>
-        <div></div>
-      </div>
+      </TableRowGroupSticky>
       <AnimatePresence initial={false}>
         {isOpen && (
           <motion.div
-            className="flex flex-col overflow-hidden"
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              overflow: "hidden",
+            }}
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -429,17 +574,53 @@ function TableRowGroup({
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </TableRowGroupContainer>
   );
 }
+
+const TableRowGroupContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+  height: 100%;
+`;
+
+const TableRowGroupSticky = styled.div`
+  display: flex;
+  flex-direction: row;
+  cursor: pointer;
+  padding: 0.75rem;
+  z-index: 10;
+  position: sticky;
+  top: 0;
+  align-items: center;
+  width: 100%;
+  border-left: 1px solid #e5e7eb;
+  border-right: 1px solid #e5e7eb;
+  border-top: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+  background-color: #f3f4f6;
+  gap: 1rem;
+`;
+
+const RotatingIcon = styled.span<{ $isOpen?: boolean }>`
+  transition: transform 300ms;
+  margin-left: 2px;
+  ${(props) =>
+    props.$isOpen &&
+    css`
+      transform: rotate(-180deg);
+    `}
+`;
 
 function TableRow({
   content,
   selectable = false,
   isSelected = false,
   handleSelect,
-  rowClassName,
-  rowCellClassName,
+  rowStyle,
+  rowCellStyle,
   rowId,
   children,
   actions,
@@ -473,33 +654,26 @@ function TableRow({
   const [isOpen, setIsOpen] = useState<null | boolean>(true);
   const [isHovered, setIsHovered] = useState<null | string>(null);
 
-  const tableRowClass = cn(
-    "flex relative p-3 items-center border-r border-l border-b w-full border-gray-200 cursor-default",
-    isSelected ? "bg-blue-50" : "bg-gray-50 hover:bg-blue-100",
-    rowClassName
-  );
-
   const childArray = Children.toArray(children).filter(isValidElement);
 
   return (
-    <div
+    <TableRowWrapper
       ref={rowRef}
       onMouseLeave={() => setIsHovered(null)}
       onMouseEnter={() => setIsHovered(rowId)}
-      className={tableRowClass}
+      $rowCellStyle={rowStyle}
     >
       {selectable && (
-        <div
+        <CheckboxWrapperRow
           onClick={(e) => {
             e.stopPropagation();
             if (rowId) {
               handleSelect?.(rowId);
             }
           }}
-          className="min-w-8 flex justify-center cursor-pointer pointer-events-auto items-center"
         >
           <Checkbox {...props} checked={isSelected} />
-        </div>
+        </CheckboxWrapperRow>
       )}
       {content
         ? content.map((col, i) => {
@@ -509,8 +683,13 @@ function TableRow({
             return (
               <TableRowCell
                 width={column.width}
-                className={
-                  isLast ? cn("pr-9", rowCellClassName) : rowCellClassName
+                contentStyle={
+                  isLast
+                    ? css`
+                        padding-right: 36px;
+                        ${rowCellStyle}
+                      `
+                    : rowCellStyle
                 }
               >
                 {col}
@@ -524,43 +703,104 @@ function TableRow({
 
             return cloneElement(child, {
               width: child.props.width ?? widthColumn,
-              className: isLast
-                ? cn("pr-9", child.props.className)
-                : child.props.className,
+              contentStyle: isLast
+                ? css`
+                    padding-right: 36px;
+                    ${child.props.contentStyle};
+                  `
+                : child.props.contentStyle,
             });
           })}
 
       {isHovered === rowId && actions && (
-        <Toolbar className="w-fit absolute right-2">
+        <Toolbar
+          style={css`
+            width: fit-content;
+            position: absolute;
+            right: 0.5rem;
+            z-index: 20;
+          `}
+        >
           <Toolbar.Menu
             closedIcon={RiMoreFill}
             openedIcon={RiMoreFill}
             isOpen={isOpen}
             setIsOpen={setIsOpen}
-            dropdownClassName="min-w-[235px]"
-            triggerClassName="hover:bg-blue-200 text-black"
-            toggleActiveClassName="text-black bg-blue-200"
+            dropdownStyle={css`
+              min-width: 235px;
+            `}
+            triggerStyle={css`
+              color: black;
+
+              &:hover {
+                background-color: #bfdbfe;
+              }
+            `}
+            toggleActiveStyle={css`
+              color: black;
+              background-color: #bfdbfe;
+            `}
             variant="none"
             subMenuList={actions(`${rowId}`)}
           />
         </Toolbar>
       )}
-    </div>
+    </TableRowWrapper>
   );
 }
 
-function TableRowCell({ children, className, width }: TableRowCellProps) {
+const TableRowWrapper = styled.div<{
+  isSelected?: boolean;
+  $rowCellStyle?: CSSProp;
+}>`
+  display: flex;
+  position: relative;
+  padding: 0.75rem;
+  align-items: center;
+  width: 100%;
+  border-left: 1px solid #e5e7eb;
+  border-right: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+  cursor: default;
+  background-color: ${({ isSelected }) => (isSelected ? "#eff6ff" : "#f9fafb")};
+
+  &:hover {
+    background-color: ${({ isSelected }) =>
+      isSelected ? "#eff6ff" : "#dbeafe"};
+  }
+
+  ${({ $rowCellStyle }) => $rowCellStyle}
+`;
+
+const CheckboxWrapperRow = styled.div`
+  min-width: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  pointer-events: auto;
+`;
+
+function TableRowCell({ children, contentStyle, width }: TableRowCellProps) {
   return (
-    <div
-      className={cn("px-2", width ? "" : "flex-1", className)}
-      style={{
-        width: width ?? "100%",
-      }}
-    >
+    <CellContent width={width} $contentStyle={contentStyle}>
       {children}
-    </div>
+    </CellContent>
   );
 }
+
+const CellContent = styled.div<{ width?: string; $contentStyle?: CSSProp }>`
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  ${({ width }) =>
+    !width &&
+    css`
+      flex: 1;
+      display: flex;
+    `}
+  width: ${({ width }) => (width ? width : "100%")};
+  ${({ $contentStyle }) => $contentStyle};
+`;
 
 function getAllRowContentsFromChildren(children: ReactNode): string[] {
   const result: string[] = [];
