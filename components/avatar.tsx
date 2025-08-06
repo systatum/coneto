@@ -77,10 +77,10 @@ function Avatar({
       role="button"
       tabIndex={0}
       $clickable={isClickable}
-      $bg_color={!isImageValid ? backgroundColor : undefined}
-      $font_size={fontSize}
-      $frame_size={frameSize}
-      $avatar_style={style}
+      $backgroundColor={!isImageValid ? backgroundColor : undefined}
+      $fontSize={fontSize}
+      $frameSize={frameSize}
+      $avatarStyle={style}
     >
       {isImageValid ? (
         <AvatarImage
@@ -110,10 +110,10 @@ function Avatar({
 
 const AvatarContainer = styled.div<{
   $clickable: boolean;
-  $bg_color: string;
-  $frame_size: number;
-  $font_size: number;
-  $avatar_style: CSSProp;
+  $backgroundColor: string;
+  $frameSize: number;
+  $fontSize: number;
+  $avatarStyle: CSSProp;
 }>`
   position: relative;
   display: flex;
@@ -123,10 +123,10 @@ const AvatarContainer = styled.div<{
   border-radius: 9999px;
   border: 1px solid #f3f4f6;
   font-weight: bold;
-  background-color: ${({ $bg_color }) => $bg_color};
-  font-size: ${({ $font_size }) => $font_size}px;
-  width: ${({ $frame_size }) => $frame_size}px;
-  height: ${({ $frame_size }) => $frame_size}px;
+  background-color: ${({ $backgroundColor }) => $backgroundColor};
+  font-size: ${({ $fontSize }) => $fontSize}px;
+  width: ${({ $frameSize }) => $frameSize}px;
+  height: ${({ $frameSize }) => $frameSize}px;
   cursor: ${({ $clickable }) => ($clickable ? "pointer" : "default")};
 `;
 

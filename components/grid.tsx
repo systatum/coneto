@@ -36,7 +36,7 @@ function Grid({
   `;
 
   return (
-    <PresetGrid style={style} $container_style={containerStyle}>
+    <PresetGrid style={style} $containerStyle={containerStyle}>
       {children}
     </PresetGrid>
   );
@@ -57,7 +57,7 @@ function GridCard({
     <GridCardWrapper
       {...props}
       aria-label="grid-card"
-      $container_style={containerStyle}
+      $containerStyle={containerStyle}
       isSelected={isSelected}
       selectable={selectable}
       onClick={() => selectable && onSelected?.()}
@@ -93,11 +93,11 @@ function GridCard({
 }
 
 const GridBase = styled.div<{
-  $container_style?: CSSProp;
+  $containerStyle?: CSSProp;
 }>`
   display: grid;
   width: 100%;
-  ${({ $container_style }) => $container_style}
+  ${({ $containerStyle }) => $containerStyle}
 `;
 
 const GridCardWrapper = styled.div.attrs<{
@@ -107,7 +107,7 @@ const GridCardWrapper = styled.div.attrs<{
   "data-selected": isSelected,
 }))<{
   selectable?: boolean;
-  $container_style?: CSSProp;
+  $containerStyle?: CSSProp;
 }>`
   position: relative;
   display: flex;
@@ -128,7 +128,7 @@ const GridCardWrapper = styled.div.attrs<{
         background-color: #f3f3f3;
       }
     `}
-  ${({ $container_style }) => $container_style}
+  ${({ $containerStyle }) => $containerStyle}
 `;
 
 const CheckboxWrapper = styled.div`

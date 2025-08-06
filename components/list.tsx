@@ -115,7 +115,7 @@ function List({
 
   return (
     <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
-      <ListContainer role="list" $container_style={containerStyle}>
+      <ListContainer role="list" $containerStyle={containerStyle}>
         {searchable && (
           <Searchbox
             name="search"
@@ -147,12 +147,12 @@ function List({
   );
 }
 
-const ListContainer = styled.div<{ $container_style?: CSSProp }>`
+const ListContainer = styled.div<{ $containerStyle?: CSSProp }>`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   position: relative;
-  ${(props) => props.$container_style}
+  ${(props) => props.$containerStyle}
 `;
 
 const OverlayLoading = styled.div`
@@ -182,7 +182,7 @@ function ListGroup({
   const { dragItem, setDragItem, onDragged } = useContext(DnDContext);
 
   return (
-    <ListGroupContainer $container_style={containerStyle}>
+    <ListGroupContainer $containerStyle={containerStyle}>
       <HeaderButton
         onClick={() => setIsOpen((prev) => !prev)}
         aria-expanded={isOpen}
@@ -261,7 +261,7 @@ function ListGroup({
                   collapsed: { opacity: 0, height: 0 },
                 }}
                 transition={{ duration: 0.2, ease: "easeInOut" }}
-                $content_style={contentStyle}
+                $contentStyle={contentStyle}
               >
                 {modifiedChild}
               </ListGroupContent>
@@ -307,23 +307,23 @@ function ListGroup({
 }
 
 const ListGroupContainer = styled.div<{
-  $container_style?: CSSProp;
+  $containerStyle?: CSSProp;
 }>`
   display: flex;
   flex-direction: column;
   position: relative;
-  ${(props) => props.$container_style}
+  ${({ $containerStyle }) => $containerStyle}
 `;
 
 const ListGroupContent = styled(motion.div)<{
-  $content_style?: CSSProp;
+  $contentStyle?: CSSProp;
 }>`
   display: flex;
   flex-direction: column;
   position: relative;
   padding-top: 2px;
   overflow: hidden;
-  ${(props) => props.$content_style}
+  ${({ $contentStyle }) => $contentStyle}
 `;
 
 const HeaderButton = styled.button`
@@ -395,7 +395,7 @@ function ListItem({
 
   return (
     <ListItemWrapper
-      $container_style={containerStyle}
+      $containerStyle={containerStyle}
       onClick={onClick}
       draggable={draggable}
       onDragStart={() =>
@@ -494,7 +494,7 @@ function ListItem({
 }
 
 const ListItemWrapper = styled.div<{
-  $container_style?: CSSProp;
+  $containerStyle?: CSSProp;
 }>`
   display: flex;
   flex-direction: row;
@@ -510,7 +510,7 @@ const ListItemWrapper = styled.div<{
     background-color: #dbeafe;
   }
 
-  ${({ $container_style }) => $container_style}
+  ${({ $containerStyle }) => $containerStyle}
 `;
 
 const ListItemLeft = styled.div`

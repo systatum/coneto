@@ -21,16 +21,16 @@ function EmptySlate({
   childStyle,
 }: EmptySlateProps) {
   return (
-    <Container $container_style={containerStyle}>
+    <Container $containerStyle={containerStyle}>
       {imageUrl && (
-        <ImageWrapper $image_style={imageStyle}>
+        <ImageWrapper $imageStyle={imageStyle}>
           <StyledImage
             src={imageUrl}
             alt="Image for Empty Slate Coneto Product from Systatum."
           />
         </ImageWrapper>
       )}
-      <Content $content_style={childStyle}>
+      <Content $contentStyle={childStyle}>
         <Title>{title}</Title>
         {subtitle && <Subtitle>{subtitle}</Subtitle>}
         {actions && <Actions>{actions}</Actions>}
@@ -39,7 +39,7 @@ function EmptySlate({
   );
 }
 
-const Container = styled.div<{ $container_style?: CSSProp }>`
+const Container = styled.div<{ $containerStyle?: CSSProp }>`
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
@@ -47,10 +47,10 @@ const Container = styled.div<{ $container_style?: CSSProp }>`
   justify-content: center;
   padding-top: 5rem;
   padding-bottom: 5rem;
-  ${({ $container_style }) => $container_style}
+  ${({ $containerStyle }) => $containerStyle}
 `;
 
-const ImageWrapper = styled.div<{ $image_style?: CSSProp }>`
+const ImageWrapper = styled.div<{ $imageStyle?: CSSProp }>`
   width: 250px;
   height: 150px;
 
@@ -64,7 +64,7 @@ const ImageWrapper = styled.div<{ $image_style?: CSSProp }>`
     height: 200px;
   }
 
-  ${({ $image_style }) => $image_style}
+  ${({ $imageStyle }) => $imageStyle}
 `;
 
 const StyledImage = styled.img`
@@ -73,13 +73,13 @@ const StyledImage = styled.img`
   object-fit: cover;
 `;
 
-const Content = styled.div<{ $content_style?: CSSProp }>`
+const Content = styled.div<{ $contentStyle?: CSSProp }>`
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
   align-items: center;
   justify-content: center;
-  ${({ $content_style }) => $content_style}
+  ${({ $contentStyle }) => $contentStyle}
 `;
 
 const Title = styled.h2`

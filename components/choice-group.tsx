@@ -23,7 +23,7 @@ function ChoiceGroup({
   const childArray = Children.toArray(children).filter(isValidElement);
 
   return (
-    <ChoiceGroupWrapper $container_style={containerStyle}>
+    <ChoiceGroupWrapper $containerStyle={containerStyle}>
       {childArray.map((child, index) => {
         const isLast = index === childArray.length - 1;
         const componentChild = child as ReactElement<
@@ -51,14 +51,14 @@ function ChoiceGroup({
 }
 
 const ChoiceGroupWrapper = styled.div<{
-  $container_style?: CSSProp;
+  $containerStyle?: CSSProp;
 }>`
   display: flex;
   flex-direction: column;
   border: 1px solid #e5e7eb;
   border-radius: 4px;
   overflow: hidden;
-  ${({ $container_style }) => $container_style}
+  ${({ $containerStyle }) => $containerStyle}
 `;
 
 const ChoiceGroupDivider = styled.div<{

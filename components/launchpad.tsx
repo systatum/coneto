@@ -95,7 +95,7 @@ function Launchpad({
     <LaunchpadContainer
       ref={containerRef}
       onPointerDown={(e) => dragControls.start(e)}
-      $container_style={containerStyle}
+      $containerStyle={containerStyle}
     >
       <motion.div
         drag={"x"}
@@ -135,7 +135,7 @@ function Launchpad({
             <DotButton
               key={index}
               onClick={() => setPage(index)}
-              active={page === index}
+              $active={page === index}
             />
           ))}
         </PaginationDots>
@@ -153,8 +153,8 @@ function LaunchpadSection({
   gridPreset = "2-to-4",
 }: LaunchpadSectionProps) {
   return (
-    <LaunchpadSectionContainer $container_style={containerStyle}>
-      <LaunchPadSectionSeparatorWrapper $separator_style={separatorStyle}>
+    <LaunchpadSectionContainer $containerStyle={containerStyle}>
+      <LaunchPadSectionSeparatorWrapper $separatorStyle={separatorStyle}>
         <Separator title={title} depth="0" />
       </LaunchPadSectionSeparatorWrapper>
       <Grid preset={gridPreset} containerStyle={gridStyle}>
@@ -172,9 +172,9 @@ function LaunchpadSectionItem({
   iconStyle,
 }: LaunchpadSectionItemProps) {
   return (
-    <LaunchpadSectionItemLink $container_style={containerStyle} href={href}>
+    <LaunchpadSectionItemLink $containerStyle={containerStyle} href={href}>
       {iconUrl && (
-        <LaunchpadSectionIconWrapper $icon_style={iconStyle}>
+        <LaunchpadSectionIconWrapper $iconStyle={iconStyle}>
           <img width={400} height={400} src={iconUrl} />
         </LaunchpadSectionIconWrapper>
       )}
@@ -184,7 +184,7 @@ function LaunchpadSectionItem({
 }
 
 const LaunchpadContainer = styled.div<{
-  $container_style?: CSSProp;
+  $containerStyle?: CSSProp;
 }>`
   display: flex;
   flex-direction: column;
@@ -200,7 +200,7 @@ const LaunchpadContainer = styled.div<{
     cursor: grabbing;
   }
 
-  ${({ $container_style }) => $container_style}
+  ${({ $containerStyle }) => $containerStyle}
 `;
 
 const LaunchpadSectionGroup = styled.div`
@@ -217,27 +217,27 @@ const PaginationDots = styled.div`
   margin-top: 1rem;
 `;
 
-const DotButton = styled.button<{ active?: boolean }>`
+const DotButton = styled.button<{ $active?: boolean }>`
   width: 8px;
   height: 8px;
   border-radius: 9999px;
-  background-color: ${({ active }) => (active ? "#6b7280" : "#d1d5db")};
+  background-color: ${({ $active }) => ($active ? "#6b7280" : "#d1d5db")};
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
 `;
 
 const LaunchpadSectionContainer = styled.div<{
-  $container_style?: CSSProp;
+  $containerStyle?: CSSProp;
 }>`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 
-  ${({ $container_style }) => $container_style}
+  ${({ $containerStyle }) => $containerStyle}
 `;
 
 const LaunchPadSectionSeparatorWrapper = styled.div<{
-  $separator_style?: CSSProp;
+  $separatorStyle?: CSSProp;
 }>`
   padding-right: 1.5rem;
 
@@ -253,11 +253,11 @@ const LaunchPadSectionSeparatorWrapper = styled.div<{
     padding-right: 1.5rem;
   }
 
-  ${({ $separator_style }) => $separator_style}
+  ${({ $separatorStyle }) => $separatorStyle}
 `;
 
 const LaunchpadSectionItemLink = styled.a<{
-  $container_style: CSSProp;
+  $containerStyle: CSSProp;
 }>`
   display: flex;
   flex-direction: column;
@@ -277,14 +277,14 @@ const LaunchpadSectionItemLink = styled.a<{
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
   }
 
-  ${({ $container_style }) => $container_style}
+  ${({ $containerStyle }) => $containerStyle}
 `;
 
 const LaunchpadSectionIconWrapper = styled.div<{
-  $icon_style: CSSProp;
+  $iconStyle: CSSProp;
 }>`
   max-width: 30px;
-  ${({ $icon_style }) => $icon_style}
+  ${({ $iconStyle }) => $iconStyle}
 `;
 
 Launchpad.Section = LaunchpadSection;

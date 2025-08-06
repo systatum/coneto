@@ -56,15 +56,15 @@ export function Tooltip({
       <TextTrigger
         {...triggerProps}
         $underline={underline}
-        $open_on={openOn}
-        $container_Style={containerStyle}
+        $openOn={openOn}
+        $containerStyle={containerStyle}
       >
         {text}
       </TextTrigger>
       {isOpen && (
         <>
-          <TooltipArrow aria-label="tooltip-arrow" $arrow_Style={arrowStyle} />
-          <TooltipDrawer $drawer_Style={drawerStyle}>{children}</TooltipDrawer>
+          <TooltipArrow aria-label="tooltip-arrow" $arrowStyle={arrowStyle} />
+          <TooltipDrawer $drawerStyle={drawerStyle}>{children}</TooltipDrawer>
         </>
       )}
     </Wrapper>
@@ -79,11 +79,11 @@ const Wrapper = styled.div`
 
 const TextTrigger = styled.div<{
   $underline: TooltipProps["underline"];
-  $open_on: TooltipProps["openOn"];
-  $container_Style?: CSSProp;
+  $openOn: TooltipProps["openOn"];
+  $containerStyle?: CSSProp;
 }>`
-  ${({ $open_on }) =>
-    $open_on === "hover"
+  ${({ $openOn }) =>
+    $openOn === "hover"
       ? css`
           cursor: default;
         `
@@ -122,11 +122,11 @@ const TextTrigger = styled.div<{
     }
   }}
 
-  ${({ $container_Style }) => $container_Style}
+  ${({ $containerStyle }) => $containerStyle}
 `;
 
 const TooltipArrow = styled.div<{
-  $arrow_Style?: CSSProp;
+  $arrowStyle?: CSSProp;
 }>`
   position: absolute;
   top: 100%;
@@ -137,11 +137,11 @@ const TooltipArrow = styled.div<{
   background-color: #4b5563;
   transform: translateX(-25%) rotate(45deg);
   z-index: 10;
-  ${({ $arrow_Style }) => $arrow_Style}
+  ${({ $arrowStyle }) => $arrowStyle}
 `;
 
 const TooltipDrawer = styled.div<{
-  $drawer_Style?: CSSProp;
+  $drawerStyle?: CSSProp;
 }>`
   position: absolute;
   top: 100%;
@@ -155,5 +155,5 @@ const TooltipDrawer = styled.div<{
   z-index: 50;
   white-space: nowrap;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  ${({ $drawer_Style }) => $drawer_Style}
+  ${({ $drawerStyle }) => $drawerStyle}
 `;

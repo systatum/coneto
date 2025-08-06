@@ -90,14 +90,14 @@ function Card({
       $shadow={shadow}
       $radius={radius}
       $padding={padding}
-      $container_style={containerStyle}
+      $containerStyle={containerStyle}
     >
-      {title && <Header $header_style={headerStyle}>{title}</Header>}
+      {title && <Header $headerStyle={headerStyle}>{title}</Header>}
 
-      <Contain $content_style={contentStyle}>{children}</Contain>
+      <Contain $contentStyle={contentStyle}>{children}</Contain>
 
       {(leftSideActions || rightSideActions) && (
-        <Footer $footer_style={footerStyle}>
+        <Footer $footerStyle={footerStyle}>
           <ActionGroup>
             {leftSideActions &&
               leftSideActions.map((action, i) => <span key={i}>{action}</span>)}
@@ -130,7 +130,7 @@ const CardContainer = styled.div<{
   $shadow: CardProps["shadow"];
   $radius: CardProps["radius"];
   $padding: CardProps["padding"];
-  $container_style?: CSSProp;
+  $containerStyle?: CSSProp;
 }>`
   display: flex;
   flex-direction: column;
@@ -143,32 +143,32 @@ const CardContainer = styled.div<{
     border-radius: ${RADIUS_MAP[$radius!]};
     padding: ${PADDING_MAP[$padding!]};
   `}
-  ${({ $container_style }) => $container_style}
+  ${({ $containerStyle }) => $containerStyle}
 `;
 
 const Header = styled.span<{
-  $header_style?: CSSProp;
+  $headerStyle?: CSSProp;
 }>`
   padding: 0.75rem 1.5rem;
   font-size: 1rem;
   border-bottom: 1px solid #d1d5db;
-  ${({ $header_style }) => $header_style}
+  ${({ $headerStyle }) => $headerStyle}
 `;
 
 const Contain = styled.span<{
-  $content_style?: CSSProp;
+  $contentStyle?: CSSProp;
 }>`
-  ${({ $content_style }) => $content_style}
+  ${({ $contentStyle }) => $contentStyle}
 `;
 
 const Footer = styled.div<{
-  $footer_style?: CSSProp;
+  $footerStyle?: CSSProp;
 }>`
   display: flex;
   justify-content: space-between;
   padding: 0.5rem 1.5rem;
   border-top: 1px solid #d1d5db;
-  ${({ $footer_style }) => $footer_style}
+  ${({ $footerStyle }) => $footerStyle}
 `;
 
 const ActionGroup = styled.div`

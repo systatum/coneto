@@ -38,7 +38,7 @@ function LoadingSpinner({
           d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
         />
       </SpinnerIcon>
-      {label && <SpinnerLabel $text_size={textSize}>{label}</SpinnerLabel>}
+      {label && <SpinnerLabel $textSize={textSize}>{label}</SpinnerLabel>}
     </SpinnerWrapper>
   );
 }
@@ -64,8 +64,8 @@ const SpinnerIcon = styled.svg<{ $size: number }>`
   color: #3b82f6;
 `;
 
-const SpinnerLabel = styled.span<{ $text_size: number }>`
-  font-size: ${({ $text_size }) => $text_size}px;
+const SpinnerLabel = styled.span<{ $textSize: number }>`
+  font-size: ${({ $textSize }) => $textSize}px;
 `;
 
 export { LoadingSpinner };
