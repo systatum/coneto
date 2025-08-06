@@ -1,4 +1,4 @@
-import { COLOR_CLASS_MAP } from "./../constants/color-map";
+import { COLOR_STYLE_MAP } from "./../constants/color-map";
 import { RiArrowDownSLine, RiArrowUpSLine } from "@remixicon/react";
 import {
   Children,
@@ -11,7 +11,6 @@ import {
   useState,
 } from "react";
 import { TipMenu, TipMenuItemProps } from "./tip-menu";
-import { cn } from "./../lib/utils";
 import { RemixiconComponentType } from "@remixicon/react";
 import {
   useFloating,
@@ -20,10 +19,11 @@ import {
   shift,
   autoUpdate,
 } from "@floating-ui/react";
+import styled, { css, CSSProp } from "styled-components";
 
 interface ToolbarProps {
   children: ReactNode;
-  className?: string;
+  style?: CSSProp;
 }
 
 interface ToolbarMenuProps {
@@ -36,40 +36,146 @@ interface ToolbarMenuProps {
   isOpen?: boolean;
   setIsOpen?: (data?: boolean) => void;
   onClick?: () => void;
-  dropdownClassName?: string;
-  containerClassName?: string;
-  triggerClassName?: string;
-  toggleActiveClassName?: string;
+  dropdownStyle?: CSSProp;
+  containerStyle?: CSSProp;
+  triggerStyle?: CSSProp;
+  toggleActiveStyle?: CSSProp;
   variant?: "default" | "primary" | "danger" | "none";
 }
 
 const VARIANT_CLASS_MAP = {
   base: {
-    default: "bg-white hover:border-[#ececec]",
-    primary: "bg-[rgb(86,154,236)] hover:border-[#5286c9]",
-    danger: "bg-[rgb(206,55,93)] hover:border-[#c00000]",
+    default: css`
+      background-color: white;
+      &:hover {
+        border-color: #ececec;
+      }
+    `,
+    primary: css`
+      background-color: rgb(86, 154, 236);
+      &:hover {
+        border-color: #5286c9;
+      }
+    `,
+    danger: css`
+      background-color: rgb(206, 55, 93);
+      &:hover {
+        border-color: #c00000;
+      }
+    `,
   },
   hover: {
-    default: "hover:bg-gray-100",
-    primary: "hover:bg-[rgb(64,142,232)]",
-    danger: "hover:bg-[rgb(200,53,50)]",
+    default: css`
+      &:hover {
+        background-color: #f5f5f5;
+      }
+    `,
+    primary: css`
+      &:hover {
+        background-color: rgb(64, 142, 232);
+      }
+    `,
+    danger: css`
+      &:hover {
+        background-color: rgb(200, 53, 50);
+      }
+    `,
   },
 };
 
 const VARIANT_ACTIVE = {
   background: {
-    default: "bg-gray-100",
-    primary: "bg-[rgb(64,142,232)]",
-    danger: "bg-[rgb(200,53,50)]",
+    default: css`
+      background-color: #f5f5f5;
+    `,
+    primary: css`
+      background-color: rgb(64, 142, 232);
+    `,
+    danger: css`
+      background-color: rgb(200, 53, 50);
+    `,
   },
   border: {
-    default: "border-[#ececec]",
-    primary: "border-[#5286c9]",
-    danger: "border-[#c00000]",
+    default: css`
+      border-color: #ececec;
+    `,
+    primary: css`
+      border-color: #5286c9;
+    `,
+    danger: css`
+      border-color: #c00000;
+    `,
   },
 };
 
-function Toolbar({ children, className }: ToolbarProps) {
+const ToolbarWrapper = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  ${(props) => props.$style}
+`;
+
+const ToolbarContainer = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  flex-direction: column;
+  margin-right: 0.25rem;
+  position: relative;
+  ${(props) => props.$style}
+`;
+
+const MenuWrapper = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border: 1px solid transparent;
+  position: relative;
+  user-select: none;
+  overflow: hidden;
+  cursor: pointer;
+  border-radius: 0.125rem;
+  ${(props) => props.$style}
+`;
+
+const TriggerButton = styled.button<{ $style?: CSSProp }>`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  animation-duration: 200ms;
+  cursor: pointer;
+  ${(props) => props.$style}
+`;
+
+const ToggleButton = styled.button<{ $style?: CSSProp }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  height: 100%;
+  max-width: 36px;
+  position: relative;
+  cursor: pointer;
+
+  ${(props) => props.$style}
+`;
+
+const Divider = styled.span<{ $style?: CSSProp }>`
+  position: absolute;
+  right: 35px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 100%;
+  width: 1px;
+  border-width: 0.5px;
+  color: #bdbdbd;
+  z-index: 10;
+  transition: height 150ms ease-in-out;
+
+  ${(props) => props.$style}
+`;
+
+function Toolbar({ children, style }: ToolbarProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const toolbarRef = useRef<HTMLDivElement>(null);
 
@@ -100,12 +206,11 @@ function Toolbar({ children, className }: ToolbarProps) {
     }
     return child;
   });
-  const toolbarClass = cn("flex w-full flex-row", className);
 
   return (
-    <div ref={toolbarRef} className={toolbarClass}>
+    <ToolbarWrapper ref={toolbarRef} $style={style}>
       {childrenWithProps}
-    </div>
+    </ToolbarWrapper>
   );
 }
 
@@ -119,10 +224,10 @@ function ToolbarMenu({
   isOpen,
   setIsOpen,
   onClick,
-  dropdownClassName,
-  containerClassName,
-  triggerClassName,
-  toggleActiveClassName,
+  dropdownStyle,
+  containerStyle,
+  triggerStyle,
+  toggleActiveStyle,
   variant = "default",
 }: ToolbarMenuProps) {
   const [hovered, setHovered] = useState<"main" | "original" | "dropdown">(
@@ -154,93 +259,78 @@ function ToolbarMenu({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen]);
 
-  const handleClickOpen = () => {
-    setIsOpen?.();
-  };
+  const handleClickOpen = () => setIsOpen?.();
   const handleMainClick = () => {
     onClick?.();
-    if (isOpen) {
-      setIsOpen(false);
-    }
+    if (isOpen) setIsOpen(false);
   };
 
-  const toolbarMenuContainerClass = VARIANT_CLASS_MAP.base[variant];
-  const toolbarMenuHoverClass = VARIANT_CLASS_MAP.hover[variant];
-  const toolbarMenuBorderActiveClass = VARIANT_ACTIVE.border[variant];
-  const toolbarMenuBackgroundActiveClass = VARIANT_ACTIVE.background[variant];
-
-  const toolbarMenuClass = cn(
-    "flex items-center w-full hover:border border-transparent relative border select-none overflow-hidden cursor-pointer rounded-sm",
-    toolbarMenuContainerClass,
-    variant !== "default" ? "text-white" : "text-gray-700",
-    isOpen && toolbarMenuBorderActiveClass,
-    containerClassName
-  );
+  const menuBase = VARIANT_CLASS_MAP.base[variant];
+  const menuHover = VARIANT_CLASS_MAP.hover[variant];
+  const menuBorderActive = VARIANT_ACTIVE.border[variant];
+  const menuBackgroundActive = VARIANT_ACTIVE.background[variant];
 
   return (
-    <div
-      aria-label={`toolbar-menu`}
-      ref={containerRef}
-      className="relative flex flex-col mr-1"
-    >
-      <div ref={refs.setReference} className={toolbarMenuClass}>
+    <ToolbarContainer ref={containerRef} $style={containerStyle}>
+      <MenuWrapper
+        ref={refs.setReference}
+        $style={css`
+          ${menuBase};
+          ${variant !== "default" ? "color: white;" : "color: #4b5563"};
+          ${isOpen && menuBorderActive};
+        `}
+      >
         {(Icon || caption) && (
           <>
-            <button
+            <TriggerButton
               aria-label={`toolbar-menu-button-${caption}`}
               onMouseEnter={() => setHovered("main")}
               onMouseLeave={() => setHovered("original")}
               onClick={handleMainClick}
-              className={cn(
-                `flex flex-row items-center gap-2 p-2`,
-                hovered === "main" && toolbarMenuHoverClass,
-                isOpen && toolbarMenuBorderActiveClass,
-                triggerClassName
-              )}
+              $style={css`
+                ${hovered === "main" && menuHover};
+                ${isOpen && menuBorderActive};
+                ${triggerStyle}
+              `}
             >
               {Icon && (
-                <Icon size={20} className={cn(COLOR_CLASS_MAP[iconColor])} />
+                <Icon size={20} style={{ color: COLOR_STYLE_MAP[iconColor] }} />
               )}
-              {caption && (
-                <span className="text-sm sm:flex hidden px-2">{caption}</span>
-              )}
-            </button>
-            <span
-              aria-label="divider"
-              className={cn(
-                "absolute transform duration-200 right-[35px] h-full w-px border-[0.5px] top-1/2 -translate-y-1/2 text-[#bdbdbd] z-10",
-                hovered === "original" && !isOpen && "h-[80%]"
-              )}
-            ></span>
+              {caption && <Caption>{caption}</Caption>}
+            </TriggerButton>
+            <Divider
+              $style={css`
+                height: ${hovered === "original" && !isOpen ? "80%" : "100%"};
+              `}
+            />
           </>
         )}
-        <button
-          aria-label={`toolbar-menu-toggle`}
+        <ToggleButton
+          aria-label="toolbar-menu-toggle"
           onMouseEnter={() => setHovered("dropdown")}
           onMouseLeave={() => setHovered("original")}
-          className={cn(
-            "flex p-2 relative h-full items-center max-w-[36px]",
-            hovered === "dropdown" && toolbarMenuHoverClass,
-            isOpen && toolbarMenuBackgroundActiveClass,
-            isOpen && toolbarMenuBorderActiveClass,
-            triggerClassName,
-            isOpen && toggleActiveClassName
-          )}
           onClick={handleClickOpen}
+          $style={css`
+            ${hovered === "dropdown" && menuHover};
+            ${isOpen && menuBackgroundActive};
+            ${isOpen && menuBorderActive};
+            ${triggerStyle};
+            ${isOpen && toggleActiveStyle};
+          `}
         >
           {isOpen ? (
             <OpenedIcon
-              className={variant === "default" ? "text-gray-400" : ""}
               size={20}
+              style={variant === "default" ? { color: "#9ca3af" } : undefined}
             />
           ) : (
             <ClosedIcon
-              className={variant === "default" ? "text-gray-400" : ""}
               size={20}
+              style={variant === "default" ? { color: "#9ca3af" } : undefined}
             />
           )}
-        </button>
-      </div>
+        </ToggleButton>
+      </MenuWrapper>
 
       {isOpen && (
         <div
@@ -254,14 +344,24 @@ function ToolbarMenu({
               setIsOpen(false);
               setHovered("original");
             }}
-            className={dropdownClassName}
+            style={dropdownStyle}
             subMenuList={subMenuList}
           />
         </div>
       )}
-    </div>
+    </ToolbarContainer>
   );
 }
+
+const Caption = styled.span`
+  font-size: 0.875rem;
+  padding-left: 0.5rem;
+  display: none;
+
+  @media (min-width: 768px) {
+    display: flex;
+  }
+`;
 
 function isToolbarMenuElement(
   element: ReactNode
