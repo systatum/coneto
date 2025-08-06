@@ -1,4 +1,3 @@
-import { cn } from "./../lib/utils";
 import {
   Children,
   cloneElement,
@@ -7,11 +6,12 @@ import {
   useState,
 } from "react";
 import {
-  INNER_CIRCLE_VARIANT_CLASS,
-  OUTER_CIRCLE_VARIANT_CLASS,
+  INNER_CIRCLE_VARIANT_COLOR,
+  OUTER_CIRCLE_VARIANT_COLOR,
   SteplineItemState,
-  TEXT_VARIANT_CLASS,
+  TEXT_VARIANT_COLOR,
 } from "./../constants/step-component-util";
+import styled, { css, CSSProp } from "styled-components";
 
 export interface TimelineProps {
   children?: ReactNode;
@@ -26,11 +26,10 @@ export type TimelineItemProps = SteplineItemState &
 
 function Timeline({ children, isClickable = false }: TimelineProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-
   const childArray = Children.toArray(children).filter(isValidElement);
 
   return (
-    <div className="flex flex-col gap-1 relative">
+    <TimelineWrapper>
       {childArray.map((child, index) => {
         if (
           !isValidElement<
@@ -43,118 +42,212 @@ function Timeline({ children, isClickable = false }: TimelineProps) {
           return null;
 
         const isLast = index === childArray.length - 1;
-        const variant = child.props.variant;
+        const variant = child.props.variant || "todo";
         const onClick = child.props.onClick;
 
         return (
-          <div
+          <TimelineContent
             key={index}
+            $isClickable={isClickable}
+            onMouseEnter={() => setHoveredIndex(index)}
+            onMouseLeave={() => setHoveredIndex(null)}
             onClick={() => {
-              if (isClickable) {
+              if (onClick) {
                 onClick();
               }
             }}
-            onMouseEnter={() => {
-              setHoveredIndex(index);
-            }}
-            onMouseLeave={() => {
-              setHoveredIndex(null);
-            }}
-            className={cn(
-              "flex flex-row gap-2 relative",
-              isClickable && "cursor-pointer"
-            )}
           >
-            <div className="relative flex flex-col items-center w-5">
-              <div
+            <IndicatorWrapper>
+              <OuterCircle
                 aria-label="outer-circle-timeline"
-                className={cn(
-                  "w-1 h-1 bg-gray-600 transform duration-200 rounded-full absolute -translate-x-[0.5px]  translate-y-[2px]",
-                  hoveredIndex === index && "scale-[300%] bg-gray-400",
-                  OUTER_CIRCLE_VARIANT_CLASS[variant]
-                )}
+                $color={OUTER_CIRCLE_VARIANT_COLOR[variant]}
+                $isHovered={hoveredIndex === index}
               />
-              <div
+              <InnerCircle
                 aria-label="inner-circle-timeline"
-                className={cn(
-                  "min-w-2 min-h-2 max-w-2 max-h-2 bg-gray-600 rounded-full -translate-x-[0.5px]",
-                  INNER_CIRCLE_VARIANT_CLASS[variant]
-                )}
+                $color={INNER_CIRCLE_VARIANT_COLOR[variant]}
               />
-              <div
+              <Divider
                 aria-label="divider-timeline"
-                className={cn(
-                  "h-full w-px bg-gray-400",
-                  INNER_CIRCLE_VARIANT_CLASS[variant],
-                  isLast && "h-[calc(100%-1.2rem)]"
-                )}
+                $color={INNER_CIRCLE_VARIANT_COLOR[variant]}
+                $isLast={isLast}
               />
-            </div>
+            </IndicatorWrapper>
 
-            <div
-              className={cn(
-                "flex flex-col w-full -translate-y-2 mb-[7px] justify-between",
-                isLast && "mb-0"
-              )}
-            >
+            <ContentWrapper $isLast={isLast}>
               {cloneElement(child, {
                 id: index,
                 isClickable: isClickable,
               })}
-            </div>
-          </div>
+            </ContentWrapper>
+          </TimelineContent>
         );
       })}
-    </div>
+    </TimelineWrapper>
   );
 }
+
+export const TimelineWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  position: relative;
+`;
+
+export const TimelineContent = styled.div<{ $isClickable: boolean }>`
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  position: relative;
+  ${({ $isClickable }) => $isClickable && "cursor: pointer;"}
+`;
+
+export const IndicatorWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 1.25rem;
+  position: relative;
+`;
+
+export const OuterCircle = styled.div<{
+  $color: string;
+  $isHovered: boolean;
+}>`
+  width: 0.25rem;
+  height: 0.25rem;
+  border-radius: 9999px;
+  position: absolute;
+  left: 7px;
+
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
+
+  ${({ $isHovered, $color }) =>
+    $isHovered &&
+    css`
+      transform: scale(3) translateY(0.6px);
+      background-color: ${$color};
+    `}
+`;
+
+export const InnerCircle = styled.div<{ $color: string }>`
+  min-width: 0.5rem;
+  min-height: 0.5rem;
+  max-width: 0.5rem;
+  max-height: 0.5rem;
+  border-radius: 9999px;
+  left: 5.4px;
+  position: absolute;
+  background-color: ${(props) => props.$color};
+`;
+
+export const Divider = styled.div<{
+  $color: string;
+  $isLast: boolean;
+}>`
+  width: 1px;
+  height: 100%;
+  background-color: ${(props) => props.$color};
+  ${(props) =>
+    props.$isLast &&
+    css`
+      height: calc(100% - 1.2rem);
+    `}
+`;
+
+export const ContentWrapper = styled.div<{ $isLast: boolean }>`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  transform: translateY(-0.5rem);
+  margin-bottom: 7px;
+
+  ${(props) =>
+    props.$isLast &&
+    css`
+      margin-bottom: 0;
+    `}
+`;
 
 function TimelineItem({
   subtitle,
   title,
   sidenote,
-  className,
+  containerStyle,
   id,
-  onClick,
-  isClickable,
   variant,
 }: TimelineItemProps) {
   return (
-    <div
+    <TimelineContainer
       aria-label={`timeline-item-${id}`}
-      onClick={() => {
-        if (isClickable) {
-          onClick();
-        }
-      }}
       id={String(id)}
-      className={cn(
-        "flex flex-row gap-10 justify-between items-start",
-        isClickable && "cursor-pointer",
-        TEXT_VARIANT_CLASS[variant],
-        className
-      )}
+      $containerStyle={containerStyle}
+      $variant={variant}
     >
-      <div className="flex flex-col w-full">
-        <span className="font-medium">{title}</span>
+      <TitleContainer>
+        <TitleText>{title}</TitleText>
         {subtitle && (
-          <div className="flex flex-col text-sm">
+          <SubtitleContainer>
             {subtitle.map((data, index) => (
               <span key={index}>{data}</span>
             ))}
-          </div>
+          </SubtitleContainer>
         )}
-      </div>
+      </TitleContainer>
       {sidenote && (
-        <div className="flex flex-col min-w-[100px]">
+        <SidenoteContainer>
           {sidenote.map((data, index) => (
             <span key={index}>{data}</span>
           ))}
-        </div>
+        </SidenoteContainer>
       )}
-    </div>
+    </TimelineContainer>
   );
 }
+
+const TimelineContainer = styled.div<{
+  $variant: keyof typeof TEXT_VARIANT_COLOR;
+  $containerStyle?: CSSProp;
+}>`
+  display: flex;
+  flex-direction: row;
+  gap: 2.5rem;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  ${({ $variant }) =>
+    TEXT_VARIANT_COLOR[$variant] &&
+    css`
+      ${TEXT_VARIANT_COLOR[$variant]}
+    `}
+
+  ${({ $containerStyle }) => $containerStyle}
+`;
+
+const TitleContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
+
+const SubtitleContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  font-size: 0.875rem;
+`;
+
+const SidenoteContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-width: 100px;
+`;
+
+const TitleText = styled.span`
+  font-weight: 500;
+`;
 
 Timeline.Item = TimelineItem;
 export { Timeline };
