@@ -1,6 +1,6 @@
-import { strToColor } from "./../lib/code-color";
-import { cn } from "./../lib/utils";
+import styled, { CSSProp } from "styled-components";
 import { ChangeEvent, MouseEvent } from "react";
+import { strToColor } from "./../lib/code-color";
 
 export type BadgeVariantProps = null | "neutral" | "green" | "yellow" | "red";
 
@@ -16,6 +16,7 @@ export interface BadgeProps {
   onClick?: (
     e?: ChangeEvent<HTMLInputElement> | MouseEvent<HTMLDivElement>
   ) => void;
+  badgeStyle?: CSSProp;
 }
 
 const BADGE_BACKGROUND_COLORS: string[] = [
@@ -72,25 +73,18 @@ const VARIANTS_BADGE = {
 
 function Badge({
   variant = null,
-  caption,
+  caption = "",
   withCircle = false,
-  className,
   backgroundColor,
   textColor,
   circleColor,
   onClick,
+  badgeStyle,
 }: BadgeProps) {
   const { bg: backgroundColorVariant, color: colorVariant } =
     VARIANTS_BADGE[variant];
 
   const circleColorLocal = strToColor(caption, BADGE_BACKGROUND_COLORS);
-
-  const classBadge = cn(
-    `flex flex-row text-xs w-fit px-2 py-[2px] border border-gray-100 rounded-md items-center select-none break-all`,
-    caption.length === 0 && "min-h-[22px]",
-    withCircle && "gap-2",
-    className
-  );
 
   const isInvalidColor = (color?: string | null) =>
     !color || color.trim() === "#";
@@ -116,26 +110,54 @@ function Badge({
         : (circleColorLocal ?? "black");
 
   return (
-    <div
+    <BadgeWrapper
       onClick={onClick}
-      style={{
-        background: badgeBackgroundColor,
-        color: badgeTextColor,
-      }}
-      className={classBadge}
+      $backgroundColor={badgeBackgroundColor}
+      $textColor={badgeTextColor}
+      $withCircle={withCircle}
+      $hasCaption={caption.length > 0}
+      $badgeStyle={badgeStyle}
     >
-      {withCircle && (
-        <span
-          className="rounded-full min-w-[8px] max-w-[8px] min-h-[8px] max-h-[8px] border"
-          style={{
-            borderColor: badgeCircleColor,
-            backgroundColor: badgeCircleColor,
-          }}
-        />
-      )}
+      {withCircle && <BadgeCircle color={badgeCircleColor} />}
       {caption}
-    </div>
+    </BadgeWrapper>
   );
 }
+
+const BadgeWrapper = styled.div<{
+  $backgroundColor: string;
+  $textColor: string;
+  $withCircle: boolean;
+  $hasCaption: boolean;
+  $badgeStyle: CSSProp;
+}>`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: ${({ $withCircle }) => ($withCircle ? "0.5rem" : "0")};
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  border: 1px solid #f3f4f6;
+  border-radius: 6px;
+  width: fit-content;
+  background: ${({ $backgroundColor }) => $backgroundColor};
+  color: ${({ $textColor }) => $textColor};
+  user-select: none;
+  word-break: break-word;
+  min-height: ${({ $hasCaption }) => ($hasCaption ? "unset" : "22px")};
+  cursor: ${({ onClick }) => (onClick ? "pointer" : "default")};
+  ${({ $badgeStyle }) => $badgeStyle};
+`;
+
+const BadgeCircle = styled.span<{ color: string }>`
+  display: inline-block;
+  border-radius: 9999px;
+  min-width: 8px;
+  max-width: 8px;
+  min-height: 8px;
+  max-height: 8px;
+  background-color: ${({ color }) => color};
+  border: 1px solid ${({ color }) => color};
+`;
 
 export { Badge };
