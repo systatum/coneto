@@ -132,7 +132,7 @@ const MenuWrapper = styled.div<{ $style?: CSSProp }>`
   user-select: none;
   overflow: hidden;
   cursor: pointer;
-  border-radius: 0.125rem;
+  border-radius: 0.3rem;
   ${(props) => props.$style}
 `;
 
@@ -141,7 +141,10 @@ const TriggerButton = styled.button<{ $style?: CSSProp }>`
   flex-direction: row;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 0.8rem;
+  padding-right: 0.8rem;
   animation-duration: 200ms;
   cursor: pointer;
   ${(props) => props.$style}
