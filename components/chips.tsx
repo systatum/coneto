@@ -1,11 +1,11 @@
 import { RiAddBoxFill, RiAddLine, RiCloseLine } from "@remixicon/react";
-import { cn } from "./../lib/utils";
 import { Badge, BadgeProps } from "./badge";
 import { Checkbox } from "./checkbox";
 import {
   ChangeEvent,
   CSSProperties,
   KeyboardEvent,
+  ReactElement,
   useEffect,
   useRef,
   useState,
@@ -23,6 +23,7 @@ import {
 import { Textbox } from "./textbox";
 import { Colorbox, ColorPickProps } from "./colorbox";
 import { Button } from "./button";
+import styled, { css, CSSProp } from "styled-components";
 
 type InputValueProps = {
   search: string;
@@ -45,10 +46,10 @@ interface BaseChipsProps {
     data: ChangeEvent<HTMLInputElement>,
     type?: ColorPickProps
   ) => void;
-  chipsContainerClassName?: string;
-  chipContainerClassName?: string;
-  chipClassName?: string;
-  chipsDrawerClassName?: string;
+  chipsContainerStyle?: CSSProp;
+  chipContainerStyle?: CSSProp;
+  chipStyle?: CSSProp;
+  chipsDrawerStyle?: CSSProp;
   filterPlaceholder?: string;
   newLabelPlaceholder?: string;
   addButtonLabel?: string;
@@ -110,19 +111,9 @@ function Chips(props: ChipsProps) {
       )
     : getAllOptions();
 
-  const buttonAddClass = cn(
-    "cursor-pointer border border-transparent rounded-full p-[1px] text-[#c3c3c3] hover:shadow-md hover:border-gray-300",
-    open && "border-gray-300"
-  );
-
-  const chipsClassName = cn(
-    "flex flex-row gap-[3px] flex-wrap p-2",
-    props.chipsContainerClassName
-  );
-
-  const inputElement = (
+  const inputElement: ReactElement = (
     <>
-      <div className={chipsClassName}>
+      <InputGroup $containerStyle={props.chipsContainerStyle}>
         {CLICKED_OPTIONS.map((data) => (
           <Badge
             key={data.id}
@@ -133,20 +124,21 @@ function Chips(props: ChipsProps) {
             variant={data.variant}
             backgroundColor={data.backgroundColor}
             circleColor={data.circleColor}
-            className={"rounded-sm"}
+            badgeStyle={css`
+              border-radius: 4px;
+            `}
             textColor={data.textColor}
             caption={data.caption}
             withCircle
           />
         ))}
 
-        <RiAddLine
+        <AddButton
           ref={refs.setReference}
-          className={buttonAddClass}
           role="button"
           {...getReferenceProps()}
         />
-      </div>
+      </InputGroup>
 
       {open && (
         <ChipsDrawer
@@ -162,17 +154,67 @@ function Chips(props: ChipsProps) {
   );
 
   return (
-    <div className={cn(`flex w-full flex-col gap-2 text-xs`)}>
+    <InputWrapper>
       {props.label && <label>{props.label}</label>}
-      <div className="flex flex-col gap-1 text-xs">
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "4px",
+          fontSize: "12px",
+        }}
+      >
         {inputElement}
-        {props.showError && (
-          <span className="text-red-600">{props.errorMessage}</span>
-        )}
+        {props.showError && <ErrorText>{props.errorMessage}</ErrorText>}
       </div>
-    </div>
+    </InputWrapper>
   );
 }
+
+const InputGroup = styled.div<{
+  $containerStyle?: CSSProp;
+}>`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 3px;
+  padding: 0.5rem;
+`;
+
+const InputWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  width: 100%;
+`;
+
+const ErrorText = styled.span`
+  color: "#dc2626";
+  font-size: "0.75rem";
+`;
+
+const AddButton = styled(RiAddLine)<{ $open?: boolean }>`
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 9999px;
+  padding: 1px;
+  color: #c3c3c3;
+  transition:
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-color: #d1d5db;
+  }
+
+  ${({ $open }) =>
+    $open &&
+    css`
+      border-color: #d1d5db;
+    `}
+`;
 
 type ChipsDrawerProps = ChipsProps & {
   getFloatingProps: ReturnType<typeof useInteractions>["getFloatingProps"];
@@ -189,9 +231,9 @@ function ChipsDrawer({
   setHasInteracted,
   addButtonLabel = "Add",
   cancelAddingButtonLabel = "Cancel",
-  chipClassName,
-  chipContainerClassName,
-  chipsDrawerClassName,
+  chipStyle,
+  chipContainerStyle,
+  chipsDrawerStyle,
   filterPlaceholder = "Change or add labels...",
   inputValue,
   newLabelPlaceholder = "Create a new label:",
@@ -225,11 +267,6 @@ function ChipsDrawer({
   useEffect(() => {
     if (isTyping) setTimeout(() => setIsTyping(false), 50);
   }, [isTyping]);
-
-  const chipsDrawerClass = cn(
-    "flex flex-col bg-white border text-sm border-gray-300 rounded-xs w-fit shadow-xs list-none outline-none z-[9999] max-w-[240px]",
-    mode === "idle" && chipsDrawerClassName
-  );
 
   const filteredSearch = options.filter(
     (opt) => opt.caption.toLowerCase() === inputValue.search.toLowerCase()
@@ -293,13 +330,13 @@ function ChipsDrawer({
   };
 
   return (
-    <ul
+    <ChipsDrawerWrapper
       {...getFloatingProps()}
       ref={refs.setFloating}
       style={floatingStyles}
       tabIndex={-1}
       role="listbox"
-      className={chipsDrawerClass}
+      $style={chipsDrawerStyle}
       onKeyDown={handleKeyDown}
     >
       {mode === "idle" && (
@@ -310,7 +347,11 @@ function ChipsDrawer({
             type="text"
             placeholder={filterPlaceholder}
             value={inputValue.search}
-            className="border-none min-h-[34px] rounded-none"
+            style={{
+              border: "none",
+              minHeight: "34px",
+              borderRadius: 0,
+            }}
             autoComplete="off"
             onChange={(e) => {
               setHasInteracted?.(true);
@@ -325,30 +366,40 @@ function ChipsDrawer({
               setInputValue(inputNameTagEvent);
             }}
           />
-          <div
-            aria-label="divider"
-            className="border-b w-full border-gray-300 h-px"
-          />
+          <Divider aria-label="divider" />
 
-          <div className="flex flex-col gap-1 p-1">
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "4px",
+              padding: "4px",
+            }}
+          >
             {filterNewLabel && creatable && (
-              <div
+              <NewTagOption
                 onMouseEnter={() => setHovered(0)}
                 onClick={async () => {
                   await setMode("create");
                   await inputNameTagRef.current.focus();
                 }}
-                className={cn(
-                  "flex flex-row items-start justify-start cursor-pointer text-xs rounded-xs gap-1 text-black p-2 w-full",
-                  hovered === 0 && "bg-blue-100"
-                )}
+                $hovered={hovered === 0}
               >
-                <RiAddLine size={14} className="min-w-[14px]" />
-                <span className={"w-fit font-medium truncate"}>
+                <RiAddLine size={14} style={{ minWidth: "14px" }} />
+                <span
+                  style={{
+                    fontWeight: 500,
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
                   {newLabelPlaceholder}&nbsp;
-                  <span className="text-gray-600">"{inputValue.search}"</span>
+                  <span style={{ color: "#4b5563" }}>
+                    "{inputValue.search}"
+                  </span>
                 </span>
-              </div>
+              </NewTagOption>
             )}
 
             {options && options.length > 0 ? (
@@ -365,21 +416,16 @@ function ChipsDrawer({
                         selectedOptions?.some(
                           (clicked) => clicked === options[index - 1].id
                         ) &&
-                        !isClicked && (
-                          <div
-                            aria-label="divider"
-                            className="border-b w-full border-gray-200 h-px"
-                          />
-                        )}
+                        !isClicked && <Divider aria-label="divider" />}
 
                       <Chips.Item
                         badge={data}
-                        chipContainerClassName={chipContainerClassName}
+                        chipContainerStyle={chipContainerStyle}
                         hovered={hovered}
                         isClicked={isClicked}
                         setHovered={setHovered}
                         onOptionClicked={onOptionClicked}
-                        chipClassName={chipClassName}
+                        chipStyle={chipStyle}
                         deletable={deletable}
                         onDeleteRequested={onDeleteRequested}
                       />
@@ -389,7 +435,14 @@ function ChipsDrawer({
               </>
             ) : (
               !filterNewLabel && (
-                <span className="text-xs text-gray-600 text-center p-2">
+                <span
+                  style={{
+                    fontSize: "0.75rem",
+                    color: "#4b5563",
+                    textAlign: "center",
+                    padding: "8px",
+                  }}
+                >
                   No matching actions
                 </span>
               )
@@ -399,16 +452,42 @@ function ChipsDrawer({
       )}
 
       {mode === "create" && (
-        <div className="flex flex-col min-w-[240px]">
-          <div className="flex flex-row py-2 px-3 gap-2 text-xs items-center font-medium">
-            <RiAddBoxFill size={18} />
-            <span className="pt-[2px]">Create a new tag</span>
-          </div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            minWidth: "240px",
+          }}
+        >
           <div
-            aria-label="divider"
-            className="border-b w-full border-gray-300 h-px"
-          />
-          <div className="flex flex-col p-3 gap-3">
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              padding: "8px 12px",
+              gap: "8px",
+              fontSize: "0.75rem",
+              fontWeight: 500,
+              alignItems: "center",
+            }}
+          >
+            <RiAddBoxFill size={18} />
+            <span
+              style={{
+                paddingTop: "2px",
+              }}
+            >
+              Create a new tag
+            </span>
+          </div>
+          <Divider aria-label="divider" />
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              padding: "12px",
+              gap: "12px",
+            }}
+          >
             <Textbox
               ref={inputNameTagRef}
               name="name_tag"
@@ -445,7 +524,14 @@ function ChipsDrawer({
               caption={inputValue.name_tag}
             />
 
-            <div className="flex flex-row justify-between w-full">
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                width: "100%",
+              }}
+            >
               <Button
                 onClick={async () => {
                   await setMode("idle");
@@ -459,7 +545,9 @@ function ChipsDrawer({
                   await inputRef.current.focus();
                 }}
                 size="sm"
-                className="text-xs"
+                buttonStyle={{
+                  fontSize: "12px",
+                }}
               >
                 {cancelAddingButtonLabel}
               </Button>
@@ -467,7 +555,9 @@ function ChipsDrawer({
                 onClick={onNewTagCreated}
                 size="sm"
                 variant="primary"
-                className="text-xs"
+                buttonStyle={{
+                  fontSize: "12px",
+                }}
               >
                 {addButtonLabel}
               </Button>
@@ -475,9 +565,54 @@ function ChipsDrawer({
           </div>
         </div>
       )}
-    </ul>
+    </ChipsDrawerWrapper>
   );
 }
+
+const ChipsDrawerWrapper = styled.ul<{
+  $style?: CSSProp;
+}>`
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border: 1px solid #d1d5db;
+  font-size: 0.875rem;
+  border-radius: 2px;
+  width: fit-content;
+  max-width: 240px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  list-style: none;
+  outline: none;
+  z-index: 9999;
+  ${({ $style }) => $style}
+`;
+
+const NewTagOption = styled.div<{ $hovered: boolean }>`
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 4px;
+  padding: 8px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: black;
+  width: 100%;
+  border-radius: 2px;
+  cursor: pointer;
+
+  ${({ $hovered }) =>
+    $hovered &&
+    css`
+      background-color: #bfdbfe;
+    `}
+`;
+
+const Divider = styled.div`
+  width: 100%;
+  height: 1px;
+  border-bottom: 1px solid #d1d5db;
+`;
 
 function ChipsItem({
   badge,
@@ -485,8 +620,8 @@ function ChipsItem({
   hovered,
   setHovered,
   onOptionClicked,
-  chipContainerClassName,
-  chipClassName,
+  chipContainerStyle,
+  chipStyle,
   onDeleteRequested,
   deletable,
 }: {
@@ -495,57 +630,104 @@ function ChipsItem({
   hovered: number | null;
   setHovered: (number: number) => void;
   onOptionClicked?: (badge: BadgeProps) => void;
-  chipClassName?: string;
-  chipContainerClassName?: string;
+  chipStyle?: CSSProp;
+  chipContainerStyle?: CSSProp;
   onDeleteRequested?: (badge: BadgeProps) => void;
   deletable?: boolean;
 }) {
   return (
-    <div
-      className={cn(
-        "flex py-[4px] flex-row px-3 gap-[2px] items-center cursor-pointer justify-between relative",
-        hovered === badge.id && "bg-blue-100",
-        chipContainerClassName
-      )}
+    <ChipItemWrapper
+      $hovered={hovered === badge.id}
+      $style={chipContainerStyle}
       onClick={() => onOptionClicked?.(badge)}
       onMouseEnter={() => setHovered(badge.id)}
     >
       <Checkbox
         checked={isClicked}
-        containerClassName={cn(
-          "border-transparent w-[10px] h-[10px] mb-[6px] rounded-xs",
-          hovered === badge.id && "border-[#61A9F9]"
-        )}
-        className="w-[10px] h-[10px]"
+        wrapperStyle={css`
+          max-width: 10px;
+          max-height: 10px;
+          margin-bottom: 6px;
+          border-radius: 2px;
+        `}
         readOnly
       />
       <Badge
         variant={badge.variant}
         backgroundColor={badge.backgroundColor}
         circleColor={badge.circleColor}
-        className={chipClassName}
+        badgeStyle={css`
+          cursor: pointer;
+          ${chipStyle}
+        `}
         textColor={badge.textColor}
         caption={badge.caption}
         withCircle
       />
       {deletable && (
-        <RiCloseLine
+        <CloseButton
           role="button"
+          $hovered={hovered === badge.id}
           aria-label="Delete requested data"
           onClick={(e) => {
             e.stopPropagation();
             onDeleteRequested(badge);
           }}
           size={14}
-          className={cn(
-            "absolute top-1/2 right-4 -translate-y-1/2 hover:bg-gray-300 text-transparent cursor-pointer",
-            hovered === badge.id && "text-gray-400 hover:text-gray-600"
-          )}
         />
       )}
-    </div>
+    </ChipItemWrapper>
   );
 }
+
+const ChipItemWrapper = styled.div<{
+  $hovered: boolean;
+  $style?: CSSProp;
+}>`
+  display: flex;
+  flex-direction: row;
+  padding: 4px 12px;
+  gap: 2px;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  position: relative;
+
+  ${({ $hovered }) =>
+    $hovered &&
+    css`
+      background-color: #bfdbfe;
+    `}
+  ${({ $style }) => $style}
+`;
+
+export const CloseButton = styled(RiCloseLine)<{
+  $hovered: boolean;
+}>`
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  color: transparent;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+
+  &:hover {
+    background-color: #d1d5db;
+  }
+
+  ${({ $hovered }) =>
+    $hovered &&
+    css`
+      color: #9ca3af;
+
+      &:hover {
+        color: #4b5563;
+      }
+    `}
+`;
 
 Chips.Item = ChipsItem;
 
