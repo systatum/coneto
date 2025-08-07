@@ -3,7 +3,6 @@ import { useSwipeable } from "react-swipeable";
 import { useAnimation } from "framer-motion";
 import { RiArrowLeftSLine, RiArrowRightSLine } from "@remixicon/react";
 import { motion } from "framer-motion";
-import { cn } from "./../lib/utils";
 import styled, { CSSProp } from "styled-components";
 
 interface SidebarProps {
