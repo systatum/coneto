@@ -1,7 +1,7 @@
-import { cn } from "./../lib/utils";
 import { RemixiconComponentType, RiCloseLine } from "@remixicon/react";
 import { useAnimation, motion } from "framer-motion";
 import { ReactNode, useState } from "react";
+import styled, { css, CSSProp } from "styled-components";
 
 export interface DrawerTabProps {
   tabs: Array<{
@@ -10,15 +10,15 @@ export interface DrawerTabProps {
     icon: RemixiconComponentType;
     content: ReactNode;
   }>;
-  tabClassName?: string;
-  drawerTabClassName?: string;
+  tabStyle?: CSSProp;
+  drawerTabStyle?: CSSProp;
   position?: "left" | "right";
 }
 
 function DrawerTab({
   tabs,
-  drawerTabClassName,
-  tabClassName,
+  drawerTabStyle,
+  tabStyle,
   position = "right",
 }: DrawerTabProps) {
   const [isDrawerTab, setIsDrawerTab] = useState(false);
@@ -35,98 +35,208 @@ function DrawerTab({
     });
   };
 
-  const selectedTab = tabs?.filter((tab) => tab.id === selected);
+  const selectedTab = tabs.filter((tab) => tab.id === selected);
 
   return (
-    <motion.div
-      initial={
-        isLeft
-          ? {
-              x: "-100%",
-            }
-          : {
-              x: "+100%",
-            }
-      }
+    <DrawerTabContainer
+      initial={{ x: isLeft ? "-100%" : "+100%" }}
       animate={controls}
-      className={cn(
-        `fixed flex w-64 min-w-[300px] gap-3 flex-col border border-gray-300 bg-white pb-4 top-10 shadow-lg md:translate-x-0 md:shadow-none`,
-        isLeft ? "left-0" : "right-0",
-        drawerTabClassName
-      )}
+      position={position}
+      $style={drawerTabStyle}
     >
-      <div
-        className={cn(
-          "h-fit absolute z-10 flex flex-col top-8 border-gray-300 bg-transparent gap-[2px]",
-          isLeft ? "left-[298px]" : "right-[298px]",
-          tabClassName
-        )}
-      >
-        {tabs.map((data) => (
-          <div
+      <TabButtonsContainer position={position} $style={tabStyle}>
+        {tabs.map((tab) => (
+          <TabButton
+            key={tab.id}
             role="button"
-            aria-label={`Open ${data.title} tab`}
             tabIndex={0}
-            key={data.id}
+            aria-label={`Open ${tab.title} tab`}
+            selected={tab.id === selected}
+            position={position}
             onClick={() => {
-              const isSame = selected === data.id;
-
+              const isSame = selected === tab.id;
               if (isSame && isDrawerTab) {
                 handleToggleDrawer(false);
                 setTimeout(() => setSelected(null), 400);
               } else {
-                setSelected(data.id);
-
+                setSelected(tab.id);
                 if (!isDrawerTab) {
                   handleToggleDrawer(true);
                 }
               }
             }}
-            className={cn(
-              "cursor-pointer hover:bg-gray-100 bg-white border-gray-300 relative ",
-              data.id !== selected && "border hover:border",
-              data.id === selected &&
-                isLeft &&
-                "border-y border-r hover:border-y hover:border-r",
-              data.id === selected &&
-                !isLeft &&
-                "border-y border-l hover:border-y hover:border-l",
-              isLeft ? "p-2 rounded-r-xl" : "p-2 rounded-l-xl"
-            )}
           >
-            <data.icon size={20} />
-          </div>
+            <tab.icon size={20} />
+          </TabButton>
         ))}
-      </div>
+      </TabButtonsContainer>
 
-      {selectedTab &&
-        selectedTab.map((data) => (
-          <div
-            key={data.id}
-            className="flex flex-col gap-3 relative z-30 bg-white"
-          >
-            <div className="flex flex-row relative justify-between pl-4 pr-2 bg-gray-100 items-center z-40">
-              <span className="font-medium py-[6px] text-sm">{data.title}</span>
-              <div className="cursor-pointer flex justify-center items-center w-5 h-5 hover:bg-gray-300 text-gray-600 rounded-xs">
-                <RiCloseLine
-                  size={16}
-                  role="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleToggleDrawer(false);
-                    setTimeout(() => setSelected(null), 400);
-                  }}
-                />
-              </div>
-            </div>
-            <div
-              aria-label="divider"
-              className="border-b w-full absolute top-8 left-0 border-gray-200 h-px"
-            />
-            <span className="px-4 relative z-40">{data.content}</span>
-          </div>
-        ))}
-    </motion.div>
+      {selectedTab.map((tab) => (
+        <TabContentContainer key={tab.id}>
+          <TabHeader>
+            <span>{tab.title}</span>
+            <CloseButton
+              onClick={(e) => {
+                e.stopPropagation();
+                handleToggleDrawer(false);
+                setTimeout(() => setSelected(null), 400);
+              }}
+            >
+              <RiCloseLine size={16} />
+            </CloseButton>
+          </TabHeader>
+          <Divider />
+          <Content>{tab.content}</Content>
+        </TabContentContainer>
+      ))}
+    </DrawerTabContainer>
   );
 }
+
+const DrawerTabContainer = styled(motion.div)<{
+  position: "left" | "right";
+  $style?: CSSProp;
+}>`
+  position: fixed;
+  top: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  width: 16rem;
+  min-width: 300px;
+  padding-bottom: 1rem;
+  gap: 0.75rem;
+  background: white;
+  border: 1px solid #d1d5db;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  z-index: 40;
+
+  ${({ position }) => (position === "left" ? "left: 0;" : "right: 0;")}
+
+  @media (min-width: 768px) {
+    transform: translateX(0);
+    box-shadow: none;
+  }
+
+  ${({ $style }) => $style}
+`;
+
+const TabButtonsContainer = styled.div<{
+  position: "left" | "right";
+  $style?: CSSProp;
+}>`
+  position: absolute;
+  top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 50;
+  background: transparent;
+  border-color: #d1d5db;
+
+  ${({ position }) => (position === "left" ? "left: 298px;" : "right: 298px;")}
+
+  ${({ $style }) => $style}
+`;
+
+const TabButton = styled.div<{
+  selected: boolean;
+  position: "left" | "right";
+}>`
+  cursor: pointer;
+  padding: 0.5rem;
+  background: white;
+  border-color: #d1d5db;
+
+  &:hover {
+    background: #f3f4f6;
+  }
+
+  ${({ selected, position }) =>
+    selected
+      ? position === "left"
+        ? css`
+            border-top: 1px solid #d1d5db;
+            border-bottom: 1px solid #d1d5db;
+            border-right: 1px solid #d1d5db;
+            border-left: none;
+            border-radius: 0 0.75rem 0.75rem 0;
+          `
+        : css`
+            border-top: 1px solid #d1d5db;
+            border-bottom: 1px solid #d1d5db;
+            border-left: 1px solid #d1d5db;
+            border-right: none;
+            border-radius: 0.75rem 0 0 0.75rem;
+          `
+      : css`
+          border: 1px solid #d1d5db;
+
+          ${position === "left"
+            ? css`
+                border-radius: 0 0.75rem 0.75rem 0;
+              `
+            : css`
+                border-radius: 0.75rem 0 0 0.75rem;
+              `}
+
+          &:hover {
+            border: 1px solid #d1d5db;
+          }
+        `}
+`;
+
+const TabContentContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  position: relative;
+  z-index: 30;
+  background: white;
+`;
+
+const TabHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0.5rem 6px 1rem;
+  background-color: #f3f4f6;
+  position: relative;
+  z-index: 40;
+
+  span {
+    font-weight: 500;
+    font-size: 0.875rem;
+  }
+`;
+
+const Divider = styled.div`
+  position: absolute;
+  top: 2rem;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background-color: #e5e7eb;
+`;
+
+const Content = styled.span`
+  padding: 0 1rem;
+  position: relative;
+  z-index: 40;
+`;
+
+const CloseButton = styled.div`
+  width: 20px;
+  height: 20px;
+  border-radius: 0.25rem;
+  color: #4b5563;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+
+  &:hover {
+    background: #d1d5db;
+  }
+`;
+
 export { DrawerTab };
