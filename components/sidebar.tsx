@@ -4,23 +4,23 @@ import { useAnimation } from "framer-motion";
 import { RiArrowLeftSLine, RiArrowRightSLine } from "@remixicon/react";
 import { motion } from "framer-motion";
 import { cn } from "./../lib/utils";
+import styled, { CSSProp } from "styled-components";
 
 interface SidebarProps {
   children?: ReactNode;
-  className?: string;
+  style?: CSSProp;
   position?: "left" | "right";
 }
 
 interface SidebarItemProps {
   isFixed?: boolean;
-  className?: string;
+  style?: CSSProp;
   children?: ReactNode;
 }
 
-function Sidebar({ children, className, position = "left" }: SidebarProps) {
+function Sidebar({ children, style, position = "left" }: SidebarProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(true);
-
   const controls = useAnimation();
 
   useLayoutEffect(() => {
@@ -28,36 +28,31 @@ function Sidebar({ children, className, position = "left" }: SidebarProps) {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
       setIsSidebarOpen(!mobile);
-      position === "left"
-        ? controls.set({ x: !mobile ? 0 : "-100%" })
-        : controls.set({ x: !mobile ? 0 : "+100%" });
+      controls.set({
+        x: !mobile ? 0 : position === "left" ? "-100%" : "+100%",
+      });
     }
-  }, [controls]);
+  }, [controls, position]);
 
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
       setIsSidebarOpen(!mobile);
-      position === "left"
-        ? controls.set({ x: !mobile ? 0 : "-100%" })
-        : controls.set({ x: !mobile ? 0 : "+100%" });
+      controls.set({
+        x: !mobile ? 0 : position === "left" ? "-100%" : "+100%",
+      });
     };
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [controls]);
+  }, [controls, position]);
 
   const handleToggleSidebar = (open: boolean) => {
     setIsSidebarOpen(open);
-    if (isMobile && position === "left") {
+    if (isMobile) {
       controls.start({
-        x: open ? 0 : "-100%",
-        transition: { type: "spring", stiffness: 300, damping: 30 },
-      });
-    } else if (isMobile && position === "right") {
-      controls.start({
-        x: open ? 0 : "+100%",
+        x: open ? 0 : position === "left" ? "-100%" : "+100%",
         transition: { type: "spring", stiffness: 300, damping: 30 },
       });
     }
@@ -75,81 +70,169 @@ function Sidebar({ children, className, position = "left" }: SidebarProps) {
   return (
     <>
       {isSidebarOpen && (
-        <div
-          {...handlers}
-          className={cn(
-            `fixed top-0 h-full z-30 md:hidden`,
-            isSidebarOpen ? "w-full" : "w-[5%]",
-            position === "left" ? "left-0" : "right-0"
-          )}
-        />
+        <Overlay {...handlers} isOpen={isSidebarOpen} position={position} />
       )}
 
       {isSidebarOpen && isMobile && (
-        <div
-          className="fixed inset-0 z-20 bg-black/30 backdrop-blur-sm md:hidden"
-          onClick={() => handleToggleSidebar(false)}
-        />
+        <Backdrop onClick={() => handleToggleSidebar(false)} />
       )}
 
-      <motion.div
-        initial={
-          position === "left"
-            ? {
-                x: "-100%",
-              }
-            : {
-                x: "+100%",
-              }
-        }
+      <MotionSidebar
+        initial={{ x: position === "left" ? "-100%" : "+100%" }}
         animate={isMobile ? controls : { x: 0 }}
-        className={cn(
-          `fixed z-40 flex h-full min-h-screen w-64 min-w-[300px] flex-col shadow-md border-gray-300 bg-white p-6 pt-10 md:static md:hidden md:translate-x-0`,
-          position === "left" ? "left-0 border-r" : "right-0 border-l",
-          className
-        )}
+        position={position}
+        $style={style}
       >
         {children}
-      </motion.div>
+      </MotionSidebar>
 
       {isMobile && !isSidebarOpen && (
-        <button
+        <ToggleButton
           {...handlers}
           onClick={() => handleToggleSidebar(true)}
-          className={cn(
-            "fixed top-0 z-30 block h-full cursor-pointer rounded-xs border border-gray-200 bg-white p-[2px] shadow-md md:hidden",
-            position === "left" ? "left-0" : "right-0"
-          )}
+          position={position}
         >
           {position === "left" ? <RiArrowRightSLine /> : <RiArrowLeftSLine />}
-        </button>
+        </ToggleButton>
       )}
 
-      <div
-        className={cn(
-          `fixed overflow-y-auto top-0 z-40 hidden h-full min-h-screen w-64 min-w-[300px] border-gray-200 bg-white p-6 pt-10 shadow-md md:fixed md:flex md:translate-x-0 md:flex-col`,
-          position === "left" ? "left-0 border-r" : "right-0 border-l",
-          className
-        )}
-      >
+      <DesktopSidebar position={position} $style={style}>
         {children}
-      </div>
+      </DesktopSidebar>
     </>
   );
 }
 
-function SidebarItem({ isFixed, className, children }: SidebarItemProps) {
-  const sidebarItemClass = cn(
-    "w-full h-fit flex flex-col my-2",
-    isFixed ? "" : "max-h-[300px]",
-    className
-  );
-  return <div className={sidebarItemClass}>{children}</div>;
-}
+const Overlay = styled.div<{ isOpen: boolean; position: "left" | "right" }>`
+  position: fixed;
+  top: 0;
+  height: 100%;
+  z-index: 30;
+  width: ${({ isOpen }) => (isOpen ? "100%" : "5%")};
+  ${({ position }) => (position === "left" ? "left: 0;" : "right: 0;")}
+  @media (min-width: 768px) {
+    display: none;
+  }
+`;
 
-function SidebarSpacer() {
-  return <div className="hidden md:block md:min-w-[300px]" />;
+const Backdrop = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(4px);
+  @media (min-width: 768px) {
+    display: none;
+  }
+`;
+
+const MotionSidebar = styled(motion.div)<{
+  position: "left" | "right";
+  $style?: CSSProp;
+}>`
+  position: fixed;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100vh;
+  width: 16rem;
+  min-width: 300px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+  border-color: #d1d5db;
+  background-color: white;
+  padding: 2.5rem 1.5rem 1.5rem;
+  ${({ position }) =>
+    position === "left"
+      ? "left: 0; border-right: 1px solid #d1d5db;"
+      : "right: 0; border-left: 1px solid #d1d5db;"}
+  @media (min-width: 768px) {
+    display: none;
+  }
+  ${({ $style }) => $style}
+`;
+
+const ToggleButton = styled.button<{
+  position: "left" | "right";
+}>`
+  position: fixed;
+  top: 0;
+  z-index: 30;
+  display: block;
+  height: 100%;
+  padding: 2px;
+  background-color: white;
+  border-radius: var(--radius-xs);
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+
+  ${({ position }) => (position === "left" ? "left: 0;" : "right: 0;")}
+
+  @media (min-width: 768px) {
+    display: none;
+  }
+`;
+
+const DesktopSidebar = styled.div<{
+  position: "left" | "right";
+  $style?: CSSProp;
+}>`
+  position: fixed;
+  z-index: 40;
+  display: none;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100vh;
+  width: 16rem;
+  min-width: 300px;
+  overflow-y: auto;
+  padding: 2.5rem 1.5rem 1.5rem;
+  background-color: white;
+  border-color: #e5e7eb;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+
+  ${({ position }) =>
+    position === "left"
+      ? "left: 0; border-right: 1px solid #d1d5db;"
+      : "right: 0; border-left: 1px solid #d1d5db;"}
+
+  @media (min-width: 768px) {
+    display: flex;
+  }
+
+  ${({ $style }) => $style}
+`;
+
+function SidebarItem({ isFixed, style, children }: SidebarItemProps) {
+  return (
+    <StyledSidebarItem isFixed={isFixed} $style={style}>
+      {children}
+    </StyledSidebarItem>
+  );
 }
+const StyledSidebarItem = styled.div<{
+  isFixed?: boolean;
+  $style?: CSSProp;
+}>`
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  margin: 0.5rem 0;
+
+  ${({ isFixed }) => !isFixed && `max-height: 300px;`}
+  ${({ $style }) => $style}
+`;
+
+const SidebarSpacer = styled.div`
+  display: none;
+
+  @media (min-width: 768px) {
+    display: block;
+    min-width: 300px;
+  }
+`;
 
 Sidebar.Spacer = SidebarSpacer;
 Sidebar.Item = SidebarItem;
