@@ -39,9 +39,7 @@ export const Default: Story = {
         <Dialog.Content>
           <Dialog.Header>
             <Dialog.Title>Custom Dialog</Dialog.Title>
-            <Dialog.Description>
-              Fully styled with styled-components.
-            </Dialog.Description>
+            <Dialog.Description>This is dialog customize</Dialog.Description>
           </Dialog.Header>
           <p
             style={{
@@ -51,7 +49,7 @@ export const Default: Story = {
           >
             This is the dialog body.
           </p>
-          <Dialog.Footer>
+          <Dialog.Footer style={{ marginTop: "20px" }}>
             <Dialog.Close>
               <Button>Close</Button>
             </Dialog.Close>

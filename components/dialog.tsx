@@ -110,6 +110,7 @@ function DialogContent({
   overlayStyle?: CSSProp;
   closeButtonStyle?: CSSProp;
 }) {
+  const [isVisible, setIsVisible] = useState(false);
   const { open, setOpen } = useDialogContext();
   const { mounted, target } = usePortal();
 
@@ -125,7 +126,16 @@ function DialogContent({
     return () => document.removeEventListener("keydown", handleEscape);
   }, [handleEscape]);
 
-  if (!mounted || !target || !open) return null;
+  useEffect(() => {
+    if (open) {
+      setIsVisible(true);
+    } else {
+      const timeout = setTimeout(() => setIsVisible(false), 200); // 200ms = anim duration
+      return () => clearTimeout(timeout);
+    }
+  }, [open]);
+
+  if (!mounted || !target || !isVisible) return null;
 
   return ReactDOM.createPortal(
     <>
@@ -228,11 +238,7 @@ const StyledHeader = styled.div<StyleProp>`
   display: flex;
   flex-direction: column;
   gap: 2px;
-  text-align: center;
-
-  @media (min-width: 640px) {
-    text-align: left;
-  }
+  text-align: left;
 
   ${({ $style }) => $style}
 `;
@@ -241,11 +247,8 @@ const StyledFooter = styled.div<StyleProp>`
   display: flex;
   flex-direction: column-reverse;
   gap: 0.5rem;
-
-  @media (min-width: 640px) {
-    flex-direction: row;
-    justify-content: flex-end;
-  }
+  flex-direction: row;
+  justify-content: flex-end;
 
   ${({ $style }) => $style}
 `;
