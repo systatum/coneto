@@ -1,39 +1,60 @@
-import { cn } from "./../lib/utils";
+import styled, { CSSProp } from "styled-components";
 
 export interface SeparatorProps {
   title?: string;
-  className?: string;
+  style?: CSSProp;
   textFloat?: "left" | "right";
   depth?: string;
 }
 
 function Separator({
   title,
-  className,
+  style,
   textFloat = "left",
   depth = "20px",
 }: SeparatorProps) {
   return (
-    <div className={cn("flex text-gray-500 w-full relative", className)}>
-      <span className="h-[2px] absolute w-full rounded-sm bg-gray-900 shadow-[inset_0_2px_2px_#ffffff,inset_0_-1px_1px_#7a7a7a]"></span>
-      <span
-        className={cn(
-          "font-medium absolute -top-1/2 -translate-y-1/2 bg-white px-2"
-        )}
-        style={
-          textFloat === "left"
-            ? {
-                left: depth,
-              }
-            : {
-                right: depth,
-              }
-        }
-      >
+    <SeparatorContainer $style={style}>
+      <Line />
+      <Title textFloat={textFloat} depth={depth}>
         {title}
-      </span>
-    </div>
+      </Title>
+    </SeparatorContainer>
   );
 }
+
+const SeparatorContainer = styled.div<{ $style?: CSSProp }>`
+  position: relative;
+  width: 100%;
+  display: flex;
+  color: #6b7280;
+  ${({ $style }) => $style}
+`;
+
+const Line = styled.span`
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  border-radius: 0.125rem;
+  background-color: #111827;
+  box-shadow:
+    inset 0 2px 2px #ffffff,
+    inset 0 -1px 1px #7a7a7a;
+`;
+
+const Title = styled.span<{
+  textFloat: "left" | "right";
+  depth: string;
+}>`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: white;
+  padding: 0 0.5rem;
+  font-weight: 500;
+
+  ${({ textFloat, depth }) =>
+    textFloat === "left" ? `left: ${depth};` : `right: ${depth};`}
+`;
 
 export { Separator };
