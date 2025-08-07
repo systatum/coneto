@@ -1,6 +1,6 @@
 import { RiFile2Line, RiFileUploadLine, RiImageLine } from "@remixicon/react";
-import { cn } from "../lib/utils";
-import { ChangeEvent, DragEvent, useRef, useState } from "react";
+import { ChangeEvent, DragEvent, ReactElement, useRef, useState } from "react";
+import styled, { css, CSSProp } from "styled-components";
 import { LoadingSpinner } from "./loading-spinner";
 
 export interface OnFileDroppedFunctionProps {
@@ -18,7 +18,7 @@ export interface OnCompleteFunctionProps {
 }
 
 export interface FileDropBoxProps {
-  containerClassName?: string;
+  containerStyle?: CSSProp;
   placeholder?: string;
   accept?: string;
   label?: string;
@@ -30,7 +30,7 @@ export interface FileDropBoxProps {
 type ProgressProps = "idle" | "loading" | "succeed";
 
 function FileDropBox({
-  containerClassName,
+  containerStyle,
   placeholder = "Drag and Drop Your File",
   accept = "*",
   onFileDropped,
@@ -38,38 +38,22 @@ function FileDropBox({
   label,
 }: FileDropBoxProps) {
   const FILE_ICON = [
-    {
-      id: 1,
-      icon: RiImageLine,
-      size: 50,
-    },
-    {
-      id: 2,
-      icon: RiFileUploadLine,
-      size: 80,
-    },
-    {
-      id: 3,
-      icon: RiFile2Line,
-      size: 50,
-    },
+    { id: 1, icon: RiImageLine, size: 50 },
+    { id: 2, icon: RiFileUploadLine, size: 80 },
+    { id: 3, icon: RiFile2Line, size: 50 },
   ];
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
-  const [progressComponentLabel, setProgressComponentLabel] = useState("");
+  const [progressLabel, setProgressLabel] = useState("");
   const [progressPercentage, setProgressPercentage] = useState(0);
   const [progress, setProgress] = useState<ProgressProps>("idle");
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
 
-  const handleBrowseClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleErrorMessage = (data: string) => {
-    setErrorMessages((prev) => [...prev, data]);
-  };
+  const handleBrowseClick = () => fileInputRef.current?.click();
+  const handleErrorMessage = (msg: string) =>
+    setErrorMessages((prev) => [...prev, msg]);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -92,9 +76,7 @@ function FileDropBox({
     setIsDragging(true);
   };
 
-  const handleDragLeave = () => {
-    setIsDragging(false);
-  };
+  const handleDragLeave = () => setIsDragging(false);
 
   const handleUploadFile = async (files: File[]) => {
     if (!onFileDropped) return;
@@ -105,26 +87,18 @@ function FileDropBox({
     const failedFiles: File[] = [];
     const total = files.length;
 
-    const setProgressLabel = (data: string) => {
-      setProgressComponentLabel(data);
-    };
-
     const succeed = (file: File) => {
       succeedFiles.push(file);
-      handleUpdateProgressBar(succeedFiles.length, total);
+      updateProgressBar(succeedFiles.length, total);
     };
 
-    const error = (file: File, errorMessage: string) => {
+    const error = (file: File, message: string) => {
       failedFiles.push(file);
-      console.error(errorMessage);
-      handleErrorMessage(errorMessage);
-      handleUpdateProgressBar(succeedFiles.length, total);
+      handleErrorMessage(message);
+      updateProgressBar(succeedFiles.length, total);
     };
 
-    const handleUpdateProgressBar = (
-      succeedCount: number,
-      totalCount: number
-    ) => {
+    const updateProgressBar = (succeedCount: number, totalCount: number) => {
       const percentage = Math.round((succeedCount / totalCount) * 100);
       setProgressPercentage(percentage);
     };
@@ -136,105 +110,277 @@ function FileDropBox({
         succeed,
         error,
         setProgressLabel,
-        progressPercentage: progressPercentage,
+        progressPercentage,
       });
     }
 
-    await onComplete?.({
-      succeedFiles,
-      failedFiles,
-      setProgressLabel,
-    });
-    await setProgress("succeed");
+    await onComplete?.({ succeedFiles, failedFiles, setProgressLabel });
+    setProgress("succeed");
   };
 
-  const containerDropBoxClass = cn(
-    "p-3 flex flex-col gap-2 cursor-pointer text-center relative items-center rounded-xs justify-between text-gray-500",
-    progress === "idle"
-      ? "border border-gray-400 border-dotted-customize"
-      : progress === "succeed"
-        ? "border border-gray-100"
-        : "",
-    isDragging ? "bg-blue-50 text-[#61A9F9] border-dotted-customize-blue" : "",
-    containerClassName
-  );
-
-  const inputElement = (
-    <>
-      <div
-        aria-label="filedropbox"
-        onClick={handleBrowseClick}
-        className={containerDropBoxClass}
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-      >
-        {currentIndex !== null && progress === "loading" ? (
-          <div className="w-full text-sm rounded-xs p-4 text-black relative border border-gray-100">
-            <div className="flex flex-row">
-              <LoadingSpinner iconSize={20} />
-              <span>{progressComponentLabel}</span>
-            </div>
-            <div className="h-[4px] left-0 bottom-0 absolute w-full bg-gray-300">
-              <div
-                className="h-[4px] left-0 bottom-0 absolute bg-blue-300 rounded-xs transition-all duration-200"
-                style={{ width: `${progressPercentage}%` }}
-              />
-            </div>
+  const inputElement: ReactElement = (
+    <DropArea
+      isDragging={isDragging}
+      progress={progress}
+      aria-label="filedropbox"
+      onClick={handleBrowseClick}
+      onDrop={handleDrop}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+    >
+      {progress === "loading" && currentIndex !== null ? (
+        <ProgressContainer>
+          <LoadingSpinner iconSize={20} />
+          <span>{progressLabel}</span>
+          <ProgressBarWrapper>
+            <ProgressBar width={progressPercentage} />
+          </ProgressBarWrapper>
+        </ProgressContainer>
+      ) : progress === "idle" ? (
+        <UploadContent>
+          <IconsRow>
+            {FILE_ICON.map(({ id, icon: Icon, size }) => (
+              <Icon key={id} size={size} />
+            ))}
+          </IconsRow>
+          <PlaceholderText isDragging={isDragging}>
+            {placeholder}
+          </PlaceholderText>
+          <div>
+            <LinkText>Select some files</LinkText> from your computer
           </div>
-        ) : progress === "idle" ? (
-          <div className="text-sm w-full flex flex-col gap-2 items-center p-6">
-            <div className="flex flex-row items-end">
-              {FILE_ICON.map((data, index) => (
-                <data.icon size={data.size} key={index} />
-              ))}
-            </div>
-            <span
-              className={cn(
-                "font-semibold text-xl",
-                isDragging ? "text-blue-500" : "text-black"
-              )}
-            >
-              {placeholder}
-            </span>
-            <div>
-              <span className="text-blue-500 underline">Select some files</span>
-              &nbsp;from your computer
-            </div>
-          </div>
-        ) : null}
+        </UploadContent>
+      ) : progress === "succeed" ? (
+        <div>{progressLabel}</div>
+      ) : null}
 
-        {progress === "succeed" && (
-          <div className="text-xs">{progressComponentLabel}</div>
-        )}
-
-        {progress === "idle" && (
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept={accept}
-            onChange={handleFileChange}
-            multiple
-            hidden
-          />
-        )}
-      </div>
-      {errorMessages.length > 0 && (
-        <ul className="list-disc text-sm text-gray-600 ml-10">
-          {errorMessages.map((data, index) => (
-            <li key={index}>{data}</li>
-          ))}
-        </ul>
+      {progress === "idle" && (
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept={accept}
+          onChange={handleFileChange}
+          multiple
+          hidden
+        />
       )}
-    </>
+    </DropArea>
   );
 
   return (
-    <div className={cn(`flex w-full flex-col gap-2 text-xs`)}>
-      {label && <label>{label}</label>}
-      <div className="flex flex-col gap-1 text-xs">{inputElement}</div>
-    </div>
+    <InputWrapper $containerStyle={containerStyle}>
+      {label && <Label>{label}</Label>}
+      {inputElement}
+
+      {errorMessages.length > 0 && (
+        <ErrorList>
+          {errorMessages.map((msg, idx) => (
+            <li key={idx}>{msg}</li>
+          ))}
+        </ErrorList>
+      )}
+    </InputWrapper>
   );
 }
+
+const InputWrapper = styled.div<{
+  $containerStyle?: CSSProp;
+}>`
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+
+  ${({ $containerStyle }) => $containerStyle}
+`;
+
+const Label = styled.label`
+  font-size: 0.75rem;
+`;
+
+const DropArea = styled.div<{
+  isDragging: boolean;
+  progress: ProgressProps;
+}>`
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: center;
+  position: relative;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  border-radius: 4px;
+  color: #6b7280;
+
+  ${({ progress }) =>
+    progress === "idle" &&
+    css`
+      border: 1px dotted transparent;
+      background-image:
+        repeating-linear-gradient(
+          to right,
+          #9ca3af 0,
+          #9ca3af 8px,
+          transparent 8px,
+          transparent 12px
+        ),
+        repeating-linear-gradient(
+          to bottom,
+          #9ca3af 0,
+          #9ca3af 8px,
+          transparent 8px,
+          transparent 12px
+        ),
+        repeating-linear-gradient(
+          to left,
+          #9ca3af 0,
+          #9ca3af 8px,
+          transparent 8px,
+          transparent 12px
+        ),
+        repeating-linear-gradient(
+          to top,
+          #9ca3af 0,
+          #9ca3af 8px,
+          transparent 8px,
+          transparent 12px
+        );
+      background-size:
+        100% 1px,
+        1px 100%,
+        100% 1px,
+        1px 100%;
+      background-position:
+        top left,
+        top right,
+        bottom right,
+        bottom left;
+      background-repeat: no-repeat;
+    `}
+
+  ${({ isDragging }) =>
+    isDragging &&
+    css`
+      background-color: #eff6ff;
+      color: #61a9f9;
+      background-image:
+        repeating-linear-gradient(
+          to right,
+          #60a5fa 0,
+          #60a5fa 8px,
+          transparent 8px,
+          transparent 12px
+        ),
+        repeating-linear-gradient(
+          to bottom,
+          #60a5fa 0,
+          #60a5fa 8px,
+          transparent 8px,
+          transparent 12px
+        ),
+        repeating-linear-gradient(
+          to left,
+          #60a5fa 0,
+          #60a5fa 8px,
+          transparent 8px,
+          transparent 12px
+        ),
+        repeating-linear-gradient(
+          to top,
+          #60a5fa 0,
+          #60a5fa 8px,
+          transparent 8px,
+          transparent 12px
+        );
+      background-size:
+        100% 1px,
+        1px 100%,
+        100% 1px,
+        1px 100%;
+      background-position:
+        top left,
+        top right,
+        bottom right,
+        bottom left;
+      background-repeat: no-repeat;
+    `}
+
+  ${({ progress }) =>
+    progress === "succeed" &&
+    css`
+      border: 1px solid #f3f4f6;
+    `}
+`;
+
+const UploadContent = styled.div`
+  font-size: 0.875rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 1.5rem;
+`;
+
+const IconsRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 0.5rem;
+`;
+
+const PlaceholderText = styled.span<{ isDragging: boolean }>`
+  font-weight: 600;
+  font-size: 1.25rem;
+  color: ${(props) => (props.isDragging ? "#3b82f6" : "#000")};
+`;
+
+const LinkText = styled.span`
+  color: #3b82f6;
+  text-decoration: underline;
+`;
+
+const ProgressContainer = styled.div`
+  width: 100%;
+  font-size: 0.875rem;
+  color: black;
+  padding: 1rem;
+  border-radius: 2px;
+  position: relative;
+  border: 1px solid #f3f4f6;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+const ProgressBarWrapper = styled.div`
+  height: 4px;
+  width: 100%;
+  background-color: #d1d5db;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+`;
+
+const ProgressBar = styled.div<{ width: number }>`
+  height: 4px;
+  background-color: #93c5fd;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  border-radius: 2px;
+  transition: all 0.2s ease;
+  width: ${(props) => props.width}%;
+`;
+
+const ErrorList = styled.ul`
+  list-style-type: disc;
+  font-size: 0.875rem;
+  color: #4b5563;
+  margin-left: 2.5rem;
+`;
 
 export { FileDropBox };
