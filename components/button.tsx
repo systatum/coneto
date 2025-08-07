@@ -90,8 +90,9 @@ function Button({
         type="button"
         $variant={variant}
         $size={size}
+        disabled={disabled}
         $disabled={disabled}
-        tipMenu={tipMenu}
+        $tipMenu={tipMenu}
         onMouseEnter={() => setHovered("dropdown")}
         onMouseLeave={() => setHovered("original")}
         $style={buttonStyle}
@@ -128,7 +129,7 @@ function Button({
             }}
             $variant={variant}
             $size={size}
-            tipMenu={tipMenu}
+            $tipMenu={tipMenu}
             $disabled={disabled}
             onMouseEnter={() => setHovered("dropdown")}
             onMouseLeave={() => setHovered("original")}
@@ -174,8 +175,7 @@ function Button({
 }
 
 const BaseButton = styled.button<{
-  tipMenu?: boolean;
-  disabled?: boolean;
+  $tipMenu?: boolean;
   $style?: CSSProp;
   $disabled?: boolean;
   $variant: NonNullable<ButtonVariants["variant"]>;
@@ -300,8 +300,8 @@ const BaseButton = styled.button<{
       ${$style}
     `}
 
-  ${({ tipMenu }) =>
-    tipMenu &&
+  ${({ $tipMenu }) =>
+    $tipMenu &&
     css`
       border-top-right-radius: 0;
       border-bottom-right-radius: 0;
@@ -314,8 +314,8 @@ const BaseButtonToggle = styled(BaseButton)<{
   min-width: 40px;
   max-width: 40px;
   padding: 0;
-  border-top-left-radius: ${({ tipMenu }) => (tipMenu ? 0 : "2px")};
-  border-bottom-left-radius: ${({ tipMenu }) => (tipMenu ? 0 : "2px")};
+  border-top-left-radius: ${({ $tipMenu }) => ($tipMenu ? 0 : "2px")};
+  border-bottom-left-radius: ${({ $tipMenu }) => ($tipMenu ? 0 : "2px")};
   ${({ $style }) => $style}
 `;
 
