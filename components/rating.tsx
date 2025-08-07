@@ -1,5 +1,5 @@
-import { cn } from "./../lib/utils";
 import { MouseEvent, useState } from "react";
+import styled, { css } from "styled-components";
 
 export interface RatingProps {
   rating?: number;
@@ -33,9 +33,7 @@ function Rating({
     const isHalf = x < width / 2;
     const newRating = isHalf ? index + 0.5 : index + 1;
     setRatingLocal(newRating);
-    if (onChange) {
-      onChange(newRating);
-    }
+    onChange?.(newRating);
   };
 
   const getStarType = (index: number) => {
@@ -106,31 +104,67 @@ function Rating({
   };
 
   return (
-    <div className="flex flex-row gap-[2px] items-center">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <span
-          role="img"
-          key={i}
-          onMouseMove={(e) => editable && handleMouseMove(e, i)}
-          onMouseLeave={() => editable && setHoverRating(0)}
-          onClick={(e) => editable && handleClick(e, i)}
-          className={cn(editable && "cursor-pointer")}
-        >
-          {renderStar(getStarType(i))}
-        </span>
-      ))}
+    <RatingWrapper>
+      <StarsWrapper>
+        {Array.from({ length: 5 }).map((_, i) => (
+          <StarSpan
+            role="img"
+            key={i}
+            onMouseMove={(e) => editable && handleMouseMove(e, i)}
+            onMouseLeave={() => editable && setHoverRating(0)}
+            onClick={(e) => editable && handleClick(e, i)}
+            $editable={editable}
+          >
+            {renderStar(getStarType(i))}
+          </StarSpan>
+        ))}
+      </StarsWrapper>
+
       {withLabel && (
-        <span
-          className={cn(
-            "ml-2 font-medium",
-            size === "sm" ? "text-sm" : size === "lg" ? "text-xl" : "text-base"
-          )}
-        >
-          {ratingLocal.toFixed(1)} / 5
-        </span>
+        <RatingLabel $size={size}>{ratingLocal.toFixed(1)} / 5</RatingLabel>
       )}
-    </div>
+    </RatingWrapper>
   );
 }
+
+const RatingWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const StarsWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+`;
+
+const StarSpan = styled.span<{ $editable?: boolean }>`
+  ${({ $editable }) =>
+    $editable &&
+    css`
+      cursor: pointer;
+    `}
+`;
+
+const RatingLabel = styled.span<{ $size: "sm" | "md" | "lg" }>`
+  font-weight: 500;
+  ${({ $size }) => {
+    switch ($size) {
+      case "sm":
+        return css`
+          font-size: 0.875rem;
+        `;
+      case "lg":
+        return css`
+          font-size: 1.25rem;
+        `;
+      default:
+        return css`
+          font-size: 1rem;
+        `;
+    }
+  }}
+`;
 
 export { Rating };
