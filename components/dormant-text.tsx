@@ -17,10 +17,10 @@ import {
   useRef,
   useState,
 } from "react";
-import { cn } from "../lib/utils";
+import styled, { CSSProp } from "styled-components";
 
 export interface DormantTextProps {
-  className?: string;
+  style?: CSSProp;
   onActionClick?: () => void;
   icon?: RemixiconComponentType;
   dormantedFontSize?: number;
@@ -40,7 +40,7 @@ export interface DormantTextRef {
 
 function DormantText({
   onActionClick,
-  className,
+  style,
   dormantedFontSize = 17,
   icon: Icon = RiCheckLine,
   children,
@@ -144,97 +144,152 @@ function DormantText({
   });
 
   return dormantedLocal ? (
-    <label
+    <DormantLabel
       ref={measureLabelSize}
       onClick={() => {
         setDormantedLocal(false);
-        if (onActive) {
-          onActive();
-        }
-        setTimeout(() => {
-          inputRef.current.focus();
-        }, 0);
+        if (onActive) onActive();
+        setTimeout(() => inputRef.current?.focus(), 0);
       }}
-      className={cn(
-        "group p-2 rounded-xs cursor-pointer duration-100 transform transition-all flex flex-row justify-between items-center w-fit relative gap-1 hover:bg-[#e9e9e9] border hover:border-[#e9e9e9] border-transparent",
-        className
-      )}
-      style={{
-        minWidth: fullWidth && "100%",
-        fontSize: dormantedFontSize,
-      }}
+      $fullWidth={fullWidth}
+      $fontSize={dormantedFontSize}
+      $style={style}
     >
       {content}
-      <RiPencilFill
-        className={
-          "duration-100 transform transition-all opacity-0 group-hover:opacity-100"
-        }
-        size={dormantPencilSize}
-      />
-    </label>
+      <PencilIcon className="pencil-icon" size={dormantPencilSize} />
+    </DormantLabel>
   ) : (
-    <div
-      className={cn(
-        "relative w-full flex gap-[2px] flex-row ring-0 h-full justify-start items-center",
-        className
-      )}
-      style={{
-        minHeight: labelHeight,
-      }}
-    >
-      <div
-        style={{
-          maxWidth: labelWidth,
-        }}
-        ref={measureLabelSize}
-        className="w-full h-full"
-      >
+    <DormantWrapper $style={style} $minHeight={labelHeight}>
+      <LabelWrapper ref={measureLabelSize} $maxWidth={labelWidth}>
         {dormantChildren}
-      </div>
-      <button
-        className={cn(
-          "text-muted-foreground flex min-w-[30px] p-[2px] relative rounded-xs transition-all duration-200 cursor-pointer hover:bg-gray-300"
-        )}
-        style={{
-          minHeight: 32.5 | inputHeight,
-        }}
+      </LabelWrapper>
+
+      <ActionButton
+        $minHeight={32.5 | inputHeight}
         onClick={(e) => {
           e.preventDefault();
-          if (onActionClick) {
-            onActionClick();
-          }
+          onActionClick?.();
           setDormantedLocal(true);
         }}
       >
-        <Icon
-          className="top-1/2 -translate-y-1/2 left-[6px]  absolute"
-          size={18}
-        />
-      </button>
+        <IconWrapper>
+          <Icon size={18} />
+        </IconWrapper>
+      </ActionButton>
+
       {cancelable && (
-        <button
-          className={cn(
-            "text-muted-foreground flex min-w-[30px] p-[2px] relative rounded-xs transition-all duration-200 cursor-pointer hover:bg-gray-300"
-          )}
-          style={{
-            minHeight: 32.5 | inputHeight,
-          }}
+        <ActionButton
+          $minHeight={32.5 | inputHeight}
           onClick={(e) => {
             e.preventDefault();
             setDormantedLocal(true);
-            if (onCancelRequested) {
-              onCancelRequested();
-            }
+            onCancelRequested?.();
           }}
         >
-          <RiCloseLine
-            className="top-1/2 -translate-y-1/2 left-[6px]  absolute"
-            size={18}
-          />
-        </button>
+          <IconWrapper>
+            <RiCloseLine size={18} />
+          </IconWrapper>
+        </ActionButton>
       )}
-    </div>
+    </DormantWrapper>
   );
 }
+
+const DormantLabel = styled.label<{
+  $fullWidth?: boolean;
+  $fontSize?: string | number;
+  $style?: CSSProp;
+}>`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: fit-content;
+  position: relative;
+  gap: 0.25rem;
+
+  padding: 0.5rem;
+  border-radius: 2px;
+  cursor: pointer;
+
+  border: 1px solid transparent;
+  transition: all 0.1s ease;
+  transform: translateZ(0);
+
+  ${({ $fullWidth }) => $fullWidth && `min-width: 100%;`}
+  ${({ $fontSize }) =>
+    $fontSize &&
+    `font-size: ${typeof $fontSize === "number" ? `${$fontSize}px` : $fontSize};`}
+
+  &:hover {
+    background-color: #e9e9e9;
+    border-color: #e9e9e9;
+
+    .pencil-icon {
+      opacity: 1;
+    }
+  }
+  ${({ $style }) => $style}
+`;
+
+const PencilIcon = styled(RiPencilFill)`
+  opacity: 0;
+  transition: all 0.1s ease;
+  transform: translateZ(0);
+`;
+
+const DormantWrapper = styled.div<{
+  $style?: CSSProp;
+  $minHeight?: number | string;
+}>`
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 2px;
+  height: 100%;
+  min-height: ${({ $minHeight }) =>
+    typeof $minHeight === "number" ? `${$minHeight}px` : $minHeight};
+  ${({ $style }) => $style}
+`;
+
+const LabelWrapper = styled.div<{ $maxWidth?: number | string }>`
+  width: 100%;
+  height: 100%;
+  max-width: ${({ $maxWidth }) =>
+    typeof $maxWidth === "number" ? `${$maxWidth}px` : $maxWidth};
+`;
+
+const ActionButton = styled.button<{
+  $style?: CSSProp;
+  $minHeight?: number | string;
+}>`
+  display: flex;
+  min-width: 30px;
+  padding: 2px;
+  position: relative;
+  border-radius: 2px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  color: var(--muted-foreground, #666);
+
+  min-height: ${({ $minHeight }) =>
+    typeof $minHeight === "number" ? `${$minHeight}px` : $minHeight};
+
+  &:hover {
+    background-color: #d1d5db;
+  }
+
+  ${({ $style }) => $style}
+`;
+
+const IconWrapper = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 6px;
+  transform: translateY(-50%);
+`;
 
 export { DormantText };
