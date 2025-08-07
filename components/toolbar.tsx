@@ -108,76 +108,6 @@ const VARIANT_ACTIVE = {
   },
 };
 
-const ToolbarWrapper = styled.div<{ $style?: CSSProp }>`
-  display: flex;
-  width: 100%;
-  flex-direction: row;
-  ${(props) => props.$style}
-`;
-
-const ToolbarContainer = styled.div<{ $style?: CSSProp }>`
-  display: flex;
-  flex-direction: column;
-  margin-right: 0.25rem;
-  position: relative;
-  ${(props) => props.$style}
-`;
-
-const MenuWrapper = styled.div<{ $style?: CSSProp }>`
-  display: flex;
-  align-items: center;
-  width: 100%;
-  border: 1px solid transparent;
-  position: relative;
-  user-select: none;
-  overflow: hidden;
-  cursor: pointer;
-  border-radius: 0.3rem;
-  ${(props) => props.$style}
-`;
-
-const TriggerButton = styled.button<{ $style?: CSSProp }>`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 0.5rem;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  padding-left: 0.8rem;
-  padding-right: 0.8rem;
-  animation-duration: 200ms;
-  cursor: pointer;
-  ${(props) => props.$style}
-`;
-
-const ToggleButton = styled.button<{ $style?: CSSProp }>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem;
-  height: 100%;
-  max-width: 36px;
-  position: relative;
-  cursor: pointer;
-
-  ${(props) => props.$style}
-`;
-
-const Divider = styled.span<{ $style?: CSSProp }>`
-  position: absolute;
-  right: 35px;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 100%;
-  width: 1px;
-  border-width: 0.5px;
-  color: #bdbdbd;
-  z-index: 10;
-  transition: height 150ms ease-in-out;
-
-  ${(props) => props.$style}
-`;
-
 function Toolbar({ children, style }: ToolbarProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const toolbarRef = useRef<HTMLDivElement>(null);
@@ -274,7 +204,11 @@ function ToolbarMenu({
   const menuBackgroundActive = VARIANT_ACTIVE.background[variant];
 
   return (
-    <ToolbarContainer ref={containerRef} $style={containerStyle}>
+    <ToolbarContainer
+      aria-label="toolbar-menu"
+      ref={containerRef}
+      $style={containerStyle}
+    >
       <MenuWrapper
         ref={refs.setReference}
         $style={css`
@@ -286,7 +220,7 @@ function ToolbarMenu({
         {(Icon || caption) && (
           <>
             <TriggerButton
-              aria-label={`toolbar-menu-button-${caption}`}
+              aria-label={`toolbar-menu-button`}
               onMouseEnter={() => setHovered("main")}
               onMouseLeave={() => setHovered("original")}
               onClick={handleMainClick}
@@ -355,6 +289,76 @@ function ToolbarMenu({
     </ToolbarContainer>
   );
 }
+
+const ToolbarWrapper = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  ${(props) => props.$style}
+`;
+
+const ToolbarContainer = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  flex-direction: column;
+  margin-right: 0.25rem;
+  position: relative;
+  ${(props) => props.$style}
+`;
+
+const MenuWrapper = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border: 1px solid transparent;
+  position: relative;
+  user-select: none;
+  overflow: hidden;
+  cursor: pointer;
+  border-radius: 0.3rem;
+  ${(props) => props.$style}
+`;
+
+const TriggerButton = styled.button<{ $style?: CSSProp }>`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 0.8rem;
+  padding-right: 0.8rem;
+  animation-duration: 200ms;
+  cursor: pointer;
+  ${(props) => props.$style}
+`;
+
+const ToggleButton = styled.button<{ $style?: CSSProp }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  height: 100%;
+  max-width: 36px;
+  position: relative;
+  cursor: pointer;
+
+  ${(props) => props.$style}
+`;
+
+const Divider = styled.span<{ $style?: CSSProp }>`
+  position: absolute;
+  right: 35px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 100%;
+  width: 1px;
+  border-width: 0.5px;
+  color: #bdbdbd;
+  z-index: 10;
+  transition: height 150ms ease-in-out;
+
+  ${(props) => props.$style}
+`;
 
 const Caption = styled.span`
   font-size: 0.875rem;
