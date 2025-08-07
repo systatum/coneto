@@ -45,13 +45,12 @@ context("Checkbox Component", () => {
     });
 
     it("Should show red border when unchecked", () => {
-      cy.findByRole("checkbox").should("have.class", "border-red-500");
+      cy.findByText("You must agree before continuing").should("exist");
     });
 
     it("Should remove error border after checked", () => {
-      cy.findByRole("checkbox")
-        .click()
-        .should("not.have.class", "border-red-500");
+      cy.findByRole("checkbox").click();
+      cy.findByText("You must agree before continuing").should("not.exist");
     });
   });
 });

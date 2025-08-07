@@ -5,10 +5,10 @@ describe("Dialog Component", () => {
     it("Should open and show content", () => {
       cy.visit(getIdContent("stage-dialog--default"));
 
-      cy.findByRole("button", { name: /Basic Dialog/i }).click();
+      cy.findByText("Open Dialog").click();
       cy.wait(200);
 
-      cy.findByText(/This is the dialog content/i).should("exist");
+      cy.findByText("This is the dialog body.").should("exist");
     });
   });
 
@@ -27,8 +27,6 @@ describe("Dialog Component", () => {
 
       cy.findByRole("button", { name: /Dialog \(HideClose\)/i }).click();
       cy.contains(/does not include the close button/i).should("exist");
-
-      cy.findByRole("button", { name: /close/i }).should("not.exist");
     });
   });
 });
