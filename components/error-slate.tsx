@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 import { CSSProperties, ReactNode } from "react";
 
 export interface ErrorSlateProps {
@@ -26,6 +26,36 @@ export interface ErrorSlateProps {
   cubeFaceStyle?: CSSProperties;
 }
 
+const rotateUp = keyframes`
+  from {
+    transform: rotateX(-20deg) rotateY(-20deg);
+  }
+  to {
+    transform: rotateX(340deg) rotateY(-20deg);
+  }
+`;
+
+const transformStyles = {
+  front: css`
+    transform: translateZ(50px);
+  `,
+  back: css`
+    transform: rotateY(180deg) translateZ(50px);
+  `,
+  right: css`
+    transform: rotateY(90deg) translateZ(50px);
+  `,
+  left: css`
+    transform: rotateY(-90deg) translateZ(50px);
+  `,
+  top: css`
+    transform: rotateX(90deg) translateZ(50px);
+  `,
+  bottom: css`
+    transform: rotateX(-90deg) translateZ(50px);
+  `,
+};
+
 function ErrorSlate({ code, children, title, cubeFaceStyle }: ErrorSlateProps) {
   const defaultFaceStyle: CSSProperties = {
     background: "#dd0b0b",
@@ -36,47 +66,33 @@ function ErrorSlate({ code, children, title, cubeFaceStyle }: ErrorSlateProps) {
   };
 
   const FACE_DATA = [
-    { transformClass: "front", content: code[0] },
-    {
-      transformClass: "back",
-      content: code[0],
-    },
-    {
-      transformClass: "right",
-      content: code[1],
-    },
-    {
-      transformClass: "left",
-      content: code[1],
-    },
-    {
-      transformClass: "top",
-      content: code[2],
-    },
-    {
-      transformClass: "bottom",
-      content: code[2],
-    },
-  ];
+    { face: "front", content: code[0] },
+    { face: "back", content: code[0] },
+    { face: "right", content: code[1] },
+    { face: "left", content: code[1] },
+    { face: "top", content: code[2] },
+    { face: "bottom", content: code[2] },
+  ] as const;
 
   return (
     <ErrorSlateWrapper>
       <ErrorSlatePerspective>
-        <div className="cube">
-          {FACE_DATA.map((face, i) => (
-            <div
+        <Cube>
+          {FACE_DATA.map(({ face, content }, i) => (
+            <Face
+              aria-label="face-error-slate"
               key={i}
+              $transform={face}
               style={{ ...defaultFaceStyle, ...cubeFaceStyle }}
-              className={`face ${face.transformClass}`}
             >
-              {face.content}
-            </div>
+              {content}
+            </Face>
           ))}
-        </div>
+        </Cube>
       </ErrorSlatePerspective>
 
       <ErrorSlateTitle>{title}</ErrorSlateTitle>
-      <>{children}</>
+      {children}
     </ErrorSlateWrapper>
   );
 }
@@ -94,6 +110,27 @@ const ErrorSlatePerspective = styled.div`
   position: absolute;
   top: 1rem;
   perspective: 1000px;
+`;
+
+const Cube = styled.div`
+  position: relative;
+  width: 100px;
+  height: 100px;
+  transform-style: preserve-3d;
+  animation: ${rotateUp} 6s infinite linear;
+  transform: rotateY(-20deg) rotateX(-20deg);
+`;
+
+const Face = styled.div<{ $transform: keyof typeof transformStyles }>`
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  font-size: 2.5rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  ${({ $transform }) => transformStyles[$transform]}
 `;
 
 const ErrorSlateTitle = styled.span`
