@@ -112,7 +112,7 @@ const GridCardWrapper = styled.div.attrs<{
   height: 100%;
   padding: 4px;
   gap: 8px;
-  font-size: 0.875rem;
+  font-size: 12px;
   border-radius: 4px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   ${({ selectable }) =>
