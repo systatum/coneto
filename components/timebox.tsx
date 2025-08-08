@@ -229,26 +229,10 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
         $disabled={disabled}
       >
         {label && <label htmlFor={inputId}>{label}</label>}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "4px",
-            fontSize: "12px",
-          }}
-        >
+        <InputContent>
           {inputElement}
-          {showError && (
-            <span
-              style={{
-                color: "#dc2626",
-                fontSize: "0.75rem",
-              }}
-            >
-              {errorMessage}
-            </span>
-          )}
-        </div>
+          {showError && <ErrorText>{errorMessage}</ErrorText>}
+        </InputContent>
       </InputWrapper>
     );
   }
@@ -278,6 +262,18 @@ const InputGroup = styled.div<{ $focused: boolean; $error: boolean }>`
 
   border-color: ${({ $error, $focused }) =>
     $error ? "#dc2626" : $focused ? "#61A9F9" : "#d1d5db"};
+`;
+
+const InputContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+`;
+
+const ErrorText = styled.span`
+  color: #dc2626;
+  font-size: 0.75rem;
 `;
 
 const Input = styled.input<{ $inputStyle?: CSSProp }>`
