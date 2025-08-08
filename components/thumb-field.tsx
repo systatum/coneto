@@ -116,17 +116,10 @@ function ThumbField({
   return (
     <InputWrapper $containerStyle={containerStyle} $disabled={disabled}>
       {label && <label htmlFor={id}>{label}</label>}
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "4px",
-          fontSize: "12px",
-        }}
-      >
+      <InputContent>
         {inputElement}
         {showError && <ErrorText>{errorMessage}</ErrorText>}
-      </div>
+      </InputContent>
     </InputWrapper>
   );
 }
@@ -158,9 +151,16 @@ const InputGroup = styled.div<{ $style?: CSSProp }>`
   ${({ $style }) => $style};
 `;
 
+const InputContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+`;
+
 const ErrorText = styled.span`
-  color: "#dc2626";
-  font-size: "0.75rem";
+  color: #dc2626;
+  font-size: 0.75rem;
 `;
 
 const TriggerWrapper = styled.div<{
@@ -194,7 +194,7 @@ const ErrorIconWrapper = styled.div`
   background-color: #dc2626;
   color: white;
   border-radius: 50%;
-  padding: 2px;
+  padding: 1px;
   display: flex;
   align-items: center;
   justify-content: center;
