@@ -1,6 +1,6 @@
 import { RemixiconComponentType, RiCloseLine } from "@remixicon/react";
 import { useAnimation, motion } from "framer-motion";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import styled, { css, CSSProp } from "styled-components";
 
 export interface DrawerTabProps {
@@ -36,6 +36,16 @@ function DrawerTab({
   };
 
   const selectedTab = tabs.filter((tab) => tab.id === selected);
+
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  if (!hasMounted) {
+    return null;
+  }
 
   return (
     <DrawerTabContainer
@@ -230,6 +240,7 @@ const CloseButton = styled.div`
   border-radius: 0.25rem;
   color: #4b5563;
   display: flex;
+  position: relative;
   justify-content: center;
   align-items: center;
   cursor: pointer;
