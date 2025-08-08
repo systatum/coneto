@@ -209,9 +209,6 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
       });
     };
 
-    const ArrowUp = IconStyled(RiArrowUpSLine);
-    const ArrowDown = IconStyled(RiArrowDownSLine);
-
     return (
       <div
         ref={ref}
@@ -420,6 +417,9 @@ const IconStyled = (icon: RemixiconComponentType) => styled(icon)`
   height: 1rem;
   color: #6b7280;
 `;
+
+const ArrowUp = IconStyled(RiArrowUpSLine);
+const ArrowDown = IconStyled(RiArrowDownSLine);
 
 const PhoneInput = styled.input<{ $disabled?: boolean }>`
   width: 100%;
