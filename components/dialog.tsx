@@ -130,7 +130,7 @@ function DialogContent({
     if (open) {
       setIsVisible(true);
     } else {
-      const timeout = setTimeout(() => setIsVisible(false), 200); // 200ms = anim duration
+      const timeout = setTimeout(() => setIsVisible(false), 200);
       return () => clearTimeout(timeout);
     }
   }, [open]);
