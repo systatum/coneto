@@ -13,7 +13,7 @@ import {
 import TurndownService from "./../lib/turndown/turndown";
 import { marked } from "./../lib/marked/marked";
 import { TipMenu } from "./tip-menu";
-import styled, { css, CSSProp } from "styled-components";
+import styled, { CSSProp } from "styled-components";
 
 interface RichEditorProps {
   value?: string;
@@ -385,7 +385,6 @@ function RichEditor({
         ref={editorRef}
         role="textbox"
         contentEditable
-        className="rich-editor"
         $editorStyles={editorStyles}
         onInput={() => {
           const html = editorRef.current?.innerHTML || "";
@@ -466,12 +465,43 @@ const EditorArea = styled.div<{
   min-height: 200px;
   padding: 8px;
   outline: none;
+  background-color: white;
 
-  ${({ $editorStyles }) =>
-    $editorStyles &&
-    css`
-      ${$editorStyles}
-    `}
+  ol {
+    list-style-type: decimal !important;
+    list-style-position: outside !important;
+    padding-left: 2.6rem !important;
+    margin: 0 !important;
+  }
+
+  ul {
+    list-style-type: disc !important;
+    list-style-position: outside !important;
+    padding-left: 2.6rem !important;
+    margin: 0 !important;
+  }
+
+  li {
+    padding-left: 0 !important;
+    display: list-item !important;
+  }
+
+  h1 {
+    font-size: 2em;
+    margin: 0.5em 0;
+  }
+
+  h2 {
+    font-size: 1.5em;
+    margin: 0.5em 0;
+  }
+
+  h3 {
+    font-size: 1.25em;
+    margin: 0.5em 0;
+  }
+
+  ${({ $editorStyles }) => $editorStyles};
 `;
 
 const ToolbarButton = styled.button`
