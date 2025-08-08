@@ -701,7 +701,7 @@ const ChipItemWrapper = styled.div<{
   ${({ $style }) => $style}
 `;
 
-export const CloseButton = styled(RiCloseLine)<{
+const CloseButton = styled(RiCloseLine)<{
   $hovered: boolean;
 }>`
   position: absolute;

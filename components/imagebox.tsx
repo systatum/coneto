@@ -1,5 +1,4 @@
 import { ChangeEvent, DragEvent, ReactElement, useRef, useState } from "react";
-import { cn } from "../lib/utils";
 import { RiAddLine, RiImageLine } from "@remixicon/react";
 import styled, { CSSProp } from "styled-components";
 
