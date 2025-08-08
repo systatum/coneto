@@ -194,7 +194,7 @@ const DialogOverlay = styled.div<{
   $paperDialogStyle?: CSSProp;
 }>`
   position: fixed;
-  z-index: 40;
+  z-index: 9999;
   ${({ $dialogState }) =>
     $dialogState === "restored" &&
     css`
@@ -268,6 +268,7 @@ const MinimizeButtonWrapper = styled.div<{
   $tabStyle?: CSSProp;
 }>`
   position: absolute;
+  z-index: 9999;
   top: 44px;
   z-index: 50;
   display: flex;
