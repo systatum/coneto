@@ -3,7 +3,7 @@ import { getIdContent } from "test/support/commands";
 context("FileInputBox Component", () => {
   describe("Default", () => {
     beforeEach(() => {
-      cy.visit(getIdContent("input-elements-fileinputbox--default")); // Adjust if your story ID is different
+      cy.visit(getIdContent("input-elements-fileinputbox--default"));
     });
 
     it("Should accept and display a single uploaded file", () => {
