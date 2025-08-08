@@ -118,7 +118,13 @@ export const Default: Story = {
     ];
 
     return (
-      <div className="flex flex-col gap-1">
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "4px",
+        }}
+      >
         <Button onClick={() => dialogRef.current?.openDialog()}>Open</Button>
         <Button onClick={() => dialogRef.current?.closeDialog()}>Close</Button>
         <PaperDialog ref={dialogRef}>

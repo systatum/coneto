@@ -2,6 +2,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { Moneybox } from "./moneybox";
 import { useArgs } from "@storybook/preview-api";
 import { ChangeEvent } from "react";
+import { css } from "styled-components";
 
 const meta: Meta<typeof Moneybox> = {
   title: "Input Elements/Moneybox",
@@ -28,7 +29,9 @@ export const Dollar: Story = {
     return (
       <Moneybox
         {...args}
-        className="max-w-[300px]"
+        style={css`
+          max-width: 300px;
+        `}
         value={currentArgs.value}
         onChange={onChangeValue}
         separator="dot"
@@ -53,7 +56,9 @@ export const Euro: Story = {
     return (
       <Moneybox
         {...args}
-        className="max-w-[300px]"
+        style={css`
+          max-width: 300px;
+        `}
         value={currentArgs.value}
         onChange={onChangeValue}
       />
@@ -77,7 +82,9 @@ export const Yen: Story = {
     return (
       <Moneybox
         {...args}
-        className="max-w-[300px]"
+        style={css`
+          max-width: 300px;
+        `}
         value={currentArgs.value}
         onChange={onChangeValue}
       />
@@ -101,7 +108,9 @@ export const Pound: Story = {
     return (
       <Moneybox
         {...args}
-        className="max-w-[300px]"
+        style={css`
+          max-width: 300px;
+        `}
         value={currentArgs.value}
         onChange={onChangeValue}
       />
@@ -125,7 +134,9 @@ export const Rupiah: Story = {
     return (
       <Moneybox
         {...args}
-        className="max-w-[300px]"
+        style={css`
+          max-width: 300px;
+        `}
         value={currentArgs.value}
         onChange={onChangeValue}
       />
@@ -150,7 +161,9 @@ export const WithLabel: Story = {
     return (
       <Moneybox
         {...args}
-        className="max-w-[300px]"
+        style={css`
+          max-width: 300px;
+        `}
         value={currentArgs.value}
         onChange={onChangeValue}
       />
@@ -186,7 +199,13 @@ export const ErrorState: Story = {
     };
 
     return (
-      <Moneybox {...args} className="max-w-[300px]" onChange={onChangeValue} />
+      <Moneybox
+        {...args}
+        style={css`
+          max-width: 300px;
+        `}
+        onChange={onChangeValue}
+      />
     );
   },
 };

@@ -15,6 +15,7 @@ import {
 import { BadgeProps } from "./badge";
 import { ColorPickProps } from "./colorbox";
 import { CountryCodeProps } from "./phonebox";
+import { css } from "styled-components";
 
 const meta: Meta<typeof StatefulForm> = {
   title: "Input Elements/StatefulForm",
@@ -123,7 +124,19 @@ export const Default: Story = {
     ];
 
     return (
-      <div className="mx-auto flex w-full max-w-[400px] flex-col gap-2 py-4 md:mx-0 md:items-start">
+      <div
+        style={{
+          marginLeft: "auto",
+          marginRight: "auto",
+          display: "flex",
+          width: "100%",
+          maxWidth: "400px",
+          flexDirection: "column",
+          gap: "0.5rem",
+          paddingTop: "1rem",
+          paddingBottom: "1rem",
+        }}
+      >
         <StatefulForm
           fields={EMPLOYEE_FIELDS}
           formValues={value}
@@ -132,10 +145,20 @@ export const Default: Story = {
           mode="onChange"
         />
 
-        <div className="flex w-full flex-row justify-end">
+        <div
+          style={{
+            display: "flex",
+            width: "100%",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+          }}
+        >
           <Button
             disabled={!isFormValid}
-            className="w-full cursor-pointer md:max-w-[180px]"
+            buttonStyle={{
+              width: "100%",
+              cursor: "pointer",
+            }}
             type="submit"
           >
             Save
@@ -521,9 +544,17 @@ export const AllCase: Story = {
         required: false,
         chipsProps: {
           options: BADGE_OPTIONS,
-          chipClassName: "w-full gap-2 border-transparent",
-          chipContainerClassName: "gap-1",
-          chipsDrawerClassName: "max-w-[250px]",
+          chipStyle: css`
+            width: 100%;
+            gap: 0.5rem;
+            border-color: transparent;
+          `,
+          chipContainerStyle: css`
+            gap: 4px;
+          `,
+          chipsContainerStyle: css`
+            max-width: 250px;
+          `,
           onOptionClicked: handleOptionClicked,
           selectedOptions: selectedChips,
           inputValue: value.chips,
@@ -534,7 +565,19 @@ export const AllCase: Story = {
     ];
 
     return (
-      <div className="mx-auto flex w-full max-w-[500px] flex-col gap-2 py-4 md:mx-0 md:items-start">
+      <div
+        style={{
+          marginLeft: "auto",
+          marginRight: "auto",
+          display: "flex",
+          width: "100%",
+          maxWidth: "400px",
+          flexDirection: "column",
+          gap: "0.5rem",
+          paddingTop: "1rem",
+          paddingBottom: "1rem",
+        }}
+      >
         <StatefulForm
           fields={FIELDS}
           formValues={value}

@@ -35,7 +35,11 @@ export const Default: Story = {
     ];
 
     return (
-      <div className="w-64">
+      <div
+        style={{
+          width: "256px",
+        }}
+      >
         <Combobox
           inputValue={value}
           options={FRUIT_OPTIONS}
@@ -78,7 +82,11 @@ export const Clearable: Story = {
     ];
 
     return (
-      <div className="w-64">
+      <div
+        style={{
+          width: "256px",
+        }}
+      >
         <Combobox
           clearable
           inputValue={value}
@@ -119,7 +127,11 @@ export const WithActions: Story = {
     ];
 
     return (
-      <div className="w-64">
+      <div
+        style={{
+          width: "256px",
+        }}
+      >
         <Combobox
           clearable
           actions={FRUIT_ACTIONS}
@@ -151,7 +163,11 @@ export const StrictValue: Story = {
     ];
 
     return (
-      <div className="w-64">
+      <div
+        style={{
+          width: "256px",
+        }}
+      >
         <Combobox
           clearable
           strict

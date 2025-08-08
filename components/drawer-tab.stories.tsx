@@ -28,15 +28,22 @@ export const Default: Story = {
         const { name, value } = e.target;
         setValue((prev) => ({ ...prev, [name]: value }));
       };
+
       return (
-        <div className="text-sm flex flex-col gap-2">
-          <h3 className="font-medium">Write Tab</h3>
+        <div
+          style={{
+            fontSize: "0.875rem",
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.5rem",
+          }}
+        >
+          <h3 style={{ fontWeight: 500 }}>Write Tab</h3>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
             malesuada, nisl a tincidunt scelerisque, velit sapien sollicitudin
             arcu, nec faucibus sem justo vitae sapien.
           </p>
-
           <Textbox
             rows={4}
             name="write"
@@ -49,8 +56,15 @@ export const Default: Story = {
 
     const ReviewTabContent = () => {
       return (
-        <div className="text-sm flex flex-col gap-2">
-          <h3 className="">Review Tab</h3>
+        <div
+          style={{
+            fontSize: "0.875rem",
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.5rem",
+          }}
+        >
+          <h3 style={{ fontWeight: 500 }}>Review Tab</h3>
           <p>
             This tab is meant to review the content that has been submitted. It
             includes multiple paragraphs to simulate a longer layout.
@@ -95,15 +109,22 @@ export const FixedRight: Story = {
         const { name, value } = e.target;
         setValue((prev) => ({ ...prev, [name]: value }));
       };
+
       return (
-        <div className="text-sm flex flex-col gap-2">
-          <h3 className="font-medium">Write Tab</h3>
+        <div
+          style={{
+            fontSize: "0.875rem",
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.5rem",
+          }}
+        >
+          <h3 style={{ fontWeight: 500 }}>Write Tab</h3>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
             malesuada, nisl a tincidunt scelerisque, velit sapien sollicitudin
             arcu, nec faucibus sem justo vitae sapien.
           </p>
-
           <Textbox
             rows={4}
             name="write"
@@ -116,8 +137,15 @@ export const FixedRight: Story = {
 
     const ReviewTabContent = () => {
       return (
-        <div className="text-sm flex flex-col gap-2">
-          <h3 className="">Review Tab</h3>
+        <div
+          style={{
+            fontSize: "0.875rem",
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.5rem",
+          }}
+        >
+          <h3 style={{ fontWeight: 500 }}>Review Tab</h3>
           <p>
             This tab is meant to review the content that has been submitted. It
             includes multiple paragraphs to simulate a longer layout.
@@ -131,7 +159,6 @@ export const FixedRight: Story = {
         </div>
       );
     };
-
     const tabs = [
       {
         id: 1,

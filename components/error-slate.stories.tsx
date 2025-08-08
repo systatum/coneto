@@ -41,7 +41,6 @@ export const Default: Story = {
     title: "PageNotFound",
     children: (
       <div
-        className="max-w-[400px] text-center"
         style={{
           maxWidth: "400px",
           textAlign: "center",
