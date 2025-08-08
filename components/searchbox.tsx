@@ -1,4 +1,3 @@
-import clsx from "clsx";
 import { RiSearchLine, RiCloseLine } from "@remixicon/react";
 import {
   ChangeEvent,
@@ -7,58 +6,48 @@ import {
   useEffect,
   useRef,
 } from "react";
+import styled, { CSSProp } from "styled-components";
 
-export interface SearchboxProps extends InputHTMLAttributes<HTMLInputElement> {
+export interface SearchboxProps
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {
   name: string;
   value: string;
-  className?: string;
+  style?: CSSProp;
+  containerStyle?: CSSProp;
   onChange: (data: ChangeEvent<HTMLInputElement>) => void;
 }
 
 const Searchbox = forwardRef<HTMLInputElement, SearchboxProps>(
-  ({ name, value, className, onChange, ...props }, ref) => {
+  ({ name, value, onChange, style, containerStyle, ...props }, ref) => {
     const inputId = `textbox-${name}`;
     const inputRef = useRef<HTMLInputElement>(null);
-
-    const inputClass = clsx(
-      "rounded-3xl text-black px-9 bg-white text-xs w-full py-[8px] outline-none",
-      "border border-gray-300 border-2 focus:ring-[#61A9F9] focus:border-[#61A9F9]",
-      className
-    );
 
     const valueLengthChecker = value.length > 0;
 
     useEffect(() => {
-      let didFocusInitially = false;
-
-      if (!didFocusInitially) {
-        didFocusInitially = true;
-        inputRef.current?.focus();
-      }
+      inputRef.current?.focus();
     }, []);
 
     return (
-      <div ref={ref} className="relative w-full ring-0">
-        <RiSearchLine
-          size={14}
-          className="absolute top-1/2 text-gray-400 left-3 -translate-y-1/2"
-        />
+      <SearchboxWrapper ref={ref} $style={containerStyle}>
+        <SearchIcon size={14} />
 
-        <input
+        <SearchboxInput
           ref={inputRef}
           id={inputId}
-          aria-label={"textbox-search"}
+          aria-label="textbox-search"
           name={name}
           value={value}
           onChange={onChange}
-          className={inputClass}
+          $style={style}
           {...(props as InputHTMLAttributes<HTMLInputElement>)}
         />
 
         {valueLengthChecker && (
-          <RiCloseLine
+          <ClearIcon
             role="button"
             aria-label="delete-input"
+            size={14}
             onClick={() => {
               const event = {
                 target: {
@@ -68,13 +57,57 @@ const Searchbox = forwardRef<HTMLInputElement, SearchboxProps>(
               } as ChangeEvent<HTMLInputElement>;
               onChange(event);
             }}
-            size={14}
-            className="absolute top-1/2 right-3 text-gray-400 -translate-y-1/2 cursor-pointer"
           />
         )}
-      </div>
+      </SearchboxWrapper>
     );
   }
 );
+
+const SearchboxWrapper = styled.div<{ $style?: CSSProp }>`
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  ${({ $style }) => $style};
+`;
+
+const SearchboxInput = styled.input<{ $style?: CSSProp }>`
+  border-radius: 9999px;
+  padding: 8px 36px 8px 30px;
+  width: 100%;
+  font-size: 0.75rem;
+  outline: none;
+  color: black;
+  background-color: white;
+  border: 1px solid #d1d5db;
+
+  &:focus {
+    border-color: #61a9f9;
+    box-shadow: 0 0 0 1px #61a9f9;
+  }
+
+  ${({ $style }) => $style}
+`;
+
+const SearchIcon = styled(RiSearchLine)`
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  color: #9ca3af;
+`;
+
+const ClearIcon = styled(RiCloseLine)`
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  cursor: pointer;
+`;
+
+Searchbox.displayName = "Searchbox";
 
 export { Searchbox };
