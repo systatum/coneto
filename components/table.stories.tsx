@@ -510,8 +510,14 @@ export const SortableWithPagination: Story = {
     };
 
     return (
-      <div className="flex flex-col gap-4">
-        <h3 className="font-semibold text-xl font-mono">
+      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <h3
+          style={{
+            fontWeight: 600,
+            fontSize: "1.25rem",
+            fontFamily: "monospace",
+          }}
+        >
           Data Load Balancer 2025
         </h3>
 
@@ -613,10 +619,20 @@ export const WithEmptySlate: Story = {
         subtitle="Track and receive your incoming inventory from suppliers."
         actions={
           <>
-            <Button variant="default" className="text-xs">
+            <Button
+              variant="default"
+              buttonStyle={{
+                fontSize: "12px",
+              }}
+            >
               Add Item
             </Button>
-            <Button variant="primary" className="text-xs">
+            <Button
+              variant="primary"
+              buttonStyle={{
+                fontSize: "12px",
+              }}
+            >
               Learn More
             </Button>
           </>
@@ -901,8 +917,14 @@ export const WithRowGroup: Story = {
     };
 
     return (
-      <div className="flex flex-col gap-4">
-        <h3 className="font-semibold text-xl font-mono">
+      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <h3
+          style={{
+            fontWeight: 600,
+            fontSize: "1.25rem",
+            fontFamily: "monospace",
+          }}
+        >
           Data Load Balancer 2025
         </h3>
 
