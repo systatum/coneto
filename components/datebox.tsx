@@ -1,20 +1,21 @@
 import { RiCalendar2Line } from "@remixicon/react";
 import { DrawerProps, Selectbox } from "./selectbox";
-import { cn } from "./../lib/utils";
 import { Calendar, BaseCalendarProps } from "./calendar";
+import styled, { CSSProp } from "styled-components";
 
 export type DateboxProps = BaseCalendarProps & {
   label?: string;
   showError?: boolean;
   errorMessage?: string;
+  disabled?: boolean;
 };
 type CalendarDrawerProps = BaseCalendarProps & Partial<DrawerProps>;
 
 function Datebox(props: DateboxProps) {
   return (
-    <div className={cn(`flex w-full flex-col gap-2 text-xs `)}>
+    <InputWrapper $disabled={props.disabled}>
       {props.label && <label>{props.label}</label>}
-      <div className="flex flex-col gap-1 text-xs">
+      <InputContent>
         <Selectbox
           {...props}
           placeholder="mm/dd/yyyy"
@@ -27,23 +28,39 @@ function Datebox(props: DateboxProps) {
             <CalendarDrawer {...props} {...selectBoxProps} />
           )}
         </Selectbox>
-        {props.showError && (
-          <span className="text-red-600">{props.errorMessage}</span>
-        )}
-      </div>
-    </div>
+        {props.showError && <ErrorText>{props.errorMessage}</ErrorText>}
+      </InputContent>
+    </InputWrapper>
   );
 }
 
-function CalendarDrawer(props: CalendarDrawerProps) {
-  const calendarClass = cn(
-    "flex flex-col gap-1 bg-white border border-gray-300 rounded-xs w-full shadow-xs list-none outline-none",
-    "p-2 z-[9999] p-2 text-sm max-w-[300px] min-w-[295px] flex flex-col gap-2 bg-white border border-gray-300 rounded-xs w-full shadow-xs list-none outline-none",
-    props.containerClassName
-  );
+const InputWrapper = styled.div<{
+  $containerStyle?: CSSProp;
+  $disabled?: boolean;
+}>`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  width: 100%;
+  ${({ $disabled }) => $disabled && `cursor: not-allowed; opacity: 0.5;`}
+`;
 
+const InputContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+`;
+
+const ErrorText = styled.span`
+  color: #dc2626;
+  font-size: 0.75rem;
+`;
+
+function CalendarDrawer(props: CalendarDrawerProps) {
   return (
-    <ul
+    <CalendarWrapper
       {...(props.getFloatingProps?.() ?? {})}
       ref={props.refs?.setFloating ?? null}
       style={{
@@ -52,11 +69,32 @@ function CalendarDrawer(props: CalendarDrawerProps) {
       tabIndex={-1}
       role="listbox"
       aria-label="Calendar"
-      className={calendarClass}
     >
       <Calendar {...props} label={null} />
-    </ul>
+    </CalendarWrapper>
   );
 }
+
+const CalendarWrapper = styled.ul<{
+  $style?: CSSProp;
+}>`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  font-size: 0.875rem;
+  background-color: white;
+  border: 1px solid #d1d5db;
+  border-radius: 0.125rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 300px;
+  min-width: 295px;
+  list-style: none;
+  outline: none;
+  z-index: 9999;
+
+  ${({ $style }) => $style}
+`;
 
 export { Datebox };

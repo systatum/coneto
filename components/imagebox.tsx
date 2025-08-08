@@ -118,18 +118,10 @@ function Imagebox({
   return (
     <InputWrapper $containerStyle={containerStyle}>
       {label && <label>{label}</label>}
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "4px",
-          width: "full",
-          fontSize: "12px",
-        }}
-      >
+      <InputContent>
         {inputElement}
         {showError && <ErrorText>{errorMessage}</ErrorText>}
-      </div>
+      </InputContent>
     </InputWrapper>
   );
 }
@@ -169,9 +161,16 @@ const InputBox = styled.div<{
   cursor: pointer;
 `;
 
+const InputContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+`;
+
 const ErrorText = styled.span`
-  color: "#dc2626";
-  font-size: "0.75rem";
+  color: #dc2626;
+  font-size: 0.75rem;
 `;
 
 const IconPlaceholder = styled.div`

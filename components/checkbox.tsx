@@ -108,7 +108,7 @@ function Checkbox({
         )}
       </Label>
 
-      {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
+      {showError && <ErrorText>{errorMessage}</ErrorText>}
     </div>
   );
 }

@@ -94,18 +94,10 @@ function Colorbox({
   return (
     <InputWrapper $containerStyle={containerStyle} $disabled={props.disabled}>
       {label && <label>{label}</label>}
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "4px",
-          width: "full",
-          fontSize: "12px",
-        }}
-      >
+      <InputContent>
         {inputElement}
         {showError && <ErrorText>{errorMessage}</ErrorText>}
-      </div>
+      </InputContent>
     </InputWrapper>
   );
 }
@@ -122,6 +114,13 @@ const InputWrapper = styled.div<{
 
   ${({ $disabled }) => $disabled && `cursor: not-allowed; opacity: 0.5;`}
   ${({ $containerStyle }) => $containerStyle}
+`;
+
+const InputContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
 `;
 
 const ColorInputContainer = styled.div<{
@@ -167,8 +166,8 @@ const HiddenColorInput = styled.input`
 `;
 
 const ErrorText = styled.span`
-  color: "#dc2626";
-  font-size: "0.75rem";
+  color: #dc2626;
+  font-size: 0.75rem;
 `;
 
 const TextInputGroup = styled.span<{

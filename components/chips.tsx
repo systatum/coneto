@@ -156,17 +156,10 @@ function Chips(props: ChipsProps) {
   return (
     <InputWrapper>
       {props.label && <label>{props.label}</label>}
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "4px",
-          fontSize: "12px",
-        }}
-      >
+      <InputContent>
         {inputElement}
         {props.showError && <ErrorText>{props.errorMessage}</ErrorText>}
-      </div>
+      </InputContent>
     </InputWrapper>
   );
 }
@@ -189,9 +182,16 @@ const InputWrapper = styled.div`
   width: 100%;
 `;
 
+const InputContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+`;
+
 const ErrorText = styled.span`
-  color: "#dc2626";
-  font-size: "0.75rem";
+  color: #dc2626;
+  font-size: 0.75rem;
 `;
 
 const AddButton = styled(RiAddLine)<{ $open?: boolean }>`
