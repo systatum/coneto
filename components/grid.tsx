@@ -30,14 +30,16 @@ function Grid({
     gap: typeof gap === "number" ? `${gap}px` : gap,
   };
 
-  const PresetGrid = styled(GridBase)`
-    ${gridPresets[preset]}
-  `;
-
   return (
-    <PresetGrid style={style} $containerStyle={containerStyle}>
+    <GridBase
+      style={style}
+      $containerStyle={css`
+        ${gridPresets[preset]}
+        ${containerStyle}
+      `}
+    >
       {children}
-    </PresetGrid>
+    </GridBase>
   );
 }
 

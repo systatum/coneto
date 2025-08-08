@@ -9,9 +9,9 @@ export interface BadgeProps {
   variant?: BadgeVariantProps;
   withCircle?: boolean;
   caption?: string;
-  backgroundColor?: string | null;
-  textColor?: string | null;
-  circleColor?: string | null;
+  backgroundColor?: string;
+  textColor?: string;
+  circleColor?: string;
   onClick?: (
     e?: ChangeEvent<HTMLInputElement> | MouseEvent<HTMLDivElement>
   ) => void;
@@ -117,7 +117,7 @@ function Badge({
       $hasCaption={caption.length > 0}
       $badgeStyle={badgeStyle}
     >
-      {withCircle && <BadgeCircle color={badgeCircleColor} />}
+      {withCircle && <BadgeCircle $color={badgeCircleColor} />}
       {caption}
     </BadgeWrapper>
   );
@@ -148,15 +148,15 @@ const BadgeWrapper = styled.div<{
   ${({ $badgeStyle }) => $badgeStyle};
 `;
 
-const BadgeCircle = styled.span<{ color: string }>`
+const BadgeCircle = styled.span<{ $color: string }>`
   display: inline-block;
   border-radius: 9999px;
   min-width: 8px;
   max-width: 8px;
   min-height: 8px;
   max-height: 8px;
-  background-color: ${({ color }) => color};
-  border: 1px solid ${({ color }) => color};
+  background-color: ${({ $color }) => $color};
+  border: 1px solid ${({ $color }) => $color};
 `;
 
 export { Badge };

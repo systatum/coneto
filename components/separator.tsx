@@ -16,7 +16,7 @@ function Separator({
   return (
     <SeparatorContainer $style={style}>
       <Line />
-      <Title textFloat={textFloat} depth={depth}>
+      <Title $textFloat={textFloat} $depth={depth}>
         {title}
       </Title>
     </SeparatorContainer>
@@ -43,8 +43,8 @@ const Line = styled.span`
 `;
 
 const Title = styled.span<{
-  textFloat: "left" | "right";
-  depth: string;
+  $textFloat: "left" | "right";
+  $depth: string;
 }>`
   position: absolute;
   top: 50%;
@@ -53,8 +53,8 @@ const Title = styled.span<{
   padding: 0 0.5rem;
   font-weight: 500;
 
-  ${({ textFloat, depth }) =>
-    textFloat === "left" ? `left: ${depth};` : `right: ${depth};`}
+  ${({ $textFloat, $depth }) =>
+    $textFloat === "left" ? `left: ${$depth};` : `right: ${$depth};`}
 `;
 
 export { Separator };

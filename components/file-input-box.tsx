@@ -69,8 +69,8 @@ function FileInputBox({
 
   const inputElement: ReactElement = (
     <InputBox
-      isDragging={isDragging}
-      hasFile={!!selectedFile}
+      $isDragging={isDragging}
+      $hasFile={!!selectedFile}
       onClick={handleBrowseClick}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
@@ -129,8 +129,8 @@ const InputWrapper = styled.div<{
 `;
 
 const InputBox = styled.div<{
-  isDragging: boolean;
-  hasFile: boolean;
+  $isDragging: boolean;
+  $hasFile: boolean;
 }>`
   padding: 12px;
   display: flex;
@@ -138,13 +138,13 @@ const InputBox = styled.div<{
   align-items: center;
   justify-content: space-between;
   border-radius: 4px;
-  cursor: ${({ hasFile }) => (hasFile ? "default" : "pointer")};
+  cursor: ${({ $hasFile }) => ($hasFile ? "default" : "pointer")};
   font-size: 14px;
-  color: ${({ isDragging }) => (isDragging ? "#3b82f6" : "#6b7280")};
-  background-color: ${({ isDragging }) => (isDragging ? "#eff6ff" : "#fff")};
+  color: ${({ $isDragging }) => ($isDragging ? "#3b82f6" : "#6b7280")};
+  background-color: ${({ $isDragging }) => ($isDragging ? "#eff6ff" : "#fff")};
   border: 1px dotted transparent;
-  background-image: ${({ isDragging }) =>
-    isDragging
+  background-image: ${({ $isDragging }) =>
+    $isDragging
       ? `
       repeating-linear-gradient(to right, #60a5fa 0, #60a5fa 8px, transparent 8px, transparent 12px),
       repeating-linear-gradient(to bottom, #60a5fa 0, #60a5fa 8px, transparent 8px, transparent 12px),

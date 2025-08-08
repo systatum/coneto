@@ -120,8 +120,8 @@ function FileDropBox({
 
   const inputElement: ReactElement = (
     <DropArea
-      isDragging={isDragging}
-      progress={progress}
+      $isDragging={isDragging}
+      $progress={progress}
       aria-label="filedropbox"
       onClick={handleBrowseClick}
       onDrop={handleDrop}
@@ -143,7 +143,7 @@ function FileDropBox({
               <Icon key={id} size={size} />
             ))}
           </IconsRow>
-          <PlaceholderText isDragging={isDragging}>
+          <PlaceholderText $isDragging={isDragging}>
             {placeholder}
           </PlaceholderText>
           <div>
@@ -200,8 +200,8 @@ const Label = styled.label`
 `;
 
 const DropArea = styled.div<{
-  isDragging: boolean;
-  progress: ProgressProps;
+  $isDragging: boolean;
+  $progress: ProgressProps;
 }>`
   padding: 0.75rem;
   display: flex;
@@ -215,8 +215,8 @@ const DropArea = styled.div<{
   border-radius: 4px;
   color: #6b7280;
 
-  ${({ progress }) =>
-    progress === "idle" &&
+  ${({ $progress }) =>
+    $progress === "idle" &&
     css`
       border: 1px dotted transparent;
       background-image:
@@ -261,8 +261,8 @@ const DropArea = styled.div<{
       background-repeat: no-repeat;
     `}
 
-  ${({ isDragging }) =>
-    isDragging &&
+  ${({ $isDragging }) =>
+    $isDragging &&
     css`
       background-color: #eff6ff;
       color: #61a9f9;
@@ -308,8 +308,8 @@ const DropArea = styled.div<{
       background-repeat: no-repeat;
     `}
 
-  ${({ progress }) =>
-    progress === "succeed" &&
+  ${({ $progress }) =>
+    $progress === "succeed" &&
     css`
       border: 1px solid #f3f4f6;
     `}
@@ -332,10 +332,10 @@ const IconsRow = styled.div`
   gap: 0.5rem;
 `;
 
-const PlaceholderText = styled.span<{ isDragging: boolean }>`
+const PlaceholderText = styled.span<{ $isDragging: boolean }>`
   font-weight: 600;
   font-size: 1.25rem;
-  color: ${(props) => (props.isDragging ? "#3b82f6" : "#000")};
+  color: ${(props) => (props.$isDragging ? "#3b82f6" : "#000")};
 `;
 
 const LinkText = styled.span`

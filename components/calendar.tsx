@@ -305,10 +305,6 @@ function Calendar({
     }
   }, [inputValue.text, format]);
 
-  const ArrowLeft = StyledIcon(RiArrowLeftSLine);
-  const ArrowRight = StyledIcon(RiArrowRightSLine);
-  const CheckCalendar = StyledIcon(RiCheckLine);
-
   const inputElement: ReactElement = (
     <CalendarContainer
       $style={
@@ -774,5 +770,9 @@ const StyledIcon = (icon: RemixiconComponentType) => styled(icon)<{
   }
   ${({ $style }) => $style}
 `;
+
+const ArrowLeft = StyledIcon(RiArrowLeftSLine);
+const ArrowRight = StyledIcon(RiArrowRightSLine);
+const CheckCalendar = StyledIcon(RiCheckLine);
 
 export { Calendar };

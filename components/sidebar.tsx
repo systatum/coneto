@@ -69,7 +69,7 @@ function Sidebar({ children, style, position = "left" }: SidebarProps) {
   return (
     <>
       {isSidebarOpen && (
-        <Overlay {...handlers} isOpen={isSidebarOpen} position={position} />
+        <Overlay {...handlers} $isOpen={isSidebarOpen} $position={position} />
       )}
 
       {isSidebarOpen && isMobile && (
@@ -79,7 +79,7 @@ function Sidebar({ children, style, position = "left" }: SidebarProps) {
       <MotionSidebar
         initial={{ x: position === "left" ? "-100%" : "+100%" }}
         animate={isMobile ? controls : { x: 0 }}
-        position={position}
+        $position={position}
         $style={style}
       >
         {children}
@@ -89,26 +89,26 @@ function Sidebar({ children, style, position = "left" }: SidebarProps) {
         <ToggleButton
           {...handlers}
           onClick={() => handleToggleSidebar(true)}
-          position={position}
+          $position={position}
         >
           {position === "left" ? <RiArrowRightSLine /> : <RiArrowLeftSLine />}
         </ToggleButton>
       )}
 
-      <DesktopSidebar position={position} $style={style}>
+      <DesktopSidebar $position={position} $style={style}>
         {children}
       </DesktopSidebar>
     </>
   );
 }
 
-const Overlay = styled.div<{ isOpen: boolean; position: "left" | "right" }>`
+const Overlay = styled.div<{ $isOpen: boolean; $position: "left" | "right" }>`
   position: fixed;
   top: 0;
   height: 100%;
   z-index: 30;
-  width: ${({ isOpen }) => (isOpen ? "100%" : "5%")};
-  ${({ position }) => (position === "left" ? "left: 0;" : "right: 0;")}
+  width: ${({ $isOpen }) => ($isOpen ? "100%" : "5%")};
+  ${({ $position }) => ($position === "left" ? "left: 0;" : "right: 0;")}
   @media (min-width: 768px) {
     display: none;
   }
@@ -126,7 +126,7 @@ const Backdrop = styled.div`
 `;
 
 const MotionSidebar = styled(motion.div)<{
-  position: "left" | "right";
+  $position: "left" | "right";
   $style?: CSSProp;
 }>`
   position: fixed;
@@ -141,8 +141,8 @@ const MotionSidebar = styled(motion.div)<{
   border-color: #d1d5db;
   background-color: white;
   padding: 2.5rem 1.5rem 1.5rem;
-  ${({ position }) =>
-    position === "left"
+  ${({ $position }) =>
+    $position === "left"
       ? "left: 0; border-right: 1px solid #d1d5db;"
       : "right: 0; border-left: 1px solid #d1d5db;"}
   @media (min-width: 768px) {
@@ -152,7 +152,7 @@ const MotionSidebar = styled(motion.div)<{
 `;
 
 const ToggleButton = styled.button<{
-  position: "left" | "right";
+  $position: "left" | "right";
 }>`
   position: fixed;
   top: 0;
@@ -166,7 +166,7 @@ const ToggleButton = styled.button<{
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
   cursor: pointer;
 
-  ${({ position }) => (position === "left" ? "left: 0;" : "right: 0;")}
+  ${({ $position }) => ($position === "left" ? "left: 0;" : "right: 0;")}
 
   @media (min-width: 768px) {
     display: none;
@@ -174,7 +174,7 @@ const ToggleButton = styled.button<{
 `;
 
 const DesktopSidebar = styled.div<{
-  position: "left" | "right";
+  $position: "left" | "right";
   $style?: CSSProp;
 }>`
   position: fixed;
@@ -191,8 +191,8 @@ const DesktopSidebar = styled.div<{
   border-color: #e5e7eb;
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
 
-  ${({ position }) =>
-    position === "left"
+  ${({ $position }) =>
+    $position === "left"
       ? "left: 0; border-right: 1px solid #d1d5db;"
       : "right: 0; border-left: 1px solid #d1d5db;"}
 

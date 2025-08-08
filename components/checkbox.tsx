@@ -72,6 +72,7 @@ function Checkbox({
             $indeterminate={indeterminate}
             $checked={isChecked}
             $style={inputStyle}
+            readOnly
             {...(props as InputHTMLAttributes<HTMLInputElement>)}
           />
           <Icon
@@ -143,7 +144,7 @@ const CheckboxBox = styled.div<{ $hasDescription: boolean; $style?: CSSProp }>`
   position: relative;
   max-width: 16px;
   max-height: 16px;
-  ${({ $hasDescription }) => $hasDescription && "margin-top: 4px;"}
+  ${({ $hasDescription }) => $hasDescription && "margin-top: 2px;"}
   ${({ $style }) => $style}
 `;
 

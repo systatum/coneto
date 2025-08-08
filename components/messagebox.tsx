@@ -141,7 +141,10 @@ const BorderAccent = styled.div<{
   $variant: keyof typeof variationStyles;
 }>`
   position: absolute;
-  border-top: 1px solid ${({ $variant }) => variationStyles[$variant].text};
+  top: 0;
+  left: 0;
+  width: 100%;
+  border-top: 2px solid ${({ $variant }) => variationStyles[$variant].text};
 `;
 
 const IconWrapper = styled.div<{

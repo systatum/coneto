@@ -51,18 +51,18 @@ function DrawerTab({
     <DrawerTabContainer
       initial={{ x: isLeft ? "-100%" : "+100%" }}
       animate={controls}
-      position={position}
+      $position={position}
       $style={drawerTabStyle}
     >
-      <TabButtonsContainer position={position} $style={tabStyle}>
+      <TabButtonsContainer $position={position} $style={tabStyle}>
         {tabs.map((tab) => (
           <TabButton
             key={tab.id}
             role="button"
             tabIndex={0}
             aria-label={`Open ${tab.title} tab`}
-            selected={tab.id === selected}
-            position={position}
+            $selected={tab.id === selected}
+            $position={position}
             onClick={() => {
               const isSame = selected === tab.id;
               if (isSame && isDrawerTab) {
@@ -104,7 +104,7 @@ function DrawerTab({
 }
 
 const DrawerTabContainer = styled(motion.div)<{
-  position: "left" | "right";
+  $position: "left" | "right";
   $style?: CSSProp;
 }>`
   position: fixed;
@@ -120,7 +120,7 @@ const DrawerTabContainer = styled(motion.div)<{
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   z-index: 40;
 
-  ${({ position }) => (position === "left" ? "left: 0;" : "right: 0;")}
+  ${({ $position }) => ($position === "left" ? "left: 0;" : "right: 0;")}
 
   @media (min-width: 768px) {
     transform: translateX(0);
@@ -131,7 +131,7 @@ const DrawerTabContainer = styled(motion.div)<{
 `;
 
 const TabButtonsContainer = styled.div<{
-  position: "left" | "right";
+  $position: "left" | "right";
   $style?: CSSProp;
 }>`
   position: absolute;
@@ -143,14 +143,15 @@ const TabButtonsContainer = styled.div<{
   background: transparent;
   border-color: #d1d5db;
 
-  ${({ position }) => (position === "left" ? "left: 298px;" : "right: 298px;")}
+  ${({ $position }) =>
+    $position === "left" ? "left: 298px;" : "right: 298px;"}
 
   ${({ $style }) => $style}
 `;
 
 const TabButton = styled.div<{
-  selected: boolean;
-  position: "left" | "right";
+  $selected: boolean;
+  $position: "left" | "right";
 }>`
   cursor: pointer;
   padding: 0.5rem;
@@ -161,9 +162,9 @@ const TabButton = styled.div<{
     background: #f3f4f6;
   }
 
-  ${({ selected, position }) =>
-    selected
-      ? position === "left"
+  ${({ $selected, $position }) =>
+    $selected
+      ? $position === "left"
         ? css`
             border-top: 1px solid #d1d5db;
             border-bottom: 1px solid #d1d5db;
@@ -181,7 +182,7 @@ const TabButton = styled.div<{
       : css`
           border: 1px solid #d1d5db;
 
-          ${position === "left"
+          ${$position === "left"
             ? css`
                 border-radius: 0 0.75rem 0.75rem 0;
               `

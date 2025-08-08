@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { EmptySlate } from "./empty-slate";
 import { Button } from "./button";
+import { css } from "styled-components";
 
 const meta: Meta<typeof EmptySlate> = {
   title: "Content/EmptySlate",
@@ -57,6 +58,9 @@ export const Default: Story = {
         <Button variant="primary">Learn More</Button>
       </>
     ),
+    containerStyle: css`
+      text-align: center;
+    `,
   },
   render: (args) => {
     return <EmptySlate {...args} />;

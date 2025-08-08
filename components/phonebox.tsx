@@ -369,7 +369,6 @@ const InputWrapper = styled.div<{
 }>`
   display: flex;
   width: 100%;
-  min-width: 300px;
   min-height: 32px;
   align-items: center;
   border-radius: var(--radius-xs);

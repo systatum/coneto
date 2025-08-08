@@ -262,11 +262,15 @@ function Table({
           </HeaderActions>
         )}
 
-        <TableContainer hasSelected={selectedData.length > 0}>
+        <TableContainer $hasSelected={selectedData.length > 0}>
           <TableHeader>
             {selectable && (
               <CheckboxWrapper>
                 <Checkbox
+                  containerStyle={{
+                    width: 12,
+                    height: 12,
+                  }}
                   onChange={handleSelectAll}
                   checked={allRowSelectedLocal}
                   indeterminate={someSelectedLocal}
@@ -436,12 +440,12 @@ const Divider = styled.div`
   border-left: 1px solid white;
 `;
 
-const TableContainer = styled.div<{ hasSelected: boolean }>`
+const TableContainer = styled.div<{ $hasSelected: boolean }>`
   display: flex;
   flex-direction: column;
   position: relative;
-  ${({ hasSelected }) =>
-    hasSelected &&
+  ${({ $hasSelected }) =>
+    $hasSelected &&
     css`
       border-top: 0.5px solid #e5e7eb;
     `}
@@ -672,7 +676,14 @@ function TableRow({
             }
           }}
         >
-          <Checkbox {...props} checked={isSelected} />
+          <Checkbox
+            containerStyle={{
+              width: 12,
+              height: 12,
+            }}
+            {...props}
+            checked={isSelected}
+          />
         </CheckboxWrapperRow>
       )}
       {content
@@ -682,6 +693,7 @@ function TableRow({
 
             return (
               <TableRowCell
+                key={i}
                 width={column.width}
                 contentStyle={
                   isLast

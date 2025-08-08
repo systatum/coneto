@@ -22,6 +22,7 @@ type StoryWithDescription = StoryObj<
 export const Default: Story = {
   render: () => {
     const [checked, setChecked] = useState(false);
+
     return (
       <Checkbox
         label="I agree to the terms"
