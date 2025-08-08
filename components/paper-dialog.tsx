@@ -24,7 +24,7 @@ type DialogState = "restored" | "closed" | "minimized";
 export interface PaperDialogProps {
   style?: CSSProp;
   tabStyle?: CSSProp;
-  paperDialogClassName?: string;
+  paperDialogStyle?: CSSProp;
   position?: "left" | "right";
   children: ReactNode;
   closable?: boolean;
@@ -57,7 +57,17 @@ export interface PaperDialogRef {
 }
 
 const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
-  ({ style, position = "right", tabStyle, children, closable }, ref) => {
+  (
+    {
+      style,
+      paperDialogStyle,
+      position = "right",
+      tabStyle,
+      children,
+      closable,
+    },
+    ref
+  ) => {
     const [dialogState, setDialogState] = useState<DialogState>("closed");
     const controls = useAnimation();
     const isLeft = position === "left";
@@ -108,7 +118,10 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
           })}
 
         {dialogState !== "closed" && (
-          <DialogOverlay $dialogState={dialogState}>
+          <DialogOverlay
+            $dialogState={dialogState}
+            $paperDialogStyle={paperDialogStyle}
+          >
             {dialogState === "restored" && (
               <BackgroundBlur aria-hidden="true" />
             )}
@@ -176,7 +189,10 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
   }
 );
 
-const DialogOverlay = styled.div<{ $dialogState: DialogState }>`
+const DialogOverlay = styled.div<{
+  $dialogState: DialogState;
+  $paperDialogStyle?: CSSProp;
+}>`
   position: fixed;
   z-index: 40;
   ${({ $dialogState }) =>
@@ -184,6 +200,8 @@ const DialogOverlay = styled.div<{ $dialogState: DialogState }>`
     css`
       inset: 0;
     `}
+
+  ${({ $paperDialogStyle }) => $paperDialogStyle}
 `;
 
 const BackgroundBlur = styled.div`
