@@ -1,4 +1,4 @@
-import { RiCloseLine } from "@remixicon/react";
+import { RiCloseLine, RiPencilLine } from "@remixicon/react";
 import { error } from "cypress/types/jquery";
 import { useRef, useEffect, ChangeEvent, ReactElement, useState } from "react";
 import styled, { CSSProp } from "styled-components";
@@ -239,6 +239,10 @@ const SignatureWrapper = styled.div`
   position: relative;
 `;
 
+const penSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="black"><path d="M15.7279 9.57627L14.3137 8.16206L5 17.4758V18.89H6.41421L15.7279 9.57627ZM17.1421 8.16206L18.5563 6.74785L17.1421 5.33363L15.7279 6.74785L17.1421 8.16206ZM7.24264 20.89H3V16.6473L16.435 3.21231C16.8256 2.82179 17.4587 2.82179 17.8492 3.21231L20.6777 6.04074C21.0682 6.43126 21.0682 7.06443 20.6777 7.45495L7.24264 20.89Z"></path></svg>`;
+const base64SVG = btoa(penSVG);
+const cursorDataUrl = `url("data:image/svg+xml;base64,${base64SVG}") 2 16, auto`;
+
 const SignatureCanvas = styled.canvas<{
   $canvasStyle?: CSSProp;
   $error?: boolean;
@@ -248,8 +252,9 @@ const SignatureCanvas = styled.canvas<{
   position: relative;
   border: 1px solid ${({ $error }) => ($error ? "#f87171" : "#d1d5db")};
   border-radius: 2px;
+  cursor: ${cursorDataUrl};
 
-  ${({ $canvasStyle }) => $canvasStyle}
+  ${({ $canvasStyle }) => $canvasStyle};
 `;
 
 const SignatureClearable = styled(RiCloseLine)`
