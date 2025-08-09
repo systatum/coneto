@@ -65,7 +65,7 @@ function Crumb({
 
           if (isEllipsis) {
             return (
-              <CrumbEllipsisLi
+              <CrumbEllipsisListItem
                 key={index}
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
@@ -86,13 +86,13 @@ function Crumb({
                     }}
                   />
                 )}
-              </CrumbEllipsisLi>
+              </CrumbEllipsisListItem>
             );
           }
 
           if (isValidElement<CrumbItemProps>(data)) {
             return (
-              <CrumbItemLi
+              <CrumbListEllipsisItem
                 key={
                   (isValidElement(data) && data.key?.toString()) ||
                   `crumb-${index}`
@@ -116,7 +116,7 @@ function Crumb({
                     }}
                   />
                 )}
-              </CrumbItemLi>
+              </CrumbListEllipsisItem>
             );
           }
 
@@ -132,14 +132,14 @@ const CrumbNav = styled.nav`
   flex-direction: row;
 `;
 
-const CrumbItemLi = styled(motion.li)`
+const CrumbListEllipsisItem = styled(motion.li)`
   display: flex;
   align-items: center;
   min-height: 24px;
   max-height: 24px;
 `;
 
-const CrumbEllipsisLi = styled(motion.li)`
+const CrumbEllipsisListItem = styled(motion.li)`
   display: flex;
   align-items: center;
 `;
