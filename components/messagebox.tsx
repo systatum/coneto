@@ -24,7 +24,7 @@ interface ActionLinkProps {
   type: "button" | "link";
 }
 
-const variationStyles = {
+const VARIATION_STYLES = {
   primary: {
     container: "#e7f2fc",
     text: "#2a63b4",
@@ -119,7 +119,7 @@ function Messagebox({
 
 const Wrapper = styled.div<{
   $style?: CSSProp;
-  $variant: keyof typeof variationStyles;
+  $variant: keyof typeof VARIATION_STYLES;
 }>`
   display: flex;
   flex-direction: row;
@@ -132,26 +132,26 @@ const Wrapper = styled.div<{
   overflow: hidden;
   height: 100%;
 
-  background-color: ${({ $variant }) => variationStyles[$variant].container};
-  color: ${({ $variant }) => variationStyles[$variant].text};
+  background-color: ${({ $variant }) => VARIATION_STYLES[$variant].container};
+  color: ${({ $variant }) => VARIATION_STYLES[$variant].text};
   ${({ $style }) => $style};
 `;
 
 const BorderAccent = styled.div<{
-  $variant: keyof typeof variationStyles;
+  $variant: keyof typeof VARIATION_STYLES;
 }>`
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  border-top: 2px solid ${({ $variant }) => variationStyles[$variant].text};
+  border-top: 2px solid ${({ $variant }) => VARIATION_STYLES[$variant].text};
 `;
 
 const IconWrapper = styled.div<{
-  $variant: keyof typeof variationStyles;
+  $variant: keyof typeof VARIATION_STYLES;
 }>`
   margin-top: 4px;
-  color: ${({ $variant }) => variationStyles[$variant].text};
+  color: ${({ $variant }) => VARIATION_STYLES[$variant].text};
 `;
 
 const Content = styled.div`
@@ -175,14 +175,14 @@ const ActionList = styled.div`
 `;
 
 const ActionItem = styled.button<{
-  $variant: keyof typeof variationStyles;
+  $variant: keyof typeof VARIATION_STYLES;
 }>`
   cursor: pointer;
   background: none;
   border: none;
   font-size: 0.875rem;
   font-weight: 500;
-  color: ${({ $variant }) => variationStyles[$variant].text};
+  color: ${({ $variant }) => VARIATION_STYLES[$variant].text};
   transition: all 0.3s;
 
   &:hover {
@@ -191,11 +191,11 @@ const ActionItem = styled.button<{
 `;
 
 const ActionLink = styled.a<{
-  $variant: keyof typeof variationStyles;
+  $variant: keyof typeof VARIATION_STYLES;
 }>`
   font-size: 0.875rem;
   font-weight: 500;
-  color: ${({ $variant }) => variationStyles[$variant].text};
+  color: ${({ $variant }) => VARIATION_STYLES[$variant].text};
   transition: all 0.3s;
   cursor: pointer;
 
