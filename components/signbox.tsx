@@ -1,4 +1,5 @@
 import { RiCloseLine } from "@remixicon/react";
+import { error } from "cypress/types/jquery";
 import { useRef, useEffect, ChangeEvent, ReactElement, useState } from "react";
 import styled, { CSSProp } from "styled-components";
 
@@ -174,6 +175,7 @@ function Signbox({
   const inputElement: ReactElement = (
     <SignatureWrapper>
       <SignatureCanvas
+        $error={showError}
         $canvasStyle={canvasStyle}
         ref={canvasRef}
         width={400}
@@ -237,11 +239,14 @@ const SignatureWrapper = styled.div`
   position: relative;
 `;
 
-const SignatureCanvas = styled.canvas<{ $canvasStyle?: CSSProp }>`
+const SignatureCanvas = styled.canvas<{
+  $canvasStyle?: CSSProp;
+  $error?: boolean;
+}>`
   width: 100%;
   height: 200px;
   position: relative;
-  border: 1px solid #d1d5db;
+  border: 1px solid ${({ $error }) => ($error ? "#f87171" : "#d1d5db")};
   border-radius: 2px;
 
   ${({ $canvasStyle }) => $canvasStyle}
