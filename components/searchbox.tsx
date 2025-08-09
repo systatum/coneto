@@ -108,6 +108,4 @@ const ClearIcon = styled(RiCloseLine)`
   cursor: pointer;
 `;
 
-Searchbox.displayName = "Searchbox";
-
 export { Searchbox };

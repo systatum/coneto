@@ -226,7 +226,7 @@ const TextAreaWrapper = styled.div`
   width: 100%;
 `;
 
-const sharedInputStyles = css<{ $error?: boolean; $style?: string }>`
+const SharedInputStyles = css<{ $error?: boolean; $style?: string }>`
   border-radius: 2px;
   font-size: 0.75rem;
   color: black;
@@ -253,12 +253,12 @@ const sharedInputStyles = css<{ $error?: boolean; $style?: string }>`
 `;
 
 const Input = styled.input<{ $error?: boolean; $style?: CSSProp }>`
-  ${sharedInputStyles}
+  ${SharedInputStyles}
   ${({ $style }) => $style}
 `;
 
 const Textarea = styled.textarea<{ $error?: boolean; $style?: CSSProp }>`
-  ${sharedInputStyles}
+  ${SharedInputStyles}
   resize: none;
   overflow: hidden;
   scrollbar-width: none;
@@ -312,7 +312,5 @@ const ErrorIconWrapper = styled.button`
 const ErrorText = styled.span`
   color: #dc2626;
 `;
-
-Textbox.displayName = "Textbox";
 
 export { Textbox };
