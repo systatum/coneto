@@ -17,6 +17,7 @@ import { ChangeEvent, useMemo, useState } from "react";
 import { Checkbox } from "./checkbox";
 import { Button } from "./button";
 import { List, ListItemProps } from "./list";
+import { css } from "styled-components";
 
 const meta: Meta<typeof Card> = {
   title: "Content/Card",
@@ -62,15 +63,15 @@ const meta: Meta<typeof Card> = {
       description: "Padding size",
       defaultValue: "sm",
     },
-    containerClassName: {
+    containerStyle: {
       control: "text",
       description: "Additional custom container classes",
     },
-    headerClassName: {
+    headerStyle: {
       control: "text",
       description: "Additional custom title classes",
     },
-    footerClassName: {
+    footerStyle: {
       control: "text",
       description: "Additional custom footer classes",
     },
@@ -158,7 +159,9 @@ export const Default: Story = {
       <Card>
         <Toolbar>
           <Toolbar.Menu
-            dropdownClassName="min-w-[235px]"
+            dropdownStyle={css`
+              min-width: 235px;
+            `}
             onClick={() => {
               console.log("test");
             }}
@@ -168,7 +171,9 @@ export const Default: Story = {
             subMenuList={TIP_MENU_ITEMS}
           />
           <Toolbar.Menu
-            dropdownClassName="min-w-[235px]"
+            dropdownStyle={css`
+              min-width: 235px;
+            `}
             caption="Primary"
             icon={RiSpam2Line}
             iconColor="white"
@@ -176,7 +181,9 @@ export const Default: Story = {
             subMenuList={TIP_MENU_ITEMS}
           />
           <Toolbar.Menu
-            dropdownClassName="min-w-[235px]"
+            dropdownStyle={css`
+              min-width: 235px;
+            `}
             caption="Danger"
             icon={RiSpam2Line}
             iconColor="white"
@@ -194,8 +201,6 @@ export const WithTitle: Story = {
     shadow: "sm",
     padding: "sm",
     title: "Import dishes",
-    containerClassName: "px-0",
-    headerClassName: "font-semibold text-sm",
   },
   render: (args) => {
     interface RestaurantDish {
@@ -299,18 +304,54 @@ export const WithTitle: Story = {
     }, [value.search]);
 
     return (
-      <Card {...args}>
-        <div className="px-8 py-4 min-w-[500px]">
+      <Card
+        {...args}
+        containerStyle={css`
+          padding: 0px;
+        `}
+      >
+        <div
+          style={{
+            paddingLeft: "2rem",
+            paddingRight: "2rem",
+            paddingTop: "1rem",
+            paddingBottom: "1rem",
+            minWidth: "500px",
+          }}
+        >
           <Searchbox
             name="search"
             onChange={onChangeValue}
             value={value.search}
             placeholder="Search..."
           />
-          <div className="flex flex-col gap-2 py-4">
+
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "0.5rem",
+              paddingTop: "1rem",
+              paddingBottom: "1rem",
+            }}
+          >
             {filteredContent.map((dish, index) => (
-              <div key={index} className="flex flex-row justify-between">
-                <div className="flex flex-row items-center gap-3">
+              <div
+                key={index}
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: "0.75rem",
+                  }}
+                >
                   <Checkbox
                     onChange={onChangeValue}
                     value={JSON.stringify(dish)}
@@ -319,7 +360,15 @@ export const WithTitle: Story = {
                     )}
                     name="checked"
                   />
-                  <div className="items-center w-[30px] rounded-sm overflow-hidden">
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      width: "30px",
+                      borderRadius: "0.125rem",
+                      overflow: "hidden",
+                    }}
+                  >
                     <img src={dish.image} />
                   </div>
                   <h3>{dish.name}</h3>
@@ -543,7 +592,14 @@ export const WithTitleAndActions: Story = {
 
     const ContentCard = {
       leftSideActions: [
-        <div className="flex flex-row items-center gap-2">
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: "8px",
+          }}
+        >
           <Checkbox
             onChange={(e) => {
               if (e.target.checked) {
@@ -570,9 +626,19 @@ export const WithTitleAndActions: Story = {
     return (
       <Card
         title="Systatum Corps Food."
-        containerClassName="px-0"
-        headerClassName="font-semibold px-3"
-        footerClassName="px-5"
+        containerStyle={css`
+          padding-left: 10px;
+          padding-right: 10px;
+        `}
+        headerStyle={css`
+          font-weight: 600;
+          padding-left: 10px;
+          padding-right: 10px;
+        `}
+        footerStyle={css`
+          padding-left: 20px;
+          padding-right: 20px;
+        `}
         leftSideActions={ContentCard.leftSideActions}
         rightSideActions={ContentCard.rightSideActions}
       >
@@ -581,7 +647,10 @@ export const WithTitleAndActions: Story = {
           selectable
           onDragged={onDragged}
           onSearchRequested={onChangeValue}
-          className="px-3 py-4 min-w-[450px]"
+          containerStyle={css`
+            padding: 16px;
+            min-width: 400px;
+          `}
         >
           {filteredContent.map((group, index) => {
             return (
@@ -590,7 +659,13 @@ export const WithTitleAndActions: Story = {
                   <List.Item
                     key={i}
                     groupId={group.id}
-                    className="min-w-[300px]"
+                    containerStyle={css`
+                      min-width: 300px;
+                      padding-right: 8px;
+                      padding-left: 8px;
+                      padding-top: 10px;
+                      padding-bottom: 10px;
+                    `}
                     id={list.id}
                     subtitle={list.subtitle}
                     title={list.title}

@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Checkbox, CheckboxProps } from "./checkbox";
 import { ChangeEvent, useState } from "react";
+import { css } from "styled-components";
 
 const meta: Meta<typeof Checkbox> = {
   title: "Input Elements/Checkbox",
@@ -21,6 +22,7 @@ type StoryWithDescription = StoryObj<
 export const Default: Story = {
   render: () => {
     const [checked, setChecked] = useState(false);
+
     return (
       <Checkbox
         label="I agree to the terms"
@@ -92,7 +94,9 @@ export const WithDescription: StoryWithDescription = {
             value={JSON.stringify(option)}
             description={option.description}
             label={option.label}
-            titleClassName="text-base font-medium"
+            labelStyle={css`
+              font-weight: 500;
+            `}
             checked={selected.checked.some(
               (item) => item.value === option.value
             )}

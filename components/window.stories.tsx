@@ -2,6 +2,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { Window } from "./window";
 import { RiCloseFill } from "@remixicon/react";
 import { useState } from "react";
+import { css } from "styled-components";
 
 const meta: Meta<typeof Window> = {
   title: "Content/Window",
@@ -16,9 +17,28 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: () => {
     return (
-      <Window orientation="vertical" className="h-[500px]">
-        <Window.Cell className="bg-red-100 p-10">left</Window.Cell>
-        <Window.Cell className="bg-green-100 p-10">Right</Window.Cell>
+      <Window
+        orientation="vertical"
+        style={css`
+          height: 500px;
+        `}
+      >
+        <Window.Cell
+          style={css`
+            background-color: #fee2e2;
+            padding: 2.5rem;
+          `}
+        >
+          Left
+        </Window.Cell>
+        <Window.Cell
+          style={css`
+            background-color: #dcfce7;
+            padding: 2.5rem;
+          `}
+        >
+          Right
+        </Window.Cell>
       </Window>
     );
   },
@@ -27,9 +47,28 @@ export const Default: Story = {
 export const Horizontal: Story = {
   render: () => {
     return (
-      <Window orientation="horizontal" className="h-[400px]">
-        <Window.Cell className="bg-red-100 p-10">Up</Window.Cell>
-        <Window.Cell className="bg-green-100 p-10">Down</Window.Cell>
+      <Window
+        orientation="horizontal"
+        style={css`
+          height: 400px;
+        `}
+      >
+        <Window.Cell
+          style={css`
+            background-color: #fee2e2;
+            padding: 2.5rem;
+          `}
+        >
+          Up
+        </Window.Cell>
+        <Window.Cell
+          style={css`
+            background-color: #dcfce7;
+            padding: 2.5rem;
+          `}
+        >
+          Down
+        </Window.Cell>
       </Window>
     );
   },
@@ -39,36 +78,46 @@ export const Closable: Story = {
   render: () => {
     const stateValue = [
       {
-        title: "left",
-        className: "bg-red-100 p-10 w-full",
+        title: "Left",
+        style: css`
+          background-color: #fee2e2;
+          padding: 2.5rem;
+          width: 100%;
+        `,
         actions: false,
       },
       {
-        title: "right",
-        className: "bg-green-100 p-10 w-full",
+        title: "Right",
+        style: css`
+          background-color: #dcfce7;
+          padding: 2.5rem;
+          width: 100%;
+        `,
         actions: true,
       },
     ];
 
     const [value, setValue] = useState(stateValue);
 
-    const WINDOW_ACTIONS = (e: string) => {
-      return [
-        {
-          onClick: () => {
-            setValue((prev) => prev.filter((item) => item.title !== e));
-          },
-          icon: RiCloseFill,
-        },
-      ];
-    };
+    const WINDOW_ACTIONS = (title: string) => [
+      {
+        onClick: () =>
+          setValue((prev) => prev.filter((item) => item.title !== title)),
+        icon: RiCloseFill,
+      },
+    ];
 
     return (
-      <Window className="h-[400px]">
+      <Window
+        style={css`
+          height: 400px;
+        `}
+      >
         {value.map((data) => (
           <Window.Cell
-            className={data.className}
-            actions={data.actions ? WINDOW_ACTIONS(data.title) : null}
+            key={data.title}
+            style={data.style}
+            actions={data.actions ? WINDOW_ACTIONS(data.title) : undefined}
           >
             {data.title}
           </Window.Cell>

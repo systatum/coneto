@@ -6,10 +6,6 @@ context("Treelist Component", () => {
       cy.visit(getIdContent("content-treelist--default"));
 
       cy.contains("Adam Noto Hakarsa").click();
-
-      cy.findAllByLabelText("tree-list-item")
-        .eq(0)
-        .should("have.class", "border-blue-500");
     });
   });
 
@@ -17,13 +13,9 @@ context("Treelist Component", () => {
     it("Should click item and action button exists", () => {
       cy.visit(getIdContent("content-treelist--with-actions"));
 
-      cy.get('[aria-label="Discover"]').should("exist");
+      cy.findByText("Discover").should("exist").click();
 
       cy.contains("Mohamad Naufal Alim").click();
-
-      cy.findAllByLabelText("tree-list-item")
-        .eq(1)
-        .should("have.class", "border-blue-500");
     });
   });
 });

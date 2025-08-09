@@ -12,6 +12,7 @@ import {
   RiShareLine,
   RiEditLine,
 } from "@remixicon/react";
+import { css } from "styled-components";
 
 const meta = {
   title: "Controls/Button",
@@ -193,6 +194,7 @@ export const WithLoading: Story = {
     variant: "default",
     isLoading: true,
     children: "Button",
+    disabled: true,
   },
   render: (args) => {
     return <Button {...args} />;
@@ -205,9 +207,16 @@ export const WithTipMenu: Story = {
     children: "Button",
     tipMenu: true,
     subMenuList: TIP_MENU_ITEMS,
-    dropdownClassName: "min-w-[300px] mt-2",
+    dropdownStyle: css`
+      min-width: 300px;
+      margin-top: 8px;
+    `,
   },
   render: (args) => {
-    return <Button {...args} />;
+    return (
+      <div>
+        <Button {...args} />
+      </div>
+    );
   },
 };

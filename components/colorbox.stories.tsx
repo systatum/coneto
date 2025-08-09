@@ -2,6 +2,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { Colorbox, ColorPickProps } from "./colorbox";
 import { useArgs } from "@storybook/preview-api";
 import { ChangeEvent } from "react";
+import { css } from "styled-components";
 
 const meta: Meta<typeof Colorbox> = {
   title: "Input Elements/Colorbox",
@@ -37,7 +38,9 @@ export const Default: Story = {
 
     return (
       <Colorbox
-        containerClassName="max-w-[250px]"
+        containerStyle={css`
+          max-width: 250px;
+        `}
         {...args}
         label="Color"
         value={args.color}
@@ -93,7 +96,9 @@ export const WithError: Story = {
 
     return (
       <Colorbox
-        containerClassName="max-w-[250px]"
+        containerStyle={css`
+          max-width: 250px;
+        `}
         {...args}
         label="Color"
         value={args.color}

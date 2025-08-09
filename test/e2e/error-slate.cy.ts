@@ -7,10 +7,17 @@ context("ErrorSlate component", () => {
     });
 
     it("Renders the 404 code and title", () => {
-      cy.get(".face").should("have.length", 6);
-      cy.get(".face").eq(0).should("contain.text", "4");
-      cy.get(".face").eq(2).should("contain.text", "0");
-      cy.get(".face").eq(4).should("contain.text", "4");
+      cy.findAllByLabelText("face-error-slate").should("have.length", 6);
+      cy.findAllByLabelText("face-error-slate")
+        .eq(0)
+        .should("contain.text", "4");
+      cy.findAllByLabelText("face-error-slate")
+        .eq(2)
+        .should("contain.text", "0");
+      cy.findAllByLabelText("face-error-slate")
+        .eq(4)
+        .should("contain.text", "4");
+
       cy.contains("PageNotFound").should("exist");
     });
 
@@ -28,10 +35,16 @@ context("ErrorSlate component", () => {
     });
 
     it("Renders the 403 code and title", () => {
-      cy.get(".face").should("have.length", 6);
-      cy.get(".face").eq(0).should("contain.text", "4");
-      cy.get(".face").eq(2).should("contain.text", "0");
-      cy.get(".face").eq(4).should("contain.text", "3");
+      cy.findAllByLabelText("face-error-slate").should("have.length", 6);
+      cy.findAllByLabelText("face-error-slate")
+        .eq(0)
+        .should("contain.text", "4");
+      cy.findAllByLabelText("face-error-slate")
+        .eq(2)
+        .should("contain.text", "0");
+      cy.findAllByLabelText("face-error-slate")
+        .eq(4)
+        .should("contain.text", "3");
       cy.contains("AccessDenied").should("exist");
     });
 

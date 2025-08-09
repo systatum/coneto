@@ -1,11 +1,11 @@
-import { cn } from "./../lib/utils";
+import styled, { CSSProp, keyframes } from "styled-components";
 
 interface LoadingSpinnerProps {
   iconSize?: number;
   textSize?: number;
   label?: string;
   gap?: number;
-  className?: string;
+  style?: CSSProp;
 }
 
 function LoadingSpinner({
@@ -13,26 +13,19 @@ function LoadingSpinner({
   textSize = 16,
   label,
   gap = 2,
-  className,
+  style,
 }: LoadingSpinnerProps) {
   return (
-    <div
-      className={cn("flex flex-row items-center", className)}
-      style={{
-        gap: `${gap}px`,
-      }}
-    >
-      <svg
+    <SpinnerWrapper $style={style} $gap={gap}>
+      <SpinnerIcon
         aria-label="circle"
-        className={cn("animate-spin text-blue-500", label && "mr-2")}
+        $size={iconSize}
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
-        height={iconSize}
-        width={iconSize}
       >
         <circle
-          className="opacity-25"
+          opacity="0.25"
           cx="12"
           cy="12"
           r="10"
@@ -40,22 +33,39 @@ function LoadingSpinner({
           strokeWidth="4"
         />
         <path
-          className="opacity-75"
+          opacity="0.75"
           fill="currentColor"
           d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
         />
-      </svg>
-      {label && (
-        <span
-          style={{
-            fontSize: `${textSize}px`,
-          }}
-        >
-          {label}
-        </span>
-      )}
-    </div>
+      </SpinnerIcon>
+      {label && <SpinnerLabel $textSize={textSize}>{label}</SpinnerLabel>}
+    </SpinnerWrapper>
   );
 }
+
+const spin = keyframes`
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
+const SpinnerWrapper = styled.div<{ $gap: number; $style?: CSSProp }>`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: ${({ $gap }) => $gap}px;
+  ${({ $style }) => $style}
+`;
+
+const SpinnerIcon = styled.svg<{ $size: number }>`
+  height: ${({ $size }) => $size}px;
+  width: ${({ $size }) => $size}px;
+  animation: ${spin} 1s linear infinite;
+  color: #3b82f6;
+`;
+
+const SpinnerLabel = styled.span<{ $textSize: number }>`
+  font-size: ${({ $textSize }) => $textSize}px;
+`;
 
 export { LoadingSpinner };

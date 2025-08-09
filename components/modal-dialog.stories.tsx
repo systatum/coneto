@@ -37,7 +37,12 @@ export const Default: Story = {
       closeDialog();
     },
     children: (
-      <div className="text-sm text-gray-700">
+      <div
+        style={{
+          fontSize: "0.875rem",
+          color: "#374151",
+        }}
+      >
         Here is the content of the modal dialog.
       </div>
     ),

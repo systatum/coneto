@@ -1,5 +1,5 @@
+import styled, { CSSProp } from "styled-components";
 import { ReactNode, useState } from "react";
-import { cn } from "./../lib/utils";
 import { RemixiconComponentType } from "@remixicon/react";
 
 export interface TreeListProps<T extends TreeListItemsProps> {
@@ -7,7 +7,7 @@ export interface TreeListProps<T extends TreeListItemsProps> {
     title?: string;
     items: T[];
   }>;
-  containerClassName?: string;
+  containerStyle?: CSSProp;
   children?: ReactNode;
   emptySlate?: ReactNode;
   searchTerm?: string;
@@ -18,7 +18,7 @@ export interface TreeListActionsProps {
   title?: string;
   onClick?: () => void;
   icon?: RemixiconComponentType;
-  className?: string;
+  style?: CSSProp;
 }
 
 export interface TreeListItemsProps {
@@ -31,7 +31,7 @@ export interface TreeListItemsProps {
 
 function TreeList<T extends TreeListItemsProps>({
   content,
-  containerClassName,
+  containerStyle,
   children,
   emptySlate,
   searchTerm = "",
@@ -39,69 +39,49 @@ function TreeList<T extends TreeListItemsProps>({
 }: TreeListProps<T>) {
   const [isSelected, setIsSelected] = useState("");
 
-  const treeListClass = cn("flex flex-col gap-4", containerClassName);
-
   return (
-    <div className={treeListClass}>
+    <TreeListWrapper $containerStyle={containerStyle}>
       {actions && (
-        <div className="flex flex-col w-full gap-1">
+        <ActionsWrapper>
           {actions.map((data, index) => (
-            <div
-              role="button"
+            <ActionItem
               key={index}
-              aria-label={data.title}
+              role="button"
               tabIndex={0}
-              onClick={() => {
-                if (data.onClick) {
-                  data.onClick();
-                }
-              }}
-              className={cn(
-                "flex flex-row relative hover:bg-gray-100 w-full items-center cursor-pointer px-3 py-1 gap-2",
-                data.className
-              )}
+              aria-label={data.title}
+              onClick={() => data.onClick?.()}
+              $style={data.style}
             >
-              {data.icon && (
-                <span>
-                  <data.icon size={16} />
-                </span>
-              )}
+              {data.icon && <data.icon size={16} />}
               <div>{data.title}</div>
-            </div>
+            </ActionItem>
           ))}
-        </div>
+        </ActionsWrapper>
       )}
-      {content && actions && (
-        <div
-          role="separator"
-          aria-label="divider"
-          className="w-full h-px border-b border-gray-300"
-        />
-      )}
+
+      {content && actions && <Divider role="separator" aria-label="divider" />}
 
       {content.length > 0 ? (
         content.map((data, index) => (
-          <div key={index} className="flex flex-col gap-1">
-            {data.title && (
-              <span className={"font-medium px-4 py-[2px]"}>{data.title}</span>
-            )}
-            <div className="flex flex-col">
+          <GroupWrapper key={index}>
+            {data.title && <GroupTitle>{data.title}</GroupTitle>}
+            <ItemsWrapper>
               {data.items.map((val) => (
                 <TreeListItem
-                  item={{ ...val, isSelected, setIsSelected }}
                   key={val.id}
+                  item={{ ...val, isSelected, setIsSelected }}
                   searchTerm={searchTerm}
                 />
               ))}
-            </div>
-          </div>
+            </ItemsWrapper>
+          </GroupWrapper>
         ))
       ) : (
         <div>{emptySlate}</div>
       )}
 
       {children}
-    </div>
+    </TreeListWrapper>
   );
 }
 
@@ -116,35 +96,97 @@ function TreeListItem<T extends TreeListItemsProps>({
   const regex = new RegExp(`(${escapedTerm})`, "gi");
   const parts = escapedTerm ? item.title.split(regex) : [item.title];
 
-  const treeListItemClass = cn(
-    "cursor-pointer border-l-3 border-transparent hover:bg-gray-100 py-1 px-4",
-    item.isSelected === item.title
-      ? "bg-gray-100 border-blue-500"
-      : "border-transparent"
-  );
-
   return (
-    <div
+    <TreeListItemWrapper
       role="button"
       aria-label="tree-list-item"
-      className={treeListItemClass}
+      $isSelected={item.isSelected === item.title}
       onClick={() => {
         item.onClick(item);
-        item.setIsSelected(item.title);
+        item.setIsSelected?.(item.title);
       }}
     >
       {parts.map((part, index) =>
-        part.toLowerCase() === searchTerm?.toLowerCase() ? (
-          <span key={index} className="bg-gray-200 font-semibold rounded-xs">
-            {part}
-          </span>
+        part.toLowerCase() === searchTerm.toLowerCase() ? (
+          <HighlightedText key={index}>{part}</HighlightedText>
         ) : (
           <span key={index}>{part}</span>
         )
       )}
-    </div>
+    </TreeListItemWrapper>
   );
 }
+
+const TreeListWrapper = styled.div<{
+  $containerStyle?: CSSProp;
+}>`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  ${(props) => props.$containerStyle}
+`;
+
+const ActionsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 0.25rem;
+`;
+
+const ActionItem = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  width: 100%;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  gap: 0.5rem;
+  cursor: pointer;
+  &:hover {
+    background-color: #f5f5f5;
+  }
+  ${(props) => props.$style}
+`;
+
+const Divider = styled.div`
+  width: 100%;
+  height: 1px;
+  border-bottom: 1px solid #d1d5db;
+`;
+
+const GroupWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+`;
+
+const GroupTitle = styled.span`
+  font-weight: 500;
+  padding: 2px 1rem;
+`;
+
+const ItemsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const TreeListItemWrapper = styled.div<{ $isSelected: boolean }>`
+  cursor: pointer;
+  border-left: 3px solid
+    ${(props) => (props.$isSelected ? "#3b82f6" : "transparent")};
+  background-color: ${(props) =>
+    props.$isSelected ? "#f3f4f6" : "transparent"};
+  padding: 0.25rem 1rem;
+  &:hover {
+    background-color: #f3f4f6;
+  }
+`;
+
+const HighlightedText = styled.span`
+  background-color: #e5e7eb;
+  font-weight: 600;
+  border-radius: 4px;
+`;
 
 function escapeRegExp(string: string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

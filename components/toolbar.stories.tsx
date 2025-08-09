@@ -13,6 +13,7 @@ import {
   RiMessage2Line,
 } from "@remixicon/react";
 import { TipMenu } from "./tip-menu";
+import { css } from "styled-components";
 
 const TIP_MENU_ITEMS = [
   {
@@ -92,7 +93,9 @@ export const Default: Story = {
     return (
       <Toolbar>
         <Toolbar.Menu
-          dropdownClassName="min-w-[235px]"
+          dropdownStyle={css`
+            min-width: 235px;
+          `}
           onClick={() => {
             console.log("test");
           }}
@@ -102,7 +105,9 @@ export const Default: Story = {
           subMenuList={subMenuList}
         />
         <Toolbar.Menu
-          dropdownClassName="min-w-[235px]"
+          dropdownStyle={css`
+            min-width: 235px;
+          `}
           caption="Primary Mode"
           icon={RiMessage2Line}
           iconColor="white"
@@ -110,7 +115,9 @@ export const Default: Story = {
           subMenuList={subMenuList}
         />
         <Toolbar.Menu
-          dropdownClassName="min-w-[235px]"
+          dropdownStyle={css`
+            min-width: 235px;
+          `}
           caption="Danger Mode"
           icon={RiMessage2Line}
           iconColor="white"

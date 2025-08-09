@@ -30,7 +30,11 @@ export const Default: Story = {
     ];
 
     return (
-      <div className="w-64">
+      <div
+        style={{
+          width: "256px",
+        }}
+      >
         <Selectbox
           options={SELECTBOX_DATA}
           inputValue={value}
@@ -38,27 +42,36 @@ export const Default: Story = {
           placeholder="click this place holder"
         >
           {(props) =>
-            props.options.map((option, index) => (
-              <ul
-                key={index}
-                {...(props.getFloatingProps?.() ?? {})}
-                ref={props.refs.setFloating ?? null}
-                style={{
-                  ...(props.floatingStyles ?? {}),
-                }}
-                tabIndex={-1}
-                role="listbox"
-                aria-label="Calendar"
-                {...props}
-                className="text-center border w-full border-gray-300 cursor-pointer hover:bg-blue-100 mt-1 p-10"
-                onClick={() => {
-                  props.setInputValue(option);
-                  props.setIsOpen(false);
-                }}
-              >
-                {option.text}
-              </ul>
-            ))
+            props.options.map((option, index) => {
+              const { style: _style, ...restProps } = props;
+
+              return (
+                <ul
+                  key={index}
+                  {...(props.getFloatingProps?.() ?? {})}
+                  ref={props.refs.setFloating ?? null}
+                  style={{
+                    textAlign: "center",
+                    width: "100%",
+                    border: "1px solid #d1d5db",
+                    cursor: "pointer",
+                    marginTop: "0.25rem",
+                    padding: "2.5rem",
+                    ...(props.floatingStyles ?? {}),
+                  }}
+                  tabIndex={-1}
+                  role="listbox"
+                  aria-label="Calendar"
+                  {...restProps}
+                  onClick={() => {
+                    props.setInputValue(option);
+                    props.setIsOpen(false);
+                  }}
+                >
+                  {option.text}
+                </ul>
+              );
+            })
           }
         </Selectbox>
       </div>
@@ -81,7 +94,7 @@ export const Clearable: Story = {
     ];
 
     return (
-      <div className="w-64">
+      <div style={{ width: "256px" }}>
         <Selectbox
           options={SELECTBOX_DATA}
           inputValue={value}
@@ -90,27 +103,36 @@ export const Clearable: Story = {
           clearable
         >
           {(props) =>
-            props.options.map((option, index) => (
-              <ul
-                key={index}
-                {...(props.getFloatingProps?.() ?? {})}
-                ref={props.refs.setFloating ?? null}
-                style={{
-                  ...(props.floatingStyles ?? {}),
-                }}
-                tabIndex={-1}
-                role="listbox"
-                aria-label="Calendar"
-                {...props}
-                className="text-center border w-full border-gray-300 cursor-pointer hover:bg-blue-100 mt-1 p-10"
-                onClick={() => {
-                  props.setInputValue(option);
-                  props.setIsOpen(false);
-                }}
-              >
-                {option.text}
-              </ul>
-            ))
+            props.options.map((option, index) => {
+              const { style: _style, ...restProps } = props;
+
+              return (
+                <ul
+                  key={index}
+                  {...(props.getFloatingProps?.() ?? {})}
+                  ref={props.refs.setFloating ?? null}
+                  style={{
+                    textAlign: "center",
+                    width: "100%",
+                    border: "1px solid #d1d5db",
+                    cursor: "pointer",
+                    marginTop: "0.25rem",
+                    padding: "2.5rem",
+                    ...(props.floatingStyles ?? {}),
+                  }}
+                  {...restProps}
+                  tabIndex={-1}
+                  role="listbox"
+                  aria-label="Calendar"
+                  onClick={() => {
+                    props.setInputValue(option);
+                    props.setIsOpen(false);
+                  }}
+                >
+                  {option.text}
+                </ul>
+              );
+            })
           }
         </Selectbox>
       </div>

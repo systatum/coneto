@@ -1,4 +1,4 @@
-import { cn } from "./../lib/utils";
+import styled, { css, CSSProp } from "styled-components";
 import { CSSProperties, ReactNode, useState } from "react";
 import { Checkbox } from "./checkbox";
 
@@ -7,7 +7,7 @@ interface GridProps {
   height?: number | string;
   width?: number | string;
   gap?: number | string;
-  containerClassName?: string;
+  containerStyle?: CSSProp;
   preset?: GridPresetKey;
 }
 
@@ -15,169 +15,237 @@ interface GridCardProps {
   children?: ReactNode;
   thumbnail?: string;
   isSelected?: boolean;
-  containerClassName?: string;
+  containerStyle?: CSSProp;
   onSelected?: () => void;
   selectable?: boolean;
 }
 
-function Grid({ children, gap = 8, containerClassName, preset }: GridProps) {
-  const gridClass = cn(
-    "grid w-full",
-    GRID_PRESETS[preset]?.className,
-    containerClassName
-  );
-
+function Grid({
+  children,
+  gap = 8,
+  containerStyle,
+  preset = "1-to-4",
+}: GridProps) {
   const style: CSSProperties = {
     gap: typeof gap === "number" ? `${gap}px` : gap,
   };
 
   return (
-    <div className={gridClass} style={style}>
+    <GridBase
+      style={style}
+      $containerStyle={css`
+        ${gridPresets[preset]}
+        ${containerStyle}
+      `}
+    >
       {children}
-    </div>
+    </GridBase>
   );
 }
 
 function GridCard({
   children,
   thumbnail,
-  containerClassName,
+  containerStyle,
   onSelected,
   isSelected,
   selectable,
   ...props
 }: GridCardProps) {
   const [isHovered, setIsHovered] = useState(false);
-  const gridCardClass = cn(
-    "text-sm h-full relative flex flex-col items-center w-full h-full p-1 gap-2 rounded-xs shadow",
-    selectable && "cursor-pointer hover:bg-gray-100",
-    containerClassName
-  );
 
   return (
-    <div
+    <GridCardWrapper
       {...props}
       aria-label="grid-card"
-      className={gridCardClass}
-      onClick={() => {
-        if (selectable) {
-          onSelected?.();
-        }
-      }}
+      $containerStyle={containerStyle}
+      isSelected={isSelected}
+      selectable={selectable}
+      onClick={() => selectable && onSelected?.()}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="absolute top-4 left-4">
+      <CheckboxWrapper>
         {selectable && (isSelected || isHovered) && (
           <Checkbox
             checked={isSelected}
-            containerClassName={cn("rounded-xs")}
-            className="w-[16px] h-[16px]"
+            containerStyle={css`
+              border-radius: 2px;
+            `}
             readOnly
           />
         )}
-      </div>
-      <div className="bg-gray-200 w-full flex items-center justify-center">
-        <img
-          src={thumbnail}
-          alt={`This is ${thumbnail} Image from Systatum Corp`}
-        />
-      </div>
-      <div className="w-full h-full flex flex-col">{children}</div>
-    </div>
+      </CheckboxWrapper>
+      <ThumbnailWrapper>
+        {thumbnail && (
+          <img
+            src={thumbnail}
+            alt={`This is ${thumbnail} Image from Systatum Corp`}
+          />
+        )}
+      </ThumbnailWrapper>
+      <ContentWrapper>{children}</ContentWrapper>
+    </GridCardWrapper>
   );
 }
 
-export interface GridPreset {
-  label: string;
-  className: string;
-}
+const GridBase = styled.div<{
+  $containerStyle?: CSSProp;
+}>`
+  display: grid;
+  width: 100%;
+  ${({ $containerStyle }) => $containerStyle}
+`;
 
-export const GRID_PRESETS = {
-  "1-col": {
-    label: "Single column",
-    className: "grid-cols-1",
-  },
-  "2-col": {
-    label: "2 columns fixed",
-    className: "grid-cols-2",
-  },
-  "3-col": {
-    label: "3 columns fixed",
-    className: "grid-cols-3",
-  },
-  "4-col": {
-    label: "4 columns fixed",
-    className: "grid-cols-4",
-  },
-  "5-col": {
-    label: "5 columns fixed",
-    className: "grid-cols-5",
-  },
-  "6-col": {
-    label: "6 columns fixed",
-    className: "grid-cols-6",
-  },
-  "1-to-3": {
-    label: "Responsive: 1 to 3 columns",
-    className: "grid-cols-1 sm:grid-cols-2 md:grid-cols-3",
-  },
-  "1-to-4": {
-    label: "Responsive: 1 to 6 columns",
-    className: "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4",
-  },
-  "1-to-6": {
-    label: "Responsive: 1 to 6 columns",
-    className:
-      "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6",
-  },
-  "2-to-4": {
-    label: "Responsive: 2 to 4 columns",
-    className: "grid-cols-2 sm:grid-cols-3 md:grid-cols-4",
-  },
-  "3-to-5": {
-    label: "Responsive: 3 to 5 columns",
-    className: "grid-cols-3 sm:grid-cols-4 md:grid-cols-5",
-  },
-  "3-to-6": {
-    label: "Responsive: 3 to 6 columns",
-    className: "grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6",
-  },
-  "auto-fit-400": {
-    label: "Auto-fit min 400px",
-    className: "grid-cols-[repeat(auto-fit,minmax(400px,1fr))]",
-  },
-  "auto-fit-350": {
-    label: "Auto-fit min 350px",
-    className: "grid-cols-[repeat(auto-fit,minmax(350px,1fr))]",
-  },
-  "auto-fit-300": {
-    label: "Auto-fit min 300px",
-    className: "grid-cols-[repeat(auto-fit,minmax(300px,1fr))]",
-  },
-  "auto-fit-250": {
-    label: "Auto-fit min 250px",
-    className: "grid-cols-[repeat(auto-fit,minmax(250px,1fr))]",
-  },
-  "auto-fit-200": {
-    label: "Auto-fit min 200px",
-    className: "grid-cols-[repeat(auto-fit,minmax(200px,1fr))]",
-  },
-  "auto-fit-150": {
-    label: "Auto-fit min 150px",
-    className: "grid-cols-[repeat(auto-fill,minmax(150px,1fr))]",
-  },
-  "13-col": {
-    label: "13 columns fixed",
-    className: "grid-cols-13",
-  },
-  "16-col": {
-    label: "16 columns fixed",
-    className: "grid-cols-16",
-  },
-} as const;
+const GridCardWrapper = styled.div.attrs<{
+  isSelected?: boolean;
+}>(({ isSelected }) => ({
+  "aria-label": "grid-card",
+  "data-selected": isSelected,
+}))<{
+  selectable?: boolean;
+  $containerStyle?: CSSProp;
+}>`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 4px;
+  gap: 8px;
+  font-size: 12px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  ${({ selectable }) =>
+    selectable &&
+    css`
+      cursor: pointer;
+      &:hover {
+        background-color: #f3f3f3;
+      }
+    `}
+  ${({ $containerStyle }) => $containerStyle}
+`;
 
-export type GridPresetKey = keyof typeof GRID_PRESETS;
+const CheckboxWrapper = styled.div`
+  position: absolute;
+  top: 16px;
+  left: 16px;
+`;
+
+const ThumbnailWrapper = styled.div`
+  width: 100%;
+  background-color: #e5e5e5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ContentWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+`;
+
+const gridPresets = {
+  "1-col": css`
+    grid-template-columns: repeat(1, 1fr);
+  `,
+  "2-col": css`
+    grid-template-columns: repeat(2, 1fr);
+  `,
+  "3-col": css`
+    grid-template-columns: repeat(3, 1fr);
+  `,
+  "4-col": css`
+    grid-template-columns: repeat(4, 1fr);
+  `,
+  "5-col": css`
+    grid-template-columns: repeat(5, 1fr);
+  `,
+  "6-col": css`
+    grid-template-columns: repeat(6, 1fr);
+  `,
+  "13-col": css`
+    grid-template-columns: repeat(13, 1fr);
+  `,
+  "16-col": css`
+    grid-template-columns: repeat(16, 1fr);
+  `,
+  "1-to-3": css`
+    grid-template-columns: repeat(1, 1fr);
+    @media (min-width: 640px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  `,
+  "1-to-4": css`
+    grid-template-columns: repeat(1, 1fr);
+    @media (min-width: 640px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    @media (min-width: 1024px) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  `,
+  "2-to-4": css`
+    grid-template-columns: repeat(2, 1fr);
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    @media (min-width: 1024px) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  `,
+  "3-to-5": css`
+    grid-template-columns: repeat(3, 1fr);
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    @media (min-width: 1024px) {
+      grid-template-columns: repeat(5, 1fr);
+    }
+  `,
+  "1-to-6": css`
+    grid-template-columns: repeat(1, 1fr);
+    @media (min-width: 640px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    @media (min-width: 1024px) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    @media (min-width: 1280px) {
+      grid-template-columns: repeat(6, 1fr);
+    }
+  `,
+  "auto-fit-400": css`
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  `,
+  "auto-fit-350": css`
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  `,
+  "auto-fit-300": css`
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  `,
+  "auto-fit-250": css`
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  `,
+  "auto-fit-200": css`
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  `,
+} satisfies Record<string, CSSProp>;
+
+export type GridPresetKey = keyof typeof gridPresets;
 
 Grid.Card = GridCard;
 export { Grid };

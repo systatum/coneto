@@ -118,22 +118,45 @@ export const Default: Story = {
     ];
 
     return (
-      <div className="flex flex-col gap-1">
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "4px",
+        }}
+      >
         <Button onClick={() => dialogRef.current?.openDialog()}>Open</Button>
         <Button onClick={() => dialogRef.current?.closeDialog()}>Close</Button>
         <PaperDialog ref={dialogRef}>
-          <PaperDialog.Content className="p-6 gap-4">
+          <PaperDialog.Content
+            style={{
+              padding: "36px",
+              gap: "24px",
+            }}
+          >
             <Button onClick={() => dialogRef.current?.minimizedDialog()}>
               Minimize here.
             </Button>
-            <div className="flex flex-col gap-1">
-              <h2 className="text-2xl font-bold ">Add New Employee</h2>
-              <p className="text-sm text-gray-600">
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "4px" }}
+            >
+              <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>
+                Add New Employee
+              </h2>
+              <p style={{ fontSize: "14px", color: "#4B5563" }}>
                 Fill out the information below to add a new employee to your
                 team.
               </p>
             </div>
-            <div className="max-w-[400px] flex flex-col gap-1">
+
+            <div
+              style={{
+                maxWidth: "400px",
+                display: "flex",
+                flexDirection: "column",
+                gap: "4px",
+              }}
+            >
               <StatefulForm
                 fields={EMPLOYEE_FIELDS}
                 formValues={value}
@@ -142,10 +165,21 @@ export const Default: Story = {
                 mode="onChange"
               />
 
-              <div className="flex w-full flex-row justify-end">
+              <div
+                style={{
+                  display: "flex",
+                  width: "100%",
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+                }}
+              >
                 <Button
                   disabled={!isFormValid}
-                  className="w-full cursor-pointer md:max-w-[180px]"
+                  buttonStyle={{
+                    width: "100%",
+                    cursor: "pointer",
+                    maxWidth: "180px",
+                  }}
                   type="submit"
                 >
                   Save
@@ -258,14 +292,29 @@ export const Closable: Story = {
     return (
       <PaperDialog closable>
         <PaperDialog.Trigger>Trigger</PaperDialog.Trigger>
-        <PaperDialog.Content className="p-6 gap-4">
-          <div className="flex flex-col gap-1">
-            <h2 className="text-2xl font-bold ">Add New Employee</h2>
-            <p className="text-sm text-gray-600">
+        <PaperDialog.Content
+          style={{
+            padding: "36px",
+            gap: "24px",
+          }}
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+            <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>
+              Add New Employee
+            </h2>
+            <p style={{ fontSize: "14px", color: "#4B5563" }}>
               Fill out the information below to add a new employee to your team.
             </p>
           </div>
-          <div className="max-w-[400px] flex flex-col gap-1">
+
+          <div
+            style={{
+              maxWidth: "400px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "4px",
+            }}
+          >
             <StatefulForm
               fields={EMPLOYEE_FIELDS}
               formValues={value}
@@ -274,10 +323,21 @@ export const Closable: Story = {
               mode="onChange"
             />
 
-            <div className="flex w-full flex-row justify-end">
+            <div
+              style={{
+                display: "flex",
+                width: "100%",
+                flexDirection: "row",
+                justifyContent: "flex-end",
+              }}
+            >
               <Button
                 disabled={!isFormValid}
-                className="w-full cursor-pointer md:max-w-[180px]"
+                buttonStyle={{
+                  width: "100%",
+                  cursor: "pointer",
+                  maxWidth: "180px",
+                }}
                 type="submit"
               >
                 Save
@@ -389,14 +449,29 @@ export const FixedLeft: Story = {
     return (
       <PaperDialog closable position="left">
         <PaperDialog.Trigger>Trigger</PaperDialog.Trigger>
-        <PaperDialog.Content className="p-6 gap-4">
-          <div className="flex flex-col gap-1">
-            <h2 className="text-2xl font-bold ">Add New Employee</h2>
-            <p className="text-sm text-gray-600">
+        <PaperDialog.Content
+          style={{
+            padding: "36px",
+            gap: "24px",
+          }}
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+            <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>
+              Add New Employee
+            </h2>
+            <p style={{ fontSize: "14px", color: "#4B5563" }}>
               Fill out the information below to add a new employee to your team.
             </p>
           </div>
-          <div className="max-w-[400px] flex flex-col gap-1">
+
+          <div
+            style={{
+              maxWidth: "400px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "4px",
+            }}
+          >
             <StatefulForm
               fields={EMPLOYEE_FIELDS}
               formValues={value}
@@ -405,10 +480,21 @@ export const FixedLeft: Story = {
               mode="onChange"
             />
 
-            <div className="flex w-full flex-row justify-end">
+            <div
+              style={{
+                display: "flex",
+                width: "100%",
+                flexDirection: "row",
+                justifyContent: "flex-end",
+              }}
+            >
               <Button
                 disabled={!isFormValid}
-                className="w-full cursor-pointer md:max-w-[180px]"
+                buttonStyle={{
+                  width: "100%",
+                  cursor: "pointer",
+                  maxWidth: "180px",
+                }}
                 type="submit"
               >
                 Save

@@ -1,5 +1,4 @@
 import * as React from "react";
-import { cn } from "./../lib/utils";
 import { LoadingSpinner } from "./loading-spinner";
 import {
   RemixiconComponentType,
@@ -7,6 +6,7 @@ import {
   RiArrowUpSLine,
 } from "@remixicon/react";
 import { TipMenu, TipMenuItemProps } from "./tip-menu";
+import styled, { css, CSSProp } from "styled-components";
 
 export type ButtonVariants = {
   variant?:
@@ -20,101 +20,38 @@ export type ButtonVariants = {
   size?: "default" | "icon" | "sm" | "lg";
 };
 
-const ButtonActiveVariant: Record<
-  NonNullable<ButtonVariants["variant"]>,
-  string
-> = {
-  default: "bg-[rgb(207,204,203)]",
-  primary: "bg-[rgb(64,142,232)]",
-  danger: "bg-[rgb(200,53,50)]",
-  outline: "bg-accent text-accent-foreground dark:bg-input/50",
-  secondary: "bg-secondary/80",
-  ghost: "bg-accent text-accent-foreground dark:bg-accent/50",
-  link: "underline",
-};
-
-function getButtonClasses(
-  variant?: ButtonVariants["variant"],
-  size?: ButtonVariants["size"]
-) {
-  let base =
-    "inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-xs text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-60 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive";
-
-  let variantClass = "";
-  switch (variant) {
-    case "primary":
-      variantClass =
-        "bg-[rgb(86,154,236)] text-white hover:bg-[rgb(64,142,232)]";
-      break;
-    case "danger":
-      variantClass = "bg-[rgb(206,55,93)] text-white hover:bg-[rgb(200,53,50)]";
-      break;
-    case "outline":
-      variantClass =
-        "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50";
-      break;
-    case "secondary":
-      variantClass =
-        "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80";
-      break;
-    case "ghost":
-      variantClass =
-        "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50";
-      break;
-    case "link":
-      variantClass = "text-primary underline-offset-4 hover:underline";
-      break;
-    default:
-      variantClass =
-        "bg-[rgb(243,243,243)] text-black hover:bg-[rgb(207,204,203)]";
-  }
-
-  let sizeClass = "";
-  switch (size) {
-    case "sm":
-      sizeClass = "h-8 rounded-xs gap-1.5 px-3 has-[>svg]:px-2.5";
-      break;
-    case "lg":
-      sizeClass = "h-10 rounded-xs px-6 has-[>svg]:px-4";
-      break;
-    case "icon":
-      sizeClass = "size-9";
-      break;
-    default:
-      sizeClass = "h-9 px-4 py-2 has-[>svg]:px-3";
-  }
-
-  return `${base} ${variantClass} ${sizeClass}`;
-}
-
 function Button({
-  className,
   variant = "default",
-  children,
-  isLoading,
   size = "default",
+  isLoading,
   tipMenu,
   subMenuList,
-  dropdownClassName,
+  dropdownStyle,
   openedIcon: OpenedIcon = RiArrowDownSLine,
   closedIcon: ClosedIcon = RiArrowUpSLine,
+  children,
+  disabled,
+  buttonStyle,
+  toggleStyle,
   ...props
 }: React.ComponentProps<"button"> &
   ButtonVariants & {
     isLoading?: boolean;
     tipMenu?: boolean;
     subMenuList?: TipMenuItemProps[];
-    dropdownClassName?: string;
+    dropdownStyle?: CSSProp;
     openedIcon?: RemixiconComponentType;
     closedIcon?: RemixiconComponentType;
+    buttonStyle?: CSSProp;
+    toggleStyle?: CSSProp;
   }) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [hovered, setHovered] = React.useState<
     "main" | "original" | "dropdown"
   >("original");
-  const [positionClass, setPositionClass] = React.useState<
-    "left-0" | "right-0"
-  >("left-0");
+  const [positionClass, setPositionClass] = React.useState<"left" | "right">(
+    "left"
+  );
 
   const containerRef = React.useRef<HTMLDivElement>(null);
 
@@ -125,92 +62,110 @@ function Button({
         setIsOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   React.useEffect(() => {
     if (isOpen && containerRef.current) {
       const rect = containerRef.current.getBoundingClientRect();
-      const halfWindowWidth = window.innerWidth / 2;
-
-      setPositionClass(rect.left > halfWindowWidth ? "right-0" : "left-0");
+      const half = window.innerWidth / 2;
+      setPositionClass(rect.left > half ? "right" : "left");
     }
   }, [isOpen]);
 
   return (
     <div
       ref={containerRef}
-      className="flex flex-row h-fit w-fit relative items-center"
+      style={{
+        display: "flex",
+        position: "relative",
+        alignItems: "center",
+        width: "fit-content",
+        height: "fit-content",
+      }}
     >
-      <button
-        onMouseEnter={() => setHovered("main")}
-        onMouseLeave={() => setHovered("original")}
-        className={cn(
-          getButtonClasses(variant, size),
-          "relative",
-          tipMenu && "rounded-none",
-          className
-        )}
-        disabled={isLoading || props.disabled}
+      <BaseButton
         {...props}
+        type="button"
+        $variant={variant}
+        $size={size}
+        disabled={disabled}
+        $disabled={disabled}
+        $tipMenu={tipMenu}
+        onMouseEnter={() => setHovered("dropdown")}
+        onMouseLeave={() => setHovered("original")}
+        $style={buttonStyle}
       >
-        <span className="pointer-events-none absolute inset-0 rounded-xs bg-white opacity-0 active:opacity-10" />
         {children}
         {isLoading && <LoadingSpinner />}
-      </button>
+      </BaseButton>
 
       {tipMenu && (
-        <>
-          <span
+        <div
+          style={{
+            position: "relative",
+            alignItems: "center",
+            display: "flex",
+            flexDirection: "row",
+          }}
+        >
+          <div
             aria-label="divider"
-            className={cn(
-              "absolute transform duration-200 right-[40px] h-full w-px border-l top-1/2 -translate-y-1/2 text-[#a5a0a0] z-10",
-              hovered === "original" && !isOpen && "h-[80%]"
-            )}
+            style={{
+              height:
+                hovered === "main" || hovered === "dropdown" ? "100%" : "80%",
+              borderRight: "1px solid black",
+              borderColor: "gray",
+              position: "absolute",
+              transition: "height 100ms ease-in-out",
+              right: "40px",
+            }}
           />
-          <button
-            className={cn(
-              getButtonClasses(variant, size),
-              "relative max-w-[40px]",
-              tipMenu && "rounded-none",
-              isOpen && ButtonActiveVariant[variant],
-              className
-            )}
+
+          <BaseButtonToggle
+            onClick={() => {
+              setIsOpen(true);
+            }}
+            $variant={variant}
+            $size={size}
+            $tipMenu={tipMenu}
+            $disabled={disabled}
             onMouseEnter={() => setHovered("dropdown")}
             onMouseLeave={() => setHovered("original")}
-            onClick={() => setIsOpen(!isOpen)}
+            $style={toggleStyle}
           >
             {isOpen ? (
-              <OpenedIcon
-                className={variant === "default" ? "text-gray-400" : ""}
-                size={20}
-              />
+              <OpenedIcon size={20} style={{ color: "#aaa" }} />
             ) : (
-              <ClosedIcon
-                className={variant === "default" ? "text-gray-400" : ""}
-                size={20}
-              />
+              <ClosedIcon size={20} style={{ color: "#aaa" }} />
             )}
-          </button>
-        </>
+          </BaseButtonToggle>
+        </div>
       )}
 
       {isOpen && (
         <div
           onMouseEnter={() => setHovered("dropdown")}
-          onMouseLeave={() => setHovered("original")}
-          className={cn("absolute top-full -translate-y-1 z-10", positionClass)}
+          onMouseLeave={() => {
+            setHovered("original");
+            setIsOpen(false);
+          }}
+          style={{
+            position: "absolute",
+            top: "100%",
+            transform: "translateY(-4px)",
+            zIndex: 10,
+            left: positionClass === "left" ? 0 : undefined,
+            right: positionClass === "right" ? 0 : undefined,
+          }}
         >
           <TipMenu
             setIsOpen={() => {
               setIsOpen(false);
               setHovered("original");
             }}
-            className={dropdownClassName}
+            style={dropdownStyle}
             subMenuList={subMenuList}
           />
         </div>
@@ -218,5 +173,150 @@ function Button({
     </div>
   );
 }
+
+const BaseButton = styled.button<{
+  $tipMenu?: boolean;
+  $style?: CSSProp;
+  $disabled?: boolean;
+  $variant: NonNullable<ButtonVariants["variant"]>;
+  $size: NonNullable<ButtonVariants["size"]>;
+}>`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: all 0.2s ease-in-out;
+  cursor: ${({ $disabled }) => ($disabled ? "not-allowed" : "pointer")};
+  user-select: none;
+  outline: none;
+  border: none;
+  border-radius: 2px;
+  opacity: ${({ $disabled }) => ($disabled ? 0.6 : 1)};
+  pointer-events: ${({ $disabled }) => ($disabled ? "none" : "auto")};
+
+  ${({ $size }) => {
+    switch ($size) {
+      case "sm":
+        return css`
+          height: 32px;
+          padding: 0 12px;
+        `;
+      case "lg":
+        return css`
+          height: 40px;
+          padding: 0 24px;
+        `;
+      case "icon":
+        return css`
+          width: 36px;
+          height: 36px;
+          padding: 0;
+        `;
+      default:
+        return css`
+          height: 36px;
+          padding: 0 16px;
+        `;
+    }
+  }}
+
+  ${({ $variant }) => {
+    switch ($variant) {
+      case "primary":
+        return css`
+          background-color: #569aec;
+          color: white;
+
+          &:hover {
+            background-color: #3e7dd3;
+          }
+        `;
+      case "danger":
+        return css`
+          background-color: #ce375d;
+          color: white;
+
+          &:hover {
+            background-color: #a02a48;
+          }
+        `;
+      case "outline":
+        return css`
+          background-color: white;
+          color: black;
+          border: 1px solid #ccc;
+
+          &:hover {
+            background-color: #f0f0f0;
+          }
+        `;
+      case "secondary":
+        return css`
+          background-color: #dddddd;
+          color: #111;
+
+          &:hover {
+            background-color: #cccccc;
+          }
+        `;
+      case "ghost":
+        return css`
+          background-color: transparent;
+          color: #111;
+
+          &:hover {
+            background-color: #f3f3f3;
+          }
+        `;
+      case "link":
+        return css`
+          background-color: transparent;
+          color: #408ee8;
+          text-decoration: underline;
+
+          &:hover {
+            color: #2a73c3;
+          }
+        `;
+      default:
+        return css`
+          background-color: #f3f3f3;
+          color: black;
+
+          &:hover {
+            background-color: #e2e2e2;
+          }
+        `;
+    }
+  }}
+
+  ${({ $style }) =>
+    $style &&
+    css`
+      ${$style}
+    `}
+
+  ${({ $tipMenu }) =>
+    $tipMenu &&
+    css`
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    `}
+`;
+
+const BaseButtonToggle = styled(BaseButton)<{
+  $style?: CSSProp;
+}>`
+  min-width: 40px;
+  max-width: 40px;
+  padding: 0;
+  border-top-left-radius: ${({ $tipMenu }) => ($tipMenu ? 0 : "2px")};
+  border-bottom-left-radius: ${({ $tipMenu }) => ($tipMenu ? 0 : "2px")};
+  ${({ $style }) => $style}
+`;
 
 export { Button };

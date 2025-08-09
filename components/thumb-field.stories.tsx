@@ -2,6 +2,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { ThumbField } from "./thumb-field";
 import { useArgs } from "@storybook/preview-api";
 import { ChangeEvent } from "react";
+import { css } from "styled-components";
 
 const meta: Meta<typeof ThumbField> = {
   title: "Input Elements/ThumbField",
@@ -35,7 +36,10 @@ export const WithLabel: Story = {
     label: "Would you recommend this employer?",
     value: null,
     name: "value",
-    containerClassName: "text-sm font-mono",
+    containerStyle: css`
+      font-size: 14px;
+      font-family: monospace;
+    `,
   },
   render: (args) => {
     const [, setUpdateArgs] = useArgs();
@@ -54,7 +58,10 @@ export const WithError: Story = {
     label: "How would you rate this employee’s performance?",
     value: null,
     name: "value",
-    containerClassName: "text-sm font-medium",
+    containerStyle: css`
+      font-size: 14px;
+      font-weight: 500;
+    `,
     showError: true,
     errorMessage: "This field is required",
   },

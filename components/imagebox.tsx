@@ -1,9 +1,10 @@
-import { ChangeEvent, DragEvent, useRef, useState } from "react";
-import { cn } from "../lib/utils";
+import { ChangeEvent, DragEvent, ReactElement, useRef, useState } from "react";
 import { RiAddLine, RiImageLine } from "@remixicon/react";
+import styled, { CSSProp } from "styled-components";
 
 export interface ImageboxProps {
-  containerClassName?: string;
+  containerStyle?: CSSProp;
+  style?: CSSProp;
   onFilesSelected?: (files: FileList) => void;
   size?: "xs" | "sm" | "md" | "lg";
   label?: string;
@@ -12,32 +13,40 @@ export interface ImageboxProps {
   name?: string;
 }
 
-const SIZE_CLASSES = {
-  xs: "min-w-[80px] min-h-[80px] max-w-[80px] max-h-[80px]",
-  sm: "min-w-[100px] min-h-[100px] max-w-[100px] max-h-[100px]",
-  md: "min-w-[120px] min-h-[120px] max-w-[120px] max-h-[120px]",
-  lg: "min-w-[160px] min-h-[160px] max-w-[160px] max-h-[160px]",
-};
-
-const SIZE_ICON = {
-  xs: 16,
-  sm: 20,
-  md: 24,
-  lg: 28,
+const SIZE_STYLES = {
+  xs: {
+    dimension: "80px",
+    icon: 16,
+  },
+  sm: {
+    dimension: "100px",
+    icon: 20,
+  },
+  md: {
+    dimension: "120px",
+    icon: 24,
+  },
+  lg: {
+    dimension: "160px",
+    icon: 28,
+  },
 };
 
 function Imagebox({
-  containerClassName,
+  containerStyle,
   onFilesSelected,
   size = "md",
   label,
   errorMessage,
   showError,
   name,
+  style,
 }: ImageboxProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+
+  const { dimension, icon } = SIZE_STYLES[size];
 
   const handleBrowseClick = () => {
     fileInputRef.current?.click();
@@ -74,59 +83,127 @@ function Imagebox({
     setIsDragging(false);
   };
 
-  const classInputBox = cn(
-    "border rounded-xs border-gray-300 cursor-pointer text-gray-600 relative w-full h-full",
-    SIZE_CLASSES[size],
-    isDragging ? "bg-blue-50 border border-blue-500 text-blue-500" : "",
-    containerClassName
-  );
-
-  const inputElement = (
-    <div
-      className={classInputBox}
+  const inputElement: ReactElement = (
+    <InputBox
+      $style={style}
+      $dimension={dimension}
+      $isDragging={isDragging}
       onClick={handleBrowseClick}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
     >
-      {selectedFile === null ? (
-        <div className="absolute top-1/2 left-1/2 text-[#c3c3c3] transform -translate-x-1/2 -translate-y-1/2">
-          <RiImageLine size={SIZE_ICON[size]} />
-        </div>
+      {selectedFile ? (
+        <PreviewImage src={selectedFile} alt="preview" />
       ) : (
-        <img
-          src={selectedFile}
-          className="absolute inset-0 w-full h-full object-cover"
-        />
+        <IconPlaceholder>
+          <RiImageLine size={icon} />
+        </IconPlaceholder>
       )}
-      <input
-        name={name}
+
+      <HiddenInput
         ref={fileInputRef}
         type="file"
         accept="image/*"
+        name={name}
         onChange={handleFileChange}
-        hidden
       />
-      <div
-        className={cn(
-          "border-gray-300 text-[#c3c3c3] w-fit h-fit border rounded-xs absolute -bottom-1 -right-1 ",
-          isDragging ? "bg-[#60a5fa]" : "bg-white"
-        )}
-      >
-        <RiAddLine size={SIZE_ICON[size]} />
-      </div>
-    </div>
+
+      <AddIconWrapper $isDragging={isDragging}>
+        <RiAddLine size={icon} />
+      </AddIconWrapper>
+    </InputBox>
   );
 
   return (
-    <div className={cn(`flex w-full flex-col gap-2 text-xs`)}>
+    <InputWrapper $containerStyle={containerStyle}>
       {label && <label>{label}</label>}
-      <div className="flex flex-col gap-1 text-xs">
+      <InputContent>
         {inputElement}
-        {showError && <span className="text-red-600">{errorMessage}</span>}
-      </div>
-    </div>
+        {showError && <ErrorText>{errorMessage}</ErrorText>}
+      </InputContent>
+    </InputWrapper>
   );
 }
+
+const InputWrapper = styled.div<{
+  $containerStyle?: CSSProp;
+  $disabled?: boolean;
+}>`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  width: 100%;
+
+  ${({ $disabled }) => $disabled && `cursor: not-allowed; opacity: 0.5;`}
+  ${({ $containerStyle }) => $containerStyle}
+`;
+
+const InputBox = styled.div<{
+  $dimension: string;
+  $isDragging: boolean;
+  $style?: CSSProp;
+}>`
+  position: relative;
+  width: ${({ $dimension }) => $dimension};
+  height: ${({ $dimension }) => $dimension};
+  min-width: ${({ $dimension }) => $dimension};
+  min-height: ${({ $dimension }) => $dimension};
+  max-width: ${({ $dimension }) => $dimension};
+  max-height: ${({ $dimension }) => $dimension};
+  border-radius: 2px;
+  border: 1px solid
+    ${({ $isDragging }) => ($isDragging ? "#3b82f6" : "#d1d5db")};
+  background-color: ${({ $isDragging }) =>
+    $isDragging ? "#eff6ff" : "#ffffff"};
+  color: ${({ $isDragging }) => ($isDragging ? "#3b82f6" : "#6b7280")};
+  cursor: pointer;
+`;
+
+const InputContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+`;
+
+const ErrorText = styled.span`
+  color: #dc2626;
+  font-size: 0.75rem;
+`;
+
+const IconPlaceholder = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  color: #c3c3c3;
+  transform: translate(-50%, -50%);
+`;
+
+const PreviewImage = styled.img`
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`;
+
+const AddIconWrapper = styled.div<{ $isDragging: boolean }>`
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  background-color: ${({ $isDragging }) =>
+    $isDragging ? "#60a5fa" : "#ffffff"};
+  border: 1px solid #d1d5db;
+  border-radius: 2px;
+  width: fit-content;
+  height: fit-content;
+  color: #c3c3c3;
+`;
+
+const HiddenInput = styled.input`
+  display: none;
+`;
 
 export { Imagebox };

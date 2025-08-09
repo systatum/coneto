@@ -27,7 +27,7 @@ import {
   RiArrowUpSLine,
   RiCloseLine,
 } from "@remixicon/react";
-import { cn } from "./../lib/utils";
+import styled, { css, CSSProp } from "styled-components";
 
 export interface SelectboxProps {
   options?: OptionsProps[];
@@ -38,8 +38,7 @@ export interface SelectboxProps {
   iconClosed?: RemixiconComponentType;
   type?: "calendar" | "default";
   clearable?: boolean;
-  containerClassName?: string;
-  childClassName?: string;
+  containerStyle?: CSSProp;
   highlightOnMatch?: boolean;
   strict?: boolean;
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
@@ -64,7 +63,7 @@ export interface DrawerProps {
   floatingStyles: CSSProperties;
   listRef: MutableRefObject<(HTMLLIElement | null)[]>;
   isOpen: boolean;
-  className?: string;
+  style?: CSSProp;
   onClick?: () => void;
 }
 
@@ -85,7 +84,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       iconOpened: IconOpened = RiArrowDownSLine,
       iconClosed: IconClosed = RiArrowUpSLine,
       clearable = false,
-      containerClassName,
+      containerStyle,
       highlightOnMatch,
       strict,
       onKeyDown,
@@ -93,15 +92,9 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
     },
     ref
   ) => {
-    const selectboxState = inputValue
-      ? inputValue
-      : {
-          text: "",
-          value: 0,
-        };
+    const selectboxState = inputValue || { text: "", value: 0 };
     const [inputValueLocal, setInputValueLocal] =
       useState<OptionsProps>(selectboxState);
-
     const [isOpen, setIsOpen] = useState(false);
     const [highlightedIndex, setHighlightedIndex] = useState(0);
     const [hasInteracted, setHasInteracted] = useState(false);
@@ -136,11 +129,10 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
     const { getFloatingProps, getReferenceProps } = useInteractions([dismiss]);
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-      setHasInteracted?.(true);
+      setHasInteracted(true);
       let value = e.target.value;
       if (type === "calendar") {
         value = value.replace(/\D/g, "");
-
         if (value.length > 2 && value.length <= 4) {
           value = value.slice(0, 2) + "/" + value.slice(2);
         } else if (value.length > 4) {
@@ -152,40 +144,29 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
             value.slice(4, 8);
         }
       }
-      if (setInputValue) {
-        setInputValue({ ...inputValue, text: value });
-      }
+      setInputValue?.({ ...inputValue, text: value });
       setInputValueLocal({ ...inputValueLocal, text: value });
-
       setIsOpen(value.length > 0);
       setHighlightedIndex(0);
     };
 
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-      if (onKeyDown) {
-        onKeyDown(e);
-      }
+      onKeyDown?.(e);
       if (e.key === "ArrowDown") {
         e.preventDefault();
-        if (!isOpen) {
-          setIsOpen(true);
-        }
+        if (!isOpen) setIsOpen(true);
         setHighlightedIndex((prev) =>
           Math.min(prev + 1, FILTERED_OPTIONS.length - 1)
         );
       } else if (e.key === "ArrowUp") {
         e.preventDefault();
-        if (!isOpen) {
-          setIsOpen(true);
-        }
+        if (!isOpen) setIsOpen(true);
         setHighlightedIndex((prev) => Math.max(prev - 1, 0));
       } else if (e.key === "Enter") {
         e.preventDefault();
         const selected = FILTERED_OPTIONS[highlightedIndex];
         if (selected) {
-          if (setInputValue) {
-            setInputValue?.(selected);
-          }
+          setInputValue?.(selected);
           setInputValueLocal(selected);
           setIsOpen(false);
           setHasInteracted(false);
@@ -202,45 +183,24 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       }
     }, [highlightedIndex, isOpen]);
 
-    const selectBoxClass = cn(
-      "relative w-full text-xs ring-0",
-      containerClassName
-    );
-
     return (
-      <div
-        role="combobox"
-        aria-expanded={isOpen}
-        aria-haspopup="listbox"
-        aria-owns="combo-list"
-        aria-controls="combo-list"
-        aria-activedescendant={`option-${highlightedIndex}`}
-        className={selectBoxClass}
-      >
-        <input
+      <Container role="combobox" $style={containerStyle} aria-expanded={isOpen}>
+        <Input
           {...getReferenceProps()}
           data-type="selectbox"
           ref={(el) => {
             refs.setReference(el);
             inputRef.current = el;
-            if (typeof ref === "function") {
-              ref(el);
-            } else if (ref) {
+            if (typeof ref === "function") ref(el);
+            else if (ref)
               (ref as MutableRefObject<HTMLInputElement | null>).current = el;
-            }
           }}
           type="text"
           value={inputValue ? inputValue.text : inputValueLocal.text}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
           onFocus={() => {
-            if (type === "calendar") {
-              setIsOpen(true);
-            } else if (inputValueLocal) {
-              setIsOpen(true);
-            }
+            if (type === "calendar" || inputValueLocal) setIsOpen(true);
             setIsFocused(true);
           }}
           onBlur={() => {
@@ -249,7 +209,6 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
               const matched = options.find(
                 (opt) => opt.text === inputValueLocal.text
               );
-
               if (matched) {
                 setConfirmedValue(matched);
                 setInputValueLocal(matched);
@@ -264,61 +223,36 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
               }
             }
           }}
-          aria-autocomplete="list"
           placeholder={placeholder || "Search your item..."}
-          className={cn(
-            "w-full rounded-xs border border-gray-100 px-3 py-2 outline-none",
-            isFocused &&
-              "focus:border-[#61A9F9] focus:ring-0 focus:ring-[#61A9F9]",
-            isHovered && "border-blue-200",
-            highlightOnMatch &&
-              FILTERED_ACTIVE.length > 0 &&
-              "border-[#61A9F9] hover:border-[#61A9F9]"
-          )}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          $focused={isFocused}
+          $hovered={isHovered}
+          $highlight={highlightOnMatch && FILTERED_ACTIVE.length > 0}
         />
 
         {clearable && inputValueLocal.text !== "" && (
           <>
-            <RiCloseLine
+            <ClearIcon
               aria-label="clearable-content"
               onClick={() => {
-                if (setInputValue) {
-                  setInputValue({
-                    text: "",
-                    value: 0,
-                  });
-                }
-                setInputValueLocal({
-                  text: "",
-                  value: 0,
-                });
+                setInputValue?.({ text: "", value: 0 });
+                setInputValueLocal({ text: "", value: 0 });
                 setIsOpen(false);
-
                 setHasInteracted(false);
               }}
-              size={12}
-              className={cn(
-                "absolute top-[11px] z-20 right-9 hover:bg-gray-200 hover:rounded-xs cursor-pointer text-gray-400",
-                highlightOnMatch &&
-                  FILTERED_ACTIVE.length > 0 &&
-                  "bg-[#61A9F9] text-white"
-              )}
+              $highlight={highlightOnMatch && FILTERED_ACTIVE.length > 0}
+              size={16}
             />
-            <span
-              aria-label="divider"
-              className="absolute top-1/2 -translate-y-1/2 border-r border-gray-400 min-h-[15px] w-px right-[31px] font-extralight text-xs text-gray-400"
-            ></span>
+            <Divider aria-label="divider" />
           </>
         )}
 
-        <div
-          className="cursor-pointer"
+        <IconWrapper
           onClick={() => {
             setIsOpen((prev) => {
               const newState = !prev;
-              if (newState && inputRef.current) {
-                inputRef.current.focus();
-              }
+              if (newState && inputRef.current) inputRef.current.focus();
               return newState;
             });
           }}
@@ -326,30 +260,20 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
           {isOpen ? (
             <IconOpened
               size={18}
-              className={cn(
-                "absolute text-gray-400 top-1/2 -translate-1/2 right-0.5",
-                highlightOnMatch && isFocused && "text-[#61A9F9]",
-                highlightOnMatch &&
-                  FILTERED_ACTIVE.length > 0 &&
-                  "text-[#61A9F9]"
-              )}
+              color={highlightOnMatch && isFocused ? "#61a9f9" : "#9ca3af"}
             />
           ) : (
             <IconClosed
               onMouseEnter={() => setIsHovered(true)}
               size={18}
-              className={cn(
-                "absolute text-gray-400 top-1/2 -translate-1/2 right-0.5",
-                isHovered && highlightOnMatch && FILTERED_ACTIVE.length > 0
-                  ? "hover:text-[#61A9F9]"
-                  : "",
-                highlightOnMatch &&
-                  FILTERED_ACTIVE.length > 0 &&
-                  "text-[#61A9F9]"
-              )}
+              color={
+                highlightOnMatch && FILTERED_ACTIVE.length > 0
+                  ? "#61a9f9"
+                  : "#9ca3af"
+              }
             />
           )}
-        </div>
+        </IconWrapper>
 
         {isOpen &&
           children?.({
@@ -359,11 +283,9 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
             setHighlightedIndex,
             setInputValue: (e) => {
               setInputValueLocal(e);
-              if (setInputValue) {
-                setInputValue(e);
-              }
+              setInputValue?.(e);
             },
-            inputValue: inputValue ? inputValue : inputValueLocal,
+            inputValue: inputValue || inputValueLocal,
             onClick,
             setIsOpen,
             getFloatingProps,
@@ -371,9 +293,82 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
             floatingStyles,
             listRef,
           })}
-      </div>
+      </Container>
     );
   }
 );
+
+const Container = styled.div<{ $style?: CSSProp }>`
+  position: relative;
+  width: 100%;
+  font-size: 12px;
+  ${({ $style }) => $style}
+`;
+
+const Input = styled.input<{
+  $highlight?: boolean;
+  $focused?: boolean;
+  $hovered?: boolean;
+}>`
+  width: 100%;
+  border-radius: 2px;
+  border: 1px solid #f3f4f6;
+  padding: 0.5rem 0.75rem;
+  outline: none;
+
+  ${({ $focused }) =>
+    $focused &&
+    css`
+      border-color: #61a9f9;
+    `}
+
+  ${({ $hovered }) =>
+    $hovered &&
+    css`
+      border-color: #bfdbfe;
+    `}
+
+  ${({ $highlight }) =>
+    $highlight &&
+    css`
+      border-color: #61a9f9;
+    `}
+`;
+
+const ClearIcon = styled(RiCloseLine)<{ $highlight?: boolean }>`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 36px;
+  z-index: 20;
+  cursor: pointer;
+  color: ${({ $highlight }) => ($highlight ? "#fff" : "#9ca3af")};
+  background-color: ${({ $highlight }) =>
+    $highlight ? "#61a9f9" : "transparent"};
+  border-radius: 2px;
+  padding: 2px;
+
+  &&:hover {
+    background-color: #e5e7eb !important;
+  }
+`;
+
+const Divider = styled.span`
+  position: absolute;
+  top: 50%;
+  right: 31px;
+  transform: translateY(-50%);
+  width: 1px;
+  min-height: 15px;
+  border-right: 1px solid #9ca3af;
+`;
+
+const IconWrapper = styled.div`
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  cursor: pointer;
+`;
 
 export { Selectbox };

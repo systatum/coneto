@@ -48,7 +48,7 @@ context("Textbox Component", () => {
       cy.findByPlaceholderText("Enter password...")
         .clear()
         .type("mypassword123");
-      cy.findByLabelText("action-icon").click({ force: true });
+      cy.findAllByLabelText("toggle-password").eq(0).click({ force: true });
     });
   });
 

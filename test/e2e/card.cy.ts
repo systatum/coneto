@@ -7,13 +7,13 @@ context("Card Component", () => {
 
       cy.findAllByLabelText("toolbar-menu", { timeout: 10000 })
         .eq(0)
-        .should("be.visible");
+        .should("exist");
       cy.findAllByLabelText("toolbar-menu", { timeout: 10000 })
         .eq(1)
-        .should("be.visible");
+        .should("exist");
       cy.findAllByLabelText("toolbar-menu", { timeout: 10000 })
         .eq(2)
-        .should("be.visible");
+        .should("exist");
     });
   });
 

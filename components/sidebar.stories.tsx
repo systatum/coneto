@@ -64,7 +64,14 @@ export const Default: Story = {
     }, [TREE_LIST_DATA, value]);
 
     return (
-      <div className="flex flex-row w-full justify-between">
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          width: "100%",
+          justifyContent: "space-between",
+        }}
+      >
         <Sidebar position="left">
           <Sidebar.Item>
             <Searchbox
@@ -81,13 +88,29 @@ export const Default: Story = {
                   imageUrl="https://picsum.photos/200?random=1"
                   title="No Matches"
                   subtitle="We couldn't find any person or team that matches your search."
-                  containerClassName="text-center items-center"
+                  containerStyle={{
+                    textAlign: "center",
+                    alignItems: "center",
+                  }}
+                  imageStyle={{
+                    maxWidth: "200px",
+                  }}
                   actions={
                     <>
-                      <Button variant="default" className="text-xs">
+                      <Button
+                        variant="default"
+                        buttonStyle={{
+                          fontSize: "12px",
+                        }}
+                      >
                         Clear Search
                       </Button>
-                      <Button variant="primary" className="text-xs">
+                      <Button
+                        variant="primary"
+                        buttonStyle={{
+                          fontSize: "12px",
+                        }}
+                      >
                         Add Member
                       </Button>
                     </>
@@ -99,7 +122,15 @@ export const Default: Story = {
           </Sidebar.Item>
         </Sidebar>
         <Sidebar.Spacer />
-        <div className="items-center min-h-screen justify-center flex w-full">
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            minHeight: "100vh",
+            width: "100%",
+          }}
+        >
           Empty Content
         </div>
       </div>
@@ -152,8 +183,23 @@ export const FixedRight: Story = {
     }, [TREE_LIST_DATA, value]);
 
     return (
-      <div className="flex flex-row w-full justify-between">
-        <div className="items-center min-h-screen justify-center flex w-full">
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          width: "100%",
+          justifyContent: "space-between",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            minHeight: "100vh",
+            width: "100%",
+          }}
+        >
           Empty Content
         </div>
         <Sidebar.Spacer />
@@ -173,13 +219,29 @@ export const FixedRight: Story = {
                   imageUrl="https://picsum.photos/200?random=1"
                   title="No Matches"
                   subtitle="We couldn't find any person or team that matches your search."
-                  containerClassName="text-center items-center"
+                  containerStyle={{
+                    textAlign: "center",
+                    alignItems: "center",
+                  }}
+                  imageStyle={{
+                    maxWidth: "200px",
+                  }}
                   actions={
                     <>
-                      <Button variant="default" className="text-xs">
+                      <Button
+                        variant="default"
+                        buttonStyle={{
+                          fontSize: "12px",
+                        }}
+                      >
                         Clear Search
                       </Button>
-                      <Button variant="primary" className="text-xs">
+                      <Button
+                        variant="primary"
+                        buttonStyle={{
+                          fontSize: "12px",
+                        }}
+                      >
                         Add Member
                       </Button>
                     </>

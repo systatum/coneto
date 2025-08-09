@@ -1,13 +1,14 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { Boxbar } from "./boxbar";
 import { Badge } from "./badge";
+import { css } from "styled-components";
 
 const meta: Meta<typeof Boxbar> = {
   title: "Stage/Boxbar",
   component: Boxbar,
   tags: ["autodocs"],
   argTypes: {
-    containerClassName: {
+    containerStyle: {
       control: "text",
       description:
         "Optional class name to style the container of the children.",
@@ -16,7 +17,7 @@ const meta: Meta<typeof Boxbar> = {
         defaultValue: { summary: "undefined" },
       },
     },
-    childClassName: {
+    childStyle: {
       control: "text",
       description: "Optional class name to style the child content.",
       table: {
@@ -99,10 +100,17 @@ export const Default: Story = {
       },
     ];
     return (
-      <Boxbar childClassName="gap-1">
+      <Boxbar
+        childStyle={css`
+          gap: 4px;
+        `}
+      >
         {BADGE_OPTIONS.map((badge) => (
           <Badge
-            className="w-full max-w-[120px]"
+            badgeStyle={css`
+              width: 100%;
+              max-width: 100px;
+            `}
             key={badge.id}
             caption={badge.caption}
             withCircle

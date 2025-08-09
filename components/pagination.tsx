@@ -1,15 +1,15 @@
 import { RiArrowLeftSLine, RiArrowRightSLine } from "@remixicon/react";
-import { cn } from "./../lib/utils";
 import { Combobox } from "./combobox";
 import { OptionsProps } from "./selectbox";
 import { ReactNode, useEffect, useState } from "react";
+import styled, { css, CSSProp } from "styled-components";
 
 type PaginationProps = {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
   showNumbers?: boolean;
-  className?: string;
+  style?: CSSProp;
 };
 
 function Pagination({
@@ -17,7 +17,7 @@ function Pagination({
   totalPages,
   onPageChange,
   showNumbers = true,
-  className = "",
+  style,
 }: PaginationProps) {
   const [currentPageLocal, setCurrentPageLocal] = useState<OptionsProps>({
     text: currentPage.toString(),
@@ -48,7 +48,7 @@ function Pagination({
   };
 
   return (
-    <div className={cn("flex flex-row items-center gap-2", className)}>
+    <PaginationWrapper $style={style}>
       <PaginationButton
         onClick={handlePrevious}
         disabled={currentPage === 1}
@@ -74,9 +74,17 @@ function Pagination({
       >
         <RiArrowRightSLine size={20} />
       </PaginationButton>
-    </div>
+    </PaginationWrapper>
   );
 }
+
+const PaginationWrapper = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  ${({ $style }) => $style}
+`;
 
 const PaginationItem = ({
   totalPages,
@@ -126,7 +134,7 @@ const PaginationItem = ({
   });
 
   return (
-    <div className="flex flex-row items-center gap-2">
+    <PaginationItemWrapper>
       {totalPages > threshold ? (
         <>
           <Combobox
@@ -138,7 +146,10 @@ const PaginationItem = ({
               setCurrentPageLocal(val);
             }}
             placeholder="1"
-            containerClassName="w-[80px] text-sm"
+            containerStyle={css`
+              width: 80px;
+              font-size: 14px;
+            `}
           />
 
           {lastPages.map((page) => {
@@ -178,38 +189,77 @@ const PaginationItem = ({
           })}
         </>
       )}
-    </div>
+    </PaginationItemWrapper>
   );
 };
 
+const PaginationItemWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+`;
+
 const PaginationButton = ({
   onClick,
-  className,
+  style,
   children,
   isActive,
   disabled,
   ...props
 }: {
   onClick: () => void;
-  className?: string;
+  style?: CSSProp;
   children: ReactNode;
   isActive?: boolean;
   disabled?: boolean;
 }) => {
   return (
-    <button
+    <Button
       {...props}
       onClick={onClick}
       disabled={disabled}
-      className={cn(
-        "min-w-[38px] min-h-[38px] max-w-[38px] max-h-[38px] rounded-xs flex justify-center items-center text-sm cursor-pointer font-medium focus:outline-none border border-gray-100 disabled:cursor-default disabled:hover:bg-transparent disabled:opacity-30",
-        isActive ? "border-[#61A9F9]" : "hover:border-blue-100 text-gray-700",
-        className
-      )}
+      $style={style}
+      $isActive={isActive}
     >
       {children}
-    </button>
+    </Button>
   );
 };
+
+const Button = styled.button<{
+  $isActive?: boolean;
+  $style?: CSSProp;
+}>`
+  min-width: 39px;
+  min-height: 39px;
+  max-width: 39px;
+  max-height: 39px;
+  border-radius: 2px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  border: 1px solid ${({ $isActive }) => ($isActive ? "#61A9F9" : "#f3f4f6")};
+  color: ${({ $isActive }) => ($isActive ? "#000" : "#374151")};
+
+  &:hover {
+    border-color: ${({ $isActive }) => ($isActive ? "#61A9F9" : "#bfdbfe")};
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.3;
+    background-color: transparent;
+    &:hover {
+      border-color: ${({ $isActive }) => ($isActive ? "#61A9F9" : "#f3f4f6")};
+    }
+  }
+
+  ${({ $style }) => $style}
+`;
 
 export { Pagination };

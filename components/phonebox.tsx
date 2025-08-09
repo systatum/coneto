@@ -16,14 +16,15 @@ import {
   useInteractions,
   Placement,
 } from "@floating-ui/react";
-import clsx from "clsx";
 import {
+  RemixiconComponentType,
   RiArrowDownSLine,
   RiArrowUpSLine,
   RiSearchLine,
 } from "@remixicon/react";
 import { COUNTRY_CODES } from "../constants/countries";
 import { AsYouType, CountryCode } from "libphonenumber-js/max";
+import styled, { css, CSSProp } from "styled-components";
 
 export interface CountryCodeProps {
   id: string;
@@ -35,7 +36,7 @@ export interface CountryCodeProps {
 export interface PhoneboxProps {
   label?: string;
   name?: string;
-  className?: string;
+  style?: CSSProp;
   value?: string;
   onChange?: (
     e:
@@ -54,7 +55,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
   (
     {
       label,
-      className,
+      style,
       value = "",
       onChange,
       placeholder,
@@ -66,7 +67,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
     },
     ref
   ) => {
-    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES[86];
+    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES[205];
     const countryCodeState = countryCodeValue ?? DEFAULT_COUNTRY_CODES;
 
     const [isOpen, setIsOpen] = useState(false);
@@ -209,23 +210,29 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
     };
 
     return (
-      <div ref={ref} className="flex w-full flex-col gap-1">
+      <div
+        ref={ref}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "4px",
+          width: "100%",
+        }}
+      >
         {label && (
-          <label className="text-xs" htmlFor={label}>
+          <label
+            style={{
+              fontSize: "12px",
+            }}
+            htmlFor={label}
+          >
             {label}
           </label>
         )}
-        <div
-          className={clsx(
-            "flex w-full min-w-[150px] rounded-xs min-h-[32px] items-center border border-gray-300",
-            showError
-              ? "border-red-500"
-              : isOpen
-                ? "border-gray-300"
-                : "border-gray-300 focus-within:border-[#61A9F9]",
-            disabled ? "opacity-50" : "",
-            className
-          )}
+        <InputWrapper
+          $hasError={showError}
+          $isOpen={isOpen}
+          $disabled={disabled}
           {...getReferenceProps({
             ref: refs.setReference,
             tabIndex: -1,
@@ -237,51 +244,42 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
               ? `country-option-${highlightedIndex}`
               : undefined,
           })}
+          $style={style}
         >
-          <button
+          <CountryButton
             type="button"
             onClick={handleToggleDropdown}
             disabled={disabled}
-            className={clsx(
-              "flex flex-row min-h-[32px] items-center gap-1 rounded-l-xs border-gray-300 border-r px-2 text-xs",
-              disabled
-                ? "cursor-not-allowed"
-                : "cursor-pointer hover:bg-gray-50"
-            )}
+            $disabled={disabled}
             aria-label="Select country code"
             tabIndex={0}
           >
-            <span className="text-xs">{selectedCountry.flag}</span>
+            <span
+              style={{
+                fontSize: "12px",
+              }}
+            >
+              {selectedCountry.flag}
+            </span>
             <span>{selectedCountry.code}</span>
-            {isOpen ? (
-              <RiArrowUpSLine className="h-4 w-4 text-gray-500" />
-            ) : (
-              <RiArrowDownSLine className="h-4 w-4 text-gray-500" />
-            )}
-          </button>
+            {isOpen ? <ArrowUp /> : <ArrowDown />}
+          </CountryButton>
 
-          <input
+          <PhoneInput
             ref={phoneInputRef}
             type="tel"
-            className={clsx(
-              "w-full rounded-xs px-3 text-xs focus:outline-none text-black",
-              disabled ? "cursor-not-allowed" : "bg-white"
-            )}
             placeholder={placeholder}
             value={phoneNumber}
             onChange={handlePhoneChange}
-            onKeyDown={(e) => {
-              if (onKeyDown) {
-                onKeyDown(e);
-              }
-            }}
+            onKeyDown={(e) => onKeyDown?.(e)}
             disabled={disabled}
+            $disabled={disabled}
             aria-label="Phone number input"
           />
-        </div>
+        </InputWrapper>
 
         {isOpen && (
-          <div
+          <DropdownContainer
             {...getFloatingProps({
               ref: refs.setFloating,
               id: "country-listbox",
@@ -289,21 +287,25 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
               style: {
                 ...floatingStyles,
                 width: refs.reference.current?.getBoundingClientRect().width,
-                zIndex: 1000,
-                maxHeight: 240,
-                overflowY: "auto",
               },
               tabIndex: -1,
             })}
-            className="absolute left-0 scrollbar-thin rounded-xs border border-gray-300 focus:border-[#61A9F9] bg-white shadow-xl md:min-w-[400px]"
           >
-            <div className="sticky top-0 bg-white p-2">
-              <div className="relative">
-                <RiSearchLine className="absolute top-2 left-2 h-4 w-4 text-gray-400" />
-                <input
+            <StickyHeader>
+              <SearchWrapper>
+                <RiSearchLine
+                  style={{
+                    position: "absolute",
+                    top: "0.5rem",
+                    left: "0.5rem",
+                    width: "1rem",
+                    height: "1rem",
+                    color: "#9ca3af",
+                  }}
+                />
+                <SearchInput
                   type="text"
                   ref={searchInputRef}
-                  className="w-full rounded-xs border border-gray-300 py-2 pr-2 pl-8 text-xs focus:border-[#61A9F9] focus:outline-none"
                   placeholder="Search your country..."
                   value={searchTerm}
                   onChange={(e) => {
@@ -314,12 +316,12 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
                   aria-label="search-countries"
                   autoComplete="off"
                 />
-              </div>
-            </div>
+              </SearchWrapper>
+            </StickyHeader>
 
             {FILTERED_COUNTRIES.length > 0 ? (
               FILTERED_COUNTRIES.map((country, index) => (
-                <div
+                <CountryOption
                   key={country.id}
                   id={`country-option-${index}`}
                   role="option"
@@ -333,31 +335,181 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
                     handleSelectCountry(country);
                   }}
                   onMouseEnter={() => setHighlightedIndex(index)}
-                  className={clsx(
-                    "flex cursor-pointer items-center px-3 py-2 text-xs",
-                    highlightedIndex === index ? "bg-blue-100" : ""
-                  )}
+                  $highlighted={highlightedIndex === index}
                 >
-                  <span className="mr-2">{country.flag}</span>
+                  <span style={{ marginRight: "8px" }}>{country.flag}</span>
                   <span>{country.name}</span>
-                  <span className="ml-auto text-gray-500">{country.code}</span>
-                </div>
+                  <span
+                    style={{
+                      marginLeft: "auto",
+                      color: "#6a7282",
+                    }}
+                  >
+                    {country.code}
+                  </span>
+                </CountryOption>
               ))
             ) : (
-              <div className="p-3 text-center text-xs text-gray-500">
-                No country found.
-              </div>
+              <EmptyOption>No country found.</EmptyOption>
             )}
-          </div>
+          </DropdownContainer>
         )}
 
-        {showError && errorMessage && (
-          <p className="text-xs text-red-500">{errorMessage}</p>
-        )}
+        {showError && <ErrorText>{errorMessage}</ErrorText>}
       </div>
     );
   }
 );
+
+const InputWrapper = styled.div<{
+  $hasError?: boolean;
+  $isOpen?: boolean;
+  $disabled?: boolean;
+  $style?: CSSProp;
+}>`
+  display: flex;
+  width: 100%;
+  min-height: 32px;
+  align-items: center;
+  border-radius: var(--radius-xs);
+  border: 1px solid
+    ${({ $hasError, $isOpen }) =>
+      $hasError ? "#ef4444" : $isOpen ? "#d1d5db" : "#d1d5db"};
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      opacity: 0.5;
+    `}
+  &:focus-within {
+    border-color: ${({ $hasError }) => ($hasError ? "#ef4444" : "#61A9F9")};
+  }
+
+  ${({ $style }) => $style}
+`;
+
+const CountryButton = styled.button<{ $disabled?: boolean }>`
+  display: flex;
+  flex-direction: row;
+  min-height: 32px;
+  align-items: center;
+  gap: 4px;
+  border-right: 1px solid #d1d5db;
+  padding: 0 8px;
+  font-size: 12px;
+  border-top-left-radius: var(--radius-xs);
+  border-bottom-left-radius: var(--radius-xs);
+  ${({ $disabled }) =>
+    $disabled
+      ? css`
+          cursor: not-allowed;
+        `
+      : css`
+          cursor: pointer;
+          &:hover {
+            background-color: #f9fafb;
+          }
+        `}
+`;
+
+const IconStyled = (icon: RemixiconComponentType) => styled(icon)`
+  width: 1rem;
+  height: 1rem;
+  color: #6b7280;
+`;
+
+const ArrowUp = IconStyled(RiArrowUpSLine);
+const ArrowDown = IconStyled(RiArrowDownSLine);
+
+const PhoneInput = styled.input<{ $disabled?: boolean }>`
+  width: 100%;
+  padding: 0 12px;
+  font-size: 12px;
+  border-radius: var(--radius-xs);
+  color: black;
+  outline: none;
+  ${({ $disabled }) =>
+    $disabled
+      ? css`
+          cursor: not-allowed;
+        `
+      : css`
+          background-color: white;
+        `}
+`;
+
+const DropdownContainer = styled.div`
+  position: absolute;
+  left: 0;
+  background-color: white;
+  border: 1px solid #d1d5db;
+  border-radius: var(--radius-xs);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  max-height: 240px;
+  overflow-y: auto;
+  z-index: 1000;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #d1d5db;
+    border-radius: 4px;
+  }
+`;
+
+const StickyHeader = styled.div`
+  position: sticky;
+  top: 0;
+  background-color: white;
+  padding: 8px;
+`;
+
+const SearchWrapper = styled.div`
+  position: relative;
+`;
+
+const SearchInput = styled.input`
+  width: 100%;
+  border: 1px solid #d1d5db;
+  padding: 8px 8px 8px 32px;
+  font-size: 12px;
+  border-radius: var(--radius-xs);
+  outline: none;
+
+  &:focus {
+    border-color: #61a9f9;
+  }
+`;
+
+const CountryOption = styled.div<{ $highlighted?: boolean }>`
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  ${({ $highlighted }) =>
+    $highlighted &&
+    css`
+      background-color: #dbeafe;
+    `}
+`;
+
+const EmptyOption = styled.div`
+  padding: 12px;
+  text-align: center;
+  font-size: 12px;
+  color: #6b7280;
+`;
+
+const ErrorText = styled.span`
+  color: #dc2626;
+  font-size: 0.75rem;
+`;
 
 function trimPhone(input: string): string {
   const onlyNumber = input.replace(/[^0-9]/g, "");

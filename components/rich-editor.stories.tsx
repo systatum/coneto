@@ -46,14 +46,21 @@ export const Default: Story = {
     );
 
     return (
-      <div className="flex flex-col gap-4">
+      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
         <RichEditor
           onChange={(e) => setValue(e)}
           value={value}
           toolbarRightPanel={TOOLBAR_RIGHT_PANEL_ACTIONS}
         />
         {printValue !== "" && (
-          <pre className="p-4 bg-gray-100">{printValue}</pre>
+          <pre
+            style={{
+              padding: 28,
+              background: "#D3D3D3",
+            }}
+          >
+            {printValue}
+          </pre>
         )}
       </div>
     );

@@ -1,10 +1,10 @@
 "use client";
 
 import { strToColor } from "./../lib/code-color";
-import clsx from "clsx";
-import { ChangeEvent, HTMLAttributes, useRef } from "react";
+import { ChangeEvent, useRef } from "react";
+import styled, { CSSProp } from "styled-components";
 
-export interface AvatarProps extends HTMLAttributes<HTMLDivElement> {
+export interface AvatarProps {
   firstName: string;
   lastName?: string;
   profileImageUrl?: string | null | undefined;
@@ -12,6 +12,8 @@ export interface AvatarProps extends HTMLAttributes<HTMLDivElement> {
   onChange?: (e: ChangeEvent<HTMLInputElement>, file?: File) => void;
   frameSize?: number;
   fontSize?: number;
+  style?: CSSProp;
+  onClick?: () => void;
 }
 
 const AVATAR_BACKGROUND_COLORS: string[] = [
@@ -41,11 +43,12 @@ function Avatar({
   onChange,
   frameSize = 70,
   fontSize = 23,
-  ...props
+  style,
+  onClick,
 }: AvatarProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const isClickable = changeable || !!onChange || !!props.onClick;
+  const isClickable = changeable || !!onChange || !!onClick;
 
   const fullName = `${firstName} ${lastName}`;
   const backgroundColor = strToColor(fullName, AVATAR_BACKGROUND_COLORS);
@@ -67,29 +70,22 @@ function Avatar({
   };
 
   return (
-    <div
-      {...props}
-      onClick={changeable ? handleClick : props.onClick}
+    <AvatarContainer
+      onClick={changeable ? handleClick : onClick}
       onChange={changeable ? handleFileChange : onChange}
       aria-label="avatar-content"
       role="button"
       tabIndex={0}
-      className={clsx(
-        "group relative flex items-center justify-center overflow-hidden rounded-full border border-gray-100 font-bold",
-        isClickable ? "cursor-pointer" : "cursor-default"
-      )}
-      style={{
-        backgroundColor: !isImageValid ? backgroundColor : undefined,
-        fontSize: `${fontSize}px`,
-        width: `${frameSize}px`,
-        height: `${frameSize}px`,
-      }}
+      $clickable={isClickable}
+      $backgroundColor={!isImageValid ? backgroundColor : undefined}
+      $fontSize={fontSize}
+      $frameSize={frameSize}
+      $avatarStyle={style}
     >
       {isImageValid ? (
-        <img
+        <AvatarImage
           width={30}
           height={30}
-          className="h-full w-full object-contain"
           alt={`${fullName} profile image on the Systatum superapp`}
           src={profileImageUrl}
         />
@@ -97,21 +93,72 @@ function Avatar({
         <div>{initials}</div>
       )}
       {changeable ? (
-        <div className="bg-opacity-50 absolute inset-0 flex items-center justify-center bg-black opacity-0 transition-opacity group-hover:opacity-80">
-          <input
+        <AvatarChange>
+          <HiddenInput
             ref={fileInputRef}
             type="file"
             accept="image/*"
-            className="hidden"
             onChange={handleFileChange}
             aria-label="profile-file-input"
           />
-          <span className="text-sm text-white">📷</span>
-        </div>
+          <AvatarChangeIcon>📷</AvatarChangeIcon>
+        </AvatarChange>
       ) : null}
-    </div>
+    </AvatarContainer>
   );
 }
+
+const AvatarContainer = styled.div<{
+  $clickable: boolean;
+  $backgroundColor: string;
+  $frameSize: number;
+  $fontSize: number;
+  $avatarStyle: CSSProp;
+}>`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 9999px;
+  border: 1px solid #f3f4f6;
+  font-weight: bold;
+  background-color: ${({ $backgroundColor }) => $backgroundColor};
+  font-size: ${({ $fontSize }) => $fontSize}px;
+  width: ${({ $frameSize }) => $frameSize}px;
+  height: ${({ $frameSize }) => $frameSize}px;
+  cursor: ${({ $clickable }) => ($clickable ? "pointer" : "default")};
+`;
+
+const AvatarImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+`;
+
+const AvatarChange = styled.div`
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+
+  ${AvatarContainer}:hover & {
+    opacity: 0.8;
+  }
+`;
+
+const HiddenInput = styled.input`
+  display: none;
+`;
+
+const AvatarChangeIcon = styled.span`
+  color: white;
+  font-size: 0.875rem;
+`;
 
 export function getInitials(
   firstName: string,

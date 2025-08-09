@@ -1,5 +1,4 @@
 import { RemixiconComponentType } from "@remixicon/react";
-import { cn } from "./../lib/utils";
 import {
   Children,
   isValidElement,
@@ -10,30 +9,27 @@ import {
   useRef,
   useState,
 } from "react";
+import styled, { css, CSSProp } from "styled-components";
 
 interface WindowProps {
   orientation?: "horizontal" | "vertical";
   children?: ReactNode;
-  className?: string;
+  style?: CSSProp;
 }
 
 interface WindowCellProps {
   children?: ReactNode;
-  className?: string;
+  style?: CSSProp;
   actions?: WindowActionProps[];
 }
 
 export interface WindowActionProps {
   onClick?: () => void;
   icon?: RemixiconComponentType;
-  className?: string;
+  style?: string;
 }
 
-function Window({
-  orientation = "vertical",
-  children,
-  className,
-}: WindowProps) {
+function Window({ orientation = "vertical", children, style }: WindowProps) {
   const isVertical = orientation === "vertical";
   const childrenArray = Children.toArray(children).filter(isValidElement);
   const sizeState = new Array(childrenArray.length).fill(
@@ -128,84 +124,130 @@ function Window({
   }, [childrenArray.length]);
 
   return (
-    <div
-      ref={containerRef}
-      className={cn(
-        "flex w-full h-full overflow-hidden",
-        isVertical ? "flex-row" : "flex-col",
-        className
-      )}
-    >
+    <Container ref={containerRef} $isVertical={isVertical} $style={style}>
       {childrenArray.map((child, index) => (
-        <div
-          key={index}
-          style={{
-            [isVertical ? "width" : "height"]: `${sizes[index] * 100}%`,
-            [isVertical ? "height" : "width"]: "100%",
-          }}
-          className="relative w-full h-full"
-        >
+        <CellWrapper key={index} $size={sizes[index]} $isVertical={isVertical}>
           {child}
-
           {index < childrenArray.length - 1 && (
-            <div
+            <Divider
               aria-label={`window-divider`}
               onMouseDown={startDrag(index)}
-              className={cn(
-                "absolute z-10 bg-transparent transition-colors",
-                isVertical
-                  ? "top-0 -right-0 w-px h-full cursor-col-resize border-r border-gray-300"
-                  : "left-0 -bottom-0 h-px w-full cursor-row-resize border-b border-gray-300"
-              )}
+              $isVertical={isVertical}
             />
           )}
-        </div>
+        </CellWrapper>
       ))}
-    </div>
+    </Container>
   );
 }
 
-function WindowCell({ children, className, actions }: WindowCellProps) {
+function WindowCell({ children, style, actions }: WindowCellProps) {
   return (
-    <div
+    <CellWrapper
       aria-label="window-cell"
-      className={cn("flex flex-row relative w-full h-full", className)}
+      $size={1}
+      $isVertical={true}
+      $style={style}
     >
-      <div className="absolute right-4 top-4">
-        {actions && (
-          <div className="flex flex-row w-full">
-            {actions.map((data, index) => (
-              <div
-                key={index}
-                onClick={() => {
-                  if (data.onClick) {
-                    data.onClick();
-                  }
-                }}
-                className={cn(
-                  "flex relative w-full items-center cursor-pointer px-3 py-2 gap-2",
-                  data.className
-                )}
-              >
-                {data.icon && (
-                  <button
-                    aria-label="window-button"
-                    className="absolute hover:bg-gray-400 transition-all duration-300 right-2 top-1/2 -translate-y-1/2"
-                  >
-                    <data.icon size={16} />
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
+      {actions && (
+        <ActionContainer>
+          {actions.map((data, index) => (
+            <ActionButton
+              key={index}
+              aria-label="window-button"
+              onClick={() => {
+                if (data.onClick) data.onClick();
+              }}
+              $style={data.style}
+            >
+              {data.icon && <data.icon size={16} />}
+            </ActionButton>
+          ))}
+        </ActionContainer>
+      )}
       {children}
-    </div>
+    </CellWrapper>
   );
 }
+
+const Container = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== "$style" && prop !== "$isVertical",
+})<{ $isVertical: boolean; $style?: CSSProp }>`
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  flex-direction: ${({ $isVertical }) => ($isVertical ? "row" : "column")};
+  ${({ $style }) => $style}
+`;
+
+const CellWrapper = styled.div.withConfig({
+  shouldForwardProp: (prop) =>
+    !["$size", "$isVertical", "$style"].includes(prop),
+})<{
+  $size: number;
+  $isVertical: boolean;
+  $style?: CSSProp;
+}>`
+  position: relative;
+  width: ${({ $isVertical, $size }) =>
+    $isVertical ? `${$size * 100}%` : "100%"};
+  height: ${({ $isVertical, $size }) =>
+    !$isVertical ? `${$size * 100}%` : "100%"};
+  ${({ $style }) => $style}
+`;
+
+const Divider = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== "$isVertical",
+})<{ $isVertical: boolean }>`
+  position: absolute;
+  z-index: 10;
+  background-color: transparent;
+  transition: background-color 0.3s;
+
+  ${({ $isVertical }) =>
+    $isVertical
+      ? css`
+          top: 0;
+          right: 0;
+          width: 1px;
+          height: 100%;
+          cursor: col-resize;
+          border-right: 1px solid #d1d5db;
+        `
+      : css`
+          left: 0;
+          bottom: 0;
+          height: 1px;
+          width: 100%;
+          cursor: row-resize;
+          border-bottom: 1px solid #d1d5db;
+        `}
+`;
+
+const ActionContainer = styled.div`
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  display: flex;
+  flex-direction: row;
+`;
+
+const ActionButton = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding: 2px;
+  gap: 8px;
+  transition: background-color 0.3s;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #d1d5db;
+  }
+
+  ${({ $style }) => $style}
+`;
 
 Window.Cell = WindowCell;
-
 export { Window };

@@ -10,23 +10,27 @@ const meta: Meta<typeof LoadingSpinner> = {
   tags: ["autodocs"],
   argTypes: {
     iconSize: {
-      control: { type: "number" },
+      control: { type: "number", min: 8, max: 64, step: 1 },
+      description: "Diameter of the spinner icon in pixels.",
       defaultValue: 16,
-      description: "Size of the loading spinner icon (in pixels)",
     },
     textSize: {
-      control: { type: "number" },
+      control: { type: "number", min: 8, max: 40, step: 1 },
+      description: "Font size of the optional label text in pixels.",
       defaultValue: 16,
-      description: "Font size of the label text (in pixels)",
     },
     label: {
-      control: { type: "text" },
-      description: "Optional label displayed next to the spinner",
+      control: "text",
+      description: "Optional text displayed next to the spinner.",
     },
     gap: {
-      control: { type: "number" },
-      description:
-        "Optional label displayed gap on between text and spinner on pixel",
+      control: { type: "number", min: 0, max: 24, step: 1 },
+      description: "Space (in px) between the spinner and label.",
+      defaultValue: 2,
+    },
+    style: {
+      control: false,
+      description: "Custom `styled-components` CSS to override the wrapper.",
     },
   },
 };

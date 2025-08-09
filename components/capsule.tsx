@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { cn } from "./../lib/utils";
+import styled, { css, CSSProp } from "styled-components";
 
 export interface TabFieldsProps {
   id: string | number;
@@ -12,8 +12,8 @@ export interface TabProps {
   view: string | null | number;
   fields: TabFieldsProps[];
   setView: (data: string | number) => void;
-  containerClassName?: string;
-  classActiveTab?: string;
+  containerStyle?: CSSProp;
+  styleActiveTab?: CSSProp;
   full?: boolean;
   activeBackgroundColor?: string;
 }
@@ -22,8 +22,8 @@ function Capsule({
   fields,
   view,
   setView,
-  containerClassName,
-  classActiveTab,
+  containerStyle,
+  styleActiveTab,
   full,
   activeBackgroundColor = "oklch(54.6% .245 262.881)",
 }: TabProps) {
@@ -130,19 +130,23 @@ function Capsule({
   const hoverPosition = getHoverPosition();
   const initialPosition = getInitialPosition();
 
-  const capsuleClass = cn(
-    "relative flex flex-row items-center justify-start overflow-hidden  border-[#ebebeb] shadow-[0_1px_4px_-3px_#5b5b5b] px-1 shadow-sm",
-    full ? "w-full border-b bg-white" : "w-fit border rounded-xl",
-    containerClassName
-  );
-
   return (
-    <div ref={containerRef} role="tablist" className={capsuleClass}>
+    <CapsuleWrapper
+      $containerStyle={containerStyle}
+      $full={full}
+      ref={containerRef}
+      role="tablist"
+    >
       <motion.div
         layout
-        className="absolute rounded-xl top-1 bottom-1 z-10 h-[25px"
         style={{
-          background: activeBackgroundColor,
+          position: "absolute",
+          top: "4px",
+          borderRadius: "12px",
+          bottom: "4px",
+          zIndex: 10,
+          height: "25px",
+          backgroundColor: activeBackgroundColor,
         }}
         initial={{
           left: initialPosition.left,
@@ -161,9 +165,14 @@ function Capsule({
 
       <motion.div
         layout
-        className="absolute top-1 rounded-xl bottom-1 z-0 h-[25px] border-2"
         style={{
-          borderColor: activeBackgroundColor,
+          position: "absolute",
+          top: "4px",
+          borderRadius: "12px",
+          bottom: "4px",
+          zIndex: 0,
+          height: "25px",
+          border: `2px solid ${activeBackgroundColor}`,
         }}
         initial={{
           left: hoverPosition.left,
@@ -183,27 +192,84 @@ function Capsule({
       {fields.map((data, index) => {
         const isActive = view === data.id;
 
-        const tabClass = cn(
-          "z-10 cursor-pointer px-4 py-1 text-center font-medium transition-colors duration-200",
-          isActive ? "text-white" : `text-gray-900 ${classActiveTab}`
-        );
-
         return (
-          <div
+          <Tab
+            $isActive={isActive}
+            $styleActiveTab={styleActiveTab}
             role="tab"
             key={index}
             ref={setTabRef(index)}
-            className={tabClass}
             onMouseEnter={() => setHovered(data.id)}
             onMouseLeave={() => setHovered(null)}
             onClick={() => setView(data.id)}
           >
             {data.title}
-          </div>
+          </Tab>
         );
       })}
-    </div>
+    </CapsuleWrapper>
   );
 }
+
+const CapsuleWrapper = styled.div<{
+  $full?: boolean;
+  $containerStyle?: CSSProp;
+}>`
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: hidden;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  border-color: #ebebeb;
+  box-shadow:
+    0 1px 4px -3px #5b5b5b,
+    0 1px 1px rgba(0, 0, 0, 0.05);
+
+  ${({ $full }) =>
+    $full
+      ? css`
+          width: 100%;
+          background-color: white;
+          border-bottom-width: 1px;
+        `
+      : css`
+          width: fit-content;
+          border-width: 1px;
+          border-radius: 0.75rem;
+        `}
+
+  ${({ $containerStyle }) => $containerStyle}
+`;
+
+const Tab = styled.div<{
+  $isActive?: boolean;
+  $styleActiveTab?: CSSProp;
+}>`
+  z-index: 10;
+  cursor: pointer;
+  padding: 0.3rem 1rem;
+  padding-left: 12px;
+  text-align: center;
+  font-weight: 500;
+  transition: color 0.2s;
+
+  ${({ $isActive }) =>
+    $isActive
+      ? css`
+          color: white;
+        `
+      : css`
+          color: #111827;
+        `}
+
+  ${({ $isActive, $styleActiveTab }) =>
+    !$isActive &&
+    css`
+      ${$styleActiveTab}
+    `}
+`;
 
 export { Capsule };

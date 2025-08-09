@@ -3,6 +3,7 @@ import { Chips } from "./chips";
 import { ChangeEvent, useState } from "react";
 import { BadgeProps } from "./badge";
 import { ColorPickProps } from "./colorbox";
+import { css } from "styled-components";
 
 const meta: Meta<typeof Chips> = {
   title: "Input Elements/Chips",
@@ -104,9 +105,17 @@ export const Default: Story = {
       <Chips
         inputValue={inputValue}
         setInputValue={onChangeValue}
-        chipClassName="w-full gap-2 border-transparent"
-        chipContainerClassName="gap-1"
-        chipsDrawerClassName="min-w-[250px] max-w-[250px]"
+        chipStyle={css`
+          min-width: 300px;
+          gap: 8px;
+          border-color: transparent;
+        `}
+        chipContainerStyle={css`
+          gap: 4px;
+        `}
+        chipsDrawerStyle={css`
+          max-width: 300px;
+        `}
         onOptionClicked={handleOptionClicked}
         selectedOptions={selectedOptions}
         options={BADGE_OPTIONS as BadgeProps[]}
@@ -241,8 +250,15 @@ export const DarkBackground: Story = {
       <Chips
         inputValue={inputValue}
         setInputValue={onChangeValue}
-        chipClassName="gap-2 border-transparent"
-        chipContainerClassName="gap-2 justify-start"
+        chipStyle={css`
+          width: 100%;
+          gap: 8px;
+          border-color: transparent;
+        `}
+        chipContainerStyle={css`
+          gap: 8px;
+          justify-content: start;
+        `}
         onOptionClicked={handleOptionClicked}
         selectedOptions={selectedOptions}
         onDeleteRequested={handleDeleteClicked}
@@ -348,9 +364,17 @@ export const Deletable: Story = {
       <Chips
         inputValue={inputValue}
         setInputValue={onChangeValue}
-        chipClassName="w-full gap-2 border-transparent"
-        chipContainerClassName="gap-1"
-        chipsDrawerClassName="max-w-[250px]"
+        chipStyle={css`
+          width: 100%;
+          gap: 8px;
+          border-color: transparent;
+        `}
+        chipContainerStyle={css`
+          gap: 4px;
+        `}
+        chipsDrawerStyle={css`
+          max-width: 250px;
+        `}
         onOptionClicked={handleOptionClicked}
         selectedOptions={selectedOptions}
         options={BADGE_OPTIONS as BadgeProps[]}

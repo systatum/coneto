@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { Crumb } from "./crumb";
+import { css } from "styled-components";
 
 const meta: Meta<typeof Crumb> = {
   title: "Controls/Crumb",
@@ -22,7 +23,12 @@ export const Default: Story = {
     ];
 
     return (
-      <Crumb className="text-sm" maxShown={3}>
+      <Crumb
+        style={css`
+          font-size: 14px;
+        `}
+        maxShown={3}
+      >
         {CRUMB_ITEMS.map((data, index) => (
           <Crumb.Item path={data.path} key={index}>
             {data.label}

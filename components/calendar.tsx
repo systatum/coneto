@@ -1,14 +1,15 @@
 import {
+  RemixiconComponentType,
   RiArrowLeftSLine,
   RiArrowRightSLine,
   RiCheckLine,
 } from "@remixicon/react";
-import { Fragment } from "react";
+import { Fragment, ReactElement } from "react";
 import { useState, useEffect } from "react";
 import { Button } from "./button";
-import { cn } from "../lib/utils";
 import { Combobox } from "./combobox";
 import { DrawerProps, OptionsProps } from "./selectbox";
+import styled, { css, CSSProp } from "styled-components";
 
 export interface BaseCalendarProps {
   options?: OptionsProps[];
@@ -18,7 +19,8 @@ export interface BaseCalendarProps {
   monthNames?: OptionsProps[];
   disableWeekend?: boolean;
   format?: FormatProps;
-  containerClassName?: string;
+  containerStyle?: CSSProp;
+  style?: CSSProp;
   yearPastReach?: number;
   futurePastReach?: number;
   onClick?: () => void;
@@ -86,11 +88,12 @@ function Calendar({
   yearPastReach = 80,
   futurePastReach = 50,
   format = "mm/dd/yyyy",
-  className,
+  style,
   label,
   showError,
   errorMessage,
   onClick,
+  containerStyle,
 }: CalendarProps) {
   const parsedDate = inputValue?.text ? new Date(inputValue.text) : new Date();
   const stateDate = isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
@@ -302,25 +305,41 @@ function Calendar({
     }
   }, [inputValue.text, format]);
 
-  const calendarClass = cn(
-    floatingStyles
-      ? ""
-      : "p-2 text-sm min-w-[300px] flex flex-col gap-2 bg-white border border-gray-300 rounded-xs w-full shadow-xs list-none outline-none",
-    className
-  );
-
-  const inputElement = (
-    <div className={calendarClass}>
-      <div
-        className={cn(
-          "flex flex-row font-semibold justify-between w-full items-center mb-2 px-2 gap-2"
-        )}
-      >
+  const inputElement: ReactElement = (
+    <CalendarContainer
+      $style={
+        floatingStyles
+          ? style
+          : css`
+              padding: 0.5rem;
+              font-size: 0.875rem;
+              min-width: 300px;
+              display: flex;
+              flex-direction: column;
+              gap: 0.5rem;
+              background-color: white;
+              border: 1px solid #d1d5db;
+              border-radius: 0.125rem;
+              width: 100%;
+              box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+              list-style: none;
+              outline: none;
+              ${style}
+            `
+      }
+    >
+      <CalendarHeader>
         {!calendarState.open ? (
-          <div className="rounded-xs w-full flex items-center">
-            <button
+          <div
+            style={{
+              borderRadius: "2px",
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <CalendarButton
               aria-label="calendar-select-date"
-              className="w-fit hover:bg-gray-200 cursor-pointer text-xs px-2 py-2"
               onClick={() => {
                 if (!calendarState.open) {
                   handleClickMode("open");
@@ -333,17 +352,26 @@ function Calendar({
                   year: "numeric",
                 })
                 .toUpperCase()}
-            </button>
+            </CalendarButton>
           </div>
         ) : (
           <Fragment>
-            <div className="flex flex-row gap-1">
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                gap: "4px",
+              }}
+            >
               <Combobox
                 name="month"
                 options={monthNames}
                 inputValue={calendarState.month}
                 placeholder={monthNames[0].text}
-                containerClassName="min-w-[90px] max-w-[90px]"
+                containerStyle={css`
+                  min-width: 90px;
+                  max-width: 90px;
+                `}
                 setInputValue={(value) => {
                   onChangeValueDate({
                     target: { name: "month", value },
@@ -355,7 +383,10 @@ function Calendar({
                 options={yearOptions}
                 inputValue={calendarState.year}
                 placeholder={String(currentYear)}
-                containerClassName="min-w-[75px] max-w-[75px]"
+                containerStyle={css`
+                  min-width: 75px;
+                  max-width: 75px;
+                `}
                 setInputValue={(value) => {
                   onChangeValueDate({
                     target: { name: "year", value },
@@ -364,28 +395,34 @@ function Calendar({
               />
             </div>
 
-            <RiCheckLine
+            <CheckCalendar
               size={24}
               onClick={() => handleClickMode("open")}
-              className="rounded-xs focus:outline-none cursor-pointer p-1 hover:bg-gray-200"
+              $style={{
+                padding: "4px",
+              }}
               aria-label="Select date"
             />
           </Fragment>
         )}
         {!calendarState.open && (
-          <div className="flex flex-row w-full">
-            <RiArrowLeftSLine
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              width: "100%",
+            }}
+          >
+            <ArrowLeft
               onClick={handleClickPrevMonth}
               size={24}
               aria-label="previous-month"
-              className="rounded-xs focus:outline-none cursor-pointer hover:bg-gray-200"
             />
 
-            <RiArrowRightSLine
+            <ArrowRight
               onClick={handleClickNextMonth}
               size={24}
               aria-label="next-month"
-              className="rounded-xs focus:outline-none cursor-pointer hover:bg-gray-200"
             />
           </div>
         )}
@@ -393,21 +430,32 @@ function Calendar({
         <Button
           onClick={handleMoveToToday}
           variant="outline"
-          className="border-gray-100 w-full hover:bg-gray-200 shadow-none max-h-[34px] max-w-[60px] text-xs px-2"
+          buttonStyle={css`
+            border-color: #f3f4f6;
+            width: 100%;
+            max-height: 34px;
+            max-width: 60px;
+            font-size: 0.75rem;
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+            box-shadow: none;
+
+            &:hover {
+              background-color: #e5e7eb;
+            }
+          `}
         >
           Today
         </Button>
-      </div>
+      </CalendarHeader>
 
       <>
-        <li>
-          <div className="grid grid-cols-7 gap-1 text-center text-xs font-medium text-gray-500 mb-1 select-none pointer-events-none">
-            {dayNames.map((data, index) => (
-              <div key={index}>{data.text}</div>
-            ))}
-          </div>
-        </li>
-        <div className="w-full grid grid-cols-7 gap-[2px] pb-2">
+        <GridDay>
+          {dayNames.map((data, index) => (
+            <div key={index}>{data.text}</div>
+          ))}
+        </GridDay>
+        <GridDate>
           {Array(emptyCellsCount)
             .fill(null)
             .map((_, i) => (
@@ -432,7 +480,7 @@ function Calendar({
             const isWeekend = date.getDay() === 0 || date.getDay() === 6;
 
             return (
-              <li
+              <DateCellWrapper
                 key={date.toISOString()}
                 ref={(el) => {
                   if (listRef?.current) {
@@ -453,57 +501,242 @@ function Calendar({
                 }}
                 onMouseEnter={() => setHighlightedIndexChange(idx)}
                 tabIndex={isHighlighted ? 0 : -1}
-                className={cn(
-                  `flex self-center justify-center text-center`,
-                  isHighlighted &&
-                    (!disableWeekend || !isWeekend) &&
-                    "cursor-pointer"
-                )}
+                $isHighlighted={isHighlighted}
+                $disableWeekend={disableWeekend}
+                $isWeekend={isWeekend}
               >
-                <span
-                  className={cn(
-                    "w-6 h-6 rounded-full relative border border-transparent",
-                    floatingStyles ? "p-[3px]" : "p-[2px]",
-                    disableWeekend && isWeekend
-                      ? "text-gray-300"
-                      : isWeekend && "text-red-300",
-                    isHighlighted
-                      ? "border-[#61A9F9] border text-[#61A9F9]"
-                      : "hover:bg-blue-200 focus:outline-none focus:bg-blue-200",
-                    isHighlighted &&
-                      disableWeekend &&
-                      isWeekend &&
-                      "bg-white text-gray-300 border-transparent select-none cursor-default",
-                    isCurrentDate
-                      ? "bg-[#61A9F9] text-white"
-                      : isToday && !isCurrentDate
-                        ? "text-[#61A9F9]"
-                        : isToday && isHighlighted && "text-white"
-                  )}
+                <DateCell
+                  $style={
+                    floatingStyles
+                      ? css`
+                          padding: 3px;
+                        `
+                      : css`
+                          padding: 4px;
+                          margin-bottom: 3px;
+                        `
+                  }
+                  $disableWeekend={disableWeekend}
+                  $isWeekend={isWeekend}
+                  $isHighlighted={isHighlighted}
+                  $isCurrentDate={isCurrentDate}
+                  $isToday={isToday}
                 >
                   {date.getDate()}
-                  {isToday && (
-                    <div className="border-[#61A9F9] bg-[#61A9F9] absolute bottom-[1px] left-[10px] border w-[3px] h-[3px]"></div>
-                  )}
-                </span>
-              </li>
+                  {isToday && <DateCellTodayDot />}
+                </DateCell>
+              </DateCellWrapper>
             );
           })}
-        </div>
+        </GridDate>
       </>
-    </div>
+    </CalendarContainer>
   );
 
   return (
-    <div className={cn(`flex w-full flex-col gap-2 text-xs`)}>
+    <Container $style={containerStyle}>
       {label && <label>{label}</label>}
-      <div className="flex flex-col gap-1 text-xs">
+      <InputContent>
         {inputElement}
-        {showError && <span className="text-red-600">{errorMessage}</span>}
-      </div>
-    </div>
+        {showError && <ErrorText>{errorMessage}</ErrorText>}
+      </InputContent>
+    </Container>
   );
 }
+
+const CalendarContainer = styled.div<{
+  $style?: CSSProp;
+}>`
+  ${({ $style }) => $style}
+`;
+
+const CalendarButton = styled.button`
+  width: fit-content;
+  padding: 0.5rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+
+  &:hover {
+    background-color: #e5e7eb;
+  }
+
+  &:focus {
+    outline: none;
+  }
+`;
+
+const CalendarHeader = styled.div`
+  display: flex;
+  flex-direction: row;
+  font-weight: 600;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 0.5rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  gap: 0.5rem;
+`;
+
+const GridDay = styled.div`
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.25rem;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6b7280;
+  margin-bottom: 0.25rem;
+  user-select: none;
+  pointer-events: none;
+`;
+
+const GridDate = styled.div`
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 2px;
+  padding-bottom: 8px;
+  width: 100%;
+`;
+
+const DateCellWrapper = styled.li<{
+  $isHighlighted: boolean;
+  $disableWeekend: boolean;
+  $isWeekend: boolean;
+}>`
+  display: flex;
+  align-self: center;
+  justify-content: center;
+  text-align: center;
+
+  ${({ $isHighlighted, $disableWeekend, $isWeekend }) =>
+    $isHighlighted &&
+    (!$disableWeekend || !$isWeekend) &&
+    css`
+      cursor: pointer;
+    `}
+`;
+
+const DateCell = styled.span<{
+  $style?: CSSProp;
+  $disableWeekend?: boolean;
+  $isWeekend?: boolean;
+  $isHighlighted?: boolean;
+  $isCurrentDate?: boolean;
+  $isToday?: boolean;
+}>`
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 9999px;
+  position: relative;
+  border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  ${({ $disableWeekend, $isWeekend }) =>
+    $disableWeekend &&
+    $isWeekend &&
+    css`
+      color: #d1d5db;
+    `}
+
+  ${({ $isWeekend, $disableWeekend }) =>
+    $isWeekend &&
+    !$disableWeekend &&
+    css`
+      color: #fca5a5;
+    `}
+
+  ${({ $isHighlighted }) =>
+    $isHighlighted
+      ? css`
+          border-color: #61a9f9;
+          color: #61a9f9;
+        `
+      : css`
+          &:hover {
+            background-color: #bfdbfe;
+          }
+          &:focus {
+            outline: none;
+            background-color: #bfdbfe;
+          }
+        `}
+
+  ${({ $isHighlighted, $disableWeekend, $isWeekend }) =>
+    $isHighlighted &&
+    $disableWeekend &&
+    $isWeekend &&
+    css`
+      background-color: white;
+      color: #d1d5db;
+      border-color: transparent;
+      user-select: none;
+      cursor: default;
+    `}
+
+  ${({ $isCurrentDate }) =>
+    $isCurrentDate &&
+    css`
+      background-color: #61a9f9;
+      color: white;
+    `}
+
+  ${({ $isToday, $isCurrentDate }) =>
+    $isToday &&
+    !$isCurrentDate &&
+    css`
+      color: #61a9f9;
+    `}
+    
+  
+  ${({ $isToday, $isHighlighted, $isCurrentDate }) =>
+    $isToday && $isHighlighted && $isCurrentDate
+      ? css`
+          color: white;
+        `
+      : $isToday &&
+        $isHighlighted &&
+        css`
+          color: #61a9f9;
+        `}
+
+  ${({ $style }) => $style}
+`;
+
+const DateCellTodayDot = styled.div`
+  position: absolute;
+  bottom: 1px;
+  left: 10px;
+  width: 3px;
+  height: 3px;
+  background-color: #61a9f9;
+  border: 1px solid #61a9f9;
+`;
+
+const Container = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  ${({ $style }) => $style}
+`;
+
+const ErrorText = styled.span`
+  color: #dc2626;
+  font-size: 0.75rem;
+`;
+
+const InputContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+`;
 
 function formatDate(date: Date, format: FormatProps) {
   const year = date.getFullYear();
@@ -520,5 +753,26 @@ function formatDate(date: Date, format: FormatProps) {
       return `${month}/${day}/${year}`;
   }
 }
+
+const StyledIcon = (icon: RemixiconComponentType) => styled(icon)<{
+  $style?: CSSProp;
+}>`
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #e5e7eb;
+  }
+
+  &:focus {
+    outline: none;
+  }
+  ${({ $style }) => $style}
+`;
+
+const ArrowLeft = StyledIcon(RiArrowLeftSLine);
+const ArrowRight = StyledIcon(RiArrowRightSLine);
+const CheckCalendar = StyledIcon(RiCheckLine);
 
 export { Calendar };

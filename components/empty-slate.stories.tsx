@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { EmptySlate } from "./empty-slate";
 import { Button } from "./button";
+import { css } from "styled-components";
 
 const meta: Meta<typeof EmptySlate> = {
   title: "Content/EmptySlate",
@@ -9,22 +10,35 @@ const meta: Meta<typeof EmptySlate> = {
   argTypes: {
     imageUrl: {
       control: "text",
-      description: "Image URL to be displayed at the top",
-      defaultValue: "https://via.placeholder.com/150",
+      description: "URL of the image to display as visual context.",
     },
     title: {
       control: "text",
-      description: "Main title text",
-      defaultValue: "Nothing Here Yet",
+      description: "Main title of the empty state.",
     },
     subtitle: {
       control: "text",
-      description: "Optional subtitle text",
-      defaultValue: "Start by adding some content.",
+      description: "Optional subtitle to give more context.",
     },
     actions: {
       control: false,
-      description: "Optional ReactNode to render action buttons",
+      description:
+        "Optional React node to render interactive elements like buttons.",
+    },
+    containerStyle: {
+      control: false,
+      description:
+        "Optional styled-components CSS for container customization.",
+    },
+    imageStyle: {
+      control: false,
+      description:
+        "Optional styled-components CSS for image wrapper customization.",
+    },
+    childStyle: {
+      control: false,
+      description:
+        "Optional styled-components CSS for content area customization.",
     },
   },
 };
@@ -44,6 +58,9 @@ export const Default: Story = {
         <Button variant="primary">Learn More</Button>
       </>
     ),
+    containerStyle: css`
+      text-align: center;
+    `,
   },
   render: (args) => {
     return <EmptySlate {...args} />;

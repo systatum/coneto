@@ -1,4 +1,3 @@
-import { cn } from "./../lib/utils";
 import {
   RiErrorWarningLine,
   RiThumbDownFill,
@@ -7,6 +6,7 @@ import {
   RiThumbUpLine,
 } from "@remixicon/react";
 import { ChangeEvent, ReactElement, useRef, useState } from "react";
+import styled, { css, CSSProp } from "styled-components";
 
 export interface ThumbFieldProps {
   value?: boolean | null;
@@ -18,9 +18,9 @@ export interface ThumbFieldProps {
   label?: string;
   showError?: boolean;
   errorMessage?: string;
-  containerClassName?: string;
-  triggerClassName?: string;
-  className?: string;
+  containerStyle?: CSSProp;
+  triggerStyle?: CSSProp;
+  style: CSSProp;
   id?: string;
 }
 
@@ -36,9 +36,9 @@ function ThumbField({
   errorMessage,
   label,
   showError,
-  containerClassName,
-  triggerClassName,
-  className,
+  containerStyle,
+  style,
+  triggerStyle,
   id,
 }: ThumbFieldProps) {
   const thumbStateValue = value === true ? "up" : value ? "down" : "blank";
@@ -64,14 +64,8 @@ function ThumbField({
     }
   };
 
-  const triggerClass = cn(
-    "hover:text-gray-600",
-    showError && "text-red-600",
-    triggerClassName
-  );
-
   const inputElement: ReactElement = (
-    <div className={cn("flex flex-row gap-2 items-center", className)}>
+    <InputGroup $style={style}>
       <input
         ref={thumbInputRef}
         name={name}
@@ -80,69 +74,130 @@ function ThumbField({
           thumbValue === "up" ? "true" : thumbValue === "down" ? "false" : ""
         }
       />
-      <div
+
+      <TriggerWrapper
         aria-label="thumb-up"
-        onClick={() => {
-          handleChangeValue("up");
-        }}
-        className="cursor-pointer"
+        onClick={() => handleChangeValue("up")}
+        $triggerStyle={triggerStyle}
+        $active={thumbValue === "up"}
+        $activeColor={thumbsUpBackgroundColor}
+        $showError={showError}
       >
         {thumbValue === "up" ? (
-          <RiThumbUpFill
-            size={24}
-            className={triggerClass}
-            style={{
-              color: thumbsUpBackgroundColor,
-            }}
-          />
+          <RiThumbUpFill size={24} />
         ) : (
-          <RiThumbUpLine size={24} className={triggerClass} />
+          <RiThumbUpLine size={24} />
         )}
-      </div>
-      <div
+      </TriggerWrapper>
+
+      <TriggerWrapper
         aria-label="thumb-down"
-        onClick={() => {
-          handleChangeValue("down");
-        }}
-        className="cursor-pointer"
+        onClick={() => handleChangeValue("down")}
+        $triggerStyle={triggerStyle}
+        $active={thumbValue === "down"}
+        $activeColor={thumbsDownBackgroundColor}
+        $showError={showError}
       >
         {thumbValue === "down" ? (
-          <RiThumbDownFill
-            size={24}
-            className={triggerClass}
-            style={{
-              color: thumbsDownBackgroundColor,
-            }}
-          />
+          <RiThumbDownFill size={24} />
         ) : (
-          <RiThumbDownLine size={24} className={triggerClass} />
+          <RiThumbDownLine size={24} />
         )}
-      </div>
+      </TriggerWrapper>
+
       {showError && (
-        <RiErrorWarningLine
-          size={24}
-          className="rounded-full bg-red-600 text-white"
-        />
+        <ErrorIconWrapper>
+          <RiErrorWarningLine size={24} />
+        </ErrorIconWrapper>
       )}
-    </div>
+    </InputGroup>
   );
 
   return (
-    <div
-      className={cn(
-        `flex w-full flex-col gap-2 text-xs`,
-        disabled && "cursor-not-allowed opacity-50",
-        containerClassName
-      )}
-    >
+    <InputWrapper $containerStyle={containerStyle} $disabled={disabled}>
       {label && <label htmlFor={id}>{label}</label>}
-      <div className="flex flex-col gap-1 text-xs">
+      <InputContent>
         {inputElement}
-
-        {showError && <span className="text-red-600">{errorMessage}</span>}
-      </div>
-    </div>
+        {showError && <ErrorText>{errorMessage}</ErrorText>}
+      </InputContent>
+    </InputWrapper>
   );
 }
+
+const InputWrapper = styled.div<{
+  $containerStyle?: CSSProp;
+  $disabled?: boolean;
+}>`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  width: 100%;
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      cursor: not-allowed;
+      opacity: 0.5;
+    `}
+  ${({ $containerStyle }) => $containerStyle}
+`;
+
+const InputGroup = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
+  ${({ $style }) => $style};
+`;
+
+const InputContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+`;
+
+const ErrorText = styled.span`
+  color: #dc2626;
+  font-size: 0.75rem;
+`;
+
+const TriggerWrapper = styled.div<{
+  $triggerStyle?: CSSProp;
+  $active?: boolean;
+  $activeColor?: string;
+  $showError?: boolean;
+}>`
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+
+  svg {
+    transition: opacity 0.2s ease;
+    ${({ $active, $activeColor }) =>
+      $active &&
+      css`
+        color: ${$activeColor};
+      `}
+    ${({ $showError }) =>
+      $showError &&
+      css`
+        color: #dc2626;
+      `}
+  }
+
+  ${({ $triggerStyle }) => $triggerStyle}
+`;
+
+const ErrorIconWrapper = styled.div`
+  background-color: #dc2626;
+  color: white;
+  border-radius: 50%;
+  padding: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
 
 export { ThumbField };

@@ -49,7 +49,11 @@ export const Default: Story = {
     });
 
     return (
-      <div className="w-[295px]">
+      <div
+        style={{
+          width: "295px",
+        }}
+      >
         <Datebox
           options={DAY_NAMES}
           setInputValue={setValue}
@@ -94,7 +98,11 @@ export const NoWeekends: Story = {
     });
 
     return (
-      <div className="w-[295px]">
+      <div
+        style={{
+          width: "295px",
+        }}
+      >
         <Datebox
           options={DAY_NAMES}
           setInputValue={setValue}

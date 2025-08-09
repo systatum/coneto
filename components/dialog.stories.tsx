@@ -2,6 +2,7 @@ import { useArgs } from "@storybook/preview-api";
 import type { Args, Meta, StoryObj } from "@storybook/react";
 import { Dialog } from "./dialog";
 import { Button } from "./button";
+import { css } from "styled-components";
 
 const meta: Meta = {
   title: "Stage/Dialog",
@@ -34,19 +35,25 @@ export const Default: Story = {
         open={open}
         onOpenChange={(newOpen) => updateArgs({ open: newOpen })}
       >
-        <Dialog.Trigger asChild>
-          <Button>Basic Dialog</Button>
-        </Dialog.Trigger>
+        <Dialog.Trigger>Open Dialog</Dialog.Trigger>
         <Dialog.Content>
-          <div className="flex flex-col gap-4 items-start">
-            <div className="flex flex-col gap-1 items-start">
-              <Dialog.Title>Basic Dialog</Dialog.Title>
-              <Dialog.Description>
-                This is a basic dialog example.
-              </Dialog.Description>
-            </div>
-            <p className="text-xs">This is the dialog content.</p>
-          </div>
+          <Dialog.Header>
+            <Dialog.Title>Custom Dialog</Dialog.Title>
+            <Dialog.Description>This is dialog customize</Dialog.Description>
+          </Dialog.Header>
+          <p
+            style={{
+              paddingTop: "16px",
+              fontSize: 14,
+            }}
+          >
+            This is the dialog body.
+          </p>
+          <Dialog.Footer style={{ marginTop: "20px" }}>
+            <Dialog.Close>
+              <Button>Close</Button>
+            </Dialog.Close>
+          </Dialog.Footer>
         </Dialog.Content>
       </Dialog>
     );
@@ -68,18 +75,42 @@ export const DialogWithButton: Story = {
         open={open}
         onOpenChange={(newOpen) => updateArgs({ open: newOpen })}
       >
-        <Dialog.Trigger asChild>
+        <Dialog.Trigger>
           <Button>Dialog With Button</Button>
         </Dialog.Trigger>
-        <Dialog.Content className="p-3">
-          <div className="flex flex-col w-full gap-2 items-start">
-            <div className="flex flex-col gap-1">
+        <Dialog.Content
+          style={css`
+            max-width: 400px;
+          `}
+        >
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              width: "100%",
+              gap: "0.5rem",
+              alignItems: "flex-start",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.25rem",
+              }}
+            >
               <Dialog.Title>Dialog With Button</Dialog.Title>
               <Dialog.Description>
                 Dialog with actions in the footer.
               </Dialog.Description>
             </div>
-            <p className="text-xs py-4">
+            <p
+              style={{
+                fontSize: "0.75rem",
+                paddingTop: "1rem",
+                paddingBottom: "1rem",
+              }}
+            >
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
               eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
               enim ad minim veniam, quis nostrud exercitation ullamco laboris
@@ -88,11 +119,20 @@ export const DialogWithButton: Story = {
               nulla pariatur. Excepteur sint occaecat cupidatat non proident,
               sunt in culpa qui officia deserunt mollit anim id est laborum.
             </p>
-            <div className="flex flex-row justify-end w-full mt-4 gap-2">
-              <Dialog.Close asChild>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "flex-end",
+                width: "100%",
+                marginTop: "1rem",
+                gap: "0.5rem",
+              }}
+            >
+              <Dialog.Close>
                 <Button>Cancel</Button>
               </Dialog.Close>
-              <Dialog.Close asChild>
+              <Dialog.Close>
                 <Button variant="primary">Confirm</Button>
               </Dialog.Close>
             </div>
@@ -120,15 +160,31 @@ export const HideCloseButton: Story = {
         open={open}
         onOpenChange={(newOpen) => updateArgs({ open: newOpen })}
       >
-        <Dialog.Trigger asChild>
+        <Dialog.Trigger>
           <Button>Dialog (HideClose)</Button>
         </Dialog.Trigger>
-        <Dialog.Content hideClose={args.hideClose}>
-          <div className="flex flex-col gap-2 items-start">
+        <Dialog.Content
+          hideClose={args.hideClose}
+          style={css`
+            max-width: 500px;
+          `}
+        >
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "8px",
+              alignItems: "start",
+            }}
+          >
             <Dialog.Header>
               <Dialog.Title>Dialog (HideClose)</Dialog.Title>
             </Dialog.Header>
-            <p className="text-xs">
+            <p
+              style={{
+                fontSize: "12px",
+              }}
+            >
               This dialog does not include the close button in the top corner.
             </p>
           </div>

@@ -1,18 +1,23 @@
 import { RiErrorWarningLine } from "@remixicon/react";
-import { cn } from "./../lib/utils";
-import { ChangeEvent, InputHTMLAttributes, useState } from "react";
+import {
+  ChangeEvent,
+  InputHTMLAttributes,
+  ReactElement,
+  useState,
+} from "react";
+import styled, { CSSProp } from "styled-components";
 
 export type ColorPickProps = "color-picker" | "color-text";
 
 export interface ColorboxProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange"> {
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "style"> {
   onChange: (e: ChangeEvent<HTMLInputElement>, data: ColorPickProps) => void;
   value?: string;
   label?: string;
   showError?: boolean;
   errorMessage?: string;
-  className?: string;
-  containerClassName?: string;
+  style?: CSSProp;
+  containerStyle?: CSSProp;
   onClick?: () => void;
 }
 
@@ -22,8 +27,8 @@ function Colorbox({
   label,
   errorMessage,
   showError,
-  className,
-  containerClassName,
+  style,
+  containerStyle,
   placeholder,
   onClick,
   ...props
@@ -32,106 +37,174 @@ function Colorbox({
 
   const inputId = `colorbox-${props.name}`;
 
-  const inputElement = (
-    <div
-      className={cn(
-        "relative w-full flex flex-row rounded-xs h-full items-center border",
-        showError
-          ? " border-red-500 focus:border-red-500 focus:ring-red-500 text-red-800"
-          : hovered
-            ? "ring-[#61A9F9] border-[#61A9F9]"
-            : "border border-gray-300 ",
-        className
-      )}
+  const inputElement: ReactElement = (
+    <ColorInputContainer
+      $style={style}
+      $hovered={hovered}
+      $showError={!!showError}
     >
-      <div className="relative">
-        <div
-          tabIndex={0}
-          className={cn(
-            "w-[24px] h-[24px] rounded-xs mx-[4px] my-[4px] border cursor-pointer overflow-hidden",
-            showError ? "border-red-500" : "border-gray-300"
-          )}
-          style={{
-            backgroundColor:
-              !value || value.trim() === "#" || value.trim() === ""
-                ? "#ffffff"
-                : value,
-          }}
-          onClick={() => {
-            document.getElementById(inputId)?.click();
-            setHovered(true);
-          }}
-          onBlur={() => {
-            setHovered(false);
-            if (onClick) {
-              onClick();
-            }
-          }}
-        ></div>
+      <ColorBox
+        tabIndex={0}
+        $bgColor={
+          !value || value.trim() === "#" || value.trim() === ""
+            ? "#ffffff"
+            : value
+        }
+        $showError={!!showError}
+        onClick={() => {
+          document.getElementById(inputId)?.click();
+          setHovered(true);
+        }}
+        onBlur={() => {
+          setHovered(false);
+          if (onClick) onClick();
+        }}
+      />
 
-        <input
-          {...props}
-          id={inputId}
-          type="color"
-          value={value?.startsWith("#") ? value : `#${value}`}
-          onChange={(e) => onChange(e, "color-picker")}
-          className="sr-only absolute border border-transparent -bottom-1"
-        />
-      </div>
+      <HiddenColorInput
+        {...props}
+        id={inputId}
+        type="color"
+        value={value?.startsWith("#") ? value : `#${value}`}
+        onChange={(e) => onChange(e, "color-picker")}
+      />
 
-      <span
-        className={cn(
-          "flex-row w-full gap-1 border-l px-3 flex items-center h-[34px] py-[2px]",
-          showError
-            ? "border-red-500 text-red-500"
-            : hovered
-              ? "ring-[#61A9F9] border-[#61A9F9]"
-              : "border-gray-300"
-        )}
-      >
+      <TextInputGroup $hovered={hovered} $showError={!!showError}>
         {value?.replace(/^#/, "").length > 0 && (
-          <span className={showError ? "text-red-500" : "text-gray-600"}>
-            #
-          </span>
+          <Prefix $showError={!!showError}>#</Prefix>
         )}
-        <input
+        <TextInput
           {...props}
           type="text"
           value={value?.replace(/^#/, "")}
-          onChange={(e) => {
-            onChange(e, "color-text");
-          }}
-          className={cn(
-            "w-full outline-none bg-transparent",
-            showError ? "text-red-500" : "text-gray-800"
-          )}
+          onChange={(e) => onChange(e, "color-text")}
           placeholder={placeholder}
           onFocus={() => setHovered(true)}
           onBlur={() => setHovered(false)}
           maxLength={6}
           spellCheck={false}
+          $showError={!!showError}
         />
-      </span>
+      </TextInputGroup>
 
-      {showError && (
-        <RiErrorWarningLine
-          size={18}
-          className="absolute top-1/2 right-3 -translate-y-1/2 rounded-full bg-red-600 text-white"
-        />
-      )}
-    </div>
+      {showError && <StyledErrorIcon size={18} />}
+    </ColorInputContainer>
   );
 
   return (
-    <div
-      className={cn(`flex w-full flex-col gap-2 text-xs`, containerClassName)}
-    >
+    <InputWrapper $containerStyle={containerStyle} $disabled={props.disabled}>
       {label && <label>{label}</label>}
-      <div className="flex flex-col w-full gap-1 text-xs">
+      <InputContent>
         {inputElement}
-        {showError && <span className="text-red-600">{errorMessage}</span>}
-      </div>
-    </div>
+        {showError && <ErrorText>{errorMessage}</ErrorText>}
+      </InputContent>
+    </InputWrapper>
   );
 }
+
+const InputWrapper = styled.div<{
+  $containerStyle?: CSSProp;
+  $disabled?: boolean;
+}>`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  width: 100%;
+
+  ${({ $disabled }) => $disabled && `cursor: not-allowed; opacity: 0.5;`}
+  ${({ $containerStyle }) => $containerStyle}
+`;
+
+const InputContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+`;
+
+const ColorInputContainer = styled.div<{
+  $hovered: boolean;
+  $showError: boolean;
+  $style?: CSSProp;
+}>`
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 2px;
+  height: 100%;
+  width: 100%;
+  border: 1px solid
+    ${({ $showError, $hovered }) =>
+      $showError ? "#ef4444" : $hovered ? "#61A9F9" : "#d1d5db"};
+
+  ${({ $style }) => $style}
+`;
+
+const ColorBox = styled.div<{
+  $bgColor?: string;
+  $showError?: boolean;
+}>`
+  min-width: 24px;
+  min-height: 24px;
+  margin: 4px;
+  border-radius: 2px;
+  border: 1px solid ${({ $showError }) => ($showError ? "#ef4444" : "#d1d5db")};
+  background-color: ${({ $bgColor }) => $bgColor ?? "#ffffff"};
+  overflow: hidden;
+  cursor: pointer;
+`;
+
+const HiddenColorInput = styled.input`
+  position: absolute;
+  bottom: -5px;
+  border: 1px solid transparent;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+`;
+
+const ErrorText = styled.span`
+  color: #dc2626;
+  font-size: 0.75rem;
+`;
+
+const TextInputGroup = styled.span<{
+  $hovered: boolean;
+  $showError: boolean;
+}>`
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  height: 34px;
+  padding: 2px 12px;
+  border-left: 1px solid
+    ${({ $showError, $hovered }) =>
+      $showError ? "#ef4444" : $hovered ? "#61A9F9" : "#d1d5db"};
+  width: 100%;
+`;
+
+const Prefix = styled.span<{ $showError: boolean }>`
+  color: ${({ $showError }) => ($showError ? "#ef4444" : "#6b7280")};
+`;
+
+const TextInput = styled.input<{ $showError: boolean }>`
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: ${({ $showError }) => ($showError ? "#ef4444" : "#1f2937")};
+`;
+
+const StyledErrorIcon = styled(RiErrorWarningLine)`
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  background-color: #dc2626;
+  color: white;
+  border-radius: 9999px;
+`;
+
 export { Colorbox };

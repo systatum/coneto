@@ -12,6 +12,7 @@ import {
 } from "@remixicon/react";
 import { EmptySlate } from "./empty-slate";
 import { Button } from "./button";
+import { css } from "styled-components";
 
 const meta: Meta<typeof Table> = {
   title: "Content/Table",
@@ -72,14 +73,14 @@ const meta: Meta<typeof Table> = {
         type: { summary: "ReactNode" },
       },
     },
-    className: {
+    containerStyle: {
       description: "Class applied to the main container.",
       control: "text",
       table: {
         type: { summary: "string" },
       },
     },
-    classNameTableRow: {
+    tableRowStyle: {
       description: "Class applied to the container holding all table rows.",
       control: "text",
       table: {
@@ -158,7 +159,12 @@ export const Default: Story = {
     ];
 
     return (
-      <Table classNameTableRow="max-h-[400px]" columns={columns}>
+      <Table
+        tableRowStyle={css`
+          max-height: 400px;
+        `}
+        columns={columns}
+      >
         {sampleRows}
       </Table>
     );
@@ -359,7 +365,9 @@ export const Appendable: Story = {
     return (
       <Table
         selectable
-        classNameTableRow="max-h-[400px]"
+        tableRowStyle={css`
+          max-height: 400px;
+        `}
         columns={columns}
         onItemsSelected={handleItemsSelected}
         subMenuList={TIP_MENU_ACTION}
@@ -502,8 +510,14 @@ export const SortableWithPagination: Story = {
     };
 
     return (
-      <div className="flex flex-col gap-4">
-        <h3 className="font-semibold text-xl font-mono">
+      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <h3
+          style={{
+            fontWeight: 600,
+            fontSize: "1.25rem",
+            fontFamily: "monospace",
+          }}
+        >
           Data Load Balancer 2025
         </h3>
 
@@ -605,10 +619,20 @@ export const WithEmptySlate: Story = {
         subtitle="Track and receive your incoming inventory from suppliers."
         actions={
           <>
-            <Button variant="default" className="text-xs">
+            <Button
+              variant="default"
+              buttonStyle={{
+                fontSize: "12px",
+              }}
+            >
               Add Item
             </Button>
-            <Button variant="primary" className="text-xs">
+            <Button
+              variant="primary"
+              buttonStyle={{
+                fontSize: "12px",
+              }}
+            >
               Learn More
             </Button>
           </>
@@ -893,14 +917,22 @@ export const WithRowGroup: Story = {
     };
 
     return (
-      <div className="flex flex-col gap-4">
-        <h3 className="font-semibold text-xl font-mono">
+      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <h3
+          style={{
+            fontWeight: 600,
+            fontSize: "1.25rem",
+            fontFamily: "monospace",
+          }}
+        >
           Data Load Balancer 2025
         </h3>
 
         <Table
           selectable
-          classNameTableRow="max-h-[400px]"
+          tableRowStyle={css`
+            max-height: 400px;
+          `}
           columns={columns}
           onItemsSelected={handleItemsSelected}
           subMenuList={TIP_MENU_ACTION}

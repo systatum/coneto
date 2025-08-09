@@ -3,6 +3,7 @@ import { Textbox, TextboxProps } from "./textbox";
 import { useArgs } from "@storybook/preview-api";
 import { useEffect, type ChangeEvent } from "react";
 import * as RemixIcons from "@remixicon/react";
+import { css } from "styled-components";
 
 const meta: Meta<typeof Textbox> = {
   title: "Input Elements/Textbox",
@@ -48,8 +49,8 @@ const meta: Meta<typeof Textbox> = {
       mapping: RemixIcons,
     },
     onChange: { action: "changed" },
-    className: { control: false },
-    containerClassName: { control: false },
+    style: { control: false },
+    containerStyle: { control: false },
   },
   args: {
     value: "",
@@ -71,7 +72,10 @@ export const Input: Story = {
     placeholder: "Type here...",
     value: "",
     type: "text",
-    className: "min-w-[400px]",
+    style: css`
+      min-width: 400px;
+      max-width: 400px;
+    `,
   },
   render: (args: TextboxProps) => {
     const [, setUpdateArgs] = useArgs();
@@ -103,7 +107,10 @@ export const Textarea: Story = {
     value: "",
     type: "textarea",
     rows: 3,
-    className: "min-w-[400px]",
+    style: css`
+      min-width: 400px;
+      max-width: 400px;
+    `,
   },
   render: (args: TextboxProps) => {
     const [, setUpdateArgs] = useArgs();
@@ -134,7 +141,10 @@ export const InputMessage: Story = {
     placeholder: "Type a message...",
     value: "",
     type: "text",
-    className: "min-w-[400px]",
+    style: css`
+      min-width: 400px;
+      max-width: 400px;
+    `,
     actionIcon: true,
     icon: RemixIcons.RiSendPlaneFill,
   },
@@ -176,7 +186,10 @@ export const Password: Story = {
     placeholder: "Enter password...",
     value: "",
     type: "password",
-    className: "min-w-[400px]",
+    style: css`
+      min-width: 400px;
+      max-width: 400px;
+    `,
   },
   render: (args: TextboxProps) => {
     const [, setUpdateArgs] = useArgs();
@@ -209,7 +222,10 @@ export const WithErrorMessage: Story = {
     type: "text",
     showError: true,
     errorMessage: "This field is required",
-    className: "min-w-[400px]",
+    style: css`
+      min-width: 400px;
+      max-width: 400px;
+    `,
   },
   render: (args: TextboxProps) => {
     const [, setUpdateArgs] = useArgs();

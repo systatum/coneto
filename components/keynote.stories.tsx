@@ -5,6 +5,34 @@ const meta: Meta<typeof Keynote> = {
   title: "Content/Keynote",
   component: Keynote,
   tags: ["autodocs"],
+  argTypes: {
+    data: {
+      control: "object",
+      description: "The source object whose keys and values will be rendered.",
+    },
+    keys: {
+      control: false,
+      description: "Array of keys to display from the `data` object.",
+    },
+    keyLabels: {
+      control: false,
+      description: "Display labels corresponding to each key.",
+    },
+    renderer: {
+      control: false,
+      description:
+        "Custom renderers for specific keys. Example: `{ amount: val => <b>{val}</b> }`",
+    },
+    children: {
+      control: false,
+      description:
+        "Optional children (used if no data/keys/keyLabels are provided).",
+    },
+    style: {
+      control: false,
+      description: "Optional styled-components style override for wrapper.",
+    },
+  },
 };
 
 export default meta;
@@ -74,7 +102,11 @@ export const CustomRendering: Story = {
           requestCreatedBy: (value) => (
             <div
               onClick={() => console.log("Email was sent")}
-              className="font-medium cursor-pointer text-blue-500"
+              style={{
+                fontWeight: 500,
+                cursor: "pointer",
+                color: "#3b82f6",
+              }}
             >
               {value}
             </div>

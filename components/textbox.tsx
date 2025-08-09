@@ -16,15 +16,15 @@ import {
   useEffect,
   useState,
 } from "react";
-import { cn } from "./../lib/utils";
+import styled, { css, CSSProp } from "styled-components";
 
 export interface BaseTextboxProps
-  extends InputHTMLAttributes<HTMLInputElement> {
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {
   label?: string;
   showError?: boolean;
   errorMessage?: string;
-  className?: string;
-  containerClassName?: string;
+  containerStyle?: CSSProp;
+  style?: CSSProp;
   onActionClick?: () => void;
   onChange: (data: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   icon?: RemixiconComponentType;
@@ -33,11 +33,11 @@ export interface BaseTextboxProps
 
 export type TextboxProps =
   | (BaseTextboxProps &
-      InputHTMLAttributes<HTMLInputElement> & {
+      Omit<InputHTMLAttributes<HTMLInputElement>, "style"> & {
         rows?: undefined;
       })
   | (BaseTextboxProps &
-      TextareaHTMLAttributes<HTMLTextAreaElement> & {
+      Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "style"> & {
         rows: number;
       });
 
@@ -53,8 +53,8 @@ const Textbox = forwardRef<
       rows,
       onChange,
       onActionClick,
-      className,
-      containerClassName,
+      style,
+      containerStyle,
       actionIcon,
       icon: Icon = RiCheckLine,
       type = "text",
@@ -73,7 +73,7 @@ const Textbox = forwardRef<
     const inputId = `textbox-${props.name}`;
 
     if (type === "hidden") {
-      return <input {...props} className="hidden" />;
+      return <input {...props} hidden />;
     }
 
     const autoResize = (el: HTMLTextAreaElement | null) => {
@@ -83,21 +83,9 @@ const Textbox = forwardRef<
       }
     };
 
-    const inputClass = cn(
-      "rounded-xs border text-xs text-black px-2 w-full py-[7px] outline-none",
-      showError
-        ? "border-red-500 focus:border-red-500 focus:ring-red-500 text-red-800"
-        : "border-gray-300 focus:ring-[#61A9F9] focus:border-[#61A9F9]",
-      className
-    );
-
     const inputElement: ReactElement = rows ? (
-      <div className="relative w-full ring-0">
-        <textarea
-          style={{
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
-          }}
+      <TextAreaWrapper>
+        <Textarea
           id={inputId}
           ref={(el) => {
             autoResize(el);
@@ -113,113 +101,216 @@ const Textbox = forwardRef<
             onChange(e);
           }}
           rows={rows ?? 3}
-          className={inputClass}
+          $error={showError}
+          $style={style}
           {...(props as TextareaHTMLAttributes<HTMLTextAreaElement>)}
         />
         {actionIcon && (
-          <button
+          <ActionButton
             type="button"
-            className="text-muted-foreground p-1 bg-gray-300 absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer"
             aria-label="action-icon"
             onClick={(e) => {
               e.preventDefault();
-              if (onActionClick) {
-                onActionClick();
-              }
+              onActionClick?.();
             }}
+            $error={showError}
           >
-            <Icon className="mr-1 text-black" size={18} />
-          </button>
+            <Icon size={18} />
+          </ActionButton>
         )}
         {showError && (
           <RiErrorWarningLine
             size={18}
-            className="absolute top-1/2 right-3 -translate-y-1/2 rounded-full bg-red-600 text-white"
+            style={{
+              position: "absolute",
+              top: "50%",
+              right: "8px",
+              transform: "translateY(-50%)",
+              borderRadius: "9999px",
+              background: "#dc2626",
+              color: "white",
+            }}
           />
         )}
-      </div>
+      </TextAreaWrapper>
     ) : (
-      <div className="relative flex flex-row w-full ring-0">
-        <input
+      <InputWrapper>
+        <Input
           id={inputId}
           ref={ref as RefObject<HTMLInputElement>}
           onChange={onChange}
-          className={inputClass}
           onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              if (onActionClick) {
-                onActionClick();
-              }
-            }
+            if (e.key === "Enter") onActionClick?.();
           }}
           type={type === "password" && showPassword ? "text" : type}
+          $error={showError}
+          $style={style}
           {...(props as InputHTMLAttributes<HTMLInputElement>)}
         />
         {actionIcon && (
-          <button
+          <ActionButton
             type="submit"
             aria-label="action-icon"
-            className={cn(
-              "text-muted-foreground p-[2px]  w-fit rounded-xs transition-all duration-200 mr-1 absolute top-1/2 -translate-y-1/2 cursor-pointer",
-              showError
-                ? "right-[30px] text-red-500 hover:text-red-600"
-                : "right-2"
-            )}
             onClick={(e) => {
               e.preventDefault();
-              if (onActionClick) {
-                onActionClick();
-              }
+              onActionClick?.();
             }}
+            $error={showError}
           >
-            <Icon className="hover:text-gray-800" size={18} />
-          </button>
+            <Icon size={18} />
+          </ActionButton>
         )}
         {type === "password" && (
-          <button
+          <PasswordToggleButton
             type="button"
             onClick={() => setShowPassword((prev) => !prev)}
-            className={cn(
-              "absolute top-1/2 -translate-y-1/2 cursor-pointer text-gray-500 hover:text-gray-600",
-              showError
-                ? "right-[30px] text-red-500 hover:text-red-600"
-                : "right-2"
-            )}
-            tabIndex={-1}
-            aria-label="action-icon"
+            $error={showError}
+            aria-label="toggle-password"
           >
             {showPassword ? (
               <RiEyeOffLine size={22} />
             ) : (
               <RiEyeLine size={22} />
             )}
-          </button>
+          </PasswordToggleButton>
         )}
         {showError && (
-          <button className="absolute right-2 top-1/2 -translate-y-1/2">
+          <ErrorIconWrapper>
             <RiErrorWarningLine
               size={17}
-              className=" rounded-full bg-red-600 text-white"
+              style={{
+                borderRadius: "9999px",
+                background: "#dc2626",
+                color: "white",
+              }}
             />
-          </button>
+          </ErrorIconWrapper>
         )}
-      </div>
+      </InputWrapper>
     );
 
     return (
-      <div
-        className={cn(`flex w-full flex-col gap-2 text-xs`, containerClassName)}
-      >
-        {label && <label htmlFor={inputId}>{label}</label>}
-        <div className="flex flex-col gap-1 text-xs">
+      <Container $style={containerStyle}>
+        {label && <Label htmlFor={inputId}>{label}</Label>}
+        <div>
           {inputElement}
-          {showError && <span className="text-red-600">{errorMessage}</span>}
+          {showError && <ErrorText>{errorMessage}</ErrorText>}
         </div>
-      </div>
+      </Container>
     );
   }
 );
 
-Textbox.displayName = "Textbox";
+const Container = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  ${({ $style }) => $style}
+`;
+
+const Label = styled.label`
+  font-size: 0.75rem;
+`;
+
+const InputWrapper = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+`;
+
+const TextAreaWrapper = styled.div`
+  position: relative;
+  width: 100%;
+`;
+
+const SharedInputStyles = css<{ $error?: boolean; $style?: string }>`
+  border-radius: 2px;
+  font-size: 0.75rem;
+  color: black;
+  padding: 7px 8px;
+  width: 100%;
+  outline: none;
+  border: 1px solid ${({ $error }) => ($error ? "#f87171" : "#d1d5db")};
+  ${({ $error }) =>
+    $error
+      ? `
+    color: #991b1b;
+    &:focus {
+      border-color: #f87171;
+      box-shadow: 0 0 0 1px #f87171;
+    }
+  `
+      : `
+    &:focus {
+      border-color: #61A9F9;
+      box-shadow: 0 0 0 1px #61A9F9;
+    }
+  `}
+  ${({ $style }) => $style}
+`;
+
+const Input = styled.input<{ $error?: boolean; $style?: CSSProp }>`
+  ${SharedInputStyles}
+  ${({ $style }) => $style}
+`;
+
+const Textarea = styled.textarea<{ $error?: boolean; $style?: CSSProp }>`
+  ${SharedInputStyles}
+  resize: none;
+  overflow: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  ${({ $style }) => $style}
+`;
+
+const ActionButton = styled.button<{ $error?: boolean }>`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: ${({ $error }) => ($error ? "30px" : "8px")};
+  padding: 2px;
+  border-radius: 2px;
+  cursor: pointer;
+  background: transparent;
+  color: ${({ $error }) => ($error ? "#f87171" : "#6b7280")};
+
+  &:hover {
+    color: ${({ $error }) => ($error ? "#ef4444" : "#374151")};
+  }
+`;
+
+const PasswordToggleButton = styled.button<{ $error?: boolean }>`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: ${({ $error }) => ($error ? "30px" : "8px")};
+  cursor: pointer;
+  color: ${({ $error }) => ($error ? "#f87171" : "#6b7280")};
+
+  &:hover {
+    color: ${({ $error }) => ($error ? "#ef4444" : "#4b5563")};
+  }
+`;
+
+const ErrorIconWrapper = styled.button`
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+`;
+
+const ErrorText = styled.span`
+  color: #dc2626;
+`;
 
 export { Textbox };

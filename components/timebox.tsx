@@ -7,14 +7,14 @@ import {
   useRef,
   useState,
 } from "react";
-import { cn } from "./../lib/utils";
+import styled, { CSSProp } from "styled-components";
 
 interface TimeboxProps {
   withSeconds?: boolean;
   onChange?: (value: ChangeEvent<HTMLInputElement>) => void;
   editable?: boolean;
-  containerClassName?: string;
-  inputClassName?: string;
+  containerStyle?: CSSProp;
+  inputStyle?: CSSProp;
   disabled?: boolean;
   label?: string;
   showError?: boolean;
@@ -30,8 +30,8 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
       withSeconds = false,
       onChange,
       editable = true,
-      containerClassName,
-      inputClassName,
+      containerStyle,
+      inputStyle,
       disabled,
       label,
       errorMessage,
@@ -116,28 +116,17 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
       setValueLocal(formatted);
     };
 
-    const inputClass = cn(
-      "min-w-[50px] max-w-[50px] text-center border-none items-center min-h-[30px] text-sm bg-white border border-gray-300 focus:outline-none placeholder:text-center",
-      "appearance-none [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
-      disabled && "cursor-not-allowed opacity-50",
-      inputClassName
-    );
-
     const inputElement: ReactElement = (
-      <div
+      <InputGroup
+        $focused={isFocused}
+        $error={!!showError}
         onKeyDown={(e) => {
           if (onKeyDown) {
             onKeyDown(e);
           }
         }}
-        className={cn(
-          "flex border border-gray-300 w-fit rounded-xs items-center flex-row",
-          isFocused && "ring-[#61A9F9] border-[#61A9F9]",
-          showError && "ring-red-600 border-red-600",
-          containerClassName
-        )}
       >
-        <input
+        <Input
           ref={hourRef}
           type="text"
           inputMode="numeric"
@@ -145,19 +134,14 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
           disabled={!editable || disabled}
           value={hour}
           onChange={(e) => handleChange("hour", e.target.value)}
-          onFocus={() => {
-            setIsFocused(true);
-          }}
-          onBlur={() => {
-            setIsFocused(false);
-          }}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
           min={0}
           max={24}
-          className={inputClass}
+          $inputStyle={inputStyle}
           onKeyDown={(e) => {
             if (
               e.key === "ArrowRight" &&
-              e.currentTarget.selectionEnd !== null &&
               e.currentTarget.selectionEnd === e.currentTarget.value.length
             ) {
               e.preventDefault();
@@ -170,8 +154,8 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
             }
           }}
         />
-        <span className="-translate-y-[1px]">:</span>
-        <input
+        <Colon>:</Colon>
+        <Input
           ref={minuteRef}
           type="text"
           inputMode="numeric"
@@ -179,34 +163,20 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
           disabled={!editable || disabled}
           value={minute}
           onChange={(e) => handleChange("minute", e.target.value)}
-          onFocus={() => {
-            setIsFocused(true);
-          }}
-          onBlur={() => {
-            setIsFocused(false);
-          }}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
           min={0}
           max={59}
-          className={inputClass}
+          $inputStyle={inputStyle}
           onKeyDown={(e) => {
             const { selectionStart, selectionEnd, value } = e.currentTarget;
 
-            if (
-              e.key === "ArrowRight" &&
-              selectionEnd !== null &&
-              selectionEnd === value.length
-            ) {
+            if (e.key === "ArrowRight" && selectionEnd === value.length) {
               e.preventDefault();
-              if (withSeconds) {
-                secondRef.current?.focus();
-              }
+              if (withSeconds) secondRef.current?.focus();
             }
 
-            if (
-              e.key === "ArrowLeft" &&
-              selectionStart !== null &&
-              selectionStart === 0
-            ) {
+            if (e.key === "ArrowLeft" && selectionStart === 0) {
               e.preventDefault();
               hourRef.current?.focus();
             }
@@ -219,8 +189,8 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
         />
         {withSeconds && (
           <>
-            <span className="-translate-y-[1px]">:</span>
-            <input
+            <Colon>:</Colon>
+            <Input
               ref={secondRef}
               type="text"
               inputMode="numeric"
@@ -228,19 +198,14 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
               disabled={!editable || disabled}
               value={second}
               onChange={(e) => handleChange("second", e.target.value)}
-              onFocus={() => {
-                setIsFocused(true);
-              }}
-              onBlur={() => {
-                setIsFocused(false);
-              }}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
               min={0}
               max={59}
-              className={inputClass}
+              $inputStyle={inputStyle}
               onKeyDown={(e) => {
                 if (
                   e.key === "ArrowLeft" &&
-                  e.currentTarget.selectionStart !== null &&
                   e.currentTarget.selectionStart === 0
                 ) {
                   e.preventDefault();
@@ -250,30 +215,94 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
             />
           </>
         )}
-      </div>
+      </InputGroup>
     );
 
     const inputId = `textbox-${name}`;
     const dataType = withSeconds ? `timebox-with-second` : `timebox`;
 
     return (
-      <div
+      <InputWrapper
         data-type={dataType}
         ref={ref}
-        className={cn(
-          `flex w-full flex-col gap-2 text-xs`,
-          disabled && "cursor-not-allowed opacity-50",
-          containerClassName
-        )}
+        $containerStyle={containerStyle}
+        $disabled={disabled}
       >
         {label && <label htmlFor={inputId}>{label}</label>}
-        <div className="flex flex-col gap-1 text-xs">
+        <InputContent>
           {inputElement}
-          {showError && <span className="text-red-600">{errorMessage}</span>}
-        </div>
-      </div>
+          {showError && <ErrorText>{errorMessage}</ErrorText>}
+        </InputContent>
+      </InputWrapper>
     );
   }
 );
+
+const InputWrapper = styled.div<{
+  $containerStyle?: CSSProp;
+  $disabled?: boolean;
+}>`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  width: 100%;
+
+  ${({ $disabled }) => $disabled && `cursor: not-allowed; opacity: 0.5;`}
+  ${({ $containerStyle }) => $containerStyle}
+`;
+
+const InputGroup = styled.div<{ $focused: boolean; $error: boolean }>`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: fit-content;
+  border: 1px solid;
+  border-radius: 2px;
+
+  border-color: ${({ $error, $focused }) =>
+    $error ? "#dc2626" : $focused ? "#61A9F9" : "#d1d5db"};
+`;
+
+const InputContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+`;
+
+const ErrorText = styled.span`
+  color: #dc2626;
+  font-size: 0.75rem;
+`;
+
+const Input = styled.input<{ $inputStyle?: CSSProp }>`
+  min-width: 50px;
+  max-width: 50px;
+  height: 30px;
+  font-size: 0.875rem;
+  text-align: center;
+  background: white;
+  border: none;
+  outline: none;
+
+  appearance: none;
+  -moz-appearance: textfield;
+
+  &::placeholder {
+    text-align: center;
+  }
+
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    appearance: none;
+  }
+
+  ${({ $inputStyle }) => $inputStyle}
+`;
+
+const Colon = styled.span`
+  transform: translateY(-1px);
+`;
 
 export { Timebox };

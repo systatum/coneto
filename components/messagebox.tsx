@@ -1,4 +1,4 @@
-import { cn } from "./../lib/utils";
+import styled, { CSSProp } from "styled-components";
 import {
   RemixiconComponentType,
   RiCloseLine,
@@ -14,6 +14,7 @@ interface MessageboxProps {
   actionLinks?: ActionLinkProps[];
   closable?: boolean;
   onCloseRequest?: () => void;
+  style?: CSSProp;
 }
 
 interface ActionLinkProps {
@@ -23,28 +24,24 @@ interface ActionLinkProps {
   type: "button" | "link";
 }
 
-const MESSAGEBOX_VARIATIONS = {
+const VARIATION_STYLES = {
   primary: {
-    container: "bg-[rgb(231,242,252)] text-[rgb(42,99,180)]",
-    border: "border-[rgb(42,99,180)]",
-    icon: "text-[rgb(42,99,180)]",
+    container: "#e7f2fc",
+    text: "#2a63b4",
   },
   success: {
-    container: "bg-[rgb(233,243,232)] text-[rgb(67,132,61)]",
-    border: "border-[rgb(67,132,61)]",
-    icon: "text-[rgb(67,132,61)]",
+    container: "#e9f3e8",
+    text: "#43843d",
   },
   danger: {
-    container: "bg-[rgb(246,231,231)] text-[rgb(185,44,37)]",
-    border: "border-[rgb(185,44,37)]",
-    icon: "text-[rgb(185,44,37)]",
+    container: "#f6e7e7",
+    text: "#b92c25",
   },
   warning: {
-    container: "bg-[rgb(251,240,228)] text-[rgb(158,91,32)]",
-    border: "border-[rgb(158,91,32)]",
-    icon: "text-[rgb(158,91,32)]",
+    container: "#fbf0e4",
+    text: "#9e5b20",
   },
-};
+} as const;
 
 function Messagebox({
   variant = "primary",
@@ -54,75 +51,171 @@ function Messagebox({
   actionLinks,
   onCloseRequest,
   closable = false,
+  style,
 }: MessageboxProps) {
-  const messageBoxVariant = MESSAGEBOX_VARIATIONS[variant];
-
   return (
-    <div
-      className={cn(
-        "flex flex-row p-3 py-5 pt-[11px] w-full gap-3 relative border-t-2 rounded-xs overflow-hidden h-full",
-        messageBoxVariant.container
-      )}
-    >
-      <div className={cn("absolute", messageBoxVariant.border)} />
+    <Wrapper $variant={variant} $style={style}>
+      <BorderAccent $variant={variant} />
       {Icon && (
-        <Icon className={cn("mt-1", messageBoxVariant.icon)} size={16} />
+        <IconWrapper $variant={variant}>
+          <Icon size={16} />
+        </IconWrapper>
       )}
-      <div className="flex flex-col gap-1">
-        <span className="font-semibold">{title}</span>
-        <span className="text-sm">{children}</span>
+      <Content>
+        <span
+          style={{
+            fontWeight: 600,
+          }}
+        >
+          {title}
+        </span>
+        <span
+          style={{
+            fontSize: "14px",
+          }}
+        >
+          {children}
+        </span>
         {actionLinks && (
-          <div className="flex flex-row gap-2">
-            {actionLinks?.map((action, index) => {
-              const sharedClasses = cn(
-                "text-sm cursor-pointer font-medium duration-300 transition-all w-fit",
-                messageBoxVariant.icon
-              );
-
-              if (action.type === "button") {
-                return (
-                  <button
-                    key={index}
-                    onClick={action.onClick}
-                    className={sharedClasses}
-                  >
-                    {action.caption}
-                  </button>
-                );
-              }
-
-              return (
-                <a
+          <ActionList>
+            {actionLinks.map((action, index) =>
+              action.type === "button" ? (
+                <ActionItem
+                  key={index}
+                  onClick={action.onClick}
+                  $variant={variant}
+                >
+                  {action.caption}
+                </ActionItem>
+              ) : (
+                <ActionLink
                   key={index}
                   href={action.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={sharedClasses}
+                  $variant={variant}
                 >
                   {action.caption}
-                </a>
-              );
-            })}
-          </div>
+                </ActionLink>
+              )
+            )}
+          </ActionList>
         )}
-      </div>
-
+      </Content>
       {closable && (
-        <RiCloseLine
+        <CloseButton
           role="button"
-          aria-label="Closable request"
+          aria-label="closable-request"
+          size={18}
           onClick={(e) => {
             e.stopPropagation();
-            onCloseRequest();
+            onCloseRequest?.();
           }}
-          size={18}
-          className={cn(
-            "absolute top-4 right-3 duration-300 transition-all hover:bg-gray-300 cursor-pointer"
-          )}
         />
       )}
-    </div>
+    </Wrapper>
   );
 }
+
+const Wrapper = styled.div<{
+  $style?: CSSProp;
+  $variant: keyof typeof VARIATION_STYLES;
+}>`
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  width: 100%;
+  padding: 11px 12px 20px;
+  border-top-width: 1px;
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+
+  background-color: ${({ $variant }) => VARIATION_STYLES[$variant].container};
+  color: ${({ $variant }) => VARIATION_STYLES[$variant].text};
+  ${({ $style }) => $style};
+`;
+
+const BorderAccent = styled.div<{
+  $variant: keyof typeof VARIATION_STYLES;
+}>`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  border-top: 2px solid ${({ $variant }) => VARIATION_STYLES[$variant].text};
+`;
+
+const IconWrapper = styled.div<{
+  $variant: keyof typeof VARIATION_STYLES;
+}>`
+  margin-top: 4px;
+  color: ${({ $variant }) => VARIATION_STYLES[$variant].text};
+`;
+
+const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  span.text {
+    font-size: 0.875rem;
+  }
+
+  span.title {
+    font-weight: 600;
+  }
+`;
+
+const ActionList = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+`;
+
+const ActionItem = styled.button<{
+  $variant: keyof typeof VARIATION_STYLES;
+}>`
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: ${({ $variant }) => VARIATION_STYLES[$variant].text};
+  transition: all 0.3s;
+
+  &:hover {
+    opacity: 0.8;
+  }
+`;
+
+const ActionLink = styled.a<{
+  $variant: keyof typeof VARIATION_STYLES;
+}>`
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: ${({ $variant }) => VARIATION_STYLES[$variant].text};
+  transition: all 0.3s;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.8;
+  }
+`;
+
+const CloseButton = styled(RiCloseLine)`
+  position: absolute;
+  top: 1rem;
+  right: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  border-radius: 2px;
+  padding: 2px;
+
+  &:hover {
+    background-color: #d1d5db;
+  }
+`;
 
 export { Messagebox };

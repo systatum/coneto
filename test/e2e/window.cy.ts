@@ -6,7 +6,7 @@ context("Window Component", () => {
       cy.visit(getIdContent("content-window--default"));
 
       cy.findAllByLabelText("window-cell").should("have.length", 2);
-      cy.findAllByLabelText("window-cell").eq(0).should("contain.text", "left");
+      cy.findAllByLabelText("window-cell").eq(0).should("contain.text", "Left");
       cy.findAllByLabelText("window-cell")
         .eq(1)
         .should("contain.text", "Right");
@@ -38,11 +38,11 @@ context("Window Component", () => {
       cy.findAllByLabelText("window-cell").should("have.length", 2);
       cy.findAllByLabelText("window-cell")
         .eq(1)
-        .should("contain.text", "right");
+        .should("contain.text", "Right");
 
       cy.findAllByLabelText("window-button").first().click();
       cy.findAllByLabelText("window-cell").should("have.length", 1);
-      cy.findAllByLabelText("window-cell").eq(0).should("contain.text", "left");
+      cy.findAllByLabelText("window-cell").eq(0).should("contain.text", "Left");
     });
   });
 });

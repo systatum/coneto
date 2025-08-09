@@ -1,4 +1,4 @@
-import { cn } from "../lib/utils";
+import styled, { CSSProp } from "styled-components";
 import {
   ChangeEvent,
   forwardRef,
@@ -19,8 +19,8 @@ export interface MoneyboxProps {
   showError?: boolean;
   errorMessage?: string;
   label?: string;
-  className?: string;
-  containerClassName?: string;
+  style?: CSSProp;
+  InputWrapperStyle?: CSSProp;
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
 }
 
@@ -34,10 +34,10 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
       onChange,
       placeholder,
       separator = "comma",
-      className,
       errorMessage,
       showError,
-      containerClassName,
+      style,
+      InputWrapperStyle,
       onKeyDown,
     },
     ref
@@ -79,27 +79,13 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
       }
     };
 
-    const classMoneyBox = cn(
-      "w-full h-full relative border text-xs rounded-xs py-[10px] px-3 items-center gap-3 justify-end flex",
-      showError
-        ? "border-red-500 text-red-800"
-        : focus
-          ? "border-[#61A9F9]"
-          : "border-gray-300",
-      className
-    );
-
     return (
-      <div
-        className={cn("flex w-full flex-col gap-2 text-xs", containerClassName)}
-      >
-        {label && <label>{label}</label>}
-        <div className="flex flex-col gap-1 text-xs">
-          <div className={classMoneyBox}>
-            <span className="absolute left-2 top-1/2 -translate-y-1/2">
-              {currency}
-            </span>
-            <input
+      <InputWrapper $style={InputWrapperStyle}>
+        {label && <Label>{label}</Label>}
+        <InputContent>
+          <Box $error={showError} $focus={focus} $style={style}>
+            <Currency>{currency}</Currency>
+            <MoneyboxInput
               autoComplete="off"
               ref={ref}
               name={name}
@@ -109,17 +95,78 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
               onFocus={() => setFocus(true)}
               onBlur={() => setFocus(false)}
               onKeyDown={onKeyDown}
-              className="bg-transparent truncate outline-none text-right pl-3 min-w-0 flex-1"
               type="text"
               inputMode="decimal"
             />
-          </div>
-          {showError && <span className="text-red-600">{errorMessage}</span>}
-        </div>
-      </div>
+          </Box>
+          {showError && <ErrorText>{errorMessage}</ErrorText>}
+        </InputContent>
+      </InputWrapper>
     );
   }
 );
+
+const InputWrapper = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  ${({ $style }) => $style}
+`;
+
+const Label = styled.label`
+  font-size: 0.75rem;
+`;
+
+const InputContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+`;
+
+const Box = styled.div<{
+  $error?: boolean;
+  $focus?: boolean;
+  $style?: CSSProp;
+}>`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  width: 100%;
+  height: 100%;
+  padding: 10px 12px;
+  font-size: 0.75rem;
+  border: 1px solid
+    ${({ $error, $focus }) =>
+      $error ? "#ef4444" : $focus ? "#61A9F9" : "#d1d5db"};
+  border-radius: 2px;
+  position: relative;
+  ${({ $style }) => $style}
+`;
+
+const Currency = styled.span`
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+`;
+
+const MoneyboxInput = styled.input`
+  background: transparent;
+  text-align: right;
+  padding-left: 12px;
+  outline: none;
+  min-width: 0;
+  flex: 1;
+  font-size: 0.75rem;
+`;
+
+const ErrorText = styled.span`
+  color: #dc2626;
+  font-size: 0.75rem;
+`;
 
 const unformatMoneyboxNumber = (
   val: string,

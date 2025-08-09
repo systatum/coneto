@@ -1,9 +1,9 @@
-import { ChangeEvent, DragEvent, useRef, useState } from "react";
-import { cn } from "./../lib/utils";
+import { ChangeEvent, DragEvent, ReactElement, useRef, useState } from "react";
 import { RiCloseLine } from "@remixicon/react";
+import styled, { CSSProp } from "styled-components";
 
 interface FileInputBoxProps {
-  containerClassName?: string;
+  containerStyle?: CSSProp;
   placeholder?: string;
   accept?: string;
   onFilesSelected?: (files: FileList) => void;
@@ -13,7 +13,7 @@ interface FileInputBoxProps {
 }
 
 function FileInputBox({
-  containerClassName,
+  containerStyle,
   placeholder = "Drop a file here or browse",
   accept = "*",
   onFilesSelected,
@@ -67,41 +67,31 @@ function FileInputBox({
     setIsDragging(false);
   };
 
-  const containerInputBoxClass = cn(
-    "p-3 border border-dotted-customize  flex flex-row relative items-center rounded-xs justify-between text-gray-500",
-    selectedFile === "" && "cursor-pointer",
-    isDragging
-      ? "bg-blue-50 border border-dotted-customize-blue text-blue-500"
-      : "",
-    containerClassName
-  );
-
-  const inputElement = (
-    <div
-      aria-label="fileinputbox"
-      className={containerInputBoxClass}
+  const inputElement: ReactElement = (
+    <InputBox
+      $isDragging={isDragging}
+      $hasFile={!!selectedFile}
       onClick={handleBrowseClick}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
+      aria-label="fileinputbox"
     >
       {selectedFile !== "" ? (
         <>
-          <div className="text-sm text-gray-700 w-[90%]">{selectedFile}</div>
-          <div
+          <FileName>{selectedFile}</FileName>
+          <DeleteButton
             onClick={(e) => {
               e.stopPropagation();
               handleDeleteFile();
             }}
-            className="absolute p-1 rounded-xs hover:bg-gray-200 top-1/2  -translate-y-1/2 cursor-pointer right-4"
           >
             <RiCloseLine size={16} />
-          </div>
+          </DeleteButton>
         </>
       ) : (
-        <span className="text-sm w-full">{placeholder}</span>
+        <Placeholder>{placeholder}</Placeholder>
       )}
-
       {selectedFile === "" && (
         <input
           ref={fileInputRef}
@@ -111,18 +101,112 @@ function FileInputBox({
           hidden
         />
       )}
-    </div>
+    </InputBox>
   );
 
   return (
-    <div className={cn(`flex w-full flex-col gap-2 text-xs`)}>
+    <InputWrapper $containerStyle={containerStyle}>
       {label && <label>{label}</label>}
-      <div className="flex flex-col gap-1 text-xs">
+      <InputContent>
         {inputElement}
-        {showError && <span className="text-red-600">{errorMessage}</span>}
-      </div>
-    </div>
+        {showError && <ErrorText>{errorMessage}</ErrorText>}
+      </InputContent>
+    </InputWrapper>
   );
 }
+
+const InputWrapper = styled.div<{
+  $containerStyle?: CSSProp;
+  $disabled?: boolean;
+}>`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  width: 100%;
+  ${({ $disabled }) => $disabled && `cursor: not-allowed; opacity: 0.5;`}
+  ${({ $containerStyle }) => $containerStyle}
+`;
+
+const InputBox = styled.div<{
+  $isDragging: boolean;
+  $hasFile: boolean;
+}>`
+  padding: 12px;
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 4px;
+  cursor: ${({ $hasFile }) => ($hasFile ? "default" : "pointer")};
+  font-size: 14px;
+  color: ${({ $isDragging }) => ($isDragging ? "#3b82f6" : "#6b7280")};
+  background-color: ${({ $isDragging }) => ($isDragging ? "#eff6ff" : "#fff")};
+  border: 1px dotted transparent;
+  background-image: ${({ $isDragging }) =>
+    $isDragging
+      ? `
+      repeating-linear-gradient(to right, #60a5fa 0, #60a5fa 8px, transparent 8px, transparent 12px),
+      repeating-linear-gradient(to bottom, #60a5fa 0, #60a5fa 8px, transparent 8px, transparent 12px),
+      repeating-linear-gradient(to left, #60a5fa 0, #60a5fa 8px, transparent 8px, transparent 12px),
+      repeating-linear-gradient(to top, #60a5fa 0, #60a5fa 8px, transparent 8px, transparent 12px)
+    `
+      : `
+      repeating-linear-gradient(to right, #9ca3af 0, #9ca3af 8px, transparent 8px, transparent 12px),
+      repeating-linear-gradient(to bottom, #9ca3af 0, #9ca3af 8px, transparent 8px, transparent 12px),
+      repeating-linear-gradient(to left, #9ca3af 0, #9ca3af 8px, transparent 8px, transparent 12px),
+      repeating-linear-gradient(to top, #9ca3af 0, #9ca3af 8px, transparent 8px, transparent 12px)
+    `};
+  background-size:
+    100% 1px,
+    1px 100%,
+    100% 1px,
+    1px 100%;
+  background-position:
+    top left,
+    top right,
+    bottom right,
+    bottom left;
+  background-repeat: no-repeat;
+`;
+
+const InputContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+`;
+
+const ErrorText = styled.span`
+  color: #dc2626;
+  font-size: 0.75rem;
+`;
+
+const FileName = styled.div`
+  font-size: 14px;
+  color: #374151;
+  width: 90%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const Placeholder = styled.span`
+  font-size: 14px;
+  width: 100%;
+`;
+
+const DeleteButton = styled.div`
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  padding: 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  &:hover {
+    background-color: #e5e7eb;
+  }
+`;
 
 export { FileInputBox };

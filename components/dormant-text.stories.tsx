@@ -52,9 +52,9 @@ export const Default: Story = {
     };
 
     return (
-      <div className="flex flex-col gap-3">
-        <div className="flex flex-col">
-          <span className="font-medium">Normal Width</span>
+      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <span style={{ fontWeight: 500 }}>Normal Width</span>
           <DormantText
             content={value.normal}
             onActionClick={() => {
@@ -67,8 +67,8 @@ export const Default: Story = {
             />
           </DormantText>
         </div>
-        <div className="flex flex-col">
-          <span className="font-medium">Full Width</span>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <span style={{ fontWeight: 500 }}>Full Width</span>
           <DormantText
             fullWidth
             content={value.full}
@@ -82,8 +82,8 @@ export const Default: Story = {
             />
           </DormantText>
         </div>
-        <div className="flex flex-col">
-          <span className="font-medium">
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <span style={{ fontWeight: 500 }}>
             Change cancelable, and acceptable by pressing enter
           </span>
           <DormantText
@@ -146,9 +146,9 @@ export const WithCombobox: Story = {
     };
 
     return (
-      <div className="flex flex-col gap-3">
-        <div className="flex flex-col">
-          <span className="font-medium">Normal Width</span>
+      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <span style={{ fontWeight: 500 }}>Normal Width</span>
           <DormantText
             content={value.normal.text}
             onActionClick={() => {
@@ -164,8 +164,8 @@ export const WithCombobox: Story = {
             />
           </DormantText>
         </div>
-        <div className="flex flex-col">
-          <span className="font-medium">Full Width</span>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <span style={{ fontWeight: 500 }}>Full Width</span>
           <DormantText
             fullWidth
             content={value.full.text}
@@ -182,8 +182,8 @@ export const WithCombobox: Story = {
             />
           </DormantText>
         </div>
-        <div className="flex flex-col">
-          <span className="font-medium">
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <span style={{ fontWeight: 500 }}>
             Change cancelable, and acceptable by pressing enter or click event
           </span>
           <DormantText
@@ -264,9 +264,9 @@ export const WithDatebox: Story = {
     };
 
     return (
-      <div className="flex flex-col gap-3">
-        <div className="flex flex-col">
-          <span className="font-medium">Normal Width</span>
+      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <span style={{ fontWeight: 500 }}>Normal Width</span>
           <DormantText
             content={value.normal.text}
             onActionClick={() => {
@@ -281,8 +281,8 @@ export const WithDatebox: Story = {
             />
           </DormantText>
         </div>
-        <div className="flex flex-col">
-          <span className="font-medium">Full Width</span>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <span style={{ fontWeight: 500 }}>Full Width</span>
           <DormantText
             fullWidth
             content={value.full.text}
@@ -298,8 +298,8 @@ export const WithDatebox: Story = {
             />
           </DormantText>
         </div>
-        <div className="flex flex-col">
-          <span className="font-medium">
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <span style={{ fontWeight: 500 }}>
             Change cancelable, and acceptable by pressing click event
           </span>
           <DormantText
@@ -385,9 +385,9 @@ export const WithColorbox: Story = {
     };
 
     return (
-      <div className="flex flex-col gap-3">
-        <div className="flex flex-col">
-          <span className="font-medium">Normal Width</span>
+      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <span style={{ fontWeight: 500 }}>Normal Width</span>
           <DormantText
             content={value.normal}
             onActionClick={() => {
@@ -401,8 +401,8 @@ export const WithColorbox: Story = {
             />
           </DormantText>
         </div>
-        <div className="flex flex-col">
-          <span className="font-medium">Full Width</span>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <span style={{ fontWeight: 500 }}>Full Width</span>
           <DormantText
             fullWidth
             content={value.full}
@@ -413,8 +413,8 @@ export const WithColorbox: Story = {
             <Colorbox value={value.full} name="full" onChange={onChangeValue} />
           </DormantText>
         </div>
-        <div className="flex flex-col">
-          <span className="font-medium">
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <span style={{ fontWeight: 500 }}>
             Change cancelable, and acceptable by pressing enter or click event
           </span>
           <DormantText
@@ -468,9 +468,9 @@ export const WithMoneybox: Story = {
     };
 
     return (
-      <div className="flex flex-col gap-3">
-        <div className="flex flex-col">
-          <span className="font-medium">Normal Width</span>
+      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <span style={{ fontWeight: 500 }}>Normal Width</span>
           <DormantText
             content={`$ ${formatMoneyboxNumber(value.normal, "comma")}`}
             onActionClick={() => {
@@ -486,8 +486,8 @@ export const WithMoneybox: Story = {
             />
           </DormantText>
         </div>
-        <div className="flex flex-col">
-          <span className="font-medium">Full Width</span>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <span style={{ fontWeight: 500 }}>Full Width</span>
           <DormantText
             fullWidth
             content={`$ ${formatMoneyboxNumber(value.full, "comma")}`}
@@ -504,8 +504,8 @@ export const WithMoneybox: Story = {
             />
           </DormantText>
         </div>
-        <div className="flex flex-col">
-          <span className="font-medium">
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <span style={{ fontWeight: 500 }}>
             Change cancelable, and acceptable by pressing enter
           </span>
           <DormantText
@@ -581,9 +581,9 @@ export const WithPhonebox: Story = {
     };
 
     return (
-      <div className="flex flex-col gap-3">
-        <div className="flex flex-col">
-          <span className="font-medium">Normal Width</span>
+      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <span style={{ fontWeight: 500 }}>Normal Width</span>
           <DormantText
             content={`${value.normal.country_code.code} ${formatPhoneboxNumber(value.normal.phone, value.normal.country_code.id as CountryCode)}`}
             onActionClick={() => {
@@ -597,8 +597,8 @@ export const WithPhonebox: Story = {
             />
           </DormantText>
         </div>
-        <div className="flex flex-col">
-          <span className="font-medium">Full Width</span>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <span style={{ fontWeight: 500 }}>Full Width</span>
           <DormantText
             fullWidth
             content={`${value.full.country_code.code} ${formatPhoneboxNumber(value.full.phone, value.full.country_code.id as CountryCode)}`}
@@ -614,8 +614,8 @@ export const WithPhonebox: Story = {
             />
           </DormantText>
         </div>
-        <div className="flex flex-col">
-          <span className="font-medium">
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <span style={{ fontWeight: 500 }}>
             Change cancelable, and acceptable by pressing enter
           </span>
           <DormantText
@@ -671,9 +671,9 @@ export const WithTimebox: Story = {
     };
 
     return (
-      <div className="flex flex-col gap-3">
-        <div className="flex flex-col">
-          <span className="font-medium">Normal Width</span>
+      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <span style={{ fontWeight: 500 }}>Normal Width</span>
           <DormantText
             content={value.normal}
             onActionClick={() => {
@@ -687,8 +687,8 @@ export const WithTimebox: Story = {
             />
           </DormantText>
         </div>
-        <div className="flex flex-col">
-          <span className="font-medium">
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <span style={{ fontWeight: 500 }}>
             Change cancelable, and acceptable by pressing enter
           </span>
           <DormantText

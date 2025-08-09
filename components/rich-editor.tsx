@@ -12,14 +12,15 @@ import {
 } from "@remixicon/react";
 import TurndownService from "./../lib/turndown/turndown";
 import { marked } from "./../lib/marked/marked";
-import { cn } from "./../lib/utils";
 import { TipMenu } from "./tip-menu";
+import styled, { CSSProp } from "styled-components";
 
 interface RichEditorProps {
   value?: string;
   onChange?: (value: string) => void;
   toolbarRightPanel?: ReactNode;
-  editorClassName?: string;
+  editorStyle?: CSSProp;
+  containerStyle?: CSSProp;
 }
 
 export interface RichEditorToolbarButtonProps {
@@ -32,7 +33,8 @@ function RichEditor({
   value = "",
   onChange,
   toolbarRightPanel,
-  editorClassName,
+  editorStyle,
+  containerStyle,
 }: RichEditorProps) {
   const turndownService = new TurndownService();
 
@@ -105,16 +107,7 @@ function RichEditor({
 
       e.preventDefault();
 
-      const br = document.createElement("br");
-
-      range.deleteContents();
-      range.insertNode(br);
-
-      const newRange = document.createRange();
-      newRange.setStartAfter(br);
-      newRange.collapse(true);
-      sel.removeAllRanges();
-      sel.addRange(newRange);
+      document.execCommand("insertLineBreak");
 
       const html = editorRef.current?.innerHTML || "";
       const markdown = turndownService.turndown(html);
@@ -132,56 +125,41 @@ function RichEditor({
 
       if (node.nodeType === Node.TEXT_NODE) {
         const text = node.textContent ?? "";
+        const caretPos = range.startOffset;
 
-        const orderedMatch = text.match(/^(\d+)\.$/);
-        if (orderedMatch) {
+        const beforeCaret = text.slice(0, caretPos);
+        const afterCaret = text.slice(caretPos);
+
+        const orderedMatch = beforeCaret.match(/^(\d+)\.$/);
+        const unorderedMatch = beforeCaret.match(/^[-*]$/);
+
+        if (orderedMatch || unorderedMatch) {
           e.preventDefault();
 
-          const rawNumber = orderedMatch[1];
-          const parsedNumber = parseInt(rawNumber, 10);
-
-          node.textContent = "";
-
           const li = document.createElement("li");
-          li.appendChild(document.createElement("br"));
+          if (afterCaret) {
+            li.textContent = afterCaret;
+          } else {
+            li.appendChild(document.createElement("br"));
+          }
 
-          const ol = document.createElement("ol");
-
-          ol.setAttribute("start", parsedNumber.toString());
-          ol.appendChild(li);
+          const list = document.createElement(orderedMatch ? "ol" : "ul");
+          if (orderedMatch) {
+            list.setAttribute("start", orderedMatch[1]);
+          }
+          list.appendChild(li);
 
           const parent = node.parentNode;
           if (parent) {
-            parent.replaceChild(ol, node);
+            parent.replaceChild(list, node);
           }
 
           const newRange = document.createRange();
-          newRange.setStart(li, 0);
-          newRange.collapse(true);
-
-          sel.removeAllRanges();
-          sel.addRange(newRange);
-        }
-
-        const unorderedMatch = text.match(/^[-*]$/);
-        if (unorderedMatch) {
-          e.preventDefault();
-
-          node.textContent = "";
-
-          const li = document.createElement("li");
-          li.appendChild(document.createElement("br"));
-
-          const ul = document.createElement("ul");
-          ul.appendChild(li);
-
-          const parent = node.parentNode;
-          if (parent) {
-            parent.replaceChild(ul, node);
+          if (afterCaret) {
+            newRange.setStart(li.firstChild!, afterCaret.length);
+          } else {
+            newRange.setStart(li, 0);
           }
-
-          const newRange = document.createRange();
-          newRange.setStart(li, 0);
           newRange.collapse(true);
           sel.removeAllRanges();
           sel.addRange(newRange);
@@ -337,9 +315,9 @@ function RichEditor({
   }, [isOpen]);
 
   return (
-    <div className="border border-[#ececec] rounded-xs shadow-[0_1px_4px_-3px_#5b5b5b]">
-      <div className="flex flex-row justify-between items-center border-b border-[#ececec] px-2 bg-white shadow-sm">
-        <div className="flex flex-row relative justify-start items-start gap-1 py-[6px]">
+    <Wrapper $containerStyle={containerStyle}>
+      <Toolbar>
+        <ToolbarGroup>
           <RichEditorToolbarButton
             icon={RiBold}
             onClick={() => handleCommand("bold")}
@@ -368,45 +346,32 @@ function RichEditor({
           />
 
           {isOpen && (
-            <div
-              ref={menuRef}
-              className={cn(
-                "absolute top-full -right-[100px] translate-y-1 z-10"
-              )}
-            >
+            <MenuWrapper ref={menuRef}>
               <TipMenu
-                setIsOpen={() => {
-                  setIsOpen(false);
-                }}
+                setIsOpen={() => setIsOpen(false)}
                 subMenuList={TIP_MENU_RICH_EDITOR}
               />
-            </div>
+            </MenuWrapper>
           )}
-        </div>
+        </ToolbarGroup>
         {toolbarRightPanel && (
-          <div className="flex flex-row items-center gap-2">
-            {toolbarRightPanel}
-          </div>
+          <ToolbarRightPanel>{toolbarRightPanel}</ToolbarRightPanel>
         )}
-      </div>
+      </Toolbar>
 
-      <div
+      <EditorArea
         ref={editorRef}
         role="textbox"
         contentEditable
-        className={cn(
-          "min-h-[200px] p-2 outline-none rich-editor",
-          editorClassName
-        )}
+        $editorStyle={editorStyle}
         onInput={() => {
           const html = editorRef.current?.innerHTML || "";
           const markdown = turndownService.turndown(html);
-          console.log(html);
           onChange?.(markdown);
         }}
         onKeyDown={handleOnKeyDown}
       />
-    </div>
+    </Wrapper>
   );
 }
 
@@ -416,22 +381,125 @@ function RichEditorToolbarButton({
   children,
 }: RichEditorToolbarButtonProps) {
   return (
-    <button
+    <ToolbarButton
       type="button"
       onClick={(e) => {
         e.preventDefault();
-        if (onClick) {
-          onClick();
-        }
+        onClick?.();
       }}
-      className="px-2 py-1 flex flex-row items-center gap-1 cursor-pointer text-sm hover:bg-gray-200 rounded-xs"
       aria-label="rich-editor-toolbar-button"
     >
       {Icon && <Icon size={16} />}
       {children && <span>{children}</span>}
-    </button>
+    </ToolbarButton>
   );
 }
+
+const Wrapper = styled.div<{ $containerStyle?: CSSProp }>`
+  border: 1px solid #ececec;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px -3px #5b5b5b;
+
+  ${({ $containerStyle }) => $containerStyle}
+`;
+
+const Toolbar = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ececec;
+  padding: 0 8px;
+  background: white;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+`;
+
+const ToolbarGroup = styled.div`
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 6px 0;
+`;
+
+const ToolbarRightPanel = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+`;
+
+const MenuWrapper = styled.div`
+  position: absolute;
+  top: 100%;
+  right: -100px;
+  transform: translateY(4px);
+  z-index: 10;
+`;
+
+const EditorArea = styled.div<{
+  $editorStyle?: CSSProp;
+}>`
+  min-height: 200px;
+  padding: 8px;
+  outline: none;
+  background-color: white;
+
+  ol {
+    list-style-type: decimal !important;
+    list-style-position: outside !important;
+    padding-left: 2.6rem !important;
+    margin: 0 !important;
+  }
+
+  ul {
+    list-style-type: disc !important;
+    list-style-position: outside !important;
+    padding-left: 2.6rem !important;
+    margin: 0 !important;
+  }
+
+  li {
+    padding-left: 0 !important;
+    display: list-item !important;
+  }
+
+  h1 {
+    font-size: 2em;
+    margin: 0.5em 0;
+  }
+
+  h2 {
+    font-size: 1.5em;
+    margin: 0.5em 0;
+  }
+
+  h3 {
+    font-size: 1.25em;
+    margin: 0.5em 0;
+  }
+
+  ${({ $editorStyle }) => $editorStyle};
+`;
+
+const ToolbarButton = styled.button`
+  padding: 4px 8px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  background: transparent;
+  border-color: transparent;
+  border-radius: 2px;
+  max-height: 28px;
+  &:hover {
+    background-color: #e5e7eb;
+  }
+`;
 
 RichEditor.ToolbarButton = RichEditorToolbarButton;
 

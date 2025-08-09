@@ -10,6 +10,9 @@ context("Tooltip Component", () => {
         .trigger("mousemove", { clientX: 10, clientY: 10 });
 
       cy.contains("This tooltip appears on hover").should("be.visible");
+
+      cy.contains("Hover Tooltip").trigger("mouseout", { force: true });
+      cy.contains("This tooltip appears on hover").should("not.exist");
     });
   });
 
@@ -26,19 +29,19 @@ context("Tooltip Component", () => {
   });
 
   describe("Styled Tooltip", () => {
-    it("Should show on hover with correct class", () => {
+    it("Should show on hover and be visible", () => {
       cy.visit(getIdContent("content-tooltip--styled-tooltip"));
 
+      cy.contains("Tooltip with custom styling").should("not.exist");
+
       cy.contains("Styled Tooltip")
-        .should("have.class", "underline")
         .trigger("mouseover")
         .trigger("mousemove", { clientX: 10, clientY: 10 });
 
-      cy.contains("Tooltip with custom styling")
-        .should("be.visible")
-        .should("have.class", "text-sm");
+      cy.contains("Tooltip with custom styling").should("be.visible");
 
-      cy.contains("Styled Tooltip").trigger("mouseleave");
+      cy.contains("Styled Tooltip").trigger("mouseout", { force: true });
+      cy.contains("Tooltip with custom styling").should("not.exist");
     });
   });
 
@@ -47,61 +50,56 @@ context("Tooltip Component", () => {
       cy.visit(getIdContent("content-tooltip--dotted-underline-tooltip"));
 
       cy.contains("Dotted Underline Tooltip")
-        .should("have.class", "underline")
         .trigger("mouseover")
         .trigger("mousemove", { clientX: 10, clientY: 10 });
 
       cy.contains("Tooltip with dotted underline trigger").should("be.visible");
 
-      cy.contains("Dotted Underline Tooltip").trigger("mouseleave");
+      cy.contains("Dotted Underline Tooltip").trigger("mouseout", {
+        force: true,
+      });
+      cy.contains("Tooltip with dotted underline trigger").should("not.exist");
     });
   });
 
   describe("No Underline Tooltip", () => {
-    it("Should show on hover with no underline class", () => {
+    it("Should show on hover without checking classes", () => {
       cy.visit(getIdContent("content-tooltip--no-underline-tooltip"));
 
       cy.contains("No Underline Tooltip")
-        .should("have.class", "text-red-500")
-        .should("have.class", "font-semibold")
         .trigger("mouseover")
         .trigger("mousemove", { clientX: 10, clientY: 10 });
 
       cy.contains("Trigger text without underline").should("be.visible");
 
-      cy.contains("No Underline Tooltip").trigger("mouseleave");
+      cy.contains("No Underline Tooltip").trigger("mouseout", { force: true });
+      cy.contains("Trigger text without underline").should("not.exist");
     });
   });
 
   describe("Blue Underline Tooltip", () => {
-    it("Should open on click with correct underline", () => {
+    it("Should open on click and close again", () => {
       cy.visit(getIdContent("content-tooltip--blue-underline-tooltip"));
 
-      cy.contains("Blue Underline Tooltip")
-        .should("have.class", "underline")
-        .should("have.class", "decoration-blue-500")
-        .click();
-
+      cy.contains("Blue Underline Tooltip").click();
       cy.contains("Clicked tooltip with blue underline").should("be.visible");
 
       cy.contains("Blue Underline Tooltip").click();
-
       cy.contains("Clicked tooltip with blue underline").should("not.exist");
     });
   });
 
   describe("With Form Tooltip", () => {
-    it("Should open by pressing click, and then we input content ", () => {
+    it("Should open on click and accept input", () => {
       cy.visit(getIdContent("content-tooltip--with-form"));
 
       cy.contains("New Division").click();
 
-      cy.findAllByRole("textbox")
+      cy.findByRole("textbox")
         .should("be.visible")
-        .click()
         .type("Hello there, this is custom tooltip");
 
-      cy.findAllByDisplayValue("Hello there, this is custom tooltip").should(
+      cy.findByDisplayValue("Hello there, this is custom tooltip").should(
         "exist"
       );
     });

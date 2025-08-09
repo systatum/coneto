@@ -8,8 +8,8 @@ import {
 } from "react";
 
 import { DrawerProps, OptionsProps, Selectbox } from "./selectbox";
-import { cn } from "./../lib/utils";
 import { RemixiconComponentType } from "@remixicon/react";
+import styled, { CSSProp } from "styled-components";
 
 export type ComboboxProps = Partial<BaseComboboxProps> & {
   label?: string;
@@ -21,7 +21,7 @@ export type ComboboxProps = Partial<BaseComboboxProps> & {
 
 interface BaseComboboxProps {
   options: OptionsProps[];
-  containerClassName?: string;
+  containerStyle?: CSSProp;
   inputValue: OptionsProps;
   setInputValue: (data: OptionsProps) => void;
   clearable?: boolean;
@@ -37,7 +37,7 @@ export interface ComboboxActionProps {
   onClick?: () => void;
   icon?: RemixiconComponentType;
   title: string;
-  className?: string;
+  style?: CSSProp;
 }
 
 type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
@@ -55,7 +55,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       setInputValue,
       clearable = false,
       placeholder,
-      containerClassName,
+      containerStyle,
       highlightOnMatch = false,
       emptySlate = "Not available.",
       errorMessage,
@@ -71,15 +71,12 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
     ref
   ) => {
     return (
-      <div
-        aria-label={`combobox-${name}`}
-        className={cn(`flex w-full flex-col gap-2 text-xs`, containerClassName)}
-      >
+      <ComboboxWrapper $style={containerStyle} aria-label={`combobox-${name}`}>
         {label && <label>{label}</label>}
         <Selectbox
           ref={ref}
           highlightOnMatch={highlightOnMatch}
-          containerClassName={containerClassName}
+          containerStyle={containerStyle}
           options={options}
           inputValue={inputValue}
           setInputValue={setInputValue}
@@ -98,11 +95,27 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
           )}
         </Selectbox>
 
-        {showError && <span className="text-red-600">{errorMessage}</span>}
-      </div>
+        {showError && <ErrorText>{errorMessage}</ErrorText>}
+      </ComboboxWrapper>
     );
   }
 );
+
+const ComboboxWrapper = styled.div<{
+  $style?: CSSProp;
+}>`
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 12px;
+
+  ${({ $style }) => $style}
+`;
+
+const ErrorText = styled.span`
+  color: #dc2626;
+`;
 
 function ComboboxDrawer({
   floatingStyles,
@@ -139,55 +152,41 @@ function ComboboxDrawer({
   }, [selectedIndex]);
 
   return (
-    <ul
+    <DrawerWrapper
       {...getFloatingProps()}
       ref={refs.setFloating}
       id="combo-list"
       role="listbox"
-      style={{
-        ...floatingStyles,
-        width: refs.reference.current?.getBoundingClientRect().width,
-        zIndex: 1000,
-      }}
-      className="max-h-60 overflow-y-auto rounded-xs border border-gray-100 bg-white shadow-lg"
+      width={refs.reference.current?.getBoundingClientRect().width}
+      style={{ ...floatingStyles }}
     >
       {actions && (
-        <div className="flex flex-col w-full">
+        <ActionWrapper>
           {actions.map((data, index) => (
-            <div
+            <ActionItem
               key={index}
-              onMouseEnter={() => {
-                setHighlightedIndex(null);
-              }}
+              onMouseEnter={() => setHighlightedIndex(null)}
               onClick={() => {
-                if (data.onClick) {
-                  data.onClick();
-                }
+                data.onClick?.();
                 setIsOpen(false);
               }}
-              className={cn(
-                "flex flex-row relative hover:bg-blue-100 w-full items-center cursor-pointer px-3 py-2 gap-2",
-                data.className
-              )}
+              $style={data.style}
             >
               <div>{data.title}</div>
               {data.icon && (
-                <span className="absolute right-2 top-1/2 -translate-y-1/2">
+                <IconWrapper>
                   <data.icon size={16} />
-                </span>
+                </IconWrapper>
               )}
-            </div>
+            </ActionItem>
           ))}
-          <div
-            aria-label="divider"
-            className="w-full h-px border-b my-[2px] border-gray-300"
-          ></div>
-        </div>
+          <Divider aria-label="divider" />
+        </ActionWrapper>
       )}
       {options.length > 0 ? (
         options.map((option, index) => {
           return (
-            <li
+            <OptionItem
               key={option.value}
               id={`option-${index}`}
               role="option"
@@ -195,36 +194,98 @@ function ComboboxDrawer({
                 option.value.toString() === inputValue.value.toString()
               }
               data-highlighted={highlightedIndex === index}
+              selected={option.value === inputValue.value}
+              highlighted={highlightedIndex === index}
               onMouseDown={() => {
                 setInputValue(option);
                 setIsOpen(false);
-                if (onClick) {
-                  onClick();
-                }
+                onClick?.();
               }}
-              onMouseEnter={() => {
-                setHighlightedIndex(index);
-              }}
-              className={cn(
-                `cursor-pointer px-3 py-2`,
-                highlightedIndex === index ? "bg-blue-100" : "",
-                inputValue.value === option.value
-                  ? "bg-[#61A9F9] font-semibold text-white"
-                  : ""
-              )}
+              onMouseEnter={() => setHighlightedIndex(index)}
               ref={(el) => {
                 listRef.current[index] = el;
               }}
             >
               {option.text}
-            </li>
+            </OptionItem>
           );
         })
       ) : (
-        <li className="py-2 text-center text-gray-500">{emptySlate}</li>
+        <EmptyState>{emptySlate}</EmptyState>
       )}
-    </ul>
+    </DrawerWrapper>
   );
 }
+
+const DrawerWrapper = styled.ul<{ width?: number }>`
+  position: absolute;
+  z-index: 1000;
+  max-height: 15rem;
+  overflow-y: auto;
+  border-radius: 4px;
+  border: 1px solid #f3f4f6;
+  background-color: white;
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  width: ${({ width }) => (width ? `${width}px` : "100%")};
+`;
+
+const ActionWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
+
+const ActionItem = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  width: 100%;
+  align-items: center;
+  cursor: pointer;
+  padding: 0.5rem 0.75rem;
+  gap: 0.5rem;
+
+  &:hover {
+    background-color: #dbeafe;
+  }
+
+  ${({ $style }) => $style}
+`;
+
+const IconWrapper = styled.span`
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+`;
+
+const Divider = styled.div`
+  width: 100%;
+  height: 1px;
+  border-bottom: 1px solid #d1d5db;
+  margin: 2px 0;
+`;
+
+const OptionItem = styled.li<{ selected?: boolean; highlighted?: boolean }>`
+  cursor: pointer;
+  padding: 0.5rem 0.75rem;
+  ${({ highlighted }) => (highlighted ? "background-color: #dbeafe;" : "")}
+  ${({ selected }) =>
+    selected
+      ? `
+    background-color: #61A9F9;
+    font-weight: 600;
+    color: white;
+  `
+      : ""}
+`;
+
+const EmptyState = styled.li`
+  padding: 0.5rem;
+  text-align: center;
+  color: #6b7280;
+`;
 
 export { Combobox };

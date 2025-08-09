@@ -1,6 +1,6 @@
 {
   "name": "@systatum/coneto",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -260,15 +260,14 @@
     "react",
     "component",
     "ui",
-    "tailwind",
+    "styled-component",
     "coneto"
   ],
   "scripts": {
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "build": "pnpm build-css && pnpm build-ts && pnpm copyjs && node postbuild-inject.js",
+    "build": "pnpm build-ts && pnpm copyjs && node postbuild-inject.js",
     "build-ts": "pnpm tsc -p tsconfig.build.json",
-    "build-css": "pnpm exec tailwindcss -i ./shared.css -o ./dist/shared.css --minify",
     "copyjs": "rsync -avm --include='*/' --include='*.js' --exclude='*' lib/ dist/lib/",
     "publish-coneto": "pnpm build && pnpm publish",
     "generate-barrel": "barrelsby --excludePattern \\.stories\\.",
@@ -294,7 +293,6 @@
     "react-hook-form": "^7.56.3",
     "react-responsive": "^10.0.1",
     "react-swipeable": "^7.0.2",
-    "tailwind-merge": "^3.3.0",
     "zod": "^3.24.4"
   },
   "devDependencies": {
@@ -312,8 +310,6 @@
     "@storybook/react": "^8.6.14",
     "@storybook/react-vite": "^8.6.14",
     "@storybook/theming": "^8.6.14",
-    "@tailwindcss/cli": "^4.1.11",
-    "@tailwindcss/postcss": "^4",
     "@testing-library/cypress": "^10.0.3",
     "@types/react": "^19.1.9",
     "@types/react-dom": "^19.1.7",
@@ -331,11 +327,9 @@
     "globals": "^15.15.0",
     "libphonenumber-js": "^1.12.8",
     "playwright": "^1.54.1",
-    "postcss": "^8.5.3",
     "prettier": "^3.5.3",
-    "prettier-plugin-tailwindcss": "^0.6.11",
     "storybook": "^8.6.14",
-    "tailwindcss": "^4.1.11",
+    "styled-components": "^6.1.19",
     "typescript": "^5.4.0",
     "vite": "^6.3.5"
   },

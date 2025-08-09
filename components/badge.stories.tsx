@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { Badge, BadgeVariantProps } from "./badge";
+import { css } from "styled-components";
 
 const meta: Meta<typeof Badge> = {
   title: "Content/Badge",
@@ -19,7 +20,7 @@ const meta: Meta<typeof Badge> = {
     },
     withCircle: { control: "boolean" },
     caption: { control: "text" },
-    className: { control: false },
+    badgeStyle: { control: false },
     backgroundColor: { control: "color" },
     textColor: { control: "color" },
     circleColor: { control: "color" },
@@ -115,10 +116,19 @@ export const Custom: Story = {
       },
     ];
     return (
-      <div className="flex flex-col gap-1">
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "4px",
+        }}
+      >
         {BADGE_OPTIONS.map((badge) => (
           <Badge
-            className="w-full max-w-[150px]"
+            badgeStyle={css`
+              width: 100%;
+              max-width: 120px;
+            `}
             backgroundColor={badge.backgroundColor}
             textColor={badge.textColor}
             variant={badge.variant as BadgeVariantProps}
