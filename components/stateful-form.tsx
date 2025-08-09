@@ -22,6 +22,7 @@ import { Datebox, DateboxProps } from "./datebox";
 import { OptionsProps } from "./selectbox";
 import { Combobox, ComboboxProps } from "./combobox";
 import { Chips, ChipsProps } from "./chips";
+import { Signbox } from "./signbox";
 
 export type StatefulOnChangeType =
   | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -241,6 +242,19 @@ function FormFields<T extends FieldValues>({
             key={index}
             label={field.title}
             required={field.required}
+            {...register(field.name as Path<T>, { onChange: field.onChange })}
+            showError={shouldShowError(field.name)}
+            errorMessage={
+              errors[field.name as keyof T]?.message as string | undefined
+            }
+          />
+        ) : field.type === "signbox" ? (
+          <Signbox
+            name={field.name}
+            key={index}
+            label={field.title}
+            required={field.required}
+            value={formValues[field.name as keyof T] ?? ""}
             {...register(field.name as Path<T>, { onChange: field.onChange })}
             showError={shouldShowError(field.name)}
             errorMessage={
