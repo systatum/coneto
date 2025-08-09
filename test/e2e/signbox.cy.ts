@@ -130,4 +130,32 @@ context("Signbox Component", () => {
       });
     });
   });
+
+  describe("WithError", () => {
+    beforeEach(() => {
+      cy.visit(getIdContent("input-elements-signbox--with-error"));
+    });
+
+    it("Shows error message when input is empty and remove it", () => {
+      cy.findByText(/Signature is required/i).should("be.visible");
+
+      cy.get("canvas").then(($canvas) => {
+        const canvas = $canvas[0] as HTMLCanvasElement;
+        const rect = canvas.getBoundingClientRect();
+
+        cy.wrap($canvas)
+          .trigger("mousedown", {
+            clientX: rect.left + 100,
+            clientY: rect.top + 50,
+          })
+          .trigger("mousemove", {
+            clientX: rect.left + 120,
+            clientY: rect.top + 70,
+          })
+          .trigger("mouseup");
+      });
+
+      cy.findByText(/Signature is required/i).should("not.exist");
+    });
+  });
 });

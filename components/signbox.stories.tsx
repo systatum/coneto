@@ -51,3 +51,47 @@ export const Default: Story = {
     );
   },
 };
+
+export const WithError: Story = {
+  args: {
+    value: "",
+    showError: true,
+    errorMessage: "Signature is required",
+    clearable: true,
+  },
+  render: (args) => {
+    const [, setArgs] = useArgs();
+
+    const onChangeForm = (e: StatefulOnChangeType) => {
+      if (e && "target" in e) {
+        const { name, value } = e.target;
+
+        setArgs({
+          ...args,
+          [name]: value,
+          showError: !value,
+          errorMessage: !value ? "Signature is required" : "",
+        });
+      }
+    };
+
+    return (
+      <div
+        style={{
+          padding: 40,
+          display: "flex",
+          flexDirection: "column",
+          gap: 10,
+          maxWidth: 500,
+        }}
+      >
+        <Signbox
+          {...args}
+          label="Signature"
+          name={"signature"}
+          onChange={onChangeForm}
+        />
+      </div>
+    );
+  },
+};
