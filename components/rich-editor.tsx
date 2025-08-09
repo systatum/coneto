@@ -132,56 +132,41 @@ function RichEditor({
 
       if (node.nodeType === Node.TEXT_NODE) {
         const text = node.textContent ?? "";
+        const caretPos = range.startOffset;
 
-        const orderedMatch = text.match(/^(\d+)\.$/);
-        if (orderedMatch) {
+        const beforeCaret = text.slice(0, caretPos);
+        const afterCaret = text.slice(caretPos);
+
+        const orderedMatch = beforeCaret.match(/^(\d+)\.$/);
+        const unorderedMatch = beforeCaret.match(/^[-*]$/);
+
+        if (orderedMatch || unorderedMatch) {
           e.preventDefault();
 
-          const rawNumber = orderedMatch[1];
-          const parsedNumber = parseInt(rawNumber, 10);
-
-          node.textContent = "";
-
           const li = document.createElement("li");
-          li.appendChild(document.createElement("br"));
+          if (afterCaret) {
+            li.textContent = afterCaret;
+          } else {
+            li.appendChild(document.createElement("br"));
+          }
 
-          const ol = document.createElement("ol");
-
-          ol.setAttribute("start", parsedNumber.toString());
-          ol.appendChild(li);
+          const list = document.createElement(orderedMatch ? "ol" : "ul");
+          if (orderedMatch) {
+            list.setAttribute("start", orderedMatch[1]);
+          }
+          list.appendChild(li);
 
           const parent = node.parentNode;
           if (parent) {
-            parent.replaceChild(ol, node);
+            parent.replaceChild(list, node);
           }
 
           const newRange = document.createRange();
-          newRange.setStart(li, 0);
-          newRange.collapse(true);
-
-          sel.removeAllRanges();
-          sel.addRange(newRange);
-        }
-
-        const unorderedMatch = text.match(/^[-*]$/);
-        if (unorderedMatch) {
-          e.preventDefault();
-
-          node.textContent = "";
-
-          const li = document.createElement("li");
-          li.appendChild(document.createElement("br"));
-
-          const ul = document.createElement("ul");
-          ul.appendChild(li);
-
-          const parent = node.parentNode;
-          if (parent) {
-            parent.replaceChild(ul, node);
+          if (afterCaret) {
+            newRange.setStart(li.firstChild!, afterCaret.length);
+          } else {
+            newRange.setStart(li, 0);
           }
-
-          const newRange = document.createRange();
-          newRange.setStart(li, 0);
           newRange.collapse(true);
           sel.removeAllRanges();
           sel.addRange(newRange);
