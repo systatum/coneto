@@ -19,7 +19,8 @@ interface RichEditorProps {
   value?: string;
   onChange?: (value: string) => void;
   toolbarRightPanel?: ReactNode;
-  editorStyles?: CSSProp;
+  editorStyle?: CSSProp;
+  containerStyle?: CSSProp;
 }
 
 export interface RichEditorToolbarButtonProps {
@@ -32,7 +33,8 @@ function RichEditor({
   value = "",
   onChange,
   toolbarRightPanel,
-  editorStyles,
+  editorStyle,
+  containerStyle,
 }: RichEditorProps) {
   const turndownService = new TurndownService();
 
@@ -105,16 +107,7 @@ function RichEditor({
 
       e.preventDefault();
 
-      const br = document.createElement("br");
-
-      range.deleteContents();
-      range.insertNode(br);
-
-      const newRange = document.createRange();
-      newRange.setStartAfter(br);
-      newRange.collapse(true);
-      sel.removeAllRanges();
-      sel.addRange(newRange);
+      document.execCommand("insertLineBreak");
 
       const html = editorRef.current?.innerHTML || "";
       const markdown = turndownService.turndown(html);
@@ -322,7 +315,7 @@ function RichEditor({
   }, [isOpen]);
 
   return (
-    <Wrapper>
+    <Wrapper $containerStyle={containerStyle}>
       <Toolbar>
         <ToolbarGroup>
           <RichEditorToolbarButton
@@ -370,7 +363,7 @@ function RichEditor({
         ref={editorRef}
         role="textbox"
         contentEditable
-        $editorStyles={editorStyles}
+        $editorStyle={editorStyle}
         onInput={() => {
           const html = editorRef.current?.innerHTML || "";
           const markdown = turndownService.turndown(html);
@@ -402,10 +395,12 @@ function RichEditorToolbarButton({
   );
 }
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ $containerStyle?: CSSProp }>`
   border: 1px solid #ececec;
   border-radius: 4px;
   box-shadow: 0 1px 4px -3px #5b5b5b;
+
+  ${({ $containerStyle }) => $containerStyle}
 `;
 
 const Toolbar = styled.div`
@@ -445,7 +440,7 @@ const MenuWrapper = styled.div`
 `;
 
 const EditorArea = styled.div<{
-  $editorStyles?: CSSProp;
+  $editorStyle?: CSSProp;
 }>`
   min-height: 200px;
   padding: 8px;
@@ -486,7 +481,7 @@ const EditorArea = styled.div<{
     margin: 0.5em 0;
   }
 
-  ${({ $editorStyles }) => $editorStyles};
+  ${({ $editorStyle }) => $editorStyle};
 `;
 
 const ToolbarButton = styled.button`
