@@ -1,5 +1,4 @@
-import { RiCloseLine, RiPencilLine } from "@remixicon/react";
-import { error } from "cypress/types/jquery";
+import { RiCloseLine } from "@remixicon/react";
 import { useRef, useEffect, ChangeEvent, ReactElement, useState } from "react";
 import styled, { CSSProp } from "styled-components";
 
