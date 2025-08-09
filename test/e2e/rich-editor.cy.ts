@@ -40,7 +40,7 @@ context("RichEditor Component", () => {
 
       cy.findByRole("textbox").type("{selectall}");
       cy.findAllByRole("button").eq(0).click();
-      cy.findByRole("textbox").type("{moveToEnd}{enter}{enter}");
+      cy.findByRole("textbox").type("{moveToEnd}{enter}");
       cy.findAllByRole("button").eq(0).click();
 
       cy.findByRole("textbox").type(
@@ -49,7 +49,7 @@ context("RichEditor Component", () => {
 
       cy.findByRole("textbox")
         .click()
-        .type("{enter}- The quick brown fox jumps over the lazy dog.{enter}")
+        .type("- The quick brown fox jumps over the lazy dog.{enter}")
         .type("Pack my box with five dozen liquor jugs.{enter}")
         .type("Typing skills improve with daily practice.{enter}")
         .type("Accuracy is more important than speed.{enter}")
