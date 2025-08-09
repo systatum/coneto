@@ -94,7 +94,7 @@ function Avatar({
       )}
       {changeable ? (
         <AvatarChange>
-          <HiddenFileInput
+          <HiddenInput
             ref={fileInputRef}
             type="file"
             accept="image/*"
@@ -151,7 +151,7 @@ const AvatarChange = styled.div`
   }
 `;
 
-const HiddenFileInput = styled.input`
+const HiddenInput = styled.input`
   display: none;
 `;
 
