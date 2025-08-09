@@ -33,7 +33,7 @@ export const Default: Story = {
         title: "Product Management Team",
         items: [
           { id: 1, title: "Samantha Lee", onClick: setPerson },
-          { id: 2, title: "alim Kim", onClick: setPerson },
+          { id: 2, title: "Jason Kim", onClick: setPerson },
           { id: 3, title: "Rina Patel", onClick: setPerson },
         ],
       },
@@ -72,7 +72,7 @@ export const WithActions: Story = {
         title: "Product Management Team",
         items: [
           { id: 1, title: "Samantha Lee", onClick: setPerson },
-          { id: 2, title: "alim Kim", onClick: setPerson },
+          { id: 2, title: "Jason Kim", onClick: setPerson },
           { id: 3, title: "Rina Patel", onClick: setPerson },
         ],
       },
