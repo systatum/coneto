@@ -1,4 +1,4 @@
-import { RiEraserFill } from "@remixicon/react";
+import { RiEraserLine } from "@remixicon/react";
 import { useRef, useEffect, ChangeEvent, ReactElement } from "react";
 import styled, { CSSProp } from "styled-components";
 
@@ -256,7 +256,7 @@ const SignatureCanvas = styled.canvas<{
   ${({ $canvasStyle }) => $canvasStyle};
 `;
 
-const SignatureClearable = styled(RiEraserFill)`
+const SignatureClearable = styled(RiEraserLine)`
   position: absolute;
   font-size: 12px;
   top: 14px;
