@@ -127,6 +127,8 @@ const Container = styled.div<{ $style?: CSSProp }>`
   flex-direction: column;
   gap: 0.5rem;
   font-size: 0.75rem;
+  position: relative;
+
   ${({ $style }) => $style}
 `;
 
@@ -142,7 +144,6 @@ const TextAreaWrapper = styled.div`
 const TextareaInput = styled.textarea<{ $error?: boolean; $style?: CSSProp }>`
   border-radius: 2px;
   font-size: 0.75rem;
-  color: black;
   padding: 7px 8px;
   width: 100%;
   outline: none;

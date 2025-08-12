@@ -137,6 +137,8 @@ const Container = styled.div<{ $style?: CSSProp }>`
   flex-direction: column;
   gap: 0.5rem;
   font-size: 0.75rem;
+  position: relative;
+
   ${({ $style }) => $style}
 `;
 
@@ -151,10 +153,9 @@ const InputWrapper = styled.div`
   width: 100%;
 `;
 
-const SharedInputStyles = css<{ $error?: boolean; $style?: string }>`
+const Input = styled.input<{ $error?: boolean; $style?: CSSProp }>`
   border-radius: 2px;
   font-size: 0.75rem;
-  color: black;
   padding: 7px 8px;
   width: 100%;
   outline: none;
@@ -174,11 +175,6 @@ const SharedInputStyles = css<{ $error?: boolean; $style?: string }>`
       box-shadow: 0 0 0 1px #61A9F9;
     }
   `}
-  ${({ $style }) => $style}
-`;
-
-const Input = styled.input<{ $error?: boolean; $style?: CSSProp }>`
-  ${SharedInputStyles}
   ${({ $style }) => $style}
 `;
 
