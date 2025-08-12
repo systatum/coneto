@@ -234,6 +234,8 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
         {clearable && inputValueLocal.text !== "" && (
           <>
             <ClearIcon
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
               aria-label="clearable-content"
               onClick={() => {
                 setInputValue?.({ text: "", value: 0 });
@@ -244,7 +246,11 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
               $highlight={highlightOnMatch && FILTERED_ACTIVE.length > 0}
               size={16}
             />
-            <Divider aria-label="divider" />
+            <Divider
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+              aria-label="divider"
+            />
           </>
         )}
 
@@ -322,14 +328,8 @@ const Input = styled.input<{
       border-color: #61a9f9;
     `}
 
-  ${({ $hovered }) =>
-    $hovered &&
-    css`
-      border-color: #bfdbfe;
-    `}
-
-  ${({ $highlight }) =>
-    $highlight &&
+  ${({ $highlight, $hovered }) =>
+    ($highlight || $hovered) &&
     css`
       border-color: #61a9f9;
     `}
