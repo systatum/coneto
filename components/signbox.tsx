@@ -1,5 +1,5 @@
 import { RiEraserFill } from "@remixicon/react";
-import { useRef, useEffect, ChangeEvent, ReactElement, useState } from "react";
+import { useRef, useEffect, ChangeEvent, ReactElement } from "react";
 import styled, { CSSProp } from "styled-components";
 
 interface SignboxProps {
