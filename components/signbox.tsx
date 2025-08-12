@@ -1,4 +1,4 @@
-import { RiCloseLine } from "@remixicon/react";
+import { RiEraserFill } from "@remixicon/react";
 import { useRef, useEffect, ChangeEvent, ReactElement, useState } from "react";
 import styled, { CSSProp } from "styled-components";
 
@@ -256,16 +256,17 @@ const SignatureCanvas = styled.canvas<{
   ${({ $canvasStyle }) => $canvasStyle};
 `;
 
-const SignatureClearable = styled(RiCloseLine)`
+const SignatureClearable = styled(RiEraserFill)`
   position: absolute;
   font-size: 12px;
   top: 14px;
   right: 14px;
   cursor: pointer;
   padding: 2px;
+  border-radius: 2px;
 
   &&:hover {
-    background-color: #f0f0f0;
+    background-color: #e5e5e5;
   }
 `;
 
