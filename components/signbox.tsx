@@ -266,8 +266,8 @@ const SignatureCanvas = styled.canvas`
 const SignatureClearable = styled(RiEraserLine)`
   position: absolute;
   font-size: 12px;
-  top: 14px;
-  right: 14px;
+  top: 5px;
+  right: 5px;
   cursor: pointer;
   padding: 2px;
   border-radius: 2px;
