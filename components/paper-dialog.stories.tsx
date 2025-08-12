@@ -447,7 +447,7 @@ export const FixedLeft: Story = {
     ];
 
     return (
-      <PaperDialog closable position="left">
+      <PaperDialog closable position="left" width="70vw">
         <PaperDialog.Trigger>Trigger</PaperDialog.Trigger>
         <PaperDialog.Content
           style={{
