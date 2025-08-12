@@ -10,7 +10,7 @@ import {
   TextareaHTMLAttributes,
   forwardRef,
 } from "react";
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
 
 export interface TextareaProps
   extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "style"> {
@@ -56,6 +56,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     const inputElement: ReactElement = (
       <TextAreaWrapper>
         <TextareaInput
+          $autogrow={autogrow}
           id={inputId}
           ref={(el) => {
             if (autogrow) {
@@ -141,7 +142,11 @@ const TextAreaWrapper = styled.div`
   width: 100%;
 `;
 
-const TextareaInput = styled.textarea<{ $error?: boolean; $style?: CSSProp }>`
+const TextareaInput = styled.textarea<{
+  $error?: boolean;
+  $style?: CSSProp;
+  $autogrow?: boolean;
+}>`
   border-radius: 2px;
   font-size: 0.75rem;
   padding: 7px 8px;
@@ -150,13 +155,18 @@ const TextareaInput = styled.textarea<{ $error?: boolean; $style?: CSSProp }>`
   border: 1px solid ${({ $error }) => ($error ? "#f87171" : "#d1d5db")};
 
   resize: none;
-  overflow: hidden;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
 
-  &::-webkit-scrollbar {
-    display: none;
-  }
+  ${({ $autogrow }) =>
+    $autogrow &&
+    css`
+      overflow: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    `}
+
   ${({ $error }) =>
     $error
       ? `
