@@ -259,8 +259,10 @@ export const AllCase: Story = {
       file: "",
       image: "",
       phone: "",
+      signature: "",
       country_code: DEFAULT_COUNTRY_CODES,
     });
+
     const [selectedChips, setSelectedChips] = useState<number[]>([]);
 
     const handleOptionClicked = (val: BadgeProps) => {
@@ -309,6 +311,7 @@ export const AllCase: Story = {
       file_drop_box: z.array(z.instanceof(File)).optional(),
       file: z.string().optional(),
       image: z.string().optional(),
+      signature: z.string().min(1, "Signature is required"),
       phone: z.string().min(8, "Phone number must be 8 digits").optional(),
       country_code: z
         .object({
@@ -534,6 +537,13 @@ export const AllCase: Story = {
         name: "country_code",
         title: "Country Code",
         type: "country_code",
+        required: false,
+        onChange: onChangeForm,
+      },
+      {
+        name: "signature",
+        title: "Signature",
+        type: "signbox",
         required: false,
         onChange: onChangeForm,
       },
