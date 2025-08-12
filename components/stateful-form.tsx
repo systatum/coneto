@@ -23,6 +23,7 @@ import { OptionsProps } from "./selectbox";
 import { Combobox, ComboboxProps } from "./combobox";
 import { Chips, ChipsProps } from "./chips";
 import { Signbox } from "./signbox";
+import { Textarea } from "./textarea";
 
 export type StatefulOnChangeType =
   | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -136,12 +137,23 @@ function FormFields<T extends FieldValues>({
           field.type === "message" ||
           field.type === "number" ||
           field.type === "email" ||
-          field.type === "password" ||
-          field.type === "textarea" ? (
+          field.type === "password" ? (
           <Textbox
             key={index}
             label={field.title}
             type={field.type}
+            value={formValues[field.name as keyof T] ?? ""}
+            required={field.required}
+            {...register(field.name as Path<T>, { onChange: field.onChange })}
+            showError={shouldShowError(field.name)}
+            errorMessage={
+              errors[field.name as keyof T]?.message as string | undefined
+            }
+          />
+        ) : field.type === "textarea" ? (
+          <Textarea
+            key={index}
+            label={field.title}
             rows={field.rows}
             value={formValues[field.name as keyof T] ?? ""}
             required={field.required}
