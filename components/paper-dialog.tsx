@@ -28,6 +28,7 @@ export interface PaperDialogProps {
   position?: "left" | "right";
   children: ReactNode;
   closable?: boolean;
+  width?: string;
 }
 
 interface PaperDialogTriggerProps {
@@ -65,6 +66,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
       tabStyle,
       children,
       closable,
+      width,
     },
     ref
   ) => {
@@ -127,13 +129,18 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
             )}
 
             <MotionDialog
+              $width={width}
               initial={{ x: isLeft ? "-100%" : "100%" }}
               animate={controls}
               $isLeft={isLeft}
               $style={style}
             >
               {closable && (
-                <CloseButtonWrapper $isLeft={isLeft} $tabStyle={tabStyle}>
+                <CloseButtonWrapper
+                  $width={width}
+                  $isLeft={isLeft}
+                  $tabStyle={tabStyle}
+                >
                   <IconButton
                     $isLeft={isLeft}
                     aria-label="button-close"
@@ -144,7 +151,11 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                 </CloseButtonWrapper>
               )}
 
-              <MinimizeButtonWrapper $isLeft={isLeft} $tabStyle={tabStyle}>
+              <MinimizeButtonWrapper
+                $width={width}
+                $isLeft={isLeft}
+                $tabStyle={tabStyle}
+              >
                 <IconButton
                   $isLeft={isLeft}
                   aria-label="Toggle Expanded/Collapsed PaperDialog"
@@ -216,6 +227,7 @@ const BackgroundBlur = styled.div`
 const MotionDialog = styled(motion.div)<{
   $isLeft: boolean;
   $style?: CSSProp;
+  $width?: string;
 }>`
   position: fixed;
   top: 0;
@@ -231,7 +243,7 @@ const MotionDialog = styled(motion.div)<{
   flex-direction: column;
   gap: 12px;
   width: 16rem;
-  min-width: 92vw;
+  min-width: ${({ $width }) => $width ?? "92vw"};
   background-color: white;
   border: 1px solid #ebebeb;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -243,6 +255,7 @@ const MotionDialog = styled(motion.div)<{
 const CloseButtonWrapper = styled.div<{
   $isLeft: boolean;
   $tabStyle?: CSSProp;
+  $width?: string;
 }>`
   position: absolute;
   top: 4px;
@@ -250,14 +263,14 @@ const CloseButtonWrapper = styled.div<{
   display: flex;
   flex-direction: column;
   height: fit-content;
-  ${({ $isLeft }) =>
+  ${({ $isLeft, $width }) =>
     $isLeft
       ? css`
-          left: 92vw;
+          left: ${$width ?? "92vw"};
           translate: -4px;
         `
       : css`
-          right: 92vw;
+          right: ${$width ?? "92vw"};
           translate: 4px;
         `}
   ${({ $tabStyle }) => $tabStyle}
@@ -266,6 +279,7 @@ const CloseButtonWrapper = styled.div<{
 const MinimizeButtonWrapper = styled.div<{
   $isLeft: boolean;
   $tabStyle?: CSSProp;
+  $width?: string;
 }>`
   position: absolute;
   z-index: 9999;
@@ -274,14 +288,14 @@ const MinimizeButtonWrapper = styled.div<{
   display: flex;
   flex-direction: column;
   height: fit-content;
-  ${({ $isLeft }) =>
+  ${({ $isLeft, $width }) =>
     $isLeft
       ? css`
-          left: 92vw;
+          left: ${$width ?? "92vw"};
           translate: -4px;
         `
       : css`
-          right: 92vw;
+          right: ${$width ?? "92vw"};
           translate: 4px;
         `}
   ${({ $tabStyle }) => $tabStyle}
@@ -358,8 +372,7 @@ const StyledDialogContentWrapper = styled.div`
 
 const StyledDialogContent = styled.div<{ $style?: CSSProp }>`
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+
   ${({ $style }) => $style}
 `;
 
