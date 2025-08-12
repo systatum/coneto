@@ -17,6 +17,19 @@ context("Selectbox Component", () => {
         "Selectbox content default."
       );
     });
+
+    it("Should have consistent color if hovered/highlight on selectbox", () => {
+      cy.findByPlaceholderText("click this place holder")
+        .should("exist")
+        .click()
+        .should("have.css", "border-color", "rgb(97, 169, 249)");
+
+      cy.findByPlaceholderText("click this place holder")
+        .trigger("mouseover")
+        .should("have.css", "border-color", "rgb(97, 169, 249)");
+
+      cy.findByRole("listbox").should("be.visible");
+    });
   });
 
   describe("Clearable", () => {

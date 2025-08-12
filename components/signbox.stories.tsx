@@ -36,10 +36,11 @@ export const Default: Story = {
           display: "flex",
           flexDirection: "column",
           gap: 10,
-          maxWidth: 500,
         }}
       >
         <Signbox
+          width="400px"
+          height="200px"
           clearable
           value={args.value}
           label="Signature"
