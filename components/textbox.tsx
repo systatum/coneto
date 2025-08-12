@@ -8,18 +8,19 @@ import {
 import {
   ChangeEvent,
   InputHTMLAttributes,
-  MutableRefObject,
   ReactElement,
   RefObject,
-  TextareaHTMLAttributes,
   forwardRef,
   useEffect,
   useState,
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
 
-export interface BaseTextboxProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {
+export interface TextboxProps
+  extends Omit<
+    InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement>,
+    "style"
+  > {
   label?: string;
   showError?: boolean;
   errorMessage?: string;
@@ -31,26 +32,12 @@ export interface BaseTextboxProps
   actionIcon?: boolean;
 }
 
-export type TextboxProps =
-  | (BaseTextboxProps &
-      Omit<InputHTMLAttributes<HTMLInputElement>, "style"> & {
-        rows?: undefined;
-      })
-  | (BaseTextboxProps &
-      Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "style"> & {
-        rows: number;
-      });
-
-const Textbox = forwardRef<
-  HTMLInputElement | HTMLTextAreaElement,
-  TextboxProps
->(
+const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
   (
     {
       label,
       showError,
       errorMessage,
-      rows,
       onChange,
       onActionClick,
       style,
@@ -76,64 +63,7 @@ const Textbox = forwardRef<
       return <input {...props} hidden />;
     }
 
-    const autoResize = (el: HTMLTextAreaElement | null) => {
-      if (el) {
-        el.style.height = "auto";
-        el.style.height = `${el.scrollHeight}px`;
-      }
-    };
-
-    const inputElement: ReactElement = rows ? (
-      <TextAreaWrapper>
-        <Textarea
-          id={inputId}
-          ref={(el) => {
-            autoResize(el);
-            if (typeof ref === "function") {
-              ref(el);
-            } else if (ref) {
-              (ref as MutableRefObject<HTMLTextAreaElement | null>).current =
-                el;
-            }
-          }}
-          onChange={(e) => {
-            autoResize(e.target);
-            onChange(e);
-          }}
-          rows={rows ?? 3}
-          $error={showError}
-          $style={style}
-          {...(props as TextareaHTMLAttributes<HTMLTextAreaElement>)}
-        />
-        {actionIcon && (
-          <ActionButton
-            type="button"
-            aria-label="action-icon"
-            onClick={(e) => {
-              e.preventDefault();
-              onActionClick?.();
-            }}
-            $error={showError}
-          >
-            <Icon size={18} />
-          </ActionButton>
-        )}
-        {showError && (
-          <RiErrorWarningLine
-            size={18}
-            style={{
-              position: "absolute",
-              top: "50%",
-              right: "8px",
-              transform: "translateY(-50%)",
-              borderRadius: "9999px",
-              background: "#dc2626",
-              color: "white",
-            }}
-          />
-        )}
-      </TextAreaWrapper>
-    ) : (
+    const inputElement: ReactElement = (
       <InputWrapper>
         <Input
           id={inputId}
@@ -221,11 +151,6 @@ const InputWrapper = styled.div`
   width: 100%;
 `;
 
-const TextAreaWrapper = styled.div`
-  position: relative;
-  width: 100%;
-`;
-
 const SharedInputStyles = css<{ $error?: boolean; $style?: string }>`
   border-radius: 2px;
   font-size: 0.75rem;
@@ -254,20 +179,6 @@ const SharedInputStyles = css<{ $error?: boolean; $style?: string }>`
 
 const Input = styled.input<{ $error?: boolean; $style?: CSSProp }>`
   ${SharedInputStyles}
-  ${({ $style }) => $style}
-`;
-
-const Textarea = styled.textarea<{ $error?: boolean; $style?: CSSProp }>`
-  ${SharedInputStyles}
-  resize: none;
-  overflow: hidden;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
-
   ${({ $style }) => $style}
 `;
 

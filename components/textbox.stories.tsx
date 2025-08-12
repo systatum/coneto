@@ -30,10 +30,6 @@ const meta: Meta<typeof Textbox> = {
         options: ["text", "password", "message"],
       },
     },
-    rows: {
-      control: "number",
-      if: { arg: "type", eq: "textarea" },
-    },
     showError: {
       control: "boolean",
     },
@@ -92,42 +88,6 @@ export const Input: Story = {
     ) => {
       const newValue = e.target.value;
       setUpdateArgs({ value: newValue });
-      args.onChange?.(e);
-    };
-
-    return <Textbox {...args} value={args.value} onChange={handleChange} />;
-  },
-};
-
-export const Textarea: Story = {
-  args: {
-    name: "textarea",
-    label: "Textarea",
-    placeholder: "Type your message...",
-    value: "",
-    type: "textarea",
-    rows: 3,
-    style: css`
-      min-width: 400px;
-      max-width: 400px;
-    `,
-  },
-  render: (args: TextboxProps) => {
-    const [, setUpdateArgs] = useArgs();
-
-    useEffect(() => {
-      const timer = setTimeout(() => {
-        setUpdateArgs({ value: "" });
-      }, 100);
-      return () => clearTimeout(timer);
-    }, [setUpdateArgs]);
-
-    const handleChange = (
-      e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
-      const newValue = e.target.value;
-      setUpdateArgs({ value: newValue });
-      args.onChange?.(e);
     };
 
     return <Textbox {...args} value={args.value} onChange={handleChange} />;
@@ -163,7 +123,6 @@ export const InputMessage: Story = {
     ) => {
       const newValue = e.target.value;
       setUpdateArgs({ value: newValue });
-      args.onChange?.(e);
     };
 
     return (
@@ -206,7 +165,6 @@ export const Password: Story = {
     ) => {
       const newValue = e.target.value;
       setUpdateArgs({ value: newValue });
-      args.onChange?.(e);
     };
 
     return <Textbox {...args} value={args.value} onChange={handleChange} />;
@@ -242,7 +200,6 @@ export const WithErrorMessage: Story = {
     ) => {
       const newValue = e.target.value;
       setUpdateArgs({ value: newValue });
-      args.onChange?.(e);
     };
 
     return <Textbox {...args} value={args.value} onChange={handleChange} />;
