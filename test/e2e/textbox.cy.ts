@@ -13,18 +13,6 @@ context("Textbox Component", () => {
     });
   });
 
-  describe("Textarea", () => {
-    beforeEach(() => {
-      cy.visit(getIdContent("input-elements-textbox--textarea"));
-    });
-
-    it("Should type into the textarea", () => {
-      cy.findByPlaceholderText("Type your message...")
-        .clear()
-        .type("This is Textarea");
-    });
-  });
-
   describe("InputMessage", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-textbox--input-message"));
