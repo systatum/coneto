@@ -80,7 +80,6 @@ function Button({
     <ButtonWrapper ref={containerRef} $style={containerStyle}>
       <BaseButton
         {...props}
-        type="button"
         $variant={variant}
         $size={size}
         disabled={disabled}
