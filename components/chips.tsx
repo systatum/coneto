@@ -43,7 +43,7 @@ interface BaseChipsProps {
   options?: BadgeProps[];
   inputValue?: InputValueProps;
   setInputValue?: (
-    data: ChangeEvent<HTMLInputElement>,
+    data: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     type?: ColorPickProps
   ) => void;
   chipsContainerStyle?: CSSProp;
@@ -180,6 +180,7 @@ const InputWrapper = styled.div`
   gap: 0.5rem;
   font-size: 0.75rem;
   width: 100%;
+  position: relative;
 `;
 
 const InputContent = styled.div`

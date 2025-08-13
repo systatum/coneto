@@ -425,7 +425,6 @@ const PhoneInput = styled.input<{ $disabled?: boolean }>`
   padding: 0 12px;
   font-size: 12px;
   border-radius: var(--radius-xs);
-  color: black;
   outline: none;
   ${({ $disabled }) =>
     $disabled

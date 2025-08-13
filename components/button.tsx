@@ -31,6 +31,7 @@ function Button({
   closedIcon: ClosedIcon = RiArrowUpSLine,
   children,
   disabled,
+  containerStyle,
   buttonStyle,
   toggleStyle,
   ...props
@@ -44,6 +45,7 @@ function Button({
     closedIcon?: RemixiconComponentType;
     buttonStyle?: CSSProp;
     toggleStyle?: CSSProp;
+    containerStyle?: CSSProp;
   }) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [hovered, setHovered] = React.useState<
@@ -75,19 +77,17 @@ function Button({
   }, [isOpen]);
 
   return (
-    <div
-      ref={containerRef}
-      style={{
-        display: "flex",
-        position: "relative",
-        alignItems: "center",
-        width: "fit-content",
-        height: "fit-content",
-      }}
-    >
+    <ButtonWrapper ref={containerRef} $style={containerStyle}>
       <BaseButton
+        onClick={(event) => {
+          if (props.onClick) {
+            props.onClick(event);
+          }
+          if (tipMenu) {
+            setIsOpen(false);
+          }
+        }}
         {...props}
-        type="button"
         $variant={variant}
         $size={size}
         disabled={disabled}
@@ -125,7 +125,7 @@ function Button({
 
           <BaseButtonToggle
             onClick={() => {
-              setIsOpen(true);
+              setIsOpen(!isOpen);
             }}
             $variant={variant}
             $size={size}
@@ -170,9 +170,23 @@ function Button({
           />
         </div>
       )}
-    </div>
+    </ButtonWrapper>
   );
 }
+
+const ButtonWrapper = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  position: relative;
+  align-items: center;
+
+  ${({ $style }) =>
+    $style
+      ? $style
+      : css`
+          width: fit-content;
+          height: fit-content;
+        `}
+`;
 
 const BaseButton = styled.button<{
   $tipMenu?: boolean;

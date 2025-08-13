@@ -59,6 +59,7 @@ const KeynoteWrapper = styled.div<{
 }>`
   display: flex;
   flex-direction: column;
+  position: relative;
 
   ${({ $style }) => $style}
 `;
@@ -68,6 +69,7 @@ const KeynotePointWrapper = styled.div`
   flex-direction: row;
   justify-content: space-between;
   padding: 4px 0;
+  position: relative;
 `;
 
 const Label = styled.span`

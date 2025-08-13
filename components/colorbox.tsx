@@ -111,6 +111,7 @@ const InputWrapper = styled.div<{
   gap: 0.5rem;
   font-size: 0.75rem;
   width: 100%;
+  position: relative;
 
   ${({ $disabled }) => $disabled && `cursor: not-allowed; opacity: 0.5;`}
   ${({ $containerStyle }) => $containerStyle}

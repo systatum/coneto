@@ -723,6 +723,8 @@ const Container = styled.div<{ $style?: CSSProp }>`
   flex-direction: column;
   gap: 0.5rem;
   font-size: 0.75rem;
+  position: relative;
+
   ${({ $style }) => $style}
 `;
 
