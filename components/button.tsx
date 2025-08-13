@@ -79,6 +79,14 @@ function Button({
   return (
     <ButtonWrapper ref={containerRef} $style={containerStyle}>
       <BaseButton
+        onClick={(event) => {
+          if (props.onClick) {
+            props.onClick(event);
+          }
+          if (tipMenu) {
+            setIsOpen(false);
+          }
+        }}
         {...props}
         $variant={variant}
         $size={size}
@@ -117,7 +125,7 @@ function Button({
 
           <BaseButtonToggle
             onClick={() => {
-              setIsOpen(true);
+              setIsOpen(!isOpen);
             }}
             $variant={variant}
             $size={size}
