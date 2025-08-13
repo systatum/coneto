@@ -103,8 +103,7 @@ const StyledTipMenuItem = styled.div<{
   padding: 8px;
   border-radius: 4px;
   border: 2px solid transparent;
-  background-color: ${(props) =>
-    props.$isDangerous ? "#ef4444" : "white"}; /* red-500 */
+  background-color: ${(props) => (props.$isDangerous ? "#ef4444" : "white")};
   color: ${(props) => (props.$isDangerous ? "white" : "black")};
   transition: background-color 0.2s;
 

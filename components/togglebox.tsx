@@ -94,6 +94,8 @@ const ToggleboxWrapper = styled.div<{ $containerStyle?: CSSProp }>`
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
+  position: relative;
+
   ${({ $containerStyle }) => $containerStyle}
 `;
 

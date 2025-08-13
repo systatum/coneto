@@ -581,7 +581,6 @@ export const AllCase: Story = {
           marginRight: "auto",
           display: "flex",
           width: "100%",
-          maxWidth: "400px",
           flexDirection: "column",
           gap: "0.5rem",
           paddingTop: "1rem",

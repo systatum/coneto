@@ -247,6 +247,7 @@ const DormantWrapper = styled.div<{
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
+  position: relative;
   align-items: center;
   gap: 2px;
   height: 100%;

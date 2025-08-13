@@ -109,6 +109,7 @@ const ComboboxWrapper = styled.div<{
   flex-direction: column;
   gap: 8px;
   font-size: 12px;
+  position: relative;
 
   ${({ $style }) => $style}
 `;

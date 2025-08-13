@@ -79,7 +79,6 @@ const SearchboxInput = styled.input<{ $style?: CSSProp }>`
   width: 100%;
   font-size: 0.75rem;
   outline: none;
-  color: black;
   background-color: white;
   border: 1px solid #d1d5db;
 
