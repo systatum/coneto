@@ -782,8 +782,9 @@ const TableRowWrapper = styled.div<{
   display: flex;
   position: relative;
   padding: 0.75rem;
-  align-items: center;
+  align-items: stretch;
   width: 100%;
+  height: 100%;
   border-left: 1px solid #e5e7eb;
   border-right: 1px solid #e5e7eb;
   border-bottom: 1px solid #e5e7eb;
@@ -837,13 +838,18 @@ function TableRowCell({
 const CellContent = styled.div<{ width?: string; $contentStyle?: CSSProp }>`
   padding-left: 0.5rem;
   padding-right: 0.5rem;
+  display: flex;
+  align-items: center;
   ${({ width }) =>
     !width &&
     css`
       flex: 1;
-      display: flex;
+      height: fit-content;
+      width: "100%";
     `}
-  width: ${({ width }) => (width ? width : "100%")};
+
+  width: ${({ width }) => width};
+  min-height: inherit;
   ${({ $contentStyle }) => $contentStyle};
 `;
 

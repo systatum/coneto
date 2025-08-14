@@ -386,7 +386,11 @@ export const Appendable: Story = {
             actions={ROW_ACTION}
           >
             <Table.Row.Cell>{rowValue.from}</Table.Row.Cell>
-            <Table.Row.Cell>
+            <Table.Row.Cell
+              contentStyle={{
+                display: "block",
+              }}
+            >
               <strong>{rowValue.subject}</strong> — {rowValue.content}
             </Table.Row.Cell>
           </Table.Row>
