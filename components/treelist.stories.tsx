@@ -1,5 +1,9 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { TreeList, TreeListActionsProps } from "./treelist";
+import {
+  TreeList,
+  TreeListActionsProps,
+  TreeListContentProps,
+} from "./treelist";
 import { RiAtLine, RiSearchLine } from "@remixicon/react";
 import { EmptySlate } from "./empty-slate";
 import { Button } from "./button";
@@ -21,7 +25,7 @@ export const Default: Story = {
       console.log("Clicked person:", item.title);
     };
 
-    const TREE_LIST_DATA = [
+    const TREE_LIST_DATA: TreeListContentProps[] = [
       {
         title: "Member of Technical Staff",
         items: [
@@ -60,7 +64,7 @@ export const WithActions: Story = {
       console.log("Clicked person:", item.title);
     };
 
-    const TREE_LIST_DATA = [
+    const TREE_LIST_DATA: TreeListContentProps[] = [
       {
         title: "Member of Technical Staff",
         items: [
@@ -170,7 +174,7 @@ export const WithoutHeader: Story = {
 
 export const WithEmptySlate: Story = {
   render: () => {
-    const TREE_LIST_DATA = [];
+    const TREE_LIST_DATA: TreeListContentProps[] = [];
 
     const TREE_LIST_ACTIONS: TreeListActionsProps[] = [
       {

@@ -2,16 +2,18 @@ import styled, { CSSProp } from "styled-components";
 import { ReactNode, useState } from "react";
 import { RemixiconComponentType } from "@remixicon/react";
 
-export interface TreeListProps<T extends TreeListItemsProps> {
-  content: Array<{
-    title?: string;
-    items: T[];
-  }>;
+export interface TreeListProps {
+  content: TreeListContentProps[];
   containerStyle?: CSSProp;
   children?: ReactNode;
   emptySlate?: ReactNode;
   searchTerm?: string;
   actions?: TreeListActionsProps[];
+}
+
+export interface TreeListContentProps {
+  title?: string;
+  items: TreeListItemsProps[];
 }
 
 export interface TreeListActionsProps {
@@ -24,19 +26,19 @@ export interface TreeListActionsProps {
 export interface TreeListItemsProps {
   id: number;
   title: string;
-  onClick: (item?: TreeListItemsProps) => void;
+  onClick?: (item?: TreeListItemsProps) => void;
   setIsSelected?: (item?: string) => void;
   isSelected?: string;
 }
 
-function TreeList<T extends TreeListItemsProps>({
+function TreeList({
   content,
   containerStyle,
   children,
   emptySlate,
   searchTerm = "",
   actions,
-}: TreeListProps<T>) {
+}: TreeListProps) {
   const [isSelected, setIsSelected] = useState("");
 
   return (
