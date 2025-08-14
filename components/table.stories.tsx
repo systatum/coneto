@@ -376,6 +376,11 @@ export const Appendable: Story = {
       >
         {rows.map((rowValue, rowIndex) => (
           <Table.Row
+            onClick={() =>
+              console.log(
+                `Selected to this ${`${rowValue.from}-${rowValue.content}-${rowValue.subject}`}`
+              )
+            }
             key={rowIndex}
             rowId={`${rowValue.from}-${rowValue.content}-${rowValue.subject}`}
             actions={ROW_ACTION}

@@ -73,6 +73,7 @@ export interface TableRowProps {
   rowId?: string;
   children?: ReactNode;
   actions?: (columnCaption: string) => TipMenuItemProps[];
+  onClick?: () => void;
 }
 
 export interface TableRowGroupProps {
@@ -86,6 +87,7 @@ export interface TableRowCellProps {
   children: ReactNode;
   contentStyle?: CSSProp;
   width?: string;
+  onClick?: () => void;
 }
 
 const TableColumnContext = createContext<ColumnTableProps[]>([]);
@@ -630,6 +632,7 @@ function TableRow({
   actions,
   isLast,
   onLastRowReached,
+  onClick,
   ...props
 }: TableRowProps &
   Partial<{
@@ -665,7 +668,18 @@ function TableRow({
       ref={rowRef}
       onMouseLeave={() => setIsHovered(null)}
       onMouseEnter={() => setIsHovered(rowId)}
-      $rowCellStyle={rowStyle}
+      onClick={() => {
+        if (onClick) {
+          onClick();
+        }
+      }}
+      $rowCellStyle={css`
+        ${rowStyle};
+        ${onClick &&
+        css`
+          cursor: pointer;
+        `}
+      `}
     >
       {selectable && (
         <CheckboxWrapperRow
@@ -793,9 +807,28 @@ const CheckboxWrapperRow = styled.div`
   pointer-events: auto;
 `;
 
-function TableRowCell({ children, contentStyle, width }: TableRowCellProps) {
+function TableRowCell({
+  children,
+  contentStyle,
+  width,
+  onClick,
+}: TableRowCellProps) {
   return (
-    <CellContent width={width} $contentStyle={contentStyle}>
+    <CellContent
+      onClick={() => {
+        if (onClick) {
+          onClick();
+        }
+      }}
+      width={width}
+      $contentStyle={css`
+        ${contentStyle};
+        ${onClick &&
+        css`
+          cursor: pointer;
+        `}
+      `}
+    >
       {children}
     </CellContent>
   );
