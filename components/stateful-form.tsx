@@ -24,7 +24,7 @@ import { Combobox, ComboboxProps } from "./combobox";
 import { Chips, ChipsProps } from "./chips";
 import { Signbox } from "./signbox";
 import { Textarea } from "./textarea";
-import { CSSProp } from "styled-components";
+import { css } from "styled-components";
 
 export type StatefulOnChangeType =
   | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -43,6 +43,8 @@ interface StatefulFormProps<Z extends ZodTypeAny> {
   validationSchema: Z;
   mode?: "onChange" | "onBlur" | "onSubmit";
   onValidityChange?: (e: boolean) => void;
+  labelSize?: string;
+  fieldSize?: string;
 }
 
 export interface FormFieldProps {
@@ -65,7 +67,6 @@ export interface FormFieldProps {
   dateProps?: DateboxProps;
   comboboxProps?: ComboboxProps;
   chipsProps?: ChipsProps;
-  style?: CSSProp;
 }
 
 function StatefulForm<Z extends ZodTypeAny>({
@@ -74,6 +75,8 @@ function StatefulForm<Z extends ZodTypeAny>({
   formValues,
   mode = "onChange",
   onValidityChange,
+  fieldSize,
+  labelSize,
 }: StatefulFormProps<Z>) {
   const {
     register,
@@ -104,6 +107,8 @@ function StatefulForm<Z extends ZodTypeAny>({
   return (
     <>
       <FormFields
+        labelSize={labelSize}
+        fieldSize={fieldSize}
         control={control}
         fields={fields}
         formValues={formValues}
@@ -122,6 +127,8 @@ interface FormFieldsProps<T extends FieldValues> {
   errors: FieldErrors<T>;
   shouldShowError: (name: string) => boolean;
   control: Control<T>;
+  labelSize?: string;
+  fieldSize?: string;
 }
 
 function FormFields<T extends FieldValues>({
@@ -131,6 +138,8 @@ function FormFields<T extends FieldValues>({
   errors,
   shouldShowError,
   control,
+  fieldSize,
+  labelSize,
 }: FormFieldsProps<T>) {
   return (
     <>
@@ -144,11 +153,22 @@ function FormFields<T extends FieldValues>({
             key={index}
             label={field.title}
             type={field.type}
-            containerStyle={field.style}
             value={formValues[field.name as keyof T] ?? ""}
             required={field.required}
             {...register(field.name as Path<T>, { onChange: field.onChange })}
             showError={shouldShowError(field.name)}
+            labelStyle={
+              labelSize &&
+              css`
+                font-size: ${labelSize};
+              `
+            }
+            style={
+              fieldSize &&
+              css`
+                font-size: ${fieldSize};
+              `
+            }
             errorMessage={
               errors[field.name as keyof T]?.message as string | undefined
             }
@@ -158,11 +178,22 @@ function FormFields<T extends FieldValues>({
             key={index}
             label={field.title}
             rows={field.rows}
-            containerStyle={field.style}
             value={formValues[field.name as keyof T] ?? ""}
             required={field.required}
             {...register(field.name as Path<T>, { onChange: field.onChange })}
             showError={shouldShowError(field.name)}
+            labelStyle={
+              labelSize &&
+              css`
+                font-size: ${labelSize};
+              `
+            }
+            style={
+              fieldSize &&
+              css`
+                font-size: ${fieldSize};
+              `
+            }
             errorMessage={
               errors[field.name as keyof T]?.message as string | undefined
             }
@@ -177,7 +208,33 @@ function FormFields<T extends FieldValues>({
                 label={field.title}
                 name={field.name}
                 checked={controllerField.value ?? false}
-                containerStyle={field.style}
+                labelStyle={
+                  labelSize &&
+                  css`
+                    font-size: ${labelSize};
+                  `
+                }
+                inputStyle={
+                  fieldSize &&
+                  css`
+                    width: ${fieldSize};
+                    height: ${fieldSize};
+                  `
+                }
+                iconStyle={
+                  fieldSize &&
+                  css`
+                    width: ${fieldSize}-2;
+                    height: ${fieldSize}-2;
+                  `
+                }
+                wrapperStyle={
+                  fieldSize &&
+                  css`
+                    width: ${fieldSize};
+                    height: ${fieldSize};
+                  `
+                }
                 {...register(field.name as Path<T>, {
                   onChange: field.onChange,
                 })}
@@ -196,13 +253,24 @@ function FormFields<T extends FieldValues>({
                 <Phonebox
                   label={field.title}
                   value={controllerField.value}
-                  style={field.style}
                   onChange={(e) => {
                     if (e.target.name === "phone") {
                       controllerField.onChange(e);
                     }
                     field.onChange?.(e);
                   }}
+                  labelStyle={
+                    labelSize &&
+                    css`
+                      font-size: ${labelSize};
+                    `
+                  }
+                  style={
+                    fieldSize &&
+                    css`
+                      font-size: ${fieldSize};
+                    `
+                  }
                   showError={!!errors["phone"]}
                   errorMessage={errors["phone"]?.message as string}
                 />
@@ -218,8 +286,19 @@ function FormFields<T extends FieldValues>({
                 key={index}
                 label={field.title}
                 required={field.required}
+                labelStyle={
+                  labelSize &&
+                  css`
+                    font-size: ${labelSize};
+                  `
+                }
+                style={
+                  fieldSize &&
+                  css`
+                    font-size: ${fieldSize};
+                  `
+                }
                 value={controllerField.value}
-                containerStyle={field.style}
                 onChange={(e, kind) => {
                   const newVal =
                     kind === "color-text"
@@ -240,7 +319,12 @@ function FormFields<T extends FieldValues>({
           <FileDropBox
             key={index}
             label={field.title}
-            containerStyle={field.style}
+            labelStyle={
+              labelSize &&
+              css`
+                font-size: ${labelSize};
+              `
+            }
             {...field.fileDropBoxProps}
             {...register(field.name as Path<T>, { onChange: field.onChange })}
           />
@@ -249,7 +333,12 @@ function FormFields<T extends FieldValues>({
             key={index}
             onFilesSelected={(e) => field.onChange(e, "file")}
             label={field.title}
-            containerStyle={field.style}
+            labelStyle={
+              labelSize &&
+              css`
+                font-size: ${labelSize};
+              `
+            }
             {...register(field.name as Path<T>, { onChange: field.onChange })}
             showError={shouldShowError(field.name)}
             errorMessage={
@@ -260,9 +349,14 @@ function FormFields<T extends FieldValues>({
           <Imagebox
             key={index}
             name={field.name}
-            containerStyle={field.style}
             onFilesSelected={(e) => field.onChange(e, "image")}
             label={field.title}
+            labelStyle={
+              labelSize &&
+              css`
+                font-size: ${labelSize};
+              `
+            }
             required={field.required}
             {...register(field.name as Path<T>, { onChange: field.onChange })}
             showError={shouldShowError(field.name)}
@@ -276,7 +370,12 @@ function FormFields<T extends FieldValues>({
             name={field.name}
             key={index}
             label={field.title}
-            containerStyle={field.style}
+            labelStyle={
+              labelSize &&
+              css`
+                font-size: ${labelSize};
+              `
+            }
             required={field.required}
             value={formValues[field.name as keyof T] ?? ""}
             {...register(field.name as Path<T>, { onChange: field.onChange })}
@@ -289,7 +388,18 @@ function FormFields<T extends FieldValues>({
           <Moneybox
             key={index}
             label={field.title}
-            containerStyle={field.style}
+            labelStyle={
+              labelSize &&
+              css`
+                font-size: ${labelSize};
+              `
+            }
+            style={
+              fieldSize &&
+              css`
+                font-size: ${fieldSize};
+              `
+            }
             {...field.moneyProps}
             value={formValues[field.name as keyof T] ?? ""}
             required={field.required}
@@ -309,7 +419,18 @@ function FormFields<T extends FieldValues>({
                 key={index}
                 label={field.title}
                 showError={shouldShowError(field.name)}
-                containerStyle={field.style}
+                labelStyle={
+                  labelSize &&
+                  css`
+                    font-size: ${labelSize};
+                  `
+                }
+                selectboxStyle={
+                  fieldSize &&
+                  css`
+                    font-size: ${fieldSize};
+                  `
+                }
                 errorMessage={
                   (
                     errors[field.name as keyof T] as {
@@ -337,6 +458,18 @@ function FormFields<T extends FieldValues>({
                 key={index}
                 label={field.title}
                 showError={shouldShowError(field.name)}
+                labelStyle={
+                  labelSize &&
+                  css`
+                    font-size: ${labelSize};
+                  `
+                }
+                selectboxStyle={
+                  fieldSize &&
+                  css`
+                    font-size: ${fieldSize};
+                  `
+                }
                 {...field.comboboxProps}
                 errorMessage={
                   (
@@ -364,6 +497,18 @@ function FormFields<T extends FieldValues>({
               <Chips
                 key={index}
                 label={field.title}
+                labelStyle={
+                  labelSize &&
+                  css`
+                    font-size: ${labelSize};
+                  `
+                }
+                chipSelectedStyle={
+                  fieldSize &&
+                  css`
+                    font-size: ${fieldSize};
+                  `
+                }
                 inputValue={controllerField.value}
                 {...field.chipsProps}
                 setInputValue={(e) => {
