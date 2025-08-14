@@ -18,4 +18,16 @@ context("Treelist Component", () => {
       cy.contains("Mohamad Naufal Alim").click();
     });
   });
+
+  describe("Without Header", () => {
+    it("Should click item and action button exists", () => {
+      cy.visit(getIdContent("content-treelist--with-actions"));
+
+      cy.findByText("Discover").should("exist").click();
+
+      cy.contains("Mohamad Naufal Alim").click();
+
+      cy.contains("Adam Noto Hakarsa").click();
+    });
+  });
 });
