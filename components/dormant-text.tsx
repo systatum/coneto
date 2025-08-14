@@ -17,7 +17,7 @@ import {
   useRef,
   useState,
 } from "react";
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
 
 export interface DormantTextProps {
   style?: CSSProp;
@@ -31,6 +31,7 @@ export interface DormantTextProps {
   cancelable?: boolean;
   onActive?: () => void;
   onCancelRequested?: () => void;
+  dormantedMaxWidth?: string;
 }
 
 export interface DormantTextRef {
@@ -50,6 +51,7 @@ function DormantText({
   cancelable,
   onActive,
   onCancelRequested,
+  dormantedMaxWidth,
 }: DormantTextProps) {
   const [dormantedLocal, setDormantedLocal] = useState(true);
 
@@ -152,10 +154,11 @@ function DormantText({
         setTimeout(() => inputRef.current?.focus(), 0);
       }}
       $fullWidth={fullWidth}
+      $dormantedMaxWidth={dormantedMaxWidth}
       $fontSize={dormantedFontSize}
       $style={style}
     >
-      {content}
+      <DormantLabelText>{content}</DormantLabelText>
       <PencilIcon className="pencil-icon" size={dormantPencilSize} />
     </DormantLabel>
   ) : (
@@ -199,6 +202,7 @@ const DormantLabel = styled.label<{
   $fullWidth?: boolean;
   $fontSize?: string | number;
   $style?: CSSProp;
+  $dormantedMaxWidth?: string;
 }>`
   display: flex;
   flex-direction: row;
@@ -217,6 +221,21 @@ const DormantLabel = styled.label<{
   transform: translateZ(0);
 
   ${({ $fullWidth }) => $fullWidth && `min-width: 100%;`}
+
+  ${({ $dormantedMaxWidth }) =>
+    $dormantedMaxWidth &&
+    css`
+      width: ${$dormantedMaxWidth};
+      overflow: hidden;
+      min-width: 0;
+
+      & > :first-child {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-width: 0;
+      }
+    `}
   ${({ $fontSize }) =>
     $fontSize &&
     `font-size: ${typeof $fontSize === "number" ? `${$fontSize}px` : $fontSize};`}
@@ -230,6 +249,14 @@ const DormantLabel = styled.label<{
     }
   }
   ${({ $style }) => $style}
+`;
+
+const DormantLabelText = styled.span`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  flex: 1;
 `;
 
 const PencilIcon = styled(RiPencilFill)`

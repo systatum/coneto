@@ -34,12 +34,14 @@ export const Default: Story = {
     const [value, setValue] = useState({
       normal: "Hello there, this is dormanted text",
       full: "Hello there, this is dormanted text with full width",
+      max: "Hello there, this is dormanted text with max width",
       keydown: "Hello there, this is dormanted text with enable keydown",
     });
 
     const [oldValue, setOldValue] = useState({
       normal: value.normal,
       full: value.full,
+      max: value.max,
       keydown: value.keydown,
     });
 
@@ -83,6 +85,21 @@ export const Default: Story = {
           </DormantText>
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
+          <span style={{ fontWeight: 500 }}>Max Width</span>
+          <DormantText
+            dormantedMaxWidth="250px"
+            content={value.max}
+            onActionClick={() => {
+              console.log(`The value is : ${value.max}`);
+            }}
+          >
+            <Textbox
+              value={value.max}
+              onChange={(e) => handleChange(e, "max")}
+            />
+          </DormantText>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column" }}>
           <span style={{ fontWeight: 500 }}>
             Change cancelable, and acceptable by pressing enter
           </span>
@@ -121,12 +138,14 @@ export const WithCombobox: Story = {
     const [value, setValue] = useState({
       normal: { text: "Apple", value: 1 },
       full: { text: "Banana", value: 2 },
-      keydown: { text: "Orange", value: 3 },
+      max: { text: "Orange", value: 3 },
+      keydown: { text: "Grape", value: 4 },
     });
 
     const [oldValue, setOldValue] = useState({
       normal: value.normal,
       full: value.full,
+      max: value.max,
       keydown: value.keydown,
     });
 
@@ -183,6 +202,24 @@ export const WithCombobox: Story = {
           </DormantText>
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
+          <span style={{ fontWeight: 500 }}>Max Width</span>
+          <DormantText
+            dormantedMaxWidth="90px"
+            content={value.max.text}
+            onActionClick={() => {
+              console.log(`Selected value: ${value.max.text}`);
+            }}
+          >
+            <Combobox
+              placeholder="Select a fruit max..."
+              strict
+              inputValue={value.max}
+              options={FRUIT_OPTIONS}
+              setInputValue={(e) => handleChange(e, "max")}
+            />
+          </DormantText>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column" }}>
           <span style={{ fontWeight: 500 }}>
             Change cancelable, and acceptable by pressing enter or click event
           </span>
@@ -224,12 +261,14 @@ export const WithDatebox: Story = {
     const [value, setValue] = useState({
       normal: { text: "07/25/2025", value: "07/25/2025" },
       full: { text: "07/25/2025", value: "07/25/2025" },
+      max: { text: "07/25/2025", value: "07/25/2025" },
       keydown: { text: "07/25/2025", value: "07/25/2025" },
     });
 
     const [oldValue, setOldValue] = useState({
       normal: value.normal,
       full: value.full,
+      max: value.max,
       keydown: value.keydown,
     });
 
@@ -299,6 +338,23 @@ export const WithDatebox: Story = {
           </DormantText>
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
+          <span style={{ fontWeight: 500 }}>Max Width</span>
+          <DormantText
+            dormantedMaxWidth="120px"
+            content={value.max.text}
+            onActionClick={() => {
+              console.log(`Selected value: ${value.max.value}`);
+            }}
+          >
+            <Datebox
+              inputValue={value.max}
+              dayNames={DAY_NAMES}
+              monthNames={MONTH_NAMES}
+              setInputValue={(e) => handleChange(e, "max")}
+            />
+          </DormantText>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column" }}>
           <span style={{ fontWeight: 500 }}>
             Change cancelable, and acceptable by pressing click event
           </span>
@@ -339,12 +395,14 @@ export const WithColorbox: Story = {
     const [value, setValue] = useState({
       normal: "#zzzzzz",
       full: "#zzzzzz",
+      max: "#zzzzzz",
       keydown: "#zzzzzz",
     });
 
     const [oldValue, setOldValue] = useState({
       normal: value.normal,
       full: value.full,
+      max: value.max,
       keydown: value.keydown,
     });
 
@@ -396,7 +454,7 @@ export const WithColorbox: Story = {
           >
             <Colorbox
               value={value.normal}
-              name="Full"
+              name="normal"
               onChange={onChangeValue}
             />
           </DormantText>
@@ -411,6 +469,18 @@ export const WithColorbox: Story = {
             }}
           >
             <Colorbox value={value.full} name="full" onChange={onChangeValue} />
+          </DormantText>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <span style={{ fontWeight: 500 }}>Max Width</span>
+          <DormantText
+            dormantedMaxWidth="100px"
+            content={value.max}
+            onActionClick={() => {
+              console.log(`Selected value: ${value.max}`);
+            }}
+          >
+            <Colorbox value={value.max} name="max" onChange={onChangeValue} />
           </DormantText>
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -453,12 +523,14 @@ export const WithMoneybox: Story = {
     const [value, setValue] = useState({
       normal: "100000",
       full: "100000",
+      max: "100000",
       keydown: "100000",
     });
 
     const [oldValue, setOldValue] = useState({
       normal: value.normal,
       full: value.full,
+      max: value.max,
       keydown: value.keydown,
     });
 
@@ -499,6 +571,24 @@ export const WithMoneybox: Story = {
               name="full"
               currency="$"
               value={value.full}
+              onChange={onChangeValue}
+              separator="comma"
+            />
+          </DormantText>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <span style={{ fontWeight: 500 }}>Max Width</span>
+          <DormantText
+            dormantedMaxWidth="110px"
+            content={`$ ${formatMoneyboxNumber(value.max, "comma")}`}
+            onActionClick={() => {
+              console.log(`Selected value: ${value.max}`);
+            }}
+          >
+            <Moneybox
+              name="max"
+              currency="$"
+              value={value.max}
               onChange={onChangeValue}
               separator="comma"
             />
@@ -555,6 +645,10 @@ export const WithPhonebox: Story = {
         country_code: DEFAULT_COUNTRY_CODES,
         phone: "8123457890",
       },
+      max: {
+        country_code: DEFAULT_COUNTRY_CODES,
+        phone: "8123457890",
+      },
       keydown: {
         country_code: DEFAULT_COUNTRY_CODES,
         phone: "8123457890",
@@ -564,6 +658,7 @@ export const WithPhonebox: Story = {
     const [oldValue, setOldValue] = useState({
       normal: value.normal,
       full: value.full,
+      max: value.max,
       keydown: value.keydown,
     });
 
@@ -609,8 +704,25 @@ export const WithPhonebox: Story = {
             <Phonebox
               value={value.full.phone}
               placeholder="Enter your phone number"
-              onChange={(e) => onChangeValue(e, "normal")}
+              onChange={(e) => onChangeValue(e, "full")}
               countryCodeValue={value.full.country_code}
+            />
+          </DormantText>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <span style={{ fontWeight: 500 }}>Max Width</span>
+          <DormantText
+            dormantedMaxWidth="150px"
+            content={`${value.max.country_code.code} ${formatPhoneboxNumber(value.max.phone, value.max.country_code.id as CountryCode)}`}
+            onActionClick={() => {
+              console.log(`Selected value: ${value.max}`);
+            }}
+          >
+            <Phonebox
+              value={value.max.phone}
+              placeholder="Enter your phone number"
+              onChange={(e) => onChangeValue(e, "max")}
+              countryCodeValue={value.max.country_code}
             />
           </DormantText>
         </div>
