@@ -25,6 +25,7 @@ export interface TextboxProps
   showError?: boolean;
   errorMessage?: string;
   containerStyle?: CSSProp;
+  labelStyle?: CSSProp;
   style?: CSSProp;
   onActionClick?: () => void;
   onChange: (data: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
@@ -43,6 +44,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
       style,
       containerStyle,
       actionIcon,
+      labelStyle,
       icon: Icon = RiCheckLine,
       type = "text",
       ...props
@@ -121,7 +123,11 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
 
     return (
       <Container $style={containerStyle}>
-        {label && <Label htmlFor={inputId}>{label}</Label>}
+        {label && (
+          <Label $style={labelStyle} htmlFor={inputId}>
+            {label}
+          </Label>
+        )}
         <div>
           {inputElement}
           {showError && <ErrorText>{errorMessage}</ErrorText>}
@@ -142,8 +148,9 @@ const Container = styled.div<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
-const Label = styled.label`
+const Label = styled.label<{ $style?: CSSProp }>`
   font-size: 0.75rem;
+  ${({ $style }) => $style}
 `;
 
 const InputWrapper = styled.div`

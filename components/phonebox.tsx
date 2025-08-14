@@ -37,6 +37,7 @@ export interface PhoneboxProps {
   label?: string;
   name?: string;
   style?: CSSProp;
+  labelStyle?: CSSProp;
   value?: string;
   onChange?: (
     e:
@@ -64,6 +65,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
       errorMessage,
       onKeyDown,
       countryCodeValue,
+      labelStyle,
     },
     ref
   ) => {
@@ -220,14 +222,9 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
         }}
       >
         {label && (
-          <label
-            style={{
-              fontSize: "12px",
-            }}
-            htmlFor={label}
-          >
+          <Label $style={labelStyle} htmlFor={label}>
             {label}
-          </label>
+          </Label>
         )}
         <InputWrapper
           $hasError={showError}
@@ -253,14 +250,9 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
             $disabled={disabled}
             aria-label="Select country code"
             tabIndex={0}
+            $style={style}
           >
-            <span
-              style={{
-                fontSize: "12px",
-              }}
-            >
-              {selectedCountry.flag}
-            </span>
+            <span>{selectedCountry.flag}</span>
             <span>{selectedCountry.code}</span>
             {isOpen ? <ArrowUp /> : <ArrowDown />}
           </CountryButton>
@@ -268,6 +260,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
           <PhoneInput
             ref={phoneInputRef}
             type="tel"
+            $style={style}
             placeholder={placeholder}
             value={phoneNumber}
             onChange={handlePhoneChange}
@@ -296,10 +289,11 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
                 <RiSearchLine
                   style={{
                     position: "absolute",
-                    top: "0.5rem",
+                    top: "50%",
                     left: "0.5rem",
                     width: "1rem",
                     height: "1rem",
+                    transform: "translateY(-50%)",
                     color: "#9ca3af",
                   }}
                 />
@@ -387,7 +381,12 @@ const InputWrapper = styled.div<{
   ${({ $style }) => $style}
 `;
 
-const CountryButton = styled.button<{ $disabled?: boolean }>`
+const Label = styled.label<{ $style?: CSSProp }>`
+  font-size: 0.75rem;
+  ${({ $style }) => $style}
+`;
+
+const CountryButton = styled.button<{ $disabled?: boolean; $style?: CSSProp }>`
   display: flex;
   flex-direction: row;
   min-height: 32px;
@@ -409,6 +408,8 @@ const CountryButton = styled.button<{ $disabled?: boolean }>`
             background-color: #f9fafb;
           }
         `}
+
+  ${({ $style }) => $style}
 `;
 
 const IconStyled = (icon: RemixiconComponentType) => styled(icon)`
@@ -420,7 +421,7 @@ const IconStyled = (icon: RemixiconComponentType) => styled(icon)`
 const ArrowUp = IconStyled(RiArrowUpSLine);
 const ArrowDown = IconStyled(RiArrowDownSLine);
 
-const PhoneInput = styled.input<{ $disabled?: boolean }>`
+const PhoneInput = styled.input<{ $disabled?: boolean; $style?: CSSProp }>`
   width: 100%;
   padding: 0 12px;
   font-size: 12px;
@@ -434,6 +435,8 @@ const PhoneInput = styled.input<{ $disabled?: boolean }>`
       : css`
           background-color: white;
         `}
+
+  ${({ $style }) => $style}
 `;
 
 const DropdownContainer = styled.div`

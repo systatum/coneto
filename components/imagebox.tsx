@@ -4,6 +4,7 @@ import styled, { CSSProp } from "styled-components";
 
 export interface ImageboxProps {
   containerStyle?: CSSProp;
+  labelStyle?: CSSProp;
   style?: CSSProp;
   onFilesSelected?: (files: FileList) => void;
   size?: "xs" | "sm" | "md" | "lg";
@@ -34,6 +35,7 @@ const SIZE_STYLES = {
 
 function Imagebox({
   containerStyle,
+  labelStyle,
   onFilesSelected,
   size = "md",
   label,
@@ -117,7 +119,7 @@ function Imagebox({
 
   return (
     <InputWrapper $containerStyle={containerStyle}>
-      {label && <label>{label}</label>}
+      {label && <Label $style={labelStyle}>{label}</Label>}
       <InputContent>
         {inputElement}
         {showError && <ErrorText>{errorMessage}</ErrorText>}
@@ -160,6 +162,10 @@ const InputBox = styled.div<{
     $isDragging ? "#eff6ff" : "#ffffff"};
   color: ${({ $isDragging }) => ($isDragging ? "#3b82f6" : "#6b7280")};
   cursor: pointer;
+`;
+
+const Label = styled.label<{ $style?: CSSProp }>`
+  ${({ $style }) => $style}
 `;
 
 const InputContent = styled.div`
