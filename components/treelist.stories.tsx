@@ -114,6 +114,60 @@ export const WithActions: Story = {
   },
 };
 
+export const WithoutHeader: Story = {
+  render: () => {
+    const setPerson = (item: { id: number; title: string }) => {
+      console.log("Clicked person:", item.title);
+    };
+
+    const TREE_LIST_DATA = [
+      {
+        items: [
+          { id: 1, title: "Adam Noto Hakarsa", onClick: setPerson },
+          { id: 2, title: "Mohamad Naufal Alim", onClick: setPerson },
+          { id: 1, title: "Samantha Lee", onClick: setPerson },
+          { id: 2, title: "Jason Kim", onClick: setPerson },
+          { id: 3, title: "Rina Patel", onClick: setPerson },
+        ],
+      },
+    ];
+
+    const TREE_LIST_ACTIONS: TreeListActionsProps[] = [
+      {
+        title: "Discover",
+        onClick: () => {
+          console.log("Discover clicked");
+        },
+        icon: RiSearchLine,
+      },
+      {
+        title: "Mention",
+        onClick: () => {
+          console.log("Mention clicked");
+        },
+        icon: RiAtLine,
+      },
+    ];
+
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "0.25rem",
+          maxWidth: "250px",
+        }}
+      >
+        <TreeList
+          content={TREE_LIST_DATA}
+          actions={TREE_LIST_ACTIONS}
+          emptySlate={<p>Not found.</p>}
+        />
+      </div>
+    );
+  },
+};
+
 export const WithEmptySlate: Story = {
   render: () => {
     const TREE_LIST_DATA = [];
