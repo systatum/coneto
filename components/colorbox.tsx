@@ -192,6 +192,9 @@ const Prefix = styled.span<{ $showError: boolean }>`
 
 const TextInput = styled.input<{ $showError: boolean }>`
   flex: 1;
+  width: 100%;
+  overflow: scroll;
+
   background: transparent;
   border: none;
   outline: none;
