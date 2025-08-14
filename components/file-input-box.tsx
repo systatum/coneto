@@ -8,6 +8,7 @@ interface FileInputBoxProps {
   accept?: string;
   onFilesSelected?: (files: FileList) => void;
   label?: string;
+  labelStyle?: CSSProp;
   showError?: boolean;
   errorMessage?: string;
 }
@@ -18,6 +19,7 @@ function FileInputBox({
   accept = "*",
   onFilesSelected,
   label,
+  labelStyle,
   errorMessage,
   showError,
 }: FileInputBoxProps) {
@@ -106,7 +108,7 @@ function FileInputBox({
 
   return (
     <InputWrapper $containerStyle={containerStyle}>
-      {label && <label>{label}</label>}
+      {label && <Label $style={labelStyle}>{label}</Label>}
       <InputContent>
         {inputElement}
         {showError && <ErrorText>{errorMessage}</ErrorText>}
@@ -177,6 +179,10 @@ const InputContent = styled.div`
   flex-direction: column;
   gap: 4px;
   font-size: 12px;
+`;
+
+const Label = styled.label<{ $style?: CSSProp }>`
+  ${({ $style }) => $style}
 `;
 
 const ErrorText = styled.span`

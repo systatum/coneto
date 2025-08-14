@@ -12,6 +12,7 @@ interface SignboxProps {
   showError?: boolean;
   errorMessage?: string;
   containerStyle?: CSSProp;
+  labelStyle?: CSSProp;
   canvasStyle?: CSSProp;
   height?: string;
   width?: string;
@@ -28,6 +29,7 @@ function Signbox({
   errorMessage,
   containerStyle,
   canvasStyle,
+  labelStyle,
   height,
   width,
 }: SignboxProps) {
@@ -202,7 +204,11 @@ function Signbox({
 
   return (
     <InputWrapper $containerStyle={containerStyle} $disabled={disabled}>
-      {label && <label htmlFor="signbox">{label}</label>}
+      {label && (
+        <Label $style={labelStyle} htmlFor="signbox">
+          {label}
+        </Label>
+      )}
       <InputContent>
         {inputElement}
         {showError && <ErrorText>{errorMessage}</ErrorText>}
@@ -224,6 +230,10 @@ const InputWrapper = styled.div<{
 
   ${({ $disabled }) => $disabled && `cursor: not-allowed; opacity: 0.5;`}
   ${({ $containerStyle }) => $containerStyle}
+`;
+
+const Label = styled.label<{ $style?: CSSProp }>`
+  ${({ $style }) => $style}
 `;
 
 const InputContent = styled.div`

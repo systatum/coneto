@@ -22,6 +22,8 @@ export type ComboboxProps = Partial<BaseComboboxProps> & {
 interface BaseComboboxProps {
   options: OptionsProps[];
   containerStyle?: CSSProp;
+  selectboxStyle?: CSSProp;
+  labelStyle?: CSSProp;
   inputValue: OptionsProps;
   setInputValue: (data: OptionsProps) => void;
   clearable?: boolean;
@@ -56,6 +58,8 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       clearable = false,
       placeholder,
       containerStyle,
+      selectboxStyle,
+      labelStyle,
       highlightOnMatch = false,
       emptySlate = "Not available.",
       errorMessage,
@@ -72,11 +76,12 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
   ) => {
     return (
       <ComboboxWrapper $style={containerStyle} aria-label={`combobox-${name}`}>
-        {label && <label>{label}</label>}
+        {label && <Label $style={labelStyle}>{label}</Label>}
         <Selectbox
           ref={ref}
           highlightOnMatch={highlightOnMatch}
           containerStyle={containerStyle}
+          selectboxStyle={selectboxStyle}
           options={options}
           inputValue={inputValue}
           setInputValue={setInputValue}
@@ -85,14 +90,16 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
           strict={strict}
           onKeyDown={onKeyDown}
         >
-          {(props) => (
-            <ComboboxDrawer
-              {...props}
-              emptySlate={emptySlate}
-              actions={actions}
-              onClick={onClick}
-            />
-          )}
+          {(props) => {
+            return (
+              <ComboboxDrawer
+                {...props}
+                emptySlate={emptySlate}
+                actions={actions}
+                onClick={onClick}
+              />
+            );
+          }}
         </Selectbox>
 
         {showError && <ErrorText>{errorMessage}</ErrorText>}
@@ -111,6 +118,10 @@ const ComboboxWrapper = styled.div<{
   font-size: 12px;
   position: relative;
 
+  ${({ $style }) => $style}
+`;
+
+const Label = styled.label<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 

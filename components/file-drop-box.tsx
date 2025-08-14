@@ -19,6 +19,7 @@ export interface OnCompleteFunctionProps {
 
 export interface FileDropBoxProps {
   containerStyle?: CSSProp;
+  labelStyle?: CSSProp;
   placeholder?: string;
   accept?: string;
   label?: string;
@@ -31,6 +32,7 @@ type ProgressProps = "idle" | "loading" | "succeed";
 
 function FileDropBox({
   containerStyle,
+  labelStyle,
   placeholder = "Drag and Drop Your File",
   accept = "*",
   onFileDropped,
@@ -169,7 +171,7 @@ function FileDropBox({
 
   return (
     <InputWrapper $containerStyle={containerStyle}>
-      {label && <Label>{label}</Label>}
+      {label && <Label $style={labelStyle}> {label}</Label>}
       {inputElement}
 
       {errorMessages.length > 0 && (
@@ -196,8 +198,12 @@ const InputWrapper = styled.div<{
   ${({ $containerStyle }) => $containerStyle}
 `;
 
-const Label = styled.label`
+const Label = styled.label<{
+  $style?: CSSProp;
+}>`
   font-size: 0.75rem;
+
+  ${({ $style }) => $style}
 `;
 
 const DropArea = styled.div<{

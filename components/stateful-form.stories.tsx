@@ -585,9 +585,12 @@ export const AllCase: Story = {
           gap: "0.5rem",
           paddingTop: "1rem",
           paddingBottom: "1rem",
+          maxWidth: "500px",
         }}
       >
         <StatefulForm
+          labelSize="14px"
+          fieldSize="14px"
           fields={FIELDS}
           formValues={value}
           validationSchema={schema}

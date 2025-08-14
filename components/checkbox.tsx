@@ -142,8 +142,10 @@ const Label = styled.label<{
 
 const CheckboxBox = styled.div<{ $hasDescription: boolean; $style?: CSSProp }>`
   position: relative;
-  max-width: 16px;
-  max-height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   ${({ $hasDescription }) => $hasDescription && "margin-top: 2px;"}
   ${({ $style }) => $style}
 `;
@@ -180,14 +182,17 @@ const HiddenCheckbox = styled.input<{
 
 const Icon = styled.svg<{ $visible?: boolean; $style?: CSSProp }>`
   position: absolute;
-  left: 3px;
-  top: 3px;
-  height: 10px;
-  width: 10px;
+  top: 50%;
+  left: 50%;
   color: white;
+  transform: ${({ $visible }) =>
+    $visible
+      ? "translate(-50%, -50%) scale(1)"
+      : "translate(-50%, -50%) scale(0)"};
+  height: 60%;
+  width: 60%;
   transition: transform 150ms;
   pointer-events: none;
-  transform: ${({ $visible }) => ($visible ? "scale(1)" : "scale(0)")};
   ${({ $style }) => $style};
 `;
 

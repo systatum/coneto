@@ -21,6 +21,7 @@ export interface MoneyboxProps {
   label?: string;
   style?: CSSProp;
   containerStyle?: CSSProp;
+  labelStyle?: CSSProp;
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
 }
 
@@ -38,6 +39,7 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
       showError,
       style,
       containerStyle,
+      labelStyle,
       onKeyDown,
     },
     ref
@@ -81,7 +83,7 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
 
     return (
       <InputWrapper $style={containerStyle}>
-        {label && <Label>{label}</Label>}
+        {label && <Label $style={labelStyle}>{label}</Label>}
         <InputContent>
           <Box $error={showError} $focus={focus} $style={style}>
             <Currency>{currency}</Currency>
@@ -113,12 +115,13 @@ const InputWrapper = styled.div<{ $style?: CSSProp }>`
   gap: 0.5rem;
   font-size: 0.75rem;
   position: relative;
+  font-size: 0.75rem;
 
   ${({ $style }) => $style}
 `;
 
-const Label = styled.label`
-  font-size: 0.75rem;
+const Label = styled.label<{ $style?: CSSProp }>`
+  ${({ $style }) => $style}
 `;
 
 const InputContent = styled.div`

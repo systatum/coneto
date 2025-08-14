@@ -39,6 +39,7 @@ export interface SelectboxProps {
   type?: "calendar" | "default";
   clearable?: boolean;
   containerStyle?: CSSProp;
+  selectboxStyle?: CSSProp;
   highlightOnMatch?: boolean;
   strict?: boolean;
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
@@ -61,6 +62,7 @@ export interface DrawerProps {
   ) => HTMLAttributes<HTMLUListElement>;
   refs: { setFloating: Ref<HTMLUListElement>; setReference: Ref<HTMLElement> };
   floatingStyles: CSSProperties;
+
   listRef: MutableRefObject<(HTMLLIElement | null)[]>;
   isOpen: boolean;
   style?: CSSProp;
@@ -89,6 +91,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       strict,
       onKeyDown,
       onClick,
+      selectboxStyle,
     },
     ref
   ) => {
@@ -186,6 +189,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
     return (
       <Container role="combobox" $style={containerStyle} aria-expanded={isOpen}>
         <Input
+          $style={selectboxStyle}
           {...getReferenceProps()}
           data-type="selectbox"
           ref={(el) => {
@@ -315,6 +319,7 @@ const Input = styled.input<{
   $highlight?: boolean;
   $focused?: boolean;
   $hovered?: boolean;
+  $style?: CSSProp;
 }>`
   width: 100%;
   border-radius: 2px;
@@ -333,6 +338,8 @@ const Input = styled.input<{
     css`
       border-color: #61a9f9;
     `}
+
+  ${({ $style }) => $style}
 `;
 
 const ClearIcon = styled(RiCloseLine)<{ $highlight?: boolean }>`

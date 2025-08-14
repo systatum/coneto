@@ -18,6 +18,7 @@ export interface ColorboxProps
   errorMessage?: string;
   style?: CSSProp;
   containerStyle?: CSSProp;
+  labelStyle?: CSSProp;
   onClick?: () => void;
 }
 
@@ -31,6 +32,7 @@ function Colorbox({
   containerStyle,
   placeholder,
   onClick,
+  labelStyle,
   ...props
 }: ColorboxProps) {
   const [hovered, setHovered] = useState(false);
@@ -93,7 +95,7 @@ function Colorbox({
 
   return (
     <InputWrapper $containerStyle={containerStyle} $disabled={props.disabled}>
-      {label && <label>{label}</label>}
+      {label && <Label $style={labelStyle}>{label}</Label>}
       <InputContent>
         {inputElement}
         {showError && <ErrorText>{errorMessage}</ErrorText>}
@@ -115,6 +117,10 @@ const InputWrapper = styled.div<{
 
   ${({ $disabled }) => $disabled && `cursor: not-allowed; opacity: 0.5;`}
   ${({ $containerStyle }) => $containerStyle}
+`;
+
+const Label = styled.span<{ $highlight?: boolean; $style?: CSSProp }>`
+  ${({ $style }) => $style};
 `;
 
 const InputContent = styled.div`

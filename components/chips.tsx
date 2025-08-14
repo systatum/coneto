@@ -48,7 +48,9 @@ interface BaseChipsProps {
   ) => void;
   chipsContainerStyle?: CSSProp;
   chipContainerStyle?: CSSProp;
+  chipSelectedStyle?: CSSProp;
   chipStyle?: CSSProp;
+  labelStyle?: CSSProp;
   chipsDrawerStyle?: CSSProp;
   filterPlaceholder?: string;
   newLabelPlaceholder?: string;
@@ -126,6 +128,7 @@ function Chips(props: ChipsProps) {
             circleColor={data.circleColor}
             badgeStyle={css`
               border-radius: 4px;
+              ${props.chipSelectedStyle}
             `}
             textColor={data.textColor}
             caption={data.caption}
@@ -155,7 +158,7 @@ function Chips(props: ChipsProps) {
 
   return (
     <InputWrapper>
-      {props.label && <label>{props.label}</label>}
+      {props.label && <Label $style={props.labelStyle}>{props.label}</Label>}
       <InputContent>
         {inputElement}
         {props.showError && <ErrorText>{props.errorMessage}</ErrorText>}
@@ -188,6 +191,12 @@ const InputContent = styled.div`
   flex-direction: column;
   gap: 4px;
   font-size: 12px;
+`;
+
+const Label = styled.label<{
+  $style?: CSSProp;
+}>`
+  ${({ $style }) => $style}
 `;
 
 const ErrorText = styled.span`
@@ -636,6 +645,7 @@ function ChipsItem({
   onDeleteRequested?: (badge: BadgeProps) => void;
   deletable?: boolean;
 }) {
+  console.log(chipStyle);
   return (
     <ChipItemWrapper
       $hovered={hovered === badge.id}
@@ -646,10 +656,19 @@ function ChipsItem({
       <Checkbox
         checked={isClicked}
         wrapperStyle={css`
-          max-width: 10px;
-          max-height: 10px;
-          margin-bottom: 6px;
-          border-radius: 2px;
+          width: 14px;
+          height: 14px;
+        `}
+        inputStyle={css`
+          width: 14px;
+          height: 14px;
+        `}
+        containerStyle={css`
+          margin-bottom: 1px;
+        `}
+        iconStyle={css`
+          min-width: 9px;
+          min-height: 9px;
         `}
         readOnly
       />
