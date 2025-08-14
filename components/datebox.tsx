@@ -8,16 +8,19 @@ export type DateboxProps = BaseCalendarProps & {
   showError?: boolean;
   errorMessage?: string;
   disabled?: boolean;
+  labelStyle?: CSSProp;
+  selectboxStyle?: CSSProp;
 };
 type CalendarDrawerProps = BaseCalendarProps & Partial<DrawerProps>;
 
 function Datebox(props: DateboxProps) {
   return (
     <InputWrapper $disabled={props.disabled}>
-      {props.label && <label>{props.label}</label>}
+      {props.label && <Label $style={props.labelStyle}>{props.label}</Label>}
       <InputContent>
         <Selectbox
           {...props}
+          selectboxStyle={props.selectboxStyle}
           placeholder="mm/dd/yyyy"
           iconClosed={RiCalendar2Line}
           iconOpened={RiCalendar2Line}
@@ -46,6 +49,10 @@ const InputWrapper = styled.div<{
   position: relative;
 
   ${({ $disabled }) => $disabled && `cursor: not-allowed; opacity: 0.5;`}
+`;
+
+const Label = styled.label<{ $style?: CSSProp }>`
+  ${({ $style }) => $style}
 `;
 
 const InputContent = styled.div`
