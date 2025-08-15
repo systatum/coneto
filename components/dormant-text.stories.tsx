@@ -34,7 +34,7 @@ export const Default: Story = {
     const [value, setValue] = useState({
       normal: "Hello there, this is dormanted text",
       full: "Hello there, this is dormanted text with full width",
-      max: "Hello there, this is dormanted text with max width",
+      max: "Hello there, this is dormanted text with With Max. Width",
       keydown: "Hello there, this is dormanted text with enable keydown",
     });
 
@@ -85,7 +85,7 @@ export const Default: Story = {
           </DormantText>
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <span style={{ fontWeight: 500 }}>Max Width</span>
+          <span style={{ fontWeight: 500 }}>With Max. Width</span>
           <DormantText
             dormantedMaxWidth="250px"
             content={value.max}
@@ -202,7 +202,7 @@ export const WithCombobox: Story = {
           </DormantText>
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <span style={{ fontWeight: 500 }}>Max Width</span>
+          <span style={{ fontWeight: 500 }}>With Max. Width</span>
           <DormantText
             dormantedMaxWidth="90px"
             content={value.max.text}
@@ -338,7 +338,7 @@ export const WithDatebox: Story = {
           </DormantText>
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <span style={{ fontWeight: 500 }}>Max Width</span>
+          <span style={{ fontWeight: 500 }}>With Max. Width</span>
           <DormantText
             dormantedMaxWidth="120px"
             content={value.max.text}
@@ -472,7 +472,7 @@ export const WithColorbox: Story = {
           </DormantText>
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <span style={{ fontWeight: 500 }}>Max Width</span>
+          <span style={{ fontWeight: 500 }}>With Max. Width</span>
           <DormantText
             dormantedMaxWidth="100px"
             content={value.max}
@@ -577,7 +577,7 @@ export const WithMoneybox: Story = {
           </DormantText>
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <span style={{ fontWeight: 500 }}>Max Width</span>
+          <span style={{ fontWeight: 500 }}>With Max. Width</span>
           <DormantText
             dormantedMaxWidth="110px"
             content={`$ ${formatMoneyboxNumber(value.max, "comma")}`}
@@ -710,7 +710,7 @@ export const WithPhonebox: Story = {
           </DormantText>
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <span style={{ fontWeight: 500 }}>Max Width</span>
+          <span style={{ fontWeight: 500 }}>With Max. Width</span>
           <DormantText
             dormantedMaxWidth="150px"
             content={`${value.max.country_code.code} ${formatPhoneboxNumber(value.max.phone, value.max.country_code.id as CountryCode)}`}
