@@ -41,6 +41,9 @@ context("DormantText Component", () => {
               expect(scrollWidth).to.be.greaterThan(clientWidth);
             });
         });
+      cy.findByText(
+        "Hello there, this is dormanted text with With Max. Width"
+      ).should("have.css", "text-overflow", "ellipsis");
     });
 
     it("Should type and confirm update pressing by Enter", () => {
@@ -101,6 +104,8 @@ context("DormantText Component", () => {
               expect(scrollWidth).to.be.greaterThan(clientWidth);
             });
         });
+
+      cy.findByText("Orange").should("have.css", "text-overflow", "ellipsis");
     });
 
     it("Should type and change cancelable pressing by Escape", () => {
@@ -141,6 +146,9 @@ context("DormantText Component", () => {
               expect(scrollWidth).to.be.greaterThan(clientWidth);
             });
         });
+      cy.findAllByText("07/25/2025")
+        .eq(2)
+        .should("have.css", "text-overflow", "ellipsis");
     });
 
     it("Should open date picker and change cancelable pressing by click Close", () => {
@@ -182,6 +190,10 @@ context("DormantText Component", () => {
               expect(scrollWidth).to.be.greaterThan(clientWidth);
             });
         });
+
+      cy.findAllByText("#zzzzzz")
+        .eq(2)
+        .should("have.css", "text-overflow", "ellipsis");
     });
 
     it("Should input a valid hex color and change cancelable pressing by Escape", () => {
@@ -221,6 +233,9 @@ context("DormantText Component", () => {
               expect(scrollWidth).to.be.greaterThan(clientWidth);
             });
         });
+      cy.findAllByText("$ 100,000")
+        .eq(2)
+        .should("have.css", "text-overflow", "ellipsis");
     });
 
     it("Should input and change cancelable pressing by Escape", () => {
@@ -261,6 +276,10 @@ context("DormantText Component", () => {
               expect(scrollWidth).to.be.greaterThan(clientWidth);
             });
         });
+
+      cy.findAllByText("+1 812-345-7890")
+        .eq(2)
+        .should("have.css", "text-overflow", "ellipsis");
     });
 
     it("Should input phone number and change cancelable pressing by Escape", () => {
