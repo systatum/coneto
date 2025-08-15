@@ -29,6 +29,23 @@ context("DormantText Component", () => {
       cy.findByText("Updated text full").should("be.visible");
     });
 
+    it("Should truncate text with ellipsis when max width is set", () => {
+      cy.findByText("Hello there, this is dormanted text with With Max. Width")
+        .invoke("prop", "scrollWidth")
+        .then((scrollWidth) => {
+          cy.findByText(
+            "Hello there, this is dormanted text with With Max. Width"
+          )
+            .invoke("prop", "clientWidth")
+            .then((clientWidth) => {
+              expect(scrollWidth).to.be.greaterThan(clientWidth);
+            });
+        });
+      cy.findByText(
+        "Hello there, this is dormanted text with With Max. Width"
+      ).should("have.css", "text-overflow", "ellipsis");
+    });
+
     it("Should type and confirm update pressing by Enter", () => {
       cy.findByText(
         "Hello there, this is dormanted text with enable keydown"
@@ -77,8 +94,22 @@ context("DormantText Component", () => {
       cy.findByText("Orange").should("be.visible");
     });
 
+    it("Should truncate text with ellipsis when max width is set", () => {
+      cy.findByText("Orange")
+        .invoke("prop", "scrollWidth")
+        .then((scrollWidth) => {
+          cy.findByText("Orange")
+            .invoke("prop", "clientWidth")
+            .then((clientWidth) => {
+              expect(scrollWidth).to.be.greaterThan(clientWidth);
+            });
+        });
+
+      cy.findByText("Orange").should("have.css", "text-overflow", "ellipsis");
+    });
+
     it("Should type and change cancelable pressing by Escape", () => {
-      cy.findByText("Orange").click();
+      cy.findByText("Grape").click();
       cy.findByPlaceholderText("Select a fruit keydown...")
         .clear()
         .type("Pineapp {esc}");
@@ -92,7 +123,7 @@ context("DormantText Component", () => {
     });
 
     it("Should open date picker and click a date", () => {
-      cy.findAllByText("07/25/2025").eq(2).click();
+      cy.findAllByText("07/25/2025").eq(3).click();
       cy.get('[data-type="selectbox"]').click();
       cy.findByLabelText("calendar-select-date").click();
       cy.findByLabelText("combobox-month").click();
@@ -103,8 +134,25 @@ context("DormantText Component", () => {
       cy.findByText("01/03/2024").should("exist");
     });
 
+    it("Should truncate text with ellipsis when max width is set", () => {
+      cy.findAllByText("07/25/2025")
+        .eq(2)
+        .invoke("prop", "scrollWidth")
+        .then((scrollWidth) => {
+          cy.findAllByText("07/25/2025")
+            .eq(2)
+            .invoke("prop", "clientWidth")
+            .then((clientWidth) => {
+              expect(scrollWidth).to.be.greaterThan(clientWidth);
+            });
+        });
+      cy.findAllByText("07/25/2025")
+        .eq(2)
+        .should("have.css", "text-overflow", "ellipsis");
+    });
+
     it("Should open date picker and change cancelable pressing by click Close", () => {
-      cy.findAllByText("07/25/2025").eq(2).click();
+      cy.findAllByText("07/25/2025").eq(3).click();
       cy.get('[data-type="selectbox"]').click();
       cy.findByLabelText("calendar-select-date").click();
       cy.findByLabelText("combobox-month").click();
@@ -122,7 +170,7 @@ context("DormantText Component", () => {
     });
 
     it("Should input a valid hex color and accepted by pressing click or Enter", () => {
-      cy.findAllByText("#zzzzzz").eq(2).click();
+      cy.findAllByText("#zzzzzz").eq(3).click();
       cy.findByRole("textbox")
         .should("have.value", "zzzzzz")
         .clear()
@@ -130,13 +178,31 @@ context("DormantText Component", () => {
       cy.findByText("#00ff00").should("exist");
     });
 
+    it("Should truncate text with ellipsis when max width is set", () => {
+      cy.findAllByText("#zzzzzz")
+        .eq(2)
+        .invoke("prop", "scrollWidth")
+        .then((scrollWidth) => {
+          cy.findAllByText("#zzzzzz")
+            .eq(2)
+            .invoke("prop", "clientWidth")
+            .then((clientWidth) => {
+              expect(scrollWidth).to.be.greaterThan(clientWidth);
+            });
+        });
+
+      cy.findAllByText("#zzzzzz")
+        .eq(2)
+        .should("have.css", "text-overflow", "ellipsis");
+    });
+
     it("Should input a valid hex color and change cancelable pressing by Escape", () => {
-      cy.findAllByText("#zzzzzz").eq(2).click();
+      cy.findAllByText("#zzzzzz").eq(3).click();
       cy.findByRole("textbox")
         .should("have.value", "zzzzzz")
         .clear()
         .type("00ff00{esc}");
-      cy.findAllByText("#zzzzzz").eq(2).should("exist");
+      cy.findAllByText("#zzzzzz").eq(3).should("exist");
     });
   });
 
@@ -146,7 +212,7 @@ context("DormantText Component", () => {
     });
 
     it("Should input and update money value and accepted by click", () => {
-      cy.findAllByText("$ 100,000").eq(2).click();
+      cy.findAllByText("$ 100,000").eq(3).click();
       cy.get('input[name="keydown"]')
         .should("have.value", "100,000")
         .clear()
@@ -155,8 +221,25 @@ context("DormantText Component", () => {
       cy.findByText("$ 500,000").should("be.visible");
     });
 
+    it("Should truncate text with ellipsis when max width is set", () => {
+      cy.findAllByText("$ 100,000")
+        .eq(2)
+        .invoke("prop", "scrollWidth")
+        .then((scrollWidth) => {
+          cy.findAllByText("$ 100,000")
+            .eq(2)
+            .invoke("prop", "clientWidth")
+            .then((clientWidth) => {
+              expect(scrollWidth).to.be.greaterThan(clientWidth);
+            });
+        });
+      cy.findAllByText("$ 100,000")
+        .eq(2)
+        .should("have.css", "text-overflow", "ellipsis");
+    });
+
     it("Should input and change cancelable pressing by Escape", () => {
-      cy.findAllByText("$ 100,000").eq(2).click();
+      cy.findAllByText("$ 100,000").eq(3).click();
       cy.get('input[name="keydown"]')
         .should("have.value", "100,000")
         .clear()
@@ -171,7 +254,7 @@ context("DormantText Component", () => {
     });
 
     it("Should input phone number and accepted by pressing Enter", () => {
-      cy.findAllByText("+1 812-345-7890").eq(2).click();
+      cy.findAllByText("+1 812-345-7890").eq(3).click();
       cy.findByLabelText("Select country code").click();
       cy.findAllByLabelText("search-countries").type("Indonesia");
       cy.findByText("Indonesia").click();
@@ -181,8 +264,26 @@ context("DormantText Component", () => {
       cy.findByText("+62 812-3456-789").should("exist");
     });
 
+    it("Should truncate text with ellipsis when max width is set", () => {
+      cy.findAllByText("+1 812-345-7890")
+        .eq(2)
+        .invoke("prop", "scrollWidth")
+        .then((scrollWidth) => {
+          cy.findAllByText("+1 812-345-7890")
+            .eq(2)
+            .invoke("prop", "clientWidth")
+            .then((clientWidth) => {
+              expect(scrollWidth).to.be.greaterThan(clientWidth);
+            });
+        });
+
+      cy.findAllByText("+1 812-345-7890")
+        .eq(2)
+        .should("have.css", "text-overflow", "ellipsis");
+    });
+
     it("Should input phone number and change cancelable pressing by Escape", () => {
-      cy.findAllByText("+1 812-345-7890").eq(2).click();
+      cy.findAllByText("+1 812-345-7890").eq(3).click();
       cy.findByLabelText("Select country code").click();
       cy.findAllByLabelText("search-countries").type("Indonesia");
       cy.findByText("Indonesia").click();
