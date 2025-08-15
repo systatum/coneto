@@ -73,7 +73,7 @@ export interface TableRowProps {
   rowId?: string;
   children?: ReactNode;
   actions?: (columnCaption: string) => TipMenuItemProps[];
-  onClick?: () => void;
+  onClick?: (args?: { setIsChecked: (value: boolean) => void }) => void;
 }
 
 export interface TableRowGroupProps {
@@ -670,7 +670,13 @@ function TableRow({
       onMouseEnter={() => setIsHovered(rowId)}
       onClick={() => {
         if (onClick) {
-          onClick();
+          onClick?.({
+            setIsChecked: (value: boolean) => {
+              if (rowId && value === true) {
+                handleSelect?.(rowId);
+              }
+            },
+          });
         }
       }}
       $rowCellStyle={css`
@@ -744,7 +750,9 @@ function TableRow({
             width: fit-content;
             position: absolute;
             right: 0.5rem;
-            z-index: 20;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 50;
           `}
         >
           <Toolbar.Menu
