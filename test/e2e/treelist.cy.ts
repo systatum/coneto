@@ -5,8 +5,11 @@ context("Treelist Component", () => {
     it("Should highlight selected item", () => {
       cy.visit(getIdContent("content-treelist--default"));
 
-      cy.contains("Adam Noto Hakarsa").click();
       cy.contains("Adam Noto Hakarsa")
+        .parent()
+        .should("have.css", "border-left-color", "rgba(0, 0, 0, 0)");
+      cy.contains("Adam Noto Hakarsa")
+        .click()
         .parent()
         .should("have.css", "border-left-color", "rgb(59, 130, 246)");
     });
@@ -18,8 +21,11 @@ context("Treelist Component", () => {
 
       cy.findByText("Discover").should("exist").click();
 
-      cy.contains("Mohamad Naufal Alim").click();
       cy.contains("Mohamad Naufal Alim")
+        .parent()
+        .should("have.css", "border-left-color", "rgba(0, 0, 0, 0)");
+      cy.contains("Mohamad Naufal Alim")
+        .click()
         .parent()
         .should("have.css", "border-left-color", "rgb(59, 130, 246)");
     });
@@ -31,16 +37,26 @@ context("Treelist Component", () => {
 
       cy.findByText("Discover").should("exist").click();
 
-      cy.contains("Mohamad Naufal Alim").click();
       cy.contains("Mohamad Naufal Alim")
         .parent()
+        .should("have.css", "border-left-color", "rgba(0, 0, 0, 0)");
+      cy.contains("Mohamad Naufal Alim")
+        .click()
+        .parent()
         .should("have.css", "border-left-color", "rgb(59, 130, 246)");
-
-      cy.contains("Adam Noto Hakarsa").click();
 
       cy.contains("Adam Noto Hakarsa")
         .parent()
+        .should("have.css", "border-left-color", "rgba(0, 0, 0, 0)");
+
+      cy.contains("Adam Noto Hakarsa")
+        .click()
+        .parent()
         .should("have.css", "border-left-color", "rgb(59, 130, 246)");
+
+      cy.contains("Mohamad Naufal Alim")
+        .parent()
+        .should("have.css", "border-left-color", "rgba(0, 0, 0, 0)");
     });
   });
 });
