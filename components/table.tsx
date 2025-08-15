@@ -73,7 +73,7 @@ export interface TableRowProps {
   rowId?: string;
   children?: ReactNode;
   actions?: (columnCaption: string) => TipMenuItemProps[];
-  onClick?: (args?: { setIsChecked: (value: boolean) => void }) => void;
+  onClick?: (args?: { toggleCheckbox: () => void }) => void;
 }
 
 export interface TableRowGroupProps {
@@ -671,8 +671,8 @@ function TableRow({
       onClick={() => {
         if (onClick) {
           onClick?.({
-            setIsChecked: (value: boolean) => {
-              if (rowId && value === true) {
+            toggleCheckbox: () => {
+              if (rowId) {
                 handleSelect?.(rowId);
               }
             },

@@ -376,11 +376,11 @@ export const Appendable: Story = {
       >
         {rows.map((rowValue, rowIndex) => (
           <Table.Row
-            onClick={({ setIsChecked }) => {
+            onClick={({ toggleCheckbox }) => {
               console.log(
                 `Selected to this ${`${rowValue.from}-${rowValue.content}-${rowValue.subject}`}`
               );
-              setIsChecked(true);
+              toggleCheckbox();
             }}
             key={rowIndex}
             rowId={`${rowValue.from}-${rowValue.content}-${rowValue.subject}`}
@@ -545,8 +545,8 @@ export const SortableWithPagination: Story = {
         >
           {pagedRows?.map((dataRow, index) => (
             <Table.Row
-              onClick={({ setIsChecked }) => {
-                setIsChecked(true);
+              onClick={({ toggleCheckbox }) => {
+                toggleCheckbox();
               }}
               key={index}
               rowId={`${dataRow.name}-${dataRow.type}`}
