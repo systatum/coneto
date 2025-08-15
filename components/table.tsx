@@ -672,7 +672,7 @@ function TableRow({
         if (onClick) {
           onClick?.({
             toggleCheckbox: () => {
-              if (rowId) {
+              if (rowId && selectable) {
                 handleSelect?.(rowId);
               }
             },
