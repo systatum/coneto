@@ -29,6 +29,20 @@ context("DormantText Component", () => {
       cy.findByText("Updated text full").should("be.visible");
     });
 
+    it("Should truncate text with ellipsis when max width is set", () => {
+      cy.findByText("Hello there, this is dormanted text with With Max. Width")
+        .invoke("prop", "scrollWidth")
+        .then((scrollWidth) => {
+          cy.findByText(
+            "Hello there, this is dormanted text with With Max. Width"
+          )
+            .invoke("prop", "clientWidth")
+            .then((clientWidth) => {
+              expect(scrollWidth).to.be.greaterThan(clientWidth);
+            });
+        });
+    });
+
     it("Should type and confirm update pressing by Enter", () => {
       cy.findByText(
         "Hello there, this is dormanted text with enable keydown"
@@ -77,6 +91,18 @@ context("DormantText Component", () => {
       cy.findByText("Orange").should("be.visible");
     });
 
+    it("Should truncate text with ellipsis when max width is set", () => {
+      cy.findByText("Orange")
+        .invoke("prop", "scrollWidth")
+        .then((scrollWidth) => {
+          cy.findByText("Orange")
+            .invoke("prop", "clientWidth")
+            .then((clientWidth) => {
+              expect(scrollWidth).to.be.greaterThan(clientWidth);
+            });
+        });
+    });
+
     it("Should type and change cancelable pressing by Escape", () => {
       cy.findByText("Grape").click();
       cy.findByPlaceholderText("Select a fruit keydown...")
@@ -101,6 +127,20 @@ context("DormantText Component", () => {
       cy.findByText("2024").click();
       cy.findByText("3").click();
       cy.findByText("01/03/2024").should("exist");
+    });
+
+    it("Should truncate text with ellipsis when max width is set", () => {
+      cy.findAllByText("07/25/2025")
+        .eq(2)
+        .invoke("prop", "scrollWidth")
+        .then((scrollWidth) => {
+          cy.findAllByText("07/25/2025")
+            .eq(2)
+            .invoke("prop", "clientWidth")
+            .then((clientWidth) => {
+              expect(scrollWidth).to.be.greaterThan(clientWidth);
+            });
+        });
     });
 
     it("Should open date picker and change cancelable pressing by click Close", () => {
@@ -130,6 +170,20 @@ context("DormantText Component", () => {
       cy.findByText("#00ff00").should("exist");
     });
 
+    it("Should truncate text with ellipsis when max width is set", () => {
+      cy.findAllByText("#zzzzzz")
+        .eq(2)
+        .invoke("prop", "scrollWidth")
+        .then((scrollWidth) => {
+          cy.findAllByText("#zzzzzz")
+            .eq(2)
+            .invoke("prop", "clientWidth")
+            .then((clientWidth) => {
+              expect(scrollWidth).to.be.greaterThan(clientWidth);
+            });
+        });
+    });
+
     it("Should input a valid hex color and change cancelable pressing by Escape", () => {
       cy.findAllByText("#zzzzzz").eq(3).click();
       cy.findByRole("textbox")
@@ -153,6 +207,20 @@ context("DormantText Component", () => {
         .type("500000");
       cy.findAllByRole("button").eq(0).click();
       cy.findByText("$ 500,000").should("be.visible");
+    });
+
+    it("Should truncate text with ellipsis when max width is set", () => {
+      cy.findAllByText("$ 100,000")
+        .eq(2)
+        .invoke("prop", "scrollWidth")
+        .then((scrollWidth) => {
+          cy.findAllByText("$ 100,000")
+            .eq(2)
+            .invoke("prop", "clientWidth")
+            .then((clientWidth) => {
+              expect(scrollWidth).to.be.greaterThan(clientWidth);
+            });
+        });
     });
 
     it("Should input and change cancelable pressing by Escape", () => {
@@ -179,6 +247,20 @@ context("DormantText Component", () => {
         .clear()
         .type("08123456789{enter}");
       cy.findByText("+62 812-3456-789").should("exist");
+    });
+
+    it("Should truncate text with ellipsis when max width is set", () => {
+      cy.findAllByText("+1 812-345-7890")
+        .eq(2)
+        .invoke("prop", "scrollWidth")
+        .then((scrollWidth) => {
+          cy.findAllByText("+1 812-345-7890")
+            .eq(2)
+            .invoke("prop", "clientWidth")
+            .then((clientWidth) => {
+              expect(scrollWidth).to.be.greaterThan(clientWidth);
+            });
+        });
     });
 
     it("Should input phone number and change cancelable pressing by Escape", () => {
