@@ -2,7 +2,7 @@ import { RiEraserLine } from "@remixicon/react";
 import { useRef, useEffect, ChangeEvent, ReactElement } from "react";
 import styled, { CSSProp } from "styled-components";
 
-interface SignboxProps {
+export interface SignboxProps {
   name?: string;
   value?: string;
   clearable?: boolean;
