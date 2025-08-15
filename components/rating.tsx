@@ -1,12 +1,19 @@
-import { MouseEvent, useState } from "react";
-import styled, { css } from "styled-components";
+import { ChangeEvent, MouseEvent, ReactElement, useState } from "react";
+import styled, { css, CSSProp } from "styled-components";
 
 export interface RatingProps {
-  rating?: number;
-  onChange?: (rating: number) => void;
+  rating?: string;
+  onChange?: (rating: ChangeEvent<HTMLInputElement>) => void;
   editable?: boolean;
   withLabel?: boolean;
   size?: "sm" | "md" | "lg";
+  errorMessage?: string;
+  containerStyle?: CSSProp;
+  labelStyle?: CSSProp;
+  disabled?: boolean;
+  showError?: boolean;
+  label?: string;
+  name?: string;
 }
 
 function Rating({
@@ -15,8 +22,15 @@ function Rating({
   editable,
   withLabel = false,
   size = "md",
+  label,
+  showError,
+  errorMessage,
+  containerStyle,
+  disabled,
+  labelStyle,
+  name,
 }: RatingProps) {
-  const ratingState = rating ?? 0;
+  const ratingState = Number(rating) ?? 0;
   const [ratingLocal, setRatingLocal] = useState(ratingState);
   const [hoverRating, setHoverRating] = useState(0);
 
@@ -33,11 +47,17 @@ function Rating({
     const isHalf = x < width / 2;
     const newRating = isHalf ? index + 0.5 : index + 1;
     setRatingLocal(newRating);
-    onChange?.(newRating);
+    const inputRatingEvent = {
+      target: {
+        name: name ?? "rating",
+        value: String(newRating),
+      },
+    } as ChangeEvent<HTMLInputElement>;
+    onChange(inputRatingEvent);
   };
 
   const getStarType = (index: number) => {
-    const current = hoverRating || ratingLocal;
+    const current = Number(hoverRating) || Number(ratingLocal);
     if (current >= index + 1) return "full";
     if (current >= index + 0.5) return "half";
     return "empty";
@@ -103,7 +123,7 @@ function Rating({
     return emptyStar;
   };
 
-  return (
+  const inputElement: ReactElement = (
     <RatingWrapper>
       <StarsWrapper>
         {Array.from({ length: 5 }).map((_, i) => (
@@ -125,7 +145,48 @@ function Rating({
       )}
     </RatingWrapper>
   );
+
+  return (
+    <InputWrapper $disabled={disabled} $containerStyle={containerStyle}>
+      {label && <Label $style={labelStyle}>{label}</Label>}
+      <InputContent>
+        {inputElement}
+        {showError && <ErrorText>{errorMessage}</ErrorText>}
+      </InputContent>
+    </InputWrapper>
+  );
 }
+
+const InputWrapper = styled.div<{
+  $containerStyle?: CSSProp;
+  $disabled?: boolean;
+}>`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  width: 100%;
+  position: relative;
+
+  ${({ $disabled }) => $disabled && `cursor: not-allowed; opacity: 0.5;`}
+  ${({ $containerStyle }) => $containerStyle}
+`;
+
+const Label = styled.label<{ $style?: CSSProp }>`
+  ${({ $style }) => $style}
+`;
+
+const InputContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+`;
+
+const ErrorText = styled.span`
+  color: #dc2626;
+  font-size: 0.75rem;
+`;
 
 const RatingWrapper = styled.div`
   display: flex;
