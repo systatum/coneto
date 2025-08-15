@@ -115,6 +115,11 @@ context("Button Component", () => {
         "have.attr",
         "disabled"
       );
+      cy.findByRole("button", { name: /Button/i }).should(
+        "have.css",
+        "cursor",
+        "not-allowed"
+      );
 
       cy.findByRole("button", { name: /Button/i })
         .should("have.css", "background-color", "rgb(243, 243, 243)")
