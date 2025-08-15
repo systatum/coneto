@@ -153,14 +153,7 @@ export const Default: Story = {
             justifyContent: "flex-end",
           }}
         >
-          <Button
-            disabled={!isFormValid}
-            buttonStyle={{
-              width: "100%",
-              cursor: "pointer",
-            }}
-            type="submit"
-          >
+          <Button disabled={!isFormValid} type="submit">
             Save
           </Button>
         </div>
