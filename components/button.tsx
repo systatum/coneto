@@ -77,7 +77,11 @@ function Button({
   }, [isOpen]);
 
   return (
-    <ButtonWrapper ref={containerRef} $style={containerStyle}>
+    <ButtonWrapper
+      $disabled={disabled}
+      ref={containerRef}
+      $style={containerStyle}
+    >
       <BaseButton
         onClick={(event) => {
           if (props.onClick) {
@@ -174,11 +178,19 @@ function Button({
   );
 }
 
-const ButtonWrapper = styled.div<{ $style?: CSSProp }>`
+const ButtonWrapper = styled.div<{ $style?: CSSProp; $disabled?: boolean }>`
   display: flex;
   position: relative;
   align-items: center;
 
+  ${({ $disabled }) =>
+    $disabled
+      ? css`
+          cursor: not-allowed;
+        `
+      : css`
+          cursor: pointer;
+        `}
   ${({ $style }) =>
     $style
       ? $style
