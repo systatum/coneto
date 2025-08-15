@@ -20,6 +20,7 @@ export interface ThumbFieldProps {
   errorMessage?: string;
   containerStyle?: CSSProp;
   triggerStyle?: CSSProp;
+  labelStyle?: CSSProp;
   style: CSSProp;
   id?: string;
 }
@@ -37,6 +38,7 @@ function ThumbField({
   label,
   showError,
   containerStyle,
+  labelStyle,
   style,
   triggerStyle,
   id,
@@ -115,7 +117,11 @@ function ThumbField({
 
   return (
     <InputWrapper $containerStyle={containerStyle} $disabled={disabled}>
-      {label && <label htmlFor={id}>{label}</label>}
+      {label && (
+        <Label $style={labelStyle} htmlFor={id}>
+          {label}
+        </Label>
+      )}
       <InputContent>
         {inputElement}
         {showError && <ErrorText>{errorMessage}</ErrorText>}
@@ -134,6 +140,7 @@ const InputWrapper = styled.div<{
   font-size: 0.75rem;
   width: 100%;
   position: relative;
+  font-size: 12px;
 
   ${({ $disabled }) =>
     $disabled &&
@@ -156,7 +163,10 @@ const InputContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4px;
-  font-size: 12px;
+`;
+
+const Label = styled.label<{ $style?: CSSProp }>`
+  ${({ $style }) => $style}
 `;
 
 const ErrorText = styled.span`
