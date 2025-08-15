@@ -192,8 +192,12 @@ function ToolbarMenu({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen]);
 
-  const handleClickOpen = () => setIsOpen?.();
-  const handleMainClick = () => {
+  const handleClickOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    setIsOpen?.();
+  };
+  const handleMainClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
     onClick?.();
     if (isOpen) setIsOpen(false);
   };
