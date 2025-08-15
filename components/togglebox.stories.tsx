@@ -3,6 +3,7 @@ import { Togglebox } from "./togglebox";
 import { useEffect } from "react";
 import * as RemixIcons from "@remixicon/react";
 import { useArgs } from "@storybook/preview-api";
+import { css } from "styled-components";
 
 const meta: Meta<typeof Togglebox> = {
   title: "Input Elements/Togglebox",
@@ -94,6 +95,69 @@ export const WithIconAndLoading: Story = {
     return (
       <Togglebox
         {...args}
+        onChange={(e) => setUpdateArgs({ checked: e.target.checked })}
+      />
+    );
+  },
+};
+
+export const WithDescription: Story = {
+  args: {
+    checked: false,
+    icon: RemixIcons.RiLock2Fill,
+    isLoading: false,
+    label: "With Icon And Loading",
+    description: "If we clicked, that expected had loading",
+    labelStyle: css`
+      font-size: 14px;
+    `,
+  },
+  render: (args) => {
+    const [, setUpdateArgs] = useArgs();
+
+    useEffect(() => {
+      if (args.checked) {
+        setUpdateArgs({ isLoading: true });
+        setTimeout(() => {
+          setUpdateArgs({ isLoading: false });
+        }, 1200);
+      }
+    }, [args.checked]);
+
+    return (
+      <Togglebox
+        {...args}
+        onChange={(e) => setUpdateArgs({ checked: e.target.checked })}
+      />
+    );
+  },
+};
+
+export const WithError: Story = {
+  args: {
+    checked: false,
+    icon: RemixIcons.RiLock2Fill,
+    isLoading: false,
+    showError: true,
+    label: "With Error",
+    errorMessage: "Must add value on togglebox",
+  },
+  render: (args) => {
+    const [, setUpdateArgs] = useArgs();
+
+    useEffect(() => {
+      if (args.checked) {
+        setUpdateArgs({ isLoading: true });
+        setTimeout(() => {
+          setUpdateArgs({ isLoading: false });
+        }, 1200);
+      }
+    }, [args.checked]);
+
+    return (
+      <Togglebox
+        {...args}
+        showError={!args.checked}
         onChange={(e) => setUpdateArgs({ checked: e.target.checked })}
       />
     );
