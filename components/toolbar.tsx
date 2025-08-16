@@ -1,6 +1,6 @@
 import { COLOR_STYLE_MAP } from "./../constants/color-map";
 import { RiArrowDownSLine, RiArrowUpSLine } from "@remixicon/react";
-import {
+import React, {
   Children,
   cloneElement,
   isValidElement,

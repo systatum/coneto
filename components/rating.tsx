@@ -30,7 +30,7 @@ function Rating({
   labelStyle,
   name,
 }: RatingProps) {
-  const ratingState = Number(rating) ?? 0;
+  const ratingState = Number(rating || 0);
   const [ratingLocal, setRatingLocal] = useState(ratingState);
   const [hoverRating, setHoverRating] = useState(0);
 
