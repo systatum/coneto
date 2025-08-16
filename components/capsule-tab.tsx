@@ -1,6 +1,6 @@
 import { ReactNode, useState } from "react";
 import { Capsule } from "./capsule";
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
 
 interface CapsuleTabProps {
   tabs: Array<{
@@ -10,9 +10,10 @@ interface CapsuleTabProps {
   }>;
   activeTab?: number;
   style?: CSSProp;
+  tabStyle?: CSSProp;
 }
 
-function CapsuleTab({ tabs, style, activeTab = 1 }: CapsuleTabProps) {
+function CapsuleTab({ tabs, style, activeTab = 1, tabStyle }: CapsuleTabProps) {
   const CONTENT_TABS = tabs.map((data) => data.id);
   const NUMBER_ACTIVE_TAB = activeTab - 1;
   const [selected, setSelected] = useState<string | number>(
@@ -24,6 +25,11 @@ function CapsuleTab({ tabs, style, activeTab = 1 }: CapsuleTabProps) {
   return (
     <CapsuleTabWrapper $containerStyle={style}>
       <Capsule
+        containerStyle={css`
+          border-top-left-radius: 2px;
+          border-top-right-radius: 2px;
+          ${tabStyle};
+        `}
         fields={tabs}
         setView={setSelected}
         activeBackgroundColor="black"
