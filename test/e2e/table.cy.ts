@@ -39,6 +39,13 @@ context("Table Component", () => {
     it("Should select a row", () => {
       cy.get("input[type=checkbox]").first().click().should("be.checked");
     });
+
+    it("Should can check if we clicked on Table Row", () => {
+      cy.findByText("Load Balancer 1").click();
+      cy.get("input[type=checkbox]").eq(1).should("be.checked");
+      cy.findAllByText("HTTPS").eq(0).click();
+      cy.get("input[type=checkbox]").eq(2).should("be.checked");
+    });
   });
 
   describe("With Empty Slate", () => {

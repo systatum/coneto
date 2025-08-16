@@ -376,12 +376,22 @@ export const Appendable: Story = {
       >
         {rows.map((rowValue, rowIndex) => (
           <Table.Row
+            onClick={({ toggleCheckbox }) => {
+              console.log(
+                `Selected to this ${`${rowValue.from}-${rowValue.content}-${rowValue.subject}`}`
+              );
+              toggleCheckbox();
+            }}
             key={rowIndex}
             rowId={`${rowValue.from}-${rowValue.content}-${rowValue.subject}`}
             actions={ROW_ACTION}
           >
             <Table.Row.Cell>{rowValue.from}</Table.Row.Cell>
-            <Table.Row.Cell>
+            <Table.Row.Cell
+              contentStyle={{
+                display: "block",
+              }}
+            >
               <strong>{rowValue.subject}</strong> — {rowValue.content}
             </Table.Row.Cell>
           </Table.Row>
@@ -534,7 +544,13 @@ export const SortableWithPagination: Story = {
           disablePreviousPageButton={isDisabledPrev}
         >
           {pagedRows?.map((dataRow, index) => (
-            <Table.Row key={index} rowId={`${dataRow.name}-${dataRow.type}`}>
+            <Table.Row
+              onClick={({ toggleCheckbox }) => {
+                toggleCheckbox();
+              }}
+              key={index}
+              rowId={`${dataRow.name}-${dataRow.type}`}
+            >
               {[dataRow.name, dataRow.type].map((dataCell, i) => (
                 <Table.Row.Cell
                   key={`${dataRow.name}-${dataRow.type}-${dataCell}`}

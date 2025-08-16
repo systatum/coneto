@@ -73,6 +73,7 @@ export interface TableRowProps {
   rowId?: string;
   children?: ReactNode;
   actions?: (columnCaption: string) => TipMenuItemProps[];
+  onClick?: (args?: { toggleCheckbox: () => void }) => void;
 }
 
 export interface TableRowGroupProps {
@@ -86,6 +87,7 @@ export interface TableRowCellProps {
   children: ReactNode;
   contentStyle?: CSSProp;
   width?: string;
+  onClick?: () => void;
 }
 
 const TableColumnContext = createContext<ColumnTableProps[]>([]);
@@ -630,6 +632,7 @@ function TableRow({
   actions,
   isLast,
   onLastRowReached,
+  onClick,
   ...props
 }: TableRowProps &
   Partial<{
@@ -665,7 +668,24 @@ function TableRow({
       ref={rowRef}
       onMouseLeave={() => setIsHovered(null)}
       onMouseEnter={() => setIsHovered(rowId)}
-      $rowCellStyle={rowStyle}
+      onClick={() => {
+        if (onClick) {
+          onClick?.({
+            toggleCheckbox: () => {
+              if (rowId && selectable) {
+                handleSelect?.(rowId);
+              }
+            },
+          });
+        }
+      }}
+      $rowCellStyle={css`
+        ${rowStyle};
+        ${onClick &&
+        css`
+          cursor: pointer;
+        `}
+      `}
     >
       {selectable && (
         <CheckboxWrapperRow
@@ -730,7 +750,9 @@ function TableRow({
             width: fit-content;
             position: absolute;
             right: 0.5rem;
-            z-index: 20;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 50;
           `}
         >
           <Toolbar.Menu
@@ -768,8 +790,9 @@ const TableRowWrapper = styled.div<{
   display: flex;
   position: relative;
   padding: 0.75rem;
-  align-items: center;
+  align-items: stretch;
   width: 100%;
+  height: 100%;
   border-left: 1px solid #e5e7eb;
   border-right: 1px solid #e5e7eb;
   border-bottom: 1px solid #e5e7eb;
@@ -793,9 +816,28 @@ const CheckboxWrapperRow = styled.div`
   pointer-events: auto;
 `;
 
-function TableRowCell({ children, contentStyle, width }: TableRowCellProps) {
+function TableRowCell({
+  children,
+  contentStyle,
+  width,
+  onClick,
+}: TableRowCellProps) {
   return (
-    <CellContent width={width} $contentStyle={contentStyle}>
+    <CellContent
+      onClick={() => {
+        if (onClick) {
+          onClick();
+        }
+      }}
+      width={width}
+      $contentStyle={css`
+        ${contentStyle};
+        ${onClick &&
+        css`
+          cursor: pointer;
+        `}
+      `}
+    >
       {children}
     </CellContent>
   );
@@ -804,13 +846,18 @@ function TableRowCell({ children, contentStyle, width }: TableRowCellProps) {
 const CellContent = styled.div<{ width?: string; $contentStyle?: CSSProp }>`
   padding-left: 0.5rem;
   padding-right: 0.5rem;
+  display: flex;
+  align-items: center;
   ${({ width }) =>
     !width &&
     css`
       flex: 1;
-      display: flex;
+      height: fit-content;
+      width: "100%";
     `}
-  width: ${({ width }) => (width ? width : "100%")};
+
+  width: ${({ width }) => width};
+  min-height: inherit;
   ${({ $contentStyle }) => $contentStyle};
 `;
 
