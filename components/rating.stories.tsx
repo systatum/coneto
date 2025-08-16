@@ -14,7 +14,7 @@ type Story = StoryObj<typeof Rating>;
 
 export const Default: Story = {
   args: {
-    rating: 0,
+    rating: "0",
     withLabel: false,
   },
 
@@ -32,14 +32,14 @@ export const Default: Story = {
 
 export const NotEditable: Story = {
   args: {
-    rating: 4.5,
+    rating: "4.5",
   },
   render: (args) => <Rating {...args} />,
 };
 
 export const WithLabel: Story = {
   args: {
-    rating: 4.5,
+    rating: "4.5",
     withLabel: true,
   },
   render: (args) => <Rating {...args} />,
@@ -47,7 +47,7 @@ export const WithLabel: Story = {
 
 export const Small: Story = {
   args: {
-    rating: 4.5,
+    rating: "4.5",
     size: "sm",
   },
   render: (args) => <Rating {...args} />,
@@ -55,7 +55,7 @@ export const Small: Story = {
 
 export const Medium: Story = {
   args: {
-    rating: 4.5,
+    rating: "4.5",
     size: "md",
   },
   render: (args) => <Rating {...args} />,
@@ -63,7 +63,7 @@ export const Medium: Story = {
 
 export const Large: Story = {
   args: {
-    rating: 4.5,
+    rating: "4.5",
     size: "lg",
   },
   render: (args) => <Rating {...args} />,

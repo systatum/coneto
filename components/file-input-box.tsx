@@ -2,7 +2,7 @@ import { ChangeEvent, DragEvent, ReactElement, useRef, useState } from "react";
 import { RiCloseLine } from "@remixicon/react";
 import styled, { CSSProp } from "styled-components";
 
-interface FileInputBoxProps {
+export interface FileInputBoxProps {
   containerStyle?: CSSProp;
   placeholder?: string;
   accept?: string;

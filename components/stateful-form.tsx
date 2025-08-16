@@ -10,21 +10,24 @@ import {
   Path,
   UseFormRegister,
 } from "react-hook-form";
-import { Phonebox, CountryCodeProps } from "./phonebox";
-import { Checkbox } from "./checkbox";
-import { Textbox } from "./textbox";
-import { Colorbox } from "./colorbox";
+import { Phonebox, CountryCodeProps, PhoneboxProps } from "./phonebox";
+import { Checkbox, CheckboxProps } from "./checkbox";
+import { Textbox, TextboxProps } from "./textbox";
+import { Colorbox, ColorboxProps } from "./colorbox";
 import { FileDropBox, FileDropBoxProps } from "./file-drop-box";
-import { FileInputBox } from "./file-input-box";
-import { Imagebox } from "./imagebox";
+import { FileInputBox, FileInputBoxProps } from "./file-input-box";
+import { Imagebox, ImageboxProps } from "./imagebox";
 import { Moneybox, MoneyboxProps } from "./moneybox";
 import { Datebox, DateboxProps } from "./datebox";
 import { OptionsProps } from "./selectbox";
 import { Combobox, ComboboxProps } from "./combobox";
 import { Chips, ChipsProps } from "./chips";
-import { Signbox } from "./signbox";
-import { Textarea } from "./textarea";
+import { Signbox, SignboxProps } from "./signbox";
+import { Textarea, TextareaProps } from "./textarea";
 import { css } from "styled-components";
+import { Rating, RatingProps } from "./rating";
+import { ThumbField, ThumbFieldProps } from "./thumb-field";
+import { Togglebox, ToggleboxProps } from "./togglebox";
 
 export type StatefulOnChangeType =
   | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -62,11 +65,22 @@ export interface FormFieldProps {
       | OptionsProps,
     type?: string
   ) => void;
+  textboxProps?: TextboxProps;
+  textareaProps?: TextareaProps;
+  checkboxProps?: CheckboxProps;
+  phoneboxProps?: PhoneboxProps;
+  colorboxProps?: ColorboxProps;
   moneyProps?: MoneyboxProps;
   fileDropBoxProps?: FileDropBoxProps;
+  fileInputBoxProps?: FileInputBoxProps;
+  imageboxProps?: ImageboxProps;
+  signboxProps?: SignboxProps;
   dateProps?: DateboxProps;
   comboboxProps?: ComboboxProps;
   chipsProps?: ChipsProps;
+  ratingProps?: RatingProps;
+  thumbFieldProps?: ThumbFieldProps;
+  toggleboxProps?: ToggleboxProps;
 }
 
 function StatefulForm<Z extends ZodTypeAny>({
@@ -151,6 +165,7 @@ function FormFields<T extends FieldValues>({
           field.type === "password" ? (
           <Textbox
             key={index}
+            {...field.textboxProps}
             label={field.title}
             type={field.type}
             value={formValues[field.name as keyof T] ?? ""}
@@ -176,6 +191,7 @@ function FormFields<T extends FieldValues>({
         ) : field.type === "textarea" ? (
           <Textarea
             key={index}
+            {...field.textareaProps}
             label={field.title}
             rows={field.rows}
             value={formValues[field.name as keyof T] ?? ""}
@@ -205,6 +221,7 @@ function FormFields<T extends FieldValues>({
             name={field.name as Path<T>}
             render={({ field: controllerField }) => (
               <Checkbox
+                {...field.checkboxProps}
                 label={field.title}
                 name={field.name}
                 checked={controllerField.value ?? false}
@@ -251,6 +268,7 @@ function FormFields<T extends FieldValues>({
             render={({ field: controllerField }) => (
               <>
                 <Phonebox
+                  {...field.phoneboxProps}
                   label={field.title}
                   value={controllerField.value}
                   onChange={(e) => {
@@ -279,11 +297,12 @@ function FormFields<T extends FieldValues>({
           />
         ) : field.type === "color" ? (
           <Controller
+            key={index}
             name={field.name as Path<T>}
             control={control}
             render={({ field: controllerField, fieldState }) => (
               <Colorbox
-                key={index}
+                {...field.colorboxProps}
                 label={field.title}
                 required={field.required}
                 labelStyle={
@@ -318,6 +337,7 @@ function FormFields<T extends FieldValues>({
         ) : field.type === "file_drop_box" ? (
           <FileDropBox
             key={index}
+            {...field.fileDropBoxProps}
             label={field.title}
             labelStyle={
               labelSize &&
@@ -325,12 +345,12 @@ function FormFields<T extends FieldValues>({
                 font-size: ${labelSize};
               `
             }
-            {...field.fileDropBoxProps}
             {...register(field.name as Path<T>, { onChange: field.onChange })}
           />
         ) : field.type === "file" ? (
           <FileInputBox
             key={index}
+            {...field.fileInputBoxProps}
             onFilesSelected={(e) => field.onChange(e, "file")}
             label={field.title}
             labelStyle={
@@ -348,6 +368,7 @@ function FormFields<T extends FieldValues>({
         ) : field.type === "image" ? (
           <Imagebox
             key={index}
+            {...field.imageboxProps}
             name={field.name}
             onFilesSelected={(e) => field.onChange(e, "image")}
             label={field.title}
@@ -366,9 +387,10 @@ function FormFields<T extends FieldValues>({
           />
         ) : field.type === "signbox" ? (
           <Signbox
+            key={index}
+            {...field.signboxProps}
             clearable
             name={field.name}
-            key={index}
             label={field.title}
             labelStyle={
               labelSize &&
@@ -387,6 +409,7 @@ function FormFields<T extends FieldValues>({
         ) : field.type === "money" ? (
           <Moneybox
             key={index}
+            {...field.moneyProps}
             label={field.title}
             labelStyle={
               labelSize &&
@@ -400,7 +423,6 @@ function FormFields<T extends FieldValues>({
                 font-size: ${fieldSize};
               `
             }
-            {...field.moneyProps}
             value={formValues[field.name as keyof T] ?? ""}
             required={field.required}
             {...register(field.name as Path<T>, { onChange: field.onChange })}
@@ -417,6 +439,7 @@ function FormFields<T extends FieldValues>({
             render={({ field: controllerField }) => (
               <Datebox
                 key={index}
+                {...field.dateProps}
                 label={field.title}
                 showError={shouldShowError(field.name)}
                 labelStyle={
@@ -455,7 +478,7 @@ function FormFields<T extends FieldValues>({
             control={control}
             render={({ field: controllerField }) => (
               <Combobox
-                key={index}
+                {...field.comboboxProps}
                 label={field.title}
                 showError={shouldShowError(field.name)}
                 labelStyle={
@@ -470,7 +493,6 @@ function FormFields<T extends FieldValues>({
                     font-size: ${fieldSize};
                   `
                 }
-                {...field.comboboxProps}
                 errorMessage={
                   (
                     errors[field.name as keyof T] as {
@@ -495,7 +517,7 @@ function FormFields<T extends FieldValues>({
             control={control}
             render={({ field: controllerField }) => (
               <Chips
-                key={index}
+                {...field.chipsProps}
                 label={field.title}
                 labelStyle={
                   labelSize &&
@@ -510,11 +532,102 @@ function FormFields<T extends FieldValues>({
                   `
                 }
                 inputValue={controllerField.value}
-                {...field.chipsProps}
                 setInputValue={(e) => {
                   controllerField.onChange(e);
                   field.onChange(e, "chips");
                 }}
+              />
+            )}
+          />
+        ) : field.type === "rating" ? (
+          <Controller
+            key={index}
+            name={field.name as Path<T>}
+            control={control}
+            render={({ field: controllerField, fieldState }) => (
+              <Rating
+                editable
+                {...field.ratingProps}
+                label={field.title}
+                rating={controllerField.value}
+                onChange={(e) => {
+                  controllerField.onChange(e.target.value);
+                  field.onChange?.(e);
+                }}
+                labelStyle={
+                  labelSize &&
+                  css`
+                    font-size: ${labelSize};
+                  `
+                }
+                containerStyle={
+                  fieldSize &&
+                  css`
+                    font-size: ${fieldSize};
+                  `
+                }
+                showError={!!fieldState.error}
+                errorMessage={fieldState.error?.message}
+              />
+            )}
+          />
+        ) : field.type === "thumbfield" ? (
+          <Controller
+            key={index}
+            control={control}
+            name={field.name as Path<T>}
+            render={({ field: controllerField }) => (
+              <ThumbField
+                {...field.thumbFieldProps}
+                label={field.title}
+                labelStyle={
+                  labelSize &&
+                  css`
+                    font-size: ${labelSize};
+                  `
+                }
+                style={
+                  fieldSize &&
+                  css`
+                    font-size: ${fieldSize};
+                  `
+                }
+                value={controllerField.value ?? false}
+                required={field.required}
+                {...register(field.name as Path<T>, {
+                  onChange: field.onChange,
+                })}
+                showError={shouldShowError(field.name)}
+                errorMessage={
+                  errors[field.name as keyof T]?.message as string | undefined
+                }
+              />
+            )}
+          />
+        ) : field.type === "toggle" ? (
+          <Controller
+            key={index}
+            control={control}
+            name={field.name as Path<T>}
+            render={({ field: controllerField }) => (
+              <Togglebox
+                {...field.toggleboxProps}
+                label={field.title}
+                labelStyle={
+                  labelSize &&
+                  css`
+                    font-size: ${labelSize};
+                  `
+                }
+                checked={controllerField.value ?? false}
+                required={field.required}
+                {...register(field.name as Path<T>, {
+                  onChange: field.onChange,
+                })}
+                showError={shouldShowError(field.name)}
+                errorMessage={
+                  errors[field.name as keyof T]?.message as string | undefined
+                }
               />
             )}
           />

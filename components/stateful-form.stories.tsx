@@ -231,6 +231,7 @@ export const AllCase: Story = {
       number: "",
       password: "",
       textarea: "",
+      rating: "",
       check: false,
       chips: {
         search: "",
@@ -252,6 +253,8 @@ export const AllCase: Story = {
       file: "",
       image: "",
       phone: "",
+      thumb_field: null,
+      togglebox: false,
       signature: "",
       country_code: DEFAULT_COUNTRY_CODES,
     });
@@ -306,6 +309,9 @@ export const AllCase: Story = {
       image: z.string().optional(),
       signature: z.string().min(1, "Signature is required"),
       phone: z.string().min(8, "Phone number must be 8 digits").optional(),
+      rating: z.string().optional(),
+      thumb_field: z.boolean().optional(),
+      togglebox: z.boolean().optional(),
       country_code: z
         .object({
           id: z.string(),
@@ -315,6 +321,8 @@ export const AllCase: Story = {
         })
         .optional(),
     });
+
+    console.log(value);
 
     const onChangeForm = (
       e?: StatefulOnChangeType,
@@ -537,6 +545,20 @@ export const AllCase: Story = {
         name: "signature",
         title: "Signature",
         type: "signbox",
+        required: false,
+        onChange: onChangeForm,
+      },
+      {
+        name: "rating",
+        title: "Rating",
+        type: "rating",
+        required: false,
+        onChange: onChangeForm,
+      },
+      {
+        name: "thumb_field",
+        title: "Thumb Field",
+        type: "thumbfield",
         required: false,
         onChange: onChangeForm,
       },
