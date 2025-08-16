@@ -4,15 +4,17 @@ import { ReactNode, useEffect, useState } from "react";
 import styled, { css, CSSProp } from "styled-components";
 
 export interface DrawerTabProps {
-  tabs: Array<{
-    id: number;
-    title: string;
-    icon: RemixiconComponentType;
-    content: ReactNode;
-  }>;
+  tabs: DrawerTabContentProps[];
   tabStyle?: CSSProp;
   drawerTabStyle?: CSSProp;
   position?: "left" | "right";
+}
+
+export interface DrawerTabContentProps {
+  id: number;
+  title: string;
+  icon: RemixiconComponentType;
+  content: ReactNode;
 }
 
 function DrawerTab({

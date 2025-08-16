@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { CapsuleTab } from "./capsule-tab";
+import { CapsuleTab, CapsuleTabContentProps } from "./capsule-tab";
 import { Button } from "./button";
 import { Textbox } from "./textbox";
 import { ChangeEvent, useState } from "react";
@@ -48,12 +48,7 @@ export const Default: Story = {
             arcu, nec faucibus sem justo vitae sapien.
           </p>
 
-          <Textbox
-            rows={4}
-            name="write"
-            value={value.write}
-            onChange={onChangeValue}
-          />
+          <Textbox name="write" value={value.write} onChange={onChangeValue} />
         </div>
       );
     };
@@ -90,7 +85,7 @@ export const Default: Story = {
       );
     };
 
-    const TABS_ITEMS = [
+    const TABS_ITEMS: CapsuleTabContentProps[] = [
       { id: 1, title: "Write", content: <WriteTabContent /> },
       { id: 2, title: "Review", content: <ReviewTabContent /> },
     ];

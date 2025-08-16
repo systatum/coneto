@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { DrawerTab } from "./drawer-tab";
+import { DrawerTab, DrawerTabContentProps } from "./drawer-tab";
 import { Textbox } from "./textbox";
 import { ChangeEvent, useState } from "react";
 import { RiListCheck, RiNodeTree } from "@remixicon/react";
@@ -44,12 +44,7 @@ export const Default: Story = {
             malesuada, nisl a tincidunt scelerisque, velit sapien sollicitudin
             arcu, nec faucibus sem justo vitae sapien.
           </p>
-          <Textbox
-            rows={4}
-            name="write"
-            value={value.write}
-            onChange={onChangeValue}
-          />
+          <Textbox name="write" value={value.write} onChange={onChangeValue} />
         </div>
       );
     };
@@ -79,7 +74,7 @@ export const Default: Story = {
       );
     };
 
-    const tabs = [
+    const tabs: DrawerTabContentProps[] = [
       {
         id: 1,
         title: "File Attributes",
@@ -125,12 +120,7 @@ export const FixedRight: Story = {
             malesuada, nisl a tincidunt scelerisque, velit sapien sollicitudin
             arcu, nec faucibus sem justo vitae sapien.
           </p>
-          <Textbox
-            rows={4}
-            name="write"
-            value={value.write}
-            onChange={onChangeValue}
-          />
+          <Textbox name="write" value={value.write} onChange={onChangeValue} />
         </div>
       );
     };
@@ -159,7 +149,7 @@ export const FixedRight: Story = {
         </div>
       );
     };
-    const tabs = [
+    const tabs: DrawerTabContentProps[] = [
       {
         id: 1,
         title: "File Attributes",
