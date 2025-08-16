@@ -20,54 +20,49 @@ function NavTab({
   activeTab = 1,
   containerStyle,
   contentStyle,
-  tabs,
-  activeColor,
+  tabs = [],
+  activeColor = "#999bd1",
 }: NavTabProps) {
   const [hovered, setHovered] = useState<string | null | number>(null);
-  const CONTENT_TABS = tabs.map((data) => data.id);
-  const NUMBER_ACTIVE_TAB = activeTab - 1;
-  const [selected, setSelected] = useState<string | number>(
-    CONTENT_TABS[NUMBER_ACTIVE_TAB]
-  );
-  const activeContent = tabs.filter((data) => data.id === selected);
+  const [selected, setSelected] = useState<number>(activeTab);
 
-  const activeId = hovered || activeTab;
   const tabRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [tabSizes, setTabSizes] = useState<{ width: number; left: number }[]>(
     []
   );
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
-  const hoverIndex = tabs.findIndex((item) => item.id === activeId);
 
   const getHoverPosition = () => {
-    if (!isInitialized && tabs.length > 0) {
-      if (hoverIndex === 0) {
-        return { left: 4, width: 60 };
-      }
+    if (!isInitialized || tabSizes.length === 0) {
+      return { left: 0, width: 0, opacity: 0 };
     }
 
-    if (isInitialized && hoverIndex !== -1 && tabSizes[hoverIndex]) {
-      return {
-        left: tabSizes[hoverIndex].left,
-        width: tabSizes[hoverIndex].width - 3,
-      };
+    const targetId = hovered !== null ? hovered : selected;
+    const targetIndex = tabs.findIndex((tab) => tab.id === targetId);
+
+    if (targetIndex === -1 || !tabSizes[targetIndex]) {
+      return { left: 0, width: 0, opacity: 0 };
     }
 
-    return { left: 4, width: 60 };
+    return {
+      left: tabSizes[targetIndex].left,
+      width: tabSizes[targetIndex].width,
+      opacity: 1,
+    };
   };
 
   useEffect(() => {
     const calculateTabSizes = () => {
       if (
         !tabRefs.current.length ||
-        !tabRefs.current[0] ||
-        !containerRef.current
-      )
+        !containerRef.current ||
+        tabs.length === 0
+      ) {
         return;
+      }
 
       const parentRect = containerRef.current.getBoundingClientRect();
-
       const sizes = tabRefs.current.map((tabRef) => {
         if (!tabRef) return { width: 0, left: 0 };
 
@@ -83,6 +78,7 @@ function NavTab({
     };
 
     calculateTabSizes();
+
     const timeoutId = setTimeout(calculateTabSizes, 50);
 
     window.addEventListener("resize", calculateTabSizes);
@@ -97,42 +93,46 @@ function NavTab({
   };
 
   const hoverPosition = getHoverPosition();
+  const activeContent = tabs.filter((data) => data.id === selected);
 
   return (
     <NavTabWrapper $containerStyle={containerStyle}>
       <NavTabHeader ref={containerRef}>
         <motion.div
-          layout
           style={{
             position: "absolute",
             bottom: "0px",
-            zIndex: 0,
-            height: "1px",
+            zIndex: 1,
+            height: "2px",
             borderRadius: "1px",
-            backgroundColor: activeColor ?? "#999bd1",
-            opacity: hovered ? 1 : 0,
+            backgroundColor: activeColor,
           }}
           initial={{
-            left: hoverPosition.left,
-            width: hoverPosition.width,
+            left: 0,
+            width: 0,
+            opacity: 0,
           }}
           animate={{
             left: hoverPosition.left,
             width: hoverPosition.width,
+            opacity: hoverPosition.opacity,
           }}
           transition={{
             type: "spring",
-            stiffness: 250,
+            stiffness: 300,
             damping: 30,
+            opacity: { duration: 0.2 },
           }}
         />
+
         {tabs.map((data, index) => (
           <NavTabHeaderContent
-            key={index}
+            key={data.id}
             ref={setTabRef(index)}
             role="tab"
             onClick={() => setSelected(data.id)}
             $selected={selected === data.id}
+            $activeColor={activeColor}
             onMouseEnter={() => setHovered(data.id)}
             onMouseLeave={() => setHovered(null)}
           >
@@ -166,12 +166,12 @@ const NavTabHeader = styled.div<{
   $headerStyle?: CSSProp;
 }>`
   width: 100%;
-  height: 100%;
+  height: auto;
   display: flex;
   flex-direction: row;
   position: relative;
   background-color: white;
-  border: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
   box-shadow: 0 1px 4px -3px #5b5b5b;
 
   ${({ $headerStyle }) => $headerStyle}
@@ -181,23 +181,28 @@ const NavTabHeaderContent = styled.div<{
   $selected?: boolean;
   $activeColor?: string;
 }>`
-  padding: 10px;
+  padding: 12px 16px;
   cursor: pointer;
-  border-bottom: 1px solid transparent;
   font-weight: 500;
+  position: relative;
+  transition: color 0.2s ease;
+  white-space: nowrap;
 
   ${({ $selected, $activeColor }) =>
     $selected &&
     css`
-      border-bottom: 1px solid ${$activeColor ? $activeColor : "#999bd1"};
-      color: ${$activeColor ? $activeColor : "#999bd1"};
+      color: ${$activeColor};
     `}
+
+  &:hover {
+    color: ${({ $activeColor }) => $activeColor};
+  }
 `;
 
 const NavContent = styled.div<{ $contentStyle?: CSSProp }>`
-  padding: 4px;
+  padding: 16px;
   overflow-y: auto;
-  max-height: 100vh;
+  max-height: calc(100vh - 60px);
 
   ${({ $contentStyle }) => $contentStyle}
 `;
