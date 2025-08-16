@@ -2,7 +2,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { CSSProperties, ReactNode, useState } from "react";
 import { Checkbox } from "./checkbox";
 
-interface GridProps {
+export interface GridProps {
   children?: ReactNode;
   height?: number | string;
   width?: number | string;
@@ -11,7 +11,7 @@ interface GridProps {
   preset?: GridPresetKey;
 }
 
-interface GridCardProps {
+export interface GridCardProps {
   children?: ReactNode;
   thumbnail?: string;
   isSelected?: boolean;

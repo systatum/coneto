@@ -2,14 +2,16 @@ import { ReactNode, useState } from "react";
 import { Capsule } from "./capsule";
 import styled, { CSSProp } from "styled-components";
 
-interface CapsuleTabProps {
-  tabs: Array<{
-    id: number | string;
-    title: string;
-    content: ReactNode;
-  }>;
+export interface CapsuleTabProps {
+  tabs: CapsuleTabContentProps[];
   activeTab?: number;
   style?: CSSProp;
+}
+
+export interface CapsuleTabContentProps {
+  id: number | string;
+  title: string;
+  content: ReactNode;
 }
 
 function CapsuleTab({ tabs, style, activeTab = 1 }: CapsuleTabProps) {

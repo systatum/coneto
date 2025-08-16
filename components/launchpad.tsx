@@ -11,13 +11,13 @@ import { motion, useDragControls, useMotionValue } from "framer-motion";
 import { Grid, GridPresetKey } from "./grid";
 import styled, { CSSProp } from "styled-components";
 
-interface LaunchpadProps {
+export interface LaunchpadProps {
   children: ReactNode;
   containerStyle?: CSSProp;
   maxSection?: number;
 }
 
-interface LaunchpadSectionProps {
+export interface LaunchpadSectionProps {
   children: ReactNode;
   title?: string;
   containerStyle?: CSSProp;
@@ -26,7 +26,7 @@ interface LaunchpadSectionProps {
   gridPreset?: GridPresetKey;
 }
 
-interface LaunchpadSectionItemProps {
+export interface LaunchpadSectionItemProps {
   href: string;
   iconUrl: string;
   label: string;
