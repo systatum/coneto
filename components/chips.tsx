@@ -645,7 +645,6 @@ function ChipsItem({
   onDeleteRequested?: (badge: BadgeProps) => void;
   deletable?: boolean;
 }) {
-  console.log(chipStyle);
   return (
     <ChipItemWrapper
       $hovered={hovered === badge.id}
