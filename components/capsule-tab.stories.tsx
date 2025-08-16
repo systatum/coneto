@@ -1,8 +1,8 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { CapsuleTab } from "./capsule-tab";
 import { Button } from "./button";
-import { Textbox } from "./textbox";
 import { ChangeEvent, useState } from "react";
+import { Textarea } from "./textarea";
 
 const meta: Meta<typeof CapsuleTab> = {
   title: "Stage/CapsuleTab",
@@ -28,7 +28,7 @@ export const Default: Story = {
       return (
         <div
           style={{
-            padding: "0.5rem",
+            padding: "0.8rem",
             fontSize: "0.875rem",
             display: "flex",
             flexDirection: "column",
@@ -48,7 +48,7 @@ export const Default: Story = {
             arcu, nec faucibus sem justo vitae sapien.
           </p>
 
-          <Textbox
+          <Textarea
             rows={4}
             name="write"
             value={value.write}
@@ -62,7 +62,7 @@ export const Default: Story = {
       return (
         <div
           style={{
-            padding: "0.5rem",
+            padding: "0.8rem",
             fontSize: "0.875rem",
             display: "flex",
             flexDirection: "column",
