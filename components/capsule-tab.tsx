@@ -63,8 +63,8 @@ const CapsuleTabWrapper = styled.div<{
   width: 100%;
   padding-bottom: 5px;
   border: 1px solid #ebebeb;
-  border-radius: 0.375rem;
-  box-shadow: 0 1px 4px -3px #5b5b5b;
+  border-radius: 2px;
+  box-shadow: 0 1px 3px -3px #5b5b5b;
 
   ${({ $containerStyle }) => $containerStyle}
 `;
