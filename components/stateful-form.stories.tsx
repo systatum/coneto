@@ -322,8 +322,6 @@ export const AllCase: Story = {
         .optional(),
     });
 
-    console.log(value);
-
     const onChangeForm = (
       e?: StatefulOnChangeType,
       type?: string | ColorPickProps

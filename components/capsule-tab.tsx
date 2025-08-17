@@ -1,11 +1,12 @@
 import { ReactNode, useState } from "react";
 import { Capsule } from "./capsule";
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
 
 export interface CapsuleTabProps {
   tabs: CapsuleTabContentProps[];
   activeTab?: number;
   style?: CSSProp;
+  tabStyle?: CSSProp;
 }
 
 export interface CapsuleTabContentProps {
@@ -14,7 +15,7 @@ export interface CapsuleTabContentProps {
   content: ReactNode;
 }
 
-function CapsuleTab({ tabs, style, activeTab = 1 }: CapsuleTabProps) {
+function CapsuleTab({ tabs, style, activeTab = 1, tabStyle }: CapsuleTabProps) {
   const CONTENT_TABS = tabs.map((data) => data.id);
   const NUMBER_ACTIVE_TAB = activeTab - 1;
   const [selected, setSelected] = useState<string | number>(
@@ -26,6 +27,11 @@ function CapsuleTab({ tabs, style, activeTab = 1 }: CapsuleTabProps) {
   return (
     <CapsuleTabWrapper $containerStyle={style}>
       <Capsule
+        containerStyle={css`
+          border-top-left-radius: 2px;
+          border-top-right-radius: 2px;
+          ${tabStyle};
+        `}
         fields={tabs}
         setView={setSelected}
         activeBackgroundColor="black"
@@ -65,8 +71,8 @@ const CapsuleTabWrapper = styled.div<{
   width: 100%;
   padding-bottom: 5px;
   border: 1px solid #ebebeb;
-  border-radius: 0.375rem;
-  box-shadow: 0 1px 4px -3px #5b5b5b;
+  border-radius: 2px;
+  box-shadow: 0 1px 3px -3px #5b5b5b;
 
   ${({ $containerStyle }) => $containerStyle}
 `;
