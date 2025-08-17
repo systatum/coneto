@@ -1,7 +1,7 @@
 import { Children, isValidElement, ReactNode } from "react";
 import styled, { CSSProp } from "styled-components";
 
-interface KeynoteProps<T extends Record<string, unknown>> {
+export interface KeynoteProps<T extends Record<string, unknown>> {
   data?: T;
   keys?: (keyof T)[];
   keyLabels?: string[];
@@ -10,7 +10,7 @@ interface KeynoteProps<T extends Record<string, unknown>> {
   renderer?: Partial<Record<keyof T, (value: T[keyof T]) => ReactNode>>;
 }
 
-interface KeynotePointProps {
+export interface KeynotePointProps {
   label: string;
   children: ReactNode;
 }
