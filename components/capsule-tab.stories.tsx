@@ -2,7 +2,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { CapsuleTab, CapsuleTabContentProps } from "./capsule-tab";
 import { Button } from "./button";
 import { ChangeEvent, useState } from "react";
-import { Textarea } from "./textarea";
+import { Textbox } from "./textbox";
 
 const meta: Meta<typeof CapsuleTab> = {
   title: "Stage/CapsuleTab",
@@ -47,7 +47,6 @@ export const Default: Story = {
             malesuada, nisl a tincidunt scelerisque, velit sapien sollicitudin
             arcu, nec faucibus sem justo vitae sapien.
           </p>
-
 
           <Textbox name="write" value={value.write} onChange={onChangeValue} />
         </div>
