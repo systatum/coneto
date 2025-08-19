@@ -3,6 +3,7 @@ import { Combobox } from "./combobox";
 import { OptionsProps } from "./selectbox";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import styled, { css, CSSProp } from "styled-components";
+import { clamp } from "./../lib/math";
 
 type PaginationProps = {
   currentPage: number;
@@ -46,10 +47,6 @@ function Pagination({
       }
     }
   };
-
-  function clamp(val: number, min: number, max: number) {
-    return Math.min(Math.max(val, min), max);
-  }
 
   useEffect(() => {
     const comboboxPagesNumber = totalPages - 3;
@@ -114,8 +111,6 @@ const PaginationItem = ({
   const highlightOnMatch = useMemo(() => {
     return currentPage <= comboboxPagesNumber;
   }, [currentPage, comboboxPagesNumber]);
-
-  console.log(highlightOnMatch);
 
   const threshold = 5;
 
@@ -253,7 +248,7 @@ const Button = styled.button<{
   color: ${({ $isActive }) => ($isActive ? "#000" : "#374151")};
 
   &:hover {
-    border-color: ${({ $isActive }) => ($isActive ? "#61A9F9" : "#bfdbfe")};
+    border-color: #61a9f9;
   }
 
   &:disabled {
