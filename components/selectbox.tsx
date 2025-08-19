@@ -186,7 +186,14 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
     }, [highlightedIndex, isOpen]);
 
     return (
-      <Container role="combobox" $style={containerStyle} aria-expanded={isOpen}>
+      <Container
+        onBlur={() => {
+          setIsHovered(false);
+        }}
+        role="combobox"
+        $style={containerStyle}
+        aria-expanded={isOpen}
+      >
         <Input
           $style={selectboxStyle}
           {...getReferenceProps()}
@@ -336,7 +343,6 @@ const Input = styled.input<{
     css`
       border-color: #61a9f9;
     `}
-
   ${({ $style }) => $style}
 `;
 
