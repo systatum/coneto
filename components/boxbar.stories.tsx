@@ -82,6 +82,12 @@ export const Default: Story = {
             badgeStyle={css`
               width: 100%;
               max-width: 100px;
+
+              &:hover {
+                border-color: #4cbbf7;
+                cursor: pointer;
+                transition: all 0.5s ease-in-out;
+              }
             `}
             key={badge.id}
             caption={badge.caption}
