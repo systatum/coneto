@@ -23,7 +23,6 @@ function NavTab({
   tabs = [],
   activeColor = "#999bd1",
 }: NavTabProps) {
-  const [hovered, setHovered] = useState<string | null | number>(null);
   const [selected, setSelected] = useState<number>(activeTab);
 
   const tabRefs = useRef<Array<HTMLDivElement | null>>([]);
@@ -38,8 +37,7 @@ function NavTab({
       return { left: 0, width: 0, opacity: 0 };
     }
 
-    const targetId = hovered !== null ? hovered : selected;
-    const targetIndex = tabs.findIndex((tab) => tab.id === targetId);
+    const targetIndex = tabs.findIndex((tab) => tab.id === selected);
 
     if (targetIndex === -1 || !tabSizes[targetIndex]) {
       return { left: 0, width: 0, opacity: 0 };
@@ -133,8 +131,6 @@ function NavTab({
             onClick={() => setSelected(data.id)}
             $selected={selected === data.id}
             $activeColor={activeColor}
-            onMouseEnter={() => setHovered(data.id)}
-            onMouseLeave={() => setHovered(null)}
           >
             {data.title}
           </NavTabHeaderContent>
