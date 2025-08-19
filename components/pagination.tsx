@@ -1,7 +1,7 @@
 import { RiArrowLeftSLine, RiArrowRightSLine } from "@remixicon/react";
 import { Combobox } from "./combobox";
 import { OptionsProps } from "./selectbox";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import styled, { css, CSSProp } from "styled-components";
 
 type PaginationProps = {
@@ -46,6 +46,16 @@ function Pagination({
       }
     }
   };
+
+  function clamp(val: number, min: number, max: number) {
+    return Math.min(Math.max(val, min), max);
+  }
+
+  useEffect(() => {
+    const comboboxPagesNumber = totalPages - 3;
+    const safePage = clamp(currentPage, 1, comboboxPagesNumber);
+    setCurrentPageLocal({ value: safePage, text: safePage.toString() });
+  }, []);
 
   return (
     <PaginationWrapper $style={style}>
@@ -99,17 +109,13 @@ const PaginationItem = ({
   onPageChange: (page: number) => void;
   setCurrentPageLocal: (page: OptionsProps) => void;
 }) => {
-  const [highlightOnMatch, setHighlightOnMatch] = useState(false);
-
   const comboboxPagesNumber = totalPages - 3;
 
-  useEffect(() => {
-    if (currentPage > comboboxPagesNumber) {
-      setHighlightOnMatch(false);
-    } else {
-      setHighlightOnMatch(true);
-    }
+  const highlightOnMatch = useMemo(() => {
+    return currentPage <= comboboxPagesNumber;
   }, [currentPage, comboboxPagesNumber]);
+
+  console.log(highlightOnMatch);
 
   const threshold = 5;
 

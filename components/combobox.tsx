@@ -94,6 +94,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
             return (
               <ComboboxDrawer
                 {...props}
+                highlightOnMatch={highlightOnMatch}
                 emptySlate={emptySlate}
                 actions={actions}
                 onClick={onClick}
@@ -133,6 +134,7 @@ function ComboboxDrawer({
   floatingStyles,
   getFloatingProps,
   highlightedIndex,
+  highlightOnMatch,
   listRef,
   options,
   refs,
@@ -197,17 +199,19 @@ function ComboboxDrawer({
       )}
       {options.length > 0 ? (
         options.map((option, index) => {
+          const isSelected = option.value === inputValue.value;
+          const shouldHighlight =
+            highlightOnMatch && isSelected ? true : highlightedIndex === index;
+
           return (
             <OptionItem
               key={option.value}
               id={`option-${index}`}
               role="option"
-              aria-selected={
-                option.value.toString() === inputValue.value.toString()
-              }
-              data-highlighted={highlightedIndex === index}
-              selected={option.value === inputValue.value}
-              highlighted={highlightedIndex === index}
+              aria-selected={isSelected}
+              selected={isSelected}
+              data-highlighted={shouldHighlight}
+              highlighted={shouldHighlight}
               onMouseDown={() => {
                 setInputValue(option);
                 setIsOpen(false);
