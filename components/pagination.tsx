@@ -49,7 +49,6 @@ function Pagination({
   };
 
   useEffect(() => {
-    const comboboxPagesNumber = totalPages - 3;
     const safePage = clamp(currentPage, 1, comboboxPagesNumber);
     setCurrentPageLocal({ value: safePage, text: safePage.toString() });
   }, []);
@@ -71,6 +70,7 @@ function Pagination({
           onPageChange={onPageChange}
           totalPages={totalPages}
           setCurrentPageLocal={setCurrentPageLocal}
+          comboboxPagesNumber={comboboxPagesNumber}
         />
       )}
 
@@ -99,15 +99,15 @@ const PaginationItem = ({
   currentPageLocal,
   onPageChange,
   setCurrentPageLocal,
+  comboboxPagesNumber,
 }: {
   totalPages: number;
   currentPage: number;
   currentPageLocal: OptionsProps;
   onPageChange: (page: number) => void;
   setCurrentPageLocal: (page: OptionsProps) => void;
+  comboboxPagesNumber?: number;
 }) => {
-  const comboboxPagesNumber = totalPages - 3;
-
   const highlightOnMatch = useMemo(() => {
     return currentPage <= comboboxPagesNumber;
   }, [currentPage, comboboxPagesNumber]);
