@@ -130,7 +130,6 @@ function NavTab({
             role="tab"
             onClick={() => setSelected(data.id)}
             $selected={selected === data.id}
-            $activeColor={activeColor}
           >
             {data.title}
           </NavTabHeaderContent>
@@ -175,7 +174,6 @@ const NavTabHeader = styled.div<{
 
 const NavTabHeaderContent = styled.div<{
   $selected?: boolean;
-  $activeColor?: string;
 }>`
   padding: 12px 16px;
   cursor: pointer;
@@ -184,7 +182,7 @@ const NavTabHeaderContent = styled.div<{
   transition: color 0.2s ease;
   white-space: nowrap;
 
-  ${({ $selected, $activeColor }) =>
+  ${({ $selected }) =>
     $selected &&
     css`
       background-color: rgb(243 244 246 / 50%);
