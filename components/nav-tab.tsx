@@ -21,7 +21,7 @@ function NavTab({
   containerStyle,
   contentStyle,
   tabs = [],
-  activeColor = "#999bd1",
+  activeColor = "rgb(59, 130, 246)",
 }: NavTabProps) {
   const [selected, setSelected] = useState<number>(activeTab);
 
@@ -187,11 +187,11 @@ const NavTabHeaderContent = styled.div<{
   ${({ $selected, $activeColor }) =>
     $selected &&
     css`
-      color: ${$activeColor};
+      background-color: rgb(243 244 246 / 50%);
     `}
 
   &:hover {
-    color: ${({ $activeColor }) => $activeColor};
+    background-color: rgb(243 244 246 / 50%);
   }
 `;
 
