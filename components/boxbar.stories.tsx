@@ -17,30 +17,6 @@ const meta: Meta<typeof Boxbar> = {
         defaultValue: { summary: "undefined" },
       },
     },
-    childStyle: {
-      control: "text",
-      description: "Optional class name to style the child content.",
-      table: {
-        type: { summary: "string" },
-        defaultValue: { summary: "undefined" },
-      },
-    },
-    minHeight: {
-      control: { type: "number", min: 0, step: 10 },
-      description: "Minimum height of the Boxbar (when collapsed).",
-      table: {
-        type: { summary: "number" },
-        defaultValue: { summary: "40" },
-      },
-    },
-    maxHeight: {
-      control: { type: "number", min: 0, step: 10 },
-      description: "Maximum height of the Boxbar (when expanded).",
-      table: {
-        type: { summary: "number" },
-        defaultValue: { summary: "400" },
-      },
-    },
     children: {
       control: false,
       description: "Content to render inside the Boxbar.",
@@ -100,16 +76,18 @@ export const Default: Story = {
       },
     ];
     return (
-      <Boxbar
-        childStyle={css`
-          gap: 4px;
-        `}
-      >
+      <Boxbar>
         {BADGE_OPTIONS.map((badge) => (
           <Badge
             badgeStyle={css`
               width: 100%;
               max-width: 100px;
+
+              &:hover {
+                border-color: #4cbbf7;
+                cursor: pointer;
+                transition: all 0.5s ease-in-out;
+              }
             `}
             key={badge.id}
             caption={badge.caption}
