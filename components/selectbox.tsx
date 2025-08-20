@@ -116,9 +116,8 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
         )
       : options;
 
-    const FILTERED_ACTIVE = options.filter(
-      (opt) => opt.text === inputValueLocal.text
-    );
+    const activeValue = inputValue?.text || inputValueLocal.text;
+    const FILTERED_ACTIVE = options.some((opt) => opt.text === activeValue);
 
     const { refs, floatingStyles, context } = useFloating({
       placement: "bottom-start" as Placement,
@@ -187,7 +186,14 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
     }, [highlightedIndex, isOpen]);
 
     return (
-      <Container role="combobox" $style={containerStyle} aria-expanded={isOpen}>
+      <Container
+        onBlur={() => {
+          setIsHovered(false);
+        }}
+        role="combobox"
+        $style={containerStyle}
+        aria-expanded={isOpen}
+      >
         <Input
           $style={selectboxStyle}
           {...getReferenceProps()}
@@ -209,6 +215,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
           }}
           onBlur={() => {
             setIsFocused(false);
+            setIsHovered(false);
             if (strict) {
               const matched = options.find(
                 (opt) => opt.text === inputValueLocal.text
@@ -232,7 +239,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
           onMouseLeave={() => setIsHovered(false)}
           $focused={isFocused}
           $hovered={isHovered}
-          $highlight={highlightOnMatch && FILTERED_ACTIVE.length > 0}
+          $highlight={highlightOnMatch && FILTERED_ACTIVE}
         />
 
         {clearable && inputValueLocal.text !== "" && (
@@ -247,7 +254,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
                 setIsOpen(false);
                 setHasInteracted(false);
               }}
-              $highlight={highlightOnMatch && FILTERED_ACTIVE.length > 0}
+              $highlight={highlightOnMatch && FILTERED_ACTIVE}
               size={16}
             />
             <Divider
@@ -277,9 +284,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
               onMouseEnter={() => setIsHovered(true)}
               size={18}
               color={
-                highlightOnMatch && FILTERED_ACTIVE.length > 0
-                  ? "#61a9f9"
-                  : "#9ca3af"
+                highlightOnMatch && FILTERED_ACTIVE ? "#61a9f9" : "#9ca3af"
               }
             />
           )}
@@ -338,7 +343,6 @@ const Input = styled.input<{
     css`
       border-color: #61a9f9;
     `}
-
   ${({ $style }) => $style}
 `;
 
