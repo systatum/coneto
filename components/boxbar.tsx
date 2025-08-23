@@ -1,7 +1,7 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { RiArrowRightSLine } from "@remixicon/react";
 import { motion } from "framer-motion";
-import styled, { css, CSSProp } from "styled-components";
+import styled, { CSSProp } from "styled-components";
 
 interface BoxbarProps {
   children: ReactNode;
