@@ -174,7 +174,8 @@ const InputGroup = styled.div<{
   flex-direction: row;
   flex-wrap: wrap;
   gap: 3px;
-  padding: 0.5rem;
+
+  ${({ $containerStyle }) => $containerStyle}
 `;
 
 const InputWrapper = styled.div`
