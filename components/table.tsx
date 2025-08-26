@@ -333,6 +333,7 @@ function Table({
               </TableRowCell>
             ))}
           </TableHeader>
+
           {rowChildren.length > 0 ? (
             <TableRowContainer
               aria-label="table-scroll-container"
@@ -541,11 +542,7 @@ function TableRowGroup({
 
   return (
     <TableRowGroupContainer>
-      <TableRowGroupSticky
-        onClick={() => {
-          setIsOpen(!isOpen);
-        }}
-      >
+      <TableRowGroupSticky onClick={() => setIsOpen(!isOpen)}>
         <RotatingIcon $isOpen={isOpen}>
           <RiArrowDownSLine />
         </RotatingIcon>
@@ -568,6 +565,7 @@ function TableRowGroup({
           )}
         </div>
       </TableRowGroupSticky>
+
       <AnimatePresence initial={false}>
         {isOpen && (
           <motion.div
@@ -595,6 +593,7 @@ const TableRowGroupContainer = styled.div`
   position: relative;
   width: 100%;
   height: 100%;
+  overflow-y: visible;
 `;
 
 const TableRowGroupSticky = styled.div`
@@ -602,17 +601,22 @@ const TableRowGroupSticky = styled.div`
   flex-direction: row;
   cursor: pointer;
   padding: 0.75rem;
-  z-index: 10;
+  z-index: 100;
   position: sticky;
-  top: 0;
+  top: 0px;
   align-items: center;
   width: 100%;
-  border-left: 1px solid #e5e7eb;
-  border-right: 1px solid #e5e7eb;
-  border-top: 1px solid #e5e7eb;
-  border-bottom: 1px solid #e5e7eb;
-  background-color: #f3f4f6;
+  border: 1px solid #e5e7eb;
   gap: 1rem;
+  background-color: #f3f4f6;
+
+  will-change: transform;
+  backface-visibility: hidden;
+  isolation: isolate;
+  transform: translateZ(0);
+  contain: layout style paint;
+  -webkit-transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
 `;
 
 const RotatingIcon = styled.span<{ $isOpen?: boolean }>`
