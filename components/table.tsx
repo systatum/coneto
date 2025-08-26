@@ -49,7 +49,7 @@ export interface TableProps {
   children: ReactNode;
   isLoading?: boolean;
   containerStyle?: CSSProp;
-  tableRowStyle?: CSSProp;
+  tableRowContainerStyle?: CSSProp;
   isOpen?: boolean;
   setIsOpen?: () => void;
   subMenuList?: (columnCaption: string) => TipMenuItemProps[];
@@ -101,7 +101,7 @@ function Table({
   children,
   isLoading,
   containerStyle,
-  tableRowStyle,
+  tableRowContainerStyle,
   isOpen,
   setIsOpen,
   subMenuList,
@@ -336,7 +336,7 @@ function Table({
           {rowChildren.length > 0 ? (
             <TableRowContainer
               aria-label="table-scroll-container"
-              $tableRowStyle={tableRowStyle}
+              $tableRowContainerStyle={tableRowContainerStyle}
             >
               {rowChildren}
             </TableRowContainer>
@@ -468,14 +468,14 @@ const TableHeader = styled.div`
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 `;
 
-const TableRowContainer = styled.div<{ $tableRowStyle?: CSSProp }>`
+const TableRowContainer = styled.div<{ $tableRowContainerStyle?: CSSProp }>`
   display: flex;
   flex-direction: column;
   overflow: auto;
   position: relative;
   width: 100%;
 
-  ${({ $tableRowStyle }) => $tableRowStyle}
+  ${({ $tableRowContainerStyle }) => $tableRowContainerStyle}
 `;
 
 const EmptyState = styled.div`

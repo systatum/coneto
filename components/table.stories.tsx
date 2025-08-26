@@ -80,7 +80,7 @@ const meta: Meta<typeof Table> = {
         type: { summary: "string" },
       },
     },
-    tableRowStyle: {
+    tableRowContainerStyle: {
       description: "Class applied to the container holding all table rows.",
       control: "text",
       table: {
@@ -160,7 +160,7 @@ export const Default: Story = {
 
     return (
       <Table
-        tableRowStyle={css`
+        tableRowContainerStyle={css`
           max-height: 400px;
         `}
         columns={columns}
@@ -365,7 +365,7 @@ export const Appendable: Story = {
     return (
       <Table
         selectable
-        tableRowStyle={css`
+        tableRowContainerStyle={css`
           max-height: 400px;
         `}
         columns={columns}
@@ -946,7 +946,7 @@ export const WithRowGroup: Story = {
 
         <Table
           selectable
-          tableRowStyle={css`
+          tableRowContainerStyle={css`
             max-height: 400px;
           `}
           columns={columns}
