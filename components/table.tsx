@@ -601,7 +601,7 @@ const TableRowGroupSticky = styled.div`
   flex-direction: row;
   cursor: pointer;
   padding: 0.75rem;
-  z-index: 100;
+  z-index: 10;
   position: sticky;
   top: 0px;
   align-items: center;
@@ -772,6 +772,7 @@ function TableRow({
             setIsOpen={setIsOpen}
             dropdownStyle={css`
               min-width: 235px;
+              z-index: 50;
             `}
             triggerStyle={css`
               color: black;
