@@ -43,7 +43,7 @@ function Crumb({
   maxShown = 3,
   children,
   style,
-  fontSize,
+  fontSize = 16,
   hoverColor,
   textColor,
   lastTextColor,
@@ -81,6 +81,8 @@ function Crumb({
           const isEllipsis = data === "ellipsis";
           const isLast = index === shownItems.length - 1;
 
+          const iconSize = fontSize * 1.25;
+
           if (isEllipsis) {
             return (
               <CrumbEllipsisListItem
@@ -89,7 +91,7 @@ function Crumb({
                 animate={{ x: 0, opacity: 1 }}
               >
                 <CrumbEllipsisIcon
-                  size={20}
+                  size={iconSize}
                   aria-label="ellipsis"
                   onClick={() => setExpanded(true)}
                   $hoverColor={hoverColor}
@@ -100,7 +102,7 @@ function Crumb({
                   <CrumbArrowIcon
                     as={Icon}
                     $arrowColor={arrowColor}
-                    size={20}
+                    size={iconSize}
                   />
                 )}
               </CrumbEllipsisListItem>
@@ -131,7 +133,7 @@ function Crumb({
                   <CrumbArrowIcon
                     as={Icon}
                     $arrowColor={arrowColor}
-                    size={20}
+                    size={iconSize}
                   />
                 )}
               </CrumbListEllipsisItem>
@@ -148,6 +150,7 @@ function Crumb({
 const CrumbNav = styled.nav`
   display: flex;
   flex-direction: row;
+  align-items: center;
 `;
 
 const CrumbListEllipsisItem = styled(motion.li)`
@@ -192,7 +195,7 @@ function CrumbItem({
   isLast = false,
   style,
   onClick,
-  fontSize,
+  fontSize = 16,
   hoverColor,
   textColor,
   lastTextColor,
