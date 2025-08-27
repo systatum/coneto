@@ -46,7 +46,7 @@ export const Custom: Story = {
 
     return (
       <Crumb
-        fontSize={14}
+        fontSize={16}
         maxShown={4}
         arrowColor="#A78BFA"
         hoverColor="#EC4899"
