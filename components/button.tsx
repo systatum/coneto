@@ -125,6 +125,7 @@ function Button({
           />
 
           <BaseButtonToggle
+            aria-label="button-toggle"
             onClick={() => {
               setIsOpen(!isOpen);
             }}
