@@ -22,6 +22,7 @@ export interface TipMenuItemProps {
 function TipMenu({ children, subMenuList, style, setIsOpen }: TipMenuProps) {
   return (
     <StyledTipMenu
+      aria-label="tip-menu"
       $style={style}
       onClick={() => {
         setIsOpen?.();
@@ -54,7 +55,11 @@ function TipMenuItem({
   const isIconValid = iconUrl && iconUrl !== "";
 
   return (
-    <StyledTipMenuItem $isDangerous={isDangerous} onClick={onClick}>
+    <StyledTipMenuItem
+      aria-label="tip-menu-item"
+      $isDangerous={isDangerous}
+      onClick={onClick}
+    >
       {isIconValid ? (
         <StyledIconImage
           alt={`${caption} icon on the Systatum superapp`}

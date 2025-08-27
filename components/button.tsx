@@ -62,6 +62,7 @@ function Button({
       const target = event.target as Node;
       if (containerRef.current && !containerRef.current.contains(target)) {
         setIsOpen(false);
+        setHovered("original");
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -81,6 +82,8 @@ function Button({
       $disabled={disabled}
       ref={containerRef}
       $style={containerStyle}
+      $isOpen={isOpen}
+      $variant={variant}
     >
       <BaseButton
         onClick={(event) => {
@@ -114,24 +117,20 @@ function Button({
             flexDirection: "row",
           }}
         >
-          <div
+          <Divider
             aria-label="divider"
-            style={{
-              height:
-                hovered === "main" || hovered === "dropdown" ? "100%" : "80%",
-              borderRight: "1px solid black",
-              borderColor: "gray",
-              position: "absolute",
-              transition: "height 100ms ease-in-out",
-              right: "40px",
-            }}
+            $hovered={hovered === "main" || hovered === "dropdown" || isOpen}
+            $variant={variant}
+            $isOpen={isOpen}
           />
 
           <BaseButtonToggle
+            aria-label="button-toggle"
             onClick={() => {
               setIsOpen(!isOpen);
             }}
             $variant={variant}
+            $isOpen={isOpen}
             $size={size}
             $tipMenu={tipMenu}
             $disabled={disabled}
@@ -139,11 +138,7 @@ function Button({
             onMouseLeave={() => setHovered("original")}
             $style={toggleStyle}
           >
-            {isOpen ? (
-              <OpenedIcon size={20} style={{ color: "#aaa" }} />
-            ) : (
-              <ClosedIcon size={20} style={{ color: "#aaa" }} />
-            )}
+            {isOpen ? <OpenedIcon size={20} /> : <ClosedIcon size={20} />}
           </BaseButtonToggle>
         </div>
       )}
@@ -151,10 +146,6 @@ function Button({
       {isOpen && (
         <div
           onMouseEnter={() => setHovered("dropdown")}
-          onMouseLeave={() => {
-            setHovered("original");
-            setIsOpen(false);
-          }}
           style={{
             position: "absolute",
             top: "100%",
@@ -178,7 +169,12 @@ function Button({
   );
 }
 
-const ButtonWrapper = styled.div<{ $style?: CSSProp; $disabled?: boolean }>`
+const ButtonWrapper = styled.div<{
+  $style?: CSSProp;
+  $disabled?: boolean;
+  $isOpen?: boolean;
+  $variant?: ButtonVariants["variant"];
+}>`
   display: flex;
   position: relative;
   align-items: center;
@@ -191,6 +187,18 @@ const ButtonWrapper = styled.div<{ $style?: CSSProp; $disabled?: boolean }>`
       : css`
           cursor: pointer;
         `}
+
+  ${({ $isOpen, $variant }) => {
+    const { border } = getButtonColors($variant, $isOpen);
+    return (
+      $variant === "outline" &&
+      css`
+        border: ${border};
+        border-radius: 2px;
+      `
+    );
+  }}
+
   ${({ $style }) =>
     $style
       ? $style
@@ -206,6 +214,7 @@ const BaseButton = styled.button<{
   $disabled?: boolean;
   $variant: NonNullable<ButtonVariants["variant"]>;
   $size: NonNullable<ButtonVariants["size"]>;
+  $isOpen?: boolean;
 }>`
   display: flex;
   flex-direction: row;
@@ -250,75 +259,28 @@ const BaseButton = styled.button<{
     }
   }}
 
-  ${({ $variant }) => {
-    switch ($variant) {
-      case "primary":
-        return css`
-          background-color: #569aec;
-          color: white;
+  ${({ $variant, $isOpen }) => {
+    const { bg, color, underline } = getButtonColors($variant, $isOpen);
+    return css`
+      background-color: ${bg};
+      color: ${color};
 
-          &:hover {
-            background-color: #3e7dd3;
-          }
-        `;
-      case "danger":
-        return css`
-          background-color: #ce375d;
-          color: white;
+      ${underline
+        ? css`
+            text-decoration: underline;
+          `
+        : ""}
 
-          &:hover {
-            background-color: #a02a48;
-          }
-        `;
-      case "outline":
-        return css`
-          background-color: white;
-          color: black;
-          border: 1px solid #ccc;
-
-          &:hover {
-            background-color: #f0f0f0;
-          }
-        `;
-      case "secondary":
-        return css`
-          background-color: #dddddd;
-          color: #111;
-
-          &:hover {
-            background-color: #cccccc;
-          }
-        `;
-      case "ghost":
-        return css`
-          background-color: transparent;
-          color: #111;
-
-          &:hover {
-            background-color: #f3f3f3;
-          }
-        `;
-      case "link":
-        return css`
-          background-color: transparent;
-          color: #408ee8;
-          text-decoration: underline;
-
-          &:hover {
-            color: #2a73c3;
-          }
-        `;
-      default:
-        return css`
-          background-color: #f3f3f3;
-          color: black;
-
-          &:hover {
-            background-color: #e2e2e2;
-          }
-        `;
-    }
+      &:hover {
+        ${!$isOpen &&
+        css`
+          background-color: ${getHoverColor($variant)};
+        `}
+      }
+    `;
   }}
+
+
 
   ${({ $style }) =>
     $style &&
@@ -336,13 +298,88 @@ const BaseButton = styled.button<{
 
 const BaseButtonToggle = styled(BaseButton)<{
   $style?: CSSProp;
+  $isOpen?: boolean;
 }>`
   min-width: 40px;
   max-width: 40px;
   padding: 0;
+
   border-top-left-radius: ${({ $tipMenu }) => ($tipMenu ? 0 : "2px")};
   border-bottom-left-radius: ${({ $tipMenu }) => ($tipMenu ? 0 : "2px")};
+
   ${({ $style }) => $style}
 `;
+
+const Divider = styled.div<{
+  $hovered?: boolean;
+  $variant: ButtonVariants["variant"];
+  $isOpen?: boolean;
+}>`
+  height: ${({ $hovered }) => ($hovered ? "100%" : "80%")};
+  border-right: 1px solid;
+  position: absolute;
+  transition: height 100ms ease-in-out;
+  right: 40px;
+
+  ${({ $variant, $isOpen }) => {
+    const { color } = getButtonColors($variant, $isOpen);
+    return css`
+      border-color: ${$variant === "default" ||
+      $variant === "ghost" ||
+      $variant === "outline"
+        ? "gray"
+        : color};
+    `;
+  }}
+`;
+
+const getButtonColors = (
+  variant: ButtonVariants["variant"],
+  isOpen?: boolean
+) => {
+  switch (variant) {
+    case "primary":
+      return { bg: isOpen ? "#3e7dd3" : "#569aec", color: "white" };
+    case "danger":
+      return { bg: isOpen ? "#a02a48" : "#ce375d", color: "white" };
+    case "outline":
+      return {
+        bg: isOpen ? "#f0f0f0" : "white",
+        color: "black",
+        border: "1px solid #ccc",
+      };
+    case "secondary":
+      return { bg: isOpen ? "#cccccc" : "#dddddd", color: "#111" };
+    case "ghost":
+      return { bg: isOpen ? "#f3f3f3" : "transparent", color: "#111" };
+    case "link":
+      return {
+        bg: isOpen ? "#e6f0ff" : "transparent",
+        color: "#408ee8",
+        underline: true,
+      };
+    default:
+      return { bg: isOpen ? "#e2e2e2" : "#f3f3f3", color: "black" };
+  }
+};
+
+const getHoverColor = (variant: string) => {
+  switch (variant) {
+    case "primary":
+      return "#3e7dd3";
+    case "danger":
+      return "#a02a48";
+    case "outline":
+      return "#f0f0f0";
+    case "secondary":
+      return "#cccccc";
+    case "ghost":
+      return "#f3f3f3";
+    case "link":
+      return "#2a73c3";
+    default:
+      return "#e2e2e2";
+  }
+};
 
 export { Button };
