@@ -10,4 +10,13 @@ export default defineConfig({
     supportFile: "test/support/e2e.ts",
     fixturesFolder: "test/fixtures",
   },
+  component: {
+    devServer: {
+      framework: "react",
+      bundler: "vite",
+    },
+    specPattern: "test/component/**/*.cy.{ts,tsx}",
+    indexHtmlFile: "test/support/component-index.html",
+    supportFile: "test/support/component.tsx",
+  },
 });
