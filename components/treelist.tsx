@@ -24,7 +24,7 @@ export interface TreeListActionsProps {
 }
 
 export interface TreeListItemsProps {
-  id: number;
+  id: number | string;
   title: string;
   onClick?: (item?: TreeListItemsProps) => void;
   setIsSelected?: (item?: string) => void;

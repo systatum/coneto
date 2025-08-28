@@ -11,7 +11,7 @@ export interface DrawerTabProps {
 }
 
 export interface DrawerTabContentProps {
-  id: number;
+  id: string | number;
   title: string;
   icon: RemixiconComponentType;
   content: ReactNode;
@@ -24,7 +24,7 @@ function DrawerTab({
   position = "right",
 }: DrawerTabProps) {
   const [isDrawerTab, setIsDrawerTab] = useState(false);
-  const [selected, setSelected] = useState<number | null>(null);
+  const [selected, setSelected] = useState<string | number | null>(null);
 
   const controls = useAnimation();
   const isLeft = position === "left";

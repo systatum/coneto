@@ -8,7 +8,7 @@ export interface SteplineItemState {
   containerStyle?: CSSProp;
   active?: boolean;
   onClick?: () => void;
-  id?: number;
+  id?: number | string;
 }
 
 export const OUTER_CIRCLE_VARIANT_COLOR: Record<string, string> = {
