@@ -1,4 +1,5 @@
 import {
+  ChangeEvent,
   Children,
   cloneElement,
   createContext,
@@ -24,6 +25,7 @@ import {
 } from "@remixicon/react";
 import { AnimatePresence, motion } from "framer-motion";
 import styled, { css, CSSProp } from "styled-components";
+import { Searchbox } from "./searchbox";
 
 export type RowData = (string | ReactNode)[];
 
@@ -43,6 +45,10 @@ export interface TableActionsProps {
 
 export interface TableProps {
   selectable?: boolean;
+  searchable?: boolean;
+  onSearchboxChange?: (
+    e?: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
   actions?: TableActionsProps[];
   columns: ColumnTableProps[];
   onItemsSelected?: (data: string[]) => void;
@@ -115,6 +121,8 @@ function Table({
   onPreviousPageRequested,
   pageNumberText = 1,
   totalSelectedItemText,
+  searchable,
+  onSearchboxChange,
 }: TableProps) {
   const [selectedData, setSelectedData] = useState<string[]>([]);
   const [allRowsLocal, setAllRowsLocal] = useState<string[]>([]);
@@ -200,7 +208,10 @@ function Table({
   return (
     <TableColumnContext.Provider value={columns}>
       <Wrapper $containerStyle={containerStyle}>
-        {(selectedData.length > 0 || showPagination || actions) && (
+        {(selectedData.length > 0 ||
+          showPagination ||
+          actions ||
+          searchable) && (
           <HeaderActions>
             {(actions || showPagination) && (
               <ActionsWrapper>
@@ -240,6 +251,32 @@ function Table({
                     </ActionButton>
                   ))}
               </ActionsWrapper>
+            )}
+            {searchable && (
+              <Searchbox
+                containerStyle={css`
+                  ${actions &&
+                  css`
+                    margin-left: 40px;
+                  `}
+                  ${(showPagination || selectable) &&
+                  css`
+                    margin-right: 40px;
+                  `}
+                    max-height: 33px;
+                `}
+                style={css`
+                  background-color: transparent;
+                  &:hover {
+                    border-color: #61a9f9;
+                    background-color: white;
+                  }
+                `}
+                name="search"
+                onChange={(e) => {
+                  if (searchable) onSearchboxChange?.(e);
+                }}
+              />
             )}
             {(selectable || showPagination) && (
               <PaginationInfo>
@@ -437,6 +474,7 @@ const PaginationInfo = styled.div`
   flex-direction: row;
   gap: 0.5rem;
   align-items: center;
+  min-width: 140px;
 `;
 
 const Divider = styled.div`

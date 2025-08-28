@@ -5,13 +5,14 @@ import {
   InputHTMLAttributes,
   useEffect,
   useRef,
+  useState,
 } from "react";
 import styled, { CSSProp } from "styled-components";
 
 export interface SearchboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {
   name: string;
-  value: string;
+  value?: string;
   style?: CSSProp;
   containerStyle?: CSSProp;
   onChange: (data: ChangeEvent<HTMLInputElement>) => void;
@@ -19,17 +20,24 @@ export interface SearchboxProps
 
 const Searchbox = forwardRef<HTMLInputElement, SearchboxProps>(
   ({ name, value, onChange, style, containerStyle, ...props }, ref) => {
+    const searchboxValue = value ? value : "";
+    const [inputValueLocal, setInputValueLocal] = useState(searchboxValue);
+
     const inputId = `textbox-${name}`;
     const inputRef = useRef<HTMLInputElement>(null);
 
-    const valueLengthChecker = value.length > 0;
+    const valueLengthChecker = inputValueLocal.length > 0;
 
     useEffect(() => {
       inputRef.current?.focus();
     }, []);
 
     return (
-      <SearchboxWrapper ref={ref} $style={containerStyle}>
+      <SearchboxWrapper
+        aria-label="textbox-search-wrapper"
+        ref={ref}
+        $style={containerStyle}
+      >
         <SearchIcon size={14} />
 
         <SearchboxInput
@@ -37,8 +45,11 @@ const Searchbox = forwardRef<HTMLInputElement, SearchboxProps>(
           id={inputId}
           aria-label="textbox-search"
           name={name}
-          value={value}
-          onChange={onChange}
+          value={inputValueLocal}
+          onChange={(e) => {
+            setInputValueLocal(e.target.value);
+            onChange(e);
+          }}
           $style={style}
           {...(props as InputHTMLAttributes<HTMLInputElement>)}
         />
@@ -55,6 +66,7 @@ const Searchbox = forwardRef<HTMLInputElement, SearchboxProps>(
                   value: "",
                 },
               } as ChangeEvent<HTMLInputElement>;
+              setInputValueLocal("");
               onChange(event);
             }}
           />
