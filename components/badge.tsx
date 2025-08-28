@@ -5,7 +5,7 @@ import { strToColor } from "./../lib/code-color";
 export type BadgeVariantProps = null | "neutral" | "green" | "yellow" | "red";
 
 export interface BadgeProps {
-  id?: string;
+  id?: number;
   variant?: BadgeVariantProps;
   withCircle?: boolean;
   caption?: string;
