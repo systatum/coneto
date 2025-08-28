@@ -7,7 +7,8 @@ import styled, { CSSProp } from "styled-components";
 
 interface SidebarProps {
   children?: ReactNode;
-  style?: CSSProp;
+  mobileStyle?: CSSProp;
+  desktopStyle?: CSSProp;
   position?: "left" | "right";
 }
 
@@ -17,7 +18,12 @@ interface SidebarItemProps {
   children?: ReactNode;
 }
 
-function Sidebar({ children, style, position = "left" }: SidebarProps) {
+function Sidebar({
+  children,
+  mobileStyle,
+  desktopStyle,
+  position = "left",
+}: SidebarProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(true);
   const controls = useAnimation();
@@ -80,7 +86,7 @@ function Sidebar({ children, style, position = "left" }: SidebarProps) {
         initial={{ x: position === "left" ? "-100%" : "+100%" }}
         animate={isMobile ? controls : { x: 0 }}
         $position={position}
-        $style={style}
+        $style={mobileStyle}
       >
         {children}
       </MotionSidebar>
@@ -95,7 +101,7 @@ function Sidebar({ children, style, position = "left" }: SidebarProps) {
         </ToggleButton>
       )}
 
-      <DesktopSidebar $position={position} $style={style}>
+      <DesktopSidebar $position={position} $style={desktopStyle}>
         {children}
       </DesktopSidebar>
     </>
@@ -224,12 +230,33 @@ const StyledSidebarItem = styled.div<{
   ${({ $style }) => $style}
 `;
 
-const SidebarSpacer = styled.div`
-  display: none;
+interface SidebarSpacerProps {
+  mobileWidth?: number;
+  desktopWidth?: number;
+}
+
+function SidebarSpacer({ desktopWidth, mobileWidth }: SidebarSpacerProps) {
+  return (
+    <StyledSidebarSpacer
+      $desktopWidth={desktopWidth}
+      $mobileWidth={mobileWidth}
+    />
+  );
+}
+
+const StyledSidebarSpacer = styled.div<{
+  $mobileWidth?: number;
+  $desktopWidth?: number;
+}>`
+  display: flex;
+  background-color: transparent;
+  min-width: ${({ $mobileWidth }) =>
+    $mobileWidth ? `${$mobileWidth}px` : "30px"};
 
   @media (min-width: 768px) {
     display: block;
-    min-width: 300px;
+    min-width: ${({ $desktopWidth }) =>
+      $desktopWidth ? `${$desktopWidth}px` : "300px"};
   }
 `;
 
