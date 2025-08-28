@@ -15,9 +15,10 @@ interface WindowProps {
   orientation?: "horizontal" | "vertical";
   children?: ReactNode;
   style?: CSSProp;
+  onDraggingChange?: (dragging: boolean) => void;
 }
 
-interface WindowCellProps {
+export interface WindowCellProps {
   children?: ReactNode;
   style?: CSSProp;
   actions?: WindowActionProps[];
@@ -29,13 +30,19 @@ export interface WindowActionProps {
   style?: string;
 }
 
-function Window({ orientation = "vertical", children, style }: WindowProps) {
+function Window({
+  orientation = "vertical",
+  children,
+  style,
+  onDraggingChange,
+}: WindowProps) {
   const isVertical = orientation === "vertical";
   const childrenArray = Children.toArray(children).filter(isValidElement);
   const sizeState = new Array(childrenArray.length).fill(
     1 / childrenArray.length
   );
   const [sizes, setSizes] = useState<number[]>(sizeState);
+  const [isDragging, setIsDragging] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const draggingIndex = useRef<number | null>(null);
@@ -91,16 +98,25 @@ function Window({ orientation = "vertical", children, style }: WindowProps) {
   const stopDrag = useCallback(() => {
     draggingIndex.current = null;
     startSizes.current = [];
+    setIsDragging(false);
+    if (onDraggingChange) {
+      onDraggingChange(false);
+    }
     document.removeEventListener("mousemove", onMouseMove);
     document.removeEventListener("mouseup", stopDrag);
   }, [onMouseMove]);
 
   const startDrag = useCallback(
     (index: number) => (e: MouseEvent) => {
-      e.preventDefault();
+      const target = e.target as HTMLElement;
+      if (!target.classList.contains("divider")) return;
 
       draggingIndex.current = index;
+      if (onDraggingChange) {
+        onDraggingChange(true);
+      }
       startSizes.current = [...sizes];
+      setIsDragging(true);
 
       const rect = containerRef.current?.getBoundingClientRect();
       if (!rect) return;
@@ -126,10 +142,16 @@ function Window({ orientation = "vertical", children, style }: WindowProps) {
   return (
     <Container ref={containerRef} $isVertical={isVertical} $style={style}>
       {childrenArray.map((child, index) => (
-        <CellWrapper key={index} $size={sizes[index]} $isVertical={isVertical}>
+        <CellWrapper
+          key={index}
+          $size={sizes[index]}
+          $isDragging={isDragging}
+          $isVertical={isVertical}
+        >
           {child}
           {index < childrenArray.length - 1 && (
             <Divider
+              className="divider"
               aria-label={`window-divider`}
               onMouseDown={startDrag(index)}
               $isVertical={isVertical}
@@ -183,18 +205,22 @@ const Container = styled.div.withConfig({
 
 const CellWrapper = styled.div.withConfig({
   shouldForwardProp: (prop) =>
-    !["$size", "$isVertical", "$style"].includes(prop),
+    !["$size", "$isVertical", "$style", "$isDragging"].includes(prop),
 })<{
   $size: number;
   $isVertical: boolean;
   $style?: CSSProp;
+  $isDragging?: boolean;
 }>`
   position: relative;
   width: ${({ $isVertical, $size }) =>
     $isVertical ? `${$size * 100}%` : "100%"};
   height: ${({ $isVertical, $size }) =>
     !$isVertical ? `${$size * 100}%` : "100%"};
-  ${({ $style }) => $style}
+  ${({ $style }) => $style};
+  -webkit-overflow-scrolling: "touch";
+  pointer-events: ${({ $isDragging }) => ($isDragging ? "none" : "auto")};
+  user-select: ${({ $isDragging }) => ($isDragging ? "none" : "auto")};
 `;
 
 const Divider = styled.div.withConfig({
@@ -250,4 +276,5 @@ const ActionButton = styled.div<{ $style?: CSSProp }>`
 `;
 
 Window.Cell = WindowCell;
+
 export { Window };
