@@ -231,8 +231,8 @@ const StyledSidebarItem = styled.div<{
 `;
 
 interface SidebarSpacerProps {
-  mobileWidth?: number;
-  desktopWidth?: number;
+  mobileWidth?: string;
+  desktopWidth?: string;
 }
 
 function SidebarSpacer({ desktopWidth, mobileWidth }: SidebarSpacerProps) {
@@ -245,18 +245,18 @@ function SidebarSpacer({ desktopWidth, mobileWidth }: SidebarSpacerProps) {
 }
 
 const StyledSidebarSpacer = styled.div<{
-  $mobileWidth?: number;
-  $desktopWidth?: number;
+  $mobileWidth?: string;
+  $desktopWidth?: string;
 }>`
   display: flex;
   background-color: transparent;
   min-width: ${({ $mobileWidth }) =>
-    $mobileWidth ? `${$mobileWidth}px` : "30px"};
+    $mobileWidth ? `${$mobileWidth}` : "30px"};
 
   @media (min-width: 768px) {
     display: block;
     min-width: ${({ $desktopWidth }) =>
-      $desktopWidth ? `${$desktopWidth}px` : "300px"};
+      $desktopWidth ? `${$desktopWidth}` : "300px"};
   }
 `;
 
