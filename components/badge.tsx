@@ -5,7 +5,7 @@ import { strToColor } from "./../lib/code-color";
 export type BadgeVariantProps = null | "neutral" | "green" | "yellow" | "red";
 
 export interface BadgeProps {
-  id?: number;
+  id?: string;
   variant?: BadgeVariantProps;
   withCircle?: boolean;
   caption?: string;
@@ -79,6 +79,7 @@ function Badge({
   circleColor,
   onClick,
   badgeStyle,
+  id,
 }: BadgeProps) {
   const { bg: backgroundColorVariant, color: colorVariant } =
     VARIANTS_BADGE[variant];
@@ -110,6 +111,7 @@ function Badge({
 
   return (
     <BadgeWrapper
+      id={String(id)}
       onClick={onClick}
       $backgroundColor={badgeBackgroundColor}
       $textColor={badgeTextColor}
