@@ -262,10 +262,15 @@ function Table({
                   ${(showPagination || selectable) &&
                   css`
                     margin-right: 40px;
+                    max-height: 33px;
                   `}
                 `}
                 style={css`
-                  background-color: #fbfbfb;
+                  background-color: transparent;
+                  &:hover {
+                    border-color: #61a9f9;
+                    background-color: white;
+                  }
                 `}
                 name="search"
                 onChange={(e) => {
