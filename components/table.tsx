@@ -1,4 +1,5 @@
 import {
+  ChangeEvent,
   Children,
   cloneElement,
   createContext,
@@ -24,6 +25,7 @@ import {
 } from "@remixicon/react";
 import { AnimatePresence, motion } from "framer-motion";
 import styled, { css, CSSProp } from "styled-components";
+import { Searchbox } from "./searchbox";
 
 export type RowData = (string | ReactNode)[];
 
@@ -43,6 +45,10 @@ export interface TableActionsProps {
 
 export interface TableProps {
   selectable?: boolean;
+  searchable?: boolean;
+  onSearchboxChange?: (
+    e?: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
   actions?: TableActionsProps[];
   columns: ColumnTableProps[];
   onItemsSelected?: (data: string[]) => void;
@@ -115,6 +121,8 @@ function Table({
   onPreviousPageRequested,
   pageNumberText = 1,
   totalSelectedItemText,
+  searchable,
+  onSearchboxChange,
 }: TableProps) {
   const [selectedData, setSelectedData] = useState<string[]>([]);
   const [allRowsLocal, setAllRowsLocal] = useState<string[]>([]);
@@ -240,6 +248,17 @@ function Table({
                     </ActionButton>
                   ))}
               </ActionsWrapper>
+            )}
+            {searchable && (
+              <Searchbox
+                containerStyle={css`
+                  max-width: 200px;
+                `}
+                name="search"
+                onChange={(e) => {
+                  if (searchable) onSearchboxChange?.(e);
+                }}
+              />
             )}
             {(selectable || showPagination) && (
               <PaginationInfo>

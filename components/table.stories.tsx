@@ -953,6 +953,8 @@ export const WithRowGroup: Story = {
           onItemsSelected={handleItemsSelected}
           subMenuList={TIP_MENU_ACTION}
           actions={TOP_ACTIONS}
+          onSearchboxChange={(e) => console.log(e.target.value)}
+          searchable
         >
           {rows?.map((groupValue, groupIndex) => (
             <Table.Row.Group
