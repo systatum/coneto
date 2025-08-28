@@ -33,7 +33,11 @@ const Searchbox = forwardRef<HTMLInputElement, SearchboxProps>(
     }, []);
 
     return (
-      <SearchboxWrapper ref={ref} $style={containerStyle}>
+      <SearchboxWrapper
+        aria-label="textbox-search-wrapper"
+        ref={ref}
+        $style={containerStyle}
+      >
         <SearchIcon size={14} />
 
         <SearchboxInput
