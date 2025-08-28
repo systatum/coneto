@@ -11,7 +11,7 @@ export interface NavTabProps {
 }
 
 export interface NavTabContentProps {
-  id: number;
+  id: number | string;
   title: string;
   content: ReactNode;
 }
@@ -23,7 +23,7 @@ function NavTab({
   tabs = [],
   activeColor = "rgb(59, 130, 246)",
 }: NavTabProps) {
-  const [selected, setSelected] = useState<number>(activeTab);
+  const [selected, setSelected] = useState<number | string>(activeTab);
 
   const tabRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [tabSizes, setTabSizes] = useState<{ width: number; left: number }[]>(
