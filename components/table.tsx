@@ -262,8 +262,8 @@ function Table({
                   ${(showPagination || selectable) &&
                   css`
                     margin-right: 40px;
-                    max-height: 33px;
                   `}
+                    max-height: 33px;
                 `}
                 style={css`
                   background-color: transparent;
