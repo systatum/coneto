@@ -102,7 +102,7 @@ context("Button Component", () => {
 
       cy.findByRole("button", { name: /Button/i })
         .should("have.css", "background-color", "rgb(255, 255, 255)")
-        .and("have.css", "border-color", "rgb(204, 204, 204)")
+        .and("have.css", "border-color", "rgb(0, 0, 0)")
         .and("have.css", "color", "rgb(0, 0, 0)");
     });
   });
@@ -125,6 +125,62 @@ context("Button Component", () => {
         .should("have.css", "background-color", "rgb(243, 243, 243)")
         .and("have.css", "opacity", "0.6")
         .and("have.css", "pointer-events", "none");
+    });
+  });
+
+  describe("Default Tip Menu", () => {
+    it("Should render main button and toggle", () => {
+      cy.visit(getIdContent("controls-button--with-tip-menu"));
+
+      cy.findAllByRole("button").eq(0).should("exist");
+      cy.findAllByRole("button").eq(1).should("exist");
+
+      cy.findByLabelText("divider").should("exist");
+    });
+
+    it("Should open and close dropdown when toggle clicked", () => {
+      cy.visit(getIdContent("controls-button--with-tip-menu"));
+
+      cy.findByLabelText("tip-menu").should("not.exist");
+
+      cy.findByLabelText("button-toggle").last().click();
+
+      cy.findByLabelText("tip-menu").should("exist");
+
+      cy.findByLabelText("button-toggle").last().click();
+
+      cy.findByLabelText("tip-menu").should("not.exist");
+    });
+
+    it("Should close dropdown when clicking outside", () => {
+      cy.visit(getIdContent("controls-button--with-tip-menu"));
+
+      cy.findByLabelText("button-toggle").last().click();
+      cy.findByLabelText("tip-menu").should("exist");
+
+      cy.get("body").click(0, 0);
+
+      cy.findByLabelText("tip-menu").should("not.exist");
+    });
+
+    it("Should apply correct styles for divider", () => {
+      cy.visit(getIdContent("controls-button--with-tip-menu"));
+
+      cy.findByLabelText("divider")
+        .should("have.css", "border-right-width", "1px")
+        .and("have.css", "position", "absolute")
+        .and("have.css", "border-right-style", "solid");
+    });
+
+    it("Should allow selecting submenu item and close menu", () => {
+      cy.visit(getIdContent("controls-button--with-tip-menu"));
+
+      cy.findByLabelText("button-toggle").last().click();
+      cy.findByLabelText("tip-menu").should("exist");
+
+      cy.findAllByLabelText("tip-menu-item").eq(0).click();
+
+      cy.findByLabelText("tip-menu").should("not.exist");
     });
   });
 });

@@ -80,7 +80,7 @@ const meta: Meta<typeof Table> = {
         type: { summary: "string" },
       },
     },
-    tableRowStyle: {
+    tableRowContainerStyle: {
       description: "Class applied to the container holding all table rows.",
       control: "text",
       table: {
@@ -160,7 +160,7 @@ export const Default: Story = {
 
     return (
       <Table
-        tableRowStyle={css`
+        tableRowContainerStyle={css`
           max-height: 400px;
         `}
         columns={columns}
@@ -365,7 +365,7 @@ export const Appendable: Story = {
     return (
       <Table
         selectable
-        tableRowStyle={css`
+        tableRowContainerStyle={css`
           max-height: 400px;
         `}
         columns={columns}
@@ -825,6 +825,7 @@ export const WithRowGroup: Story = {
     ];
 
     const [rows, setRows] = useState(TABLE_ITEMS);
+    const [search, setSearch] = useState("");
 
     const columns: ColumnTableProps[] = [
       {
@@ -928,6 +929,22 @@ export const WithRowGroup: Story = {
       ];
     };
 
+    const filteredRows = rows
+      .map((data) => {
+        const filteredItems = data.items.filter(
+          (item) =>
+            item.title.toLowerCase().includes(search.toLowerCase()) ||
+            item.category.toLowerCase().includes(search.toLowerCase()) ||
+            item.author.toLowerCase().includes(search.toLowerCase())
+        );
+
+        return {
+          ...data,
+          items: filteredItems,
+        };
+      })
+      .filter((group) => group.items.length > 0);
+
     const handleItemsSelected = (data: string[]) => {
       console.log("Selected rows:", data);
     };
@@ -946,15 +963,17 @@ export const WithRowGroup: Story = {
 
         <Table
           selectable
-          tableRowStyle={css`
+          tableRowContainerStyle={css`
             max-height: 400px;
           `}
           columns={columns}
           onItemsSelected={handleItemsSelected}
           subMenuList={TIP_MENU_ACTION}
           actions={TOP_ACTIONS}
+          onSearchboxChange={(e) => setSearch(e.target.value)}
+          searchable
         >
-          {rows?.map((groupValue, groupIndex) => (
+          {filteredRows?.map((groupValue, groupIndex) => (
             <Table.Row.Group
               key={groupIndex}
               title={groupValue.title}

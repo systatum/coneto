@@ -1,4 +1,5 @@
 import {
+  ChangeEvent,
   Children,
   cloneElement,
   createContext,
@@ -19,10 +20,12 @@ import {
   RiArrowDownSLine,
   RiArrowLeftSLine,
   RiArrowRightSLine,
+  RiArrowUpDownLine,
   RiMoreFill,
 } from "@remixicon/react";
 import { AnimatePresence, motion } from "framer-motion";
 import styled, { css, CSSProp } from "styled-components";
+import { Searchbox } from "./searchbox";
 
 export type RowData = (string | ReactNode)[];
 
@@ -42,13 +45,17 @@ export interface TableActionsProps {
 
 export interface TableProps {
   selectable?: boolean;
+  searchable?: boolean;
+  onSearchboxChange?: (
+    e?: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
   actions?: TableActionsProps[];
   columns: ColumnTableProps[];
   onItemsSelected?: (data: string[]) => void;
   children: ReactNode;
   isLoading?: boolean;
   containerStyle?: CSSProp;
-  tableRowStyle?: CSSProp;
+  tableRowContainerStyle?: CSSProp;
   isOpen?: boolean;
   setIsOpen?: () => void;
   subMenuList?: (columnCaption: string) => TipMenuItemProps[];
@@ -100,7 +107,7 @@ function Table({
   children,
   isLoading,
   containerStyle,
-  tableRowStyle,
+  tableRowContainerStyle,
   isOpen,
   setIsOpen,
   subMenuList,
@@ -114,6 +121,8 @@ function Table({
   onPreviousPageRequested,
   pageNumberText = 1,
   totalSelectedItemText,
+  searchable,
+  onSearchboxChange,
 }: TableProps) {
   const [selectedData, setSelectedData] = useState<string[]>([]);
   const [allRowsLocal, setAllRowsLocal] = useState<string[]>([]);
@@ -199,7 +208,10 @@ function Table({
   return (
     <TableColumnContext.Provider value={columns}>
       <Wrapper $containerStyle={containerStyle}>
-        {(selectedData.length > 0 || showPagination || actions) && (
+        {(selectedData.length > 0 ||
+          showPagination ||
+          actions ||
+          searchable) && (
           <HeaderActions>
             {(actions || showPagination) && (
               <ActionsWrapper>
@@ -239,6 +251,32 @@ function Table({
                     </ActionButton>
                   ))}
               </ActionsWrapper>
+            )}
+            {searchable && (
+              <Searchbox
+                containerStyle={css`
+                  ${actions &&
+                  css`
+                    margin-left: 40px;
+                  `}
+                  ${(showPagination || selectable) &&
+                  css`
+                    margin-right: 40px;
+                  `}
+                    max-height: 33px;
+                `}
+                style={css`
+                  background-color: transparent;
+                  &:hover {
+                    border-color: #61a9f9;
+                    background-color: white;
+                  }
+                `}
+                name="search"
+                onChange={(e) => {
+                  if (searchable) onSearchboxChange?.(e);
+                }}
+              />
             )}
             {(selectable || showPagination) && (
               <PaginationInfo>
@@ -308,20 +346,21 @@ function Table({
                     `}
                   >
                     <Toolbar.Menu
-                      closedIcon={RiMoreFill}
-                      openedIcon={RiMoreFill}
+                      closedIcon={RiArrowUpDownLine}
+                      openedIcon={RiArrowUpDownLine}
                       isOpen={isOpen}
                       setIsOpen={setIsOpen}
                       dropdownStyle={css`
                         min-width: 235px;
                       `}
                       triggerStyle={css`
+                        color: black;
                         &:hover {
-                          background-color: #002e54;
+                          background-color: #d4d4d4;
                         }
                       `}
                       toggleActiveStyle={css`
-                        background-color: #002e54;
+                        background-color: #d4d4d4;
                       `}
                       variant="none"
                       subMenuList={subMenuList(`${col.caption}`)}
@@ -331,10 +370,11 @@ function Table({
               </TableRowCell>
             ))}
           </TableHeader>
+
           {rowChildren.length > 0 ? (
             <TableRowContainer
               aria-label="table-scroll-container"
-              $tableRowStyle={tableRowStyle}
+              $tableRowContainerStyle={tableRowContainerStyle}
             >
               {rowChildren}
             </TableRowContainer>
@@ -369,8 +409,8 @@ const HeaderActions = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 0.5rem 14px;
-  color: white;
-  background-color: #4b5563;
+  color: #343434;
+  background: linear-gradient(to bottom, #fbf9f9, #f0f0f0);
   border-bottom: 0.5px solid #e5e7eb;
 `;
 
@@ -388,19 +428,19 @@ const ActionButton = styled.button<{
   gap: 0.25rem;
   align-items: center;
   cursor: pointer;
-  border: 1px solid #6b7280;
-  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
   padding: 0.25rem 0.5rem;
   background-color: transparent;
   color: inherit;
 
   &:hover {
-    background-color: #5c626a;
+    background-color: #e2e0e0;
   }
 
   &:disabled {
-    background-color: #4b5563;
-    opacity: 0.6;
+    background-color: #e8e5e5;
+    opacity: 0.5;
     cursor: not-allowed;
   }
 
@@ -412,19 +452,19 @@ const PaginationButton = styled.button`
   gap: 0.25rem;
   align-items: center;
   cursor: pointer;
-  border: 1px solid #6b7280;
+  border: 1px solid #e5e7eb;
   border-radius: 9999px;
   padding: 0.25rem;
   background-color: transparent;
   color: inherit;
 
   &:hover {
-    background-color: #5c626a;
+    background-color: #e2e0e0;
   }
 
   &:disabled {
-    background-color: #4b5563;
-    opacity: 0.6;
+    background-color: #e8e5e5;
+    opacity: 0.5;
     cursor: not-allowed;
   }
 `;
@@ -434,6 +474,7 @@ const PaginationInfo = styled.div`
   flex-direction: row;
   gap: 0.5rem;
   align-items: center;
+  min-width: 140px;
 `;
 
 const Divider = styled.div`
@@ -457,20 +498,23 @@ const TableHeader = styled.div`
   display: flex;
   flex-direction: row;
   padding: 0.75rem;
-  background-color: #0f3969;
+  background: linear-gradient(to bottom, #f0f0f0, #e4e4e4);
   align-items: center;
   font-weight: 600;
-  color: white;
+  color: #343434;
+  border-bottom-width: 1px;
+  border-color: #d1d5db;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 `;
 
-const TableRowContainer = styled.div<{ $tableRowStyle?: CSSProp }>`
+const TableRowContainer = styled.div<{ $tableRowContainerStyle?: CSSProp }>`
   display: flex;
   flex-direction: column;
   overflow: auto;
   position: relative;
   width: 100%;
 
-  ${({ $tableRowStyle }) => $tableRowStyle}
+  ${({ $tableRowContainerStyle }) => $tableRowContainerStyle}
 `;
 
 const EmptyState = styled.div`
@@ -536,11 +580,7 @@ function TableRowGroup({
 
   return (
     <TableRowGroupContainer>
-      <TableRowGroupSticky
-        onClick={() => {
-          setIsOpen(!isOpen);
-        }}
-      >
+      <TableRowGroupSticky onClick={() => setIsOpen(!isOpen)}>
         <RotatingIcon $isOpen={isOpen}>
           <RiArrowDownSLine />
         </RotatingIcon>
@@ -563,6 +603,7 @@ function TableRowGroup({
           )}
         </div>
       </TableRowGroupSticky>
+
       <AnimatePresence initial={false}>
         {isOpen && (
           <motion.div
@@ -590,6 +631,7 @@ const TableRowGroupContainer = styled.div`
   position: relative;
   width: 100%;
   height: 100%;
+  overflow-y: visible;
 `;
 
 const TableRowGroupSticky = styled.div`
@@ -599,15 +641,20 @@ const TableRowGroupSticky = styled.div`
   padding: 0.75rem;
   z-index: 10;
   position: sticky;
-  top: 0;
+  top: 0px;
   align-items: center;
   width: 100%;
-  border-left: 1px solid #e5e7eb;
-  border-right: 1px solid #e5e7eb;
-  border-top: 1px solid #e5e7eb;
-  border-bottom: 1px solid #e5e7eb;
-  background-color: #f3f4f6;
+  border: 1px solid #e5e7eb;
   gap: 1rem;
+  background-color: #f3f4f6;
+
+  will-change: transform;
+  backface-visibility: hidden;
+  isolation: isolate;
+  transform: translateZ(0);
+  contain: layout style paint;
+  -webkit-transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
 `;
 
 const RotatingIcon = styled.span<{ $isOpen?: boolean }>`
@@ -666,6 +713,7 @@ function TableRow({
   return (
     <TableRowWrapper
       ref={rowRef}
+      $isSelected={isSelected}
       onMouseLeave={() => setIsHovered(null)}
       onMouseEnter={() => setIsHovered(rowId)}
       onClick={() => {
@@ -762,17 +810,16 @@ function TableRow({
             setIsOpen={setIsOpen}
             dropdownStyle={css`
               min-width: 235px;
+              z-index: 50;
             `}
             triggerStyle={css`
               color: black;
-
               &:hover {
-                background-color: #bfdbfe;
+                background-color: #d4d4d4;
               }
             `}
             toggleActiveStyle={css`
-              color: black;
-              background-color: #bfdbfe;
+              background-color: #d4d4d4;
             `}
             variant="none"
             subMenuList={actions(`${rowId}`)}
@@ -784,7 +831,7 @@ function TableRow({
 }
 
 const TableRowWrapper = styled.div<{
-  isSelected?: boolean;
+  $isSelected?: boolean;
   $rowCellStyle?: CSSProp;
 }>`
   display: flex;
@@ -797,11 +844,12 @@ const TableRowWrapper = styled.div<{
   border-right: 1px solid #e5e7eb;
   border-bottom: 1px solid #e5e7eb;
   cursor: default;
-  background-color: ${({ isSelected }) => (isSelected ? "#eff6ff" : "#f9fafb")};
+  background-color: ${({ $isSelected }) =>
+    $isSelected ? "#f3f4f6" : "#f9fafb"};
 
   &:hover {
-    background-color: ${({ isSelected }) =>
-      isSelected ? "#eff6ff" : "#dbeafe"};
+    background-color: ${({ $isSelected }) =>
+      $isSelected ? "#f3f4f6" : "#e5e7eb"};
   }
 
   ${({ $rowCellStyle }) => $rowCellStyle}
