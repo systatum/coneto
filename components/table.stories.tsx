@@ -825,6 +825,7 @@ export const WithRowGroup: Story = {
     ];
 
     const [rows, setRows] = useState(TABLE_ITEMS);
+    const [search, setSearch] = useState("");
 
     const columns: ColumnTableProps[] = [
       {
@@ -928,6 +929,22 @@ export const WithRowGroup: Story = {
       ];
     };
 
+    const filteredRows = rows
+      .map((data) => {
+        const filteredItems = data.items.filter(
+          (item) =>
+            item.title.toLowerCase().includes(search.toLowerCase()) ||
+            item.category.toLowerCase().includes(search.toLowerCase()) ||
+            item.author.toLowerCase().includes(search.toLowerCase())
+        );
+
+        return {
+          ...data,
+          items: filteredItems,
+        };
+      })
+      .filter((group) => group.items.length > 0);
+
     const handleItemsSelected = (data: string[]) => {
       console.log("Selected rows:", data);
     };
@@ -953,10 +970,10 @@ export const WithRowGroup: Story = {
           onItemsSelected={handleItemsSelected}
           subMenuList={TIP_MENU_ACTION}
           actions={TOP_ACTIONS}
-          onSearchboxChange={(e) => console.log(e.target.value)}
+          onSearchboxChange={(e) => setSearch(e.target.value)}
           searchable
         >
-          {rows?.map((groupValue, groupIndex) => (
+          {filteredRows?.map((groupValue, groupIndex) => (
             <Table.Row.Group
               key={groupIndex}
               title={groupValue.title}
