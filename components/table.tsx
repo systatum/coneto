@@ -208,7 +208,10 @@ function Table({
   return (
     <TableColumnContext.Provider value={columns}>
       <Wrapper $containerStyle={containerStyle}>
-        {(selectedData.length > 0 || showPagination || actions) && (
+        {(selectedData.length > 0 ||
+          showPagination ||
+          actions ||
+          searchable) && (
           <HeaderActions>
             {(actions || showPagination) && (
               <ActionsWrapper>
@@ -252,7 +255,17 @@ function Table({
             {searchable && (
               <Searchbox
                 containerStyle={css`
-                  max-width: 200px;
+                  ${actions &&
+                  css`
+                    margin-left: 40px;
+                  `}
+                  ${(showPagination || selectable) &&
+                  css`
+                    margin-right: 40px;
+                  `}
+                `}
+                style={css`
+                  background-color: #fbfbfb;
                 `}
                 name="search"
                 onChange={(e) => {
@@ -456,6 +469,7 @@ const PaginationInfo = styled.div`
   flex-direction: row;
   gap: 0.5rem;
   align-items: center;
+  min-width: 140px;
 `;
 
 const Divider = styled.div`
