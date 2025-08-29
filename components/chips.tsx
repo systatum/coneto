@@ -728,7 +728,7 @@ const CloseButton = styled(RiCloseLine)<{
 }>`
   position: absolute;
   top: 50%;
-  right: 8px;
+  right: 10px;
   transform: translateY(-50%);
   color: transparent;
   cursor: pointer;
