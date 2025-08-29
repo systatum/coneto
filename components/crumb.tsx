@@ -206,6 +206,7 @@ function CrumbItem({
 }: CrumbItemProps) {
   return path ? (
     <CrumbItemLink
+      aria-label="crumb-item-link"
       $fontSize={fontSize}
       $hoverColor={hoverColor}
       $textColor={textColor}
@@ -218,6 +219,7 @@ function CrumbItem({
     </CrumbItemLink>
   ) : (
     <CrumbItemSpan
+      aria-label="crumb-item-span"
       $fontSize={fontSize}
       $hoverColor={hoverColor}
       $textColor={textColor}
