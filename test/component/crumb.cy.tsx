@@ -1,7 +1,7 @@
 import { Crumb } from "../../components/crumb";
 import { mount } from "cypress/react";
 
-describe("Crumb Component", () => {
+describe("Crumb", () => {
   const CrumbData = [
     { text: "Home", href: "/" },
     { text: "About", href: "/about" },

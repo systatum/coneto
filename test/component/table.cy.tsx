@@ -16,7 +16,7 @@ interface TableItemProps {
   items: { title: string; category: string; author: string }[];
 }
 
-describe("Table Component", () => {
+describe("Table", () => {
   const TABLE_ITEMS: TableItemProps[] = [
     {
       title: "Tech Articles",
