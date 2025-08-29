@@ -75,7 +75,7 @@ describe("Crumb Component", () => {
       });
     });
 
-    context("when maxShown 3, have 5 data and not having actions", () => {
+    context("when maxShown 3, have 4 data and not having actions", () => {
       it("displays link for the first, ellipsis, and 2 link from latest", () => {
         mount(<Crumb maxShown={3}>{CrumbItems}</Crumb>);
 
