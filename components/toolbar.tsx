@@ -40,8 +40,10 @@ interface ToolbarMenuProps {
   containerStyle?: CSSProp;
   triggerStyle?: CSSProp;
   toggleActiveStyle?: CSSProp;
-  variant?: "default" | "primary" | "danger" | "none";
+  variant?: ToolbarVariantType;
 }
+
+type ToolbarVariantType = "default" | "primary" | "danger" | "none";
 
 const VARIANT_CLASS_MAP = {
   base: {
@@ -78,6 +80,52 @@ const VARIANT_CLASS_MAP = {
     danger: css`
       &:hover {
         background-color: rgb(200, 53, 50);
+      }
+    `,
+  },
+  active: {
+    default: css`
+      &:active {
+        background-color: #e8e8e8;
+      }
+    `,
+    primary: css`
+      &:active {
+        background-color: rgb(54, 132, 222);
+      }
+    `,
+    danger: css`
+      &:active {
+        background-color: rgb(176, 40, 45);
+      }
+    `,
+  },
+  focusVisible: {
+    default: css`
+      &:focus-visible {
+        outline: none;
+        box-shadow: inset 0 0 0 2px #666666;
+        transition: box-shadow 0.2s ease-in-out;
+        border-radius: inherit;
+        z-index: 40;
+      }
+    `,
+    primary: css`
+      &:focus-visible {
+        outline: none;
+        box-shadow: inset 0 0 0 2px #1e5bb5;
+        transition: box-shadow 0.2s ease-in-out;
+        border-radius: inherit;
+        z-index: 40;
+      }
+    `,
+    danger: css`
+      &:focus-visible {
+        outline: none;
+        box-shadow: inset 0 0 0 2px #8a1620;
+        transition: box-shadow 0.2s ease-in-out;
+        border-radius: inherit;
+        z-index: 40;
       }
     `,
   },
@@ -204,6 +252,8 @@ function ToolbarMenu({
 
   const menuBase = VARIANT_CLASS_MAP.base[variant];
   const menuHover = VARIANT_CLASS_MAP.hover[variant];
+  const menuActive = VARIANT_CLASS_MAP.active[variant];
+  const menuFocusVisible = VARIANT_CLASS_MAP.focusVisible[variant];
   const menuBorderActive = VARIANT_ACTIVE.border[variant];
   const menuBackgroundActive = VARIANT_ACTIVE.background[variant];
 
@@ -224,6 +274,7 @@ function ToolbarMenu({
         {(Icon || caption) && (
           <>
             <TriggerButton
+              type="button"
               aria-label={`toolbar-menu-button`}
               onMouseEnter={() => setHovered("main")}
               onMouseLeave={() => setHovered("original")}
@@ -231,6 +282,8 @@ function ToolbarMenu({
               $style={css`
                 ${hovered === "main" && menuHover};
                 ${isOpen && menuBorderActive};
+                ${menuFocusVisible};
+                ${menuActive};
                 ${triggerStyle}
               `}
             >
@@ -255,6 +308,8 @@ function ToolbarMenu({
             ${hovered === "dropdown" && menuHover};
             ${isOpen && menuBackgroundActive};
             ${isOpen && menuBorderActive};
+            ${menuActive};
+            ${menuFocusVisible};
             ${triggerStyle};
             ${isOpen && toggleActiveStyle};
           `}
