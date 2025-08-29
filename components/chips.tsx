@@ -65,12 +65,12 @@ interface BaseChipsProps {
 }
 
 function Chips(props: ChipsProps) {
-  const [open, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
 
   const { refs, floatingStyles, context } = useFloating({
-    open,
-    onOpenChange: setOpen,
+    open: isOpen,
+    onOpenChange: setIsOpen,
     middleware: [
       offset(6),
       flip({ fallbackPlacements: ["bottom-end", "top-start", "top-end"] }),
@@ -139,11 +139,12 @@ function Chips(props: ChipsProps) {
         <AddButton
           ref={refs.setReference}
           role="button"
+          $isOpen={isOpen}
           {...getReferenceProps()}
         />
       </InputGroup>
 
-      {open && (
+      {isOpen && (
         <ChipsDrawer
           {...props}
           getFloatingProps={getFloatingProps}
@@ -205,7 +206,7 @@ const ErrorText = styled.span`
   font-size: 0.75rem;
 `;
 
-const AddButton = styled(RiAddLine)<{ $open?: boolean }>`
+const AddButton = styled(RiAddLine)<{ $isOpen?: boolean }>`
   cursor: pointer;
   border: 1px solid transparent;
   border-radius: 9999px;
@@ -220,9 +221,10 @@ const AddButton = styled(RiAddLine)<{ $open?: boolean }>`
     border-color: #d1d5db;
   }
 
-  ${({ $open }) =>
-    $open &&
+  ${({ $isOpen }) =>
+    $isOpen &&
     css`
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       border-color: #d1d5db;
     `}
 `;
@@ -693,7 +695,7 @@ function ChipsItem({
             e.stopPropagation();
             onDeleteRequested(badge);
           }}
-          size={14}
+          size={16}
         />
       )}
     </ChipItemWrapper>
@@ -726,7 +728,7 @@ const CloseButton = styled(RiCloseLine)<{
 }>`
   position: absolute;
   top: 50%;
-  right: 1rem;
+  right: 10px;
   transform: translateY(-50%);
   color: transparent;
   cursor: pointer;
