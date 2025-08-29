@@ -190,13 +190,13 @@ const ButtonWrapper = styled.div<{
 
   ${({ $isOpen, $variant }) => {
     const { border } = getButtonColors($variant, $isOpen);
-    return css`
-      ${$variant === "outline" &&
+    return (
+      $variant === "outline" &&
       css`
         border: ${border};
         border-radius: 2px;
-      `}
-    `;
+      `
+    );
   }}
 
   ${({ $style }) =>
@@ -280,15 +280,7 @@ const BaseButton = styled.button<{
     `;
   }}
 
-  &:active {
-    background-color: ${({ $variant }) => getActiveColor($variant)};
-  }
 
-  &:focus-visible {
-    outline: none;
-    box-shadow: inset 0 0 0 2px ${({ $variant }) => getFocusColor($variant)};
-    transition: box-shadow 0.2s ease;
-  }
 
   ${({ $style }) =>
     $style &&
@@ -314,8 +306,6 @@ const BaseButtonToggle = styled(BaseButton)<{
 
   border-top-left-radius: ${({ $tipMenu }) => ($tipMenu ? 0 : "2px")};
   border-bottom-left-radius: ${({ $tipMenu }) => ($tipMenu ? 0 : "2px")};
-  border-top-right-radius: 2px;
-  border-bottom-right-radius: 2px;
 
   ${({ $style }) => $style}
 `;
@@ -373,7 +363,7 @@ const getButtonColors = (
   }
 };
 
-const getHoverColor = (variant: ButtonVariants["variant"]) => {
+const getHoverColor = (variant: string) => {
   switch (variant) {
     case "primary":
       return "#3e7dd3";
@@ -389,44 +379,6 @@ const getHoverColor = (variant: ButtonVariants["variant"]) => {
       return "#2a73c3";
     default:
       return "#e2e2e2";
-  }
-};
-
-const getActiveColor = (variant: ButtonVariants["variant"]) => {
-  switch (variant) {
-    case "primary":
-      return "#2a73c3";
-    case "danger":
-      return "#802036";
-    case "outline":
-      return "#e6e6e6";
-    case "secondary":
-      return "#b3b3b3";
-    case "ghost":
-      return "#eaeaea";
-    case "link":
-      return "#1e5ba8";
-    default:
-      return "#cfcfcf";
-  }
-};
-
-const getFocusColor = (variant: ButtonVariants["variant"]) => {
-  switch (variant) {
-    case "primary":
-      return "#569AEC80";
-    case "danger":
-      return "#CE375D80";
-    case "outline":
-      return "#00000040";
-    case "secondary":
-      return "#B4B4B480";
-    case "ghost":
-      return "#00000033";
-    case "link":
-      return "#408EE880";
-    default:
-      return "#00000033";
   }
 };
 

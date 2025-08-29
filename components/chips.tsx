@@ -738,16 +738,6 @@ const CloseButton = styled(RiCloseLine)<{
     background-color: #d1d5db;
   }
 
-  &:active {
-    background-color: #999999;
-  }
-
-  &:focus-visible {
-    outline: none;
-    box-shadow: inset 0 0 0 2px #00000033;
-    transition: box-shadow 0.2s ease;
-  }
-
   ${({ $hovered }) =>
     $hovered &&
     css`

@@ -13,7 +13,7 @@ import {
 import TurndownService from "./../lib/turndown/turndown";
 import { marked } from "./../lib/marked/marked";
 import { TipMenu } from "./tip-menu";
-import styled, { css, CSSProp } from "styled-components";
+import styled, { CSSProp } from "styled-components";
 
 interface RichEditorProps {
   value?: string;
@@ -27,7 +27,6 @@ export interface RichEditorToolbarButtonProps {
   icon?: RemixiconComponentType;
   onClick?: () => void;
   children?: ReactNode;
-  style?: CSSProp;
 }
 
 function RichEditor({
@@ -337,12 +336,6 @@ function RichEditor({
           />
           <RichEditorToolbarButton
             icon={RiHeading}
-            style={
-              isOpen &&
-              css`
-                background-color: #e5e7eb;
-              `
-            }
             onClick={() => {
               const sel = window.getSelection();
               if (sel && sel.rangeCount > 0) {
@@ -386,11 +379,9 @@ function RichEditorToolbarButton({
   icon: Icon,
   onClick,
   children,
-  style,
 }: RichEditorToolbarButtonProps) {
   return (
     <ToolbarButton
-      $style={style}
       type="button"
       onClick={(e) => {
         e.preventDefault();
@@ -493,7 +484,7 @@ const EditorArea = styled.div<{
   ${({ $editorStyle }) => $editorStyle};
 `;
 
-const ToolbarButton = styled.button<{ $style?: CSSProp }>`
+const ToolbarButton = styled.button`
   padding: 4px 8px;
   display: flex;
   flex-direction: row;
@@ -508,15 +499,6 @@ const ToolbarButton = styled.button<{ $style?: CSSProp }>`
   &:hover {
     background-color: #e5e7eb;
   }
-  &:active {
-    background-color: #cfcfcf;
-  }
-  &:focus-visible {
-    outline: none;
-    box-shadow: inset 0 0 0 2px #00000033;
-    transition: box-shadow 0.2s ease;
-  }
-  ${({ $style }) => $style}
 `;
 
 RichEditor.ToolbarButton = RichEditorToolbarButton;
