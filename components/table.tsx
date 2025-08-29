@@ -271,6 +271,9 @@ function Table({
                     border-color: #61a9f9;
                     background-color: white;
                   }
+                  &:focus {
+                    background-color: white;
+                  }
                 `}
                 name="search"
                 onChange={(e) => {
@@ -463,7 +466,7 @@ const PaginationButton = styled.button`
   }
 
   &:disabled {
-    background-color: #e8e5e5;
+    background-color: #c3c3c3;
     opacity: 0.5;
     cursor: not-allowed;
   }
