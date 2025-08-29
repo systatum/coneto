@@ -103,6 +103,7 @@ function Crumb({
                     as={Icon}
                     $arrowColor={arrowColor}
                     size={iconSize}
+                    aria-label="arrow-icon"
                   />
                 )}
               </CrumbEllipsisListItem>
@@ -134,6 +135,7 @@ function Crumb({
                     as={Icon}
                     $arrowColor={arrowColor}
                     size={iconSize}
+                    aria-label="arrow-icon"
                   />
                 )}
               </CrumbListEllipsisItem>
@@ -179,13 +181,15 @@ const CrumbEllipsisIcon = styled(RiMoreLine)<{
 `;
 
 const CrumbArrowIcon = styled.div<{
-  as: RemixiconComponentType;
   $arrowColor?: string;
+  $size?: number;
 }>`
-  ${({ $arrowColor }) => css`
-    margin-left: "0.5rem";
-    margin-right: "0.5rem";
+  ${({ $arrowColor, $size }) => css`
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
     color: ${$arrowColor ? $arrowColor : "#9ca3af"};
+    width: ${$size}px;
+    height: ${$size}px;
   `}
 `;
 
