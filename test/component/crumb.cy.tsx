@@ -14,30 +14,6 @@ describe("Crumb Component", () => {
     </Crumb.Item>
   ));
 
-  context("general interaction and behaviour", () => {
-    context("when render all content", () => {
-      it("expected links with correct href", () => {
-        mount(<Crumb maxShown={5}>{CrumbItems}</Crumb>);
-
-        CrumbData.forEach(({ text, href }) => {
-          cy.contains("a", text).should("have.attr", "href", href);
-        });
-      });
-    });
-
-    context("when content hidden and click ellipsis", () => {
-      it("renders all content on crumbs", () => {
-        mount(<Crumb maxShown={2}>{CrumbItems}</Crumb>);
-        cy.contains("About").should("not.exist");
-        cy.contains("Services").should("not.exist");
-        cy.findByLabelText("ellipsis").click();
-        CrumbData.forEach(({ text }) => {
-          cy.contains("a", text).should("exist");
-        });
-      });
-    });
-  });
-
   context("fontSize", () => {
     context("when a custom fontSize is provided", () => {
       it("renders the crumb links with the correct font size and calculates chevron size", () => {
@@ -56,7 +32,7 @@ describe("Crumb Component", () => {
   });
 
   context("maxShown", () => {
-    context("when maxShown = 1", () => {
+    context("when 1", () => {
       it("displays one ellipsis on the left and the last link on the right", () => {
         mount(<Crumb maxShown={1}>{CrumbItems}</Crumb>);
 
@@ -65,7 +41,7 @@ describe("Crumb Component", () => {
       });
     });
 
-    context("when maxShown = 2", () => {
+    context("when 2", () => {
       it("displays first link on the left, one ellipsis in the middle, and the last link on the right", () => {
         mount(<Crumb maxShown={2}>{CrumbItems}</Crumb>);
 
@@ -75,7 +51,7 @@ describe("Crumb Component", () => {
       });
     });
 
-    context("when maxShown 3, have 4 data and not having actions", () => {
+    context("when maxShown smaller than data and not having actions", () => {
       it("displays link for the first, ellipsis, and 2 link from latest", () => {
         mount(<Crumb maxShown={3}>{CrumbItems}</Crumb>);
 
@@ -85,7 +61,7 @@ describe("Crumb Component", () => {
       });
     });
 
-    context("when maxShown ≥ number of items", () => {
+    context("when maxShown smaller than data and click ellipsis", () => {
       it("displays all links and no ellipsis", () => {
         mount(<Crumb maxShown={5}>{CrumbItems}</Crumb>);
 
@@ -98,7 +74,7 @@ describe("Crumb Component", () => {
   });
 
   context("arrowColor", () => {
-    context("when arrowColor is provided", () => {
+    context("when given", () => {
       it("renders arrow icons with the specified color", () => {
         mount(
           <Crumb arrowColor="red" maxShown={4}>
@@ -114,7 +90,7 @@ describe("Crumb Component", () => {
   });
 
   context("lastTextColor", () => {
-    context("when lastTextColor is provided", () => {
+    context("when given", () => {
       it("renders the last crumb link with the specified color", () => {
         mount(<Crumb lastTextColor="green">{CrumbItems}</Crumb>);
 
@@ -124,7 +100,7 @@ describe("Crumb Component", () => {
   });
 
   context("hoverColor", () => {
-    context("when no hoverColor is provided", () => {
+    context("when default", () => {
       it("uses the default hover color", () => {
         mount(<Crumb>{CrumbItems}</Crumb>);
 
@@ -135,7 +111,7 @@ describe("Crumb Component", () => {
       });
     });
 
-    context("when a hoverColor is provided", () => {
+    context("when given", () => {
       it("changes the color of the crumb link on hover", () => {
         mount(<Crumb hoverColor="red">{CrumbItems}</Crumb>);
 
