@@ -42,7 +42,7 @@ describe("Crumb", () => {
     });
 
     context("when 2", () => {
-      it("displays first link on the left, one ellipsis in the middle, and the last link on the right", () => {
+      it("displays the first link on the left, one ellipsis in the middle, and the last link on the right", () => {
         mount(<Crumb maxShown={2}>{CrumbItems}</Crumb>);
 
         cy.contains("Home").should("exist");
@@ -51,18 +51,16 @@ describe("Crumb", () => {
       });
     });
 
-    context("when maxShown smaller than data and not having actions", () => {
-      it("displays link for the first, ellipsis, and 2 link from latest", () => {
+    context("when maxShown smaller than data", () => {
+      it("displays the first link, one ellipsis in the middle, and 2 link from latest when not clicking the ellipsis", () => {
         mount(<Crumb maxShown={3}>{CrumbItems}</Crumb>);
 
         cy.contains("Home").should("exist");
         cy.contains("Service").should("exist");
         cy.contains("Contact").should("exist");
       });
-    });
 
-    context("when maxShown smaller than data and click ellipsis", () => {
-      it("displays all links and no ellipsis", () => {
+      it("displays all links and no ellipsis when clicking on the ellipsis", () => {
         mount(<Crumb maxShown={5}>{CrumbItems}</Crumb>);
 
         cy.contains("Home").should("exist");
