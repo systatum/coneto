@@ -16,7 +16,7 @@ interface TableItemProps {
   items: { title: string; category: string; author: string }[];
 }
 
-describe("Table Component", () => {
+describe("Table", () => {
   const TABLE_ITEMS: TableItemProps[] = [
     {
       title: "Tech Articles",
@@ -183,28 +183,6 @@ describe("Table Component", () => {
     },
   ];
 
-  const TIP_MENU_ACTION = (columnCaption: string): TipMenuItemProps[] => {
-    const column =
-      columnCaption.toLowerCase() as keyof (typeof TABLE_ITEMS)[0]["items"][0];
-    return [
-      {
-        caption: "Sort Ascending",
-        icon: RiArrowUpSLine,
-        iconColor: "gray",
-      },
-      {
-        caption: "Sort Descending",
-        icon: RiArrowDownSLine,
-        iconColor: "gray",
-      },
-      {
-        caption: "Reset Sorting",
-        icon: RiRefreshLine,
-        iconColor: "gray",
-      },
-    ];
-  };
-
   const rows = TABLE_ITEMS;
 
   const ROW_ACTION = (rowId: string): TipMenuItemProps[] => {
@@ -238,7 +216,6 @@ describe("Table Component", () => {
               max-height: 400px;
             `}
             columns={columns}
-            subMenuList={TIP_MENU_ACTION}
             actions={TOP_ACTIONS}
             searchable
           >
@@ -291,7 +268,6 @@ describe("Table Component", () => {
               max-height: 400px;
             `}
             columns={columns}
-            subMenuList={TIP_MENU_ACTION}
             searchable
           >
             {rows?.map((groupValue, groupIndex) => (
@@ -343,7 +319,6 @@ describe("Table Component", () => {
               max-height: 400px;
             `}
             columns={columns}
-            subMenuList={TIP_MENU_ACTION}
             actions={TOP_ACTIONS}
             searchable
           >
@@ -396,7 +371,6 @@ describe("Table Component", () => {
               max-height: 400px;
             `}
             columns={columns}
-            subMenuList={TIP_MENU_ACTION}
             searchable
           >
             {rows?.map((groupValue, groupIndex) => (

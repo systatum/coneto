@@ -14,19 +14,28 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import styled, { css, CSSProp } from "styled-components";
 
-interface CrumbProps {
+export interface CrumbProps {
   children?: ReactNode;
   maxShown?: number;
   style?: CSSProp;
   iconSeparator?: RemixiconComponentType;
+  fontSize?: number;
+  textColor?: string;
+  hoverColor?: string;
+  lastTextColor?: string;
+  arrowColor?: string;
 }
 
-interface CrumbItemProps {
+export interface CrumbItemProps {
   path?: string;
   children?: ReactNode;
   isLast?: boolean;
   style?: CSSProp;
   onClick?: () => void;
+  fontSize?: number;
+  textColor?: string;
+  hoverColor?: string;
+  lastTextColor?: string;
 }
 
 function Crumb({
@@ -34,6 +43,11 @@ function Crumb({
   maxShown = 3,
   children,
   style,
+  fontSize = 16,
+  hoverColor,
+  textColor,
+  lastTextColor,
+  arrowColor,
 }: CrumbProps) {
   const [expanded, setExpanded] = useState(false);
 
@@ -50,10 +64,14 @@ function Crumb({
     shownItems = allItems;
   } else {
     const first = allItems[0];
-    const last = allItems[itemCount - 1];
-    const current = allItems[itemCount - 2];
+    const lastItems = allItems.slice(itemCount - (maxShown - 1));
+    const lastItem = allItems[itemCount - 1];
 
-    shownItems = [first, "ellipsis", current, last];
+    if (maxShown === 1) {
+      shownItems = ["ellipsis", lastItem];
+    } else {
+      shownItems = [first, "ellipsis", ...lastItems];
+    }
   }
 
   return (
@@ -63,6 +81,8 @@ function Crumb({
           const isEllipsis = data === "ellipsis";
           const isLast = index === shownItems.length - 1;
 
+          const iconSize = fontSize * 1.25;
+
           if (isEllipsis) {
             return (
               <CrumbEllipsisListItem
@@ -71,19 +91,19 @@ function Crumb({
                 animate={{ x: 0, opacity: 1 }}
               >
                 <CrumbEllipsisIcon
-                  size={20}
+                  size={iconSize}
                   aria-label="ellipsis"
                   onClick={() => setExpanded(true)}
+                  $hoverColor={hoverColor}
+                  $textColor={textColor}
                 />
 
                 {!isLast && (
-                  <Icon
-                    size={20}
-                    style={{
-                      marginLeft: "0.5rem",
-                      marginRight: "0.5rem",
-                      color: "#9ca3af",
-                    }}
+                  <CrumbArrowIcon
+                    as={Icon}
+                    $arrowColor={arrowColor}
+                    size={iconSize}
+                    aria-label="arrow-icon"
                   />
                 )}
               </CrumbEllipsisListItem>
@@ -105,15 +125,17 @@ function Crumb({
                 {cloneElement(data, {
                   isLast,
                   style,
+                  fontSize,
+                  hoverColor,
+                  textColor,
+                  lastTextColor,
                 })}
                 {!isLast && (
-                  <Icon
-                    size={20}
-                    style={{
-                      marginLeft: "0.5rem",
-                      marginRight: "0.5rem",
-                      color: "#9ca3af",
-                    }}
+                  <CrumbArrowIcon
+                    as={Icon}
+                    $arrowColor={arrowColor}
+                    size={iconSize}
+                    aria-label="arrow-icon"
                   />
                 )}
               </CrumbListEllipsisItem>
@@ -130,6 +152,7 @@ function Crumb({
 const CrumbNav = styled.nav`
   display: flex;
   flex-direction: row;
+  align-items: center;
 `;
 
 const CrumbListEllipsisItem = styled(motion.li)`
@@ -144,12 +167,30 @@ const CrumbEllipsisListItem = styled(motion.li)`
   align-items: center;
 `;
 
-const CrumbEllipsisIcon = styled(RiMoreLine)`
-  color: #6b7280;
-  cursor: pointer;
-  &:hover {
-    color: #61a9f9;
-  }
+const CrumbEllipsisIcon = styled(RiMoreLine)<{
+  $textColor?: string;
+  $hoverColor?: string;
+}>`
+  ${({ $textColor, $hoverColor }) => css`
+    color: ${$textColor ? $textColor : "#6b7280"};
+    cursor: pointer;
+    &:hover {
+      color: ${$hoverColor ? $hoverColor : "#61a9f9"};
+    }
+  `}
+`;
+
+const CrumbArrowIcon = styled.div<{
+  $arrowColor?: string;
+  $size?: number;
+}>`
+  ${({ $arrowColor, $size }) => css`
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+    color: ${$arrowColor ? $arrowColor : "#9ca3af"};
+    width: ${$size}px;
+    height: ${$size}px;
+  `}
 `;
 
 function CrumbItem({
@@ -158,13 +199,35 @@ function CrumbItem({
   isLast = false,
   style,
   onClick,
+  fontSize = 16,
+  hoverColor,
+  textColor,
+  lastTextColor,
 }: CrumbItemProps) {
   return path ? (
-    <CrumbItemLink href={path} $style={style} $isLast={isLast}>
+    <CrumbItemLink
+      aria-label="crumb-item-link"
+      $fontSize={fontSize}
+      $hoverColor={hoverColor}
+      $textColor={textColor}
+      href={path}
+      $style={style}
+      $isLast={isLast}
+      $lastTextColor={lastTextColor}
+    >
       {children}
     </CrumbItemLink>
   ) : (
-    <CrumbItemSpan $style={style} onClick={onClick} $isLast={isLast}>
+    <CrumbItemSpan
+      aria-label="crumb-item-span"
+      $fontSize={fontSize}
+      $hoverColor={hoverColor}
+      $textColor={textColor}
+      $style={style}
+      onClick={onClick}
+      $isLast={isLast}
+      $lastTextColor={lastTextColor}
+    >
       {children}
     </CrumbItemSpan>
   );
@@ -173,17 +236,29 @@ function CrumbItem({
 const CrumbItemLink = styled.a<{
   $isLast?: boolean;
   $style?: CSSProp;
+  $fontSize?: number;
+  $textColor?: string;
+  $hoverColor?: string;
+  $lastTextColor?: string;
 }>`
-  color: #4b5563;
-  margin-bottom: 2px;
-  &:hover {
-    color: #61a9f9;
-  }
+  ${({ $textColor, $hoverColor, $fontSize }) => css`
+    color: ${$textColor ? $textColor : "#4b5563"};
+    margin-bottom: 2px;
 
-  ${({ $isLast }) =>
+    ${$fontSize &&
+    css`
+      font-size: ${`${$fontSize}px`};
+    `}
+
+    &:hover {
+      color: ${$hoverColor ? $hoverColor : "#61a9f9"};
+    }
+  `}
+
+  ${({ $isLast, $lastTextColor }) =>
     $isLast &&
     css`
-      color: #000;
+      color: ${$lastTextColor ? $lastTextColor : "#000"};
       font-weight: 500;
     `}
 
@@ -193,18 +268,29 @@ const CrumbItemLink = styled.a<{
 const CrumbItemSpan = styled.span<{
   $isLast?: boolean;
   $style?: CSSProp;
+  $fontSize?: number;
+  $textColor?: string;
+  $hoverColor?: string;
+  $lastTextColor?: string;
 }>`
-  color: #4b5563;
-  cursor: pointer;
+  ${({ $textColor, $hoverColor, $fontSize }) => css`
+    color: ${$textColor ? $textColor : "#4b5563"};
+    margin-bottom: 2px;
 
-  &:hover {
-    color: #61a9f9;
-  }
+    ${$fontSize &&
+    css`
+      font-size: ${`${$fontSize}px`};
+    `}
 
-  ${({ $isLast }) =>
+    &:hover {
+      color: ${$hoverColor ? $hoverColor : "#61a9f9"};
+    }
+  `}
+
+  ${({ $isLast, $lastTextColor }) =>
     $isLast &&
     css`
-      color: #000;
+      color: ${$lastTextColor ? $lastTextColor : "#000"};
       font-weight: 500;
     `}
 
