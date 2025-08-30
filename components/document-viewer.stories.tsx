@@ -16,10 +16,10 @@ export const Default: Story = {
   render: () => {
     return (
       <DocumentViewer
-        onRegionSelected={({ height, width, x, y }) =>
-          console.log(height, width, x, y)
+        onRegionSelected={({ x, y, width, height }) =>
+          console.log(x, y, width, height)
         }
-        source="https://icseindia.org/document/sample.pdf"
+        source="/sample.pdf"
       />
     );
   },
