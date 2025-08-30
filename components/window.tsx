@@ -15,7 +15,8 @@ interface WindowProps {
   orientation?: "horizontal" | "vertical";
   children?: ReactNode;
   style?: CSSProp;
-  onDraggingChange?: (dragging: boolean) => void;
+  onResize?: () => void;
+  onResizeComplete?: () => void;
 }
 
 export interface WindowCellProps {
@@ -34,7 +35,8 @@ function Window({
   orientation = "vertical",
   children,
   style,
-  onDraggingChange,
+  onResize,
+  onResizeComplete,
 }: WindowProps) {
   const isVertical = orientation === "vertical";
   const childrenArray = Children.toArray(children).filter(isValidElement);
@@ -99,8 +101,8 @@ function Window({
     draggingIndex.current = null;
     startSizes.current = [];
     setIsDragging(false);
-    if (onDraggingChange) {
-      onDraggingChange(false);
+    if (onResizeComplete) {
+      onResizeComplete();
     }
     document.removeEventListener("mousemove", onMouseMove);
     document.removeEventListener("mouseup", stopDrag);
@@ -108,12 +110,11 @@ function Window({
 
   const startDrag = useCallback(
     (index: number) => (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (!target.classList.contains("divider")) return;
+      e.preventDefault();
 
       draggingIndex.current = index;
-      if (onDraggingChange) {
-        onDraggingChange(true);
+      if (onResize) {
+        onResize();
       }
       startSizes.current = [...sizes];
       setIsDragging(true);
