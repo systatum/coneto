@@ -72,8 +72,18 @@ describe("Crumb", () => {
   });
 
   context("arrowColor", () => {
+    context("when not given", () => {
+      it("renders with the default color", () => {
+        mount(<Crumb maxShown={4}>{CrumbItems}</Crumb>);
+
+        cy.findAllByLabelText("arrow-icon").each(($icon) => {
+          cy.wrap($icon).should("have.css", "color", "rgb(156, 163, 175)");
+        });
+      });
+    });
+
     context("when given", () => {
-      it("renders arrow icons with the specified color", () => {
+      it("renders with the specified color", () => {
         mount(
           <Crumb arrowColor="red" maxShown={4}>
             {CrumbItems}
@@ -88,6 +98,14 @@ describe("Crumb", () => {
   });
 
   context("lastTextColor", () => {
+    context("when not given", () => {
+      it("renders the last crumb with the default color", () => {
+        mount(<Crumb>{CrumbItems}</Crumb>);
+
+        cy.get("a").last().should("have.css", "color", "rgb(0, 0, 0)");
+      });
+    });
+
     context("when given", () => {
       it("renders the last crumb link with the specified color", () => {
         mount(<Crumb lastTextColor="green">{CrumbItems}</Crumb>);
@@ -98,7 +116,7 @@ describe("Crumb", () => {
   });
 
   context("hoverColor", () => {
-    context("when default", () => {
+    context("when not given", () => {
       it("uses the default hover color", () => {
         mount(<Crumb>{CrumbItems}</Crumb>);
 
