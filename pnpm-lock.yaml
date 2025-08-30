@@ -129,6 +129,9 @@ importers:
       cypress:
         specifier: ^14.5.2
         version: 14.5.3
+      cypress-real-events:
+        specifier: ^1.14.0
+        version: 1.14.0(cypress@14.5.3)
       dotenv:
         specifier: ^17.2.0
         version: 17.2.1
@@ -1993,6 +1996,11 @@ packages:
 
   csstype@3.1.3:
     resolution: {integrity: sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==}
+
+  cypress-real-events@1.14.0:
+    resolution: {integrity: sha512-XmI8y3OZLh6cjRroPalzzS++iv+pGCaD9G9kfIbtspgv7GVsDt30dkZvSXfgZb4rAN+3pOkMVB7e0j4oXydW7Q==}
+    peerDependencies:
+      cypress: ^4.x || ^5.x || ^6.x || ^7.x || ^8.x || ^9.x || ^10.x || ^11.x || ^12.x || ^13.x || ^14.x
 
   cypress@14.5.3:
     resolution: {integrity: sha512-syLwKjDeMg77FRRx68bytLdlqHXDT4yBVh0/PPkcgesChYDjUZbwxLqMXuryYKzAyJsPsQHUDW1YU74/IYEUIA==}
@@ -6470,6 +6478,10 @@ snapshots:
   css.escape@1.5.1: {}
 
   csstype@3.1.3: {}
+
+  cypress-real-events@1.14.0(cypress@14.5.3):
+    dependencies:
+      cypress: 14.5.3
 
   cypress@14.5.3:
     dependencies:
