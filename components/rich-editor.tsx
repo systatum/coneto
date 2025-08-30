@@ -28,6 +28,7 @@ export interface RichEditorToolbarButtonProps {
   onClick?: () => void;
   children?: ReactNode;
   style?: CSSProp;
+  isOpen?: boolean;
 }
 
 function RichEditor({
@@ -337,12 +338,7 @@ function RichEditor({
           />
           <RichEditorToolbarButton
             icon={RiHeading}
-            style={
-              isOpen &&
-              css`
-                background-color: #e5e7eb;
-              `
-            }
+            isOpen={isOpen}
             onClick={() => {
               const sel = window.getSelection();
               if (sel && sel.rangeCount > 0) {
@@ -387,11 +383,13 @@ function RichEditorToolbarButton({
   onClick,
   children,
   style,
+  isOpen,
 }: RichEditorToolbarButtonProps) {
   return (
     <ToolbarButton
       $style={style}
       type="button"
+      $isOpen={isOpen}
       onClick={(e) => {
         e.preventDefault();
         onClick?.();
@@ -493,7 +491,7 @@ const EditorArea = styled.div<{
   ${({ $editorStyle }) => $editorStyle};
 `;
 
-const ToolbarButton = styled.button<{ $style?: CSSProp }>`
+const ToolbarButton = styled.button<{ $style?: CSSProp; $isOpen?: boolean }>`
   padding: 4px 8px;
   display: flex;
   flex-direction: row;
@@ -506,8 +504,18 @@ const ToolbarButton = styled.button<{ $style?: CSSProp }>`
   border-radius: 2px;
   max-height: 28px;
   &:hover {
-    background-color: #e5e7eb;
+    ${({ $isOpen }) =>
+      !$isOpen &&
+      css`
+        background-color: #e5e7eb;
+      `}
   }
+
+  ${({ $isOpen }) =>
+    $isOpen &&
+    css`
+      background-color: #cfcfcf;
+    `}
   &:active {
     background-color: #cfcfcf;
   }

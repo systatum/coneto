@@ -358,9 +358,6 @@ function Table({
                         &:hover {
                           background-color: #d4d4d4;
                         }
-                        &:hover {
-                          background-color: #d4d4d4;
-                        }
                         &:active {
                           background-color: #cfcfcf;
                         }
@@ -371,7 +368,7 @@ function Table({
                         }
                       `}
                       toggleActiveStyle={css`
-                        background-color: #d4d4d4;
+                        background-color: #cfcfcf;
                       `}
                       variant="none"
                       subMenuList={subMenuList(`${col.caption}`)}
@@ -848,7 +845,7 @@ function TableRow({
               }
             `}
             toggleActiveStyle={css`
-              background-color: #d4d4d4;
+              background-color: #cfcfcf;
             `}
             variant="none"
             subMenuList={actions(`${rowId}`)}

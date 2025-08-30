@@ -282,6 +282,9 @@ const BaseButton = styled.button<{
 
   &:active {
     background-color: ${({ $variant }) => getActiveColor($variant)};
+    box-shadow:
+      inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
+      inset 0 -0.5px 0.5px ${({ $variant }) => getActiveColor($variant)};
   }
 
   &:focus-visible {
@@ -347,29 +350,31 @@ const getButtonColors = (
   variant: ButtonVariants["variant"],
   isOpen?: boolean
 ) => {
+  const activeColor = getActiveColor(variant);
+
   switch (variant) {
     case "primary":
-      return { bg: isOpen ? "#3e7dd3" : "#569aec", color: "white" };
+      return { bg: isOpen ? activeColor : "#569aec", color: "white" };
     case "danger":
-      return { bg: isOpen ? "#a02a48" : "#ce375d", color: "white" };
+      return { bg: isOpen ? activeColor : "#ce375d", color: "white" };
     case "outline":
       return {
-        bg: isOpen ? "#f0f0f0" : "white",
+        bg: isOpen ? activeColor : "white",
         color: "black",
         border: "1px solid #ccc",
       };
     case "secondary":
-      return { bg: isOpen ? "#cccccc" : "#dddddd", color: "#111" };
+      return { bg: isOpen ? activeColor : "#dddddd", color: "#111" };
     case "ghost":
-      return { bg: isOpen ? "#f3f3f3" : "transparent", color: "#111" };
+      return { bg: isOpen ? activeColor : "transparent", color: "#111" };
     case "link":
       return {
-        bg: isOpen ? "#e6f0ff" : "transparent",
+        bg: isOpen ? activeColor : "transparent",
         color: "#408ee8",
         underline: true,
       };
     default:
-      return { bg: isOpen ? "#e2e2e2" : "#f3f3f3", color: "black" };
+      return { bg: isOpen ? activeColor : "#f3f3f3", color: "black" };
   }
 };
 
@@ -378,7 +383,7 @@ const getHoverColor = (variant: ButtonVariants["variant"]) => {
     case "primary":
       return "#3e7dd3";
     case "danger":
-      return "#a02a48";
+      return "#a12f4b";
     case "outline":
       return "#f0f0f0";
     case "secondary":

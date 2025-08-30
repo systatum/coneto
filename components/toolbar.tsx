@@ -68,19 +68,13 @@ const VARIANT_CLASS_MAP = {
   },
   hover: {
     default: css`
-      &:hover {
-        background-color: #f5f5f5;
-      }
+      background-color: #f5f5f5;
     `,
     primary: css`
-      &:hover {
-        background-color: rgb(64, 142, 232);
-      }
+      background-color: rgb(64, 142, 232);
     `,
     danger: css`
-      &:hover {
-        background-color: rgb(200, 53, 50);
-      }
+      background-color: rgb(200, 53, 50);
     `,
   },
   active: {
@@ -134,13 +128,13 @@ const VARIANT_CLASS_MAP = {
 const VARIANT_ACTIVE = {
   background: {
     default: css`
-      background-color: #f5f5f5;
+      background-color: #e8e8e8;
     `,
     primary: css`
-      background-color: rgb(64, 142, 232);
+      background-color: rgb(54, 132, 222);
     `,
     danger: css`
-      background-color: rgb(200, 53, 50);
+      background-color: rgb(176, 40, 45);
     `,
   },
   border: {
