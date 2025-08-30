@@ -361,9 +361,17 @@ function Table({
                         &:hover {
                           background-color: #d4d4d4;
                         }
+                        &:active {
+                          background-color: #cfcfcf;
+                        }
+                        &:focus-visible {
+                          outline: none;
+                          box-shadow: inset 0 0 0 2px #00000033;
+                          transition: box-shadow 0.2s ease;
+                        }
                       `}
                       toggleActiveStyle={css`
-                        background-color: #d4d4d4;
+                        background-color: #cfcfcf;
                       `}
                       variant="none"
                       subMenuList={subMenuList(`${col.caption}`)}
@@ -439,6 +447,16 @@ const ActionButton = styled.button<{
 
   &:hover {
     background-color: #e2e0e0;
+  }
+
+  &:active {
+    background-color: #cfcfcf;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 2px #00000033;
+    transition: box-shadow 0.2s ease;
   }
 
   &:disabled {
@@ -820,9 +838,17 @@ function TableRow({
               &:hover {
                 background-color: #d4d4d4;
               }
+              &:active {
+                background-color: #cfcfcf;
+              }
+              &:focus-visible {
+                outline: none;
+                box-shadow: inset 0 0 0 2px #00000033;
+                transition: box-shadow 0.2s ease;
+              }
             `}
             toggleActiveStyle={css`
-              background-color: #d4d4d4;
+              background-color: #cfcfcf;
             `}
             variant="none"
             subMenuList={actions(`${rowId}`)}

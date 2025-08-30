@@ -161,7 +161,8 @@ function Signbox({
     lastPoint.current = null;
   };
 
-  const clearCanvas = () => {
+  const clearCanvas = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
     if (canvas && ctx) {
@@ -195,7 +196,7 @@ function Signbox({
       {clearable && (
         <SignatureClearable
           aria-label="signbox-clearable"
-          onClick={() => clearCanvas()}
+          onClick={(e) => clearCanvas(e)}
           size={18}
         />
       )}
@@ -233,6 +234,11 @@ const InputWrapper = styled.div<{
 `;
 
 const Label = styled.label<{ $style?: CSSProp }>`
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+
   ${({ $style }) => $style}
 `;
 
@@ -283,8 +289,16 @@ const SignatureClearable = styled(RiEraserLine)`
   padding: 2px;
   border-radius: 2px;
 
-  &&:hover {
+  &:hover {
     background-color: #e5e5e5;
+  }
+  &:active {
+    background-color: #cfcfcf;
+  }
+  &:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 2px #00000033;
+    transition: box-shadow 0.2s ease;
   }
 `;
 

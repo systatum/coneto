@@ -323,6 +323,7 @@
     "barrelsby": "^2.8.1",
     "chromatic": "^11.28.2",
     "cypress": "^14.5.2",
+    "cypress-real-events": "^1.14.0",
     "dotenv": "^17.2.0",
     "eslint": "^9.26.0",
     "eslint-plugin-cypress": "^5.1.0",
