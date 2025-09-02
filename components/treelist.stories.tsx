@@ -58,6 +58,47 @@ export const Default: Story = {
   },
 };
 
+export const WithCollapsible: Story = {
+  render: () => {
+    const setPerson = (item: { id: number; title: string }) => {
+      console.log("Clicked person:", item.title);
+    };
+
+    const TREE_LIST_DATA: TreeListContentProps[] = [
+      {
+        title: "Member of Technical Staff",
+        collapsible: true,
+        items: [
+          { id: 1, title: "Adam Noto Hakarsa", onClick: setPerson },
+          { id: 2, title: "Mohamad Naufal Alim", onClick: setPerson },
+        ],
+      },
+      {
+        title: "Product Management Team",
+        collapsible: true,
+        items: [
+          { id: 1, title: "Samantha Lee", onClick: setPerson },
+          { id: 2, title: "Jason Kim", onClick: setPerson },
+          { id: 3, title: "Rina Patel", onClick: setPerson },
+        ],
+      },
+    ];
+
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "0.25rem",
+          maxWidth: "250px",
+        }}
+      >
+        <TreeList content={TREE_LIST_DATA} emptySlate={<p>Not found.</p>} />
+      </div>
+    );
+  },
+};
+
 export const WithActions: Story = {
   render: () => {
     const setPerson = (item: { id: number; title: string }) => {
