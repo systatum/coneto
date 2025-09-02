@@ -146,7 +146,7 @@ describe("Toolbar", () => {
         cy.findByLabelText("toolbar-menu-toggle")
           .realHover()
           .wait(300)
-          .should("have.css", "background-color", "rgb(245, 245, 245)"); // sesuai VARIANT_CLASS_MAP.hover.default (#f5f5f5)
+          .should("have.css", "background-color", "rgb(245, 245, 245)");
       });
     });
   });
