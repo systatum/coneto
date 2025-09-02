@@ -360,6 +360,9 @@ function Table({
                         }
                         &:active {
                           background-color: #cfcfcf;
+                          box-shadow:
+                            inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
+                            inset 0 -0.5px 0.5px #cfcfcf;
                         }
                         &:focus-visible {
                           outline: none;
@@ -369,6 +372,9 @@ function Table({
                       `}
                       toggleActiveStyle={css`
                         background-color: #cfcfcf;
+                        box-shadow:
+                          inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
+                          inset 0 -0.5px 0.5px #cfcfcf;
                       `}
                       variant="none"
                       subMenuList={subMenuList(`${col.caption}`)}
@@ -837,6 +843,9 @@ function TableRow({
               }
               &:active {
                 background-color: #cfcfcf;
+                box-shadow:
+                  inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
+                  inset 0 -0.5px 0.5px #cfcfcf;
               }
               &:focus-visible {
                 outline: none;
@@ -846,6 +855,9 @@ function TableRow({
             `}
             toggleActiveStyle={css`
               background-color: #cfcfcf;
+              box-shadow:
+                inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
+                inset 0 -0.5px 0.5px #cfcfcf;
             `}
             variant="none"
             subMenuList={actions(`${rowId}`)}
