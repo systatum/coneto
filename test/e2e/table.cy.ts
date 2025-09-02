@@ -1,19 +1,19 @@
 import { getIdContent } from "test/support/commands";
 
-context("Table Component", () => {
-  describe("Appendable", () => {
+describe("Table Component", () => {
+  context("Appendable", () => {
     beforeEach(() => {
       cy.visit(getIdContent("content-table--appendable"));
     });
 
     const checkbox = () => cy.get("input[type=checkbox]").first();
 
-    it("Should select and unselect a row", () => {
+    it("should select and unselect a row", () => {
       checkbox().click().should("be.checked");
       checkbox().click().should("not.be.checked");
     });
 
-    it("Should scroll to bottom, select and count", () => {
+    it("should scroll to bottom, select and count", () => {
       cy.findByLabelText("table-scroll-container").scrollTo("bottom", {
         duration: 1000,
       });
@@ -23,12 +23,12 @@ context("Table Component", () => {
     });
   });
 
-  describe("Sortable with Pagination", () => {
+  context("Sortable with Pagination", () => {
     beforeEach(() => {
       cy.visit(getIdContent("content-table--sortable-with-pagination"));
     });
 
-    it("Should go to next and previous page", () => {
+    it("should go to next and previous page", () => {
       cy.findByLabelText("next-button-pagination").click();
       cy.contains("Pg. 2").should("exist");
 
@@ -36,11 +36,11 @@ context("Table Component", () => {
       cy.contains("Pg. 1").should("exist");
     });
 
-    it("Should select a row", () => {
+    it("should select a row", () => {
       cy.get("input[type=checkbox]").first().click().should("be.checked");
     });
 
-    it("Should can check if we clicked on Table Row", () => {
+    it("should can check if we clicked on Table Row", () => {
       cy.findByText("Load Balancer 1").click();
       cy.get("input[type=checkbox]").eq(1).should("be.checked");
       cy.findAllByText("HTTPS").eq(0).click();
@@ -48,31 +48,40 @@ context("Table Component", () => {
     });
   });
 
-  describe("With Empty Slate", () => {
+  context("With Empty Slate", () => {
     beforeEach(() => {
       cy.visit(getIdContent("content-table--with-empty-slate"));
     });
 
-    it("Should render empty slate content", () => {
+    it("should render empty slate content", () => {
       cy.contains("Manage your inventory transfers").should("exist");
       cy.contains("Add Item").should("exist");
       cy.contains("Learn More").should("exist");
     });
   });
 
-  describe("With Row Group", () => {
+  context("With Row Group", () => {
     beforeEach(() => {
       cy.visit(getIdContent("content-table--with-row-group"));
     });
 
-    it("Should render table with grouped rows", () => {
+    it("should render table with grouped rows", () => {
       cy.contains("Tech Articles").should("exist");
       cy.get("input[type=checkbox]").first().click().should("be.checked");
     });
 
-    it("Should click top action buttons", () => {
+    it("should click top action buttons", () => {
+      cy.contains("Delete").should("be.disabled");
       cy.contains("Copy").click();
-      cy.contains("Delete").click();
+    });
+
+    it("should display expected actions on tip menu and allow clicking them", () => {
+      cy.findByLabelText("button-toggle").click();
+      const COPY_ACTIONS = ["Copy to parent", "Copy to link"];
+      COPY_ACTIONS.forEach((text) => {
+        cy.contains(text).should("be.visible");
+      });
+      cy.contains(COPY_ACTIONS[0]).click();
     });
   });
 });
