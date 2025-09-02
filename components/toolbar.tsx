@@ -81,16 +81,25 @@ const VARIANT_CLASS_MAP = {
     default: css`
       &:active {
         background-color: #e8e8e8;
+        box-shadow:
+          inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
+          inset 0 -0.5px 0.5px #e8e8e8;
       }
     `,
     primary: css`
       &:active {
         background-color: rgb(54, 132, 222);
+        box-shadow:
+          inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
+          inset 0 -0.5px 0.5px rgb(54, 132, 222);
       }
     `,
     danger: css`
       &:active {
         background-color: rgb(176, 40, 45);
+        box-shadow:
+          inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
+          inset 0 -0.5px 0.5px rgb(176, 40, 45);
       }
     `,
   },
@@ -129,12 +138,57 @@ const VARIANT_ACTIVE = {
   background: {
     default: css`
       background-color: #e8e8e8;
+      position: relative;
+
+      &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        box-shadow:
+          inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
+          inset 0 -0.5px 0.5px #e8e8e8;
+        border-radius: inherit;
+        pointer-events: none;
+      }
     `,
     primary: css`
       background-color: rgb(54, 132, 222);
+      position: relative;
+
+      &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        box-shadow:
+          inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
+          inset 0 -0.5px 0.5px rgb(54, 132, 222);
+        border-radius: inherit;
+        pointer-events: none;
+      }
     `,
     danger: css`
       background-color: rgb(176, 40, 45);
+      position: relative;
+
+      &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        box-shadow:
+          inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
+          inset 0 -0.5px 0.5px rgb(176, 40, 45);
+        border-radius: inherit;
+        pointer-events: none;
+      }
     `,
   },
   border: {
