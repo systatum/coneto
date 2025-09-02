@@ -215,11 +215,12 @@ const GroupTitleWrapper = styled.div<{ $collapsible?: boolean }>`
 const GroupTitle = styled.span`
   font-weight: 500;
   padding: 2px 1rem;
+  padding-left: 1.4rem;
 `;
 
 const GroupIcon = styled(RiArrowRightSLine)<{ $isOpen?: boolean }>`
   position: absolute;
-  right: 2px;
+  left: 2px;
   top: 50%;
   transform: translateY(-50%);
   transition: transform 0.2s ease-in-out;
@@ -243,7 +244,7 @@ const TreeListItemWrapper = styled.div<{ $isSelected: boolean }>`
     ${(props) => (props.$isSelected ? "#3b82f6" : "transparent")};
   background-color: ${(props) =>
     props.$isSelected ? "#f3f4f6" : "transparent"};
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 1.2rem;
   &:hover {
     background-color: #f3f4f6;
   }
