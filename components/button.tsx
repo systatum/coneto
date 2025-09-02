@@ -36,6 +36,7 @@ function Button({
   buttonStyle,
   toggleStyle,
   onClick,
+  dividerStyle,
   ...props
 }: React.ComponentProps<"button"> &
   ButtonVariants & {
@@ -48,6 +49,7 @@ function Button({
     buttonStyle?: CSSProp;
     toggleStyle?: CSSProp;
     containerStyle?: CSSProp;
+    dividerStyle?: CSSProp;
   }) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [hovered, setHovered] = React.useState<
@@ -124,6 +126,7 @@ function Button({
             $hovered={hovered === "main" || hovered === "dropdown" || isOpen}
             $variant={variant}
             $isOpen={isOpen}
+            $style={dividerStyle}
           />
 
           <BaseButtonToggle
@@ -325,6 +328,7 @@ const Divider = styled.div<{
   $hovered?: boolean;
   $variant: ButtonVariants["variant"];
   $isOpen?: boolean;
+  $style?: CSSProp;
 }>`
   height: ${({ $hovered }) => ($hovered ? "100%" : "80%")};
   border-right: 1px solid;
@@ -342,6 +346,8 @@ const Divider = styled.div<{
         : color};
     `;
   }}
+
+  ${({ $style }) => $style}
 `;
 
 const getButtonColors = (
