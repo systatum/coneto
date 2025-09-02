@@ -1,13 +1,19 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { ColumnTableProps, Table } from "./table";
+import {
+  ColumnTableProps,
+  SubMenuListTableProps,
+  Table,
+  TableActionsProps,
+} from "./table";
 import { useEffect, useMemo, useState } from "react";
-import { TipMenuItemProps } from "./tip-menu";
 import {
   RiArrowDownSLine,
   RiArrowUpSLine,
   RiClipboardFill,
+  RiClipboardLine,
   RiDeleteBin2Fill,
   RiDeleteBin2Line,
+  RiFileCopy2Line,
   RiRefreshLine,
 } from "@remixicon/react";
 import { EmptySlate } from "./empty-slate";
@@ -106,7 +112,7 @@ const meta: Meta<typeof Table> = {
         "Function to generate menu list for sorting options per column.",
       table: {
         type: {
-          summary: "(columnCaption: string) => TipMenuItemProps[]",
+          summary: "(columnCaption: string) => SubMenuListTableProps[]",
         },
       },
     },
@@ -303,7 +309,7 @@ export const Appendable: Story = {
 
     const TIP_MENU_ACTION = (
       columnCaption: "from" | "content"
-    ): TipMenuItemProps[] => {
+    ): SubMenuListTableProps[] => {
       return [
         {
           caption: "Sort Ascending",
@@ -332,7 +338,7 @@ export const Appendable: Story = {
       ];
     };
 
-    const ROW_ACTION = (rowId: string): TipMenuItemProps[] => {
+    const ROW_ACTION = (rowId: string): SubMenuListTableProps[] => {
       return [
         {
           caption: "Edit",
@@ -485,7 +491,9 @@ export const SortableWithPagination: Story = {
       },
     ];
 
-    const TIP_MENU_ACTION = (columnCaption: string): TipMenuItemProps[] => {
+    const TIP_MENU_ACTION = (
+      columnCaption: string
+    ): SubMenuListTableProps[] => {
       const column = columnCaption.toLowerCase() as keyof (typeof rawRows)[0];
       return [
         {
@@ -807,25 +815,9 @@ export const WithRowGroup: Story = {
       },
     ];
 
-    const TOP_ACTIONS = [
-      {
-        title: "Delete",
-        icon: RiDeleteBin2Line,
-        onClick: () => {
-          console.log("Delete clicked");
-        },
-      },
-      {
-        title: "Copy",
-        icon: RiClipboardFill,
-        onClick: () => {
-          console.log("Copy clicked");
-        },
-      },
-    ];
-
     const [rows, setRows] = useState(TABLE_ITEMS);
     const [search, setSearch] = useState("");
+    const [selected, setSelected] = useState([]);
 
     const columns: ColumnTableProps[] = [
       {
@@ -877,7 +869,48 @@ export const WithRowGroup: Story = {
       setRows(sortedRows);
     };
 
-    const TIP_MENU_ACTION = (columnCaption: string): TipMenuItemProps[] => {
+    const COPY_ACTIONS: SubMenuListTableProps[] = [
+      {
+        caption: "Copy to parent",
+        icon: RiFileCopy2Line,
+        iconColor: "gray",
+        isDangerous: true,
+        onClick: () => {
+          console.log(`${selected} copied to parent`);
+        },
+      },
+      {
+        caption: "Copy to link",
+        icon: RiClipboardLine,
+        iconColor: "gray",
+        onClick: () => {
+          console.log(`${selected} was copied to parent`);
+        },
+      },
+    ];
+
+    const TOP_ACTIONS: TableActionsProps[] = [
+      {
+        title: "Delete",
+        disabled: selected.length === 0,
+        icon: RiDeleteBin2Line,
+        onClick: () => {
+          console.log(`Delete ${selected.length} clicked`);
+        },
+      },
+      {
+        title: "Copy",
+        icon: RiClipboardFill,
+        onClick: () => {
+          console.log("Copy clicked");
+        },
+        subMenuList: COPY_ACTIONS,
+      },
+    ];
+
+    const TIP_MENU_ACTION = (
+      columnCaption: string
+    ): SubMenuListTableProps[] => {
       const column =
         columnCaption.toLowerCase() as keyof (typeof TABLE_ITEMS)[0]["items"][0];
       return [
@@ -908,7 +941,7 @@ export const WithRowGroup: Story = {
       ];
     };
 
-    const ROW_ACTION = (rowId: string): TipMenuItemProps[] => {
+    const ROW_ACTION = (rowId: string): SubMenuListTableProps[] => {
       return [
         {
           caption: "Edit",
@@ -947,6 +980,7 @@ export const WithRowGroup: Story = {
 
     const handleItemsSelected = (data: string[]) => {
       console.log("Selected rows:", data);
+      setSelected(data);
     };
 
     return (

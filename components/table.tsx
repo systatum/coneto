@@ -26,6 +26,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import styled, { css, CSSProp } from "styled-components";
 import { Searchbox } from "./searchbox";
+import { Button } from "./button";
 
 export type RowData = (string | ReactNode)[];
 
@@ -41,7 +42,11 @@ export interface TableActionsProps {
   icon?: RemixiconComponentType;
   onClick?: () => void;
   style?: CSSProp;
+  subMenuList?: SubMenuListTableProps[];
+  disabled?: boolean;
 }
+
+export type SubMenuListTableProps = TipMenuItemProps;
 
 export interface TableProps {
   selectable?: boolean;
@@ -235,10 +240,72 @@ function Table({
                 )}
                 {actions &&
                   actions.map((data, index) => (
-                    <ActionButton
+                    <Button
                       key={index}
                       onClick={data.onClick}
-                      $style={data.style}
+                      tipMenu={data.subMenuList ? true : false}
+                      subMenuList={data.subMenuList}
+                      disabled={data.disabled}
+                      buttonStyle={css`
+                        display: flex;
+                        flex-direction: row;
+                        gap: 0.25rem;
+                        align-items: center;
+                        cursor: pointer;
+                        padding: 0.25rem 0.5rem;
+                        background-color: transparent;
+                        color: inherit;
+                        border: 1px solid #e5e7eb;
+                        border-radius: 6px;
+                        position: relative;
+
+                        &:hover {
+                          background-color: #e2e0e0;
+                        }
+
+                        &:disabled {
+                          background-color: rgb(227 227 227);
+                          opacity: 0.5;
+                          cursor: not-allowed;
+                        }
+                        ${data.style}
+                      `}
+                      toggleStyle={
+                        data.subMenuList &&
+                        css`
+                          display: flex;
+                          flex-direction: row;
+                          gap: 0.25rem;
+                          align-items: center;
+                          cursor: pointer;
+                          border-top: 1px solid #e5e7eb;
+                          border-right: 1px solid #e5e7eb;
+                          border-bottom: 1px solid #e5e7eb;
+                          border-top-right-radius: 6px;
+                          border-bottom-right-radius: 6px;
+                          padding: 0.25rem 0.5rem;
+                          background-color: transparent;
+                          color: inherit;
+                          position: relative;
+
+                          &:hover {
+                            background-color: #e2e0e0;
+                          }
+
+                          &:disabled {
+                            background-color: rgb(227 227 227);
+                            opacity: 0.5;
+                            cursor: not-allowed;
+                          }
+                          ${data.style}
+                        `
+                      }
+                      dropdownStyle={css`
+                        position: absolute;
+                        margin-top: 2px;
+                        z-index: 9999;
+                        width: 200px;
+                      `}
                     >
                       <data.icon size={14} />
                       <span
@@ -248,7 +315,7 @@ function Table({
                       >
                         {data.title}
                       </span>
-                    </ActionButton>
+                    </Button>
                   ))}
               </ActionsWrapper>
             )}
@@ -421,33 +488,6 @@ const ActionsWrapper = styled.div`
   display: flex;
   flex-direction: row;
   gap: 0.25rem;
-`;
-
-const ActionButton = styled.button<{
-  $style?: CSSProp;
-}>`
-  display: flex;
-  flex-direction: row;
-  gap: 0.25rem;
-  align-items: center;
-  cursor: pointer;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  padding: 0.25rem 0.5rem;
-  background-color: transparent;
-  color: inherit;
-
-  &:hover {
-    background-color: #e2e0e0;
-  }
-
-  &:disabled {
-    background-color: rgb(227 227 227);
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  ${({ $style }) => $style}
 `;
 
 const PaginationButton = styled.button`
