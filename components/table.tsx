@@ -308,6 +308,9 @@ function Table({
                           ${data.style}
                         `
                       }
+                      dividerStyle={css`
+                        border-color: #d1d3d6;
+                      `}
                       dropdownStyle={css`
                         position: absolute;
                         margin-top: 2px;
