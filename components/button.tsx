@@ -65,8 +65,10 @@ function Button({
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
       if (containerRef.current && !containerRef.current.contains(target)) {
-        setIsOpen(false);
-        setHovered("original");
+        setTimeout(() => {
+          setIsOpen(false);
+          setHovered("original");
+        }, 100);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
