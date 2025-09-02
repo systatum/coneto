@@ -254,8 +254,16 @@ function Table({
                         cursor: pointer;
                         padding: 0.25rem 0.5rem;
                         background-color: transparent;
-                        color: inherit;
-                        border: 1px solid #e5e7eb;
+                        color: #565555;
+                        ${data.subMenuList
+                          ? css`
+                              border-top: 1px solid #e5e7eb;
+                              border-left: 1px solid #e5e7eb;
+                              border-bottom: 1px solid #e5e7eb;
+                            `
+                          : css`
+                              border: 1px solid #e5e7eb;
+                            `}
                         border-radius: 6px;
                         position: relative;
 
@@ -278,6 +286,7 @@ function Table({
                           gap: 0.25rem;
                           align-items: center;
                           cursor: pointer;
+                          color: #565555;
                           border-top: 1px solid #e5e7eb;
                           border-right: 1px solid #e5e7eb;
                           border-bottom: 1px solid #e5e7eb;
@@ -285,7 +294,6 @@ function Table({
                           border-bottom-right-radius: 6px;
                           padding: 0.25rem 0.5rem;
                           background-color: transparent;
-                          color: inherit;
                           position: relative;
 
                           &:hover {
