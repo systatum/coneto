@@ -1,8 +1,8 @@
 import { getIdContent } from "test/support/commands";
 
 describe("Treelist", () => {
-  context("Default", () => {
-    it("Should highlight selected item", () => {
+  context("default", () => {
+    it("should highlight selected item", () => {
       cy.visit(getIdContent("content-treelist--default"));
 
       cy.contains("Adam Noto Hakarsa")
@@ -13,11 +13,9 @@ describe("Treelist", () => {
         .parent()
         .should("have.css", "border-left-color", "rgb(59, 130, 246)");
     });
-  });
 
-  context("With Collapsible", () => {
-    it("Should toggle collapse and expand items", () => {
-      cy.visit(getIdContent("content-treelist--with-collapsible"));
+    it("should toggle collapse and expand items", () => {
+      cy.visit(getIdContent("content-treelist--default"));
 
       cy.contains("Adam Noto Hakarsa").should("exist");
 
@@ -28,8 +26,8 @@ describe("Treelist", () => {
       cy.contains("Adam Noto Hakarsa").should("exist");
     });
 
-    it("Should still allow selecting an item when expanded", () => {
-      cy.visit(getIdContent("content-treelist--with-collapsible"));
+    it("should still allow selecting an item when expanded", () => {
+      cy.visit(getIdContent("content-treelist--default"));
 
       cy.contains("Member of Technical Staff").click();
       cy.contains("Member of Technical Staff").click();
@@ -45,8 +43,8 @@ describe("Treelist", () => {
     });
   });
 
-  context("With Actions", () => {
-    it("Should click item and action button exists", () => {
+  context("with actions", () => {
+    it("should click item and action button exists", () => {
       cy.visit(getIdContent("content-treelist--with-actions"));
 
       cy.findByText("Discover").should("exist").click();
@@ -61,8 +59,8 @@ describe("Treelist", () => {
     });
   });
 
-  context("Without Header", () => {
-    it("Should click item and action button exists", () => {
+  context("without header", () => {
+    it("should click item and action button exists", () => {
       cy.visit(getIdContent("content-treelist--with-actions"));
 
       cy.findByText("Discover").should("exist").click();
