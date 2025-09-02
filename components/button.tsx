@@ -7,6 +7,7 @@ import {
 } from "@remixicon/react";
 import { TipMenu, TipMenuItemProps } from "./tip-menu";
 import styled, { css, CSSProp } from "styled-components";
+import { createPortal } from "react-dom";
 
 export type ButtonVariants = {
   variant?:
@@ -34,6 +35,7 @@ function Button({
   containerStyle,
   buttonStyle,
   toggleStyle,
+  onClick,
   ...props
 }: React.ComponentProps<"button"> &
   ButtonVariants & {
@@ -87,8 +89,8 @@ function Button({
     >
       <BaseButton
         onClick={(event) => {
-          if (props.onClick) {
-            props.onClick(event);
+          if (onClick) {
+            onClick(event);
           }
           if (tipMenu) {
             setIsOpen(false);
@@ -126,7 +128,8 @@ function Button({
 
           <BaseButtonToggle
             aria-label="button-toggle"
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               setIsOpen(!isOpen);
             }}
             $variant={variant}
@@ -143,28 +146,36 @@ function Button({
         </div>
       )}
 
-      {isOpen && (
-        <div
-          onMouseEnter={() => setHovered("dropdown")}
-          style={{
-            position: "absolute",
-            top: "100%",
-            transform: "translateY(-4px)",
-            zIndex: 10,
-            left: positionClass === "left" ? 0 : undefined,
-            right: positionClass === "right" ? 0 : undefined,
-          }}
-        >
-          <TipMenu
-            setIsOpen={() => {
-              setIsOpen(false);
-              setHovered("original");
+      {isOpen &&
+        createPortal(
+          <div
+            style={{
+              position: "absolute",
+              top: containerRef.current?.getBoundingClientRect().bottom ?? 0,
+              left:
+                positionClass === "left"
+                  ? containerRef.current?.getBoundingClientRect().left
+                  : undefined,
+              right:
+                positionClass === "right"
+                  ? window.innerWidth -
+                    (containerRef.current?.getBoundingClientRect().right ?? 0)
+                  : undefined,
+              zIndex: 9999,
             }}
-            style={dropdownStyle}
-            subMenuList={subMenuList}
-          />
-        </div>
-      )}
+            onMouseEnter={() => setHovered("dropdown")}
+          >
+            <TipMenu
+              setIsOpen={() => {
+                setIsOpen(false);
+                setHovered("original");
+              }}
+              style={dropdownStyle}
+              subMenuList={subMenuList}
+            />
+          </div>,
+          document.body
+        )}
     </ButtonWrapper>
   );
 }
