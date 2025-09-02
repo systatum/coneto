@@ -884,7 +884,7 @@ export const WithRowGroup: Story = {
         icon: RiClipboardLine,
         iconColor: "gray",
         onClick: () => {
-          console.log(`${selected} was copied to parent`);
+          console.log(`${selected} was copied to link`);
         },
       },
     ];
