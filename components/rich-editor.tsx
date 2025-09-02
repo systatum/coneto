@@ -515,9 +515,16 @@ const ToolbarButton = styled.button<{ $style?: CSSProp; $isOpen?: boolean }>`
     $isOpen &&
     css`
       background-color: #cfcfcf;
+      box-shadow:
+        inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
+        inset 0 -0.5px 0.5px #cfcfcf;
     `}
+
   &:active {
     background-color: #cfcfcf;
+    box-shadow:
+      inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
+      inset 0 -0.5px 0.5px #cfcfcf;
   }
   &:focus-visible {
     outline: none;
