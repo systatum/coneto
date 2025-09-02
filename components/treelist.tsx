@@ -1,6 +1,7 @@
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
 import { ReactNode, useState } from "react";
-import { RemixiconComponentType } from "@remixicon/react";
+import { RemixiconComponentType, RiArrowRightSLine } from "@remixicon/react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export interface TreeListProps {
   content: TreeListContentProps[];
@@ -14,6 +15,7 @@ export interface TreeListProps {
 export interface TreeListContentProps {
   title?: string;
   items: TreeListItemsProps[];
+  collapsible?: boolean;
 }
 
 export interface TreeListActionsProps {
@@ -40,6 +42,16 @@ function TreeList({
   actions,
 }: TreeListProps) {
   const [isSelected, setIsSelected] = useState("");
+  const [isOpen, setIsOpen] = useState<Record<number, boolean>>(
+    Object.fromEntries(content.map((_, i) => [i, true]))
+  );
+
+  const handleSelected = (index: number) => {
+    setIsOpen((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
+  };
 
   return (
     <TreeListWrapper $containerStyle={containerStyle}>
@@ -66,16 +78,38 @@ function TreeList({
       {content.length > 0 ? (
         content.map((data, index) => (
           <GroupWrapper key={index}>
-            {data.title && <GroupTitle>{data.title}</GroupTitle>}
-            <ItemsWrapper>
-              {data.items.map((val) => (
-                <TreeListItem
-                  key={val.id}
-                  item={{ ...val, isSelected, setIsSelected }}
-                  searchTerm={searchTerm}
-                />
-              ))}
-            </ItemsWrapper>
+            {data.title && (
+              <GroupTitleWrapper
+                onClick={() => {
+                  if (data.collapsible) handleSelected(index);
+                }}
+                $collapsible={data.collapsible}
+              >
+                <GroupTitle>{data.title}</GroupTitle>
+                {data.collapsible && (
+                  <GroupIcon $isOpen={isOpen[index]} size={20} />
+                )}
+              </GroupTitleWrapper>
+            )}
+            <AnimatePresence initial={false}>
+              {isOpen[index] && (
+                <ItemsWrapper
+                  key={`items-wrapper-${index}`}
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2, ease: "easeInOut" }}
+                >
+                  {data.items.map((val) => (
+                    <TreeListItem
+                      key={val.id}
+                      item={{ ...val, isSelected, setIsSelected }}
+                      searchTerm={searchTerm}
+                    />
+                  ))}
+                </ItemsWrapper>
+              )}
+            </AnimatePresence>
           </GroupWrapper>
         ))
       ) : (
@@ -162,14 +196,45 @@ const GroupWrapper = styled.div`
   gap: 0.25rem;
 `;
 
+const GroupTitleWrapper = styled.div<{ $collapsible?: boolean }>`
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  align-items: center;
+
+  ${({ $collapsible }) =>
+    $collapsible &&
+    css`
+      &:hover {
+        background-color: #f3f4f6;
+      }
+      cursor: pointer;
+    `}
+`;
+
 const GroupTitle = styled.span`
   font-weight: 500;
   padding: 2px 1rem;
 `;
 
-const ItemsWrapper = styled.div`
+const GroupIcon = styled(RiArrowRightSLine)<{ $isOpen?: boolean }>`
+  position: absolute;
+  right: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: transform 0.2s ease-in-out;
+
+  ${({ $isOpen }) =>
+    $isOpen &&
+    css`
+      transform: translateY(-50%) rotate(90deg);
+    `}
+`;
+
+const ItemsWrapper = styled(motion.div)`
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 `;
 
 const TreeListItemWrapper = styled.div<{ $isSelected: boolean }>`
