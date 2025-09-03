@@ -77,7 +77,7 @@ function TreeList({
 
       {content.length > 0 ? (
         content.map((data, index) => (
-          <GroupWrapper $isOpen={isOpen[index]} key={index}>
+          <GroupWrapper key={index}>
             {data.title && (
               <GroupTitleWrapper
                 onClick={() => {
@@ -87,7 +87,7 @@ function TreeList({
               >
                 <GroupTitle>{data.title}</GroupTitle>
                 {data.collapsible && (
-                  <GroupIcon $isOpen={isOpen[index]} size={20} />
+                  <GroupIcon aria-expanded={isOpen[index]} size={20} />
                 )}
               </GroupTitleWrapper>
             )}
@@ -158,6 +158,7 @@ const TreeListWrapper = styled.div<{
 }>`
   display: flex;
   flex-direction: column;
+
   ${(props) => props.$containerStyle}
 `;
 
@@ -166,6 +167,7 @@ const ActionsWrapper = styled.div`
   flex-direction: column;
   width: 100%;
   gap: 0.25rem;
+  margin-bottom: 1em;
 `;
 
 const ActionItem = styled.div<{ $style?: CSSProp }>`
@@ -175,6 +177,7 @@ const ActionItem = styled.div<{ $style?: CSSProp }>`
   width: 100%;
   align-items: center;
   padding: 0.25rem 0.75rem;
+  padding-left: 1.4rem;
   gap: 0.5rem;
   cursor: pointer;
   &:hover {
@@ -187,18 +190,17 @@ const Divider = styled.div`
   width: 100%;
   height: 1px;
   border-bottom: 1px solid #d1d5db;
+  margin-bottom: 1em;
 `;
 
-const GroupWrapper = styled.div<{ $isOpen?: boolean }>`
+const GroupWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
 
-  ${({ $isOpen }) =>
-    $isOpen &&
-    css`
-      padding-bottom: 8px;
-    `}
+  &:not(:last-child) {
+    padding-bottom: 8px;
+  }
 `;
 
 const GroupTitleWrapper = styled.div<{ $collapsible?: boolean }>`
@@ -223,18 +225,16 @@ const GroupTitle = styled.span`
   padding-left: 1.4rem;
 `;
 
-const GroupIcon = styled(RiArrowRightSLine)<{ $isOpen?: boolean }>`
+const GroupIcon = styled(RiArrowRightSLine)`
   position: absolute;
   left: 2px;
   top: 50%;
   transform: translateY(-50%);
   transition: transform 0.2s ease-in-out;
 
-  ${({ $isOpen }) =>
-    $isOpen &&
-    css`
-      transform: translateY(-50%) rotate(90deg);
-    `}
+  &[aria-expanded="true"] {
+    transform: translateY(-50%) rotate(90deg);
+  }
 `;
 
 const ItemsWrapper = styled(motion.ul)`
