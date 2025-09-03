@@ -309,7 +309,7 @@ function Table({
                         `
                       }
                       dividerStyle={css`
-                        border-color: #d1d3d6;
+                        border: 1px solid rgb(236 236 236);
                       `}
                       dropdownStyle={css`
                         position: absolute;
