@@ -1,10 +1,8 @@
 import {
-  RiArrowDownSLine,
   RiArrowUpSLine,
   RiClipboardFill,
   RiDeleteBin2Fill,
   RiDeleteBin2Line,
-  RiRefreshLine,
 } from "@remixicon/react";
 import { ColumnTableProps, Table } from "./../../components/table";
 import { TipMenuItemProps } from "./../../components/tip-menu";
