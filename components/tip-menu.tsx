@@ -1,13 +1,15 @@
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
 import { RemixiconComponentType } from "@remixicon/react";
 import { COLOR_STYLE_MAP } from "../constants/color-map";
 import { ReactNode } from "react";
 
+export type TipMenuItemVariantType = "sm" | "md";
 interface TipMenuProps {
   children?: ReactNode;
   subMenuList?: TipMenuItemProps[];
   style?: CSSProp;
   setIsOpen?: () => void;
+  variant?: TipMenuItemVariantType;
 }
 
 export interface TipMenuItemProps {
@@ -17,9 +19,16 @@ export interface TipMenuItemProps {
   iconColor?: string;
   isDangerous?: boolean;
   iconUrl?: string | null | undefined;
+  variant?: TipMenuItemVariantType;
 }
 
-function TipMenu({ children, subMenuList, style, setIsOpen }: TipMenuProps) {
+function TipMenu({
+  children,
+  subMenuList,
+  style,
+  setIsOpen,
+  variant = "md",
+}: TipMenuProps) {
   return (
     <StyledTipMenu
       aria-label="tip-menu"
@@ -31,6 +40,7 @@ function TipMenu({ children, subMenuList, style, setIsOpen }: TipMenuProps) {
       {subMenuList?.map((data, index) => (
         <TipMenuItem
           key={index}
+          variant={data.variant ?? variant}
           caption={data.caption}
           icon={data.icon}
           iconColor={data.iconColor}
@@ -51,11 +61,13 @@ function TipMenuItem({
   iconColor = "gray",
   isDangerous = false,
   iconUrl,
+  variant,
 }: TipMenuItemProps) {
   const isIconValid = iconUrl && iconUrl !== "";
 
   return (
     <StyledTipMenuItem
+      $variant={variant}
       aria-label="tip-menu-item"
       $isDangerous={isDangerous}
       onClick={onClick}
@@ -66,17 +78,10 @@ function TipMenuItem({
           src={iconUrl}
         />
       ) : (
-        <Icon
-          size={20}
-          style={
-            isDangerous
-              ? {
-                  color: "white",
-                }
-              : {
-                  color: COLOR_STYLE_MAP[iconColor],
-                }
-          }
+        <StyledIcon
+          as={Icon}
+          $variant={variant}
+          $color={isDangerous ? "white" : COLOR_STYLE_MAP[iconColor]}
         />
       )}
       <StyledCaption>{caption}</StyledCaption>
@@ -100,17 +105,26 @@ const StyledTipMenu = styled.div<{ $style?: CSSProp }>`
 
 const StyledTipMenuItem = styled.div<{
   $isDangerous: boolean;
+  $variant?: TipMenuItemVariantType;
 }>`
   display: flex;
   align-items: center;
-  gap: 12px;
   cursor: pointer;
-  padding: 8px;
   border-radius: 4px;
   border: 2px solid transparent;
   background-color: ${(props) => (props.$isDangerous ? "#ef4444" : "white")};
   color: ${(props) => (props.$isDangerous ? "white" : "black")};
   transition: background-color 0.2s;
+  ${({ $variant }) =>
+    $variant === "sm"
+      ? css`
+          gap: 8px;
+          padding: 2px;
+        `
+      : css`
+          gap: 12px;
+          padding: 8px;
+        `}
 
   &:hover {
     background-color: ${(props) =>
@@ -124,6 +138,26 @@ const StyledIconImage = styled.img`
   width: 30px;
   height: 30px;
   object-fit: contain;
+  padding-left: 1em;
+`;
+
+const StyledIcon = styled.div<{
+  $variant?: TipMenuItemVariantType;
+  $color?: string;
+}>`
+  color: ${({ $color }) => $color};
+
+  ${({ $variant }) =>
+    $variant === "sm"
+      ? css`
+          margin-left: 0.5em;
+          width: 15px;
+          height: 15px;
+        `
+      : css`
+          width: 20px;
+          height: 20px;
+        `}
 `;
 
 const StyledCaption = styled.span`
