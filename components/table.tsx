@@ -42,6 +42,8 @@ export interface TableActionsProps {
   icon?: RemixiconComponentType;
   onClick?: () => void;
   style?: CSSProp;
+  dividerStyle?: CSSProp;
+  dropdownStyle?: CSSProp;
   subMenuList?: SubMenuListTableProps[];
   disabled?: boolean;
 }
@@ -246,13 +248,14 @@ function Table({
                       tipMenu={data.subMenuList ? true : false}
                       subMenuList={data.subMenuList}
                       disabled={data.disabled}
+                      size="sm"
+                      tipMenuVariant="sm"
                       buttonStyle={css`
                         display: flex;
                         flex-direction: row;
                         gap: 0.25rem;
                         align-items: center;
                         cursor: pointer;
-                        padding: 0.25rem 0.5rem;
                         background-color: transparent;
                         color: #565555;
                         ${data.subMenuList
@@ -310,12 +313,18 @@ function Table({
                       }
                       dividerStyle={css`
                         border: 1px solid rgb(236 236 236);
+                        ${data.subMenuList && data.dividerStyle
+                          ? data.dividerStyle
+                          : null}
                       `}
                       dropdownStyle={css`
                         position: absolute;
                         margin-top: 2px;
                         z-index: 9999;
-                        width: 200px;
+                        width: 170px;
+                        ${data.subMenuList && data.dropdownStyle
+                          ? data.dropdownStyle
+                          : null}
                       `}
                     >
                       <data.icon size={14} />
