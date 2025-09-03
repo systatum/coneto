@@ -77,7 +77,7 @@ function TreeList({
 
       {content.length > 0 ? (
         content.map((data, index) => (
-          <GroupWrapper key={index}>
+          <GroupWrapper $isOpen={isOpen[index]} key={index}>
             {data.title && (
               <GroupTitleWrapper
                 onClick={() => {
@@ -158,7 +158,6 @@ const TreeListWrapper = styled.div<{
 }>`
   display: flex;
   flex-direction: column;
-  gap: 8px;
   ${(props) => props.$containerStyle}
 `;
 
@@ -190,10 +189,16 @@ const Divider = styled.div`
   border-bottom: 1px solid #d1d5db;
 `;
 
-const GroupWrapper = styled.div`
+const GroupWrapper = styled.div<{ $isOpen?: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+
+  ${({ $isOpen }) =>
+    $isOpen &&
+    css`
+      padding-bottom: 8px;
+    `}
 `;
 
 const GroupTitleWrapper = styled.div<{ $collapsible?: boolean }>`
