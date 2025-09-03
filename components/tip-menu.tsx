@@ -96,6 +96,7 @@ const StyledTipMenu = styled.div<{ $style?: CSSProp }>`
   overflow: hidden;
   padding: 4px;
   background-color: white;
+  gap: 2px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   border-radius: 4px;
   animation-duration: 200ms;
@@ -111,7 +112,6 @@ const StyledTipMenuItem = styled.div<{
   align-items: center;
   cursor: pointer;
   border-radius: 4px;
-  border: 2px solid transparent;
   background-color: ${(props) => (props.$isDangerous ? "#ef4444" : "white")};
   color: ${(props) => (props.$isDangerous ? "white" : "black")};
   transition: background-color 0.2s;
@@ -125,6 +125,21 @@ const StyledTipMenuItem = styled.div<{
           gap: 12px;
           padding: 8px;
         `}
+
+  &:active {
+    background-color: ${(props) => (props.$isDangerous ? "#ce375d" : "white")};
+    box-shadow:
+      inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
+      inset 0 -0.5px 0.5px
+        ${(props) => (props.$isDangerous ? "#ce375d" : "white")};
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 2px
+      ${(props) => (props.$isDangerous ? "#ce375d" : "white")};
+    transition: box-shadow 0.2s ease;
+  }
 
   &:hover {
     background-color: ${(props) =>
