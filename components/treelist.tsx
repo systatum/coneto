@@ -158,7 +158,7 @@ const TreeListWrapper = styled.div<{
 }>`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 8px;
   ${(props) => props.$containerStyle}
 `;
 
@@ -232,13 +232,16 @@ const GroupIcon = styled(RiArrowRightSLine)<{ $isOpen?: boolean }>`
     `}
 `;
 
-const ItemsWrapper = styled(motion.div)`
+const ItemsWrapper = styled(motion.ul)`
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 `;
 
-const TreeListItemWrapper = styled.div<{ $isSelected: boolean }>`
+const TreeListItemWrapper = styled.li<{ $isSelected: boolean }>`
   cursor: pointer;
   border-left: 3px solid
     ${(props) => (props.$isSelected ? "#3b82f6" : "transparent")};
@@ -248,6 +251,7 @@ const TreeListItemWrapper = styled.div<{ $isSelected: boolean }>`
   &:hover {
     background-color: #f3f4f6;
   }
+  list-style: none;
 `;
 
 const HighlightedText = styled.span`
