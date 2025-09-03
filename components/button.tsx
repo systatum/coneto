@@ -18,12 +18,12 @@ export type ButtonVariants = {
     | "danger"
     | "secondary"
     | "ghost";
-  size?: "default" | "icon" | "sm" | "lg";
+  size?: "icon" | "xs" | "md" | "sm" | "lg";
 };
 
 function Button({
   variant = "default",
-  size = "default",
+  size = "md",
   isLoading,
   tipMenu,
   subMenuList,
@@ -251,6 +251,11 @@ const BaseButton = styled.button<{
 
   ${({ $size }) => {
     switch ($size) {
+      case "xs":
+        return css`
+          height: 28px;
+          padding: 0 6px;
+        `;
       case "sm":
         return css`
           height: 32px;

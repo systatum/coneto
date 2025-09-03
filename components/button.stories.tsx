@@ -7,10 +7,6 @@ import {
   RiShieldLine,
   RiCheckLine,
   RiInboxArchiveLine,
-  RiDownloadLine,
-  RiLink,
-  RiShareLine,
-  RiEditLine,
 } from "@remixicon/react";
 import { css } from "styled-components";
 
