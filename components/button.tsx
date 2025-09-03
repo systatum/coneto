@@ -5,7 +5,7 @@ import {
   RiArrowDownSLine,
   RiArrowUpSLine,
 } from "@remixicon/react";
-import { TipMenu, TipMenuItemProps } from "./tip-menu";
+import { TipMenu, TipMenuItemProps, TipMenuItemVariantType } from "./tip-menu";
 import styled, { css, CSSProp } from "styled-components";
 import { createPortal } from "react-dom";
 
@@ -37,6 +37,7 @@ function Button({
   toggleStyle,
   onClick,
   dividerStyle,
+  tipMenuVariant,
   ...props
 }: React.ComponentProps<"button"> &
   ButtonVariants & {
@@ -50,6 +51,7 @@ function Button({
     toggleStyle?: CSSProp;
     containerStyle?: CSSProp;
     dividerStyle?: CSSProp;
+    tipMenuVariant?: TipMenuItemVariantType;
   }) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [hovered, setHovered] = React.useState<
@@ -177,6 +179,7 @@ function Button({
               }}
               style={dropdownStyle}
               subMenuList={subMenuList}
+              variant={tipMenuVariant}
             />
           </div>,
           document.body
