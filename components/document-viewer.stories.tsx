@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { BoundingBoxesProps, DocumentViewer } from "./document-viewer";
 import { css } from "styled-components";
-import { ReactElement, useState } from "react";
-import { StatefulForm } from "./stateful-form";
+import { ChangeEvent, ReactElement, useState } from "react";
+import { StatefulForm, StatefulOnChangeType } from "./stateful-form";
 import { Button } from "./button";
 import { Textbox } from "./textbox";
 
@@ -18,9 +18,8 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: () => {
-    const [tipState, setTipState] = useState<
-      "succeed" | "failed" | "idle" | "process"
-    >("idle");
+    const [tipState, setTipState] = useState<boolean>(false);
+    const [activeIndex, setActiveIndex] = useState<number | null>(0);
     const [boundingBoxes, setBoundingBoxes] = useState<BoundingBoxesProps[]>([
       {
         page: 1,
@@ -32,13 +31,40 @@ export const Default: Story = {
         boxStyle: { borderColor: "#aqua", backgroundColor: "#aqua" },
       },
     ]);
-
     const [boundingProcess, setBoundingProcess] = useState(boundingBoxes);
+    const [textReview, setTextReview] = useState<string>("");
 
-    const handleSetBoxes = (data: BoundingBoxesProps) => {
-      if (tipState === "idle") {
-        setBoundingProcess((prev) => [...prev, data]);
+    const handleSetBoxes = (data?: BoundingBoxesProps) => {
+      if (data) {
+        setBoundingProcess((prev) => {
+          const newBoxes = [...prev, data];
+          setActiveIndex(newBoxes.length - 1);
+          return newBoxes;
+        });
       }
+    };
+
+    const handleChangeText = (e: StatefulOnChangeType) => {
+      if (activeIndex !== null && e && "target" in e) {
+        const { value } = e.target;
+        setTextReview(String(value));
+      }
+    };
+
+    const handleSubmitText = async () => {
+      await setBoundingProcess((prev) => {
+        const newBoxes = [...prev];
+        newBoxes[activeIndex] = {
+          ...newBoxes[activeIndex],
+          contentOnHover: <p>{textReview}</p>,
+        };
+        setBoundingBoxes(newBoxes);
+        return newBoxes;
+      });
+
+      await setTextReview("");
+      await setActiveIndex(null);
+      await setTipState(false);
     };
 
     const componentRendered: ReactElement = (
@@ -51,36 +77,52 @@ export const Default: Story = {
         }}
       >
         <Textbox
-          name="input"
-          label="Input"
+          name="contentOnHover"
+          label="Review"
+          autoComplete="off"
           placeholder="Type here..."
-          onChange={() => setBoundingProcess((prev) => [...prev])}
+          onChange={handleChangeText}
+          value={textReview}
         />
         <div
           style={{
             marginTop: 4,
             display: "flex",
+            gap: "4px",
+            flexDirection: "row",
             justifyContent: "flex-end",
           }}
         >
-          <Button style={{ fontSize: "0.75rem" }}>Save</Button>
+          <Button
+            style={{ fontSize: "0.75rem" }}
+            onClick={() => handleSubmitText()}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="primary"
+            style={{ fontSize: "0.75rem" }}
+            onClick={() => handleSubmitText()}
+          >
+            Save
+          </Button>
         </div>
       </div>
     );
 
+    console.log(tipState);
+
     return (
       <DocumentViewer
         onRegionSelected={(props: BoundingBoxesProps) => {
-          setTipState("process");
-          handleSetBoxes(props);
+          if (!tipState) {
+            handleSetBoxes(props);
+            setTipState(true);
+          }
         }}
         componentRendered={componentRendered}
-        showComponentRendered={tipState === "process"}
-        boundingBoxes={
-          tipState === "succeed" || tipState === "failed"
-            ? boundingBoxes
-            : boundingProcess
-        }
+        showComponentRendered={tipState}
+        boundingBoxes={tipState ? boundingProcess : boundingBoxes}
         source="/sample.pdf"
       />
     );
