@@ -55,7 +55,7 @@ export default [
     },
   },
   {
-    files: ["**/*.cy.{ts,tsx,js,jsx}"],
+    files: ["test/support/**/*.{ts,tsx,js,jsx}", "**/*.cy.{ts,tsx,js,jsx}"],
     plugins: {
       cypress: cypressPlugin,
     },
@@ -64,6 +64,7 @@ export default [
         ...globals.browser,
         ...globals.node,
         ...globals.mocha,
+        Cypress: true,
         cy: true,
         expect: true,
       },
