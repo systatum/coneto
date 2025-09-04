@@ -10,17 +10,19 @@ import {
   ReactNode,
   Fragment,
 } from "react";
-import styled, { type CSSProp } from "styled-components";
+import styled, { css, type CSSProp } from "styled-components";
 import * as pdfjsLib from "pdfjs-dist";
+import { Combobox } from "./combobox";
+import { OptionsProps } from "./selectbox";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.54/pdf.worker.min.mjs";
 
 interface DocumentViewerProps {
-  style?: CSSProp;
   containerStyle?: CSSProp;
   selectionStyle?: CSSProp;
   source?: string;
+  title?: string;
   onRegionSelected?: (region: {
     page?: number;
     x?: number;
@@ -29,10 +31,13 @@ interface DocumentViewerProps {
     height?: number;
   }) => void;
   boundingBoxes?: BoundingBoxesProps[];
-  stateBoundingBox?: BoundingBoxesProps;
   initialZoom?: number;
   componentRendered?: ReactNode;
   showComponentRendered?: boolean;
+  totalPagesText?: (data: {
+    currentPage?: number;
+    totalPages?: number;
+  }) => string;
 }
 
 export interface BoundingBoxesProps {
@@ -50,21 +55,38 @@ interface BoxStyleProps {
   backgroundColor?: string;
 }
 
+const SCALE_OPTIONS = [
+  { text: "75%", value: 75 },
+  { text: "100%", value: 100 },
+  { text: "110%", value: 110 },
+  { text: "120%", value: 120 },
+  { text: "130%", value: 130 },
+  { text: "140%", value: 140 },
+  { text: "150%", value: 150 },
+];
+
 function DocumentViewer({
-  style,
   source,
   onRegionSelected,
   containerStyle,
   selectionStyle,
   boundingBoxes,
-  stateBoundingBox,
   componentRendered,
   showComponentRendered,
   initialZoom = 1.0,
+  totalPagesText,
+  title = "Document",
 }: DocumentViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewerRef = useRef<HTMLDivElement>(null);
+
   const [scale, setScale] = useState(initialZoom);
+  const scaleInitialState = initialZoom * 100;
+  const [scaleValue, setScaleValue] = useState<OptionsProps>({
+    text: `${String(scaleInitialState)}%`,
+    value: scaleInitialState,
+  });
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [totalPages, setTotalPages] = useState(0);
@@ -85,6 +107,43 @@ function DocumentViewer({
     pdf: pdfjsLib.PDFDocumentProxy;
     canvases: HTMLCanvasElement[];
   } | null>(null);
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || !pdfRef.current) return;
+
+    const handleScroll = () => {
+      const canvases = pdfRef.current!.canvases;
+      const containerRect = container.getBoundingClientRect();
+      const containerTop = containerRect.top;
+      const containerBottom = containerRect.bottom;
+      const containerCenter = (containerTop + containerBottom) / 2;
+
+      let closestPage = 1;
+      let closestDistance = Infinity;
+
+      canvases.forEach((canvas, i) => {
+        const canvasRect = canvas.getBoundingClientRect();
+        const canvasCenter = (canvasRect.top + canvasRect.bottom) / 2;
+
+        const distance = Math.abs(canvasCenter - containerCenter);
+
+        if (distance < closestDistance) {
+          closestPage = i + 1;
+          closestDistance = distance;
+        }
+      });
+
+      setCurrentPage(closestPage);
+    };
+
+    container.addEventListener("scroll", handleScroll);
+    handleScroll();
+
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, [pdfRef.current]);
 
   const preserveScrollPosition = useCallback(
     (newScale: number) => {
@@ -231,18 +290,13 @@ function DocumentViewer({
     return () => window.removeEventListener("resize", handleResize);
   }, [resizeCanvases]);
 
-  const handleZoomIn = () => {
-    const newScale = Math.min(scale + 0.1, 1.5);
-    preserveScrollPosition(newScale);
-  };
-
-  const handleZoomOut = () => {
-    const newScale = Math.max(scale - 0.1, 0.75);
-    preserveScrollPosition(newScale);
-  };
-
-  const handleZoomReset = () => {
-    preserveScrollPosition(1.0);
+  const handleScale = (e: OptionsProps) => {
+    setScaleValue({
+      text: e.text,
+      value: e.value,
+    });
+    const scalePosition = Number(e.value) / 100;
+    preserveScrollPosition(scalePosition);
   };
 
   const getCanvasAtPoint = (x: number, y: number) => {
@@ -310,25 +364,47 @@ function DocumentViewer({
 
   return (
     <PDFViewerContainer>
-      <Toolbar>
-        <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-          <span>Total: {totalPages} pages</span>
+      <ToolbarWrapper>
+        <Title>{title}</Title>
+        <ComboboxWrapper>
+          <Combobox
+            inputValue={scaleValue}
+            setInputValue={handleScale}
+            placeholder="zoom your pdf"
+            containerStyle={css`
+              width: 100px;
+              color: black;
+            `}
+            options={SCALE_OPTIONS}
+          />
+        </ComboboxWrapper>
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            alignContent: "end",
+            justifyContent: "end",
+          }}
+        >
+          {totalPagesText ? (
+            totalPagesText({
+              currentPage: currentPage,
+              totalPages: totalPages,
+            })
+          ) : (
+            <p>
+              Page {currentPage} of {totalPages}
+            </p>
+          )}
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-          <ToolbarButton onClick={handleZoomOut}>−</ToolbarButton>
-          <span style={{ minWidth: "60px", textAlign: "center" }}>
-            {Math.round(scale * 100)}%
-          </span>
-          <ToolbarButton onClick={handleZoomIn}>+</ToolbarButton>
-          <ToolbarButton onClick={handleZoomReset}>Reset</ToolbarButton>
-        </div>
-
-        <StatusText>
-          {loading && "Loading..."}
-          {error && <span className="error">{error}</span>}
-        </StatusText>
-      </Toolbar>
+        {(loading || error) && (
+          <StatusText>
+            {loading && "Loading..."}
+            {error && <span className="error">{error}</span>}
+          </StatusText>
+        )}
+      </ToolbarWrapper>
 
       <ContainerDocumentViewer
         $containerStyle={containerStyle}
@@ -448,30 +524,37 @@ const PDFViewerContainer = styled.div`
   background: #525659;
 `;
 
-const Toolbar = styled.div`
+const ToolbarWrapper = styled.div`
   background: #323639;
   color: white;
   padding: 8px 16px;
   display: flex;
   align-items: center;
   gap: 12px;
-  flex-wrap: wrap;
+  display: flex;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  flex-direction: row;
+  justify-content: space-between;
+  position: relative;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  flex-shrink: 0;
 `;
 
-const ToolbarButton = styled.button<{ disabled?: boolean }>`
-  background: transparent;
-  border: 1px solid #555;
-  color: white;
-  padding: 6px 12px;
-  cursor: pointer;
-  border-radius: 3px;
-  opacity: ${(props) => (props.disabled ? 0.5 : 1)};
+const Title = styled.div`
+  flex: 0 1 70%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
 
-  &:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.1);
-  }
+const ComboboxWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  align-content: center;
+  gap: 4px;
+  position: absolute;
+  left: 40vw;
+  z-index: 9999;
 `;
 
 const StatusText = styled.div`
