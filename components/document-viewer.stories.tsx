@@ -1,8 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { BoundingBoxesProps, DocumentViewer } from "./document-viewer";
-import { css } from "styled-components";
-import { ChangeEvent, ReactElement, useState } from "react";
-import { StatefulForm, StatefulOnChangeType } from "./stateful-form";
+import { ReactElement, useState } from "react";
+import { StatefulOnChangeType } from "./stateful-form";
 import { Button } from "./button";
 import { Textbox } from "./textbox";
 
@@ -51,20 +50,27 @@ export const Default: Story = {
       }
     };
 
-    const handleSubmitText = async () => {
-      await setBoundingProcess((prev) => {
-        const newBoxes = [...prev];
-        newBoxes[activeIndex] = {
-          ...newBoxes[activeIndex],
-          contentOnHover: <p>{textReview}</p>,
-        };
-        setBoundingBoxes(newBoxes);
-        return newBoxes;
-      });
+    const handleSubmitText = async (data: "cancel" | "submit") => {
+      if (data === "submit") {
+        await setBoundingProcess((prev) => {
+          const newBoxes = [...prev];
+          newBoxes[activeIndex] = {
+            ...newBoxes[activeIndex],
+            contentOnHover: <p>{textReview}</p>,
+          };
+          setBoundingBoxes(newBoxes);
+          return newBoxes;
+        });
 
-      await setTextReview("");
-      await setActiveIndex(null);
-      await setTipState(false);
+        await setTextReview("");
+        await setActiveIndex(null);
+        await setTipState(false);
+      } else {
+        await setBoundingProcess(boundingBoxes);
+        await setTextReview("");
+        await setActiveIndex(null);
+        await setTipState(false);
+      }
     };
 
     const componentRendered: ReactElement = (
@@ -95,22 +101,20 @@ export const Default: Story = {
         >
           <Button
             style={{ fontSize: "0.75rem" }}
-            onClick={() => handleSubmitText()}
+            onClick={() => handleSubmitText("cancel")}
           >
             Cancel
           </Button>
           <Button
             variant="primary"
             style={{ fontSize: "0.75rem" }}
-            onClick={() => handleSubmitText()}
+            onClick={() => handleSubmitText("submit")}
           >
             Save
           </Button>
         </div>
       </div>
     );
-
-    console.log(tipState);
 
     return (
       <DocumentViewer
@@ -120,6 +124,7 @@ export const Default: Story = {
             setTipState(true);
           }
         }}
+        title="Team Collaboration Notes"
         componentRendered={componentRendered}
         showComponentRendered={tipState}
         boundingBoxes={tipState ? boundingProcess : boundingBoxes}
