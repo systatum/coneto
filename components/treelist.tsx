@@ -208,13 +208,11 @@ const GroupTitleWrapper = styled.div<{ $collapsible?: boolean }>`
   flex-direction: row;
   position: relative;
   align-items: center;
+  user-select: none;
 
   ${({ $collapsible }) =>
     $collapsible &&
     css`
-      &:hover {
-        background-color: #f3f4f6;
-      }
       cursor: pointer;
     `}
 `;
