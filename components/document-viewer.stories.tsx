@@ -1,9 +1,15 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { BoundingBoxesProps, DocumentViewer } from "./document-viewer";
-import { ReactElement, useState } from "react";
+import {
+  BoundingBoxesProps,
+  BoundingBoxState,
+  DocumentViewerRef,
+  DocumentViewer,
+} from "./document-viewer";
+import { ReactElement, useRef, useState } from "react";
 import { StatefulOnChangeType } from "./stateful-form";
 import { Button } from "./button";
 import { Textbox } from "./textbox";
+import styled from "styled-components";
 
 const meta: Meta<typeof DocumentViewer> = {
   title: "Content/DocumentViewer",
@@ -17,8 +23,9 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: () => {
+    const ref = useRef<DocumentViewerRef>(null);
+
     const [tipState, setTipState] = useState<boolean>(false);
-    const [activeIndex, setActiveIndex] = useState<number | null>(0);
     const [boundingBoxes, setBoundingBoxes] = useState<BoundingBoxesProps[]>([
       {
         page: 1,
@@ -30,21 +37,18 @@ export const Default: Story = {
         boxStyle: { borderColor: "#aqua", backgroundColor: "#aqua" },
       },
     ]);
-    const [boundingProcess, setBoundingProcess] = useState(boundingBoxes);
+    const [boundingProcess, setBoundingProcess] =
+      useState<BoundingBoxState | null>(null);
     const [textReview, setTextReview] = useState<string>("");
 
-    const handleSetBoxes = (data?: BoundingBoxesProps) => {
+    const handleSetBoxes = (data?: BoundingBoxState) => {
       if (data) {
-        setBoundingProcess((prev) => {
-          const newBoxes = [...prev, data];
-          setActiveIndex(newBoxes.length - 1);
-          return newBoxes;
-        });
+        setBoundingProcess(data);
       }
     };
 
     const handleChangeText = (e: StatefulOnChangeType) => {
-      if (activeIndex !== null && e && "target" in e) {
+      if (e && "target" in e) {
         const { value } = e.target;
         setTextReview(String(value));
       }
@@ -52,84 +56,95 @@ export const Default: Story = {
 
     const handleSubmitText = async (data: "cancel" | "submit") => {
       if (data === "submit") {
-        await setBoundingProcess((prev) => {
-          const newBoxes = [...prev];
-          newBoxes[activeIndex] = {
-            ...newBoxes[activeIndex],
+        await setBoundingBoxes((prev) => {
+          const box: BoundingBoxesProps = {
+            ...boundingProcess,
             contentOnHover: <p>{textReview}</p>,
           };
-          setBoundingBoxes(newBoxes);
+          const newBoxes = [...prev, box];
           return newBoxes;
         });
-
-        await setTextReview("");
-        await setActiveIndex(null);
-        await setTipState(false);
-      } else {
-        await setBoundingProcess(boundingBoxes);
-        await setTextReview("");
-        await setActiveIndex(null);
-        await setTipState(false);
       }
+      await setTextReview("");
+      await setTipState(false);
+      await ref.current.clearSelection();
+      await setBoundingProcess(null);
     };
 
     const componentRendered: ReactElement = (
-      <div
+      <ContentViewer
         style={{
+          left: boundingProcess?.absoluteX ?? 0,
+          top: boundingProcess?.absoluteY ?? 0,
           background: "white",
-          minWidth: 300,
-          padding: "8px 8px 4px",
-          cursor: "pointer",
+          border: "1px solid gray",
         }}
       >
-        <Textbox
-          name="contentOnHover"
-          label="Review"
-          autoComplete="off"
-          placeholder="Type here..."
-          onChange={handleChangeText}
-          value={textReview}
-        />
         <div
           style={{
-            marginTop: 4,
-            display: "flex",
-            gap: "4px",
-            flexDirection: "row",
-            justifyContent: "flex-end",
+            background: "white",
+            minWidth: 300,
+            padding: "12px",
+            cursor: "pointer",
           }}
         >
-          <Button
-            style={{ fontSize: "0.75rem" }}
-            onClick={() => handleSubmitText("cancel")}
+          <Textbox
+            name="contentOnHover"
+            label="Review"
+            autoComplete="off"
+            placeholder="Type here..."
+            onChange={handleChangeText}
+            value={textReview}
+          />
+          <div
+            style={{
+              marginTop: 4,
+              display: "flex",
+              gap: "4px",
+              flexDirection: "row",
+              justifyContent: "flex-end",
+            }}
           >
-            Cancel
-          </Button>
-          <Button
-            variant="primary"
-            style={{ fontSize: "0.75rem" }}
-            onClick={() => handleSubmitText("submit")}
-          >
-            Save
-          </Button>
+            <Button
+              style={{ fontSize: "0.75rem" }}
+              onClick={() => handleSubmitText("cancel")}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="primary"
+              style={{ fontSize: "0.75rem" }}
+              onClick={() => handleSubmitText("submit")}
+            >
+              Save
+            </Button>
+          </div>
         </div>
-      </div>
+      </ContentViewer>
     );
 
     return (
-      <DocumentViewer
-        onRegionSelected={(props: BoundingBoxesProps) => {
-          if (!tipState) {
-            handleSetBoxes(props);
-            setTipState(true);
-          }
-        }}
-        title="Team Collaboration Notes"
-        componentRendered={componentRendered}
-        showComponentRendered={tipState}
-        boundingBoxes={tipState ? boundingProcess : boundingBoxes}
-        source="/sample.pdf"
-      />
+      <>
+        <DocumentViewer
+          ref={ref}
+          onRegionSelected={(props: BoundingBoxState) => {
+            if (!tipState) {
+              handleSetBoxes(props);
+              setTipState(true);
+            }
+          }}
+          title="Team Collaboration Notes"
+          boundingBoxes={boundingBoxes}
+          source="/sample.pdf"
+        />
+        {tipState && componentRendered}
+      </>
     );
   },
 };
+
+const ContentViewer = styled.div`
+  position: absolute;
+  border: 2px solid #4daaf5;
+  background: rgba(77, 170, 245, 0.2);
+`;
