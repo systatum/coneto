@@ -241,6 +241,7 @@ const ItemsWrapper = styled(motion.ul)`
   overflow: hidden;
   list-style: none;
   padding: 0;
+  padding-bottom: 0.5em;
   margin: 0;
 `;
 
