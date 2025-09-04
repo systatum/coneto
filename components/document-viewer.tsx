@@ -396,8 +396,8 @@ function DocumentViewer({
                     style={{
                       left: contentLeft,
                       top: contentTop,
-                      borderColor: data.boxStyle?.borderColor,
-                      backgroundColor: data.boxStyle?.backgroundColor,
+                      background: "white",
+                      border: "1px solid gray",
                     }}
                   >
                     {componentRendered}
