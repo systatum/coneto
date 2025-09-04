@@ -37,7 +37,7 @@ function Button({
   toggleStyle,
   onClick,
   dividerStyle,
-  tipMenuVariant,
+  tipMenuSize,
   ...props
 }: React.ComponentProps<"button"> &
   ButtonVariants & {
@@ -51,7 +51,7 @@ function Button({
     toggleStyle?: CSSProp;
     containerStyle?: CSSProp;
     dividerStyle?: CSSProp;
-    tipMenuVariant?: TipMenuItemVariantType;
+    tipMenuSize?: TipMenuItemVariantType;
   }) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [hovered, setHovered] = React.useState<
@@ -179,7 +179,7 @@ function Button({
               }}
               style={dropdownStyle}
               subMenuList={subMenuList}
-              variant={tipMenuVariant}
+              variant={tipMenuSize}
             />
           </div>,
           document.body

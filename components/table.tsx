@@ -249,7 +249,7 @@ function Table({
                       subMenuList={data.subMenuList}
                       disabled={data.disabled}
                       size="sm"
-                      tipMenuVariant="sm"
+                      tipMenuSize="sm"
                       buttonStyle={css`
                         display: flex;
                         flex-direction: row;
