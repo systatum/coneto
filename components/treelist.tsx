@@ -92,23 +92,22 @@ function TreeList({
               </GroupTitleWrapper>
             )}
             <AnimatePresence initial={false}>
-              {isOpen[index] && (
-                <ItemsWrapper
-                  key={`items-wrapper-${index}`}
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.2, ease: "easeInOut" }}
-                >
-                  {data.items.map((val) => (
-                    <TreeListItem
-                      key={val.id}
-                      item={{ ...val, isSelected, setIsSelected }}
-                      searchTerm={searchTerm}
-                    />
-                  ))}
-                </ItemsWrapper>
-              )}
+              <ItemsWrapper
+                key={`items-wrapper-${index}`}
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.2, ease: "easeInOut" }}
+                $collapsed={!isOpen[index]}
+              >
+                {data.items.map((val) => (
+                  <TreeListItem
+                    key={val.id}
+                    item={{ ...val, isSelected, setIsSelected }}
+                    searchTerm={searchTerm}
+                  />
+                ))}
+              </ItemsWrapper>
             </AnimatePresence>
           </GroupWrapper>
         ))
@@ -235,14 +234,20 @@ const GroupIcon = styled(RiArrowRightSLine)`
   }
 `;
 
-const ItemsWrapper = styled(motion.ul)`
-  display: flex;
+const ItemsWrapper = styled(motion.ul)<{ $collapsed?: boolean }>`
+  display: none;
   flex-direction: column;
   overflow: hidden;
   list-style: none;
   padding: 0;
   padding-bottom: 0.5em;
   margin: 0;
+
+  ${({ $collapsed }) => 
+    $collapsed &&
+    css`
+      display: none;
+    `}
 `;
 
 const TreeListItemWrapper = styled.li<{ $isSelected: boolean }>`
