@@ -78,64 +78,62 @@ function RichEditor({
     },
   });
 
+  marked.use({ gfm: false });
+
   const editorRef = useRef<HTMLDivElement>(null);
   const savedSelection = useRef<Range | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
-  const stateValue = marked(value);
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     if (!editorRef.current || editorRef.current.innerHTML) return;
 
-    editorRef.current.innerHTML = String(stateValue);
+    editorRef.current.innerHTML = String(marked(value));
+
+    editorRef.current
+      .querySelectorAll(".custom-checkbox-wrapper")
+      .forEach((node) => node.remove());
 
     const walker = document.createTreeWalker(
       editorRef.current,
       NodeFilter.SHOW_TEXT
     );
 
-    const regex = /\[(x| )\]/gi;
+    const textNodesToProcess: Text[] = [];
 
     while (walker.nextNode()) {
       const textNode = walker.currentNode as Text;
-      let match;
-      let lastIndex = 0;
-
-      while ((match = regex.exec(textNode.nodeValue!))) {
-        const index = match.index;
-
-        if (index > lastIndex) {
-          const beforeText = document.createTextNode(
-            textNode.nodeValue!.slice(lastIndex, index)
-          );
-          textNode.parentNode!.insertBefore(beforeText, textNode);
-        }
-
-        const isChecked = match[1].toLowerCase() === "x";
-
-        const checkboxWrapper = createCheckboxWrapper(
-          isChecked,
-          turndownService,
-          editorRef,
-          onChange
-        );
-
-        textNode.parentNode!.insertBefore(checkboxWrapper, textNode);
-
-        lastIndex = index + match[0].length;
+      if (textNode.nodeValue && /\[(x| )\]/i.test(textNode.nodeValue)) {
+        textNodesToProcess.push(textNode);
       }
-
-      if (lastIndex < textNode.nodeValue!.length) {
-        const afterText = document.createTextNode(
-          textNode.nodeValue!.slice(lastIndex)
-        );
-        textNode.parentNode!.insertBefore(afterText, textNode);
-      }
-
-      textNode.parentNode!.removeChild(textNode);
     }
-  }, [stateValue]);
+
+    textNodesToProcess.forEach((textNode) => {
+      if (!textNode.parentNode || !textNode.nodeValue) return;
+
+      const parts = textNode.nodeValue.split(/(\[x\]|\[ \])/i);
+      if (parts.length === 1) return;
+
+      const fragment = document.createDocumentFragment();
+
+      parts.forEach((part) => {
+        if (part.toLowerCase() === "[x]") {
+          fragment.appendChild(
+            createCheckboxWrapper(true, turndownService, editorRef, onChange)
+          );
+        } else if (part.toLowerCase() === "[ ]") {
+          fragment.appendChild(
+            createCheckboxWrapper(false, turndownService, editorRef, onChange)
+          );
+        } else if (part) {
+          fragment.appendChild(document.createTextNode(part));
+        }
+      });
+
+      textNode.parentNode.replaceChild(fragment, textNode);
+    });
+  }, []);
 
   const handleCommand = (
     command:
@@ -160,6 +158,7 @@ function RichEditor({
         editorRef,
         onChange
       );
+
       range.insertNode(checkboxWrapper);
 
       const spaceNode = document.createTextNode("\u00A0");
@@ -237,8 +236,8 @@ function RichEditor({
         const beforeCaret = text.slice(0, caretPos);
         const afterCaret = text.slice(caretPos);
 
-        const checkedCheckboxMatch = beforeCaret.match(/\[\s*x\s*\]$/i);
-        const uncheckedCheckboxMatch = beforeCaret.match(/\[\s*\]$/);
+        const checkedCheckboxMatch = beforeCaret.match(/\[x\]$/);
+        const uncheckedCheckboxMatch = beforeCaret.match(/\[ \]$/);
 
         if (checkedCheckboxMatch || uncheckedCheckboxMatch) {
           e.preventDefault();
@@ -314,6 +313,7 @@ function RichEditor({
           e.preventDefault();
 
           const li = document.createElement("li");
+
           if (afterCaret) {
             li.textContent = afterCaret;
           } else {
@@ -438,7 +438,6 @@ function RichEditor({
     savedSelection.current = null;
 
     const html = editorRef.current.innerHTML || "";
-    console.log("test", html);
 
     const markdown = turndownService.turndown(html);
     if (onChange) {
@@ -753,6 +752,7 @@ function createCheckboxWrapper(
     : "translate(-50%, -50%) scale(0)";
   icon.style.transition = "transform 150ms";
   icon.style.color = "white";
+  icon.style.pointerEvents = "none";
 
   const polyline = document.createElementNS(
     "http://www.w3.org/2000/svg",
