@@ -1,7 +1,14 @@
-import { KeyboardEvent, ReactNode, useEffect, useRef, useState } from "react";
+import {
+  type KeyboardEvent,
+  type ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   RemixiconComponentType,
   RiBold,
+  RiCheckboxLine,
   RiH1,
   RiH2,
   RiH3,
@@ -56,29 +63,124 @@ function RichEditor({
     },
   });
 
+  turndownService.addRule("checkbox", {
+    filter: function (node) {
+      return (
+        node.nodeName === "SPAN" &&
+        (node as HTMLElement).classList.contains("custom-checkbox-wrapper")
+      );
+    },
+    replacement: function (content, node) {
+      const checked = (node as HTMLElement).dataset.checked === "true";
+      return `[${checked ? "x" : " "}]`;
+    },
+  });
+
+  marked.use({ gfm: false });
+
   const editorRef = useRef<HTMLDivElement>(null);
   const savedSelection = useRef<Range | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
-  const stateValue = marked(value);
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    if (editorRef.current && !editorRef.current.innerHTML) {
-      editorRef.current.innerHTML = String(stateValue);
+    if (!editorRef.current || editorRef.current.innerHTML) return;
+
+    editorRef.current.innerHTML = String(marked(value));
+
+    editorRef.current
+      .querySelectorAll(".custom-checkbox-wrapper")
+      .forEach((node) => node.remove());
+
+    const walker = document.createTreeWalker(
+      editorRef.current,
+      NodeFilter.SHOW_TEXT
+    );
+
+    const textNodesToProcess: Text[] = [];
+
+    while (walker.nextNode()) {
+      const textNode = walker.currentNode as Text;
+      if (textNode.nodeValue && /\[(x| )\]/i.test(textNode.nodeValue)) {
+        textNodesToProcess.push(textNode);
+      }
     }
-  }, [stateValue]);
+
+    textNodesToProcess.forEach((textNode) => {
+      if (!textNode.parentNode || !textNode.nodeValue) return;
+
+      const parts = textNode.nodeValue.split(/(\[x\]|\[ \])/i);
+      if (parts.length === 1) return;
+
+      const fragment = document.createDocumentFragment();
+
+      parts.forEach((part) => {
+        if (part.toLowerCase() === "[x]") {
+          fragment.appendChild(
+            createCheckboxWrapper(true, turndownService, editorRef, onChange)
+          );
+        } else if (part.toLowerCase() === "[ ]") {
+          fragment.appendChild(
+            createCheckboxWrapper(false, turndownService, editorRef, onChange)
+          );
+        } else if (part) {
+          fragment.appendChild(document.createTextNode(part));
+        }
+      });
+
+      textNode.parentNode.replaceChild(fragment, textNode);
+    });
+  }, []);
 
   const handleCommand = (
-    command: "bold" | "italic" | "insertOrderedList" | "insertUnorderedList"
+    command:
+      | "bold"
+      | "italic"
+      | "insertOrderedList"
+      | "insertUnorderedList"
+      | "checkbox"
   ) => {
     if (!editorRef.current) return;
     editorRef.current.focus();
-    document.execCommand(command);
-    const html = editorRef.current.innerHTML || "";
-    const markdown = turndownService.turndown(html);
-    if (onChange) {
-      onChange(markdown);
+
+    if (command === "checkbox") {
+      const sel = window.getSelection();
+      if (!sel || !sel.rangeCount) return;
+
+      const range = sel.getRangeAt(0);
+
+      const checkboxWrapper = createCheckboxWrapper(
+        false,
+        turndownService,
+        editorRef,
+        onChange
+      );
+
+      range.insertNode(checkboxWrapper);
+
+      const spaceNode = document.createTextNode("\u00A0");
+      checkboxWrapper.after(spaceNode);
+
+      const newRange = document.createRange();
+      newRange.setStartAfter(spaceNode);
+      newRange.collapse(true);
+
+      sel.removeAllRanges();
+      sel.addRange(newRange);
+
+      const html = editorRef.current.innerHTML || "";
+      const markdown = turndownService.turndown(html);
+      if (onChange) {
+        onChange(markdown);
+      }
+    } else {
+      document.execCommand(command);
+      const html = editorRef.current.innerHTML || "";
+      const markdown = turndownService.turndown(html);
+      if (onChange) {
+        onChange(markdown);
+      }
     }
   };
 
@@ -132,6 +234,76 @@ function RichEditor({
         const beforeCaret = text.slice(0, caretPos);
         const afterCaret = text.slice(caretPos);
 
+        const checkedCheckboxMatch = beforeCaret.match(/\[x\]$/);
+        const uncheckedCheckboxMatch = beforeCaret.match(/\[ \]$/);
+
+        if (checkedCheckboxMatch || uncheckedCheckboxMatch) {
+          e.preventDefault();
+
+          const patternLength = checkedCheckboxMatch
+            ? checkedCheckboxMatch[0].length
+            : uncheckedCheckboxMatch![0].length;
+          const beforePattern = beforeCaret.slice(0, -patternLength);
+
+          const checkboxWrapper = createCheckboxWrapper(
+            !!checkedCheckboxMatch,
+            turndownService,
+            editorRef,
+            onChange
+          );
+
+          const spaceNode = document.createTextNode("\u00A0");
+          checkboxWrapper.after(spaceNode);
+
+          if (beforePattern || afterCaret) {
+            const afterText = afterCaret ?? "";
+
+            node.textContent = beforePattern + afterText;
+
+            const newRange = document.createRange();
+            newRange.setStart(node, beforePattern.length);
+            newRange.collapse(true);
+
+            newRange.insertNode(checkboxWrapper);
+
+            if (!afterText.startsWith(" ")) {
+              const spaceNode = document.createTextNode("\u00A0");
+              checkboxWrapper.after(spaceNode);
+            }
+
+            const finalRange = document.createRange();
+            if (checkboxWrapper.nextSibling) {
+              finalRange.setStartAfter(checkboxWrapper.nextSibling);
+            } else {
+              finalRange.setStartAfter(checkboxWrapper);
+            }
+            finalRange.collapse(true);
+
+            sel.removeAllRanges();
+            sel.addRange(finalRange);
+          } else {
+            const parent = node.parentNode;
+            if (parent) {
+              parent.replaceChild(checkboxWrapper, node);
+
+              const spaceNode = document.createTextNode("\u00A0");
+              parent.insertBefore(spaceNode, checkboxWrapper.nextSibling);
+
+              const finalRange = document.createRange();
+              finalRange.setStartAfter(spaceNode);
+              finalRange.collapse(true);
+
+              sel.removeAllRanges();
+              sel.addRange(finalRange);
+            }
+          }
+
+          const html = editorRef.current?.innerHTML || "";
+          const markdown = turndownService.turndown(html);
+          onChange?.(markdown);
+          return;
+        }
+
         const orderedMatch = beforeCaret.match(/^(\d+)\.$/);
         const unorderedMatch = beforeCaret.match(/^[-*]$/);
 
@@ -139,6 +311,7 @@ function RichEditor({
           e.preventDefault();
 
           const li = document.createElement("li");
+
           if (afterCaret) {
             li.textContent = afterCaret;
           } else {
@@ -245,7 +418,7 @@ function RichEditor({
       newRange.selectNodeContents(newHeading);
       newRange.collapse(false);
       sel.removeAllRanges();
-      sel.addRange;
+      sel.addRange(newRange);
     } else {
       const heading = document.createElement(headingTag);
       heading.innerHTML = sel.toString();
@@ -263,6 +436,7 @@ function RichEditor({
     savedSelection.current = null;
 
     const html = editorRef.current.innerHTML || "";
+
     const markdown = turndownService.turndown(html);
     if (onChange) {
       onChange(markdown);
@@ -335,6 +509,10 @@ function RichEditor({
           <RichEditorToolbarButton
             icon={RiListUnordered}
             onClick={() => handleCommand("insertUnorderedList")}
+          />
+          <RichEditorToolbarButton
+            icon={RiCheckboxLine}
+            onClick={() => handleCommand("checkbox")}
           />
           <RichEditorToolbarButton
             icon={RiHeading}
@@ -533,6 +711,73 @@ const ToolbarButton = styled.button<{ $style?: CSSProp; $isOpen?: boolean }>`
   }
   ${({ $style }) => $style}
 `;
+
+function createCheckboxWrapper(
+  isChecked: boolean,
+  turndownService: TurndownService,
+  editorRef: React.RefObject<HTMLDivElement>,
+  onChange?: (value: string) => void
+) {
+  const wrapper = document.createElement("span");
+  wrapper.className = "custom-checkbox-wrapper";
+  wrapper.dataset.checked = String(isChecked);
+  wrapper.contentEditable = "false";
+  wrapper.style.display = "inline-flex";
+  wrapper.style.alignItems = "center";
+  wrapper.style.position = "relative";
+
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  checkbox.checked = isChecked;
+  checkbox.style.appearance = "none";
+  checkbox.style.height = "14px";
+  checkbox.style.width = "14px";
+  checkbox.style.cursor = "pointer";
+  checkbox.style.outline = "none";
+  checkbox.style.backgroundColor = isChecked ? "#61A9F9" : "#ffffff";
+  checkbox.style.border = `1px solid ${isChecked ? "#61A9F9" : "#6b7280"}`;
+
+  const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  icon.setAttribute("viewBox", "0 0 24 24");
+  icon.setAttribute("stroke", "currentColor");
+  icon.setAttribute("stroke-width", "3");
+  icon.setAttribute("fill", "none");
+  icon.style.position = "absolute";
+  icon.style.top = "50%";
+  icon.style.left = "50%";
+  icon.style.transform = isChecked
+    ? "translate(-50%, -50%) scale(1)"
+    : "translate(-50%, -50%) scale(0)";
+  icon.style.transition = "transform 150ms";
+  icon.style.color = "white";
+  icon.style.pointerEvents = "none";
+
+  const polyline = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "polyline"
+  );
+  polyline.setAttribute("points", "20 6 9 17 4 12");
+  icon.appendChild(polyline);
+
+  checkbox.addEventListener("change", () => {
+    const checked = checkbox.checked;
+    wrapper.dataset.checked = String(checked);
+    checkbox.style.backgroundColor = checked ? "#61A9F9" : "#ffffff";
+    checkbox.style.borderColor = checked ? "#61A9F9" : "#6b7280";
+    icon.style.transform = checked
+      ? "translate(-50%, -50%) scale(1)"
+      : "translate(-50%, -50%) scale(0)";
+
+    const html = editorRef.current?.innerHTML || "";
+    const markdown = turndownService.turndown(html);
+    onChange?.(markdown);
+  });
+
+  wrapper.appendChild(checkbox);
+  wrapper.appendChild(icon);
+
+  return wrapper;
+}
 
 RichEditor.ToolbarButton = RichEditorToolbarButton;
 

@@ -15,6 +15,7 @@ const meta: Meta<typeof RichEditor> = {
 ✍️ A lightweight Markdown-compatible rich text editor using \`contentEditable\` div, Remix Icons, and inline HTML/Markdown conversion.
 
 - Supports bold, italic, ordered/unordered list, and headings
+- Supports checklists with \`[]\` (unchecked) and \`[x]\` (checked)
 - Uses custom turndown rules for markdown conversion
 - Includes a floating tip menu for H1–H3 heading options
 - Optional right-panel toolbar 
