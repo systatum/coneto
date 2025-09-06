@@ -627,6 +627,7 @@ const ToolbarWrapper = styled.div`
   justify-content: space-between;
   position: relative;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 `;
 
 const Title = styled.div`
@@ -642,7 +643,7 @@ const ComboboxWrapper = styled.div`
   align-content: center;
   gap: 4px;
   position: absolute;
-  left: 40vw;
+  left: 35vw;
   z-index: 9999;
 `;
 
