@@ -62,6 +62,7 @@ export interface BoundingBoxState {
 export interface DocumentViewerRef {
   clearSelection: () => void;
   redraw: () => void;
+  resizeShowPopUp: (data: HTMLDivElement) => void;
 }
 
 interface BoxStyleProps {
@@ -120,6 +121,10 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
     const [canvasLocal, setCanvasLocal] = useState<HTMLCanvasElement | null>(
       null
     );
+    const [size, setSize] = useState<{
+      width?: number;
+      height?: number;
+    } | null>(null);
 
     useImperativeHandle(
       ref,
@@ -127,7 +132,18 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
         clearSelection: () => {
           setSelectionShow(null);
         },
-        redraw: () => {},
+        redraw: () => {
+          setStart({ x: 240, y: 235 });
+        },
+        resizeShowPopUp: (data) => {
+          const timeout = setTimeout(() => {
+            setSize({
+              width: data.clientWidth,
+              height: data.clientHeight,
+            });
+          }, 50);
+          return timeout;
+        },
       }),
       []
     );
@@ -245,7 +261,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
       });
     }, [scale]);
 
-    useEffect(() => {
+    const renderPDF = async () => {
       if (!source || !viewerRef.current) return;
 
       const container = viewerRef.current;
@@ -253,55 +269,55 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
       setLoading(true);
       setError(null);
 
-      const renderPDF = async () => {
-        try {
-          const pdf = await pdfjsLib.getDocument(source).promise;
-          setTotalPages(pdf.numPages);
-          const canvases: HTMLCanvasElement[] = [];
+      try {
+        const pdf = await pdfjsLib.getDocument(source).promise;
+        setTotalPages(pdf.numPages);
+        const canvases: HTMLCanvasElement[] = [];
 
-          for (let i = 1; i <= pdf.numPages; i++) {
-            const page = await pdf.getPage(i);
-            const viewport = page.getViewport({ scale });
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const page = await pdf.getPage(i);
+          const viewport = page.getViewport({ scale });
 
-            const canvas = document.createElement("canvas");
-            const context = canvas.getContext("2d");
-            if (!context) continue;
+          const canvas = document.createElement("canvas");
+          const context = canvas.getContext("2d");
+          if (!context) continue;
 
-            canvas.width = viewport.width;
-            canvas.height = viewport.height;
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
 
-            await page.render({
-              canvas,
-              canvasContext: context,
-              viewport,
-            }).promise;
+          await page.render({
+            canvas,
+            canvasContext: context,
+            viewport,
+          }).promise;
 
-            const pageWrapper = document.createElement("div");
-            pageWrapper.style.display = "flex";
-            pageWrapper.style.justifyContent = "center";
-            pageWrapper.style.marginBottom = "20px";
-            pageWrapper.style.background = "white";
-            pageWrapper.style.boxShadow = "0 2px 10px rgba(0, 0, 0, 0.1)";
-            pageWrapper.style.width = "fit-content";
-            pageWrapper.style.margin = "0 auto 20px auto";
+          const pageWrapper = document.createElement("div");
+          pageWrapper.style.display = "flex";
+          pageWrapper.style.justifyContent = "center";
+          pageWrapper.style.marginBottom = "20px";
+          pageWrapper.style.background = "white";
+          pageWrapper.style.boxShadow = "0 2px 10px rgba(0, 0, 0, 0.1)";
+          pageWrapper.style.width = "fit-content";
+          pageWrapper.style.margin = "0 auto 20px auto";
 
-            canvas.style.display = "block";
-            canvas.style.maxWidth = "100%";
-            canvas.style.height = "auto";
+          canvas.style.display = "block";
+          canvas.style.maxWidth = "100%";
+          canvas.style.height = "auto";
 
-            pageWrapper.appendChild(canvas);
-            container.appendChild(pageWrapper);
-            canvases.push(canvas);
-          }
-
-          pdfRef.current = { pdf, canvases };
-          setLoading(false);
-        } catch (err: any) {
-          setError(`Error loading PDF: ${err.message}`);
-          setLoading(false);
+          pageWrapper.appendChild(canvas);
+          container.appendChild(pageWrapper);
+          canvases.push(canvas);
         }
-      };
 
+        pdfRef.current = { pdf, canvases };
+        setLoading(false);
+      } catch (err: any) {
+        setError(`Error loading PDF: ${err.message}`);
+        setLoading(false);
+      }
+    };
+
+    useEffect(() => {
       renderPDF();
     }, [source]);
 
@@ -404,8 +420,8 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
         const viewportHeight = window.innerHeight;
         const viewportWidth = window.innerWidth;
 
-        const popupWidth = 300;
-        const popupHeight = 120;
+        const popupWidth = size?.width !== undefined ? size.width : 300;
+        const popupHeight = size?.height !== undefined ? size.height : 124;
 
         let popupX = boxLeft;
         let popupY = boxTop + boxHeight + 8;
