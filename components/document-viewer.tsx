@@ -62,7 +62,7 @@ export interface BoundingBoxState {
 export interface DocumentViewerRef {
   clearSelection: () => void;
   redraw: () => void;
-  repositionShowPopUp: (data: HTMLDivElement) => void;
+  repositionPopUp: (data: HTMLDivElement) => void;
 }
 
 interface BoxStyleProps {
@@ -135,7 +135,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
         redraw: () => {
           setStart({ x: 240, y: 235 });
         },
-        repositionShowPopUp: (data) => {
+        repositionPopUp: (data) => {
           const timeout = setTimeout(() => {
             setSize({
               width: data.clientWidth,

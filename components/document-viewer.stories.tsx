@@ -73,7 +73,7 @@ export const Default: Story = {
 
     const componentRendered: ReactElement = (
       <ContentViewer
-        ref={ref.current?.repositionShowPopUp}
+        ref={ref.current?.repositionPopUp}
         style={{
           left: boundingProcess?.absoluteX ?? 0,
           top: boundingProcess?.absoluteY ?? 0,
