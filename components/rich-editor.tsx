@@ -95,7 +95,7 @@ function RichEditor({
       NodeFilter.SHOW_TEXT
     );
 
-    const regex = /\[[x ]?\]/gi;
+    const regex = /\[(x| )\]/gi;
 
     while (walker.nextNode()) {
       const textNode = walker.currentNode as Text;
@@ -112,7 +112,7 @@ function RichEditor({
           textNode.parentNode!.insertBefore(beforeText, textNode);
         }
 
-        const isChecked = match[1] === "x";
+        const isChecked = match[1].toLowerCase() === "x";
 
         const checkboxWrapper = createCheckboxWrapper(
           isChecked,
@@ -254,10 +254,14 @@ function RichEditor({
             editorRef,
             onChange
           );
-          checkboxWrapper.after(document.createTextNode(" "));
+
+          const spaceNode = document.createTextNode("\u00A0");
+          checkboxWrapper.after(spaceNode);
 
           if (beforePattern || afterCaret) {
-            node.textContent = beforePattern + afterCaret;
+            const afterText = afterCaret ?? "";
+
+            node.textContent = beforePattern + afterText;
 
             const newRange = document.createRange();
             newRange.setStart(node, beforePattern.length);
@@ -265,9 +269,19 @@ function RichEditor({
 
             newRange.insertNode(checkboxWrapper);
 
+            if (!afterText.startsWith(" ")) {
+              const spaceNode = document.createTextNode("\u00A0");
+              checkboxWrapper.after(spaceNode);
+            }
+
             const finalRange = document.createRange();
-            finalRange.setStartAfter(checkboxWrapper);
+            if (checkboxWrapper.nextSibling) {
+              finalRange.setStartAfter(checkboxWrapper.nextSibling);
+            } else {
+              finalRange.setStartAfter(checkboxWrapper);
+            }
             finalRange.collapse(true);
+
             sel.removeAllRanges();
             sel.addRange(finalRange);
           } else {
@@ -281,6 +295,7 @@ function RichEditor({
               const finalRange = document.createRange();
               finalRange.setStartAfter(spaceNode);
               finalRange.collapse(true);
+
               sel.removeAllRanges();
               sel.addRange(finalRange);
             }
@@ -423,6 +438,8 @@ function RichEditor({
     savedSelection.current = null;
 
     const html = editorRef.current.innerHTML || "";
+    console.log("test", html);
+
     const markdown = turndownService.turndown(html);
     if (onChange) {
       onChange(markdown);
