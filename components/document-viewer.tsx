@@ -7,15 +7,16 @@ import {
   useRef,
   useState,
   useCallback,
-  Fragment,
   forwardRef,
   useImperativeHandle,
+  useReducer,
 } from "react";
 import styled, { css, type CSSProp } from "styled-components";
 import * as pdfjsLib from "pdfjs-dist";
 import { Combobox } from "./combobox";
 import { OptionsProps } from "./selectbox";
 
+// We set pdfjsLib.GlobalWorkerOptions.workerSrc to load the PDF.js worker from a CDN, since the built-in worker from the library cannot be used directly at the moment.
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.54/pdf.worker.min.mjs";
 
@@ -61,7 +62,6 @@ export interface BoundingBoxState {
 
 export interface DocumentViewerRef {
   clearSelection: () => void;
-  redraw: () => void;
   repositionPopUp: (data: HTMLDivElement) => void;
 }
 
@@ -87,7 +87,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
       onRegionSelected,
       containerStyle,
       selectionStyle,
-      boundingBoxes,
+      boundingBoxes = [],
       initialZoom = 1.0,
       totalPagesText,
       title = "Document",
@@ -103,17 +103,16 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
       text: `${String(scaleInitialState)}%`,
       value: scaleInitialState,
     });
+    const [isHovered, setIsHovered] = useState<number | null>(null);
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [totalPages, setTotalPages] = useState(0);
     const contentRef = useRef<HTMLDivElement>(null);
+    const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
-    const selectionBoundingBoxes = boundingBoxes ? boundingBoxes : [];
     const [selection, setSelection] = useState<BoundingBoxState | null>(null);
-    const [selectionShow, setSelectionShow] = useState<BoundingBoxState | null>(
-      null
-    );
+
     const [start, setStart] = useState<{
       x: number;
       y: number;
@@ -126,23 +125,35 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
       height?: number;
     } | null>(null);
 
+    useEffect(() => {
+      if (!viewerRef.current && selection) return;
+      const resizeObserver = new ResizeObserver(() => {
+        forceUpdate();
+      });
+
+      resizeObserver.observe(viewerRef.current);
+
+      return () => resizeObserver.disconnect();
+    }, [selection]);
+
     useImperativeHandle(
       ref,
       () => ({
         clearSelection: () => {
-          setSelectionShow(null);
+          setSelection(null);
         },
-        redraw: () => {
-          setStart({ x: 240, y: 235 });
-        },
-        repositionPopUp: (data) => {
-          const timeout = setTimeout(() => {
-            setSize({
-              width: data.clientWidth,
-              height: data.clientHeight,
-            });
-          }, 50);
-          return timeout;
+        repositionPopUp: (data: HTMLDivElement) => {
+          if (!data) return;
+          if (size === null) {
+            const timeout = setTimeout(() => {
+              if (!data) return;
+              setSize({
+                width: data.clientWidth,
+                height: data.clientHeight,
+              });
+            }, 50);
+            return timeout;
+          }
         },
       }),
       []
@@ -236,6 +247,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
       [scale]
     );
 
+    // For resize canvases when we changed scale
     const resizeCanvases = useCallback(() => {
       if (!viewerRef.current || !pdfRef.current) return;
       const { canvases, pdf } = pdfRef.current;
@@ -261,6 +273,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
       });
     }, [scale]);
 
+    // For render for the first time to read pdf.
     const renderPDF = async () => {
       if (!source || !viewerRef.current) return;
 
@@ -408,7 +421,24 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
       setSelection(box);
     };
 
+    const timeoutRef = useRef(null);
+
+    const handleMouseEnter = useCallback((index: number) => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+      setIsHovered(index);
+    }, []);
+
+    const handleMouseLeave = useCallback(() => {
+      timeoutRef.current = setTimeout(() => {
+        setIsHovered(null);
+      }, 150);
+    }, []);
+
     const handleMouseUp = () => {
+      if (!canvasLocal) return;
       if (selection && onRegionSelected) {
         const rect = canvasLocal.getBoundingClientRect();
 
@@ -442,9 +472,11 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
         };
 
         onRegionSelected(finalSelection);
-        setSelectionShow(finalSelection);
+        setSelection(finalSelection);
+      } else {
+        setSelection(null);
       }
-      setSelection(null);
+
       setStart(null);
     };
 
@@ -460,6 +492,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
               containerStyle={css`
                 width: 100px;
                 color: black;
+                z-index: 9999;
               `}
               options={SCALE_OPTIONS}
             />
@@ -495,15 +528,15 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
         <ContainerDocumentViewer
           $containerStyle={containerStyle}
           ref={containerRef}
+          onMouseUp={handleMouseUp}
         >
           <Viewer
             ref={viewerRef}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
           />
-          {selectionBoundingBoxes &&
-            selectionBoundingBoxes.map((data, index) => {
+          {boundingBoxes &&
+            boundingBoxes.map((data, index) => {
               const canvas = pdfRef.current?.canvases[data.page! - 1];
               if (!canvas) return null;
 
@@ -540,7 +573,11 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
               }
 
               return (
-                <Fragment key={index}>
+                <div
+                  onMouseEnter={() => handleMouseEnter(index)}
+                  onMouseLeave={() => handleMouseLeave()}
+                  key={index}
+                >
                   <SelectionBox
                     style={{
                       left: boxLeft,
@@ -552,7 +589,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
                     }}
                     $selectionStyle={selectionStyle}
                   />
-                  {data.contentOnHover && (
+                  {data.contentOnHover && isHovered === index && (
                     <ContentViewer
                       ref={contentRef}
                       style={{
@@ -565,24 +602,10 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
                       {data.contentOnHover}
                     </ContentViewer>
                   )}
-                </Fragment>
+                </div>
               );
             })}
-          {selectionShow && (
-            <SelectionBox
-              style={{
-                left:
-                  selectionShow.x * canvasLocal.clientWidth +
-                  canvasLocal.offsetLeft,
-                top:
-                  selectionShow.y * canvasLocal.clientHeight +
-                  canvasLocal.offsetTop,
-                width: selectionShow.width * canvasLocal.clientWidth,
-                height: selectionShow.height * canvasLocal.clientHeight,
-              }}
-              $selectionStyle={selectionStyle}
-            />
-          )}
+
           {canvasLocal && selection && (
             <SelectionBox
               style={{
@@ -627,23 +650,23 @@ const ToolbarWrapper = styled.div`
   justify-content: space-between;
   position: relative;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
 `;
 
 const Title = styled.div`
-  flex: 0 1 70%;
+  display: block;
   white-space: nowrap;
+  width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
 `;
 
 const ComboboxWrapper = styled.div`
   display: flex;
-  width: 100%;
+  position: relative;
+  justify-content: center;
+  width: fit-content;
   align-content: center;
   gap: 4px;
-  position: absolute;
-  left: 35vw;
   z-index: 9999;
 `;
 
@@ -678,7 +701,6 @@ const SelectionBox = styled.div<{ $selectionStyle?: CSSProp }>`
   position: absolute;
   border: 2px dashed #4daaf5;
   background: rgba(77, 170, 245, 0.2);
-  pointer-events: none;
   user-select: none;
 
   ${({ $selectionStyle }) => $selectionStyle};
