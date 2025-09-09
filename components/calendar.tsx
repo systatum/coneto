@@ -4,7 +4,7 @@ import {
   RiArrowRightSLine,
   RiCheckLine,
 } from "@remixicon/react";
-import { Fragment, ReactElement } from "react";
+import { Fragment, ReactElement, ReactNode } from "react";
 import { useState, useEffect } from "react";
 import { Button } from "./button";
 import { Combobox } from "./combobox";
@@ -31,6 +31,7 @@ type CalendarProps = BaseCalendarProps &
     label?: string;
     showError?: boolean;
     errorMessage?: string;
+    footer?: ReactNode;
   };
 
 interface CalendarStateProps {
@@ -94,6 +95,7 @@ function Calendar({
   errorMessage,
   onClick,
   containerStyle,
+  footer,
 }: CalendarProps) {
   const parsedDate = inputValue?.text ? new Date(inputValue.text) : new Date();
   const stateDate = isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
@@ -530,6 +532,7 @@ function Calendar({
           })}
         </GridDate>
       </>
+      <>{footer}</>
     </CalendarContainer>
   );
 
