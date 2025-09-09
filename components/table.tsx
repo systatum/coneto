@@ -26,6 +26,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import styled, { css, CSSProp } from "styled-components";
 import { Searchbox } from "./searchbox";
+import { Button } from "./button";
 
 export type RowData = (string | ReactNode)[];
 
@@ -41,7 +42,13 @@ export interface TableActionsProps {
   icon?: RemixiconComponentType;
   onClick?: () => void;
   style?: CSSProp;
+  dividerStyle?: CSSProp;
+  dropdownStyle?: CSSProp;
+  subMenuList?: SubMenuListTableProps[];
+  disabled?: boolean;
 }
+
+export type SubMenuListTableProps = TipMenuItemProps;
 
 export interface TableProps {
   selectable?: boolean;
@@ -235,10 +242,90 @@ function Table({
                 )}
                 {actions &&
                   actions.map((data, index) => (
-                    <ActionButton
+                    <Button
                       key={index}
                       onClick={data.onClick}
-                      $style={data.style}
+                      tipMenu={data.subMenuList ? true : false}
+                      subMenuList={data.subMenuList}
+                      disabled={data.disabled}
+                      size="sm"
+                      tipMenuSize="sm"
+                      buttonStyle={css`
+                        display: flex;
+                        flex-direction: row;
+                        gap: 0.25rem;
+                        align-items: center;
+                        cursor: pointer;
+                        background-color: transparent;
+                        color: #565555;
+                        ${data.subMenuList
+                          ? css`
+                              border-top: 1px solid #e5e7eb;
+                              border-left: 1px solid #e5e7eb;
+                              border-bottom: 1px solid #e5e7eb;
+                            `
+                          : css`
+                              border: 1px solid #e5e7eb;
+                            `}
+                        border-radius: 6px;
+                        position: relative;
+
+                        &:hover {
+                          background-color: #e2e0e0;
+                        }
+
+                        &:disabled {
+                          background-color: rgb(227 227 227);
+                          opacity: 0.5;
+                          cursor: not-allowed;
+                        }
+                        ${data.style}
+                      `}
+                      toggleStyle={
+                        data.subMenuList &&
+                        css`
+                          display: flex;
+                          flex-direction: row;
+                          gap: 0.25rem;
+                          align-items: center;
+                          cursor: pointer;
+                          color: #565555;
+                          border-top: 1px solid #e5e7eb;
+                          border-right: 1px solid #e5e7eb;
+                          border-bottom: 1px solid #e5e7eb;
+                          border-top-right-radius: 6px;
+                          border-bottom-right-radius: 6px;
+                          padding: 0.25rem 0.5rem;
+                          background-color: transparent;
+                          position: relative;
+
+                          &:hover {
+                            background-color: #e2e0e0;
+                          }
+
+                          &:disabled {
+                            background-color: rgb(227 227 227);
+                            opacity: 0.5;
+                            cursor: not-allowed;
+                          }
+                          ${data.style}
+                        `
+                      }
+                      dividerStyle={css`
+                        border: 1px solid rgb(236 236 236);
+                        ${data.subMenuList && data.dividerStyle
+                          ? data.dividerStyle
+                          : null}
+                      `}
+                      dropdownStyle={css`
+                        position: absolute;
+                        margin-top: 2px;
+                        z-index: 9999;
+                        width: 170px;
+                        ${data.subMenuList && data.dropdownStyle
+                          ? data.dropdownStyle
+                          : null}
+                      `}
                     >
                       <data.icon size={14} />
                       <span
@@ -248,7 +335,7 @@ function Table({
                       >
                         {data.title}
                       </span>
-                    </ActionButton>
+                    </Button>
                   ))}
               </ActionsWrapper>
             )}
@@ -361,23 +448,9 @@ function Table({
                         &:hover {
                           background-color: #d4d4d4;
                         }
-                        &:active {
-                          background-color: #cfcfcf;
-                          box-shadow:
-                            inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
-                            inset 0 -0.5px 0.5px #cfcfcf;
-                        }
-                        &:focus-visible {
-                          outline: none;
-                          box-shadow: inset 0 0 0 2px #00000033;
-                          transition: box-shadow 0.2s ease;
-                        }
                       `}
                       toggleActiveStyle={css`
-                        background-color: #cfcfcf;
-                        box-shadow:
-                          inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
-                          inset 0 -0.5px 0.5px #cfcfcf;
+                        background-color: #d4d4d4;
                       `}
                       variant="none"
                       subMenuList={subMenuList(`${col.caption}`)}
@@ -435,43 +508,6 @@ const ActionsWrapper = styled.div`
   display: flex;
   flex-direction: row;
   gap: 0.25rem;
-`;
-
-const ActionButton = styled.button<{
-  $style?: CSSProp;
-}>`
-  display: flex;
-  flex-direction: row;
-  gap: 0.25rem;
-  align-items: center;
-  cursor: pointer;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  padding: 0.25rem 0.5rem;
-  background-color: transparent;
-  color: inherit;
-
-  &:hover {
-    background-color: #e2e0e0;
-  }
-
-  &:active {
-    background-color: #cfcfcf;
-  }
-
-  &:focus-visible {
-    outline: none;
-    box-shadow: inset 0 0 0 2px #00000033;
-    transition: box-shadow 0.2s ease;
-  }
-
-  &:disabled {
-    background-color: rgb(227 227 227);
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  ${({ $style }) => $style}
 `;
 
 const PaginationButton = styled.button`
@@ -844,23 +880,9 @@ function TableRow({
               &:hover {
                 background-color: #d4d4d4;
               }
-              &:active {
-                background-color: #cfcfcf;
-                box-shadow:
-                  inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
-                  inset 0 -0.5px 0.5px #cfcfcf;
-              }
-              &:focus-visible {
-                outline: none;
-                box-shadow: inset 0 0 0 2px #00000033;
-                transition: box-shadow 0.2s ease;
-              }
             `}
             toggleActiveStyle={css`
-              background-color: #cfcfcf;
-              box-shadow:
-                inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
-                inset 0 -0.5px 0.5px #cfcfcf;
+              background-color: #d4d4d4;
             `}
             variant="none"
             subMenuList={actions(`${rowId}`)}

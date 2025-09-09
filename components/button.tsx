@@ -5,8 +5,9 @@ import {
   RiArrowDownSLine,
   RiArrowUpSLine,
 } from "@remixicon/react";
-import { TipMenu, TipMenuItemProps } from "./tip-menu";
+import { TipMenu, TipMenuItemProps, TipMenuItemVariantType } from "./tip-menu";
 import styled, { css, CSSProp } from "styled-components";
+import { createPortal } from "react-dom";
 
 export type ButtonVariants = {
   variant?:
@@ -17,12 +18,12 @@ export type ButtonVariants = {
     | "danger"
     | "secondary"
     | "ghost";
-  size?: "default" | "icon" | "sm" | "lg";
+  size?: "icon" | "xs" | "md" | "sm" | "lg";
 };
 
 function Button({
   variant = "default",
-  size = "default",
+  size = "md",
   isLoading,
   tipMenu,
   subMenuList,
@@ -34,6 +35,9 @@ function Button({
   containerStyle,
   buttonStyle,
   toggleStyle,
+  onClick,
+  dividerStyle,
+  tipMenuSize,
   ...props
 }: React.ComponentProps<"button"> &
   ButtonVariants & {
@@ -46,6 +50,8 @@ function Button({
     buttonStyle?: CSSProp;
     toggleStyle?: CSSProp;
     containerStyle?: CSSProp;
+    dividerStyle?: CSSProp;
+    tipMenuSize?: TipMenuItemVariantType;
   }) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [hovered, setHovered] = React.useState<
@@ -61,8 +67,10 @@ function Button({
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
       if (containerRef.current && !containerRef.current.contains(target)) {
-        setIsOpen(false);
-        setHovered("original");
+        setTimeout(() => {
+          setIsOpen(false);
+          setHovered("original");
+        }, 100);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -87,8 +95,8 @@ function Button({
     >
       <BaseButton
         onClick={(event) => {
-          if (props.onClick) {
-            props.onClick(event);
+          if (onClick) {
+            onClick(event);
           }
           if (tipMenu) {
             setIsOpen(false);
@@ -122,11 +130,13 @@ function Button({
             $hovered={hovered === "main" || hovered === "dropdown" || isOpen}
             $variant={variant}
             $isOpen={isOpen}
+            $style={dividerStyle}
           />
 
           <BaseButtonToggle
             aria-label="button-toggle"
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               setIsOpen(!isOpen);
             }}
             $variant={variant}
@@ -143,28 +153,37 @@ function Button({
         </div>
       )}
 
-      {isOpen && (
-        <div
-          onMouseEnter={() => setHovered("dropdown")}
-          style={{
-            position: "absolute",
-            top: "100%",
-            transform: "translateY(-4px)",
-            zIndex: 10,
-            left: positionClass === "left" ? 0 : undefined,
-            right: positionClass === "right" ? 0 : undefined,
-          }}
-        >
-          <TipMenu
-            setIsOpen={() => {
-              setIsOpen(false);
-              setHovered("original");
+      {isOpen &&
+        createPortal(
+          <div
+            style={{
+              position: "absolute",
+              top: containerRef.current?.getBoundingClientRect().bottom ?? 0,
+              left:
+                positionClass === "left"
+                  ? containerRef.current?.getBoundingClientRect().left
+                  : undefined,
+              right:
+                positionClass === "right"
+                  ? window.innerWidth -
+                    (containerRef.current?.getBoundingClientRect().right ?? 0)
+                  : undefined,
+              zIndex: 9999,
             }}
-            style={dropdownStyle}
-            subMenuList={subMenuList}
-          />
-        </div>
-      )}
+            onMouseEnter={() => setHovered("dropdown")}
+          >
+            <TipMenu
+              setIsOpen={() => {
+                setIsOpen(false);
+                setHovered("original");
+              }}
+              style={dropdownStyle}
+              subMenuList={subMenuList}
+              variant={tipMenuSize}
+            />
+          </div>,
+          document.body
+        )}
     </ButtonWrapper>
   );
 }
@@ -235,6 +254,11 @@ const BaseButton = styled.button<{
 
   ${({ $size }) => {
     switch ($size) {
+      case "xs":
+        return css`
+          height: 28px;
+          padding: 0 6px;
+        `;
       case "sm":
         return css`
           height: 32px;
@@ -346,6 +370,7 @@ const Divider = styled.div<{
   $hovered?: boolean;
   $variant: ButtonVariants["variant"];
   $isOpen?: boolean;
+  $style?: CSSProp;
 }>`
   height: ${({ $hovered }) => ($hovered ? "100%" : "80%")};
   border-right: 1px solid;
@@ -363,6 +388,8 @@ const Divider = styled.div<{
         : color};
     `;
   }}
+
+  ${({ $style }) => $style}
 `;
 
 const getButtonColors = (
