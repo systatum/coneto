@@ -55,8 +55,8 @@ describe("Document Viewer", () => {
     });
   });
 
-  context("selection", () => {
-    context("when hovered selection", () => {
+  context("bounding boxes", () => {
+    context("when hovered", () => {
       it("renders contentOnHover", () => {
         const boundingBoxes = [
           {
@@ -85,7 +85,8 @@ describe("Document Viewer", () => {
           .and("contain.text", "heyyy");
       });
     });
-    context("when drag selection", () => {
+
+    context("when creating", () => {
       it("renders selected rectangle", () => {
         cy.mount(
           <DocumentViewer
