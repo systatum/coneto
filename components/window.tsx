@@ -17,6 +17,7 @@ interface WindowProps {
   style?: CSSProp;
   onResize?: () => void;
   onResizeComplete?: () => void;
+  dividerStyle?: CSSProp;
 }
 
 export interface WindowCellProps {
@@ -37,6 +38,7 @@ function Window({
   style,
   onResize,
   onResizeComplete,
+  dividerStyle,
 }: WindowProps) {
   const isVertical = orientation === "vertical";
   const childrenArray = Children.toArray(children).filter(isValidElement);
@@ -152,6 +154,7 @@ function Window({
           {child}
           {index < childrenArray.length - 1 && (
             <Divider
+              $style={dividerStyle}
               className="divider"
               aria-label={`window-divider`}
               onMouseDown={startDrag(index)}
@@ -224,9 +227,7 @@ const CellWrapper = styled.div.withConfig({
   user-select: ${({ $isDragging }) => ($isDragging ? "none" : "auto")};
 `;
 
-const Divider = styled.div.withConfig({
-  shouldForwardProp: (prop) => prop !== "$isVertical",
-})<{ $isVertical: boolean }>`
+const Divider = styled.div<{ $isVertical: boolean; $style?: CSSProp }>`
   position: absolute;
   z-index: 10;
   background-color: transparent;
@@ -250,6 +251,8 @@ const Divider = styled.div.withConfig({
           cursor: row-resize;
           border-bottom: 1px solid #d1d5db;
         `}
+
+  ${({ $style }) => $style}
 `;
 
 const ActionContainer = styled.div`
