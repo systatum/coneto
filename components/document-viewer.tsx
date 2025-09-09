@@ -16,10 +16,6 @@ import * as pdfjsLib from "pdfjs-dist";
 import { Combobox } from "./combobox";
 import { OptionsProps } from "./selectbox";
 
-// We set pdfjsLib.GlobalWorkerOptions.workerSrc to load the PDF.js worker from a CDN, since the built-in worker from the library cannot be used directly at the moment.
-pdfjsLib.GlobalWorkerOptions.workerSrc =
-  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.54/pdf.worker.min.mjs";
-
 interface DocumentViewerProps {
   containerStyle?: CSSProp;
   selectionStyle?: CSSProp;
@@ -38,6 +34,7 @@ interface DocumentViewerProps {
     currentPage?: number;
     totalPages?: number;
   }) => string;
+  libPdfJsWorkerSrc?: string;
 }
 
 export interface BoundingBoxesProps {
@@ -62,6 +59,10 @@ export interface BoundingBoxState {
 
 export interface DocumentViewerRef {
   clearSelection: () => void;
+  /**
+   * Call this when onRegionSelected is opening a popup,
+   * so that the popup can be positioned more accurately.
+   */
   repositionPopUp: (data: HTMLDivElement) => void;
 }
 
@@ -91,9 +92,13 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
       initialZoom = 1.0,
       totalPagesText,
       title = "Document",
+      libPdfJsWorkerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.54/pdf.worker.min.mjs",
     },
     ref
   ) => {
+    // We set pdfjsLib.GlobalWorkerOptions.workerSrc to load the PDF.js worker from a CDN, since the built-in worker from the library cannot be used directly at the moment.
+    pdfjsLib.GlobalWorkerOptions.workerSrc = libPdfJsWorkerSrc;
+
     const containerRef = useRef<HTMLDivElement>(null);
     const viewerRef = useRef<HTMLDivElement>(null);
 
