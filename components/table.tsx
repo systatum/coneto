@@ -245,7 +245,6 @@ function Table({
                     <Button
                       key={index}
                       onClick={data.onClick}
-                      tipMenu={data.subMenuList ? true : false}
                       subMenuList={data.subMenuList}
                       disabled={data.disabled}
                       size="sm"

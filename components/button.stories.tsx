@@ -176,7 +176,6 @@ export const WithTipMenu: Story = {
   args: {
     variant: "default",
     children: "Button",
-    tipMenu: true,
     subMenuList: TIP_MENU_ITEMS,
     dropdownStyle: css`
       min-width: 240px;
