@@ -190,6 +190,73 @@ function RichEditor({
       return;
     }
 
+    if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+      const sel = window.getSelection();
+      if (!sel || !sel.rangeCount) return;
+
+      const range = sel.getRangeAt(0);
+      if (!range.collapsed) return;
+
+      const container = range.startContainer;
+      const offset = range.startOffset;
+
+      if (e.key === "ArrowLeft") {
+        let nodeToCheck: Node | null = container;
+
+        while (
+          nodeToCheck?.previousSibling &&
+          ((nodeToCheck.previousSibling.nodeType === Node.TEXT_NODE &&
+            nodeToCheck.previousSibling.nodeValue?.trim() === "") ||
+            (nodeToCheck.previousSibling.nodeType === Node.ELEMENT_NODE &&
+              (nodeToCheck.previousSibling as HTMLElement).tagName === "BR"))
+        ) {
+          nodeToCheck = nodeToCheck.previousSibling;
+        }
+
+        const prevElement = nodeToCheck?.previousSibling as HTMLElement;
+        if (prevElement?.classList.contains("custom-checkbox-wrapper")) {
+          e.preventDefault();
+          const sel = window.getSelection();
+          if (!sel) return;
+          const newRange = document.createRange();
+          newRange.setStartBefore(prevElement);
+          newRange.collapse(true);
+          sel.removeAllRanges();
+          sel.addRange(newRange);
+          return;
+        }
+      }
+
+      if (e.key === "ArrowRight") {
+        let nodeToCheck: Node | null = null;
+
+        if (
+          container.nodeType === Node.TEXT_NODE &&
+          offset === container.textContent?.length
+        ) {
+          nodeToCheck = container.nextSibling;
+        } else if (container.nodeType === Node.ELEMENT_NODE) {
+          const childNodes = Array.from(container.childNodes);
+          nodeToCheck = childNodes[offset];
+        }
+
+        if (nodeToCheck?.nodeType === Node.ELEMENT_NODE) {
+          const element = nodeToCheck as HTMLElement;
+          if (element.classList.contains("custom-checkbox-wrapper")) {
+            e.preventDefault();
+
+            const newRange = document.createRange();
+            newRange.setStartAfter(element);
+            newRange.collapse(true);
+
+            sel.removeAllRanges();
+            sel.addRange(newRange);
+            return;
+          }
+        }
+      }
+    }
+
     // This logic use for handle space for orderedlist/unorderedlist
     if (e.key === "Enter") {
       const sel = window.getSelection();
@@ -351,37 +418,249 @@ function RichEditor({
 
       let li: HTMLElement | null = null;
 
+      if (range.collapsed) {
+        let nodeToCheck: Node | null = container;
+
+        if (container.nodeType === Node.TEXT_NODE && range.startOffset === 0) {
+          nodeToCheck = container.previousSibling;
+        } else if (
+          container.nodeType === Node.ELEMENT_NODE &&
+          range.startOffset > 0
+        ) {
+          const childNodes = Array.from(container.childNodes);
+          nodeToCheck = childNodes[range.startOffset - 1];
+        }
+
+        while (nodeToCheck) {
+          if (nodeToCheck.nodeType === Node.ELEMENT_NODE) {
+            const element = nodeToCheck as HTMLElement;
+            if (element.classList.contains("custom-checkbox-wrapper")) {
+              e.preventDefault();
+
+              element.remove();
+
+              const html =
+                editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
+              const markdown = turndownService.turndown(html);
+              console.log(html, "test isi html");
+              onChange?.(markdown);
+
+              return;
+            }
+          }
+
+          if (
+            nodeToCheck.nodeType === Node.TEXT_NODE &&
+            nodeToCheck.nodeValue === "\u00A0" &&
+            nodeToCheck.nextSibling?.nodeType === Node.ELEMENT_NODE
+          ) {
+            const nextElement = nodeToCheck.nextSibling as HTMLElement;
+            if (nextElement.classList.contains("custom-checkbox-wrapper")) {
+              e.preventDefault();
+
+              if (nodeToCheck.parentNode) {
+                nodeToCheck.parentNode.removeChild(nodeToCheck);
+              }
+              if (nextElement.parentNode) {
+                nextElement.parentNode.removeChild(nextElement);
+              }
+
+              const html =
+                editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
+              const markdown = turndownService.turndown(html);
+              console.log(html, "test isi html");
+              onChange?.(markdown);
+
+              return;
+            }
+          }
+
+          break;
+        }
+      }
+
       if (container.nodeType === Node.ELEMENT_NODE) {
         li = (container as Element).closest("li");
       } else if (container.nodeType === Node.TEXT_NODE) {
         li = (container.parentNode as HTMLElement)?.closest("li");
       }
 
+      if (range.collapsed && range.startOffset === 0) {
+        if (container.nodeType === Node.ELEMENT_NODE) {
+          li = (container as Element).closest("li");
+        } else if (container.nodeType === Node.TEXT_NODE) {
+          li = (container.parentNode as HTMLElement)?.closest("li");
+        }
+
+        if (
+          li &&
+          li.parentElement &&
+          (li.parentElement.tagName === "OL" ||
+            li.parentElement.tagName === "UL")
+        ) {
+          e.preventDefault();
+
+          const parentList = li.parentElement;
+          const content = li.innerHTML;
+
+          if (parentList.children.length === 1) {
+            const block = document.createElement("p");
+
+            if (content === "<br>" || content.trim() === "") {
+              block.innerHTML = "<br>";
+            } else {
+              block.innerHTML = content;
+            }
+
+            parentList.replaceWith(block);
+
+            const newRange = document.createRange();
+            newRange.setStart(block, 0);
+            newRange.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(newRange);
+          } else {
+            const isFirstItem = li === parentList.firstElementChild;
+
+            if (isFirstItem) {
+              const block = document.createElement("p");
+
+              if (content === "<br>" || content.trim() === "") {
+                block.innerHTML = "<br>";
+              } else {
+                block.innerHTML = content;
+              }
+
+              parentList.parentNode?.insertBefore(block, parentList);
+
+              li.remove();
+
+              const newRange = document.createRange();
+              newRange.setStart(block, 0);
+              newRange.collapse(true);
+              sel.removeAllRanges();
+              sel.addRange(newRange);
+            } else {
+              const prevLi = li.previousElementSibling as HTMLElement;
+
+              if (prevLi) {
+                let cursorPosition = 0;
+                if (prevLi.innerHTML !== "<br>") {
+                  const tempDiv = document.createElement("div");
+                  tempDiv.innerHTML = prevLi.innerHTML;
+                  cursorPosition = tempDiv.textContent?.length || 0;
+                }
+
+                if (prevLi.innerHTML === "<br>") {
+                  prevLi.innerHTML = "";
+                  cursorPosition = 0;
+                }
+
+                while (li.firstChild) {
+                  const child = li.firstChild;
+                  prevLi.appendChild(child);
+                }
+
+                li.remove();
+
+                const newRange = document.createRange();
+
+                const walker = document.createTreeWalker(
+                  prevLi,
+                  NodeFilter.SHOW_TEXT,
+                  null
+                );
+
+                let currentPos = 0;
+                let targetNode = null;
+                let targetOffset = 0;
+
+                while (walker.nextNode()) {
+                  const textNode = walker.currentNode as Text;
+                  const nodeLength = textNode.textContent?.length || 0;
+
+                  if (currentPos + nodeLength >= cursorPosition) {
+                    targetNode = textNode;
+                    targetOffset = cursorPosition - currentPos;
+                    break;
+                  }
+                  currentPos += nodeLength;
+                }
+
+                if (targetNode) {
+                  newRange.setStart(targetNode, targetOffset);
+                  newRange.collapse(true);
+                } else {
+                  newRange.selectNodeContents(prevLi);
+                  newRange.collapse(false);
+                }
+
+                sel.removeAllRanges();
+                sel.addRange(newRange);
+              }
+            }
+          }
+
+          const html =
+            editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
+          const markdown = turndownService.turndown(html);
+          onChange?.(markdown);
+
+          return;
+        }
+      }
+    }
+
+    if (e.key === "Delete") {
+      const sel = window.getSelection();
+      if (!sel || !sel.rangeCount) return;
+
+      const range = sel.getRangeAt(0);
+      const container = range.startContainer;
+      const offset = range.startOffset;
+
+      let nodeToCheck: Node | null = null;
+
       if (
-        li &&
-        li.innerHTML === "<br>" &&
-        li.parentElement &&
-        (li.parentElement.tagName === "OL" ||
-          li.parentElement.tagName === "UL") &&
-        li.parentElement.children.length === 1
+        container.nodeType === Node.TEXT_NODE &&
+        offset === container.textContent?.length
+      ) {
+        nodeToCheck = container.nextSibling;
+      } else if (container.nodeType === Node.ELEMENT_NODE) {
+        const childNodes = Array.from(container.childNodes);
+        nodeToCheck = childNodes[offset] ?? null;
+      }
+
+      if (
+        nodeToCheck?.nodeType === Node.TEXT_NODE &&
+        nodeToCheck.nodeValue === "\u00A0"
+      ) {
+        e.preventDefault();
+        nodeToCheck.parentNode?.removeChild(nodeToCheck);
+      }
+      if (
+        nodeToCheck?.nodeType === Node.ELEMENT_NODE &&
+        (nodeToCheck as HTMLElement).classList.contains(
+          "custom-checkbox-wrapper"
+        )
       ) {
         e.preventDefault();
 
-        const parentList = li.parentElement;
-        const block = document.createElement("p");
-        block.innerHTML = "<br>";
+        const spaceNode = nodeToCheck.nextSibling;
+        nodeToCheck.parentNode?.removeChild(nodeToCheck);
 
-        parentList.replaceWith(block);
-
-        const newRange = document.createRange();
-        newRange.setStart(block, 0);
-        newRange.collapse(true);
-
-        sel.removeAllRanges();
-        sel.addRange(newRange);
-
-        return;
+        if (
+          spaceNode?.nodeType === Node.TEXT_NODE &&
+          spaceNode.nodeValue === "\u00A0"
+        ) {
+          spaceNode.parentNode?.removeChild(spaceNode);
+        }
       }
+
+      const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
+      console.log(html);
+      const markdown = turndownService.turndown(html);
+      onChange?.(markdown);
     }
   };
 
@@ -546,7 +825,8 @@ function RichEditor({
         contentEditable
         $editorStyle={editorStyle}
         onInput={() => {
-          const html = editorRef.current?.innerHTML || "";
+          const html =
+            editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
           const markdown = turndownService.turndown(html);
           onChange?.(markdown);
         }}
@@ -725,6 +1005,7 @@ function createCheckboxWrapper(
   wrapper.style.display = "inline-flex";
   wrapper.style.alignItems = "center";
   wrapper.style.position = "relative";
+  wrapper.style.userSelect = "none";
 
   const checkbox = document.createElement("input");
   checkbox.type = "checkbox";
@@ -751,6 +1032,8 @@ function createCheckboxWrapper(
   icon.style.transition = "transform 150ms";
   icon.style.color = "white";
   icon.style.pointerEvents = "none";
+  icon.style.height = "10px";
+  icon.style.width = "10px";
 
   const polyline = document.createElementNS(
     "http://www.w3.org/2000/svg",
@@ -771,6 +1054,13 @@ function createCheckboxWrapper(
     const html = editorRef.current?.innerHTML || "";
     const markdown = turndownService.turndown(html);
     onChange?.(markdown);
+  });
+
+  wrapper.addEventListener("click", (e) => {
+    if (e.target === wrapper) {
+      checkbox.focus();
+      checkbox.click();
+    }
   });
 
   wrapper.appendChild(checkbox);
