@@ -31,6 +31,7 @@ type CalendarProps = BaseCalendarProps &
     label?: string;
     showError?: boolean;
     errorMessage?: string;
+    todayButtonCaption?: string;
   };
 
 interface CalendarStateProps {
@@ -94,6 +95,7 @@ function Calendar({
   errorMessage,
   onClick,
   containerStyle,
+  todayButtonCaption = "Today",
 }: CalendarProps) {
   const parsedDate = inputValue?.text ? new Date(inputValue.text) : new Date();
   const stateDate = isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
@@ -445,7 +447,7 @@ function Calendar({
             }
           `}
         >
-          Today
+          {todayButtonCaption}
         </Button>
       </CalendarHeader>
 
