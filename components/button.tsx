@@ -25,7 +25,6 @@ function Button({
   variant = "default",
   size = "md",
   isLoading,
-  tipMenu,
   subMenuList,
   dropdownStyle,
   openedIcon: OpenedIcon = RiArrowDownSLine,
@@ -42,7 +41,6 @@ function Button({
 }: React.ComponentProps<"button"> &
   ButtonVariants & {
     isLoading?: boolean;
-    tipMenu?: boolean;
     subMenuList?: TipMenuItemProps[];
     dropdownStyle?: CSSProp;
     openedIcon?: RemixiconComponentType;
@@ -98,7 +96,7 @@ function Button({
           if (onClick) {
             onClick(event);
           }
-          if (tipMenu) {
+          if (subMenuList) {
             setIsOpen(false);
           }
         }}
@@ -107,7 +105,7 @@ function Button({
         $size={size}
         disabled={disabled}
         $disabled={disabled}
-        $tipMenu={tipMenu}
+        $tipMenu={subMenuList ? true : false}
         onMouseEnter={() => setHovered("dropdown")}
         onMouseLeave={() => setHovered("original")}
         $style={buttonStyle}
@@ -116,7 +114,7 @@ function Button({
         {isLoading && <LoadingSpinner />}
       </BaseButton>
 
-      {tipMenu && (
+      {subMenuList && (
         <div
           style={{
             position: "relative",
@@ -142,7 +140,7 @@ function Button({
             $variant={variant}
             $isOpen={isOpen}
             $size={size}
-            $tipMenu={tipMenu}
+            $tipMenu={subMenuList ? true : false}
             $disabled={disabled}
             onMouseEnter={() => setHovered("dropdown")}
             onMouseLeave={() => setHovered("original")}
