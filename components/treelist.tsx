@@ -94,9 +94,11 @@ function TreeList({
             <AnimatePresence initial={false}>
               <ItemsWrapper
                 key={`items-wrapper-${index}`}
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
+                animate={
+                  isOpen[index]
+                    ? { height: "auto", opacity: 1 }
+                    : { height: 0, opacity: 0 }
+                }
                 transition={{ duration: 0.2, ease: "easeInOut" }}
                 $collapsed={!isOpen[index]}
               >
@@ -235,19 +237,20 @@ const GroupIcon = styled(RiArrowRightSLine)`
 `;
 
 const ItemsWrapper = styled(motion.ul)<{ $collapsed?: boolean }>`
-  display: none;
+  display: flex;
   flex-direction: column;
   overflow: hidden;
   list-style: none;
   padding: 0;
   padding-bottom: 0.5em;
   margin: 0;
+  cursor: pointer;
 
-  ${({ $collapsed }) => 
+  ${({ $collapsed }) =>
     $collapsed &&
     css`
       display: none;
-    `}
+    `};
 `;
 
 const TreeListItemWrapper = styled.li<{ $isSelected: boolean }>`
