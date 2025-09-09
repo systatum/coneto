@@ -33,7 +33,7 @@ interface DocumentViewerProps {
     height?: number;
   }) => void;
   boundingBoxes?: BoundingBoxesProps[];
-  initialZoom?: number;
+  initialZoom?: "0.75" | "1.0" | "1.1" | "1.2" | "1.3" | "1.4" | "1.5";
   totalPagesText?: (data: {
     currentPage?: number;
     totalPages?: number;
@@ -97,8 +97,8 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
     const containerRef = useRef<HTMLDivElement>(null);
     const viewerRef = useRef<HTMLDivElement>(null);
 
-    const [scale, setScale] = useState(initialZoom);
-    const scaleInitialState = initialZoom * 100;
+    const [scale, setScale] = useState(Number(initialZoom));
+    const scaleInitialState = Number(initialZoom) * 100;
     const [scaleValue, setScaleValue] = useState<OptionsProps>({
       text: `${String(scaleInitialState)}%`,
       value: scaleInitialState,
@@ -488,7 +488,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
             <Combobox
               inputValue={scaleValue}
               setInputValue={handleScale}
-              placeholder="zoom your pdf"
+              placeholder="zoom your pdf..."
               containerStyle={css`
                 width: 100px;
                 color: black;
@@ -526,11 +526,13 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
         </ToolbarWrapper>
 
         <ContainerDocumentViewer
+          aria-label="container-content"
           $containerStyle={containerStyle}
           ref={containerRef}
           onMouseUp={handleMouseUp}
         >
           <Viewer
+            aria-label="view-content"
             ref={viewerRef}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
@@ -588,6 +590,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
                       backgroundColor: data.boxStyle?.backgroundColor,
                     }}
                     $selectionStyle={selectionStyle}
+                    aria-label="selection-box"
                   />
                   {data.contentOnHover && isHovered === index && (
                     <ContentViewer
@@ -598,6 +601,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
                         borderColor: data.boxStyle?.borderColor,
                         backgroundColor: data.boxStyle?.backgroundColor,
                       }}
+                      aria-label="selection-content-hovered"
                     >
                       {data.contentOnHover}
                     </ContentViewer>
