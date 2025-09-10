@@ -139,32 +139,20 @@ export const WithFooter: Story = {
       value: "",
     });
 
+    const date = new Date();
+    const formatPHInitial = formatPHDate(date);
+
+    const [phValue, setPhValue] = useState(formatPHInitial);
+
+    const handleCalendarPeriodChanged = (e?: Date) => {
+      const formatPH = formatPHDate(e);
+      setPhValue(formatPH);
+    };
+
     const footerContent: ReactElement = (
       <ContentWrapper>
-        <span>Format: {value.text}</span>
-        <div style={{ display: "flex", gap: "0.5rem" }}>
-          <Button
-            onClick={() => setValue({ text: "", value: "" })}
-            variant="outline"
-            size="sm"
-            buttonStyle={css`
-              border-color: #f3f4f6;
-              width: 100%;
-              max-height: 34px;
-              max-width: 60px;
-              font-size: 0.75rem;
-              padding-left: 0.5rem;
-              padding-right: 0.5rem;
-              box-shadow: none;
-
-              &:hover {
-                background-color: #e5e7eb;
-              }
-            `}
-          >
-            Clear
-          </Button>
-        </div>
+        <span>Public Holiday: </span>
+        <div>{phValue}</div>
       </ContentWrapper>
     );
 
@@ -176,9 +164,17 @@ export const WithFooter: Story = {
         setInputValue={setValue}
         format="mm/dd/yyyy"
         footer={footerContent}
+        onCalendarPeriodChanged={handleCalendarPeriodChanged}
       />
     );
   },
+};
+
+const formatPHDate = (date: Date): string => {
+  const monthDatePH = 10 + date.getMonth();
+  const monthName = date.toLocaleDateString("en-US", { month: "long" });
+  const yearDate = date.toLocaleDateString("en-US", { year: "numeric" });
+  return `${monthDatePH} ${monthName}, ${yearDate}`;
 };
 
 const ContentWrapper = styled.div`
