@@ -175,10 +175,10 @@ export const Default: Story = {
           orientation="horizontal"
           style={css`
             height: 100vh;
+            gap: 8px;
           `}
           dividerStyle={css`
-            border: 4px;
-            border-bottom: 4px solid #d1d5db;
+            border-bottom: 6px solid #d1d5db;
           `}
         >
           <Window.Cell
