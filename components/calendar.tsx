@@ -31,6 +31,7 @@ type CalendarProps = BaseCalendarProps &
     label?: string;
     showError?: boolean;
     errorMessage?: string;
+    todayButtonCaption?: string;
   };
 
 interface CalendarStateProps {
@@ -94,6 +95,7 @@ function Calendar({
   errorMessage,
   onClick,
   containerStyle,
+  todayButtonCaption = "Today",
 }: CalendarProps) {
   const parsedDate = inputValue?.text ? new Date(inputValue.text) : new Date();
   const stateDate = isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
@@ -235,10 +237,12 @@ function Calendar({
 
   const handleMoveToToday = () => {
     setCurrentDate(today);
-    setInputValue({
-      text: formatDate(today, format),
-      value: formatDate(today, format),
-    });
+    if (setInputValue) {
+      setInputValue({
+        text: formatDate(today, format),
+        value: formatDate(today, format),
+      });
+    }
 
     setHighlightedIndexChange(0);
     setCalendarState((prev) => ({
@@ -255,10 +259,12 @@ function Calendar({
   };
 
   const handleSelect = (date: Date) => {
-    setInputValue({
-      text: formatDate(date, format),
-      value: formatDate(date, format),
-    });
+    if (setInputValue) {
+      setInputValue({
+        text: formatDate(date, format),
+        value: formatDate(date, format),
+      });
+    }
     if (setIsOpen) {
       setIsOpen(false);
     }
@@ -445,7 +451,7 @@ function Calendar({
             }
           `}
         >
-          Today
+          {todayButtonCaption}
         </Button>
       </CalendarHeader>
 
