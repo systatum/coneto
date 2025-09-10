@@ -9,7 +9,10 @@ import { ReactElement, useRef, useState } from "react";
 import { StatefulOnChangeType } from "./stateful-form";
 import { Button } from "./button";
 import { Textbox } from "./textbox";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
+import { Window } from "./window";
+import { ColumnTableProps, Table } from "./table";
+import { createPortal } from "react-dom";
 
 const meta: Meta<typeof DocumentViewer> = {
   title: "Content/DocumentViewer",
@@ -71,7 +74,28 @@ export const Default: Story = {
       await setBoundingProcess(null);
     };
 
-    const componentRendered: ReactElement = (
+    const columns: ColumnTableProps[] = [
+      {
+        caption: "Page",
+      },
+      {
+        caption: "X",
+      },
+      {
+        caption: "Y",
+      },
+      {
+        caption: "Width",
+      },
+      {
+        caption: "Height",
+      },
+      {
+        caption: "content",
+      },
+    ];
+
+    const commentPopUp: ReactElement = (
       <ContentViewer
         ref={ref.current?.repositionPopUp}
         style={{
@@ -79,6 +103,8 @@ export const Default: Story = {
           top: boundingProcess?.absoluteY ?? 0,
           background: "white",
           border: "1px solid gray",
+          zIndex: 9999,
+          position: "absolute",
         }}
       >
         <div
@@ -126,19 +152,48 @@ export const Default: Story = {
 
     return (
       <>
-        <DocumentViewer
-          ref={ref}
-          onRegionSelected={(props: BoundingBoxState) => {
-            if (!tipState) {
-              handleSetBoxes(props);
-              setTipState(true);
-            }
-          }}
-          title="Team Collaboration Notes"
-          boundingBoxes={boundingBoxes}
-          source="/sample.pdf"
-        />
-        {tipState && componentRendered}
+        <Window
+          orientation="horizontal"
+          style={css`
+            height: 100vh;
+          `}
+          dividerStyle={css`
+            border: 4px;
+            border-bottom: 4px solid #d1d5db;
+          `}
+        >
+          <Window.Cell
+            style={css`
+              overflow: hidden;
+            `}
+          >
+            <DocumentViewer
+              ref={ref}
+              onRegionSelected={(props: BoundingBoxState) => {
+                handleSetBoxes(props);
+                setTipState(true);
+              }}
+              title="Team Collaboration Notes"
+              boundingBoxes={boundingBoxes}
+              source="/sample.pdf"
+            />
+          </Window.Cell>
+          <Window.Cell>
+            <Table columns={columns}>
+              {boundingBoxes.map((data, index) => (
+                <Table.Row key={index}>
+                  <Table.Row.Cell>{data.page}</Table.Row.Cell>
+                  <Table.Row.Cell>{data.x.toPrecision(4)}</Table.Row.Cell>
+                  <Table.Row.Cell>{data.y.toPrecision(4)}</Table.Row.Cell>
+                  <Table.Row.Cell>{data.width.toPrecision(4)}</Table.Row.Cell>
+                  <Table.Row.Cell>{data.height.toPrecision(4)}</Table.Row.Cell>
+                  <Table.Row.Cell>{data.contentOnHover}</Table.Row.Cell>
+                </Table.Row>
+              ))}
+            </Table>
+          </Window.Cell>
+        </Window>
+        {tipState && createPortal(commentPopUp, document.body)}
       </>
     );
   },
