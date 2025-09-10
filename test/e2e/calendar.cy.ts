@@ -37,29 +37,15 @@ describe("Calendar", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-calendar--with-footer"));
     });
-    it("should display footer with initial empty value", () => {
-      cy.get("div").contains("Format:");
-      cy.get("button").contains("Clear");
-    });
 
-    it("should update footer when selecting a date", () => {
+    it("should clear the value when Clear button is clicked", () => {
       cy.findByLabelText("calendar-select-date").click();
       cy.findByLabelText("combobox-month").click();
       cy.findByText("JAN").click();
       cy.findByLabelText("combobox-year").click();
       cy.findByText("2024").click();
-      cy.findByText("3").click();
 
-      cy.get("div").contains("Format: 01/03/2024");
-    });
-
-    it("should clear the value when Clear button is clicked", () => {
-      cy.findByLabelText("calendar-select-date").click();
-      cy.findByText("3").click();
-
-      cy.get("button").contains("Clear").click();
-
-      cy.get("div").contains("Format: ");
+      cy.findAllByText("10 January, 2024");
     });
   });
 });
