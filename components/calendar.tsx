@@ -237,10 +237,12 @@ function Calendar({
 
   const handleMoveToToday = () => {
     setCurrentDate(today);
-    setInputValue({
-      text: formatDate(today, format),
-      value: formatDate(today, format),
-    });
+    if (setInputValue) {
+      setInputValue({
+        text: formatDate(today, format),
+        value: formatDate(today, format),
+      });
+    }
 
     setHighlightedIndexChange(0);
     setCalendarState((prev) => ({
@@ -257,10 +259,12 @@ function Calendar({
   };
 
   const handleSelect = (date: Date) => {
-    setInputValue({
-      text: formatDate(date, format),
-      value: formatDate(date, format),
-    });
+    if (setInputValue) {
+      setInputValue({
+        text: formatDate(date, format),
+        value: formatDate(date, format),
+      });
+    }
     if (setIsOpen) {
       setIsOpen(false);
     }

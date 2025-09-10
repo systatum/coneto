@@ -1,5 +1,4 @@
 import { Calendar } from "./../../components/calendar";
-import { ReactNode } from "react";
 
 describe("Calendar ", () => {
   const value = { text: "", value: "" };
