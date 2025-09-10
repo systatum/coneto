@@ -1,5 +1,3 @@
-"use client";
-
 import type React from "react";
 
 import {
@@ -497,7 +495,6 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
               containerStyle={css`
                 width: 100px;
                 color: black;
-                z-index: 9999;
               `}
               options={SCALE_OPTIONS}
             />
@@ -639,7 +636,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
 const PDFViewerContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
   width: 100%;
   font-family: system-ui, sans-serif;
   background: #525659;
@@ -676,7 +673,6 @@ const ComboboxWrapper = styled.div`
   width: fit-content;
   align-content: center;
   gap: 4px;
-  z-index: 9999;
 `;
 
 const StatusText = styled.div`
