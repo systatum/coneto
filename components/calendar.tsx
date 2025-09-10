@@ -24,6 +24,7 @@ export interface BaseCalendarProps {
   yearPastReach?: number;
   futurePastReach?: number;
   onClick?: () => void;
+  onCalendarPeriodChanged?: (data: Date) => void;
 }
 
 type CalendarProps = BaseCalendarProps &
@@ -96,6 +97,7 @@ function Calendar({
   onClick,
   containerStyle,
   todayButtonCaption = "Today",
+  onCalendarPeriodChanged,
 }: CalendarProps) {
   const parsedDate = inputValue?.text ? new Date(inputValue.text) : new Date();
   const stateDate = isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
@@ -138,7 +140,11 @@ function Calendar({
 
     if (name === "month") {
       const monthIndex = Number(value.value) - 1;
-      setCurrentDate(new Date(currentDate.getFullYear(), monthIndex, 1));
+      const dateMonth = new Date(currentDate.getFullYear(), monthIndex, 1);
+      setCurrentDate(dateMonth);
+      if (onCalendarPeriodChanged) {
+        onCalendarPeriodChanged(dateMonth);
+      }
     } else if (name === "year") {
       const yearNumber = Number(value.value);
       if (!isNaN(yearNumber)) {
@@ -147,7 +153,11 @@ function Calendar({
           currentDate.getDate(),
           new Date(yearNumber, month + 1, 0).getDate()
         );
-        setCurrentDate(new Date(yearNumber, month, day));
+        const dateYear = new Date(yearNumber, month, day);
+        setCurrentDate(dateYear);
+        if (onCalendarPeriodChanged) {
+          onCalendarPeriodChanged(dateYear);
+        }
       }
     }
   };
@@ -200,6 +210,9 @@ function Calendar({
   );
 
   const handleClickPrevMonth = () => {
+    if (onCalendarPeriodChanged) {
+      onCalendarPeriodChanged(prevMonth);
+    }
     setCurrentDate(prevMonth);
     setHighlightedIndexChange(0);
     setCalendarState((prev) => ({
@@ -219,6 +232,9 @@ function Calendar({
 
   const handleClickNextMonth = () => {
     setCurrentDate(nextMonth);
+    if (onCalendarPeriodChanged) {
+      onCalendarPeriodChanged(nextMonth);
+    }
     setHighlightedIndexChange(0);
     setCalendarState((prev) => ({
       ...prev,
@@ -236,6 +252,9 @@ function Calendar({
   };
 
   const handleMoveToToday = () => {
+    if (onCalendarPeriodChanged) {
+      onCalendarPeriodChanged(today);
+    }
     setCurrentDate(today);
     if (setInputValue) {
       setInputValue({
@@ -300,6 +319,9 @@ function Calendar({
           }
         }
 
+        if (onCalendarPeriodChanged) {
+          onCalendarPeriodChanged(validDate);
+        }
         setCurrentDate(validDate);
         if (inputValue.text.length > 9) {
           setInputValue({
