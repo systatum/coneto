@@ -7,10 +7,6 @@ import {
   RiShieldLine,
   RiCheckLine,
   RiInboxArchiveLine,
-  RiDownloadLine,
-  RiLink,
-  RiShareLine,
-  RiEditLine,
 } from "@remixicon/react";
 import { css } from "styled-components";
 
@@ -81,31 +77,6 @@ const TIP_MENU_ITEMS = [
     icon: RiInboxArchiveLine,
     iconColor: "purple",
     onClick: () => console.log("Moved to spam"),
-  },
-  {
-    caption: "Download Attachment",
-    icon: RiDownloadLine,
-    iconColor: "teal",
-    onClick: () => console.log("Downloading"),
-  },
-  {
-    caption: "Copy Link",
-    icon: RiLink,
-    iconColor: "gray",
-    onClick: () => console.log("Link copied"),
-  },
-  {
-    caption: "Share",
-    icon: RiShareLine,
-    iconColor: "indigo",
-    isDangerous: true,
-    onClick: () => console.log("Shared"),
-  },
-  {
-    caption: "Edit",
-    icon: RiEditLine,
-    iconColor: "yellow",
-    onClick: () => console.log("Edit mode"),
   },
 ];
 
@@ -205,10 +176,9 @@ export const WithTipMenu: Story = {
   args: {
     variant: "default",
     children: "Button",
-    tipMenu: true,
     subMenuList: TIP_MENU_ITEMS,
     dropdownStyle: css`
-      min-width: 300px;
+      min-width: 240px;
       margin-top: 8px;
     `,
   },

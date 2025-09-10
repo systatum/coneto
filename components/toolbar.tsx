@@ -40,8 +40,10 @@ interface ToolbarMenuProps {
   containerStyle?: CSSProp;
   triggerStyle?: CSSProp;
   toggleActiveStyle?: CSSProp;
-  variant?: "default" | "primary" | "danger" | "none";
+  variant?: ToolbarVariantType;
 }
+
+type ToolbarVariantType = "default" | "primary" | "danger" | "none";
 
 const VARIANT_CLASS_MAP = {
   base: {
@@ -66,18 +68,67 @@ const VARIANT_CLASS_MAP = {
   },
   hover: {
     default: css`
-      &:hover {
-        background-color: #f5f5f5;
+      background-color: #f5f5f5;
+    `,
+    primary: css`
+      background-color: rgb(64, 142, 232);
+    `,
+    danger: css`
+      background-color: rgb(200, 53, 50);
+    `,
+  },
+  active: {
+    default: css`
+      &:active {
+        background-color: #e8e8e8;
+        box-shadow:
+          inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
+          inset 0 -0.5px 0.5px #e8e8e8;
       }
     `,
     primary: css`
-      &:hover {
-        background-color: rgb(64, 142, 232);
+      &:active {
+        background-color: rgb(54, 132, 222);
+        box-shadow:
+          inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
+          inset 0 -0.5px 0.5px rgb(54, 132, 222);
       }
     `,
     danger: css`
-      &:hover {
-        background-color: rgb(200, 53, 50);
+      &:active {
+        background-color: rgb(176, 40, 45);
+        box-shadow:
+          inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
+          inset 0 -0.5px 0.5px rgb(176, 40, 45);
+      }
+    `,
+  },
+  focusVisible: {
+    default: css`
+      &:focus-visible {
+        outline: none;
+        box-shadow: inset 0 0 0 2px #666666;
+        transition: box-shadow 0.2s ease-in-out;
+        border-radius: inherit;
+        z-index: 40;
+      }
+    `,
+    primary: css`
+      &:focus-visible {
+        outline: none;
+        box-shadow: inset 0 0 0 2px #1e5bb5;
+        transition: box-shadow 0.2s ease-in-out;
+        border-radius: inherit;
+        z-index: 40;
+      }
+    `,
+    danger: css`
+      &:focus-visible {
+        outline: none;
+        box-shadow: inset 0 0 0 2px #8a1620;
+        transition: box-shadow 0.2s ease-in-out;
+        border-radius: inherit;
+        z-index: 40;
       }
     `,
   },
@@ -86,13 +137,58 @@ const VARIANT_CLASS_MAP = {
 const VARIANT_ACTIVE = {
   background: {
     default: css`
-      background-color: #f5f5f5;
+      background-color: #e8e8e8;
+      position: relative;
+
+      &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        box-shadow:
+          inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
+          inset 0 -0.5px 0.5px #e8e8e8;
+        border-radius: inherit;
+        pointer-events: none;
+      }
     `,
     primary: css`
-      background-color: rgb(64, 142, 232);
+      background-color: rgb(54, 132, 222);
+      position: relative;
+
+      &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        box-shadow:
+          inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
+          inset 0 -0.5px 0.5px rgb(54, 132, 222);
+        border-radius: inherit;
+        pointer-events: none;
+      }
     `,
     danger: css`
-      background-color: rgb(200, 53, 50);
+      background-color: rgb(176, 40, 45);
+      position: relative;
+
+      &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        box-shadow:
+          inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
+          inset 0 -0.5px 0.5px rgb(176, 40, 45);
+        border-radius: inherit;
+        pointer-events: none;
+      }
     `,
   },
   border: {
@@ -204,6 +300,8 @@ function ToolbarMenu({
 
   const menuBase = VARIANT_CLASS_MAP.base[variant];
   const menuHover = VARIANT_CLASS_MAP.hover[variant];
+  const menuActive = VARIANT_CLASS_MAP.active[variant];
+  const menuFocusVisible = VARIANT_CLASS_MAP.focusVisible[variant];
   const menuBorderActive = VARIANT_ACTIVE.border[variant];
   const menuBackgroundActive = VARIANT_ACTIVE.background[variant];
 
@@ -224,6 +322,7 @@ function ToolbarMenu({
         {(Icon || caption) && (
           <>
             <TriggerButton
+              type="button"
               aria-label={`toolbar-menu-button`}
               onMouseEnter={() => setHovered("main")}
               onMouseLeave={() => setHovered("original")}
@@ -231,6 +330,8 @@ function ToolbarMenu({
               $style={css`
                 ${hovered === "main" && menuHover};
                 ${isOpen && menuBorderActive};
+                ${menuFocusVisible};
+                ${menuActive};
                 ${triggerStyle}
               `}
             >
@@ -255,6 +356,8 @@ function ToolbarMenu({
             ${hovered === "dropdown" && menuHover};
             ${isOpen && menuBackgroundActive};
             ${isOpen && menuBorderActive};
+            ${menuActive};
+            ${menuFocusVisible};
             ${triggerStyle};
             ${isOpen && toggleActiveStyle};
           `}

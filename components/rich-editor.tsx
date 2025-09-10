@@ -13,7 +13,7 @@ import {
 import TurndownService from "./../lib/turndown/turndown";
 import { marked } from "./../lib/marked/marked";
 import { TipMenu } from "./tip-menu";
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
 
 interface RichEditorProps {
   value?: string;
@@ -27,6 +27,8 @@ export interface RichEditorToolbarButtonProps {
   icon?: RemixiconComponentType;
   onClick?: () => void;
   children?: ReactNode;
+  style?: CSSProp;
+  isOpen?: boolean;
 }
 
 function RichEditor({
@@ -336,6 +338,7 @@ function RichEditor({
           />
           <RichEditorToolbarButton
             icon={RiHeading}
+            isOpen={isOpen}
             onClick={() => {
               const sel = window.getSelection();
               if (sel && sel.rangeCount > 0) {
@@ -379,10 +382,14 @@ function RichEditorToolbarButton({
   icon: Icon,
   onClick,
   children,
+  style,
+  isOpen,
 }: RichEditorToolbarButtonProps) {
   return (
     <ToolbarButton
+      $style={style}
       type="button"
+      $isOpen={isOpen}
       onClick={(e) => {
         e.preventDefault();
         onClick?.();
@@ -484,7 +491,7 @@ const EditorArea = styled.div<{
   ${({ $editorStyle }) => $editorStyle};
 `;
 
-const ToolbarButton = styled.button`
+const ToolbarButton = styled.button<{ $style?: CSSProp; $isOpen?: boolean }>`
   padding: 4px 8px;
   display: flex;
   flex-direction: row;
@@ -497,8 +504,34 @@ const ToolbarButton = styled.button`
   border-radius: 2px;
   max-height: 28px;
   &:hover {
-    background-color: #e5e7eb;
+    ${({ $isOpen }) =>
+      !$isOpen &&
+      css`
+        background-color: #e5e7eb;
+      `}
   }
+
+  ${({ $isOpen }) =>
+    $isOpen &&
+    css`
+      background-color: #cfcfcf;
+      box-shadow:
+        inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
+        inset 0 -0.5px 0.5px #cfcfcf;
+    `}
+
+  &:active {
+    background-color: #cfcfcf;
+    box-shadow:
+      inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
+      inset 0 -0.5px 0.5px #cfcfcf;
+  }
+  &:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 2px #00000033;
+    transition: box-shadow 0.2s ease;
+  }
+  ${({ $style }) => $style}
 `;
 
 RichEditor.ToolbarButton = RichEditorToolbarButton;
