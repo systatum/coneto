@@ -73,7 +73,7 @@ describe("Calendar ", () => {
   });
 
   context("month/year", () => {
-    it("when selecting", () => {
+    context("when selecting", () => {
       it("renders changing month and year", () => {
         cy.mount(<Calendar inputValue={value} monthNames={MONTH_NAMES} />);
         cy.findByLabelText("calendar-select-date").eq(0).click();
@@ -81,6 +81,21 @@ describe("Calendar ", () => {
         cy.findByText("JAN").should("exist").click();
         cy.findByLabelText("combobox-year").click();
         cy.findByText("2024").should("exist").click();
+      });
+    });
+  });
+
+  context("todayButtonCaption", () => {
+    context("when given", () => {
+      it("renders text", () => {
+        cy.mount(
+          <Calendar
+            todayButtonCaption="Present"
+            inputValue={value}
+            monthNames={MONTH_NAMES}
+          />
+        );
+        cy.findByText("Present").should("be.visible");
       });
     });
   });
