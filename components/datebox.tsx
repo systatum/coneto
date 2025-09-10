@@ -18,6 +18,7 @@ type CalendarDrawerProps = BaseCalendarProps &
   Partial<
     DrawerProps & {
       calendarFooter?: ReactNode;
+      calendarTodayButtonCaption?: string;
     }
   >;
 
@@ -87,7 +88,12 @@ function CalendarDrawer(props: CalendarDrawerProps) {
       role="listbox"
       aria-label="Calendar"
     >
-      <Calendar {...props} footer={props.calendarFooter} label={null} />
+      <Calendar
+        {...props}
+        footer={props.calendarFooter}
+        todayButtonCaption={props.calendarTodayButtonCaption}
+        label={null}
+      />
     </CalendarWrapper>
   );
 }
