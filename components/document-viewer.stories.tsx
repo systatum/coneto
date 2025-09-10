@@ -105,24 +105,12 @@ export const Default: Story = {
     }, [tipState]);
 
     const columns: ColumnTableProps[] = [
-      {
-        caption: "Page",
-      },
-      {
-        caption: "X",
-      },
-      {
-        caption: "Y",
-      },
-      {
-        caption: "Width",
-      },
-      {
-        caption: "Height",
-      },
-      {
-        caption: "content",
-      },
+      { caption: "Page", width: "15%" },
+      { caption: "X", width: "15%" },
+      { caption: "Y", width: "15%" },
+      { caption: "Width", width: "15%" },
+      { caption: "Height", width: "15%" },
+      { caption: "Content", width: "25%" },
     ];
 
     const commentPopUp: ReactElement = (
@@ -211,17 +199,22 @@ export const Default: Story = {
           <Window.Cell>
             <Table columns={columns}>
               {boundingBoxes.map((data, index) => (
-                <Table.Row
-                  key={index}
-                  content={[
-                    data.page,
-                    data.x.toPrecision(4),
-                    data.y.toPrecision(4),
-                    data.width.toPrecision(4),
-                    data.height.toPrecision(4),
-                    data.contentOnHover,
-                  ]}
-                />
+                <Table.Row key={index}>
+                  <Table.Row.Cell>{data.page}</Table.Row.Cell>
+                  <Table.Row.Cell>{data.x.toPrecision(4)}</Table.Row.Cell>
+                  <Table.Row.Cell>{data.y.toPrecision(4)}</Table.Row.Cell>
+                  <Table.Row.Cell>{data.width.toPrecision(4)}</Table.Row.Cell>
+                  <Table.Row.Cell>{data.height.toPrecision(4)}</Table.Row.Cell>
+                  <Table.Row.Cell
+                    contentStyle={css`
+                      display: block;
+                      word-break: break-word;
+                      white-space: pre-wrap;
+                    `}
+                  >
+                    {data.contentOnHover}
+                  </Table.Row.Cell>
+                </Table.Row>
               ))}
             </Table>
           </Window.Cell>
