@@ -85,6 +85,39 @@ describe("Calendar ", () => {
     });
   });
 
+  context("onCalendarPeriodChanged", () => {
+    context("when selecting", () => {
+      it("renders changing month and year", () => {
+        const initialDate = new Date();
+        const onCalendarPeriodChanged = cy.spy().as("onCalendarPeriodChanged");
+
+        cy.mount(
+          <Calendar
+            inputValue={value}
+            monthNames={MONTH_NAMES}
+            onCalendarPeriodChanged={onCalendarPeriodChanged}
+          />
+        );
+        cy.findByLabelText("next-month").click();
+
+        cy.get("@onCalendarPeriodChanged").should(
+          "have.been.calledWithMatch",
+          (date: Date) => {
+            const expectedMonth = (initialDate.getMonth() + 1) % 12;
+            const expectedYear =
+              initialDate.getFullYear() +
+              (initialDate.getMonth() === 11 ? 1 : 0);
+
+            expect(date.getMonth()).to.equal(expectedMonth);
+            expect(date.getFullYear()).to.equal(expectedYear);
+
+            return true;
+          }
+        );
+      });
+    });
+  });
+
   context("todayButtonCaption", () => {
     context("when given", () => {
       it("renders text", () => {
