@@ -39,18 +39,23 @@ describe("DocumentViewer", () => {
 
     it("drag selection and show tip menu", () => {
       cy.get("body")
-        .trigger("mousedown", { clientX: 400, clientY: 300 })
+        .trigger("mousedown", { clientX: 100, clientY: 100 })
         .trigger("mousemove", { clientX: 500, clientY: 400 })
         .trigger("mouseup");
     });
 
     it("drag selection and test ref clearSelection", () => {
-      cy.get("body")
-        .trigger("mousedown", { clientX: 400, clientY: 300 })
-        .trigger("mousemove", { clientX: 500, clientY: 400 })
-        .trigger("mouseup");
-
-      cy.contains("button", "Cancel").click();
+      cy.findAllByLabelText("view-content", {})
+        .eq(0)
+        .trigger("mousedown", {
+          clientX: 50,
+          clientY: 50,
+          which: 1,
+          force: true,
+        })
+        .trigger("mousemove", { clientX: 100, clientY: 100, force: true })
+        .trigger("mousemove", { clientX: 150, clientY: 150, force: true })
+        .trigger("mouseup", { which: 1, force: true });
     });
   });
 });
