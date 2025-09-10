@@ -1,18 +1,18 @@
 import { getIdContent } from "test/support/commands";
 
-context("Calendar Component", () => {
-  describe("Default", () => {
+describe("Calendar", () => {
+  context("default", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-calendar--default"));
     });
 
-    it("Should render click on all day", () => {
+    it("should render click on all day", () => {
       cy.findByLabelText("next-month").click();
       cy.findByLabelText("previous-month").click();
       cy.findByText("13").click();
     });
 
-    it("Should select date", () => {
+    it("should select date", () => {
       cy.findByLabelText("calendar-select-date").click();
       cy.findByLabelText("combobox-month").click();
       cy.findByText("JAN").click();
@@ -22,7 +22,7 @@ context("Calendar Component", () => {
     });
   });
 
-  describe("No Weekends", () => {
+  context("no weekends", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-calendar--no-weekends"));
     });
@@ -30,6 +30,36 @@ context("Calendar Component", () => {
       cy.findByLabelText("next-month").click();
       cy.findByLabelText("previous-month").click();
       cy.findByText("13").click();
+    });
+  });
+
+  context("with footer", () => {
+    beforeEach(() => {
+      cy.visit(getIdContent("input-elements-calendar--with-footer"));
+    });
+    it("should display footer with initial empty value", () => {
+      cy.get("div").contains("Format:");
+      cy.get("button").contains("Clear");
+    });
+
+    it("should update footer when selecting a date", () => {
+      cy.findByLabelText("calendar-select-date").click();
+      cy.findByLabelText("combobox-month").click();
+      cy.findByText("JAN").click();
+      cy.findByLabelText("combobox-year").click();
+      cy.findByText("2024").click();
+      cy.findByText("3").click();
+
+      cy.get("div").contains("Format: 01/03/2024");
+    });
+
+    it("should clear the value when Clear button is clicked", () => {
+      cy.findByLabelText("calendar-select-date").click();
+      cy.findByText("3").click();
+
+      cy.get("button").contains("Clear").click();
+
+      cy.get("div").contains("Format: ");
     });
   });
 });
