@@ -577,20 +577,18 @@ const TableRowContainer = styled.div<{ $tableRowContainerStyle?: CSSProp }>`
   width: 100%;
 
   &::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.3);
-    border-radius: 3px;
+    background-color: rgba(145, 142, 142, 0.3);
+    border-radius: 2px;
   }
 
   &::-webkit-scrollbar-track {
-    background: transparent;
+    background: rgba(168, 167, 167, 0.1);
   }
-
-  scrollbar-gutter: stable;
 
   ${({ $tableRowContainerStyle }) => $tableRowContainerStyle}
 `;
