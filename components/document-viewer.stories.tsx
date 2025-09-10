@@ -5,7 +5,7 @@ import {
   DocumentViewerRef,
   DocumentViewer,
 } from "./document-viewer";
-import { ReactElement, useRef, useState } from "react";
+import { ReactElement, useEffect, useRef, useState } from "react";
 import { StatefulOnChangeType } from "./stateful-form";
 import { Button } from "./button";
 import { Textbox } from "./textbox";
@@ -47,6 +47,11 @@ export const Default: Story = {
     const handleSetBoxes = (data?: BoundingBoxState) => {
       if (data) {
         setBoundingProcess(data);
+        if (data?.width >= 0.02 || data?.height >= 0.02) {
+          setTipState(true);
+        } else {
+          setTipState(false);
+        }
       }
     };
 
@@ -74,6 +79,31 @@ export const Default: Story = {
       await setBoundingProcess(null);
     };
 
+    useEffect(() => {
+      if (!tipState) return;
+
+      let openedAt = Date.now();
+
+      const handleClickOutside = (e: MouseEvent) => {
+        const target = e.target as HTMLElement;
+        const popup = document.getElementById("comment-popup");
+        if (!popup?.contains(target)) {
+          const elapsed = Date.now() - openedAt;
+          if (elapsed < 3000) {
+            setTipState(false);
+            setBoundingProcess(null);
+            setTextReview("");
+          }
+        }
+      };
+
+      document.addEventListener("mousedown", handleClickOutside);
+
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, [tipState]);
+
     const columns: ColumnTableProps[] = [
       {
         caption: "Page",
@@ -97,6 +127,7 @@ export const Default: Story = {
 
     const commentPopUp: ReactElement = (
       <ContentViewer
+        id="comment-popup"
         ref={ref.current?.repositionPopUp}
         style={{
           left: boundingProcess?.absoluteX ?? 0,
@@ -171,7 +202,6 @@ export const Default: Story = {
               ref={ref}
               onRegionSelected={(props: BoundingBoxState) => {
                 handleSetBoxes(props);
-                setTipState(true);
               }}
               title="Team Collaboration Notes"
               boundingBoxes={boundingBoxes}
@@ -181,14 +211,17 @@ export const Default: Story = {
           <Window.Cell>
             <Table columns={columns}>
               {boundingBoxes.map((data, index) => (
-                <Table.Row key={index}>
-                  <Table.Row.Cell>{data.page}</Table.Row.Cell>
-                  <Table.Row.Cell>{data.x.toPrecision(4)}</Table.Row.Cell>
-                  <Table.Row.Cell>{data.y.toPrecision(4)}</Table.Row.Cell>
-                  <Table.Row.Cell>{data.width.toPrecision(4)}</Table.Row.Cell>
-                  <Table.Row.Cell>{data.height.toPrecision(4)}</Table.Row.Cell>
-                  <Table.Row.Cell>{data.contentOnHover}</Table.Row.Cell>
-                </Table.Row>
+                <Table.Row
+                  key={index}
+                  content={[
+                    data.page,
+                    data.x.toPrecision(4),
+                    data.y.toPrecision(4),
+                    data.width.toPrecision(4),
+                    data.height.toPrecision(4),
+                    data.contentOnHover,
+                  ]}
+                />
               ))}
             </Table>
           </Window.Cell>
