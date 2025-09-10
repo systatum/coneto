@@ -175,17 +175,14 @@ export const Default: Story = {
           orientation="horizontal"
           style={css`
             height: 100vh;
-            gap: 8px;
           `}
           dividerStyle={css`
+            padding-top: 6px;
             border-bottom: 6px solid #d1d5db;
+            background-color: white;
           `}
         >
-          <Window.Cell
-            style={css`
-              overflow: hidden;
-            `}
-          >
+          <Window.Cell>
             <DocumentViewer
               ref={ref}
               onRegionSelected={(props: BoundingBoxState) => {
@@ -196,7 +193,12 @@ export const Default: Story = {
               source="/sample.pdf"
             />
           </Window.Cell>
-          <Window.Cell>
+          <Window.Cell
+            style={css`
+              padding-top: 6px;
+              background-color: white;
+            `}
+          >
             <Table columns={columns}>
               {boundingBoxes.map((data, index) => (
                 <Table.Row key={index}>
