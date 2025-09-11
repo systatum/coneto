@@ -2,8 +2,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { ReactElement, useState } from "react";
 import { Calendar } from "./calendar";
 import { OptionsProps } from "./selectbox";
-import { Button } from "./button";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
 const meta: Meta<typeof Calendar> = {
   title: "Input Elements/Calendar",
