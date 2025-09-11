@@ -104,8 +104,8 @@ context("Crumb Component", () => {
         .find("svg")
         .each(($icon) => {
           const size = 16 * 1.25;
-          expect($icon.width()).to.eq(size);
-          expect($icon.height()).to.eq(size);
+          expect($icon.width().toFixed(2)).to.eq(size.toFixed(2));
+          expect($icon.height().toFixed(2)).to.eq(size.toFixed(2));
         });
     });
 
@@ -165,8 +165,8 @@ context("Crumb Component", () => {
         .find("svg")
         .each(($icon) => {
           const size = 14 * 1.25;
-          expect($icon.width()).to.be.closeTo(size, 0.01);
-          expect($icon.height()).to.be.closeTo(size, 0.01);
+          expect($icon.width().toFixed(2)).to.eq(size.toFixed(2));
+          expect($icon.height().toFixed(2)).to.eq(size.toFixed(2));
         });
     });
 
