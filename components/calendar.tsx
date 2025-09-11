@@ -280,12 +280,12 @@ function Calendar({
     }));
   };
 
-  const handleSelect = (date: Date) => {
+  const handleSelect = async (date: Date) => {
     const dataFormatted = formatDate(date, format);
     let newValues: string[];
 
     if (selectability === "multiple") {
-      setinputValueLocal((prev) => {
+      await setinputValueLocal((prev) => {
         const values = prev ? prev.split(",") : [];
 
         if (values.includes(dataFormatted)) {
@@ -309,7 +309,7 @@ function Calendar({
         return finalValues;
       });
     } else if (selectability === "ranged") {
-      setinputValueLocal((prev) => {
+      await setinputValueLocal((prev) => {
         const values = prev ? prev.split("-") : [];
         if (!startPicked.picked) {
           newValues = [dataFormatted];
@@ -340,14 +340,16 @@ function Calendar({
     }
 
     if (setInputValue && selectability === "single") {
-      setInputValue({
+      await setInputValue({
         text: formatDate(date, format),
         value: formatDate(date, format),
       });
     }
 
-    if (setIsOpen && selectability === "single") {
-      setIsOpen(false);
+    if (setIsOpen && selectability === "ranged" && !startPicked.picked) {
+      await setIsOpen(true);
+    } else if (setIsOpen && selectability !== "multiple") {
+      await setIsOpen(false);
     }
   };
 
