@@ -149,13 +149,14 @@ export const WithFooter: Story = {
     });
 
     const footerContent: ReactElement = (
-      <Messagebox variant="primary" title="Date Selected">
+      <Messagebox variant="primary" title="No weekends">
         <span
           style={{
             fontSize: "12px",
           }}
         >
-          Please select a date before proceeding. You must choose one.
+          Unfortunately, due to a driver shortage, please choose delivery dates
+          other than weekends. Thank you.
         </span>
       </Messagebox>
     );
