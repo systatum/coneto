@@ -1,6 +1,7 @@
 import { RemixiconComponentType } from "@remixicon/react";
 import {
   Children,
+  Fragment,
   isValidElement,
   MouseEvent,
   ReactNode,
@@ -145,13 +146,14 @@ function Window({
   return (
     <Container ref={containerRef} $isVertical={isVertical} $style={style}>
       {childrenArray.map((child, index) => (
-        <CellWrapper
-          key={index}
-          $size={sizes[index]}
-          $isDragging={isDragging}
-          $isVertical={isVertical}
-        >
-          {child}
+        <Fragment key={index}>
+          <CellWrapper
+            $size={sizes[index]}
+            $isDragging={isDragging}
+            $isVertical={isVertical}
+          >
+            {child}
+          </CellWrapper>
           {index < childrenArray.length - 1 && (
             <Divider
               $style={dividerStyle}
@@ -161,7 +163,7 @@ function Window({
               $isVertical={isVertical}
             />
           )}
-        </CellWrapper>
+        </Fragment>
       ))}
     </Container>
   );
@@ -201,8 +203,9 @@ const Container = styled.div.withConfig({
 })<{ $isVertical: boolean; $style?: CSSProp }>`
   display: flex;
   width: 100%;
-  height: 100%;
+  height: auto;
   overflow: hidden;
+
   flex-direction: ${({ $isVertical }) => ($isVertical ? "row" : "column")};
   ${({ $style }) => $style}
 `;
@@ -228,24 +231,19 @@ const CellWrapper = styled.div.withConfig({
 `;
 
 const Divider = styled.div<{ $isVertical: boolean; $style?: CSSProp }>`
-  position: absolute;
-  z-index: 10;
+  position: relative;
   background-color: transparent;
   transition: background-color 0.3s;
 
   ${({ $isVertical }) =>
     $isVertical
       ? css`
-          top: 0;
-          right: 0;
           width: 1px;
           height: 100%;
           cursor: col-resize;
           border-right: 1px solid #d1d5db;
         `
       : css`
-          left: 0;
-          bottom: 0;
           height: 1px;
           width: 100%;
           cursor: row-resize;

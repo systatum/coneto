@@ -484,10 +484,12 @@ function Table({
 const Wrapper = styled.div<{
   $containerStyle?: CSSProp;
 }>`
-  display: "flex";
-  flex-direction: "column";
-  position: "relative";
-  border-radius: "4px";
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: 100%;
+  width: 100%;
+
   ${({ $containerStyle }) => $containerStyle}
 `;
 
@@ -549,6 +551,8 @@ const TableContainer = styled.div<{ $hasSelected: boolean }>`
   display: flex;
   flex-direction: column;
   position: relative;
+  height: 100%;
+
   ${({ $hasSelected }) =>
     $hasSelected &&
     css`
@@ -575,6 +579,9 @@ const TableRowContainer = styled.div<{ $tableRowContainerStyle?: CSSProp }>`
   overflow: auto;
   position: relative;
   width: 100%;
+  height: 100%;
+
+  margin-bottom: 15px;
 
   ${({ $tableRowContainerStyle }) => $tableRowContainerStyle}
 `;
@@ -900,8 +907,7 @@ const TableRowWrapper = styled.div<{
   position: relative;
   padding: 0.75rem;
   align-items: stretch;
-  width: 100%;
-  height: 100%;
+
   border-left: 1px solid #e5e7eb;
   border-right: 1px solid #e5e7eb;
   border-bottom: 1px solid #e5e7eb;
@@ -963,7 +969,7 @@ const CellContent = styled.div<{ width?: string; $contentStyle?: CSSProp }>`
     css`
       flex: 1;
       height: fit-content;
-      width: "100%";
+      width: 100%;
     `}
 
   width: ${({ width }) => width};
