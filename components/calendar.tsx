@@ -4,7 +4,7 @@ import {
   RiArrowRightSLine,
   RiCheckLine,
 } from "@remixicon/react";
-import { Fragment, ReactElement } from "react";
+import { Fragment, ReactElement, useMemo } from "react";
 import { useState, useEffect } from "react";
 import { Button } from "./button";
 import { Combobox } from "./combobox";
@@ -119,7 +119,10 @@ function Calendar({
   });
 
   const [inputValueLocal, setinputValueLocal] = useState(inputValue.text);
-  const [startPicked, setStartPicked] = useState(false);
+  const [startPicked, setStartPicked] = useState({
+    picked: false,
+    indexPicked: new Date(),
+  });
 
   const [highlightedIndexInternal, setHighlightedIndexInternal] = useState(0);
   const highlightedIndexChange = highlightedIndex ?? highlightedIndexInternal;
@@ -168,51 +171,45 @@ function Calendar({
     }
   };
 
-  const getDatesInMonth = (date: Date) => {
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    const dates: Date[] = [];
+  const dates = useMemo(() => {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
     const lastDate = new Date(year, month + 1, 0).getDate();
-    for (let i = 1; i <= lastDate; i++) {
-      dates.push(new Date(year, month, i));
-    }
-    return dates;
-  };
+    const arr: Date[] = [];
+    for (let i = 1; i <= lastDate; i++) arr.push(new Date(year, month, i));
+    return arr;
+  }, [currentDate]);
 
-  const dates = getDatesInMonth(currentDate);
+  const { yearOptions } = useMemo(() => {
+    const t = new Date();
+    const min = new Date(
+      t.getFullYear() - (yearPastReach ?? 80),
+      t.getMonth(),
+      t.getDate()
+    );
+    const max = new Date(
+      t.getFullYear() + (futurePastReach ?? 50),
+      t.getMonth(),
+      t.getDate()
+    );
+    const years = Array.from(
+      { length: max.getFullYear() - min.getFullYear() + 1 },
+      (_, i) => ({
+        text: String(min.getFullYear() + i),
+        value: min.getFullYear() + i,
+      })
+    );
+    return { yearOptions: years };
+  }, [yearPastReach, futurePastReach]);
 
-  const minDate = new Date(
-    today.getFullYear() - (yearPastReach ?? 80),
-    today.getMonth(),
-    today.getDate()
-  );
-  const maxDate = new Date(
-    today.getFullYear() + (futurePastReach ?? 50),
-    today.getMonth(),
-    today.getDate()
-  );
-
-  const yearOptions = Array.from(
-    { length: maxDate.getFullYear() - minDate.getFullYear() + 1 },
-    (_, i) => {
-      const year = minDate.getFullYear() + i;
-      return {
-        text: String(year),
-        value: year,
-      };
-    }
-  );
-
-  const prevMonth = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth() - 1,
-    1
+  const prevMonth = useMemo(
+    () => new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1),
+    [currentDate]
   );
 
-  const nextMonth = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth() + 1,
-    1
+  const nextMonth = useMemo(
+    () => new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1),
+    [currentDate]
   );
 
   const handleClickPrevMonth = () => {
@@ -284,13 +281,6 @@ function Calendar({
   };
 
   const handleSelect = (date: Date) => {
-    if (setInputValue) {
-      setInputValue({
-        text: formatDate(date, format),
-        value: formatDate(date, format),
-      });
-    }
-
     const dataFormatted = formatDate(date, format);
     let newValues: string[];
 
@@ -310,21 +300,27 @@ function Calendar({
           return dateA.getTime() - dateB.getTime();
         });
 
-        return newValues.join(",");
+        const finalValues = newValues.join(",");
+        setInputValue({
+          text: finalValues,
+          value: finalValues,
+        });
+
+        return finalValues;
       });
     } else if (selectability === "ranged") {
       setinputValueLocal((prev) => {
         const values = prev ? prev.split("-") : [];
-        if (!startPicked) {
+        if (!startPicked.picked) {
           newValues = [dataFormatted];
-          setStartPicked(true);
+          setStartPicked((prev) => ({ ...prev, picked: true }));
         } else {
           if (values.includes(dataFormatted)) {
             newValues = [];
           } else {
             newValues = [...values, dataFormatted];
           }
-          setStartPicked(false);
+          setStartPicked({ picked: false, indexPicked: null });
         }
 
         newValues = newValues.sort((a, b) => {
@@ -332,12 +328,25 @@ function Calendar({
           const dateB = new Date(b);
           return dateA.getTime() - dateB.getTime();
         });
+        const finalValues = newValues.join("-");
 
-        return newValues.join("-");
+        setInputValue({
+          text: finalValues,
+          value: finalValues,
+        });
+
+        return finalValues;
       });
     }
 
-    if (setIsOpen) {
+    if (setInputValue && selectability === "single") {
+      setInputValue({
+        text: formatDate(date, format),
+        value: formatDate(date, format),
+      });
+    }
+
+    if (setIsOpen && selectability === "single") {
       setIsOpen(false);
     }
   };
@@ -555,7 +564,7 @@ function Calendar({
             let isRangeStart: boolean;
             let isRangeEnd: boolean;
             let isInRange: boolean;
-            let isHighlightedRange: number;
+            let isHighlightedPicked: boolean;
 
             const selectedDates =
               selectability === "ranged"
@@ -571,9 +580,14 @@ function Calendar({
                   : [];
 
             if (selectability === "ranged") {
-              if (startPicked) {
+              if (startPicked.picked) {
                 const selectedDate = selectedDates[0];
                 isDisabled = date.getTime() < selectedDate.getTime();
+
+                isRangeStart = date.getTime() === selectedDate.getTime();
+                isHighlightedPicked =
+                  date.getTime() >= selectedDate.getTime() &&
+                  date.getTime() <= startPicked.indexPicked.getTime();
               }
               if (selectedDates.length === 2) {
                 const [startDate, endDate] = selectedDates;
@@ -612,7 +626,6 @@ function Calendar({
                 date.getMonth() === selectedDate.getMonth() &&
                 date.getFullYear() === selectedDate.getFullYear();
             }
-
             const isToday =
               date.getDate() === today.getDate() &&
               date.getMonth() === today.getMonth() &&
@@ -641,7 +654,10 @@ function Calendar({
                     onClick();
                   }
                 }}
-                onMouseEnter={() => setHighlightedIndexChange(idx)}
+                onMouseEnter={() => {
+                  setHighlightedIndexChange(idx);
+                  setStartPicked((prev) => ({ ...prev, indexPicked: date }));
+                }}
                 tabIndex={isHighlighted ? 0 : -1}
                 $isHighlighted={isHighlighted}
                 $isDisable={disableWeekend || isDisabled}
@@ -651,9 +667,18 @@ function Calendar({
               >
                 {selectability === "ranged" && (
                   <DataCellRange
-                    $isInRange={isCurrentDate && !startPicked}
+                    $isInRange={
+                      disableWeekend
+                        ? !isWeekend &&
+                          ((isCurrentDate && !startPicked.picked) ||
+                            (isHighlightedPicked && !isDisabled))
+                        : (isCurrentDate && !startPicked.picked) ||
+                          (isHighlightedPicked && !isDisabled)
+                    }
                     $isRangeStart={isRangeStart}
-                    $isRangeEnd={isRangeEnd}
+                    $isRangeEnd={
+                      isRangeEnd || (isHighlighted && startPicked.picked)
+                    }
                   />
                 )}
                 <DateCell
@@ -672,7 +697,13 @@ function Calendar({
                     disableWeekend ? isWeekend || isDisabled : isDisabled
                   }
                   $isHighlighted={isHighlighted}
-                  $isCurrentDate={isCurrentDate}
+                  $isCurrentDate={
+                    isCurrentDate ||
+                    (selectability === "ranged" &&
+                      isHighlighted &&
+                      startPicked.picked &&
+                      !isDisabled)
+                  }
                   $isInRange={isInRange && selectability === "ranged"}
                   $isToday={isToday}
                 >
@@ -861,12 +892,17 @@ const DateCell = styled.span<{
           color: #61a9f9;
         `};
 
-  ${({ $isInRange }) =>
-    $isInRange &&
-    css`
-      background-color: transparent;
-      color: #61a9f9;
-    `}
+  ${({ $isInRange, $isWeekend }) =>
+    $isInRange && $isWeekend
+      ? css`
+          background-color: transparent;
+          color: #d1d5db;
+        `
+      : $isInRange &&
+        css`
+          background-color: transparent;
+          color: #61a9f9;
+        `}
 
   ${({ $style }) => $style}
 `;
@@ -883,6 +919,12 @@ const DataCellRange = styled.span<{
   left: 0;
   transform: translateY(-50%);
 
+  ${({ $isInRange }) =>
+    $isInRange &&
+    css`
+      background-color: #dbeafe;
+    `}
+
   ${({ $isRangeStart }) =>
     $isRangeStart &&
     css`
@@ -897,12 +939,6 @@ const DataCellRange = styled.span<{
     css`
       width: 25px;
       transform: translateX(-25%) translateY(-50%);
-    `}
-
-  ${({ $isInRange }) =>
-    $isInRange &&
-    css`
-      background-color: #dbeafe;
     `}
 `;
 
