@@ -20,10 +20,10 @@ describe("Treelist", () => {
       cy.contains("Adam Noto Hakarsa").should("exist");
 
       cy.contains("Member of Technical Staff").click();
-      cy.contains("Adam Noto Hakarsa").should("not.exist");
+      cy.contains("Adam Noto Hakarsa").should("not.be.visible");
 
       cy.contains("Member of Technical Staff").click();
-      cy.contains("Adam Noto Hakarsa").should("exist");
+      cy.contains("Adam Noto Hakarsa").should("be.visible");
     });
 
     it("should still allow selecting an item when expanded", () => {

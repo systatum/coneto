@@ -4,7 +4,7 @@ import {
   RiArrowRightSLine,
   RiCheckLine,
 } from "@remixicon/react";
-import { Fragment, ReactElement, useMemo } from "react";
+import { Fragment, ReactElement, useMemo, ReactNode } from "react";
 import { useState, useEffect } from "react";
 import { Button } from "./button";
 import { Combobox } from "./combobox";
@@ -33,6 +33,7 @@ type CalendarProps = BaseCalendarProps &
     label?: string;
     showError?: boolean;
     errorMessage?: string;
+    footer?: ReactNode;
     todayButtonCaption?: string;
   };
 
@@ -98,6 +99,7 @@ function Calendar({
   errorMessage,
   onClick,
   containerStyle,
+  footer,
   todayButtonCaption = "Today",
   onCalendarPeriodChanged,
   selectability = "single",
@@ -718,6 +720,7 @@ function Calendar({
           })}
         </GridDate>
       </>
+      <>{footer}</>
     </CalendarContainer>
   );
 
