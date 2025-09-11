@@ -2,6 +2,7 @@ import { RiCalendar2Line } from "@remixicon/react";
 import { DrawerProps, Selectbox } from "./selectbox";
 import { Calendar, BaseCalendarProps } from "./calendar";
 import styled, { CSSProp } from "styled-components";
+import { ReactNode } from "react";
 
 export type DateboxProps = BaseCalendarProps & {
   label?: string;
@@ -10,11 +11,13 @@ export type DateboxProps = BaseCalendarProps & {
   disabled?: boolean;
   labelStyle?: CSSProp;
   selectboxStyle?: CSSProp;
-  calendarTodayButtonCaption?: string;
+  calendarFooter?: ReactNode;
 };
+
 type CalendarDrawerProps = BaseCalendarProps &
   Partial<
     DrawerProps & {
+      calendarFooter?: ReactNode;
       calendarTodayButtonCaption?: string;
     }
   >;
@@ -87,6 +90,7 @@ function CalendarDrawer(props: CalendarDrawerProps) {
     >
       <Calendar
         {...props}
+        footer={props.calendarFooter}
         todayButtonCaption={props.calendarTodayButtonCaption}
         label={null}
       />
