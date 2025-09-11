@@ -49,10 +49,10 @@ describe("Datebox", () => {
 
     it("should show footer", () => {
       cy.get('[data-type="selectbox"]').click();
-      cy.contains("span", "Date Selected");
+      cy.contains("span", "No weekends");
       cy.contains(
         "span",
-        "Please select a date before proceeding. You must choose one."
+        "Unfortunately, due to a driver shortage, please choose delivery dates other than weekends. Thank you."
       );
     });
   });
