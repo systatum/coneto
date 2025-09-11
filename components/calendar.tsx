@@ -25,6 +25,7 @@ export interface BaseCalendarProps {
   futurePastReach?: number;
   onClick?: () => void;
   onCalendarPeriodChanged?: (data: Date) => void;
+  selectability?: SelectabilityState;
 }
 
 type CalendarProps = BaseCalendarProps &
@@ -48,8 +49,9 @@ type CustomChangeEvent = {
   };
 };
 
-export type FormatProps = "mm/dd/yyyy" | "yyyy-mm-dd" | "dd/mm/yyyy";
+export type FormatProps = "mm/dd/yyyy" | "yyyy/mm/dd" | "dd/mm/yyyy";
 export type DateBoxOpen = "open" | "month" | "year";
+type SelectabilityState = "single" | "multiple" | "ranged";
 
 const DEFAULT_DAY_NAMES = [
   { text: "Su", value: 1 },
@@ -98,6 +100,7 @@ function Calendar({
   containerStyle,
   todayButtonCaption = "Today",
   onCalendarPeriodChanged,
+  selectability = "single",
 }: CalendarProps) {
   const parsedDate = inputValue?.text ? new Date(inputValue.text) : new Date();
   const stateDate = isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
@@ -114,6 +117,9 @@ function Calendar({
     month: currentMonth,
     year: { text: String(currentYear), value: currentYear },
   });
+
+  const [inputValueLocal, setinputValueLocal] = useState(inputValue.text);
+  const [startPicked, setStartPicked] = useState(false);
 
   const [highlightedIndexInternal, setHighlightedIndexInternal] = useState(0);
   const highlightedIndexChange = highlightedIndex ?? highlightedIndexInternal;
@@ -284,6 +290,53 @@ function Calendar({
         value: formatDate(date, format),
       });
     }
+
+    const dataFormatted = formatDate(date, format);
+    let newValues: string[];
+
+    if (selectability === "multiple") {
+      setinputValueLocal((prev) => {
+        const values = prev ? prev.split(",") : [];
+
+        if (values.includes(dataFormatted)) {
+          newValues = values.filter((value) => value !== dataFormatted);
+        } else {
+          newValues = [...values, dataFormatted];
+        }
+
+        newValues = newValues.sort((a, b) => {
+          const dateA = new Date(a);
+          const dateB = new Date(b);
+          return dateA.getTime() - dateB.getTime();
+        });
+
+        return newValues.join(",");
+      });
+    } else if (selectability === "ranged") {
+      setinputValueLocal((prev) => {
+        const values = prev ? prev.split("-") : [];
+        if (!startPicked) {
+          newValues = [dataFormatted];
+          setStartPicked(true);
+        } else {
+          if (values.includes(dataFormatted)) {
+            newValues = [];
+          } else {
+            newValues = [...values, dataFormatted];
+          }
+          setStartPicked(false);
+        }
+
+        newValues = newValues.sort((a, b) => {
+          const dateA = new Date(a);
+          const dateB = new Date(b);
+          return dateA.getTime() - dateB.getTime();
+        });
+
+        return newValues.join("-");
+      });
+    }
+
     if (setIsOpen) {
       setIsOpen(false);
     }
@@ -439,6 +492,8 @@ function Calendar({
               display: "flex",
               flexDirection: "row",
               width: "100%",
+              justifyContent:
+                selectability === "single" ? "flex-start" : "flex-end",
             }}
           >
             <ArrowLeft
@@ -455,26 +510,28 @@ function Calendar({
           </div>
         )}
 
-        <Button
-          onClick={handleMoveToToday}
-          variant="outline"
-          buttonStyle={css`
-            border-color: #f3f4f6;
-            width: 100%;
-            max-height: 34px;
-            max-width: 60px;
-            font-size: 0.75rem;
-            padding-left: 0.5rem;
-            padding-right: 0.5rem;
-            box-shadow: none;
+        {selectability === "single" && (
+          <Button
+            onClick={handleMoveToToday}
+            variant="outline"
+            buttonStyle={css`
+              border-color: #f3f4f6;
+              width: 100%;
+              max-height: 34px;
+              max-width: 60px;
+              font-size: 0.75rem;
+              padding-left: 0.5rem;
+              padding-right: 0.5rem;
+              box-shadow: none;
 
-            &:hover {
-              background-color: #e5e7eb;
-            }
-          `}
-        >
-          {todayButtonCaption}
-        </Button>
+              &:hover {
+                background-color: #e5e7eb;
+              }
+            `}
+          >
+            {todayButtonCaption}
+          </Button>
+        )}
       </CalendarHeader>
 
       <>
@@ -492,13 +549,69 @@ function Calendar({
           {dates.map((date, i) => {
             const idx = i + emptyCellsCount + 1;
             const isHighlighted = idx === highlightedIndexChange;
-            const selectedDate = inputValue.text
-              ? new Date(inputValue.text)
-              : new Date();
-            const isCurrentDate =
-              date.getDate() === selectedDate.getDate() &&
-              date.getMonth() === selectedDate.getMonth() &&
-              date.getFullYear() === selectedDate.getFullYear();
+
+            let isCurrentDate: boolean;
+            let isDisabled: boolean;
+            let isRangeStart: boolean;
+            let isRangeEnd: boolean;
+            let isInRange: boolean;
+            let isHighlightedRange: number;
+
+            const selectedDates =
+              selectability === "ranged"
+                ? inputValueLocal
+                    .split("-")
+                    .filter(Boolean)
+                    .map((d) => new Date(d))
+                : selectability === "multiple"
+                  ? inputValueLocal
+                      .split(",")
+                      .filter(Boolean)
+                      .map((d) => new Date(d))
+                  : [];
+
+            if (selectability === "ranged") {
+              if (startPicked) {
+                const selectedDate = selectedDates[0];
+                isDisabled = date.getTime() < selectedDate.getTime();
+              }
+              if (selectedDates.length === 2) {
+                const [startDate, endDate] = selectedDates;
+                isCurrentDate =
+                  date.getTime() >= startDate.getTime() &&
+                  date.getTime() <= endDate.getTime();
+                isRangeStart = date.getTime() === startDate.getTime();
+                isRangeEnd = date.getTime() === endDate.getTime();
+                isInRange =
+                  date.getTime() > startDate.getTime() &&
+                  date.getTime() < endDate.getTime();
+
+                isCurrentDate = isRangeStart || isRangeEnd || isInRange;
+              } else {
+                isCurrentDate = selectedDates.some(
+                  (selected) =>
+                    date.getDate() === selected.getDate() &&
+                    date.getMonth() === selected.getMonth() &&
+                    date.getFullYear() === selected.getFullYear()
+                );
+              }
+            } else if (selectability === "multiple") {
+              isCurrentDate = selectedDates.some(
+                (selected) =>
+                  date.getDate() === selected.getDate() &&
+                  date.getMonth() === selected.getMonth() &&
+                  date.getFullYear() === selected.getFullYear()
+              );
+            } else {
+              const selectedDate = inputValue.text
+                ? new Date(inputValue.text)
+                : new Date();
+
+              isCurrentDate =
+                date.getDate() === selectedDate.getDate() &&
+                date.getMonth() === selectedDate.getMonth() &&
+                date.getFullYear() === selectedDate.getFullYear();
+            }
 
             const isToday =
               date.getDate() === today.getDate() &&
@@ -519,9 +632,10 @@ function Calendar({
                 aria-selected={isHighlighted}
                 id={`option-${idx}`}
                 onClick={async () => {
-                  if (isWeekend && disableWeekend) {
+                  if ((isWeekend && disableWeekend) || isDisabled) {
                     return;
                   }
+
                   await handleSelect(date);
                   if (onClick) {
                     onClick();
@@ -530,9 +644,18 @@ function Calendar({
                 onMouseEnter={() => setHighlightedIndexChange(idx)}
                 tabIndex={isHighlighted ? 0 : -1}
                 $isHighlighted={isHighlighted}
-                $disableWeekend={disableWeekend}
-                $isWeekend={isWeekend}
+                $isDisable={disableWeekend || isDisabled}
+                $isWeekend={
+                  disableWeekend ? isWeekend || isDisabled : isDisabled
+                }
               >
+                {selectability === "ranged" && (
+                  <DataCellRange
+                    $isInRange={isCurrentDate && !startPicked}
+                    $isRangeStart={isRangeStart}
+                    $isRangeEnd={isRangeEnd}
+                  />
+                )}
                 <DateCell
                   $style={
                     floatingStyles
@@ -544,13 +667,17 @@ function Calendar({
                           margin-bottom: 3px;
                         `
                   }
-                  $disableWeekend={disableWeekend}
-                  $isWeekend={isWeekend}
+                  $isDisable={disableWeekend || isDisabled}
+                  $isWeekend={
+                    disableWeekend ? isWeekend || isDisabled : isDisabled
+                  }
                   $isHighlighted={isHighlighted}
                   $isCurrentDate={isCurrentDate}
+                  $isInRange={isInRange && selectability === "ranged"}
                   $isToday={isToday}
                 >
                   {date.getDate()}
+
                   {isToday && <DateCellTodayDot />}
                 </DateCell>
               </DateCellWrapper>
@@ -627,21 +754,23 @@ const GridDate = styled.div`
   gap: 2px;
   padding-bottom: 8px;
   width: 100%;
+  overflow: hidden;
 `;
 
 const DateCellWrapper = styled.li<{
   $isHighlighted: boolean;
-  $disableWeekend: boolean;
-  $isWeekend: boolean;
+  $isDisable: boolean;
+  $isWeekend?: boolean;
 }>`
   display: flex;
   align-self: center;
   justify-content: center;
   text-align: center;
+  position: relative;
 
-  ${({ $isHighlighted, $disableWeekend, $isWeekend }) =>
+  ${({ $isHighlighted, $isDisable, $isWeekend }) =>
     $isHighlighted &&
-    (!$disableWeekend || !$isWeekend) &&
+    (!$isDisable || !$isWeekend) &&
     css`
       cursor: pointer;
     `}
@@ -649,14 +778,15 @@ const DateCellWrapper = styled.li<{
 
 const DateCell = styled.span<{
   $style?: CSSProp;
-  $disableWeekend?: boolean;
+  $isDisable?: boolean;
   $isWeekend?: boolean;
   $isHighlighted?: boolean;
   $isCurrentDate?: boolean;
   $isToday?: boolean;
+  $isInRange?: boolean;
 }>`
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 27px;
+  height: 27px;
   border-radius: 9999px;
   position: relative;
   border: 1px solid transparent;
@@ -664,16 +794,16 @@ const DateCell = styled.span<{
   align-items: center;
   justify-content: center;
 
-  ${({ $disableWeekend, $isWeekend }) =>
-    $disableWeekend &&
+  ${({ $isDisable, $isWeekend }) =>
+    $isDisable &&
     $isWeekend &&
     css`
       color: #d1d5db;
     `}
 
-  ${({ $isWeekend, $disableWeekend }) =>
+  ${({ $isWeekend, $isDisable }) =>
     $isWeekend &&
-    !$disableWeekend &&
+    !$isDisable &&
     css`
       color: #fca5a5;
     `}
@@ -694,9 +824,9 @@ const DateCell = styled.span<{
           }
         `}
 
-  ${({ $isHighlighted, $disableWeekend, $isWeekend }) =>
+  ${({ $isHighlighted, $isDisable, $isWeekend }) =>
     $isHighlighted &&
-    $disableWeekend &&
+    $isDisable &&
     $isWeekend &&
     css`
       background-color: white;
@@ -718,9 +848,8 @@ const DateCell = styled.span<{
     !$isCurrentDate &&
     css`
       color: #61a9f9;
-    `}
-    
-  
+    `};
+
   ${({ $isToday, $isHighlighted, $isCurrentDate }) =>
     $isToday && $isHighlighted && $isCurrentDate
       ? css`
@@ -730,9 +859,51 @@ const DateCell = styled.span<{
         $isHighlighted &&
         css`
           color: #61a9f9;
-        `}
+        `};
+
+  ${({ $isInRange }) =>
+    $isInRange &&
+    css`
+      background-color: transparent;
+      color: #61a9f9;
+    `}
 
   ${({ $style }) => $style}
+`;
+
+const DataCellRange = styled.span<{
+  $isInRange?: boolean;
+  $isRangeStart?: boolean;
+  $isRangeEnd?: boolean;
+}>`
+  position: absolute;
+  width: 45px;
+  height: 18px;
+  top: 47%;
+  left: 0;
+  transform: translateY(-50%);
+
+  ${({ $isRangeStart }) =>
+    $isRangeStart &&
+    css`
+      left: auto;
+      right: 0;
+      width: 25px;
+      transform: translateX(50%) translateY(-50%);
+    `}
+
+  ${({ $isRangeEnd }) =>
+    $isRangeEnd &&
+    css`
+      width: 25px;
+      transform: translateX(-25%) translateY(-50%);
+    `}
+
+  ${({ $isInRange }) =>
+    $isInRange &&
+    css`
+      background-color: #dbeafe;
+    `}
 `;
 
 const DateCellTodayDot = styled.div`
@@ -774,8 +945,8 @@ function formatDate(date: Date, format: FormatProps) {
   const day = String(date.getDate()).padStart(2, "0");
 
   switch (format) {
-    case "yyyy-mm-dd":
-      return `${year}-${month}-${day}`;
+    case "yyyy/mm/dd":
+      return `${year}/${month}/${day}`;
     case "dd/mm/yyyy":
       return `${day}/${month}/${year}`;
     case "mm/dd/yyyy":
