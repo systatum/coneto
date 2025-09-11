@@ -583,6 +583,20 @@ const TableRowContainer = styled.div<{ $tableRowContainerStyle?: CSSProp }>`
 
   margin-bottom: 15px;
 
+  &::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(145, 142, 142, 0.3);
+    border-radius: 2px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(168, 167, 167, 0.1);
+  }
+
   ${({ $tableRowContainerStyle }) => $tableRowContainerStyle}
 `;
 
@@ -905,7 +919,7 @@ const TableRowWrapper = styled.div<{
 }>`
   display: flex;
   position: relative;
-  padding: 0.75rem;
+  padding: 12px;
   align-items: stretch;
 
   border-left: 1px solid #e5e7eb;
@@ -964,6 +978,9 @@ const CellContent = styled.div<{ width?: string; $contentStyle?: CSSProp }>`
   padding-right: 0.5rem;
   display: flex;
   align-items: center;
+  word-break: break-word;
+  white-space: pre-wrap;
+
   ${({ width }) =>
     !width &&
     css`

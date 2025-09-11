@@ -10,8 +10,14 @@ export type DateboxProps = BaseCalendarProps & {
   disabled?: boolean;
   labelStyle?: CSSProp;
   selectboxStyle?: CSSProp;
+  calendarTodayButtonCaption?: string;
 };
-type CalendarDrawerProps = BaseCalendarProps & Partial<DrawerProps>;
+type CalendarDrawerProps = BaseCalendarProps &
+  Partial<
+    DrawerProps & {
+      calendarTodayButtonCaption?: string;
+    }
+  >;
 
 function Datebox(props: DateboxProps) {
   return (
@@ -79,7 +85,11 @@ function CalendarDrawer(props: CalendarDrawerProps) {
       role="listbox"
       aria-label="Calendar"
     >
-      <Calendar {...props} label={null} />
+      <Calendar
+        {...props}
+        todayButtonCaption={props.calendarTodayButtonCaption}
+        label={null}
+      />
     </CalendarWrapper>
   );
 }
