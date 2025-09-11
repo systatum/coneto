@@ -207,15 +207,7 @@ export const Default: Story = {
                   <Table.Row.Cell>{data.y.toPrecision(4)}</Table.Row.Cell>
                   <Table.Row.Cell>{data.width.toPrecision(4)}</Table.Row.Cell>
                   <Table.Row.Cell>{data.height.toPrecision(4)}</Table.Row.Cell>
-                  <Table.Row.Cell
-                    contentStyle={css`
-                      display: block;
-                      word-break: break-word;
-                      white-space: pre-wrap;
-                    `}
-                  >
-                    {data.contentOnHover}
-                  </Table.Row.Cell>
+                  <Table.Row.Cell>{data.contentOnHover}</Table.Row.Cell>
                 </Table.Row>
               ))}
             </Table>
