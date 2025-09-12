@@ -41,7 +41,7 @@ describe("Document Viewer", () => {
       it("renders viewport scale 75%", () => {
         cy.mount(
           <DocumentViewer
-            initialZoom="0.75"
+            initialZoom={75}
             source="sample.pdf"
             title="Team Collaboration Notes"
           />
