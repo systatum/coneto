@@ -25,7 +25,7 @@ export interface BaseCalendarProps {
   futurePastReach?: number;
   onClick?: () => void;
   onCalendarPeriodChanged?: (data: Date) => void;
-  selectability?: SelectabilityState;
+  selectabilityMode?: SelectabilityModeState;
 }
 
 type CalendarProps = BaseCalendarProps &
@@ -52,7 +52,7 @@ type CustomChangeEvent = {
 
 export type FormatProps = "mm/dd/yyyy" | "yyyy/mm/dd" | "dd/mm/yyyy";
 export type DateBoxOpen = "open" | "month" | "year";
-type SelectabilityState = "single" | "multiple" | "ranged";
+type SelectabilityModeState = "single" | "multiple" | "ranged";
 
 const DEFAULT_DAY_NAMES = [
   { text: "Su", value: 1 },
@@ -102,13 +102,18 @@ function Calendar({
   footer,
   todayButtonCaption = "Today",
   onCalendarPeriodChanged,
-  selectability = "single",
+  selectabilityMode = "single",
 }: CalendarProps) {
-  const parsedDate = inputValue?.text ? new Date(inputValue.text) : new Date();
-  const stateDate = isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
-  const today = new Date();
+  const stateDate = useMemo(() => {
+    const parsedDate = inputValue?.text
+      ? new Date(inputValue.text)
+      : new Date();
+    return isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
+  }, [inputValue?.text]);
+
   const [currentDate, setCurrentDate] = useState(stateDate);
 
+  const today = new Date();
   const currentMonth = monthNames.find(
     (data) => data.value === today.getMonth() + 1
   );
@@ -283,17 +288,17 @@ function Calendar({
   };
 
   const handleSelect = async (date: Date) => {
-    const dataFormatted = formatDate(date, format);
+    const formattedData = formatDate(date, format);
     let newValues: string[];
 
-    if (selectability === "multiple") {
+    if (selectabilityMode === "multiple") {
       await setinputValueLocal((prev) => {
         const values = prev ? prev.split(",") : [];
 
-        if (values.includes(dataFormatted)) {
-          newValues = values.filter((value) => value !== dataFormatted);
+        if (values.includes(formattedData)) {
+          newValues = values.filter((value) => value !== formattedData);
         } else {
-          newValues = [...values, dataFormatted];
+          newValues = [...values, formattedData];
         }
 
         newValues = newValues.sort((a, b) => {
@@ -310,17 +315,17 @@ function Calendar({
 
         return finalValues;
       });
-    } else if (selectability === "ranged") {
+    } else if (selectabilityMode === "ranged") {
       await setinputValueLocal((prev) => {
         const values = prev ? prev.split("-") : [];
         if (!startPicked.picked) {
-          newValues = [dataFormatted];
+          newValues = [formattedData];
           setStartPicked((prev) => ({ ...prev, picked: true }));
         } else {
-          if (values.includes(dataFormatted)) {
+          if (values.includes(formattedData)) {
             newValues = [];
           } else {
-            newValues = [...values, dataFormatted];
+            newValues = [...values, formattedData];
           }
           setStartPicked({ picked: false, indexPicked: null });
         }
@@ -341,16 +346,16 @@ function Calendar({
       });
     }
 
-    if (setInputValue && selectability === "single") {
+    if (setInputValue && selectabilityMode === "single") {
       await setInputValue({
         text: formatDate(date, format),
         value: formatDate(date, format),
       });
     }
 
-    if (setIsOpen && selectability === "ranged" && !startPicked.picked) {
+    if (setIsOpen && selectabilityMode === "ranged" && !startPicked.picked) {
       await setIsOpen(true);
-    } else if (setIsOpen && selectability !== "multiple") {
+    } else if (setIsOpen && selectabilityMode !== "multiple") {
       await setIsOpen(false);
     }
   };
@@ -370,8 +375,9 @@ function Calendar({
     }
   };
 
+  // for automaticly change when prop added disable weekend and today it's weekend
   useEffect(() => {
-    if (inputValue) {
+    if (inputValue?.text) {
       const newDate = new Date(inputValue.text);
       if (!isNaN(newDate.getTime())) {
         let validDate = newDate;
@@ -397,7 +403,41 @@ function Calendar({
         }
       }
     }
-  }, [inputValue.text, format]);
+  }, [inputValue?.text, format]);
+
+  const selectedDates = useMemo(() => {
+    if (!inputValueLocal) return [];
+
+    switch (selectabilityMode) {
+      case "ranged":
+        return inputValueLocal
+          .split("-")
+          .filter(Boolean)
+          .map((dateStr) => {
+            const date = new Date(dateStr.trim());
+            return isNaN(date.getTime()) ? null : date;
+          })
+          .filter(Boolean);
+
+      case "multiple":
+        return inputValueLocal
+          .split(",")
+          .filter(Boolean)
+          .map((dateStr) => {
+            const date = new Date(dateStr.trim());
+            return isNaN(date.getTime()) ? null : date;
+          })
+          .filter(Boolean);
+
+      case "single":
+      default:
+        if (inputValueLocal) {
+          const date = new Date(inputValueLocal);
+          return isNaN(date.getTime()) ? [] : [date];
+        }
+        return [];
+    }
+  }, [inputValueLocal, selectabilityMode]);
 
   const inputElement: ReactElement = (
     <CalendarContainer
@@ -506,7 +546,7 @@ function Calendar({
               flexDirection: "row",
               width: "100%",
               justifyContent:
-                selectability === "single" ? "flex-start" : "flex-end",
+                selectabilityMode === "single" ? "flex-start" : "flex-end",
             }}
           >
             <ArrowLeft
@@ -523,7 +563,7 @@ function Calendar({
           </div>
         )}
 
-        {selectability === "single" && (
+        {selectabilityMode === "single" && (
           <Button
             onClick={handleMoveToToday}
             variant="outline"
@@ -569,21 +609,9 @@ function Calendar({
             let isRangeEnd: boolean;
             let isInRange: boolean;
             let isHighlightedPicked: boolean;
+            let isSameDate: boolean;
 
-            const selectedDates =
-              selectability === "ranged"
-                ? inputValueLocal
-                    .split("-")
-                    .filter(Boolean)
-                    .map((d) => new Date(d))
-                : selectability === "multiple"
-                  ? inputValueLocal
-                      .split(",")
-                      .filter(Boolean)
-                      .map((d) => new Date(d))
-                  : [];
-
-            if (selectability === "ranged") {
+            if (selectabilityMode === "ranged") {
               if (startPicked.picked) {
                 const selectedDate = selectedDates[0];
                 isDisabled = date.getTime() < selectedDate.getTime();
@@ -591,7 +619,10 @@ function Calendar({
                 isRangeStart = date.getTime() === selectedDate.getTime();
                 isHighlightedPicked =
                   date.getTime() >= selectedDate.getTime() &&
-                  date.getTime() <= startPicked.indexPicked.getTime();
+                  date.getTime() <= startPicked?.indexPicked?.getTime();
+                isSameDate =
+                  selectedDate.getTime() ===
+                  startPicked?.indexPicked?.getTime();
               }
               if (selectedDates.length === 2) {
                 const [startDate, endDate] = selectedDates;
@@ -613,7 +644,7 @@ function Calendar({
                     date.getFullYear() === selected.getFullYear()
                 );
               }
-            } else if (selectability === "multiple") {
+            } else if (selectabilityMode === "multiple") {
               isCurrentDate = selectedDates.some(
                 (selected) =>
                   date.getDate() === selected.getDate() &&
@@ -630,6 +661,7 @@ function Calendar({
                 date.getMonth() === selectedDate.getMonth() &&
                 date.getFullYear() === selectedDate.getFullYear();
             }
+
             const isToday =
               date.getDate() === today.getDate() &&
               date.getMonth() === today.getMonth() &&
@@ -669,7 +701,7 @@ function Calendar({
                   disableWeekend ? isWeekend || isDisabled : isDisabled
                 }
               >
-                {selectability === "ranged" && (
+                {selectabilityMode === "ranged" && (
                   <DataCellRange
                     $isInRange={
                       disableWeekend
@@ -683,6 +715,7 @@ function Calendar({
                     $isRangeEnd={
                       isRangeEnd || (isHighlighted && startPicked.picked)
                     }
+                    $isSameDate={isSameDate}
                   />
                 )}
                 <DateCell
@@ -703,12 +736,12 @@ function Calendar({
                   $isHighlighted={isHighlighted}
                   $isCurrentDate={
                     isCurrentDate ||
-                    (selectability === "ranged" &&
+                    (selectabilityMode === "ranged" &&
                       isHighlighted &&
                       startPicked.picked &&
                       !isDisabled)
                   }
-                  $isInRange={isInRange && selectability === "ranged"}
+                  $isInRange={isInRange && selectabilityMode === "ranged"}
                   $isToday={isToday}
                 >
                   {date.getDate()}
@@ -916,10 +949,11 @@ const DataCellRange = styled.span<{
   $isInRange?: boolean;
   $isRangeStart?: boolean;
   $isRangeEnd?: boolean;
+  $isSameDate?: boolean;
 }>`
   position: absolute;
   width: 45px;
-  height: 18px;
+  height: 25px;
   top: 47%;
   left: 0;
   transform: translateY(-50%);
@@ -930,12 +964,21 @@ const DataCellRange = styled.span<{
       background-color: #dbeafe;
     `}
 
+  ${({ $isSameDate }) =>
+    $isSameDate &&
+    css`
+      width: 0px;
+      background-color: transparent;
+    `}
+
   ${({ $isRangeStart }) =>
     $isRangeStart &&
     css`
       left: auto;
-      right: 0;
+      right: -10;
       width: 25px;
+      border-radius: 9999;
+      overflow: hidden;
       transform: translateX(50%) translateY(-50%);
     `}
 
