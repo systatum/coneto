@@ -580,7 +580,11 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
 
               return (
                 <div
-                  onMouseEnter={() => handleMouseEnter(index)}
+                  onMouseEnter={() => {
+                    if (!selection) {
+                      handleMouseEnter(index);
+                    }
+                  }}
                   onMouseLeave={() => handleMouseLeave()}
                   key={index}
                 >
@@ -593,23 +597,31 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
                       borderColor: data.boxStyle?.borderColor,
                       backgroundColor: data.boxStyle?.backgroundColor,
                     }}
-                    $selectionStyle={selectionStyle}
+                    $selectionStyle={css`
+                      ${selectionStyle}
+                      ${selection &&
+                      css`
+                        pointer-events: none;
+                      `}
+                    `}
                     aria-label="selection-box"
                   />
-                  {data.contentOnHover && hoveredContentIndex === index && (
-                    <ContentViewer
-                      ref={contentRef}
-                      style={{
-                        left: contentLeft,
-                        top: contentTop,
-                        borderColor: data.boxStyle?.borderColor,
-                        backgroundColor: data.boxStyle?.backgroundColor,
-                      }}
-                      aria-label="selection-content-hovered"
-                    >
-                      {data.contentOnHover}
-                    </ContentViewer>
-                  )}
+                  {data.contentOnHover &&
+                    hoveredContentIndex === index &&
+                    !selection && (
+                      <ContentViewer
+                        ref={contentRef}
+                        style={{
+                          left: contentLeft,
+                          top: contentTop,
+                          borderColor: data.boxStyle?.borderColor,
+                          backgroundColor: data.boxStyle?.backgroundColor,
+                        }}
+                        aria-label="selection-content-hovered"
+                      >
+                        {data.contentOnHover}
+                      </ContentViewer>
+                    )}
                 </div>
               );
             })}
