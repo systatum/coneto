@@ -27,7 +27,7 @@ interface DocumentViewerProps {
     height?: number;
   }) => void;
   boundingBoxes?: BoundingBoxesProps[];
-  initialZoom?: "0.75" | "1.0" | "1.1" | "1.2" | "1.3" | "1.4" | "1.5";
+  initialZoom?: 75 | 100 | 110 | 120 | 130 | 140 | 150;
   totalPagesText?: (data: {
     currentPage?: number;
     totalPages?: number;
@@ -87,7 +87,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
       containerStyle,
       selectionStyle,
       boundingBoxes = [],
-      initialZoom = 1.0,
+      initialZoom = 100,
       totalPagesText,
       title = "Document",
       libPdfJsWorkerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.54/pdf.worker.min.mjs",
@@ -100,13 +100,15 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
     const containerRef = useRef<HTMLDivElement>(null);
     const viewerRef = useRef<HTMLDivElement>(null);
 
-    const [scale, setScale] = useState(Number(initialZoom));
-    const scaleInitialState = Number(initialZoom) * 100;
+    const [scale, setScale] = useState(initialZoom / 100);
     const [scaleValue, setScaleValue] = useState<OptionsProps>({
-      text: `${String(scaleInitialState)}%`,
-      value: scaleInitialState,
+      text: `${String(initialZoom)}%`,
+      value: initialZoom,
     });
-    const [isHovered, setIsHovered] = useState<number | null>(null);
+
+    const [hoveredContentIndex, sethoveredContentIndex] = useState<
+      number | null
+    >(null);
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -431,12 +433,12 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
         clearTimeout(timeoutRef.current);
         timeoutRef.current = null;
       }
-      setIsHovered(index);
+      sethoveredContentIndex(index);
     }, []);
 
     const handleMouseLeave = useCallback(() => {
       timeoutRef.current = setTimeout(() => {
-        setIsHovered(null);
+        sethoveredContentIndex(null);
       }, 150);
     }, []);
 
@@ -594,7 +596,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
                     $selectionStyle={selectionStyle}
                     aria-label="selection-box"
                   />
-                  {data.contentOnHover && isHovered === index && (
+                  {data.contentOnHover && hoveredContentIndex === index && (
                     <ContentViewer
                       ref={contentRef}
                       style={{
