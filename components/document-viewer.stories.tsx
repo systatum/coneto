@@ -28,7 +28,7 @@ export const Default: Story = {
   render: () => {
     const ref = useRef<DocumentViewerRef>(null);
 
-    const [tipState, setTipState] = useState<boolean>(false);
+    const [popupVisibility, setPopupVisibility] = useState<boolean>(false);
     const [boundingBoxes, setBoundingBoxes] = useState<BoundingBoxesProps[]>([
       {
         page: 1,
@@ -40,47 +40,64 @@ export const Default: Story = {
         boxStyle: { borderColor: "#aqua", backgroundColor: "#aqua" },
       },
     ]);
-    const [boundingProcess, setBoundingProcess] =
+
+    const [currentlySelectedRegion, setCurrentlySelectedRegion] =
       useState<BoundingBoxState | null>(null);
-    const [textReview, setTextReview] = useState<string>("");
+    /*
+     * this is the region that is currently selected, as given by the document viewer;
+     * this is needed so that, when we submit the comment, we know at which region
+     * should the comment be associated with. remember that once popup comment is
+     * called, the process is now asynchronous, that is, user has the time to type whatever
+     * comment they write, and so we can't have this data passed as an argument, because
+     * the function call will be done before the comment is recorded -- which means, the
+     * bounding state is loss and we don't know at which region the comment should be
+     * associated. this very state remembered that selection until the comment is submitted
+     */
+
+    const [commentText, setCommentText] = useState<string>("");
 
     const handleSetBoxes = (data?: BoundingBoxState) => {
-      if (data) {
-        setBoundingProcess(data);
-        if (data?.width >= 0.02 || data?.height >= 0.02) {
-          setTipState(true);
-        } else {
-          setTipState(false);
-        }
+      setCurrentlySelectedRegion(data);
+      // if the width and height is too small, we ignore it as selection, but to indicate the user may want to ignore/cancel/close the coment popup (if any)
+      if (data?.width >= 0.02 || data?.height >= 0.02) {
+        setPopupVisibility(true);
+      } else {
+        setPopupVisibility(false);
       }
     };
 
-    const handleChangeText = (e: StatefulOnChangeType) => {
+    const handleChangeComment = (e: StatefulOnChangeType) => {
       if (e && "target" in e) {
         const { value } = e.target;
-        setTextReview(String(value));
+        setCommentText(String(value));
       }
     };
 
-    const handleSubmitText = async (data: "cancel" | "submit") => {
-      if (data === "submit") {
-        await setBoundingBoxes((prev) => {
-          const box: BoundingBoxesProps = {
-            ...boundingProcess,
-            contentOnHover: <p>{textReview}</p>,
-          };
-          const newBoxes = [...prev, box];
-          return newBoxes;
-        });
-      }
-      await setTextReview("");
-      await setTipState(false);
+    const clearScreen = async () => {
+      await setCommentText("");
+      await setPopupVisibility(false);
       await ref.current.clearSelection();
-      await setBoundingProcess(null);
+      await setCurrentlySelectedRegion(null);
+    };
+
+    const handleCancelSubmission = async () => {
+      await clearScreen();
+    };
+
+    const handleCommentSubmission = async () => {
+      await setBoundingBoxes((prev) => {
+        const box: BoundingBoxesProps = {
+          ...currentlySelectedRegion,
+          contentOnHover: <p>{commentText}</p>,
+        };
+        const newBoxes = [...prev, box];
+        return newBoxes;
+      });
+      await clearScreen();
     };
 
     useEffect(() => {
-      if (!tipState) return;
+      if (!popupVisibility) return;
 
       let openedAt = Date.now();
 
@@ -90,9 +107,9 @@ export const Default: Story = {
         if (!popup?.contains(target)) {
           const elapsed = Date.now() - openedAt;
           if (elapsed < 3000) {
-            setTipState(false);
-            setBoundingProcess(null);
-            setTextReview("");
+            setPopupVisibility(false);
+            setCurrentlySelectedRegion(null);
+            setCommentText("");
           }
         }
       };
@@ -102,7 +119,7 @@ export const Default: Story = {
       return () => {
         document.removeEventListener("mousedown", handleClickOutside);
       };
-    }, [tipState]);
+    }, [popupVisibility]);
 
     const columns: ColumnTableProps[] = [
       { caption: "Page", width: "15%" },
@@ -118,8 +135,8 @@ export const Default: Story = {
         id="comment-popup"
         ref={ref.current?.repositionPopUp}
         style={{
-          left: boundingProcess?.absoluteX ?? 0,
-          top: boundingProcess?.absoluteY ?? 0,
+          left: currentlySelectedRegion?.absoluteX ?? 0,
+          top: currentlySelectedRegion?.absoluteY ?? 0,
           background: "white",
           border: "1px solid gray",
           zIndex: 9999,
@@ -139,8 +156,8 @@ export const Default: Story = {
             label="Review"
             autoComplete="off"
             placeholder="Type here..."
-            onChange={handleChangeText}
-            value={textReview}
+            onChange={handleChangeComment}
+            value={commentText}
           />
           <div
             style={{
@@ -153,14 +170,14 @@ export const Default: Story = {
           >
             <Button
               style={{ fontSize: "0.75rem" }}
-              onClick={() => handleSubmitText("cancel")}
+              onClick={() => handleCancelSubmission()}
             >
               Cancel
             </Button>
             <Button
               variant="primary"
               style={{ fontSize: "0.75rem" }}
-              onClick={() => handleSubmitText("submit")}
+              onClick={() => handleCommentSubmission()}
             >
               Save
             </Button>
@@ -213,7 +230,7 @@ export const Default: Story = {
             </Table>
           </Window.Cell>
         </Window>
-        {tipState && createPortal(commentPopUp, document.body)}
+        {popupVisibility && createPortal(commentPopUp, document.body)}
       </>
     );
   },
