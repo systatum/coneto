@@ -63,16 +63,21 @@ function RichEditor({
     },
   });
 
+  turndownService.keep(["input"]);
+
   turndownService.addRule("checkbox", {
-    filter: function (node) {
+    filter: (node) => {
       return (
-        node.nodeName === "SPAN" &&
+        node.nodeName === "INPUT" &&
+        (node as HTMLInputElement).type === "checkbox" &&
         (node as HTMLElement).classList.contains("custom-checkbox-wrapper")
       );
     },
-    replacement: function (content, node) {
-      const checked = (node as HTMLElement).dataset.checked === "true";
-      return `[${checked ? "x" : " "}]`;
+    replacement: (_content, node) => {
+      const el = node as HTMLElement & { checked?: boolean };
+      const checked =
+        (el as HTMLInputElement).checked || el.dataset.checked === "true";
+      return `[${checked ? "x" : " "}] `;
     },
   });
 
@@ -201,29 +206,35 @@ function RichEditor({
       const offset = range.startOffset;
 
       if (e.key === "ArrowLeft") {
-        let nodeToCheck: Node | null = container;
+        const sel = window.getSelection();
+        if (!sel || !sel.rangeCount) return;
 
-        while (
-          nodeToCheck?.previousSibling &&
-          ((nodeToCheck.previousSibling.nodeType === Node.TEXT_NODE &&
-            nodeToCheck.previousSibling.nodeValue?.trim() === "") ||
-            (nodeToCheck.previousSibling.nodeType === Node.ELEMENT_NODE &&
-              (nodeToCheck.previousSibling as HTMLElement).tagName === "BR"))
-        ) {
-          nodeToCheck = nodeToCheck.previousSibling;
-        }
+        const range = sel.getRangeAt(0);
+        if (!range.collapsed) return;
 
-        const prevElement = nodeToCheck?.previousSibling as HTMLElement;
-        if (prevElement?.classList.contains("custom-checkbox-wrapper")) {
-          e.preventDefault();
-          const sel = window.getSelection();
-          if (!sel) return;
-          const newRange = document.createRange();
-          newRange.setStartBefore(prevElement);
-          newRange.collapse(true);
-          sel.removeAllRanges();
-          sel.addRange(newRange);
-          return;
+        const container = range.startContainer;
+        const offset = range.startOffset;
+
+        if (container.nodeType === Node.TEXT_NODE && offset === 0) {
+          let nodeToCheck: Node | null = container.previousSibling;
+
+          while (nodeToCheck) {
+            if (
+              nodeToCheck.nodeType === Node.ELEMENT_NODE &&
+              (nodeToCheck as HTMLElement).classList.contains(
+                "custom-checkbox-wrapper"
+              )
+            ) {
+              e.preventDefault();
+              const newRange = document.createRange();
+              newRange.setStartBefore(nodeToCheck);
+              newRange.collapse(true);
+              sel.removeAllRanges();
+              sel.addRange(newRange);
+              return;
+            }
+            nodeToCheck = nodeToCheck.previousSibling;
+          }
         }
       }
 
@@ -263,26 +274,125 @@ function RichEditor({
       if (!sel || !sel.rangeCount) return;
 
       const range = sel.getRangeAt(0);
-      let container = range.startContainer as HTMLElement;
+      if (!range.collapsed) return;
 
-      let liParent: HTMLElement | null = null;
+      const container = range.startContainer;
+      let li: HTMLElement | null = null;
       if (container.nodeType === Node.ELEMENT_NODE) {
-        liParent = (container as Element).closest("li");
+        li = (container as Element).closest("li");
       } else if (container.nodeType === Node.TEXT_NODE) {
-        liParent = (container.parentNode as Element)?.closest("li");
+        li = (container.parentNode as HTMLElement)?.closest("li");
       }
 
-      if (liParent) {
+      if (!li) return;
+
+      const parentList = li.parentElement;
+      if (
+        !parentList ||
+        (parentList.tagName !== "UL" && parentList.tagName !== "OL")
+      )
+        return;
+
+      const liText = (li.textContent || "").replace(/\u00A0/g, "").trim();
+      const liHasCheckbox = !!li.querySelector(".custom-checkbox-wrapper");
+      if (liText === "" && !liHasCheckbox) {
+        e.preventDefault();
+        const p = document.createElement("p");
+        p.innerHTML = "<br>";
+
+        if (li === parentList.lastElementChild) {
+          parentList.insertAdjacentElement("afterend", p);
+        } else {
+          parentList.parentNode?.insertBefore(p, parentList);
+        }
+
+        li.remove();
+
+        const newRange = document.createRange();
+        newRange.setStart(p, 0);
+        newRange.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(newRange);
+
+        const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
+        onChange?.(turndownService.turndown(html));
         return;
       }
 
       e.preventDefault();
 
-      document.execCommand("insertLineBreak");
+      const newLi = document.createElement("li");
 
-      const html = editorRef.current?.innerHTML || "";
-      const markdown = turndownService.turndown(html);
-      onChange?.(markdown);
+      let nodeAfter: Node | null = null;
+      if (container.nodeType === Node.TEXT_NODE) {
+        const textNode = container as Text;
+        const offset = range.startOffset;
+        const textLen = textNode.textContent?.length || 0;
+        if (offset < textLen) {
+          nodeAfter = textNode.splitText(offset);
+        } else {
+          nodeAfter = textNode.nextSibling;
+        }
+      } else if (container.nodeType === Node.ELEMENT_NODE) {
+        const el = container as Element;
+        nodeAfter = el.childNodes[range.startOffset] || null;
+      }
+
+      while (nodeAfter && nodeAfter.parentNode === li) {
+        const next = nodeAfter.nextSibling;
+        newLi.appendChild(nodeAfter);
+        nodeAfter = next;
+      }
+
+      const newLiText = (newLi.textContent || "").replace(/\u00A0/g, "").trim();
+      const newLiHasCheckbox = !!newLi.querySelector(
+        ".custom-checkbox-wrapper"
+      );
+      if (!newLi.hasChildNodes() || (newLiText === "" && !newLiHasCheckbox)) {
+        newLi.innerHTML = "<br>";
+      }
+
+      li.parentNode?.insertBefore(newLi, li.nextSibling);
+
+      const walker = document.createTreeWalker(
+        newLi,
+        NodeFilter.SHOW_TEXT,
+        null
+      );
+      const firstText = walker.nextNode() as Text | null;
+      const newRange = document.createRange();
+
+      if (firstText) {
+        newRange.setStart(firstText, 0);
+      } else {
+        const firstChild = newLi.firstChild as Node | null;
+        if (
+          firstChild &&
+          firstChild.nodeType === Node.ELEMENT_NODE &&
+          (firstChild as HTMLElement).classList.contains(
+            "custom-checkbox-wrapper"
+          )
+        ) {
+          const after = firstChild.nextSibling;
+          if (after && after.nodeType === Node.TEXT_NODE) {
+            newRange.setStart(after, 0);
+          } else {
+            const txt = document.createTextNode("\u00A0");
+            newLi.appendChild(txt);
+            newRange.setStart(txt, 1);
+          }
+        } else {
+          newRange.selectNodeContents(newLi);
+          newRange.collapse(true);
+        }
+      }
+
+      sel.removeAllRanges();
+      sel.addRange(newRange);
+
+      const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
+      onChange?.(turndownService.turndown(html));
+      return;
     }
 
     // this logic is to handle ordered and unordered lists, so when we type "1." or "-",
@@ -380,7 +490,7 @@ function RichEditor({
           const li = document.createElement("li");
 
           if (afterCaret) {
-            li.textContent = afterCaret;
+            li.appendChild(document.createTextNode(afterCaret));
           } else {
             li.appendChild(document.createElement("br"));
           }
@@ -394,11 +504,25 @@ function RichEditor({
           const parent = node.parentNode;
           if (parent) {
             parent.replaceChild(list, node);
+
+            const prevSibling = list.previousSibling;
+            if (prevSibling && prevSibling.nodeType === Node.ELEMENT_NODE) {
+              if (
+                (prevSibling as HTMLElement).tagName === "INPUT" &&
+                (prevSibling as HTMLInputElement).type === "checkbox"
+              ) {
+                li.insertBefore(prevSibling, li.firstChild);
+                li.insertBefore(
+                  document.createTextNode("\u00A0"),
+                  prevSibling.nextSibling
+                );
+              }
+            }
           }
 
           const newRange = document.createRange();
           if (afterCaret) {
-            newRange.setStart(li.firstChild!, afterCaret.length);
+            newRange.setStart(li.lastChild!, afterCaret.length);
           } else {
             newRange.setStart(li, 0);
           }
@@ -409,206 +533,123 @@ function RichEditor({
       }
     }
 
+    const removeNode = (n: Node | null) => {
+      if (!n) return;
+      const p = n.parentNode;
+      if (p) p.removeChild(n);
+    };
+
     if (e.key === "Backspace") {
       const sel = window.getSelection();
       if (!sel || !sel.rangeCount) return;
 
       const range = sel.getRangeAt(0);
+      if (!range.collapsed) return;
+
       const container = range.startContainer;
 
-      let li: HTMLElement | null = null;
+      const removeNode = (n: Node | null) => n?.parentNode?.removeChild(n);
+      const updateMarkdown = () => {
+        const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
+        onChange?.(turndownService.turndown(html));
+      };
 
-      if (range.collapsed) {
-        let nodeToCheck: Node | null = container;
+      let node: Node | null =
+        container.nodeType === Node.TEXT_NODE && range.startOffset === 0
+          ? container.previousSibling
+          : container.nodeType === Node.ELEMENT_NODE
+            ? (container.childNodes[range.startOffset - 1] ?? null)
+            : null;
 
-        if (container.nodeType === Node.TEXT_NODE && range.startOffset === 0) {
-          nodeToCheck = container.previousSibling;
-        } else if (
-          container.nodeType === Node.ELEMENT_NODE &&
-          range.startOffset > 0
+      if (
+        (node instanceof HTMLInputElement && node.type === "checkbox") ||
+        (node?.nodeType === Node.TEXT_NODE &&
+          node.nextSibling instanceof HTMLInputElement &&
+          node.nextSibling.type === "checkbox")
+      ) {
+        e.preventDefault();
+
+        if (node instanceof HTMLInputElement) removeNode(node);
+        else if (
+          node?.nodeType === Node.TEXT_NODE &&
+          node.nextSibling instanceof HTMLInputElement
         ) {
-          const childNodes = Array.from(container.childNodes);
-          nodeToCheck = childNodes[range.startOffset - 1];
+          removeNode(node.nextSibling);
+          removeNode(node);
         }
 
-        while (nodeToCheck) {
-          if (nodeToCheck.nodeType === Node.ELEMENT_NODE) {
-            const element = nodeToCheck as HTMLElement;
-            if (element.classList.contains("custom-checkbox-wrapper")) {
-              e.preventDefault();
-
-              element.remove();
-
-              const html =
-                editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
-              const markdown = turndownService.turndown(html);
-              console.log(html, "test isi html");
-              onChange?.(markdown);
-
-              return;
-            }
-          }
-
-          if (
-            nodeToCheck.nodeType === Node.TEXT_NODE &&
-            nodeToCheck.nodeValue === "\u00A0" &&
-            nodeToCheck.nextSibling?.nodeType === Node.ELEMENT_NODE
-          ) {
-            const nextElement = nodeToCheck.nextSibling as HTMLElement;
-            if (nextElement.classList.contains("custom-checkbox-wrapper")) {
-              e.preventDefault();
-
-              if (nodeToCheck.parentNode) {
-                nodeToCheck.parentNode.removeChild(nodeToCheck);
-              }
-              if (nextElement.parentNode) {
-                nextElement.parentNode.removeChild(nextElement);
-              }
-
-              const html =
-                editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
-              const markdown = turndownService.turndown(html);
-              console.log(html, "test isi html");
-              onChange?.(markdown);
-
-              return;
-            }
-          }
-
-          break;
-        }
+        updateMarkdown();
+        return;
       }
 
-      if (container.nodeType === Node.ELEMENT_NODE) {
-        li = (container as Element).closest("li");
-      } else if (container.nodeType === Node.TEXT_NODE) {
-        li = (container.parentNode as HTMLElement)?.closest("li");
-      }
+      const li =
+        container.nodeType === Node.TEXT_NODE
+          ? (container.parentNode as HTMLElement)?.closest("li")
+          : (container as HTMLElement).closest("li");
 
-      if (range.collapsed && range.startOffset === 0) {
-        if (container.nodeType === Node.ELEMENT_NODE) {
-          li = (container as Element).closest("li");
-        } else if (container.nodeType === Node.TEXT_NODE) {
-          li = (container.parentNode as HTMLElement)?.closest("li");
+      if (!li || range.startOffset !== 0) return;
+
+      const list = li.parentElement;
+      if (!list || (list.tagName !== "UL" && list.tagName !== "OL")) return;
+
+      e.preventDefault();
+      const content = li.innerHTML;
+
+      if (list.children.length === 1 || li === list.firstElementChild) {
+        const p = document.createElement("p");
+        p.innerHTML = !content.trim() || content === "<br>" ? "<br>" : content;
+
+        if (list.children.length === 1) list.replaceWith(p);
+        else list.parentNode?.insertBefore(p, list);
+
+        removeNode(li);
+
+        const newRange = document.createRange();
+        newRange.setStart(p, 0);
+        newRange.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(newRange);
+      } else {
+        const prevLi = li.previousElementSibling as HTMLElement;
+        if (!prevLi) return;
+
+        let cursorPos = prevLi.textContent?.length || 0;
+        if (prevLi.innerHTML === "<br>") {
+          prevLi.innerHTML = "";
+          cursorPos = 0;
         }
 
-        if (
-          li &&
-          li.parentElement &&
-          (li.parentElement.tagName === "OL" ||
-            li.parentElement.tagName === "UL")
-        ) {
-          e.preventDefault();
+        while (li.firstChild) prevLi.appendChild(li.firstChild);
+        removeNode(li);
 
-          const parentList = li.parentElement;
-          const content = li.innerHTML;
+        const newRange = document.createRange();
+        const walker = document.createTreeWalker(prevLi, NodeFilter.SHOW_TEXT);
+        let pos = 0,
+          target: Text | null = null,
+          offset = 0;
 
-          if (parentList.children.length === 1) {
-            const block = document.createElement("p");
-
-            if (content === "<br>" || content.trim() === "") {
-              block.innerHTML = "<br>";
-            } else {
-              block.innerHTML = content;
-            }
-
-            parentList.replaceWith(block);
-
-            const newRange = document.createRange();
-            newRange.setStart(block, 0);
-            newRange.collapse(true);
-            sel.removeAllRanges();
-            sel.addRange(newRange);
-          } else {
-            const isFirstItem = li === parentList.firstElementChild;
-
-            if (isFirstItem) {
-              const block = document.createElement("p");
-
-              if (content === "<br>" || content.trim() === "") {
-                block.innerHTML = "<br>";
-              } else {
-                block.innerHTML = content;
-              }
-
-              parentList.parentNode?.insertBefore(block, parentList);
-
-              li.remove();
-
-              const newRange = document.createRange();
-              newRange.setStart(block, 0);
-              newRange.collapse(true);
-              sel.removeAllRanges();
-              sel.addRange(newRange);
-            } else {
-              const prevLi = li.previousElementSibling as HTMLElement;
-
-              if (prevLi) {
-                let cursorPosition = 0;
-                if (prevLi.innerHTML !== "<br>") {
-                  const tempDiv = document.createElement("div");
-                  tempDiv.innerHTML = prevLi.innerHTML;
-                  cursorPosition = tempDiv.textContent?.length || 0;
-                }
-
-                if (prevLi.innerHTML === "<br>") {
-                  prevLi.innerHTML = "";
-                  cursorPosition = 0;
-                }
-
-                while (li.firstChild) {
-                  const child = li.firstChild;
-                  prevLi.appendChild(child);
-                }
-
-                li.remove();
-
-                const newRange = document.createRange();
-
-                const walker = document.createTreeWalker(
-                  prevLi,
-                  NodeFilter.SHOW_TEXT,
-                  null
-                );
-
-                let currentPos = 0;
-                let targetNode = null;
-                let targetOffset = 0;
-
-                while (walker.nextNode()) {
-                  const textNode = walker.currentNode as Text;
-                  const nodeLength = textNode.textContent?.length || 0;
-
-                  if (currentPos + nodeLength >= cursorPosition) {
-                    targetNode = textNode;
-                    targetOffset = cursorPosition - currentPos;
-                    break;
-                  }
-                  currentPos += nodeLength;
-                }
-
-                if (targetNode) {
-                  newRange.setStart(targetNode, targetOffset);
-                  newRange.collapse(true);
-                } else {
-                  newRange.selectNodeContents(prevLi);
-                  newRange.collapse(false);
-                }
-
-                sel.removeAllRanges();
-                sel.addRange(newRange);
-              }
-            }
+        while (walker.nextNode()) {
+          const text = walker.currentNode as Text;
+          const len = text.textContent?.length || 0;
+          if (pos + len >= cursorPos) {
+            target = text;
+            offset = cursorPos - pos;
+            break;
           }
-
-          const html =
-            editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
-          const markdown = turndownService.turndown(html);
-          onChange?.(markdown);
-
-          return;
+          pos += len;
         }
+
+        if (target) newRange.setStart(target, offset);
+        else {
+          newRange.selectNodeContents(prevLi);
+          newRange.collapse(false);
+        }
+
+        sel.removeAllRanges();
+        sel.addRange(newRange);
       }
+
+      updateMarkdown();
     }
 
     if (e.key === "Delete") {
@@ -631,34 +672,50 @@ function RichEditor({
         nodeToCheck = childNodes[offset] ?? null;
       }
 
-      if (
-        nodeToCheck?.nodeType === Node.TEXT_NODE &&
-        nodeToCheck.nodeValue === "\u00A0"
-      ) {
-        e.preventDefault();
-        nodeToCheck.parentNode?.removeChild(nodeToCheck);
-      }
-      if (
-        nodeToCheck?.nodeType === Node.ELEMENT_NODE &&
-        (nodeToCheck as HTMLElement).classList.contains(
-          "custom-checkbox-wrapper"
-        )
-      ) {
-        e.preventDefault();
+      if (nodeToCheck) {
+        if (
+          nodeToCheck.nodeType === Node.TEXT_NODE &&
+          nodeToCheck.nodeValue === "\u00A0" &&
+          nodeToCheck.nextSibling instanceof HTMLElement &&
+          nodeToCheck.nextSibling.classList.contains("custom-checkbox-wrapper")
+        ) {
+          e.preventDefault();
+          removeNode(nodeToCheck.nextSibling);
+          removeNode(nodeToCheck);
 
-        const spaceNode = nodeToCheck.nextSibling;
-        nodeToCheck.parentNode?.removeChild(nodeToCheck);
+          const html =
+            editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
+          const markdown = turndownService.turndown(html);
+          onChange?.(markdown);
+          return;
+        }
 
         if (
-          spaceNode?.nodeType === Node.TEXT_NODE &&
-          spaceNode.nodeValue === "\u00A0"
+          nodeToCheck.nodeType === Node.ELEMENT_NODE &&
+          (nodeToCheck as HTMLElement).classList.contains(
+            "custom-checkbox-wrapper"
+          )
         ) {
-          spaceNode.parentNode?.removeChild(spaceNode);
+          e.preventDefault();
+          const spaceNode = nodeToCheck.nextSibling;
+          removeNode(nodeToCheck);
+
+          if (
+            spaceNode?.nodeType === Node.TEXT_NODE &&
+            spaceNode.nodeValue === "\u00A0"
+          ) {
+            removeNode(spaceNode);
+          }
+
+          const html =
+            editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
+          const markdown = turndownService.turndown(html);
+          onChange?.(markdown);
+          return;
         }
       }
 
       const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
-      console.log(html);
       const markdown = turndownService.turndown(html);
       onChange?.(markdown);
     }
@@ -998,75 +1055,23 @@ function createCheckboxWrapper(
   editorRef: React.RefObject<HTMLDivElement>,
   onChange?: (value: string) => void
 ) {
-  const wrapper = document.createElement("span");
-  wrapper.className = "custom-checkbox-wrapper";
-  wrapper.dataset.checked = String(isChecked);
-  wrapper.contentEditable = "false";
-  wrapper.style.display = "inline-flex";
-  wrapper.style.alignItems = "center";
-  wrapper.style.position = "relative";
-  wrapper.style.userSelect = "none";
+  const input = document.createElement("input");
+  input.type = "checkbox";
+  input.checked = isChecked;
+  input.className = "custom-checkbox-wrapper";
+  input.contentEditable = "false";
+  input.style.cursor = "pointer";
+  input.dataset.checked = String(isChecked);
 
-  const checkbox = document.createElement("input");
-  checkbox.type = "checkbox";
-  checkbox.checked = isChecked;
-  checkbox.style.appearance = "none";
-  checkbox.style.height = "14px";
-  checkbox.style.width = "14px";
-  checkbox.style.cursor = "pointer";
-  checkbox.style.outline = "none";
-  checkbox.style.backgroundColor = isChecked ? "#61A9F9" : "#ffffff";
-  checkbox.style.border = `1px solid ${isChecked ? "#61A9F9" : "#6b7280"}`;
+  input.addEventListener("change", () => {
+    input.dataset.checked = String(input.checked);
 
-  const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  icon.setAttribute("viewBox", "0 0 24 24");
-  icon.setAttribute("stroke", "currentColor");
-  icon.setAttribute("stroke-width", "3");
-  icon.setAttribute("fill", "none");
-  icon.style.position = "absolute";
-  icon.style.top = "50%";
-  icon.style.left = "50%";
-  icon.style.transform = isChecked
-    ? "translate(-50%, -50%) scale(1)"
-    : "translate(-50%, -50%) scale(0)";
-  icon.style.transition = "transform 150ms";
-  icon.style.color = "white";
-  icon.style.pointerEvents = "none";
-  icon.style.height = "10px";
-  icon.style.width = "10px";
-
-  const polyline = document.createElementNS(
-    "http://www.w3.org/2000/svg",
-    "polyline"
-  );
-  polyline.setAttribute("points", "20 6 9 17 4 12");
-  icon.appendChild(polyline);
-
-  checkbox.addEventListener("change", () => {
-    const checked = checkbox.checked;
-    wrapper.dataset.checked = String(checked);
-    checkbox.style.backgroundColor = checked ? "#61A9F9" : "#ffffff";
-    checkbox.style.borderColor = checked ? "#61A9F9" : "#6b7280";
-    icon.style.transform = checked
-      ? "translate(-50%, -50%) scale(1)"
-      : "translate(-50%, -50%) scale(0)";
-
-    const html = editorRef.current?.innerHTML || "";
+    const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
     const markdown = turndownService.turndown(html);
     onChange?.(markdown);
   });
 
-  wrapper.addEventListener("click", (e) => {
-    if (e.target === wrapper) {
-      checkbox.focus();
-      checkbox.click();
-    }
-  });
-
-  wrapper.appendChild(checkbox);
-  wrapper.appendChild(icon);
-
-  return wrapper;
+  return input;
 }
 
 RichEditor.ToolbarButton = RichEditorToolbarButton;
