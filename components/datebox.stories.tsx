@@ -160,7 +160,7 @@ export const Multiple: Story = {
           dayNames={DAY_NAMES}
           monthNames={MONTH_NAMES}
           disableWeekend
-          selectability="multiple"
+          selectabilityMode="multiple"
         />
       </div>
     );
@@ -210,7 +210,7 @@ export const Ranged: Story = {
           setInputValue={setValue}
           dayNames={DAY_NAMES}
           monthNames={MONTH_NAMES}
-          selectability="ranged"
+          selectabilityMode="ranged"
           disableWeekend
         />
       </div>
@@ -276,7 +276,6 @@ export const WithFooter: Story = {
           monthNames={MONTH_NAMES}
           disableWeekend
           calendarFooter={footerContent}
-          selectability="multiple"
         />
       </div>
     );

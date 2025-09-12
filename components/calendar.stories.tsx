@@ -145,7 +145,7 @@ export const Multiple: Story = {
         inputValue={value}
         setInputValue={setValue}
         format="mm/dd/yyyy"
-        selectability="multiple"
+        selectabilityMode="multiple"
       />
     );
   },
@@ -190,7 +190,7 @@ export const Ranged: Story = {
         inputValue={value}
         setInputValue={setValue}
         format="mm/dd/yyyy"
-        selectability="ranged"
+        selectabilityMode="ranged"
       />
     );
   },
