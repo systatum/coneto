@@ -126,10 +126,11 @@ function Calendar({
   });
 
   const [inputValueLocal, setinputValueLocal] = useState(inputValue.text);
-  const [startPicked, setStartPicked] = useState({
-    picked: false,
-    indexPicked: new Date(),
-  });
+
+  const [startPicked, setStartPicked] = useState<{
+    picked: boolean;
+    indexPicked: Date | null;
+  }>({ picked: false, indexPicked: null });
 
   const [highlightedIndexInternal, setHighlightedIndexInternal] = useState(0);
   const highlightedIndexChange = highlightedIndex ?? highlightedIndexInternal;
@@ -287,7 +288,7 @@ function Calendar({
     }));
   };
 
-  const handleSelect = async (date: Date) => {
+  const handleSelect = async (date: Date, e?: React.MouseEvent) => {
     const formattedData = formatDate(date, format);
     let newValues: string[];
 
@@ -295,17 +296,34 @@ function Calendar({
       await setinputValueLocal((prev) => {
         const values = prev ? prev.split(",") : [];
 
-        if (values.includes(formattedData)) {
-          newValues = values.filter((value) => value !== formattedData);
-        } else {
-          newValues = [...values, formattedData];
-        }
+        if (e?.shiftKey && values.length > 0) {
+          const lastDate = new Date(values[values.length - 1]);
+          const start = lastDate.getTime() < date.getTime() ? lastDate : date;
+          const end = lastDate.getTime() > date.getTime() ? lastDate : date;
 
-        newValues = newValues.sort((a, b) => {
-          const dateA = new Date(a);
-          const dateB = new Date(b);
-          return dateA.getTime() - dateB.getTime();
-        });
+          const range: string[] = [];
+          let cursor = new Date(start);
+
+          while (cursor.getTime() <= end.getTime()) {
+            range.push(formatDate(new Date(cursor), format));
+            cursor.setDate(cursor.getDate() + 1);
+          }
+
+          const unique = new Set([...values, ...range]);
+          newValues = Array.from(unique).sort(
+            (a, b) => new Date(a).getTime() - new Date(b).getTime()
+          );
+        } else {
+          if (values.includes(formattedData)) {
+            newValues = values.filter((value) => value !== formattedData);
+          } else {
+            newValues = [...values, formattedData];
+          }
+
+          newValues = newValues.sort(
+            (a, b) => new Date(a).getTime() - new Date(b).getTime()
+          );
+        }
 
         const finalValues = newValues.join(",");
         setInputValue({
@@ -680,12 +698,12 @@ function Calendar({
                 role="option"
                 aria-selected={isHighlighted}
                 id={`option-${idx}`}
-                onClick={async () => {
+                onClick={async (e) => {
                   if ((isWeekend && disableWeekend) || isDisabled) {
                     return;
                   }
 
-                  await handleSelect(date);
+                  await handleSelect(date, e);
                   if (onClick) {
                     onClick();
                   }
@@ -862,6 +880,7 @@ const DateCell = styled.span<{
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  user-select: none;
 
   ${({ $isDisable, $isWeekend }) =>
     $isDisable &&
@@ -975,7 +994,7 @@ const DataCellRange = styled.span<{
     $isRangeStart &&
     css`
       left: auto;
-      right: -10;
+      right: 4px;
       width: 25px;
       border-radius: 9999;
       overflow: hidden;
