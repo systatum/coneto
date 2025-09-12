@@ -66,18 +66,15 @@ function RichEditor({
   turndownService.keep(["input"]);
 
   turndownService.addRule("checkbox", {
-    filter: (node) => {
+    filter: function (node) {
       return (
-        node.nodeName === "INPUT" &&
-        (node as HTMLInputElement).type === "checkbox" &&
+        node.nodeName === "SPAN" &&
         (node as HTMLElement).classList.contains("custom-checkbox-wrapper")
       );
     },
-    replacement: (_content, node) => {
-      const el = node as HTMLElement & { checked?: boolean };
-      const checked =
-        (el as HTMLInputElement).checked || el.dataset.checked === "true";
-      return `[${checked ? "x" : " "}] `;
+    replacement: function (content, node) {
+      const checked = (node as HTMLElement).dataset.checked === "true";
+      return `[${checked ? "x" : " "}]`;
     },
   });
 
@@ -1055,23 +1052,75 @@ function createCheckboxWrapper(
   editorRef: React.RefObject<HTMLDivElement>,
   onChange?: (value: string) => void
 ) {
-  const input = document.createElement("input");
-  input.type = "checkbox";
-  input.checked = isChecked;
-  input.className = "custom-checkbox-wrapper";
-  input.contentEditable = "false";
-  input.style.cursor = "pointer";
-  input.dataset.checked = String(isChecked);
+  const wrapper = document.createElement("span");
+  wrapper.className = "custom-checkbox-wrapper";
+  wrapper.dataset.checked = String(isChecked);
+  wrapper.contentEditable = "false";
+  wrapper.style.display = "inline-flex";
+  wrapper.style.alignItems = "center";
+  wrapper.style.position = "relative";
+  wrapper.style.userSelect = "none";
 
-  input.addEventListener("change", () => {
-    input.dataset.checked = String(input.checked);
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  checkbox.checked = isChecked;
+  checkbox.style.appearance = "none";
+  checkbox.style.height = "14px";
+  checkbox.style.width = "14px";
+  checkbox.style.cursor = "pointer";
+  checkbox.style.outline = "none";
+  checkbox.style.backgroundColor = isChecked ? "#61A9F9" : "#ffffff";
+  checkbox.style.border = `1px solid ${isChecked ? "#61A9F9" : "#6b7280"}`;
 
-    const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
+  const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  icon.setAttribute("viewBox", "0 0 24 24");
+  icon.setAttribute("stroke", "currentColor");
+  icon.setAttribute("stroke-width", "3");
+  icon.setAttribute("fill", "none");
+  icon.style.position = "absolute";
+  icon.style.top = "50%";
+  icon.style.left = "50%";
+  icon.style.transform = isChecked
+    ? "translate(-50%, -50%) scale(1)"
+    : "translate(-50%, -50%) scale(0)";
+  icon.style.transition = "transform 150ms";
+  icon.style.color = "white";
+  icon.style.pointerEvents = "none";
+  icon.style.height = "10px";
+  icon.style.width = "10px";
+
+  const polyline = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "polyline"
+  );
+  polyline.setAttribute("points", "20 6 9 17 4 12");
+  icon.appendChild(polyline);
+
+  checkbox.addEventListener("change", () => {
+    const checked = checkbox.checked;
+    wrapper.dataset.checked = String(checked);
+    checkbox.style.backgroundColor = checked ? "#61A9F9" : "#ffffff";
+    checkbox.style.borderColor = checked ? "#61A9F9" : "#6b7280";
+    icon.style.transform = checked
+      ? "translate(-50%, -50%) scale(1)"
+      : "translate(-50%, -50%) scale(0)";
+
+    const html = editorRef.current?.innerHTML || "";
     const markdown = turndownService.turndown(html);
     onChange?.(markdown);
   });
 
-  return input;
+  wrapper.addEventListener("click", (e) => {
+    if (e.target === wrapper) {
+      checkbox.focus();
+      checkbox.click();
+    }
+  });
+
+  wrapper.appendChild(checkbox);
+  wrapper.appendChild(icon);
+
+  return wrapper;
 }
 
 RichEditor.ToolbarButton = RichEditorToolbarButton;
