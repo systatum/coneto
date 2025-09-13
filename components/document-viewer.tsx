@@ -491,6 +491,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
           <Title>{title}</Title>
           <ComboboxWrapper>
             <Combobox
+              strict
               inputValue={scaleValue}
               setInputValue={handleScale}
               placeholder="zoom your pdf..."
