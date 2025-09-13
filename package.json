@@ -291,6 +291,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.12.1",
+    "pdfjs-dist": "^5.4.54",
     "react-hook-form": "^7.56.3",
     "react-responsive": "^10.0.1",
     "react-swipeable": "^7.0.2",
