@@ -223,6 +223,7 @@ function RichEditor({
     const cleanedHTML = cleanupHtml(html);
     const markdown = turndownService.turndown(cleanedHTML);
     const cleaningMarkdown = cleanSpacing(markdown);
+    console.log(html);
     console.log(cleanedHTML);
 
     onChange?.(cleaningMarkdown);
@@ -1147,6 +1148,10 @@ function createCheckboxWrapper(
   return input;
 }
 
+// Cleans up spacing in markdown text by:
+// - Replacing non-breaking spaces (&nbsp;) with normal spaces
+// - Preserving spacing for list markers (*, [ ], numbers.)
+// - Collapsing multiple spaces into a single space elsewhere
 const cleanSpacing = (text: string): string => {
   return text
     .replace(/\u00A0/g, " ")
@@ -1167,16 +1172,21 @@ const cleanSpacing = (text: string): string => {
     .join("\n");
 };
 
+// Clean up HTML so that <div> elements don't cause extra spacing in <ul> or <ol>.
+// This ensures ordered and unordered lists are not wrapped with <div> or <p>,
+// since semantically <ul>/<ol> should not be wrapped by those tags.
 const cleanupHtml = (html: string): string => {
   const container = document.createElement("div");
   container.innerHTML = html;
 
   Array.from(container.querySelectorAll("div")).forEach((div) => {
-    const frag = document.createDocumentFragment();
-    while (div.firstChild) {
-      frag.appendChild(div.firstChild);
+    if (div.querySelector("ul, ol")) {
+      const frag = document.createDocumentFragment();
+      while (div.firstChild) {
+        frag.appendChild(div.firstChild);
+      }
+      div.parentNode?.replaceChild(frag, div);
     }
-    div.parentNode?.replaceChild(frag, div);
   });
 
   Array.from(container.querySelectorAll("p")).forEach((p) => {
