@@ -41,8 +41,6 @@ export const Default: Story = {
       },
     ]);
 
-    const [currentlySelectedRegion, setCurrentlySelectedRegion] =
-      useState<BoundingBoxState | null>(null);
     /*
      * this is the region that is currently selected, as given by the document viewer;
      * this is needed so that, when we submit the comment, we know at which region
@@ -53,6 +51,8 @@ export const Default: Story = {
      * bounding state is loss and we don't know at which region the comment should be
      * associated. this very state remembered that selection until the comment is submitted
      */
+    const [currentlySelectedRegion, setCurrentlySelectedRegion] =
+      useState<BoundingBoxState | null>(null);
 
     const [commentText, setCommentText] = useState<string>("");
 
