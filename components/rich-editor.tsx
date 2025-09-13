@@ -545,10 +545,11 @@ function RichEditor({
 
       const container = range.startContainer;
 
-      const removeNode = (n: Node | null) => n?.parentNode?.removeChild(n);
       const updateMarkdown = () => {
         const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
-        onChange?.(turndownService.turndown(html));
+        const markdown = turndownService.turndown(html);
+        console.log(html);
+        onChange?.(markdown);
       };
 
       let node: Node | null =
@@ -559,17 +560,20 @@ function RichEditor({
             : null;
 
       if (
-        (node instanceof HTMLInputElement && node.type === "checkbox") ||
+        (node instanceof HTMLInputElement &&
+          (node as HTMLElement).classList.contains(
+            "custom-checkbox-wrapper"
+          )) ||
         (node?.nodeType === Node.TEXT_NODE &&
           node.nextSibling instanceof HTMLInputElement &&
-          node.nextSibling.type === "checkbox")
+          (node as HTMLElement).classList.contains("custom-checkbox-wrapper"))
       ) {
         e.preventDefault();
 
         if (node instanceof HTMLInputElement) removeNode(node);
         else if (
           node?.nodeType === Node.TEXT_NODE &&
-          node.nextSibling instanceof HTMLInputElement
+          (node as HTMLElement).classList.contains("custom-checkbox-wrapper")
         ) {
           removeNode(node.nextSibling);
           removeNode(node);
@@ -602,7 +606,6 @@ function RichEditor({
         removeNode(li);
 
         const newRange = document.createRange();
-        newRange.setStart(p, 0);
         newRange.collapse(true);
         sel.removeAllRanges();
         sel.addRange(newRange);
@@ -616,7 +619,16 @@ function RichEditor({
           cursorPos = 0;
         }
 
-        while (li.firstChild) prevLi.appendChild(li.firstChild);
+        const checkboxWrapper = prevLi.querySelector(
+          ".custom-checkbox-wrapper"
+        );
+        let insertBeforeNode: Node | null =
+          checkboxWrapper?.nextSibling ?? prevLi.firstChild;
+
+        while (li.firstChild) {
+          prevLi.insertBefore(li.firstChild, insertBeforeNode);
+          insertBeforeNode = insertBeforeNode?.nextSibling ?? null;
+        }
         removeNode(li);
 
         const newRange = document.createRange();
@@ -713,6 +725,7 @@ function RichEditor({
       }
 
       const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
+      console.log(html);
       const markdown = turndownService.turndown(html);
       onChange?.(markdown);
     }
