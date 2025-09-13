@@ -47,6 +47,17 @@ function RichEditor({
 }: RichEditorProps) {
   const turndownService = new TurndownService();
 
+  turndownService.addRule("divToBr", {
+    filter: ["div"],
+    replacement: function (content, node) {
+      if (!content.trim() || content === "<br>") {
+        return "\n";
+      }
+
+      return "\n" + content + "\n";
+    },
+  });
+
   turndownService.addRule("atxHeading", {
     filter: ["h1", "h2", "h3", "h4", "h5", "h6"],
     replacement: function (content, node) {
@@ -58,23 +69,95 @@ function RichEditor({
 
   turndownService.addRule("cleanListSpacing", {
     filter: ["ul", "ol"],
-    replacement: function (content) {
-      return `\n${content}\n`;
+    replacement: function (content, node) {
+      const parentIsParagraph = node.parentElement?.tagName === "P";
+      return parentIsParagraph ? content : `\n${content}\n`;
+    },
+  });
+
+  turndownService.addRule("cleanParagraphSpacing", {
+    filter: ["p"],
+    replacement: function (content, node) {
+      const htmlContent = (node as HTMLElement).innerHTML;
+
+      const hasBrOnly =
+        htmlContent.trim() === "<br>" || htmlContent.trim() === "<br/>";
+
+      const prevSibling = node.previousElementSibling;
+      const nextSibling = node.nextElementSibling;
+
+      if (
+        prevSibling &&
+        (prevSibling.tagName === "UL" || prevSibling.tagName === "OL") &&
+        nextSibling &&
+        (nextSibling.tagName === "UL" || nextSibling.tagName === "OL")
+      ) {
+        return content.trim() ? content : "\n";
+      }
+
+      if (hasBrOnly) {
+        if (
+          prevSibling &&
+          (prevSibling.tagName === "UL" || prevSibling.tagName === "OL")
+        ) {
+          return "\n" + (nextSibling ? "\n" : "");
+        }
+
+        if (prevSibling && prevSibling.tagName === "P") {
+          return "\n" + (nextSibling ? "\n" : "");
+        }
+
+        return "\n" + (nextSibling ? "\n" : "");
+      }
+
+      if (!content.trim()) return "";
+
+      if (
+        prevSibling &&
+        (prevSibling.tagName === "UL" || prevSibling.tagName === "OL")
+      ) {
+        return content + (nextSibling ? "\n" : "");
+      }
+
+      if (prevSibling && prevSibling.tagName === "P") {
+        return "\n" + content + (nextSibling ? "\n" : "");
+      }
+
+      const prefix = prevSibling ? "\n" : "";
+      const suffix = nextSibling ? "\n" : "";
+
+      return prefix + content + suffix;
+    },
+  });
+
+  turndownService.addRule("unwrapListsInParagraphs", {
+    filter: (node) => {
+      return node.nodeName === "P" && node.querySelector("ul, ol") !== null;
+    },
+    replacement: function (content, node) {
+      const listElement = node.querySelector("ul, ol");
+      if (listElement) {
+        return turndownService.turndown(listElement.outerHTML);
+      }
+      return content;
     },
   });
 
   turndownService.keep(["input"]);
 
   turndownService.addRule("checkbox", {
-    filter: function (node) {
+    filter: (node) => {
       return (
-        node.nodeName === "SPAN" &&
+        node.nodeName === "INPUT" &&
+        (node as HTMLInputElement).type === "checkbox" &&
         (node as HTMLElement).classList.contains("custom-checkbox-wrapper")
       );
     },
-    replacement: function (content, node) {
-      const checked = (node as HTMLElement).dataset.checked === "true";
-      return `[${checked ? "x" : " "}]`;
+    replacement: (_content, node) => {
+      const el = node as HTMLElement & { checked?: boolean };
+      const checked =
+        (el as HTMLInputElement).checked || el.dataset.checked === "true";
+      return `[${checked ? "x" : " "}] `;
     },
   });
 
@@ -135,6 +218,16 @@ function RichEditor({
     });
   }, []);
 
+  const handleEditorChange = () => {
+    const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
+    const cleanedHTML = cleanupHtml(html);
+    const markdown = turndownService.turndown(cleanedHTML);
+    const cleaningMarkdown = cleanSpacing(markdown);
+    console.log(cleanedHTML);
+
+    onChange?.(cleaningMarkdown);
+  };
+
   const handleCommand = (
     command:
       | "bold"
@@ -171,18 +264,10 @@ function RichEditor({
       sel.removeAllRanges();
       sel.addRange(newRange);
 
-      const html = editorRef.current.innerHTML || "";
-      const markdown = turndownService.turndown(html);
-      if (onChange) {
-        onChange(markdown);
-      }
+      handleEditorChange();
     } else {
       document.execCommand(command);
-      const html = editorRef.current.innerHTML || "";
-      const markdown = turndownService.turndown(html);
-      if (onChange) {
-        onChange(markdown);
-      }
+      handleEditorChange();
     }
   };
 
@@ -294,14 +379,11 @@ function RichEditor({
       const liHasCheckbox = !!li.querySelector(".custom-checkbox-wrapper");
       if (liText === "" && !liHasCheckbox) {
         e.preventDefault();
+
         const p = document.createElement("p");
         p.innerHTML = "<br>";
 
-        if (li === parentList.lastElementChild) {
-          parentList.insertAdjacentElement("afterend", p);
-        } else {
-          parentList.parentNode?.insertBefore(p, parentList);
-        }
+        parentList.insertAdjacentElement("afterend", p);
 
         li.remove();
 
@@ -311,8 +393,7 @@ function RichEditor({
         sel.removeAllRanges();
         sel.addRange(newRange);
 
-        const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
-        onChange?.(turndownService.turndown(html));
+        handleEditorChange();
         return;
       }
 
@@ -387,8 +468,7 @@ function RichEditor({
       sel.removeAllRanges();
       sel.addRange(newRange);
 
-      const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
-      onChange?.(turndownService.turndown(html));
+      handleEditorChange();
       return;
     }
 
@@ -472,9 +552,7 @@ function RichEditor({
             }
           }
 
-          const html = editorRef.current?.innerHTML || "";
-          const markdown = turndownService.turndown(html);
-          onChange?.(markdown);
+          handleEditorChange();
           return;
         }
 
@@ -545,12 +623,7 @@ function RichEditor({
 
       const container = range.startContainer;
 
-      const updateMarkdown = () => {
-        const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
-        const markdown = turndownService.turndown(html);
-        console.log(html);
-        onChange?.(markdown);
-      };
+      const removeNode = (n: Node | null) => n?.parentNode?.removeChild(n);
 
       let node: Node | null =
         container.nodeType === Node.TEXT_NODE && range.startOffset === 0
@@ -560,26 +633,23 @@ function RichEditor({
             : null;
 
       if (
-        (node instanceof HTMLInputElement &&
-          (node as HTMLElement).classList.contains(
-            "custom-checkbox-wrapper"
-          )) ||
+        (node instanceof HTMLInputElement && node.type === "checkbox") ||
         (node?.nodeType === Node.TEXT_NODE &&
           node.nextSibling instanceof HTMLInputElement &&
-          (node as HTMLElement).classList.contains("custom-checkbox-wrapper"))
+          node.nextSibling.type === "checkbox")
       ) {
         e.preventDefault();
 
         if (node instanceof HTMLInputElement) removeNode(node);
         else if (
           node?.nodeType === Node.TEXT_NODE &&
-          (node as HTMLElement).classList.contains("custom-checkbox-wrapper")
+          node.nextSibling instanceof HTMLInputElement
         ) {
           removeNode(node.nextSibling);
           removeNode(node);
         }
 
-        updateMarkdown();
+        handleEditorChange();
         return;
       }
 
@@ -606,6 +676,7 @@ function RichEditor({
         removeNode(li);
 
         const newRange = document.createRange();
+        newRange.setStart(p, 0);
         newRange.collapse(true);
         sel.removeAllRanges();
         sel.addRange(newRange);
@@ -619,16 +690,7 @@ function RichEditor({
           cursorPos = 0;
         }
 
-        const checkboxWrapper = prevLi.querySelector(
-          ".custom-checkbox-wrapper"
-        );
-        let insertBeforeNode: Node | null =
-          checkboxWrapper?.nextSibling ?? prevLi.firstChild;
-
-        while (li.firstChild) {
-          prevLi.insertBefore(li.firstChild, insertBeforeNode);
-          insertBeforeNode = insertBeforeNode?.nextSibling ?? null;
-        }
+        while (li.firstChild) prevLi.appendChild(li.firstChild);
         removeNode(li);
 
         const newRange = document.createRange();
@@ -658,7 +720,7 @@ function RichEditor({
         sel.addRange(newRange);
       }
 
-      updateMarkdown();
+      handleEditorChange();
     }
 
     if (e.key === "Delete") {
@@ -695,7 +757,8 @@ function RichEditor({
           const html =
             editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
           const markdown = turndownService.turndown(html);
-          onChange?.(markdown);
+          const cleaningMarkdown = cleanSpacing(markdown);
+          onChange?.(cleaningMarkdown);
           return;
         }
 
@@ -719,15 +782,13 @@ function RichEditor({
           const html =
             editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
           const markdown = turndownService.turndown(html);
-          onChange?.(markdown);
+          const cleaningMarkdown = cleanSpacing(markdown);
+          onChange?.(cleaningMarkdown);
           return;
         }
       }
 
-      const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
-      console.log(html);
-      const markdown = turndownService.turndown(html);
-      onChange?.(markdown);
+      handleEditorChange();
     }
   };
 
@@ -781,12 +842,7 @@ function RichEditor({
 
     savedSelection.current = null;
 
-    const html = editorRef.current.innerHTML || "";
-
-    const markdown = turndownService.turndown(html);
-    if (onChange) {
-      onChange(markdown);
-    }
+    handleEditorChange();
   };
 
   const TIP_MENU_RICH_EDITOR = [
@@ -894,8 +950,11 @@ function RichEditor({
         onInput={() => {
           const html =
             editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
-          const markdown = turndownService.turndown(html);
-          onChange?.(markdown);
+          const cleanedHTML = cleanupHtml(html);
+
+          const markdown = turndownService.turndown(cleanedHTML);
+          const cleaningMarkdown = cleanSpacing(markdown);
+          onChange?.(cleaningMarkdown);
         }}
         onKeyDown={handleOnKeyDown}
       />
@@ -1065,76 +1124,83 @@ function createCheckboxWrapper(
   editorRef: React.RefObject<HTMLDivElement>,
   onChange?: (value: string) => void
 ) {
-  const wrapper = document.createElement("span");
-  wrapper.className = "custom-checkbox-wrapper";
-  wrapper.dataset.checked = String(isChecked);
-  wrapper.contentEditable = "false";
-  wrapper.style.display = "inline-flex";
-  wrapper.style.alignItems = "center";
-  wrapper.style.position = "relative";
-  wrapper.style.userSelect = "none";
+  const input = document.createElement("input");
+  input.type = "checkbox";
+  input.checked = isChecked;
+  input.className = "custom-checkbox-wrapper";
+  input.contentEditable = "true";
+  input.style.cursor = "pointer";
+  input.dataset.checked = String(isChecked);
 
-  const checkbox = document.createElement("input");
-  checkbox.type = "checkbox";
-  checkbox.checked = isChecked;
-  checkbox.style.appearance = "none";
-  checkbox.style.height = "14px";
-  checkbox.style.width = "14px";
-  checkbox.style.cursor = "pointer";
-  checkbox.style.outline = "none";
-  checkbox.style.backgroundColor = isChecked ? "#61A9F9" : "#ffffff";
-  checkbox.style.border = `1px solid ${isChecked ? "#61A9F9" : "#6b7280"}`;
+  input.addEventListener("change", () => {
+    input.dataset.checked = String(input.checked);
 
-  const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  icon.setAttribute("viewBox", "0 0 24 24");
-  icon.setAttribute("stroke", "currentColor");
-  icon.setAttribute("stroke-width", "3");
-  icon.setAttribute("fill", "none");
-  icon.style.position = "absolute";
-  icon.style.top = "50%";
-  icon.style.left = "50%";
-  icon.style.transform = isChecked
-    ? "translate(-50%, -50%) scale(1)"
-    : "translate(-50%, -50%) scale(0)";
-  icon.style.transition = "transform 150ms";
-  icon.style.color = "white";
-  icon.style.pointerEvents = "none";
-  icon.style.height = "10px";
-  icon.style.width = "10px";
-
-  const polyline = document.createElementNS(
-    "http://www.w3.org/2000/svg",
-    "polyline"
-  );
-  polyline.setAttribute("points", "20 6 9 17 4 12");
-  icon.appendChild(polyline);
-
-  checkbox.addEventListener("change", () => {
-    const checked = checkbox.checked;
-    wrapper.dataset.checked = String(checked);
-    checkbox.style.backgroundColor = checked ? "#61A9F9" : "#ffffff";
-    checkbox.style.borderColor = checked ? "#61A9F9" : "#6b7280";
-    icon.style.transform = checked
-      ? "translate(-50%, -50%) scale(1)"
-      : "translate(-50%, -50%) scale(0)";
-
-    const html = editorRef.current?.innerHTML || "";
+    const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
     const markdown = turndownService.turndown(html);
-    onChange?.(markdown);
-  });
+    const cleaningMarkdown = cleanSpacing(markdown);
 
-  wrapper.addEventListener("click", (e) => {
-    if (e.target === wrapper) {
-      checkbox.focus();
-      checkbox.click();
+    if (onChange) {
+      onChange(cleaningMarkdown);
     }
   });
 
-  wrapper.appendChild(checkbox);
-  wrapper.appendChild(icon);
-
-  return wrapper;
+  return input;
 }
+
+const cleanSpacing = (text: string): string => {
+  return text
+    .replace(/\u00A0/g, " ")
+    .split("\n")
+    .map((line) => {
+      if (
+        line.includes("*") ||
+        line.includes("[") ||
+        line.includes("]") ||
+        /^\s*\d+\./.test(line) ||
+        line.trim() === ""
+      ) {
+        return line;
+      }
+
+      return line.replace(/\s{2,}/g, " ");
+    })
+    .join("\n");
+};
+
+const cleanupHtml = (html: string): string => {
+  const container = document.createElement("div");
+  container.innerHTML = html;
+
+  Array.from(container.querySelectorAll("p")).forEach((p) => {
+    if (p.querySelector("ul, ol")) {
+      const frag = document.createDocumentFragment();
+      while (p.firstChild) {
+        frag.appendChild(p.firstChild);
+      }
+      p.parentNode?.replaceChild(frag, p);
+    }
+  });
+
+  Array.from(container.querySelectorAll("p")).forEach((p) => {
+    const inner = p.innerHTML.trim().toLowerCase();
+
+    if (
+      inner === "<br>" ||
+      inner === "<br/>" ||
+      inner === "<br />" ||
+      inner === "&nbsp;"
+    ) {
+      return;
+    }
+
+    if (inner === "") {
+      p.parentNode?.removeChild(p);
+    }
+  });
+
+  container.normalize();
+  return container.innerHTML;
+};
 
 RichEditor.ToolbarButton = RichEditorToolbarButton;
 
