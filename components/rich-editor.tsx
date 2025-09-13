@@ -204,8 +204,6 @@ function RichEditor({
     const cleanedHTML = cleanupHtml(html);
     const markdown = turndownService.turndown(cleanedHTML);
     const cleaningMarkdown = cleanSpacing(markdown);
-    console.log(cleanedHTML);
-    console.log(cleaningMarkdown);
 
     onChange?.(cleaningMarkdown);
   };
@@ -273,6 +271,17 @@ function RichEditor({
 
       let container = range.startContainer as HTMLElement;
 
+      let liParent: HTMLElement | null = null;
+      if (container.nodeType === Node.ELEMENT_NODE) {
+        liParent = (container as Element).closest("li");
+      } else if (container.nodeType === Node.TEXT_NODE) {
+        liParent = (container.parentNode as Element)?.closest("li");
+      }
+
+      if (liParent) {
+        return;
+      }
+
       const headingParent =
         container.nodeType === Node.ELEMENT_NODE
           ? (container as Element).closest("h1,h2,h3,h4,h5,h6")
@@ -297,7 +306,9 @@ function RichEditor({
       }
 
       e.preventDefault();
+
       document.execCommand("insertLineBreak");
+
       handleEditorChange();
     }
 
