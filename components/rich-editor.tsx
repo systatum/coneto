@@ -266,7 +266,7 @@ function RichEditor({
 
       handleEditorChange();
     } else {
-      document.execCommand(command);
+      document.execCommand("defaultParagraphSeparator", false, "p");
       handleEditorChange();
     }
   };
@@ -1170,6 +1170,14 @@ const cleanSpacing = (text: string): string => {
 const cleanupHtml = (html: string): string => {
   const container = document.createElement("div");
   container.innerHTML = html;
+
+  Array.from(container.querySelectorAll("div")).forEach((div) => {
+    const frag = document.createDocumentFragment();
+    while (div.firstChild) {
+      frag.appendChild(div.firstChild);
+    }
+    div.parentNode?.replaceChild(frag, div);
+  });
 
   Array.from(container.querySelectorAll("p")).forEach((p) => {
     if (p.querySelector("ul, ol")) {
