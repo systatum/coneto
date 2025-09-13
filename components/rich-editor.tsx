@@ -47,17 +47,6 @@ function RichEditor({
 }: RichEditorProps) {
   const turndownService = new TurndownService();
 
-  turndownService.addRule("divToBr", {
-    filter: ["div"],
-    replacement: function (content, node) {
-      if (!content.trim() || content === "<br>") {
-        return "\n";
-      }
-
-      return "\n" + content + "\n";
-    },
-  });
-
   turndownService.addRule("atxHeading", {
     filter: ["h1", "h2", "h3", "h4", "h5", "h6"],
     replacement: function (content, node) {
@@ -123,7 +112,7 @@ function RichEditor({
         return "\n" + content + (nextSibling ? "\n" : "");
       }
 
-      const prefix = prevSibling ? "\n" : "";
+      const prefix = prevSibling ? "\n" : "\n";
       const suffix = nextSibling ? "\n" : "";
 
       return prefix + content + suffix;
@@ -173,6 +162,7 @@ function RichEditor({
     if (!editorRef.current || editorRef.current.innerHTML) return;
 
     editorRef.current.innerHTML = String(marked(value));
+    document.execCommand("defaultParagraphSeparator", false, "p");
 
     editorRef.current
       .querySelectorAll(".custom-checkbox-wrapper")
@@ -223,8 +213,6 @@ function RichEditor({
     const cleanedHTML = cleanupHtml(html);
     const markdown = turndownService.turndown(cleanedHTML);
     const cleaningMarkdown = cleanSpacing(markdown);
-    console.log(html);
-    console.log(cleanedHTML);
 
     onChange?.(cleaningMarkdown);
   };
