@@ -1,4 +1,5 @@
 import {
+  INNER_ACTIVE_CIRCLE_VARIANT_COLOR,
   INNER_CIRCLE_VARIANT_COLOR,
   OUTER_CIRCLE_VARIANT_COLOR,
   SteplineItemState,
@@ -132,6 +133,7 @@ const StepGroup = styled.div<{ $clickable?: boolean }>`
   flex-direction: row;
   gap: 0.5rem;
   position: relative;
+
   ${({ $clickable }) =>
     $clickable &&
     css`
@@ -214,8 +216,17 @@ const InnerCircle = styled.div<{ $variant: string }>`
   border-radius: 9999px;
   color: white;
   background-color: #4b5563;
+  transition: all 0.2s ease-in-out;
+
   ${({ $variant }) => css`
     background-color: ${INNER_CIRCLE_VARIANT_COLOR[$variant]};
+    ${StepGroup}:active & {
+      opacity: 90%;
+      background-color: ${INNER_ACTIVE_CIRCLE_VARIANT_COLOR[$variant]};
+      box-shadow:
+        inset 0 0.5px 4px #959494,
+        inset 0 -0.5px 0.5px ${INNER_ACTIVE_CIRCLE_VARIANT_COLOR[$variant]};
+    }
   `}
 `;
 

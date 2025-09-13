@@ -8,6 +8,7 @@ import {
 import { TipMenu, TipMenuItemProps, TipMenuItemVariantType } from "./tip-menu";
 import styled, { css, CSSProp } from "styled-components";
 import { createPortal } from "react-dom";
+import { color } from "framer-motion";
 
 export type ButtonVariants = {
   variant?:
@@ -17,7 +18,8 @@ export type ButtonVariants = {
     | "primary"
     | "danger"
     | "secondary"
-    | "ghost";
+    | "ghost"
+    | "transparent";
   size?: "icon" | "xs" | "md" | "sm" | "lg";
 };
 
@@ -417,6 +419,11 @@ const getButtonColors = (
         color: "#408ee8",
         underline: true,
       };
+    case "transparent":
+      return {
+        bg: isOpen ? activeColor : "transparent",
+        color: "black",
+      };
     default:
       return { bg: isOpen ? activeColor : "#f3f3f3", color: "black" };
   }
@@ -455,6 +462,8 @@ const getActiveColor = (variant: ButtonVariants["variant"]) => {
       return "#eaeaea";
     case "link":
       return "#1e5ba8";
+    case "transparent":
+      return "#cfcfcf";
     default:
       return "#cfcfcf";
   }

@@ -510,6 +510,13 @@ const ListItemWrapper = styled.div<{
     background-color: #dbeafe;
   }
 
+  &:active {
+    background-color: #c2dcfe;
+    box-shadow:
+      inset 0 0.5px 4px #83b2f0,
+      inset 0 -0.5px 0.5px #c2dcfe;
+  }
+
   ${({ $containerStyle }) => $containerStyle}
 `;
 

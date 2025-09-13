@@ -243,12 +243,22 @@ const Button = styled.button<{
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  background-color: white;
+
   outline: none;
   border: 1px solid ${({ $isActive }) => ($isActive ? "#61A9F9" : "#f3f4f6")};
   color: ${({ $isActive }) => ($isActive ? "#000" : "#374151")};
 
   &:hover {
     border-color: #61a9f9;
+  }
+
+  &:active {
+    background-color: #f6f4f4;
+    box-shadow:
+      inset 0 0.5px 4px #d2d1d1,
+      inset 0 -0.5px 0.5px #f6f4f4;
   }
 
   &:disabled {

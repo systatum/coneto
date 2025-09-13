@@ -10,6 +10,7 @@ import {
   useState,
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
+import { Button } from "./button";
 
 interface WindowProps {
   orientation?: "horizontal" | "vertical";
@@ -178,16 +179,32 @@ function WindowCell({ children, style, actions }: WindowCellProps) {
       {actions && (
         <ActionContainer>
           {actions.map((data, index) => (
-            <ActionButton
+            <Button
+              variant="transparent"
               key={index}
               aria-label="window-button"
               onClick={() => {
                 if (data.onClick) data.onClick();
               }}
-              $style={data.style}
+              containerStyle={css`
+                position: absolute;
+                top: 0.5rem;
+                right: 0.5rem;
+                cursor: pointer;
+                transition: all 0.3s;
+                border-radius: 2px;
+                padding: 2px;
+                width: fit-content;
+                height: fit-content;
+              `}
+              buttonStyle={css`
+                width: fit-content;
+                height: fit-content;
+                padding: 2px;
+              `}
             >
               {data.icon && <data.icon size={16} />}
-            </ActionButton>
+            </Button>
           ))}
         </ActionContainer>
       )}
@@ -261,22 +278,6 @@ const ActionContainer = styled.div`
   top: 16px;
   display: flex;
   flex-direction: row;
-`;
-
-const ActionButton = styled.div<{ $style?: CSSProp }>`
-  display: flex;
-  align-items: center;
-  position: relative;
-  padding: 2px;
-  gap: 8px;
-  transition: background-color 0.3s;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #d1d5db;
-  }
-
-  ${({ $style }) => $style}
 `;
 
 Window.Cell = WindowCell;

@@ -191,6 +191,13 @@ const NavTabHeaderContent = styled.div<{
   &:hover {
     background-color: rgb(243 244 246 / 50%);
   }
+
+  &:active {
+    background-color: rgb(243 244 246 / 80%);
+    box-shadow:
+      inset 0 0.5px 4px rgb(243 244 246 / 100%),
+      inset 0 -0.5px 0.5px rgb(243 244 246 / 80%);
+  }
 `;
 
 const NavContent = styled.div<{ $contentStyle?: CSSProp }>`
