@@ -273,21 +273,31 @@ function RichEditor({
 
       let container = range.startContainer as HTMLElement;
 
-      let liParent: HTMLElement | null = null;
-      if (container.nodeType === Node.ELEMENT_NODE) {
-        liParent = (container as Element).closest("li");
-      } else if (container.nodeType === Node.TEXT_NODE) {
-        liParent = (container.parentNode as Element)?.closest("li");
-      }
+      const headingParent =
+        container.nodeType === Node.ELEMENT_NODE
+          ? (container as Element).closest("h1,h2,h3,h4,h5,h6")
+          : (container.parentNode as Element)?.closest("h1,h2,h3,h4,h5,h6");
 
-      if (liParent) {
+      if (headingParent) {
+        e.preventDefault();
+
+        const p = document.createElement("p");
+        p.innerHTML = "<br>";
+        headingParent.insertAdjacentElement("afterend", p);
+
+        const newRange = document.createRange();
+        newRange.setStart(p, 0);
+        newRange.collapse(true);
+
+        sel.removeAllRanges();
+        sel.addRange(newRange);
+
+        handleEditorChange();
         return;
       }
 
       e.preventDefault();
-
       document.execCommand("insertLineBreak");
-
       handleEditorChange();
     }
 
@@ -498,32 +508,54 @@ function RichEditor({
     const headingTag = `h${level}` as keyof HTMLElementTagNameMap;
 
     if (/^H[1-6]$/.test(node.tagName)) {
-      const newHeading = document.createElement(headingTag);
-      newHeading.innerHTML = node.innerHTML;
+      if (node.tagName.toLowerCase() === headingTag) {
+        const p = document.createElement("p");
+        p.innerHTML = node.innerHTML;
+        node.replaceWith(p);
 
-      node.replaceWith(newHeading);
+        const newRange = document.createRange();
+        newRange.selectNodeContents(p);
+        newRange.collapse(false);
+        sel.removeAllRanges();
+        sel.addRange(newRange);
+      } else {
+        const newHeading = document.createElement(headingTag);
+        newHeading.innerHTML = node.innerHTML;
+        node.replaceWith(newHeading);
 
-      const newRange = document.createRange();
-      newRange.selectNodeContents(newHeading);
-      newRange.collapse(false);
-      sel.removeAllRanges();
-      sel.addRange(newRange);
+        const newRange = document.createRange();
+        newRange.selectNodeContents(newHeading);
+        newRange.collapse(false);
+        sel.removeAllRanges();
+        sel.addRange(newRange);
+      }
     } else {
       const heading = document.createElement(headingTag);
-      heading.innerHTML = sel.toString();
+
+      if (sel.isCollapsed) {
+        heading.innerHTML = "<br>";
+      } else {
+        heading.innerHTML = sel.toString();
+      }
 
       range.deleteContents();
       range.insertNode(heading);
 
       const newRange = document.createRange();
       newRange.selectNodeContents(heading);
-      newRange.collapse(false);
+
+      if (sel.isCollapsed) {
+        newRange.setStart(heading, 0);
+        newRange.collapse(true);
+      } else {
+        newRange.collapse(false);
+      }
+
       sel.removeAllRanges();
       sel.addRange(newRange);
     }
 
     savedSelection.current = null;
-
     handleEditorChange();
   };
 
