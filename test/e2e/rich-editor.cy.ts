@@ -73,6 +73,26 @@ describe("RichEditor", () => {
       });
     });
 
+    context(
+      "when type, press enter (not using unordered) and ensure the structure",
+      () => {
+        it("render text with unordered list and normal text", () => {
+          cy.findByRole("textbox").click().type("- Bullet Point{enter}{enter}");
+          cy.findByRole("textbox").click().type("Normal Point");
+          cy.findAllByRole("button").eq(6).click();
+
+          cy.get("pre")
+            .invoke("text")
+            .then((text) => {
+              expectTextIncludesOrderedLines(text, [
+                "*   Bullet Point",
+                "Normal Point",
+              ]);
+            });
+        });
+      }
+    );
+
     context("when type and delete on centered text", () => {
       it("render merge unordered list", () => {
         cy.findByRole("textbox")
@@ -115,6 +135,15 @@ describe("RichEditor", () => {
     context("when type [x]", () => {
       it("render checked value", () => {
         cy.findByRole("textbox").click().type("[x] checkbox value checked");
+        cy.get("input[type='checkbox']").should("be.checked");
+      });
+    });
+
+    context("when type with strip, space, [x], and text", () => {
+      it("render text with unordered with checked checkbox and text", () => {
+        cy.findByRole("textbox")
+          .click()
+          .type("- [x] checkbox value checked{enter}");
         cy.get("input[type='checkbox']").should("be.checked");
       });
     });
