@@ -6,7 +6,6 @@ import {
   useState,
 } from "react";
 import {
-  INNER_ACTIVE_CIRCLE_VARIANT_COLOR,
   INNER_CIRCLE_VARIANT_COLOR,
   OUTER_CIRCLE_VARIANT_COLOR,
   SteplineItemState,
@@ -52,26 +51,25 @@ function Timeline({ children, isClickable = false }: TimelineProps) {
             $isClickable={isClickable}
             onMouseEnter={() => setHoveredIndex(index)}
             onMouseLeave={() => setHoveredIndex(null)}
-            onClick={async () => {
+            onClick={() => {
               if (onClick) {
-                await onClick();
+                onClick();
               }
             }}
           >
             <IndicatorWrapper>
               <OuterCircle
                 aria-label="outer-circle-timeline"
-                $variant={variant}
+                $color={OUTER_CIRCLE_VARIANT_COLOR[variant]}
                 $isHovered={hoveredIndex === index}
               />
               <InnerCircle
                 aria-label="inner-circle-timeline"
-                $variant={variant}
-                $isClickable={isClickable}
+                $color={INNER_CIRCLE_VARIANT_COLOR[variant]}
               />
               <Divider
                 aria-label="divider-timeline"
-                $variant={variant}
+                $color={INNER_CIRCLE_VARIANT_COLOR[variant]}
                 $isLast={isLast}
               />
             </IndicatorWrapper>
@@ -113,7 +111,7 @@ export const IndicatorWrapper = styled.div`
 `;
 
 export const OuterCircle = styled.div<{
-  $variant: string;
+  $color: string;
   $isHovered: boolean;
 }>`
   width: 0.25rem;
@@ -126,18 +124,15 @@ export const OuterCircle = styled.div<{
     transform 0.2s ease,
     background-color 0.2s ease;
 
-  ${({ $isHovered, $variant }) =>
+  ${({ $isHovered, $color }) =>
     $isHovered &&
     css`
       transform: scale(3) translateY(0.6px);
-      background-color: ${OUTER_CIRCLE_VARIANT_COLOR[$variant]};
+      background-color: ${$color};
     `}
 `;
 
-export const InnerCircle = styled.div<{
-  $variant?: string;
-  $isClickable?: boolean;
-}>`
+export const InnerCircle = styled.div<{ $color: string }>`
   min-width: 0.5rem;
   min-height: 0.5rem;
   max-width: 0.5rem;
@@ -145,31 +140,18 @@ export const InnerCircle = styled.div<{
   border-radius: 9999px;
   left: 5.4px;
   position: absolute;
-  background-color: ${({ $variant }) => INNER_CIRCLE_VARIANT_COLOR[$variant]};
-  transition: all 0.2s ease-in-out;
-
-  ${TimelineContent}:active & {
-    ${({ $variant, $isClickable }) =>
-      $isClickable &&
-      css`
-        background-color: ${INNER_ACTIVE_CIRCLE_VARIANT_COLOR[$variant]};
-        opacity: 90%;
-        box-shadow:
-          inset 0 0.5px 4px #959494,
-          inset 0 -0.5px 0.5px ${INNER_ACTIVE_CIRCLE_VARIANT_COLOR[$variant]};
-      `};
-  }
+  background-color: ${(props) => props.$color};
 `;
 
 export const Divider = styled.div<{
-  $variant: string;
+  $color: string;
   $isLast: boolean;
 }>`
   width: 1px;
   height: 100%;
-  background-color: ${({ $variant }) => INNER_CIRCLE_VARIANT_COLOR[$variant]};
-  ${({ $isLast }) =>
-    $isLast &&
+  background-color: ${(props) => props.$color};
+  ${(props) =>
+    props.$isLast &&
     css`
       height: calc(100% - 1.2rem);
     `}

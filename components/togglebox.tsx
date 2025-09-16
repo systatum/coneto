@@ -1,4 +1,4 @@
-import { ChangeEvent, InputHTMLAttributes, useState } from "react";
+import { ChangeEvent, InputHTMLAttributes } from "react";
 import { motion } from "framer-motion";
 import { RemixiconComponentType } from "@remixicon/react";
 import { LoadingSpinner } from "./loading-spinner";
@@ -144,6 +144,14 @@ const StyledInput = styled.input`
   opacity: 0;
 `;
 
+const ToggleBackground = styled.div<{ checked: boolean }>`
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  transition: background-color 0.3s;
+  background-color: ${({ checked }) => (checked ? "#61A9F9" : "#D1D5DB")};
+`;
+
 const ToggleButton = styled(motion.div)`
   position: absolute;
   top: 0;
@@ -153,19 +161,6 @@ const ToggleButton = styled(motion.div)`
   background-color: white;
   border-radius: 9999px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-  pointer-events: none;
-`;
-
-const ToggleBackground = styled.div<{ checked: boolean }>`
-  width: 100%;
-  height: 100%;
-  border-radius: 9999px;
-  transition: background-color 0.3s;
-  background-color: ${({ checked }) => (checked ? "#61A9F9" : "#D1D5DB")};
-
-  &:active {
-    background-color: ${({ checked }) => (checked ? "#3B82F6" : "#9CA3AF")};
-  }
 `;
 
 const TextGroup = styled.div`

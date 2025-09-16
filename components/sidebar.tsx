@@ -171,18 +171,6 @@ const ToggleButton = styled.button<{
   border: 1px solid #e5e7eb;
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    background-color: #f6f4f4;
-  }
-
-  &:active {
-    background-color: #e7e7e7;
-    box-shadow:
-      inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
-      inset 0 -0.5px 0.5px #e7e7e7;
-  }
 
   ${({ $position }) => ($position === "left" ? "left: 0;" : "right: 0;")}
 
