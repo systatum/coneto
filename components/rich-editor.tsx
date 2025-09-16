@@ -22,7 +22,12 @@ interface RichEditorProps {
   toolbarRightPanel?: ReactNode;
   editorStyle?: CSSProp;
   containerStyle?: CSSProp;
+  mode?: RichEditorModeState;
+  toolbarPosition?: RichEditorToolbarPositionState;
 }
+
+type RichEditorToolbarPositionState = "top" | "bottom";
+type RichEditorModeState = "view-only" | "page-editor";
 
 export interface RichEditorToolbarButtonProps {
   icon?: RemixiconComponentType;
@@ -38,6 +43,8 @@ function RichEditor({
   toolbarRightPanel,
   editorStyle,
   containerStyle,
+  mode = "view-only",
+  toolbarPosition = "top",
 }: RichEditorProps) {
   const turndownService = new TurndownService();
 
@@ -153,7 +160,6 @@ function RichEditor({
     if (!editorRef.current || editorRef.current.innerHTML) return;
 
     editorRef.current.innerHTML = String(marked(value));
-    document.execCommand("defaultParagraphSeparator", false, "p");
 
     editorRef.current
       .querySelectorAll(".custom-checkbox-wrapper")
@@ -204,6 +210,9 @@ function RichEditor({
     const cleanedHTML = cleanupHtml(html);
     const markdown = turndownService.turndown(cleanedHTML);
     const cleaningMarkdown = cleanSpacing(markdown);
+
+    console.log(cleanedHTML);
+    console.log(cleaningMarkdown);
 
     onChange?.(cleaningMarkdown);
   };
@@ -619,59 +628,63 @@ function RichEditor({
 
   return (
     <Wrapper $containerStyle={containerStyle}>
-      <Toolbar>
-        <ToolbarGroup>
-          <RichEditorToolbarButton
-            icon={RiBold}
-            onClick={() => handleCommand("bold")}
-          />
-          <RichEditorToolbarButton
-            icon={RiItalic}
-            onClick={() => handleCommand("italic")}
-          />
-          <RichEditorToolbarButton
-            icon={RiListOrdered}
-            onClick={() => handleCommand("insertOrderedList")}
-          />
-          <RichEditorToolbarButton
-            icon={RiListUnordered}
-            onClick={() => handleCommand("insertUnorderedList")}
-          />
-          <RichEditorToolbarButton
-            icon={RiCheckboxLine}
-            onClick={() => handleCommand("checkbox")}
-          />
-          <RichEditorToolbarButton
-            icon={RiHeading}
-            isOpen={isOpen}
-            onClick={() => {
-              const sel = window.getSelection();
-              if (sel && sel.rangeCount > 0) {
-                savedSelection.current = sel.getRangeAt(0).cloneRange();
-              }
-              setIsOpen(true);
-            }}
-          />
+      <ToolbarWrapper $toolbarMode={toolbarPosition}>
+        <Toolbar $toolbarMode={toolbarPosition}>
+          <ToolbarGroup>
+            <RichEditorToolbarButton
+              icon={RiBold}
+              onClick={() => handleCommand("bold")}
+            />
+            <RichEditorToolbarButton
+              icon={RiItalic}
+              onClick={() => handleCommand("italic")}
+            />
+            <RichEditorToolbarButton
+              icon={RiListOrdered}
+              onClick={() => handleCommand("insertOrderedList")}
+            />
+            <RichEditorToolbarButton
+              icon={RiListUnordered}
+              onClick={() => handleCommand("insertUnorderedList")}
+            />
+            <RichEditorToolbarButton
+              icon={RiCheckboxLine}
+              onClick={() => handleCommand("checkbox")}
+            />
+            <RichEditorToolbarButton
+              icon={RiHeading}
+              isOpen={isOpen}
+              onClick={() => {
+                const sel = window.getSelection();
+                if (sel && sel.rangeCount > 0) {
+                  savedSelection.current = sel.getRangeAt(0).cloneRange();
+                }
+                setIsOpen(true);
+              }}
+            />
 
-          {isOpen && (
-            <MenuWrapper ref={menuRef}>
-              <TipMenu
-                setIsOpen={() => setIsOpen(false)}
-                subMenuList={TIP_MENU_RICH_EDITOR}
-              />
-            </MenuWrapper>
+            {isOpen && (
+              <MenuWrapper ref={menuRef}>
+                <TipMenu
+                  setIsOpen={() => setIsOpen(false)}
+                  subMenuList={TIP_MENU_RICH_EDITOR}
+                />
+              </MenuWrapper>
+            )}
+          </ToolbarGroup>
+          {toolbarRightPanel && (
+            <ToolbarRightPanel>{toolbarRightPanel}</ToolbarRightPanel>
           )}
-        </ToolbarGroup>
-        {toolbarRightPanel && (
-          <ToolbarRightPanel>{toolbarRightPanel}</ToolbarRightPanel>
-        )}
-      </Toolbar>
+        </Toolbar>
+      </ToolbarWrapper>
 
       <EditorArea
         ref={editorRef}
         role="textbox"
         contentEditable
         $editorStyle={editorStyle}
+        $toolbarPosition={toolbarPosition}
+        $mode={mode}
         onInput={() => {
           const html =
             editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
@@ -715,19 +728,49 @@ const Wrapper = styled.div<{ $containerStyle?: CSSProp }>`
   border: 1px solid #ececec;
   border-radius: 4px;
   box-shadow: 0 1px 4px -3px #5b5b5b;
+  position: relative;
 
   ${({ $containerStyle }) => $containerStyle}
 `;
 
-const Toolbar = styled.div`
+const ToolbarWrapper = styled.div<{
+  $toolbarMode?: RichEditorToolbarPositionState;
+}>`
+  position: absolute;
+  width: 100%;
+  overflow: hidden;
+
+  ${({ $toolbarMode }) =>
+    $toolbarMode === "top"
+      ? css`
+          top: 0;
+        `
+      : css`
+          bottom: 0;
+        `}
+`;
+
+const Toolbar = styled.div<{
+  $toolbarMode?: RichEditorToolbarPositionState;
+}>`
   display: flex;
   flex-direction: row;
+  width: 100%;
+  position: relative;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #ececec;
   padding: 0 8px;
   background: white;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+  ${({ $toolbarMode }) =>
+    $toolbarMode === "top"
+      ? css`
+          border-bottom: 1px solid #ececec;
+        `
+      : css`
+          border-top: 1px solid #ececec;
+        `}
 `;
 
 const ToolbarGroup = styled.div`
@@ -756,12 +799,31 @@ const MenuWrapper = styled.div`
 `;
 
 const EditorArea = styled.div<{
+  $toolbarPosition?: RichEditorToolbarPositionState;
   $editorStyle?: CSSProp;
+  $mode?: RichEditorModeState;
 }>`
-  min-height: 200px;
   padding: 8px;
   outline: none;
   background-color: white;
+
+  ${({ $mode }) =>
+    $mode === "view-only"
+      ? css`
+          min-height: 200px;
+        `
+      : css`
+          min-height: 100vh;
+        `}
+
+  ${({ $toolbarPosition }) =>
+    $toolbarPosition === "top"
+      ? css`
+          padding-top: 45px;
+        `
+      : css`
+          padding-bottom: 45px;
+        `}
 
   ol {
     list-style-type: decimal !important;
