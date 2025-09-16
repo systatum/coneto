@@ -67,3 +67,83 @@ export const Default: Story = {
     );
   },
 };
+
+export const ToolbarPositionBottom: Story = {
+  render: () => {
+    const [value, setValue] = useState("");
+    const [printValue, setPrintValue] = useState("");
+
+    const TOOLBAR_RIGHT_PANEL_ACTIONS = (
+      <RichEditor.ToolbarButton
+        icon={RiPrinterFill}
+        onClick={() => {
+          setPrintValue(value);
+          console.log(value);
+        }}
+      >
+        Print
+      </RichEditor.ToolbarButton>
+    );
+
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <RichEditor
+          toolbarPosition="bottom"
+          onChange={(e) => setValue(e)}
+          value={value}
+          toolbarRightPanel={TOOLBAR_RIGHT_PANEL_ACTIONS}
+        />
+        {printValue !== "" && (
+          <pre
+            style={{
+              padding: 28,
+              background: "#D3D3D3",
+            }}
+          >
+            {printValue}
+          </pre>
+        )}
+      </div>
+    );
+  },
+};
+
+export const PageEditor: Story = {
+  render: () => {
+    const [value, setValue] = useState("");
+    const [printValue, setPrintValue] = useState("");
+
+    const TOOLBAR_RIGHT_PANEL_ACTIONS = (
+      <RichEditor.ToolbarButton
+        icon={RiPrinterFill}
+        onClick={() => {
+          setPrintValue(value);
+          console.log(value);
+        }}
+      >
+        Print
+      </RichEditor.ToolbarButton>
+    );
+
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <RichEditor
+          mode="page-editor"
+          onChange={(e) => setValue(e)}
+          value={value}
+          toolbarRightPanel={TOOLBAR_RIGHT_PANEL_ACTIONS}
+        />
+        {printValue !== "" && (
+          <pre
+            style={{
+              padding: 28,
+              background: "#D3D3D3",
+            }}
+          >
+            {printValue}
+          </pre>
+        )}
+      </div>
+    );
+  },
+};
