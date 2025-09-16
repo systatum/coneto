@@ -368,7 +368,13 @@ function Calendar({
               alignItems: "center",
             }}
           >
-            <CalendarButton
+            <Button
+              variant="transparent"
+              buttonStyle={css`
+                width: fit-content;
+                padding: 0.5rem;
+                font-size: 0.75rem;
+              `}
               aria-label="calendar-select-date"
               onClick={() => {
                 if (!calendarState.open) {
@@ -382,7 +388,7 @@ function Calendar({
                   year: "numeric",
                 })
                 .toUpperCase()}
-            </CalendarButton>
+            </Button>
           </div>
         ) : (
           <Fragment>
@@ -425,14 +431,28 @@ function Calendar({
               />
             </div>
 
-            <CheckCalendar
-              size={24}
-              onClick={() => handleClickMode("open")}
-              $style={{
-                padding: "4px",
-              }}
-              aria-label="Select date"
-            />
+            <Button
+              variant="transparent"
+              containerStyle={css`
+                cursor: pointer;
+                transition: all 0.3s;
+                border-radius: 2px;
+                padding: 0px;
+                width: fit-content;
+                height: fit-content;
+              `}
+              buttonStyle={css`
+                width: fit-content;
+                height: fit-content;
+                padding: 2px;
+              `}
+            >
+              <RiCheckLine
+                size={20}
+                onClick={() => handleClickMode("open")}
+                aria-label="Select date"
+              />
+            </Button>
           </Fragment>
         )}
         {!calendarState.open && (
@@ -443,17 +463,51 @@ function Calendar({
               width: "100%",
             }}
           >
-            <ArrowLeft
-              onClick={handleClickPrevMonth}
-              size={24}
-              aria-label="previous-month"
-            />
+            <Button
+              variant="transparent"
+              containerStyle={css`
+                cursor: pointer;
+                transition: all 0.3s;
+                border-radius: 2px;
+                padding: 0px;
+                width: fit-content;
+                height: fit-content;
+              `}
+              buttonStyle={css`
+                width: fit-content;
+                height: fit-content;
+                padding: 0px;
+              `}
+            >
+              <RiArrowLeftSLine
+                onClick={handleClickPrevMonth}
+                size={24}
+                aria-label="previous-month"
+              />
+            </Button>
 
-            <ArrowRight
-              onClick={handleClickNextMonth}
-              size={24}
-              aria-label="next-month"
-            />
+            <Button
+              variant="transparent"
+              containerStyle={css`
+                cursor: pointer;
+                transition: all 0.3s;
+                border-radius: 2px;
+                padding: 0px;
+                width: fit-content;
+                height: fit-content;
+              `}
+              buttonStyle={css`
+                width: fit-content;
+                height: fit-content;
+                padding: 0px;
+              `}
+            >
+              <RiArrowRightSLine
+                onClick={handleClickNextMonth}
+                size={24}
+                aria-label="next-month"
+              />
+            </Button>
           </div>
         )}
 
@@ -579,23 +633,6 @@ const CalendarContainer = styled.div<{
   $style?: CSSProp;
 }>`
   ${({ $style }) => $style}
-`;
-
-const CalendarButton = styled.button`
-  width: fit-content;
-  padding: 0.5rem;
-  font-size: 0.75rem;
-  cursor: pointer;
-  background-color: transparent;
-  border: none;
-
-  &:hover {
-    background-color: #e5e7eb;
-  }
-
-  &:focus {
-    outline: none;
-  }
 `;
 
 const CalendarHeader = styled.div`
@@ -786,26 +823,5 @@ function formatDate(date: Date, format: FormatProps) {
       return `${month}/${day}/${year}`;
   }
 }
-
-const StyledIcon = (icon: RemixiconComponentType) => styled(icon)<{
-  $style?: CSSProp;
-}>`
-  border-radius: 2px;
-  outline: none;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #e5e7eb;
-  }
-
-  &:focus {
-    outline: none;
-  }
-  ${({ $style }) => $style}
-`;
-
-const ArrowLeft = StyledIcon(RiArrowLeftSLine);
-const ArrowRight = StyledIcon(RiArrowRightSLine);
-const CheckCalendar = StyledIcon(RiCheckLine);
 
 export { Calendar };
