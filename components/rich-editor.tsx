@@ -673,6 +673,10 @@ function RichEditor({
         contentEditable
         $editorStyle={editorStyle}
         onInput={() => {
+          if (editorRef.current) {
+            syncCheckboxStates(editorRef.current);
+          }
+
           const html =
             editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
           const cleanedHTML = cleanupHtml(html);
@@ -895,6 +899,16 @@ const cleanSpacing = (text: string): string => {
     })
     .join("\n");
 };
+
+function syncCheckboxStates(container: HTMLElement) {
+  const checkboxes = container.querySelectorAll(
+    'input[type="checkbox"].custom-checkbox-wrapper'
+  );
+  checkboxes.forEach((checkbox) => {
+    const input = checkbox as HTMLInputElement;
+    input.dataset.checked = String(input.checked);
+  });
+}
 
 // Clean up HTML so that <div> elements don't cause extra spacing in <ul> or <ol>.
 // This ensures ordered and unordered lists are not wrapped with <div> or <p>,
