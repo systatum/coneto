@@ -58,6 +58,30 @@ function RichEditor({
     },
   });
 
+  turndownService.addRule("listItem", {
+    filter: "li",
+    replacement: function (content, node) {
+      content = content
+        .replace(/^\n+/, "")
+        .replace(/\n+$/, "\n")
+        .replace(/\n/gm, "\n    ");
+
+      var prefix = "* ";
+      var parent = node.parentNode as HTMLElement;
+      if (parent.nodeName === "OL") {
+        var start = parent.getAttribute("start");
+        var index = Array.prototype.indexOf.call(parent.children, node);
+        prefix = (start ? parseInt(start, 10) + index : index + 1) + ". ";
+      }
+
+      return (
+        prefix +
+        content +
+        (node.nextSibling && !/\n$/.test(content) ? "\n" : "")
+      );
+    },
+  });
+
   turndownService.addRule("cleanParagraphSpacing", {
     filter: ["p"],
     replacement: function (content, node) {
