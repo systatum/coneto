@@ -761,10 +761,11 @@ function Calendar({
                   }
                   $isInRange={isInRange && selectabilityMode === "ranged"}
                   $isToday={isToday}
+                  $isPickingProcess={startPicked.picked}
                 >
                   {date.getDate()}
 
-                  {isToday && <DateCellTodayDot />}
+                  {isToday && !startPicked.picked && <DateCellTodayDot />}
                 </DateCell>
               </DateCellWrapper>
             );
@@ -871,6 +872,7 @@ const DateCell = styled.span<{
   $isCurrentDate?: boolean;
   $isToday?: boolean;
   $isInRange?: boolean;
+  $isPickingProcess?: boolean;
 }>`
   width: 27px;
   height: 27px;
@@ -931,9 +933,10 @@ const DateCell = styled.span<{
       color: white;
     `}
 
-  ${({ $isToday, $isCurrentDate }) =>
+  ${({ $isToday, $isCurrentDate, $isPickingProcess }) =>
     $isToday &&
     !$isCurrentDate &&
+    !$isPickingProcess &&
     css`
       color: #61a9f9;
     `};
