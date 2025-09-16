@@ -85,7 +85,7 @@ describe("RichEditor", () => {
             .invoke("text")
             .then((text) => {
               expectTextIncludesOrderedLines(text, [
-                "*   Bullet Point",
+                "* Bullet Point",
                 "Normal Point",
               ]);
             });
@@ -185,10 +185,10 @@ describe("RichEditor", () => {
           expectTextIncludesOrderedLines(text, [
             "**Print content Test**",
             "The quick brown fox jumps over the lazy dog.",
-            "*   Pack my box with five dozen liquor jugs.",
-            "*   Typing skills improve with daily practice.",
-            "*   Accuracy is more important than speed.",
-            "*   Stay consistent and avoid looking at the keyboard.",
+            "* Pack my box with five dozen liquor jugs.",
+            "* Typing skills improve with daily practice.",
+            "* Accuracy is more important than speed.",
+            "* Stay consistent and avoid looking at the keyboard.",
           ]);
         });
     });
