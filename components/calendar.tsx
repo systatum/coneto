@@ -765,7 +765,7 @@ function Calendar({
                 >
                   {date.getDate()}
 
-                  {isToday && !startPicked.picked && <DateCellTodayDot />}
+                  {isToday && <DateCellTodayDot />}
                 </DateCell>
               </DateCellWrapper>
             );
