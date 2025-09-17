@@ -203,9 +203,11 @@ function RichEditor({
     const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
     const cleanedHTML = cleanupHtml(html);
     const markdown = turndownService.turndown(cleanedHTML);
-    const cleaningMarkdown = cleanSpacing(markdown);
+    const cleanedMarkdown = cleanSpacing(markdown);
 
-    onChange?.(cleaningMarkdown);
+    if (onChange) {
+      onChange(cleanedMarkdown);
+    }
   };
 
   const handleCommand = (
@@ -637,8 +639,10 @@ function RichEditor({
           const cleanedHTML = cleanupHtml(html);
 
           const markdown = turndownService.turndown(cleanedHTML);
-          const cleaningMarkdown = cleanSpacing(markdown);
-          onChange?.(cleaningMarkdown);
+          const cleanedMarkdown = cleanSpacing(markdown);
+          if (onChange) {
+            onChange(cleanedMarkdown);
+          }
         }}
         onKeyDown={handleOnKeyDown}
       />
@@ -821,10 +825,10 @@ function createCheckboxWrapper(
 
     const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
     const markdown = turndownService.turndown(html);
-    const cleaningMarkdown = cleanSpacing(markdown);
+    const cleanedMarkdown = cleanSpacing(markdown);
 
     if (onChange) {
-      onChange(cleaningMarkdown);
+      onChange(cleanedMarkdown);
     }
   });
 
@@ -838,6 +842,7 @@ function createCheckboxWrapper(
 const cleanSpacing = (text: string): string => {
   return text
     .replace(/\u00A0/g, " ")
+    .replace(/\[(x| )\]\s+/gi, "[$1] ")
     .split("\n")
     .map((line) => {
       if (
