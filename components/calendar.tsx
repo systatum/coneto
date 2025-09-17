@@ -371,9 +371,9 @@ function Calendar({
       });
     }
 
-    if (setIsOpen && selectabilityMode === "ranged" && !startPicked.picked) {
+    if (setIsOpen && selectabilityMode !== "single") {
       await setIsOpen(true);
-    } else if (setIsOpen && selectabilityMode !== "multiple") {
+    } else if (setIsOpen) {
       await setIsOpen(false);
     }
   };
@@ -926,12 +926,14 @@ const DateCell = styled.span<{
       cursor: default;
     `}
 
-  ${({ $isCurrentDate }) =>
-    $isCurrentDate &&
-    css`
-      background-color: #61a9f9;
-      color: white;
-    `}
+  ${({ $isCurrentDate, $isWeekend }) =>
+    $isCurrentDate && $isWeekend
+      ? ``
+      : $isCurrentDate &&
+        css`
+          background-color: #61a9f9;
+          color: white;
+        `}
 
   ${({ $isToday, $isCurrentDate, $isPickingProcess }) =>
     $isToday &&
