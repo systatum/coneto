@@ -78,6 +78,40 @@ export const Masked: Story = {
   },
 };
 
+export const Disabled: Story = {
+  render: () => {
+    const [value, setValue] = useState({ pinbox: "" });
+
+    const PARTS_INPUT: PinboxState[] = [
+      { type: "static", text: "S" },
+      { type: "alphanumeric" },
+      { type: "alphanumeric" },
+      { type: "alphanumeric" },
+      { type: "static", text: "-" },
+      { type: "alphanumeric" },
+    ];
+
+    const onChangeValue = (e: StatefulOnChangeType) => {
+      if (e && "target" in e) {
+        const { name, value } = e.target;
+        setValue((prev) => ({ ...prev, [name]: value }));
+      }
+    };
+
+    return (
+      <Pinbox
+        disabled
+        label="Disabled"
+        parts={PARTS_INPUT}
+        name="pinbox"
+        errorMessage="Error value"
+        value={value.pinbox}
+        onChange={onChangeValue}
+      />
+    );
+  },
+};
+
 export const Error: Story = {
   render: () => {
     const [value, setValue] = useState({ pinbox: "" });
