@@ -869,17 +869,7 @@ const cleanSpacing = (text: string): string => {
     .replace(/\[(x| )\]\s+/gi, "[$1] ")
     .split("\n")
     .map((line) => {
-      if (
-        line.includes("*") ||
-        line.includes("[") ||
-        line.includes("]") ||
-        /^\s*\d+\./.test(line) ||
-        line.trim() === ""
-      ) {
-        return line;
-      }
-
-      return line.replace(/\s{2,}/g, " ");
+      return line;
     })
     .join("\n");
 };
