@@ -32,7 +32,7 @@ export interface PinboxState {
 type PinboxTypeState = "static" | "digit" | "alphabet" | "alphanumeric";
 
 function Pinbox({
-  fontSize = 16,
+  fontSize = 24,
   label,
   errorMessage,
   masked,
@@ -129,7 +129,6 @@ function Pinbox({
     if (key === "Backspace") {
       if (valueLocal[index]) {
         updateValue(index, "");
-        moveToPrevInput(index);
       } else {
         moveToPrevInput(index);
       }
@@ -245,10 +244,10 @@ function Pinbox({
       })}
       {showError && (
         <RiErrorWarningLine
-          size={fontSize * 1.5}
+          size={fontSize * 1.25}
           style={{
             display: "flex",
-            marginLeft: fontSize * 0.7,
+            marginLeft: fontSize * 0.4,
             borderRadius: "9999px",
             background: "#dc2626",
             color: "white",
@@ -293,6 +292,7 @@ const PinboxInputWrapper = styled.div`
   height: fit-content;
   justify-content: center;
   align-items: center;
+  gap: 4px;
 `;
 
 const PinboxInputContent = styled.div<{
@@ -302,8 +302,8 @@ const PinboxInputContent = styled.div<{
   ${({ $fontSize }) =>
     $fontSize &&
     css`
-      width: ${`${$fontSize * 2}px`};
-      height: ${`${$fontSize * 2.5}px`};
+      width: ${`${$fontSize * 1.5}px`};
+      height: ${`${$fontSize * 1.75}px`};
     `};
 
   display: flex;
@@ -341,16 +341,16 @@ const PinboxInput = styled.input<{
   ${({ $fontSize, $isStatic }) =>
     $isStatic
       ? css`
-          width: ${`${$fontSize * 2}px`};
-          font-size: ${`${$fontSize * 1.5}px`};
+          width: ${`${$fontSize * 1.5}px`};
+          font-size: ${`${$fontSize}px`};
           display: flex;
           align-items: center;
           appearance: none;
         `
       : css`
-          width: ${`${$fontSize * 2}px`};
-          height: ${`${$fontSize * 2.5}px`};
-          font-size: ${$fontSize};
+          width: ${`${$fontSize * 1.5}px`};
+          height: ${`${$fontSize * 1.75}px`};
+          font-size: ${`${$fontSize}px`};
         `};
 
   border: 0.5px solid black;
