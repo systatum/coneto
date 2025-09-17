@@ -159,7 +159,6 @@ export const Multiple: Story = {
           setInputValue={setValue}
           dayNames={DAY_NAMES}
           monthNames={MONTH_NAMES}
-          disableWeekend
           selectabilityMode="multiple"
         />
       </div>
