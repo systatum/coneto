@@ -22,6 +22,7 @@ interface PinboxProps {
   value?: string;
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
+  disabled?: boolean;
 }
 
 export interface PinboxState {
@@ -43,6 +44,7 @@ function Pinbox({
   value,
   onChange,
   containerStyle,
+  disabled,
 }: PinboxProps) {
   const getDefaultValue = () => {
     let valIndex = 0;
@@ -206,12 +208,12 @@ function Pinbox({
   };
 
   const inputElements: ReactElement = (
-    <PinboxInputWrapper>
+    <PinboxInputWrapper $disabled={disabled}>
       {parts.map((part, index) => {
         const isStatic = part.type === "static";
 
         const displayChar = getDisplayChar(index);
-        const { type, pattern } = switchInputBox(part.type);
+        const { type, pattern, readOnly } = switchInputBox(part.type);
         const isAnimate = Boolean(
           masked && !isStatic && !maskedIndices.has(index) && valueLocal[index]
         );
@@ -223,19 +225,22 @@ function Pinbox({
             key={index}
           >
             <PinboxInput
+              aria-label="pinbox-input"
               $error={showError}
               ref={(el: HTMLInputElement) => {
                 inputsRef.current[index] = el;
                 if (el) el.value = displayChar;
               }}
+              disabled={disabled}
               pattern={pattern}
               type={type}
               maxLength={1}
               value={displayChar}
+              readOnly={readOnly}
               onKeyDown={(e) => handleKeyDown(e, index)}
-              readOnly={true}
               $isStatic={isStatic}
               $fontSize={fontSize}
+              onChange={() => {}}
               $isAnimate={isAnimate}
             />
             <PinboxIndicator $error={showError} />
@@ -285,7 +290,7 @@ const Container = styled.div<{
   ${({ $containerStyle }) => $containerStyle}
 `;
 
-const PinboxInputWrapper = styled.div`
+const PinboxInputWrapper = styled.div<{ $disabled?: boolean }>`
   display: flex;
   flex-direction: row;
   width: fit-content;
@@ -293,6 +298,13 @@ const PinboxInputWrapper = styled.div`
   justify-content: center;
   align-items: center;
   gap: 4px;
+  position: relative;
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      cursor: not-allowed;
+    `}
 `;
 
 const PinboxInputContent = styled.div<{
@@ -383,10 +395,22 @@ const PinboxInput = styled.input<{
           border: 0px;
           user-select: none;
           pointer-events: none;
+          &:disabled {
+            opacity: 0.6;
+            user-select: none;
+            cursor: not-allowed;
+          }
         `
       : css`
           &:focus + ${PinboxIndicator} {
             display: flex;
+          }
+          &:disabled {
+            background-color: #f9fafb;
+            opacity: 0.6;
+            user-select: none;
+            border-color: rgba(0, 0, 0, 0.3);
+            cursor: not-allowed;
           }
         `}
 `;
@@ -405,6 +429,7 @@ const switchInputBox = (type: PinboxTypeState) => {
     case "static":
       return {
         type: "text",
+        readOnly: true,
       };
 
     case "digit":
