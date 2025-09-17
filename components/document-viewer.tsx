@@ -33,6 +33,7 @@ interface DocumentViewerProps {
     totalPages?: number;
   }) => string;
   libPdfJsWorkerSrc?: string;
+  zoomPlaceholderText?: string;
 }
 
 export interface BoundingBoxesProps {
@@ -90,6 +91,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
       initialZoom = 100,
       totalPagesText,
       title = "Document",
+      zoomPlaceholderText = "zoom your pdf...",
       libPdfJsWorkerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.54/pdf.worker.min.mjs",
     },
     ref
@@ -494,7 +496,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
               strict
               inputValue={scaleValue}
               setInputValue={handleScale}
-              placeholder="zoom your pdf..."
+              placeholder={zoomPlaceholderText}
               containerStyle={css`
                 width: 100px;
                 color: black;
