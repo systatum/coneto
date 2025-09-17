@@ -58,30 +58,6 @@ function RichEditor({
     },
   });
 
-  turndownService.addRule("listItem", {
-    filter: "li",
-    replacement: function (content, node) {
-      content = content
-        .replace(/^\n+/, "")
-        .replace(/\n+$/, "\n")
-        .replace(/\n/gm, "\n    ");
-
-      var prefix = "* ";
-      var parent = node.parentNode as HTMLElement;
-      if (parent.nodeName === "OL") {
-        var start = parent.getAttribute("start");
-        var index = Array.prototype.indexOf.call(parent.children, node);
-        prefix = (start ? parseInt(start, 10) + index : index + 1) + ". ";
-      }
-
-      return (
-        prefix +
-        content +
-        (node.nextSibling && !/\n$/.test(content) ? "\n" : "")
-      );
-    },
-  });
-
   turndownService.addRule("cleanParagraphSpacing", {
     filter: ["p"],
     replacement: function (content, node) {
@@ -306,29 +282,6 @@ function RichEditor({
         return;
       }
 
-      const headingParent =
-        container.nodeType === Node.ELEMENT_NODE
-          ? (container as Element).closest("h1,h2,h3,h4,h5,h6")
-          : (container.parentNode as Element)?.closest("h1,h2,h3,h4,h5,h6");
-
-      if (headingParent) {
-        e.preventDefault();
-
-        const p = document.createElement("p");
-        p.innerHTML = "<br>";
-        headingParent.insertAdjacentElement("afterend", p);
-
-        const newRange = document.createRange();
-        newRange.setStart(p, 0);
-        newRange.collapse(true);
-
-        sel.removeAllRanges();
-        sel.addRange(newRange);
-
-        handleEditorChange();
-        return;
-      }
-
       e.preventDefault();
 
       document.execCommand("insertLineBreak");
@@ -543,54 +496,32 @@ function RichEditor({
     const headingTag = `h${level}` as keyof HTMLElementTagNameMap;
 
     if (/^H[1-6]$/.test(node.tagName)) {
-      if (node.tagName.toLowerCase() === headingTag) {
-        const p = document.createElement("p");
-        p.innerHTML = node.innerHTML;
-        node.replaceWith(p);
+      const newHeading = document.createElement(headingTag);
+      newHeading.innerHTML = node.innerHTML;
 
-        const newRange = document.createRange();
-        newRange.selectNodeContents(p);
-        newRange.collapse(false);
-        sel.removeAllRanges();
-        sel.addRange(newRange);
-      } else {
-        const newHeading = document.createElement(headingTag);
-        newHeading.innerHTML = node.innerHTML;
-        node.replaceWith(newHeading);
+      node.replaceWith(newHeading);
 
-        const newRange = document.createRange();
-        newRange.selectNodeContents(newHeading);
-        newRange.collapse(false);
-        sel.removeAllRanges();
-        sel.addRange(newRange);
-      }
+      const newRange = document.createRange();
+      newRange.selectNodeContents(newHeading);
+      newRange.collapse(false);
+      sel.removeAllRanges();
+      sel.addRange(newRange);
     } else {
       const heading = document.createElement(headingTag);
-
-      if (sel.isCollapsed) {
-        heading.innerHTML = "<br>";
-      } else {
-        heading.innerHTML = sel.toString();
-      }
+      heading.innerHTML = sel.toString();
 
       range.deleteContents();
       range.insertNode(heading);
 
       const newRange = document.createRange();
       newRange.selectNodeContents(heading);
-
-      if (sel.isCollapsed) {
-        newRange.setStart(heading, 0);
-        newRange.collapse(true);
-      } else {
-        newRange.collapse(false);
-      }
-
+      newRange.collapse(false);
       sel.removeAllRanges();
       sel.addRange(newRange);
     }
 
     savedSelection.current = null;
+
     handleEditorChange();
   };
 
