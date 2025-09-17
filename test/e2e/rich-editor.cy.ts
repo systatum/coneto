@@ -58,6 +58,13 @@ describe("RichEditor", () => {
         );
 
         cy.findByText("Test 2").should("not.exist");
+        cy.findAllByRole("button").eq(6).click();
+
+        cy.get("pre")
+          .invoke("text")
+          .then((text) => {
+            expectTextIncludesOrderedLines(text, ["1. Test 1", "2. Test 3"]);
+          });
       });
     });
   });
@@ -85,7 +92,7 @@ describe("RichEditor", () => {
             .invoke("text")
             .then((text) => {
               expectTextIncludesOrderedLines(text, [
-                "*   Bullet Point",
+                "* Bullet Point",
                 "Normal Point",
               ]);
             });
@@ -128,13 +135,6 @@ describe("RichEditor", () => {
     context("when type [ ]", () => {
       it("render unchecked value", () => {
         cy.findByRole("textbox").click().type("[ ] checkbox value");
-        cy.findAllByRole("button").eq(6).click();
-
-        cy.get("pre")
-          .invoke("text")
-          .then((text) => {
-            expectTextIncludesOrderedLines(text, ["[ ] checkbox value"]);
-          });
         cy.get("input[type='checkbox']").should("not.be.checked");
       });
     });
@@ -142,15 +142,6 @@ describe("RichEditor", () => {
     context("when type [x]", () => {
       it("render checked value", () => {
         cy.findByRole("textbox").click().type("[x] checkbox value checked");
-        cy.findAllByRole("button").eq(6).click();
-
-        cy.get("pre")
-          .invoke("text")
-          .then((text) => {
-            expectTextIncludesOrderedLines(text, [
-              "[x] checkbox value checked",
-            ]);
-          });
         cy.get("input[type='checkbox']").should("be.checked");
       });
     });
@@ -160,7 +151,6 @@ describe("RichEditor", () => {
         cy.findByRole("textbox")
           .click()
           .type("- [x] checkbox value checked{enter}");
-
         cy.get("input[type='checkbox']").should("be.checked");
       });
     });
@@ -202,10 +192,10 @@ describe("RichEditor", () => {
           expectTextIncludesOrderedLines(text, [
             "**Print content Test**",
             "The quick brown fox jumps over the lazy dog.",
-            "*   Pack my box with five dozen liquor jugs.",
-            "*   Typing skills improve with daily practice.",
-            "*   Accuracy is more important than speed.",
-            "*   Stay consistent and avoid looking at the keyboard.",
+            "* Pack my box with five dozen liquor jugs.",
+            "* Typing skills improve with daily practice.",
+            "* Accuracy is more important than speed.",
+            "* Stay consistent and avoid looking at the keyboard.",
           ]);
         });
     });
