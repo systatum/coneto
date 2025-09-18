@@ -19,13 +19,7 @@ interface DocumentViewerProps {
   selectionStyle?: CSSProp;
   source?: string;
   title?: string;
-  onRegionSelected?: (region: {
-    page?: number;
-    x?: number;
-    y?: number;
-    width?: number;
-    height?: number;
-  }) => void;
+  onRegionSelected?: (region: BoundingBoxState) => void;
   boundingBoxes?: BoundingBoxesProps[];
   initialZoom?: 75 | 100 | 110 | 120 | 130 | 140 | 150;
   totalPagesText?: (data: {
