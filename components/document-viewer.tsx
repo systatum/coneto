@@ -10,9 +10,9 @@ import {
   useReducer,
 } from "react";
 import styled, { css, type CSSProp } from "styled-components";
-import * as pdfjsLib from "pdfjs-dist";
 import { Combobox } from "./combobox";
 import { OptionsProps } from "./selectbox";
+import type { PDFDocumentProxy } from "pdfjs-dist";
 
 interface DocumentViewerProps {
   containerStyle?: CSSProp;
@@ -28,6 +28,7 @@ interface DocumentViewerProps {
   }) => string;
   libPdfJsWorkerSrc?: string;
   zoomPlaceholderText?: string;
+  zoomStyle?: CSSProp;
 }
 
 export interface BoundingBoxesProps {
@@ -86,12 +87,12 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
       totalPagesText,
       title = "Document",
       zoomPlaceholderText = "zoom your pdf...",
+      zoomStyle,
       libPdfJsWorkerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.54/pdf.worker.min.mjs",
     },
     ref
   ) => {
     // We set pdfjsLib.GlobalWorkerOptions.workerSrc to load the PDF.js worker from a CDN, since the built-in worker from the library cannot be used directly at the moment.
-    pdfjsLib.GlobalWorkerOptions.workerSrc = libPdfJsWorkerSrc;
 
     const containerRef = useRef<HTMLDivElement>(null);
     const viewerRef = useRef<HTMLDivElement>(null);
@@ -125,6 +126,70 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
       width?: number;
       height?: number;
     } | null>(null);
+
+    // For render for the first time to read pdf.
+    useEffect(() => {
+      if (!source || !viewerRef.current) return;
+      setLoading(true);
+      setError(null);
+
+      let cancelled = false;
+
+      import("pdfjs-dist").then((module) => {
+        module.GlobalWorkerOptions.workerSrc = libPdfJsWorkerSrc;
+
+        module
+          .getDocument(source)
+          .promise.then((pdf: PDFDocumentProxy) => {
+            if (cancelled) return;
+            setTotalPages(pdf.numPages);
+            const canvases: HTMLCanvasElement[] = [];
+
+            const renderPages = async () => {
+              for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const viewport = page.getViewport({ scale });
+
+                const canvas = document.createElement("canvas");
+                const context = canvas.getContext("2d");
+                if (!context) continue;
+
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+
+                await page.render({ canvas, canvasContext: context, viewport })
+                  .promise;
+
+                const pageWrapper = document.createElement("div");
+                pageWrapper.style.display = "flex";
+                pageWrapper.style.justifyContent = "center";
+                pageWrapper.style.marginBottom = "20px";
+                pageWrapper.style.background = "white";
+                pageWrapper.style.width = "fit-content";
+                pageWrapper.style.margin = "0 auto 20px auto";
+
+                pageWrapper.appendChild(canvas);
+                viewerRef.current?.appendChild(pageWrapper);
+                canvases.push(canvas);
+              }
+
+              pdfRef.current = { pdf, canvases };
+              setLoading(false);
+            };
+
+            renderPages();
+          })
+          .catch((err: any) => {
+            if (cancelled) return;
+            setError(`Error loading PDF: ${err.message}`);
+            setLoading(false);
+          });
+      });
+
+      return () => {
+        cancelled = true;
+      };
+    }, [source]);
 
     useEffect(() => {
       if (!viewerRef.current && selection) return;
@@ -161,7 +226,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
     );
 
     const pdfRef = useRef<{
-      pdf: pdfjsLib.PDFDocumentProxy;
+      pdf: PDFDocumentProxy;
       canvases: HTMLCanvasElement[];
     } | null>(null);
 
@@ -273,67 +338,6 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
         });
       });
     }, [scale]);
-
-    // For render for the first time to read pdf.
-    const renderPDF = async () => {
-      if (!source || !viewerRef.current) return;
-
-      const container = viewerRef.current;
-      container.innerHTML = "";
-      setLoading(true);
-      setError(null);
-
-      try {
-        const pdf = await pdfjsLib.getDocument(source).promise;
-        setTotalPages(pdf.numPages);
-        const canvases: HTMLCanvasElement[] = [];
-
-        for (let i = 1; i <= pdf.numPages; i++) {
-          const page = await pdf.getPage(i);
-          const viewport = page.getViewport({ scale });
-
-          const canvas = document.createElement("canvas");
-          const context = canvas.getContext("2d");
-          if (!context) continue;
-
-          canvas.width = viewport.width;
-          canvas.height = viewport.height;
-
-          await page.render({
-            canvas,
-            canvasContext: context,
-            viewport,
-          }).promise;
-
-          const pageWrapper = document.createElement("div");
-          pageWrapper.style.display = "flex";
-          pageWrapper.style.justifyContent = "center";
-          pageWrapper.style.marginBottom = "20px";
-          pageWrapper.style.background = "white";
-          pageWrapper.style.boxShadow = "0 2px 10px rgba(0, 0, 0, 0.1)";
-          pageWrapper.style.width = "fit-content";
-          pageWrapper.style.margin = "0 auto 20px auto";
-
-          canvas.style.display = "block";
-          canvas.style.maxWidth = "100%";
-          canvas.style.height = "auto";
-
-          pageWrapper.appendChild(canvas);
-          container.appendChild(pageWrapper);
-          canvases.push(canvas);
-        }
-
-        pdfRef.current = { pdf, canvases };
-        setLoading(false);
-      } catch (err: any) {
-        setError(`Error loading PDF: ${err.message}`);
-        setLoading(false);
-      }
-    };
-
-    useEffect(() => {
-      renderPDF();
-    }, [source]);
 
     useEffect(() => {
       if (pdfRef.current) {
@@ -494,6 +498,10 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
               containerStyle={css`
                 width: 100px;
                 color: black;
+              `}
+              selectboxStyle={css`
+                background-color: white;
+                ${zoomStyle}
               `}
               options={SCALE_OPTIONS}
             />
