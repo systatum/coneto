@@ -73,6 +73,10 @@
       "import": "./dist/components/dialog.js",
       "types": "./dist/components/dialog.d.ts"
     },
+    "./document-viewer": {
+      "import": "./dist/components/document-viewer.js",
+      "types": "./dist/components/document-viewer.d.ts"
+    },
     "./dormant-text": {
       "import": "./dist/components/dormant-text.js",
       "types": "./dist/components/dormant-text.d.ts"
