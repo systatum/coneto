@@ -11,6 +11,85 @@ const meta: Meta<typeof Combobox> = {
     layout: "centered",
   },
   tags: ["autodocs"],
+  argTypes: {
+    inputValue: {
+      control: "object",
+      description:
+        "Currently selected value of the combobox. Example: { text: 'Apple', value: 'apple' }",
+    },
+    setInputValue: {
+      control: false,
+      description:
+        "Callback function to update inputValue. Should not be controlled directly in Storybook.",
+    },
+    options: {
+      control: "object",
+      description:
+        "Array of available options. Each option has text and value properties.",
+    },
+    clearable: {
+      control: "boolean",
+      description: "Show a clear button to reset inputValue.",
+    },
+    placeholder: {
+      control: "text",
+      description: "Placeholder text shown when inputValue is empty.",
+    },
+    emptySlate: {
+      control: "text",
+      description: "Text to display when no options are available.",
+    },
+    highlightOnMatch: {
+      control: "boolean",
+      description:
+        "Highlight matching option automatically when inputValue matches.",
+    },
+    strict: {
+      control: "boolean",
+      description: "Restrict input to only values that exist in options.",
+    },
+    label: {
+      control: "text",
+      description: "Label displayed above the input field.",
+    },
+    containerStyle: {
+      control: "object",
+      description: "Custom CSS style for the wrapper.",
+    },
+    selectboxStyle: {
+      control: "object",
+      description: "Custom CSS style for the input/select area.",
+    },
+    labelStyle: {
+      control: "object",
+      description: "Custom CSS style for the label element.",
+    },
+    actions: {
+      control: "object",
+      description:
+        "Array of actions displayed at the top of dropdown. Each action has { title, icon, onClick, style }.",
+    },
+    showError: {
+      control: "boolean",
+      description: "Whether to show an error message below the input.",
+    },
+    errorMessage: {
+      control: "text",
+      description: "Text content of the error message.",
+    },
+    onKeyDown: {
+      control: false,
+      description: "Keyboard event handler for input field.",
+    },
+    onClick: {
+      control: false,
+      description: "Callback triggered when an option or action is clicked.",
+    },
+    name: {
+      control: "text",
+      description: "Name/id used for accessibility and aria-label.",
+    },
+  },
 };
 
 export default meta;
