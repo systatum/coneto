@@ -67,50 +67,52 @@ describe("Combobox", () => {
       });
     });
 
-    context("when search, choosen and clicked selectbox", () => {
-      it("should show all option if we clicked", () => {
-        cy.findByPlaceholderText("Select a fruit...").type("Apple").click();
-
-        const FRUIT_OPTIONS = [
-          "Apple",
-          "Banana",
-          "Orange",
-          "Grape",
-          "Pineapple",
-          "Strawberry",
-          "Watermelon",
-        ];
-
-        cy.findByRole("option", { name: "Apple" }).click();
-
-        cy.findByPlaceholderText("Select a fruit...").click();
-        FRUIT_OPTIONS.forEach((data) =>
-          cy.findByRole("option", { name: data }).should("be.visible")
-        );
+    context("when making selection", () => {
+      context("when by clicking the item", () => {
+        it("shows all options when opening the combobox", () => {
+          cy.findByPlaceholderText("Select a fruit...").type("Apple").click();
+  
+          const FRUIT_OPTIONS = [
+            "Apple",
+            "Banana",
+            "Orange",
+            "Grape",
+            "Pineapple",
+            "Strawberry",
+            "Watermelon",
+          ];
+  
+          cy.findByRole("option", { name: "Apple" }).click();
+  
+          cy.findByPlaceholderText("Select a fruit...").click();
+          FRUIT_OPTIONS.forEach((data) =>
+            cy.findByRole("option", { name: data }).should("be.visible")
+          );
+        });
       });
-    });
 
-    context("when search, choosen with enter and clicked selectbox", () => {
-      it("should show all option if we clicked", () => {
-        cy.findByPlaceholderText("Select a fruit...")
-          .click()
-          .type("Apple")
-          .type("{enter}");
-
-        const FRUIT_OPTIONS = [
-          "Apple",
-          "Banana",
-          "Orange",
-          "Grape",
-          "Pineapple",
-          "Strawberry",
-          "Watermelon",
-        ];
-
-        cy.findByPlaceholderText("Select a fruit...").type("{downarrow}");
-        FRUIT_OPTIONS.forEach((data) =>
-          cy.findByRole("option", { name: data }).should("be.visible")
-        );
+      context("when by hitting enter", () => {
+        it("shows all options when opening the combobox", () => {
+          cy.findByPlaceholderText("Select a fruit...")
+            .click()
+            .type("Apple")
+            .type("{enter}");
+  
+          const FRUIT_OPTIONS = [
+            "Apple",
+            "Banana",
+            "Orange",
+            "Grape",
+            "Pineapple",
+            "Strawberry",
+            "Watermelon",
+          ];
+  
+          cy.findByPlaceholderText("Select a fruit...").type("{downarrow}");
+          FRUIT_OPTIONS.forEach((data) =>
+            cy.findByRole("option", { name: data }).should("be.visible")
+          );
+        });        
       });
     });
   });
