@@ -137,6 +137,10 @@
       "import": "./dist/components/moneybox.js",
       "types": "./dist/components/moneybox.d.ts"
     },
+    "./nav-tab": {
+      "import": "./dist/components/nav-tab.js",
+      "types": "./dist/components/nav-tab.d.ts"
+    },
     "./pagination": {
       "import": "./dist/components/pagination.js",
       "types": "./dist/components/pagination.d.ts"
