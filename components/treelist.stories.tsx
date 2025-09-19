@@ -28,6 +28,7 @@ export const Default: Story = {
     const TREE_LIST_DATA: TreeListContentProps[] = [
       {
         title: "Member of Technical Staff",
+        collapsible: true,
         items: [
           { id: 1, title: "Adam Noto Hakarsa", onClick: setPerson },
           { id: 2, title: "Mohamad Naufal Alim", onClick: setPerson },
@@ -35,6 +36,7 @@ export const Default: Story = {
       },
       {
         title: "Product Management Team",
+        collapsible: true,
         items: [
           { id: 1, title: "Samantha Lee", onClick: setPerson },
           { id: 2, title: "Jason Kim", onClick: setPerson },

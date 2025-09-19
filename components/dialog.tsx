@@ -10,8 +10,9 @@ import {
   createContext,
 } from "react";
 import ReactDOM from "react-dom";
-import styled, { keyframes, CSSProp } from "styled-components";
+import styled, { keyframes, CSSProp, css } from "styled-components";
 import { RiCloseLine } from "@remixicon/react";
+import { Button } from "./button";
 
 const fadeIn = keyframes`from {opacity: 0;} to {opacity: 1;}`;
 const fadeOut = keyframes`from {opacity: 1;} to {opacity: 0;}`;
@@ -146,13 +147,28 @@ function DialogContent({
       />
       <StyledContent $isOpen={open} $style={style}>
         {!hideClose && (
-          <StyledClose
+          <Button
+            variant="transparent"
             onClick={() => setOpen(false)}
             aria-label="Close dialog"
-            $style={closeButtonStyle}
+            containerStyle={css`
+              position: absolute;
+              top: 1rem;
+              right: 1.2rem;
+              cursor: pointer;
+              transition: all 0.3s;
+              border-radius: 2px;
+              padding: 2px;
+            `}
+            buttonStyle={css`
+              width: 20px;
+              height: 20px;
+              padding: 2px;
+              ${closeButtonStyle}
+            `}
           >
             <RiCloseLine />
-          </StyledClose>
+          </Button>
         )}
         {children}
       </StyledContent>

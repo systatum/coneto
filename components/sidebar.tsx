@@ -74,12 +74,13 @@ function Sidebar({
 
   return (
     <>
-      {isSidebarOpen && (
-        <Overlay {...handlers} $isOpen={isSidebarOpen} $position={position} />
-      )}
-
       {isSidebarOpen && isMobile && (
-        <Backdrop onClick={() => handleToggleSidebar(false)} />
+        <Overlay
+          {...handlers}
+          onClick={() => handleToggleSidebar(false)}
+          $isOpen={isSidebarOpen}
+          $position={position}
+        />
       )}
 
       <MotionSidebar
@@ -114,18 +115,9 @@ const Overlay = styled.div<{ $isOpen: boolean; $position: "left" | "right" }>`
   height: 100%;
   z-index: 30;
   width: ${({ $isOpen }) => ($isOpen ? "100%" : "5%")};
-  ${({ $position }) => ($position === "left" ? "left: 0;" : "right: 0;")}
-  @media (min-width: 768px) {
-    display: none;
-  }
-`;
-
-const Backdrop = styled.div`
-  position: fixed;
-  inset: 0;
-  z-index: 20;
   background: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(4px);
+  ${({ $position }) => ($position === "left" ? "left: 0;" : "right: 0;")}
   @media (min-width: 768px) {
     display: none;
   }

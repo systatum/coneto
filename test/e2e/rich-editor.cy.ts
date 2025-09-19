@@ -135,6 +135,13 @@ describe("RichEditor", () => {
     context("when type [ ]", () => {
       it("render unchecked value", () => {
         cy.findByRole("textbox").click().type("[ ] checkbox value");
+        cy.findAllByRole("button").eq(6).click();
+
+        cy.get("pre")
+          .invoke("text")
+          .then((text) => {
+            expectTextIncludesOrderedLines(text, ["[ ] checkbox value"]);
+          });
         cy.get("input[type='checkbox']").should("not.be.checked");
       });
     });
@@ -142,6 +149,15 @@ describe("RichEditor", () => {
     context("when type [x]", () => {
       it("render checked value", () => {
         cy.findByRole("textbox").click().type("[x] checkbox value checked");
+        cy.findAllByRole("button").eq(6).click();
+
+        cy.get("pre")
+          .invoke("text")
+          .then((text) => {
+            expectTextIncludesOrderedLines(text, [
+              "[x] checkbox value checked",
+            ]);
+          });
         cy.get("input[type='checkbox']").should("be.checked");
       });
     });

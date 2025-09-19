@@ -25,6 +25,13 @@ export const INNER_CIRCLE_VARIANT_COLOR: Record<string, string> = {
   todo: "#4b5563",
 };
 
+export const INNER_ACTIVE_CIRCLE_VARIANT_COLOR: Record<string, string> = {
+  error: "#cc0000",
+  completed: "#009927",
+  current: "#009927",
+  todo: "#374151",
+};
+
 export const TEXT_VARIANT_COLOR: Record<string, string> = {
   error: "#ff0000",
   completed: "",
