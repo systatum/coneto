@@ -10,6 +10,7 @@ import {
   useState,
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
+import { Button } from "./button";
 
 interface WindowProps {
   orientation?: "horizontal" | "vertical";
@@ -17,6 +18,7 @@ interface WindowProps {
   style?: CSSProp;
   onResize?: () => void;
   onResizeComplete?: () => void;
+  dividerStyle?: CSSProp;
 }
 
 export interface WindowCellProps {
@@ -37,6 +39,7 @@ function Window({
   style,
   onResize,
   onResizeComplete,
+  dividerStyle,
 }: WindowProps) {
   const isVertical = orientation === "vertical";
   const childrenArray = Children.toArray(children).filter(isValidElement);
@@ -152,6 +155,7 @@ function Window({
           {child}
           {index < childrenArray.length - 1 && (
             <Divider
+              $style={dividerStyle}
               className="divider"
               aria-label={`window-divider`}
               onMouseDown={startDrag(index)}
@@ -175,16 +179,32 @@ function WindowCell({ children, style, actions }: WindowCellProps) {
       {actions && (
         <ActionContainer>
           {actions.map((data, index) => (
-            <ActionButton
+            <Button
+              variant="transparent"
               key={index}
               aria-label="window-button"
               onClick={() => {
                 if (data.onClick) data.onClick();
               }}
-              $style={data.style}
+              containerStyle={css`
+                position: absolute;
+                top: 0.5rem;
+                right: 0.5rem;
+                cursor: pointer;
+                transition: all 0.3s;
+                border-radius: 2px;
+                padding: 2px;
+                width: fit-content;
+                height: fit-content;
+              `}
+              buttonStyle={css`
+                width: fit-content;
+                height: fit-content;
+                padding: 2px;
+              `}
             >
               {data.icon && <data.icon size={16} />}
-            </ActionButton>
+            </Button>
           ))}
         </ActionContainer>
       )}
@@ -224,9 +244,7 @@ const CellWrapper = styled.div.withConfig({
   user-select: ${({ $isDragging }) => ($isDragging ? "none" : "auto")};
 `;
 
-const Divider = styled.div.withConfig({
-  shouldForwardProp: (prop) => prop !== "$isVertical",
-})<{ $isVertical: boolean }>`
+const Divider = styled.div<{ $isVertical: boolean; $style?: CSSProp }>`
   position: absolute;
   z-index: 10;
   background-color: transparent;
@@ -250,6 +268,8 @@ const Divider = styled.div.withConfig({
           cursor: row-resize;
           border-bottom: 1px solid #d1d5db;
         `}
+
+  ${({ $style }) => $style}
 `;
 
 const ActionContainer = styled.div`
@@ -258,22 +278,6 @@ const ActionContainer = styled.div`
   top: 16px;
   display: flex;
   flex-direction: row;
-`;
-
-const ActionButton = styled.div<{ $style?: CSSProp }>`
-  display: flex;
-  align-items: center;
-  position: relative;
-  padding: 2px;
-  gap: 8px;
-  transition: background-color 0.3s;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #d1d5db;
-  }
-
-  ${({ $style }) => $style}
 `;
 
 Window.Cell = WindowCell;

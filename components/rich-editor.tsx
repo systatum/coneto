@@ -65,6 +65,30 @@ function RichEditor({
     },
   });
 
+  turndownService.addRule("listItem", {
+    filter: "li",
+    replacement: function (content, node) {
+      content = content
+        .replace(/^\n+/, "")
+        .replace(/\n+$/, "\n")
+        .replace(/\n/gm, "\n    ");
+
+      var prefix = "* ";
+      var parent = node.parentNode as HTMLElement;
+      if (parent.nodeName === "OL") {
+        var start = parent.getAttribute("start");
+        var index = Array.prototype.indexOf.call(parent.children, node);
+        prefix = (start ? parseInt(start, 10) + index : index + 1) + ". ";
+      }
+
+      return (
+        prefix +
+        content +
+        (node.nextSibling && !/\n$/.test(content) ? "\n" : "")
+      );
+    },
+  });
+
   turndownService.addRule("cleanParagraphSpacing", {
     filter: ["p"],
     replacement: function (content, node) {
@@ -160,6 +184,7 @@ function RichEditor({
     if (!editorRef.current || editorRef.current.innerHTML) return;
 
     editorRef.current.innerHTML = String(marked(value));
+    document.execCommand("defaultParagraphSeparator", false, "p");
 
     editorRef.current
       .querySelectorAll(".custom-checkbox-wrapper")
@@ -209,12 +234,11 @@ function RichEditor({
     const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
     const cleanedHTML = cleanupHtml(html);
     const markdown = turndownService.turndown(cleanedHTML);
-    const cleaningMarkdown = cleanSpacing(markdown);
+    const cleanedMarkdown = cleanSpacing(markdown);
 
-    console.log(cleanedHTML);
-    console.log(cleaningMarkdown);
-
-    onChange?.(cleaningMarkdown);
+    if (onChange) {
+      onChange(cleanedMarkdown);
+    }
   };
 
   const handleCommand = (
@@ -665,6 +689,7 @@ function RichEditor({
 
             {isOpen && (
               <MenuWrapper ref={menuRef}>
+                test
                 <TipMenu
                   setIsOpen={() => setIsOpen(false)}
                   subMenuList={TIP_MENU_RICH_EDITOR}
@@ -686,13 +711,19 @@ function RichEditor({
         $toolbarPosition={toolbarPosition}
         $mode={mode}
         onInput={() => {
+          if (editorRef.current) {
+            syncCheckboxStates(editorRef.current);
+          }
+
           const html =
             editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
           const cleanedHTML = cleanupHtml(html);
 
           const markdown = turndownService.turndown(cleanedHTML);
-          const cleaningMarkdown = cleanSpacing(markdown);
-          onChange?.(cleaningMarkdown);
+          const cleanedMarkdown = cleanSpacing(markdown);
+          if (onChange) {
+            onChange(cleanedMarkdown);
+          }
         }}
         onKeyDown={handleOnKeyDown}
       />
@@ -795,7 +826,7 @@ const MenuWrapper = styled.div`
   top: 100%;
   right: -100px;
   transform: translateY(4px);
-  z-index: 10;
+  z-index: 40;
 `;
 
 const EditorArea = styled.div<{
@@ -924,10 +955,10 @@ function createCheckboxWrapper(
 
     const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
     const markdown = turndownService.turndown(html);
-    const cleaningMarkdown = cleanSpacing(markdown);
+    const cleanedMarkdown = cleanSpacing(markdown);
 
     if (onChange) {
-      onChange(cleaningMarkdown);
+      onChange(cleanedMarkdown);
     }
   });
 
@@ -941,22 +972,23 @@ function createCheckboxWrapper(
 const cleanSpacing = (text: string): string => {
   return text
     .replace(/\u00A0/g, " ")
+    .replace(/\[(x| )\]\s+/gi, "[$1] ")
     .split("\n")
     .map((line) => {
-      if (
-        line.includes("*") ||
-        line.includes("[") ||
-        line.includes("]") ||
-        /^\s*\d+\./.test(line) ||
-        line.trim() === ""
-      ) {
-        return line;
-      }
-
-      return line.replace(/\s{2,}/g, " ");
+      return line;
     })
     .join("\n");
 };
+
+function syncCheckboxStates(container: HTMLElement) {
+  const checkboxes = container.querySelectorAll(
+    'input[type="checkbox"].custom-checkbox-wrapper'
+  );
+  checkboxes.forEach((checkbox) => {
+    const input = checkbox as HTMLInputElement;
+    input.dataset.checked = String(input.checked);
+  });
+}
 
 // Clean up HTML so that <div> elements don't cause extra spacing in <ul> or <ol>.
 // This ensures ordered and unordered lists are not wrapped with <div> or <p>,
