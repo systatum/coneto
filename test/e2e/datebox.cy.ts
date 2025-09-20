@@ -9,9 +9,30 @@ describe("Datebox", () => {
     context("when click next, previous and date", () => {
       it("should show render date", () => {
         cy.get('[data-type="selectbox"]').click();
+
         cy.findByLabelText("next-month").click();
         cy.findByLabelText("previous-month").click();
         cy.findByText("13").click();
+
+        cy.get('[data-type="selectbox"]')
+          .invoke("val")
+          .then((value) => {
+            const today = new Date();
+            const selectedDate = new Date(
+              today.getFullYear(),
+              today.getMonth(),
+              13
+            );
+
+            const formatted =
+              String(selectedDate.getMonth() + 1).padStart(2, "0") +
+              "/" +
+              String(selectedDate.getDate()).padStart(2, "0") +
+              "/" +
+              selectedDate.getFullYear();
+
+            expect(value).to.eq(formatted);
+          });
       });
     });
 
@@ -24,6 +45,10 @@ describe("Datebox", () => {
         cy.findByLabelText("combobox-year").click();
         cy.findByText("2024").click();
         cy.findByText("3").click();
+        const expectedContent = "01/03/2024";
+
+        cy.findByPlaceholderText("mm/dd/yyyy").as("input");
+        cy.get("@input").should("have.value", expectedContent);
       });
     });
   });
@@ -36,14 +61,19 @@ describe("Datebox", () => {
     context("when click on the weekend", () => {
       it("value doesn't change ", () => {
         cy.get('[data-type="selectbox"]').click();
-        cy.findByLabelText("next-month").click();
-        cy.findByLabelText("previous-month").click();
         cy.findByLabelText("calendar-select-date").click();
         cy.findByLabelText("combobox-month").click();
         cy.findByText("JUN").click();
         cy.findByLabelText("combobox-year").click();
         cy.findByText("2025").click();
+        cy.findByText("23").click();
+        cy.get('[data-type="selectbox"]').click();
+
         cy.findByText("22").click();
+        const expectedContent = "06/23/2025";
+
+        cy.findByPlaceholderText("mm/dd/yyyy").as("input");
+        cy.get("@input").should("have.value", expectedContent);
       });
     });
   });
