@@ -22,7 +22,12 @@ interface RichEditorProps {
   toolbarRightPanel?: ReactNode;
   editorStyle?: CSSProp;
   containerStyle?: CSSProp;
+  mode?: RichEditorModeState;
+  toolbarPosition?: RichEditorToolbarPositionState;
 }
+
+type RichEditorToolbarPositionState = "top" | "bottom";
+type RichEditorModeState = "view-only" | "page-editor";
 
 export interface RichEditorToolbarButtonProps {
   icon?: RemixiconComponentType;
@@ -38,6 +43,8 @@ function RichEditor({
   toolbarRightPanel,
   editorStyle,
   containerStyle,
+  mode = "view-only",
+  toolbarPosition = "top",
 }: RichEditorProps) {
   const turndownService = new TurndownService();
 
@@ -545,32 +552,54 @@ function RichEditor({
     const headingTag = `h${level}` as keyof HTMLElementTagNameMap;
 
     if (/^H[1-6]$/.test(node.tagName)) {
-      const newHeading = document.createElement(headingTag);
-      newHeading.innerHTML = node.innerHTML;
+      if (node.tagName.toLowerCase() === headingTag) {
+        const p = document.createElement("p");
+        p.innerHTML = node.innerHTML;
+        node.replaceWith(p);
 
-      node.replaceWith(newHeading);
+        const newRange = document.createRange();
+        newRange.selectNodeContents(p);
+        newRange.collapse(false);
+        sel.removeAllRanges();
+        sel.addRange(newRange);
+      } else {
+        const newHeading = document.createElement(headingTag);
+        newHeading.innerHTML = node.innerHTML;
+        node.replaceWith(newHeading);
 
-      const newRange = document.createRange();
-      newRange.selectNodeContents(newHeading);
-      newRange.collapse(false);
-      sel.removeAllRanges();
-      sel.addRange(newRange);
+        const newRange = document.createRange();
+        newRange.selectNodeContents(newHeading);
+        newRange.collapse(false);
+        sel.removeAllRanges();
+        sel.addRange(newRange);
+      }
     } else {
       const heading = document.createElement(headingTag);
-      heading.innerHTML = sel.toString();
+
+      if (sel.isCollapsed) {
+        heading.innerHTML = "<br>";
+      } else {
+        heading.innerHTML = sel.toString();
+      }
 
       range.deleteContents();
       range.insertNode(heading);
 
       const newRange = document.createRange();
       newRange.selectNodeContents(heading);
-      newRange.collapse(false);
+
+      if (sel.isCollapsed) {
+        newRange.setStart(heading, 0);
+        newRange.collapse(true);
+      } else {
+        newRange.collapse(false);
+      }
+
       sel.removeAllRanges();
       sel.addRange(newRange);
     }
 
     savedSelection.current = null;
-
     handleEditorChange();
   };
 
@@ -623,59 +652,63 @@ function RichEditor({
 
   return (
     <Wrapper $containerStyle={containerStyle}>
-      <Toolbar>
-        <ToolbarGroup>
-          <RichEditorToolbarButton
-            icon={RiBold}
-            onClick={() => handleCommand("bold")}
-          />
-          <RichEditorToolbarButton
-            icon={RiItalic}
-            onClick={() => handleCommand("italic")}
-          />
-          <RichEditorToolbarButton
-            icon={RiListOrdered}
-            onClick={() => handleCommand("insertOrderedList")}
-          />
-          <RichEditorToolbarButton
-            icon={RiListUnordered}
-            onClick={() => handleCommand("insertUnorderedList")}
-          />
-          <RichEditorToolbarButton
-            icon={RiCheckboxLine}
-            onClick={() => handleCommand("checkbox")}
-          />
-          <RichEditorToolbarButton
-            icon={RiHeading}
-            isOpen={isOpen}
-            onClick={() => {
-              const sel = window.getSelection();
-              if (sel && sel.rangeCount > 0) {
-                savedSelection.current = sel.getRangeAt(0).cloneRange();
-              }
-              setIsOpen(true);
-            }}
-          />
+      <ToolbarWrapper $toolbarMode={toolbarPosition}>
+        <Toolbar $toolbarMode={toolbarPosition}>
+          <ToolbarGroup>
+            <RichEditorToolbarButton
+              icon={RiBold}
+              onClick={() => handleCommand("bold")}
+            />
+            <RichEditorToolbarButton
+              icon={RiItalic}
+              onClick={() => handleCommand("italic")}
+            />
+            <RichEditorToolbarButton
+              icon={RiListOrdered}
+              onClick={() => handleCommand("insertOrderedList")}
+            />
+            <RichEditorToolbarButton
+              icon={RiListUnordered}
+              onClick={() => handleCommand("insertUnorderedList")}
+            />
+            <RichEditorToolbarButton
+              icon={RiCheckboxLine}
+              onClick={() => handleCommand("checkbox")}
+            />
+            <RichEditorToolbarButton
+              icon={RiHeading}
+              isOpen={isOpen}
+              onClick={() => {
+                const sel = window.getSelection();
+                if (sel && sel.rangeCount > 0) {
+                  savedSelection.current = sel.getRangeAt(0).cloneRange();
+                }
+                setIsOpen(true);
+              }}
+            />
 
-          {isOpen && (
-            <MenuWrapper ref={menuRef}>
-              <TipMenu
-                setIsOpen={() => setIsOpen(false)}
-                subMenuList={TIP_MENU_RICH_EDITOR}
-              />
-            </MenuWrapper>
+            {isOpen && (
+              <MenuWrapper ref={menuRef} $toolbarPosition={toolbarPosition}>
+                <TipMenu
+                  setIsOpen={() => setIsOpen(false)}
+                  subMenuList={TIP_MENU_RICH_EDITOR}
+                />
+              </MenuWrapper>
+            )}
+          </ToolbarGroup>
+          {toolbarRightPanel && (
+            <ToolbarRightPanel>{toolbarRightPanel}</ToolbarRightPanel>
           )}
-        </ToolbarGroup>
-        {toolbarRightPanel && (
-          <ToolbarRightPanel>{toolbarRightPanel}</ToolbarRightPanel>
-        )}
-      </Toolbar>
+        </Toolbar>
+      </ToolbarWrapper>
 
       <EditorArea
         ref={editorRef}
         role="textbox"
         contentEditable
         $editorStyle={editorStyle}
+        $toolbarPosition={toolbarPosition}
+        $mode={mode}
         onInput={() => {
           if (editorRef.current) {
             syncCheckboxStates(editorRef.current);
@@ -725,19 +758,48 @@ const Wrapper = styled.div<{ $containerStyle?: CSSProp }>`
   border: 1px solid #ececec;
   border-radius: 4px;
   box-shadow: 0 1px 4px -3px #5b5b5b;
+  position: relative;
 
   ${({ $containerStyle }) => $containerStyle}
 `;
 
-const Toolbar = styled.div`
+const ToolbarWrapper = styled.div<{
+  $toolbarMode?: RichEditorToolbarPositionState;
+}>`
+  position: absolute;
+  width: 100%;
+
+  ${({ $toolbarMode }) =>
+    $toolbarMode === "top"
+      ? css`
+          top: 0;
+        `
+      : css`
+          bottom: 0;
+        `}
+`;
+
+const Toolbar = styled.div<{
+  $toolbarMode?: RichEditorToolbarPositionState;
+}>`
   display: flex;
   flex-direction: row;
+  width: 100%;
+  position: relative;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #ececec;
   padding: 0 8px;
   background: white;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+  ${({ $toolbarMode }) =>
+    $toolbarMode === "top"
+      ? css`
+          border-bottom: 1px solid #ececec;
+        `
+      : css`
+          border-top: 1px solid #ececec;
+        `}
 `;
 
 const ToolbarGroup = styled.div`
@@ -757,21 +819,50 @@ const ToolbarRightPanel = styled.div`
   gap: 8px;
 `;
 
-const MenuWrapper = styled.div`
+const MenuWrapper = styled.div<{
+  $toolbarPosition?: RichEditorToolbarPositionState;
+}>`
   position: absolute;
-  top: 100%;
+  ${({ $toolbarPosition }) =>
+    $toolbarPosition === "top"
+      ? css`
+          top: 100%;
+          transform: translateY(4px);
+        `
+      : css`
+          bottom: 100%;
+          transform: translateY(-4px);
+        `}
   right: -100px;
-  transform: translateY(4px);
-  z-index: 10;
+  z-index: 40;
 `;
 
 const EditorArea = styled.div<{
+  $toolbarPosition?: RichEditorToolbarPositionState;
   $editorStyle?: CSSProp;
+  $mode?: RichEditorModeState;
 }>`
-  min-height: 200px;
   padding: 8px;
   outline: none;
   background-color: white;
+
+  ${({ $mode }) =>
+    $mode === "view-only"
+      ? css`
+          min-height: 200px;
+        `
+      : css`
+          min-height: 100vh;
+        `}
+
+  ${({ $toolbarPosition }) =>
+    $toolbarPosition === "top"
+      ? css`
+          padding-top: 45px;
+        `
+      : css`
+          padding-bottom: 45px;
+        `}
 
   ol {
     list-style-type: decimal !important;
