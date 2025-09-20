@@ -381,7 +381,7 @@ function Calendar({
 
               newValues = rangeValues;
             } else {
-              newValues = [...values, formattedData];
+              newValues = [...new Set([...values, formattedData])];
             }
           }
           setStartPicked({ picked: false, indexPicked: null });
@@ -401,6 +401,7 @@ function Calendar({
         const latestValueLocal = newValues[newValues.length - 1]
           ? `-${newValues[newValues.length - 1]}`
           : "";
+
         const newValuesLocal = `${firstValueLocal}${latestValueLocal}`;
 
         setInputValue({
@@ -914,6 +915,7 @@ const DateCellWrapper = styled.li<{
   justify-content: center;
   text-align: center;
   position: relative;
+  height: 27px;
 
   ${({ $isHighlighted, $isDisabled, $isWeekend }) =>
     $isHighlighted &&
@@ -1071,8 +1073,8 @@ const DataCellRange = styled.span<{
 }>`
   position: absolute;
   width: 45px;
-  height: 26px;
-  top: 45%;
+  height: 25px;
+  top: 50%;
   left: 0;
   transform: translateY(-50%);
 
@@ -1113,7 +1115,7 @@ const DataCellRange = styled.span<{
     $isRangeEnd &&
     css`
       width: 25px;
-      transform: translateX(-3%) translateY(-50%);
+      transform: translateX(-10%) translateY(-50%);
     `}
 `;
 
