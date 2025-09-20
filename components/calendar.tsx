@@ -585,6 +585,7 @@ function Calendar({
           <Button
             onClick={handleMoveToToday}
             variant="outline"
+            aria-label="today-button"
             buttonStyle={css`
               border-color: #f3f4f6;
               width: 100%;
@@ -762,6 +763,7 @@ function Calendar({
 
                   {isToday && (
                     <DateCellTodayDot
+                      aria-label="today-dot"
                       $isToday={isToday}
                       $isDisabled={isDisabled}
                       $isPickingProcess={startPicked.picked}
