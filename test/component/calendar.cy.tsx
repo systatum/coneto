@@ -36,6 +36,7 @@ describe("Calendar ", () => {
           .should("have.length.greaterThan", 0);
       });
     });
+
     context("when clicked", () => {
       it("not clickable", () => {
         cy.mount(
@@ -57,16 +58,49 @@ describe("Calendar ", () => {
     });
   });
 
-  context("highlight today", () => {
-    context("when given", () => {
+  context("today", () => {
+    context("when clicked", () => {
       it("renders date with blue dot and color", () => {
         cy.mount(<Calendar inputValue={value} monthNames={MONTH_NAMES} />);
-        cy.findAllByLabelText("calendar-select-date").eq(0).click();
+        cy.findAllByLabelText("today-button").eq(0).click();
         const today = new Date().getDate();
         cy.get("li")
           .contains(today.toString())
           .within(() => {
             cy.get("div").should("exist");
+          });
+      });
+
+      it("renders today dot centered even after selecting another date", () => {
+        cy.mount(<Calendar inputValue={value} monthNames={MONTH_NAMES} />);
+
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+
+        cy.findAllByText(String(tomorrow.getDate())).eq(0).click();
+
+        cy.findByLabelText("today-dot").should("exist");
+
+        // Verify the element is translated by -50% horizontally.
+        // We can’t check percentages directly, since the browser converts them to pixel values.
+        cy.findByLabelText("today-dot")
+          .should("have.css", "position", "absolute")
+          .and("have.css", "left", "12.5px");
+
+        cy.findByLabelText("today-dot")
+          .invoke("css", "transform")
+          .then((val) => {
+            const str = String(val);
+
+            const parts = str
+              .replace("matrix(", "")
+              .replace(")", "")
+              .split(", ")
+              .map(parseFloat);
+
+            const translateX = parts[4];
+            expect(translateX).to.be.below(0);
           });
       });
     });
