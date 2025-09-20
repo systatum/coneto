@@ -688,8 +688,7 @@ function RichEditor({
             />
 
             {isOpen && (
-              <MenuWrapper ref={menuRef}>
-                test
+              <MenuWrapper ref={menuRef} $toolbarPosition={toolbarPosition}>
                 <TipMenu
                   setIsOpen={() => setIsOpen(false)}
                   subMenuList={TIP_MENU_RICH_EDITOR}
@@ -769,7 +768,6 @@ const ToolbarWrapper = styled.div<{
 }>`
   position: absolute;
   width: 100%;
-  overflow: hidden;
 
   ${({ $toolbarMode }) =>
     $toolbarMode === "top"
@@ -821,11 +819,21 @@ const ToolbarRightPanel = styled.div`
   gap: 8px;
 `;
 
-const MenuWrapper = styled.div`
+const MenuWrapper = styled.div<{
+  $toolbarPosition?: RichEditorToolbarPositionState;
+}>`
   position: absolute;
-  top: 100%;
+  ${({ $toolbarPosition }) =>
+    $toolbarPosition === "top"
+      ? css`
+          top: 100%;
+          transform: translateY(4px);
+        `
+      : css`
+          bottom: 100%;
+          transform: translateY(-4px);
+        `}
   right: -100px;
-  transform: translateY(4px);
   z-index: 40;
 `;
 
