@@ -43,6 +43,39 @@ describe("Pinbox", () => {
         });
       });
     });
+
+    context("when click static", () => {
+      it("shouldn't change value", () => {
+        cy.findAllByLabelText("pinbox-input")
+          .eq(0)
+          .click()
+          .type("t")
+          .should("have.value", "S");
+      });
+    });
+
+    context("when click, type on static and keydown right", () => {
+      it("shouldn't change value first, add second input, and focus on third input", () => {
+        cy.findAllByLabelText("pinbox-input")
+          .eq(0)
+          .click()
+          .type("t{rightarrow}a");
+        cy.findAllByLabelText("pinbox-input").eq(0).should("have.value", "S");
+        cy.findAllByLabelText("pinbox-input").eq(1).should("have.value", "a");
+        cy.findAllByLabelText("pinbox-input").eq(2).should("have.focus");
+      });
+    });
+
+    context("when enter arrow right and arrow left", () => {
+      it("should render focus after enter keydown", () => {
+        cy.findAllByLabelText("pinbox-input")
+          .eq(0)
+          .click()
+          .type("{rightarrow}{rightarrow}{rightarrow}");
+
+        cy.findAllByLabelText("pinbox-input").eq(3).should("have.focus");
+      });
+    });
   });
 
   context("Masked", () => {
