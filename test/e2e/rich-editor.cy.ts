@@ -180,52 +180,80 @@ describe("RichEditor", () => {
   });
 
   context("print markdown", () => {
-    it("should show content on screen", () => {
-      cy.findByRole("textbox").click().type("Print content Test");
+    context("when type and print content", () => {
+      it("should show content on screen", () => {
+        cy.findByRole("textbox").click().type("Print content Test");
 
-      cy.findByRole("textbox").type("{selectall}");
-      cy.findAllByRole("button").eq(0).click();
-      cy.findByRole("textbox").type("{moveToEnd}{enter}");
-      cy.findAllByRole("button").eq(0).click();
+        cy.findByRole("textbox").type("{selectall}");
+        cy.findAllByRole("button").eq(0).click();
+        cy.findByRole("textbox").type("{moveToEnd}{enter}");
+        cy.findAllByRole("button").eq(0).click();
 
-      cy.findByRole("textbox").type(
-        "The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs.{enter}"
-      );
+        cy.findByRole("textbox").type(
+          "The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs.{enter}"
+        );
 
-      cy.findByRole("textbox")
-        .click()
-        .type("- The quick brown fox jumps over the lazy dog.{enter}")
-        .type("Pack my box with five dozen liquor jugs.{enter}")
-        .type("Typing skills improve with daily practice.{enter}")
-        .type("Accuracy is more important than speed.{enter}")
-        .type("Stay consistent and avoid looking at the keyboard.");
+        cy.findByRole("textbox")
+          .click()
+          .type("- The quick brown fox jumps over the lazy dog.{enter}")
+          .type("Pack my box with five dozen liquor jugs.{enter}")
+          .type("Typing skills improve with daily practice.{enter}")
+          .type("Accuracy is more important than speed.{enter}")
+          .type("Stay consistent and avoid looking at the keyboard.");
 
-      cy.findAllByRole("button").eq(6).click();
+        cy.findAllByRole("button").eq(6).click();
 
-      cy.get("pre")
-        .invoke("text")
-        .then((text) => {
-          expectTextIncludesOrderedLines(text, [
-            "**Print content Test**",
-            "The quick brown fox jumps over the lazy dog.",
-            "* Pack my box with five dozen liquor jugs.",
-            "* Typing skills improve with daily practice.",
-            "* Accuracy is more important than speed.",
-            "* Stay consistent and avoid looking at the keyboard.",
-          ]);
-        });
+        cy.get("pre")
+          .invoke("text")
+          .then((text) => {
+            expectTextIncludesOrderedLines(text, [
+              "**Print content Test**",
+              "The quick brown fox jumps over the lazy dog.",
+              "* Pack my box with five dozen liquor jugs.",
+              "* Typing skills improve with daily practice.",
+              "* Accuracy is more important than speed.",
+              "* Stay consistent and avoid looking at the keyboard.",
+            ]);
+          });
+      });
     });
   });
 
   context("tip menu heading", () => {
-    const headings = ["Heading 1", "Heading 2", "Heading 3"];
+    const headings = [
+      { label: "Heading 1", text: "#" },
+      { label: "Heading 2", text: "#" },
+      { label: "Heading 3", text: "#" },
+    ];
+    headings.forEach((data) => {
+      context(`When click menu ${data.label}`, () => {
+        it(`should apply ${data.label} from dropdown`, () => {
+          cy.findByRole("textbox").click().type("Heading Text");
+          cy.findByRole("textbox").type("{selectall}");
+          cy.findAllByRole("button").eq(5).click();
+          cy.findByText(data.label).click();
+        });
+      });
 
-    headings.forEach((label) => {
-      it(`should apply ${label} heading from dropdown`, () => {
-        cy.findByRole("textbox").click().type("Heading Text");
-        cy.findByRole("textbox").type("{selectall}");
-        cy.findAllByRole("button").eq(5).click();
-        cy.findByText(label).click();
+      context(`When typing, click ${data.label}, and enter`, () => {
+        it(`should apply ${data.label} and on the bottom render paragraph`, () => {
+          cy.findByRole("textbox").click().type(`${data.label} Text`);
+          cy.findByRole("textbox").type("{selectall}");
+          cy.findAllByRole("button").eq(5).click();
+          cy.findByText(data.label).click();
+          cy.findByRole("textbox").click().type("{enter}Paragraph text");
+          cy.findAllByRole("button").eq(6).click();
+
+          cy.get("pre")
+            .invoke("text")
+            .then((text) => {
+              expectTextIncludesOrderedLines(text, [
+                `${data.text} ${data.label} Text`,
+                "",
+                "Paragraph text",
+              ]);
+            });
+        });
       });
     });
   });

@@ -308,6 +308,29 @@ function RichEditor({
         return;
       }
 
+      const headingParent =
+        container.nodeType === Node.ELEMENT_NODE
+          ? (container as Element).closest("h1,h2,h3,h4,h5,h6")
+          : (container.parentNode as Element)?.closest("h1,h2,h3,h4,h5,h6");
+
+      if (headingParent) {
+        e.preventDefault();
+
+        const p = document.createElement("p");
+        p.innerHTML = "<br>";
+        headingParent.insertAdjacentElement("afterend", p);
+
+        const newRange = document.createRange();
+        newRange.setStart(p, 0);
+        newRange.collapse(true);
+
+        sel.removeAllRanges();
+        sel.addRange(newRange);
+
+        handleEditorChange();
+        return;
+      }
+
       e.preventDefault();
 
       document.execCommand("insertLineBreak");
@@ -771,17 +794,17 @@ const EditorArea = styled.div<{
 
   h1 {
     font-size: 2em;
-    margin: 0.5em 0;
+    margin: 0.25em 0;
   }
 
   h2 {
-    font-size: 1.5em;
-    margin: 0.5em 0;
+    font-size: 1.65em;
+    margin: 0.3em 0;
   }
 
   h3 {
-    font-size: 1.25em;
-    margin: 0.5em 0;
+    font-size: 1.3em;
+    margin: 0.4em 0;
   }
 
   ${({ $editorStyle }) => $editorStyle};
