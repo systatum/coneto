@@ -58,6 +58,8 @@ export const Default: Story = {
             style={{
               padding: 28,
               background: "#D3D3D3",
+              whiteSpace: "pre-wrap",
+              wordBreak: "break-all",
             }}
           >
             {printValue}
