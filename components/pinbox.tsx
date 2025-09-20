@@ -222,7 +222,7 @@ function Pinbox({
         const isStatic = part.type === "static";
 
         const displayChar = getDisplayChar(index);
-        const { type, pattern, readOnly } = switchInputBox(part.type);
+        const { type, pattern } = switchInputBox(part.type);
         const isAnimate = Boolean(
           masked && !isStatic && !maskedIndices.has(index) && valueLocal[index]
         );
@@ -245,7 +245,6 @@ function Pinbox({
               type={type}
               maxLength={1}
               value={displayChar}
-              readOnly={readOnly}
               onKeyDown={(e) => handleKeyDown(e, index)}
               $isStatic={isStatic}
               $fontSize={fontSize}
@@ -439,7 +438,6 @@ const switchInputBox = (type: PinboxTypeState) => {
     case "static":
       return {
         type: "text",
-        readOnly: true,
       };
 
     case "digit":
