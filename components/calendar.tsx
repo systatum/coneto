@@ -714,7 +714,7 @@ function Calendar({
                 }}
                 tabIndex={isHighlighted ? 0 : -1}
                 $isHighlighted={isHighlighted}
-                $isDisable={disableWeekend || isDisabled}
+                $isDisabled={disableWeekend || isDisabled}
                 $isWeekend={
                   disableWeekend ? isWeekend || isDisabled : isDisabled
                 }
@@ -722,12 +722,8 @@ function Calendar({
                 {selectabilityMode === "ranged" && (
                   <DataCellRange
                     $isInRange={
-                      disableWeekend
-                        ? !isWeekend &&
-                          ((isCurrentDate && !startPicked.picked) ||
-                            (isHighlightedPicked && !isDisabled))
-                        : (isCurrentDate && !startPicked.picked) ||
-                          (isHighlightedPicked && !isDisabled)
+                      (isCurrentDate && !startPicked.picked) ||
+                      (isHighlightedPicked && !isDisabled)
                     }
                     $isRangeStart={isRangeStart}
                     $isRangeEnd={
@@ -747,10 +743,9 @@ function Calendar({
                           margin-bottom: 3px;
                         `
                   }
-                  $isDisable={disableWeekend || isDisabled}
-                  $isWeekend={
-                    disableWeekend ? isWeekend || isDisabled : isDisabled
-                  }
+                  $isDisabled={isDisabled}
+                  $disableWeekend={disableWeekend}
+                  $isWeekend={isWeekend}
                   $isHighlighted={isHighlighted}
                   $isCurrentDate={
                     isCurrentDate ||
@@ -765,7 +760,13 @@ function Calendar({
                 >
                   {date.getDate()}
 
-                  {isToday && <DateCellTodayDot />}
+                  {isToday && (
+                    <DateCellTodayDot
+                      $isToday={isToday}
+                      $isDisabled={isDisabled}
+                      $isPickingProcess={startPicked.picked}
+                    />
+                  )}
                 </DateCell>
               </DateCellWrapper>
             );
@@ -847,7 +848,7 @@ const GridDate = styled.div`
 
 const DateCellWrapper = styled.li<{
   $isHighlighted: boolean;
-  $isDisable: boolean;
+  $isDisabled: boolean;
   $isWeekend?: boolean;
 }>`
   display: flex;
@@ -856,18 +857,19 @@ const DateCellWrapper = styled.li<{
   text-align: center;
   position: relative;
 
-  ${({ $isHighlighted, $isDisable, $isWeekend }) =>
+  ${({ $isHighlighted, $isDisabled, $isWeekend }) =>
     $isHighlighted &&
-    (!$isDisable || !$isWeekend) &&
+    (!$isDisabled || !$isWeekend) &&
     css`
       cursor: pointer;
     `}
 `;
 
-const DateCell = styled.span<{
+export const DateCell = styled.span<{
   $style?: CSSProp;
-  $isDisable?: boolean;
+  $isDisabled?: boolean;
   $isWeekend?: boolean;
+  $disableWeekend?: boolean;
   $isHighlighted?: boolean;
   $isCurrentDate?: boolean;
   $isToday?: boolean;
@@ -884,87 +886,94 @@ const DateCell = styled.span<{
   justify-content: center;
   user-select: none;
 
-  ${({ $isDisable, $isWeekend }) =>
-    $isDisable &&
+  ${({ $isDisabled, $isWeekend, $isPickingProcess }) =>
+    ($isDisabled && $isWeekend) || ($isDisabled && $isPickingProcess)
+      ? css`
+          color: #d1d5db;
+        `
+      : null};
+
+  ${({ $isWeekend, $isDisabled, $isToday }) =>
+    $isWeekend && !$isDisabled && !$isToday
+      ? css`
+          color: #fca5a5;
+        `
+      : null};
+
+  ${({ $isWeekend, $disableWeekend }) =>
     $isWeekend &&
+    $disableWeekend &&
     css`
       color: #d1d5db;
     `}
 
-  ${({ $isWeekend, $isDisable }) =>
-    $isWeekend &&
-    !$isDisable &&
-    css`
-      color: #fca5a5;
-    `}
-
-  ${({ $isHighlighted }) =>
-    $isHighlighted
+  ${({ $isHighlighted, $isDisabled }) =>
+    $isHighlighted && $isDisabled
       ? css`
+          color: #d1d5db;
+        `
+      : $isHighlighted &&
+        css`
           border-color: #61a9f9;
-          color: #61a9f9;
-        `
-      : css`
-          &:hover {
-            background-color: #bfdbfe;
-          }
-          &:focus {
-            outline: none;
-            background-color: #bfdbfe;
-          }
-        `}
-
-  ${({ $isHighlighted, $isDisable, $isWeekend }) =>
-    $isHighlighted &&
-    $isDisable &&
-    $isWeekend &&
-    css`
-      background-color: white;
-      color: #d1d5db;
-      border-color: transparent;
-      user-select: none;
-      cursor: default;
-    `}
-
-  ${({ $isCurrentDate, $isWeekend }) =>
-    $isCurrentDate && $isWeekend
-      ? ``
-      : $isCurrentDate &&
-        css`
-          background-color: #61a9f9;
-          color: white;
-        `}
-
-  ${({ $isToday, $isCurrentDate, $isPickingProcess }) =>
-    $isToday &&
-    !$isCurrentDate &&
-    !$isPickingProcess &&
-    css`
-      color: #61a9f9;
-    `};
-
-  ${({ $isToday, $isHighlighted, $isCurrentDate }) =>
-    $isToday && $isHighlighted && $isCurrentDate
-      ? css`
-          color: white;
-        `
-      : $isToday &&
-        $isHighlighted &&
-        css`
           color: #61a9f9;
         `};
 
-  ${({ $isInRange, $isWeekend }) =>
-    $isInRange && $isWeekend
+  ${({ $isHighlighted, $isWeekend, $disableWeekend }) =>
+    $isHighlighted && $isWeekend && $disableWeekend
+      ? css`
+          background-color: white;
+          color: #d1d5db;
+          border-color: transparent;
+          user-select: none;
+          cursor: default;
+        `
+      : null};
+
+  ${({ $isCurrentDate }) =>
+    $isCurrentDate
+      ? css`
+          background-color: #61a9f9;
+          color: white;
+        `
+      : null};
+
+  ${({
+    $isToday,
+    $isHighlighted,
+    $isCurrentDate,
+    $isPickingProcess,
+    $isDisabled,
+  }) => {
+    if ($isToday && $isHighlighted && $isCurrentDate) {
+      return css`
+        color: white;
+      `;
+    }
+    if ($isToday && $isHighlighted) {
+      return css`
+        color: #61a9f9;
+      `;
+    }
+    if ($isToday && !$isCurrentDate && $isPickingProcess && $isDisabled) {
+      return css`
+        color: #d1d5db;
+      `;
+    }
+    if ($isToday && !$isCurrentDate) {
+      return css`
+        color: #61a9f9;
+      `;
+    }
+    return null;
+  }}
+
+  ${({ $isInRange }) =>
+    $isInRange
       ? css`
           background-color: transparent;
-          color: #d1d5db;
-        `
-      : $isInRange &&
-        css`
-          background-color: transparent;
           color: #61a9f9;
-        `}
+        `
+      : null};
 
   ${({ $style }) => $style}
 `;
@@ -977,8 +986,8 @@ const DataCellRange = styled.span<{
 }>`
   position: absolute;
   width: 45px;
-  height: 25px;
-  top: 47%;
+  height: 26px;
+  top: 45%;
   left: 0;
   transform: translateY(-50%);
 
@@ -1014,14 +1023,28 @@ const DataCellRange = styled.span<{
     `}
 `;
 
-const DateCellTodayDot = styled.div`
+const DateCellTodayDot = styled.div<{
+  $isToday?: boolean;
+  $isDisabled?: boolean;
+  $isPickingProcess?: boolean;
+}>`
   position: absolute;
   bottom: 1px;
-  left: 10px;
+  left: 50%;
+  transform: translateX(-50%);
   width: 3px;
   height: 3px;
   background-color: #61a9f9;
   border: 1px solid #61a9f9;
+
+  ${({ $isDisabled, $isPickingProcess, $isToday }) =>
+    $isToday &&
+    $isPickingProcess &&
+    $isDisabled &&
+    css`
+      background-color: #d1d5db;
+      border-color: #d1d5db;
+    `}
 `;
 
 const Container = styled.div<{ $style?: CSSProp }>`
