@@ -2,6 +2,7 @@ import { KeyboardEvent, ReactNode, useEffect, useRef, useState } from "react";
 import {
   RemixiconComponentType,
   RiBold,
+  RiCheckboxLine,
   RiH1,
   RiH2,
   RiH3,
@@ -51,34 +52,232 @@ function RichEditor({
 
   turndownService.addRule("cleanListSpacing", {
     filter: ["ul", "ol"],
-    replacement: function (content) {
-      return `\n${content}\n`;
+    replacement: function (content, node) {
+      const parentIsParagraph = node.parentElement?.tagName === "P";
+      return parentIsParagraph ? content : `\n${content}\n`;
     },
   });
+
+  turndownService.addRule("listItem", {
+    filter: "li",
+    replacement: function (content, node) {
+      content = content
+        .replace(/^\n+/, "")
+        .replace(/\n+$/, "\n")
+        .replace(/\n/gm, "\n    ");
+
+      var prefix = "* ";
+      var parent = node.parentNode as HTMLElement;
+      if (parent.nodeName === "OL") {
+        var start = parent.getAttribute("start");
+        var index = Array.prototype.indexOf.call(parent.children, node);
+        prefix = (start ? parseInt(start, 10) + index : index + 1) + ". ";
+      }
+
+      return (
+        prefix +
+        content +
+        (node.nextSibling && !/\n$/.test(content) ? "\n" : "")
+      );
+    },
+  });
+
+  turndownService.addRule("cleanParagraphSpacing", {
+    filter: ["p"],
+    replacement: function (content, node) {
+      const htmlContent = (node as HTMLElement).innerHTML;
+
+      const hasBrOnly =
+        htmlContent.trim() === "<br>" || htmlContent.trim() === "<br/>";
+      const prevSibling = node.previousElementSibling;
+      const nextSibling = node.nextElementSibling;
+
+      if (
+        prevSibling &&
+        (prevSibling.tagName === "UL" || prevSibling.tagName === "OL") &&
+        nextSibling &&
+        (nextSibling.tagName === "UL" || nextSibling.tagName === "OL")
+      ) {
+        return content.trim() ? content : "\n";
+      }
+
+      if (hasBrOnly) {
+        if (
+          prevSibling &&
+          (prevSibling.tagName === "UL" || prevSibling.tagName === "OL")
+        ) {
+          return "\n" + (nextSibling ? "\n" : "");
+        }
+
+        if (prevSibling && prevSibling.tagName === "P") {
+          return "\n" + (nextSibling ? "\n" : "");
+        }
+        return "\n" + (nextSibling ? "\n" : "");
+      }
+      if (!content.trim()) return "";
+
+      if (
+        prevSibling &&
+        (prevSibling.tagName === "UL" || prevSibling.tagName === "OL")
+      ) {
+        return content + (nextSibling ? "\n" : "");
+      }
+
+      if (prevSibling && prevSibling.tagName === "P") {
+        return "\n" + content + (nextSibling ? "\n" : "");
+      }
+
+      const prefix = prevSibling ? "\n" : "\n";
+      const suffix = nextSibling ? "\n" : "";
+
+      return prefix + content + suffix;
+    },
+  });
+
+  turndownService.addRule("unwrapListsInParagraphs", {
+    filter: (node) => {
+      return node.nodeName === "P" && node.querySelector("ul, ol") !== null;
+    },
+    replacement: function (content, node) {
+      const listElement = node.querySelector("ul, ol");
+      if (listElement) {
+        return turndownService.turndown(listElement.outerHTML);
+      }
+      return content;
+    },
+  });
+
+  turndownService.keep(["input"]);
+
+  turndownService.addRule("checkbox", {
+    filter: (node) => {
+      return (
+        node.nodeName === "INPUT" &&
+        (node as HTMLInputElement).type === "checkbox" &&
+        (node as HTMLElement).classList.contains("custom-checkbox-wrapper")
+      );
+    },
+    replacement: (_content, node) => {
+      const el = node as HTMLElement & { checked?: boolean };
+      const checked =
+        (el as HTMLInputElement).checked || el.dataset.checked === "true";
+      return `[${checked ? "x" : " "}] `;
+    },
+  });
+
+  marked.use({ gfm: false });
 
   const editorRef = useRef<HTMLDivElement>(null);
   const savedSelection = useRef<Range | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
-  const stateValue = marked(value);
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    if (editorRef.current && !editorRef.current.innerHTML) {
-      editorRef.current.innerHTML = String(stateValue);
+    if (!editorRef.current || editorRef.current.innerHTML) return;
+
+    editorRef.current.innerHTML = String(marked(value));
+    document.execCommand("defaultParagraphSeparator", false, "p");
+
+    editorRef.current
+      .querySelectorAll(".custom-checkbox-wrapper")
+      .forEach((node) => node.remove());
+
+    const walker = document.createTreeWalker(
+      editorRef.current,
+      NodeFilter.SHOW_TEXT
+    );
+
+    const textNodesToProcess: Text[] = [];
+
+    while (walker.nextNode()) {
+      const textNode = walker.currentNode as Text;
+      if (textNode.nodeValue && /\[(x| )\]/i.test(textNode.nodeValue)) {
+        textNodesToProcess.push(textNode);
+      }
     }
-  }, [stateValue]);
+
+    textNodesToProcess.forEach((textNode) => {
+      if (!textNode.parentNode || !textNode.nodeValue) return;
+
+      const parts = textNode.nodeValue.split(/(\[x\]|\[ \])/i);
+      if (parts.length === 1) return;
+
+      const fragment = document.createDocumentFragment();
+
+      parts.forEach((part) => {
+        if (part.toLowerCase() === "[x]") {
+          fragment.appendChild(
+            createCheckboxWrapper(true, turndownService, editorRef, onChange)
+          );
+        } else if (part.toLowerCase() === "[ ]") {
+          fragment.appendChild(
+            createCheckboxWrapper(false, turndownService, editorRef, onChange)
+          );
+        } else if (part) {
+          fragment.appendChild(document.createTextNode(part));
+        }
+      });
+
+      textNode.parentNode.replaceChild(fragment, textNode);
+    });
+  }, []);
+
+  const handleEditorChange = () => {
+    const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
+    const cleanedHTML = cleanupHtml(html);
+    const markdown = turndownService.turndown(cleanedHTML);
+    const cleanedMarkdown = cleanSpacing(markdown);
+
+    if (onChange) {
+      onChange(cleanedMarkdown);
+    }
+  };
 
   const handleCommand = (
-    command: "bold" | "italic" | "insertOrderedList" | "insertUnorderedList"
+    command:
+      | "bold"
+      | "italic"
+      | "insertOrderedList"
+      | "insertUnorderedList"
+      | "checkbox"
   ) => {
     if (!editorRef.current) return;
     editorRef.current.focus();
-    document.execCommand(command);
-    const html = editorRef.current.innerHTML || "";
-    const markdown = turndownService.turndown(html);
-    if (onChange) {
-      onChange(markdown);
+
+    if (command === "checkbox") {
+      const sel = window.getSelection();
+      if (!sel || !sel.rangeCount) return;
+
+      const range = sel.getRangeAt(0);
+
+      const checkboxWrapper = createCheckboxWrapper(
+        false,
+        turndownService,
+        editorRef,
+        onChange
+      );
+
+      range.insertNode(checkboxWrapper);
+
+      const spaceNode = document.createTextNode("\u00A0");
+      checkboxWrapper.after(spaceNode);
+
+      const newRange = document.createRange();
+      newRange.setStartAfter(spaceNode);
+      newRange.collapse(true);
+
+      sel.removeAllRanges();
+      sel.addRange(newRange);
+
+      handleEditorChange();
+    } else {
+      document.execCommand(command);
+      const html = editorRef.current.innerHTML || "";
+      const markdown = turndownService.turndown(html);
+      if (onChange) {
+        onChange(markdown);
+      }
     }
   };
 
@@ -94,6 +293,8 @@ function RichEditor({
       if (!sel || !sel.rangeCount) return;
 
       const range = sel.getRangeAt(0);
+      if (!range.collapsed) return;
+
       let container = range.startContainer as HTMLElement;
 
       let liParent: HTMLElement | null = null;
@@ -111,9 +312,7 @@ function RichEditor({
 
       document.execCommand("insertLineBreak");
 
-      const html = editorRef.current?.innerHTML || "";
-      const markdown = turndownService.turndown(html);
-      onChange?.(markdown);
+      handleEditorChange();
     }
 
     // this logic is to handle ordered and unordered lists, so when we type "1." or "-",
@@ -131,6 +330,74 @@ function RichEditor({
 
         const beforeCaret = text.slice(0, caretPos);
         const afterCaret = text.slice(caretPos);
+
+        const checkedCheckboxMatch = beforeCaret.match(/\[x\]$/);
+        const uncheckedCheckboxMatch = beforeCaret.match(/\[ \]$/);
+
+        if (checkedCheckboxMatch || uncheckedCheckboxMatch) {
+          e.preventDefault();
+
+          const patternLength = checkedCheckboxMatch
+            ? checkedCheckboxMatch[0].length
+            : uncheckedCheckboxMatch![0].length;
+          const beforePattern = beforeCaret.slice(0, -patternLength);
+
+          const checkboxWrapper = createCheckboxWrapper(
+            !!checkedCheckboxMatch,
+            turndownService,
+            editorRef,
+            onChange
+          );
+
+          const spaceNode = document.createTextNode("\u00A0");
+          checkboxWrapper.after(spaceNode);
+
+          if (beforePattern || afterCaret) {
+            const afterText = afterCaret ?? "";
+
+            node.textContent = beforePattern + afterText;
+
+            const newRange = document.createRange();
+            newRange.setStart(node, beforePattern.length);
+            newRange.collapse(true);
+
+            newRange.insertNode(checkboxWrapper);
+
+            if (!afterText.startsWith(" ")) {
+              const spaceNode = document.createTextNode("\u00A0");
+              checkboxWrapper.after(spaceNode);
+            }
+
+            const finalRange = document.createRange();
+            if (checkboxWrapper.nextSibling) {
+              finalRange.setStartAfter(checkboxWrapper.nextSibling);
+            } else {
+              finalRange.setStartAfter(checkboxWrapper);
+            }
+            finalRange.collapse(true);
+
+            sel.removeAllRanges();
+            sel.addRange(finalRange);
+          } else {
+            const parent = node.parentNode;
+            if (parent) {
+              parent.replaceChild(checkboxWrapper, node);
+
+              const spaceNode = document.createTextNode("\u00A0");
+              parent.insertBefore(spaceNode, checkboxWrapper.nextSibling);
+
+              const finalRange = document.createRange();
+              finalRange.setStartAfter(spaceNode);
+              finalRange.collapse(true);
+
+              sel.removeAllRanges();
+              sel.addRange(finalRange);
+            }
+          }
+
+          handleEditorChange();
+          return;
+        }
 
         const orderedMatch = beforeCaret.match(/^(\d+)\.$/);
         const unorderedMatch = beforeCaret.match(/^[-*]$/);
@@ -154,6 +421,20 @@ function RichEditor({
           const parent = node.parentNode;
           if (parent) {
             parent.replaceChild(list, node);
+
+            const prevSibling = list.previousSibling;
+            if (prevSibling && prevSibling.nodeType === Node.ELEMENT_NODE) {
+              if (
+                (prevSibling as HTMLElement).tagName === "INPUT" &&
+                (prevSibling as HTMLInputElement).type === "checkbox"
+              ) {
+                li.insertBefore(prevSibling, li.firstChild);
+                li.insertBefore(
+                  document.createTextNode("\u00A0"),
+                  prevSibling.nextSibling
+                );
+              }
+            }
           }
 
           const newRange = document.createRange();
@@ -174,6 +455,8 @@ function RichEditor({
       if (!sel || !sel.rangeCount) return;
 
       const range = sel.getRangeAt(0);
+      if (!range.collapsed) return;
+
       const container = range.startContainer;
 
       let li: HTMLElement | null = null;
@@ -207,8 +490,11 @@ function RichEditor({
         sel.removeAllRanges();
         sel.addRange(newRange);
 
+        handleEditorChange();
         return;
       }
+
+      handleEditorChange();
     }
   };
 
@@ -245,7 +531,7 @@ function RichEditor({
       newRange.selectNodeContents(newHeading);
       newRange.collapse(false);
       sel.removeAllRanges();
-      sel.addRange;
+      sel.addRange(newRange);
     } else {
       const heading = document.createElement(headingTag);
       heading.innerHTML = sel.toString();
@@ -262,11 +548,7 @@ function RichEditor({
 
     savedSelection.current = null;
 
-    const html = editorRef.current.innerHTML || "";
-    const markdown = turndownService.turndown(html);
-    if (onChange) {
-      onChange(markdown);
-    }
+    handleEditorChange();
   };
 
   const TIP_MENU_RICH_EDITOR = [
@@ -337,6 +619,10 @@ function RichEditor({
             onClick={() => handleCommand("insertUnorderedList")}
           />
           <RichEditorToolbarButton
+            icon={RiCheckboxLine}
+            onClick={() => handleCommand("checkbox")}
+          />
+          <RichEditorToolbarButton
             icon={RiHeading}
             isOpen={isOpen}
             onClick={() => {
@@ -368,9 +654,19 @@ function RichEditor({
         contentEditable
         $editorStyle={editorStyle}
         onInput={() => {
-          const html = editorRef.current?.innerHTML || "";
-          const markdown = turndownService.turndown(html);
-          onChange?.(markdown);
+          if (editorRef.current) {
+            syncCheckboxStates(editorRef.current);
+          }
+
+          const html =
+            editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
+          const cleanedHTML = cleanupHtml(html);
+
+          const markdown = turndownService.turndown(cleanedHTML);
+          const cleanedMarkdown = cleanSpacing(markdown);
+          if (onChange) {
+            onChange(cleanedMarkdown);
+          }
         }}
         onKeyDown={handleOnKeyDown}
       />
@@ -533,6 +829,108 @@ const ToolbarButton = styled.button<{ $style?: CSSProp; $isOpen?: boolean }>`
   }
   ${({ $style }) => $style}
 `;
+
+function createCheckboxWrapper(
+  isChecked: boolean,
+  turndownService: TurndownService,
+  editorRef: React.RefObject<HTMLDivElement>,
+  onChange?: (value: string) => void
+) {
+  const input = document.createElement("input");
+  input.type = "checkbox";
+  input.checked = isChecked;
+  input.className = "custom-checkbox-wrapper";
+  input.contentEditable = "true";
+  input.style.cursor = "pointer";
+  input.dataset.checked = String(isChecked);
+
+  input.addEventListener("change", () => {
+    input.dataset.checked = String(input.checked);
+
+    const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
+    const markdown = turndownService.turndown(html);
+    const cleanedMarkdown = cleanSpacing(markdown);
+
+    if (onChange) {
+      onChange(cleanedMarkdown);
+    }
+  });
+
+  return input;
+}
+
+// Cleans up spacing in markdown text by:
+// - Replacing non-breaking spaces (&nbsp;) with normal spaces
+// - Preserving spacing for list markers (*, [ ], numbers.)
+// - Collapsing multiple spaces into a single space elsewhere
+const cleanSpacing = (text: string): string => {
+  return text
+    .replace(/\u00A0/g, " ")
+    .replace(/\[(x| )\]\s+/gi, "[$1] ")
+    .split("\n")
+    .map((line) => {
+      return line;
+    })
+    .join("\n");
+};
+
+function syncCheckboxStates(container: HTMLElement) {
+  const checkboxes = container.querySelectorAll(
+    'input[type="checkbox"].custom-checkbox-wrapper'
+  );
+  checkboxes.forEach((checkbox) => {
+    const input = checkbox as HTMLInputElement;
+    input.dataset.checked = String(input.checked);
+  });
+}
+
+// Clean up HTML so that <div> elements don't cause extra spacing in <ul> or <ol>.
+// This ensures ordered and unordered lists are not wrapped with <div> or <p>,
+// since semantically <ul>/<ol> should not be wrapped by those tags.
+const cleanupHtml = (html: string): string => {
+  const container = document.createElement("div");
+  container.innerHTML = html;
+
+  Array.from(container.querySelectorAll("div")).forEach((div) => {
+    if (div.querySelector("ul, ol")) {
+      const frag = document.createDocumentFragment();
+      while (div.firstChild) {
+        frag.appendChild(div.firstChild);
+      }
+      div.parentNode?.replaceChild(frag, div);
+    }
+  });
+
+  Array.from(container.querySelectorAll("p")).forEach((p) => {
+    if (p.querySelector("ul, ol")) {
+      const frag = document.createDocumentFragment();
+      while (p.firstChild) {
+        frag.appendChild(p.firstChild);
+      }
+      p.parentNode?.replaceChild(frag, p);
+    }
+  });
+
+  Array.from(container.querySelectorAll("p")).forEach((p) => {
+    const inner = p.innerHTML.trim().toLowerCase();
+
+    if (
+      inner === "<br>" ||
+      inner === "<br/>" ||
+      inner === "<br />" ||
+      inner === "&nbsp;"
+    ) {
+      return;
+    }
+
+    if (inner === "") {
+      p.parentNode?.removeChild(p);
+    }
+  });
+
+  container.normalize();
+  return container.innerHTML;
+};
 
 RichEditor.ToolbarButton = RichEditorToolbarButton;
 

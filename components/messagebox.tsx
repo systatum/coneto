@@ -1,10 +1,11 @@
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
 import {
   RemixiconComponentType,
   RiCloseLine,
   RiInformation2Fill,
 } from "@remixicon/react";
 import { ReactNode } from "react";
+import { Button } from "./button";
 
 interface MessageboxProps {
   variant?: "primary" | "success" | "danger" | "warning";
@@ -28,18 +29,22 @@ const VARIATION_STYLES = {
   primary: {
     container: "#e7f2fc",
     text: "#2a63b4",
+    active: "#1f4a89",
   },
   success: {
     container: "#e9f3e8",
     text: "#43843d",
+    active: "#30602c",
   },
   danger: {
     container: "#f6e7e7",
     text: "#b92c25",
+    active: "#891f1a",
   },
   warning: {
     container: "#fbf0e4",
     text: "#9e5b20",
+    active: "#734418",
   },
 } as const;
 
@@ -103,15 +108,36 @@ function Messagebox({
         )}
       </Content>
       {closable && (
-        <CloseButton
-          role="button"
-          aria-label="closable-request"
-          size={18}
-          onClick={(e) => {
-            e.stopPropagation();
-            onCloseRequest?.();
-          }}
-        />
+        <Button
+          variant="transparent"
+          containerStyle={css`
+            position: absolute;
+            top: 1rem;
+            right: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 2px;
+            padding: 2px;
+            width: fit-content;
+            height: fit-content;
+          `}
+          buttonStyle={css`
+            width: fit-content;
+            height: fit-content;
+            padding: 2px;
+            color: ${VARIATION_STYLES[variant].text};
+          `}
+        >
+          <RiCloseLine
+            role="button"
+            aria-label="closable-request"
+            size={14}
+            onClick={(e) => {
+              e.stopPropagation();
+              onCloseRequest?.();
+            }}
+          />
+        </Button>
       )}
     </Wrapper>
   );
@@ -188,6 +214,10 @@ const ActionItem = styled.button<{
   &:hover {
     opacity: 0.8;
   }
+
+  &:active {
+    color: ${({ $variant }) => VARIATION_STYLES[$variant].active};
+  }
 `;
 
 const ActionLink = styled.a<{
@@ -202,19 +232,9 @@ const ActionLink = styled.a<{
   &:hover {
     opacity: 0.8;
   }
-`;
 
-const CloseButton = styled(RiCloseLine)`
-  position: absolute;
-  top: 1rem;
-  right: 0.75rem;
-  cursor: pointer;
-  transition: all 0.3s;
-  border-radius: 2px;
-  padding: 2px;
-
-  &:hover {
-    background-color: #d1d5db;
+  &:active {
+    color: ${({ $variant }) => VARIATION_STYLES[$variant].active};
   }
 `;
 

@@ -160,6 +160,16 @@ export const Outline: Story = {
   },
 };
 
+export const Transparent: Story = {
+  args: {
+    variant: "transparent",
+    children: "Button",
+  },
+  render: (args) => {
+    return <Button {...args} />;
+  },
+};
+
 export const WithLoading: Story = {
   args: {
     variant: "default",
