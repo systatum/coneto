@@ -125,7 +125,18 @@ function Calendar({
     year: { text: String(currentYear), value: currentYear },
   });
 
-  const [inputValueLocal, setinputValueLocal] = useState(inputValue.text);
+  const initialValueState = () => {
+    if (disableWeekend && selectabilityMode === "ranged") {
+      const value = inputValue.text.split(",");
+      const firstValue = value[0];
+      const latestValue = value[value.length - 1];
+
+      return `${firstValue}-${latestValue}`;
+    }
+    return inputValue.text;
+  };
+
+  const [inputValueLocal, setinputValueLocal] = useState(initialValueState());
 
   const [startPicked, setStartPicked] = useState<{
     picked: boolean;
@@ -292,6 +303,11 @@ function Calendar({
     const formattedData = formatDate(date, format);
     let newValues: string[];
 
+    const isWeekend = (dateToCheck: Date): boolean => {
+      const day = dateToCheck.getDay();
+      return day === 0 || day === 6;
+    };
+
     if (selectabilityMode === "multiple") {
       await setinputValueLocal((prev) => {
         const values = prev ? prev.split(",") : [];
@@ -305,7 +321,9 @@ function Calendar({
           let cursor = new Date(start);
 
           while (cursor.getTime() <= end.getTime()) {
-            range.push(formatDate(new Date(cursor), format));
+            if (!disableWeekend || !isWeekend(cursor)) {
+              range.push(formatDate(new Date(cursor), format));
+            }
             cursor.setDate(cursor.getDate() + 1);
           }
 
@@ -343,7 +361,28 @@ function Calendar({
           if (values.includes(formattedData)) {
             newValues = [];
           } else {
-            newValues = [...values, formattedData];
+            if (disableWeekend) {
+              const startDate = new Date(values[0]);
+              const endDate = date;
+              const start =
+                startDate.getTime() < endDate.getTime() ? startDate : endDate;
+              const end =
+                startDate.getTime() > endDate.getTime() ? startDate : endDate;
+
+              const rangeValues: string[] = [];
+              let cursor = new Date(start);
+
+              while (cursor.getTime() <= end.getTime()) {
+                if (!disableWeekend || !isWeekend(cursor)) {
+                  rangeValues.push(formatDate(new Date(cursor), format));
+                }
+                cursor.setDate(cursor.getDate() + 1);
+              }
+
+              newValues = rangeValues;
+            } else {
+              newValues = [...values, formattedData];
+            }
           }
           setStartPicked({ picked: false, indexPicked: null });
         }
@@ -353,14 +392,23 @@ function Calendar({
           const dateB = new Date(b);
           return dateA.getTime() - dateB.getTime();
         });
-        const finalValues = newValues.join("-");
+
+        const finalValues = disableWeekend
+          ? newValues.join(",")
+          : newValues.join("-");
+
+        const firstValueLocal = newValues[0];
+        const latestValueLocal = newValues[newValues.length - 1]
+          ? `-${newValues[newValues.length - 1]}`
+          : "";
+        const newValuesLocal = `${firstValueLocal}${latestValueLocal}`;
 
         setInputValue({
           text: finalValues,
           value: finalValues,
         });
 
-        return finalValues;
+        return newValuesLocal;
       });
     }
 
@@ -456,6 +504,8 @@ function Calendar({
         return [];
     }
   }, [inputValueLocal, selectabilityMode]);
+
+  console.log(inputValueLocal.split("-"));
 
   const inputElement: ReactElement = (
     <CalendarContainer
@@ -643,6 +693,7 @@ function Calendar({
                   selectedDate.getTime() ===
                   startPicked?.indexPicked?.getTime();
               }
+
               if (selectedDates.length === 2) {
                 const [startDate, endDate] = selectedDates;
                 isCurrentDate =
@@ -687,7 +738,6 @@ function Calendar({
               date.getFullYear() === today.getFullYear();
 
             const isWeekend = date.getDay() === 0 || date.getDay() === 6;
-
             return (
               <DateCellWrapper
                 key={date.toISOString()}
@@ -722,9 +772,15 @@ function Calendar({
               >
                 {selectabilityMode === "ranged" && (
                   <DataCellRange
+                    $disableWeekend={disableWeekend}
+                    $isPickingProcess={startPicked.picked}
                     $isInRange={
-                      (isCurrentDate && !startPicked.picked) ||
-                      (isHighlightedPicked && !isDisabled)
+                      disableWeekend
+                        ? !isWeekend &&
+                          ((isCurrentDate && !startPicked.picked) ||
+                            (isHighlightedPicked && !isDisabled))
+                        : (isCurrentDate && !startPicked.picked) ||
+                          (isHighlightedPicked && !isDisabled)
                     }
                     $isRangeStart={isRangeStart}
                     $isRangeEnd={
@@ -945,7 +1001,15 @@ export const DateCell = styled.span<{
     $isCurrentDate,
     $isPickingProcess,
     $isDisabled,
+    $isWeekend,
+    $disableWeekend,
   }) => {
+    if ($isToday && $isHighlighted && $isCurrentDate && $disableWeekend) {
+      return css`
+        color: #61a9f9;
+        background-color: transparent;
+      `;
+    }
     if ($isToday && $isHighlighted && $isCurrentDate) {
       return css`
         color: white;
@@ -961,21 +1025,38 @@ export const DateCell = styled.span<{
         color: #d1d5db;
       `;
     }
+    if (
+      $isHighlighted &&
+      $isPickingProcess &&
+      ($disableWeekend ? $isWeekend : "") &&
+      $isCurrentDate
+    ) {
+      return css`
+        color: #d1d5db;
+        background-color: transparent;
+      `;
+    }
+
     if ($isToday && !$isCurrentDate) {
       return css`
         color: #61a9f9;
       `;
     }
     return null;
-  }}
+  }};
 
-  ${({ $isInRange }) =>
-    $isInRange
+  ${({ $isInRange, $disableWeekend, $isWeekend, $isToday }) =>
+    $isInRange && $disableWeekend && $isWeekend && !$isToday
       ? css`
           background-color: transparent;
-          color: #61a9f9;
+          color: #d1d5db;
         `
-      : null};
+      : $isInRange
+        ? css`
+            background-color: transparent;
+            color: #61a9f9;
+          `
+        : null};
 
   ${({ $style }) => $style}
 `;
@@ -985,6 +1066,8 @@ const DataCellRange = styled.span<{
   $isRangeStart?: boolean;
   $isRangeEnd?: boolean;
   $isSameDate?: boolean;
+  $isPickingProcess?: boolean;
+  $disableWeekend?: boolean;
 }>`
   position: absolute;
   width: 45px;
@@ -997,31 +1080,40 @@ const DataCellRange = styled.span<{
     $isInRange &&
     css`
       background-color: #dbeafe;
-    `}
+    `};
 
   ${({ $isSameDate }) =>
     $isSameDate &&
     css`
       width: 0px;
       background-color: transparent;
-    `}
+    `};
 
-  ${({ $isRangeStart }) =>
-    $isRangeStart &&
-    css`
-      left: auto;
-      right: 4px;
-      width: 25px;
-      border-radius: 9999;
-      overflow: hidden;
-      transform: translateX(50%) translateY(-50%);
-    `}
+  ${({ $isRangeStart, $isPickingProcess, $disableWeekend }) =>
+    $isRangeStart && $isPickingProcess
+      ? css`
+          left: auto;
+          right: -10px;
+          width: 25px;
+          border-radius: 9999;
+          overflow: hidden;
+          transform: translateX(50%) translateY(-50%);
+        `
+      : $isRangeStart &&
+        css`
+          left: auto;
+          right: 4px;
+          width: 25px;
+          border-radius: 9999;
+          overflow: hidden;
+          transform: translateX(50%) translateY(-50%);
+        `};
 
   ${({ $isRangeEnd }) =>
     $isRangeEnd &&
     css`
       width: 25px;
-      transform: translateX(-25%) translateY(-50%);
+      transform: translateX(-3%) translateY(-50%);
     `}
 `;
 
