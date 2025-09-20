@@ -92,8 +92,6 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
     },
     ref
   ) => {
-    // We set pdfjsLib.GlobalWorkerOptions.workerSrc to load the PDF.js worker from a CDN, since the built-in worker from the library cannot be used directly at the moment.
-
     const containerRef = useRef<HTMLDivElement>(null);
     const viewerRef = useRef<HTMLDivElement>(null);
 
@@ -136,6 +134,11 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
       let cancelled = false;
 
       import("pdfjs-dist").then((module) => {
+        /**
+         * We set pdfjsLib.GlobalWorkerOptions.workerSrc to load the PDF.js worker from a CDN, since the built-in worker from the library cannot be used directly at the moment.
+         * In Next.js, the import must be done inside useEffect, because using `import * as ...`
+         * can cause issues with server-side rendering (SSR).
+         */
         module.GlobalWorkerOptions.workerSrc = libPdfJsWorkerSrc;
 
         module
