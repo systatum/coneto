@@ -191,6 +191,7 @@ export const MultipleNoWeekend: Story = {
         setInputValue={setValue}
         format="mm/dd/yyyy"
         selectabilityMode="multiple"
+        disableWeekend
       />
     );
   },
