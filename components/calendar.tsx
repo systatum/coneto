@@ -822,6 +822,7 @@ function Calendar({
                       $isToday={isToday}
                       $isDisabled={isDisabled}
                       $isPickingProcess={startPicked.picked}
+                      $disableWeekend={disableWeekend}
                     />
                   )}
                 </DateCell>
@@ -1015,7 +1016,7 @@ export const DateCell = styled.span<{
         color: white;
       `;
     }
-    if ($isToday && $isHighlighted) {
+    if ($isToday && $isHighlighted && !$isWeekend) {
       return css`
         color: #61a9f9;
       `;
@@ -1037,7 +1038,7 @@ export const DateCell = styled.span<{
       `;
     }
 
-    if ($isToday && !$isCurrentDate) {
+    if ($isToday && !$isCurrentDate && !$disableWeekend) {
       return css`
         color: #61a9f9;
       `;
@@ -1045,8 +1046,8 @@ export const DateCell = styled.span<{
     return null;
   }};
 
-  ${({ $isInRange, $disableWeekend, $isWeekend, $isToday }) =>
-    $isInRange && $disableWeekend && $isWeekend && !$isToday
+  ${({ $isInRange, $disableWeekend, $isWeekend }) =>
+    $isInRange && $disableWeekend && $isWeekend
       ? css`
           background-color: transparent;
           color: #d1d5db;
@@ -1121,6 +1122,7 @@ const DateCellTodayDot = styled.div<{
   $isToday?: boolean;
   $isDisabled?: boolean;
   $isPickingProcess?: boolean;
+  $disableWeekend?: boolean;
 }>`
   position: absolute;
   bottom: 1px;
@@ -1131,14 +1133,18 @@ const DateCellTodayDot = styled.div<{
   background-color: #61a9f9;
   border: 1px solid #61a9f9;
 
-  ${({ $isDisabled, $isPickingProcess, $isToday }) =>
-    $isToday &&
-    $isPickingProcess &&
-    $isDisabled &&
-    css`
-      background-color: #d1d5db;
-      border-color: #d1d5db;
-    `}
+  ${({ $isDisabled, $isPickingProcess, $isToday, $disableWeekend }) =>
+    $isToday && $isPickingProcess && $isDisabled
+      ? css`
+          background-color: #d1d5db;
+          border-color: #d1d5db;
+        `
+      : $isToday &&
+        $disableWeekend &&
+        css`
+          background-color: #d1d5db;
+          border-color: #d1d5db;
+        `}
 `;
 
 const Container = styled.div<{ $style?: CSSProp }>`
