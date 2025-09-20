@@ -308,6 +308,29 @@ function RichEditor({
         return;
       }
 
+      const headingParent =
+        container.nodeType === Node.ELEMENT_NODE
+          ? (container as Element).closest("h1,h2,h3,h4,h5,h6")
+          : (container.parentNode as Element)?.closest("h1,h2,h3,h4,h5,h6");
+
+      if (headingParent) {
+        e.preventDefault();
+
+        const p = document.createElement("p");
+        p.innerHTML = "<br>";
+        headingParent.insertAdjacentElement("afterend", p);
+
+        const newRange = document.createRange();
+        newRange.setStart(p, 0);
+        newRange.collapse(true);
+
+        sel.removeAllRanges();
+        sel.addRange(newRange);
+
+        handleEditorChange();
+        return;
+      }
+
       e.preventDefault();
 
       document.execCommand("insertLineBreak");
