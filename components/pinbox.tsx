@@ -97,6 +97,15 @@ function Pinbox({
     const key = e.key;
     const type = parts[index].type;
 
+    if (type === "static") {
+      if (key === "ArrowLeft") moveToPrevInput(index);
+      if (key === "Backspace") moveToPrevInput(index);
+      if (key === "ArrowRight") moveToNextInput(index);
+      if (key === "Tab") moveToNextInput(index);
+      e.preventDefault();
+      return;
+    }
+
     if (
       type === "digit" &&
       !/[0-9]/.test(key) &&
@@ -392,13 +401,14 @@ const PinboxInput = styled.input<{
   ${({ $isStatic }) =>
     $isStatic
       ? css`
-          border: 0px;
           user-select: none;
-          pointer-events: none;
           &:disabled {
             opacity: 0.6;
             user-select: none;
             cursor: not-allowed;
+          }
+          &:focus + ${PinboxIndicator} {
+            display: flex;
           }
         `
       : css`
