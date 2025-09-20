@@ -149,6 +149,10 @@
       "import": "./dist/components/pagination.js",
       "types": "./dist/components/pagination.d.ts"
     },
+    "./pinbox": {
+      "import": "./dist/components/pinbox.js",
+      "types": "./dist/components/pinbox.d.ts"
+    },
     "./paper-dialog": {
       "import": "./dist/components/paper-dialog.js",
       "types": "./dist/components/paper-dialog.d.ts"
