@@ -6,74 +6,123 @@ describe("Pinbox", () => {
       cy.visit(getIdContent("input-elements-pinbox--default"));
     });
 
-    context("when typing", () => {
-      it("should render text value", () => {
-        cy.findAllByLabelText("pinbox-input").eq(1).type("A");
-        cy.findAllByLabelText("pinbox-input").eq(2).type("1");
-        cy.findAllByLabelText("pinbox-input").eq(3).type("B");
-        cy.findAllByLabelText("pinbox-input").eq(5).type("9");
+    context("normal text", () => {
+      context("when pressing character", () => {
+        it("should render text value", () => {
+          cy.findAllByLabelText("pinbox-input").eq(1).type("A");
+          cy.findAllByLabelText("pinbox-input").eq(2).type("1");
 
-        const contentExpected = ["S", "A", "1", "B", "-", "9"];
+          const contentExpected = ["S", "A", "1", "", "-", ""];
 
-        contentExpected.forEach((data, index) => {
-          cy.findAllByLabelText("pinbox-input")
-            .eq(index)
-            .should("have.value", data);
+          contentExpected.forEach((data, index) => {
+            cy.findAllByLabelText("pinbox-input")
+              .eq(index)
+              .should("have.value", data);
+          });
+        });
+
+        context("when pressing right arrow", () => {
+          it("move to the next textbox", () => {
+            cy.findAllByLabelText("pinbox-input")
+              .eq(1)
+              .click()
+              .type("{rightarrow}");
+            cy.findAllByLabelText("pinbox-input").eq(2).should("be.focused");
+          });
+
+          context("when the next element is static", () => {
+            it("move to the next editable textbox", () => {
+              cy.findAllByLabelText("pinbox-input")
+                .eq(1)
+                .click()
+                .type("{rightarrow}{rightarrow}{rightarrow}");
+              cy.findAllByLabelText("pinbox-input").eq(5).should("be.focused");
+            });
+          });
+        });
+
+        context("when pressing backspace", () => {
+          it("remove value textbox", () => {
+            cy.findAllByLabelText("pinbox-input")
+              .eq(1)
+              .click()
+              .type("AA{backspace}{backspace}");
+
+            cy.findAllByLabelText("pinbox-input").eq(2).should("be.focused");
+          });
+
+          it("move to the previous textbox", () => {
+            cy.findAllByLabelText("pinbox-input")
+              .eq(2)
+              .click()
+              .type("{backspace}");
+            cy.findAllByLabelText("pinbox-input").eq(1).should("be.focused");
+          });
+
+          context("when the previous element is static", () => {
+            it("move to the previous editable textbox", () => {
+              cy.findAllByLabelText("pinbox-input")
+                .eq(5)
+                .click()
+                .type("{backspace}");
+              cy.findAllByLabelText("pinbox-input").eq(3).should("be.focused");
+            });
+          });
         });
       });
     });
 
-    context("when typed and backspace", () => {
-      it("should delete values and focus on the last deleted", () => {
-        cy.findAllByLabelText("pinbox-input").eq(1).type("A");
-        cy.findAllByLabelText("pinbox-input").eq(2).type("1");
-        cy.findAllByLabelText("pinbox-input").eq(3).type("B");
-        cy.findAllByLabelText("pinbox-input")
-          .eq(5)
-          .type("9")
-          .type("{backspace}{backspace}");
-        cy.findAllByLabelText("pinbox-input").eq(3).should("be.focused");
-
-        const contentExpected = ["S", "A", "1", "B", "-", ""];
-
-        contentExpected.forEach((data, index) => {
-          cy.findAllByLabelText("pinbox-input")
-            .eq(index)
-            .should("have.value", data);
+    context("static", () => {
+      context("when active", () => {
+        context("when pressing character", () => {
+          it("doesn't change it's value", () => {
+            cy.findAllByLabelText("pinbox-input")
+              .eq(0)
+              .click()
+              .type("t")
+              .should("have.value", "S");
+          });
         });
-      });
-    });
 
-    context("when click static", () => {
-      it("shouldn't change value", () => {
-        cy.findAllByLabelText("pinbox-input")
-          .eq(0)
-          .click()
-          .type("t")
-          .should("have.value", "S");
-      });
-    });
+        context("when pressing right arrow", () => {
+          it("move to the next textbox", () => {
+            cy.findAllByLabelText("pinbox-input")
+              .eq(0)
+              .click()
+              .type("{rightarrow}a");
+            cy.findAllByLabelText("pinbox-input")
+              .eq(0)
+              .should("have.value", "S");
+            cy.findAllByLabelText("pinbox-input")
+              .eq(1)
+              .should("have.value", "a");
+            cy.findAllByLabelText("pinbox-input").eq(2).should("have.focus");
+          });
+        });
 
-    context("when click, type on static and keydown right", () => {
-      it("shouldn't change value first, add second input, and focus on third input", () => {
-        cy.findAllByLabelText("pinbox-input")
-          .eq(0)
-          .click()
-          .type("t{rightarrow}a");
-        cy.findAllByLabelText("pinbox-input").eq(0).should("have.value", "S");
-        cy.findAllByLabelText("pinbox-input").eq(1).should("have.value", "a");
-        cy.findAllByLabelText("pinbox-input").eq(2).should("have.focus");
-      });
-    });
+        context("when pressing left arrow", () => {
+          it("move to previous textbox", () => {
+            cy.findAllByLabelText("pinbox-input")
+              .eq(4)
+              .click()
+              .type("{leftarrow}{leftarrow}");
 
-    context("when enter arrow right and arrow left", () => {
-      it("should render focus after enter keydown", () => {
-        cy.findAllByLabelText("pinbox-input")
-          .eq(0)
-          .click()
-          .type("{rightarrow}{rightarrow}{rightarrow}");
+            cy.findAllByLabelText("pinbox-input").eq(2).should("have.focus");
+          });
+        });
 
-        cy.findAllByLabelText("pinbox-input").eq(3).should("have.focus");
+        context("when pressing backspace", () => {
+          it("doesn't change it's value", () => {
+            cy.findAllByLabelText("pinbox-input")
+              .eq(0)
+              .click()
+              .type("{backspace}");
+
+            cy.findAllByLabelText("pinbox-input")
+              .eq(0)
+              .should("have.value", "S");
+          });
+        });
       });
     });
   });
