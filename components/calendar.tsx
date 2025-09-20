@@ -506,8 +506,6 @@ function Calendar({
     }
   }, [inputValueLocal, selectabilityMode]);
 
-  console.log(inputValueLocal.split("-"));
-
   const inputElement: ReactElement = (
     <CalendarContainer
       $style={
