@@ -75,15 +75,40 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       },
     });
 
+    turndownService.addRule("listItem", {
+      filter: "li",
+      replacement: function (content, node) {
+        content = content
+          .replace(/^\n+/, "")
+          .replace(/\n+$/, "\n")
+          .replace(/\n/gm, "\n    ");
+
+        var prefix = "* ";
+        var parent = node.parentNode as HTMLElement;
+        if (parent.nodeName === "OL") {
+          var start = parent.getAttribute("start");
+          var index = Array.prototype.indexOf.call(parent.children, node);
+          prefix = (start ? parseInt(start, 10) + index : index + 1) + ". ";
+        }
+
+        return (
+          prefix +
+          content +
+          (node.nextSibling && !/\n$/.test(content) ? "\n" : "")
+        );
+      },
+    });
+
     turndownService.addRule("cleanParagraphSpacing", {
       filter: ["p"],
       replacement: function (content, node) {
-        const htmlContent = (node as HTMLElement).innerHTML;
-
-        const hasBrOnly =
-          htmlContent.trim() === "<br>" || htmlContent.trim() === "<br/>";
+        const htmlContent = (node as HTMLElement).innerHTML.trim();
         const prevSibling = node.previousElementSibling;
         const nextSibling = node.nextElementSibling;
+
+        if (htmlContent === "<br>" || htmlContent === "<br/>") {
+          return "";
+        }
 
         if (
           prevSibling &&
@@ -94,30 +119,20 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           return content.trim() ? content : "\n";
         }
 
-        if (hasBrOnly) {
-          if (
-            prevSibling &&
-            (prevSibling.tagName === "UL" || prevSibling.tagName === "OL")
-          ) {
-            return "\n" + (nextSibling ? "\n" : "");
-          }
-
-          if (prevSibling && prevSibling.tagName === "P") {
-            return "\n" + (nextSibling ? "\n" : "");
-          }
-          return "\n" + (nextSibling ? "\n" : "");
-        }
         if (!content.trim()) return "";
+
+        if (
+          nextSibling &&
+          (nextSibling.tagName === "UL" || nextSibling.tagName === "OL")
+        ) {
+          return content.trim() ? content : "\n";
+        }
 
         if (
           prevSibling &&
           (prevSibling.tagName === "UL" || prevSibling.tagName === "OL")
         ) {
           return content + (nextSibling ? "\n" : "");
-        }
-
-        if (prevSibling && prevSibling.tagName === "P") {
-          return "\n" + content + (nextSibling ? "\n" : "");
         }
 
         const prefix = prevSibling ? "\n" : "\n";
@@ -158,7 +173,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       },
     });
 
-    marked.use({ gfm: false, breaks: true });
+    marked.use({ gfm: false });
 
     const editorRef = useRef<HTMLDivElement>(null);
     const savedSelection = useRef<Range | null>(null);
@@ -264,6 +279,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
       const cleanedHTML = cleanupHtml(html);
       const markdown = turndownService.turndown(cleanedHTML);
+      console.log(cleanedHTML);
       const cleanedMarkdown = cleanSpacing(markdown);
 
       if (onChange) {
@@ -342,6 +358,29 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         }
 
         if (liParent) {
+          return;
+        }
+
+        const headingParent =
+          container.nodeType === Node.ELEMENT_NODE
+            ? (container as Element).closest("h1,h2,h3,h4,h5,h6")
+            : (container.parentNode as Element)?.closest("h1,h2,h3,h4,h5,h6");
+
+        if (headingParent) {
+          e.preventDefault();
+
+          const p = document.createElement("p");
+          p.innerHTML = "<br>";
+          headingParent.insertAdjacentElement("afterend", p);
+
+          const newRange = document.createRange();
+          newRange.setStart(p, 0);
+          newRange.collapse(true);
+
+          sel.removeAllRanges();
+          sel.addRange(newRange);
+
+          handleEditorChange();
           return;
         }
 

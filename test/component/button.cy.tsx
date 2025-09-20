@@ -77,7 +77,6 @@ describe("Button", () => {
         cy.mount(
           <Button
             variant="default"
-            tipMenu
             dropdownStyle={{
               minWidth: "240px",
             }}
@@ -101,7 +100,6 @@ describe("Button", () => {
         cy.mount(
           <Button
             variant="default"
-            tipMenu
             dropdownStyle={{
               minWidth: "240px",
             }}
@@ -122,7 +120,6 @@ describe("Button", () => {
         cy.mount(
           <Button
             variant="default"
-            tipMenu
             dropdownStyle={{
               minWidth: "240px",
             }}
