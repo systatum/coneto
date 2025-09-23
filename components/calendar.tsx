@@ -344,10 +344,12 @@ function Calendar({
         }
 
         const finalValues = newValues.join(",");
-        setInputValue({
-          text: finalValues,
-          value: finalValues,
-        });
+        if (setInputValue) {
+          setInputValue({
+            text: finalValues,
+            value: finalValues,
+          });
+        }
 
         return finalValues;
       });
@@ -404,20 +406,25 @@ function Calendar({
 
         const newValuesLocal = `${firstValueLocal}${latestValueLocal}`;
 
-        setInputValue({
-          text: finalValues,
-          value: finalValues,
-        });
+        if (setInputValue) {
+          setInputValue({
+            text: finalValues,
+            value: finalValues,
+          });
+        }
 
         return newValuesLocal;
       });
     }
 
-    if (setInputValue && selectabilityMode === "single") {
-      await setInputValue({
-        text: formatDate(date, format),
-        value: formatDate(date, format),
-      });
+    if (selectabilityMode === "single") {
+      if (setInputValue) {
+        await setInputValue({
+          text: formatDate(date, format),
+          value: formatDate(date, format),
+        });
+      }
+      await setinputValueLocal(formatDate(date, format));
     }
 
     if (setIsOpen && selectabilityMode !== "single") {
@@ -462,12 +469,8 @@ function Calendar({
           onCalendarPeriodChanged(validDate);
         }
         setCurrentDate(validDate);
-        if (inputValue.text.length > 9) {
-          setInputValue({
-            text: formatDate(validDate, format),
-            value: formatDate(validDate, format),
-          });
-        }
+
+        setinputValueLocal(formatDate(validDate, format));
       }
     }
   }, [inputValue?.text, format]);
@@ -602,7 +605,7 @@ function Calendar({
               $style={{
                 padding: "4px",
               }}
-              aria-label="Select date"
+              aria-label="select-date"
             />
           </Fragment>
         )}
@@ -721,9 +724,18 @@ function Calendar({
                   date.getFullYear() === selected.getFullYear()
               );
             } else {
-              const selectedDate = inputValue.text
-                ? new Date(inputValue.text)
+              const selectedDate = inputValueLocal
+                ? new Date(inputValueLocal)
                 : new Date();
+
+              if (disableWeekend && !inputValueLocal) {
+                const day = selectedDate.getDay();
+                if (day === 6) {
+                  selectedDate.setDate(selectedDate.getDate() - 1);
+                } else if (day === 0) {
+                  selectedDate.setDate(selectedDate.getDate() + 1);
+                }
+              }
 
               isCurrentDate =
                 date.getDate() === selectedDate.getDate() &&
@@ -737,6 +749,7 @@ function Calendar({
               date.getFullYear() === today.getFullYear();
 
             const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+
             return (
               <DateCellWrapper
                 key={date.toISOString()}
