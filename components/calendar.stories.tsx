@@ -89,8 +89,8 @@ export const NoWeekends: Story = {
     ];
 
     const [value, setValue] = useState<OptionsProps>({
-      text: "",
-      value: "",
+      text: "09/21/2025",
+      value: "09/21/2025",
     });
 
     return (
