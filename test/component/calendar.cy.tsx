@@ -20,10 +20,11 @@ describe("Calendar ", () => {
 
   context("disable weekend", () => {
     context("when given", () => {
+      const valueWeekend = { text: "09/21/2025", value: "09/21/2025" };
       it("renders weekend dates gray", () => {
         cy.mount(
           <Calendar
-            inputValue={value}
+            inputValue={valueWeekend}
             monthNames={MONTH_NAMES}
             disableWeekend
           />
@@ -34,6 +35,27 @@ describe("Calendar ", () => {
             (_, el) => getComputedStyle(el).color === "rgb(209, 213, 219)"
           )
           .should("have.length.greaterThan", 0);
+      });
+
+      context("when value in the weekend", () => {
+        it("renders selected previous/next day", () => {
+          cy.mount(
+            <Calendar
+              inputValue={valueWeekend}
+              monthNames={MONTH_NAMES}
+              disableWeekend
+            />
+          );
+          cy.findAllByLabelText("calendar-select-date").eq(0).click();
+          cy.findByLabelText("combobox-month").click();
+          cy.findByText("SEP").should("exist").click();
+          cy.findByLabelText("combobox-year").click();
+          cy.findByText("2025").should("exist").click();
+          cy.findByText("21").should("have.css", "color", "rgb(209, 213, 219)");
+          cy.findByText("22")
+            .should("have.css", "color", "rgb(255, 255, 255)")
+            .and("have.css", "background-color", "rgb(97, 169, 249)");
+        });
       });
     });
 
