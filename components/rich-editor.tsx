@@ -27,7 +27,7 @@ interface RichEditorProps {
 }
 
 type RichEditorToolbarPositionState = "top" | "bottom";
-type RichEditorModeState = "view-only" | "page-editor";
+type RichEditorModeState = "view-only" | "page-editor" | "text-editor";
 
 export interface RichEditorToolbarButtonProps {
   icon?: RemixiconComponentType;
@@ -43,7 +43,7 @@ function RichEditor({
   toolbarRightPanel,
   editorStyle,
   containerStyle,
-  mode = "view-only",
+  mode = "text-editor",
   toolbarPosition = "top",
 }: RichEditorProps) {
   const turndownService = new TurndownService();
@@ -172,7 +172,7 @@ function RichEditor({
     },
   });
 
-  marked.use({ gfm: false });
+  marked.use({ gfm: false, breaks: true });
 
   const editorRef = useRef<HTMLDivElement>(null);
   const savedSelection = useRef<Range | null>(null);
@@ -183,51 +183,100 @@ function RichEditor({
   useEffect(() => {
     if (!editorRef.current || editorRef.current.innerHTML) return;
 
-    editorRef.current.innerHTML = String(marked(value));
-    document.execCommand("defaultParagraphSeparator", false, "p");
+    const initializeEditor = async () => {
+      let processedValue = value;
 
-    editorRef.current
-      .querySelectorAll(".custom-checkbox-wrapper")
-      .forEach((node) => node.remove());
+      processedValue = processedValue.replace(
+        /^(#{1,6}\s+.*?)\n(\n+)/gm,
+        (_, heading, newlines) => {
+          const newlineCount = newlines.length;
 
-    const walker = document.createTreeWalker(
-      editorRef.current,
-      NodeFilter.SHOW_TEXT
-    );
+          if (newlineCount === 1) {
+            return heading + "\n";
+          }
 
-    const textNodesToProcess: Text[] = [];
+          const spacingCount = newlineCount - 1;
+          const emptyParagraphs = "\n\n&nbsp;".repeat(spacingCount);
 
-    while (walker.nextNode()) {
-      const textNode = walker.currentNode as Text;
-      if (textNode.nodeValue && /\[(x| )\]/i.test(textNode.nodeValue)) {
-        textNodesToProcess.push(textNode);
-      }
-    }
-
-    textNodesToProcess.forEach((textNode) => {
-      if (!textNode.parentNode || !textNode.nodeValue) return;
-
-      const parts = textNode.nodeValue.split(/(\[x\]|\[ \])/i);
-      if (parts.length === 1) return;
-
-      const fragment = document.createDocumentFragment();
-
-      parts.forEach((part) => {
-        if (part.toLowerCase() === "[x]") {
-          fragment.appendChild(
-            createCheckboxWrapper(true, turndownService, editorRef, onChange)
-          );
-        } else if (part.toLowerCase() === "[ ]") {
-          fragment.appendChild(
-            createCheckboxWrapper(false, turndownService, editorRef, onChange)
-          );
-        } else if (part) {
-          fragment.appendChild(document.createTextNode(part));
+          return heading + "\n" + emptyParagraphs;
         }
-      });
+      );
 
-      textNode.parentNode.replaceChild(fragment, textNode);
-    });
+      processedValue = processedValue.replace(
+        /\n(\n+)/g,
+        (_, extraNewlines) => {
+          const emptyParagraphs = "\n\n<br>".repeat(extraNewlines.length);
+          return "\n" + emptyParagraphs;
+        }
+      );
+
+      let html = await marked.parse(processedValue);
+
+      html = html.replace(/<p>&nbsp;<\/p>/g, "<p><br></p>");
+
+      editorRef.current.innerHTML = String(html);
+      console.log("html", html);
+      document.execCommand("defaultParagraphSeparator", false, "p");
+
+      editorRef.current
+        .querySelectorAll(".custom-checkbox-wrapper")
+        .forEach((node) => node.remove());
+
+      const walker = document.createTreeWalker(
+        editorRef.current,
+        NodeFilter.SHOW_TEXT
+      );
+
+      const textNodesToProcess: Text[] = [];
+
+      while (walker.nextNode()) {
+        const textNode = walker.currentNode as Text;
+        if (textNode.nodeValue && /\[(x| )\]/i.test(textNode.nodeValue)) {
+          textNodesToProcess.push(textNode);
+        }
+      }
+
+      const isViewOnly = mode === "view-only";
+
+      textNodesToProcess.forEach((textNode) => {
+        if (!textNode.parentNode || !textNode.nodeValue) return;
+
+        const parts = textNode.nodeValue.split(/(\[x\]|\[ \])/i);
+        if (parts.length === 1) return;
+
+        const fragment = document.createDocumentFragment();
+
+        parts.forEach((part) => {
+          if (part.toLowerCase() === "[x]") {
+            fragment.appendChild(
+              createCheckboxWrapper(
+                true,
+                turndownService,
+                editorRef,
+                onChange,
+                isViewOnly
+              )
+            );
+          } else if (part.toLowerCase() === "[ ]") {
+            fragment.appendChild(
+              createCheckboxWrapper(
+                false,
+                turndownService,
+                editorRef,
+                onChange,
+                isViewOnly
+              )
+            );
+          } else if (part) {
+            fragment.appendChild(document.createTextNode(part));
+          }
+        });
+
+        textNode.parentNode.replaceChild(fragment, textNode);
+      });
+    };
+
+    initializeEditor();
   }, []);
 
   const handleEditorChange = () => {
@@ -289,6 +338,9 @@ function RichEditor({
   };
 
   const handleOnKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (mode === "view-only") {
+      e.preventDefault();
+    }
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "u") {
       e.preventDefault();
       return;
@@ -652,55 +704,60 @@ function RichEditor({
 
   return (
     <Wrapper $containerStyle={containerStyle}>
-      <ToolbarWrapper $toolbarMode={toolbarPosition}>
-        <Toolbar $toolbarMode={toolbarPosition}>
-          <ToolbarGroup>
-            <RichEditorToolbarButton
-              icon={RiBold}
-              onClick={() => handleCommand("bold")}
-            />
-            <RichEditorToolbarButton
-              icon={RiItalic}
-              onClick={() => handleCommand("italic")}
-            />
-            <RichEditorToolbarButton
-              icon={RiListOrdered}
-              onClick={() => handleCommand("insertOrderedList")}
-            />
-            <RichEditorToolbarButton
-              icon={RiListUnordered}
-              onClick={() => handleCommand("insertUnorderedList")}
-            />
-            <RichEditorToolbarButton
-              icon={RiCheckboxLine}
-              onClick={() => handleCommand("checkbox")}
-            />
-            <RichEditorToolbarButton
-              icon={RiHeading}
-              isOpen={isOpen}
-              onClick={() => {
-                const sel = window.getSelection();
-                if (sel && sel.rangeCount > 0) {
-                  savedSelection.current = sel.getRangeAt(0).cloneRange();
-                }
-                setIsOpen(true);
-              }}
-            />
+      {mode !== "view-only" && (
+        <ToolbarWrapper
+          aria-label="toolbar-content"
+          $toolbarPosition={toolbarPosition}
+        >
+          <Toolbar $toolbarPosition={toolbarPosition}>
+            <ToolbarGroup>
+              <RichEditorToolbarButton
+                icon={RiBold}
+                onClick={() => handleCommand("bold")}
+              />
+              <RichEditorToolbarButton
+                icon={RiItalic}
+                onClick={() => handleCommand("italic")}
+              />
+              <RichEditorToolbarButton
+                icon={RiListOrdered}
+                onClick={() => handleCommand("insertOrderedList")}
+              />
+              <RichEditorToolbarButton
+                icon={RiListUnordered}
+                onClick={() => handleCommand("insertUnorderedList")}
+              />
+              <RichEditorToolbarButton
+                icon={RiCheckboxLine}
+                onClick={() => handleCommand("checkbox")}
+              />
+              <RichEditorToolbarButton
+                icon={RiHeading}
+                isOpen={isOpen}
+                onClick={() => {
+                  const sel = window.getSelection();
+                  if (sel && sel.rangeCount > 0) {
+                    savedSelection.current = sel.getRangeAt(0).cloneRange();
+                  }
+                  setIsOpen(true);
+                }}
+              />
 
-            {isOpen && (
-              <MenuWrapper ref={menuRef} $toolbarPosition={toolbarPosition}>
-                <TipMenu
-                  setIsOpen={() => setIsOpen(false)}
-                  subMenuList={TIP_MENU_RICH_EDITOR}
-                />
-              </MenuWrapper>
+              {isOpen && (
+                <MenuWrapper ref={menuRef} $toolbarPosition={toolbarPosition}>
+                  <TipMenu
+                    setIsOpen={() => setIsOpen(false)}
+                    subMenuList={TIP_MENU_RICH_EDITOR}
+                  />
+                </MenuWrapper>
+              )}
+            </ToolbarGroup>
+            {toolbarRightPanel && (
+              <ToolbarRightPanel>{toolbarRightPanel}</ToolbarRightPanel>
             )}
-          </ToolbarGroup>
-          {toolbarRightPanel && (
-            <ToolbarRightPanel>{toolbarRightPanel}</ToolbarRightPanel>
-          )}
-        </Toolbar>
-      </ToolbarWrapper>
+          </Toolbar>
+        </ToolbarWrapper>
+      )}
 
       <EditorArea
         ref={editorRef}
@@ -710,18 +767,20 @@ function RichEditor({
         $toolbarPosition={toolbarPosition}
         $mode={mode}
         onInput={() => {
-          if (editorRef.current) {
-            syncCheckboxStates(editorRef.current);
-          }
+          if (mode !== "view-only") {
+            if (editorRef.current) {
+              syncCheckboxStates(editorRef.current);
+            }
 
-          const html =
-            editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
-          const cleanedHTML = cleanupHtml(html);
+            const html =
+              editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
+            const cleanedHTML = cleanupHtml(html);
 
-          const markdown = turndownService.turndown(cleanedHTML);
-          const cleanedMarkdown = cleanSpacing(markdown);
-          if (onChange) {
-            onChange(cleanedMarkdown);
+            const markdown = turndownService.turndown(cleanedHTML);
+            const cleanedMarkdown = cleanSpacing(markdown);
+            if (onChange) {
+              onChange(cleanedMarkdown);
+            }
           }
         }}
         onKeyDown={handleOnKeyDown}
@@ -764,13 +823,13 @@ const Wrapper = styled.div<{ $containerStyle?: CSSProp }>`
 `;
 
 const ToolbarWrapper = styled.div<{
-  $toolbarMode?: RichEditorToolbarPositionState;
+  $toolbarPosition?: RichEditorToolbarPositionState;
 }>`
   position: absolute;
   width: 100%;
 
-  ${({ $toolbarMode }) =>
-    $toolbarMode === "top"
+  ${({ $toolbarPosition }) =>
+    $toolbarPosition === "top"
       ? css`
           top: 0;
         `
@@ -780,7 +839,7 @@ const ToolbarWrapper = styled.div<{
 `;
 
 const Toolbar = styled.div<{
-  $toolbarMode?: RichEditorToolbarPositionState;
+  $toolbarPosition?: RichEditorToolbarPositionState;
 }>`
   display: flex;
   flex-direction: row;
@@ -792,8 +851,8 @@ const Toolbar = styled.div<{
   background: white;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 
-  ${({ $toolbarMode }) =>
-    $toolbarMode === "top"
+  ${({ $toolbarPosition }) =>
+    $toolbarPosition === "top"
       ? css`
           border-bottom: 1px solid #ececec;
         `
@@ -847,12 +906,12 @@ const EditorArea = styled.div<{
   background-color: white;
 
   ${({ $mode }) =>
-    $mode === "view-only"
+    $mode === "page-editor"
       ? css`
-          min-height: 200px;
+          min-height: 100vh;
         `
       : css`
-          min-height: 100vh;
+          min-height: 200px;
         `}
 
   ${({ $toolbarPosition }) =>
@@ -862,7 +921,15 @@ const EditorArea = styled.div<{
         `
       : css`
           padding-bottom: 45px;
-        `}
+        `};
+  ${({ $mode }) =>
+    $mode === "view-only" &&
+    css`
+      padding: 12px;
+      user-select: text;
+      caret-color: transparent;
+      outline: none;
+    `};
 
   ol {
     list-style-type: decimal !important;
@@ -948,27 +1015,32 @@ function createCheckboxWrapper(
   isChecked: boolean,
   turndownService: TurndownService,
   editorRef: React.RefObject<HTMLDivElement>,
-  onChange?: (value: string) => void
+  onChange?: (value: string) => void,
+  isViewOnly?: boolean
 ) {
   const input = document.createElement("input");
   input.type = "checkbox";
   input.checked = isChecked;
   input.className = "custom-checkbox-wrapper";
-  input.contentEditable = "true";
-  input.style.cursor = "pointer";
+  input.contentEditable = "false";
+  input.style.cursor = isViewOnly ? "default" : "pointer";
   input.dataset.checked = String(isChecked);
 
-  input.addEventListener("change", () => {
-    input.dataset.checked = String(input.checked);
+  if (isViewOnly) {
+    input.style.pointerEvents = "none";
+  } else {
+    input.addEventListener("change", () => {
+      input.dataset.checked = String(input.checked);
 
-    const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
-    const markdown = turndownService.turndown(html);
-    const cleanedMarkdown = cleanSpacing(markdown);
+      const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
+      const markdown = turndownService.turndown(html);
+      const cleanedMarkdown = cleanSpacing(markdown);
 
-    if (onChange) {
-      onChange(cleanedMarkdown);
-    }
-  });
+      if (onChange) {
+        onChange(cleanedMarkdown);
+      }
+    });
+  }
 
   return input;
 }
