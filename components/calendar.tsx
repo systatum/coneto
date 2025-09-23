@@ -471,6 +471,13 @@ function Calendar({
         setCurrentDate(validDate);
 
         setinputValueLocal(formatDate(validDate, format));
+
+        if (inputValue.text.length > 9) {
+          setInputValue({
+            text: formatDate(validDate, format),
+            value: formatDate(validDate, format),
+          });
+        }
       }
     }
   }, [inputValue?.text, format]);
@@ -834,8 +841,10 @@ function Calendar({
                       aria-label="today-dot"
                       $isToday={isToday}
                       $isDisabled={isDisabled}
+                      $isWeekend={isWeekend}
                       $isPickingProcess={startPicked.picked}
                       $disableWeekend={disableWeekend}
+                      $isCurrentDate={isCurrentDate}
                     />
                   )}
                 </DateCell>
@@ -1018,7 +1027,13 @@ export const DateCell = styled.span<{
     $isWeekend,
     $disableWeekend,
   }) => {
-    if ($isToday && $isHighlighted && $isCurrentDate && $disableWeekend) {
+    if (
+      $isToday &&
+      $isWeekend &&
+      $isHighlighted &&
+      $isCurrentDate &&
+      $disableWeekend
+    ) {
       return css`
         color: #61a9f9;
         background-color: transparent;
@@ -1103,25 +1118,16 @@ const DataCellRange = styled.span<{
       background-color: transparent;
     `};
 
-  ${({ $isRangeStart, $isPickingProcess, $disableWeekend }) =>
-    $isRangeStart && $isPickingProcess
-      ? css`
-          left: auto;
-          right: -10px;
-          width: 25px;
-          border-radius: 9999;
-          overflow: hidden;
-          transform: translateX(50%) translateY(-50%);
-        `
-      : $isRangeStart &&
-        css`
-          left: auto;
-          right: 4px;
-          width: 25px;
-          border-radius: 9999;
-          overflow: hidden;
-          transform: translateX(50%) translateY(-50%);
-        `};
+  ${({ $isRangeStart }) =>
+    $isRangeStart &&
+    css`
+      left: auto;
+      right: 6px;
+      width: 25px;
+      border-radius: 9999;
+      overflow: hidden;
+      transform: translateX(50%) translateY(-50%);
+    `};
 
   ${({ $isRangeEnd }) =>
     $isRangeEnd &&
@@ -1136,6 +1142,8 @@ const DateCellTodayDot = styled.div<{
   $isDisabled?: boolean;
   $isPickingProcess?: boolean;
   $disableWeekend?: boolean;
+  $isWeekend?: boolean;
+  $isCurrentDate?: boolean;
 }>`
   position: absolute;
   bottom: 1px;
@@ -1146,14 +1154,23 @@ const DateCellTodayDot = styled.div<{
   background-color: #61a9f9;
   border: 1px solid #61a9f9;
 
-  ${({ $isDisabled, $isPickingProcess, $isToday, $disableWeekend }) =>
-    $isToday && $isPickingProcess && $isDisabled
+  ${({
+    $isDisabled,
+    $isPickingProcess,
+    $isToday,
+    $disableWeekend,
+    $isCurrentDate,
+    $isWeekend,
+  }) =>
+    $isToday && $isPickingProcess && $isDisabled && !$isCurrentDate
       ? css`
           background-color: #d1d5db;
           border-color: #d1d5db;
         `
       : $isToday &&
         $disableWeekend &&
+        !$isCurrentDate &&
+        $isWeekend &&
         css`
           background-color: #d1d5db;
           border-color: #d1d5db;
