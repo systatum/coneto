@@ -113,6 +113,9 @@ export const ToolbarPositionBottom: Story = {
 };
 
 export const PageEditor: Story = {
+  parameters: {
+    layout: "fullscreen",
+  },
   render: () => {
     const [value, setValue] = useState("");
     const [printValue, setPrintValue] = useState("");
