@@ -52,7 +52,7 @@ export const Default: Story = {
     return (
       <div
         style={{
-          width: "295px",
+          width: "300px",
         }}
       >
         <Datebox
@@ -101,7 +101,7 @@ export const NoWeekends: Story = {
     return (
       <div
         style={{
-          width: "295px",
+          width: "300px",
         }}
       >
         <Datebox
@@ -151,7 +151,7 @@ export const Multiple: Story = {
     return (
       <div
         style={{
-          width: "295px",
+          width: "300px",
         }}
       >
         <Datebox
@@ -159,7 +159,7 @@ export const Multiple: Story = {
           setInputValue={setValue}
           dayNames={DAY_NAMES}
           monthNames={MONTH_NAMES}
-          selectabilityMode="multiple"
+          calendarSelectabilityMode="multiple"
         />
       </div>
     );
@@ -201,7 +201,7 @@ export const MultipleNoWeekends: Story = {
     return (
       <div
         style={{
-          width: "295px",
+          width: "300px",
         }}
       >
         <Datebox
@@ -209,7 +209,7 @@ export const MultipleNoWeekends: Story = {
           setInputValue={setValue}
           dayNames={DAY_NAMES}
           monthNames={MONTH_NAMES}
-          selectabilityMode="multiple"
+          calendarSelectabilityMode="multiple"
           disableWeekend
         />
       </div>
@@ -252,7 +252,7 @@ export const Ranged: Story = {
     return (
       <div
         style={{
-          width: "295px",
+          width: "300px",
         }}
       >
         <Datebox
@@ -260,7 +260,7 @@ export const Ranged: Story = {
           setInputValue={setValue}
           dayNames={DAY_NAMES}
           monthNames={MONTH_NAMES}
-          selectabilityMode="ranged"
+          calendarSelectabilityMode="ranged"
         />
       </div>
     );
@@ -302,7 +302,7 @@ export const RangedNoWeekends: Story = {
     return (
       <div
         style={{
-          width: "295px",
+          width: "300px",
         }}
       >
         <Datebox
@@ -310,7 +310,7 @@ export const RangedNoWeekends: Story = {
           setInputValue={setValue}
           dayNames={DAY_NAMES}
           monthNames={MONTH_NAMES}
-          selectabilityMode="ranged"
+          calendarSelectabilityMode="ranged"
           disableWeekend
         />
       </div>
@@ -366,7 +366,7 @@ export const WithFooter: Story = {
     return (
       <div
         style={{
-          width: "295px",
+          width: "300px",
         }}
       >
         <Datebox
