@@ -73,6 +73,10 @@
       "import": "./dist/components/dialog.js",
       "types": "./dist/components/dialog.d.ts"
     },
+    "./document-viewer": {
+      "import": "./dist/components/document-viewer.js",
+      "types": "./dist/components/document-viewer.d.ts"
+    },
     "./dormant-text": {
       "import": "./dist/components/dormant-text.js",
       "types": "./dist/components/dormant-text.d.ts"
@@ -295,6 +299,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.12.1",
+    "pdfjs-dist": "^5.4.54",
     "react-hook-form": "^7.56.3",
     "react-responsive": "^10.0.1",
     "react-swipeable": "^7.0.2",
