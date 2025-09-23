@@ -58,6 +58,8 @@ export const Default: Story = {
             style={{
               padding: 28,
               background: "#D3D3D3",
+              whiteSpace: "pre-wrap",
+              wordBreak: "break-word",
             }}
           >
             {printValue}
@@ -98,6 +100,8 @@ export const ToolbarPositionBottom: Story = {
             style={{
               padding: 28,
               background: "#D3D3D3",
+              whiteSpace: "pre-wrap",
+              wordBreak: "break-word",
             }}
           >
             {printValue}
@@ -138,9 +142,52 @@ export const PageEditor: Story = {
             style={{
               padding: 28,
               background: "#D3D3D3",
+              whiteSpace: "pre-wrap",
+              wordBreak: "break-word",
             }}
           >
             {printValue}
+          </pre>
+        )}
+      </div>
+    );
+  },
+};
+
+export const ViewOnly: Story = {
+  render: () => {
+    const [value, setValue] = useState(
+      `### Hello there!
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor reprehenderit voluptate velit.
+
+This is ordered list
+1. test [ ]
+2. test [x]
+
+This is unordered list
+* test
+* test
+`
+    );
+
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <RichEditor
+          mode="view-only"
+          onChange={(e) => setValue(e)}
+          value={value}
+        />
+        {value !== "" && (
+          <pre
+            style={{
+              padding: 28,
+              background: "#D3D3D3",
+              whiteSpace: "pre-wrap",
+              wordBreak: "break-word",
+            }}
+          >
+            {value}
           </pre>
         )}
       </div>
