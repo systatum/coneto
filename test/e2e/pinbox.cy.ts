@@ -14,7 +14,7 @@ describe("Pinbox", () => {
           cy.findAllByLabelText("pinbox-input").eq(3).type("a");
           cy.findAllByLabelText("pinbox-input").eq(5).type("b");
 
-          const contentExpected = ["S", "2", "1", "a", "-", "b"];
+          const contentExpected = ["S", "2", "1", "A", "-", "B"];
 
           contentExpected.forEach((data, index) => {
             cy.findAllByLabelText("pinbox-input")
@@ -28,7 +28,7 @@ describe("Pinbox", () => {
         it("should render character", () => {
           cy.findAllByLabelText("pinbox-input").eq(1).type("a");
 
-          const contentExpected = ["S", "a", "", "", "-", ""];
+          const contentExpected = ["S", "A", "", "", "-", ""];
 
           contentExpected.forEach((data, index) => {
             cy.findAllByLabelText("pinbox-input")
@@ -85,7 +85,7 @@ describe("Pinbox", () => {
           cy.findAllByLabelText("pinbox-input").eq(3).type("a");
           cy.findAllByLabelText("pinbox-input").eq(5).type("b");
 
-          const contentExpected = ["S", "", "", "a", "-", "b"];
+          const contentExpected = ["S", "", "", "A", "-", "B"];
 
           contentExpected.forEach((data, index) => {
             cy.findAllByLabelText("pinbox-input")
