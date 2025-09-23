@@ -25,7 +25,6 @@ export interface BaseCalendarProps {
   futurePastReach?: number;
   onClick?: () => void;
   onCalendarPeriodChanged?: (data: Date) => void;
-  selectabilityMode?: SelectabilityModeState;
 }
 
 type CalendarProps = BaseCalendarProps &
@@ -35,6 +34,7 @@ type CalendarProps = BaseCalendarProps &
     errorMessage?: string;
     footer?: ReactNode;
     todayButtonCaption?: string;
+    selectabilityMode?: SelectabilityModeState;
   };
 
 interface CalendarStateProps {
@@ -52,7 +52,7 @@ type CustomChangeEvent = {
 
 export type FormatProps = "mm/dd/yyyy" | "yyyy/mm/dd" | "dd/mm/yyyy";
 export type DateBoxOpen = "open" | "month" | "year";
-type SelectabilityModeState = "single" | "multiple" | "ranged";
+export type SelectabilityModeState = "single" | "multiple" | "ranged";
 
 const DEFAULT_DAY_NAMES = [
   { text: "Su", value: 1 },
@@ -1172,7 +1172,7 @@ const DataCellRange = styled.span<{
     $isRangeEnd &&
     css`
       width: 25px;
-      transform: translateX(-10%) translateY(-50%);
+      transform: translateX(-2%) translateY(-50%);
     `}
 `;
 
