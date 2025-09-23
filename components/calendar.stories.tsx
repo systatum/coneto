@@ -89,6 +89,187 @@ export const NoWeekends: Story = {
     ];
 
     const [value, setValue] = useState<OptionsProps>({
+      text: "09/21/2025",
+      value: "09/21/2025",
+    });
+
+    return (
+      <Calendar
+        dayNames={DAY_NAMES}
+        monthNames={MONTH_NAMES}
+        inputValue={value}
+        setInputValue={setValue}
+        format="mm/dd/yyyy"
+        disableWeekend
+      />
+    );
+  },
+};
+
+export const Multiple: Story = {
+  render: () => {
+    const DAY_NAMES = [
+      { text: "Su", value: 1 },
+      { text: "Mo", value: 2 },
+      { text: "Tu", value: 3 },
+      { text: "We", value: 4 },
+      { text: "Th", value: 5 },
+      { text: "Fr", value: 6 },
+      { text: "Sa", value: 7 },
+    ];
+
+    const MONTH_NAMES = [
+      { text: "JAN", value: 1 },
+      { text: "FEB", value: 2 },
+      { text: "MAR", value: 3 },
+      { text: "APR", value: 4 },
+      { text: "MAY", value: 5 },
+      { text: "JUN", value: 6 },
+      { text: "JUL", value: 7 },
+      { text: "AUG", value: 8 },
+      { text: "SEP", value: 9 },
+      { text: "OCT", value: 10 },
+      { text: "NOV", value: 11 },
+      { text: "DEC", value: 12 },
+    ];
+
+    const [value, setValue] = useState<OptionsProps>({
+      text: "",
+      value: "",
+    });
+
+    return (
+      <Calendar
+        dayNames={DAY_NAMES}
+        monthNames={MONTH_NAMES}
+        inputValue={value}
+        setInputValue={setValue}
+        format="mm/dd/yyyy"
+        selectabilityMode="multiple"
+      />
+    );
+  },
+};
+
+export const MultipleNoWeekend: Story = {
+  render: () => {
+    const DAY_NAMES = [
+      { text: "Su", value: 1 },
+      { text: "Mo", value: 2 },
+      { text: "Tu", value: 3 },
+      { text: "We", value: 4 },
+      { text: "Th", value: 5 },
+      { text: "Fr", value: 6 },
+      { text: "Sa", value: 7 },
+    ];
+
+    const MONTH_NAMES = [
+      { text: "JAN", value: 1 },
+      { text: "FEB", value: 2 },
+      { text: "MAR", value: 3 },
+      { text: "APR", value: 4 },
+      { text: "MAY", value: 5 },
+      { text: "JUN", value: 6 },
+      { text: "JUL", value: 7 },
+      { text: "AUG", value: 8 },
+      { text: "SEP", value: 9 },
+      { text: "OCT", value: 10 },
+      { text: "NOV", value: 11 },
+      { text: "DEC", value: 12 },
+    ];
+
+    const [value, setValue] = useState<OptionsProps>({
+      text: "",
+      value: "",
+    });
+
+    return (
+      <Calendar
+        dayNames={DAY_NAMES}
+        monthNames={MONTH_NAMES}
+        inputValue={value}
+        setInputValue={setValue}
+        format="mm/dd/yyyy"
+        selectabilityMode="multiple"
+        disableWeekend
+      />
+    );
+  },
+};
+
+export const Ranged: Story = {
+  render: () => {
+    const DAY_NAMES = [
+      { text: "Su", value: 1 },
+      { text: "Mo", value: 2 },
+      { text: "Tu", value: 3 },
+      { text: "We", value: 4 },
+      { text: "Th", value: 5 },
+      { text: "Fr", value: 6 },
+      { text: "Sa", value: 7 },
+    ];
+
+    const MONTH_NAMES = [
+      { text: "JAN", value: 1 },
+      { text: "FEB", value: 2 },
+      { text: "MAR", value: 3 },
+      { text: "APR", value: 4 },
+      { text: "MAY", value: 5 },
+      { text: "JUN", value: 6 },
+      { text: "JUL", value: 7 },
+      { text: "AUG", value: 8 },
+      { text: "SEP", value: 9 },
+      { text: "OCT", value: 10 },
+      { text: "NOV", value: 11 },
+      { text: "DEC", value: 12 },
+    ];
+
+    const [value, setValue] = useState<OptionsProps>({
+      text: "",
+      value: "",
+    });
+
+    return (
+      <Calendar
+        dayNames={DAY_NAMES}
+        monthNames={MONTH_NAMES}
+        inputValue={value}
+        setInputValue={setValue}
+        format="mm/dd/yyyy"
+        selectabilityMode="ranged"
+      />
+    );
+  },
+};
+
+export const RangedNoWeekends: Story = {
+  render: () => {
+    const DAY_NAMES = [
+      { text: "Su", value: 1 },
+      { text: "Mo", value: 2 },
+      { text: "Tu", value: 3 },
+      { text: "We", value: 4 },
+      { text: "Th", value: 5 },
+      { text: "Fr", value: 6 },
+      { text: "Sa", value: 7 },
+    ];
+
+    const MONTH_NAMES = [
+      { text: "JAN", value: 1 },
+      { text: "FEB", value: 2 },
+      { text: "MAR", value: 3 },
+      { text: "APR", value: 4 },
+      { text: "MAY", value: 5 },
+      { text: "JUN", value: 6 },
+      { text: "JUL", value: 7 },
+      { text: "AUG", value: 8 },
+      { text: "SEP", value: 9 },
+      { text: "OCT", value: 10 },
+      { text: "NOV", value: 11 },
+      { text: "DEC", value: 12 },
+    ];
+
+    const [value, setValue] = useState<OptionsProps>({
       text: "",
       value: "",
     });
@@ -101,6 +282,7 @@ export const NoWeekends: Story = {
         setInputValue={setValue}
         format="mm/dd/yyyy"
         disableWeekend
+        selectabilityMode="ranged"
       />
     );
   },
@@ -163,6 +345,7 @@ export const WithFooter: Story = {
         setInputValue={setValue}
         format="mm/dd/yyyy"
         footer={footerContent}
+        selectabilityMode="ranged"
         onCalendarPeriodChanged={handleCalendarPeriodChanged}
       />
     );

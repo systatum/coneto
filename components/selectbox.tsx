@@ -216,6 +216,8 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
           onBlur={() => {
             setIsFocused(false);
             setIsHovered(false);
+            setHasInteracted(false);
+
             if (strict) {
               const matched = options.find(
                 (opt) => opt.text === inputValueLocal.text

@@ -949,17 +949,17 @@ const EditorArea = styled.div<{
 
   h1 {
     font-size: 2em;
-    margin: 0.5em 0;
+    margin: 0.25em 0;
   }
 
   h2 {
-    font-size: 1.5em;
-    margin: 0.5em 0;
+    font-size: 1.65em;
+    margin: 0.3em 0;
   }
 
   h3 {
-    font-size: 1.25em;
-    margin: 0.5em 0;
+    font-size: 1.3em;
+    margin: 0.4em 0;
   }
 
   ${({ $editorStyle }) => $editorStyle};
