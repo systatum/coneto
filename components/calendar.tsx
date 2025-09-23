@@ -473,10 +473,12 @@ function Calendar({
         setinputValueLocal(formatDate(validDate, format));
 
         if (inputValue.text.length > 9) {
-          setInputValue({
-            text: formatDate(validDate, format),
-            value: formatDate(validDate, format),
-          });
+          if (setInputValue) {
+            setInputValue({
+              text: formatDate(validDate, format),
+              value: formatDate(validDate, format),
+            });
+          }
         }
       }
     }
