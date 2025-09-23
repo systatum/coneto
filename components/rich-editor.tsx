@@ -53,7 +53,7 @@ function RichEditor({
     replacement: function (content, node) {
       const hLevel = Number((node as HTMLElement).nodeName.charAt(1));
       const prefix = "#".repeat(hLevel);
-      return `\n\n${prefix} ${content}\n\n`;
+      return `${prefix} ${content}\n`;
     },
   });
 
@@ -98,6 +98,15 @@ function RichEditor({
         htmlContent.trim() === "<br>" || htmlContent.trim() === "<br/>";
       const prevSibling = node.previousElementSibling;
       const nextSibling = node.nextElementSibling;
+
+      if (
+        prevSibling &&
+        /^H[1-6]$/.test(prevSibling.tagName) &&
+        nextSibling &&
+        nextSibling.tagName === "P"
+      ) {
+        return content;
+      }
 
       if (
         prevSibling &&
@@ -185,22 +194,6 @@ function RichEditor({
 
     const initializeEditor = async () => {
       let processedValue = value;
-
-      processedValue = processedValue.replace(
-        /^(#{1,6}\s+.*?)\n(\n+)/gm,
-        (_, heading, newlines) => {
-          const newlineCount = newlines.length;
-
-          if (newlineCount === 1) {
-            return heading + "\n";
-          }
-
-          const spacingCount = newlineCount - 1;
-          const emptyParagraphs = "\n\n&nbsp;".repeat(spacingCount);
-
-          return heading + "\n" + emptyParagraphs;
-        }
-      );
 
       processedValue = processedValue.replace(
         /\n(\n+)/g,
@@ -375,16 +368,7 @@ function RichEditor({
       if (headingParent) {
         e.preventDefault();
 
-        const p = document.createElement("p");
-        p.innerHTML = "<br>";
-        headingParent.insertAdjacentElement("afterend", p);
-
-        const newRange = document.createRange();
-        newRange.setStart(p, 0);
-        newRange.collapse(true);
-
-        sel.removeAllRanges();
-        sel.addRange(newRange);
+        document.execCommand("insertParagraph");
 
         handleEditorChange();
         return;
