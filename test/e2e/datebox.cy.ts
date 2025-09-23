@@ -102,7 +102,8 @@ describe("Datebox", () => {
           );
         });
 
-        const expectedContent = "09/01/2025,09/03/2025,09/05/2025,09/08/2025";
+        const expectedContent =
+          "09/01/2025, 09/03/2025, 09/05/2025, 09/08/2025";
 
         cy.findByPlaceholderText("mm/dd/yyyy").as("input");
         cy.get("@input").should("have.value", expectedContent);
@@ -130,7 +131,7 @@ describe("Datebox", () => {
         });
 
         const expectedContent =
-          "09/01/2025,09/02/2025,09/03/2025,09/04/2025,09/05/2025,09/06/2025,09/07/2025,09/08/2025,09/09/2025,09/10/2025";
+          "09/01/2025, 09/02/2025, 09/03/2025, 09/04/2025, 09/05/2025, 09/06/2025, 09/07/2025, 09/08/2025, 09/09/2025, 09/10/2025";
 
         cy.findByPlaceholderText("mm/dd/yyyy").as("input");
         cy.get("@input").should("have.value", expectedContent);
@@ -170,7 +171,8 @@ describe("Datebox", () => {
             "rgb(255, 255, 255)"
           );
         });
-        const expectedContent = "09/01/2025,09/03/2025,09/05/2025,09/08/2025";
+        const expectedContent =
+          "09/01/2025, 09/03/2025, 09/05/2025, 09/08/2025";
 
         cy.findByPlaceholderText("mm/dd/yyyy").as("input");
         cy.get("@input").should("have.value", expectedContent);
@@ -198,7 +200,7 @@ describe("Datebox", () => {
         });
 
         const expectedContent =
-          "09/01/2025,09/02/2025,09/03/2025,09/04/2025,09/05/2025,09/08/2025,09/09/2025,09/10/2025";
+          "09/01/2025, 09/02/2025, 09/03/2025, 09/04/2025, 09/05/2025, 09/08/2025, 09/09/2025, 09/10/2025";
 
         cy.findByPlaceholderText("mm/dd/yyyy").as("input");
         cy.get("@input").should("have.value", expectedContent);
@@ -269,7 +271,7 @@ describe("Datebox", () => {
         );
 
         const expectedContentNoWeekend =
-          "09/01/2025,09/02/2025,09/03/2025,09/04/2025,09/05/2025,09/08/2025,09/09/2025,09/10/2025,09/11/2025,09/12/2025,09/15/2025,09/16/2025,09/17/2025,09/18/2025,09/19/2025";
+          "09/01/2025, 09/02/2025, 09/03/2025, 09/04/2025, 09/05/2025, 09/08/2025, 09/09/2025, 09/10/2025, 09/11/2025, 09/12/2025, 09/15/2025, 09/16/2025, 09/17/2025, 09/18/2025, 09/19/2025";
 
         cy.findByPlaceholderText("mm/dd/yyyy").as("input");
         cy.get("@input").should("have.value", expectedContentNoWeekend);

@@ -127,7 +127,7 @@ function Calendar({
 
   const initialValueState = () => {
     if (disableWeekend && selectabilityMode === "ranged") {
-      const value = inputValue.text.split(",");
+      const value = inputValue.text.split(", ");
       const firstValue = value[0];
       const latestValue = value[value.length - 1];
 
@@ -310,7 +310,7 @@ function Calendar({
 
     if (selectabilityMode === "multiple") {
       await setinputValueLocal((prev) => {
-        const values = prev ? prev.split(",") : [];
+        const values = prev ? prev.split(", ") : [];
 
         if (e?.shiftKey && values.length > 0) {
           const lastDate = new Date(values[values.length - 1]);
@@ -343,7 +343,7 @@ function Calendar({
           );
         }
 
-        const finalValues = newValues.join(",");
+        const finalValues = newValues.join(", ");
         if (setInputValue) {
           setInputValue({
             text: finalValues,
@@ -396,7 +396,7 @@ function Calendar({
         });
 
         const finalValues = disableWeekend
-          ? newValues.join(",")
+          ? newValues.join(", ")
           : newValues.join("-");
 
         const firstValueLocal = newValues[0];
@@ -500,7 +500,7 @@ function Calendar({
 
       case "multiple":
         return inputValueLocal
-          .split(",")
+          .split(", ")
           .filter(Boolean)
           .map((dateStr) => {
             const date = new Date(dateStr.trim());
