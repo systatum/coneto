@@ -7,7 +7,7 @@ describe("Pinbox", () => {
     });
 
     context("specific", () => {
-      context("when pressing character", () => {
+      context("when pressing", () => {
         it("should render character", () => {
           cy.findAllByLabelText("pinbox-input").eq(1).type("2");
           cy.findAllByLabelText("pinbox-input").eq(2).type("1");
@@ -24,12 +24,68 @@ describe("Pinbox", () => {
         });
       });
 
+      context("when alphanumeric pressing with alphabet", () => {
+        it("should render character", () => {
+          cy.findAllByLabelText("pinbox-input").eq(1).type("a");
+
+          const contentExpected = ["S", "a", "", "", "-", ""];
+
+          contentExpected.forEach((data, index) => {
+            cy.findAllByLabelText("pinbox-input")
+              .eq(index)
+              .should("have.value", data);
+          });
+        });
+      });
+
+      context("when alphanumeric pressing with digit", () => {
+        it("should render character", () => {
+          cy.findAllByLabelText("pinbox-input").eq(1).type("2");
+
+          const contentExpected = ["S", "2", "", "", "-", ""];
+
+          contentExpected.forEach((data, index) => {
+            cy.findAllByLabelText("pinbox-input")
+              .eq(index)
+              .should("have.value", data);
+          });
+        });
+      });
+
       context("when digit pressing with alphabet", () => {
         it("should not render character", () => {
-          cy.findAllByLabelText("pinbox-input").eq(1).type("a");
           cy.findAllByLabelText("pinbox-input").eq(2).type("b");
 
           const contentExpected = ["S", "", "", "", "-", ""];
+
+          contentExpected.forEach((data, index) => {
+            cy.findAllByLabelText("pinbox-input")
+              .eq(index)
+              .should("have.value", data);
+          });
+        });
+      });
+
+      context("when digit pressing with digit", () => {
+        it("should render character", () => {
+          cy.findAllByLabelText("pinbox-input").eq(2).type("2");
+
+          const contentExpected = ["S", "", "2", "", "-", ""];
+
+          contentExpected.forEach((data, index) => {
+            cy.findAllByLabelText("pinbox-input")
+              .eq(index)
+              .should("have.value", data);
+          });
+        });
+      });
+
+      context("when alphabet pressing with alphabet", () => {
+        it("should render character", () => {
+          cy.findAllByLabelText("pinbox-input").eq(3).type("a");
+          cy.findAllByLabelText("pinbox-input").eq(5).type("b");
+
+          const contentExpected = ["S", "", "", "a", "-", "b"];
 
           contentExpected.forEach((data, index) => {
             cy.findAllByLabelText("pinbox-input")
