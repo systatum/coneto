@@ -332,7 +332,10 @@ function RichEditor({
 
   const handleOnKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (mode === "view-only") {
-      e.preventDefault();
+      const isCopy = (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "c";
+      if (!isCopy) {
+        e.preventDefault();
+      }
     }
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "u") {
       e.preventDefault();
@@ -687,7 +690,7 @@ function RichEditor({
   }, [isOpen]);
 
   return (
-    <Wrapper $containerStyle={containerStyle}>
+    <Wrapper $containerStyle={containerStyle} $mode={mode}>
       {mode !== "view-only" && (
         <ToolbarWrapper
           aria-label="toolbar-content"
@@ -797,10 +800,18 @@ function RichEditorToolbarButton({
   );
 }
 
-const Wrapper = styled.div<{ $containerStyle?: CSSProp }>`
-  border: 1px solid #ececec;
-  border-radius: 4px;
-  box-shadow: 0 1px 4px -3px #5b5b5b;
+const Wrapper = styled.div<{
+  $containerStyle?: CSSProp;
+  $mode?: RichEditorModeState;
+}>`
+  ${({ $mode }) =>
+    $mode !== "page-editor" &&
+    css`
+      border: 1px solid #ececec;
+      border-radius: 4px;
+      box-shadow: 0 1px 4px -3px #5b5b5b;
+    `}
+
   position: relative;
 
   ${({ $containerStyle }) => $containerStyle}
@@ -865,7 +876,7 @@ const ToolbarRightPanel = styled.div`
 const MenuWrapper = styled.div<{
   $toolbarPosition?: RichEditorToolbarPositionState;
 }>`
-  position: absolute;
+  position: fixed;
   ${({ $toolbarPosition }) =>
     $toolbarPosition === "top"
       ? css`
@@ -893,6 +904,8 @@ const EditorArea = styled.div<{
     $mode === "page-editor"
       ? css`
           min-height: 100vh;
+          max-height: 100vh;
+          overflow: auto;
         `
       : css`
           min-height: 200px;
