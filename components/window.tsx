@@ -1,6 +1,7 @@
 import { RemixiconComponentType } from "@remixicon/react";
 import {
   Children,
+  Fragment,
   isValidElement,
   MouseEvent,
   ReactNode,
@@ -10,6 +11,7 @@ import {
   useState,
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
+import { Button } from "./button";
 
 interface WindowProps {
   orientation?: "horizontal" | "vertical";
@@ -145,13 +147,14 @@ function Window({
   return (
     <Container ref={containerRef} $isVertical={isVertical} $style={style}>
       {childrenArray.map((child, index) => (
-        <CellWrapper
-          key={index}
-          $size={sizes[index]}
-          $isDragging={isDragging}
-          $isVertical={isVertical}
-        >
-          {child}
+        <Fragment key={index}>
+          <CellWrapper
+            $size={sizes[index]}
+            $isDragging={isDragging}
+            $isVertical={isVertical}
+          >
+            {child}
+          </CellWrapper>
           {index < childrenArray.length - 1 && (
             <Divider
               $style={dividerStyle}
@@ -161,7 +164,7 @@ function Window({
               $isVertical={isVertical}
             />
           )}
-        </CellWrapper>
+        </Fragment>
       ))}
     </Container>
   );
@@ -178,16 +181,32 @@ function WindowCell({ children, style, actions }: WindowCellProps) {
       {actions && (
         <ActionContainer>
           {actions.map((data, index) => (
-            <ActionButton
+            <Button
+              variant="transparent"
               key={index}
               aria-label="window-button"
               onClick={() => {
                 if (data.onClick) data.onClick();
               }}
-              $style={data.style}
+              containerStyle={css`
+                position: absolute;
+                top: 0.5rem;
+                right: 0.5rem;
+                cursor: pointer;
+                transition: all 0.3s;
+                border-radius: 2px;
+                padding: 2px;
+                width: fit-content;
+                height: fit-content;
+              `}
+              buttonStyle={css`
+                width: fit-content;
+                height: fit-content;
+                padding: 2px;
+              `}
             >
               {data.icon && <data.icon size={16} />}
-            </ActionButton>
+            </Button>
           ))}
         </ActionContainer>
       )}
@@ -201,8 +220,9 @@ const Container = styled.div.withConfig({
 })<{ $isVertical: boolean; $style?: CSSProp }>`
   display: flex;
   width: 100%;
-  height: 100%;
+  height: auto;
   overflow: hidden;
+
   flex-direction: ${({ $isVertical }) => ($isVertical ? "row" : "column")};
   ${({ $style }) => $style}
 `;
@@ -228,24 +248,19 @@ const CellWrapper = styled.div.withConfig({
 `;
 
 const Divider = styled.div<{ $isVertical: boolean; $style?: CSSProp }>`
-  position: absolute;
-  z-index: 10;
+  position: relative;
   background-color: transparent;
   transition: background-color 0.3s;
 
   ${({ $isVertical }) =>
     $isVertical
       ? css`
-          top: 0;
-          right: 0;
           width: 1px;
           height: 100%;
           cursor: col-resize;
           border-right: 1px solid #d1d5db;
         `
       : css`
-          left: 0;
-          bottom: 0;
           height: 1px;
           width: 100%;
           cursor: row-resize;
@@ -261,22 +276,6 @@ const ActionContainer = styled.div`
   top: 16px;
   display: flex;
   flex-direction: row;
-`;
-
-const ActionButton = styled.div<{ $style?: CSSProp }>`
-  display: flex;
-  align-items: center;
-  position: relative;
-  padding: 2px;
-  gap: 8px;
-  transition: background-color 0.3s;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #d1d5db;
-  }
-
-  ${({ $style }) => $style}
 `;
 
 Window.Cell = WindowCell;

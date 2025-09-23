@@ -171,7 +171,7 @@ function ComboboxDrawer({
       ref={refs.setFloating}
       id="combo-list"
       role="listbox"
-      width={refs.reference.current?.getBoundingClientRect().width}
+      $width={refs.reference.current?.getBoundingClientRect().width}
       style={{ ...floatingStyles }}
     >
       {actions && (
@@ -209,9 +209,9 @@ function ComboboxDrawer({
               id={`option-${index}`}
               role="option"
               aria-selected={isSelected}
-              selected={isSelected}
               data-highlighted={shouldHighlight}
-              highlighted={shouldHighlight}
+              $selected={isSelected}
+              $highlighted={shouldHighlight}
               onMouseDown={() => {
                 setInputValue(option);
                 setIsOpen(false);
@@ -233,7 +233,7 @@ function ComboboxDrawer({
   );
 }
 
-const DrawerWrapper = styled.ul<{ width?: number }>`
+const DrawerWrapper = styled.ul<{ $width?: number }>`
   position: absolute;
   z-index: 1000;
   max-height: 15rem;
@@ -244,7 +244,7 @@ const DrawerWrapper = styled.ul<{ width?: number }>`
   box-shadow:
     0 10px 15px -3px rgba(0, 0, 0, 0.1),
     0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  width: ${({ width }) => (width ? `${width}px` : "100%")};
+  width: ${({ $width }) => ($width ? `${$width}px` : "100%")};
 `;
 
 const ActionWrapper = styled.div`
@@ -284,12 +284,12 @@ const Divider = styled.div`
   margin: 2px 0;
 `;
 
-const OptionItem = styled.li<{ selected?: boolean; highlighted?: boolean }>`
+const OptionItem = styled.li<{ $selected?: boolean; $highlighted?: boolean }>`
   cursor: pointer;
   padding: 0.5rem 0.75rem;
-  ${({ highlighted }) => (highlighted ? "background-color: #dbeafe;" : "")}
-  ${({ selected }) =>
-    selected
+  ${({ $highlighted }) => ($highlighted ? "background-color: #dbeafe;" : "")}
+  ${({ $selected }) =>
+    $selected
       ? `
     background-color: #61A9F9;
     font-weight: 600;
