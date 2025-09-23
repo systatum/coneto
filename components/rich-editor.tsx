@@ -333,6 +333,7 @@ function RichEditor({
   const handleOnKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (mode === "view-only") {
       const isCopy = (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "c";
+
       if (!isCopy) {
         e.preventDefault();
       }
@@ -690,7 +691,11 @@ function RichEditor({
   }, [isOpen]);
 
   return (
-    <Wrapper $containerStyle={containerStyle} $mode={mode}>
+    <Wrapper
+      aria-label="wrapper-editor"
+      $containerStyle={containerStyle}
+      $mode={mode}
+    >
       {mode !== "view-only" && (
         <ToolbarWrapper
           aria-label="toolbar-content"
@@ -876,7 +881,7 @@ const ToolbarRightPanel = styled.div`
 const MenuWrapper = styled.div<{
   $toolbarPosition?: RichEditorToolbarPositionState;
 }>`
-  position: fixed;
+  position: absolute;
   ${({ $toolbarPosition }) =>
     $toolbarPosition === "top"
       ? css`
