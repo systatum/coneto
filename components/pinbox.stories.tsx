@@ -19,11 +19,11 @@ export const Default: Story = {
 
     const PARTS_INPUT: PinboxState[] = [
       { type: "static", text: "S" },
-      { type: "alphanumeric" },
-      { type: "alphanumeric" },
-      { type: "alphanumeric" },
+      { type: "digit" },
+      { type: "digit" },
+      { type: "alphabet" },
       { type: "static", text: "-" },
-      { type: "alphanumeric" },
+      { type: "alphabet" },
     ];
 
     const onChangeValue = (e: StatefulOnChangeType) => {
