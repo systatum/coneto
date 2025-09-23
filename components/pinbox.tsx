@@ -165,6 +165,13 @@ function Pinbox({
   };
 
   const updateValue = (index: number, newChar: string) => {
+    const type = parts[index].type;
+    if (type === "alphabet" || type === "alphanumeric") {
+      if (/[a-z]/.test(newChar)) {
+        newChar = newChar.toUpperCase();
+      }
+    }
+
     const finalValue = [...valueLocal];
     finalValue[index] = newChar;
     setValueLocal(finalValue);
