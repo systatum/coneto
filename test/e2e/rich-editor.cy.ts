@@ -8,6 +8,263 @@ describe("RichEditor", () => {
     cy.visit(getIdContent("input-elements-richeditor--default"));
   });
 
+  context("toolbar position", () => {
+    context("when given top", () => {
+      it("renders toolbar on the top", () => {
+        cy.findByLabelText("toolbar-content").should("have.css", "top", "0px");
+        cy.findByRole("textbox")
+          .should("have.css", "min-height", "200px")
+          .and("have.css", "padding-top", "45px");
+      });
+    });
+
+    context("when given bottom", () => {
+      it("renders toolbar on the bottom", () => {
+        cy.visit(
+          getIdContent("input-elements-richeditor--toolbar-position-bottom")
+        );
+        cy.findByLabelText("toolbar-content").should(
+          "have.css",
+          "bottom",
+          "0px"
+        );
+        cy.findByRole("textbox")
+          .should("have.css", "min-height", "200px")
+          .and("have.css", "padding-bottom", "45px");
+      });
+    });
+  });
+
+  context("ref", () => {
+    context("when using insertMarkdownContent", () => {
+      context("when click", () => {
+        it("renders content on editor", () => {
+          cy.findByText("Markdown Example").click();
+          const contentHTML = `<h3>Hello there!</h3>
+<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor reprehenderit voluptate velit.</p>
+<p><br>This is ordered list</p>
+<ol>
+<li><input type="checkbox" class="custom-checkbox-wrapper" contenteditable="false" data-checked="false" style="cursor: pointer;"> test</li>
+<li><input type="checkbox" class="custom-checkbox-wrapper" contenteditable="false" data-checked="true" style="cursor: pointer;"> test</li>
+</ol>
+<p><br>This is unordered list</p>
+<ul>
+<li>test</li>
+<li>test</li>
+</ul>`;
+          cy.findByRole("textbox").should("contain.html", contentHTML);
+        });
+      });
+
+      context("when printing content", () => {
+        it("renders the markdown identical to its previous value", () => {
+          cy.findByText("Markdown Example").click();
+          const contentHTML = `<h3>Hello there!</h3>
+<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor reprehenderit voluptate velit.</p>
+<p><br>This is ordered list</p>
+<ol>
+<li><input type="checkbox" class="custom-checkbox-wrapper" contenteditable="false" data-checked="false" style="cursor: pointer;"> test</li>
+<li><input type="checkbox" class="custom-checkbox-wrapper" contenteditable="false" data-checked="true" style="cursor: pointer;"> test</li>
+</ol>
+<p><br>This is unordered list</p>
+<ul>
+<li>test</li>
+<li>test</li>
+</ul>`;
+          cy.findByRole("textbox").should("contain.html", contentHTML);
+          cy.findAllByRole("button").eq(6).click();
+
+          cy.get("pre")
+            .invoke("text")
+            .then((text) => {
+              expectTextIncludesOrderedLines(text, [
+                "### Hello there!",
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor reprehenderit voluptate velit.",
+                "",
+                "This is ordered list",
+                "1. [ ] test",
+                "2. [x] test",
+                "",
+                "This is unordered list",
+                "* test",
+                "* test",
+              ]);
+            });
+        });
+      });
+    });
+
+    context("when using insertPlainText", () => {
+      context("when clicking", () => {
+        it("renders content on editor", () => {
+          cy.findByText("Sender Name").dblclick();
+          cy.findByText("Sender Email").dblclick();
+
+          cy.findByRole("textbox")
+            .invoke("text")
+            .then((txt) => {
+              expect(txt.replace(/\u00A0/g, " ")).to.contain(
+                "Sender Name Sender Name Sender Email Sender Email"
+              );
+            });
+        });
+
+        context("when printing content", () => {
+          it("renders markdown", () => {
+            cy.findByText("Sender Name").dblclick();
+            cy.findByText("Sender Email").dblclick();
+
+            cy.findByRole("textbox")
+              .invoke("text")
+              .then((txt) => {
+                expect(txt.replace(/\u00A0/g, " ")).to.contain(
+                  "Sender Name Sender Name Sender Email Sender Email"
+                );
+              });
+
+            cy.findAllByRole("button").eq(6).click();
+
+            cy.get("pre")
+              .invoke("text")
+              .then((text) => {
+                expectTextIncludesOrderedLines(text, [
+                  "Sender Name Sender Name Sender Email Sender Email",
+                ]);
+              });
+          });
+        });
+      });
+
+      context("when pressing character", () => {
+        context("when clicking", () => {
+          it("renders content on editor", () => {
+            cy.findByRole("textbox").type("Hello, my name is ");
+            cy.findByText("Sender Name").click();
+            cy.findByRole("textbox").type(
+              ", May I confirm if this is your email address?"
+            );
+
+            cy.findByRole("textbox")
+              .invoke("text")
+              .then((txt) => {
+                expect(txt.replace(/\u00A0/g, " ")).to.contain(
+                  "Hello, my name is Sender Name, May I confirm if this is your email address?"
+                );
+              });
+          });
+        });
+      });
+    });
+  });
+
+  context("mode", () => {
+    context("when given default (text-editor)", () => {
+      it("renders normal component", () => {
+        cy.visit(getIdContent("input-elements-richeditor--default"));
+        cy.findByLabelText("toolbar-content").should("have.css", "top", "0px");
+        cy.findByRole("textbox")
+          .should("have.css", "min-height", "200px")
+          .and("have.css", "padding-top", "45px");
+      });
+    });
+
+    context("when given page-editor", () => {
+      it("renders toolbar on the top", () => {
+        // ensure the viewport is consistent with the page editor mode
+        cy.viewport(1280, 800);
+        cy.visit(getIdContent("input-elements-richeditor--page-editor"));
+        cy.findByLabelText("toolbar-content").should("have.css", "top", "0px");
+        cy.findByLabelText("wrapper-editor")
+          .should("not.have.css", "border", "1px solid #ececec")
+          .and("not.have.css", "box-shadow", "0 1px 4px -3px #5b5b5b");
+        cy.findByRole("textbox")
+          .should("have.css", "min-height", "800px")
+          .and("have.css", "padding-top", "45px");
+        cy.findByRole("textbox")
+          .should("have.css", "max-height", "800px")
+          .and("have.css", "padding-top", "45px");
+      });
+    });
+
+    context("when given view-only", () => {
+      beforeEach(() => {
+        cy.visit(getIdContent("input-elements-richeditor--view-only"));
+      });
+
+      it("should not render the toolbar", () => {
+        cy.findByLabelText("toolbar-content").should("not.exist");
+      });
+
+      it("should render same value in the editor and <pre> element", () => {
+        cy.findByRole("textbox")
+          .should("have.css", "padding", "12px")
+          .and("have.css", "user-select", "text");
+        cy.findByRole("textbox").should(
+          "have.css",
+          "caret-color",
+          "rgba(0, 0, 0, 0)"
+        );
+
+        // On this element same state value between text editor and element pre without print
+        cy.get("pre")
+          .invoke("text")
+          .then((text) => {
+            expectTextIncludesOrderedLines(text, [
+              "### Hello there!",
+              "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor reprehenderit voluptate velit.",
+              "",
+              "This is ordered list",
+              "1. [ ] test",
+              "2. [x] test",
+              "",
+              "This is unordered list",
+              "* test",
+              "* test",
+            ]);
+          });
+      });
+
+      context("when drag content", () => {
+        context("when pressing any character", () => {
+          it("renders without change value", () => {
+            cy.findByRole("textbox").type("{selectall}{backspace}test 123");
+
+            // On this element value same from editor without print
+            cy.get("pre")
+              .invoke("text")
+              .then((text) => {
+                expectTextIncludesOrderedLines(text, [
+                  "### Hello there!",
+                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor reprehenderit voluptate velit.",
+                  "",
+                  "This is ordered list",
+                  "1. [ ] test",
+                  "2. [x] test",
+                  "",
+                  "This is unordered list",
+                  "* test",
+                  "* test",
+                ]);
+              });
+          });
+        });
+      });
+
+      context("when have checkboxes", () => {
+        it("renders with correct state and can't be clicked", () => {
+          cy.get("input[type='checkbox']")
+            .eq(0)
+            .should("have.css", "pointer-events", "none")
+            .and("have.prop", "checked", false);
+          cy.get("input[type='checkbox']")
+            .eq(1)
+            .should("have.css", "pointer-events", "none")
+            .and("have.prop", "checked", true);
+        });
+      });
+    });
+  });
+
   context("bold", () => {
     context("when type and given", () => {
       it("renders text with bold style", () => {
