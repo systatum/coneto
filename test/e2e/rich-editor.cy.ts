@@ -8,6 +8,141 @@ describe("RichEditor", () => {
     cy.visit(getIdContent("input-elements-richeditor--default"));
   });
 
+  context("toolbar position", () => {
+    context("when given top", () => {
+      it("renders toolbar on the top", () => {
+        cy.findByLabelText("toolbar-content").should("have.css", "top", "0px");
+        cy.findByRole("textbox")
+          .should("have.css", "min-height", "200px")
+          .and("have.css", "padding-top", "45px");
+      });
+    });
+
+    context("when given bottom", () => {
+      it("renders toolbar on the bottom", () => {
+        cy.visit(
+          getIdContent("input-elements-richeditor--toolbar-position-bottom")
+        );
+        cy.findByLabelText("toolbar-content").should(
+          "have.css",
+          "bottom",
+          "0px"
+        );
+        cy.findByRole("textbox")
+          .should("have.css", "min-height", "200px")
+          .and("have.css", "padding-bottom", "45px");
+      });
+    });
+  });
+
+  context("mode", () => {
+    context("when given default (text-editor)", () => {
+      it("renders normal component", () => {
+        cy.visit(getIdContent("input-elements-richeditor--default"));
+        cy.findByLabelText("toolbar-content").should("have.css", "top", "0px");
+        cy.findByRole("textbox")
+          .should("have.css", "min-height", "200px")
+          .and("have.css", "padding-top", "45px");
+      });
+    });
+
+    context("when given page-editor", () => {
+      it("renders toolbar on the top", () => {
+        // ensure the viewport is consistent with the page editor mode
+        cy.viewport(1280, 800);
+        cy.visit(getIdContent("input-elements-richeditor--page-editor"));
+        cy.findByLabelText("toolbar-content").should("have.css", "top", "0px");
+        cy.findByLabelText("wrapper-editor")
+          .should("not.have.css", "border", "1px solid #ececec")
+          .and("not.have.css", "box-shadow", "0 1px 4px -3px #5b5b5b");
+        cy.findByRole("textbox")
+          .should("have.css", "min-height", "800px")
+          .and("have.css", "padding-top", "45px");
+        cy.findByRole("textbox")
+          .should("have.css", "max-height", "800px")
+          .and("have.css", "padding-top", "45px");
+      });
+    });
+
+    context("when given view-only", () => {
+      beforeEach(() => {
+        cy.visit(getIdContent("input-elements-richeditor--view-only"));
+      });
+
+      it("should not render the toolbar", () => {
+        cy.findByLabelText("toolbar-content").should("not.exist");
+      });
+
+      it("should render same value in the editor and <pre> element", () => {
+        cy.findByRole("textbox")
+          .should("have.css", "padding", "12px")
+          .and("have.css", "user-select", "text");
+        cy.findByRole("textbox").should(
+          "have.css",
+          "caret-color",
+          "rgba(0, 0, 0, 0)"
+        );
+
+        // On this element same state value between text editor and element pre without print
+        cy.get("pre")
+          .invoke("text")
+          .then((text) => {
+            expectTextIncludesOrderedLines(text, [
+              "### Hello there!",
+              "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor reprehenderit voluptate velit.",
+              "",
+              "This is ordered list",
+              "1. test [ ]",
+              "2. test [x]",
+              "",
+              "This is unordered list",
+              "* test",
+              "* test",
+            ]);
+          });
+      });
+
+      context("when drag content", () => {
+        context("when pressing any character", () => {
+          it("renders without change value", () => {
+            cy.findByRole("textbox").type("{selectall}{backspace}test 123");
+
+            // On this element value same from editor without print
+            cy.get("pre")
+              .invoke("text")
+              .then((text) => {
+                expectTextIncludesOrderedLines(text, [
+                  "### Hello there!",
+                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor reprehenderit voluptate velit.",
+                  "",
+                  "This is ordered list",
+                  "1. test [ ]",
+                  "2. test [x]",
+                  "",
+                  "This is unordered list",
+                  "* test",
+                  "* test",
+                ]);
+              });
+          });
+        });
+      });
+
+      context("when have checkboxes", () => {
+        it("renders with correct state and can't be clicked", () => {
+          cy.get("input[type='checkbox']")
+            .eq(0)
+            .should("have.css", "pointer-events", "none")
+            .and("have.prop", "checked", false);
+          cy.get("input[type='checkbox']")
+            .eq(1)
+            .should("have.css", "pointer-events", "none")
+            .and("have.prop", "checked", true);
+        });
+      });
+    });
+  });
+
   context("bold", () => {
     context("when type and given", () => {
       it("renders text with bold style", () => {
