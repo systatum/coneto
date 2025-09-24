@@ -20,10 +20,11 @@ describe("Calendar ", () => {
 
   context("disable weekend", () => {
     context("when given", () => {
+      const valueWeekend = { text: "09/21/2025", value: "09/21/2025" };
       it("renders weekend dates gray", () => {
         cy.mount(
           <Calendar
-            inputValue={value}
+            inputValue={valueWeekend}
             monthNames={MONTH_NAMES}
             disableWeekend
           />
@@ -35,7 +36,29 @@ describe("Calendar ", () => {
           )
           .should("have.length.greaterThan", 0);
       });
+
+      context("when value in the weekend", () => {
+        it("renders selected previous/next day", () => {
+          cy.mount(
+            <Calendar
+              inputValue={valueWeekend}
+              monthNames={MONTH_NAMES}
+              disableWeekend
+            />
+          );
+          cy.findAllByLabelText("calendar-select-date").eq(0).click();
+          cy.findByLabelText("combobox-month").click();
+          cy.findByText("SEP").should("exist").click();
+          cy.findByLabelText("combobox-year").click();
+          cy.findByText("2025").should("exist").click();
+          cy.findByText("21").should("have.css", "color", "rgb(209, 213, 219)");
+          cy.findByText("22")
+            .should("have.css", "color", "rgb(255, 255, 255)")
+            .and("have.css", "background-color", "rgb(97, 169, 249)");
+        });
+      });
     });
+
     context("when clicked", () => {
       it("not clickable", () => {
         cy.mount(
@@ -57,16 +80,49 @@ describe("Calendar ", () => {
     });
   });
 
-  context("highlight today", () => {
-    context("when given", () => {
+  context("today", () => {
+    context("when clicked", () => {
       it("renders date with blue dot and color", () => {
         cy.mount(<Calendar inputValue={value} monthNames={MONTH_NAMES} />);
-        cy.findAllByLabelText("calendar-select-date").eq(0).click();
+        cy.findAllByLabelText("today-button").eq(0).click();
         const today = new Date().getDate();
         cy.get("li")
           .contains(today.toString())
           .within(() => {
             cy.get("div").should("exist");
+          });
+      });
+
+      it("renders today dot centered even after selecting another date", () => {
+        cy.mount(<Calendar inputValue={value} monthNames={MONTH_NAMES} />);
+
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+
+        cy.findAllByText(String(tomorrow.getDate())).eq(0).click();
+
+        cy.findByLabelText("today-dot").should("exist");
+
+        // Verify the element is translated by -50% horizontally.
+        // We can’t check percentages directly, since the browser converts them to pixel values.
+        cy.findByLabelText("today-dot")
+          .should("have.css", "position", "absolute")
+          .and("have.css", "left", "12.5px");
+
+        cy.findByLabelText("today-dot")
+          .invoke("css", "transform")
+          .then((val) => {
+            const str = String(val);
+
+            const parts = str
+              .replace("matrix(", "")
+              .replace(")", "")
+              .split(", ")
+              .map(parseFloat);
+
+            const translateX = parts[4];
+            expect(translateX).to.be.below(0);
           });
       });
     });

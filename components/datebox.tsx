@@ -1,6 +1,10 @@
 import { RiCalendar2Line } from "@remixicon/react";
 import { DrawerProps, Selectbox } from "./selectbox";
-import { Calendar, BaseCalendarProps } from "./calendar";
+import {
+  Calendar,
+  BaseCalendarProps,
+  SelectabilityModeState,
+} from "./calendar";
 import styled, { CSSProp } from "styled-components";
 import { ReactNode } from "react";
 
@@ -12,6 +16,8 @@ export type DateboxProps = BaseCalendarProps & {
   labelStyle?: CSSProp;
   selectboxStyle?: CSSProp;
   calendarFooter?: ReactNode;
+  calendarTodayButtonCaption?: string;
+  calendarSelectabilityMode?: SelectabilityModeState;
 };
 
 type CalendarDrawerProps = BaseCalendarProps &
@@ -19,6 +25,7 @@ type CalendarDrawerProps = BaseCalendarProps &
     DrawerProps & {
       calendarFooter?: ReactNode;
       calendarTodayButtonCaption?: string;
+      calendarSelectabilityMode?: SelectabilityModeState;
     }
   >;
 
@@ -92,6 +99,7 @@ function CalendarDrawer(props: CalendarDrawerProps) {
         {...props}
         footer={props.calendarFooter}
         todayButtonCaption={props.calendarTodayButtonCaption}
+        selectabilityMode={props.calendarSelectabilityMode}
         label={null}
       />
     </CalendarWrapper>
@@ -112,7 +120,7 @@ const CalendarWrapper = styled.ul<{
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   width: 100%;
   max-width: 300px;
-  min-width: 295px;
+  min-width: 300px;
   list-style: none;
   outline: none;
   z-index: 9999;
