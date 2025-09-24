@@ -30,7 +30,12 @@ interface RichEditorProps {
   toolbarRightPanel?: ReactNode;
   editorStyle?: CSSProp;
   containerStyle?: CSSProp;
+  mode?: RichEditorModeState;
+  toolbarPosition?: RichEditorToolbarPositionState;
 }
+
+type RichEditorToolbarPositionState = "top" | "bottom";
+type RichEditorModeState = "view-only" | "page-editor" | "text-editor";
 
 export interface RichEditorToolbarButtonProps {
   icon?: RemixiconComponentType;
@@ -48,12 +53,21 @@ interface RichEditorComponent
 }
 
 export interface RichEditorRef {
-  insertContent: (data: string) => void;
+  insertPlainText: (data: string) => void;
+  insertMarkdownContent: (data: string) => void;
 }
 
 const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
   (
-    { value = "", onChange, toolbarRightPanel, editorStyle, containerStyle },
+    {
+      value = "",
+      mode = "text-editor",
+      toolbarPosition = "top",
+      onChange,
+      toolbarRightPanel,
+      editorStyle,
+      containerStyle,
+    },
     ref
   ) => {
     const turndownService = new TurndownService();
@@ -63,7 +77,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       replacement: function (content, node) {
         const hLevel = Number((node as HTMLElement).nodeName.charAt(1));
         const prefix = "#".repeat(hLevel);
-        return `\n\n${prefix} ${content}\n\n`;
+        return `${prefix} ${content}\n`;
       },
     });
 
@@ -173,14 +187,69 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       },
     });
 
-    marked.use({ gfm: false });
+    marked.use({ gfm: false, breaks: true });
 
     const editorRef = useRef<HTMLDivElement>(null);
     const savedSelection = useRef<Range | null>(null);
     const menuRef = useRef<HTMLDivElement | null>(null);
 
     useImperativeHandle(ref, () => ({
-      insertContent: async (data: string) => {
+      insertMarkdownContent: async (data: string) => {
+        if (!editorRef.current) return;
+
+        if (document.activeElement !== editorRef.current) {
+          editorRef.current.focus();
+          await new Promise((resolve) => setTimeout(resolve, 0));
+        }
+
+        let sel = window.getSelection();
+        let range = sel?.rangeCount ? sel.getRangeAt(0) : null;
+        if (!range) return;
+
+        let processedValue = data.replace(/\n(\n+)/g, (_, extraNewlines) => {
+          const emptyParagraphs = "\n\n<br>".repeat(extraNewlines.length);
+          return "\n" + emptyParagraphs;
+        });
+
+        let html = await marked.parse(processedValue);
+
+        html = html.replace(/<p>&nbsp;<\/p>/g, "<p><br></p>");
+
+        const temp = document.createElement("div");
+        temp.innerHTML = html;
+
+        const nodes = Array.from(temp.childNodes);
+
+        nodes.forEach((node) => {
+          range.insertNode(node);
+          range.setStartAfter(node);
+          range.collapse(true);
+        });
+        console.log(html);
+
+        if (nodes.length > 0) {
+          const lastNode = nodes[nodes.length - 1];
+
+          range.setStartAfter(lastNode);
+          range.collapse(true);
+        }
+
+        sel?.removeAllRanges();
+        sel?.addRange(range);
+
+        handleFilteringCheckbox();
+
+        const cleanedHTML = cleanupHtml(editorRef.current.innerHTML);
+        console.log("cleaner", cleanedHTML);
+        const markdown = turndownService.turndown(cleanedHTML);
+        console.log(markdown);
+        const cleanedMarkdown = cleanSpacing(markdown);
+
+        if (onChange) {
+          onChange(cleanedMarkdown);
+        }
+      },
+      insertPlainText: async (data: string) => {
         if (!editorRef.current) return;
 
         if (document.activeElement !== editorRef.current) {
@@ -203,7 +272,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           range.collapse(true);
         });
 
-        const spaceNode = document.createTextNode("\u00A0");
+        const spaceNode = document.createTextNode(" ");
         range.insertNode(spaceNode);
         range.setStartAfter(spaceNode);
         range.collapse(true);
@@ -211,8 +280,9 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         sel?.removeAllRanges();
         sel?.addRange(range);
 
-        const html = editorRef.current.innerHTML.replace(/\u00A0/g, "") || "";
+        handleFilteringCheckbox();
 
+        const html = editorRef.current.innerHTML.replace(/\u00A0/g, " ") || "";
         const cleanedHTML = cleanupHtml(html);
         const markdown = turndownService.turndown(cleanedHTML);
         const cleanedMarkdown = cleanSpacing(markdown);
@@ -228,13 +298,35 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     useEffect(() => {
       if (!editorRef.current || editorRef.current.innerHTML) return;
 
-      editorRef.current.innerHTML = String(marked(value));
-      document.execCommand("defaultParagraphSeparator", false, "p");
+      const initializeEditor = async () => {
+        let processedValue = value;
 
-      editorRef.current
-        .querySelectorAll(".custom-checkbox-wrapper")
-        .forEach((node) => node.remove());
+        processedValue = processedValue.replace(
+          /\n(\n+)/g,
+          (_, extraNewlines) => {
+            const emptyParagraphs = "\n\n<br>".repeat(extraNewlines.length);
+            return "\n" + emptyParagraphs;
+          }
+        );
 
+        let html = await marked.parse(processedValue);
+
+        html = html.replace(/<p>&nbsp;<\/p>/g, "<p><br></p>");
+
+        editorRef.current.innerHTML = String(html);
+        document.execCommand("defaultParagraphSeparator", false, "p");
+
+        editorRef.current
+          .querySelectorAll(".custom-checkbox-wrapper")
+          .forEach((node) => node.remove());
+
+        handleFilteringCheckbox();
+      };
+
+      initializeEditor();
+    }, []);
+
+    const handleFilteringCheckbox = () => {
       const walker = document.createTreeWalker(
         editorRef.current,
         NodeFilter.SHOW_TEXT
@@ -249,6 +341,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         }
       }
 
+      const isViewOnly = mode === "view-only";
+
       textNodesToProcess.forEach((textNode) => {
         if (!textNode.parentNode || !textNode.nodeValue) return;
 
@@ -260,11 +354,23 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         parts.forEach((part) => {
           if (part.toLowerCase() === "[x]") {
             fragment.appendChild(
-              createCheckboxWrapper(true, turndownService, editorRef, onChange)
+              createCheckboxWrapper(
+                true,
+                turndownService,
+                editorRef,
+                onChange,
+                isViewOnly
+              )
             );
           } else if (part.toLowerCase() === "[ ]") {
             fragment.appendChild(
-              createCheckboxWrapper(false, turndownService, editorRef, onChange)
+              createCheckboxWrapper(
+                false,
+                turndownService,
+                editorRef,
+                onChange,
+                isViewOnly
+              )
             );
           } else if (part) {
             fragment.appendChild(document.createTextNode(part));
@@ -273,13 +379,12 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
         textNode.parentNode.replaceChild(fragment, textNode);
       });
-    }, []);
+    };
 
     const handleEditorChange = () => {
       const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
       const cleanedHTML = cleanupHtml(html);
       const markdown = turndownService.turndown(cleanedHTML);
-      console.log(cleanedHTML);
       const cleanedMarkdown = cleanSpacing(markdown);
 
       if (onChange) {
@@ -335,6 +440,13 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     };
 
     const handleOnKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+      if (mode === "view-only") {
+        const isCopy = (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "c";
+
+        if (!isCopy) {
+          e.preventDefault();
+        }
+      }
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "u") {
         e.preventDefault();
         return;
@@ -598,26 +710,48 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       const headingTag = `h${level}` as keyof HTMLElementTagNameMap;
 
       if (/^H[1-6]$/.test(node.tagName)) {
-        const newHeading = document.createElement(headingTag);
-        newHeading.innerHTML = node.innerHTML;
+        if (node.tagName.toLowerCase() === headingTag) {
+          const p = document.createElement("p");
+          p.innerHTML = node.innerHTML;
+          node.replaceWith(p);
 
-        node.replaceWith(newHeading);
+          const newRange = document.createRange();
+          newRange.selectNodeContents(p);
+          newRange.collapse(false);
+          sel.removeAllRanges();
+          sel.addRange(newRange);
+        } else {
+          const newHeading = document.createElement(headingTag);
+          newHeading.innerHTML = node.innerHTML;
+          node.replaceWith(newHeading);
 
-        const newRange = document.createRange();
-        newRange.selectNodeContents(newHeading);
-        newRange.collapse(false);
-        sel.removeAllRanges();
-        sel.addRange(newRange);
+          const newRange = document.createRange();
+          newRange.selectNodeContents(newHeading);
+          newRange.collapse(false);
+          sel.removeAllRanges();
+          sel.addRange(newRange);
+        }
       } else {
         const heading = document.createElement(headingTag);
-        heading.innerHTML = sel.toString();
+        if (sel.isCollapsed) {
+          heading.innerHTML = "<br>";
+        } else {
+          heading.innerHTML = sel.toString();
+        }
 
         range.deleteContents();
         range.insertNode(heading);
 
         const newRange = document.createRange();
         newRange.selectNodeContents(heading);
-        newRange.collapse(false);
+
+        if (sel.isCollapsed) {
+          newRange.setStart(heading, 0);
+          newRange.collapse(true);
+        } else {
+          newRange.collapse(false);
+        }
+
         sel.removeAllRanges();
         sel.addRange(newRange);
       }
@@ -675,73 +809,89 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     }, [isOpen]);
 
     return (
-      <Wrapper $containerStyle={containerStyle}>
-        <Toolbar>
-          <ToolbarGroup>
-            <RichEditorToolbarButton
-              icon={RiBold}
-              onClick={() => handleCommand("bold")}
-            />
-            <RichEditorToolbarButton
-              icon={RiItalic}
-              onClick={() => handleCommand("italic")}
-            />
-            <RichEditorToolbarButton
-              icon={RiListOrdered}
-              onClick={() => handleCommand("insertOrderedList")}
-            />
-            <RichEditorToolbarButton
-              icon={RiListUnordered}
-              onClick={() => handleCommand("insertUnorderedList")}
-            />
-            <RichEditorToolbarButton
-              icon={RiCheckboxLine}
-              onClick={() => handleCommand("checkbox")}
-            />
-            <RichEditorToolbarButton
-              icon={RiHeading}
-              isOpen={isOpen}
-              onClick={() => {
-                const sel = window.getSelection();
-                if (sel && sel.rangeCount > 0) {
-                  savedSelection.current = sel.getRangeAt(0).cloneRange();
-                }
-                setIsOpen(true);
-              }}
-            />
-
-            {isOpen && (
-              <MenuWrapper ref={menuRef}>
-                <TipMenu
-                  setIsOpen={() => setIsOpen(false)}
-                  subMenuList={TIP_MENU_RICH_EDITOR}
+      <Wrapper
+        aria-label="wrapper-editor"
+        $containerStyle={containerStyle}
+        $mode={mode}
+      >
+        {mode !== "view-only" && (
+          <ToolbarWrapper
+            aria-label="toolbar-content"
+            $toolbarPosition={toolbarPosition}
+          >
+            <Toolbar $toolbarPosition={toolbarPosition}>
+              <ToolbarGroup>
+                <RichEditorToolbarButton
+                  icon={RiBold}
+                  onClick={() => handleCommand("bold")}
                 />
-              </MenuWrapper>
-            )}
-          </ToolbarGroup>
-          {toolbarRightPanel && (
-            <ToolbarRightPanel>{toolbarRightPanel}</ToolbarRightPanel>
-          )}
-        </Toolbar>
+                <RichEditorToolbarButton
+                  icon={RiItalic}
+                  onClick={() => handleCommand("italic")}
+                />
+                <RichEditorToolbarButton
+                  icon={RiListOrdered}
+                  onClick={() => handleCommand("insertOrderedList")}
+                />
+                <RichEditorToolbarButton
+                  icon={RiListUnordered}
+                  onClick={() => handleCommand("insertUnorderedList")}
+                />
+                <RichEditorToolbarButton
+                  icon={RiCheckboxLine}
+                  onClick={() => handleCommand("checkbox")}
+                />
+                <RichEditorToolbarButton
+                  icon={RiHeading}
+                  isOpen={isOpen}
+                  onClick={() => {
+                    const sel = window.getSelection();
+                    if (sel && sel.rangeCount > 0) {
+                      savedSelection.current = sel.getRangeAt(0).cloneRange();
+                    }
+                    setIsOpen(true);
+                  }}
+                />
+
+                {isOpen && (
+                  <MenuWrapper ref={menuRef} $toolbarPosition={toolbarPosition}>
+                    <TipMenu
+                      setIsOpen={() => setIsOpen(false)}
+                      subMenuList={TIP_MENU_RICH_EDITOR}
+                    />
+                  </MenuWrapper>
+                )}
+              </ToolbarGroup>
+              {toolbarRightPanel && (
+                <ToolbarRightPanel>{toolbarRightPanel}</ToolbarRightPanel>
+              )}
+            </Toolbar>
+          </ToolbarWrapper>
+        )}
 
         <EditorArea
           ref={editorRef}
           role="textbox"
           contentEditable
           $editorStyle={editorStyle}
+          $toolbarPosition={toolbarPosition}
+          $mode={mode}
           onInput={() => {
-            if (editorRef.current) {
-              syncCheckboxStates(editorRef.current);
-            }
+            if (mode !== "view-only") {
+              if (editorRef.current) {
+                syncCheckboxStates(editorRef.current);
+              }
 
-            const html =
-              editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
-            const cleanedHTML = cleanupHtml(html);
+              const html =
+                editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
+              const cleanedHTML = cleanupHtml(html);
+              console.log("cleaner", cleanedHTML);
 
-            const markdown = turndownService.turndown(cleanedHTML);
-            const cleanedMarkdown = cleanSpacing(markdown);
-            if (onChange) {
-              onChange(cleanedMarkdown);
+              const markdown = turndownService.turndown(cleanedHTML);
+              const cleanedMarkdown = cleanSpacing(markdown);
+              if (onChange) {
+                onChange(cleanedMarkdown);
+              }
             }
           }}
           onKeyDown={handleOnKeyDown}
@@ -775,23 +925,60 @@ function RichEditorToolbarButton({
   );
 }
 
-const Wrapper = styled.div<{ $containerStyle?: CSSProp }>`
-  border: 1px solid #ececec;
-  border-radius: 4px;
-  box-shadow: 0 1px 4px -3px #5b5b5b;
+const Wrapper = styled.div<{
+  $containerStyle?: CSSProp;
+  $mode?: RichEditorModeState;
+}>`
+  ${({ $mode }) =>
+    $mode !== "page-editor" &&
+    css`
+      border: 1px solid #ececec;
+      border-radius: 4px;
+      box-shadow: 0 1px 4px -3px #5b5b5b;
+    `}
+
+  position: relative;
 
   ${({ $containerStyle }) => $containerStyle}
 `;
 
-const Toolbar = styled.div`
+const ToolbarWrapper = styled.div<{
+  $toolbarPosition?: RichEditorToolbarPositionState;
+}>`
+  position: absolute;
+  width: 100%;
+
+  ${({ $toolbarPosition }) =>
+    $toolbarPosition === "top"
+      ? css`
+          top: 0;
+        `
+      : css`
+          bottom: 0;
+        `}
+`;
+
+const Toolbar = styled.div<{
+  $toolbarPosition?: RichEditorToolbarPositionState;
+}>`
   display: flex;
   flex-direction: row;
+  width: 100%;
+  position: relative;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #ececec;
   padding: 0 8px;
   background: white;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+  ${({ $toolbarPosition }) =>
+    $toolbarPosition === "top"
+      ? css`
+          border-bottom: 1px solid #ececec;
+        `
+      : css`
+          border-top: 1px solid #ececec;
+        `}
 `;
 
 const ToolbarGroup = styled.div`
@@ -811,22 +998,60 @@ const ToolbarRightPanel = styled.div`
   gap: 8px;
 `;
 
-const MenuWrapper = styled.div`
+const MenuWrapper = styled.div<{
+  $toolbarPosition?: RichEditorToolbarPositionState;
+}>`
   position: absolute;
-  top: 100%;
+  ${({ $toolbarPosition }) =>
+    $toolbarPosition === "top"
+      ? css`
+          top: 100%;
+          transform: translateY(4px);
+        `
+      : css`
+          bottom: 100%;
+          transform: translateY(-4px);
+        `}
   right: -100px;
-  transform: translateY(4px);
-  z-index: 10;
+  z-index: 40;
 `;
 
 const EditorArea = styled.div<{
+  $toolbarPosition?: RichEditorToolbarPositionState;
   $editorStyle?: CSSProp;
+  $mode?: RichEditorModeState;
 }>`
-  min-height: 200px;
   padding: 8px;
   outline: none;
   background-color: white;
 
+  ${({ $mode }) =>
+    $mode === "page-editor"
+      ? css`
+          min-height: 100vh;
+          max-height: 100vh;
+          overflow: auto;
+        `
+      : css`
+          min-height: 200px;
+        `}
+
+  ${({ $toolbarPosition }) =>
+    $toolbarPosition === "top"
+      ? css`
+          padding-top: 45px;
+        `
+      : css`
+          padding-bottom: 45px;
+        `};
+  ${({ $mode }) =>
+    $mode === "view-only" &&
+    css`
+      padding: 12px;
+      user-select: text;
+      caret-color: transparent;
+      outline: none;
+    `};
   ol {
     list-style-type: decimal !important;
     list-style-position: outside !important;
@@ -848,17 +1073,17 @@ const EditorArea = styled.div<{
 
   h1 {
     font-size: 2em;
-    margin: 0.5em 0;
+    margin: 0.25em 0;
   }
 
   h2 {
-    font-size: 1.5em;
-    margin: 0.5em 0;
+    font-size: 1.65em;
+    margin: 0.3em 0;
   }
 
   h3 {
-    font-size: 1.25em;
-    margin: 0.5em 0;
+    font-size: 1.3em;
+    margin: 0.4em 0;
   }
 
   ${({ $editorStyle }) => $editorStyle};
@@ -911,27 +1136,32 @@ function createCheckboxWrapper(
   isChecked: boolean,
   turndownService: TurndownService,
   editorRef: React.RefObject<HTMLDivElement>,
-  onChange?: (value: string) => void
+  onChange?: (value: string) => void,
+  isViewOnly?: boolean
 ) {
   const input = document.createElement("input");
   input.type = "checkbox";
   input.checked = isChecked;
   input.className = "custom-checkbox-wrapper";
-  input.contentEditable = "true";
-  input.style.cursor = "pointer";
+  input.contentEditable = "false";
+  input.style.cursor = isViewOnly ? "default" : "pointer";
   input.dataset.checked = String(isChecked);
 
-  input.addEventListener("change", () => {
-    input.dataset.checked = String(input.checked);
+  if (isViewOnly) {
+    input.style.pointerEvents = "none";
+  } else {
+    input.addEventListener("change", () => {
+      input.dataset.checked = String(input.checked);
 
-    const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
-    const markdown = turndownService.turndown(html);
-    const cleanedMarkdown = cleanSpacing(markdown);
+      const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
+      const markdown = turndownService.turndown(html);
+      const cleanedMarkdown = cleanSpacing(markdown);
 
-    if (onChange) {
-      onChange(cleanedMarkdown);
-    }
-  });
+      if (onChange) {
+        onChange(cleanedMarkdown);
+      }
+    });
+  }
 
   return input;
 }
@@ -946,17 +1176,7 @@ const cleanSpacing = (text: string): string => {
     .replace(/\[(x| )\]\s+/gi, "[$1] ")
     .split("\n")
     .map((line) => {
-      if (
-        line.includes("*") ||
-        line.includes("[") ||
-        line.includes("]") ||
-        /^\s*\d+\./.test(line) ||
-        line.trim() === ""
-      ) {
-        return line;
-      }
-
-      return line.replace(/\s{2,}/g, " ");
+      return line;
     })
     .join("\n");
 };

@@ -42,47 +42,6 @@ export const Default: Story = {
     const [value, setValue] = useState("");
     const [printValue, setPrintValue] = useState("");
 
-    const TOOLBAR_RIGHT_PANEL_ACTIONS = (
-      <RichEditor.ToolbarButton
-        icon={RiPrinterFill}
-        onClick={() => {
-          setPrintValue(value);
-          console.log(value);
-        }}
-      >
-        Print
-      </RichEditor.ToolbarButton>
-    );
-
-    return (
-      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-        <RichEditor
-          onChange={(e) => setValue(e)}
-          value={value}
-          toolbarRightPanel={TOOLBAR_RIGHT_PANEL_ACTIONS}
-        />
-        {printValue !== "" && (
-          <pre
-            style={{
-              padding: 28,
-              background: "#D3D3D3",
-              whiteSpace: "pre-wrap",
-              wordBreak: "break-all",
-            }}
-          >
-            {printValue}
-          </pre>
-        )}
-      </div>
-    );
-  },
-};
-
-export const WithRef: Story = {
-  render: () => {
-    const [value, setValue] = useState("");
-    const [printValue, setPrintValue] = useState("");
-
     const ref = useRef<RichEditorRef>(null);
 
     const TIP_MENU_EMAIL = [
@@ -100,7 +59,24 @@ export const WithRef: Story = {
       },
     ];
 
-    const BADGE_ITEMS = ["Company Name", "Sender Name", "Sender Email"];
+    const BADGE_ITEMS = [
+      {
+        title: "Markdown Example",
+        content: `### Hello there!
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor reprehenderit voluptate velit.
+
+This is ordered list
+1. [ ] test
+2. [x] test
+
+This is unordered list
+* test
+* test  
+`,
+      },
+      { title: "Sender Name", content: "Sender Name" },
+      { title: "Sender Email", content: "Sender Email" },
+    ];
 
     const TOOLBAR_RIGHT_PANEL_ACTIONS = (
       <RichEditor.ToolbarButton
@@ -138,11 +114,15 @@ export const WithRef: Story = {
             {BADGE_ITEMS.map((data, index) => (
               <Badge
                 onClick={async () => {
-                  await ref.current?.insertContent(data);
+                  if (data.title === "Markdown Example") {
+                    await ref.current?.insertMarkdownContent(data.content);
+                  } else {
+                    await ref.current?.insertPlainText(data.content);
+                  }
                 }}
                 key={index}
                 withCircle
-                caption={data}
+                caption={data.title}
               />
             ))}
           </Boxbar>
@@ -160,7 +140,6 @@ export const WithRef: Story = {
               `}
               subMenuList={TIP_MENU_EMAIL}
               className="w-fit"
-              tipMenu
             >
               Save
             </Button>
@@ -176,6 +155,133 @@ export const WithRef: Story = {
             }}
           >
             {printValue}
+          </pre>
+        )}
+      </div>
+    );
+  },
+};
+
+export const ToolbarPositionBottom: Story = {
+  render: () => {
+    const [value, setValue] = useState("");
+    const [printValue, setPrintValue] = useState("");
+
+    const TOOLBAR_RIGHT_PANEL_ACTIONS = (
+      <RichEditor.ToolbarButton
+        icon={RiPrinterFill}
+        onClick={() => {
+          setPrintValue(value);
+          console.log(value);
+        }}
+      >
+        Print
+      </RichEditor.ToolbarButton>
+    );
+
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <RichEditor
+          toolbarPosition="bottom"
+          onChange={(e) => setValue(e)}
+          value={value}
+          toolbarRightPanel={TOOLBAR_RIGHT_PANEL_ACTIONS}
+        />
+        {printValue !== "" && (
+          <pre
+            style={{
+              padding: 28,
+              background: "#D3D3D3",
+              whiteSpace: "pre-wrap",
+              wordBreak: "break-word",
+            }}
+          >
+            {printValue}
+          </pre>
+        )}
+      </div>
+    );
+  },
+};
+
+export const PageEditor: Story = {
+  parameters: {
+    layout: "fullscreen",
+  },
+  render: () => {
+    const [value, setValue] = useState("");
+    const [printValue, setPrintValue] = useState("");
+
+    const TOOLBAR_RIGHT_PANEL_ACTIONS = (
+      <RichEditor.ToolbarButton
+        icon={RiPrinterFill}
+        onClick={() => {
+          setPrintValue(value);
+          console.log(value);
+        }}
+      >
+        Print
+      </RichEditor.ToolbarButton>
+    );
+
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <RichEditor
+          mode="page-editor"
+          onChange={(e) => setValue(e)}
+          value={value}
+          toolbarRightPanel={TOOLBAR_RIGHT_PANEL_ACTIONS}
+        />
+        {printValue !== "" && (
+          <pre
+            style={{
+              padding: 28,
+              background: "#D3D3D3",
+              whiteSpace: "pre-wrap",
+              wordBreak: "break-word",
+            }}
+          >
+            {printValue}
+          </pre>
+        )}
+      </div>
+    );
+  },
+};
+
+export const ViewOnly: Story = {
+  render: () => {
+    const [value, setValue] = useState(
+      `### Hello there!
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor reprehenderit voluptate velit.
+
+This is ordered list
+1. [ ] test
+2. [x] test
+
+This is unordered list
+* test
+* test
+`
+    );
+
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <RichEditor
+          mode="view-only"
+          onChange={(e) => setValue(e)}
+          value={value}
+        />
+        {value !== "" && (
+          <pre
+            style={{
+              padding: 28,
+              background: "#D3D3D3",
+              whiteSpace: "pre-wrap",
+              wordBreak: "break-word",
+            }}
+          >
+            {value}
           </pre>
         )}
       </div>
