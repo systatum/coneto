@@ -36,11 +36,10 @@ describe("RichEditor", () => {
   });
 
   context("ref", () => {
-    context("when using insertMarkdownContent", () => {
-      context("when click", () => {
-        it("renders content on editor", () => {
-          cy.findByText("Markdown Example").click();
-          const contentHTML = `<h3>Hello there!</h3>
+    context(".insertMarkdownContent", () => {
+      it("renders content on editor", () => {
+        cy.findByText("Markdown Example").click();
+        const contentHTML = `<h3>Hello there!</h3>
 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor reprehenderit voluptate velit.</p>
 <p><br>This is ordered list</p>
 <ol>
@@ -52,106 +51,69 @@ describe("RichEditor", () => {
 <li>test</li>
 <li>test</li>
 </ul>`;
-          cy.findByRole("textbox").should("contain.html", contentHTML);
-        });
-      });
+        cy.findByRole("textbox").should("contain.html", contentHTML);
+        cy.findAllByRole("button").eq(6).click();
 
-      context("when printing content", () => {
-        it("renders the markdown identical to its previous value", () => {
-          cy.findByText("Markdown Example").click();
-          const contentHTML = `<h3>Hello there!</h3>
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor reprehenderit voluptate velit.</p>
-<p><br>This is ordered list</p>
-<ol>
-<li><input type="checkbox" class="custom-checkbox-wrapper" contenteditable="false" data-checked="false" style="cursor: pointer;"> test</li>
-<li><input type="checkbox" class="custom-checkbox-wrapper" contenteditable="false" data-checked="true" style="cursor: pointer;"> test</li>
-</ol>
-<p><br>This is unordered list</p>
-<ul>
-<li>test</li>
-<li>test</li>
-</ul>`;
-          cy.findByRole("textbox").should("contain.html", contentHTML);
-          cy.findAllByRole("button").eq(6).click();
-
-          cy.get("pre")
-            .invoke("text")
-            .then((text) => {
-              expectTextIncludesOrderedLines(text, [
-                "### Hello there!",
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor reprehenderit voluptate velit.",
-                "",
-                "This is ordered list",
-                "1. [ ] test",
-                "2. [x] test",
-                "",
-                "This is unordered list",
-                "* test",
-                "* test",
-              ]);
-            });
-        });
+        cy.get("pre")
+          .invoke("text")
+          .then((text) => {
+            expectTextIncludesOrderedLines(text, [
+              "### Hello there!",
+              "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor reprehenderit voluptate velit.",
+              "",
+              "This is ordered list",
+              "1. [ ] test",
+              "2. [x] test",
+              "",
+              "This is unordered list",
+              "* test",
+              "* test",
+            ]);
+          });
       });
     });
 
-    context("when using insertPlainText", () => {
+    context(".insertPlainText", () => {
+      it("renders content on editor", () => {
+        cy.findByText("Sender Name").dblclick();
+        cy.findByText("Sender Email").dblclick();
+
+        cy.findByRole("textbox")
+          .invoke("text")
+          .then((txt) => {
+            expect(txt.replace(/\u00A0/g, " ")).to.contain(
+              "Sender Name Sender Name Sender Email Sender Email"
+            );
+          });
+
+        cy.findAllByRole("button").eq(6).click();
+
+        cy.get("pre")
+          .invoke("text")
+          .then((text) => {
+            expectTextIncludesOrderedLines(text, [
+              "Sender Name Sender Name Sender Email Sender Email",
+            ]);
+          });
+      });
+    });
+
+    context("when pressing character", () => {
       context("when clicking", () => {
         it("renders content on editor", () => {
-          cy.findByText("Sender Name").dblclick();
-          cy.findByText("Sender Email").dblclick();
+          cy.findByRole("textbox").type("Hello, my name is ");
+          cy.findByText("Sender Name").click();
+          cy.findByRole("textbox").type(
+            ", May I confirm if this is your email address?"
+          );
 
           cy.findByRole("textbox")
             .invoke("text")
             .then((txt) => {
               expect(txt.replace(/\u00A0/g, " ")).to.contain(
-                "Sender Name Sender Name Sender Email Sender Email"
+                "Hello, my name is Sender Name, May I confirm if this is your email address?"
               );
             });
-        });
-
-        context("when printing content", () => {
-          it("renders markdown", () => {
-            cy.findByText("Sender Name").dblclick();
-            cy.findByText("Sender Email").dblclick();
-
-            cy.findByRole("textbox")
-              .invoke("text")
-              .then((txt) => {
-                expect(txt.replace(/\u00A0/g, " ")).to.contain(
-                  "Sender Name Sender Name Sender Email Sender Email"
-                );
-              });
-
-            cy.findAllByRole("button").eq(6).click();
-
-            cy.get("pre")
-              .invoke("text")
-              .then((text) => {
-                expectTextIncludesOrderedLines(text, [
-                  "Sender Name Sender Name Sender Email Sender Email",
-                ]);
-              });
-          });
-        });
-      });
-
-      context("when pressing character", () => {
-        context("when clicking", () => {
-          it("renders content on editor", () => {
-            cy.findByRole("textbox").type("Hello, my name is ");
-            cy.findByText("Sender Name").click();
-            cy.findByRole("textbox").type(
-              ", May I confirm if this is your email address?"
-            );
-
-            cy.findByRole("textbox")
-              .invoke("text")
-              .then((txt) => {
-                expect(txt.replace(/\u00A0/g, " ")).to.contain(
-                  "Hello, my name is Sender Name, May I confirm if this is your email address?"
-                );
-              });
-          });
         });
       });
     });
