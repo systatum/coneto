@@ -225,7 +225,6 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           range.setStartAfter(node);
           range.collapse(true);
         });
-        console.log(html);
 
         if (nodes.length > 0) {
           const lastNode = nodes[nodes.length - 1];
@@ -240,9 +239,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         handleFilteringCheckbox();
 
         const cleanedHTML = cleanupHtml(editorRef.current.innerHTML);
-        console.log("cleaner", cleanedHTML);
         const markdown = turndownService.turndown(cleanedHTML);
-        console.log(markdown);
         const cleanedMarkdown = cleanSpacing(markdown);
 
         if (onChange) {
@@ -885,7 +882,6 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
               const html =
                 editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
               const cleanedHTML = cleanupHtml(html);
-              console.log("cleaner", cleanedHTML);
 
               const markdown = turndownService.turndown(cleanedHTML);
               const cleanedMarkdown = cleanSpacing(markdown);
