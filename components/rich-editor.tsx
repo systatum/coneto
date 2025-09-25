@@ -1,4 +1,12 @@
-import { KeyboardEvent, ReactNode, useEffect, useRef, useState } from "react";
+import {
+  forwardRef,
+  KeyboardEvent,
+  ReactNode,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import {
   RemixiconComponentType,
   RiBold,
@@ -37,184 +45,285 @@ export interface RichEditorToolbarButtonProps {
   isOpen?: boolean;
 }
 
-function RichEditor({
-  value = "",
-  onChange,
-  toolbarRightPanel,
-  editorStyle,
-  containerStyle,
-  mode = "text-editor",
-  toolbarPosition = "top",
-}: RichEditorProps) {
-  const turndownService = new TurndownService();
+interface RichEditorComponent
+  extends React.ForwardRefExoticComponent<
+    RichEditorProps & React.RefAttributes<RichEditorRef>
+  > {
+  ToolbarButton: typeof RichEditorToolbarButton;
+}
 
-  turndownService.addRule("atxHeading", {
-    filter: ["h1", "h2", "h3", "h4", "h5", "h6"],
-    replacement: function (content, node) {
-      const hLevel = Number((node as HTMLElement).nodeName.charAt(1));
-      const prefix = "#".repeat(hLevel);
-      return `${prefix} ${content}\n`;
+export interface RichEditorRef {
+  insertPlainText: (data: string) => void;
+  insertMarkdownContent: (data: string) => void;
+}
+
+const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
+  (
+    {
+      value = "",
+      mode = "text-editor",
+      toolbarPosition = "top",
+      onChange,
+      toolbarRightPanel,
+      editorStyle,
+      containerStyle,
     },
-  });
+    ref
+  ) => {
+    const turndownService = new TurndownService();
 
-  turndownService.addRule("cleanListSpacing", {
-    filter: ["ul", "ol"],
-    replacement: function (content, node) {
-      const parentIsParagraph = node.parentElement?.tagName === "P";
-      return parentIsParagraph ? content : `\n${content}\n`;
-    },
-  });
+    turndownService.addRule("atxHeading", {
+      filter: ["h1", "h2", "h3", "h4", "h5", "h6"],
+      replacement: function (content, node) {
+        const hLevel = Number((node as HTMLElement).nodeName.charAt(1));
+        const prefix = "#".repeat(hLevel);
+        return `${prefix} ${content}\n`;
+      },
+    });
 
-  turndownService.addRule("listItem", {
-    filter: "li",
-    replacement: function (content, node) {
-      content = content
-        .replace(/^\n+/, "")
-        .replace(/\n+$/, "\n")
-        .replace(/\n/gm, "\n    ");
+    turndownService.addRule("cleanListSpacing", {
+      filter: ["ul", "ol"],
+      replacement: function (content, node) {
+        const parentIsParagraph = node.parentElement?.tagName === "P";
+        return parentIsParagraph ? content : `\n${content}\n`;
+      },
+    });
 
-      var prefix = "* ";
-      var parent = node.parentNode as HTMLElement;
-      if (parent.nodeName === "OL") {
-        var start = parent.getAttribute("start");
-        var index = Array.prototype.indexOf.call(parent.children, node);
-        prefix = (start ? parseInt(start, 10) + index : index + 1) + ". ";
-      }
+    turndownService.addRule("listItem", {
+      filter: "li",
+      replacement: function (content, node) {
+        content = content
+          .replace(/^\n+/, "")
+          .replace(/\n+$/, "\n")
+          .replace(/\n/gm, "\n    ");
 
-      return (
-        prefix +
-        content +
-        (node.nextSibling && !/\n$/.test(content) ? "\n" : "")
-      );
-    },
-  });
+        var prefix = "* ";
+        var parent = node.parentNode as HTMLElement;
+        if (parent.nodeName === "OL") {
+          var start = parent.getAttribute("start");
+          var index = Array.prototype.indexOf.call(parent.children, node);
+          prefix = (start ? parseInt(start, 10) + index : index + 1) + ". ";
+        }
 
-  turndownService.addRule("cleanParagraphSpacing", {
-    filter: ["p"],
-    replacement: function (content, node) {
-      const htmlContent = (node as HTMLElement).innerHTML;
+        return (
+          prefix +
+          content +
+          (node.nextSibling && !/\n$/.test(content) ? "\n" : "")
+        );
+      },
+    });
 
-      const hasBrOnly =
-        htmlContent.trim() === "<br>" || htmlContent.trim() === "<br/>";
-      const prevSibling = node.previousElementSibling;
-      const nextSibling = node.nextElementSibling;
+    turndownService.addRule("cleanParagraphSpacing", {
+      filter: ["p"],
+      replacement: function (content, node) {
+        const htmlContent = (node as HTMLElement).innerHTML.trim();
+        const prevSibling = node.previousElementSibling;
+        const nextSibling = node.nextElementSibling;
 
-      if (
-        prevSibling &&
-        /^H[1-6]$/.test(prevSibling.tagName) &&
-        nextSibling &&
-        nextSibling.tagName === "P"
-      ) {
-        return content;
-      }
+        if (htmlContent === "<br>" || htmlContent === "<br/>") {
+          return "";
+        }
 
-      if (
-        prevSibling &&
-        (prevSibling.tagName === "UL" || prevSibling.tagName === "OL") &&
-        nextSibling &&
-        (nextSibling.tagName === "UL" || nextSibling.tagName === "OL")
-      ) {
-        return content.trim() ? content : "\n";
-      }
+        if (
+          prevSibling &&
+          (prevSibling.tagName === "UL" || prevSibling.tagName === "OL") &&
+          nextSibling &&
+          (nextSibling.tagName === "UL" || nextSibling.tagName === "OL")
+        ) {
+          return content.trim() ? content : "\n";
+        }
 
-      if (hasBrOnly) {
+        if (!content.trim()) return "";
+
+        if (
+          nextSibling &&
+          (nextSibling.tagName === "UL" || nextSibling.tagName === "OL")
+        ) {
+          return content.trim() ? content : "\n";
+        }
+
         if (
           prevSibling &&
           (prevSibling.tagName === "UL" || prevSibling.tagName === "OL")
         ) {
-          return "\n" + (nextSibling ? "\n" : "");
+          return content + (nextSibling ? "\n" : "");
         }
 
-        if (prevSibling && prevSibling.tagName === "P") {
-          return "\n" + (nextSibling ? "\n" : "");
+        const prefix = prevSibling ? "\n" : "\n";
+        const suffix = nextSibling ? "\n" : "";
+
+        return prefix + content + suffix;
+      },
+    });
+
+    turndownService.addRule("unwrapListsInParagraphs", {
+      filter: (node) => {
+        return node.nodeName === "P" && node.querySelector("ul, ol") !== null;
+      },
+      replacement: function (content, node) {
+        const listElement = node.querySelector("ul, ol");
+        if (listElement) {
+          return turndownService.turndown(listElement.outerHTML);
         }
-        return "\n" + (nextSibling ? "\n" : "");
-      }
-      if (!content.trim()) return "";
+        return content;
+      },
+    });
 
-      if (
-        prevSibling &&
-        (prevSibling.tagName === "UL" || prevSibling.tagName === "OL")
-      ) {
-        return content + (nextSibling ? "\n" : "");
-      }
+    turndownService.keep(["input"]);
 
-      if (prevSibling && prevSibling.tagName === "P") {
-        return "\n" + content + (nextSibling ? "\n" : "");
-      }
+    turndownService.addRule("checkbox", {
+      filter: (node) => {
+        return (
+          node.nodeName === "INPUT" &&
+          (node as HTMLInputElement).type === "checkbox" &&
+          (node as HTMLElement).classList.contains("custom-checkbox-wrapper")
+        );
+      },
+      replacement: (_content, node) => {
+        const el = node as HTMLElement & { checked?: boolean };
+        const checked =
+          (el as HTMLInputElement).checked || el.dataset.checked === "true";
+        return `[${checked ? "x" : " "}] `;
+      },
+    });
 
-      const prefix = prevSibling ? "\n" : "\n";
-      const suffix = nextSibling ? "\n" : "";
+    marked.use({ gfm: false, breaks: true });
 
-      return prefix + content + suffix;
-    },
-  });
+    const editorRef = useRef<HTMLDivElement>(null);
+    const savedSelection = useRef<Range | null>(null);
+    const menuRef = useRef<HTMLDivElement | null>(null);
 
-  turndownService.addRule("unwrapListsInParagraphs", {
-    filter: (node) => {
-      return node.nodeName === "P" && node.querySelector("ul, ol") !== null;
-    },
-    replacement: function (content, node) {
-      const listElement = node.querySelector("ul, ol");
-      if (listElement) {
-        return turndownService.turndown(listElement.outerHTML);
-      }
-      return content;
-    },
-  });
+    useImperativeHandle(ref, () => ({
+      insertMarkdownContent: async (data: string) => {
+        if (!editorRef.current) return;
 
-  turndownService.keep(["input"]);
+        if (document.activeElement !== editorRef.current) {
+          editorRef.current.focus();
+          await new Promise((resolve) => setTimeout(resolve, 0));
+        }
 
-  turndownService.addRule("checkbox", {
-    filter: (node) => {
-      return (
-        node.nodeName === "INPUT" &&
-        (node as HTMLInputElement).type === "checkbox" &&
-        (node as HTMLElement).classList.contains("custom-checkbox-wrapper")
-      );
-    },
-    replacement: (_content, node) => {
-      const el = node as HTMLElement & { checked?: boolean };
-      const checked =
-        (el as HTMLInputElement).checked || el.dataset.checked === "true";
-      return `[${checked ? "x" : " "}] `;
-    },
-  });
+        let sel = window.getSelection();
+        let range = sel?.rangeCount ? sel.getRangeAt(0) : null;
+        if (!range) return;
 
-  marked.use({ gfm: false, breaks: true });
-
-  const editorRef = useRef<HTMLDivElement>(null);
-  const savedSelection = useRef<Range | null>(null);
-  const menuRef = useRef<HTMLDivElement | null>(null);
-
-  const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    if (!editorRef.current || editorRef.current.innerHTML) return;
-
-    const initializeEditor = async () => {
-      let processedValue = value;
-
-      processedValue = processedValue.replace(
-        /\n(\n+)/g,
-        (_, extraNewlines) => {
+        let processedValue = data.replace(/\n(\n+)/g, (_, extraNewlines) => {
           const emptyParagraphs = "\n\n<br>".repeat(extraNewlines.length);
           return "\n" + emptyParagraphs;
+        });
+
+        let html = await marked.parse(processedValue);
+
+        html = html.replace(/<p>&nbsp;<\/p>/g, "<p><br></p>");
+
+        const temp = document.createElement("div");
+        temp.innerHTML = html;
+
+        const nodes = Array.from(temp.childNodes);
+
+        nodes.forEach((node) => {
+          range.insertNode(node);
+          range.setStartAfter(node);
+          range.collapse(true);
+        });
+
+        if (nodes.length > 0) {
+          const lastNode = nodes[nodes.length - 1];
+
+          range.setStartAfter(lastNode);
+          range.collapse(true);
         }
-      );
 
-      let html = await marked.parse(processedValue);
+        sel?.removeAllRanges();
+        sel?.addRange(range);
 
-      html = html.replace(/<p>&nbsp;<\/p>/g, "<p><br></p>");
+        handleFilteringCheckbox();
 
-      editorRef.current.innerHTML = String(html);
-      console.log("html", html);
-      document.execCommand("defaultParagraphSeparator", false, "p");
+        const cleanedHTML = cleanupHtml(editorRef.current.innerHTML);
+        const markdown = turndownService.turndown(cleanedHTML);
+        const cleanedMarkdown = cleanSpacing(markdown);
 
-      editorRef.current
-        .querySelectorAll(".custom-checkbox-wrapper")
-        .forEach((node) => node.remove());
+        if (onChange) {
+          onChange(cleanedMarkdown);
+        }
+      },
+      insertPlainText: async (data: string) => {
+        if (!editorRef.current) return;
 
+        if (document.activeElement !== editorRef.current) {
+          editorRef.current.focus();
+
+          await new Promise((resolve) => setTimeout(resolve, 0));
+        }
+
+        let sel = window.getSelection();
+        let range = sel?.rangeCount ? sel.getRangeAt(0) : null;
+
+        const temp = document.createElement("div");
+        temp.innerHTML = data;
+
+        const nodes = Array.from(temp.childNodes);
+
+        nodes.forEach((node) => {
+          range.insertNode(node);
+          range.setStartAfter(node);
+          range.collapse(true);
+        });
+
+        const spaceNode = document.createTextNode(" ");
+        range.insertNode(spaceNode);
+        range.setStartAfter(spaceNode);
+        range.collapse(true);
+
+        sel?.removeAllRanges();
+        sel?.addRange(range);
+
+        handleFilteringCheckbox();
+
+        const html = editorRef.current.innerHTML.replace(/\u00A0/g, " ") || "";
+        const cleanedHTML = cleanupHtml(html);
+        const markdown = turndownService.turndown(cleanedHTML);
+        const cleanedMarkdown = cleanSpacing(markdown);
+
+        if (onChange) {
+          onChange(cleanedMarkdown);
+        }
+      },
+    }));
+
+    const [isOpen, setIsOpen] = useState(false);
+
+    useEffect(() => {
+      if (!editorRef.current || editorRef.current.innerHTML) return;
+
+      const initializeEditor = async () => {
+        let processedValue = value;
+
+        processedValue = processedValue.replace(
+          /\n(\n+)/g,
+          (_, extraNewlines) => {
+            const emptyParagraphs = "\n\n<br>".repeat(extraNewlines.length);
+            return "\n" + emptyParagraphs;
+          }
+        );
+
+        let html = await marked.parse(processedValue);
+
+        html = html.replace(/<p>&nbsp;<\/p>/g, "<p><br></p>");
+
+        editorRef.current.innerHTML = String(html);
+        document.execCommand("defaultParagraphSeparator", false, "p");
+
+        editorRef.current
+          .querySelectorAll(".custom-checkbox-wrapper")
+          .forEach((node) => node.remove());
+
+        handleFilteringCheckbox();
+      };
+
+      initializeEditor();
+    }, []);
+
+    const handleFilteringCheckbox = () => {
       const walker = document.createTreeWalker(
         editorRef.current,
         NodeFilter.SHOW_TEXT
@@ -269,517 +378,524 @@ function RichEditor({
       });
     };
 
-    initializeEditor();
-  }, []);
+    const handleEditorChange = () => {
+      const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
+      const cleanedHTML = cleanupHtml(html);
+      const markdown = turndownService.turndown(cleanedHTML);
+      const cleanedMarkdown = cleanSpacing(markdown);
 
-  const handleEditorChange = () => {
-    const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
-    const cleanedHTML = cleanupHtml(html);
-    const markdown = turndownService.turndown(cleanedHTML);
-    const cleanedMarkdown = cleanSpacing(markdown);
-
-    if (onChange) {
-      onChange(cleanedMarkdown);
-    }
-  };
-
-  const handleCommand = (
-    command:
-      | "bold"
-      | "italic"
-      | "insertOrderedList"
-      | "insertUnorderedList"
-      | "checkbox"
-  ) => {
-    if (!editorRef.current) return;
-    editorRef.current.focus();
-
-    if (command === "checkbox") {
-      const sel = window.getSelection();
-      if (!sel || !sel.rangeCount) return;
-
-      const range = sel.getRangeAt(0);
-
-      const checkboxWrapper = createCheckboxWrapper(
-        false,
-        turndownService,
-        editorRef,
-        onChange
-      );
-
-      range.insertNode(checkboxWrapper);
-
-      const spaceNode = document.createTextNode("\u00A0");
-      checkboxWrapper.after(spaceNode);
-
-      const newRange = document.createRange();
-      newRange.setStartAfter(spaceNode);
-      newRange.collapse(true);
-
-      sel.removeAllRanges();
-      sel.addRange(newRange);
-
-      handleEditorChange();
-    } else {
-      document.execCommand(command);
-      const html = editorRef.current.innerHTML || "";
-      const markdown = turndownService.turndown(html);
       if (onChange) {
-        onChange(markdown);
+        onChange(cleanedMarkdown);
       }
-    }
-  };
+    };
 
-  const handleOnKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-    if (mode === "view-only") {
-      const isCopy = (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "c";
+    const handleCommand = (
+      command:
+        | "bold"
+        | "italic"
+        | "insertOrderedList"
+        | "insertUnorderedList"
+        | "checkbox"
+    ) => {
+      if (!editorRef.current) return;
+      editorRef.current.focus();
 
-      if (!isCopy) {
-        e.preventDefault();
-      }
-    }
-    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "u") {
-      e.preventDefault();
-      return;
-    }
+      if (command === "checkbox") {
+        const sel = window.getSelection();
+        if (!sel || !sel.rangeCount) return;
 
-    // This logic use for handle space for orderedlist/unorderedlist
-    if (e.key === "Enter") {
-      const sel = window.getSelection();
-      if (!sel || !sel.rangeCount) return;
+        const range = sel.getRangeAt(0);
 
-      const range = sel.getRangeAt(0);
-      if (!range.collapsed) return;
+        const checkboxWrapper = createCheckboxWrapper(
+          false,
+          turndownService,
+          editorRef,
+          onChange
+        );
 
-      let container = range.startContainer as HTMLElement;
+        range.insertNode(checkboxWrapper);
 
-      let liParent: HTMLElement | null = null;
-      if (container.nodeType === Node.ELEMENT_NODE) {
-        liParent = (container as Element).closest("li");
-      } else if (container.nodeType === Node.TEXT_NODE) {
-        liParent = (container.parentNode as Element)?.closest("li");
-      }
+        const spaceNode = document.createTextNode("\u00A0");
+        checkboxWrapper.after(spaceNode);
 
-      if (liParent) {
-        return;
-      }
+        const newRange = document.createRange();
+        newRange.setStartAfter(spaceNode);
+        newRange.collapse(true);
 
-      const headingParent =
-        container.nodeType === Node.ELEMENT_NODE
-          ? (container as Element).closest("h1,h2,h3,h4,h5,h6")
-          : (container.parentNode as Element)?.closest("h1,h2,h3,h4,h5,h6");
-
-      if (headingParent) {
-        e.preventDefault();
-
-        document.execCommand("insertParagraph");
+        sel.removeAllRanges();
+        sel.addRange(newRange);
 
         handleEditorChange();
+      } else {
+        document.execCommand(command);
+        const html = editorRef.current.innerHTML || "";
+        const markdown = turndownService.turndown(html);
+        if (onChange) {
+          onChange(markdown);
+        }
+      }
+    };
+
+    const handleOnKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+      if (mode === "view-only") {
+        const isCopy = (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "c";
+
+        if (!isCopy) {
+          e.preventDefault();
+        }
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "u") {
+        e.preventDefault();
         return;
       }
 
-      e.preventDefault();
+      // This logic use for handle space for orderedlist/unorderedlist
+      if (e.key === "Enter") {
+        const sel = window.getSelection();
+        if (!sel || !sel.rangeCount) return;
 
-      document.execCommand("insertLineBreak");
+        const range = sel.getRangeAt(0);
+        if (!range.collapsed) return;
 
-      handleEditorChange();
-    }
+        let container = range.startContainer as HTMLElement;
 
-    // this logic is to handle ordered and unordered lists, so when we type "1." or "-",
-    // it will automatically convert it to an ordered or unordered list
-    if (e.key === " ") {
-      const sel = window.getSelection();
-      if (!sel || !sel.rangeCount) return;
+        let liParent: HTMLElement | null = null;
+        if (container.nodeType === Node.ELEMENT_NODE) {
+          liParent = (container as Element).closest("li");
+        } else if (container.nodeType === Node.TEXT_NODE) {
+          liParent = (container.parentNode as Element)?.closest("li");
+        }
 
-      const range = sel.getRangeAt(0);
-      const node = range.startContainer;
+        if (liParent) {
+          return;
+        }
 
-      if (node.nodeType === Node.TEXT_NODE) {
-        const text = node.textContent ?? "";
-        const caretPos = range.startOffset;
+        const headingParent =
+          container.nodeType === Node.ELEMENT_NODE
+            ? (container as Element).closest("h1,h2,h3,h4,h5,h6")
+            : (container.parentNode as Element)?.closest("h1,h2,h3,h4,h5,h6");
 
-        const beforeCaret = text.slice(0, caretPos);
-        const afterCaret = text.slice(caretPos);
-
-        const checkedCheckboxMatch = beforeCaret.match(/\[x\]$/);
-        const uncheckedCheckboxMatch = beforeCaret.match(/\[ \]$/);
-
-        if (checkedCheckboxMatch || uncheckedCheckboxMatch) {
+        if (headingParent) {
           e.preventDefault();
 
-          const patternLength = checkedCheckboxMatch
-            ? checkedCheckboxMatch[0].length
-            : uncheckedCheckboxMatch![0].length;
-          const beforePattern = beforeCaret.slice(0, -patternLength);
+          const p = document.createElement("p");
+          p.innerHTML = "<br>";
+          headingParent.insertAdjacentElement("afterend", p);
 
-          const checkboxWrapper = createCheckboxWrapper(
-            !!checkedCheckboxMatch,
-            turndownService,
-            editorRef,
-            onChange
-          );
+          const newRange = document.createRange();
+          newRange.setStart(p, 0);
+          newRange.collapse(true);
 
-          const spaceNode = document.createTextNode("\u00A0");
-          checkboxWrapper.after(spaceNode);
-
-          if (beforePattern || afterCaret) {
-            const afterText = afterCaret ?? "";
-
-            node.textContent = beforePattern + afterText;
-
-            const newRange = document.createRange();
-            newRange.setStart(node, beforePattern.length);
-            newRange.collapse(true);
-
-            newRange.insertNode(checkboxWrapper);
-
-            if (!afterText.startsWith(" ")) {
-              const spaceNode = document.createTextNode("\u00A0");
-              checkboxWrapper.after(spaceNode);
-            }
-
-            const finalRange = document.createRange();
-            if (checkboxWrapper.nextSibling) {
-              finalRange.setStartAfter(checkboxWrapper.nextSibling);
-            } else {
-              finalRange.setStartAfter(checkboxWrapper);
-            }
-            finalRange.collapse(true);
-
-            sel.removeAllRanges();
-            sel.addRange(finalRange);
-          } else {
-            const parent = node.parentNode;
-            if (parent) {
-              parent.replaceChild(checkboxWrapper, node);
-
-              const spaceNode = document.createTextNode("\u00A0");
-              parent.insertBefore(spaceNode, checkboxWrapper.nextSibling);
-
-              const finalRange = document.createRange();
-              finalRange.setStartAfter(spaceNode);
-              finalRange.collapse(true);
-
-              sel.removeAllRanges();
-              sel.addRange(finalRange);
-            }
-          }
+          sel.removeAllRanges();
+          sel.addRange(newRange);
 
           handleEditorChange();
           return;
         }
 
-        const orderedMatch = beforeCaret.match(/^(\d+)\.$/);
-        const unorderedMatch = beforeCaret.match(/^[-*]$/);
+        e.preventDefault();
 
-        if (orderedMatch || unorderedMatch) {
-          e.preventDefault();
+        document.execCommand("insertLineBreak");
 
-          const li = document.createElement("li");
-          if (afterCaret) {
-            li.textContent = afterCaret;
-          } else {
-            li.appendChild(document.createElement("br"));
-          }
+        handleEditorChange();
+      }
 
-          const list = document.createElement(orderedMatch ? "ol" : "ul");
-          if (orderedMatch) {
-            list.setAttribute("start", orderedMatch[1]);
-          }
-          list.appendChild(li);
+      // this logic is to handle ordered and unordered lists, so when we type "1." or "-",
+      // it will automatically convert it to an ordered or unordered list
+      if (e.key === " ") {
+        const sel = window.getSelection();
+        if (!sel || !sel.rangeCount) return;
 
-          const parent = node.parentNode;
-          if (parent) {
-            parent.replaceChild(list, node);
+        const range = sel.getRangeAt(0);
+        const node = range.startContainer;
 
-            const prevSibling = list.previousSibling;
-            if (prevSibling && prevSibling.nodeType === Node.ELEMENT_NODE) {
-              if (
-                (prevSibling as HTMLElement).tagName === "INPUT" &&
-                (prevSibling as HTMLInputElement).type === "checkbox"
-              ) {
-                li.insertBefore(prevSibling, li.firstChild);
-                li.insertBefore(
-                  document.createTextNode("\u00A0"),
-                  prevSibling.nextSibling
-                );
+        if (node.nodeType === Node.TEXT_NODE) {
+          const text = node.textContent ?? "";
+          const caretPos = range.startOffset;
+
+          const beforeCaret = text.slice(0, caretPos);
+          const afterCaret = text.slice(caretPos);
+
+          const checkedCheckboxMatch = beforeCaret.match(/\[x\]$/);
+          const uncheckedCheckboxMatch = beforeCaret.match(/\[ \]$/);
+
+          if (checkedCheckboxMatch || uncheckedCheckboxMatch) {
+            e.preventDefault();
+
+            const patternLength = checkedCheckboxMatch
+              ? checkedCheckboxMatch[0].length
+              : uncheckedCheckboxMatch![0].length;
+            const beforePattern = beforeCaret.slice(0, -patternLength);
+
+            const checkboxWrapper = createCheckboxWrapper(
+              !!checkedCheckboxMatch,
+              turndownService,
+              editorRef,
+              onChange
+            );
+
+            const spaceNode = document.createTextNode("\u00A0");
+            checkboxWrapper.after(spaceNode);
+
+            if (beforePattern || afterCaret) {
+              const afterText = afterCaret ?? "";
+
+              node.textContent = beforePattern + afterText;
+
+              const newRange = document.createRange();
+              newRange.setStart(node, beforePattern.length);
+              newRange.collapse(true);
+
+              newRange.insertNode(checkboxWrapper);
+
+              if (!afterText.startsWith(" ")) {
+                const spaceNode = document.createTextNode("\u00A0");
+                checkboxWrapper.after(spaceNode);
+              }
+
+              const finalRange = document.createRange();
+              if (checkboxWrapper.nextSibling) {
+                finalRange.setStartAfter(checkboxWrapper.nextSibling);
+              } else {
+                finalRange.setStartAfter(checkboxWrapper);
+              }
+              finalRange.collapse(true);
+
+              sel.removeAllRanges();
+              sel.addRange(finalRange);
+            } else {
+              const parent = node.parentNode;
+              if (parent) {
+                parent.replaceChild(checkboxWrapper, node);
+
+                const spaceNode = document.createTextNode("\u00A0");
+                parent.insertBefore(spaceNode, checkboxWrapper.nextSibling);
+
+                const finalRange = document.createRange();
+                finalRange.setStartAfter(spaceNode);
+                finalRange.collapse(true);
+
+                sel.removeAllRanges();
+                sel.addRange(finalRange);
               }
             }
+
+            handleEditorChange();
+            return;
           }
 
-          const newRange = document.createRange();
-          if (afterCaret) {
-            newRange.setStart(li.firstChild!, afterCaret.length);
-          } else {
-            newRange.setStart(li, 0);
+          const orderedMatch = beforeCaret.match(/^(\d+)\.$/);
+          const unorderedMatch = beforeCaret.match(/^[-*]$/);
+
+          if (orderedMatch || unorderedMatch) {
+            e.preventDefault();
+
+            const li = document.createElement("li");
+            if (afterCaret) {
+              li.textContent = afterCaret;
+            } else {
+              li.appendChild(document.createElement("br"));
+            }
+
+            const list = document.createElement(orderedMatch ? "ol" : "ul");
+            if (orderedMatch) {
+              list.setAttribute("start", orderedMatch[1]);
+            }
+            list.appendChild(li);
+
+            const parent = node.parentNode;
+            if (parent) {
+              parent.replaceChild(list, node);
+
+              const prevSibling = list.previousSibling;
+              if (prevSibling && prevSibling.nodeType === Node.ELEMENT_NODE) {
+                if (
+                  (prevSibling as HTMLElement).tagName === "INPUT" &&
+                  (prevSibling as HTMLInputElement).type === "checkbox"
+                ) {
+                  li.insertBefore(prevSibling, li.firstChild);
+                  li.insertBefore(
+                    document.createTextNode("\u00A0"),
+                    prevSibling.nextSibling
+                  );
+                }
+              }
+            }
+
+            const newRange = document.createRange();
+            if (afterCaret) {
+              newRange.setStart(li.firstChild!, afterCaret.length);
+            } else {
+              newRange.setStart(li, 0);
+            }
+            newRange.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(newRange);
           }
-          newRange.collapse(true);
-          sel.removeAllRanges();
-          sel.addRange(newRange);
         }
       }
-    }
 
-    if (e.key === "Backspace") {
+      if (e.key === "Backspace") {
+        const sel = window.getSelection();
+        if (!sel || !sel.rangeCount) return;
+
+        const range = sel.getRangeAt(0);
+        if (!range.collapsed) return;
+
+        const container = range.startContainer;
+
+        let li: HTMLElement | null = null;
+
+        if (container.nodeType === Node.ELEMENT_NODE) {
+          li = (container as Element).closest("li");
+        } else if (container.nodeType === Node.TEXT_NODE) {
+          li = (container.parentNode as HTMLElement)?.closest("li");
+        }
+
+        if (
+          li &&
+          li.innerHTML === "<br>" &&
+          li.parentElement &&
+          (li.parentElement.tagName === "OL" ||
+            li.parentElement.tagName === "UL") &&
+          li.parentElement.children.length === 1
+        ) {
+          e.preventDefault();
+
+          const parentList = li.parentElement;
+          const block = document.createElement("p");
+          block.innerHTML = "<br>";
+
+          parentList.replaceWith(block);
+
+          const newRange = document.createRange();
+          newRange.setStart(block, 0);
+          newRange.collapse(true);
+
+          sel.removeAllRanges();
+          sel.addRange(newRange);
+
+          handleEditorChange();
+          return;
+        }
+
+        handleEditorChange();
+      }
+    };
+
+    const handleHeading = (level: 1 | 2 | 3) => {
+      if (!editorRef.current) return;
+
+      editorRef.current.focus();
+
       const sel = window.getSelection();
+
+      if (savedSelection.current) {
+        sel?.removeAllRanges();
+        sel?.addRange(savedSelection.current);
+      }
+
       if (!sel || !sel.rangeCount) return;
 
       const range = sel.getRangeAt(0);
-      if (!range.collapsed) return;
+      let node = range.commonAncestorContainer as HTMLElement;
 
-      const container = range.startContainer;
-
-      let li: HTMLElement | null = null;
-
-      if (container.nodeType === Node.ELEMENT_NODE) {
-        li = (container as Element).closest("li");
-      } else if (container.nodeType === Node.TEXT_NODE) {
-        li = (container.parentNode as HTMLElement)?.closest("li");
+      if (node.nodeType === Node.TEXT_NODE) {
+        node = node.parentElement!;
       }
 
-      if (
-        li &&
-        li.innerHTML === "<br>" &&
-        li.parentElement &&
-        (li.parentElement.tagName === "OL" ||
-          li.parentElement.tagName === "UL") &&
-        li.parentElement.children.length === 1
-      ) {
-        e.preventDefault();
+      const headingTag = `h${level}` as keyof HTMLElementTagNameMap;
 
-        const parentList = li.parentElement;
-        const block = document.createElement("p");
-        block.innerHTML = "<br>";
+      if (/^H[1-6]$/.test(node.tagName)) {
+        if (node.tagName.toLowerCase() === headingTag) {
+          const p = document.createElement("p");
+          p.innerHTML = node.innerHTML;
+          node.replaceWith(p);
 
-        parentList.replaceWith(block);
+          const newRange = document.createRange();
+          newRange.selectNodeContents(p);
+          newRange.collapse(false);
+          sel.removeAllRanges();
+          sel.addRange(newRange);
+        } else {
+          const newHeading = document.createElement(headingTag);
+          newHeading.innerHTML = node.innerHTML;
+          node.replaceWith(newHeading);
+
+          const newRange = document.createRange();
+          newRange.selectNodeContents(newHeading);
+          newRange.collapse(false);
+          sel.removeAllRanges();
+          sel.addRange(newRange);
+        }
+      } else {
+        const heading = document.createElement(headingTag);
+        if (sel.isCollapsed) {
+          heading.innerHTML = "<br>";
+        } else {
+          heading.innerHTML = sel.toString();
+        }
+
+        range.deleteContents();
+        range.insertNode(heading);
 
         const newRange = document.createRange();
-        newRange.setStart(block, 0);
-        newRange.collapse(true);
+        newRange.selectNodeContents(heading);
+
+        if (sel.isCollapsed) {
+          newRange.setStart(heading, 0);
+          newRange.collapse(true);
+        } else {
+          newRange.collapse(false);
+        }
 
         sel.removeAllRanges();
         sel.addRange(newRange);
-
-        handleEditorChange();
-        return;
       }
+
+      savedSelection.current = null;
 
       handleEditorChange();
-    }
-  };
-
-  const handleHeading = (level: 1 | 2 | 3) => {
-    if (!editorRef.current) return;
-
-    editorRef.current.focus();
-
-    const sel = window.getSelection();
-
-    if (savedSelection.current) {
-      sel?.removeAllRanges();
-      sel?.addRange(savedSelection.current);
-    }
-
-    if (!sel || !sel.rangeCount) return;
-
-    const range = sel.getRangeAt(0);
-    let node = range.commonAncestorContainer as HTMLElement;
-
-    if (node.nodeType === Node.TEXT_NODE) {
-      node = node.parentElement!;
-    }
-
-    const headingTag = `h${level}` as keyof HTMLElementTagNameMap;
-
-    if (/^H[1-6]$/.test(node.tagName)) {
-      if (node.tagName.toLowerCase() === headingTag) {
-        const p = document.createElement("p");
-        p.innerHTML = node.innerHTML;
-        node.replaceWith(p);
-
-        const newRange = document.createRange();
-        newRange.selectNodeContents(p);
-        newRange.collapse(false);
-        sel.removeAllRanges();
-        sel.addRange(newRange);
-      } else {
-        const newHeading = document.createElement(headingTag);
-        newHeading.innerHTML = node.innerHTML;
-        node.replaceWith(newHeading);
-
-        const newRange = document.createRange();
-        newRange.selectNodeContents(newHeading);
-        newRange.collapse(false);
-        sel.removeAllRanges();
-        sel.addRange(newRange);
-      }
-    } else {
-      const heading = document.createElement(headingTag);
-
-      if (sel.isCollapsed) {
-        heading.innerHTML = "<br>";
-      } else {
-        heading.innerHTML = sel.toString();
-      }
-
-      range.deleteContents();
-      range.insertNode(heading);
-
-      const newRange = document.createRange();
-      newRange.selectNodeContents(heading);
-
-      if (sel.isCollapsed) {
-        newRange.setStart(heading, 0);
-        newRange.collapse(true);
-      } else {
-        newRange.collapse(false);
-      }
-
-      sel.removeAllRanges();
-      sel.addRange(newRange);
-    }
-
-    savedSelection.current = null;
-    handleEditorChange();
-  };
-
-  const TIP_MENU_RICH_EDITOR = [
-    {
-      caption: "Heading 1",
-      icon: RiH1,
-      iconColor: "black",
-      onClick: () => {
-        editorRef.current?.focus();
-        handleHeading(1);
-      },
-    },
-    {
-      caption: "Heading 2",
-      icon: RiH2,
-      iconColor: "black",
-      onClick: () => {
-        editorRef.current?.focus();
-        handleHeading(2);
-      },
-    },
-    {
-      caption: "Heading 3",
-      icon: RiH3,
-      iconColor: "black",
-      onClick: () => {
-        editorRef.current?.focus();
-        handleHeading(3);
-      },
-    },
-  ];
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        menuRef.current &&
-        !menuRef.current.contains(event.target as Node) &&
-        isOpen
-      ) {
-        setIsOpen(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isOpen]);
 
-  return (
-    <Wrapper
-      aria-label="wrapper-editor"
-      $containerStyle={containerStyle}
-      $mode={mode}
-    >
-      {mode !== "view-only" && (
-        <ToolbarWrapper
-          aria-label="toolbar-content"
-          $toolbarPosition={toolbarPosition}
-        >
-          <Toolbar $toolbarPosition={toolbarPosition}>
-            <ToolbarGroup>
-              <RichEditorToolbarButton
-                icon={RiBold}
-                onClick={() => handleCommand("bold")}
-              />
-              <RichEditorToolbarButton
-                icon={RiItalic}
-                onClick={() => handleCommand("italic")}
-              />
-              <RichEditorToolbarButton
-                icon={RiListOrdered}
-                onClick={() => handleCommand("insertOrderedList")}
-              />
-              <RichEditorToolbarButton
-                icon={RiListUnordered}
-                onClick={() => handleCommand("insertUnorderedList")}
-              />
-              <RichEditorToolbarButton
-                icon={RiCheckboxLine}
-                onClick={() => handleCommand("checkbox")}
-              />
-              <RichEditorToolbarButton
-                icon={RiHeading}
-                isOpen={isOpen}
-                onClick={() => {
-                  const sel = window.getSelection();
-                  if (sel && sel.rangeCount > 0) {
-                    savedSelection.current = sel.getRangeAt(0).cloneRange();
-                  }
-                  setIsOpen(true);
-                }}
-              />
+    const TIP_MENU_RICH_EDITOR = [
+      {
+        caption: "Heading 1",
+        icon: RiH1,
+        iconColor: "black",
+        onClick: () => {
+          editorRef.current?.focus();
+          handleHeading(1);
+        },
+      },
+      {
+        caption: "Heading 2",
+        icon: RiH2,
+        iconColor: "black",
+        onClick: () => {
+          editorRef.current?.focus();
+          handleHeading(2);
+        },
+      },
+      {
+        caption: "Heading 3",
+        icon: RiH3,
+        iconColor: "black",
+        onClick: () => {
+          editorRef.current?.focus();
+          handleHeading(3);
+        },
+      },
+    ];
 
-              {isOpen && (
-                <MenuWrapper ref={menuRef} $toolbarPosition={toolbarPosition}>
-                  <TipMenu
-                    setIsOpen={() => setIsOpen(false)}
-                    subMenuList={TIP_MENU_RICH_EDITOR}
-                  />
-                </MenuWrapper>
-              )}
-            </ToolbarGroup>
-            {toolbarRightPanel && (
-              <ToolbarRightPanel>{toolbarRightPanel}</ToolbarRightPanel>
-            )}
-          </Toolbar>
-        </ToolbarWrapper>
-      )}
+    useEffect(() => {
+      function handleClickOutside(event: MouseEvent) {
+        if (
+          menuRef.current &&
+          !menuRef.current.contains(event.target as Node) &&
+          isOpen
+        ) {
+          setIsOpen(false);
+        }
+      }
 
-      <EditorArea
-        ref={editorRef}
-        role="textbox"
-        contentEditable
-        $editorStyle={editorStyle}
-        $toolbarPosition={toolbarPosition}
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, [isOpen]);
+
+    return (
+      <Wrapper
+        aria-label="wrapper-editor"
+        $containerStyle={containerStyle}
         $mode={mode}
-        onInput={() => {
-          if (mode !== "view-only") {
-            if (editorRef.current) {
-              syncCheckboxStates(editorRef.current);
-            }
+      >
+        {mode !== "view-only" && (
+          <ToolbarWrapper
+            aria-label="toolbar-content"
+            $toolbarPosition={toolbarPosition}
+          >
+            <Toolbar $toolbarPosition={toolbarPosition}>
+              <ToolbarGroup>
+                <RichEditorToolbarButton
+                  icon={RiBold}
+                  onClick={() => handleCommand("bold")}
+                />
+                <RichEditorToolbarButton
+                  icon={RiItalic}
+                  onClick={() => handleCommand("italic")}
+                />
+                <RichEditorToolbarButton
+                  icon={RiListOrdered}
+                  onClick={() => handleCommand("insertOrderedList")}
+                />
+                <RichEditorToolbarButton
+                  icon={RiListUnordered}
+                  onClick={() => handleCommand("insertUnorderedList")}
+                />
+                <RichEditorToolbarButton
+                  icon={RiCheckboxLine}
+                  onClick={() => handleCommand("checkbox")}
+                />
+                <RichEditorToolbarButton
+                  icon={RiHeading}
+                  isOpen={isOpen}
+                  onClick={() => {
+                    const sel = window.getSelection();
+                    if (sel && sel.rangeCount > 0) {
+                      savedSelection.current = sel.getRangeAt(0).cloneRange();
+                    }
+                    setIsOpen(true);
+                  }}
+                />
 
-            const html =
-              editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
-            const cleanedHTML = cleanupHtml(html);
+                {isOpen && (
+                  <MenuWrapper ref={menuRef} $toolbarPosition={toolbarPosition}>
+                    <TipMenu
+                      setIsOpen={() => setIsOpen(false)}
+                      subMenuList={TIP_MENU_RICH_EDITOR}
+                    />
+                  </MenuWrapper>
+                )}
+              </ToolbarGroup>
+              {toolbarRightPanel && (
+                <ToolbarRightPanel>{toolbarRightPanel}</ToolbarRightPanel>
+              )}
+            </Toolbar>
+          </ToolbarWrapper>
+        )}
 
-            const markdown = turndownService.turndown(cleanedHTML);
-            const cleanedMarkdown = cleanSpacing(markdown);
-            if (onChange) {
-              onChange(cleanedMarkdown);
+        <EditorArea
+          ref={editorRef}
+          role="textbox"
+          contentEditable
+          $editorStyle={editorStyle}
+          $toolbarPosition={toolbarPosition}
+          $mode={mode}
+          onInput={() => {
+            if (mode !== "view-only") {
+              if (editorRef.current) {
+                syncCheckboxStates(editorRef.current);
+              }
+
+              const html =
+                editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
+              const cleanedHTML = cleanupHtml(html);
+
+              const markdown = turndownService.turndown(cleanedHTML);
+              const cleanedMarkdown = cleanSpacing(markdown);
+              if (onChange) {
+                onChange(cleanedMarkdown);
+              }
             }
-          }
-        }}
-        onKeyDown={handleOnKeyDown}
-      />
-    </Wrapper>
-  );
-}
+          }}
+          onKeyDown={handleOnKeyDown}
+        />
+      </Wrapper>
+    );
+  }
+) as RichEditorComponent;
 
 function RichEditorToolbarButton({
   icon: Icon,
@@ -932,7 +1048,6 @@ const EditorArea = styled.div<{
       caret-color: transparent;
       outline: none;
     `};
-
   ol {
     list-style-type: decimal !important;
     list-style-position: outside !important;
