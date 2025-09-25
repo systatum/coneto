@@ -248,11 +248,22 @@ describe("RichEditor", () => {
         cy.findByRole("textbox")
           .should("exist")
           .click()
-          .type("Hello World{leftarrow}");
+          .type("Hello World{leftarrow}{leftarrow}");
         cy.findByRole("textbox").should("contain.text", "Hello World");
 
         cy.findAllByRole("button").eq(0).click();
         cy.findAllByRole("button").eq(6).click();
+
+        cy.findByRole("textbox").then(($el) => {
+          const sel = $el[0].ownerDocument.getSelection();
+          const node = sel?.anchorNode;
+          const offset = sel?.anchorOffset;
+
+          expect(node?.nodeType).to.eq(Node.TEXT_NODE);
+          expect(node?.textContent).to.eq("World");
+
+          expect(offset).to.eq(3);
+        });
 
         cy.get("pre")
           .invoke("text")
@@ -285,6 +296,17 @@ describe("RichEditor", () => {
 
         cy.findAllByRole("button").eq(1).click();
         cy.findAllByRole("button").eq(6).click();
+
+        cy.findByRole("textbox").then(($el) => {
+          const sel = $el[0].ownerDocument.getSelection();
+          const node = sel?.anchorNode;
+          const offset = sel?.anchorOffset;
+
+          expect(node?.nodeType).to.eq(Node.TEXT_NODE);
+          expect(node?.textContent).to.eq("World");
+
+          expect(offset).to.eq(4);
+        });
 
         cy.get("pre")
           .invoke("text")
