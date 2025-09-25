@@ -418,7 +418,6 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       const cleanedHTML = cleanupHtml(html);
       const markdown = turndownService.turndown(cleanedHTML);
       const cleanedMarkdown = cleanSpacing(markdown);
-      console.log(cleanedHTML);
 
       if (onChange) {
         onChange(cleanedMarkdown);
@@ -813,6 +812,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     const handleHeading = (level: 1 | 2 | 3) => {
       if (!editorRef.current) return;
 
+      editorRef.current.focus();
+
       const sel = window.getSelection();
 
       if (savedSelection.current) {
@@ -823,9 +824,6 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       if (!sel || !sel.rangeCount) return;
 
       const range = sel.getRangeAt(0);
-
-      const cursorOffset = range.startOffset;
-
       let node = range.commonAncestorContainer as HTMLElement;
 
       if (node.nodeType === Node.TEXT_NODE) {
@@ -834,90 +832,42 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
       const headingTag = `h${level}` as keyof HTMLElementTagNameMap;
 
-      if (/^H[1-6]$/.test(node.tagName) || node.tagName === "P") {
+      if (/^H[1-6]$/.test(node.tagName)) {
         if (node.tagName.toLowerCase() === headingTag) {
           const p = document.createElement("p");
           p.innerHTML = node.innerHTML;
-
-          if (p.innerHTML === "<br>") {
-            p.innerHTML = "";
-          }
-
           node.replaceWith(p);
 
           const newRange = document.createRange();
-          const textNode = p.firstChild;
-          if (textNode && textNode.nodeType === Node.TEXT_NODE) {
-            const maxOffset = Math.min(
-              cursorOffset,
-              textNode.textContent?.length || 0
-            );
-            newRange.setStart(textNode, maxOffset);
-            newRange.collapse(true);
-          } else {
-            newRange.setStart(p, 0);
-            newRange.collapse(true);
-          }
+          newRange.selectNodeContents(p);
+          newRange.collapse(true);
           sel.removeAllRanges();
           sel.addRange(newRange);
         } else {
           const newHeading = document.createElement(headingTag);
           newHeading.innerHTML = node.innerHTML;
-
-          if (newHeading.innerHTML === "<br>") {
-            newHeading.innerHTML = "";
-          }
-
           node.replaceWith(newHeading);
 
-          const nextSibling = newHeading.nextSibling;
-          if (
-            nextSibling &&
-            nextSibling.nodeType === Node.ELEMENT_NODE &&
-            (nextSibling as Element).tagName === "BR"
-          ) {
-            nextSibling.remove();
-          }
-
           const newRange = document.createRange();
-          const textNode = newHeading.firstChild;
-          if (textNode && textNode.nodeType === Node.TEXT_NODE) {
-            const maxOffset = Math.min(
-              cursorOffset,
-              textNode.textContent?.length || 0
-            );
-            newRange.setStart(textNode, maxOffset);
-            newRange.collapse(true);
-          } else {
-            newRange.setStart(newHeading, 0);
-            newRange.collapse(true);
-          }
+          newRange.selectNodeContents(newHeading);
+          newRange.collapse(false);
           sel.removeAllRanges();
           sel.addRange(newRange);
         }
       } else {
-        let targetNode = node;
+        const heading = document.createElement(headingTag);
+        if (sel.isCollapsed) {
+          const startContainer = range.startContainer;
+          if (startContainer.nodeType === Node.TEXT_NODE) {
+            const textContent = startContainer.textContent || "";
+            heading.textContent = textContent;
 
-        while (targetNode && targetNode !== editorRef.current) {
-          if (
-            targetNode.tagName === "DIV" ||
-            targetNode.tagName === "P" ||
-            /^H[1-6]$/.test(targetNode.tagName)
-          ) {
-            break;
+            const parent = startContainer.parentNode!;
+            parent.replaceChild(heading, startContainer);
+          } else {
+            heading.innerHTML = "<br>";
+            range.insertNode(heading);
           }
-          targetNode = targetNode.parentElement!;
-        }
-
-        if (targetNode && targetNode !== editorRef.current) {
-          const heading = document.createElement(headingTag);
-          heading.innerHTML = targetNode.innerHTML || "";
-
-          if (heading.innerHTML === "") {
-            heading.textContent = "";
-          }
-
-          targetNode.replaceWith(heading);
 
           const nextSibling = heading.nextSibling;
           if (
@@ -927,81 +877,29 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           ) {
             nextSibling.remove();
           }
-
-          const newRange = document.createRange();
-          const textNode = heading.firstChild;
-          if (textNode && textNode.nodeType === Node.TEXT_NODE) {
-            const maxOffset = Math.min(
-              cursorOffset,
-              textNode.textContent?.length || 0
-            );
-            newRange.setStart(textNode, maxOffset);
-            newRange.collapse(true);
-          } else {
-            newRange.setStart(heading, 0);
-            newRange.collapse(true);
-          }
-          sel.removeAllRanges();
-          sel.addRange(newRange);
         } else {
-          const heading = document.createElement(headingTag);
-
-          if (sel.isCollapsed) {
-            const startContainer = range.startContainer;
-            if (startContainer.nodeType === Node.TEXT_NODE) {
-              const textContent = startContainer.textContent || "";
-              heading.textContent = textContent;
-
-              const parent = startContainer.parentNode!;
-              parent.replaceChild(heading, startContainer);
-            } else {
-              heading.innerHTML = "";
-              range.insertNode(heading);
-            }
-
-            const nextSibling = heading.nextSibling;
-            if (
-              nextSibling &&
-              nextSibling.nodeType === Node.ELEMENT_NODE &&
-              (nextSibling as Element).tagName === "BR"
-            ) {
-              nextSibling.remove();
-            }
-
-            const newRange = document.createRange();
-            const textNode = heading.firstChild;
-            if (textNode && textNode.nodeType === Node.TEXT_NODE) {
-              newRange.setStart(textNode, textNode.textContent?.length || 0);
-            } else {
-              newRange.setStart(heading, 0);
-            }
-            newRange.collapse(true);
-            sel.removeAllRanges();
-            sel.addRange(newRange);
-          } else {
-            heading.textContent = sel.toString();
-            range.deleteContents();
-            range.insertNode(heading);
-
-            const nextSibling = heading.nextSibling;
-            if (
-              nextSibling &&
-              nextSibling.nodeType === Node.ELEMENT_NODE &&
-              (nextSibling as Element).tagName === "BR"
-            ) {
-              nextSibling.remove();
-            }
-
-            const newRange = document.createRange();
-            newRange.selectNodeContents(heading);
-            newRange.collapse(false);
-            sel.removeAllRanges();
-            sel.addRange(newRange);
-          }
+          heading.innerHTML = sel.toString();
         }
+
+        range.deleteContents();
+        range.insertNode(heading);
+
+        const newRange = document.createRange();
+        newRange.selectNodeContents(heading);
+
+        if (sel.isCollapsed) {
+          newRange.setStart(heading, 0);
+          newRange.collapse(true);
+        } else {
+          newRange.collapse(false);
+        }
+
+        sel.removeAllRanges();
+        sel.addRange(newRange);
       }
 
       savedSelection.current = null;
+
       handleEditorChange();
     };
 
@@ -1463,20 +1361,34 @@ const cleanupHtml = (html: string): string => {
   });
 
   Array.from(container.querySelectorAll("p")).forEach((p) => {
-    const inner = p.innerHTML.trim().toLowerCase();
+    const frag = document.createDocumentFragment();
+    let buffer = "";
 
-    if (
-      inner === "<br>" ||
-      inner === "<br/>" ||
-      inner === "<br />" ||
-      inner === "&nbsp;"
-    ) {
-      return;
+    const walker = document.createTreeWalker(p, NodeFilter.SHOW_ALL);
+    while (walker.nextNode()) {
+      const node = walker.currentNode;
+
+      if (node.nodeType === Node.TEXT_NODE) {
+        buffer += node.textContent || "";
+      } else if (node.nodeName.toLowerCase() === "br") {
+        if (buffer.trim()) {
+          const newP = document.createElement("p");
+          newP.innerHTML = buffer.trim();
+          frag.appendChild(newP);
+          buffer = "";
+        } else {
+          frag.appendChild(document.createElement("br"));
+        }
+      }
     }
 
-    if (inner === "") {
-      p.parentNode?.removeChild(p);
+    if (buffer.trim()) {
+      const newP = document.createElement("p");
+      newP.innerHTML = buffer.trim();
+      frag.appendChild(newP);
     }
+
+    p.parentNode?.replaceChild(frag, p);
   });
 
   Array.from(container.querySelectorAll("span")).forEach((span) => {
