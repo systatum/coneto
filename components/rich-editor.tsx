@@ -144,9 +144,18 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           prevSibling &&
           prevSibling.tagName === "P" &&
           nextSibling &&
+          /^H[1-6]$/.test(nextSibling.tagName)
+        ) {
+          return content;
+        }
+
+        if (
+          prevSibling &&
+          prevSibling.tagName === "P" &&
+          nextSibling &&
           (nextSibling.tagName === "UL" || nextSibling.tagName === "OL")
         ) {
-          return content.trim() ? content : "\n";
+          return content + "\n";
         }
 
         if (
@@ -155,7 +164,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           nextSibling &&
           (nextSibling.tagName === "UL" || nextSibling.tagName === "OL")
         ) {
-          return content;
+          return content.trim() ? content : "\n";
         }
 
         if (hasBrOnly) {
@@ -326,6 +335,24 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     }));
 
     const [isOpen, setIsOpen] = useState(false);
+
+    useEffect(() => {
+      if (!editorRef.current) return;
+
+      if (!editorRef.current.innerHTML.trim()) {
+        const p = document.createElement("p");
+        p.innerHTML = "<br>";
+        editorRef.current.appendChild(p);
+
+        const range = document.createRange();
+        range.setStart(p, 0);
+        range.collapse(true);
+
+        const sel = window.getSelection();
+        sel?.removeAllRanges();
+        sel?.addRange(range);
+      }
+    }, []);
 
     useEffect(() => {
       if (!editorRef.current || editorRef.current.innerHTML) return;
@@ -822,7 +849,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         sel?.addRange(savedSelection.current);
       }
 
-      if (!sel || !sel.rangeCount) return;
+      if (!sel.rangeCount) return;
 
       const range = sel.getRangeAt(0);
       let node = range.commonAncestorContainer as HTMLElement;
@@ -866,26 +893,26 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
             const parent = startContainer.parentNode!;
             parent.replaceChild(heading, startContainer);
           } else {
-            if (!heading.textContent) {
-              heading.innerHTML = "<br>";
-            }
+            heading.innerHTML = "<br>";
             range.insertNode(heading);
-          }
-
-          const nextSibling = heading.nextSibling;
-          if (
-            nextSibling &&
-            nextSibling.nodeType === Node.ELEMENT_NODE &&
-            (nextSibling as Element).tagName === "BR"
-          ) {
-            nextSibling.remove();
           }
         } else {
           heading.innerHTML = sel.toString();
+          range.deleteContents();
+          range.insertNode(heading);
         }
 
-        range.deleteContents();
-        range.insertNode(heading);
+        let nextSibling = heading.nextSibling;
+        if (
+          nextSibling &&
+          nextSibling.nodeType === Node.TEXT_NODE &&
+          !nextSibling.textContent?.trim()
+        ) {
+          nextSibling = nextSibling.nextSibling;
+        }
+        if (nextSibling && nextSibling.nodeName === "BR") {
+          nextSibling.remove();
+        }
 
         const newRange = document.createRange();
         newRange.selectNodeContents(heading);
@@ -1350,6 +1377,10 @@ const cleanupHtml = (html: string): string => {
         frag.appendChild(div.firstChild);
       }
       div.parentNode?.replaceChild(frag, div);
+    } else {
+      const p = document.createElement("p");
+      p.innerHTML = div.innerHTML || "<br>";
+      div.parentNode?.replaceChild(p, div);
     }
   });
 
@@ -1364,6 +1395,8 @@ const cleanupHtml = (html: string): string => {
   });
 
   Array.from(container.querySelectorAll("p")).forEach((p) => {
+    if (p.querySelector("ul, ol, h1, h2, h3, h4, h5, h6")) return;
+
     const frag = document.createDocumentFragment();
     let buffer = "";
 
