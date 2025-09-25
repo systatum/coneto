@@ -337,9 +337,9 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
-      if (!editorRef.current) return;
+      if (!editorRef.current || editorRef.current.innerHTML) return;
 
-      if (!editorRef.current.innerHTML.trim()) {
+      if (!value || !value.trim()) {
         const p = document.createElement("p");
         p.innerHTML = "<br>";
         editorRef.current.appendChild(p);
@@ -352,7 +352,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         sel?.removeAllRanges();
         sel?.addRange(range);
       }
-    }, []);
+    }, [value]);
 
     useEffect(() => {
       if (!editorRef.current || editorRef.current.innerHTML) return;
@@ -489,17 +489,22 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         sel.addRange(newRange);
 
         handleEditorChange();
-      } else {
-        if (command === "bold" || command === "italic") {
-          if (sel && sel.rangeCount && sel.isCollapsed) {
-            applyInlineStyleToWord(command);
-          } else {
-            document.execCommand(command);
-          }
+        return;
+      }
+
+      if (command === "bold" || command === "italic") {
+        if (sel && sel.rangeCount && sel.isCollapsed) {
+          applyInlineStyleToWord(command);
+        } else {
+          document.execCommand(command);
         }
 
         handleEditorChange();
+        return;
       }
+
+      document.execCommand(command);
+      handleEditorChange();
     };
 
     const handleOnKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
@@ -516,22 +521,28 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       }
 
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "b") {
+        e.preventDefault();
         const sel = window.getSelection();
+
         if (sel && sel.rangeCount && sel.isCollapsed) {
-          e.preventDefault();
           applyInlineStyleToWord("bold");
-          handleEditorChange();
-          return;
+        } else {
+          document.execCommand("bold");
         }
+        handleEditorChange();
+        return;
       }
+
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "i") {
+        e.preventDefault();
         const sel = window.getSelection();
         if (sel && sel.rangeCount && sel.isCollapsed) {
-          e.preventDefault();
           applyInlineStyleToWord("italic");
-          handleEditorChange();
-          return;
+        } else {
+          document.execCommand("italic");
         }
+        handleEditorChange();
+        return;
       }
 
       // This logic use for handle space for orderedlist/unorderedlist, and heading.
@@ -1418,7 +1429,7 @@ const cleanupHtml = (html: string): string => {
   });
 
   Array.from(container.querySelectorAll("p")).forEach((p) => {
-    if (p.querySelector("ul, ol, h1, h2, h3, h4, h5, h6, b, i")) return;
+    if (p.querySelector("ul, ol, h1, h2, h3, h4, h5, h6, b, i, input")) return;
 
     const frag = document.createDocumentFragment();
     let buffer = "";

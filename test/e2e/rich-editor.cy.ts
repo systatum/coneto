@@ -39,7 +39,7 @@ describe("RichEditor", () => {
     context(".insertMarkdownContent", () => {
       it("renders content on editor", () => {
         cy.findByText("Markdown Example").click();
-        const contentHTML = `<h3>Hello there!</h3>
+        const contentHTML = `<p><h3>Hello there!</h3>
 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor reprehenderit voluptate velit.</p>
 <p><br>This is ordered list</p>
 <ol>
@@ -50,7 +50,8 @@ describe("RichEditor", () => {
 <ul>
 <li>test</li>
 <li>test</li>
-</ul>`;
+</ul>
+<br></p>`;
         cy.findByRole("textbox").should("contain.html", contentHTML);
         cy.findAllByRole("button").eq(6).click();
 
@@ -187,6 +188,9 @@ describe("RichEditor", () => {
       });
 
       context("when drag content", () => {
+        beforeEach(() => {
+          cy.visit(getIdContent("input-elements-richeditor--view-only"));
+        });
         context("when pressing any character", () => {
           it("renders without change value", () => {
             cy.findByRole("textbox").type("{selectall}{backspace}test 123");
@@ -238,6 +242,25 @@ describe("RichEditor", () => {
         cy.findAllByRole("button").eq(0).click();
       });
     });
+
+    context("when between word and given ", () => {
+      it("renders text with bold style (only on 1 word)", () => {
+        cy.findByRole("textbox")
+          .should("exist")
+          .click()
+          .type("Hello World{leftarrow}");
+        cy.findByRole("textbox").should("contain.text", "Hello World");
+
+        cy.findAllByRole("button").eq(0).click();
+        cy.findAllByRole("button").eq(6).click();
+
+        cy.get("pre")
+          .invoke("text")
+          .then((text) => {
+            expectTextIncludesOrderedLines(text, ["Hello **World**"]);
+          });
+      });
+    });
   });
 
   context("italic", () => {
@@ -249,6 +272,25 @@ describe("RichEditor", () => {
         cy.findByRole("textbox").type("{selectall}");
 
         cy.findAllByRole("button").eq(1).click();
+      });
+    });
+
+    context("when between word and given", () => {
+      it("renders text with italic style (only on 1 word)", () => {
+        cy.findByRole("textbox")
+          .should("exist")
+          .click()
+          .type("Hello World{leftarrow}");
+        cy.findByRole("textbox").should("contain.text", "Hello World");
+
+        cy.findAllByRole("button").eq(1).click();
+        cy.findAllByRole("button").eq(6).click();
+
+        cy.get("pre")
+          .invoke("text")
+          .then((text) => {
+            expectTextIncludesOrderedLines(text, ["Hello _World_"]);
+          });
       });
     });
   });
@@ -406,10 +448,10 @@ describe("RichEditor", () => {
         cy.findByRole("textbox").type("{selectall}");
         cy.findAllByRole("button").eq(0).click();
         cy.findByRole("textbox").type("{moveToEnd}{enter}");
-        cy.findAllByRole("button").eq(0).click();
 
+        cy.findByRole("textbox").type("The{ctrl}b");
         cy.findByRole("textbox").type(
-          "The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs.{enter}"
+          " quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs.{enter}"
         );
 
         cy.findByRole("textbox")
