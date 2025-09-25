@@ -868,7 +868,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
           const newRange = document.createRange();
           newRange.selectNodeContents(p);
-          newRange.collapse(true);
+          newRange.collapse(false);
           sel.removeAllRanges();
           sel.addRange(newRange);
         } else {
@@ -919,7 +919,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
         if (sel.isCollapsed) {
           newRange.setStart(heading, 0);
-          newRange.collapse(true);
+          newRange.collapse(false);
         } else {
           newRange.collapse(false);
         }
