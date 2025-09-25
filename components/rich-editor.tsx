@@ -856,6 +856,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
       const range = sel.getRangeAt(0);
       let node = range.commonAncestorContainer as HTMLElement;
+      let offsetInNode = range.startOffset;
 
       if (node.nodeType === Node.TEXT_NODE) {
         node = node.parentElement!;
@@ -863,72 +864,69 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
       const headingTag = `h${level}` as keyof HTMLElementTagNameMap;
 
+      let newHeading: HTMLElement;
+
       if (/^H[1-6]$/.test(node.tagName)) {
         if (node.tagName.toLowerCase() === headingTag) {
           const p = document.createElement("p");
           p.innerHTML = node.innerHTML;
           node.replaceWith(p);
-
-          const newRange = document.createRange();
-          newRange.selectNodeContents(p);
-          newRange.collapse(false);
-          sel.removeAllRanges();
-          sel.addRange(newRange);
+          newHeading = p;
         } else {
-          const newHeading = document.createElement(headingTag);
-          newHeading.innerHTML = node.innerHTML;
-          node.replaceWith(newHeading);
-
-          const newRange = document.createRange();
-          newRange.selectNodeContents(newHeading);
-          newRange.collapse(false);
-          sel.removeAllRanges();
-          sel.addRange(newRange);
+          const h = document.createElement(headingTag);
+          h.innerHTML = node.innerHTML;
+          node.replaceWith(h);
+          newHeading = h;
         }
       } else {
-        const heading = document.createElement(headingTag);
-        if (sel.isCollapsed) {
-          const startContainer = range.startContainer;
-          if (startContainer.nodeType === Node.TEXT_NODE) {
-            const textContent = startContainer.textContent || "";
-            heading.textContent = textContent;
-
-            const parent = startContainer.parentNode!;
-            parent.replaceChild(heading, startContainer);
-          } else {
-            heading.innerHTML = "<br>";
-            range.insertNode(heading);
-          }
-        } else {
-          heading.innerHTML = sel.toString();
-          range.deleteContents();
-          range.insertNode(heading);
-        }
-
-        let nextSibling = heading.nextSibling;
+        newHeading = document.createElement(headingTag);
         if (
-          nextSibling &&
-          nextSibling.nodeType === Node.TEXT_NODE &&
-          !nextSibling.textContent?.trim()
+          sel.isCollapsed &&
+          range.startContainer.nodeType === Node.TEXT_NODE
         ) {
-          nextSibling = nextSibling.nextSibling;
-        }
-        if (nextSibling && nextSibling.nodeName === "BR") {
-          nextSibling.remove();
-        }
-
-        const newRange = document.createRange();
-        newRange.selectNodeContents(heading);
-
-        if (sel.isCollapsed) {
-          newRange.setStart(heading, 0);
-          newRange.collapse(false);
+          const textContent = range.startContainer.textContent || "";
+          newHeading.textContent = textContent;
+          range.startContainer.parentNode?.replaceChild(
+            newHeading,
+            range.startContainer
+          );
+        } else if (!sel.isCollapsed) {
+          newHeading.innerHTML = sel.toString();
+          range.deleteContents();
+          range.insertNode(newHeading);
         } else {
-          newRange.collapse(false);
+          newHeading.innerHTML = "<br>";
+          range.insertNode(newHeading);
         }
+      }
+
+      const textNode = newHeading.firstChild;
+      if (textNode && textNode.nodeType === Node.TEXT_NODE) {
+        const pos = Math.min(offsetInNode, textNode.textContent!.length);
+        const newRange = document.createRange();
+        newRange.setStart(textNode, pos);
+        newRange.collapse(true);
 
         sel.removeAllRanges();
         sel.addRange(newRange);
+      } else {
+        const newRange = document.createRange();
+        newRange.selectNodeContents(newHeading);
+        newRange.collapse(false);
+        sel.removeAllRanges();
+        sel.addRange(newRange);
+      }
+
+      let nextSibling = newHeading.nextSibling;
+      if (
+        nextSibling &&
+        nextSibling.nodeType === Node.TEXT_NODE &&
+        !nextSibling.textContent?.trim()
+      ) {
+        nextSibling = nextSibling.nextSibling;
+      }
+      if (nextSibling && nextSibling.nodeName === "BR") {
+        nextSibling.remove();
       }
 
       savedSelection.current = null;
