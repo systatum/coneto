@@ -1457,7 +1457,7 @@ const cleanupHtml = (html: string): string => {
   return container.innerHTML;
 };
 
-// To apply instyle to word
+// To apply instyle to word bold or italic
 const applyInlineStyleToWord = (style: "bold" | "italic") => {
   const sel = window.getSelection();
   if (!sel || !sel.rangeCount) return;
@@ -1477,6 +1477,8 @@ const applyInlineStyleToWord = (style: "bold" | "italic") => {
 
   if (start === end) return;
 
+  const relativeOffset = range.startOffset - start;
+
   const wordRange = document.createRange();
   wordRange.setStart(node, start);
   wordRange.setEnd(node, end);
@@ -1486,7 +1488,25 @@ const applyInlineStyleToWord = (style: "bold" | "italic") => {
 
   document.execCommand(style);
 
-  sel.collapseToEnd();
+  const newNode = sel.anchorNode;
+  if (newNode) {
+    let textNode: Node | null = null;
+
+    if (newNode.nodeType === Node.TEXT_NODE) {
+      textNode = newNode;
+    } else if (newNode.nodeType === Node.ELEMENT_NODE && newNode.firstChild) {
+      textNode = newNode.firstChild;
+    }
+
+    if (textNode && textNode.nodeType === Node.TEXT_NODE) {
+      const pos = Math.min(relativeOffset, textNode.textContent!.length);
+      const newRange = document.createRange();
+      newRange.setStart(textNode, pos);
+      newRange.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(newRange);
+    }
+  }
 };
 
 RichEditor.ToolbarButton = RichEditorToolbarButton;
