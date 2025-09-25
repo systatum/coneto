@@ -530,10 +530,23 @@ describe("RichEditor", () => {
       context(`when typing`, () => {
         context(`when click tip`, () => {
           it(`should apply ${data.label}`, () => {
-            cy.findByRole("textbox").type(`${data.label} Text{selectall}`);
+            cy.findByRole("textbox").type(
+              `${data.label} Text{leftarrow}{leftarrow}`
+            );
             cy.findAllByRole("button").eq(5).click();
             cy.findByText(data.label).click();
             cy.findAllByRole("button").eq(6).click();
+
+            cy.findByRole("textbox").then(($el) => {
+              const sel = $el[0].ownerDocument.getSelection();
+              const node = sel?.anchorNode;
+              const offset = sel?.anchorOffset;
+
+              expect(node?.nodeType).to.eq(Node.TEXT_NODE);
+              expect(node?.textContent).to.eq(`${data.label} Text`);
+
+              expect(offset).to.eq(12);
+            });
 
             cy.get("pre")
               .invoke("text")
@@ -563,6 +576,23 @@ describe("RichEditor", () => {
                   ]);
                 });
             });
+          });
+        });
+
+        context(`when double click`, () => {
+          it(`should not apply ${data.label}`, () => {
+            cy.findByRole("textbox").type(`${data.label} Text{selectall}`);
+            cy.findAllByRole("button").eq(5).click();
+            cy.findByText(data.label).click();
+            cy.findAllByRole("button").eq(5).click();
+            cy.findByText(data.label).click();
+            cy.findAllByRole("button").eq(6).click();
+
+            cy.get("pre")
+              .invoke("text")
+              .then((text) => {
+                expectTextIncludesOrderedLines(text, [`${data.label} Text`]);
+              });
           });
         });
       });
