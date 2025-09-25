@@ -891,9 +891,22 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
             range.startContainer
           );
         } else if (!sel.isCollapsed) {
-          newHeading.innerHTML = sel.toString();
-          range.deleteContents();
-          range.insertNode(newHeading);
+          const startContainer = range.startContainer;
+
+          let lineNode: Node;
+          if (startContainer.nodeType === Node.TEXT_NODE) {
+            lineNode = startContainer;
+          } else {
+            lineNode =
+              startContainer.childNodes[range.startOffset] || startContainer;
+          }
+
+          const lineText = lineNode.textContent || "";
+          newHeading.textContent = lineText;
+
+          if (lineNode.parentNode) {
+            lineNode.parentNode.replaceChild(newHeading, lineNode);
+          }
         } else {
           newHeading.innerHTML = "<br>";
           range.insertNode(newHeading);
