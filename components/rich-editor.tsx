@@ -462,8 +462,9 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       if (!editorRef.current) return;
       editorRef.current.focus();
 
+      const sel = window.getSelection();
+
       if (command === "checkbox") {
-        const sel = window.getSelection();
         if (!sel || !sel.rangeCount) return;
 
         const range = sel.getRangeAt(0);
@@ -489,12 +490,15 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
         handleEditorChange();
       } else {
-        document.execCommand(command);
-        const html = editorRef.current.innerHTML || "";
-        const markdown = turndownService.turndown(html);
-        if (onChange) {
-          onChange(markdown);
+        if (command === "bold" || command === "italic") {
+          if (sel && sel.rangeCount && sel.isCollapsed) {
+            applyInlineStyleToWord(command);
+          } else {
+            document.execCommand(command);
+          }
         }
+
+        handleEditorChange();
       }
     };
 
@@ -509,6 +513,25 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "u") {
         e.preventDefault();
         return;
+      }
+
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "b") {
+        const sel = window.getSelection();
+        if (sel && sel.rangeCount && sel.isCollapsed) {
+          e.preventDefault();
+          applyInlineStyleToWord("bold");
+          handleEditorChange();
+          return;
+        }
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "i") {
+        const sel = window.getSelection();
+        if (sel && sel.rangeCount && sel.isCollapsed) {
+          e.preventDefault();
+          applyInlineStyleToWord("italic");
+          handleEditorChange();
+          return;
+        }
       }
 
       // This logic use for handle space for orderedlist/unorderedlist, and heading.
@@ -1395,7 +1418,7 @@ const cleanupHtml = (html: string): string => {
   });
 
   Array.from(container.querySelectorAll("p")).forEach((p) => {
-    if (p.querySelector("ul, ol, h1, h2, h3, h4, h5, h6")) return;
+    if (p.querySelector("ul, ol, h1, h2, h3, h4, h5, h6, b, i")) return;
 
     const frag = document.createDocumentFragment();
     let buffer = "";
@@ -1452,6 +1475,38 @@ const cleanupHtml = (html: string): string => {
 
   container.normalize();
   return container.innerHTML;
+};
+
+// To apply instyle to word
+const applyInlineStyleToWord = (style: "bold" | "italic") => {
+  const sel = window.getSelection();
+  if (!sel || !sel.rangeCount) return;
+
+  const range = sel.getRangeAt(0);
+  const node = range.startContainer;
+
+  if (node.nodeType !== Node.TEXT_NODE) return;
+
+  const text = node.textContent || "";
+  let start = range.startOffset;
+  let end = range.startOffset;
+
+  while (start > 0 && /\S/.test(text[start - 1])) start--;
+
+  while (end < text.length && /\S/.test(text[end])) end++;
+
+  if (start === end) return;
+
+  const wordRange = document.createRange();
+  wordRange.setStart(node, start);
+  wordRange.setEnd(node, end);
+
+  sel.removeAllRanges();
+  sel.addRange(wordRange);
+
+  document.execCommand(style);
+
+  sel.collapseToEnd();
 };
 
 RichEditor.ToolbarButton = RichEditorToolbarButton;
