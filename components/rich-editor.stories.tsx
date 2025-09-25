@@ -1,7 +1,15 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { RichEditor } from "./rich-editor";
-import { useState } from "react";
-import { RiPrinterFill } from "@remixicon/react";
+import { RichEditor, RichEditorRef } from "./rich-editor";
+import { useRef, useState } from "react";
+import {
+  RiDeleteBinLine,
+  RiFileCopyLine,
+  RiPrinterFill,
+} from "@remixicon/react";
+import { Button } from "./button";
+import { css } from "styled-components";
+import { Boxbar } from "./boxbar";
+import { Badge } from "./badge";
 
 const meta: Meta<typeof RichEditor> = {
   title: "Input Elements/RichEditor",
@@ -34,6 +42,42 @@ export const Default: Story = {
     const [value, setValue] = useState("");
     const [printValue, setPrintValue] = useState("");
 
+    const ref = useRef<RichEditorRef>(null);
+
+    const TIP_MENU_EMAIL = [
+      {
+        caption: "Duplicate",
+        icon: RiFileCopyLine,
+        iconColor: "",
+        onClick: () => console.log("Phishing reported"),
+      },
+      {
+        caption: "Report Junk",
+        icon: RiDeleteBinLine,
+        isDangerous: true,
+        onClick: () => console.log("Junk reported"),
+      },
+    ];
+
+    const BADGE_ITEMS = [
+      {
+        title: "Markdown Example",
+        content: `### Hello there!
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor reprehenderit voluptate velit.
+
+This is ordered list
+1. [ ] test
+2. [x] test
+
+This is unordered list
+* test
+* test  
+`,
+      },
+      { title: "Sender Name", content: "Sender Name" },
+      { title: "Sender Email", content: "Sender Email" },
+    ];
+
     const TOOLBAR_RIGHT_PANEL_ACTIONS = (
       <RichEditor.ToolbarButton
         icon={RiPrinterFill}
@@ -49,17 +93,65 @@ export const Default: Story = {
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
         <RichEditor
+          ref={ref}
           onChange={(e) => setValue(e)}
           value={value}
           toolbarRightPanel={TOOLBAR_RIGHT_PANEL_ACTIONS}
         />
+        <div
+          style={{
+            display: "flex",
+            width: "100%",
+            gap: "8px",
+            flexDirection: "row",
+          }}
+        >
+          <Boxbar
+            containerStyle={css`
+              width: 100%;
+            `}
+          >
+            {BADGE_ITEMS.map((data, index) => (
+              <Badge
+                onClick={async () => {
+                  if (data.title === "Markdown Example") {
+                    await ref.current?.insertMarkdownContent(data.content);
+                  } else {
+                    await ref.current?.insertPlainText(data.content);
+                  }
+                }}
+                key={index}
+                withCircle
+                caption={data.title}
+              />
+            ))}
+          </Boxbar>
+          <div>
+            <Button
+              dropdownStyle={css`
+                min-width: 200px;
+                margin-top: 10px;
+              `}
+              buttonStyle={css`
+                min-height: 40px;
+              `}
+              toggleStyle={css`
+                min-height: 40px;
+              `}
+              subMenuList={TIP_MENU_EMAIL}
+              className="w-fit"
+            >
+              Save
+            </Button>
+          </div>
+        </div>
         {printValue !== "" && (
           <pre
             style={{
               padding: 28,
               background: "#D3D3D3",
-              whiteSpace: "pre-wrap",
               wordBreak: "break-word",
+              whiteSpace: "pre-wrap",
             }}
           >
             {printValue}
@@ -164,8 +256,8 @@ export const ViewOnly: Story = {
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor reprehenderit voluptate velit.
 
 This is ordered list
-1. test [ ]
-2. test [x]
+1. [ ] test
+2. [x] test
 
 This is unordered list
 * test
