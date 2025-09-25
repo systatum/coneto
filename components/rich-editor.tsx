@@ -513,47 +513,15 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         if (headingParent) {
           e.preventDefault();
 
-          const isAtEnd =
-            range.startOffset >= (headingParent.textContent?.length || 0);
+          const p = document.createElement("p");
+          p.innerHTML = "<br>";
+          headingParent.insertAdjacentElement("afterend", p);
 
-          if (isAtEnd) {
-            const newParagraph = document.createElement("p");
-            newParagraph.innerHTML = "<br>";
-
-            headingParent.insertAdjacentElement("afterend", newParagraph);
-
-            const newRange = document.createRange();
-            newRange.setStart(newParagraph, 0);
-            newRange.collapse(true);
-            sel.removeAllRanges();
-            sel.addRange(newRange);
-          } else {
-            const textAfterCursor =
-              headingParent.textContent?.substring(range.startOffset) || "";
-            const textBeforeCursor =
-              headingParent.textContent?.substring(0, range.startOffset) || "";
-
-            headingParent.textContent = textBeforeCursor;
-
-            const newParagraph = document.createElement("p");
-            if (textAfterCursor.trim()) {
-              newParagraph.textContent = textAfterCursor;
-            } else {
-              newParagraph.innerHTML = "<br>";
-            }
-
-            headingParent.insertAdjacentElement("afterend", newParagraph);
-
-            const newRange = document.createRange();
-            if (textAfterCursor.trim()) {
-              newRange.setStart(newParagraph.firstChild!, 0);
-            } else {
-              newRange.setStart(newParagraph, 0);
-            }
-            newRange.collapse(true);
-            sel.removeAllRanges();
-            sel.addRange(newRange);
-          }
+          const newRange = document.createRange();
+          newRange.setStart(p, 0);
+          newRange.collapse(true);
+          sel.removeAllRanges();
+          sel.addRange(newRange);
 
           handleEditorChange();
           return;
@@ -865,7 +833,9 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
             const parent = startContainer.parentNode!;
             parent.replaceChild(heading, startContainer);
           } else {
-            heading.innerHTML = "<br>";
+            if (!heading.textContent) {
+              heading.innerHTML = "<br>";
+            }
             range.insertNode(heading);
           }
 
@@ -991,7 +961,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
                     if (sel && sel.rangeCount > 0) {
                       savedSelection.current = sel.getRangeAt(0).cloneRange();
                     }
-                    setIsOpen(true);
+                    setIsOpen(!isOpen);
                   }}
                 />
 
