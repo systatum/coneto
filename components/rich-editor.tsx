@@ -237,6 +237,17 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     const savedSelection = useRef<Range | null>(null);
     const menuRef = useRef<HTMLDivElement | null>(null);
 
+    const handleEditorChange = () => {
+      const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
+      const cleanedHTML = cleanupHtml(html);
+      const markdown = turndownService.turndown(cleanedHTML);
+      const cleanedMarkdown = cleanSpacing(markdown);
+
+      if (onChange) {
+        onChange(cleanedMarkdown);
+      }
+    };
+
     useImperativeHandle(ref, () => ({
       insertMarkdownContent: async (data: string) => {
         if (!editorRef.current) return;
@@ -282,13 +293,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
         handleFilteringCheckbox();
 
-        const cleanedHTML = cleanupHtml(editorRef.current.innerHTML);
-        const markdown = turndownService.turndown(cleanedHTML);
-        const cleanedMarkdown = cleanSpacing(markdown);
-
-        if (onChange) {
-          onChange(cleanedMarkdown);
-        }
+        handleEditorChange();
       },
       insertPlainText: async (data: string) => {
         if (!editorRef.current) return;
@@ -323,36 +328,11 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
         handleFilteringCheckbox();
 
-        const html = editorRef.current.innerHTML.replace(/\u00A0/g, " ") || "";
-        const cleanedHTML = cleanupHtml(html);
-        const markdown = turndownService.turndown(cleanedHTML);
-        const cleanedMarkdown = cleanSpacing(markdown);
-
-        if (onChange) {
-          onChange(cleanedMarkdown);
-        }
+        handleEditorChange();
       },
     }));
 
     const [isOpen, setIsOpen] = useState(false);
-
-    useEffect(() => {
-      if (!editorRef.current || editorRef.current.innerHTML) return;
-
-      if (!value || !value.trim()) {
-        const p = document.createElement("p");
-        p.innerHTML = "<br>";
-        editorRef.current.appendChild(p);
-
-        const range = document.createRange();
-        range.setStart(p, 0);
-        range.collapse(true);
-
-        const sel = window.getSelection();
-        sel?.removeAllRanges();
-        sel?.addRange(range);
-      }
-    }, [value]);
 
     useEffect(() => {
       if (!editorRef.current || editorRef.current.innerHTML) return;
@@ -438,17 +418,6 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
         textNode.parentNode.replaceChild(fragment, textNode);
       });
-    };
-
-    const handleEditorChange = () => {
-      const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
-      const cleanedHTML = cleanupHtml(html);
-      const markdown = turndownService.turndown(cleanedHTML);
-      const cleanedMarkdown = cleanSpacing(markdown);
-
-      if (onChange) {
-        onChange(cleanedMarkdown);
-      }
     };
 
     const handleCommand = (
