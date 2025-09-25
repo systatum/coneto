@@ -510,18 +510,51 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
             ? (container as Element).closest("h1,h2,h3,h4,h5,h6")
             : (container.parentNode as Element)?.closest("h1,h2,h3,h4,h5,h6");
 
+        // We can't split heading word with enter without this function.
         if (headingParent) {
           e.preventDefault();
+          const lastChild = headingParent.lastChild;
 
-          const p = document.createElement("p");
-          p.innerHTML = "<br>";
-          headingParent.insertAdjacentElement("afterend", p);
+          const isAtEnd =
+            (range.startContainer.nodeType === Node.TEXT_NODE &&
+              range.startOffset ===
+                (range.startContainer.textContent?.length || 0) &&
+              range.startContainer === lastChild) ||
+            (range.startContainer === headingParent &&
+              range.startOffset === headingParent.childNodes.length);
 
-          const newRange = document.createRange();
-          newRange.setStart(p, 0);
-          newRange.collapse(true);
-          sel.removeAllRanges();
-          sel.addRange(newRange);
+          if (isAtEnd) {
+            const p = document.createElement("p");
+            p.innerHTML = "<br>";
+            headingParent.insertAdjacentElement("afterend", p);
+
+            const newRange = document.createRange();
+            newRange.setStart(p, 0);
+            newRange.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(newRange);
+          } else {
+            const textNode = range.startContainer;
+            const offset = range.startOffset;
+
+            if (textNode.nodeType === Node.TEXT_NODE) {
+              const fullText = textNode.textContent || "";
+              const before = fullText.slice(0, offset);
+              const after = fullText.slice(offset);
+
+              textNode.textContent = before;
+
+              const p = document.createElement("p");
+              p.textContent = after || "\u200B";
+              headingParent.insertAdjacentElement("afterend", p);
+
+              const newRange = document.createRange();
+              newRange.setStart(p.firstChild || p, 0);
+              newRange.collapse(true);
+              sel.removeAllRanges();
+              sel.addRange(newRange);
+            }
+          }
 
           handleEditorChange();
           return;
