@@ -525,6 +525,54 @@ describe("RichEditor", () => {
               });
           });
         });
+
+        context(`when part of a word is selected in a sentence`, () => {
+          it(`render one line with ${data.label}`, () => {
+            cy.findByRole("textbox").type(
+              `${data.label} Text{enter}Paragraph Text`
+            );
+            cy.findByRole("textbox").then(($el) => {
+              const el = $el[0];
+
+              const doc = el.ownerDocument!;
+              const sel = doc.getSelection()!;
+              const range = doc.createRange();
+
+              const textNode = el.firstChild!;
+              const textLength = textNode.textContent!.length;
+
+              range.setStart(textNode, textLength - 2);
+              range.setEnd(textNode, textLength);
+
+              sel.removeAllRanges();
+              sel.addRange(range);
+            });
+
+            cy.findAllByRole("button").eq(5).click();
+            cy.findByText(data.label).click();
+            cy.findAllByRole("button").eq(6).click();
+
+            cy.findByRole("textbox").then(($el) => {
+              const sel = $el[0].ownerDocument.getSelection();
+              const node = sel?.anchorNode;
+              const offset = sel?.anchorOffset;
+
+              expect(node?.nodeType).to.eq(Node.TEXT_NODE);
+              expect(node?.textContent).to.eq(`${data.label} Text`);
+
+              expect(offset).to.eq(12);
+            });
+
+            cy.get("pre")
+              .invoke("text")
+              .then((text) => {
+                expectTextIncludesOrderedLines(text, [
+                  `${data.text} ${data.label} Text`,
+                  `Paragraph Text`,
+                ]);
+              });
+          });
+        });
       });
 
       context(`when typing`, () => {
