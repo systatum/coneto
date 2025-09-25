@@ -418,6 +418,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       const cleanedHTML = cleanupHtml(html);
       const markdown = turndownService.turndown(cleanedHTML);
       const cleanedMarkdown = cleanSpacing(markdown);
+      console.log(cleanedHTML);
 
       if (onChange) {
         onChange(cleanedMarkdown);
@@ -484,7 +485,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         return;
       }
 
-      // This logic use for handle space for orderedlist/unorderedlist
+      // This logic use for handle space for orderedlist/unorderedlist, and heading.
       if (e.key === "Enter") {
         const sel = window.getSelection();
         if (!sel || !sel.rangeCount) return;
@@ -513,7 +514,47 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         if (headingParent) {
           e.preventDefault();
 
-          document.execCommand("insertParagraph");
+          const isAtEnd =
+            range.startOffset >= (headingParent.textContent?.length || 0);
+
+          if (isAtEnd) {
+            const newParagraph = document.createElement("p");
+            newParagraph.innerHTML = "<br>";
+
+            headingParent.insertAdjacentElement("afterend", newParagraph);
+
+            const newRange = document.createRange();
+            newRange.setStart(newParagraph, 0);
+            newRange.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(newRange);
+          } else {
+            const textAfterCursor =
+              headingParent.textContent?.substring(range.startOffset) || "";
+            const textBeforeCursor =
+              headingParent.textContent?.substring(0, range.startOffset) || "";
+
+            headingParent.textContent = textBeforeCursor;
+
+            const newParagraph = document.createElement("p");
+            if (textAfterCursor.trim()) {
+              newParagraph.textContent = textAfterCursor;
+            } else {
+              newParagraph.innerHTML = "<br>";
+            }
+
+            headingParent.insertAdjacentElement("afterend", newParagraph);
+
+            const newRange = document.createRange();
+            if (textAfterCursor.trim()) {
+              newRange.setStart(newParagraph.firstChild!, 0);
+            } else {
+              newRange.setStart(newParagraph, 0);
+            }
+            newRange.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(newRange);
+          }
 
           handleEditorChange();
           return;
@@ -705,6 +746,66 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           return;
         }
 
+        let heading: HTMLElement | null = null;
+
+        if (container.nodeType === Node.ELEMENT_NODE) {
+          heading = (container as Element).closest("h1, h2, h3, h4, h5, h6");
+        } else if (container.nodeType === Node.TEXT_NODE) {
+          heading = (container.parentNode as HTMLElement)?.closest(
+            "h1, h2, h3, h4, h5, h6"
+          );
+        }
+
+        if (
+          heading &&
+          range.startOffset === 0 &&
+          heading.textContent?.trim() === ""
+        ) {
+          e.preventDefault();
+
+          const block = document.createElement("p");
+          block.innerHTML = "<br>";
+
+          heading.replaceWith(block);
+
+          const newRange = document.createRange();
+          newRange.setStart(block, 0);
+          newRange.collapse(true);
+
+          sel.removeAllRanges();
+          sel.addRange(newRange);
+
+          handleEditorChange();
+          return;
+        }
+
+        // For request when span delete on editable content syncronize.
+        requestAnimationFrame(() => {
+          if (!editorRef.current) return;
+
+          const spans = editorRef.current.querySelectorAll(
+            'span[style*="font-size"], span[style*="font-weight"]'
+          );
+
+          spans.forEach((span) => {
+            const style = span.getAttribute("style") || "";
+            const hasOnlyFontStyling =
+              /^(font-size:\s*[\d.]+em;\s*)?(font-weight:\s*inherit;\s*)?$/.test(
+                style.replace(/\s/g, "")
+              );
+
+            if (hasOnlyFontStyling && span.textContent) {
+              const parent = span.parentNode;
+              if (parent) {
+                const textNode = document.createTextNode(span.textContent);
+                parent.replaceChild(textNode, span);
+              }
+            }
+          });
+
+          editorRef.current.normalize();
+        });
+
         handleEditorChange();
       }
     };
@@ -722,6 +823,9 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       if (!sel || !sel.rangeCount) return;
 
       const range = sel.getRangeAt(0);
+
+      const cursorOffset = range.startOffset;
+
       let node = range.commonAncestorContainer as HTMLElement;
 
       if (node.nodeType === Node.TEXT_NODE) {
@@ -730,57 +834,177 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
       const headingTag = `h${level}` as keyof HTMLElementTagNameMap;
 
-      if (/^H[1-6]$/.test(node.tagName)) {
+      if (/^H[1-6]$/.test(node.tagName) || node.tagName === "P") {
         if (node.tagName.toLowerCase() === headingTag) {
           const p = document.createElement("p");
           p.innerHTML = node.innerHTML;
+
+          if (p.innerHTML === "<br>") {
+            p.innerHTML = "";
+          }
+
           node.replaceWith(p);
 
           const newRange = document.createRange();
-          newRange.selectNodeContents(p);
-          newRange.collapse(false);
+          const textNode = p.firstChild;
+          if (textNode && textNode.nodeType === Node.TEXT_NODE) {
+            const maxOffset = Math.min(
+              cursorOffset,
+              textNode.textContent?.length || 0
+            );
+            newRange.setStart(textNode, maxOffset);
+            newRange.collapse(true);
+          } else {
+            newRange.setStart(p, 0);
+            newRange.collapse(true);
+          }
           sel.removeAllRanges();
           sel.addRange(newRange);
         } else {
           const newHeading = document.createElement(headingTag);
           newHeading.innerHTML = node.innerHTML;
+
+          if (newHeading.innerHTML === "<br>") {
+            newHeading.innerHTML = "";
+          }
+
           node.replaceWith(newHeading);
 
+          const nextSibling = newHeading.nextSibling;
+          if (
+            nextSibling &&
+            nextSibling.nodeType === Node.ELEMENT_NODE &&
+            (nextSibling as Element).tagName === "BR"
+          ) {
+            nextSibling.remove();
+          }
+
           const newRange = document.createRange();
-          newRange.selectNodeContents(newHeading);
-          newRange.collapse(false);
+          const textNode = newHeading.firstChild;
+          if (textNode && textNode.nodeType === Node.TEXT_NODE) {
+            const maxOffset = Math.min(
+              cursorOffset,
+              textNode.textContent?.length || 0
+            );
+            newRange.setStart(textNode, maxOffset);
+            newRange.collapse(true);
+          } else {
+            newRange.setStart(newHeading, 0);
+            newRange.collapse(true);
+          }
           sel.removeAllRanges();
           sel.addRange(newRange);
         }
       } else {
-        const heading = document.createElement(headingTag);
+        let targetNode = node;
 
-        if (sel.isCollapsed) {
-          heading.innerHTML = "<br>";
-        } else {
-          heading.innerHTML = sel.toString();
+        while (targetNode && targetNode !== editorRef.current) {
+          if (
+            targetNode.tagName === "DIV" ||
+            targetNode.tagName === "P" ||
+            /^H[1-6]$/.test(targetNode.tagName)
+          ) {
+            break;
+          }
+          targetNode = targetNode.parentElement!;
         }
 
-        range.deleteContents();
-        range.insertNode(heading);
+        if (targetNode && targetNode !== editorRef.current) {
+          const heading = document.createElement(headingTag);
+          heading.innerHTML = targetNode.innerHTML || "";
 
-        const newRange = document.createRange();
-        newRange.selectNodeContents(heading);
+          if (heading.innerHTML === "") {
+            heading.textContent = "";
+          }
 
-        if (sel.isCollapsed) {
-          newRange.setStart(heading, 0);
-          newRange.collapse(true);
+          targetNode.replaceWith(heading);
+
+          const nextSibling = heading.nextSibling;
+          if (
+            nextSibling &&
+            nextSibling.nodeType === Node.ELEMENT_NODE &&
+            (nextSibling as Element).tagName === "BR"
+          ) {
+            nextSibling.remove();
+          }
+
+          const newRange = document.createRange();
+          const textNode = heading.firstChild;
+          if (textNode && textNode.nodeType === Node.TEXT_NODE) {
+            const maxOffset = Math.min(
+              cursorOffset,
+              textNode.textContent?.length || 0
+            );
+            newRange.setStart(textNode, maxOffset);
+            newRange.collapse(true);
+          } else {
+            newRange.setStart(heading, 0);
+            newRange.collapse(true);
+          }
+          sel.removeAllRanges();
+          sel.addRange(newRange);
         } else {
-          newRange.collapse(false);
-        }
+          const heading = document.createElement(headingTag);
 
-        sel.removeAllRanges();
-        sel.addRange(newRange);
+          if (sel.isCollapsed) {
+            const startContainer = range.startContainer;
+            if (startContainer.nodeType === Node.TEXT_NODE) {
+              const textContent = startContainer.textContent || "";
+              heading.textContent = textContent;
+
+              const parent = startContainer.parentNode!;
+              parent.replaceChild(heading, startContainer);
+            } else {
+              heading.innerHTML = "";
+              range.insertNode(heading);
+            }
+
+            const nextSibling = heading.nextSibling;
+            if (
+              nextSibling &&
+              nextSibling.nodeType === Node.ELEMENT_NODE &&
+              (nextSibling as Element).tagName === "BR"
+            ) {
+              nextSibling.remove();
+            }
+
+            const newRange = document.createRange();
+            const textNode = heading.firstChild;
+            if (textNode && textNode.nodeType === Node.TEXT_NODE) {
+              newRange.setStart(textNode, textNode.textContent?.length || 0);
+            } else {
+              newRange.setStart(heading, 0);
+            }
+            newRange.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(newRange);
+          } else {
+            heading.textContent = sel.toString();
+            range.deleteContents();
+            range.insertNode(heading);
+
+            const nextSibling = heading.nextSibling;
+            if (
+              nextSibling &&
+              nextSibling.nodeType === Node.ELEMENT_NODE &&
+              (nextSibling as Element).tagName === "BR"
+            ) {
+              nextSibling.remove();
+            }
+
+            const newRange = document.createRange();
+            newRange.selectNodeContents(heading);
+            newRange.collapse(false);
+            sel.removeAllRanges();
+            sel.addRange(newRange);
+          }
+        }
       }
 
       savedSelection.current = null;
       handleEditorChange();
     };
+
     const TIP_MENU_RICH_EDITOR = [
       {
         caption: "Heading 1",
@@ -1213,6 +1437,7 @@ function syncCheckboxStates(container: HTMLElement) {
 // Clean up HTML so that <div> elements don't cause extra spacing in <ul> or <ol>.
 // This ensures ordered and unordered lists are not wrapped with <div> or <p>,
 // since semantically <ul>/<ol> should not be wrapped by those tags.
+// Remove unnecessary <span> with font-size when deleting from a heading line to a paragraph
 const cleanupHtml = (html: string): string => {
   const container = document.createElement("div");
   container.innerHTML = html;
@@ -1251,6 +1476,29 @@ const cleanupHtml = (html: string): string => {
 
     if (inner === "") {
       p.parentNode?.removeChild(p);
+    }
+  });
+
+  Array.from(container.querySelectorAll("span")).forEach((span) => {
+    const style = span.getAttribute("style") || "";
+
+    const hasOnlyFontStyling =
+      /^(font-size:\s*[\d.]+em;\s*)?(font-weight:\s*inherit;\s*)?$/.test(
+        style.replace(/\s/g, "")
+      );
+
+    const shouldRemove = hasOnlyFontStyling || !style || style.trim() === "";
+
+    if (shouldRemove) {
+      const parent = span.parentNode;
+      if (parent) {
+        if (span.textContent) {
+          const textNode = document.createTextNode(span.textContent);
+          parent.replaceChild(textNode, span);
+        } else {
+          parent.removeChild(span);
+        }
+      }
     }
   });
 
