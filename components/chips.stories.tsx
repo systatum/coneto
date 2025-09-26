@@ -18,7 +18,7 @@ type Story = StoryObj<typeof Chips>;
 
 export const Default: Story = {
   render: () => {
-    const BADGE_OPTIONS = [
+    const BADGE_OPTIONS: BadgeProps[] = [
       {
         id: 1,
         caption: "Anime",
@@ -129,7 +129,7 @@ export const Default: Story = {
 
 export const DarkBackground: Story = {
   render: () => {
-    const BADGE_OPTIONS = [
+    const BADGE_OPTIONS: BadgeProps[] = [
       {
         id: 1,
         backgroundColor: "#1c0f13",
@@ -268,48 +268,51 @@ export const DarkBackground: Story = {
 
 export const Deletable: Story = {
   render: () => {
-    const BADGE_OPTIONS = [
-      {
-        id: 1,
-        caption: "Anime",
-      },
-      {
-        id: 2,
-        caption: "Manga",
-      },
-      {
-        id: 3,
-        caption: "Comics",
-      },
-      {
-        id: 4,
-        caption: "Movies",
-      },
-      {
-        id: 5,
-        caption: "Podcasts",
-      },
-      {
-        id: 6,
-        caption: "TV Shows",
-      },
-      {
-        id: 7,
-        caption: "Novels",
-      },
-      {
-        id: 8,
-        caption: "Music",
-      },
-      {
-        id: 9,
-        caption: "Games",
-      },
-      {
-        id: 10,
-        caption: "Webtoons",
-      },
-    ];
+    const BADGE_OPTIONS: BadgeProps[] = Array.from({ length: 10 }, (_, i) => ({
+      id: i + 1,
+      caption: (() => {
+        switch (i + 1) {
+          case 1:
+            return "Anime";
+          case 2:
+            return "Manga";
+          case 3:
+            return "Comics";
+          case 4:
+            return "Movies";
+          case 5:
+            return "Podcasts";
+          case 6:
+            return "TV Shows";
+          case 7:
+            return "Novels";
+          case 8:
+            return "Music";
+          case 9:
+            return "Games";
+          case 10:
+            return "Webtoons";
+          default:
+            return "";
+        }
+      })(),
+      actions: [
+        {
+          icon: RiCloseLine,
+          onClick: (badge) => {
+            console.log(badge);
+          },
+          size: 16,
+          styleWithProp: (hovered: boolean) => css`
+            opacity: 0;
+            ${hovered &&
+            css`
+              opacity: 100;
+            `}
+          `,
+        },
+      ],
+    }));
 
     const [inputValue, setInputValue] = useState({
       search: "",
@@ -352,23 +355,6 @@ export const Deletable: Story = {
       console.log("clicked new tag");
     };
 
-    const chipActions: BadgeActionProps[] = [
-      {
-        icon: RiCloseLine,
-        onClick: (badge) => {
-          console.log(badge);
-        },
-        size: 16,
-        styleWithProp: (hovered: boolean) => css`
-          opacity: 0;
-          ${hovered &&
-          css`
-            opacity: 100;
-          `}
-        `,
-      },
-    ];
-
     return (
       <Chips
         inputValue={inputValue}
@@ -388,7 +374,6 @@ export const Deletable: Story = {
         selectedOptions={selectedOptions}
         options={BADGE_OPTIONS as BadgeProps[]}
         onNewTagCreated={handleNewTagClicked}
-        chipButtonActions={chipActions}
         creatable
       />
     );
