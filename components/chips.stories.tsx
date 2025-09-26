@@ -1,9 +1,10 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { Chips } from "./chips";
 import { ChangeEvent, useState } from "react";
-import { BadgeProps } from "./badge";
+import { BadgeActionProps, BadgeProps } from "./badge";
 import { ColorPickProps } from "./colorbox";
 import { css } from "styled-components";
+import { RiCloseLine } from "@remixicon/react";
 
 const meta: Meta<typeof Chips> = {
   title: "Input Elements/Chips",
@@ -238,10 +239,6 @@ export const DarkBackground: Story = {
       }
     };
 
-    const handleDeleteClicked = (option: BadgeProps) => {
-      console.log(option);
-    };
-
     const handleNewTagClicked = () => {
       console.log("clicked new tag");
     };
@@ -261,7 +258,6 @@ export const DarkBackground: Story = {
         `}
         onOptionClicked={handleOptionClicked}
         selectedOptions={selectedOptions}
-        onDeleteRequested={handleDeleteClicked}
         options={BADGE_OPTIONS as BadgeProps[]}
         onNewTagCreated={handleNewTagClicked}
         creatable
@@ -356,9 +352,22 @@ export const Deletable: Story = {
       console.log("clicked new tag");
     };
 
-    const handleDeleteClicked = (option: BadgeProps) => {
-      console.log(option);
-    };
+    const chipActions: BadgeActionProps[] = [
+      {
+        icon: RiCloseLine,
+        onClick: (badge) => {
+          console.log(badge);
+        },
+        size: 16,
+        styleWithProp: (hovered: boolean) => css`
+          opacity: 0;
+          ${hovered &&
+          css`
+            opacity: 100;
+          `}
+        `,
+      },
+    ];
 
     return (
       <Chips
@@ -379,9 +388,8 @@ export const Deletable: Story = {
         selectedOptions={selectedOptions}
         options={BADGE_OPTIONS as BadgeProps[]}
         onNewTagCreated={handleNewTagClicked}
-        onDeleteRequested={handleDeleteClicked}
+        chipButtonActions={chipActions}
         creatable
-        deletable
       />
     );
   },
