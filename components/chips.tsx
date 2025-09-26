@@ -1,4 +1,4 @@
-import { RiAddBoxFill, RiAddLine, RiCloseLine } from "@remixicon/react";
+import { RiAddBoxFill, RiAddLine } from "@remixicon/react";
 import { Badge, BadgeActionProps, BadgeProps } from "./badge";
 import { Checkbox } from "./checkbox";
 import {
