@@ -241,7 +241,6 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
       const cleanedHTML = cleanupHtml(html);
       const markdown = turndownService.turndown(cleanedHTML);
-      console.log(cleanedHTML);
       const cleanedMarkdown = cleanSpacing(markdown);
 
       if (onChange) {
@@ -352,8 +351,6 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         let html = await marked.parse(processedValue);
 
         html = html.replace(/<p>&nbsp;<\/p>/g, "<p><br></p>");
-
-        console.log("html ori bang", html);
 
         editorRef.current.innerHTML = String(html);
         document.execCommand("defaultParagraphSeparator", false, "p");
