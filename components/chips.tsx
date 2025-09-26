@@ -62,7 +62,6 @@ interface BaseChipsProps {
   onOptionClicked?: (badge: BadgeProps) => void;
   selectedOptions?: number[];
   onNewTagCreated?: () => void;
-  chipButtonActions?: ChipActionsProps[];
 }
 
 function Chips(props: ChipsProps) {
@@ -256,7 +255,6 @@ function ChipsDrawer({
   creatable,
   onOptionClicked,
   selectedOptions,
-  chipButtonActions,
 }: ChipsDrawerProps) {
   const [hovered, setHovered] = useState<number | null>(null);
   const [mode, setMode] = useState<"idle" | "create">("idle");
@@ -433,7 +431,6 @@ function ChipsDrawer({
 
                       <Chips.Item
                         badge={data}
-                        chipButtonActions={chipButtonActions}
                         chipContainerStyle={chipContainerStyle}
                         hovered={hovered}
                         isClicked={isClicked}
@@ -634,7 +631,6 @@ function ChipsItem({
   onOptionClicked,
   chipContainerStyle,
   chipStyle,
-  chipButtonActions,
 }: {
   badge: BadgeProps;
   isClicked: boolean;
@@ -643,10 +639,9 @@ function ChipsItem({
   onOptionClicked?: (badge: BadgeProps) => void;
   chipStyle?: CSSProp;
   chipContainerStyle?: CSSProp;
-  chipButtonActions?: ChipActionsProps[];
 }) {
   const finalValueActions =
-    chipButtonActions?.map((action) => ({
+    badge.actions?.map((action) => ({
       ...action,
       onClick: () => action.onClick?.(badge),
       styleWithProp: () => action.styleWithProp(hovered === badge.id),
