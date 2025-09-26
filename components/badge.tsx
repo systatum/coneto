@@ -132,7 +132,9 @@ function Badge({
       $badgeStyle={badgeStyle}
     >
       <BadgeContent $withCircle={withCircle}>
-        {withCircle && <BadgeCircle $color={badgeCircleColor} />}
+        {withCircle && (
+          <BadgeCircle aria-label="badge-circle" $color={badgeCircleColor} />
+        )}
         {caption}
       </BadgeContent>
       {actions && (
