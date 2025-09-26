@@ -1,5 +1,5 @@
 import { RiAddBoxFill, RiAddLine, RiCloseLine } from "@remixicon/react";
-import { Badge, BadgeProps } from "./badge";
+import { Badge, BadgeActionProps, BadgeProps } from "./badge";
 import { Checkbox } from "./checkbox";
 import {
   ChangeEvent,
@@ -33,6 +33,8 @@ type InputValueProps = {
   circle_color: string;
 };
 
+export type ChipActionsProps = BadgeActionProps;
+
 export type ChipsProps = BaseChipsProps & {
   label?: string;
   showError?: boolean;
@@ -59,9 +61,8 @@ interface BaseChipsProps {
   creatable?: boolean;
   onOptionClicked?: (badge: BadgeProps) => void;
   selectedOptions?: number[];
-  onDeleteRequested?: (badge: BadgeProps) => void;
-  deletable?: boolean;
   onNewTagCreated?: () => void;
+  chipButtonActions?: ChipActionsProps[];
 }
 
 function Chips(props: ChipsProps) {
@@ -255,8 +256,7 @@ function ChipsDrawer({
   creatable,
   onOptionClicked,
   selectedOptions,
-  deletable,
-  onDeleteRequested,
+  chipButtonActions,
 }: ChipsDrawerProps) {
   const [hovered, setHovered] = useState<number | null>(null);
   const [mode, setMode] = useState<"idle" | "create">("idle");
@@ -433,14 +433,13 @@ function ChipsDrawer({
 
                       <Chips.Item
                         badge={data}
+                        chipButtonActions={chipButtonActions}
                         chipContainerStyle={chipContainerStyle}
                         hovered={hovered}
                         isClicked={isClicked}
                         setHovered={setHovered}
                         onOptionClicked={onOptionClicked}
                         chipStyle={chipStyle}
-                        deletable={deletable}
-                        onDeleteRequested={onDeleteRequested}
                       />
                     </div>
                   );
@@ -635,8 +634,7 @@ function ChipsItem({
   onOptionClicked,
   chipContainerStyle,
   chipStyle,
-  onDeleteRequested,
-  deletable,
+  chipButtonActions,
 }: {
   badge: BadgeProps;
   isClicked: boolean;
@@ -645,14 +643,23 @@ function ChipsItem({
   onOptionClicked?: (badge: BadgeProps) => void;
   chipStyle?: CSSProp;
   chipContainerStyle?: CSSProp;
-  onDeleteRequested?: (badge: BadgeProps) => void;
-  deletable?: boolean;
+  chipButtonActions?: ChipActionsProps[];
 }) {
+  const finalValueActions =
+    chipButtonActions?.map((action) => ({
+      ...action,
+      onClick: () => action.onClick?.(badge),
+      styleWithProp: () => action.styleWithProp(hovered === badge.id),
+    })) ?? [];
+
   return (
     <ChipItemWrapper
       $hovered={hovered === badge.id}
       $style={chipContainerStyle}
-      onClick={() => onOptionClicked?.(badge)}
+      onClick={(e) => {
+        e.stopPropagation();
+        onOptionClicked?.(badge);
+      }}
       onMouseEnter={() => setHovered(badge.id)}
     >
       <Checkbox
@@ -681,23 +688,16 @@ function ChipsItem({
         badgeStyle={css`
           cursor: pointer;
           ${chipStyle}
+          ${finalValueActions &&
+          css`
+            padding-right: 0px;
+          `}
         `}
+        actions={finalValueActions}
         textColor={badge.textColor}
         caption={badge.caption}
         withCircle
       />
-      {deletable && (
-        <CloseButton
-          role="button"
-          $hovered={hovered === badge.id}
-          aria-label="Delete requested data"
-          onClick={(e) => {
-            e.stopPropagation();
-            onDeleteRequested(badge);
-          }}
-          size={16}
-        />
-      )}
     </ChipItemWrapper>
   );
 }
@@ -721,44 +721,6 @@ const ChipItemWrapper = styled.div<{
       background-color: #bfdbfe;
     `}
   ${({ $style }) => $style}
-`;
-
-const CloseButton = styled(RiCloseLine)<{
-  $hovered: boolean;
-}>`
-  position: absolute;
-  top: 50%;
-  right: 10px;
-  transform: translateY(-50%);
-  color: transparent;
-  cursor: pointer;
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease;
-
-  &:hover {
-    background-color: #d1d5db;
-  }
-
-  &:active {
-    background-color: #999999;
-  }
-
-  &:focus-visible {
-    outline: none;
-    box-shadow: inset 0 0 0 2px #00000033;
-    transition: box-shadow 0.2s ease;
-  }
-
-  ${({ $hovered }) =>
-    $hovered &&
-    css`
-      color: #9ca3af;
-
-      &:hover {
-        color: #4b5563;
-      }
-    `}
 `;
 
 Chips.Item = ChipsItem;
