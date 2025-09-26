@@ -241,6 +241,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
       const cleanedHTML = cleanupHtml(html);
       const markdown = turndownService.turndown(cleanedHTML);
+      console.log(cleanedHTML);
       const cleanedMarkdown = cleanSpacing(markdown);
 
       if (onChange) {
@@ -351,6 +352,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         let html = await marked.parse(processedValue);
 
         html = html.replace(/<p>&nbsp;<\/p>/g, "<p><br></p>");
+
+        console.log("html ori bang", html);
 
         editorRef.current.innerHTML = String(html);
         document.execCommand("defaultParagraphSeparator", false, "p");
@@ -1409,7 +1412,8 @@ const cleanupHtml = (html: string): string => {
   });
 
   Array.from(container.querySelectorAll("p")).forEach((p) => {
-    if (p.querySelector("ul, ol, h1, h2, h3, h4, h5, h6, b, i, input")) return;
+    if (p.querySelector("ul, ol, h1, h2, h3, h4, h5, h6, b, i, input, strong"))
+      return;
 
     const frag = document.createDocumentFragment();
     let buffer = "";
@@ -1476,7 +1480,10 @@ const applyInlineStyleToWord = (style: "bold" | "italic") => {
   const range = sel.getRangeAt(0);
   const node = range.startContainer;
 
-  if (node.nodeType !== Node.TEXT_NODE) return;
+  if (node.nodeType !== Node.TEXT_NODE) {
+    document.execCommand(style);
+    return;
+  }
 
   const text = node.textContent || "";
   let start = range.startOffset;
@@ -1486,7 +1493,10 @@ const applyInlineStyleToWord = (style: "bold" | "italic") => {
 
   while (end < text.length && /\S/.test(text[end])) end++;
 
-  if (start === end) return;
+  if (start === end) {
+    document.execCommand(style);
+    return;
+  }
 
   const relativeOffset = range.startOffset - start;
 
