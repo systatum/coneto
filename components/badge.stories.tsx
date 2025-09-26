@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { Badge, BadgeVariantProps } from "./badge";
 import { css } from "styled-components";
-import { RiCloseLine, RiDeleteBack2Fill } from "@remixicon/react";
+import { RiCloseLine } from "@remixicon/react";
 
 const meta: Meta<typeof Badge> = {
   title: "Content/Badge",
