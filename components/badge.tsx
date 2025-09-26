@@ -1,6 +1,7 @@
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
 import { ChangeEvent, MouseEvent } from "react";
 import { strToColor } from "./../lib/code-color";
+import { RemixiconComponentType } from "@remixicon/react";
 
 export type BadgeVariantProps = null | "neutral" | "green" | "yellow" | "red";
 
@@ -16,6 +17,17 @@ export interface BadgeProps {
     e?: ChangeEvent<HTMLInputElement> | MouseEvent<HTMLDivElement>
   ) => void;
   badgeStyle?: CSSProp;
+  actions?: BadgeActionProps[];
+}
+
+export interface BadgeActionProps {
+  icon?: RemixiconComponentType;
+  onClick?: (badge?: BadgeProps) => void;
+  disabled?: boolean;
+  title?: string;
+  style?: CSSProp;
+  styleWithProp?: (data?: boolean) => CSSProp;
+  size?: number;
 }
 
 const BADGE_BACKGROUND_COLORS: string[] = [
@@ -80,6 +92,7 @@ function Badge({
   onClick,
   badgeStyle,
   id,
+  actions,
 }: BadgeProps) {
   const { bg: backgroundColorVariant, color: colorVariant } =
     VARIANTS_BADGE[variant];
@@ -115,32 +128,107 @@ function Badge({
       onClick={onClick}
       $backgroundColor={badgeBackgroundColor}
       $textColor={badgeTextColor}
-      $withCircle={withCircle}
       $hasCaption={caption.length > 0}
       $badgeStyle={badgeStyle}
     >
-      {withCircle && <BadgeCircle $color={badgeCircleColor} />}
-      {caption}
+      <BadgeContent $withCircle={withCircle}>
+        {withCircle && <BadgeCircle $color={badgeCircleColor} />}
+        {caption}
+      </BadgeContent>
+      {actions && (
+        <BadgeIconWrapper>
+          {actions.map((data, index) => (
+            <BadgeIcon
+              key={index}
+              aria-label="badge-action"
+              as={data.icon}
+              $style={data.style || data.styleWithProp}
+              $size={data.size}
+              $disabled={data.disabled}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (data.onClick) data.onClick();
+              }}
+            />
+          ))}
+        </BadgeIconWrapper>
+      )}
     </BadgeWrapper>
   );
 }
 
+const BadgeIconWrapper = styled.div<{
+  $style?: CSSProp;
+}>`
+  display: flex;
+  flex-direction: row;
+
+  & > *:not(:last-child) {
+    margin-right: 2px;
+  }
+
+  ${({ $style }) => $style};
+`;
+
+const BadgeIcon = styled.div<{
+  $disabled?: boolean;
+  $style?: CSSProp;
+  $size?: number;
+}>`
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+  border-radius: 9999px;
+  padding: 1px;
+
+  &:hover {
+    background-color: #d1d5db;
+  }
+
+  &:active {
+    background-color: #999999;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 2px #00000033;
+    transition: box-shadow 0.2s ease;
+  }
+
+  ${({ $size }) =>
+    $size &&
+    css`
+      width: ${`${$size}px`};
+      height: ${`${$size}px`};
+    `};
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      cursor: not-allowed;
+      opacity: 40%;
+    `};
+
+  ${({ $style }) => $style}
+`;
+
 const BadgeWrapper = styled.div<{
   $backgroundColor: string;
   $textColor: string;
-  $withCircle: boolean;
   $hasCaption: boolean;
   $badgeStyle: CSSProp;
 }>`
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
   align-items: center;
-  gap: ${({ $withCircle }) => ($withCircle ? "0.5rem" : "0")};
   padding: 2px 8px;
   font-size: 0.75rem;
   border: 1px solid #f3f4f6;
   border-radius: 6px;
   width: fit-content;
+  gap: 0.5rem;
   background: ${({ $backgroundColor }) => $backgroundColor};
   color: ${({ $textColor }) => $textColor};
   user-select: none;
@@ -148,6 +236,13 @@ const BadgeWrapper = styled.div<{
   min-height: ${({ $hasCaption }) => ($hasCaption ? "unset" : "22px")};
   cursor: ${({ onClick }) => (onClick ? "pointer" : "default")};
   ${({ $badgeStyle }) => $badgeStyle};
+`;
+
+const BadgeContent = styled.div<{ $withCircle?: boolean }>`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: ${({ $withCircle }) => ($withCircle ? "0.5rem" : "0px")};
 `;
 
 const BadgeCircle = styled.span<{ $color: string }>`
