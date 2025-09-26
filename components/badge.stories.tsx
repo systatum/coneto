@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { Badge, BadgeVariantProps } from "./badge";
 import { css } from "styled-components";
+import { RiCloseLine, RiDeleteBack2Fill } from "@remixicon/react";
 
 const meta: Meta<typeof Badge> = {
   title: "Content/Badge",
@@ -36,6 +37,24 @@ export const Default: Story = {
     variant: null,
     caption: "Default badge",
     withCircle: true,
+  },
+  render: (args) => <Badge {...args} />,
+};
+
+export const WithActions: Story = {
+  args: {
+    variant: null,
+    caption: "With action badge",
+    withCircle: true,
+    actions: [
+      {
+        icon: RiCloseLine,
+        onClick: () => {
+          console.log("Data was deleted");
+        },
+        size: 14,
+      },
+    ],
   },
   render: (args) => <Badge {...args} />,
 };
