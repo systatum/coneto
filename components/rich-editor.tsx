@@ -128,7 +128,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           nextSibling &&
           (nextSibling.tagName === "UL" || nextSibling.tagName === "OL")
         ) {
-          return content;
+          return content + "\n";
         }
 
         if (
