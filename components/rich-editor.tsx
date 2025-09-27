@@ -1598,7 +1598,7 @@ const preprocessMarkdown = (markdown: string) => {
       return "\n" + emptyParagraphs;
     })
     .replace(/<br>\n([^\s\n<][^\n]*)/g, "<br>\n\n$1")
-    .replace(/([^\n<]+)\n([^\s\n<*\-+\d][^\n]*)/g, "$1\n\n$2")
+    .replace(/([^\n])\n([a-zA-Z])/g, "$1\n\n$2")
     .replace(
       /^(\s*(?:[\*\-\+]|\d+\.)\s+[^\n]+)\n(?![\s\*\-\+\d<\n])([^\n]+)/gm,
       "$1\n\n$2"
