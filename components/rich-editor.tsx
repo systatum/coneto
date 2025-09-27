@@ -636,9 +636,43 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           return;
         }
 
-        e.preventDefault();
+        const isInFormattedText =
+          container.nodeType === Node.TEXT_NODE &&
+          ["B", "STRONG", "I", "EM"].includes(
+            container.parentElement?.tagName ?? ""
+          ) &&
+          !/^H[1-6]$/.test(container.parentElement?.tagName ?? "");
 
-        document.execCommand("insertLineBreak");
+        if (isInFormattedText) {
+          e.preventDefault();
+
+          const newP = document.createElement("p");
+          newP.innerHTML = "<br>";
+
+          let currentP = container.parentElement;
+          while (currentP && currentP.tagName !== "P") {
+            currentP = currentP.parentElement;
+          }
+
+          if (currentP) {
+            currentP.insertAdjacentElement("afterend", newP);
+          } else {
+            container.parentElement?.insertAdjacentElement("afterend", newP);
+          }
+
+          const sel = window.getSelection();
+          const newRange = document.createRange();
+          newRange.setStart(newP, 0);
+          sel.removeAllRanges();
+          sel.addRange(newRange);
+        } else {
+          e.preventDefault();
+          document.execCommand("insertLineBreak");
+        }
+
+        setTimeout(() => {
+          updateFormatStates();
+        }, 0);
 
         handleEditorChange();
       }
