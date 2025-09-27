@@ -262,10 +262,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         let range = sel?.rangeCount ? sel.getRangeAt(0) : null;
         if (!range) return;
 
-        let processedValue = data.replace(/\n(\n+)/g, (_, extraNewlines) => {
-          const emptyParagraphs = "\n\n<br>".repeat(extraNewlines.length);
-          return "\n" + emptyParagraphs;
-        });
+        let processedValue = preprocessMarkdown(data);
 
         let html = await marked.parse(processedValue);
 
@@ -395,18 +392,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       const initializeEditor = async () => {
         let processedValue = value;
 
-        processedValue = processedValue.replace(
-          /\n(\n+)/g,
-          (_, extraNewlines) => {
-            const emptyParagraphs = "\n\n<br>"
-              .repeat(extraNewlines.length)
-              .replace(
-                /^(\s*[\*\-\+]\s+.+)(\n)([^\s\*\-\+\n].+)/gm,
-                "$1$2\n$3"
-              );
-            return "\n" + emptyParagraphs;
-          }
-        );
+        processedValue = preprocessMarkdown(processedValue);
 
         let html = await marked.parse(processedValue);
 
@@ -1602,6 +1588,21 @@ const applyInlineStyleToWord = (style: "bold" | "italic") => {
       sel.addRange(newRange);
     }
   }
+};
+
+// To read markdown when have list
+const preprocessMarkdown = (markdown: string) => {
+  return markdown
+    .replace(/\n(\n+)/g, (_, extraNewlines) => {
+      const emptyParagraphs = "\n\n<br>".repeat(extraNewlines.length);
+      return "\n" + emptyParagraphs;
+    })
+    .replace(/<br>\n([^\s\n<][^\n]*)/g, "<br>\n\n$1")
+    .replace(/([^\n<]+)\n([^\s\n<*\-+\d][^\n]*)/g, "$1\n\n$2")
+    .replace(
+      /^(\s*(?:[\*\-\+]|\d+\.)\s+[^\n]+)\n(?![\s\*\-\+\d<\n])([^\n]+)/gm,
+      "$1\n\n$2"
+    );
 };
 
 RichEditor.ToolbarButton = RichEditorToolbarButton;
