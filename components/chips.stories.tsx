@@ -303,12 +303,8 @@ export const Deletable: Story = {
             console.log(badge);
           },
           size: 16,
-          styleWithProp: (hovered: boolean) => css`
+          style: css`
             opacity: 0;
-            ${hovered &&
-            css`
-              opacity: 100;
-            `}
           `,
         },
       ],
