@@ -232,8 +232,8 @@ describe("RichEditor", () => {
   });
 
   context("bold", () => {
-    context("when type and given", () => {
-      it("renders text with bold style", () => {
+    context("when pressed after selecting the whole word", () => {
+      it("renders the text in bold", () => {
         cy.findByRole("textbox").should("exist").click().type("Hello World");
         cy.findByRole("textbox").should("contain.text", "Hello World");
 
@@ -243,8 +243,8 @@ describe("RichEditor", () => {
       });
     });
 
-    context("when caret inside a word and given", () => {
-      it("renders text with bold style (only on 1 word)", () => {
+    context("when pressed while cursor is within a word", () => {
+      it("renders the word in bold", () => {
         cy.findByRole("textbox")
           .should("exist")
           .click()
@@ -275,8 +275,8 @@ describe("RichEditor", () => {
   });
 
   context("italic", () => {
-    context("when type and given", () => {
-      it("renders text with italic style", () => {
+    context("when pressed after selecting the whole word", () => {
+      it("renders the text in italic", () => {
         cy.findByRole("textbox").should("exist").click().type("Hello World");
         cy.findByRole("textbox").should("contain.text", "Hello World");
 
@@ -286,8 +286,8 @@ describe("RichEditor", () => {
       });
     });
 
-    context("when between word and given", () => {
-      it("renders text with italic style (only on 1 word)", () => {
+    context("when pressed while cursor is within a word", () => {
+      it("renders the text in italic", () => {
         cy.findByRole("textbox")
           .should("exist")
           .click()
