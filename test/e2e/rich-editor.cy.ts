@@ -239,7 +239,15 @@ describe("RichEditor", () => {
 
         cy.findByRole("textbox").type("{selectall}");
 
-        cy.findAllByRole("button").eq(0).click();
+        cy.findAllByRole("button")
+          .eq(0)
+          .click()
+          .should("have.css", "background-color", "rgb(207, 207, 207)")
+          .and(
+            "have.css",
+            "box-shadow",
+            "rgba(0, 0, 0, 0.2) 0px 0.5px 4px 0px inset, rgb(207, 207, 207) 0px -0.5px 0.5px 0px inset"
+          );
       });
     });
 
@@ -251,7 +259,15 @@ describe("RichEditor", () => {
           .type("Hello World{leftarrow}{leftarrow}");
         cy.findByRole("textbox").should("contain.text", "Hello World");
 
-        cy.findAllByRole("button").eq(0).click();
+        cy.findAllByRole("button")
+          .eq(0)
+          .click()
+          .should("have.css", "background-color", "rgb(207, 207, 207)")
+          .and(
+            "have.css",
+            "box-shadow",
+            "rgba(0, 0, 0, 0.2) 0px 0.5px 4px 0px inset, rgb(207, 207, 207) 0px -0.5px 0.5px 0px inset"
+          );
         cy.findAllByRole("button").eq(6).click();
 
         cy.findByRole("textbox").then(($el) => {
@@ -282,7 +298,15 @@ describe("RichEditor", () => {
 
         cy.findByRole("textbox").type("{selectall}");
 
-        cy.findAllByRole("button").eq(1).click();
+        cy.findAllByRole("button")
+          .eq(1)
+          .click()
+          .should("have.css", "background-color", "rgb(207, 207, 207)")
+          .and(
+            "have.css",
+            "box-shadow",
+            "rgba(0, 0, 0, 0.2) 0px 0.5px 4px 0px inset, rgb(207, 207, 207) 0px -0.5px 0.5px 0px inset"
+          );
       });
     });
 
@@ -294,7 +318,15 @@ describe("RichEditor", () => {
           .type("Hello World{leftarrow}");
         cy.findByRole("textbox").should("contain.text", "Hello World");
 
-        cy.findAllByRole("button").eq(1).click();
+        cy.findAllByRole("button")
+          .eq(1)
+          .click()
+          .should("have.css", "background-color", "rgb(207, 207, 207)")
+          .and(
+            "have.css",
+            "box-shadow",
+            "rgba(0, 0, 0, 0.2) 0px 0.5px 4px 0px inset, rgb(207, 207, 207) 0px -0.5px 0.5px 0px inset"
+          );
         cy.findAllByRole("button").eq(6).click();
 
         cy.findByRole("textbox").then(($el) => {
