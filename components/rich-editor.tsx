@@ -43,6 +43,7 @@ export interface RichEditorToolbarButtonProps {
   children?: ReactNode;
   style?: CSSProp;
   isOpen?: boolean;
+  isActive?: boolean;
 }
 
 interface RichEditorComponent
@@ -85,7 +86,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       filter: ["ul", "ol"],
       replacement: function (content, node) {
         const parentIsParagraph = node.parentElement?.tagName === "P";
-        return parentIsParagraph ? content : `\n${content}\n`;
+        return parentIsParagraph ? content : `${content}\n`;
       },
     });
 
@@ -116,12 +117,46 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     turndownService.addRule("cleanParagraphSpacing", {
       filter: ["p"],
       replacement: function (content, node) {
-        const htmlContent = (node as HTMLElement).innerHTML.trim();
+        const htmlContent = (node as HTMLElement).innerHTML;
+
+        const hasBrOnly = /^(\s*<br\s*\/?>\s*)+$/.test(htmlContent);
         const prevSibling = node.previousElementSibling;
         const nextSibling = node.nextElementSibling;
 
-        if (htmlContent === "<br>" || htmlContent === "<br/>") {
-          return "";
+        if (
+          prevSibling &&
+          /^H[1-6]$/.test(prevSibling.tagName) &&
+          nextSibling &&
+          (nextSibling.tagName === "UL" || nextSibling.tagName === "OL")
+        ) {
+          return content + "\n";
+        }
+
+        if (
+          prevSibling &&
+          /^H[1-6]$/.test(prevSibling.tagName) &&
+          nextSibling &&
+          nextSibling.tagName === "P"
+        ) {
+          return content;
+        }
+
+        if (
+          prevSibling &&
+          prevSibling.tagName === "P" &&
+          nextSibling &&
+          /^H[1-6]$/.test(nextSibling.tagName)
+        ) {
+          return content;
+        }
+
+        if (
+          prevSibling &&
+          prevSibling.tagName === "P" &&
+          nextSibling &&
+          (nextSibling.tagName === "UL" || nextSibling.tagName === "OL")
+        ) {
+          return content + "\n";
         }
 
         if (
@@ -133,20 +168,30 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           return content.trim() ? content : "\n";
         }
 
-        if (!content.trim()) return "";
+        if (hasBrOnly) {
+          if (
+            prevSibling &&
+            (prevSibling.tagName === "UL" || prevSibling.tagName === "OL")
+          ) {
+            return "\n" + (nextSibling ? "\n" : "");
+          }
 
-        if (
-          nextSibling &&
-          (nextSibling.tagName === "UL" || nextSibling.tagName === "OL")
-        ) {
-          return content.trim() ? content : "\n";
+          if (prevSibling && prevSibling.tagName === "P") {
+            return "\n" + (nextSibling ? "\n" : "");
+          }
+          return "\n" + (nextSibling ? "\n" : "");
         }
+        if (!content.trim()) return "";
 
         if (
           prevSibling &&
           (prevSibling.tagName === "UL" || prevSibling.tagName === "OL")
         ) {
           return content + (nextSibling ? "\n" : "");
+        }
+
+        if (prevSibling && prevSibling.tagName === "P") {
+          return "\n" + content + (nextSibling ? "\n" : "");
         }
 
         const prefix = prevSibling ? "\n" : "\n";
@@ -193,6 +238,17 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     const savedSelection = useRef<Range | null>(null);
     const menuRef = useRef<HTMLDivElement | null>(null);
 
+    const handleEditorChange = () => {
+      const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
+      const cleanedHTML = cleanupHtml(html);
+      const markdown = turndownService.turndown(cleanedHTML);
+      const cleanedMarkdown = cleanSpacing(markdown);
+
+      if (onChange) {
+        onChange(cleanedMarkdown);
+      }
+    };
+
     useImperativeHandle(ref, () => ({
       insertMarkdownContent: async (data: string) => {
         if (!editorRef.current) return;
@@ -206,10 +262,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         let range = sel?.rangeCount ? sel.getRangeAt(0) : null;
         if (!range) return;
 
-        let processedValue = data.replace(/\n(\n+)/g, (_, extraNewlines) => {
-          const emptyParagraphs = "\n\n<br>".repeat(extraNewlines.length);
-          return "\n" + emptyParagraphs;
-        });
+        let processedValue = preprocessMarkdown(data);
 
         let html = await marked.parse(processedValue);
 
@@ -238,13 +291,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
         handleFilteringCheckbox();
 
-        const cleanedHTML = cleanupHtml(editorRef.current.innerHTML);
-        const markdown = turndownService.turndown(cleanedHTML);
-        const cleanedMarkdown = cleanSpacing(markdown);
-
-        if (onChange) {
-          onChange(cleanedMarkdown);
-        }
+        handleEditorChange();
       },
       insertPlainText: async (data: string) => {
         if (!editorRef.current) return;
@@ -279,18 +326,65 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
         handleFilteringCheckbox();
 
-        const html = editorRef.current.innerHTML.replace(/\u00A0/g, " ") || "";
-        const cleanedHTML = cleanupHtml(html);
-        const markdown = turndownService.turndown(cleanedHTML);
-        const cleanedMarkdown = cleanSpacing(markdown);
-
-        if (onChange) {
-          onChange(cleanedMarkdown);
-        }
+        handleEditorChange();
       },
     }));
 
     const [isOpen, setIsOpen] = useState(false);
+
+    const [formatStates, setFormatStates] = useState({
+      bold: false,
+      italic: false,
+    });
+
+    const updateFormatStates = () => {
+      if (!editorRef.current || mode === "view-only") return;
+
+      try {
+        const bold = document.queryCommandState("bold");
+        const italic = document.queryCommandState("italic");
+
+        setFormatStates({
+          bold,
+          italic,
+        });
+      } catch (error) {
+        console.warn("Error checking command state:", error);
+      }
+    };
+
+    useEffect(() => {
+      const editor = editorRef.current;
+      if (!editor || mode === "view-only") return;
+
+      const handleSelectionChange = () => {
+        setTimeout(updateFormatStates, 0);
+      };
+
+      const handleKeyUp = () => {
+        updateFormatStates();
+      };
+
+      const handleMouseUp = () => {
+        updateFormatStates();
+      };
+
+      const handleFocus = () => {
+        updateFormatStates();
+      };
+
+      document.addEventListener("selectionchange", handleSelectionChange);
+      editor.addEventListener("keyup", handleKeyUp);
+      editor.addEventListener("mouseup", handleMouseUp);
+      editor.addEventListener("focus", handleFocus);
+
+      return () => {
+        document.removeEventListener("selectionchange", handleSelectionChange);
+        editor.removeEventListener("keyup", handleKeyUp);
+        editor.removeEventListener("mouseup", handleMouseUp);
+        editor.removeEventListener("focus", handleFocus);
+      };
+    }, [mode]);
 
     useEffect(() => {
       if (!editorRef.current || editorRef.current.innerHTML) return;
@@ -298,13 +392,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       const initializeEditor = async () => {
         let processedValue = value;
 
-        processedValue = processedValue.replace(
-          /\n(\n+)/g,
-          (_, extraNewlines) => {
-            const emptyParagraphs = "\n\n<br>".repeat(extraNewlines.length);
-            return "\n" + emptyParagraphs;
-          }
-        );
+        processedValue = preprocessMarkdown(processedValue);
 
         let html = await marked.parse(processedValue);
 
@@ -378,17 +466,6 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       });
     };
 
-    const handleEditorChange = () => {
-      const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
-      const cleanedHTML = cleanupHtml(html);
-      const markdown = turndownService.turndown(cleanedHTML);
-      const cleanedMarkdown = cleanSpacing(markdown);
-
-      if (onChange) {
-        onChange(cleanedMarkdown);
-      }
-    };
-
     const handleCommand = (
       command:
         | "bold"
@@ -400,8 +477,9 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       if (!editorRef.current) return;
       editorRef.current.focus();
 
+      const sel = window.getSelection();
+
       if (command === "checkbox") {
-        const sel = window.getSelection();
         if (!sel || !sel.rangeCount) return;
 
         const range = sel.getRangeAt(0);
@@ -426,14 +504,22 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         sel.addRange(newRange);
 
         handleEditorChange();
-      } else {
-        document.execCommand(command);
-        const html = editorRef.current.innerHTML || "";
-        const markdown = turndownService.turndown(html);
-        if (onChange) {
-          onChange(markdown);
-        }
+        return;
       }
+
+      if (command === "bold" || command === "italic") {
+        if (sel && sel.rangeCount && sel.isCollapsed) {
+          applyInlineStyleToWord(command);
+        } else {
+          document.execCommand(command);
+        }
+
+        handleEditorChange();
+        return;
+      }
+
+      document.execCommand(command);
+      handleEditorChange();
     };
 
     const handleOnKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
@@ -449,7 +535,40 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         return;
       }
 
-      // This logic use for handle space for orderedlist/unorderedlist
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "b") {
+        e.preventDefault();
+        const sel = window.getSelection();
+
+        if (sel && sel.rangeCount && sel.isCollapsed) {
+          applyInlineStyleToWord("bold");
+        } else {
+          document.execCommand("bold");
+        }
+        setTimeout(() => {
+          updateFormatStates();
+        }, 0);
+
+        handleEditorChange();
+        return;
+      }
+
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "i") {
+        e.preventDefault();
+        const sel = window.getSelection();
+        if (sel && sel.rangeCount && sel.isCollapsed) {
+          applyInlineStyleToWord("italic");
+        } else {
+          document.execCommand("italic");
+        }
+        setTimeout(() => {
+          updateFormatStates();
+        }, 0);
+
+        handleEditorChange();
+        return;
+      }
+
+      // This logic use for handle space for orderedlist/unorderedlist, and heading.
       if (e.key === "Enter") {
         const sel = window.getSelection();
         if (!sel || !sel.rangeCount) return;
@@ -475,27 +594,93 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
             ? (container as Element).closest("h1,h2,h3,h4,h5,h6")
             : (container.parentNode as Element)?.closest("h1,h2,h3,h4,h5,h6");
 
+        // We can't split heading word with enter without this function.
         if (headingParent) {
           e.preventDefault();
+          const lastChild = headingParent.lastChild;
 
-          const p = document.createElement("p");
-          p.innerHTML = "<br>";
-          headingParent.insertAdjacentElement("afterend", p);
+          const isAtEnd =
+            (range.startContainer.nodeType === Node.TEXT_NODE &&
+              range.startOffset ===
+                (range.startContainer.textContent?.length || 0) &&
+              range.startContainer === lastChild) ||
+            (range.startContainer === headingParent &&
+              range.startOffset === headingParent.childNodes.length);
 
-          const newRange = document.createRange();
-          newRange.setStart(p, 0);
-          newRange.collapse(true);
+          if (isAtEnd) {
+            const p = document.createElement("p");
+            p.innerHTML = "<br>";
+            headingParent.insertAdjacentElement("afterend", p);
 
-          sel.removeAllRanges();
-          sel.addRange(newRange);
+            const newRange = document.createRange();
+            newRange.setStart(p, 0);
+            newRange.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(newRange);
+          } else {
+            const textNode = range.startContainer;
+            const offset = range.startOffset;
+
+            if (textNode.nodeType === Node.TEXT_NODE) {
+              const fullText = textNode.textContent || "";
+              const before = fullText.slice(0, offset);
+              const after = fullText.slice(offset);
+
+              textNode.textContent = before;
+
+              const p = document.createElement("p");
+              p.textContent = after || "\u200B";
+              headingParent.insertAdjacentElement("afterend", p);
+
+              const newRange = document.createRange();
+              newRange.setStart(p.firstChild || p, 0);
+              newRange.collapse(true);
+              sel.removeAllRanges();
+              sel.addRange(newRange);
+            }
+          }
 
           handleEditorChange();
           return;
         }
 
-        e.preventDefault();
+        const isInFormattedText =
+          container.nodeType === Node.TEXT_NODE &&
+          ["B", "STRONG", "I", "EM"].includes(
+            container.parentElement?.tagName ?? ""
+          ) &&
+          !/^H[1-6]$/.test(container.parentElement?.tagName ?? "");
 
-        document.execCommand("insertLineBreak");
+        if (isInFormattedText) {
+          e.preventDefault();
+
+          const newP = document.createElement("p");
+          newP.innerHTML = "<br>";
+
+          let currentP = container.parentElement;
+          while (currentP && currentP.tagName !== "P") {
+            currentP = currentP.parentElement;
+          }
+
+          if (currentP) {
+            currentP.insertAdjacentElement("afterend", newP);
+          } else {
+            container.parentElement?.insertAdjacentElement("afterend", newP);
+          }
+
+          const sel = window.getSelection();
+          const newRange = document.createRange();
+          newRange.setStart(newP, 0);
+          sel.removeAllRanges();
+          sel.addRange(newRange);
+        } else {
+          e.preventDefault();
+          document.execCommand("insertLineBreak");
+        }
+
+        setTimeout(() => {
+          updateFormatStates();
+        }, 0);
 
         handleEditorChange();
       }
@@ -679,6 +864,66 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           return;
         }
 
+        let heading: HTMLElement | null = null;
+
+        if (container.nodeType === Node.ELEMENT_NODE) {
+          heading = (container as Element).closest("h1, h2, h3, h4, h5, h6");
+        } else if (container.nodeType === Node.TEXT_NODE) {
+          heading = (container.parentNode as HTMLElement)?.closest(
+            "h1, h2, h3, h4, h5, h6"
+          );
+        }
+
+        if (
+          heading &&
+          range.startOffset === 0 &&
+          heading.textContent?.trim() === ""
+        ) {
+          e.preventDefault();
+
+          const block = document.createElement("p");
+          block.innerHTML = "<br>";
+
+          heading.replaceWith(block);
+
+          const newRange = document.createRange();
+          newRange.setStart(block, 0);
+          newRange.collapse(true);
+
+          sel.removeAllRanges();
+          sel.addRange(newRange);
+
+          handleEditorChange();
+          return;
+        }
+
+        // For request when span delete on editable content syncronize.
+        requestAnimationFrame(() => {
+          if (!editorRef.current) return;
+
+          const spans = editorRef.current.querySelectorAll(
+            'span[style*="font-size"], span[style*="font-weight"]'
+          );
+
+          spans.forEach((span) => {
+            const style = span.getAttribute("style") || "";
+            const hasOnlyFontStyling =
+              /^(font-size:\s*[\d.]+em;\s*)?(font-weight:\s*inherit;\s*)?$/.test(
+                style.replace(/\s/g, "")
+              );
+
+            if (hasOnlyFontStyling && span.textContent) {
+              const parent = span.parentNode;
+              if (parent) {
+                const textNode = document.createTextNode(span.textContent);
+                parent.replaceChild(textNode, span);
+              }
+            }
+          });
+
+          editorRef.current.normalize();
+        });
+
         handleEditorChange();
       }
     };
@@ -695,10 +940,11 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         sel?.addRange(savedSelection.current);
       }
 
-      if (!sel || !sel.rangeCount) return;
+      if (!sel.rangeCount) return;
 
       const range = sel.getRangeAt(0);
       let node = range.commonAncestorContainer as HTMLElement;
+      let offsetInNode = range.startOffset;
 
       if (node.nodeType === Node.TEXT_NODE) {
         node = node.parentElement!;
@@ -706,51 +952,82 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
       const headingTag = `h${level}` as keyof HTMLElementTagNameMap;
 
+      let newHeading: HTMLElement;
+
       if (/^H[1-6]$/.test(node.tagName)) {
         if (node.tagName.toLowerCase() === headingTag) {
           const p = document.createElement("p");
           p.innerHTML = node.innerHTML;
           node.replaceWith(p);
-
-          const newRange = document.createRange();
-          newRange.selectNodeContents(p);
-          newRange.collapse(false);
-          sel.removeAllRanges();
-          sel.addRange(newRange);
+          newHeading = p;
         } else {
-          const newHeading = document.createElement(headingTag);
-          newHeading.innerHTML = node.innerHTML;
-          node.replaceWith(newHeading);
-
-          const newRange = document.createRange();
-          newRange.selectNodeContents(newHeading);
-          newRange.collapse(false);
-          sel.removeAllRanges();
-          sel.addRange(newRange);
+          const h = document.createElement(headingTag);
+          h.innerHTML = node.innerHTML;
+          node.replaceWith(h);
+          newHeading = h;
         }
       } else {
-        const heading = document.createElement(headingTag);
-        if (sel.isCollapsed) {
-          heading.innerHTML = "<br>";
+        newHeading = document.createElement(headingTag);
+        if (
+          sel.isCollapsed &&
+          range.startContainer.nodeType === Node.TEXT_NODE
+        ) {
+          const textContent = range.startContainer.textContent || "";
+          newHeading.textContent = textContent;
+          range.startContainer.parentNode?.replaceChild(
+            newHeading,
+            range.startContainer
+          );
+        } else if (!sel.isCollapsed) {
+          const startContainer = range.startContainer;
+
+          let lineNode: Node;
+          if (startContainer.nodeType === Node.TEXT_NODE) {
+            lineNode = startContainer;
+          } else {
+            lineNode =
+              startContainer.childNodes[range.startOffset] || startContainer;
+          }
+
+          const lineText = lineNode.textContent || "";
+          newHeading.textContent = lineText;
+
+          if (lineNode.parentNode) {
+            lineNode.parentNode.replaceChild(newHeading, lineNode);
+          }
         } else {
-          heading.innerHTML = sel.toString();
+          newHeading.innerHTML = "<br>";
+          range.insertNode(newHeading);
         }
+      }
 
-        range.deleteContents();
-        range.insertNode(heading);
-
+      const textNode = newHeading.firstChild;
+      if (textNode && textNode.nodeType === Node.TEXT_NODE) {
+        const pos = Math.min(offsetInNode, textNode.textContent!.length);
         const newRange = document.createRange();
-        newRange.selectNodeContents(heading);
-
-        if (sel.isCollapsed) {
-          newRange.setStart(heading, 0);
-          newRange.collapse(true);
-        } else {
-          newRange.collapse(false);
-        }
+        newRange.setStart(textNode, pos);
+        newRange.collapse(true);
 
         sel.removeAllRanges();
         sel.addRange(newRange);
+      } else {
+        const newRange = document.createRange();
+        newRange.selectNodeContents(newHeading);
+        newRange.collapse(false);
+        sel.removeAllRanges();
+        sel.addRange(newRange);
+      }
+
+      let nextSibling = newHeading.nextSibling;
+      if (
+        nextSibling &&
+        nextSibling.nodeType === Node.TEXT_NODE &&
+        !nextSibling.textContent?.trim()
+      ) {
+        nextSibling = nextSibling.nextSibling;
+      }
+      if (nextSibling && nextSibling.nodeName === "BR") {
+        nextSibling.remove();
       }
 
       savedSelection.current = null;
@@ -763,27 +1040,27 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         caption: "Heading 1",
         icon: RiH1,
         iconColor: "black",
-        onClick: () => {
-          editorRef.current?.focus();
-          handleHeading(1);
+        onClick: async () => {
+          await editorRef.current?.focus();
+          await handleHeading(1);
         },
       },
       {
         caption: "Heading 2",
         icon: RiH2,
         iconColor: "black",
-        onClick: () => {
-          editorRef.current?.focus();
-          handleHeading(2);
+        onClick: async () => {
+          await editorRef.current?.focus();
+          await handleHeading(2);
         },
       },
       {
         caption: "Heading 3",
         icon: RiH3,
         iconColor: "black",
-        onClick: () => {
-          editorRef.current?.focus();
-          handleHeading(3);
+        onClick: async () => {
+          await editorRef.current?.focus();
+          await handleHeading(3);
         },
       },
     ];
@@ -819,10 +1096,12 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
             <Toolbar $toolbarPosition={toolbarPosition}>
               <ToolbarGroup>
                 <RichEditorToolbarButton
+                  isActive={formatStates.bold}
                   icon={RiBold}
                   onClick={() => handleCommand("bold")}
                 />
                 <RichEditorToolbarButton
+                  isActive={formatStates.italic}
                   icon={RiItalic}
                   onClick={() => handleCommand("italic")}
                 />
@@ -846,7 +1125,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
                     if (sel && sel.rangeCount > 0) {
                       savedSelection.current = sel.getRangeAt(0).cloneRange();
                     }
-                    setIsOpen(true);
+                    setIsOpen(!isOpen);
                   }}
                 />
 
@@ -903,6 +1182,7 @@ function RichEditorToolbarButton({
   children,
   style,
   isOpen,
+  isActive,
 }: RichEditorToolbarButtonProps) {
   return (
     <ToolbarButton
@@ -913,6 +1193,7 @@ function RichEditorToolbarButton({
         e.preventDefault();
         onClick?.();
       }}
+      $isActive={isActive}
       aria-label="rich-editor-toolbar-button"
     >
       {Icon && <Icon size={16} />}
@@ -1085,7 +1366,11 @@ const EditorArea = styled.div<{
   ${({ $editorStyle }) => $editorStyle};
 `;
 
-const ToolbarButton = styled.button<{ $style?: CSSProp; $isOpen?: boolean }>`
+const ToolbarButton = styled.button<{
+  $style?: CSSProp;
+  $isOpen?: boolean;
+  $isActive?: boolean;
+}>`
   padding: 4px 8px;
   display: flex;
   flex-direction: row;
@@ -1107,6 +1392,15 @@ const ToolbarButton = styled.button<{ $style?: CSSProp; $isOpen?: boolean }>`
 
   ${({ $isOpen }) =>
     $isOpen &&
+    css`
+      background-color: #cfcfcf;
+      box-shadow:
+        inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
+        inset 0 -0.5px 0.5px #cfcfcf;
+    `}
+
+  ${({ $isActive }) =>
+    $isActive &&
     css`
       background-color: #cfcfcf;
       box-shadow:
@@ -1190,6 +1484,7 @@ function syncCheckboxStates(container: HTMLElement) {
 // Clean up HTML so that <div> elements don't cause extra spacing in <ul> or <ol>.
 // This ensures ordered and unordered lists are not wrapped with <div> or <p>,
 // since semantically <ul>/<ol> should not be wrapped by those tags.
+// Remove unnecessary <span> with font-size when deleting from a heading line to a paragraph
 const cleanupHtml = (html: string): string => {
   const container = document.createElement("div");
   container.innerHTML = html;
@@ -1201,6 +1496,10 @@ const cleanupHtml = (html: string): string => {
         frag.appendChild(div.firstChild);
       }
       div.parentNode?.replaceChild(frag, div);
+    } else {
+      const p = document.createElement("p");
+      p.innerHTML = div.innerHTML || "<br>";
+      div.parentNode?.replaceChild(p, div);
     }
   });
 
@@ -1215,24 +1514,137 @@ const cleanupHtml = (html: string): string => {
   });
 
   Array.from(container.querySelectorAll("p")).forEach((p) => {
-    const inner = p.innerHTML.trim().toLowerCase();
-
-    if (
-      inner === "<br>" ||
-      inner === "<br/>" ||
-      inner === "<br />" ||
-      inner === "&nbsp;"
-    ) {
+    if (p.querySelector("ul, ol, h1, h2, h3, h4, h5, h6, b, i, input, strong"))
       return;
+
+    const frag = document.createDocumentFragment();
+    let buffer = "";
+
+    const walker = document.createTreeWalker(p, NodeFilter.SHOW_ALL);
+    while (walker.nextNode()) {
+      const node = walker.currentNode;
+
+      if (node.nodeType === Node.TEXT_NODE) {
+        buffer += node.textContent || "";
+      } else if (node.nodeName.toLowerCase() === "br") {
+        if (buffer.trim()) {
+          const newP = document.createElement("p");
+          newP.innerHTML = buffer.trim();
+          frag.appendChild(newP);
+          buffer = "";
+        } else {
+          frag.appendChild(document.createElement("br"));
+        }
+      }
     }
 
-    if (inner === "") {
-      p.parentNode?.removeChild(p);
+    if (buffer.trim()) {
+      const newP = document.createElement("p");
+      newP.innerHTML = buffer.trim();
+      frag.appendChild(newP);
+    }
+
+    p.parentNode?.replaceChild(frag, p);
+  });
+
+  Array.from(container.querySelectorAll("span")).forEach((span) => {
+    const style = span.getAttribute("style") || "";
+
+    const hasOnlyFontStyling =
+      /^(font-size:\s*[\d.]+em;\s*)?(font-weight:\s*inherit;\s*)?$/.test(
+        style.replace(/\s/g, "")
+      );
+
+    const shouldRemove = hasOnlyFontStyling || !style || style.trim() === "";
+
+    if (shouldRemove) {
+      const parent = span.parentNode;
+      if (parent) {
+        if (span.textContent) {
+          const textNode = document.createTextNode(span.textContent);
+          parent.replaceChild(textNode, span);
+        } else {
+          parent.removeChild(span);
+        }
+      }
     }
   });
 
   container.normalize();
   return container.innerHTML;
+};
+
+// To apply instyle to word bold or italic
+const applyInlineStyleToWord = (style: "bold" | "italic") => {
+  const sel = window.getSelection();
+  if (!sel || !sel.rangeCount) return;
+
+  const range = sel.getRangeAt(0);
+  const node = range.startContainer;
+
+  if (node.nodeType !== Node.TEXT_NODE) {
+    document.execCommand(style);
+    return;
+  }
+
+  const text = node.textContent || "";
+  let start = range.startOffset;
+  let end = range.startOffset;
+
+  while (start > 0 && /\S/.test(text[start - 1])) start--;
+
+  while (end < text.length && /\S/.test(text[end])) end++;
+
+  if (start === end) {
+    document.execCommand(style);
+    return;
+  }
+
+  const relativeOffset = range.startOffset - start;
+
+  const wordRange = document.createRange();
+  wordRange.setStart(node, start);
+  wordRange.setEnd(node, end);
+
+  sel.removeAllRanges();
+  sel.addRange(wordRange);
+
+  document.execCommand(style);
+
+  const newNode = sel.anchorNode;
+  if (newNode) {
+    let textNode: Node | null = null;
+
+    if (newNode.nodeType === Node.TEXT_NODE) {
+      textNode = newNode;
+    } else if (newNode.nodeType === Node.ELEMENT_NODE && newNode.firstChild) {
+      textNode = newNode.firstChild;
+    }
+
+    if (textNode && textNode.nodeType === Node.TEXT_NODE) {
+      const pos = Math.min(relativeOffset, textNode.textContent!.length);
+      const newRange = document.createRange();
+      newRange.setStart(textNode, pos);
+      newRange.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(newRange);
+    }
+  }
+};
+
+// To read markdown when have list
+const preprocessMarkdown = (markdown: string) => {
+  return markdown
+    .replace(/\n(\n+)/g, (_, extraNewlines) => {
+      const emptyParagraphs = "\n\n<br>".repeat(extraNewlines.length);
+      return "\n" + emptyParagraphs;
+    })
+    .replace(/<br>\n([^\s\n<][^\n]*)/g, "<br>\n\n$1")
+    .replace(/([^\n])\n([a-zA-Z])/g, "$1\n\n$2")
+    .replace(
+      /^(\s*(?:[\*\-\+]|\d+\.)\s+[^\n]+)\n(?![\s\*\-\+\d<\n])([^\n]+)/gm,
+      "$1\n\n$2"
+    );
 };
 
 RichEditor.ToolbarButton = RichEditorToolbarButton;

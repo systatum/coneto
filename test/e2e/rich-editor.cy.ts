@@ -50,7 +50,8 @@ describe("RichEditor", () => {
 <ul>
 <li>test</li>
 <li>test</li>
-</ul>`;
+</ul>
+`;
         cy.findByRole("textbox").should("contain.html", contentHTML);
         cy.findAllByRole("button").eq(6).click();
 
@@ -187,6 +188,9 @@ describe("RichEditor", () => {
       });
 
       context("when drag content", () => {
+        beforeEach(() => {
+          cy.visit(getIdContent("input-elements-richeditor--view-only"));
+        });
         context("when pressing any character", () => {
           it("renders without change value", () => {
             cy.findByRole("textbox").type("{selectall}{backspace}test 123");
@@ -235,7 +239,53 @@ describe("RichEditor", () => {
 
         cy.findByRole("textbox").type("{selectall}");
 
-        cy.findAllByRole("button").eq(0).click();
+        cy.findAllByRole("button")
+          .eq(0)
+          .click()
+          .should("have.css", "background-color", "rgb(207, 207, 207)")
+          .and(
+            "have.css",
+            "box-shadow",
+            "rgba(0, 0, 0, 0.2) 0px 0.5px 4px 0px inset, rgb(207, 207, 207) 0px -0.5px 0.5px 0px inset"
+          );
+      });
+    });
+
+    context("when caret inside a word and given", () => {
+      it("renders text with bold style (only on 1 word)", () => {
+        cy.findByRole("textbox")
+          .should("exist")
+          .click()
+          .type("Hello World{leftarrow}{leftarrow}");
+        cy.findByRole("textbox").should("contain.text", "Hello World");
+
+        cy.findAllByRole("button")
+          .eq(0)
+          .click()
+          .should("have.css", "background-color", "rgb(207, 207, 207)")
+          .and(
+            "have.css",
+            "box-shadow",
+            "rgba(0, 0, 0, 0.2) 0px 0.5px 4px 0px inset, rgb(207, 207, 207) 0px -0.5px 0.5px 0px inset"
+          );
+        cy.findAllByRole("button").eq(6).click();
+
+        cy.findByRole("textbox").then(($el) => {
+          const sel = $el[0].ownerDocument.getSelection();
+          const node = sel?.anchorNode;
+          const offset = sel?.anchorOffset;
+
+          expect(node?.nodeType).to.eq(Node.TEXT_NODE);
+          expect(node?.textContent).to.eq("World");
+
+          expect(offset).to.eq(3);
+        });
+
+        cy.get("pre")
+          .invoke("text")
+          .then((text) => {
+            expectTextIncludesOrderedLines(text, ["Hello **World**"]);
+          });
       });
     });
   });
@@ -248,7 +298,53 @@ describe("RichEditor", () => {
 
         cy.findByRole("textbox").type("{selectall}");
 
-        cy.findAllByRole("button").eq(1).click();
+        cy.findAllByRole("button")
+          .eq(1)
+          .click()
+          .should("have.css", "background-color", "rgb(207, 207, 207)")
+          .and(
+            "have.css",
+            "box-shadow",
+            "rgba(0, 0, 0, 0.2) 0px 0.5px 4px 0px inset, rgb(207, 207, 207) 0px -0.5px 0.5px 0px inset"
+          );
+      });
+    });
+
+    context("when between word and given", () => {
+      it("renders text with italic style (only on 1 word)", () => {
+        cy.findByRole("textbox")
+          .should("exist")
+          .click()
+          .type("Hello World{leftarrow}");
+        cy.findByRole("textbox").should("contain.text", "Hello World");
+
+        cy.findAllByRole("button")
+          .eq(1)
+          .click()
+          .should("have.css", "background-color", "rgb(207, 207, 207)")
+          .and(
+            "have.css",
+            "box-shadow",
+            "rgba(0, 0, 0, 0.2) 0px 0.5px 4px 0px inset, rgb(207, 207, 207) 0px -0.5px 0.5px 0px inset"
+          );
+        cy.findAllByRole("button").eq(6).click();
+
+        cy.findByRole("textbox").then(($el) => {
+          const sel = $el[0].ownerDocument.getSelection();
+          const node = sel?.anchorNode;
+          const offset = sel?.anchorOffset;
+
+          expect(node?.nodeType).to.eq(Node.TEXT_NODE);
+          expect(node?.textContent).to.eq("World");
+
+          expect(offset).to.eq(4);
+        });
+
+        cy.get("pre")
+          .invoke("text")
+          .then((text) => {
+            expectTextIncludesOrderedLines(text, ["Hello _World_"]);
+          });
       });
     });
   });
@@ -406,10 +502,10 @@ describe("RichEditor", () => {
         cy.findByRole("textbox").type("{selectall}");
         cy.findAllByRole("button").eq(0).click();
         cy.findByRole("textbox").type("{moveToEnd}{enter}");
-        cy.findAllByRole("button").eq(0).click();
 
+        cy.findByRole("textbox").type("The{ctrl}b");
         cy.findByRole("textbox").type(
-          "The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs.{enter}"
+          " quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs.{enter}"
         );
 
         cy.findByRole("textbox")
@@ -445,33 +541,139 @@ describe("RichEditor", () => {
       { label: "Heading 3", text: "#" },
     ];
     headings.forEach((data) => {
-      context(`When click menu ${data.label}`, () => {
-        it(`should apply ${data.label} from dropdown`, () => {
-          cy.findByRole("textbox").click().type("Heading Text");
-          cy.findByRole("textbox").type("{selectall}");
-          cy.findAllByRole("button").eq(5).click();
-          cy.findByText(data.label).click();
+      context(`when click tip ${data.label}`, () => {
+        context(`when typing`, () => {
+          it(`should focus and render text with ${data.label}`, () => {
+            cy.findAllByRole("button").eq(5).click();
+            cy.findByText(data.label).click();
+            cy.focused().type(`${data.label} Text`);
+            cy.findAllByRole("button").eq(6).click();
+            cy.get("pre")
+              .invoke("text")
+              .then((text) => {
+                expectTextIncludesOrderedLines(text, [
+                  `${data.text} ${data.label} Text`,
+                ]);
+              });
+          });
+        });
+
+        context(`when part of a word is selected in a sentence`, () => {
+          it(`render one line with ${data.label}`, () => {
+            cy.findByRole("textbox").type(
+              `${data.label} Text{enter}Paragraph Text`
+            );
+            cy.findByRole("textbox").then(($el) => {
+              const el = $el[0];
+
+              const doc = el.ownerDocument!;
+              const sel = doc.getSelection()!;
+              const range = doc.createRange();
+
+              const textNode = el.firstChild!;
+              const textLength = textNode.textContent!.length;
+
+              range.setStart(textNode, textLength - 2);
+              range.setEnd(textNode, textLength);
+
+              sel.removeAllRanges();
+              sel.addRange(range);
+            });
+
+            cy.findAllByRole("button").eq(5).click();
+            cy.findByText(data.label).click();
+            cy.findAllByRole("button").eq(6).click();
+
+            cy.findByRole("textbox").then(($el) => {
+              const sel = $el[0].ownerDocument.getSelection();
+              const node = sel?.anchorNode;
+              const offset = sel?.anchorOffset;
+
+              expect(node?.nodeType).to.eq(Node.TEXT_NODE);
+              expect(node?.textContent).to.eq(`${data.label} Text`);
+
+              expect(offset).to.eq(12);
+            });
+
+            cy.get("pre")
+              .invoke("text")
+              .then((text) => {
+                expectTextIncludesOrderedLines(text, [
+                  `${data.text} ${data.label} Text`,
+                  `Paragraph Text`,
+                ]);
+              });
+          });
         });
       });
 
-      context(`When typing, click ${data.label}, and enter`, () => {
-        it(`should apply ${data.label} and on the bottom render paragraph`, () => {
-          cy.findByRole("textbox").click().type(`${data.label} Text`);
-          cy.findByRole("textbox").type("{selectall}");
-          cy.findAllByRole("button").eq(5).click();
-          cy.findByText(data.label).click();
-          cy.findByRole("textbox").click().type("{enter}Paragraph text");
-          cy.findAllByRole("button").eq(6).click();
+      context(`when typing`, () => {
+        context(`when click tip`, () => {
+          it(`should apply ${data.label}`, () => {
+            cy.findByRole("textbox").type(
+              `${data.label} Text{leftarrow}{leftarrow}`
+            );
+            cy.findAllByRole("button").eq(5).click();
+            cy.findByText(data.label).click();
+            cy.findAllByRole("button").eq(6).click();
 
-          cy.get("pre")
-            .invoke("text")
-            .then((text) => {
-              expectTextIncludesOrderedLines(text, [
-                `${data.text} ${data.label} Text`,
-                "",
-                "Paragraph text",
-              ]);
+            cy.findByRole("textbox").then(($el) => {
+              const sel = $el[0].ownerDocument.getSelection();
+              const node = sel?.anchorNode;
+              const offset = sel?.anchorOffset;
+
+              expect(node?.nodeType).to.eq(Node.TEXT_NODE);
+              expect(node?.textContent).to.eq(`${data.label} Text`);
+
+              expect(offset).to.eq(12);
             });
+
+            cy.get("pre")
+              .invoke("text")
+              .then((text) => {
+                expectTextIncludesOrderedLines(text, [
+                  `${data.text} ${data.label} Text`,
+                ]);
+              });
+          });
+
+          context(`when typing paragraph`, () => {
+            it(`should apply ${data.label} and on the bottom render paragraph`, () => {
+              cy.findByRole("textbox")
+                .click()
+                .type(`${data.label} Text{selectall}`);
+              cy.findAllByRole("button").eq(5).click();
+              cy.findByText(data.label).click();
+              cy.findByRole("textbox").click().type("{enter}Paragraph text");
+              cy.findAllByRole("button").eq(6).click();
+
+              cy.get("pre")
+                .invoke("text")
+                .then((text) => {
+                  expectTextIncludesOrderedLines(text, [
+                    `${data.text} ${data.label} Text`,
+                    "Paragraph text",
+                  ]);
+                });
+            });
+          });
+        });
+
+        context(`when double click`, () => {
+          it(`should not apply ${data.label}`, () => {
+            cy.findByRole("textbox").type(`${data.label} Text{selectall}`);
+            cy.findAllByRole("button").eq(5).click();
+            cy.findByText(data.label).click();
+            cy.findAllByRole("button").eq(5).click();
+            cy.findByText(data.label).click();
+            cy.findAllByRole("button").eq(6).click();
+
+            cy.get("pre")
+              .invoke("text")
+              .then((text) => {
+                expectTextIncludesOrderedLines(text, [`${data.label} Text`]);
+              });
+          });
         });
       });
     });
