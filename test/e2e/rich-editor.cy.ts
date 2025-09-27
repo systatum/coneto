@@ -243,7 +243,7 @@ describe("RichEditor", () => {
       });
     });
 
-    context("when between word and given ", () => {
+    context("when caret inside a word and given", () => {
       it("renders text with bold style (only on 1 word)", () => {
         cy.findByRole("textbox")
           .should("exist")
