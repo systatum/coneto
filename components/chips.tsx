@@ -6,6 +6,7 @@ import {
   CSSProperties,
   KeyboardEvent,
   ReactElement,
+  RefObject,
   useEffect,
   useRef,
   useState,
@@ -293,7 +294,6 @@ function ChipsDrawer({
       setHovered(options[0]?.id);
     }
   }, [inputValue.search, options, mode, creatable, filterNewLabel, isTyping]);
-
   const handleKeyDown = (e: KeyboardEvent<HTMLUListElement>) => {
     if (mode !== "idle") return;
 
@@ -356,6 +356,7 @@ function ChipsDrawer({
             ref={inputRef}
             name="search"
             type="text"
+            aria-label="chip-input-box"
             placeholder={filterPlaceholder}
             value={inputValue.search}
             style={{
@@ -389,11 +390,11 @@ function ChipsDrawer({
           >
             {filterNewLabel && creatable && (
               <NewTagOption
-                onMouseEnter={() => setHovered(0)}
                 onClick={async () => {
                   await setMode("create");
                   await inputNameTagRef.current.focus();
                 }}
+                onMouseEnter={() => setHovered(0)}
                 $hovered={hovered === 0}
               >
                 <RiAddLine size={14} style={{ minWidth: "14px" }} />
@@ -434,6 +435,7 @@ function ChipsDrawer({
                         chipContainerStyle={chipContainerStyle}
                         hovered={hovered}
                         isClicked={isClicked}
+                        inputRef={inputRef}
                         setHovered={setHovered}
                         onOptionClicked={onOptionClicked}
                         chipStyle={chipStyle}
@@ -631,6 +633,7 @@ function ChipsItem({
   onOptionClicked,
   chipContainerStyle,
   chipStyle,
+  inputRef,
 }: {
   badge: BadgeProps;
   isClicked: boolean;
@@ -639,21 +642,22 @@ function ChipsItem({
   onOptionClicked?: (badge: BadgeProps) => void;
   chipStyle?: CSSProp;
   chipContainerStyle?: CSSProp;
+  inputRef?: RefObject<HTMLInputElement>;
 }) {
   const finalValueActions =
     badge.actions?.map((action) => ({
       ...action,
-      onClick: () => action.onClick?.(badge),
-      styleWithProp: () => action.styleWithProp(hovered === badge.id),
+      onClick: () => action.onClick && action.onClick?.(badge),
     })) ?? [];
 
   return (
     <ChipItemWrapper
       $hovered={hovered === badge.id}
       $style={chipContainerStyle}
-      onClick={(e) => {
-        e.stopPropagation();
-        onOptionClicked?.(badge);
+      onClick={async (e) => {
+        await e.stopPropagation();
+        await onOptionClicked?.(badge);
+        await inputRef.current.focus();
       }}
       onMouseEnter={() => setHovered(badge.id)}
     >
@@ -714,7 +718,13 @@ const ChipItemWrapper = styled.div<{
     $hovered &&
     css`
       background-color: #bfdbfe;
+
+      [aria-label="badge-action"] {
+        opacity: 1;
+        transition: opacity 0.2s;
+      }
     `}
+
   ${({ $style }) => $style}
 `;
 
