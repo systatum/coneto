@@ -43,6 +43,7 @@ export interface RichEditorToolbarButtonProps {
   children?: ReactNode;
   style?: CSSProp;
   isOpen?: boolean;
+  isActive?: boolean;
 }
 
 interface RichEditorComponent
@@ -334,6 +335,60 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
     const [isOpen, setIsOpen] = useState(false);
 
+    const [formatStates, setFormatStates] = useState({
+      bold: false,
+      italic: false,
+    });
+
+    const updateFormatStates = () => {
+      if (!editorRef.current || mode === "view-only") return;
+
+      try {
+        const bold = document.queryCommandState("bold");
+        const italic = document.queryCommandState("italic");
+
+        setFormatStates({
+          bold,
+          italic,
+        });
+      } catch (error) {
+        console.warn("Error checking command state:", error);
+      }
+    };
+
+    useEffect(() => {
+      const editor = editorRef.current;
+      if (!editor || mode === "view-only") return;
+
+      const handleSelectionChange = () => {
+        setTimeout(updateFormatStates, 0);
+      };
+
+      const handleKeyUp = () => {
+        updateFormatStates();
+      };
+
+      const handleMouseUp = () => {
+        updateFormatStates();
+      };
+
+      const handleFocus = () => {
+        updateFormatStates();
+      };
+
+      document.addEventListener("selectionchange", handleSelectionChange);
+      editor.addEventListener("keyup", handleKeyUp);
+      editor.addEventListener("mouseup", handleMouseUp);
+      editor.addEventListener("focus", handleFocus);
+
+      return () => {
+        document.removeEventListener("selectionchange", handleSelectionChange);
+        editor.removeEventListener("keyup", handleKeyUp);
+        editor.removeEventListener("mouseup", handleMouseUp);
+        editor.removeEventListener("focus", handleFocus);
+      };
+    }, [mode]);
+
     useEffect(() => {
       if (!editorRef.current || editorRef.current.innerHTML) return;
 
@@ -343,7 +398,12 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         processedValue = processedValue.replace(
           /\n(\n+)/g,
           (_, extraNewlines) => {
-            const emptyParagraphs = "\n\n<br>".repeat(extraNewlines.length);
+            const emptyParagraphs = "\n\n<br>"
+              .repeat(extraNewlines.length)
+              .replace(
+                /^(\s*[\*\-\+]\s+.+)(\n)([^\s\*\-\+\n].+)/gm,
+                "$1$2\n$3"
+              );
             return "\n" + emptyParagraphs;
           }
         );
@@ -1008,10 +1068,12 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
             <Toolbar $toolbarPosition={toolbarPosition}>
               <ToolbarGroup>
                 <RichEditorToolbarButton
+                  isActive={formatStates.bold}
                   icon={RiBold}
                   onClick={() => handleCommand("bold")}
                 />
                 <RichEditorToolbarButton
+                  isActive={formatStates.italic}
                   icon={RiItalic}
                   onClick={() => handleCommand("italic")}
                 />
@@ -1092,6 +1154,7 @@ function RichEditorToolbarButton({
   children,
   style,
   isOpen,
+  isActive,
 }: RichEditorToolbarButtonProps) {
   return (
     <ToolbarButton
@@ -1102,6 +1165,7 @@ function RichEditorToolbarButton({
         e.preventDefault();
         onClick?.();
       }}
+      $isActive={isActive}
       aria-label="rich-editor-toolbar-button"
     >
       {Icon && <Icon size={16} />}
@@ -1274,7 +1338,11 @@ const EditorArea = styled.div<{
   ${({ $editorStyle }) => $editorStyle};
 `;
 
-const ToolbarButton = styled.button<{ $style?: CSSProp; $isOpen?: boolean }>`
+const ToolbarButton = styled.button<{
+  $style?: CSSProp;
+  $isOpen?: boolean;
+  $isActive?: boolean;
+}>`
   padding: 4px 8px;
   display: flex;
   flex-direction: row;
@@ -1296,6 +1364,15 @@ const ToolbarButton = styled.button<{ $style?: CSSProp; $isOpen?: boolean }>`
 
   ${({ $isOpen }) =>
     $isOpen &&
+    css`
+      background-color: #cfcfcf;
+      box-shadow:
+        inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
+        inset 0 -0.5px 0.5px #cfcfcf;
+    `}
+
+  ${({ $isActive }) =>
+    $isActive &&
     css`
       background-color: #cfcfcf;
       box-shadow:
