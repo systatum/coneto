@@ -26,7 +26,6 @@ export interface BadgeActionProps {
   disabled?: boolean;
   title?: string;
   style?: CSSProp;
-  styleWithProp?: (data?: boolean) => CSSProp;
   size?: number;
 }
 
@@ -144,7 +143,7 @@ function Badge({
               key={index}
               aria-label="badge-action"
               as={data.icon}
-              $style={data.style || data.styleWithProp}
+              $style={data.style}
               $size={data.size}
               $disabled={data.disabled}
               onClick={(e) => {
