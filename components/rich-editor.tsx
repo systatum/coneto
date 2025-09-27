@@ -544,6 +544,10 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         } else {
           document.execCommand("bold");
         }
+        setTimeout(() => {
+          updateFormatStates();
+        }, 0);
+
         handleEditorChange();
         return;
       }
@@ -556,6 +560,10 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         } else {
           document.execCommand("italic");
         }
+        setTimeout(() => {
+          updateFormatStates();
+        }, 0);
+
         handleEditorChange();
         return;
       }
