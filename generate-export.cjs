@@ -27,6 +27,21 @@ function getFlatExportsFrom(dirPath, baseDistPath) {
 
 const componentsExports = getFlatExportsFrom("components", "components");
 
+const additionalExports = {
+  "./constants/*": {
+    import: "./dist/constants/*.js",
+    types: "./dist/constants/*.d.ts",
+  },
+  "./code-color": {
+    import: "./dist/lib/code-color.js",
+    types: "./dist/lib/code-color.d.ts",
+  },
+  "./utils": {
+    import: "./dist/lib/utils.js",
+    types: "./dist/lib/utils.d.ts",
+  },
+};
+
 const pkgPath = path.join(__dirname, "package.json");
 const pkg = require(pkgPath);
 
@@ -36,6 +51,7 @@ pkg.exports = {
     types: "./dist/index.d.ts",
   },
   ...componentsExports,
+  ...additionalExports,
 };
 
 fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2));
