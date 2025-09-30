@@ -232,8 +232,8 @@ describe("RichEditor", () => {
   });
 
   context("bold", () => {
-    context("when type and given", () => {
-      it("renders text with bold style", () => {
+    context("when pressed after selecting the whole word", () => {
+      it("renders the text in bold", () => {
         cy.findByRole("textbox").should("exist").click().type("Hello World");
         cy.findByRole("textbox").should("contain.text", "Hello World");
 
@@ -288,11 +288,41 @@ describe("RichEditor", () => {
           });
       });
     });
+
+    context("when pressed while cursor is within a word", () => {
+      it("renders the word in bold", () => {
+        cy.findByRole("textbox")
+          .should("exist")
+          .click()
+          .type("Hello World{leftarrow}{leftarrow}");
+        cy.findByRole("textbox").should("contain.text", "Hello World");
+
+        cy.findAllByRole("button").eq(0).click();
+        cy.findAllByRole("button").eq(6).click();
+
+        cy.findByRole("textbox").then(($el) => {
+          const sel = $el[0].ownerDocument.getSelection();
+          const node = sel?.anchorNode;
+          const offset = sel?.anchorOffset;
+
+          expect(node?.nodeType).to.eq(Node.TEXT_NODE);
+          expect(node?.textContent).to.eq("World");
+
+          expect(offset).to.eq(3);
+        });
+
+        cy.get("pre")
+          .invoke("text")
+          .then((text) => {
+            expectTextIncludesOrderedLines(text, ["Hello **World**"]);
+          });
+      });
+    });
   });
 
   context("italic", () => {
-    context("when type and given", () => {
-      it("renders text with italic style", () => {
+    context("when pressed after selecting the whole word", () => {
+      it("renders the text in italic", () => {
         cy.findByRole("textbox").should("exist").click().type("Hello World");
         cy.findByRole("textbox").should("contain.text", "Hello World");
 
@@ -327,6 +357,36 @@ describe("RichEditor", () => {
             "box-shadow",
             "rgba(0, 0, 0, 0.2) 0px 0.5px 4px 0px inset, rgb(207, 207, 207) 0px -0.5px 0.5px 0px inset"
           );
+        cy.findAllByRole("button").eq(6).click();
+
+        cy.findByRole("textbox").then(($el) => {
+          const sel = $el[0].ownerDocument.getSelection();
+          const node = sel?.anchorNode;
+          const offset = sel?.anchorOffset;
+
+          expect(node?.nodeType).to.eq(Node.TEXT_NODE);
+          expect(node?.textContent).to.eq("World");
+
+          expect(offset).to.eq(4);
+        });
+
+        cy.get("pre")
+          .invoke("text")
+          .then((text) => {
+            expectTextIncludesOrderedLines(text, ["Hello _World_"]);
+          });
+      });
+    });
+
+    context("when pressed while cursor is within a word", () => {
+      it("renders the text in italic", () => {
+        cy.findByRole("textbox")
+          .should("exist")
+          .click()
+          .type("Hello World{leftarrow}");
+        cy.findByRole("textbox").should("contain.text", "Hello World");
+
+        cy.findAllByRole("button").eq(1).click();
         cy.findAllByRole("button").eq(6).click();
 
         cy.findByRole("textbox").then(($el) => {
