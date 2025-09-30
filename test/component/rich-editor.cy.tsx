@@ -68,6 +68,7 @@ Paragraph line 2`;
     context("ordered/unordered list", () => {
       context("when the next line is paragraph", () => {
         // number 4 replace on `preprocessMarkdown`.
+        // Ensures list item is separated with a blank line
         //    .replace(
         //   /^(\s*(?:[\*\-\+]|\d+\.)\s+[^\n]+)\n(?![\s\*\-\+\d<\n])([^\n]+)/gm,
         //   "$1\n\n$2"
