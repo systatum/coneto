@@ -189,6 +189,10 @@
       "import": "./dist/components/sidebar.js",
       "types": "./dist/components/sidebar.d.ts"
     },
+    "./signbox": {
+      "import": "./dist/components/signbox.js",
+      "types": "./dist/components/signbox.d.ts"
+    },
     "./stateful-form": {
       "import": "./dist/components/stateful-form.js",
       "types": "./dist/components/stateful-form.d.ts"
@@ -200,6 +204,10 @@
     "./table": {
       "import": "./dist/components/table.js",
       "types": "./dist/components/table.d.ts"
+    },
+    "./textarea": {
+      "import": "./dist/components/textarea.js",
+      "types": "./dist/components/textarea.d.ts"
     },
     "./textbox": {
       "import": "./dist/components/textbox.js",

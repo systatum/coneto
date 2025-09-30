@@ -43,6 +43,7 @@ export interface RichEditorToolbarButtonProps {
   children?: ReactNode;
   style?: CSSProp;
   isOpen?: boolean;
+  isActive?: boolean;
 }
 
 interface RichEditorComponent
@@ -261,10 +262,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         let range = sel?.rangeCount ? sel.getRangeAt(0) : null;
         if (!range) return;
 
-        let processedValue = data.replace(/\n(\n+)/g, (_, extraNewlines) => {
-          const emptyParagraphs = "\n\n<br>".repeat(extraNewlines.length);
-          return "\n" + emptyParagraphs;
-        });
+        let processedValue = preprocessMarkdown(data);
 
         let html = await marked.parse(processedValue);
 
@@ -334,19 +332,67 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
     const [isOpen, setIsOpen] = useState(false);
 
+    const [formatStates, setFormatStates] = useState({
+      bold: false,
+      italic: false,
+    });
+
+    const updateFormatStates = () => {
+      if (!editorRef.current || mode === "view-only") return;
+
+      try {
+        const bold = document.queryCommandState("bold");
+        const italic = document.queryCommandState("italic");
+
+        setFormatStates({
+          bold,
+          italic,
+        });
+      } catch (error) {
+        console.warn("Error checking command state:", error);
+      }
+    };
+
+    useEffect(() => {
+      const editor = editorRef.current;
+      if (!editor || mode === "view-only") return;
+
+      const handleSelectionChange = () => {
+        setTimeout(updateFormatStates, 0);
+      };
+
+      const handleKeyUp = () => {
+        updateFormatStates();
+      };
+
+      const handleMouseUp = () => {
+        updateFormatStates();
+      };
+
+      const handleFocus = () => {
+        updateFormatStates();
+      };
+
+      document.addEventListener("selectionchange", handleSelectionChange);
+      editor.addEventListener("keyup", handleKeyUp);
+      editor.addEventListener("mouseup", handleMouseUp);
+      editor.addEventListener("focus", handleFocus);
+
+      return () => {
+        document.removeEventListener("selectionchange", handleSelectionChange);
+        editor.removeEventListener("keyup", handleKeyUp);
+        editor.removeEventListener("mouseup", handleMouseUp);
+        editor.removeEventListener("focus", handleFocus);
+      };
+    }, [mode]);
+
     useEffect(() => {
       if (!editorRef.current || editorRef.current.innerHTML) return;
 
       const initializeEditor = async () => {
         let processedValue = value;
 
-        processedValue = processedValue.replace(
-          /\n(\n+)/g,
-          (_, extraNewlines) => {
-            const emptyParagraphs = "\n\n<br>".repeat(extraNewlines.length);
-            return "\n" + emptyParagraphs;
-          }
-        );
+        processedValue = preprocessMarkdown(processedValue);
 
         let html = await marked.parse(processedValue);
 
@@ -498,6 +544,10 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         } else {
           document.execCommand("bold");
         }
+        setTimeout(() => {
+          updateFormatStates();
+        }, 0);
+
         handleEditorChange();
         return;
       }
@@ -510,6 +560,10 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         } else {
           document.execCommand("italic");
         }
+        setTimeout(() => {
+          updateFormatStates();
+        }, 0);
+
         handleEditorChange();
         return;
       }
@@ -590,9 +644,43 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           return;
         }
 
-        e.preventDefault();
+        const isInFormattedText =
+          container.nodeType === Node.TEXT_NODE &&
+          ["B", "STRONG", "I", "EM"].includes(
+            container.parentElement?.tagName ?? ""
+          ) &&
+          !/^H[1-6]$/.test(container.parentElement?.tagName ?? "");
 
-        document.execCommand("insertLineBreak");
+        if (isInFormattedText) {
+          e.preventDefault();
+
+          const newP = document.createElement("p");
+          newP.innerHTML = "<br>";
+
+          let currentP = container.parentElement;
+          while (currentP && currentP.tagName !== "P") {
+            currentP = currentP.parentElement;
+          }
+
+          if (currentP) {
+            currentP.insertAdjacentElement("afterend", newP);
+          } else {
+            container.parentElement?.insertAdjacentElement("afterend", newP);
+          }
+
+          const sel = window.getSelection();
+          const newRange = document.createRange();
+          newRange.setStart(newP, 0);
+          sel.removeAllRanges();
+          sel.addRange(newRange);
+        } else {
+          e.preventDefault();
+          document.execCommand("insertLineBreak");
+        }
+
+        setTimeout(() => {
+          updateFormatStates();
+        }, 0);
 
         handleEditorChange();
       }
@@ -1008,10 +1096,12 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
             <Toolbar $toolbarPosition={toolbarPosition}>
               <ToolbarGroup>
                 <RichEditorToolbarButton
+                  isActive={formatStates.bold}
                   icon={RiBold}
                   onClick={() => handleCommand("bold")}
                 />
                 <RichEditorToolbarButton
+                  isActive={formatStates.italic}
                   icon={RiItalic}
                   onClick={() => handleCommand("italic")}
                 />
@@ -1092,6 +1182,7 @@ function RichEditorToolbarButton({
   children,
   style,
   isOpen,
+  isActive,
 }: RichEditorToolbarButtonProps) {
   return (
     <ToolbarButton
@@ -1102,6 +1193,7 @@ function RichEditorToolbarButton({
         e.preventDefault();
         onClick?.();
       }}
+      $isActive={isActive}
       aria-label="rich-editor-toolbar-button"
     >
       {Icon && <Icon size={16} />}
@@ -1274,7 +1366,11 @@ const EditorArea = styled.div<{
   ${({ $editorStyle }) => $editorStyle};
 `;
 
-const ToolbarButton = styled.button<{ $style?: CSSProp; $isOpen?: boolean }>`
+const ToolbarButton = styled.button<{
+  $style?: CSSProp;
+  $isOpen?: boolean;
+  $isActive?: boolean;
+}>`
   padding: 4px 8px;
   display: flex;
   flex-direction: row;
@@ -1296,6 +1392,15 @@ const ToolbarButton = styled.button<{ $style?: CSSProp; $isOpen?: boolean }>`
 
   ${({ $isOpen }) =>
     $isOpen &&
+    css`
+      background-color: #cfcfcf;
+      box-shadow:
+        inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
+        inset 0 -0.5px 0.5px #cfcfcf;
+    `}
+
+  ${({ $isActive }) =>
+    $isActive &&
     css`
       background-color: #cfcfcf;
       box-shadow:
@@ -1525,6 +1630,37 @@ const applyInlineStyleToWord = (style: "bold" | "italic") => {
       sel.addRange(newRange);
     }
   }
+};
+
+// Processes all input provided in the editor
+const preprocessMarkdown = (markdown: string) => {
+  return (
+    markdown
+      // Replace multiple newlines with <br> (sometime marked can't like WYSIWYG)
+      // Example: "\n\n\n" => "\n\n<br>\n\n<br>"
+      .replace(/\n(\n+)/g, (_, extraNewlines) => {
+        const emptyParagraphs = "\n\n<br>".repeat(extraNewlines.length);
+        return "\n" + emptyParagraphs;
+      })
+
+      // Ensure that a <br> followed by a line starts a new paragraph
+      // Example: "<br>\nsome text" => "<br>\n\nsome text"
+      .replace(/<br>\n([^\s\n<][^\n]*)/g, "<br>\n\n$1")
+
+      // When same as element paragraph, but different line -> marked can't read this.
+      // without this, sometime paragraphs may merge into one
+      // Example: "Hello\nWorld" => "Hello\n\nWorld"
+      .replace(/([^\n])\n([a-zA-Z])/g, "$1\n\n$2")
+
+      // Handle list items followed by normal text
+      // Ensures list item is separated with a blank line
+      // Example:
+      // "- item\nnext line" => "- item\n\nnext line"
+      .replace(
+        /^(\s*(?:[\*\-\+]|\d+\.)\s+[^\n]+)\n(?![\s\*\-\+\d<\n])([^\n]+)/gm,
+        "$1\n\n$2"
+      )
+  );
 };
 
 RichEditor.ToolbarButton = RichEditorToolbarButton;
