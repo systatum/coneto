@@ -1648,6 +1648,7 @@ const preprocessMarkdown = (markdown: string) => {
       .replace(/<br>\n([^\s\n<][^\n]*)/g, "<br>\n\n$1")
 
       // When same as element paragraph, but different line -> marked can't read this.
+      // without this, sometime paragraphs may merge into one
       // Example: "Hello\nWorld" => "Hello\n\nWorld"
       .replace(/([^\n])\n([a-zA-Z])/g, "$1\n\n$2")
 
