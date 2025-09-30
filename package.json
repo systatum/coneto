@@ -1,6 +1,6 @@
 {
   "name": "@systatum/coneto",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -149,10 +149,6 @@
       "import": "./dist/components/pagination.js",
       "types": "./dist/components/pagination.d.ts"
     },
-    "./pinbox": {
-      "import": "./dist/components/pinbox.js",
-      "types": "./dist/components/pinbox.d.ts"
-    },
     "./paper-dialog": {
       "import": "./dist/components/paper-dialog.js",
       "types": "./dist/components/paper-dialog.d.ts"
@@ -160,6 +156,10 @@
     "./phonebox": {
       "import": "./dist/components/phonebox.js",
       "types": "./dist/components/phonebox.d.ts"
+    },
+    "./pinbox": {
+      "import": "./dist/components/pinbox.js",
+      "types": "./dist/components/pinbox.d.ts"
     },
     "./radio": {
       "import": "./dist/components/radio.js",
@@ -295,6 +295,7 @@
     "lint": "eslint '**/*.{ts,tsx}'",
     "format": "prettier --write .",
     "build-chromatic": "chromatic --project-token=$CHROMATIC_PROJECT_TOKEN",
+    "prepare": "node generate-export.cjs",
     "test-open": "cypress open",
     "test-run": "cypress run"
   },
