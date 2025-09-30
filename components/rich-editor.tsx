@@ -1632,19 +1632,34 @@ const applyInlineStyleToWord = (style: "bold" | "italic") => {
   }
 };
 
-// To read markdown when have list
+// Processes all input provided in the editor
 const preprocessMarkdown = (markdown: string) => {
-  return markdown
-    .replace(/\n(\n+)/g, (_, extraNewlines) => {
-      const emptyParagraphs = "\n\n<br>".repeat(extraNewlines.length);
-      return "\n" + emptyParagraphs;
-    })
-    .replace(/<br>\n([^\s\n<][^\n]*)/g, "<br>\n\n$1")
-    .replace(/([^\n])\n([a-zA-Z])/g, "$1\n\n$2")
-    .replace(
-      /^(\s*(?:[\*\-\+]|\d+\.)\s+[^\n]+)\n(?![\s\*\-\+\d<\n])([^\n]+)/gm,
-      "$1\n\n$2"
-    );
+  return (
+    markdown
+      // Replace multiple newlines with <br> (sometime marked can't like WYSIWYG)
+      // Example: "\n\n\n" => "\n\n<br>\n\n<br>"
+      .replace(/\n(\n+)/g, (_, extraNewlines) => {
+        const emptyParagraphs = "\n\n<br>".repeat(extraNewlines.length);
+        return "\n" + emptyParagraphs;
+      })
+
+      // Ensure that a <br> followed by a line starts a new paragraph
+      // Example: "<br>\nsome text" => "<br>\n\nsome text"
+      .replace(/<br>\n([^\s\n<][^\n]*)/g, "<br>\n\n$1")
+
+      // When same as element paragraph, but different line -> marked can't read this.
+      // Example: "Hello\nWorld" => "Hello\n\nWorld"
+      .replace(/([^\n])\n([a-zA-Z])/g, "$1\n\n$2")
+
+      // Handle list items followed by normal text
+      // Ensures list item is separated with a blank line
+      // Example:
+      // "- item\nnext line" => "- item\n\nnext line"
+      .replace(
+        /^(\s*(?:[\*\-\+]|\d+\.)\s+[^\n]+)\n(?![\s\*\-\+\d<\n])([^\n]+)/gm,
+        "$1\n\n$2"
+      )
+  );
 };
 
 RichEditor.ToolbarButton = RichEditorToolbarButton;
