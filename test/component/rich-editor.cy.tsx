@@ -10,7 +10,7 @@ describe("RichEditor", () => {
         //   const emptyParagraphs = "\n\n<br>".repeat(extraNewlines.length);
         //   return "\n" + emptyParagraphs;
         // })
-        it("should render like WYSIWYG (not ", () => {
+        it("should render exactly as the expected value", () => {
           const input = `Paragraph line 1
         
 
@@ -28,7 +28,7 @@ Paragraph line 2`;
         // Number 2 replace on `preprocessMarkdown`.
         // Ensure that a <br> followed by a line starts a new paragraph
         // .replace(/<br>\n([^\s\n<][^\n]*)/g, "<br>\n\n$1")
-        it("should render like WYSIWYG (not ", () => {
+        it("should render exactly as the expected value", () => {
           const input = `Paragraph line 1
 Paragraph line 2
 Paragraph line 3
@@ -52,7 +52,7 @@ Paragraph line 4
         //   /^(\s*(?:[\*\-\+]|\d+\.)\s+[^\n]+)\n(?![\s\*\-\+\d<\n])([^\n]+)/gm,
         //   "$1\n\n$2"
         // )
-        it("should render like WYSIWYG (not ", () => {
+        it("should render exactly as the expected value", () => {
           const input = `Paragraph line 1
 Paragraph line 2`;
           cy.mount(<RichEditor value={input} />);
