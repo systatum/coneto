@@ -144,7 +144,6 @@ export const Default: Story = {
 
     const sampleRows = Array.from({ length: 20 }, (_, i) => {
       const type = TYPES_DATA[i % TYPES_DATA.length];
-      console.log("typebang", type);
       return (
         <Table.Row
           rowId={`${type}`}
@@ -1091,37 +1090,6 @@ export const Draggable: Story = {
             category: "Frontend",
             author: "Ali Rahman",
           },
-          {
-            title: "Clean Code Practices",
-            category: "General",
-            author: "Nina Hart",
-          },
-          {
-            title: "Intro to WebAssembly",
-            category: "Experimental",
-            author: "Tom K.",
-          },
-          {
-            title: "Rust for JavaScript Devs",
-            category: "Backend",
-            author: "Lia Wang",
-          },
-          {
-            title: "Next.js Performance Tips",
-            category: "Frontend",
-            author: "Hugo Lin",
-          },
-          {
-            title: "Database Indexing 101",
-            category: "Backend",
-            author: "Sara Lee",
-          },
-          {
-            title: "Scaling with Redis",
-            category: "DevOps",
-            author: "David Kim",
-          },
-          { title: "AI in the Browser", category: "AI/ML", author: "Zara T." },
         ],
       },
       {
@@ -1149,36 +1117,6 @@ export const Draggable: Story = {
             category: "API",
             author: "Frontend Masters",
           },
-          {
-            title: "Design Systems",
-            category: "UI/UX",
-            author: "Figma Academy",
-          },
-          {
-            title: "AI with TensorFlow.js",
-            category: "AI/ML",
-            author: "Coursera",
-          },
-          {
-            title: "Intro to TypeScript",
-            category: "Frontend",
-            author: "FreeCodeCamp",
-          },
-          {
-            title: "AWS Lambda in Practice",
-            category: "Cloud",
-            author: "Egghead.io",
-          },
-          {
-            title: "Security for Developers",
-            category: "Security",
-            author: "HackerOne",
-          },
-          {
-            title: "Building Design Tools",
-            category: "DevTools",
-            author: "ToolingLab",
-          },
         ],
       },
       {
@@ -1191,15 +1129,6 @@ export const Draggable: Story = {
           { title: "tRPC", category: "API", author: "Julian Fahrer" },
           { title: "Remix", category: "Fullstack", author: "Remix Team" },
           { title: "Nx", category: "Monorepo", author: "Nrwl" },
-          { title: "SWR", category: "Data Fetching", author: "Vercel" },
-          {
-            title: "Drizzle ORM",
-            category: "Database",
-            author: "Drizzle Team",
-          },
-          { title: "Playwright", category: "Testing", author: "Microsoft" },
-          { title: "Astro", category: "Static Site", author: "Astro Team" },
-          { title: "React Hook Form", category: "Forms", author: "Bluebill" },
         ],
       },
     ];
@@ -1444,7 +1373,16 @@ export const Draggable: Story = {
       ];
     };
 
-    const filteredRows = (rowNumber: number, category?: TableCategoryState) => {
+    function filteredRows(
+      rowNumber: number,
+      category: "group"
+    ): TableItemProps[];
+    function filteredRows(
+      rowNumber: number,
+      category: "simple"
+    ): TableItemSimpleProps[];
+
+    function filteredRows(rowNumber: number, category?: TableCategoryState) {
       const { rows } = getRowsState(rowNumber, category);
       const { search } = getSearchState(rowNumber);
 
@@ -1473,7 +1411,7 @@ export const Draggable: Story = {
             item.type.toLowerCase().includes(search.toLowerCase())
         );
       }
-    };
+    }
 
     const reorderItems = (
       oldPosition: number,
@@ -1538,6 +1476,7 @@ export const Draggable: Story = {
     };
 
     const onDragged = ({
+      id,
       oldPosition,
       newPosition,
       oldGroupId,
@@ -1545,6 +1484,7 @@ export const Draggable: Story = {
       rowNumber,
       category,
     }: {
+      id?: string;
       oldPosition: number;
       newPosition: number;
       oldGroupId: string;
