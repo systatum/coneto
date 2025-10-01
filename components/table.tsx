@@ -56,6 +56,7 @@ export interface TableProps {
   searchable?: boolean;
   draggable?: boolean;
   onDragged?: (props: {
+    id?: string;
     oldGroupId: string;
     newGroupId: string;
     oldPosition: number;
@@ -120,12 +121,14 @@ const DnDContext = createContext<{
     oldPosition: number;
     newGroupId?: string;
     newPosition?: number;
+    id: string;
   } | null;
   setDragItem: (props: {
     oldGroupId: string;
     oldPosition: number;
     newGroupId?: string;
     newPosition?: number;
+    id: string;
   }) => void;
   onDragged?: TableProps["onDragged"];
 }>({
@@ -167,6 +170,7 @@ function Table({
     oldPosition: number;
     newGroupId?: string;
     newPosition?: number;
+    id: string;
   } | null>(null);
 
   const [selectedData, setSelectedData] = useState<string[]>([]);
@@ -251,12 +255,13 @@ function Table({
         index: index,
         onDropItem: (newPosition: number) => {
           if (dragItem) {
-            const { oldGroupId, newGroupId, oldPosition } = dragItem;
+            const { oldGroupId, newGroupId, oldPosition, id } = dragItem;
             onDragged?.({
               oldGroupId: oldGroupId || "",
               newGroupId: newGroupId || "",
               oldPosition,
               newPosition,
+              id: id,
             });
 
             setDragItem(null);
@@ -725,13 +730,13 @@ function TableRowGroup({
         groupId: id,
         onDropItem: (newPosition: number) => {
           if (dragItem) {
-            const { oldGroupId, oldPosition } = dragItem;
-
+            const { oldGroupId, oldPosition, id: rowId } = dragItem;
             onDragged?.({
               oldGroupId,
               newGroupId: id,
               oldPosition,
               newPosition: newPosition,
+              id: rowId,
             });
 
             setDragItem(null);
@@ -852,7 +857,7 @@ function TableRow({
   onClick,
   groupLength,
   index,
-  groupId = "",
+  groupId = "default",
   onDropItem,
   draggable,
   ...props
@@ -899,6 +904,7 @@ function TableRow({
     <TableRowWrapper
       ref={rowRef}
       $isSelected={isSelected}
+      aria-label="table-row"
       onMouseLeave={() => setIsHovered(null)}
       onMouseEnter={() => setIsHovered(rowId)}
       onClick={() => {
@@ -924,6 +930,7 @@ function TableRow({
         setDragItem({
           oldGroupId: groupId!,
           oldPosition: index,
+          id: rowId ?? "",
         })
       }
       onDragOver={(e) => {
@@ -962,6 +969,14 @@ function TableRow({
         }
 
         const clampedPosition = Math.min(position, groupLength ?? 0);
+
+        if (dragItem) {
+          setDragItem({
+            ...dragItem,
+            id: rowId,
+            newGroupId: groupId || "default",
+          });
+        }
 
         onDropItem?.(clampedPosition);
       }}
