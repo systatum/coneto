@@ -21,7 +21,9 @@ Each main component consists of two parts:
 1. Install dependencies: `pnpm install`
 2. Start Storybook locally: `pnpm storybook`
 
-## How to Make Changes
+## How to Submit Changes to Chromatic
+
+We don't actively using Chromatic anymore.
 
 1. Open Chromatic on your desktop
 2. Make any necessary changes to your component
@@ -34,9 +36,26 @@ Each main component consists of two parts:
 1. Create your component test inside the `test/e2e` directory. Each component should have its own test file.
 2. Write your test logic to cover expected behaviors, interactions, and visual, name the file using the format `[component].cy.ts` then save it.
 3. Commit and push your changes to the repository.
-4. To run tests locally, use one of the following commands:
-   - `pnpm test-open` – opens the Cypress Test Runner with an interactive UI.
-   - `pnpm test-run` – runs all tests in headless mode via the CLI.
+4. To run tests locally:
+   1. Ensure that you have `cypress` installed:
+      ```bash
+      pnpm add --save-dev cypress # you may need to do this
+      ./node_modules/.bin/cypress install # install the cypress app locally
+      ```
+
+      You will know that you need to install `cypress` if you see this kind of error:
+
+      ```txt
+      Please reinstall Cypress by running: cypress install
+
+      ----------
+
+      Cypress executable not found at: /Users/adam.h/Library/Caches/Cypress/14.5.3/Cypress.app/Contents/MacOS/Cypress
+      ```
+   1. Run the storybook server, used for E2E testing: `pnpm run storybook`
+   1. Execute either use one of the following commands:
+      - `pnpm test-open` – opens the Cypress Test Runner with an interactive UI.
+      - `pnpm test-run` – runs all tests in headless mode via the CLI. Ensure that you see `All specs passed!` eventually.
 
 ## Tech Stack
 
