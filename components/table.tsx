@@ -21,6 +21,7 @@ import {
   RiArrowLeftSLine,
   RiArrowRightSLine,
   RiArrowUpDownLine,
+  RiDraggable,
   RiMoreFill,
 } from "@remixicon/react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -53,6 +54,14 @@ export type SubMenuListTableProps = TipMenuItemProps;
 export interface TableProps {
   selectable?: boolean;
   searchable?: boolean;
+  draggable?: boolean;
+  onDragged?: (props: {
+    id?: string;
+    oldGroupId: string;
+    newGroupId: string;
+    oldPosition: number;
+    newPosition: number;
+  }) => void;
   onSearchboxChange?: (
     e?: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
@@ -88,9 +97,11 @@ export interface TableRowProps {
   children?: ReactNode;
   actions?: (columnCaption: string) => TipMenuItemProps[];
   onClick?: (args?: { toggleCheckbox: () => void }) => void;
+  groupId?: string;
 }
 
 export interface TableRowGroupProps {
+  id?: string;
   children?: ReactNode;
   title?: string;
   subtitle?: string;
@@ -103,6 +114,27 @@ export interface TableRowCellProps {
   width?: string;
   onClick?: () => void;
 }
+
+const DnDContext = createContext<{
+  dragItem: {
+    oldGroupId: string;
+    oldPosition: number;
+    newGroupId?: string;
+    newPosition?: number;
+    id: string;
+  } | null;
+  setDragItem: (props: {
+    oldGroupId: string;
+    oldPosition: number;
+    newGroupId?: string;
+    newPosition?: number;
+    id: string;
+  }) => void;
+  onDragged?: TableProps["onDragged"];
+}>({
+  dragItem: null,
+  setDragItem: () => {},
+});
 
 const TableColumnContext = createContext<ColumnTableProps[]>([]);
 const useTableColumns = () => useContext(TableColumnContext);
@@ -130,7 +162,17 @@ function Table({
   totalSelectedItemText,
   searchable,
   onSearchboxChange,
+  draggable,
+  onDragged,
 }: TableProps) {
+  const [dragItem, setDragItem] = useState<{
+    oldGroupId: string;
+    oldPosition: number;
+    newGroupId?: string;
+    newPosition?: number;
+    id: string;
+  } | null>(null);
+
   const [selectedData, setSelectedData] = useState<string[]>([]);
   const [allRowsLocal, setAllRowsLocal] = useState<string[]>([]);
 
@@ -186,9 +228,11 @@ function Table({
         selectable,
         selectedData,
         handleSelect,
+        draggable,
       } as TableRowGroupProps & {
         selectedData?: string[];
         handleSelect?: (data: string) => void;
+        draggable?: boolean;
       });
     }
     if (child.type === TableRow) {
@@ -206,6 +250,23 @@ function Table({
         handleSelect,
         isLast,
         onLastRowReached,
+        draggable,
+        groupLength: Children?.count(children),
+        index: index,
+        onDropItem: (newPosition: number) => {
+          if (dragItem) {
+            const { oldGroupId, newGroupId, oldPosition, id } = dragItem;
+            onDragged?.({
+              oldGroupId: oldGroupId || "",
+              newGroupId: newGroupId || "",
+              oldPosition,
+              newPosition,
+              id: id,
+            });
+
+            setDragItem(null);
+          }
+        },
       } as TableRowProps);
     }
 
@@ -213,89 +274,61 @@ function Table({
   });
 
   return (
-    <TableColumnContext.Provider value={columns}>
-      <Wrapper $containerStyle={containerStyle}>
-        {(selectedData.length > 0 ||
-          showPagination ||
-          actions ||
-          searchable) && (
-          <HeaderActions>
-            {(actions || showPagination) && (
-              <ActionsWrapper>
-                {showPagination && (
-                  <>
-                    <PaginationButton
-                      disabled={disablePreviousPageButton}
-                      aria-label="previous-button-pagination"
-                      onClick={onPreviousPageRequested}
-                    >
-                      <RiArrowLeftSLine size={16} />
-                    </PaginationButton>
-                    <PaginationButton
-                      disabled={disableNextPageButton}
-                      aria-label="next-button-pagination"
-                      onClick={onNextPageRequested}
-                    >
-                      <RiArrowRightSLine size={16} />
-                    </PaginationButton>
-                  </>
-                )}
-                {actions &&
-                  actions.map((data, index) => (
-                    <Button
-                      key={index}
-                      onClick={data.onClick}
-                      subMenuList={data.subMenuList}
-                      disabled={data.disabled}
-                      size="sm"
-                      tipMenuSize="sm"
-                      buttonStyle={css`
-                        display: flex;
-                        flex-direction: row;
-                        gap: 0.25rem;
-                        align-items: center;
-                        cursor: pointer;
-                        background-color: transparent;
-                        color: #565555;
-                        ${data.subMenuList
-                          ? css`
-                              border-top: 1px solid #e5e7eb;
-                              border-left: 1px solid #e5e7eb;
-                              border-bottom: 1px solid #e5e7eb;
-                            `
-                          : css`
-                              border: 1px solid #e5e7eb;
-                            `}
-                        border-radius: 6px;
-                        position: relative;
-
-                        &:hover {
-                          background-color: #e2e0e0;
-                        }
-
-                        &:disabled {
-                          background-color: rgb(227 227 227);
-                          opacity: 0.5;
-                          cursor: not-allowed;
-                        }
-                        ${data.style}
-                      `}
-                      toggleStyle={
-                        data.subMenuList &&
-                        css`
+    <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
+      <TableColumnContext.Provider value={columns}>
+        <Wrapper $containerStyle={containerStyle}>
+          {(selectedData.length > 0 ||
+            showPagination ||
+            actions ||
+            searchable) && (
+            <HeaderActions>
+              {(actions || showPagination) && (
+                <ActionsWrapper>
+                  {showPagination && (
+                    <>
+                      <PaginationButton
+                        disabled={disablePreviousPageButton}
+                        aria-label="previous-button-pagination"
+                        onClick={onPreviousPageRequested}
+                      >
+                        <RiArrowLeftSLine size={16} />
+                      </PaginationButton>
+                      <PaginationButton
+                        disabled={disableNextPageButton}
+                        aria-label="next-button-pagination"
+                        onClick={onNextPageRequested}
+                      >
+                        <RiArrowRightSLine size={16} />
+                      </PaginationButton>
+                    </>
+                  )}
+                  {actions &&
+                    actions.map((data, index) => (
+                      <Button
+                        key={index}
+                        onClick={data.onClick}
+                        subMenuList={data.subMenuList}
+                        disabled={data.disabled}
+                        size="sm"
+                        tipMenuSize="sm"
+                        buttonStyle={css`
                           display: flex;
                           flex-direction: row;
                           gap: 0.25rem;
                           align-items: center;
                           cursor: pointer;
-                          color: #565555;
-                          border-top: 1px solid #e5e7eb;
-                          border-right: 1px solid #e5e7eb;
-                          border-bottom: 1px solid #e5e7eb;
-                          border-top-right-radius: 6px;
-                          border-bottom-right-radius: 6px;
-                          padding: 0.25rem 0.5rem;
                           background-color: transparent;
+                          color: #565555;
+                          ${data.subMenuList
+                            ? css`
+                                border-top: 1px solid #e5e7eb;
+                                border-left: 1px solid #e5e7eb;
+                                border-bottom: 1px solid #e5e7eb;
+                              `
+                            : css`
+                                border: 1px solid #e5e7eb;
+                              `}
+                          border-radius: 6px;
                           position: relative;
 
                           &:hover {
@@ -308,176 +341,206 @@ function Table({
                             cursor: not-allowed;
                           }
                           ${data.style}
+                        `}
+                        toggleStyle={
+                          data.subMenuList &&
+                          css`
+                            display: flex;
+                            flex-direction: row;
+                            gap: 0.25rem;
+                            align-items: center;
+                            cursor: pointer;
+                            color: #565555;
+                            border-top: 1px solid #e5e7eb;
+                            border-right: 1px solid #e5e7eb;
+                            border-bottom: 1px solid #e5e7eb;
+                            border-top-right-radius: 6px;
+                            border-bottom-right-radius: 6px;
+                            padding: 0.25rem 0.5rem;
+                            background-color: transparent;
+                            position: relative;
+
+                            &:hover {
+                              background-color: #e2e0e0;
+                            }
+
+                            &:disabled {
+                              background-color: rgb(227 227 227);
+                              opacity: 0.5;
+                              cursor: not-allowed;
+                            }
+                            ${data.style}
+                          `
+                        }
+                        dividerStyle={css`
+                          border: 1px solid rgb(236 236 236);
+                          ${data.subMenuList && data.dividerStyle
+                            ? data.dividerStyle
+                            : null}
+                        `}
+                        dropdownStyle={css`
+                          position: absolute;
+                          margin-top: 2px;
+                          z-index: 9999;
+                          width: 170px;
+                          ${data.subMenuList && data.dropdownStyle
+                            ? data.dropdownStyle
+                            : null}
+                        `}
+                      >
+                        <data.icon size={14} />
+                        <span
+                          style={{
+                            fontSize: "14px",
+                          }}
+                        >
+                          {data.title}
+                        </span>
+                      </Button>
+                    ))}
+                </ActionsWrapper>
+              )}
+              {searchable && (
+                <Searchbox
+                  containerStyle={css`
+                    ${actions &&
+                    css`
+                      margin-left: 40px;
+                    `}
+                    ${(showPagination || selectable) &&
+                    css`
+                      margin-right: 40px;
+                    `}
+                    max-height: 33px;
+                  `}
+                  style={css`
+                    background-color: transparent;
+                    &:hover {
+                      border-color: #61a9f9;
+                      background-color: white;
+                    }
+                    &:focus {
+                      background-color: white;
+                    }
+                  `}
+                  name="search"
+                  onChange={(e) => {
+                    if (searchable) onSearchboxChange?.(e);
+                  }}
+                />
+              )}
+              {(selectable || showPagination) && (
+                <PaginationInfo>
+                  {showPagination && (
+                    <>
+                      <span>
+                        {typeof pageNumberText === "number"
+                          ? `Pg. ${pageNumberText}`
+                          : pageNumberText}
+                      </span>
+                      <Divider aria-label="divider" />
+                    </>
+                  )}
+                  {selectable && (
+                    <span>
+                      {totalSelectedItemText
+                        ? totalSelectedItemText(selectedData.length)
+                        : `${selectedData.length} items selected`}
+                    </span>
+                  )}
+                </PaginationInfo>
+              )}
+            </HeaderActions>
+          )}
+
+          <TableContainer $hasSelected={selectedData.length > 0}>
+            <TableHeader>
+              {selectable && (
+                <CheckboxWrapper>
+                  <Checkbox
+                    containerStyle={{
+                      width: 12,
+                      height: 12,
+                    }}
+                    onChange={handleSelectAll}
+                    checked={allRowSelectedLocal}
+                    indeterminate={someSelectedLocal}
+                  />
+                </CheckboxWrapper>
+              )}
+              {columns.map((col, i) => (
+                <TableRowCell
+                  key={i}
+                  width={col.width}
+                  contentStyle={css`
+                    display: flex;
+                    position: relative;
+                    align-items: center;
+                    ${col.width
+                      ? css`
+                          width: ${col.width};
+                          flex-direction: row;
                         `
-                      }
-                      dividerStyle={css`
-                        border: 1px solid rgb(236 236 236);
-                        ${data.subMenuList && data.dividerStyle
-                          ? data.dividerStyle
-                          : null}
-                      `}
-                      dropdownStyle={css`
+                      : css`
+                          flex: 1;
+                        `}
+                  `}
+                >
+                  {col.caption}
+                  {col.sortable && (
+                    <Toolbar
+                      style={css`
+                        width: fit-content;
                         position: absolute;
-                        margin-top: 2px;
-                        z-index: 9999;
-                        width: 170px;
-                        ${data.subMenuList && data.dropdownStyle
-                          ? data.dropdownStyle
-                          : null}
+                        right: 0.5rem;
+                        z-index: 20;
                       `}
                     >
-                      <data.icon size={14} />
-                      <span
-                        style={{
-                          fontSize: "14px",
-                        }}
-                      >
-                        {data.title}
-                      </span>
-                    </Button>
-                  ))}
-              </ActionsWrapper>
-            )}
-            {searchable && (
-              <Searchbox
-                containerStyle={css`
-                  ${actions &&
-                  css`
-                    margin-left: 40px;
-                  `}
-                  ${(showPagination || selectable) &&
-                  css`
-                    margin-right: 40px;
-                  `}
-                    max-height: 33px;
-                `}
-                style={css`
-                  background-color: transparent;
-                  &:hover {
-                    border-color: #61a9f9;
-                    background-color: white;
-                  }
-                  &:focus {
-                    background-color: white;
-                  }
-                `}
-                name="search"
-                onChange={(e) => {
-                  if (searchable) onSearchboxChange?.(e);
-                }}
-              />
-            )}
-            {(selectable || showPagination) && (
-              <PaginationInfo>
-                {showPagination && (
-                  <>
-                    <span>
-                      {typeof pageNumberText === "number"
-                        ? `Pg. ${pageNumberText}`
-                        : pageNumberText}
-                    </span>
-                    <Divider aria-label="divider" />
-                  </>
-                )}
-                {selectable && (
-                  <span>
-                    {totalSelectedItemText
-                      ? totalSelectedItemText(selectedData.length)
-                      : `${selectedData.length} items selected`}
-                  </span>
-                )}
-              </PaginationInfo>
-            )}
-          </HeaderActions>
-        )}
-
-        <TableContainer $hasSelected={selectedData.length > 0}>
-          <TableHeader>
-            {selectable && (
-              <CheckboxWrapper>
-                <Checkbox
-                  containerStyle={{
-                    width: 12,
-                    height: 12,
-                  }}
-                  onChange={handleSelectAll}
-                  checked={allRowSelectedLocal}
-                  indeterminate={someSelectedLocal}
-                />
-              </CheckboxWrapper>
-            )}
-            {columns.map((col, i) => (
-              <TableRowCell
-                key={i}
-                width={col.width}
-                contentStyle={css`
-                  display: flex;
-                  position: relative;
-                  align-items: center;
-                  width: ${col.width};
-                  ${col.width
-                    ? css`
-                        flex-direction: row;
-                      `
-                    : css`
-                        flex: 1;
-                      `}
-                `}
-              >
-                {col.caption}
-                {col.sortable && (
-                  <Toolbar
-                    style={css`
-                      width: fit-content;
-                      position: absolute;
-                      right: 0.5rem;
-                      z-index: 20;
-                    `}
-                  >
-                    <Toolbar.Menu
-                      closedIcon={RiArrowUpDownLine}
-                      openedIcon={RiArrowUpDownLine}
-                      isOpen={isOpen}
-                      setIsOpen={setIsOpen}
-                      dropdownStyle={css`
-                        min-width: 235px;
-                      `}
-                      triggerStyle={css`
-                        color: black;
-                        &:hover {
+                      <Toolbar.Menu
+                        closedIcon={RiArrowUpDownLine}
+                        openedIcon={RiArrowUpDownLine}
+                        isOpen={isOpen}
+                        setIsOpen={setIsOpen}
+                        dropdownStyle={css`
+                          min-width: 235px;
+                        `}
+                        triggerStyle={css`
+                          color: black;
+                          &:hover {
+                            background-color: #d4d4d4;
+                          }
+                        `}
+                        toggleActiveStyle={css`
                           background-color: #d4d4d4;
-                        }
-                      `}
-                      toggleActiveStyle={css`
-                        background-color: #d4d4d4;
-                      `}
-                      variant="none"
-                      subMenuList={subMenuList(`${col.caption}`)}
-                    />
-                  </Toolbar>
-                )}
-              </TableRowCell>
-            ))}
-          </TableHeader>
+                        `}
+                        variant="none"
+                        subMenuList={subMenuList(`${col.caption}`)}
+                      />
+                    </Toolbar>
+                  )}
+                </TableRowCell>
+              ))}
+            </TableHeader>
 
-          {rowChildren.length > 0 ? (
-            <TableRowContainer
-              aria-label="table-scroll-container"
-              $tableRowContainerStyle={tableRowContainerStyle}
-            >
-              {rowChildren}
-            </TableRowContainer>
-          ) : (
-            <EmptyState>{emptySlate}</EmptyState>
-          )}
-          {isLoading && (
-            <TableLoadingOverlay>
-              <LoadingSpinner iconSize={24} />
-            </TableLoadingOverlay>
-          )}
-        </TableContainer>
-      </Wrapper>
-    </TableColumnContext.Provider>
+            {rowChildren.length > 0 ? (
+              <TableRowContainer
+                aria-label="table-scroll-container"
+                $tableRowContainerStyle={tableRowContainerStyle}
+              >
+                {rowChildren}
+              </TableRowContainer>
+            ) : (
+              <EmptyState>{emptySlate}</EmptyState>
+            )}
+            {isLoading && (
+              <TableLoadingOverlay>
+                <LoadingSpinner iconSize={24} />
+              </TableLoadingOverlay>
+            )}
+          </TableContainer>
+        </Wrapper>
+      </TableColumnContext.Provider>
+    </DnDContext.Provider>
   );
 }
 
@@ -496,6 +559,7 @@ const Wrapper = styled.div<{
 const HeaderActions = styled.div`
   width: 100%;
   display: flex;
+  overflow: hidden;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
@@ -626,6 +690,7 @@ const CheckboxWrapper = styled.div`
 `;
 
 function TableRowGroup({
+  id,
   children,
   title,
   subtitle,
@@ -634,13 +699,17 @@ function TableRowGroup({
   selectedData,
   isLast,
   onLastRowReached,
+  draggable,
 }: TableRowGroupProps & {
   selectedData?: string[];
   handleSelect?: (data: string) => void;
   onLastRowReached?: () => void;
   isLast?: boolean;
+  draggable?: boolean;
 }) {
-  const rowChildren = Children.map(children, (child) => {
+  const { dragItem, setDragItem, onDragged } = useContext(DnDContext);
+
+  const rowChildren = Children.map(children, (child, index) => {
     if (!isValidElement<TableRowProps>(child)) return null;
     if (child.type === TableRow) {
       const props = child.props as TableRowProps;
@@ -655,7 +724,30 @@ function TableRowGroup({
         handleSelect,
         isLast,
         onLastRowReached,
-      } as TableRowProps);
+        index: index,
+        groupLength: Children?.count(children),
+        draggable: draggable,
+        groupId: id,
+        onDropItem: (newPosition: number) => {
+          if (dragItem) {
+            const { oldGroupId, oldPosition, id: rowId } = dragItem;
+            onDragged?.({
+              oldGroupId,
+              newGroupId: id,
+              oldPosition,
+              newPosition: newPosition,
+              id: rowId,
+            });
+
+            setDragItem(null);
+          }
+        },
+      } as TableRowProps & {
+        index?: number;
+        onDropItem?: (position: number) => void;
+        groupLength?: number;
+        draggable?: boolean;
+      });
     }
   });
 
@@ -763,12 +855,27 @@ function TableRow({
   isLast,
   onLastRowReached,
   onClick,
+  groupLength,
+  index,
+  groupId = "default",
+  onDropItem,
+  draggable,
   ...props
 }: TableRowProps &
   Partial<{
     onLastRowReached?: () => void;
     isLast?: boolean;
+    index?: number;
+    onDropItem?: (position: number) => void;
+    groupLength?: number;
+    draggable?: boolean;
   }>) {
+  const { setDragItem, dragItem } = useContext(DnDContext);
+  const [isOver, setIsOver] = useState(false);
+  const [dropPosition, setDropPosition] = useState<"top" | "bottom" | null>(
+    null
+  );
+
   const columns = useTableColumns();
   const rowRef = useRef<HTMLDivElement>(null);
 
@@ -797,6 +904,7 @@ function TableRow({
     <TableRowWrapper
       ref={rowRef}
       $isSelected={isSelected}
+      aria-label="table-row"
       onMouseLeave={() => setIsHovered(null)}
       onMouseEnter={() => setIsHovered(rowId)}
       onClick={() => {
@@ -817,6 +925,61 @@ function TableRow({
           cursor: pointer;
         `}
       `}
+      draggable={draggable}
+      onDragStart={() =>
+        setDragItem({
+          oldGroupId: groupId!,
+          oldPosition: index,
+          id: rowId ?? "",
+        })
+      }
+      onDragOver={(e) => {
+        e.preventDefault();
+        const rect = e.currentTarget.getBoundingClientRect();
+        const offsetY = e.clientY - rect.top;
+        const half = rect.height / 2;
+
+        if (offsetY < half) {
+          setDropPosition("top");
+        } else {
+          setDropPosition("bottom");
+        }
+
+        setIsOver(true);
+      }}
+      onDragLeave={() => {
+        setIsOver(false);
+        setDropPosition(null);
+      }}
+      onDrop={(e) => {
+        e.preventDefault();
+        setIsOver(false);
+
+        let position = 0;
+        const isSameGroup = dragItem?.oldGroupId === groupId;
+
+        if (dropPosition === "top") {
+          position = index;
+        } else {
+          position = index + 1;
+        }
+
+        if (isSameGroup && dragItem?.oldPosition < position) {
+          position -= 1;
+        }
+
+        const clampedPosition = Math.min(position, groupLength ?? 0);
+
+        if (dragItem) {
+          setDragItem({
+            ...dragItem,
+            id: rowId,
+            newGroupId: groupId || "default",
+          });
+        }
+
+        onDropItem?.(clampedPosition);
+      }}
     >
       {selectable && (
         <CheckboxWrapperRow
@@ -845,7 +1008,7 @@ function TableRow({
             return (
               <TableRowCell
                 key={i}
-                width={column.width}
+                width={column?.width}
                 contentStyle={
                   isLast
                     ? css`
@@ -875,15 +1038,23 @@ function TableRow({
             });
           })}
 
+      {isOver && dropPosition && <DragLine position={dropPosition} />}
+
       {isHovered === rowId && actions && (
         <Toolbar
           style={css`
             width: fit-content;
             position: absolute;
-            right: 0.5rem;
             top: 50%;
             transform: translateY(-50%);
-            z-index: 50;
+            z-index: 8;
+            ${draggable
+              ? css`
+                  right: 2rem;
+                `
+              : css`
+                  right: 0.5rem;
+                `}
           `}
         >
           <Toolbar.Menu
@@ -908,6 +1079,12 @@ function TableRow({
             subMenuList={actions(`${rowId}`)}
           />
         </Toolbar>
+      )}
+
+      {draggable && (
+        <DraggableRequest aria-label="draggable-request">
+          <RiDraggable size={18} />
+        </DraggableRequest>
       )}
     </TableRowWrapper>
   );
@@ -935,6 +1112,29 @@ const TableRowWrapper = styled.div<{
   }
 
   ${({ $rowCellStyle }) => $rowCellStyle}
+`;
+
+const DragLine = styled.div<{ position: "top" | "bottom" }>`
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #3b82f6;
+  border-radius: 2px;
+  top: ${({ position }) => (position === "top" ? "0" : "auto")};
+  bottom: ${({ position }) => (position === "bottom" ? "0" : "auto")};
+`;
+
+const DraggableRequest = styled.div`
+  cursor: grab;
+  border-radius: 2px;
+  color: #4b5563;
+  width: fit-content;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 8;
+  right: 1rem;
 `;
 
 const CheckboxWrapperRow = styled.div`

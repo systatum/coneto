@@ -1028,3 +1028,639 @@ export const WithRowGroup: Story = {
     );
   },
 };
+
+export const Draggable: Story = {
+  render: () => {
+    interface TableItemProps {
+      id: string;
+      title: string;
+      subtitle?: string;
+      items: { title: string; category: string; author: string }[];
+    }
+
+    interface TableItemSimpleProps {
+      name: string;
+      type: string;
+    }
+
+    type TableCategoryState = "simple" | "group";
+
+    const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
+
+    const columnsDefault = (sortable?: boolean): ColumnTableProps[] => {
+      let sortableValue = sortable;
+      return [
+        {
+          caption: "Name",
+          sortable: sortableValue,
+        },
+        {
+          caption: "Type",
+          sortable: sortableValue,
+        },
+      ];
+    };
+
+    const TABLE_ITEMS_DEFAULT = Array.from({ length: 20 }, (_, i) => {
+      const type = TYPES_DATA[i % TYPES_DATA.length];
+      return {
+        name: `Load Balancer ${i + 1}`,
+        type: type,
+      };
+    });
+
+    const TABLE_ITEMS_GROUPS: TableItemProps[] = [
+      {
+        id: "tech-articles",
+        title: "Tech Articles",
+        subtitle: "Curated articles on web tech trends",
+        items: [
+          {
+            title: "Understanding React 18",
+            category: "Frontend",
+            author: "John Doe",
+          },
+          {
+            title: "TypeScript Deep Dive",
+            category: "Backend",
+            author: "Jane Smith",
+          },
+          {
+            title: "Async Patterns in JS",
+            category: "Frontend",
+            author: "Ali Rahman",
+          },
+        ],
+      },
+      {
+        id: "online-courses",
+        title: "Online Courses",
+        subtitle: "Popular tech courses this month",
+        items: [
+          {
+            title: "React & Redux Bootcamp",
+            category: "Frontend",
+            author: "Codecademy",
+          },
+          {
+            title: "Docker Essentials",
+            category: "DevOps",
+            author: "Pluralsight",
+          },
+          {
+            title: "Fullstack with Node.js",
+            category: "Backend",
+            author: "Udemy",
+          },
+          {
+            title: "GraphQL Mastery",
+            category: "API",
+            author: "Frontend Masters",
+          },
+        ],
+      },
+      {
+        id: "open-source-tools",
+        title: "Open Source Tools",
+        subtitle: "Top GitHub projects by community",
+        items: [
+          { title: "Vite", category: "Frontend", author: "Evan You" },
+          { title: "Zod", category: "Validation", author: "Colin McDonnell" },
+          { title: "tRPC", category: "API", author: "Julian Fahrer" },
+          { title: "Remix", category: "Fullstack", author: "Remix Team" },
+          { title: "Nx", category: "Monorepo", author: "Nrwl" },
+        ],
+      },
+    ];
+
+    const [rowsDefault, setRowsDefault] = useState<TableItemSimpleProps[][]>(
+      Array(2).fill(TABLE_ITEMS_DEFAULT)
+    );
+    const [rowsStates, setRowsStates] = useState<TableItemProps[]>(
+      TABLE_ITEMS_GROUPS ?? []
+    );
+    const [searchStates, setSearchStates] = useState<string[]>(
+      Array(3).fill("")
+    );
+
+    const [selected, setSelected] = useState([]);
+
+    const columnsGroup: ColumnTableProps[] = [
+      {
+        caption: "Title",
+        sortable: true,
+        width: "45%",
+      },
+      {
+        caption: "Category",
+        sortable: true,
+        width: "30%",
+      },
+      {
+        caption: "Author",
+        sortable: true,
+        width: "25%",
+      },
+    ];
+
+    const getRowsState = (rowNumber: number, category?: TableCategoryState) => {
+      let rows;
+      let setRows;
+      if (category === "simple") {
+        rows = rowsDefault;
+        setRows = setRowsDefault;
+        return {
+          rows: rows[rowNumber - 1],
+          setRows: (newRows: TableItemSimpleProps[] | TableItemProps[]) =>
+            setRows((prev) => {
+              const copy = [...prev];
+              copy[rowNumber - 1] = newRows;
+              return copy;
+            }),
+        };
+      } else {
+        rows = rowsStates;
+        setRows = setRowsStates;
+        return { rows, setRows };
+      }
+    };
+
+    const getSearchState = (rowNumber: number) => {
+      if (rowNumber < 1 || rowNumber > searchStates.length) {
+        throw new Error(`No search found for rowNumber: ${rowNumber}`);
+      }
+
+      return {
+        search: searchStates[rowNumber - 1],
+        setSearch: (value: string) =>
+          setSearchStates((prev) => {
+            const copy = [...prev];
+            copy[rowNumber - 1] = value;
+            return copy;
+          }),
+      };
+    };
+
+    type GroupItem = (typeof TABLE_ITEMS_GROUPS)[0]["items"][0];
+    type DefaultItem = (typeof TABLE_ITEMS_DEFAULT)[0];
+
+    const handleSortingRequested = ({
+      mode,
+      column,
+      rowNumber,
+      category,
+    }: {
+      mode: "asc" | "desc" | "original";
+      column: keyof GroupItem | keyof DefaultItem;
+      rowNumber?: number;
+      category?: TableCategoryState;
+    }) => {
+      const { setRows, rows } = getRowsState(rowNumber, category);
+
+      if (category === "group") {
+        if (mode === "original") {
+          setRows([...TABLE_ITEMS_GROUPS]);
+          return;
+        }
+
+        const sortedRows = rows.map((data) => {
+          const sortedItems = [...data.items].sort((a, b) => {
+            const aVal = a[column];
+            const bVal = b[column];
+            return typeof aVal === "string" && typeof bVal === "string"
+              ? mode === "asc"
+                ? aVal.localeCompare(bVal)
+                : bVal.localeCompare(aVal)
+              : 0;
+          });
+
+          return {
+            ...data,
+            items: sortedItems,
+          };
+        });
+        setRows(sortedRows);
+      } else {
+        if (mode === "original") {
+          setRows([...TABLE_ITEMS_DEFAULT]);
+          return;
+        }
+
+        const sortedRows = [...rows].sort((a, b) => {
+          const aVal = a[column];
+          const bVal = b[column];
+
+          if (typeof aVal === "string" && typeof bVal === "string") {
+            return mode === "asc"
+              ? aVal.localeCompare(bVal)
+              : bVal.localeCompare(aVal);
+          }
+
+          return 0;
+        });
+
+        setRows(sortedRows);
+      }
+    };
+
+    const COPY_ACTIONS: SubMenuListTableProps[] = [
+      {
+        caption: "Copy to parent",
+        icon: RiFileCopy2Line,
+        iconColor: "gray",
+        isDangerous: true,
+        onClick: () => {
+          console.log(`${selected} copied to parent`);
+        },
+      },
+      {
+        caption: "Copy to link",
+        icon: RiClipboardLine,
+        iconColor: "gray",
+        onClick: () => {
+          console.log(`${selected} was copied to link`);
+        },
+      },
+    ];
+
+    const TOP_ACTIONS: TableActionsProps[] = [
+      {
+        title: "Delete",
+        disabled: selected.length === 0,
+        icon: RiDeleteBin2Line,
+        onClick: () => {
+          console.log(`Delete ${selected.length} clicked`);
+        },
+      },
+      {
+        title: "Copy",
+        icon: RiClipboardFill,
+        onClick: () => {
+          console.log("Copy clicked");
+        },
+        subMenuList: COPY_ACTIONS,
+      },
+    ];
+
+    const TIP_MENU_ACTION = (
+      columnCaption: string,
+      rowNumber?: number,
+      category?: TableCategoryState
+    ): SubMenuListTableProps[] => {
+      const column =
+        columnCaption.toLowerCase() as keyof (typeof TABLE_ITEMS_GROUPS)[0]["items"][0];
+      return [
+        {
+          caption: "Sort Ascending",
+          icon: RiArrowUpSLine,
+          iconColor: "gray",
+          onClick: () => {
+            handleSortingRequested({
+              mode: "asc",
+              column,
+              rowNumber,
+              category,
+            });
+          },
+        },
+        {
+          caption: "Sort Descending",
+          icon: RiArrowDownSLine,
+          iconColor: "gray",
+          onClick: () => {
+            handleSortingRequested({
+              mode: "desc",
+              column,
+              rowNumber,
+              category,
+            });
+          },
+        },
+        {
+          caption: "Reset Sorting",
+          icon: RiRefreshLine,
+          iconColor: "gray",
+          onClick: () => {
+            handleSortingRequested({
+              mode: "original",
+              column,
+              rowNumber,
+              category,
+            });
+          },
+        },
+      ];
+    };
+
+    const ROW_ACTION = (rowId: string): SubMenuListTableProps[] => {
+      return [
+        {
+          caption: "Edit",
+          icon: RiArrowUpSLine,
+          iconColor: "gray",
+          onClick: () => {
+            console.log(`${rowId} was edited`);
+          },
+        },
+        {
+          caption: "Delete",
+          icon: RiDeleteBin2Fill,
+          iconColor: "gray",
+          onClick: () => {
+            console.log(`${rowId} was deleted`);
+          },
+        },
+      ];
+    };
+
+    function filteredRows(
+      rowNumber: number,
+      category: "group"
+    ): TableItemProps[];
+    function filteredRows(
+      rowNumber: number,
+      category: "simple"
+    ): TableItemSimpleProps[];
+
+    function filteredRows(rowNumber: number, category?: TableCategoryState) {
+      const { rows } = getRowsState(rowNumber, category);
+      const { search } = getSearchState(rowNumber);
+
+      if (category === "group") {
+        return (rows as TableItemProps[])
+          .map((data) => {
+            const filteredItems = data.items.filter(
+              (item) =>
+                item.title.toLowerCase().includes(search.toLowerCase()) ||
+                item.category.toLowerCase().includes(search.toLowerCase()) ||
+                item.author.toLowerCase().includes(search.toLowerCase())
+            );
+
+            return {
+              ...data,
+              items: filteredItems,
+            };
+          })
+          .filter((group) => group.items.length > 0);
+      }
+
+      if (category === "simple") {
+        return (rows as TableItemSimpleProps[]).filter(
+          (item: { name: string; type: string }) =>
+            item.name.toLowerCase().includes(search.toLowerCase()) ||
+            item.type.toLowerCase().includes(search.toLowerCase())
+        );
+      }
+    }
+
+    const reorderItems = (
+      oldPosition: number,
+      newPosition: number,
+      oldGroupId?: string,
+      newGroupId?: string,
+      rowNumber?: number,
+      category?: TableCategoryState
+    ) => {
+      const { rows, setRows } = getRowsState(rowNumber, category);
+
+      if (category === "group") {
+        if (oldGroupId === newGroupId) {
+          const updated = rows.map((group) => {
+            if (group.id !== oldGroupId) return group;
+
+            const newItems = [...group.items];
+            const [movedItem] = newItems.splice(oldPosition, 1);
+            newItems.splice(newPosition, 0, movedItem);
+
+            return { ...group, items: newItems };
+          });
+
+          setRows(updated);
+          return;
+        }
+
+        const itemToMove = rows.find((group) => group.id === oldGroupId)?.items[
+          oldPosition
+        ];
+        if (!itemToMove) return;
+
+        const updated = rows.map((group) => {
+          if (group.id === oldGroupId) {
+            const newItems = group.items.filter(
+              (_, index) => index !== oldPosition
+            );
+            return { ...group, items: newItems };
+          }
+
+          if (group.id === newGroupId) {
+            const newItems = [...group.items];
+            newItems.splice(newPosition, 0, itemToMove);
+            return { ...group, items: newItems };
+          }
+
+          return group;
+        });
+
+        setRows(updated);
+        return;
+      }
+
+      if (category === "simple") {
+        const newRows = [...(rows as TableItemSimpleProps[])];
+        const [movedItem] = newRows.splice(oldPosition, 1);
+        newRows.splice(newPosition, 0, movedItem);
+
+        setRows(newRows);
+        return;
+      }
+    };
+
+    const onDragged = ({
+      id,
+      oldPosition,
+      newPosition,
+      oldGroupId,
+      newGroupId,
+      rowNumber,
+      category,
+    }: {
+      id?: string;
+      oldPosition: number;
+      newPosition: number;
+      oldGroupId: string;
+      newGroupId: string;
+      rowNumber?: number;
+      category?: TableCategoryState;
+    }) => {
+      reorderItems(
+        oldPosition,
+        newPosition,
+        oldGroupId,
+        newGroupId,
+        rowNumber,
+        category
+      );
+    };
+
+    const handleItemsSelected = (data: string[]) => {
+      console.log("Selected rows:", data);
+      setSelected(data);
+    };
+
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "40px",
+        }}
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <h3
+            style={{
+              fontWeight: 600,
+              fontSize: "1.25rem",
+              fontFamily: "monospace",
+            }}
+          >
+            Default
+          </h3>
+
+          <Table
+            tableRowContainerStyle={css`
+              max-height: 400px;
+            `}
+            columns={columnsDefault(false)}
+            subMenuList={(props) => TIP_MENU_ACTION(props, 1, "simple")}
+            onItemsSelected={handleItemsSelected}
+            onSearchboxChange={(e) => {
+              const { setSearch } = getSearchState(1);
+              setSearch(e.target.value);
+            }}
+            onDragged={(props) =>
+              onDragged({
+                ...props,
+                rowNumber: 1,
+                category: "simple",
+              })
+            }
+            searchable
+            draggable
+            selectable
+          >
+            {filteredRows(1, "simple")?.map((rowValue, index) => (
+              <Table.Row
+                key={index}
+                index={index}
+                rowId={`${rowValue.name}-${rowValue.type}`}
+                content={[rowValue.name, rowValue.type]}
+              />
+            ))}
+          </Table>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <h3
+            style={{
+              fontWeight: 600,
+              fontSize: "1.25rem",
+              fontFamily: "monospace",
+            }}
+          >
+            With Action
+          </h3>
+
+          <Table
+            selectable
+            tableRowContainerStyle={css`
+              max-height: 400px;
+            `}
+            columns={columnsDefault(true)}
+            onItemsSelected={handleItemsSelected}
+            subMenuList={(props) => TIP_MENU_ACTION(props, 2, "simple")}
+            actions={TOP_ACTIONS}
+            onSearchboxChange={(e) => {
+              const { setSearch } = getSearchState(2);
+              setSearch(e.target.value);
+            }}
+            onDragged={(props) =>
+              onDragged({
+                ...props,
+                rowNumber: 2,
+                category: "simple",
+              })
+            }
+            searchable
+            draggable
+          >
+            {filteredRows(2, "simple")?.map((rowValue, rowIndex) => (
+              <Table.Row
+                key={rowIndex}
+                rowId={`${rowValue.name}-${rowValue.type}`}
+                content={[rowValue.name, rowValue.type]}
+                actions={ROW_ACTION}
+              />
+            ))}
+          </Table>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <h3
+            style={{
+              fontWeight: 600,
+              fontSize: "1.25rem",
+              fontFamily: "monospace",
+            }}
+          >
+            With Group
+          </h3>
+
+          <Table
+            selectable
+            tableRowContainerStyle={css`
+              max-height: 400px;
+            `}
+            columns={columnsGroup}
+            onItemsSelected={handleItemsSelected}
+            subMenuList={(props) => TIP_MENU_ACTION(props, 1, "group")}
+            actions={TOP_ACTIONS}
+            onSearchboxChange={(e) => {
+              const { setSearch } = getSearchState(3);
+              setSearch(e.target.value);
+            }}
+            onDragged={(props) =>
+              onDragged({
+                ...props,
+                rowNumber: 3,
+                category: "group",
+              })
+            }
+            searchable
+            draggable
+          >
+            {filteredRows(3, "group")?.map((groupValue, groupIndex) => (
+              <Table.Row.Group
+                key={groupIndex}
+                id={groupValue.id}
+                title={groupValue.title}
+                subtitle={groupValue.subtitle}
+              >
+                {groupValue.items.map((rowValue, rowIndex) => (
+                  <Table.Row
+                    key={rowIndex}
+                    rowId={`${groupValue.title}-${rowValue.title}`}
+                    content={[
+                      rowValue.title,
+                      rowValue.category,
+                      rowValue.author,
+                    ]}
+                    actions={ROW_ACTION}
+                  />
+                ))}
+              </Table.Row.Group>
+            ))}
+          </Table>
+        </div>
+      </div>
+    );
+  },
+};
