@@ -12,6 +12,7 @@ type PaginationProps = {
   showNumbers?: boolean;
   style?: CSSProp;
   buttonStyle?: CSSProp;
+  comboboxStyle?: CSSProp;
 };
 
 function Pagination({
@@ -21,6 +22,7 @@ function Pagination({
   showNumbers = true,
   style,
   buttonStyle,
+  comboboxStyle,
 }: PaginationProps) {
   const [currentPageLocal, setCurrentPageLocal] = useState<OptionsProps>({
     text: currentPage.toString(),
@@ -61,13 +63,13 @@ function Pagination({
         style={buttonStyle}
         onClick={handlePrevious}
         disabled={currentPage === 1}
-        aria-label="previous-page"
       >
         <RiArrowLeftSLine size={20} />
       </PaginationButton>
 
       {showNumbers && (
         <PaginationItem
+          comboboxStyle={comboboxStyle}
           buttonStyle={buttonStyle}
           currentPage={currentPage}
           currentPageLocal={currentPageLocal}
@@ -82,7 +84,6 @@ function Pagination({
         style={buttonStyle}
         onClick={handleNext}
         disabled={currentPage === totalPages}
-        aria-label="next-page"
       >
         <RiArrowRightSLine size={20} />
       </PaginationButton>
@@ -106,6 +107,7 @@ const PaginationItem = ({
   setCurrentPageLocal,
   comboboxPagesNumber,
   buttonStyle,
+  comboboxStyle,
 }: {
   totalPages: number;
   currentPage: number;
@@ -114,6 +116,7 @@ const PaginationItem = ({
   setCurrentPageLocal: (page: OptionsProps) => void;
   comboboxPagesNumber?: number;
   buttonStyle?: CSSProp;
+  comboboxStyle?: CSSProp;
 }) => {
   const highlightOnMatch = useMemo(() => {
     return currentPage <= comboboxPagesNumber;
@@ -153,6 +156,7 @@ const PaginationItem = ({
               onPageChange(Number(val.value));
               setCurrentPageLocal(val);
             }}
+            selectboxStyle={comboboxStyle}
             placeholder="1"
             containerStyle={css`
               width: 80px;
@@ -227,6 +231,7 @@ const PaginationButton = ({
   return (
     <Button
       {...props}
+      aria-label="pagination-button"
       onClick={onClick}
       disabled={disabled}
       $style={style}
@@ -264,7 +269,7 @@ const Button = styled.button<{
   &:disabled {
     cursor: default;
     opacity: 0.3;
-    background-color: transparent;
+    background-color: white;
     &:hover {
       border-color: ${({ $isActive }) => ($isActive ? "#61A9F9" : "#f3f4f6")};
     }
