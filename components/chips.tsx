@@ -1,8 +1,4 @@
-import {
-  RiAddBoxFill,
-  RiAddLine,
-  RiCheckboxMultipleBlankLine,
-} from "@remixicon/react";
+import { RiAddLine, RiCheckboxMultipleBlankLine } from "@remixicon/react";
 import { Badge, BadgeActionProps, BadgeProps } from "./badge";
 import { Checkbox } from "./checkbox";
 import {
@@ -29,8 +25,7 @@ import {
   useRole,
 } from "@floating-ui/react";
 import { Textbox } from "./textbox";
-import { Colorbox, ColorPickProps } from "./colorbox";
-import { Button } from "./button";
+import { ColorPickProps } from "./colorbox";
 import styled, { css, CSSProp } from "styled-components";
 
 type InputValueProps = {
