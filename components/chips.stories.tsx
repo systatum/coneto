@@ -104,7 +104,7 @@ export const Default: Story = {
       console.log("clicked new tag");
     };
 
-    const MissingContent = ({
+    const MissingOptionForm = ({
       inputRef,
       switchToIdle,
     }: MissingOptionFormProps) => (
@@ -237,7 +237,7 @@ export const Default: Story = {
         onOptionClicked={handleOptionClicked}
         selectedOptions={selectedOptions}
         options={BADGE_OPTIONS as BadgeProps[]}
-        missingOptionForm={MissingContent}
+        missingOptionForm={MissingOptionForm}
         creatable
       />
     );
@@ -462,7 +462,7 @@ export const Deletable: Story = {
       console.log("clicked new tag");
     };
 
-    const MissingContent = ({
+    const MissingOptionForm = ({
       inputRef,
       switchToIdle,
     }: MissingOptionFormProps) => (
@@ -595,7 +595,7 @@ export const Deletable: Story = {
         onOptionClicked={handleOptionClicked}
         selectedOptions={selectedOptions}
         options={BADGE_OPTIONS as BadgeProps[]}
-        missingOptionForm={MissingContent}
+        missingOptionForm={MissingOptionForm}
         creatable
       />
     );
