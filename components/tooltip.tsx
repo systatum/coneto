@@ -1,45 +1,72 @@
+import {
+  arrow,
+  autoUpdate,
+  flip,
+  offset,
+  Placement,
+  shift,
+  useFloating,
+} from "@floating-ui/react";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import styled, { css, CSSProp } from "styled-components";
 
 export type TooltipProps = {
+  dialog: ReactNode;
   children: ReactNode;
-  text: ReactNode;
-  openOn?: "hover" | "click";
+  showDialogOn?: "hover" | "click";
+  hideDialogOn?: "hover" | "click";
   drawerStyle?: CSSProp;
   containerStyle?: CSSProp;
   arrowStyle?: CSSProp;
-  underline?: "underline" | "underline-dot" | "transparent" | "blue" | "gray";
+  underline?:
+    | "underline"
+    | "underline-dot"
+    | "transparent"
+    | "blue"
+    | "gray"
+    | null;
 };
 
 export function Tooltip({
+  dialog,
   children,
-  text,
-  openOn = "hover",
+  showDialogOn = "hover",
+  hideDialogOn = "hover",
   drawerStyle,
   containerStyle,
   arrowStyle,
-  underline = "underline",
+  underline = null,
 }: TooltipProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const tooltipRef = useRef<HTMLDivElement>(null);
+  const arrowRef = useRef<HTMLDivElement>(null);
 
-  const triggerProps =
-    openOn === "hover"
-      ? {
-          onMouseEnter: () => setIsOpen(true),
-          onMouseLeave: () => setIsOpen(false),
-        }
-      : {
-          onClick: () => setIsOpen((prev) => !prev),
-        };
+  const { floatingStyles, refs, placement } = useFloating({
+    placement: "bottom-start",
+    open: isOpen,
+    onOpenChange: setIsOpen,
+    middleware: [
+      offset(({ placement }) => {
+        return placement === "top-start" ? 8 : 0;
+      }),
+      flip(),
+      shift({ padding: 8 }),
+      arrow({ element: arrowRef }),
+    ],
+    whileElementsMounted: autoUpdate,
+  });
 
   useEffect(() => {
-    if (openOn !== "click" || !isOpen) return;
+    if (hideDialogOn !== "click" || !isOpen) return;
 
     function handleClickOutside(event: MouseEvent) {
+      const floatingEl = refs.floating.current;
+      const referenceEl = refs.reference.current;
+
       if (
-        tooltipRef.current &&
-        !tooltipRef.current.contains(event.target as Node)
+        floatingEl instanceof HTMLElement &&
+        !floatingEl.contains(event.target as Node) &&
+        referenceEl instanceof HTMLElement &&
+        !referenceEl.contains(event.target as Node)
       ) {
         setIsOpen(false);
       }
@@ -49,22 +76,47 @@ export function Tooltip({
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
-  }, [isOpen, openOn]);
+  }, [isOpen, hideDialogOn, refs.floating, refs.reference]);
 
   return (
-    <Wrapper ref={tooltipRef}>
-      <TextTrigger
-        {...triggerProps}
+    <Wrapper
+      onMouseEnter={() => {
+        if (showDialogOn === "hover") setIsOpen(true);
+      }}
+      onMouseLeave={() => {
+        if (hideDialogOn === "hover") setIsOpen(false);
+      }}
+      ref={refs.setReference}
+    >
+      <ContentTrigger
+        onClick={(e: React.MouseEvent) => {
+          e.stopPropagation();
+          if (showDialogOn === "click") {
+            setIsOpen((prev) => !prev);
+          }
+        }}
         $underline={underline}
-        $openOn={openOn}
+        $showDialogOn={showDialogOn}
         $containerStyle={containerStyle}
       >
-        {text}
-      </TextTrigger>
+        {children}
+      </ContentTrigger>
       {isOpen && (
         <>
-          <TooltipArrow aria-label="tooltip-arrow" $arrowStyle={arrowStyle} />
-          <TooltipDrawer $drawerStyle={drawerStyle}>{children}</TooltipDrawer>
+          <Spacer $placement={placement} />
+          <TooltipArrow
+            ref={arrowRef}
+            $placement={placement}
+            aria-label="tooltip-arrow"
+            $arrowStyle={arrowStyle}
+          />
+          <TooltipDrawer
+            style={floatingStyles}
+            $drawerStyle={drawerStyle}
+            ref={refs.setFloating}
+          >
+            {dialog}
+          </TooltipDrawer>
         </>
       )}
     </Wrapper>
@@ -75,15 +127,33 @@ const Wrapper = styled.div`
   position: relative;
   display: inline-flex;
   align-items: center;
+  height: fit-content;
+  width: fit-content;
 `;
 
-const TextTrigger = styled.div<{
+const Spacer = styled.div<{ $placement?: Placement }>`
+  position: absolute;
+  background-color: transparent;
+  width: 100%;
+  height: 10px;
+
+  ${({ $placement }) =>
+    $placement.startsWith("top")
+      ? css`
+          bottom: 100%;
+        `
+      : css`
+          top: 100%;
+        `}
+`;
+
+const ContentTrigger = styled.div<{
   $underline: TooltipProps["underline"];
-  $openOn: TooltipProps["openOn"];
+  $showDialogOn: TooltipProps["showDialogOn"];
   $containerStyle?: CSSProp;
 }>`
-  ${({ $openOn }) =>
-    $openOn === "hover"
+  ${({ $showDialogOn }) =>
+    $showDialogOn === "hover"
       ? css`
           cursor: default;
         `
@@ -127,16 +197,41 @@ const TextTrigger = styled.div<{
 
 const TooltipArrow = styled.div<{
   $arrowStyle?: CSSProp;
+  $placement?: Placement;
 }>`
   position: absolute;
-  top: 100%;
-  left: 25%;
-  margin-top: 4px;
   width: 8px;
   height: 8px;
   background-color: #4b5563;
   transform: translateX(-25%) rotate(45deg);
   z-index: 10;
+  ${({ $placement }) =>
+    $placement === "bottom-start"
+      ? css`
+          top: 100%;
+          left: 25%;
+          margin-top: 4px;
+        `
+      : $placement === "bottom-end"
+        ? css`
+            top: 100%;
+            right: 25%;
+            margin-top: 4px;
+          `
+        : $placement === "top-start"
+          ? css`
+              bottom: 100%;
+              left: 25%;
+              margin-bottom: 4px;
+            `
+          : $placement === "top-end"
+            ? css`
+                bottom: 100%;
+                right: 25%;
+                margin-bottom: 4px;
+              `
+            : null}
+
   ${({ $arrowStyle }) => $arrowStyle}
 `;
 
