@@ -284,8 +284,6 @@ function ChipsDrawer({
   const filterEmptyOption =
     filteredSearch.length === 0 && inputValue.length > 1;
 
-  console.log(filterEmptyOption);
-
   useEffect(() => {
     if (isTyping && filterEmptyOption && creatable) {
       setHovered(0);
@@ -300,6 +298,7 @@ function ChipsDrawer({
     filterEmptyOption,
     isTyping,
   ]);
+
   const handleKeyDown = (e: KeyboardEvent<HTMLUListElement>) => {
     if (mode !== "idle") return;
 

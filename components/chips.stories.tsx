@@ -84,6 +84,8 @@ export const Default: Story = {
           val = "#" + val;
         }
         setInputValue((prev) => ({ ...prev, [name]: val }));
+      } else if (name === "chips") {
+        setInputValue((prev) => ({ ...prev, ["search"]: value }));
       } else {
         setInputValue((prev) => ({ ...prev, [name]: value }));
       }
@@ -221,7 +223,7 @@ export const Default: Story = {
 
     return (
       <Chips
-        inputValue={inputValue}
+        inputValue={inputValue.search}
         setInputValue={onChangeValue}
         chipStyle={css`
           min-width: 300px;
@@ -319,31 +321,8 @@ export const DarkBackground: Story = {
       },
     ];
 
-    const [inputValue, setInputValue] = useState({
-      search: "",
-      name_tag: "",
-      background_color: "",
-      text_color: "",
-      circle_color: "",
-    });
+    const [inputValue, setInputValue] = useState("");
     const [selectedOptions, setSelectedOptions] = useState<number[]>([]);
-
-    const onChangeValue = (
-      e: ChangeEvent<HTMLInputElement>,
-      type?: ColorPickProps
-    ) => {
-      const { name, value } = e.target;
-
-      if (type === "color-text") {
-        let val = value;
-        if (!val.startsWith("#")) {
-          val = "#" + val;
-        }
-        setInputValue((prev) => ({ ...prev, [name]: val }));
-      } else {
-        setInputValue((prev) => ({ ...prev, [name]: value }));
-      }
-    };
 
     const handleOptionClicked = (val: BadgeProps) => {
       const valId = val?.id;
@@ -359,7 +338,7 @@ export const DarkBackground: Story = {
     return (
       <Chips
         inputValue={inputValue}
-        setInputValue={onChangeValue}
+        setInputValue={(e) => setInputValue(e.target.value)}
         chipStyle={css`
           width: 100%;
           gap: 8px;
@@ -442,6 +421,8 @@ export const Deletable: Story = {
           val = "#" + val;
         }
         setInputValue((prev) => ({ ...prev, [name]: val }));
+      } else if (name === "chips") {
+        setInputValue((prev) => ({ ...prev, ["search"]: value }));
       } else {
         setInputValue((prev) => ({ ...prev, [name]: value }));
       }
@@ -579,7 +560,7 @@ export const Deletable: Story = {
 
     return (
       <Chips
-        inputValue={inputValue}
+        inputValue={inputValue.search}
         setInputValue={onChangeValue}
         chipStyle={css`
           width: 100%;
