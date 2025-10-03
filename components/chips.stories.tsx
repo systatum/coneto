@@ -1,10 +1,12 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { Chips } from "./chips";
+import { Chips, MissingOptionFormProps } from "./chips";
 import { ChangeEvent, useState } from "react";
-import { BadgeActionProps, BadgeProps } from "./badge";
-import { ColorPickProps } from "./colorbox";
-import { css } from "styled-components";
-import { RiCloseLine } from "@remixicon/react";
+import { Badge, BadgeProps } from "./badge";
+import { Colorbox, ColorPickProps } from "./colorbox";
+import styled, { css } from "styled-components";
+import { RiAddBoxFill, RiCloseLine } from "@remixicon/react";
+import { Textbox } from "./textbox";
+import { Button } from "./button";
 
 const meta: Meta<typeof Chips> = {
   title: "Input Elements/Chips",
@@ -102,6 +104,121 @@ export const Default: Story = {
       console.log("clicked new tag");
     };
 
+    const MissingContent = ({
+      inputRef,
+      switchToIdle,
+    }: MissingOptionFormProps) => (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          minWidth: "240px",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            padding: "8px 12px",
+            gap: "8px",
+            fontSize: "0.75rem",
+            fontWeight: 500,
+            alignItems: "center",
+          }}
+        >
+          <RiAddBoxFill size={18} />
+          <span
+            style={{
+              paddingTop: "2px",
+            }}
+          >
+            Create a new tag
+          </span>
+        </div>
+        <Divider aria-label="divider" />
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            padding: "12px",
+            gap: "12px",
+          }}
+        >
+          <Textbox
+            ref={inputRef}
+            name="name_tag"
+            placeholder={"name tag ref"}
+            value={inputValue.name_tag}
+            autoComplete="off"
+            onChange={onChangeValue}
+          />
+          <Colorbox
+            placeholder="Select background color..."
+            name={"background_color"}
+            value={inputValue.background_color}
+            onChange={onChangeValue}
+          />
+          <Colorbox
+            placeholder="Select text color..."
+            name={"text_color"}
+            value={inputValue.text_color}
+            onChange={onChangeValue}
+          />
+          <Colorbox
+            placeholder="Select circle color..."
+            name={"circle_color"}
+            value={inputValue.circle_color}
+            onChange={onChangeValue}
+          />
+          <Badge
+            textColor={inputValue.text_color}
+            backgroundColor={inputValue.background_color}
+            circleColor={inputValue.circle_color}
+            caption={inputValue.name_tag}
+            withCircle
+          />
+
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              width: "100%",
+            }}
+          >
+            <Button
+              onClick={async () => {
+                const inputSearchEvent = {
+                  target: {
+                    name: "search",
+                    value: inputValue.name_tag,
+                  },
+                } as ChangeEvent<HTMLInputElement>;
+                await onChangeValue(inputSearchEvent);
+                await switchToIdle();
+              }}
+              size="sm"
+              buttonStyle={{
+                fontSize: "12px",
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleNewTagClicked}
+              size="sm"
+              variant="primary"
+              buttonStyle={{
+                fontSize: "12px",
+              }}
+            >
+              Add
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+
     return (
       <Chips
         inputValue={inputValue}
@@ -120,7 +237,7 @@ export const Default: Story = {
         onOptionClicked={handleOptionClicked}
         selectedOptions={selectedOptions}
         options={BADGE_OPTIONS as BadgeProps[]}
-        onNewTagCreated={handleNewTagClicked}
+        missingOptionForm={MissingContent}
         creatable
       />
     );
@@ -239,10 +356,6 @@ export const DarkBackground: Story = {
       }
     };
 
-    const handleNewTagClicked = () => {
-      console.log("clicked new tag");
-    };
-
     return (
       <Chips
         inputValue={inputValue}
@@ -259,8 +372,6 @@ export const DarkBackground: Story = {
         onOptionClicked={handleOptionClicked}
         selectedOptions={selectedOptions}
         options={BADGE_OPTIONS as BadgeProps[]}
-        onNewTagCreated={handleNewTagClicked}
-        creatable
       />
     );
   },
@@ -351,6 +462,121 @@ export const Deletable: Story = {
       console.log("clicked new tag");
     };
 
+    const MissingContent = ({
+      inputRef,
+      switchToIdle,
+    }: MissingOptionFormProps) => (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          minWidth: "240px",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            padding: "8px 12px",
+            gap: "8px",
+            fontSize: "0.75rem",
+            fontWeight: 500,
+            alignItems: "center",
+          }}
+        >
+          <RiAddBoxFill size={18} />
+          <span
+            style={{
+              paddingTop: "2px",
+            }}
+          >
+            Create a new tag
+          </span>
+        </div>
+        <Divider aria-label="divider" />
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            padding: "12px",
+            gap: "12px",
+          }}
+        >
+          <Textbox
+            ref={inputRef}
+            name="name_tag"
+            placeholder={"name tag ref"}
+            value={inputValue.name_tag}
+            autoComplete="off"
+            onChange={onChangeValue}
+          />
+          <Colorbox
+            placeholder="Select background color..."
+            name={"background_color"}
+            value={inputValue.background_color}
+            onChange={onChangeValue}
+          />
+          <Colorbox
+            placeholder="Select text color..."
+            name={"text_color"}
+            value={inputValue.text_color}
+            onChange={onChangeValue}
+          />
+          <Colorbox
+            placeholder="Select circle color..."
+            name={"circle_color"}
+            value={inputValue.circle_color}
+            onChange={onChangeValue}
+          />
+          <Badge
+            textColor={inputValue.text_color}
+            backgroundColor={inputValue.background_color}
+            circleColor={inputValue.circle_color}
+            caption={inputValue.name_tag}
+            withCircle
+          />
+
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              width: "100%",
+            }}
+          >
+            <Button
+              onClick={async () => {
+                const inputSearchEvent = {
+                  target: {
+                    name: "search",
+                    value: inputValue.name_tag,
+                  },
+                } as ChangeEvent<HTMLInputElement>;
+                await onChangeValue(inputSearchEvent);
+                await switchToIdle();
+              }}
+              size="sm"
+              buttonStyle={{
+                fontSize: "12px",
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleNewTagClicked}
+              size="sm"
+              variant="primary"
+              buttonStyle={{
+                fontSize: "12px",
+              }}
+            >
+              Add
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+
     return (
       <Chips
         inputValue={inputValue}
@@ -369,9 +595,15 @@ export const Deletable: Story = {
         onOptionClicked={handleOptionClicked}
         selectedOptions={selectedOptions}
         options={BADGE_OPTIONS as BadgeProps[]}
-        onNewTagCreated={handleNewTagClicked}
+        missingOptionForm={MissingContent}
         creatable
       />
     );
   },
 };
+
+const Divider = styled.div`
+  width: 100%;
+  height: 1px;
+  border-bottom: 1px solid #d1d5db;
+`;
