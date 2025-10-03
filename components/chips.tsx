@@ -28,14 +28,6 @@ import { Textbox } from "./textbox";
 import { ColorPickProps } from "./colorbox";
 import styled, { css, CSSProp } from "styled-components";
 
-type InputValueProps = {
-  search: string;
-  name_tag: string;
-  background_color: string;
-  text_color: string;
-  circle_color: string;
-};
-
 export type ChipActionsProps = BadgeActionProps;
 
 export type ChipsProps = BaseChipsProps & {
@@ -46,7 +38,7 @@ export type ChipsProps = BaseChipsProps & {
 };
 interface BaseChipsProps {
   options?: BadgeProps[];
-  inputValue?: InputValueProps;
+  inputValue?: string;
   setInputValue?: (
     data: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     type?: ColorPickProps
@@ -116,9 +108,7 @@ function Chips(props: ChipsProps) {
 
   const ALL_OPTIONS = hasInteracted
     ? getAllOptions().filter((opt) =>
-        opt.caption
-          .toLowerCase()
-          .includes(props.inputValue.search.toLowerCase())
+        opt.caption.toLowerCase().includes(props.inputValue.toLowerCase())
       )
     : getAllOptions();
 
@@ -288,11 +278,13 @@ function ChipsDrawer({
   }, [isTyping]);
 
   const filteredSearch = options.filter(
-    (opt) => opt.caption.toLowerCase() === inputValue.search.toLowerCase()
+    (opt) => opt.caption.toLowerCase() === inputValue.toLowerCase()
   );
 
   const filterEmptyOption =
-    filteredSearch.length === 0 && inputValue.search.length > 1;
+    filteredSearch.length === 0 && inputValue.length > 1;
+
+  console.log(filterEmptyOption);
 
   useEffect(() => {
     if (isTyping && filterEmptyOption && creatable) {
@@ -368,11 +360,11 @@ function ChipsDrawer({
         <>
           <Textbox
             ref={inputRef}
-            name="search"
+            name="chips"
             type="text"
             aria-label="chip-input-box"
             placeholder={filterPlaceholder}
-            value={inputValue.search}
+            value={inputValue}
             style={{
               border: "none",
               minHeight: "34px",
@@ -383,13 +375,6 @@ function ChipsDrawer({
               setHasInteracted?.(true);
               setInputValue(e);
               setIsTyping(true);
-              const inputNameTagEvent = {
-                target: {
-                  name: "name_tag",
-                  value: e.target.value,
-                },
-              } as ChangeEvent<HTMLInputElement>;
-              setInputValue(inputNameTagEvent);
             }}
           />
           <Divider aria-label="divider" />
@@ -402,7 +387,7 @@ function ChipsDrawer({
               padding: "4px",
             }}
           >
-            {filterEmptyOption && creatable ? (
+            {filterEmptyOption && creatable && (
               <EmptyOption
                 onClick={async () => {
                   await setMode("create");
@@ -421,30 +406,9 @@ function ChipsDrawer({
                   }}
                 >
                   {missingOptionLabel}&nbsp;
-                  <span style={{ color: "#4b5563" }}>
-                    "{inputValue.search}"
-                  </span>
+                  <span style={{ color: "#4b5563" }}>"{inputValue}"</span>
                 </span>
               </EmptyOption>
-            ) : (
-              filterEmptyOption && (
-                <EmptyOption>
-                  {missingEmptyContent ? (
-                    missingEmptyContent
-                  ) : (
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        gap: "10px",
-                        alignItems: "center",
-                      }}
-                    >
-                      <RiCheckboxMultipleBlankLine size={16} /> Empty Content
-                    </div>
-                  )}
-                </EmptyOption>
-              )
             )}
 
             {options && options.length > 0 ? (
@@ -477,8 +441,11 @@ function ChipsDrawer({
                   );
                 })}
               </>
+            ) : filterEmptyOption && missingEmptyContent && !creatable ? (
+              <Fragment>{missingEmptyContent}</Fragment>
             ) : (
-              !filterEmptyOption && (
+              filterEmptyOption &&
+              !creatable && (
                 <span
                   style={{
                     fontSize: "0.75rem",
