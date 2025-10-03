@@ -11,6 +11,7 @@ type PaginationProps = {
   onPageChange: (page: number) => void;
   showNumbers?: boolean;
   style?: CSSProp;
+  buttonStyle?: CSSProp;
 };
 
 function Pagination({
@@ -19,6 +20,7 @@ function Pagination({
   onPageChange,
   showNumbers = true,
   style,
+  buttonStyle,
 }: PaginationProps) {
   const [currentPageLocal, setCurrentPageLocal] = useState<OptionsProps>({
     text: currentPage.toString(),
@@ -56,6 +58,7 @@ function Pagination({
   return (
     <PaginationWrapper $style={style}>
       <PaginationButton
+        style={buttonStyle}
         onClick={handlePrevious}
         disabled={currentPage === 1}
         aria-label="previous-page"
@@ -65,6 +68,7 @@ function Pagination({
 
       {showNumbers && (
         <PaginationItem
+          buttonStyle={buttonStyle}
           currentPage={currentPage}
           currentPageLocal={currentPageLocal}
           onPageChange={onPageChange}
@@ -75,6 +79,7 @@ function Pagination({
       )}
 
       <PaginationButton
+        style={buttonStyle}
         onClick={handleNext}
         disabled={currentPage === totalPages}
         aria-label="next-page"
@@ -100,6 +105,7 @@ const PaginationItem = ({
   onPageChange,
   setCurrentPageLocal,
   comboboxPagesNumber,
+  buttonStyle,
 }: {
   totalPages: number;
   currentPage: number;
@@ -107,6 +113,7 @@ const PaginationItem = ({
   onPageChange: (page: number) => void;
   setCurrentPageLocal: (page: OptionsProps) => void;
   comboboxPagesNumber?: number;
+  buttonStyle?: CSSProp;
 }) => {
   const highlightOnMatch = useMemo(() => {
     return currentPage <= comboboxPagesNumber;
@@ -157,6 +164,7 @@ const PaginationItem = ({
             const isActive = currentPage === page;
             return (
               <PaginationButton
+                style={buttonStyle}
                 key={page}
                 onClick={() => {
                   onPageChange(page);
@@ -177,6 +185,7 @@ const PaginationItem = ({
             const isActive = currentPage === page;
             return (
               <PaginationButton
+                style={buttonStyle}
                 key={page}
                 onClick={() => {
                   onPageChange(page);
@@ -244,6 +253,7 @@ const Button = styled.button<{
   font-weight: 500;
   cursor: pointer;
   outline: none;
+  background-color: white;
   border: 1px solid ${({ $isActive }) => ($isActive ? "#61A9F9" : "#f3f4f6")};
   color: ${({ $isActive }) => ($isActive ? "#000" : "#374151")};
 
