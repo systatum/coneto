@@ -25,6 +25,110 @@ type Story = StoryObj<typeof Tooltip>;
 
 export const Link: Story = {
   render: () => {
+    const Hover: TooltipProps = {
+      children: <>Hover Tooltip</>,
+      showDialogOn: "hover",
+      dialog: "This tooltip appears on hover",
+      containerStyle: css`
+        font-size: 0.875rem;
+        text-decoration: underline;
+      `,
+    } as const;
+
+    const Click: TooltipProps = {
+      children: "Click Tooltip",
+      showDialogOn: "click",
+      dialog: "This tooltip appears on click",
+      underline: "blue",
+      containerStyle: css`
+        font-size: 0.875rem;
+        color: #2563eb;
+        cursor: pointer;
+      `,
+      drawerStyle: css`
+        background-color: #2563eb;
+        color: white;
+      `,
+      arrowStyle: css`
+        background-color: #2563eb;
+      `,
+    } as const;
+
+    const StyledTooltip: TooltipProps = {
+      children: "Styled Tooltip",
+      showDialogOn: "hover",
+      dialog: "Tooltip with custom styling",
+      containerStyle: css`
+        font-size: 0.875rem;
+        color: #16a34a;
+        text-decoration: underline wavy;
+      `,
+      drawerStyle: css`
+        background-color: #15803d;
+        color: white;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border-radius: 4px;
+        padding: 4px 12px;
+        font-size: 0.875rem;
+      `,
+      arrowStyle: css`
+        background-color: #15803d;
+      `,
+    } as const;
+
+    const DottedUnderlineTooltip: TooltipProps = {
+      children: "Dotted Underline Tooltip",
+      showDialogOn: "hover",
+      dialog: "Tooltip with dotted underline trigger",
+      underline: "underline-dot",
+      containerStyle: css`
+        font-size: 0.875rem;
+      `,
+      drawerStyle: css`
+        background-color: #1f2937;
+        color: white;
+      `,
+      arrowStyle: css`
+        background-color: #1f2937;
+      `,
+    } as const;
+
+    const NoUnderlineTooltip: TooltipProps = {
+      children: "No Underline Tooltip",
+      showDialogOn: "hover",
+      dialog: "Trigger text without underline",
+      underline: "transparent",
+      containerStyle: css`
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: #ef4444;
+      `,
+      drawerStyle: css`
+        background-color: #dc2626;
+        color: white;
+      `,
+      arrowStyle: css`
+        background-color: #dc2626;
+      `,
+    } as const;
+
+    const BlueUnderlineTooltip: TooltipProps = {
+      children: "Blue Underline Tooltip",
+      showDialogOn: "click",
+      underline: "blue",
+      containerStyle: css`
+        font-size: 0.875rem;
+      `,
+      dialog: "Clicked tooltip with blue underline",
+      drawerStyle: css`
+        background-color: #1d4ed8;
+        color: white;
+      `,
+      arrowStyle: css`
+        background-color: #1d4ed8;
+      `,
+    } as const;
+
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: "30px" }}>
         <Tooltip {...Hover} />
@@ -37,110 +141,6 @@ export const Link: Story = {
     );
   },
 };
-
-const Hover: TooltipProps = {
-  children: <>Hover Tooltip</>,
-  showDialogOn: "hover",
-  dialog: "This tooltip appears on hover",
-  containerStyle: css`
-    font-size: 0.875rem;
-    text-decoration: underline;
-  `,
-} as const;
-
-const Click: TooltipProps = {
-  children: "Click Tooltip",
-  showDialogOn: "click",
-  dialog: "This tooltip appears on click",
-  underline: "blue",
-  containerStyle: css`
-    font-size: 0.875rem;
-    color: #2563eb;
-    cursor: pointer;
-  `,
-  drawerStyle: css`
-    background-color: #2563eb;
-    color: white;
-  `,
-  arrowStyle: css`
-    background-color: #2563eb;
-  `,
-} as const;
-
-const StyledTooltip: TooltipProps = {
-  children: "Styled Tooltip",
-  showDialogOn: "hover",
-  dialog: "Tooltip with custom styling",
-  containerStyle: css`
-    font-size: 0.875rem;
-    color: #16a34a;
-    text-decoration: underline wavy;
-  `,
-  drawerStyle: css`
-    background-color: #15803d;
-    color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
-    padding: 4px 12px;
-    font-size: 0.875rem;
-  `,
-  arrowStyle: css`
-    background-color: #15803d;
-  `,
-} as const;
-
-const DottedUnderlineTooltip: TooltipProps = {
-  children: "Dotted Underline Tooltip",
-  showDialogOn: "hover",
-  dialog: "Tooltip with dotted underline trigger",
-  underline: "underline-dot",
-  containerStyle: css`
-    font-size: 0.875rem;
-  `,
-  drawerStyle: css`
-    background-color: #1f2937;
-    color: white;
-  `,
-  arrowStyle: css`
-    background-color: #1f2937;
-  `,
-} as const;
-
-const NoUnderlineTooltip: TooltipProps = {
-  children: "No Underline Tooltip",
-  showDialogOn: "hover",
-  dialog: "Trigger text without underline",
-  underline: "transparent",
-  containerStyle: css`
-    font-weight: 600;
-    font-size: 0.875rem;
-    color: #ef4444;
-  `,
-  drawerStyle: css`
-    background-color: #dc2626;
-    color: white;
-  `,
-  arrowStyle: css`
-    background-color: #dc2626;
-  `,
-} as const;
-
-const BlueUnderlineTooltip: TooltipProps = {
-  children: "Blue Underline Tooltip",
-  showDialogOn: "click",
-  underline: "blue",
-  containerStyle: css`
-    font-size: 0.875rem;
-  `,
-  dialog: "Clicked tooltip with blue underline",
-  drawerStyle: css`
-    background-color: #1d4ed8;
-    color: white;
-  `,
-  arrowStyle: css`
-    background-color: #1d4ed8;
-  `,
-} as const;
 
 export const WithForm: Story = {
   render: () => {
