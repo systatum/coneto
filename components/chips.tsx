@@ -35,6 +35,7 @@ export type ChipsProps = BaseChipsProps & {
   showError?: boolean;
   errorMessage?: string;
   type?: string;
+  name?: string;
 };
 interface BaseChipsProps {
   options?: BadgeProps[];
@@ -253,6 +254,7 @@ function ChipsDrawer({
   selectedOptions,
   missingOptionForm,
   missingEmptyContent,
+  name = "chips",
 }: ChipsDrawerProps) {
   const [hovered, setHovered] = useState<number | null>(null);
   const [mode, setMode] = useState<"idle" | "create">("idle");
@@ -290,14 +292,7 @@ function ChipsDrawer({
     } else if (isTyping && options && options.length > 0) {
       setHovered(options[0]?.id);
     }
-  }, [
-    inputValue.search,
-    options,
-    mode,
-    creatable,
-    filterEmptyOption,
-    isTyping,
-  ]);
+  }, [inputValue, options, mode, creatable, filterEmptyOption, isTyping]);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLUListElement>) => {
     if (mode !== "idle") return;
@@ -359,7 +354,7 @@ function ChipsDrawer({
         <>
           <Textbox
             ref={inputRef}
-            name="chips"
+            name={name}
             type="text"
             aria-label="chip-input-box"
             placeholder={filterPlaceholder}
