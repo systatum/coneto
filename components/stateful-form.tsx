@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { useForm, UseFormSetValue } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ZodTypeAny, TypeOf } from "zod";
 import { ChangeEvent, useEffect } from "react";
@@ -36,7 +36,7 @@ export type StatefulOnChangeType =
   | {
       target: {
         name: string;
-        value: CountryCodeProps;
+        value: CountryCodeProps | FileList | File | null;
       };
     };
 
@@ -57,14 +57,7 @@ export interface FormFieldProps {
   type?: string;
   placeholder?: string;
   rows?: number;
-  onChange?: (
-    e?:
-      | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-      | { target: { name: string; value: CountryCodeProps } }
-      | FileList
-      | OptionsProps,
-    type?: string
-  ) => void;
+  onChange?: (e?: StatefulOnChangeType, type?: string) => void;
   textboxProps?: TextboxProps;
   textareaProps?: TextareaProps;
   checkboxProps?: CheckboxProps;
@@ -95,6 +88,7 @@ function StatefulForm<Z extends ZodTypeAny>({
   const {
     register,
     control,
+    setValue,
     formState: { errors, touchedFields, isValid },
   } = useForm<TypeOf<Z>>({
     resolver: zodResolver(validationSchema),
@@ -113,9 +107,18 @@ function StatefulForm<Z extends ZodTypeAny>({
     const touched = touchedFields[field];
     const error = errors[field];
 
-    return (
-      typeof value === "string" && value.length > 0 && !!touched && !!error
-    );
+    if (typeof value === "string") {
+      return value.length > 0 && !!touched && !!error;
+    }
+    const isFile = (val: unknown): val is File => val instanceof File;
+    const isFileList = (val: unknown): val is FileList =>
+      val instanceof FileList;
+
+    if (isFile(value) || isFileList(value)) {
+      return !!touched && !!error;
+    }
+
+    return !!touched && !!error;
   };
 
   return (
@@ -128,6 +131,7 @@ function StatefulForm<Z extends ZodTypeAny>({
         formValues={formValues}
         register={register}
         errors={errors}
+        setValue={setValue}
         shouldShowError={(name) => shouldShowError(name as keyof TypeOf<Z>)}
       />
     </>
@@ -143,6 +147,7 @@ interface FormFieldsProps<T extends FieldValues> {
   control: Control<T>;
   labelSize?: string;
   fieldSize?: string;
+  setValue?: UseFormSetValue<T>;
 }
 
 function FormFields<T extends FieldValues>({
@@ -154,6 +159,7 @@ function FormFields<T extends FieldValues>({
   control,
   fieldSize,
   labelSize,
+  setValue,
 }: FormFieldsProps<T>) {
   return (
     <>
@@ -165,7 +171,6 @@ function FormFields<T extends FieldValues>({
           field.type === "password" ? (
           <Textbox
             key={index}
-            {...field.textboxProps}
             label={field.title}
             type={field.type}
             value={formValues[field.name as keyof T] ?? ""}
@@ -187,11 +192,11 @@ function FormFields<T extends FieldValues>({
             errorMessage={
               errors[field.name as keyof T]?.message as string | undefined
             }
+            {...field.textboxProps}
           />
         ) : field.type === "textarea" ? (
           <Textarea
             key={index}
-            {...field.textareaProps}
             label={field.title}
             rows={field.rows}
             value={formValues[field.name as keyof T] ?? ""}
@@ -213,6 +218,7 @@ function FormFields<T extends FieldValues>({
             errorMessage={
               errors[field.name as keyof T]?.message as string | undefined
             }
+            {...field.textareaProps}
           />
         ) : field.type === "checkbox" ? (
           <Controller
@@ -221,7 +227,6 @@ function FormFields<T extends FieldValues>({
             name={field.name as Path<T>}
             render={({ field: controllerField }) => (
               <Checkbox
-                {...field.checkboxProps}
                 label={field.title}
                 name={field.name}
                 checked={controllerField.value ?? false}
@@ -257,6 +262,7 @@ function FormFields<T extends FieldValues>({
                 })}
                 required={field.required}
                 showError={shouldShowError(field.name)}
+                {...field.checkboxProps}
               />
             )}
           />
@@ -268,7 +274,6 @@ function FormFields<T extends FieldValues>({
             render={({ field: controllerField }) => (
               <>
                 <Phonebox
-                  {...field.phoneboxProps}
                   label={field.title}
                   value={controllerField.value}
                   onChange={(e) => {
@@ -291,6 +296,7 @@ function FormFields<T extends FieldValues>({
                   }
                   showError={!!errors["phone"]}
                   errorMessage={errors["phone"]?.message as string}
+                  {...field.phoneboxProps}
                 />
               </>
             )}
@@ -302,7 +308,6 @@ function FormFields<T extends FieldValues>({
             control={control}
             render={({ field: controllerField, fieldState }) => (
               <Colorbox
-                {...field.colorboxProps}
                 label={field.title}
                 required={field.required}
                 labelStyle={
@@ -331,13 +336,13 @@ function FormFields<T extends FieldValues>({
                 }}
                 showError={shouldShowError(field.name)}
                 errorMessage={fieldState.error?.message}
+                {...field.colorboxProps}
               />
             )}
           />
         ) : field.type === "file_drop_box" ? (
           <FileDropBox
             key={index}
-            {...field.fileDropBoxProps}
             label={field.title}
             labelStyle={
               labelSize &&
@@ -346,12 +351,11 @@ function FormFields<T extends FieldValues>({
               `
             }
             {...register(field.name as Path<T>, { onChange: field.onChange })}
+            {...field.fileDropBoxProps}
           />
         ) : field.type === "file" ? (
           <FileInputBox
             key={index}
-            {...field.fileInputBoxProps}
-            onFilesSelected={(e) => field.onChange(e, "file")}
             label={field.title}
             labelStyle={
               labelSize &&
@@ -359,16 +363,35 @@ function FormFields<T extends FieldValues>({
                 font-size: ${labelSize};
               `
             }
-            {...register(field.name as Path<T>, { onChange: field.onChange })}
             showError={shouldShowError(field.name)}
             errorMessage={
               errors[field.name as keyof T]?.message as string | undefined
             }
+            {...field.fileInputBoxProps}
+            onFilesSelected={(files: FileList | undefined) => {
+              const file = files?.[0];
+
+              const isFile = file instanceof File;
+              if (isFile) {
+                setValue(field.name as Path<T>, file as any, {
+                  shouldValidate: true,
+                  shouldTouch: true,
+                });
+              } else {
+                setValue(field.name as Path<T>, undefined, {
+                  shouldValidate: true,
+                  shouldTouch: true,
+                });
+              }
+
+              field.onChange({
+                target: { name: field.name, value: file ?? undefined },
+              });
+            }}
           />
         ) : field.type === "image" ? (
           <Imagebox
             key={index}
-            {...field.imageboxProps}
             name={field.name}
             onFilesSelected={(e) => field.onChange(e, "image")}
             label={field.title}
@@ -384,11 +407,11 @@ function FormFields<T extends FieldValues>({
             errorMessage={
               errors[field.name as keyof T]?.message as string | undefined
             }
+            {...field.imageboxProps}
           />
         ) : field.type === "signbox" ? (
           <Signbox
             key={index}
-            {...field.signboxProps}
             clearable
             name={field.name}
             label={field.title}
@@ -405,11 +428,11 @@ function FormFields<T extends FieldValues>({
             errorMessage={
               errors[field.name as keyof T]?.message as string | undefined
             }
+            {...field.signboxProps}
           />
         ) : field.type === "money" ? (
           <Moneybox
             key={index}
-            {...field.moneyProps}
             label={field.title}
             labelStyle={
               labelSize &&
@@ -430,6 +453,7 @@ function FormFields<T extends FieldValues>({
             errorMessage={
               errors[field.name as keyof T]?.message as string | undefined
             }
+            {...field.moneyProps}
           />
         ) : field.type === "date" ? (
           <Controller
@@ -439,7 +463,6 @@ function FormFields<T extends FieldValues>({
             render={({ field: controllerField }) => (
               <Datebox
                 key={index}
-                {...field.dateProps}
                 label={field.title}
                 showError={shouldShowError(field.name)}
                 labelStyle={
@@ -468,6 +491,7 @@ function FormFields<T extends FieldValues>({
                   field.onChange(e);
                 }}
                 inputValue={controllerField.value}
+                {...field.dateProps}
               />
             )}
           />
@@ -478,7 +502,6 @@ function FormFields<T extends FieldValues>({
             control={control}
             render={({ field: controllerField }) => (
               <Combobox
-                {...field.comboboxProps}
                 label={field.title}
                 showError={shouldShowError(field.name)}
                 labelStyle={
@@ -507,6 +530,7 @@ function FormFields<T extends FieldValues>({
                   field.onChange(e);
                 }}
                 inputValue={controllerField.value}
+                {...field.comboboxProps}
               />
             )}
           />
@@ -517,7 +541,6 @@ function FormFields<T extends FieldValues>({
             control={control}
             render={({ field: controllerField }) => (
               <Chips
-                {...field.chipsProps}
                 label={field.title}
                 labelStyle={
                   labelSize &&
@@ -536,6 +559,7 @@ function FormFields<T extends FieldValues>({
                   controllerField.onChange(e);
                   field.onChange(e, "chips");
                 }}
+                {...field.chipsProps}
               />
             )}
           />
@@ -547,7 +571,6 @@ function FormFields<T extends FieldValues>({
             render={({ field: controllerField, fieldState }) => (
               <Rating
                 editable
-                {...field.ratingProps}
                 label={field.title}
                 rating={controllerField.value}
                 onChange={(e) => {
@@ -568,6 +591,7 @@ function FormFields<T extends FieldValues>({
                 }
                 showError={!!fieldState.error}
                 errorMessage={fieldState.error?.message}
+                {...field.ratingProps}
               />
             )}
           />
@@ -578,7 +602,6 @@ function FormFields<T extends FieldValues>({
             name={field.name as Path<T>}
             render={({ field: controllerField }) => (
               <ThumbField
-                {...field.thumbFieldProps}
                 label={field.title}
                 labelStyle={
                   labelSize &&
@@ -601,6 +624,7 @@ function FormFields<T extends FieldValues>({
                 errorMessage={
                   errors[field.name as keyof T]?.message as string | undefined
                 }
+                {...field.thumbFieldProps}
               />
             )}
           />
@@ -611,7 +635,6 @@ function FormFields<T extends FieldValues>({
             name={field.name as Path<T>}
             render={({ field: controllerField }) => (
               <Togglebox
-                {...field.toggleboxProps}
                 label={field.title}
                 labelStyle={
                   labelSize &&
@@ -628,6 +651,7 @@ function FormFields<T extends FieldValues>({
                 errorMessage={
                   errors[field.name as keyof T]?.message as string | undefined
                 }
+                {...field.toggleboxProps}
               />
             )}
           />
