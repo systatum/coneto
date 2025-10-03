@@ -250,7 +250,7 @@ export const AllCase: Story = {
         value: 0 as number | string,
       },
       file_drop_box: [] as File[],
-      file: "",
+      file: undefined,
       image: "",
       phone: "",
       thumb_field: null,
@@ -304,8 +304,30 @@ export const AllCase: Story = {
           text: z.string().optional(),
         })
         .optional(),
-      file_drop_box: z.array(z.instanceof(File)).optional(),
-      file: z.string().optional(),
+      file_drop_box: z
+        .array(z.instanceof(File))
+        .optional()
+        .refine(
+          (files) =>
+            !files || files.every((file) => file.size <= 5 * 1024 * 1024),
+          {
+            message: "Each file must be 5 MB or smaller",
+          }
+        ),
+
+      file: z
+        .any()
+        .refine(
+          (file) => {
+            return file?.type === "application/pdf";
+          },
+          {
+            message: "Only PDF files are allowed",
+          }
+        )
+        .refine((file) => file?.size <= 5 * 1024 * 1024, {
+          message: "File size must be 5MB or less",
+        }),
       image: z.string().optional(),
       signature: z.string().min(1, "Signature is required"),
       phone: z.string().min(8, "Phone number must be 8 digits").optional(),
@@ -355,7 +377,13 @@ export const AllCase: Story = {
         const target = e.target;
         const { name, value } = target;
 
-        let updatedValue: string | boolean | number | CountryCodeProps = value;
+        let updatedValue:
+          | string
+          | boolean
+          | number
+          | CountryCodeProps
+          | File
+          | FileList = value;
 
         if (target instanceof HTMLInputElement && target.type === "checkbox") {
           updatedValue = target.checked;
@@ -374,6 +402,8 @@ export const AllCase: Story = {
         }
       }
     };
+
+    console.log(value);
 
     const onFileDropped = async ({
       error,
@@ -507,6 +537,9 @@ export const AllCase: Story = {
         type: "file",
         required: false,
         onChange: onChangeForm,
+        fileInputBoxProps: {
+          accept: "application/pdf",
+        },
       },
       {
         name: "image",
