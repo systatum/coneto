@@ -39,7 +39,6 @@ export const Link: Story = {
       children: "Click Tooltip",
       showDialogOn: "click",
       dialog: "This tooltip appears on click",
-      underline: "blue",
       containerStyle: css`
         font-size: 0.875rem;
         color: #2563eb;
@@ -80,7 +79,6 @@ export const Link: Story = {
       children: "Dotted Underline Tooltip",
       showDialogOn: "hover",
       dialog: "Tooltip with dotted underline trigger",
-      underline: "underline-dot",
       containerStyle: css`
         font-size: 0.875rem;
       `,
@@ -97,7 +95,6 @@ export const Link: Story = {
       children: "No Underline Tooltip",
       showDialogOn: "hover",
       dialog: "Trigger text without underline",
-      underline: "transparent",
       containerStyle: css`
         font-weight: 600;
         font-size: 0.875rem;
@@ -115,7 +112,6 @@ export const Link: Story = {
     const BlueUnderlineTooltip: TooltipProps = {
       children: "Blue Underline Tooltip",
       showDialogOn: "click",
-      underline: "blue",
       containerStyle: css`
         font-size: 0.875rem;
       `,

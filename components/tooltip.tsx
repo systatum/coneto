@@ -18,13 +18,6 @@ export type TooltipProps = {
   drawerStyle?: CSSProp;
   containerStyle?: CSSProp;
   arrowStyle?: CSSProp;
-  underline?:
-    | "underline"
-    | "underline-dot"
-    | "transparent"
-    | "blue"
-    | "gray"
-    | null;
 };
 
 export function Tooltip({
@@ -35,7 +28,6 @@ export function Tooltip({
   drawerStyle,
   containerStyle,
   arrowStyle,
-  underline = null,
 }: TooltipProps) {
   const [isOpen, setIsOpen] = useState(false);
   const arrowRef = useRef<HTMLDivElement>(null);
@@ -95,7 +87,6 @@ export function Tooltip({
             setIsOpen((prev) => !prev);
           }
         }}
-        $underline={underline}
         $showDialogOn={showDialogOn}
         $containerStyle={containerStyle}
       >
@@ -148,7 +139,6 @@ const Spacer = styled.div<{ $placement?: Placement }>`
 `;
 
 const ContentTrigger = styled.div<{
-  $underline: TooltipProps["underline"];
   $showDialogOn: TooltipProps["showDialogOn"];
   $containerStyle?: CSSProp;
 }>`
@@ -160,37 +150,6 @@ const ContentTrigger = styled.div<{
       : css`
           cursor: pointer;
         `}
-
-  ${({ $underline }) => {
-    switch ($underline) {
-      case "underline":
-        return css`
-          text-decoration: underline;
-          text-decoration-color: black;
-        `;
-      case "underline-dot":
-        return css`
-          text-decoration: underline dotted;
-          text-decoration-color: black;
-        `;
-      case "transparent":
-        return css`
-          text-decoration: none;
-        `;
-      case "blue":
-        return css`
-          text-decoration: underline;
-          text-decoration-color: #3b82f6;
-        `;
-      case "gray":
-        return css`
-          text-decoration: underline;
-          text-decoration-color: #6b7280;
-        `;
-      default:
-        return null;
-    }
-  }}
 
   ${({ $containerStyle }) => $containerStyle}
 `;
