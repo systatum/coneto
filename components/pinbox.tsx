@@ -412,6 +412,7 @@ const PinboxInput = styled.input<{
             opacity: 0.6;
             user-select: none;
             cursor: not-allowed;
+            border-color: rgba(0, 0, 0, 0.3);
           }
           &:focus + ${PinboxIndicator} {
             display: flex;
