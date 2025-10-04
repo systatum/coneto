@@ -1,12 +1,12 @@
 import { getIdContent } from "test/support/commands";
 
 describe("Pinbox", () => {
-  context("Default", () => {
+  context("when default", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-pinbox--default"));
     });
 
-    context("specific", () => {
+    context("when specific character", () => {
       context("when pressing", () => {
         it("should render character", () => {
           cy.findAllByLabelText("pinbox-input").eq(1).type("2");
@@ -215,7 +215,7 @@ describe("Pinbox", () => {
     });
   });
 
-  context("Masked", () => {
+  context("when masked", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-pinbox--masked"));
     });
@@ -233,29 +233,30 @@ describe("Pinbox", () => {
     });
   });
 
-  context("Disabled", () => {
+  context("when disabled", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-pinbox--disabled"));
     });
 
     context("when given", () => {
       it("should be disabled and show correct styles", () => {
-        cy.findAllByLabelText("pinbox-input").eq(1).should("be.disabled");
-
-        cy.findAllByLabelText("pinbox-input")
-          .eq(1)
-          .should("have.css", "background-color", "rgb(249, 250, 251)");
-        cy.findAllByLabelText("pinbox-input")
-          .eq(1)
-          .should("have.css", "opacity", "0.6");
-        cy.findAllByLabelText("pinbox-input")
-          .eq(1)
-          .should("have.css", "border-color", "rgba(0, 0, 0, 0.3)");
+        [0, 1, 2, 3, 4, 5].map((data) => {
+          cy.findAllByLabelText("pinbox-input").eq(data).should("be.disabled");
+          cy.findAllByLabelText("pinbox-input")
+            .eq(data)
+            .should("have.css", "background-color", "rgb(249, 250, 251)");
+          cy.findAllByLabelText("pinbox-input")
+            .eq(data)
+            .should("have.css", "opacity", "0.6");
+          cy.findAllByLabelText("pinbox-input")
+            .eq(data)
+            .should("have.css", "border-color", "rgba(0, 0, 0, 0.3)");
+        });
       });
     });
   });
 
-  context("Error", () => {
+  context("when error", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-pinbox--error"));
     });
