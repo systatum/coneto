@@ -1,11 +1,14 @@
-import { RiAddBoxFill, RiAddLine } from "@remixicon/react";
+import { RiAddLine, RiCheckboxMultipleBlankLine } from "@remixicon/react";
 import { Badge, BadgeActionProps, BadgeProps } from "./badge";
 import { Checkbox } from "./checkbox";
 import {
   ChangeEvent,
   CSSProperties,
+  Fragment,
   KeyboardEvent,
   ReactElement,
+  ReactNode,
+  Ref,
   RefObject,
   useEffect,
   useRef,
@@ -22,17 +25,8 @@ import {
   useRole,
 } from "@floating-ui/react";
 import { Textbox } from "./textbox";
-import { Colorbox, ColorPickProps } from "./colorbox";
-import { Button } from "./button";
+import { ColorPickProps } from "./colorbox";
 import styled, { css, CSSProp } from "styled-components";
-
-type InputValueProps = {
-  search: string;
-  name_tag: string;
-  background_color: string;
-  text_color: string;
-  circle_color: string;
-};
 
 export type ChipActionsProps = BadgeActionProps;
 
@@ -41,10 +35,11 @@ export type ChipsProps = BaseChipsProps & {
   showError?: boolean;
   errorMessage?: string;
   type?: string;
+  name?: string;
 };
 interface BaseChipsProps {
   options?: BadgeProps[];
-  inputValue?: InputValueProps;
+  inputValue?: string;
   setInputValue?: (
     data: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     type?: ColorPickProps
@@ -56,13 +51,19 @@ interface BaseChipsProps {
   labelStyle?: CSSProp;
   chipsDrawerStyle?: CSSProp;
   filterPlaceholder?: string;
-  newLabelPlaceholder?: string;
-  addButtonLabel?: string;
-  cancelAddingButtonLabel?: string;
+  missingOptionLabel?: string;
   creatable?: boolean;
   onOptionClicked?: (badge: BadgeProps) => void;
   selectedOptions?: number[];
-  onNewTagCreated?: () => void;
+  missingOptionForm?:
+    | ReactNode
+    | ((props?: MissingOptionFormProps) => ReactNode);
+  missingEmptyContent?: ReactNode;
+}
+
+export interface MissingOptionFormProps {
+  firstInputRef?: Ref<HTMLInputElement>;
+  closeForm?: () => void;
 }
 
 function Chips(props: ChipsProps) {
@@ -108,9 +109,7 @@ function Chips(props: ChipsProps) {
 
   const ALL_OPTIONS = hasInteracted
     ? getAllOptions().filter((opt) =>
-        opt.caption
-          .toLowerCase()
-          .includes(props.inputValue.search.toLowerCase())
+        opt.caption.toLowerCase().includes(props.inputValue.toLowerCase())
       )
     : getAllOptions();
 
@@ -238,31 +237,31 @@ type ChipsDrawerProps = ChipsProps & {
 };
 
 function ChipsDrawer({
-  onNewTagCreated,
   floatingStyles,
   getFloatingProps,
   refs,
   setHasInteracted,
-  addButtonLabel = "Add",
-  cancelAddingButtonLabel = "Cancel",
   chipStyle,
   chipContainerStyle,
   chipsDrawerStyle,
   filterPlaceholder = "Change or add labels...",
   inputValue,
-  newLabelPlaceholder = "Create a new label:",
+  missingOptionLabel = "Create a new label:",
   options,
   setInputValue,
   creatable,
   onOptionClicked,
   selectedOptions,
+  missingOptionForm,
+  missingEmptyContent,
+  name = "chips",
 }: ChipsDrawerProps) {
   const [hovered, setHovered] = useState<number | null>(null);
   const [mode, setMode] = useState<"idle" | "create">("idle");
   const [isTyping, setIsTyping] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
-  const inputNameTagRef = useRef<HTMLInputElement>(null);
+  const inputMissingRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (mode === "idle") {
@@ -272,7 +271,7 @@ function ChipsDrawer({
 
   useEffect(() => {
     if (mode === "create") {
-      inputNameTagRef.current?.focus();
+      inputMissingRef.current?.focus();
     }
   }, [mode]);
 
@@ -281,24 +280,24 @@ function ChipsDrawer({
   }, [isTyping]);
 
   const filteredSearch = options.filter(
-    (opt) => opt.caption.toLowerCase() === inputValue.search.toLowerCase()
+    (opt) => opt.caption.toLowerCase() === inputValue.toLowerCase()
   );
 
-  const filterNewLabel =
-    filteredSearch.length === 0 && inputValue.search.length > 1;
+  const hasNoFilter = filteredSearch.length === 0 && inputValue.length > 1;
 
   useEffect(() => {
-    if (isTyping && filterNewLabel && creatable) {
+    if (isTyping && hasNoFilter && creatable) {
       setHovered(0);
     } else if (isTyping && options && options.length > 0) {
       setHovered(options[0]?.id);
     }
-  }, [inputValue.search, options, mode, creatable, filterNewLabel, isTyping]);
+  }, [inputValue, options, mode, creatable, hasNoFilter, isTyping]);
+
   const handleKeyDown = (e: KeyboardEvent<HTMLUListElement>) => {
     if (mode !== "idle") return;
 
     const index = options.findIndex((opt) => opt.id === hovered);
-    const hasCreateOption = filterNewLabel && creatable;
+    const hasCreateOption = hasNoFilter && creatable;
     const allOptions = [{ id: 0 }, ...options];
 
     if (e.key === "ArrowDown") {
@@ -354,11 +353,11 @@ function ChipsDrawer({
         <>
           <Textbox
             ref={inputRef}
-            name="search"
+            name={name}
             type="text"
             aria-label="chip-input-box"
             placeholder={filterPlaceholder}
-            value={inputValue.search}
+            value={inputValue}
             style={{
               border: "none",
               minHeight: "34px",
@@ -369,13 +368,6 @@ function ChipsDrawer({
               setHasInteracted?.(true);
               setInputValue(e);
               setIsTyping(true);
-              const inputNameTagEvent = {
-                target: {
-                  name: "name_tag",
-                  value: e.target.value,
-                },
-              } as ChangeEvent<HTMLInputElement>;
-              setInputValue(inputNameTagEvent);
             }}
           />
           <Divider aria-label="divider" />
@@ -388,11 +380,11 @@ function ChipsDrawer({
               padding: "4px",
             }}
           >
-            {filterNewLabel && creatable && (
-              <NewTagOption
+            {hasNoFilter && creatable && (
+              <EmptyOptionContainer
                 onClick={async () => {
                   await setMode("create");
-                  await inputNameTagRef.current.focus();
+                  await inputMissingRef.current.focus();
                 }}
                 onMouseEnter={() => setHovered(0)}
                 $hovered={hovered === 0}
@@ -406,12 +398,10 @@ function ChipsDrawer({
                     textOverflow: "ellipsis",
                   }}
                 >
-                  {newLabelPlaceholder}&nbsp;
-                  <span style={{ color: "#4b5563" }}>
-                    "{inputValue.search}"
-                  </span>
+                  {missingOptionLabel}&nbsp;
+                  <span style={{ color: "#4b5563" }}>"{inputValue}"</span>
                 </span>
-              </NewTagOption>
+              </EmptyOptionContainer>
             )}
 
             {options && options.length > 0 ? (
@@ -444,8 +434,11 @@ function ChipsDrawer({
                   );
                 })}
               </>
+            ) : hasNoFilter && missingEmptyContent && !creatable ? (
+              <Fragment>{missingEmptyContent}</Fragment>
             ) : (
-              !filterNewLabel && (
+              hasNoFilter &&
+              !creatable && (
                 <span
                   style={{
                     fontSize: "0.75rem",
@@ -463,122 +456,26 @@ function ChipsDrawer({
       )}
 
       {mode === "create" && (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            minWidth: "240px",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              padding: "8px 12px",
-              gap: "8px",
-              fontSize: "0.75rem",
-              fontWeight: 500,
-              alignItems: "center",
-            }}
-          >
-            <RiAddBoxFill size={18} />
-            <span
-              style={{
-                paddingTop: "2px",
-              }}
-            >
-              Create a new tag
-            </span>
-          </div>
-          <Divider aria-label="divider" />
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              padding: "12px",
-              gap: "12px",
-            }}
-          >
-            <Textbox
-              ref={inputNameTagRef}
-              name="name_tag"
-              placeholder={newLabelPlaceholder}
-              value={inputValue.name_tag}
-              autoComplete="off"
-              onChange={(e) => {
-                setInputValue(e);
-              }}
-            />
-            <Colorbox
-              placeholder="Select background color..."
-              name={"background_color"}
-              value={inputValue.background_color}
-              onChange={setInputValue}
-            />
-            <Colorbox
-              placeholder="Select text color..."
-              name={"text_color"}
-              value={inputValue.text_color}
-              onChange={setInputValue}
-            />
-            <Colorbox
-              placeholder="Select circle color..."
-              name={"circle_color"}
-              value={inputValue.circle_color}
-              onChange={setInputValue}
-            />
-            <Badge
-              textColor={inputValue.text_color}
-              backgroundColor={inputValue.background_color}
-              circleColor={inputValue.circle_color}
-              withCircle
-              caption={inputValue.name_tag}
-            />
-
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                width: "100%",
-              }}
-            >
-              <Button
-                onClick={async () => {
+        <Fragment>
+          {typeof missingOptionForm === "function"
+            ? missingOptionForm({
+                firstInputRef: inputMissingRef,
+                closeForm: async () => {
                   await setMode("idle");
-                  const inputSearchEvent = {
-                    target: {
-                      name: "search",
-                      value: inputValue.name_tag,
-                    },
-                  } as ChangeEvent<HTMLInputElement>;
-                  await setInputValue(inputSearchEvent);
-                  await inputRef.current.focus();
-                }}
-                size="sm"
-                buttonStyle={{
-                  fontSize: "12px",
-                }}
-              >
-                {cancelAddingButtonLabel}
-              </Button>
-              <Button
-                onClick={onNewTagCreated}
-                size="sm"
-                variant="primary"
-                buttonStyle={{
-                  fontSize: "12px",
-                }}
-              >
-                {addButtonLabel}
-              </Button>
-            </div>
-          </div>
-        </div>
+                  await inputRef.current?.focus();
+                },
+              })
+            : missingOptionForm}
+        </Fragment>
       )}
     </ChipsDrawerWrapper>
   );
 }
+const Divider = styled.div`
+  width: 100%;
+  height: 1px;
+  border-bottom: 1px solid #d1d5db;
+`;
 
 const ChipsDrawerWrapper = styled.ul<{
   $style?: CSSProp;
@@ -598,7 +495,7 @@ const ChipsDrawerWrapper = styled.ul<{
   ${({ $style }) => $style}
 `;
 
-const NewTagOption = styled.div<{ $hovered: boolean }>`
+const EmptyOptionContainer = styled.div<{ $hovered?: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: flex-start;
@@ -610,19 +507,13 @@ const NewTagOption = styled.div<{ $hovered: boolean }>`
   color: black;
   width: 100%;
   border-radius: 2px;
-  cursor: pointer;
 
   ${({ $hovered }) =>
     $hovered &&
     css`
+      cursor: pointer;
       background-color: #bfdbfe;
     `}
-`;
-
-const Divider = styled.div`
-  width: 100%;
-  height: 1px;
-  border-bottom: 1px solid #d1d5db;
 `;
 
 function ChipsItem({

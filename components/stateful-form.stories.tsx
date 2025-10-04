@@ -233,13 +233,7 @@ export const AllCase: Story = {
       textarea: "",
       rating: "",
       check: false,
-      chips: {
-        search: "",
-        name_tag: "",
-        background_color: "",
-        text_color: "",
-        circle_color: "",
-      },
+      chips: "",
       color: "",
       combo: {
         text: "",
@@ -284,13 +278,7 @@ export const AllCase: Story = {
       password: z.string().min(6, "Password must be at least 6 characters"),
       textarea: z.string().optional(),
       check: z.boolean().optional(),
-      chips: z.object({
-        search: z.string().optional(),
-        name_tag: z.string().optional(),
-        background_color: z.string().optional(),
-        text_color: z.string().optional(),
-        circle_color: z.string().optional(),
-      }),
+      chips: z.string().optional(),
       color: z.string().optional(),
       combo: z
         .object({
@@ -361,17 +349,7 @@ export const AllCase: Story = {
           updatedValue = target.checked;
         }
 
-        if (type === "chips") {
-          setValue((prev) => ({
-            ...prev,
-            chips: {
-              ...prev.chips,
-              [name]: updatedValue,
-            },
-          }));
-        } else {
-          setValue((prev) => ({ ...prev, [name]: updatedValue }));
-        }
+        setValue((prev) => ({ ...prev, [name]: updatedValue }));
       }
     };
 
@@ -575,13 +553,12 @@ export const AllCase: Story = {
           chipContainerStyle: css`
             gap: 4px;
           `,
-          chipsContainerStyle: css`
-            max-width: 250px;
+          chipsDrawerStyle: css`
+            min-width: 250px;
           `,
           onOptionClicked: handleOptionClicked,
           selectedOptions: selectedChips,
           inputValue: value.chips,
-          creatable: true,
         },
         onChange: onChangeForm,
       },
