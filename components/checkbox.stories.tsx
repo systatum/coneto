@@ -96,6 +96,13 @@ export const WithDescription: StoryWithDescription = {
             label={option.label}
             labelStyle={css`
               font-weight: 500;
+              font-size: 16px;
+            `}
+            inputStyle={css`
+              margin-top: 2px;
+            `}
+            iconStyle={css`
+              margin-top: 2px;
             `}
             checked={selected.checked.some(
               (item) => item.value === option.value
