@@ -71,7 +71,13 @@ function Checkbox({
             $isError={showError}
             $indeterminate={indeterminate}
             $checked={isChecked}
-            $style={inputStyle}
+            $style={css`
+              ${description &&
+              css`
+                margin-top: 2px;
+              `}
+              ${inputStyle}
+            `}
             readOnly
             {...(props as InputHTMLAttributes<HTMLInputElement>)}
           />
@@ -82,7 +88,13 @@ function Checkbox({
             strokeWidth="3"
             strokeLinecap="round"
             strokeLinejoin="round"
-            $style={iconStyle}
+            $style={css`
+              ${description &&
+              css`
+                margin-top: 2px;
+              `}
+              ${iconStyle}
+            `}
             $visible={indeterminate || isChecked}
           >
             {indeterminate ? (
@@ -96,7 +108,16 @@ function Checkbox({
         {(label || description) && (
           <TextContainer>
             {label && (
-              <LabelText $highlight={highlightOnChecked} $style={labelStyle}>
+              <LabelText
+                $highlight={highlightOnChecked}
+                $style={css`
+                  ${description &&
+                  css`
+                    font-size: 16px;
+                  `}
+                  ${labelStyle}
+                `}
+              >
                 {label}
               </LabelText>
             )}
