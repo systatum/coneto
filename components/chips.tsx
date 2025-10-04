@@ -62,8 +62,8 @@ interface BaseChipsProps {
 }
 
 export interface MissingOptionFormProps {
-  inputRef?: Ref<HTMLInputElement>;
-  switchToIdle?: () => void;
+  secondInputRef?: Ref<HTMLInputElement>;
+  closeForm?: () => void;
 }
 
 function Chips(props: ChipsProps) {
@@ -459,8 +459,8 @@ function ChipsDrawer({
         <Fragment>
           {typeof missingOptionForm === "function"
             ? missingOptionForm({
-                inputRef: inputMissingRef,
-                switchToIdle: async () => {
+                secondInputRef: inputMissingRef,
+                closeForm: async () => {
                   await setMode("idle");
                   await inputRef.current.focus();
                 },
