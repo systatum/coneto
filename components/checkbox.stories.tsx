@@ -95,7 +95,6 @@ export const WithDescription: StoryWithDescription = {
             description={option.description}
             label={option.label}
             labelStyle={css`
-              font-weight: 500;
               font-size: 16px;
             `}
             inputStyle={css`

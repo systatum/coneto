@@ -1,4 +1,4 @@
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
 import {
   DetailedHTMLProps,
   InputHTMLAttributes,
@@ -170,13 +170,13 @@ const HiddenCheckbox = styled.input<{
 
   ${({ $isError }) =>
     $isError &&
-    `
-    border-color: #f87171;
-    &:focus {
+    css`
       border-color: #f87171;
-      box-shadow: 0 0 0 1px #f87171;
-    }
-  `}
+      &:focus {
+        border-color: #f87171;
+        box-shadow: 0 0 0 1px #f87171;
+      }
+    `}
   ${({ $style }) => $style};
 `;
 
@@ -204,20 +204,19 @@ const TextContainer = styled.div`
 const LabelText = styled.span<{ $highlight?: boolean; $style?: CSSProp }>`
   ${({ $highlight }) =>
     $highlight &&
-    `
-    font-size: 16px;
-    font-weight: 500;
-  `}
+    css`
+      font-size: 16px;
+    `}
   ${({ $style }) => $style};
 `;
 
 const DescriptionText = styled.span<{ $highlight?: boolean; $style?: CSSProp }>`
   ${({ $highlight }) =>
     $highlight &&
-    `
-    font-size: 14px;
-    color: #4B5563;
-  `}
+    css`
+      font-size: 14px;
+      color: #4b5563;
+    `}
   ${({ $style }) => $style};
 `;
 
