@@ -10,6 +10,7 @@ export interface RadioProps {
   name?: string;
   highlightOnChecked?: boolean;
   containerStyle?: CSSProp;
+  labelStyle?: CSSProp;
 }
 
 function Radio({
@@ -21,6 +22,7 @@ function Radio({
   name,
   highlightOnChecked,
   containerStyle,
+  labelStyle,
   ...props
 }: RadioProps & InputHTMLAttributes<HTMLInputElement>) {
   const id = `radio-${value}`;
@@ -43,7 +45,7 @@ function Radio({
       />
       <Circle />
       <TextContainer>
-        {label && <LabelText>{label}</LabelText>}
+        {label && <LabelText $style={labelStyle}>{label}</LabelText>}
         {description && <DescriptionText>{description}</DescriptionText>}
       </TextContainer>
     </Label>
@@ -95,8 +97,8 @@ const TextContainer = styled.div`
   flex-direction: column;
 `;
 
-const LabelText = styled.div`
-  font-weight: 500;
+const LabelText = styled.div<{ $style?: CSSProp }>`
+  ${({ $style }) => $style}
 `;
 
 const DescriptionText = styled.div`

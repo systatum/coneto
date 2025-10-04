@@ -94,9 +94,6 @@ export const WithDescription: StoryWithDescription = {
             value={JSON.stringify(option)}
             description={option.description}
             label={option.label}
-            labelStyle={css`
-              font-weight: 500;
-            `}
             checked={selected.checked.some(
               (item) => item.value === option.value
             )}
