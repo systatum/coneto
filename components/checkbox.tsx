@@ -60,7 +60,7 @@ function Checkbox({
         $checked={isChecked}
         $style={containerStyle}
       >
-        <CheckboxBox $hasDescription={!!description} $style={wrapperStyle}>
+        <CheckboxBox $style={wrapperStyle} $highlight={!!highlightOnChecked}>
           <HiddenCheckbox
             ref={inputRef}
             type="checkbox"
@@ -71,13 +71,7 @@ function Checkbox({
             $isError={showError}
             $indeterminate={indeterminate}
             $checked={isChecked}
-            $style={css`
-              ${description &&
-              css`
-                margin-top: 2px;
-              `}
-              ${inputStyle}
-            `}
+            $style={inputStyle}
             readOnly
             {...(props as InputHTMLAttributes<HTMLInputElement>)}
           />
@@ -88,13 +82,7 @@ function Checkbox({
             strokeWidth="3"
             strokeLinecap="round"
             strokeLinejoin="round"
-            $style={css`
-              ${description &&
-              css`
-                margin-top: 2px;
-              `}
-              ${iconStyle}
-            `}
+            $style={iconStyle}
             $visible={indeterminate || isChecked}
           >
             {indeterminate ? (
@@ -108,16 +96,7 @@ function Checkbox({
         {(label || description) && (
           <TextContainer>
             {label && (
-              <LabelText
-                $highlight={highlightOnChecked}
-                $style={css`
-                  ${description &&
-                  css`
-                    font-size: 16px;
-                  `}
-                  ${labelStyle}
-                `}
-              >
+              <LabelText $highlight={highlightOnChecked} $style={labelStyle}>
                 {label}
               </LabelText>
             )}
@@ -161,13 +140,16 @@ const Label = styled.label<{
   }
 `;
 
-const CheckboxBox = styled.div<{ $hasDescription: boolean; $style?: CSSProp }>`
+const CheckboxBox = styled.div<{ $highlight: boolean; $style?: CSSProp }>`
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  ${({ $hasDescription }) => $hasDescription && "margin-top: 2px;"}
+  ${({ $highlight }) =>
+    $highlight &&
+    css`
+      margin-top: 4px;
+    `}
   ${({ $style }) => $style}
 `;
 
