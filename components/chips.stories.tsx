@@ -111,7 +111,7 @@ export const Default: Story = {
     };
 
     const MissingOptionForm = ({
-      secondInputRef,
+      firstInputRef,
       closeForm,
     }: MissingOptionFormProps) => (
       <div
@@ -151,7 +151,7 @@ export const Default: Story = {
           }}
         >
           <Textbox
-            ref={secondInputRef}
+            ref={firstInputRef}
             name="name_tag"
             placeholder={"Create a new label"}
             value={inputValue.name_tag}
@@ -452,7 +452,7 @@ export const Deletable: Story = {
     };
 
     const MissingOptionForm = ({
-      secondInputRef,
+      firstInputRef,
       closeForm,
     }: MissingOptionFormProps) => (
       <div
@@ -492,7 +492,7 @@ export const Deletable: Story = {
           }}
         >
           <Textbox
-            ref={secondInputRef}
+            ref={firstInputRef}
             name="name_tag"
             placeholder={"Create a new label"}
             value={inputValue.name_tag}
