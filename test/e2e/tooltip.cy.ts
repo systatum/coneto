@@ -109,7 +109,7 @@ describe("Tooltip", () => {
     });
   });
 
-  context("With Form Tooltip", () => {
+  context("with form tooltip", () => {
     it("should open on click and accept input", () => {
       cy.visit(getIdContent("content-tooltip--with-form"));
 
