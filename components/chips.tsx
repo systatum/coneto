@@ -283,22 +283,21 @@ function ChipsDrawer({
     (opt) => opt.caption.toLowerCase() === inputValue.toLowerCase()
   );
 
-  const filterEmptyOption =
-    filteredSearch.length === 0 && inputValue.length > 1;
+  const hasNoFilter = filteredSearch.length === 0 && inputValue.length > 1;
 
   useEffect(() => {
-    if (isTyping && filterEmptyOption && creatable) {
+    if (isTyping && hasNoFilter && creatable) {
       setHovered(0);
     } else if (isTyping && options && options.length > 0) {
       setHovered(options[0]?.id);
     }
-  }, [inputValue, options, mode, creatable, filterEmptyOption, isTyping]);
+  }, [inputValue, options, mode, creatable, hasNoFilter, isTyping]);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLUListElement>) => {
     if (mode !== "idle") return;
 
     const index = options.findIndex((opt) => opt.id === hovered);
-    const hasCreateOption = filterEmptyOption && creatable;
+    const hasCreateOption = hasNoFilter && creatable;
     const allOptions = [{ id: 0 }, ...options];
 
     if (e.key === "ArrowDown") {
@@ -381,8 +380,8 @@ function ChipsDrawer({
               padding: "4px",
             }}
           >
-            {filterEmptyOption && creatable && (
-              <EmptyOption
+            {hasNoFilter && creatable && (
+              <EmptyOptionContainer
                 onClick={async () => {
                   await setMode("create");
                   await inputMissingRef.current.focus();
@@ -402,7 +401,7 @@ function ChipsDrawer({
                   {missingOptionLabel}&nbsp;
                   <span style={{ color: "#4b5563" }}>"{inputValue}"</span>
                 </span>
-              </EmptyOption>
+              </EmptyOptionContainer>
             )}
 
             {options && options.length > 0 ? (
@@ -435,10 +434,10 @@ function ChipsDrawer({
                   );
                 })}
               </>
-            ) : filterEmptyOption && missingEmptyContent && !creatable ? (
+            ) : hasNoFilter && missingEmptyContent && !creatable ? (
               <Fragment>{missingEmptyContent}</Fragment>
             ) : (
-              filterEmptyOption &&
+              hasNoFilter &&
               !creatable && (
                 <span
                   style={{
@@ -496,7 +495,7 @@ const ChipsDrawerWrapper = styled.ul<{
   ${({ $style }) => $style}
 `;
 
-const EmptyOption = styled.div<{ $hovered?: boolean }>`
+const EmptyOptionContainer = styled.div<{ $hovered?: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: flex-start;
