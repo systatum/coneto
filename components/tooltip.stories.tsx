@@ -26,7 +26,7 @@ type Story = StoryObj<typeof Tooltip>;
 export const Link: Story = {
   render: () => {
     const Hover: TooltipProps = {
-      children: <>Hover Tooltip</>,
+      children: "Hover Tooltip",
       showDialogOn: "hover",
       dialog: "This tooltip appears on hover",
       containerStyle: css`
