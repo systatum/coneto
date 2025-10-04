@@ -85,7 +85,11 @@ export const Default: Story = {
         }
         setInputValue((prev) => ({ ...prev, [name]: val }));
       } else if (name === "chips") {
-        setInputValue((prev) => ({ ...prev, ["search"]: value }));
+        setInputValue((prev) => ({
+          ...prev,
+          ["search"]: value,
+          ["name_tag"]: value,
+        }));
       } else {
         setInputValue((prev) => ({ ...prev, [name]: value }));
       }
@@ -107,8 +111,8 @@ export const Default: Story = {
     };
 
     const MissingOptionForm = ({
-      inputRef,
-      switchToIdle,
+      secondInputRef,
+      closeForm,
     }: MissingOptionFormProps) => (
       <div
         style={{
@@ -147,7 +151,7 @@ export const Default: Story = {
           }}
         >
           <Textbox
-            ref={inputRef}
+            ref={secondInputRef}
             name="name_tag"
             placeholder={"name tag ref"}
             value={inputValue.name_tag}
@@ -197,7 +201,7 @@ export const Default: Story = {
                   },
                 } as ChangeEvent<HTMLInputElement>;
                 await onChangeValue(inputSearchEvent);
-                await switchToIdle();
+                await closeForm();
               }}
               size="sm"
               buttonStyle={{
@@ -422,7 +426,11 @@ export const Deletable: Story = {
         }
         setInputValue((prev) => ({ ...prev, [name]: val }));
       } else if (name === "chips") {
-        setInputValue((prev) => ({ ...prev, ["search"]: value }));
+        setInputValue((prev) => ({
+          ...prev,
+          ["search"]: value,
+          ["name_tag"]: value,
+        }));
       } else {
         setInputValue((prev) => ({ ...prev, [name]: value }));
       }
@@ -444,8 +452,8 @@ export const Deletable: Story = {
     };
 
     const MissingOptionForm = ({
-      inputRef,
-      switchToIdle,
+      secondInputRef,
+      closeForm,
     }: MissingOptionFormProps) => (
       <div
         style={{
@@ -484,7 +492,7 @@ export const Deletable: Story = {
           }}
         >
           <Textbox
-            ref={inputRef}
+            ref={secondInputRef}
             name="name_tag"
             placeholder={"name tag ref"}
             value={inputValue.name_tag}
@@ -534,7 +542,7 @@ export const Deletable: Story = {
                   },
                 } as ChangeEvent<HTMLInputElement>;
                 await onChangeValue(inputSearchEvent);
-                await switchToIdle();
+                await closeForm();
               }}
               size="sm"
               buttonStyle={{
