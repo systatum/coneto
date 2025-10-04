@@ -11,6 +11,8 @@ type PaginationProps = {
   onPageChange: (page: number) => void;
   showNumbers?: boolean;
   style?: CSSProp;
+  buttonStyle?: CSSProp;
+  comboboxStyle?: CSSProp;
 };
 
 function Pagination({
@@ -19,6 +21,8 @@ function Pagination({
   onPageChange,
   showNumbers = true,
   style,
+  buttonStyle,
+  comboboxStyle,
 }: PaginationProps) {
   const [currentPageLocal, setCurrentPageLocal] = useState<OptionsProps>({
     text: currentPage.toString(),
@@ -56,15 +60,17 @@ function Pagination({
   return (
     <PaginationWrapper $style={style}>
       <PaginationButton
+        style={buttonStyle}
         onClick={handlePrevious}
         disabled={currentPage === 1}
-        aria-label="previous-page"
       >
         <RiArrowLeftSLine size={20} />
       </PaginationButton>
 
       {showNumbers && (
         <PaginationItem
+          comboboxStyle={comboboxStyle}
+          buttonStyle={buttonStyle}
           currentPage={currentPage}
           currentPageLocal={currentPageLocal}
           onPageChange={onPageChange}
@@ -75,9 +81,9 @@ function Pagination({
       )}
 
       <PaginationButton
+        style={buttonStyle}
         onClick={handleNext}
         disabled={currentPage === totalPages}
-        aria-label="next-page"
       >
         <RiArrowRightSLine size={20} />
       </PaginationButton>
@@ -100,6 +106,8 @@ const PaginationItem = ({
   onPageChange,
   setCurrentPageLocal,
   comboboxPagesNumber,
+  buttonStyle,
+  comboboxStyle,
 }: {
   totalPages: number;
   currentPage: number;
@@ -107,6 +115,8 @@ const PaginationItem = ({
   onPageChange: (page: number) => void;
   setCurrentPageLocal: (page: OptionsProps) => void;
   comboboxPagesNumber?: number;
+  buttonStyle?: CSSProp;
+  comboboxStyle?: CSSProp;
 }) => {
   const highlightOnMatch = useMemo(() => {
     return currentPage <= comboboxPagesNumber;
@@ -146,6 +156,7 @@ const PaginationItem = ({
               onPageChange(Number(val.value));
               setCurrentPageLocal(val);
             }}
+            selectboxStyle={comboboxStyle}
             placeholder="1"
             containerStyle={css`
               width: 80px;
@@ -157,6 +168,7 @@ const PaginationItem = ({
             const isActive = currentPage === page;
             return (
               <PaginationButton
+                style={buttonStyle}
                 key={page}
                 onClick={() => {
                   onPageChange(page);
@@ -177,6 +189,7 @@ const PaginationItem = ({
             const isActive = currentPage === page;
             return (
               <PaginationButton
+                style={buttonStyle}
                 key={page}
                 onClick={() => {
                   onPageChange(page);
@@ -218,6 +231,7 @@ const PaginationButton = ({
   return (
     <Button
       {...props}
+      aria-label="pagination-button"
       onClick={onClick}
       disabled={disabled}
       $style={style}
@@ -244,6 +258,7 @@ const Button = styled.button<{
   font-weight: 500;
   cursor: pointer;
   outline: none;
+  background-color: white;
   border: 1px solid ${({ $isActive }) => ($isActive ? "#61A9F9" : "#f3f4f6")};
   color: ${({ $isActive }) => ($isActive ? "#000" : "#374151")};
 
@@ -254,7 +269,7 @@ const Button = styled.button<{
   &:disabled {
     cursor: default;
     opacity: 0.3;
-    background-color: transparent;
+    background-color: white;
     &:hover {
       border-color: ${({ $isActive }) => ($isActive ? "#61A9F9" : "#f3f4f6")};
     }
