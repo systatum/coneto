@@ -1,7 +1,7 @@
 import { getIdContent } from "test/support/commands";
 
 describe("Pinbox", () => {
-  context("Default", () => {
+  context("default", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-pinbox--default"));
     });
@@ -215,7 +215,7 @@ describe("Pinbox", () => {
     });
   });
 
-  context("Masked", () => {
+  context("masked", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-pinbox--masked"));
     });
@@ -233,7 +233,7 @@ describe("Pinbox", () => {
     });
   });
 
-  context("Disabled", () => {
+  context("disabled", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-pinbox--disabled"));
     });
@@ -256,7 +256,7 @@ describe("Pinbox", () => {
     });
   });
 
-  context("Error", () => {
+  context("error", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-pinbox--error"));
     });
