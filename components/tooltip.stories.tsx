@@ -305,7 +305,7 @@ export const WithBadge: Story = {
       },
       {
         name: "combo",
-        title: "Combo",
+        title: "Role",
         type: "combo",
         required: false,
         onChange: onChangeDivisionEmployeeForm,
@@ -357,8 +357,8 @@ export const WithBadge: Story = {
 
     return (
       <Tooltip
-        showDialogOn="click"
-        hideDialogOn="click"
+        showDialogOn="hover"
+        hideDialogOn="hover"
         dialogPosition="top-start"
         onOpenChange={(open) => {
           setOpen(open);
@@ -392,7 +392,7 @@ export const WithBadge: Story = {
               border-color: #045e95;
             }
           `}
-          caption="Badge"
+          caption="M. Alim"
           withCircle
         />
       </Tooltip>
