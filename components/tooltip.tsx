@@ -19,6 +19,7 @@ export type TooltipProps = {
   containerStyle?: CSSProp;
   arrowStyle?: CSSProp;
   dialogPosition?: "bottom-start" | "bottom-end" | "top-start" | "top-end";
+  onOpenChange?: (open?: boolean) => void;
 };
 
 export function Tooltip({
@@ -30,6 +31,7 @@ export function Tooltip({
   containerStyle,
   arrowStyle,
   dialogPosition = "bottom-start",
+  onOpenChange,
 }: TooltipProps) {
   const [isOpen, setIsOpen] = useState(false);
   const arrowRef = useRef<HTMLDivElement>(null);
@@ -63,6 +65,7 @@ export function Tooltip({
         !referenceEl.contains(event.target as Node)
       ) {
         setIsOpen(false);
+        onOpenChange(false);
       }
     }
 
@@ -75,10 +78,16 @@ export function Tooltip({
   return (
     <Wrapper
       onMouseEnter={() => {
-        if (showDialogOn === "hover") setIsOpen(true);
+        if (showDialogOn === "hover") {
+          setIsOpen(true);
+          onOpenChange(true);
+        }
       }}
       onMouseLeave={() => {
-        if (hideDialogOn === "hover") setIsOpen(false);
+        if (hideDialogOn === "hover") {
+          setIsOpen(false);
+          onOpenChange(false);
+        }
       }}
       ref={refs.setReference}
     >
@@ -86,7 +95,13 @@ export function Tooltip({
         onClick={(e: React.MouseEvent) => {
           e.stopPropagation();
           if (showDialogOn === "click") {
-            setIsOpen((prev) => !prev);
+            setIsOpen((prev) => {
+              const next = !prev;
+              if (onOpenChange) {
+                onOpenChange(next);
+              }
+              return next;
+            });
           }
         }}
         $showDialogOn={showDialogOn}
