@@ -6,7 +6,7 @@ export interface FileInputBoxProps {
   containerStyle?: CSSProp;
   placeholder?: string;
   accept?: string;
-  onFilesSelected?: (files: FileList) => void;
+  onFilesSelected?: (files: FileList | undefined) => void;
   label?: string;
   labelStyle?: CSSProp;
   showError?: boolean;
@@ -33,7 +33,7 @@ function FileInputBox({
 
   const handleDeleteFile = () => {
     if (selectedFile !== "") {
-      onFilesSelected(null);
+      onFilesSelected(undefined);
       setSelectedFile("");
     }
   };
