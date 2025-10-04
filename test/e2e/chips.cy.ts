@@ -23,18 +23,35 @@ describe("Chips", () => {
     });
   });
 
-  context("when missing", () => {
-    context("when select empty button", () => {
-      it("should changes mode", () => {
-        cy.findByRole("button").click();
-        cy.findByRole("textbox").type("MyCustomTag");
-        cy.findByText(/Create a new label/i).click();
+  context("when creatable", () => {
+    context("when missing option", () => {
+      context("when pressing empty button", () => {
+        it("should change to creatable mode", () => {
+          cy.findByRole("button").click();
+          cy.findByRole("textbox").type("MyCustomTag");
+          cy.findByText(/Create a new label/i).click();
 
-        cy.findByPlaceholderText(/Create a new label/i)
-          .clear()
-          .type("MyCustomTag");
+          cy.findByPlaceholderText(/Create a new label/i)
+            .clear()
+            .type("MyCustomTag");
 
-        cy.findByRole("button", { name: /Add/i }).click();
+          cy.findByRole("button", { name: /Add/i }).click();
+        });
+      });
+
+      context("when pressing button close", () => {
+        it("should change to idle mode", () => {
+          cy.findByRole("button").click();
+          cy.findByRole("textbox").type("MyCustomTag");
+          cy.findByText(/Create a new label/i).click();
+
+          cy.findByPlaceholderText(/Create a new label/i)
+            .clear()
+            .type("MyCustomTag");
+
+          cy.findByRole("button", { name: /Add/i }).click();
+          cy.findByRole("button", { name: /Cancel/i }).click();
+        });
       });
     });
   });
