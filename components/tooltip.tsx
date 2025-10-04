@@ -18,6 +18,7 @@ export type TooltipProps = {
   drawerStyle?: CSSProp;
   containerStyle?: CSSProp;
   arrowStyle?: CSSProp;
+  dialogPosition?: "bottom-start" | "bottom-end" | "top-start" | "top-end";
 };
 
 export function Tooltip({
@@ -28,17 +29,18 @@ export function Tooltip({
   drawerStyle,
   containerStyle,
   arrowStyle,
+  dialogPosition = "bottom-start",
 }: TooltipProps) {
   const [isOpen, setIsOpen] = useState(false);
   const arrowRef = useRef<HTMLDivElement>(null);
 
   const { floatingStyles, refs, placement } = useFloating({
-    placement: "bottom-start",
+    placement: dialogPosition,
     open: isOpen,
     onOpenChange: setIsOpen,
     middleware: [
       offset(({ placement }) => {
-        return placement === "top-start" ? 8 : 0;
+        return placement.startsWith("top") ? 16 : 0;
       }),
       flip(),
       shift({ padding: 8 }),
