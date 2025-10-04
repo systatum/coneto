@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Tooltip, TooltipProps } from "./tooltip";
 import { Button } from "./button";
+import { Badge } from "./badge";
 import {
   FormFieldProps,
   StatefulForm,
@@ -10,6 +11,7 @@ import { useState } from "react";
 import z from "zod";
 import { RiAddBoxLine } from "@remixicon/react";
 import { css } from "styled-components";
+import { OptionsProps } from "./selectbox";
 
 const meta: Meta<typeof Tooltip> = {
   title: "Content/Tooltip",
@@ -241,6 +243,159 @@ export const WithForm: Story = {
           </div>
         </Tooltip>
       </div>
+    );
+  },
+};
+
+export const WithBadge: Story = {
+  render: () => {
+    const [value, setValue] = useState<{ name: string; role: OptionsProps }>({
+      name: "",
+      role: {
+        text: "",
+        value: "",
+      },
+    });
+    const [open, setOpen] = useState(false);
+
+    const EMPLOYEE_OPTIONS: OptionsProps[] = [
+      { text: "Organization Owner", value: 1 },
+      { text: "HR Manager", value: 2 },
+      { text: "Member", value: 3 },
+    ];
+
+    const onChangeDivisionEmployeeForm = (e?: StatefulOnChangeType) => {
+      if (!e || typeof e !== "object") return;
+      console.log(e);
+      if (e && typeof e === "object" && "value" in e && "text" in e) {
+        const isOptionsProps =
+          (typeof e.value === "string" || typeof e.value === "number") &&
+          typeof e.text === "string";
+
+        if (isOptionsProps) {
+          setValue((prev) => ({ ...prev, ["role"]: e }));
+        }
+        return;
+      }
+
+      if ("target" in e && typeof e.target?.name === "string") {
+        const target = e.target;
+        const { name, value } = target as
+          | HTMLInputElement
+          | HTMLTextAreaElement;
+
+        let updatedValue: string | boolean = value;
+
+        if (target instanceof HTMLInputElement && target.type === "checkbox") {
+          updatedValue = target.checked;
+        }
+
+        setValue((prev) => ({ ...prev, [name]: updatedValue }));
+      }
+    };
+    console.log(value);
+
+    const EMPLOYEE_FIELDS: FormFieldProps[] = [
+      {
+        name: "name",
+        title: "Name",
+        type: "text",
+        required: true,
+        onChange: onChangeDivisionEmployeeForm,
+      },
+      {
+        name: "combo",
+        title: "Combo",
+        type: "combo",
+        required: false,
+        onChange: onChangeDivisionEmployeeForm,
+        comboboxProps: {
+          options: EMPLOYEE_OPTIONS,
+          selectboxStyle: css`
+            border: 1px solid #d1d5db;
+            &:focus {
+              border-color: #61a9f9;
+              box-shadow: 0 0 0 1px #61a9f9;
+            }
+          `,
+        },
+      },
+    ];
+
+    const divisionEmployeeSchema = z.object({
+      name: z
+        .string()
+        .min(2, "Division name must be at least 2 characters long"),
+    });
+
+    const contentDialog = (
+      <div
+        style={{
+          minWidth: 300,
+          padding: "8px 8px 4px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "8px",
+        }}
+      >
+        <StatefulForm
+          fields={EMPLOYEE_FIELDS}
+          formValues={value}
+          validationSchema={divisionEmployeeSchema}
+          mode="onChange"
+        />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+          }}
+        >
+          <Button style={{ fontSize: "0.75rem" }}>Save</Button>
+        </div>
+      </div>
+    );
+
+    return (
+      <Tooltip
+        showDialogOn="click"
+        hideDialogOn="click"
+        dialogPosition="top-start"
+        onOpenChange={(open) => {
+          setOpen(open);
+        }}
+        dialog={contentDialog}
+        containerStyle={css`
+          width: fit-content;
+          padding: 0 12px;
+        `}
+        arrowStyle={css`
+          background-color: #e5e7eb;
+          border: 1px solid #e5e7eb;
+        `}
+        drawerStyle={css`
+          width: fit-content;
+          left: 1rem;
+          background-color: white;
+          color: black;
+          border: 1px solid #e5e7eb;
+        `}
+      >
+        <Badge
+          badgeStyle={css`
+            cursor: pointer;
+            ${open &&
+            css`
+              border-color: #045e95;
+            `}
+            transition: all ease-in-out 0.2s;
+            &:hover {
+              border-color: #045e95;
+            }
+          `}
+          caption="Badge"
+          withCircle
+        />
+      </Tooltip>
     );
   },
 };
