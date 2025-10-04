@@ -240,17 +240,18 @@ describe("Pinbox", () => {
 
     context("when given", () => {
       it("should be disabled and show correct styles", () => {
-        cy.findAllByLabelText("pinbox-input").eq(1).should("be.disabled");
-
-        cy.findAllByLabelText("pinbox-input")
-          .eq(1)
-          .should("have.css", "background-color", "rgb(249, 250, 251)");
-        cy.findAllByLabelText("pinbox-input")
-          .eq(1)
-          .should("have.css", "opacity", "0.6");
-        cy.findAllByLabelText("pinbox-input")
-          .eq(1)
-          .should("have.css", "border-color", "rgba(0, 0, 0, 0.3)");
+        [0, 1, 2, 3, 4, 5].map((data) => {
+          cy.findAllByLabelText("pinbox-input").eq(data).should("be.disabled");
+          cy.findAllByLabelText("pinbox-input")
+            .eq(data)
+            .should("have.css", "background-color", "rgb(249, 250, 251)");
+          cy.findAllByLabelText("pinbox-input")
+            .eq(data)
+            .should("have.css", "opacity", "0.6");
+          cy.findAllByLabelText("pinbox-input")
+            .eq(data)
+            .should("have.css", "border-color", "rgba(0, 0, 0, 0.3)");
+        });
       });
     });
   });
