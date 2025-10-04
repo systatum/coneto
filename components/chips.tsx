@@ -462,7 +462,7 @@ function ChipsDrawer({
                 secondInputRef: inputMissingRef,
                 closeForm: async () => {
                   await setMode("idle");
-                  await inputRef.current.focus();
+                  await inputRef.current?.focus();
                 },
               })
             : missingOptionForm}

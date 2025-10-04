@@ -153,7 +153,7 @@ export const Default: Story = {
           <Textbox
             ref={secondInputRef}
             name="name_tag"
-            placeholder={"name tag ref"}
+            placeholder={"Create a new label"}
             value={inputValue.name_tag}
             autoComplete="off"
             onChange={onChangeValue}
@@ -494,7 +494,7 @@ export const Deletable: Story = {
           <Textbox
             ref={secondInputRef}
             name="name_tag"
-            placeholder={"name tag ref"}
+            placeholder={"Create a new label"}
             value={inputValue.name_tag}
             autoComplete="off"
             onChange={onChangeValue}
