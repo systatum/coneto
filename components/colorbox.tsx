@@ -7,11 +7,9 @@ import {
 } from "react";
 import styled, { CSSProp } from "styled-components";
 
-export type ColorPickProps = "color-picker" | "color-text";
-
 export interface ColorboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "style"> {
-  onChange: (e: ChangeEvent<HTMLInputElement>, data: ColorPickProps) => void;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   value?: string;
   label?: string;
   showError?: boolean;
@@ -47,11 +45,7 @@ function Colorbox({
     >
       <ColorBox
         tabIndex={0}
-        $bgColor={
-          !value || value.trim() === "#" || value.trim() === ""
-            ? "#ffffff"
-            : value
-        }
+        $bgColor={value}
         $showError={!!showError}
         onClick={() => {
           document.getElementById(inputId)?.click();
@@ -67,19 +61,27 @@ function Colorbox({
         {...props}
         id={inputId}
         type="color"
-        value={value?.startsWith("#") ? value : `#${value}`}
-        onChange={(e) => onChange(e, "color-picker")}
+        value={value}
+        onChange={onChange}
       />
 
       <TextInputGroup $hovered={hovered} $showError={!!showError}>
-        {value?.replace(/^#/, "").length > 0 && (
-          <Prefix $showError={!!showError}>#</Prefix>
-        )}
+        <Prefix $showError={!!showError}>#</Prefix>
         <TextInput
           {...props}
           type="text"
           value={value?.replace(/^#/, "")}
-          onChange={(e) => onChange(e, "color-text")}
+          onChange={(e) => {
+            const cleanValue = e.target.value.replace(/#/g, "");
+
+            const inputChangeEvent = {
+              target: {
+                name: props.name,
+                value: `#${cleanValue}`,
+              },
+            } as ChangeEvent<HTMLInputElement>;
+            onChange(inputChangeEvent);
+          }}
           placeholder={placeholder}
           onFocus={() => setHovered(true)}
           onBlur={() => setHovered(false)}
@@ -158,7 +160,7 @@ const ColorBox = styled.div<{
   margin: 4px;
   border-radius: 2px;
   border: 1px solid ${({ $showError }) => ($showError ? "#ef4444" : "#d1d5db")};
-  background-color: ${({ $bgColor }) => $bgColor ?? "#ffffff"};
+  background-color: ${({ $bgColor }) => ($bgColor ? $bgColor : "#ffffff")};
   overflow: hidden;
   cursor: pointer;
 `;

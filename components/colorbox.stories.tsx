@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { Colorbox, ColorPickProps } from "./colorbox";
+import { Colorbox } from "./colorbox";
 import { useArgs } from "@storybook/preview-api";
 import { ChangeEvent } from "react";
 import { css } from "styled-components";
@@ -20,20 +20,9 @@ export const Default: Story = {
   },
   render: (args) => {
     const [currentArgs, setUpdateArgs] = useArgs();
-    const onChangeValue = (
-      e: ChangeEvent<HTMLInputElement>,
-      data: ColorPickProps
-    ) => {
+    const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
-      if (data === "color-picker") {
-        setUpdateArgs({ ...currentArgs, [name]: value });
-      } else if (data === "color-text") {
-        let val = value;
-        if (!val.startsWith("#")) {
-          val = "#" + val;
-        }
-        setUpdateArgs({ ...currentArgs, [e.target.name]: val });
-      }
+      setUpdateArgs({ ...currentArgs, [name]: value });
     };
 
     return (
@@ -65,33 +54,16 @@ export const WithError: Story = {
       return hexRegex.test(value);
     }
 
-    const onChangeValue = (
-      e: ChangeEvent<HTMLInputElement>,
-      data: ColorPickProps
-    ) => {
+    const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
 
-      if (data === "color-picker") {
-        const isValidHex = isValidHexColor(value);
-        setUpdateArgs({
-          ...currentArgs,
-          [name]: value,
-          showError: !isValidHex,
-          errorMessage: isValidHex ? "" : "Invalid color value.",
-        });
-      } else if (data === "color-text") {
-        let val = value;
-        if (!val.startsWith("#")) {
-          val = "#" + val;
-        }
-        const isValidHex = isValidHexColor(val);
-        setUpdateArgs({
-          ...currentArgs,
-          [name]: val,
-          showError: !isValidHex,
-          errorMessage: isValidHex ? "" : "Invalid color value.",
-        });
-      }
+      const isValidHex = isValidHexColor(value);
+      setUpdateArgs({
+        ...currentArgs,
+        [name]: value,
+        showError: !isValidHex,
+        errorMessage: isValidHex ? "" : "Invalid color value.",
+      });
     };
 
     return (
