@@ -15,6 +15,15 @@ describe("Colorbox", () => {
       });
     });
 
+    context("when type with #", () => {
+      it("should render normal value", () => {
+        cy.findByText("Color").should("exist");
+
+        cy.findByRole("textbox").clear().type("###ff0099");
+        cy.findByDisplayValue("ff0099").should("exist");
+      });
+    });
+
     context("when change with color selection", () => {
       it("should render color", () => {
         cy.get('input[type="color"]').then(($input) => {
