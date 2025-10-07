@@ -66,18 +66,18 @@ function Colorbox({
       />
 
       <TextInputGroup $hovered={hovered} $showError={!!showError}>
-        {value?.replace(/^#/, "").length > 0 && (
-          <Prefix $showError={!!showError}>#</Prefix>
-        )}
+        <Prefix $showError={!!showError}>#</Prefix>
         <TextInput
           {...props}
           type="text"
           value={value?.replace(/^#/, "")}
           onChange={(e) => {
+            const cleanValue = e.target.value.replace(/#/g, "");
+
             const inputChangeEvent = {
               target: {
                 name: props.name,
-                value: `#${e.target.value}`,
+                value: `#${cleanValue}`,
               },
             } as ChangeEvent<HTMLInputElement>;
             onChange(inputChangeEvent);
