@@ -1,4 +1,4 @@
-import { RiAddLine, RiCheckboxMultipleBlankLine } from "@remixicon/react";
+import { RiAddLine } from "@remixicon/react";
 import { Badge, BadgeActionProps, BadgeProps } from "./badge";
 import { Checkbox } from "./checkbox";
 import {
@@ -11,6 +11,7 @@ import {
   Ref,
   RefObject,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -97,23 +98,27 @@ function Chips(props: ChipsProps) {
     dismiss,
     role,
   ]);
-  const getAllOptions = () => {
-    const selectedIds = new Set(props.selectedOptions.map((data) => data.id));
+
+  const ALL_OPTIONS = useMemo(() => {
+    const selectedIds = new Set(props.selectedOptions.map((d) => d.id));
 
     const clickedOptions = props.selectedOptions;
     const unClickedOptions = props.options.filter(
       (opt) => !selectedIds.has(opt.id)
     );
-    return [...clickedOptions, ...unClickedOptions];
-  };
+
+    const allOpts = [...clickedOptions, ...unClickedOptions];
+
+    if (hasInteracted && props.inputValue) {
+      return allOpts.filter((opt) =>
+        opt.caption.toLowerCase().includes(props.inputValue.toLowerCase())
+      );
+    }
+
+    return allOpts;
+  }, [props.selectedOptions, props.options, props.inputValue, hasInteracted]);
 
   const CLICKED_OPTIONS = props.selectedOptions;
-
-  const ALL_OPTIONS = hasInteracted
-    ? getAllOptions().filter((opt) =>
-        opt.caption.toLowerCase().includes(props.inputValue.toLowerCase())
-      )
-    : getAllOptions();
 
   const inputElement: ReactElement = (
     <>
@@ -428,7 +433,7 @@ function ChipsDrawer({
                       {index > 0 &&
                         options[index - 1] &&
                         selectedOptions?.some(
-                          (clicked) => clicked === options[index - 1].id
+                          (clicked) => clicked.id === options[index - 1].id
                         ) &&
                         !isClicked && <Divider aria-label="divider" />}
 
