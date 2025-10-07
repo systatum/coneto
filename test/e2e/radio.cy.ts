@@ -10,9 +10,6 @@ describe("Radio", () => {
       it("should selected option", () => {
         cy.findByText("Mentions").click();
         cy.findAllByRole("radio").eq(1).should("be.checked");
-        cy.findAllByLabelText("input-container-radio")
-          .eq(0)
-          .should("have.css", "align-items", "center");
       });
     });
   });

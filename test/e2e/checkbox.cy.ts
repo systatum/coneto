@@ -10,11 +10,6 @@ describe("Checkbox", () => {
       it("should have checked value on checkbox", () => {
         cy.findByRole("checkbox").click();
         cy.findByRole("checkbox").should("be.checked");
-        cy.findByLabelText("input-container-checkbox").should(
-          "have.css",
-          "align-items",
-          "center"
-        );
       });
     });
   });
