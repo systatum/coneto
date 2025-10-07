@@ -12,6 +12,8 @@ export interface RadioProps {
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
   descriptionStyle?: CSSProp;
+  inputStyle?: CSSProp;
+  errorStyle?: CSSProp;
   showError?: boolean;
   errorMessage?: string;
 }
@@ -29,6 +31,8 @@ function Radio({
   descriptionStyle,
   showError,
   errorMessage,
+  inputStyle,
+  errorStyle,
   ...props
 }: RadioProps & InputHTMLAttributes<HTMLInputElement>) {
   const id = `radio-${value}`;
@@ -40,8 +44,9 @@ function Radio({
       $checked={checked}
       $style={containerStyle}
       $hasDescription={!!description}
+      $disabled={props.disabled}
     >
-      <TextContainer>
+      <InputContainer aria-label="input-container-radio">
         <HiddenRadio
           type="radio"
           id={id}
@@ -49,11 +54,12 @@ function Radio({
           value={value}
           onChange={onChange}
           checked={checked}
+          $disabled={props.disabled}
           {...props}
         />
-        <Circle />
+        <Circle $error={showError} $style={inputStyle} />
         {label && <LabelText $style={labelStyle}>{label}</LabelText>}
-      </TextContainer>
+      </InputContainer>
       {description && (
         <DescriptionText
           $highlight={highlightOnChecked}
@@ -62,7 +68,7 @@ function Radio({
           {description}
         </DescriptionText>
       )}
-      {showError && <ErrorText>{errorMessage}</ErrorText>}
+      {showError && <ErrorText $style={errorStyle}>{errorMessage}</ErrorText>}
     </Label>
   );
 }
@@ -72,6 +78,7 @@ const Label = styled.label<{
   $checked?: boolean;
   $style?: CSSProp;
   $hasDescription?: boolean;
+  $disabled?: boolean;
 }>`
   display: flex;
   align-items: flex-start;
@@ -88,28 +95,49 @@ const Label = styled.label<{
     background-color: ${({ $highlight }) => ($highlight ? "#E7F2FC" : "none")};
   }
 
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      cursor: not-allowed;
+      opacity: 0.6;
+    `}
+
   ${({ $style }) => $style}
 `;
 
-const HiddenRadio = styled.input`
+const HiddenRadio = styled.input<{ $disabled?: boolean }>`
   position: absolute;
   opacity: 0;
   pointer-events: none;
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      cursor: not-allowed;
+      opacity: 0.6;
+    `}
 `;
 
-const Circle = styled.div`
+const Circle = styled.div<{ $style?: CSSProp; $error?: boolean }>`
   width: 16px;
   height: 16px;
   border-radius: 9999px;
   border: 1px solid #4b5563;
 
+  ${({ $error }) =>
+    $error &&
+    css`
+      border-color: #dc2626;
+    `}
+
+  ${({ $style }) => $style}
   input:checked + & {
     border-width: 5px;
     border-color: #61a9f9;
   }
 `;
 
-const TextContainer = styled.div`
+const InputContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -121,9 +149,10 @@ const LabelText = styled.div<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
-const ErrorText = styled.span`
+const ErrorText = styled.span<{ $style?: CSSProp }>`
   margin-top: 4px;
   color: #dc2626;
+  ${({ $style }) => $style}
 `;
 
 const DescriptionText = styled.span<{ $highlight?: boolean; $style?: CSSProp }>`

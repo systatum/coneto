@@ -25,6 +25,7 @@ export interface CheckboxProps
   iconStyle?: CSSProp;
   wrapperStyle?: CSSProp;
   descriptionStyle?: CSSProp;
+  errorStyle?: CSSProp;
 }
 
 function Checkbox({
@@ -41,6 +42,7 @@ function Checkbox({
   iconStyle,
   wrapperStyle,
   descriptionStyle,
+  errorStyle,
   ...props
 }: CheckboxProps) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -60,8 +62,9 @@ function Checkbox({
       $highlight={!!highlightOnChecked}
       $checked={isChecked}
       $style={containerStyle}
+      $disabled={props.disabled}
     >
-      <TextContainer>
+      <InputContainer aria-label="input-container-checkbox">
         <CheckboxBox $style={wrapperStyle} $highlight={!!highlightOnChecked}>
           <HiddenCheckbox
             ref={inputRef}
@@ -74,6 +77,7 @@ function Checkbox({
             $indeterminate={indeterminate}
             $checked={isChecked}
             $style={inputStyle}
+            $disabled={props.disabled}
             readOnly
             {...(props as InputHTMLAttributes<HTMLInputElement>)}
           />
@@ -100,7 +104,7 @@ function Checkbox({
             {label}
           </LabelText>
         )}
-      </TextContainer>
+      </InputContainer>
 
       {description && (
         <DescriptionText
@@ -110,7 +114,7 @@ function Checkbox({
           {description}
         </DescriptionText>
       )}
-      {showError && <ErrorText>{errorMessage}</ErrorText>}
+      {showError && <ErrorText $style={errorStyle}>{errorMessage}</ErrorText>}
     </Label>
   );
 }
@@ -120,12 +124,11 @@ const Label = styled.label<{
   $highlight: boolean;
   $checked: boolean;
   $style?: CSSProp;
+  $disabled?: boolean;
 }>`
   display: flex;
   flex-direction: column;
   font-size: 12px;
-  align-items: ${({ $hasDescription }) =>
-    $hasDescription ? "flex-start" : "center"};
   background-color: ${({ $highlight, $checked }) =>
     $highlight && $checked ? "#DBEAFE" : "white"};
   border: ${({ $highlight }) =>
@@ -133,6 +136,14 @@ const Label = styled.label<{
   padding: ${({ $highlight }) => ($highlight ? "12px" : "0")};
   cursor: ${({ $highlight }) => ($highlight ? "pointer" : "default")};
   transition: background-color 0.2s;
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      cursor: not-allowed;
+      opacity: 0.6;
+    `}
+
   ${({ $style }) => $style};
 
   &:hover {
@@ -155,18 +166,27 @@ const HiddenCheckbox = styled.input<{
   $checked?: boolean;
   $indeterminate?: boolean;
   $style?: CSSProp;
+  $disabled?: boolean;
 }>`
   appearance: none;
   height: 16px;
   width: 16px;
   border-radius: 0;
-  cursor: pointer;
   outline: none;
   background-color: ${({ $indeterminate, $checked }) =>
     $indeterminate || $checked ? "#61A9F9" : "#ffffff"};
   border: 1px solid
     ${({ $indeterminate, $checked }) =>
       $indeterminate || $checked ? "#61A9F9" : "#6b7280"};
+
+  ${({ $disabled }) =>
+    $disabled
+      ? css`
+          cursor: not-allowed;
+        `
+      : css`
+          cursor: pointer;
+        `}
 
   ${({ $isError }) =>
     $isError &&
@@ -196,7 +216,7 @@ const Icon = styled.svg<{ $visible?: boolean; $style?: CSSProp }>`
   ${({ $style }) => $style};
 `;
 
-const TextContainer = styled.div`
+const InputContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -224,9 +244,10 @@ const DescriptionText = styled.span<{ $highlight?: boolean; $style?: CSSProp }>`
   ${({ $style }) => $style};
 `;
 
-const ErrorText = styled.span`
+const ErrorText = styled.span<{ $style?: CSSProp }>`
   margin-top: 4px;
   color: #dc2626;
+  ${({ $style }) => $style}
 `;
 
 export { Checkbox };
