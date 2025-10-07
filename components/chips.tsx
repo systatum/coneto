@@ -54,11 +54,18 @@ interface BaseChipsProps {
   missingOptionLabel?: string;
   creatable?: boolean;
   onOptionClicked?: (badge: BadgeProps) => void;
-  selectedOptions?: number[];
+  selectedOptions?: BadgeProps[];
   missingOptionForm?:
     | ReactNode
     | ((props?: MissingOptionFormProps) => ReactNode);
   missingEmptyContent?: ReactNode;
+  renderer?: ReactNode | ((props: ChipRendererProps) => ReactNode);
+}
+
+export interface ChipRendererProps {
+  id?: string;
+  caption?: string;
+  metadata?: Record<string, unknown>;
 }
 
 export interface MissingOptionFormProps {
@@ -90,22 +97,17 @@ function Chips(props: ChipsProps) {
     dismiss,
     role,
   ]);
-
   const getAllOptions = () => {
-    const selectedIds = new Set(props.selectedOptions);
+    const selectedIds = new Set(props.selectedOptions.map((data) => data.id));
 
-    const clickedOptions = props.selectedOptions
-      .map((id) => props.options.find((opt) => opt.id === id))
-      .filter(Boolean);
+    const clickedOptions = props.selectedOptions;
     const unClickedOptions = props.options.filter(
       (opt) => !selectedIds.has(opt.id)
     );
     return [...clickedOptions, ...unClickedOptions];
   };
 
-  const CLICKED_OPTIONS = props.selectedOptions
-    .map((id) => props.options.find((opt) => opt.id === id))
-    .filter(Boolean);
+  const CLICKED_OPTIONS = props.selectedOptions;
 
   const ALL_OPTIONS = hasInteracted
     ? getAllOptions().filter((opt) =>
@@ -116,25 +118,35 @@ function Chips(props: ChipsProps) {
   const inputElement: ReactElement = (
     <>
       <InputGroup $containerStyle={props.chipsContainerStyle}>
-        {CLICKED_OPTIONS.map((data) => (
-          <Badge
-            key={data.id}
-            onClick={(e) => {
-              e.stopPropagation();
-              dismiss;
-            }}
-            variant={data.variant}
-            backgroundColor={data.backgroundColor}
-            circleColor={data.circleColor}
-            badgeStyle={css`
-              border-radius: 4px;
-              ${props.chipSelectedStyle}
-            `}
-            textColor={data.textColor}
-            caption={data.caption}
-            withCircle
-          />
-        ))}
+        {CLICKED_OPTIONS.map((data) =>
+          typeof props.renderer === "function" ? (
+            props.renderer({
+              id: data.id,
+              caption: data.caption,
+              metadata: data.metadata,
+            })
+          ) : props.renderer ? (
+            props.renderer
+          ) : (
+            <Badge
+              key={data.id}
+              onClick={(e) => {
+                e.stopPropagation();
+                dismiss;
+              }}
+              variant={data.variant}
+              backgroundColor={data.backgroundColor}
+              circleColor={data.circleColor}
+              badgeStyle={css`
+                border-radius: 4px;
+                ${props.chipSelectedStyle}
+              `}
+              textColor={data.textColor}
+              caption={data.caption}
+              withCircle
+            />
+          )
+        )}
 
         <AddButton
           ref={refs.setReference}
@@ -256,7 +268,7 @@ function ChipsDrawer({
   missingEmptyContent,
   name = "chips",
 }: ChipsDrawerProps) {
-  const [hovered, setHovered] = useState<number | null>(null);
+  const [hovered, setHovered] = useState<string | null>(null);
   const [mode, setMode] = useState<"idle" | "create">("idle");
   const [isTyping, setIsTyping] = useState(false);
 
@@ -287,7 +299,7 @@ function ChipsDrawer({
 
   useEffect(() => {
     if (isTyping && hasNoFilter && creatable) {
-      setHovered(0);
+      setHovered("0");
     } else if (isTyping && options && options.length > 0) {
       setHovered(options[0]?.id);
     }
@@ -298,7 +310,7 @@ function ChipsDrawer({
 
     const index = options.findIndex((opt) => opt.id === hovered);
     const hasCreateOption = hasNoFilter && creatable;
-    const allOptions = [{ id: 0 }, ...options];
+    const allOptions = [{ id: "0" }, ...options];
 
     if (e.key === "ArrowDown") {
       e.preventDefault();
@@ -331,7 +343,7 @@ function ChipsDrawer({
       e.preventDefault();
       e.stopPropagation();
       const selected = options.find((opt) => opt.id === hovered);
-      if (hovered === 0) {
+      if (hovered === "0") {
         setMode("create");
       } else if (selected && onOptionClicked) {
         onOptionClicked(selected);
@@ -386,8 +398,8 @@ function ChipsDrawer({
                   await setMode("create");
                   await inputMissingRef.current.focus();
                 }}
-                onMouseEnter={() => setHovered(0)}
-                $hovered={hovered === 0}
+                onMouseEnter={() => setHovered("0")}
+                $hovered={hovered === "0"}
               >
                 <RiAddLine size={14} style={{ minWidth: "14px" }} />
                 <span
@@ -408,7 +420,7 @@ function ChipsDrawer({
               <>
                 {options.map((data, index) => {
                   const isClicked = selectedOptions?.some(
-                    (clicked) => clicked === data.id
+                    (clicked) => clicked.id === data.id
                   );
 
                   return (
@@ -528,8 +540,8 @@ function ChipsItem({
 }: {
   badge: BadgeProps;
   isClicked: boolean;
-  hovered: number | null;
-  setHovered: (number: number) => void;
+  hovered: string | null;
+  setHovered: (number: string) => void;
   onOptionClicked?: (badge: BadgeProps) => void;
   chipStyle?: CSSProp;
   chipContainerStyle?: CSSProp;
