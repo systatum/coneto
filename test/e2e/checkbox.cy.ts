@@ -1,17 +1,25 @@
 import { getIdContent } from "test/support/commands";
 
-context("Checkbox Component", () => {
-  describe("Default", () => {
+describe("Checkbox", () => {
+  context("when default", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-checkbox--default"));
     });
 
-    it("Should be click on checkbox", () => {
-      cy.get("input[type='checkbox']").click();
+    context("when clicking", () => {
+      it("should have checked value on checkbox", () => {
+        cy.findByRole("checkbox").click();
+        cy.findByRole("checkbox").should("be.checked");
+        cy.findByLabelText("input-container-checkbox").should(
+          "have.css",
+          "align-items",
+          "center"
+        );
+      });
     });
   });
 
-  describe("With Description", () => {
+  context("with description", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-checkbox--with-description"));
     });
@@ -31,26 +39,54 @@ context("Checkbox Component", () => {
       },
     ];
 
-    it("Should have content with label & description and clickable", () => {
-      CHECKBOX_OPTIONS.forEach((data) => {
-        cy.findByText(data.label).should("exist").click();
-        cy.findByText(data.description).should("exist");
+    context("when given", () => {
+      it("should render label & description", () => {
+        CHECKBOX_OPTIONS.forEach((data) => {
+          cy.findByText(data.label).should("exist").click();
+          cy.findByText(data.description).should("exist");
+        });
       });
     });
   });
 
-  describe("With Error", () => {
+  context("with error", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-checkbox--with-error"));
     });
 
-    it("Should show red border when unchecked", () => {
-      cy.findByText("You must agree before continuing").should("exist");
+    context("when not qualified", () => {
+      it("should show error", () => {
+        cy.findByText("Please select an option before continuing.").should(
+          "exist"
+        );
+      });
     });
 
-    it("Should remove error border after checked", () => {
-      cy.findByRole("checkbox").click();
-      cy.findByText("You must agree before continuing").should("not.exist");
+    context("when clicking", () => {
+      it("should remove error", () => {
+        cy.findByRole("checkbox").click();
+        cy.findByText("Please select an option before continuing.").should(
+          "not.exist"
+        );
+      });
+    });
+  });
+
+  context("when error", () => {
+    beforeEach(() => {
+      cy.visit(getIdContent("input-elements-checkbox--disabled"));
+    });
+
+    context("when given", () => {
+      it("shouldn't checked value", () => {
+        cy.findAllByRole("checkbox")
+          .eq(0)
+          .should("not.be.checked")
+          .and("be.disabled");
+        cy.findAllByRole("checkbox")
+          .eq(0)
+          .should("have.css", "cursor", "not-allowed");
+      });
     });
   });
 });
