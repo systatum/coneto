@@ -359,7 +359,7 @@ export const WithBadge: Story = {
       <Tooltip
         showDialogOn="hover"
         hideDialogOn="hover"
-        dialogPosition="top-start"
+        dialogPosition="top-left"
         onOpenChange={(open) => {
           setOpen(open);
         }}
