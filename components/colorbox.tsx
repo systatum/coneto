@@ -7,8 +7,6 @@ import {
 } from "react";
 import styled, { CSSProp } from "styled-components";
 
-export type ColorPickProps = "color-picker" | "color-text";
-
 export interface ColorboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "style"> {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;

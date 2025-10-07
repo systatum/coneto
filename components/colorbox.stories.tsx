@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { Colorbox, ColorPickProps } from "./colorbox";
+import { Colorbox } from "./colorbox";
 import { useArgs } from "@storybook/preview-api";
 import { ChangeEvent } from "react";
 import { css } from "styled-components";
@@ -24,8 +24,6 @@ export const Default: Story = {
       const { name, value } = e.target;
       setUpdateArgs({ ...currentArgs, [name]: value });
     };
-
-    console.log(currentArgs);
 
     return (
       <Colorbox
