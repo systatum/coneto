@@ -1,4 +1,4 @@
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
 import { ChangeEvent, InputHTMLAttributes } from "react";
 
 export interface RadioProps {
@@ -11,6 +11,9 @@ export interface RadioProps {
   highlightOnChecked?: boolean;
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
+  descriptionStyle?: CSSProp;
+  showError?: boolean;
+  errorMessage?: string;
 }
 
 function Radio({
@@ -23,6 +26,9 @@ function Radio({
   highlightOnChecked,
   containerStyle,
   labelStyle,
+  descriptionStyle,
+  showError,
+  errorMessage,
   ...props
 }: RadioProps & InputHTMLAttributes<HTMLInputElement>) {
   const id = `radio-${value}`;
@@ -33,21 +39,30 @@ function Radio({
       $highlight={highlightOnChecked}
       $checked={checked}
       $style={containerStyle}
+      $hasDescription={!!description}
     >
-      <HiddenRadio
-        type="radio"
-        id={id}
-        name={name}
-        value={value}
-        onChange={onChange}
-        checked={checked}
-        {...props}
-      />
-      <Circle />
       <TextContainer>
+        <HiddenRadio
+          type="radio"
+          id={id}
+          name={name}
+          value={value}
+          onChange={onChange}
+          checked={checked}
+          {...props}
+        />
+        <Circle />
         {label && <LabelText $style={labelStyle}>{label}</LabelText>}
-        {description && <DescriptionText>{description}</DescriptionText>}
       </TextContainer>
+      {description && (
+        <DescriptionText
+          $highlight={highlightOnChecked}
+          $style={descriptionStyle}
+        >
+          {description}
+        </DescriptionText>
+      )}
+      {showError && <ErrorText>{errorMessage}</ErrorText>}
     </Label>
   );
 }
@@ -56,11 +71,14 @@ const Label = styled.label<{
   $highlight?: boolean;
   $checked?: boolean;
   $style?: CSSProp;
+  $hasDescription?: boolean;
 }>`
   display: flex;
   align-items: flex-start;
-  gap: 0.5rem;
+  flex-direction: column;
+  gap: 2px;
   cursor: pointer;
+  font-size: 12px;
   border: 1px solid transparent;
   background-color: ${({ $highlight, $checked }) =>
     $highlight && $checked ? "#DBEAFE" : "#fff"};
@@ -80,9 +98,8 @@ const HiddenRadio = styled.input`
 `;
 
 const Circle = styled.div`
-  margin-top: 5px;
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   border-radius: 9999px;
   border: 1px solid #4b5563;
 
@@ -94,16 +111,30 @@ const Circle = styled.div`
 
 const TextContainer = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
 `;
 
 const LabelText = styled.div<{ $style?: CSSProp }>`
+  font-size: 14px;
   ${({ $style }) => $style}
 `;
 
-const DescriptionText = styled.div`
-  font-size: 0.875rem;
+const ErrorText = styled.span`
+  margin-top: 4px;
+  color: #dc2626;
+`;
+
+const DescriptionText = styled.span<{ $highlight?: boolean; $style?: CSSProp }>`
+  ${({ $highlight }) =>
+    $highlight &&
+    css`
+      font-size: 14px;
+    `}
   color: #4b5563;
+  margin-left: 24px;
+  ${({ $style }) => $style};
 `;
 
 export { Radio };
