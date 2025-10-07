@@ -91,12 +91,12 @@ export const WithDescription: StoryWithDescription = {
           <Checkbox
             key={index}
             name="checked"
+            containerStyle={css`
+              font-size: 14px;
+            `}
             value={JSON.stringify(option)}
             description={option.description}
             label={option.label}
-            labelStyle={css`
-              font-weight: 500;
-            `}
             checked={selected.checked.some(
               (item) => item.value === option.value
             )}
@@ -119,8 +119,78 @@ export const WithError: Story = {
         checked={checked}
         onChange={() => setChecked(!checked)}
         showError={!checked}
-        errorMessage="You must agree before continuing"
+        errorMessage="Please select an option before continuing."
       />
+    );
+  },
+};
+
+export const Disabled: StoryWithDescription = {
+  args: {
+    valueSelected: [],
+  },
+  render: () => {
+    interface CheckboxOptionsProps {
+      value: string;
+      label: string;
+      description: string;
+    }
+
+    const CHECKBOX_OPTIONS: CheckboxOptionsProps[] = [
+      {
+        value: "email",
+        label: "Email",
+        description: "Receive updates via email",
+      },
+      {
+        value: "push",
+        label: "Push Notifications",
+        description: "Receive updates via push notifications",
+      },
+    ];
+
+    const [selected, setSelected] = useState({
+      checked: [] as CheckboxOptionsProps[],
+    });
+
+    const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
+      const { name, value: inputValue, checked, type } = e.target;
+
+      if (type === "checkbox") {
+        const parsed = JSON.parse(inputValue);
+        setSelected((prev) => ({
+          ...prev,
+          [name]: checked
+            ? [...prev[name], parsed]
+            : prev[name].filter(
+                (val: CheckboxOptionsProps) => val.value !== parsed.value
+              ),
+        }));
+      } else {
+        setSelected((prev) => ({ ...prev, [name]: inputValue }));
+      }
+    };
+
+    return (
+      <>
+        {CHECKBOX_OPTIONS.map((option, index) => (
+          <Checkbox
+            key={index}
+            name="checked"
+            containerStyle={css`
+              font-size: 14px;
+            `}
+            disabled
+            value={JSON.stringify(option)}
+            description={option.description}
+            label={option.label}
+            checked={selected.checked.some(
+              (item) => item.value === option.value
+            )}
+            onChange={onChangeValue}
+          />
+        ))}
+      </>
     );
   },
 };
