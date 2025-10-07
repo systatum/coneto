@@ -69,4 +69,27 @@ describe("Chips", () => {
       });
     });
   });
+
+  context("with custom renderer", () => {
+    beforeEach(() => {
+      cy.visit(getIdContent("input-elements-chips--custom-renderer"));
+    });
+
+    context("when given", () => {
+      it("should render content", () => {
+        cy.findByRole("button").click();
+        cy.findByText("Alice Johnson").click();
+        cy.get("body").click(0, 0);
+        cy.findByText("Alice Johnson").trigger("mouseover");
+        cy.wait(200);
+
+        cy.findByLabelText("Name").type("John Doe");
+
+        cy.findByPlaceholderText("Search your role...").as("input").type("HR");
+        cy.findByRole("option", { name: "HR Manager" })
+          .should("be.visible")
+          .click();
+      });
+    });
+  });
 });
