@@ -91,6 +91,9 @@ export const WithDescription: StoryWithDescription = {
           <Checkbox
             key={index}
             name="checked"
+            containerStyle={css`
+              font-size: 14px;
+            `}
             value={JSON.stringify(option)}
             description={option.description}
             label={option.label}
