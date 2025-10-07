@@ -22,55 +22,64 @@ export const Default: Story = {
   render: () => {
     const BADGE_OPTIONS: BadgeProps[] = [
       {
-        id: 1,
+        id: "1",
         caption: "Anime",
       },
       {
-        id: 2,
+        id: "2",
         caption: "Manga",
       },
       {
-        id: 3,
+        id: "3",
         caption: "Comics",
       },
       {
-        id: 4,
+        id: "4",
         caption: "Movies",
       },
       {
-        id: 5,
+        id: "5",
         caption: "Podcasts",
       },
       {
-        id: 6,
+        id: "6",
         caption: "TV Shows",
       },
       {
-        id: 7,
+        id: "7",
         caption: "Novels",
       },
       {
-        id: 8,
+        id: "8",
         caption: "Music",
       },
       {
-        id: 9,
+        id: "9",
         caption: "Games",
       },
       {
-        id: 10,
+        id: "10",
         caption: "Webtoons",
       },
     ];
 
-    const [inputValue, setInputValue] = useState({
+    interface InputValueProps {
+      search: string;
+      name_tag: string;
+      background_color: string;
+      text_color: string;
+      circle_color: string;
+      selectedOptions: BadgeProps[];
+    }
+
+    const [inputValue, setInputValue] = useState<InputValueProps>({
       search: "",
       name_tag: "",
       background_color: "",
       text_color: "",
       circle_color: "",
+      selectedOptions: [],
     });
-    const [selectedOptions, setSelectedOptions] = useState<number[]>([]);
 
     const onChangeValue = (
       e: ChangeEvent<HTMLInputElement>,
@@ -95,15 +104,17 @@ export const Default: Story = {
       }
     };
 
-    const handleOptionClicked = (val: BadgeProps) => {
-      const valId = val?.id;
-      const isAlreadySelected = selectedOptions.some((data) => data === valId);
+    const handleOptionClicked = (badge: BadgeProps) => {
+      const isAlreadySelected = inputValue.selectedOptions.some(
+        (data) => data.id === badge.id
+      );
 
-      if (isAlreadySelected) {
-        setSelectedOptions((prev) => prev.filter((data) => data !== valId));
-      } else {
-        setSelectedOptions([...selectedOptions, valId]);
-      }
+      setInputValue((prev) => ({
+        ...prev,
+        selectedOptions: isAlreadySelected
+          ? prev.selectedOptions.filter((data) => data.id !== badge.id)
+          : [...prev.selectedOptions, badge],
+      }));
     };
 
     const handleNewTagClicked = () => {
@@ -241,7 +252,7 @@ export const Default: Story = {
           max-width: 300px;
         `}
         onOptionClicked={handleOptionClicked}
-        selectedOptions={selectedOptions}
+        selectedOptions={inputValue.selectedOptions}
         options={BADGE_OPTIONS as BadgeProps[]}
         missingOptionForm={MissingOptionForm}
         creatable
@@ -254,95 +265,105 @@ export const DarkBackground: Story = {
   render: () => {
     const BADGE_OPTIONS: BadgeProps[] = [
       {
-        id: 1,
+        id: "1",
         backgroundColor: "#1c0f13",
         textColor: "#ffffff",
         caption: "Anime",
         circleColor: "#ff6f61",
       },
       {
-        id: 2,
+        id: "2",
         backgroundColor: "#120f1f",
         textColor: "#ffffff",
         caption: "Manga",
         circleColor: "#6b5b95",
       },
       {
-        id: 3,
+        id: "3",
         backgroundColor: "#0e1a0e",
         textColor: "#ffffff",
         caption: "Comics",
         circleColor: "#88b04b",
       },
       {
-        id: 4,
+        id: "4",
         backgroundColor: "#1a1212",
         textColor: "#ffffff",
         caption: "Movies",
         circleColor: "#f7cac9",
       },
       {
-        id: 5,
+        id: "5",
         backgroundColor: "#0e1626",
         textColor: "#ffffff",
         caption: "Podcasts",
         circleColor: "#92a8d1",
       },
       {
-        id: 6,
+        id: "6",
         backgroundColor: "#1b0d0d",
         textColor: "#ffffff",
         caption: "TV Shows",
         circleColor: "#955251",
       },
       {
-        id: 7,
+        id: "7",
         backgroundColor: "#160d18",
         textColor: "#ffffff",
         caption: "Novels",
         circleColor: "#b565a7",
       },
       {
-        id: 8,
+        id: "8",
         backgroundColor: "#0d1a17",
         textColor: "#ffffff",
         caption: "Music",
         circleColor: "#009b77",
       },
       {
-        id: 9,
+        id: "9",
         backgroundColor: "#1c0e0c",
         textColor: "#ffffff",
         caption: "Games",
         circleColor: "#dd4124",
       },
       {
-        id: 10,
+        id: "10",
         backgroundColor: "#0d1c1a",
         textColor: "#ffffff",
         caption: "Webtoons",
         circleColor: "#45b8ac",
       },
     ];
+    interface InputValueProps {
+      search: string;
+      selectedOptions: BadgeProps[];
+    }
 
-    const [inputValue, setInputValue] = useState("");
-    const [selectedOptions, setSelectedOptions] = useState<number[]>([]);
+    const [inputValue, setInputValue] = useState<InputValueProps>({
+      search: "",
+      selectedOptions: [],
+    });
 
-    const handleOptionClicked = (val: BadgeProps) => {
-      const valId = val?.id;
-      const isAlreadySelected = selectedOptions.some((data) => data === valId);
+    const handleOptionClicked = (badge: BadgeProps) => {
+      const isAlreadySelected = inputValue.selectedOptions.some(
+        (data) => data.id === badge.id
+      );
 
-      if (isAlreadySelected) {
-        setSelectedOptions((prev) => prev.filter((data) => data !== valId));
-      } else {
-        setSelectedOptions([...selectedOptions, valId]);
-      }
+      setInputValue((prev) => ({
+        ...prev,
+        selectedOptions: isAlreadySelected
+          ? prev.selectedOptions.filter((data) => data.id !== badge.id)
+          : [...prev.selectedOptions, badge],
+      }));
     };
 
     return (
       <Chips
-        inputValue={inputValue}
-        setInputValue={(e) => setInputValue(e.target.value)}
+        inputValue={inputValue.search}
+        setInputValue={(e) =>
+          setInputValue((prev) => ({ ...prev, searchText: e.target.value }))
+        }
         chipStyle={css`
           width: 100%;
           gap: 8px;
@@ -353,7 +374,7 @@ export const DarkBackground: Story = {
           justify-content: start;
         `}
         onOptionClicked={handleOptionClicked}
-        selectedOptions={selectedOptions}
+        selectedOptions={inputValue.selectedOptions}
         options={BADGE_OPTIONS as BadgeProps[]}
       />
     );
@@ -362,8 +383,17 @@ export const DarkBackground: Story = {
 
 export const Deletable: Story = {
   render: () => {
+    interface InputValueProps {
+      search: string;
+      name_tag: string;
+      background_color: string;
+      text_color: string;
+      circle_color: string;
+      selectedOptions: BadgeProps[];
+    }
+
     const BADGE_OPTIONS: BadgeProps[] = Array.from({ length: 10 }, (_, i) => ({
-      id: i + 1,
+      id: String(i + 1),
       caption: (() => {
         switch (i + 1) {
           case 1:
@@ -404,14 +434,14 @@ export const Deletable: Story = {
       ],
     }));
 
-    const [inputValue, setInputValue] = useState({
+    const [inputValue, setInputValue] = useState<InputValueProps>({
       search: "",
       name_tag: "",
       background_color: "",
       text_color: "",
       circle_color: "",
+      selectedOptions: [],
     });
-    const [selectedOptions, setSelectedOptions] = useState<number[]>([]);
 
     const onChangeValue = (
       e: ChangeEvent<HTMLInputElement>,
@@ -436,15 +466,17 @@ export const Deletable: Story = {
       }
     };
 
-    const handleOptionClicked = (val: BadgeProps) => {
-      const valId = val?.id;
-      const isAlreadySelected = selectedOptions.some((data) => data === valId);
+    const handleOptionClicked = (badge: BadgeProps) => {
+      const isAlreadySelected = inputValue.selectedOptions.some(
+        (data) => data.id === badge.id
+      );
 
-      if (isAlreadySelected) {
-        setSelectedOptions((prev) => prev.filter((data) => data !== valId));
-      } else {
-        setSelectedOptions([...selectedOptions, valId]);
-      }
+      setInputValue((prev) => ({
+        ...prev,
+        selectedOptions: isAlreadySelected
+          ? prev.selectedOptions.filter((data) => data.id !== badge.id)
+          : [...prev.selectedOptions, badge],
+      }));
     };
 
     const handleNewTagClicked = () => {
@@ -582,7 +614,7 @@ export const Deletable: Story = {
           max-width: 250px;
         `}
         onOptionClicked={handleOptionClicked}
-        selectedOptions={selectedOptions}
+        selectedOptions={inputValue.selectedOptions}
         options={BADGE_OPTIONS as BadgeProps[]}
         missingOptionForm={MissingOptionForm}
         creatable
