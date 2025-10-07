@@ -24,6 +24,7 @@ export interface CheckboxProps
   labelStyle?: CSSProp;
   iconStyle?: CSSProp;
   wrapperStyle?: CSSProp;
+  descriptionStyle?: CSSProp;
 }
 
 function Checkbox({
@@ -39,6 +40,7 @@ function Checkbox({
   labelStyle,
   iconStyle,
   wrapperStyle,
+  descriptionStyle,
   ...props
 }: CheckboxProps) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -52,14 +54,14 @@ function Checkbox({
   }, [indeterminate]);
 
   return (
-    <div>
-      <Label
-        htmlFor={inputId}
-        $hasDescription={!!description}
-        $highlight={!!highlightOnChecked}
-        $checked={isChecked}
-        $style={containerStyle}
-      >
+    <Label
+      htmlFor={inputId}
+      $hasDescription={!!description}
+      $highlight={!!highlightOnChecked}
+      $checked={isChecked}
+      $style={containerStyle}
+    >
+      <TextContainer>
         <CheckboxBox $style={wrapperStyle} $highlight={!!highlightOnChecked}>
           <HiddenCheckbox
             ref={inputRef}
@@ -93,24 +95,23 @@ function Checkbox({
           </Icon>
         </CheckboxBox>
 
-        {(label || description) && (
-          <TextContainer>
-            {label && (
-              <LabelText $highlight={highlightOnChecked} $style={labelStyle}>
-                {label}
-              </LabelText>
-            )}
-            {description && (
-              <DescriptionText $highlight={highlightOnChecked}>
-                {description}
-              </DescriptionText>
-            )}
-          </TextContainer>
+        {label && (
+          <LabelText $highlight={highlightOnChecked} $style={labelStyle}>
+            {label}
+          </LabelText>
         )}
-      </Label>
+      </TextContainer>
 
+      {description && (
+        <DescriptionText
+          $highlight={highlightOnChecked}
+          $style={descriptionStyle}
+        >
+          {description}
+        </DescriptionText>
+      )}
       {showError && <ErrorText>{errorMessage}</ErrorText>}
-    </div>
+    </Label>
   );
 }
 
@@ -121,7 +122,7 @@ const Label = styled.label<{
   $style?: CSSProp;
 }>`
   display: flex;
-  gap: 6px;
+  flex-direction: column;
   font-size: 12px;
   align-items: ${({ $hasDescription }) =>
     $hasDescription ? "flex-start" : "center"};
@@ -145,11 +146,7 @@ const CheckboxBox = styled.div<{ $highlight: boolean; $style?: CSSProp }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  ${({ $highlight }) =>
-    $highlight &&
-    css`
-      margin-top: 4px;
-    `}
+
   ${({ $style }) => $style}
 `;
 
@@ -201,14 +198,16 @@ const Icon = styled.svg<{ $visible?: boolean; $style?: CSSProp }>`
 
 const TextContainer = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
 `;
 
 const LabelText = styled.span<{ $highlight?: boolean; $style?: CSSProp }>`
   ${({ $highlight }) =>
     $highlight &&
     css`
-      font-size: 16px;
+      font-size: 14px;
     `}
   ${({ $style }) => $style};
 `;
@@ -218,14 +217,15 @@ const DescriptionText = styled.span<{ $highlight?: boolean; $style?: CSSProp }>`
     $highlight &&
     css`
       font-size: 14px;
-      color: #4b5563;
     `}
+  margin-left: 24px;
+
+  color: #4b5563;
   ${({ $style }) => $style};
 `;
 
 const ErrorText = styled.span`
   margin-top: 4px;
-  font-size: 12px;
   color: #dc2626;
 `;
 
