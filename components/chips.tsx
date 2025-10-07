@@ -60,7 +60,7 @@ interface BaseChipsProps {
     | ReactNode
     | ((props?: MissingOptionFormProps) => ReactNode);
   missingEmptyContent?: ReactNode;
-  renderer?: ReactNode | ((props: ChipRendererProps) => ReactNode);
+  renderer?: (props: ChipRendererProps) => ReactNode;
 }
 
 export interface ChipRendererProps {
@@ -130,8 +130,6 @@ function Chips(props: ChipsProps) {
               caption: data.caption,
               metadata: data.metadata,
             })
-          ) : props.renderer ? (
-            props.renderer
           ) : (
             <Badge
               key={data.id}
