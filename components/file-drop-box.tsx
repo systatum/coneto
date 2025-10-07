@@ -340,7 +340,6 @@ const IconsRow = styled.div`
 `;
 
 const PlaceholderText = styled.span<{ $isDragging: boolean }>`
-  font-weight: 400;
   font-size: 1.25rem;
   color: ${(props) => (props.$isDragging ? "#3b82f6" : "#000")};
 `;
