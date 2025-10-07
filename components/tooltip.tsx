@@ -18,11 +18,11 @@ export type TooltipProps = {
   drawerStyle?: CSSProp;
   containerStyle?: CSSProp;
   arrowStyle?: CSSProp;
-  dialogPlacement?: DialogPlacementState;
+  dialogPlacement?: DialogPlacement;
   onOpenChange?: (open?: boolean) => void;
 };
 
-type DialogPlacementState =
+type DialogPlacement =
   | "bottom-left"
   | "bottom-right"
   | "top-left"
@@ -239,7 +239,7 @@ const TooltipDrawer = styled.div<{
   ${({ $drawerStyle }) => $drawerStyle}
 `;
 
-function getFloatingPlacement(position?: DialogPlacementState): Placement {
+function getFloatingPlacement(position?: DialogPlacement): Placement {
   switch (position) {
     case "bottom-left":
       return "bottom-start";
