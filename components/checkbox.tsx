@@ -1,4 +1,4 @@
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
 import {
   DetailedHTMLProps,
   InputHTMLAttributes,
@@ -24,6 +24,8 @@ export interface CheckboxProps
   labelStyle?: CSSProp;
   iconStyle?: CSSProp;
   wrapperStyle?: CSSProp;
+  descriptionStyle?: CSSProp;
+  errorStyle?: CSSProp;
 }
 
 function Checkbox({
@@ -39,6 +41,8 @@ function Checkbox({
   labelStyle,
   iconStyle,
   wrapperStyle,
+  descriptionStyle,
+  errorStyle,
   ...props
 }: CheckboxProps) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -52,15 +56,16 @@ function Checkbox({
   }, [indeterminate]);
 
   return (
-    <div>
-      <Label
-        htmlFor={inputId}
-        $hasDescription={!!description}
-        $highlight={!!highlightOnChecked}
-        $checked={isChecked}
-        $style={containerStyle}
-      >
-        <CheckboxBox $hasDescription={!!description} $style={wrapperStyle}>
+    <Label
+      htmlFor={inputId}
+      $hasDescription={!!description}
+      $highlight={!!highlightOnChecked}
+      $checked={isChecked}
+      $style={containerStyle}
+      $disabled={props.disabled}
+    >
+      <InputContainer aria-label="input-container-checkbox">
+        <CheckboxBox $style={wrapperStyle} $highlight={!!highlightOnChecked}>
           <HiddenCheckbox
             ref={inputRef}
             type="checkbox"
@@ -72,6 +77,7 @@ function Checkbox({
             $indeterminate={indeterminate}
             $checked={isChecked}
             $style={inputStyle}
+            $disabled={props.disabled}
             readOnly
             {...(props as InputHTMLAttributes<HTMLInputElement>)}
           />
@@ -93,24 +99,23 @@ function Checkbox({
           </Icon>
         </CheckboxBox>
 
-        {(label || description) && (
-          <TextContainer>
-            {label && (
-              <LabelText $highlight={highlightOnChecked} $style={labelStyle}>
-                {label}
-              </LabelText>
-            )}
-            {description && (
-              <DescriptionText $highlight={highlightOnChecked}>
-                {description}
-              </DescriptionText>
-            )}
-          </TextContainer>
+        {label && (
+          <LabelText $highlight={highlightOnChecked} $style={labelStyle}>
+            {label}
+          </LabelText>
         )}
-      </Label>
+      </InputContainer>
 
-      {showError && <ErrorText>{errorMessage}</ErrorText>}
-    </div>
+      {description && (
+        <DescriptionText
+          $highlight={highlightOnChecked}
+          $style={descriptionStyle}
+        >
+          {description}
+        </DescriptionText>
+      )}
+      {showError && <ErrorText $style={errorStyle}>{errorMessage}</ErrorText>}
+    </Label>
   );
 }
 
@@ -119,12 +124,11 @@ const Label = styled.label<{
   $highlight: boolean;
   $checked: boolean;
   $style?: CSSProp;
+  $disabled?: boolean;
 }>`
   display: flex;
-  gap: 6px;
+  flex-direction: column;
   font-size: 12px;
-  align-items: ${({ $hasDescription }) =>
-    $hasDescription ? "flex-start" : "center"};
   background-color: ${({ $highlight, $checked }) =>
     $highlight && $checked ? "#DBEAFE" : "white"};
   border: ${({ $highlight }) =>
@@ -132,6 +136,14 @@ const Label = styled.label<{
   padding: ${({ $highlight }) => ($highlight ? "12px" : "0")};
   cursor: ${({ $highlight }) => ($highlight ? "pointer" : "default")};
   transition: background-color 0.2s;
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      cursor: not-allowed;
+      opacity: 0.6;
+    `}
+
   ${({ $style }) => $style};
 
   &:hover {
@@ -140,13 +152,12 @@ const Label = styled.label<{
   }
 `;
 
-const CheckboxBox = styled.div<{ $hasDescription: boolean; $style?: CSSProp }>`
+const CheckboxBox = styled.div<{ $highlight: boolean; $style?: CSSProp }>`
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
 
-  ${({ $hasDescription }) => $hasDescription && "margin-top: 2px;"}
   ${({ $style }) => $style}
 `;
 
@@ -155,12 +166,12 @@ const HiddenCheckbox = styled.input<{
   $checked?: boolean;
   $indeterminate?: boolean;
   $style?: CSSProp;
+  $disabled?: boolean;
 }>`
   appearance: none;
   height: 16px;
   width: 16px;
   border-radius: 0;
-  cursor: pointer;
   outline: none;
   background-color: ${({ $indeterminate, $checked }) =>
     $indeterminate || $checked ? "#61A9F9" : "#ffffff"};
@@ -168,15 +179,24 @@ const HiddenCheckbox = styled.input<{
     ${({ $indeterminate, $checked }) =>
       $indeterminate || $checked ? "#61A9F9" : "#6b7280"};
 
+  ${({ $disabled }) =>
+    $disabled
+      ? css`
+          cursor: not-allowed;
+        `
+      : css`
+          cursor: pointer;
+        `}
+
   ${({ $isError }) =>
     $isError &&
-    `
-    border-color: #f87171;
-    &:focus {
+    css`
       border-color: #f87171;
-      box-shadow: 0 0 0 1px #f87171;
-    }
-  `}
+      &:focus {
+        border-color: #f87171;
+        box-shadow: 0 0 0 1px #f87171;
+      }
+    `}
   ${({ $style }) => $style};
 `;
 
@@ -196,35 +216,38 @@ const Icon = styled.svg<{ $visible?: boolean; $style?: CSSProp }>`
   ${({ $style }) => $style};
 `;
 
-const TextContainer = styled.div`
+const InputContainer = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
 `;
 
 const LabelText = styled.span<{ $highlight?: boolean; $style?: CSSProp }>`
   ${({ $highlight }) =>
     $highlight &&
-    `
-    font-size: 16px;
-    font-weight: 500;
-  `}
+    css`
+      font-size: 14px;
+    `}
   ${({ $style }) => $style};
 `;
 
 const DescriptionText = styled.span<{ $highlight?: boolean; $style?: CSSProp }>`
   ${({ $highlight }) =>
     $highlight &&
-    `
-    font-size: 14px;
-    color: #4B5563;
-  `}
+    css`
+      font-size: 14px;
+    `}
+  margin-left: 24px;
+
+  color: #4b5563;
   ${({ $style }) => $style};
 `;
 
-const ErrorText = styled.span`
+const ErrorText = styled.span<{ $style?: CSSProp }>`
   margin-top: 4px;
-  font-size: 12px;
   color: #dc2626;
+  ${({ $style }) => $style}
 `;
 
 export { Checkbox };

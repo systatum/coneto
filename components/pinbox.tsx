@@ -409,8 +409,10 @@ const PinboxInput = styled.input<{
       ? css`
           user-select: none;
           &:disabled {
+            background-color: #f9fafb;
             opacity: 0.6;
             user-select: none;
+            border-color: rgba(0, 0, 0, 0.3);
             cursor: not-allowed;
           }
           &:focus + ${PinboxIndicator} {
