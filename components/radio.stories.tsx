@@ -1,7 +1,8 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { Radio } from "./radio";
-import { ChangeEvent, ComponentProps } from "react";
+import { ChangeEvent, ComponentProps, Fragment, useState } from "react";
 import { useArgs } from "@storybook/preview-api";
+import { css } from "styled-components";
 
 const meta: Meta<typeof Radio> = {
   title: "Input Elements/Radio",
@@ -106,6 +107,60 @@ export const WithDescription: Story = {
           />
         ))}
       </div>
+    );
+  },
+};
+
+export const WithError: Story = {
+  render: () => {
+    const [checked, setChecked] = useState("");
+
+    return (
+      <Fragment>
+        {RADIO_OPTIONS.map((option, index) => (
+          <Radio
+            key={index}
+            label={option.label}
+            description={option.description}
+            value={option.value}
+            name="radioSelected"
+            onChange={(e) => setChecked(e.target.value)}
+            showError={!checked && index === RADIO_OPTIONS.length - 1}
+            inputStyle={
+              !checked &&
+              css`
+                border-color: red;
+              `
+            }
+            errorMessage="Please select an option before continuing."
+            errorStyle={css`
+              font-size: 14px;
+            `}
+          />
+        ))}
+      </Fragment>
+    );
+  },
+};
+
+export const Disabled: Story = {
+  render: () => {
+    const [, setChecked] = useState("");
+
+    return (
+      <Fragment>
+        {RADIO_OPTIONS.map((option, index) => (
+          <Radio
+            key={index}
+            label={option.label}
+            description={option.description}
+            value={option.value}
+            disabled
+            name="radioSelected"
+            onChange={(e) => setChecked(e.target.value)}
+          />
+        ))}
+      </Fragment>
     );
   },
 };
