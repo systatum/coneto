@@ -266,7 +266,6 @@ export const WithBadge: Story = {
 
     const onChangeDivisionEmployeeForm = (e?: StatefulOnChangeType) => {
       if (!e || typeof e !== "object") return;
-      console.log(e);
       if (e && typeof e === "object" && "value" in e && "text" in e) {
         const isOptionsProps =
           (typeof e.value === "string" || typeof e.value === "number") &&
@@ -293,7 +292,6 @@ export const WithBadge: Story = {
         setValue((prev) => ({ ...prev, [name]: updatedValue }));
       }
     };
-    console.log(value);
 
     const EMPLOYEE_FIELDS: FormFieldProps[] = [
       {
