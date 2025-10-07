@@ -18,9 +18,15 @@ export type TooltipProps = {
   drawerStyle?: CSSProp;
   containerStyle?: CSSProp;
   arrowStyle?: CSSProp;
-  dialogPosition?: "bottom-start" | "bottom-end" | "top-start" | "top-end";
+  dialogPosition?: DialogPositionState;
   onOpenChange?: (open?: boolean) => void;
 };
+
+type DialogPositionState =
+  | "bottom-left"
+  | "bottom-right"
+  | "top-left"
+  | "top-right";
 
 export function Tooltip({
   dialog,
@@ -30,14 +36,14 @@ export function Tooltip({
   drawerStyle,
   containerStyle,
   arrowStyle,
-  dialogPosition = "bottom-start",
+  dialogPosition = "bottom-right",
   onOpenChange,
 }: TooltipProps) {
   const [isOpen, setIsOpen] = useState(false);
   const arrowRef = useRef<HTMLDivElement>(null);
 
   const { floatingStyles, refs, placement } = useFloating({
-    placement: dialogPosition,
+    placement: getFloatingPlacement(dialogPosition),
     open: isOpen,
     onOpenChange: setIsOpen,
     middleware: [
@@ -80,13 +86,17 @@ export function Tooltip({
       onMouseEnter={() => {
         if (showDialogOn === "hover") {
           setIsOpen(true);
-          onOpenChange(true);
+          if (onOpenChange) {
+            onOpenChange(true);
+          }
         }
       }}
       onMouseLeave={() => {
         if (hideDialogOn === "hover") {
           setIsOpen(false);
-          onOpenChange(false);
+          if (onOpenChange) {
+            onOpenChange(false);
+          }
         }
       }}
       ref={refs.setReference}
@@ -228,3 +238,18 @@ const TooltipDrawer = styled.div<{
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   ${({ $drawerStyle }) => $drawerStyle}
 `;
+
+function getFloatingPlacement(position?: DialogPositionState): Placement {
+  switch (position) {
+    case "bottom-left":
+      return "bottom-start";
+    case "bottom-right":
+      return "bottom-end";
+    case "top-left":
+      return "top-start";
+    case "top-right":
+      return "top-end";
+    default:
+      return "bottom-start";
+  }
+}
