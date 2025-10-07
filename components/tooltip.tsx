@@ -36,7 +36,7 @@ export function Tooltip({
   drawerStyle,
   containerStyle,
   arrowStyle,
-  dialogPlacement = "bottom-right",
+  dialogPlacement = "bottom-left",
   onOpenChange,
 }: TooltipProps) {
   const [isOpen, setIsOpen] = useState(false);
