@@ -910,6 +910,7 @@ export const CustomRenderer: Story = {
         required: false,
         onChange: onChangeDivisionEmployeeForm,
         comboboxProps: {
+          placeholder: "Search your role...",
           options: EMPLOYEE_OPTIONS,
           selectboxStyle: css`
             border: 1px solid #d1d5db;
