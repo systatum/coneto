@@ -64,10 +64,7 @@ function Colorbox({
         id={inputId}
         type="color"
         value={value}
-        onChange={(e) => {
-          console.log(e.target.value);
-          onChange(e);
-        }}
+        onChange={onChange}
       />
 
       <TextInputGroup $hovered={hovered} $showError={!!showError}>
