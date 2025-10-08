@@ -10,15 +10,13 @@ export interface NavTabProps {
   containerBoxStyle?: CSSProp;
   boxStyle?: CSSProp;
   activeColor?: string;
-  mode?: "state" | "link";
-  tabContent?: ReactNode;
+  children?: ReactNode;
 }
 
 export interface NavTabContentProps {
   id: string;
   title: string;
   content?: ReactNode;
-  href?: string;
   onClick?: () => void;
 }
 
@@ -30,8 +28,7 @@ function NavTab({
   containerBoxStyle,
   tabs = [],
   activeColor = "rgb(59, 130, 246)",
-  mode = "state",
-  tabContent,
+  children,
 }: NavTabProps) {
   const [selected, setSelected] = useState<string>(activeTab);
 
@@ -127,22 +124,16 @@ function NavTab({
         />
 
         {tabs.map((data, index) => {
-          const isLinkMode = mode === "link";
-          const Tag = isLinkMode ? "a" : "div";
           return (
             <NavTabHeaderContent
               key={data.id}
               $boxStyle={boxStyle}
               ref={setTabRef(index)}
               role="tab"
-              as={Tag}
-              href={isLinkMode ? data.href : undefined}
               onClick={() => {
-                if (mode === "state") {
-                  setSelected(data.id);
-                  if (data.onClick) {
-                    data.onClick();
-                  }
+                setSelected(data.id);
+                if (data.onClick) {
+                  data.onClick();
                 }
               }}
               $selected={selected === data.id}
@@ -156,7 +147,7 @@ function NavTab({
         {activeContent.map((data, index) => (
           <Fragment key={index}>{data.content}</Fragment>
         ))}
-        {tabContent}
+        {children}
       </NavContent>
     </NavTabWrapper>
   );
