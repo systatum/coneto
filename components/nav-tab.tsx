@@ -11,12 +11,13 @@ export interface NavTabProps {
   boxStyle?: CSSProp;
   activeColor?: string;
   mode?: "state" | "link" | "onClick";
+  tabContent?: ReactNode;
 }
 
 export interface NavTabContentProps {
   id: string;
   title: string;
-  content: ReactNode;
+  content?: ReactNode;
   href?: string;
   onClick?: () => void;
 }
@@ -30,6 +31,7 @@ function NavTab({
   tabs = [],
   activeColor = "rgb(59, 130, 246)",
   mode = "state",
+  tabContent,
 }: NavTabProps) {
   const [selected, setSelected] = useState<string>(activeTab);
 
@@ -155,6 +157,7 @@ function NavTab({
         {activeContent.map((data, index) => (
           <Fragment key={index}>{data.content}</Fragment>
         ))}
+        {tabContent}
       </NavContent>
     </NavTabWrapper>
   );
