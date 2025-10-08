@@ -10,7 +10,7 @@ export interface NavTabProps {
   containerBoxStyle?: CSSProp;
   boxStyle?: CSSProp;
   activeColor?: string;
-  mode?: "state" | "link" | "onClick";
+  mode?: "state" | "link";
   tabContent?: ReactNode;
 }
 
@@ -140,7 +140,6 @@ function NavTab({
               onClick={() => {
                 if (mode === "state") {
                   setSelected(data.id);
-                } else if (mode === "onClick") {
                   if (data.onClick) {
                     data.onClick();
                   }
