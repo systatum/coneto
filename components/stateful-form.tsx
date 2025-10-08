@@ -517,7 +517,6 @@ function FormFields<T extends FieldValues>({
             control={control}
             render={({ field: controllerField }) => (
               <Chips
-                {...field.chipsProps}
                 label={field.title}
                 labelStyle={
                   labelSize &&
@@ -536,6 +535,7 @@ function FormFields<T extends FieldValues>({
                   controllerField.onChange(e);
                   field.onChange(e, "chips");
                 }}
+                {...field.chipsProps}
               />
             )}
           />

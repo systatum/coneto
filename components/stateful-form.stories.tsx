@@ -182,50 +182,81 @@ export const AllCase: Story = {
       { text: "Watermelon", value: 7 },
     ];
 
-    const BADGE_OPTIONS = [
+    const BADGE_OPTIONS: BadgeProps[] = [
       {
-        id: 1,
+        id: "1",
         caption: "Anime",
       },
       {
-        id: 2,
+        id: "2",
         caption: "Manga",
       },
       {
-        id: 3,
+        id: "3",
         caption: "Comics",
       },
       {
-        id: 4,
+        id: "4",
         caption: "Movies",
       },
       {
-        id: 5,
+        id: "5",
         caption: "Podcasts",
       },
       {
-        id: 6,
+        id: "6",
         caption: "TV Shows",
       },
       {
-        id: 7,
+        id: "7",
         caption: "Novels",
       },
       {
-        id: 8,
+        id: "8",
         caption: "Music",
       },
       {
-        id: 9,
+        id: "9",
         caption: "Games",
       },
       {
-        id: 10,
+        id: "10",
         caption: "Webtoons",
       },
     ];
 
-    const [value, setValue] = useState({
+    interface AllCaseValueProps {
+      text: string;
+      email: string;
+      number: string;
+      password: string;
+      textarea: string;
+      rating: string;
+      check: boolean;
+      chips: {
+        searchText: string;
+        selectedOptions: BadgeProps[];
+      };
+      color: string;
+      combo: {
+        text: string;
+        value: number | string;
+      };
+      date: {
+        text: string;
+        value: number | string;
+      };
+      file_drop_box: File[];
+      file: File | undefined;
+      image: string;
+      phone: string;
+      thumb_field: boolean;
+      togglebox: boolean;
+      signature: string;
+      country_code: typeof DEFAULT_COUNTRY_CODES;
+    }
+
+    const [value, setValue] = useState<AllCaseValueProps>({
       text: "",
       email: "",
       number: "",
@@ -234,11 +265,8 @@ export const AllCase: Story = {
       rating: "",
       check: false,
       chips: {
-        search: "",
-        name_tag: "",
-        background_color: "",
-        text_color: "",
-        circle_color: "",
+        searchText: "",
+        selectedOptions: [],
       },
       color: "",
       combo: {
@@ -250,7 +278,7 @@ export const AllCase: Story = {
         value: 0 as number | string,
       },
       file_drop_box: [] as File[],
-      file: "",
+      file: undefined,
       image: "",
       phone: "",
       thumb_field: null,
@@ -259,19 +287,32 @@ export const AllCase: Story = {
       country_code: DEFAULT_COUNTRY_CODES,
     });
 
-    const [selectedChips, setSelectedChips] = useState<number[]>([]);
+    const handleOptionClicked = (badge: BadgeProps) => {
+      const isAlreadySelected = value.chips.selectedOptions.some(
+        (data) => data.id === badge.id
+      );
 
-    const handleOptionClicked = (val: BadgeProps) => {
-      const valId = val.id ?? 0;
-
-      const isAlreadySelected = selectedChips.some((data) => data === valId);
-
-      if (isAlreadySelected) {
-        setSelectedChips((prev) => prev.filter((data) => data !== valId));
-      } else {
-        setSelectedChips([...selectedChips, valId]);
-      }
+      setValue((prev) => ({
+        ...prev,
+        chips: {
+          ...prev.chips,
+          selectedOptions: isAlreadySelected
+            ? prev.chips.selectedOptions.filter((data) => data.id !== badge.id)
+            : [...prev.chips.selectedOptions, badge],
+        },
+      }));
     };
+
+    const badgeSchema = z.object({
+      id: z.string().optional(),
+      metadata: z.record(z.unknown()).optional(),
+      variant: z.string().optional(),
+      withCircle: z.boolean().optional(),
+      caption: z.string().optional(),
+      backgroundColor: z.string().optional(),
+      textColor: z.string().optional(),
+      circleColor: z.string().optional(),
+    });
 
     const schema = z.object({
       text: z.string().min(3, "Text must be at least 3 characters"),
@@ -285,11 +326,8 @@ export const AllCase: Story = {
       textarea: z.string().optional(),
       check: z.boolean().optional(),
       chips: z.object({
-        search: z.string().optional(),
-        name_tag: z.string().optional(),
-        background_color: z.string().optional(),
-        text_color: z.string().optional(),
-        circle_color: z.string().optional(),
+        searchText: z.string().optional(),
+        selectedOptions: z.array(badgeSchema).optional(),
       }),
       color: z.string().optional(),
       combo: z
@@ -305,7 +343,19 @@ export const AllCase: Story = {
         })
         .optional(),
       file_drop_box: z.array(z.instanceof(File)).optional(),
-      file: z.string().optional(),
+      file: z
+        .any()
+        .refine(
+          (file) => {
+            return file?.type === "application/pdf";
+          },
+          {
+            message: "Only PDF files are allowed",
+          }
+        )
+        .refine((file) => file?.size <= 5 * 1024 * 1024, {
+          message: "File size must be 5MB or less",
+        }),
       image: z.string().optional(),
       signature: z.string().min(1, "Signature is required"),
       phone: z.string().min(8, "Phone number must be 8 digits").optional(),
@@ -361,13 +411,10 @@ export const AllCase: Story = {
           updatedValue = target.checked;
         }
 
-        if (type === "chips") {
+        if (target.name === "chips") {
           setValue((prev) => ({
             ...prev,
-            chips: {
-              ...prev.chips,
-              [name]: updatedValue,
-            },
+            chips: { ...prev.chips, ["searchText"]: String(updatedValue) },
           }));
         } else {
           setValue((prev) => ({ ...prev, [name]: updatedValue }));
@@ -575,13 +622,12 @@ export const AllCase: Story = {
           chipContainerStyle: css`
             gap: 4px;
           `,
-          chipsContainerStyle: css`
-            max-width: 250px;
+          chipsDrawerStyle: css`
+            min-width: 250px;
           `,
           onOptionClicked: handleOptionClicked,
-          selectedOptions: selectedChips,
-          inputValue: value.chips,
-          creatable: true,
+          selectedOptions: value.chips.selectedOptions,
+          inputValue: value.chips.searchText,
         },
         onChange: onChangeForm,
       },

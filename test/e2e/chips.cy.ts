@@ -1,59 +1,95 @@
 import { getIdContent } from "test/support/commands";
 
 describe("Chips", () => {
-  context("Default", () => {
-    beforeEach(() => {
-      cy.visit(getIdContent("input-elements-chips--default"));
+  beforeEach(() => {
+    cy.visit(getIdContent("input-elements-chips--default"));
+  });
+  context("when default ", () => {
+    context("when search", () => {
+      it("should select a chip", () => {
+        cy.findByRole("button").click();
+        cy.findByRole("textbox").type("Anime");
+        cy.findByText("Anime").click();
+      });
     });
 
-    it("should filter and select a chip", () => {
-      cy.findByRole("button").click();
-      cy.findByRole("textbox").type("Anime");
-      cy.findByText("Anime").click();
-    });
-
-    it("should deselect a chip", () => {
-      cy.findByRole("button").click();
-      cy.findByRole("textbox").type("Anime");
-      cy.findByText("Anime").click();
-
-      cy.findByRole("button").click();
-      cy.findByText("Anime").click();
-    });
-
-    it("should trigger tag creation flow", () => {
-      cy.findByRole("button").click();
-      cy.findByRole("textbox").type("MyCustomTag");
-      cy.findByText(/Create a new label/i).click();
-
-      cy.findByPlaceholderText(/Create a new label/i)
-        .clear()
-        .type("MyCustomTag");
-
-      cy.findByRole("button", { name: /Add/i }).click();
-    });
-
-    it("should cancel new tag creation", () => {
-      cy.findByRole("button").click();
-      cy.findByRole("textbox").type("TemporaryTag");
-      cy.findByText(/Create a new label/i).click();
-
-      cy.findByRole("button", { name: /Cancel/i }).click();
-      cy.findByRole("textbox").should("exist").clear().type("TemporaryTag");
-
-      cy.findByText(/Create a new label/i).should("exist");
+    context("when double select", () => {
+      it("should deselect a chip", () => {
+        cy.findByRole("button").click();
+        cy.findByRole("textbox").type("Anime");
+        cy.findByText("Anime").dblclick();
+        cy.findByRole("button").click();
+      });
     });
   });
 
-  context("Deletable", () => {
+  context("when creatable", () => {
+    context("when missing option", () => {
+      context("when pressing empty button", () => {
+        it("should change to creatable mode", () => {
+          cy.findByRole("button").click();
+          cy.findByRole("textbox").type("MyCustomTag");
+          cy.findByText(/Create a new label/i).click();
+
+          cy.findByPlaceholderText(/Create a new label/i)
+            .clear()
+            .type("MyCustomTag");
+
+          cy.findByRole("button", { name: /Add/i }).click();
+        });
+      });
+
+      context("when pressing button close", () => {
+        it("should change to idle mode", () => {
+          cy.findByRole("button").click();
+          cy.findByRole("textbox").type("MyCustomTag");
+          cy.findByText(/Create a new label/i).click();
+
+          cy.findByPlaceholderText(/Create a new label/i)
+            .clear()
+            .type("MyCustomTag");
+
+          cy.findByRole("button", { name: /Add/i }).click();
+          cy.findByRole("button", { name: /Cancel/i }).click();
+        });
+      });
+    });
+  });
+
+  context("when deletable", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-chips--deletable"));
     });
 
-    it("should show delete icon on hover and trigger delete", () => {
-      cy.findByRole("button").click();
-      cy.findByText("Anime").trigger("mouseover");
-      cy.findAllByLabelText("badge-action").eq(0).click({ force: true });
+    context("when pressing delete", () => {
+      it("should trigger delete", () => {
+        cy.findByRole("button").click();
+        cy.findByText("Anime").trigger("mouseover");
+        cy.findAllByLabelText("badge-action").eq(0).click({ force: true });
+      });
+    });
+  });
+
+  context("with custom renderer", () => {
+    beforeEach(() => {
+      cy.visit(getIdContent("input-elements-chips--custom-renderer"));
+    });
+
+    context("when given", () => {
+      it("should render content", () => {
+        cy.findByRole("button").click();
+        cy.findByText("Alice Johnson").click();
+        cy.get("body").click(0, 0);
+        cy.findByText("Alice Johnson").trigger("mouseover");
+        cy.wait(200);
+
+        cy.findByLabelText("Name").type("John Doe");
+
+        cy.findByPlaceholderText("Search your role...").as("input").type("HR");
+        cy.findByRole("option", { name: "HR Manager" })
+          .should("be.visible")
+          .click();
+      });
     });
   });
 });

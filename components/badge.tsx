@@ -6,7 +6,8 @@ import { RemixiconComponentType } from "@remixicon/react";
 export type BadgeVariantProps = null | "neutral" | "green" | "yellow" | "red";
 
 export interface BadgeProps {
-  id?: number;
+  id?: string;
+  metadata?: Record<string, unknown>;
   variant?: BadgeVariantProps;
   withCircle?: boolean;
   caption?: string;
