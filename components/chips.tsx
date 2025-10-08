@@ -59,7 +59,7 @@ interface BaseChipsProps {
   missingOptionForm?:
     | ReactNode
     | ((props?: MissingOptionFormProps) => ReactNode);
-  missingEmptyContent?: ReactNode;
+  emptySlate?: ReactNode;
   renderer?: (props: ChipRendererProps) => ReactNode;
 }
 
@@ -268,7 +268,7 @@ function ChipsDrawer({
   onOptionClicked,
   selectedOptions,
   missingOptionForm,
-  missingEmptyContent,
+  emptySlate,
   name = "chips",
 }: ChipsDrawerProps) {
   const [hovered, setHovered] = useState<string | null>(null);
@@ -449,8 +449,8 @@ function ChipsDrawer({
                   );
                 })}
               </>
-            ) : hasNoFilter && missingEmptyContent && !creatable ? (
-              <Fragment>{missingEmptyContent}</Fragment>
+            ) : hasNoFilter && emptySlate && !creatable ? (
+              <Fragment>{emptySlate}</Fragment>
             ) : (
               hasNoFilter &&
               !creatable && (
