@@ -103,7 +103,8 @@ function NavTab({
   return (
     <NavTabWrapper $containerStyle={containerStyle}>
       <NavTabHeader $headerStyle={containerBoxStyle} ref={containerRef}>
-        <NavTabBox
+        <NavTabList
+          aria-label="nav-tab-list"
           $activeColor={activeColor}
           initial={{
             left: 0,
@@ -125,7 +126,8 @@ function NavTab({
 
         {tabs.map((data, index) => {
           return (
-            <NavTabHeaderContent
+            <NavTabBox
+              aria-label="nav-tab-box"
               key={data.id}
               $boxStyle={boxStyle}
               ref={setTabRef(index)}
@@ -139,7 +141,7 @@ function NavTab({
               $selected={selected === data.id}
             >
               {data.title}
-            </NavTabHeaderContent>
+            </NavTabBox>
           );
         })}
       </NavTabHeader>
@@ -182,7 +184,7 @@ const NavTabHeader = styled.div<{
   ${({ $headerStyle }) => $headerStyle}
 `;
 
-const NavTabBox = styled(motion.div)<{
+const NavTabList = styled(motion.div)<{
   $activeColor?: string;
 }>`
   position: absolute;
@@ -193,7 +195,7 @@ const NavTabBox = styled(motion.div)<{
   background-color: ${({ $activeColor }) => $activeColor};
 `;
 
-const NavTabHeaderContent = styled.div<{
+const NavTabBox = styled.div<{
   $selected?: boolean;
   $boxStyle?: CSSProp;
 }>`
