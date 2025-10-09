@@ -168,6 +168,7 @@ export const Default: Story = {
 
 export const AllCase: Story = {
   render: () => {
+    const [isFormValid, setIsFormValid] = useState(false);
     const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
       (data) => data.id === "US" || COUNTRY_CODES[206]
     );
@@ -346,7 +347,7 @@ export const AllCase: Story = {
           text: z.string().optional(),
         })
         .optional(),
-      file_drop_box: z.array(z.instanceof(File)).optional(),
+      file_drop_box: z.any().optional(),
       file: z
         .any()
         .refine(
@@ -428,7 +429,6 @@ export const AllCase: Story = {
         }
       }
     };
-    console.log(value);
 
     const onFileDropped = async ({
       error,
@@ -695,6 +695,7 @@ export const AllCase: Story = {
         }}
       >
         <StatefulForm
+          onValidityChange={setIsFormValid}
           labelSize="14px"
           fieldSize="14px"
           fields={FIELDS}
@@ -702,6 +703,17 @@ export const AllCase: Story = {
           validationSchema={schema}
           mode="onChange"
         />
+        <Button
+          containerStyle={css`
+            width: 100%;
+          `}
+          buttonStyle={css`
+            width: 100%;
+          `}
+          disabled={!isFormValid}
+        >
+          Save
+        </Button>
       </div>
     );
   },
