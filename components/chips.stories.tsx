@@ -2,7 +2,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { Chips, MissingOptionFormProps } from "./chips";
 import { ChangeEvent, useState } from "react";
 import { Badge, BadgeProps } from "./badge";
-import { Colorbox, ColorPickProps } from "./colorbox";
+import { Colorbox } from "./colorbox";
 import styled, { css } from "styled-components";
 import { RiAddBoxFill, RiCloseLine } from "@remixicon/react";
 import { Textbox } from "./textbox";
@@ -89,19 +89,10 @@ export const Default: Story = {
       selectedOptions: [],
     });
 
-    const onChangeValue = (
-      e: ChangeEvent<HTMLInputElement>,
-      type?: ColorPickProps
-    ) => {
+    const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
 
-      if (type === "color-text") {
-        let val = value;
-        if (!val.startsWith("#")) {
-          val = "#" + val;
-        }
-        setInputValue((prev) => ({ ...prev, [name]: val }));
-      } else if (name === "chips") {
+      if (name === "chips") {
         setInputValue((prev) => ({
           ...prev,
           ["search"]: value,
@@ -451,19 +442,10 @@ export const Deletable: Story = {
       selectedOptions: [],
     });
 
-    const onChangeValue = (
-      e: ChangeEvent<HTMLInputElement>,
-      type?: ColorPickProps
-    ) => {
+    const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
 
-      if (type === "color-text") {
-        let val = value;
-        if (!val.startsWith("#")) {
-          val = "#" + val;
-        }
-        setInputValue((prev) => ({ ...prev, [name]: val }));
-      } else if (name === "chips") {
+      if (name === "chips") {
         setInputValue((prev) => ({
           ...prev,
           ["search"]: value,
@@ -705,19 +687,10 @@ export const CustomRenderer: Story = {
       selectedOptions: [],
     });
 
-    const onChangeValue = (
-      e: ChangeEvent<HTMLInputElement>,
-      type?: ColorPickProps
-    ) => {
+    const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
 
-      if (type === "color-text") {
-        let val = value;
-        if (!val.startsWith("#")) {
-          val = "#" + val;
-        }
-        setInputValue((prev) => ({ ...prev, [name]: val }));
-      } else if (name === "chips") {
+      if (name === "chips") {
         setInputValue((prev) => ({
           ...prev,
           ["search"]: value,

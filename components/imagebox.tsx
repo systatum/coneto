@@ -108,6 +108,7 @@ function Imagebox({
         type="file"
         accept="image/*"
         name={name}
+        aria-label="imagebox"
         onChange={handleFileChange}
       />
 
