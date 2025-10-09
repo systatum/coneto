@@ -26,7 +26,6 @@ import {
   useRole,
 } from "@floating-ui/react";
 import { Textbox } from "./textbox";
-import { ColorPickProps } from "./colorbox";
 import styled, { css, CSSProp } from "styled-components";
 
 export type ChipActionsProps = BadgeActionProps;
@@ -42,8 +41,7 @@ interface BaseChipsProps {
   options?: BadgeProps[];
   inputValue?: string;
   setInputValue?: (
-    data: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    type?: ColorPickProps
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
   chipsContainerStyle?: CSSProp;
   chipContainerStyle?: CSSProp;
