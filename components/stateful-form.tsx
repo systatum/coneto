@@ -173,6 +173,7 @@ function FormFields<T extends FieldValues>({
             key={index}
             label={field.title}
             type={field.type}
+            placeholder={field.placeholder}
             value={formValues[field.name as keyof T] ?? ""}
             required={field.required}
             {...register(field.name as Path<T>, { onChange: field.onChange })}
@@ -199,6 +200,7 @@ function FormFields<T extends FieldValues>({
             key={index}
             label={field.title}
             rows={field.rows}
+            placeholder={field.placeholder}
             value={formValues[field.name as keyof T] ?? ""}
             required={field.required}
             {...register(field.name as Path<T>, { onChange: field.onChange })}
@@ -229,6 +231,7 @@ function FormFields<T extends FieldValues>({
               <Checkbox
                 label={field.title}
                 name={field.name}
+                placeholder={field.placeholder}
                 checked={controllerField.value ?? false}
                 labelStyle={
                   labelSize &&
@@ -276,6 +279,7 @@ function FormFields<T extends FieldValues>({
                 <Phonebox
                   label={field.title}
                   value={controllerField.value}
+                  placeholder={field.placeholder}
                   onChange={(e) => {
                     if (e.target.name === "phone") {
                       controllerField.onChange(e);
@@ -310,6 +314,7 @@ function FormFields<T extends FieldValues>({
               <Colorbox
                 label={field.title}
                 required={field.required}
+                placeholder={field.placeholder}
                 labelStyle={
                   labelSize &&
                   css`
@@ -344,6 +349,7 @@ function FormFields<T extends FieldValues>({
           <FileDropBox
             key={index}
             label={field.title}
+            placeholder={field.placeholder}
             labelStyle={
               labelSize &&
               css`
@@ -357,6 +363,7 @@ function FormFields<T extends FieldValues>({
           <FileInputBox
             key={index}
             label={field.title}
+            placeholder={field.placeholder}
             labelStyle={
               labelSize &&
               css`
@@ -434,6 +441,7 @@ function FormFields<T extends FieldValues>({
           <Moneybox
             key={index}
             label={field.title}
+            placeholder={field.placeholder}
             labelStyle={
               labelSize &&
               css`
@@ -502,6 +510,7 @@ function FormFields<T extends FieldValues>({
             control={control}
             render={({ field: controllerField }) => (
               <Combobox
+                placeholder={field.placeholder}
                 label={field.title}
                 showError={shouldShowError(field.name)}
                 labelStyle={
@@ -542,6 +551,7 @@ function FormFields<T extends FieldValues>({
             render={({ field: controllerField }) => (
               <Chips
                 label={field.title}
+                filterPlaceholder={field.placeholder}
                 labelStyle={
                   labelSize &&
                   css`
@@ -633,27 +643,31 @@ function FormFields<T extends FieldValues>({
             key={index}
             control={control}
             name={field.name as Path<T>}
-            render={({ field: controllerField }) => (
-              <Togglebox
-                label={field.title}
-                labelStyle={
-                  labelSize &&
-                  css`
-                    font-size: ${labelSize};
-                  `
-                }
-                checked={controllerField.value ?? false}
-                required={field.required}
-                {...register(field.name as Path<T>, {
-                  onChange: field.onChange,
-                })}
-                showError={shouldShowError(field.name)}
-                errorMessage={
-                  errors[field.name as keyof T]?.message as string | undefined
-                }
-                {...field.toggleboxProps}
-              />
-            )}
+            render={({ field: controllerField }) => {
+              return (
+                <Togglebox
+                  name={controllerField.name}
+                  label={field.title}
+                  labelStyle={
+                    labelSize &&
+                    css`
+                      font-size: ${labelSize};
+                    `
+                  }
+                  checked={controllerField.value ?? false}
+                  required={field.required}
+                  {...register(field.name as Path<T>, {
+                    onChange: field.onChange,
+                  })}
+                  onChange={controllerField.onChange}
+                  showError={shouldShowError(field.name)}
+                  errorMessage={
+                    errors[field.name as keyof T]?.message as string | undefined
+                  }
+                  {...field.toggleboxProps}
+                />
+              );
+            }}
           />
         ) : null;
       })}
