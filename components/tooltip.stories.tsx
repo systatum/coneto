@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Tooltip } from "./tooltip";
+import { Tooltip, TooltipProps } from "./tooltip";
 import { Button } from "./button";
+import { Badge } from "./badge";
 import {
   FormFieldProps,
   StatefulForm,
@@ -10,6 +11,7 @@ import { useState } from "react";
 import z from "zod";
 import { RiAddBoxLine } from "@remixicon/react";
 import { css } from "styled-components";
+import { OptionsProps } from "./selectbox";
 
 const meta: Meta<typeof Tooltip> = {
   title: "Content/Tooltip",
@@ -23,118 +25,118 @@ const meta: Meta<typeof Tooltip> = {
 export default meta;
 type Story = StoryObj<typeof Tooltip>;
 
-export const Hover: Story = {
-  args: {
-    text: "Hover Tooltip",
-    openOn: "hover",
-    children: "This tooltip appears on hover",
-    containerStyle: css`
-      font-size: 0.875rem;
-      text-decoration: underline;
-    `,
-  },
-};
+export const Link: Story = {
+  render: () => {
+    const Hover: TooltipProps = {
+      children: "Hover Tooltip",
+      showDialogOn: "hover",
+      dialog: "This tooltip appears on hover",
+      containerStyle: css`
+        font-size: 0.875rem;
+        text-decoration: underline;
+      `,
+    } as const;
 
-export const Click: Story = {
-  args: {
-    text: "Click Tooltip",
-    openOn: "click",
-    children: "This tooltip appears on click",
-    containerStyle: css`
-      font-size: 0.875rem;
-      color: #2563eb;
-      cursor: pointer;
-    `,
-    drawerStyle: css`
-      background-color: #2563eb;
-      color: white;
-    `,
-    arrowStyle: css`
-      background-color: #2563eb;
-    `,
-  },
-};
+    const Click: TooltipProps = {
+      children: "Click Tooltip",
+      showDialogOn: "click",
+      dialog: "This tooltip appears on click",
+      containerStyle: css`
+        font-size: 0.875rem;
+        color: #2563eb;
+        cursor: pointer;
+      `,
+      drawerStyle: css`
+        background-color: #2563eb;
+        color: white;
+      `,
+      arrowStyle: css`
+        background-color: #2563eb;
+      `,
+    } as const;
 
-export const StyledTooltip: Story = {
-  args: {
-    text: "Styled Tooltip",
-    openOn: "hover",
-    children: "Tooltip with custom styling",
-    containerStyle: css`
-      font-size: 0.875rem;
-      color: #16a34a;
-      text-decoration: underline wavy;
-    `,
-    drawerStyle: css`
-      background-color: #15803d;
-      color: white;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      border-radius: 4px;
-      padding: 4px 12px;
-      font-size: 0.875rem;
-    `,
-    arrowStyle: css`
-      background-color: #15803d;
-    `,
-  },
-};
+    const StyledTooltip: TooltipProps = {
+      children: "Styled Tooltip",
+      showDialogOn: "hover",
+      dialog: "Tooltip with custom styling",
+      containerStyle: css`
+        font-size: 0.875rem;
+        color: #16a34a;
+        text-decoration: underline wavy;
+      `,
+      drawerStyle: css`
+        background-color: #15803d;
+        color: white;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border-radius: 4px;
+        padding: 4px 12px;
+        font-size: 0.875rem;
+      `,
+      arrowStyle: css`
+        background-color: #15803d;
+      `,
+    } as const;
 
-export const DottedUnderlineTooltip: Story = {
-  args: {
-    text: "Dotted Underline Tooltip",
-    openOn: "hover",
-    children: "Tooltip with dotted underline trigger",
-    underline: "underline-dot",
-    containerStyle: css`
-      font-size: 0.875rem;
-    `,
-    drawerStyle: css`
-      background-color: #1f2937;
-      color: white;
-    `,
-    arrowStyle: css`
-      background-color: #1f2937;
-    `,
-  },
-};
+    const DottedUnderlineTooltip: TooltipProps = {
+      children: "Dotted Underline Tooltip",
+      showDialogOn: "hover",
+      dialog: "Tooltip with dotted underline trigger",
+      containerStyle: css`
+        font-size: 0.875rem;
+      `,
+      drawerStyle: css`
+        background-color: #1f2937;
+        color: white;
+      `,
+      arrowStyle: css`
+        background-color: #1f2937;
+      `,
+    } as const;
 
-export const NoUnderlineTooltip: Story = {
-  args: {
-    text: "No Underline Tooltip",
-    openOn: "hover",
-    children: "Trigger text without underline",
-    underline: "transparent",
-    containerStyle: css`
-      font-weight: 600;
-      font-size: 0.875rem;
-      color: #ef4444;
-    `,
-    drawerStyle: css`
-      background-color: #dc2626;
-      color: white;
-    `,
-    arrowStyle: css`
-      background-color: #dc2626;
-    `,
-  },
-};
+    const NoUnderlineTooltip: TooltipProps = {
+      children: "No Underline Tooltip",
+      showDialogOn: "hover",
+      dialog: "Trigger text without underline",
+      containerStyle: css`
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: #ef4444;
+      `,
+      drawerStyle: css`
+        background-color: #dc2626;
+        color: white;
+      `,
+      arrowStyle: css`
+        background-color: #dc2626;
+      `,
+    } as const;
 
-export const BlueUnderlineTooltip: Story = {
-  args: {
-    text: "Blue Underline Tooltip",
-    openOn: "click",
-    underline: "blue",
-    containerStyle: css`
-      font-size: 0.875rem;
-    `,
-    children: "Clicked tooltip with blue underline",
-    drawerStyle: css`
-      background-color: #1d4ed8;
-      color: white;
-    `,
-    arrowStyle: css`
-      background-color: #1d4ed8;
-    `,
+    const BlueUnderlineTooltip: TooltipProps = {
+      children: "Blue Underline Tooltip",
+      showDialogOn: "click",
+      containerStyle: css`
+        font-size: 0.875rem;
+      `,
+      dialog: "Clicked tooltip with blue underline",
+      drawerStyle: css`
+        background-color: #1d4ed8;
+        color: white;
+      `,
+      arrowStyle: css`
+        background-color: #1d4ed8;
+      `,
+    } as const;
+
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: "30px" }}>
+        <Tooltip {...Hover} />
+        <Tooltip {...Click} />
+        <Tooltip {...StyledTooltip} />
+        <Tooltip {...DottedUnderlineTooltip} />
+        <Tooltip {...NoUnderlineTooltip} />
+        <Tooltip {...BlueUnderlineTooltip} />
+      </div>
+    );
   },
 };
 
@@ -179,11 +181,55 @@ export const WithForm: Story = {
         .min(2, "Division name must be at least 2 characters long"),
     });
 
+    const contentDialog = (
+      <div style={{ minWidth: 300, padding: "8px 8px 4px" }}>
+        <StatefulForm
+          fields={DIVISION_EMPLOYEE_FIELDS}
+          formValues={value}
+          validationSchema={divisionEmployeeSchema}
+          mode="onChange"
+        />
+        <div
+          style={{
+            marginTop: 4,
+            display: "flex",
+            justifyContent: "flex-end",
+          }}
+        >
+          <Button style={{ fontSize: "0.75rem" }}>Save</Button>
+        </div>
+      </div>
+    );
+
     return (
-      <Tooltip
-        openOn="click"
-        underline="transparent"
-        text={
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          width: "100%",
+          justifyContent: "end",
+        }}
+      >
+        <Tooltip
+          showDialogOn="click"
+          hideDialogOn="click"
+          dialog={contentDialog}
+          containerStyle={css`
+            width: fit-content;
+            padding: 0 12px;
+          `}
+          arrowStyle={css`
+            background-color: #e5e7eb;
+            border: 1px solid #e5e7eb;
+          `}
+          drawerStyle={css`
+            width: fit-content;
+            left: 1rem;
+            background-color: white;
+            color: black;
+            border: 1px solid #e5e7eb;
+          `}
+        >
           <div
             style={{
               display: "flex",
@@ -195,7 +241,127 @@ export const WithForm: Story = {
             <RiAddBoxLine size={16} />
             <span>New Division</span>
           </div>
+        </Tooltip>
+      </div>
+    );
+  },
+};
+
+export const WithBadge: Story = {
+  render: () => {
+    const [value, setValue] = useState<{ name: string; role: OptionsProps }>({
+      name: "",
+      role: {
+        text: "",
+        value: "",
+      },
+    });
+    const [open, setOpen] = useState(false);
+
+    const EMPLOYEE_OPTIONS: OptionsProps[] = [
+      { text: "Organization Owner", value: 1 },
+      { text: "HR Manager", value: 2 },
+      { text: "Member", value: 3 },
+    ];
+
+    const onChangeDivisionEmployeeForm = (e?: StatefulOnChangeType) => {
+      if (!e || typeof e !== "object") return;
+      if (e && typeof e === "object" && "value" in e && "text" in e) {
+        const isOptionsProps =
+          (typeof e.value === "string" || typeof e.value === "number") &&
+          typeof e.text === "string";
+
+        if (isOptionsProps) {
+          setValue((prev) => ({ ...prev, ["role"]: e }));
         }
+        return;
+      }
+
+      if ("target" in e && typeof e.target?.name === "string") {
+        const target = e.target;
+        const { name, value } = target as
+          | HTMLInputElement
+          | HTMLTextAreaElement;
+
+        let updatedValue: string | boolean = value;
+
+        if (target instanceof HTMLInputElement && target.type === "checkbox") {
+          updatedValue = target.checked;
+        }
+
+        setValue((prev) => ({ ...prev, [name]: updatedValue }));
+      }
+    };
+
+    const EMPLOYEE_FIELDS: FormFieldProps[] = [
+      {
+        name: "name",
+        title: "Name",
+        type: "text",
+        required: true,
+        onChange: onChangeDivisionEmployeeForm,
+      },
+      {
+        name: "combo",
+        title: "Role",
+        type: "combo",
+        required: false,
+        onChange: onChangeDivisionEmployeeForm,
+        comboboxProps: {
+          options: EMPLOYEE_OPTIONS,
+          selectboxStyle: css`
+            border: 1px solid #d1d5db;
+            &:focus {
+              border-color: #61a9f9;
+              box-shadow: 0 0 0 1px #61a9f9;
+            }
+          `,
+        },
+      },
+    ];
+
+    const divisionEmployeeSchema = z.object({
+      name: z
+        .string()
+        .min(2, "Division name must be at least 2 characters long"),
+    });
+
+    const contentDialog = (
+      <div
+        style={{
+          minWidth: 300,
+          padding: "8px 8px 4px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "8px",
+        }}
+      >
+        <StatefulForm
+          fields={EMPLOYEE_FIELDS}
+          formValues={value}
+          validationSchema={divisionEmployeeSchema}
+          mode="onChange"
+        />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+          }}
+        >
+          <Button style={{ fontSize: "0.75rem" }}>Save</Button>
+        </div>
+      </div>
+    );
+
+    return (
+      <Tooltip
+        showDialogOn="hover"
+        hideDialogOn="hover"
+        dialogPlacement="top-left"
+        onOpenChange={(open) => {
+          setOpen(open);
+        }}
+        dialog={contentDialog}
         containerStyle={css`
           width: fit-content;
           padding: 0 12px;
@@ -212,23 +378,21 @@ export const WithForm: Story = {
           border: 1px solid #e5e7eb;
         `}
       >
-        <div style={{ minWidth: 300, padding: "8px 8px 4px" }}>
-          <StatefulForm
-            fields={DIVISION_EMPLOYEE_FIELDS}
-            formValues={value}
-            validationSchema={divisionEmployeeSchema}
-            mode="onChange"
-          />
-          <div
-            style={{
-              marginTop: 4,
-              display: "flex",
-              justifyContent: "flex-end",
-            }}
-          >
-            <Button style={{ fontSize: "0.75rem" }}>Save</Button>
-          </div>
-        </div>
+        <Badge
+          badgeStyle={css`
+            cursor: pointer;
+            ${open &&
+            css`
+              border-color: #045e95;
+            `}
+            transition: all ease-in-out 0.2s;
+            &:hover {
+              border-color: #045e95;
+            }
+          `}
+          caption="M. Alim"
+          withCircle
+        />
       </Tooltip>
     );
   },
