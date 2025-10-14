@@ -6,7 +6,7 @@ export interface FileInputBoxProps {
   containerStyle?: CSSProp;
   placeholder?: string;
   accept?: string;
-  onFilesSelected?: (files: FileList | undefined) => void;
+  onFileSelected?: (files: File | undefined) => void;
   label?: string;
   labelStyle?: CSSProp;
   showError?: boolean;
@@ -17,7 +17,7 @@ function FileInputBox({
   containerStyle,
   placeholder = "Drop a file here or browse",
   accept = "*",
-  onFilesSelected,
+  onFileSelected,
   label,
   labelStyle,
   errorMessage,
@@ -33,7 +33,7 @@ function FileInputBox({
 
   const handleDeleteFile = () => {
     if (selectedFile !== "") {
-      onFilesSelected(undefined);
+      onFileSelected(undefined);
       setSelectedFile("");
     }
   };
@@ -41,8 +41,8 @@ function FileInputBox({
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const file = e.target.files;
-      if (onFilesSelected) {
-        onFilesSelected(file);
+      if (onFileSelected) {
+        onFileSelected(file[0]);
       }
       setSelectedFile(file[0].name);
     }
@@ -51,10 +51,10 @@ function FileInputBox({
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
-    if (e.dataTransfer.files && onFilesSelected) {
+    if (e.dataTransfer.files && onFileSelected) {
       const file = e.dataTransfer.files;
-      if (onFilesSelected) {
-        onFilesSelected(file);
+      if (onFileSelected) {
+        onFileSelected(file[0]);
       }
       setSelectedFile(file[0].name);
     }
