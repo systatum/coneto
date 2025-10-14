@@ -14,11 +14,10 @@ type Story = StoryObj<typeof FileInputBox>;
 
 export const Default: Story = {
   render: () => {
-    const [value, setValue] = useState();
+    const [, setValue] = useState();
     const onChangeValue = (e) => {
       setValue(e);
     };
-    console.log(value);
-    return <FileInputBox onFilesSelected={onChangeValue} />;
+    return <FileInputBox onFileSelected={onChangeValue} />;
   },
 };
