@@ -1,7 +1,7 @@
 import { useForm, UseFormSetValue } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ZodTypeAny, TypeOf } from "zod";
-import { ChangeEvent, useEffect } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import {
   Control,
   Controller,
@@ -34,9 +34,20 @@ export type StatefulOnChangeType =
   | {
       target: {
         name: string;
-        value: CountryCodeProps | FileList | File | null | OptionsProps;
+        value: FormValueType;
       };
     };
+
+type FormValueType =
+  | string
+  | number
+  | boolean
+  | File
+  | FileList
+  | OptionsProps
+  | null
+  | undefined
+  | CountryCodeProps;
 
 interface StatefulFormProps<Z extends ZodTypeAny> {
   fields: FormFieldProps[];
@@ -46,6 +57,7 @@ interface StatefulFormProps<Z extends ZodTypeAny> {
   onValidityChange?: (e: boolean) => void;
   labelSize?: string;
   fieldSize?: string;
+  onChange?: (args: { currentState: TypeOf<Z> }) => void;
 }
 
 export interface FormFieldProps {
@@ -82,7 +94,12 @@ function StatefulForm<Z extends ZodTypeAny>({
   onValidityChange,
   fieldSize,
   labelSize,
+  onChange,
 }: StatefulFormProps<Z>) {
+  const handleFieldChange = (name: keyof TypeOf<Z>, value: FormValueType) => {
+    onChange?.({ currentState: { [name]: value } });
+  };
+
   const {
     register,
     control,
@@ -104,8 +121,6 @@ function StatefulForm<Z extends ZodTypeAny>({
     const value = formValues[field];
     const touched = touchedFields[field];
     const error = errors[field];
-
-    console.log(field, touched, error);
 
     const isFile = (val: unknown): val is File => val instanceof File;
     const isFileList = (val: unknown): val is FileList =>
@@ -155,6 +170,7 @@ function StatefulForm<Z extends ZodTypeAny>({
         register={register}
         errors={errors}
         setValue={setValue}
+        onChange={handleFieldChange}
         shouldShowError={(name) => shouldShowError(name as keyof TypeOf<Z>)}
       />
     </>
@@ -171,6 +187,7 @@ interface FormFieldsProps<T extends FieldValues> {
   labelSize?: string;
   fieldSize?: string;
   setValue?: UseFormSetValue<T>;
+  onChange?: (name: keyof T, value: FormValueType) => void;
 }
 
 function FormFields<T extends FieldValues>({
@@ -183,6 +200,7 @@ function FormFields<T extends FieldValues>({
   fieldSize,
   labelSize,
   setValue,
+  onChange,
 }: FormFieldsProps<T>) {
   return (
     <>
@@ -199,7 +217,16 @@ function FormFields<T extends FieldValues>({
             placeholder={field.placeholder}
             value={formValues[field.name as keyof T] ?? ""}
             required={field.required}
-            {...register(field.name as Path<T>, { onChange: field.onChange })}
+            {...register(field.name as Path<T>, {
+              onChange: (e) => {
+                if (field.onChange) {
+                  field.onChange(e);
+                }
+                if (onChange) {
+                  onChange(field.name as keyof T, e.target.value);
+                }
+              },
+            })}
             showError={shouldShowError(field.name)}
             labelStyle={
               labelSize &&
@@ -226,7 +253,16 @@ function FormFields<T extends FieldValues>({
             placeholder={field.placeholder}
             value={formValues[field.name as keyof T] ?? ""}
             required={field.required}
-            {...register(field.name as Path<T>, { onChange: field.onChange })}
+            {...register(field.name as Path<T>, {
+              onChange: (e) => {
+                if (field.onChange) {
+                  field.onChange(e);
+                }
+                if (onChange) {
+                  onChange(field.name as keyof T, e.target.value);
+                }
+              },
+            })}
             showError={shouldShowError(field.name)}
             labelStyle={
               labelSize &&
@@ -283,11 +319,16 @@ function FormFields<T extends FieldValues>({
                     height: ${fieldSize};
                   `
                 }
-                {...register(field.name as Path<T>, {
-                  onChange: field.onChange,
-                })}
                 required={field.required}
                 showError={shouldShowError(field.name)}
+                onChange={(e) => {
+                  controllerField?.onChange(e);
+                  controllerField?.onBlur();
+                  if (onChange) {
+                    onChange(field.name as keyof T, e.target.checked);
+                  }
+                  field.onChange?.(e);
+                }}
                 {...field.checkboxProps}
               />
             )}
@@ -298,34 +339,39 @@ function FormFields<T extends FieldValues>({
             control={control}
             name={"phone" as Path<T>}
             render={({ field: controllerField }) => (
-              <>
-                <Phonebox
-                  label={field.title}
-                  value={controllerField.value}
-                  placeholder={field.placeholder}
-                  onChange={(e) => {
-                    if (e.target.name === "phone") {
-                      controllerField.onChange(e);
-                    }
-                    field.onChange?.(e);
-                  }}
-                  labelStyle={
-                    labelSize &&
-                    css`
-                      font-size: ${labelSize};
-                    `
+              <Phonebox
+                label={field.title}
+                value={controllerField.value}
+                placeholder={field.placeholder}
+                onChange={(
+                  e:
+                    | { target: { name: string; value: CountryCodeProps } }
+                    | ChangeEvent<HTMLInputElement>
+                ) => {
+                  if (e.target.name === "phone") {
+                    controllerField.onChange(e);
+                    controllerField.onBlur();
+                    onChange?.("phone", e.target.value);
+                  } else if (e.target.name === "country_code") {
+                    onChange?.("country_code", e.target.value);
                   }
-                  style={
-                    fieldSize &&
-                    css`
-                      font-size: ${fieldSize};
-                    `
-                  }
-                  showError={!!errors["phone"]}
-                  errorMessage={errors["phone"]?.message as string}
-                  {...field.phoneboxProps}
-                />
-              </>
+                }}
+                labelStyle={
+                  labelSize &&
+                  css`
+                    font-size: ${labelSize};
+                  `
+                }
+                style={
+                  fieldSize &&
+                  css`
+                    font-size: ${fieldSize};
+                  `
+                }
+                showError={!!errors["phone"]}
+                errorMessage={errors["phone"]?.message as string}
+                {...field.phoneboxProps}
+              />
             )}
           />
         ) : field.type === "color" ? (
@@ -352,8 +398,12 @@ function FormFields<T extends FieldValues>({
                 }
                 value={controllerField.value}
                 onChange={(e) => {
+                  controllerField?.onChange(e);
+                  controllerField?.onBlur();
                   field.onChange?.(e);
-                  controllerField.onChange(e);
+                  if (onChange) {
+                    onChange(field.name as keyof T, e.target.value);
+                  }
                 }}
                 showError={shouldShowError(field.name)}
                 errorMessage={fieldState.error?.message}
@@ -372,7 +422,16 @@ function FormFields<T extends FieldValues>({
                 font-size: ${labelSize};
               `
             }
-            {...register(field.name as Path<T>, { onChange: field.onChange })}
+            {...register(field.name as Path<T>, {
+              onChange: (e) => {
+                if (field.onChange) {
+                  field.onChange(e);
+                }
+                if (onChange) {
+                  onChange(field.name as keyof T, e.target.value);
+                }
+              },
+            })}
             {...field.fileDropBoxProps}
           />
         ) : field.type === "file" ? (
@@ -391,11 +450,9 @@ function FormFields<T extends FieldValues>({
               errors[field.name as keyof T]?.message as string | undefined
             }
             {...field.fileInputBoxProps}
-            onFilesSelected={(files: FileList | undefined) => {
-              const file = files?.[0];
-
-              const isFile = file instanceof File;
-              if (isFile) {
+            onFileSelected={(e: File | undefined) => {
+              const file = e;
+              if (file instanceof File) {
                 setValue(field.name as Path<T>, file as any, {
                   shouldValidate: true,
                   shouldTouch: true,
@@ -406,8 +463,15 @@ function FormFields<T extends FieldValues>({
                   shouldTouch: true,
                 });
               }
+              if (onChange) {
+                if (file) {
+                  onChange(field.name, file);
+                } else {
+                  onChange(field.name, undefined);
+                }
+              }
 
-              field.onChange({
+              field.onChange?.({
                 target: { name: field.name, value: file ?? undefined },
               });
             }}
@@ -416,10 +480,9 @@ function FormFields<T extends FieldValues>({
           <Imagebox
             key={index}
             name={field.name}
-            onFileSelected={(e) => {
+            onFileSelected={(e: File | undefined) => {
               const file = e;
-              const isFile = file instanceof File;
-              if (isFile) {
+              if (file instanceof File) {
                 setValue(field.name as Path<T>, file as any, {
                   shouldValidate: true,
                   shouldTouch: true,
@@ -430,10 +493,12 @@ function FormFields<T extends FieldValues>({
                   shouldTouch: true,
                 });
               }
-
-              field.onChange({
+              field.onChange?.({
                 target: { name: field.name, value: file ?? undefined },
               });
+              if (onChange) {
+                onChange(field.name as keyof T, file ?? undefined);
+              }
             }}
             label={field.title}
             labelStyle={
@@ -443,7 +508,16 @@ function FormFields<T extends FieldValues>({
               `
             }
             required={field.required}
-            {...register(field.name as Path<T>, { onChange: field.onChange })}
+            {...register(field.name as Path<T>, {
+              onChange: (e) => {
+                if (field.onChange) {
+                  field.onChange(e);
+                }
+                if (onChange) {
+                  onChange(field.name as keyof T, e.target.value);
+                }
+              },
+            })}
             showError={shouldShowError(field.name)}
             errorMessage={
               errors[field.name as keyof T]?.message as string | undefined
@@ -464,7 +538,16 @@ function FormFields<T extends FieldValues>({
             }
             required={field.required}
             value={formValues[field.name as keyof T] ?? ""}
-            {...register(field.name as Path<T>, { onChange: field.onChange })}
+            {...register(field.name as Path<T>, {
+              onChange: (e) => {
+                if (field.onChange) {
+                  field.onChange(e);
+                }
+                if (onChange) {
+                  onChange(field.name as keyof T, e.target.value);
+                }
+              },
+            })}
             showError={shouldShowError(field.name)}
             errorMessage={
               errors[field.name as keyof T]?.message as string | undefined
@@ -490,7 +573,16 @@ function FormFields<T extends FieldValues>({
             }
             value={formValues[field.name as keyof T] ?? ""}
             required={field.required}
-            {...register(field.name as Path<T>, { onChange: field.onChange })}
+            {...register(field.name as Path<T>, {
+              onChange: (e) => {
+                if (field.onChange) {
+                  field.onChange(e);
+                }
+                if (onChange) {
+                  onChange(field.name as keyof T, e.target.value);
+                }
+              },
+            })}
             showError={shouldShowError(field.name)}
             errorMessage={
               errors[field.name as keyof T]?.message as string | undefined
@@ -522,22 +614,20 @@ function FormFields<T extends FieldValues>({
                 errorMessage={
                   (
                     errors[field.name as keyof T] as {
-                      text?: {
-                        message?: string;
-                      };
+                      text?: { message?: string };
                     }
                   )?.text?.message
                 }
                 setInputValue={(e) => {
                   const inputValueEvent = {
-                    target: {
-                      name: field.name,
-                      value: e,
-                    },
+                    target: { name: field.name, value: e },
                   };
                   controllerField.onChange(inputValueEvent);
-                  controllerField.onBlur();
-                  field.onChange(inputValueEvent);
+                  controllerField?.onBlur();
+                  field.onChange?.(inputValueEvent);
+                  if (onChange) {
+                    onChange(field.name as keyof T, e);
+                  }
                 }}
                 inputValue={controllerField.value}
                 {...field.dateProps}
@@ -569,22 +659,20 @@ function FormFields<T extends FieldValues>({
                 errorMessage={
                   (
                     errors[field.name as keyof T] as {
-                      text?: {
-                        message?: string;
-                      };
+                      text?: { message?: string };
                     }
                   )?.text?.message
                 }
                 setInputValue={(e) => {
                   const inputValueEvent = {
-                    target: {
-                      name: field.name,
-                      value: e,
-                    },
+                    target: { name: field.name, value: e },
                   };
                   controllerField.onChange(inputValueEvent);
-                  controllerField.onBlur();
-                  field.onChange(inputValueEvent);
+                  controllerField?.onBlur();
+                  field.onChange?.(inputValueEvent);
+                  if (onChange) {
+                    onChange(field.name as keyof T, e);
+                  }
                 }}
                 inputValue={controllerField.value}
                 {...field.comboboxProps}
@@ -614,9 +702,9 @@ function FormFields<T extends FieldValues>({
                 }
                 inputValue={controllerField.value}
                 setInputValue={(e) => {
-                  controllerField.onChange(e);
-                  controllerField.onBlur();
-                  field.onChange(e);
+                  controllerField?.onChange(e);
+                  controllerField?.onBlur();
+                  field.onChange?.(e);
                 }}
                 {...field.chipsProps}
               />
@@ -634,7 +722,11 @@ function FormFields<T extends FieldValues>({
                 rating={controllerField.value}
                 onChange={(e) => {
                   controllerField.onChange(e.target.value);
+                  controllerField?.onBlur();
                   field.onChange?.(e);
+                  if (onChange) {
+                    onChange(field.name as keyof T, e.target.value);
+                  }
                 }}
                 labelStyle={
                   labelSize &&
@@ -677,12 +769,22 @@ function FormFields<T extends FieldValues>({
                 value={controllerField.value ?? false}
                 required={field.required}
                 {...register(field.name as Path<T>, {
-                  onChange: field.onChange,
+                  onChange: (e) => {
+                    if (field.onChange) {
+                      field.onChange(e);
+                    }
+                    if (onChange) {
+                      onChange(field.name as keyof T, e.target.checked);
+                    }
+                  },
                 })}
                 onChange={(e) => {
+                  controllerField?.onChange(e);
+                  controllerField?.onBlur();
                   field.onChange?.(e);
-                  controllerField.onBlur();
-                  controllerField.onChange(e);
+                  if (onChange) {
+                    onChange(field.name as keyof T, e.target.value);
+                  }
                 }}
                 showError={shouldShowError(field.name)}
                 errorMessage={
@@ -697,33 +799,34 @@ function FormFields<T extends FieldValues>({
             key={index}
             control={control}
             name={field.name as Path<T>}
-            render={({ field: controllerField }) => {
-              return (
-                <Togglebox
-                  name={controllerField.name}
-                  label={field.title}
-                  labelStyle={
-                    labelSize &&
-                    css`
-                      font-size: ${labelSize};
-                    `
+            render={({ field: controllerField }) => (
+              <Togglebox
+                name={controllerField.name}
+                label={field.title}
+                labelStyle={
+                  labelSize &&
+                  css`
+                    font-size: ${labelSize};
+                  `
+                }
+                checked={controllerField.value ?? false}
+                required={field.required}
+                onChange={(e) => {
+                  controllerField?.onChange(e);
+                  controllerField?.onBlur();
+                  field.onChange?.(e);
+                  if (onChange) {
+                    onChange(field.name as keyof T, e.target.checked);
                   }
-                  checked={controllerField.value ?? false}
-                  required={field.required}
-                  onChange={(e) => {
-                    field.onChange?.(e);
-                    controllerField.onBlur();
-                    controllerField.onChange(e);
-                  }}
-                  onBlur={controllerField.onBlur}
-                  showError={shouldShowError(field.name)}
-                  errorMessage={
-                    errors[field.name as keyof T]?.message as string | undefined
-                  }
-                  {...field.toggleboxProps}
-                />
-              );
-            }}
+                }}
+                onBlur={controllerField.onBlur}
+                showError={shouldShowError(field.name)}
+                errorMessage={
+                  errors[field.name as keyof T]?.message as string | undefined
+                }
+                {...field.toggleboxProps}
+              />
+            )}
           />
         ) : null;
       })}
