@@ -338,12 +338,17 @@ export const AllCase: Story = {
       color: z.string().optional(),
       combo: z.object({
         value: z.union([z.number(), z.string()]).optional(),
-        text: z.string().min(1, "Choose one"),
+        text: z.string().min(5, "Choose one"),
       }),
       date: z
         .object({
           value: z.union([z.number(), z.string()]).optional(),
-          text: z.string().optional(),
+          text: z
+            .string()
+            .min(5, "Choose your date")
+            .refine((val) => !isNaN(Date.parse(val)), {
+              message: "Invalid date",
+            }),
         })
         .optional(),
       file_drop_box: z.any().optional(),
@@ -376,8 +381,8 @@ export const AllCase: Story = {
       signature: z.string().min(1, "Signature is required"),
       phone: z.string().min(8, "Phone number must be 8 digits").optional(),
       rating: z.string().optional(),
-      thumb_field: z.boolean().optional(),
-      togglebox: z.boolean().optional(),
+      thumb_field: z.boolean(),
+      togglebox: z.boolean(),
       country_code: z
         .object({
           id: z.string(),
