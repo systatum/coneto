@@ -15,6 +15,7 @@ import {
 import { BadgeProps } from "./badge";
 import { CountryCodeProps } from "./phonebox";
 import { css } from "styled-components";
+import { OptionsProps } from "./selectbox";
 
 const meta: Meta<typeof StatefulForm> = {
   title: "Input Elements/StatefulForm",
@@ -328,19 +329,17 @@ export const AllCase: Story = {
           message: "Number must be numeric",
         }),
       password: z.string().min(6, "Password must be at least 6 characters"),
-      textarea: z.string().optional(),
-      check: z.boolean().optional(),
+      textarea: z.string().min(10, "Text must be at least 10 characters"),
+      check: z.boolean(),
       chips: z.object({
         searchText: z.string().optional(),
         selectedOptions: z.array(badgeSchema).optional(),
       }),
       color: z.string().optional(),
-      combo: z
-        .object({
-          value: z.union([z.number(), z.string()]).optional(),
-          text: z.string().optional(),
-        })
-        .optional(),
+      combo: z.object({
+        value: z.union([z.number(), z.string()]).optional(),
+        text: z.string().min(1, "Choose one"),
+      }),
       date: z
         .object({
           value: z.union([z.number(), z.string()]).optional(),
@@ -361,7 +360,19 @@ export const AllCase: Story = {
         .refine((file) => file?.size <= 5 * 1024 * 1024, {
           message: "File size must be 5MB or less",
         }),
-      image: z.string().optional(),
+      image: z
+        .any()
+        .refine(
+          (file) => {
+            return file?.type === "image/jpeg";
+          },
+          {
+            message: "Only JPEG file are allowed",
+          }
+        )
+        .refine((file) => file?.size <= 5 * 1024 * 1024, {
+          message: "File size must be 5MB or less",
+        }),
       signature: z.string().min(1, "Signature is required"),
       phone: z.string().min(8, "Phone number must be 8 digits").optional(),
       rating: z.string().optional(),
@@ -377,46 +388,22 @@ export const AllCase: Story = {
         .optional(),
     });
 
-    const onChangeForm = (e?: StatefulOnChangeType, type?: string) => {
-      if (e instanceof FileList) {
-        const file = e[0];
-        if (file && typeof type === "string") {
-          setValue((prev) => ({ ...prev, [type]: file }));
-        }
-        return;
-      }
-
-      if (
-        e &&
-        typeof e === "object" &&
-        "value" in e &&
-        "text" in e &&
-        typeof type === "string"
-      ) {
-        const isOptionsProps =
-          (typeof e.value === "string" || typeof e.value === "number") &&
-          typeof e.text === "string";
-
-        if (isOptionsProps) {
-          setValue((prev) => ({ ...prev, [type]: e }));
-        }
-        return;
-      }
-
+    const onChangeForm = (e?: StatefulOnChangeType) => {
       if (e && "target" in e) {
         const target = e.target;
         const { name, value } = target;
+
         let updatedValue:
           | string
           | boolean
           | number
           | CountryCodeProps
+          | OptionsProps
           | File
           | FileList = value;
 
         if (target instanceof HTMLInputElement && target.type === "checkbox") {
           updatedValue = target.checked;
-          console.log(target.checked);
         }
 
         if (target.name === "chips") {
@@ -553,7 +540,7 @@ export const AllCase: Story = {
         required: false,
         placeholder: "Select a fruit...",
         onChange: (e) => {
-          onChangeForm(e, "combo");
+          onChangeForm(e);
         },
         comboboxProps: {
           options: FRUIT_OPTIONS,
@@ -565,9 +552,7 @@ export const AllCase: Story = {
         type: "date",
         required: false,
         placeholder: "Select a date",
-        onChange: (e) => {
-          onChangeForm(e, "date");
-        },
+        onChange: onChangeForm,
         dateProps: {
           monthNames: MONTH_NAMES,
         },
