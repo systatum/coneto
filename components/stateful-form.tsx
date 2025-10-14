@@ -31,12 +31,10 @@ import { Togglebox, ToggleboxProps } from "./togglebox";
 
 export type StatefulOnChangeType =
   | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  | FileList
-  | OptionsProps
   | {
       target: {
         name: string;
-        value: CountryCodeProps | FileList | File | null;
+        value: CountryCodeProps | FileList | File | null | OptionsProps;
       };
     };
 
@@ -107,18 +105,41 @@ function StatefulForm<Z extends ZodTypeAny>({
     const touched = touchedFields[field];
     const error = errors[field];
 
-    if (typeof value === "string") {
-      return value.length > 0 && !!touched && !!error;
-    }
     const isFile = (val: unknown): val is File => val instanceof File;
     const isFileList = (val: unknown): val is FileList =>
       val instanceof FileList;
 
-    if (isFile(value) || isFileList(value)) {
-      return !!touched && !!error;
+    const hasErrorMessage = (err: unknown): boolean => {
+      if (!err || typeof err !== "object") return false;
+
+      if (typeof (err as any)?.message === "string") return true;
+
+      if (typeof (err as any)?.text?.message === "string") return true;
+
+      if (Array.isArray(err)) {
+        return err.some((item) => hasErrorMessage(item));
+      }
+
+      return Object.values(err).some((v) => hasErrorMessage(v));
+    };
+
+    if (typeof value === "string") {
+      return value.length > 0 && !!touched && hasErrorMessage(error);
     }
 
-    return !!touched && !!error;
+    if (typeof value === "number" || typeof value === "boolean") {
+      return !!touched && hasErrorMessage(error);
+    }
+
+    if (isFile(value) || isFileList(value)) {
+      return !!touched && hasErrorMessage(error);
+    }
+
+    if (typeof value === "object" && value !== null) {
+      return !!touched && hasErrorMessage(error);
+    }
+
+    return !!touched && hasErrorMessage(error);
   };
 
   return (
@@ -400,7 +421,25 @@ function FormFields<T extends FieldValues>({
           <Imagebox
             key={index}
             name={field.name}
-            onFilesSelected={(e) => field.onChange(e, "image")}
+            onFileSelected={(e) => {
+              const file = e;
+              const isFile = file instanceof File;
+              if (isFile) {
+                setValue(field.name as Path<T>, file as any, {
+                  shouldValidate: true,
+                  shouldTouch: true,
+                });
+              } else {
+                setValue(field.name as Path<T>, undefined, {
+                  shouldValidate: true,
+                  shouldTouch: true,
+                });
+              }
+
+              field.onChange({
+                target: { name: field.name, value: file ?? undefined },
+              });
+            }}
             label={field.title}
             labelStyle={
               labelSize &&
@@ -495,8 +534,14 @@ function FormFields<T extends FieldValues>({
                   )?.text?.message
                 }
                 setInputValue={(e) => {
-                  controllerField.onChange(e);
-                  field.onChange(e);
+                  const inputValueEvent = {
+                    target: {
+                      name: field.name,
+                      value: e,
+                    },
+                  };
+                  controllerField.onChange(inputValueEvent);
+                  field.onChange(inputValueEvent);
                 }}
                 inputValue={controllerField.value}
                 {...field.dateProps}
@@ -535,8 +580,14 @@ function FormFields<T extends FieldValues>({
                   )?.text?.message
                 }
                 setInputValue={(e) => {
-                  controllerField.onChange(e);
-                  field.onChange(e);
+                  const inputValueEvent = {
+                    target: {
+                      name: field.name,
+                      value: e,
+                    },
+                  };
+                  controllerField.onChange(inputValueEvent);
+                  field.onChange(inputValueEvent);
                 }}
                 inputValue={controllerField.value}
                 {...field.comboboxProps}
