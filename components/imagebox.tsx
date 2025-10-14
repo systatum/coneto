@@ -6,7 +6,7 @@ export interface ImageboxProps {
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
   style?: CSSProp;
-  onFilesSelected?: (files: FileList) => void;
+  onFileSelected?: (files: File) => void;
   size?: "xs" | "sm" | "md" | "lg";
   label?: string;
   showError?: boolean;
@@ -36,7 +36,7 @@ const SIZE_STYLES = {
 function Imagebox({
   containerStyle,
   labelStyle,
-  onFilesSelected,
+  onFileSelected,
   size = "md",
   label,
   errorMessage,
@@ -57,8 +57,8 @@ function Imagebox({
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const file = e.target.files;
-      if (onFilesSelected) {
-        onFilesSelected?.(file);
+      if (onFileSelected) {
+        onFileSelected?.(file[0]);
       }
       setSelectedFile(URL.createObjectURL(file[0]));
     }
@@ -67,10 +67,10 @@ function Imagebox({
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
-    if (e.dataTransfer.files && onFilesSelected) {
+    if (e.dataTransfer.files && onFileSelected) {
       const file = e.dataTransfer.files;
-      if (onFilesSelected) {
-        onFilesSelected(file);
+      if (onFileSelected) {
+        onFileSelected(file[0]);
       }
       setSelectedFile(URL.createObjectURL(file[0]));
     }
