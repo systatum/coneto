@@ -55,7 +55,7 @@ export interface FormFieldProps {
   type?: string;
   placeholder?: string;
   rows?: number;
-  onChange?: (e?: StatefulOnChangeType, type?: string) => void;
+  onChange?: (e?: StatefulOnChangeType) => void;
   textboxProps?: TextboxProps;
   textareaProps?: TextareaProps;
   checkboxProps?: CheckboxProps;
@@ -104,6 +104,8 @@ function StatefulForm<Z extends ZodTypeAny>({
     const value = formValues[field];
     const touched = touchedFields[field];
     const error = errors[field];
+
+    console.log(field, touched, error);
 
     const isFile = (val: unknown): val is File => val instanceof File;
     const isFileList = (val: unknown): val is FileList =>
@@ -349,16 +351,9 @@ function FormFields<T extends FieldValues>({
                   `
                 }
                 value={controllerField.value}
-                onChange={(e, kind) => {
-                  const newVal =
-                    kind === "color-text"
-                      ? e.target.value.startsWith("#")
-                        ? e.target.value
-                        : `#${e.target.value}`
-                      : e.target.value;
-
-                  field.onChange?.(e, kind);
-                  controllerField.onChange(newVal);
+                onChange={(e) => {
+                  field.onChange?.(e);
+                  controllerField.onChange(e);
                 }}
                 showError={shouldShowError(field.name)}
                 errorMessage={fieldState.error?.message}
@@ -541,6 +536,7 @@ function FormFields<T extends FieldValues>({
                     },
                   };
                   controllerField.onChange(inputValueEvent);
+                  controllerField.onBlur();
                   field.onChange(inputValueEvent);
                 }}
                 inputValue={controllerField.value}
@@ -587,6 +583,7 @@ function FormFields<T extends FieldValues>({
                     },
                   };
                   controllerField.onChange(inputValueEvent);
+                  controllerField.onBlur();
                   field.onChange(inputValueEvent);
                 }}
                 inputValue={controllerField.value}
@@ -618,7 +615,8 @@ function FormFields<T extends FieldValues>({
                 inputValue={controllerField.value}
                 setInputValue={(e) => {
                   controllerField.onChange(e);
-                  field.onChange(e, "chips");
+                  controllerField.onBlur();
+                  field.onChange(e);
                 }}
                 {...field.chipsProps}
               />
@@ -681,6 +679,11 @@ function FormFields<T extends FieldValues>({
                 {...register(field.name as Path<T>, {
                   onChange: field.onChange,
                 })}
+                onChange={(e) => {
+                  field.onChange?.(e);
+                  controllerField.onBlur();
+                  controllerField.onChange(e);
+                }}
                 showError={shouldShowError(field.name)}
                 errorMessage={
                   errors[field.name as keyof T]?.message as string | undefined
@@ -707,10 +710,12 @@ function FormFields<T extends FieldValues>({
                   }
                   checked={controllerField.value ?? false}
                   required={field.required}
-                  {...register(field.name as Path<T>, {
-                    onChange: field.onChange,
-                  })}
-                  onChange={controllerField.onChange}
+                  onChange={(e) => {
+                    field.onChange?.(e);
+                    controllerField.onBlur();
+                    controllerField.onChange(e);
+                  }}
+                  onBlur={controllerField.onBlur}
                   showError={shouldShowError(field.name)}
                   errorMessage={
                     errors[field.name as keyof T]?.message as string | undefined
