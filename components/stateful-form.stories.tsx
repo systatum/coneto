@@ -84,7 +84,6 @@ export const Default: Story = {
         type: "text",
         required: true,
         placeholder: "Enter first name",
-        onChange: onChangeForm,
       },
       {
         name: "last_name",
@@ -92,7 +91,6 @@ export const Default: Story = {
         type: "text",
         required: false,
         placeholder: "Enter last name",
-        onChange: onChangeForm,
       },
       {
         name: "email",
@@ -100,7 +98,6 @@ export const Default: Story = {
         type: "email",
         required: true,
         placeholder: "Enter email address",
-        onChange: onChangeForm,
       },
       {
         name: "phone",
@@ -108,7 +105,6 @@ export const Default: Story = {
         type: "phone",
         required: false,
         placeholder: "Enter phone number",
-        onChange: onChangeForm,
       },
       {
         name: "note",
@@ -117,14 +113,12 @@ export const Default: Story = {
         rows: 3,
         required: false,
         placeholder: "Add additional notes",
-        onChange: onChangeForm,
       },
       {
         name: "access",
         title: "Has access to login",
         type: "checkbox",
         required: false,
-        onChange: onChangeForm,
       },
     ];
 
@@ -239,7 +233,7 @@ export const AllCase: Story = {
       textarea: string;
       rating: string;
       check: boolean;
-      chips: {
+      chips?: {
         searchText: string;
         selectedOptions: BadgeProps[];
       };
@@ -250,16 +244,17 @@ export const AllCase: Story = {
       };
       date: {
         text: string;
-        value: number | string;
+        value?: number | string;
       };
-      file_drop_box: File[];
+      file_drop_box?: File[];
       file: File | undefined;
-      image: string;
+      image: File | undefined;
+      money: string;
       phone: string;
       thumb_field: boolean;
       togglebox: boolean;
       signature: string;
-      country_code: typeof DEFAULT_COUNTRY_CODES;
+      country_code?: CountryCodeProps;
     }
 
     const [value, setValue] = useState<AllCaseValueProps>({
@@ -285,9 +280,10 @@ export const AllCase: Story = {
       },
       file_drop_box: [] as File[],
       file: undefined,
-      image: "",
+      image: undefined,
+      money: "",
       phone: "",
-      thumb_field: null,
+      thumb_field: false,
       togglebox: false,
       signature: "",
       country_code: DEFAULT_COUNTRY_CODES,
@@ -323,11 +319,9 @@ export const AllCase: Story = {
     const schema = z.object({
       text: z.string().min(3, "Text must be at least 3 characters"),
       email: z.string().email("Please enter a valid email address"),
-      number: z
-        .union([z.string(), z.number()])
-        .refine((val) => val === "" || !isNaN(Number(val)), {
-          message: "Number must be numeric",
-        }),
+      number: z.string().refine((val) => val === "" || !isNaN(Number(val)), {
+        message: "Number must be numeric",
+      }),
       password: z.string().min(6, "Password must be at least 6 characters"),
       textarea: z.string().min(10, "Text must be at least 10 characters"),
       check: z.boolean(),
@@ -378,6 +372,7 @@ export const AllCase: Story = {
         .refine((file) => file?.size <= 5 * 1024 * 1024, {
           message: "File size must be 5MB or less",
         }),
+      money: z.string().optional(),
       signature: z.string().min(1, "Signature is required"),
       phone: z.string().min(8, "Phone number must be 8 digits").optional(),
       rating: z.string().optional(),
@@ -466,6 +461,8 @@ export const AllCase: Story = {
       );
     };
 
+    console.log(value);
+
     const MONTH_NAMES = [
       { text: "JAN", value: 1 },
       { text: "FEB", value: 2 },
@@ -488,7 +485,6 @@ export const AllCase: Story = {
         type: "text",
         required: true,
         placeholder: "Enter text",
-        onChange: onChangeForm,
       },
       {
         name: "email",
@@ -496,7 +492,6 @@ export const AllCase: Story = {
         type: "email",
         required: false,
         placeholder: "Enter email address",
-        onChange: onChangeForm,
       },
       {
         name: "number",
@@ -504,7 +499,6 @@ export const AllCase: Story = {
         type: "number",
         required: false,
         placeholder: "Enter number",
-        onChange: onChangeForm,
       },
       {
         name: "password",
@@ -512,7 +506,6 @@ export const AllCase: Story = {
         type: "password",
         required: false,
         placeholder: "Enter password",
-        onChange: onChangeForm,
       },
       {
         name: "textarea",
@@ -521,14 +514,12 @@ export const AllCase: Story = {
         rows: 3,
         required: false,
         placeholder: "Enter text here",
-        onChange: onChangeForm,
       },
       {
         name: "check",
         title: "Check",
         type: "checkbox",
         required: false,
-        onChange: onChangeForm,
       },
       {
         name: "color",
@@ -536,7 +527,6 @@ export const AllCase: Story = {
         type: "color",
         required: false,
         placeholder: "Enter the color here",
-        onChange: onChangeForm,
       },
       {
         name: "combo",
@@ -544,9 +534,7 @@ export const AllCase: Story = {
         type: "combo",
         required: false,
         placeholder: "Select a fruit...",
-        onChange: (e) => {
-          onChangeForm(e);
-        },
+
         comboboxProps: {
           options: FRUIT_OPTIONS,
         },
@@ -557,7 +545,7 @@ export const AllCase: Story = {
         type: "date",
         required: false,
         placeholder: "Select a date",
-        onChange: onChangeForm,
+
         dateProps: {
           monthNames: MONTH_NAMES,
         },
@@ -577,7 +565,6 @@ export const AllCase: Story = {
         title: "File",
         type: "file",
         required: false,
-        onChange: onChangeForm,
         fileInputBoxProps: {
           accept: "image/jpeg",
         },
@@ -587,7 +574,6 @@ export const AllCase: Story = {
         title: "Image",
         type: "image",
         required: false,
-        onChange: onChangeForm,
       },
       {
         name: "money",
@@ -595,7 +581,6 @@ export const AllCase: Story = {
         type: "money",
         required: false,
         placeholder: "Enter amount",
-        onChange: onChangeForm,
         moneyProps: {
           separator: "dot",
         },
@@ -606,7 +591,6 @@ export const AllCase: Story = {
         type: "phone",
         required: false,
         placeholder: "Enter phone number",
-        onChange: onChangeForm,
       },
       {
         name: "country_code",
@@ -614,35 +598,30 @@ export const AllCase: Story = {
         type: "country_code",
         required: false,
         placeholder: "Enter country code",
-        onChange: onChangeForm,
       },
       {
         name: "signature",
         title: "Signature",
         type: "signbox",
         required: false,
-        onChange: onChangeForm,
       },
       {
         name: "rating",
         title: "Rating",
         type: "rating",
         required: false,
-        onChange: onChangeForm,
       },
       {
         name: "thumb_field",
         title: "Thumb Field",
         type: "thumbfield",
         required: false,
-        onChange: onChangeForm,
       },
       {
         name: "togglebox",
         title: "Togglebox",
         type: "toggle",
         required: false,
-        onChange: onChangeForm,
       },
       {
         name: "chips",
@@ -685,6 +664,17 @@ export const AllCase: Story = {
         }}
       >
         <StatefulForm
+          onChange={({ currentState }) => {
+            setValue((prev) => {
+              const next: typeof prev = { ...prev };
+
+              Object.entries(currentState).forEach(([key, value]) => {
+                (next as unknown)[key] = value;
+              });
+
+              return next;
+            });
+          }}
           onValidityChange={setIsFormValid}
           labelSize="14px"
           fieldSize="14px"
