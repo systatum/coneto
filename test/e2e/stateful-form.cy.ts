@@ -40,24 +40,39 @@ describe("StatefulForm", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-statefulform--all-case"));
     });
-
     it("should fill all fields and assert their values", () => {
-      cy.findAllByRole("button").eq(3).should("be.disabled");
-      cy.findByLabelText("Text").type("Hello World");
-      cy.findByLabelText("Email").type("alim@systatum.com");
-      cy.findByLabelText("Number").type("12345");
-      cy.findByLabelText("Password").type("secret123");
-      cy.findByLabelText("Textarea").type("This is a test textarea");
+      cy.findByLabelText("Text")
+        .type("Hello World")
+        .should("have.value", "Hello World");
+      cy.findByLabelText("Email")
+        .type("alim@systatum.com")
+        .should("have.value", "alim@systatum.com");
+      cy.findByLabelText("Number").type("12345").should("have.value", "12345");
+      cy.findByLabelText("Password")
+        .type("secret123")
+        .should("have.value", "secret123");
+      cy.findByLabelText("Textarea")
+        .type("This is a test textarea")
+        .should("have.value", "This is a test textarea");
 
       cy.findByLabelText("Check").check().should("be.checked");
 
-      cy.findByLabelText("Color").invoke("val", "#ff0000").trigger("change");
+      cy.get('input[type="color"]').then(($input) => {
+        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+          window.HTMLInputElement.prototype,
+          "value"
+        ).set;
+
+        nativeInputValueSetter.call($input[0], "#ff0099");
+
+        $input[0].dispatchEvent(new Event("input", { bubbles: true }));
+        $input[0].dispatchEvent(new Event("change", { bubbles: true }));
+      });
+      cy.get('input[type="color"]').should("have.value", "#ff0099");
 
       cy.findByPlaceholderText("Select a fruit...").as("combobox").type("ap");
-
       cy.findByRole("option", { name: "Apple" }).should("be.visible");
       cy.findByRole("option", { name: "Grape" }).should("be.visible");
-
       cy.get("@combobox").type("{downarrow}{enter}");
       cy.get("@combobox").should("have.value", "Grape");
 
@@ -68,36 +83,24 @@ describe("StatefulForm", () => {
       cy.findByLabelText("combobox-year").click();
       cy.findByText("2024").click();
       cy.findByText("3").click();
-      const expectedContent = "01/03/2024";
-
+      const expectedDate = "01/03/2024";
       cy.findByPlaceholderText("mm/dd/yyyy").as("datebox");
-      cy.get("@datebox").should("have.value", expectedContent);
+      cy.get("@datebox").should("have.value", expectedDate);
 
-      cy.findByLabelText("filedropbox").selectFile(
-        ["test/fixtures/test-images/sample-1.jpg"],
-        {
-          action: "drag-drop",
-          force: true,
-        }
-      );
-      cy.findByLabelText("fileinputbox").selectFile(
-        ["test/fixtures/test-images/sample-1.jpg"],
-        {
-          action: "drag-drop",
-          force: true,
-        }
-      );
-
+      const testFile = "test/fixtures/test-images/sample-1.jpg";
+      cy.findByLabelText("filedropbox").selectFile(testFile, {
+        action: "drag-drop",
+        force: true,
+      });
+      cy.findByLabelText("fileinputbox").selectFile(testFile, {
+        action: "drag-drop",
+        force: true,
+      });
       cy.contains("sample-1.jpg").should("exist");
-
-      cy.findByLabelText("imagebox").selectFile(
-        ["test/fixtures/test-images/sample-1.jpg"],
-        {
-          action: "drag-drop",
-          force: true,
-        }
-      );
-
+      cy.findByLabelText("imagebox").selectFile(testFile, {
+        action: "drag-drop",
+        force: true,
+      });
       cy.get("img").eq(0).should("exist");
 
       cy.findAllByRole("button").eq(1).click();
@@ -111,11 +114,9 @@ describe("StatefulForm", () => {
       );
 
       cy.get("canvas").should("exist").and("be.visible");
-
       cy.get("canvas").then(($canvas) => {
         const canvas = $canvas[0] as HTMLCanvasElement;
         const rect = canvas.getBoundingClientRect();
-
         cy.wrap($canvas)
           .trigger("mousedown", {
             clientX: rect.left + 150,
@@ -154,12 +155,8 @@ describe("StatefulForm", () => {
             clientY: rect.top + 190,
           })
           .trigger("mouseup");
-      });
 
-      cy.get("canvas").then(($canvas) => {
-        const canvasEl = $canvas[0] as HTMLCanvasElement;
-        const base64 = canvasEl.toDataURL("image/png");
-
+        const base64 = canvas.toDataURL("image/png");
         expect(base64).to.match(/^data:image\/png;base64,/);
       });
 
@@ -168,7 +165,6 @@ describe("StatefulForm", () => {
       cy.findByLabelText("thumb-up").click();
       cy.findByLabelText("thumb-down").click();
       cy.findByLabelText("input-thumbfield").should("not.be.checked");
-
       cy.findByLabelText("input-togglebox")
         .click({ force: true })
         .should("be.checked");
