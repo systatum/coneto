@@ -4,7 +4,11 @@ import {
   RiDeleteBin2Fill,
   RiDeleteBin2Line,
 } from "@remixicon/react";
-import { ColumnTableProps, Table } from "./../../components/table";
+import {
+  ColumnTableProps,
+  Table,
+  TableActionsProps,
+} from "./../../components/table";
 import { TipMenuItemProps } from "./../../components/tip-menu";
 import { css } from "styled-components";
 
@@ -146,7 +150,7 @@ describe("Table", () => {
     },
   ];
 
-  const TOP_ACTIONS = [
+  const TOP_ACTIONS: TableActionsProps[] = [
     {
       title: "Delete",
       icon: RiDeleteBin2Line,
@@ -166,24 +170,37 @@ describe("Table", () => {
   const columns: ColumnTableProps[] = [
     {
       caption: "Title",
-      sortable: true,
+      sortable: false,
       width: "45%",
     },
     {
       caption: "Category",
-      sortable: true,
+      sortable: false,
       width: "30%",
     },
     {
       caption: "Author",
-      sortable: true,
+      sortable: false,
       width: "25%",
     },
   ];
 
   const rows = TABLE_ITEMS;
 
-  const ROW_ACTION = (rowId: string): TipMenuItemProps[] => {
+  const ONE_ROW_ACTION = (rowId: string): TipMenuItemProps[] => {
+    return [
+      {
+        caption: "Delete",
+        icon: RiDeleteBin2Fill,
+        iconColor: "gray",
+        onClick: () => {
+          console.log(`${rowId} was deleted`);
+        },
+      },
+    ];
+  };
+
+  const ROW_ACTIONS = (rowId: string): TipMenuItemProps[] => {
     return [
       {
         caption: "Edit",
@@ -232,7 +249,7 @@ describe("Table", () => {
                       rowValue.category,
                       rowValue.author,
                     ]}
-                    actions={ROW_ACTION}
+                    actions={ROW_ACTIONS}
                   />
                 ))}
               </Table.Row.Group>
@@ -283,7 +300,7 @@ describe("Table", () => {
                       rowValue.category,
                       rowValue.author,
                     ]}
-                    actions={ROW_ACTION}
+                    actions={ROW_ACTIONS}
                   />
                 ))}
               </Table.Row.Group>
@@ -335,7 +352,7 @@ describe("Table", () => {
                       rowValue.category,
                       rowValue.author,
                     ]}
-                    actions={ROW_ACTION}
+                    actions={ROW_ACTIONS}
                   />
                 ))}
               </Table.Row.Group>
@@ -386,7 +403,7 @@ describe("Table", () => {
                       rowValue.category,
                       rowValue.author,
                     ]}
-                    actions={ROW_ACTION}
+                    actions={ROW_ACTIONS}
                   />
                 ))}
               </Table.Row.Group>
@@ -408,6 +425,116 @@ describe("Table", () => {
           "have.css",
           "max-height",
           "33px"
+        );
+      });
+    });
+  });
+
+  context("with row actions", () => {
+    context("when only one action", () => {
+      it("render action button", () => {
+        cy.mount(
+          <Table
+            selectable
+            tableRowContainerStyle={css`
+              max-height: 400px;
+            `}
+            columns={columns}
+            actions={TOP_ACTIONS}
+            searchable
+          >
+            {rows?.map((groupValue, groupIndex) => (
+              <Table.Row.Group
+                key={groupIndex}
+                title={groupValue.title}
+                subtitle={groupValue.subtitle}
+              >
+                {groupValue.items.map((rowValue, rowIndex) => (
+                  <Table.Row
+                    key={rowIndex}
+                    rowId={`${groupValue.title}-${rowValue.title}`}
+                    content={[
+                      rowValue.title,
+                      rowValue.category,
+                      rowValue.author,
+                    ]}
+                    actions={ONE_ROW_ACTION}
+                  />
+                ))}
+              </Table.Row.Group>
+            ))}
+          </Table>
+        );
+        cy.window().then((win) => {
+          cy.spy(win.console, "log").as("consoleLog");
+        });
+
+        cy.findAllByLabelText("table-row")
+          .eq(2)
+          .trigger("mouseover")
+          .within(() => {
+            cy.findByLabelText("row-action").should("be.visible").click();
+          });
+
+        cy.wait(100);
+        cy.get("@consoleLog").should(
+          "have.been.calledWith",
+          "Tech Articles-Async Patterns in JS was deleted"
+        );
+      });
+    });
+    context("when given multiple actions", () => {
+      it("render with tip menu", () => {
+        cy.mount(
+          <Table
+            selectable
+            tableRowContainerStyle={css`
+              max-height: 400px;
+            `}
+            columns={columns}
+            actions={TOP_ACTIONS}
+            searchable
+          >
+            {rows?.map((groupValue, groupIndex) => (
+              <Table.Row.Group
+                key={groupIndex}
+                title={groupValue.title}
+                subtitle={groupValue.subtitle}
+              >
+                {groupValue.items.map((rowValue, rowIndex) => (
+                  <Table.Row
+                    key={rowIndex}
+                    rowId={`${groupValue.title}-${rowValue.title}`}
+                    content={[
+                      rowValue.title,
+                      rowValue.category,
+                      rowValue.author,
+                    ]}
+                    actions={ROW_ACTIONS}
+                  />
+                ))}
+              </Table.Row.Group>
+            ))}
+          </Table>
+        );
+        cy.window().then((win) => {
+          cy.spy(win.console, "log").as("consoleLog");
+        });
+
+        cy.findAllByLabelText("table-row")
+          .eq(2)
+          .trigger("mouseover")
+          .within(() => {
+            cy.findByLabelText("toolbar-menu-toggle")
+              .should("be.visible")
+              .click();
+            cy.findByText("Edit").click();
+          });
+
+        cy.wait(100);
+        cy.get("@consoleLog").should(
+          "have.been.calledWith",
+          "Tech Articles-Async Patterns in JS was edited"
         );
       });
     });
