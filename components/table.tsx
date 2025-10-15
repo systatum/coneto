@@ -1040,46 +1040,83 @@ function TableRow({
 
       {isOver && dropPosition && <DragLine position={dropPosition} />}
 
-      {isHovered === rowId && actions && (
-        <Toolbar
-          style={css`
-            width: fit-content;
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 8;
-            ${draggable
-              ? css`
-                  right: 2rem;
-                `
-              : css`
-                  right: 0.5rem;
+      {isHovered === rowId &&
+        actions &&
+        (() => {
+          const list = actions(`${rowId}`);
+          if (list.length === 1) {
+            return list.map((data, index) => {
+              const Icon = data.icon;
+              return (
+                <Button
+                  key={index}
+                  onClick={data.onClick}
+                  aria-label="row-action"
+                  containerStyle={css`
+                    width: fit-content;
+                    position: absolute;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    z-index: 8;
+                    ${draggable
+                      ? css`
+                          right: 2rem;
+                        `
+                      : css`
+                          right: 0.5rem;
+                        `}
+                  `}
+                  buttonStyle={css`
+                    padding: 8px;
+                  `}
+                >
+                  <Icon size={16} />
+                </Button>
+              );
+            });
+          }
+
+          return (
+            <Toolbar
+              style={css`
+                width: fit-content;
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                z-index: 8;
+                ${draggable
+                  ? css`
+                      right: 2rem;
+                    `
+                  : css`
+                      right: 0.5rem;
+                    `}
+              `}
+            >
+              <Toolbar.Menu
+                closedIcon={RiMoreFill}
+                openedIcon={RiMoreFill}
+                isOpen={isOpen}
+                setIsOpen={setIsOpen}
+                dropdownStyle={css`
+                  min-width: 235px;
+                  z-index: 50;
                 `}
-          `}
-        >
-          <Toolbar.Menu
-            closedIcon={RiMoreFill}
-            openedIcon={RiMoreFill}
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-            dropdownStyle={css`
-              min-width: 235px;
-              z-index: 50;
-            `}
-            triggerStyle={css`
-              color: black;
-              &:hover {
-                background-color: #d4d4d4;
-              }
-            `}
-            toggleActiveStyle={css`
-              background-color: #d4d4d4;
-            `}
-            variant="none"
-            subMenuList={actions(`${rowId}`)}
-          />
-        </Toolbar>
-      )}
+                triggerStyle={css`
+                  color: black;
+                  &:hover {
+                    background-color: #d4d4d4;
+                  }
+                `}
+                toggleActiveStyle={css`
+                  background-color: #d4d4d4;
+                `}
+                variant="none"
+                subMenuList={list}
+              />
+            </Toolbar>
+          );
+        })()}
 
       {draggable && (
         <DraggableRequest aria-label="draggable-request">
