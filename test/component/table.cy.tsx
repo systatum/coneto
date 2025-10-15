@@ -473,7 +473,10 @@ describe("Table", () => {
           .eq(2)
           .trigger("mouseover")
           .within(() => {
-            cy.findByLabelText("row-action").should("be.visible").click();
+            cy.findByLabelText("row-action")
+              .should("be.visible")
+              .and("have.attr", "title", "Delete")
+              .click();
           });
 
         cy.wait(100);
