@@ -88,6 +88,7 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
           <Box $error={showError} $focus={focus} $style={style}>
             <Currency>{currency}</Currency>
             <MoneyboxInput
+              aria-label="input-moneybox"
               autoComplete="off"
               ref={ref}
               name={name}

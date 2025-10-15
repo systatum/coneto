@@ -52,6 +52,7 @@ function Togglebox({
           aria-label="togglebox"
         >
           <StyledInput
+            aria-label="input-togglebox"
             id={props.id}
             name={name}
             type="checkbox"
@@ -175,7 +176,6 @@ const ErrorText = styled.span`
 `;
 
 const Label = styled.span<{ $labelStyle?: CSSProp }>`
-  font-weight: 500;
   ${({ $labelStyle }) => $labelStyle}
 `;
 

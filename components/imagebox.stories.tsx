@@ -19,7 +19,7 @@ export const ExtraSmall: Story = {
       setValue(e);
     };
 
-    return <Imagebox size="xs" onFilesSelected={onChangeValue} />;
+    return <Imagebox size="xs" onFileSelected={onChangeValue} />;
   },
 };
 
@@ -30,7 +30,7 @@ export const Small: Story = {
       setValue(e);
     };
 
-    return <Imagebox size="sm" onFilesSelected={onChangeValue} />;
+    return <Imagebox size="sm" onFileSelected={onChangeValue} />;
   },
 };
 
@@ -41,7 +41,7 @@ export const Medium: Story = {
       setValue(e);
     };
 
-    return <Imagebox size="md" onFilesSelected={onChangeValue} />;
+    return <Imagebox size="md" onFileSelected={onChangeValue} />;
   },
 };
 
@@ -52,6 +52,6 @@ export const Large: Story = {
       setValue(e);
     };
 
-    return <Imagebox size="lg" onFilesSelected={onChangeValue} />;
+    return <Imagebox size="lg" onFileSelected={onChangeValue} />;
   },
 };

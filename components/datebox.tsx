@@ -5,7 +5,7 @@ import {
   BaseCalendarProps,
   SelectabilityModeState,
 } from "./calendar";
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
 import { ReactNode } from "react";
 
 export type DateboxProps = BaseCalendarProps & {
@@ -36,7 +36,13 @@ function Datebox(props: DateboxProps) {
       <InputContent>
         <Selectbox
           {...props}
-          selectboxStyle={props.selectboxStyle}
+          selectboxStyle={css`
+            ${props.selectboxStyle}
+            ${props.showError &&
+            css`
+              border-color: #f87171;
+            `}
+          `}
           placeholder="mm/dd/yyyy"
           iconClosed={RiCalendar2Line}
           iconOpened={RiCalendar2Line}

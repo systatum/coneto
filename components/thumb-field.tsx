@@ -69,6 +69,7 @@ function ThumbField({
   const inputElement: ReactElement = (
     <InputGroup $style={style}>
       <input
+        aria-label="input-thumbfield"
         ref={thumbInputRef}
         name={name}
         type="hidden"

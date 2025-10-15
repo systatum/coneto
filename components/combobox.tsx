@@ -9,7 +9,7 @@ import {
 
 import { DrawerProps, OptionsProps, Selectbox } from "./selectbox";
 import { RemixiconComponentType } from "@remixicon/react";
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
 
 export type ComboboxProps = Partial<BaseComboboxProps> & {
   label?: string;
@@ -81,7 +81,13 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
           ref={ref}
           highlightOnMatch={highlightOnMatch}
           containerStyle={containerStyle}
-          selectboxStyle={selectboxStyle}
+          selectboxStyle={css`
+            ${selectboxStyle}
+            ${showError &&
+            css`
+              border-color: #f87171;
+            `}
+          `}
           options={options}
           inputValue={inputValue}
           setInputValue={setInputValue}

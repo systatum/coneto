@@ -97,7 +97,11 @@ function Colorbox({
 
   return (
     <InputWrapper $containerStyle={containerStyle} $disabled={props.disabled}>
-      {label && <Label $style={labelStyle}>{label}</Label>}
+      {label && (
+        <Label htmlFor={inputId} $style={labelStyle}>
+          {label}
+        </Label>
+      )}
       <InputContent>
         {inputElement}
         {showError && <ErrorText>{errorMessage}</ErrorText>}
@@ -121,7 +125,7 @@ const InputWrapper = styled.div<{
   ${({ $containerStyle }) => $containerStyle}
 `;
 
-const Label = styled.span<{ $highlight?: boolean; $style?: CSSProp }>`
+const Label = styled.label<{ $highlight?: boolean; $style?: CSSProp }>`
   ${({ $style }) => $style};
 `;
 
