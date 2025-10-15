@@ -6,7 +6,7 @@ export interface FileInputBoxProps {
   containerStyle?: CSSProp;
   placeholder?: string;
   accept?: string;
-  onFileSelected?: (files: File | undefined) => void;
+  onFileSelected?: (file: File | undefined) => void;
   label?: string;
   labelStyle?: CSSProp;
   showError?: boolean;

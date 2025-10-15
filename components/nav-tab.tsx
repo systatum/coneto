@@ -4,26 +4,33 @@ import { motion } from "framer-motion";
 
 export interface NavTabProps {
   tabs?: NavTabContentProps[];
-  activeTab?: number;
+  activeTab?: string;
   contentStyle?: CSSProp;
   containerStyle?: CSSProp;
+  containerBoxStyle?: CSSProp;
+  boxStyle?: CSSProp;
   activeColor?: string;
+  children?: ReactNode;
 }
 
 export interface NavTabContentProps {
-  id: number | string;
+  id: string;
   title: string;
-  content: ReactNode;
+  content?: ReactNode;
+  onClick?: () => void;
 }
 
 function NavTab({
-  activeTab = 1,
+  activeTab = "1",
   containerStyle,
   contentStyle,
+  boxStyle,
+  containerBoxStyle,
   tabs = [],
   activeColor = "rgb(59, 130, 246)",
+  children,
 }: NavTabProps) {
-  const [selected, setSelected] = useState<number | string>(activeTab);
+  const [selected, setSelected] = useState<string>(activeTab);
 
   const tabRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [tabSizes, setTabSizes] = useState<{ width: number; left: number }[]>(
@@ -95,16 +102,10 @@ function NavTab({
 
   return (
     <NavTabWrapper $containerStyle={containerStyle}>
-      <NavTabHeader ref={containerRef}>
-        <motion.div
-          style={{
-            position: "absolute",
-            bottom: "0px",
-            zIndex: 1,
-            height: "2px",
-            borderRadius: "1px",
-            backgroundColor: activeColor,
-          }}
+      <NavTabHeader $headerStyle={containerBoxStyle} ref={containerRef}>
+        <NavTabList
+          aria-label="nav-tab-list"
+          $activeColor={activeColor}
           initial={{
             left: 0,
             width: 0,
@@ -123,22 +124,32 @@ function NavTab({
           }}
         />
 
-        {tabs.map((data, index) => (
-          <NavTabHeaderContent
-            key={data.id}
-            ref={setTabRef(index)}
-            role="tab"
-            onClick={() => setSelected(data.id)}
-            $selected={selected === data.id}
-          >
-            {data.title}
-          </NavTabHeaderContent>
-        ))}
+        {tabs.map((data, index) => {
+          return (
+            <NavTabBox
+              aria-label="nav-tab-box"
+              key={data.id}
+              $boxStyle={boxStyle}
+              ref={setTabRef(index)}
+              role="tab"
+              onClick={() => {
+                setSelected(data.id);
+                if (data.onClick) {
+                  data.onClick();
+                }
+              }}
+              $selected={selected === data.id}
+            >
+              {data.title}
+            </NavTabBox>
+          );
+        })}
       </NavTabHeader>
       <NavContent $contentStyle={contentStyle}>
         {activeContent.map((data, index) => (
           <Fragment key={index}>{data.content}</Fragment>
         ))}
+        {children}
       </NavContent>
     </NavTabWrapper>
   );
@@ -150,9 +161,10 @@ const NavTabWrapper = styled.div<{
   width: 100%;
   height: 100%;
   display: flex;
-  position: sticky;
+  position: fixed;
   flex-direction: column;
   font-size: 14px;
+  top: 0;
 
   ${({ $containerStyle }) => $containerStyle}
 `;
@@ -172,8 +184,20 @@ const NavTabHeader = styled.div<{
   ${({ $headerStyle }) => $headerStyle}
 `;
 
-const NavTabHeaderContent = styled.div<{
+const NavTabList = styled(motion.div)<{
+  $activeColor?: string;
+}>`
+  position: absolute;
+  bottom: 0;
+  z-index: 1;
+  height: 2px;
+  border-radius: 1px;
+  background-color: ${({ $activeColor }) => $activeColor};
+`;
+
+const NavTabBox = styled.div<{
   $selected?: boolean;
+  $boxStyle?: CSSProp;
 }>`
   padding: 12px 16px;
   cursor: pointer;
@@ -198,6 +222,7 @@ const NavTabHeaderContent = styled.div<{
       inset 0 0.5px 4px rgb(243 244 246 / 100%),
       inset 0 -0.5px 0.5px rgb(243 244 246 / 80%);
   }
+  ${({ $boxStyle }) => $boxStyle};
 `;
 
 const NavContent = styled.div<{ $contentStyle?: CSSProp }>`
