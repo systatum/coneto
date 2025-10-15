@@ -1051,6 +1051,7 @@ function TableRow({
                 <Button
                   key={index}
                   onClick={data.onClick}
+                  title={data.caption}
                   aria-label="row-action"
                   containerStyle={css`
                     width: fit-content;
