@@ -59,6 +59,7 @@ interface StatefulFormProps<Z extends ZodTypeAny> {
   fieldSize?: string;
   onChange?: (args: { currentState: TypeOf<Z> }) => void;
   containerStyle?: CSSProp;
+  rowStyle?: CSSProp;
 }
 
 export type FormFieldGroup = FormFieldProps | FormFieldProps[];
@@ -99,6 +100,7 @@ function StatefulForm<Z extends ZodTypeAny>({
   labelSize,
   onChange,
   containerStyle,
+  rowStyle,
 }: StatefulFormProps<Z>) {
   const handleFieldChange = (name: keyof TypeOf<Z>, value: FormValueType) => {
     onChange?.({ currentState: { [name]: value } });
@@ -194,6 +196,7 @@ interface FormFieldsProps<T extends FieldValues> {
   setValue?: UseFormSetValue<T>;
   onChange?: (name: keyof T, value: FormValueType) => void;
   containerStyle?: CSSProp;
+  rowStyle?: CSSProp;
 }
 
 function FormFields<T extends FieldValues>({
@@ -208,12 +211,17 @@ function FormFields<T extends FieldValues>({
   setValue,
   onChange,
   containerStyle,
+  rowStyle,
 }: FormFieldsProps<T>) {
   return (
-    <>
+    <ContainerFormField $style={containerStyle}>
       {fields.map((group: FormFieldGroup, indexGroup: number) => {
         return (
-          <ContainerFormField $style={containerStyle} key={indexGroup}>
+          <RowFormField
+            aria-label="stateful-form-row"
+            $style={rowStyle}
+            key={indexGroup}
+          >
             {(Array.isArray(group) ? group : [group]).map(
               (field: FormFieldProps, index: number) => {
                 return field.type === "text" ||
@@ -864,14 +872,22 @@ function FormFields<T extends FieldValues>({
                 ) : null;
               }
             )}
-          </ContainerFormField>
+          </RowFormField>
         );
       })}
-    </>
+    </ContainerFormField>
   );
 }
 
 const ContainerFormField = styled.div<{ $style: CSSProp }>`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  ${({ $style }) => $style}
+`;
+
+const RowFormField = styled.div<{ $style: CSSProp }>`
   display: flex;
   flex-direction: row;
   gap: 6px;
