@@ -355,6 +355,7 @@ function FormFields<T extends FieldValues>({
                   } else if (e.target.name === "country_code") {
                     onChange?.("country_code", e.target.value);
                   }
+                  field.onChange?.(e);
                 }}
                 labelStyle={
                   labelSize &&
