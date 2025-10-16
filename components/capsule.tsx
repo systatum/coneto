@@ -141,6 +141,7 @@ function Capsule({
 
   const inputElement: ReactElement = (
     <CapsuleWrapper
+      aria-label="capsule"
       $containerStyle={containerStyle}
       $full={full}
       ref={containerRef}
@@ -148,6 +149,7 @@ function Capsule({
     >
       <ActiveBackground
         layout
+        aria-label="active-capsule-box"
         $style={tabStyle}
         $activeBackgroundColor={activeBackgroundColor}
         initial={{
@@ -167,6 +169,7 @@ function Capsule({
 
       <HoverBorder
         layout
+        aria-label="hover-capsule-box"
         $style={tabStyle}
         $activeBackgroundColor={activeBackgroundColor}
         initial={{
