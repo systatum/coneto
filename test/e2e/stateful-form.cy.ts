@@ -169,6 +169,11 @@ describe("StatefulForm", () => {
         .click({ force: true })
         .should("be.checked");
 
+      cy.findByText("Unpaid").click();
+      cy.findAllByLabelText("active-capsule-box")
+        .eq(0)
+        .should("have.css", "background-color", "oklch(0.546 0.245 262.881)");
+
       cy.findAllByRole("button").eq(2).click();
 
       cy.findByLabelText("chip-input-box").type("Anime{enter}");
