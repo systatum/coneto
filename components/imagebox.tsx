@@ -6,7 +6,7 @@ export interface ImageboxProps {
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
   style?: CSSProp;
-  onFileSelected?: (file: File) => void;
+  onFileSelected?: (file: File | undefined) => void;
   size?: "xs" | "sm" | "md" | "lg";
   label?: string;
   showError?: boolean;

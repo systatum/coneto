@@ -1,7 +1,7 @@
 import { useForm, UseFormSetValue } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ZodTypeAny, TypeOf } from "zod";
-import { ChangeEvent, useEffect } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import {
   Control,
   Controller,
@@ -24,7 +24,7 @@ import { Combobox, ComboboxProps } from "./combobox";
 import { Chips, ChipsProps } from "./chips";
 import { Signbox, SignboxProps } from "./signbox";
 import { Textarea, TextareaProps } from "./textarea";
-import { css } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
 import { Rating, RatingProps } from "./rating";
 import { ThumbField, ThumbFieldProps } from "./thumb-field";
 import { Togglebox, ToggleboxProps } from "./togglebox";
@@ -34,19 +34,35 @@ export type StatefulOnChangeType =
   | {
       target: {
         name: string;
-        value: CountryCodeProps | FileList | File | null | OptionsProps;
+        value: FormValueType;
       };
     };
 
+export type FormValueType =
+  | string
+  | number
+  | boolean
+  | File
+  | FileList
+  | OptionsProps
+  | null
+  | undefined
+  | CountryCodeProps;
+
 interface StatefulFormProps<Z extends ZodTypeAny> {
-  fields: FormFieldProps[];
+  fields: FormFieldGroup[];
   formValues: TypeOf<Z>;
   validationSchema: Z;
   mode?: "onChange" | "onBlur" | "onSubmit";
   onValidityChange?: (e: boolean) => void;
   labelSize?: string;
   fieldSize?: string;
+  onChange?: (args: { currentState: TypeOf<Z> }) => void;
+  containerStyle?: CSSProp;
+  rowStyle?: CSSProp;
 }
+
+export type FormFieldGroup = FormFieldProps | FormFieldProps[];
 
 export interface FormFieldProps {
   name: string;
@@ -82,7 +98,14 @@ function StatefulForm<Z extends ZodTypeAny>({
   onValidityChange,
   fieldSize,
   labelSize,
+  onChange,
+  containerStyle,
+  rowStyle,
 }: StatefulFormProps<Z>) {
+  const handleFieldChange = (name: keyof TypeOf<Z>, value: FormValueType) => {
+    onChange?.({ currentState: { [name]: value } });
+  };
+
   const {
     register,
     control,
@@ -104,8 +127,6 @@ function StatefulForm<Z extends ZodTypeAny>({
     const value = formValues[field];
     const touched = touchedFields[field];
     const error = errors[field];
-
-    console.log(field, touched, error);
 
     const isFile = (val: unknown): val is File => val instanceof File;
     const isFileList = (val: unknown): val is FileList =>
@@ -155,6 +176,8 @@ function StatefulForm<Z extends ZodTypeAny>({
         register={register}
         errors={errors}
         setValue={setValue}
+        onChange={handleFieldChange}
+        containerStyle={containerStyle}
         shouldShowError={(name) => shouldShowError(name as keyof TypeOf<Z>)}
       />
     </>
@@ -162,7 +185,7 @@ function StatefulForm<Z extends ZodTypeAny>({
 }
 
 interface FormFieldsProps<T extends FieldValues> {
-  fields: FormFieldProps[];
+  fields: FormFieldGroup[];
   formValues: T;
   register: UseFormRegister<T>;
   errors: FieldErrors<T>;
@@ -171,6 +194,9 @@ interface FormFieldsProps<T extends FieldValues> {
   labelSize?: string;
   fieldSize?: string;
   setValue?: UseFormSetValue<T>;
+  onChange?: (name: keyof T, value: FormValueType) => void;
+  containerStyle?: CSSProp;
+  rowStyle?: CSSProp;
 }
 
 function FormFields<T extends FieldValues>({
@@ -183,552 +209,691 @@ function FormFields<T extends FieldValues>({
   fieldSize,
   labelSize,
   setValue,
+  onChange,
+  containerStyle,
+  rowStyle,
 }: FormFieldsProps<T>) {
   return (
-    <>
-      {fields.map((field: FormFieldProps, index: number) => {
-        return field.type === "text" ||
-          field.type === "message" ||
-          field.type === "number" ||
-          field.type === "email" ||
-          field.type === "password" ? (
-          <Textbox
-            key={index}
-            label={field.title}
-            type={field.type}
-            placeholder={field.placeholder}
-            value={formValues[field.name as keyof T] ?? ""}
-            required={field.required}
-            {...register(field.name as Path<T>, { onChange: field.onChange })}
-            showError={shouldShowError(field.name)}
-            labelStyle={
-              labelSize &&
-              css`
-                font-size: ${labelSize};
-              `
-            }
-            style={
-              fieldSize &&
-              css`
-                font-size: ${fieldSize};
-              `
-            }
-            errorMessage={
-              errors[field.name as keyof T]?.message as string | undefined
-            }
-            {...field.textboxProps}
-          />
-        ) : field.type === "textarea" ? (
-          <Textarea
-            key={index}
-            label={field.title}
-            rows={field.rows}
-            placeholder={field.placeholder}
-            value={formValues[field.name as keyof T] ?? ""}
-            required={field.required}
-            {...register(field.name as Path<T>, { onChange: field.onChange })}
-            showError={shouldShowError(field.name)}
-            labelStyle={
-              labelSize &&
-              css`
-                font-size: ${labelSize};
-              `
-            }
-            style={
-              fieldSize &&
-              css`
-                font-size: ${fieldSize};
-              `
-            }
-            errorMessage={
-              errors[field.name as keyof T]?.message as string | undefined
-            }
-            {...field.textareaProps}
-          />
-        ) : field.type === "checkbox" ? (
-          <Controller
-            key={index}
-            control={control}
-            name={field.name as Path<T>}
-            render={({ field: controllerField }) => (
-              <Checkbox
-                label={field.title}
-                name={field.name}
-                placeholder={field.placeholder}
-                checked={controllerField.value ?? false}
-                labelStyle={
-                  labelSize &&
-                  css`
-                    font-size: ${labelSize};
-                  `
-                }
-                inputStyle={
-                  fieldSize &&
-                  css`
-                    width: ${fieldSize};
-                    height: ${fieldSize};
-                  `
-                }
-                iconStyle={
-                  fieldSize &&
-                  css`
-                    width: ${fieldSize}-2;
-                    height: ${fieldSize}-2;
-                  `
-                }
-                wrapperStyle={
-                  fieldSize &&
-                  css`
-                    width: ${fieldSize};
-                    height: ${fieldSize};
-                  `
-                }
-                {...register(field.name as Path<T>, {
-                  onChange: field.onChange,
-                })}
-                required={field.required}
-                showError={shouldShowError(field.name)}
-                {...field.checkboxProps}
-              />
-            )}
-          />
-        ) : field.type === "phone" ? (
-          <Controller
-            key={index}
-            control={control}
-            name={"phone" as Path<T>}
-            render={({ field: controllerField }) => (
-              <>
-                <Phonebox
-                  label={field.title}
-                  value={controllerField.value}
-                  placeholder={field.placeholder}
-                  onChange={(e) => {
-                    if (e.target.name === "phone") {
-                      controllerField.onChange(e);
+    <ContainerFormField $style={containerStyle}>
+      {fields.map((group: FormFieldGroup, indexGroup: number) => {
+        return (
+          <RowFormField
+            aria-label="stateful-form-row"
+            $style={rowStyle}
+            key={indexGroup}
+          >
+            {(Array.isArray(group) ? group : [group]).map(
+              (field: FormFieldProps, index: number) => {
+                return field.type === "text" ||
+                  field.type === "message" ||
+                  field.type === "number" ||
+                  field.type === "email" ||
+                  field.type === "password" ? (
+                  <Textbox
+                    key={index}
+                    label={field.title}
+                    type={field.type}
+                    placeholder={field.placeholder}
+                    value={formValues[field.name as keyof T] ?? ""}
+                    required={field.required}
+                    {...register(field.name as Path<T>, {
+                      onChange: (e) => {
+                        if (field.onChange) {
+                          field.onChange(e);
+                        }
+                        if (onChange) {
+                          onChange(field.name as keyof T, e.target.value);
+                        }
+                      },
+                    })}
+                    showError={shouldShowError(field.name)}
+                    labelStyle={
+                      labelSize &&
+                      css`
+                        font-size: ${labelSize};
+                      `
                     }
-                    field.onChange?.(e);
-                  }}
-                  labelStyle={
-                    labelSize &&
-                    css`
-                      font-size: ${labelSize};
-                    `
-                  }
-                  style={
-                    fieldSize &&
-                    css`
-                      font-size: ${fieldSize};
-                    `
-                  }
-                  showError={!!errors["phone"]}
-                  errorMessage={errors["phone"]?.message as string}
-                  {...field.phoneboxProps}
-                />
-              </>
-            )}
-          />
-        ) : field.type === "color" ? (
-          <Controller
-            key={index}
-            name={field.name as Path<T>}
-            control={control}
-            render={({ field: controllerField, fieldState }) => (
-              <Colorbox
-                label={field.title}
-                required={field.required}
-                placeholder={field.placeholder}
-                labelStyle={
-                  labelSize &&
-                  css`
-                    font-size: ${labelSize};
-                  `
-                }
-                style={
-                  fieldSize &&
-                  css`
-                    font-size: ${fieldSize};
-                  `
-                }
-                value={controllerField.value}
-                onChange={(e) => {
-                  field.onChange?.(e);
-                  controllerField.onChange(e);
-                }}
-                showError={shouldShowError(field.name)}
-                errorMessage={fieldState.error?.message}
-                {...field.colorboxProps}
-              />
-            )}
-          />
-        ) : field.type === "file_drop_box" ? (
-          <FileDropBox
-            key={index}
-            label={field.title}
-            placeholder={field.placeholder}
-            labelStyle={
-              labelSize &&
-              css`
-                font-size: ${labelSize};
-              `
-            }
-            {...register(field.name as Path<T>, { onChange: field.onChange })}
-            {...field.fileDropBoxProps}
-          />
-        ) : field.type === "file" ? (
-          <FileInputBox
-            key={index}
-            label={field.title}
-            placeholder={field.placeholder}
-            labelStyle={
-              labelSize &&
-              css`
-                font-size: ${labelSize};
-              `
-            }
-            showError={shouldShowError(field.name)}
-            errorMessage={
-              errors[field.name as keyof T]?.message as string | undefined
-            }
-            {...field.fileInputBoxProps}
-            onFilesSelected={(files: FileList | undefined) => {
-              const file = files?.[0];
+                    style={
+                      fieldSize &&
+                      css`
+                        font-size: ${fieldSize};
+                      `
+                    }
+                    errorMessage={
+                      errors[field.name as keyof T]?.message as
+                        | string
+                        | undefined
+                    }
+                    {...field.textboxProps}
+                  />
+                ) : field.type === "textarea" ? (
+                  <Textarea
+                    key={index}
+                    label={field.title}
+                    rows={field.rows}
+                    placeholder={field.placeholder}
+                    value={formValues[field.name as keyof T] ?? ""}
+                    required={field.required}
+                    {...register(field.name as Path<T>, {
+                      onChange: (e) => {
+                        if (field.onChange) {
+                          field.onChange(e);
+                        }
+                        if (onChange) {
+                          onChange(field.name as keyof T, e.target.value);
+                        }
+                      },
+                    })}
+                    showError={shouldShowError(field.name)}
+                    labelStyle={
+                      labelSize &&
+                      css`
+                        font-size: ${labelSize};
+                      `
+                    }
+                    style={
+                      fieldSize &&
+                      css`
+                        font-size: ${fieldSize};
+                      `
+                    }
+                    errorMessage={
+                      errors[field.name as keyof T]?.message as
+                        | string
+                        | undefined
+                    }
+                    {...field.textareaProps}
+                  />
+                ) : field.type === "checkbox" ? (
+                  <Controller
+                    key={index}
+                    control={control}
+                    name={field.name as Path<T>}
+                    render={({ field: controllerField }) => (
+                      <Checkbox
+                        label={field.title}
+                        name={field.name}
+                        placeholder={field.placeholder}
+                        checked={controllerField.value ?? false}
+                        labelStyle={
+                          labelSize &&
+                          css`
+                            font-size: ${labelSize};
+                          `
+                        }
+                        inputStyle={
+                          fieldSize &&
+                          css`
+                            width: ${fieldSize};
+                            height: ${fieldSize};
+                          `
+                        }
+                        iconStyle={
+                          fieldSize &&
+                          css`
+                            width: ${fieldSize}-2;
+                            height: ${fieldSize}-2;
+                          `
+                        }
+                        wrapperStyle={
+                          fieldSize &&
+                          css`
+                            width: ${fieldSize};
+                            height: ${fieldSize};
+                          `
+                        }
+                        required={field.required}
+                        showError={shouldShowError(field.name)}
+                        onChange={(e) => {
+                          controllerField?.onChange(e);
+                          controllerField?.onBlur();
+                          if (onChange) {
+                            onChange(field.name as keyof T, e.target.checked);
+                          }
+                          field.onChange?.(e);
+                        }}
+                        {...field.checkboxProps}
+                      />
+                    )}
+                  />
+                ) : field.type === "phone" ? (
+                  <Controller
+                    key={index}
+                    control={control}
+                    name={"phone" as Path<T>}
+                    render={({ field: controllerField }) => (
+                      <Phonebox
+                        label={field.title}
+                        value={controllerField.value}
+                        placeholder={field.placeholder}
+                        onChange={(
+                          e:
+                            | {
+                                target: {
+                                  name: string;
+                                  value: CountryCodeProps;
+                                };
+                              }
+                            | ChangeEvent<HTMLInputElement>
+                        ) => {
+                          if (e.target.name === "phone") {
+                            controllerField.onChange(e);
+                            controllerField.onBlur();
+                            onChange?.("phone", e.target.value);
+                          } else if (e.target.name === "country_code") {
+                            onChange?.("country_code", e.target.value);
+                          }
+                          field.onChange?.(e);
+                        }}
+                        labelStyle={
+                          labelSize &&
+                          css`
+                            font-size: ${labelSize};
+                          `
+                        }
+                        style={
+                          fieldSize &&
+                          css`
+                            font-size: ${fieldSize};
+                          `
+                        }
+                        showError={!!errors["phone"]}
+                        errorMessage={errors["phone"]?.message as string}
+                        {...field.phoneboxProps}
+                      />
+                    )}
+                  />
+                ) : field.type === "color" ? (
+                  <Controller
+                    key={index}
+                    name={field.name as Path<T>}
+                    control={control}
+                    render={({ field: controllerField, fieldState }) => (
+                      <Colorbox
+                        label={field.title}
+                        required={field.required}
+                        placeholder={field.placeholder}
+                        labelStyle={
+                          labelSize &&
+                          css`
+                            font-size: ${labelSize};
+                          `
+                        }
+                        style={
+                          fieldSize &&
+                          css`
+                            font-size: ${fieldSize};
+                          `
+                        }
+                        value={controllerField.value}
+                        onChange={(e) => {
+                          controllerField?.onChange(e);
+                          controllerField?.onBlur();
+                          field.onChange?.(e);
+                          if (onChange) {
+                            onChange(field.name as keyof T, e.target.value);
+                          }
+                        }}
+                        showError={shouldShowError(field.name)}
+                        errorMessage={fieldState.error?.message}
+                        {...field.colorboxProps}
+                      />
+                    )}
+                  />
+                ) : field.type === "file_drop_box" ? (
+                  <FileDropBox
+                    key={index}
+                    label={field.title}
+                    placeholder={field.placeholder}
+                    labelStyle={
+                      labelSize &&
+                      css`
+                        font-size: ${labelSize};
+                      `
+                    }
+                    {...register(field.name as Path<T>, {
+                      onChange: (e) => {
+                        if (field.onChange) {
+                          field.onChange(e);
+                        }
+                        if (onChange) {
+                          onChange(field.name as keyof T, e.target.value);
+                        }
+                      },
+                    })}
+                    {...field.fileDropBoxProps}
+                  />
+                ) : field.type === "file" ? (
+                  <FileInputBox
+                    key={index}
+                    label={field.title}
+                    placeholder={field.placeholder}
+                    labelStyle={
+                      labelSize &&
+                      css`
+                        font-size: ${labelSize};
+                      `
+                    }
+                    showError={shouldShowError(field.name)}
+                    errorMessage={
+                      errors[field.name as keyof T]?.message as
+                        | string
+                        | undefined
+                    }
+                    {...field.fileInputBoxProps}
+                    onFileSelected={(e: File | undefined) => {
+                      const file = e;
+                      if (file instanceof File) {
+                        setValue(field.name as Path<T>, file as any, {
+                          shouldValidate: true,
+                          shouldTouch: true,
+                        });
+                      } else {
+                        setValue(field.name as Path<T>, undefined, {
+                          shouldValidate: true,
+                          shouldTouch: true,
+                        });
+                      }
+                      if (onChange) {
+                        if (file) {
+                          onChange(field.name, file);
+                        } else {
+                          onChange(field.name, undefined);
+                        }
+                      }
 
-              const isFile = file instanceof File;
-              if (isFile) {
-                setValue(field.name as Path<T>, file as any, {
-                  shouldValidate: true,
-                  shouldTouch: true,
-                });
-              } else {
-                setValue(field.name as Path<T>, undefined, {
-                  shouldValidate: true,
-                  shouldTouch: true,
-                });
+                      field.onChange?.({
+                        target: { name: field.name, value: file ?? undefined },
+                      });
+                    }}
+                  />
+                ) : field.type === "image" ? (
+                  <Imagebox
+                    key={index}
+                    name={field.name}
+                    onFileSelected={(e: File | undefined) => {
+                      const file = e;
+                      if (file instanceof File) {
+                        setValue(field.name as Path<T>, file as any, {
+                          shouldValidate: true,
+                          shouldTouch: true,
+                        });
+                      } else {
+                        setValue(field.name as Path<T>, undefined, {
+                          shouldValidate: true,
+                          shouldTouch: true,
+                        });
+                      }
+                      field.onChange?.({
+                        target: { name: field.name, value: file ?? undefined },
+                      });
+                      if (onChange) {
+                        onChange(field.name as keyof T, file ?? undefined);
+                      }
+                    }}
+                    label={field.title}
+                    labelStyle={
+                      labelSize &&
+                      css`
+                        font-size: ${labelSize};
+                      `
+                    }
+                    required={field.required}
+                    {...register(field.name as Path<T>, {
+                      onChange: (e) => {
+                        if (field.onChange) {
+                          field.onChange(e);
+                        }
+                        if (onChange) {
+                          onChange(field.name as keyof T, e.target.value);
+                        }
+                      },
+                    })}
+                    showError={shouldShowError(field.name)}
+                    errorMessage={
+                      errors[field.name as keyof T]?.message as
+                        | string
+                        | undefined
+                    }
+                    {...field.imageboxProps}
+                  />
+                ) : field.type === "signbox" ? (
+                  <Signbox
+                    key={index}
+                    clearable
+                    name={field.name}
+                    label={field.title}
+                    labelStyle={
+                      labelSize &&
+                      css`
+                        font-size: ${labelSize};
+                      `
+                    }
+                    required={field.required}
+                    value={formValues[field.name as keyof T] ?? ""}
+                    {...register(field.name as Path<T>, {
+                      onChange: (e) => {
+                        if (field.onChange) {
+                          field.onChange(e);
+                        }
+                        if (onChange) {
+                          onChange(field.name as keyof T, e.target.value);
+                        }
+                      },
+                    })}
+                    showError={shouldShowError(field.name)}
+                    errorMessage={
+                      errors[field.name as keyof T]?.message as
+                        | string
+                        | undefined
+                    }
+                    {...field.signboxProps}
+                  />
+                ) : field.type === "money" ? (
+                  <Moneybox
+                    key={index}
+                    label={field.title}
+                    placeholder={field.placeholder}
+                    labelStyle={
+                      labelSize &&
+                      css`
+                        font-size: ${labelSize};
+                      `
+                    }
+                    style={
+                      fieldSize &&
+                      css`
+                        font-size: ${fieldSize};
+                      `
+                    }
+                    value={formValues[field.name as keyof T] ?? ""}
+                    required={field.required}
+                    {...register(field.name as Path<T>, {
+                      onChange: (e) => {
+                        if (field.onChange) {
+                          field.onChange(e);
+                        }
+                        if (onChange) {
+                          onChange(field.name as keyof T, e.target.value);
+                        }
+                      },
+                    })}
+                    showError={shouldShowError(field.name)}
+                    errorMessage={
+                      errors[field.name as keyof T]?.message as
+                        | string
+                        | undefined
+                    }
+                    {...field.moneyProps}
+                  />
+                ) : field.type === "date" ? (
+                  <Controller
+                    key={index}
+                    name={field.name as Path<T>}
+                    control={control}
+                    render={({ field: controllerField }) => (
+                      <Datebox
+                        key={index}
+                        label={field.title}
+                        showError={shouldShowError(field.name)}
+                        labelStyle={
+                          labelSize &&
+                          css`
+                            font-size: ${labelSize};
+                          `
+                        }
+                        selectboxStyle={
+                          fieldSize &&
+                          css`
+                            font-size: ${fieldSize};
+                          `
+                        }
+                        errorMessage={
+                          (
+                            errors[field.name as keyof T] as {
+                              text?: { message?: string };
+                            }
+                          )?.text?.message
+                        }
+                        setInputValue={(e) => {
+                          const inputValueEvent = {
+                            target: { name: field.name, value: e },
+                          };
+                          controllerField.onChange(inputValueEvent);
+                          controllerField?.onBlur();
+                          field.onChange?.(inputValueEvent);
+                          if (onChange) {
+                            onChange(field.name as keyof T, e);
+                          }
+                        }}
+                        inputValue={controllerField.value}
+                        {...field.dateProps}
+                      />
+                    )}
+                  />
+                ) : field.type === "combo" ? (
+                  <Controller
+                    key={index}
+                    name={field.name as Path<T>}
+                    control={control}
+                    render={({ field: controllerField }) => (
+                      <Combobox
+                        placeholder={field.placeholder}
+                        label={field.title}
+                        showError={shouldShowError(field.name)}
+                        labelStyle={
+                          labelSize &&
+                          css`
+                            font-size: ${labelSize};
+                          `
+                        }
+                        selectboxStyle={
+                          fieldSize &&
+                          css`
+                            font-size: ${fieldSize};
+                          `
+                        }
+                        errorMessage={
+                          (
+                            errors[field.name as keyof T] as {
+                              text?: { message?: string };
+                            }
+                          )?.text?.message
+                        }
+                        setInputValue={(e) => {
+                          const inputValueEvent = {
+                            target: { name: field.name, value: e },
+                          };
+                          controllerField.onChange(inputValueEvent);
+                          controllerField?.onBlur();
+                          field.onChange?.(inputValueEvent);
+                          if (onChange) {
+                            onChange(field.name as keyof T, e);
+                          }
+                        }}
+                        inputValue={controllerField.value}
+                        {...field.comboboxProps}
+                      />
+                    )}
+                  />
+                ) : field.type === "chips" ? (
+                  <Controller
+                    key={index}
+                    name={field.name as Path<T>}
+                    control={control}
+                    render={({ field: controllerField }) => (
+                      <Chips
+                        label={field.title}
+                        filterPlaceholder={field.placeholder}
+                        labelStyle={
+                          labelSize &&
+                          css`
+                            font-size: ${labelSize};
+                          `
+                        }
+                        chipSelectedStyle={
+                          fieldSize &&
+                          css`
+                            font-size: ${fieldSize};
+                          `
+                        }
+                        inputValue={controllerField.value}
+                        setInputValue={(e) => {
+                          controllerField?.onChange(e);
+                          controllerField?.onBlur();
+                          field.onChange?.(e);
+                        }}
+                        {...field.chipsProps}
+                      />
+                    )}
+                  />
+                ) : field.type === "rating" ? (
+                  <Controller
+                    key={index}
+                    name={field.name as Path<T>}
+                    control={control}
+                    render={({ field: controllerField, fieldState }) => (
+                      <Rating
+                        editable
+                        label={field.title}
+                        rating={controllerField.value}
+                        onChange={(e) => {
+                          controllerField.onChange(e.target.value);
+                          controllerField?.onBlur();
+                          field.onChange?.(e);
+                          if (onChange) {
+                            onChange(field.name as keyof T, e.target.value);
+                          }
+                        }}
+                        labelStyle={
+                          labelSize &&
+                          css`
+                            font-size: ${labelSize};
+                          `
+                        }
+                        containerStyle={
+                          fieldSize &&
+                          css`
+                            font-size: ${fieldSize};
+                          `
+                        }
+                        showError={!!fieldState.error}
+                        errorMessage={fieldState.error?.message}
+                        {...field.ratingProps}
+                      />
+                    )}
+                  />
+                ) : field.type === "thumbfield" ? (
+                  <Controller
+                    key={index}
+                    control={control}
+                    name={field.name as Path<T>}
+                    render={({ field: controllerField }) => (
+                      <ThumbField
+                        label={field.title}
+                        labelStyle={
+                          labelSize &&
+                          css`
+                            font-size: ${labelSize};
+                          `
+                        }
+                        style={
+                          fieldSize &&
+                          css`
+                            font-size: ${fieldSize};
+                          `
+                        }
+                        value={controllerField.value ?? false}
+                        required={field.required}
+                        {...register(field.name as Path<T>, {
+                          onChange: (e) => {
+                            if (field.onChange) {
+                              field.onChange(e);
+                            }
+                            if (onChange) {
+                              onChange(field.name as keyof T, e.target.checked);
+                            }
+                          },
+                        })}
+                        onChange={(e) => {
+                          controllerField?.onChange(e);
+                          controllerField?.onBlur();
+                          field.onChange?.(e);
+                          if (onChange) {
+                            onChange(field.name as keyof T, e.target.value);
+                          }
+                        }}
+                        showError={shouldShowError(field.name)}
+                        errorMessage={
+                          errors[field.name as keyof T]?.message as
+                            | string
+                            | undefined
+                        }
+                        {...field.thumbFieldProps}
+                      />
+                    )}
+                  />
+                ) : field.type === "toggle" ? (
+                  <Controller
+                    key={index}
+                    control={control}
+                    name={field.name as Path<T>}
+                    render={({ field: controllerField }) => (
+                      <Togglebox
+                        name={controllerField.name}
+                        label={field.title}
+                        labelStyle={
+                          labelSize &&
+                          css`
+                            font-size: ${labelSize};
+                          `
+                        }
+                        checked={controllerField.value ?? false}
+                        required={field.required}
+                        onChange={(e) => {
+                          controllerField?.onChange(e);
+                          controllerField?.onBlur();
+                          field.onChange?.(e);
+                          if (onChange) {
+                            onChange(field.name as keyof T, e.target.checked);
+                          }
+                        }}
+                        onBlur={controllerField.onBlur}
+                        showError={shouldShowError(field.name)}
+                        errorMessage={
+                          errors[field.name as keyof T]?.message as
+                            | string
+                            | undefined
+                        }
+                        {...field.toggleboxProps}
+                      />
+                    )}
+                  />
+                ) : null;
               }
-
-              field.onChange({
-                target: { name: field.name, value: file ?? undefined },
-              });
-            }}
-          />
-        ) : field.type === "image" ? (
-          <Imagebox
-            key={index}
-            name={field.name}
-            onFileSelected={(e) => {
-              const file = e;
-              const isFile = file instanceof File;
-              if (isFile) {
-                setValue(field.name as Path<T>, file as any, {
-                  shouldValidate: true,
-                  shouldTouch: true,
-                });
-              } else {
-                setValue(field.name as Path<T>, undefined, {
-                  shouldValidate: true,
-                  shouldTouch: true,
-                });
-              }
-
-              field.onChange({
-                target: { name: field.name, value: file ?? undefined },
-              });
-            }}
-            label={field.title}
-            labelStyle={
-              labelSize &&
-              css`
-                font-size: ${labelSize};
-              `
-            }
-            required={field.required}
-            {...register(field.name as Path<T>, { onChange: field.onChange })}
-            showError={shouldShowError(field.name)}
-            errorMessage={
-              errors[field.name as keyof T]?.message as string | undefined
-            }
-            {...field.imageboxProps}
-          />
-        ) : field.type === "signbox" ? (
-          <Signbox
-            key={index}
-            clearable
-            name={field.name}
-            label={field.title}
-            labelStyle={
-              labelSize &&
-              css`
-                font-size: ${labelSize};
-              `
-            }
-            required={field.required}
-            value={formValues[field.name as keyof T] ?? ""}
-            {...register(field.name as Path<T>, { onChange: field.onChange })}
-            showError={shouldShowError(field.name)}
-            errorMessage={
-              errors[field.name as keyof T]?.message as string | undefined
-            }
-            {...field.signboxProps}
-          />
-        ) : field.type === "money" ? (
-          <Moneybox
-            key={index}
-            label={field.title}
-            placeholder={field.placeholder}
-            labelStyle={
-              labelSize &&
-              css`
-                font-size: ${labelSize};
-              `
-            }
-            style={
-              fieldSize &&
-              css`
-                font-size: ${fieldSize};
-              `
-            }
-            value={formValues[field.name as keyof T] ?? ""}
-            required={field.required}
-            {...register(field.name as Path<T>, { onChange: field.onChange })}
-            showError={shouldShowError(field.name)}
-            errorMessage={
-              errors[field.name as keyof T]?.message as string | undefined
-            }
-            {...field.moneyProps}
-          />
-        ) : field.type === "date" ? (
-          <Controller
-            key={index}
-            name={field.name as Path<T>}
-            control={control}
-            render={({ field: controllerField }) => (
-              <Datebox
-                key={index}
-                label={field.title}
-                showError={shouldShowError(field.name)}
-                labelStyle={
-                  labelSize &&
-                  css`
-                    font-size: ${labelSize};
-                  `
-                }
-                selectboxStyle={
-                  fieldSize &&
-                  css`
-                    font-size: ${fieldSize};
-                  `
-                }
-                errorMessage={
-                  (
-                    errors[field.name as keyof T] as {
-                      text?: {
-                        message?: string;
-                      };
-                    }
-                  )?.text?.message
-                }
-                setInputValue={(e) => {
-                  const inputValueEvent = {
-                    target: {
-                      name: field.name,
-                      value: e,
-                    },
-                  };
-                  controllerField.onChange(inputValueEvent);
-                  controllerField.onBlur();
-                  field.onChange(inputValueEvent);
-                }}
-                inputValue={controllerField.value}
-                {...field.dateProps}
-              />
             )}
-          />
-        ) : field.type === "combo" ? (
-          <Controller
-            key={index}
-            name={field.name as Path<T>}
-            control={control}
-            render={({ field: controllerField }) => (
-              <Combobox
-                placeholder={field.placeholder}
-                label={field.title}
-                showError={shouldShowError(field.name)}
-                labelStyle={
-                  labelSize &&
-                  css`
-                    font-size: ${labelSize};
-                  `
-                }
-                selectboxStyle={
-                  fieldSize &&
-                  css`
-                    font-size: ${fieldSize};
-                  `
-                }
-                errorMessage={
-                  (
-                    errors[field.name as keyof T] as {
-                      text?: {
-                        message?: string;
-                      };
-                    }
-                  )?.text?.message
-                }
-                setInputValue={(e) => {
-                  const inputValueEvent = {
-                    target: {
-                      name: field.name,
-                      value: e,
-                    },
-                  };
-                  controllerField.onChange(inputValueEvent);
-                  controllerField.onBlur();
-                  field.onChange(inputValueEvent);
-                }}
-                inputValue={controllerField.value}
-                {...field.comboboxProps}
-              />
-            )}
-          />
-        ) : field.type === "chips" ? (
-          <Controller
-            key={index}
-            name={field.name as Path<T>}
-            control={control}
-            render={({ field: controllerField }) => (
-              <Chips
-                label={field.title}
-                filterPlaceholder={field.placeholder}
-                labelStyle={
-                  labelSize &&
-                  css`
-                    font-size: ${labelSize};
-                  `
-                }
-                chipSelectedStyle={
-                  fieldSize &&
-                  css`
-                    font-size: ${fieldSize};
-                  `
-                }
-                inputValue={controllerField.value}
-                setInputValue={(e) => {
-                  controllerField.onChange(e);
-                  controllerField.onBlur();
-                  field.onChange(e);
-                }}
-                {...field.chipsProps}
-              />
-            )}
-          />
-        ) : field.type === "rating" ? (
-          <Controller
-            key={index}
-            name={field.name as Path<T>}
-            control={control}
-            render={({ field: controllerField, fieldState }) => (
-              <Rating
-                editable
-                label={field.title}
-                rating={controllerField.value}
-                onChange={(e) => {
-                  controllerField.onChange(e.target.value);
-                  field.onChange?.(e);
-                }}
-                labelStyle={
-                  labelSize &&
-                  css`
-                    font-size: ${labelSize};
-                  `
-                }
-                containerStyle={
-                  fieldSize &&
-                  css`
-                    font-size: ${fieldSize};
-                  `
-                }
-                showError={!!fieldState.error}
-                errorMessage={fieldState.error?.message}
-                {...field.ratingProps}
-              />
-            )}
-          />
-        ) : field.type === "thumbfield" ? (
-          <Controller
-            key={index}
-            control={control}
-            name={field.name as Path<T>}
-            render={({ field: controllerField }) => (
-              <ThumbField
-                label={field.title}
-                labelStyle={
-                  labelSize &&
-                  css`
-                    font-size: ${labelSize};
-                  `
-                }
-                style={
-                  fieldSize &&
-                  css`
-                    font-size: ${fieldSize};
-                  `
-                }
-                value={controllerField.value ?? false}
-                required={field.required}
-                {...register(field.name as Path<T>, {
-                  onChange: field.onChange,
-                })}
-                onChange={(e) => {
-                  field.onChange?.(e);
-                  controllerField.onBlur();
-                  controllerField.onChange(e);
-                }}
-                showError={shouldShowError(field.name)}
-                errorMessage={
-                  errors[field.name as keyof T]?.message as string | undefined
-                }
-                {...field.thumbFieldProps}
-              />
-            )}
-          />
-        ) : field.type === "toggle" ? (
-          <Controller
-            key={index}
-            control={control}
-            name={field.name as Path<T>}
-            render={({ field: controllerField }) => {
-              return (
-                <Togglebox
-                  name={controllerField.name}
-                  label={field.title}
-                  labelStyle={
-                    labelSize &&
-                    css`
-                      font-size: ${labelSize};
-                    `
-                  }
-                  checked={controllerField.value ?? false}
-                  required={field.required}
-                  onChange={(e) => {
-                    field.onChange?.(e);
-                    controllerField.onBlur();
-                    controllerField.onChange(e);
-                  }}
-                  onBlur={controllerField.onBlur}
-                  showError={shouldShowError(field.name)}
-                  errorMessage={
-                    errors[field.name as keyof T]?.message as string | undefined
-                  }
-                  {...field.toggleboxProps}
-                />
-              );
-            }}
-          />
-        ) : null;
+          </RowFormField>
+        );
       })}
-    </>
+    </ContainerFormField>
   );
 }
+
+const ContainerFormField = styled.div<{ $style: CSSProp }>`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  ${({ $style }) => $style}
+`;
+
+const RowFormField = styled.div<{ $style: CSSProp }>`
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  align-items: start;
+
+  ${({ $style }) => $style}
+`;
 
 export { StatefulForm };
