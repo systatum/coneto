@@ -1050,7 +1050,12 @@ function TableRow({
               return (
                 <Button
                   key={index}
-                  onClick={data.onClick}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (data.onClick) {
+                      data.onClick();
+                    }
+                  }}
                   title={data.caption}
                   aria-label="row-action"
                   containerStyle={css`
