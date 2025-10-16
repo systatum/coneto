@@ -1,21 +1,26 @@
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { ReactElement, ReactNode, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import styled, { css, CSSProp } from "styled-components";
 
-export interface TabContentProps {
+export interface CapsuleContentProps {
   id: string;
   title: string;
   content?: ReactNode;
 }
 
-export interface TabProps {
+export interface CapsuleProps {
   activeTab: string | null;
-  tabs: TabContentProps[];
-  setActiveTab: (data: string) => void;
+  tabs: CapsuleContentProps[];
+  setActiveTab?: (data: string) => void;
   containerStyle?: CSSProp;
+  label?: string;
+  labelStyle?: CSSProp;
+  description?: string;
   tabStyle?: CSSProp;
   full?: boolean;
   activeBackgroundColor?: string;
+  showError?: boolean;
+  errorMessage?: string;
 }
 
 function Capsule({
@@ -26,7 +31,11 @@ function Capsule({
   tabStyle,
   full,
   activeBackgroundColor = "oklch(54.6% .245 262.881)",
-}: TabProps) {
+  label,
+  labelStyle,
+  showError,
+  errorMessage,
+}: CapsuleProps) {
   const [hovered, setHovered] = useState<string | null>(null);
 
   const activeId = hovered || activeTab;
@@ -130,7 +139,7 @@ function Capsule({
   const hoverPosition = getHoverPosition();
   const initialPosition = getInitialPosition();
 
-  return (
+  const inputElement: ReactElement = (
     <CapsuleWrapper
       $containerStyle={containerStyle}
       $full={full}
@@ -195,6 +204,20 @@ function Capsule({
       })}
     </CapsuleWrapper>
   );
+
+  return (
+    <Container $style={containerStyle}>
+      {label && (
+        <Label $style={labelStyle} htmlFor="capsule">
+          {label}
+        </Label>
+      )}
+      <div>
+        {inputElement}
+        {showError && <ErrorText>{errorMessage}</ErrorText>}
+      </div>
+    </Container>
+  );
 }
 
 const CapsuleWrapper = styled.div<{
@@ -228,6 +251,26 @@ const CapsuleWrapper = styled.div<{
         `}
 
   ${({ $containerStyle }) => $containerStyle}
+`;
+
+const Container = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  position: relative;
+
+  ${({ $style }) => $style}
+`;
+
+const Label = styled.label<{ $style?: CSSProp }>`
+  font-size: 0.75rem;
+  ${({ $style }) => $style}
+`;
+
+const ErrorText = styled.span`
+  color: #dc2626;
 `;
 
 const ActiveBackground = styled(motion.div)<{

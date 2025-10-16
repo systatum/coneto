@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { Capsule, TabContentProps } from "./capsule";
+import { Capsule, CapsuleContentProps } from "./capsule";
 import { useArgs } from "@storybook/preview-api";
 
 const meta: Meta<typeof Capsule> = {
@@ -15,7 +15,7 @@ export default meta;
 
 type Story = StoryObj<typeof Capsule>;
 
-const VIEW_MODES: TabContentProps[] = [
+const VIEW_MODES: CapsuleContentProps[] = [
   {
     id: "new",
     title: "New",
