@@ -4,23 +4,24 @@ import styled, { css, CSSProp } from "styled-components";
 
 export interface CapsuleTabProps {
   tabs: CapsuleTabContentProps[];
-  activeTab?: number;
+  activeTab?: string;
   style?: CSSProp;
   tabStyle?: CSSProp;
 }
 
 export interface CapsuleTabContentProps {
-  id: number | string;
+  id: string;
   title: string;
   content: ReactNode;
 }
 
-function CapsuleTab({ tabs, style, activeTab = 1, tabStyle }: CapsuleTabProps) {
-  const CONTENT_TABS = tabs.map((data) => data.id);
-  const NUMBER_ACTIVE_TAB = activeTab - 1;
-  const [selected, setSelected] = useState<string | number>(
-    CONTENT_TABS[NUMBER_ACTIVE_TAB]
-  );
+function CapsuleTab({
+  tabs,
+  style,
+  activeTab = "1",
+  tabStyle,
+}: CapsuleTabProps) {
+  const [selected, setSelected] = useState<string>(activeTab);
 
   const activeContent = tabs.filter((data) => data.id === selected);
 
@@ -32,10 +33,10 @@ function CapsuleTab({ tabs, style, activeTab = 1, tabStyle }: CapsuleTabProps) {
           border-top-right-radius: 2px;
           ${tabStyle};
         `}
-        fields={tabs}
-        setView={setSelected}
+        tabs={tabs}
+        setActiveTab={setSelected}
+        activeTab={selected}
         activeBackgroundColor="black"
-        view={selected}
         full
       />
 
