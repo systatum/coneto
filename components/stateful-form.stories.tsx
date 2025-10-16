@@ -3,8 +3,9 @@ import {
   StatefulForm,
   StatefulOnChangeType,
   FormFieldGroup,
+  FormValueType,
 } from "./stateful-form";
-import { ChangeEvent, useState } from "react";
+import { useState } from "react";
 import { COUNTRY_CODES } from "./../constants/countries";
 import { z } from "zod";
 import { Button } from "./button";
@@ -128,15 +129,7 @@ export const Default: Story = {
       >
         <StatefulForm
           onChange={({ currentState }) => {
-            setValue((prev) => {
-              const next: typeof prev = { ...prev };
-
-              Object.entries(currentState).forEach(([key, value]) => {
-                (next as unknown)[key] = value;
-              });
-
-              return next;
-            });
+            setValue((prev) => ({ ...prev, ...currentState }));
           }}
           fields={EMPLOYEE_FIELDS}
           formValues={value}
@@ -408,14 +401,7 @@ export const AllCase: Story = {
         const target = e.target;
         const { name, value } = target;
 
-        let updatedValue:
-          | string
-          | boolean
-          | number
-          | CountryCodeProps
-          | OptionsProps
-          | File
-          | FileList = value;
+        let updatedValue: FormValueType = value;
 
         if (target instanceof HTMLInputElement && target.type === "checkbox") {
           updatedValue = target.checked;
@@ -475,8 +461,6 @@ export const AllCase: Story = {
         `Upload complete! Success: ${succeedFiles.length}, Failed: ${failedFiles.length}`
       );
     };
-
-    console.log(value);
 
     const MONTH_NAMES = [
       { text: "JAN", value: 1 },
@@ -673,6 +657,7 @@ export const AllCase: Story = {
         },
       },
     ];
+    console.log(value);
 
     return (
       <div
@@ -690,15 +675,10 @@ export const AllCase: Story = {
       >
         <StatefulForm
           onChange={({ currentState }) => {
-            setValue((prev) => {
-              const next: typeof prev = { ...prev };
-
-              Object.entries(currentState).forEach(([key, value]) => {
-                (next as unknown)[key] = value;
-              });
-
-              return next;
-            });
+            setValue((prev) => ({
+              ...prev,
+              ...currentState,
+            }));
           }}
           onValidityChange={setIsFormValid}
           labelSize="14px"

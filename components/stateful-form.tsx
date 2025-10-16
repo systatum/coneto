@@ -58,7 +58,7 @@ interface StatefulFormProps<Z extends ZodTypeAny> {
   onValidityChange?: (e: boolean) => void;
   labelSize?: string;
   fieldSize?: string;
-  onChange?: (args: { currentState: TypeOf<Z> }) => void;
+  onChange?: (args: { currentState: any }) => void;
   containerStyle?: CSSProp;
   rowStyle?: CSSProp;
 }
@@ -179,6 +179,7 @@ function StatefulForm<Z extends ZodTypeAny>({
         errors={errors}
         setValue={setValue}
         onChange={handleFieldChange}
+        rowStyle={rowStyle}
         containerStyle={containerStyle}
         shouldShowError={(name) => shouldShowError(name as keyof TypeOf<Z>)}
       />
