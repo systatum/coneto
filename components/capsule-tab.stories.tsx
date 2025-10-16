@@ -86,8 +86,8 @@ export const Default: Story = {
     };
 
     const TABS_ITEMS: CapsuleTabContentProps[] = [
-      { id: 1, title: "Write", content: <WriteTabContent /> },
-      { id: 2, title: "Review", content: <ReviewTabContent /> },
+      { id: "1", title: "Write", content: <WriteTabContent /> },
+      { id: "2", title: "Review", content: <ReviewTabContent /> },
     ];
 
     return (
@@ -99,7 +99,7 @@ export const Default: Story = {
           width: "100%",
         }}
       >
-        <CapsuleTab tabs={TABS_ITEMS} activeTab={2} />
+        <CapsuleTab tabs={TABS_ITEMS} activeTab={"2"} />
         <div
           style={{
             display: "flex",

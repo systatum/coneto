@@ -16,6 +16,7 @@ import { BadgeProps } from "./badge";
 import { CountryCodeProps } from "./phonebox";
 import { css } from "styled-components";
 import { OptionsProps } from "./selectbox";
+import { CapsuleContentProps } from "./capsule";
 
 const meta: Meta<typeof StatefulForm> = {
   title: "Input Elements/StatefulForm",
@@ -254,6 +255,7 @@ export const AllCase: Story = {
       thumb_field: boolean;
       togglebox: boolean;
       signature: string;
+      capsule: string;
       country_code?: CountryCodeProps;
     }
 
@@ -286,8 +288,20 @@ export const AllCase: Story = {
       thumb_field: false,
       togglebox: false,
       signature: "",
+      capsule: "",
       country_code: DEFAULT_COUNTRY_CODES,
     });
+
+    const CAPSULE_TABS: CapsuleContentProps[] = [
+      {
+        id: "paid",
+        title: "Paid",
+      },
+      {
+        id: "unpaid",
+        title: "Unpaid",
+      },
+    ];
 
     const handleOptionClicked = (badge: BadgeProps) => {
       const isAlreadySelected = value.chips.selectedOptions.some(
@@ -378,6 +392,7 @@ export const AllCase: Story = {
       rating: z.string().optional(),
       thumb_field: z.boolean(),
       togglebox: z.boolean(),
+      capsule: z.string().max(4, "Paid is required"),
       country_code: z
         .object({
           id: z.string(),
@@ -646,6 +661,16 @@ export const AllCase: Story = {
           inputValue: value.chips.searchText,
         },
         onChange: onChangeForm,
+      },
+      {
+        name: "capsule",
+        title: "Monetary Value",
+        type: "capsule",
+        required: false,
+        capsuleProps: {
+          activeTab: value.capsule,
+          tabs: CAPSULE_TABS,
+        },
       },
     ];
 

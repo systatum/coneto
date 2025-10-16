@@ -1,9 +1,9 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { Capsule } from "./capsule";
+import { Capsule, CapsuleContentProps } from "./capsule";
 import { useArgs } from "@storybook/preview-api";
 
 const meta: Meta<typeof Capsule> = {
-  title: "Controls/Capsule",
+  title: "Input Elements/Capsule",
   component: Capsule,
   parameters: {
     layout: "centered",
@@ -15,7 +15,7 @@ export default meta;
 
 type Story = StoryObj<typeof Capsule>;
 
-const VIEW_MODES = [
+const VIEW_MODES: CapsuleContentProps[] = [
   {
     id: "new",
     title: "New",
@@ -28,17 +28,17 @@ const VIEW_MODES = [
 
 export const Default: Story = {
   args: {
-    fields: VIEW_MODES,
-    view: "new",
+    tabs: VIEW_MODES,
+    activeTab: "new",
   },
   render: (args) => {
-    const [{ view }, setUpdateArgs] = useArgs();
+    const [{ activeTab }, setUpdateArgs] = useArgs();
 
     return (
       <Capsule
         {...args}
-        view={view}
-        setView={(prev: string) => setUpdateArgs({ view: prev })}
+        activeTab={activeTab}
+        setActiveTab={(prev: string) => setUpdateArgs({ activeTab: prev })}
       />
     );
   },

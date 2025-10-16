@@ -28,6 +28,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { Rating, RatingProps } from "./rating";
 import { ThumbField, ThumbFieldProps } from "./thumb-field";
 import { Togglebox, ToggleboxProps } from "./togglebox";
+import { Capsule, CapsuleProps } from "./capsule";
 
 export type StatefulOnChangeType =
   | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -88,6 +89,7 @@ export interface FormFieldProps {
   ratingProps?: RatingProps;
   thumbFieldProps?: ThumbFieldProps;
   toggleboxProps?: ToggleboxProps;
+  capsuleProps?: CapsuleProps;
 }
 
 function StatefulForm<Z extends ZodTypeAny>({
@@ -866,6 +868,42 @@ function FormFields<T extends FieldValues>({
                             | undefined
                         }
                         {...field.toggleboxProps}
+                      />
+                    )}
+                  />
+                ) : field.type === "capsule" ? (
+                  <Controller
+                    key={index}
+                    control={control}
+                    name={field.name as Path<T>}
+                    render={({ field: controllerField }) => (
+                      <Capsule
+                        label={field.title}
+                        labelStyle={
+                          labelSize &&
+                          css`
+                            font-size: ${labelSize};
+                          `
+                        }
+                        activeTab={controllerField.value}
+                        setActiveTab={(e) => {
+                          const inputValueEvent = {
+                            target: { name: field.name, value: e },
+                          };
+                          controllerField?.onChange(e);
+                          controllerField?.onBlur();
+                          field.onChange?.(inputValueEvent);
+                          if (onChange) {
+                            onChange(field.name as keyof T, e);
+                          }
+                        }}
+                        showError={shouldShowError(field.name)}
+                        errorMessage={
+                          errors[field.name as keyof T]?.message as
+                            | string
+                            | undefined
+                        }
+                        {...field.capsuleProps}
                       />
                     )}
                   />
