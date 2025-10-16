@@ -128,15 +128,7 @@ export const Default: Story = {
       >
         <StatefulForm
           onChange={({ currentState }) => {
-            setValue((prev) => {
-              const next: typeof prev = { ...prev };
-
-              Object.entries(currentState).forEach(([key, value]) => {
-                (next as unknown)[key] = value;
-              });
-
-              return next;
-            });
+            setValue((prev) => ({ ...prev, ...currentState }));
           }}
           fields={EMPLOYEE_FIELDS}
           formValues={value}
@@ -455,8 +447,6 @@ export const AllCase: Story = {
       );
     };
 
-    console.log(value);
-
     const MONTH_NAMES = [
       { text: "JAN", value: 1 },
       { text: "FEB", value: 2 },
@@ -642,6 +632,7 @@ export const AllCase: Story = {
         onChange: onChangeForm,
       },
     ];
+    console.log(value);
 
     return (
       <div
@@ -659,15 +650,10 @@ export const AllCase: Story = {
       >
         <StatefulForm
           onChange={({ currentState }) => {
-            setValue((prev) => {
-              const next: typeof prev = { ...prev };
-
-              Object.entries(currentState).forEach(([key, value]) => {
-                (next as unknown)[key] = value;
-              });
-
-              return next;
-            });
+            setValue((prev) => ({
+              ...prev,
+              ...currentState,
+            }));
           }}
           onValidityChange={setIsFormValid}
           labelSize="14px"
