@@ -1,10 +1,11 @@
 import { Meta, StoryObj } from "@storybook/react/";
 import {
   StatefulForm,
-  FormFieldProps,
   StatefulOnChangeType,
+  FormFieldGroup,
+  FormValueType,
 } from "./stateful-form";
-import { ChangeEvent, useState } from "react";
+import { useState } from "react";
 import { COUNTRY_CODES } from "./../constants/countries";
 import { z } from "zod";
 import { Button } from "./button";
@@ -59,39 +60,28 @@ export const Default: Story = {
         .regex(/^\d{10,15}$/, "Phone number must be between 10 and 15 digits")
         .optional(),
       note: z.string().optional(),
-      access: z.boolean().optional(),
+      access: z.boolean().refine((val) => val === true, {
+        message: "Access must be true",
+      }),
     });
 
-    const onChangeForm = (
-      e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
-      const target = e.target;
-      const { name, value } = target;
-
-      let updatedValue: string | boolean | number = value;
-
-      if (target instanceof HTMLInputElement && target.type === "checkbox") {
-        updatedValue = target.checked;
-      }
-
-      setValue((prev) => ({ ...prev, [name]: updatedValue }));
-    };
-
-    const EMPLOYEE_FIELDS: FormFieldProps[] = [
-      {
-        name: "first_name",
-        title: "First Name",
-        type: "text",
-        required: true,
-        placeholder: "Enter first name",
-      },
-      {
-        name: "last_name",
-        title: "Last Name",
-        type: "text",
-        required: false,
-        placeholder: "Enter last name",
-      },
+    const EMPLOYEE_FIELDS: FormFieldGroup[] = [
+      [
+        {
+          name: "first_name",
+          title: "First Name",
+          type: "text",
+          required: true,
+          placeholder: "Enter first name",
+        },
+        {
+          name: "last_name",
+          title: "Last Name",
+          type: "text",
+          required: false,
+          placeholder: "Enter last name",
+        },
+      ],
       {
         name: "email",
         title: "Email",
@@ -137,6 +127,17 @@ export const Default: Story = {
         }}
       >
         <StatefulForm
+          onChange={({ currentState }) => {
+            setValue((prev) => {
+              const next: typeof prev = { ...prev };
+
+              Object.entries(currentState).forEach(([key, value]) => {
+                (next as unknown)[key] = value;
+              });
+
+              return next;
+            });
+          }}
           fields={EMPLOYEE_FIELDS}
           formValues={value}
           validationSchema={employeeSchema}
@@ -393,14 +394,7 @@ export const AllCase: Story = {
         const target = e.target;
         const { name, value } = target;
 
-        let updatedValue:
-          | string
-          | boolean
-          | number
-          | CountryCodeProps
-          | OptionsProps
-          | File
-          | FileList = value;
+        let updatedValue: FormValueType = value;
 
         if (target instanceof HTMLInputElement && target.type === "checkbox") {
           updatedValue = target.checked;
@@ -478,7 +472,7 @@ export const AllCase: Story = {
       { text: "DEC", value: 12 },
     ];
 
-    const FIELDS: FormFieldProps[] = [
+    const FIELDS: FormFieldGroup[] = [
       {
         name: "text",
         title: "Text",
