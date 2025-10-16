@@ -2,36 +2,36 @@ import { ReactNode, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import styled, { css, CSSProp } from "styled-components";
 
-export interface TabFieldsProps {
-  id: string | number;
+export interface TabContentProps {
+  id: string;
   title: string;
   content?: ReactNode;
 }
 
 export interface TabProps {
-  view: string | null | number;
-  fields: TabFieldsProps[];
-  setView: (data: string | number) => void;
+  activeTab: string | null;
+  tabs: TabContentProps[];
+  setActiveTab: (data: string) => void;
   containerStyle?: CSSProp;
-  styleActiveTab?: CSSProp;
+  tabStyle?: CSSProp;
   full?: boolean;
   activeBackgroundColor?: string;
 }
 
 function Capsule({
-  fields,
-  view,
-  setView,
+  tabs,
+  activeTab,
+  setActiveTab,
   containerStyle,
-  styleActiveTab,
+  tabStyle,
   full,
   activeBackgroundColor = "oklch(54.6% .245 262.881)",
 }: TabProps) {
-  const [hovered, setHovered] = useState<string | null | number>(null);
+  const [hovered, setHovered] = useState<string | null>(null);
 
-  const activeId = hovered || view;
-  const activeIndex = fields.findIndex((item) => item.id === view);
-  const hoverIndex = fields.findIndex((item) => item.id === activeId);
+  const activeId = hovered || activeTab;
+  const activeIndex = tabs.findIndex((item) => item.id === activeTab);
+  const hoverIndex = tabs.findIndex((item) => item.id === activeId);
 
   const tabRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [tabSizes, setTabSizes] = useState<{ width: number; left: number }[]>(
@@ -41,18 +41,18 @@ function Capsule({
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    tabRefs.current = tabRefs.current.slice(0, fields.length);
+    tabRefs.current = tabRefs.current.slice(0, tabs.length);
 
-    while (tabRefs.current.length < fields.length) {
+    while (tabRefs.current.length < tabs.length) {
       tabRefs.current.push(null);
     }
-  }, [fields]);
+  }, [tabs]);
 
   useEffect(() => {
-    if (!view && fields.length > 0) {
-      setView(fields[0].id);
+    if (!activeTab && tabs.length > 0) {
+      setActiveTab(tabs[0].id);
     }
-  }, [view, fields, setView]);
+  }, [activeTab, tabs, setActiveTab]);
 
   useEffect(() => {
     const calculateTabSizes = () => {
@@ -87,14 +87,14 @@ function Capsule({
       window.removeEventListener("resize", calculateTabSizes);
       clearTimeout(timeoutId);
     };
-  }, [fields.length]);
+  }, [tabs.length]);
 
   const setTabRef = (index: number) => (element: HTMLDivElement | null) => {
     tabRefs.current[index] = element;
   };
 
   const getInitialPosition = () => {
-    if (!isInitialized && fields.length > 0) {
+    if (!isInitialized && tabs.length > 0) {
       if (activeIndex === 0) {
         return { left: 4, width: 60 };
       }
@@ -111,7 +111,7 @@ function Capsule({
   };
 
   const getHoverPosition = () => {
-    if (!isInitialized && fields.length > 0) {
+    if (!isInitialized && tabs.length > 0) {
       if (hoverIndex === 0) {
         return { left: 4, width: 60 };
       }
@@ -137,17 +137,10 @@ function Capsule({
       ref={containerRef}
       role="tablist"
     >
-      <motion.div
+      <ActiveBackground
         layout
-        style={{
-          position: "absolute",
-          top: "4px",
-          borderRadius: "12px",
-          bottom: "4px",
-          zIndex: 10,
-          height: "25px",
-          backgroundColor: activeBackgroundColor,
-        }}
+        $style={tabStyle}
+        $activeBackgroundColor={activeBackgroundColor}
         initial={{
           left: initialPosition.left,
           width: initialPosition.width,
@@ -163,17 +156,10 @@ function Capsule({
         }}
       />
 
-      <motion.div
+      <HoverBorder
         layout
-        style={{
-          position: "absolute",
-          top: "4px",
-          borderRadius: "12px",
-          bottom: "4px",
-          zIndex: 0,
-          height: "25px",
-          border: `2px solid ${activeBackgroundColor}`,
-        }}
+        $style={tabStyle}
+        $activeBackgroundColor={activeBackgroundColor}
         initial={{
           left: hoverPosition.left,
           width: hoverPosition.width,
@@ -189,19 +175,19 @@ function Capsule({
         }}
       />
 
-      {fields.map((data, index) => {
-        const isActive = view === data.id;
+      {tabs.map((data, index) => {
+        const isActive = activeTab === data.id;
 
         return (
           <Tab
             $isActive={isActive}
-            $styleActiveTab={styleActiveTab}
             role="tab"
             key={index}
             ref={setTabRef(index)}
+            $activeTabStyle={tabStyle}
             onMouseEnter={() => setHovered(data.id)}
             onMouseLeave={() => setHovered(null)}
-            onClick={() => setView(data.id)}
+            onClick={() => setActiveTab(data.id)}
           >
             {data.title}
           </Tab>
@@ -244,9 +230,39 @@ const CapsuleWrapper = styled.div<{
   ${({ $containerStyle }) => $containerStyle}
 `;
 
+const ActiveBackground = styled(motion.div)<{
+  $style?: CSSProp;
+  $activeBackgroundColor?: string;
+}>`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+
+  border-radius: 12px;
+  z-index: 10;
+  height: 25px;
+  background-color: ${({ $activeBackgroundColor }) => $activeBackgroundColor};
+  ${({ $style }) => $style}
+`;
+
+const HoverBorder = styled(motion.div)<{
+  $style?: CSSProp;
+  $activeBackgroundColor?: string;
+}>`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+
+  border-radius: 12px;
+  z-index: 0;
+  height: 25px;
+  border: 2px solid ${({ $activeBackgroundColor }) => $activeBackgroundColor};
+  ${({ $style }) => $style}
+`;
+
 const Tab = styled.div<{
   $isActive?: boolean;
-  $styleActiveTab?: CSSProp;
+  $activeTabStyle?: CSSProp;
 }>`
   z-index: 10;
   cursor: pointer;
@@ -265,10 +281,10 @@ const Tab = styled.div<{
           color: #111827;
         `}
 
-  ${({ $isActive, $styleActiveTab }) =>
+  ${({ $isActive, $activeTabStyle }) =>
     !$isActive &&
     css`
-      ${$styleActiveTab}
+      ${$activeTabStyle}
     `}
 `;
 
