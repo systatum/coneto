@@ -1074,6 +1074,10 @@ function TableRow({
                   `}
                   buttonStyle={css`
                     padding: 8px;
+                    background-color: transparent;
+                    &:hover {
+                      background-color: #d4d4d4;
+                    }
                   `}
                 >
                   <Icon size={16} />
