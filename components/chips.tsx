@@ -283,12 +283,6 @@ function ChipsDrawer({
   }, []);
 
   useEffect(() => {
-    if (mode === "create") {
-      inputMissingRef.current?.focus();
-    }
-  }, [mode]);
-
-  useEffect(() => {
     if (isTyping) setTimeout(() => setIsTyping(false), 50);
   }, [isTyping]);
 
@@ -397,7 +391,7 @@ function ChipsDrawer({
               <EmptyOptionContainer
                 onClick={async () => {
                   await setMode("create");
-                  await inputMissingRef.current.focus();
+                  await inputMissingRef.current?.focus();
                 }}
                 onMouseEnter={() => setHovered("0")}
                 $hovered={hovered === "0"}
