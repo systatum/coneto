@@ -283,12 +283,6 @@ function ChipsDrawer({
   }, []);
 
   useEffect(() => {
-    if (mode === "create") {
-      inputMissingRef.current?.focus();
-    }
-  }, [mode]);
-
-  useEffect(() => {
     if (isTyping) setTimeout(() => setIsTyping(false), 50);
   }, [isTyping]);
 
@@ -306,7 +300,7 @@ function ChipsDrawer({
     }
   }, [inputValue, options, mode, creatable, hasNoFilter, isTyping]);
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLUListElement>) => {
+  const handleKeyDown = async (e: KeyboardEvent<HTMLUListElement>) => {
     if (mode !== "idle") return;
 
     const index = options.findIndex((opt) => opt.id === hovered);
@@ -345,7 +339,8 @@ function ChipsDrawer({
       e.stopPropagation();
       const selected = options.find((opt) => opt.id === hovered);
       if (hovered === "0") {
-        setMode("create");
+        await setMode("create");
+        await inputMissingRef.current?.focus();
       } else if (selected && onOptionClicked) {
         onOptionClicked(selected);
       }
@@ -397,7 +392,7 @@ function ChipsDrawer({
               <EmptyOptionContainer
                 onClick={async () => {
                   await setMode("create");
-                  await inputMissingRef.current.focus();
+                  await inputMissingRef.current?.focus();
                 }}
                 onMouseEnter={() => setHovered("0")}
                 $hovered={hovered === "0"}

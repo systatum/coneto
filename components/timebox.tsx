@@ -4,6 +4,7 @@ import {
   KeyboardEvent,
   ReactElement,
   useEffect,
+  useImperativeHandle,
   useRef,
   useState,
 } from "react";
@@ -54,6 +55,8 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
     const minuteRef = useRef<HTMLInputElement>(null);
     const secondRef = useRef<HTMLInputElement>(null);
 
+    useImperativeHandle(ref, () => hourRef.current!);
+
     useEffect(() => {
       if (valueLocal) {
         const parts = valueLocal.split(":");
@@ -61,15 +64,6 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
         setHour(hh ?? "00");
         setMinute(mm ?? "00");
         setSecond(ss ?? "00");
-      }
-    }, []);
-
-    useEffect(() => {
-      let didFocusInitially = false;
-
-      if (!didFocusInitially) {
-        didFocusInitially = true;
-        hourRef.current?.focus();
       }
     }, []);
 

@@ -839,49 +839,18 @@ export const CustomRenderer: Story = {
       { text: "Member", value: 3 },
     ];
 
-    const onChangeDivisionEmployeeForm = (e?: StatefulOnChangeType) => {
-      if (!e || typeof e !== "object") return;
-      if (e && typeof e === "object" && "value" in e && "text" in e) {
-        const isOptionsProps =
-          (typeof e.value === "string" || typeof e.value === "number") &&
-          typeof e.text === "string";
-
-        if (isOptionsProps) {
-          setValueEmployee((prev) => ({ ...prev, ["role"]: e }));
-        }
-        return;
-      }
-
-      if ("target" in e && typeof e.target?.name === "string") {
-        const target = e.target;
-        const { name, value } = target as
-          | HTMLInputElement
-          | HTMLTextAreaElement;
-
-        let updatedValue: string | boolean = value;
-
-        if (target instanceof HTMLInputElement && target.type === "checkbox") {
-          updatedValue = target.checked;
-        }
-
-        setValueEmployee((prev) => ({ ...prev, [name]: updatedValue }));
-      }
-    };
-
     const EMPLOYEE_FIELDS: FormFieldProps[] = [
       {
         name: "name",
         title: "Name",
         type: "text",
         required: true,
-        onChange: onChangeDivisionEmployeeForm,
       },
       {
         name: "combo",
         title: "Role",
         type: "combo",
         required: false,
-        onChange: onChangeDivisionEmployeeForm,
         comboboxProps: {
           placeholder: "Search your role...",
           options: EMPLOYEE_OPTIONS,
@@ -916,6 +885,12 @@ export const CustomRenderer: Story = {
           fields={EMPLOYEE_FIELDS}
           formValues={valueEmployee}
           validationSchema={divisionEmployeeSchema}
+          onChange={({ currentState }) => {
+            setValueEmployee((prev) => ({
+              ...prev,
+              ...currentState,
+            }));
+          }}
           mode="onChange"
         />
         <div
