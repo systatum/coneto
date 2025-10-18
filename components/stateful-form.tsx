@@ -267,6 +267,8 @@ function FormFields<T extends FieldValues>({
                     })}
                     ref={(el) => {
                       if (el) refs.current[field.name] = el;
+                      const { ref } = register(field.name as Path<T>);
+                      if (ref) ref(el);
                     }}
                     showError={shouldShowError(field.name)}
                     labelStyle={
@@ -293,9 +295,6 @@ function FormFields<T extends FieldValues>({
                     key={index}
                     label={field.title}
                     rows={field.rows}
-                    ref={(el) => {
-                      if (el) refs.current[field.name] = el;
-                    }}
                     placeholder={field.placeholder}
                     value={formValues[field.name as keyof T] ?? ""}
                     required={field.required}
@@ -309,6 +308,11 @@ function FormFields<T extends FieldValues>({
                         }
                       },
                     })}
+                    ref={(el) => {
+                      if (el) refs.current[field.name] = el;
+                      const { ref } = register(field.name as Path<T>);
+                      if (ref) ref(el);
+                    }}
                     showError={shouldShowError(field.name)}
                     labelStyle={
                       labelSize &&
@@ -342,6 +346,8 @@ function FormFields<T extends FieldValues>({
                         checked={controllerField.value ?? false}
                         ref={(el) => {
                           if (el) refs.current[field.name] = el;
+                          const { ref } = register(field.name as Path<T>);
+                          if (ref) ref(el);
                         }}
                         labelStyle={
                           labelSize &&
@@ -395,6 +401,8 @@ function FormFields<T extends FieldValues>({
                         value={controllerField.value}
                         ref={(el) => {
                           if (el) refs.current[field.name] = el;
+                          const { ref } = register(field.name as Path<T>);
+                          if (ref) ref(el);
                         }}
                         placeholder={field.placeholder}
                         onChange={(
@@ -446,6 +454,8 @@ function FormFields<T extends FieldValues>({
                         placeholder={field.placeholder}
                         ref={(el) => {
                           if (el) refs.current[field.name] = el;
+                          const { ref } = register(field.name as Path<T>);
+                          if (ref) ref(el);
                         }}
                         labelStyle={
                           labelSize &&
@@ -630,6 +640,8 @@ function FormFields<T extends FieldValues>({
                     placeholder={field.placeholder}
                     ref={(el) => {
                       if (el) refs.current[field.name] = el;
+                      const { ref } = register(field.name as Path<T>);
+                      if (ref) ref(el);
                     }}
                     labelStyle={
                       labelSize &&
@@ -675,6 +687,8 @@ function FormFields<T extends FieldValues>({
                         showError={shouldShowError(field.name)}
                         ref={(el) => {
                           if (el) refs.current[field.name] = el;
+                          const { ref } = register(field.name as Path<T>);
+                          if (ref) ref(el);
                         }}
                         labelStyle={
                           labelSize &&
@@ -723,6 +737,8 @@ function FormFields<T extends FieldValues>({
                         showError={shouldShowError(field.name)}
                         ref={(el) => {
                           if (el) refs.current[field.name] = el;
+                          const { ref } = register(field.name as Path<T>);
+                          if (ref) ref(el);
                         }}
                         labelStyle={
                           labelSize &&
