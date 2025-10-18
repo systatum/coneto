@@ -3,7 +3,7 @@ import {
   ChangeEvent,
   forwardRef,
   InputHTMLAttributes,
-  useEffect,
+  useImperativeHandle,
   useRef,
   useState,
 } from "react";
@@ -26,16 +26,13 @@ const Searchbox = forwardRef<HTMLInputElement, SearchboxProps>(
     const inputId = `textbox-${name}`;
     const inputRef = useRef<HTMLInputElement>(null);
 
-    const valueLengthChecker = inputValueLocal.length > 0;
+    useImperativeHandle(ref, () => inputRef.current!);
 
-    useEffect(() => {
-      inputRef.current?.focus();
-    }, []);
+    const valueLengthChecker = inputValueLocal.length > 0;
 
     return (
       <SearchboxWrapper
         aria-label="textbox-search-wrapper"
-        ref={ref}
         $style={containerStyle}
       >
         <SearchIcon size={14} />
@@ -60,6 +57,7 @@ const Searchbox = forwardRef<HTMLInputElement, SearchboxProps>(
             aria-label="delete-input"
             size={14}
             onClick={() => {
+              inputRef.current?.focus();
               const event = {
                 target: {
                   name,
