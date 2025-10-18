@@ -69,7 +69,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
       <InputWrapper>
         <Input
           id={inputId}
-          ref={ref as RefObject<HTMLInputElement>}
+          ref={ref}
           onChange={onChange}
           onKeyDown={(e) => {
             if (e.key === "Enter") onActionClick?.();
