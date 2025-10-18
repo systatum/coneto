@@ -3,6 +3,7 @@ import React, {
   forwardRef,
   KeyboardEvent,
   useEffect,
+  useImperativeHandle,
   useRef,
   useState,
 } from "react";
@@ -82,6 +83,8 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
     const searchInputRef = useRef<HTMLInputElement>(null);
     const phoneInputRef = useRef<HTMLInputElement>(null);
 
+    useImperativeHandle(ref, () => phoneInputRef.current!);
+
     const FILTERED_COUNTRIES = COUNTRY_CODES.filter(
       (country) =>
         country.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -118,15 +121,6 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
       );
       setPhoneNumber(formatted);
     }, [value]);
-
-    useEffect(() => {
-      let didFocusInitially = false;
-
-      if (!didFocusInitially) {
-        didFocusInitially = true;
-        phoneInputRef.current?.focus();
-      }
-    }, []);
 
     const listRef = useRef<(HTMLDivElement | null)[]>([]);
     useEffect(() => {
@@ -213,7 +207,6 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
 
     return (
       <div
-        ref={ref}
         style={{
           display: "flex",
           flexDirection: "column",
