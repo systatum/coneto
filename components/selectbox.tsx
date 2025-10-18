@@ -198,9 +198,9 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       }
     }, [highlightedIndex, isOpen]);
 
-    const contentMultiple = options
-      .filter((val) => selectionOptions.includes(val.value))
-      .map((data) => data.text)
+    const contentMultiple = selectionOptions
+      .map((val) => options.find((o) => o.value === val)?.text)
+      .filter(Boolean)
       .join(", ");
 
     const inputValue = multiple ? contentMultiple : selectionOptionsLocal.text;
