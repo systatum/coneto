@@ -1,6 +1,7 @@
 import { RiErrorWarningLine } from "@remixicon/react";
 import {
   ChangeEvent,
+  forwardRef,
   InputHTMLAttributes,
   ReactElement,
   useState,
@@ -20,95 +21,101 @@ export interface ColorboxProps
   onClick?: () => void;
 }
 
-function Colorbox({
-  onChange,
-  value,
-  label,
-  errorMessage,
-  showError,
-  style,
-  containerStyle,
-  placeholder,
-  onClick,
-  labelStyle,
-  ...props
-}: ColorboxProps) {
-  const [hovered, setHovered] = useState(false);
+const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
+  (
+    {
+      onChange,
+      value,
+      label,
+      errorMessage,
+      showError,
+      style,
+      containerStyle,
+      placeholder,
+      onClick,
+      labelStyle,
+      ...props
+    },
+    ref
+  ) => {
+    const [hovered, setHovered] = useState(false);
 
-  const inputId = `colorbox-${props.name}`;
+    const inputId = `colorbox-${props.name}`;
 
-  const inputElement: ReactElement = (
-    <ColorInputContainer
-      $style={style}
-      $hovered={hovered}
-      $showError={!!showError}
-    >
-      <ColorBox
-        tabIndex={0}
-        $bgColor={value}
+    const inputElement: ReactElement = (
+      <ColorInputContainer
+        $style={style}
+        $hovered={hovered}
         $showError={!!showError}
-        onClick={() => {
-          document.getElementById(inputId)?.click();
-          setHovered(true);
-        }}
-        onBlur={() => {
-          setHovered(false);
-          if (onClick) onClick();
-        }}
-      />
-
-      <HiddenColorInput
-        {...props}
-        id={inputId}
-        type="color"
-        value={value}
-        onChange={onChange}
-      />
-
-      <TextInputGroup $hovered={hovered} $showError={!!showError}>
-        <Prefix $showError={!!showError}>#</Prefix>
-        <TextInput
-          {...props}
-          type="text"
-          value={value?.replace(/^#/, "")}
-          onChange={(e) => {
-            const cleanValue = e.target.value.replace(/#/g, "");
-
-            const inputChangeEvent = {
-              target: {
-                name: props.name,
-                value: `#${cleanValue}`,
-              },
-            } as ChangeEvent<HTMLInputElement>;
-            onChange(inputChangeEvent);
-          }}
-          placeholder={placeholder}
-          onFocus={() => setHovered(true)}
-          onBlur={() => setHovered(false)}
-          maxLength={6}
-          spellCheck={false}
+      >
+        <ColorBox
+          tabIndex={0}
+          $bgColor={value}
           $showError={!!showError}
+          onClick={() => {
+            document.getElementById(inputId)?.click();
+            setHovered(true);
+          }}
+          onBlur={() => {
+            setHovered(false);
+            if (onClick) onClick();
+          }}
         />
-      </TextInputGroup>
 
-      {showError && <StyledErrorIcon size={18} />}
-    </ColorInputContainer>
-  );
+        <HiddenColorInput
+          {...props}
+          id={inputId}
+          type="color"
+          value={value}
+          onChange={onChange}
+        />
 
-  return (
-    <InputWrapper $containerStyle={containerStyle} $disabled={props.disabled}>
-      {label && (
-        <Label htmlFor={inputId} $style={labelStyle}>
-          {label}
-        </Label>
-      )}
-      <InputContent>
-        {inputElement}
-        {showError && <ErrorText>{errorMessage}</ErrorText>}
-      </InputContent>
-    </InputWrapper>
-  );
-}
+        <TextInputGroup $hovered={hovered} $showError={!!showError}>
+          <Prefix $showError={!!showError}>#</Prefix>
+          <TextInput
+            {...props}
+            type="text"
+            ref={ref}
+            value={value?.replace(/^#/, "")}
+            onChange={(e) => {
+              const cleanValue = e.target.value.replace(/#/g, "");
+
+              const inputChangeEvent = {
+                target: {
+                  name: props.name,
+                  value: `#${cleanValue}`,
+                },
+              } as ChangeEvent<HTMLInputElement>;
+              onChange(inputChangeEvent);
+            }}
+            placeholder={placeholder}
+            onFocus={() => setHovered(true)}
+            onBlur={() => setHovered(false)}
+            maxLength={6}
+            spellCheck={false}
+            $showError={!!showError}
+          />
+        </TextInputGroup>
+
+        {showError && <StyledErrorIcon size={18} />}
+      </ColorInputContainer>
+    );
+
+    return (
+      <InputWrapper $containerStyle={containerStyle} $disabled={props.disabled}>
+        {label && (
+          <Label htmlFor={inputId} $style={labelStyle}>
+            {label}
+          </Label>
+        )}
+        <InputContent>
+          {inputElement}
+          {showError && <ErrorText>{errorMessage}</ErrorText>}
+        </InputContent>
+      </InputWrapper>
+    );
+  }
+);
 
 const InputWrapper = styled.div<{
   $containerStyle?: CSSProp;
