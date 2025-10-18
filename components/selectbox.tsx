@@ -31,8 +31,8 @@ import styled, { css, CSSProp } from "styled-components";
 
 export interface SelectboxProps {
   options?: OptionsProps[];
-  inputValue?: OptionsProps;
-  setInputValue?: (data: OptionsProps) => void;
+  selectionOptions?: string[];
+  setSelectionOptions?: (data: string[]) => void;
   placeholder?: string;
   iconOpened?: RemixiconComponentType;
   iconClosed?: RemixiconComponentType;
@@ -44,25 +44,28 @@ export interface SelectboxProps {
   strict?: boolean;
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
   onClick?: () => void;
+  multiple?: boolean;
   children?: (
     props: DrawerProps & {
       options: OptionsProps[];
-      inputValue: OptionsProps;
-      setInputValue: (value: OptionsProps) => void;
+      selectionOptionsLocal: OptionsProps;
+      setSelectionOptionsLocal: (value: OptionsProps) => void;
+      setHasInteracted?: (value: boolean) => void;
+      ref?: Ref<HTMLInputElement>;
     }
   ) => ReactNode;
 }
 
 export interface DrawerProps {
-  highlightedIndex: number;
-  setHighlightedIndex: (index: number) => void;
+  highlightedIndex: number | null;
+  setHighlightedIndex: (index: number | null) => void;
   setIsOpen: (open: boolean) => void;
+  multiple?: boolean;
   getFloatingProps: (
     userProps?: HTMLAttributes<HTMLUListElement>
   ) => HTMLAttributes<HTMLUListElement>;
   refs: { setFloating: Ref<HTMLUListElement>; setReference: Ref<HTMLElement> };
   floatingStyles: CSSProperties;
-
   listRef: MutableRefObject<(HTMLLIElement | null)[]>;
   isOpen: boolean;
   style?: CSSProp;
@@ -71,14 +74,14 @@ export interface DrawerProps {
 
 export interface OptionsProps {
   text: string;
-  value?: string | number;
+  value: string;
 }
 
 const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
   (
     {
-      setInputValue,
-      inputValue,
+      setSelectionOptions,
+      selectionOptions,
       options = [],
       placeholder,
       children,
@@ -92,14 +95,15 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       onKeyDown,
       onClick,
       selectboxStyle,
+      multiple,
     },
     ref
   ) => {
-    const selectboxState = inputValue || { text: "", value: 0 };
-    const [inputValueLocal, setInputValueLocal] =
+    const selectboxState = { text: "", value: "0" };
+    const [selectionOptionsLocal, setSelectionOptionsLocal] =
       useState<OptionsProps>(selectboxState);
     const [isOpen, setIsOpen] = useState(false);
-    const [highlightedIndex, setHighlightedIndex] = useState(0);
+    const [highlightedIndex, setHighlightedIndex] = useState<number | null>(0);
     const [hasInteracted, setHasInteracted] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
@@ -112,11 +116,13 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
 
     const FILTERED_OPTIONS = hasInteracted
       ? options.filter((opt) =>
-          opt.text.toLowerCase().includes(inputValueLocal.text.toLowerCase())
+          opt.text
+            .toLowerCase()
+            .includes(selectionOptionsLocal.text.toLowerCase())
         )
       : options;
 
-    const activeValue = inputValue?.text || inputValueLocal.text;
+    const activeValue = selectionOptionsLocal.text;
     const FILTERED_ACTIVE = options.some((opt) => opt.text === activeValue);
 
     const { refs, floatingStyles, context } = useFloating({
@@ -146,8 +152,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
             value.slice(4, 8);
         }
       }
-      setInputValue?.({ ...inputValue, text: value });
-      setInputValueLocal({ ...inputValueLocal, text: value });
+      setSelectionOptionsLocal({ ...selectionOptionsLocal, text: value });
       setIsOpen(value.length > 0);
       setHighlightedIndex(0);
     };
@@ -168,9 +173,17 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
         e.preventDefault();
         const selected = FILTERED_OPTIONS[highlightedIndex];
         if (selected) {
-          setInputValue?.(selected);
-          setInputValueLocal(selected);
-          setIsOpen(false);
+          if (multiple) {
+            setSelectionOptions?.(
+              selectionOptions.includes(selected.value)
+                ? selectionOptions.filter((val) => val !== selected.value)
+                : [...selectionOptions, selected.value]
+            );
+          } else {
+            setSelectionOptions?.([selected.value]);
+            setSelectionOptionsLocal(selected);
+            setIsOpen(false);
+          }
           setHasInteracted(false);
         }
       } else if (e.key === "Escape") {
@@ -185,6 +198,13 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       }
     }, [highlightedIndex, isOpen]);
 
+    const contentMultiple = options
+      .filter((val) => selectionOptions.includes(val.value))
+      .map((data) => data.text)
+      .join(", ");
+
+    const inputValue = multiple ? contentMultiple : selectionOptionsLocal.text;
+
     return (
       <Container
         onBlur={() => {
@@ -198,20 +218,27 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
           $style={selectboxStyle}
           {...getReferenceProps()}
           data-type="selectbox"
+          $clearable={clearable}
           ref={(el) => {
             refs.setReference(el);
-            inputRef.current = el;
+            if (!multiple) {
+              inputRef.current = el;
+            }
             if (typeof ref === "function") ref(el);
             else if (ref)
               (ref as MutableRefObject<HTMLInputElement | null>).current = el;
           }}
           type="text"
-          value={inputValue ? inputValue.text : inputValueLocal.text}
+          value={inputValue}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
+          readOnly={multiple}
           onFocus={() => {
-            if (type === "calendar" || inputValueLocal) setIsOpen(true);
+            if (type === "calendar" || selectionOptionsLocal) setIsOpen(true);
             setIsFocused(true);
+          }}
+          onClick={() => {
+            if (multiple) inputRef.current?.focus();
           }}
           onBlur={() => {
             setIsFocused(false);
@@ -220,40 +247,56 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
 
             if (strict) {
               const matched = options.find(
-                (opt) => opt.text === inputValueLocal.text
+                (opt) => opt.text === selectionOptionsLocal.text
               );
               if (matched) {
                 setConfirmedValue(matched);
-                setInputValueLocal(matched);
-                setInputValue?.(matched);
+                setSelectionOptionsLocal(matched);
+                if (multiple) {
+                  setSelectionOptions?.(
+                    selectionOptions.includes(matched.value)
+                      ? selectionOptions.filter((val) => val !== matched.value)
+                      : [...selectionOptions, matched.value]
+                  );
+                } else {
+                  setSelectionOptions?.([matched.value]);
+                }
               } else if (confirmedValue) {
-                setInputValueLocal(confirmedValue);
-                setInputValue?.(confirmedValue);
+                setSelectionOptionsLocal(confirmedValue);
+                if (multiple) {
+                  setSelectionOptions?.(
+                    selectionOptions.includes(confirmedValue.value)
+                      ? selectionOptions.filter(
+                          (val) => val !== confirmedValue.value
+                        )
+                      : [...selectionOptions, confirmedValue.value]
+                  );
+                } else {
+                  setSelectionOptions?.([confirmedValue.value]);
+                }
               } else {
-                const empty = { text: "", value: 0 };
-                setInputValueLocal(empty);
-                setInputValue?.(empty);
+                const empty = { text: "", value: "0" };
+                setSelectionOptionsLocal(empty);
               }
             }
           }}
           placeholder={placeholder || "Search your item..."}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          $focused={isFocused}
-          $hovered={isHovered}
+          $focused={isFocused && !multiple}
+          $hovered={isHovered && !multiple}
           $highlight={highlightOnMatch && FILTERED_ACTIVE}
         />
 
-        {clearable && inputValueLocal.text !== "" && (
+        {clearable && selectionOptions.length !== 0 && (
           <>
             <ClearIcon
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
               aria-label="clearable-content"
               onClick={() => {
-                setInputValue?.({ text: "", value: 0 });
-                setInputValueLocal({ text: "", value: 0 });
-                setIsOpen(false);
+                setSelectionOptions?.([]);
+                setSelectionOptionsLocal({ text: "", value: "0" });
                 setHasInteracted(false);
               }}
               $highlight={highlightOnMatch && FILTERED_ACTIVE}
@@ -268,12 +311,15 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
         )}
 
         <IconWrapper
-          onClick={() => {
-            setIsOpen((prev) => {
+          onClick={async () => {
+            await setIsOpen((prev) => {
               const newState = !prev;
-              if (newState && inputRef.current) inputRef.current.focus();
+              if (newState && inputRef.current) inputRef.current?.focus();
               return newState;
             });
+            if (multiple) {
+              await inputRef.current?.focus();
+            }
           }}
         >
           {isOpen ? (
@@ -298,17 +344,16 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
             options: FILTERED_OPTIONS,
             highlightedIndex,
             setHighlightedIndex,
-            setInputValue: (e) => {
-              setInputValueLocal(e);
-              setInputValue?.(e);
-            },
-            inputValue: inputValue || inputValueLocal,
+            setSelectionOptionsLocal,
+            selectionOptionsLocal,
             onClick,
             setIsOpen,
             getFloatingProps,
             refs,
             floatingStyles,
             listRef,
+            setHasInteracted,
+            ref: multiple ? inputRef : undefined,
           })}
       </Container>
     );
@@ -327,12 +372,14 @@ const Input = styled.input<{
   $focused?: boolean;
   $hovered?: boolean;
   $style?: CSSProp;
+  $clearable?: boolean;
 }>`
   width: 100%;
   border-radius: 2px;
   border: 1px solid #f3f4f6;
   padding: 0.5rem 0.75rem;
   outline: none;
+  padding-right: ${({ $clearable }) => ($clearable ? "50px" : "24px")};
 
   ${({ $focused }) =>
     $focused &&
