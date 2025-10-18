@@ -159,36 +159,38 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
 
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
       onKeyDown?.(e);
-      if (e.key === "ArrowDown") {
-        e.preventDefault();
-        if (!isOpen) setIsOpen(true);
-        setHighlightedIndex((prev) =>
-          Math.min(prev + 1, FILTERED_OPTIONS.length - 1)
-        );
-      } else if (e.key === "ArrowUp") {
-        e.preventDefault();
-        if (!isOpen) setIsOpen(true);
-        setHighlightedIndex((prev) => Math.max(prev - 1, 0));
-      } else if (e.key === "Enter") {
-        e.preventDefault();
-        const selected = FILTERED_OPTIONS[highlightedIndex];
-        if (selected) {
-          if (multiple) {
-            setSelectionOptions?.(
-              selectionOptions.includes(selected.value)
-                ? selectionOptions.filter((val) => val !== selected.value)
-                : [...selectionOptions, selected.value]
-            );
-          } else {
-            setSelectionOptions?.([selected.value]);
-            setSelectionOptionsLocal(selected);
-            setIsOpen(false);
+      if (!multiple) {
+        if (e.key === "ArrowDown") {
+          e.preventDefault();
+          if (!isOpen) setIsOpen(true);
+          setHighlightedIndex((prev) =>
+            Math.min(prev + 1, FILTERED_OPTIONS.length - 1)
+          );
+        } else if (e.key === "ArrowUp") {
+          e.preventDefault();
+          if (!isOpen) setIsOpen(true);
+          setHighlightedIndex((prev) => Math.max(prev - 1, 0));
+        } else if (e.key === "Enter") {
+          e.preventDefault();
+          const selected = FILTERED_OPTIONS[highlightedIndex];
+          if (selected) {
+            if (multiple) {
+              setSelectionOptions?.(
+                selectionOptions.includes(selected.value)
+                  ? selectionOptions.filter((val) => val !== selected.value)
+                  : [...selectionOptions, selected.value]
+              );
+            } else {
+              setSelectionOptions?.([selected.value]);
+              setSelectionOptionsLocal(selected);
+              setIsOpen(false);
+            }
+            setHasInteracted(false);
           }
+        } else if (e.key === "Escape") {
+          setIsOpen(false);
           setHasInteracted(false);
         }
-      } else if (e.key === "Escape") {
-        setIsOpen(false);
-        setHasInteracted(false);
       }
     };
 
