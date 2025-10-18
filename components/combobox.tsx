@@ -1,7 +1,9 @@
 import {
   forwardRef,
+  Fragment,
   KeyboardEvent,
   Ref,
+  RefObject,
   useEffect,
   useMemo,
   useState,
@@ -10,6 +12,8 @@ import {
 import { DrawerProps, OptionsProps, Selectbox } from "./selectbox";
 import { RemixiconComponentType } from "@remixicon/react";
 import styled, { css, CSSProp } from "styled-components";
+import { Searchbox } from "./searchbox";
+import { Checkbox } from "./checkbox";
 
 export type ComboboxProps = Partial<BaseComboboxProps> & {
   label?: string;
@@ -24,8 +28,8 @@ interface BaseComboboxProps {
   containerStyle?: CSSProp;
   selectboxStyle?: CSSProp;
   labelStyle?: CSSProp;
-  inputValue: OptionsProps;
-  setInputValue: (data: OptionsProps) => void;
+  selectionOptions: string[];
+  setSelectionOptions: (data: string[]) => void;
   clearable?: boolean;
   placeholder?: string;
   emptySlate?: string;
@@ -33,6 +37,7 @@ interface BaseComboboxProps {
   strict?: boolean;
   actions?: ComboboxActionProps[];
   name?: string;
+  multiple?: boolean;
 }
 
 export interface ComboboxActionProps {
@@ -44,6 +49,10 @@ export interface ComboboxActionProps {
 
 type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
   BaseComboboxProps & {
+    refInput?: Ref<HTMLInputElement>;
+    selectionOptionsLocal: OptionsProps;
+    setSelectionOptionsLocal: (value: OptionsProps) => void;
+    setHasInteracted?: (value: boolean) => void;
     refs?: {
       setFloating?: Ref<HTMLUListElement>;
       reference?: Ref<HTMLElement> & { current?: HTMLElement | null };
@@ -54,7 +63,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
   (
     {
       options,
-      setInputValue,
+      setSelectionOptions,
       clearable = false,
       placeholder,
       containerStyle,
@@ -65,12 +74,13 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       errorMessage,
       label,
       showError,
-      inputValue,
+      selectionOptions,
       strict,
       actions,
       onKeyDown,
       onClick,
       name,
+      multiple,
     },
     ref
   ) => {
@@ -89,21 +99,26 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
             `}
           `}
           options={options}
-          inputValue={inputValue}
-          setInputValue={setInputValue}
+          selectionOptions={selectionOptions}
+          setSelectionOptions={setSelectionOptions}
           placeholder={placeholder}
           clearable={clearable}
           strict={strict}
           onKeyDown={onKeyDown}
+          multiple={multiple}
         >
           {(props) => {
             return (
               <ComboboxDrawer
                 {...props}
+                refInput={props.ref}
+                selectionOptions={selectionOptions}
+                setSelectionOptions={setSelectionOptions}
                 highlightOnMatch={highlightOnMatch}
                 emptySlate={emptySlate}
                 actions={actions}
                 onClick={onClick}
+                multiple={multiple}
               />
             );
           }}
@@ -145,22 +160,33 @@ function ComboboxDrawer({
   options,
   refs,
   setHighlightedIndex,
-  setInputValue,
+  setSelectionOptions,
+  setSelectionOptionsLocal,
+  selectionOptionsLocal,
+  selectionOptions,
   setIsOpen,
-  inputValue,
   actions,
   onClick,
+  multiple,
   emptySlate = "Not Available.",
+  setHasInteracted,
+  refInput,
 }: ComboboxDrawerProps) {
   const [hasScrolled, setHasScrolled] = useState(false);
 
   const selectedIndex = useMemo(
-    () => options.findIndex((option) => option.value === inputValue.value),
-    [options, inputValue.value]
+    () =>
+      options.findIndex((option) => selectionOptions.includes(option.value)),
+    [options, selectionOptions]
   );
 
   useEffect(() => {
-    if (!hasScrolled && inputValue?.value != null && options.length > 0) {
+    if (
+      !hasScrolled &&
+      selectionOptions.length > 0 &&
+      !multiple &&
+      options.length > 0
+    ) {
       const selectedEl = listRef.current[selectedIndex];
       if (selectedEl) {
         requestAnimationFrame(() => {
@@ -180,6 +206,64 @@ function ComboboxDrawer({
       $width={refs.reference.current?.getBoundingClientRect().width}
       style={{ ...floatingStyles }}
     >
+      {multiple && (
+        <Fragment>
+          <Searchbox
+            ref={refInput}
+            autoComplete="off"
+            onKeyDown={(e) => {
+              if (e.key === "ArrowDown") {
+                setHighlightedIndex(
+                  highlightedIndex === null
+                    ? 0
+                    : Math.min(highlightedIndex + 1, options.length - 1)
+                );
+                e.preventDefault();
+              } else if (e.key === "ArrowUp") {
+                setHighlightedIndex(
+                  highlightedIndex === null
+                    ? options.length - 1
+                    : Math.max(highlightedIndex - 1, 0)
+                );
+                e.preventDefault();
+              } else if (e.key === "Enter") {
+                if (highlightedIndex !== null) {
+                  const selectedOption = options[highlightedIndex];
+                  if (multiple) {
+                    setSelectionOptions(
+                      selectionOptions.includes(selectedOption.value)
+                        ? selectionOptions.filter(
+                            (v) => v !== selectedOption.value
+                          )
+                        : [...selectionOptions, selectedOption.value]
+                    );
+                  } else {
+                    setSelectionOptions([selectedOption.value]);
+                  }
+                }
+                e.preventDefault();
+              }
+            }}
+            name="multiple"
+            value={selectionOptionsLocal.text}
+            containerStyle={css`
+              padding: 4px;
+              background-color: white;
+              position: sticky;
+              top: 0;
+              z-index: 30;
+            `}
+            onChange={(e) => {
+              const { value } = e.target;
+              setHasInteracted(true);
+              setSelectionOptionsLocal({
+                ...selectionOptionsLocal,
+                text: value,
+              });
+            }}
+          />
+        </Fragment>
+      )}
       {actions && (
         <ActionWrapper>
           {actions.map((data, index) => (
@@ -205,7 +289,7 @@ function ComboboxDrawer({
       )}
       {options.length > 0 ? (
         options.map((option, index) => {
-          const isSelected = option.value === inputValue.value;
+          const isSelected = selectionOptions.includes(option.value);
           const shouldHighlight =
             highlightOnMatch && isSelected ? true : highlightedIndex === index;
 
@@ -214,13 +298,22 @@ function ComboboxDrawer({
               key={option.value}
               id={`option-${index}`}
               role="option"
-              aria-selected={isSelected}
+              aria-selected={isSelected && !multiple}
               data-highlighted={shouldHighlight}
-              $selected={isSelected}
+              $selected={isSelected && !multiple}
               $highlighted={shouldHighlight}
-              onMouseDown={() => {
-                setInputValue(option);
-                setIsOpen(false);
+              onClick={() => {
+                if (multiple) {
+                  setSelectionOptions(
+                    selectionOptions.includes(option.value)
+                      ? selectionOptions.filter((val) => val !== option.value)
+                      : [...selectionOptions, option.value]
+                  );
+                } else {
+                  setIsOpen(false);
+                  setSelectionOptionsLocal(option);
+                  setSelectionOptions([option.value]);
+                }
                 onClick?.();
               }}
               onMouseEnter={() => setHighlightedIndex(index)}
@@ -228,6 +321,19 @@ function ComboboxDrawer({
                 listRef.current[index] = el;
               }}
             >
+              {multiple && (
+                <Checkbox
+                  iconStyle={css`
+                    width: 8px;
+                    height: 8px;
+                  `}
+                  inputStyle={css`
+                    width: 14px;
+                    height: 14px;
+                  `}
+                  checked={isSelected}
+                />
+              )}
               {option.text}
             </OptionItem>
           );
@@ -293,6 +399,11 @@ const Divider = styled.div`
 const OptionItem = styled.li<{ $selected?: boolean; $highlighted?: boolean }>`
   cursor: pointer;
   padding: 0.5rem 0.75rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+
   ${({ $highlighted }) => ($highlighted ? "background-color: #dbeafe;" : "")}
   ${({ $selected }) =>
     $selected
