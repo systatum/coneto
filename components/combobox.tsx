@@ -197,6 +197,17 @@ function ComboboxDrawer({
     }
   }, [selectedIndex]);
 
+  useEffect(() => {
+    if (highlightedIndex !== null && multiple) {
+      const el = listRef.current[highlightedIndex + (actions?.length || 0)];
+      if (el) {
+        el.scrollIntoView({ block: "center", inline: "nearest" });
+      }
+    }
+  }, [highlightedIndex]);
+
+  const combinedLength = (actions?.length ?? 0) + options.length;
+
   return (
     <DrawerWrapper
       {...getFloatingProps()}
@@ -213,35 +224,43 @@ function ComboboxDrawer({
             autoComplete="off"
             onKeyDown={(e) => {
               if (e.key === "ArrowDown") {
-                setHighlightedIndex(
-                  highlightedIndex === null
-                    ? 0
-                    : Math.min(highlightedIndex + 1, options.length - 1)
-                );
+                if (highlightedIndex === null) {
+                  setHighlightedIndex(0);
+                } else if (highlightedIndex < combinedLength - 1) {
+                  setHighlightedIndex(highlightedIndex + 1);
+                }
                 e.preventDefault();
               } else if (e.key === "ArrowUp") {
-                setHighlightedIndex(
-                  highlightedIndex === null
-                    ? options.length - 1
-                    : Math.max(highlightedIndex - 1, 0)
-                );
+                if (highlightedIndex === null) {
+                  setHighlightedIndex(0);
+                } else if (highlightedIndex > 0) {
+                  setHighlightedIndex(highlightedIndex - 1);
+                }
                 e.preventDefault();
               } else if (e.key === "Enter") {
                 if (highlightedIndex !== null) {
-                  const selectedOption = options[highlightedIndex];
-                  if (multiple) {
-                    setSelectionOptions(
-                      selectionOptions.includes(selectedOption.value)
-                        ? selectionOptions.filter(
-                            (v) => v !== selectedOption.value
-                          )
-                        : [...selectionOptions, selectedOption.value]
-                    );
+                  if (highlightedIndex < (actions?.length || 0)) {
+                    actions[highlightedIndex].onClick?.();
+                    setIsOpen(false);
                   } else {
-                    setSelectionOptions([selectedOption.value]);
+                    const optionIndex =
+                      highlightedIndex - (actions?.length || 0);
+                    const selectedOption = options[optionIndex];
+                    if (multiple) {
+                      setSelectionOptions(
+                        selectionOptions.includes(selectedOption.value)
+                          ? selectionOptions.filter(
+                              (v) => v !== selectedOption.value
+                            )
+                          : [...selectionOptions, selectedOption.value]
+                      );
+                    } else {
+                      setSelectionOptions([selectedOption.value]);
+                      setSelectionOptionsLocal(selectedOption);
+                      setIsOpen(false);
+                    }
                   }
                 }
-                e.preventDefault();
               }
             }}
             name="multiple"
@@ -252,6 +271,9 @@ function ComboboxDrawer({
               position: sticky;
               top: 0;
               z-index: 30;
+            `}
+            style={css`
+              height: 33px;
             `}
             onChange={(e) => {
               const { value } = e.target;
@@ -266,24 +288,33 @@ function ComboboxDrawer({
       )}
       {actions && (
         <ActionWrapper>
-          {actions.map((data, index) => (
-            <ActionItem
-              key={index}
-              onMouseEnter={() => setHighlightedIndex(null)}
-              onClick={() => {
-                data.onClick?.();
-                setIsOpen(false);
-              }}
-              $style={data.style}
-            >
-              <div>{data.title}</div>
-              {data.icon && (
-                <IconWrapper>
-                  <data.icon size={16} />
-                </IconWrapper>
-              )}
-            </ActionItem>
-          ))}
+          {actions.map((data, index) => {
+            const shouldHighlight = highlightedIndex === index;
+
+            return (
+              <ActionItem
+                key={index}
+                id={`action-${index}`}
+                ref={(el: HTMLLIElement) => {
+                  listRef.current[index] = el;
+                }}
+                $highlighted={shouldHighlight}
+                onMouseEnter={() => setHighlightedIndex(null)}
+                onClick={() => {
+                  data.onClick?.();
+                  setIsOpen(false);
+                }}
+                $style={data.style}
+              >
+                <div>{data.title}</div>
+                {data.icon && (
+                  <IconWrapper>
+                    <data.icon size={16} />
+                  </IconWrapper>
+                )}
+              </ActionItem>
+            );
+          })}
           <Divider aria-label="divider" />
         </ActionWrapper>
       )}
@@ -291,8 +322,9 @@ function ComboboxDrawer({
         options.map((option, index) => {
           const isSelected = selectionOptions.includes(option.value);
           const shouldHighlight =
-            highlightOnMatch && isSelected ? true : highlightedIndex === index;
-
+            highlightOnMatch && isSelected
+              ? true
+              : highlightedIndex === index + (actions?.length || 0);
           return (
             <OptionItem
               key={option.value}
@@ -302,13 +334,15 @@ function ComboboxDrawer({
               data-highlighted={shouldHighlight}
               $selected={isSelected && !multiple}
               $highlighted={shouldHighlight}
-              onClick={() => {
+              onMouseDown={(e) => {
+                e.preventDefault();
                 if (multiple) {
                   setSelectionOptions(
                     selectionOptions.includes(option.value)
                       ? selectionOptions.filter((val) => val !== option.value)
                       : [...selectionOptions, option.value]
                   );
+                  (refInput as RefObject<HTMLInputElement>)?.current?.focus();
                 } else {
                   setIsOpen(false);
                   setSelectionOptionsLocal(option);
@@ -316,9 +350,11 @@ function ComboboxDrawer({
                 }
                 onClick?.();
               }}
-              onMouseEnter={() => setHighlightedIndex(index)}
+              onMouseEnter={() =>
+                setHighlightedIndex(index + (actions?.length || 0))
+              }
               ref={(el) => {
-                listRef.current[index] = el;
+                listRef.current[index + (actions?.length || 0)] = el;
               }}
             >
               {multiple && (
@@ -365,7 +401,7 @@ const ActionWrapper = styled.div`
   width: 100%;
 `;
 
-const ActionItem = styled.div<{ $style?: CSSProp }>`
+const ActionItem = styled.li<{ $style?: CSSProp; $highlighted?: boolean }>`
   display: flex;
   flex-direction: row;
   position: relative;
@@ -374,6 +410,8 @@ const ActionItem = styled.div<{ $style?: CSSProp }>`
   cursor: pointer;
   padding: 0.5rem 0.75rem;
   gap: 0.5rem;
+
+  ${({ $highlighted }) => ($highlighted ? "background-color: #dbeafe;" : "")}
 
   &:hover {
     background-color: #dbeafe;
