@@ -134,6 +134,7 @@ export const Default: Story = {
           formValues={value}
           validationSchema={employeeSchema}
           onValidityChange={setIsFormValid}
+          autoFocusField="first_name"
           mode="onChange"
         />
 
