@@ -6,6 +6,7 @@ import {
   RefObject,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
@@ -49,7 +50,8 @@ export interface ComboboxActionProps {
 
 type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
   BaseComboboxProps & {
-    refInput?: Ref<HTMLInputElement>;
+    inputRef?: Ref<HTMLInputElement>;
+    handleKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
     selectionOptionsLocal: OptionsProps;
     setSelectionOptionsLocal: (value: OptionsProps) => void;
     setHasInteracted?: (value: boolean) => void;
@@ -106,12 +108,13 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
           strict={strict}
           onKeyDown={onKeyDown}
           multiple={multiple}
+          actions={actions}
         >
           {(props) => {
             return (
               <ComboboxDrawer
                 {...props}
-                refInput={props.ref}
+                inputRef={props.ref}
                 selectionOptions={selectionOptions}
                 setSelectionOptions={setSelectionOptions}
                 highlightOnMatch={highlightOnMatch}
@@ -170,23 +173,21 @@ function ComboboxDrawer({
   multiple,
   emptySlate = "Not Available.",
   setHasInteracted,
-  refInput,
+  inputRef,
+  handleKeyDown,
 }: ComboboxDrawerProps) {
   const [hasScrolled, setHasScrolled] = useState(false);
+  const floatingRef = useRef<HTMLUListElement>(null);
 
   const selectedIndex = useMemo(
     () =>
-      options.findIndex((option) => selectionOptions.includes(option.value)),
-    [options, selectionOptions]
+      options.findIndex((option) => selectionOptions.includes(option.value)) +
+      (actions?.length ?? 0),
+    [options, selectionOptions, actions]
   );
 
   useEffect(() => {
-    if (
-      !hasScrolled &&
-      selectionOptions.length > 0 &&
-      !multiple &&
-      options.length > 0
-    ) {
+    if (!hasScrolled && selectionOptions.length > 0 && options.length > 0) {
       const selectedEl = listRef.current[selectedIndex];
       if (selectedEl) {
         requestAnimationFrame(() => {
@@ -198,20 +199,38 @@ function ComboboxDrawer({
   }, [selectedIndex]);
 
   useEffect(() => {
-    if (highlightedIndex !== null && multiple) {
-      const el = listRef.current[highlightedIndex + (actions?.length || 0)];
-      if (el) {
-        el.scrollIntoView({ block: "center", inline: "nearest" });
+    if (highlightedIndex !== null && listRef.current[highlightedIndex]) {
+      const element = listRef.current[highlightedIndex];
+      const container = floatingRef.current;
+
+      if (element && container) {
+        const searchboxHeight = multiple ? 41 : 0;
+        const elementTop = element.offsetTop;
+        const containerScrollTop = container.scrollTop;
+        const containerHeight = container.clientHeight;
+
+        if (elementTop < containerScrollTop + searchboxHeight) {
+          container.scrollTop = elementTop - searchboxHeight;
+        } else if (
+          elementTop + element.clientHeight >
+          containerScrollTop + containerHeight
+        ) {
+          container.scrollTop =
+            elementTop + element.clientHeight - containerHeight;
+        }
       }
     }
-  }, [highlightedIndex]);
-
-  const combinedLength = (actions?.length ?? 0) + options.length;
+  }, [highlightedIndex, multiple]);
 
   return (
     <DrawerWrapper
       {...getFloatingProps()}
-      ref={refs.setFloating}
+      ref={(node) => {
+        if (typeof refs.setFloating === "function") {
+          refs.setFloating(node);
+        }
+        floatingRef.current = node;
+      }}
       id="combo-list"
       role="listbox"
       $width={refs.reference.current?.getBoundingClientRect().width}
@@ -220,56 +239,16 @@ function ComboboxDrawer({
       {multiple && (
         <Fragment>
           <Searchbox
-            ref={refInput}
+            ref={inputRef}
             autoComplete="off"
-            onKeyDown={(e) => {
-              if (e.key === "ArrowDown") {
-                if (highlightedIndex === null) {
-                  setHighlightedIndex(0);
-                } else if (highlightedIndex < combinedLength - 1) {
-                  setHighlightedIndex(highlightedIndex + 1);
-                }
-                e.preventDefault();
-              } else if (e.key === "ArrowUp") {
-                if (highlightedIndex === null) {
-                  setHighlightedIndex(0);
-                } else if (highlightedIndex > 0) {
-                  setHighlightedIndex(highlightedIndex - 1);
-                }
-                e.preventDefault();
-              } else if (e.key === "Enter") {
-                if (highlightedIndex !== null) {
-                  if (highlightedIndex < (actions?.length || 0)) {
-                    actions[highlightedIndex].onClick?.();
-                    setIsOpen(false);
-                  } else {
-                    const optionIndex =
-                      highlightedIndex - (actions?.length || 0);
-                    const selectedOption = options[optionIndex];
-                    if (multiple) {
-                      setSelectionOptions(
-                        selectionOptions.includes(selectedOption.value)
-                          ? selectionOptions.filter(
-                              (v) => v !== selectedOption.value
-                            )
-                          : [...selectionOptions, selectedOption.value]
-                      );
-                    } else {
-                      setSelectionOptions([selectedOption.value]);
-                      setSelectionOptionsLocal(selectedOption);
-                      setIsOpen(false);
-                    }
-                  }
-                }
-              }
-            }}
+            onKeyDown={handleKeyDown}
             name="multiple"
             value={selectionOptionsLocal.text}
             containerStyle={css`
-              padding: 4px;
-              background-color: white;
               position: sticky;
               top: 0;
+              padding: 4px;
+              background-color: white;
               z-index: 30;
             `}
             style={css`
@@ -286,6 +265,7 @@ function ComboboxDrawer({
           />
         </Fragment>
       )}
+
       {actions && (
         <ActionWrapper>
           {actions.map((data, index) => {
@@ -299,7 +279,7 @@ function ComboboxDrawer({
                   listRef.current[index] = el;
                 }}
                 $highlighted={shouldHighlight}
-                onMouseEnter={() => setHighlightedIndex(null)}
+                onMouseEnter={() => setHighlightedIndex(index)}
                 onClick={() => {
                   data.onClick?.();
                   setIsOpen(false);
@@ -342,7 +322,7 @@ function ComboboxDrawer({
                       ? selectionOptions.filter((val) => val !== option.value)
                       : [...selectionOptions, option.value]
                   );
-                  (refInput as RefObject<HTMLInputElement>)?.current?.focus();
+                  (inputRef as RefObject<HTMLInputElement>)?.current?.focus();
                 } else {
                   setIsOpen(false);
                   setSelectionOptionsLocal(option);
