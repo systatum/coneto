@@ -45,9 +45,11 @@ export interface SelectboxProps {
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
   onClick?: () => void;
   multiple?: boolean;
+  actions?: any[];
   children?: (
     props: DrawerProps & {
       options: OptionsProps[];
+      handleKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
       selectionOptionsLocal: OptionsProps;
       setSelectionOptionsLocal: (value: OptionsProps) => void;
       setHasInteracted?: (value: boolean) => void;
@@ -96,6 +98,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       onClick,
       selectboxStyle,
       multiple,
+      actions,
     },
     ref
   ) => {
@@ -156,41 +159,52 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       setIsOpen(value.length > 0);
       setHighlightedIndex(0);
     };
-
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
       onKeyDown?.(e);
-      if (!multiple) {
-        if (e.key === "ArrowDown") {
-          e.preventDefault();
-          if (!isOpen) setIsOpen(true);
-          setHighlightedIndex((prev) =>
-            Math.min(prev + 1, FILTERED_OPTIONS.length - 1)
-          );
-        } else if (e.key === "ArrowUp") {
-          e.preventDefault();
-          if (!isOpen) setIsOpen(true);
-          setHighlightedIndex((prev) => Math.max(prev - 1, 0));
-        } else if (e.key === "Enter") {
-          e.preventDefault();
-          const selected = FILTERED_OPTIONS[highlightedIndex];
-          if (selected) {
-            if (multiple) {
-              setSelectionOptions?.(
-                selectionOptions.includes(selected.value)
-                  ? selectionOptions.filter((val) => val !== selected.value)
-                  : [...selectionOptions, selected.value]
-              );
-            } else {
-              setSelectionOptions?.([selected.value]);
-              setSelectionOptionsLocal(selected);
-              setIsOpen(false);
-            }
-            setHasInteracted(false);
-          }
-        } else if (e.key === "Escape") {
-          setIsOpen(false);
-          setHasInteracted(false);
+
+      if (e.key === "ArrowDown") {
+        if (highlightedIndex < (actions?.length ?? 0) + options.length - 1) {
+          setHighlightedIndex(highlightedIndex + 1);
         }
+        if (!isOpen) setIsOpen(true);
+        e.preventDefault();
+      }
+      if (e.key === "ArrowUp") {
+        if (highlightedIndex > 0) {
+          setHighlightedIndex(highlightedIndex - 1);
+        }
+        if (!isOpen) setIsOpen(true);
+        e.preventDefault();
+      }
+      if (e.key === "Enter") {
+        if (highlightedIndex !== null) {
+          if (highlightedIndex < (actions?.length || 0)) {
+            actions?.[highlightedIndex]?.onClick?.();
+            setIsOpen(false);
+          } else {
+            const selectedOption =
+              FILTERED_OPTIONS[highlightedIndex - (actions?.length ?? 0)];
+
+            if (selectedOption) {
+              if (multiple) {
+                setSelectionOptions(
+                  selectionOptions.includes(selectedOption.value)
+                    ? selectionOptions.filter((v) => v !== selectedOption.value)
+                    : [...selectionOptions, selectedOption.value]
+                );
+              } else {
+                setSelectionOptions([selectedOption.value]);
+                setSelectionOptionsLocal(selectedOption);
+                setIsOpen(false);
+              }
+            }
+          }
+        }
+      }
+
+      if (e.key === "Escape") {
+        setIsOpen(false);
+        setHasInteracted(false);
       }
     };
 
@@ -215,6 +229,9 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
         role="combobox"
         $style={containerStyle}
         aria-expanded={isOpen}
+        onClick={() => {
+          if (multiple) inputRef.current?.focus();
+        }}
       >
         <Input
           $style={selectboxStyle}
@@ -233,14 +250,13 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
           type="text"
           value={inputValue}
           onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
+          onKeyDown={(e) => {
+            handleKeyDown(e);
+          }}
           readOnly={multiple}
           onFocus={() => {
             if (type === "calendar" || selectionOptionsLocal) setIsOpen(true);
             setIsFocused(true);
-          }}
-          onClick={() => {
-            if (multiple) inputRef.current?.focus();
           }}
           onBlur={() => {
             setIsFocused(false);
@@ -355,6 +371,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
             floatingStyles,
             listRef,
             setHasInteracted,
+            handleKeyDown,
             ref: multiple ? inputRef : undefined,
           })}
       </Container>
