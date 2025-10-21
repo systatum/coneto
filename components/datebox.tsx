@@ -1,12 +1,12 @@
 import { RiCalendar2Line } from "@remixicon/react";
-import { DrawerProps, Selectbox } from "./selectbox";
+import { DrawerProps, OptionsProps, Selectbox } from "./selectbox";
 import {
   Calendar,
   BaseCalendarProps,
   SelectabilityModeState,
 } from "./calendar";
 import styled, { css, CSSProp } from "styled-components";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 
 export type DateboxProps = BaseCalendarProps & {
   label?: string;
@@ -23,19 +23,23 @@ export type DateboxProps = BaseCalendarProps & {
 type CalendarDrawerProps = BaseCalendarProps &
   Partial<
     DrawerProps & {
+      selectionOptionsLocal?: OptionsProps;
+      setSelectionOptionsLocal?: (data: OptionsProps) => void;
       calendarFooter?: ReactNode;
       calendarTodayButtonCaption?: string;
       calendarSelectabilityMode?: SelectabilityModeState;
+      showError?: boolean;
     }
   >;
 
 function Datebox(props: DateboxProps) {
+  const { selectionOptions, errorMessage, ...rest } = props;
   return (
     <InputWrapper $disabled={props.disabled}>
       {props.label && <Label $style={props.labelStyle}>{props.label}</Label>}
       <InputContent>
         <Selectbox
-          {...props}
+          {...rest}
           selectboxStyle={css`
             ${props.selectboxStyle}
             ${props.showError &&
@@ -50,7 +54,11 @@ function Datebox(props: DateboxProps) {
           clearable
         >
           {(selectBoxProps) => (
-            <CalendarDrawer {...props} {...selectBoxProps} />
+            <CalendarDrawer
+              {...rest}
+              {...selectBoxProps}
+              selectionOptions={selectionOptions}
+            />
           )}
         </Selectbox>
         {props.showError && <ErrorText>{props.errorMessage}</ErrorText>}
@@ -90,12 +98,22 @@ const ErrorText = styled.span`
 `;
 
 function CalendarDrawer(props: CalendarDrawerProps) {
+  useEffect(() => {
+    if (props.selectionOptions.length > 0) {
+      props.setSelectionOptionsLocal({
+        text: props.selectionOptions?.[0],
+        value: props.selectionOptions?.[0],
+      });
+    }
+  }, [props.selectionOptions]);
+
   return (
     <CalendarWrapper
       {...(props.getFloatingProps?.() ?? {})}
       ref={props.refs?.setFloating ?? null}
       style={{
         ...(props.floatingStyles ?? {}),
+        borderColor: props.showError ? "#dc2626" : "",
       }}
       tabIndex={-1}
       role="listbox"
