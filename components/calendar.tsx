@@ -1,5 +1,4 @@
 import {
-  RemixiconComponentType,
   RiArrowLeftSLine,
   RiArrowRightSLine,
   RiCheckLine,
@@ -13,8 +12,8 @@ import styled, { css, CSSProp } from "styled-components";
 
 export interface BaseCalendarProps {
   options?: OptionsProps[];
-  inputValue?: OptionsProps;
-  setInputValue?: (data: OptionsProps) => void;
+  selectionOptions?: string[];
+  setSelectionOptions?: (data: string[]) => void;
   dayNames?: OptionsProps[];
   monthNames?: OptionsProps[];
   disableWeekend?: boolean;
@@ -39,14 +38,14 @@ type CalendarProps = BaseCalendarProps &
 
 interface CalendarStateProps {
   open: boolean;
-  month: OptionsProps;
-  year: OptionsProps;
+  month: string[];
+  year: string[];
 }
 
 type CustomChangeEvent = {
   target: {
     name: string;
-    value: OptionsProps;
+    value: string[];
   };
 };
 
@@ -55,35 +54,35 @@ export type DateBoxOpen = "open" | "month" | "year";
 export type SelectabilityModeState = "single" | "multiple" | "ranged";
 
 const DEFAULT_DAY_NAMES = [
-  { text: "Su", value: 1 },
-  { text: "Mo", value: 2 },
-  { text: "Tu", value: 3 },
-  { text: "We", value: 4 },
-  { text: "Th", value: 5 },
-  { text: "Fr", value: 6 },
-  { text: "Sa", value: 7 },
+  { text: "Su", value: "1" },
+  { text: "Mo", value: "2" },
+  { text: "Tu", value: "3" },
+  { text: "We", value: "4" },
+  { text: "Th", value: "5" },
+  { text: "Fr", value: "6" },
+  { text: "Sa", value: "7" },
 ];
 
 const DEFAULT_MONTH_NAMES = [
-  { text: "January", value: 1 },
-  { text: "February", value: 2 },
-  { text: "March", value: 3 },
-  { text: "April", value: 4 },
-  { text: "May", value: 5 },
-  { text: "June", value: 6 },
-  { text: "July", value: 7 },
-  { text: "August", value: 8 },
-  { text: "September", value: 9 },
-  { text: "October", value: 10 },
-  { text: "November", value: 11 },
-  { text: "December", value: 12 },
+  { text: "January", value: "1" },
+  { text: "February", value: "2" },
+  { text: "March", value: "3" },
+  { text: "April", value: "4" },
+  { text: "May", value: "5" },
+  { text: "June", value: "6" },
+  { text: "July", value: "7" },
+  { text: "August", value: "8" },
+  { text: "September", value: "9" },
+  { text: "October", value: "10" },
+  { text: "November", value: "11" },
+  { text: "December", value: "12" },
 ];
 
 function Calendar({
   highlightedIndex,
   setHighlightedIndex,
-  setInputValue,
-  inputValue,
+  setSelectionOptions,
+  selectionOptions,
   setIsOpen,
   floatingStyles,
   listRef,
@@ -105,38 +104,40 @@ function Calendar({
   selectabilityMode = "single",
 }: CalendarProps) {
   const stateDate = useMemo(() => {
-    const parsedDate = inputValue?.text
-      ? new Date(inputValue.text)
-      : new Date();
+    const parsedDate =
+      selectionOptions?.length > 0
+        ? new Date(selectionOptions?.[0])
+        : new Date();
     return isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
-  }, [inputValue?.text]);
+  }, [selectionOptions]);
 
   const [currentDate, setCurrentDate] = useState(stateDate);
 
   const today = new Date();
   const currentMonth = monthNames.find(
-    (data) => data.value === today.getMonth() + 1
+    (data) => Number(data.value) === today.getMonth() + 1
   );
   const currentYear = today.getFullYear();
 
   const [calendarState, setCalendarState] = useState<CalendarStateProps>({
     open: false,
-    month: currentMonth,
-    year: { text: String(currentYear), value: currentYear },
+    month: [String(currentMonth.value)],
+    year: [String(currentYear)],
   });
 
   const initialValueState = () => {
     if (disableWeekend && selectabilityMode === "ranged") {
-      const value = inputValue.text.split(", ");
+      const value = selectionOptions?.[0]?.split(", ") ?? [];
       const firstValue = value[0];
       const latestValue = value[value.length - 1];
 
       return `${firstValue}-${latestValue}`;
     }
-    return inputValue.text;
+    return selectionOptions?.[0] ?? "";
   };
 
-  const [inputValueLocal, setinputValueLocal] = useState(initialValueState());
+  const [selectionOptionsLocal, setSelectionOptionsLocal] =
+    useState(initialValueState());
 
   const [startPicked, setStartPicked] = useState<{
     picked: boolean;
@@ -163,18 +164,18 @@ function Calendar({
     handleChangeValueDate(name, value);
   };
 
-  const handleChangeValueDate = (name: string, value: OptionsProps) => {
+  const handleChangeValueDate = (name: string, value: string[]) => {
     setCalendarState((prev) => ({ ...prev, [name]: value }));
 
     if (name === "month") {
-      const monthIndex = Number(value.value) - 1;
+      const monthIndex = Number(value[0]) - 1;
       const dateMonth = new Date(currentDate.getFullYear(), monthIndex, 1);
       setCurrentDate(dateMonth);
       if (onCalendarPeriodChanged) {
         onCalendarPeriodChanged(dateMonth);
       }
     } else if (name === "year") {
-      const yearNumber = Number(value.value);
+      const yearNumber = Number(value[0]);
       if (!isNaN(yearNumber)) {
         const month = currentDate.getMonth();
         const day = Math.min(
@@ -215,7 +216,7 @@ function Calendar({
       { length: max.getFullYear() - min.getFullYear() + 1 },
       (_, i) => ({
         text: String(min.getFullYear() + i),
-        value: min.getFullYear() + i,
+        value: String(min.getFullYear() + i),
       })
     );
     return { yearOptions: years };
@@ -239,16 +240,8 @@ function Calendar({
     setHighlightedIndexChange(0);
     setCalendarState((prev) => ({
       ...prev,
-      month: {
-        text: prevMonth
-          .toLocaleString("default", { month: "short" })
-          .toUpperCase(),
-        value: prevMonth.getMonth() + 1,
-      },
-      year: {
-        text: prevMonth.getFullYear().toString(),
-        value: prevMonth.getFullYear(),
-      },
+      month: [String(prevMonth.getMonth() + 1)],
+      year: [prevMonth.getFullYear().toString()],
     }));
   };
 
@@ -260,16 +253,8 @@ function Calendar({
     setHighlightedIndexChange(0);
     setCalendarState((prev) => ({
       ...prev,
-      month: {
-        text: nextMonth
-          .toLocaleString("default", { month: "short" })
-          .toUpperCase(),
-        value: nextMonth.getMonth() + 1,
-      },
-      year: {
-        text: nextMonth.getFullYear().toString(),
-        value: nextMonth.getFullYear(),
-      },
+      month: [String(nextMonth.getMonth() + 1)],
+      year: [String(nextMonth.getFullYear())],
     }));
   };
 
@@ -278,24 +263,15 @@ function Calendar({
       onCalendarPeriodChanged(today);
     }
     setCurrentDate(today);
-    if (setInputValue) {
-      setInputValue({
-        text: formatDate(today, format),
-        value: formatDate(today, format),
-      });
+    if (setSelectionOptions) {
+      setSelectionOptions([formatDate(today, format)]);
     }
 
     setHighlightedIndexChange(0);
     setCalendarState((prev) => ({
       ...prev,
-      month: {
-        value: currentMonth.value,
-        text: currentMonth.text.toUpperCase(),
-      },
-      year: {
-        text: String(currentYear),
-        value: currentYear,
-      },
+      month: [String(currentMonth)],
+      year: [String(currentYear)],
     }));
   };
 
@@ -309,7 +285,7 @@ function Calendar({
     };
 
     if (selectabilityMode === "multiple") {
-      await setinputValueLocal((prev) => {
+      await setSelectionOptionsLocal((prev) => {
         const values = prev ? prev.split(", ") : [];
 
         if (e?.shiftKey && values.length > 0) {
@@ -344,17 +320,14 @@ function Calendar({
         }
 
         const finalValues = newValues.join(", ");
-        if (setInputValue) {
-          setInputValue({
-            text: finalValues,
-            value: finalValues,
-          });
+        if (setSelectionOptions) {
+          setSelectionOptions([finalValues]);
         }
 
         return finalValues;
       });
     } else if (selectabilityMode === "ranged") {
-      await setinputValueLocal((prev) => {
+      await setSelectionOptionsLocal((prev) => {
         const values = prev ? prev.split("-") : [];
         if (!startPicked.picked) {
           newValues = [formattedData];
@@ -406,11 +379,8 @@ function Calendar({
 
         const newValuesLocal = `${firstValueLocal}${latestValueLocal}`;
 
-        if (setInputValue) {
-          setInputValue({
-            text: finalValues,
-            value: finalValues,
-          });
+        if (setSelectionOptions) {
+          setSelectionOptions([finalValues]);
         }
 
         return newValuesLocal;
@@ -418,13 +388,10 @@ function Calendar({
     }
 
     if (selectabilityMode === "single") {
-      if (setInputValue) {
-        await setInputValue({
-          text: formatDate(date, format),
-          value: formatDate(date, format),
-        });
+      if (setSelectionOptions) {
+        await setSelectionOptions([formatDate(date, format)]);
       }
-      await setinputValueLocal(formatDate(date, format));
+      await setSelectionOptionsLocal(formatDate(date, format));
     }
 
     if (setIsOpen && selectabilityMode !== "single") {
@@ -451,8 +418,8 @@ function Calendar({
 
   // for automaticly change when prop added disable weekend and today it's weekend
   useEffect(() => {
-    if (inputValue?.text) {
-      const newDate = new Date(inputValue.text);
+    if (selectionOptions?.length > 0) {
+      const newDate = new Date(selectionOptions[0]);
       if (!isNaN(newDate.getTime())) {
         let validDate = newDate;
 
@@ -470,26 +437,23 @@ function Calendar({
         }
         setCurrentDate(validDate);
 
-        setinputValueLocal(formatDate(validDate, format));
+        setSelectionOptionsLocal(formatDate(validDate, format));
 
-        if (inputValue.text.length > 9) {
-          if (setInputValue) {
-            setInputValue({
-              text: formatDate(validDate, format),
-              value: formatDate(validDate, format),
-            });
+        if (selectionOptions[0].length > 9) {
+          if (setSelectionOptions) {
+            setSelectionOptions([formatDate(validDate, format)]);
           }
         }
       }
     }
-  }, [inputValue?.text, format]);
+  }, [selectionOptions?.[0], format]);
 
   const selectedDates = useMemo(() => {
-    if (!inputValueLocal) return [];
+    if (!selectionOptionsLocal) return [];
 
     switch (selectabilityMode) {
       case "ranged":
-        return inputValueLocal
+        return selectionOptionsLocal
           .split("-")
           .filter(Boolean)
           .map((dateStr) => {
@@ -499,7 +463,7 @@ function Calendar({
           .filter(Boolean);
 
       case "multiple":
-        return inputValueLocal
+        return selectionOptionsLocal
           .split(", ")
           .filter(Boolean)
           .map((dateStr) => {
@@ -510,13 +474,13 @@ function Calendar({
 
       case "single":
       default:
-        if (inputValueLocal) {
-          const date = new Date(inputValueLocal);
+        if (selectionOptionsLocal) {
+          const date = new Date(selectionOptionsLocal);
           return isNaN(date.getTime()) ? [] : [date];
         }
         return [];
     }
-  }, [inputValueLocal, selectabilityMode]);
+  }, [selectionOptionsLocal, selectabilityMode]);
 
   const inputElement: ReactElement = (
     <CalendarContainer
@@ -585,13 +549,13 @@ function Calendar({
               <Combobox
                 name="month"
                 options={monthNames}
-                inputValue={calendarState.month}
+                selectionOptions={calendarState.month}
                 placeholder={monthNames[0].text}
                 containerStyle={css`
                   min-width: 90px;
                   max-width: 90px;
                 `}
-                setInputValue={(value) => {
+                setSelectionOptions={(value) => {
                   onChangeValueDate({
                     target: { name: "month", value },
                   });
@@ -600,13 +564,13 @@ function Calendar({
               <Combobox
                 name="year"
                 options={yearOptions}
-                inputValue={calendarState.year}
+                selectionOptions={calendarState.year}
                 placeholder={String(currentYear)}
                 containerStyle={css`
                   min-width: 75px;
                   max-width: 75px;
                 `}
-                setInputValue={(value) => {
+                setSelectionOptions={(value) => {
                   onChangeValueDate({
                     target: { name: "year", value },
                   });
@@ -787,11 +751,11 @@ function Calendar({
                   date.getFullYear() === selected.getFullYear()
               );
             } else {
-              const selectedDate = inputValueLocal
-                ? new Date(inputValueLocal)
+              const selectedDate = selectionOptionsLocal
+                ? new Date(selectionOptionsLocal)
                 : new Date();
 
-              if (disableWeekend && !inputValueLocal) {
+              if (disableWeekend && !selectionOptionsLocal) {
                 const day = selectedDate.getDay();
                 if (day === 6) {
                   selectedDate.setDate(selectedDate.getDate() - 1);
