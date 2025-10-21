@@ -71,7 +71,7 @@ describe("Combobox", () => {
       context("when by clicking the item", () => {
         it("shows all options when opening the combobox", () => {
           cy.findByPlaceholderText("Select a fruit...").type("Apple").click();
-  
+
           const FRUIT_OPTIONS = [
             "Apple",
             "Banana",
@@ -81,10 +81,12 @@ describe("Combobox", () => {
             "Strawberry",
             "Watermelon",
           ];
-  
+
           cy.findByRole("option", { name: "Apple" }).click();
-  
-          cy.findByPlaceholderText("Select a fruit...").click();
+
+          cy.findByPlaceholderText("Select a fruit...").type(
+            "{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}"
+          );
           FRUIT_OPTIONS.forEach((data) =>
             cy.findByRole("option", { name: data }).should("be.visible")
           );
@@ -97,7 +99,7 @@ describe("Combobox", () => {
             .click()
             .type("Apple")
             .type("{enter}");
-  
+
           const FRUIT_OPTIONS = [
             "Apple",
             "Banana",
@@ -107,12 +109,48 @@ describe("Combobox", () => {
             "Strawberry",
             "Watermelon",
           ];
-  
-          cy.findByPlaceholderText("Select a fruit...").type("{downarrow}");
+
+          cy.findByPlaceholderText("Select a fruit...").type(
+            "{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}{downarrow}"
+          );
           FRUIT_OPTIONS.forEach((data) =>
             cy.findByRole("option", { name: data }).should("be.visible")
           );
-        });        
+        });
+      });
+    });
+  });
+
+  context("Multiple Selection", () => {
+    beforeEach(() => {
+      cy.visit(getIdContent("input-elements-combobox--multiple-selection"));
+    });
+
+    context("when click option", () => {
+      const FRUIT_OPTIONS = [
+        "Apple",
+        "Banana",
+        "Orange",
+        "Grape",
+        "Pineapple",
+        "Strawberry",
+        "Watermelon",
+      ];
+
+      it("should have multiple value", () => {
+        cy.findAllByPlaceholderText("Select a fruit...")
+          .eq(0)
+          .click()
+          .type("Apple{enter}{downarrow}{enter}", { force: true });
+        cy.get("input[type=checkbox]").eq(0).should("be.checked");
+        cy.get("input[type=checkbox]").eq(1).should("be.checked");
+        FRUIT_OPTIONS.map((data) => {
+          if (data === "Pineapple" || data === "Apple") {
+            cy.findByText(data).should("exist");
+          } else {
+            cy.findByText(data).should("not.exist");
+          }
+        });
       });
     });
   });
