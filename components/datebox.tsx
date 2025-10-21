@@ -61,7 +61,7 @@ function Datebox(props: DateboxProps) {
             />
           )}
         </Selectbox>
-        {props.showError && <ErrorText>{props.errorMessage}</ErrorText>}
+        {props.showError && <ErrorText>{errorMessage}</ErrorText>}
       </InputContent>
     </InputWrapper>
   );

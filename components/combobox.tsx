@@ -86,7 +86,6 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
     },
     ref
   ) => {
-    console.log(errorMessage);
     return (
       <ComboboxWrapper $style={containerStyle} aria-label={`combobox-${name}`}>
         {label && <Label $style={labelStyle}>{label}</Label>}

@@ -7,7 +7,7 @@ import {
   shift,
   useFloating,
 } from "@floating-ui/react";
-import { ReactNode, useEffect, useRef, useState } from "react";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
 import styled, { css, CSSProp } from "styled-components";
 
 export type TooltipProps = {

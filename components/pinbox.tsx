@@ -6,7 +6,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import styled, { css, CSSProp, keyframes } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
 
 interface PinboxProps {
   fontSize?: number;
@@ -62,7 +62,9 @@ function Pinbox({
 
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
   const [maskedIndices, setMaskedIndices] = useState<Set<number>>(new Set());
-  const maskTimeoutsRef = useRef<Map<number, NodeJS.Timeout>>(new Map());
+  const maskTimeoutsRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(
+    new Map()
+  );
 
   const moveToNextInput = (currentIndex: number) => {
     let nextIndex = currentIndex + 1;

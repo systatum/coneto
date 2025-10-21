@@ -1,7 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { ReactElement, useState } from "react";
 import { Calendar } from "./calendar";
-import { OptionsProps } from "./selectbox";
 import styled from "styled-components";
 
 const meta: Meta<typeof Calendar> = {

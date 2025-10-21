@@ -282,36 +282,6 @@ const StyledDescription = styled.p<StyleProp>`
   ${({ $style }) => $style}
 `;
 
-const StyledClose = styled.button<StyleProp>`
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  border: none;
-  background: transparent;
-  opacity: 0.7;
-  cursor: pointer;
-  padding: 0.25rem;
-  border-radius: 4px;
-  transition: opacity 0.2s;
-
-  &:hover {
-    opacity: 1;
-    background-color: #d1d5db;
-  }
-
-  &:focus {
-    outline: 2px solid #3b82f6;
-    outline-offset: 2px;
-  }
-
-  svg {
-    width: 1rem;
-    height: 1rem;
-  }
-
-  ${({ $style }) => $style}
-`;
-
 Dialog.Content = DialogContent;
 Dialog.Description = DialogDescription;
 Dialog.Footer = DialogFooter;

@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { OptionsProps, Selectbox } from "./selectbox";
-import { Ref, useState } from "react";
+import { useState } from "react";
 
 const meta: Meta<typeof Selectbox> = {
   title: "Input Elements/Selectbox",

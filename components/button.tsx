@@ -8,7 +8,6 @@ import {
 import { TipMenu, TipMenuItemProps, TipMenuItemVariantType } from "./tip-menu";
 import styled, { css, CSSProp } from "styled-components";
 import { createPortal } from "react-dom";
-import { color } from "framer-motion";
 
 export type ButtonVariants = {
   variant?:

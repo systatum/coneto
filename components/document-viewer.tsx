@@ -11,7 +11,6 @@ import {
 } from "react";
 import styled, { css, type CSSProp } from "styled-components";
 import { Combobox } from "./combobox";
-import { OptionsProps } from "./selectbox";
 import type { PDFDocumentProxy } from "pdfjs-dist";
 
 interface DocumentViewerProps {

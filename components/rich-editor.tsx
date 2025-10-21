@@ -1,4 +1,4 @@
-import {
+import React, {
   forwardRef,
   KeyboardEvent,
   ReactNode,
@@ -1657,7 +1657,7 @@ const preprocessMarkdown = (markdown: string) => {
       // Example:
       // "- item\nnext line" => "- item\n\nnext line"
       .replace(
-        /^(\s*(?:[\*\-\+]|\d+\.)\s+[^\n]+)\n(?![\s\*\-\+\d<\n])([^\n]+)/gm,
+        /^(\s*(?:[*\-+]|\d+\.)\s+[^\n]+)\n(?![\s*\-+\d<\n])([^\n]+)/gm,
         "$1\n\n$2"
       )
   );
