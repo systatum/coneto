@@ -159,21 +159,29 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       setIsOpen(value.length > 0);
       setHighlightedIndex(0);
     };
+
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
       onKeyDown?.(e);
 
+      const totalItems = (actions?.length ?? 0) + FILTERED_OPTIONS.length - 1;
+
+      if ((e.key === "ArrowDown" || e.key === "ArrowUp") && !isOpen) {
+        setIsOpen(true);
+        e.preventDefault();
+        return;
+      }
+
       if (e.key === "ArrowDown") {
-        if (highlightedIndex < (actions?.length ?? 0) + options.length - 1) {
+        if (highlightedIndex < totalItems) {
           setHighlightedIndex(highlightedIndex + 1);
         }
-        if (!isOpen) setIsOpen(true);
         e.preventDefault();
       }
+
       if (e.key === "ArrowUp") {
         if (highlightedIndex > 0) {
           setHighlightedIndex(highlightedIndex - 1);
         }
-        if (!isOpen) setIsOpen(true);
         e.preventDefault();
       }
       if (e.key === "Enter") {
