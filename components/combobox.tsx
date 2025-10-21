@@ -257,6 +257,7 @@ function ComboboxDrawer({
             onChange={(e) => {
               const { value } = e.target;
               setHasInteracted(true);
+              setHighlightedIndex(0);
               setSelectionOptionsLocal({
                 ...selectionOptionsLocal,
                 text: value,
