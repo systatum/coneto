@@ -102,9 +102,21 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
     },
     ref
   ) => {
-    const selectboxState = { text: "", value: "0" };
+    const initialState: OptionsProps = { text: "", value: "0" };
     const [selectionOptionsLocal, setSelectionOptionsLocal] =
-      useState<OptionsProps>(selectboxState);
+      useState<OptionsProps>(initialState);
+
+    useEffect(() => {
+      if (selectionOptions?.length > 0) {
+        setSelectionOptionsLocal({
+          text: String(selectionOptions[0]),
+          value: String(selectionOptions[0]),
+        });
+      } else {
+        setSelectionOptionsLocal(initialState);
+      }
+    }, [selectionOptions]);
+
     const [isOpen, setIsOpen] = useState(false);
     const [highlightedIndex, setHighlightedIndex] = useState<number | null>(0);
     const [hasInteracted, setHasInteracted] = useState(false);
