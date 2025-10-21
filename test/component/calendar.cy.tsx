@@ -1,30 +1,30 @@
 import { Calendar } from "./../../components/calendar";
 
 describe("Calendar ", () => {
-  const value = { text: "", value: "" };
+  const value = [];
 
   const MONTH_NAMES = [
-    { text: "JAN", value: 1 },
-    { text: "FEB", value: 2 },
-    { text: "MAR", value: 3 },
-    { text: "APR", value: 4 },
-    { text: "MAY", value: 5 },
-    { text: "JUN", value: 6 },
-    { text: "JUL", value: 7 },
-    { text: "AUG", value: 8 },
-    { text: "SEP", value: 9 },
-    { text: "OCT", value: 10 },
-    { text: "NOV", value: 11 },
-    { text: "DEC", value: 12 },
+    { text: "JAN", value: "1" },
+    { text: "FEB", value: "2" },
+    { text: "MAR", value: "3" },
+    { text: "APR", value: "4" },
+    { text: "MAY", value: "5" },
+    { text: "JUN", value: "6" },
+    { text: "JUL", value: "7" },
+    { text: "AUG", value: "8" },
+    { text: "SEP", value: "9" },
+    { text: "OCT", value: "10" },
+    { text: "NOV", value: "11" },
+    { text: "DEC", value: "12" },
   ];
 
   context("disable weekend", () => {
     context("when given", () => {
-      const valueWeekend = { text: "09/21/2025", value: "09/21/2025" };
+      const valueWeekend = ["09/21/2025"];
       it("renders weekend dates gray", () => {
         cy.mount(
           <Calendar
-            inputValue={valueWeekend}
+            selectionOptions={valueWeekend}
             monthNames={MONTH_NAMES}
             disableWeekend
           />
@@ -41,7 +41,7 @@ describe("Calendar ", () => {
         it("renders selected previous/next day", () => {
           cy.mount(
             <Calendar
-              inputValue={valueWeekend}
+              selectionOptions={valueWeekend}
               monthNames={MONTH_NAMES}
               disableWeekend
             />
@@ -63,7 +63,7 @@ describe("Calendar ", () => {
       it("not clickable", () => {
         cy.mount(
           <Calendar
-            inputValue={value}
+            selectionOptions={value}
             monthNames={MONTH_NAMES}
             disableWeekend
           />
@@ -83,7 +83,9 @@ describe("Calendar ", () => {
   context("today", () => {
     context("when clicked", () => {
       it("renders date with blue dot and color", () => {
-        cy.mount(<Calendar inputValue={value} monthNames={MONTH_NAMES} />);
+        cy.mount(
+          <Calendar selectionOptions={value} monthNames={MONTH_NAMES} />
+        );
         cy.findAllByLabelText("today-button").eq(0).click();
         const today = new Date().getDate();
         cy.get("li")
@@ -94,7 +96,9 @@ describe("Calendar ", () => {
       });
 
       it("renders today dot centered even after selecting another date", () => {
-        cy.mount(<Calendar inputValue={value} monthNames={MONTH_NAMES} />);
+        cy.mount(
+          <Calendar selectionOptions={value} monthNames={MONTH_NAMES} />
+        );
 
         const today = new Date();
         const tomorrow = new Date(today);
@@ -131,7 +135,9 @@ describe("Calendar ", () => {
   context("month/year", () => {
     context("when selecting", () => {
       it("renders changing month and year", () => {
-        cy.mount(<Calendar inputValue={value} monthNames={MONTH_NAMES} />);
+        cy.mount(
+          <Calendar selectionOptions={value} monthNames={MONTH_NAMES} />
+        );
         cy.findByLabelText("calendar-select-date").eq(0).click();
         cy.findByLabelText("combobox-month").click();
         cy.findByText("JAN").should("exist").click();
@@ -149,7 +155,7 @@ describe("Calendar ", () => {
 
         cy.mount(
           <Calendar
-            inputValue={value}
+            selectionOptions={value}
             monthNames={MONTH_NAMES}
             onCalendarPeriodChanged={onCalendarPeriodChanged}
           />
@@ -180,7 +186,7 @@ describe("Calendar ", () => {
         cy.mount(
           <Calendar
             todayButtonCaption="Present"
-            inputValue={value}
+            selectionOptions={value}
             monthNames={MONTH_NAMES}
           />
         );
