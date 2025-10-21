@@ -102,17 +102,15 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
     },
     ref
   ) => {
-    const initialState: OptionsProps = { text: "", value: "0" };
+    const initialState = options.find(
+      (opt) => opt.value === selectionOptions?.[0]
+    ) ?? { text: "", value: "0" };
+
     const [selectionOptionsLocal, setSelectionOptionsLocal] =
       useState<OptionsProps>(initialState);
 
     useEffect(() => {
       if (selectionOptions?.length > 0) {
-        setSelectionOptionsLocal({
-          text: String(selectionOptions[0]),
-          value: String(selectionOptions[0]),
-        });
-      } else {
         setSelectionOptionsLocal(initialState);
       }
     }, [selectionOptions]);
@@ -166,6 +164,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
             "/" +
             value.slice(4, 8);
         }
+        setSelectionOptions([value]);
       }
       setSelectionOptionsLocal({ ...selectionOptionsLocal, text: value });
       setIsOpen(value.length > 0);
@@ -180,7 +179,6 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       if ((e.key === "ArrowDown" || e.key === "ArrowUp") && !isOpen) {
         setIsOpen(true);
         e.preventDefault();
-        return;
       }
 
       if (e.key === "ArrowDown") {
@@ -197,6 +195,13 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
         e.preventDefault();
       }
       if (e.key === "Enter") {
+        if (!multiple) {
+          const matched = options.find(
+            (opt) => opt.text === selectionOptionsLocal.text
+          );
+          setHasInteracted(false);
+          setConfirmedValue(matched);
+        }
         if (highlightedIndex !== null) {
           if (highlightedIndex < (actions?.length || 0)) {
             actions?.[highlightedIndex]?.onClick?.();
@@ -208,7 +213,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
             if (selectedOption) {
               if (multiple) {
                 setSelectionOptions(
-                  selectionOptions.includes(selectedOption.value)
+                  selectionOptions?.includes(selectedOption.value)
                     ? selectionOptions.filter((v) => v !== selectedOption.value)
                     : [...selectionOptions, selectedOption.value]
                 );
@@ -235,7 +240,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
     }, [highlightedIndex, isOpen]);
 
     const contentMultiple = selectionOptions
-      .map((val) => options.find((o) => o.value === val)?.text)
+      ?.map((val) => options.find((o) => o.value === val)?.text)
       .filter(Boolean)
       .join(", ");
 
@@ -292,7 +297,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
                 setSelectionOptionsLocal(matched);
                 if (multiple) {
                   setSelectionOptions?.(
-                    selectionOptions.includes(matched.value)
+                    selectionOptions?.includes(matched.value)
                       ? selectionOptions.filter((val) => val !== matched.value)
                       : [...selectionOptions, matched.value]
                   );
@@ -303,7 +308,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
                 setSelectionOptionsLocal(confirmedValue);
                 if (multiple) {
                   setSelectionOptions?.(
-                    selectionOptions.includes(confirmedValue.value)
+                    selectionOptions?.includes(confirmedValue.value)
                       ? selectionOptions.filter(
                           (val) => val !== confirmedValue.value
                         )
@@ -326,7 +331,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
           $highlight={highlightOnMatch && FILTERED_ACTIVE}
         />
 
-        {clearable && selectionOptions.length !== 0 && (
+        {clearable && selectionOptions?.length !== 0 && (
           <>
             <ClearIcon
               onMouseEnter={() => setIsHovered(true)}
