@@ -204,7 +204,7 @@ function ComboboxDrawer({
       const container = floatingRef.current;
 
       if (element && container) {
-        const searchboxHeight = multiple ? 41 : 0;
+        const searchboxHeight = multiple ? 33 : 0;
         const elementTop = element.offsetTop;
         const containerScrollTop = container.scrollTop;
         const containerHeight = container.clientHeight;
@@ -257,6 +257,8 @@ function ComboboxDrawer({
               max-height: 33px;
               margin-top: 2px;
               margin-bottom: 4px;
+              padding-bottom: 7px;
+              padding-top: 7px;
             `}
             onChange={(e) => {
               const { value } = e.target;
