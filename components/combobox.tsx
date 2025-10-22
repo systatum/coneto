@@ -247,12 +247,16 @@ function ComboboxDrawer({
             containerStyle={css`
               position: sticky;
               top: 0;
-              padding: 4px;
               background-color: white;
               z-index: 30;
+              height: 33px;
+              padding-right: 3px;
+              padding-left: 3px;
             `}
             style={css`
-              height: 33px;
+              max-height: 33px;
+              margin-top: 2px;
+              margin-bottom: 4px;
             `}
             onChange={(e) => {
               const { value } = e.target;
