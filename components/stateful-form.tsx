@@ -1,7 +1,7 @@
 import { useForm, UseFormSetValue } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ZodTypeAny, TypeOf } from "zod";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useRef } from "react";
 import {
   Control,
   Controller,
@@ -61,6 +61,7 @@ interface StatefulFormProps<Z extends ZodTypeAny> {
   onChange?: (args: { currentState: any }) => void;
   containerStyle?: CSSProp;
   rowStyle?: CSSProp;
+  autoFocusField?: string;
 }
 
 export type FormFieldGroup = FormFieldProps | FormFieldProps[];
@@ -103,6 +104,7 @@ function StatefulForm<Z extends ZodTypeAny>({
   onChange,
   containerStyle,
   rowStyle,
+  autoFocusField,
 }: StatefulFormProps<Z>) {
   const handleFieldChange = (name: keyof TypeOf<Z>, value: FormValueType) => {
     onChange?.({ currentState: { [name]: value } });
@@ -179,6 +181,7 @@ function StatefulForm<Z extends ZodTypeAny>({
         errors={errors}
         setValue={setValue}
         onChange={handleFieldChange}
+        autoFocusField={autoFocusField}
         rowStyle={rowStyle}
         containerStyle={containerStyle}
         shouldShowError={(name) => shouldShowError(name as keyof TypeOf<Z>)}
@@ -200,6 +203,7 @@ interface FormFieldsProps<T extends FieldValues> {
   onChange?: (name: keyof T, value: FormValueType) => void;
   containerStyle?: CSSProp;
   rowStyle?: CSSProp;
+  autoFocusField?: string;
 }
 
 function FormFields<T extends FieldValues>({
@@ -215,7 +219,19 @@ function FormFields<T extends FieldValues>({
   onChange,
   containerStyle,
   rowStyle,
+  autoFocusField,
 }: FormFieldsProps<T>) {
+  const refs = useRef<Record<string, HTMLElement | null>>({});
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const el = refs.current[autoFocusField];
+      el?.focus?.();
+    }, 50);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <ContainerFormField $style={containerStyle}>
       {fields.map((group: FormFieldGroup, indexGroup: number) => {
@@ -249,6 +265,11 @@ function FormFields<T extends FieldValues>({
                         }
                       },
                     })}
+                    ref={(el) => {
+                      if (el) refs.current[field.name] = el;
+                      const { ref } = register(field.name as Path<T>);
+                      if (ref) ref(el);
+                    }}
                     showError={shouldShowError(field.name)}
                     labelStyle={
                       labelSize &&
@@ -287,6 +308,11 @@ function FormFields<T extends FieldValues>({
                         }
                       },
                     })}
+                    ref={(el) => {
+                      if (el) refs.current[field.name] = el;
+                      const { ref } = register(field.name as Path<T>);
+                      if (ref) ref(el);
+                    }}
                     showError={shouldShowError(field.name)}
                     labelStyle={
                       labelSize &&
@@ -318,6 +344,11 @@ function FormFields<T extends FieldValues>({
                         name={field.name}
                         placeholder={field.placeholder}
                         checked={controllerField.value ?? false}
+                        ref={(el) => {
+                          if (el) refs.current[field.name] = el;
+                          const { ref } = register(field.name as Path<T>);
+                          if (ref) ref(el);
+                        }}
                         labelStyle={
                           labelSize &&
                           css`
@@ -368,6 +399,11 @@ function FormFields<T extends FieldValues>({
                       <Phonebox
                         label={field.title}
                         value={controllerField.value}
+                        ref={(el) => {
+                          if (el) refs.current[field.name] = el;
+                          const { ref } = register(field.name as Path<T>);
+                          if (ref) ref(el);
+                        }}
                         placeholder={field.placeholder}
                         onChange={(
                           e:
@@ -416,6 +452,11 @@ function FormFields<T extends FieldValues>({
                         label={field.title}
                         required={field.required}
                         placeholder={field.placeholder}
+                        ref={(el) => {
+                          if (el) refs.current[field.name] = el;
+                          const { ref } = register(field.name as Path<T>);
+                          if (ref) ref(el);
+                        }}
                         labelStyle={
                           labelSize &&
                           css`
@@ -597,6 +638,11 @@ function FormFields<T extends FieldValues>({
                     key={index}
                     label={field.title}
                     placeholder={field.placeholder}
+                    ref={(el) => {
+                      if (el) refs.current[field.name] = el;
+                      const { ref } = register(field.name as Path<T>);
+                      if (ref) ref(el);
+                    }}
                     labelStyle={
                       labelSize &&
                       css`
@@ -639,6 +685,11 @@ function FormFields<T extends FieldValues>({
                         key={index}
                         label={field.title}
                         showError={shouldShowError(field.name)}
+                        ref={(el) => {
+                          if (el) refs.current[field.name] = el;
+                          const { ref } = register(field.name as Path<T>);
+                          if (ref) ref(el);
+                        }}
                         labelStyle={
                           labelSize &&
                           css`
@@ -684,6 +735,11 @@ function FormFields<T extends FieldValues>({
                         placeholder={field.placeholder}
                         label={field.title}
                         showError={shouldShowError(field.name)}
+                        ref={(el) => {
+                          if (el) refs.current[field.name] = el;
+                          const { ref } = register(field.name as Path<T>);
+                          if (ref) ref(el);
+                        }}
                         labelStyle={
                           labelSize &&
                           css`

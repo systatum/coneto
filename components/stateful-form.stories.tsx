@@ -16,7 +16,6 @@ import {
 import { BadgeProps } from "./badge";
 import { CountryCodeProps } from "./phonebox";
 import { css } from "styled-components";
-import { OptionsProps } from "./selectbox";
 import { CapsuleContentProps } from "./capsule";
 
 const meta: Meta<typeof StatefulForm> = {
@@ -135,6 +134,7 @@ export const Default: Story = {
           formValues={value}
           validationSchema={employeeSchema}
           onValidityChange={setIsFormValid}
+          autoFocusField="first_name"
           mode="onChange"
         />
 
@@ -657,7 +657,6 @@ export const AllCase: Story = {
         },
       },
     ];
-    console.log(value);
 
     return (
       <div
@@ -675,9 +674,11 @@ export const AllCase: Story = {
       >
         <StatefulForm
           onChange={({ currentState }) => {
+            const { chips, ...rest } = currentState;
+
             setValue((prev) => ({
               ...prev,
-              ...currentState,
+              ...rest,
             }));
           }}
           onValidityChange={setIsFormValid}
