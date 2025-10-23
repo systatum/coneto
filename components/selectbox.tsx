@@ -77,6 +77,7 @@ export interface DrawerProps {
 
 export interface OptionsProps {
   text: string;
+  display?: ReactNode;
   value: string;
 }
 
@@ -213,8 +214,8 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
             const selectedOption =
               FILTERED_OPTIONS[highlightedIndex - (actions?.length ?? 0)];
 
-            if (selectedOption) {
-              if (multiple) {
+            if (multiple) {
+              if (!selectionOptions.includes(selectedOption.value)) {
                 if (
                   !maxSelectableItems ||
                   selectionOptions.length < maxSelectableItems
@@ -223,18 +224,16 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
                     ...selectionOptions,
                     selectedOption.value,
                   ]);
-                } else {
-                  setSelectionOptions(
-                    selectionOptions.filter(
-                      (val) => val !== selectedOption.value
-                    )
-                  );
                 }
               } else {
-                setSelectionOptions([selectedOption.value]);
-                setSelectionOptionsLocal(selectedOption);
-                setIsOpen(false);
+                setSelectionOptions(
+                  selectionOptions.filter((val) => val !== selectedOption.value)
+                );
               }
+            } else {
+              setSelectionOptions([selectedOption.value]);
+              setSelectionOptionsLocal(selectedOption);
+              setIsOpen(false);
             }
           }
         }
