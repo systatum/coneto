@@ -339,7 +339,7 @@ export const WithDisplay: Story = {
       {
         text: "Apple",
         value: "1",
-        display: (
+        render: (
           <FruitDisplay
             title="Apple"
             description="A sweet red fruit often eaten raw or in pies."
@@ -349,7 +349,7 @@ export const WithDisplay: Story = {
       {
         text: "Banana",
         value: "2",
-        display: (
+        render: (
           <FruitDisplay
             title="Banana"
             description="A long yellow fruit that’s soft and sweet."
@@ -359,7 +359,7 @@ export const WithDisplay: Story = {
       {
         text: "Orange",
         value: "3",
-        display: (
+        render: (
           <FruitDisplay
             title="Orange"
             description="A juicy citrus fruit rich in vitamin C."
@@ -369,7 +369,7 @@ export const WithDisplay: Story = {
       {
         text: "Grape",
         value: "4",
-        display: (
+        render: (
           <FruitDisplay
             title="Grape"
             description="Small, round fruit used in snacks, juice, and wine."
@@ -379,7 +379,7 @@ export const WithDisplay: Story = {
       {
         text: "Pineapple",
         value: "5",
-        display: (
+        render: (
           <FruitDisplay
             title="Pineapple"
             description="A tropical fruit with sweet and tangy flavor."
@@ -389,7 +389,7 @@ export const WithDisplay: Story = {
       {
         text: "Strawberry",
         value: "6",
-        display: (
+        render: (
           <FruitDisplay
             title="Strawberry"
             description="A small red fruit, sweet and juicy."
@@ -399,7 +399,7 @@ export const WithDisplay: Story = {
       {
         text: "Watermelon",
         value: "7",
-        display: (
+        render: (
           <FruitDisplay
             title="Watermelon"
             description="A large green fruit with sweet pink flesh."
@@ -409,7 +409,7 @@ export const WithDisplay: Story = {
       {
         text: "Mango",
         value: "8",
-        display: (
+        render: (
           <FruitDisplay
             title="Mango"
             description="A tropical fruit with soft, sweet yellow-orange flesh."
@@ -419,7 +419,7 @@ export const WithDisplay: Story = {
       {
         text: "Blueberry",
         value: "9",
-        display: (
+        render: (
           <FruitDisplay
             title="Blueberry"
             description="A small round blue fruit, rich in antioxidants."
@@ -429,7 +429,7 @@ export const WithDisplay: Story = {
       {
         text: "Kiwi",
         value: "10",
-        display: (
+        render: (
           <FruitDisplay
             title="Kiwi"
             description="A brown fuzzy fruit with bright green sweet-tart flesh."
@@ -439,7 +439,7 @@ export const WithDisplay: Story = {
       {
         text: "Papaya",
         value: "11",
-        display: (
+        render: (
           <FruitDisplay
             title="Papaya"
             description="A tropical fruit with orange flesh and soft texture."
@@ -449,7 +449,7 @@ export const WithDisplay: Story = {
       {
         text: "Cherry",
         value: "12",
-        display: (
+        render: (
           <FruitDisplay
             title="Cherry"
             description="Small round red fruit, sweet or tart."
@@ -459,7 +459,7 @@ export const WithDisplay: Story = {
       {
         text: "Peach",
         value: "13",
-        display: (
+        render: (
           <FruitDisplay
             title="Peach"
             description="A soft, juicy fruit with fuzzy skin."
@@ -469,7 +469,7 @@ export const WithDisplay: Story = {
       {
         text: "Plum",
         value: "14",
-        display: (
+        render: (
           <FruitDisplay
             title="Plum"
             description="A small, sweet fruit with smooth skin."
@@ -479,7 +479,7 @@ export const WithDisplay: Story = {
       {
         text: "Guava",
         value: "15",
-        display: (
+        render: (
           <FruitDisplay
             title="Guava"
             description="A tropical fruit with pink or white flesh and strong aroma."
@@ -489,7 +489,7 @@ export const WithDisplay: Story = {
       {
         text: "Raspberry",
         value: "16",
-        display: (
+        render: (
           <FruitDisplay
             title="Raspberry"
             description="A small red berry, sweet and tart."
@@ -499,7 +499,7 @@ export const WithDisplay: Story = {
       {
         text: "Lychee",
         value: "17",
-        display: (
+        render: (
           <FruitDisplay
             title="Lychee"
             description="A small tropical fruit with sweet white flesh."
@@ -509,7 +509,7 @@ export const WithDisplay: Story = {
       {
         text: "Coconut",
         value: "18",
-        display: (
+        render: (
           <FruitDisplay
             title="Coconut"
             description="A tropical fruit with hard shell and sweet water/flesh."
@@ -519,7 +519,7 @@ export const WithDisplay: Story = {
       {
         text: "Pear",
         value: "19",
-        display: (
+        render: (
           <FruitDisplay
             title="Pear"
             description="A soft, sweet fruit with grainy texture."
@@ -529,7 +529,7 @@ export const WithDisplay: Story = {
       {
         text: "Pomegranate",
         value: "20",
-        display: (
+        render: (
           <FruitDisplay
             title="Pomegranate"
             description="A fruit with many juicy red seeds, sweet-tart flavor."

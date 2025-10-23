@@ -329,7 +329,7 @@ function ComboboxDrawer({
               data-highlighted={shouldHighlight}
               $selected={isSelected && !multiple}
               $highlighted={shouldHighlight}
-              $optionDisplay={!!option.display}
+              $optionDisplay={!!option?.render}
               onMouseDown={(e) => {
                 e.preventDefault();
                 if (multiple) {
@@ -373,7 +373,7 @@ function ComboboxDrawer({
                     height: 14px;
                   `}
                   containerStyle={css`
-                    ${option.display &&
+                    ${option?.render &&
                     css`
                       margin-top: 3px;
                     `}
@@ -381,7 +381,7 @@ function ComboboxDrawer({
                   checked={isSelected}
                 />
               )}
-              {option.display ? option.display : option.text}
+              {option?.render ? option?.render : option.text}
             </OptionItem>
           );
         })
