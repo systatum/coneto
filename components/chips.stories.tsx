@@ -8,11 +8,7 @@ import { RiAddBoxFill, RiCloseLine } from "@remixicon/react";
 import { Textbox } from "./textbox";
 import { Button } from "./button";
 import { Tooltip } from "./tooltip";
-import {
-  FormFieldProps,
-  StatefulForm,
-  StatefulOnChangeType,
-} from "./stateful-form";
+import { FormFieldProps, StatefulForm } from "./stateful-form";
 import z from "zod";
 import { OptionsProps } from "./selectbox";
 
@@ -834,9 +830,9 @@ export const CustomRenderer: Story = {
     );
 
     const EMPLOYEE_OPTIONS: OptionsProps[] = [
-      { text: "Organization Owner", value: 1 },
-      { text: "HR Manager", value: 2 },
-      { text: "Member", value: 3 },
+      { text: "Organization Owner", value: "1" },
+      { text: "HR Manager", value: "2" },
+      { text: "Member", value: "3" },
     ];
 
     const EMPLOYEE_FIELDS: FormFieldProps[] = [
