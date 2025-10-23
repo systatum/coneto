@@ -46,6 +46,7 @@ export interface SelectboxProps {
   onClick?: () => void;
   multiple?: boolean;
   actions?: any[];
+  maxSelectableItems?: number | undefined;
   children?: (
     props: DrawerProps & {
       options: OptionsProps[];
@@ -99,6 +100,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       selectboxStyle,
       multiple,
       actions,
+      maxSelectableItems,
     },
     ref
   ) => {
@@ -194,6 +196,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
         }
         e.preventDefault();
       }
+
       if (e.key === "Enter") {
         if (!multiple) {
           const matched = options.find(
@@ -212,11 +215,21 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
 
             if (selectedOption) {
               if (multiple) {
-                setSelectionOptions(
-                  selectionOptions?.includes(selectedOption.value)
-                    ? selectionOptions.filter((v) => v !== selectedOption.value)
-                    : [...selectionOptions, selectedOption.value]
-                );
+                if (
+                  !maxSelectableItems ||
+                  selectionOptions.length < maxSelectableItems
+                ) {
+                  setSelectionOptions([
+                    ...selectionOptions,
+                    selectedOption.value,
+                  ]);
+                } else {
+                  setSelectionOptions(
+                    selectionOptions.filter(
+                      (val) => val !== selectedOption.value
+                    )
+                  );
+                }
               } else {
                 setSelectionOptions([selectedOption.value]);
                 setSelectionOptionsLocal(selectedOption);
