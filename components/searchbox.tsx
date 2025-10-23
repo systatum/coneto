@@ -15,11 +15,15 @@ export interface SearchboxProps
   value?: string;
   style?: CSSProp;
   containerStyle?: CSSProp;
+  iconStyle?: CSSProp;
   onChange: (data: ChangeEvent<HTMLInputElement>) => void;
 }
 
 const Searchbox = forwardRef<HTMLInputElement, SearchboxProps>(
-  ({ name, value, onChange, style, containerStyle, ...props }, ref) => {
+  (
+    { name, value, onChange, style, containerStyle, iconStyle, ...props },
+    ref
+  ) => {
     const searchboxValue = value ? value : "";
     const [inputValueLocal, setInputValueLocal] = useState(searchboxValue);
 
@@ -35,7 +39,7 @@ const Searchbox = forwardRef<HTMLInputElement, SearchboxProps>(
         aria-label="textbox-search-wrapper"
         $style={containerStyle}
       >
-        <SearchIcon size={14} />
+        <SearchIcon $style={iconStyle} size={14} />
 
         <SearchboxInput
           ref={inputRef}
@@ -100,12 +104,14 @@ const SearchboxInput = styled.input<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
-const SearchIcon = styled(RiSearchLine)`
+const SearchIcon = styled(RiSearchLine)<{ $style?: CSSProp }>`
   position: absolute;
   top: 50%;
   left: 12px;
   transform: translateY(-50%);
   color: #9ca3af;
+
+  ${({ $style }) => $style}
 `;
 
 const ClearIcon = styled(RiCloseLine)`
