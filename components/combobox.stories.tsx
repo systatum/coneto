@@ -263,16 +263,6 @@ export const MultipleSelection: Story = {
     const [value1, setValue1] = useState<string[]>([]);
     const [value2, setValue2] = useState<string[]>([]);
 
-    const FRUIT_ACTIONS: ComboboxActionProps[] = [
-      {
-        title: "Add Fruit",
-        onClick: () => {
-          console.log(`New fruit added`);
-        },
-        icon: RiAddLine,
-      },
-    ];
-
     const FRUIT_OPTIONS = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
@@ -315,11 +305,10 @@ export const MultipleSelection: Story = {
           placeholder="Select a fruit..."
         />
         <Combobox
-          label="With Maximal Items"
+          label="Maximal 2 Items"
           multiple
           clearable
           maxSelectableItems={2}
-          actions={FRUIT_ACTIONS}
           selectionOptions={value2}
           options={FRUIT_OPTIONS}
           setSelectionOptions={setValue2}
