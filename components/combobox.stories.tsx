@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Combobox, ComboboxActionProps } from "./combobox";
 import { OptionsProps } from "./selectbox";
 import { RiAddLine } from "@remixicon/react";
+import styled from "styled-components";
 
 const meta: Meta<typeof Combobox> = {
   title: "Input Elements/Combobox",
@@ -329,3 +330,261 @@ export const MultipleSelection: Story = {
     );
   },
 };
+
+export const CustomDisplay: Story = {
+  render: () => {
+    const [value, setValue] = useState<string[]>([]);
+
+    const FRUIT_OPTIONS: OptionsProps[] = [
+      {
+        text: "Apple",
+        value: "1",
+        display: (
+          <FruitDisplay
+            title="Apple"
+            description="A sweet red fruit often eaten raw or in pies."
+          />
+        ),
+      },
+      {
+        text: "Banana",
+        value: "2",
+        display: (
+          <FruitDisplay
+            title="Banana"
+            description="A long yellow fruit that’s soft and sweet."
+          />
+        ),
+      },
+      {
+        text: "Orange",
+        value: "3",
+        display: (
+          <FruitDisplay
+            title="Orange"
+            description="A juicy citrus fruit rich in vitamin C."
+          />
+        ),
+      },
+      {
+        text: "Grape",
+        value: "4",
+        display: (
+          <FruitDisplay
+            title="Grape"
+            description="Small, round fruit used in snacks, juice, and wine."
+          />
+        ),
+      },
+      {
+        text: "Pineapple",
+        value: "5",
+        display: (
+          <FruitDisplay
+            title="Pineapple"
+            description="A tropical fruit with sweet and tangy flavor."
+          />
+        ),
+      },
+      {
+        text: "Strawberry",
+        value: "6",
+        display: (
+          <FruitDisplay
+            title="Strawberry"
+            description="A small red fruit, sweet and juicy."
+          />
+        ),
+      },
+      {
+        text: "Watermelon",
+        value: "7",
+        display: (
+          <FruitDisplay
+            title="Watermelon"
+            description="A large green fruit with sweet pink flesh."
+          />
+        ),
+      },
+      {
+        text: "Mango",
+        value: "8",
+        display: (
+          <FruitDisplay
+            title="Mango"
+            description="A tropical fruit with soft, sweet yellow-orange flesh."
+          />
+        ),
+      },
+      {
+        text: "Blueberry",
+        value: "9",
+        display: (
+          <FruitDisplay
+            title="Blueberry"
+            description="A small round blue fruit, rich in antioxidants."
+          />
+        ),
+      },
+      {
+        text: "Kiwi",
+        value: "10",
+        display: (
+          <FruitDisplay
+            title="Kiwi"
+            description="A brown fuzzy fruit with bright green sweet-tart flesh."
+          />
+        ),
+      },
+      {
+        text: "Papaya",
+        value: "11",
+        display: (
+          <FruitDisplay
+            title="Papaya"
+            description="A tropical fruit with orange flesh and soft texture."
+          />
+        ),
+      },
+      {
+        text: "Cherry",
+        value: "12",
+        display: (
+          <FruitDisplay
+            title="Cherry"
+            description="Small round red fruit, sweet or tart."
+          />
+        ),
+      },
+      {
+        text: "Peach",
+        value: "13",
+        display: (
+          <FruitDisplay
+            title="Peach"
+            description="A soft, juicy fruit with fuzzy skin."
+          />
+        ),
+      },
+      {
+        text: "Plum",
+        value: "14",
+        display: (
+          <FruitDisplay
+            title="Plum"
+            description="A small, sweet fruit with smooth skin."
+          />
+        ),
+      },
+      {
+        text: "Guava",
+        value: "15",
+        display: (
+          <FruitDisplay
+            title="Guava"
+            description="A tropical fruit with pink or white flesh and strong aroma."
+          />
+        ),
+      },
+      {
+        text: "Raspberry",
+        value: "16",
+        display: (
+          <FruitDisplay
+            title="Raspberry"
+            description="A small red berry, sweet and tart."
+          />
+        ),
+      },
+      {
+        text: "Lychee",
+        value: "17",
+        display: (
+          <FruitDisplay
+            title="Lychee"
+            description="A small tropical fruit with sweet white flesh."
+          />
+        ),
+      },
+      {
+        text: "Coconut",
+        value: "18",
+        display: (
+          <FruitDisplay
+            title="Coconut"
+            description="A tropical fruit with hard shell and sweet water/flesh."
+          />
+        ),
+      },
+      {
+        text: "Pear",
+        value: "19",
+        display: (
+          <FruitDisplay
+            title="Pear"
+            description="A soft, sweet fruit with grainy texture."
+          />
+        ),
+      },
+      {
+        text: "Pomegranate",
+        value: "20",
+        display: (
+          <FruitDisplay
+            title="Pomegranate"
+            description="A fruit with many juicy red seeds, sweet-tart flavor."
+          />
+        ),
+      },
+    ];
+
+    return (
+      <div
+        style={{
+          width: "256px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "8px",
+        }}
+      >
+        <Combobox
+          multiple
+          clearable
+          selectionOptions={value}
+          options={FRUIT_OPTIONS}
+          setSelectionOptions={setValue}
+          placeholder="Select a fruit..."
+        />
+      </div>
+    );
+  },
+};
+
+const FruitDisplay = ({ title, description }: FruitDisplayProps) => {
+  return (
+    <Container>
+      <Title>{title}</Title>
+      <Description>{description}</Description>
+    </Container>
+  );
+};
+interface FruitDisplayProps {
+  title: string;
+  description: string;
+}
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
+const Title = styled.span`
+  font-weight: 600;
+  font-size: 14px;
+`;
+
+const Description = styled.span`
+  font-size: 12px;
+  color: #555;
+`;
