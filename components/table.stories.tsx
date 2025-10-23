@@ -407,6 +407,228 @@ export const Appendable: Story = {
   },
 };
 
+export const WithOneAction: Story = {
+  render: () => {
+    const columns: ColumnTableProps[] = [
+      {
+        caption: "From",
+        sortable: true,
+        width: "40%",
+      },
+      {
+        caption: "Content",
+        sortable: true,
+        width: "60%",
+      },
+    ];
+
+    const generate20RandomSender = () => {
+      const names = [
+        "adam.h",
+        "alim.y",
+        "zuma.l",
+        "john.d",
+        "emma.s",
+        "mike.t",
+        "nina.b",
+        "ryan.k",
+        "sara.w",
+        "kevin.j",
+      ];
+      const domains = ["example.org", "mail.com", "test.net"];
+      const senders = [];
+
+      while (senders.length < 20) {
+        const name = names[Math.floor(Math.random() * names.length)];
+        const domain = domains[Math.floor(Math.random() * domains.length)];
+        const email = `${name}@${domain}`;
+        if (!senders.includes(email)) senders.push(email);
+      }
+
+      return senders;
+    };
+
+    const generate20RandomSubject = () => {
+      const subjects = [
+        "Hello",
+        "What's up",
+        "Yo!",
+        "Can we meet?",
+        "Help please",
+        "Project discussion",
+        "Quick question",
+        "Meeting reminder",
+        "Check this out",
+        "Weekend plan",
+        "Catch up?",
+        "Important update",
+        "Heads up",
+        "FYI",
+        "Urgent task",
+        "Proposal idea",
+        "Follow-up",
+        "Congrats!",
+        "Welcome!",
+        "Random thought",
+      ];
+      return subjects;
+    };
+
+    const generate20RandomLoremIpsum = () => {
+      const baseText = [
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent sodales dui nec ex commodo, nec volutpat quam viverra.",
+        "Suspendisse potenti. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
+        "Curabitur vitae nunc vel nisi egestas tempus. Sed feugiat sagittis orci, non iaculis justo fermentum ac.",
+        "Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Donec at orci non magna fermentum blandit.",
+        "Integer ac malesuada nulla. Cras ac nisl vel lectus hendrerit cursus. Duis volutpat eros a metus pretium varius.",
+      ];
+      return baseText;
+    };
+
+    const generate20RandomEmails = ({ senders, subjects, contents }) => {
+      const emails = [];
+      for (let i = 0; i < 20; i++) {
+        const from = senders[i % senders.length];
+        const subject = subjects[Math.floor(Math.random() * subjects.length)];
+        const content = contents[Math.floor(Math.random() * contents.length)];
+        emails.push({
+          from,
+          subject,
+          content,
+        });
+      }
+      return emails;
+    };
+
+    const emails = generate20RandomEmails({
+      senders: generate20RandomSender(),
+      subjects: generate20RandomSubject(),
+      contents: generate20RandomLoremIpsum(),
+    });
+
+    const [rows, setRows] = useState(emails);
+
+    const handleSortingRequested = ({
+      mode,
+      column,
+    }: {
+      mode: "asc" | "desc" | "original";
+      column: "from" | "content";
+    }) => {
+      if (mode === "original") {
+        setRows([...emails]);
+        return;
+      }
+
+      const sorted = [...rows].sort((a, b) => {
+        const aVal = a[column];
+        const bVal = b[column];
+        return typeof aVal === "string" && typeof bVal === "string"
+          ? mode === "asc"
+            ? aVal.localeCompare(bVal)
+            : bVal.localeCompare(aVal)
+          : 0;
+      });
+
+      setRows(sorted);
+    };
+
+    const handleItemsSelected = (data: string[]) => {
+      console.log("Selected rows:", data);
+    };
+
+    const TIP_MENU_ACTION = (
+      columnCaption: "from" | "content"
+    ): SubMenuListTableProps[] => {
+      return [
+        {
+          caption: "Sort Ascending",
+          icon: RiArrowUpSLine,
+          iconColor: "gray",
+          onClick: () => {
+            handleSortingRequested({ mode: "asc", column: columnCaption });
+          },
+        },
+        {
+          caption: "Sort Descending",
+          icon: RiArrowDownSLine,
+          iconColor: "gray",
+          onClick: () => {
+            handleSortingRequested({ mode: "desc", column: columnCaption });
+          },
+        },
+        {
+          caption: "Reset Sorting",
+          icon: RiRefreshLine,
+          iconColor: "gray",
+          onClick: () => {
+            handleSortingRequested({ mode: "original", column: columnCaption });
+          },
+        },
+      ];
+    };
+
+    const ROW_ACTION = (rowId: string): SubMenuListTableProps[] => {
+      return [
+        {
+          caption: "Delete",
+          icon: RiDeleteBin2Fill,
+          iconColor: "gray",
+          onClick: () => {
+            console.log(`${rowId} was deleted`);
+          },
+        },
+      ];
+    };
+
+    const handleFetchData = () => {
+      const moreEmails = generate20RandomEmails({
+        senders: generate20RandomSender(),
+        subjects: generate20RandomSubject(),
+        contents: generate20RandomLoremIpsum(),
+      });
+      setRows((prev) => [...prev, ...moreEmails]);
+    };
+
+    return (
+      <Table
+        selectable
+        tableRowContainerStyle={css`
+          max-height: 400px;
+        `}
+        columns={columns}
+        onItemsSelected={handleItemsSelected}
+        subMenuList={TIP_MENU_ACTION}
+        onLastRowReached={handleFetchData}
+        totalSelectedItemText={(n) => `${n} emails selected`}
+      >
+        {rows.map((rowValue, rowIndex) => (
+          <Table.Row
+            onClick={({ toggleCheckbox }) => {
+              console.log(
+                `Selected to this ${`${rowValue.from}-${rowValue.content}-${rowValue.subject}`}`
+              );
+              toggleCheckbox();
+            }}
+            key={rowIndex}
+            rowId={`${rowValue.from}-${rowValue.content}-${rowValue.subject}`}
+            actions={ROW_ACTION}
+          >
+            <Table.Row.Cell>{rowValue.from}</Table.Row.Cell>
+            <Table.Row.Cell
+              contentStyle={{
+                display: "block",
+              }}
+            >
+              <strong>{rowValue.subject}</strong> — {rowValue.content}
+            </Table.Row.Cell>
+          </Table.Row>
+        ))}
+      </Table>
+    );
+  },
+};
+
 export const SortableWithPagination: Story = {
   render: () => {
     const [page, setPage] = useState(1);

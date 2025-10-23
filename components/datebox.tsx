@@ -6,7 +6,7 @@ import {
   SelectabilityModeState,
 } from "./calendar";
 import styled, { css, CSSProp } from "styled-components";
-import { ReactNode, useEffect } from "react";
+import { forwardRef, ReactNode, useEffect } from "react";
 
 export type DateboxProps = BaseCalendarProps & {
   label?: string;
@@ -32,7 +32,7 @@ type CalendarDrawerProps = BaseCalendarProps &
     }
   >;
 
-function Datebox(props: DateboxProps) {
+const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
   const { selectionOptions, errorMessage, ...rest } = props;
   return (
     <InputWrapper $disabled={props.disabled}>
@@ -40,6 +40,7 @@ function Datebox(props: DateboxProps) {
       <InputContent>
         <Selectbox
           {...rest}
+          ref={ref}
           selectboxStyle={css`
             ${props.selectboxStyle}
             ${props.showError &&
@@ -65,7 +66,7 @@ function Datebox(props: DateboxProps) {
       </InputContent>
     </InputWrapper>
   );
-}
+});
 
 const InputWrapper = styled.div<{
   $containerStyle?: CSSProp;
