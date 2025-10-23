@@ -167,4 +167,38 @@ describe("Combobox", () => {
       });
     });
   });
+
+  context("With Display", () => {
+    beforeEach(() => {
+      cy.visit(getIdContent("input-elements-combobox--with-display"));
+    });
+
+    it("render the display", () => {
+      cy.findAllByPlaceholderText("Select a fruit...").eq(0).click();
+      cy.findByText("Apple").should("be.visible");
+      cy.findByText("A sweet red fruit often eaten raw or in pies.").should(
+        "be.visible"
+      );
+      cy.findByText("Banana").should("be.visible");
+      cy.findByText(/A long yellow fruit that.?s soft and sweet/).should(
+        "be.visible"
+      );
+    });
+
+    context("when click option", () => {
+      it("render the display with checked", () => {
+        cy.findAllByPlaceholderText("Select a fruit...").eq(0).click();
+        cy.findByText("Apple").should("be.visible");
+        cy.findByText("A sweet red fruit often eaten raw or in pies.")
+          .should("be.visible")
+          .click();
+        cy.findByText("Banana").should("be.visible");
+        cy.findByText(/A long yellow fruit that.?s soft and sweet/)
+          .should("be.visible")
+          .click();
+        cy.get("input[type=checkbox]").eq(0).should("be.checked");
+        cy.get("input[type=checkbox]").eq(1).should("be.checked");
+      });
+    });
+  });
 });
