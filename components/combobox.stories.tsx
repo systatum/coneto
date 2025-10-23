@@ -306,6 +306,7 @@ export const MultipleSelection: Story = {
         }}
       >
         <Combobox
+          label="Default"
           multiple
           clearable
           selectionOptions={value1}
@@ -314,8 +315,10 @@ export const MultipleSelection: Story = {
           placeholder="Select a fruit..."
         />
         <Combobox
+          label="With Maximal Items"
           multiple
           clearable
+          maxSelectableItems={2}
           actions={FRUIT_ACTIONS}
           selectionOptions={value2}
           options={FRUIT_OPTIONS}
