@@ -153,5 +153,18 @@ describe("Combobox", () => {
         });
       });
     });
+
+    context("with maximal items", () => {
+      it("should have multiple value", () => {
+        cy.findAllByPlaceholderText("Select a fruit...")
+          .eq(1)
+          .click()
+          .type("{downarrow}{enter}{downarrow}{enter}", { force: true });
+        cy.get("input[type=checkbox]").eq(0).should("be.checked");
+        cy.get("input[type=checkbox]").eq(1).should("be.checked");
+        cy.get("input[type=checkbox]").eq(2).should("not.be.checked");
+        cy.get("input[type=checkbox]").eq(3).should("not.be.checked");
+      });
+    });
   });
 });
