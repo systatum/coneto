@@ -39,6 +39,7 @@ interface BaseComboboxProps {
   actions?: ComboboxActionProps[];
   name?: string;
   multiple?: boolean;
+  maxSelectableItems?: number | undefined;
 }
 
 export interface ComboboxActionProps {
@@ -83,6 +84,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       onClick,
       name,
       multiple,
+      maxSelectableItems,
     },
     ref
   ) => {
@@ -108,6 +110,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
           strict={strict}
           onKeyDown={onKeyDown}
           multiple={multiple}
+          maxSelectableItems={maxSelectableItems}
           actions={actions}
         >
           {(props) => {
@@ -121,6 +124,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
                 emptySlate={emptySlate}
                 actions={actions}
                 onClick={onClick}
+                maxSelectableItems={maxSelectableItems}
                 multiple={multiple}
               />
             );
@@ -175,6 +179,7 @@ function ComboboxDrawer({
   setHasInteracted,
   inputRef,
   handleKeyDown,
+  maxSelectableItems,
 }: ComboboxDrawerProps) {
   const [hasScrolled, setHasScrolled] = useState(false);
   const floatingRef = useRef<HTMLUListElement>(null);
@@ -249,14 +254,17 @@ function ComboboxDrawer({
               top: 0;
               background-color: white;
               z-index: 30;
-              height: 33px;
-              padding-right: 3px;
-              padding-left: 3px;
+              height: 38px;
+              padding-right: 7px;
+              padding-left: 7px;
+            `}
+            iconStyle={css`
+              left: 16px;
             `}
             style={css`
-              max-height: 33px;
-              margin-top: 2px;
-              margin-bottom: 4px;
+              max-height: 35px;
+              margin-top: 7px;
+              margin-bottom: 7px;
               padding-bottom: 7px;
               padding-top: 7px;
             `}
@@ -324,11 +332,18 @@ function ComboboxDrawer({
               onMouseDown={(e) => {
                 e.preventDefault();
                 if (multiple) {
-                  setSelectionOptions(
-                    selectionOptions.includes(option.value)
-                      ? selectionOptions.filter((val) => val !== option.value)
-                      : [...selectionOptions, option.value]
-                  );
+                  if (!selectionOptions.includes(option.value)) {
+                    if (
+                      !maxSelectableItems ||
+                      selectionOptions.length < maxSelectableItems
+                    ) {
+                      setSelectionOptions([...selectionOptions, option.value]);
+                    }
+                  } else {
+                    setSelectionOptions(
+                      selectionOptions.filter((val) => val !== option.value)
+                    );
+                  }
                   (inputRef as RefObject<HTMLInputElement>)?.current?.focus();
                 } else {
                   setIsOpen(false);
