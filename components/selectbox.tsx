@@ -77,6 +77,7 @@ export interface DrawerProps {
 
 export interface OptionsProps {
   text: string;
+  display?: ReactNode;
   value: string;
 }
 
