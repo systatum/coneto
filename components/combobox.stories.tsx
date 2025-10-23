@@ -331,7 +331,7 @@ export const MultipleSelection: Story = {
   },
 };
 
-export const CustomDisplay: Story = {
+export const WithDisplay: Story = {
   render: () => {
     const [value, setValue] = useState<string[]>([]);
 

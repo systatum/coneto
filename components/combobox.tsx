@@ -329,6 +329,7 @@ function ComboboxDrawer({
               data-highlighted={shouldHighlight}
               $selected={isSelected && !multiple}
               $highlighted={shouldHighlight}
+              $optionDisplay={!!option.display}
               onMouseDown={(e) => {
                 e.preventDefault();
                 if (multiple) {
@@ -371,10 +372,16 @@ function ComboboxDrawer({
                     width: 14px;
                     height: 14px;
                   `}
+                  containerStyle={css`
+                    ${option.display &&
+                    css`
+                      margin-top: 3px;
+                    `}
+                  `}
                   checked={isSelected}
                 />
               )}
-              {option.text}
+              {option.display ? option.display : option.text}
             </OptionItem>
           );
         })
@@ -438,13 +445,25 @@ const Divider = styled.div`
   margin: 2px 0;
 `;
 
-const OptionItem = styled.li<{ $selected?: boolean; $highlighted?: boolean }>`
+const OptionItem = styled.li<{
+  $selected?: boolean;
+  $highlighted?: boolean;
+  $optionDisplay: boolean;
+}>`
   cursor: pointer;
   padding: 0.5rem 0.75rem;
   display: flex;
   flex-direction: row;
-  align-items: center;
   gap: 8px;
+
+  ${({ $optionDisplay }) =>
+    $optionDisplay
+      ? css`
+          align-items: start;
+        `
+      : css`
+          align-items: center;
+        `}
 
   ${({ $highlighted }) => ($highlighted ? "background-color: #dbeafe;" : "")}
   ${({ $selected }) =>
