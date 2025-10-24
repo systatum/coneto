@@ -113,10 +113,10 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       useState<OptionsProps>(initialState);
 
     useEffect(() => {
-      if (selectedOptions?.length > 0) {
+      if (selectedOptions?.length > 0 && !multiple) {
         setSelectedOptionsLocal(initialState);
       }
-    }, [selectedOptions]);
+    }, [selectedOptions, multiple]);
 
     const [isOpen, setIsOpen] = useState(false);
     const [highlightedIndex, setHighlightedIndex] = useState<number | null>(0);
@@ -266,6 +266,13 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
         role="combobox"
         $style={containerStyle}
         aria-expanded={isOpen}
+        onMouseDown={() => {
+          if (multiple)
+            setSelectedOptionsLocal({
+              text: "",
+              value: "",
+            });
+        }}
         onClick={() => {
           if (multiple) inputRef.current?.focus();
         }}
