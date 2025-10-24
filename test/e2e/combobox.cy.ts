@@ -50,6 +50,19 @@ describe("Combobox", () => {
         cy.findByText("Add Fruit").should("be.visible").click();
       });
     });
+
+    context("when pressing enter", () => {
+      it("should render action and trigger it", () => {
+        cy.findByPlaceholderText("Select a fruit...")
+          .as("input")
+          .type("{downarrow}{enter}");
+
+        cy.findByPlaceholderText("Select a fruit...").should(
+          "have.value",
+          "Apple"
+        );
+      });
+    });
   });
 
   context("Strict Value", () => {
@@ -117,6 +130,17 @@ describe("Combobox", () => {
             cy.findByRole("option", { name: data }).should("be.visible")
           );
         });
+
+        it("renders selected value", () => {
+          cy.findByPlaceholderText("Select a fruit...")
+            .click()
+            .type("Apple")
+            .type("{enter}");
+          cy.findByPlaceholderText("Select a fruit...").should(
+            "have.value",
+            "Apple"
+          );
+        });
       });
     });
   });
@@ -159,7 +183,7 @@ describe("Combobox", () => {
         cy.findAllByPlaceholderText("Select a fruit...")
           .eq(1)
           .click()
-          .type("{downarrow}{enter}{downarrow}{enter}", { force: true });
+          .type("{enter}{downarrow}{enter}", { force: true });
         cy.get("input[type=checkbox]").eq(0).should("be.checked");
         cy.get("input[type=checkbox]").eq(1).should("be.checked");
         cy.get("input[type=checkbox]").eq(2).should("not.be.checked");
