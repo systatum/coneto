@@ -251,12 +251,14 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       }
     }, [highlightedIndex, isOpen]);
 
-    const contentMultiple = selectedOptions
+    const multipleOptionsJoinedText = selectedOptions
       ?.map((val) => options.find((o) => o.value === val)?.text)
       .filter(Boolean)
       .join(", ");
 
-    const inputValue = multiple ? contentMultiple : selectedOptionsLocal.text;
+    const inputValue = multiple
+      ? multipleOptionsJoinedText
+      : selectedOptionsLocal.text;
 
     return (
       <Container
