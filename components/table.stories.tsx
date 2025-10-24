@@ -1595,15 +1595,6 @@ export const Draggable: Story = {
       ];
     };
 
-    function filteredRows(
-      rowNumber: number,
-      category: "group"
-    ): TableItemProps[];
-    function filteredRows(
-      rowNumber: number,
-      category: "simple"
-    ): TableItemSimpleProps[];
-
     function filteredRows(rowNumber: number, category?: TableCategoryState) {
       const { rows } = getRowsState(rowNumber, category);
       const { search } = getSearchState(rowNumber);
@@ -1698,7 +1689,6 @@ export const Draggable: Story = {
     };
 
     const onDragged = ({
-      id,
       oldPosition,
       newPosition,
       oldGroupId,
@@ -1706,7 +1696,6 @@ export const Draggable: Story = {
       rowNumber,
       category,
     }: {
-      id?: string;
       oldPosition: number;
       newPosition: number;
       oldGroupId: string;

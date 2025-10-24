@@ -11,7 +11,6 @@ import {
 } from "react";
 import styled, { css, type CSSProp } from "styled-components";
 import { Combobox } from "./combobox";
-import { OptionsProps } from "./selectbox";
 import type { PDFDocumentProxy } from "pdfjs-dist";
 
 interface DocumentViewerProps {
@@ -66,13 +65,13 @@ interface BoxStyleProps {
 }
 
 const SCALE_OPTIONS = [
-  { text: "75%", value: 75 },
-  { text: "100%", value: 100 },
-  { text: "110%", value: 110 },
-  { text: "120%", value: 120 },
-  { text: "130%", value: 130 },
-  { text: "140%", value: 140 },
-  { text: "150%", value: 150 },
+  { text: "75%", value: "75" },
+  { text: "100%", value: "100" },
+  { text: "110%", value: "110" },
+  { text: "120%", value: "120" },
+  { text: "130%", value: "130" },
+  { text: "140%", value: "140" },
+  { text: "150%", value: "150" },
 ];
 
 const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
@@ -96,10 +95,9 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
     const viewerRef = useRef<HTMLDivElement>(null);
 
     const [scale, setScale] = useState(initialZoom / 100);
-    const [scaleValue, setScaleValue] = useState<OptionsProps>({
-      text: `${String(initialZoom)}%`,
-      value: initialZoom,
-    });
+    const [scaleValue, setScaleValue] = useState<string[]>([
+      String(initialZoom),
+    ]);
 
     const [hoveredContentIndex, sethoveredContentIndex] = useState<
       number | null
@@ -356,12 +354,9 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
       return () => window.removeEventListener("resize", handleResize);
     }, [resizeCanvases]);
 
-    const handleScale = (e: OptionsProps) => {
-      setScaleValue({
-        text: e.text,
-        value: e.value,
-      });
-      const scalePosition = Number(e.value) / 100;
+    const handleScale = (e: string[]) => {
+      setScaleValue(e);
+      const scalePosition = Number(e[0]) / 100;
       preserveScrollPosition(scalePosition);
     };
 
@@ -495,8 +490,8 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
           <ComboboxWrapper>
             <Combobox
               strict
-              inputValue={scaleValue}
-              setInputValue={handleScale}
+              selectedOptions={scaleValue}
+              setSelectedOptions={handleScale}
               placeholder={zoomPlaceholderText}
               containerStyle={css`
                 width: 100px;

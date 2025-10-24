@@ -17,18 +17,14 @@ type Story = StoryObj<typeof Selectbox>;
 
 export const Default: Story = {
   render: () => {
-    const [value, setValue] = useState<OptionsProps>({
-      text: "",
-      value: 0,
-    });
+    const [value, setValue] = useState<string[]>([]);
 
     const SELECTBOX_DATA: OptionsProps[] = [
       {
         text: "Selectbox content default.",
-        value: 1,
+        value: "1",
       },
     ];
-
     return (
       <div
         style={{
@@ -37,19 +33,19 @@ export const Default: Story = {
       >
         <Selectbox
           options={SELECTBOX_DATA}
-          inputValue={value}
-          setInputValue={setValue}
+          selectedOptions={value}
+          setSelectedOptions={setValue}
           placeholder="click this place holder"
         >
           {(props) =>
             props.options.map((option, index) => {
-              const { style: _style, ...restProps } = props;
+              const { style: _style } = props;
 
               return (
                 <ul
                   key={index}
                   {...(props.getFloatingProps?.() ?? {})}
-                  ref={props.refs.setFloating ?? null}
+                  ref={props.refs.setFloating}
                   style={{
                     textAlign: "center",
                     width: "100%",
@@ -62,9 +58,9 @@ export const Default: Story = {
                   tabIndex={-1}
                   role="listbox"
                   aria-label="Calendar"
-                  {...restProps}
                   onClick={() => {
-                    props.setInputValue(option);
+                    setValue([option.value]);
+                    props.setSelectedOptionsLocal(option);
                     props.setIsOpen(false);
                   }}
                 >
@@ -81,15 +77,12 @@ export const Default: Story = {
 
 export const Clearable: Story = {
   render: () => {
-    const [value, setValue] = useState<OptionsProps>({
-      text: "",
-      value: 0,
-    });
+    const [value, setValue] = useState<string[]>([]);
 
     const SELECTBOX_DATA: OptionsProps[] = [
       {
         text: "Selectbox content with clearable.",
-        value: 1,
+        value: "1",
       },
     ];
 
@@ -97,14 +90,14 @@ export const Clearable: Story = {
       <div style={{ width: "256px" }}>
         <Selectbox
           options={SELECTBOX_DATA}
-          inputValue={value}
-          setInputValue={setValue}
+          selectedOptions={value}
+          setSelectedOptions={setValue}
           placeholder="click this place holder"
           clearable
         >
           {(props) =>
             props.options.map((option, index) => {
-              const { style: _style, ...restProps } = props;
+              const { style: _style } = props;
 
               return (
                 <ul
@@ -120,12 +113,12 @@ export const Clearable: Story = {
                     padding: "2.5rem",
                     ...(props.floatingStyles ?? {}),
                   }}
-                  {...restProps}
                   tabIndex={-1}
                   role="listbox"
                   aria-label="Calendar"
                   onClick={() => {
-                    props.setInputValue(option);
+                    setValue([option.value]);
+                    props.setSelectedOptionsLocal(option);
                     props.setIsOpen(false);
                   }}
                 >

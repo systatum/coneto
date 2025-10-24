@@ -3,7 +3,7 @@ import {
   ChangeEvent,
   forwardRef,
   InputHTMLAttributes,
-  useEffect,
+  useImperativeHandle,
   useRef,
   useState,
 } from "react";
@@ -15,30 +15,31 @@ export interface SearchboxProps
   value?: string;
   style?: CSSProp;
   containerStyle?: CSSProp;
+  iconStyle?: CSSProp;
   onChange: (data: ChangeEvent<HTMLInputElement>) => void;
 }
 
 const Searchbox = forwardRef<HTMLInputElement, SearchboxProps>(
-  ({ name, value, onChange, style, containerStyle, ...props }, ref) => {
+  (
+    { name, value, onChange, style, containerStyle, iconStyle, ...props },
+    ref
+  ) => {
     const searchboxValue = value ? value : "";
     const [inputValueLocal, setInputValueLocal] = useState(searchboxValue);
 
     const inputId = `textbox-${name}`;
     const inputRef = useRef<HTMLInputElement>(null);
 
-    const valueLengthChecker = inputValueLocal.length > 0;
+    useImperativeHandle(ref, () => inputRef.current!);
 
-    useEffect(() => {
-      inputRef.current?.focus();
-    }, []);
+    const valueLengthChecker = inputValueLocal.length > 0;
 
     return (
       <SearchboxWrapper
         aria-label="textbox-search-wrapper"
-        ref={ref}
         $style={containerStyle}
       >
-        <SearchIcon size={14} />
+        <SearchIcon $style={iconStyle} size={14} />
 
         <SearchboxInput
           ref={inputRef}
@@ -60,6 +61,7 @@ const Searchbox = forwardRef<HTMLInputElement, SearchboxProps>(
             aria-label="delete-input"
             size={14}
             onClick={() => {
+              inputRef.current?.focus();
               const event = {
                 target: {
                   name,
@@ -102,12 +104,14 @@ const SearchboxInput = styled.input<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
-const SearchIcon = styled(RiSearchLine)`
+const SearchIcon = styled(RiSearchLine)<{ $style?: CSSProp }>`
   position: absolute;
   top: 50%;
   left: 12px;
   transform: translateY(-50%);
   color: #9ca3af;
+
+  ${({ $style }) => $style}
 `;
 
 const ClearIcon = styled(RiCloseLine)`

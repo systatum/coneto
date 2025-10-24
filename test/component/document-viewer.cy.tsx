@@ -98,15 +98,20 @@ describe("Document Viewer", () => {
 
         cy.findAllByLabelText("container-content")
           .eq(0)
-          .trigger("mousemove", { clientX: 100, clientY: 100 });
+          .trigger("mousemove", { clientX: 100, clientY: 100, force: true });
 
         cy.findAllByLabelText("container-content")
           .eq(0)
-          .trigger("mousedown", { clientX: 100, clientY: 100, button: 0 });
+          .trigger("mousedown", {
+            clientX: 100,
+            clientY: 100,
+            button: 0,
+            force: true,
+          });
 
         cy.findAllByLabelText("container-content")
           .eq(0)
-          .trigger("mousemove", { clientX: 150, clientY: 150 });
+          .trigger("mousemove", { clientX: 150, clientY: 150, force: true });
       });
     });
   });

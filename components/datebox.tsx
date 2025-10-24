@@ -1,12 +1,12 @@
 import { RiCalendar2Line } from "@remixicon/react";
-import { DrawerProps, Selectbox } from "./selectbox";
+import { DrawerProps, OptionsProps, Selectbox } from "./selectbox";
 import {
   Calendar,
   BaseCalendarProps,
   SelectabilityModeState,
 } from "./calendar";
 import styled, { css, CSSProp } from "styled-components";
-import { forwardRef, ReactNode } from "react";
+import { forwardRef, ReactNode, useEffect } from "react";
 
 export type DateboxProps = BaseCalendarProps & {
   label?: string;
@@ -23,19 +23,23 @@ export type DateboxProps = BaseCalendarProps & {
 type CalendarDrawerProps = BaseCalendarProps &
   Partial<
     DrawerProps & {
+      selectedOptionsLocal?: OptionsProps;
+      setSelectedOptionsLocal?: (data: OptionsProps) => void;
       calendarFooter?: ReactNode;
       calendarTodayButtonCaption?: string;
       calendarSelectabilityMode?: SelectabilityModeState;
+      showError?: boolean;
     }
   >;
 
 const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
+  const { selectedDates, errorMessage, ...rest } = props;
   return (
     <InputWrapper $disabled={props.disabled}>
       {props.label && <Label $style={props.labelStyle}>{props.label}</Label>}
       <InputContent>
         <Selectbox
-          {...props}
+          {...rest}
           ref={ref}
           selectboxStyle={css`
             ${props.selectboxStyle}
@@ -51,10 +55,14 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
           clearable
         >
           {(selectBoxProps) => (
-            <CalendarDrawer {...props} {...selectBoxProps} />
+            <CalendarDrawer
+              {...rest}
+              {...selectBoxProps}
+              selectedDates={selectedDates}
+            />
           )}
         </Selectbox>
-        {props.showError && <ErrorText>{props.errorMessage}</ErrorText>}
+        {props.showError && <ErrorText>{errorMessage}</ErrorText>}
       </InputContent>
     </InputWrapper>
   );
@@ -91,12 +99,22 @@ const ErrorText = styled.span`
 `;
 
 function CalendarDrawer(props: CalendarDrawerProps) {
+  useEffect(() => {
+    if (props.selectedDates.length > 0) {
+      props.setSelectedOptionsLocal({
+        text: props.selectedDates?.[0],
+        value: props.selectedDates?.[0],
+      });
+    }
+  }, [props.selectedDates]);
+
   return (
     <CalendarWrapper
       {...(props.getFloatingProps?.() ?? {})}
       ref={props.refs?.setFloating ?? null}
       style={{
         ...(props.floatingStyles ?? {}),
+        borderColor: props.showError ? "#dc2626" : "",
       }}
       tabIndex={-1}
       role="listbox"

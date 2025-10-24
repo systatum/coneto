@@ -1,7 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { ReactElement, useState } from "react";
 import { Datebox } from "./datebox";
-import { OptionsProps } from "./selectbox";
 import { Messagebox } from "./messagebox";
 
 const meta: Meta<typeof Datebox> = {
@@ -20,34 +19,31 @@ type Story = StoryObj<typeof Datebox>;
 export const Default: Story = {
   render: () => {
     const DAY_NAMES = [
-      { text: "Su", value: 1 },
-      { text: "Mo", value: 2 },
-      { text: "Tu", value: 3 },
-      { text: "We", value: 4 },
-      { text: "Th", value: 5 },
-      { text: "Fr", value: 6 },
-      { text: "Sa", value: 7 },
+      { text: "Su", value: "1" },
+      { text: "Mo", value: "2" },
+      { text: "Tu", value: "3" },
+      { text: "We", value: "4" },
+      { text: "Th", value: "5" },
+      { text: "Fr", value: "6" },
+      { text: "Sa", value: "7" },
     ];
 
     const MONTH_NAMES = [
-      { text: "JAN", value: 1 },
-      { text: "FEB", value: 2 },
-      { text: "MAR", value: 3 },
-      { text: "APR", value: 4 },
-      { text: "MAY", value: 5 },
-      { text: "JUN", value: 6 },
-      { text: "JUL", value: 7 },
-      { text: "AUG", value: 8 },
-      { text: "SEP", value: 9 },
-      { text: "OCT", value: 10 },
-      { text: "NOV", value: 11 },
-      { text: "DEC", value: 12 },
+      { text: "JAN", value: "1" },
+      { text: "FEB", value: "2" },
+      { text: "MAR", value: "3" },
+      { text: "APR", value: "4" },
+      { text: "MAY", value: "5" },
+      { text: "JUN", value: "6" },
+      { text: "JUL", value: "7" },
+      { text: "AUG", value: "8" },
+      { text: "SEP", value: "9" },
+      { text: "OCT", value: "10" },
+      { text: "NOV", value: "11" },
+      { text: "DEC", value: "12" },
     ];
 
-    const [, setValue] = useState<OptionsProps>({
-      text: "",
-      value: 0,
-    });
+    const [value, setValue] = useState<string[]>([]);
 
     return (
       <div
@@ -57,7 +53,8 @@ export const Default: Story = {
       >
         <Datebox
           options={DAY_NAMES}
-          setInputValue={setValue}
+          selectedDates={value}
+          setSelectedDates={setValue}
           dayNames={DAY_NAMES}
           monthNames={MONTH_NAMES}
         />
@@ -69,34 +66,31 @@ export const Default: Story = {
 export const NoWeekends: Story = {
   render: () => {
     const DAY_NAMES = [
-      { text: "Su", value: 1 },
-      { text: "Mo", value: 2 },
-      { text: "Tu", value: 3 },
-      { text: "We", value: 4 },
-      { text: "Th", value: 5 },
-      { text: "Fr", value: 6 },
-      { text: "Sa", value: 7 },
+      { text: "Su", value: "1" },
+      { text: "Mo", value: "2" },
+      { text: "Tu", value: "3" },
+      { text: "We", value: "4" },
+      { text: "Th", value: "5" },
+      { text: "Fr", value: "6" },
+      { text: "Sa", value: "7" },
     ];
 
     const MONTH_NAMES = [
-      { text: "JAN", value: 1 },
-      { text: "FEB", value: 2 },
-      { text: "MAR", value: 3 },
-      { text: "APR", value: 4 },
-      { text: "MAY", value: 5 },
-      { text: "JUN", value: 6 },
-      { text: "JUL", value: 7 },
-      { text: "AUG", value: 8 },
-      { text: "SEP", value: 9 },
-      { text: "OCT", value: 10 },
-      { text: "NOV", value: 11 },
-      { text: "DEC", value: 12 },
+      { text: "JAN", value: "1" },
+      { text: "FEB", value: "2" },
+      { text: "MAR", value: "3" },
+      { text: "APR", value: "4" },
+      { text: "MAY", value: "5" },
+      { text: "JUN", value: "6" },
+      { text: "JUL", value: "7" },
+      { text: "AUG", value: "8" },
+      { text: "SEP", value: "9" },
+      { text: "OCT", value: "10" },
+      { text: "NOV", value: "11" },
+      { text: "DEC", value: "12" },
     ];
 
-    const [, setValue] = useState<OptionsProps>({
-      text: "",
-      value: 0,
-    });
+    const [value, setValue] = useState<string[]>([]);
 
     return (
       <div
@@ -106,7 +100,8 @@ export const NoWeekends: Story = {
       >
         <Datebox
           options={DAY_NAMES}
-          setInputValue={setValue}
+          selectedDates={value}
+          setSelectedDates={setValue}
           dayNames={DAY_NAMES}
           monthNames={MONTH_NAMES}
           disableWeekend
@@ -119,34 +114,31 @@ export const NoWeekends: Story = {
 export const Multiple: Story = {
   render: () => {
     const DAY_NAMES = [
-      { text: "Su", value: 1 },
-      { text: "Mo", value: 2 },
-      { text: "Tu", value: 3 },
-      { text: "We", value: 4 },
-      { text: "Th", value: 5 },
-      { text: "Fr", value: 6 },
-      { text: "Sa", value: 7 },
+      { text: "Su", value: "1" },
+      { text: "Mo", value: "2" },
+      { text: "Tu", value: "3" },
+      { text: "We", value: "4" },
+      { text: "Th", value: "5" },
+      { text: "Fr", value: "6" },
+      { text: "Sa", value: "7" },
     ];
 
     const MONTH_NAMES = [
-      { text: "JAN", value: 1 },
-      { text: "FEB", value: 2 },
-      { text: "MAR", value: 3 },
-      { text: "APR", value: 4 },
-      { text: "MAY", value: 5 },
-      { text: "JUN", value: 6 },
-      { text: "JUL", value: 7 },
-      { text: "AUG", value: 8 },
-      { text: "SEP", value: 9 },
-      { text: "OCT", value: 10 },
-      { text: "NOV", value: 11 },
-      { text: "DEC", value: 12 },
+      { text: "JAN", value: "1" },
+      { text: "FEB", value: "2" },
+      { text: "MAR", value: "3" },
+      { text: "APR", value: "4" },
+      { text: "MAY", value: "5" },
+      { text: "JUN", value: "6" },
+      { text: "JUL", value: "7" },
+      { text: "AUG", value: "8" },
+      { text: "SEP", value: "9" },
+      { text: "OCT", value: "10" },
+      { text: "NOV", value: "11" },
+      { text: "DEC", value: "12" },
     ];
 
-    const [, setValue] = useState<OptionsProps>({
-      text: "",
-      value: 0,
-    });
+    const [value, setValue] = useState<string[]>([]);
 
     return (
       <div
@@ -156,7 +148,8 @@ export const Multiple: Story = {
       >
         <Datebox
           options={DAY_NAMES}
-          setInputValue={setValue}
+          selectedDates={value}
+          setSelectedDates={setValue}
           dayNames={DAY_NAMES}
           monthNames={MONTH_NAMES}
           calendarSelectabilityMode="multiple"
@@ -169,34 +162,31 @@ export const Multiple: Story = {
 export const MultipleNoWeekends: Story = {
   render: () => {
     const DAY_NAMES = [
-      { text: "Su", value: 1 },
-      { text: "Mo", value: 2 },
-      { text: "Tu", value: 3 },
-      { text: "We", value: 4 },
-      { text: "Th", value: 5 },
-      { text: "Fr", value: 6 },
-      { text: "Sa", value: 7 },
+      { text: "Su", value: "1" },
+      { text: "Mo", value: "2" },
+      { text: "Tu", value: "3" },
+      { text: "We", value: "4" },
+      { text: "Th", value: "5" },
+      { text: "Fr", value: "6" },
+      { text: "Sa", value: "7" },
     ];
 
     const MONTH_NAMES = [
-      { text: "JAN", value: 1 },
-      { text: "FEB", value: 2 },
-      { text: "MAR", value: 3 },
-      { text: "APR", value: 4 },
-      { text: "MAY", value: 5 },
-      { text: "JUN", value: 6 },
-      { text: "JUL", value: 7 },
-      { text: "AUG", value: 8 },
-      { text: "SEP", value: 9 },
-      { text: "OCT", value: 10 },
-      { text: "NOV", value: 11 },
-      { text: "DEC", value: 12 },
+      { text: "JAN", value: "1" },
+      { text: "FEB", value: "2" },
+      { text: "MAR", value: "3" },
+      { text: "APR", value: "4" },
+      { text: "MAY", value: "5" },
+      { text: "JUN", value: "6" },
+      { text: "JUL", value: "7" },
+      { text: "AUG", value: "8" },
+      { text: "SEP", value: "9" },
+      { text: "OCT", value: "10" },
+      { text: "NOV", value: "11" },
+      { text: "DEC", value: "12" },
     ];
 
-    const [, setValue] = useState<OptionsProps>({
-      text: "",
-      value: 0,
-    });
+    const [value, setValue] = useState<string[]>([]);
 
     return (
       <div
@@ -206,7 +196,8 @@ export const MultipleNoWeekends: Story = {
       >
         <Datebox
           options={DAY_NAMES}
-          setInputValue={setValue}
+          selectedDates={value}
+          setSelectedDates={setValue}
           dayNames={DAY_NAMES}
           monthNames={MONTH_NAMES}
           calendarSelectabilityMode="multiple"
@@ -220,34 +211,31 @@ export const MultipleNoWeekends: Story = {
 export const Ranged: Story = {
   render: () => {
     const DAY_NAMES = [
-      { text: "Su", value: 1 },
-      { text: "Mo", value: 2 },
-      { text: "Tu", value: 3 },
-      { text: "We", value: 4 },
-      { text: "Th", value: 5 },
-      { text: "Fr", value: 6 },
-      { text: "Sa", value: 7 },
+      { text: "Su", value: "1" },
+      { text: "Mo", value: "2" },
+      { text: "Tu", value: "3" },
+      { text: "We", value: "4" },
+      { text: "Th", value: "5" },
+      { text: "Fr", value: "6" },
+      { text: "Sa", value: "7" },
     ];
 
     const MONTH_NAMES = [
-      { text: "JAN", value: 1 },
-      { text: "FEB", value: 2 },
-      { text: "MAR", value: 3 },
-      { text: "APR", value: 4 },
-      { text: "MAY", value: 5 },
-      { text: "JUN", value: 6 },
-      { text: "JUL", value: 7 },
-      { text: "AUG", value: 8 },
-      { text: "SEP", value: 9 },
-      { text: "OCT", value: 10 },
-      { text: "NOV", value: 11 },
-      { text: "DEC", value: 12 },
+      { text: "JAN", value: "1" },
+      { text: "FEB", value: "2" },
+      { text: "MAR", value: "3" },
+      { text: "APR", value: "4" },
+      { text: "MAY", value: "5" },
+      { text: "JUN", value: "6" },
+      { text: "JUL", value: "7" },
+      { text: "AUG", value: "8" },
+      { text: "SEP", value: "9" },
+      { text: "OCT", value: "10" },
+      { text: "NOV", value: "11" },
+      { text: "DEC", value: "12" },
     ];
 
-    const [, setValue] = useState<OptionsProps>({
-      text: "",
-      value: 0,
-    });
+    const [value, setValue] = useState<string[]>([]);
 
     return (
       <div
@@ -257,7 +245,8 @@ export const Ranged: Story = {
       >
         <Datebox
           options={DAY_NAMES}
-          setInputValue={setValue}
+          selectedDates={value}
+          setSelectedDates={setValue}
           dayNames={DAY_NAMES}
           monthNames={MONTH_NAMES}
           calendarSelectabilityMode="ranged"
@@ -270,34 +259,31 @@ export const Ranged: Story = {
 export const RangedNoWeekends: Story = {
   render: () => {
     const DAY_NAMES = [
-      { text: "Su", value: 1 },
-      { text: "Mo", value: 2 },
-      { text: "Tu", value: 3 },
-      { text: "We", value: 4 },
-      { text: "Th", value: 5 },
-      { text: "Fr", value: 6 },
-      { text: "Sa", value: 7 },
+      { text: "Su", value: "1" },
+      { text: "Mo", value: "2" },
+      { text: "Tu", value: "3" },
+      { text: "We", value: "4" },
+      { text: "Th", value: "5" },
+      { text: "Fr", value: "6" },
+      { text: "Sa", value: "7" },
     ];
 
     const MONTH_NAMES = [
-      { text: "JAN", value: 1 },
-      { text: "FEB", value: 2 },
-      { text: "MAR", value: 3 },
-      { text: "APR", value: 4 },
-      { text: "MAY", value: 5 },
-      { text: "JUN", value: 6 },
-      { text: "JUL", value: 7 },
-      { text: "AUG", value: 8 },
-      { text: "SEP", value: 9 },
-      { text: "OCT", value: 10 },
-      { text: "NOV", value: 11 },
-      { text: "DEC", value: 12 },
+      { text: "JAN", value: "1" },
+      { text: "FEB", value: "2" },
+      { text: "MAR", value: "3" },
+      { text: "APR", value: "4" },
+      { text: "MAY", value: "5" },
+      { text: "JUN", value: "6" },
+      { text: "JUL", value: "7" },
+      { text: "AUG", value: "8" },
+      { text: "SEP", value: "9" },
+      { text: "OCT", value: "10" },
+      { text: "NOV", value: "11" },
+      { text: "DEC", value: "12" },
     ];
 
-    const [, setValue] = useState<OptionsProps>({
-      text: "",
-      value: 0,
-    });
+    const [value, setValue] = useState<string[]>([]);
 
     return (
       <div
@@ -307,7 +293,8 @@ export const RangedNoWeekends: Story = {
       >
         <Datebox
           options={DAY_NAMES}
-          setInputValue={setValue}
+          selectedDates={value}
+          setSelectedDates={setValue}
           dayNames={DAY_NAMES}
           monthNames={MONTH_NAMES}
           calendarSelectabilityMode="ranged"
@@ -321,34 +308,31 @@ export const RangedNoWeekends: Story = {
 export const WithFooter: Story = {
   render: () => {
     const DAY_NAMES = [
-      { text: "Su", value: 1 },
-      { text: "Mo", value: 2 },
-      { text: "Tu", value: 3 },
-      { text: "We", value: 4 },
-      { text: "Th", value: 5 },
-      { text: "Fr", value: 6 },
-      { text: "Sa", value: 7 },
+      { text: "Su", value: "1" },
+      { text: "Mo", value: "2" },
+      { text: "Tu", value: "3" },
+      { text: "We", value: "4" },
+      { text: "Th", value: "5" },
+      { text: "Fr", value: "6" },
+      { text: "Sa", value: "7" },
     ];
 
     const MONTH_NAMES = [
-      { text: "JAN", value: 1 },
-      { text: "FEB", value: 2 },
-      { text: "MAR", value: 3 },
-      { text: "APR", value: 4 },
-      { text: "MAY", value: 5 },
-      { text: "JUN", value: 6 },
-      { text: "JUL", value: 7 },
-      { text: "AUG", value: 8 },
-      { text: "SEP", value: 9 },
-      { text: "OCT", value: 10 },
-      { text: "NOV", value: 11 },
-      { text: "DEC", value: 12 },
+      { text: "JAN", value: "1" },
+      { text: "FEB", value: "2" },
+      { text: "MAR", value: "3" },
+      { text: "APR", value: "4" },
+      { text: "MAY", value: "5" },
+      { text: "JUN", value: "6" },
+      { text: "JUL", value: "7" },
+      { text: "AUG", value: "8" },
+      { text: "SEP", value: "9" },
+      { text: "OCT", value: "10" },
+      { text: "NOV", value: "11" },
+      { text: "DEC", value: "12" },
     ];
 
-    const [, setValue] = useState<OptionsProps>({
-      text: "",
-      value: 0,
-    });
+    const [value, setValue] = useState<string[]>([]);
 
     const footerContent: ReactElement = (
       <Messagebox variant="primary" title="No weekends">
@@ -371,7 +355,8 @@ export const WithFooter: Story = {
       >
         <Datebox
           options={DAY_NAMES}
-          setInputValue={setValue}
+          selectedDates={value}
+          setSelectedDates={setValue}
           dayNames={DAY_NAMES}
           monthNames={MONTH_NAMES}
           disableWeekend

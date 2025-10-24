@@ -1,6 +1,5 @@
 import { RiArrowLeftSLine, RiArrowRightSLine } from "@remixicon/react";
 import { Combobox } from "./combobox";
-import { OptionsProps } from "./selectbox";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { clamp } from "./../lib/math";
@@ -24,10 +23,7 @@ function Pagination({
   buttonStyle,
   comboboxStyle,
 }: PaginationProps) {
-  const [currentPageLocal, setCurrentPageLocal] = useState<OptionsProps>({
-    text: currentPage.toString(),
-    value: currentPage,
-  });
+  const [currentPageLocal, setCurrentPageLocal] = useState<string[]>([]);
 
   const currentPageNumber = currentPage;
   const comboboxPagesNumber = totalPages - 3;
@@ -36,8 +32,8 @@ function Pagination({
     if (currentPageNumber > 1) {
       const newValue = currentPage - 1;
       onPageChange(newValue);
-      if (currentPage < 49) {
-        setCurrentPageLocal({ value: newValue, text: newValue.toString() });
+      if (currentPage < totalPages) {
+        setCurrentPageLocal([String(newValue)]);
       }
     }
   };
@@ -47,14 +43,14 @@ function Pagination({
       const newValue = currentPage + 1;
       onPageChange(newValue);
       if (currentPage < comboboxPagesNumber) {
-        setCurrentPageLocal({ value: newValue, text: newValue.toString() });
+        setCurrentPageLocal([String(newValue)]);
       }
     }
   };
 
   useEffect(() => {
     const safePage = clamp(currentPage, 1, comboboxPagesNumber);
-    setCurrentPageLocal({ value: safePage, text: safePage.toString() });
+    setCurrentPageLocal([String(safePage)]);
   }, []);
 
   return (
@@ -111,9 +107,9 @@ const PaginationItem = ({
 }: {
   totalPages: number;
   currentPage: number;
-  currentPageLocal: OptionsProps;
+  currentPageLocal: string[];
   onPageChange: (page: number) => void;
-  setCurrentPageLocal: (page: OptionsProps) => void;
+  setCurrentPageLocal: (page: string[]) => void;
   comboboxPagesNumber?: number;
   buttonStyle?: CSSProp;
   comboboxStyle?: CSSProp;
@@ -139,9 +135,9 @@ const PaginationItem = ({
       ? Array.from({ length: totalPages }, (_, i) => i + 1)
       : [];
 
-  const formatOption = (page: string | number) => ({
+  const formatOption = (page: string) => ({
     value: page,
-    text: page.toString(),
+    text: page,
   });
 
   return (
@@ -150,10 +146,10 @@ const PaginationItem = ({
         <>
           <Combobox
             highlightOnMatch={highlightOnMatch}
-            options={comboBoxPages.map(formatOption)}
-            inputValue={currentPageLocal}
-            setInputValue={(val) => {
-              onPageChange(Number(val.value));
+            options={comboBoxPages.map((data) => formatOption(String(data)))}
+            selectedOptions={currentPageLocal}
+            setSelectedOptions={(val) => {
+              onPageChange(Number(val[0]));
               setCurrentPageLocal(val);
             }}
             selectboxStyle={comboboxStyle}
@@ -172,8 +168,8 @@ const PaginationItem = ({
                 key={page}
                 onClick={() => {
                   onPageChange(page);
-                  if (Number(currentPageLocal.value) > comboboxPagesNumber) {
-                    setCurrentPageLocal(formatOption(page));
+                  if (Number(currentPageLocal[0]) > comboboxPagesNumber) {
+                    setCurrentPageLocal([String(page)]);
                   }
                 }}
                 isActive={isActive}
@@ -193,7 +189,7 @@ const PaginationItem = ({
                 key={page}
                 onClick={() => {
                   onPageChange(page);
-                  setCurrentPageLocal(formatOption(page));
+                  setCurrentPageLocal([String(page)]);
                 }}
                 isActive={isActive}
               >

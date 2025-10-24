@@ -17,6 +17,7 @@ import { BadgeProps } from "./badge";
 import { CountryCodeProps } from "./phonebox";
 import { css } from "styled-components";
 import { CapsuleContentProps } from "./capsule";
+import { OptionsProps } from "./selectbox";
 
 const meta: Meta<typeof StatefulForm> = {
   title: "Input Elements/StatefulForm",
@@ -166,14 +167,14 @@ export const AllCase: Story = {
       throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
     }
 
-    const FRUIT_OPTIONS = [
-      { text: "Apple", value: 1 },
-      { text: "Banana", value: 2 },
-      { text: "Orange", value: 3 },
-      { text: "Grape", value: 4 },
-      { text: "Pineapple", value: 5 },
-      { text: "Strawberry", value: 6 },
-      { text: "Watermelon", value: 7 },
+    const FRUIT_OPTIONS: OptionsProps[] = [
+      { text: "Apple", value: "1" },
+      { text: "Banana", value: "2" },
+      { text: "Orange", value: "3" },
+      { text: "Grape", value: "4" },
+      { text: "Pineapple", value: "5" },
+      { text: "Strawberry", value: "6" },
+      { text: "Watermelon", value: "7" },
     ];
 
     const BADGE_OPTIONS: BadgeProps[] = [
@@ -232,14 +233,8 @@ export const AllCase: Story = {
         selectedOptions: BadgeProps[];
       };
       color: string;
-      combo: {
-        text: string;
-        value: number | string;
-      };
-      date: {
-        text: string;
-        value?: number | string;
-      };
+      combo: string[];
+      date: string[];
       file_drop_box?: File[];
       file: File | undefined;
       image: File | undefined;
@@ -265,14 +260,8 @@ export const AllCase: Story = {
         selectedOptions: [],
       },
       color: "",
-      combo: {
-        text: "",
-        value: 0 as number | string,
-      },
-      date: {
-        text: "",
-        value: 0 as number | string,
-      },
+      combo: [""],
+      date: [""],
       file_drop_box: [] as File[],
       file: undefined,
       image: undefined,
@@ -337,21 +326,26 @@ export const AllCase: Story = {
         selectedOptions: z.array(badgeSchema).optional(),
       }),
       color: z.string().optional(),
-      combo: z.object({
-        value: z.union([z.number(), z.string()]).optional(),
-        text: z.string().min(5, "Choose one"),
-      }),
-      date: z
-        .object({
-          value: z.union([z.number(), z.string()]).optional(),
-          text: z
-            .string()
-            .min(5, "Choose your date")
-            .refine((val) => !isNaN(Date.parse(val)), {
+      combo: z
+        .array(z.string().min(1, "Choose one"))
+        .min(1, "Combo must have at least one item")
+        .refine(
+          (arr) =>
+            arr.every((val) => FRUIT_OPTIONS.some((opt) => opt.value === val)),
+          "Invalid value in combo"
+        ),
+      date: z.array(
+        z
+          .string()
+          .nonempty("Choose your date")
+          .refine(
+            (val) =>
+              /^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/\d{4}$/.test(val),
+            {
               message: "Invalid date",
-            }),
-        })
-        .optional(),
+            }
+          )
+      ),
       file_drop_box: z.any().optional(),
       file: z
         .any()
@@ -418,6 +412,8 @@ export const AllCase: Story = {
       }
     };
 
+    console.log(value);
+
     const onFileDropped = async ({
       error,
       files,
@@ -463,18 +459,18 @@ export const AllCase: Story = {
     };
 
     const MONTH_NAMES = [
-      { text: "JAN", value: 1 },
-      { text: "FEB", value: 2 },
-      { text: "MAR", value: 3 },
-      { text: "APR", value: 4 },
-      { text: "MAY", value: 5 },
-      { text: "JUN", value: 6 },
-      { text: "JUL", value: 7 },
-      { text: "AUG", value: 8 },
-      { text: "SEP", value: 9 },
-      { text: "OCT", value: 10 },
-      { text: "NOV", value: 11 },
-      { text: "DEC", value: 12 },
+      { text: "JAN", value: "1" },
+      { text: "FEB", value: "2" },
+      { text: "MAR", value: "3" },
+      { text: "APR", value: "4" },
+      { text: "MAY", value: "5" },
+      { text: "JUN", value: "6" },
+      { text: "JUL", value: "7" },
+      { text: "AUG", value: "8" },
+      { text: "SEP", value: "9" },
+      { text: "OCT", value: "10" },
+      { text: "NOV", value: "11" },
+      { text: "DEC", value: "12" },
     ];
 
     const FIELDS: FormFieldGroup[] = [
@@ -533,7 +529,6 @@ export const AllCase: Story = {
         type: "combo",
         required: false,
         placeholder: "Select a fruit...",
-
         comboboxProps: {
           options: FRUIT_OPTIONS,
         },
@@ -544,7 +539,6 @@ export const AllCase: Story = {
         type: "date",
         required: false,
         placeholder: "Select a date",
-
         dateProps: {
           monthNames: MONTH_NAMES,
         },

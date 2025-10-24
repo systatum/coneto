@@ -1,15 +1,20 @@
 import {
   forwardRef,
+  Fragment,
   KeyboardEvent,
   Ref,
+  RefObject,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
 import { DrawerProps, OptionsProps, Selectbox } from "./selectbox";
 import { RemixiconComponentType } from "@remixicon/react";
 import styled, { css, CSSProp } from "styled-components";
+import { Searchbox } from "./searchbox";
+import { Checkbox } from "./checkbox";
 
 export type ComboboxProps = Partial<BaseComboboxProps> & {
   label?: string;
@@ -24,8 +29,8 @@ interface BaseComboboxProps {
   containerStyle?: CSSProp;
   selectboxStyle?: CSSProp;
   labelStyle?: CSSProp;
-  inputValue: OptionsProps;
-  setInputValue: (data: OptionsProps) => void;
+  selectedOptions: string[];
+  setSelectedOptions: (data: string[]) => void;
   clearable?: boolean;
   placeholder?: string;
   emptySlate?: string;
@@ -33,6 +38,8 @@ interface BaseComboboxProps {
   strict?: boolean;
   actions?: ComboboxActionProps[];
   name?: string;
+  multiple?: boolean;
+  maxSelectableItems?: number | undefined;
 }
 
 export interface ComboboxActionProps {
@@ -44,6 +51,11 @@ export interface ComboboxActionProps {
 
 type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
   BaseComboboxProps & {
+    inputRef?: Ref<HTMLInputElement>;
+    handleKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
+    selectedOptionsLocal: OptionsProps;
+    setSelectedOptionsLocal: (value: OptionsProps) => void;
+    setHasInteracted?: (value: boolean) => void;
     refs?: {
       setFloating?: Ref<HTMLUListElement>;
       reference?: Ref<HTMLElement> & { current?: HTMLElement | null };
@@ -54,7 +66,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
   (
     {
       options,
-      setInputValue,
+      setSelectedOptions,
       clearable = false,
       placeholder,
       containerStyle,
@@ -65,12 +77,14 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       errorMessage,
       label,
       showError,
-      inputValue,
+      selectedOptions,
       strict,
       actions,
       onKeyDown,
       onClick,
       name,
+      multiple,
+      maxSelectableItems,
     },
     ref
   ) => {
@@ -89,21 +103,29 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
             `}
           `}
           options={options}
-          inputValue={inputValue}
-          setInputValue={setInputValue}
+          selectedOptions={selectedOptions}
+          setSelectedOptions={setSelectedOptions}
           placeholder={placeholder}
           clearable={clearable}
           strict={strict}
           onKeyDown={onKeyDown}
+          multiple={multiple}
+          maxSelectableItems={maxSelectableItems}
+          actions={actions}
         >
           {(props) => {
             return (
               <ComboboxDrawer
                 {...props}
+                inputRef={props.ref}
+                selectedOptions={selectedOptions}
+                setSelectedOptions={setSelectedOptions}
                 highlightOnMatch={highlightOnMatch}
                 emptySlate={emptySlate}
                 actions={actions}
                 onClick={onClick}
+                maxSelectableItems={maxSelectableItems}
+                multiple={multiple}
               />
             );
           }}
@@ -145,22 +167,32 @@ function ComboboxDrawer({
   options,
   refs,
   setHighlightedIndex,
-  setInputValue,
+  setSelectedOptions,
+  setSelectedOptionsLocal,
+  selectedOptionsLocal,
+  selectedOptions,
   setIsOpen,
-  inputValue,
   actions,
   onClick,
+  multiple,
   emptySlate = "Not Available.",
+  setHasInteracted,
+  inputRef,
+  handleKeyDown,
+  maxSelectableItems,
 }: ComboboxDrawerProps) {
   const [hasScrolled, setHasScrolled] = useState(false);
+  const floatingRef = useRef<HTMLUListElement>(null);
 
   const selectedIndex = useMemo(
-    () => options.findIndex((option) => option.value === inputValue.value),
-    [options, inputValue.value]
+    () =>
+      options.findIndex((option) => selectedOptions.includes(option.value)) +
+      (actions?.length ?? 0),
+    [options, selectedOptions, actions]
   );
 
   useEffect(() => {
-    if (!hasScrolled && inputValue?.value != null && options.length > 0) {
+    if (!hasScrolled && selectedOptions.length > 0 && options.length > 0) {
       const selectedEl = listRef.current[selectedIndex];
       if (selectedEl) {
         requestAnimationFrame(() => {
@@ -171,63 +203,177 @@ function ComboboxDrawer({
     }
   }, [selectedIndex]);
 
+  useEffect(() => {
+    if (highlightedIndex !== null && listRef.current[highlightedIndex]) {
+      const element = listRef.current[highlightedIndex];
+      const container = floatingRef.current;
+
+      if (element && container) {
+        const searchboxHeight = multiple ? 38 : 0;
+        const elementTop = element.offsetTop;
+        const containerScrollTop = container.scrollTop;
+        const containerHeight = container.clientHeight;
+
+        if (elementTop < containerScrollTop + searchboxHeight) {
+          container.scrollTop = elementTop - searchboxHeight;
+        } else if (
+          elementTop + element.clientHeight >
+          containerScrollTop + containerHeight
+        ) {
+          container.scrollTop =
+            elementTop + element.clientHeight - containerHeight;
+        }
+      }
+    }
+  }, [highlightedIndex, multiple]);
+
   return (
     <DrawerWrapper
       {...getFloatingProps()}
-      ref={refs.setFloating}
+      ref={(node) => {
+        if (typeof refs.setFloating === "function") {
+          refs.setFloating(node);
+        }
+        floatingRef.current = node;
+      }}
       id="combo-list"
       role="listbox"
       $width={refs.reference.current?.getBoundingClientRect().width}
       style={{ ...floatingStyles }}
     >
+      {multiple && (
+        <Fragment>
+          <Searchbox
+            ref={inputRef}
+            autoComplete="off"
+            onKeyDown={handleKeyDown}
+            name="multiple"
+            value={selectedOptionsLocal.text}
+            containerStyle={css`
+              position: sticky;
+              top: 0;
+              background-color: white;
+              z-index: 30;
+              height: 38px;
+              padding-right: 7px;
+              padding-left: 7px;
+            `}
+            iconStyle={css`
+              left: 16px;
+            `}
+            style={css`
+              max-height: 35px;
+              margin-top: 7px;
+              margin-bottom: 7px;
+              padding-bottom: 7px;
+              padding-top: 7px;
+            `}
+            onChange={(e) => {
+              const { value } = e.target;
+              setHasInteracted(true);
+              setHighlightedIndex(0);
+              setSelectedOptionsLocal({
+                ...selectedOptionsLocal,
+                text: value,
+              });
+            }}
+          />
+        </Fragment>
+      )}
+
       {actions && (
         <ActionWrapper>
-          {actions.map((data, index) => (
-            <ActionItem
-              key={index}
-              onMouseEnter={() => setHighlightedIndex(null)}
-              onClick={() => {
-                data.onClick?.();
-                setIsOpen(false);
-              }}
-              $style={data.style}
-            >
-              <div>{data.title}</div>
-              {data.icon && (
-                <IconWrapper>
-                  <data.icon size={16} />
-                </IconWrapper>
-              )}
-            </ActionItem>
-          ))}
+          {actions.map((data, index) => {
+            const shouldHighlight = highlightedIndex === index;
+
+            return (
+              <ActionItem
+                key={index}
+                id={`action-${index}`}
+                ref={(el: HTMLLIElement) => {
+                  listRef.current[index] = el;
+                }}
+                $highlighted={shouldHighlight}
+                onMouseEnter={() => setHighlightedIndex(index)}
+                onClick={() => {
+                  data.onClick?.();
+                  setIsOpen(false);
+                }}
+                $style={data.style}
+              >
+                <div>{data.title}</div>
+                {data.icon && (
+                  <IconWrapper>
+                    <data.icon size={16} />
+                  </IconWrapper>
+                )}
+              </ActionItem>
+            );
+          })}
           <Divider aria-label="divider" />
         </ActionWrapper>
       )}
       {options.length > 0 ? (
         options.map((option, index) => {
-          const isSelected = option.value === inputValue.value;
+          const isSelected = selectedOptions.includes(option.value);
           const shouldHighlight =
-            highlightOnMatch && isSelected ? true : highlightedIndex === index;
-
+            highlightOnMatch && isSelected
+              ? true
+              : highlightedIndex === index + (actions?.length || 0);
           return (
             <OptionItem
               key={option.value}
               id={`option-${index}`}
               role="option"
-              aria-selected={isSelected}
+              aria-selected={isSelected && !multiple}
               data-highlighted={shouldHighlight}
-              $selected={isSelected}
+              $selected={isSelected && !multiple}
               $highlighted={shouldHighlight}
-              onMouseDown={() => {
-                setInputValue(option);
-                setIsOpen(false);
+              onMouseDown={(e) => {
+                e.preventDefault();
+                if (multiple) {
+                  if (!selectedOptions.includes(option.value)) {
+                    if (
+                      !maxSelectableItems ||
+                      selectedOptions.length < maxSelectableItems
+                    ) {
+                      setSelectedOptions([...selectedOptions, option.value]);
+                    }
+                  } else {
+                    setSelectedOptions(
+                      selectedOptions.filter((val) => val !== option.value)
+                    );
+                  }
+                  (inputRef as RefObject<HTMLInputElement>)?.current?.focus();
+                } else {
+                  setIsOpen(false);
+                  setSelectedOptionsLocal(option);
+                  setSelectedOptions([option.value]);
+                  setHasInteracted(false);
+                }
+
                 onClick?.();
               }}
-              onMouseEnter={() => setHighlightedIndex(index)}
+              onMouseEnter={() =>
+                setHighlightedIndex(index + (actions?.length || 0))
+              }
               ref={(el) => {
-                listRef.current[index] = el;
+                listRef.current[index + (actions?.length || 0)] = el;
               }}
             >
+              {multiple && (
+                <Checkbox
+                  iconStyle={css`
+                    width: 8px;
+                    height: 8px;
+                  `}
+                  inputStyle={css`
+                    width: 14px;
+                    height: 14px;
+                  `}
+                  checked={isSelected}
+                />
+              )}
               {option.text}
             </OptionItem>
           );
@@ -259,7 +405,7 @@ const ActionWrapper = styled.div`
   width: 100%;
 `;
 
-const ActionItem = styled.div<{ $style?: CSSProp }>`
+const ActionItem = styled.li<{ $style?: CSSProp; $highlighted?: boolean }>`
   display: flex;
   flex-direction: row;
   position: relative;
@@ -268,6 +414,8 @@ const ActionItem = styled.div<{ $style?: CSSProp }>`
   cursor: pointer;
   padding: 0.5rem 0.75rem;
   gap: 0.5rem;
+
+  ${({ $highlighted }) => ($highlighted ? "background-color: #dbeafe;" : "")}
 
   &:hover {
     background-color: #dbeafe;
@@ -293,6 +441,11 @@ const Divider = styled.div`
 const OptionItem = styled.li<{ $selected?: boolean; $highlighted?: boolean }>`
   cursor: pointer;
   padding: 0.5rem 0.75rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+
   ${({ $highlighted }) => ($highlighted ? "background-color: #dbeafe;" : "")}
   ${({ $selected }) =>
     $selected

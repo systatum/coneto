@@ -19,7 +19,6 @@ import { FileInputBox, FileInputBoxProps } from "./file-input-box";
 import { Imagebox, ImageboxProps } from "./imagebox";
 import { Moneybox, MoneyboxProps } from "./moneybox";
 import { Datebox, DateboxProps } from "./datebox";
-import { OptionsProps } from "./selectbox";
 import { Combobox, ComboboxProps } from "./combobox";
 import { Chips, ChipsProps } from "./chips";
 import { Signbox, SignboxProps } from "./signbox";
@@ -45,7 +44,7 @@ export type FormValueType =
   | boolean
   | File
   | FileList
-  | OptionsProps
+  | string[]
   | null
   | undefined
   | CountryCodeProps;
@@ -703,13 +702,11 @@ function FormFields<T extends FieldValues>({
                           `
                         }
                         errorMessage={
-                          (
-                            errors[field.name as keyof T] as {
-                              text?: { message?: string };
-                            }
-                          )?.text?.message
+                          errors[field.name as keyof T]?.[0]?.message as
+                            | string
+                            | undefined
                         }
-                        setInputValue={(e) => {
+                        setSelectedDates={(e) => {
                           const inputValueEvent = {
                             target: { name: field.name, value: e },
                           };
@@ -720,7 +717,7 @@ function FormFields<T extends FieldValues>({
                             onChange(field.name as keyof T, e);
                           }
                         }}
-                        inputValue={controllerField.value}
+                        selectedDates={controllerField.value}
                         {...field.dateProps}
                       />
                     )}
@@ -753,13 +750,11 @@ function FormFields<T extends FieldValues>({
                           `
                         }
                         errorMessage={
-                          (
-                            errors[field.name as keyof T] as {
-                              text?: { message?: string };
-                            }
-                          )?.text?.message
+                          errors[field.name as keyof T]?.[0]?.message as
+                            | string
+                            | undefined
                         }
-                        setInputValue={(e) => {
+                        setSelectedOptions={(e) => {
                           const inputValueEvent = {
                             target: { name: field.name, value: e },
                           };
@@ -770,7 +765,7 @@ function FormFields<T extends FieldValues>({
                             onChange(field.name as keyof T, e);
                           }
                         }}
-                        inputValue={controllerField.value}
+                        selectedOptions={controllerField.value}
                         {...field.comboboxProps}
                       />
                     )}

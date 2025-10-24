@@ -31,8 +31,8 @@ import styled, { css, CSSProp } from "styled-components";
 
 export interface SelectboxProps {
   options?: OptionsProps[];
-  inputValue?: OptionsProps;
-  setInputValue?: (data: OptionsProps) => void;
+  selectedOptions?: string[];
+  setSelectedOptions?: (data: string[]) => void;
   placeholder?: string;
   iconOpened?: RemixiconComponentType;
   iconClosed?: RemixiconComponentType;
@@ -44,25 +44,31 @@ export interface SelectboxProps {
   strict?: boolean;
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
   onClick?: () => void;
+  multiple?: boolean;
+  actions?: any[];
+  maxSelectableItems?: number | undefined;
   children?: (
     props: DrawerProps & {
       options: OptionsProps[];
-      inputValue: OptionsProps;
-      setInputValue: (value: OptionsProps) => void;
+      handleKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
+      selectedOptionsLocal: OptionsProps;
+      setSelectedOptionsLocal: (value: OptionsProps) => void;
+      setHasInteracted?: (value: boolean) => void;
+      ref?: Ref<HTMLInputElement>;
     }
   ) => ReactNode;
 }
 
 export interface DrawerProps {
-  highlightedIndex: number;
-  setHighlightedIndex: (index: number) => void;
+  highlightedIndex: number | null;
+  setHighlightedIndex: (index: number | null) => void;
   setIsOpen: (open: boolean) => void;
+  multiple?: boolean;
   getFloatingProps: (
     userProps?: HTMLAttributes<HTMLUListElement>
   ) => HTMLAttributes<HTMLUListElement>;
   refs: { setFloating: Ref<HTMLUListElement>; setReference: Ref<HTMLElement> };
   floatingStyles: CSSProperties;
-
   listRef: MutableRefObject<(HTMLLIElement | null)[]>;
   isOpen: boolean;
   style?: CSSProp;
@@ -71,14 +77,15 @@ export interface DrawerProps {
 
 export interface OptionsProps {
   text: string;
-  value?: string | number;
+  display?: ReactNode;
+  value: string;
 }
 
 const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
   (
     {
-      setInputValue,
-      inputValue,
+      setSelectedOptions,
+      selectedOptions,
       options = [],
       placeholder,
       children,
@@ -92,14 +99,27 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       onKeyDown,
       onClick,
       selectboxStyle,
+      multiple,
+      actions,
+      maxSelectableItems,
     },
     ref
   ) => {
-    const selectboxState = inputValue || { text: "", value: 0 };
-    const [inputValueLocal, setInputValueLocal] =
-      useState<OptionsProps>(selectboxState);
+    const initialState = options.find(
+      (opt) => opt.value === selectedOptions?.[0]
+    ) ?? { text: "", value: "0" };
+
+    const [selectedOptionsLocal, setSelectedOptionsLocal] =
+      useState<OptionsProps>(initialState);
+
+    useEffect(() => {
+      if (selectedOptions?.length > 0 && !multiple) {
+        setSelectedOptionsLocal(initialState);
+      }
+    }, [selectedOptions, multiple]);
+
     const [isOpen, setIsOpen] = useState(false);
-    const [highlightedIndex, setHighlightedIndex] = useState(0);
+    const [highlightedIndex, setHighlightedIndex] = useState<number | null>(0);
     const [hasInteracted, setHasInteracted] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
@@ -112,11 +132,13 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
 
     const FILTERED_OPTIONS = hasInteracted
       ? options.filter((opt) =>
-          opt.text.toLowerCase().includes(inputValueLocal.text.toLowerCase())
+          opt.text
+            .toLowerCase()
+            .includes(selectedOptionsLocal.text.toLowerCase())
         )
       : options;
 
-    const activeValue = inputValue?.text || inputValueLocal.text;
+    const activeValue = selectedOptionsLocal.text;
     const FILTERED_ACTIVE = options.some((opt) => opt.text === activeValue);
 
     const { refs, floatingStyles, context } = useFloating({
@@ -145,35 +167,79 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
             "/" +
             value.slice(4, 8);
         }
+        setSelectedOptions([value]);
       }
-      setInputValue?.({ ...inputValue, text: value });
-      setInputValueLocal({ ...inputValueLocal, text: value });
+      setSelectedOptionsLocal({ ...selectedOptionsLocal, text: value });
       setIsOpen(value.length > 0);
       setHighlightedIndex(0);
     };
 
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
       onKeyDown?.(e);
+
+      const totalItems = (actions?.length ?? 0) + FILTERED_OPTIONS.length - 1;
+
+      if ((e.key === "ArrowDown" || e.key === "ArrowUp") && !isOpen) {
+        setIsOpen(true);
+        e.preventDefault();
+      }
+
       if (e.key === "ArrowDown") {
-        e.preventDefault();
-        if (!isOpen) setIsOpen(true);
-        setHighlightedIndex((prev) =>
-          Math.min(prev + 1, FILTERED_OPTIONS.length - 1)
-        );
-      } else if (e.key === "ArrowUp") {
-        e.preventDefault();
-        if (!isOpen) setIsOpen(true);
-        setHighlightedIndex((prev) => Math.max(prev - 1, 0));
-      } else if (e.key === "Enter") {
-        e.preventDefault();
-        const selected = FILTERED_OPTIONS[highlightedIndex];
-        if (selected) {
-          setInputValue?.(selected);
-          setInputValueLocal(selected);
-          setIsOpen(false);
-          setHasInteracted(false);
+        if (highlightedIndex < totalItems) {
+          setHighlightedIndex(highlightedIndex + 1);
         }
-      } else if (e.key === "Escape") {
+        e.preventDefault();
+      }
+
+      if (e.key === "ArrowUp") {
+        if (highlightedIndex > 0) {
+          setHighlightedIndex(highlightedIndex - 1);
+        }
+        e.preventDefault();
+      }
+
+      if (e.key === "Enter") {
+        if (!multiple) {
+          const matched = options.find(
+            (opt) => opt.text === selectedOptionsLocal.text
+          );
+          setHasInteracted(false);
+          setConfirmedValue(matched);
+        }
+        if (highlightedIndex !== null) {
+          if (highlightedIndex < (actions?.length || 0)) {
+            actions?.[highlightedIndex]?.onClick?.();
+            setIsOpen(false);
+          } else {
+            const selectedOption =
+              FILTERED_OPTIONS[highlightedIndex - (actions?.length ?? 0)];
+
+            if (multiple) {
+              if (!selectedOptions.includes(selectedOption.value)) {
+                if (
+                  !maxSelectableItems ||
+                  selectedOptions.length < maxSelectableItems
+                ) {
+                  setSelectedOptions([
+                    ...selectedOptions,
+                    selectedOption.value,
+                  ]);
+                }
+              } else {
+                setSelectedOptions(
+                  selectedOptions.filter((val) => val !== selectedOption.value)
+                );
+              }
+            } else {
+              setSelectedOptions([selectedOption.value]);
+              setSelectedOptionsLocal(selectedOption);
+              setIsOpen(false);
+            }
+          }
+        }
+      }
+
+      if (e.key === "Escape") {
         setIsOpen(false);
         setHasInteracted(false);
       }
@@ -185,6 +251,15 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       }
     }, [highlightedIndex, isOpen]);
 
+    const multipleOptionsJoinedText = selectedOptions
+      ?.map((val) => options.find((o) => o.value === val)?.text)
+      .filter(Boolean)
+      .join(", ");
+
+    const inputValue = multiple
+      ? multipleOptionsJoinedText
+      : selectedOptionsLocal.text;
+
     return (
       <Container
         onBlur={() => {
@@ -193,24 +268,40 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
         role="combobox"
         $style={containerStyle}
         aria-expanded={isOpen}
+        onMouseDown={() => {
+          if (multiple)
+            setSelectedOptionsLocal({
+              text: "",
+              value: "",
+            });
+        }}
+        onClick={() => {
+          if (multiple) inputRef.current?.focus();
+        }}
       >
         <Input
           $style={selectboxStyle}
           {...getReferenceProps()}
           data-type="selectbox"
+          $clearable={clearable}
           ref={(el) => {
             refs.setReference(el);
-            inputRef.current = el;
+            if (!multiple) {
+              inputRef.current = el;
+            }
             if (typeof ref === "function") ref(el);
             else if (ref)
               (ref as MutableRefObject<HTMLInputElement | null>).current = el;
           }}
           type="text"
-          value={inputValue ? inputValue.text : inputValueLocal.text}
+          value={inputValue}
           onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
+          onKeyDown={(e) => {
+            handleKeyDown(e);
+          }}
+          readOnly={multiple}
           onFocus={() => {
-            if (type === "calendar" || inputValueLocal) setIsOpen(true);
+            if (type === "calendar" || selectedOptionsLocal) setIsOpen(true);
             setIsFocused(true);
           }}
           onBlur={() => {
@@ -220,40 +311,56 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
 
             if (strict) {
               const matched = options.find(
-                (opt) => opt.text === inputValueLocal.text
+                (opt) => opt.text === selectedOptionsLocal.text
               );
               if (matched) {
                 setConfirmedValue(matched);
-                setInputValueLocal(matched);
-                setInputValue?.(matched);
+                setSelectedOptionsLocal(matched);
+                if (multiple) {
+                  setSelectedOptions?.(
+                    selectedOptions?.includes(matched.value)
+                      ? selectedOptions.filter((val) => val !== matched.value)
+                      : [...selectedOptions, matched.value]
+                  );
+                } else {
+                  setSelectedOptions?.([matched.value]);
+                }
               } else if (confirmedValue) {
-                setInputValueLocal(confirmedValue);
-                setInputValue?.(confirmedValue);
+                setSelectedOptionsLocal(confirmedValue);
+                if (multiple) {
+                  setSelectedOptions?.(
+                    selectedOptions?.includes(confirmedValue.value)
+                      ? selectedOptions.filter(
+                          (val) => val !== confirmedValue.value
+                        )
+                      : [...selectedOptions, confirmedValue.value]
+                  );
+                } else {
+                  setSelectedOptions?.([confirmedValue.value]);
+                }
               } else {
-                const empty = { text: "", value: 0 };
-                setInputValueLocal(empty);
-                setInputValue?.(empty);
+                const empty = { text: "", value: "0" };
+                setSelectedOptionsLocal(empty);
               }
             }
           }}
           placeholder={placeholder || "Search your item..."}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          $focused={isFocused}
-          $hovered={isHovered}
+          $focused={isFocused && !multiple}
+          $hovered={isHovered && !multiple}
           $highlight={highlightOnMatch && FILTERED_ACTIVE}
         />
 
-        {clearable && inputValueLocal.text !== "" && (
+        {clearable && selectedOptions?.length !== 0 && (
           <>
             <ClearIcon
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
               aria-label="clearable-content"
               onClick={() => {
-                setInputValue?.({ text: "", value: 0 });
-                setInputValueLocal({ text: "", value: 0 });
-                setIsOpen(false);
+                setSelectedOptions?.([]);
+                setSelectedOptionsLocal({ text: "", value: "0" });
                 setHasInteracted(false);
               }}
               $highlight={highlightOnMatch && FILTERED_ACTIVE}
@@ -268,12 +375,15 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
         )}
 
         <IconWrapper
-          onClick={() => {
-            setIsOpen((prev) => {
+          onClick={async () => {
+            await setIsOpen((prev) => {
               const newState = !prev;
-              if (newState && inputRef.current) inputRef.current.focus();
+              if (newState && inputRef.current) inputRef.current?.focus();
               return newState;
             });
+            if (multiple) {
+              await inputRef.current?.focus();
+            }
           }}
         >
           {isOpen ? (
@@ -298,17 +408,17 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
             options: FILTERED_OPTIONS,
             highlightedIndex,
             setHighlightedIndex,
-            setInputValue: (e) => {
-              setInputValueLocal(e);
-              setInputValue?.(e);
-            },
-            inputValue: inputValue || inputValueLocal,
+            setSelectedOptionsLocal,
+            selectedOptionsLocal,
             onClick,
             setIsOpen,
             getFloatingProps,
             refs,
             floatingStyles,
             listRef,
+            setHasInteracted,
+            handleKeyDown,
+            ref: multiple ? inputRef : undefined,
           })}
       </Container>
     );
@@ -327,12 +437,14 @@ const Input = styled.input<{
   $focused?: boolean;
   $hovered?: boolean;
   $style?: CSSProp;
+  $clearable?: boolean;
 }>`
   width: 100%;
   border-radius: 2px;
   border: 1px solid #f3f4f6;
   padding: 0.5rem 0.75rem;
   outline: none;
+  padding-right: ${({ $clearable }) => ($clearable ? "50px" : "24px")};
 
   ${({ $focused }) =>
     $focused &&
