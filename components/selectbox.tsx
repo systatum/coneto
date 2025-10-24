@@ -31,8 +31,8 @@ import styled, { css, CSSProp } from "styled-components";
 
 export interface SelectboxProps {
   options?: OptionsProps[];
-  selectionOptions?: string[];
-  setSelectionOptions?: (data: string[]) => void;
+  selectedOptions?: string[];
+  setSelectedOptions?: (data: string[]) => void;
   placeholder?: string;
   iconOpened?: RemixiconComponentType;
   iconClosed?: RemixiconComponentType;
@@ -51,8 +51,8 @@ export interface SelectboxProps {
     props: DrawerProps & {
       options: OptionsProps[];
       handleKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
-      selectionOptionsLocal: OptionsProps;
-      setSelectionOptionsLocal: (value: OptionsProps) => void;
+      selectedOptionsLocal: OptionsProps;
+      setSelectedOptionsLocal: (value: OptionsProps) => void;
       setHasInteracted?: (value: boolean) => void;
       ref?: Ref<HTMLInputElement>;
     }
@@ -84,8 +84,8 @@ export interface OptionsProps {
 const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
   (
     {
-      setSelectionOptions,
-      selectionOptions,
+      setSelectedOptions,
+      selectedOptions,
       options = [],
       placeholder,
       children,
@@ -106,17 +106,17 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
     ref
   ) => {
     const initialState = options.find(
-      (opt) => opt.value === selectionOptions?.[0]
+      (opt) => opt.value === selectedOptions?.[0]
     ) ?? { text: "", value: "0" };
 
-    const [selectionOptionsLocal, setSelectionOptionsLocal] =
+    const [selectedOptionsLocal, setSelectedOptionsLocal] =
       useState<OptionsProps>(initialState);
 
     useEffect(() => {
-      if (selectionOptions?.length > 0) {
-        setSelectionOptionsLocal(initialState);
+      if (selectedOptions?.length > 0) {
+        setSelectedOptionsLocal(initialState);
       }
-    }, [selectionOptions]);
+    }, [selectedOptions]);
 
     const [isOpen, setIsOpen] = useState(false);
     const [highlightedIndex, setHighlightedIndex] = useState<number | null>(0);
@@ -134,11 +134,11 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       ? options.filter((opt) =>
           opt.text
             .toLowerCase()
-            .includes(selectionOptionsLocal.text.toLowerCase())
+            .includes(selectedOptionsLocal.text.toLowerCase())
         )
       : options;
 
-    const activeValue = selectionOptionsLocal.text;
+    const activeValue = selectedOptionsLocal.text;
     const FILTERED_ACTIVE = options.some((opt) => opt.text === activeValue);
 
     const { refs, floatingStyles, context } = useFloating({
@@ -167,9 +167,9 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
             "/" +
             value.slice(4, 8);
         }
-        setSelectionOptions([value]);
+        setSelectedOptions([value]);
       }
-      setSelectionOptionsLocal({ ...selectionOptionsLocal, text: value });
+      setSelectedOptionsLocal({ ...selectedOptionsLocal, text: value });
       setIsOpen(value.length > 0);
       setHighlightedIndex(0);
     };
@@ -201,7 +201,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       if (e.key === "Enter") {
         if (!multiple) {
           const matched = options.find(
-            (opt) => opt.text === selectionOptionsLocal.text
+            (opt) => opt.text === selectedOptionsLocal.text
           );
           setHasInteracted(false);
           setConfirmedValue(matched);
@@ -215,24 +215,24 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
               FILTERED_OPTIONS[highlightedIndex - (actions?.length ?? 0)];
 
             if (multiple) {
-              if (!selectionOptions.includes(selectedOption.value)) {
+              if (!selectedOptions.includes(selectedOption.value)) {
                 if (
                   !maxSelectableItems ||
-                  selectionOptions.length < maxSelectableItems
+                  selectedOptions.length < maxSelectableItems
                 ) {
-                  setSelectionOptions([
-                    ...selectionOptions,
+                  setSelectedOptions([
+                    ...selectedOptions,
                     selectedOption.value,
                   ]);
                 }
               } else {
-                setSelectionOptions(
-                  selectionOptions.filter((val) => val !== selectedOption.value)
+                setSelectedOptions(
+                  selectedOptions.filter((val) => val !== selectedOption.value)
                 );
               }
             } else {
-              setSelectionOptions([selectedOption.value]);
-              setSelectionOptionsLocal(selectedOption);
+              setSelectedOptions([selectedOption.value]);
+              setSelectedOptionsLocal(selectedOption);
               setIsOpen(false);
             }
           }
@@ -251,12 +251,12 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       }
     }, [highlightedIndex, isOpen]);
 
-    const contentMultiple = selectionOptions
+    const contentMultiple = selectedOptions
       ?.map((val) => options.find((o) => o.value === val)?.text)
       .filter(Boolean)
       .join(", ");
 
-    const inputValue = multiple ? contentMultiple : selectionOptionsLocal.text;
+    const inputValue = multiple ? contentMultiple : selectedOptionsLocal.text;
 
     return (
       <Container
@@ -292,7 +292,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
           }}
           readOnly={multiple}
           onFocus={() => {
-            if (type === "calendar" || selectionOptionsLocal) setIsOpen(true);
+            if (type === "calendar" || selectedOptionsLocal) setIsOpen(true);
             setIsFocused(true);
           }}
           onBlur={() => {
@@ -302,36 +302,36 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
 
             if (strict) {
               const matched = options.find(
-                (opt) => opt.text === selectionOptionsLocal.text
+                (opt) => opt.text === selectedOptionsLocal.text
               );
               if (matched) {
                 setConfirmedValue(matched);
-                setSelectionOptionsLocal(matched);
+                setSelectedOptionsLocal(matched);
                 if (multiple) {
-                  setSelectionOptions?.(
-                    selectionOptions?.includes(matched.value)
-                      ? selectionOptions.filter((val) => val !== matched.value)
-                      : [...selectionOptions, matched.value]
+                  setSelectedOptions?.(
+                    selectedOptions?.includes(matched.value)
+                      ? selectedOptions.filter((val) => val !== matched.value)
+                      : [...selectedOptions, matched.value]
                   );
                 } else {
-                  setSelectionOptions?.([matched.value]);
+                  setSelectedOptions?.([matched.value]);
                 }
               } else if (confirmedValue) {
-                setSelectionOptionsLocal(confirmedValue);
+                setSelectedOptionsLocal(confirmedValue);
                 if (multiple) {
-                  setSelectionOptions?.(
-                    selectionOptions?.includes(confirmedValue.value)
-                      ? selectionOptions.filter(
+                  setSelectedOptions?.(
+                    selectedOptions?.includes(confirmedValue.value)
+                      ? selectedOptions.filter(
                           (val) => val !== confirmedValue.value
                         )
-                      : [...selectionOptions, confirmedValue.value]
+                      : [...selectedOptions, confirmedValue.value]
                   );
                 } else {
-                  setSelectionOptions?.([confirmedValue.value]);
+                  setSelectedOptions?.([confirmedValue.value]);
                 }
               } else {
                 const empty = { text: "", value: "0" };
-                setSelectionOptionsLocal(empty);
+                setSelectedOptionsLocal(empty);
               }
             }
           }}
@@ -343,15 +343,15 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
           $highlight={highlightOnMatch && FILTERED_ACTIVE}
         />
 
-        {clearable && selectionOptions?.length !== 0 && (
+        {clearable && selectedOptions?.length !== 0 && (
           <>
             <ClearIcon
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
               aria-label="clearable-content"
               onClick={() => {
-                setSelectionOptions?.([]);
-                setSelectionOptionsLocal({ text: "", value: "0" });
+                setSelectedOptions?.([]);
+                setSelectedOptionsLocal({ text: "", value: "0" });
                 setHasInteracted(false);
               }}
               $highlight={highlightOnMatch && FILTERED_ACTIVE}
@@ -399,8 +399,8 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
             options: FILTERED_OPTIONS,
             highlightedIndex,
             setHighlightedIndex,
-            setSelectionOptionsLocal,
-            selectionOptionsLocal,
+            setSelectedOptionsLocal,
+            selectedOptionsLocal,
             onClick,
             setIsOpen,
             getFloatingProps,
