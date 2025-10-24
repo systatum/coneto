@@ -49,8 +49,8 @@ export const Default: Story = {
       <Calendar
         dayNames={DAY_NAMES}
         monthNames={MONTH_NAMES}
-        selectionOptions={value}
-        setSelectionOptions={setValue}
+        selectedDates={value}
+        setSelectedDates={setValue}
         format="mm/dd/yyyy"
       />
     );
@@ -90,8 +90,8 @@ export const NoWeekends: Story = {
       <Calendar
         dayNames={DAY_NAMES}
         monthNames={MONTH_NAMES}
-        selectionOptions={value}
-        setSelectionOptions={setValue}
+        selectedDates={value}
+        setSelectedDates={setValue}
         format="mm/dd/yyyy"
         disableWeekend
       />
@@ -132,8 +132,8 @@ export const Multiple: Story = {
       <Calendar
         dayNames={DAY_NAMES}
         monthNames={MONTH_NAMES}
-        selectionOptions={value}
-        setSelectionOptions={setValue}
+        selectedDates={value}
+        setSelectedDates={setValue}
         format="mm/dd/yyyy"
         selectabilityMode="multiple"
       />
@@ -174,8 +174,8 @@ export const MultipleNoWeekend: Story = {
       <Calendar
         dayNames={DAY_NAMES}
         monthNames={MONTH_NAMES}
-        selectionOptions={value}
-        setSelectionOptions={setValue}
+        selectedDates={value}
+        setSelectedDates={setValue}
         format="mm/dd/yyyy"
         selectabilityMode="multiple"
         disableWeekend
@@ -217,8 +217,8 @@ export const Ranged: Story = {
       <Calendar
         dayNames={DAY_NAMES}
         monthNames={MONTH_NAMES}
-        selectionOptions={value}
-        setSelectionOptions={setValue}
+        selectedDates={value}
+        setSelectedDates={setValue}
         format="mm/dd/yyyy"
         selectabilityMode="ranged"
       />
@@ -259,8 +259,8 @@ export const RangedNoWeekends: Story = {
       <Calendar
         dayNames={DAY_NAMES}
         monthNames={MONTH_NAMES}
-        selectionOptions={value}
-        setSelectionOptions={setValue}
+        selectedDates={value}
+        setSelectedDates={setValue}
         format="mm/dd/yyyy"
         disableWeekend
         selectabilityMode="ranged"
@@ -319,8 +319,8 @@ export const WithFooter: Story = {
       <Calendar
         dayNames={DAY_NAMES}
         monthNames={MONTH_NAMES}
-        selectionOptions={value}
-        setSelectionOptions={setValue}
+        selectedDates={value}
+        setSelectedDates={setValue}
         format="mm/dd/yyyy"
         footer={footerContent}
         selectabilityMode="ranged"
