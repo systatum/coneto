@@ -51,16 +51,48 @@ describe("Combobox", () => {
       });
     });
 
-    context("when pressing enter", () => {
-      it("should render action and trigger it", () => {
-        cy.findByPlaceholderText("Select a fruit...")
-          .as("input")
-          .type("{downarrow}{enter}");
+    context("when making selection using arrow keys", () => {
+      context("when using enter", () => {
+        it("should trigger action", () => {
+          cy.window().then((win) => {
+            cy.spy(win.console, "log").as("consoleLog");
+          });
 
-        cy.findByPlaceholderText("Select a fruit...").should(
-          "have.value",
-          "Apple"
-        );
+          cy.findByPlaceholderText("Select a fruit...")
+            .as("input")
+            .type("{enter}");
+
+          cy.get("@consoleLog").should(
+            "have.been.calledWith",
+            "New fruit added"
+          );
+        });
+      });
+
+      context("when using arrow down and enter", () => {
+        it("should render value", () => {
+          cy.findByPlaceholderText("Select a fruit...")
+            .as("input")
+            .type("{downarrow}{enter}");
+
+          cy.findByPlaceholderText("Select a fruit...").should(
+            "have.value",
+            "Apple"
+          );
+        });
+      });
+
+      context("when using arrow up and enter", () => {
+        it("should render value", () => {
+          cy.findByPlaceholderText("Select a fruit...")
+            .as("input")
+            .type("{downarrow}{downarrow}{uparrow}{enter}");
+
+          cy.findByPlaceholderText("Select a fruit...").should(
+            "have.value",
+            "Apple"
+          );
+        });
       });
     });
   });
@@ -150,7 +182,7 @@ describe("Combobox", () => {
       cy.visit(getIdContent("input-elements-combobox--multiple-selection"));
     });
 
-    context("when click option", () => {
+    context("when selecting option", () => {
       const FRUIT_OPTIONS = [
         "Apple",
         "Banana",
@@ -175,8 +207,8 @@ describe("Combobox", () => {
       });
     });
 
-    context("with maximal items", () => {
-      it("should have multiple value", () => {
+    context("with maximum selectable items", () => {
+      it("renders only select as much as allowed", () => {
         cy.findAllByPlaceholderText("Select a fruit...")
           .eq(1)
           .click()
@@ -186,16 +218,81 @@ describe("Combobox", () => {
         cy.get("input[type=checkbox]").eq(2).should("not.be.checked");
         cy.get("input[type=checkbox]").eq(3).should("not.be.checked");
       });
+
+      context("when deselecting one option and choosing another", () => {
+        it("renders with the selected option", () => {
+          cy.findAllByPlaceholderText("Select a fruit...")
+            .eq(1)
+            .click()
+            .type("{enter}{downarrow}{enter}{enter}{downarrow}{enter}", {
+              force: true,
+            });
+          cy.get("input[type=checkbox]").eq(0).should("be.checked");
+          cy.get("input[type=checkbox]").eq(1).should("not.be.checked");
+          cy.get("input[type=checkbox]").eq(2).should("be.checked");
+          cy.get("input[type=checkbox]").eq(3).should("not.be.checked");
+        });
+      });
     });
 
-    context("when blurring", () => {
-      it("should render empty string", () => {
+    context("when searching options through the searchbox", () => {
+      it("should render with filtered options", () => {
+        const FRUIT_OPTIONS = [
+          "Apple",
+          "Banana",
+          "Orange",
+          "Grape",
+          "Pineapple",
+          "Strawberry",
+          "Watermelon",
+          "Mango",
+          "Blueberry",
+          "Kiwi",
+          "Papaya",
+          "Cherry",
+          "Peach",
+          "Plum",
+          "Guava",
+          "Raspberry",
+          "Lychee",
+          "Coconut",
+          "Pear",
+          "Pomegranate",
+        ];
+
         cy.findAllByPlaceholderText("Select a fruit...")
           .eq(1)
           .click()
-          .type("{enter}{downarrow}{enter}", { force: true });
-        cy.findAllByPlaceholderText("Select a fruit...").eq(1).click();
-        cy.findByLabelText("textbox-search").should("have.value", "");
+          .then(() => {
+            cy.findByLabelText("textbox-search").type(
+              "Apple{enter}{downarrow}{enter}",
+              { force: true }
+            );
+          });
+        cy.findAllByPlaceholderText("Select a fruit...")
+          .eq(1)
+          .should("have.value", "Apple, Pineapple");
+        cy.get("input[type='checkbox']").eq(0).should("be.checked");
+        cy.get("input[type='checkbox']").eq(1).should("be.checked");
+
+        FRUIT_OPTIONS.map((data) => {
+          if (data === "Apple" || data === "Pineapple") {
+            cy.findByText(data).should("exist");
+          } else {
+            cy.findByText(data).should("not.exist");
+          }
+        });
+      });
+
+      context("when losing focus", () => {
+        it("should render empty string on the searchbox", () => {
+          cy.findAllByPlaceholderText("Select a fruit...")
+            .eq(1)
+            .click()
+            .type("{enter}{downarrow}{enter}", { force: true });
+          cy.findAllByPlaceholderText("Select a fruit...").eq(1).click();
+          cy.findByLabelText("textbox-search").should("have.value", "");
+        });
       });
     });
   });
