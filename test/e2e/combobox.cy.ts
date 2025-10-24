@@ -165,15 +165,12 @@ describe("Combobox", () => {
         cy.findAllByPlaceholderText("Select a fruit...")
           .eq(0)
           .click()
-          .type("Apple{enter}{downarrow}{enter}", { force: true });
+          .type("{enter}{downarrow}{enter}", { force: true });
         cy.get("input[type=checkbox]").eq(0).should("be.checked");
         cy.get("input[type=checkbox]").eq(1).should("be.checked");
+
         FRUIT_OPTIONS.map((data) => {
-          if (data === "Pineapple" || data === "Apple") {
-            cy.findByText(data).should("exist");
-          } else {
-            cy.findByText(data).should("not.exist");
-          }
+          cy.findByText(data).should("exist");
         });
       });
     });
@@ -188,6 +185,17 @@ describe("Combobox", () => {
         cy.get("input[type=checkbox]").eq(1).should("be.checked");
         cy.get("input[type=checkbox]").eq(2).should("not.be.checked");
         cy.get("input[type=checkbox]").eq(3).should("not.be.checked");
+      });
+    });
+
+    context("when blurring", () => {
+      it("should render empty string", () => {
+        cy.findAllByPlaceholderText("Select a fruit...")
+          .eq(1)
+          .click()
+          .type("{enter}{downarrow}{enter}", { force: true });
+        cy.findAllByPlaceholderText("Select a fruit...").eq(1).click();
+        cy.findByLabelText("textbox-search").should("have.value", "");
       });
     });
   });
