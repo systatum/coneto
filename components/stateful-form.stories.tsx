@@ -17,6 +17,7 @@ import { BadgeProps } from "./badge";
 import { CountryCodeProps } from "./phonebox";
 import { css } from "styled-components";
 import { CapsuleContentProps } from "./capsule";
+import { OptionsProps } from "./selectbox";
 
 const meta: Meta<typeof StatefulForm> = {
   title: "Input Elements/StatefulForm",

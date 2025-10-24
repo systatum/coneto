@@ -706,7 +706,7 @@ function FormFields<T extends FieldValues>({
                             | string
                             | undefined
                         }
-                        setSelectionOptions={(e) => {
+                        setSelectedDates={(e) => {
                           const inputValueEvent = {
                             target: { name: field.name, value: e },
                           };
@@ -717,7 +717,7 @@ function FormFields<T extends FieldValues>({
                             onChange(field.name as keyof T, e);
                           }
                         }}
-                        selectionOptions={controllerField.value}
+                        selectedDates={controllerField.value}
                         {...field.dateProps}
                       />
                     )}
@@ -754,7 +754,7 @@ function FormFields<T extends FieldValues>({
                             | string
                             | undefined
                         }
-                        setSelectionOptions={(e) => {
+                        setSelectedOptions={(e) => {
                           const inputValueEvent = {
                             target: { name: field.name, value: e },
                           };
@@ -765,7 +765,7 @@ function FormFields<T extends FieldValues>({
                             onChange(field.name as keyof T, e);
                           }
                         }}
-                        selectionOptions={controllerField.value}
+                        selectedOptions={controllerField.value}
                         {...field.comboboxProps}
                       />
                     )}
