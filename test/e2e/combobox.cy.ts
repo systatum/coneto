@@ -283,15 +283,72 @@ describe("Combobox", () => {
           }
         });
       });
+    });
 
-      context("when losing focus", () => {
-        it("should render empty string on the searchbox", () => {
+    context("when losing focus", () => {
+      it("should render empty string on the searchbox", () => {
+        cy.findAllByPlaceholderText("Select a fruit...")
+          .eq(1)
+          .click()
+          .type("{enter}{downarrow}{enter}", { force: true });
+        cy.findAllByPlaceholderText("Select a fruit...").eq(1).click();
+        cy.findByLabelText("textbox-search").should("have.value", "");
+      });
+    });
+  });
+
+  context("With Custom Renderer", () => {
+    beforeEach(() => {
+      cy.visit(getIdContent("input-elements-combobox--with-custom-renderer"));
+    });
+
+    it("render the display", () => {
+      cy.findAllByPlaceholderText("Select a fruit...").eq(0).click();
+      cy.findByText("Apple").should("be.visible");
+      cy.findByText("A sweet red fruit often eaten raw or in pies.").should(
+        "be.visible"
+      );
+      cy.findByText("Banana").should("be.visible");
+      cy.findByText(/A long yellow fruit that.?s soft and sweet/).should(
+        "be.visible"
+      );
+    });
+
+    context("when selecting option", () => {
+      context("with clicking", () => {
+        it("render the display with checked", () => {
+          cy.findAllByPlaceholderText("Select a fruit...").eq(0).click();
+          cy.findByText("Apple").should("be.visible");
+          cy.findByText("A sweet red fruit often eaten raw or in pies.")
+            .should("be.visible")
+            .click();
+          cy.findByText("Banana").should("be.visible");
+          cy.findByText(/A long yellow fruit that.?s soft and sweet/)
+            .should("be.visible")
+            .click();
+          cy.get("input[type=checkbox]").eq(0).should("be.checked");
+          cy.get("input[type=checkbox]").eq(1).should("be.checked");
+        });
+      });
+
+      context("with pressing enter", () => {
+        it("render the display with checked", () => {
           cy.findAllByPlaceholderText("Select a fruit...")
-            .eq(1)
-            .click()
+            .eq(0)
             .type("{enter}{downarrow}{enter}", { force: true });
-          cy.findAllByPlaceholderText("Select a fruit...").eq(1).click();
-          cy.findByLabelText("textbox-search").should("have.value", "");
+          cy.findByText("Apple").should("be.visible");
+          cy.findByText("A sweet red fruit often eaten raw or in pies.").should(
+            "be.visible"
+          );
+          cy.findByText("Banana").should("be.visible");
+          cy.findByText(/A long yellow fruit that.?s soft and sweet/).should(
+            "be.visible"
+          );
+          cy.get("input[type=checkbox]").eq(0).should("be.checked");
+          cy.get("input[type=checkbox]").eq(1).should("be.checked");
+          cy.findAllByPlaceholderText("Select a fruit...")
+            .eq(0)
+            .should("have.value", "Apple, Banana");
         });
       });
     });
