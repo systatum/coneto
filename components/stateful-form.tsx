@@ -67,8 +67,8 @@ export type FormFieldGroup = FormFieldProps | FormFieldProps[];
 
 export interface FormFieldProps {
   name: string;
-  title: string;
-  required: boolean;
+  title?: string;
+  required?: boolean;
   type?: string;
   placeholder?: string;
   rows?: number;
