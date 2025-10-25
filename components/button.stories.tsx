@@ -186,11 +186,11 @@ export const WithTipMenu: Story = {
   args: {
     variant: "default",
     children: "Button",
-    subMenuList: TIP_MENU_ITEMS,
     dropdownStyle: css`
       min-width: 240px;
       margin-top: 8px;
     `,
+    subMenu: ({ list }) => list(TIP_MENU_ITEMS),
   },
   render: (args) => {
     return (
