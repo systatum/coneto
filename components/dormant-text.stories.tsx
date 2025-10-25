@@ -2,10 +2,9 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { useState, type ChangeEvent } from "react";
 import { DormantText } from "./dormant-text";
 import { Textbox } from "./textbox";
-import { OptionsProps } from "./selectbox";
 import { Combobox } from "./combobox";
 import { Datebox } from "./datebox";
-import { Colorbox, ColorPickProps } from "./colorbox";
+import { Colorbox } from "./colorbox";
 import { formatMoneyboxNumber, Moneybox } from "./moneybox";
 import { CountryCodeProps, formatPhoneboxNumber, Phonebox } from "./phonebox";
 import { COUNTRY_CODES } from "./../constants/countries";
@@ -49,7 +48,7 @@ export const Default: Story = {
       e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
       name: string
     ) => {
-      const newValue = e.target.value;
+      const newValue = e.target?.value;
       setValue((prev) => ({ ...prev, [name]: newValue }));
     };
 
@@ -136,10 +135,10 @@ export const WithCombobox: Story = {
 
   render: () => {
     const [value, setValue] = useState({
-      normal: { text: "Apple", value: 1 },
-      full: { text: "Banana", value: 2 },
-      max: { text: "Orange", value: 3 },
-      keydown: { text: "Grape", value: 4 },
+      normal: ["1"],
+      full: ["2"],
+      max: ["3"],
+      keydown: ["4"],
     });
 
     const [oldValue, setOldValue] = useState({
@@ -150,16 +149,24 @@ export const WithCombobox: Story = {
     });
 
     const FRUIT_OPTIONS = [
-      { text: "Apple", value: 1 },
-      { text: "Banana", value: 2 },
-      { text: "Orange", value: 3 },
-      { text: "Grape", value: 4 },
-      { text: "Pineapple", value: 5 },
-      { text: "Strawberry", value: 6 },
-      { text: "Watermelon", value: 7 },
+      { text: "Apple", value: "1" },
+      { text: "Banana", value: "2" },
+      { text: "Orange", value: "3" },
+      { text: "Grape", value: "4" },
+      { text: "Pineapple", value: "5" },
+      { text: "Strawberry", value: "6" },
+      { text: "Watermelon", value: "7" },
     ];
 
-    const handleChange = (e: OptionsProps, name: string) => {
+    const valueMatcher = (content: string[]) =>
+      FRUIT_OPTIONS.find((data) => content.includes(data.value));
+
+    const valueNormal = valueMatcher(value.normal);
+    const valueFull = valueMatcher(value.full);
+    const valueMax = valueMatcher(value.max);
+    const valueKeydown = valueMatcher(value.keydown);
+
+    const handleChange = (e: string[], name: string) => {
       const newValue = e;
       setValue((prev) => ({ ...prev, [name]: newValue }));
     };
@@ -169,17 +176,17 @@ export const WithCombobox: Story = {
         <div style={{ display: "flex", flexDirection: "column" }}>
           <span style={{ fontWeight: 500 }}>Normal Width</span>
           <DormantText
-            content={value.normal.text}
+            content={valueNormal.text}
             onActionClick={() => {
-              console.log(`Selected value: ${value.normal.value}`);
+              console.log(`Selected value: ${value.normal?.[0]}`);
             }}
           >
             <Combobox
               placeholder="Select a fruit..."
               strict
-              inputValue={value.normal}
+              selectedOptions={value.normal}
               options={FRUIT_OPTIONS}
-              setInputValue={(e) => handleChange(e, "normal")}
+              setSelectedOptions={(e) => handleChange(e, "normal")}
             />
           </DormantText>
         </div>
@@ -187,17 +194,17 @@ export const WithCombobox: Story = {
           <span style={{ fontWeight: 500 }}>Full Width</span>
           <DormantText
             fullWidth
-            content={value.full.text}
+            content={valueFull.text}
             onActionClick={() => {
-              console.log(`Selected value: ${value.full.value}`);
+              console.log(`Selected value: ${valueFull.text}`);
             }}
           >
             <Combobox
               placeholder="Select a fruit full..."
               strict
-              inputValue={value.full}
+              selectedOptions={value.full}
               options={FRUIT_OPTIONS}
-              setInputValue={(e) => handleChange(e, "full")}
+              setSelectedOptions={(e) => handleChange(e, "full")}
             />
           </DormantText>
         </div>
@@ -205,17 +212,17 @@ export const WithCombobox: Story = {
           <span style={{ fontWeight: 500 }}>With Max. Width</span>
           <DormantText
             dormantedMaxWidth="90px"
-            content={value.max.text}
+            content={valueMax.text}
             onActionClick={() => {
-              console.log(`Selected value: ${value.max.text}`);
+              console.log(`Selected value: ${valueMax}`);
             }}
           >
             <Combobox
               placeholder="Select a fruit max..."
               strict
-              inputValue={value.max}
+              selectedOptions={value.max}
               options={FRUIT_OPTIONS}
-              setInputValue={(e) => handleChange(e, "max")}
+              setSelectedOptions={(e) => handleChange(e, "max")}
             />
           </DormantText>
         </div>
@@ -226,9 +233,9 @@ export const WithCombobox: Story = {
           <DormantText
             fullWidth
             acceptChangeOn={"all"}
-            content={value.keydown.text}
+            content={valueKeydown.text}
             onActionClick={() => {
-              console.log(`Selected value: ${value.keydown.value}`);
+              console.log(`Selected value: ${valueKeydown}`);
             }}
             cancelable
             onActive={() => {
@@ -241,9 +248,9 @@ export const WithCombobox: Story = {
             <Combobox
               placeholder="Select a fruit keydown..."
               strict
-              inputValue={value.keydown}
+              selectedOptions={value.keydown}
               options={FRUIT_OPTIONS}
-              setInputValue={(e) => handleChange(e, "keydown")}
+              setSelectedOptions={(e) => handleChange(e, "keydown")}
             />
           </DormantText>
         </div>
@@ -259,10 +266,10 @@ export const WithDatebox: Story = {
 
   render: () => {
     const [value, setValue] = useState({
-      normal: { text: "07/25/2025", value: "07/25/2025" },
-      full: { text: "07/25/2025", value: "07/25/2025" },
-      max: { text: "07/25/2025", value: "07/25/2025" },
-      keydown: { text: "07/25/2025", value: "07/25/2025" },
+      normal: ["07/25/2025"],
+      full: ["07/25/2025"],
+      max: ["07/25/2025"],
+      keydown: ["07/25/2025"],
     });
 
     const [oldValue, setOldValue] = useState({
@@ -273,31 +280,31 @@ export const WithDatebox: Story = {
     });
 
     const DAY_NAMES = [
-      { text: "Su", value: 1 },
-      { text: "Mo", value: 2 },
-      { text: "Tu", value: 3 },
-      { text: "We", value: 4 },
-      { text: "Th", value: 5 },
-      { text: "Fr", value: 6 },
-      { text: "Sa", value: 7 },
+      { text: "Su", value: "1" },
+      { text: "Mo", value: "2" },
+      { text: "Tu", value: "3" },
+      { text: "We", value: "4" },
+      { text: "Th", value: "5" },
+      { text: "Fr", value: "6" },
+      { text: "Sa", value: "7" },
     ];
 
     const MONTH_NAMES = [
-      { text: "JAN", value: 1 },
-      { text: "FEB", value: 2 },
-      { text: "MAR", value: 3 },
-      { text: "APR", value: 4 },
-      { text: "MAY", value: 5 },
-      { text: "JUN", value: 6 },
-      { text: "JUL", value: 7 },
-      { text: "AUG", value: 8 },
-      { text: "SEP", value: 9 },
-      { text: "OCT", value: 10 },
-      { text: "NOV", value: 11 },
-      { text: "DEC", value: 12 },
+      { text: "JAN", value: "1" },
+      { text: "FEB", value: "2" },
+      { text: "MAR", value: "3" },
+      { text: "APR", value: "4" },
+      { text: "MAY", value: "5" },
+      { text: "JUN", value: "6" },
+      { text: "JUL", value: "7" },
+      { text: "AUG", value: "8" },
+      { text: "SEP", value: "9" },
+      { text: "OCT", value: "10" },
+      { text: "NOV", value: "11" },
+      { text: "DEC", value: "12" },
     ];
 
-    const handleChange = (e: OptionsProps, name: string) => {
+    const handleChange = (e: string[], name: string) => {
       const newValue = e;
       setValue((prev) => ({ ...prev, [name]: newValue }));
     };
@@ -307,16 +314,16 @@ export const WithDatebox: Story = {
         <div style={{ display: "flex", flexDirection: "column" }}>
           <span style={{ fontWeight: 500 }}>Normal Width</span>
           <DormantText
-            content={value.normal.text}
+            content={value.normal[0]}
             onActionClick={() => {
-              console.log(`Selected value: ${value.normal.value}`);
+              console.log(`Selected value: ${value.normal?.[0]}`);
             }}
           >
             <Datebox
-              inputValue={value.normal}
+              selectedDates={value.normal}
               dayNames={DAY_NAMES}
               monthNames={MONTH_NAMES}
-              setInputValue={(e) => handleChange(e, "normal")}
+              setSelectedDates={(e) => handleChange(e, "normal")}
             />
           </DormantText>
         </div>
@@ -324,16 +331,16 @@ export const WithDatebox: Story = {
           <span style={{ fontWeight: 500 }}>Full Width</span>
           <DormantText
             fullWidth
-            content={value.full.text}
+            content={value.full?.[0]}
             onActionClick={() => {
-              console.log(`Selected value: ${value.full.value}`);
+              console.log(`Selected value: ${value.full?.[0]}`);
             }}
           >
             <Datebox
-              inputValue={value.full}
+              selectedDates={value.full}
               dayNames={DAY_NAMES}
               monthNames={MONTH_NAMES}
-              setInputValue={(e) => handleChange(e, "full")}
+              setSelectedDates={(e) => handleChange(e, "full")}
             />
           </DormantText>
         </div>
@@ -341,16 +348,16 @@ export const WithDatebox: Story = {
           <span style={{ fontWeight: 500 }}>With Max. Width</span>
           <DormantText
             dormantedMaxWidth="120px"
-            content={value.max.text}
+            content={value.max?.[0]}
             onActionClick={() => {
-              console.log(`Selected value: ${value.max.value}`);
+              console.log(`Selected value: ${value.max?.[0]}`);
             }}
           >
             <Datebox
-              inputValue={value.max}
+              selectedDates={value.max}
               dayNames={DAY_NAMES}
               monthNames={MONTH_NAMES}
-              setInputValue={(e) => handleChange(e, "max")}
+              setSelectedDates={(e) => handleChange(e, "max")}
             />
           </DormantText>
         </div>
@@ -361,7 +368,7 @@ export const WithDatebox: Story = {
           <DormantText
             fullWidth
             acceptChangeOn={"click"}
-            content={value.keydown.text}
+            content={value.keydown?.[0]}
             cancelable
             onActive={() => {
               setOldValue((prev) => ({ ...prev, ["keydown"]: value.keydown }));
@@ -370,14 +377,14 @@ export const WithDatebox: Story = {
               setValue((prev) => ({ ...prev, ["keydown"]: oldValue.keydown }));
             }}
             onActionClick={() => {
-              console.log(`Selected value: ${value.keydown.value}`);
+              console.log(`Selected value: ${value.keydown?.[0]}`);
             }}
           >
             <Datebox
-              inputValue={value.keydown}
+              selectedDates={value.keydown}
               dayNames={DAY_NAMES}
               monthNames={MONTH_NAMES}
-              setInputValue={(e) => handleChange(e, "keydown")}
+              setSelectedDates={(e) => handleChange(e, "keydown")}
             />
           </DormantText>
         </div>
@@ -406,10 +413,7 @@ export const WithColorbox: Story = {
       keydown: value.keydown,
     });
 
-    const onChangeValue = (
-      e: ChangeEvent<HTMLInputElement>,
-      data: ColorPickProps
-    ) => {
+    const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
 
       function isValidHexColor(value: string): boolean {
@@ -417,29 +421,13 @@ export const WithColorbox: Story = {
         return hexRegex.test(value);
       }
 
-      if (data === "color-picker") {
-        const isValidHex = isValidHexColor(value);
-        setValue((prev) => ({
-          ...prev,
-          [name]: value,
-          showError: !isValidHex,
-          errorMessage: isValidHex ? "" : "Invalid color value.",
-        }));
-      } else if (data === "color-text") {
-        let val = value;
-
-        if (!val.startsWith("#")) {
-          val = "#" + val;
-        }
-
-        const isValidHex = isValidHexColor(val);
-        setValue((prev) => ({
-          ...prev,
-          [name]: val,
-          showError: !isValidHex,
-          errorMessage: isValidHex ? "" : "Invalid color value.",
-        }));
-      }
+      const isValidHex = isValidHexColor(value);
+      setValue((prev) => ({
+        ...prev,
+        [name]: value,
+        showError: !isValidHex,
+        errorMessage: isValidHex ? "" : "Invalid color value.",
+      }));
     };
 
     return (
