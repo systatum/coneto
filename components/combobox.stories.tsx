@@ -320,9 +320,18 @@ export const MultipleSelection: Story = {
   },
 };
 
-export const WithDisplay: Story = {
+export const WithCustomRenderer: Story = {
   render: () => {
     const [value, setValue] = useState<string[]>([]);
+
+    const FruitDisplay = ({ title, description }: FruitDisplayProps) => {
+      return (
+        <Container>
+          <Title>{title}</Title>
+          <Description>{description}</Description>
+        </Container>
+      );
+    };
 
     const FRUIT_OPTIONS: OptionsProps[] = [
       {
@@ -549,14 +558,6 @@ export const WithDisplay: Story = {
   },
 };
 
-const FruitDisplay = ({ title, description }: FruitDisplayProps) => {
-  return (
-    <Container>
-      <Title>{title}</Title>
-      <Description>{description}</Description>
-    </Container>
-  );
-};
 interface FruitDisplayProps {
   title: string;
   description: string;
