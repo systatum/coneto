@@ -193,10 +193,6 @@ export const WithTipMenu: Story = {
     subMenu: ({ list }) => list(TIP_MENU_ITEMS),
   },
   render: (args) => {
-    return (
-      <div>
-        <Button {...args} />
-      </div>
-    );
+    return <Button {...args} />;
   },
 };
