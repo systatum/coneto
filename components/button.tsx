@@ -22,11 +22,16 @@ export type ButtonVariants = {
   size?: "icon" | "xs" | "md" | "sm" | "lg";
 };
 
+export interface SubMenuButtonProps {
+  list?: (subMenuList: TipMenuItemProps[]) => React.ReactNode;
+  show?: (children: React.ReactNode) => React.ReactNode;
+  render?: (children?: React.ReactNode) => React.ReactNode;
+}
+
 function Button({
   variant = "default",
   size = "md",
   isLoading,
-  subMenuList,
   dropdownStyle,
   openedIcon: OpenedIcon = RiArrowDownSLine,
   closedIcon: ClosedIcon = RiArrowUpSLine,
@@ -38,11 +43,13 @@ function Button({
   onClick,
   dividerStyle,
   tipMenuSize,
+  subMenu,
+  showSubMenuOn = "caret",
   ...props
 }: React.ComponentProps<"button"> &
   ButtonVariants & {
     isLoading?: boolean;
-    subMenuList?: TipMenuItemProps[];
+    subMenu?: (props: SubMenuButtonProps) => React.ReactNode;
     dropdownStyle?: CSSProp;
     openedIcon?: RemixiconComponentType;
     closedIcon?: RemixiconComponentType;
@@ -50,6 +57,7 @@ function Button({
     toggleStyle?: CSSProp;
     containerStyle?: CSSProp;
     dividerStyle?: CSSProp;
+    showSubMenuOn?: "caret" | "self";
     tipMenuSize?: TipMenuItemVariantType;
   }) {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -94,10 +102,12 @@ function Button({
     >
       <BaseButton
         onClick={(event) => {
-          if (onClick) {
+          if (onClick && showSubMenuOn === "caret") {
             onClick(event);
           }
-          if (subMenuList) {
+          if (subMenu && showSubMenuOn === "self") {
+            setIsOpen((prev) => !prev);
+          } else {
             setIsOpen(false);
           }
         }}
@@ -106,7 +116,7 @@ function Button({
         $size={size}
         disabled={disabled}
         $disabled={disabled}
-        $tipMenu={subMenuList ? true : false}
+        $tipMenu={subMenu ? true : false}
         onMouseEnter={() => setHovered("dropdown")}
         onMouseLeave={() => setHovered("original")}
         $style={buttonStyle}
@@ -115,7 +125,7 @@ function Button({
         {isLoading && <LoadingSpinner />}
       </BaseButton>
 
-      {subMenuList && (
+      {showSubMenuOn === "caret" && subMenu && (
         <div
           style={{
             position: "relative",
@@ -141,7 +151,7 @@ function Button({
             $variant={variant}
             $isOpen={isOpen}
             $size={size}
-            $tipMenu={subMenuList ? true : false}
+            $tipMenu={subMenu ? true : false}
             $disabled={disabled}
             onMouseEnter={() => setHovered("dropdown")}
             onMouseLeave={() => setHovered("original")}
@@ -171,21 +181,58 @@ function Button({
             }}
             onMouseEnter={() => setHovered("dropdown")}
           >
-            <TipMenu
-              setIsOpen={() => {
-                setIsOpen(false);
-                setHovered("original");
-              }}
-              style={dropdownStyle}
-              subMenuList={subMenuList}
-              variant={tipMenuSize}
-            />
+            {subMenu({
+              list: (subMenuList) => (
+                <TipMenu
+                  setIsOpen={() => {
+                    setIsOpen(false);
+                    setHovered("original");
+                  }}
+                  style={dropdownStyle}
+                  subMenuList={subMenuList}
+                  variant={tipMenuSize}
+                />
+              ),
+              show: (children) => (
+                <ButtonTipMenuContainer>{children}</ButtonTipMenuContainer>
+              ),
+              render: (children) => children,
+            })}
           </div>,
           document.body
         )}
     </ButtonWrapper>
   );
 }
+
+function ButtonTipMenuContainer({
+  style,
+  children,
+}: {
+  style?: CSSProp;
+  children?: React.ReactNode;
+}) {
+  return (
+    <TipMenuContainer aria-label="button-tip-menu-container" $style={style}>
+      {children}
+    </TipMenuContainer>
+  );
+}
+
+const TipMenuContainer = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #f3f4f6;
+  overflow: hidden;
+  padding: 4px;
+  background-color: white;
+  gap: 2px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+  animation-duration: 200ms;
+
+  ${({ $style }) => $style}
+`;
 
 const ButtonWrapper = styled.div<{
   $style?: CSSProp;
@@ -486,5 +533,7 @@ const getFocusColor = (variant: ButtonVariants["variant"]) => {
       return "#00000033";
   }
 };
+
+Button.TipMenuContainer = ButtonTipMenuContainer;
 
 export { Button };
