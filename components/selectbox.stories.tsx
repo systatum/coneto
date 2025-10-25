@@ -33,8 +33,8 @@ export const Default: Story = {
       >
         <Selectbox
           options={SELECTBOX_DATA}
-          selectionOptions={value}
-          setSelectionOptions={setValue}
+          selectedOptions={value}
+          setSelectedOptions={setValue}
           placeholder="click this place holder"
         >
           {(props) =>
@@ -60,7 +60,7 @@ export const Default: Story = {
                   aria-label="Calendar"
                   onClick={() => {
                     setValue([option.value]);
-                    props.setSelectionOptionsLocal(option);
+                    props.setSelectedOptionsLocal(option);
                     props.setIsOpen(false);
                   }}
                 >
@@ -90,8 +90,8 @@ export const Clearable: Story = {
       <div style={{ width: "256px" }}>
         <Selectbox
           options={SELECTBOX_DATA}
-          selectionOptions={value}
-          setSelectionOptions={setValue}
+          selectedOptions={value}
+          setSelectedOptions={setValue}
           placeholder="click this place holder"
           clearable
         >
@@ -118,7 +118,7 @@ export const Clearable: Story = {
                   aria-label="Calendar"
                   onClick={() => {
                     setValue([option.value]);
-                    props.setSelectionOptionsLocal(option);
+                    props.setSelectedOptionsLocal(option);
                     props.setIsOpen(false);
                   }}
                 >

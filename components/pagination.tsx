@@ -147,8 +147,8 @@ const PaginationItem = ({
           <Combobox
             highlightOnMatch={highlightOnMatch}
             options={comboBoxPages.map((data) => formatOption(String(data)))}
-            selectionOptions={currentPageLocal}
-            setSelectionOptions={(val) => {
+            selectedOptions={currentPageLocal}
+            setSelectedOptions={(val) => {
               onPageChange(Number(val[0]));
               setCurrentPageLocal(val);
             }}

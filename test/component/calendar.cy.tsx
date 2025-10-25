@@ -24,7 +24,7 @@ describe("Calendar ", () => {
       it("renders weekend dates gray", () => {
         cy.mount(
           <Calendar
-            selectionOptions={valueWeekend}
+            selectedDates={valueWeekend}
             monthNames={MONTH_NAMES}
             disableWeekend
           />
@@ -41,7 +41,7 @@ describe("Calendar ", () => {
         it("renders selected previous/next day", () => {
           cy.mount(
             <Calendar
-              selectionOptions={valueWeekend}
+              selectedDates={valueWeekend}
               monthNames={MONTH_NAMES}
               disableWeekend
             />
@@ -63,7 +63,7 @@ describe("Calendar ", () => {
       it("not clickable", () => {
         cy.mount(
           <Calendar
-            selectionOptions={value}
+            selectedDates={value}
             monthNames={MONTH_NAMES}
             disableWeekend
           />
@@ -83,9 +83,7 @@ describe("Calendar ", () => {
   context("today", () => {
     context("when clicked", () => {
       it("renders date with blue dot and color", () => {
-        cy.mount(
-          <Calendar selectionOptions={value} monthNames={MONTH_NAMES} />
-        );
+        cy.mount(<Calendar selectedDates={value} monthNames={MONTH_NAMES} />);
         cy.findAllByLabelText("today-button").eq(0).click();
         const today = new Date().getDate();
         cy.get("li")
@@ -96,9 +94,7 @@ describe("Calendar ", () => {
       });
 
       it("renders today dot centered even after selecting another date", () => {
-        cy.mount(
-          <Calendar selectionOptions={value} monthNames={MONTH_NAMES} />
-        );
+        cy.mount(<Calendar selectedDates={value} monthNames={MONTH_NAMES} />);
 
         const today = new Date();
         const tomorrow = new Date(today);
@@ -135,9 +131,7 @@ describe("Calendar ", () => {
   context("month/year", () => {
     context("when selecting", () => {
       it("renders changing month and year", () => {
-        cy.mount(
-          <Calendar selectionOptions={value} monthNames={MONTH_NAMES} />
-        );
+        cy.mount(<Calendar selectedDates={value} monthNames={MONTH_NAMES} />);
         cy.findByLabelText("calendar-select-date").eq(0).click();
         cy.findByLabelText("combobox-month").click();
         cy.findByText("JAN").should("exist").click();
@@ -155,7 +149,7 @@ describe("Calendar ", () => {
 
         cy.mount(
           <Calendar
-            selectionOptions={value}
+            selectedDates={value}
             monthNames={MONTH_NAMES}
             onCalendarPeriodChanged={onCalendarPeriodChanged}
           />
@@ -186,7 +180,7 @@ describe("Calendar ", () => {
         cy.mount(
           <Calendar
             todayButtonCaption="Present"
-            selectionOptions={value}
+            selectedDates={value}
             monthNames={MONTH_NAMES}
           />
         );

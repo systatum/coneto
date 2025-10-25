@@ -23,8 +23,8 @@ export type DateboxProps = BaseCalendarProps & {
 type CalendarDrawerProps = BaseCalendarProps &
   Partial<
     DrawerProps & {
-      selectionOptionsLocal?: OptionsProps;
-      setSelectionOptionsLocal?: (data: OptionsProps) => void;
+      selectedOptionsLocal?: OptionsProps;
+      setSelectedOptionsLocal?: (data: OptionsProps) => void;
       calendarFooter?: ReactNode;
       calendarTodayButtonCaption?: string;
       calendarSelectabilityMode?: SelectabilityModeState;
@@ -33,7 +33,7 @@ type CalendarDrawerProps = BaseCalendarProps &
   >;
 
 const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
-  const { selectionOptions, errorMessage, ...rest } = props;
+  const { selectedDates, errorMessage, ...rest } = props;
   return (
     <InputWrapper $disabled={props.disabled}>
       {props.label && <Label $style={props.labelStyle}>{props.label}</Label>}
@@ -58,7 +58,7 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
             <CalendarDrawer
               {...rest}
               {...selectBoxProps}
-              selectionOptions={selectionOptions}
+              selectedDates={selectedDates}
             />
           )}
         </Selectbox>
@@ -100,13 +100,13 @@ const ErrorText = styled.span`
 
 function CalendarDrawer(props: CalendarDrawerProps) {
   useEffect(() => {
-    if (props.selectionOptions.length > 0) {
-      props.setSelectionOptionsLocal({
-        text: props.selectionOptions?.[0],
-        value: props.selectionOptions?.[0],
+    if (props.selectedDates.length > 0) {
+      props.setSelectedOptionsLocal({
+        text: props.selectedDates?.[0],
+        value: props.selectedDates?.[0],
       });
     }
-  }, [props.selectionOptions]);
+  }, [props.selectedDates]);
 
   return (
     <CalendarWrapper

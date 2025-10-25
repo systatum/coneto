@@ -29,8 +29,8 @@ interface BaseComboboxProps {
   containerStyle?: CSSProp;
   selectboxStyle?: CSSProp;
   labelStyle?: CSSProp;
-  selectionOptions: string[];
-  setSelectionOptions: (data: string[]) => void;
+  selectedOptions: string[];
+  setSelectedOptions: (data: string[]) => void;
   clearable?: boolean;
   placeholder?: string;
   emptySlate?: string;
@@ -53,8 +53,8 @@ type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
   BaseComboboxProps & {
     inputRef?: Ref<HTMLInputElement>;
     handleKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
-    selectionOptionsLocal: OptionsProps;
-    setSelectionOptionsLocal: (value: OptionsProps) => void;
+    selectedOptionsLocal: OptionsProps;
+    setSelectedOptionsLocal: (value: OptionsProps) => void;
     setHasInteracted?: (value: boolean) => void;
     refs?: {
       setFloating?: Ref<HTMLUListElement>;
@@ -66,7 +66,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
   (
     {
       options,
-      setSelectionOptions,
+      setSelectedOptions,
       clearable = false,
       placeholder,
       containerStyle,
@@ -77,7 +77,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       errorMessage,
       label,
       showError,
-      selectionOptions,
+      selectedOptions,
       strict,
       actions,
       onKeyDown,
@@ -103,8 +103,8 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
             `}
           `}
           options={options}
-          selectionOptions={selectionOptions}
-          setSelectionOptions={setSelectionOptions}
+          selectedOptions={selectedOptions}
+          setSelectedOptions={setSelectedOptions}
           placeholder={placeholder}
           clearable={clearable}
           strict={strict}
@@ -118,8 +118,8 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
               <ComboboxDrawer
                 {...props}
                 inputRef={props.ref}
-                selectionOptions={selectionOptions}
-                setSelectionOptions={setSelectionOptions}
+                selectedOptions={selectedOptions}
+                setSelectedOptions={setSelectedOptions}
                 highlightOnMatch={highlightOnMatch}
                 emptySlate={emptySlate}
                 actions={actions}
@@ -167,10 +167,10 @@ function ComboboxDrawer({
   options,
   refs,
   setHighlightedIndex,
-  setSelectionOptions,
-  setSelectionOptionsLocal,
-  selectionOptionsLocal,
-  selectionOptions,
+  setSelectedOptions,
+  setSelectedOptionsLocal,
+  selectedOptionsLocal,
+  selectedOptions,
   setIsOpen,
   actions,
   onClick,
@@ -186,13 +186,13 @@ function ComboboxDrawer({
 
   const selectedIndex = useMemo(
     () =>
-      options.findIndex((option) => selectionOptions.includes(option.value)) +
+      options.findIndex((option) => selectedOptions.includes(option.value)) +
       (actions?.length ?? 0),
-    [options, selectionOptions, actions]
+    [options, selectedOptions, actions]
   );
 
   useEffect(() => {
-    if (!hasScrolled && selectionOptions.length > 0 && options.length > 0) {
+    if (!hasScrolled && selectedOptions.length > 0 && options.length > 0) {
       const selectedEl = listRef.current[selectedIndex];
       if (selectedEl) {
         requestAnimationFrame(() => {
@@ -248,7 +248,7 @@ function ComboboxDrawer({
             autoComplete="off"
             onKeyDown={handleKeyDown}
             name="multiple"
-            value={selectionOptionsLocal.text}
+            value={selectedOptionsLocal.text}
             containerStyle={css`
               position: sticky;
               top: 0;
@@ -272,8 +272,8 @@ function ComboboxDrawer({
               const { value } = e.target;
               setHasInteracted(true);
               setHighlightedIndex(0);
-              setSelectionOptionsLocal({
-                ...selectionOptionsLocal,
+              setSelectedOptionsLocal({
+                ...selectedOptionsLocal,
                 text: value,
               });
             }}
@@ -315,7 +315,7 @@ function ComboboxDrawer({
       )}
       {options.length > 0 ? (
         options.map((option, index) => {
-          const isSelected = selectionOptions.includes(option.value);
+          const isSelected = selectedOptions.includes(option.value);
           const shouldHighlight =
             highlightOnMatch && isSelected
               ? true
@@ -329,27 +329,27 @@ function ComboboxDrawer({
               data-highlighted={shouldHighlight}
               $selected={isSelected && !multiple}
               $highlighted={shouldHighlight}
-              $optionDisplay={!!option?.render}
+              $optionDisplay={!!option.render}
               onMouseDown={(e) => {
                 e.preventDefault();
                 if (multiple) {
-                  if (!selectionOptions.includes(option.value)) {
+                  if (!selectedOptions.includes(option.value)) {
                     if (
                       !maxSelectableItems ||
-                      selectionOptions.length < maxSelectableItems
+                      selectedOptions.length < maxSelectableItems
                     ) {
-                      setSelectionOptions([...selectionOptions, option.value]);
+                      setSelectedOptions([...selectedOptions, option.value]);
                     }
                   } else {
-                    setSelectionOptions(
-                      selectionOptions.filter((val) => val !== option.value)
+                    setSelectedOptions(
+                      selectedOptions.filter((val) => val !== option.value)
                     );
                   }
                   (inputRef as RefObject<HTMLInputElement>)?.current?.focus();
                 } else {
                   setIsOpen(false);
-                  setSelectionOptionsLocal(option);
-                  setSelectionOptions([option.value]);
+                  setSelectedOptionsLocal(option);
+                  setSelectedOptions([option.value]);
                   setHasInteracted(false);
                 }
 
