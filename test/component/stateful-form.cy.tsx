@@ -205,4 +205,115 @@ describe("StatefulForm", () => {
         });
     });
   });
+
+  context("when not given a title", () => {
+    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
+      (data) => data.id === "US" || COUNTRY_CODES[206]
+    );
+
+    if (!DEFAULT_COUNTRY_CODES) {
+      throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
+    }
+
+    const value = {
+      first_name: "",
+      last_name: "",
+      email: "",
+      phone: "",
+      note: "",
+      access: false,
+      country_code: DEFAULT_COUNTRY_CODES,
+    };
+
+    const employeeSchema = z.object({
+      first_name: z
+        .string()
+        .min(3, "First name must be at least 3 characters long"),
+      last_name: z.string().optional(),
+      email: z.string().email("Please enter a valid email address"),
+      phone: z
+        .string()
+        .regex(/^\d{10,15}$/, "Phone number must be between 10 and 15 digits")
+        .optional(),
+      note: z.string().optional(),
+      access: z.boolean().refine((val) => val === true, {
+        message: "Access must be true",
+      }),
+    });
+
+    const EMPLOYEE_FIELDS: FormFieldGroup[] = [
+      [
+        {
+          name: "first_name",
+          type: "text",
+          required: true,
+          placeholder: "Enter first name",
+        },
+        {
+          name: "last_name",
+          type: "text",
+          required: false,
+          placeholder: "Enter last name",
+        },
+      ],
+      {
+        name: "email",
+        type: "email",
+        required: true,
+        placeholder: "Enter email address",
+      },
+      {
+        name: "phone",
+        type: "phone",
+        required: false,
+        placeholder: "Enter phone number",
+      },
+      {
+        name: "note",
+        type: "textarea",
+        rows: 3,
+        required: false,
+        placeholder: "Add additional notes",
+      },
+      {
+        name: "access",
+        type: "checkbox",
+        required: false,
+      },
+    ];
+
+    const TITLE_EMPLOYEE_FIELD = [
+      "First Name",
+      "Last Name",
+      "Email",
+      "Phone Number",
+      "Note",
+      "Has access to login",
+    ];
+
+    const PLACEHOLDER_EMPLOYEE_FIELD = [
+      "Enter first name",
+      "Enter last name",
+      "Enter email address",
+      "Enter phone number",
+      "Add additional notes",
+    ];
+
+    it("should render only the input", () => {
+      cy.mount(
+        <StatefulForm
+          fields={EMPLOYEE_FIELDS}
+          formValues={value}
+          validationSchema={employeeSchema}
+          mode="onChange"
+        />
+      );
+      PLACEHOLDER_EMPLOYEE_FIELD.map((data) => {
+        cy.findByPlaceholderText(data).should("exist");
+      });
+      TITLE_EMPLOYEE_FIELD.map((data) => {
+        cy.findByText(data).should("not.exist");
+      });
+    });
+  });
 });

@@ -67,8 +67,8 @@ export type FormFieldGroup = FormFieldProps | FormFieldProps[];
 
 export interface FormFieldProps {
   name: string;
-  title: string;
-  required: boolean;
+  title?: string;
+  required?: boolean;
   type?: string;
   placeholder?: string;
   rows?: number;
@@ -132,8 +132,6 @@ function StatefulForm<Z extends ZodTypeAny>({
     const error = errors[field];
 
     const isFile = (val: unknown): val is File => val instanceof File;
-    const isFileList = (val: unknown): val is FileList =>
-      val instanceof FileList;
 
     const hasErrorMessage = (err: unknown): boolean => {
       if (!err || typeof err !== "object") return false;
@@ -157,7 +155,7 @@ function StatefulForm<Z extends ZodTypeAny>({
       return !!touched && hasErrorMessage(error);
     }
 
-    if (isFile(value) || isFileList(value)) {
+    if (isFile(value)) {
       return !!touched && hasErrorMessage(error);
     }
 
