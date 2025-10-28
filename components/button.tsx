@@ -124,7 +124,7 @@ function Button({
         $size={size}
         disabled={disabled}
         $disabled={disabled}
-        $tipMenu={subMenu ? true : false}
+        $tipMenu={subMenu && showSubMenuOn === "caret" ? true : false}
         onMouseEnter={() => setHovered("dropdown")}
         onMouseLeave={() => setHovered("original")}
         $style={buttonStyle}
