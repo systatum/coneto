@@ -311,14 +311,20 @@ function Table({
                       if (data.type === "capsule") {
                         return (
                           <Capsule
+                            {...data.capsuleProps}
+                            activeBackgroundColor="#aeaeae"
                             containerStyle={css`
                               box-shadow: none;
                               min-height: 32px;
                               max-height: 32px;
                               border-radius: 6px;
                               font-size: 14px;
+                              ${data.capsuleProps.containerStyle}
                             `}
-                            {...data.capsuleProps}
+                            tabStyle={css`
+                              border-radius: 6px;
+                              ${data.capsuleProps.tabStyle}
+                            `}
                           />
                         );
                       }
@@ -475,10 +481,6 @@ function Table({
               {selectable && (
                 <CheckboxWrapper>
                   <Checkbox
-                    containerStyle={{
-                      width: 12,
-                      height: 12,
-                    }}
                     onChange={handleSelectAll}
                     checked={allRowSelectedLocal}
                     indeterminate={someSelectedLocal}
@@ -1007,14 +1009,7 @@ function TableRow({
             }
           }}
         >
-          <Checkbox
-            containerStyle={{
-              width: 12,
-              height: 12,
-            }}
-            {...props}
-            checked={isSelected}
-          />
+          <Checkbox {...props} checked={isSelected} />
         </CheckboxWrapperRow>
       )}
       {content
