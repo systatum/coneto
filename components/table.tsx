@@ -312,7 +312,7 @@ function Table({
                         return (
                           <Capsule
                             {...data.capsuleProps}
-                            activeBackgroundColor="#aeaeae"
+                            activeBackgroundColor="rgb(226, 224, 224)"
                             containerStyle={css`
                               box-shadow: none;
                               min-height: 32px;
@@ -323,6 +323,7 @@ function Table({
                             `}
                             tabStyle={css`
                               border-radius: 6px;
+                              color: rgb(86, 85, 85);
                               ${data.capsuleProps.tabStyle}
                             `}
                           />
@@ -381,6 +382,11 @@ function Table({
                               padding: 0.25rem 0.5rem;
                               background-color: transparent;
                               position: relative;
+                              border-top: 1px solid #e5e7eb;
+                              border-right: 1px solid #e5e7eb;
+                              border-bottom: 1px solid #e5e7eb;
+                              border-top-right-radius: 6px;
+                              border-bottom-right-radius: 6px;
 
                               &:hover {
                                 background-color: #e2e0e0;
