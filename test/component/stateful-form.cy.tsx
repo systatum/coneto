@@ -205,4 +205,64 @@ describe("StatefulForm", () => {
         });
     });
   });
+
+  context("when not given a title", () => {
+    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
+      (data) => data.id === "US" || COUNTRY_CODES[206]
+    );
+
+    if (!DEFAULT_COUNTRY_CODES) {
+      throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
+    }
+
+    const value = {
+      first_name: "",
+      access: false,
+    };
+
+    const employeeSchema = z.object({
+      first_name: z
+        .string()
+        .min(3, "First name must be at least 3 characters long"),
+      access: z.boolean().refine((val) => val === true, {
+        message: "Access must be true",
+      }),
+    });
+
+    const EMPLOYEE_FIELDS: FormFieldGroup[] = [
+      {
+        name: "first_name",
+        type: "text",
+        required: true,
+        placeholder: "Enter first name",
+      },
+
+      {
+        name: "access",
+        type: "checkbox",
+        required: false,
+      },
+    ];
+
+    const TITLE_EMPLOYEE_FIELD = ["First Name", "Has access to login"];
+
+    const PLACEHOLDER_EMPLOYEE_FIELD = ["Enter first name"];
+
+    it("should render only the input", () => {
+      cy.mount(
+        <StatefulForm
+          fields={EMPLOYEE_FIELDS}
+          formValues={value}
+          validationSchema={employeeSchema}
+          mode="onChange"
+        />
+      );
+      PLACEHOLDER_EMPLOYEE_FIELD.map((data) => {
+        cy.findByPlaceholderText(data).should("exist");
+      });
+      TITLE_EMPLOYEE_FIELD.map((data) => {
+        cy.findByText(data).should("not.exist");
+      });
+    });
+  });
 });
