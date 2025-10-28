@@ -327,11 +327,9 @@ const Tab = styled.div<{
           color: #111827;
         `}
 
-  ${({ $isActive, $activeTabStyle }) =>
-    !$isActive &&
-    css`
-      ${$activeTabStyle}
-    `}
+  ${({ $activeTabStyle }) => css`
+    ${$activeTabStyle}
+  `}
 `;
 
 export { Capsule };
