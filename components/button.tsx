@@ -28,6 +28,21 @@ export interface SubMenuButtonProps {
   render?: (children?: React.ReactNode) => React.ReactNode;
 }
 
+export type ButtonProps = React.ComponentProps<"button"> &
+  ButtonVariants & {
+    isLoading?: boolean;
+    subMenu?: (props: SubMenuButtonProps) => React.ReactNode;
+    dropdownStyle?: CSSProp;
+    openedIcon?: RemixiconComponentType;
+    closedIcon?: RemixiconComponentType;
+    buttonStyle?: CSSProp;
+    toggleStyle?: CSSProp;
+    containerStyle?: CSSProp;
+    dividerStyle?: CSSProp;
+    showSubMenuOn?: "caret" | "self";
+    tipMenuSize?: TipMenuItemVariantType;
+  };
+
 function Button({
   variant = "default",
   size = "md",
@@ -46,20 +61,7 @@ function Button({
   subMenu,
   showSubMenuOn = "caret",
   ...props
-}: React.ComponentProps<"button"> &
-  ButtonVariants & {
-    isLoading?: boolean;
-    subMenu?: (props: SubMenuButtonProps) => React.ReactNode;
-    dropdownStyle?: CSSProp;
-    openedIcon?: RemixiconComponentType;
-    closedIcon?: RemixiconComponentType;
-    buttonStyle?: CSSProp;
-    toggleStyle?: CSSProp;
-    containerStyle?: CSSProp;
-    dividerStyle?: CSSProp;
-    showSubMenuOn?: "caret" | "self";
-    tipMenuSize?: TipMenuItemVariantType;
-  }) {
+}: ButtonProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [hovered, setHovered] = React.useState<
     "main" | "original" | "dropdown"
@@ -69,11 +71,17 @@ function Button({
   );
 
   const containerRef = React.useRef<HTMLDivElement>(null);
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
-      if (containerRef.current && !containerRef.current.contains(target)) {
+      if (
+        containerRef.current &&
+        dropdownRef.current &&
+        !containerRef.current.contains(target) &&
+        !dropdownRef.current.contains(target)
+      ) {
         setTimeout(() => {
           setIsOpen(false);
           setHovered("original");
@@ -165,6 +173,7 @@ function Button({
       {isOpen &&
         createPortal(
           <div
+            ref={dropdownRef}
             style={{
               position: "absolute",
               top: containerRef.current?.getBoundingClientRect().bottom ?? 0,
@@ -208,12 +217,20 @@ function Button({
 function ButtonTipMenuContainer({
   style,
   children,
-}: {
+  ...props
+}: Omit<React.ComponentProps<"div">, "style"> & {
   style?: CSSProp;
   children?: React.ReactNode;
 }) {
   return (
-    <TipMenuContainer aria-label="button-tip-menu-container" $style={style}>
+    <TipMenuContainer
+      {...props}
+      onClick={(e) => {
+        if (props.onClick) props.onClick?.(e);
+      }}
+      aria-label="button-tip-menu-container"
+      $style={style}
+    >
       {children}
     </TipMenuContainer>
   );
