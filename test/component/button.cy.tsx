@@ -133,7 +133,7 @@ describe("Button", () => {
                       padding: "10px",
                     }}
                   >
-                    This button using function show
+                    This button using show function
                   </div>
                 )
               }
@@ -150,7 +150,7 @@ describe("Button", () => {
                 "rgb(207, 207, 207)"
               );
             });
-          cy.findByText("This button using function show").should("exist");
+          cy.findByText("This button using show function").should("exist");
           cy.findByLabelText("button-tip-menu-container").should("exist");
         });
       });
@@ -254,6 +254,9 @@ describe("Button", () => {
 
       context("when set to self", () => {
         it("renders just only a button", () => {
+          cy.window().then((win) => {
+            cy.spy(win.console, "log").as("consoleLog");
+          });
           cy.mount(
             <Button
               variant="default"
@@ -261,6 +264,9 @@ describe("Button", () => {
                 minWidth: "240px",
               }}
               showSubMenuOn="self"
+              onClick={() => {
+                console.log("console log");
+              }}
               subMenu={({ render }) =>
                 render(
                   <Button.TipMenuContainer
@@ -294,6 +300,11 @@ describe("Button", () => {
           cy.findByText("Got it").should("exist");
 
           cy.findByLabelText("button-toggle").should("not.exist");
+
+          cy.get("@consoleLog").should(
+            "not.have.been.calledWith",
+            "console log"
+          );
         });
       });
     });
