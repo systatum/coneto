@@ -176,16 +176,21 @@ function Button({
             ref={dropdownRef}
             style={{
               position: "absolute",
-              top: containerRef.current?.getBoundingClientRect().bottom ?? 0,
+              top:
+                (containerRef.current?.getBoundingClientRect().bottom ?? 0) +
+                window.scrollY,
               left:
                 positionClass === "left"
-                  ? containerRef.current?.getBoundingClientRect().left
+                  ? (containerRef.current?.getBoundingClientRect().left ?? 0) +
+                    window.scrollX
                   : undefined,
               right:
                 positionClass === "right"
                   ? window.innerWidth -
-                    (containerRef.current?.getBoundingClientRect().right ?? 0)
+                    (containerRef.current?.getBoundingClientRect().right ?? 0) -
+                    window.scrollX
                   : undefined,
+
               zIndex: 9999,
             }}
             onMouseEnter={() => setHovered("dropdown")}
