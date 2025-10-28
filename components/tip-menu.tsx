@@ -2,6 +2,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { RemixiconComponentType } from "@remixicon/react";
 import { COLOR_STYLE_MAP } from "../constants/color-map";
 import { ReactNode } from "react";
+import { Button } from "./button";
 
 export type TipMenuItemVariantType = "sm" | "md";
 interface TipMenuProps {
@@ -30,9 +31,9 @@ function TipMenu({
   variant = "md",
 }: TipMenuProps) {
   return (
-    <StyledTipMenu
+    <Button.TipMenuContainer
       aria-label="tip-menu"
-      $style={style}
+      style={style}
       onClick={() => {
         setIsOpen?.();
       }}
@@ -50,7 +51,7 @@ function TipMenu({
         />
       ))}
       {children}
-    </StyledTipMenu>
+    </Button.TipMenuContainer>
   );
 }
 
@@ -88,21 +89,6 @@ function TipMenuItem({
     </StyledTipMenuItem>
   );
 }
-
-const StyledTipMenu = styled.div<{ $style?: CSSProp }>`
-  display: flex;
-  flex-direction: column;
-  border: 1px solid #f3f4f6;
-  overflow: hidden;
-  padding: 4px;
-  background-color: white;
-  gap: 2px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  border-radius: 4px;
-  animation-duration: 200ms;
-
-  ${({ $style }) => $style}
-`;
 
 const StyledTipMenuItem = styled.div<{
   $isDangerous: boolean;

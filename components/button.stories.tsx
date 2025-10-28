@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Button } from "./button";
+import { Button, ButtonProps } from "./button";
 import {
   RiMovie2Fill,
   RiSpam2Line,
@@ -8,7 +8,8 @@ import {
   RiCheckLine,
   RiInboxArchiveLine,
 } from "@remixicon/react";
-import { css } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
+import { Calendar } from "./calendar";
 
 const meta = {
   title: "Controls/Button",
@@ -183,20 +184,133 @@ export const WithLoading: Story = {
 };
 
 export const WithTipMenu: Story = {
-  args: {
-    variant: "default",
-    children: "Button",
-    subMenuList: TIP_MENU_ITEMS,
-    dropdownStyle: css`
-      min-width: 240px;
-      margin-top: 8px;
-    `,
-  },
-  render: (args) => {
+  render: () => {
+    const LIST_SUB_MENU: ButtonProps = {
+      variant: "default",
+      children: "List",
+      dropdownStyle: css`
+        min-width: 240px;
+        margin-top: 8px;
+      `,
+      subMenu: ({ list }) => list(TIP_MENU_ITEMS),
+    };
+
+    const SHOW_SUB_MENU: ButtonProps = {
+      variant: "default",
+      children: "Show",
+      dropdownStyle: css`
+        min-width: 240px;
+      `,
+      subMenu: ({ show }) => show(<Calendar />),
+    };
+
+    const RENDER_SUB_MENU: ButtonProps = {
+      variant: "default",
+      children: "Render",
+      dropdownStyle: css`
+        min-width: 240px;
+        margin-top: 8px;
+      `,
+      subMenu: ({ render }) =>
+        render(
+          <Button.TipMenuContainer
+            style={css`
+              padding: 10px;
+              display: flex;
+              flex-direction: column;
+              gap: 4px;
+              cursor: default;
+              margin-top: 4px;
+            `}
+          >
+            <MenuContainer>
+              <MenuTitle>Information</MenuTitle>
+              <MenuDescription>
+                This button uses a render function to show custom content inside
+                TipMenu.
+              </MenuDescription>
+            </MenuContainer>
+            <Button variant="primary">Got it</Button>
+          </Button.TipMenuContainer>
+        ),
+    };
+
     return (
-      <div>
-        <Button {...args} />
-      </div>
+      <Container>
+        <Section>
+          <SectionTitle>Using list() to list sub menu items</SectionTitle>
+          <ButtonRow>
+            <Button {...LIST_SUB_MENU} showSubMenuOn="caret" />
+            <Button {...LIST_SUB_MENU} showSubMenuOn="self" />
+          </ButtonRow>
+        </Section>
+
+        <Section>
+          <SectionTitle>
+            Using show() to show with built-in container
+          </SectionTitle>
+          <ButtonRow>
+            <Button {...SHOW_SUB_MENU} showSubMenuOn="caret" />
+            <Button {...SHOW_SUB_MENU} showSubMenuOn="self" />
+          </ButtonRow>
+        </Section>
+
+        <Section>
+          <SectionTitle>
+            Using render() to render a totally custom component
+          </SectionTitle>
+          <ButtonRow>
+            <Button {...RENDER_SUB_MENU} showSubMenuOn="caret" />
+            <Button {...RENDER_SUB_MENU} showSubMenuOn="self" />
+          </ButtonRow>
+        </Section>
+      </Container>
     );
   },
 };
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 350px;
+`;
+
+const Section = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+`;
+
+const SectionTitle = styled.span``;
+
+const ButtonRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+`;
+
+const MenuContainer = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  user-select: auto;
+  max-width: 300px;
+  margin-bottom: 4px;
+  ${({ $style }) => $style}
+`;
+
+const MenuTitle = styled.div<{ $style?: CSSProp }>`
+  font-weight: 600;
+  font-size: 15px;
+  color: #111827;
+
+  ${({ $style }) => $style}
+`;
+
+const MenuDescription = styled.div<{ $style?: CSSProp }>`
+  font-size: 13px;
+  color: #6b7280;
+  ${({ $style }) => $style}
+`;
