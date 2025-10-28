@@ -904,7 +904,12 @@ export const WithRowGroup: Story = {
     interface TableItemProps {
       title: string;
       subtitle?: string;
-      items: { title: string; category: string; author: string }[];
+      items: {
+        taken?: boolean;
+        title: string;
+        category: string;
+        author: string;
+      }[];
     }
 
     const TABLE_ITEMS: TableItemProps[] = [
@@ -916,48 +921,62 @@ export const WithRowGroup: Story = {
             title: "Understanding React 18",
             category: "Frontend",
             author: "John Doe",
+            taken: true,
           },
           {
             title: "TypeScript Deep Dive",
             category: "Backend",
             author: "Jane Smith",
+            taken: false,
           },
           {
             title: "Async Patterns in JS",
             category: "Frontend",
             author: "Ali Rahman",
+            taken: true,
           },
           {
             title: "Clean Code Practices",
             category: "General",
             author: "Nina Hart",
+            taken: false,
           },
           {
             title: "Intro to WebAssembly",
             category: "Experimental",
             author: "Tom K.",
+            taken: false,
           },
           {
             title: "Rust for JavaScript Devs",
             category: "Backend",
             author: "Lia Wang",
+            taken: true,
           },
           {
             title: "Next.js Performance Tips",
             category: "Frontend",
             author: "Hugo Lin",
+            taken: false,
           },
           {
             title: "Database Indexing 101",
             category: "Backend",
             author: "Sara Lee",
+            taken: true,
           },
           {
             title: "Scaling with Redis",
             category: "DevOps",
             author: "David Kim",
+            taken: false,
           },
-          { title: "AI in the Browser", category: "AI/ML", author: "Zara T." },
+          {
+            title: "AI in the Browser",
+            category: "AI/ML",
+            author: "Zara T.",
+            taken: true,
+          },
         ],
       },
       {
@@ -968,51 +987,61 @@ export const WithRowGroup: Story = {
             title: "React & Redux Bootcamp",
             category: "Frontend",
             author: "Codecademy",
+            taken: false,
           },
           {
             title: "Docker Essentials",
             category: "DevOps",
             author: "Pluralsight",
+            taken: true,
           },
           {
             title: "Fullstack with Node.js",
             category: "Backend",
             author: "Udemy",
+            taken: false,
           },
           {
             title: "GraphQL Mastery",
             category: "API",
             author: "Frontend Masters",
+            taken: true,
           },
           {
             title: "Design Systems",
             category: "UI/UX",
             author: "Figma Academy",
+            taken: false,
           },
           {
             title: "AI with TensorFlow.js",
             category: "AI/ML",
             author: "Coursera",
+            taken: true,
           },
           {
             title: "Intro to TypeScript",
             category: "Frontend",
             author: "FreeCodeCamp",
+            taken: false,
           },
           {
             title: "AWS Lambda in Practice",
             category: "Cloud",
             author: "Egghead.io",
+            taken: true,
           },
           {
             title: "Security for Developers",
             category: "Security",
             author: "HackerOne",
+            taken: false,
           },
           {
             title: "Building Design Tools",
             category: "DevTools",
             author: "ToolingLab",
+            taken: true,
           },
         ],
       },
@@ -1020,20 +1049,61 @@ export const WithRowGroup: Story = {
         title: "Open Source Tools",
         subtitle: "Top GitHub projects by community",
         items: [
-          { title: "Vite", category: "Frontend", author: "Evan You" },
-          { title: "Zod", category: "Validation", author: "Colin McDonnell" },
-          { title: "tRPC", category: "API", author: "Julian Fahrer" },
-          { title: "Remix", category: "Fullstack", author: "Remix Team" },
-          { title: "Nx", category: "Monorepo", author: "Nrwl" },
-          { title: "SWR", category: "Data Fetching", author: "Vercel" },
+          {
+            title: "Vite",
+            category: "Frontend",
+            author: "Evan You",
+            taken: false,
+          },
+          {
+            title: "Zod",
+            category: "Validation",
+            author: "Colin McDonnell",
+            taken: true,
+          },
+          {
+            title: "tRPC",
+            category: "API",
+            author: "Julian Fahrer",
+            taken: false,
+          },
+          {
+            title: "Remix",
+            category: "Fullstack",
+            author: "Remix Team",
+            taken: true,
+          },
+          { title: "Nx", category: "Monorepo", author: "Nrwl", taken: false },
+          {
+            title: "SWR",
+            category: "Data Fetching",
+            author: "Vercel",
+            taken: true,
+          },
           {
             title: "Drizzle ORM",
             category: "Database",
             author: "Drizzle Team",
+            taken: false,
           },
-          { title: "Playwright", category: "Testing", author: "Microsoft" },
-          { title: "Astro", category: "Static Site", author: "Astro Team" },
-          { title: "React Hook Form", category: "Forms", author: "Bluebill" },
+          {
+            title: "Playwright",
+            category: "Testing",
+            author: "Microsoft",
+            taken: true,
+          },
+          {
+            title: "Astro",
+            category: "Static Site",
+            author: "Astro Team",
+            taken: false,
+          },
+          {
+            title: "React Hook Form",
+            category: "Forms",
+            author: "Bluebill",
+            taken: true,
+          },
         ],
       },
     ];
@@ -1041,7 +1111,7 @@ export const WithRowGroup: Story = {
     const [rows, setRows] = useState(TABLE_ITEMS);
     const [search, setSearch] = useState("");
     const [selected, setSelected] = useState([]);
-    const [activeTab, setActiveTab] = useState("new");
+    const [activeTab, setActiveTab] = useState("taken");
 
     const columns: ColumnTableProps[] = [
       {
@@ -1095,12 +1165,12 @@ export const WithRowGroup: Story = {
 
     const VIEW_MODES: CapsuleContentProps[] = [
       {
-        id: "new",
-        title: "New",
+        id: "taken",
+        title: "Taken",
       },
       {
-        id: "list",
-        title: "List",
+        id: "all",
+        title: "All",
       },
     ];
 
@@ -1126,6 +1196,14 @@ export const WithRowGroup: Story = {
 
     const TOP_ACTIONS: TableActionsProps[] = [
       {
+        type: "capsule",
+        capsuleProps: {
+          activeTab: activeTab,
+          tabs: VIEW_MODES,
+          setActiveTab: setActiveTab,
+        },
+      },
+      {
         title: "Delete",
         disabled: selected.length === 0,
         icon: RiDeleteBin2Line,
@@ -1141,14 +1219,6 @@ export const WithRowGroup: Story = {
         },
         subMenu: ({ list }) => list(COPY_ACTIONS),
         showSubMenuOn: "self",
-      },
-      {
-        type: "capsule",
-        capsuleProps: {
-          activeTab: activeTab,
-          tabs: VIEW_MODES,
-          setActiveTab: setActiveTab,
-        },
       },
     ];
 
@@ -1208,12 +1278,14 @@ export const WithRowGroup: Story = {
 
     const filteredRows = rows
       .map((data) => {
-        const filteredItems = data.items.filter(
-          (item) =>
-            item.title.toLowerCase().includes(search.toLowerCase()) ||
-            item.category.toLowerCase().includes(search.toLowerCase()) ||
-            item.author.toLowerCase().includes(search.toLowerCase())
-        );
+        const filteredItems = data.items
+          .filter(
+            (item) =>
+              item.title.toLowerCase().includes(search.toLowerCase()) ||
+              item.category.toLowerCase().includes(search.toLowerCase()) ||
+              item.author.toLowerCase().includes(search.toLowerCase())
+          )
+          .filter((item) => (activeTab === "taken" ? item.taken : item));
 
         return {
           ...data,
@@ -1236,7 +1308,7 @@ export const WithRowGroup: Story = {
             fontFamily: "monospace",
           }}
         >
-          Data Load Balancer 2025
+          JavaScript Courses
         </h3>
 
         <Table
