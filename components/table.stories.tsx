@@ -19,6 +19,7 @@ import {
 import { EmptySlate } from "./empty-slate";
 import { Button } from "./button";
 import { css } from "styled-components";
+import { CapsuleContentProps } from "./capsule";
 
 const meta: Meta<typeof Table> = {
   title: "Content/Table",
@@ -1040,6 +1041,7 @@ export const WithRowGroup: Story = {
     const [rows, setRows] = useState(TABLE_ITEMS);
     const [search, setSearch] = useState("");
     const [selected, setSelected] = useState([]);
+    const [activeTab, setActiveTab] = useState("new");
 
     const columns: ColumnTableProps[] = [
       {
@@ -1091,6 +1093,17 @@ export const WithRowGroup: Story = {
       setRows(sortedRows);
     };
 
+    const VIEW_MODES: CapsuleContentProps[] = [
+      {
+        id: "new",
+        title: "New",
+      },
+      {
+        id: "list",
+        title: "List",
+      },
+    ];
+
     const COPY_ACTIONS: SubMenuListTableProps[] = [
       {
         caption: "Copy to parent",
@@ -1126,7 +1139,16 @@ export const WithRowGroup: Story = {
         onClick: () => {
           console.log("Copy clicked");
         },
-        subMenuList: COPY_ACTIONS,
+        subMenu: ({ list }) => list(COPY_ACTIONS),
+        showSubMenuOn: "self",
+      },
+      {
+        type: "capsule",
+        capsuleProps: {
+          activeTab: activeTab,
+          tabs: VIEW_MODES,
+          setActiveTab: setActiveTab,
+        },
       },
     ];
 
@@ -1520,7 +1542,7 @@ export const Draggable: Story = {
         onClick: () => {
           console.log("Copy clicked");
         },
-        subMenuList: COPY_ACTIONS,
+        subMenu: ({ list }) => list(COPY_ACTIONS),
       },
     ];
 
