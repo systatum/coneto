@@ -27,7 +27,8 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import styled, { css, CSSProp } from "styled-components";
 import { Searchbox } from "./searchbox";
-import { Button } from "./button";
+import { Button, SubMenuButtonProps } from "./button";
+import { Capsule, CapsuleProps } from "./capsule";
 
 export type RowData = (string | ReactNode)[];
 
@@ -45,8 +46,11 @@ export interface TableActionsProps {
   style?: CSSProp;
   dividerStyle?: CSSProp;
   dropdownStyle?: CSSProp;
-  subMenuList?: SubMenuListTableProps[];
+  subMenu?: (props: SubMenuButtonProps) => React.ReactNode;
   disabled?: boolean;
+  type?: "default" | "capsule";
+  showSubMenuOn?: "caret" | "self";
+  capsuleProps?: CapsuleProps;
 }
 
 export type SubMenuListTableProps = TipMenuItemProps;
@@ -303,101 +307,13 @@ function Table({
                     </>
                   )}
                   {actions &&
-                    actions.map((data, index) => (
-                      <Button
-                        key={index}
-                        onClick={data.onClick}
-                        subMenuList={data.subMenuList}
-                        disabled={data.disabled}
-                        size="sm"
-                        tipMenuSize="sm"
-                        buttonStyle={css`
-                          display: flex;
-                          flex-direction: row;
-                          gap: 0.25rem;
-                          align-items: center;
-                          cursor: pointer;
-                          background-color: transparent;
-                          color: #565555;
-                          ${data.subMenuList
-                            ? css`
-                                border-top: 1px solid #e5e7eb;
-                                border-left: 1px solid #e5e7eb;
-                                border-bottom: 1px solid #e5e7eb;
-                              `
-                            : css`
-                                border: 1px solid #e5e7eb;
-                              `}
-                          border-radius: 6px;
-                          position: relative;
+                    actions.map((data, index) => {
+                      if (data.type === "capsule") {
+                        return <ActionCapsule key={index} {...data} />;
+                      }
 
-                          &:hover {
-                            background-color: #e2e0e0;
-                          }
-
-                          &:disabled {
-                            background-color: rgb(227 227 227);
-                            opacity: 0.5;
-                            cursor: not-allowed;
-                          }
-                          ${data.style}
-                        `}
-                        toggleStyle={
-                          data.subMenuList &&
-                          css`
-                            display: flex;
-                            flex-direction: row;
-                            gap: 0.25rem;
-                            align-items: center;
-                            cursor: pointer;
-                            color: #565555;
-                            border-top: 1px solid #e5e7eb;
-                            border-right: 1px solid #e5e7eb;
-                            border-bottom: 1px solid #e5e7eb;
-                            border-top-right-radius: 6px;
-                            border-bottom-right-radius: 6px;
-                            padding: 0.25rem 0.5rem;
-                            background-color: transparent;
-                            position: relative;
-
-                            &:hover {
-                              background-color: #e2e0e0;
-                            }
-
-                            &:disabled {
-                              background-color: rgb(227 227 227);
-                              opacity: 0.5;
-                              cursor: not-allowed;
-                            }
-                            ${data.style}
-                          `
-                        }
-                        dividerStyle={css`
-                          border: 1px solid rgb(236 236 236);
-                          ${data.subMenuList && data.dividerStyle
-                            ? data.dividerStyle
-                            : null}
-                        `}
-                        dropdownStyle={css`
-                          position: absolute;
-                          margin-top: 2px;
-                          z-index: 9999;
-                          width: 170px;
-                          ${data.subMenuList && data.dropdownStyle
-                            ? data.dropdownStyle
-                            : null}
-                        `}
-                      >
-                        <data.icon size={14} />
-                        <span
-                          style={{
-                            fontSize: "14px",
-                          }}
-                        >
-                          {data.title}
-                        </span>
-                      </Button>
-                    ))}
+                      return <ActionButton key={index} {...data} />;
+                    })}
                 </ActionsWrapper>
               )}
               {searchable && (
@@ -458,10 +374,6 @@ function Table({
               {selectable && (
                 <CheckboxWrapper>
                   <Checkbox
-                    containerStyle={{
-                      width: 12,
-                      height: 12,
-                    }}
                     onChange={handleSelectAll}
                     checked={allRowSelectedLocal}
                     indeterminate={someSelectedLocal}
@@ -541,6 +453,122 @@ function Table({
         </Wrapper>
       </TableColumnContext.Provider>
     </DnDContext.Provider>
+  );
+}
+
+function ActionCapsule(data: TableActionsProps) {
+  return (
+    <Capsule
+      {...data.capsuleProps}
+      activeBackgroundColor="rgb(226, 224, 224)"
+      containerStyle={css`
+        box-shadow: none;
+        min-height: 32px;
+        max-height: 32px;
+        border-radius: 6px;
+        font-size: 14px;
+        ${data.capsuleProps.containerStyle}
+      `}
+      tabStyle={css`
+        border-radius: 6px;
+        color: rgb(86, 85, 85);
+        ${data.capsuleProps.tabStyle}
+      `}
+    />
+  );
+}
+
+function ActionButton(data: TableActionsProps) {
+  return (
+    <Button
+      onClick={data.onClick}
+      subMenu={data.subMenu}
+      disabled={data.disabled}
+      showSubMenuOn={data.showSubMenuOn}
+      size="sm"
+      tipMenuSize="sm"
+      buttonStyle={css`
+        display: flex;
+        flex-direction: row;
+        gap: 0.25rem;
+        align-items: center;
+        cursor: pointer;
+        background-color: transparent;
+        color: #565555;
+        ${data.subMenu && data.showSubMenuOn === "caret"
+          ? css`
+              border-top: 1px solid #e5e7eb;
+              border-left: 1px solid #e5e7eb;
+              border-bottom: 1px solid #e5e7eb;
+            `
+          : css`
+              border: 1px solid #e5e7eb;
+            `}
+        border-radius: 6px;
+        position: relative;
+
+        &:hover {
+          background-color: #e2e0e0;
+        }
+
+        &:disabled {
+          background-color: rgb(227 227 227);
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+        ${data.style}
+      `}
+      toggleStyle={
+        data.subMenu &&
+        css`
+          display: flex;
+          flex-direction: row;
+          gap: 0.25rem;
+          align-items: center;
+          cursor: pointer;
+          color: #565555;
+          padding: 0.25rem 0.5rem;
+          background-color: transparent;
+          position: relative;
+          border-top: 1px solid #e5e7eb;
+          border-right: 1px solid #e5e7eb;
+          border-bottom: 1px solid #e5e7eb;
+          border-top-right-radius: 6px;
+          border-bottom-right-radius: 6px;
+
+          &:hover {
+            background-color: #e2e0e0;
+          }
+
+          &:disabled {
+            background-color: rgb(227 227 227);
+            opacity: 0.5;
+            cursor: not-allowed;
+          }
+          ${data.style}
+        `
+      }
+      dividerStyle={css`
+        border: 1px solid rgb(236 236 236);
+        ${data.subMenu && data.dividerStyle ? data.dividerStyle : null}
+      `}
+      dropdownStyle={css`
+        position: absolute;
+        margin-top: 2px;
+        z-index: 9999;
+        width: 170px;
+        ${data.subMenu && data.dropdownStyle ? data.dropdownStyle : null}
+      `}
+    >
+      <data.icon size={14} />
+      <span
+        style={{
+          fontSize: "14px",
+        }}
+      >
+        {data.title}
+      </span>
+    </Button>
   );
 }
 
@@ -990,14 +1018,7 @@ function TableRow({
             }
           }}
         >
-          <Checkbox
-            containerStyle={{
-              width: 12,
-              height: 12,
-            }}
-            {...props}
-            checked={isSelected}
-          />
+          <Checkbox {...props} checked={isSelected} />
         </CheckboxWrapperRow>
       )}
       {content

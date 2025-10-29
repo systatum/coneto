@@ -3,6 +3,8 @@ import {
   RiClipboardFill,
   RiDeleteBin2Fill,
   RiDeleteBin2Line,
+  RiForbid2Line,
+  RiSpam2Line,
 } from "@remixicon/react";
 import {
   ColumnTableProps,
@@ -11,6 +13,7 @@ import {
 } from "./../../components/table";
 import { TipMenuItemProps } from "./../../components/tip-menu";
 import { css } from "styled-components";
+import { CapsuleContentProps } from "./../../components/capsule";
 
 interface TableItemProps {
   title: string;
@@ -220,6 +223,201 @@ describe("Table", () => {
       },
     ];
   };
+
+  context("with top actions", () => {
+    context("when given default", () => {
+      const DEFAULT_TOP_ACTIONS: TableActionsProps[] = [
+        {
+          title: "Copy",
+          icon: RiArrowUpSLine,
+          onClick: () => {
+            console.log("Copy clicked");
+          },
+        },
+      ];
+
+      it("renders default button", () => {
+        cy.mount(
+          <Table
+            selectable
+            tableRowContainerStyle={css`
+              max-height: 400px;
+            `}
+            columns={columns}
+            actions={DEFAULT_TOP_ACTIONS}
+            searchable
+          >
+            {rows?.map((groupValue, groupIndex) => (
+              <Table.Row.Group
+                key={groupIndex}
+                title={groupValue.title}
+                subtitle={groupValue.subtitle}
+              >
+                {groupValue.items.map((rowValue, rowIndex) => (
+                  <Table.Row
+                    key={rowIndex}
+                    rowId={`${groupValue.title}-${rowValue.title}`}
+                    content={[
+                      rowValue.title,
+                      rowValue.category,
+                      rowValue.author,
+                    ]}
+                    actions={ROW_ACTIONS}
+                  />
+                ))}
+              </Table.Row.Group>
+            ))}
+          </Table>
+        );
+
+        cy.window().then((win) => {
+          cy.spy(win.console, "log").as("consoleLog");
+        });
+
+        cy.findByText("Copy").click();
+
+        cy.wait(100);
+        cy.get("@consoleLog").should("have.been.calledWith", "Copy clicked");
+      });
+    });
+
+    context("when given subMenu", () => {
+      const TIP_MENU_ITEMS = [
+        {
+          caption: "Report Phishing",
+          icon: RiSpam2Line,
+          iconColor: "blue",
+          onClick: () => console.log("Phishing reported"),
+        },
+        {
+          caption: "Report Junk",
+          icon: RiForbid2Line,
+          iconColor: "red",
+          onClick: () => console.log("Junk reported"),
+        },
+      ];
+
+      const DEFAULT_TOP_ACTIONS: TableActionsProps[] = [
+        {
+          title: "Copy",
+          icon: RiArrowUpSLine,
+          onClick: () => {
+            console.log("Copy clicked");
+          },
+          subMenu: ({ list }) => list(TIP_MENU_ITEMS),
+          showSubMenuOn: "self",
+        },
+      ];
+
+      it("renders button self to open tip.", () => {
+        cy.mount(
+          <Table
+            selectable
+            tableRowContainerStyle={css`
+              max-height: 400px;
+            `}
+            columns={columns}
+            actions={DEFAULT_TOP_ACTIONS}
+            searchable
+          >
+            {rows?.map((groupValue, groupIndex) => (
+              <Table.Row.Group
+                key={groupIndex}
+                title={groupValue.title}
+                subtitle={groupValue.subtitle}
+              >
+                {groupValue.items.map((rowValue, rowIndex) => (
+                  <Table.Row
+                    key={rowIndex}
+                    rowId={`${groupValue.title}-${rowValue.title}`}
+                    content={[
+                      rowValue.title,
+                      rowValue.category,
+                      rowValue.author,
+                    ]}
+                    actions={ROW_ACTIONS}
+                  />
+                ))}
+              </Table.Row.Group>
+            ))}
+          </Table>
+        );
+
+        cy.window().then((win) => {
+          cy.spy(win.console, "log").as("consoleLog");
+        });
+
+        cy.findByText("Copy").click();
+
+        cy.wait(100);
+        cy.get("@consoleLog").should(
+          "not.have.been.calledWith",
+          "Copy clicked"
+        );
+      });
+    });
+
+    context("when given capsule", () => {
+      const VIEW_MODES: CapsuleContentProps[] = [
+        {
+          id: "new",
+          title: "New",
+        },
+        {
+          id: "list",
+          title: "List",
+        },
+      ];
+
+      const DEFAULT_TOP_ACTIONS: TableActionsProps[] = [
+        {
+          type: "capsule",
+          capsuleProps: {
+            activeTab: "new",
+            tabs: VIEW_MODES,
+          },
+        },
+      ];
+
+      it("renders capsule button", () => {
+        cy.mount(
+          <Table
+            selectable
+            tableRowContainerStyle={css`
+              max-height: 400px;
+            `}
+            columns={columns}
+            actions={DEFAULT_TOP_ACTIONS}
+            searchable
+          >
+            {rows?.map((groupValue, groupIndex) => (
+              <Table.Row.Group
+                key={groupIndex}
+                title={groupValue.title}
+                subtitle={groupValue.subtitle}
+              >
+                {groupValue.items.map((rowValue, rowIndex) => (
+                  <Table.Row
+                    key={rowIndex}
+                    rowId={`${groupValue.title}-${rowValue.title}`}
+                    content={[
+                      rowValue.title,
+                      rowValue.category,
+                      rowValue.author,
+                    ]}
+                    actions={ROW_ACTIONS}
+                  />
+                ))}
+              </Table.Row.Group>
+            ))}
+          </Table>
+        );
+
+        cy.findByText("New").should("exist");
+        cy.findByText("List").should("exist");
+      });
+    });
+  });
 
   context("with searchable", () => {
     context("when there are action buttons and right-side info panel", () => {
