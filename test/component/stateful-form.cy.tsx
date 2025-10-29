@@ -1,6 +1,9 @@
 import z from "zod";
 import { FormFieldGroup, StatefulForm } from "./../../components/stateful-form";
 import { COUNTRY_CODES } from "./../../constants/countries";
+import { Boxbar } from "./../../components/boxbar";
+import { Badge } from "./../../components/badge";
+import { css } from "styled-components";
 
 describe("StatefulForm", () => {
   context("when array of array", () => {
@@ -262,6 +265,129 @@ describe("StatefulForm", () => {
       });
       TITLE_EMPLOYEE_FIELD.map((data) => {
         cy.findByText(data).should("not.exist");
+      });
+    });
+  });
+
+  context("with type custom", () => {
+    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
+      (data) => data.id === "US" || COUNTRY_CODES[206]
+    );
+
+    if (!DEFAULT_COUNTRY_CODES) {
+      throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
+    }
+
+    const value = {
+      first_name: "",
+      access: false,
+    };
+
+    const employeeSchema = z.object({
+      first_name: z
+        .string()
+        .min(3, "First name must be at least 3 characters long"),
+      access: z.boolean().refine((val) => val === true, {
+        message: "Access must be true",
+      }),
+    });
+
+    const BADGE_OPTIONS = [
+      {
+        id: 1,
+        caption: "Anime",
+      },
+      {
+        id: 2,
+        caption: "Manga",
+      },
+      {
+        id: 3,
+        caption: "Comics",
+      },
+      {
+        id: 4,
+        caption: "Movies",
+      },
+      {
+        id: 5,
+        caption: "Podcasts",
+      },
+      {
+        id: 6,
+        caption: "TV Shows",
+      },
+      {
+        id: 7,
+        caption: "Novels",
+      },
+      {
+        id: 8,
+        caption: "Music",
+      },
+      {
+        id: 9,
+        caption: "Games",
+      },
+      {
+        id: 10,
+        caption: "Webtoons",
+      },
+    ];
+
+    const EMPLOYEE_FIELDS: FormFieldGroup[] = [
+      {
+        name: "first_name",
+        type: "text",
+        required: true,
+        placeholder: "Enter first name",
+      },
+      {
+        name: "custom",
+        type: "custom",
+        render: (
+          <Boxbar>
+            {BADGE_OPTIONS.map((badge) => (
+              <Badge
+                badgeStyle={css`
+                  width: 100%;
+                  max-width: 100px;
+
+                  &:hover {
+                    border-color: #4cbbf7;
+                    cursor: pointer;
+                    transition: all 0.5s ease-in-out;
+                  }
+                `}
+                key={badge.id}
+                caption={badge.caption}
+                withCircle
+              />
+            ))}
+          </Boxbar>
+        ),
+      },
+      {
+        name: "access",
+        type: "checkbox",
+        required: false,
+      },
+    ];
+
+    it("should render custom renderer", () => {
+      cy.mount(
+        <StatefulForm
+          fields={EMPLOYEE_FIELDS}
+          formValues={value}
+          validationSchema={employeeSchema}
+          mode="onChange"
+        />
+      );
+
+      cy.findByLabelText("boxbar-toggle").click();
+
+      BADGE_OPTIONS.map((data) => {
+        cy.findByText(data.caption).should("exist");
       });
     });
   });

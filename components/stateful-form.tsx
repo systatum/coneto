@@ -1,7 +1,7 @@
 import { useForm, UseFormSetValue } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ZodTypeAny, TypeOf } from "zod";
-import { ChangeEvent, useEffect, useRef } from "react";
+import { ChangeEvent, ReactNode, useEffect, useRef } from "react";
 import {
   Control,
   Controller,
@@ -71,6 +71,7 @@ export interface FormFieldProps {
   required?: boolean;
   type?: string;
   placeholder?: string;
+  render?: ReactNode;
   rows?: number;
   onChange?: (e?: StatefulOnChangeType) => void;
   textboxProps?: TextboxProps;
@@ -127,6 +128,14 @@ function StatefulForm<Z extends ZodTypeAny>({
   }, [isValid, onValidityChange]);
 
   const shouldShowError = (field: keyof TypeOf<Z>): boolean => {
+    const fieldConfig = fields
+      .flat()
+      .find((f) => (f as FormFieldProps).name === field);
+
+    if (fieldConfig && (fieldConfig as FormFieldProps).type === "custom") {
+      return false;
+    }
+
     const value = formValues[field];
     const touched = touchedFields[field];
     const error = errors[field];
@@ -240,7 +249,9 @@ function FormFields<T extends FieldValues>({
           >
             {(Array.isArray(group) ? group : [group]).map(
               (field: FormFieldProps, index: number) => {
-                return field.type === "text" ||
+                return field.type === "custom" ? (
+                  field.render
+                ) : field.type === "text" ||
                   field.type === "message" ||
                   field.type === "number" ||
                   field.type === "email" ||
