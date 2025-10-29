@@ -1,15 +1,31 @@
 import { getIdContent } from "test/support/commands";
 
-context("Capsule Component", () => {
-  describe("Default", () => {
+describe("Capsule", () => {
+  context("Default", () => {
     beforeEach(() => {
-      cy.visit(getIdContent("controls-capsule--default"));
+      cy.visit(getIdContent("input-elements-capsule--default"));
     });
 
-    it("Should allow clicking and changing active state", () => {
-      cy.findByText("List").should("be.visible").click();
+    context("when pressing", () => {
+      it("should allow changing active state", () => {
+        cy.findByText("List").should("exist").click();
+        cy.wait(400);
+        cy.findByText("New").should("exist").click();
+      });
+    });
+  });
+
+  context("With Icon", () => {
+    beforeEach(() => {
+      cy.visit(getIdContent("input-elements-capsule--with-icon"));
+    });
+
+    it("should renders the icon", () => {
+      cy.findByText("List").should("exist").click();
       cy.wait(400);
-      cy.findByText("New").should("be.visible").click();
+      cy.findByText("New").should("exist").click();
+      cy.findAllByLabelText("capsule-icon").eq(0).should("exist");
+      cy.findAllByLabelText("capsule-icon").eq(1).should("exist");
     });
   });
 });
