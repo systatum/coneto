@@ -15,9 +15,10 @@ import {
 } from "./file-drop-box";
 import { BadgeProps } from "./badge";
 import { CountryCodeProps } from "./phonebox";
-import { css } from "styled-components";
+import styled, { css } from "styled-components";
 import { CapsuleContentProps } from "./capsule";
 import { OptionsProps } from "./selectbox";
+import { Messagebox } from "./messagebox";
 
 const meta: Meta<typeof StatefulForm> = {
   title: "Input Elements/StatefulForm",
@@ -32,7 +33,7 @@ type Story = StoryObj<typeof StatefulForm>;
 export const Default: Story = {
   render: () => {
     const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
-      (data) => data.id === "US" || COUNTRY_CODES[206]
+      (data) => data.id === "US"
     );
 
     if (!DEFAULT_COUNTRY_CODES) {
@@ -48,6 +49,7 @@ export const Default: Story = {
       access: false,
       country_code: DEFAULT_COUNTRY_CODES,
     });
+
     const [isFormValid, setIsFormValid] = useState(false);
 
     const employeeSchema = z.object({
@@ -106,8 +108,47 @@ export const Default: Story = {
         placeholder: "Add additional notes",
       },
       {
+        name: "custom",
+        type: "custom",
+        render: (
+          <Messagebox variant="primary" title="Terms and Conditions">
+            <ScrollBox>
+              <span>
+                Welcome to <strong>Systatum</strong>. Before proceeding, please
+                take a moment to read the following information carefully.
+              </span>
+              <span>
+                By using <strong>Systatum</strong> products or services, you
+                agree to comply with our terms of use and privacy policies.
+                These guidelines are designed to ensure a consistent and secure
+                experience for all users within the <strong>Systatum</strong>{" "}
+                ecosystem.
+              </span>
+              <span>
+                The <strong>Systatum</strong> platform may update its features,
+                security policies, or user interface without prior notice. We
+                encourage you to review these updates regularly to stay informed
+                about the latest improvements.
+              </span>
+              <span>
+                Your data and privacy are important to <strong>Systatum</strong>
+                . We use industry-standard security measures to protect your
+                information and maintain compliance with global data protection
+                regulations.
+              </span>
+              <span>
+                If you have any questions, feedback, or require further
+                assistance, please contact the <strong>Systatum</strong> support
+                team. We’re here to help ensure you have the best experience
+                possible.
+              </span>
+            </ScrollBox>
+          </Messagebox>
+        ),
+      },
+      {
         name: "access",
-        title: "Has access to login",
+        title: "I agree",
         type: "checkbox",
         required: false,
       },
@@ -155,6 +196,31 @@ export const Default: Story = {
     );
   },
 };
+
+const ScrollBox = styled.div`
+  max-height: 120px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 6px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: #aaa;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  scrollbar-width: thin;
+  scrollbar-color: #ccc transparent;
+`;
 
 export const AllCase: Story = {
   render: () => {
