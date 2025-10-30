@@ -10,13 +10,18 @@ const meta: Meta<typeof Capsule> = {
     layout: "centered",
   },
   tags: ["autodocs"],
+  excludeStories: [
+    "VIEW_ONLY_TITLE_MODES",
+    "VIEW_WITH_ICON_MODES",
+    "VIEW_ONLY_ICON_MODES",
+  ],
 };
 
 export default meta;
 
 type Story = StoryObj<typeof Capsule>;
 
-const VIEW_MODES: CapsuleContentProps[] = [
+export const VIEW_ONLY_TITLE_MODES: CapsuleContentProps[] = [
   {
     id: "new",
     title: "New",
@@ -29,7 +34,7 @@ const VIEW_MODES: CapsuleContentProps[] = [
 
 export const Default: Story = {
   args: {
-    tabs: VIEW_MODES,
+    tabs: VIEW_ONLY_TITLE_MODES,
     activeTab: "new",
   },
   render: (args) => {
@@ -45,7 +50,7 @@ export const Default: Story = {
   },
 };
 
-const VIEW_WITH_ICON_MODES: CapsuleContentProps[] = [
+export const VIEW_WITH_ICON_MODES: CapsuleContentProps[] = [
   {
     id: "new",
     title: "New",
@@ -75,3 +80,14 @@ export const WithIcon: Story = {
     );
   },
 };
+
+export const VIEW_ONLY_ICON_MODES: CapsuleContentProps[] = [
+  {
+    id: "new",
+    icon: RiFile2Line,
+  },
+  {
+    id: "list",
+    icon: RiNewspaperLine,
+  },
+];

@@ -1,19 +1,12 @@
-import { RiFile2Line, RiNewspaperLine } from "@remixicon/react";
-import { Capsule, CapsuleContentProps } from "./../../components/capsule";
+import { Capsule } from "./../../components/capsule";
+import {
+  VIEW_ONLY_ICON_MODES,
+  VIEW_ONLY_TITLE_MODES,
+  VIEW_WITH_ICON_MODES,
+} from "./../../components/capsule.stories";
 
 describe("Capsule", () => {
   context("when only title", () => {
-    const VIEW_ONLY_TITLE_MODES: CapsuleContentProps[] = [
-      {
-        id: "new",
-        title: "New",
-      },
-      {
-        id: "list",
-        title: "List",
-      },
-    ];
-
     it("renders capsule only with text", () => {
       cy.mount(<Capsule activeTab="new" tabs={VIEW_ONLY_TITLE_MODES} />);
       cy.findByText("List").should("exist");
@@ -23,17 +16,6 @@ describe("Capsule", () => {
   });
 
   context("when only icon", () => {
-    const VIEW_ONLY_ICON_MODES: CapsuleContentProps[] = [
-      {
-        id: "new",
-        icon: RiFile2Line,
-      },
-      {
-        id: "list",
-        icon: RiNewspaperLine,
-      },
-    ];
-
     it("renders capsule only with icon", () => {
       cy.mount(<Capsule activeTab="new" tabs={VIEW_ONLY_ICON_MODES} />);
       cy.findByText("List").should("not.exist");
@@ -44,19 +26,6 @@ describe("Capsule", () => {
   });
 
   context("when given title and icon", () => {
-    const VIEW_WITH_ICON_MODES: CapsuleContentProps[] = [
-      {
-        id: "new",
-        title: "New",
-        icon: RiFile2Line,
-      },
-      {
-        id: "list",
-        title: "List",
-        icon: RiNewspaperLine,
-      },
-    ];
-
     it("renders capsule with icon & text", () => {
       cy.mount(<Capsule activeTab="new" tabs={VIEW_WITH_ICON_MODES} />);
       cy.findByText("List").should("exist");
@@ -71,17 +40,6 @@ describe("Capsule", () => {
   });
 
   context("with iconSize", () => {
-    const VIEW_ONLY_ICON_MODES: CapsuleContentProps[] = [
-      {
-        id: "new",
-        icon: RiFile2Line,
-      },
-      {
-        id: "list",
-        icon: RiNewspaperLine,
-      },
-    ];
-
     it("renders with given number", () => {
       cy.mount(
         <Capsule iconSize={20} activeTab="new" tabs={VIEW_ONLY_ICON_MODES} />
@@ -101,17 +59,6 @@ describe("Capsule", () => {
   });
 
   context("with fontSize", () => {
-    const VIEW_ONLY_TITLE_MODES: CapsuleContentProps[] = [
-      {
-        id: "new",
-        title: "New",
-      },
-      {
-        id: "list",
-        title: "List",
-      },
-    ];
-
     it("renders with given number", () => {
       cy.mount(
         <Capsule fontSize={20} activeTab="new" tabs={VIEW_ONLY_TITLE_MODES} />
