@@ -72,6 +72,7 @@ export interface FormFieldProps {
   type?: string;
   placeholder?: string;
   render?: ReactNode;
+  hidden?: boolean;
   rows?: number;
   onChange?: (e?: StatefulOnChangeType) => void;
   textboxProps?: TextboxProps;
@@ -249,6 +250,10 @@ function FormFields<T extends FieldValues>({
           >
             {(Array.isArray(group) ? group : [group]).map(
               (field: FormFieldProps, index: number) => {
+                if (field.hidden) {
+                  return;
+                }
+
                 return field.type === "custom" ? (
                   field.render
                 ) : field.type === "text" ||
