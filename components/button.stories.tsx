@@ -16,11 +16,24 @@ const meta = {
   component: Button,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+The **Button** component is a flexible, theme-aware button with full support for loading states, icons, and dropdown submenus.
+
+It supports multiple visual variants and sizes, can include loading indicators, and can display nested actions using \`subMenu\` or \`TipMenu\`.
+
+Use this component for all user-interactive button actions — from primary call-to-actions to lightweight menu triggers.
+        `,
+      },
+    },
   },
   tags: ["autodocs"],
   argTypes: {
     variant: {
       control: "select",
+      description:
+        "Defines the visual style of the button. Commonly used to indicate semantic importance.",
       options: [
         "default",
         "primary",
@@ -29,17 +42,33 @@ const meta = {
         "secondary",
         "ghost",
         "link",
+        "transparent",
       ],
     },
     size: {
       control: "select",
-      options: ["default", "sm", "lg", "icon"],
+      description:
+        "Determines the button’s size and padding. Use `icon` for circular icon buttons.",
+      options: ["xs", "sm", "md", "lg", "icon"],
     },
     isLoading: {
       control: "boolean",
+      description: "Shows a loading spinner inside the button.",
     },
     children: {
       control: "text",
+      description: "Button label or content.",
+    },
+    showSubMenuOn: {
+      control: "radio",
+      description:
+        "Controls how submenus are triggered. Use `self` to open when clicking the main button, or `caret` for separate toggle area.",
+      options: ["self", "caret"],
+    },
+    isSafeAreaActive: {
+      control: "object",
+      description:
+        "Defines a list of aria-label string values (string[]) that are treated as 'safe zones' when detecting outside clicks. Useful for complex dropdowns or overlay components.",
     },
   },
 } satisfies Meta<typeof Button>;
