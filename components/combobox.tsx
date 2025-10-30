@@ -89,7 +89,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
     ref
   ) => {
     return (
-      <ComboboxWrapper $style={containerStyle}>
+      <ComboboxWrapper $style={containerStyle} aria-label={`combobox-${name}`}>
         {label && <Label $style={labelStyle}>{label}</Label>}
         <Selectbox
           ref={ref}
@@ -239,7 +239,7 @@ function ComboboxDrawer({
         floatingRef.current = node;
       }}
       id="combo-list"
-      aria-label={`combobox-${name}`}
+      aria-label={`combobox-drawer-${name}`}
       role="listbox"
       $width={refs.reference.current?.getBoundingClientRect().width}
       style={{ ...floatingStyles }}
