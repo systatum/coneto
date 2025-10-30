@@ -44,7 +44,7 @@ export const Default: Story = {
       <Capsule
         {...args}
         activeTab={activeTab}
-        setActiveTab={(prev: string) => setUpdateArgs({ activeTab: prev })}
+        onTabChange={(prev: string) => setUpdateArgs({ activeTab: prev })}
       />
     );
   },
@@ -75,7 +75,7 @@ export const WithIcon: Story = {
       <Capsule
         {...args}
         activeTab={activeTab}
-        setActiveTab={(prev: string) => setUpdateArgs({ activeTab: prev })}
+        onTabChange={(prev: string) => setUpdateArgs({ activeTab: prev })}
       />
     );
   },
