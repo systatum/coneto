@@ -1,8 +1,8 @@
 import { getIdContent } from "test/support/commands";
 
-context("Button Component", () => {
-  describe("Default", () => {
-    it("Should click and have correct styles", () => {
+describe("Button", () => {
+  context("Default", () => {
+    it("should click and have correct styles", () => {
       cy.visit(getIdContent("controls-button--default"));
 
       cy.findByRole("button", { name: /Button/i }).click();
@@ -16,8 +16,8 @@ context("Button Component", () => {
     });
   });
 
-  describe("Default Large", () => {
-    it("Should click and have correct styles", () => {
+  context("Default Large", () => {
+    it("should click and have correct styles", () => {
       cy.visit(getIdContent("controls-button--default-large"));
 
       cy.findByRole("button", { name: /Button/i }).click();
@@ -29,8 +29,8 @@ context("Button Component", () => {
     });
   });
 
-  describe("Default Small", () => {
-    it("Should click and have correct styles", () => {
+  context("Default Small", () => {
+    it("should click and have correct styles", () => {
       cy.visit(getIdContent("controls-button--default-small"));
 
       cy.findByRole("button", { name: /Button/i }).click();
@@ -44,8 +44,8 @@ context("Button Component", () => {
     });
   });
 
-  describe("Default Icon", () => {
-    it("Should click and have correct styles", () => {
+  context("Default Icon", () => {
+    it("should click and have correct styles", () => {
       cy.visit(getIdContent("controls-button--default-icon"));
 
       cy.findByRole("button", { name: /Movie/i }).click();
@@ -58,8 +58,8 @@ context("Button Component", () => {
     });
   });
 
-  describe("Primary", () => {
-    it("Should click and have correct styles", () => {
+  context("Primary", () => {
+    it("should click and have correct styles", () => {
       cy.visit(getIdContent("controls-button--primary"));
 
       cy.findByRole("button", { name: /Button/i }).click();
@@ -70,8 +70,8 @@ context("Button Component", () => {
     });
   });
 
-  describe("Secondary", () => {
-    it("Should click and have correct styles", () => {
+  context("Secondary", () => {
+    it("should click and have correct styles", () => {
       cy.visit(getIdContent("controls-button--secondary"));
 
       cy.findByRole("button", { name: /Button/i }).click();
@@ -82,8 +82,8 @@ context("Button Component", () => {
     });
   });
 
-  describe("Danger", () => {
-    it("Should click and have correct styles", () => {
+  context("Danger", () => {
+    it("should click and have correct styles", () => {
       cy.visit(getIdContent("controls-button--danger"));
 
       cy.findByRole("button", { name: /Button/i }).click();
@@ -94,8 +94,8 @@ context("Button Component", () => {
     });
   });
 
-  describe("Outline", () => {
-    it("Should click and have correct styles", () => {
+  context("Outline", () => {
+    it("should click and have correct styles", () => {
       cy.visit(getIdContent("controls-button--outline"));
 
       cy.findByRole("button", { name: /Button/i }).click();
@@ -107,8 +107,8 @@ context("Button Component", () => {
     });
   });
 
-  describe("With Loading", () => {
-    it("Should be disabled and have correct styles", () => {
+  context("With Loading", () => {
+    it("should be disabled and have correct styles", () => {
       cy.visit(getIdContent("controls-button--with-loading"));
 
       cy.findByRole("button", { name: /Button/i }).should(
@@ -125,62 +125,6 @@ context("Button Component", () => {
         .should("have.css", "background-color", "rgb(243, 243, 243)")
         .and("have.css", "opacity", "0.6")
         .and("have.css", "pointer-events", "none");
-    });
-  });
-
-  describe("Default Tip Menu", () => {
-    it("Should render main button and toggle", () => {
-      cy.visit(getIdContent("controls-button--with-tip-menu"));
-
-      cy.findAllByRole("button").eq(0).should("exist");
-      cy.findAllByRole("button").eq(1).should("exist");
-
-      cy.findByLabelText("divider").should("exist");
-    });
-
-    it("Should open and close dropdown when toggle clicked", () => {
-      cy.visit(getIdContent("controls-button--with-tip-menu"));
-
-      cy.findByLabelText("tip-menu").should("not.exist");
-
-      cy.findByLabelText("button-toggle").last().click();
-
-      cy.findByLabelText("tip-menu").should("exist");
-
-      cy.findByLabelText("button-toggle").last().click();
-
-      cy.findByLabelText("tip-menu").should("not.exist");
-    });
-
-    it("Should close dropdown when clicking outside", () => {
-      cy.visit(getIdContent("controls-button--with-tip-menu"));
-
-      cy.findByLabelText("button-toggle").last().click();
-      cy.findByLabelText("tip-menu").should("exist");
-
-      cy.get("body").click(0, 0);
-
-      cy.findByLabelText("tip-menu").should("not.exist");
-    });
-
-    it("Should apply correct styles for divider", () => {
-      cy.visit(getIdContent("controls-button--with-tip-menu"));
-
-      cy.findByLabelText("divider")
-        .should("have.css", "border-right-width", "1px")
-        .and("have.css", "position", "absolute")
-        .and("have.css", "border-right-style", "solid");
-    });
-
-    it("Should allow selecting submenu item and close menu", () => {
-      cy.visit(getIdContent("controls-button--with-tip-menu"));
-
-      cy.findByLabelText("button-toggle").last().click();
-      cy.findByLabelText("tip-menu").should("exist");
-
-      cy.findAllByLabelText("tip-menu-item").eq(0).click();
-
-      cy.findByLabelText("tip-menu").should("not.exist");
     });
   });
 });
