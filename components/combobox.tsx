@@ -89,7 +89,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
     ref
   ) => {
     return (
-      <ComboboxWrapper $style={containerStyle} aria-label={`combobox-${name}`}>
+      <ComboboxWrapper $style={containerStyle}>
         {label && <Label $style={labelStyle}>{label}</Label>}
         <Selectbox
           ref={ref}
@@ -118,6 +118,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
               <ComboboxDrawer
                 {...props}
                 inputRef={props.ref}
+                name={name}
                 selectedOptions={selectedOptions}
                 setSelectedOptions={setSelectedOptions}
                 highlightOnMatch={highlightOnMatch}
@@ -180,6 +181,7 @@ function ComboboxDrawer({
   inputRef,
   handleKeyDown,
   maxSelectableItems,
+  name,
 }: ComboboxDrawerProps) {
   const [hasScrolled, setHasScrolled] = useState(false);
   const floatingRef = useRef<HTMLUListElement>(null);
@@ -237,6 +239,7 @@ function ComboboxDrawer({
         floatingRef.current = node;
       }}
       id="combo-list"
+      aria-label={`combobox-${name}`}
       role="listbox"
       $width={refs.reference.current?.getBoundingClientRect().width}
       style={{ ...floatingStyles }}
