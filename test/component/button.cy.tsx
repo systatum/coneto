@@ -11,6 +11,7 @@ import {
   RiShareLine,
   RiEditLine,
 } from "@remixicon/react";
+import { Calendar } from "./../../components/calendar";
 
 describe("Button", () => {
   const TIP_MENU_ITEMS = [
@@ -308,6 +309,48 @@ describe("Button", () => {
         });
       });
     });
+
+    context("isSafeAreaActive", () => {
+      context("when given element with any drawer", () => {
+        it("shouldn't close the tip menu", () => {
+          cy.mount(
+            <Button
+              variant="default"
+              dropdownStyle={{
+                minWidth: "240px",
+              }}
+              isSafeAreaActive={[
+                "combobox-drawer-month",
+                "combobox-drawer-year",
+              ]}
+              subMenu={({ show }) =>
+                show(<Calendar monthNames={MONTH_NAMES} />)
+              }
+            >
+              Test
+            </Button>
+          );
+          cy.findByLabelText("button-toggle")
+            .click()
+            .then(($button) => {
+              cy.wrap($button).should(
+                "have.css",
+                "background-color",
+                "rgb(207, 207, 207)"
+              );
+              cy.findAllByLabelText("calendar-select-date").eq(0).click();
+              cy.findByLabelText("combobox-month").click();
+              cy.findByText("SEP").should("exist").click();
+              cy.findByLabelText("combobox-year").click();
+              cy.findByText("2025").should("exist").click();
+              cy.findByText("22")
+                .click()
+                .should("have.css", "color", "rgb(255, 255, 255)")
+                .and("have.css", "background-color", "rgb(97, 169, 249)");
+            });
+        });
+      });
+    });
   });
 });
 
@@ -327,3 +370,18 @@ const MenuDescription = styled.div`
   font-size: 13px;
   color: #6b7280;
 `;
+
+const MONTH_NAMES = [
+  { text: "JAN", value: "1" },
+  { text: "FEB", value: "2" },
+  { text: "MAR", value: "3" },
+  { text: "APR", value: "4" },
+  { text: "MAY", value: "5" },
+  { text: "JUN", value: "6" },
+  { text: "JUL", value: "7" },
+  { text: "AUG", value: "8" },
+  { text: "SEP", value: "9" },
+  { text: "OCT", value: "10" },
+  { text: "NOV", value: "11" },
+  { text: "DEC", value: "12" },
+];
