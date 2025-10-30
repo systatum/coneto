@@ -194,6 +194,20 @@ export const WithTipMenu: Story = {
       `,
       subMenu: ({ list }) => list(TIP_MENU_ITEMS),
     };
+    const MONTH_NAMES = [
+      { text: "JAN", value: "1" },
+      { text: "FEB", value: "2" },
+      { text: "MAR", value: "3" },
+      { text: "APR", value: "4" },
+      { text: "MAY", value: "5" },
+      { text: "JUN", value: "6" },
+      { text: "JUL", value: "7" },
+      { text: "AUG", value: "8" },
+      { text: "SEP", value: "9" },
+      { text: "OCT", value: "10" },
+      { text: "NOV", value: "11" },
+      { text: "DEC", value: "12" },
+    ];
 
     const SHOW_SUB_MENU: ButtonProps = {
       variant: "default",
@@ -201,7 +215,8 @@ export const WithTipMenu: Story = {
       dropdownStyle: css`
         min-width: 240px;
       `,
-      subMenu: ({ show }) => show(<Calendar />),
+      isSafeAreaActive: ["combobox-month", "combobox-year"],
+      subMenu: ({ show }) => show(<Calendar monthNames={MONTH_NAMES} />),
     };
 
     const RENDER_SUB_MENU: ButtonProps = {
