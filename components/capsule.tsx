@@ -13,7 +13,7 @@ export interface CapsuleContentProps {
 export interface CapsuleProps {
   activeTab: string | null;
   tabs: CapsuleContentProps[];
-  setActiveTab?: (data: string) => void;
+  onTabChange?: (data: string) => void;
   containerStyle?: CSSProp;
   label?: string;
   labelStyle?: CSSProp;
@@ -29,7 +29,7 @@ export interface CapsuleProps {
 function Capsule({
   tabs,
   activeTab,
-  setActiveTab,
+  onTabChange,
   containerStyle,
   tabStyle,
   full,
@@ -64,9 +64,9 @@ function Capsule({
 
   useEffect(() => {
     if (!activeTab && tabs.length > 0) {
-      setActiveTab(tabs[0].id);
+      onTabChange(tabs[0].id);
     }
-  }, [activeTab, tabs, setActiveTab]);
+  }, [activeTab, tabs, onTabChange]);
 
   useEffect(() => {
     const calculateTabSizes = () => {
@@ -205,7 +205,7 @@ function Capsule({
             $activeTabStyle={tabStyle}
             onMouseEnter={() => setHovered(data.id)}
             onMouseLeave={() => setHovered(null)}
-            onClick={() => setActiveTab(data.id)}
+            onClick={() => onTabChange(data.id)}
           >
             {Icon && <Icon aria-label="capsule-icon" size={iconSize} />}
             {data.title && data.title}

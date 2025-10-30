@@ -34,7 +34,7 @@ function CapsuleTab({
           ${tabStyle};
         `}
         tabs={tabs}
-        setActiveTab={setSelected}
+        onTabChange={setSelected}
         activeTab={selected}
         activeBackgroundColor="black"
         full
