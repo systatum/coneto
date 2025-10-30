@@ -268,13 +268,6 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
         role="combobox"
         $style={containerStyle}
         aria-expanded={isOpen}
-        onMouseDown={() => {
-          if (multiple)
-            setSelectedOptionsLocal({
-              text: "",
-              value: "",
-            });
-        }}
         onClick={() => {
           if (multiple) inputRef.current?.focus();
         }}
@@ -303,6 +296,14 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
           onFocus={() => {
             if (type === "calendar" || selectedOptionsLocal) setIsOpen(true);
             setIsFocused(true);
+          }}
+          onMouseOver={() => {
+            if (multiple) {
+              setSelectedOptionsLocal({
+                text: "",
+                value: "",
+              });
+            }
           }}
           onBlur={() => {
             setIsFocused(false);
