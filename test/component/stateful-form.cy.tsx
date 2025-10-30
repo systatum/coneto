@@ -391,4 +391,60 @@ describe("StatefulForm", () => {
       });
     });
   });
+
+  context("with hidden", () => {
+    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
+      (data) => data.id === "US" || COUNTRY_CODES[206]
+    );
+
+    if (!DEFAULT_COUNTRY_CODES) {
+      throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
+    }
+
+    const value = {
+      first_name: "",
+      access: false,
+    };
+
+    const employeeSchema = z.object({
+      first_name: z
+        .string()
+        .min(3, "First name must be at least 3 characters long"),
+      access: z.boolean().refine((val) => val === true, {
+        message: "Access must be true",
+      }),
+    });
+
+    const EMPLOYEE_FIELDS: FormFieldGroup[] = [
+      {
+        name: "first_name",
+        title: "First Name",
+        type: "text",
+        required: true,
+        placeholder: "Enter first name",
+        hidden: true,
+      },
+
+      {
+        name: "access",
+        title: "Access",
+        type: "checkbox",
+        required: false,
+      },
+    ];
+
+    it("should hidden the input element", () => {
+      cy.mount(
+        <StatefulForm
+          fields={EMPLOYEE_FIELDS}
+          formValues={value}
+          validationSchema={employeeSchema}
+          mode="onChange"
+        />
+      );
+
+      cy.findByText("First Name").should("not.exist");
+      cy.findByText("Access").should("exist");
+    });
+  });
 });
