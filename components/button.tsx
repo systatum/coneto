@@ -80,8 +80,6 @@ function Button({
       const target = event.target as Node;
       const el = target as HTMLElement;
 
-      console.log("clicked:", (target as HTMLElement).ariaLabel);
-
       if (
         Array.isArray(isSafeAreaActive) &&
         isSafeAreaActive.some((label) => el.closest(`[aria-label="${label}"]`))
