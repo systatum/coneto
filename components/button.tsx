@@ -74,6 +74,11 @@ function Button({
 
   const containerRef = React.useRef<HTMLDivElement>(null);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
+  const isSafeAreaActiveLocal: string[] = [
+    "combobox-drawer-month",
+    "combobox-drawer-year",
+    ...(isSafeAreaActive || []),
+  ];
 
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -81,8 +86,10 @@ function Button({
       const el = target as HTMLElement;
 
       if (
-        Array.isArray(isSafeAreaActive) &&
-        isSafeAreaActive.some((label) => el.closest(`[aria-label="${label}"]`))
+        Array.isArray(isSafeAreaActiveLocal) &&
+        isSafeAreaActiveLocal.some((label) =>
+          el.closest(`[aria-label="${label}"]`)
+        )
       ) {
         return;
       }
@@ -102,7 +109,7 @@ function Button({
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isSafeAreaActive]);
+  }, [isSafeAreaActiveLocal]);
 
   React.useEffect(() => {
     if (isOpen && containerRef.current) {

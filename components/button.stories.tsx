@@ -244,7 +244,6 @@ export const WithTipMenu: Story = {
       dropdownStyle: css`
         min-width: 240px;
       `,
-      isSafeAreaActive: ["combobox-drawer-month", "combobox-drawer-year"],
       subMenu: ({ show }) => show(<Calendar monthNames={MONTH_NAMES} />),
     };
 
