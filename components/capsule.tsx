@@ -13,7 +13,7 @@ export interface CapsuleContentProps {
 export interface CapsuleProps {
   activeTab: string | null;
   tabs: CapsuleContentProps[];
-  onTabChange?: (data: string) => void;
+  onTabChange?: (id: string) => void;
   containerStyle?: CSSProp;
   label?: string;
   labelStyle?: CSSProp;
