@@ -194,6 +194,52 @@ export const WithTipMenu: Story = {
         ]),
     };
 
+    const LIST_SUB_WITH_FILTER: ButtonProps = {
+      variant: "default",
+      children: "With Filter",
+      dropdownStyle: css`
+        min-width: 240px;
+        margin-top: 8px;
+      `,
+      subMenu: ({ list }) =>
+        list(
+          [
+            {
+              caption: "Report Phishing",
+              icon: RiSpam2Line,
+              iconColor: "blue",
+              onClick: () => console.log("Phishing reported"),
+            },
+            {
+              caption: "Report Junk",
+              icon: RiForbid2Line,
+              iconColor: "red",
+              onClick: () => console.log("Junk reported"),
+            },
+            {
+              caption: "Block Sender",
+              icon: RiShieldLine,
+              iconColor: "orange",
+              isDangerous: true,
+              onClick: () => console.log("Sender blocked"),
+            },
+            {
+              caption: "Mark as Read",
+              icon: RiCheckLine,
+              iconColor: "green",
+              onClick: () => console.log("Marked as read"),
+            },
+            {
+              caption: "Move to Spam",
+              icon: RiInboxArchiveLine,
+              iconColor: "purple",
+              onClick: () => console.log("Moved to spam"),
+            },
+          ],
+          { withFilter: true }
+        ),
+    };
+
     const SHOW_SUB_MENU: ButtonProps = {
       variant: "default",
       children: "Show",
@@ -240,7 +286,7 @@ export const WithTipMenu: Story = {
           <SectionTitle>Using list() to list sub menu items</SectionTitle>
           <ButtonRow>
             <Button {...LIST_SUB_MENU} showSubMenuOn="caret" />
-            <Button {...LIST_SUB_MENU} showSubMenuOn="self" />
+            <Button {...LIST_SUB_WITH_FILTER} showSubMenuOn="self" />
           </ButtonRow>
         </Section>
 
