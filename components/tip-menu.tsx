@@ -1,8 +1,9 @@
 import styled, { css, CSSProp } from "styled-components";
 import { RemixiconComponentType } from "@remixicon/react";
 import { COLOR_STYLE_MAP } from "../constants/color-map";
-import { ReactNode } from "react";
+import { ReactNode, useMemo, useState } from "react";
 import { Button } from "./button";
+import { Searchbox } from "./searchbox";
 
 export type TipMenuItemVariantType = "sm" | "md";
 interface TipMenuProps {
@@ -11,6 +12,7 @@ interface TipMenuProps {
   style?: CSSProp;
   setIsOpen?: () => void;
   variant?: TipMenuItemVariantType;
+  withFilter?: boolean;
 }
 
 export interface TipMenuItemProps {
@@ -29,16 +31,34 @@ function TipMenu({
   style,
   setIsOpen,
   variant = "md",
+  withFilter,
 }: TipMenuProps) {
+  const [search, setSearch] = useState<string>("");
+  const [isHasInteracted, setHasInteracted] = useState<boolean>(false);
+
+  const filteredSubMenuList = useMemo(() => {
+    const searchContent = search.toLowerCase().trim();
+    return subMenuList.filter((list) =>
+      isHasInteracted
+        ? list.caption.toLowerCase().includes(searchContent)
+        : list
+    );
+  }, [search, subMenuList]);
+
   return (
-    <Button.TipMenuContainer
-      aria-label="tip-menu"
-      style={style}
-      onClick={() => {
-        setIsOpen?.();
-      }}
-    >
-      {subMenuList?.map((data, index) => (
+    <Button.TipMenuContainer aria-label="tip-menu" style={style}>
+      {withFilter && (
+        <Searchbox
+          autoFocus
+          name="tip-menu-search"
+          value={search}
+          onChange={(e) => {
+            setHasInteracted(true);
+            setSearch(e.target.value);
+          }}
+        />
+      )}
+      {filteredSubMenuList?.map((data, index) => (
         <TipMenuItem
           key={index}
           variant={data.variant ?? variant}
@@ -46,7 +66,12 @@ function TipMenu({
           icon={data.icon}
           iconColor={data.iconColor}
           isDangerous={data.isDangerous}
-          onClick={data.onClick}
+          onClick={() => {
+            if (data.onClick) {
+              data.onClick();
+            }
+            setIsOpen?.();
+          }}
           iconUrl={data.iconUrl}
         />
       ))}
