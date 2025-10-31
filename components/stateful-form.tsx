@@ -1,6 +1,6 @@
 import { useForm, UseFormSetValue } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ZodTypeAny, TypeOf } from "zod";
+import z, { ZodTypeAny, TypeOf, ZodObject } from "zod";
 import { ChangeEvent, ReactNode, useEffect, useRef } from "react";
 import {
   Control,
@@ -111,13 +111,15 @@ function StatefulForm<Z extends ZodTypeAny>({
     onChange?.({ currentState: { [name]: value } });
   };
 
+  const finalSchema = getSchemaForVisibleFields(validationSchema, fields);
+
   const {
     register,
     control,
     setValue,
     formState: { errors, touchedFields, isValid },
   } = useForm<TypeOf<Z>>({
-    resolver: zodResolver(validationSchema),
+    resolver: zodResolver(finalSchema),
     mode,
     defaultValues: formValues,
   });
@@ -131,9 +133,9 @@ function StatefulForm<Z extends ZodTypeAny>({
   const shouldShowError = (field: keyof TypeOf<Z>): boolean => {
     const fieldConfig = fields
       .flat()
-      .find((f) => (f as FormFieldProps).name === field);
+      .find((f) => (f as FormFieldProps).name === field) as FormFieldProps;
 
-    if (fieldConfig && (fieldConfig as FormFieldProps).type === "custom") {
+    if (!fieldConfig || fieldConfig.type === "custom" || fieldConfig.hidden) {
       return false;
     }
 
@@ -195,6 +197,38 @@ function StatefulForm<Z extends ZodTypeAny>({
       />
     </>
   );
+}
+
+function getSchemaForVisibleFields<Z extends ZodTypeAny>(
+  validationSchema: Z,
+  fields: FormFieldGroup[]
+) {
+  if (!(validationSchema instanceof ZodObject)) {
+    throw new Error("StatefulForm only supports Zod object schemas");
+  }
+
+  const objSchema = validationSchema as ZodObject<any>;
+
+  const flatFields: FormFieldProps[] = fields.flatMap((f) =>
+    Array.isArray(f) ? f : [f]
+  );
+
+  const newShape = Object.fromEntries(
+    flatFields.map((field) => {
+      const key = field.name;
+      const originalFieldSchema = objSchema.shape[key];
+
+      if (!originalFieldSchema) return [key, z.any()];
+      return [
+        key,
+        field.hidden || field.type === "custom"
+          ? originalFieldSchema.optional()
+          : originalFieldSchema,
+      ];
+    })
+  );
+
+  return z.object(newShape);
 }
 
 interface FormFieldsProps<T extends FieldValues> {
