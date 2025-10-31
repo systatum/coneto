@@ -88,65 +88,6 @@ const meta: Meta<typeof Card> = {
 
 export default meta;
 
-const TIP_MENU_ITEMS = [
-  {
-    caption: "Report Phishing",
-    icon: RiSpam2Line,
-    iconColor: "blue",
-    onClick: () => console.log("Phishing reported"),
-  },
-  {
-    caption: "Report Junk",
-    icon: RiErrorWarningLine,
-    iconColor: "red",
-    onClick: () => console.log("Junk reported"),
-  },
-  {
-    caption: "Block Sender",
-    icon: RiShieldLine,
-    iconColor: "orange",
-    isDangerous: true,
-    onClick: () => console.log("Sender blocked"),
-  },
-  {
-    caption: "Mark as Read",
-    icon: RiCheckDoubleLine,
-    iconColor: "green",
-    onClick: () => console.log("Marked as read"),
-  },
-  {
-    caption: "Move to Spam",
-    icon: RiInboxArchiveLine,
-    iconColor: "purple",
-    onClick: () => console.log("Moved to spam"),
-  },
-  {
-    caption: "Download Attachment",
-    icon: RiDownload2Line,
-    iconColor: "teal",
-    onClick: () => console.log("Downloading"),
-  },
-  {
-    caption: "Copy Link",
-    icon: RiLinkM,
-    iconColor: "gray",
-    onClick: () => console.log("Link copied"),
-  },
-  {
-    caption: "Share",
-    icon: RiSendPlane2Line,
-    iconColor: "indigo",
-    isDangerous: true,
-    onClick: () => console.log("Shared"),
-  },
-  {
-    caption: "Edit",
-    icon: RiEdit2Line,
-    iconColor: "yellow",
-    onClick: () => console.log("Edit mode"),
-  },
-];
-
 type Story = StoryObj<typeof Card>;
 
 export const Default: Story = {
@@ -168,7 +109,64 @@ export const Default: Story = {
             caption="Default"
             icon={RiSpam2Line}
             iconColor="red"
-            subMenuList={TIP_MENU_ITEMS}
+            subMenuList={[
+              {
+                caption: "Report Phishing",
+                icon: RiSpam2Line,
+                iconColor: "blue",
+                onClick: () => console.log("Phishing reported"),
+              },
+              {
+                caption: "Report Junk",
+                icon: RiErrorWarningLine,
+                iconColor: "red",
+                onClick: () => console.log("Junk reported"),
+              },
+              {
+                caption: "Block Sender",
+                icon: RiShieldLine,
+                iconColor: "orange",
+                isDangerous: true,
+                onClick: () => console.log("Sender blocked"),
+              },
+              {
+                caption: "Mark as Read",
+                icon: RiCheckDoubleLine,
+                iconColor: "green",
+                onClick: () => console.log("Marked as read"),
+              },
+              {
+                caption: "Move to Spam",
+                icon: RiInboxArchiveLine,
+                iconColor: "purple",
+                onClick: () => console.log("Moved to spam"),
+              },
+              {
+                caption: "Download Attachment",
+                icon: RiDownload2Line,
+                iconColor: "teal",
+                onClick: () => console.log("Downloading"),
+              },
+              {
+                caption: "Copy Link",
+                icon: RiLinkM,
+                iconColor: "gray",
+                onClick: () => console.log("Link copied"),
+              },
+              {
+                caption: "Share",
+                icon: RiSendPlane2Line,
+                iconColor: "indigo",
+                isDangerous: true,
+                onClick: () => console.log("Shared"),
+              },
+              {
+                caption: "Edit",
+                icon: RiEdit2Line,
+                iconColor: "yellow",
+                onClick: () => console.log("Edit mode"),
+              },
+            ]}
           />
           <Toolbar.Menu
             dropdownStyle={css`
@@ -178,7 +176,64 @@ export const Default: Story = {
             icon={RiSpam2Line}
             iconColor="white"
             variant="primary"
-            subMenuList={TIP_MENU_ITEMS}
+            subMenuList={[
+              {
+                caption: "Report Phishing",
+                icon: RiSpam2Line,
+                iconColor: "blue",
+                onClick: () => console.log("Phishing reported"),
+              },
+              {
+                caption: "Report Junk",
+                icon: RiErrorWarningLine,
+                iconColor: "red",
+                onClick: () => console.log("Junk reported"),
+              },
+              {
+                caption: "Block Sender",
+                icon: RiShieldLine,
+                iconColor: "orange",
+                isDangerous: true,
+                onClick: () => console.log("Sender blocked"),
+              },
+              {
+                caption: "Mark as Read",
+                icon: RiCheckDoubleLine,
+                iconColor: "green",
+                onClick: () => console.log("Marked as read"),
+              },
+              {
+                caption: "Move to Spam",
+                icon: RiInboxArchiveLine,
+                iconColor: "purple",
+                onClick: () => console.log("Moved to spam"),
+              },
+              {
+                caption: "Download Attachment",
+                icon: RiDownload2Line,
+                iconColor: "teal",
+                onClick: () => console.log("Downloading"),
+              },
+              {
+                caption: "Copy Link",
+                icon: RiLinkM,
+                iconColor: "gray",
+                onClick: () => console.log("Link copied"),
+              },
+              {
+                caption: "Share",
+                icon: RiSendPlane2Line,
+                iconColor: "indigo",
+                isDangerous: true,
+                onClick: () => console.log("Shared"),
+              },
+              {
+                caption: "Edit",
+                icon: RiEdit2Line,
+                iconColor: "yellow",
+                onClick: () => console.log("Edit mode"),
+              },
+            ]}
           />
           <Toolbar.Menu
             dropdownStyle={css`
@@ -188,7 +243,64 @@ export const Default: Story = {
             icon={RiSpam2Line}
             iconColor="white"
             variant="danger"
-            subMenuList={TIP_MENU_ITEMS}
+            subMenuList={[
+              {
+                caption: "Report Phishing",
+                icon: RiSpam2Line,
+                iconColor: "blue",
+                onClick: () => console.log("Phishing reported"),
+              },
+              {
+                caption: "Report Junk",
+                icon: RiErrorWarningLine,
+                iconColor: "red",
+                onClick: () => console.log("Junk reported"),
+              },
+              {
+                caption: "Block Sender",
+                icon: RiShieldLine,
+                iconColor: "orange",
+                isDangerous: true,
+                onClick: () => console.log("Sender blocked"),
+              },
+              {
+                caption: "Mark as Read",
+                icon: RiCheckDoubleLine,
+                iconColor: "green",
+                onClick: () => console.log("Marked as read"),
+              },
+              {
+                caption: "Move to Spam",
+                icon: RiInboxArchiveLine,
+                iconColor: "purple",
+                onClick: () => console.log("Moved to spam"),
+              },
+              {
+                caption: "Download Attachment",
+                icon: RiDownload2Line,
+                iconColor: "teal",
+                onClick: () => console.log("Downloading"),
+              },
+              {
+                caption: "Copy Link",
+                icon: RiLinkM,
+                iconColor: "gray",
+                onClick: () => console.log("Link copied"),
+              },
+              {
+                caption: "Share",
+                icon: RiSendPlane2Line,
+                iconColor: "indigo",
+                isDangerous: true,
+                onClick: () => console.log("Shared"),
+              },
+              {
+                caption: "Edit",
+                icon: RiEdit2Line,
+                iconColor: "yellow",
+                onClick: () => console.log("Edit mode"),
+              },
+            ]}
           />
         </Toolbar>
       </Card>

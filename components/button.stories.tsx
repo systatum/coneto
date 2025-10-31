@@ -47,40 +47,6 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const TIP_MENU_ITEMS = [
-  {
-    caption: "Report Phishing",
-    icon: RiSpam2Line,
-    iconColor: "blue",
-    onClick: () => console.log("Phishing reported"),
-  },
-  {
-    caption: "Report Junk",
-    icon: RiForbid2Line,
-    iconColor: "red",
-    onClick: () => console.log("Junk reported"),
-  },
-  {
-    caption: "Block Sender",
-    icon: RiShieldLine,
-    iconColor: "orange",
-    isDangerous: true,
-    onClick: () => console.log("Sender blocked"),
-  },
-  {
-    caption: "Mark as Read",
-    icon: RiCheckLine,
-    iconColor: "green",
-    onClick: () => console.log("Marked as read"),
-  },
-  {
-    caption: "Move to Spam",
-    icon: RiInboxArchiveLine,
-    iconColor: "purple",
-    onClick: () => console.log("Moved to spam"),
-  },
-];
-
 export const Default: Story = {
   args: {
     variant: "default",
@@ -192,7 +158,40 @@ export const WithTipMenu: Story = {
         min-width: 240px;
         margin-top: 8px;
       `,
-      subMenu: ({ list }) => list(TIP_MENU_ITEMS),
+      subMenu: ({ list }) =>
+        list([
+          {
+            caption: "Report Phishing",
+            icon: RiSpam2Line,
+            iconColor: "blue",
+            onClick: () => console.log("Phishing reported"),
+          },
+          {
+            caption: "Report Junk",
+            icon: RiForbid2Line,
+            iconColor: "red",
+            onClick: () => console.log("Junk reported"),
+          },
+          {
+            caption: "Block Sender",
+            icon: RiShieldLine,
+            iconColor: "orange",
+            isDangerous: true,
+            onClick: () => console.log("Sender blocked"),
+          },
+          {
+            caption: "Mark as Read",
+            icon: RiCheckLine,
+            iconColor: "green",
+            onClick: () => console.log("Marked as read"),
+          },
+          {
+            caption: "Move to Spam",
+            icon: RiInboxArchiveLine,
+            iconColor: "purple",
+            onClick: () => console.log("Moved to spam"),
+          },
+        ]),
     };
 
     const SHOW_SUB_MENU: ButtonProps = {

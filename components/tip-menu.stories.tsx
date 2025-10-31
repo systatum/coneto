@@ -15,65 +15,6 @@ import {
 } from "@remixicon/react";
 import { ModalDialog, ModalButtonProps } from "./modal-dialog";
 
-const TIP_MENU_ITEMS = [
-  {
-    caption: "Report Phishing",
-    icon: RiSpam2Line,
-    iconColor: "blue",
-    onClick: () => console.log("Phishing reported"),
-  },
-  {
-    caption: "Report Junk",
-    icon: RiForbid2Line,
-    iconColor: "red",
-    onClick: () => console.log("Junk reported"),
-  },
-  {
-    caption: "Block Sender",
-    icon: RiShieldLine,
-    iconColor: "orange",
-    isDangerous: true,
-    onClick: () => console.log("Sender blocked"),
-  },
-  {
-    caption: "Mark as Read",
-    icon: RiCheckLine,
-    iconColor: "green",
-    onClick: () => console.log("Marked as read"),
-  },
-  {
-    caption: "Move to Spam",
-    icon: RiInboxArchiveLine,
-    iconColor: "purple",
-    onClick: () => console.log("Moved to spam"),
-  },
-  {
-    caption: "Download Attachment",
-    icon: RiDownloadLine,
-    iconColor: "teal",
-    onClick: () => console.log("Downloading"),
-  },
-  {
-    caption: "Copy Link",
-    icon: RiLink,
-    iconColor: "gray",
-    onClick: () => console.log("Link copied"),
-  },
-  {
-    caption: "Share",
-    icon: RiShareLine,
-    iconColor: "indigo",
-    isDangerous: true,
-    onClick: () => console.log("Shared"),
-  },
-  {
-    caption: "Edit",
-    icon: RiEditLine,
-    iconColor: "yellow",
-    onClick: () => console.log("Edit mode"),
-  },
-];
-
 const BUTTONS: ModalButtonProps[] = [
   {
     id: "cancel",
@@ -90,9 +31,6 @@ const BUTTONS: ModalButtonProps[] = [
 const meta: Meta<typeof TipMenu> = {
   title: "Controls/TipMenu",
   component: TipMenu,
-  args: {
-    subMenuList: TIP_MENU_ITEMS,
-  },
   parameters: {
     layout: "centered",
   },
@@ -110,11 +48,70 @@ export default meta;
 type Story = StoryObj<typeof TipMenu>;
 
 export const Default: Story = {
-  render: ({ subMenuList }) => {
+  render: () => {
     const [isOpen, setIsOpen] = useState(false);
     return (
       <>
-        <TipMenu subMenuList={subMenuList}>
+        <TipMenu
+          subMenuList={[
+            {
+              caption: "Report Phishing",
+              icon: RiSpam2Line,
+              iconColor: "blue",
+              onClick: () => console.log("Phishing reported"),
+            },
+            {
+              caption: "Report Junk",
+              icon: RiForbid2Line,
+              iconColor: "red",
+              onClick: () => console.log("Junk reported"),
+            },
+            {
+              caption: "Block Sender",
+              icon: RiShieldLine,
+              iconColor: "orange",
+              isDangerous: true,
+              onClick: () => console.log("Sender blocked"),
+            },
+            {
+              caption: "Mark as Read",
+              icon: RiCheckLine,
+              iconColor: "green",
+              onClick: () => console.log("Marked as read"),
+            },
+            {
+              caption: "Move to Spam",
+              icon: RiInboxArchiveLine,
+              iconColor: "purple",
+              onClick: () => console.log("Moved to spam"),
+            },
+            {
+              caption: "Download Attachment",
+              icon: RiDownloadLine,
+              iconColor: "teal",
+              onClick: () => console.log("Downloading"),
+            },
+            {
+              caption: "Copy Link",
+              icon: RiLink,
+              iconColor: "gray",
+              onClick: () => console.log("Link copied"),
+            },
+            {
+              caption: "Share",
+              icon: RiShareLine,
+              iconColor: "indigo",
+              isDangerous: true,
+              onClick: () => console.log("Shared"),
+            },
+            {
+              caption: "Edit",
+              icon: RiEditLine,
+              iconColor: "yellow",
+              onClick: () => console.log("Edit mode"),
+            },
+          ]}
+        >
           <TipMenu.Item
             caption="Delete"
             icon={RiDeleteBinLine}
