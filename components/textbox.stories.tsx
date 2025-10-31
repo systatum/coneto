@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Textbox, TextboxProps } from "./textbox";
 import { useArgs } from "@storybook/preview-api";
-import { useEffect, type ChangeEvent } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 import * as RemixIcons from "@remixicon/react";
 import { css } from "styled-components";
 
@@ -94,7 +94,62 @@ export const Input: Story = {
   },
 };
 
-export const InputMessage: Story = {
+export const WithDropdown: Story = {
+  args: {
+    name: "with-dropdown",
+    label: "With Dropdown",
+    placeholder: "Type here...",
+    value: "",
+    type: "text",
+    style: css`
+      min-width: 400px;
+      max-width: 400px;
+    `,
+  },
+  render: (args: TextboxProps) => {
+    const [, setUpdateArgs] = useArgs();
+    const [selectionOption, setSelectionOption] = useState("1");
+
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        setUpdateArgs({ value: "" });
+      }, 100);
+      return () => clearTimeout(timer);
+    }, [setUpdateArgs]);
+
+    const handleChange = (
+      e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+      const newValue = e.target.value;
+      setUpdateArgs({ value: newValue });
+    };
+
+    return (
+      <Textbox
+        {...args}
+        value={args.value}
+        onChange={handleChange}
+        dropdown={{
+          selectedOption: selectionOption,
+          options: [
+            { text: "Home", value: "1", icon: RemixIcons.RiHome2Line },
+            { text: "Profile", value: "2", icon: RemixIcons.RiUser2Line },
+            { text: "Settings", value: "3", icon: RemixIcons.RiSettings2Line },
+            { text: "Logout", value: "4", icon: RemixIcons.RiLogoutBoxLine },
+            {
+              text: "Dashboard",
+              value: "5",
+              icon: RemixIcons.RiDashboard2Line,
+            },
+          ],
+          onChange: (id) => setSelectionOption(id),
+        }}
+      />
+    );
+  },
+};
+
+export const WithAction: Story = {
   args: {
     name: "message",
     label: "Message",
@@ -199,7 +254,13 @@ export const WithErrorMessage: Story = {
       e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
       const newValue = e.target.value;
-      setUpdateArgs({ value: newValue });
+
+      setUpdateArgs({
+        value: newValue,
+        showError: newValue.length < 10,
+        errorMessage:
+          newValue.length < 10 ? "This field is required" : undefined,
+      });
     };
 
     return <Textbox {...args} value={args.value} onChange={handleChange} />;
