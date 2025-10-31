@@ -410,6 +410,9 @@ describe("StatefulForm", () => {
       first_name: z
         .string()
         .min(3, "First name must be at least 3 characters long"),
+      middle_name: z
+        .string()
+        .min(3, "Middle name must be at least 3 characters long"),
       access: z.boolean().refine((val) => val === true, {
         message: "Access must be true",
       }),
@@ -422,9 +425,15 @@ describe("StatefulForm", () => {
         type: "text",
         required: true,
         placeholder: "Enter first name",
+      },
+      {
+        name: "middle_name",
+        title: "Middle Name",
+        type: "text",
+        required: true,
+        placeholder: "Enter first name",
         hidden: true,
       },
-
       {
         name: "access",
         title: "Access",
@@ -443,8 +452,9 @@ describe("StatefulForm", () => {
         />
       );
 
-      cy.findByText("First Name").should("not.exist");
-      cy.findByText("Access").should("exist");
+      cy.findByText(EMPLOYEE_FIELDS[0]["title"]).should("exist");
+      cy.findByText(EMPLOYEE_FIELDS[1]["title"]).should("not.exist");
+      cy.findByText(EMPLOYEE_FIELDS[2]["title"]).should("exist");
     });
   });
 });
