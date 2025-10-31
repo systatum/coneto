@@ -38,6 +38,22 @@ describe("Textbox", () => {
         cy.findAllByRole("button").eq(0).should("contain.text", "Profile");
       });
     });
+
+    context("with filter", () => {
+      context("when search content", () => {
+        it("should render with filtered content", () => {
+          cy.findAllByRole("button").eq(0).click();
+          cy.findByLabelText("textbox-search").type("prof");
+          ["Home", "Profile", "Settings", "Logout", "Dashboard"].map((data) => {
+            if (data === "Profile" || data === "Home") {
+              cy.findAllByText(data).should("exist");
+            } else {
+              cy.findAllByText(data).should("not.exist");
+            }
+          });
+        });
+      });
+    });
   });
 
   context("with action", () => {
