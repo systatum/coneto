@@ -21,20 +21,18 @@ export default meta;
 
 type Story = StoryObj<typeof Capsule>;
 
-export const VIEW_ONLY_TITLE_MODES: CapsuleContentProps[] = [
-  {
-    id: "new",
-    title: "New",
-  },
-  {
-    id: "list",
-    title: "List",
-  },
-];
-
 export const Default: Story = {
   args: {
-    tabs: VIEW_ONLY_TITLE_MODES,
+    tabs: [
+      {
+        id: "new",
+        title: "New",
+      },
+      {
+        id: "list",
+        title: "List",
+      },
+    ],
     activeTab: "new",
   },
   render: (args) => {
@@ -44,28 +42,26 @@ export const Default: Story = {
       <Capsule
         {...args}
         activeTab={activeTab}
-        onTabChange={(prev: string) => setUpdateArgs({ activeTab: prev })}
+        onTabChange={(id: string) => setUpdateArgs({ activeTab: id })}
       />
     );
   },
 };
-
-export const VIEW_WITH_ICON_MODES: CapsuleContentProps[] = [
-  {
-    id: "new",
-    title: "New",
-    icon: RiFile2Line,
-  },
-  {
-    id: "list",
-    title: "List",
-    icon: RiNewspaperLine,
-  },
-];
 
 export const WithIcon: Story = {
   args: {
-    tabs: VIEW_WITH_ICON_MODES,
+    tabs: [
+      {
+        id: "new",
+        title: "New",
+        icon: RiFile2Line,
+      },
+      {
+        id: "list",
+        title: "List",
+        icon: RiNewspaperLine,
+      },
+    ],
     activeTab: "new",
   },
   render: (args) => {
@@ -75,19 +71,8 @@ export const WithIcon: Story = {
       <Capsule
         {...args}
         activeTab={activeTab}
-        onTabChange={(prev: string) => setUpdateArgs({ activeTab: prev })}
+        onTabChange={(id: string) => setUpdateArgs({ activeTab: id })}
       />
     );
   },
 };
-
-export const VIEW_ONLY_ICON_MODES: CapsuleContentProps[] = [
-  {
-    id: "new",
-    icon: RiFile2Line,
-  },
-  {
-    id: "list",
-    icon: RiNewspaperLine,
-  },
-];
