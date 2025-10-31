@@ -13,7 +13,9 @@ import {
   useEffect,
   useState,
 } from "react";
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
+import { Button } from "./button";
+import { TipMenuItemProps } from "./tip-menu";
 
 export interface TextboxProps
   extends Omit<
@@ -30,6 +32,20 @@ export interface TextboxProps
   onChange: (data: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   icon?: RemixiconComponentType;
   actionIcon?: boolean;
+  dropdown?: DropdownProps;
+}
+
+interface DropdownProps {
+  options: DropdownOptionProps[];
+  selectedOption: string;
+  onChange: (id: string) => void;
+}
+
+interface DropdownOptionProps {
+  text: string;
+  value: string;
+  icon?: RemixiconComponentType;
+  iconColor?: string;
 }
 
 const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
@@ -46,6 +62,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
       labelStyle,
       icon: Icon = RiCheckLine,
       type = "text",
+      dropdown,
       ...props
     },
     ref
@@ -64,8 +81,38 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
       return <input {...props} hidden />;
     }
 
+    const selectionCaption =
+      dropdown?.options.find(
+        (data) => data.value === dropdown.selectedOption
+      ) ?? dropdown?.options[0];
+
     const inputElement: ReactElement = (
       <InputWrapper>
+        {dropdown && (
+          <Button
+            subMenu={({ list }) => {
+              const dropdownData = dropdown.options.map((data) => {
+                const subMenuList: TipMenuItemProps = {
+                  caption: data.text,
+                  icon: data.icon,
+                  iconColor: data.iconColor,
+                  onClick: () => {
+                    dropdown.onChange(data.value);
+                  },
+                };
+                return subMenuList;
+              });
+              return list(dropdownData);
+            }}
+            showSubMenuOn="self"
+            variant="outline"
+            buttonStyle={css`
+              font-size: 12px;
+            `}
+          >
+            {selectionCaption && selectionCaption.text}
+          </Button>
+        )}
         <Input
           id={inputId}
           ref={ref}
