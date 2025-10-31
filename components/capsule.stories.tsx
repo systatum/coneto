@@ -10,31 +10,24 @@ const meta: Meta<typeof Capsule> = {
     layout: "centered",
   },
   tags: ["autodocs"],
-  excludeStories: [
-    "VIEW_ONLY_TITLE_MODES",
-    "VIEW_WITH_ICON_MODES",
-    "VIEW_ONLY_ICON_MODES",
-  ],
 };
 
 export default meta;
 
 type Story = StoryObj<typeof Capsule>;
 
-export const VIEW_ONLY_TITLE_MODES: CapsuleContentProps[] = [
-  {
-    id: "new",
-    title: "New",
-  },
-  {
-    id: "list",
-    title: "List",
-  },
-];
-
 export const Default: Story = {
   args: {
-    tabs: VIEW_ONLY_TITLE_MODES,
+    tabs: [
+      {
+        id: "new",
+        title: "New",
+      },
+      {
+        id: "list",
+        title: "List",
+      },
+    ],
     activeTab: "new",
   },
   render: (args) => {
@@ -49,23 +42,21 @@ export const Default: Story = {
     );
   },
 };
-
-export const VIEW_WITH_ICON_MODES: CapsuleContentProps[] = [
-  {
-    id: "new",
-    title: "New",
-    icon: RiFile2Line,
-  },
-  {
-    id: "list",
-    title: "List",
-    icon: RiNewspaperLine,
-  },
-];
 
 export const WithIcon: Story = {
   args: {
-    tabs: VIEW_WITH_ICON_MODES,
+    tabs: [
+      {
+        id: "new",
+        title: "New",
+        icon: RiFile2Line,
+      },
+      {
+        id: "list",
+        title: "List",
+        icon: RiNewspaperLine,
+      },
+    ],
     activeTab: "new",
   },
   render: (args) => {
@@ -80,14 +71,3 @@ export const WithIcon: Story = {
     );
   },
 };
-
-export const VIEW_ONLY_ICON_MODES: CapsuleContentProps[] = [
-  {
-    id: "new",
-    icon: RiFile2Line,
-  },
-  {
-    id: "list",
-    icon: RiNewspaperLine,
-  },
-];
