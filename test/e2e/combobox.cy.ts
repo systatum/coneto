@@ -283,6 +283,54 @@ describe("Combobox", () => {
           }
         });
       });
+      context("when losing focus and open the input", () => {
+        it("should render empty search", () => {
+          const FRUIT_OPTIONS = [
+            "Apple",
+            "Banana",
+            "Orange",
+            "Grape",
+            "Pineapple",
+            "Strawberry",
+            "Watermelon",
+            "Mango",
+            "Blueberry",
+            "Kiwi",
+            "Papaya",
+            "Cherry",
+            "Peach",
+            "Plum",
+            "Guava",
+            "Raspberry",
+            "Lychee",
+            "Coconut",
+            "Pear",
+            "Pomegranate",
+          ];
+
+          cy.findAllByPlaceholderText("Select a fruit...")
+            .eq(1)
+            .click()
+            .then(() => {
+              cy.findByLabelText("textbox-search").type(
+                "Apple{enter}{downarrow}{enter}"
+              );
+            });
+          cy.findAllByPlaceholderText("Select a fruit...")
+            .eq(1)
+            .should("have.value", "Apple, Pineapple");
+          cy.get("body").click();
+          cy.findAllByPlaceholderText("Select a fruit...")
+            .eq(1)
+            .click()
+            .then(() => {
+              cy.findByLabelText("textbox-search").should("have.value", "");
+              FRUIT_OPTIONS.map((data) => {
+                cy.findByText(data).should("exist");
+              });
+            });
+        });
+      });
     });
 
     context("when losing focus", () => {
