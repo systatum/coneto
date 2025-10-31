@@ -1,11 +1,13 @@
 import { ReactElement, ReactNode, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import styled, { css, CSSProp } from "styled-components";
+import { RemixiconComponentType } from "@remixicon/react";
 
 export interface CapsuleContentProps {
   id: string;
-  title: string;
+  title?: string;
   content?: ReactNode;
+  icon?: RemixiconComponentType | null;
 }
 
 export interface CapsuleProps {
@@ -15,12 +17,13 @@ export interface CapsuleProps {
   containerStyle?: CSSProp;
   label?: string;
   labelStyle?: CSSProp;
-  description?: string;
   tabStyle?: CSSProp;
   full?: boolean;
   activeBackgroundColor?: string;
   showError?: boolean;
   errorMessage?: string;
+  fontSize?: number;
+  iconSize?: number;
 }
 
 function Capsule({
@@ -35,6 +38,8 @@ function Capsule({
   labelStyle,
   showError,
   errorMessage,
+  fontSize = 12,
+  iconSize = 14,
 }: CapsuleProps) {
   const [hovered, setHovered] = useState<string | null>(null);
 
@@ -188,6 +193,7 @@ function Capsule({
       />
 
       {tabs.map((data, index) => {
+        const Icon = data.icon as RemixiconComponentType;
         const isActive = activeTab === data.id;
 
         return (
@@ -201,7 +207,8 @@ function Capsule({
             onMouseLeave={() => setHovered(null)}
             onClick={() => setActiveTab(data.id)}
           >
-            {data.title}
+            {Icon && <Icon aria-label="capsule-icon" size={iconSize} />}
+            {data.title && data.title}
           </Tab>
         );
       })}
@@ -209,7 +216,7 @@ function Capsule({
   );
 
   return (
-    <Container $style={containerStyle}>
+    <Container $fontSize={fontSize} $style={containerStyle}>
       {label && (
         <Label $style={labelStyle} htmlFor="capsule">
           {label}
@@ -256,12 +263,12 @@ const CapsuleWrapper = styled.div<{
   ${({ $containerStyle }) => $containerStyle}
 `;
 
-const Container = styled.div<{ $style?: CSSProp }>`
+const Container = styled.div<{ $style?: CSSProp; $fontSize?: number }>`
   display: flex;
   width: 100%;
   flex-direction: column;
   gap: 0.5rem;
-  font-size: 0.75rem;
+  font-size: ${({ $fontSize }) => `${$fontSize}px`};
   position: relative;
 
   ${({ $style }) => $style}
@@ -310,6 +317,10 @@ const Tab = styled.div<{
   $isActive?: boolean;
   $activeTabStyle?: CSSProp;
 }>`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 3px;
   z-index: 10;
   cursor: pointer;
   padding: 0.3rem 1rem;
