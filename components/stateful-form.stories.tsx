@@ -56,6 +56,9 @@ export const Default: Story = {
       first_name: z
         .string()
         .min(3, "First name must be at least 3 characters long"),
+      middle_name: z
+        .string()
+        .min(3, "Middle name must be at least 3 characters long"),
       last_name: z.string().optional(),
       email: z.string().email("Please enter a valid email address"),
       phone: z
@@ -76,6 +79,14 @@ export const Default: Story = {
           type: "text",
           required: true,
           placeholder: "Enter first name",
+        },
+        {
+          name: "middle_name",
+          title: "Middle Name",
+          type: "text",
+          required: true,
+          placeholder: "Enter last name",
+          hidden: true,
         },
         {
           name: "last_name",
