@@ -143,6 +143,7 @@ export const WithDropdown: Story = {
             },
           ],
           onChange: (id) => setSelectionOption(id),
+          withFilter: true,
         }}
       />
     );
