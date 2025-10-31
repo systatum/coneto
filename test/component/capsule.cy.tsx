@@ -1,41 +1,6 @@
 import { RiFile2Line, RiNewspaperLine } from "@remixicon/react";
 import { Capsule, CapsuleContentProps } from "./../../components/capsule";
 
-const VIEW_WITH_ICON_MODES: CapsuleContentProps[] = [
-  {
-    id: "new",
-    title: "New",
-    icon: RiFile2Line,
-  },
-  {
-    id: "list",
-    title: "List",
-    icon: RiNewspaperLine,
-  },
-];
-
-const VIEW_ONLY_TITLE_MODES: CapsuleContentProps[] = [
-  {
-    id: "new",
-    title: "New",
-  },
-  {
-    id: "list",
-    title: "List",
-  },
-];
-
-const VIEW_ONLY_ICON_MODES: CapsuleContentProps[] = [
-  {
-    id: "new",
-    icon: RiFile2Line,
-  },
-  {
-    id: "list",
-    icon: RiNewspaperLine,
-  },
-];
-
 describe("Capsule", () => {
   context("when only title", () => {
     it("renders capsule only with text", () => {
@@ -100,3 +65,38 @@ describe("Capsule", () => {
     });
   });
 });
+
+const VIEW_WITH_ICON_MODES: CapsuleContentProps[] = [
+  {
+    id: "new",
+    title: "New",
+    icon: RiFile2Line,
+  },
+  {
+    id: "list",
+    title: "List",
+    icon: RiNewspaperLine,
+  },
+];
+
+const VIEW_ONLY_TITLE_MODES: CapsuleContentProps[] = [
+  {
+    id: "new",
+    title: "New",
+  },
+  {
+    id: "list",
+    title: "List",
+  },
+];
+
+const VIEW_ONLY_ICON_MODES: CapsuleContentProps[] = [
+  {
+    id: "new",
+    icon: RiFile2Line,
+  },
+  {
+    id: "list",
+    icon: RiNewspaperLine,
+  },
+];
