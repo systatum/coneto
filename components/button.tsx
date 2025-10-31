@@ -41,7 +41,7 @@ export type ButtonProps = React.ComponentProps<"button"> &
     dividerStyle?: CSSProp;
     showSubMenuOn?: "caret" | "self";
     tipMenuSize?: TipMenuItemVariantType;
-    isSafeAreaActive?: string[];
+    safeAreaAriaLabels?: string[];
   };
 
 function Button({
@@ -61,7 +61,7 @@ function Button({
   tipMenuSize,
   subMenu,
   showSubMenuOn = "caret",
-  isSafeAreaActive,
+  safeAreaAriaLabels,
   ...props
 }: ButtonProps) {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -74,10 +74,10 @@ function Button({
 
   const containerRef = React.useRef<HTMLDivElement>(null);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
-  const isSafeAreaActiveLocal: string[] = [
+  const safeAreaAriaLabelsLocal: string[] = [
     "combobox-drawer-month",
     "combobox-drawer-year",
-    ...(isSafeAreaActive || []),
+    ...(safeAreaAriaLabels || []),
   ];
 
   React.useEffect(() => {
@@ -86,8 +86,8 @@ function Button({
       const el = target as HTMLElement;
 
       if (
-        Array.isArray(isSafeAreaActiveLocal) &&
-        isSafeAreaActiveLocal.some((label) =>
+        Array.isArray(safeAreaAriaLabelsLocal) &&
+        safeAreaAriaLabelsLocal.some((label) =>
           el.closest(`[aria-label="${label}"]`)
         )
       ) {
@@ -109,7 +109,7 @@ function Button({
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isSafeAreaActiveLocal]);
+  }, [safeAreaAriaLabelsLocal]);
 
   React.useEffect(() => {
     if (isOpen && containerRef.current) {

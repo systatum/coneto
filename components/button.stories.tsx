@@ -65,7 +65,7 @@ Use this component for all user-interactive button actions — from primary call
         "Controls how submenus are triggered. Use `self` to open when clicking the main button, or `caret` for separate toggle area.",
       options: ["self", "caret"],
     },
-    isSafeAreaActive: {
+    safeAreaAriaLabels: {
       control: "object",
       description:
         "Defines a list of aria-label string values (string[]) that are treated as 'safe zones' when detecting outside clicks. Useful for complex dropdowns or overlay components.",

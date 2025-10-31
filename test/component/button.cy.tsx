@@ -310,7 +310,7 @@ describe("Button", () => {
       });
     });
 
-    context("isSafeAreaActive", () => {
+    context("safeAreaAriaLabels", () => {
       context("when given element with any drawer", () => {
         it("shouldn't close the tip menu", () => {
           cy.mount(
@@ -319,10 +319,6 @@ describe("Button", () => {
               dropdownStyle={{
                 minWidth: "240px",
               }}
-              isSafeAreaActive={[
-                "combobox-drawer-month",
-                "combobox-drawer-year",
-              ]}
               subMenu={({ show }) =>
                 show(<Calendar monthNames={MONTH_NAMES} />)
               }
