@@ -39,6 +39,7 @@ interface DropdownProps {
   options: DropdownOptionProps[];
   selectedOption: string;
   onChange: (id: string) => void;
+  withFilter?: boolean;
 }
 
 interface DropdownOptionProps {
@@ -102,7 +103,9 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
                 };
                 return subMenuList;
               });
-              return list(dropdownData);
+              return list(dropdownData, {
+                withFilter: dropdown.withFilter ?? false,
+              });
             }}
             showSubMenuOn="self"
             variant="outline"
