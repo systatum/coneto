@@ -664,13 +664,10 @@ export const CustomRenderer: Story = {
 
     const [valueEmployee, setValueEmployee] = useState<{
       name: string;
-      role: OptionsProps;
+      role: string[];
     }>({
       name: "",
-      role: {
-        text: "",
-        value: "",
-      },
+      role: [""],
     });
 
     const [openMap, setOpenMap] = useState<Record<string, boolean>>({});
@@ -843,7 +840,7 @@ export const CustomRenderer: Story = {
         required: true,
       },
       {
-        name: "combo",
+        name: "role",
         title: "Role",
         type: "combo",
         required: false,
@@ -865,6 +862,16 @@ export const CustomRenderer: Story = {
       name: z
         .string()
         .min(2, "Division name must be at least 2 characters long"),
+      role: z
+        .array(z.string().min(1, "Choose one"))
+        .min(1, "Combo must have at least one item")
+        .refine(
+          (arr) =>
+            arr.every((val) =>
+              EMPLOYEE_OPTIONS.some((opt) => opt.value === val)
+            ),
+          "Invalid value in combo"
+        ),
     });
 
     const contentDialog = (
@@ -922,17 +929,14 @@ export const CustomRenderer: Story = {
               showDialogOn="hover"
               hideDialogOn="hover"
               dialogPlacement="top-left"
-              onVisibilityChange={(open) => {
-                if (!open) {
+              onVisibilityChange={(isOpen) => {
+                if (!isOpen) {
                   setValueEmployee({
                     name: "",
-                    role: {
-                      text: "",
-                      value: "",
-                    },
+                    role: [""],
                   });
                 }
-                setOpenMap((prev) => ({ ...prev, [id]: open }));
+                setOpenMap((prev) => ({ ...prev, [id]: isOpen }));
               }}
               dialog={contentDialog}
               containerStyle={css`

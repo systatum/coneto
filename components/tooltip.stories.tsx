@@ -253,7 +253,7 @@ export const WithBadge: Story = {
       name: "",
       role: [""],
     });
-    const [open, setOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
 
     const EMPLOYEE_OPTIONS: OptionsProps[] = [
       { text: "Organization Owner", value: "1" },
@@ -330,8 +330,8 @@ export const WithBadge: Story = {
         showDialogOn="hover"
         hideDialogOn="hover"
         dialogPlacement="top-left"
-        onVisibilityChange={(open) => {
-          setOpen(open);
+        onVisibilityChange={(isOpen) => {
+          setIsOpen(isOpen);
         }}
         dialog={contentDialog}
         containerStyle={css`
@@ -353,7 +353,7 @@ export const WithBadge: Story = {
         <Badge
           badgeStyle={css`
             cursor: pointer;
-            ${open &&
+            ${isOpen &&
             css`
               border-color: #045e95;
             `}

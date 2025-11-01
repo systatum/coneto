@@ -12,6 +12,7 @@ const meta: Meta<typeof NavTab> = {
   parameters: {
     layout: "fullscreen",
   },
+  excludeStories: ["WriteTabContent", "ReviewTabContent"],
 };
 
 export default meta;

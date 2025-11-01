@@ -120,7 +120,7 @@ export const Default: Story = {
           />
         </TipMenu>
         <ModalDialog
-          open={isOpen}
+          isOpen={isOpen}
           onVisibilityChange={setIsOpen}
           title="Confirm Action"
           subTitle="Are you sure you want to delete?"

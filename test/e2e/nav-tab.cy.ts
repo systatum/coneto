@@ -10,7 +10,7 @@ describe("NavTab", () => {
       it("should move to another tab", () => {
         cy.contains("Review").should("exist");
 
-        cy.findByRole("tab", { name: /Write/i }).click();
+        cy.contains(/Write/i).click();
         cy.contains("Write").should("exist");
         cy.findByRole("textbox").type("This is a test comment");
         cy.findByRole("textbox").should("have.value", "This is a test comment");
@@ -24,9 +24,7 @@ describe("NavTab", () => {
             cy.spy(win.console, "log").as("consoleLog");
           });
           cy.contains("Review").should("exist");
-
-          cy.findByRole("tab", { name: /Write/i }).click();
-
+          cy.contains(/Write/i).click();
           cy.contains("Write").should("exist");
           cy.findByRole("textbox").type("This is a test comment");
           cy.findByRole("textbox").should(

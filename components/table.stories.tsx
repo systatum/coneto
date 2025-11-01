@@ -1218,7 +1218,6 @@ export const WithRowGroup: Story = {
           console.log("Copy clicked");
         },
         subMenu: ({ list }) => list(COPY_ACTIONS),
-        showSubMenuOn: "self",
       },
     ];
 
