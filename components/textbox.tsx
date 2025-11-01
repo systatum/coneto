@@ -13,7 +13,9 @@ import {
   useEffect,
   useState,
 } from "react";
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
+import { Button } from "./button";
+import { TipMenuItemProps } from "./tip-menu";
 
 export interface TextboxProps
   extends Omit<
@@ -30,6 +32,21 @@ export interface TextboxProps
   onChange: (data: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   icon?: RemixiconComponentType;
   actionIcon?: boolean;
+  dropdown?: DropdownProps;
+  dropdownToggleStyle?: CSSProp;
+}
+
+interface DropdownProps {
+  options: DropdownOptionProps[];
+  selectedOption: string;
+  onChange: (id: string) => void;
+}
+
+interface DropdownOptionProps {
+  text: string;
+  value: string;
+  icon?: RemixiconComponentType;
+  iconColor?: string;
 }
 
 const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
@@ -46,6 +63,8 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
       labelStyle,
       icon: Icon = RiCheckLine,
       type = "text",
+      dropdown,
+      dropdownToggleStyle,
       ...props
     },
     ref
@@ -64,8 +83,44 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
       return <input {...props} hidden />;
     }
 
+    const selectionCaption =
+      dropdown?.options.find(
+        (data) => data.value === dropdown.selectedOption
+      ) ?? dropdown?.options[0];
+
     const inputElement: ReactElement = (
       <InputWrapper>
+        {dropdown && (
+          <Button
+            subMenu={({ list }) => {
+              const dropdownData = dropdown.options.map((prop) => {
+                const subMenuList: TipMenuItemProps = {
+                  caption: prop.text,
+                  icon: prop.icon,
+                  iconColor: prop.iconColor,
+                  onClick: () => {
+                    dropdown.onChange(prop.value);
+                  },
+                };
+                return subMenuList;
+              });
+              return list(dropdownData);
+            }}
+            showSubMenuOn="self"
+            variant="outline"
+            containerStyle={css`
+              border-right: 0px;
+              border-top-right-radius: 0px;
+              border-bottom-right-radius: 0px;
+              ${dropdownToggleStyle}
+            `}
+            buttonStyle={css`
+              font-size: 12px;
+            `}
+          >
+            {selectionCaption && selectionCaption.text}
+          </Button>
+        )}
         <Input
           id={inputId}
           ref={ref}
@@ -73,6 +128,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
           onKeyDown={(e) => {
             if (e.key === "Enter") onActionClick?.();
           }}
+          $dropdown={!!dropdown}
           type={type === "password" && showPassword ? "text" : type}
           $error={showError}
           $style={style}
@@ -159,7 +215,11 @@ const InputWrapper = styled.div`
   width: 100%;
 `;
 
-const Input = styled.input<{ $error?: boolean; $style?: CSSProp }>`
+const Input = styled.input<{
+  $error?: boolean;
+  $style?: CSSProp;
+  $dropdown: boolean;
+}>`
   border-radius: 2px;
   font-size: 0.75rem;
   padding: 7px 8px;
@@ -168,19 +228,26 @@ const Input = styled.input<{ $error?: boolean; $style?: CSSProp }>`
   border: 1px solid ${({ $error }) => ($error ? "#f87171" : "#d1d5db")};
   ${({ $error }) =>
     $error
-      ? `
-    color: #991b1b;
-    &:focus {
-      border-color: #f87171;
-      box-shadow: 0 0 0 1px #f87171;
-    }
-  `
-      : `
-    &:focus {
-      border-color: #61A9F9;
-      box-shadow: 0 0 0 1px #61A9F9;
-    }
-  `}
+      ? css`
+          color: #991b1b;
+          &:focus {
+            border-color: #f87171;
+            box-shadow: 0 0 0 1px #f87171;
+          }
+        `
+      : css`
+          &:focus {
+            border-color: #61a9f9;
+            box-shadow: 0 0 0 1px #61a9f9;
+          }
+        `}
+
+  ${({ $dropdown }) =>
+    $dropdown &&
+    css`
+      border-top-left-radius: 0px;
+      border-bottom-left-radius: 0px;
+    `}
   ${({ $style }) => $style}
 `;
 
