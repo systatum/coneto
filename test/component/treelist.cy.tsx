@@ -6,6 +6,48 @@ import {
 import { RiAtLine, RiSearchLine } from "@remixicon/react";
 
 describe("Treelist", () => {
+  context("selectedItem", () => {
+    let TREE_LIST_DATA: TreeListContentProps[];
+
+    beforeEach(() => {
+      const setPerson = cy.stub().as("setPerson");
+
+      TREE_LIST_DATA = [
+        {
+          title: "Member of Technical Staff",
+          items: [
+            { id: "mts-1", title: "Adam Noto Hakarsa", onClick: setPerson },
+            { id: "mts-2", title: "Mohamad Naufal Alim", onClick: setPerson },
+          ],
+        },
+        {
+          title: "Product Management Team",
+          items: [
+            { id: "pmt-1", title: "Samantha Lee", onClick: setPerson },
+            { id: "pmt-2", title: "Jason Kim", onClick: setPerson },
+            { id: "pmt-3", title: "Rina Patel", onClick: setPerson },
+          ],
+        },
+      ];
+    });
+
+    context("when given", () => {
+      it("render highlight active item", () => {
+        cy.mount(
+          <TreeList
+            selectedItem="mts-1"
+            content={TREE_LIST_DATA}
+            emptySlate={<p>Not found.</p>}
+          />
+        );
+
+        cy.contains("Adam Noto Hakarsa")
+          .parent()
+          .should("have.css", "border-left-color", "rgb(59, 130, 246)");
+      });
+    });
+  });
+
   context("collapsible", () => {
     let TREE_LIST_DATA: TreeListContentProps[];
 
@@ -17,17 +59,17 @@ describe("Treelist", () => {
           title: "Member of Technical Staff",
           collapsible: true,
           items: [
-            { id: 1, title: "Adam Noto Hakarsa", onClick: setPerson },
-            { id: 2, title: "Mohamad Naufal Alim", onClick: setPerson },
+            { id: "mts-1", title: "Adam Noto Hakarsa", onClick: setPerson },
+            { id: "mts-2", title: "Mohamad Naufal Alim", onClick: setPerson },
           ],
         },
         {
           title: "Product Management Team",
           collapsible: true,
           items: [
-            { id: 1, title: "Samantha Lee", onClick: setPerson },
-            { id: 2, title: "Jason Kim", onClick: setPerson },
-            { id: 3, title: "Rina Patel", onClick: setPerson },
+            { id: "pmt-1", title: "Samantha Lee", onClick: setPerson },
+            { id: "pmt-2", title: "Jason Kim", onClick: setPerson },
+            { id: "pmt-3", title: "Rina Patel", onClick: setPerson },
           ],
         },
       ];
@@ -55,13 +97,13 @@ describe("Treelist", () => {
           <TreeList content={TREE_LIST_DATA} emptySlate={<p>Not found.</p>} />
         );
 
-        cy.contains("Adam Noto Hakarsa").should("exist");
+        cy.contains("Adam Noto Hakarsa").should("be.visible");
 
         cy.contains("Member of Technical Staff").click();
-        cy.contains("Adam Noto Hakarsa").should("not.exist");
+        cy.contains("Adam Noto Hakarsa").should("not.be.visible");
 
         cy.contains("Member of Technical Staff").click();
-        cy.contains("Adam Noto Hakarsa").should("exist");
+        cy.contains("Adam Noto Hakarsa").should("be.visible");
       });
     });
   });
@@ -79,16 +121,16 @@ describe("Treelist", () => {
         {
           title: "Member of Technical Staff",
           items: [
-            { id: 1, title: "Adam Noto Hakarsa", onClick: setPerson },
-            { id: 2, title: "Mohamad Naufal Alim", onClick: setPerson },
+            { id: "mts-1", title: "Adam Noto Hakarsa", onClick: setPerson },
+            { id: "mts-2", title: "Mohamad Naufal Alim", onClick: setPerson },
           ],
         },
         {
           title: "Product Management Team",
           items: [
-            { id: 1, title: "Samantha Lee", onClick: setPerson },
-            { id: 2, title: "Jason Kim", onClick: setPerson },
-            { id: 3, title: "Rina Patel", onClick: setPerson },
+            { id: "pmt-1", title: "Samantha Lee", onClick: setPerson },
+            { id: "pmt-2", title: "Jason Kim", onClick: setPerson },
+            { id: "pmt-3", title: "Rina Patel", onClick: setPerson },
           ],
         },
       ];
