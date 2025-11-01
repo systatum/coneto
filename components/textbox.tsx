@@ -33,6 +33,7 @@ export interface TextboxProps
   icon?: RemixiconComponentType;
   actionIcon?: boolean;
   dropdown?: DropdownProps;
+  dropdownToggleStyle?: CSSProp;
 }
 
 interface DropdownProps {
@@ -63,6 +64,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
       icon: Icon = RiCheckLine,
       type = "text",
       dropdown,
+      dropdownToggleStyle,
       ...props
     },
     ref
@@ -110,6 +112,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
               border-right: 0px;
               border-top-right-radius: 0px;
               border-bottom-right-radius: 0px;
+              ${dropdownToggleStyle}
             `}
             buttonStyle={css`
               font-size: 12px;
