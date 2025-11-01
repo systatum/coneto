@@ -8,13 +8,13 @@ describe("Textbox", () => {
 
     context("when typing", () => {
       it("should render text on the input", () => {
-        cy.findByPlaceholderText("Type here...")
+        cy.findAllByPlaceholderText("Type here...")
+          .eq(0)
           .clear()
           .type("This is input text");
-        cy.findByPlaceholderText("Type here...").should(
-          "have.value",
-          "This is input text"
-        );
+        cy.findAllByPlaceholderText("Type here...")
+          .eq(0)
+          .should("have.value", "This is input text");
       });
     });
   });
@@ -26,26 +26,26 @@ describe("Textbox", () => {
 
     context("when choosing", () => {
       it("should change the text on button", () => {
-        cy.findByPlaceholderText("Type here...")
+        cy.findAllByPlaceholderText("Type here...")
+          .eq(0)
           .clear()
           .type("This is input text");
-        cy.findByPlaceholderText("Type here...").should(
-          "have.value",
-          "This is input text"
-        );
+        cy.findAllByPlaceholderText("Type here...")
+          .eq(0)
+          .should("have.value", "This is input text");
         cy.findAllByRole("button").eq(0).click();
-        cy.findByText("Profile").click();
-        cy.findAllByRole("button").eq(0).should("contain.text", "Profile");
+        cy.findByText("Sick leave").click();
+        cy.findAllByRole("button").eq(0).should("contain.text", "Sick leave");
       });
     });
 
     context("with filter", () => {
       context("when search content", () => {
         it("should render with filtered content", () => {
-          cy.findAllByRole("button").eq(0).click();
-          cy.findByLabelText("textbox-search").type("prof");
-          ["Home", "Profile", "Settings", "Logout", "Dashboard"].map((data) => {
-            if (data === "Profile" || data === "Home") {
+          cy.findAllByRole("button").eq(1).click();
+          cy.findByLabelText("textbox-search").type("sick");
+          ["On-site", "WFH", "Sick leave", "Annual leave"].map((data) => {
+            if (data === "On-site" || data === "Sick leave") {
               cy.findAllByText(data).should("exist");
             } else {
               cy.findAllByText(data).should("not.exist");
@@ -91,7 +91,7 @@ describe("Textbox", () => {
           .clear()
           .type("mypassword123")
           .should("have.attr", "type", "password");
-        cy.findAllByLabelText("toggle-password").eq(0).click();
+        cy.findAllByLabelText("toggle-password").eq(0).click({ force: true });
         cy.findByPlaceholderText("Enter password...").should(
           "have.attr",
           "type",

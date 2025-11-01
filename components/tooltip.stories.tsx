@@ -249,49 +249,17 @@ export const WithForm: Story = {
 
 export const WithBadge: Story = {
   render: () => {
-    const [value, setValue] = useState<{ name: string; role: OptionsProps }>({
+    const [value, setValue] = useState<{ name: string; role: string[] }>({
       name: "",
-      role: {
-        text: "",
-        value: "",
-      },
+      role: [""],
     });
-    const [open, setOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
 
     const EMPLOYEE_OPTIONS: OptionsProps[] = [
-      { text: "Organization Owner", value: 1 },
-      { text: "HR Manager", value: 2 },
-      { text: "Member", value: 3 },
+      { text: "Organization Owner", value: "1" },
+      { text: "HR Manager", value: "2" },
+      { text: "Member", value: "3" },
     ];
-
-    const onChangeDivisionEmployeeForm = (e?: StatefulOnChangeType) => {
-      if (!e || typeof e !== "object") return;
-      if (e && typeof e === "object" && "value" in e && "text" in e) {
-        const isOptionsProps =
-          (typeof e.value === "string" || typeof e.value === "number") &&
-          typeof e.text === "string";
-
-        if (isOptionsProps) {
-          setValue((prev) => ({ ...prev, ["role"]: e }));
-        }
-        return;
-      }
-
-      if ("target" in e && typeof e.target?.name === "string") {
-        const target = e.target;
-        const { name, value } = target as
-          | HTMLInputElement
-          | HTMLTextAreaElement;
-
-        let updatedValue: string | boolean = value;
-
-        if (target instanceof HTMLInputElement && target.type === "checkbox") {
-          updatedValue = target.checked;
-        }
-
-        setValue((prev) => ({ ...prev, [name]: updatedValue }));
-      }
-    };
 
     const EMPLOYEE_FIELDS: FormFieldProps[] = [
       {
@@ -299,23 +267,14 @@ export const WithBadge: Story = {
         title: "Name",
         type: "text",
         required: true,
-        onChange: onChangeDivisionEmployeeForm,
       },
       {
-        name: "combo",
+        name: "role",
         title: "Role",
         type: "combo",
         required: false,
-        onChange: onChangeDivisionEmployeeForm,
         comboboxProps: {
           options: EMPLOYEE_OPTIONS,
-          selectboxStyle: css`
-            border: 1px solid #d1d5db;
-            &:focus {
-              border-color: #61a9f9;
-              box-shadow: 0 0 0 1px #61a9f9;
-            }
-          `,
         },
       },
     ];
@@ -324,6 +283,16 @@ export const WithBadge: Story = {
       name: z
         .string()
         .min(2, "Division name must be at least 2 characters long"),
+      combo: z
+        .array(z.string().min(1, "Choose one"))
+        .min(1, "Combo must have at least one item")
+        .refine(
+          (arr) =>
+            arr.every((val) =>
+              EMPLOYEE_OPTIONS.some((opt) => opt.value === val)
+            ),
+          "Invalid value in combo"
+        ),
     });
 
     const contentDialog = (
@@ -339,6 +308,9 @@ export const WithBadge: Story = {
         <StatefulForm
           fields={EMPLOYEE_FIELDS}
           formValues={value}
+          onChange={({ currentState }) =>
+            setValue((prev) => ({ ...prev, ...currentState }))
+          }
           validationSchema={divisionEmployeeSchema}
           mode="onChange"
         />
@@ -358,8 +330,8 @@ export const WithBadge: Story = {
         showDialogOn="hover"
         hideDialogOn="hover"
         dialogPlacement="top-left"
-        onOpenChange={(open) => {
-          setOpen(open);
+        onVisibilityChange={(isOpen) => {
+          setIsOpen(isOpen);
         }}
         dialog={contentDialog}
         containerStyle={css`
@@ -381,7 +353,7 @@ export const WithBadge: Story = {
         <Badge
           badgeStyle={css`
             cursor: pointer;
-            ${open &&
+            ${isOpen &&
             css`
               border-color: #045e95;
             `}

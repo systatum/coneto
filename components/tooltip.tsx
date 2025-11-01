@@ -19,7 +19,7 @@ export type TooltipProps = {
   containerStyle?: CSSProp;
   arrowStyle?: CSSProp;
   dialogPlacement?: DialogPlacement;
-  onOpenChange?: (open?: boolean) => void;
+  onVisibilityChange?: (open?: boolean) => void;
 };
 
 type DialogPlacement =
@@ -37,7 +37,7 @@ export function Tooltip({
   containerStyle,
   arrowStyle,
   dialogPlacement = "bottom-left",
-  onOpenChange,
+  onVisibilityChange,
 }: TooltipProps) {
   const [isOpen, setIsOpen] = useState(false);
   const arrowRef = useRef<HTMLDivElement>(null);
@@ -71,7 +71,7 @@ export function Tooltip({
         !referenceEl.contains(event.target as Node)
       ) {
         setIsOpen(false);
-        onOpenChange(false);
+        onVisibilityChange(false);
       }
     }
 
@@ -86,16 +86,16 @@ export function Tooltip({
       onMouseEnter={() => {
         if (showDialogOn === "hover") {
           setIsOpen(true);
-          if (onOpenChange) {
-            onOpenChange(true);
+          if (onVisibilityChange) {
+            onVisibilityChange(true);
           }
         }
       }}
       onMouseLeave={() => {
         if (hideDialogOn === "hover") {
           setIsOpen(false);
-          if (onOpenChange) {
-            onOpenChange(false);
+          if (onVisibilityChange) {
+            onVisibilityChange(false);
           }
         }
       }}
@@ -107,8 +107,8 @@ export function Tooltip({
           if (showDialogOn === "click") {
             setIsOpen((prev) => {
               const next = !prev;
-              if (onOpenChange) {
-                onOpenChange(next);
+              if (onVisibilityChange) {
+                onVisibilityChange(next);
               }
               return next;
             });

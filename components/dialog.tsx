@@ -24,8 +24,8 @@ type StyleProp = {
 };
 
 const DialogContext = createContext<{
-  open: boolean;
-  setOpen: (val: boolean) => void;
+  isOpen: boolean;
+  setIsOpen: (val: boolean) => void;
 } | null>(null);
 
 function useDialogContext() {
@@ -50,15 +50,15 @@ function usePortal() {
 
 function Dialog({
   children,
-  open,
-  onOpenChange,
+  isOpen,
+  onVisibilityChange,
 }: {
   children: ReactNode;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  isOpen: boolean;
+  onVisibilityChange: (isOpen: boolean) => void;
 }) {
   return (
-    <DialogContext.Provider value={{ open, setOpen: onOpenChange }}>
+    <DialogContext.Provider value={{ isOpen, setIsOpen: onVisibilityChange }}>
       {children}
     </DialogContext.Provider>
   );
@@ -71,14 +71,14 @@ function DialogTrigger({
   children: ReactNode;
   onClick?: () => void;
 }) {
-  const { open, setOpen } = useDialogContext();
+  const { isOpen, setIsOpen } = useDialogContext();
   return (
     <div
       onClick={() => {
         if (onClick) {
           onClick();
         } else {
-          setOpen(!open);
+          setIsOpen(!isOpen);
         }
       }}
       style={{ display: "inline-block", cursor: "pointer" }}
@@ -89,10 +89,10 @@ function DialogTrigger({
 }
 
 function DialogClose({ children }: { children: ReactNode }) {
-  const { setOpen } = useDialogContext();
+  const { setIsOpen } = useDialogContext();
 
   return (
-    <div onClick={() => setOpen(false)} style={{ display: "inline-block" }}>
+    <div onClick={() => setIsOpen(false)} style={{ display: "inline-block" }}>
       {children}
     </div>
   );
@@ -112,14 +112,14 @@ function DialogContent({
   closeButtonStyle?: CSSProp;
 }) {
   const [isVisible, setIsVisible] = useState(false);
-  const { open, setOpen } = useDialogContext();
+  const { isOpen, setIsOpen } = useDialogContext();
   const { mounted, target } = usePortal();
 
   const handleEscape = useCallback(
     (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") setIsOpen(false);
     },
-    [setOpen]
+    [setIsOpen]
   );
 
   useEffect(() => {
@@ -128,28 +128,28 @@ function DialogContent({
   }, [handleEscape]);
 
   useEffect(() => {
-    if (open) {
+    if (isOpen) {
       setIsVisible(true);
     } else {
       const timeout = setTimeout(() => setIsVisible(false), 200);
       return () => clearTimeout(timeout);
     }
-  }, [open]);
+  }, [isOpen]);
 
   if (!mounted || !target || !isVisible) return null;
 
   return ReactDOM.createPortal(
     <>
       <StyledOverlay
-        $isOpen={open}
+        $isOpen={isOpen}
         $style={overlayStyle}
-        onClick={() => setOpen(false)}
+        onClick={() => setIsOpen(false)}
       />
-      <StyledContent $isOpen={open} $style={style}>
+      <StyledContent $isOpen={isOpen} $style={style}>
         {!hideClose && (
           <Button
             variant="transparent"
-            onClick={() => setOpen(false)}
+            onClick={() => setIsOpen(false)}
             aria-label="Close dialog"
             containerStyle={css`
               position: absolute;
