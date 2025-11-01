@@ -14,7 +14,7 @@ export interface ModalButtonProps extends Pick<ButtonVariants, "variant"> {
 
 export interface ModalDialogProps {
   open: boolean;
-  onVisibilityChange: (data: boolean) => void;
+  onVisibilityChange: (open: boolean) => void;
   title: string;
   subTitle?: string;
   hasCloseButton?: boolean;
