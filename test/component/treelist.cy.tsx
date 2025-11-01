@@ -6,7 +6,7 @@ import {
 import { RiAtLine, RiSearchLine } from "@remixicon/react";
 
 describe("Treelist", () => {
-  context("activeList", () => {
+  context("selectedItem", () => {
     let TREE_LIST_DATA: TreeListContentProps[];
 
     beforeEach(() => {
@@ -35,7 +35,7 @@ describe("Treelist", () => {
       it("render highlight active item", () => {
         cy.mount(
           <TreeList
-            activeList="mts-1"
+            selectedItem="mts-1"
             content={TREE_LIST_DATA}
             emptySlate={<p>Not found.</p>}
           />

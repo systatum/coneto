@@ -10,7 +10,7 @@ export interface TreeListProps {
   emptySlate?: ReactNode;
   searchTerm?: string;
   actions?: TreeListActionsProps[];
-  activeList?: string;
+  selectedItem?: string;
   onChange?: (id: string) => void;
 }
 
@@ -41,9 +41,9 @@ function TreeList({
   searchTerm = "",
   actions,
   onChange,
-  activeList = "",
+  selectedItem = "",
 }: TreeListProps) {
-  const [isSelected, setIsSelected] = useState(activeList);
+  const [isSelected, setIsSelected] = useState(selectedItem);
   const [isOpen, setIsOpen] = useState<Record<number, boolean>>(
     Object.fromEntries(content.map((_, i) => [i, true]))
   );
