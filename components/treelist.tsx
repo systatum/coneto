@@ -10,6 +10,8 @@ export interface TreeListProps {
   emptySlate?: ReactNode;
   searchTerm?: string;
   actions?: TreeListActionsProps[];
+  activeList?: string;
+  onChange?: (id: string) => void;
 }
 
 export interface TreeListContentProps {
@@ -26,11 +28,9 @@ export interface TreeListActionsProps {
 }
 
 export interface TreeListItemsProps {
-  id: number | string;
+  id: string;
   title: string;
   onClick?: (item?: TreeListItemsProps) => void;
-  setIsSelected?: (item?: string) => void;
-  isSelected?: string;
 }
 
 function TreeList({
@@ -40,11 +40,21 @@ function TreeList({
   emptySlate,
   searchTerm = "",
   actions,
+  onChange,
+  activeList = "",
 }: TreeListProps) {
-  const [isSelected, setIsSelected] = useState("");
+  const [isSelected, setIsSelected] = useState(activeList);
   const [isOpen, setIsOpen] = useState<Record<number, boolean>>(
     Object.fromEntries(content.map((_, i) => [i, true]))
   );
+
+  const handleOnChange = (id: string) => {
+    if (onChange) {
+      onChange(id);
+    }
+
+    setIsSelected(id);
+  };
 
   const handleSelected = (index: number) => {
     setIsOpen((prev) => ({
@@ -105,7 +115,9 @@ function TreeList({
                 {data.items.map((val) => (
                   <TreeListItem
                     key={val.id}
-                    item={{ ...val, isSelected, setIsSelected }}
+                    item={{ ...val }}
+                    isSelected={isSelected}
+                    onChange={handleOnChange}
                     searchTerm={searchTerm}
                   />
                 ))}
@@ -124,10 +136,14 @@ function TreeList({
 
 function TreeListItem<T extends TreeListItemsProps>({
   item,
+  isSelected,
+  onChange,
   searchTerm = "",
 }: {
   item: T;
   searchTerm?: string;
+  onChange?: (item?: string) => void;
+  isSelected?: string;
 }) {
   const escapedTerm = escapeRegExp(searchTerm.trim());
   const regex = new RegExp(`(${escapedTerm})`, "gi");
@@ -137,10 +153,10 @@ function TreeListItem<T extends TreeListItemsProps>({
     <TreeListItemWrapper
       role="button"
       aria-label="tree-list-item"
-      $isSelected={item.isSelected === item.title}
+      $isSelected={isSelected === item.id}
       onClick={() => {
         item.onClick(item);
-        item.setIsSelected?.(item.title);
+        onChange(item.id);
       }}
     >
       {parts.map((part, index) =>
