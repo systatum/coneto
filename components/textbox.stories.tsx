@@ -96,8 +96,6 @@ export const Input: Story = {
 
 export const WithDropdown: Story = {
   args: {
-    name: "with-dropdown",
-    label: "With Dropdown",
     placeholder: "Type here...",
     value: "",
     type: "text",
@@ -107,45 +105,87 @@ export const WithDropdown: Story = {
     `,
   },
   render: (args: TextboxProps) => {
-    const [, setUpdateArgs] = useArgs();
-    const [selectionOption, setSelectionOption] = useState("1");
-
-    useEffect(() => {
-      const timer = setTimeout(() => {
-        setUpdateArgs({ value: "" });
-      }, 100);
-      return () => clearTimeout(timer);
-    }, [setUpdateArgs]);
-
-    const handleChange = (
-      e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
-      const newValue = e.target.value;
-      setUpdateArgs({ value: newValue });
-    };
+    const [value1, setValue1] = useState({
+      selectionOption: "1",
+      search: "",
+    });
+    const [value2, setValue2] = useState({
+      selectionOption: "1",
+      search: "",
+    });
 
     return (
-      <Textbox
-        {...args}
-        value={args.value}
-        onChange={handleChange}
-        dropdown={{
-          selectedOption: selectionOption,
-          options: [
-            { text: "Home", value: "1", icon: RemixIcons.RiHome2Line },
-            { text: "Profile", value: "2", icon: RemixIcons.RiUser2Line },
-            { text: "Settings", value: "3", icon: RemixIcons.RiSettings2Line },
-            { text: "Logout", value: "4", icon: RemixIcons.RiLogoutBoxLine },
-            {
-              text: "Dashboard",
-              value: "5",
-              icon: RemixIcons.RiDashboard2Line,
-            },
-          ],
-          onChange: (id) => setSelectionOption(id),
-          withFilter: true,
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "8px",
         }}
-      />
+      >
+        <Textbox
+          {...args}
+          name="clock-in"
+          label="Clock In"
+          value={value1.search}
+          onChange={(e) =>
+            setValue1((prev) => ({ ...prev, search: e.target.value }))
+          }
+          dropdownToggleStyle={css`
+            min-width: 106px;
+          `}
+          dropdown={{
+            selectedOption: value1.selectionOption,
+            options: [
+              { text: "On-site", value: "1", icon: RemixIcons.RiHome2Line },
+              { text: "WFH", value: "2", icon: RemixIcons.RiUser2Line },
+              {
+                text: "Sick leave",
+                value: "3",
+                icon: RemixIcons.RiSettings2Line,
+              },
+              {
+                text: "Annual leave",
+                value: "4",
+                icon: RemixIcons.RiLogoutBoxLine,
+              },
+            ],
+            onChange: (id) =>
+              setValue1((prev) => ({ ...prev, selectionOption: id })),
+          }}
+        />
+        <Textbox
+          {...args}
+          name="clock-in-with-filter"
+          label="Clock In With Filter"
+          value={value2.search}
+          onChange={(e) =>
+            setValue2((prev) => ({ ...prev, search: e.target.value }))
+          }
+          dropdownToggleStyle={css`
+            min-width: 106px;
+          `}
+          dropdown={{
+            selectedOption: value2.selectionOption,
+            options: [
+              { text: "On-site", value: "1", icon: RemixIcons.RiHome2Line },
+              { text: "WFH", value: "2", icon: RemixIcons.RiUser2Line },
+              {
+                text: "Sick leave",
+                value: "3",
+                icon: RemixIcons.RiSettings2Line,
+              },
+              {
+                text: "Annual leave",
+                value: "4",
+                icon: RemixIcons.RiLogoutBoxLine,
+              },
+            ],
+            onChange: (id) =>
+              setValue2((prev) => ({ ...prev, selectionOption: id })),
+            withFilter: true,
+          }}
+        />
+      </div>
     );
   },
 };
