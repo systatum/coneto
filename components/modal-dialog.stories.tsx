@@ -20,7 +20,7 @@ export const Default: Story = {
     title: "Default Modal",
     subTitle: "This is a subtitle",
     hasCloseButton: true,
-    open: false,
+    isOpen: false,
     buttons: [
       {
         id: "confirm",
@@ -48,17 +48,17 @@ export const Default: Story = {
     ),
   },
   render: (args: ModalDialogProps) => {
-    const [{ open }, setUpdateArgs] = useArgs();
+    const [{ isOpen }, setUpdateArgs] = useArgs();
 
     return (
       <>
-        <Button onClick={() => setUpdateArgs({ open: true })}>
+        <Button onClick={() => setUpdateArgs({ isOpen: true })}>
           Default Modal
         </Button>
         <ModalDialog
           {...args}
-          open={open}
-          onVisibilityChange={(open) => setUpdateArgs({ open })}
+          isOpen={isOpen}
+          onVisibilityChange={(isOpen) => setUpdateArgs({ isOpen })}
         />
       </>
     );
@@ -70,7 +70,7 @@ export const NoCloseButton: Story = {
     title: "No Close Button",
     subTitle: "Close icon hidden",
     hasCloseButton: false,
-    open: false,
+    isOpen: false,
     buttons: [
       {
         id: "ok",
@@ -89,17 +89,17 @@ export const NoCloseButton: Story = {
     children: <p>Modal without the top-right close button.</p>,
   },
   render: (args: ModalDialogProps) => {
-    const [{ open }, setUpdateArgs] = useArgs();
+    const [{ isOpen }, setUpdateArgs] = useArgs();
 
     return (
       <>
-        <Button onClick={() => setUpdateArgs({ open: true })}>
+        <Button onClick={() => setUpdateArgs({ isOpen: true })}>
           Default With HideClose
         </Button>
         <ModalDialog
           {...args}
-          open={open}
-          onVisibilityChange={(open) => setUpdateArgs({ open })}
+          isOpen={isOpen}
+          onVisibilityChange={(isOpen) => setUpdateArgs({ isOpen })}
         />
       </>
     );

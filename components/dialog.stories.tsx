@@ -12,7 +12,7 @@ const meta: Meta = {
   },
   tags: ["autodocs"],
   argTypes: {
-    open: { control: "boolean" },
+    isOpen: { control: "boolean" },
     hideClose: { control: "boolean" },
   },
 };
@@ -23,17 +23,17 @@ type Story = StoryObj;
 
 export const Default: Story = {
   args: {
-    open: false,
+    isOpen: false,
   },
   argTypes: {
-    open: { control: "boolean" },
+    isOpen: { control: "boolean" },
   },
   render: () => {
-    const [{ open }, updateArgs] = useArgs();
+    const [{ isOpen }, updateArgs] = useArgs();
     return (
       <Dialog
-        open={open}
-        onVisibilityChange={(newOpen) => updateArgs({ open: newOpen })}
+        isOpen={isOpen}
+        onVisibilityChange={(newOpen) => updateArgs({ isOpen: newOpen })}
       >
         <Dialog.Trigger>Open Dialog</Dialog.Trigger>
         <Dialog.Content>
@@ -62,18 +62,18 @@ export const Default: Story = {
 
 export const DialogWithButton: Story = {
   args: {
-    open: false,
+    isOpen: false,
   },
   argTypes: {
-    open: { control: "boolean" },
+    isOpen: { control: "boolean" },
   },
   render: () => {
-    const [{ open }, updateArgs] = useArgs();
+    const [{ isOpen }, updateArgs] = useArgs();
 
     return (
       <Dialog
-        open={open}
-        onVisibilityChange={(newOpen) => updateArgs({ open: newOpen })}
+        isOpen={isOpen}
+        onVisibilityChange={(newOpen) => updateArgs({ isOpen: newOpen })}
       >
         <Dialog.Trigger>
           <Button>Dialog With Button</Button>
@@ -145,20 +145,20 @@ export const DialogWithButton: Story = {
 
 export const HideCloseButton: Story = {
   args: {
-    open: false,
+    isOpen: false,
     hideClose: true,
   },
   argTypes: {
-    open: { control: "boolean" },
+    isOpen: { control: "boolean" },
     hideClose: { control: "boolean" },
   },
 
   render: (args: Args) => {
-    const [{ open }, updateArgs] = useArgs();
+    const [{ isOpen }, updateArgs] = useArgs();
     return (
       <Dialog
-        open={open}
-        onVisibilityChange={(newOpen) => updateArgs({ open: newOpen })}
+        isOpen={isOpen}
+        onVisibilityChange={(newOpen) => updateArgs({ isOpen: newOpen })}
       >
         <Dialog.Trigger>
           <Button>Dialog (HideClose)</Button>
