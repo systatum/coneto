@@ -44,6 +44,7 @@ export type ButtonProps = React.ComponentProps<"button"> &
     dividerStyle?: CSSProp;
     showSubMenuOn?: "caret" | "self";
     tipMenuSize?: TipMenuItemVariantType;
+    safeAreaAriaLabels?: string[];
   };
 
 function Button({
@@ -63,6 +64,7 @@ function Button({
   tipMenuSize,
   subMenu,
   showSubMenuOn = "caret",
+  safeAreaAriaLabels,
   ...props
 }: ButtonProps) {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -75,10 +77,26 @@ function Button({
 
   const containerRef = React.useRef<HTMLDivElement>(null);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
+  const safeAreaAriaLabelsLocal: string[] = [
+    "combobox-drawer-month",
+    "combobox-drawer-year",
+    ...(safeAreaAriaLabels || []),
+  ];
 
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
+      const el = target as HTMLElement;
+
+      if (
+        Array.isArray(safeAreaAriaLabelsLocal) &&
+        safeAreaAriaLabelsLocal.some((label) =>
+          el.closest(`[aria-label="${label}"]`)
+        )
+      ) {
+        return;
+      }
+
       if (
         containerRef.current &&
         dropdownRef.current &&
@@ -91,9 +109,10 @@ function Button({
         }, 100);
       }
     };
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [safeAreaAriaLabelsLocal]);
 
   React.useEffect(() => {
     if (isOpen && containerRef.current) {
@@ -249,7 +268,6 @@ const TipMenuContainer = styled.div<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: column;
   border: 1px solid #f3f4f6;
-  overflow: hidden;
   padding: 4px;
   background-color: white;
   gap: 2px;

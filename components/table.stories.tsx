@@ -1200,7 +1200,7 @@ export const WithRowGroup: Story = {
         capsuleProps: {
           activeTab: activeTab,
           tabs: VIEW_MODES,
-          setActiveTab: setActiveTab,
+          onTabChange: setActiveTab,
         },
       },
       {

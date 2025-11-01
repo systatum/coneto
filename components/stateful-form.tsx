@@ -986,7 +986,7 @@ function FormFields<T extends FieldValues>({
                           `
                         }
                         activeTab={controllerField.value}
-                        setActiveTab={(e) => {
+                        onTabChange={(e) => {
                           const inputValueEvent = {
                             target: { name: field.name, value: e },
                           };

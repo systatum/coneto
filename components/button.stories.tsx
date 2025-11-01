@@ -16,11 +16,24 @@ const meta = {
   component: Button,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+The **Button** component is a flexible, theme-aware button with full support for loading states, icons, and dropdown submenus.
+
+It supports multiple visual variants and sizes, can include loading indicators, and can display nested actions using \`subMenu\` or \`TipMenu\`.
+
+Use this component for all user-interactive button actions — from primary call-to-actions to lightweight menu triggers.
+        `,
+      },
+    },
   },
   tags: ["autodocs"],
   argTypes: {
     variant: {
       control: "select",
+      description:
+        "Defines the visual style of the button. Commonly used to indicate semantic importance.",
       options: [
         "default",
         "primary",
@@ -29,17 +42,33 @@ const meta = {
         "secondary",
         "ghost",
         "link",
+        "transparent",
       ],
     },
     size: {
       control: "select",
-      options: ["default", "sm", "lg", "icon"],
+      description:
+        "Determines the button’s size and padding. Use `icon` for circular icon buttons.",
+      options: ["xs", "sm", "md", "lg", "icon"],
     },
     isLoading: {
       control: "boolean",
+      description: "Shows a loading spinner inside the button.",
     },
     children: {
       control: "text",
+      description: "Button label or content.",
+    },
+    showSubMenuOn: {
+      control: "radio",
+      description:
+        "Controls how submenus are triggered. Use `self` to open when clicking the main button, or `caret` for separate toggle area.",
+      options: ["self", "caret"],
+    },
+    safeAreaAriaLabels: {
+      control: "object",
+      description:
+        "Defines a list of aria-label string values (string[]) that are treated as 'safe zones' when detecting outside clicks. Useful for complex dropdowns or overlay components.",
     },
   },
 } satisfies Meta<typeof Button>;
@@ -239,6 +268,20 @@ export const WithTipMenu: Story = {
           { withFilter: true }
         ),
     };
+    const MONTH_NAMES = [
+      { text: "JAN", value: "1" },
+      { text: "FEB", value: "2" },
+      { text: "MAR", value: "3" },
+      { text: "APR", value: "4" },
+      { text: "MAY", value: "5" },
+      { text: "JUN", value: "6" },
+      { text: "JUL", value: "7" },
+      { text: "AUG", value: "8" },
+      { text: "SEP", value: "9" },
+      { text: "OCT", value: "10" },
+      { text: "NOV", value: "11" },
+      { text: "DEC", value: "12" },
+    ];
 
     const SHOW_SUB_MENU: ButtonProps = {
       variant: "default",
@@ -246,7 +289,7 @@ export const WithTipMenu: Story = {
       dropdownStyle: css`
         min-width: 240px;
       `,
-      subMenu: ({ show }) => show(<Calendar />),
+      subMenu: ({ show }) => show(<Calendar monthNames={MONTH_NAMES} />),
     };
 
     const RENDER_SUB_MENU: ButtonProps = {

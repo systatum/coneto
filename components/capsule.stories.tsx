@@ -10,6 +10,11 @@ const meta: Meta<typeof Capsule> = {
     layout: "centered",
   },
   tags: ["autodocs"],
+  excludeStories: [
+    "VIEW_ONLY_TITLE_MODES",
+    "VIEW_WITH_ICON_MODES",
+    "VIEW_ONLY_ICON_MODES",
+  ],
 };
 
 export default meta;
@@ -37,7 +42,7 @@ export const Default: Story = {
       <Capsule
         {...args}
         activeTab={activeTab}
-        setActiveTab={(prev: string) => setUpdateArgs({ activeTab: prev })}
+        onTabChange={(id: string) => setUpdateArgs({ activeTab: id })}
       />
     );
   },
@@ -66,7 +71,7 @@ export const WithIcon: Story = {
       <Capsule
         {...args}
         activeTab={activeTab}
-        setActiveTab={(prev: string) => setUpdateArgs({ activeTab: prev })}
+        onTabChange={(id: string) => setUpdateArgs({ activeTab: id })}
       />
     );
   },
