@@ -16,9 +16,9 @@ export interface ModalDialogProps {
   open: boolean;
   onOpenChange: (data: boolean) => void;
   title: string;
-  subTitle: string;
-  hasCloseButton: boolean;
-  buttons: ModalButtonProps[];
+  subTitle?: string;
+  hasCloseButton?: boolean;
+  buttons?: ModalButtonProps[];
   style?: CSSProp;
   children?: ReactNode;
   onClick?: (args: { id: string; closeDialog: () => void }) => void;
