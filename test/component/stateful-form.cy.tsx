@@ -418,7 +418,7 @@ describe("StatefulForm", () => {
       }),
     });
 
-    const EMPLOYEE_FIELDS: FormFieldGroup[] = [
+    const EMPLOYEE_FIELDS_WITH_HIDDEN: FormFieldGroup[] = [
       {
         name: "first_name",
         title: "First Name",
@@ -445,16 +445,31 @@ describe("StatefulForm", () => {
     it("should hidden the input element", () => {
       cy.mount(
         <StatefulForm
-          fields={EMPLOYEE_FIELDS}
+          fields={EMPLOYEE_FIELDS_WITH_HIDDEN}
           formValues={value}
           validationSchema={employeeSchema}
           mode="onChange"
         />
       );
 
-      cy.findByText(EMPLOYEE_FIELDS[0]["title"]).should("exist");
-      cy.findByText(EMPLOYEE_FIELDS[1]["title"]).should("not.exist");
-      cy.findByText(EMPLOYEE_FIELDS[2]["title"]).should("exist");
+      cy.findByText(EMPLOYEE_FIELDS_WITH_HIDDEN[0]["title"]).should("exist");
+      cy.findByText(EMPLOYEE_FIELDS_WITH_HIDDEN[1]["title"]).should(
+        "not.exist"
+      );
+      cy.findByText(EMPLOYEE_FIELDS_WITH_HIDDEN[2]["title"]).should("exist");
+    });
+
+    it("should hidden the row input element", () => {
+      cy.mount(
+        <StatefulForm
+          fields={EMPLOYEE_FIELDS_WITH_HIDDEN}
+          formValues={value}
+          validationSchema={employeeSchema}
+          mode="onChange"
+        />
+      );
+
+      cy.findAllByLabelText("stateful-form-row").should("have.length", 2);
     });
   });
 });
