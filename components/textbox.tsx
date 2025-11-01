@@ -91,13 +91,13 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
         {dropdown && (
           <Button
             subMenu={({ list }) => {
-              const dropdownData = dropdown.options.map((data) => {
+              const dropdownData = dropdown.options.map((prop) => {
                 const subMenuList: TipMenuItemProps = {
-                  caption: data.text,
-                  icon: data.icon,
-                  iconColor: data.iconColor,
+                  caption: prop.text,
+                  icon: prop.icon,
+                  iconColor: prop.iconColor,
                   onClick: () => {
-                    dropdown.onChange(data.value);
+                    dropdown.onChange(prop.value);
                   },
                 };
                 return subMenuList;
@@ -106,6 +106,11 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
             }}
             showSubMenuOn="self"
             variant="outline"
+            containerStyle={css`
+              border-right: 0px;
+              border-top-right-radius: 0px;
+              border-bottom-right-radius: 0px;
+            `}
             buttonStyle={css`
               font-size: 12px;
             `}
@@ -120,6 +125,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
           onKeyDown={(e) => {
             if (e.key === "Enter") onActionClick?.();
           }}
+          $dropdown={!!dropdown}
           type={type === "password" && showPassword ? "text" : type}
           $error={showError}
           $style={style}
@@ -206,7 +212,11 @@ const InputWrapper = styled.div`
   width: 100%;
 `;
 
-const Input = styled.input<{ $error?: boolean; $style?: CSSProp }>`
+const Input = styled.input<{
+  $error?: boolean;
+  $style?: CSSProp;
+  $dropdown: boolean;
+}>`
   border-radius: 2px;
   font-size: 0.75rem;
   padding: 7px 8px;
@@ -215,19 +225,26 @@ const Input = styled.input<{ $error?: boolean; $style?: CSSProp }>`
   border: 1px solid ${({ $error }) => ($error ? "#f87171" : "#d1d5db")};
   ${({ $error }) =>
     $error
-      ? `
-    color: #991b1b;
-    &:focus {
-      border-color: #f87171;
-      box-shadow: 0 0 0 1px #f87171;
-    }
-  `
-      : `
-    &:focus {
-      border-color: #61A9F9;
-      box-shadow: 0 0 0 1px #61A9F9;
-    }
-  `}
+      ? css`
+          color: #991b1b;
+          &:focus {
+            border-color: #f87171;
+            box-shadow: 0 0 0 1px #f87171;
+          }
+        `
+      : css`
+          &:focus {
+            border-color: #61a9f9;
+            box-shadow: 0 0 0 1px #61a9f9;
+          }
+        `}
+
+  ${({ $dropdown }) =>
+    $dropdown &&
+    css`
+      border-top-left-radius: 0px;
+      border-bottom-left-radius: 0px;
+    `}
   ${({ $style }) => $style}
 `;
 
