@@ -58,7 +58,7 @@ export const Default: Story = {
         <ModalDialog
           {...args}
           open={open}
-          onOpenChange={(open) => setUpdateArgs({ open })}
+          onVisibilityChange={(open) => setUpdateArgs({ open })}
         />
       </>
     );
@@ -99,7 +99,7 @@ export const NoCloseButton: Story = {
         <ModalDialog
           {...args}
           open={open}
-          onOpenChange={(open) => setUpdateArgs({ open })}
+          onVisibilityChange={(open) => setUpdateArgs({ open })}
         />
       </>
     );

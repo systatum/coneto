@@ -101,7 +101,7 @@ export const WithActions: Story = {
         <Avatar {...args} onClick={() => setIsOpen(!isOpen)} />
         <ModalDialog
           open={isOpen}
-          onOpenChange={setIsOpen}
+          onVisibilityChange={setIsOpen}
           title="Confirm Action"
           subTitle="Are you sure you want to continue?"
           hasCloseButton={true}

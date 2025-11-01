@@ -922,7 +922,7 @@ export const CustomRenderer: Story = {
               showDialogOn="hover"
               hideDialogOn="hover"
               dialogPlacement="top-left"
-              onOpenChange={(open) => {
+              onVisibilityChange={(open) => {
                 if (!open) {
                   setValueEmployee({
                     name: "",

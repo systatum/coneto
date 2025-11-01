@@ -14,7 +14,7 @@ export interface ModalButtonProps extends Pick<ButtonVariants, "variant"> {
 
 export interface ModalDialogProps {
   open: boolean;
-  onOpenChange: (data: boolean) => void;
+  onVisibilityChange: (data: boolean) => void;
   title: string;
   subTitle?: string;
   hasCloseButton?: boolean;
@@ -25,7 +25,7 @@ export interface ModalDialogProps {
 }
 
 function ModalDialog({
-  onOpenChange,
+  onVisibilityChange,
   open,
   hasCloseButton,
   subTitle,
@@ -35,10 +35,10 @@ function ModalDialog({
   style,
   onClick,
 }: ModalDialogProps) {
-  const closeDialog = () => onOpenChange(false);
+  const closeDialog = () => onVisibilityChange(false);
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onVisibilityChange={onVisibilityChange}>
       <Dialog.Content
         style={css`
           display: flex;

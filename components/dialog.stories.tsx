@@ -33,7 +33,7 @@ export const Default: Story = {
     return (
       <Dialog
         open={open}
-        onOpenChange={(newOpen) => updateArgs({ open: newOpen })}
+        onVisibilityChange={(newOpen) => updateArgs({ open: newOpen })}
       >
         <Dialog.Trigger>Open Dialog</Dialog.Trigger>
         <Dialog.Content>
@@ -73,7 +73,7 @@ export const DialogWithButton: Story = {
     return (
       <Dialog
         open={open}
-        onOpenChange={(newOpen) => updateArgs({ open: newOpen })}
+        onVisibilityChange={(newOpen) => updateArgs({ open: newOpen })}
       >
         <Dialog.Trigger>
           <Button>Dialog With Button</Button>
@@ -158,7 +158,7 @@ export const HideCloseButton: Story = {
     return (
       <Dialog
         open={open}
-        onOpenChange={(newOpen) => updateArgs({ open: newOpen })}
+        onVisibilityChange={(newOpen) => updateArgs({ open: newOpen })}
       >
         <Dialog.Trigger>
           <Button>Dialog (HideClose)</Button>

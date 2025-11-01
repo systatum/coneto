@@ -51,14 +51,14 @@ function usePortal() {
 function Dialog({
   children,
   open,
-  onOpenChange,
+  onVisibilityChange,
 }: {
   children: ReactNode;
   open: boolean;
-  onOpenChange: (open: boolean) => void;
+  onVisibilityChange: (open: boolean) => void;
 }) {
   return (
-    <DialogContext.Provider value={{ open, setOpen: onOpenChange }}>
+    <DialogContext.Provider value={{ open, setOpen: onVisibilityChange }}>
       {children}
     </DialogContext.Provider>
   );
