@@ -40,6 +40,7 @@ interface DropdownProps {
   options: DropdownOptionProps[];
   selectedOption: string;
   onChange: (id: string) => void;
+  withFilter?: boolean;
 }
 
 interface DropdownOptionProps {
@@ -104,7 +105,9 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
                 };
                 return subMenuList;
               });
-              return list(dropdownData);
+              return list(dropdownData, {
+                withFilter: dropdown.withFilter ?? false,
+              });
             }}
             showSubMenuOn="self"
             variant="outline"
@@ -116,6 +119,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
             `}
             buttonStyle={css`
               font-size: 12px;
+              ${dropdownToggleStyle}
             `}
           >
             {selectionCaption && selectionCaption.text}
@@ -226,19 +230,20 @@ const Input = styled.input<{
   width: 100%;
   outline: none;
   border: 1px solid ${({ $error }) => ($error ? "#f87171" : "#d1d5db")};
+  z-index: 10;
   ${({ $error }) =>
     $error
       ? css`
           color: #991b1b;
           &:focus {
             border-color: #f87171;
-            box-shadow: 0 0 0 1px #f87171;
+            box-shadow: 0 0 0 0.5px #f87171;
           }
         `
       : css`
           &:focus {
             border-color: #61a9f9;
-            box-shadow: 0 0 0 1px #61a9f9;
+            box-shadow: 0 0 0 0.5px #61a9f9;
           }
         `}
 

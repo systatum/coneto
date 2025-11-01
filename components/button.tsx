@@ -23,7 +23,10 @@ export type ButtonVariants = {
 };
 
 export interface SubMenuButtonProps {
-  list?: (subMenuList: TipMenuItemProps[]) => React.ReactNode;
+  list?: (
+    subMenuList: TipMenuItemProps[],
+    withFilter?: { withFilter?: boolean }
+  ) => React.ReactNode;
   show?: (children: React.ReactNode) => React.ReactNode;
   render?: (children?: React.ReactNode) => React.ReactNode;
 }
@@ -215,12 +218,13 @@ function Button({
             onMouseEnter={() => setHovered("dropdown")}
           >
             {subMenu({
-              list: (subMenuList) => (
+              list: (subMenuList, { withFilter } = {}) => (
                 <TipMenu
                   setIsOpen={() => {
                     setIsOpen(false);
                     setHovered("original");
                   }}
+                  withFilter={withFilter ?? false}
                   style={dropdownStyle}
                   subMenuList={subMenuList}
                   variant={tipMenuSize}
