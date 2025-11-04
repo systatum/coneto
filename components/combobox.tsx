@@ -94,7 +94,6 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
         <Selectbox
           ref={ref}
           highlightOnMatch={highlightOnMatch}
-          containerStyle={containerStyle}
           selectboxStyle={css`
             ${selectboxStyle}
             ${showError &&

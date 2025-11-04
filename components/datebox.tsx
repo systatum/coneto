@@ -33,9 +33,9 @@ type CalendarDrawerProps = BaseCalendarProps &
   >;
 
 const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
-  const { selectedDates, errorMessage, ...rest } = props;
+  const { selectedDates, errorMessage, containerStyle, ...rest } = props;
   return (
-    <InputWrapper $disabled={props.disabled}>
+    <InputWrapper $style={containerStyle} $disabled={props.disabled}>
       {props.label && <Label $style={props.labelStyle}>{props.label}</Label>}
       <InputContent>
         <Selectbox
@@ -69,7 +69,7 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
 });
 
 const InputWrapper = styled.div<{
-  $containerStyle?: CSSProp;
+  $style?: CSSProp;
   $disabled?: boolean;
 }>`
   display: flex;
@@ -80,6 +80,7 @@ const InputWrapper = styled.div<{
   position: relative;
 
   ${({ $disabled }) => $disabled && `cursor: not-allowed; opacity: 0.5;`}
+  ${({ $style }) => $style}
 `;
 
 const Label = styled.label<{ $style?: CSSProp }>`
