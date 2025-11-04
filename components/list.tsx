@@ -21,24 +21,36 @@ import { AnimatePresence, motion } from "framer-motion";
 import { LoadingSpinner } from "./loading-spinner";
 import { Checkbox } from "./checkbox";
 import { Togglebox } from "./togglebox";
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
+import { Button, SubMenuButtonProps } from "./button";
 
 export interface ListProps {
   searchable?: boolean;
   onSearchRequested?: (search: ChangeEvent<HTMLInputElement>) => void;
   children: ReactNode;
   containerStyle?: CSSProp;
-
   isLoading?: boolean;
   draggable?: boolean;
   selectable?: boolean;
   onDragged?: (props: {
-    id: number;
+    id: string;
     oldGroupId: string;
     newGroupId: string;
     oldPosition: number;
     newPosition: number;
   }) => void;
+}
+
+export interface ListActionsProps {
+  title: string;
+  icon?: RemixiconComponentType;
+  onClick?: (e: string) => void;
+  style?: CSSProp;
+  dividerStyle?: CSSProp;
+  dropdownStyle?: CSSProp;
+  subMenu?: (props: SubMenuButtonProps) => React.ReactNode;
+  disabled?: boolean;
+  showSubMenuOn?: "caret" | "self";
 }
 
 export interface ListGroupProps {
@@ -50,12 +62,22 @@ export interface ListGroupProps {
   containerStyle?: CSSProp;
   contentStyle?: CSSProp;
   selectable?: boolean;
-  rightSideContent?: ReactNode[];
+  rightSideContent?: ((prop: string) => ReactNode) | ReactNode;
+  actions?: ListActionsProps[];
   openerStyle?: "chevron" | "togglebox" | "none";
 }
 
+export interface ListGroupContent {
+  id: string;
+  title: string;
+  subtitle?: string;
+  actions?: ListActionsProps[];
+  rightSideContent?: ((prop: string) => ReactNode) | ReactNode;
+  items: ListItemProps[];
+}
+
 export interface ListItemProps {
-  id?: number;
+  id: string;
   title?: string;
   subtitle?: string;
   imageUrl?: string;
@@ -65,27 +87,27 @@ export interface ListItemProps {
   selectable?: boolean;
   onSelected?: (selected: ChangeEvent<HTMLInputElement>) => void;
   onClick?: () => void;
-  rightSideContent?: ReactNode[];
+  rightSideContent?: ((prop: string) => ReactNode) | ReactNode;
   containerStyle?: CSSProp;
   selectedOptions?: {
-    value?: string | number;
+    value?: string;
     checked?: boolean;
   };
 }
 
 const DnDContext = createContext<{
   dragItem: {
-    id: number;
+    id: string;
     item: ListItemProps;
     oldGroupId: string;
     oldPosition: number;
   } | null;
   setDragItem: (props: {
-    id: number | string;
+    id: string;
     oldGroupId: string;
     oldPosition: number;
     item: {
-      id: number;
+      id: string;
       title: string;
       subtitle: string;
       imageUrl?: string;
@@ -176,6 +198,7 @@ function ListGroup({
   subtitle,
   rightSideContent,
   openerStyle = "chevron",
+  actions,
 }: ListGroupProps) {
   const childArray = Children.toArray(children).filter(isValidElement);
   const [isOpen, setIsOpen] = useState(true);
@@ -192,11 +215,25 @@ function ListGroup({
           {subtitle && <HeaderSubtext>{subtitle}</HeaderSubtext>}
         </div>
 
-        <div style={{ display: "flex", flexDirection: "row", gap: "8px" }}>
-          {rightSideContent &&
-            rightSideContent.map((data, index) => (
-              <Fragment key={index}>{data}</Fragment>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            gap: "4px",
+            alignItems: "center",
+          }}
+        >
+          {actions &&
+            actions.map((prop, index) => (
+              <ActionButton key={index} {...prop} id={id} />
             ))}
+          {rightSideContent && (
+            <Fragment>
+              {rightSideContent && typeof rightSideContent === "function"
+                ? rightSideContent(`${id}`)
+                : (rightSideContent as ReactNode)}
+            </Fragment>
+          )}
           {openerStyle === "chevron" ? (
             <RiArrowDownSLine
               style={{
@@ -315,6 +352,107 @@ const ListGroupContainer = styled.div<{
   ${({ $containerStyle }) => $containerStyle}
 `;
 
+function ActionButton(
+  prop: ListActionsProps &
+    Partial<{
+      id?: string;
+    }>
+) {
+  return (
+    <Button
+      onClick={(e) => {
+        e.stopPropagation();
+        if (prop.onClick) {
+          prop.onClick(prop.id);
+        }
+      }}
+      subMenu={prop.subMenu}
+      disabled={prop.disabled}
+      showSubMenuOn={prop.showSubMenuOn}
+      size="sm"
+      tipMenuSize="sm"
+      buttonStyle={css`
+        display: flex;
+        flex-direction: row;
+        gap: 0.25rem;
+        align-items: center;
+        cursor: pointer;
+        background-color: transparent;
+        color: #565555;
+        ${prop.subMenu && prop.showSubMenuOn === "caret"
+          ? css`
+              border-top: 1px solid #e5e7eb;
+              border-left: 1px solid #e5e7eb;
+              border-bottom: 1px solid #e5e7eb;
+            `
+          : css`
+              border: 1px solid #e5e7eb;
+            `}
+        border-radius: 6px;
+        position: relative;
+        font-size: 11px;
+        max-height: 24px;
+
+        &:hover {
+          background-color: #e2e0e0;
+        }
+
+        &:disabled {
+          background-color: rgb(227 227 227);
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+        ${prop.style}
+      `}
+      toggleStyle={
+        prop.subMenu &&
+        css`
+          display: flex;
+          flex-direction: row;
+          gap: 0.25rem;
+          align-items: center;
+          cursor: pointer;
+          color: #565555;
+          padding: 0.25rem 0.5rem;
+          background-color: transparent;
+          position: relative;
+          border-top: 1px solid #e5e7eb;
+          border-right: 1px solid #e5e7eb;
+          border-bottom: 1px solid #e5e7eb;
+          border-top-right-radius: 6px;
+          border-bottom-right-radius: 6px;
+
+          &:hover {
+            background-color: #e2e0e0;
+          }
+
+          &:disabled {
+            background-color: rgb(227 227 227);
+            opacity: 0.5;
+            cursor: not-allowed;
+          }
+          ${prop.style}
+        `
+      }
+      dividerStyle={css`
+        border: 1px solid rgb(236 236 236);
+        ${prop.subMenu && prop.dividerStyle ? prop.dividerStyle : null}
+      `}
+      dropdownStyle={css`
+        position: absolute;
+        margin-top: 2px;
+        z-index: 9999;
+        width: 170px;
+        ${prop.subMenu && prop.dropdownStyle ? prop.dropdownStyle : null}
+      `}
+    >
+      {prop.icon && <prop.icon size={14} />}
+
+      {prop.title}
+    </Button>
+  );
+}
+
 const ListGroupContent = styled(motion.div)<{
   $contentStyle?: CSSProp;
 }>`
@@ -382,6 +520,7 @@ function ListItem({
   selectedOptions,
   onClick,
   rightSideContent,
+  id,
 }: ListItemProps & {
   index?: number;
   onDropItem?: (position: number) => void;
@@ -400,11 +539,11 @@ function ListItem({
       draggable={draggable}
       onDragStart={() =>
         setDragItem({
-          id: index,
+          id: id,
           oldGroupId: groupId!,
           oldPosition: index,
           item: {
-            id: index,
+            id: id,
             title,
             subtitle,
             ...(imageUrl ? { imageUrl } : { iconUrl: Icon }),
@@ -472,8 +611,9 @@ function ListItem({
       </ListItemLeft>
 
       <ListItemRight>
-        {rightSideContent &&
-          rightSideContent.map((content, id) => <div key={id}>{content}</div>)}
+        {rightSideContent && typeof rightSideContent === "function"
+          ? rightSideContent(groupId ? `${groupId}-${id}` : `${id}`)
+          : (rightSideContent as ReactNode)}
         {draggable && (
           <div
             aria-label="draggable-request"
