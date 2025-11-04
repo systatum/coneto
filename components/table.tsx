@@ -560,7 +560,7 @@ function ActionButton(data: TableActionsProps) {
         ${data.subMenu && data.dropdownStyle ? data.dropdownStyle : null}
       `}
     >
-      <data.icon size={14} />
+      {data.icon && <data.icon size={14} />}
       <span
         style={{
           fontSize: "14px",
