@@ -1,5 +1,10 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { List, ListItemProps } from "./list";
+import {
+  List,
+  ListActionsProps,
+  ListGroupContent,
+  ListItemProps,
+} from "./list";
 import {
   RiHome2Fill,
   RiUser3Fill,
@@ -7,6 +12,7 @@ import {
   RiMailFill,
   RiNotification3Fill,
   RiCalendar2Fill,
+  RiErrorWarningLine,
 } from "@remixicon/react";
 import { Card } from "./card";
 import { ChangeEvent, useMemo, useState } from "react";
@@ -26,31 +32,31 @@ export const Default: Story = {
   render: () => {
     const LIST_ITEMS: ListItemProps[] = [
       {
-        id: 1,
+        id: "home",
         title: "Home",
         subtitle: "Go to homepage",
         iconUrl: RiHome2Fill,
       },
       {
-        id: 2,
+        id: "profile",
         title: "Profile",
         subtitle: "View your profile",
         iconUrl: RiUser3Fill,
       },
       {
-        id: 3,
+        id: "settings",
         title: "Settings",
         subtitle: "Adjust preferences",
         iconUrl: RiSettings3Fill,
       },
       {
-        id: 4,
+        id: "messages",
         title: "Messages",
         subtitle: "Check your inbox",
         iconUrl: RiMailFill,
       },
       {
-        id: 5,
+        id: "notifications",
         title: "Notifications",
         subtitle: "View Alerts",
         iconUrl: RiNotification3Fill,
@@ -68,7 +74,7 @@ export const Default: Story = {
           {LIST_ITEMS.map((item, index) => (
             <List.Item
               key={index}
-              id={index}
+              id={item.id}
               iconUrl={item.iconUrl}
               subtitle={item.subtitle}
               title={item.title}
@@ -84,36 +90,37 @@ export const WithSearch: Story = {
   render: () => {
     const LIST_ITEMS: ListItemProps[] = [
       {
-        id: 1,
+        id: "home",
         title: "Home",
         subtitle: "Go to homepage",
         iconUrl: RiHome2Fill,
       },
       {
-        id: 2,
+        id: "profile",
         title: "Profile",
         subtitle: "View your profile",
         iconUrl: RiUser3Fill,
       },
       {
-        id: 3,
+        id: "settings",
         title: "Settings",
         subtitle: "Adjust preferences",
         iconUrl: RiSettings3Fill,
       },
       {
-        id: 4,
+        id: "messages",
         title: "Messages",
         subtitle: "Check your inbox",
         iconUrl: RiMailFill,
       },
       {
-        id: 5,
+        id: "notifications",
         title: "Notifications",
         subtitle: "View Alerts",
         iconUrl: RiNotification3Fill,
       },
     ];
+
     const [value, setValue] = useState({
       search: "",
     });
@@ -148,7 +155,7 @@ export const WithSearch: Story = {
                 gap: 4px;
               `}
               key={index}
-              id={index}
+              id={item.id}
               iconUrl={item.iconUrl}
               subtitle={item.subtitle}
               title={item.title}
@@ -162,29 +169,25 @@ export const WithSearch: Story = {
 
 export const WithGroup: Story = {
   render: () => {
-    const LIST_GROUPS: {
-      id: string;
-      title: string;
-      items: ListItemProps[];
-    }[] = [
+    const LIST_GROUPS: ListGroupContent[] = [
       {
         id: "recent-content",
         title: "Recent Content",
         items: [
           {
-            id: 1,
+            id: "messages",
             title: "Messages",
             subtitle: "Check your inbox",
             iconUrl: RiMailFill,
           },
           {
-            id: 2,
+            id: "notifications",
             title: "Notifications",
             subtitle: "View Alerts",
             iconUrl: RiNotification3Fill,
           },
           {
-            id: 3,
+            id: "calendar",
             title: "Calendar",
             subtitle: "Upcoming events",
             iconUrl: RiCalendar2Fill,
@@ -196,19 +199,19 @@ export const WithGroup: Story = {
         title: "All Content",
         items: [
           {
-            id: 1,
+            id: "home",
             title: "Home",
             subtitle: "Go to homepage",
             iconUrl: RiHome2Fill,
           },
           {
-            id: 2,
+            id: "profile",
             title: "Profile",
             subtitle: "View your profile",
             iconUrl: RiUser3Fill,
           },
           {
-            id: 3,
+            id: "settings",
             title: "Settings",
             subtitle: "Adjust preferences",
             iconUrl: RiSettings3Fill,
@@ -216,6 +219,7 @@ export const WithGroup: Story = {
         ],
       },
     ];
+
     const [value, setValue] = useState({
       search: "",
     });
@@ -290,29 +294,25 @@ export const WithGroup: Story = {
 
 export const Draggable: Story = {
   render: () => {
-    const LIST_GROUPS: {
-      id: string;
-      title: string;
-      items: ListItemProps[];
-    }[] = [
+    const LIST_GROUPS: ListGroupContent[] = [
       {
         id: "recent-content",
         title: "Recent Content",
         items: [
           {
-            id: 1,
+            id: "messages",
             title: "Messages",
             subtitle: "Check your inbox",
             iconUrl: RiMailFill,
           },
           {
-            id: 2,
+            id: "notifications",
             title: "Notifications",
             subtitle: "View Alerts",
             iconUrl: RiNotification3Fill,
           },
           {
-            id: 3,
+            id: "calendar",
             title: "Calendar",
             subtitle: "Upcoming events",
             iconUrl: RiCalendar2Fill,
@@ -324,19 +324,19 @@ export const Draggable: Story = {
         title: "All Content",
         items: [
           {
-            id: 4,
+            id: "home",
             title: "Home",
             subtitle: "Go to homepage",
             iconUrl: RiHome2Fill,
           },
           {
-            id: 5,
+            id: "profile",
             title: "Profile",
             subtitle: "View your profile",
             iconUrl: RiUser3Fill,
           },
           {
-            id: 6,
+            id: "settings",
             title: "Settings",
             subtitle: "Adjust preferences",
             iconUrl: RiSettings3Fill,
@@ -483,29 +483,25 @@ export const Draggable: Story = {
 
 export const WithLoading: Story = {
   render: () => {
-    const LIST_GROUPS: {
-      id: string;
-      title: string;
-      items: ListItemProps[];
-    }[] = [
+    const LIST_GROUPS: ListGroupContent[] = [
       {
         id: "recent-content",
         title: "Recent Content",
         items: [
           {
-            id: 1,
+            id: "messages",
             title: "Messages",
             subtitle: "Check your inbox",
             iconUrl: RiMailFill,
           },
           {
-            id: 2,
+            id: "notifications",
             title: "Notifications",
             subtitle: "View Alerts",
             iconUrl: RiNotification3Fill,
           },
           {
-            id: 3,
+            id: "calendar",
             title: "Calendar",
             subtitle: "Upcoming events",
             iconUrl: RiCalendar2Fill,
@@ -517,19 +513,19 @@ export const WithLoading: Story = {
         title: "All Content",
         items: [
           {
-            id: 4,
+            id: "home",
             title: "Home",
             subtitle: "Go to homepage",
             iconUrl: RiHome2Fill,
           },
           {
-            id: 5,
+            id: "profile",
             title: "Profile",
             subtitle: "View your profile",
             iconUrl: RiUser3Fill,
           },
           {
-            id: 6,
+            id: "settings",
             title: "Settings",
             subtitle: "Adjust preferences",
             iconUrl: RiSettings3Fill,
@@ -677,26 +673,51 @@ export const WithLoading: Story = {
 
 export const CustomOpener: Story = {
   render: () => {
-    const LIST_GROUPS = [
+    const RIGHT_SIDE_CONTENT = (prop: string) => (
+      <RiErrorWarningLine
+        color="orange"
+        onClick={(e) => {
+          e.stopPropagation();
+          console.log(`error warning clicked ${prop}`);
+        }}
+      />
+    );
+
+    const ACTIONS_GROUPS: ListActionsProps[] = [
+      {
+        title: "Add",
+        onClick: (id: string) => {
+          console.log(`action was added ${id}`);
+        },
+      },
+    ];
+
+    const LIST_GROUPS: ListGroupContent[] = [
       {
         id: "recent-content",
         title: "Recent Content",
         subtitle: "Your latest activity",
         items: [
           {
-            id: 1,
+            id: "messages",
             title: "Messages",
             subtitle: "Check your inbox",
             iconUrl: RiMailFill,
           },
           {
-            id: 2,
+            id: "notifications",
             title: "Notifications",
             subtitle: "View Alerts",
             iconUrl: RiNotification3Fill,
           },
           {
-            id: 3,
+            id: "profile",
+            title: "Profile",
+            subtitle: "View your profile",
+            iconUrl: RiUser3Fill,
+          },
+          {
+            id: "calendar",
             title: "Calendar",
             subtitle: "Upcoming events",
             iconUrl: RiCalendar2Fill,
@@ -706,25 +727,23 @@ export const CustomOpener: Story = {
       {
         id: "all-content",
         title: "All Content",
-        subtitle: "Browse everything",
+        subtitle: "With warning rightSideContent",
+        rightSideContent: RIGHT_SIDE_CONTENT,
         items: [
           {
-            id: 4,
+            id: "home",
             title: "Home",
             subtitle: "Go to homepage",
             iconUrl: RiHome2Fill,
+            rightSideContent: RIGHT_SIDE_CONTENT,
           },
+
           {
-            id: 5,
-            title: "Profile",
-            subtitle: "View your profile",
-            iconUrl: RiUser3Fill,
-          },
-          {
-            id: 6,
+            id: "settings",
             title: "Settings",
             subtitle: "Adjust preferences",
             iconUrl: RiSettings3Fill,
+            rightSideContent: RIGHT_SIDE_CONTENT,
           },
         ],
       },
@@ -854,7 +873,7 @@ export const CustomOpener: Story = {
           onSearchRequested={onChangeValue}
           containerStyle={css`
             padding: 16px;
-            min-width: 300px;
+            min-width: 500px;
           `}
         >
           {filteredContent.map((group, index) => {
@@ -864,6 +883,8 @@ export const CustomOpener: Story = {
                 id={group.id}
                 subtitle={group.subtitle}
                 title={group.title}
+                actions={ACTIONS_GROUPS}
+                rightSideContent={group.rightSideContent}
                 openerStyle="togglebox"
               >
                 {group.items.map((list, i) => (
@@ -874,6 +895,7 @@ export const CustomOpener: Story = {
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
+                    rightSideContent={list.rightSideContent}
                     onSelected={onChangeValue}
                     selectedOptions={{
                       checked: value.checked.some(
