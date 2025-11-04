@@ -89,6 +89,7 @@ export interface ListItemProps {
   onClick?: () => void;
   rightSideContent?: ((prop: string) => ReactNode) | ReactNode;
   containerStyle?: CSSProp;
+  actions?: ListActionsProps[];
   selectedOptions?: {
     value?: string;
     checked?: boolean;
@@ -352,107 +353,6 @@ const ListGroupContainer = styled.div<{
   ${({ $containerStyle }) => $containerStyle}
 `;
 
-function ActionButton(
-  prop: ListActionsProps &
-    Partial<{
-      id?: string;
-    }>
-) {
-  return (
-    <Button
-      onClick={(e) => {
-        e.stopPropagation();
-        if (prop.onClick) {
-          prop.onClick(prop.id);
-        }
-      }}
-      subMenu={prop.subMenu}
-      disabled={prop.disabled}
-      showSubMenuOn={prop.showSubMenuOn}
-      size="sm"
-      tipMenuSize="sm"
-      buttonStyle={css`
-        display: flex;
-        flex-direction: row;
-        gap: 0.25rem;
-        align-items: center;
-        cursor: pointer;
-        background-color: transparent;
-        color: #565555;
-        ${prop.subMenu && prop.showSubMenuOn === "caret"
-          ? css`
-              border-top: 1px solid #e5e7eb;
-              border-left: 1px solid #e5e7eb;
-              border-bottom: 1px solid #e5e7eb;
-            `
-          : css`
-              border: 1px solid #e5e7eb;
-            `}
-        border-radius: 6px;
-        position: relative;
-        font-size: 11px;
-        max-height: 24px;
-
-        &:hover {
-          background-color: #e2e0e0;
-        }
-
-        &:disabled {
-          background-color: rgb(227 227 227);
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
-        ${prop.style}
-      `}
-      toggleStyle={
-        prop.subMenu &&
-        css`
-          display: flex;
-          flex-direction: row;
-          gap: 0.25rem;
-          align-items: center;
-          cursor: pointer;
-          color: #565555;
-          padding: 0.25rem 0.5rem;
-          background-color: transparent;
-          position: relative;
-          border-top: 1px solid #e5e7eb;
-          border-right: 1px solid #e5e7eb;
-          border-bottom: 1px solid #e5e7eb;
-          border-top-right-radius: 6px;
-          border-bottom-right-radius: 6px;
-
-          &:hover {
-            background-color: #e2e0e0;
-          }
-
-          &:disabled {
-            background-color: rgb(227 227 227);
-            opacity: 0.5;
-            cursor: not-allowed;
-          }
-          ${prop.style}
-        `
-      }
-      dividerStyle={css`
-        border: 1px solid rgb(236 236 236);
-        ${prop.subMenu && prop.dividerStyle ? prop.dividerStyle : null}
-      `}
-      dropdownStyle={css`
-        position: absolute;
-        margin-top: 2px;
-        z-index: 9999;
-        width: 170px;
-        ${prop.subMenu && prop.dropdownStyle ? prop.dropdownStyle : null}
-      `}
-    >
-      {prop.icon && <prop.icon size={14} />}
-
-      {prop.title}
-    </Button>
-  );
-}
-
 const ListGroupContent = styled(motion.div)<{
   $contentStyle?: CSSProp;
 }>`
@@ -521,6 +421,7 @@ function ListItem({
   onClick,
   rightSideContent,
   id,
+  actions,
 }: ListItemProps & {
   index?: number;
   onDropItem?: (position: number) => void;
@@ -611,6 +512,14 @@ function ListItem({
       </ListItemLeft>
 
       <ListItemRight>
+        {actions &&
+          actions.map((prop, index) => (
+            <ActionButton
+              key={index}
+              {...prop}
+              id={groupId ? `${groupId}-${id}` : `${id}`}
+            />
+          ))}
         {rightSideContent && typeof rightSideContent === "function"
           ? rightSideContent(groupId ? `${groupId}-${id}` : `${id}`)
           : (rightSideContent as ReactNode)}
@@ -700,6 +609,108 @@ const DragLine = styled.div<{ position: "top" | "bottom" }>`
   top: ${({ position }) => (position === "top" ? "0" : "auto")};
   bottom: ${({ position }) => (position === "bottom" ? "0" : "auto")};
 `;
+
+function ActionButton(
+  prop: ListActionsProps &
+    Partial<{
+      id?: string;
+    }>
+) {
+  return (
+    <Button
+      onClick={(e) => {
+        e.stopPropagation();
+        if (prop.onClick) {
+          prop.onClick(prop.id);
+        }
+      }}
+      aria-label="list-action-button"
+      subMenu={prop.subMenu}
+      disabled={prop.disabled}
+      showSubMenuOn={prop.showSubMenuOn}
+      size="sm"
+      tipMenuSize="sm"
+      buttonStyle={css`
+        display: flex;
+        flex-direction: row;
+        gap: 0.25rem;
+        align-items: center;
+        cursor: pointer;
+        background-color: transparent;
+        color: #565555;
+        ${prop.subMenu && prop.showSubMenuOn === "caret"
+          ? css`
+              border-top: 1px solid #e5e7eb;
+              border-left: 1px solid #e5e7eb;
+              border-bottom: 1px solid #e5e7eb;
+            `
+          : css`
+              border: 1px solid #e5e7eb;
+            `}
+        border-radius: 6px;
+        position: relative;
+        font-size: 11px;
+        max-height: 24px;
+
+        &:hover {
+          background-color: #e2e0e0;
+        }
+
+        &:disabled {
+          background-color: rgb(227 227 227);
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+        ${prop.style}
+      `}
+      toggleStyle={
+        prop.subMenu &&
+        css`
+          display: flex;
+          flex-direction: row;
+          gap: 0.25rem;
+          align-items: center;
+          cursor: pointer;
+          color: #565555;
+          padding: 0.25rem 0.5rem;
+          background-color: transparent;
+          position: relative;
+          border-top: 1px solid #e5e7eb;
+          border-right: 1px solid #e5e7eb;
+          border-bottom: 1px solid #e5e7eb;
+          border-top-right-radius: 6px;
+          border-bottom-right-radius: 6px;
+
+          &:hover {
+            background-color: #e2e0e0;
+          }
+
+          &:disabled {
+            background-color: rgb(227 227 227);
+            opacity: 0.5;
+            cursor: not-allowed;
+          }
+          ${prop.style}
+        `
+      }
+      dividerStyle={css`
+        border: 1px solid rgb(236 236 236);
+        ${prop.subMenu && prop.dividerStyle ? prop.dividerStyle : null}
+      `}
+      dropdownStyle={css`
+        position: absolute;
+        margin-top: 2px;
+        z-index: 9999;
+        width: 170px;
+        ${prop.subMenu && prop.dropdownStyle ? prop.dropdownStyle : null}
+      `}
+    >
+      {prop.icon && <prop.icon size={14} />}
+
+      {prop.title}
+    </Button>
+  );
+}
 
 List.Group = ListGroup;
 List.Item = ListItem;
