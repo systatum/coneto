@@ -693,22 +693,24 @@ describe("StatefulForm", () => {
     ];
 
     const ALL_INPUT: FormFieldGroup[] = [
-      {
-        name: "text",
-        title: "Text",
-        type: "text",
-        required: true,
-        placeholder: "Enter text",
-        width: "50%",
-      },
-      {
-        name: "email",
-        title: "Email",
-        type: "email",
-        required: false,
-        placeholder: "Enter email address",
-        width: "50%",
-      },
+      [
+        {
+          name: "text",
+          title: "Text",
+          type: "text",
+          required: true,
+          placeholder: "Enter text",
+          width: "50%",
+        },
+        {
+          name: "email",
+          title: "Email",
+          type: "email",
+          required: false,
+          placeholder: "Enter email address",
+          width: "50%",
+        },
+      ],
       {
         name: "number",
         title: "Number",
