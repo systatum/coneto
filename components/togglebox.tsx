@@ -38,6 +38,7 @@ function Togglebox({
         display: "flex",
         flexDirection: "column",
         gap: "2px",
+        height: "fit-content",
       }}
     >
       <ToggleboxWrapper
