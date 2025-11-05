@@ -89,7 +89,10 @@ export interface ListItemProps {
   onClick?: () => void;
   rightSideContent?: ((prop: string) => ReactNode) | ReactNode;
   containerStyle?: CSSProp;
+  rowStyle?: CSSProp;
   actions?: ListActionsProps[];
+  children?: ReactNode;
+  openable?: boolean;
   selectedOptions?: {
     value?: string;
     checked?: boolean;
@@ -410,6 +413,7 @@ function ListItem({
   subtitle,
   title,
   containerStyle,
+  rowStyle,
   draggable,
   index,
   onDropItem,
@@ -422,6 +426,8 @@ function ListItem({
   rightSideContent,
   id,
   actions,
+  children,
+  openable,
 }: ListItemProps & {
   index?: number;
   onDropItem?: (position: number) => void;
@@ -429,121 +435,164 @@ function ListItem({
 }) {
   const { setDragItem, dragItem } = useContext(DnDContext);
   const [isOver, setIsOver] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const [dropPosition, setDropPosition] = useState<"top" | "bottom" | null>(
     null
   );
 
   return (
-    <ListItemWrapper
-      $containerStyle={containerStyle}
-      onClick={onClick}
-      draggable={draggable}
-      onDragStart={() =>
-        setDragItem({
-          id: id,
-          oldGroupId: groupId!,
-          oldPosition: index,
-          item: {
+    <ListItemWrapper $style={containerStyle}>
+      <ListItemRow
+        $style={rowStyle}
+        onClick={() => {
+          if (onClick) {
+            onClick();
+          }
+          if (openable) {
+            setIsOpen((prev) => !prev);
+          }
+        }}
+        draggable={draggable}
+        onDragStart={() =>
+          setDragItem({
             id: id,
-            title,
-            subtitle,
-            ...(imageUrl ? { imageUrl } : { iconUrl: Icon }),
-          },
-        })
-      }
-      onDragOver={(e) => {
-        e.preventDefault();
-        const rect = e.currentTarget.getBoundingClientRect();
-        const offsetY = e.clientY - rect.top;
-        const half = rect.height / 2;
-
-        if (offsetY < half) {
-          setDropPosition("top");
-        } else {
-          setDropPosition("bottom");
+            oldGroupId: groupId!,
+            oldPosition: index,
+            item: {
+              id: id,
+              title,
+              subtitle,
+              ...(imageUrl ? { imageUrl } : { iconUrl: Icon }),
+            },
+          })
         }
+        onDragOver={(e) => {
+          e.preventDefault();
+          const rect = e.currentTarget.getBoundingClientRect();
+          const offsetY = e.clientY - rect.top;
+          const half = rect.height / 2;
 
-        setIsOver(true);
-      }}
-      onDragLeave={() => {
-        setIsOver(false);
-        setDropPosition(null);
-      }}
-      onDrop={(e) => {
-        e.preventDefault();
-        setIsOver(false);
+          if (offsetY < half) {
+            setDropPosition("top");
+          } else {
+            setDropPosition("bottom");
+          }
 
-        let position = 0;
-        const isSameGroup = dragItem?.oldGroupId === groupId;
+          setIsOver(true);
+        }}
+        onDragLeave={() => {
+          setIsOver(false);
+          setDropPosition(null);
+        }}
+        onDrop={(e) => {
+          e.preventDefault();
+          setIsOver(false);
 
-        if (dropPosition === "top") {
-          position = index;
-        } else {
-          position = index + 1;
-        }
+          let position = 0;
+          const isSameGroup = dragItem?.oldGroupId === groupId;
 
-        if (isSameGroup && dragItem?.oldPosition < position) {
-          position -= 1;
-        }
+          if (dropPosition === "top") {
+            position = index;
+          } else {
+            position = index + 1;
+          }
 
-        const clampedPosition = Math.min(position, groupLength ?? 0);
+          if (isSameGroup && dragItem?.oldPosition < position) {
+            position -= 1;
+          }
 
-        onDropItem?.(clampedPosition);
-      }}
-    >
-      <ListItemLeft>
-        {selectable && (
-          <Checkbox
-            name="checked"
-            value={selectedOptions.value}
-            checked={selectedOptions.checked}
-            onChange={onSelected}
-          />
-        )}
-        {imageUrl ? (
-          <ImageStyle src={imageUrl} alt="Image from coneto, Systatum." />
-        ) : (
-          <Icon size={22} color="#4b5563" />
-        )}
-        <TextWrapper>
-          {title && <Title>{title}</Title>}
-          {subtitle && <Subtitle>{subtitle}</Subtitle>}
-        </TextWrapper>
-      </ListItemLeft>
+          const clampedPosition = Math.min(position, groupLength ?? 0);
 
-      <ListItemRight>
-        {actions &&
-          actions.map((prop, index) => (
-            <ActionButton
-              key={index}
-              {...prop}
-              id={groupId ? `${groupId}-${id}` : `${id}`}
+          onDropItem?.(clampedPosition);
+        }}
+      >
+        <ListItemLeft>
+          {selectable && (
+            <Checkbox
+              name="checked"
+              value={selectedOptions.value}
+              checked={selectedOptions.checked}
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+              onChange={onSelected}
             />
-          ))}
-        {rightSideContent && typeof rightSideContent === "function"
-          ? rightSideContent(groupId ? `${groupId}-${id}` : `${id}`)
-          : (rightSideContent as ReactNode)}
-        {draggable && (
-          <div
-            aria-label="draggable-request"
-            style={{
-              cursor: "grab",
-              borderRadius: "2px",
-              color: "#4b5563",
-            }}
-          >
-            <RiDraggable size={18} />
-          </div>
-        )}
-      </ListItemRight>
+          )}
+          {imageUrl ? (
+            <ImageStyle src={imageUrl} alt="Image from coneto, Systatum." />
+          ) : (
+            <Icon size={22} color="#4b5563" />
+          )}
+          <TextWrapper>
+            {title && <Title>{title}</Title>}
+            {subtitle && <Subtitle>{subtitle}</Subtitle>}
+          </TextWrapper>
+        </ListItemLeft>
 
-      {isOver && dropPosition && <DragLine position={dropPosition} />}
+        <ListItemRight>
+          {actions &&
+            actions.map((prop, index) => (
+              <ActionButton
+                key={index}
+                {...prop}
+                id={groupId ? `${groupId}-${id}` : `${id}`}
+              />
+            ))}
+          {rightSideContent && typeof rightSideContent === "function"
+            ? rightSideContent(groupId ? `${groupId}-${id}` : `${id}`)
+            : (rightSideContent as ReactNode)}
+          {draggable && (
+            <div
+              aria-label="draggable-request"
+              style={{
+                cursor: "grab",
+                borderRadius: "2px",
+                color: "#4b5563",
+              }}
+            >
+              <RiDraggable size={18} />
+            </div>
+          )}
+        </ListItemRight>
+
+        {isOver && dropPosition && <DragLine position={dropPosition} />}
+      </ListItemRow>
+
+      <AnimatePresence>
+        {isOpen && (
+          <ListGroupContent
+            key={`list-group-content-${index}`}
+            initial="collapsed"
+            animate="open"
+            exit="collapsed"
+            variants={{
+              open: { opacity: 1, height: "auto" },
+              collapsed: { opacity: 0, height: 0 },
+            }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+          >
+            {children}
+          </ListGroupContent>
+        )}
+      </AnimatePresence>
     </ListItemWrapper>
   );
 }
 
 const ListItemWrapper = styled.div<{
-  $containerStyle?: CSSProp;
+  $style?: CSSProp;
+}>`
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  gap: 4px;
+  transition: background-color 300ms;
+
+  ${({ $style }) => $style}
+`;
+
+const ListItemRow = styled.div<{
+  $style?: CSSProp;
 }>`
   display: flex;
   flex-direction: row;
@@ -559,7 +608,7 @@ const ListItemWrapper = styled.div<{
     background-color: #dbeafe;
   }
 
-  ${({ $containerStyle }) => $containerStyle}
+  ${({ $style }) => $style}
 `;
 
 const ListItemLeft = styled.div`
