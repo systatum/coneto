@@ -43,13 +43,16 @@ function Stepline({ children, style, reversable }: SteplineProps) {
           >(child)
         )
           return null;
+
         const variant = child.props.variant;
         const onClick = child.props.onClick;
+        const line = child.props.line ?? "solid";
+
         return (
           <StepGroup
             key={index}
             $clickable={!!(reversable && variant)}
-            onClick={() => reversable && variant && onClick?.()}
+            onClick={() => variant && onClick?.()}
             onMouseEnter={() => setHoveredIndex(index + 1)}
             onMouseLeave={() => setHoveredIndex(null)}
           >
@@ -59,7 +62,13 @@ function Stepline({ children, style, reversable }: SteplineProps) {
                 hoveredIndex,
               })}
             </StepContent>
-            {index !== childArray.length - 1 && <StepLine $variant={variant} />}
+            {index !== childArray.length - 1 && (
+              <StepLine
+                aria-label="stepline-connector"
+                $variant={variant}
+                $line={line}
+              />
+            )}
           </StepGroup>
         );
       })}
@@ -146,25 +155,22 @@ const StepContent = styled.div`
   justify-content: space-between;
 `;
 
-const StepLine = styled.div<{ $variant?: string }>`
-  display: flex;
-  flex-direction: row;
-  position: relative;
-  align-items: center;
-  width: 100%;
-
-  &::after {
-    content: "";
-    flex: 1;
-    height: 1px;
-    min-width: 44px;
-    background-color: ${({ $variant }) =>
-      $variant === "error"
-        ? "#b60000"
-        : $variant === "completed" || $variant === "current"
-          ? "#00b62e"
-          : "#9ca3af"};
-  }
+const StepLine = styled.div<{
+  $variant?: string;
+  $line: "solid" | "dash" | "dot";
+}>`
+  align-self: center;
+  flex: 1;
+  min-width: 44px;
+  border-bottom-width: 1px;
+  border-bottom-style: ${({ $line }) =>
+    $line === "dash" ? "dashed" : $line === "dot" ? "dotted" : "solid"};
+  border-bottom-color: ${({ $variant }) =>
+    $variant === "error"
+      ? "#b60000"
+      : $variant === "completed" || $variant === "current"
+        ? "#00b62e"
+        : "#9ca3af"};
 `;
 
 const StepItemWrapper = styled.div<{ $style?: CSSProp }>`
