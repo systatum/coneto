@@ -46,7 +46,7 @@ function Checkbox({
   ...props
 }: CheckboxProps) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const inputId = props.disabled ? null : `checkbox-${name}-${props.value}`;
+  const inputId = `checkbox-${name}-${props.value}`;
   const isChecked = Boolean(props.checked);
 
   useEffect(() => {
@@ -57,7 +57,7 @@ function Checkbox({
 
   return (
     <Label
-      htmlFor={inputId}
+      htmlFor={props.disabled ? null : inputId}
       $hasDescription={!!description}
       $highlight={!!highlightOnChecked}
       $checked={isChecked}

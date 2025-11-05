@@ -35,11 +35,11 @@ function Radio({
   errorStyle,
   ...props
 }: RadioProps & InputHTMLAttributes<HTMLInputElement>) {
-  const id = props.disabled ? null : `radio-${value}`;
+  const id = `radio-${value}`;
 
   return (
     <Label
-      htmlFor={id}
+      htmlFor={props.disabled ? null : id}
       $highlight={highlightOnChecked}
       $checked={checked}
       $style={containerStyle}
