@@ -15,37 +15,41 @@ type Story = StoryObj<typeof Timeline>;
 
 export const Default: Story = {
   render: () => {
-    const RAW_TIMELINE_ITEMS: TimelineItemProps[] = [
+    const TIMELINE_ITEMS: TimelineItemProps[] = [
       {
         title: "Traveled to Japan",
         subtitle: [
-          "- Visited Tokyo, Kyoto, and Osaka",
-          "- Tried authentic sushi and stayed in a ryokan",
+          <span>
+            - Visited Tokyo, Kyoto, and Osaka
+            <br />- Tried authentic sushi and stayed in a ryokan
+          </span>,
         ],
         sidenote: [<span style={{ fontSize: "14px" }}>Oct 2025</span>],
         variant: "todo",
+        line: "dash",
       },
       {
         title: "Started Daily Meditation Habit",
-        subtitle: ["Practicing mindfulness for 10 minutes every morning"],
+        subtitle: [
+          <span>Practicing mindfulness for 10 minutes every morning</span>,
+        ],
         sidenote: [<span style={{ fontSize: "14px" }}>Jan 2023</span>],
         variant: "error",
+        line: "dash",
       },
       {
         title: "Ran First Half Marathon",
-        subtitle: ["variant 21 km in under 2 hours"],
+        subtitle: [<span>variant 21 km in under 2 hours</span>],
         sidenote: [<span style={{ fontSize: "14px" }}>Sep 2022</span>],
         variant: "completed",
       },
       {
         title: "Adopted a Dog",
-        subtitle: ["Golden Retriever named Mochi"],
+        subtitle: [<span>Golden Retriever named Mochi</span>],
         sidenote: [<span style={{ fontSize: "14px" }}>Jun 2022</span>],
         variant: "completed",
       },
     ];
-
-    const TIMELINE_ITEMS = [...RAW_TIMELINE_ITEMS].reverse();
 
     return (
       <Timeline>
@@ -59,37 +63,49 @@ export const Default: Story = {
 
 export const Clickable: Story = {
   render: () => {
-    const RAW_TIMELINE_ITEMS: TimelineItemProps[] = [
+    const TIMELINE_ITEMS: TimelineItemProps[] = [
       {
         title: "Traveled to Japan",
         subtitle: [
           "- Visited Tokyo, Kyoto, and Osaka",
           "- Tried authentic sushi and stayed in a ryokan",
         ],
+        onClick: () => {
+          console.log("Traveled to Japan");
+        },
         sidenote: [<span style={{ fontSize: "14px" }}>Oct 2025</span>],
         variant: "todo",
+        line: "dash",
       },
       {
         title: "Started Daily Meditation Habit",
         subtitle: ["Practicing mindfulness for 10 minutes every morning"],
+        onClick: () => {
+          console.log("Started Daily Meditation Habit");
+        },
         sidenote: [<span style={{ fontSize: "14px" }}>Jan 2023</span>],
         variant: "error",
+        line: "dash",
       },
       {
         title: "Ran First Half Marathon",
         subtitle: ["variant 21 km in under 2 hours"],
+        onClick: () => {
+          console.log("Ran First Half Marathon");
+        },
         sidenote: [<span style={{ fontSize: "14px" }}>Sep 2022</span>],
         variant: "completed",
       },
       {
         title: "Adopted a Dog",
         subtitle: ["Golden Retriever named Mochi"],
+        onClick: () => {
+          console.log("Adopted a Dog");
+        },
         sidenote: [<span style={{ fontSize: "14px" }}>Jun 2022</span>],
         variant: "completed",
       },
     ];
-
-    const TIMELINE_ITEMS = [...RAW_TIMELINE_ITEMS].reverse();
 
     return (
       <Timeline isClickable>

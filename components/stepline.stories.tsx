@@ -43,10 +43,12 @@ export const Reversable: Story = {
         title: "Technical Interview",
         subtitle: ["Assessment of technical skills"],
         variant: "error",
+        line: "dash",
       },
       {
         title: "Final Interview",
         subtitle: ["Discussion with the team lead"],
+        line: "dash",
       },
       {
         title: "Offer Sent",
