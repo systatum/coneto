@@ -26,4 +26,16 @@ describe("Checkbox", () => {
       );
     });
   });
+
+  context("when disabled", () => {
+    it("render the checkbox with not-allowed", () => {
+      cy.mount(<Checkbox disabled label="This is checkbox with title" />);
+      cy.findByRole("checkbox")
+        .should("have.css", "cursor", "not-allowed")
+        .and("have.css", "user-select", "none");
+      cy.findByText("This is checkbox with title")
+        .should("have.css", "cursor", "not-allowed")
+        .and("have.css", "user-select", "none");
+    });
+  });
 });
