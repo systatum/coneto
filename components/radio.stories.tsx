@@ -13,36 +13,32 @@ const meta: Meta<typeof Radio> = {
 export default meta;
 
 type RadioProps = ComponentProps<typeof Radio>;
-type Story = StoryObj<RadioProps & Partial<{ radioSelected?: string }>>;
-
-const RADIO_OPTIONS = [
-  {
-    value: "comments",
-    label: "Comments",
-    description: "Get notified when someone posts a comment",
-  },
-  {
-    value: "mentions",
-    label: "Mentions",
-    description: "Get notified when someone mentions you",
-  },
-  {
-    value: "follows",
-    label: "Follows",
-    description: "Get notified when someone follows you",
-  },
-  {
-    value: "none",
-    label: "None",
-    description: "Don't notify me",
-  },
-];
+type Story = StoryObj<RadioProps>;
 
 export const Default: Story = {
   args: {
-    radioSelected: "comments",
+    value: "comments",
   },
   render: (args) => {
+    const RADIO_OPTIONS = [
+      {
+        value: "comments",
+        label: "Comments",
+      },
+      {
+        value: "mentions",
+        label: "Mentions",
+      },
+      {
+        value: "follows",
+        label: "Follows",
+      },
+      {
+        value: "none",
+        label: "None",
+      },
+    ];
+
     const [, setUpdateArgs] = useArgs();
 
     const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
@@ -59,10 +55,10 @@ export const Default: Story = {
         {RADIO_OPTIONS.map((option, index) => (
           <Radio
             key={index}
-            name="radioSelected"
+            name="value"
             value={option.value}
             label={option.label}
-            checked={args.radioSelected === option.value}
+            checked={args.value === option.value}
             onChange={onChangeValue}
           />
         ))}
@@ -71,15 +67,38 @@ export const Default: Story = {
   },
 };
 
+const DAILY_RADIO_OPTIONS = [
+  {
+    value: "daily",
+    label: "Daily",
+    description: "Receive a daily summary of your activity",
+  },
+  {
+    value: "weekly",
+    label: "Weekly",
+    description: "Receive a weekly summary of your activity",
+  },
+  {
+    value: "monthly",
+    label: "Monthly",
+    description: "Receive a monthly summary of your activity",
+  },
+  {
+    value: "never",
+    label: "Never",
+    description: "Do not receive any notifications",
+  },
+];
+
 export const WithDescription: Story = {
   argTypes: {
-    radioSelected: {
+    value: {
       control: "radio",
-      options: RADIO_OPTIONS.map((val) => val.value),
+      options: DAILY_RADIO_OPTIONS.map((val) => val.value),
     },
   },
   args: {
-    radioSelected: "comments",
+    value: "comments",
   },
   render: (args) => {
     const [, setUpdateArgs] = useArgs();
@@ -95,14 +114,14 @@ export const WithDescription: Story = {
 
     return (
       <div>
-        {RADIO_OPTIONS.map((option, index) => (
+        {DAILY_RADIO_OPTIONS.map((option, index) => (
           <Radio
             key={index}
-            name="radioSelected"
+            name="value"
             value={option.value}
             label={option.label}
             description={option.description}
-            checked={args.radioSelected === option.value}
+            checked={args.value === option.value}
             onChange={onChangeValue}
           />
         ))}
@@ -113,6 +132,29 @@ export const WithDescription: Story = {
 
 export const WithError: Story = {
   render: () => {
+    const RADIO_OPTIONS = [
+      {
+        value: "high",
+        label: "High Priority",
+        description: "Only get notified for high priority updates",
+      },
+      {
+        value: "medium",
+        label: "Medium Priority",
+        description: "Get notified for important updates",
+      },
+      {
+        value: "low",
+        label: "Low Priority",
+        description: "Receive notifications for all updates",
+      },
+      {
+        value: "off",
+        label: "Turn Off",
+        description: "Disable all notifications",
+      },
+    ];
+
     const [checked, setChecked] = useState("");
 
     return (
@@ -123,7 +165,7 @@ export const WithError: Story = {
             label={option.label}
             description={option.description}
             value={option.value}
-            name="radioSelected"
+            name="value"
             onChange={(e) => setChecked(e.target.value)}
             showError={!checked && index === RADIO_OPTIONS.length - 1}
             inputStyle={
@@ -145,6 +187,29 @@ export const WithError: Story = {
 
 export const Disabled: Story = {
   render: () => {
+    const RADIO_OPTIONS = [
+      {
+        value: "email",
+        label: "Email",
+        description: "Receive notifications via email",
+      },
+      {
+        value: "sms",
+        label: "SMS",
+        description: "Receive notifications via text message",
+      },
+      {
+        value: "push",
+        label: "Push Notification",
+        description: "Receive notifications via app push",
+      },
+      {
+        value: "none",
+        label: "None",
+        description: "Do not receive any notifications",
+      },
+    ];
+
     const [, setChecked] = useState("");
 
     return (
@@ -156,7 +221,7 @@ export const Disabled: Story = {
             description={option.description}
             value={option.value}
             disabled
-            name="radioSelected"
+            name="value"
             onChange={(e) => setChecked(e.target.value)}
           />
         ))}
