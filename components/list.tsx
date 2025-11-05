@@ -363,7 +363,6 @@ const ListGroupContent = styled(motion.div)<{
   flex-direction: column;
   position: relative;
   padding-top: 2px;
-  overflow: hidden;
   ${({ $contentStyle }) => $contentStyle}
 `;
 
@@ -559,7 +558,7 @@ function ListItem({
       </ListItemRow>
 
       <AnimatePresence>
-        {isOpen && (
+        {isOpen && children && (
           <ListGroupContent
             key={`list-group-content-${index}`}
             initial="collapsed"
