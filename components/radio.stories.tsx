@@ -220,6 +220,7 @@ export const Disabled: Story = {
             label={option.label}
             description={option.description}
             value={option.value}
+            checked={option.value === "none"}
             disabled
             name="value"
             onChange={(e) => setChecked(e.target.value)}

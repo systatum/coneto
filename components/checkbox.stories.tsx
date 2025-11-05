@@ -149,7 +149,7 @@ export const Disabled: StoryWithDescription = {
       },
     ];
 
-    const [selected, setSelected] = useState({
+    const [, setSelected] = useState({
       checked: [] as CheckboxOptionsProps[],
     });
 
@@ -184,9 +184,7 @@ export const Disabled: StoryWithDescription = {
             value={JSON.stringify(option)}
             description={option.description}
             label={option.label}
-            checked={selected.checked.some(
-              (item) => item.value === option.value
-            )}
+            checked={"push" === option.value}
             onChange={onChangeValue}
           />
         ))}
