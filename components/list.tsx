@@ -81,7 +81,7 @@ export interface ListItemProps {
   title?: string;
   subtitle?: string;
   imageUrl?: string;
-  iconUrl?: RemixiconComponentType;
+  iconUrl?: RemixiconComponentType | null;
   draggable?: boolean;
   groupId?: string;
   selectable?: boolean;
@@ -407,7 +407,7 @@ const EmptyContent = styled(motion.div)`
 `;
 
 function ListItem({
-  iconUrl: Icon = RiFile2Fill,
+  iconUrl: Icon = null,
   imageUrl,
   subtitle,
   title,
@@ -520,7 +520,7 @@ function ListItem({
           {imageUrl ? (
             <ImageStyle src={imageUrl} alt="Image from coneto, Systatum." />
           ) : (
-            <Icon size={22} color="#4b5563" />
+            Icon && <Icon size={22} color="#4b5563" />
           )}
           <TextWrapper>
             {title && <Title>{title}</Title>}
