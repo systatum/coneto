@@ -489,33 +489,6 @@ describe("StatefulForm", () => {
       throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
     }
 
-    interface AllCaseValueProps {
-      text: string;
-      email: string;
-      number: string;
-      password: string;
-      textarea: string;
-      rating: string;
-      check: boolean;
-      chips?: {
-        searchText: string;
-        selectedOptions: BadgeProps[];
-      };
-      color: string;
-      combo: string[];
-      date: string[];
-      file_drop_box?: File[];
-      file: File | undefined;
-      image: File | undefined;
-      money: string;
-      phone: string;
-      thumb_field: boolean;
-      togglebox: boolean;
-      signature: string;
-      capsule: string;
-      country_code?: CountryCodeProps;
-    }
-
     const FRUIT_OPTIONS: OptionsProps[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
@@ -526,7 +499,7 @@ describe("StatefulForm", () => {
       { text: "Watermelon", value: "7" },
     ];
 
-    const valueAll: AllCaseValueProps = {
+    const valueAll = {
       text: "",
       email: "",
       number: "",
