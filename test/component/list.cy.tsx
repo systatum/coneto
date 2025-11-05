@@ -880,4 +880,183 @@ describe("List", () => {
       });
     });
   });
+
+  const LIST_GROUPS_OPENABLE: ListGroupContent[] = [
+    {
+      id: "recent-content",
+      title: "Recent Content",
+      subtitle: "Your latest activity",
+      items: [
+        {
+          id: "messages",
+          title: "Messages",
+          subtitle: "Check your inbox",
+          iconUrl: RiMailFill,
+
+          children:
+            "Stay connected with your contacts by checking and replying to your recent messages. Keep conversations organized and never miss important updates.",
+        },
+        {
+          id: "notifications",
+          title: "Notifications",
+          subtitle: "View Alerts",
+          iconUrl: RiNotification3Fill,
+          children:
+            "See what's new at a glance. Review recent alerts, mentions, and important reminders to stay on top of your activities.",
+        },
+        {
+          id: "calendar",
+          title: "Calendar",
+          subtitle: "Upcoming events",
+          iconUrl: RiCalendar2Fill,
+          children:
+            "View your scheduled events and upcoming meetings in one place. Manage your time effectively and plan your week with confidence.",
+        },
+      ],
+    },
+    {
+      id: "all-content",
+      title: "All Content",
+      subtitle: "With warning rightSideContent",
+      items: [
+        {
+          id: "home",
+          title: "Home",
+          subtitle: "Go to homepage",
+          iconUrl: RiHome2Fill,
+          children:
+            "Return to your main dashboard where you can quickly access all your essential tools, updates, and recent highlights in one glance.",
+        },
+        {
+          id: "profile",
+          title: "Profile",
+          subtitle: "View your profile",
+          iconUrl: RiUser3Fill,
+          children:
+            "Customize your personal information, update your avatar, and manage your account preferences to reflect your identity and style.",
+        },
+        {
+          id: "settings",
+          title: "Settings",
+          subtitle: "Adjust preferences",
+          iconUrl: RiSettings3Fill,
+          openable: true,
+          children:
+            "Modify your system preferences, manage privacy and notifications, and fine-tune your user experience to suit your workflow.",
+        },
+      ],
+    },
+  ];
+
+  context("openable", () => {
+    context("when clicking", () => {
+      it("should hide the children list item", () => {
+        cy.mount(
+          <List
+            searchable
+            draggable
+            selectable
+            containerStyle={css`
+              padding: 16px;
+              min-width: 350px;
+            `}
+          >
+            {LIST_GROUPS_OPENABLE.map((group, index) => (
+              <List.Group
+                key={index}
+                id={group.id}
+                title={group.title}
+                subtitle={group.subtitle}
+                actions={group.actions}
+                openerStyle="togglebox"
+              >
+                {group.items.map((list, i) => (
+                  <List.Item
+                    key={i}
+                    id={list.id}
+                    actions={list.actions}
+                    iconUrl={list.iconUrl}
+                    subtitle={list.subtitle}
+                    title={list.title}
+                    groupId={group.id}
+                    openable={list.openable}
+                    selectedOptions={{
+                      checked: true,
+                    }}
+                  >
+                    {list.children}
+                  </List.Item>
+                ))}
+              </List.Group>
+            ))}
+          </List>
+        );
+        cy.wait(100);
+
+        cy.findByText("Settings").click();
+        LIST_GROUPS_OPENABLE.map((groups) =>
+          groups.items.map((list) => {
+            if (list.title !== "Settings") {
+              cy.findByText(String(list.children)).should("exist");
+            } else {
+              cy.findByText(String(list.children)).should("not.exist");
+            }
+          })
+        );
+      });
+    });
+  });
+
+  context("children", () => {
+    context("when given", () => {
+      it("should render the children", () => {
+        cy.mount(
+          <List
+            searchable
+            draggable
+            selectable
+            containerStyle={css`
+              padding: 16px;
+              min-width: 350px;
+            `}
+          >
+            {LIST_GROUPS_OPENABLE.map((group, index) => (
+              <List.Group
+                key={index}
+                id={group.id}
+                title={group.title}
+                subtitle={group.subtitle}
+                actions={group.actions}
+                openerStyle="togglebox"
+              >
+                {group.items.map((list, i) => (
+                  <List.Item
+                    key={i}
+                    id={list.id}
+                    actions={list.actions}
+                    iconUrl={list.iconUrl}
+                    subtitle={list.subtitle}
+                    title={list.title}
+                    groupId={group.id}
+                    selectedOptions={{
+                      checked: true,
+                    }}
+                  >
+                    {list.children}
+                  </List.Item>
+                ))}
+              </List.Group>
+            ))}
+          </List>
+        );
+        cy.wait(100);
+
+        LIST_GROUPS_OPENABLE.map((groups) =>
+          groups.items.map((list) =>
+            cy.findByText(String(list.children)).should("exist")
+          )
+        );
+      });
+    });
+  });
 });
