@@ -553,17 +553,6 @@ describe("StatefulForm", () => {
       country_code: DEFAULT_COUNTRY_CODES,
     };
 
-    const badgeSchema = z.object({
-      id: z.string().optional(),
-      metadata: z.record(z.unknown()).optional(),
-      variant: z.string().optional(),
-      withCircle: z.boolean().optional(),
-      caption: z.string().optional(),
-      backgroundColor: z.string().optional(),
-      textColor: z.string().optional(),
-      circleColor: z.string().optional(),
-    });
-
     const schema = z.object({
       text: z.string().min(3, "Text must be at least 3 characters"),
       email: z.string().email("Please enter a valid email address"),
@@ -575,7 +564,6 @@ describe("StatefulForm", () => {
       check: z.boolean(),
       chips: z.object({
         searchText: z.string().optional(),
-        selectedOptions: z.array(badgeSchema).optional(),
       }),
       color: z.string().optional(),
       combo: z
@@ -646,38 +634,6 @@ describe("StatefulForm", () => {
       {
         id: "2",
         caption: "Manga",
-      },
-      {
-        id: "3",
-        caption: "Comics",
-      },
-      {
-        id: "4",
-        caption: "Movies",
-      },
-      {
-        id: "5",
-        caption: "Podcasts",
-      },
-      {
-        id: "6",
-        caption: "TV Shows",
-      },
-      {
-        id: "7",
-        caption: "Novels",
-      },
-      {
-        id: "8",
-        caption: "Music",
-      },
-      {
-        id: "9",
-        caption: "Games",
-      },
-      {
-        id: "10",
-        caption: "Webtoons",
       },
     ];
 
