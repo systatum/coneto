@@ -677,7 +677,7 @@ export const WithLoading: Story = {
 export const WithCheckbox: Story = {
   render: () => {
     const [formValues, setFormValues] = useState({
-      field_name: "qweqweqweasd",
+      field_name: "",
       type: ["1"],
     });
 
@@ -799,7 +799,7 @@ export const WithCheckbox: Story = {
                     {list.id === "lead" && (
                       <StatefulForm
                         containerStyle={css`
-                          padding-left: 35px;
+                          padding-left: 8px;
                         `}
                         formValues={formValues}
                         onChange={({ currentState }) => {
@@ -837,6 +837,13 @@ export const WithCheckbox: Story = {
                             placeholder: "Select the type data",
                             comboboxProps: {
                               options: FIELD_NAME_OPTIONS,
+                              selectboxStyle: css`
+                                border: 1px solid #d1d5db;
+                                &:focus {
+                                  border-color: #61a9f9;
+                                  box-shadow: 0 0 0 1px #61a9f9;
+                                }
+                              `,
                             },
                           },
                         ]}
@@ -1090,9 +1097,7 @@ export const CustomOpener: Story = {
                         subtitle: list.subtitle,
                       }),
                     }}
-                  >
-                    test
-                  </List.Item>
+                  />
                 ))}
               </List.Group>
             );
