@@ -35,7 +35,7 @@ function Radio({
   errorStyle,
   ...props
 }: RadioProps & InputHTMLAttributes<HTMLInputElement>) {
-  const id = `radio-${value}`;
+  const id = props.disabled ? null : `radio-${value}`;
 
   return (
     <Label
@@ -55,7 +55,9 @@ function Radio({
           onChange={onChange}
           checked={checked}
           $disabled={props.disabled}
+          readOnly
           {...props}
+          disabled={props.disabled}
         />
         <Circle $error={showError} $style={inputStyle} />
         {label && <LabelText $style={labelStyle}>{label}</LabelText>}
@@ -100,6 +102,7 @@ const Label = styled.label<{
     css`
       cursor: not-allowed;
       opacity: 0.6;
+      user-select: none;
     `}
 
   ${({ $style }) => $style}
@@ -115,6 +118,7 @@ const HiddenRadio = styled.input<{ $disabled?: boolean }>`
     css`
       cursor: not-allowed;
       opacity: 0.6;
+      user-select: none;
     `}
 `;
 
