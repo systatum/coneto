@@ -5,6 +5,7 @@ export interface SteplineItemState {
   title?: string;
   subtitle?: ReactNode[];
   variant?: "current" | "todo" | "error" | "completed";
+  line?: "dash" | "dot" | "solid";
   containerStyle?: CSSProp;
   active?: boolean;
   onClick?: () => void;
