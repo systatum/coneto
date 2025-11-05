@@ -38,6 +38,34 @@ describe("Radio", () => {
           .and("have.css", "user-select", "none");
       });
     });
+
+    context("when clicking", () => {
+      it("should not render the console", () => {
+        cy.mount(
+          RADIO_OPTIONS.map((prop) => (
+            <Radio
+              disabled
+              {...prop}
+              onChange={() => {
+                console.log("Test the console");
+              }}
+            />
+          ))
+        );
+        cy.window().then((win) => {
+          cy.spy(win.console, "log").as("consoleLog");
+        });
+
+        RADIO_OPTIONS.map((prop) => {
+          cy.findByText(prop.description).click();
+        });
+
+        cy.get("@consoleLog").should(
+          "not.have.been.calledWith",
+          "Test the console"
+        );
+      });
+    });
   });
 });
 
