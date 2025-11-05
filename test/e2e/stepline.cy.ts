@@ -1,8 +1,8 @@
 import { getIdContent } from "test/support/commands";
 
-context("Stepline Component", () => {
-  describe("Default", () => {
-    it("Should render 5 steps with todo variant", () => {
+describe("Stepline Component", () => {
+  context("Default", () => {
+    it("should render 5 steps with todo variant", () => {
       cy.visit(getIdContent("controls-stepline--default"));
 
       cy.findAllByLabelText("inner-circle").should("have.length", 5);
@@ -16,8 +16,8 @@ context("Stepline Component", () => {
     });
   });
 
-  describe("Reversable", () => {
-    it("Should be click for move page", () => {
+  context("Reversable", () => {
+    it("should be click for move page", () => {
       cy.visit(getIdContent("controls-stepline--reversable"));
 
       const allTitles = [
