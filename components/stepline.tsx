@@ -56,19 +56,19 @@ function Stepline({ children, style, reversable }: SteplineProps) {
             onMouseEnter={() => setHoveredIndex(index + 1)}
             onMouseLeave={() => setHoveredIndex(null)}
           >
-            <StepContent>
-              {cloneElement(child, {
-                id: index + 1,
-                hoveredIndex,
-              })}
-            </StepContent>
-            {index !== childArray.length - 1 && (
+            {index > 0 && (
               <StepLine
                 aria-label="stepline-connector"
                 $variant={variant}
                 $line={line}
               />
             )}
+            <StepContent>
+              {cloneElement(child, {
+                id: index + 1,
+                hoveredIndex,
+              })}
+            </StepContent>
           </StepGroup>
         );
       })}
@@ -112,9 +112,7 @@ function SteplineItem({
                 fontSize: "12px",
               }}
             >
-              {subtitle.map((data, index) => (
-                <Fragment key={index}>{data}</Fragment>
-              ))}
+              {subtitle}
             </span>
           )}
         </TextWrapper>
