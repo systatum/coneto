@@ -948,9 +948,9 @@ describe("List", () => {
     },
   ];
 
-  context("openable", () => {
-    context("when clicking", () => {
-      it("should hide the children list item", () => {
+  context("openable ", () => {
+    context("with children", () => {
+      it("should render children list item", () => {
         cy.mount(
           <List
             searchable
@@ -993,10 +993,9 @@ describe("List", () => {
         );
         cy.wait(100);
 
-        cy.findByText("Settings").click();
         LIST_GROUPS_OPENABLE.map((groups) =>
           groups.items.map((list) => {
-            if (list.title !== "Settings") {
+            if (list.title === "Settings") {
               cy.findByText(String(list.children)).should("exist");
             } else {
               cy.findByText(String(list.children)).should("not.exist");
@@ -1004,58 +1003,62 @@ describe("List", () => {
           })
         );
       });
-    });
-  });
 
-  context("children", () => {
-    context("when given", () => {
-      it("should render the children", () => {
-        cy.mount(
-          <List
-            searchable
-            draggable
-            selectable
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
-          >
-            {LIST_GROUPS_OPENABLE.map((group, index) => (
-              <List.Group
-                key={index}
-                id={group.id}
-                title={group.title}
-                subtitle={group.subtitle}
-                actions={group.actions}
-                openerStyle="togglebox"
-              >
-                {group.items.map((list, i) => (
-                  <List.Item
-                    key={i}
-                    id={list.id}
-                    actions={list.actions}
-                    iconUrl={list.iconUrl}
-                    subtitle={list.subtitle}
-                    title={list.title}
-                    groupId={group.id}
-                    selectedOptions={{
-                      checked: true,
-                    }}
-                  >
-                    {list.children}
-                  </List.Item>
-                ))}
-              </List.Group>
-            ))}
-          </List>
-        );
-        cy.wait(100);
+      context("when clicking", () => {
+        it("should hide the children list item", () => {
+          cy.mount(
+            <List
+              searchable
+              draggable
+              selectable
+              containerStyle={css`
+                padding: 16px;
+                min-width: 350px;
+              `}
+            >
+              {LIST_GROUPS_OPENABLE.map((group, index) => (
+                <List.Group
+                  key={index}
+                  id={group.id}
+                  title={group.title}
+                  subtitle={group.subtitle}
+                  actions={group.actions}
+                  openerStyle="togglebox"
+                >
+                  {group.items.map((list, i) => (
+                    <List.Item
+                      key={i}
+                      id={list.id}
+                      actions={list.actions}
+                      iconUrl={list.iconUrl}
+                      subtitle={list.subtitle}
+                      title={list.title}
+                      groupId={group.id}
+                      openable={list.openable}
+                      selectedOptions={{
+                        checked: true,
+                      }}
+                    >
+                      {list.children}
+                    </List.Item>
+                  ))}
+                </List.Group>
+              ))}
+            </List>
+          );
+          cy.wait(100);
+          cy.findByText("Settings").click();
 
-        LIST_GROUPS_OPENABLE.map((groups) =>
-          groups.items.map((list) =>
-            cy.findByText(String(list.children)).should("exist")
-          )
-        );
+          LIST_GROUPS_OPENABLE.map((groups) =>
+            groups.items.map((list) => {
+              if (list.title === "Settings") {
+                cy.findByText(String(list.children)).should("not.be.visible");
+              } else {
+                cy.findByText(String(list.children)).should("not.exist");
+              }
+            })
+          );
+        });
       });
     });
   });
