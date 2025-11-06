@@ -10,7 +10,9 @@ import {
   RiLinkM,
   RiSendPlane2Line,
   RiEdit2Line,
-  RiDeleteBin2Line,
+  RiArrowUpSLine,
+  RiArrowDownSLine,
+  RiRefreshLine,
 } from "@remixicon/react";
 import { Toolbar } from "./toolbar";
 import { Searchbox } from "./searchbox";
@@ -19,6 +21,7 @@ import { Checkbox } from "./checkbox";
 import { Button } from "./button";
 import { List, ListItemProps } from "./list";
 import { css } from "styled-components";
+import { ColumnTableProps, SubMenuListTableProps, Table } from "./table";
 
 const meta: Meta<typeof Card> = {
   title: "Content/Card",
@@ -848,6 +851,218 @@ export const WithHeaderAndFooter: Story = {
             );
           })}
         </List>
+      </Card>
+    );
+  },
+};
+
+export const WithFullWidthContent: Story = {
+  render: () => {
+    const columns: ColumnTableProps[] = [
+      {
+        caption: "Name",
+        sortable: true,
+      },
+      {
+        caption: "Code",
+        sortable: true,
+      },
+      {
+        caption: "Lead",
+        sortable: true,
+      },
+      {
+        caption: "Members",
+        sortable: true,
+      },
+    ];
+
+    const DEPARTMENTS = [
+      {
+        name: "Executive Office",
+        code: "EXE",
+        lead: "Adam Hakarsa",
+        members: "3",
+      },
+      {
+        name: "Engineering Department",
+        code: "ENG",
+        lead: "Mohamad Naufal Alim",
+        members: "15",
+      },
+      {
+        name: "Human Resources Department",
+        code: "HRD",
+        lead: "Aisha Rahman",
+        members: "6",
+      },
+      {
+        name: "Finance Department",
+        code: "FIN",
+        lead: "Budi Santoso",
+        members: "8",
+      },
+      {
+        name: "Marketing Department",
+        code: "MKT",
+        lead: "Nadia Putri",
+        members: "10",
+      },
+      {
+        name: "Product Department",
+        code: "PRD",
+        lead: "Rizky Setiawan",
+        members: "7",
+      },
+      {
+        name: "Customer Success Department",
+        code: "CSD",
+        lead: "Tania Lestari",
+        members: "5",
+      },
+      {
+        name: "Operations Department",
+        code: "OPS",
+        lead: "Dimas Saputra",
+        members: "9",
+      },
+      {
+        name: "Legal Department",
+        code: "LGL",
+        lead: "Anita Kusuma",
+        members: "4",
+      },
+      {
+        name: "IT Support Department",
+        code: "IT",
+        lead: "Fajar Nugroho",
+        members: "12",
+      },
+    ];
+
+    const [rows, setRows] = useState(DEPARTMENTS);
+
+    type DepartmentKeys = keyof (typeof DEPARTMENTS)[number];
+
+    const handleSortingRequested = ({
+      mode,
+      column,
+    }: {
+      mode: "asc" | "desc" | "original";
+      column: DepartmentKeys;
+    }) => {
+      if (mode === "original") {
+        setRows([...DEPARTMENTS]);
+        return;
+      }
+
+      const sorted = [...rows].sort((a, b) => {
+        const aVal = a[column];
+        const bVal = b[column];
+        return typeof aVal === "string" && typeof bVal === "string"
+          ? mode === "asc"
+            ? aVal.localeCompare(bVal)
+            : bVal.localeCompare(aVal)
+          : 0;
+      });
+
+      setRows(sorted);
+    };
+
+    const handleItemsSelected = (data: string[]) => {
+      console.log("Selected rows:", data);
+    };
+
+    const TIP_MENU_ACTION = (
+      columnCaption: DepartmentKeys
+    ): SubMenuListTableProps[] => {
+      return [
+        {
+          caption: "Sort Ascending",
+          icon: RiArrowUpSLine,
+          iconColor: "gray",
+          onClick: () => {
+            handleSortingRequested({ mode: "asc", column: columnCaption });
+          },
+        },
+        {
+          caption: "Sort Descending",
+          icon: RiArrowDownSLine,
+          iconColor: "gray",
+          onClick: () => {
+            handleSortingRequested({ mode: "desc", column: columnCaption });
+          },
+        },
+        {
+          caption: "Reset Sorting",
+          icon: RiRefreshLine,
+          iconColor: "gray",
+          onClick: () => {
+            handleSortingRequested({ mode: "original", column: columnCaption });
+          },
+        },
+      ];
+    };
+
+    const ROW_ACTION = (rowId: string): SubMenuListTableProps[] => {
+      return [
+        {
+          caption: "Edit",
+          icon: RiEdit2Line,
+          iconColor: "gray",
+          onClick: () => {
+            console.log(`${rowId} was edited`);
+          },
+        },
+      ];
+    };
+
+    return (
+      <Card
+        title="Departments"
+        subtitle="Departments and their leaders"
+        containerStyle={css`
+          padding-left: 0px;
+          padding-right: 0px;
+          min-width: 1000px;
+          padding-bottom: 0px;
+        `}
+        headerStyle={css`
+          padding-left: 15px;
+          padding-right: 15px;
+          border-bottom: 1px solid #d1d5db;
+        `}
+      >
+        <Table
+          selectable
+          tableRowContainerStyle={css`
+            max-height: 400px;
+          `}
+          columns={columns}
+          onItemsSelected={handleItemsSelected}
+          subMenuList={TIP_MENU_ACTION}
+          totalSelectedItemText={(n) => `${n} Department selected`}
+        >
+          {rows.map((rowValue, rowIndex) => (
+            <Table.Row
+              onClick={({ toggleCheckbox }) => {
+                console.log(
+                  `Selected to this ${`${rowValue.name}-${rowValue.code}-${rowValue.lead}-${rowValue.members}`}`
+                );
+                toggleCheckbox();
+              }}
+              key={rowIndex}
+              rowId={`${rowValue.name}-${rowValue.code}-${rowValue.lead}-${rowValue.members}`}
+              actions={ROW_ACTION}
+              content={[
+                rowValue.name,
+                rowValue.code,
+                rowValue.lead,
+                rowValue.members,
+              ]}
+            />
+          ))}
+        </Table>
       </Card>
     );
   },
