@@ -274,7 +274,7 @@ function ListGroup({
             index: index,
             groupLength: childArray.length,
             onDropItem: (newPosition: number) => {
-              if (dragItem) {
+              if (dragItem && draggable) {
                 const { id: draggedId, oldGroupId, oldPosition } = dragItem;
 
                 onDragged?.({
@@ -321,7 +321,7 @@ function ListGroup({
             onDragOver={(e) => e.preventDefault()}
             onDrop={(e) => {
               e.preventDefault();
-              if (dragItem) {
+              if (dragItem && draggable) {
                 const { id: draggedId, oldGroupId, oldPosition } = dragItem;
 
                 onDragged?.({
@@ -464,17 +464,19 @@ function ListItem({
         }
         onDragOver={(e) => {
           e.preventDefault();
-          const rect = e.currentTarget.getBoundingClientRect();
-          const offsetY = e.clientY - rect.top;
-          const half = rect.height / 2;
+          if (draggable) {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const offsetY = e.clientY - rect.top;
+            const half = rect.height / 2;
 
-          if (offsetY < half) {
-            setDropPosition("top");
-          } else {
-            setDropPosition("bottom");
+            if (offsetY < half) {
+              setDropPosition("top");
+            } else {
+              setDropPosition("bottom");
+            }
+
+            setIsOver(true);
           }
-
-          setIsOver(true);
         }}
         onDragLeave={() => {
           setIsOver(false);
