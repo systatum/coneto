@@ -699,6 +699,7 @@ export const WithCheckbox: Story = {
           {
             id: "lead",
             title: "Lead",
+            openable: true,
           },
         ],
       },
@@ -776,7 +777,7 @@ export const WithCheckbox: Story = {
                 {group.items.map((list, i) => (
                   <List.Item
                     key={i}
-                    openable={list.title === "Lead"}
+                    openable={list.openable}
                     id={list.id}
                     subtitle={list.subtitle}
                     title={list.title}
@@ -796,6 +797,7 @@ export const WithCheckbox: Story = {
                       }),
                     }}
                   >
+                    {list.children}
                     {list.id === "lead" && (
                       <StatefulForm
                         containerStyle={css`
