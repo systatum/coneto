@@ -20,7 +20,7 @@ export interface TimelineProps {
 
 export type TimelineItemProps = SteplineItemState &
   Partial<{
-    sidenote?: ReactNode[];
+    sidenote?: ReactNode;
     isClickable?: boolean;
   }>;
 
@@ -201,21 +201,9 @@ function TimelineItem({
     >
       <TitleContainer>
         <TitleText>{title}</TitleText>
-        {subtitle && (
-          <SubtitleContainer>
-            {subtitle.map((data, index) => (
-              <span key={index}>{data}</span>
-            ))}
-          </SubtitleContainer>
-        )}
+        {subtitle && <SubtitleContainer>{subtitle}</SubtitleContainer>}
       </TitleContainer>
-      {sidenote && (
-        <SidenoteContainer>
-          {sidenote.map((data, index) => (
-            <span key={index}>{data}</span>
-          ))}
-        </SidenoteContainer>
-      )}
+      {sidenote && <SidenoteContainer>{sidenote}</SidenoteContainer>}
     </TimelineContainer>
   );
 }

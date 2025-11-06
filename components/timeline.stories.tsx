@@ -18,35 +18,36 @@ export const Default: Story = {
     const TIMELINE_ITEMS: TimelineItemProps[] = [
       {
         title: "Traveled to Japan",
-        subtitle: [
+        subtitle: (
           <span>
             - Visited Tokyo, Kyoto, and Osaka
             <br />- Tried authentic sushi and stayed in a ryokan
-          </span>,
-        ],
-        sidenote: [<span style={{ fontSize: "14px" }}>Oct 2025</span>],
+          </span>
+        ),
+        sidenote: <span style={{ fontSize: "14px" }}>Oct 2025</span>,
         variant: "todo",
         line: "dash",
       },
       {
         title: "Started Daily Meditation Habit",
-        subtitle: [
-          <span>Practicing mindfulness for 10 minutes every morning</span>,
-        ],
-        sidenote: [<span style={{ fontSize: "14px" }}>Jan 2023</span>],
+        subtitle: (
+          <span>Practicing mindfulness for 10 minutes every morning</span>
+        ),
+
+        sidenote: <span style={{ fontSize: "14px" }}>Jan 2023</span>,
         variant: "error",
         line: "dash",
       },
       {
         title: "Ran First Half Marathon",
-        subtitle: [<span>variant 21 km in under 2 hours</span>],
-        sidenote: [<span style={{ fontSize: "14px" }}>Sep 2022</span>],
+        subtitle: <span>variant 21 km in under 2 hours</span>,
+        sidenote: <span style={{ fontSize: "14px" }}>Sep 2022</span>,
         variant: "completed",
       },
       {
         title: "Adopted a Dog",
-        subtitle: [<span>Golden Retriever named Mochi</span>],
-        sidenote: [<span style={{ fontSize: "14px" }}>Jun 2022</span>],
+        subtitle: <span>Golden Retriever named Mochi</span>,
+        sidenote: <span style={{ fontSize: "14px" }}>Jun 2022</span>,
         variant: "completed",
       },
     ];
@@ -66,43 +67,45 @@ export const Clickable: Story = {
     const TIMELINE_ITEMS: TimelineItemProps[] = [
       {
         title: "Traveled to Japan",
-        subtitle: [
-          "- Visited Tokyo, Kyoto, and Osaka",
-          "- Tried authentic sushi and stayed in a ryokan",
-        ],
+        subtitle: (
+          <span>
+            - Visited Tokyo, Kyoto, and Osaka
+            <br />- Tried authentic sushi and stayed in a ryokan
+          </span>
+        ),
         onClick: () => {
           console.log("Traveled to Japan");
         },
-        sidenote: [<span style={{ fontSize: "14px" }}>Oct 2025</span>],
+        sidenote: <span style={{ fontSize: "14px" }}>Oct 2025</span>,
         variant: "todo",
         line: "dash",
       },
       {
         title: "Started Daily Meditation Habit",
-        subtitle: ["Practicing mindfulness for 10 minutes every morning"],
+        subtitle: "Practicing mindfulness for 10 minutes every morning",
         onClick: () => {
           console.log("Started Daily Meditation Habit");
         },
-        sidenote: [<span style={{ fontSize: "14px" }}>Jan 2023</span>],
+        sidenote: <span style={{ fontSize: "14px" }}>Jan 2023</span>,
         variant: "error",
         line: "dash",
       },
       {
         title: "Ran First Half Marathon",
-        subtitle: ["variant 21 km in under 2 hours"],
+        subtitle: "variant 21 km in under 2 hours",
         onClick: () => {
           console.log("Ran First Half Marathon");
         },
-        sidenote: [<span style={{ fontSize: "14px" }}>Sep 2022</span>],
+        sidenote: <span style={{ fontSize: "14px" }}>Sep 2022</span>,
         variant: "completed",
       },
       {
         title: "Adopted a Dog",
-        subtitle: ["Golden Retriever named Mochi"],
+        subtitle: "Golden Retriever named Mochi",
         onClick: () => {
           console.log("Adopted a Dog");
         },
-        sidenote: [<span style={{ fontSize: "14px" }}>Jun 2022</span>],
+        sidenote: <span style={{ fontSize: "14px" }}>Jun 2022</span>,
         variant: "completed",
       },
     ];
@@ -245,7 +248,7 @@ export const Custom: Story = {
       },
       {
         title: "HR Team | 2 weeks ago",
-        subtitle: [
+        subtitle: (
           <div
             style={{
               display: "flex",
@@ -281,12 +284,12 @@ export const Custom: Story = {
               We’re excited to offer you the Frontend Engineer position. Please
               review the offer letter attached.
             </div>
-          </div>,
-        ],
+          </div>
+        ),
       },
       {
         title: "Alim Naufal | 2 weeks ago",
-        subtitle: [
+        subtitle: (
           <div
             style={{
               display: "flex",
@@ -322,12 +325,12 @@ export const Custom: Story = {
               Thank you for the offer. I'm happy to accept the Frontend Engineer
               position. Looking forward to joining the team!
             </div>
-          </div>,
-        ],
+          </div>
+        ),
       },
       {
         title: "HR Team | 1 week ago",
-        subtitle: [
+        subtitle: (
           <div
             style={{
               display: "flex",
@@ -363,8 +366,8 @@ export const Custom: Story = {
               Here are the onboarding instructions. Please follow the steps and
               reach out if you have any questions.
             </div>
-          </div>,
-        ],
+          </div>
+        ),
       },
     ];
 
