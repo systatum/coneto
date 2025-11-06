@@ -309,7 +309,7 @@ export const Default: Story = {
   },
 };
 
-export const WithTitle: Story = {
+export const WithHeader: Story = {
   args: {
     shadow: "sm",
     padding: "sm",
@@ -422,6 +422,9 @@ export const WithTitle: Story = {
         containerStyle={css`
           padding: 0px;
         `}
+        headerStyle={css`
+          border-bottom: 1px solid #d1d5db;
+        `}
       >
         <div
           style={{
@@ -496,7 +499,7 @@ export const WithTitle: Story = {
   },
 };
 
-export const WithTitleAndActions: Story = {
+export const WithHeaderAndFooter: Story = {
   render: () => {
     const LIST_GROUPS: {
       id: string;
@@ -752,35 +755,38 @@ export const WithTitleAndActions: Story = {
 
     return (
       <Card
-        title="Systatum Corps Food."
+        title="Systatum Food Services"
+        subtitle="Fueling innovation with every bite."
         headerActions={[
           {
             title: "Edit fields",
             disabled: value.checked.length === 0,
-            icon: RiDeleteBin2Line,
+            icon: RiEdit2Line,
             onClick: () => {
               console.log(`Delete ${value.checked.length} clicked`);
             },
           },
         ]}
         containerStyle={css`
-          padding-left: 10px;
-          padding-right: 10px;
+          padding-left: 0px;
+          padding-right: 0px;
         `}
         headerStyle={css`
-          font-weight: 600;
-          padding-left: 10px;
-          padding-right: 10px;
+          padding-left: 15px;
+          padding-right: 15px;
+          border-bottom: 1px solid #d1d5db;
         `}
         footerStyle={css`
           padding-left: 20px;
           padding-right: 20px;
+          border-top: 1px solid #d1d5db;
         `}
         footerContent={ContentCard}
       >
         <List
           searchable
           selectable
+          draggable
           onDragged={onDragged}
           onSearchRequested={onChangeValue}
           containerStyle={css`
