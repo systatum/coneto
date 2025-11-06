@@ -673,8 +673,6 @@ const TableRowContainer = styled.div<{ $tableRowContainerStyle?: CSSProp }>`
   width: 100%;
   height: 100%;
 
-  margin-bottom: 15px;
-
   &::-webkit-scrollbar {
     width: 5px;
     height: 5px;
