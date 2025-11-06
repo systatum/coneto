@@ -31,26 +31,28 @@ export const Reversable: Story = {
     const STEPLINE_ITEMS: SteplineItemProps[] = [
       {
         title: "Application Submitted",
-        subtitle: ["Your application has been received"],
+        subtitle: "Your application has been received",
         variant: "completed",
       },
       {
         title: "Initial Screening",
-        subtitle: ["Resume and profile review"],
+        subtitle: "Resume and profile review",
         variant: "completed",
       },
       {
         title: "Technical Interview",
-        subtitle: ["Assessment of technical skills"],
+        subtitle: "Assessment of technical skills",
         variant: "error",
       },
       {
         title: "Final Interview",
-        subtitle: ["Discussion with the team lead"],
+        subtitle: "Discussion with the team lead",
+        line: "dash",
       },
       {
         title: "Offer Sent",
-        subtitle: ["Waiting for your confirmation"],
+        subtitle: "Waiting for your confirmation",
+        line: "dash",
       },
     ];
 

@@ -20,7 +20,7 @@ export interface TimelineProps {
 
 export type TimelineItemProps = SteplineItemState &
   Partial<{
-    sidenote?: ReactNode[];
+    sidenote?: ReactNode;
     isClickable?: boolean;
   }>;
 
@@ -44,6 +44,7 @@ function Timeline({ children, isClickable = false }: TimelineProps) {
         const isLast = index === childArray.length - 1;
         const variant = child.props.variant || "todo";
         const onClick = child.props.onClick;
+        const line = child.props.line ?? "solid";
 
         return (
           <TimelineContent
@@ -68,7 +69,8 @@ function Timeline({ children, isClickable = false }: TimelineProps) {
                 $color={INNER_CIRCLE_VARIANT_COLOR[variant]}
               />
               <Divider
-                aria-label="divider-timeline"
+                $line={line}
+                aria-label="timeline-connector"
                 $color={INNER_CIRCLE_VARIANT_COLOR[variant]}
                 $isLast={isLast}
               />
@@ -146,12 +148,22 @@ export const InnerCircle = styled.div<{ $color: string }>`
 export const Divider = styled.div<{
   $color: string;
   $isLast: boolean;
+  $line: "solid" | "dash" | "dot";
 }>`
   width: 1px;
   height: 100%;
-  background-color: ${(props) => props.$color};
-  ${(props) =>
-    props.$isLast &&
+  background-color: ${({ $line, $color }) =>
+    $line === "dash" || $line === "dot" ? "transparent" : $color};
+
+  ${({ $line, $color }) =>
+    ($line === "dash" || $line === "dot") &&
+    css`
+      border-left: 1px ${$line === "dash" ? "dashed" : "dotted"} ${$color};
+      background-color: transparent;
+    `}
+
+  ${({ $isLast }) =>
+    $isLast &&
     css`
       height: calc(100% - 1.2rem);
     `}
@@ -189,21 +201,9 @@ function TimelineItem({
     >
       <TitleContainer>
         <TitleText>{title}</TitleText>
-        {subtitle && (
-          <SubtitleContainer>
-            {subtitle.map((data, index) => (
-              <span key={index}>{data}</span>
-            ))}
-          </SubtitleContainer>
-        )}
+        {subtitle && <SubtitleContainer>{subtitle}</SubtitleContainer>}
       </TitleContainer>
-      {sidenote && (
-        <SidenoteContainer>
-          {sidenote.map((data, index) => (
-            <span key={index}>{data}</span>
-          ))}
-        </SidenoteContainer>
-      )}
+      {sidenote && <SidenoteContainer>{sidenote}</SidenoteContainer>}
     </TimelineContainer>
   );
 }
