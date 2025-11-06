@@ -1004,7 +1004,7 @@ describe("List", () => {
       });
 
       context("when clicking", () => {
-        it("should hide the children list item", () => {
+        it("should show the children list item", () => {
           cy.mount(
             <List
               searchable
@@ -1049,11 +1049,17 @@ describe("List", () => {
           cy.findByText("Settings").click();
 
           LIST_GROUPS_OPENABLE.map((groups) =>
-            groups.items.map((list) => {
+            groups.items.map((list, index) => {
               if (list.title === "Settings") {
                 cy.findByText(String(list.children)).should("be.visible");
+                cy.findAllByLabelText("list-item-wrapper")
+                  .eq(5)
+                  .should("have.css", "background-color", "rgb(219, 234, 254)");
               } else {
                 cy.findByText(String(list.children)).should("not.exist");
+                cy.findAllByLabelText("list-item-wrapper")
+                  .eq(index)
+                  .should("have.css", "background-color", "rgba(0, 0, 0, 0)");
               }
             })
           );
@@ -1109,12 +1115,15 @@ describe("List", () => {
           cy.findByText("Notifications").click();
 
           LIST_GROUPS_OPENABLE.map((groups) =>
-            groups.items.map((list) => {
+            groups.items.map((list, index) => {
               if (list.title === "Settings") {
                 cy.findByText(String(list.children)).should("not.be.visible");
               } else {
                 cy.findByText(String(list.children)).should("not.exist");
               }
+              cy.findAllByLabelText("list-item-wrapper")
+                .eq(index)
+                .should("have.css", "background-color", "rgba(0, 0, 0, 0)");
             })
           );
         });
