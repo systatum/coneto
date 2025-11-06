@@ -802,6 +802,8 @@ export const WithCheckbox: Story = {
                       <StatefulForm
                         containerStyle={css`
                           padding-left: 8px;
+                          padding-right: 8px;
+                          padding-bottom: 8px;
                         `}
                         formValues={formValues}
                         onChange={({ currentState }) => {
