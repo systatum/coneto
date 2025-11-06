@@ -4,7 +4,7 @@ describe("Stepline", () => {
   const STEPLINE_ITEMS: SteplineItemProps[] = [
     {
       title: "Application Submitted",
-      subtitle: ["Your application has been received"],
+      subtitle: "Your application has been received",
       variant: "completed",
       onClick: () => {
         console.log("Application Submitted");
@@ -12,7 +12,7 @@ describe("Stepline", () => {
     },
     {
       title: "Initial Screening",
-      subtitle: ["Resume and profile review"],
+      subtitle: "Resume and profile review",
       variant: "completed",
       onClick: () => {
         console.log("Initial Screening");
@@ -20,7 +20,7 @@ describe("Stepline", () => {
     },
     {
       title: "Technical Interview",
-      subtitle: ["Assessment of technical skills"],
+      subtitle: "Assessment of technical skills",
       variant: "error",
       line: "dash",
       onClick: () => {
@@ -29,7 +29,7 @@ describe("Stepline", () => {
     },
     {
       title: "Final Interview",
-      subtitle: ["Discussion with the team lead"],
+      subtitle: "Discussion with the team lead",
       line: "dash",
       onClick: () => {
         console.log("Final Interview");
@@ -37,12 +37,14 @@ describe("Stepline", () => {
     },
     {
       title: "Offer Sent",
-      subtitle: ["Waiting for your confirmation"],
+      subtitle: "Waiting for your confirmation",
+      line: "dash",
       onClick: () => {
         console.log("Offer Sent");
       },
     },
   ];
+
   context("clickable", () => {
     context("when clicking", () => {
       it("should render the console", () => {
@@ -87,9 +89,9 @@ describe("Stepline", () => {
         );
 
         STEPLINE_ITEMS.map((props, index) => {
-          if (index < STEPLINE_ITEMS.length - 1) {
+          if (index > 0) {
             cy.findAllByLabelText("stepline-connector")
-              .eq(index)
+              .eq(index - 1)
               .should(
                 "have.css",
                 "border-bottom-style",
