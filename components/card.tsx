@@ -85,25 +85,27 @@ function Card({
       $padding={padding}
       $containerStyle={containerStyle}
     >
-      <Header $headerStyle={headerStyle}>
-        {(title || subtitle) && (
-          <HeaderTextContainer $style={textContainerStyle}>
-            {title && <HeaderTitle $style={titleStyle}>{title}</HeaderTitle>}
-            {subtitle && (
-              <HeaderSubitle $style={subtitleStyle}>{subtitle}</HeaderSubitle>
-            )}
-          </HeaderTextContainer>
-        )}
-        {headerActions && (
-          <ActionGroup $style={actionContainerStyle}>
-            {headerActions.map((props, index) => (
-              <ActionButton key={index} {...props} />
-            ))}
-          </ActionGroup>
-        )}
-      </Header>
+      {(title || subtitle || headerActions) && (
+        <Header $headerStyle={headerStyle}>
+          {(title || subtitle) && (
+            <HeaderTextContainer $style={textContainerStyle}>
+              {title && <HeaderTitle $style={titleStyle}>{title}</HeaderTitle>}
+              {subtitle && (
+                <HeaderSubitle $style={subtitleStyle}>{subtitle}</HeaderSubitle>
+              )}
+            </HeaderTextContainer>
+          )}
+          {headerActions && (
+            <ActionGroup $style={actionContainerStyle}>
+              {headerActions.map((props, index) => (
+                <ActionButton key={index} {...props} />
+              ))}
+            </ActionGroup>
+          )}
+        </Header>
+      )}
 
-      <Contain $contentStyle={contentStyle}>{children}</Contain>
+      <Contain $style={contentStyle}>{children}</Contain>
 
       {footerContent && (
         <Footer $footerStyle={footerStyle}>{footerContent}</Footer>
@@ -153,23 +155,27 @@ const Header = styled.span<{
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #d1d5db;
 
   ${({ $headerStyle }) => $headerStyle}
 `;
 
 const HeaderTitle = styled.span<{ $style?: CSSProp }>`
   font-size: 1rem;
+  ${({ $style }) => $style}
 `;
 
 const HeaderSubitle = styled.span<{ $style?: CSSProp }>`
-  font-size: 0.6rem;
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: #8b8e92;
+
+  ${({ $style }) => $style}
 `;
 
 const Contain = styled.span<{
-  $contentStyle?: CSSProp;
+  $style?: CSSProp;
 }>`
-  ${({ $contentStyle }) => $contentStyle}
+  ${({ $style }) => $style}
 `;
 
 const Footer = styled.div<{
@@ -178,7 +184,7 @@ const Footer = styled.div<{
   display: flex;
   justify-content: space-between;
   padding: 0.5rem 1.5rem;
-  border-top: 1px solid #d1d5db;
+
   ${({ $footerStyle }) => $footerStyle}
 `;
 
@@ -301,5 +307,7 @@ function ActionButton(data: CardActionsProps) {
     </Button>
   );
 }
+
+Card.Action = ActionButton;
 
 export { Card };
