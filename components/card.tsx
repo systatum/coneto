@@ -138,11 +138,13 @@ const CardContainer = styled.div<{
   border: 1px solid #e5e7eb;
   position: relative;
   width: fit-content;
+
   ${({ $shadow, $radius, $padding }) => css`
     box-shadow: ${SHADOW_MAP[$shadow!]};
     border-radius: ${RADIUS_MAP[$radius!]};
     padding: ${PADDING_MAP[$padding!]};
   `}
+
   ${({ $containerStyle }) => $containerStyle}
 `;
 
