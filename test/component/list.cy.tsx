@@ -892,7 +892,6 @@ describe("List", () => {
           title: "Messages",
           subtitle: "Check your inbox",
           iconUrl: RiMailFill,
-
           children:
             "Stay connected with your contacts by checking and replying to your recent messages. Keep conversations organized and never miss important updates.",
         },
@@ -1048,6 +1047,66 @@ describe("List", () => {
           );
           cy.wait(100);
           cy.findByText("Settings").click();
+
+          LIST_GROUPS_OPENABLE.map((groups) =>
+            groups.items.map((list) => {
+              if (list.title === "Settings") {
+                cy.findByText(String(list.children)).should("be.visible");
+              } else {
+                cy.findByText(String(list.children)).should("not.exist");
+              }
+            })
+          );
+        });
+      });
+    });
+
+    context("when not given", () => {
+      context("when clicking", () => {
+        it("should not show the value", () => {
+          cy.mount(
+            <List
+              searchable
+              draggable
+              selectable
+              containerStyle={css`
+                padding: 16px;
+                min-width: 350px;
+              `}
+            >
+              {LIST_GROUPS_OPENABLE.map((group, index) => (
+                <List.Group
+                  key={index}
+                  id={group.id}
+                  title={group.title}
+                  subtitle={group.subtitle}
+                  actions={group.actions}
+                  openerStyle="togglebox"
+                >
+                  {group.items.map((list, i) => (
+                    <List.Item
+                      key={i}
+                      id={list.id}
+                      actions={list.actions}
+                      iconUrl={list.iconUrl}
+                      subtitle={list.subtitle}
+                      title={list.title}
+                      groupId={group.id}
+                      openable={list.openable}
+                      selectedOptions={{
+                        checked: true,
+                      }}
+                    >
+                      {list.children}
+                    </List.Item>
+                  ))}
+                </List.Group>
+              ))}
+            </List>
+          );
+          cy.wait(100);
+          cy.findByText("Messages").click();
+          cy.findByText("Notifications").click();
 
           LIST_GROUPS_OPENABLE.map((groups) =>
             groups.items.map((list) => {
