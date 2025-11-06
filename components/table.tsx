@@ -481,7 +481,12 @@ function ActionCapsule(data: TableActionsProps) {
 function ActionButton(data: TableActionsProps) {
   return (
     <Button
-      onClick={data.onClick}
+      onClick={(e) => {
+        e.stopPropagation();
+        if (data.onClick) {
+          data.onClick();
+        }
+      }}
       subMenu={data.subMenu}
       disabled={data.disabled}
       showSubMenuOn={data.showSubMenuOn}

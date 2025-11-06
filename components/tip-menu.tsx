@@ -1,7 +1,7 @@
 import styled, { css, CSSProp } from "styled-components";
 import { RemixiconComponentType } from "@remixicon/react";
 import { COLOR_STYLE_MAP } from "../constants/color-map";
-import { ReactNode, useMemo, useState } from "react";
+import React, { ReactNode, useMemo, useState } from "react";
 import { Button } from "./button";
 import { Searchbox } from "./searchbox";
 
@@ -18,7 +18,7 @@ interface TipMenuProps {
 export interface TipMenuItemProps {
   caption: string;
   icon?: RemixiconComponentType;
-  onClick?: () => void;
+  onClick?: (e?: React.MouseEvent) => void;
   iconColor?: string;
   isDangerous?: boolean;
   iconUrl?: string | null | undefined;
@@ -85,7 +85,9 @@ function TipMenu({
           icon={data.icon}
           iconColor={data.iconColor}
           isDangerous={data.isDangerous}
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
+
             if (data.onClick) {
               data.onClick();
             }
