@@ -437,7 +437,11 @@ function ListItem({
   );
 
   return (
-    <ListItemWrapper $openable={openable && isOpen} $style={containerStyle}>
+    <ListItemWrapper
+      aria-label="list-item-wrapper"
+      $openable={openable && isOpen}
+      $style={containerStyle}
+    >
       <ListItemRow
         $style={rowStyle}
         onClick={() => {
