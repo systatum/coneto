@@ -10,6 +10,7 @@ import {
   RiLinkM,
   RiSendPlane2Line,
   RiEdit2Line,
+  RiDeleteBin2Line,
 } from "@remixicon/react";
 import { Toolbar } from "./toolbar";
 import { Searchbox } from "./searchbox";
@@ -507,35 +508,35 @@ export const WithTitleAndActions: Story = {
         title: "Breakfast",
         items: [
           {
-            id: 1,
+            id: "1",
             title: "French Toast",
             subtitle: "Breakfast",
             imageUrl: "https://picsum.photos/seed/frenchtoast/200",
             rightSideContent: [<span>13$</span>],
           },
           {
-            id: 2,
+            id: "2",
             title: "Croissant & Coffee",
             subtitle: "French",
             imageUrl: "https://picsum.photos/seed/croissant/200",
             rightSideContent: [<span>10$</span>],
           },
           {
-            id: 3,
+            id: "3",
             title: "Sushi Deluxe",
             subtitle: "Japanese",
             imageUrl: "https://picsum.photos/seed/sushi/200",
             rightSideContent: [<span>22$</span>],
           },
           {
-            id: 4,
+            id: "4",
             title: "Pad Thai",
             subtitle: "Thai",
             imageUrl: "https://picsum.photos/seed/padthai/200",
             rightSideContent: [<span>15$</span>],
           },
           {
-            id: 5,
+            id: "5",
             title: "Tacos Al Pastor",
             subtitle: "Mexican",
             imageUrl: "https://picsum.photos/seed/tacos/200",
@@ -548,35 +549,35 @@ export const WithTitleAndActions: Story = {
         title: "International Dishes",
         items: [
           {
-            id: 6,
+            id: "6",
             title: "Margherita Pizza",
             subtitle: "Italian",
             imageUrl: "https://picsum.photos/seed/pizza/200",
             rightSideContent: [<span>18$</span>],
           },
           {
-            id: 7,
+            id: "7",
             title: "Butter Chicken",
             subtitle: "Indian",
             imageUrl: "https://picsum.photos/seed/butterchicken/200",
             rightSideContent: [<span>16$</span>],
           },
           {
-            id: 8,
+            id: "8",
             title: "Pho Bo",
             subtitle: "Vietnamese",
             imageUrl: "https://picsum.photos/seed/phobo/200",
             rightSideContent: [<span>14$</span>],
           },
           {
-            id: 9,
+            id: "9",
             title: "Cheeseburger",
             subtitle: "American",
             imageUrl: "https://picsum.photos/seed/cheeseburger/200",
             rightSideContent: [<span>11$</span>],
           },
           {
-            id: 10,
+            id: "10",
             title: "Falafel Wrap",
             subtitle: "Middle Eastern",
             imageUrl: "https://picsum.photos/seed/falafel/200",
@@ -702,8 +703,16 @@ export const WithTitleAndActions: Story = {
 
     const DataItems = filteredContent.flatMap((data) => data.items);
 
-    const ContentCard = {
-      leftSideActions: [
+    const ContentCard = (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          width: "100%",
+        }}
+      >
         <div
           style={{
             display: "flex",
@@ -727,17 +736,33 @@ export const WithTitleAndActions: Story = {
             }
           />
           <span>Select all ({value.checked.length})</span>
-        </div>,
-      ],
-      rightSideActions: [
-        <Button>Cancel</Button>,
-        <Button variant="primary">Import</Button>,
-      ],
-    };
+        </div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            gap: "4px",
+          }}
+        >
+          <Button>Cancel</Button>
+          <Button variant="primary">Import</Button>
+        </div>
+      </div>
+    );
 
     return (
       <Card
         title="Systatum Corps Food."
+        headerActions={[
+          {
+            title: "Edit fields",
+            disabled: value.checked.length === 0,
+            icon: RiDeleteBin2Line,
+            onClick: () => {
+              console.log(`Delete ${value.checked.length} clicked`);
+            },
+          },
+        ]}
         containerStyle={css`
           padding-left: 10px;
           padding-right: 10px;
@@ -751,8 +776,7 @@ export const WithTitleAndActions: Story = {
           padding-left: 20px;
           padding-right: 20px;
         `}
-        leftSideActions={ContentCard.leftSideActions}
-        rightSideActions={ContentCard.rightSideActions}
+        footerContent={ContentCard}
       >
         <List
           searchable
