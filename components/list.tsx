@@ -291,30 +291,27 @@ function ListGroup({
           });
 
           return (
-            isOpen && (
-              <ListGroupContent
-                key={`list-group-content-${index}`}
-                initial="collapsed"
-                animate="open"
-                exit="collapsed"
-                variants={{
-                  open: { opacity: 1, height: "auto" },
-                  collapsed: { opacity: 0, height: 0 },
-                }}
-                transition={{ duration: 0.2, ease: "easeInOut" }}
-                $contentStyle={contentStyle}
-              >
-                {modifiedChild}
-              </ListGroupContent>
-            )
+            <ListGroupContent
+              key={`list-group-content-${index}`}
+              initial="open"
+              animate={isOpen ? "open" : "collapsed"}
+              exit="collapsed"
+              variants={{
+                open: { opacity: 1, height: "auto" },
+                collapsed: { opacity: 0, height: 0 },
+              }}
+              transition={{ duration: 0.2, ease: "easeInOut" }}
+            >
+              {modifiedChild}
+            </ListGroupContent>
           );
         })}
 
         {childArray.length === 0 && (
           <EmptyContent
             key="drop-here"
-            initial="collapsed"
-            animate="open"
+            initial="open"
+            animate={isOpen ? "open" : "collapsed"}
             exit="collapsed"
             variants={{
               open: { opacity: 1, height: "auto" },
@@ -558,11 +555,11 @@ function ListItem({
       </ListItemRow>
 
       <AnimatePresence>
-        {isOpen && children && (
+        {children && openable && (
           <ListGroupContent
             key={`list-group-content-${index}`}
-            initial="collapsed"
-            animate="open"
+            initial="open"
+            animate={isOpen ? "open" : "collapsed"}
             exit="collapsed"
             variants={{
               open: { opacity: 1, height: "auto" },
