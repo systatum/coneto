@@ -431,13 +431,13 @@ function ListItem({
 }) {
   const { setDragItem, dragItem } = useContext(DnDContext);
   const [isOver, setIsOver] = useState(false);
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const [dropPosition, setDropPosition] = useState<"top" | "bottom" | null>(
     null
   );
 
   return (
-    <ListItemWrapper $style={containerStyle}>
+    <ListItemWrapper $openable={openable && isOpen} $style={containerStyle}>
       <ListItemRow
         $style={rowStyle}
         onClick={() => {
@@ -555,17 +555,17 @@ function ListItem({
       </ListItemRow>
 
       <AnimatePresence>
-        {children && openable && (
+        {openable && (
           <ListGroupContent
             key={`list-group-content-${index}`}
-            initial="open"
+            initial="collapsed"
             animate={isOpen ? "open" : "collapsed"}
             exit="collapsed"
             variants={{
-              open: { opacity: 1, height: "auto" },
-              collapsed: { opacity: 0, height: 0 },
+              open: { opacity: 1, height: "auto", display: "flex" },
+              collapsed: { opacity: 0, height: 0, display: "none" },
             }}
-            transition={{ duration: 0.2, ease: "easeInOut" }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
           >
             {children}
           </ListGroupContent>
@@ -577,12 +577,18 @@ function ListItem({
 
 const ListItemWrapper = styled.div<{
   $style?: CSSProp;
+  $openable?: boolean;
 }>`
   display: flex;
   flex-direction: column;
   position: relative;
   gap: 4px;
   transition: background-color 300ms;
+  ${({ $openable }) =>
+    $openable &&
+    css`
+      background-color: #dbeafe;
+    `}
 
   ${({ $style }) => $style}
 `;
