@@ -62,7 +62,6 @@ function Togglebox({
           />
           <ToggleBackground checked={checked} />
           <ToggleButton
-            layout
             transition={{ type: "spring", stiffness: 700, damping: 30 }}
             animate={{
               x: checked ? 25 : 0,
