@@ -7,6 +7,7 @@ export interface CapsuleTabProps {
   activeTab?: string;
   style?: CSSProp;
   tabStyle?: CSSProp;
+  activeBackgroundColor?: string;
 }
 
 export interface CapsuleTabContentProps {
@@ -20,6 +21,7 @@ function CapsuleTab({
   style,
   activeTab = "1",
   tabStyle,
+  activeBackgroundColor = "black",
 }: CapsuleTabProps) {
   const [selected, setSelected] = useState<string>(activeTab);
 
@@ -36,7 +38,7 @@ function CapsuleTab({
         tabs={tabs}
         onTabChange={setSelected}
         activeTab={selected}
-        activeBackgroundColor="black"
+        activeBackgroundColor={activeBackgroundColor}
         full
       />
 
