@@ -1083,7 +1083,7 @@ export const CustomOpener: Story = {
                 {group.items.map((list, i) => (
                   <List.Item
                     key={i}
-                    openable
+                    openable={list.openable}
                     id={list.id}
                     iconUrl={list.iconUrl}
                     subtitle={list.subtitle}
