@@ -772,7 +772,6 @@ export const WithCheckbox: Story = {
                 id={group.id}
                 subtitle={group.subtitle}
                 title={group.title}
-                openerStyle="togglebox"
               >
                 {group.items.map((list, i) => (
                   <List.Item
