@@ -13,6 +13,8 @@ export interface ToggleboxProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   description?: string;
   containerStyle?: CSSProp;
+  descriptionStyle?: CSSProp;
+  errorStyle?: CSSProp;
   labelStyle?: CSSProp;
   showError?: boolean;
   errorMessage?: string;
@@ -27,24 +29,17 @@ function Togglebox({
   label,
   description,
   containerStyle,
-  labelStyle,
+  style,
   showError,
+  errorStyle,
   errorMessage,
+  descriptionStyle,
+  labelStyle,
   ...props
 }: ToggleboxProps) {
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "2px",
-        height: "fit-content",
-      }}
-    >
-      <ToggleboxWrapper
-        $containerStyle={containerStyle}
-        $description={description}
-      >
+    <ToggleboxContainer $style={containerStyle}>
+      <ToggleboxWrapper>
         <StyledLabel
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -96,37 +91,36 @@ function Togglebox({
           </ToggleButton>
         </StyledLabel>
 
-        {(label || description) && (
-          <TextGroup>
-            {label && <Label $labelStyle={labelStyle}>{label}</Label>}
-            {description && <Description>{description}</Description>}
-          </TextGroup>
-        )}
+        {label && <Label $style={labelStyle}>{label}</Label>}
       </ToggleboxWrapper>
-      {showError && <ErrorText>{errorMessage}</ErrorText>}
-    </div>
+      {description && (
+        <Description $style={descriptionStyle}>{description}</Description>
+      )}
+      {showError && (
+        <ErrorText $style={descriptionStyle}>{errorMessage}</ErrorText>
+      )}
+    </ToggleboxContainer>
   );
 }
 
-const ToggleboxWrapper = styled.div<{
-  $containerStyle?: CSSProp;
-  $description?: string;
-}>`
+const ToggleboxContainer = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  font-size: 14px;
+
+  ${({ $style }) => $style}
+`;
+
+const ToggleboxWrapper = styled.div`
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
   position: relative;
   font-size: 0.75rem;
-  ${({ $description }) =>
-    !$description
-      ? css`
-          align-items: center;
-        `
-      : css`
-          align-items: flex-start;
-        `};
-
-  ${({ $containerStyle }) => $containerStyle}
+  width: 100%;
+  align-items: center;
 `;
 
 const StyledLabel = styled(motion.label)`
@@ -165,21 +159,24 @@ const ToggleButton = styled(motion.div)`
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 `;
 
-const TextGroup = styled.div`
-  display: flex;
-  flex-direction: column;
+const Label = styled.span<{ $style?: CSSProp }>`
+  width: 100%;
+
+  ${({ $style }) => $style}
 `;
 
-const ErrorText = styled.span`
+const Description = styled.span<{ $style?: CSSProp }>`
+  margin-left: 50px;
+  font-size: 12px;
+  width: 100%;
+  ${({ $style }) => $style}
+`;
+
+const ErrorText = styled.span<{ $style?: CSSProp }>`
   margin-top: 4px;
   font-size: 12px;
   color: #dc2626;
+  ${({ $style }) => $style}
 `;
-
-const Label = styled.span<{ $labelStyle?: CSSProp }>`
-  ${({ $labelStyle }) => $labelStyle}
-`;
-
-const Description = styled.span``;
 
 export { Togglebox };

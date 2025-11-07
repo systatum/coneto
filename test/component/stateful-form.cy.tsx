@@ -1,9 +1,16 @@
 import z from "zod";
-import { FormFieldGroup, StatefulForm } from "./../../components/stateful-form";
+import {
+  FormFieldGroup,
+  FormFieldProps,
+  StatefulForm,
+} from "./../../components/stateful-form";
 import { COUNTRY_CODES } from "./../../constants/countries";
 import { Boxbar } from "./../../components/boxbar";
-import { Badge } from "./../../components/badge";
+import { Badge, BadgeProps } from "./../../components/badge";
 import { css } from "styled-components";
+import { CountryCodeProps } from "./../../components/phonebox";
+import { OptionsProps } from "./../../components/selectbox";
+import { CapsuleContentProps } from "./../../components/capsule";
 
 describe("StatefulForm", () => {
   context("when array of array", () => {
@@ -470,6 +477,372 @@ describe("StatefulForm", () => {
       );
 
       cy.findAllByLabelText("stateful-form-row").should("have.length", 2);
+    });
+  });
+
+  context("with width", () => {
+    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
+      (data) => data.id === "US" || COUNTRY_CODES[206]
+    );
+
+    if (!DEFAULT_COUNTRY_CODES) {
+      throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
+    }
+
+    const FRUIT_OPTIONS: OptionsProps[] = [
+      { text: "Apple", value: "1" },
+      { text: "Banana", value: "2" },
+      { text: "Orange", value: "3" },
+      { text: "Grape", value: "4" },
+      { text: "Pineapple", value: "5" },
+      { text: "Strawberry", value: "6" },
+      { text: "Watermelon", value: "7" },
+    ];
+
+    const valueAll = {
+      text: "",
+      email: "",
+      number: "",
+      password: "",
+      textarea: "",
+      rating: "",
+      check: false,
+      chips: {
+        searchText: "",
+        selectedOptions: [],
+      },
+      color: "",
+      combo: [""],
+      date: [""],
+      file_drop_box: [] as File[],
+      file: undefined,
+      image: undefined,
+      money: "",
+      phone: "",
+      thumb_field: false,
+      togglebox: false,
+      signature: "",
+      capsule: "",
+      country_code: DEFAULT_COUNTRY_CODES,
+    };
+
+    const schema = z.object({
+      text: z.string().min(3, "Text must be at least 3 characters"),
+      email: z.string().email("Please enter a valid email address"),
+      number: z.string().refine((val) => val === "" || !isNaN(Number(val)), {
+        message: "Number must be numeric",
+      }),
+      password: z.string().min(6, "Password must be at least 6 characters"),
+      textarea: z.string().min(10, "Text must be at least 10 characters"),
+      check: z.boolean(),
+      chips: z.object({
+        searchText: z.string().optional(),
+      }),
+      color: z.string().optional(),
+      combo: z
+        .array(z.string().min(1, "Choose one"))
+        .min(1, "Combo must have at least one item")
+        .optional(),
+      date: z.array(
+        z
+          .string()
+          .nonempty("Choose your date")
+          .refine(
+            (val) =>
+              /^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/\d{4}$/.test(val),
+            {
+              message: "Invalid date",
+            }
+          )
+      ),
+      file_drop_box: z.any().optional(),
+      file: z
+        .any()
+        .refine(
+          (file) => {
+            return file?.type === "image/jpeg";
+          },
+          {
+            message: "Only JPEG file are allowed",
+          }
+        )
+        .refine((file) => file?.size <= 5 * 1024 * 1024, {
+          message: "File size must be 5MB or less",
+        }),
+      image: z
+        .any()
+        .refine(
+          (file) => {
+            return file?.type === "image/jpeg";
+          },
+          {
+            message: "Only JPEG file are allowed",
+          }
+        )
+        .refine((file) => file?.size <= 5 * 1024 * 1024, {
+          message: "File size must be 5MB or less",
+        }),
+      money: z.string().optional(),
+      signature: z.string().min(1, "Signature is required"),
+      phone: z.string().min(8, "Phone number must be 8 digits").optional(),
+      rating: z.string().optional(),
+      thumb_field: z.boolean(),
+      togglebox: z.boolean(),
+      capsule: z.string().max(4, "Paid is required"),
+      country_code: z
+        .object({
+          id: z.string(),
+          name: z.string(),
+          flag: z.string(),
+          code: z.string(),
+        })
+        .optional(),
+    });
+
+    const BADGE_OPTIONS: BadgeProps[] = [
+      {
+        id: "1",
+        caption: "Anime",
+      },
+      {
+        id: "2",
+        caption: "Manga",
+      },
+    ];
+
+    const CAPSULE_TABS: CapsuleContentProps[] = [
+      {
+        id: "paid",
+        title: "Paid",
+      },
+      {
+        id: "unpaid",
+        title: "Unpaid",
+      },
+    ];
+
+    const ALL_INPUT: FormFieldGroup[] = [
+      [
+        {
+          name: "text",
+          title: "Text",
+          type: "text",
+          required: true,
+          placeholder: "Enter text",
+          width: "50%",
+        },
+        {
+          name: "email",
+          title: "Email",
+          type: "email",
+          required: false,
+          placeholder: "Enter email address",
+          width: "50%",
+        },
+      ],
+      {
+        name: "number",
+        title: "Number",
+        type: "number",
+        required: false,
+        placeholder: "Enter number",
+        width: "50%",
+      },
+      {
+        name: "password",
+        title: "Password",
+        type: "password",
+        required: false,
+        placeholder: "Enter password",
+        width: "50%",
+      },
+      {
+        name: "textarea",
+        title: "Textarea",
+        type: "textarea",
+        rows: 3,
+        required: false,
+        placeholder: "Enter text here",
+        width: "50%",
+      },
+      {
+        name: "check",
+        title: "Check",
+        type: "checkbox",
+        required: false,
+        width: "50%",
+      },
+      {
+        name: "color",
+        title: "Color",
+        type: "color",
+        required: false,
+        placeholder: "Enter the color here",
+        width: "50%",
+      },
+      {
+        name: "combo",
+        title: "Combo",
+        type: "combo",
+        required: false,
+        placeholder: "Select a fruit...",
+        comboboxProps: {
+          options: FRUIT_OPTIONS,
+        },
+        width: "50%",
+      },
+      {
+        name: "date",
+        title: "Date",
+        type: "date",
+        required: false,
+        placeholder: "Select a date",
+        width: "50%",
+      },
+      {
+        name: "file_drop_box",
+        title: "File Drop Box",
+        type: "file_drop_box",
+        required: false,
+        width: "50%",
+      },
+      {
+        name: "file",
+        title: "File",
+        type: "file",
+        required: false,
+        fileInputBoxProps: {
+          accept: "image/jpeg",
+        },
+        width: "50%",
+      },
+      {
+        name: "image",
+        title: "Image",
+        type: "image",
+        required: false,
+        width: "50%",
+      },
+      {
+        name: "money",
+        title: "Money",
+        type: "money",
+        required: false,
+        placeholder: "Enter amount",
+        moneyProps: {
+          separator: "dot",
+        },
+        width: "50%",
+      },
+      {
+        name: "phone",
+        title: "Phone",
+        type: "phone",
+        required: false,
+        placeholder: "Enter phone number",
+        width: "50%",
+      },
+      {
+        name: "country_code",
+        title: "Country Code",
+        type: "country_code",
+        required: false,
+        placeholder: "Enter country code",
+        width: "50%",
+      },
+      {
+        name: "signature",
+        title: "Signature",
+        type: "signbox",
+        required: false,
+        width: "50%",
+      },
+      {
+        name: "rating",
+        title: "Rating",
+        type: "rating",
+        required: false,
+        width: "50%",
+      },
+      {
+        name: "thumb_field",
+        title: "Thumb Field",
+        type: "thumbfield",
+        required: false,
+        width: "50%",
+      },
+      {
+        name: "togglebox",
+        title: "Togglebox",
+        type: "toggle",
+        required: false,
+        width: "50%",
+      },
+      {
+        name: "chips",
+        title: "Chips",
+        type: "chips",
+        required: false,
+        width: "50%",
+        chipsProps: {
+          options: BADGE_OPTIONS,
+          chipStyle: css`
+            width: 100%;
+            gap: 0.5rem;
+            border-color: transparent;
+          `,
+          chipContainerStyle: css`
+            gap: 4px;
+          `,
+          chipsDrawerStyle: css`
+            min-width: 250px;
+          `,
+          selectedOptions: valueAll.chips.selectedOptions,
+          inputValue: valueAll.chips.searchText,
+        },
+      },
+      {
+        name: "capsule",
+        title: "Monetary Value",
+        type: "capsule",
+        required: false,
+        width: "50%",
+        capsuleProps: {
+          activeTab: valueAll.capsule,
+          tabs: CAPSULE_TABS,
+        },
+      },
+    ];
+
+    context("when given all input elements", () => {
+      it("should render input elements with sizing", () => {
+        cy.mount(
+          <StatefulForm
+            fields={ALL_INPUT}
+            formValues={valueAll}
+            validationSchema={schema}
+            mode="onChange"
+          />
+        );
+
+        const flattenFields = (groups: FormFieldGroup[]): FormFieldProps[] =>
+          groups.flatMap((group) =>
+            Array.isArray(group) ? flattenFields(group) : [group]
+          );
+
+        const allFields = flattenFields(ALL_INPUT);
+
+        allFields.forEach((prop) => {
+          if (prop.name === "country_code") return;
+          cy.findByText(prop.title)
+            .parent()
+            .then(($el) => {
+              const elWidth = $el.width();
+
+              expect(elWidth).to.be.closeTo(222.5, 5);
+            });
+        });
+      });
     });
   });
 });

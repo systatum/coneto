@@ -41,6 +41,7 @@ export const Default: Story = {
     }
 
     const [value, setValue] = useState({
+      salutation: ["1"],
       first_name: "",
       last_name: "",
       email: "",
@@ -50,15 +51,28 @@ export const Default: Story = {
       country_code: DEFAULT_COUNTRY_CODES,
     });
 
+    const SALUTATION_OPTIONS: OptionsProps[] = [
+      { text: "Mr.", value: "1" },
+      { text: "Mrs.", value: "2" },
+      { text: "Ms.", value: "3" },
+    ];
+
     const [isFormValid, setIsFormValid] = useState(false);
 
     const employeeSchema = z.object({
+      salutation: z
+        .array(z.string().min(1, "Choose one"))
+        .min(1, "Combo must have at least one item")
+        .refine(
+          (arr) =>
+            arr.every((val) =>
+              SALUTATION_OPTIONS.some((opt) => opt.value === val)
+            ),
+          "Invalid value in combo"
+        ),
       first_name: z
         .string()
         .min(3, "First name must be at least 3 characters long"),
-      middle_name: z
-        .string()
-        .min(3, "Middle name must be at least 3 characters long"),
       last_name: z.string().optional(),
       email: z.string().email("Please enter a valid email address"),
       phone: z
@@ -74,19 +88,31 @@ export const Default: Story = {
     const EMPLOYEE_FIELDS: FormFieldGroup[] = [
       [
         {
+          name: "salutation",
+          title: "Salutation",
+          type: "combo",
+          required: true,
+          placeholder: "Select your salutation",
+          width: "40%",
+          comboboxProps: {
+            options: SALUTATION_OPTIONS,
+            strict: true,
+            selectboxStyle: css`
+              border: 1px solid #d1d5db;
+              max-height: 34px;
+              &:focus {
+                border-color: #61a9f9;
+                box-shadow: 0 0 0 1px #61a9f9;
+              }
+            `,
+          },
+        },
+        {
           name: "first_name",
           title: "First Name",
           type: "text",
           required: true,
           placeholder: "Enter first name",
-        },
-        {
-          name: "middle_name",
-          title: "Middle Name",
-          type: "text",
-          required: true,
-          placeholder: "Enter last name",
-          hidden: true,
         },
         {
           name: "last_name",

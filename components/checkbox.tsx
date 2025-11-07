@@ -152,6 +152,8 @@ const Label = styled.label<{
     background-color: ${({ $highlight }) =>
       $highlight ? "rgb(231,242,252)" : "white"};
   }
+
+  ${({ $style }) => $style}
 `;
 
 const CheckboxBox = styled.div<{ $highlight: boolean; $style?: CSSProp }>`
