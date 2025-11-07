@@ -13,6 +13,7 @@ import {
   RiArrowUpSLine,
   RiArrowDownSLine,
   RiRefreshLine,
+  RiAddBoxLine,
 } from "@remixicon/react";
 import { Toolbar } from "./toolbar";
 import { Searchbox } from "./searchbox";
@@ -21,7 +22,12 @@ import { Checkbox } from "./checkbox";
 import { Button } from "./button";
 import { List, ListItemProps } from "./list";
 import { css } from "styled-components";
-import { ColumnTableProps, SubMenuListTableProps, Table } from "./table";
+import {
+  ColumnTableProps,
+  SubMenuListTableProps,
+  Table,
+  TableActionsProps,
+} from "./table";
 
 const meta: Meta<typeof Card> = {
   title: "Content/Card",
@@ -1032,6 +1038,15 @@ export const WithFullWidthContent: Story = {
           padding-right: 15px;
           border-bottom: 1px solid #d1d5db;
         `}
+        headerActions={[
+          {
+            title: "Add",
+            icon: RiAddBoxLine,
+            onClick: () => {
+              console.log(`Add button was clicked`);
+            },
+          },
+        ]}
       >
         <Table
           selectable
