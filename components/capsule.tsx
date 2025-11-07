@@ -236,7 +236,6 @@ const CapsuleWrapper = styled.div<{
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
   overflow: hidden;
   padding-left: 0.25rem;
   padding-right: 0.25rem;
