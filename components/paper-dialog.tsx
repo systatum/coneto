@@ -24,6 +24,7 @@ type DialogState = "restored" | "closed" | "minimized";
 export interface PaperDialogProps {
   style?: CSSProp;
   tabStyle?: CSSProp;
+  tabCloseStyle?: CSSProp;
   paperDialogStyle?: CSSProp;
   position?: "left" | "right";
   children: ReactNode;
@@ -64,6 +65,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
       paperDialogStyle,
       position = "right",
       tabStyle,
+      tabCloseStyle,
       children,
       closable,
       width,
@@ -139,7 +141,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                 <CloseButtonWrapper
                   $width={width}
                   $isLeft={isLeft}
-                  $tabStyle={tabStyle}
+                  $tabStyle={tabCloseStyle}
                 >
                   <IconButton
                     $isLeft={isLeft}
@@ -263,6 +265,7 @@ const CloseButtonWrapper = styled.div<{
   display: flex;
   flex-direction: column;
   height: fit-content;
+
   ${({ $isLeft, $width }) =>
     $isLeft
       ? css`
