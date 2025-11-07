@@ -1054,7 +1054,8 @@ describe("List", () => {
                 cy.findByText(String(list.children)).should("be.visible");
                 cy.findAllByLabelText("list-item-wrapper")
                   .eq(5)
-                  .should("have.css", "background-color", "rgb(219, 234, 254)");
+                  .should("have.css", "background-color", "rgb(219, 234, 254)")
+                  .and("have.css", "border-radius", "6px");
               } else {
                 cy.findByText(String(list.children)).should("not.exist");
                 cy.findAllByLabelText("list-item-wrapper")
