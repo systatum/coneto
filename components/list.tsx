@@ -561,7 +561,7 @@ function ListItem({
       </ListItemRow>
 
       <AnimatePresence>
-        {openable && (
+        {openable && children && (
           <ListGroupContent
             key={`list-group-content-${index}`}
             initial="collapsed"
