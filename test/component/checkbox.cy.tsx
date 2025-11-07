@@ -26,4 +26,39 @@ describe("Checkbox", () => {
       );
     });
   });
+
+  context("when disabled", () => {
+    it("render the checkbox with not-allowed", () => {
+      cy.mount(<Checkbox disabled label="This is checkbox with title" />);
+      cy.findByRole("checkbox")
+        .should("have.css", "cursor", "not-allowed")
+        .and("have.css", "user-select", "none");
+      cy.findByText("This is checkbox with title")
+        .should("have.css", "cursor", "not-allowed")
+        .and("have.css", "user-select", "none");
+    });
+    context("when clicking", () => {
+      it("should not render the console", () => {
+        cy.mount(
+          <Checkbox
+            disabled
+            label="This is checkbox with title"
+            onChange={() => {
+              console.log("Test the console");
+            }}
+          />
+        );
+        cy.window().then((win) => {
+          cy.spy(win.console, "log").as("consoleLog");
+        });
+
+        cy.findByText("This is checkbox with title").click();
+
+        cy.get("@consoleLog").should(
+          "not.have.been.calledWith",
+          "Test the console"
+        );
+      });
+    });
+  });
 });

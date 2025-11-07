@@ -57,7 +57,7 @@ function Checkbox({
 
   return (
     <Label
-      htmlFor={inputId}
+      htmlFor={props.disabled ? null : inputId}
       $hasDescription={!!description}
       $highlight={!!highlightOnChecked}
       $checked={isChecked}
@@ -68,6 +68,7 @@ function Checkbox({
         <CheckboxBox $style={wrapperStyle} $highlight={!!highlightOnChecked}>
           <HiddenCheckbox
             ref={inputRef}
+            {...(props as InputHTMLAttributes<HTMLInputElement>)}
             type="checkbox"
             name={name}
             id={inputId}
@@ -78,8 +79,8 @@ function Checkbox({
             $checked={isChecked}
             $style={inputStyle}
             $disabled={props.disabled}
+            disabled={props.disabled}
             readOnly
-            {...(props as InputHTMLAttributes<HTMLInputElement>)}
           />
           <Icon
             viewBox="0 0 24 24"
@@ -142,6 +143,7 @@ const Label = styled.label<{
     css`
       cursor: not-allowed;
       opacity: 0.6;
+      user-select: none;
     `}
 
   ${({ $style }) => $style};
