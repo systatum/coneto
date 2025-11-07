@@ -51,6 +51,7 @@ export interface PhoneboxProps {
   errorMessage?: string;
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
   countryCodeValue?: CountryCodeProps;
+  containerStyle?: CSSProp;
 }
 
 const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
@@ -67,6 +68,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
       onKeyDown,
       countryCodeValue,
       labelStyle,
+      containerStyle,
     },
     ref
   ) => {
@@ -206,14 +208,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
     };
 
     return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "4px",
-          width: "100%",
-        }}
-      >
+      <ContainerPhonebox $style={containerStyle}>
         {label && (
           <Label $style={labelStyle} htmlFor={label}>
             {label}
@@ -343,7 +338,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
         )}
 
         {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
-      </div>
+      </ContainerPhonebox>
     );
   }
 );
@@ -370,6 +365,15 @@ const InputWrapper = styled.div<{
   &:focus-within {
     border-color: ${({ $hasError }) => ($hasError ? "#ef4444" : "#61A9F9")};
   }
+
+  ${({ $style }) => $style}
+`;
+
+const ContainerPhonebox = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
 
   ${({ $style }) => $style}
 `;

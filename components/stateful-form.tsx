@@ -74,6 +74,7 @@ export interface FormFieldProps {
   render?: ReactNode;
   hidden?: boolean;
   rows?: number;
+  width?: string;
   onChange?: (e?: StatefulOnChangeType) => void;
   textboxProps?: TextboxProps;
   textareaProps?: TextareaProps;
@@ -333,6 +334,12 @@ function FormFields<T extends FieldValues>({
                       font-size: ${fieldSize};
                     `
                   }
+                  containerStyle={
+                    field.width &&
+                    css`
+                      width: ${field.width};
+                    `
+                  }
                   errorMessage={
                     errors[field.name as keyof T]?.message as string | undefined
                   }
@@ -368,12 +375,18 @@ function FormFields<T extends FieldValues>({
                       font-size: ${labelSize};
                     `
                   }
-                  style={
-                    fieldSize &&
+                  style={css`
+                    ${fieldSize &&
                     css`
                       font-size: ${fieldSize};
-                    `
-                  }
+                    `}
+                  `}
+                  containerStyle={css`
+                    ${field.width &&
+                    css`
+                      width: ${field.width};
+                    `}
+                  `}
                   errorMessage={
                     errors[field.name as keyof T]?.message as string | undefined
                   }
@@ -418,6 +431,12 @@ function FormFields<T extends FieldValues>({
                         css`
                           width: ${fieldSize}-2;
                           height: ${fieldSize}-2;
+                        `
+                      }
+                      containerStyle={
+                        field.width &&
+                        css`
+                          width: ${field.width};
                         `
                       }
                       wrapperStyle={
@@ -481,10 +500,16 @@ function FormFields<T extends FieldValues>({
                           font-size: ${labelSize};
                         `
                       }
-                      style={
-                        fieldSize &&
+                      style={css`
+                        ${fieldSize &&
                         css`
                           font-size: ${fieldSize};
+                        `}
+                      `}
+                      containerStyle={
+                        field.width &&
+                        css`
+                          width: ${field.width};
                         `
                       }
                       showError={!!errors["phone"]}
@@ -520,6 +545,12 @@ function FormFields<T extends FieldValues>({
                           font-size: ${fieldSize};
                         `
                       }
+                      containerStyle={
+                        field.width &&
+                        css`
+                          width: ${field.width};
+                        `
+                      }
                       value={controllerField.value}
                       onChange={(e) => {
                         controllerField?.onChange(e);
@@ -546,6 +577,12 @@ function FormFields<T extends FieldValues>({
                       font-size: ${labelSize};
                     `
                   }
+                  containerStyle={css`
+                    ${field.width &&
+                    css`
+                      width: ${field.width};
+                    `}
+                  `}
                   {...register(field.name as Path<T>, {
                     onChange: (e) => {
                       if (field.onChange) {
@@ -569,6 +606,12 @@ function FormFields<T extends FieldValues>({
                       font-size: ${labelSize};
                     `
                   }
+                  containerStyle={css`
+                    ${field.width &&
+                    css`
+                      width: ${field.width};
+                    `}
+                  `}
                   showError={shouldShowError(field.name)}
                   errorMessage={
                     errors[field.name as keyof T]?.message as string | undefined
@@ -604,6 +647,12 @@ function FormFields<T extends FieldValues>({
                 <Imagebox
                   key={index}
                   name={field.name}
+                  containerStyle={css`
+                    ${field.width &&
+                    css`
+                      width: ${field.width};
+                    `}
+                  `}
                   onFileSelected={(e: File | undefined) => {
                     const file = e;
                     if (file instanceof File) {
@@ -660,6 +709,12 @@ function FormFields<T extends FieldValues>({
                       font-size: ${labelSize};
                     `
                   }
+                  containerStyle={css`
+                    ${field.width &&
+                    css`
+                      width: ${field.width};
+                    `}
+                  `}
                   required={field.required}
                   value={formValues[field.name as keyof T] ?? ""}
                   {...register(field.name as Path<T>, {
@@ -700,6 +755,12 @@ function FormFields<T extends FieldValues>({
                       font-size: ${fieldSize};
                     `
                   }
+                  containerStyle={css`
+                    ${field.width &&
+                    css`
+                      width: ${field.width};
+                    `}
+                  `}
                   value={formValues[field.name as keyof T] ?? ""}
                   required={field.required}
                   {...register(field.name as Path<T>, {
@@ -739,6 +800,12 @@ function FormFields<T extends FieldValues>({
                           font-size: ${labelSize};
                         `
                       }
+                      containerStyle={css`
+                        ${field.width &&
+                        css`
+                          width: ${field.width};
+                        `}
+                      `}
                       selectboxStyle={
                         fieldSize &&
                         css`
@@ -798,6 +865,12 @@ function FormFields<T extends FieldValues>({
                           | string
                           | undefined
                       }
+                      containerStyle={css`
+                        ${field.width &&
+                        css`
+                          width: ${field.width};
+                        `}
+                      `}
                       setSelectedOptions={(e) => {
                         const inputValueEvent = {
                           target: { name: field.name, value: e },
@@ -841,6 +914,12 @@ function FormFields<T extends FieldValues>({
                         controllerField?.onBlur();
                         field.onChange?.(e);
                       }}
+                      containerStyle={css`
+                        ${field.width &&
+                        css`
+                          width: ${field.width};
+                        `}
+                      `}
                       {...field.chipsProps}
                     />
                   )}
@@ -869,12 +948,16 @@ function FormFields<T extends FieldValues>({
                           font-size: ${labelSize};
                         `
                       }
-                      containerStyle={
-                        fieldSize &&
+                      containerStyle={css`
+                        ${fieldSize &&
                         css`
                           font-size: ${fieldSize};
-                        `
-                      }
+                        `}
+                        ${field.width &&
+                        css`
+                          width: ${field.width};
+                        `}
+                      `}
                       showError={!!fieldState.error}
                       errorMessage={fieldState.error?.message}
                       {...field.ratingProps}
@@ -899,6 +982,12 @@ function FormFields<T extends FieldValues>({
                         fieldSize &&
                         css`
                           font-size: ${fieldSize};
+                        `
+                      }
+                      containerStyle={
+                        field.width &&
+                        css`
+                          width: ${field.width};
                         `
                       }
                       value={controllerField.value ?? false}
@@ -944,6 +1033,12 @@ function FormFields<T extends FieldValues>({
                         labelSize &&
                         css`
                           font-size: ${labelSize};
+                        `
+                      }
+                      containerStyle={
+                        field.width &&
+                        css`
+                          width: ${field.width};
                         `
                       }
                       checked={controllerField.value ?? false}
@@ -993,6 +1088,12 @@ function FormFields<T extends FieldValues>({
                           onChange(field.name as keyof T, e);
                         }
                       }}
+                      containerStyle={
+                        field.width &&
+                        css`
+                          width: ${field.width};
+                        `
+                      }
                       showError={shouldShowError(field.name)}
                       errorMessage={
                         errors[field.name as keyof T]?.message as

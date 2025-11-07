@@ -49,6 +49,7 @@ interface BaseChipsProps {
   chipStyle?: CSSProp;
   labelStyle?: CSSProp;
   chipsDrawerStyle?: CSSProp;
+  containerStyle?: CSSProp;
   filterPlaceholder?: string;
   missingOptionLabel?: string;
   creatable?: boolean;
@@ -171,7 +172,7 @@ function Chips(props: ChipsProps) {
   );
 
   return (
-    <InputWrapper>
+    <InputWrapper $style={props.containerStyle}>
       {props.label && <Label $style={props.labelStyle}>{props.label}</Label>}
       <InputContent>
         {inputElement}
@@ -194,13 +195,15 @@ const InputGroup = styled.div<{
   ${({ $containerStyle }) => $containerStyle}
 `;
 
-const InputWrapper = styled.div`
+const InputWrapper = styled.div<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   font-size: 0.75rem;
   width: 100%;
   position: relative;
+
+  ${({ $style }) => $style}
 `;
 
 const InputContent = styled.div`
