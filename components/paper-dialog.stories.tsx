@@ -2,9 +2,19 @@ import { Meta, StoryObj } from "@storybook/react";
 import { PaperDialog, PaperDialogRef } from "./paper-dialog";
 import { Button } from "./button";
 import { StatefulForm, FormFieldProps } from "./stateful-form";
-import { ChangeEvent, useRef, useState } from "react";
+import { Fragment, useMemo, useRef, useState } from "react";
 import { z } from "zod";
 import { COUNTRY_CODES } from "./../constants/countries";
+import { css } from "styled-components";
+import { Card } from "./card";
+import { ColumnTableProps, SubMenuListTableProps, Table } from "./table";
+import {
+  RiAddBoxLine,
+  RiArrowDownSLine,
+  RiArrowUpSLine,
+  RiEdit2Line,
+  RiRefreshLine,
+} from "@remixicon/react";
 
 const meta: Meta<typeof PaperDialog> = {
   title: "Stage/PaperDialog",
@@ -56,49 +66,30 @@ export const Default: Story = {
       access: z.boolean().optional(),
     });
 
-    const onChangeForm = (
-      e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
-      const target = e.target;
-      const { name, value } = target;
-
-      let updatedValue: string | boolean | number = value;
-
-      if (target instanceof HTMLInputElement && target.type === "checkbox") {
-        updatedValue = target.checked;
-      }
-
-      setValue((prev) => ({ ...prev, [name]: updatedValue }));
-    };
-
     const EMPLOYEE_FIELDS: FormFieldProps[] = [
       {
         name: "first_name",
         title: "First Name",
         type: "text",
         required: true,
-        onChange: onChangeForm,
       },
       {
         name: "last_name",
         title: "Last Name",
         type: "text",
         required: false,
-        onChange: onChangeForm,
       },
       {
         name: "email",
         title: "Email",
         type: "email",
         required: true,
-        onChange: onChangeForm,
       },
       {
         name: "phone",
         title: "Phone Number",
         type: "phone",
         required: false,
-        onChange: onChangeForm,
       },
       {
         name: "note",
@@ -106,14 +97,12 @@ export const Default: Story = {
         type: "textarea",
         rows: 3,
         required: false,
-        onChange: onChangeForm,
       },
       {
         name: "access",
         title: "Has access to login",
         type: "checkbox",
         required: false,
-        onChange: onChangeForm,
       },
     ];
 
@@ -162,6 +151,9 @@ export const Default: Story = {
                 formValues={value}
                 validationSchema={employeeSchema}
                 onValidityChange={setIsFormValid}
+                onChange={({ currentState }) =>
+                  setValue((prev) => ({ ...prev, ...currentState }))
+                }
                 mode="onChange"
               />
 
@@ -228,49 +220,30 @@ export const Closable: Story = {
       access: z.boolean().optional(),
     });
 
-    const onChangeForm = (
-      e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
-      const target = e.target;
-      const { name, value } = target;
-
-      let updatedValue: string | boolean | number = value;
-
-      if (target instanceof HTMLInputElement && target.type === "checkbox") {
-        updatedValue = target.checked;
-      }
-
-      setValue((prev) => ({ ...prev, [name]: updatedValue }));
-    };
-
     const EMPLOYEE_FIELDS: FormFieldProps[] = [
       {
         name: "first_name",
         title: "First Name",
         type: "text",
         required: true,
-        onChange: onChangeForm,
       },
       {
         name: "last_name",
         title: "Last Name",
         type: "text",
         required: false,
-        onChange: onChangeForm,
       },
       {
         name: "email",
         title: "Email",
         type: "email",
         required: true,
-        onChange: onChangeForm,
       },
       {
         name: "phone",
         title: "Phone Number",
         type: "phone",
         required: false,
-        onChange: onChangeForm,
       },
       {
         name: "note",
@@ -278,14 +251,12 @@ export const Closable: Story = {
         type: "textarea",
         rows: 3,
         required: false,
-        onChange: onChangeForm,
       },
       {
         name: "access",
         title: "Has access to login",
         type: "checkbox",
         required: false,
-        onChange: onChangeForm,
       },
     ];
 
@@ -320,6 +291,9 @@ export const Closable: Story = {
               formValues={value}
               validationSchema={employeeSchema}
               onValidityChange={setIsFormValid}
+              onChange={({ currentState }) =>
+                setValue((prev) => ({ ...prev, ...currentState }))
+              }
               mode="onChange"
             />
 
@@ -385,49 +359,30 @@ export const FixedLeft: Story = {
       access: z.boolean().optional(),
     });
 
-    const onChangeForm = (
-      e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
-      const target = e.target;
-      const { name, value } = target;
-
-      let updatedValue: string | boolean | number = value;
-
-      if (target instanceof HTMLInputElement && target.type === "checkbox") {
-        updatedValue = target.checked;
-      }
-
-      setValue((prev) => ({ ...prev, [name]: updatedValue }));
-    };
-
     const EMPLOYEE_FIELDS: FormFieldProps[] = [
       {
         name: "first_name",
         title: "First Name",
         type: "text",
         required: true,
-        onChange: onChangeForm,
       },
       {
         name: "last_name",
         title: "Last Name",
         type: "text",
         required: false,
-        onChange: onChangeForm,
       },
       {
         name: "email",
         title: "Email",
         type: "email",
         required: true,
-        onChange: onChangeForm,
       },
       {
         name: "phone",
         title: "Phone Number",
         type: "phone",
         required: false,
-        onChange: onChangeForm,
       },
       {
         name: "note",
@@ -435,14 +390,12 @@ export const FixedLeft: Story = {
         type: "textarea",
         rows: 3,
         required: false,
-        onChange: onChangeForm,
       },
       {
         name: "access",
         title: "Has access to login",
         type: "checkbox",
         required: false,
-        onChange: onChangeForm,
       },
     ];
 
@@ -477,6 +430,9 @@ export const FixedLeft: Story = {
               formValues={value}
               validationSchema={employeeSchema}
               onValidityChange={setIsFormValid}
+              onChange={({ currentState }) =>
+                setValue((prev) => ({ ...prev, ...currentState }))
+              }
               mode="onChange"
             />
 
@@ -503,6 +459,392 @@ export const FixedLeft: Story = {
           </div>
         </PaperDialog.Content>
       </PaperDialog>
+    );
+  },
+};
+
+export const MultiplePaperDialog: Story = {
+  render: () => {
+    type Gender = "Male" | "Female";
+    type Status = "Active" | "Inactive";
+
+    interface FamilyMember {
+      name: string;
+      status: Status;
+      gender: Gender;
+      birthday: string;
+    }
+
+    interface Employee {
+      name: string;
+      status: Status;
+      gender: Gender;
+      birthday: string;
+      familyRegistry: FamilyMember[];
+    }
+
+    const dialogRef1 = useRef<PaperDialogRef>(null);
+    const dialogRef2 = useRef<PaperDialogRef>(null);
+
+    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
+      (data) => data.id === "US" || COUNTRY_CODES[206]
+    );
+
+    if (!DEFAULT_COUNTRY_CODES) {
+      throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
+    }
+
+    const columns: ColumnTableProps[] = [
+      {
+        caption: "Name",
+        sortable: true,
+      },
+      {
+        caption: "Status",
+        sortable: true,
+      },
+      {
+        caption: "Gender",
+        sortable: true,
+      },
+      {
+        caption: "Birthday",
+        sortable: true,
+      },
+    ];
+
+    const columnsFamily: ColumnTableProps[] = [
+      {
+        caption: "Name",
+      },
+      {
+        caption: "Status",
+      },
+      {
+        caption: "Gender",
+      },
+      {
+        caption: "Birthday",
+      },
+    ];
+
+    const EMPLOYEE_DATA: Employee[] = [
+      {
+        name: "Adam Hakarsa",
+        status: "Active",
+        gender: "Male",
+        birthday: "2000-03-12",
+        familyRegistry: [
+          {
+            name: "Hana Hakarsa",
+            status: "Active",
+            gender: "Female",
+            birthday: "2002-05-21",
+          },
+          {
+            name: "Dimas Hakarsa",
+            status: "Active",
+            gender: "Male",
+            birthday: "2004-10-11",
+          },
+        ],
+      },
+      {
+        name: "Mohamad Naufal Alim",
+        status: "Active",
+        gender: "Male",
+        birthday: "2005-07-21",
+        familyRegistry: [
+          {
+            name: "Amira Alim",
+            status: "Active",
+            gender: "Female",
+            birthday: "2008-03-04",
+          },
+          {
+            name: "Tono Alim",
+            status: "Inactive",
+            gender: "Male",
+            birthday: "2010-12-25",
+          },
+        ],
+      },
+      {
+        name: "Aisha Rahman",
+        status: "Active",
+        gender: "Female",
+        birthday: "2000-11-05",
+        familyRegistry: [
+          {
+            name: "Siti Rahman",
+            status: "Active",
+            gender: "Female",
+            birthday: "2003-06-11",
+          },
+          {
+            name: "Amir Rahman",
+            status: "Inactive",
+            gender: "Male",
+            birthday: "2006-08-30",
+          },
+        ],
+      },
+      {
+        name: "Budi Santoso",
+        status: "Inactive",
+        gender: "Male",
+        birthday: "2002-09-16",
+        familyRegistry: [
+          {
+            name: "Rina Santoso",
+            status: "Active",
+            gender: "Female",
+            birthday: "2005-02-12",
+          },
+          {
+            name: "Andi Santoso",
+            status: "Active",
+            gender: "Male",
+            birthday: "2008-10-01",
+          },
+        ],
+      },
+    ];
+
+    const [rows, setRows] = useState<Employee[]>(EMPLOYEE_DATA);
+    const [familyRows, setFamilyRows] = useState<Employee>(null);
+    const [search, setSearch] = useState("");
+    const [familySearch, setFamilySearch] = useState("");
+
+    type DepartmentKeys = keyof (typeof EMPLOYEE_DATA)[number];
+
+    const handleSortingRequested = ({
+      mode,
+      column,
+    }: {
+      mode: "asc" | "desc" | "original";
+      column: DepartmentKeys;
+    }) => {
+      const finalColumn = column.toLowerCase();
+
+      if (mode === "original") {
+        setRows([...EMPLOYEE_DATA]);
+        return;
+      }
+
+      setRows((prev) => {
+        const sorted = [...prev].sort((a, b) => {
+          const aVal = a[finalColumn];
+          const bVal = b[finalColumn];
+          return typeof aVal === "string" && typeof bVal === "string"
+            ? mode === "asc"
+              ? aVal.localeCompare(bVal)
+              : bVal.localeCompare(aVal)
+            : 0;
+        });
+        return sorted;
+      });
+    };
+
+    console.log(rows);
+
+    const handleItemsSelected = (data: string[]) => {
+      console.log("Selected rows:", data);
+    };
+
+    const TIP_MENU_ACTION = (
+      columnCaption: DepartmentKeys
+    ): SubMenuListTableProps[] => {
+      return [
+        {
+          caption: "Sort Ascending",
+          icon: RiArrowUpSLine,
+          iconColor: "gray",
+          onClick: () => {
+            handleSortingRequested({ mode: "asc", column: columnCaption });
+          },
+        },
+        {
+          caption: "Sort Descending",
+          icon: RiArrowDownSLine,
+          iconColor: "gray",
+          onClick: () => {
+            handleSortingRequested({ mode: "desc", column: columnCaption });
+          },
+        },
+        {
+          caption: "Reset Sorting",
+          icon: RiRefreshLine,
+          iconColor: "gray",
+          onClick: () => {
+            handleSortingRequested({ mode: "original", column: columnCaption });
+          },
+        },
+      ];
+    };
+
+    const ROW_ACTION = (rowId: string): SubMenuListTableProps[] => {
+      const name = rowId.split("-")[0];
+      const dataFamily = rows.find((props) => props.name === name);
+      return [
+        {
+          caption: "Edit",
+          icon: RiEdit2Line,
+          iconColor: "gray",
+          onClick: async () => {
+            await setFamilyRows(dataFamily);
+            await dialogRef1.current.openDialog();
+          },
+        },
+      ];
+    };
+
+    const filteredRows = useMemo(() => {
+      return rows.filter(
+        (item) =>
+          item.name.toLowerCase().includes(search.toLowerCase()) ||
+          item.status.toLowerCase().includes(search.toLowerCase()) ||
+          item.gender.toLowerCase().includes(search.toLowerCase()) ||
+          item.birthday.toLowerCase().includes(search.toLowerCase())
+      );
+    }, [rows, search]);
+
+    const filteredFamilyRows = useMemo(() => {
+      return familyRows?.familyRegistry.filter(
+        (props) =>
+          props.name.toLowerCase().includes(familySearch.toLowerCase()) ||
+          props.status.toLowerCase().includes(familySearch.toLowerCase()) ||
+          props.gender.toLowerCase().includes(familySearch.toLowerCase()) ||
+          props.birthday.toLowerCase().includes(familySearch.toLowerCase())
+      );
+    }, [familyRows, familySearch]);
+
+    return (
+      <Fragment>
+        <Card
+          title="Employee"
+          subtitle="Overview of all employee and their key personel"
+          containerStyle={css`
+            padding-left: 0px;
+            padding-right: 0px;
+            min-width: 1000px;
+            padding-bottom: 0px;
+          `}
+          headerStyle={css`
+            padding-left: 15px;
+            padding-right: 15px;
+            border-bottom: 1px solid #d1d5db;
+          `}
+        >
+          <Table
+            searchable
+            tableRowContainerStyle={css`
+              max-height: 400px;
+            `}
+            onSearchboxChange={(e) => setSearch(e.target.value)}
+            columns={columns}
+            subMenuList={TIP_MENU_ACTION}
+          >
+            {filteredRows.map((rowValue, rowIndex) => (
+              <Table.Row
+                key={rowIndex}
+                rowId={`${rowValue.name}-${rowValue.status}-${rowValue.gender}-${rowValue.birthday}`}
+                actions={ROW_ACTION}
+                content={[
+                  rowValue.name,
+                  rowValue.status,
+                  rowValue.gender,
+                  rowValue.birthday,
+                ]}
+              />
+            ))}
+          </Table>
+        </Card>
+
+        <PaperDialog ref={dialogRef1} closable width="90vw">
+          <PaperDialog.Content
+            style={css`
+              padding: 36px;
+              padding-left: 20px;
+              gap: 24px;
+              overflow: auto;
+            `}
+          >
+            <Card
+              title="Family Registry"
+              subtitle="Detailed view of employees and their family registry records"
+              containerStyle={css`
+                padding-left: 0px;
+                padding-right: 0px;
+                min-width: 1000px;
+                padding-bottom: 0px;
+              `}
+              headerStyle={css`
+                padding-left: 15px;
+                padding-right: 15px;
+                border-bottom: 1px solid #d1d5db;
+              `}
+            >
+              <Table
+                searchable
+                tableRowContainerStyle={css`
+                  max-height: 400px;
+                `}
+                actions={[
+                  {
+                    title: "Add Family",
+                    icon: RiAddBoxLine,
+                    onClick: async () => {
+                      await dialogRef2.current.openDialog();
+                    },
+                  },
+                ]}
+                onSearchboxChange={(e) => setFamilySearch(e.target.value)}
+                columns={columnsFamily}
+                onItemsSelected={handleItemsSelected}
+              >
+                {filteredFamilyRows?.map((rowValue, rowIndex) => (
+                  <Table.Row
+                    key={rowIndex}
+                    rowId={`${rowValue.name}-${rowValue.status}-${rowValue.gender}-${rowValue.birthday}`}
+                    content={[
+                      rowValue.name,
+                      rowValue.status,
+                      rowValue.gender,
+                      rowValue.birthday,
+                    ]}
+                  />
+                ))}
+              </Table>
+            </Card>
+          </PaperDialog.Content>
+        </PaperDialog>
+
+        <PaperDialog
+          ref={dialogRef2}
+          tabStyle={css`
+            top: 120px;
+          `}
+          tabCloseStyle={css`
+            top: 80px;
+          `}
+          closable
+          width="75vw"
+        >
+          <PaperDialog.Content
+            style={{
+              padding: "36px",
+              gap: "24px",
+            }}
+          >
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "4px" }}
+            >
+              <h3>This is the nested paper dialog</h3>
+            </div>
+          </PaperDialog.Content>
+        </PaperDialog>
+      </Fragment>
     );
   },
 };
