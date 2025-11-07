@@ -395,6 +395,11 @@ function FormFields<T extends FieldValues>({
                         const { ref } = register(field.name as Path<T>);
                         if (ref) ref(el);
                       }}
+                      errorMessage={
+                        errors[field.name as keyof T]?.message as
+                          | string
+                          | undefined
+                      }
                       labelStyle={
                         labelSize &&
                         css`
