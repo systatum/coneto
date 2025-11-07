@@ -108,7 +108,7 @@ function ThumbField({
         )}
       </TriggerWrapper>
 
-      {showError && (
+      {showError && errorMessage && (
         <ErrorIconWrapper>
           <RiErrorWarningLine size={24} />
         </ErrorIconWrapper>
@@ -125,7 +125,7 @@ function ThumbField({
       )}
       <InputContent>
         {inputElement}
-        {showError && <ErrorText>{errorMessage}</ErrorText>}
+        {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
       </InputContent>
     </InputWrapper>
   );

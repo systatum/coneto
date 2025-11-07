@@ -103,7 +103,7 @@ function Togglebox({
           </TextGroup>
         )}
       </ToggleboxWrapper>
-      {showError && <ErrorText>{errorMessage}</ErrorText>}
+      {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
     </div>
   );
 }

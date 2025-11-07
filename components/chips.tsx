@@ -175,7 +175,9 @@ function Chips(props: ChipsProps) {
       {props.label && <Label $style={props.labelStyle}>{props.label}</Label>}
       <InputContent>
         {inputElement}
-        {props.showError && <ErrorText>{props.errorMessage}</ErrorText>}
+        {props.showError && props.errorMessage && (
+          <ErrorText>{props.errorMessage}</ErrorText>
+        )}
       </InputContent>
     </InputWrapper>
   );

@@ -165,7 +165,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
             )}
           </PasswordToggleButton>
         )}
-        {showError && (
+        {showError && errorMessage && (
           <ErrorIconWrapper>
             <RiErrorWarningLine
               size={17}
@@ -189,7 +189,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
         )}
         <div>
           {inputElement}
-          {showError && <ErrorText>{errorMessage}</ErrorText>}
+          {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
         </div>
       </Container>
     );

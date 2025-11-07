@@ -212,7 +212,7 @@ function Signbox({
       )}
       <InputContent>
         {inputElement}
-        {showError && <ErrorText>{errorMessage}</ErrorText>}
+        {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
       </InputContent>
     </InputWrapper>
   );

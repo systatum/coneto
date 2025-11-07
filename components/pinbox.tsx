@@ -264,7 +264,7 @@ function Pinbox({
           </PinboxInputContent>
         );
       })}
-      {showError && (
+      {showError && errorMessage && (
         <RiErrorWarningLine
           size={fontSize * 1.25}
           style={{
@@ -289,7 +289,7 @@ function Pinbox({
         </Label>
       )}
       {inputElements}
-      {showError && <ErrorText>{errorMessage}</ErrorText>}
+      {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
     </Container>
   );
 }

@@ -151,7 +151,7 @@ function Rating({
       {label && <Label $style={labelStyle}>{label}</Label>}
       <InputContent>
         {inputElement}
-        {showError && <ErrorText>{errorMessage}</ErrorText>}
+        {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
       </InputContent>
     </InputWrapper>
   );

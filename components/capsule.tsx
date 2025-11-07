@@ -224,7 +224,7 @@ function Capsule({
       )}
       <div>
         {inputElement}
-        {showError && <ErrorText>{errorMessage}</ErrorText>}
+        {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
       </div>
     </Container>
   );

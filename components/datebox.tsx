@@ -62,7 +62,9 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
             />
           )}
         </Selectbox>
-        {props.showError && <ErrorText>{errorMessage}</ErrorText>}
+        {props.showError && errorMessage && (
+          <ErrorText>{errorMessage}</ErrorText>
+        )}
       </InputContent>
     </InputWrapper>
   );

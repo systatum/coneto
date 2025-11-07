@@ -102,7 +102,7 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
               inputMode="decimal"
             />
           </Box>
-          {showError && <ErrorText>{errorMessage}</ErrorText>}
+          {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
         </InputContent>
       </InputWrapper>
     );
