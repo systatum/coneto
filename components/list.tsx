@@ -590,6 +590,8 @@ const ListItemWrapper = styled.div<{
   position: relative;
   gap: 4px;
   transition: background-color 300ms;
+  border-radius: 6px;
+
   ${({ $openable }) =>
     $openable &&
     css`
@@ -611,6 +613,7 @@ const ListItemRow = styled.div<{
   cursor: pointer;
   gap: 0.5rem;
   transition: background-color 300ms;
+  border-radius: 6px;
 
   &:hover {
     background-color: #dbeafe;
