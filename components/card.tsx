@@ -235,18 +235,18 @@ function ActionButton(data: CardActionsProps) {
         color: #565555;
         ${data.subMenu && data.showSubMenuOn === "caret"
           ? css`
-              border-top: 1px solid #e5e7eb;
-              border-left: 1px solid #e5e7eb;
-              border-bottom: 1px solid #e5e7eb;
+              border-top: 1px solid #f3f3f3;
+              border-left: 1px solid #f3f3f3;
+              border-bottom: 1px solid #f3f3f3;
             `
           : css`
-              border: 1px solid #e5e7eb;
+              border: 1px solid #f3f3f3;
             `}
         border-radius: 6px;
         position: relative;
 
         &:hover {
-          background-color: #e2e0e0;
+          background-color: rgb(245, 245, 245);
         }
 
         &:disabled {
@@ -268,14 +268,14 @@ function ActionButton(data: CardActionsProps) {
           padding: 0.25rem 0.5rem;
           background-color: transparent;
           position: relative;
-          border-top: 1px solid #e5e7eb;
-          border-right: 1px solid #e5e7eb;
-          border-bottom: 1px solid #e5e7eb;
+          border-top: 1px solid #f3f3f3;
+          border-right: 1px solid #f3f3f3;
+          border-bottom: 1px solid #f3f3f3;
           border-top-right-radius: 6px;
           border-bottom-right-radius: 6px;
 
           &:hover {
-            background-color: #e2e0e0;
+            background-color: rgb(245, 245, 245);
           }
 
           &:disabled {
