@@ -225,7 +225,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
         {label && <label htmlFor={inputId}>{label}</label>}
         <InputContent>
           {inputElement}
-          {showError && <ErrorText>{errorMessage}</ErrorText>}
+          {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
         </InputContent>
       </InputWrapper>
     );

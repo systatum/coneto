@@ -96,7 +96,7 @@ function Togglebox({
       {description && (
         <Description $style={descriptionStyle}>{description}</Description>
       )}
-      {showError && (
+      {showError && errorMessage && (
         <ErrorText $style={descriptionStyle}>{errorMessage}</ErrorText>
       )}
     </ToggleboxContainer>

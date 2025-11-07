@@ -110,7 +110,7 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
         )}
         <InputContent>
           {inputElement}
-          {showError && <ErrorText>{errorMessage}</ErrorText>}
+          {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
         </InputContent>
       </InputWrapper>
     );

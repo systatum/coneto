@@ -880,7 +880,7 @@ function Calendar({
       {label && <label>{label}</label>}
       <InputContent>
         {inputElement}
-        {showError && <ErrorText>{errorMessage}</ErrorText>}
+        {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
       </InputContent>
     </Container>
   );

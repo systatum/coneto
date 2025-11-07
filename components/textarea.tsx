@@ -95,7 +95,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
             <Icon size={18} />
           </ActionButton>
         )}
-        {showError && (
+        {showError && errorMessage && (
           <RiErrorWarningLine
             size={18}
             style={{
@@ -121,7 +121,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         )}
         <div>
           {inputElement}
-          {showError && <ErrorText>{errorMessage}</ErrorText>}
+          {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
         </div>
       </Container>
     );

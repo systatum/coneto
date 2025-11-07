@@ -115,7 +115,9 @@ function Checkbox({
           {description}
         </DescriptionText>
       )}
-      {showError && <ErrorText $style={errorStyle}>{errorMessage}</ErrorText>}
+      {showError && errorMessage && (
+        <ErrorText $style={errorStyle}>{errorMessage}</ErrorText>
+      )}
     </Label>
   );
 }

@@ -131,7 +131,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
           }}
         </Selectbox>
 
-        {showError && <ErrorText>{errorMessage}</ErrorText>}
+        {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
       </ComboboxWrapper>
     );
   }

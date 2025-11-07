@@ -337,7 +337,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
           </DropdownContainer>
         )}
 
-        {showError && <ErrorText>{errorMessage}</ErrorText>}
+        {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
       </ContainerPhonebox>
     );
   }
