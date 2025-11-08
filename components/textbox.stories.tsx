@@ -37,13 +37,6 @@ const meta: Meta<typeof Textbox> = {
       control: "text",
     },
     onActionClick: { action: "sendClicked" },
-    icon: {
-      control: {
-        type: "select",
-      },
-      options: Object.keys(RemixIcons),
-      mapping: RemixIcons,
-    },
     onChange: { action: "changed" },
     style: { control: false },
     containerStyle: { control: false },
@@ -201,8 +194,12 @@ export const WithAction: Story = {
       min-width: 400px;
       max-width: 400px;
     `,
-    actionIcon: true,
-    icon: RemixIcons.RiSendPlaneFill,
+    actions: [
+      {
+        icon: RemixIcons.RiSendPlaneFill,
+        onClick: () => console.log("send the message"),
+      },
+    ].filter(Boolean),
   },
   render: (args: TextboxProps) => {
     const [, setUpdateArgs] = useArgs();
