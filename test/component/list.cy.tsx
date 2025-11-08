@@ -10,7 +10,7 @@ import {
 import {
   List,
   ListActionsProps,
-  ListGroupContent,
+  ListGroupContentProps,
 } from "./../../components/list";
 import { css } from "styled-components";
 
@@ -28,7 +28,7 @@ describe("List", () => {
         />
       );
 
-      const LIST_GROUPS: ListGroupContent[] = [
+      const LIST_GROUPS: ListGroupContentProps[] = [
         {
           id: "recent-content",
           title: "Recent Content",
@@ -38,19 +38,19 @@ describe("List", () => {
               id: "messages",
               title: "Messages",
               subtitle: "Check your inbox",
-              iconUrl: RiMailFill,
+              leftIcon: RiMailFill,
             },
             {
               id: "notifications",
               title: "Notifications",
               subtitle: "View Alerts",
-              iconUrl: RiNotification3Fill,
+              leftIcon: RiNotification3Fill,
             },
             {
               id: "calendar",
               title: "Calendar",
               subtitle: "Upcoming events",
-              iconUrl: RiCalendar2Fill,
+              leftIcon: RiCalendar2Fill,
             },
           ],
         },
@@ -63,21 +63,21 @@ describe("List", () => {
               id: "home",
               title: "Home",
               subtitle: "Go to homepage",
-              iconUrl: RiHome2Fill,
+              leftIcon: RiHome2Fill,
               rightSideContent: RIGHT_SIDE_CONTENT,
             },
             {
               id: "profile",
               title: "Profile",
               subtitle: "View your profile",
-              iconUrl: RiUser3Fill,
+              leftIcon: RiUser3Fill,
               rightSideContent: RIGHT_SIDE_CONTENT,
             },
             {
               id: "settings",
               title: "Settings",
               subtitle: "Adjust preferences",
-              iconUrl: RiSettings3Fill,
+              leftIcon: RiSettings3Fill,
               rightSideContent: RIGHT_SIDE_CONTENT,
             },
           ],
@@ -108,7 +108,7 @@ describe("List", () => {
                   <List.Item
                     key={i}
                     id={list.id}
-                    iconUrl={list.iconUrl}
+                    leftIcon={list.leftIcon}
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
@@ -152,7 +152,7 @@ describe("List", () => {
                     <List.Item
                       key={i}
                       id={list.id}
-                      iconUrl={list.iconUrl}
+                      leftIcon={list.leftIcon}
                       subtitle={list.subtitle}
                       title={list.title}
                       groupId={group.id}
@@ -200,7 +200,7 @@ describe("List", () => {
         },
       ];
 
-      const LIST_GROUPS: ListGroupContent[] = [
+      const LIST_GROUPS: ListGroupContentProps[] = [
         {
           id: "recent-content",
           title: "Recent Content",
@@ -210,19 +210,19 @@ describe("List", () => {
               id: "messages",
               title: "Messages",
               subtitle: "Check your inbox",
-              iconUrl: RiMailFill,
+              leftIcon: RiMailFill,
             },
             {
               id: "notifications",
               title: "Notifications",
               subtitle: "View Alerts",
-              iconUrl: RiNotification3Fill,
+              leftIcon: RiNotification3Fill,
             },
             {
               id: "calendar",
               title: "Calendar",
               subtitle: "Upcoming events",
-              iconUrl: RiCalendar2Fill,
+              leftIcon: RiCalendar2Fill,
             },
           ],
         },
@@ -235,19 +235,19 @@ describe("List", () => {
               id: "home",
               title: "Home",
               subtitle: "Go to homepage",
-              iconUrl: RiHome2Fill,
+              leftIcon: RiHome2Fill,
             },
             {
               id: "profile",
               title: "Profile",
               subtitle: "View your profile",
-              iconUrl: RiUser3Fill,
+              leftIcon: RiUser3Fill,
             },
             {
               id: "settings",
               title: "Settings",
               subtitle: "Adjust preferences",
-              iconUrl: RiSettings3Fill,
+              leftIcon: RiSettings3Fill,
             },
           ],
         },
@@ -278,7 +278,7 @@ describe("List", () => {
                   <List.Item
                     key={i}
                     id={list.id}
-                    iconUrl={list.iconUrl}
+                    leftIcon={list.leftIcon}
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
@@ -323,7 +323,7 @@ describe("List", () => {
                     <List.Item
                       key={i}
                       id={list.id}
-                      iconUrl={list.iconUrl}
+                      leftIcon={list.leftIcon}
                       subtitle={list.subtitle}
                       title={list.title}
                       groupId={group.id}
@@ -368,7 +368,7 @@ describe("List", () => {
         },
       ];
 
-      const LIST_GROUPS: ListGroupContent[] = [
+      const LIST_GROUPS: ListGroupContentProps[] = [
         {
           id: "recent-content",
           title: "Recent Content",
@@ -378,20 +378,20 @@ describe("List", () => {
               id: "messages",
               title: "Messages",
               subtitle: "Check your inbox",
-              iconUrl: RiMailFill,
+              leftIcon: RiMailFill,
               actions: ACTIONS_GROUPS,
             },
             {
               id: "notifications",
               title: "Notifications",
               subtitle: "View Alerts",
-              iconUrl: RiNotification3Fill,
+              leftIcon: RiNotification3Fill,
             },
             {
               id: "calendar",
               title: "Calendar",
               subtitle: "Upcoming events",
-              iconUrl: RiCalendar2Fill,
+              leftIcon: RiCalendar2Fill,
             },
           ],
         },
@@ -404,20 +404,20 @@ describe("List", () => {
               id: "home",
               title: "Home",
               subtitle: "Go to homepage",
-              iconUrl: RiHome2Fill,
+              leftIcon: RiHome2Fill,
               actions: ACTIONS_GROUPS,
             },
             {
               id: "profile",
               title: "Profile",
               subtitle: "View your profile",
-              iconUrl: RiUser3Fill,
+              leftIcon: RiUser3Fill,
             },
             {
               id: "settings",
               title: "Settings",
               subtitle: "Adjust preferences",
-              iconUrl: RiSettings3Fill,
+              leftIcon: RiSettings3Fill,
             },
           ],
         },
@@ -448,7 +448,7 @@ describe("List", () => {
                     key={i}
                     id={list.id}
                     actions={list.actions}
-                    iconUrl={list.iconUrl}
+                    leftIcon={list.leftIcon}
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
@@ -494,7 +494,7 @@ describe("List", () => {
                       id={list.id}
                       groupId={group.id}
                       actions={list.actions}
-                      iconUrl={list.iconUrl}
+                      leftIcon={list.leftIcon}
                       subtitle={list.subtitle}
                       title={list.title}
                       selectedOptions={{
@@ -530,7 +530,7 @@ describe("List", () => {
         },
       ];
 
-      const LIST_GROUPS: ListGroupContent[] = [
+      const LIST_GROUPS: ListGroupContentProps[] = [
         {
           id: "recent-content",
           title: "Recent Content",
@@ -541,19 +541,19 @@ describe("List", () => {
               id: "messages",
               title: "Messages",
               subtitle: "Check your inbox",
-              iconUrl: RiMailFill,
+              leftIcon: RiMailFill,
             },
             {
               id: "notifications",
               title: "Notifications",
               subtitle: "View Alerts",
-              iconUrl: RiNotification3Fill,
+              leftIcon: RiNotification3Fill,
             },
             {
               id: "calendar",
               title: "Calendar",
               subtitle: "Upcoming events",
-              iconUrl: RiCalendar2Fill,
+              leftIcon: RiCalendar2Fill,
             },
           ],
         },
@@ -567,19 +567,19 @@ describe("List", () => {
               id: "home",
               title: "Home",
               subtitle: "Go to homepage",
-              iconUrl: RiHome2Fill,
+              leftIcon: RiHome2Fill,
             },
             {
               id: "profile",
               title: "Profile",
               subtitle: "View your profile",
-              iconUrl: RiUser3Fill,
+              leftIcon: RiUser3Fill,
             },
             {
               id: "settings",
               title: "Settings",
               subtitle: "Adjust preferences",
-              iconUrl: RiSettings3Fill,
+              leftIcon: RiSettings3Fill,
             },
           ],
         },
@@ -609,7 +609,7 @@ describe("List", () => {
                   <List.Item
                     key={i}
                     id={list.id}
-                    iconUrl={list.iconUrl}
+                    leftIcon={list.leftIcon}
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
@@ -653,7 +653,7 @@ describe("List", () => {
                     <List.Item
                       key={i}
                       id={list.id}
-                      iconUrl={list.iconUrl}
+                      leftIcon={list.leftIcon}
                       subtitle={list.subtitle}
                       title={list.title}
                       groupId={group.id}
@@ -704,7 +704,7 @@ describe("List", () => {
         },
       ];
 
-      const LIST_GROUPS: ListGroupContent[] = [
+      const LIST_GROUPS: ListGroupContentProps[] = [
         {
           id: "recent-content",
           title: "Recent Content",
@@ -715,19 +715,19 @@ describe("List", () => {
               id: "messages",
               title: "Messages",
               subtitle: "Check your inbox",
-              iconUrl: RiMailFill,
+              leftIcon: RiMailFill,
             },
             {
               id: "notifications",
               title: "Notifications",
               subtitle: "View Alerts",
-              iconUrl: RiNotification3Fill,
+              leftIcon: RiNotification3Fill,
             },
             {
               id: "calendar",
               title: "Calendar",
               subtitle: "Upcoming events",
-              iconUrl: RiCalendar2Fill,
+              leftIcon: RiCalendar2Fill,
             },
           ],
         },
@@ -741,21 +741,21 @@ describe("List", () => {
               id: "home",
               title: "Home",
               subtitle: "Go to homepage",
-              iconUrl: RiHome2Fill,
+              leftIcon: RiHome2Fill,
               rightSideContent: RIGHT_SIDE_CONTENT,
             },
             {
               id: "profile",
               title: "Profile",
               subtitle: "View your profile",
-              iconUrl: RiUser3Fill,
+              leftIcon: RiUser3Fill,
               rightSideContent: RIGHT_SIDE_CONTENT,
             },
             {
               id: "settings",
               title: "Settings",
               subtitle: "Adjust preferences",
-              iconUrl: RiSettings3Fill,
+              leftIcon: RiSettings3Fill,
               rightSideContent: RIGHT_SIDE_CONTENT,
             },
           ],
@@ -786,7 +786,7 @@ describe("List", () => {
                   <List.Item
                     key={i}
                     id={list.id}
-                    iconUrl={list.iconUrl}
+                    leftIcon={list.leftIcon}
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
@@ -831,7 +831,7 @@ describe("List", () => {
                     <List.Item
                       key={i}
                       id={list.id}
-                      iconUrl={list.iconUrl}
+                      leftIcon={list.leftIcon}
                       subtitle={list.subtitle}
                       title={list.title}
                       groupId={group.id}
@@ -881,7 +881,7 @@ describe("List", () => {
     });
   });
 
-  const LIST_GROUPS_OPENABLE: ListGroupContent[] = [
+  const LIST_GROUPS_OPENABLE: ListGroupContentProps[] = [
     {
       id: "recent-content",
       title: "Recent Content",
@@ -891,7 +891,7 @@ describe("List", () => {
           id: "messages",
           title: "Messages",
           subtitle: "Check your inbox",
-          iconUrl: RiMailFill,
+          leftIcon: RiMailFill,
           children:
             "Stay connected with your contacts by checking and replying to your recent messages. Keep conversations organized and never miss important updates.",
         },
@@ -899,7 +899,7 @@ describe("List", () => {
           id: "notifications",
           title: "Notifications",
           subtitle: "View Alerts",
-          iconUrl: RiNotification3Fill,
+          leftIcon: RiNotification3Fill,
           children:
             "See what's new at a glance. Review recent alerts, mentions, and important reminders to stay on top of your activities.",
         },
@@ -907,7 +907,7 @@ describe("List", () => {
           id: "calendar",
           title: "Calendar",
           subtitle: "Upcoming events",
-          iconUrl: RiCalendar2Fill,
+          leftIcon: RiCalendar2Fill,
           children:
             "View your scheduled events and upcoming meetings in one place. Manage your time effectively and plan your week with confidence.",
         },
@@ -922,7 +922,7 @@ describe("List", () => {
           id: "home",
           title: "Home",
           subtitle: "Go to homepage",
-          iconUrl: RiHome2Fill,
+          leftIcon: RiHome2Fill,
           children:
             "Return to your main dashboard where you can quickly access all your essential tools, updates, and recent highlights in one glance.",
         },
@@ -930,7 +930,7 @@ describe("List", () => {
           id: "profile",
           title: "Profile",
           subtitle: "View your profile",
-          iconUrl: RiUser3Fill,
+          leftIcon: RiUser3Fill,
           children:
             "Customize your personal information, update your avatar, and manage your account preferences to reflect your identity and style.",
         },
@@ -938,7 +938,7 @@ describe("List", () => {
           id: "settings",
           title: "Settings",
           subtitle: "Adjust preferences",
-          iconUrl: RiSettings3Fill,
+          leftIcon: RiSettings3Fill,
           openable: true,
           children:
             "Modify your system preferences, manage privacy and notifications, and fine-tune your user experience to suit your workflow.",
@@ -974,7 +974,7 @@ describe("List", () => {
                     key={i}
                     id={list.id}
                     actions={list.actions}
-                    iconUrl={list.iconUrl}
+                    leftIcon={list.leftIcon}
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
@@ -1029,7 +1029,7 @@ describe("List", () => {
                       key={i}
                       id={list.id}
                       actions={list.actions}
-                      iconUrl={list.iconUrl}
+                      leftIcon={list.leftIcon}
                       subtitle={list.subtitle}
                       title={list.title}
                       groupId={group.id}
@@ -1069,7 +1069,7 @@ describe("List", () => {
     });
 
     context("without children", () => {
-      const LIST_GROUPS_OPENABLE_WITHOUT_CHILDREN: ListGroupContent[] = [
+      const LIST_GROUPS_OPENABLE_WITHOUT_CHILDREN: ListGroupContentProps[] = [
         {
           id: "recent-content",
           title: "Recent Content",
@@ -1079,21 +1079,21 @@ describe("List", () => {
               id: "messages",
               title: "Messages",
               subtitle: "Check your inbox",
-              iconUrl: RiMailFill,
+              leftIcon: RiMailFill,
               openable: true,
             },
             {
               id: "notifications",
               title: "Notifications",
               subtitle: "View Alerts",
-              iconUrl: RiNotification3Fill,
+              leftIcon: RiNotification3Fill,
               openable: true,
             },
             {
               id: "calendar",
               title: "Calendar",
               subtitle: "Upcoming events",
-              iconUrl: RiCalendar2Fill,
+              leftIcon: RiCalendar2Fill,
               openable: true,
             },
           ],
@@ -1125,7 +1125,7 @@ describe("List", () => {
                     key={i}
                     id={list.id}
                     actions={list.actions}
-                    iconUrl={list.iconUrl}
+                    leftIcon={list.leftIcon}
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
@@ -1177,7 +1177,7 @@ describe("List", () => {
                       key={i}
                       id={list.id}
                       actions={list.actions}
-                      iconUrl={list.iconUrl}
+                      leftIcon={list.leftIcon}
                       subtitle={list.subtitle}
                       title={list.title}
                       groupId={group.id}
@@ -1242,7 +1242,7 @@ describe("List", () => {
                       key={i}
                       id={list.id}
                       actions={list.actions}
-                      iconUrl={list.iconUrl}
+                      leftIcon={list.leftIcon}
                       subtitle={list.subtitle}
                       title={list.title}
                       groupId={group.id}
