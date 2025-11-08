@@ -1014,7 +1014,11 @@ export const WithBadge: Story = {
                 actions={[
                   {
                     title: "Back",
-                    disabled: !isOpen,
+                    style:
+                      !isOpen &&
+                      css`
+                        display: none;
+                      `,
                     onClick: () => {
                       setIsOpen(false);
                     },
