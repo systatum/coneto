@@ -29,9 +29,8 @@ export interface TextboxProps
   labelStyle?: CSSProp;
   style?: CSSProp;
   onActionClick?: () => void;
-  onChange: (data: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  icon?: RemixiconComponentType;
-  actionIcon?: boolean;
+  onChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  actions?: ActionsProps[];
   dropdown?: DropdownProps;
   dropdownToggleStyle?: CSSProp;
 }
@@ -50,6 +49,13 @@ interface DropdownOptionProps {
   iconColor?: string;
 }
 
+interface ActionsProps {
+  icon?: RemixiconComponentType;
+  iconColor?: string;
+  isDangerous?: boolean;
+  onClick?: (e: React.MouseEvent) => void;
+}
+
 const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
   (
     {
@@ -57,19 +63,19 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
       showError,
       errorMessage,
       onChange,
-      onActionClick,
       style,
       containerStyle,
-      actionIcon,
       labelStyle,
-      icon: Icon = RiCheckLine,
       type = "text",
       dropdown,
       dropdownToggleStyle,
+      actions,
       ...props
     },
     ref
   ) => {
+    console.log(type);
+
     const [showPassword, setShowPassword] = useState<boolean>(false);
 
     useEffect(() => {
@@ -129,28 +135,40 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
           id={inputId}
           ref={ref}
           onChange={onChange}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") onActionClick?.();
-          }}
           $dropdown={!!dropdown}
           type={type === "password" && showPassword ? "text" : type}
           $error={showError}
           $style={style}
           {...(props as InputHTMLAttributes<HTMLInputElement>)}
         />
-        {actionIcon && (
-          <ActionButton
-            type="submit"
-            aria-label="action-icon"
-            onClick={(e) => {
-              e.preventDefault();
-              onActionClick?.();
-            }}
-            $error={showError}
-          >
-            <Icon size={18} />
-          </ActionButton>
-        )}
+        {actions &&
+          actions.map((props, index) => {
+            const Icon = (props.icon = RiCheckLine);
+            const offsetBase = 8;
+            const offsetEach = 22;
+            const offset =
+              offsetBase +
+              index * offsetEach +
+              (type === "password" ? offsetEach : 0) +
+              (showError ? offsetEach : 0);
+
+            return (
+              <ActionButton
+                type="submit"
+                aria-label="action-icon"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (props.onClick) {
+                    props.onClick(e);
+                  }
+                }}
+                style={{ right: `${offset}px` }}
+                $error={showError}
+              >
+                <Icon size={18} />
+              </ActionButton>
+            );
+          })}
         {type === "password" && (
           <PasswordToggleButton
             type="button"
@@ -165,7 +183,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
             )}
           </PasswordToggleButton>
         )}
-        {showError && errorMessage && (
+        {showError && (
           <ErrorIconWrapper>
             <RiErrorWarningLine
               size={17}
@@ -229,8 +247,8 @@ const Input = styled.input<{
   padding: 7px 8px;
   width: 100%;
   outline: none;
-  border: 1px solid ${({ $error }) => ($error ? "#f87171" : "#d1d5db")};
   z-index: 10;
+  border: 1px solid ${({ $error }) => ($error ? "#f87171" : "#d1d5db")};
   ${({ $error }) =>
     $error
       ? css`
@@ -265,6 +283,7 @@ const ActionButton = styled.button<{ $error?: boolean }>`
   border-radius: 2px;
   cursor: pointer;
   background: transparent;
+  z-index: 10;
   color: ${({ $error }) => ($error ? "#f87171" : "#6b7280")};
 
   &:hover {
@@ -278,6 +297,7 @@ const PasswordToggleButton = styled.button<{ $error?: boolean }>`
   transform: translateY(-50%);
   right: ${({ $error }) => ($error ? "30px" : "8px")};
   cursor: pointer;
+  z-index: 10;
   color: ${({ $error }) => ($error ? "#f87171" : "#6b7280")};
 
   &:hover {
@@ -292,6 +312,7 @@ const ErrorIconWrapper = styled.button`
   transform: translateY(-50%);
   background: none;
   border: none;
+  z-index: 10;
 `;
 
 const ErrorText = styled.span`
