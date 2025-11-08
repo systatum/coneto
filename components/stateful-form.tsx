@@ -1,4 +1,4 @@
-import { useForm, UseFormSetValue } from "react-hook-form";
+import { useForm, UseFormProps, UseFormSetValue } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z, { ZodTypeAny, TypeOf, ZodObject } from "zod";
 import { ChangeEvent, ReactNode, useEffect, useRef } from "react";
@@ -114,7 +114,7 @@ function StatefulForm<Z extends ZodTypeAny>({
 
   const finalSchema = getSchemaForVisibleFields(validationSchema, fields);
 
-  const formConfig: Parameters<typeof useForm<TypeOf<Z>>>[0] = {
+  const formConfig: UseFormProps<TypeOf<Z>> = {
     mode,
     defaultValues: formValues,
   };
