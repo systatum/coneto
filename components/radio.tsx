@@ -35,7 +35,7 @@ function Radio({
   errorStyle,
   ...props
 }: RadioProps & InputHTMLAttributes<HTMLInputElement>) {
-  const id = `radio-${name}`;
+  const id = `radio-${value}`;
 
   return (
     <Label
