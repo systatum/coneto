@@ -463,7 +463,7 @@ export const FixedLeft: Story = {
   },
 };
 
-export const MultiplePaperDialog: Story = {
+export const Nested: Story = {
   render: () => {
     type Gender = "Male" | "Female";
     type Status = "Active" | "Inactive";

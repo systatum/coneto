@@ -58,9 +58,9 @@ describe("PaperDialog", () => {
     });
   });
 
-  context("with multiple paper dialog", () => {
-    it("should open and close the left-positioned dialog", () => {
-      cy.visit(getIdContent("stage-paperdialog--multiple-paper-dialog"));
+  context("when nested", () => {
+    it("should render nested dialog", () => {
+      cy.visit(getIdContent("stage-paperdialog--nested"));
 
       cy.findAllByLabelText("table-row")
         .eq(0)
