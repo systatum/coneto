@@ -9,23 +9,23 @@ describe("Card", () => {
         cy.mount(<Card title="Systatum Food Services">Test`</Card>);
         cy.findByText("Systatum Food Services").should("exist");
       });
-    });
 
-    context("with subtitle", () => {
-      it("should render the text", () => {
-        cy.mount(
-          <Card
-            title="Systatum Food Services"
-            subtitle="Fueling innovation with every bite."
-          >
-            Test`
-          </Card>
-        );
-        cy.findByText("Fueling innovation with every bite.").should("exist");
+      context("with subtitle", () => {
+        it("should render the text", () => {
+          cy.mount(
+            <Card
+              title="Systatum Food Services"
+              subtitle="Fueling innovation with every bite."
+            >
+              Test`
+            </Card>
+          );
+          cy.findByText("Fueling innovation with every bite.").should("exist");
+        });
       });
     });
 
-    context("with having action buttons", () => {
+    context("when having action buttons", () => {
       it("should render the action button", () => {
         cy.window().then((win) => {
           cy.spy(win.console, "log").as("consoleLog");
