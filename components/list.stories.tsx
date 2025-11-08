@@ -17,6 +17,9 @@ import {
 import { Card } from "./card";
 import { ChangeEvent, useMemo, useState } from "react";
 import { css } from "styled-components";
+import { StatefulForm } from "./stateful-form";
+import { OptionsProps } from "./selectbox";
+import z from "zod";
 
 const meta: Meta<typeof List> = {
   title: "Content/List",
@@ -671,6 +674,195 @@ export const WithLoading: Story = {
   },
 };
 
+export const WithCheckbox: Story = {
+  render: () => {
+    const [formValues, setFormValues] = useState({
+      field_name: "",
+      type: ["1"],
+    });
+
+    const FIELD_NAME_OPTIONS: OptionsProps[] = [
+      { text: "code", value: "1" },
+      { text: "function", value: "2" },
+      { text: "variable", value: "3" },
+      { text: "loop", value: "4" },
+      { text: "array", value: "5" },
+    ];
+
+    const LIST_GROUPS: ListGroupContent[] = [
+      {
+        id: "form-fields",
+        title: "Form Fields",
+        items: [
+          { id: "name", title: "Name" },
+          { id: "code", title: "Code" },
+          {
+            id: "lead",
+            title: "Lead",
+            openable: true,
+          },
+        ],
+      },
+    ];
+
+    const [groups] = useState(LIST_GROUPS);
+    const [value, setValue] = useState({
+      search: "",
+      checked: [] as ListItemProps[],
+    });
+
+    const filteredContent = useMemo(() => {
+      const searchContent = value.search.toLowerCase().trim();
+
+      return groups
+        .map((group) => {
+          const matchedItems = group.items.filter(
+            (item) =>
+              item.title?.toLowerCase().includes(searchContent) ||
+              item.subtitle?.toLowerCase().includes(searchContent)
+          );
+
+          const groupMatches = group.title
+            .toLowerCase()
+            .includes(searchContent);
+
+          if (groupMatches || matchedItems.length > 0) {
+            return {
+              ...group,
+              items: groupMatches ? group.items : matchedItems,
+            };
+          }
+
+          return null;
+        })
+        .filter(Boolean);
+    }, [value.search, groups, formValues]);
+
+    const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
+      const { name, value: inputValue, checked, type } = e.target;
+
+      if (type === "checkbox") {
+        const parsed = JSON.parse(inputValue);
+        setValue((prev) => ({
+          ...prev,
+          [name]: checked
+            ? [...prev[name], parsed]
+            : prev[name].filter((val: ListItemProps) => val.id !== parsed.id),
+        }));
+      } else {
+        setValue((prev) => ({ ...prev, [name]: inputValue }));
+      }
+    };
+
+    return (
+      <Card>
+        <List
+          searchable
+          selectable
+          onSearchRequested={onChangeValue}
+          containerStyle={css`
+            padding: 16px;
+            min-width: 500px;
+          `}
+        >
+          {filteredContent.map((group, index) => {
+            return (
+              <List.Group
+                key={index}
+                id={group.id}
+                subtitle={group.subtitle}
+                title={group.title}
+              >
+                {group.items.map((list, i) => (
+                  <List.Item
+                    key={i}
+                    openable={list.openable}
+                    id={list.id}
+                    subtitle={list.subtitle}
+                    title={list.title}
+                    groupId={group.id}
+                    onSelected={onChangeValue}
+                    selectedOptions={{
+                      checked:
+                        value.checked.some((check) => check.id === list.id) ||
+                        [
+                          { id: "name", title: "Name" },
+                          { id: "code", title: "Code" },
+                        ].some((check) => check.id === list.id),
+                      value: JSON.stringify({
+                        id: list.id,
+                        title: list.title,
+                        subtitle: list.subtitle,
+                      }),
+                    }}
+                  >
+                    {list.children}
+                    {list.id === "lead" && (
+                      <StatefulForm
+                        containerStyle={css`
+                          padding-left: 8px;
+                          padding-right: 8px;
+                          padding-bottom: 8px;
+                        `}
+                        formValues={formValues}
+                        onChange={({ currentState }) => {
+                          setFormValues((prev) => ({
+                            ...prev,
+                            ...currentState,
+                          }));
+                        }}
+                        mode="onChange"
+                        validationSchema={z.object({
+                          field_name: z
+                            .string()
+                            .min(
+                              3,
+                              "First name must be at least 3 characters long"
+                            ),
+                          type: z
+                            .array(z.string().min(1, "Choose one"))
+                            .min(1, "Combo must have at least one item")
+                            .optional(),
+                        })}
+                        fields={[
+                          {
+                            name: "field_name",
+                            title: "Field Name",
+                            type: "text",
+                            required: false,
+                            placeholder: "Enter the field name",
+                          },
+                          {
+                            name: "type",
+                            title: "Type",
+                            type: "combo",
+                            required: false,
+                            placeholder: "Select the type data",
+                            comboboxProps: {
+                              options: FIELD_NAME_OPTIONS,
+                              selectboxStyle: css`
+                                border: 1px solid #d1d5db;
+                                &:focus {
+                                  border-color: #61a9f9;
+                                  box-shadow: 0 0 0 1px #61a9f9;
+                                }
+                              `,
+                            },
+                          },
+                        ]}
+                      />
+                    )}
+                  </List.Item>
+                ))}
+              </List.Group>
+            );
+          })}
+        </List>
+      </Card>
+    );
+  },
+};
+
 export const CustomOpener: Story = {
   render: () => {
     const RIGHT_SIDE_CONTENT = (prop: string) => (
@@ -890,6 +1082,7 @@ export const CustomOpener: Story = {
                 {group.items.map((list, i) => (
                   <List.Item
                     key={i}
+                    openable={list.openable}
                     id={list.id}
                     iconUrl={list.iconUrl}
                     subtitle={list.subtitle}
