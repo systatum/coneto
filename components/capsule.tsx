@@ -153,7 +153,6 @@ function Capsule({
       role="tablist"
     >
       <ActiveBackground
-        layout
         aria-label="active-capsule-box"
         $style={tabStyle}
         $activeBackgroundColor={activeBackgroundColor}
@@ -173,7 +172,6 @@ function Capsule({
       />
 
       <HoverBorder
-        layout
         aria-label="hover-capsule-box"
         $style={tabStyle}
         $activeBackgroundColor={activeBackgroundColor}
@@ -238,7 +236,6 @@ const CapsuleWrapper = styled.div<{
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: flex-start;
   overflow: hidden;
   padding-left: 0.25rem;
   padding-right: 0.25rem;
@@ -328,6 +325,8 @@ const Tab = styled.div<{
   text-align: center;
   font-weight: 500;
   transition: color 0.2s;
+  margin-top: 4px;
+  margin-bottom: 4px;
 
   ${({ $isActive }) =>
     $isActive
