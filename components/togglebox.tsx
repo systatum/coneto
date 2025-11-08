@@ -2,7 +2,7 @@ import { ChangeEvent, InputHTMLAttributes } from "react";
 import { motion } from "framer-motion";
 import { RemixiconComponentType } from "@remixicon/react";
 import { LoadingSpinner } from "./loading-spinner";
-import styled, { css, CSSProp } from "styled-components";
+import styled, { CSSProp } from "styled-components";
 
 export interface ToggleboxProps extends InputHTMLAttributes<HTMLInputElement> {
   checked?: boolean;
@@ -96,7 +96,7 @@ function Togglebox({
         <Description $style={descriptionStyle}>{description}</Description>
       )}
       {showError && errorMessage && (
-        <ErrorText $style={descriptionStyle}>{errorMessage}</ErrorText>
+        <ErrorText $style={errorStyle}>{errorMessage}</ErrorText>
       )}
     </ToggleboxContainer>
   );
@@ -106,7 +106,6 @@ const ToggleboxContainer = styled.div<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: column;
   gap: 2px;
-  width: 100%;
   font-size: 14px;
 
   ${({ $style }) => $style}
