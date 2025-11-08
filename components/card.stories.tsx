@@ -10,6 +10,10 @@ import {
   RiLinkM,
   RiSendPlane2Line,
   RiEdit2Line,
+  RiArrowUpSLine,
+  RiArrowDownSLine,
+  RiRefreshLine,
+  RiAddBoxLine,
 } from "@remixicon/react";
 import { Toolbar } from "./toolbar";
 import { Searchbox } from "./searchbox";
@@ -18,6 +22,12 @@ import { Checkbox } from "./checkbox";
 import { Button } from "./button";
 import { List, ListItemProps } from "./list";
 import { css } from "styled-components";
+import {
+  ColumnTableProps,
+  SubMenuListTableProps,
+  Table,
+  TableActionsProps,
+} from "./table";
 
 const meta: Meta<typeof Card> = {
   title: "Content/Card",
@@ -308,7 +318,7 @@ export const Default: Story = {
   },
 };
 
-export const WithTitle: Story = {
+export const WithHeader: Story = {
   args: {
     shadow: "sm",
     padding: "sm",
@@ -421,6 +431,9 @@ export const WithTitle: Story = {
         containerStyle={css`
           padding: 0px;
         `}
+        headerStyle={css`
+          border-bottom: 1px solid #d1d5db;
+        `}
       >
         <div
           style={{
@@ -495,7 +508,7 @@ export const WithTitle: Story = {
   },
 };
 
-export const WithTitleAndActions: Story = {
+export const WithHeaderAndFooter: Story = {
   render: () => {
     const LIST_GROUPS: {
       id: string;
@@ -507,35 +520,35 @@ export const WithTitleAndActions: Story = {
         title: "Breakfast",
         items: [
           {
-            id: 1,
+            id: "1",
             title: "French Toast",
             subtitle: "Breakfast",
             imageUrl: "https://picsum.photos/seed/frenchtoast/200",
             rightSideContent: [<span>13$</span>],
           },
           {
-            id: 2,
+            id: "2",
             title: "Croissant & Coffee",
             subtitle: "French",
             imageUrl: "https://picsum.photos/seed/croissant/200",
             rightSideContent: [<span>10$</span>],
           },
           {
-            id: 3,
+            id: "3",
             title: "Sushi Deluxe",
             subtitle: "Japanese",
             imageUrl: "https://picsum.photos/seed/sushi/200",
             rightSideContent: [<span>22$</span>],
           },
           {
-            id: 4,
+            id: "4",
             title: "Pad Thai",
             subtitle: "Thai",
             imageUrl: "https://picsum.photos/seed/padthai/200",
             rightSideContent: [<span>15$</span>],
           },
           {
-            id: 5,
+            id: "5",
             title: "Tacos Al Pastor",
             subtitle: "Mexican",
             imageUrl: "https://picsum.photos/seed/tacos/200",
@@ -548,35 +561,35 @@ export const WithTitleAndActions: Story = {
         title: "International Dishes",
         items: [
           {
-            id: 6,
+            id: "6",
             title: "Margherita Pizza",
             subtitle: "Italian",
             imageUrl: "https://picsum.photos/seed/pizza/200",
             rightSideContent: [<span>18$</span>],
           },
           {
-            id: 7,
+            id: "7",
             title: "Butter Chicken",
             subtitle: "Indian",
             imageUrl: "https://picsum.photos/seed/butterchicken/200",
             rightSideContent: [<span>16$</span>],
           },
           {
-            id: 8,
+            id: "8",
             title: "Pho Bo",
             subtitle: "Vietnamese",
             imageUrl: "https://picsum.photos/seed/phobo/200",
             rightSideContent: [<span>14$</span>],
           },
           {
-            id: 9,
+            id: "9",
             title: "Cheeseburger",
             subtitle: "American",
             imageUrl: "https://picsum.photos/seed/cheeseburger/200",
             rightSideContent: [<span>11$</span>],
           },
           {
-            id: 10,
+            id: "10",
             title: "Falafel Wrap",
             subtitle: "Middle Eastern",
             imageUrl: "https://picsum.photos/seed/falafel/200",
@@ -702,8 +715,16 @@ export const WithTitleAndActions: Story = {
 
     const DataItems = filteredContent.flatMap((data) => data.items);
 
-    const ContentCard = {
-      leftSideActions: [
+    const ContentCard = (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          width: "100%",
+        }}
+      >
         <div
           style={{
             display: "flex",
@@ -727,36 +748,54 @@ export const WithTitleAndActions: Story = {
             }
           />
           <span>Select all ({value.checked.length})</span>
-        </div>,
-      ],
-      rightSideActions: [
-        <Button>Cancel</Button>,
-        <Button variant="primary">Import</Button>,
-      ],
-    };
+        </div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            gap: "4px",
+          }}
+        >
+          <Button>Cancel</Button>
+          <Button variant="primary">Import</Button>
+        </div>
+      </div>
+    );
 
     return (
       <Card
-        title="Systatum Corps Food."
+        title="Systatum Food Services"
+        subtitle="Fueling innovation with every bite."
+        headerActions={[
+          {
+            title: "Edit fields",
+            disabled: value.checked.length === 0,
+            icon: RiEdit2Line,
+            onClick: () => {
+              console.log(`Delete ${value.checked.length} clicked`);
+            },
+          },
+        ]}
         containerStyle={css`
-          padding-left: 10px;
-          padding-right: 10px;
+          padding-left: 0px;
+          padding-right: 0px;
         `}
         headerStyle={css`
-          font-weight: 600;
-          padding-left: 10px;
-          padding-right: 10px;
+          padding-left: 15px;
+          padding-right: 15px;
+          border-bottom: 1px solid #d1d5db;
         `}
         footerStyle={css`
           padding-left: 20px;
           padding-right: 20px;
+          border-top: 1px solid #d1d5db;
         `}
-        leftSideActions={ContentCard.leftSideActions}
-        rightSideActions={ContentCard.rightSideActions}
+        footerContent={ContentCard}
       >
         <List
           searchable
           selectable
+          draggable
           onDragged={onDragged}
           onSearchRequested={onChangeValue}
           containerStyle={css`
@@ -818,6 +857,227 @@ export const WithTitleAndActions: Story = {
             );
           })}
         </List>
+      </Card>
+    );
+  },
+};
+
+export const WithFullWidthContent: Story = {
+  render: () => {
+    const columns: ColumnTableProps[] = [
+      {
+        caption: "Name",
+        sortable: true,
+      },
+      {
+        caption: "Code",
+        sortable: true,
+      },
+      {
+        caption: "Lead",
+        sortable: true,
+      },
+      {
+        caption: "Members",
+        sortable: true,
+      },
+    ];
+
+    const DEPARTMENTS = [
+      {
+        name: "Executive Office",
+        code: "EXE",
+        lead: "Adam Hakarsa",
+        members: "3",
+      },
+      {
+        name: "Engineering Department",
+        code: "ENG",
+        lead: "Mohamad Naufal Alim",
+        members: "15",
+      },
+      {
+        name: "Human Resources Department",
+        code: "HRD",
+        lead: "Aisha Rahman",
+        members: "6",
+      },
+      {
+        name: "Finance Department",
+        code: "FIN",
+        lead: "Budi Santoso",
+        members: "8",
+      },
+      {
+        name: "Marketing Department",
+        code: "MKT",
+        lead: "Nadia Putri",
+        members: "10",
+      },
+      {
+        name: "Product Department",
+        code: "PRD",
+        lead: "Rizky Setiawan",
+        members: "7",
+      },
+      {
+        name: "Customer Success Department",
+        code: "CSD",
+        lead: "Tania Lestari",
+        members: "5",
+      },
+      {
+        name: "Operations Department",
+        code: "OPS",
+        lead: "Dimas Saputra",
+        members: "9",
+      },
+      {
+        name: "Legal Department",
+        code: "LGL",
+        lead: "Anita Kusuma",
+        members: "4",
+      },
+      {
+        name: "IT Support Department",
+        code: "IT",
+        lead: "Fajar Nugroho",
+        members: "12",
+      },
+    ];
+
+    const [rows, setRows] = useState(DEPARTMENTS);
+
+    type DepartmentKeys = keyof (typeof DEPARTMENTS)[number];
+
+    const handleSortingRequested = ({
+      mode,
+      column,
+    }: {
+      mode: "asc" | "desc" | "original";
+      column: DepartmentKeys;
+    }) => {
+      if (mode === "original") {
+        setRows([...DEPARTMENTS]);
+        return;
+      }
+
+      const sorted = [...rows].sort((a, b) => {
+        const aVal = a[column];
+        const bVal = b[column];
+        return typeof aVal === "string" && typeof bVal === "string"
+          ? mode === "asc"
+            ? aVal.localeCompare(bVal)
+            : bVal.localeCompare(aVal)
+          : 0;
+      });
+
+      setRows(sorted);
+    };
+
+    const handleItemsSelected = (data: string[]) => {
+      console.log("Selected rows:", data);
+    };
+
+    const TIP_MENU_ACTION = (
+      columnCaption: DepartmentKeys
+    ): SubMenuListTableProps[] => {
+      return [
+        {
+          caption: "Sort Ascending",
+          icon: RiArrowUpSLine,
+          iconColor: "gray",
+          onClick: () => {
+            handleSortingRequested({ mode: "asc", column: columnCaption });
+          },
+        },
+        {
+          caption: "Sort Descending",
+          icon: RiArrowDownSLine,
+          iconColor: "gray",
+          onClick: () => {
+            handleSortingRequested({ mode: "desc", column: columnCaption });
+          },
+        },
+        {
+          caption: "Reset Sorting",
+          icon: RiRefreshLine,
+          iconColor: "gray",
+          onClick: () => {
+            handleSortingRequested({ mode: "original", column: columnCaption });
+          },
+        },
+      ];
+    };
+
+    const ROW_ACTION = (rowId: string): SubMenuListTableProps[] => {
+      return [
+        {
+          caption: "Edit",
+          icon: RiEdit2Line,
+          iconColor: "gray",
+          onClick: () => {
+            console.log(`${rowId} was edited`);
+          },
+        },
+      ];
+    };
+
+    return (
+      <Card
+        title="Departments"
+        subtitle="Departments and their leaders"
+        containerStyle={css`
+          padding-left: 0px;
+          padding-right: 0px;
+          min-width: 1000px;
+          padding-bottom: 0px;
+        `}
+        headerStyle={css`
+          padding-left: 15px;
+          padding-right: 15px;
+          border-bottom: 1px solid #d1d5db;
+        `}
+        headerActions={[
+          {
+            title: "Add",
+            icon: RiAddBoxLine,
+            onClick: () => {
+              console.log(`Add button was clicked`);
+            },
+          },
+        ]}
+      >
+        <Table
+          selectable
+          tableRowContainerStyle={css`
+            max-height: 400px;
+          `}
+          columns={columns}
+          onItemsSelected={handleItemsSelected}
+          subMenuList={TIP_MENU_ACTION}
+          totalSelectedItemText={(n) => `${n} Department selected`}
+        >
+          {rows.map((rowValue, rowIndex) => (
+            <Table.Row
+              onClick={({ toggleCheckbox }) => {
+                console.log(
+                  `Selected to this ${`${rowValue.name}-${rowValue.code}-${rowValue.lead}-${rowValue.members}`}`
+                );
+                toggleCheckbox();
+              }}
+              key={rowIndex}
+              rowId={`${rowValue.name}-${rowValue.code}-${rowValue.lead}-${rowValue.members}`}
+              actions={ROW_ACTION}
+              content={[
+                rowValue.name,
+                rowValue.code,
+                rowValue.lead,
+                rowValue.members,
+              ]}
+            />
+          ))}
+        </Table>
       </Card>
     );
   },

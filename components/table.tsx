@@ -481,7 +481,12 @@ function ActionCapsule(data: TableActionsProps) {
 function ActionButton(data: TableActionsProps) {
   return (
     <Button
-      onClick={data.onClick}
+      onClick={(e) => {
+        e.stopPropagation();
+        if (data.onClick) {
+          data.onClick();
+        }
+      }}
       subMenu={data.subMenu}
       disabled={data.disabled}
       showSubMenuOn={data.showSubMenuOn}
@@ -672,8 +677,6 @@ const TableRowContainer = styled.div<{ $tableRowContainerStyle?: CSSProp }>`
   position: relative;
   width: 100%;
   height: 100%;
-
-  margin-bottom: 15px;
 
   &::-webkit-scrollbar {
     width: 5px;
