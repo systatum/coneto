@@ -325,6 +325,8 @@ const Tab = styled.div<{
   text-align: center;
   font-weight: 500;
   transition: color 0.2s;
+  margin-top: 4px;
+  margin-bottom: 4px;
 
   ${({ $isActive }) =>
     $isActive
