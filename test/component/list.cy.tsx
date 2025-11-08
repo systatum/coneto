@@ -881,6 +881,74 @@ describe("List", () => {
     });
   });
 
+  context("leftSideContent", () => {
+    context("when given in the list", () => {
+      const LIST_GROUPS: ListGroupContentProps[] = [
+        {
+          id: "employees",
+          title: "Employees",
+          items: [
+            { id: "birthday", title: "Birthday", leftSideContent: 2 },
+            { id: "new-hires", title: "New Hires", leftSideContent: 1 },
+            {
+              id: "terminated-employees",
+              title: "Terminated Employees",
+              leftSideContent: 0,
+            },
+            { id: "anniversaries", title: "Anniversaries", leftSideContent: 3 },
+            { id: "promotions", title: "Promotions", leftSideContent: 1 },
+            { id: "trainings", title: "Trainings", leftSideContent: 2 },
+            { id: "sick-leave", title: "Sick Leave", leftSideContent: 1 },
+          ],
+        },
+      ];
+
+      it("should render the actions", () => {
+        cy.mount(
+          <List
+            searchable
+            containerStyle={css`
+              padding: 16px;
+              min-width: 350px;
+            `}
+          >
+            {LIST_GROUPS.map((group, index) => (
+              <List.Group
+                key={index}
+                id={group.id}
+                title={group.title}
+                subtitle={group.subtitle}
+                actions={group.actions}
+                openerStyle="togglebox"
+              >
+                {group.items.map((list, i) => (
+                  <List.Item
+                    key={i}
+                    id={list.id}
+                    actions={list.actions}
+                    leftIcon={list.leftIcon}
+                    leftSideContent={({ badge }) => badge(list.leftSideContent)}
+                    subtitle={list.subtitle}
+                    title={list.title}
+                    groupId={group.id}
+                  />
+                ))}
+              </List.Group>
+            ))}
+          </List>
+        );
+
+        LIST_GROUPS.map((props) =>
+          props.items.map((list, index) => {
+            cy.findAllByLabelText("left-side-content")
+              .eq(index)
+              .should("contain", list.leftSideContent);
+          })
+        );
+      });
+    });
+  });
+
   const LIST_GROUPS_OPENABLE: ListGroupContentProps[] = [
     {
       id: "recent-content",
