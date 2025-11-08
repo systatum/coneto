@@ -1,4 +1,4 @@
-import { useForm, UseFormSetValue } from "react-hook-form";
+import { useForm, UseFormProps, UseFormSetValue } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z, { ZodTypeAny, TypeOf, ZodObject } from "zod";
 import { ChangeEvent, ReactNode, useEffect, useRef } from "react";
@@ -52,7 +52,7 @@ export type FormValueType =
 interface StatefulFormProps<Z extends ZodTypeAny> {
   fields: FormFieldGroup[];
   formValues: TypeOf<Z>;
-  validationSchema: Z;
+  validationSchema?: Z;
   mode?: "onChange" | "onBlur" | "onSubmit";
   onValidityChange?: (e: boolean) => void;
   labelSize?: string;
@@ -114,16 +114,21 @@ function StatefulForm<Z extends ZodTypeAny>({
 
   const finalSchema = getSchemaForVisibleFields(validationSchema, fields);
 
+  const formConfig: UseFormProps<TypeOf<Z>> = {
+    mode,
+    defaultValues: formValues,
+  };
+
+  if (validationSchema) {
+    formConfig.resolver = zodResolver(finalSchema);
+  }
+
   const {
     register,
     control,
     setValue,
     formState: { errors, touchedFields, isValid },
-  } = useForm<TypeOf<Z>>({
-    resolver: zodResolver(finalSchema),
-    mode,
-    defaultValues: formValues,
-  });
+  } = useForm<TypeOf<Z>>(formConfig);
 
   useEffect(() => {
     if (onValidityChange) {
@@ -201,9 +206,11 @@ function StatefulForm<Z extends ZodTypeAny>({
 }
 
 function getSchemaForVisibleFields<Z extends ZodTypeAny>(
-  validationSchema: Z,
-  fields: FormFieldGroup[]
+  validationSchema?: Z,
+  fields?: FormFieldGroup[]
 ) {
+  if (!validationSchema) return undefined;
+
   if (!(validationSchema instanceof ZodObject)) {
     throw new Error("StatefulForm only supports Zod object schemas");
   }

@@ -32,22 +32,6 @@ describe("StatefulForm", () => {
       country_code: DEFAULT_COUNTRY_CODES,
     };
 
-    const employeeSchema = z.object({
-      first_name: z
-        .string()
-        .min(3, "First name must be at least 3 characters long"),
-      last_name: z.string().optional(),
-      email: z.string().email("Please enter a valid email address"),
-      phone: z
-        .string()
-        .regex(/^\d{10,15}$/, "Phone number must be between 10 and 15 digits")
-        .optional(),
-      note: z.string().optional(),
-      access: z.boolean().refine((val) => val === true, {
-        message: "Access must be true",
-      }),
-    });
-
     const EMPLOYEE_FIELDS: FormFieldGroup[] = [
       [
         {
@@ -99,7 +83,6 @@ describe("StatefulForm", () => {
         <StatefulForm
           fields={EMPLOYEE_FIELDS}
           formValues={value}
-          validationSchema={employeeSchema}
           mode="onChange"
         />
       );
@@ -136,22 +119,6 @@ describe("StatefulForm", () => {
       country_code: DEFAULT_COUNTRY_CODES,
     };
 
-    const employeeSchema = z.object({
-      first_name: z
-        .string()
-        .min(3, "First name must be at least 3 characters long"),
-      last_name: z.string().optional(),
-      email: z.string().email("Please enter a valid email address"),
-      phone: z
-        .string()
-        .regex(/^\d{10,15}$/, "Phone number must be between 10 and 15 digits")
-        .optional(),
-      note: z.string().optional(),
-      access: z.boolean().refine((val) => val === true, {
-        message: "Access must be true",
-      }),
-    });
-
     const EMPLOYEE_FIELDS: FormFieldGroup[] = [
       [
         {
@@ -203,7 +170,6 @@ describe("StatefulForm", () => {
         <StatefulForm
           fields={EMPLOYEE_FIELDS}
           formValues={value}
-          validationSchema={employeeSchema}
           mode="onChange"
           autoFocusField="first_name"
         />
@@ -230,15 +196,6 @@ describe("StatefulForm", () => {
       access: false,
     };
 
-    const employeeSchema = z.object({
-      first_name: z
-        .string()
-        .min(3, "First name must be at least 3 characters long"),
-      access: z.boolean().refine((val) => val === true, {
-        message: "Access must be true",
-      }),
-    });
-
     const EMPLOYEE_FIELDS: FormFieldGroup[] = [
       {
         name: "first_name",
@@ -263,7 +220,6 @@ describe("StatefulForm", () => {
         <StatefulForm
           fields={EMPLOYEE_FIELDS}
           formValues={value}
-          validationSchema={employeeSchema}
           mode="onChange"
         />
       );
@@ -289,15 +245,6 @@ describe("StatefulForm", () => {
       first_name: "",
       access: false,
     };
-
-    const employeeSchema = z.object({
-      first_name: z
-        .string()
-        .min(3, "First name must be at least 3 characters long"),
-      access: z.boolean().refine((val) => val === true, {
-        message: "Access must be true",
-      }),
-    });
 
     const BADGE_OPTIONS = [
       {
@@ -386,7 +333,6 @@ describe("StatefulForm", () => {
         <StatefulForm
           fields={EMPLOYEE_FIELDS}
           formValues={value}
-          validationSchema={employeeSchema}
           mode="onChange"
         />
       );
@@ -412,18 +358,6 @@ describe("StatefulForm", () => {
       first_name: "",
       access: false,
     };
-
-    const employeeSchema = z.object({
-      first_name: z
-        .string()
-        .min(3, "First name must be at least 3 characters long"),
-      middle_name: z
-        .string()
-        .min(3, "Middle name must be at least 3 characters long"),
-      access: z.boolean().refine((val) => val === true, {
-        message: "Access must be true",
-      }),
-    });
 
     const EMPLOYEE_FIELDS_WITH_HIDDEN: FormFieldGroup[] = [
       {
@@ -454,7 +388,6 @@ describe("StatefulForm", () => {
         <StatefulForm
           fields={EMPLOYEE_FIELDS_WITH_HIDDEN}
           formValues={value}
-          validationSchema={employeeSchema}
           mode="onChange"
         />
       );
@@ -471,7 +404,6 @@ describe("StatefulForm", () => {
         <StatefulForm
           fields={EMPLOYEE_FIELDS_WITH_HIDDEN}
           formValues={value}
-          validationSchema={employeeSchema}
           mode="onChange"
         />
       );
@@ -820,7 +752,6 @@ describe("StatefulForm", () => {
           <StatefulForm
             fields={ALL_INPUT}
             formValues={valueAll}
-            validationSchema={schema}
             mode="onChange"
           />
         );
