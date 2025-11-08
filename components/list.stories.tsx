@@ -2,7 +2,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import {
   List,
   ListActionsProps,
-  ListGroupContent,
+  ListGroupContentProps,
   ListItemProps,
 } from "./list";
 import {
@@ -13,6 +13,7 @@ import {
   RiNotification3Fill,
   RiCalendar2Fill,
   RiErrorWarningLine,
+  RiArrowRightSLine,
 } from "@remixicon/react";
 import { Card } from "./card";
 import { ChangeEvent, useMemo, useState } from "react";
@@ -20,6 +21,8 @@ import { css } from "styled-components";
 import { StatefulForm } from "./stateful-form";
 import { OptionsProps } from "./selectbox";
 import z from "zod";
+import { EmptySlate } from "./empty-slate";
+import { Button } from "./button";
 
 const meta: Meta<typeof List> = {
   title: "Content/List",
@@ -38,31 +41,31 @@ export const Default: Story = {
         id: "home",
         title: "Home",
         subtitle: "Go to homepage",
-        iconUrl: RiHome2Fill,
+        leftIcon: RiHome2Fill,
       },
       {
         id: "profile",
         title: "Profile",
         subtitle: "View your profile",
-        iconUrl: RiUser3Fill,
+        leftIcon: RiUser3Fill,
       },
       {
         id: "settings",
         title: "Settings",
         subtitle: "Adjust preferences",
-        iconUrl: RiSettings3Fill,
+        leftIcon: RiSettings3Fill,
       },
       {
         id: "messages",
         title: "Messages",
         subtitle: "Check your inbox",
-        iconUrl: RiMailFill,
+        leftIcon: RiMailFill,
       },
       {
         id: "notifications",
         title: "Notifications",
         subtitle: "View Alerts",
-        iconUrl: RiNotification3Fill,
+        leftIcon: RiNotification3Fill,
       },
     ];
 
@@ -78,7 +81,7 @@ export const Default: Story = {
             <List.Item
               key={index}
               id={item.id}
-              iconUrl={item.iconUrl}
+              leftIcon={item.leftIcon}
               subtitle={item.subtitle}
               title={item.title}
             />
@@ -96,31 +99,31 @@ export const WithSearch: Story = {
         id: "home",
         title: "Home",
         subtitle: "Go to homepage",
-        iconUrl: RiHome2Fill,
+        leftIcon: RiHome2Fill,
       },
       {
         id: "profile",
         title: "Profile",
         subtitle: "View your profile",
-        iconUrl: RiUser3Fill,
+        leftIcon: RiUser3Fill,
       },
       {
         id: "settings",
         title: "Settings",
         subtitle: "Adjust preferences",
-        iconUrl: RiSettings3Fill,
+        leftIcon: RiSettings3Fill,
       },
       {
         id: "messages",
         title: "Messages",
         subtitle: "Check your inbox",
-        iconUrl: RiMailFill,
+        leftIcon: RiMailFill,
       },
       {
         id: "notifications",
         title: "Notifications",
         subtitle: "View Alerts",
-        iconUrl: RiNotification3Fill,
+        leftIcon: RiNotification3Fill,
       },
     ];
 
@@ -159,7 +162,7 @@ export const WithSearch: Story = {
               `}
               key={index}
               id={item.id}
-              iconUrl={item.iconUrl}
+              leftIcon={item.leftIcon}
               subtitle={item.subtitle}
               title={item.title}
             />
@@ -172,7 +175,7 @@ export const WithSearch: Story = {
 
 export const WithGroup: Story = {
   render: () => {
-    const LIST_GROUPS: ListGroupContent[] = [
+    const LIST_GROUPS: ListGroupContentProps[] = [
       {
         id: "recent-content",
         title: "Recent Content",
@@ -181,19 +184,19 @@ export const WithGroup: Story = {
             id: "messages",
             title: "Messages",
             subtitle: "Check your inbox",
-            iconUrl: RiMailFill,
+            leftIcon: RiMailFill,
           },
           {
             id: "notifications",
             title: "Notifications",
             subtitle: "View Alerts",
-            iconUrl: RiNotification3Fill,
+            leftIcon: RiNotification3Fill,
           },
           {
             id: "calendar",
             title: "Calendar",
             subtitle: "Upcoming events",
-            iconUrl: RiCalendar2Fill,
+            leftIcon: RiCalendar2Fill,
           },
         ],
       },
@@ -205,19 +208,19 @@ export const WithGroup: Story = {
             id: "home",
             title: "Home",
             subtitle: "Go to homepage",
-            iconUrl: RiHome2Fill,
+            leftIcon: RiHome2Fill,
           },
           {
             id: "profile",
             title: "Profile",
             subtitle: "View your profile",
-            iconUrl: RiUser3Fill,
+            leftIcon: RiUser3Fill,
           },
           {
             id: "settings",
             title: "Settings",
             subtitle: "Adjust preferences",
-            iconUrl: RiSettings3Fill,
+            leftIcon: RiSettings3Fill,
           },
         ],
       },
@@ -282,7 +285,7 @@ export const WithGroup: Story = {
                     padding-left: 4px;
                   `}
                   id={list.id}
-                  iconUrl={list.iconUrl}
+                  leftIcon={list.leftIcon}
                   subtitle={list.subtitle}
                   title={list.title}
                 />
@@ -297,7 +300,7 @@ export const WithGroup: Story = {
 
 export const Draggable: Story = {
   render: () => {
-    const LIST_GROUPS: ListGroupContent[] = [
+    const LIST_GROUPS: ListGroupContentProps[] = [
       {
         id: "recent-content",
         title: "Recent Content",
@@ -306,19 +309,19 @@ export const Draggable: Story = {
             id: "messages",
             title: "Messages",
             subtitle: "Check your inbox",
-            iconUrl: RiMailFill,
+            leftIcon: RiMailFill,
           },
           {
             id: "notifications",
             title: "Notifications",
             subtitle: "View Alerts",
-            iconUrl: RiNotification3Fill,
+            leftIcon: RiNotification3Fill,
           },
           {
             id: "calendar",
             title: "Calendar",
             subtitle: "Upcoming events",
-            iconUrl: RiCalendar2Fill,
+            leftIcon: RiCalendar2Fill,
           },
         ],
       },
@@ -330,19 +333,19 @@ export const Draggable: Story = {
             id: "home",
             title: "Home",
             subtitle: "Go to homepage",
-            iconUrl: RiHome2Fill,
+            leftIcon: RiHome2Fill,
           },
           {
             id: "profile",
             title: "Profile",
             subtitle: "View your profile",
-            iconUrl: RiUser3Fill,
+            leftIcon: RiUser3Fill,
           },
           {
             id: "settings",
             title: "Settings",
             subtitle: "Adjust preferences",
-            iconUrl: RiSettings3Fill,
+            leftIcon: RiSettings3Fill,
           },
         ],
       },
@@ -469,7 +472,7 @@ export const Draggable: Story = {
                   <List.Item
                     key={i}
                     id={list.id}
-                    iconUrl={list.iconUrl}
+                    leftIcon={list.leftIcon}
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
@@ -486,7 +489,7 @@ export const Draggable: Story = {
 
 export const WithLoading: Story = {
   render: () => {
-    const LIST_GROUPS: ListGroupContent[] = [
+    const LIST_GROUPS: ListGroupContentProps[] = [
       {
         id: "recent-content",
         title: "Recent Content",
@@ -495,19 +498,19 @@ export const WithLoading: Story = {
             id: "messages",
             title: "Messages",
             subtitle: "Check your inbox",
-            iconUrl: RiMailFill,
+            leftIcon: RiMailFill,
           },
           {
             id: "notifications",
             title: "Notifications",
             subtitle: "View Alerts",
-            iconUrl: RiNotification3Fill,
+            leftIcon: RiNotification3Fill,
           },
           {
             id: "calendar",
             title: "Calendar",
             subtitle: "Upcoming events",
-            iconUrl: RiCalendar2Fill,
+            leftIcon: RiCalendar2Fill,
           },
         ],
       },
@@ -519,19 +522,19 @@ export const WithLoading: Story = {
             id: "home",
             title: "Home",
             subtitle: "Go to homepage",
-            iconUrl: RiHome2Fill,
+            leftIcon: RiHome2Fill,
           },
           {
             id: "profile",
             title: "Profile",
             subtitle: "View your profile",
-            iconUrl: RiUser3Fill,
+            leftIcon: RiUser3Fill,
           },
           {
             id: "settings",
             title: "Settings",
             subtitle: "Adjust preferences",
-            iconUrl: RiSettings3Fill,
+            leftIcon: RiSettings3Fill,
           },
         ],
       },
@@ -659,7 +662,7 @@ export const WithLoading: Story = {
                   <List.Item
                     key={i}
                     id={list.id}
-                    iconUrl={list.iconUrl}
+                    leftIcon={list.leftIcon}
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
@@ -689,7 +692,7 @@ export const WithCheckbox: Story = {
       { text: "array", value: "5" },
     ];
 
-    const LIST_GROUPS: ListGroupContent[] = [
+    const LIST_GROUPS: ListGroupContentProps[] = [
       {
         id: "form-fields",
         title: "Form Fields",
@@ -863,10 +866,209 @@ export const WithCheckbox: Story = {
   },
 };
 
+export const WithBadge: Story = {
+  render: () => {
+    const [content, setContent] = useState([]);
+    const [isOpen, setIsOpen] = useState(false);
+
+    const LIST_GROUPS: ListGroupContentProps[] = [
+      {
+        id: "employees",
+        title: "Employees",
+        items: [
+          { id: "birthday", title: "Birthday", leftSideContent: 2 },
+          { id: "new-hires", title: "New Hires", leftSideContent: 1 },
+          {
+            id: "terminated-employees",
+            title: "Terminated Employees",
+            leftSideContent: 0,
+          },
+          { id: "anniversaries", title: "Anniversaries", leftSideContent: 3 },
+          { id: "promotions", title: "Promotions", leftSideContent: 1 },
+          { id: "trainings", title: "Trainings", leftSideContent: 2 },
+          { id: "sick-leave", title: "Sick Leave", leftSideContent: 1 },
+        ],
+      },
+    ];
+
+    const EMPLOYEES_BIRTHDAY: ListItemProps[] = [
+      { id: "1", title: "Alim", subtitle: "Jan 1" },
+      { id: "2", title: "Budi", subtitle: "Feb 3" },
+    ];
+
+    const EMPLOYEES_NEW_HIRES: ListItemProps[] = [
+      { id: "1", title: "Citra", subtitle: "Joined 1 week ago" },
+    ];
+
+    const EMPLOYEES_TERMINATED: ListItemProps[] = [];
+
+    const EMPLOYEES_ANNIVERSARIES: ListItemProps[] = [
+      { id: "1", title: "Deni", subtitle: "5 years" },
+      { id: "2", title: "Eka", subtitle: "3 years" },
+      { id: "3", title: "Fajar", subtitle: "2 years" },
+    ];
+
+    const EMPLOYEES_PROMOTIONS: ListItemProps[] = [
+      { id: "1", title: "Gita", subtitle: "Promoted to Senior" },
+    ];
+
+    const EMPLOYEES_TRAININGS: ListItemProps[] = [
+      { id: "1", title: "Hadi", subtitle: "React Training" },
+      { id: "2", title: "Ika", subtitle: "TypeScript Training" },
+    ];
+
+    const EMPLOYEES_ON_LEAVE: ListItemProps[] = [
+      { id: "1", title: "Joko", subtitle: "Sick Leave" },
+    ];
+
+    const EMPLOYEE_CONTENT_MAP: Record<string, ListItemProps[]> = {
+      birthday: EMPLOYEES_BIRTHDAY,
+      "new-hires": EMPLOYEES_NEW_HIRES,
+      "terminated-employees": EMPLOYEES_TERMINATED,
+      anniversaries: EMPLOYEES_ANNIVERSARIES,
+      promotions: EMPLOYEES_PROMOTIONS,
+      trainings: EMPLOYEES_TRAININGS,
+      "sick-leave": EMPLOYEES_ON_LEAVE,
+    };
+
+    const ShowContent = () => {
+      return content.length > 0 ? (
+        content.map((list, i) => (
+          <List.Item
+            key={i}
+            openable={list.openable}
+            id={list.id}
+            subtitle={list.subtitle}
+            title={list.title}
+          >
+            {list.children}
+          </List.Item>
+        ))
+      ) : (
+        <EmptySlate
+          imageUrl="https://picsum.photos/200?random=2"
+          title="No employees found"
+          subtitle="It looks like there are no employees in this category yet."
+          actions={
+            <>
+              <Button variant="default">Add Employee</Button>
+              <Button variant="primary">Learn More</Button>
+            </>
+          }
+          containerStyle={css`
+            text-align: center;
+            padding-top: 30px;
+            padding-bottom: 30px;
+          `}
+        />
+      );
+    };
+
+    const [groups] = useState(LIST_GROUPS);
+    const [search, setSearch] = useState("");
+
+    const filteredContent = useMemo(() => {
+      const searchContent = search.toLowerCase().trim();
+
+      return groups
+        .map((group) => {
+          const matchedItems = group.items.filter(
+            (item) =>
+              item.title?.toLowerCase().includes(searchContent) ||
+              item.subtitle?.toLowerCase().includes(searchContent)
+          );
+
+          const groupMatches = group.title
+            .toLowerCase()
+            .includes(searchContent);
+
+          if (groupMatches || matchedItems.length > 0) {
+            return {
+              ...group,
+              items: groupMatches ? group.items : matchedItems,
+            };
+          }
+
+          return null;
+        })
+        .filter(Boolean);
+    }, [search, groups]);
+
+    return (
+      <Card>
+        <List
+          searchable
+          onSearchRequested={(e) => setSearch(e.target.value)}
+          containerStyle={css`
+            padding: 16px;
+            min-width: 500px;
+          `}
+        >
+          {filteredContent.map((group, index) => {
+            return (
+              <List.Group
+                key={index}
+                id={group.id}
+                subtitle={group.subtitle}
+                title={group.title}
+                actions={[
+                  {
+                    title: "Back",
+                    disabled: !isOpen,
+                    onClick: () => {
+                      setIsOpen(false);
+                    },
+                  },
+                ]}
+              >
+                {isOpen ? (
+                  <ShowContent />
+                ) : (
+                  group.items.map((list, i) => (
+                    <List.Item
+                      key={i}
+                      onClick={async () => {
+                        await setContent(EMPLOYEE_CONTENT_MAP[list.id]);
+                        await setIsOpen(true);
+                      }}
+                      openable={list.openable}
+                      id={list.id}
+                      subtitle={list.subtitle}
+                      title={list.title}
+                      groupId={group.id}
+                      leftSideContent={({ badge }) =>
+                        badge(list.leftSideContent, {
+                          withStyle: css`
+                            background-color: #488cac;
+                            color: white;
+                            min-width: 30px;
+                            max-width: 30px;
+                          `,
+                        })
+                      }
+                      rightSideContent={<RiArrowRightSLine size={18} />}
+                    >
+                      {list.children}
+                    </List.Item>
+                  ))
+                )}
+              </List.Group>
+            );
+          })}
+        </List>
+      </Card>
+    );
+  },
+};
+
 export const CustomOpener: Story = {
   render: () => {
     const RIGHT_SIDE_CONTENT = (prop: string) => (
       <RiErrorWarningLine
+        style={{
+          minWidth: "22px",
+          minHeight: "22px",
+        }}
         color="orange"
         onClick={(e) => {
           e.stopPropagation();
@@ -884,7 +1086,7 @@ export const CustomOpener: Story = {
       },
     ];
 
-    const LIST_GROUPS: ListGroupContent[] = [
+    const LIST_GROUPS: ListGroupContentProps[] = [
       {
         id: "recent-content",
         title: "Recent Content",
@@ -894,25 +1096,25 @@ export const CustomOpener: Story = {
             id: "messages",
             title: "Messages",
             subtitle: "Check your inbox",
-            iconUrl: RiMailFill,
+            leftIcon: RiMailFill,
           },
           {
             id: "notifications",
             title: "Notifications",
             subtitle: "View Alerts",
-            iconUrl: RiNotification3Fill,
+            leftIcon: RiNotification3Fill,
           },
           {
             id: "profile",
             title: "Profile",
             subtitle: "View your profile",
-            iconUrl: RiUser3Fill,
+            leftIcon: RiUser3Fill,
           },
           {
             id: "calendar",
             title: "Calendar",
             subtitle: "Upcoming events",
-            iconUrl: RiCalendar2Fill,
+            leftIcon: RiCalendar2Fill,
           },
         ],
       },
@@ -926,7 +1128,7 @@ export const CustomOpener: Story = {
             id: "home",
             title: "Home",
             subtitle: "Go to homepage",
-            iconUrl: RiHome2Fill,
+            leftIcon: RiHome2Fill,
             rightSideContent: RIGHT_SIDE_CONTENT,
           },
 
@@ -934,7 +1136,7 @@ export const CustomOpener: Story = {
             id: "settings",
             title: "Settings",
             subtitle: "Adjust preferences",
-            iconUrl: RiSettings3Fill,
+            leftIcon: RiSettings3Fill,
             rightSideContent: RIGHT_SIDE_CONTENT,
           },
         ],
@@ -1084,7 +1286,7 @@ export const CustomOpener: Story = {
                     key={i}
                     openable={list.openable}
                     id={list.id}
-                    iconUrl={list.iconUrl}
+                    leftIcon={list.leftIcon}
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
