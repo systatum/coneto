@@ -949,58 +949,207 @@ describe("List", () => {
 
   context("openable ", () => {
     context("with children", () => {
-      it("should render children list item", () => {
-        cy.mount(
-          <List
-            searchable
-            draggable
-            selectable
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
-          >
-            {LIST_GROUPS_OPENABLE.map((group, index) => (
-              <List.Group
-                key={index}
-                id={group.id}
-                title={group.title}
-                subtitle={group.subtitle}
-                actions={group.actions}
-                openerStyle="togglebox"
-              >
-                {group.items.map((list, i) => (
-                  <List.Item
-                    key={i}
-                    id={list.id}
-                    actions={list.actions}
-                    iconUrl={list.iconUrl}
-                    subtitle={list.subtitle}
-                    title={list.title}
-                    groupId={group.id}
-                    openable={list.openable}
-                    selectedOptions={{
-                      checked: true,
-                    }}
-                  >
-                    {list.children}
-                  </List.Item>
-                ))}
-              </List.Group>
-            ))}
-          </List>
-        );
-        cy.wait(100);
+      context("when given", () => {
+        it("should render children list item", () => {
+          cy.mount(
+            <List
+              searchable
+              draggable
+              selectable
+              containerStyle={css`
+                padding: 16px;
+                min-width: 350px;
+              `}
+            >
+              {LIST_GROUPS_OPENABLE.map((group, index) => (
+                <List.Group
+                  key={index}
+                  id={group.id}
+                  title={group.title}
+                  subtitle={group.subtitle}
+                  actions={group.actions}
+                  openerStyle="togglebox"
+                >
+                  {group.items.map((list, i) => (
+                    <List.Item
+                      key={i}
+                      id={list.id}
+                      actions={list.actions}
+                      iconUrl={list.iconUrl}
+                      subtitle={list.subtitle}
+                      title={list.title}
+                      groupId={group.id}
+                      openable={list.openable}
+                      selectedOptions={{
+                        checked: true,
+                      }}
+                    >
+                      {list.children}
+                    </List.Item>
+                  ))}
+                </List.Group>
+              ))}
+            </List>
+          );
+          cy.wait(100);
 
-        LIST_GROUPS_OPENABLE.map((groups) =>
-          groups.items.map((list) => {
-            if (list.title === "Settings") {
-              cy.findByText(String(list.children)).should("exist");
-            } else {
+          LIST_GROUPS_OPENABLE.map((groups) =>
+            groups.items.map((list) => {
+              if (list.title === "Settings") {
+                cy.findByText(String(list.children)).should("exist");
+              } else {
+                cy.findByText(String(list.children)).should("not.exist");
+              }
+            })
+          );
+        });
+      });
+
+      context("without children", () => {
+        const LIST_GROUPS_OPENABLE_WITHOUT_CHILDREN: ListGroupContent[] = [
+          {
+            id: "recent-content",
+            title: "Recent Content",
+            subtitle: "Your latest activity",
+            items: [
+              {
+                id: "messages",
+                title: "Messages",
+                subtitle: "Check your inbox",
+                iconUrl: RiMailFill,
+                openable: true,
+              },
+              {
+                id: "notifications",
+                title: "Notifications",
+                subtitle: "View Alerts",
+                iconUrl: RiNotification3Fill,
+                openable: true,
+              },
+              {
+                id: "calendar",
+                title: "Calendar",
+                subtitle: "Upcoming events",
+                iconUrl: RiCalendar2Fill,
+                openable: true,
+              },
+            ],
+          },
+        ];
+
+        it("should render only the list item", () => {
+          cy.mount(
+            <List
+              searchable
+              draggable
+              selectable
+              containerStyle={css`
+                padding: 16px;
+                min-width: 350px;
+              `}
+            >
+              {LIST_GROUPS_OPENABLE_WITHOUT_CHILDREN.map((group, index) => (
+                <List.Group
+                  key={index}
+                  id={group.id}
+                  title={group.title}
+                  subtitle={group.subtitle}
+                  actions={group.actions}
+                  openerStyle="togglebox"
+                >
+                  {group.items.map((list, i) => (
+                    <List.Item
+                      key={i}
+                      id={list.id}
+                      actions={list.actions}
+                      iconUrl={list.iconUrl}
+                      subtitle={list.subtitle}
+                      title={list.title}
+                      groupId={group.id}
+                      openable={list.openable}
+                      selectedOptions={{
+                        checked: true,
+                      }}
+                    >
+                      {list.children}
+                    </List.Item>
+                  ))}
+                </List.Group>
+              ))}
+            </List>
+          );
+          cy.wait(100);
+          cy.findByText("Messages").click();
+
+          LIST_GROUPS_OPENABLE_WITHOUT_CHILDREN.map((groups) =>
+            groups.items.map((list) => {
               cy.findByText(String(list.children)).should("not.exist");
-            }
-          })
-        );
+            })
+          );
+        });
+
+        context("when clicking", () => {
+          it("should keep height consistent", () => {
+            cy.mount(
+              <List
+                searchable
+                draggable
+                selectable
+                containerStyle={css`
+                  padding: 16px;
+                  min-width: 350px;
+                `}
+              >
+                {LIST_GROUPS_OPENABLE_WITHOUT_CHILDREN.map((group, index) => (
+                  <List.Group
+                    key={index}
+                    id={group.id}
+                    title={group.title}
+                    subtitle={group.subtitle}
+                    actions={group.actions}
+                    openerStyle="togglebox"
+                  >
+                    {group.items.map((list, i) => (
+                      <List.Item
+                        key={i}
+                        id={list.id}
+                        actions={list.actions}
+                        iconUrl={list.iconUrl}
+                        subtitle={list.subtitle}
+                        title={list.title}
+                        groupId={group.id}
+                        openable={list.openable}
+                        selectedOptions={{
+                          checked: true,
+                        }}
+                      >
+                        {list.children}
+                      </List.Item>
+                    ))}
+                  </List.Group>
+                ))}
+              </List>
+            );
+
+            LIST_GROUPS_OPENABLE_WITHOUT_CHILDREN.map((groups, index) =>
+              cy
+                .findAllByLabelText("list-item-wrapper")
+                .eq(index)
+                .then(($el) => {
+                  const initialHeight = $el.height();
+
+                  cy.findByText(groups.items[index].title).click();
+
+                  cy.findAllByLabelText("list-item-wrapper")
+                    .eq(index)
+                    .then(($elAfter) => {
+                      const afterHeight = $elAfter.height();
+                      expect(afterHeight).to.equal(initialHeight);
+                    });
+                })
+            );
+          });
+        });
       });
 
       context("when clicking", () => {
@@ -1055,7 +1204,7 @@ describe("List", () => {
                 cy.findAllByLabelText("list-item-wrapper")
                   .eq(5)
                   .should("have.css", "background-color", "rgb(219, 234, 254)")
-                  .and("have.css", "border-radius", "6px");
+                  .and("have.css", "border-radius", "3px");
               } else {
                 cy.findByText(String(list.children)).should("not.exist");
                 cy.findAllByLabelText("list-item-wrapper")
