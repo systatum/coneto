@@ -497,25 +497,6 @@ export const MultiplePaperDialog: Story = {
     const columns: ColumnTableProps[] = [
       {
         caption: "Name",
-        sortable: true,
-      },
-      {
-        caption: "Status",
-        sortable: true,
-      },
-      {
-        caption: "Gender",
-        sortable: true,
-      },
-      {
-        caption: "Birthday",
-        sortable: true,
-      },
-    ];
-
-    const columnsFamily: ColumnTableProps[] = [
-      {
-        caption: "Name",
       },
       {
         caption: "Status",
@@ -611,76 +592,13 @@ export const MultiplePaperDialog: Story = {
       },
     ];
 
-    const [rows, setRows] = useState<Employee[]>(EMPLOYEE_DATA);
+    const [rows] = useState<Employee[]>(EMPLOYEE_DATA);
     const [familyRows, setFamilyRows] = useState<Employee>(null);
     const [search, setSearch] = useState("");
     const [familySearch, setFamilySearch] = useState("");
 
-    type DepartmentKeys = keyof (typeof EMPLOYEE_DATA)[number];
-
-    const handleSortingRequested = ({
-      mode,
-      column,
-    }: {
-      mode: "asc" | "desc" | "original";
-      column: DepartmentKeys;
-    }) => {
-      const finalColumn = column.toLowerCase();
-
-      if (mode === "original") {
-        setRows([...EMPLOYEE_DATA]);
-        return;
-      }
-
-      setRows((prev) => {
-        const sorted = [...prev].sort((a, b) => {
-          const aVal = a[finalColumn];
-          const bVal = b[finalColumn];
-          return typeof aVal === "string" && typeof bVal === "string"
-            ? mode === "asc"
-              ? aVal.localeCompare(bVal)
-              : bVal.localeCompare(aVal)
-            : 0;
-        });
-        return sorted;
-      });
-    };
-
-    console.log(rows);
-
     const handleItemsSelected = (data: string[]) => {
       console.log("Selected rows:", data);
-    };
-
-    const TIP_MENU_ACTION = (
-      columnCaption: DepartmentKeys
-    ): SubMenuListTableProps[] => {
-      return [
-        {
-          caption: "Sort Ascending",
-          icon: RiArrowUpSLine,
-          iconColor: "gray",
-          onClick: () => {
-            handleSortingRequested({ mode: "asc", column: columnCaption });
-          },
-        },
-        {
-          caption: "Sort Descending",
-          icon: RiArrowDownSLine,
-          iconColor: "gray",
-          onClick: () => {
-            handleSortingRequested({ mode: "desc", column: columnCaption });
-          },
-        },
-        {
-          caption: "Reset Sorting",
-          icon: RiRefreshLine,
-          iconColor: "gray",
-          onClick: () => {
-            handleSortingRequested({ mode: "original", column: columnCaption });
-          },
-        },
-      ];
     };
 
     const ROW_ACTION = (rowId: string): SubMenuListTableProps[] => {
@@ -743,7 +661,6 @@ export const MultiplePaperDialog: Story = {
             `}
             onSearchboxChange={(e) => setSearch(e.target.value)}
             columns={columns}
-            subMenuList={TIP_MENU_ACTION}
           >
             {filteredRows.map((rowValue, rowIndex) => (
               <Table.Row
@@ -800,7 +717,7 @@ export const MultiplePaperDialog: Story = {
                   },
                 ]}
                 onSearchboxChange={(e) => setFamilySearch(e.target.value)}
-                columns={columnsFamily}
+                columns={columns}
                 onItemsSelected={handleItemsSelected}
               >
                 {filteredFamilyRows?.map((rowValue, rowIndex) => (
@@ -820,17 +737,7 @@ export const MultiplePaperDialog: Story = {
           </PaperDialog.Content>
         </PaperDialog>
 
-        <PaperDialog
-          ref={dialogRef2}
-          tabStyle={css`
-            top: 120px;
-          `}
-          tabCloseStyle={css`
-            top: 80px;
-          `}
-          closable
-          width="75vw"
-        >
+        <PaperDialog ref={dialogRef2} closable width="75vw">
           <PaperDialog.Content
             style={{
               padding: "36px",
@@ -840,7 +747,7 @@ export const MultiplePaperDialog: Story = {
             <div
               style={{ display: "flex", flexDirection: "column", gap: "4px" }}
             >
-              <h3>This is the nested paper dialog</h3>
+              <h3>Nested</h3>
             </div>
           </PaperDialog.Content>
         </PaperDialog>
