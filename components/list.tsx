@@ -2,7 +2,6 @@ import {
   RemixiconComponentType,
   RiArrowDownSLine,
   RiDraggable,
-  RiFile2Fill,
 } from "@remixicon/react";
 import {
   ChangeEvent,
@@ -48,7 +47,7 @@ export interface ListActionsProps {
   style?: CSSProp;
   dividerStyle?: CSSProp;
   dropdownStyle?: CSSProp;
-  subMenu?: (props: SubMenuButtonProps) => React.ReactNode;
+  subMenu?: (props: SubMenuButtonProps) => ReactNode;
   disabled?: boolean;
   showSubMenuOn?: "caret" | "self";
 }
@@ -67,7 +66,7 @@ export interface ListGroupProps {
   openerStyle?: "chevron" | "togglebox" | "none";
 }
 
-export interface ListGroupContent {
+export interface ListGroupContentProps {
   id: string;
   title: string;
   subtitle?: string;
@@ -76,12 +75,17 @@ export interface ListGroupContent {
   items: ListItemProps[];
 }
 
+export interface LeftSideContentMenuProps {
+  badge?: (badge: ReactNode, withStyle?: { withStyle?: CSSProp }) => ReactNode;
+  render?: (children?: ReactNode) => ReactNode;
+}
+
 export interface ListItemProps {
   id: string;
   title?: string;
   subtitle?: string;
   imageUrl?: string;
-  iconUrl?: RemixiconComponentType | null;
+  leftIcon?: RemixiconComponentType | null;
   draggable?: boolean;
   groupId?: string;
   selectable?: boolean;
@@ -97,6 +101,13 @@ export interface ListItemProps {
     value?: string;
     checked?: boolean;
   };
+  leftSideContent?: ReactNode;
+  titleStyle?: CSSProp;
+  subtitleStyle?: CSSProp;
+}
+
+interface ListItemInternal extends Omit<ListItemProps, "leftSideContent"> {
+  leftSideContent?: (props?: LeftSideContentMenuProps) => ReactNode;
 }
 
 const DnDContext = createContext<{
@@ -115,7 +126,7 @@ const DnDContext = createContext<{
       title: string;
       subtitle: string;
       imageUrl?: string;
-      iconUrl?: RemixiconComponentType;
+      leftIcon?: RemixiconComponentType;
     };
   }) => void;
   onDragged?: ListProps["onDragged"];
@@ -214,7 +225,14 @@ function ListGroup({
         onClick={() => setIsOpen((prev) => !prev)}
         aria-expanded={isOpen}
       >
-        <div style={{ display: "flex", flexDirection: "column" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            width: "100%",
+            alignItems: "start",
+          }}
+        >
           <HeaderText>{title}</HeaderText>
           {subtitle && <HeaderSubtext>{subtitle}</HeaderSubtext>}
         </div>
@@ -225,6 +243,9 @@ function ListGroup({
             flexDirection: "row",
             gap: "4px",
             alignItems: "center",
+            width: "100%",
+            justifyContent: "end",
+            paddingRight: "0.5rem",
           }}
         >
           {actions &&
@@ -404,7 +425,7 @@ const EmptyContent = styled(motion.div)`
 `;
 
 function ListItem({
-  iconUrl: Icon = null,
+  leftIcon: LeftIcon = null,
   imageUrl,
   subtitle,
   title,
@@ -424,7 +445,10 @@ function ListItem({
   actions,
   children,
   openable,
-}: ListItemProps & {
+  leftSideContent,
+  titleStyle,
+  subtitleStyle,
+}: ListItemInternal & {
   index?: number;
   onDropItem?: (position: number) => void;
   groupLength?: number;
@@ -462,7 +486,7 @@ function ListItem({
               id: id,
               title,
               subtitle,
-              ...(imageUrl ? { imageUrl } : { iconUrl: Icon }),
+              ...(imageUrl ? { imageUrl } : { leftIcon: LeftIcon }),
             },
           })
         }
@@ -520,14 +544,24 @@ function ListItem({
               onChange={onSelected}
             />
           )}
+          {leftSideContent &&
+            typeof leftSideContent === "function" &&
+            leftSideContent({
+              badge: (children, style = { withStyle: css`` }) => (
+                <CustomLeftSideContent $style={style.withStyle}>
+                  {children}
+                </CustomLeftSideContent>
+              ),
+              render: (children) => children,
+            })}
           {imageUrl ? (
             <ImageStyle src={imageUrl} alt="Image from coneto, Systatum." />
           ) : (
-            Icon && <Icon size={22} color="#4b5563" />
+            LeftIcon && <LeftIcon size={22} color="#4b5563" />
           )}
           <TextWrapper>
-            {title && <Title>{title}</Title>}
-            {subtitle && <Subtitle>{subtitle}</Subtitle>}
+            {title && <Title $style={titleStyle}>{title}</Title>}
+            {subtitle && <Subtitle $style={subtitleStyle}>{subtitle}</Subtitle>}
           </TextWrapper>
         </ListItemLeft>
 
@@ -543,6 +577,7 @@ function ListItem({
           {rightSideContent && typeof rightSideContent === "function"
             ? rightSideContent(groupId ? `${groupId}-${id}` : `${id}`)
             : (rightSideContent as ReactNode)}
+
           {draggable && (
             <div
               aria-label="draggable-request"
@@ -648,15 +683,30 @@ const TextWrapper = styled.div`
   user-select: none;
 `;
 
-const Title = styled.h3`
-  font-weight: 500;
-  font-size: 0.875rem;
-  color: #1f2937;
+const CustomLeftSideContent = styled.div<{
+  $style?: CSSProp;
+}>`
+  display: flex;
+  border: 1px solid #d1d5db;
+  border-radius: 20px;
+  padding-right: 10px;
+  padding-left: 10px;
+  font-size: 12px;
+
+  ${({ $style }) => $style};
 `;
 
-const Subtitle = styled.span`
+const Title = styled.h3<{ $style?: CSSProp }>`
+  font-weight: 500;
+  font-size: 0.875rem;
+
+  ${({ $style }) => $style}
+`;
+
+const Subtitle = styled.span<{ $style?: CSSProp }>`
   font-size: 0.75rem;
   color: #4b5563;
+  ${({ $style }) => $style}
 `;
 
 const DragLine = styled.div<{ position: "top" | "bottom" }>`
