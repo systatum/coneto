@@ -548,7 +548,10 @@ function ListItem({
             typeof leftSideContent === "function" &&
             leftSideContent({
               badge: (children, style = { withStyle: css`` }) => (
-                <CustomLeftSideContent $style={style.withStyle}>
+                <CustomLeftSideContent
+                  aria-label="left-side-content"
+                  $style={style.withStyle}
+                >
                   {children}
                 </CustomLeftSideContent>
               ),
