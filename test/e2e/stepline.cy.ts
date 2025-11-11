@@ -16,20 +16,22 @@ describe("Stepline Component", () => {
     });
   });
 
-  context("Reversable", () => {
-    it("should be click for move page", () => {
-      cy.visit(getIdContent("controls-stepline--reversable"));
+  context("onClick", () => {
+    context("when clicking", () => {
+      it("should be move to another page", () => {
+        cy.visit(getIdContent("controls-stepline--reversable"));
 
-      const allTitles = [
-        "Application Submitted",
-        "Initial Screening",
-        "Technical Interview",
-        "Final Interview",
-      ];
+        const allTitles = [
+          "Application Submitted",
+          "Initial Screening",
+          "Technical Interview",
+          "Final Interview",
+        ];
 
-      allTitles.forEach((data) => {
-        cy.contains(data, { timeout: 10000 });
-        cy.contains(data).should("be.visible");
+        allTitles.forEach((data) => {
+          cy.contains(data, { timeout: 10000 });
+          cy.contains(data).should("be.visible");
+        });
       });
     });
   });

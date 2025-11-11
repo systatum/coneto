@@ -18,7 +18,6 @@ import type { CSSProp } from "styled-components";
 export interface SteplineProps {
   children?: ReactNode;
   style?: CSSProp;
-  reversable?: boolean;
 }
 
 export type SteplineItemProps = SteplineItemState &
@@ -27,7 +26,7 @@ export type SteplineItemProps = SteplineItemState &
     containerStyle?: CSSProp;
   }>;
 
-function Stepline({ children, style, reversable }: SteplineProps) {
+function Stepline({ children, style }: SteplineProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const childArray = Children.toArray(children).filter(isValidElement);
 
@@ -51,7 +50,7 @@ function Stepline({ children, style, reversable }: SteplineProps) {
         return (
           <StepGroup
             key={index}
-            $clickable={!!(reversable && variant)}
+            $clickable={Boolean(variant && onClick)}
             onClick={() => variant && onClick?.()}
             onMouseEnter={() => setHoveredIndex(index + 1)}
             onMouseLeave={() => setHoveredIndex(null)}
