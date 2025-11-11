@@ -251,11 +251,13 @@ export const WithAction: Story = {
             icon: RemixIcons.RiSendPlaneFill,
             iconColor: "blue",
             onClick: () => console.log("Send message", args.value),
+            title: "Send message",
           },
           {
             icon: RemixIcons.RiCloseLine,
             iconColor: "gray",
             onClick: () => setUpdateArgs({ value: "" }),
+            title: "Delete message",
           },
         ].filter(Boolean)}
         onChange={handleChange}

@@ -9,6 +9,7 @@ import {
   ChangeEvent,
   InputHTMLAttributes,
   ReactElement,
+  ReactNode,
   forwardRef,
   useEffect,
   useState,
@@ -48,11 +49,12 @@ interface DropdownOptionProps {
   iconColor?: string;
 }
 
-interface ActionsProps {
+export interface ActionsProps {
+  title?: string;
   icon?: RemixiconComponentType;
   iconColor?: string;
-  isDangerous?: boolean;
   onClick?: (e: React.MouseEvent) => void;
+  disabled?: boolean;
 }
 
 const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
@@ -149,8 +151,9 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
               reverseIndex * offsetEach +
               (type === "password" ? offsetEach : 0) +
               (showError ? offsetEach : 0);
+
             return (
-              <ActionButton
+              <Button
                 key={index}
                 type="submit"
                 aria-label="action-icon"
@@ -160,11 +163,39 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
                     props.onClick(e);
                   }
                 }}
-                style={{ right: `${offset}px` }}
-                $error={showError}
+                disabled={props.disabled}
+                title={props.title}
+                containerStyle={css`
+                  position: absolute;
+                  top: 50%;
+                  transform: translateY(-50%);
+                  right: ${`${offset}px`};
+                  z-index: 10;
+                `}
+                buttonStyle={css`
+                  padding: 2px;
+                  border-radius: 2px;
+                  cursor: pointer;
+                  background: transparent;
+                  z-index: 10;
+                  height: 25px;
+                  color: ${props.iconColor
+                    ? props.iconColor
+                    : showError
+                      ? "#f87171"
+                      : "#6b7280"};
+
+                  &:hover {
+                    color: ${props.iconColor
+                      ? props.iconColor
+                      : showError
+                        ? "#ef4444"
+                        : "#374151"};
+                  }
+                `}
               >
                 <Icon size={18} />
-              </ActionButton>
+              </Button>
             );
           })}
         {type === "password" && (
@@ -270,23 +301,6 @@ const Input = styled.input<{
       border-bottom-left-radius: 0px;
     `}
   ${({ $style }) => $style}
-`;
-
-const ActionButton = styled.button<{ $error?: boolean }>`
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  right: ${({ $error }) => ($error ? "30px" : "8px")};
-  padding: 2px;
-  border-radius: 2px;
-  cursor: pointer;
-  background: transparent;
-  z-index: 10;
-  color: ${({ $error }) => ($error ? "#f87171" : "#6b7280")};
-
-  &:hover {
-    color: ${({ $error }) => ($error ? "#ef4444" : "#374151")};
-  }
 `;
 
 const PasswordToggleButton = styled.button<{ $error?: boolean }>`
