@@ -9,6 +9,7 @@ import {
   ChangeEvent,
   InputHTMLAttributes,
   ReactElement,
+  ReactNode,
   forwardRef,
   useEffect,
   useState,
@@ -16,6 +17,7 @@ import {
 import styled, { css, CSSProp } from "styled-components";
 import { Button } from "./button";
 import { TipMenuItemProps } from "./tip-menu";
+import { Tooltip } from "./tooltip";
 
 export interface TextboxProps
   extends Omit<
@@ -28,10 +30,8 @@ export interface TextboxProps
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
   style?: CSSProp;
-  onActionClick?: () => void;
-  onChange: (data: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  icon?: RemixiconComponentType;
-  actionIcon?: boolean;
+  onChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  actions?: ActionsProps[];
   dropdown?: DropdownProps;
   dropdownToggleStyle?: CSSProp;
 }
@@ -50,6 +50,15 @@ interface DropdownOptionProps {
   iconColor?: string;
 }
 
+export interface ActionsProps {
+  title?: string;
+  icon?: RemixiconComponentType;
+  iconColor?: string;
+  onClick?: (e: React.MouseEvent) => void;
+  disabled?: boolean;
+  titleShowDelay?: number;
+}
+
 const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
   (
     {
@@ -57,15 +66,13 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
       showError,
       errorMessage,
       onChange,
-      onActionClick,
       style,
       containerStyle,
-      actionIcon,
       labelStyle,
-      icon: Icon = RiCheckLine,
       type = "text",
       dropdown,
       dropdownToggleStyle,
+      actions,
       ...props
     },
     ref
@@ -129,43 +136,136 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
           id={inputId}
           ref={ref}
           onChange={onChange}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") onActionClick?.();
-          }}
           $dropdown={!!dropdown}
           type={type === "password" && showPassword ? "text" : type}
           $error={showError}
           $style={style}
           {...(props as InputHTMLAttributes<HTMLInputElement>)}
         />
-        {actionIcon && (
-          <ActionButton
-            type="submit"
-            aria-label="action-icon"
-            onClick={(e) => {
-              e.preventDefault();
-              onActionClick?.();
-            }}
-            $error={showError}
-          >
-            <Icon size={18} />
-          </ActionButton>
-        )}
+        {actions &&
+          actions.map((props, index) => {
+            const { icon: Icon = RiCheckLine, titleShowDelay = 1250 } = props;
+            const offsetBase = 8;
+            const offsetEach = 22;
+            const reverseIndex = actions.length - 1 - index;
+            const offset =
+              offsetBase +
+              reverseIndex * offsetEach +
+              (type === "password" ? offsetEach : 0) +
+              (showError ? offsetEach : 0);
+
+            return (
+              <Button
+                key={index}
+                type="submit"
+                aria-label="action-icon"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (props.onClick) {
+                    props.onClick(e);
+                  }
+                }}
+                disabled={props.disabled}
+                containerStyle={css`
+                  position: absolute;
+                  top: 50%;
+                  transform: translateY(-50%);
+                  right: ${`${offset}px`};
+                  z-index: 10;
+                  height: 23px;
+                `}
+                buttonStyle={css`
+                  padding: 2px;
+                  border-radius: 2px;
+                  cursor: pointer;
+                  background: transparent;
+                  position: relative;
+                  z-index: 10;
+                  height: 23px;
+                  color: ${showError
+                    ? "#f87171"
+                    : props.iconColor
+                      ? props.iconColor
+                      : "#6b7280"};
+
+                  &:hover {
+                    color: ${showError
+                      ? "#ef4444"
+                      : props.iconColor
+                        ? props.iconColor
+                        : "#374151"};
+                  }
+                `}
+              >
+                <Tooltip
+                  containerStyle={css`
+                    cursor: pointer;
+                  `}
+                  key={index}
+                  arrowStyle={(placement) => css`
+                    ${placement === "bottom-start"
+                      ? css`
+                          margin-left: 2px;
+                          margin-top: 6px;
+                        `
+                      : placement === "bottom-end"
+                        ? css`
+                            margin-right: 2px;
+                            margin-top: 6px;
+                          `
+                        : placement === "top-start"
+                          ? css`
+                              margin-left: 2px;
+                              margin-bottom: 6px;
+                            `
+                          : placement === "top-end"
+                            ? css`
+                                margin-right: 2px;
+                                margin-bottom: 6px;
+                              `
+                            : null}
+                  `}
+                  showDelayPeriod={titleShowDelay}
+                  dialog={props.title}
+                >
+                  <Icon size={18} />
+                </Tooltip>
+              </Button>
+            );
+          })}
         {type === "password" && (
-          <PasswordToggleButton
+          <Button
             type="button"
             onClick={() => setShowPassword((prev) => !prev)}
-            $error={showError}
             aria-label="toggle-password"
+            containerStyle={css`
+              position: absolute;
+              top: 50%;
+              transform: translateY(-50%);
+              right: ${showError ? "30px" : "8px"};
+              z-index: 10;
+            `}
+            buttonStyle={css`
+              padding: 2px;
+              border-radius: 2px;
+              cursor: pointer;
+              background: transparent;
+              z-index: 10;
+              height: 25px;
+              color: ${showError ? "#f87171" : "#6b7280"};
+              &:hover {
+                color: ${showError ? "#ef4444" : "#374151"};
+              }
+            `}
           >
             {showPassword ? (
-              <RiEyeOffLine size={22} />
-            ) : (
               <RiEyeLine size={22} />
+            ) : (
+              <RiEyeOffLine size={22} />
             )}
-          </PasswordToggleButton>
+          </Button>
         )}
-        {showError && errorMessage && (
+        {showError && (
           <ErrorIconWrapper>
             <RiErrorWarningLine
               size={17}
@@ -229,8 +329,8 @@ const Input = styled.input<{
   padding: 7px 8px;
   width: 100%;
   outline: none;
-  border: 1px solid ${({ $error }) => ($error ? "#f87171" : "#d1d5db")};
   z-index: 10;
+  border: 1px solid ${({ $error }) => ($error ? "#f87171" : "#d1d5db")};
   ${({ $error }) =>
     $error
       ? css`
@@ -256,35 +356,6 @@ const Input = styled.input<{
   ${({ $style }) => $style}
 `;
 
-const ActionButton = styled.button<{ $error?: boolean }>`
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  right: ${({ $error }) => ($error ? "30px" : "8px")};
-  padding: 2px;
-  border-radius: 2px;
-  cursor: pointer;
-  background: transparent;
-  color: ${({ $error }) => ($error ? "#f87171" : "#6b7280")};
-
-  &:hover {
-    color: ${({ $error }) => ($error ? "#ef4444" : "#374151")};
-  }
-`;
-
-const PasswordToggleButton = styled.button<{ $error?: boolean }>`
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  right: ${({ $error }) => ($error ? "30px" : "8px")};
-  cursor: pointer;
-  color: ${({ $error }) => ($error ? "#f87171" : "#6b7280")};
-
-  &:hover {
-    color: ${({ $error }) => ($error ? "#ef4444" : "#4b5563")};
-  }
-`;
-
 const ErrorIconWrapper = styled.button`
   position: absolute;
   top: 50%;
@@ -292,6 +363,8 @@ const ErrorIconWrapper = styled.button`
   transform: translateY(-50%);
   background: none;
   border: none;
+  z-index: 10;
+  cursor: default;
 `;
 
 const ErrorText = styled.span`

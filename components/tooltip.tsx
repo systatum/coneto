@@ -15,9 +15,9 @@ export type TooltipProps = {
   children: ReactNode;
   showDialogOn?: "hover" | "click";
   hideDialogOn?: "hover" | "click";
-  drawerStyle?: CSSProp;
+  drawerStyle?: CSSProp | ((placement?: Placement) => CSSProp);
   containerStyle?: CSSProp;
-  arrowStyle?: CSSProp;
+  arrowStyle?: CSSProp | ((placement?: Placement) => CSSProp);
   dialogPlacement?: DialogPlacement;
   onVisibilityChange?: (open?: boolean) => void;
   safeAreaAriaLabels?: string[];
@@ -150,11 +150,19 @@ export function Tooltip({
             ref={arrowRef}
             $placement={placement}
             aria-label="tooltip-arrow"
-            $arrowStyle={arrowStyle}
+            $arrowStyle={
+              typeof arrowStyle === "function"
+                ? arrowStyle(placement as Placement)
+                : arrowStyle
+            }
           />
           <TooltipDrawer
             style={floatingStyles}
-            $drawerStyle={drawerStyle}
+            $drawerStyle={
+              typeof drawerStyle === "function"
+                ? drawerStyle(placement as Placement)
+                : drawerStyle
+            }
             ref={refs.setFloating}
           >
             {dialog}
@@ -260,6 +268,7 @@ const TooltipDrawer = styled.div<{
   z-index: 50;
   white-space: nowrap;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
   ${({ $drawerStyle }) => $drawerStyle}
 `;
 

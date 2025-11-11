@@ -11,42 +11,65 @@ const meta: Meta<typeof Textbox> = {
   argTypes: {
     name: {
       control: "text",
-      description: "Name attribute for the input",
+      description: "Name attribute for the input element",
     },
     label: {
       control: "text",
-      description: "Label text for the textbox",
+      description: "Label text displayed above the input",
     },
     value: {
       control: "text",
-      description: "Input value",
+      description: "The current value of the input",
     },
     placeholder: {
       control: "text",
+      description: "Placeholder text shown when input is empty",
     },
     type: {
       control: {
         type: "select",
-        options: ["text", "password", "message"],
+        options: ["text", "password", "message", "hidden"],
       },
+      description: "Input type (text, password, message, hidden)",
     },
     showError: {
       control: "boolean",
+      description: "Whether to show an error state",
     },
     errorMessage: {
       control: "text",
+      description: "Error message displayed when showError is true",
     },
-    onActionClick: { action: "sendClicked" },
-    icon: {
-      control: {
-        type: "select",
-      },
-      options: Object.keys(RemixIcons),
-      mapping: RemixIcons,
+    actions: {
+      control: false,
+      description:
+        "Array of action buttons with icons displayed inside the input",
     },
-    onChange: { action: "changed" },
-    style: { control: false },
-    containerStyle: { control: false },
+    dropdown: {
+      control: false,
+      description:
+        "Dropdown configuration object with options and selectedOption",
+    },
+    dropdownToggleStyle: {
+      control: false,
+      description: "Custom styles for the dropdown toggle button",
+    },
+    onChange: {
+      action: "changed",
+      description: "Triggered when the input value changes",
+    },
+    style: {
+      control: false,
+      description: "Custom style applied to the input element",
+    },
+    containerStyle: {
+      control: false,
+      description: "Custom style applied to the input container",
+    },
+    labelStyle: {
+      control: false,
+      description: "Custom style applied to the label",
+    },
   },
   args: {
     value: "",
@@ -193,7 +216,7 @@ export const WithDropdown: Story = {
 export const WithAction: Story = {
   args: {
     name: "message",
-    label: "Message",
+    label: "With Action",
     placeholder: "Type a message...",
     value: "",
     type: "text",
@@ -201,8 +224,6 @@ export const WithAction: Story = {
       min-width: 400px;
       max-width: 400px;
     `,
-    actionIcon: true,
-    icon: RemixIcons.RiSendPlaneFill,
   },
   render: (args: TextboxProps) => {
     const [, setUpdateArgs] = useArgs();
@@ -225,10 +246,20 @@ export const WithAction: Story = {
       <Textbox
         {...args}
         value={args.value}
+        actions={[
+          {
+            icon: RemixIcons.RiSendPlaneFill,
+            onClick: () => console.log("Send message", args.value),
+            title: "Send message",
+          },
+
+          {
+            icon: RemixIcons.RiCloseLine,
+            onClick: () => setUpdateArgs({ value: "" }),
+            title: "Delete message",
+          },
+        ].filter(Boolean)}
         onChange={handleChange}
-        onActionClick={() => {
-          console.log("Send message has been successful.");
-        }}
       />
     );
   },
