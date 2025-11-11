@@ -41,7 +41,7 @@ export function Tooltip({
   dialogPlacement = "bottom-left",
   onVisibilityChange,
   safeAreaAriaLabels,
-  showDelayPeriod = 300,
+  showDelayPeriod = 0,
 }: TooltipProps) {
   const [isOpen, setIsOpen] = useState(false);
   const arrowRef = useRef<HTMLDivElement>(null);
