@@ -20,6 +20,8 @@ export type TooltipProps = {
   arrowStyle?: CSSProp;
   dialogPlacement?: DialogPlacement;
   onVisibilityChange?: (open?: boolean) => void;
+  safeAreaAriaLabels?: string[];
+  showDelayPeriod?: number;
 };
 
 type DialogPlacement =
@@ -38,6 +40,8 @@ export function Tooltip({
   arrowStyle,
   dialogPlacement = "bottom-left",
   onVisibilityChange,
+  safeAreaAriaLabels,
+  showDelayPeriod = 300,
 }: TooltipProps) {
   const [isOpen, setIsOpen] = useState(false);
   const arrowRef = useRef<HTMLDivElement>(null);
@@ -57,12 +61,27 @@ export function Tooltip({
     whileElementsMounted: autoUpdate,
   });
 
+  const safeAreaAriaLabelsLocal: string[] = [
+    "combobox-drawer-month",
+    "combobox-drawer-year",
+    ...(safeAreaAriaLabels || []),
+  ];
+
   useEffect(() => {
     if (hideDialogOn !== "click" || !isOpen) return;
 
     function handleClickOutside(event: MouseEvent) {
       const floatingEl = refs.floating.current;
       const referenceEl = refs.reference.current;
+
+      if (
+        Array.isArray(safeAreaAriaLabelsLocal) &&
+        safeAreaAriaLabelsLocal.some((label) =>
+          floatingEl.closest(`[aria-label="${label}"]`)
+        )
+      ) {
+        return;
+      }
 
       if (
         floatingEl instanceof HTMLElement &&
@@ -93,10 +112,12 @@ export function Tooltip({
       }}
       onMouseLeave={() => {
         if (hideDialogOn === "hover") {
-          setIsOpen(false);
-          if (onVisibilityChange) {
-            onVisibilityChange(false);
-          }
+          setTimeout(() => {
+            setIsOpen(false);
+            if (onVisibilityChange) {
+              onVisibilityChange(false);
+            }
+          }, showDelayPeriod);
         }
       }}
       ref={refs.setReference}
