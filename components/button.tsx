@@ -74,6 +74,7 @@ function Button({
   const [positionClass, setPositionClass] = React.useState<"left" | "right">(
     "left"
   );
+  const [placement, setPlacement] = React.useState<"top" | "bottom">("bottom");
 
   const containerRef = React.useRef<HTMLDivElement>(null);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
@@ -119,6 +120,12 @@ function Button({
       const rect = containerRef.current.getBoundingClientRect();
       const half = window.innerWidth / 2;
       setPositionClass(rect.left > half ? "right" : "left");
+
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const spaceAbove = rect.top;
+      setPlacement(
+        spaceBelow < 200 && spaceAbove > spaceBelow ? "top" : "bottom"
+      );
     }
   }, [isOpen]);
 
@@ -146,6 +153,7 @@ function Button({
         $size={size}
         disabled={disabled}
         $disabled={disabled}
+        $isOpen={showSubMenuOn === "self" && isOpen}
         $tipMenu={subMenu && showSubMenuOn === "caret" ? true : false}
         onMouseEnter={() => setHovered("dropdown")}
         onMouseLeave={() => setHovered("original")}
@@ -199,8 +207,15 @@ function Button({
             style={{
               position: "absolute",
               top:
-                (containerRef.current?.getBoundingClientRect().bottom ?? 0) +
-                window.scrollY,
+                placement === "bottom"
+                  ? (containerRef.current?.getBoundingClientRect().bottom ??
+                      0) +
+                    window.scrollY +
+                    2
+                  : (containerRef.current?.getBoundingClientRect().top ?? 0) +
+                    window.scrollY -
+                    (dropdownRef.current?.offsetHeight ?? 0) -
+                    2,
               left:
                 positionClass === "left"
                   ? (containerRef.current?.getBoundingClientRect().left ?? 0) +
