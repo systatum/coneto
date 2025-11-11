@@ -28,7 +28,6 @@ export interface TextboxProps
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
   style?: CSSProp;
-  onActionClick?: () => void;
   onChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   actions?: ActionsProps[];
   dropdown?: DropdownProps;
@@ -74,8 +73,6 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
     },
     ref
   ) => {
-    console.log(type);
-
     const [showPassword, setShowPassword] = useState<boolean>(false);
 
     useEffect(() => {
@@ -143,17 +140,18 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
         />
         {actions &&
           actions.map((props, index) => {
-            const Icon = (props.icon = RiCheckLine);
+            const { icon: Icon = RiCheckLine } = props;
             const offsetBase = 8;
             const offsetEach = 22;
+            const reverseIndex = actions.length - 1 - index;
             const offset =
               offsetBase +
-              index * offsetEach +
+              reverseIndex * offsetEach +
               (type === "password" ? offsetEach : 0) +
               (showError ? offsetEach : 0);
-
             return (
               <ActionButton
+                key={index}
                 type="submit"
                 aria-label="action-icon"
                 onClick={(e) => {
