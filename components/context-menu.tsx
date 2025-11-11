@@ -47,12 +47,18 @@ export default function ContextMenu({
           activeBackgroundColor={activeBackgroundColor}
           buttonStyle={css`
             padding: 8px;
-            &:focus-visible {
-              background-color: ${focusBackgroundColor};
-            }
-            &:hover {
-              background-color: ${hoverBackgroundColor};
-            }
+            ${focusBackgroundColor &&
+            css`
+              &:focus {
+                background-color: ${focusBackgroundColor};
+              }
+            `}
+            ${hoverBackgroundColor &&
+            css`
+              &:hover {
+                background-color: ${hoverBackgroundColor};
+              }
+            `}
 
             ${buttonStyle}
           `}
@@ -77,12 +83,18 @@ export default function ContextMenu({
       variant="ghost"
       buttonStyle={css`
         padding: 8px;
-        &:focus {
-          background-color: ${focusBackgroundColor};
-        }
-        &:hover {
-          background-color: ${hoverBackgroundColor};
-        }
+        ${focusBackgroundColor &&
+        css`
+          &:focus {
+            background-color: ${focusBackgroundColor};
+          }
+        `}
+        ${hoverBackgroundColor &&
+        css`
+          &:hover {
+            background-color: ${hoverBackgroundColor};
+          }
+        `}
 
         ${buttonStyle}
       `}
