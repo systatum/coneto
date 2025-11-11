@@ -49,7 +49,7 @@ describe("Stepline", () => {
     context("when clicking", () => {
       it("should render the console", () => {
         cy.mount(
-          <Stepline reversable>
+          <Stepline>
             {STEPLINE_ITEMS.map((props, index) => (
               <Stepline.Item key={index} {...props} />
             ))}
@@ -81,7 +81,7 @@ describe("Stepline", () => {
     context("when given", () => {
       it("should render the line dash | solid | dotted", () => {
         cy.mount(
-          <Stepline reversable>
+          <Stepline>
             {STEPLINE_ITEMS.map((props, index) => (
               <Stepline.Item key={index} {...props} />
             ))}
