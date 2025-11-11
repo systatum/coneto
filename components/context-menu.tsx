@@ -11,6 +11,9 @@ export interface ContextMenuProps {
   children?: ReactNode;
   buttonStyle?: CSSProp;
   dropdownStyle?: CSSProp;
+  focusBackgroundColor?: string;
+  activeBackgroundColor?: string;
+  hoverBackgroundColor?: string;
 }
 
 export default function ContextMenu({
@@ -18,6 +21,9 @@ export default function ContextMenu({
   actions,
   buttonStyle,
   dropdownStyle,
+  activeBackgroundColor,
+  hoverBackgroundColor,
+  focusBackgroundColor,
 }: ContextMenuProps) {
   if (actions.length === 1) {
     return actions.map((prop, index) => {
@@ -38,8 +44,16 @@ export default function ContextMenu({
             width: fit-content;
             height: fit-content;
           `}
+          activeBackgroundColor={activeBackgroundColor}
           buttonStyle={css`
             padding: 8px;
+            &:focus-visible {
+              background-color: ${focusBackgroundColor};
+            }
+            &:hover {
+              background-color: ${hoverBackgroundColor};
+            }
+
             ${buttonStyle}
           `}
         >
@@ -63,6 +77,13 @@ export default function ContextMenu({
       variant="ghost"
       buttonStyle={css`
         padding: 8px;
+        &:focus {
+          background-color: ${focusBackgroundColor};
+        }
+        &:hover {
+          background-color: ${hoverBackgroundColor};
+        }
+
         ${buttonStyle}
       `}
       showSubMenuOn="self"
