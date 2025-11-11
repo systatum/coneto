@@ -45,6 +45,7 @@ export function Tooltip({
 }: TooltipProps) {
   const [isOpen, setIsOpen] = useState(false);
   const arrowRef = useRef<HTMLDivElement>(null);
+  const delayTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { floatingStyles, refs, placement } = useFloating({
     placement: getFloatingPlacement(dialogPlacement),
@@ -104,20 +105,22 @@ export function Tooltip({
     <Wrapper
       onMouseEnter={() => {
         if (showDialogOn === "hover") {
-          setIsOpen(true);
-          if (onVisibilityChange) {
-            onVisibilityChange(true);
-          }
+          delayTimeoutRef.current = setTimeout(() => {
+            setIsOpen(true);
+            if (onVisibilityChange) {
+              onVisibilityChange(true);
+            }
+          }, showDelayPeriod);
         }
       }}
       onMouseLeave={() => {
         if (hideDialogOn === "hover") {
-          setTimeout(() => {
-            setIsOpen(false);
-            if (onVisibilityChange) {
-              onVisibilityChange(false);
-            }
-          }, showDelayPeriod);
+          clearTimeout(delayTimeoutRef.current);
+
+          setIsOpen(false);
+          if (onVisibilityChange) {
+            onVisibilityChange(false);
+          }
         }
       }}
       ref={refs.setReference}
