@@ -1,7 +1,9 @@
 import {
   RemixiconComponentType,
   RiArrowDownSLine,
+  RiArrowRightSLine,
   RiDraggable,
+  RiMoreFill,
 } from "@remixicon/react";
 import {
   ChangeEvent,
@@ -22,6 +24,7 @@ import { Checkbox } from "./checkbox";
 import { Togglebox } from "./togglebox";
 import styled, { css, CSSProp } from "styled-components";
 import { Button, SubMenuButtonProps } from "./button";
+import { TipMenuItemProps } from "./tip-menu";
 
 export interface ListProps {
   searchable?: boolean;
@@ -40,10 +43,10 @@ export interface ListProps {
   }) => void;
 }
 
-export interface ListActionsProps {
-  title: string;
+export interface ListGroupActionsProps {
+  caption: string;
   icon?: RemixiconComponentType;
-  onClick?: (e: string) => void;
+  onClick?: (e?: string) => void;
   style?: CSSProp;
   dividerStyle?: CSSProp;
   dropdownStyle?: CSSProp;
@@ -62,7 +65,7 @@ export interface ListGroupProps {
   contentStyle?: CSSProp;
   selectable?: boolean;
   rightSideContent?: ((prop: string) => ReactNode) | ReactNode;
-  actions?: ListActionsProps[];
+  actions?: ListGroupActionsProps[];
   openerStyle?: "chevron" | "togglebox" | "none";
 }
 
@@ -70,10 +73,12 @@ export interface ListGroupContentProps {
   id: string;
   title: string;
   subtitle?: string;
-  actions?: ListActionsProps[];
+  actions?: ListGroupActionsProps[];
   rightSideContent?: ((prop: string) => ReactNode) | ReactNode;
   items: ListItemProps[];
 }
+
+export type ListActionItemProps = TipMenuItemProps;
 
 export interface LeftSideContentMenuProps {
   badge?: (badge: ReactNode, withStyle?: { withStyle?: CSSProp }) => ReactNode;
@@ -94,7 +99,7 @@ export interface ListItemProps {
   rightSideContent?: ((prop: string) => ReactNode) | ReactNode;
   containerStyle?: CSSProp;
   rowStyle?: CSSProp;
-  actions?: ListActionsProps[];
+  actions?: (id?: string) => ListActionItemProps[];
   children?: ReactNode;
   openable?: boolean;
   selectedOptions?: {
@@ -106,8 +111,10 @@ export interface ListItemProps {
   subtitleStyle?: CSSProp;
 }
 
-interface ListItemInternal extends Omit<ListItemProps, "leftSideContent"> {
+interface ListItemInternal
+  extends Omit<ListItemProps, "leftSideContent" | "onClick"> {
   leftSideContent?: (props?: LeftSideContentMenuProps) => ReactNode;
+  onClick?: (e?: React.MouseEvent) => void;
 }
 
 const DnDContext = createContext<{
@@ -207,7 +214,6 @@ function ListGroup({
   title,
   children,
   containerStyle,
-  contentStyle,
   draggable,
   selectable,
   subtitle,
@@ -456,17 +462,22 @@ function ListItem({
   const { setDragItem, dragItem } = useContext(DnDContext);
   const [isOver, setIsOver] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isHovered, setIsHovered] = useState<string | null>(null);
   const [dropPosition, setDropPosition] = useState<"top" | "bottom" | null>(
     null
   );
+  const idFullname = groupId ? `${groupId}-${id}` : `${id}`;
 
   return (
     <ListItemWrapper
+      onMouseEnter={() => setIsHovered(idFullname)}
+      onMouseLeave={() => setIsHovered(null)}
       aria-label="list-item-wrapper"
       $openable={openable && isOpen}
       $style={containerStyle}
     >
       <ListItemRow
+        $isHovered={isHovered === idFullname}
         $style={rowStyle}
         onClick={() => {
           if (onClick) {
@@ -569,16 +580,79 @@ function ListItem({
         </ListItemLeft>
 
         <ListItemRight>
-          {actions &&
-            actions.map((prop, index) => (
-              <ActionButton
-                key={index}
-                {...prop}
-                id={groupId ? `${groupId}-${id}` : `${id}`}
-              />
-            ))}
+          {isHovered === idFullname &&
+            actions &&
+            (() => {
+              const list = actions(idFullname);
+
+              const actionsWithIcons = list.map((prop) => ({
+                ...prop,
+                icon: prop.icon ?? RiArrowRightSLine,
+                onClick: (e?: React.MouseEvent) => {
+                  prop.onClick?.(e);
+                  setIsHovered(null);
+                },
+              }));
+
+              if (actionsWithIcons.length === 1) {
+                return actionsWithIcons.map((prop, index) => {
+                  const { icon: Icon } = prop;
+                  return (
+                    <Button
+                      key={index}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (prop.onClick) {
+                          prop.onClick();
+                        }
+                      }}
+                      title={prop.caption}
+                      aria-label="list-action-button"
+                      containerStyle={css`
+                        width: fit-content;
+                        height: fit-content;
+                        z-index: 8;
+                      `}
+                      buttonStyle={css`
+                        padding: 8px;
+                        height: fit-content;
+                        background-color: transparent;
+                        &:hover {
+                          background-color: #d4d4d4;
+                        }
+                      `}
+                    >
+                      <Icon size={16} />
+                    </Button>
+                  );
+                });
+              }
+
+              return (
+                <Button
+                  dropdownStyle={css`
+                    margin-top: 2px;
+                  `}
+                  aria-label="list-action-button"
+                  variant="ghost"
+                  buttonStyle={css`
+                    &:hover {
+                      background-color: #f3f3f3;
+                    }
+
+                    padding-right: 4px;
+                    padding-left: 4px;
+                    height: ${subtitle ? "32px" : "fit-content"};
+                  `}
+                  showSubMenuOn="self"
+                  subMenu={({ list }) => list(actionsWithIcons)}
+                >
+                  <RiMoreFill />
+                </Button>
+              );
+            })()}
           {rightSideContent && typeof rightSideContent === "function"
-            ? rightSideContent(groupId ? `${groupId}-${id}` : `${id}`)
+            ? rightSideContent(idFullname)
             : (rightSideContent as ReactNode)}
 
           {draggable && (
@@ -641,6 +715,7 @@ const ListItemWrapper = styled.div<{
 
 const ListItemRow = styled.div<{
   $style?: CSSProp;
+  $isHovered?: boolean;
 }>`
   display: flex;
   flex-direction: row;
@@ -653,9 +728,11 @@ const ListItemRow = styled.div<{
   transition: background-color 300ms;
   border-radius: 3px;
 
-  &:hover {
-    background-color: #dbeafe;
-  }
+  ${({ $isHovered }) =>
+    $isHovered &&
+    css`
+      background-color: #dbeafe;
+    `}
 
   ${({ $style }) => $style}
 `;
@@ -724,7 +801,7 @@ const DragLine = styled.div<{ position: "top" | "bottom" }>`
 `;
 
 function ActionButton(
-  prop: ListActionsProps &
+  prop: ListGroupActionsProps &
     Partial<{
       id?: string;
     }>
@@ -820,7 +897,7 @@ function ActionButton(
     >
       {prop.icon && <prop.icon size={14} />}
 
-      {prop.title}
+      {prop.caption}
     </Button>
   );
 }
