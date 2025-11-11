@@ -20,6 +20,8 @@ export type TooltipProps = {
   arrowStyle?: CSSProp;
   dialogPlacement?: DialogPlacement;
   onVisibilityChange?: (open?: boolean) => void;
+  safeAreaAriaLabels?: string[];
+  showDelayPeriod?: number;
 };
 
 type DialogPlacement =
@@ -38,9 +40,12 @@ export function Tooltip({
   arrowStyle,
   dialogPlacement = "bottom-left",
   onVisibilityChange,
+  safeAreaAriaLabels,
+  showDelayPeriod = 0,
 }: TooltipProps) {
   const [isOpen, setIsOpen] = useState(false);
   const arrowRef = useRef<HTMLDivElement>(null);
+  const delayTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { floatingStyles, refs, placement } = useFloating({
     placement: getFloatingPlacement(dialogPlacement),
@@ -57,12 +62,27 @@ export function Tooltip({
     whileElementsMounted: autoUpdate,
   });
 
+  const safeAreaAriaLabelsLocal: string[] = [
+    "combobox-drawer-month",
+    "combobox-drawer-year",
+    ...(safeAreaAriaLabels || []),
+  ];
+
   useEffect(() => {
     if (hideDialogOn !== "click" || !isOpen) return;
 
     function handleClickOutside(event: MouseEvent) {
       const floatingEl = refs.floating.current;
       const referenceEl = refs.reference.current;
+
+      if (
+        Array.isArray(safeAreaAriaLabelsLocal) &&
+        safeAreaAriaLabelsLocal.some((label) =>
+          floatingEl.closest(`[aria-label="${label}"]`)
+        )
+      ) {
+        return;
+      }
 
       if (
         floatingEl instanceof HTMLElement &&
@@ -85,14 +105,18 @@ export function Tooltip({
     <Wrapper
       onMouseEnter={() => {
         if (showDialogOn === "hover") {
-          setIsOpen(true);
-          if (onVisibilityChange) {
-            onVisibilityChange(true);
-          }
+          delayTimeoutRef.current = setTimeout(() => {
+            setIsOpen(true);
+            if (onVisibilityChange) {
+              onVisibilityChange(true);
+            }
+          }, showDelayPeriod);
         }
       }}
       onMouseLeave={() => {
         if (hideDialogOn === "hover") {
+          clearTimeout(delayTimeoutRef.current);
+
           setIsOpen(false);
           if (onVisibilityChange) {
             onVisibilityChange(false);
