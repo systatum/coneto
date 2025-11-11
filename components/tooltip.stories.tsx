@@ -369,3 +369,38 @@ export const WithBadge: Story = {
     );
   },
 };
+
+export const WithShowDelay: Story = {
+  render: () => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    return (
+      <Tooltip
+        showDialogOn="hover"
+        hideDialogOn="hover"
+        dialogPlacement="top-left"
+        onVisibilityChange={(isOpen) => {
+          setIsOpen(isOpen);
+        }}
+        showDelayPeriod={2000}
+        dialog={<div>This is a delay tooltip with 2 second.</div>}
+      >
+        <Badge
+          badgeStyle={css`
+            cursor: pointer;
+            ${isOpen &&
+            css`
+              border-color: #045e95;
+            `}
+            transition: all ease-in-out 0.2s;
+            &:hover {
+              border-color: #045e95;
+            }
+          `}
+          caption="With Show Delay"
+          withCircle
+        />
+      </Tooltip>
+    );
+  },
+};
