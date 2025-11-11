@@ -19,7 +19,8 @@ describe("Textbox", () => {
       ACTIONS_OPTION.map((_, index) => {
         const offsetBase = 8;
         const offsetEach = 22;
-        const offset = offsetBase + index * offsetEach;
+        const reverseIndex = ACTIONS_OPTION.length - 1 - index;
+        const offset = offsetBase + reverseIndex * offsetEach;
 
         cy.findAllByLabelText("action-icon")
           .eq(index)
@@ -67,7 +68,8 @@ describe("Textbox", () => {
           const offsetBase = 8;
           const offsetEach = 22;
           const password = offsetEach;
-          const offset = offsetBase + index * offsetEach + password;
+          const reverseIndex = ACTIONS_OPTION.length - 1 - index;
+          const offset = offsetBase + reverseIndex * offsetEach + password;
 
           cy.findAllByLabelText("action-icon")
             .eq(index)
@@ -102,8 +104,10 @@ describe("Textbox", () => {
             const offsetEach = 22;
             const password = offsetEach;
             const showError = offsetEach;
+            const reverseIndex = ACTIONS_OPTION.length - 1 - index;
+
             const offset =
-              offsetBase + index * offsetEach + password + showError;
+              offsetBase + reverseIndex * offsetEach + password + showError;
 
             cy.findAllByLabelText("action-icon")
               .eq(index)
