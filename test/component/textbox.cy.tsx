@@ -24,6 +24,7 @@ describe("Textbox", () => {
 
         cy.findAllByLabelText("action-icon")
           .eq(index)
+          .parent()
           .should("have.css", "right", `${offset}px`);
       });
     });
@@ -36,7 +37,10 @@ describe("Textbox", () => {
         cy.mount(<Textbox value="" actions={ACTIONS_OPTION} />);
 
         ACTIONS_OPTION.map((_, index) => {
-          cy.findAllByLabelText("action-icon").eq(index).click();
+          cy.findAllByLabelText("action-icon")
+            .eq(index)
+
+            .click();
         });
 
         cy.get("@consoleLog").should(
@@ -73,6 +77,7 @@ describe("Textbox", () => {
 
           cy.findAllByLabelText("action-icon")
             .eq(index)
+            .parent()
             .should("have.css", "right", `${offset}px`);
         });
       });
@@ -111,6 +116,7 @@ describe("Textbox", () => {
 
             cy.findAllByLabelText("action-icon")
               .eq(index)
+              .parent()
               .should("have.css", "right", `${offset}px`);
           });
         });
