@@ -45,6 +45,7 @@ export type ButtonProps = React.ComponentProps<"button"> &
     showSubMenuOn?: "caret" | "self";
     tipMenuSize?: TipMenuItemVariantType;
     safeAreaAriaLabels?: string[];
+    activeBackgroundColor?: string;
   };
 
 function Button({
@@ -65,6 +66,7 @@ function Button({
   subMenu,
   showSubMenuOn = "caret",
   safeAreaAriaLabels,
+  activeBackgroundColor,
   ...props
 }: ButtonProps) {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -153,6 +155,7 @@ function Button({
         $size={size}
         disabled={disabled}
         $disabled={disabled}
+        activeBackgroundColor={activeBackgroundColor}
         $isOpen={showSubMenuOn === "self" && isOpen}
         $tipMenu={subMenu && showSubMenuOn === "caret" ? true : false}
         onMouseEnter={() => setHovered("dropdown")}
@@ -339,6 +342,7 @@ const BaseButton = styled.button<{
   $variant: NonNullable<ButtonVariants["variant"]>;
   $size: NonNullable<ButtonVariants["size"]>;
   $isOpen?: boolean;
+  activeBackgroundColor?: string;
 }>`
   display: flex;
   flex-direction: row;
@@ -388,8 +392,12 @@ const BaseButton = styled.button<{
     }
   }}
 
-  ${({ $variant, $isOpen }) => {
-    const { bg, color, underline } = getButtonColors($variant, $isOpen);
+  ${({ $variant, $isOpen, activeBackgroundColor }) => {
+    const { bg, color, underline } = getButtonColors(
+      $variant,
+      $isOpen,
+      activeBackgroundColor
+    );
     return css`
       background-color: ${bg};
       color: ${color};
@@ -499,9 +507,12 @@ const Divider = styled.div<{
 
 const getButtonColors = (
   variant: ButtonVariants["variant"],
-  isOpen?: boolean
+  isOpen?: boolean,
+  customActiveColor?: string
 ) => {
-  const activeColor = getActiveColor(variant);
+  const activeColor = customActiveColor
+    ? customActiveColor
+    : getActiveColor(variant);
 
   switch (variant) {
     case "primary":
