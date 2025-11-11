@@ -24,6 +24,44 @@ describe("Radio", () => {
     });
   });
 
+  context("with onChange", () => {
+    context("when clicking", () => {
+      it("render the callback with args onChange", () => {
+        cy.window().then((win) => {
+          cy.spy(win.console, "log").as("consoleLog");
+        });
+        cy.mount(
+          <div>
+            {RADIO_OPTIONS.map((props, index) => (
+              <Radio
+                key={index}
+                name="radioSelected"
+                label={props.label}
+                value={props.value}
+                onChange={(e) =>
+                  console.log(
+                    `The name is ${e.target.name} and the value is ${e.target.value}`
+                  )
+                }
+                labelStyle={css`
+                  font-size: 30px;
+                `}
+              />
+            ))}
+          </div>
+        );
+
+        RADIO_OPTIONS.map((props, index) => {
+          cy.findByText(props.label).click();
+          cy.get("@consoleLog").should(
+            "have.been.calledWith",
+            `The name is radioSelected and the value is ${props.value}`
+          );
+        });
+      });
+    });
+  });
+
   context("when disabled", () => {
     it("render the radio with not-allowed", () => {
       cy.mount(RADIO_OPTIONS.map((prop) => <Radio disabled {...prop} />));

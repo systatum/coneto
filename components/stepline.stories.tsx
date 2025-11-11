@@ -57,7 +57,7 @@ export const Reversable: Story = {
     ];
 
     return (
-      <Stepline reversable>
+      <Stepline>
         {STEPLINE_ITEMS.map((data, index) => (
           <Stepline.Item
             {...data}
