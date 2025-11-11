@@ -144,7 +144,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
         />
         {actions &&
           actions.map((props, index) => {
-            const { icon: Icon = RiCheckLine, titleShowDelay = 500 } = props;
+            const { icon: Icon = RiCheckLine, titleShowDelay = 2000 } = props;
             const offsetBase = 8;
             const offsetEach = 22;
             const reverseIndex = actions.length - 1 - index;
