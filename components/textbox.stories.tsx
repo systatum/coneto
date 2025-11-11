@@ -249,7 +249,6 @@ export const WithAction: Story = {
         actions={[
           {
             icon: RemixIcons.RiSendPlaneFill,
-            iconColor: "blue",
             onClick: () => console.log("Send message", args.value),
             title: "Send message",
           },
