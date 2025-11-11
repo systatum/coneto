@@ -3,7 +3,6 @@ import {
   RiArrowDownSLine,
   RiArrowRightSLine,
   RiDraggable,
-  RiMoreFill,
 } from "@remixicon/react";
 import {
   ChangeEvent,
@@ -24,7 +23,7 @@ import { Checkbox } from "./checkbox";
 import { Togglebox } from "./togglebox";
 import styled, { css, CSSProp } from "styled-components";
 import { Button, SubMenuButtonProps } from "./button";
-import { TipMenuItemProps } from "./tip-menu";
+import ContextMenu, { ContextMenuActionsProps } from "./context-menu";
 
 export interface ListProps {
   searchable?: boolean;
@@ -78,7 +77,7 @@ export interface ListGroupContentProps {
   items: ListItemProps[];
 }
 
-export type ListActionItemProps = TipMenuItemProps;
+export type ListActionItemProps = ContextMenuActionsProps;
 
 export interface LeftSideContentMenuProps {
   badge?: (badge: ReactNode, withStyle?: { withStyle?: CSSProp }) => ReactNode;
@@ -99,7 +98,7 @@ export interface ListItemProps {
   rightSideContent?: ((prop: string) => ReactNode) | ReactNode;
   containerStyle?: CSSProp;
   rowStyle?: CSSProp;
-  actions?: (id?: string) => ListActionItemProps[];
+  actions?: (id?: string) => ContextMenuActionsProps[];
   children?: ReactNode;
   openable?: boolean;
   selectedOptions?: {
@@ -390,7 +389,7 @@ const ListGroupContent = styled(motion.div)<{
   ${({ $contentStyle }) => $contentStyle}
 `;
 
-const HeaderButton = styled.button`
+const HeaderButton = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -590,65 +589,26 @@ function ListItem({
                 icon: prop.icon ?? RiArrowRightSLine,
                 onClick: (e?: React.MouseEvent) => {
                   prop.onClick?.(e);
-                  setIsHovered(null);
+                  if (list.length > 1) {
+                    setIsHovered(null);
+                  }
                 },
               }));
 
-              if (actionsWithIcons.length === 1) {
-                return actionsWithIcons.map((prop, index) => {
-                  const { icon: Icon } = prop;
-                  return (
-                    <Button
-                      key={index}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (prop.onClick) {
-                          prop.onClick();
-                        }
-                      }}
-                      title={prop.caption}
-                      aria-label="list-action-button"
-                      containerStyle={css`
-                        width: fit-content;
-                        height: fit-content;
-                        z-index: 8;
-                      `}
-                      buttonStyle={css`
-                        padding: 8px;
-                        height: fit-content;
-                        background-color: transparent;
-                        &:hover {
-                          background-color: #d4d4d4;
-                        }
-                      `}
-                    >
-                      <Icon size={16} />
-                    </Button>
-                  );
-                });
-              }
-
               return (
-                <Button
-                  dropdownStyle={css`
-                    margin-top: 2px;
-                  `}
-                  aria-label="list-action-button"
-                  variant="ghost"
+                <ContextMenu
                   buttonStyle={css`
+                    &:focus,
                     &:hover {
-                      background-color: #f3f3f3;
+                      background-color: #c1d6f1;
                     }
-
-                    padding-right: 4px;
-                    padding-left: 4px;
-                    height: ${subtitle ? "32px" : "fit-content"};
+                    ${isHovered === idFullname &&
+                    css`
+                      background-color: #c1d6f1;
+                    `}
                   `}
-                  showSubMenuOn="self"
-                  subMenu={({ list }) => list(actionsWithIcons)}
-                >
-                  <RiMoreFill />
-                </Button>
+                  actions={actionsWithIcons}
+                />
               );
             })()}
           {rightSideContent && typeof rightSideContent === "function"
