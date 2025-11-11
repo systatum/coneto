@@ -179,17 +179,17 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
                   background: transparent;
                   z-index: 10;
                   height: 25px;
-                  color: ${props.iconColor
-                    ? props.iconColor
-                    : showError
-                      ? "#f87171"
+                  color: ${showError
+                    ? "#f87171"
+                    : props.iconColor
+                      ? props.iconColor
                       : "#6b7280"};
 
                   &:hover {
-                    color: ${props.iconColor
-                      ? props.iconColor
-                      : showError
-                        ? "#ef4444"
+                    color: ${showError
+                      ? "#ef4444"
+                      : props.iconColor
+                        ? props.iconColor
                         : "#374151"};
                   }
                 `}
