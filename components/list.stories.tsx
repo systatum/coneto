@@ -1013,14 +1013,17 @@ export const WithBadge: Story = {
                 id={group.id}
                 subtitle={group.subtitle}
                 title={group.title}
-                actions={[
-                  {
-                    caption: "Back",
-                    onClick: () => {
-                      setIsOpen(false);
+                actions={
+                  isOpen &&
+                  [
+                    {
+                      caption: "Back",
+                      onClick: () => {
+                        setIsOpen(false);
+                      },
                     },
-                  },
-                ].filter(Boolean)}
+                  ].filter(Boolean)
+                }
               >
                 {isOpen ? (
                   <ShowContent />
