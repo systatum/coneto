@@ -1,5 +1,5 @@
 import { css, CSSProp } from "styled-components";
-import { Button } from "./button";
+import { Button, ButtonProps } from "./button";
 import { RiMoreFill } from "@remixicon/react";
 import { TipMenuItemProps } from "./tip-menu";
 import { ReactNode } from "react";
@@ -25,11 +25,44 @@ export default function ContextMenu({
   hoverBackgroundColor,
   focusBackgroundColor,
 }: ContextMenuProps) {
+  const buttonProps: ButtonProps = {
+    buttonStyle: css`
+      padding: 8px;
+
+      ${focusBackgroundColor &&
+      css`
+        &:focus {
+          background-color: ${focusBackgroundColor};
+        }
+      `}
+
+      ${hoverBackgroundColor &&
+      css`
+        &:hover {
+          background-color: ${hoverBackgroundColor};
+        }
+      `}
+
+    ${buttonStyle}
+    `,
+    variant: "ghost",
+    containerStyle: css`
+      width: fit-content;
+      height: fit-content;
+    `,
+    dropdownStyle: css`
+      margin-top: 2px;
+      ${dropdownStyle}
+    `,
+    activeBackgroundColor: activeBackgroundColor,
+  };
+
   if (actions.length === 1) {
     return actions.map((prop, index) => {
       const { icon: Icon } = prop;
       return (
         <Button
+          {...buttonProps}
           key={index}
           onClick={(e) => {
             e.stopPropagation();
@@ -37,31 +70,8 @@ export default function ContextMenu({
               prop.onClick();
             }
           }}
-          variant="ghost"
           title={prop.caption}
           aria-label="list-action-button"
-          containerStyle={css`
-            width: fit-content;
-            height: fit-content;
-          `}
-          activeBackgroundColor={activeBackgroundColor}
-          buttonStyle={css`
-            padding: 8px;
-            ${focusBackgroundColor &&
-            css`
-              &:focus {
-                background-color: ${focusBackgroundColor};
-              }
-            `}
-            ${hoverBackgroundColor &&
-            css`
-              &:hover {
-                background-color: ${hoverBackgroundColor};
-              }
-            `}
-
-            ${buttonStyle}
-          `}
         >
           <Icon size={16} />
         </Button>
@@ -71,33 +81,8 @@ export default function ContextMenu({
 
   return (
     <Button
-      containerStyle={css`
-        width: fit-content;
-        height: fit-content;
-      `}
-      dropdownStyle={css`
-        margin-top: 2px;
-        ${dropdownStyle}
-      `}
+      {...buttonProps}
       aria-label="list-action-button"
-      variant="ghost"
-      buttonStyle={css`
-        padding: 8px;
-        ${focusBackgroundColor &&
-        css`
-          &:focus {
-            background-color: ${focusBackgroundColor};
-          }
-        `}
-        ${hoverBackgroundColor &&
-        css`
-          &:hover {
-            background-color: ${hoverBackgroundColor};
-          }
-        `}
-
-        ${buttonStyle}
-      `}
       showSubMenuOn="self"
       subMenu={({ list }) => list(actions)}
     >
