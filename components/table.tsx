@@ -1090,7 +1090,7 @@ function TableRow({
                 z-index: 8;
                 ${draggable
                   ? css`
-                      right: 2.2rem;
+                      right: 2.4rem;
                     `
                   : css`
                       right: 0.5rem;

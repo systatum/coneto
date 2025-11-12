@@ -30,6 +30,8 @@ export default function ContextMenu({
   const buttonProps: ButtonProps = {
     buttonStyle: css`
       padding: 8px;
+      width: 32px;
+      height: 32px;
 
       ${focusBackgroundColor &&
       css`
