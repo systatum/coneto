@@ -154,6 +154,7 @@ export const WithDropdown: Story = {
     placeholder: "Type here...",
     type: "text",
     containerStyle: css`
+      min-width: 700px;
       max-width: 700px;
     `,
   },
@@ -214,8 +215,8 @@ export const WithDropdown: Story = {
       >
         <Textbox
           {...args}
-          name="clock-in"
-          label="Clock In"
+          name="with-list-dropdown"
+          label="With list dropdown"
           value={value1.value}
           onChange={(e) =>
             setValue1((prev) => ({ ...prev, value: e.target.value }))
@@ -242,8 +243,8 @@ export const WithDropdown: Story = {
         />
         <Textbox
           {...args}
-          name="clock-in-with-filter"
-          label="Clock In With Filter"
+          name="with-list-dropdown-and-custom-renderer"
+          label="With list dropdown and custom renderer and custom width"
           value={value2.value}
           onChange={(e) =>
             setValue2((prev) => ({ ...prev, value: e.target.value }))
