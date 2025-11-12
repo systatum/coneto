@@ -597,16 +597,9 @@ function ListItem({
 
               return (
                 <ContextMenu
+                  focusBackgroundColor="#c1d6f1"
                   hoverBackgroundColor="#c1d6f1"
-                  buttonStyle={css`
-                    background-color: transparent;
-                    ${isHovered === idFullname &&
-                    css`
-                      &:focus {
-                        background-color: #c1d6f1;
-                      }
-                    `}
-                  `}
+                  activeBackgroundColor="#c1d6f1"
                   actions={actionsWithIcons}
                 />
               );

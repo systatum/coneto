@@ -31,7 +31,7 @@ export default function ContextMenu({
 
       ${focusBackgroundColor &&
       css`
-        &:focus {
+        &:focus-visible {
           background-color: ${focusBackgroundColor};
         }
       `}
