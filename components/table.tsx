@@ -22,13 +22,13 @@ import {
   RiArrowRightSLine,
   RiArrowUpDownLine,
   RiDraggable,
-  RiMoreFill,
 } from "@remixicon/react";
 import { AnimatePresence, motion } from "framer-motion";
 import styled, { css, CSSProp } from "styled-components";
 import { Searchbox } from "./searchbox";
 import { Button, SubMenuButtonProps } from "./button";
 import { Capsule, CapsuleProps } from "./capsule";
+import ContextMenu from "./context-menu";
 
 export type RowData = (string | ReactNode)[];
 
@@ -1068,51 +1068,21 @@ function TableRow({
         actions &&
         (() => {
           const list = actions(`${rowId}`);
-          if (list.length === 1) {
-            return list.map((data, index) => {
-              const Icon = data.icon;
-              return (
-                <Button
-                  key={index}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (data.onClick) {
-                      data.onClick();
-                    }
-                  }}
-                  title={data.caption}
-                  aria-label="row-action"
-                  containerStyle={css`
-                    width: fit-content;
-                    position: absolute;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    z-index: 8;
-                    ${draggable
-                      ? css`
-                          right: 2rem;
-                        `
-                      : css`
-                          right: 0.5rem;
-                        `}
-                  `}
-                  buttonStyle={css`
-                    padding: 8px;
-                    background-color: transparent;
-                    &:hover {
-                      background-color: #d4d4d4;
-                    }
-                  `}
-                >
-                  <Icon size={16} />
-                </Button>
-              );
-            });
-          }
+          const actionsWithIcons = list.map((prop) => ({
+            ...prop,
+            icon: prop.icon ?? RiArrowRightSLine,
+            onClick: (e?: React.MouseEvent) => {
+              e?.stopPropagation();
+              prop.onClick?.(e);
+              if (list.length > 1) {
+                setIsHovered(null);
+              }
+            },
+          }));
 
           return (
-            <Toolbar
-              style={css`
+            <ContextMenu
+              containerStyle={css`
                 width: fit-content;
                 position: absolute;
                 top: 50%;
@@ -1120,35 +1090,17 @@ function TableRow({
                 z-index: 8;
                 ${draggable
                   ? css`
-                      right: 2rem;
+                      right: 2.4rem;
                     `
                   : css`
                       right: 0.5rem;
                     `}
               `}
-            >
-              <Toolbar.Menu
-                closedIcon={RiMoreFill}
-                openedIcon={RiMoreFill}
-                isOpen={isOpen}
-                setIsOpen={setIsOpen}
-                dropdownStyle={css`
-                  min-width: 235px;
-                  z-index: 50;
-                `}
-                triggerStyle={css`
-                  color: black;
-                  &:hover {
-                    background-color: #d4d4d4;
-                  }
-                `}
-                toggleActiveStyle={css`
-                  background-color: #d4d4d4;
-                `}
-                variant="none"
-                subMenuList={list}
-              />
-            </Toolbar>
+              focusBackgroundColor="#d4d4d4"
+              hoverBackgroundColor="#d4d4d4"
+              activeBackgroundColor="#d4d4d4"
+              actions={actionsWithIcons}
+            />
           );
         })()}
 

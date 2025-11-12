@@ -140,11 +140,12 @@ function Button({
       $variant={variant}
     >
       <BaseButton
-        onClick={(event) => {
+        onClick={(e) => {
           if (onClick && showSubMenuOn === "caret") {
-            onClick(event);
+            onClick(e);
           }
           if (subMenu && showSubMenuOn === "self") {
+            e.stopPropagation();
             setIsOpen((prev) => !prev);
           } else {
             setIsOpen(false);
@@ -155,7 +156,7 @@ function Button({
         $size={size}
         disabled={disabled}
         $disabled={disabled}
-        activeBackgroundColor={activeBackgroundColor}
+        $activeBackgroundColor={activeBackgroundColor}
         $isOpen={showSubMenuOn === "self" && isOpen}
         $tipMenu={subMenu && showSubMenuOn === "caret" ? true : false}
         onMouseEnter={() => setHovered("dropdown")}
@@ -342,7 +343,7 @@ const BaseButton = styled.button<{
   $variant: NonNullable<ButtonVariants["variant"]>;
   $size: NonNullable<ButtonVariants["size"]>;
   $isOpen?: boolean;
-  activeBackgroundColor?: string;
+  $activeBackgroundColor?: string;
 }>`
   display: flex;
   flex-direction: row;
@@ -392,11 +393,11 @@ const BaseButton = styled.button<{
     }
   }}
 
-  ${({ $variant, $isOpen, activeBackgroundColor }) => {
+  ${({ $variant, $isOpen, $activeBackgroundColor }) => {
     const { bg, color, underline } = getButtonColors(
       $variant,
       $isOpen,
-      activeBackgroundColor
+      $activeBackgroundColor
     );
     return css`
       background-color: ${bg};
