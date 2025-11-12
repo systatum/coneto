@@ -140,11 +140,12 @@ function Button({
       $variant={variant}
     >
       <BaseButton
-        onClick={(event) => {
+        onClick={(e) => {
           if (onClick && showSubMenuOn === "caret") {
-            onClick(event);
+            onClick(e);
           }
           if (subMenu && showSubMenuOn === "self") {
+            e.stopPropagation();
             setIsOpen((prev) => !prev);
           } else {
             setIsOpen(false);
