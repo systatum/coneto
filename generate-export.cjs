@@ -14,6 +14,9 @@ function getFlatExportsFrom(dirPath, baseDistPath) {
     )
     .reduce((acc, file) => {
       const nameWithoutExt = path.basename(file, path.extname(file));
+      if (nameWithoutExt === "context-menu") {
+        return acc;
+      }
       const subpath = `./${nameWithoutExt.toLowerCase()}`;
 
       acc[subpath] = {
