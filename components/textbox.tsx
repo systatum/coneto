@@ -16,7 +16,6 @@ import {
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { Button } from "./button";
-import { TipMenuItemProps } from "./tip-menu";
 import { Tooltip } from "./tooltip";
 
 export interface TextboxProps
@@ -32,18 +31,25 @@ export interface TextboxProps
   style?: CSSProp;
   onChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   actions?: ActionsProps[];
-  dropdown?: DropdownProps;
+  dropdowns?: DropdownProps[];
   dropdownToggleStyle?: CSSProp;
 }
 
 interface DropdownProps {
-  options: DropdownOptionProps[];
-  selectedOption: string;
-  onChange: (id: string) => void;
+  options?: DropdownOptionProps[];
+  caption?: string;
+  onChange?: (id: string) => void;
+  width?: string;
+  drawerStyle?: CSSProp;
+  containerStyle?: CSSProp;
   withFilter?: boolean;
+  render?: (props: {
+    render?: (children?: ReactNode) => ReactNode;
+    setCaption?: (caption?: string) => void;
+  }) => ReactNode;
 }
 
-interface DropdownOptionProps {
+export interface DropdownOptionProps {
   text: string;
   value: string;
   icon?: RemixiconComponentType;
@@ -70,8 +76,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
       containerStyle,
       labelStyle,
       type = "text",
-      dropdown,
-      dropdownToggleStyle,
+      dropdowns,
       actions,
       ...props
     },
@@ -91,52 +96,66 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
       return <input {...props} hidden />;
     }
 
-    const selectionCaption =
-      dropdown?.options.find(
-        (data) => data.value === dropdown.selectedOption
-      ) ?? dropdown?.options[0];
-
     const inputElement: ReactElement = (
       <InputWrapper>
-        {dropdown && (
-          <Button
-            subMenu={({ list }) => {
-              const dropdownData = dropdown.options.map((prop) => {
-                const subMenuList: TipMenuItemProps = {
+        {dropdowns?.map((dropdown, index) => {
+          return (
+            <Button
+              key={index}
+              subMenu={({ list, render }) => {
+                if (dropdown.render) {
+                  return dropdown.render({ render });
+                }
+
+                const dropdownData = dropdown.options.map((prop) => ({
                   caption: prop.text,
                   icon: prop.icon,
                   iconColor: prop.iconColor,
-                  onClick: () => {
-                    dropdown.onChange(prop.value);
-                  },
-                };
-                return subMenuList;
-              });
-              return list(dropdownData, {
-                withFilter: dropdown.withFilter ?? false,
-              });
-            }}
-            showSubMenuOn="self"
-            variant="outline"
-            containerStyle={css`
-              border-right: 0px;
-              border-top-right-radius: 0px;
-              border-bottom-right-radius: 0px;
-              ${dropdownToggleStyle}
-            `}
-            buttonStyle={css`
-              font-size: 12px;
-              ${dropdownToggleStyle}
-            `}
-          >
-            {selectionCaption && selectionCaption.text}
-          </Button>
-        )}
+                  onClick: () => dropdown.onChange(prop.value),
+                }));
+
+                return list(dropdownData, {
+                  withFilter: dropdown.withFilter ?? false,
+                });
+              }}
+              showSubMenuOn="self"
+              variant="outline"
+              containerStyle={css`
+                border-right: 0;
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+                ${index > 0 &&
+                css`
+                  border-top-left-radius: 0;
+                  border-bottom-left-radius: 0;
+                `}
+                ${dropdown.width &&
+                css`
+                  width: ${dropdown.width};
+                `}
+
+                ${dropdown.containerStyle}
+              `}
+              buttonStyle={css`
+                font-size: 12px;
+                ${dropdown.width &&
+                css`
+                  width: ${dropdown.width};
+                `}
+                ${dropdown.containerStyle}
+              `}
+              dropdownStyle={dropdown.drawerStyle}
+            >
+              {dropdown.caption}
+            </Button>
+          );
+        })}
+
         <Input
           id={inputId}
           ref={ref}
           onChange={onChange}
-          $dropdown={!!dropdown}
+          $dropdown={!!dropdowns}
           type={type === "password" && showPassword ? "text" : type}
           $error={showError}
           $style={style}
@@ -330,6 +349,7 @@ const Input = styled.input<{
   width: 100%;
   outline: none;
   z-index: 10;
+
   border: 1px solid ${({ $error }) => ($error ? "#f87171" : "#d1d5db")};
   ${({ $error }) =>
     $error
