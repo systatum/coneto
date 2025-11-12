@@ -32,7 +32,6 @@ export interface TextboxProps
   onChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   actions?: ActionsProps[];
   dropdowns?: DropdownProps[];
-  dropdownToggleStyle?: CSSProp;
 }
 
 interface DropdownProps {
