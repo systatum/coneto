@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 import {
   List,
-  ListActionsProps,
+  ListGroupActionsProps,
   ListGroupContentProps,
   ListItemProps,
 } from "./list";
@@ -14,6 +14,8 @@ import {
   RiCalendar2Fill,
   RiErrorWarningLine,
   RiArrowRightSLine,
+  RiDeleteBack2Line,
+  RiEdit2Line,
 } from "@remixicon/react";
 import { Card } from "./card";
 import { ChangeEvent, useMemo, useState } from "react";
@@ -1011,14 +1013,17 @@ export const WithBadge: Story = {
                 id={group.id}
                 subtitle={group.subtitle}
                 title={group.title}
-                actions={[
-                  isOpen && {
-                    title: "Back",
-                    onClick: () => {
-                      setIsOpen(false);
+                actions={
+                  isOpen &&
+                  [
+                    {
+                      caption: "Back",
+                      onClick: () => {
+                        setIsOpen(false);
+                      },
                     },
-                  },
-                ].filter(Boolean)}
+                  ].filter(Boolean)
+                }
               >
                 {isOpen ? (
                   <ShowContent />
@@ -1076,9 +1081,9 @@ export const CustomOpener: Story = {
       />
     );
 
-    const ACTIONS_GROUPS: ListActionsProps[] = [
+    const ACTIONS_GROUPS: ListGroupActionsProps[] = [
       {
-        title: "Add",
+        caption: "Add",
         onClick: (id: string) => {
           console.log(`action was added ${id}`);
         },
@@ -1285,12 +1290,28 @@ export const CustomOpener: Story = {
                     key={i}
                     openable={list.openable}
                     id={list.id}
-                    leftIcon={list.leftIcon}
-                    subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
+                    leftIcon={list.leftIcon}
+                    subtitle={list.subtitle}
                     rightSideContent={list.rightSideContent}
                     onSelected={onChangeValue}
+                    actions={(id: string) => [
+                      {
+                        caption: "Edit",
+                        icon: RiEdit2Line,
+                        onClick: () => {
+                          console.log(`Edit content for ${id}`);
+                        },
+                      },
+                      {
+                        caption: "Delete",
+                        icon: RiDeleteBack2Line,
+                        onClick: () => {
+                          console.log(`Delete content for ${id}`);
+                        },
+                      },
+                    ]}
                     selectedOptions={{
                       checked: value.checked.some(
                         (check) => check.id === list.id

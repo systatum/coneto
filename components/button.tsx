@@ -45,6 +45,7 @@ export type ButtonProps = React.ComponentProps<"button"> &
     showSubMenuOn?: "caret" | "self";
     tipMenuSize?: TipMenuItemVariantType;
     safeAreaAriaLabels?: string[];
+    activeBackgroundColor?: string;
   };
 
 function Button({
@@ -65,6 +66,7 @@ function Button({
   subMenu,
   showSubMenuOn = "caret",
   safeAreaAriaLabels,
+  activeBackgroundColor,
   ...props
 }: ButtonProps) {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -74,6 +76,7 @@ function Button({
   const [positionClass, setPositionClass] = React.useState<"left" | "right">(
     "left"
   );
+  const [placement, setPlacement] = React.useState<"top" | "bottom">("bottom");
 
   const containerRef = React.useRef<HTMLDivElement>(null);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
@@ -119,6 +122,12 @@ function Button({
       const rect = containerRef.current.getBoundingClientRect();
       const half = window.innerWidth / 2;
       setPositionClass(rect.left > half ? "right" : "left");
+
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const spaceAbove = rect.top;
+      setPlacement(
+        spaceBelow < 200 && spaceAbove > spaceBelow ? "top" : "bottom"
+      );
     }
   }, [isOpen]);
 
@@ -146,6 +155,8 @@ function Button({
         $size={size}
         disabled={disabled}
         $disabled={disabled}
+        activeBackgroundColor={activeBackgroundColor}
+        $isOpen={showSubMenuOn === "self" && isOpen}
         $tipMenu={subMenu && showSubMenuOn === "caret" ? true : false}
         onMouseEnter={() => setHovered("dropdown")}
         onMouseLeave={() => setHovered("original")}
@@ -199,8 +210,15 @@ function Button({
             style={{
               position: "absolute",
               top:
-                (containerRef.current?.getBoundingClientRect().bottom ?? 0) +
-                window.scrollY,
+                placement === "bottom"
+                  ? (containerRef.current?.getBoundingClientRect().bottom ??
+                      0) +
+                    window.scrollY +
+                    2
+                  : (containerRef.current?.getBoundingClientRect().top ?? 0) +
+                    window.scrollY -
+                    (dropdownRef.current?.offsetHeight ?? 0) -
+                    2,
               left:
                 positionClass === "left"
                   ? (containerRef.current?.getBoundingClientRect().left ?? 0) +
@@ -324,6 +342,7 @@ const BaseButton = styled.button<{
   $variant: NonNullable<ButtonVariants["variant"]>;
   $size: NonNullable<ButtonVariants["size"]>;
   $isOpen?: boolean;
+  activeBackgroundColor?: string;
 }>`
   display: flex;
   flex-direction: row;
@@ -373,8 +392,12 @@ const BaseButton = styled.button<{
     }
   }}
 
-  ${({ $variant, $isOpen }) => {
-    const { bg, color, underline } = getButtonColors($variant, $isOpen);
+  ${({ $variant, $isOpen, activeBackgroundColor }) => {
+    const { bg, color, underline } = getButtonColors(
+      $variant,
+      $isOpen,
+      activeBackgroundColor
+    );
     return css`
       background-color: ${bg};
       color: ${color};
@@ -484,9 +507,12 @@ const Divider = styled.div<{
 
 const getButtonColors = (
   variant: ButtonVariants["variant"],
-  isOpen?: boolean
+  isOpen?: boolean,
+  customActiveColor?: string
 ) => {
-  const activeColor = getActiveColor(variant);
+  const activeColor = customActiveColor
+    ? customActiveColor
+    : getActiveColor(variant);
 
   switch (variant) {
     case "primary":

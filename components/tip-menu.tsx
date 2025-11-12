@@ -17,7 +17,7 @@ interface TipMenuProps {
 
 export interface TipMenuItemProps {
   caption: string;
-  icon?: RemixiconComponentType;
+  icon: RemixiconComponentType;
   onClick?: (e?: React.MouseEvent) => void;
   iconColor?: string;
   isDangerous?: boolean;

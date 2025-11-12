@@ -1,5 +1,8 @@
 import {
+  RiArrowRightSLine,
   RiCalendar2Fill,
+  RiDeleteBack2Line,
+  RiEdit2Line,
   RiErrorWarningLine,
   RiHome2Fill,
   RiMailFill,
@@ -9,7 +12,8 @@ import {
 } from "@remixicon/react";
 import {
   List,
-  ListActionsProps,
+  ListActionItemProps,
+  ListGroupActionsProps,
   ListGroupContentProps,
 } from "./../../components/list";
 import { css } from "styled-components";
@@ -191,9 +195,9 @@ describe("List", () => {
         />
       );
 
-      const ACTIONS_GROUPS: ListActionsProps[] = [
+      const ACTIONS_GROUPS: ListGroupActionsProps[] = [
         {
-          title: "Add",
+          caption: "Add",
           onClick: (id: string) => {
             console.log(`action was clicked ${id}`);
           },
@@ -359,10 +363,11 @@ describe("List", () => {
 
   context("actions", () => {
     context("when given in the list", () => {
-      const ACTIONS_GROUPS: ListActionsProps[] = [
+      const LIST_ACTION_ITEMS_PROPS = (id: string): ListActionItemProps[] => [
         {
-          title: "Add",
-          onClick: (id: string) => {
+          caption: "Add",
+          icon: RiArrowRightSLine,
+          onClick: () => {
             console.log(`action was clicked ${id}`);
           },
         },
@@ -379,7 +384,7 @@ describe("List", () => {
               title: "Messages",
               subtitle: "Check your inbox",
               leftIcon: RiMailFill,
-              actions: ACTIONS_GROUPS,
+              actions: LIST_ACTION_ITEMS_PROPS,
             },
             {
               id: "notifications",
@@ -405,7 +410,7 @@ describe("List", () => {
               title: "Home",
               subtitle: "Go to homepage",
               leftIcon: RiHome2Fill,
-              actions: ACTIONS_GROUPS,
+              actions: LIST_ACTION_ITEMS_PROPS,
             },
             {
               id: "profile",
@@ -463,8 +468,16 @@ describe("List", () => {
         );
         cy.wait(100);
 
-        cy.findAllByLabelText("list-action-button").should("have.length", 2);
-        cy.findAllByText("Add").should("have.length", 2);
+        cy.findAllByLabelText("list-action-button").should("have.length", 0);
+        cy.findAllByLabelText("list-item-wrapper")
+          .eq(0)
+          .realHover()
+          .within(() => {
+            cy.findAllByLabelText("list-action-button").should(
+              "have.length",
+              1
+            );
+          });
       });
 
       context("when clicking", () => {
@@ -512,18 +525,99 @@ describe("List", () => {
           });
           cy.wait(100);
 
-          cy.findAllByLabelText("list-action-button").eq(0).click();
+          cy.findAllByLabelText("list-item-wrapper")
+            .eq(0)
+            .realHover()
+            .within(() => {
+              cy.findAllByLabelText("list-action-button")
+                .should("have.length", 1)
+                .eq(0)
+                .click();
+            });
           cy.get("@consoleLog").should(
             "have.been.calledWith",
             "action was clicked recent-content-messages"
           );
         });
       });
+
+      context("when given multiple actions", () => {
+        it("should render the tip menu", () => {
+          cy.mount(
+            <List
+              searchable
+              draggable
+              selectable
+              containerStyle={css`
+                padding: 16px;
+                min-width: 350px;
+              `}
+            >
+              {LIST_GROUPS.map((group, index) => (
+                <List.Group
+                  key={index}
+                  id={group.id}
+                  title={group.title}
+                  subtitle={group.subtitle}
+                  actions={group.actions}
+                  openerStyle="togglebox"
+                >
+                  {group.items.map((list, i) => (
+                    <List.Item
+                      key={i}
+                      id={list.id}
+                      groupId={group.id}
+                      actions={(id: string) => [
+                        {
+                          caption: "Edit",
+                          icon: RiEdit2Line,
+                          onClick: () => {
+                            console.log(`Edit content for ${id}`);
+                          },
+                        },
+                        {
+                          caption: "Delete",
+                          icon: RiDeleteBack2Line,
+                          onClick: () => {
+                            console.log(`Delete content for ${id}`);
+                          },
+                        },
+                      ]}
+                      leftIcon={list.leftIcon}
+                      subtitle={list.subtitle}
+                      title={list.title}
+                      selectedOptions={{
+                        checked: true,
+                      }}
+                    />
+                  ))}
+                </List.Group>
+              ))}
+            </List>
+          );
+
+          cy.window().then((win) => {
+            cy.spy(win.console, "log").as("consoleLog");
+          });
+          cy.wait(100);
+
+          cy.findAllByLabelText("list-item-wrapper").eq(0).realHover().click();
+          cy.findAllByLabelText("list-action-button").eq(0).click();
+          cy.findAllByLabelText("tip-menu-item")
+            .should("have.length", 2)
+            .eq(0)
+            .click();
+          cy.get("@consoleLog").should(
+            "have.been.calledWith",
+            "Edit content for recent-content-messages"
+          );
+        });
+      });
     });
     context("when given in the group", () => {
-      const ACTIONS_GROUPS: ListActionsProps[] = [
+      const ACTIONS_GROUPS: ListGroupActionsProps[] = [
         {
-          title: "Add",
+          caption: "Add",
           onClick: (id: string) => {
             console.log(`action was clicked ${id}`);
           },
@@ -695,9 +789,9 @@ describe("List", () => {
         />
       );
 
-      const ACTIONS_GROUPS: ListActionsProps[] = [
+      const ACTIONS_GROUPS: ListGroupActionsProps[] = [
         {
-          title: "Add",
+          caption: "Add",
           onClick: (id: string) => {
             console.log(`action was clicked ${id}`);
           },
