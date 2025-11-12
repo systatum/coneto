@@ -9,6 +9,7 @@ export type ContextMenuActionsProps = TipMenuItemProps;
 export interface ContextMenuProps {
   actions: ContextMenuActionsProps[];
   children?: ReactNode;
+  containerStyle?: CSSProp;
   buttonStyle?: CSSProp;
   dropdownStyle?: CSSProp;
   focusBackgroundColor?: string;
@@ -21,6 +22,7 @@ export default function ContextMenu({
   actions,
   buttonStyle,
   dropdownStyle,
+  containerStyle,
   activeBackgroundColor,
   hoverBackgroundColor,
   focusBackgroundColor,
@@ -49,6 +51,7 @@ export default function ContextMenu({
     containerStyle: css`
       width: fit-content;
       height: fit-content;
+      ${containerStyle}
     `,
     dropdownStyle: css`
       margin-top: 2px;
@@ -67,7 +70,7 @@ export default function ContextMenu({
           onClick={(e) => {
             e.stopPropagation();
             if (prop.onClick) {
-              prop.onClick();
+              prop.onClick(e);
             }
           }}
           title={prop.caption}
