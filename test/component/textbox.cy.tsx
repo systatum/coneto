@@ -1,5 +1,6 @@
 import { RiDeleteBinLine, RiSendPlaneFill } from "@remixicon/react";
 import { Textbox } from "./../../components/textbox";
+import { Button } from "./../../components/button";
 
 describe("Textbox", () => {
   context("with actions", () => {
@@ -13,6 +14,7 @@ describe("Textbox", () => {
         onClick: () => console.log("delete the message"),
       },
     ].filter(Boolean);
+
     it("should render the actions button", () => {
       cy.mount(<Textbox value="" actions={ACTIONS_OPTION} />);
 
@@ -34,19 +36,18 @@ describe("Textbox", () => {
         cy.window().then((win) => {
           cy.spy(win.console, "log").as("consoleLog");
         });
+
         cy.mount(<Textbox value="" actions={ACTIONS_OPTION} />);
 
         ACTIONS_OPTION.map((_, index) => {
-          cy.findAllByLabelText("action-icon")
-            .eq(index)
-
-            .click();
+          cy.findAllByLabelText("action-icon").eq(index).click();
         });
 
         cy.get("@consoleLog").should(
           "have.been.calledWith",
           "send the message"
         );
+
         cy.get("@consoleLog").should(
           "have.been.calledWith",
           "delete the message"
@@ -120,6 +121,78 @@ describe("Textbox", () => {
               .should("have.css", "right", `${offset}px`);
           });
         });
+      });
+    });
+  });
+
+  context("Dropdown", () => {
+    context("width", () => {
+      context("when given", () => {
+        it("should render the width", () => {
+          cy.mount(
+            <Textbox
+              dropdowns={[
+                {
+                  caption: "Width",
+                  width: "100px",
+                  render: ({ render }) =>
+                    render(
+                      <Button.TipMenuContainer>
+                        Buttton with Width
+                      </Button.TipMenuContainer>
+                    ),
+                },
+              ]}
+            />
+          );
+
+          cy.findByText("Width")
+            .then(($el) => {
+              const width = $el.css("width");
+
+              expect(parseFloat(width)).to.be.closeTo(100, 1);
+            })
+            .should("have.css", "align-items", "center")
+            .and("have.css", "justify-content", "center");
+        });
+      });
+    });
+    context("when given multiple", () => {
+      it("renders more than one dropdown", () => {
+        cy.mount(
+          <Textbox
+            dropdowns={[
+              {
+                caption: "Dropdown 1",
+                width: "100px",
+                render: ({ render }) =>
+                  render(
+                    <Button.TipMenuContainer>
+                      Drawer on Dropdown 1
+                    </Button.TipMenuContainer>
+                  ),
+              },
+              {
+                caption: "Dropdown 2",
+                width: "100px",
+                render: ({ render }) =>
+                  render(
+                    <Button.TipMenuContainer>
+                      Drawer on Dropdown 2
+                    </Button.TipMenuContainer>
+                  ),
+              },
+            ]}
+          />
+        );
+
+        cy.findByText("Drawer on Dropdown 1").should("not.exist");
+        cy.findByText("Dropdown 1").click();
+        cy.findByText("Drawer on Dropdown 1").should("exist");
+
+        cy.findByText("Drawer on Dropdown 2").should("not.exist");
+        cy.findByText("Dropdown 2").click();
+        cy.findByText("Drawer on Dropdown 2").should("exist");
       });
     });
   });
