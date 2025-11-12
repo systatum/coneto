@@ -21,28 +21,32 @@ describe("Radio", () => {
 
     context("when given", () => {
       it("renders the radio and text", () => {
-        cy.findByText("Mentions").click();
+        cy.findByText("Daily").click();
 
-        const RADIO_OPTIONS = [
+        const DAILY_RADIO_OPTIONS = [
           {
-            label: "Comments",
-            description: "Get notified when someone posts a comment",
+            value: "daily",
+            label: "Daily",
+            description: "Receive a daily summary of your activity",
           },
           {
-            label: "Mentions",
-            description: "Get notified when someone mentions you",
+            value: "weekly",
+            label: "Weekly",
+            description: "Receive a weekly summary of your activity",
           },
           {
-            label: "Follows",
-            description: "Get notified when someone follows you",
+            value: "monthly",
+            label: "Monthly",
+            description: "Receive a monthly summary of your activity",
           },
           {
-            label: "None",
-            description: "Don't notify me",
+            value: "never",
+            label: "Never",
+            description: "Do not receive any notifications",
           },
         ];
 
-        RADIO_OPTIONS.forEach((data) => {
+        DAILY_RADIO_OPTIONS.forEach((data) => {
           cy.findByText(data.label).should("exist");
           cy.findByText(data.description).should("exist");
         });
@@ -65,7 +69,7 @@ describe("Radio", () => {
 
     context("when clicking", () => {
       it("should remove error", () => {
-        cy.findByText("Comments").click();
+        cy.findByText("High Priority").click();
         cy.findByText("Please select an option before continuing.").should(
           "not.exist"
         );
