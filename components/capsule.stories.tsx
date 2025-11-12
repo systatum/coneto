@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { Capsule, CapsuleContentProps } from "./capsule";
+import { Capsule } from "./capsule";
 import { useArgs } from "@storybook/preview-api";
 import { RiFile2Line, RiNewspaperLine } from "@remixicon/react";
 

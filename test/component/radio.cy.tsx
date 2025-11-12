@@ -51,7 +51,7 @@ describe("Radio", () => {
           </div>
         );
 
-        RADIO_OPTIONS.map((props, index) => {
+        RADIO_OPTIONS.map((props) => {
           cy.findByText(props.label).click();
           cy.get("@consoleLog").should(
             "have.been.calledWith",
