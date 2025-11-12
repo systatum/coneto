@@ -1,9 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Textbox, TextboxProps } from "./textbox";
+import { DropdownOptionProps, Textbox, TextboxProps } from "./textbox";
 import { useArgs } from "@storybook/preview-api";
 import { useEffect, useState, type ChangeEvent } from "react";
 import * as RemixIcons from "@remixicon/react";
 import { css } from "styled-components";
+import { Calendar } from "./calendar";
 
 const meta: Meta<typeof Textbox> = {
   title: "Input Elements/Textbox",
@@ -45,7 +46,7 @@ const meta: Meta<typeof Textbox> = {
       description:
         "Array of action buttons with icons displayed inside the input",
     },
-    dropdown: {
+    dropdowns: {
       control: false,
       description:
         "Dropdown configuration object with options and selectedOption",
@@ -120,22 +121,57 @@ export const Input: Story = {
 export const WithDropdown: Story = {
   args: {
     placeholder: "Type here...",
-    value: "",
     type: "text",
-    style: css`
-      min-width: 400px;
-      max-width: 400px;
+    containerStyle: css`
+      max-width: 500px;
     `,
+  },
+  parameters: {
+    layout: "padded",
   },
   render: (args: TextboxProps) => {
     const [value1, setValue1] = useState({
-      selectionOption: "1",
-      search: "",
+      selectedText: "On-site",
+      selectedOption: "1",
+      value: "",
     });
     const [value2, setValue2] = useState({
-      selectionOption: "1",
-      search: "",
+      selectedText1: "11/12/2025",
+      selectedOption1: "11/12/2025",
+      selectedText2: "WFH",
+      selectedOption2: "2",
+      value: "",
     });
+
+    const MONTH_NAMES = [
+      { text: "JAN", value: "1" },
+      { text: "FEB", value: "2" },
+      { text: "MAR", value: "3" },
+      { text: "APR", value: "4" },
+      { text: "MAY", value: "5" },
+      { text: "JUN", value: "6" },
+      { text: "JUL", value: "7" },
+      { text: "AUG", value: "8" },
+      { text: "SEP", value: "9" },
+      { text: "OCT", value: "10" },
+      { text: "NOV", value: "11" },
+      { text: "DEC", value: "12" },
+    ];
+
+    const ATTENDANCE_OPTIONS: DropdownOptionProps[] = [
+      { text: "On-site", value: "1", icon: RemixIcons.RiHome2Line },
+      { text: "WFH", value: "2", icon: RemixIcons.RiUser2Line },
+      {
+        text: "Sick leave",
+        value: "3",
+        icon: RemixIcons.RiSettings2Line,
+      },
+      {
+        text: "Annual leave",
+        value: "4",
+        icon: RemixIcons.RiLogoutBoxLine,
+      },
+    ];
 
     return (
       <div
@@ -149,64 +185,85 @@ export const WithDropdown: Story = {
           {...args}
           name="clock-in"
           label="Clock In"
-          value={value1.search}
+          value={value1.value}
           onChange={(e) =>
-            setValue1((prev) => ({ ...prev, search: e.target.value }))
+            setValue1((prev) => ({ ...prev, value: e.target.value }))
           }
           dropdownToggleStyle={css`
             min-width: 106px;
           `}
-          dropdown={{
-            selectedOption: value1.selectionOption,
-            options: [
-              { text: "On-site", value: "1", icon: RemixIcons.RiHome2Line },
-              { text: "WFH", value: "2", icon: RemixIcons.RiUser2Line },
-              {
-                text: "Sick leave",
-                value: "3",
-                icon: RemixIcons.RiSettings2Line,
+          dropdowns={[
+            {
+              width: "100px",
+              caption: value1.selectedText,
+              options: ATTENDANCE_OPTIONS,
+              onChange: (id) => {
+                const selected = ATTENDANCE_OPTIONS.find(
+                  (item) => item.value === id
+                );
+                if (selected) {
+                  setValue1((prev) => ({
+                    ...prev,
+                    selectedOption: id,
+                    selectedText: selected.text,
+                  }));
+                }
               },
-              {
-                text: "Annual leave",
-                value: "4",
-                icon: RemixIcons.RiLogoutBoxLine,
-              },
-            ],
-            onChange: (id) =>
-              setValue1((prev) => ({ ...prev, selectionOption: id })),
-          }}
+            },
+          ]}
         />
         <Textbox
           {...args}
           name="clock-in-with-filter"
           label="Clock In With Filter"
-          value={value2.search}
+          value={value2.value}
           onChange={(e) =>
-            setValue2((prev) => ({ ...prev, search: e.target.value }))
+            setValue2((prev) => ({ ...prev, value: e.target.value }))
           }
+          containerStyle={css`
+            max-width: 500px;
+          `}
           dropdownToggleStyle={css`
             min-width: 106px;
           `}
-          dropdown={{
-            selectedOption: value2.selectionOption,
-            options: [
-              { text: "On-site", value: "1", icon: RemixIcons.RiHome2Line },
-              { text: "WFH", value: "2", icon: RemixIcons.RiUser2Line },
-              {
-                text: "Sick leave",
-                value: "3",
-                icon: RemixIcons.RiSettings2Line,
+          dropdowns={[
+            {
+              width: "100px",
+              caption: value2.selectedText1,
+              render: ({ render }) =>
+                render(
+                  <Calendar
+                    selectedDates={[value2.selectedOption1]}
+                    monthNames={MONTH_NAMES}
+                    setSelectedDates={(date: string[]) =>
+                      setValue2((prev) => ({
+                        ...prev,
+                        selectedText1: date[0],
+                        selectedOption1: date[0],
+                      }))
+                    }
+                  />
+                ),
+            },
+            {
+              width: "100px",
+              caption: value2.selectedText2,
+              options: ATTENDANCE_OPTIONS,
+              onChange: (id) => {
+                const selected = ATTENDANCE_OPTIONS.find(
+                  (item) => item.value === id
+                );
+                if (selected) {
+                  setValue2((prev) => ({
+                    ...prev,
+                    selectedOption2: id,
+                    selectedText2: selected.text,
+                  }));
+                }
               },
-              {
-                text: "Annual leave",
-                value: "4",
-                icon: RemixIcons.RiLogoutBoxLine,
-              },
-            ],
-            onChange: (id) =>
-              setValue2((prev) => ({ ...prev, selectionOption: id })),
-            withFilter: true,
-          }}
+              withFilter: true,
+            },
+          ]}
         />
       </div>
     );
