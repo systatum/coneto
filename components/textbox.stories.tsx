@@ -9,76 +9,107 @@ import { Calendar } from "./calendar";
 const meta: Meta<typeof Textbox> = {
   title: "Input Elements/Textbox",
   component: Textbox,
+  parameters: {
+    layout: "centered",
+    docs: {
+      description: {
+        component:
+          "A flexible input component with support for labels, validation states, action icons, and customizable dropdowns with filtering and custom rendering.",
+      },
+    },
+  },
+  tags: ["autodocs"],
   argTypes: {
     name: {
       control: "text",
-      description: "Name attribute for the input element",
+      description: "Name attribute for the input element.",
     },
     label: {
       control: "text",
-      description: "Label text displayed above the input",
+      description: "Label text displayed above the input.",
     },
     value: {
       control: "text",
-      description: "The current value of the input",
+      description: "The current value of the input field.",
     },
     placeholder: {
       control: "text",
-      description: "Placeholder text shown when input is empty",
+      description: "Placeholder text shown when input is empty.",
     },
     type: {
-      control: {
-        type: "select",
-        options: ["text", "password", "message", "hidden"],
-      },
-      description: "Input type (text, password, message, hidden)",
+      control: { type: "select" },
+      options: ["text", "password", "message", "hidden"],
+      description: "Input type (text, password, message, hidden).",
     },
     showError: {
       control: "boolean",
-      description: "Whether to show an error state",
+      description: "Whether to show an error state.",
     },
     errorMessage: {
       control: "text",
-      description: "Error message displayed when showError is true",
+      description: "Error message displayed when showError is true.",
     },
     actions: {
       control: false,
       description:
-        "Array of action buttons with icons displayed inside the input",
+        "Array of action buttons displayed inside the input. Each action can include an icon, title tooltip, and click handler.",
+      table: {
+        type: {
+          summary: `ActionsProps[]`,
+          detail: `{
+  title?: string;
+  icon?: RemixiconComponentType;
+  iconColor?: string;
+  onClick?: (e: React.MouseEvent) => void;
+  disabled?: boolean;
+  titleShowDelay?: number;
+}`,
+        },
+      },
     },
     dropdowns: {
       control: false,
       description:
-        "Dropdown configuration object with options and selectedOption",
-    },
-    dropdownToggleStyle: {
-      control: false,
-      description: "Custom styles for the dropdown toggle button",
+        "Dropdown configuration array supporting custom rendering or list-based selection with optional filtering.",
+      table: {
+        type: {
+          summary: `DropdownProps[]`,
+          detail: `{
+  options?: DropdownOptionProps[];
+  caption?: string;
+  onChange?: (id: string) => void;
+  width?: string;
+  drawerStyle?: CSSProp;
+  containerStyle?: CSSProp;
+  withFilter?: boolean;
+  render?: (props: { render?: (children?: ReactNode) => ReactNode; setCaption?: (caption?: string) => void; }) => ReactNode;
+}`,
+        },
+      },
     },
     onChange: {
       action: "changed",
-      description: "Triggered when the input value changes",
-    },
-    style: {
-      control: false,
-      description: "Custom style applied to the input element",
+      description: "Triggered when the input value changes.",
     },
     containerStyle: {
       control: false,
-      description: "Custom style applied to the input container",
+      description: "Custom style applied to the outer container.",
     },
     labelStyle: {
       control: false,
-      description: "Custom style applied to the label",
+      description: "Custom style applied to the label.",
+    },
+    style: {
+      control: false,
+      description: "Custom style applied directly to the input element.",
     },
   },
+
   args: {
+    label: "Username",
+    placeholder: "Enter your username",
     value: "",
   },
-  parameters: {
-    layout: "centered",
-  },
-  tags: ["autodocs"],
 };
 
 export default meta;
@@ -123,7 +154,7 @@ export const WithDropdown: Story = {
     placeholder: "Type here...",
     type: "text",
     containerStyle: css`
-      max-width: 500px;
+      max-width: 700px;
     `,
   },
   parameters: {
@@ -189,9 +220,6 @@ export const WithDropdown: Story = {
           onChange={(e) =>
             setValue1((prev) => ({ ...prev, value: e.target.value }))
           }
-          dropdownToggleStyle={css`
-            min-width: 106px;
-          `}
           dropdowns={[
             {
               width: "100px",
@@ -220,12 +248,6 @@ export const WithDropdown: Story = {
           onChange={(e) =>
             setValue2((prev) => ({ ...prev, value: e.target.value }))
           }
-          containerStyle={css`
-            max-width: 500px;
-          `}
-          dropdownToggleStyle={css`
-            min-width: 106px;
-          `}
           dropdowns={[
             {
               width: "100px",
@@ -246,7 +268,10 @@ export const WithDropdown: Story = {
                 ),
             },
             {
-              width: "100px",
+              width: "300px",
+              drawerStyle: css`
+                width: 300px;
+              `,
               caption: value2.selectedText2,
               options: ATTENDANCE_OPTIONS,
               onChange: (id) => {
