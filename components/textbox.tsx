@@ -176,10 +176,9 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
             return (
               <Button
                 key={index}
-                type="submit"
                 aria-label="action-icon"
                 onClick={(e) => {
-                  e.preventDefault();
+                  e.stopPropagation();
                   if (props.onClick) {
                     props.onClick(e);
                   }
@@ -219,6 +218,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
                 <Tooltip
                   containerStyle={css`
                     cursor: pointer;
+                    pointer-events: none;
                   `}
                   key={index}
                   arrowStyle={(placement) => css`
