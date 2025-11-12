@@ -146,10 +146,14 @@ describe("Textbox", () => {
             />
           );
 
-          cy.findByText("Width").then(($el) => {
-            const width = $el.css("width");
-            expect(parseFloat(width)).to.be.closeTo(100, 1);
-          });
+          cy.findByText("Width")
+            .then(($el) => {
+              const width = $el.css("width");
+
+              expect(parseFloat(width)).to.be.closeTo(100, 1);
+            })
+            .should("have.css", "align-items", "center")
+            .and("have.css", "justify-content", "center");
         });
       });
     });
