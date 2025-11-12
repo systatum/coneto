@@ -667,15 +667,11 @@ describe("Table", () => {
           cy.spy(win.console, "log").as("consoleLog");
         });
 
-        cy.findAllByLabelText("table-row")
-          .eq(2)
-          .trigger("mouseover")
-          .within(() => {
-            cy.findByLabelText("row-action")
-              .should("be.visible")
-              .and("have.attr", "title", "Delete")
-              .click();
-          });
+        cy.findAllByLabelText("table-row").eq(2).trigger("mouseover");
+        cy.findByLabelText("list-action-button")
+          .should("be.visible")
+          .and("have.attr", "title", "Delete")
+          .click();
 
         cy.wait(100);
         cy.get("@consoleLog").should(
@@ -722,15 +718,9 @@ describe("Table", () => {
           cy.spy(win.console, "log").as("consoleLog");
         });
 
-        cy.findAllByLabelText("table-row")
-          .eq(2)
-          .trigger("mouseover")
-          .within(() => {
-            cy.findByLabelText("toolbar-menu-toggle")
-              .should("be.visible")
-              .click();
-            cy.findByText("Edit").click();
-          });
+        cy.findAllByLabelText("table-row").eq(2).trigger("mouseover");
+        cy.findByLabelText("list-action-button").should("be.visible").click();
+        cy.findByText("Edit").click();
 
         cy.wait(100);
         cy.get("@consoleLog").should(
