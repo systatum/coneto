@@ -15,6 +15,8 @@ export interface ToggleboxProps
   description?: string;
   containerStyle?: CSSProp;
   descriptionStyle?: CSSProp;
+  rowStyle?: CSSProp;
+  textWrapperStyle?: CSSProp;
   errorStyle?: CSSProp;
   labelStyle?: CSSProp;
   showError?: boolean;
@@ -35,6 +37,8 @@ function Togglebox({
   errorStyle,
   errorMessage,
   descriptionStyle,
+  rowStyle,
+  textWrapperStyle,
   labelStyle,
   size = 24,
   ...props
@@ -44,7 +48,7 @@ function Togglebox({
 
   return (
     <ToggleboxContainer $style={containerStyle}>
-      <ToggleboxWrapper aria-label="togglebox-row-wrapper">
+      <ToggleboxWrapper $style={rowStyle} aria-label="togglebox-row-wrapper">
         <StyledLabel
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.8 }}
@@ -84,7 +88,10 @@ function Togglebox({
         </StyledLabel>
 
         {(label || description) && (
-          <ToggleboxTextWrapper aria-label="togglebox-text-wrapper">
+          <ToggleboxTextWrapper
+            $style={textWrapperStyle}
+            aria-label="togglebox-text-wrapper"
+          >
             {label && <Label $style={labelStyle}>{label}</Label>}
             {description && (
               <Description $style={descriptionStyle}>{description}</Description>
@@ -122,7 +129,7 @@ const ToggleboxContainer = styled.div<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
-const ToggleboxWrapper = styled.div`
+const ToggleboxWrapper = styled.div<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
@@ -130,12 +137,15 @@ const ToggleboxWrapper = styled.div`
   font-size: 0.75rem;
   width: 100%;
   align-items: center;
+
+  ${({ $style }) => $style}
 `;
 
-const ToggleboxTextWrapper = styled.div`
+const ToggleboxTextWrapper = styled.div<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: column;
-  user-select: none;
+
+  ${({ $style }) => $style}
 `;
 
 const StyledLabel = styled(motion.label)`
