@@ -187,8 +187,8 @@ describe("StatefulForm", () => {
 
       cy.findByLabelText("thumb-up").click();
       cy.findByLabelText("thumb-down").click();
-      cy.findByLabelText("input-thumbfield").should("not.be.checked");
-      cy.findByLabelText("input-togglebox")
+      cy.findByLabelText("thumbfield-input").should("not.be.checked");
+      cy.findByLabelText("togglebox-input")
         .click({ force: true })
         .should("be.checked");
 
