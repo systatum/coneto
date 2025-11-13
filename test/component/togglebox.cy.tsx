@@ -40,4 +40,19 @@ describe("Togglebox", () => {
         });
     });
   });
+
+  context("with description", () => {
+    it("render with align center", () => {
+      cy.mount(
+        <Togglebox
+          label="Click and load"
+          description="Click and you will see a loading icon"
+          checked={true}
+        />
+      );
+      cy.findByLabelText("togglebox-row-wrapper")
+        .should("have.css", "flex-direction", "row")
+        .and("have.css", "align-items", "center");
+    });
+  });
 });
