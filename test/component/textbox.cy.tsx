@@ -53,6 +53,18 @@ describe("Textbox", () => {
           "delete the message"
         );
       });
+
+      it("should focus on the textbox", () => {
+        cy.mount(
+          <Textbox value="" actions={ACTIONS_OPTION} placeholder="type here" />
+        );
+        cy.findByPlaceholderText("type here").should("not.be.focused");
+        cy.findByPlaceholderText("type here").click().should("be.focused");
+        ACTIONS_OPTION.map((_, index) => {
+          cy.findAllByLabelText("action-icon").eq(index).click();
+          cy.findByPlaceholderText("type here").should("be.focused");
+        });
+      });
     });
 
     context("with type password", () => {
