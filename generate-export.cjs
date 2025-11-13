@@ -1,6 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 
+const IGNORED_COMPONENT_FILES = ["context-menu"];
+
 function getFlatExportsFrom(dirPath, baseDistPath) {
   const abs = path.join(__dirname, dirPath);
 
@@ -14,6 +16,12 @@ function getFlatExportsFrom(dirPath, baseDistPath) {
     )
     .reduce((acc, file) => {
       const nameWithoutExt = path.basename(file, path.extname(file));
+      if (
+        IGNORED_COMPONENT_FILES.some((content) => content === nameWithoutExt)
+      ) {
+        return acc;
+      }
+
       const subpath = `./${nameWithoutExt.toLowerCase()}`;
 
       acc[subpath] = {

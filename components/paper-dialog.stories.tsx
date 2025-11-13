@@ -8,13 +8,7 @@ import { COUNTRY_CODES } from "./../constants/countries";
 import { css } from "styled-components";
 import { Card } from "./card";
 import { ColumnTableProps, SubMenuListTableProps, Table } from "./table";
-import {
-  RiAddBoxLine,
-  RiArrowDownSLine,
-  RiArrowUpSLine,
-  RiEdit2Line,
-  RiRefreshLine,
-} from "@remixicon/react";
+import { RiAddBoxLine, RiEdit2Line } from "@remixicon/react";
 
 const meta: Meta<typeof PaperDialog> = {
   title: "Stage/PaperDialog",

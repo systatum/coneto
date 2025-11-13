@@ -22,12 +22,7 @@ import { Checkbox } from "./checkbox";
 import { Button } from "./button";
 import { List, ListItemProps } from "./list";
 import { css } from "styled-components";
-import {
-  ColumnTableProps,
-  SubMenuListTableProps,
-  Table,
-  TableActionsProps,
-} from "./table";
+import { ColumnTableProps, SubMenuListTableProps, Table } from "./table";
 
 const meta: Meta<typeof Card> = {
   title: "Content/Card",

@@ -4,7 +4,7 @@ import {
   SHADOW_MAP,
 } from "./../constants/global-style";
 import { RemixiconComponentType, RiCloseLine } from "@remixicon/react";
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { Button, SubMenuButtonProps } from "./button";
 import { CapsuleProps } from "./capsule";

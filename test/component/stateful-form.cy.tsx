@@ -1,4 +1,3 @@
-import z from "zod";
 import {
   FormFieldGroup,
   FormFieldProps,
@@ -8,7 +7,6 @@ import { COUNTRY_CODES } from "./../../constants/countries";
 import { Boxbar } from "./../../components/boxbar";
 import { Badge, BadgeProps } from "./../../components/badge";
 import { css } from "styled-components";
-import { CountryCodeProps } from "./../../components/phonebox";
 import { OptionsProps } from "./../../components/selectbox";
 import { CapsuleContentProps } from "./../../components/capsule";
 
@@ -457,79 +455,6 @@ describe("StatefulForm", () => {
       capsule: "",
       country_code: DEFAULT_COUNTRY_CODES,
     };
-
-    const schema = z.object({
-      text: z.string().min(3, "Text must be at least 3 characters"),
-      email: z.string().email("Please enter a valid email address"),
-      number: z.string().refine((val) => val === "" || !isNaN(Number(val)), {
-        message: "Number must be numeric",
-      }),
-      password: z.string().min(6, "Password must be at least 6 characters"),
-      textarea: z.string().min(10, "Text must be at least 10 characters"),
-      check: z.boolean(),
-      chips: z.object({
-        searchText: z.string().optional(),
-      }),
-      color: z.string().optional(),
-      combo: z
-        .array(z.string().min(1, "Choose one"))
-        .min(1, "Combo must have at least one item")
-        .optional(),
-      date: z.array(
-        z
-          .string()
-          .nonempty("Choose your date")
-          .refine(
-            (val) =>
-              /^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/\d{4}$/.test(val),
-            {
-              message: "Invalid date",
-            }
-          )
-      ),
-      file_drop_box: z.any().optional(),
-      file: z
-        .any()
-        .refine(
-          (file) => {
-            return file?.type === "image/jpeg";
-          },
-          {
-            message: "Only JPEG file are allowed",
-          }
-        )
-        .refine((file) => file?.size <= 5 * 1024 * 1024, {
-          message: "File size must be 5MB or less",
-        }),
-      image: z
-        .any()
-        .refine(
-          (file) => {
-            return file?.type === "image/jpeg";
-          },
-          {
-            message: "Only JPEG file are allowed",
-          }
-        )
-        .refine((file) => file?.size <= 5 * 1024 * 1024, {
-          message: "File size must be 5MB or less",
-        }),
-      money: z.string().optional(),
-      signature: z.string().min(1, "Signature is required"),
-      phone: z.string().min(8, "Phone number must be 8 digits").optional(),
-      rating: z.string().optional(),
-      thumb_field: z.boolean(),
-      togglebox: z.boolean(),
-      capsule: z.string().max(4, "Paid is required"),
-      country_code: z
-        .object({
-          id: z.string(),
-          name: z.string(),
-          flag: z.string(),
-          code: z.string(),
-        })
-        .optional(),
-    });
 
     const BADGE_OPTIONS: BadgeProps[] = [
       {

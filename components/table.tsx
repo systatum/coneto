@@ -1,4 +1,4 @@
-import {
+import React, {
   ChangeEvent,
   Children,
   cloneElement,
@@ -926,7 +926,6 @@ function TableRow({
     return () => observer.disconnect();
   }, [isLast, onLastRowReached]);
 
-  const [isOpen, setIsOpen] = useState<null | boolean>(true);
   const [isHovered, setIsHovered] = useState<null | string>(null);
 
   const childArray = Children.toArray(children).filter(isValidElement);
