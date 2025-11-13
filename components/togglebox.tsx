@@ -2,9 +2,10 @@ import { ChangeEvent, InputHTMLAttributes } from "react";
 import { motion } from "framer-motion";
 import { RemixiconComponentType } from "@remixicon/react";
 import { LoadingSpinner } from "./loading-spinner";
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
 
-export interface ToggleboxProps extends InputHTMLAttributes<HTMLInputElement> {
+export interface ToggleboxProps
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {
   checked?: boolean;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   icon?: RemixiconComponentType | null;
@@ -14,10 +15,13 @@ export interface ToggleboxProps extends InputHTMLAttributes<HTMLInputElement> {
   description?: string;
   containerStyle?: CSSProp;
   descriptionStyle?: CSSProp;
+  rowStyle?: CSSProp;
+  textWrapperStyle?: CSSProp;
   errorStyle?: CSSProp;
   labelStyle?: CSSProp;
   showError?: boolean;
   errorMessage?: string;
+  size?: number;
 }
 
 function Togglebox({
@@ -29,26 +33,34 @@ function Togglebox({
   label,
   description,
   containerStyle,
-  style,
   showError,
   errorStyle,
   errorMessage,
   descriptionStyle,
+  rowStyle,
+  textWrapperStyle,
   labelStyle,
+  size = 24,
   ...props
 }: ToggleboxProps) {
+  const { heightWrapper, widthWrapper, thumbShift, iconSize } =
+    getToggleboxSize(size);
+
   return (
     <ToggleboxContainer $style={containerStyle}>
-      <ToggleboxWrapper>
+      <ToggleboxWrapper $style={rowStyle} aria-label="togglebox-row-wrapper">
         <StyledLabel
-          initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.8 }}
           transition={{ duration: 0.2 }}
-          aria-label="togglebox"
+          aria-label="togglebox-wrapper"
+          style={{
+            width: widthWrapper,
+            height: heightWrapper,
+          }}
         >
           <StyledInput
-            aria-label="input-togglebox"
+            aria-label="togglebox-input"
             id={props.id}
             name={name}
             type="checkbox"
@@ -57,50 +69,56 @@ function Togglebox({
           />
           <ToggleBackground checked={checked} />
           <ToggleButton
+            aria-label="togglebox-thumb"
             transition={{ type: "spring", stiffness: 700, damping: 30 }}
             animate={{
-              x: checked ? 25 : 0,
+              x: checked ? thumbShift : 0,
+            }}
+            style={{
+              width: size,
+              height: size,
             }}
           >
             {isLoading ? (
-              <span style={{ position: "relative", width: "100%" }}>
-                <LoadingSpinner
-                  iconSize={14}
-                  style={{
-                    position: "absolute",
-                    top: "5px",
-                    left: "5px",
-                  }}
-                />
-              </span>
+              <LoadingSpinner iconSize={iconSize} />
             ) : (
-              Icon && (
-                <Icon
-                  size={13}
-                  style={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                    color: checked ? "#61A9F9" : undefined,
-                  }}
-                />
-              )
+              Icon && <Icon aria-label="togglebox-icon" size={iconSize} />
             )}
           </ToggleButton>
         </StyledLabel>
 
-        {label && <Label $style={labelStyle}>{label}</Label>}
+        {(label || description) && (
+          <ToggleboxTextWrapper
+            $style={textWrapperStyle}
+            aria-label="togglebox-text-wrapper"
+          >
+            {label && <Label $style={labelStyle}>{label}</Label>}
+            {description && (
+              <Description $style={descriptionStyle}>{description}</Description>
+            )}
+          </ToggleboxTextWrapper>
+        )}
       </ToggleboxWrapper>
-      {description && (
-        <Description $style={descriptionStyle}>{description}</Description>
-      )}
       {showError && errorMessage && (
         <ErrorText $style={errorStyle}>{errorMessage}</ErrorText>
       )}
     </ToggleboxContainer>
   );
 }
+
+const getToggleboxSize = (size: number) => {
+  const widthWrapper = size * 2;
+  const heightWrapper = size * 1;
+  const thumbShift = size * 1.02;
+  const iconSize = size * 0.6;
+
+  return {
+    widthWrapper,
+    heightWrapper,
+    thumbShift,
+    iconSize,
+  };
+};
 
 const ToggleboxContainer = styled.div<{ $style?: CSSProp }>`
   display: flex;
@@ -111,7 +129,7 @@ const ToggleboxContainer = styled.div<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
-const ToggleboxWrapper = styled.div`
+const ToggleboxWrapper = styled.div<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
@@ -119,6 +137,15 @@ const ToggleboxWrapper = styled.div`
   font-size: 0.75rem;
   width: 100%;
   align-items: center;
+
+  ${({ $style }) => $style}
+`;
+
+const ToggleboxTextWrapper = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  flex-direction: column;
+
+  ${({ $style }) => $style}
 `;
 
 const StyledLabel = styled(motion.label)`
@@ -127,8 +154,6 @@ const StyledLabel = styled(motion.label)`
   flex-direction: row;
   align-items: center;
   cursor: pointer;
-  width: 3rem;
-  height: 1.5rem;
 `;
 
 const StyledInput = styled.input`
@@ -150,8 +175,9 @@ const ToggleButton = styled(motion.div)`
   position: absolute;
   top: 0;
   left: 0;
-  width: 1.5rem;
-  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: white;
   border-radius: 9999px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
@@ -164,7 +190,6 @@ const Label = styled.span<{ $style?: CSSProp }>`
 `;
 
 const Description = styled.span<{ $style?: CSSProp }>`
-  margin-left: 50px;
   font-size: 12px;
   width: 100%;
   ${({ $style }) => $style}

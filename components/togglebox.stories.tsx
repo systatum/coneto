@@ -106,8 +106,8 @@ export const WithDescription: Story = {
     checked: false,
     icon: RemixIcons.RiLock2Fill,
     isLoading: false,
-    label: "With Icon And Loading",
-    description: "If we clicked, that expected had loading",
+    label: "Click and load",
+    description: "Click and you will see a loading icon",
     labelStyle: css`
       font-size: 14px;
     `,
