@@ -176,7 +176,6 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
               <Button
                 key={index}
                 aria-label="action-icon"
-                onMouseDown={(e) => e.preventDefault()}
                 onClick={(e) => {
                   e.stopPropagation();
                   if (props.onClick) {
@@ -255,7 +254,6 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
         {type === "password" && (
           <Button
             type="button"
-            onMouseDown={(e) => e.preventDefault()}
             onClick={() => setShowPassword((prev) => !prev)}
             aria-label="toggle-password"
             containerStyle={css`
