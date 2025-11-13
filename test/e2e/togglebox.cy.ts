@@ -1,9 +1,9 @@
 import { getIdContent } from "test/support/commands";
 
-context("Togglebox Component", () => {
-  const onClickToggle = () => cy.findByLabelText("togglebox").click();
+describe("Togglebox", () => {
+  const onClickToggle = () => cy.findByLabelText("togglebox-wrapper").click();
 
-  describe("Default", () => {
+  context("Default", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-togglebox--default"));
     });
@@ -14,18 +14,20 @@ context("Togglebox Component", () => {
     });
   });
 
-  describe("With Icon", () => {
+  context("with icon", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-togglebox--with-icon"));
     });
 
-    it("should toggle with icon and change state", () => {
-      onClickToggle();
-      cy.get("input[type=checkbox]").should("be.checked");
+    context("when clicking", () => {
+      it("should toggle with icon and change state", () => {
+        onClickToggle();
+        cy.get("input[type=checkbox]").should("be.checked");
+      });
     });
   });
 
-  describe("With Icon And Loading", () => {
+  context("with icon and loading", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-togglebox--with-icon-and-loading"));
     });
@@ -38,38 +40,42 @@ context("Togglebox Component", () => {
     });
   });
 
-  describe("With Description", () => {
+  context("with description", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-togglebox--with-description"));
     });
 
     it("should render label and description", () => {
-      cy.findByText("With Icon And Loading").should("exist");
-      cy.findByText("If we clicked, that expected had loading").should("exist");
+      cy.findByText("Click and load").should("exist");
+      cy.findByText("Click and you will see a loading icon").should("exist");
     });
 
-    it("should show loading after clicking", () => {
-      onClickToggle();
-      cy.get("input[type=checkbox]").should("be.checked");
+    context("when clicking", () => {
+      it("should show loading indicator", () => {
+        onClickToggle();
+        cy.get("input[type=checkbox]").should("be.checked");
 
-      cy.findByLabelText("circle", { timeout: 1500 }).should("exist");
-      cy.findByLabelText("circle", { timeout: 1500 }).should("not.exist");
+        cy.findByLabelText("circle", { timeout: 1500 }).should("exist");
+        cy.findByLabelText("circle", { timeout: 1500 }).should("not.exist");
+      });
     });
   });
 
-  describe("With Error", () => {
+  context("with error", () => {
     beforeEach(() => {
       cy.visit(getIdContent("input-elements-togglebox--with-error"));
     });
 
-    it("should show error message when unchecked", () => {
+    it("should show error message", () => {
       cy.findByText("Must add value on togglebox").should("exist");
     });
 
-    it("should hide error message when checked", () => {
-      onClickToggle();
-      cy.get("input[type=checkbox]").should("be.checked");
-      cy.findByText("Must add value on togglebox").should("not.exist");
+    context("when clicking", () => {
+      it("should hide error message", () => {
+        onClickToggle();
+        cy.get("input[type=checkbox]").should("be.checked");
+        cy.findByText("Must add value on togglebox").should("not.exist");
+      });
     });
   });
 });
