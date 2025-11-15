@@ -75,6 +75,9 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
 
     useImperativeHandle(ref, () => hourRef.current!);
 
+    const inputId = `timebox-${name}`;
+    const dataType = withSeconds ? `timebox-with-second` : `timebox`;
+
     useEffect(() => {
       if (valueLocal) {
         const parts = valueLocal.split(":");
@@ -139,6 +142,8 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
         }}
       >
         <Input
+          id={inputId}
+          aria-label="timebox-hour"
           ref={hourRef}
           type="text"
           inputMode="numeric"
@@ -168,6 +173,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
         />
         <Colon>:</Colon>
         <Input
+          aria-label="timebox-minute"
           ref={minuteRef}
           type="text"
           inputMode="numeric"
@@ -203,6 +209,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
           <>
             <Colon>:</Colon>
             <Input
+              aria-label="timebox-second"
               ref={secondRef}
               type="text"
               inputMode="numeric"
@@ -229,9 +236,6 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
         )}
       </InputGroup>
     );
-
-    const inputId = `textbox-${name}`;
-    const dataType = withSeconds ? `timebox-with-second` : `timebox`;
 
     return (
       <InputWrapper
