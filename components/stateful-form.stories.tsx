@@ -789,8 +789,8 @@ export const AllCase: Story = {
             }));
           }}
           onValidityChange={setIsFormValid}
-          labelSize="20px"
-          fieldSize="20px"
+          labelSize="14px"
+          fieldSize="14px"
           fields={FIELDS}
           formValues={value}
           validationSchema={schema}
