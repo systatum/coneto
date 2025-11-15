@@ -143,7 +143,7 @@ export function Tooltip({
       >
         {children}
       </ContentTrigger>
-      {isOpen && (
+      {isOpen && dialog && (
         <>
           <Spacer $placement={placement} />
           <TooltipArrow
