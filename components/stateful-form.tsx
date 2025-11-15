@@ -28,6 +28,7 @@ import { Rating, RatingProps } from "./rating";
 import { ThumbField, ThumbFieldProps } from "./thumb-field";
 import { Togglebox, ToggleboxProps } from "./togglebox";
 import { Capsule, CapsuleProps } from "./capsule";
+import { Timebox, TimeboxProps } from "./timebox";
 
 export type StatefulOnChangeType =
   | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -93,6 +94,7 @@ export interface FormFieldProps {
   thumbFieldProps?: ThumbFieldProps;
   toggleboxProps?: ToggleboxProps;
   capsuleProps?: CapsuleProps;
+  timeboxProps?: TimeboxProps;
 }
 
 function StatefulForm<Z extends ZodTypeAny>({
@@ -351,6 +353,51 @@ function FormFields<T extends FieldValues>({
                     errors[field.name as keyof T]?.message as string | undefined
                   }
                   {...field.textboxProps}
+                />
+              ) : field.type === "time" ? (
+                <Timebox
+                  key={index}
+                  label={field.title}
+                  value={formValues[field.name as keyof T] ?? ""}
+                  required={field.required}
+                  {...register(field.name as Path<T>, {
+                    onChange: (e) => {
+                      if (field.onChange) {
+                        field.onChange(e);
+                      }
+                      if (onChange) {
+                        onChange(field.name as keyof T, e.target.value);
+                      }
+                    },
+                  })}
+                  labelStyle={
+                    labelSize &&
+                    css`
+                      font-size: ${labelSize};
+                    `
+                  }
+                  inputStyle={
+                    fieldSize &&
+                    css`
+                      font-size: ${fieldSize};
+                    `
+                  }
+                  ref={(el) => {
+                    if (el) refs.current[field.name] = el;
+                    const { ref } = register(field.name as Path<T>);
+                    if (ref) ref(el);
+                  }}
+                  showError={shouldShowError(field.name)}
+                  containerStyle={
+                    field.width &&
+                    css`
+                      width: ${field.width};
+                    `
+                  }
+                  errorMessage={
+                    errors[field.name as keyof T]?.message as string | undefined
+                  }
+                  {...field.timeboxProps}
                 />
               ) : field.type === "textarea" ? (
                 <Textarea
