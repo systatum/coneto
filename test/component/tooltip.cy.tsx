@@ -69,4 +69,34 @@ describe("Tooltip", () => {
       });
     });
   });
+
+  context("dialog", () => {
+    context("when empty string", () => {
+      it("render children without drawer", () => {
+        cy.mount(
+          <Tooltip
+            showDialogOn="hover"
+            hideDialogOn="hover"
+            dialogPlacement="top-left"
+            showDelayPeriod={2000}
+            dialog={""}
+          >
+            <Badge
+              badgeStyle={css`
+                cursor: pointer;
+                transition: all ease-in-out 0.2s;
+              `}
+              caption="With Show Delay"
+              withCircle
+            />
+          </Tooltip>
+        );
+        cy.findByLabelText("tooltip-content").should("not.exist");
+        cy.findByText("With Show Delay").realHover();
+        cy.findByLabelText("tooltip-drawer").should("not.exist");
+        cy.findByLabelText("tooltip-arrow").should("not.exist");
+        cy.findByText("").should("not.exist");
+      });
+    });
+  });
 });
