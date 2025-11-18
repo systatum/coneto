@@ -110,7 +110,7 @@ export const Default: Story = {
       >
         <Button onClick={() => dialogRef.current?.openDialog()}>Open</Button>
         <Button onClick={() => dialogRef.current?.closeDialog()}>Close</Button>
-        <PaperDialog ref={dialogRef}>
+        <PaperDialog width="35vw" ref={dialogRef}>
           <PaperDialog.Content
             style={{
               padding: "36px",
