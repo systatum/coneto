@@ -817,7 +817,7 @@ function Calendar({
                 aria-selected={isHighlighted}
                 id={`option-${idx}`}
                 onClick={async (e) => {
-                  if ((isWeekend && disableWeekend) || isDisabled) {
+                  if ((isDateWeekend && disableWeekend) || isDisabled) {
                     return;
                   }
 
