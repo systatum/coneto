@@ -143,7 +143,7 @@ export function Tooltip({
       >
         {children}
       </ContentTrigger>
-      {isOpen && (
+      {isOpen && dialog && (
         <>
           <Spacer $placement={placement} />
           <TooltipArrow
@@ -157,6 +157,7 @@ export function Tooltip({
             }
           />
           <TooltipDrawer
+            aria-label="tooltip-drawer"
             style={floatingStyles}
             $drawerStyle={
               typeof drawerStyle === "function"
