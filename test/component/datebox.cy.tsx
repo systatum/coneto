@@ -1,8 +1,8 @@
 import { Datebox } from "./../../components/datebox";
 
 describe("Datebox", () => {
-  context("when initialize first", () => {
-    it("render the value on input", () => {
+  context("when initialized with selected date", () => {
+    it("renders the value on input", () => {
       cy.mount(<Datebox selectedDates={["11/30/2025"]} />);
       cy.findByPlaceholderText("mm/dd/yyyy")
         .should("be.visible")
@@ -20,7 +20,7 @@ describe("Datebox", () => {
       );
     });
 
-    context("when wrong date", () => {
+    context("when given invalid date", () => {
       it("renders an empty input and shows today's date in the calendar", () => {
         cy.mount(<Datebox selectedDates={["2025/11/300"]} />);
         const today = new Date();
@@ -39,8 +39,8 @@ describe("Datebox", () => {
   });
 
   context("multiple", () => {
-    context("when initialize first", () => {
-      it("render the value on input", () => {
+    context("when initialized with selected date", () => {
+      it("renders the value on input", () => {
         cy.mount(
           <Datebox
             calendarSelectabilityMode="multiple"
@@ -86,7 +86,7 @@ describe("Datebox", () => {
         });
       });
 
-      context("when wrong date", () => {
+      context("when given invalid date", () => {
         it("renders an empty input and shows today's date in the calendar", () => {
           cy.mount(<Datebox selectedDates={["11/01/2025, 11/300/2025"]} />);
           const today = new Date();
@@ -106,8 +106,8 @@ describe("Datebox", () => {
   });
 
   context("ranged", () => {
-    context("when initialize first", () => {
-      it("render the value on input", () => {
+    context("when initialized with selected date", () => {
+      it("renders the value on input", () => {
         cy.mount(
           <Datebox
             calendarSelectabilityMode="ranged"
@@ -140,7 +140,7 @@ describe("Datebox", () => {
         );
       });
 
-      context("when wrong date", () => {
+      context("when given invalid date", () => {
         it("renders an empty input and shows today's date in the calendar", () => {
           cy.mount(<Datebox selectedDates={["11/01/2025-11/300/2025"]} />);
           const today = new Date();
