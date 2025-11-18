@@ -29,3 +29,8 @@ export function removeWeekend(dates: string[]): string[] {
     return day !== 0 && day !== 6;
   });
 }
+
+export function isWeekend(dateToCheck: Date): boolean {
+  const day = dateToCheck.getDay();
+  return day === 0 || day === 6;
+}
