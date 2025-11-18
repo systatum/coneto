@@ -72,7 +72,7 @@ describe("Tooltip", () => {
 
   context("dialog", () => {
     context("when empty string", () => {
-      it("render children without drawer", () => {
+      it("renders children without drawer", () => {
         cy.mount(
           <Tooltip
             showDialogOn="hover"
