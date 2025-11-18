@@ -70,6 +70,9 @@ describe("StatefulForm", () => {
       cy.findByLabelText("Email")
         .type("alim@systatum.com")
         .should("have.value", "alim@systatum.com");
+      cy.findByText("Time").type("21{rightarrow}12");
+      cy.findByLabelText("timebox-hour").should("have.value", "21");
+      cy.findByLabelText("timebox-minute").should("have.value", "12");
       cy.findByLabelText("Number").type("12345").should("have.value", "12345");
       cy.findByLabelText("Password")
         .type("secret123")

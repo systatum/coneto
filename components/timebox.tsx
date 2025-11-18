@@ -10,12 +10,14 @@ import {
 } from "react";
 import styled, { CSSProp } from "styled-components";
 
-interface TimeboxProps {
+export interface TimeboxProps {
   withSeconds?: boolean;
   onChange?: (value: ChangeEvent<HTMLInputElement>) => void;
   editable?: boolean;
   containerStyle?: CSSProp;
   inputStyle?: CSSProp;
+  labelStyle?: CSSProp;
+  errorStyle?: CSSProp;
   disabled?: boolean;
   label?: string;
   showError?: boolean;
@@ -23,6 +25,13 @@ interface TimeboxProps {
   value?: string;
   name?: string;
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement | HTMLDivElement>) => void;
+  placeholder?: TimeboxPlaceholderProps;
+}
+
+interface TimeboxPlaceholderProps {
+  hour?: string;
+  minute?: string;
+  second?: string;
 }
 
 const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
@@ -33,6 +42,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
       editable = true,
       containerStyle,
       inputStyle,
+      labelStyle,
       disabled,
       label,
       errorMessage,
@@ -40,9 +50,17 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
       value,
       name,
       onKeyDown,
+      errorStyle,
+      placeholder,
     },
     ref
   ) => {
+    const {
+      hour: placeholderHour = "HH",
+      minute: placeholderMinute = "MM",
+      second: placeholderSecond = "SS",
+    } = placeholder ?? {};
+
     const stateValue = value ? value : "";
 
     const [valueLocal, setValueLocal] = useState<string>(stateValue);
@@ -56,6 +74,9 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
     const secondRef = useRef<HTMLInputElement>(null);
 
     useImperativeHandle(ref, () => hourRef.current!);
+
+    const inputId = `timebox-${name}`;
+    const dataType = withSeconds ? `timebox-with-second` : `timebox`;
 
     useEffect(() => {
       if (valueLocal) {
@@ -121,10 +142,12 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
         }}
       >
         <Input
+          id={inputId}
+          aria-label="timebox-hour"
           ref={hourRef}
           type="text"
           inputMode="numeric"
-          placeholder="HH"
+          placeholder={placeholderHour}
           disabled={!editable || disabled}
           value={hour}
           onChange={(e) => handleChange("hour", e.target.value)}
@@ -150,10 +173,11 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
         />
         <Colon>:</Colon>
         <Input
+          aria-label="timebox-minute"
           ref={minuteRef}
           type="text"
           inputMode="numeric"
-          placeholder="MM"
+          placeholder={placeholderMinute}
           disabled={!editable || disabled}
           value={minute}
           onChange={(e) => handleChange("minute", e.target.value)}
@@ -185,10 +209,11 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
           <>
             <Colon>:</Colon>
             <Input
+              aria-label="timebox-second"
               ref={secondRef}
               type="text"
               inputMode="numeric"
-              placeholder="SS"
+              placeholder={placeholderSecond}
               disabled={!editable || disabled}
               value={second}
               onChange={(e) => handleChange("second", e.target.value)}
@@ -212,9 +237,6 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
       </InputGroup>
     );
 
-    const inputId = `textbox-${name}`;
-    const dataType = withSeconds ? `timebox-with-second` : `timebox`;
-
     return (
       <InputWrapper
         data-type={dataType}
@@ -222,10 +244,16 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
         $containerStyle={containerStyle}
         $disabled={disabled}
       >
-        {label && <label htmlFor={inputId}>{label}</label>}
+        {label && (
+          <Label $style={labelStyle} htmlFor={inputId}>
+            {label}
+          </Label>
+        )}
         <InputContent>
           {inputElement}
-          {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
+          {showError && errorMessage && (
+            <ErrorText $style={errorStyle}>{errorMessage}</ErrorText>
+          )}
         </InputContent>
       </InputWrapper>
     );
@@ -266,9 +294,14 @@ const InputContent = styled.div`
   font-size: 12px;
 `;
 
-const ErrorText = styled.span`
+const Label = styled.label<{ $style?: CSSProp }>`
+  ${({ $style }) => $style}
+`;
+
+const ErrorText = styled.span<{ $style?: CSSProp }>`
   color: #dc2626;
   font-size: 0.75rem;
+  ${({ $style }) => $style}
 `;
 
 const Input = styled.input<{ $inputStyle?: CSSProp }>`

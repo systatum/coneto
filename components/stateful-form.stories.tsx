@@ -325,6 +325,7 @@ export const AllCase: Story = {
 
     interface AllCaseValueProps {
       text: string;
+      time: string;
       email: string;
       number: string;
       password: string;
@@ -352,6 +353,7 @@ export const AllCase: Story = {
 
     const [value, setValue] = useState<AllCaseValueProps>({
       text: "",
+      time: "",
       email: "",
       number: "",
       password: "",
@@ -418,6 +420,7 @@ export const AllCase: Story = {
     const schema = z.object({
       text: z.string().min(3, "Text must be at least 3 characters"),
       email: z.string().email("Please enter a valid email address"),
+      time: z.string().optional(),
       number: z.string().refine((val) => val === "" || !isNaN(Number(val)), {
         message: "Number must be numeric",
       }),
@@ -588,6 +591,13 @@ export const AllCase: Story = {
         name: "email",
         title: "Email",
         type: "email",
+        required: false,
+        placeholder: "Enter email address",
+      },
+      {
+        name: "time",
+        title: "Time",
+        type: "time",
         required: false,
         placeholder: "Enter email address",
       },

@@ -125,6 +125,7 @@ const ToggleboxContainer = styled.div<{ $style?: CSSProp }>`
   flex-direction: column;
   gap: 2px;
   font-size: 14px;
+  width: 100%;
 
   ${({ $style }) => $style}
 `;
@@ -135,8 +136,8 @@ const ToggleboxWrapper = styled.div<{ $style?: CSSProp }>`
   gap: 0.5rem;
   position: relative;
   font-size: 0.75rem;
-  width: 100%;
   align-items: center;
+  width: 100%;
 
   ${({ $style }) => $style}
 `;
@@ -144,6 +145,7 @@ const ToggleboxWrapper = styled.div<{ $style?: CSSProp }>`
 const ToggleboxTextWrapper = styled.div<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: column;
+  width: 100%;
 
   ${({ $style }) => $style}
 `;

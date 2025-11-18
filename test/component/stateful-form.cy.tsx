@@ -690,13 +690,20 @@ describe("StatefulForm", () => {
 
         allFields.forEach((prop) => {
           if (prop.name === "country_code") return;
-          cy.findByText(prop.title)
-            .parent()
-            .then(($el) => {
-              const elWidth = $el.width();
-
-              expect(elWidth).to.be.closeTo(222.5, 5);
+          if (prop.name === "togglebox") {
+            cy.findByLabelText("togglebox-row-wrapper").then(($el) => {
+              const width = $el.width();
+              expect(width).to.be.closeTo(222.5, 5);
             });
+          } else {
+            cy.findByText(prop.title)
+              .parent()
+              .then(($el) => {
+                const elWidth = $el.width();
+
+                expect(elWidth).to.be.closeTo(222.5, 5);
+              });
+          }
         });
       });
     });
