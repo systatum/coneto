@@ -131,6 +131,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
             )}
 
             <MotionDialog
+              aria-label="paper-dialog-content"
               $width={width}
               initial={{ x: isLeft ? "-100%" : "100%" }}
               animate={controls}
@@ -138,11 +139,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
               $style={style}
             >
               {closable && (
-                <CloseButtonWrapper
-                  $width={width}
-                  $isLeft={isLeft}
-                  $tabStyle={tabCloseStyle}
-                >
+                <CloseButtonWrapper $isLeft={isLeft} $tabStyle={tabCloseStyle}>
                   <IconButton
                     $isLeft={isLeft}
                     aria-label="button-close"
@@ -153,14 +150,10 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                 </CloseButtonWrapper>
               )}
 
-              <MinimizeButtonWrapper
-                $width={width}
-                $isLeft={isLeft}
-                $tabStyle={tabStyle}
-              >
+              <MinimizeButtonWrapper $isLeft={isLeft} $tabStyle={tabStyle}>
                 <IconButton
                   $isLeft={isLeft}
-                  aria-label="Toggle Expanded/Collapsed PaperDialog"
+                  aria-label="paper-dialog-toggle"
                   onClick={() =>
                     handleToggleDrawer(
                       dialogState === "minimized" ? "restored" : "minimized"
@@ -257,7 +250,6 @@ const MotionDialog = styled(motion.div)<{
 const CloseButtonWrapper = styled.div<{
   $isLeft: boolean;
   $tabStyle?: CSSProp;
-  $width?: string;
 }>`
   position: absolute;
   top: 4px;
@@ -266,14 +258,14 @@ const CloseButtonWrapper = styled.div<{
   flex-direction: column;
   height: fit-content;
 
-  ${({ $isLeft, $width }) =>
+  ${({ $isLeft }) =>
     $isLeft
       ? css`
-          left: ${$width ?? "92vw"};
+          left: 100%;
           translate: -4px;
         `
       : css`
-          right: ${$width ?? "92vw"};
+          right: 100%;
           translate: 4px;
         `}
   ${({ $tabStyle }) => $tabStyle}
@@ -282,7 +274,6 @@ const CloseButtonWrapper = styled.div<{
 const MinimizeButtonWrapper = styled.div<{
   $isLeft: boolean;
   $tabStyle?: CSSProp;
-  $width?: string;
 }>`
   position: absolute;
   z-index: 9999;
@@ -291,14 +282,14 @@ const MinimizeButtonWrapper = styled.div<{
   display: flex;
   flex-direction: column;
   height: fit-content;
-  ${({ $isLeft, $width }) =>
+  ${({ $isLeft }) =>
     $isLeft
       ? css`
-          left: ${$width ?? "92vw"};
+          left: 100%;
           translate: -4px;
         `
       : css`
-          right: ${$width ?? "92vw"};
+          right: 100%;
           translate: 4px;
         `}
   ${({ $tabStyle }) => $tabStyle}
