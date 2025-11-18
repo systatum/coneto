@@ -9,6 +9,12 @@ import { Button } from "./button";
 import { Combobox } from "./combobox";
 import { DrawerProps, OptionsProps } from "./selectbox";
 import styled, { css, CSSProp } from "styled-components";
+import {
+  getValidMultipleDate,
+  isValidDateString,
+  isWeekend,
+  removeWeekend,
+} from "../lib/date";
 
 export interface BaseCalendarProps {
   options?: OptionsProps[];
@@ -103,36 +109,65 @@ function Calendar({
   onCalendarPeriodChanged,
   selectabilityMode = "single",
 }: CalendarProps) {
-  const stateDate = useMemo(() => {
-    const parsedDate =
-      selectedDates?.length > 0 ? new Date(selectedDates?.[0]) : new Date();
-    return isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
-  }, [selectedDates]);
-
-  const [currentDate, setCurrentDate] = useState(stateDate);
-
   const today = new Date();
   const currentMonth = monthNames.find(
     (data) => Number(data.value) === today.getMonth() + 1
   );
   const currentYear = today.getFullYear();
 
+  const initialValueState = () => {
+    const raw = selectedDates?.[0];
+    if (selectabilityMode === "ranged") {
+      if (disableWeekend) {
+        if (raw?.split("-")) {
+          return isWeekend(today) ? "" : formatDate(today, format);
+        }
+
+        const value = raw?.split(", ") ?? [];
+        const firstValue = value[0];
+        const latestValue = value[value.length - 1];
+
+        return `${firstValue}-${latestValue}`;
+      }
+
+      return isValidDateString(raw) ? raw : "";
+    }
+
+    if (selectabilityMode === "multiple") {
+      let validDates = getValidMultipleDate(raw);
+
+      if (disableWeekend) {
+        validDates = removeWeekend(validDates);
+      }
+
+      return validDates.length > 0 ? validDates.join(", ") : "";
+    }
+
+    return isValidDateString(raw) ? raw : formatDate(today, format);
+  };
+
+  const normalized = initialValueState();
+
+  const stateDate = useMemo(() => {
+    if (!normalized) return new Date();
+
+    const firstStr = normalized.includes(",")
+      ? normalized.split(",")[0].trim()
+      : normalized.includes("-")
+        ? normalized.split("-")[0].trim()
+        : normalized.trim();
+
+    const d = new Date(firstStr);
+    return isNaN(d.getTime()) ? new Date() : d;
+  }, [normalized]);
+
+  const [currentDate, setCurrentDate] = useState(stateDate);
+
   const [calendarState, setCalendarState] = useState<CalendarStateProps>({
     open: false,
-    month: [String(currentMonth.value)],
-    year: [String(currentYear)],
+    month: [String(stateDate.getMonth() + 1)],
+    year: [String(stateDate.getFullYear())],
   });
-
-  const initialValueState = () => {
-    if (disableWeekend && selectabilityMode === "ranged") {
-      const value = selectedDates?.[0]?.split(", ") ?? [];
-      const firstValue = value[0];
-      const latestValue = value[value.length - 1];
-
-      return `${firstValue}-${latestValue}`;
-    }
-    return selectedDates?.[0] ?? "";
-  };
 
   const [selectedDatesLocal, setSelectedDatesLocal] =
     useState(initialValueState());
@@ -276,11 +311,6 @@ function Calendar({
   const handleSelect = async (date: Date, e?: React.MouseEvent) => {
     const formattedData = formatDate(date, format);
     let newValues: string[];
-
-    const isWeekend = (dateToCheck: Date): boolean => {
-      const day = dateToCheck.getDay();
-      return day === 0 || day === 6;
-    };
 
     if (selectabilityMode === "multiple") {
       await setSelectedDatesLocal((prev) => {
@@ -773,7 +803,7 @@ function Calendar({
               date.getMonth() === today.getMonth() &&
               date.getFullYear() === today.getFullYear();
 
-            const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+            const isDateWeekend = isWeekend(date);
 
             return (
               <DateCellWrapper
@@ -787,7 +817,7 @@ function Calendar({
                 aria-selected={isHighlighted}
                 id={`option-${idx}`}
                 onClick={async (e) => {
-                  if ((isWeekend && disableWeekend) || isDisabled) {
+                  if ((isDateWeekend && disableWeekend) || isDisabled) {
                     return;
                   }
 
@@ -804,7 +834,7 @@ function Calendar({
                 $isHighlighted={isHighlighted}
                 $isDisabled={disableWeekend || isDisabled}
                 $isWeekend={
-                  disableWeekend ? isWeekend || isDisabled : isDisabled
+                  disableWeekend ? isDateWeekend || isDisabled : isDisabled
                 }
               >
                 {selectabilityMode === "ranged" && (
@@ -813,7 +843,7 @@ function Calendar({
                     $isPickingProcess={startPicked.picked}
                     $isInRange={
                       disableWeekend
-                        ? !isWeekend &&
+                        ? !isDateWeekend &&
                           ((isCurrentDate && !startPicked.picked) ||
                             (isHighlightedPicked && !isDisabled))
                         : (isCurrentDate && !startPicked.picked) ||
@@ -839,7 +869,7 @@ function Calendar({
                   }
                   $isDisabled={isDisabled}
                   $disableWeekend={disableWeekend}
-                  $isWeekend={isWeekend}
+                  $isWeekend={isDateWeekend}
                   $isHighlighted={isHighlighted}
                   $isCurrentDate={
                     isCurrentDate ||
@@ -859,7 +889,7 @@ function Calendar({
                       aria-label="today-dot"
                       $isToday={isToday}
                       $isDisabled={isDisabled}
-                      $isWeekend={isWeekend}
+                      $isWeekend={isDateWeekend}
                       $isPickingProcess={startPicked.picked}
                       $disableWeekend={disableWeekend}
                       $isCurrentDate={isCurrentDate}

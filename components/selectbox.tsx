@@ -28,6 +28,7 @@ import {
   RiCloseLine,
 } from "@remixicon/react";
 import styled, { css, CSSProp } from "styled-components";
+import { isValidDateString } from "../lib/date";
 
 export interface SelectboxProps {
   options?: OptionsProps[];
@@ -107,7 +108,10 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
   ) => {
     const initialState = options.find(
       (opt) => opt.value === selectedOptions?.[0]
-    ) ?? { text: "", value: "0" };
+    ) ?? {
+      text: isValidDateString(selectedOptions?.[0]) ? selectedOptions?.[0] : "",
+      value: "0",
+    };
 
     const [selectedOptionsLocal, setSelectedOptionsLocal] =
       useState<OptionsProps>(initialState);
