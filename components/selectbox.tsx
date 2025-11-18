@@ -28,7 +28,7 @@ import {
   RiCloseLine,
 } from "@remixicon/react";
 import styled, { css, CSSProp } from "styled-components";
-import { isValidDateString } from "./../constants/valid-date";
+import { isValidDateString } from "../lib/date";
 
 export interface SelectboxProps {
   options?: OptionsProps[];

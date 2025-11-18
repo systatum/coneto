@@ -12,8 +12,9 @@ import styled, { css, CSSProp } from "styled-components";
 import {
   getValidMultipleDate,
   isValidDateString,
+  isWeekend,
   removeWeekend,
-} from "./../constants/valid-date";
+} from "../lib/date";
 
 export interface BaseCalendarProps {
   options?: OptionsProps[];
@@ -802,7 +803,7 @@ function Calendar({
               date.getMonth() === today.getMonth() &&
               date.getFullYear() === today.getFullYear();
 
-            const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+            const isDateWeekend = isWeekend(date);
 
             return (
               <DateCellWrapper
@@ -833,7 +834,7 @@ function Calendar({
                 $isHighlighted={isHighlighted}
                 $isDisabled={disableWeekend || isDisabled}
                 $isWeekend={
-                  disableWeekend ? isWeekend || isDisabled : isDisabled
+                  disableWeekend ? isDateWeekend || isDisabled : isDisabled
                 }
               >
                 {selectabilityMode === "ranged" && (
@@ -842,7 +843,7 @@ function Calendar({
                     $isPickingProcess={startPicked.picked}
                     $isInRange={
                       disableWeekend
-                        ? !isWeekend &&
+                        ? !isDateWeekend &&
                           ((isCurrentDate && !startPicked.picked) ||
                             (isHighlightedPicked && !isDisabled))
                         : (isCurrentDate && !startPicked.picked) ||
@@ -868,7 +869,7 @@ function Calendar({
                   }
                   $isDisabled={isDisabled}
                   $disableWeekend={disableWeekend}
-                  $isWeekend={isWeekend}
+                  $isWeekend={isDateWeekend}
                   $isHighlighted={isHighlighted}
                   $isCurrentDate={
                     isCurrentDate ||
@@ -888,7 +889,7 @@ function Calendar({
                       aria-label="today-dot"
                       $isToday={isToday}
                       $isDisabled={isDisabled}
-                      $isWeekend={isWeekend}
+                      $isWeekend={isDateWeekend}
                       $isPickingProcess={startPicked.picked}
                       $disableWeekend={disableWeekend}
                       $isCurrentDate={isCurrentDate}
@@ -1245,10 +1246,5 @@ function formatDate(date: Date, format: FormatProps) {
       return `${month}/${day}/${year}`;
   }
 }
-
-const isWeekend = (dateToCheck: Date): boolean => {
-  const day = dateToCheck.getDay();
-  return day === 0 || day === 6;
-};
 
 export { Calendar };
