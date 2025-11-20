@@ -23,25 +23,25 @@ type Story = StoryObj<typeof TreeList>;
 export const Default: Story = {
   render: () => {
     const setPerson = (item: TreeListItemsProps) => {
-      console.log("Clicked person:", item.title);
+      console.log("Clicked person:", item.caption);
     };
 
     const TREE_LIST_DATA: TreeListContentProps[] = [
       {
-        title: "Member of Technical Staff",
+        caption: "Member of Technical Staff",
         collapsible: true,
         items: [
-          { id: "mts-1", title: "Adam Noto Hakarsa", onClick: setPerson },
-          { id: "mts-2", title: "Mohamad Naufal Alim", onClick: setPerson },
+          { id: "mts-1", caption: "Adam Noto Hakarsa", onClick: setPerson },
+          { id: "mts-2", caption: "Mohamad Naufal Alim", onClick: setPerson },
         ],
       },
       {
-        title: "Product Management Team",
+        caption: "Product Management Team",
         collapsible: true,
         items: [
-          { id: "pmt-1", title: "Samantha Lee", onClick: setPerson },
-          { id: "pmt-2", title: "Jason Kim", onClick: setPerson },
-          { id: "pmt-3", title: "Rina Patel", onClick: setPerson },
+          { id: "pmt-1", caption: "Samantha Lee", onClick: setPerson },
+          { id: "pmt-2", caption: "Jason Kim", onClick: setPerson },
+          { id: "pmt-3", caption: "Rina Patel", onClick: setPerson },
         ],
       },
     ];
@@ -64,37 +64,37 @@ export const Default: Story = {
 export const WithActions: Story = {
   render: () => {
     const setPerson = (item: TreeListItemsProps) => {
-      console.log("Clicked person:", item.title);
+      console.log("Clicked person:", item.caption);
     };
 
     const TREE_LIST_DATA: TreeListContentProps[] = [
       {
-        title: "Member of Technical Staff",
+        caption: "Member of Technical Staff",
         items: [
-          { id: "mts-1", title: "Adam Noto Hakarsa", onClick: setPerson },
-          { id: "mts-2", title: "Mohamad Naufal Alim", onClick: setPerson },
+          { id: "mts-1", caption: "Adam Noto Hakarsa", onClick: setPerson },
+          { id: "mts-2", caption: "Mohamad Naufal Alim", onClick: setPerson },
         ],
       },
       {
-        title: "Product Management Team",
+        caption: "Product Management Team",
         items: [
-          { id: "pmt-1", title: "Samantha Lee", onClick: setPerson },
-          { id: "pmt-2", title: "Jason Kim", onClick: setPerson },
-          { id: "pmt-3", title: "Rina Patel", onClick: setPerson },
+          { id: "pmt-1", caption: "Samantha Lee", onClick: setPerson },
+          { id: "pmt-2", caption: "Jason Kim", onClick: setPerson },
+          { id: "pmt-3", caption: "Rina Patel", onClick: setPerson },
         ],
       },
     ];
 
     const TREE_LIST_ACTIONS: TreeListActionsProps[] = [
       {
-        title: "Discover",
+        caption: "Discover",
         onClick: () => {
           console.log("Discover clicked");
         },
         icon: RiSearchLine,
       },
       {
-        title: "Mention",
+        caption: "Mention",
         onClick: () => {
           console.log("Mention clicked");
         },
@@ -124,31 +124,31 @@ export const WithActions: Story = {
 export const WithoutHeader: Story = {
   render: () => {
     const setPerson = (item: TreeListItemsProps) => {
-      console.log("Clicked person:", item.title);
+      console.log("Clicked person:", item.caption);
     };
 
     const TREE_LIST_DATA = [
       {
         items: [
-          { id: "1", title: "Adam Noto Hakarsa", onClick: setPerson },
-          { id: "2", title: "Mohamad Naufal Alim", onClick: setPerson },
-          { id: "3", title: "Samantha Lee", onClick: setPerson },
-          { id: "4", title: "Jason Kim", onClick: setPerson },
-          { id: "5", title: "Rina Patel", onClick: setPerson },
+          { id: "1", caption: "Adam Noto Hakarsa", onClick: setPerson },
+          { id: "2", caption: "Mohamad Naufal Alim", onClick: setPerson },
+          { id: "3", caption: "Samantha Lee", onClick: setPerson },
+          { id: "4", caption: "Jason Kim", onClick: setPerson },
+          { id: "5", caption: "Rina Patel", onClick: setPerson },
         ],
       },
     ];
 
     const TREE_LIST_ACTIONS: TreeListActionsProps[] = [
       {
-        title: "Discover",
+        caption: "Discover",
         onClick: () => {
           console.log("Discover clicked");
         },
         icon: RiSearchLine,
       },
       {
-        title: "Mention",
+        caption: "Mention",
         onClick: () => {
           console.log("Mention clicked");
         },
@@ -181,14 +181,14 @@ export const WithEmptySlate: Story = {
 
     const TREE_LIST_ACTIONS: TreeListActionsProps[] = [
       {
-        title: "Discover",
+        caption: "Discover",
         onClick: () => {
           console.log("Discover clicked");
         },
         icon: RiSearchLine,
       },
       {
-        title: "Mention",
+        caption: "Mention",
         onClick: () => {
           console.log("Mention clicked");
         },
