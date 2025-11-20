@@ -33,10 +33,12 @@ export interface TreeListItemsProps {
   id: string;
   caption: string;
   onClick?: (item?: TreeListItemsProps) => void;
-  actions?: (columnCaption: string) => SubMenuTreeList[];
+  actions?: SubMenuTreeList[];
 }
 
-export type SubMenuTreeList = TipMenuItemProps;
+export interface SubMenuTreeList extends Omit<TipMenuItemProps, "onClick"> {
+  onClick: (id?: string) => void;
+}
 
 function TreeList({
   content,
@@ -178,20 +180,27 @@ function TreeListItem<T extends TreeListItemsProps>({
         part.toLowerCase() === searchTerm.toLowerCase() ? (
           <HighlightedText key={index}>{part}</HighlightedText>
         ) : (
-          <span key={index}>{part}</span>
+          <span
+            style={{
+              width: "100%",
+            }}
+            key={index}
+          >
+            {part}
+          </span>
         )
       )}
 
       {item.id === isHovered &&
         item.actions &&
         (() => {
-          const list = item.actions(`${item.id}`);
+          const list = item.actions;
           const actionsWithIcons = list.map((prop) => ({
             ...prop,
             icon: prop.icon ?? RiArrowRightSLine,
             onClick: (e?: React.MouseEvent) => {
               e?.stopPropagation();
-              prop.onClick?.(e);
+              prop.onClick?.(item.id);
               if (list.length > 2) {
                 setIsHovered(null);
               }
@@ -354,6 +363,7 @@ const HighlightedText = styled.span`
   background-color: #e5e7eb;
   font-weight: 600;
   border-radius: 4px;
+  width: 100%;
 `;
 
 function escapeRegExp(string: string) {
