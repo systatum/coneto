@@ -93,28 +93,74 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
       value: string
     ) => {
       const newDigit = value.slice(-1);
-      const isDelete = value === "";
-      const isInvalid = newDigit === "" || isNaN(Number(newDigit));
+      const numeric = /^\d$/.test(newDigit);
+
+      if (!numeric && value !== "") {
+        return;
+      }
 
       const setters = { hour: setHour, minute: setMinute, second: setSecond };
       const values = { hour, minute, second };
       const maxValues = { hour: 24, minute: 59, second: 59 };
 
-      if (isDelete) {
-        setters[type]("");
-      } else if (!isInvalid) {
-        const oldVal = values[type];
-        const newVal = oldVal.length >= 2 ? newDigit : oldVal + newDigit;
-        if (parseInt(newVal, 10) > maxValues[type]) return;
-        setters[type](newVal);
-        values[type] = newVal;
-      } else {
-        return;
+      let nextType: "minute" | "second" | null =
+        type === "hour"
+          ? "minute"
+          : type === "minute" && withSeconds
+            ? "second"
+            : null;
+
+      if (value.length <= 2) {
+        let num = Number(value);
+        const refMap = {
+          hour: hourRef,
+          minute: minuteRef,
+          second: secondRef,
+        };
+
+        if (value.length === 2 && num > maxValues[type]) {
+          const firstDigit = value[0];
+          const secondDigit = value[1];
+          setters[type](firstDigit);
+
+          if (nextType) {
+            refMap[nextType].current?.focus();
+            setters[nextType](secondDigit);
+          }
+
+          return;
+        } else if (value.length === 2) {
+          setters[type](value);
+          if (nextType) {
+            refMap[nextType].current?.focus();
+          }
+          return;
+        }
+
+        setters[type](value);
       }
 
-      const hh = type === "hour" ? (isDelete ? "" : values.hour) : hour;
-      const mm = type === "minute" ? (isDelete ? "" : values.minute) : minute;
-      const ss = type === "second" ? (isDelete ? "" : values.second) : second;
+      if (value.length > 2) {
+        const overflowDigit = value[value.length - 1];
+        const trimmedCurrent = value.slice(0, 2);
+        setters[type](trimmedCurrent);
+
+        if (nextType) {
+          const refMap = {
+            hour: hourRef,
+            minute: minuteRef,
+            second: secondRef,
+          };
+          refMap[nextType].current?.focus();
+
+          const nextValue = values[nextType] + overflowDigit;
+          setters[nextType](nextValue.slice(-2));
+        }
+      }
+
+      const hh = type === "hour" ? values.hour : hour;
+      const mm = type === "minute" ? values.minute : minute;
+      const ss = type === "second" ? values.second : second;
 
       const formatted = [
         (hh || "0").padStart(2, "0"),
@@ -157,10 +203,9 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
           max={24}
           $inputStyle={inputStyle}
           onKeyDown={(e) => {
-            if (
-              e.key === "ArrowRight" &&
-              e.currentTarget.selectionEnd === e.currentTarget.value.length
-            ) {
+            const { selectionStart, selectionEnd, value } = e.currentTarget;
+
+            if (e.key === "ArrowRight" && selectionEnd === value.length) {
               e.preventDefault();
               minuteRef.current?.focus();
             }
@@ -188,6 +233,11 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
           $inputStyle={inputStyle}
           onKeyDown={(e) => {
             const { selectionStart, selectionEnd, value } = e.currentTarget;
+
+            if (e.key === "Backspace" && selectionStart === 0) {
+              e.preventDefault();
+              hourRef.current?.focus();
+            }
 
             if (e.key === "ArrowRight" && selectionEnd === value.length) {
               e.preventDefault();
@@ -223,6 +273,12 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
               max={59}
               $inputStyle={inputStyle}
               onKeyDown={(e) => {
+                const { selectionStart } = e.currentTarget;
+                if (e.key === "Backspace" && selectionStart === 0) {
+                  e.preventDefault();
+                  minuteRef.current?.focus();
+                }
+
                 if (
                   e.key === "ArrowLeft" &&
                   e.currentTarget.selectionStart === 0
