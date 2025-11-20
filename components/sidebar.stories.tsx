@@ -2,7 +2,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { Sidebar } from "./sidebar";
 import { ChangeEvent, useMemo, useState } from "react";
 import { Searchbox } from "./searchbox";
-import { TreeList } from "./treelist";
+import { TreeList, TreeListItemsProps } from "./treelist";
 import { EmptySlate } from "./empty-slate";
 import { Button } from "./button";
 
@@ -22,7 +22,7 @@ type Story = StoryObj<typeof Sidebar>;
 export const Default: Story = {
   render: () => {
     const [value, setValue] = useState({
-      title: "",
+      caption: "",
     });
 
     const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
@@ -30,24 +30,24 @@ export const Default: Story = {
       setValue((prev) => ({ ...prev, [name]: value }));
     };
 
-    const setPerson = (item: { id: number; title: string }) => {
-      console.log("Clicked person:", item.title);
+    const setPerson = (item: TreeListItemsProps) => {
+      console.log("Clicked person:", item.caption);
     };
 
     const TREE_LIST_DATA = [
       {
-        title: "Member of Technical Staff",
+        caption: "Member of Technical Staff",
         items: [
-          { id: 1, title: "Adam Noto Hakarsa", onClick: setPerson },
-          { id: 2, title: "Mohamad Naufal Alim", onClick: setPerson },
+          { id: "1", caption: "Adam Noto Hakarsa", onClick: setPerson },
+          { id: "2", caption: "Mohamad Naufal Alim", onClick: setPerson },
         ],
       },
       {
-        title: "Product Management Team",
+        caption: "Product Management Team",
         items: [
-          { id: 1, title: "Samantha Lee", onClick: setPerson },
-          { id: 2, title: "Jason Kim", onClick: setPerson },
-          { id: 3, title: "Rina Patel", onClick: setPerson },
+          { id: "3", caption: "Samantha Lee", onClick: setPerson },
+          { id: "4", caption: "Jason Kim", onClick: setPerson },
+          { id: "5", caption: "Rina Patel", onClick: setPerson },
         ],
       },
     ];
@@ -58,7 +58,7 @@ export const Default: Story = {
       return TREE_LIST_DATA.map((data) => ({
         ...data,
         items: data.items.filter((val) =>
-          val.title.toLowerCase().includes(value.title.toLowerCase())
+          val.caption.toLowerCase().includes(value.caption.toLowerCase())
         ),
       })).filter((data) => data.items.length > 0);
     }, [TREE_LIST_DATA, value]);
@@ -76,7 +76,7 @@ export const Default: Story = {
           <Sidebar.Item>
             <Searchbox
               name="title"
-              value={value.title}
+              value={value.caption}
               onChange={onChangeValue}
             />
           </Sidebar.Item>
@@ -117,7 +117,7 @@ export const Default: Story = {
                   }
                 />
               }
-              searchTerm={value.title}
+              searchTerm={value.caption}
             />
           </Sidebar.Item>
         </Sidebar>
@@ -141,7 +141,7 @@ export const Default: Story = {
 export const FixedRight: Story = {
   render: () => {
     const [value, setValue] = useState({
-      title: "",
+      caption: "",
     });
 
     const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
@@ -149,24 +149,24 @@ export const FixedRight: Story = {
       setValue((prev) => ({ ...prev, [name]: value }));
     };
 
-    const setPerson = (item: { id: number; title: string }) => {
-      console.log("Clicked person:", item.title);
+    const setPerson = (item: TreeListItemsProps) => {
+      console.log("Clicked person:", item.caption);
     };
 
     const TREE_LIST_DATA = [
       {
-        title: "Member of Technical Staff",
+        caption: "Member of Technical Staff",
         items: [
-          { id: 1, title: "Adam Noto Hakarsa", onClick: setPerson },
-          { id: 2, title: "Mohamad Naufal Alim", onClick: setPerson },
+          { id: "1", caption: "Adam Noto Hakarsa", onClick: setPerson },
+          { id: "2", caption: "Mohamad Naufal Alim", onClick: setPerson },
         ],
       },
       {
-        title: "Product Management Team",
+        caption: "Product Management Team",
         items: [
-          { id: 1, title: "Samantha Lee", onClick: setPerson },
-          { id: 2, title: "Jason Kim", onClick: setPerson },
-          { id: 3, title: "Rina Patel", onClick: setPerson },
+          { id: "3", caption: "Samantha Lee", onClick: setPerson },
+          { id: "4", caption: "Jason Kim", onClick: setPerson },
+          { id: "5", caption: "Rina Patel", onClick: setPerson },
         ],
       },
     ];
@@ -177,7 +177,7 @@ export const FixedRight: Story = {
       return TREE_LIST_DATA.map((data) => ({
         ...data,
         items: data.items.filter((val) =>
-          val.title.toLowerCase().includes(value.title.toLowerCase())
+          val.caption.toLowerCase().includes(value.caption.toLowerCase())
         ),
       })).filter((data) => data.items.length > 0);
     }, [TREE_LIST_DATA, value]);
@@ -207,7 +207,7 @@ export const FixedRight: Story = {
           <Sidebar.Item>
             <Searchbox
               name="title"
-              value={value.title}
+              value={value.caption}
               onChange={onChangeValue}
             />
           </Sidebar.Item>
@@ -248,7 +248,7 @@ export const FixedRight: Story = {
                   }
                 />
               }
-              searchTerm={value.title}
+              searchTerm={value.caption}
             />
           </Sidebar.Item>
         </Sidebar>

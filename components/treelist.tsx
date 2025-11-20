@@ -15,13 +15,13 @@ export interface TreeListProps {
 }
 
 export interface TreeListContentProps {
-  title?: string;
+  caption?: string;
   items: TreeListItemsProps[];
   collapsible?: boolean;
 }
 
 export interface TreeListActionsProps {
-  title?: string;
+  caption?: string;
   onClick?: () => void;
   icon?: RemixiconComponentType;
   style?: CSSProp;
@@ -29,7 +29,7 @@ export interface TreeListActionsProps {
 
 export interface TreeListItemsProps {
   id: string;
-  title: string;
+  caption: string;
   onClick?: (item?: TreeListItemsProps) => void;
 }
 
@@ -72,12 +72,12 @@ function TreeList({
               key={index}
               role="button"
               tabIndex={0}
-              aria-label={data.title}
+              aria-label="tree-list-action"
               onClick={() => data.onClick?.()}
               $style={data.style}
             >
               {data.icon && <data.icon size={16} />}
-              <div>{data.title}</div>
+              <div>{data.caption}</div>
             </ActionItem>
           ))}
         </ActionsWrapper>
@@ -88,14 +88,14 @@ function TreeList({
       {content.length > 0 ? (
         content.map((data, index) => (
           <GroupWrapper key={index}>
-            {data.title && (
+            {data.caption && (
               <GroupTitleWrapper
                 onClick={() => {
                   if (data.collapsible) handleSelected(index);
                 }}
                 $collapsible={data.collapsible}
               >
-                <GroupTitle>{data.title}</GroupTitle>
+                <GroupTitle>{data.caption}</GroupTitle>
                 {data.collapsible && (
                   <GroupIcon aria-expanded={isOpen[index]} size={20} />
                 )}
@@ -147,7 +147,7 @@ function TreeListItem<T extends TreeListItemsProps>({
 }) {
   const escapedTerm = escapeRegExp(searchTerm.trim());
   const regex = new RegExp(`(${escapedTerm})`, "gi");
-  const parts = escapedTerm ? item.title.split(regex) : [item.title];
+  const parts = escapedTerm ? item.caption.split(regex) : [item.caption];
 
   return (
     <TreeListItemWrapper

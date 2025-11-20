@@ -14,25 +14,25 @@ describe("Treelist", () => {
 
       TREE_LIST_DATA = [
         {
-          title: "Member of Technical Staff",
+          caption: "Member of Technical Staff",
           items: [
-            { id: "mts-1", title: "Adam Noto Hakarsa", onClick: setPerson },
-            { id: "mts-2", title: "Mohamad Naufal Alim", onClick: setPerson },
+            { id: "mts-1", caption: "Adam Noto Hakarsa", onClick: setPerson },
+            { id: "mts-2", caption: "Mohamad Naufal Alim", onClick: setPerson },
           ],
         },
         {
-          title: "Product Management Team",
+          caption: "Product Management Team",
           items: [
-            { id: "pmt-1", title: "Samantha Lee", onClick: setPerson },
-            { id: "pmt-2", title: "Jason Kim", onClick: setPerson },
-            { id: "pmt-3", title: "Rina Patel", onClick: setPerson },
+            { id: "pmt-1", caption: "Samantha Lee", onClick: setPerson },
+            { id: "pmt-2", caption: "Jason Kim", onClick: setPerson },
+            { id: "pmt-3", caption: "Rina Patel", onClick: setPerson },
           ],
         },
       ];
     });
 
     context("when given", () => {
-      it("render highlight active item", () => {
+      it("renders highlight active item", () => {
         cy.mount(
           <TreeList
             selectedItem="mts-1"
@@ -48,6 +48,48 @@ describe("Treelist", () => {
     });
   });
 
+  context("caption", () => {
+    let TREE_LIST_DATA: TreeListContentProps[];
+
+    beforeEach(() => {
+      const setPerson = cy.stub().as("setPerson");
+
+      TREE_LIST_DATA = [
+        {
+          caption: "Member of Technical Staff",
+          collapsible: true,
+          items: [
+            { id: "mts-1", caption: "Adam Noto Hakarsa", onClick: setPerson },
+            { id: "mts-2", caption: "Mohamad Naufal Alim", onClick: setPerson },
+          ],
+        },
+        {
+          caption: "Product Management Team",
+          collapsible: true,
+          items: [
+            { id: "pmt-1", caption: "Samantha Lee", onClick: setPerson },
+            { id: "pmt-2", caption: "Jason Kim", onClick: setPerson },
+            { id: "pmt-3", caption: "Rina Patel", onClick: setPerson },
+          ],
+        },
+      ];
+    });
+
+    it("renders all group and item text", () => {
+      cy.mount(
+        <TreeList content={TREE_LIST_DATA} emptySlate={<p>Not found.</p>} />
+      );
+      TREE_LIST_DATA.map((props) => {
+        cy.findByText(props.caption).should("be.visible");
+        {
+          props.items.map((item) => {
+            cy.findByText(item.caption).should("be.visible");
+          });
+        }
+      });
+    });
+  });
+
   context("collapsible", () => {
     let TREE_LIST_DATA: TreeListContentProps[];
 
@@ -56,27 +98,27 @@ describe("Treelist", () => {
 
       TREE_LIST_DATA = [
         {
-          title: "Member of Technical Staff",
+          caption: "Member of Technical Staff",
           collapsible: true,
           items: [
-            { id: "mts-1", title: "Adam Noto Hakarsa", onClick: setPerson },
-            { id: "mts-2", title: "Mohamad Naufal Alim", onClick: setPerson },
+            { id: "mts-1", caption: "Adam Noto Hakarsa", onClick: setPerson },
+            { id: "mts-2", caption: "Mohamad Naufal Alim", onClick: setPerson },
           ],
         },
         {
-          title: "Product Management Team",
+          caption: "Product Management Team",
           collapsible: true,
           items: [
-            { id: "pmt-1", title: "Samantha Lee", onClick: setPerson },
-            { id: "pmt-2", title: "Jason Kim", onClick: setPerson },
-            { id: "pmt-3", title: "Rina Patel", onClick: setPerson },
+            { id: "pmt-1", caption: "Samantha Lee", onClick: setPerson },
+            { id: "pmt-2", caption: "Jason Kim", onClick: setPerson },
+            { id: "pmt-3", caption: "Rina Patel", onClick: setPerson },
           ],
         },
       ];
     });
 
     context("when click list item", () => {
-      it("render highlight selected item", () => {
+      it("renders highlight selected item", () => {
         cy.mount(
           <TreeList content={TREE_LIST_DATA} emptySlate={<p>Not found.</p>} />
         );
@@ -119,30 +161,30 @@ describe("Treelist", () => {
 
       TREE_LIST_DATA = [
         {
-          title: "Member of Technical Staff",
+          caption: "Member of Technical Staff",
           items: [
-            { id: "mts-1", title: "Adam Noto Hakarsa", onClick: setPerson },
-            { id: "mts-2", title: "Mohamad Naufal Alim", onClick: setPerson },
+            { id: "mts-1", caption: "Adam Noto Hakarsa", onClick: setPerson },
+            { id: "mts-2", caption: "Mohamad Naufal Alim", onClick: setPerson },
           ],
         },
         {
-          title: "Product Management Team",
+          caption: "Product Management Team",
           items: [
-            { id: "pmt-1", title: "Samantha Lee", onClick: setPerson },
-            { id: "pmt-2", title: "Jason Kim", onClick: setPerson },
-            { id: "pmt-3", title: "Rina Patel", onClick: setPerson },
+            { id: "pmt-1", caption: "Samantha Lee", onClick: setPerson },
+            { id: "pmt-2", caption: "Jason Kim", onClick: setPerson },
+            { id: "pmt-3", caption: "Rina Patel", onClick: setPerson },
           ],
         },
       ];
 
       TREE_LIST_ACTIONS = [
         {
-          title: "Discover",
+          caption: "Discover",
           onClick: onDiscover,
           icon: RiSearchLine,
         },
         {
-          title: "Mention",
+          caption: "Mention",
           onClick: onMention,
           icon: RiAtLine,
         },
