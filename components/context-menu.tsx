@@ -15,7 +15,7 @@ export interface ContextMenuProps {
   focusBackgroundColor?: string;
   activeBackgroundColor?: string;
   hoverBackgroundColor?: string;
-  maxInlineAction?: number;
+  maxActionsBeforeCollapsing?: number;
   iconSize?: number;
 }
 
@@ -28,7 +28,7 @@ export default function ContextMenu({
   activeBackgroundColor,
   hoverBackgroundColor,
   focusBackgroundColor,
-  maxInlineAction = 1,
+  maxActionsBeforeCollapsing = 1,
   iconSize = 16,
 }: ContextMenuProps) {
   const buttonProps: ButtonProps = {
@@ -66,7 +66,7 @@ export default function ContextMenu({
     activeBackgroundColor: activeBackgroundColor,
   };
 
-  if (actions.length <= maxInlineAction) {
+  if (actions.length <= maxActionsBeforeCollapsing) {
     return actions.map((prop, index) => {
       const { icon: Icon } = prop;
       return (
