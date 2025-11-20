@@ -218,7 +218,7 @@ function TreeListItem<T extends TreeListItemsProps>({
               }}
             >
               <ContextMenu
-                maxInlineAction={2}
+                maxActionsBeforeCollapsing={2}
                 iconSize={16}
                 focusBackgroundColor="#d4d4d4"
                 hoverBackgroundColor="#d4d4d4"
