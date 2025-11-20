@@ -205,6 +205,7 @@ function TreeListItem<T extends TreeListItemsProps>({
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "center",
+                gap: "4px",
               }}
             >
               <ContextMenu
