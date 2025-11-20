@@ -159,8 +159,18 @@ function Button({
         $activeBackgroundColor={activeBackgroundColor}
         $isOpen={showSubMenuOn === "self" && isOpen}
         $tipMenu={subMenu && showSubMenuOn === "caret" ? true : false}
-        onMouseEnter={() => setHovered("dropdown")}
-        onMouseLeave={() => setHovered("original")}
+        onMouseEnter={(e) => {
+          setHovered("main");
+          if (props.onMouseEnter) {
+            props.onMouseEnter(e);
+          }
+        }}
+        onMouseLeave={(e) => {
+          setHovered("original");
+          if (props.onMouseLeave) {
+            props.onMouseLeave(e);
+          }
+        }}
         $style={buttonStyle}
       >
         {children}
@@ -195,8 +205,18 @@ function Button({
             $size={size}
             $tipMenu={subMenu ? true : false}
             $disabled={disabled}
-            onMouseEnter={() => setHovered("dropdown")}
-            onMouseLeave={() => setHovered("original")}
+            onMouseEnter={(e) => {
+              setHovered("dropdown");
+              if (props.onMouseEnter) {
+                props.onMouseEnter(e);
+              }
+            }}
+            onMouseLeave={(e) => {
+              setHovered("original");
+              if (props.onMouseLeave) {
+                props.onMouseLeave(e);
+              }
+            }}
             $style={toggleStyle}
           >
             {isOpen ? <OpenedIcon size={20} /> : <ClosedIcon size={20} />}
