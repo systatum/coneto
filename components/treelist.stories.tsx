@@ -195,11 +195,21 @@ export const WithActions: Story = {
       <div
         style={{
           display: "flex",
-          flexDirection: "column",
-          gap: "0.25rem",
-          maxWidth: "300px",
+          flexDirection: "row",
+          gap: "1rem",
+          maxWidth: "700px",
+          alignItems: "center",
         }}
       >
+        <TreeList
+          key={Number(showItem.length[0])}
+          containerStyle={css`
+            min-width: 300px;
+          `}
+          content={TREE_LIST_DATA}
+          actions={TREE_LIST_ACTIONS}
+          emptySlate={<p>Not found.</p>}
+        />
         <div
           style={{
             display: "flex",
@@ -208,6 +218,9 @@ export const WithActions: Story = {
             alignItems: "center",
             gap: "4px",
             paddingLeft: "20px",
+            border: "1px solid #d1d5db",
+            height: "fit-content",
+            padding: "4px",
           }}
         >
           Subitem actions:
@@ -222,12 +235,6 @@ export const WithActions: Story = {
             `}
           />
         </div>
-        <TreeList
-          key={Number(showItem.length[0])}
-          content={TREE_LIST_DATA}
-          actions={TREE_LIST_ACTIONS}
-          emptySlate={<p>Not found.</p>}
-        />
       </div>
     );
   },
