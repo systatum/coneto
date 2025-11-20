@@ -78,54 +78,50 @@ export const WithActions: Story = {
       console.log("Clicked person:", item.caption);
     };
 
-    const ITEM_ACTION = (rowId: string): SubMenuTreeList[] => {
-      return [
-        {
-          caption: "Edit",
-          icon: RiEdit2Line,
-          iconColor: "gray",
-          onClick: () => {
-            console.log(`${rowId} was edited`);
-          },
+    const ITEM_ACTIONS: SubMenuTreeList[] = [
+      {
+        caption: "Edit",
+        icon: RiEdit2Line,
+        iconColor: "gray",
+        onClick: (id: string) => {
+          console.log(`${id} was edited`);
         },
-        {
-          caption: "Delete",
-          icon: RiDeleteBin2Line,
-          iconColor: "gray",
-          onClick: () => {
-            console.log(`${rowId} was deleted`);
-          },
+      },
+      {
+        caption: "Delete",
+        icon: RiDeleteBin2Line,
+        iconColor: "gray",
+        onClick: (id: string) => {
+          console.log(`${id} was deleted`);
         },
-        {
-          caption: "Copy",
-          icon: RiFileCopyLine,
-          iconColor: "gray",
-          onClick: () => {
-            console.log(`${rowId} was copied`);
-          },
+      },
+      {
+        caption: "Copy",
+        icon: RiFileCopyLine,
+        iconColor: "gray",
+        onClick: (id: string) => {
+          console.log(`${id} was copied`);
         },
-        {
-          caption: "Share",
-          icon: RiShareForwardLine,
-          iconColor: "gray",
-          onClick: () => {
-            console.log(`${rowId} was shared`);
-          },
+      },
+      {
+        caption: "Share",
+        icon: RiShareForwardLine,
+        iconColor: "gray",
+        onClick: (id: string) => {
+          console.log(`${id} was shared`);
         },
-      ];
-    };
+      },
+    ];
 
     const [showItem, setShowItem] = useState({
-      actions: ITEM_ACTION,
+      actions: ITEM_ACTIONS,
       length: ["1"],
     });
 
     const filteredActionsShow = useMemo(() => {
-      return (id: string) => {
-        const itemActions = showItem.actions(id);
-        const itemLength = Number(showItem.length[0]);
-        return itemActions.slice(0, itemLength);
-      };
+      const itemActions = showItem.actions;
+      const itemLength = Number(showItem.length[0]);
+      return itemActions.slice(0, itemLength);
     }, [showItem]);
 
     const TREE_LIST_DATA: TreeListContentProps[] = [
