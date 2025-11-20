@@ -348,6 +348,67 @@ describe("Button", () => {
       });
     });
   });
+
+  context("onMouseEnter", () => {
+    context("when hovering", () => {
+      it("should show the console", () => {
+        cy.window().then((win) => {
+          cy.spy(win.console, "log").as("consoleLog");
+        });
+        cy.mount(
+          <Button
+            variant="default"
+            onMouseEnter={() => {
+              console.log("test on mouse enter");
+            }}
+          >
+            onMouseEnter
+          </Button>
+        );
+
+        cy.findByText("onMouseEnter").closest("button").trigger("mouseenter");
+
+        cy.get("@consoleLog").should(
+          "have.been.calledWith",
+          "test on mouse enter"
+        );
+      });
+    });
+  });
+
+  context("onMouseLeave", () => {
+    context("when hover & leave", () => {
+      it("should show the console", () => {
+        cy.window().then((win) => {
+          cy.spy(win.console, "log").as("consoleLog");
+        });
+        cy.mount(
+          <Button
+            variant="default"
+            onMouseLeave={() => {
+              console.log("test on mouse leave");
+            }}
+          >
+            onMouseLeave
+          </Button>
+        );
+
+        cy.findByText("onMouseLeave").closest("button").trigger("mouseenter");
+
+        cy.get("@consoleLog").should(
+          "not.have.been.calledWith",
+          "test on mouse leave"
+        );
+
+        cy.get("body").realMouseMove(0, 0);
+
+        cy.get("@consoleLog").should(
+          "have.been.calledWith",
+          "test on mouse leave"
+        );
+      });
+    });
+  });
 });
 
 const MenuContainer = styled.div`
