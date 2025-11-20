@@ -15,6 +15,8 @@ export interface ContextMenuProps {
   focusBackgroundColor?: string;
   activeBackgroundColor?: string;
   hoverBackgroundColor?: string;
+  maxInlineAction?: number;
+  iconSize?: number;
 }
 
 export default function ContextMenu({
@@ -26,6 +28,8 @@ export default function ContextMenu({
   activeBackgroundColor,
   hoverBackgroundColor,
   focusBackgroundColor,
+  maxInlineAction = 1,
+  iconSize = 16,
 }: ContextMenuProps) {
   const buttonProps: ButtonProps = {
     buttonStyle: css`
@@ -62,7 +66,7 @@ export default function ContextMenu({
     activeBackgroundColor: activeBackgroundColor,
   };
 
-  if (actions.length === 1) {
+  if (actions.length <= maxInlineAction) {
     return actions.map((prop, index) => {
       const { icon: Icon } = prop;
       return (
@@ -78,7 +82,7 @@ export default function ContextMenu({
           title={prop.caption}
           aria-label="list-action-button"
         >
-          <Icon size={16} />
+          <Icon size={iconSize} />
         </Button>
       );
     });
@@ -91,7 +95,7 @@ export default function ContextMenu({
       showSubMenuOn="self"
       subMenu={({ list }) => list(actions)}
     >
-      {children ?? <RiMoreFill size={16} />}
+      {children ?? <RiMoreFill size={iconSize} />}
     </Button>
   );
 }
