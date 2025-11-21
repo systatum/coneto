@@ -119,7 +119,7 @@ function NavTab({
       window.removeEventListener("resize", calculateTabSizes);
       clearTimeout(timeoutId);
     };
-  }, [tabs.length, isHovered]);
+  }, [tabs.length]);
 
   const setTabRef = (index: number) => (element: HTMLDivElement | null) => {
     tabRefs.current[index] = element;
@@ -153,36 +153,35 @@ function NavTab({
             }}
           />
 
-          {tabs.map((data, index) => {
+          {tabs.map((props, index) => {
             return (
               <NavTabItem
                 aria-label="nav-tab-item"
-                key={data.id}
+                key={props.id}
                 $boxStyle={boxStyle}
                 ref={setTabRef(index)}
                 role="tab"
                 onClick={(e) => {
-                  setSelected(data.id);
-                  if (data.onClick) {
-                    data.onClick();
+                  setSelected(props.id);
+                  if (props.onClick) {
+                    props.onClick();
                   }
                 }}
-                onMouseEnter={() => setIsHovered(data.id)}
+                onMouseEnter={() => setIsHovered(props.id)}
                 onMouseLeave={() => setIsHovered(null)}
-                $isHovered={isHovered === data.id}
-                $selected={selected === data.id}
+                $isHovered={isHovered === props.id}
+                $selected={selected === props.id}
               >
-                {data.title}
-                {isHovered === data.id &&
-                  data.actions &&
+                {props.title}
+                {props.actions &&
                   (() => {
-                    const list = data.actions;
-                    const actionsWithIcons = list.map((prop) => ({
-                      ...prop,
-                      icon: prop.icon ?? RiArrowRightSLine,
+                    const list = props.actions;
+                    const actionsWithIcons = list.map((item) => ({
+                      ...item,
+                      icon: item.icon ?? RiArrowRightSLine,
                       onClick: (e?: React.MouseEvent) => {
                         e?.stopPropagation();
-                        prop.onClick?.(data.id);
+                        item.onClick?.(props.id);
                         if (list.length > 1) {
                           setIsHovered(null);
                         }
@@ -191,7 +190,7 @@ function NavTab({
 
                     return (
                       <ContextMenu
-                        iconSize={8.5}
+                        iconSize={9}
                         focusBackgroundColor="#d4d4d4"
                         hoverBackgroundColor="#d4d4d4"
                         activeBackgroundColor="#d4d4d4"
@@ -222,8 +221,8 @@ function NavTab({
       </NavTabRowWrapper>
 
       <NavContent $contentStyle={contentStyle}>
-        {activeContent.map((data, index) => (
-          <Fragment key={index}>{data.content}</Fragment>
+        {activeContent.map((props, index) => (
+          <Fragment key={index}>{props.content}</Fragment>
         ))}
         {children}
       </NavContent>
@@ -338,13 +337,13 @@ const NavContent = styled.div<{ $contentStyle?: CSSProp }>`
   ${({ $contentStyle }) => $contentStyle}
 `;
 
-function ActionButton(data: NavTabActionsProps) {
+function ActionButton(props: NavTabActionsProps) {
   return (
     <Button
-      onClick={data.onClick}
-      subMenu={data.subMenu}
-      disabled={data.disabled}
-      showSubMenuOn={data.showSubMenuOn}
+      onClick={props.onClick}
+      subMenu={props.subMenu}
+      disabled={props.disabled}
+      showSubMenuOn={props.showSubMenuOn}
       size="sm"
       tipMenuSize="sm"
       buttonStyle={css`
@@ -355,7 +354,7 @@ function ActionButton(data: NavTabActionsProps) {
         cursor: pointer;
         background-color: transparent;
         color: #565555;
-        ${data.subMenu && data.showSubMenuOn === "caret"
+        ${props.subMenu && props.showSubMenuOn === "caret"
           ? css`
               border-top: 1px solid #f3f3f3;
               border-left: 1px solid #f3f3f3;
@@ -376,10 +375,10 @@ function ActionButton(data: NavTabActionsProps) {
           opacity: 0.5;
           cursor: not-allowed;
         }
-        ${data.style}
+        ${props.style}
       `}
       toggleStyle={
-        data.subMenu &&
+        props.subMenu &&
         css`
           display: flex;
           flex-direction: row;
@@ -405,28 +404,28 @@ function ActionButton(data: NavTabActionsProps) {
             opacity: 0.5;
             cursor: not-allowed;
           }
-          ${data.style}
+          ${props.style}
         `
       }
       dividerStyle={css`
         border: 1px solid rgb(236 236 236);
-        ${data.subMenu && data.dividerStyle ? data.dividerStyle : null}
+        ${props.subMenu && props.dividerStyle ? props.dividerStyle : null}
       `}
       dropdownStyle={css`
         position: absolute;
         margin-top: 2px;
         z-index: 9999;
         width: 170px;
-        ${data.subMenu && data.dropdownStyle ? data.dropdownStyle : null}
+        ${props.subMenu && props.dropdownStyle ? props.dropdownStyle : null}
       `}
     >
-      {data.icon && <data.icon size={14} />}
+      {props.icon && <props.icon size={14} />}
       <span
         style={{
           fontSize: "14px",
         }}
       >
-        {data.title}
+        {props.title}
       </span>
     </Button>
   );
