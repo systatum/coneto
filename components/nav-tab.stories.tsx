@@ -4,7 +4,7 @@ import { Textbox } from "./textbox";
 import { useState } from "react";
 import { StatefulOnChangeType } from "./stateful-form";
 import { Button } from "./button";
-import { RiAddBoxLine, RiSearchLine } from "@remixicon/react";
+import { RiAddBoxLine, RiAtLine, RiSearchLine } from "@remixicon/react";
 
 const meta: Meta<typeof NavTab> = {
   title: "Stage/NavTab",
@@ -79,6 +79,13 @@ export const WithActions: Story = {
               console.log("Discover clicked");
             },
             icon: RiSearchLine,
+          },
+          {
+            caption: "Mention",
+            onClick: () => {
+              console.log("Mention clicked");
+            },
+            icon: RiAtLine,
           },
         ],
       },
