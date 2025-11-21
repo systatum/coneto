@@ -44,9 +44,15 @@ describe("Treelist", () => {
   });
 
   context("with actions", () => {
-    it("should click item and action button exists", () => {
+    beforeEach(() => {
       cy.visit(getIdContent("content-treelist--with-actions"));
 
+      cy.window().then((win) => {
+        cy.spy(win.console, "log").as("consoleLog");
+      });
+    });
+
+    it("should click item and action button exists", () => {
       cy.findByText("Discover").should("exist").click();
 
       cy.contains("Mohamad Naufal Alim")
@@ -56,6 +62,35 @@ describe("Treelist", () => {
         .click()
         .parent()
         .should("have.css", "border-left-color", "rgb(59, 130, 246)");
+    });
+
+    context("with actions item", () => {
+      it("renders action on the item", () => {
+        cy.contains("Adam Noto Hakarsa").trigger("mouseover");
+        cy.findByLabelText("list-action-button")
+          .should("be.visible")
+          .and("have.attr", "title", "Edit")
+          .click();
+        cy.get("@consoleLog").should(
+          "have.been.calledWith",
+          "mts-1 was edited"
+        );
+      });
+
+      context("when given multiple action", () => {
+        it("renders with tip menu", () => {
+          cy.findByPlaceholderText("Search your item...").click();
+          cy.findByText("3").click();
+          cy.contains("Adam Noto Hakarsa").trigger("mouseover");
+          cy.findByLabelText("list-action-button").should("be.visible").click();
+          cy.findByText("Copy").click();
+
+          cy.get("@consoleLog").should(
+            "have.been.calledWith",
+            "mts-1 was copied"
+          );
+        });
+      });
     });
   });
 

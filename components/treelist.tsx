@@ -2,6 +2,8 @@ import styled, { css, CSSProp } from "styled-components";
 import { ReactNode, useState } from "react";
 import { RemixiconComponentType, RiArrowRightSLine } from "@remixicon/react";
 import { motion, AnimatePresence } from "framer-motion";
+import { TipMenuItemProps } from "./tip-menu";
+import ContextMenu from "./context-menu";
 
 export interface TreeListProps {
   content: TreeListContentProps[];
@@ -31,6 +33,11 @@ export interface TreeListItemsProps {
   id: string;
   caption: string;
   onClick?: (item?: TreeListItemsProps) => void;
+  actions?: SubMenuTreeList[];
+}
+
+export interface SubMenuTreeList extends Omit<TipMenuItemProps, "onClick"> {
+  onClick: (id?: string) => void;
 }
 
 function TreeList({
@@ -145,6 +152,8 @@ function TreeListItem<T extends TreeListItemsProps>({
   onChange?: (item?: string) => void;
   isSelected?: string;
 }) {
+  const [isHovered, setIsHovered] = useState<null | string>(null);
+
   const escapedTerm = escapeRegExp(searchTerm.trim());
   const regex = new RegExp(`(${escapedTerm})`, "gi");
   const parts = escapedTerm ? item.caption.split(regex) : [item.caption];
@@ -158,14 +167,72 @@ function TreeListItem<T extends TreeListItemsProps>({
         item.onClick(item);
         onChange(item.id);
       }}
+      $style={css`
+        ${isHovered === item.id &&
+        css`
+          background-color: #f3f4f6;
+        `}
+      `}
+      onMouseLeave={() => setIsHovered(null)}
+      onMouseEnter={() => setIsHovered(item.id)}
     >
       {parts.map((part, index) =>
         part.toLowerCase() === searchTerm.toLowerCase() ? (
           <HighlightedText key={index}>{part}</HighlightedText>
         ) : (
-          <span key={index}>{part}</span>
+          <span
+            style={{
+              width: "100%",
+            }}
+            key={index}
+          >
+            {part}
+          </span>
         )
       )}
+
+      {item.id === isHovered &&
+        item.actions &&
+        (() => {
+          const list = item.actions;
+          const actionsWithIcons = list.map((prop) => ({
+            ...prop,
+            icon: prop.icon ?? RiArrowRightSLine,
+            onClick: (e?: React.MouseEvent) => {
+              e?.stopPropagation();
+              prop.onClick?.(item.id);
+              if (list.length > 2) {
+                setIsHovered(null);
+              }
+            },
+          }));
+
+          return (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "4px",
+              }}
+            >
+              <ContextMenu
+                maxActionsBeforeCollapsing={2}
+                iconSize={16}
+                focusBackgroundColor="#d4d4d4"
+                hoverBackgroundColor="#d4d4d4"
+                activeBackgroundColor="#d4d4d4"
+                actions={actionsWithIcons}
+                buttonStyle={css`
+                  width: 20px;
+                  height: 20px;
+                  padding: 0;
+                `}
+              />
+            </div>
+          );
+        })()}
     </TreeListItemWrapper>
   );
 }
@@ -269,23 +336,34 @@ const ItemsWrapper = styled(motion.ul)<{ $collapsed?: boolean }>`
     `};
 `;
 
-const TreeListItemWrapper = styled.li<{ $isSelected: boolean }>`
+const TreeListItemWrapper = styled.li<{
+  $isSelected: boolean;
+  $style?: CSSProp;
+}>`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  position: relative;
   cursor: pointer;
+  justify-content: space-between;
+  min-height: 36px;
+
   border-left: 3px solid
     ${(props) => (props.$isSelected ? "#3b82f6" : "transparent")};
   background-color: ${(props) =>
     props.$isSelected ? "#f3f4f6" : "transparent"};
   padding: 0.25rem 1.2rem;
-  &:hover {
-    background-color: #f3f4f6;
-  }
+  padding-right: 8px;
   list-style: none;
+
+  ${(props) => props.$style}
 `;
 
 const HighlightedText = styled.span`
   background-color: #e5e7eb;
   font-weight: 600;
   border-radius: 4px;
+  width: 100%;
 `;
 
 function escapeRegExp(string: string) {
