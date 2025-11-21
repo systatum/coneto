@@ -171,9 +171,11 @@ function NavTab({
                 onMouseLeave={() => setIsHovered(null)}
                 $isHovered={isHovered === props.id}
                 $selected={selected === props.id}
+                $isAction={!!props.actions}
               >
                 {props.title}
-                {props.actions &&
+                {isHovered === props.id &&
+                  props.actions &&
                   (() => {
                     const list = props.actions;
                     const actionsWithIcons = list.map((item) => ({
@@ -199,13 +201,15 @@ function NavTab({
                           width: 16px;
                           height: 16px;
                           padding: 0;
-                          ${isHovered !== props.id &&
-                          css`
-                            color: transparent;
-                          `}
                         `}
                         containerStyle={css`
                           transition: all 0.2s ease-in-out;
+                          width: fit-content;
+                          position: absolute;
+                          top: 50%;
+                          right: 12px;
+                          transform: translateY(-50%);
+                          z-index: 8;
                         `}
                       />
                     );
@@ -301,6 +305,7 @@ const NavTabItem = styled.div<{
   $selected?: boolean;
   $boxStyle?: CSSProp;
   $isHovered?: boolean;
+  $isAction?: boolean;
 }>`
   display: flex;
   flex-direction: row;
@@ -317,6 +322,18 @@ const NavTabItem = styled.div<{
     $selected &&
     css`
       background-color: rgb(243 244 246 / 50%);
+    `}
+
+  ${({ $isAction }) =>
+    $isAction &&
+    css`
+      &::after {
+        width: 16px;
+        height: 16px;
+        content: "";
+        display: inline-block;
+        flex-shrink: 0;
+      }
     `}
 
   &:hover {
