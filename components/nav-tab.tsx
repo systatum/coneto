@@ -199,6 +199,10 @@ function NavTab({
                           width: 16px;
                           height: 16px;
                           padding: 0;
+                          ${isHovered !== props.id &&
+                          css`
+                            color: transparent;
+                          `}
                         `}
                         containerStyle={css`
                           transition: all 0.2s ease-in-out;
