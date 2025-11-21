@@ -4,6 +4,7 @@ import { Textbox } from "./textbox";
 import { useState } from "react";
 import { StatefulOnChangeType } from "./stateful-form";
 import { Button } from "./button";
+import { RiAddBoxLine, RiAtLine, RiSearchLine } from "@remixicon/react";
 
 const meta: Meta<typeof NavTab> = {
   title: "Stage/NavTab",
@@ -41,6 +42,70 @@ export const Default: Story = {
     ];
 
     return <NavTab tabs={TABS_ITEMS} activeTab={"2"} />;
+  },
+};
+
+export const WithActions: Story = {
+  render: () => {
+    const TABS_ITEMS: NavTabContentProps[] = [
+      {
+        id: "1",
+        title: "Write",
+        content: <WriteTabContent />,
+        onClick: () => {
+          console.log("test tab 1");
+        },
+        actions: [
+          {
+            caption: "Discover",
+            onClick: () => {
+              console.log("Discover clicked");
+            },
+            icon: RiSearchLine,
+          },
+        ],
+      },
+      {
+        id: "2",
+        title: "Review",
+        content: <ReviewTabContent />,
+        onClick: () => {
+          console.log("test tab 2");
+        },
+        actions: [
+          {
+            caption: "Discover",
+            onClick: () => {
+              console.log("Discover clicked");
+            },
+            icon: RiSearchLine,
+          },
+          {
+            caption: "Mention",
+            onClick: () => {
+              console.log("Mention clicked");
+            },
+            icon: RiAtLine,
+          },
+        ],
+      },
+    ];
+
+    return (
+      <NavTab
+        tabs={TABS_ITEMS}
+        activeTab={"2"}
+        actions={[
+          {
+            title: "Add",
+            icon: RiAddBoxLine,
+            onClick: () => {
+              console.log(`Add button was clicked`);
+            },
+          },
+        ]}
+      />
+    );
   },
 };
 
