@@ -39,14 +39,12 @@ export const Default: Story = {
 
     const TREE_LIST_DATA: TreeListContentProps[] = [
       {
+        id: "member",
         caption: "Member of Technical Staff",
         collapsible: true,
-        items: [
-          { id: "mts-1", caption: "Adam Noto Hakarsa", onClick: setPerson },
-          { id: "mts-2", caption: "Mohamad Naufal Alim", onClick: setPerson },
-        ],
       },
       {
+        id: "project",
         caption: "Product Management Team",
         collapsible: true,
         items: [
@@ -57,6 +55,14 @@ export const Default: Story = {
       },
     ];
 
+    const FETCH_ID_MEMBER = [
+      { id: "mts-1", caption: "Adam Noto Hakarsa", onClick: setPerson },
+      { id: "mts-2", caption: "Mohamad Naufal Alim", onClick: setPerson },
+    ];
+
+    const [content, setContent] =
+      useState<TreeListContentProps[]>(TREE_LIST_DATA);
+
     return (
       <div
         style={{
@@ -66,7 +72,39 @@ export const Default: Story = {
           maxWidth: "250px",
         }}
       >
-        <TreeList content={TREE_LIST_DATA} emptySlate={<p>Not found.</p>} />
+        <TreeList
+          onOpen={async ({ id, setIsLoading, lastFetch, setLastFetch }) => {
+            // Simulation checking if the lastFetch was more than one minute ago
+            const ONE_MINUTE = 60 * 1000;
+            const target = await content.find((data) => data.id === id);
+            const loadingSimulationFetch = () => {
+              setIsLoading(true, "Please wait…");
+              setTimeout(() => setIsLoading(false), 1500);
+            };
+
+            if (!lastFetch) {
+              setLastFetch(new Date());
+              loadingSimulationFetch();
+            } else {
+              const diff = new Date().getTime() - lastFetch.getTime();
+              if (diff >= ONE_MINUTE) {
+                setLastFetch(new Date());
+                loadingSimulationFetch();
+              }
+            }
+
+            if (!target || (target.items && target.items.length > 0)) {
+              return;
+            }
+
+            await setContent((prev) =>
+              prev.map((item) =>
+                item.id === id ? { ...item, items: FETCH_ID_MEMBER } : item
+              )
+            );
+          }}
+          content={content}
+        />
       </div>
     );
   },
@@ -126,6 +164,7 @@ export const WithActions: Story = {
 
     const TREE_LIST_DATA: TreeListContentProps[] = [
       {
+        id: "member",
         caption: "Member of Technical Staff",
         items: [
           {
@@ -143,6 +182,7 @@ export const WithActions: Story = {
         ],
       },
       {
+        id: "project",
         caption: "Product Management Team",
         items: [
           {
@@ -248,6 +288,7 @@ export const WithoutHeader: Story = {
 
     const TREE_LIST_DATA = [
       {
+        id: "member",
         items: [
           { id: "1", caption: "Adam Noto Hakarsa", onClick: setPerson },
           { id: "2", caption: "Mohamad Naufal Alim", onClick: setPerson },
