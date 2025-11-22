@@ -73,35 +73,43 @@ export const Default: Story = {
         }}
       >
         <TreeList
-          onOpen={async ({ id, setIsLoading, lastFetch, setLastFetch }) => {
-            // Simulation checking if the lastFetch was more than one minute ago
-            const TWENTY_SECOND = 20 * 1000;
-            const target = await content.find((data) => data.id === id);
-            const loadingSimulationFetch = () => {
-              setIsLoading(true, "Please wait…");
-              setTimeout(() => setIsLoading(false), 2000);
-            };
+          onOpenChange={async ({
+            id,
+            isOpen,
+            setIsLoading,
+            lastFetch,
+            setLastFetch,
+          }) => {
+            if (isOpen) {
+              // Simulation checking if the lastFetch was more than one minute ago
+              const TWENTY_SECOND = 20 * 1000;
+              const target = await content.find((data) => data.id === id);
+              const loadingSimulationFetch = () => {
+                setIsLoading(true, "Please wait…");
+                setTimeout(() => setIsLoading(false), 2000);
+              };
 
-            if (!lastFetch) {
-              setLastFetch(new Date());
-              loadingSimulationFetch();
-            } else {
-              const diff = new Date().getTime() - lastFetch.getTime();
-              if (diff >= TWENTY_SECOND) {
+              if (!lastFetch) {
                 setLastFetch(new Date());
                 loadingSimulationFetch();
+              } else {
+                const diff = new Date().getTime() - lastFetch.getTime();
+                if (diff >= TWENTY_SECOND) {
+                  setLastFetch(new Date());
+                  loadingSimulationFetch();
+                }
               }
-            }
 
-            if (!target || (target.items && target.items.length > 0)) {
-              return;
-            }
+              if (!target || (target.items && target.items.length > 0)) {
+                return;
+              }
 
-            await setContent((prev) =>
-              prev.map((item) =>
-                item.id === id ? { ...item, items: FETCH_ID_MEMBER } : item
-              )
-            );
+              await setContent((prev) =>
+                prev.map((item) =>
+                  item.id === id ? { ...item, items: FETCH_ID_MEMBER } : item
+                )
+              );
+            }
           }}
           content={content}
         />
