@@ -55,10 +55,44 @@ export const Default: Story = {
       },
     ];
 
-    const FETCH_ID_MEMBER = [
+    const NEWLY_FETCHED_MEMBERS = [
       { id: "mts-1", caption: "Adam Noto Hakarsa", onClick: setPerson },
       { id: "mts-2", caption: "Mohamad Naufal Alim", onClick: setPerson },
+      { id: "mts-3", caption: "Badar Islami", onClick: setPerson },
     ];
+
+    const randomName = () => {
+      const firstNames = [
+        "Alicia",
+        "Daniel",
+        "Fajar",
+        "Miyu",
+        "Ethan",
+        "Sofia",
+        "Lucas",
+        "Anita",
+        "Chloe",
+        "Ravi",
+      ];
+
+      const lastNames = [
+        "Chen",
+        "Park",
+        "Prasetyo",
+        "Tanaka",
+        "Carter",
+        "Martinez",
+        "Weber",
+        "Rahman",
+        "Nguyen",
+        "Kumar",
+      ];
+
+      const first = firstNames[Math.floor(Math.random() * firstNames.length)];
+      const last = lastNames[Math.floor(Math.random() * lastNames.length)];
+
+      return `${first} ${last}`;
+    };
 
     const [content, setContent] =
       useState<TreeListContentProps[]>(TREE_LIST_DATA);
@@ -80,36 +114,66 @@ export const Default: Story = {
             lastFetch,
             setLastFetch,
           }) => {
-            if (isOpen) {
-              // Simulation checking if the lastFetch was more than one minute ago
-              const TWENTY_SECOND = 20 * 1000;
-              const target = await content.find((data) => data.id === id);
-              const loadingSimulationFetch = () => {
-                setIsLoading(true, "Please wait…");
-                setTimeout(() => setIsLoading(false), 2000);
-              };
+            if (!isOpen) return;
 
-              if (!lastFetch) {
-                setLastFetch(new Date());
-                loadingSimulationFetch();
-              } else {
-                const diff = new Date().getTime() - lastFetch.getTime();
-                if (diff >= TWENTY_SECOND) {
-                  setLastFetch(new Date());
-                  loadingSimulationFetch();
-                }
-              }
+            const TWENTY_SECOND = 20 * 1000;
+            const target = content.find((data) => data.id === id);
 
-              if (!target || (target.items && target.items.length > 0)) {
-                return;
-              }
-
-              await setContent((prev) =>
-                prev.map((item) =>
-                  item.id === id ? { ...item, items: FETCH_ID_MEMBER } : item
-                )
+            const loadingSimulationFetch = () => {
+              setIsLoading(true, "Please wait…");
+              return new Promise((resolve) =>
+                setTimeout(() => {
+                  setIsLoading(false);
+                  resolve(true);
+                }, 2000)
               );
+            };
+
+            if (!target || (target.items && target.items.length > 13)) return;
+
+            let shouldFetch = false;
+
+            if (!lastFetch) {
+              setLastFetch(new Date());
+              shouldFetch = true;
+            } else {
+              const diff = Date.now() - lastFetch.getTime();
+              if (diff >= TWENTY_SECOND) {
+                setLastFetch(new Date());
+                shouldFetch = true;
+              }
             }
+
+            if (!shouldFetch) return;
+
+            await loadingSimulationFetch();
+
+            await setContent((prev) =>
+              prev.map((group) => {
+                if (group.id !== id) return group;
+
+                if (!group.items || group.items.length === 0) {
+                  return {
+                    ...group,
+                    items: NEWLY_FETCHED_MEMBERS,
+                  };
+                }
+
+                const startIndex = group.items.length + 1;
+                const prefix = id === "project" ? "pmt" : "mts";
+
+                const newItems = Array.from({ length: 2 }, (_, i) => {
+                  const n = startIndex + i;
+                  return {
+                    id: `${prefix}-${n}`,
+                    caption: randomName(),
+                    onClick: setPerson,
+                  };
+                });
+
+                return { ...group, items: [...group.items, ...newItems] };
+              })
+            );
           }}
           content={content}
         />
