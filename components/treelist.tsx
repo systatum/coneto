@@ -16,11 +16,12 @@ export interface TreeListProps {
   actions?: TreeListActionsProps[];
   selectedItem?: string;
   onChange?: (id: string) => void;
-  onOpen?: (props?: TreeListOnOpenProps) => void;
+  onOpenChange?: (props?: TreeListOnOpenChangeProps) => void;
 }
 
-interface TreeListOnOpenProps {
+interface TreeListOnOpenChangeProps {
   id?: string;
+  isOpen?: boolean;
   setIsLoading?: (isLoading: boolean, caption?: string) => void;
   lastFetch?: Date;
   setLastFetch?: (date: Date) => void;
@@ -60,7 +61,7 @@ function TreeList({
   actions,
   onChange,
   selectedItem = "",
-  onOpen,
+  onOpenChange,
   emptyItemSlate = <div>Empty Content</div>,
 }: TreeListProps) {
   const [isSelected, setIsSelected] = useState(selectedItem);
@@ -87,9 +88,10 @@ function TreeList({
   };
 
   const handleSelected = (id: string) => {
-    if (onOpen && !isOpen[id]) {
-      onOpen({
+    if (onOpenChange) {
+      onOpenChange({
         id: id,
+        isOpen: !isOpen[id],
         lastFetch: lastFetchGroup[id],
         setLastFetch: (date) => {
           setLastFetchGroup((prev) => ({ ...prev, [id]: date }));
