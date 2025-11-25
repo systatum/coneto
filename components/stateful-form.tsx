@@ -80,7 +80,7 @@ export interface FormFieldProps {
   width?: string;
   icon?: RemixiconComponentType;
   disabled?: boolean;
-  rowJustifyContent?: "center" | "start" | "end";
+  rowJustifyContent?: "center" | "start" | "end" | "between";
   onChange?: (e?: StatefulOnChangeType) => void;
   onClick?: (e?: React.MouseEvent) => void;
   textboxProps?: TextboxProps;
@@ -321,7 +321,9 @@ function FormFields<T extends FieldValues>({
                   ? "flex-end"
                   : rowJustifiedContent === "start"
                     ? "flex-start"
-                    : "center"};
+                    : rowJustifiedContent === "between"
+                      ? "space-between"
+                      : "center"};
               `}
             `}
             key={indexGroup}
@@ -403,13 +405,10 @@ function FormFields<T extends FieldValues>({
                     ${field.buttonProps?.buttonStyle};
                   `}
                   containerStyle={css`
-                    ${field.width
-                      ? css`
-                          width: ${field.width};
-                        `
-                      : css`
-                          width: 100%;
-                        `}
+                    ${field.width &&
+                    css`
+                      width: ${field.width};
+                    `}
                     ${field.buttonProps?.containerStyle}
                   `}
                   onClick={field.onClick}

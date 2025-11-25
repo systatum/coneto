@@ -191,12 +191,11 @@ export const Default: Story = {
       },
       {
         name: "text",
-        title: "Save",
+        title: "Verify",
         type: "button",
         required: true,
         disabled: !isFormValid,
         placeholder: "Enter text",
-        width: "15%",
         rowJustifyContent: "end",
       },
     ];
@@ -760,6 +759,15 @@ export const AllCase: Story = {
           tabs: CAPSULE_TABS,
         },
       },
+      {
+        name: "text",
+        title: "Verify",
+        type: "button",
+        required: true,
+        disabled: !isFormValid,
+        placeholder: "Enter text",
+        rowJustifyContent: "end",
+      },
     ];
 
     return (
@@ -793,17 +801,6 @@ export const AllCase: Story = {
           validationSchema={schema}
           mode="onChange"
         />
-        <Button
-          containerStyle={css`
-            width: 100%;
-          `}
-          buttonStyle={css`
-            width: 100%;
-          `}
-          disabled={!isFormValid}
-        >
-          Save
-        </Button>
       </div>
     );
   },
