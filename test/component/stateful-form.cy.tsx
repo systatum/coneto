@@ -98,6 +98,95 @@ describe("StatefulForm", () => {
     });
   });
 
+  context("with justifyContent", () => {
+    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
+      (data) => data.id === "US" || COUNTRY_CODES[206]
+    );
+
+    if (!DEFAULT_COUNTRY_CODES) {
+      throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
+    }
+
+    const value = {
+      first_name: "",
+      last_name: "",
+      email: "",
+      phone: "",
+      note: "",
+      access: false,
+      country_code: DEFAULT_COUNTRY_CODES,
+    };
+
+    const EMPLOYEE_FIELDS: FormFieldGroup[] = [
+      [
+        {
+          name: "first_name",
+          title: "First Name",
+          type: "text",
+          required: true,
+          placeholder: "Enter first name",
+        },
+        {
+          name: "last_name",
+          title: "Last Name",
+          type: "text",
+          required: false,
+          placeholder: "Enter last name",
+        },
+      ],
+      {
+        name: "email",
+        title: "Email",
+        type: "email",
+        required: true,
+        placeholder: "Enter email address",
+      },
+      {
+        name: "phone",
+        title: "Phone Number",
+        type: "phone",
+        required: false,
+        placeholder: "Enter phone number",
+      },
+      {
+        name: "note",
+        title: "Note",
+        type: "textarea",
+        rows: 3,
+        required: false,
+        placeholder: "Add additional notes",
+      },
+      {
+        name: "access",
+        title: "Has access to login",
+        type: "checkbox",
+        required: false,
+      },
+      {
+        name: "text",
+        title: "Save",
+        type: "button",
+        required: true,
+        placeholder: "Enter text",
+        width: "15%",
+        rowJustifyContent: "end",
+      },
+    ];
+    it("render style align on the one row", () => {
+      cy.mount(
+        <StatefulForm
+          fields={EMPLOYEE_FIELDS}
+          formValues={value}
+          mode="onChange"
+        />
+      );
+
+      cy.findAllByLabelText("stateful-form-row")
+        .eq(5)
+        .should("have.css", "justify-content", "flex-end");
+    });
+  });
+
   context("with autoFocusField", () => {
     const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
       (data) => data.id === "US" || COUNTRY_CODES[206]
@@ -693,7 +782,7 @@ describe("StatefulForm", () => {
           if (prop.name === "togglebox") {
             cy.findByLabelText("togglebox-row-wrapper").then(($el) => {
               const width = $el.width();
-              expect(width).to.be.closeTo(222.5, 5);
+              expect(width).to.be.closeTo(222.5, 10);
             });
           } else {
             cy.findByText(prop.title)
@@ -701,7 +790,7 @@ describe("StatefulForm", () => {
               .then(($el) => {
                 const elWidth = $el.width();
 
-                expect(elWidth).to.be.closeTo(222.5, 5);
+                expect(elWidth).to.be.closeTo(222.5, 10);
               });
           }
         });

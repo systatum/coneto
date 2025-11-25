@@ -194,6 +194,7 @@ export const Default: Story = {
         title: "Save",
         type: "button",
         required: true,
+        disabled: !isFormValid,
         placeholder: "Enter text",
         width: "15%",
         rowJustifyContent: "end",
