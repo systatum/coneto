@@ -19,7 +19,6 @@ import styled, { css } from "styled-components";
 import { CapsuleContentProps } from "./capsule";
 import { OptionsProps } from "./selectbox";
 import { Messagebox } from "./messagebox";
-import { Ri24HoursFill } from "@remixicon/react";
 
 const meta: Meta<typeof StatefulForm> = {
   title: "Input Elements/StatefulForm",
@@ -194,12 +193,10 @@ export const Default: Story = {
         name: "text",
         title: "Save",
         type: "button",
-        icon: Ri24HoursFill,
         required: true,
         placeholder: "Enter text",
         width: "15%",
         rowJustifyContent: "end",
-        disabled: !isFormValid,
       },
     ];
 

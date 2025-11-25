@@ -317,7 +317,11 @@ function FormFields<T extends FieldValues>({
               ${rowStyle}
               ${rowJustifiedContent &&
               css`
-                justify-content: ${rowJustifiedContent};
+                justify-content: ${rowJustifiedContent === "end"
+                  ? "flex-end"
+                  : rowJustifiedContent === "start"
+                    ? "flex-start"
+                    : "center"};
               `}
             `}
             key={indexGroup}
@@ -379,6 +383,7 @@ function FormFields<T extends FieldValues>({
                 />
               ) : field.type === "button" ? (
                 <Button
+                  key={index}
                   {...field.buttonProps}
                   title={
                     field.buttonProps?.title
@@ -410,7 +415,10 @@ function FormFields<T extends FieldValues>({
                   onClick={field.onClick}
                   disabled={field.disabled}
                 >
-                  {field.icon && <field.icon size={fieldSize} />}
+                  {field.icon && (
+                    <field.icon size={fieldSize ? parseInt(fieldSize) : 16} />
+                  )}
+
                   {field.title}
                 </Button>
               ) : field.type === "time" ? (
