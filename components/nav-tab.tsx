@@ -174,7 +174,8 @@ function NavTab({
                 $isAction={!!props.actions}
               >
                 {props.title}
-                {props.actions &&
+                {isHovered === props.id &&
+                  props.actions &&
                   (() => {
                     const list = props.actions;
                     const actionsWithIcons = list.map((item) => ({
@@ -209,6 +210,9 @@ function NavTab({
                             : css`
                                 opacity: 0;
                               `}
+                          pointer-events: ${isHovered === props.id
+                            ? "auto"
+                            : "none"};
                           transition: all 0.3s ease-in-out;
                           width: fit-content;
                           position: absolute;
