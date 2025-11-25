@@ -19,6 +19,7 @@ import styled, { css } from "styled-components";
 import { CapsuleContentProps } from "./capsule";
 import { OptionsProps } from "./selectbox";
 import { Messagebox } from "./messagebox";
+import { Ri24HoursFill } from "@remixicon/react";
 
 const meta: Meta<typeof StatefulForm> = {
   title: "Input Elements/StatefulForm",
@@ -189,6 +190,17 @@ export const Default: Story = {
         type: "checkbox",
         required: false,
       },
+      {
+        name: "text",
+        title: "Save",
+        type: "button",
+        icon: Ri24HoursFill,
+        required: true,
+        placeholder: "Enter text",
+        width: "15%",
+        rowJustifyContent: "end",
+        disabled: !isFormValid,
+      },
     ];
 
     return (
@@ -216,19 +228,6 @@ export const Default: Story = {
           autoFocusField="first_name"
           mode="onChange"
         />
-
-        <div
-          style={{
-            display: "flex",
-            width: "100%",
-            flexDirection: "row",
-            justifyContent: "flex-end",
-          }}
-        >
-          <Button disabled={!isFormValid} type="submit">
-            Save
-          </Button>
-        </div>
       </div>
     );
   },
