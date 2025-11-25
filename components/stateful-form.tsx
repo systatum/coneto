@@ -29,6 +29,8 @@ import { ThumbField, ThumbFieldProps } from "./thumb-field";
 import { Togglebox, ToggleboxProps } from "./togglebox";
 import { Capsule, CapsuleProps } from "./capsule";
 import { Timebox, TimeboxProps } from "./timebox";
+import { Button, ButtonProps } from "./button";
+import { RemixiconComponentType } from "@remixicon/react";
 
 export type StatefulOnChangeType =
   | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -76,7 +78,11 @@ export interface FormFieldProps {
   hidden?: boolean;
   rows?: number;
   width?: string;
+  icon?: RemixiconComponentType;
+  disabled?: boolean;
+  rowJustifyContent?: "center" | "start" | "end";
   onChange?: (e?: StatefulOnChangeType) => void;
+  onClick?: (e?: React.MouseEvent) => void;
   textboxProps?: TextboxProps;
   textareaProps?: TextareaProps;
   checkboxProps?: CheckboxProps;
@@ -95,6 +101,7 @@ export interface FormFieldProps {
   toggleboxProps?: ToggleboxProps;
   capsuleProps?: CapsuleProps;
   timeboxProps?: TimeboxProps;
+  buttonProps?: ButtonProps;
 }
 
 function StatefulForm<Z extends ZodTypeAny>({
@@ -143,7 +150,12 @@ function StatefulForm<Z extends ZodTypeAny>({
       .flat()
       .find((f) => (f as FormFieldProps).name === field) as FormFieldProps;
 
-    if (!fieldConfig || fieldConfig.type === "custom" || fieldConfig.hidden) {
+    if (
+      !fieldConfig ||
+      fieldConfig.type === "custom" ||
+      fieldConfig.type === "button" ||
+      fieldConfig.hidden
+    ) {
       return false;
     }
 
@@ -294,10 +306,20 @@ function FormFields<T extends FieldValues>({
           return;
         }
 
+        const rowJustifiedContent = visibleFields.find(
+          (f) => f.rowJustifyContent
+        )?.rowJustifyContent;
+
         return (
           <RowFormField
             aria-label="stateful-form-row"
-            $style={rowStyle}
+            $style={css`
+              ${rowStyle}
+              ${rowJustifiedContent &&
+              css`
+                justify-content: ${rowJustifiedContent};
+              `}
+            `}
             key={indexGroup}
           >
             {visibleFields.map((field: FormFieldProps, index: number) => {
@@ -352,8 +374,45 @@ function FormFields<T extends FieldValues>({
                   errorMessage={
                     errors[field.name as keyof T]?.message as string | undefined
                   }
+                  disabled={field.disabled}
                   {...field.textboxProps}
                 />
+              ) : field.type === "button" ? (
+                <Button
+                  {...field.buttonProps}
+                  title={
+                    field.buttonProps?.title
+                      ? field.buttonProps?.title
+                      : field.placeholder
+                  }
+                  buttonStyle={css`
+                    ${field.icon &&
+                    css`
+                      gap: 2px;
+                    `}
+                    width:100%;
+                    ${labelSize &&
+                    css`
+                      font-size: ${labelSize};
+                    `}
+                    ${field.buttonProps?.buttonStyle};
+                  `}
+                  containerStyle={css`
+                    ${field.width
+                      ? css`
+                          width: ${field.width};
+                        `
+                      : css`
+                          width: 100%;
+                        `}
+                    ${field.buttonProps?.containerStyle}
+                  `}
+                  onClick={field.onClick}
+                  disabled={field.disabled}
+                >
+                  {field.icon && <field.icon size={fieldSize} />}
+                  {field.title}
+                </Button>
               ) : field.type === "time" ? (
                 <Timebox
                   key={index}
@@ -397,6 +456,7 @@ function FormFields<T extends FieldValues>({
                   errorMessage={
                     errors[field.name as keyof T]?.message as string | undefined
                   }
+                  disabled={field.disabled}
                   {...field.timeboxProps}
                 />
               ) : field.type === "textarea" ? (
@@ -444,6 +504,7 @@ function FormFields<T extends FieldValues>({
                   errorMessage={
                     errors[field.name as keyof T]?.message as string | undefined
                   }
+                  disabled={field.disabled}
                   {...field.textareaProps}
                 />
               ) : field.type === "checkbox" ? (
@@ -510,6 +571,7 @@ function FormFields<T extends FieldValues>({
                         }
                         field.onChange?.(e);
                       }}
+                      disabled={field.disabled}
                       {...field.checkboxProps}
                     />
                   )}
@@ -568,6 +630,7 @@ function FormFields<T extends FieldValues>({
                       }
                       showError={!!errors["phone"]}
                       errorMessage={errors["phone"]?.message as string}
+                      disabled={field.disabled}
                       {...field.phoneboxProps}
                     />
                   )}
@@ -616,6 +679,7 @@ function FormFields<T extends FieldValues>({
                       }}
                       showError={shouldShowError(field.name)}
                       errorMessage={fieldState.error?.message}
+                      disabled={field.disabled}
                       {...field.colorboxProps}
                     />
                   )}
@@ -734,6 +798,7 @@ function FormFields<T extends FieldValues>({
                       font-size: ${labelSize};
                     `
                   }
+                  disabled={field.disabled}
                   required={field.required}
                   {...register(field.name as Path<T>, {
                     onChange: (e) => {
@@ -785,6 +850,7 @@ function FormFields<T extends FieldValues>({
                   errorMessage={
                     errors[field.name as keyof T]?.message as string | undefined
                   }
+                  disabled={field.disabled}
                   {...field.signboxProps}
                 />
               ) : field.type === "money" ? (
@@ -831,6 +897,7 @@ function FormFields<T extends FieldValues>({
                   errorMessage={
                     errors[field.name as keyof T]?.message as string | undefined
                   }
+                  disabled={field.disabled}
                   {...field.moneyProps}
                 />
               ) : field.type === "date" ? (
@@ -883,6 +950,7 @@ function FormFields<T extends FieldValues>({
                         }
                       }}
                       selectedDates={controllerField.value}
+                      disabled={field.disabled}
                       {...field.dateProps}
                     />
                   )}
@@ -1014,6 +1082,7 @@ function FormFields<T extends FieldValues>({
                       `}
                       showError={!!fieldState.error}
                       errorMessage={fieldState.error?.message}
+                      disabled={field.disabled}
                       {...field.ratingProps}
                     />
                   )}
@@ -1070,6 +1139,7 @@ function FormFields<T extends FieldValues>({
                           | string
                           | undefined
                       }
+                      disabled={field.disabled}
                       {...field.thumbFieldProps}
                     />
                   )}
@@ -1112,6 +1182,7 @@ function FormFields<T extends FieldValues>({
                           | string
                           | undefined
                       }
+                      disabled={field.disabled}
                       {...field.toggleboxProps}
                     />
                   )}
