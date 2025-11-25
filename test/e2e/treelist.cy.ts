@@ -2,44 +2,72 @@ import { getIdContent } from "test/support/commands";
 
 describe("Treelist", () => {
   context("default", () => {
-    it("should highlight selected item", () => {
+    beforeEach(() => {
       cy.visit(getIdContent("content-treelist--default"));
+    });
+    context("when collapsible", () => {
+      it("should highlight selected item", () => {
+        cy.contains("Member of Technical Staff").click();
+        cy.contains("Adam Noto Hakarsa")
+          .parent()
+          .should("have.css", "border-left-color", "rgba(0, 0, 0, 0)");
+        cy.contains("Adam Noto Hakarsa")
+          .click()
+          .parent()
+          .should("have.css", "border-left-color", "rgb(59, 130, 246)");
+      });
 
-      cy.contains("Adam Noto Hakarsa")
-        .parent()
-        .should("have.css", "border-left-color", "rgba(0, 0, 0, 0)");
-      cy.contains("Adam Noto Hakarsa")
-        .click()
-        .parent()
-        .should("have.css", "border-left-color", "rgb(59, 130, 246)");
+      it("should toggle collapse and expand items", () => {
+        cy.contains("Member of Technical Staff").click();
+
+        cy.contains("Adam Noto Hakarsa").should("exist");
+
+        cy.contains("Member of Technical Staff").click();
+        cy.contains("Adam Noto Hakarsa").should("not.be.visible");
+
+        cy.contains("Member of Technical Staff").click();
+        cy.contains("Adam Noto Hakarsa").should("be.visible");
+      });
+
+      it("should still allow selecting an item when expanded", () => {
+        cy.contains("Member of Technical Staff").click();
+
+        cy.contains("Adam Noto Hakarsa")
+          .parent()
+          .should("have.css", "border-left-color", "rgba(0, 0, 0, 0)");
+
+        cy.contains("Adam Noto Hakarsa")
+          .click()
+          .parent()
+          .should("have.css", "border-left-color", "rgb(59, 130, 246)");
+      });
     });
 
-    it("should toggle collapse and expand items", () => {
-      cy.visit(getIdContent("content-treelist--default"));
+    context("with onOpen", () => {
+      context("with isLoading", () => {
+        it("renders text with loading", () => {
+          cy.contains("Adam Noto Hakarsa").should("not.exist");
+          cy.contains("Member of Technical Staff").click();
+          cy.findByLabelText("circle").should("be.visible");
+          cy.wait(2000);
+          cy.contains("Adam Noto Hakarsa").should("exist");
+        });
+      });
 
-      cy.contains("Adam Noto Hakarsa").should("exist");
-
-      cy.contains("Member of Technical Staff").click();
-      cy.contains("Adam Noto Hakarsa").should("not.be.visible");
-
-      cy.contains("Member of Technical Staff").click();
-      cy.contains("Adam Noto Hakarsa").should("be.visible");
-    });
-
-    it("should still allow selecting an item when expanded", () => {
-      cy.visit(getIdContent("content-treelist--default"));
-
-      cy.contains("Member of Technical Staff").click();
-      cy.contains("Member of Technical Staff").click();
-
-      cy.contains("Adam Noto Hakarsa")
-        .parent()
-        .should("have.css", "border-left-color", "rgba(0, 0, 0, 0)");
-
-      cy.contains("Adam Noto Hakarsa")
-        .click()
-        .parent()
-        .should("have.css", "border-left-color", "rgb(59, 130, 246)");
+      context("with lastFetch", () => {
+        it("renders fetch after one minute", () => {
+          cy.contains("Adam Noto Hakarsa").should("not.exist");
+          cy.contains("Member of Technical Staff").click();
+          cy.findByLabelText("circle").should("exist");
+          cy.wait(2000);
+          cy.findByLabelText("circle").should("not.exist");
+          cy.contains("Adam Noto Hakarsa").should("exist");
+          cy.wait(20000);
+          cy.contains("Member of Technical Staff").click();
+          cy.contains("Member of Technical Staff").click();
+          cy.findByLabelText("circle").should("exist");
+        });
+      });
     });
   });
 
@@ -73,7 +101,7 @@ describe("Treelist", () => {
           .click();
         cy.get("@consoleLog").should(
           "have.been.calledWith",
-          "mts-1 was edited"
+          "member-mts-1 was edited"
         );
       });
 
@@ -87,7 +115,7 @@ describe("Treelist", () => {
 
           cy.get("@consoleLog").should(
             "have.been.calledWith",
-            "mts-1 was copied"
+            "member-mts-1 was copied"
           );
         });
       });

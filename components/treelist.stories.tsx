@@ -39,14 +39,12 @@ export const Default: Story = {
 
     const TREE_LIST_DATA: TreeListContentProps[] = [
       {
+        id: "member",
         caption: "Member of Technical Staff",
         collapsible: true,
-        items: [
-          { id: "mts-1", caption: "Adam Noto Hakarsa", onClick: setPerson },
-          { id: "mts-2", caption: "Mohamad Naufal Alim", onClick: setPerson },
-        ],
       },
       {
+        id: "project",
         caption: "Product Management Team",
         collapsible: true,
         items: [
@@ -57,6 +55,48 @@ export const Default: Story = {
       },
     ];
 
+    const NEWLY_FETCHED_MEMBERS = [
+      { id: "mts-1", caption: "Adam Noto Hakarsa", onClick: setPerson },
+      { id: "mts-2", caption: "Mohamad Naufal Alim", onClick: setPerson },
+      { id: "mts-3", caption: "Badar Islami", onClick: setPerson },
+    ];
+
+    const randomName = () => {
+      const firstNames = [
+        "Alicia",
+        "Daniel",
+        "Fajar",
+        "Miyu",
+        "Ethan",
+        "Sofia",
+        "Lucas",
+        "Anita",
+        "Chloe",
+        "Ravi",
+      ];
+
+      const lastNames = [
+        "Chen",
+        "Park",
+        "Prasetyo",
+        "Tanaka",
+        "Carter",
+        "Martinez",
+        "Weber",
+        "Rahman",
+        "Nguyen",
+        "Kumar",
+      ];
+
+      const first = firstNames[Math.floor(Math.random() * firstNames.length)];
+      const last = lastNames[Math.floor(Math.random() * lastNames.length)];
+
+      return `${first} ${last}`;
+    };
+
+    const [content, setContent] =
+      useState<TreeListContentProps[]>(TREE_LIST_DATA);
+
     return (
       <div
         style={{
@@ -66,7 +106,77 @@ export const Default: Story = {
           maxWidth: "250px",
         }}
       >
-        <TreeList content={TREE_LIST_DATA} emptySlate={<p>Not found.</p>} />
+        <TreeList
+          onOpenChange={async ({
+            id,
+            isOpen,
+            setIsLoading,
+            lastFetch,
+            setLastFetch,
+          }) => {
+            if (!isOpen) return;
+
+            const TWENTY_SECOND = 20 * 1000;
+            const target = content.find((data) => data.id === id);
+
+            const loadingSimulationFetch = () => {
+              setIsLoading(true, "Please wait…");
+              return new Promise((resolve) =>
+                setTimeout(() => {
+                  setIsLoading(false);
+                  resolve(true);
+                }, 2000)
+              );
+            };
+
+            if (!target || (target.items && target.items.length > 13)) return;
+
+            let shouldFetch = false;
+
+            if (!lastFetch) {
+              setLastFetch(new Date());
+              shouldFetch = true;
+            } else {
+              const diff = Date.now() - lastFetch.getTime();
+              if (diff >= TWENTY_SECOND) {
+                setLastFetch(new Date());
+                shouldFetch = true;
+              }
+            }
+
+            if (!shouldFetch) return;
+
+            await loadingSimulationFetch();
+
+            await setContent((prev) =>
+              prev.map((group) => {
+                if (group.id !== id) return group;
+
+                if (!group.items || group.items.length === 0) {
+                  return {
+                    ...group,
+                    items: NEWLY_FETCHED_MEMBERS,
+                  };
+                }
+
+                const startIndex = group.items.length + 1;
+                const prefix = id === "project" ? "pmt" : "mts";
+
+                const newItems = Array.from({ length: 2 }, (_, i) => {
+                  const n = startIndex + i;
+                  return {
+                    id: `${prefix}-${n}`,
+                    caption: randomName(),
+                    onClick: setPerson,
+                  };
+                });
+
+                return { ...group, items: [...group.items, ...newItems] };
+              })
+            );
+          }}
+          content={content}
+        />
       </div>
     );
   },
@@ -126,6 +236,7 @@ export const WithActions: Story = {
 
     const TREE_LIST_DATA: TreeListContentProps[] = [
       {
+        id: "member",
         caption: "Member of Technical Staff",
         items: [
           {
@@ -143,6 +254,7 @@ export const WithActions: Story = {
         ],
       },
       {
+        id: "project",
         caption: "Product Management Team",
         items: [
           {
@@ -248,6 +360,7 @@ export const WithoutHeader: Story = {
 
     const TREE_LIST_DATA = [
       {
+        id: "member",
         items: [
           { id: "1", caption: "Adam Noto Hakarsa", onClick: setPerson },
           { id: "2", caption: "Mohamad Naufal Alim", onClick: setPerson },
