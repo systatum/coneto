@@ -174,8 +174,7 @@ function NavTab({
                 $isAction={!!props.actions}
               >
                 {props.title}
-                {isHovered === props.id &&
-                  props.actions &&
+                {props.actions &&
                   (() => {
                     const list = props.actions;
                     const actionsWithIcons = list.map((item) => ({
@@ -203,7 +202,14 @@ function NavTab({
                           padding: 0;
                         `}
                         containerStyle={css`
-                          transition: all 0.2s ease-in-out;
+                          ${isHovered === props.id
+                            ? css`
+                                opacity: 1;
+                              `
+                            : css`
+                                opacity: 0;
+                              `}
+                          transition: all 0.3s ease-in-out;
                           width: fit-content;
                           position: absolute;
                           top: 50%;
@@ -329,30 +335,30 @@ const NavTabItem = styled.div<{
   ${({ $isAction, $isHovered }) =>
     $isAction &&
     css`
+      &::before,
+      &::after {
+        display: inline-block;
+        flex-shrink: 0;
+        content: "";
+        height: 16px;
+        transition: width 0.3s ease-in-out;
+      }
+
       ${$isHovered
         ? css`
+            &::before {
+              width: 0px;
+            }
             &::after {
               width: 16px;
-              height: 16px;
-              display: inline-block;
-              flex-shrink: 0;
-              content: "";
             }
           `
         : css`
             &::before {
-              width: 4px;
-              height: 16px;
-              display: inline-block;
-              flex-shrink: 0;
-              content: "";
+              width: 8px;
             }
             &::after {
-              width: 4px;
-              height: 16px;
-              display: inline-block;
-              flex-shrink: 0;
-              content: "";
+              width: 8px;
             }
           `}
     `}
