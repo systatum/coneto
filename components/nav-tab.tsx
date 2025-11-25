@@ -192,7 +192,7 @@ function NavTab({
 
                     return (
                       <ContextMenu
-                        iconSize={9}
+                        iconSize={13}
                         focusBackgroundColor="#d4d4d4"
                         hoverBackgroundColor="#d4d4d4"
                         activeBackgroundColor="#d4d4d4"
@@ -317,6 +317,8 @@ const NavTabItem = styled.div<{
   transition: color 0.2s ease;
   white-space: nowrap;
   gap: 8px;
+  width: fit-content;
+  justify-content: center;
 
   ${({ $selected }) =>
     $selected &&
@@ -324,16 +326,35 @@ const NavTabItem = styled.div<{
       background-color: rgb(243 244 246 / 50%);
     `}
 
-  ${({ $isAction }) =>
+  ${({ $isAction, $isHovered }) =>
     $isAction &&
     css`
-      &::after {
-        width: 16px;
-        height: 16px;
-        content: "";
-        display: inline-block;
-        flex-shrink: 0;
-      }
+      ${$isHovered
+        ? css`
+            &::after {
+              width: 16px;
+              height: 16px;
+              display: inline-block;
+              flex-shrink: 0;
+              content: "";
+            }
+          `
+        : css`
+            &::before {
+              width: 4px;
+              height: 16px;
+              display: inline-block;
+              flex-shrink: 0;
+              content: "";
+            }
+            &::after {
+              width: 4px;
+              height: 16px;
+              display: inline-block;
+              flex-shrink: 0;
+              content: "";
+            }
+          `}
     `}
 
   &:hover {
