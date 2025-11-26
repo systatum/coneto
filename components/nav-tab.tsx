@@ -205,7 +205,9 @@ function NavTab({
                         <NavTabItem
                           key={idx}
                           onClick={() => {
-                            setSelected(item.id);
+                            if (item.content) {
+                              setSelected(item.id);
+                            }
                             tooltipRefs.current.forEach((ref) => {
                               ref?.close();
                             });
