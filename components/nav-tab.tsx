@@ -185,12 +185,30 @@ function NavTab({
                   opacity: 0;
                   background-color: transparent;
                 `}
-                drawerStyle={css`
+                drawerStyle={(placement) => css`
                   border-radius: 0px;
                   padding: 0px;
                   background-color: white;
                   color: black;
                   opacity: 0;
+
+                  ${placement === "bottom-start"
+                    ? css`
+                        margin-top: 3px;
+                      `
+                    : placement === "bottom-end"
+                      ? css`
+                          margin-top: 3px;
+                        `
+                      : placement === "top-start"
+                        ? css`
+                            margin-bottom: 3px;
+                          `
+                        : placement === "top-end"
+                          ? css`
+                              margin-bottom: 3px;
+                            `
+                          : null}
 
                   ${props.subItems &&
                   css`
