@@ -17,6 +17,8 @@ export interface TreeListProps {
   selectedItem?: string;
   onChange?: (id: string) => void;
   onOpenChange?: (props?: TreeListOnOpenChangeProps) => void;
+  showHierarchyLine?: boolean;
+  collapsible?: boolean;
 }
 
 interface TreeListOnOpenChangeProps {
@@ -31,14 +33,6 @@ export interface TreeListContentProps {
   id: string;
   caption?: string;
   items?: TreeListItemsProps[];
-  collapsible?: boolean;
-}
-
-export interface TreeListActionsProps {
-  caption?: string;
-  onClick?: () => void;
-  icon?: RemixiconComponentType;
-  style?: CSSProp;
 }
 
 export interface TreeListItemsProps {
@@ -46,6 +40,14 @@ export interface TreeListItemsProps {
   caption: string;
   onClick?: (item?: TreeListItemsProps) => void;
   actions?: SubMenuTreeList[];
+  items?: TreeListItemsProps[];
+}
+
+export interface TreeListActionsProps {
+  caption?: string;
+  onClick?: () => void;
+  icon?: RemixiconComponentType;
+  style?: CSSProp;
 }
 
 export interface SubMenuTreeList extends Omit<TipMenuItemProps, "onClick"> {
@@ -63,6 +65,8 @@ function TreeList({
   selectedItem = "",
   onOpenChange,
   emptyItemSlate = <div>Empty Content</div>,
+  showHierarchyLine,
+  collapsible,
 }: TreeListProps) {
   const [isSelected, setIsSelected] = useState(selectedItem);
   const [isOpen, setIsOpen] = useState<Record<string, boolean>>(
@@ -138,18 +142,19 @@ function TreeList({
             {data.caption && (
               <GroupTitleWrapper
                 onClick={() => {
-                  if (data.collapsible) {
+                  if (collapsible) {
                     handleSelected(data.id);
                   }
                 }}
-                $collapsible={data.collapsible}
+                $collapsible={collapsible}
               >
                 <GroupTitle>{data.caption}</GroupTitle>
-                {data.collapsible && (
+                {collapsible && (
                   <GroupIcon aria-expanded={isOpen[data.id]} size={20} />
                 )}
               </GroupTitleWrapper>
             )}
+
             <AnimatePresence initial={false}>
               <ItemsWrapper
                 key={`items-wrapper-${index}`}
@@ -173,14 +178,20 @@ function TreeList({
                       label={groupLoading.caption}
                     />
                   ) : data.items?.length > 0 ? (
-                    data.items.map((val) => {
+                    data.items.map((val, index) => {
+                      const isLast = index === data.items?.length - 1;
+
                       return (
                         <TreeListItem
                           key={val.id}
-                          item={{ ...val, id: `${data.id}-${val.id}` }}
+                          item={{ ...val }}
                           isSelected={isSelected}
                           onChange={handleOnChange}
                           searchTerm={searchTerm}
+                          isLastItem={isLast}
+                          showHierarchyLine={showHierarchyLine}
+                          collapsible={collapsible}
+                          isHavingContent={val.items?.length > 0}
                         />
                       );
                     })
@@ -206,94 +217,166 @@ function TreeListItem<T extends TreeListItemsProps>({
   isSelected,
   onChange,
   searchTerm = "",
+  showHierarchyLine,
+  style,
+  isLastItem,
+  level = 0,
+  collapsible,
+  isHavingContent,
 }: {
   item: T;
   searchTerm?: string;
   onChange?: (item?: string) => void;
   isSelected?: string;
+  showHierarchyLine?: boolean;
+  style?: CSSProp;
+  isLastItem?: boolean;
+  level?: number;
+  collapsible?: boolean;
+  isHavingContent?: boolean;
 }) {
+  const [isItemOpen, setIsItemOpen] = useState<Record<string, boolean>>({
+    [item.id]: true,
+  });
+
   const [isHovered, setIsHovered] = useState<null | string>(null);
 
   const escapedTerm = escapeRegExp(searchTerm.trim());
   const regex = new RegExp(`(${escapedTerm})`, "gi");
   const parts = escapedTerm ? item.caption.split(regex) : [item.caption];
 
+  const setToggleItem = (id: string) => {
+    setIsItemOpen((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
   return (
-    <TreeListItemWrapper
-      role="button"
-      aria-label="tree-list-item"
-      $isSelected={isSelected === item.id}
-      onClick={() => {
-        item.onClick(item);
-        onChange(item.id);
-      }}
-      $style={css`
-        ${isHovered === item.id &&
-        css`
-          background-color: #f3f4f6;
+    <>
+      <TreeListItemWrapper
+        role="button"
+        aria-label="tree-list-item"
+        $isSelected={isSelected === item.id && !showHierarchyLine}
+        onClick={() => {
+          item.onClick?.(item);
+          onChange?.(item.id);
+        }}
+        $style={css`
+          ${isHovered === item.id &&
+          css`
+            background-color: #f3f4f6;
+          `}
+          ${style}
         `}
-      `}
-      onMouseLeave={() => setIsHovered(null)}
-      onMouseEnter={() => setIsHovered(item.id)}
-    >
-      {parts.map((part, index) =>
-        part.toLowerCase() === searchTerm.toLowerCase() ? (
-          <HighlightedText key={index}>{part}</HighlightedText>
-        ) : (
-          <span
+        onMouseLeave={() => setIsHovered(null)}
+        onMouseEnter={() => setIsHovered(item.id)}
+        $isHavingContent={isHavingContent}
+        $level={level + 1}
+      >
+        {isHavingContent && collapsible && (
+          <GroupIcon
             style={{
-              width: "100%",
+              left: `${level * 9 + 9}px`,
             }}
-            key={index}
+            onClick={(e) => {
+              e.stopPropagation();
+              setToggleItem(item.id);
+            }}
+            aria-expanded={isItemOpen[item.id]}
+            size={20}
+          />
+        )}
+
+        {parts.map((part, index) =>
+          part.toLowerCase() === searchTerm.toLowerCase() ? (
+            <HighlightedText key={index}>{part}</HighlightedText>
+          ) : (
+            <span key={index} style={{ width: "100%" }}>
+              {part}
+            </span>
+          )
+        )}
+
+        {item.id === isHovered &&
+          item.actions &&
+          (() => {
+            const list = item.actions;
+
+            const actionsWithIcons = list.map((prop) => ({
+              ...prop,
+              icon: prop.icon ?? RiArrowRightSLine,
+              onClick: (e?: React.MouseEvent) => {
+                e?.stopPropagation();
+                prop.onClick?.(item.id);
+                if (list.length > 2) setIsHovered(null);
+              },
+            }));
+
+            return (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "4px",
+                }}
+              >
+                <ContextMenu
+                  maxActionsBeforeCollapsing={2}
+                  iconSize={16}
+                  focusBackgroundColor="#d4d4d4"
+                  hoverBackgroundColor="#d4d4d4"
+                  activeBackgroundColor="#d4d4d4"
+                  actions={actionsWithIcons}
+                  buttonStyle={css`
+                    width: 20px;
+                    height: 20px;
+                    padding: 0;
+                  `}
+                />
+              </div>
+            );
+          })()}
+
+        {showHierarchyLine && (
+          <TreeListHierarchyVerticalLine
+            $isSelected={isSelected === item.id}
+            $level={level}
+          />
+        )}
+      </TreeListItemWrapper>
+
+      <AnimatePresence initial={false}>
+        {isItemOpen[item.id] && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
           >
-            {part}
-          </span>
-        )
-      )}
-
-      {item.id === isHovered &&
-        item.actions &&
-        (() => {
-          const list = item.actions;
-          const actionsWithIcons = list.map((prop) => ({
-            ...prop,
-            icon: prop.icon ?? RiArrowRightSLine,
-            onClick: (e?: React.MouseEvent) => {
-              e?.stopPropagation();
-              prop.onClick?.(item.id);
-              if (list.length > 2) {
-                setIsHovered(null);
-              }
-            },
-          }));
-
-          return (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "4px",
-              }}
-            >
-              <ContextMenu
-                maxActionsBeforeCollapsing={2}
-                iconSize={16}
-                focusBackgroundColor="#d4d4d4"
-                hoverBackgroundColor="#d4d4d4"
-                activeBackgroundColor="#d4d4d4"
-                actions={actionsWithIcons}
-                buttonStyle={css`
-                  width: 20px;
-                  height: 20px;
-                  padding: 0;
-                `}
-              />
-            </div>
-          );
-        })()}
-    </TreeListItemWrapper>
+            {item.items?.map((child, idx) => {
+              const isLast = idx === item.items.length - 1;
+              return (
+                <TreeListItem
+                  key={child.id}
+                  item={child}
+                  isSelected={isSelected}
+                  onChange={onChange}
+                  searchTerm={searchTerm}
+                  isLastItem={isLast}
+                  showHierarchyLine={showHierarchyLine}
+                  level={level + 1}
+                  isHavingContent={child?.items?.length > 0}
+                  collapsible={collapsible}
+                />
+              );
+            })}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
 
@@ -396,9 +479,32 @@ const ItemsWrapper = styled(motion.ul)<{ $collapsed?: boolean }>`
     `};
 `;
 
+const TreeListHierarchyVerticalLine = styled.div<{
+  $level?: number;
+  $isSelected?: boolean;
+}>`
+  position: absolute;
+  top: 0;
+  width: 1px;
+  ${({ $level, $isSelected }) => css`
+    height: 96%;
+    left: ${$level * 9 + 9}px;
+
+    ${$isSelected
+      ? css`
+          border-left: 2px solid #3b82f6;
+        `
+      : css`
+          border-left: 2px dotted black;
+        `}
+  `}
+`;
+
 const TreeListItemWrapper = styled.li<{
   $isSelected: boolean;
   $style?: CSSProp;
+  $isHavingContent?: boolean;
+  $level?: number;
 }>`
   display: flex;
   flex-direction: row;
@@ -415,6 +521,16 @@ const TreeListItemWrapper = styled.li<{
   padding: 0.25rem 1.2rem;
   padding-right: 8px;
   list-style: none;
+
+  ${({ $isHavingContent, $level }) =>
+    $isHavingContent && $level
+      ? css`
+          padding-left: ${$level * 8 + 20}px;
+        `
+      : $level &&
+        css`
+          padding-left: ${$level * 8 + 12}px;
+        `}
 
   ${(props) => props.$style}
 `;
