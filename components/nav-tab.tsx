@@ -209,6 +209,9 @@ function NavTab({
                             tooltipRefs.current.forEach((ref) => {
                               ref?.close();
                             });
+                            if (item.onClick) {
+                              item.onClick();
+                            }
                           }}
                           $subMenu={true}
                         >
