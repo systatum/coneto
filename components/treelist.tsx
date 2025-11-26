@@ -277,7 +277,7 @@ function TreeListItem<T extends TreeListItemsProps>({
         {isHavingContent && collapsible && (
           <GroupIcon
             style={{
-              left: `${level * 9 + 9}px`,
+              left: `${level * 12 + 12}px`,
             }}
             onClick={(e) => {
               e.stopPropagation();
@@ -488,7 +488,7 @@ const TreeListHierarchyVerticalLine = styled.div<{
   width: 1px;
   ${({ $level, $isSelected }) => css`
     height: 96%;
-    left: ${$level * 9 + 9}px;
+    left: ${$level * 12 + 9}px;
 
     ${$isSelected
       ? css`
@@ -525,11 +525,11 @@ const TreeListItemWrapper = styled.li<{
   ${({ $isHavingContent, $level }) =>
     $isHavingContent && $level
       ? css`
-          padding-left: ${$level * 8 + 20}px;
+          padding-left: ${$level * 12 + 20}px;
         `
       : $level &&
         css`
-          padding-left: ${$level * 8 + 12}px;
+          padding-left: ${$level * 12 + 8}px;
         `}
 
   ${(props) => props.$style}
