@@ -122,13 +122,28 @@ export const Default: Story = {
           placeholder: "Enter last name",
         },
       ],
-      {
-        name: "email",
-        title: "Email",
-        type: "email",
-        required: true,
-        placeholder: "Enter email address",
-      },
+      [
+        {
+          name: "email",
+          title: "Email",
+          type: "email",
+          required: true,
+          placeholder: "Enter email address",
+        },
+        {
+          name: "text",
+          title: "Verify",
+          type: "button",
+          required: true,
+          placeholder: "Enter text",
+          buttonProps: {
+            buttonStyle: css`
+              height: 34px;
+            `,
+            variant: "primary",
+          },
+        },
+      ],
       {
         name: "phone",
         title: "Phone Number",
@@ -191,7 +206,7 @@ export const Default: Story = {
       },
       {
         name: "text",
-        title: "Verify",
+        title: "Save",
         type: "button",
         required: true,
         disabled: !isFormValid,
@@ -218,6 +233,9 @@ export const Default: Story = {
           onChange={({ currentState }) => {
             setValue((prev) => ({ ...prev, ...currentState }));
           }}
+          rowStyle={css`
+            align-items: end;
+          `}
           fields={EMPLOYEE_FIELDS}
           formValues={value}
           validationSchema={employeeSchema}
@@ -761,7 +779,7 @@ export const AllCase: Story = {
       },
       {
         name: "text",
-        title: "Verify",
+        title: "Save",
         type: "button",
         required: true,
         disabled: !isFormValid,
