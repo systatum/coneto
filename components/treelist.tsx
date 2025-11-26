@@ -69,11 +69,18 @@ function TreeList({
   collapsible,
 }: TreeListProps) {
   const [isSelected, setIsSelected] = useState(selectedItem);
-  const [isOpen, setIsOpen] = useState<Record<string, boolean>>(
-    Object.fromEntries(
-      content.map((data) => [data.id, Boolean(data.items?.length > 0)])
-    )
+
+  const initialOpenMap = Object.fromEntries(
+    content.map((group) => [group.id, !!group.items?.length])
   );
+
+  for (const group of content) {
+    if (group.items) {
+      Object.assign(initialOpenMap, collectAllItemIds(group.items));
+    }
+  }
+
+  const [isOpen, setIsOpen] = useState<Record<string, boolean>>(initialOpenMap);
 
   const [lastFetchGroup, setLastFetchGroup] = useState<Record<string, Date>>(
     Object.fromEntries(content.map((data) => [data.id, null]))
@@ -178,9 +185,7 @@ function TreeList({
                       label={groupLoading.caption}
                     />
                   ) : data.items?.length > 0 ? (
-                    data.items.map((val, index) => {
-                      const isLast = index === data.items?.length - 1;
-
+                    data.items.map((val) => {
                       return (
                         <TreeListItem
                           key={val.id}
@@ -188,10 +193,11 @@ function TreeList({
                           isSelected={isSelected}
                           onChange={handleOnChange}
                           searchTerm={searchTerm}
-                          isLastItem={isLast}
                           showHierarchyLine={showHierarchyLine}
                           collapsible={collapsible}
                           isHavingContent={val.items?.length > 0}
+                          setIsOpen={handleSelected}
+                          isOpen={isOpen}
                         />
                       );
                     })
@@ -212,6 +218,18 @@ function TreeList({
   );
 }
 
+function collectAllItemIds(
+  items: TreeListItemsProps[],
+  acc = {} as Record<string, boolean>
+) {
+  for (const item of items) {
+    acc[item.id] = !!item.items?.length;
+
+    if (item.items?.length) collectAllItemIds(item.items, acc);
+  }
+  return acc;
+}
+
 function TreeListItem<T extends TreeListItemsProps>({
   item,
   isSelected,
@@ -219,10 +237,11 @@ function TreeListItem<T extends TreeListItemsProps>({
   searchTerm = "",
   showHierarchyLine,
   style,
-  isLastItem,
   level = 0,
   collapsible,
   isHavingContent,
+  isOpen,
+  setIsOpen,
 }: {
   item: T;
   searchTerm?: string;
@@ -230,15 +249,12 @@ function TreeListItem<T extends TreeListItemsProps>({
   isSelected?: string;
   showHierarchyLine?: boolean;
   style?: CSSProp;
-  isLastItem?: boolean;
   level?: number;
   collapsible?: boolean;
   isHavingContent?: boolean;
+  isOpen?: Record<string, boolean>;
+  setIsOpen?: (prop: string) => void;
 }) {
-  const [isItemOpen, setIsItemOpen] = useState<Record<string, boolean>>({
-    [item.id]: true,
-  });
-
   const [isHovered, setIsHovered] = useState<null | string>(null);
 
   const escapedTerm = escapeRegExp(searchTerm.trim());
@@ -246,10 +262,7 @@ function TreeListItem<T extends TreeListItemsProps>({
   const parts = escapedTerm ? item.caption.split(regex) : [item.caption];
 
   const setToggleItem = (id: string) => {
-    setIsItemOpen((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
+    setIsOpen(id);
   };
 
   return (
@@ -277,13 +290,13 @@ function TreeListItem<T extends TreeListItemsProps>({
         {isHavingContent && collapsible && (
           <GroupIcon
             style={{
-              left: `${level * 12 + 12}px`,
+              left: `${level * 12 + 13}px`,
             }}
             onClick={(e) => {
               e.stopPropagation();
               setToggleItem(item.id);
             }}
-            aria-expanded={isItemOpen[item.id]}
+            aria-expanded={isOpen[item.id]}
             size={20}
           />
         )}
@@ -349,15 +362,14 @@ function TreeListItem<T extends TreeListItemsProps>({
       </TreeListItemWrapper>
 
       <AnimatePresence initial={false}>
-        {isItemOpen[item.id] && (
+        {isOpen[item.id] && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
-            {item.items?.map((child, idx) => {
-              const isLast = idx === item.items.length - 1;
+            {item.items?.map((child) => {
               return (
                 <TreeListItem
                   key={child.id}
@@ -365,11 +377,12 @@ function TreeListItem<T extends TreeListItemsProps>({
                   isSelected={isSelected}
                   onChange={onChange}
                   searchTerm={searchTerm}
-                  isLastItem={isLast}
                   showHierarchyLine={showHierarchyLine}
                   level={level + 1}
                   isHavingContent={child?.items?.length > 0}
                   collapsible={collapsible}
+                  isOpen={isOpen}
+                  setIsOpen={setIsOpen}
                 />
               );
             })}
