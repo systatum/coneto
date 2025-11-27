@@ -41,12 +41,10 @@ export const Default: Story = {
       {
         id: "member",
         caption: "Member of Technical Staff",
-        collapsible: true,
       },
       {
         id: "project",
         caption: "Product Management Team",
-        collapsible: true,
         items: [
           { id: "pmt-1", caption: "Samantha Lee", onClick: setPerson },
           { id: "pmt-2", caption: "Jason Kim", onClick: setPerson },
@@ -107,6 +105,7 @@ export const Default: Story = {
         }}
       >
         <TreeList
+          collapsible
           onOpenChange={async ({
             id,
             isOpen,
@@ -176,6 +175,70 @@ export const Default: Story = {
             );
           }}
           content={content}
+        />
+      </div>
+    );
+  },
+};
+
+export const Nested: Story = {
+  render: () => {
+    const TREE_LIST_DATA: TreeListContentProps[] = [
+      {
+        id: "home",
+        caption: "Home",
+        items: [
+          { id: "cleverfiles", caption: ".cleverfiles" },
+          {
+            id: "my-documents",
+            caption: "My Documents",
+            items: [
+              {
+                id: "contracts",
+                caption: "Contracts",
+                items: [
+                  { id: "alpha-92", caption: "Blueprints" },
+                  { id: "delta-17", caption: "Financial Report" },
+                  { id: "omega-48", caption: "Internal Notes" },
+                ],
+              },
+              { id: "engineering-economics", caption: "Engineering economics" },
+              { id: "harvard", caption: "Harvard" },
+              { id: "study", caption: "Study" },
+              { id: "work", caption: "Work" },
+            ],
+          },
+          {
+            id: "my-favourite",
+            caption: "My Favourite",
+          },
+        ],
+      },
+      {
+        id: "images",
+        caption: "Images",
+        items: [
+          { id: "backup", caption: "Backup" },
+          { id: "trip-bali", caption: "Trip to Bali" },
+          { id: "with-family", caption: "With family" },
+        ],
+      },
+    ];
+
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "0.25rem",
+          maxWidth: "250px",
+        }}
+      >
+        <TreeList
+          collapsible
+          showHierarchyLine
+          onOpenChange={({ id }) => console.log(id)}
+          content={TREE_LIST_DATA}
         />
       </div>
     );

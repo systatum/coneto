@@ -5,6 +5,7 @@ describe("Treelist", () => {
     beforeEach(() => {
       cy.visit(getIdContent("content-treelist--default"));
     });
+
     context("when collapsible", () => {
       it("should highlight selected item", () => {
         cy.contains("Member of Technical Staff").click();
@@ -71,6 +72,121 @@ describe("Treelist", () => {
     });
   });
 
+  context("with nested", () => {
+    beforeEach(() => {
+      cy.visit(getIdContent("content-treelist--nested"));
+    });
+
+    const SELECTED_VERTICAL_LINE = "2px solid rgb(59, 130, 246)";
+    const UNSELECTED_VERTICAL_LINE = "2px solid rgb(243, 243, 243)";
+    const SAME_LEVEL_SELECTED_VERTICAL_LINE = "2px solid rgb(215, 214, 214)";
+
+    context("with showHierarchy", () => {
+      it("renders the line", () => {
+        cy.contains("Blueprints")
+          .parent()
+          .findByLabelText("vertical-line")
+          .should("exist")
+          .and("have.css", "border-left", UNSELECTED_VERTICAL_LINE);
+
+        cy.findAllByLabelText("vertical-line-level")
+          .eq(0)
+          .should("exist")
+          .and("have.css", "border-left", UNSELECTED_VERTICAL_LINE);
+      });
+
+      context("when clicking", () => {
+        it("should render with blue line", () => {
+          cy.contains("Blueprints")
+            .click()
+            .parent()
+            .findByLabelText("vertical-line")
+            .should("exist")
+            .and("have.css", "border-left", SELECTED_VERTICAL_LINE);
+
+          cy.contains("Financial Report")
+            .parent()
+            .findByLabelText("vertical-line")
+            .should("exist")
+            .and("have.css", "border-left", SAME_LEVEL_SELECTED_VERTICAL_LINE);
+        });
+
+        context("when on another level", () => {
+          it("render the grayish line", () => {
+            cy.contains("Blueprints")
+              .click()
+              .parent()
+              .findByLabelText("vertical-line")
+              .should("exist")
+              .and("have.css", "border-left", SELECTED_VERTICAL_LINE);
+            cy.contains("Blueprints")
+              .parent()
+              .findByLabelText("vertical-line")
+              .should("exist")
+              .and("have.css", "border-left", SELECTED_VERTICAL_LINE);
+
+            cy.contains(".cleverfiles")
+              .parent()
+              .findByLabelText("vertical-line")
+              .should("exist")
+              .and("have.css", "border-left", UNSELECTED_VERTICAL_LINE);
+          });
+        });
+
+        context("when on different group", () => {
+          it("render the grayish line", () => {
+            cy.contains("Blueprints")
+              .click()
+              .parent()
+              .findByLabelText("vertical-line")
+              .should("exist")
+              .and("have.css", "border-left", SELECTED_VERTICAL_LINE);
+
+            cy.contains("Backup")
+              .parent()
+              .findByLabelText("vertical-line")
+              .should("exist")
+              .and("have.css", "border-left", UNSELECTED_VERTICAL_LINE);
+          });
+        });
+      });
+    });
+
+    context("when collapsible", () => {
+      it("renders the chevron", () => {
+        cy.findAllByLabelText("arrow-icon").should("have.length", 4);
+      });
+
+      context("when clicking", () => {
+        it("should collapsed the content", () => {
+          cy.findByText("Blueprints").should("exist");
+          cy.findByText("Contracts").click();
+          cy.findAllByLabelText("arrow-icon").eq(2).click();
+          cy.findByText("Blueprints").should("not.exist");
+        });
+
+        it("renders consistent line color", () => {
+          cy.findByText("Blueprints").should("exist");
+          cy.findByText("Contracts")
+            .click()
+            .parent()
+            .findByLabelText("vertical-line")
+            .should("exist")
+            .and("have.css", "border-left", SELECTED_VERTICAL_LINE);
+
+          cy.findAllByLabelText("arrow-icon").eq(2).click();
+          cy.findByText("Blueprints").should("not.exist");
+
+          cy.findByText("Contracts")
+            .parent()
+            .findByLabelText("vertical-line")
+            .should("exist")
+            .and("have.css", "border-left", SELECTED_VERTICAL_LINE);
+        });
+      });
+    });
+  });
+
   context("with actions", () => {
     beforeEach(() => {
       cy.visit(getIdContent("content-treelist--with-actions"));
@@ -101,7 +217,7 @@ describe("Treelist", () => {
           .click();
         cy.get("@consoleLog").should(
           "have.been.calledWith",
-          "member-mts-1 was edited"
+          "mts-1 was edited"
         );
       });
 
@@ -115,7 +231,7 @@ describe("Treelist", () => {
 
           cy.get("@consoleLog").should(
             "have.been.calledWith",
-            "member-mts-1 was copied"
+            "mts-1 was copied"
           );
         });
       });
