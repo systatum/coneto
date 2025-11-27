@@ -64,7 +64,7 @@ function TreeList({
   onChange,
   selectedItem = "",
   onOpenChange,
-  emptyItemSlate = <div>Empty Content</div>,
+  emptyItemSlate = "Empty Content",
   showHierarchyLine,
   collapsible,
 }: TreeListProps) {
@@ -196,12 +196,14 @@ function TreeList({
                           item={{ ...val }}
                           isSelected={isSelected}
                           onChange={handleOnChange}
+                          isLoading={loadingByGroup}
                           searchTerm={searchTerm}
                           showHierarchyLine={showHierarchyLine}
                           collapsible={collapsible}
                           isHavingContent={val.items?.length > 0}
                           setIsOpen={handleSelected}
                           isOpen={isOpen}
+                          emptyItemSlate={emptyItemSlate}
                         />
                       );
                     })
@@ -234,19 +236,7 @@ function collectAllItemIds(
   return acc;
 }
 
-function TreeListItem<T extends TreeListItemsProps>({
-  item,
-  isSelected,
-  onChange,
-  searchTerm = "",
-  showHierarchyLine,
-  style,
-  level = 0,
-  collapsible,
-  isHavingContent,
-  isOpen,
-  setIsOpen,
-}: {
+interface TreeListItemComponent<T extends TreeListItemsProps> {
   item: T;
   searchTerm?: string;
   onChange?: (item?: string) => void;
@@ -257,8 +247,26 @@ function TreeListItem<T extends TreeListItemsProps>({
   collapsible?: boolean;
   isHavingContent?: boolean;
   isOpen?: Record<string, boolean>;
+  isLoading?: Record<string, { isLoading: boolean; caption: string }>;
   setIsOpen?: (prop: string) => void;
-}) {
+  emptyItemSlate?: ReactNode;
+}
+
+function TreeListItem<T extends TreeListItemsProps>({
+  item,
+  isSelected,
+  onChange,
+  searchTerm = "",
+  showHierarchyLine,
+  style,
+  level = 0,
+  collapsible,
+  isHavingContent,
+  isLoading,
+  isOpen,
+  setIsOpen,
+  emptyItemSlate,
+}: TreeListItemComponent<T>) {
   const [isHovered, setIsHovered] = useState<null | string>(null);
 
   const escapedTerm = escapeRegExp(searchTerm.trim());
@@ -270,7 +278,11 @@ function TreeListItem<T extends TreeListItemsProps>({
   };
 
   return (
-    <>
+    <div
+      style={{
+        position: "relative",
+      }}
+    >
       <TreeListItemWrapper
         role="button"
         aria-label="tree-list-item"
@@ -359,54 +371,81 @@ function TreeListItem<T extends TreeListItemsProps>({
               </div>
             );
           })()}
-
-        {showHierarchyLine && (
-          <>
-            <TreeListHierarchyVerticalLine
-              aria-label="vertical-line"
-              $isSelected={isSelected === item.id}
-              $level={level}
-            />
-            {Array.from({ length: level }).map((_, index) => (
-              <TreeListHierarchyVerticalLine
-                key={index}
-                aria-label="vertical-line-level"
-                $level={index}
-              />
-            ))}
-          </>
-        )}
       </TreeListItemWrapper>
+
+      {showHierarchyLine && (
+        <>
+          <TreeListHierarchyVerticalLine
+            aria-label="vertical-line"
+            $isSelected={isSelected === item.id}
+            $level={level}
+          />
+          {Array.from({ length: level }).map((_, index) => (
+            <TreeListHierarchyVerticalLine
+              key={index}
+              aria-label="vertical-line-level"
+              $level={index}
+            />
+          ))}
+        </>
+      )}
 
       <AnimatePresence initial={false}>
         {isOpen[item.id] && (
           <motion.div
+            style={{
+              position: "relative",
+            }}
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
-            {item.items?.map((child) => {
-              return (
-                <TreeListItem
-                  key={child.id}
-                  item={child}
-                  isSelected={isSelected}
-                  onChange={onChange}
-                  searchTerm={searchTerm}
-                  showHierarchyLine={showHierarchyLine}
-                  level={level + 1}
-                  isHavingContent={child?.items?.length > 0}
-                  collapsible={collapsible}
-                  isOpen={isOpen}
-                  setIsOpen={setIsOpen}
-                />
+            {(() => {
+              const groupLoading = isLoading[item.id];
+
+              return groupLoading?.isLoading ? (
+                <>
+                  <LoadingSpinner
+                    style={css`
+                      transform: translateX(${level * 20 + 20}px);
+                      gap: 8px;
+                    `}
+                    label={groupLoading.caption}
+                  />
+                </>
+              ) : item.items?.length > 0 ? (
+                item.items?.map((child) => (
+                  <TreeListItem
+                    key={child.id}
+                    item={child}
+                    isSelected={isSelected}
+                    onChange={onChange}
+                    searchTerm={searchTerm}
+                    showHierarchyLine={showHierarchyLine}
+                    level={level + 1}
+                    isHavingContent={child?.items?.length > 0}
+                    collapsible={collapsible}
+                    isOpen={isOpen}
+                    setIsOpen={setIsOpen}
+                    emptyItemSlate={emptyItemSlate}
+                    isLoading={isLoading}
+                  />
+                ))
+              ) : (
+                <div
+                  style={{
+                    transform: `translateX(${level * 20 + 20}px)`,
+                  }}
+                >
+                  emptyItemSlate
+                </div>
               );
-            })}
+            })()}
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </div>
   );
 }
 
@@ -537,9 +576,10 @@ const TreeListHierarchyVerticalLine = styled.div<{
   position: absolute;
   top: 0;
   width: 1px;
+  z-index: 8888;
   ${({ $level, $isSelected }) => css`
     height: 100%;
-    left: ${$level * 12 + 9}px;
+    left: ${$level * 12 + 12}px;
 
     ${$isSelected
       ? css`
