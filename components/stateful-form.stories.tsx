@@ -97,14 +97,6 @@ export const Default: Story = {
           comboboxProps: {
             options: SALUTATION_OPTIONS,
             strict: true,
-            selectboxStyle: css`
-              border: 1px solid #d1d5db;
-              max-height: 34px;
-              &:focus {
-                border-color: #61a9f9;
-                box-shadow: 0 0 0 1px #61a9f9;
-              }
-            `,
           },
         },
         {
@@ -137,9 +129,6 @@ export const Default: Story = {
           required: true,
           placeholder: "Enter text",
           buttonProps: {
-            buttonStyle: css`
-              height: 34px;
-            `,
             variant: "primary",
           },
         },
