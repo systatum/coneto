@@ -5,6 +5,7 @@ import { RemixiconComponentType, RiArrowRightSLine } from "@remixicon/react";
 import { Button, SubMenuButtonProps } from "./button";
 import ContextMenu from "./context-menu";
 import { TipMenuItemProps } from "./tip-menu";
+import { Tooltip, TooltipRef } from "./tooltip";
 
 export interface NavTabProps {
   tabs?: NavTabContentProps[];
@@ -38,6 +39,16 @@ export interface NavTabContentProps {
   content?: ReactNode;
   onClick?: () => void;
   actions?: SubMenuNavTab[];
+  subItems?: NavTabSubItemsContentProps[];
+}
+
+export interface NavTabSubItemsContentProps {
+  id: string;
+  caption: string;
+  icon?: RemixiconComponentType;
+  iconColor?: string;
+  onClick?: () => void;
+  content?: ReactNode;
 }
 
 export interface SubMenuNavTab extends Omit<TipMenuItemProps, "onClick"> {
@@ -57,6 +68,8 @@ function NavTab({
   activeColor = "rgb(59, 130, 246)",
   children,
 }: NavTabProps) {
+  const tooltipRefs = useRef<Array<TooltipRef | null>>([]);
+
   const [selected, setSelected] = useState<string>(activeTab);
   const [isHovered, setIsHovered] = useState<string | null>(null);
 
@@ -64,6 +77,7 @@ function NavTab({
   const [tabSizes, setTabSizes] = useState<{ width: number; left: number }[]>(
     []
   );
+
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -72,7 +86,11 @@ function NavTab({
       return { left: 0, width: 0, opacity: 0 };
     }
 
-    const targetIndex = tabs.findIndex((tab) => tab.id === selected);
+    const targetIndex = tabs.findIndex(
+      (tab) =>
+        tab.id === selected ||
+        tab.subItems?.some((item) => item.id === selected)
+    );
 
     if (targetIndex === -1 || !tabSizes[targetIndex]) {
       return { left: 0, width: 0, opacity: 0 };
@@ -126,7 +144,10 @@ function NavTab({
   };
 
   const hoverPosition = getHoverPosition();
-  const activeContent = tabs.filter((data) => data.id === selected);
+  const activeContent = tabs.filter(
+    (tab) =>
+      tab.id === selected || tab.subItems?.some((item) => item.id === selected)
+  );
 
   return (
     <NavTabWrapper $containerStyle={containerStyle}>
@@ -155,76 +176,149 @@ function NavTab({
 
           {tabs.map((props, index) => {
             return (
-              <NavTabItem
-                aria-label="nav-tab-item"
-                key={props.id}
-                $boxStyle={boxStyle}
-                ref={setTabRef(index)}
-                role="tab"
-                onClick={(e) => {
-                  setSelected(props.id);
-                  if (props.onClick) {
-                    props.onClick();
-                  }
+              <Tooltip
+                ref={(el) => {
+                  tooltipRefs.current[index] = el;
                 }}
-                onMouseEnter={() => setIsHovered(props.id)}
-                onMouseLeave={() => setIsHovered(null)}
-                $isHovered={isHovered === props.id}
-                $selected={selected === props.id}
-                $isAction={!!props.actions}
-              >
-                {props.title}
-                {isHovered === props.id &&
-                  props.actions &&
-                  (() => {
-                    const list = props.actions;
-                    const actionsWithIcons = list.map((item) => ({
-                      ...item,
-                      icon: item.icon ?? RiArrowRightSLine,
-                      onClick: (e?: React.MouseEvent) => {
-                        e?.stopPropagation();
-                        item.onClick?.(props.id);
-                        if (list.length > 1) {
-                          setIsHovered(null);
-                        }
-                      },
-                    }));
+                key={props.id}
+                arrowStyle={css`
+                  opacity: 0;
+                  background-color: transparent;
+                `}
+                drawerStyle={(placement) => css`
+                  border-radius: 0px;
+                  padding: 0px;
+                  background-color: white;
+                  color: black;
+                  opacity: 0;
 
-                    return (
-                      <ContextMenu
-                        iconSize={13}
-                        focusBackgroundColor="#d4d4d4"
-                        hoverBackgroundColor="#d4d4d4"
-                        activeBackgroundColor="#d4d4d4"
-                        actions={actionsWithIcons}
-                        buttonStyle={css`
-                          width: 16px;
-                          height: 16px;
-                          padding: 0;
-                        `}
-                        containerStyle={css`
-                          ${isHovered === props.id
-                            ? css`
-                                opacity: 1;
-                              `
-                            : css`
-                                opacity: 0;
-                              `}
-                          pointer-events: ${isHovered === props.id
-                            ? "auto"
-                            : "none"};
-                          transition: all 0.3s ease-in-out;
-                          width: fit-content;
-                          position: absolute;
-                          top: 50%;
-                          right: 12px;
-                          transform: translateY(-50%);
-                          z-index: 8;
-                        `}
-                      />
-                    );
-                  })()}
-              </NavTabItem>
+                  ${placement === "bottom-start"
+                    ? css`
+                        margin-top: 3px;
+                      `
+                    : placement === "bottom-end"
+                      ? css`
+                          margin-top: 3px;
+                        `
+                      : placement === "top-start"
+                        ? css`
+                            margin-bottom: 3px;
+                          `
+                        : placement === "top-end"
+                          ? css`
+                              margin-bottom: 3px;
+                            `
+                          : null}
+
+                  ${props.subItems &&
+                  css`
+                    opacity: 1;
+                  `}
+                `}
+                dialogPlacement="bottom-left"
+                dialog={
+                  <>
+                    {props.subItems &&
+                      props.subItems.map((item, idx) => (
+                        <NavTabItem
+                          key={idx}
+                          onClick={() => {
+                            if (item.content) {
+                              setSelected(item.id);
+                            }
+                            tooltipRefs.current.forEach((ref) => {
+                              ref?.close();
+                            });
+                            if (item.onClick) {
+                              item.onClick();
+                            }
+                          }}
+                          $subMenu={true}
+                        >
+                          {item.icon && (
+                            <item.icon size={16} color={item.iconColor} />
+                          )}
+                          {item.caption}
+                        </NavTabItem>
+                      ))}
+                  </>
+                }
+              >
+                <NavTabItem
+                  aria-label="nav-tab-item"
+                  key={props.id}
+                  $boxStyle={boxStyle}
+                  ref={setTabRef(index)}
+                  role="tab"
+                  onClick={(e) => {
+                    setSelected(props.id);
+                    if (props.onClick) {
+                      props.onClick();
+                    }
+
+                    tooltipRefs.current.forEach((ref, i) => {
+                      if (i !== index) ref?.close();
+                    });
+                  }}
+                  onMouseEnter={() => setIsHovered(props.id)}
+                  onMouseLeave={() => setIsHovered(null)}
+                  $isHovered={isHovered === props.id}
+                  $selected={selected === props.id}
+                  $isAction={!!props.actions}
+                >
+                  {props.title}
+                  {isHovered === props.id &&
+                    props.actions &&
+                    (() => {
+                      const list = props.actions;
+                      const actionsWithIcons = list.map((item) => ({
+                        ...item,
+                        icon: item.icon ?? RiArrowRightSLine,
+                        onClick: (e?: React.MouseEvent) => {
+                          e?.stopPropagation();
+                          item.onClick?.(props.id);
+                          if (list.length > 1) {
+                            setIsHovered(null);
+                          }
+                        },
+                      }));
+
+                      return (
+                        <ContextMenu
+                          iconSize={13}
+                          focusBackgroundColor="#d4d4d4"
+                          hoverBackgroundColor="#d4d4d4"
+                          activeBackgroundColor="#d4d4d4"
+                          actions={actionsWithIcons}
+                          buttonStyle={css`
+                            width: 16px;
+                            height: 16px;
+                            padding: 0;
+                          `}
+                          containerStyle={css`
+                            ${isHovered === props.id
+                              ? css`
+                                  opacity: 1;
+                                `
+                              : css`
+                                  opacity: 0;
+                                `}
+                            pointer-events: ${isHovered === props.id
+                              ? "auto"
+                              : "none"};
+                            transition: all 0.3s ease-in-out;
+                            width: fit-content;
+                            position: absolute;
+                            top: 50%;
+                            right: 12px;
+                            transform: translateY(-50%);
+                            z-index: 8;
+                          `}
+                        />
+                      );
+                    })()}
+                </NavTabItem>
+              </Tooltip>
             );
           })}
         </NavTabHeader>
@@ -239,9 +333,16 @@ function NavTab({
       </NavTabRowWrapper>
 
       <NavContent $contentStyle={contentStyle}>
-        {activeContent.map((props, index) => (
-          <Fragment key={index}>{props.content}</Fragment>
-        ))}
+        {activeContent.map((props, index) => {
+          const selectedItemContent = props.subItems?.find(
+            (item) => item.id === selected
+          );
+          if (selectedItemContent) {
+            return <Fragment>{selectedItemContent.content}</Fragment>;
+          }
+
+          return <Fragment key={index}>{props.content}</Fragment>;
+        })}
         {children}
       </NavContent>
     </NavTabWrapper>
@@ -308,6 +409,7 @@ const NavTabList = styled(motion.div)<{
   z-index: 1;
   height: 2px;
   border-radius: 1px;
+  pointer-events: none;
   background-color: ${({ $activeColor }) => $activeColor};
 `;
 
@@ -316,6 +418,7 @@ const NavTabItem = styled.div<{
   $boxStyle?: CSSProp;
   $isHovered?: boolean;
   $isAction?: boolean;
+  $subMenu?: boolean;
 }>`
   display: flex;
   flex-direction: row;
@@ -329,11 +432,22 @@ const NavTabItem = styled.div<{
   gap: 8px;
   width: fit-content;
   justify-content: center;
+  user-select: none;
 
   ${({ $selected }) =>
     $selected &&
     css`
       background-color: rgb(243 244 246 / 50%);
+    `}
+
+  ${({ $subMenu }) =>
+    $subMenu &&
+    css`
+      justify-content: flex-start;
+      width: 100%;
+      min-width: 150px;
+      border: 1px solid #f3f3f3;
+      padding-right: 40px;
     `}
 
   ${({ $isAction, $isHovered }) =>

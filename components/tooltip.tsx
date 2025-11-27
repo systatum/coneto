@@ -7,7 +7,14 @@ import {
   shift,
   useFloating,
 } from "@floating-ui/react";
-import React, { ReactNode, useEffect, useRef, useState } from "react";
+import React, {
+  forwardRef,
+  ReactNode,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import styled, { css, CSSProp } from "styled-components";
 
 export type TooltipProps = {
@@ -24,155 +31,180 @@ export type TooltipProps = {
   showDelayPeriod?: number;
 };
 
+export type TooltipRef = {
+  open: () => void;
+  close: () => void;
+};
+
 type DialogPlacement =
   | "bottom-left"
   | "bottom-right"
   | "top-left"
   | "top-right";
 
-export function Tooltip({
-  dialog,
-  children,
-  showDialogOn = "hover",
-  hideDialogOn = "hover",
-  drawerStyle,
-  containerStyle,
-  arrowStyle,
-  dialogPlacement = "bottom-left",
-  onVisibilityChange,
-  safeAreaAriaLabels,
-  showDelayPeriod = 0,
-}: TooltipProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const arrowRef = useRef<HTMLDivElement>(null);
-  const delayTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+export const Tooltip = forwardRef<TooltipRef, TooltipProps>(
+  (
+    {
+      dialog,
+      children,
+      showDialogOn = "hover",
+      hideDialogOn = "hover",
+      drawerStyle,
+      containerStyle,
+      arrowStyle,
+      dialogPlacement = "bottom-left",
+      onVisibilityChange,
+      safeAreaAriaLabels,
+      showDelayPeriod = 0,
+    },
+    ref
+  ) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const arrowRef = useRef<HTMLDivElement>(null);
+    const delayTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const { floatingStyles, refs, placement } = useFloating({
-    placement: getFloatingPlacement(dialogPlacement),
-    open: isOpen,
-    onOpenChange: setIsOpen,
-    middleware: [
-      offset(({ placement }) => {
-        return placement.startsWith("top") ? 16 : 0;
-      }),
-      flip(),
-      shift({ padding: 8 }),
-      arrow({ element: arrowRef }),
-    ],
-    whileElementsMounted: autoUpdate,
-  });
-
-  const safeAreaAriaLabelsLocal: string[] = [
-    "combobox-drawer-month",
-    "combobox-drawer-year",
-    ...(safeAreaAriaLabels || []),
-  ];
-
-  useEffect(() => {
-    if (hideDialogOn !== "click" || !isOpen) return;
-
-    function handleClickOutside(event: MouseEvent) {
-      const floatingEl = refs.floating.current;
-      const referenceEl = refs.reference.current;
-
-      if (
-        Array.isArray(safeAreaAriaLabelsLocal) &&
-        safeAreaAriaLabelsLocal.some((label) =>
-          floatingEl.closest(`[aria-label="${label}"]`)
-        )
-      ) {
-        return;
-      }
-
-      if (
-        floatingEl instanceof HTMLElement &&
-        !floatingEl.contains(event.target as Node) &&
-        referenceEl instanceof HTMLElement &&
-        !referenceEl.contains(event.target as Node)
-      ) {
+    useImperativeHandle(ref, () => ({
+      open: () => {
+        setIsOpen(true);
+        if (onVisibilityChange) {
+          onVisibilityChange(true);
+        }
+      },
+      close: () => {
         setIsOpen(false);
-        onVisibilityChange(false);
-      }
-    }
-
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, [isOpen, hideDialogOn, refs.floating, refs.reference]);
-
-  return (
-    <Wrapper
-      onMouseEnter={() => {
-        if (showDialogOn === "hover") {
-          delayTimeoutRef.current = setTimeout(() => {
-            setIsOpen(true);
-            if (onVisibilityChange) {
-              onVisibilityChange(true);
-            }
-          }, showDelayPeriod);
+        if (onVisibilityChange) {
+          onVisibilityChange(false);
         }
-      }}
-      onMouseLeave={() => {
-        if (hideDialogOn === "hover") {
-          clearTimeout(delayTimeoutRef.current);
+      },
+    }));
 
+    const { floatingStyles, refs, placement } = useFloating({
+      placement: getFloatingPlacement(dialogPlacement),
+      open: isOpen,
+      onOpenChange: setIsOpen,
+      middleware: [
+        offset(({ placement }) => {
+          return placement.startsWith("top") ? 16 : 0;
+        }),
+        flip(),
+        shift({ padding: 8 }),
+        arrow({ element: arrowRef }),
+      ],
+      whileElementsMounted: autoUpdate,
+    });
+
+    const safeAreaAriaLabelsLocal: string[] = [
+      "combobox-drawer-month",
+      "combobox-drawer-year",
+      ...(safeAreaAriaLabels || []),
+    ];
+
+    useEffect(() => {
+      if (hideDialogOn !== "click" || !isOpen) return;
+
+      function handleClickOutside(event: MouseEvent) {
+        const floatingEl = refs.floating.current;
+        const referenceEl = refs.reference.current;
+
+        if (
+          Array.isArray(safeAreaAriaLabelsLocal) &&
+          safeAreaAriaLabelsLocal.some((label) =>
+            floatingEl.closest(`[aria-label="${label}"]`)
+          )
+        ) {
+          return;
+        }
+
+        if (
+          floatingEl instanceof HTMLElement &&
+          !floatingEl.contains(event.target as Node) &&
+          referenceEl instanceof HTMLElement &&
+          !referenceEl.contains(event.target as Node)
+        ) {
           setIsOpen(false);
-          if (onVisibilityChange) {
-            onVisibilityChange(false);
-          }
+          onVisibilityChange(false);
         }
-      }}
-      ref={refs.setReference}
-    >
-      <ContentTrigger
-        onClick={(e: React.MouseEvent) => {
-          e.stopPropagation();
-          if (showDialogOn === "click") {
-            setIsOpen((prev) => {
-              const next = !prev;
+      }
+
+      document.addEventListener("click", handleClickOutside);
+      return () => {
+        document.removeEventListener("click", handleClickOutside);
+      };
+    }, [isOpen, hideDialogOn, refs.floating, refs.reference]);
+
+    return (
+      <Wrapper
+        onMouseEnter={() => {
+          if (showDialogOn === "hover") {
+            delayTimeoutRef.current = setTimeout(() => {
+              setIsOpen(true);
               if (onVisibilityChange) {
-                onVisibilityChange(next);
+                onVisibilityChange(true);
               }
-              return next;
-            });
+            }, showDelayPeriod);
           }
         }}
-        $showDialogOn={showDialogOn}
-        $containerStyle={containerStyle}
+        onMouseLeave={() => {
+          if (hideDialogOn === "hover") {
+            clearTimeout(delayTimeoutRef.current);
+
+            setIsOpen(false);
+            if (onVisibilityChange) {
+              onVisibilityChange(false);
+            }
+          }
+        }}
+        ref={refs.setReference}
       >
-        {children}
-      </ContentTrigger>
-      {isOpen && dialog && (
-        <>
-          <Spacer $placement={placement} />
-          <TooltipArrow
-            ref={arrowRef}
-            $placement={placement}
-            aria-label="tooltip-arrow"
-            $arrowStyle={
-              typeof arrowStyle === "function"
-                ? arrowStyle(placement as Placement)
-                : arrowStyle
+        <ContentTrigger
+          onClick={(e: React.MouseEvent) => {
+            e.stopPropagation();
+            if (showDialogOn === "click") {
+              setIsOpen((prev) => {
+                const next = !prev;
+                if (onVisibilityChange) {
+                  onVisibilityChange(next);
+                }
+                return next;
+              });
             }
-          />
-          <TooltipDrawer
-            aria-label="tooltip-drawer"
-            style={floatingStyles}
-            $drawerStyle={
-              typeof drawerStyle === "function"
-                ? drawerStyle(placement as Placement)
-                : drawerStyle
-            }
-            ref={refs.setFloating}
-          >
-            {dialog}
-          </TooltipDrawer>
-        </>
-      )}
-    </Wrapper>
-  );
-}
+          }}
+          $showDialogOn={showDialogOn}
+          $containerStyle={containerStyle}
+        >
+          {children}
+        </ContentTrigger>
+        {isOpen && dialog && (
+          <>
+            <Spacer $placement={placement} />
+            <TooltipArrow
+              ref={arrowRef}
+              $placement={placement}
+              aria-label="tooltip-arrow"
+              $arrowStyle={
+                typeof arrowStyle === "function"
+                  ? arrowStyle(placement as Placement)
+                  : arrowStyle
+              }
+            />
+            <TooltipDrawer
+              aria-label="tooltip-drawer"
+              style={floatingStyles}
+              $drawerStyle={
+                typeof drawerStyle === "function"
+                  ? drawerStyle(placement as Placement)
+                  : drawerStyle
+              }
+              ref={refs.setFloating}
+            >
+              {dialog}
+            </TooltipDrawer>
+          </>
+        )}
+      </Wrapper>
+    );
+  }
+);
 
 const Wrapper = styled.div`
   position: relative;
@@ -186,7 +218,7 @@ const Spacer = styled.div<{ $placement?: Placement }>`
   position: absolute;
   background-color: transparent;
   width: 100%;
-  height: 10px;
+  height: 30px;
 
   ${({ $placement }) =>
     $placement.startsWith("top")

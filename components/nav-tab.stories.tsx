@@ -4,7 +4,15 @@ import { Textbox } from "./textbox";
 import { useState } from "react";
 import { StatefulOnChangeType } from "./stateful-form";
 import { Button } from "./button";
-import { RiAddBoxLine, RiAtLine, RiSearchLine } from "@remixicon/react";
+import {
+  RiAddBoxLine,
+  RiAtLine,
+  RiCharacterRecognitionLine,
+  RiSearchLine,
+  RiTable2,
+} from "@remixicon/react";
+import { ColumnTableProps, Table } from "./table";
+import { css } from "styled-components";
 
 const meta: Meta<typeof NavTab> = {
   title: "Stage/NavTab",
@@ -155,6 +163,93 @@ export const WriteTabContent = () => {
       </div>
     </div>
   );
+};
+
+export const WithSubItems: Story = {
+  render: () => {
+    const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
+
+    const sampleRows = Array.from({ length: 20 }, (_, i) => {
+      const type = TYPES_DATA[i % TYPES_DATA.length];
+      return (
+        <Table.Row
+          rowId={`${type}`}
+          key={i}
+          content={[`Load Balancer ${i + 1}`, type]}
+        />
+      );
+    });
+
+    const columns: ColumnTableProps[] = [
+      {
+        caption: "Name",
+        sortable: false,
+      },
+      {
+        caption: "Type",
+        sortable: false,
+      },
+    ];
+
+    const TABS_ITEMS: NavTabContentProps[] = [
+      {
+        id: "1",
+        title: "Write",
+        content: <WriteTabContent />,
+        onClick: () => {
+          console.log("test tab 1");
+        },
+      },
+      {
+        id: "2",
+        title: "Review",
+        content: <ReviewTabContent />,
+        onClick: () => {
+          console.log("test tab 2");
+        },
+        subItems: [
+          {
+            id: "2-1",
+            icon: RiTable2,
+            caption: "Table View",
+            content: (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "4px",
+                }}
+              >
+                <h2
+                  style={{
+                    fontSize: "18px",
+                  }}
+                >
+                  Table Content
+                </h2>
+                <Table
+                  tableRowContainerStyle={css`
+                    max-height: 400px;
+                  `}
+                  columns={columns}
+                >
+                  {sampleRows}
+                </Table>
+              </div>
+            ),
+          },
+          {
+            id: "2-2",
+            icon: RiCharacterRecognitionLine,
+            caption: "Chart",
+            content: "This is chart content",
+          },
+        ],
+      },
+    ];
+
+    return <NavTab tabs={TABS_ITEMS} activeTab={"2"} />;
+  },
 };
 
 export const ReviewTabContent = () => {

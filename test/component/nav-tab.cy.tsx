@@ -4,7 +4,12 @@ import {
 } from "./../../components/nav-tab.stories";
 import { NavTab, NavTabContentProps } from "./../../components/nav-tab";
 import { css } from "styled-components";
-import { RiAddBoxLine, RiAtLine, RiSearchLine } from "@remixicon/react";
+import {
+  RiAddBoxLine,
+  RiAtLine,
+  RiCharacterRecognitionLine,
+  RiSearchLine,
+} from "@remixicon/react";
 
 describe("NavTab", () => {
   context("actions", () => {
@@ -33,6 +38,74 @@ describe("NavTab", () => {
         cy.get("@consoleLog").should(
           "have.been.calledWith",
           "Add button was clicked"
+        );
+      });
+    });
+  });
+
+  context("with subItems", () => {
+    const tabsWithSubItems = [
+      {
+        id: "2",
+        title: "Review",
+        content: "This is review content",
+        subItems: [
+          {
+            id: "2-1",
+            icon: RiCharacterRecognitionLine,
+            caption: "Chart",
+            content: "This is chart content",
+            onClick: () => console.log("chart was clicked"),
+          },
+        ],
+      },
+    ];
+
+    it("renders with content subitem", () => {
+      cy.window().then((win) => {
+        cy.spy(win.console, "log").as("consoleLog");
+      });
+
+      cy.mount(<NavTab tabs={tabsWithSubItems} activeTab={"2"} />);
+      cy.findByText("This is review content").should("exist");
+      cy.findByText("Review").realHover();
+      cy.findByText("Chart").click();
+      cy.findByText("This is review content").should("not.exist");
+      cy.findByText("This is chart content").should("exist");
+      cy.get("@consoleLog").should("have.been.calledWith", "chart was clicked");
+    });
+
+    context("when empty content", () => {
+      const tabsWithSubItemsEmptyContent = [
+        {
+          id: "2",
+          title: "Review",
+          content: "This is review content",
+          subItems: [
+            {
+              id: "2-1",
+              icon: RiCharacterRecognitionLine,
+              caption: "Chart",
+              onClick: () => console.log("chart was clicked"),
+            },
+          ],
+        },
+      ];
+      it("renders only the console", () => {
+        cy.window().then((win) => {
+          cy.spy(win.console, "log").as("consoleLog");
+        });
+
+        cy.mount(
+          <NavTab tabs={tabsWithSubItemsEmptyContent} activeTab={"2"} />
+        );
+        cy.findByText("This is review content").should("exist");
+        cy.findByText("Review").realHover();
+        cy.findByText("Chart").click();
+        cy.findByText("This is review content").should("exist");
+        cy.get("@consoleLog").should(
+          "have.been.calledWith",
+          "chart was clicked"
         );
       });
     });
