@@ -405,7 +405,7 @@ function TreeListItem<T extends TreeListItemsProps>({
             aria-label="vertical-line"
             $isSelected={isSelected === item.id}
             $level={level}
-            $isSameLevel={isSelected ? isSameLevel : true}
+            $isSameLevel={isSameLevel}
           />
           {Array.from({ length: level }).map((_, idx) => {
             const isSameLevelLine = selectedLevel === idx;
@@ -415,7 +415,7 @@ function TreeListItem<T extends TreeListItemsProps>({
                 key={idx}
                 aria-label="vertical-line-level"
                 $level={idx}
-                $isSameLevel={isSelected ? isSameLevelLine : true}
+                $isSameLevel={isSameLevelLine}
               />
             );
           })}
