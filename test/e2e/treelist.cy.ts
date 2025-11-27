@@ -83,13 +83,63 @@ describe("Treelist", () => {
           .parent()
           .findByLabelText("vertical-line")
           .should("exist")
-          .and("have.css", "border-left", "2px solid rgb(215, 214, 214)");
+          .and("have.css", "border-left", "2px solid rgb(243, 243, 243)");
 
-        cy.contains("Blueprints")
-          .parent()
-          .findAllByLabelText("vertical-line-level")
-          .should("have.length", 2)
-          .and("have.css", "border-left", "2px solid rgb(215, 214, 214)");
+        cy.findAllByLabelText("vertical-line-level")
+          .eq(0)
+          .should("exist")
+          .and("have.css", "border-left", "2px solid rgb(243, 243, 243)");
+      });
+
+      context("when clicking", () => {
+        it("should render with blue line", () => {
+          cy.contains("Blueprints")
+            .click()
+            .parent()
+            .findByLabelText("vertical-line")
+            .should("exist")
+            .and("have.css", "border-left", "2px solid rgb(59, 130, 246)");
+
+          cy.contains("Financial Report")
+            .parent()
+            .findByLabelText("vertical-line")
+            .should("exist")
+            .and("have.css", "border-left", "2px solid rgb(215, 214, 214)");
+        });
+
+        context("when on another level", () => {
+          it("render the grayish line", () => {
+            cy.contains("Blueprints")
+              .click()
+              .parent()
+              .findByLabelText("vertical-line")
+              .should("exist")
+              .and("have.css", "border-left", "2px solid rgb(59, 130, 246)");
+
+            cy.contains(".cleverfiles")
+              .parent()
+              .findByLabelText("vertical-line")
+              .should("exist")
+              .and("have.css", "border-left", "2px solid rgb(243, 243, 243)");
+          });
+        });
+
+        context("when on different group", () => {
+          it("render the grayish line", () => {
+            cy.contains("Blueprints")
+              .click()
+              .parent()
+              .findByLabelText("vertical-line")
+              .should("exist")
+              .and("have.css", "border-left", "2px solid rgb(59, 130, 246)");
+
+            cy.contains("Backup")
+              .parent()
+              .findByLabelText("vertical-line")
+              .should("exist")
+              .and("have.css", "border-left", "2px solid rgb(243, 243, 243)");
+          });
+        });
       });
     });
 
@@ -101,8 +151,28 @@ describe("Treelist", () => {
       context("when clicking", () => {
         it("should collapsed the content", () => {
           cy.findByText("Blueprints").should("be.visible");
-          cy.findAllByLabelText("arrow-icon").eq(0).click();
+          cy.findByText("Contracts").click();
+          cy.findAllByLabelText("arrow-icon").eq(2).click();
           cy.findByText("Blueprints").should("not.be.visible");
+        });
+
+        it("renders consistent line color", () => {
+          cy.findByText("Blueprints").should("exist");
+          cy.findByText("Contracts")
+            .click()
+            .parent()
+            .findByLabelText("vertical-line")
+            .should("exist")
+            .and("have.css", "border-left", "2px solid rgb(59, 130, 246)");
+
+          cy.findAllByLabelText("arrow-icon").eq(2).click();
+          cy.findByText("Blueprints").should("not.exist");
+
+          cy.findByText("Contracts")
+            .parent()
+            .findByLabelText("vertical-line")
+            .should("exist")
+            .and("have.css", "border-left", "2px solid rgb(59, 130, 246)");
         });
       });
     });
