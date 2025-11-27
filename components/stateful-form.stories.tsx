@@ -128,9 +128,6 @@ export const Default: Story = {
           type: "button",
           required: true,
           placeholder: "Enter text",
-          buttonProps: {
-            variant: "primary",
-          },
         },
       ],
       {
