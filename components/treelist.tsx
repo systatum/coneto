@@ -80,6 +80,13 @@ function TreeList({
     }
   }
 
+  const selectedLevel = content
+    .map((group) => {
+      if (group.items) return findLevelById(group.items, isSelected, 0);
+      return null;
+    })
+    .find((level) => level !== null);
+
   const [isOpen, setIsOpen] = useState<Record<string, boolean>>(initialOpenMap);
 
   const [lastFetchGroup, setLastFetchGroup] = useState<Record<string, Date>>(
@@ -204,6 +211,7 @@ function TreeList({
                           setIsOpen={handleSelected}
                           isOpen={isOpen}
                           emptyItemSlate={emptyItemSlate}
+                          selectedLevel={selectedLevel}
                         />
                       );
                     })
@@ -236,6 +244,21 @@ function collectAllItemIds(
   return acc;
 }
 
+function findLevelById(
+  items: TreeListItemsProps[],
+  id: string,
+  level = 0
+): number | null {
+  for (const item of items) {
+    if (item.id === id) return level;
+    if (item.items) {
+      const found = findLevelById(item.items, id, level + 1);
+      if (found !== null) return found;
+    }
+  }
+  return null;
+}
+
 interface TreeListItemComponent<T extends TreeListItemsProps> {
   item: T;
   searchTerm?: string;
@@ -250,6 +273,7 @@ interface TreeListItemComponent<T extends TreeListItemsProps> {
   isLoading?: Record<string, { isLoading: boolean; caption: string }>;
   setIsOpen?: (prop: string) => void;
   emptyItemSlate?: ReactNode;
+  selectedLevel?: number;
 }
 
 function TreeListItem<T extends TreeListItemsProps>({
@@ -266,6 +290,7 @@ function TreeListItem<T extends TreeListItemsProps>({
   isOpen,
   setIsOpen,
   emptyItemSlate,
+  selectedLevel,
 }: TreeListItemComponent<T>) {
   const [isHovered, setIsHovered] = useState<null | string>(null);
 
@@ -276,6 +301,8 @@ function TreeListItem<T extends TreeListItemsProps>({
   const setToggleItem = (id: string) => {
     setIsOpen(id);
   };
+
+  const isSameLevel = selectedLevel !== null && selectedLevel === level;
 
   return (
     <div
@@ -301,7 +328,6 @@ function TreeListItem<T extends TreeListItemsProps>({
         `}
         onMouseLeave={() => setIsHovered(null)}
         onMouseEnter={() => setIsHovered(item.id)}
-        $isHavingContent={isHavingContent}
         $level={level + 1}
       >
         {isHavingContent && collapsible && (
@@ -379,14 +405,20 @@ function TreeListItem<T extends TreeListItemsProps>({
             aria-label="vertical-line"
             $isSelected={isSelected === item.id}
             $level={level}
+            $isSameLevel={isSelected ? isSameLevel : true}
           />
-          {Array.from({ length: level }).map((_, index) => (
-            <TreeListHierarchyVerticalLine
-              key={index}
-              aria-label="vertical-line-level"
-              $level={index}
-            />
-          ))}
+          {Array.from({ length: level }).map((_, idx) => {
+            const isSameLevelLine = selectedLevel === idx;
+
+            return (
+              <TreeListHierarchyVerticalLine
+                key={idx}
+                aria-label="vertical-line-level"
+                $level={idx}
+                $isSameLevel={isSelected ? isSameLevelLine : true}
+              />
+            );
+          })}
         </>
       )}
 
@@ -430,6 +462,7 @@ function TreeListItem<T extends TreeListItemsProps>({
                     setIsOpen={setIsOpen}
                     emptyItemSlate={emptyItemSlate}
                     isLoading={isLoading}
+                    selectedLevel={selectedLevel}
                   />
                 ))
               ) : (
@@ -572,12 +605,14 @@ const ItemsWrapper = styled(motion.ul)<{ $collapsed?: boolean }>`
 const TreeListHierarchyVerticalLine = styled.div<{
   $level?: number;
   $isSelected?: boolean;
+  $isSameLevel?: boolean;
+  $style?: CSSProp;
 }>`
   position: absolute;
   top: 0;
   width: 1px;
   z-index: 8888;
-  ${({ $level, $isSelected }) => css`
+  ${({ $level, $isSelected, $isSameLevel }) => css`
     height: 100%;
     left: ${$level * 12 + 12}px;
 
@@ -585,17 +620,22 @@ const TreeListHierarchyVerticalLine = styled.div<{
       ? css`
           border-left: 2px solid #3b82f6;
         `
-      : css`
-          border-left: 2px solid #d7d6d6;
-        `}
+      : $isSameLevel
+        ? css`
+            border-left: 2px solid #d7d6d6;
+          `
+        : css`
+            border-left: 2px solid rgb(243 243 243);
+          `}
   `}
+
+  ${({ $style }) => $style}
 `;
 
 const TreeListItemWrapper = styled.li<{
   $isSelected: boolean;
   $showHierarchyLine: boolean;
   $style?: CSSProp;
-  $isHavingContent?: boolean;
   $level?: number;
 }>`
   display: flex;
@@ -616,15 +656,11 @@ const TreeListItemWrapper = styled.li<{
   padding-right: 8px;
   list-style: none;
 
-  ${({ $isHavingContent, $level }) =>
-    $isHavingContent && $level
-      ? css`
-          padding-left: ${$level * 12 + 8}px;
-        `
-      : $level &&
-        css`
-          padding-left: ${$level * 12 + 8}px;
-        `}
+  ${({ $level }) =>
+    $level &&
+    css`
+      padding-left: ${$level * 12 + 8}px;
+    `}
 
   ${(props) => props.$style}
 `;
