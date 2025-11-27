@@ -157,7 +157,11 @@ function TreeList({
               >
                 <GroupTitle>{data.caption}</GroupTitle>
                 {collapsible && (
-                  <GroupIcon aria-expanded={isOpen[data.id]} size={20} />
+                  <ArrowIcon
+                    aria-label="arrow-icon"
+                    aria-expanded={isOpen[data.id]}
+                    size={20}
+                  />
                 )}
               </GroupTitleWrapper>
             )}
@@ -289,7 +293,8 @@ function TreeListItem<T extends TreeListItemsProps>({
         $level={level + 1}
       >
         {isHavingContent && collapsible && (
-          <GroupIcon
+          <ArrowIcon
+            aria-label="arrow-icon"
             $level={level}
             $showHierarchy={showHierarchyLine}
             $isSelected={isSelected === item.id}
@@ -358,11 +363,16 @@ function TreeListItem<T extends TreeListItemsProps>({
         {showHierarchyLine && (
           <>
             <TreeListHierarchyVerticalLine
+              aria-label="vertical-line"
               $isSelected={isSelected === item.id}
               $level={level}
             />
             {Array.from({ length: level }).map((_, index) => (
-              <TreeListHierarchyVerticalLine $level={index} />
+              <TreeListHierarchyVerticalLine
+                key={index}
+                aria-label="vertical-line-level"
+                $level={index}
+              />
             ))}
           </>
         )}
@@ -470,7 +480,7 @@ const GroupTitle = styled.span`
   padding-left: 1.4rem;
 `;
 
-const GroupIcon = styled(RiArrowRightSLine)<{
+const ArrowIcon = styled(RiArrowRightSLine)<{
   $isHovered?: boolean;
   $isSelected?: boolean;
   $showHierarchy?: boolean;
