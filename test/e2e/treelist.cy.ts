@@ -150,10 +150,10 @@ describe("Treelist", () => {
 
       context("when clicking", () => {
         it("should collapsed the content", () => {
-          cy.findByText("Blueprints").should("be.visible");
+          cy.findByText("Blueprints").should("exist");
           cy.findByText("Contracts").click();
           cy.findAllByLabelText("arrow-icon").eq(2).click();
-          cy.findByText("Blueprints").should("not.be.visible");
+          cy.findByText("Blueprints").should("not.exist");
         });
 
         it("renders consistent line color", () => {
