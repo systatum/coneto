@@ -400,10 +400,8 @@ function FormFields<T extends FieldValues>({
                     `}
                     width:100%;
                     height: 34px;
-                    ${labelSize &&
-                    css`
-                      font-size: ${labelSize};
-                    `}
+                    font-size: ${labelSize ?? "12px"};
+
                     ${field.buttonProps?.buttonStyle};
                   `}
                   containerStyle={css`
