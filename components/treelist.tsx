@@ -645,7 +645,7 @@ const TreeListHierarchyVerticalLine = styled.div<{
   z-index: 8888;
   ${({ $level, $isSelected, $isSameLevel }) => css`
     height: 100%;
-    left: ${$level * 12 + 10}px;
+    left: ${$level * 12 + 9}px;
 
     ${$isSelected
       ? css`
