@@ -1,5 +1,5 @@
 import styled, { css, CSSProp } from "styled-components";
-import { ReactNode, useMemo, useState } from "react";
+import { Fragment, ReactNode, useState } from "react";
 import { RemixiconComponentType, RiArrowRightSLine } from "@remixicon/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { TipMenuItemProps } from "./tip-menu";
@@ -270,7 +270,8 @@ function TreeListItem<T extends TreeListItemsProps>({
       <TreeListItemWrapper
         role="button"
         aria-label="tree-list-item"
-        $isSelected={isSelected === item.id && !showHierarchyLine}
+        $isSelected={isSelected === item.id}
+        $showHierarchyLine={showHierarchyLine}
         onClick={() => {
           item.onClick?.(item);
           onChange?.(item.id);
@@ -289,9 +290,10 @@ function TreeListItem<T extends TreeListItemsProps>({
       >
         {isHavingContent && collapsible && (
           <GroupIcon
-            style={{
-              left: `${level * 12 + 13}px`,
-            }}
+            $level={level}
+            $showHierarchy={showHierarchyLine}
+            $isSelected={isSelected === item.id}
+            $isHovered={isHovered === item.id}
             onClick={(e) => {
               e.stopPropagation();
               setToggleItem(item.id);
@@ -354,10 +356,15 @@ function TreeListItem<T extends TreeListItemsProps>({
           })()}
 
         {showHierarchyLine && (
-          <TreeListHierarchyVerticalLine
-            $isSelected={isSelected === item.id}
-            $level={level}
-          />
+          <>
+            <TreeListHierarchyVerticalLine
+              $isSelected={isSelected === item.id}
+              $level={level}
+            />
+            {Array.from({ length: level }).map((_, index) => (
+              <TreeListHierarchyVerticalLine $level={index} />
+            ))}
+          </>
         )}
       </TreeListItemWrapper>
 
@@ -463,12 +470,33 @@ const GroupTitle = styled.span`
   padding-left: 1.4rem;
 `;
 
-const GroupIcon = styled(RiArrowRightSLine)`
+const GroupIcon = styled(RiArrowRightSLine)<{
+  $isHovered?: boolean;
+  $isSelected?: boolean;
+  $showHierarchy?: boolean;
+  $level?: number;
+}>`
   position: absolute;
   left: 2px;
   top: 50%;
   transform: translateY(-50%);
   transition: transform 0.2s ease-in-out;
+
+  ${({ $level }) => css`
+    left: ${$level * 12 + 0}px;
+    z-index: 9999;
+    border-radius: 9999px;
+  `}
+
+  ${({ $isHovered, $isSelected, $showHierarchy }) =>
+    $isHovered || $isSelected
+      ? css`
+          background-color: #f3f4f6;
+        `
+      : $showHierarchy &&
+        css`
+          background-color: white;
+        `}
 
   &[aria-expanded="true"] {
     transform: translateY(-50%) rotate(90deg);
@@ -500,7 +528,7 @@ const TreeListHierarchyVerticalLine = styled.div<{
   top: 0;
   width: 1px;
   ${({ $level, $isSelected }) => css`
-    height: 96%;
+    height: 100%;
     left: ${$level * 12 + 9}px;
 
     ${$isSelected
@@ -508,13 +536,14 @@ const TreeListHierarchyVerticalLine = styled.div<{
           border-left: 2px solid #3b82f6;
         `
       : css`
-          border-left: 2px dotted black;
+          border-left: 2px solid #d7d6d6;
         `}
   `}
 `;
 
 const TreeListItemWrapper = styled.li<{
   $isSelected: boolean;
+  $showHierarchyLine: boolean;
   $style?: CSSProp;
   $isHavingContent?: boolean;
   $level?: number;
@@ -528,9 +557,11 @@ const TreeListItemWrapper = styled.li<{
   min-height: 36px;
 
   border-left: 3px solid
-    ${(props) => (props.$isSelected ? "#3b82f6" : "transparent")};
-  background-color: ${(props) =>
-    props.$isSelected ? "#f3f4f6" : "transparent"};
+    ${(props) =>
+      props.$isSelected && !props.$showHierarchyLine
+        ? "#3b82f6"
+        : "transparent"};
+  background-color: ${(props) => (props.$isSelected ? "#f3f4f6" : "white")};
   padding: 0.25rem 1.2rem;
   padding-right: 8px;
   list-style: none;
@@ -538,7 +569,7 @@ const TreeListItemWrapper = styled.li<{
   ${({ $isHavingContent, $level }) =>
     $isHavingContent && $level
       ? css`
-          padding-left: ${$level * 12 + 20}px;
+          padding-left: ${$level * 12 + 8}px;
         `
       : $level &&
         css`
