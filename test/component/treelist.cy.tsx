@@ -14,6 +14,7 @@ describe("Treelist", () => {
 
       TREE_LIST_DATA = [
         {
+          id: "member",
           caption: "Member of Technical Staff",
           items: [
             { id: "mts-1", caption: "Adam Noto Hakarsa", onClick: setPerson },
@@ -21,6 +22,7 @@ describe("Treelist", () => {
           ],
         },
         {
+          id: "product",
           caption: "Product Management Team",
           items: [
             { id: "pmt-1", caption: "Samantha Lee", onClick: setPerson },
@@ -56,16 +58,16 @@ describe("Treelist", () => {
 
       TREE_LIST_DATA = [
         {
+          id: "member",
           caption: "Member of Technical Staff",
-          collapsible: true,
           items: [
             { id: "mts-1", caption: "Adam Noto Hakarsa", onClick: setPerson },
             { id: "mts-2", caption: "Mohamad Naufal Alim", onClick: setPerson },
           ],
         },
         {
+          id: "product",
           caption: "Product Management Team",
-          collapsible: true,
           items: [
             { id: "pmt-1", caption: "Samantha Lee", onClick: setPerson },
             { id: "pmt-2", caption: "Jason Kim", onClick: setPerson },
@@ -98,16 +100,16 @@ describe("Treelist", () => {
 
       TREE_LIST_DATA = [
         {
+          id: "member",
           caption: "Member of Technical Staff",
-          collapsible: true,
           items: [
             { id: "mts-1", caption: "Adam Noto Hakarsa", onClick: setPerson },
             { id: "mts-2", caption: "Mohamad Naufal Alim", onClick: setPerson },
           ],
         },
         {
+          id: "product",
           caption: "Product Management Team",
-          collapsible: true,
           items: [
             { id: "pmt-1", caption: "Samantha Lee", onClick: setPerson },
             { id: "pmt-2", caption: "Jason Kim", onClick: setPerson },
@@ -161,6 +163,7 @@ describe("Treelist", () => {
 
       TREE_LIST_DATA = [
         {
+          id: "member",
           caption: "Member of Technical Staff",
           items: [
             { id: "mts-1", caption: "Adam Noto Hakarsa", onClick: setPerson },
@@ -168,6 +171,7 @@ describe("Treelist", () => {
           ],
         },
         {
+          id: "product",
           caption: "Product Management Team",
           items: [
             { id: "pmt-1", caption: "Samantha Lee", onClick: setPerson },
