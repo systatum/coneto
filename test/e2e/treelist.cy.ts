@@ -5,6 +5,7 @@ describe("Treelist", () => {
     beforeEach(() => {
       cy.visit(getIdContent("content-treelist--default"));
     });
+
     context("when collapsible", () => {
       it("should highlight selected item", () => {
         cy.contains("Member of Technical Staff").click();
@@ -71,6 +72,42 @@ describe("Treelist", () => {
     });
   });
 
+  context("with nested", () => {
+    beforeEach(() => {
+      cy.visit(getIdContent("content-treelist--nested"));
+    });
+
+    context("with showHierarchy", () => {
+      it("renders the line", () => {
+        cy.contains("Blueprints")
+          .parent()
+          .findByLabelText("vertical-line")
+          .should("exist")
+          .and("have.css", "border-left", "2px solid rgb(215, 214, 214)");
+
+        cy.contains("Blueprints")
+          .parent()
+          .findAllByLabelText("vertical-line-level")
+          .should("have.length", 2)
+          .and("have.css", "border-left", "2px solid rgb(215, 214, 214)");
+      });
+    });
+
+    context("when collapsible", () => {
+      it("renders the chevron", () => {
+        cy.findAllByLabelText("arrow-icon").should("have.length", 4);
+      });
+
+      context("when clicking", () => {
+        it("should collapsed the content", () => {
+          cy.findByText("Blueprints").should("be.visible");
+          cy.findAllByLabelText("arrow-icon").eq(0).click();
+          cy.findByText("Blueprints").should("not.be.visible");
+        });
+      });
+    });
+  });
+
   context("with actions", () => {
     beforeEach(() => {
       cy.visit(getIdContent("content-treelist--with-actions"));
@@ -101,7 +138,7 @@ describe("Treelist", () => {
           .click();
         cy.get("@consoleLog").should(
           "have.been.calledWith",
-          "member-mts-1 was edited"
+          "mts-1 was edited"
         );
       });
 
@@ -115,7 +152,7 @@ describe("Treelist", () => {
 
           cy.get("@consoleLog").should(
             "have.been.calledWith",
-            "member-mts-1 was copied"
+            "mts-1 was copied"
           );
         });
       });
