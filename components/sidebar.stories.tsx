@@ -36,6 +36,7 @@ export const Default: Story = {
 
     const TREE_LIST_DATA = [
       {
+        id: "member",
         caption: "Member of Technical Staff",
         items: [
           { id: "1", caption: "Adam Noto Hakarsa", onClick: setPerson },
@@ -43,6 +44,7 @@ export const Default: Story = {
         ],
       },
       {
+        id: "product",
         caption: "Product Management Team",
         items: [
           { id: "3", caption: "Samantha Lee", onClick: setPerson },
@@ -155,6 +157,7 @@ export const FixedRight: Story = {
 
     const TREE_LIST_DATA = [
       {
+        id: "member",
         caption: "Member of Technical Staff",
         items: [
           { id: "1", caption: "Adam Noto Hakarsa", onClick: setPerson },
@@ -162,6 +165,7 @@ export const FixedRight: Story = {
         ],
       },
       {
+        id: "product",
         caption: "Product Management Team",
         items: [
           { id: "3", caption: "Samantha Lee", onClick: setPerson },
