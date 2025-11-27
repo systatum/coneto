@@ -445,7 +445,7 @@ const NavTabItem = styled.div<{
     css`
       justify-content: flex-start;
       width: 100%;
-      min-width: 120px;
+      min-width: 150px;
       border: 1px solid #f3f3f3;
       padding-right: 40px;
     `}
