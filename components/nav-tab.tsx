@@ -444,8 +444,10 @@ const NavTabItem = styled.div<{
     $subMenu &&
     css`
       justify-content: flex-start;
+      width: 100%;
       min-width: 120px;
       border: 1px solid #f3f3f3;
+      padding-right: 40px;
     `}
 
   ${({ $isAction, $isHovered }) =>
