@@ -365,12 +365,13 @@ function FormFields<T extends FieldValues>({
                       font-size: ${labelSize};
                     `
                   }
-                  style={
-                    fieldSize &&
+                  style={css`
+                    ${fieldSize &&
                     css`
                       font-size: ${fieldSize};
-                    `
-                  }
+                    `}
+                    height: 34px;
+                  `}
                   containerStyle={
                     field.width &&
                     css`
@@ -398,6 +399,7 @@ function FormFields<T extends FieldValues>({
                       gap: 2px;
                     `}
                     width:100%;
+                    height: 34px;
                     ${labelSize &&
                     css`
                       font-size: ${labelSize};
@@ -442,12 +444,6 @@ function FormFields<T extends FieldValues>({
                       font-size: ${labelSize};
                     `
                   }
-                  inputStyle={
-                    fieldSize &&
-                    css`
-                      font-size: ${fieldSize};
-                    `
-                  }
                   ref={(el) => {
                     if (el) refs.current[field.name] = el;
                     const { ref } = register(field.name as Path<T>);
@@ -465,6 +461,14 @@ function FormFields<T extends FieldValues>({
                   }
                   disabled={field.disabled}
                   {...field.timeboxProps}
+                  inputStyle={css`
+                    ${fieldSize &&
+                    css`
+                      font-size: ${fieldSize};
+                    `}
+                    height:34px;
+                    ${field.timeboxProps?.inputStyle}
+                  `}
                 />
               ) : field.type === "textarea" ? (
                 <Textarea
@@ -663,12 +667,6 @@ function FormFields<T extends FieldValues>({
                           font-size: ${labelSize};
                         `
                       }
-                      style={
-                        fieldSize &&
-                        css`
-                          font-size: ${fieldSize};
-                        `
-                      }
                       containerStyle={
                         field.width &&
                         css`
@@ -688,6 +686,14 @@ function FormFields<T extends FieldValues>({
                       errorMessage={fieldState.error?.message}
                       disabled={field.disabled}
                       {...field.colorboxProps}
+                      style={css`
+                        ${fieldSize &&
+                        css`
+                          font-size: ${fieldSize};
+                        `}
+                        height:34px;
+                        ${field.colorboxProps?.style}
+                      `}
                     />
                   )}
                 />
@@ -876,12 +882,6 @@ function FormFields<T extends FieldValues>({
                       font-size: ${labelSize};
                     `
                   }
-                  style={
-                    fieldSize &&
-                    css`
-                      font-size: ${fieldSize};
-                    `
-                  }
                   containerStyle={css`
                     ${field.width &&
                     css`
@@ -906,6 +906,14 @@ function FormFields<T extends FieldValues>({
                   }
                   disabled={field.disabled}
                   {...field.moneyProps}
+                  style={css`
+                    ${fieldSize &&
+                    css`
+                      font-size: ${fieldSize};
+                    `}
+                    height: 34px;
+                    ${field.moneyProps.style}
+                  `}
                 />
               ) : field.type === "date" ? (
                 <Controller
@@ -934,12 +942,6 @@ function FormFields<T extends FieldValues>({
                           width: ${field.width};
                         `}
                       `}
-                      selectboxStyle={
-                        fieldSize &&
-                        css`
-                          font-size: ${fieldSize};
-                        `
-                      }
                       errorMessage={
                         errors[field.name as keyof T]?.[0]?.message as
                           | string
@@ -959,6 +961,19 @@ function FormFields<T extends FieldValues>({
                       selectedDates={controllerField.value}
                       disabled={field.disabled}
                       {...field.dateProps}
+                      selectboxStyle={css`
+                        ${fieldSize &&
+                        css`
+                          font-size: ${fieldSize};
+                        `}
+                        border: 1px solid #d1d5db;
+                        max-height: 34px;
+                        &:focus {
+                          border-color: #61a9f9;
+                          box-shadow: 0 0 0 1px #61a9f9;
+                        }
+                        ${field.dateProps.selectboxStyle}
+                      `}
                     />
                   )}
                 />
@@ -981,12 +996,6 @@ function FormFields<T extends FieldValues>({
                         labelSize &&
                         css`
                           font-size: ${labelSize};
-                        `
-                      }
-                      selectboxStyle={
-                        fieldSize &&
-                        css`
-                          font-size: ${fieldSize};
                         `
                       }
                       errorMessage={
@@ -1013,6 +1022,19 @@ function FormFields<T extends FieldValues>({
                       }}
                       selectedOptions={controllerField.value}
                       {...field.comboboxProps}
+                      selectboxStyle={css`
+                        ${fieldSize &&
+                        css`
+                          font-size: ${fieldSize};
+                        `}
+                        border: 1px solid #d1d5db;
+                        max-height: 34px;
+                        &:focus {
+                          border-color: #61a9f9;
+                          box-shadow: 0 0 0 1px #61a9f9;
+                        }
+                        ${field.comboboxProps.selectboxStyle}
+                      `}
                     />
                   )}
                 />
