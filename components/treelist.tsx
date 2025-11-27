@@ -128,6 +128,8 @@ function TreeList({
     }));
   };
 
+  const selectedGroupId = findGroupOfItem(content, isSelected);
+
   return (
     <TreeListWrapper $containerStyle={containerStyle}>
       {actions && (
@@ -212,6 +214,8 @@ function TreeList({
                           isOpen={isOpen}
                           emptyItemSlate={emptyItemSlate}
                           selectedLevel={selectedLevel}
+                          groupId={data.id}
+                          selectedGroupId={selectedGroupId}
                         />
                       );
                     })
@@ -259,6 +263,24 @@ function findLevelById(
   return null;
 }
 
+function findGroupOfItem(content: TreeListContentProps[], selectedId: string) {
+  for (const group of content) {
+    if (!group.items) continue;
+    if (containsId(group.items, selectedId)) {
+      return group.id;
+    }
+  }
+  return null;
+}
+
+function containsId(items: TreeListItemsProps[], id: string) {
+  for (const item of items) {
+    if (item.id === id) return true;
+    if (item.items && containsId(item.items, id)) return true;
+  }
+  return false;
+}
+
 interface TreeListItemComponent<T extends TreeListItemsProps> {
   item: T;
   searchTerm?: string;
@@ -274,6 +296,8 @@ interface TreeListItemComponent<T extends TreeListItemsProps> {
   setIsOpen?: (prop: string) => void;
   emptyItemSlate?: ReactNode;
   selectedLevel?: number;
+  groupId?: string;
+  selectedGroupId?: string;
 }
 
 function TreeListItem<T extends TreeListItemsProps>({
@@ -291,6 +315,8 @@ function TreeListItem<T extends TreeListItemsProps>({
   setIsOpen,
   emptyItemSlate,
   selectedLevel,
+  groupId,
+  selectedGroupId,
 }: TreeListItemComponent<T>) {
   const [isHovered, setIsHovered] = useState<null | string>(null);
 
@@ -302,7 +328,10 @@ function TreeListItem<T extends TreeListItemsProps>({
     setIsOpen(id);
   };
 
-  const isSameLevel = selectedLevel !== null && selectedLevel === level;
+  const isSameLevel =
+    selectedLevel !== null &&
+    selectedLevel === level &&
+    selectedGroupId === groupId;
 
   return (
     <div
@@ -408,7 +437,8 @@ function TreeListItem<T extends TreeListItemsProps>({
             $isSameLevel={isSameLevel}
           />
           {Array.from({ length: level }).map((_, idx) => {
-            const isSameLevelLine = selectedLevel === idx;
+            const isSameLevelLine =
+              selectedLevel === idx && selectedGroupId === groupId;
 
             return (
               <TreeListHierarchyVerticalLine
@@ -463,6 +493,8 @@ function TreeListItem<T extends TreeListItemsProps>({
                     emptyItemSlate={emptyItemSlate}
                     isLoading={isLoading}
                     selectedLevel={selectedLevel}
+                    selectedGroupId={selectedGroupId}
+                    groupId={groupId}
                   />
                 ))
               ) : (
