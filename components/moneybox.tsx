@@ -1,7 +1,8 @@
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
 import {
   ChangeEvent,
   forwardRef,
+  InputHTMLAttributes,
   KeyboardEvent,
   useEffect,
   useState,
@@ -9,7 +10,11 @@ import {
 
 type SeparatorTypeProps = "dot" | "comma";
 
-export interface MoneyboxProps {
+export interface MoneyboxProps
+  extends Omit<
+    InputHTMLAttributes<HTMLInputElement>,
+    "name" | "placeholder" | "style"
+  > {
   value?: string;
   currency?: string;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -41,6 +46,7 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
       containerStyle,
       labelStyle,
       onKeyDown,
+      ...props
     },
     ref
   ) => {
@@ -85,7 +91,12 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
       <InputWrapper $style={containerStyle}>
         {label && <Label $style={labelStyle}>{label}</Label>}
         <InputContent>
-          <Box $error={showError} $focus={focus} $style={style}>
+          <Box
+            $disabled={props.disabled}
+            $error={showError}
+            $focus={focus}
+            $style={style}
+          >
             <Currency>{currency}</Currency>
             <MoneyboxInput
               aria-label="input-moneybox"
@@ -100,6 +111,8 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
               onKeyDown={onKeyDown}
               type="text"
               inputMode="decimal"
+              $disabled={props.disabled}
+              {...props}
             />
           </Box>
           {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
@@ -135,6 +148,7 @@ const Box = styled.div<{
   $error?: boolean;
   $focus?: boolean;
   $style?: CSSProp;
+  $disabled?: boolean;
 }>`
   display: flex;
   align-items: center;
@@ -149,6 +163,15 @@ const Box = styled.div<{
       $error ? "#ef4444" : $focus ? "#61A9F9" : "#d1d5db"};
   border-radius: 2px;
   position: relative;
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      background-color: rgb(227 227 227);
+      opacity: 0.5;
+      cursor: not-allowed;
+    `}
+
   ${({ $style }) => $style}
 `;
 
@@ -159,7 +182,7 @@ const Currency = styled.span`
   transform: translateY(-50%);
 `;
 
-const MoneyboxInput = styled.input`
+const MoneyboxInput = styled.input<{ $disabled?: boolean }>`
   background: transparent;
   text-align: right;
   padding-left: 12px;
@@ -167,6 +190,15 @@ const MoneyboxInput = styled.input`
   min-width: 0;
   flex: 1;
   font-size: 0.75rem;
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      opacity: 0.5;
+      pointer-events: none;
+      user-select: none;
+      cursor: not-allowed;
+    `}
 `;
 
 const ErrorText = styled.span`

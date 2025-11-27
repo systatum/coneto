@@ -97,14 +97,6 @@ export const Default: Story = {
           comboboxProps: {
             options: SALUTATION_OPTIONS,
             strict: true,
-            selectboxStyle: css`
-              border: 1px solid #d1d5db;
-              max-height: 34px;
-              &:focus {
-                border-color: #61a9f9;
-                box-shadow: 0 0 0 1px #61a9f9;
-              }
-            `,
           },
         },
         {
@@ -122,13 +114,22 @@ export const Default: Story = {
           placeholder: "Enter last name",
         },
       ],
-      {
-        name: "email",
-        title: "Email",
-        type: "email",
-        required: true,
-        placeholder: "Enter email address",
-      },
+      [
+        {
+          name: "email",
+          title: "Email",
+          type: "email",
+          required: true,
+          placeholder: "Enter email address",
+        },
+        {
+          name: "text",
+          title: "Verify",
+          type: "button",
+          required: true,
+          placeholder: "Enter text",
+        },
+      ],
       {
         name: "phone",
         title: "Phone Number",
@@ -189,6 +190,15 @@ export const Default: Story = {
         type: "checkbox",
         required: false,
       },
+      {
+        name: "text",
+        title: "Save",
+        type: "button",
+        required: true,
+        disabled: !isFormValid,
+        placeholder: "Enter text",
+        rowJustifyContent: "end",
+      },
     ];
 
     return (
@@ -209,6 +219,9 @@ export const Default: Story = {
           onChange={({ currentState }) => {
             setValue((prev) => ({ ...prev, ...currentState }));
           }}
+          rowStyle={css`
+            align-items: end;
+          `}
           fields={EMPLOYEE_FIELDS}
           formValues={value}
           validationSchema={employeeSchema}
@@ -216,19 +229,6 @@ export const Default: Story = {
           autoFocusField="first_name"
           mode="onChange"
         />
-
-        <div
-          style={{
-            display: "flex",
-            width: "100%",
-            flexDirection: "row",
-            justifyContent: "flex-end",
-          }}
-        >
-          <Button disabled={!isFormValid} type="submit">
-            Save
-          </Button>
-        </div>
       </div>
     );
   },
@@ -763,6 +763,15 @@ export const AllCase: Story = {
           tabs: CAPSULE_TABS,
         },
       },
+      {
+        name: "text",
+        title: "Save",
+        type: "button",
+        required: true,
+        disabled: !isFormValid,
+        placeholder: "Enter text",
+        rowJustifyContent: "end",
+      },
     ];
 
     return (
@@ -796,17 +805,6 @@ export const AllCase: Story = {
           validationSchema={schema}
           mode="onChange"
         />
-        <Button
-          containerStyle={css`
-            width: 100%;
-          `}
-          buttonStyle={css`
-            width: 100%;
-          `}
-          disabled={!isFormValid}
-        >
-          Save
-        </Button>
       </div>
     );
   },

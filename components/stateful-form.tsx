@@ -29,6 +29,8 @@ import { ThumbField, ThumbFieldProps } from "./thumb-field";
 import { Togglebox, ToggleboxProps } from "./togglebox";
 import { Capsule, CapsuleProps } from "./capsule";
 import { Timebox, TimeboxProps } from "./timebox";
+import { Button, ButtonProps } from "./button";
+import { RemixiconComponentType } from "@remixicon/react";
 
 export type StatefulOnChangeType =
   | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -76,7 +78,11 @@ export interface FormFieldProps {
   hidden?: boolean;
   rows?: number;
   width?: string;
+  icon?: RemixiconComponentType;
+  disabled?: boolean;
+  rowJustifyContent?: "center" | "start" | "end" | "between";
   onChange?: (e?: StatefulOnChangeType) => void;
+  onClick?: (e?: React.MouseEvent) => void;
   textboxProps?: TextboxProps;
   textareaProps?: TextareaProps;
   checkboxProps?: CheckboxProps;
@@ -95,6 +101,7 @@ export interface FormFieldProps {
   toggleboxProps?: ToggleboxProps;
   capsuleProps?: CapsuleProps;
   timeboxProps?: TimeboxProps;
+  buttonProps?: ButtonProps;
 }
 
 function StatefulForm<Z extends ZodTypeAny>({
@@ -143,7 +150,12 @@ function StatefulForm<Z extends ZodTypeAny>({
       .flat()
       .find((f) => (f as FormFieldProps).name === field) as FormFieldProps;
 
-    if (!fieldConfig || fieldConfig.type === "custom" || fieldConfig.hidden) {
+    if (
+      !fieldConfig ||
+      fieldConfig.type === "custom" ||
+      fieldConfig.type === "button" ||
+      fieldConfig.hidden
+    ) {
       return false;
     }
 
@@ -294,10 +306,26 @@ function FormFields<T extends FieldValues>({
           return;
         }
 
+        const rowJustifiedContent = visibleFields.find(
+          (f) => f.rowJustifyContent
+        )?.rowJustifyContent;
+
         return (
           <RowFormField
             aria-label="stateful-form-row"
-            $style={rowStyle}
+            $style={css`
+              ${rowStyle}
+              ${rowJustifiedContent &&
+              css`
+                justify-content: ${rowJustifiedContent === "end"
+                  ? "flex-end"
+                  : rowJustifiedContent === "start"
+                    ? "flex-start"
+                    : rowJustifiedContent === "between"
+                      ? "space-between"
+                      : "center"};
+              `}
+            `}
             key={indexGroup}
           >
             {visibleFields.map((field: FormFieldProps, index: number) => {
@@ -337,12 +365,13 @@ function FormFields<T extends FieldValues>({
                       font-size: ${labelSize};
                     `
                   }
-                  style={
-                    fieldSize &&
+                  style={css`
+                    ${fieldSize &&
                     css`
                       font-size: ${fieldSize};
-                    `
-                  }
+                    `}
+                    height: 34px;
+                  `}
                   containerStyle={
                     field.width &&
                     css`
@@ -352,8 +381,45 @@ function FormFields<T extends FieldValues>({
                   errorMessage={
                     errors[field.name as keyof T]?.message as string | undefined
                   }
+                  disabled={field.disabled}
                   {...field.textboxProps}
                 />
+              ) : field.type === "button" ? (
+                <Button
+                  key={index}
+                  {...field.buttonProps}
+                  title={
+                    field.buttonProps?.title
+                      ? field.buttonProps?.title
+                      : field.placeholder
+                  }
+                  buttonStyle={css`
+                    ${field.icon &&
+                    css`
+                      gap: 2px;
+                    `}
+                    width:100%;
+                    height: 34px;
+                    font-size: ${labelSize ?? "12px"};
+
+                    ${field.buttonProps?.buttonStyle};
+                  `}
+                  containerStyle={css`
+                    ${field.width &&
+                    css`
+                      width: ${field.width};
+                    `}
+                    ${field.buttonProps?.containerStyle}
+                  `}
+                  onClick={field.onClick}
+                  disabled={field.disabled}
+                >
+                  {field.icon && (
+                    <field.icon size={fieldSize ? parseInt(fieldSize) : 16} />
+                  )}
+
+                  {field.title}
+                </Button>
               ) : field.type === "time" ? (
                 <Timebox
                   key={index}
@@ -376,12 +442,6 @@ function FormFields<T extends FieldValues>({
                       font-size: ${labelSize};
                     `
                   }
-                  inputStyle={
-                    fieldSize &&
-                    css`
-                      font-size: ${fieldSize};
-                    `
-                  }
                   ref={(el) => {
                     if (el) refs.current[field.name] = el;
                     const { ref } = register(field.name as Path<T>);
@@ -397,7 +457,16 @@ function FormFields<T extends FieldValues>({
                   errorMessage={
                     errors[field.name as keyof T]?.message as string | undefined
                   }
+                  disabled={field.disabled}
                   {...field.timeboxProps}
+                  inputStyle={css`
+                    ${fieldSize &&
+                    css`
+                      font-size: ${fieldSize};
+                    `}
+                    height:34px;
+                    ${field.timeboxProps?.inputStyle}
+                  `}
                 />
               ) : field.type === "textarea" ? (
                 <Textarea
@@ -444,6 +513,7 @@ function FormFields<T extends FieldValues>({
                   errorMessage={
                     errors[field.name as keyof T]?.message as string | undefined
                   }
+                  disabled={field.disabled}
                   {...field.textareaProps}
                 />
               ) : field.type === "checkbox" ? (
@@ -510,6 +580,7 @@ function FormFields<T extends FieldValues>({
                         }
                         field.onChange?.(e);
                       }}
+                      disabled={field.disabled}
                       {...field.checkboxProps}
                     />
                   )}
@@ -568,6 +639,7 @@ function FormFields<T extends FieldValues>({
                       }
                       showError={!!errors["phone"]}
                       errorMessage={errors["phone"]?.message as string}
+                      disabled={field.disabled}
                       {...field.phoneboxProps}
                     />
                   )}
@@ -593,12 +665,6 @@ function FormFields<T extends FieldValues>({
                           font-size: ${labelSize};
                         `
                       }
-                      style={
-                        fieldSize &&
-                        css`
-                          font-size: ${fieldSize};
-                        `
-                      }
                       containerStyle={
                         field.width &&
                         css`
@@ -616,7 +682,16 @@ function FormFields<T extends FieldValues>({
                       }}
                       showError={shouldShowError(field.name)}
                       errorMessage={fieldState.error?.message}
+                      disabled={field.disabled}
                       {...field.colorboxProps}
+                      style={css`
+                        ${fieldSize &&
+                        css`
+                          font-size: ${fieldSize};
+                        `}
+                        height:34px;
+                        ${field.colorboxProps?.style}
+                      `}
                     />
                   )}
                 />
@@ -734,6 +809,7 @@ function FormFields<T extends FieldValues>({
                       font-size: ${labelSize};
                     `
                   }
+                  disabled={field.disabled}
                   required={field.required}
                   {...register(field.name as Path<T>, {
                     onChange: (e) => {
@@ -785,6 +861,7 @@ function FormFields<T extends FieldValues>({
                   errorMessage={
                     errors[field.name as keyof T]?.message as string | undefined
                   }
+                  disabled={field.disabled}
                   {...field.signboxProps}
                 />
               ) : field.type === "money" ? (
@@ -801,12 +878,6 @@ function FormFields<T extends FieldValues>({
                     labelSize &&
                     css`
                       font-size: ${labelSize};
-                    `
-                  }
-                  style={
-                    fieldSize &&
-                    css`
-                      font-size: ${fieldSize};
                     `
                   }
                   containerStyle={css`
@@ -831,7 +902,16 @@ function FormFields<T extends FieldValues>({
                   errorMessage={
                     errors[field.name as keyof T]?.message as string | undefined
                   }
+                  disabled={field.disabled}
                   {...field.moneyProps}
+                  style={css`
+                    ${fieldSize &&
+                    css`
+                      font-size: ${fieldSize};
+                    `}
+                    height: 34px;
+                    ${field.moneyProps.style}
+                  `}
                 />
               ) : field.type === "date" ? (
                 <Controller
@@ -860,12 +940,6 @@ function FormFields<T extends FieldValues>({
                           width: ${field.width};
                         `}
                       `}
-                      selectboxStyle={
-                        fieldSize &&
-                        css`
-                          font-size: ${fieldSize};
-                        `
-                      }
                       errorMessage={
                         errors[field.name as keyof T]?.[0]?.message as
                           | string
@@ -883,7 +957,21 @@ function FormFields<T extends FieldValues>({
                         }
                       }}
                       selectedDates={controllerField.value}
+                      disabled={field.disabled}
                       {...field.dateProps}
+                      selectboxStyle={css`
+                        ${fieldSize &&
+                        css`
+                          font-size: ${fieldSize};
+                        `}
+                        border: 1px solid #d1d5db;
+                        max-height: 34px;
+                        &:focus {
+                          border-color: #61a9f9;
+                          box-shadow: 0 0 0 1px #61a9f9;
+                        }
+                        ${field.dateProps.selectboxStyle}
+                      `}
                     />
                   )}
                 />
@@ -906,12 +994,6 @@ function FormFields<T extends FieldValues>({
                         labelSize &&
                         css`
                           font-size: ${labelSize};
-                        `
-                      }
-                      selectboxStyle={
-                        fieldSize &&
-                        css`
-                          font-size: ${fieldSize};
                         `
                       }
                       errorMessage={
@@ -938,6 +1020,19 @@ function FormFields<T extends FieldValues>({
                       }}
                       selectedOptions={controllerField.value}
                       {...field.comboboxProps}
+                      selectboxStyle={css`
+                        ${fieldSize &&
+                        css`
+                          font-size: ${fieldSize};
+                        `}
+                        border: 1px solid #d1d5db;
+                        max-height: 34px;
+                        &:focus {
+                          border-color: #61a9f9;
+                          box-shadow: 0 0 0 1px #61a9f9;
+                        }
+                        ${field.comboboxProps.selectboxStyle}
+                      `}
                     />
                   )}
                 />
@@ -1014,6 +1109,7 @@ function FormFields<T extends FieldValues>({
                       `}
                       showError={!!fieldState.error}
                       errorMessage={fieldState.error?.message}
+                      disabled={field.disabled}
                       {...field.ratingProps}
                     />
                   )}
@@ -1070,6 +1166,7 @@ function FormFields<T extends FieldValues>({
                           | string
                           | undefined
                       }
+                      disabled={field.disabled}
                       {...field.thumbFieldProps}
                     />
                   )}
@@ -1112,6 +1209,7 @@ function FormFields<T extends FieldValues>({
                           | string
                           | undefined
                       }
+                      disabled={field.disabled}
                       {...field.toggleboxProps}
                     />
                   )}
