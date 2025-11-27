@@ -195,7 +195,7 @@ export const Nested: Story = {
             items: [
               {
                 id: "contracts",
-                caption: "contracts",
+                caption: "Contracts",
                 items: [
                   { id: "alpha-92", caption: "Blueprints" },
                   { id: "delta-17", caption: "Financial Report" },
