@@ -77,18 +77,22 @@ describe("Treelist", () => {
       cy.visit(getIdContent("content-treelist--nested"));
     });
 
+    const SELECTED_VERTICAL_LINE = "2px solid rgb(59, 130, 246)";
+    const UNSELECTED_VERTICAL_LINE = "2px solid rgb(243, 243, 243)";
+    const SAME_LEVEL_SELECTED_VERTICAL_LINE = "2px solid rgb(215, 214, 214)";
+
     context("with showHierarchy", () => {
       it("renders the line", () => {
         cy.contains("Blueprints")
           .parent()
           .findByLabelText("vertical-line")
           .should("exist")
-          .and("have.css", "border-left", "2px solid rgb(243, 243, 243)");
+          .and("have.css", "border-left", UNSELECTED_VERTICAL_LINE);
 
         cy.findAllByLabelText("vertical-line-level")
           .eq(0)
           .should("exist")
-          .and("have.css", "border-left", "2px solid rgb(243, 243, 243)");
+          .and("have.css", "border-left", UNSELECTED_VERTICAL_LINE);
       });
 
       context("when clicking", () => {
@@ -98,13 +102,13 @@ describe("Treelist", () => {
             .parent()
             .findByLabelText("vertical-line")
             .should("exist")
-            .and("have.css", "border-left", "2px solid rgb(59, 130, 246)");
+            .and("have.css", "border-left", SELECTED_VERTICAL_LINE);
 
           cy.contains("Financial Report")
             .parent()
             .findByLabelText("vertical-line")
             .should("exist")
-            .and("have.css", "border-left", "2px solid rgb(215, 214, 214)");
+            .and("have.css", "border-left", SAME_LEVEL_SELECTED_VERTICAL_LINE);
         });
 
         context("when on another level", () => {
@@ -114,13 +118,18 @@ describe("Treelist", () => {
               .parent()
               .findByLabelText("vertical-line")
               .should("exist")
-              .and("have.css", "border-left", "2px solid rgb(59, 130, 246)");
+              .and("have.css", "border-left", SELECTED_VERTICAL_LINE);
+            cy.contains("Blueprints")
+              .parent()
+              .findByLabelText("vertical-line")
+              .should("exist")
+              .and("have.css", "border-left", SELECTED_VERTICAL_LINE);
 
             cy.contains(".cleverfiles")
               .parent()
               .findByLabelText("vertical-line")
               .should("exist")
-              .and("have.css", "border-left", "2px solid rgb(243, 243, 243)");
+              .and("have.css", "border-left", UNSELECTED_VERTICAL_LINE);
           });
         });
 
@@ -131,13 +140,13 @@ describe("Treelist", () => {
               .parent()
               .findByLabelText("vertical-line")
               .should("exist")
-              .and("have.css", "border-left", "2px solid rgb(59, 130, 246)");
+              .and("have.css", "border-left", SELECTED_VERTICAL_LINE);
 
             cy.contains("Backup")
               .parent()
               .findByLabelText("vertical-line")
               .should("exist")
-              .and("have.css", "border-left", "2px solid rgb(243, 243, 243)");
+              .and("have.css", "border-left", UNSELECTED_VERTICAL_LINE);
           });
         });
       });
@@ -163,7 +172,7 @@ describe("Treelist", () => {
             .parent()
             .findByLabelText("vertical-line")
             .should("exist")
-            .and("have.css", "border-left", "2px solid rgb(59, 130, 246)");
+            .and("have.css", "border-left", SELECTED_VERTICAL_LINE);
 
           cy.findAllByLabelText("arrow-icon").eq(2).click();
           cy.findByText("Blueprints").should("not.exist");
@@ -172,7 +181,7 @@ describe("Treelist", () => {
             .parent()
             .findByLabelText("vertical-line")
             .should("exist")
-            .and("have.css", "border-left", "2px solid rgb(59, 130, 246)");
+            .and("have.css", "border-left", SELECTED_VERTICAL_LINE);
         });
       });
     });
