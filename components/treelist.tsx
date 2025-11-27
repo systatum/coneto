@@ -426,31 +426,31 @@ function TreeListItem<T extends TreeListItemsProps>({
               </div>
             );
           })()}
-      </TreeListItemWrapper>
 
-      {showHierarchyLine && (
-        <>
+        {showHierarchyLine && (
           <TreeListHierarchyVerticalLine
             aria-label="vertical-line"
-            $isSelected={isSelected === item.id}
             $level={level}
             $isSameLevel={isSameLevel}
+            $isSelected={isSelected === item.id}
           />
-          {Array.from({ length: level }).map((_, idx) => {
-            const isSameLevelLine =
-              selectedLevel === idx && selectedGroupId === groupId;
+        )}
+      </TreeListItemWrapper>
 
-            return (
-              <TreeListHierarchyVerticalLine
-                key={idx}
-                aria-label="vertical-line-level"
-                $level={idx}
-                $isSameLevel={isSameLevelLine}
-              />
-            );
-          })}
-        </>
-      )}
+      {showHierarchyLine &&
+        Array.from({ length: level }).map((_, idx) => {
+          const isSameLevelLine =
+            selectedLevel === idx && selectedGroupId === groupId;
+
+          return (
+            <TreeListHierarchyVerticalLine
+              key={idx}
+              aria-label="vertical-line-level"
+              $level={idx}
+              $isSameLevel={isSameLevelLine}
+            />
+          );
+        })}
 
       <AnimatePresence initial={false}>
         {isOpen[item.id] && (
@@ -591,7 +591,6 @@ const ArrowIcon = styled(RiArrowRightSLine)<{
   $level?: number;
 }>`
   position: absolute;
-  left: 2px;
   top: 50%;
   transform: translateY(-50%);
   transition: transform 0.2s ease-in-out;
@@ -646,7 +645,7 @@ const TreeListHierarchyVerticalLine = styled.div<{
   z-index: 8888;
   ${({ $level, $isSelected, $isSameLevel }) => css`
     height: 100%;
-    left: ${$level * 12 + 12}px;
+    left: ${$level * 12 + 10}px;
 
     ${$isSelected
       ? css`
@@ -678,11 +677,11 @@ const TreeListItemWrapper = styled.li<{
   justify-content: space-between;
   min-height: 36px;
 
-  border-left: 3px solid
-    ${(props) =>
-      props.$isSelected && !props.$showHierarchyLine
-        ? "#3b82f6"
-        : "transparent"};
+  ${({ $showHierarchyLine, $isSelected }) =>
+    !$showHierarchyLine &&
+    css`
+      border-left: 3px solid ${$isSelected ? "#3b82f6" : "transparent"};
+    `}
   background-color: ${(props) => (props.$isSelected ? "#f3f4f6" : "white")};
   padding: 0.25rem 1.2rem;
   padding-right: 8px;
