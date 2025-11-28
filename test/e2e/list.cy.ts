@@ -1,16 +1,16 @@
 import { getIdContent } from "test/support/commands";
 
-context("List Component", () => {
-  describe("Default", () => {
-    it("Should render list items", () => {
+describe("List", () => {
+  context("default", () => {
+    it("should render list items", () => {
       cy.visit(getIdContent("content-list--default"));
       cy.contains("Home").should("exist");
       cy.contains("View your profile").should("exist");
     });
   });
 
-  describe("With Search", () => {
-    it("Should filter items by search input", () => {
+  context("with search", () => {
+    it("should filter items by search input", () => {
       cy.visit(getIdContent("content-list--with-search"));
       cy.findByLabelText("textbox-search").type("settings");
       cy.contains("Adjust preferences").should("exist");
@@ -18,8 +18,8 @@ context("List Component", () => {
     });
   });
 
-  describe("Wit Group", () => {
-    it("Should render grouped sections", () => {
+  context("with group", () => {
+    it("should render grouped sections", () => {
       cy.visit(getIdContent("content-list--with-group"));
       cy.contains("Recent Content").should("exist");
       cy.contains("Messages").should("exist");
@@ -27,8 +27,8 @@ context("List Component", () => {
     });
   });
 
-  describe("Draggable", () => {
-    it("Should allow reordering items by dragging backward", () => {
+  context("draggable", () => {
+    it("should allow reordering items by dragging backward", () => {
       cy.visit(getIdContent("content-list--draggable"));
 
       const dataTransfer = new DataTransfer();
@@ -44,19 +44,47 @@ context("List Component", () => {
     });
   });
 
-  describe("With Loading", () => {
-    it("Should show loading skeletons", () => {
+  context("with loading", () => {
+    it("should show loading skeletons", () => {
       cy.visit(getIdContent("content-list--with-loading"));
       cy.findByLabelText("circle").should("exist");
     });
   });
 
-  describe("Custom Opener", () => {
-    it("Should render with toggle and checkbox selection", () => {
-      cy.visit(getIdContent("content-list--custom-opener"));
-      cy.contains("Your latest activity").should("exist");
-      cy.get("input[type='checkbox']").first().check({ force: true });
-      cy.get("input[type='checkbox']").first().should("be.checked");
+  context("custom", () => {
+    context("with checkbox", () => {
+      it("renders the checkbox on the left side", () => {
+        cy.visit(getIdContent("content-list--custom-opener"));
+        cy.contains("Your latest activity").should("exist");
+        cy.get("input[type='checkbox']").first().check({ force: true });
+        cy.get("input[type='checkbox']").first().should("be.checked");
+      });
+    });
+
+    context("with togglebox opener", () => {
+      beforeEach(() => {
+        cy.visit(getIdContent("content-list--custom-opener"));
+      });
+      it("renders in the right side", () => {
+        cy.findAllByLabelText("list-right-side-wrapper")
+          .eq(0)
+          .should("have.css", "justify-content", "end")
+          .and("have.css", "gap", "4px");
+      });
+
+      it("renders with fit-content (48px)", () => {
+        cy.findAllByLabelText("togglebox-container")
+          .eq(0)
+          .should("have.css", "width", "48px");
+      });
+
+      context("when clicking", () => {
+        it("renders collapsed the content", () => {
+          cy.contains("Messages").should("be.visible");
+          cy.findAllByLabelText("togglebox-thumb").eq(0).click();
+          cy.contains("Messages").should("not.be.visible");
+        });
+      });
     });
   });
 });
