@@ -18,7 +18,7 @@ import {
 } from "@remixicon/react";
 import { EmptySlate } from "./empty-slate";
 import { Button } from "./button";
-import { css } from "styled-components";
+import styled, { css } from "styled-components";
 import { useMemo, useState } from "react";
 import { Combobox } from "./combobox";
 import { OptionsProps } from "./selectbox";
@@ -257,24 +257,60 @@ export const Nested: Story = {
     ]);
 
     return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "0.25rem",
-          maxWidth: "250px",
-        }}
-      >
-        <TreeList
-          collapsible
-          showHierarchyLine
-          onOpenChange={({ id }) => console.log(id)}
-          content={TREE_LIST_DATA}
-        />
-      </div>
+      <Wrapper>
+        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+          <h2
+            style={{
+              fontSize: "18px",
+            }}
+          >
+            Caret and item opening and closing
+          </h2>
+          <TreeList
+            containerStyle={css`
+              max-width: 300px;
+            `}
+            collapsible
+            showHierarchyLine
+            onOpenChange={({ id }) => console.log(id)}
+            content={TREE_LIST_DATA}
+          />
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+          <h2
+            style={{
+              fontSize: "18px",
+            }}
+          >
+            Caret-only opening and closing
+          </h2>
+          <TreeList
+            containerStyle={css`
+              max-width: 300px;
+            `}
+            collapsible
+            showHierarchyLine
+            preventDefault
+            onOpenChange={({ id }) => console.log(id)}
+            content={TREE_LIST_DATA}
+          />
+        </div>
+      </Wrapper>
     );
   },
 };
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 4rem;
+
+  @media (max-width: 500px) {
+    flex-direction: column;
+    gap: 2rem;
+  }
+`;
 
 export const WithActions: Story = {
   render: () => {
