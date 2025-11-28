@@ -65,6 +65,7 @@ describe("List", () => {
       beforeEach(() => {
         cy.visit(getIdContent("content-list--custom-opener"));
       });
+
       it("renders in the right side", () => {
         cy.findAllByLabelText("list-right-side-wrapper")
           .eq(0)
@@ -76,6 +77,30 @@ describe("List", () => {
         cy.findAllByLabelText("togglebox-container")
           .eq(0)
           .should("have.css", "width", "48px");
+
+        cy.findAllByLabelText("togglebox-container")
+          .eq(0)
+          .then(($el) => {
+            const width = $el[0].getBoundingClientRect().width;
+            expect(width).to.be.closeTo(48, 0);
+          });
+      });
+
+      context("when given actions", () => {
+        it("renders correct spacing between togglebox and action", () => {
+          cy.findAllByLabelText("list-action-button")
+            .eq(0)
+            .then(($action) => {
+              cy.findAllByLabelText("togglebox-container").then(($toggle) => {
+                const a = $action[0].getBoundingClientRect();
+                const t = $toggle[0].getBoundingClientRect();
+
+                const gap = t.left - a.right;
+
+                expect(gap).to.be.closeTo(4, 1);
+              });
+            });
+        });
       });
 
       context("when clicking", () => {
