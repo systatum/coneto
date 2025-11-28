@@ -19,6 +19,7 @@ export interface TreeListProps {
   onOpenChange?: (props?: TreeListOnOpenChangeProps) => void;
   showHierarchyLine?: boolean;
   collapsible?: boolean;
+  preventDefault?: boolean;
 }
 
 interface TreeListOnOpenChangeProps {
@@ -70,6 +71,7 @@ function TreeList({
   emptyItemSlate = "Empty Content",
   showHierarchyLine,
   collapsible,
+  preventDefault,
 }: TreeListProps) {
   const [isSelected, setIsSelected] = useState(selectedItem);
 
@@ -219,6 +221,7 @@ function TreeList({
                           selectedLevel={selectedLevel}
                           groupId={data.id}
                           selectedGroupId={selectedGroupId}
+                          preventDefault={preventDefault}
                         />
                       );
                     })
@@ -301,6 +304,7 @@ interface TreeListItemComponent<T extends TreeListItemsProps> {
   selectedLevel?: number;
   groupId?: string;
   selectedGroupId?: string;
+  preventDefault?: boolean;
 }
 
 function TreeListItem<T extends TreeListItemsProps>({
@@ -320,6 +324,7 @@ function TreeListItem<T extends TreeListItemsProps>({
   selectedLevel,
   groupId,
   selectedGroupId,
+  preventDefault,
 }: TreeListItemComponent<T>) {
   const [isHovered, setIsHovered] = useState<null | string>(null);
 
@@ -340,6 +345,7 @@ function TreeListItem<T extends TreeListItemsProps>({
     <div
       style={{
         position: "relative",
+        width: "100%",
       }}
     >
       <TreeListItemWrapper
@@ -350,6 +356,9 @@ function TreeListItem<T extends TreeListItemsProps>({
         onClick={() => {
           item.onClick?.(item);
           onChange?.(item.id);
+          if (!preventDefault && isHavingContent && collapsible) {
+            setToggleItem(item.id);
+          }
         }}
         $style={css`
           ${isHovered === item.id &&
@@ -511,6 +520,7 @@ function TreeListItem<T extends TreeListItemsProps>({
                     selectedLevel={selectedLevel}
                     selectedGroupId={selectedGroupId}
                     groupId={groupId}
+                    preventDefault={preventDefault}
                   />
                 ))
               ) : (
@@ -535,6 +545,7 @@ const TreeListWrapper = styled.div<{
 }>`
   display: flex;
   flex-direction: column;
+  width: 100%;
 
   ${(props) => props.$containerStyle}
 `;
@@ -574,6 +585,7 @@ const GroupWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+  width: 100%;
 
   &:not(:last-child) {
     padding-bottom: 8px;
@@ -693,6 +705,8 @@ const TreeListItemWrapper = styled.li<{
   justify-content: space-between;
   min-height: 36px;
   gap: 4px;
+  user-select: none;
+  width: 100%;
 
   ${({ $showHierarchyLine, $isSelected }) =>
     !$showHierarchyLine &&
