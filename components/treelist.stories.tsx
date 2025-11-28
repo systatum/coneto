@@ -11,6 +11,8 @@ import {
   RiDeleteBin2Line,
   RiEdit2Line,
   RiFileCopyLine,
+  RiFolder6Fill,
+  RiFolderFill,
   RiSearchLine,
   RiShareForwardLine,
 } from "@remixicon/react";
@@ -183,12 +185,41 @@ export const Default: Story = {
 
 export const Nested: Story = {
   render: () => {
-    const TREE_LIST_DATA: TreeListContentProps[] = [
+    function applyFolderColor(
+      tree: TreeListContentProps[]
+    ): TreeListContentProps[] {
+      return tree.map((item) => {
+        const hasChildren = Array.isArray(item.items) && item.items.length > 0;
+
+        const normalizedItems = hasChildren
+          ? applyFolderColor(item.items).map((child) => ({
+              ...child,
+              caption: child.caption ?? "",
+            }))
+          : undefined;
+
+        return {
+          ...item,
+          icon: RiFolderFill,
+          iconOnActive: RiFolder6Fill,
+          iconColor:
+            item.id === "cleverfiles"
+              ? "rgb(252, 231, 154)"
+              : "rgb(247, 212, 82)",
+          items: normalizedItems,
+        };
+      });
+    }
+
+    const TREE_LIST_DATA: TreeListContentProps[] = applyFolderColor([
       {
         id: "home",
         caption: "Home",
         items: [
-          { id: "cleverfiles", caption: ".cleverfiles" },
+          {
+            id: "cleverfiles",
+            caption: ".cleverfiles",
+          },
           {
             id: "my-documents",
             caption: "My Documents",
@@ -223,7 +254,7 @@ export const Nested: Story = {
           { id: "with-family", caption: "With family" },
         ],
       },
-    ];
+    ]);
 
     return (
       <div

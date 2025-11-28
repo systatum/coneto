@@ -81,6 +81,48 @@ describe("Treelist", () => {
     const UNSELECTED_VERTICAL_LINE = "2px solid rgb(243, 243, 243)";
     const SAME_LEVEL_SELECTED_VERTICAL_LINE = "2px solid rgb(215, 214, 214)";
 
+    const FILE_COLOR_ICON = "rgb(252, 231, 154)";
+    const FILE_COLOR_FOLDER = "rgb(247, 212, 82)";
+
+    context("with icon", () => {
+      it("renders the icon on the item", () => {
+        cy.contains(".cleverfile")
+          .parent()
+          .findByLabelText("tree-list-icon")
+          .should("exist")
+          .and("have.css", "color", FILE_COLOR_ICON);
+
+        cy.contains("My Documents")
+          .parent()
+          .findByLabelText("tree-list-icon")
+          .should("exist")
+          .and("have.css", "color", FILE_COLOR_FOLDER);
+      });
+
+      context("when given iconOnActive", () => {
+        context("when selecting", () => {
+          it("renders the icon active", () => {
+            cy.contains("My Documents")
+              .parent()
+              .findByLabelText("tree-list-icon")
+              .should("exist")
+              .and("have.css", "color", FILE_COLOR_FOLDER)
+              .click();
+            cy.contains("My Documents")
+              .parent()
+              .findByLabelText("tree-list-icon")
+              .should("not.exist");
+
+            cy.contains("My Documents")
+              .parent()
+              .findByLabelText("tree-list-icon-on-active")
+              .should("exist")
+              .and("have.css", "color", FILE_COLOR_FOLDER);
+          });
+        });
+      });
+    });
+
     context("with showHierarchy", () => {
       it("renders the line", () => {
         cy.contains("Blueprints")
