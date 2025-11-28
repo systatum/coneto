@@ -237,6 +237,7 @@ function ListGroup({
             width: "100%",
             alignItems: "start",
           }}
+          aria-label="list-left-side-wrapper"
         >
           <HeaderText>{title}</HeaderText>
           {subtitle && <HeaderSubtext>{subtitle}</HeaderSubtext>}
@@ -252,6 +253,7 @@ function ListGroup({
             justifyContent: "end",
             paddingRight: "0.5rem",
           }}
+          aria-label="list-right-side-wrapper"
         >
           {actions &&
             actions.map((prop, index) => (
@@ -274,6 +276,9 @@ function ListGroup({
             />
           ) : openerStyle === "togglebox" ? (
             <Togglebox
+              containerStyle={css`
+                width: fit-content;
+              `}
               checked={isOpen}
               onChange={() => setIsOpen((prev) => !prev)}
             />

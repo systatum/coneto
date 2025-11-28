@@ -47,7 +47,10 @@ function Togglebox({
     getToggleboxSize(size);
 
   return (
-    <ToggleboxContainer $style={containerStyle}>
+    <ToggleboxContainer
+      aria-label="togglebox-container"
+      $style={containerStyle}
+    >
       <ToggleboxWrapper $style={rowStyle} aria-label="togglebox-row-wrapper">
         <StyledLabel
           animate={{ opacity: 1, scale: 1 }}
