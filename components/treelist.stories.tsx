@@ -202,7 +202,10 @@ export const Nested: Story = {
           ...item,
           icon: RiFolderFill,
           iconOnActive: RiFolder6Fill,
-          iconColor: hasChildren ? "rgb(247, 212, 82)" : "rgb(252, 231, 154)",
+          iconColor:
+            item.id === "cleverfiles"
+              ? "rgb(252, 231, 154)"
+              : "rgb(247, 212, 82)",
           items: normalizedItems,
         };
       });
