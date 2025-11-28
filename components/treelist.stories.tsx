@@ -258,7 +258,10 @@ export const Nested: Story = {
 
     return (
       <Wrapper>
-        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+        <div
+          aria-label="nested-with-default"
+          style={{ display: "flex", flexDirection: "column", gap: "10px" }}
+        >
           <h2
             style={{
               fontSize: "18px",
@@ -277,7 +280,10 @@ export const Nested: Story = {
           />
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+        <div
+          aria-label="nested-with-prevent-default"
+          style={{ display: "flex", flexDirection: "column", gap: "10px" }}
+        >
           <h2
             style={{
               fontSize: "18px",
