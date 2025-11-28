@@ -41,6 +41,9 @@ export interface TreeListItemsProps {
   onClick?: (item?: TreeListItemsProps) => void;
   actions?: SubMenuTreeList[];
   items?: TreeListItemsProps[];
+  icon?: RemixiconComponentType;
+  iconOnActive?: RemixiconComponentType;
+  iconColor?: string;
 }
 
 export interface TreeListActionsProps {
@@ -359,6 +362,12 @@ function TreeListItem<T extends TreeListItemsProps>({
         onMouseEnter={() => setIsHovered(item.id)}
         $level={level + 1}
       >
+        {item.iconOnActive && isSelected === item.id ? (
+          <item.iconOnActive size={21} color={item.iconColor ?? "black"} />
+        ) : (
+          item.icon && <item.icon size={21} color={item.iconColor ?? "black"} />
+        )}
+
         {isHavingContent && collapsible && (
           <ArrowIcon
             aria-label="arrow-icon"
@@ -374,7 +383,6 @@ function TreeListItem<T extends TreeListItemsProps>({
             size={20}
           />
         )}
-
         {parts.map((part, index) =>
           part.toLowerCase() === searchTerm.toLowerCase() ? (
             <HighlightedText key={index}>{part}</HighlightedText>
@@ -384,7 +392,6 @@ function TreeListItem<T extends TreeListItemsProps>({
             </span>
           )
         )}
-
         {item.id === isHovered &&
           item.actions &&
           (() => {
@@ -426,7 +433,6 @@ function TreeListItem<T extends TreeListItemsProps>({
               </div>
             );
           })()}
-
         {showHierarchyLine && (
           <TreeListHierarchyVerticalLine
             aria-label="vertical-line"
@@ -676,6 +682,7 @@ const TreeListItemWrapper = styled.li<{
   cursor: pointer;
   justify-content: space-between;
   min-height: 36px;
+  gap: 4px;
 
   ${({ $showHierarchyLine, $isSelected }) =>
     !$showHierarchyLine &&
