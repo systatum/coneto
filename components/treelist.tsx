@@ -363,9 +363,19 @@ function TreeListItem<T extends TreeListItemsProps>({
         $level={level + 1}
       >
         {item.iconOnActive && isSelected === item.id ? (
-          <item.iconOnActive size={21} color={item.iconColor ?? "black"} />
+          <item.iconOnActive
+            aria-label="tree-list-icon-on-active"
+            size={21}
+            style={{ color: item.iconColor ?? "black" }}
+          />
         ) : (
-          item.icon && <item.icon size={21} color={item.iconColor ?? "black"} />
+          item.icon && (
+            <item.icon
+              aria-label="tree-list-icon"
+              size={21}
+              style={{ color: item.iconColor ?? "black" }}
+            />
+          )
         )}
 
         {isHavingContent && collapsible && (
