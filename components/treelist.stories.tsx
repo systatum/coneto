@@ -35,8 +35,8 @@ type Story = StoryObj<typeof TreeList>;
 
 export const Default: Story = {
   render: () => {
-    const setPerson = (item: TreeListItemsProps) => {
-      console.log("Clicked person:", item.caption);
+    const setPerson = (props) => {
+      console.log("Clicked person:", props.item.caption);
     };
 
     const TREE_LIST_DATA: TreeListContentProps[] = [
@@ -211,7 +211,36 @@ export const Nested: Story = {
       });
     }
 
-    const TREE_LIST_DATA: TreeListContentProps[] = applyFolderColor([
+    function applyPreventDefault(
+      tree: TreeListContentProps[]
+    ): TreeListItemsProps[] {
+      return tree.map((props) => {
+        const hasChildren =
+          Array.isArray(props.items) && props.items.length > 0;
+
+        const normalizedItems: TreeListItemsProps[] | undefined = hasChildren
+          ? applyPreventDefault(props.items!)
+          : undefined;
+
+        return {
+          ...props,
+          caption: props.caption ?? "",
+          id: props.id ?? "",
+          items: normalizedItems,
+          icon: RiFolderFill,
+          iconOnActive: RiFolder6Fill,
+          iconColor:
+            props.id === "cleverfiles"
+              ? "rgb(252, 231, 154)"
+              : "rgb(247, 212, 82)",
+          onClick: ({ item, preventDefault }) => {
+            preventDefault();
+          },
+        };
+      });
+    }
+
+    const TREE_LIST_DATA: TreeListContentProps[] = [
       {
         id: "home",
         caption: "Home",
@@ -254,7 +283,7 @@ export const Nested: Story = {
           { id: "with-family", caption: "With family" },
         ],
       },
-    ]);
+    ];
 
     return (
       <Wrapper>
@@ -276,7 +305,7 @@ export const Nested: Story = {
             collapsible
             showHierarchyLine
             onOpenChange={({ id }) => console.log(id)}
-            content={TREE_LIST_DATA}
+            content={applyFolderColor(TREE_LIST_DATA)}
           />
         </div>
 
@@ -297,9 +326,8 @@ export const Nested: Story = {
             `}
             collapsible
             showHierarchyLine
-            preventDefault
             onOpenChange={({ id }) => console.log(id)}
-            content={TREE_LIST_DATA}
+            content={applyPreventDefault(TREE_LIST_DATA)}
           />
         </div>
       </Wrapper>
@@ -320,8 +348,8 @@ const Wrapper = styled.div`
 
 export const WithActions: Story = {
   render: () => {
-    const setPerson = (item: TreeListItemsProps) => {
-      console.log("Clicked person:", item.caption);
+    const setPerson = (props) => {
+      console.log("Clicked person:", props.item.caption);
     };
 
     const ITEM_ACTIONS: SubMenuTreeList[] = [
@@ -490,8 +518,8 @@ export const WithActions: Story = {
 
 export const WithoutHeader: Story = {
   render: () => {
-    const setPerson = (item: TreeListItemsProps) => {
-      console.log("Clicked person:", item.caption);
+    const setPerson = (props) => {
+      console.log("Clicked person:", props.item.caption);
     };
 
     const TREE_LIST_DATA = [
