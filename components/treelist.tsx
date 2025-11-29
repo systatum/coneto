@@ -19,7 +19,6 @@ export interface TreeListProps {
   onOpenChange?: (props?: TreeListOnOpenChangeProps) => void;
   showHierarchyLine?: boolean;
   collapsible?: boolean;
-  preventDefault?: boolean;
 }
 
 interface TreeListOnOpenChangeProps {
@@ -39,7 +38,10 @@ export interface TreeListContentProps {
 export interface TreeListItemsProps {
   id: string;
   caption: string;
-  onClick?: (item?: TreeListItemsProps) => void;
+  onClick?: (props: {
+    item?: TreeListItemsProps;
+    preventDefault: () => void;
+  }) => void;
   actions?: SubMenuTreeList[];
   items?: TreeListItemsProps[];
   icon?: RemixiconComponentType;
@@ -71,7 +73,6 @@ function TreeList({
   emptyItemSlate = "Empty Content",
   showHierarchyLine,
   collapsible,
-  preventDefault,
 }: TreeListProps) {
   const [isSelected, setIsSelected] = useState(selectedItem);
 
@@ -221,7 +222,6 @@ function TreeList({
                           selectedLevel={selectedLevel}
                           groupId={data.id}
                           selectedGroupId={selectedGroupId}
-                          preventDefault={preventDefault}
                         />
                       );
                     })
@@ -304,7 +304,6 @@ interface TreeListItemComponent<T extends TreeListItemsProps> {
   selectedLevel?: number;
   groupId?: string;
   selectedGroupId?: string;
-  preventDefault?: boolean;
 }
 
 function TreeListItem<T extends TreeListItemsProps>({
@@ -324,7 +323,6 @@ function TreeListItem<T extends TreeListItemsProps>({
   selectedLevel,
   groupId,
   selectedGroupId,
-  preventDefault,
 }: TreeListItemComponent<T>) {
   const [isHovered, setIsHovered] = useState<null | string>(null);
 
@@ -353,11 +351,25 @@ function TreeListItem<T extends TreeListItemsProps>({
         aria-label="tree-list-item"
         $isSelected={isSelected === item.id}
         $showHierarchyLine={showHierarchyLine}
-        onClick={() => {
-          item.onClick?.(item);
-          onChange?.(item.id);
-          if (!preventDefault && isHavingContent && collapsible) {
-            setToggleItem(item.id);
+        onClick={async () => {
+          let prevent = false;
+
+          if (onChange) {
+            await onChange(item.id);
+          }
+
+          if (item.onClick)
+            await item.onClick({
+              item,
+              preventDefault: () => {
+                prevent = true;
+              },
+            });
+
+          if (!prevent) {
+            if (isHavingContent && collapsible) {
+              await setToggleItem(item.id);
+            }
           }
         }}
         $style={css`
@@ -520,7 +532,6 @@ function TreeListItem<T extends TreeListItemsProps>({
                     selectedLevel={selectedLevel}
                     selectedGroupId={selectedGroupId}
                     groupId={groupId}
-                    preventDefault={preventDefault}
                   />
                 ))
               ) : (
