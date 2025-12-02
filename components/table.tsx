@@ -16,7 +16,6 @@ import { LoadingSpinner } from "./loading-spinner";
 import { Toolbar } from "./toolbar";
 import { TipMenuItemProps } from "./tip-menu";
 import {
-  RemixiconComponentType,
   RiArrowDownSLine,
   RiArrowLeftSLine,
   RiArrowRightSLine,
@@ -26,9 +25,9 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import styled, { css, CSSProp } from "styled-components";
 import { Searchbox } from "./searchbox";
-import { Button, SubMenuButtonProps } from "./button";
 import { Capsule, CapsuleProps } from "./capsule";
 import ContextMenu from "./context-menu";
+import { ActionButton, ActionButtonProps } from "./action-button";
 
 export type RowData = (string | ReactNode)[];
 
@@ -39,17 +38,8 @@ export interface ColumnTableProps {
   width?: string;
 }
 
-export interface TableActionsProps {
-  title?: string;
-  icon?: RemixiconComponentType;
-  onClick?: () => void;
-  style?: CSSProp;
-  dividerStyle?: CSSProp;
-  dropdownStyle?: CSSProp;
-  subMenu?: (props: SubMenuButtonProps) => React.ReactNode;
-  disabled?: boolean;
+export interface TableActionsProps extends ActionButtonProps {
   type?: "default" | "capsule";
-  showSubMenuOn?: "caret" | "self";
   capsuleProps?: CapsuleProps;
 }
 
@@ -475,105 +465,6 @@ function ActionCapsule(data: TableActionsProps) {
         ${data.capsuleProps.tabStyle}
       `}
     />
-  );
-}
-
-function ActionButton(data: TableActionsProps) {
-  return (
-    <Button
-      onClick={(e) => {
-        e.stopPropagation();
-        if (data.onClick) {
-          data.onClick();
-        }
-      }}
-      subMenu={data.subMenu}
-      disabled={data.disabled}
-      showSubMenuOn={data.showSubMenuOn}
-      size="sm"
-      tipMenuSize="sm"
-      buttonStyle={css`
-        display: flex;
-        flex-direction: row;
-        gap: 0.25rem;
-        align-items: center;
-        cursor: pointer;
-        background-color: transparent;
-        color: #565555;
-        ${data.subMenu && data.showSubMenuOn === "caret"
-          ? css`
-              border-top: 1px solid #e5e7eb;
-              border-left: 1px solid #e5e7eb;
-              border-bottom: 1px solid #e5e7eb;
-            `
-          : css`
-              border: 1px solid #e5e7eb;
-            `}
-        border-radius: 6px;
-        position: relative;
-
-        &:hover {
-          background-color: #e2e0e0;
-        }
-
-        &:disabled {
-          background-color: rgb(227 227 227);
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
-        ${data.style}
-      `}
-      toggleStyle={
-        data.subMenu &&
-        css`
-          display: flex;
-          flex-direction: row;
-          gap: 0.25rem;
-          align-items: center;
-          cursor: pointer;
-          color: #565555;
-          padding: 0.25rem 0.5rem;
-          background-color: transparent;
-          position: relative;
-          border-top: 1px solid #e5e7eb;
-          border-right: 1px solid #e5e7eb;
-          border-bottom: 1px solid #e5e7eb;
-          border-top-right-radius: 6px;
-          border-bottom-right-radius: 6px;
-
-          &:hover {
-            background-color: #e2e0e0;
-          }
-
-          &:disabled {
-            background-color: rgb(227 227 227);
-            opacity: 0.5;
-            cursor: not-allowed;
-          }
-          ${data.style}
-        `
-      }
-      dividerStyle={css`
-        border: 1px solid rgb(236 236 236);
-        ${data.subMenu && data.dividerStyle ? data.dividerStyle : null}
-      `}
-      dropdownStyle={css`
-        position: absolute;
-        margin-top: 2px;
-        z-index: 9999;
-        width: 170px;
-        ${data.subMenu && data.dropdownStyle ? data.dropdownStyle : null}
-      `}
-    >
-      {data.icon && <data.icon size={14} />}
-      <span
-        style={{
-          fontSize: "14px",
-        }}
-      >
-        {data.title}
-      </span>
-    </Button>
   );
 }
 

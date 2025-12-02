@@ -155,14 +155,14 @@ describe("Table", () => {
 
   const TOP_ACTIONS: TableActionsProps[] = [
     {
-      title: "Delete",
+      caption: "Delete",
       icon: RiDeleteBin2Line,
       onClick: () => {
         console.log("Delete clicked");
       },
     },
     {
-      title: "Copy",
+      caption: "Copy",
       icon: RiClipboardFill,
       onClick: () => {
         console.log("Copy clicked");
@@ -228,7 +228,7 @@ describe("Table", () => {
     context("when given default", () => {
       const DEFAULT_TOP_ACTIONS: TableActionsProps[] = [
         {
-          title: "Copy",
+          caption: "Copy",
           icon: RiArrowUpSLine,
           onClick: () => {
             console.log("Copy clicked");
@@ -299,7 +299,7 @@ describe("Table", () => {
 
       const DEFAULT_TOP_ACTIONS: TableActionsProps[] = [
         {
-          title: "Copy",
+          caption: "Copy",
           icon: RiArrowUpSLine,
           onClick: () => {
             console.log("Copy clicked");
@@ -668,7 +668,7 @@ describe("Table", () => {
         });
 
         cy.findAllByLabelText("table-row").eq(2).trigger("mouseover");
-        cy.findByLabelText("list-action-button")
+        cy.findByLabelText("action-button")
           .should("be.visible")
           .and("have.attr", "title", "Delete")
           .click();
@@ -719,7 +719,7 @@ describe("Table", () => {
         });
 
         cy.findAllByLabelText("table-row").eq(2).trigger("mouseover");
-        cy.findByLabelText("list-action-button").should("be.visible").click();
+        cy.findByLabelText("action-button").should("be.visible").click();
         cy.findByText("Edit").click();
 
         cy.wait(100);

@@ -1204,7 +1204,7 @@ export const WithRowGroup: Story = {
         },
       },
       {
-        title: "Delete",
+        caption: "Delete",
         disabled: selected.length === 0,
         icon: RiDeleteBin2Line,
         onClick: () => {
@@ -1212,7 +1212,7 @@ export const WithRowGroup: Story = {
         },
       },
       {
-        title: "Copy",
+        caption: "Copy",
         icon: RiClipboardFill,
         onClick: () => {
           console.log("Copy clicked");
@@ -1600,7 +1600,7 @@ export const Draggable: Story = {
 
     const TOP_ACTIONS: TableActionsProps[] = [
       {
-        title: "Delete",
+        caption: "Delete",
         disabled: selected.length === 0,
         icon: RiDeleteBin2Line,
         onClick: () => {
@@ -1608,7 +1608,7 @@ export const Draggable: Story = {
         },
       },
       {
-        title: "Copy",
+        caption: "Copy",
         icon: RiClipboardFill,
         onClick: () => {
           console.log("Copy clicked");
