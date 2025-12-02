@@ -18,7 +18,7 @@ import {
 } from "@remixicon/react";
 import { EmptySlate } from "./empty-slate";
 import { Button } from "./button";
-import { css } from "styled-components";
+import styled, { css } from "styled-components";
 import { useMemo, useState } from "react";
 import { Combobox } from "./combobox";
 import { OptionsProps } from "./selectbox";
@@ -35,8 +35,8 @@ type Story = StoryObj<typeof TreeList>;
 
 export const Default: Story = {
   render: () => {
-    const setPerson = (item: TreeListItemsProps) => {
-      console.log("Clicked person:", item.caption);
+    const setPerson = (props) => {
+      console.log("Clicked person:", props.item.caption);
     };
 
     const TREE_LIST_DATA: TreeListContentProps[] = [
@@ -211,7 +211,36 @@ export const Nested: Story = {
       });
     }
 
-    const TREE_LIST_DATA: TreeListContentProps[] = applyFolderColor([
+    function applyPreventDefault(
+      tree: TreeListContentProps[]
+    ): TreeListItemsProps[] {
+      return tree.map((props) => {
+        const hasChildren =
+          Array.isArray(props.items) && props.items.length > 0;
+
+        const normalizedItems: TreeListItemsProps[] | undefined = hasChildren
+          ? applyPreventDefault(props.items!)
+          : undefined;
+
+        return {
+          ...props,
+          caption: props.caption ?? "",
+          id: props.id ?? "",
+          items: normalizedItems,
+          icon: RiFolderFill,
+          iconOnActive: RiFolder6Fill,
+          iconColor:
+            props.id === "cleverfiles"
+              ? "rgb(252, 231, 154)"
+              : "rgb(247, 212, 82)",
+          onClick: ({ item, preventDefault }) => {
+            preventDefault();
+          },
+        };
+      });
+    }
+
+    const TREE_LIST_DATA: TreeListContentProps[] = [
       {
         id: "home",
         caption: "Home",
@@ -254,32 +283,73 @@ export const Nested: Story = {
           { id: "with-family", caption: "With family" },
         ],
       },
-    ]);
+    ];
 
     return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "0.25rem",
-          maxWidth: "250px",
-        }}
-      >
-        <TreeList
-          collapsible
-          showHierarchyLine
-          onOpenChange={({ id }) => console.log(id)}
-          content={TREE_LIST_DATA}
-        />
-      </div>
+      <Wrapper>
+        <div
+          aria-label="nested-with-default"
+          style={{ display: "flex", flexDirection: "column", gap: "10px" }}
+        >
+          <h2
+            style={{
+              fontSize: "18px",
+            }}
+          >
+            Caret and item opening and closing
+          </h2>
+          <TreeList
+            containerStyle={css`
+              max-width: 300px;
+            `}
+            collapsible
+            showHierarchyLine
+            onOpenChange={({ id }) => console.log(id)}
+            content={applyFolderColor(TREE_LIST_DATA)}
+          />
+        </div>
+
+        <div
+          aria-label="nested-with-prevent-default"
+          style={{ display: "flex", flexDirection: "column", gap: "10px" }}
+        >
+          <h2
+            style={{
+              fontSize: "18px",
+            }}
+          >
+            Caret-only opening and closing
+          </h2>
+          <TreeList
+            containerStyle={css`
+              max-width: 300px;
+            `}
+            collapsible
+            showHierarchyLine
+            onOpenChange={({ id }) => console.log(id)}
+            content={applyPreventDefault(TREE_LIST_DATA)}
+          />
+        </div>
+      </Wrapper>
     );
   },
 };
 
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 4rem;
+
+  @media (max-width: 500px) {
+    flex-direction: column;
+    gap: 2rem;
+  }
+`;
+
 export const WithActions: Story = {
   render: () => {
-    const setPerson = (item: TreeListItemsProps) => {
-      console.log("Clicked person:", item.caption);
+    const setPerson = (props) => {
+      console.log("Clicked person:", props.item.caption);
     };
 
     const ITEM_ACTIONS: SubMenuTreeList[] = [
@@ -448,8 +518,8 @@ export const WithActions: Story = {
 
 export const WithoutHeader: Story = {
   render: () => {
-    const setPerson = (item: TreeListItemsProps) => {
-      console.log("Clicked person:", item.caption);
+    const setPerson = (props) => {
+      console.log("Clicked person:", props.item.caption);
     };
 
     const TREE_LIST_DATA = [

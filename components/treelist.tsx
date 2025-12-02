@@ -38,7 +38,10 @@ export interface TreeListContentProps {
 export interface TreeListItemsProps {
   id: string;
   caption: string;
-  onClick?: (item?: TreeListItemsProps) => void;
+  onClick?: (props: {
+    item?: TreeListItemsProps;
+    preventDefault: () => void;
+  }) => void;
   actions?: SubMenuTreeList[];
   items?: TreeListItemsProps[];
   icon?: RemixiconComponentType;
@@ -340,6 +343,7 @@ function TreeListItem<T extends TreeListItemsProps>({
     <div
       style={{
         position: "relative",
+        width: "100%",
       }}
     >
       <TreeListItemWrapper
@@ -347,9 +351,26 @@ function TreeListItem<T extends TreeListItemsProps>({
         aria-label="tree-list-item"
         $isSelected={isSelected === item.id}
         $showHierarchyLine={showHierarchyLine}
-        onClick={() => {
-          item.onClick?.(item);
-          onChange?.(item.id);
+        onClick={async () => {
+          let prevent = false;
+
+          if (onChange) {
+            await onChange(item.id);
+          }
+
+          if (item.onClick)
+            await item.onClick({
+              item,
+              preventDefault: () => {
+                prevent = true;
+              },
+            });
+
+          if (!prevent) {
+            if (isHavingContent && collapsible) {
+              await setToggleItem(item.id);
+            }
+          }
         }}
         $style={css`
           ${isHovered === item.id &&
@@ -535,6 +556,7 @@ const TreeListWrapper = styled.div<{
 }>`
   display: flex;
   flex-direction: column;
+  width: 100%;
 
   ${(props) => props.$containerStyle}
 `;
@@ -574,6 +596,7 @@ const GroupWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+  width: 100%;
 
   &:not(:last-child) {
     padding-bottom: 8px;
@@ -693,6 +716,8 @@ const TreeListItemWrapper = styled.li<{
   justify-content: space-between;
   min-height: 36px;
   gap: 4px;
+  user-select: none;
+  width: 100%;
 
   ${({ $showHierarchyLine, $isSelected }) =>
     !$showHierarchyLine &&

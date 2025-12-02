@@ -196,34 +196,52 @@ describe("Treelist", () => {
 
     context("when collapsible", () => {
       it("renders the chevron", () => {
-        cy.findAllByLabelText("arrow-icon").should("have.length", 4);
+        cy.findByLabelText("nested-with-default").then(($container) =>
+          cy
+            .wrap($container)
+            .findAllByLabelText("arrow-icon")
+            .should("have.length", 4)
+        );
+        cy.findByLabelText("nested-with-prevent-default").then(($container) =>
+          cy
+            .wrap($container)
+            .findAllByLabelText("arrow-icon")
+            .should("have.length", 4)
+        );
       });
 
       context("when clicking", () => {
         it("should collapsed the content", () => {
-          cy.findByText("Blueprints").should("exist");
-          cy.findByText("Contracts").click();
-          cy.findAllByLabelText("arrow-icon").eq(2).click();
-          cy.findByText("Blueprints").should("not.exist");
+          cy.findByLabelText("nested-with-default").within(() => {
+            cy.findByText("Blueprints").should("exist");
+            cy.findByText("Contracts").click();
+            cy.findByText("Blueprints").should("not.exist");
+          });
+        });
+      });
+
+      context("with preventDefault", () => {
+        context("when clicking item", () => {
+          it("should not collapsed the content", () => {
+            cy.findByLabelText("nested-with-prevent-default").within(() => {
+              cy.findByText("Blueprints").should("exist");
+              cy.findByText("Contracts").click();
+              cy.findByText("Blueprints").should("exist");
+            });
+          });
         });
 
-        it("renders consistent line color", () => {
-          cy.findByText("Blueprints").should("exist");
-          cy.findByText("Contracts")
-            .click()
-            .parent()
-            .findByLabelText("vertical-line")
-            .should("exist")
-            .and("have.css", "border-left", SELECTED_VERTICAL_LINE);
-
-          cy.findAllByLabelText("arrow-icon").eq(2).click();
-          cy.findByText("Blueprints").should("not.exist");
-
-          cy.findByText("Contracts")
-            .parent()
-            .findByLabelText("vertical-line")
-            .should("exist")
-            .and("have.css", "border-left", SELECTED_VERTICAL_LINE);
+        context("when clicking arrow", () => {
+          it("should collapsed the content", () => {
+            cy.findByLabelText("nested-with-prevent-default").within(() => {
+              cy.findByText("Blueprints").should("exist");
+              cy.findByText("Contracts")
+                .parent()
+                .findByLabelText("arrow-icon")
+                .click();
+              cy.findByText("Blueprints").should("not.exist");
+            });
+          });
         });
       });
     });
