@@ -29,10 +29,13 @@ interface TreeListOnOpenChangeProps {
   setLastFetch?: (date: Date) => void;
 }
 
+type TreeListInitialState = "closed" | "opened";
+
 export interface TreeListContentProps {
   id: string;
   caption?: string;
   items?: TreeListItemsProps[];
+  initialState?: TreeListInitialState;
 }
 
 export interface TreeListItemsProps {
@@ -77,14 +80,26 @@ function TreeList({
   const [isSelected, setIsSelected] = useState(selectedItem);
 
   const initialOpenMap = Object.fromEntries(
-    content.map((group) => [group.id, !!group.items?.length])
+    content.map((group) => {
+      const valueInitialState = (group.initialState ?? "opened") === "opened";
+      const initialState = valueInitialState && !!group.items?.length;
+      return [group.id, initialState];
+    })
   );
 
   for (const group of content) {
     if (group.items) {
-      Object.assign(initialOpenMap, collectAllItemIds(group.items));
+      const valueInitialState = (group.initialState ?? "opened") === "opened";
+      const initialState = valueInitialState && !!group.items?.length;
+
+      Object.assign(
+        initialOpenMap,
+        collectAllItemIds(group.items, initialState)
+      );
     }
   }
+
+  const [isOpen, setIsOpen] = useState<Record<string, boolean>>(initialOpenMap);
 
   const selectedLevel = content
     .map((group) => {
@@ -92,8 +107,6 @@ function TreeList({
       return null;
     })
     .find((level) => level !== null);
-
-  const [isOpen, setIsOpen] = useState<Record<string, boolean>>(initialOpenMap);
 
   const [lastFetchGroup, setLastFetchGroup] = useState<Record<string, Date>>(
     Object.fromEntries(content.map((data) => [data.id, null]))
@@ -244,13 +257,18 @@ function TreeList({
 
 function collectAllItemIds(
   items: TreeListItemsProps[],
+  initialState?: boolean,
   acc = {} as Record<string, boolean>
 ) {
   for (const item of items) {
-    acc[item.id] = !!item.items?.length;
+    const hasChildren = Array.isArray(item.items) && item.items?.length > 0;
+    const validatorProp = initialState && hasChildren;
 
-    if (item.items?.length) collectAllItemIds(item.items, acc);
+    acc[item.id] = validatorProp;
+
+    if (validatorProp) collectAllItemIds(item.items, initialState, acc);
   }
+
   return acc;
 }
 
