@@ -185,57 +185,76 @@ export const Default: Story = {
 
 export const Nested: Story = {
   render: () => {
-    function applyFolderColor(
-      tree: TreeListContentProps[]
+    function applyContent(
+      tree: TreeListContentProps[],
+      defaultPrevented?: boolean,
+      initialState?: "opened" | "closed"
     ): TreeListContentProps[] {
-      return tree.map((item) => {
-        const hasChildren = Array.isArray(item.items) && item.items.length > 0;
+      return tree.map((props) => {
+        const hasChildren =
+          Array.isArray(props.items) && props.items.length > 0;
 
-        const normalizedItems = hasChildren
-          ? applyFolderColor(item.items).map((child) => ({
-              ...child,
-              caption: child.caption ?? "",
-            }))
-          : undefined;
+        let normalizedItems: TreeListItemsProps[] | undefined = undefined;
+
+        if (hasChildren && props.items) {
+          normalizedItems = props.items.map((item) => {
+            const itemHasChildren =
+              Array.isArray(item.items) && item.items.length > 0;
+
+            return {
+              ...item,
+              id: item.id,
+              caption: item.caption,
+              icon: RiFolderFill,
+              iconOnActive: RiFolder6Fill,
+              iconColor:
+                item.id === "cleverfiles"
+                  ? "rgb(252, 231, 154)"
+                  : "rgb(247, 212, 82)",
+              items: itemHasChildren
+                ? applyItemsRecursively(item.items!, defaultPrevented)
+                : undefined,
+              onClick: ({ preventDefault }) => {
+                if (defaultPrevented) {
+                  preventDefault();
+                }
+              },
+            };
+          });
+        }
+
+        return {
+          ...props,
+          id: props.id,
+          caption: props.id,
+          initialState: initialState,
+          items: normalizedItems,
+        };
+      });
+    }
+
+    function applyItemsRecursively(
+      items: TreeListItemsProps[],
+      defaultPrevented?: boolean
+    ): TreeListItemsProps[] {
+      return items.map((item) => {
+        const hasChildren = Array.isArray(item.items) && item.items.length > 0;
 
         return {
           ...item,
+          id: item.id,
+          caption: item.caption,
           icon: RiFolderFill,
           iconOnActive: RiFolder6Fill,
           iconColor:
             item.id === "cleverfiles"
               ? "rgb(252, 231, 154)"
               : "rgb(247, 212, 82)",
-          items: normalizedItems,
-        };
-      });
-    }
-
-    function applyPreventDefault(
-      tree: TreeListContentProps[]
-    ): TreeListItemsProps[] {
-      return tree.map((props) => {
-        const hasChildren =
-          Array.isArray(props.items) && props.items.length > 0;
-
-        const normalizedItems: TreeListItemsProps[] | undefined = hasChildren
-          ? applyPreventDefault(props.items!)
-          : undefined;
-
-        return {
-          ...props,
-          caption: props.caption ?? "",
-          id: props.id ?? "",
-          items: normalizedItems,
-          icon: RiFolderFill,
-          iconOnActive: RiFolder6Fill,
-          initialState: true,
-          iconColor:
-            props.id === "cleverfiles"
-              ? "rgb(252, 231, 154)"
-              : "rgb(247, 212, 82)",
-          onClick: ({ item, preventDefault }) => {
-            preventDefault();
+          items: hasChildren ? applyItemsRecursively(item.items!) : undefined,
+          onClick: ({ preventDefault }) => {
+            if (defaultPrevented) {
+              preventDefault();
+            }
           },
         };
       });
@@ -311,7 +330,7 @@ export const Nested: Story = {
             collapsible
             showHierarchyLine
             onOpenChange={({ id }) => console.log(id)}
-            content={applyFolderColor(TREE_LIST_DATA)}
+            content={applyContent(TREE_LIST_DATA, false, "opened")}
           />
         </div>
 
@@ -338,7 +357,7 @@ export const Nested: Story = {
             collapsible
             showHierarchyLine
             onOpenChange={({ id }) => console.log(id)}
-            content={applyPreventDefault(TREE_LIST_DATA)}
+            content={applyContent(TREE_LIST_DATA, true, "closed")}
           />
         </div>
       </Wrapper>
