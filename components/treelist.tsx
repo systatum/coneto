@@ -50,6 +50,7 @@ export interface TreeListItemsProps {
   icon?: RemixiconComponentType;
   iconOnActive?: RemixiconComponentType;
   iconColor?: string;
+  initialState?: TreeListInitialState;
 }
 
 export interface TreeListActionsProps {
@@ -262,11 +263,15 @@ function collectAllItemIds(
 ) {
   for (const item of items) {
     const hasChildren = Array.isArray(item.items) && item.items?.length > 0;
-    const validatorProp = initialState && hasChildren;
+
+    const selfInitial =
+      (item.initialState ?? "opened") === "opened" ? true : false;
+
+    const validatorProp = initialState && hasChildren && selfInitial;
 
     acc[item.id] = validatorProp;
 
-    if (validatorProp) collectAllItemIds(item.items, initialState, acc);
+    if (hasChildren) collectAllItemIds(item.items, validatorProp, acc);
   }
 
   return acc;
