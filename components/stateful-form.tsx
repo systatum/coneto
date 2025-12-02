@@ -1,7 +1,13 @@
 import { useForm, UseFormProps, UseFormSetValue } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z, { ZodTypeAny, TypeOf, ZodObject } from "zod";
-import { ChangeEvent, ReactNode, useEffect, useRef } from "react";
+import React, {
+  ChangeEvent,
+  Fragment,
+  ReactNode,
+  useEffect,
+  useRef,
+} from "react";
 import {
   Control,
   Controller,
@@ -330,7 +336,7 @@ function FormFields<T extends FieldValues>({
           >
             {visibleFields.map((field: FormFieldProps, index: number) => {
               return field.type === "custom" ? (
-                field.render
+                <Fragment key={index}>field.render</Fragment>
               ) : field.type === "text" ||
                 field.type === "message" ||
                 field.type === "number" ||

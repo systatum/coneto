@@ -8,7 +8,6 @@ import {
 import { useState } from "react";
 import { COUNTRY_CODES } from "./../constants/countries";
 import { z } from "zod";
-import { Button } from "./button";
 import {
   OnCompleteFunctionProps,
   OnFileDroppedFunctionProps,
@@ -791,6 +790,7 @@ export const AllCase: Story = {
         <StatefulForm
           onChange={({ currentState }) => {
             const { chips, ...rest } = currentState;
+            void chips;
 
             setValue((prev) => ({
               ...prev,
