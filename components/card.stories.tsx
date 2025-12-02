@@ -763,7 +763,7 @@ export const WithHeaderAndFooter: Story = {
         subtitle="Fueling innovation with every bite."
         headerActions={[
           {
-            title: "Edit fields",
+            caption: "Edit fields",
             disabled: value.checked.length === 0,
             icon: RiEdit2Line,
             onClick: () => {
@@ -1035,7 +1035,7 @@ export const WithFullWidthContent: Story = {
         `}
         headerActions={[
           {
-            title: "Add",
+            caption: "Add",
             icon: RiAddBoxLine,
             onClick: () => {
               console.log(`Add button was clicked`);
