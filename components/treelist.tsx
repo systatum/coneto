@@ -43,7 +43,7 @@ export interface TreeListItemsProps {
   caption: string;
   onClick?: (props: {
     item?: TreeListItemsProps;
-    preventDefault: () => void;
+    preventDefault?: () => void;
   }) => void;
   actions?: SubMenuTreeList[];
   items?: TreeListItemsProps[];
