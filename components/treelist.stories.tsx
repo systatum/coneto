@@ -212,7 +212,11 @@ export const Nested: Story = {
                   ? "rgb(252, 231, 154)"
                   : "rgb(247, 212, 82)",
               items: itemHasChildren
-                ? applyItemsRecursively(item.items!, defaultPrevented)
+                ? applyItemsRecursively(
+                    item.items!,
+                    defaultPrevented,
+                    initialState
+                  )
                 : undefined,
               onClick: ({ preventDefault }) => {
                 if (defaultPrevented) {
@@ -227,7 +231,6 @@ export const Nested: Story = {
           ...props,
           id: props.id,
           caption: props.id,
-          initialState: initialState,
           items: normalizedItems,
         };
       });
@@ -235,7 +238,8 @@ export const Nested: Story = {
 
     function applyItemsRecursively(
       items: TreeListItemsProps[],
-      defaultPrevented?: boolean
+      defaultPrevented?: boolean,
+      initialState?: "opened" | "closed"
     ): TreeListItemsProps[] {
       return items.map((item) => {
         const hasChildren = Array.isArray(item.items) && item.items.length > 0;
@@ -251,6 +255,10 @@ export const Nested: Story = {
               ? "rgb(252, 231, 154)"
               : "rgb(247, 212, 82)",
           items: hasChildren ? applyItemsRecursively(item.items!) : undefined,
+          initialState:
+            item.id === "contracts" && initialState === "closed"
+              ? "closed"
+              : "opened",
           onClick: ({ preventDefault }) => {
             if (defaultPrevented) {
               preventDefault();
