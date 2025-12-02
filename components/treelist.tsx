@@ -1,5 +1,5 @@
 import styled, { css, CSSProp } from "styled-components";
-import { Fragment, ReactNode, useState } from "react";
+import React, { ReactNode, useState } from "react";
 import { RemixiconComponentType, RiArrowRightSLine } from "@remixicon/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { TipMenuItemProps } from "./tip-menu";
@@ -376,13 +376,14 @@ function TreeListItem<T extends TreeListItemsProps>({
             await onChange(item.id);
           }
 
-          if (item.onClick)
+          if (item.onClick) {
             await item.onClick({
               item,
               preventDefault: () => {
                 prevent = true;
               },
             });
+          }
 
           if (!prevent) {
             if (isHavingContent && collapsible) {
@@ -432,15 +433,19 @@ function TreeListItem<T extends TreeListItemsProps>({
             size={20}
           />
         )}
-        {parts.map((part, index) =>
-          part.toLowerCase() === searchTerm.toLowerCase() ? (
-            <HighlightedText key={index}>{part}</HighlightedText>
-          ) : (
-            <span key={index} style={{ width: "100%" }}>
-              {part}
-            </span>
-          )
-        )}
+        <div
+          style={{
+            width: "100%",
+          }}
+        >
+          {parts.map((part, index) =>
+            part.toLowerCase() === searchTerm.toLowerCase() ? (
+              <HighlightedText key={index}>{part}</HighlightedText>
+            ) : (
+              <span key={index}>{part}</span>
+            )
+          )}
+        </div>
         {item.id === isHovered &&
           item.actions &&
           (() => {
@@ -760,7 +765,6 @@ const HighlightedText = styled.span`
   background-color: #e5e7eb;
   font-weight: 600;
   border-radius: 4px;
-  width: 100%;
 `;
 
 function escapeRegExp(string: string) {
