@@ -22,8 +22,8 @@ import { LoadingSpinner } from "./loading-spinner";
 import { Checkbox } from "./checkbox";
 import { Togglebox } from "./togglebox";
 import styled, { css, CSSProp } from "styled-components";
-import { Button, SubMenuButtonProps } from "./button";
 import ContextMenu, { ContextMenuActionsProps } from "./context-menu";
+import { ActionButton, ActionButtonProps } from "./action-button";
 
 export interface ListProps {
   searchable?: boolean;
@@ -42,16 +42,9 @@ export interface ListProps {
   }) => void;
 }
 
-export interface ListGroupActionsProps {
-  caption: string;
-  icon?: RemixiconComponentType;
+export interface ListGroupActionsProps
+  extends Omit<ActionButtonProps, "onClick"> {
   onClick?: (e?: string) => void;
-  style?: CSSProp;
-  dividerStyle?: CSSProp;
-  dropdownStyle?: CSSProp;
-  subMenu?: (props: SubMenuButtonProps) => ReactNode;
-  disabled?: boolean;
-  showSubMenuOn?: "caret" | "self";
 }
 
 export interface ListGroupProps {
@@ -224,6 +217,18 @@ function ListGroup({
   const [isOpen, setIsOpen] = useState(true);
   const { dragItem, setDragItem, onDragged } = useContext(DnDContext);
 
+  const finalActions =
+    actions &&
+    actions?.map((action) => ({
+      ...action,
+      style: css`
+        font-size: 11px;
+        height: 24px;
+        ${action.style}
+      `,
+      onClick: () => action.onClick && action.onClick?.(id),
+    }));
+
   return (
     <ListGroupContainer $containerStyle={containerStyle}>
       <HeaderButton
@@ -255,10 +260,10 @@ function ListGroup({
           }}
           aria-label="list-right-side-wrapper"
         >
-          {actions &&
-            actions.map((prop, index) => (
-              <ActionButton key={index} {...prop} id={id} />
-            ))}
+          {finalActions &&
+            finalActions.map((prop, index) => {
+              return <ActionButton key={index} {...prop} />;
+            })}
           {rightSideContent && (
             <Fragment>
               {rightSideContent && typeof rightSideContent === "function"
@@ -757,108 +762,6 @@ const DragLine = styled.div<{ position: "top" | "bottom" }>`
   top: ${({ position }) => (position === "top" ? "0" : "auto")};
   bottom: ${({ position }) => (position === "bottom" ? "0" : "auto")};
 `;
-
-function ActionButton(
-  prop: ListGroupActionsProps &
-    Partial<{
-      id?: string;
-    }>
-) {
-  return (
-    <Button
-      onClick={(e) => {
-        e.stopPropagation();
-        if (prop.onClick) {
-          prop.onClick(prop.id);
-        }
-      }}
-      aria-label="list-action-button"
-      subMenu={prop.subMenu}
-      disabled={prop.disabled}
-      showSubMenuOn={prop.showSubMenuOn}
-      size="sm"
-      tipMenuSize="sm"
-      buttonStyle={css`
-        display: flex;
-        flex-direction: row;
-        gap: 0.25rem;
-        align-items: center;
-        cursor: pointer;
-        background-color: transparent;
-        color: #565555;
-        ${prop.subMenu && prop.showSubMenuOn === "caret"
-          ? css`
-              border-top: 1px solid #e5e7eb;
-              border-left: 1px solid #e5e7eb;
-              border-bottom: 1px solid #e5e7eb;
-            `
-          : css`
-              border: 1px solid #e5e7eb;
-            `}
-        border-radius: 6px;
-        position: relative;
-        font-size: 11px;
-        max-height: 24px;
-
-        &:hover {
-          background-color: #e2e0e0;
-        }
-
-        &:disabled {
-          background-color: rgb(227 227 227);
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
-        ${prop.style}
-      `}
-      toggleStyle={
-        prop.subMenu &&
-        css`
-          display: flex;
-          flex-direction: row;
-          gap: 0.25rem;
-          align-items: center;
-          cursor: pointer;
-          color: #565555;
-          padding: 0.25rem 0.5rem;
-          background-color: transparent;
-          position: relative;
-          border-top: 1px solid #e5e7eb;
-          border-right: 1px solid #e5e7eb;
-          border-bottom: 1px solid #e5e7eb;
-          border-top-right-radius: 6px;
-          border-bottom-right-radius: 6px;
-
-          &:hover {
-            background-color: #e2e0e0;
-          }
-
-          &:disabled {
-            background-color: rgb(227 227 227);
-            opacity: 0.5;
-            cursor: not-allowed;
-          }
-          ${prop.style}
-        `
-      }
-      dividerStyle={css`
-        border: 1px solid rgb(236 236 236);
-        ${prop.subMenu && prop.dividerStyle ? prop.dividerStyle : null}
-      `}
-      dropdownStyle={css`
-        position: absolute;
-        margin-top: 2px;
-        z-index: 9999;
-        width: 170px;
-        ${prop.subMenu && prop.dropdownStyle ? prop.dropdownStyle : null}
-      `}
-    >
-      {prop.icon && <prop.icon size={14} />}
-
-      {prop.caption}
-    </Button>
-  );
-}
 
 List.Group = ListGroup;
 List.Item = ListItem;
