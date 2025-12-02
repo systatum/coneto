@@ -23,7 +23,7 @@ describe("NavTab", () => {
           <NavTab
             actions={[
               {
-                title: "Add",
+                caption: "Add",
                 icon: RiAddBoxLine,
                 onClick: () => {
                   console.log(`Add button was clicked`);
@@ -119,7 +119,7 @@ describe("NavTab", () => {
 
       cy.mount(<NavTab tabs={TABS_ITEMS} activeTab={"2"} />);
       cy.findByText("Write").realHover();
-      cy.findByLabelText("list-action-button").should("be.visible").click();
+      cy.findByLabelText("action-button").should("be.visible").click();
       cy.get("@consoleLog").should("have.been.calledWith", "Discover clicked");
     });
 
@@ -131,7 +131,7 @@ describe("NavTab", () => {
 
         cy.mount(<NavTab tabs={TABS_ITEMS} activeTab={"2"} />);
         cy.findByText("Review").realHover();
-        cy.findByLabelText("list-action-button").should("be.visible").click();
+        cy.findByLabelText("action-button").should("be.visible").click();
         cy.findByText("Mention").should("be.visible").click();
 
         cy.get("@consoleLog").should("have.been.calledWith", "Mention clicked");
