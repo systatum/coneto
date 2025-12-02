@@ -229,6 +229,7 @@ export const Nested: Story = {
           items: normalizedItems,
           icon: RiFolderFill,
           iconOnActive: RiFolder6Fill,
+          initialState: true,
           iconColor:
             props.id === "cleverfiles"
               ? "rgb(252, 231, 154)"
@@ -289,14 +290,19 @@ export const Nested: Story = {
       <Wrapper>
         <div
           aria-label="nested-with-default"
-          style={{ display: "flex", flexDirection: "column", gap: "10px" }}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+            maxWidth: "300px",
+          }}
         >
           <h2
             style={{
               fontSize: "18px",
             }}
           >
-            Caret and item opening and closing
+            Caret and item opening and closing.
           </h2>
           <TreeList
             containerStyle={css`
@@ -311,14 +317,19 @@ export const Nested: Story = {
 
         <div
           aria-label="nested-with-prevent-default"
-          style={{ display: "flex", flexDirection: "column", gap: "10px" }}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+            maxWidth: "300px",
+          }}
         >
           <h2
             style={{
               fontSize: "18px",
             }}
           >
-            Caret-only opening and closing
+            Caret-only opening and closing, with initialState closed.
           </h2>
           <TreeList
             containerStyle={css`
