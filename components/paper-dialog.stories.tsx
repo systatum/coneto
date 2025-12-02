@@ -703,7 +703,7 @@ export const Nested: Story = {
                 `}
                 actions={[
                   {
-                    title: "Add Family",
+                    caption: "Add Family",
                     icon: RiAddBoxLine,
                     onClick: async () => {
                       await dialogRef2.current.openDialog();
