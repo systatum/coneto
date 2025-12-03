@@ -338,7 +338,7 @@ export const Nested: Story = {
             collapsible
             showHierarchyLine
             onOpenChange={({ id }) => console.log(id)}
-            content={applyContent(TREE_LIST_DATA, false, "opened")}
+            content={applyContent(TREE_LIST_DATA, false, "closed")}
           />
         </div>
 
@@ -356,7 +356,7 @@ export const Nested: Story = {
               fontSize: "18px",
             }}
           >
-            Caret-only opening and closing, with initialState closed.
+            Caret-only opening and closing.
           </h2>
           <TreeList
             containerStyle={css`
