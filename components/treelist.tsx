@@ -1,5 +1,5 @@
 import styled, { css, CSSProp } from "styled-components";
-import { Fragment, ReactNode, useState } from "react";
+import React, { ReactNode, useState } from "react";
 import { RemixiconComponentType, RiArrowRightSLine } from "@remixicon/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { TipMenuItemProps } from "./tip-menu";
@@ -29,10 +29,13 @@ interface TreeListOnOpenChangeProps {
   setLastFetch?: (date: Date) => void;
 }
 
+type TreeListInitialState = "closed" | "opened";
+
 export interface TreeListContentProps {
   id: string;
   caption?: string;
   items?: TreeListItemsProps[];
+  initialState?: TreeListInitialState;
 }
 
 export interface TreeListItemsProps {
@@ -40,13 +43,14 @@ export interface TreeListItemsProps {
   caption: string;
   onClick?: (props: {
     item?: TreeListItemsProps;
-    preventDefault: () => void;
+    preventDefault?: () => void;
   }) => void;
   actions?: SubMenuTreeList[];
   items?: TreeListItemsProps[];
   icon?: RemixiconComponentType;
   iconOnActive?: RemixiconComponentType;
   iconColor?: string;
+  initialState?: TreeListInitialState;
 }
 
 export interface TreeListActionsProps {
@@ -77,14 +81,26 @@ function TreeList({
   const [isSelected, setIsSelected] = useState(selectedItem);
 
   const initialOpenMap = Object.fromEntries(
-    content.map((group) => [group.id, !!group.items?.length])
+    content.map((group) => {
+      const valueInitialState = (group.initialState ?? "opened") === "opened";
+      const initialState = valueInitialState && !!group.items?.length;
+      return [group.id, initialState];
+    })
   );
 
   for (const group of content) {
     if (group.items) {
-      Object.assign(initialOpenMap, collectAllItemIds(group.items));
+      const valueInitialState = (group.initialState ?? "opened") === "opened";
+      const initialState = valueInitialState && !!group.items?.length;
+
+      Object.assign(
+        initialOpenMap,
+        collectAllItemIds(group.items, initialState)
+      );
     }
   }
+
+  const [isOpen, setIsOpen] = useState<Record<string, boolean>>(initialOpenMap);
 
   const selectedLevel = content
     .map((group) => {
@@ -92,8 +108,6 @@ function TreeList({
       return null;
     })
     .find((level) => level !== null);
-
-  const [isOpen, setIsOpen] = useState<Record<string, boolean>>(initialOpenMap);
 
   const [lastFetchGroup, setLastFetchGroup] = useState<Record<string, Date>>(
     Object.fromEntries(content.map((data) => [data.id, null]))
@@ -244,13 +258,22 @@ function TreeList({
 
 function collectAllItemIds(
   items: TreeListItemsProps[],
+  initialState?: boolean,
   acc = {} as Record<string, boolean>
 ) {
   for (const item of items) {
-    acc[item.id] = !!item.items?.length;
+    const hasChildren = Array.isArray(item.items) && item.items?.length > 0;
 
-    if (item.items?.length) collectAllItemIds(item.items, acc);
+    const selfInitial =
+      (item.initialState ?? "opened") === "opened" ? true : false;
+
+    const validatorProp = initialState && hasChildren && selfInitial;
+
+    acc[item.id] = validatorProp;
+
+    if (hasChildren) collectAllItemIds(item.items, validatorProp, acc);
   }
+
   return acc;
 }
 
@@ -358,13 +381,14 @@ function TreeListItem<T extends TreeListItemsProps>({
             await onChange(item.id);
           }
 
-          if (item.onClick)
+          if (item.onClick) {
             await item.onClick({
               item,
               preventDefault: () => {
                 prevent = true;
               },
             });
+          }
 
           if (!prevent) {
             if (isHavingContent && collapsible) {
@@ -414,15 +438,19 @@ function TreeListItem<T extends TreeListItemsProps>({
             size={20}
           />
         )}
-        {parts.map((part, index) =>
-          part.toLowerCase() === searchTerm.toLowerCase() ? (
-            <HighlightedText key={index}>{part}</HighlightedText>
-          ) : (
-            <span key={index} style={{ width: "100%" }}>
-              {part}
-            </span>
-          )
-        )}
+        <div
+          style={{
+            width: "100%",
+          }}
+        >
+          {parts.map((part, index) =>
+            part.toLowerCase() === searchTerm.toLowerCase() ? (
+              <HighlightedText key={index}>{part}</HighlightedText>
+            ) : (
+              <span key={index}>{part}</span>
+            )
+          )}
+        </div>
         {item.id === isHovered &&
           item.actions &&
           (() => {
@@ -742,7 +770,6 @@ const HighlightedText = styled.span`
   background-color: #e5e7eb;
   font-weight: 600;
   border-radius: 4px;
-  width: 100%;
 `;
 
 function escapeRegExp(string: string) {

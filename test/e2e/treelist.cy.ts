@@ -241,9 +241,9 @@ describe("Treelist", () => {
         context("when clicking item", () => {
           it("should not collapsed the content", () => {
             cy.findByLabelText("nested-with-prevent-default").within(() => {
-              cy.findByText("Blueprints").should("exist");
+              cy.findByText("Blueprints").should("not.exist");
               cy.findByText("Contracts").click();
-              cy.findByText("Blueprints").should("exist");
+              cy.findByText("Blueprints").should("not.exist");
             });
           });
         });
@@ -251,13 +251,13 @@ describe("Treelist", () => {
         context("when clicking arrow", () => {
           it("should collapsed the content", () => {
             cy.findByLabelText("nested-with-prevent-default").within(() => {
-              cy.findByText("Blueprints").should("exist");
+              cy.findByText("Blueprints").should("not.exist");
               cy.findByText("Contracts")
                 .parent()
                 .parent()
                 .findByLabelText("arrow-icon")
                 .click();
-              cy.findByText("Blueprints").should("not.exist");
+              cy.findByText("Blueprints").should("exist");
             });
           });
         });
