@@ -6,7 +6,7 @@ import {
   SelectabilityModeState,
 } from "./calendar";
 import styled, { css, CSSProp } from "styled-components";
-import { forwardRef, ReactNode, useEffect } from "react";
+import { forwardRef, ReactNode } from "react";
 
 export type DateboxProps = BaseCalendarProps & {
   label?: string;

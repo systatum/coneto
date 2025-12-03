@@ -468,15 +468,12 @@ describe("List", () => {
         );
         cy.wait(100);
 
-        cy.findAllByLabelText("list-action-button").should("have.length", 0);
+        cy.findAllByLabelText("action-button").should("have.length", 0);
         cy.findAllByLabelText("list-item-wrapper")
           .eq(0)
           .realHover()
           .within(() => {
-            cy.findAllByLabelText("list-action-button").should(
-              "have.length",
-              1
-            );
+            cy.findAllByLabelText("action-button").should("have.length", 1);
           });
       });
 
@@ -529,7 +526,7 @@ describe("List", () => {
             .eq(0)
             .realHover()
             .within(() => {
-              cy.findAllByLabelText("list-action-button")
+              cy.findAllByLabelText("action-button")
                 .should("have.length", 1)
                 .eq(0)
                 .click();
@@ -602,7 +599,7 @@ describe("List", () => {
           cy.wait(100);
 
           cy.findAllByLabelText("list-item-wrapper").eq(0).realHover().click();
-          cy.findAllByLabelText("list-action-button").eq(0).click();
+          cy.findAllByLabelText("action-button").eq(0).click();
           cy.findAllByLabelText("tip-menu-item")
             .should("have.length", 2)
             .eq(0)
@@ -718,7 +715,7 @@ describe("List", () => {
         );
         cy.wait(100);
 
-        cy.findAllByLabelText("list-action-button").should("have.length", 2);
+        cy.findAllByLabelText("action-button").should("have.length", 2);
         cy.findAllByText("Add").should("have.length", 2);
       });
 
@@ -766,7 +763,7 @@ describe("List", () => {
           });
           cy.wait(100);
 
-          cy.findAllByLabelText("list-action-button").eq(0).click();
+          cy.findAllByLabelText("action-button").eq(0).click();
           cy.get("@consoleLog").should(
             "have.been.calledWith",
             "action was clicked recent-content"
@@ -896,7 +893,7 @@ describe("List", () => {
         );
         cy.wait(100);
 
-        cy.findAllByLabelText("list-action-button").should("have.length", 2);
+        cy.findAllByLabelText("action-button").should("have.length", 2);
         cy.findAllByLabelText("right-side-icon").should("have.length", 3);
       });
 
@@ -945,12 +942,12 @@ describe("List", () => {
           });
           cy.wait(100);
 
-          cy.findAllByLabelText("list-action-button").eq(0).click();
+          cy.findAllByLabelText("action-button").eq(0).click();
           cy.get("@consoleLog").should(
             "have.been.calledWith",
             "action was clicked recent-content"
           );
-          cy.findAllByLabelText("list-action-button").eq(1).click();
+          cy.findAllByLabelText("action-button").eq(1).click();
           cy.get("@consoleLog").should(
             "have.been.calledWith",
             "action was clicked all-content"

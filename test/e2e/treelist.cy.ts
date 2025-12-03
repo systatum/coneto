@@ -134,6 +134,7 @@ describe("Treelist", () => {
 
     context("with showHierarchy", () => {
       it("renders the line", () => {
+        cy.contains("Contracts").click();
         cy.contains("Blueprints")
           .parent()
           .parent()
@@ -149,6 +150,7 @@ describe("Treelist", () => {
 
       context("when clicking", () => {
         it("should render with blue line", () => {
+          cy.contains("Contracts").click();
           cy.contains("Blueprints")
             .click()
             .parent()
@@ -167,6 +169,7 @@ describe("Treelist", () => {
 
         context("when on another level", () => {
           it("render the grayish line", () => {
+            cy.contains("Contracts").click();
             cy.contains("Blueprints")
               .click()
               .parent()
@@ -192,6 +195,8 @@ describe("Treelist", () => {
 
         context("when on different group", () => {
           it("render the grayish line", () => {
+            cy.contains("Contracts").click();
+
             cy.contains("Blueprints")
               .click()
               .parent()
@@ -230,6 +235,7 @@ describe("Treelist", () => {
       context("when clicking", () => {
         it("should collapsed the content", () => {
           cy.findByLabelText("nested-with-default").within(() => {
+            cy.contains("Contracts").click();
             cy.findByText("Blueprints").should("exist");
             cy.findByText("Contracts").click();
             cy.findByText("Blueprints").should("not.exist");
@@ -291,7 +297,7 @@ describe("Treelist", () => {
     context("with actions item", () => {
       it("renders action on the item", () => {
         cy.contains("Adam Noto Hakarsa").trigger("mouseover");
-        cy.findByLabelText("list-action-button")
+        cy.findByLabelText("action-button")
           .should("be.visible")
           .and("have.attr", "title", "Edit")
           .click();
@@ -306,7 +312,7 @@ describe("Treelist", () => {
           cy.findByPlaceholderText("Search your item...").click();
           cy.findByText("3").click();
           cy.contains("Adam Noto Hakarsa").trigger("mouseover");
-          cy.findByLabelText("list-action-button").should("be.visible").click();
+          cy.findByLabelText("action-button").should("be.visible").click();
           cy.findByText("Copy").click();
 
           cy.get("@consoleLog").should(

@@ -80,7 +80,7 @@ export default function ContextMenu({
             }
           }}
           title={prop.caption}
-          aria-label="list-action-button"
+          aria-label="action-button"
         >
           <Icon size={iconSize} />
         </Button>
@@ -91,7 +91,7 @@ export default function ContextMenu({
   return (
     <Button
       {...buttonProps}
-      aria-label="list-action-button"
+      aria-label="action-button"
       showSubMenuOn="self"
       subMenu={({ list }) => list(actions)}
     >

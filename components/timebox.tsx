@@ -191,6 +191,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
           id={inputId}
           aria-label="timebox-hour"
           ref={hourRef}
+          data-type={dataType}
           type="text"
           inputMode="numeric"
           placeholder={placeholderHour}
@@ -203,7 +204,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
           max={24}
           $inputStyle={inputStyle}
           onKeyDown={(e) => {
-            const { selectionStart, selectionEnd, value } = e.currentTarget;
+            const { selectionEnd, value } = e.currentTarget;
 
             if (e.key === "ArrowRight" && selectionEnd === value.length) {
               e.preventDefault();
@@ -295,7 +296,6 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
 
     return (
       <InputWrapper
-        data-type={dataType}
         ref={ref}
         $containerStyle={containerStyle}
         $disabled={disabled}

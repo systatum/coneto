@@ -2,7 +2,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { Sidebar } from "./sidebar";
 import { ChangeEvent, useMemo, useState } from "react";
 import { Searchbox } from "./searchbox";
-import { TreeList, TreeListItemsProps } from "./treelist";
+import { TreeList } from "./treelist";
 import { EmptySlate } from "./empty-slate";
 import { Button } from "./button";
 
@@ -30,8 +30,8 @@ export const Default: Story = {
       setValue((prev) => ({ ...prev, [name]: value }));
     };
 
-    const setPerson = (item: TreeListItemsProps) => {
-      console.log("Clicked person:", item.caption);
+    const setPerson = (props) => {
+      console.log("Clicked person:", props.item.caption);
     };
 
     const TREE_LIST_DATA = [
@@ -77,7 +77,7 @@ export const Default: Story = {
         <Sidebar position="left">
           <Sidebar.Item>
             <Searchbox
-              name="title"
+              name="caption"
               value={value.caption}
               onChange={onChangeValue}
             />
@@ -151,8 +151,8 @@ export const FixedRight: Story = {
       setValue((prev) => ({ ...prev, [name]: value }));
     };
 
-    const setPerson = (item: TreeListItemsProps) => {
-      console.log("Clicked person:", item.caption);
+    const setPerson = (props) => {
+      console.log("Clicked person:", props.item.caption);
     };
 
     const TREE_LIST_DATA = [
@@ -210,7 +210,7 @@ export const FixedRight: Story = {
         <Sidebar position="right">
           <Sidebar.Item>
             <Searchbox
-              name="title"
+              name="caption"
               value={value.caption}
               onChange={onChangeValue}
             />

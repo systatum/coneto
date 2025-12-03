@@ -105,7 +105,7 @@ export const WithActions: Story = {
         activeTab={"2"}
         actions={[
           {
-            title: "Add",
+            caption: "Add",
             icon: RiAddBoxLine,
             onClick: () => {
               console.log(`Add button was clicked`);

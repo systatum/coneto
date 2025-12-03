@@ -2,7 +2,7 @@ import { ChangeEvent, InputHTMLAttributes } from "react";
 import { motion } from "framer-motion";
 import { RemixiconComponentType } from "@remixicon/react";
 import { LoadingSpinner } from "./loading-spinner";
-import styled, { css, CSSProp } from "styled-components";
+import styled, { CSSProp } from "styled-components";
 
 export interface ToggleboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {

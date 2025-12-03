@@ -1,11 +1,11 @@
-import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
+import React, { Fragment, ReactNode, useEffect, useRef, useState } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { motion } from "framer-motion";
 import { RemixiconComponentType, RiArrowRightSLine } from "@remixicon/react";
-import { Button, SubMenuButtonProps } from "./button";
 import ContextMenu from "./context-menu";
 import { TipMenuItemProps } from "./tip-menu";
 import { Tooltip, TooltipRef } from "./tooltip";
+import { ActionButton, ActionButtonProps } from "./action-button";
 
 export interface NavTabProps {
   tabs?: NavTabContentProps[];
@@ -21,17 +21,7 @@ export interface NavTabProps {
   actions?: NavTabActionsProps[];
 }
 
-export interface NavTabActionsProps {
-  title?: string;
-  icon?: RemixiconComponentType;
-  onClick?: () => void;
-  style?: CSSProp;
-  dividerStyle?: CSSProp;
-  dropdownStyle?: CSSProp;
-  subMenu?: (props: SubMenuButtonProps) => React.ReactNode;
-  disabled?: boolean;
-  showSubMenuOn?: "caret" | "self";
-}
+export type NavTabActionsProps = ActionButtonProps;
 
 export interface NavTabContentProps {
   id: string;
@@ -251,6 +241,7 @@ function NavTab({
                   ref={setTabRef(index)}
                   role="tab"
                   onClick={(e) => {
+                    e.stopPropagation();
                     setSelected(props.id);
                     if (props.onClick) {
                       props.onClick();
@@ -485,7 +476,7 @@ const NavTabItem = styled.div<{
     background-color: rgb(243 244 246 / 50%);
   }
 
-  &:active:not(:has([aria-label="list-action-button"]:active)) {
+  &:active:not(:has([aria-label="action-button"]:active)) {
     background-color: rgb(243 244 246 / 80%);
     box-shadow:
       inset 0 0.5px 4px rgb(243 244 246 / 100%),
@@ -502,99 +493,5 @@ const NavContent = styled.div<{ $contentStyle?: CSSProp }>`
 
   ${({ $contentStyle }) => $contentStyle}
 `;
-
-function ActionButton(props: NavTabActionsProps) {
-  return (
-    <Button
-      onClick={props.onClick}
-      subMenu={props.subMenu}
-      disabled={props.disabled}
-      showSubMenuOn={props.showSubMenuOn}
-      size="sm"
-      tipMenuSize="sm"
-      buttonStyle={css`
-        display: flex;
-        flex-direction: row;
-        gap: 0.25rem;
-        align-items: center;
-        cursor: pointer;
-        background-color: transparent;
-        color: #565555;
-        ${props.subMenu && props.showSubMenuOn === "caret"
-          ? css`
-              border-top: 1px solid #f3f3f3;
-              border-left: 1px solid #f3f3f3;
-              border-bottom: 1px solid #f3f3f3;
-            `
-          : css`
-              border: 1px solid #f3f3f3;
-            `}
-        border-radius: 6px;
-        position: relative;
-
-        &:hover {
-          background-color: rgb(245, 245, 245);
-        }
-
-        &:disabled {
-          background-color: rgb(227 227 227);
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
-        ${props.style}
-      `}
-      toggleStyle={
-        props.subMenu &&
-        css`
-          display: flex;
-          flex-direction: row;
-          gap: 0.25rem;
-          align-items: center;
-          cursor: pointer;
-          color: #565555;
-          padding: 0.25rem 0.5rem;
-          background-color: transparent;
-          position: relative;
-          border-top: 1px solid #f3f3f3;
-          border-right: 1px solid #f3f3f3;
-          border-bottom: 1px solid #f3f3f3;
-          border-top-right-radius: 6px;
-          border-bottom-right-radius: 6px;
-
-          &:hover {
-            background-color: rgb(245, 245, 245);
-          }
-
-          &:disabled {
-            background-color: rgb(227 227 227);
-            opacity: 0.5;
-            cursor: not-allowed;
-          }
-          ${props.style}
-        `
-      }
-      dividerStyle={css`
-        border: 1px solid rgb(236 236 236);
-        ${props.subMenu && props.dividerStyle ? props.dividerStyle : null}
-      `}
-      dropdownStyle={css`
-        position: absolute;
-        margin-top: 2px;
-        z-index: 9999;
-        width: 170px;
-        ${props.subMenu && props.dropdownStyle ? props.dropdownStyle : null}
-      `}
-    >
-      {props.icon && <props.icon size={14} />}
-      <span
-        style={{
-          fontSize: "14px",
-        }}
-      >
-        {props.title}
-      </span>
-    </Button>
-  );
-}
 
 export { NavTab };

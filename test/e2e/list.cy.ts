@@ -88,7 +88,7 @@ describe("List", () => {
 
       context("when given actions", () => {
         it("renders correct spacing between togglebox and action", () => {
-          cy.findAllByLabelText("list-action-button")
+          cy.findAllByLabelText("action-button")
             .eq(0)
             .then(($action) => {
               cy.findAllByLabelText("togglebox-container").then(($toggle) => {
