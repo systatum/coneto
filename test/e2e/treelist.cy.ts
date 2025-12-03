@@ -11,9 +11,11 @@ describe("Treelist", () => {
         cy.contains("Member of Technical Staff").click();
         cy.contains("Adam Noto Hakarsa")
           .parent()
+          .parent()
           .should("have.css", "border-left-color", "rgba(0, 0, 0, 0)");
         cy.contains("Adam Noto Hakarsa")
           .click()
+          .parent()
           .parent()
           .should("have.css", "border-left-color", "rgb(59, 130, 246)");
       });
@@ -35,10 +37,12 @@ describe("Treelist", () => {
 
         cy.contains("Adam Noto Hakarsa")
           .parent()
+          .parent()
           .should("have.css", "border-left-color", "rgba(0, 0, 0, 0)");
 
         cy.contains("Adam Noto Hakarsa")
           .click()
+          .parent()
           .parent()
           .should("have.css", "border-left-color", "rgb(59, 130, 246)");
       });
@@ -88,11 +92,13 @@ describe("Treelist", () => {
       it("renders the icon on the item", () => {
         cy.contains(".cleverfile")
           .parent()
+          .parent()
           .findByLabelText("tree-list-icon")
           .should("exist")
           .and("have.css", "color", FILE_COLOR_ICON);
 
         cy.contains("My Documents")
+          .parent()
           .parent()
           .findByLabelText("tree-list-icon")
           .should("exist")
@@ -104,16 +110,19 @@ describe("Treelist", () => {
           it("renders the icon active", () => {
             cy.contains("My Documents")
               .parent()
+              .parent()
               .findByLabelText("tree-list-icon")
               .should("exist")
               .and("have.css", "color", FILE_COLOR_FOLDER)
               .click();
             cy.contains("My Documents")
               .parent()
+              .parent()
               .findByLabelText("tree-list-icon")
               .should("not.exist");
 
             cy.contains("My Documents")
+              .parent()
               .parent()
               .findByLabelText("tree-list-icon-on-active")
               .should("exist")
@@ -126,6 +135,7 @@ describe("Treelist", () => {
     context("with showHierarchy", () => {
       it("renders the line", () => {
         cy.contains("Blueprints")
+          .parent()
           .parent()
           .findByLabelText("vertical-line")
           .should("exist")
@@ -142,11 +152,13 @@ describe("Treelist", () => {
           cy.contains("Blueprints")
             .click()
             .parent()
+            .parent()
             .findByLabelText("vertical-line")
             .should("exist")
             .and("have.css", "border-left", SELECTED_VERTICAL_LINE);
 
           cy.contains("Financial Report")
+            .parent()
             .parent()
             .findByLabelText("vertical-line")
             .should("exist")
@@ -158,16 +170,19 @@ describe("Treelist", () => {
             cy.contains("Blueprints")
               .click()
               .parent()
+              .parent()
               .findByLabelText("vertical-line")
               .should("exist")
               .and("have.css", "border-left", SELECTED_VERTICAL_LINE);
             cy.contains("Blueprints")
+              .parent()
               .parent()
               .findByLabelText("vertical-line")
               .should("exist")
               .and("have.css", "border-left", SELECTED_VERTICAL_LINE);
 
             cy.contains(".cleverfiles")
+              .parent()
               .parent()
               .findByLabelText("vertical-line")
               .should("exist")
@@ -180,11 +195,13 @@ describe("Treelist", () => {
             cy.contains("Blueprints")
               .click()
               .parent()
+              .parent()
               .findByLabelText("vertical-line")
               .should("exist")
               .and("have.css", "border-left", SELECTED_VERTICAL_LINE);
 
             cy.contains("Backup")
+              .parent()
               .parent()
               .findByLabelText("vertical-line")
               .should("exist")
@@ -224,9 +241,9 @@ describe("Treelist", () => {
         context("when clicking item", () => {
           it("should not collapsed the content", () => {
             cy.findByLabelText("nested-with-prevent-default").within(() => {
-              cy.findByText("Blueprints").should("exist");
+              cy.findByText("Blueprints").should("not.exist");
               cy.findByText("Contracts").click();
-              cy.findByText("Blueprints").should("exist");
+              cy.findByText("Blueprints").should("not.exist");
             });
           });
         });
@@ -234,12 +251,13 @@ describe("Treelist", () => {
         context("when clicking arrow", () => {
           it("should collapsed the content", () => {
             cy.findByLabelText("nested-with-prevent-default").within(() => {
-              cy.findByText("Blueprints").should("exist");
+              cy.findByText("Blueprints").should("not.exist");
               cy.findByText("Contracts")
+                .parent()
                 .parent()
                 .findByLabelText("arrow-icon")
                 .click();
-              cy.findByText("Blueprints").should("not.exist");
+              cy.findByText("Blueprints").should("exist");
             });
           });
         });
@@ -261,9 +279,11 @@ describe("Treelist", () => {
 
       cy.contains("Mohamad Naufal Alim")
         .parent()
+        .parent()
         .should("have.css", "border-left-color", "rgba(0, 0, 0, 0)");
       cy.contains("Mohamad Naufal Alim")
         .click()
+        .parent()
         .parent()
         .should("have.css", "border-left-color", "rgb(59, 130, 246)");
     });
@@ -306,22 +326,27 @@ describe("Treelist", () => {
 
       cy.contains("Mohamad Naufal Alim")
         .parent()
+        .parent()
         .should("have.css", "border-left-color", "rgba(0, 0, 0, 0)");
       cy.contains("Mohamad Naufal Alim")
         .click()
+        .parent()
         .parent()
         .should("have.css", "border-left-color", "rgb(59, 130, 246)");
 
       cy.contains("Adam Noto Hakarsa")
         .parent()
+        .parent()
         .should("have.css", "border-left-color", "rgba(0, 0, 0, 0)");
 
       cy.contains("Adam Noto Hakarsa")
         .click()
         .parent()
+        .parent()
         .should("have.css", "border-left-color", "rgb(59, 130, 246)");
 
       cy.contains("Mohamad Naufal Alim")
+        .parent()
         .parent()
         .should("have.css", "border-left-color", "rgba(0, 0, 0, 0)");
     });

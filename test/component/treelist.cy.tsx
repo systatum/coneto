@@ -6,6 +6,51 @@ import {
 import { RiAtLine, RiSearchLine } from "@remixicon/react";
 
 describe("Treelist", () => {
+  context("initialState", () => {
+    let TREE_LIST_DATA: TreeListContentProps[];
+
+    beforeEach(() => {
+      const setPerson = cy.stub().as("setPerson");
+
+      TREE_LIST_DATA = [
+        {
+          id: "member",
+          caption: "Member of Technical Staff",
+          initialState: "closed",
+          items: [
+            { id: "mts-1", caption: "Adam Noto Hakarsa", onClick: setPerson },
+            { id: "mts-2", caption: "Mohamad Naufal Alim", onClick: setPerson },
+          ],
+        },
+        {
+          id: "product",
+          caption: "Product Management Team",
+          items: [
+            { id: "pmt-1", caption: "Samantha Lee", onClick: setPerson },
+            { id: "pmt-2", caption: "Jason Kim", onClick: setPerson },
+            { id: "pmt-3", caption: "Rina Patel", onClick: setPerson },
+          ],
+        },
+      ];
+    });
+
+    context("when given", () => {
+      it("renders with closed items", () => {
+        cy.mount(
+          <TreeList
+            showHierarchyLine
+            collapsible
+            content={TREE_LIST_DATA}
+            emptySlate={<p>Not found.</p>}
+          />
+        );
+
+        cy.contains("Adam Noto Hakarsa").should("not.exist");
+        cy.findByText("Member of Technical Staff").click();
+      });
+    });
+  });
+
   context("selectedItem", () => {
     let TREE_LIST_DATA: TreeListContentProps[];
 
@@ -122,7 +167,11 @@ describe("Treelist", () => {
     context("when click list item", () => {
       it("renders highlight selected item", () => {
         cy.mount(
-          <TreeList content={TREE_LIST_DATA} emptySlate={<p>Not found.</p>} />
+          <TreeList
+            collapsible
+            content={TREE_LIST_DATA}
+            emptySlate={<p>Not found.</p>}
+          />
         );
 
         cy.contains("Adam Noto Hakarsa")
@@ -138,7 +187,11 @@ describe("Treelist", () => {
     context("when click toggle", () => {
       it("renders collapse and expand items", () => {
         cy.mount(
-          <TreeList content={TREE_LIST_DATA} emptySlate={<p>Not found.</p>} />
+          <TreeList
+            collapsible
+            content={TREE_LIST_DATA}
+            emptySlate={<p>Not found.</p>}
+          />
         );
 
         cy.contains("Adam Noto Hakarsa").should("be.visible");
