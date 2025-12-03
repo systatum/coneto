@@ -336,7 +336,7 @@ function FormFields<T extends FieldValues>({
           >
             {visibleFields.map((field: FormFieldProps, index: number) => {
               return field.type === "custom" ? (
-                <Fragment key={index}>field.render</Fragment>
+                <Fragment key={index}>{field.render}</Fragment>
               ) : field.type === "text" ||
                 field.type === "message" ||
                 field.type === "number" ||
