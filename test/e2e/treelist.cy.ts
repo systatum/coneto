@@ -134,6 +134,7 @@ describe("Treelist", () => {
 
     context("with showHierarchy", () => {
       it("renders the line", () => {
+        cy.contains("Contracts").click();
         cy.contains("Blueprints")
           .parent()
           .parent()
@@ -149,6 +150,7 @@ describe("Treelist", () => {
 
       context("when clicking", () => {
         it("should render with blue line", () => {
+          cy.contains("Contracts").click();
           cy.contains("Blueprints")
             .click()
             .parent()
@@ -167,6 +169,7 @@ describe("Treelist", () => {
 
         context("when on another level", () => {
           it("render the grayish line", () => {
+            cy.contains("Contracts").click();
             cy.contains("Blueprints")
               .click()
               .parent()
@@ -192,6 +195,8 @@ describe("Treelist", () => {
 
         context("when on different group", () => {
           it("render the grayish line", () => {
+            cy.contains("Contracts").click();
+
             cy.contains("Blueprints")
               .click()
               .parent()
@@ -230,6 +235,7 @@ describe("Treelist", () => {
       context("when clicking", () => {
         it("should collapsed the content", () => {
           cy.findByLabelText("nested-with-default").within(() => {
+            cy.contains("Contracts").click();
             cy.findByText("Blueprints").should("exist");
             cy.findByText("Contracts").click();
             cy.findByText("Blueprints").should("not.exist");
