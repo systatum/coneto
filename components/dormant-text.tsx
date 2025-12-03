@@ -94,7 +94,6 @@ function DormantText({
     } else if (type === "timebox-with-second") {
       setLabelWidth((prev) => prev + 53);
     }
-    console.log(type);
   }, [dormantedLocal]);
 
   const measureLabelSize = (el: HTMLLabelElement | HTMLDivElement | null) => {
