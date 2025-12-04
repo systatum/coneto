@@ -53,6 +53,7 @@ export type FormValueType =
   | boolean
   | File
   | FileList
+  | File[]
   | string[]
   | null
   | undefined
@@ -171,6 +172,9 @@ function StatefulForm<Z extends ZodTypeAny>({
 
     const isFile = (val: unknown): val is File => val instanceof File;
 
+    const isFileArray = (val: unknown): val is File[] =>
+      Array.isArray(val) && val.every((v) => v instanceof File);
+
     const hasErrorMessage = (err: unknown): boolean => {
       if (!err || typeof err !== "object") return false;
 
@@ -193,7 +197,7 @@ function StatefulForm<Z extends ZodTypeAny>({
       return !!touched && hasErrorMessage(error);
     }
 
-    if (isFile(value)) {
+    if (isFile(value) || isFileArray(value)) {
       return !!touched && hasErrorMessage(error);
     }
 
@@ -752,30 +756,30 @@ function FormFields<T extends FieldValues>({
                     errors[field.name as keyof T]?.message as string | undefined
                   }
                   {...field.fileInputBoxProps}
-                  onFileSelected={(e: File | undefined) => {
-                    const file = e;
-                    if (file instanceof File) {
-                      setValue(field.name as Path<T>, file as any, {
+                  onFileSelected={(files: File[]) => {
+                    if (files && files.length > 0) {
+                      setValue(field.name as Path<T>, files as any, {
                         shouldValidate: true,
                         shouldTouch: true,
+                      });
+
+                      onChange?.(field.name, files);
+
+                      field.onChange?.({
+                        target: { name: field.name, value: files },
                       });
                     } else {
                       setValue(field.name as Path<T>, undefined, {
                         shouldValidate: true,
                         shouldTouch: true,
                       });
-                    }
-                    if (onChange) {
-                      if (file) {
-                        onChange(field.name, file);
-                      } else {
-                        onChange(field.name, undefined);
-                      }
-                    }
 
-                    field.onChange?.({
-                      target: { name: field.name, value: file ?? undefined },
-                    });
+                      onChange?.(field.name, undefined);
+
+                      field.onChange?.({
+                        target: { name: field.name, value: undefined },
+                      });
+                    }
                   }}
                 />
               ) : field.type === "image" ? (
@@ -1003,7 +1007,7 @@ function FormFields<T extends FieldValues>({
                         `
                       }
                       errorMessage={
-                        errors[field.name as keyof T]?.[0]?.message as
+                        errors[field.name as keyof T]?.message as
                           | string
                           | undefined
                       }
