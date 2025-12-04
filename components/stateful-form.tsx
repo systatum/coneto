@@ -756,7 +756,7 @@ function FormFields<T extends FieldValues>({
                     errors[field.name as keyof T]?.message as string | undefined
                   }
                   {...field.fileInputBoxProps}
-                  onFileSelected={(files: File[]) => {
+                  onFilesSelected={(files: File[]) => {
                     if (files && files.length > 0) {
                       setValue(field.name as Path<T>, files as any, {
                         shouldValidate: true,
