@@ -7,7 +7,13 @@ import {
 } from "@remixicon/react";
 import { TipMenu, TipMenuItemProps, TipMenuItemVariantType } from "./tip-menu";
 import styled, { css, CSSProp } from "styled-components";
-import { createPortal } from "react-dom";
+import {
+  autoUpdate,
+  flip,
+  offset,
+  shift,
+  useFloating,
+} from "@floating-ui/react";
 
 export type ButtonVariants = {
   variant?:
@@ -73,13 +79,15 @@ function Button({
   const [hovered, setHovered] = React.useState<
     "main" | "original" | "dropdown"
   >("original");
-  const [positionClass, setPositionClass] = React.useState<"left" | "right">(
-    "left"
-  );
-  const [placement, setPlacement] = React.useState<"top" | "bottom">("bottom");
+
+  const { refs, floatingStyles } = useFloating({
+    open: isOpen,
+    whileElementsMounted: autoUpdate,
+    middleware: [offset(6), flip({ padding: 40 }), shift()],
+    placement: "bottom-start",
+  });
 
   const containerRef = React.useRef<HTMLDivElement>(null);
-  const dropdownRef = React.useRef<HTMLDivElement>(null);
   const safeAreaAriaLabelsLocal: string[] = [
     "combobox-drawer-month",
     "combobox-drawer-year",
@@ -100,16 +108,9 @@ function Button({
         return;
       }
 
-      if (
-        containerRef.current &&
-        dropdownRef.current &&
-        !containerRef.current.contains(target) &&
-        !dropdownRef.current.contains(target)
-      ) {
-        setTimeout(() => {
-          setIsOpen(false);
-          setHovered("original");
-        }, 100);
+      if (containerRef.current && !containerRef.current.contains(target)) {
+        setIsOpen(false);
+        setHovered("original");
       }
     };
 
@@ -117,24 +118,13 @@ function Button({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [safeAreaAriaLabelsLocal]);
 
-  React.useEffect(() => {
-    if (isOpen && containerRef.current) {
-      const rect = containerRef.current.getBoundingClientRect();
-      const half = window.innerWidth / 2;
-      setPositionClass(rect.left > half ? "right" : "left");
-
-      const spaceBelow = window.innerHeight - rect.bottom;
-      const spaceAbove = rect.top;
-      setPlacement(
-        spaceBelow < 200 && spaceAbove > spaceBelow ? "top" : "bottom"
-      );
-    }
-  }, [isOpen]);
-
   return (
     <ButtonWrapper
       $disabled={disabled}
-      ref={containerRef}
+      ref={(node: HTMLDivElement | null) => {
+        containerRef.current = node;
+        refs.setReference(node);
+      }}
       $style={containerStyle}
       $isOpen={isOpen}
       $variant={variant}
@@ -224,59 +214,32 @@ function Button({
         </div>
       )}
 
-      {isOpen &&
-        createPortal(
-          <div
-            ref={dropdownRef}
-            style={{
-              position: "absolute",
-              top:
-                placement === "bottom"
-                  ? (containerRef.current?.getBoundingClientRect().bottom ??
-                      0) +
-                    window.scrollY +
-                    2
-                  : (containerRef.current?.getBoundingClientRect().top ?? 0) +
-                    window.scrollY -
-                    (dropdownRef.current?.offsetHeight ?? 0) -
-                    2,
-              left:
-                positionClass === "left"
-                  ? (containerRef.current?.getBoundingClientRect().left ?? 0) +
-                    window.scrollX
-                  : undefined,
-              right:
-                positionClass === "right"
-                  ? window.innerWidth -
-                    (containerRef.current?.getBoundingClientRect().right ?? 0) -
-                    window.scrollX
-                  : undefined,
-
-              zIndex: 9999,
-            }}
-            onMouseEnter={() => setHovered("dropdown")}
-          >
-            {subMenu({
-              list: (subMenuList, { withFilter } = {}) => (
-                <TipMenu
-                  setIsOpen={() => {
-                    setIsOpen(false);
-                    setHovered("original");
-                  }}
-                  withFilter={withFilter ?? false}
-                  style={dropdownStyle}
-                  subMenuList={subMenuList}
-                  variant={tipMenuSize}
-                />
-              ),
-              show: (children) => (
-                <ButtonTipMenuContainer>{children}</ButtonTipMenuContainer>
-              ),
-              render: (children) => children,
-            })}
-          </div>,
-          document.body
-        )}
+      {isOpen && (
+        <div
+          ref={refs.setFloating}
+          style={{ ...floatingStyles, zIndex: 12000 }}
+          onMouseEnter={() => setHovered("dropdown")}
+        >
+          {subMenu({
+            list: (subMenuList, { withFilter } = {}) => (
+              <TipMenu
+                setIsOpen={() => {
+                  setIsOpen(false);
+                  setHovered("original");
+                }}
+                withFilter={withFilter ?? false}
+                style={dropdownStyle}
+                subMenuList={subMenuList}
+                variant={tipMenuSize}
+              />
+            ),
+            show: (children) => (
+              <ButtonTipMenuContainer>{children}</ButtonTipMenuContainer>
+            ),
+            render: (children) => children,
+          })}
+        </div>
+      )}
     </ButtonWrapper>
   );
 }
