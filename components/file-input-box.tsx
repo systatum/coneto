@@ -83,6 +83,7 @@ function FileInputBox({
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       aria-label="fileinputbox"
+      $isError={showError}
     >
       {selectedFiles.length > 0 ? (
         <FileList>
@@ -143,6 +144,7 @@ const InputWrapper = styled.div<{
 const InputBox = styled.div<{
   $isDragging: boolean;
   $hasFile: boolean;
+  $isError?: boolean;
 }>`
   padding: 12px;
   display: flex;
@@ -155,7 +157,7 @@ const InputBox = styled.div<{
   color: ${({ $isDragging }) => ($isDragging ? "#3b82f6" : "#6b7280")};
   background-color: ${({ $isDragging }) => ($isDragging ? "#eff6ff" : "#fff")};
   border: 1px dotted transparent;
-  background-image: ${({ $isDragging }) =>
+  background-image: ${({ $isDragging, $isError }) =>
     $isDragging
       ? `
       repeating-linear-gradient(to right, #60a5fa 0, #60a5fa 8px, transparent 8px, transparent 12px),
@@ -163,7 +165,14 @@ const InputBox = styled.div<{
       repeating-linear-gradient(to left, #60a5fa 0, #60a5fa 8px, transparent 8px, transparent 12px),
       repeating-linear-gradient(to top, #60a5fa 0, #60a5fa 8px, transparent 8px, transparent 12px)
     `
-      : `
+      : $isError
+        ? `
+      repeating-linear-gradient(to right, #dc2626 0, #dc2626 8px, transparent 8px, transparent 12px),
+      repeating-linear-gradient(to bottom, #dc2626 0, #dc2626 8px, transparent 8px, transparent 12px),
+      repeating-linear-gradient(to left, #dc2626 0, #dc2626 8px, transparent 8px, transparent 12px),
+      repeating-linear-gradient(to top, #dc2626 0, #dc2626 8px, transparent 8px, transparent 12px)
+    `
+        : `
       repeating-linear-gradient(to right, #9ca3af 0, #9ca3af 8px, transparent 8px, transparent 12px),
       repeating-linear-gradient(to bottom, #9ca3af 0, #9ca3af 8px, transparent 8px, transparent 12px),
       repeating-linear-gradient(to left, #9ca3af 0, #9ca3af 8px, transparent 8px, transparent 12px),
