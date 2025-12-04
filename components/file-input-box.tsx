@@ -1,6 +1,7 @@
 import { ChangeEvent, DragEvent, ReactElement, useRef, useState } from "react";
 import { RiCloseLine } from "@remixicon/react";
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
+import { Button } from "./button";
 
 export interface FileInputBoxProps {
   containerStyle?: CSSProp;
@@ -90,14 +91,33 @@ function FileInputBox({
           {selectedFiles.map((file, index) => (
             <FileItem key={index}>
               <FileName>{file.name}</FileName>
-              <DeleteButton
+              <Button
+                aria-label="delete-button"
+                containerStyle={css`
+                  position: absolute;
+                  top: 50%;
+                  right: 0;
+                  transform: translateY(-50%);
+                  cursor: pointer;
+                  width: fit-content;
+                  height: fit-content;
+                `}
+                buttonStyle={css`
+                  padding: 2px;
+                  width: fit-content;
+                  height: fit-content;
+                  background-color: white;
+                  &:hover {
+                    background-color: #e5e7eb;
+                  }
+                `}
                 onClick={(e) => {
                   e.stopPropagation();
                   handleDeleteFile(index);
                 }}
               >
-                <RiCloseLine size={16} />
-              </DeleteButton>
+                <RiCloseLine size={14} />
+              </Button>
             </FileItem>
           ))}
         </FileList>
@@ -233,19 +253,6 @@ const FileName = styled.div`
 const Placeholder = styled.span`
   font-size: 14px;
   width: 100%;
-`;
-
-const DeleteButton = styled.div`
-  position: absolute;
-  top: 50%;
-  right: 0;
-  transform: translateY(-50%);
-  padding: 4px;
-  border-radius: 4px;
-  cursor: pointer;
-  &:hover {
-    background-color: #e5e7eb;
-  }
 `;
 
 export { FileInputBox };
