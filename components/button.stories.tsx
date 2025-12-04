@@ -385,6 +385,7 @@ const MenuContainer = styled.div<{ $style?: CSSProp }>`
   gap: 4px;
   user-select: auto;
   max-width: 300px;
+  min-width: 300px;
   margin-bottom: 4px;
   ${({ $style }) => $style}
 `;
