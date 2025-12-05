@@ -1,5 +1,12 @@
 import { RiFile2Line, RiFileUploadLine, RiImageLine } from "@remixicon/react";
-import { ChangeEvent, DragEvent, ReactElement, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  DragEvent,
+  Fragment,
+  ReactElement,
+  useRef,
+  useState,
+} from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { LoadingSpinner } from "./loading-spinner";
 
@@ -12,13 +19,17 @@ export interface OnFileDroppedFunctionProps {
 }
 
 export interface OnCompleteFunctionProps {
-  succeedFiles: File[];
-  failedFiles: File[];
-  setProgressLabel: (label: string) => void;
+  succeedFiles?: File[];
+  failedFiles?: File[];
+  setProgressLabel?: (label: string) => void;
+  hideProgressLabel?: () => void;
+  showUploaderForm?: () => void;
 }
 
 export interface FileDropBoxProps {
   containerStyle?: CSSProp;
+  dragOverStyle?: CSSProp;
+  successStyle?: CSSProp;
   labelStyle?: CSSProp;
   placeholder?: string;
   accept?: string;
@@ -28,11 +39,13 @@ export interface FileDropBoxProps {
   progressPercentage?: number;
 }
 
-type ProgressProps = "idle" | "loading" | "succeed";
+type ProgressProps = "idle" | "loading" | "succeed" | null;
 
 function FileDropBox({
   containerStyle,
   labelStyle,
+  dragOverStyle,
+  successStyle,
   placeholder = "Drag and Drop Your File",
   accept = "*",
   onFileDropped,
@@ -80,6 +93,14 @@ function FileDropBox({
 
   const handleDragLeave = () => setIsDragging(false);
 
+  const hideProgressLabel = () => {
+    setProgress(null);
+  };
+
+  const showUploaderForm = () => {
+    setProgress("idle");
+  };
+
   const handleUploadFile = async (files: File[]) => {
     if (!onFileDropped) return;
 
@@ -115,13 +136,21 @@ function FileDropBox({
         progressPercentage,
       });
     }
+    await setProgress("succeed");
 
-    await onComplete?.({ succeedFiles, failedFiles, setProgressLabel });
-    setProgress("succeed");
+    await onComplete?.({
+      succeedFiles,
+      failedFiles,
+      setProgressLabel,
+      hideProgressLabel,
+      showUploaderForm,
+    });
   };
 
   const inputElement: ReactElement = (
     <DropArea
+      $dragOverStyle={dragOverStyle}
+      $successStyle={successStyle}
       $isDragging={isDragging}
       $progress={progress}
       aria-label="filedropbox"
@@ -153,7 +182,7 @@ function FileDropBox({
           </div>
         </UploadContent>
       ) : progress === "succeed" ? (
-        <div>{progressLabel}</div>
+        <Fragment>{progressLabel}</Fragment>
       ) : null}
 
       {progress === "idle" && (
@@ -170,7 +199,11 @@ function FileDropBox({
   );
 
   return (
-    <InputWrapper $containerStyle={containerStyle}>
+    <InputWrapper
+      aria-label="file-drop-box-container"
+      $hide={progress === null}
+      $containerStyle={containerStyle}
+    >
       {label && <Label $style={labelStyle}> {label}</Label>}
       {inputElement}
 
@@ -187,6 +220,7 @@ function FileDropBox({
 
 const InputWrapper = styled.div<{
   $containerStyle?: CSSProp;
+  $hide?: boolean;
 }>`
   display: flex;
   width: 100%;
@@ -194,6 +228,12 @@ const InputWrapper = styled.div<{
   gap: 0.5rem;
   font-size: 0.75rem;
   position: relative;
+
+  ${({ $hide }) =>
+    $hide &&
+    css`
+      display: none;
+    `}
 
   ${({ $containerStyle }) => $containerStyle}
 `;
@@ -209,6 +249,8 @@ const Label = styled.label<{
 const DropArea = styled.div<{
   $isDragging: boolean;
   $progress: ProgressProps;
+  $dragOverStyle?: CSSProp;
+  $successStyle?: CSSProp;
 }>`
   padding: 0.75rem;
   display: flex;
@@ -222,7 +264,7 @@ const DropArea = styled.div<{
   border-radius: 4px;
   color: #6b7280;
 
-  ${({ $progress }) =>
+  ${({ $progress, $dragOverStyle }) =>
     $progress === "idle" &&
     css`
       border: 1px dotted transparent;
@@ -266,6 +308,8 @@ const DropArea = styled.div<{
         bottom right,
         bottom left;
       background-repeat: no-repeat;
+
+      ${$dragOverStyle}
     `}
 
   ${({ $isDragging }) =>
@@ -315,10 +359,11 @@ const DropArea = styled.div<{
       background-repeat: no-repeat;
     `}
 
-  ${({ $progress }) =>
+  ${({ $progress, $successStyle }) =>
     $progress === "succeed" &&
     css`
       border: 1px solid #f3f4f6;
+      ${$successStyle}
     `}
 `;
 
