@@ -1004,7 +1004,7 @@ export const WithSummary: Story = {
         id: "quantity",
         caption: "Quantity",
         sortable: true,
-        width: "14%",
+        width: "20%",
       },
     ];
 
@@ -1118,7 +1118,7 @@ export const WithSummary: Story = {
 
       groups.map((group) =>
         group.items.map((item) => {
-          totalCost += parseCost(item.cost);
+          totalCost += parseCost(item.cost) * Number(item.quantity);
           totalQty += Number(item.quantity);
         })
       );
@@ -1129,7 +1129,7 @@ export const WithSummary: Story = {
       };
     }
 
-    const { totalCost, totalQty } = calculateTotals(filteredRows);
+    const { totalCost, totalQty } = calculateTotals(TABLE_ITEMS);
 
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -1140,7 +1140,7 @@ export const WithSummary: Story = {
             fontFamily: "monospace",
           }}
         >
-          Daily Cost in December 2025
+          Dine-in Tab
         </h3>
 
         <Table
@@ -1158,9 +1158,15 @@ export const WithSummary: Story = {
             },
             {
               content: totalCost.toLocaleString("en-US"),
+              style: css`
+                justify-content: end;
+              `,
             },
             {
               content: totalQty,
+              style: css`
+                justify-content: end;
+              `,
             },
           ]}
           searchable
@@ -1175,14 +1181,25 @@ export const WithSummary: Story = {
                 <Table.Row
                   key={rowIndex}
                   rowId={`${groupValue.id}-${rowValue.cost}-${rowValue.itemId}-${rowValue.name}-${rowValue.quantity}`}
-                  content={[
-                    rowValue.itemId,
-                    rowValue.name,
-                    rowValue.cost,
-                    rowValue.quantity,
-                  ]}
                   actions={ROW_ACTION}
-                />
+                >
+                  <Table.Row.Cell>{rowValue.itemId}</Table.Row.Cell>
+                  <Table.Row.Cell>{rowValue.name}</Table.Row.Cell>
+                  <Table.Row.Cell
+                    contentStyle={css`
+                      justify-content: end;
+                    `}
+                  >
+                    {rowValue.cost}
+                  </Table.Row.Cell>
+                  <Table.Row.Cell
+                    contentStyle={css`
+                      justify-content: end;
+                    `}
+                  >
+                    {rowValue.quantity}
+                  </Table.Row.Cell>
+                </Table.Row>
               ))}
             </Table.Row.Group>
           ))}
