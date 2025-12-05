@@ -90,14 +90,9 @@ function FileInputBox({
         <FileList>
           {selectedFiles.map((file, index) => (
             <FileItem key={index}>
-              <FileName>{file.name}</FileName>
               <Button
                 aria-label="delete-button"
                 containerStyle={css`
-                  position: absolute;
-                  top: 50%;
-                  right: 0;
-                  transform: translateY(-50%);
                   cursor: pointer;
                   width: fit-content;
                   height: fit-content;
@@ -118,6 +113,7 @@ function FileInputBox({
               >
                 <RiCloseLine size={14} />
               </Button>
+              <FileName>{file.name}</FileName>
             </FileItem>
           ))}
         </FileList>
@@ -239,6 +235,7 @@ const FileItem = styled.div`
   align-items: center;
   width: 100%;
   position: relative;
+  gap: 6px;
 `;
 
 const FileName = styled.div`
