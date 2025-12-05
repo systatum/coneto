@@ -1,12 +1,14 @@
 import { ChangeEvent, DragEvent, ReactElement, useRef, useState } from "react";
 import { RiCloseLine } from "@remixicon/react";
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
+import { Button } from "./button";
 
 export interface FileInputBoxProps {
   containerStyle?: CSSProp;
   placeholder?: string;
   accept?: string;
-  onFileSelected?: (file: File | undefined) => void;
+  multiple?: boolean;
+  onFilesSelected?: (files: File[]) => void;
   label?: string;
   labelStyle?: CSSProp;
   showError?: boolean;
@@ -15,9 +17,10 @@ export interface FileInputBoxProps {
 
 function FileInputBox({
   containerStyle,
-  placeholder = "Drop a file here or browse",
+  placeholder = "Drop files here or browse",
   accept = "*",
-  onFileSelected,
+  multiple = false,
+  onFilesSelected,
   label,
   labelStyle,
   errorMessage,
@@ -25,38 +28,41 @@ function FileInputBox({
 }: FileInputBoxProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<string>("");
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   const handleBrowseClick = () => {
     fileInputRef.current?.click();
   };
 
-  const handleDeleteFile = () => {
-    if (selectedFile !== "") {
-      onFileSelected(undefined);
-      setSelectedFile("");
+  const handleDeleteFile = (index: number) => {
+    const updatedFiles = selectedFiles.filter((_, i) => i !== index);
+    setSelectedFiles(updatedFiles);
+    if (onFilesSelected) {
+      onFilesSelected(updatedFiles);
     }
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const file = e.target.files;
-      if (onFileSelected) {
-        onFileSelected(file[0]);
+      const files = Array.from(e.target.files);
+      const updatedFiles = multiple ? [...selectedFiles, ...files] : files;
+      setSelectedFiles(updatedFiles);
+      if (onFilesSelected) {
+        onFilesSelected(updatedFiles);
       }
-      setSelectedFile(file[0].name);
     }
   };
 
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
-    if (e.dataTransfer.files && onFileSelected) {
-      const file = e.dataTransfer.files;
-      if (onFileSelected) {
-        onFileSelected(file[0]);
+    if (e.dataTransfer.files) {
+      const files = Array.from(e.dataTransfer.files);
+      const updatedFiles = multiple ? [...selectedFiles, ...files] : files;
+      setSelectedFiles(updatedFiles);
+      if (onFilesSelected) {
+        onFilesSelected(updatedFiles);
       }
-      setSelectedFile(file[0].name);
     }
   };
 
@@ -72,37 +78,56 @@ function FileInputBox({
   const inputElement: ReactElement = (
     <InputBox
       $isDragging={isDragging}
-      $hasFile={!!selectedFile}
+      $hasFile={selectedFiles.length > 0}
       onClick={handleBrowseClick}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       aria-label="fileinputbox"
+      $isError={showError}
     >
-      {selectedFile !== "" ? (
-        <>
-          <FileName>{selectedFile}</FileName>
-          <DeleteButton
-            onClick={(e) => {
-              e.stopPropagation();
-              handleDeleteFile();
-            }}
-          >
-            <RiCloseLine size={16} />
-          </DeleteButton>
-        </>
+      {selectedFiles.length > 0 ? (
+        <FileList>
+          {selectedFiles.map((file, index) => (
+            <FileItem key={index}>
+              <Button
+                aria-label="delete-button"
+                containerStyle={css`
+                  cursor: pointer;
+                  width: fit-content;
+                  height: fit-content;
+                `}
+                buttonStyle={css`
+                  padding: 2px;
+                  width: fit-content;
+                  height: fit-content;
+                  background-color: white;
+                  &:hover {
+                    background-color: #e5e7eb;
+                  }
+                `}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteFile(index);
+                }}
+              >
+                <RiCloseLine size={14} />
+              </Button>
+              <FileName>{file.name}</FileName>
+            </FileItem>
+          ))}
+        </FileList>
       ) : (
         <Placeholder>{placeholder}</Placeholder>
       )}
-      {selectedFile === "" && (
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept={accept}
-          onChange={handleFileChange}
-          hidden
-        />
-      )}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept={accept}
+        multiple={multiple}
+        onChange={handleFileChange}
+        hidden
+      />
     </InputBox>
   );
 
@@ -135,19 +160,20 @@ const InputWrapper = styled.div<{
 const InputBox = styled.div<{
   $isDragging: boolean;
   $hasFile: boolean;
+  $isError?: boolean;
 }>`
   padding: 12px;
   display: flex;
+  flex-direction: column;
   position: relative;
-  align-items: center;
-  justify-content: space-between;
+  align-items: flex-start;
   border-radius: 4px;
   cursor: ${({ $hasFile }) => ($hasFile ? "default" : "pointer")};
   font-size: 14px;
   color: ${({ $isDragging }) => ($isDragging ? "#3b82f6" : "#6b7280")};
   background-color: ${({ $isDragging }) => ($isDragging ? "#eff6ff" : "#fff")};
   border: 1px dotted transparent;
-  background-image: ${({ $isDragging }) =>
+  background-image: ${({ $isDragging, $isError }) =>
     $isDragging
       ? `
       repeating-linear-gradient(to right, #60a5fa 0, #60a5fa 8px, transparent 8px, transparent 12px),
@@ -155,7 +181,14 @@ const InputBox = styled.div<{
       repeating-linear-gradient(to left, #60a5fa 0, #60a5fa 8px, transparent 8px, transparent 12px),
       repeating-linear-gradient(to top, #60a5fa 0, #60a5fa 8px, transparent 8px, transparent 12px)
     `
-      : `
+      : $isError
+        ? `
+      repeating-linear-gradient(to right, #dc2626 0, #dc2626 8px, transparent 8px, transparent 12px),
+      repeating-linear-gradient(to bottom, #dc2626 0, #dc2626 8px, transparent 8px, transparent 12px),
+      repeating-linear-gradient(to left, #dc2626 0, #dc2626 8px, transparent 8px, transparent 12px),
+      repeating-linear-gradient(to top, #dc2626 0, #dc2626 8px, transparent 8px, transparent 12px)
+    `
+        : `
       repeating-linear-gradient(to right, #9ca3af 0, #9ca3af 8px, transparent 8px, transparent 12px),
       repeating-linear-gradient(to bottom, #9ca3af 0, #9ca3af 8px, transparent 8px, transparent 12px),
       repeating-linear-gradient(to left, #9ca3af 0, #9ca3af 8px, transparent 8px, transparent 12px),
@@ -190,6 +223,21 @@ const ErrorText = styled.span`
   font-size: 0.75rem;
 `;
 
+const FileList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+`;
+
+const FileItem = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  position: relative;
+  gap: 6px;
+`;
+
 const FileName = styled.div`
   font-size: 14px;
   color: #374151;
@@ -202,19 +250,6 @@ const FileName = styled.div`
 const Placeholder = styled.span`
   font-size: 14px;
   width: 100%;
-`;
-
-const DeleteButton = styled.div`
-  position: absolute;
-  top: 50%;
-  right: 16px;
-  transform: translateY(-50%);
-  padding: 4px;
-  border-radius: 4px;
-  cursor: pointer;
-  &:hover {
-    background-color: #e5e7eb;
-  }
 `;
 
 export { FileInputBox };

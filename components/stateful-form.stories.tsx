@@ -339,7 +339,7 @@ export const AllCase: Story = {
       combo: string[];
       date: string[];
       file_drop_box?: File[];
-      file: File | undefined;
+      file: File[] | undefined;
       image: File | undefined;
       money: string;
       phone: string;
@@ -364,7 +364,7 @@ export const AllCase: Story = {
         selectedOptions: [],
       },
       color: "",
-      combo: [""],
+      combo: [],
       date: [""],
       file_drop_box: [] as File[],
       file: undefined,
@@ -436,7 +436,12 @@ export const AllCase: Story = {
         .min(1, "Combo must have at least one item")
         .refine(
           (arr) =>
-            arr.every((val) => FRUIT_OPTIONS.some((opt) => opt.value === val)),
+            arr.every((val) =>
+              FRUIT_OPTIONS.some((opt) => {
+                console.log(opt.value, val);
+                return opt.value === val;
+              })
+            ),
           "Invalid value in combo"
         ),
       date: z.array(
@@ -453,18 +458,23 @@ export const AllCase: Story = {
       ),
       file_drop_box: z.any().optional(),
       file: z
-        .any()
+        .preprocess((value) => {
+          if (value instanceof FileList) return Array.from(value);
+          if (Array.isArray(value)) return value;
+          return [];
+        }, z.array(z.any()))
+        .refine((files) => files.length > 0, {
+          message: "At least one file is required",
+        })
+        .refine((files) => files.every((file) => file.type === "image/jpeg"), {
+          message: "Only JPEG files are allowed",
+        })
         .refine(
-          (file) => {
-            return file?.type === "image/jpeg";
-          },
+          (files) => files.every((file) => file.size <= 5 * 1024 * 1024),
           {
-            message: "Only JPEG file are allowed",
+            message: "Each file must be 5MB or less",
           }
-        )
-        .refine((file) => file?.size <= 5 * 1024 * 1024, {
-          message: "File size must be 5MB or less",
-        }),
+        ),
       image: z
         .any()
         .refine(
@@ -643,6 +653,7 @@ export const AllCase: Story = {
         placeholder: "Select a fruit...",
         comboboxProps: {
           options: FRUIT_OPTIONS,
+          multiple: true,
         },
       },
       {
