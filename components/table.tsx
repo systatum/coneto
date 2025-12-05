@@ -36,6 +36,7 @@ export interface ColumnTableProps {
   sortable?: boolean;
   style?: CSSProp;
   width?: string;
+  id: string;
 }
 
 export interface TableActionsProps extends ActionButtonProps {
@@ -78,6 +79,14 @@ export interface TableProps {
   disableNextPageButton?: boolean;
   pageNumberText?: string | number;
   totalSelectedItemText?: (count: number) => string;
+  sumRow?: SummaryRowProps[];
+}
+
+interface SummaryRowProps {
+  span?: number;
+  content?: ReactNode;
+  bold?: boolean;
+  style?: CSSProp;
 }
 
 export interface TableRowProps {
@@ -158,6 +167,7 @@ function Table({
   onSearchboxChange,
   draggable,
   onDragged,
+  sumRow,
 }: TableProps) {
   const [dragItem, setDragItem] = useState<{
     oldGroupId: string;
@@ -416,7 +426,7 @@ function Table({
                           background-color: #d4d4d4;
                         `}
                         variant="none"
-                        subMenuList={subMenuList(`${col.caption}`)}
+                        subMenuList={subMenuList(`${col.id}`)}
                       />
                     </Toolbar>
                   )}
@@ -434,6 +444,52 @@ function Table({
             ) : (
               <EmptyState>{emptySlate}</EmptyState>
             )}
+
+            {sumRow && (
+              <TableSummary>
+                {selectable && <CheckboxWrapper />}
+
+                {(() => {
+                  const cells: ReactNode[] = [];
+                  let colPointer = 0;
+
+                  sumRow.map((col) => {
+                    const span = col.span ?? 1;
+
+                    for (let s = 0; s < span; s++) {
+                      const columnWidth = columns[colPointer]?.width;
+                      cells.push(
+                        <TableRowCell
+                          key={`${colPointer}-${s}`}
+                          width={columnWidth}
+                          bold={col.bold}
+                          contentStyle={css`
+                            display: flex;
+                            align-items: center;
+                            ${columnWidth
+                              ? css`
+                                  width: ${columnWidth};
+                                  flex-direction: row;
+                                `
+                              : css`
+                                  flex: 1;
+                                `}
+                            ${col.style}
+                          `}
+                        >
+                          {s === 0 ? col.content : ""}
+                        </TableRowCell>
+                      );
+
+                      colPointer++;
+                    }
+                  });
+
+                  return cells;
+                })()}
+              </TableSummary>
+            )}
+
             {isLoading && (
               <TableLoadingOverlay>
                 <LoadingSpinner iconSize={24} />
@@ -555,6 +611,18 @@ const TableHeader = styled.div`
   background: linear-gradient(to bottom, #f0f0f0, #e4e4e4);
   align-items: center;
   font-weight: 600;
+  color: #343434;
+  border-bottom-width: 1px;
+  border-color: #d1d5db;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+`;
+
+const TableSummary = styled.div`
+  display: flex;
+  flex-direction: row;
+  padding: 0.75rem;
+  background: linear-gradient(to bottom, #f0f0f0, #e4e4e4);
+  align-items: center;
   color: #343434;
   border-bottom-width: 1px;
   border-color: #d1d5db;
@@ -1064,7 +1132,11 @@ function TableRowCell({
   contentStyle,
   width,
   onClick,
-}: TableRowCellProps) {
+  bold,
+}: TableRowCellProps &
+  Partial<{
+    bold?: boolean;
+  }>) {
   return (
     <CellContent
       onClick={() => {
@@ -1072,7 +1144,8 @@ function TableRowCell({
           onClick();
         }
       }}
-      width={width}
+      $width={width}
+      $bold={bold}
       $contentStyle={css`
         ${contentStyle};
         ${onClick &&
@@ -1086,7 +1159,11 @@ function TableRowCell({
   );
 }
 
-const CellContent = styled.div<{ width?: string; $contentStyle?: CSSProp }>`
+const CellContent = styled.div<{
+  $width?: string;
+  $contentStyle?: CSSProp;
+  $bold?: boolean;
+}>`
   padding-left: 0.5rem;
   padding-right: 0.5rem;
   display: flex;
@@ -1094,16 +1171,21 @@ const CellContent = styled.div<{ width?: string; $contentStyle?: CSSProp }>`
   word-break: break-word;
   white-space: pre-wrap;
 
-  ${({ width }) =>
-    !width &&
+  ${({ $width }) =>
+    !$width &&
     css`
       flex: 1;
       height: fit-content;
       width: 100%;
     `}
 
-  width: ${({ width }) => width};
+  width: ${({ $width }) => $width};
   min-height: inherit;
+  ${({ $bold }) =>
+    $bold &&
+    css`
+      font-weight: 600;
+    `}
   ${({ $contentStyle }) => $contentStyle};
 `;
 
