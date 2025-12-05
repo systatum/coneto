@@ -156,10 +156,12 @@ export const Default: Story = {
 
     const columns: ColumnTableProps[] = [
       {
+        id: "name",
         caption: "Name",
         sortable: false,
       },
       {
+        id: "type",
         caption: "Type",
         sortable: false,
       },
@@ -182,11 +184,13 @@ export const Appendable: Story = {
   render: () => {
     const columns: ColumnTableProps[] = [
       {
+        id: "from",
         caption: "From",
         sortable: true,
         width: "40%",
       },
       {
+        id: "content",
         caption: "Content",
         sortable: true,
         width: "60%",
@@ -412,11 +416,13 @@ export const WithOneAction: Story = {
   render: () => {
     const columns: ColumnTableProps[] = [
       {
+        id: "from",
         caption: "From",
         sortable: true,
         width: "40%",
       },
       {
+        id: "content",
         caption: "Content",
         sortable: true,
         width: "60%",
@@ -705,10 +711,12 @@ export const SortableWithPagination: Story = {
 
     const columns: ColumnTableProps[] = [
       {
+        id: "name",
         caption: "Name",
         sortable: true,
       },
       {
+        id: "type",
         caption: "Type",
         sortable: true,
       },
@@ -814,10 +822,12 @@ export const WithLoading: Story = {
     });
     const columns: ColumnTableProps[] = [
       {
+        id: "name",
         caption: "Name",
         sortable: false,
       },
       {
+        id: "type",
         caption: "Type",
         sortable: false,
       },
@@ -846,12 +856,12 @@ export const WithEmptySlate: Story = {
 
     const columns: ColumnTableProps[] = [
       {
+        id: "name",
         caption: "Name",
-        sortable: false,
       },
       {
+        id: "type",
         caption: "Type",
-        sortable: false,
       },
     ];
 
@@ -895,6 +905,289 @@ export const WithEmptySlate: Story = {
       >
         {emptyRows}
       </Table>
+    );
+  },
+};
+
+export const WithSummary: Story = {
+  render: () => {
+    interface TableItemProps {
+      id?: string;
+      title: string;
+      subtitle?: string;
+      items: {
+        itemId?: string;
+        name: string;
+        cost: string;
+        quantity: string;
+      }[];
+    }
+
+    const TABLE_ITEMS: TableItemProps[] = [
+      {
+        id: "food",
+        title: "Food",
+        subtitle: "List of Food Items",
+        items: [
+          {
+            itemId: "F1583",
+            name: "Ayam Geprek",
+            cost: "5,000",
+            quantity: "5",
+          },
+          {
+            itemId: "F9311",
+            name: "Laksa Singapore",
+            cost: "4,500",
+            quantity: "1",
+          },
+          { itemId: "F2210", name: "Nasi Lemak", cost: "3,500", quantity: "2" },
+          {
+            itemId: "F7721",
+            name: "Soto Betawi",
+            cost: "4,000",
+            quantity: "1",
+          },
+          {
+            itemId: "F6622",
+            name: "Bakso Malang",
+            cost: "6,000",
+            quantity: "4",
+          },
+        ],
+      },
+      {
+        id: "beverages",
+        title: "Beverages",
+        subtitle: "Cold and Hot Refreshments",
+        items: [
+          { itemId: "B1010", name: "Iced Tea", cost: "1,000", quantity: "3" },
+          {
+            itemId: "B3911",
+            name: "Mineral Water",
+            cost: "500",
+            quantity: "1",
+          },
+          { itemId: "B5512", name: "Lemonade", cost: "2,000", quantity: "2" },
+          { itemId: "B6619", name: "Hot Coffee", cost: "3,000", quantity: "1" },
+          {
+            itemId: "B8821",
+            name: "Orange Juice",
+            cost: "2,500",
+            quantity: "2",
+          },
+        ],
+      },
+    ];
+
+    const [rows, setRows] = useState(TABLE_ITEMS);
+    const [search, setSearch] = useState("");
+
+    const columns: ColumnTableProps[] = [
+      {
+        id: "itemId",
+        caption: "Item ID",
+        sortable: true,
+      },
+      {
+        id: "name",
+        caption: "Name",
+        sortable: true,
+        width: "40%",
+      },
+      {
+        id: "cost",
+        caption: "Cost",
+        sortable: true,
+      },
+      {
+        id: "quantity",
+        caption: "Quantity",
+        sortable: true,
+        width: "14%",
+      },
+    ];
+
+    const handleSortingRequested = ({
+      mode,
+      column,
+    }: {
+      mode: "asc" | "desc" | "original";
+      column: keyof (typeof TABLE_ITEMS)[0]["items"][0];
+    }) => {
+      if (mode === "original") {
+        setRows([...TABLE_ITEMS]);
+        return;
+      }
+
+      const sortedRows = rows.map((data) => {
+        const sortedItems = [...data.items].sort((a, b) => {
+          const aVal = a[column];
+          const bVal = b[column];
+          return typeof aVal === "string" && typeof bVal === "string"
+            ? mode === "asc"
+              ? aVal.localeCompare(bVal)
+              : bVal.localeCompare(aVal)
+            : 0;
+        });
+
+        return {
+          ...data,
+          items: sortedItems,
+        };
+      });
+
+      setRows(sortedRows);
+    };
+
+    const TIP_MENU_ACTION = (
+      columnCaption: string
+    ): SubMenuListTableProps[] => {
+      const column = columnCaption as keyof (typeof TABLE_ITEMS)[0]["items"][0];
+      return [
+        {
+          caption: "Sort Ascending",
+          icon: RiArrowUpSLine,
+          iconColor: "gray",
+          onClick: () => {
+            handleSortingRequested({ mode: "asc", column });
+          },
+        },
+        {
+          caption: "Sort Descending",
+          icon: RiArrowDownSLine,
+          iconColor: "gray",
+          onClick: () => {
+            handleSortingRequested({ mode: "desc", column });
+          },
+        },
+        {
+          caption: "Reset Sorting",
+          icon: RiRefreshLine,
+          iconColor: "gray",
+          onClick: () => {
+            handleSortingRequested({ mode: "original", column });
+          },
+        },
+      ];
+    };
+
+    const ROW_ACTION = (rowId: string): SubMenuListTableProps[] => {
+      return [
+        {
+          caption: "Edit",
+          icon: RiArrowUpSLine,
+          iconColor: "gray",
+          onClick: () => {
+            console.log(`${rowId} was edited`);
+          },
+        },
+        {
+          caption: "Delete",
+          icon: RiDeleteBin2Fill,
+          iconColor: "gray",
+          onClick: () => {
+            console.log(`${rowId} was deleted`);
+          },
+        },
+      ];
+    };
+
+    const filteredRows = rows
+      .map((group) => {
+        const filteredItems = group.items.filter((item) => {
+          return Object.values(item).some((val) =>
+            val.toLowerCase().includes(search.toLowerCase())
+          );
+        });
+
+        return {
+          ...group,
+          items: filteredItems,
+        };
+      })
+      .filter((group) => group.items.length > 0);
+
+    function parseCost(val: string) {
+      return Number(val.replace(/,/g, ""));
+    }
+
+    function calculateTotals(groups: TableItemProps[]) {
+      let totalCost = 0;
+      let totalQty = 0;
+
+      groups.map((group) =>
+        group.items.map((item) => {
+          totalCost += parseCost(item.cost);
+          totalQty += Number(item.quantity);
+        })
+      );
+
+      return {
+        totalCost,
+        totalQty,
+      };
+    }
+
+    const { totalCost, totalQty } = calculateTotals(filteredRows);
+
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <h3
+          style={{
+            fontWeight: 600,
+            fontSize: "1.25rem",
+            fontFamily: "monospace",
+          }}
+        >
+          Daily Cost in December 2025
+        </h3>
+
+        <Table
+          tableRowContainerStyle={css`
+            max-height: 400px;
+          `}
+          columns={columns}
+          subMenuList={TIP_MENU_ACTION}
+          onSearchboxChange={(e) => setSearch(e.target.value)}
+          sumRow={[
+            {
+              span: 2,
+              content: "Total",
+              bold: true,
+            },
+            {
+              content: totalCost.toLocaleString("en-US"),
+            },
+            {
+              content: totalQty,
+            },
+          ]}
+          searchable
+        >
+          {filteredRows?.map((groupValue, groupIndex) => (
+            <Table.Row.Group
+              key={groupIndex}
+              title={groupValue.title}
+              subtitle={groupValue.subtitle}
+            >
+              {groupValue.items.map((rowValue, rowIndex) => (
+                <Table.Row
+                  key={rowIndex}
+                  rowId={`${groupValue.id}-${rowValue.cost}-${rowValue.itemId}-${rowValue.name}-${rowValue.quantity}`}
+                  content={[
+                    rowValue.itemId,
+                    rowValue.name,
+                    rowValue.cost,
+                    rowValue.quantity,
+                  ]}
+                  actions={ROW_ACTION}
+                />
+              ))}
+            </Table.Row.Group>
+          ))}
+        </Table>
+      </div>
     );
   },
 };
@@ -1115,16 +1408,19 @@ export const WithRowGroup: Story = {
 
     const columns: ColumnTableProps[] = [
       {
+        id: "title",
         caption: "Title",
         sortable: true,
         width: "45%",
       },
       {
+        id: "category",
         caption: "Category",
         sortable: true,
         width: "30%",
       },
       {
+        id: "author",
         caption: "Author",
         sortable: true,
         width: "25%",
@@ -1366,10 +1662,12 @@ export const Draggable: Story = {
       let sortableValue = sortable;
       return [
         {
+          id: "name",
           caption: "Name",
           sortable: sortableValue,
         },
         {
+          id: "type",
           caption: "Type",
           sortable: sortableValue,
         },
@@ -1462,16 +1760,19 @@ export const Draggable: Story = {
 
     const columnsGroup: ColumnTableProps[] = [
       {
+        id: "title",
         caption: "Title",
         sortable: true,
         width: "45%",
       },
       {
+        id: "category",
         caption: "Category",
         sortable: true,
         width: "30%",
       },
       {
+        id: "author",
         caption: "Author",
         sortable: true,
         width: "25%",
