@@ -46,16 +46,20 @@ export const Default: Story = {
       });
     };
 
-    const onComplete = ({
+    const onComplete = async ({
       failedFiles,
       setProgressLabel,
       succeedFiles,
+      hideProgressLabel,
+      showUploaderForm,
     }: OnCompleteFunctionProps) => {
       console.log(succeedFiles, "This is succeedFiles");
       console.log(failedFiles, "This is failedFiles");
-      setProgressLabel(
+      await setProgressLabel(
         `Upload complete! Success: ${succeedFiles.length}, Failed: ${failedFiles.length}`
       );
+      await hideProgressLabel();
+      await showUploaderForm();
     };
 
     return (
