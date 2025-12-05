@@ -4,6 +4,7 @@ import {
   DragEvent,
   Fragment,
   ReactElement,
+  ReactNode,
   useRef,
   useState,
 } from "react";
@@ -37,6 +38,7 @@ export interface FileDropBoxProps {
   onFileDropped?: (props: OnFileDroppedFunctionProps) => void;
   onComplete?: (props: OnCompleteFunctionProps) => void;
   progressPercentage?: number;
+  children?: ReactNode;
 }
 
 type ProgressProps = "idle" | "loading" | "succeed" | null;
@@ -51,6 +53,7 @@ function FileDropBox({
   onFileDropped,
   onComplete,
   label,
+  children,
 }: FileDropBoxProps) {
   const FILE_ICON = [
     { id: 1, icon: RiImageLine, size: 50 },
@@ -168,19 +171,22 @@ function FileDropBox({
           </ProgressBarWrapper>
         </ProgressContainer>
       ) : progress === "idle" ? (
-        <UploadContent>
-          <IconsRow>
-            {FILE_ICON.map(({ id, icon: Icon, size }) => (
-              <Icon key={id} size={size} />
-            ))}
-          </IconsRow>
-          <PlaceholderText $isDragging={isDragging}>
-            {placeholder}
-          </PlaceholderText>
-          <div>
-            <LinkText>Select some files</LinkText> from your computer
-          </div>
-        </UploadContent>
+        <Fragment>
+          <UploadContent>
+            <IconsRow>
+              {FILE_ICON.map(({ id, icon: Icon, size }) => (
+                <Icon key={id} size={size} />
+              ))}
+            </IconsRow>
+            <PlaceholderText $isDragging={isDragging}>
+              {placeholder}
+            </PlaceholderText>
+            <div>
+              <LinkText>Select some files</LinkText> from your computer
+            </div>
+          </UploadContent>
+          {children && <Fragment>{children}</Fragment>}
+        </Fragment>
       ) : progress === "succeed" ? (
         <Fragment>{progressLabel}</Fragment>
       ) : null}
@@ -263,6 +269,7 @@ const DropArea = styled.div<{
   cursor: pointer;
   border-radius: 4px;
   color: #6b7280;
+  width: 100%;
 
   ${({ $progress, $dragOverStyle }) =>
     $progress === "idle" &&
