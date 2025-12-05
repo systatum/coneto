@@ -1,10 +1,13 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import {
   FileDropBox,
   OnCompleteFunctionProps,
   OnFileDroppedFunctionProps,
 } from "./file-drop-box";
+import { Table } from "./table";
+import { css } from "styled-components";
+import { RiDeleteBin2Fill } from "@remixicon/react";
 
 const meta: Meta<typeof FileDropBox> = {
   title: "Input Elements/FileDropBox",
@@ -18,6 +21,8 @@ type Story = StoryObj<typeof FileDropBox>;
 
 export const Default: Story = {
   render: () => {
+    const [files, setFiles] = useState<File[]>([]);
+
     const onFileDropped = async ({
       error,
       files,
@@ -25,6 +30,7 @@ export const Default: Story = {
       succeed,
     }: OnFileDroppedFunctionProps) => {
       const file = files[0];
+      setFiles((prev) => [...prev, file]);
       setProgressLabel(`Uploading ${file.name}`);
 
       return new Promise<void>((resolve) => {
@@ -63,7 +69,49 @@ export const Default: Story = {
     };
 
     return (
-      <FileDropBox onFileDropped={onFileDropped} onComplete={onComplete} />
+      <FileDropBox onFileDropped={onFileDropped} onComplete={onComplete}>
+        <Table
+          containerStyle={
+            files.length === 0 &&
+            css`
+              display: none;
+            `
+          }
+          columns={[
+            {
+              caption: "File Name",
+            },
+            {
+              caption: "Date",
+            },
+          ]}
+        >
+          {files.map((props) => (
+            <Table.Row
+              actions={(id) => [
+                {
+                  caption: "Delete",
+                  icon: RiDeleteBin2Fill,
+                  onClick: () => {
+                    if (id) {
+                      setFiles((prev) => prev.filter((val) => val.name !== id));
+                    }
+                  },
+                },
+              ]}
+              rowId={props.name}
+              content={[
+                props.name,
+                new Date(props.lastModified).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "short",
+                  day: "2-digit",
+                }),
+              ]}
+            />
+          ))}
+        </Table>
+      </FileDropBox>
     );
   },
 };

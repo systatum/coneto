@@ -21,6 +21,26 @@ describe("FileDropBox", () => {
 
         cy.contains(/Uploading/).should("exist");
       });
+
+      context("with children", () => {
+        it("renders the children when back to idle ", () => {
+          cy.findByText("sample-1.jpg").should("not.exist");
+          cy.findByText("sample-2.jpg").should("not.exist");
+          cy.findByLabelText("filedropbox").selectFile(
+            [
+              "test/fixtures/test-images/sample-1.jpg",
+              "test/fixtures/test-images/sample-2.jpg",
+            ],
+            {
+              action: "drag-drop",
+              force: true,
+            }
+          );
+
+          cy.findByText("sample-1.jpg").should("exist");
+          cy.findByText("sample-2.jpg").should("exist");
+        });
+      });
     });
   });
 
