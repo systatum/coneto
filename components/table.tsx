@@ -179,6 +179,7 @@ function Table({
 
   const [selectedData, setSelectedData] = useState<string[]>([]);
   const [allRowsLocal, setAllRowsLocal] = useState<string[]>([]);
+  const [rowActions, setRowActions] = useState<TipMenuItemProps[]>([]);
 
   const handleSelectAll = () => {
     const currentPageIds = getAllRowContentsFromChildren(children);
@@ -208,6 +209,9 @@ function Table({
 
   useEffect(() => {
     const currentIds = getAllRowContentsFromChildren(children);
+    const allRowActions = getRowActionsFromChildren(children);
+
+    setRowActions(allRowActions);
 
     setAllRowsLocal((prev) => Array.from(new Set([...prev, ...currentIds])));
   }, [children]);
@@ -380,58 +384,73 @@ function Table({
                   />
                 </CheckboxWrapper>
               )}
-              {columns.map((col, i) => (
-                <TableRowCell
-                  key={i}
-                  width={col.width}
-                  contentStyle={css`
-                    display: flex;
-                    position: relative;
-                    align-items: center;
-                    ${col.width
-                      ? css`
-                          width: ${col.width};
-                          flex-direction: row;
-                        `
-                      : css`
-                          flex: 1;
-                        `}
-                  `}
-                >
-                  {col.caption}
-                  {col.sortable && (
-                    <Toolbar
-                      style={css`
-                        width: fit-content;
-                        position: absolute;
-                        right: 0.5rem;
-                        z-index: 20;
-                      `}
+              {columns.map((col, i) => {
+                const isLast =
+                  rowActions?.length > 0 && columns.length - 1 === i;
+                return (
+                  <TableRowCell
+                    key={i}
+                    width={col.width}
+                    contentStyle={css`
+                      display: flex;
+                      position: relative;
+                      align-items: center;
+                      ${col.width
+                        ? css`
+                            width: ${col.width};
+                            flex-direction: row;
+                          `
+                        : css`
+                            flex: 1;
+                          `}
+                    `}
+                  >
+                    <span
+                      style={{
+                        display: "block",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
                     >
-                      <Toolbar.Menu
-                        closedIcon={RiArrowUpDownLine}
-                        openedIcon={RiArrowUpDownLine}
-                        isOpen={isOpen}
-                        setIsOpen={setIsOpen}
-                        dropdownStyle={css`
-                          min-width: 235px;
+                      {col.caption}
+                    </span>
+                    {col.sortable && (
+                      <Toolbar
+                        style={css`
+                          width: fit-content;
+                          z-index: 20;
+                          ${isLast &&
+                          css`
+                            padding-right: 14px;
+                          `}
                         `}
-                        triggerStyle={css`
-                          color: black;
-                          &:hover {
+                      >
+                        <Toolbar.Menu
+                          closedIcon={RiArrowUpDownLine}
+                          openedIcon={RiArrowUpDownLine}
+                          isOpen={isOpen}
+                          setIsOpen={setIsOpen}
+                          dropdownStyle={css`
+                            min-width: 235px;
+                          `}
+                          triggerStyle={css`
+                            color: black;
+                            &:hover {
+                              background-color: #d4d4d4;
+                            }
+                          `}
+                          toggleActiveStyle={css`
                             background-color: #d4d4d4;
-                          }
-                        `}
-                        toggleActiveStyle={css`
-                          background-color: #d4d4d4;
-                        `}
-                        variant="none"
-                        subMenuList={subMenuList(`${col.id}`)}
-                      />
-                    </Toolbar>
-                  )}
-                </TableRowCell>
-              ))}
+                          `}
+                          variant="none"
+                          subMenuList={subMenuList(`${col.id}`)}
+                        />
+                      </Toolbar>
+                    )}
+                  </TableRowCell>
+                );
+              })}
             </TableHeader>
 
             {rowChildren.length > 0 ? (
@@ -453,11 +472,20 @@ function Table({
                   const cells: ReactNode[] = [];
                   let colPointer = 0;
 
+                  const totalCells = sumRow.reduce(
+                    (acc, col) => acc + (col.span ?? 1),
+                    0
+                  );
+
                   sumRow.map((col) => {
                     const span = col.span ?? 1;
 
                     for (let s = 0; s < span; s++) {
                       const columnWidth = columns[colPointer]?.width;
+
+                      const isLast =
+                        rowActions && colPointer === totalCells - 1;
+
                       cells.push(
                         <TableRowCell
                           key={`${colPointer}-${s}`}
@@ -474,6 +502,10 @@ function Table({
                               : css`
                                   flex: 1;
                                 `}
+                            ${isLast &&
+                            css`
+                              padding-right: 36px;
+                            `}
                             ${col.style}
                           `}
                         >
@@ -596,6 +628,7 @@ const TableContainer = styled.div<{ $hasSelected: boolean }>`
   flex-direction: column;
   position: relative;
   height: 100%;
+  overflow: hidden;
 
   ${({ $hasSelected }) =>
     $hasSelected &&
@@ -620,7 +653,8 @@ const TableHeader = styled.div`
 const TableSummary = styled.div`
   display: flex;
   flex-direction: row;
-  padding: 0.75rem;
+  padding: 10px;
+  padding-right: 15px;
   background: linear-gradient(to bottom, #f0f0f0, #e4e4e4);
   align-items: center;
   color: #343434;
@@ -1170,6 +1204,7 @@ const CellContent = styled.div<{
   align-items: center;
   word-break: break-word;
   white-space: pre-wrap;
+  justify-content: space-between;
 
   ${({ $width }) =>
     !$width &&
@@ -1205,6 +1240,29 @@ function getAllRowContentsFromChildren(children: ReactNode): string[] {
 
     if (TableRowProps.type === TableRow && TableRowProps.props.rowId) {
       result.push(TableRowProps.props.rowId);
+    }
+  });
+
+  return result;
+}
+
+function getRowActionsFromChildren(children: ReactNode): TipMenuItemProps[] {
+  const result: TipMenuItemProps[] = [];
+
+  Children.forEach(children, (child) => {
+    if (!isValidElement(child)) return;
+
+    const rowGroup = child as ReactElement<TableRowGroupProps>;
+    const row = child as ReactElement<TableRowProps>;
+
+    if (rowGroup.type === TableRowGroup) {
+      const groupChildren = rowGroup.props.children as ReactNode;
+      result.push(...getRowActionsFromChildren(groupChildren));
+    }
+
+    if (row.type === TableRow && row.props.actions && row.props.rowId) {
+      const actionsForRow = row.props.actions(row.props.rowId);
+      result.push(actionsForRow[0]);
     }
   });
 
