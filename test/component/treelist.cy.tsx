@@ -90,6 +90,7 @@ describe("Treelist", () => {
 
         cy.contains("Adam Noto Hakarsa")
           .parent()
+          .parent()
           .should("have.css", "border-left-color", "rgb(59, 130, 246)");
       });
     });
@@ -176,9 +177,11 @@ describe("Treelist", () => {
 
         cy.contains("Adam Noto Hakarsa")
           .parent()
+          .parent()
           .should("have.css", "border-left-color", "rgba(0, 0, 0, 0)");
         cy.contains("Adam Noto Hakarsa")
           .click()
+          .parent()
           .parent()
           .should("have.css", "border-left-color", "rgb(59, 130, 246)");
       });
@@ -236,11 +239,13 @@ describe("Treelist", () => {
 
       TREE_LIST_ACTIONS = [
         {
+          id: "discover",
           caption: "Discover",
           onClick: onDiscover,
           icon: RiSearchLine,
         },
         {
+          id: "mention",
           caption: "Mention",
           onClick: onMention,
           icon: RiAtLine,
@@ -263,6 +268,52 @@ describe("Treelist", () => {
 
         cy.findByText("Mention").should("exist").click();
         cy.get("@onMention").should("have.been.calledOnce");
+      });
+    });
+
+    context("with setActive", () => {
+      const TREE_LIST_ACTIONS_WITH_ACTIVE = [
+        {
+          id: "discover",
+          caption: "Discover",
+          onClick: ({ setActive }) => {
+            console.log("discover was selected");
+            setActive(true);
+          },
+          icon: RiSearchLine,
+        },
+        {
+          id: "mention",
+          caption: "Mention",
+          onClick: ({ setActive }) => {
+            console.log("mention was selected");
+            setActive(true);
+          },
+          icon: RiAtLine,
+        },
+      ];
+      context("when clicking", () => {
+        it("renders selected active on actions level", () => {
+          cy.window().then((win) => {
+            cy.spy(win.console, "log").as("consoleLog");
+          });
+          cy.mount(
+            <TreeList
+              content={TREE_LIST_DATA}
+              actions={TREE_LIST_ACTIONS_WITH_ACTIVE}
+              emptySlate={<p>Not found.</p>}
+            />
+          );
+
+          cy.findByText("Discover").should("exist").click();
+          cy.get("@consoleLog").should(
+            "have.been.calledWith",
+            "discover was selected"
+          );
+          cy.findByText("Discover")
+            .parent()
+            .should("have.css", "border-left-color", "rgb(59, 130, 246)");
+        });
       });
     });
   });
