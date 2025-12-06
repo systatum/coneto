@@ -54,8 +54,9 @@ export interface TreeListItemsProps {
 }
 
 export interface TreeListActionsProps {
+  id: string;
   caption?: string;
-  onClick?: () => void;
+  onClick?: (props?: { setActive?: (data: boolean) => void }) => void;
   icon?: RemixiconComponentType;
   style?: CSSProp;
 }
@@ -157,10 +158,19 @@ function TreeList({
           {actions.map((data, index) => (
             <ActionItem
               key={index}
+              $isSelected={data.id === isSelected}
               role="button"
               tabIndex={0}
               aria-label="tree-list-action"
-              onClick={() => data.onClick?.()}
+              onClick={() =>
+                data.onClick?.({
+                  setActive: (prop: boolean) => {
+                    if (prop) {
+                      handleOnChange(data.id);
+                    }
+                  },
+                })
+              }
               $style={data.style}
             >
               {data.icon && <data.icon size={16} />}
@@ -593,23 +603,32 @@ const ActionsWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  gap: 0.25rem;
   margin-bottom: 1em;
 `;
 
-const ActionItem = styled.div<{ $style?: CSSProp }>`
+const ActionItem = styled.div<{ $style?: CSSProp; $isSelected?: boolean }>`
   display: flex;
   flex-direction: row;
   position: relative;
   width: 100%;
   align-items: center;
-  padding: 0.25rem 0.75rem;
-  padding-left: 1.4rem;
+  padding: 0.25rem 1.2rem;
   gap: 0.5rem;
   cursor: pointer;
+  border-left: 3px solid transparent;
+  user-select: none;
+  min-height: 36px;
+
   &:hover {
     background-color: #f5f5f5;
   }
+
+  ${({ $isSelected }) =>
+    $isSelected &&
+    css`
+      background-color: #f5f5f5;
+      border-left: 3px solid #3b82f6;
+    `}
   ${(props) => props.$style}
 `;
 
