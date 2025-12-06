@@ -483,6 +483,7 @@ export const WithActions: Story = {
 
     const TREE_LIST_ACTIONS: TreeListActionsProps[] = [
       {
+        id: "discover",
         caption: "Discover",
         onClick: () => {
           console.log("Discover clicked");
@@ -490,6 +491,7 @@ export const WithActions: Story = {
         icon: RiSearchLine,
       },
       {
+        id: "mention",
         caption: "Mention",
         onClick: () => {
           console.log("Mention clicked");
@@ -575,16 +577,18 @@ export const WithoutHeader: Story = {
 
     const TREE_LIST_ACTIONS: TreeListActionsProps[] = [
       {
-        caption: "Discover",
-        onClick: () => {
-          console.log("Discover clicked");
+        id: "add-new-branch",
+        caption: "Add New Branch",
+        onClick: ({ setActive }) => {
+          setActive(true);
         },
         icon: RiSearchLine,
       },
       {
-        caption: "Mention",
-        onClick: () => {
-          console.log("Mention clicked");
+        id: "table-view",
+        caption: "Table View",
+        onClick: ({ setActive }) => {
+          setActive(true);
         },
         icon: RiAtLine,
       },
@@ -615,6 +619,7 @@ export const WithEmptySlate: Story = {
 
     const TREE_LIST_ACTIONS: TreeListActionsProps[] = [
       {
+        id: "discover",
         caption: "Discover",
         onClick: () => {
           console.log("Discover clicked");
@@ -622,6 +627,7 @@ export const WithEmptySlate: Story = {
         icon: RiSearchLine,
       },
       {
+        id: "mention",
         caption: "Mention",
         onClick: () => {
           console.log("Mention clicked");
