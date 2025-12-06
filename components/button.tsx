@@ -14,6 +14,7 @@ import {
   shift,
   useFloating,
 } from "@floating-ui/react";
+import { createPortal } from "react-dom";
 
 export type ButtonVariants = {
   variant?:
@@ -214,32 +215,34 @@ function Button({
         </div>
       )}
 
-      {isOpen && (
-        <div
-          ref={refs.setFloating}
-          style={{ ...floatingStyles, zIndex: 12000 }}
-          onMouseEnter={() => setHovered("dropdown")}
-        >
-          {subMenu({
-            list: (subMenuList, { withFilter } = {}) => (
-              <TipMenu
-                setIsOpen={() => {
-                  setIsOpen(false);
-                  setHovered("original");
-                }}
-                withFilter={withFilter ?? false}
-                style={dropdownStyle}
-                subMenuList={subMenuList}
-                variant={tipMenuSize}
-              />
-            ),
-            show: (children) => (
-              <ButtonTipMenuContainer>{children}</ButtonTipMenuContainer>
-            ),
-            render: (children) => children,
-          })}
-        </div>
-      )}
+      {isOpen &&
+        createPortal(
+          <div
+            ref={refs.setFloating}
+            style={{ ...floatingStyles, zIndex: 12000 }}
+            onMouseEnter={() => setHovered("dropdown")}
+          >
+            {subMenu({
+              list: (subMenuList, { withFilter } = {}) => (
+                <TipMenu
+                  setIsOpen={() => {
+                    setIsOpen(false);
+                    setHovered("original");
+                  }}
+                  withFilter={withFilter ?? false}
+                  style={dropdownStyle}
+                  subMenuList={subMenuList}
+                  variant={tipMenuSize}
+                />
+              ),
+              show: (children) => (
+                <ButtonTipMenuContainer>{children}</ButtonTipMenuContainer>
+              ),
+              render: (children) => children,
+            })}
+          </div>,
+          document.body
+        )}
     </ButtonWrapper>
   );
 }
