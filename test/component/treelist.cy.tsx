@@ -269,6 +269,72 @@ describe("Treelist", () => {
         cy.findByText("Mention").should("exist").click();
         cy.get("@onMention").should("have.been.calledOnce");
       });
+
+      context("with render", () => {
+        const TREE_LIST_ACTIONS_WITH_RENDER = [
+          {
+            id: "discover",
+            render: <TreeList.Action caption="Discover Render" />,
+          },
+          {
+            id: "mention",
+            render: <TreeList.Action caption="Mention Render" />,
+          },
+        ];
+        it("renders action", () => {
+          cy.mount(
+            <TreeList
+              content={TREE_LIST_DATA}
+              actions={TREE_LIST_ACTIONS_WITH_RENDER}
+              emptySlate={<p>Not found.</p>}
+            />
+          );
+
+          cy.findByText("Discover Render").should("exist");
+
+          cy.findByText("Mention Render").should("exist");
+        });
+
+        context("with setActive and isSelected", () => {
+          const TREE_LIST_ACTIONS_WITH_RENDER_SELECTED: TreeListActionsProps[] =
+            [
+              {
+                id: "discover",
+                render: ({ setActive, isSelected }) => (
+                  <TreeList.Action
+                    caption="Discover Render"
+                    isSelected={isSelected}
+                    onClick={() => setActive(true)}
+                  />
+                ),
+              },
+              {
+                id: "mention",
+                render: ({ setActive, isSelected }) => (
+                  <TreeList.Action
+                    caption="Discover Render"
+                    isSelected={isSelected}
+                    onClick={() => setActive(true)}
+                  />
+                ),
+              },
+            ];
+          it("renders selected", () => {
+            cy.mount(
+              <TreeList
+                content={TREE_LIST_DATA}
+                actions={TREE_LIST_ACTIONS_WITH_RENDER_SELECTED}
+                emptySlate={<p>Not found.</p>}
+              />
+            );
+
+            cy.contains("Discover Render")
+              .click()
+              .parent()
+              .should("have.css", "border-left-color", "rgb(59, 130, 246)");
+          });
+        });
+      });
     });
 
     context("with setActive", () => {
