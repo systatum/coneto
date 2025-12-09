@@ -63,8 +63,8 @@ export interface TreeListActionsProps {
 }
 
 interface TreeListRenderProps {
-  setActive?: (data: boolean) => void;
-  render?: (data: ReactNode) => void;
+  setActive?: (prop: boolean) => void;
+  render?: (element: ReactNode) => void;
 }
 
 export interface SubMenuTreeList extends Omit<TipMenuItemProps, "onClick"> {
@@ -119,7 +119,7 @@ function TreeList({
     .find((level) => level !== null);
 
   const [lastFetchGroup, setLastFetchGroup] = useState<Record<string, Date>>(
-    Object.fromEntries(content.map((data) => [data.id, null]))
+    Object.fromEntries(content.map((props) => [props.id, null]))
   );
 
   const [loadingByGroup, setLoadingByGroup] = useState<
@@ -163,7 +163,7 @@ function TreeList({
     <TreeListWrapper $containerStyle={containerStyle}>
       {actions && (
         <ActionsWrapper>
-          {actions.map((data, index) => {
+          {actions.map((props, index) => {
             return (
               <Tooltip
                 onVisibilityChange={async (open) => {
@@ -175,7 +175,7 @@ function TreeList({
                 showDialogOn="click"
                 hideDialogOn="click"
                 dialog={
-                  renderContent && data.id === isActive ? renderContent : null
+                  renderContent && props.id === isActive ? renderContent : null
                 }
                 triggerStyle={css`
                   width: 100%;
@@ -211,28 +211,28 @@ function TreeList({
               >
                 <TreeListAction
                   key={index}
-                  isSelected={data.id === isSelected}
-                  isActive={data.id === isActive}
+                  isSelected={props.id === isSelected}
+                  isActive={props.id === isActive}
                   onClick={() => {
-                    if (data.onClick) {
-                      data.onClick?.({
+                    if (props.onClick) {
+                      props.onClick?.({
                         setActive: (prop: boolean) => {
                           if (prop) {
-                            handleOnChange(data.id);
+                            handleOnChange(props.id);
                           }
                         },
                         render: async (prop) => {
                           if (prop) {
                             await setRenderContent(prop);
-                            await setIsActive(data.id);
+                            await setIsActive(props.id);
                           }
                         },
                       });
                     }
                   }}
-                  caption={data.caption}
-                  icon={data.icon}
-                  style={data.style}
+                  caption={props.caption}
+                  icon={props.icon}
+                  style={props.style}
                 />
               </Tooltip>
             );
@@ -243,22 +243,22 @@ function TreeList({
       {content && actions && <Divider role="separator" aria-label="divider" />}
 
       {content.length > 0 ? (
-        content.map((data, index) => (
+        content.map((props, index) => (
           <GroupWrapper key={index}>
-            {data.caption && (
+            {props.caption && (
               <GroupTitleWrapper
                 onClick={() => {
                   if (collapsible) {
-                    handleSelected(data.id);
+                    handleSelected(props.id);
                   }
                 }}
                 $collapsible={collapsible}
               >
-                <GroupTitle>{data.caption}</GroupTitle>
+                <GroupTitle>{props.caption}</GroupTitle>
                 {collapsible && (
                   <ArrowIcon
                     aria-label="arrow-icon"
-                    aria-expanded={isOpen[data.id]}
+                    aria-expanded={isOpen[props.id]}
                     size={20}
                   />
                 )}
@@ -269,15 +269,15 @@ function TreeList({
               <ItemsWrapper
                 key={`items-wrapper-${index}`}
                 animate={
-                  isOpen[data.id]
+                  isOpen[props.id]
                     ? { height: "auto", opacity: 1 }
                     : { height: 0, opacity: 0 }
                 }
                 transition={{ duration: 0.2, ease: "easeInOut" }}
-                $collapsed={!isOpen[data.id]}
+                $collapsed={!isOpen[props.id]}
               >
                 {(() => {
-                  const groupLoading = loadingByGroup[data.id];
+                  const groupLoading = loadingByGroup[props.id];
 
                   return groupLoading?.isLoading ? (
                     <LoadingSpinner
@@ -287,8 +287,8 @@ function TreeList({
                       `}
                       label={groupLoading.caption}
                     />
-                  ) : data.items?.length > 0 ? (
-                    data.items.map((val) => {
+                  ) : props.items?.length > 0 ? (
+                    props.items.map((val) => {
                       return (
                         <TreeListItem
                           key={val.id}
@@ -304,7 +304,7 @@ function TreeList({
                           isOpen={isOpen}
                           emptyItemSlate={emptyItemSlate}
                           selectedLevel={selectedLevel}
-                          groupId={data.id}
+                          groupId={props.id}
                           selectedGroupId={selectedGroupId}
                         />
                       );
