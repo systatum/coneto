@@ -308,8 +308,8 @@ export const Appendable: Story = {
       setRows(sorted);
     };
 
-    const handleItemsSelected = (data: string[]) => {
-      console.log("Selected rows:", data);
+    const handleItemsSelected = (ids: string[]) => {
+      console.log("Selected rows:", ids);
     };
 
     const TIP_MENU_ACTION = (
@@ -540,8 +540,8 @@ export const WithOneAction: Story = {
       setRows(sorted);
     };
 
-    const handleItemsSelected = (data: string[]) => {
-      console.log("Selected rows:", data);
+    const handleItemsSelected = (ids: string[]) => {
+      console.log("Selected rows:", ids);
     };
 
     const TIP_MENU_ACTION = (
@@ -754,8 +754,8 @@ export const SortableWithPagination: Story = {
       ];
     };
 
-    const handleItemsSelected = (data: string[]) => {
-      console.log("Selected rows:", data);
+    const handleItemsSelected = (ids: string[]) => {
+      console.log("Selected rows:", ids);
     };
 
     return (
@@ -782,20 +782,20 @@ export const SortableWithPagination: Story = {
           disableNextPageButton={isDisabledNext}
           disablePreviousPageButton={isDisabledPrev}
         >
-          {pagedRows?.map((dataRow, index) => (
+          {pagedRows?.map((row, index) => (
             <Table.Row
               onClick={({ toggleCheckbox }) => {
                 toggleCheckbox();
               }}
               key={index}
-              rowId={`${dataRow.name}-${dataRow.type}`}
+              rowId={`${row.name}-${row.type}`}
             >
-              {[dataRow.name, dataRow.type].map((dataCell, i) => (
+              {[row.name, row.type].map((rowCell, i) => (
                 <Table.Row.Cell
-                  key={`${dataRow.name}-${dataRow.type}-${dataCell}`}
+                  key={`${row.name}-${row.type}-${rowCell}`}
                   width={columns[i].width}
                 >
-                  {dataCell}
+                  {rowCell}
                 </Table.Row.Cell>
               ))}
             </Table.Row>
@@ -833,8 +833,8 @@ export const WithLoading: Story = {
       },
     ];
 
-    const handleItemsSelected = (data: string[]) => {
-      console.log("Selected rows:", data);
+    const handleItemsSelected = (ids: string[]) => {
+      console.log("Selected rows:", ids);
     };
 
     return (
@@ -865,8 +865,8 @@ export const WithEmptySlate: Story = {
       },
     ];
 
-    const handleItemsSelected = (data: string[]) => {
-      console.log("Selected rows:", data);
+    const handleItemsSelected = (ids: string[]) => {
+      console.log("Selected rows:", ids);
     };
 
     const TableEmptySlate = (
@@ -1020,8 +1020,8 @@ export const WithSummary: Story = {
         return;
       }
 
-      const sortedRows = rows.map((data) => {
-        const sortedItems = [...data.items].sort((a, b) => {
+      const sortedRows = rows.map((row) => {
+        const sortedItems = [...row.items].sort((a, b) => {
           const aVal = a[column];
           const bVal = b[column];
           return typeof aVal === "string" && typeof bVal === "string"
@@ -1032,7 +1032,7 @@ export const WithSummary: Story = {
         });
 
         return {
-          ...data,
+          ...row,
           items: sortedItems,
         };
       });
@@ -1456,8 +1456,8 @@ export const WithRowGroup: Story = {
         return;
       }
 
-      const sortedRows = rows.map((data) => {
-        const sortedItems = [...data.items].sort((a, b) => {
+      const sortedRows = rows.map((row) => {
+        const sortedItems = [...row.items].sort((a, b) => {
           const aVal = a[column];
           const bVal = b[column];
           return typeof aVal === "string" && typeof bVal === "string"
@@ -1468,7 +1468,7 @@ export const WithRowGroup: Story = {
         });
 
         return {
-          ...data,
+          ...row,
           items: sortedItems,
         };
       });
@@ -1589,8 +1589,8 @@ export const WithRowGroup: Story = {
     };
 
     const filteredRows = rows
-      .map((data) => {
-        const filteredItems = data.items
+      .map((props) => {
+        const filteredItems = props.items
           .filter(
             (item) =>
               item.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -1600,15 +1600,15 @@ export const WithRowGroup: Story = {
           .filter((item) => (activeTab === "taken" ? item.taken : item));
 
         return {
-          ...data,
+          ...props,
           items: filteredItems,
         };
       })
       .filter((group) => group.items.length > 0);
 
-    const handleItemsSelected = (data: string[]) => {
-      console.log("Selected rows:", data);
-      setSelected(data);
+    const handleItemsSelected = (ids: string[]) => {
+      console.log("Selected rows:", ids);
+      setSelected(ids);
     };
 
     return (
@@ -1856,8 +1856,8 @@ export const Draggable: Story = {
           return;
         }
 
-        const sortedRows = rows.map((data) => {
-          const sortedItems = [...data.items].sort((a, b) => {
+        const sortedRows = rows.map((row) => {
+          const sortedItems = [...row.items].sort((a, b) => {
             const aVal = a[column];
             const bVal = b[column];
             return typeof aVal === "string" && typeof bVal === "string"
@@ -1868,7 +1868,7 @@ export const Draggable: Story = {
           });
 
           return {
-            ...data,
+            ...row,
             items: sortedItems,
           };
         });
@@ -2012,8 +2012,8 @@ export const Draggable: Story = {
 
       if (category === "group") {
         return (rows as TableItemProps[])
-          .map((data) => {
-            const filteredItems = data.items.filter(
+          .map((props) => {
+            const filteredItems = props.items.filter(
               (item) =>
                 item.title.toLowerCase().includes(search.toLowerCase()) ||
                 item.category.toLowerCase().includes(search.toLowerCase()) ||
@@ -2021,7 +2021,7 @@ export const Draggable: Story = {
             );
 
             return {
-              ...data,
+              ...props,
               items: filteredItems,
             };
           })
@@ -2124,9 +2124,9 @@ export const Draggable: Story = {
       );
     };
 
-    const handleItemsSelected = (data: string[]) => {
-      console.log("Selected rows:", data);
-      setSelected(data);
+    const handleItemsSelected = (ids: string[]) => {
+      console.log("Selected rows:", ids);
+      setSelected(ids);
     };
 
     return (
