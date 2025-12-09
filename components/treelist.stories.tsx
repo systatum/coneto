@@ -7,6 +7,7 @@ import {
   TreeListItemsProps,
 } from "./treelist";
 import {
+  RiAddBoxLine,
   RiAtLine,
   RiDeleteBin2Line,
   RiEdit2Line,
@@ -15,6 +16,7 @@ import {
   RiFolderFill,
   RiSearchLine,
   RiShareForwardLine,
+  RiTable2,
 } from "@remixicon/react";
 import { EmptySlate } from "./empty-slate";
 import { Button } from "./button";
@@ -22,6 +24,8 @@ import styled, { css } from "styled-components";
 import { useMemo, useState } from "react";
 import { Combobox } from "./combobox";
 import { OptionsProps } from "./selectbox";
+import { FormFieldGroup, StatefulForm } from "./stateful-form";
+import { Tooltip } from "./tooltip";
 
 const meta: Meta<typeof TreeList> = {
   title: "Content/TreeList",
@@ -558,6 +562,34 @@ export const WithActions: Story = {
 
 export const WithoutHeader: Story = {
   render: () => {
+    const [value, setValue] = useState<{ division_name: string }>({
+      division_name: "",
+    });
+
+    const DIVISION_EMPLOYEE_FIELDS: FormFieldGroup[] = [
+      {
+        name: "division_name",
+        title: "Division Name",
+        type: "text",
+        required: true,
+      },
+      {
+        name: "save",
+        title: "Save",
+        type: "button",
+      },
+    ];
+
+    const contentDialog = (
+      <div style={{ minWidth: 300, padding: "8px 8px 4px" }}>
+        <StatefulForm
+          fields={DIVISION_EMPLOYEE_FIELDS}
+          formValues={value}
+          onChange={({ currentState }) => setValue(currentState)}
+          mode="onChange"
+        />
+      </div>
+    );
     const setPerson = (props) => {
       console.log("Clicked person:", props.item.caption);
     };
@@ -578,11 +610,30 @@ export const WithoutHeader: Story = {
     const TREE_LIST_ACTIONS: TreeListActionsProps[] = [
       {
         id: "add-new-branch",
-        caption: "Add New Branch",
-        onClick: ({ setActive }) => {
-          setActive(true);
-        },
-        icon: RiSearchLine,
+        icon: RiAddBoxLine,
+        render: (
+          <Tooltip
+            showDialogOn="click"
+            hideDialogOn="click"
+            dialog={contentDialog}
+            containerStyle={css`
+              width: 100%;
+            `}
+            arrowStyle={css`
+              background-color: #e5e7eb;
+              border: 2px solid #e5e7eb;
+            `}
+            drawerStyle={css`
+              width: fit-content;
+              left: 1rem;
+              background-color: white;
+              color: black;
+              border: 1px solid #e5e7eb;
+            `}
+          >
+            <TreeList.Action icon={RiAddBoxLine} caption="Add New Branch" />
+          </Tooltip>
+        ),
       },
       {
         id: "table-view",
@@ -590,7 +641,7 @@ export const WithoutHeader: Story = {
         onClick: ({ setActive }) => {
           setActive(true);
         },
-        icon: RiAtLine,
+        icon: RiTable2,
       },
     ];
 
