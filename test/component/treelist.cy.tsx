@@ -1,9 +1,12 @@
+import { Tooltip } from "./../../components/tooltip";
 import {
   TreeList,
   TreeListActionsProps,
   TreeListContentProps,
 } from "./../../components/treelist";
-import { RiAtLine, RiSearchLine } from "@remixicon/react";
+import { RiAddBoxLine, RiAtLine, RiSearchLine } from "@remixicon/react";
+import { css } from "styled-components";
+import { StatefulForm } from "./../../components/stateful-form";
 
 describe("Treelist", () => {
   context("initialState", () => {
@@ -281,6 +284,7 @@ describe("Treelist", () => {
             render: <TreeList.Action caption="Mention Render" />,
           },
         ];
+
         it("renders action", () => {
           cy.mount(
             <TreeList
@@ -293,6 +297,73 @@ describe("Treelist", () => {
           cy.findByText("Discover Render").should("exist");
 
           cy.findByText("Mention Render").should("exist");
+        });
+        context("when customize actions", () => {
+          it("renders content custom", () => {
+            const TREE_LIST_ACTIONS_WITH_RENDER_CUSTOM: TreeListActionsProps[] =
+              [
+                {
+                  id: "discover",
+                  render: (
+                    <Tooltip
+                      showDialogOn="click"
+                      hideDialogOn="click"
+                      dialog={
+                        <StatefulForm
+                          fields={[
+                            {
+                              name: "division_name",
+                              title: "Division Name",
+                              type: "text",
+                              required: true,
+                            },
+                          ]}
+                          formValues={{
+                            division_name: "",
+                          }}
+                          onChange={({ currentState }) => {}}
+                          mode="onChange"
+                        />
+                      }
+                      triggerStyle={css`
+                        width: 100%;
+                      `}
+                      arrowStyle={css`
+                        background-color: #e5e7eb;
+                        border: 2px solid #e5e7eb;
+                      `}
+                      drawerStyle={css`
+                        width: fit-content;
+                        left: 1rem;
+                        background-color: white;
+                        color: black;
+                        border: 1px solid #e5e7eb;
+                      `}
+                    >
+                      <TreeList.Action
+                        icon={RiAddBoxLine}
+                        caption="Add New Branch"
+                      />
+                    </Tooltip>
+                  ),
+                },
+                {
+                  id: "table-view",
+                  render: <TreeList.Action caption="Table View" />,
+                },
+              ];
+            cy.mount(
+              <TreeList
+                content={TREE_LIST_DATA}
+                actions={TREE_LIST_ACTIONS_WITH_RENDER_CUSTOM}
+                emptySlate={<p>Not found.</p>}
+              />
+            );
+
+            cy.findByText("Division Name").should("not.exist");
+            cy.findByText("Add New Branch").should("exist").click();
+            cy.findByText("Division Name").should("exist");
+          });
         });
 
         context("with setActive and isSelected", () => {
