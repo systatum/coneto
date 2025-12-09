@@ -163,7 +163,7 @@ function TreeList({
     <TreeListWrapper $containerStyle={containerStyle}>
       {actions && (
         <ActionsWrapper>
-          {actions.map((props, index) => {
+          {actions.map((action, index) => {
             return (
               <Tooltip
                 onVisibilityChange={async (open) => {
@@ -175,7 +175,7 @@ function TreeList({
                 showDialogOn="click"
                 hideDialogOn="click"
                 dialog={
-                  renderContent && props.id === isActive ? renderContent : null
+                  renderContent && action.id === isActive ? renderContent : null
                 }
                 triggerStyle={css`
                   width: 100%;
@@ -211,28 +211,28 @@ function TreeList({
               >
                 <TreeListAction
                   key={index}
-                  isSelected={props.id === isSelected}
-                  isActive={props.id === isActive}
+                  isSelected={action.id === isSelected}
+                  isActive={action.id === isActive}
                   onClick={() => {
-                    if (props.onClick) {
-                      props.onClick?.({
+                    if (action.onClick) {
+                      action.onClick?.({
                         setActive: (prop: boolean) => {
                           if (prop) {
-                            handleOnChange(props.id);
+                            handleOnChange(action.id);
                           }
                         },
                         render: async (prop) => {
                           if (prop) {
                             await setRenderContent(prop);
-                            await setIsActive(props.id);
+                            await setIsActive(action.id);
                           }
                         },
                       });
                     }
                   }}
-                  caption={props.caption}
-                  icon={props.icon}
-                  style={props.style}
+                  caption={action.caption}
+                  icon={action.icon}
+                  style={action.style}
                 />
               </Tooltip>
             );
