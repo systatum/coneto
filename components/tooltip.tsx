@@ -24,6 +24,7 @@ export type TooltipProps = {
   hideDialogOn?: "hover" | "click";
   drawerStyle?: CSSProp | ((placement?: Placement) => CSSProp);
   containerStyle?: CSSProp;
+  triggerStyle?: CSSProp;
   arrowStyle?: CSSProp | ((placement?: Placement) => CSSProp);
   dialogPlacement?: DialogPlacement;
   onVisibilityChange?: (open?: boolean) => void;
@@ -51,6 +52,7 @@ export const Tooltip = forwardRef<TooltipRef, TooltipProps>(
       hideDialogOn = "hover",
       drawerStyle,
       containerStyle,
+      triggerStyle,
       arrowStyle,
       dialogPlacement = "bottom-left",
       onVisibilityChange,
@@ -134,6 +136,7 @@ export const Tooltip = forwardRef<TooltipRef, TooltipProps>(
 
     return (
       <Wrapper
+        $style={containerStyle}
         onMouseEnter={() => {
           if (showDialogOn === "hover") {
             delayTimeoutRef.current = setTimeout(() => {
@@ -170,7 +173,7 @@ export const Tooltip = forwardRef<TooltipRef, TooltipProps>(
             }
           }}
           $showDialogOn={showDialogOn}
-          $containerStyle={containerStyle}
+          $style={triggerStyle}
         >
           {children}
         </ContentTrigger>
@@ -206,12 +209,14 @@ export const Tooltip = forwardRef<TooltipRef, TooltipProps>(
   }
 );
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ $style?: CSSProp }>`
   position: relative;
   display: inline-flex;
   align-items: center;
   height: fit-content;
-  width: fit-content;
+  width: 100%;
+
+  ${({ $style }) => $style}
 `;
 
 const Spacer = styled.div<{ $placement?: Placement }>`
@@ -232,7 +237,7 @@ const Spacer = styled.div<{ $placement?: Placement }>`
 
 const ContentTrigger = styled.div<{
   $showDialogOn: TooltipProps["showDialogOn"];
-  $containerStyle?: CSSProp;
+  $style?: CSSProp;
 }>`
   ${({ $showDialogOn }) =>
     $showDialogOn === "hover"
@@ -243,7 +248,7 @@ const ContentTrigger = styled.div<{
           cursor: pointer;
         `}
 
-  ${({ $containerStyle }) => $containerStyle}
+  ${({ $style }) => $style}
 `;
 
 const TooltipArrow = styled.div<{
