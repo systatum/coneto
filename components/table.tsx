@@ -935,6 +935,7 @@ function TableRow({
   return (
     <TableRowWrapper
       ref={rowRef}
+      $isHovered={isHovered === rowId}
       $isSelected={isSelected}
       aria-label="table-row"
       onMouseLeave={() => setIsHovered(null)}
@@ -1117,6 +1118,7 @@ function TableRow({
 const TableRowWrapper = styled.div<{
   $isSelected?: boolean;
   $rowCellStyle?: CSSProp;
+  $isHovered?: boolean;
 }>`
   display: flex;
   position: relative;
@@ -1130,10 +1132,15 @@ const TableRowWrapper = styled.div<{
   background-color: ${({ $isSelected }) =>
     $isSelected ? "#f3f4f6" : "#f9fafb"};
 
-  &:hover {
-    background-color: ${({ $isSelected }) =>
-      $isSelected ? "#f3f4f6" : "#e5e7eb"};
-  }
+  ${({ $isHovered, $isSelected }) =>
+    $isHovered && $isSelected
+      ? css`
+          background-color: #f3f4f6;
+        `
+      : $isHovered &&
+        css`
+          background-color: #e5e7eb;
+        `}
 
   ${({ $rowCellStyle }) => $rowCellStyle}
 `;
