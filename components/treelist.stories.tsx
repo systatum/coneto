@@ -581,14 +581,17 @@ export const WithoutHeader: Story = {
     ];
 
     const contentDialog = (
-      <div style={{ minWidth: 300, padding: "8px 8px 4px" }}>
-        <StatefulForm
-          fields={DIVISION_EMPLOYEE_FIELDS}
-          formValues={value}
-          onChange={({ currentState }) => setValue(currentState)}
-          mode="onChange"
-        />
-      </div>
+      <StatefulForm
+        containerStyle={css`
+          min-width: 300px;
+          padding: 8px 8px 4px;
+          background-color: white;
+        `}
+        fields={DIVISION_EMPLOYEE_FIELDS}
+        formValues={value}
+        onChange={({ currentState }) => setValue(currentState)}
+        mode="onChange"
+      />
     );
     const setPerson = (props) => {
       console.log("Clicked person:", props.item.caption);
@@ -612,9 +615,7 @@ export const WithoutHeader: Story = {
         id: "add-new-branch",
         icon: RiAddBoxLine,
         caption: "Add New Branch",
-        onClick: ({ render }) => {
-          render(contentDialog);
-        },
+        subMenu: ({ show }) => show(contentDialog),
       },
       {
         id: "table-view",
