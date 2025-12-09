@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { TipMenuItemProps } from "./tip-menu";
 import ContextMenu from "./context-menu";
 import { LoadingSpinner } from "./loading-spinner";
+import { Tooltip } from "./tooltip";
 
 export interface TreeListProps {
   content: TreeListContentProps[];
@@ -56,15 +57,14 @@ export interface TreeListItemsProps {
 export interface TreeListActionsProps {
   id: string;
   caption?: string;
-  onClick?: (props?: { setActive?: (data: boolean) => void }) => void;
+  onClick?: (props?: TreeListRenderProps) => void;
   icon?: RemixiconComponentType;
   style?: CSSProp;
-  render?: ReactNode | ((props: TreeListRenderProps) => ReactNode);
 }
 
 interface TreeListRenderProps {
-  isSelected?: boolean;
   setActive?: (data: boolean) => void;
+  render?: (data: ReactNode) => void;
 }
 
 export interface SubMenuTreeList extends Omit<TipMenuItemProps, "onClick"> {
@@ -85,7 +85,9 @@ function TreeList({
   showHierarchyLine,
   collapsible,
 }: TreeListProps) {
-  const [isSelected, setIsSelected] = useState(selectedItem);
+  const [isSelected, setIsSelected] = useState<string>(selectedItem);
+  const [isActive, setIsActive] = useState<string | null>("");
+  const [renderContent, setRenderContent] = useState<ReactNode | null>(null);
 
   const initialOpenMap = Object.fromEntries(
     content.map((group) => {
@@ -162,42 +164,76 @@ function TreeList({
       {actions && (
         <ActionsWrapper>
           {actions.map((data, index) => {
-            if (typeof data.render === "function") {
-              return (
-                <Fragment key={index}>
-                  {data.render?.({
-                    isSelected: data.id === isSelected,
-                    setActive: (prop: boolean) => {
-                      if (prop) {
-                        handleOnChange(data.id);
-                      }
-                    },
-                  })}
-                </Fragment>
-              );
-            } else if (data.render) {
-              return data.render;
-            }
-
             return (
-              <TreeListAction
-                key={index}
-                isSelected={data.id === isSelected}
-                onClick={() => {
-                  if (data.onClick) {
-                    data.onClick?.({
-                      setActive: (prop: boolean) => {
-                        if (prop) {
-                          handleOnChange(data.id);
-                        }
-                      },
-                    });
+              <Tooltip
+                onVisibilityChange={(open) => {
+                  if (!open) {
+                    setIsActive(null);
                   }
                 }}
-                caption={data.caption}
-                icon={data.icon}
-                style={data.style}
-              />
+                showDialogOn="click"
+                hideDialogOn="click"
+                dialog={
+                  renderContent && data.id === isActive ? renderContent : null
+                }
+                triggerStyle={css`
+                  width: 100%;
+                `}
+                arrowStyle={(placement) => css`
+                  background-color: #e5e7eb;
+                  border: 2px solid #e5e7eb;
+                  ${placement === "bottom-start"
+                    ? css`
+                        left: 10%;
+                      `
+                    : placement === "bottom-end"
+                      ? css`
+                          right: 10%;
+                        `
+                      : placement === "top-start"
+                        ? css`
+                            left: 10%;
+                          `
+                        : placement === "top-end"
+                          ? css`
+                              right: 10%;
+                            `
+                          : null}
+                `}
+                drawerStyle={css`
+                  width: fit-content;
+                  left: 1rem;
+                  background-color: white;
+                  color: black;
+                  border: 1px solid #e5e7eb;
+                `}
+              >
+                <TreeListAction
+                  key={index}
+                  isSelected={data.id === isSelected}
+                  isActive={data.id === isActive}
+                  onClick={() => {
+                    if (data.onClick) {
+                      data.onClick?.({
+                        setActive: (prop: boolean) => {
+                          if (prop) {
+                            handleOnChange(data.id);
+                          }
+                        },
+                        render: async (prop) => {
+                          if (prop) {
+                            await setRenderContent(prop);
+                            await setIsActive(data.id);
+                          }
+                        },
+                      });
+                    }
+                  }}
+                  caption={data.caption}
+                  icon={data.icon}
+                  style={data.style}
+                />
+              </Tooltip>
             );
           })}
         </ActionsWrapper>
@@ -295,10 +331,12 @@ interface TreeListActionProps {
   style?: CSSProp;
   icon?: RemixiconComponentType;
   caption?: string;
+  isActive?: boolean;
 }
 
 function TreeListAction({
   isSelected,
+  isActive,
   onClick,
   caption,
   icon: Icon,
@@ -307,6 +345,7 @@ function TreeListAction({
   return (
     <ActionItem
       $isSelected={isSelected}
+      $isActive={isActive}
       role="button"
       tabIndex={0}
       aria-label="tree-list-action"
@@ -663,7 +702,11 @@ const ActionsWrapper = styled.div`
   margin-bottom: 1em;
 `;
 
-const ActionItem = styled.div<{ $style?: CSSProp; $isSelected?: boolean }>`
+const ActionItem = styled.div<{
+  $style?: CSSProp;
+  $isSelected?: boolean;
+  $isActive?: boolean;
+}>`
   display: flex;
   flex-direction: row;
   position: relative;
@@ -680,12 +723,17 @@ const ActionItem = styled.div<{ $style?: CSSProp; $isSelected?: boolean }>`
     background-color: #f5f5f5;
   }
 
+  ${({ $isActive }) =>
+    $isActive &&
+    css`
+      background-color: #f5f5f5;
+    `};
   ${({ $isSelected }) =>
     $isSelected &&
     css`
       background-color: #f5f5f5;
       border-left: 3px solid #3b82f6;
-    `}
+    `};
   ${(props) => props.$style}
 `;
 
@@ -852,6 +900,4 @@ function escapeRegExp(string: string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-TreeList.Item = TreeListItem;
-TreeList.Action = TreeListAction;
 export { TreeList };
