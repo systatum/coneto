@@ -278,55 +278,111 @@ describe("Treelist", () => {
       });
     });
 
-    context("with render", () => {
-      const TREE_LIST_ACTIONS_WITH_RENDER: TreeListActionsProps[] = [
-        {
-          id: "add-new-branch",
-          icon: RiAddBoxLine,
-          caption: "Add New Branch",
-          onClick: ({ render }) => {
-            render(
-              <StatefulForm
-                fields={[
-                  {
-                    name: "division_name",
-                    title: "Division Name",
-                    type: "text",
-                    required: true,
-                  },
-                ]}
-                formValues={{
-                  division_name: "",
-                }}
-                onChange={({}) => {}}
-                mode="onChange"
-              />
-            );
+    context("with subMenu", () => {
+      context("with show", () => {
+        const TREE_LIST_ACTIONS_WITH_RENDER: TreeListActionsProps[] = [
+          {
+            id: "add-new-branch",
+            icon: RiAddBoxLine,
+            caption: "Add New Branch",
+            subMenu: ({ show }) =>
+              show(
+                <StatefulForm
+                  fields={[
+                    {
+                      name: "division_name",
+                      title: "Division Name",
+                      type: "text",
+                      required: true,
+                    },
+                  ]}
+                  formValues={{
+                    division_name: "",
+                  }}
+                  onChange={({}) => {}}
+                  mode="onChange"
+                />
+              ),
           },
-        },
-        {
-          id: "table-view",
-          caption: "Table View",
-          onClick: ({ setActive }) => {
-            setActive(true);
+          {
+            id: "table-view",
+            caption: "Table View",
+            onClick: ({ setActive }) => {
+              setActive(true);
+            },
+            icon: RiTable2,
           },
-          icon: RiTable2,
-        },
-      ];
+        ];
 
-      it("renders action with tooltip", () => {
-        cy.mount(
-          <TreeList
-            content={TREE_LIST_DATA}
-            actions={TREE_LIST_ACTIONS_WITH_RENDER}
-            emptySlate={<p>Not found.</p>}
-          />
-        );
+        it("renders action with tip drawer & arrow", () => {
+          cy.mount(
+            <TreeList
+              content={TREE_LIST_DATA}
+              actions={TREE_LIST_ACTIONS_WITH_RENDER}
+              emptySlate={<p>Not found.</p>}
+            />
+          );
 
-        cy.findByText("Division Name").should("not.exist");
+          cy.findByText("Division Name").should("not.exist");
 
-        cy.findByText("Add New Branch").should("exist").click();
-        cy.findByText("Division Name").should("exist");
+          cy.findByText("Add New Branch").should("exist").click();
+          cy.findByText("Division Name").should("exist");
+
+          cy.findByLabelText("tooltip-arrow").should("be.visible");
+        });
+      });
+
+      context("with render", () => {
+        const TREE_LIST_ACTIONS_WITH_RENDER: TreeListActionsProps[] = [
+          {
+            id: "add-new-branch",
+            icon: RiAddBoxLine,
+            caption: "Add New Branch",
+            subMenu: ({ render }) =>
+              render(
+                <StatefulForm
+                  fields={[
+                    {
+                      name: "division_name",
+                      title: "Division Name",
+                      type: "text",
+                      required: true,
+                    },
+                  ]}
+                  formValues={{
+                    division_name: "",
+                  }}
+                  onChange={({}) => {}}
+                  mode="onChange"
+                />
+              ),
+          },
+          {
+            id: "table-view",
+            caption: "Table View",
+            onClick: ({ setActive }) => {
+              setActive(true);
+            },
+            icon: RiTable2,
+          },
+        ];
+
+        it("renders action with tip drawer", () => {
+          cy.mount(
+            <TreeList
+              content={TREE_LIST_DATA}
+              actions={TREE_LIST_ACTIONS_WITH_RENDER}
+              emptySlate={<p>Not found.</p>}
+            />
+          );
+
+          cy.findByText("Division Name").should("not.exist");
+
+          cy.findByText("Add New Branch").should("exist").click();
+          cy.findByText("Division Name").should("exist");
+
+          cy.findByLabelText("tooltip-arrow").should("not.be.visible");
+        });
       });
     });
 
