@@ -465,9 +465,10 @@ function Table({
             )}
 
             {sumRow && (
-              <TableSummary>
-                {selectable && <CheckboxWrapper />}
-
+              <TableSummary
+                aria-label="table-summary-wrapper"
+                $selectable={selectable}
+              >
                 {(() => {
                   const cells: ReactNode[] = [];
                   let colPointer = 0;
@@ -650,10 +651,18 @@ const TableHeader = styled.div`
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 `;
 
-const TableSummary = styled.div`
+const TableSummary = styled.div<{ $selectable?: boolean }>`
   display: flex;
   flex-direction: row;
   padding: 10px;
+  ${({ $selectable }) =>
+    $selectable
+      ? css`
+          padding-left: 42px;
+        `
+      : css`
+          padding-left: 10px;
+        `}
   padding-right: 15px;
   background: linear-gradient(to bottom, #f0f0f0, #e4e4e4);
   align-items: center;
