@@ -239,6 +239,7 @@ const ContentTrigger = styled.div<{
   $showDialogOn: TooltipProps["showDialogOn"];
   $style?: CSSProp;
 }>`
+  width: 100%;
   ${({ $showDialogOn }) =>
     $showDialogOn === "hover"
       ? css`

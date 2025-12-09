@@ -616,7 +616,7 @@ export const WithoutHeader: Story = {
             showDialogOn="click"
             hideDialogOn="click"
             dialog={contentDialog}
-            containerStyle={css`
+            triggerStyle={css`
               width: 100%;
             `}
             arrowStyle={css`
