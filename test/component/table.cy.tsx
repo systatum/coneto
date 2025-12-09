@@ -333,7 +333,6 @@ describe("Table", () => {
     it("renders summary on footer", () => {
       cy.mount(
         <Table
-          selectable
           tableRowContainerStyle={css`
             max-height: 400px;
           `}
@@ -381,6 +380,61 @@ describe("Table", () => {
       cy.findByText("Total").should("have.css", "font-weight", "600");
       cy.findByText("32,000").should("have.css", "font-weight", "400");
       cy.findByText("22").should("have.css", "font-weight", "400");
+    });
+
+    context("with selectable", () => {
+      it("renders with selectable and add padding right on wrapper", () => {
+        cy.mount(
+          <Table
+            selectable
+            tableRowContainerStyle={css`
+              max-height: 400px;
+            `}
+            columns={columns}
+            actions={DEFAULT_TOP_ACTIONS}
+            sumRow={[
+              {
+                span: 2,
+                content: "Total",
+                bold: true,
+              },
+              {
+                content: totalCost.toLocaleString("en-US"),
+              },
+              {
+                content: totalQty,
+              },
+            ]}
+            searchable
+          >
+            {TABLE_SUMMARY?.map((groupValue, groupIndex) => (
+              <Table.Row.Group
+                key={groupIndex}
+                title={groupValue.title}
+                subtitle={groupValue.subtitle}
+              >
+                {groupValue.items.map((rowValue, rowIndex) => (
+                  <Table.Row
+                    key={rowIndex}
+                    rowId={`${groupValue.id}-${rowValue.cost}-${rowValue.itemId}-${rowValue.name}-${rowValue.quantity}`}
+                    content={[
+                      rowValue.itemId,
+                      rowValue.name,
+                      rowValue.cost,
+                      rowValue.quantity,
+                    ]}
+                    actions={ROW_ACTIONS}
+                  />
+                ))}
+              </Table.Row.Group>
+            ))}
+          </Table>
+        );
+
+        cy.findAllByLabelText("table-summary-wrapper")
+          .eq(0)
+          .should("have.css", "padding-left", "42px");
+      });
     });
   });
 
