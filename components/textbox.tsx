@@ -143,7 +143,10 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
                 `}
                 ${dropdown.containerStyle}
               `}
-              dropdownStyle={dropdown.drawerStyle}
+              dropdownStyle={css`
+                min-width: 200px;
+                ${dropdown.drawerStyle}
+              `}
             >
               {dropdown.caption}
             </Button>
