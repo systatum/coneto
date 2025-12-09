@@ -166,9 +166,10 @@ function TreeList({
           {actions.map((data, index) => {
             return (
               <Tooltip
-                onVisibilityChange={(open) => {
+                onVisibilityChange={async (open) => {
                   if (!open) {
-                    setIsActive(null);
+                    await setIsActive(null);
+                    await setRenderContent(null);
                   }
                 }}
                 showDialogOn="click"
