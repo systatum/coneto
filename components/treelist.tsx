@@ -243,22 +243,22 @@ function TreeList({
       {content && actions && <Divider role="separator" aria-label="divider" />}
 
       {content.length > 0 ? (
-        content.map((props, index) => (
+        content.map((item, index) => (
           <GroupWrapper key={index}>
-            {props.caption && (
+            {item.caption && (
               <GroupTitleWrapper
                 onClick={() => {
                   if (collapsible) {
-                    handleSelected(props.id);
+                    handleSelected(item.id);
                   }
                 }}
                 $collapsible={collapsible}
               >
-                <GroupTitle>{props.caption}</GroupTitle>
+                <GroupTitle>{item.caption}</GroupTitle>
                 {collapsible && (
                   <ArrowIcon
                     aria-label="arrow-icon"
-                    aria-expanded={isOpen[props.id]}
+                    aria-expanded={isOpen[item.id]}
                     size={20}
                   />
                 )}
@@ -269,15 +269,15 @@ function TreeList({
               <ItemsWrapper
                 key={`items-wrapper-${index}`}
                 animate={
-                  isOpen[props.id]
+                  isOpen[item.id]
                     ? { height: "auto", opacity: 1 }
                     : { height: 0, opacity: 0 }
                 }
                 transition={{ duration: 0.2, ease: "easeInOut" }}
-                $collapsed={!isOpen[props.id]}
+                $collapsed={!isOpen[item.id]}
               >
                 {(() => {
-                  const groupLoading = loadingByGroup[props.id];
+                  const groupLoading = loadingByGroup[item.id];
 
                   return groupLoading?.isLoading ? (
                     <LoadingSpinner
@@ -287,8 +287,8 @@ function TreeList({
                       `}
                       label={groupLoading.caption}
                     />
-                  ) : props.items?.length > 0 ? (
-                    props.items.map((val) => {
+                  ) : item.items?.length > 0 ? (
+                    item.items.map((val) => {
                       return (
                         <TreeListItem
                           key={val.id}
@@ -304,7 +304,7 @@ function TreeList({
                           isOpen={isOpen}
                           emptyItemSlate={emptyItemSlate}
                           selectedLevel={selectedLevel}
-                          groupId={props.id}
+                          groupId={item.id}
                           selectedGroupId={selectedGroupId}
                         />
                       );
