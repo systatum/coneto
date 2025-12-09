@@ -1,4 +1,11 @@
-import { RiDeleteBinLine, RiSendPlaneFill } from "@remixicon/react";
+import {
+  RiDeleteBinLine,
+  RiHome2Line,
+  RiLogoutBoxLine,
+  RiSendPlaneFill,
+  RiSettings2Line,
+  RiUser2Line,
+} from "@remixicon/react";
 import { Textbox } from "./../../components/textbox";
 import { Button } from "./../../components/button";
 
@@ -138,6 +145,40 @@ describe("Textbox", () => {
   });
 
   context("Dropdown", () => {
+    it("renders initialize drawer with min-width 200px", () => {
+      cy.mount(
+        <Textbox
+          dropdowns={[
+            {
+              caption: "Button",
+              options: [
+                { text: "On-site", value: "1", icon: RiHome2Line },
+                { text: "WFH", value: "2", icon: RiUser2Line },
+                {
+                  text: "Sick leave",
+                  value: "3",
+                  icon: RiSettings2Line,
+                },
+                {
+                  text: "Annual leave",
+                  value: "4",
+                  icon: RiLogoutBoxLine,
+                },
+              ],
+            },
+          ]}
+        />
+      );
+
+      cy.findByText("Button").click();
+
+      cy.findByLabelText("button-tip-menu-container").should(
+        "have.css",
+        "min-width",
+        "200px"
+      );
+    });
+
     context("width", () => {
       context("when given", () => {
         it("should render the width", () => {
@@ -169,6 +210,7 @@ describe("Textbox", () => {
         });
       });
     });
+
     context("when given multiple", () => {
       it("renders more than one dropdown", () => {
         cy.mount(
