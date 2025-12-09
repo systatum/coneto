@@ -1,5 +1,5 @@
 import styled, { css, CSSProp } from "styled-components";
-import React, { ReactNode, useState } from "react";
+import React, { Fragment, ReactNode, useState } from "react";
 import { RemixiconComponentType, RiArrowRightSLine } from "@remixicon/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { TipMenuItemProps } from "./tip-menu";
@@ -59,6 +59,12 @@ export interface TreeListActionsProps {
   onClick?: (props?: { setActive?: (data: boolean) => void }) => void;
   icon?: RemixiconComponentType;
   style?: CSSProp;
+  render?: ReactNode | ((props: TreeListRenderProps) => ReactNode);
+}
+
+interface TreeListRenderProps {
+  isSelected?: boolean;
+  setActive?: (data: boolean) => void;
 }
 
 export interface SubMenuTreeList extends Omit<TipMenuItemProps, "onClick"> {
@@ -155,28 +161,45 @@ function TreeList({
     <TreeListWrapper $containerStyle={containerStyle}>
       {actions && (
         <ActionsWrapper>
-          {actions.map((data, index) => (
-            <ActionItem
-              key={index}
-              $isSelected={data.id === isSelected}
-              role="button"
-              tabIndex={0}
-              aria-label="tree-list-action"
-              onClick={() =>
-                data.onClick?.({
-                  setActive: (prop: boolean) => {
-                    if (prop) {
-                      handleOnChange(data.id);
-                    }
-                  },
-                })
-              }
-              $style={data.style}
-            >
-              {data.icon && <data.icon size={16} />}
-              <div>{data.caption}</div>
-            </ActionItem>
-          ))}
+          {actions.map((data, index) => {
+            if (typeof data.render === "function") {
+              return (
+                <Fragment key={index}>
+                  {data.render?.({
+                    isSelected: data.id === isSelected,
+                    setActive: (prop: boolean) => {
+                      if (prop) {
+                        handleOnChange(data.id);
+                      }
+                    },
+                  })}
+                </Fragment>
+              );
+            } else if (data.render) {
+              return data.render;
+            }
+
+            return (
+              <TreeListAction
+                key={index}
+                isSelected={data.id === isSelected}
+                onClick={() => {
+                  if (data.onClick) {
+                    data.onClick?.({
+                      setActive: (prop: boolean) => {
+                        if (prop) {
+                          handleOnChange(data.id);
+                        }
+                      },
+                    });
+                  }
+                }}
+                caption={data.caption}
+                icon={data.icon}
+                style={data.style}
+              />
+            );
+          })}
         </ActionsWrapper>
       )}
 
@@ -263,6 +286,40 @@ function TreeList({
 
       {children}
     </TreeListWrapper>
+  );
+}
+
+interface TreeListActionProps {
+  isSelected?: boolean;
+  onClick?: () => void;
+  style?: CSSProp;
+  icon?: RemixiconComponentType;
+  caption?: string;
+}
+
+function TreeListAction({
+  isSelected,
+  onClick,
+  caption,
+  icon: Icon,
+  style,
+}: TreeListActionProps) {
+  return (
+    <ActionItem
+      $isSelected={isSelected}
+      role="button"
+      tabIndex={0}
+      aria-label="tree-list-action"
+      onClick={() => {
+        if (onClick) {
+          onClick();
+        }
+      }}
+      $style={style}
+    >
+      {Icon && <Icon size={16} />}
+      <div>{caption}</div>
+    </ActionItem>
   );
 }
 
@@ -796,4 +853,5 @@ function escapeRegExp(string: string) {
 }
 
 TreeList.Item = TreeListItem;
+TreeList.Action = TreeListAction;
 export { TreeList };
