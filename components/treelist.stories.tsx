@@ -611,29 +611,10 @@ export const WithoutHeader: Story = {
       {
         id: "add-new-branch",
         icon: RiAddBoxLine,
-        render: (
-          <Tooltip
-            showDialogOn="click"
-            hideDialogOn="click"
-            dialog={contentDialog}
-            triggerStyle={css`
-              width: 100%;
-            `}
-            arrowStyle={css`
-              background-color: #e5e7eb;
-              border: 2px solid #e5e7eb;
-            `}
-            drawerStyle={css`
-              width: fit-content;
-              left: 1rem;
-              background-color: white;
-              color: black;
-              border: 1px solid #e5e7eb;
-            `}
-          >
-            <TreeList.Action icon={RiAddBoxLine} caption="Add New Branch" />
-          </Tooltip>
-        ),
+        caption: "Add New Branch",
+        onClick: ({ render }) => {
+          render(contentDialog);
+        },
       },
       {
         id: "table-view",
