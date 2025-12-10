@@ -214,23 +214,17 @@ function TreeList({
                         css`
                           background-color: #e5e7eb;
                           border: 2px solid #e5e7eb;
-                          ${placement === "bottom-start"
+                          ${placement === "bottom-start" ||
+                          placement === "top-start"
                             ? css`
                                 left: 8%;
                               `
-                            : placement === "bottom-end"
+                            : placement === "bottom-end" ||
+                                placement === "top-end"
                               ? css`
                                   right: 8%;
                                 `
-                              : placement === "top-start"
-                                ? css`
-                                    left: 8%;
-                                  `
-                                : placement === "top-end"
-                                  ? css`
-                                      right: 8%;
-                                    `
-                                  : null}
+                              : null}
 
                           ${arrowStyle}
                         `
