@@ -71,7 +71,7 @@ describe("StatefulForm", () => {
       },
       {
         name: "access",
-        title: "Has access to login",
+        placeholder: "Has access to login",
         type: "checkbox",
         required: false,
       },
@@ -158,7 +158,7 @@ describe("StatefulForm", () => {
       },
       {
         name: "access",
-        title: "Has access to login",
+        placeholder: "Has access to login",
         type: "checkbox",
         required: false,
       },
@@ -247,7 +247,7 @@ describe("StatefulForm", () => {
       },
       {
         name: "access",
-        title: "Has access to login",
+        placeholder: "Has access to login",
         type: "checkbox",
         required: false,
       },
@@ -613,7 +613,7 @@ describe("StatefulForm", () => {
       },
       {
         name: "check",
-        title: "Check",
+        placeholder: "Check",
         type: "checkbox",
         required: false,
         width: "50%",
