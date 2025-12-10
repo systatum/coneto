@@ -376,7 +376,7 @@ const SectionTitle = styled.span``;
 const ButtonRow = styled.div`
   display: flex;
   flex-direction: row;
-  gap: 4px;
+  gap: 5px;
 `;
 
 const MenuContainer = styled.div<{ $style?: CSSProp }>`
