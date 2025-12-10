@@ -50,6 +50,7 @@ export interface TableProps {
   selectable?: boolean;
   searchable?: boolean;
   draggable?: boolean;
+  selectedItems?: string[];
   onDragged?: (props: {
     id?: string;
     oldGroupId: string;
@@ -146,6 +147,7 @@ function Table({
   selectable = false,
   columns,
   onItemsSelected,
+  selectedItems = [],
   children,
   isLoading,
   containerStyle,
@@ -177,7 +179,7 @@ function Table({
     id: string;
   } | null>(null);
 
-  const [selectedData, setSelectedData] = useState<string[]>([]);
+  const [selectedData, setSelectedData] = useState<string[]>(selectedItems);
   const [allRowsLocal, setAllRowsLocal] = useState<string[]>([]);
   const [rowActions, setRowActions] = useState<TipMenuItemProps[]>([]);
 
