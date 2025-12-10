@@ -638,6 +638,11 @@ export const WithOneAction: Story = {
 
 export const SortableWithPagination: Story = {
   render: () => {
+    const [selectedItems, setSelectedItems] = useState([
+      "Load Balancer 1-HTTP",
+      "Load Balancer 4-UDP",
+      "Load Balancer 3-TCP",
+    ]);
     const [page, setPage] = useState(1);
     const itemsPerPage = 20;
     const totalItems = 200;
@@ -755,7 +760,7 @@ export const SortableWithPagination: Story = {
     };
 
     const handleItemsSelected = (ids: string[]) => {
-      console.log("Selected rows:", ids);
+      setSelectedItems(ids);
     };
 
     return (
@@ -771,6 +776,7 @@ export const SortableWithPagination: Story = {
         </h3>
 
         <Table
+          selectedItems={selectedItems}
           selectable
           showPagination
           columns={columns}
