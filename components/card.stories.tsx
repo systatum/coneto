@@ -861,18 +861,22 @@ export const WithFullWidthContent: Story = {
   render: () => {
     const columns: ColumnTableProps[] = [
       {
+        id: "name",
         caption: "Name",
         sortable: true,
       },
       {
+        id: "code",
         caption: "Code",
         sortable: true,
       },
       {
+        id: "lead",
         caption: "Lead",
         sortable: true,
       },
       {
+        id: "members",
         caption: "Members",
         sortable: true,
       },
