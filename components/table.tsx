@@ -446,7 +446,9 @@ function Table({
                             background-color: #d4d4d4;
                           `}
                           variant="none"
-                          subMenuList={subMenuList(`${col.id}`)}
+                          subMenuList={
+                            subMenuList ? subMenuList(col.id) : undefined
+                          }
                         />
                       </Toolbar>
                     )}
