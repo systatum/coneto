@@ -14,6 +14,7 @@ import {
   shift,
   useFloating,
 } from "@floating-ui/react";
+import { Tooltip } from "./tooltip";
 import { createPortal } from "react-dom";
 
 export type ButtonVariants = {
@@ -34,7 +35,10 @@ export interface SubMenuButtonProps {
     subMenuList: TipMenuItemProps[],
     withFilter?: { withFilter?: boolean }
   ) => React.ReactNode;
-  show?: (children: React.ReactNode) => React.ReactNode;
+  show?: (
+    children: React.ReactNode,
+    item?: { withArrow?: boolean; arrowStyle?: CSSProp; drawerStyle?: CSSProp }
+  ) => React.ReactNode;
   render?: (children?: React.ReactNode) => React.ReactNode;
 }
 
@@ -81,7 +85,7 @@ function Button({
     "main" | "original" | "dropdown"
   >("original");
 
-  const { refs, floatingStyles } = useFloating({
+  const { refs, floatingStyles, placement } = useFloating({
     open: isOpen,
     whileElementsMounted: autoUpdate,
     middleware: [offset(6), flip({ padding: 40 }), shift()],
@@ -239,8 +243,26 @@ function Button({
                   variant={tipMenuSize}
                 />
               ),
-              show: (children) => (
-                <ButtonTipMenuContainer>{children}</ButtonTipMenuContainer>
+              show: (children, { withArrow, arrowStyle, drawerStyle } = {}) => (
+                <Tooltip.Container
+                  arrowStyle={
+                    !withArrow
+                      ? css`
+                          display: none;
+                        `
+                      : css`
+                          background-color: gray;
+                          ${arrowStyle}
+                        `
+                  }
+                  drawerStyle={css`
+                    padding: 0px;
+                    color: black;
+                    ${drawerStyle}
+                  `}
+                  placement={placement}
+                  dialog={children}
+                />
               ),
               render: (children) => children,
             })}

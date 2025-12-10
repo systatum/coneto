@@ -1,10 +1,12 @@
 import styled, { css, CSSProp } from "styled-components";
-import React, { ReactNode, useState } from "react";
+import React, { Fragment, ReactNode, useState } from "react";
 import { RemixiconComponentType, RiArrowRightSLine } from "@remixicon/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { TipMenuItemProps } from "./tip-menu";
 import ContextMenu from "./context-menu";
 import { LoadingSpinner } from "./loading-spinner";
+import { SubMenuButtonProps } from "./button";
+import { Tooltip } from "./tooltip";
 
 export interface TreeListProps {
   content: TreeListContentProps[];
@@ -54,11 +56,15 @@ export interface TreeListItemsProps {
 }
 
 export interface TreeListActionsProps {
+  id: string;
   caption?: string;
-  onClick?: () => void;
+  onClick?: (props?: { setActive?: (prop: boolean) => void }) => void;
   icon?: RemixiconComponentType;
   style?: CSSProp;
+  subMenu?: (props: SubMenuTreeListProps) => ReactNode;
 }
+
+type SubMenuTreeListProps = Omit<SubMenuButtonProps, "list">;
 
 export interface SubMenuTreeList extends Omit<TipMenuItemProps, "onClick"> {
   onClick: (id?: string) => void;
@@ -79,6 +85,7 @@ function TreeList({
   collapsible,
 }: TreeListProps) {
   const [isSelected, setIsSelected] = useState(selectedItem);
+  const [isActive, setIsActive] = useState<string | null>("");
 
   const initialOpenMap = Object.fromEntries(
     content.map((group) => {
@@ -110,7 +117,7 @@ function TreeList({
     .find((level) => level !== null);
 
   const [lastFetchGroup, setLastFetchGroup] = useState<Record<string, Date>>(
-    Object.fromEntries(content.map((data) => [data.id, null]))
+    Object.fromEntries(content.map((item) => [item.id, null]))
   );
 
   const [loadingByGroup, setLoadingByGroup] = useState<
@@ -154,41 +161,131 @@ function TreeList({
     <TreeListWrapper $containerStyle={containerStyle}>
       {actions && (
         <ActionsWrapper>
-          {actions.map((data, index) => (
-            <ActionItem
-              key={index}
-              role="button"
-              tabIndex={0}
-              aria-label="tree-list-action"
-              onClick={() => data.onClick?.()}
-              $style={data.style}
-            >
-              {data.icon && <data.icon size={16} />}
-              <div>{data.caption}</div>
-            </ActionItem>
-          ))}
+          {actions.map((action, index) => {
+            const isActiveAction = action.id === isActive;
+            const isSelectedAction = action.id === isSelected;
+
+            const handleActionClick = () => {
+              action.onClick?.({
+                setActive: (prop: boolean) => {
+                  if (prop) handleOnChange(action.id);
+                },
+              });
+              if (action.subMenu) {
+                setIsActive(action.id);
+              }
+            };
+
+            const TreeAction = (
+              <TreeListAction
+                key={index}
+                isActive={isActiveAction}
+                isSelected={isSelectedAction}
+                onClick={handleActionClick}
+                caption={action.caption}
+                icon={action.icon}
+                style={action.style}
+              />
+            );
+
+            const tooltipBaseProps = {
+              onVisibilityChange: async (open: boolean) => {
+                if (!open) await setIsActive(null);
+              },
+              showDialogOn: "click" as const,
+              hideDialogOn: "click" as const,
+              triggerStyle: css`
+                width: 100%;
+              `,
+            };
+
+            if (action.subMenu) {
+              return action.subMenu({
+                show: (
+                  children,
+                  { arrowStyle, drawerStyle, withArrow = true } = {}
+                ) => (
+                  <Tooltip
+                    {...tooltipBaseProps}
+                    dialog={children}
+                    arrowStyle={(placement) => {
+                      return (
+                        withArrow &&
+                        css`
+                          background-color: #e5e7eb;
+                          border: 2px solid #e5e7eb;
+                          ${placement === "bottom-start" ||
+                          placement === "top-start"
+                            ? css`
+                                left: 8%;
+                              `
+                            : placement === "bottom-end" ||
+                                placement === "top-end"
+                              ? css`
+                                  right: 8%;
+                                `
+                              : null}
+
+                          ${arrowStyle}
+                        `
+                      );
+                    }}
+                    drawerStyle={css`
+                      width: fit-content;
+                      background-color: white;
+                      color: black;
+                      border: 1px solid #e5e7eb;
+                      ${drawerStyle}
+                    `}
+                  >
+                    {TreeAction}
+                  </Tooltip>
+                ),
+
+                render: (children) => (
+                  <Tooltip
+                    {...tooltipBaseProps}
+                    dialog={children}
+                    arrowStyle={css`
+                      display: none;
+                    `}
+                    drawerStyle={css`
+                      width: fit-content;
+                      background-color: white;
+                      color: black;
+                      border: 1px solid #e5e7eb;
+                    `}
+                  >
+                    {TreeAction}
+                  </Tooltip>
+                ),
+              });
+            }
+
+            return TreeAction;
+          })}
         </ActionsWrapper>
       )}
 
       {content && actions && <Divider role="separator" aria-label="divider" />}
 
       {content.length > 0 ? (
-        content.map((data, index) => (
+        content.map((item, index) => (
           <GroupWrapper key={index}>
-            {data.caption && (
+            {item.caption && (
               <GroupTitleWrapper
                 onClick={() => {
                   if (collapsible) {
-                    handleSelected(data.id);
+                    handleSelected(item.id);
                   }
                 }}
                 $collapsible={collapsible}
               >
-                <GroupTitle>{data.caption}</GroupTitle>
+                <GroupTitle>{item.caption}</GroupTitle>
                 {collapsible && (
                   <ArrowIcon
                     aria-label="arrow-icon"
-                    aria-expanded={isOpen[data.id]}
+                    aria-expanded={isOpen[item.id]}
                     size={20}
                   />
                 )}
@@ -199,15 +296,15 @@ function TreeList({
               <ItemsWrapper
                 key={`items-wrapper-${index}`}
                 animate={
-                  isOpen[data.id]
+                  isOpen[item.id]
                     ? { height: "auto", opacity: 1 }
                     : { height: 0, opacity: 0 }
                 }
                 transition={{ duration: 0.2, ease: "easeInOut" }}
-                $collapsed={!isOpen[data.id]}
+                $collapsed={!isOpen[item.id]}
               >
                 {(() => {
-                  const groupLoading = loadingByGroup[data.id];
+                  const groupLoading = loadingByGroup[item.id];
 
                   return groupLoading?.isLoading ? (
                     <LoadingSpinner
@@ -217,8 +314,8 @@ function TreeList({
                       `}
                       label={groupLoading.caption}
                     />
-                  ) : data.items?.length > 0 ? (
-                    data.items.map((val) => {
+                  ) : item.items?.length > 0 ? (
+                    item.items.map((val) => {
                       return (
                         <TreeListItem
                           key={val.id}
@@ -234,7 +331,7 @@ function TreeList({
                           isOpen={isOpen}
                           emptyItemSlate={emptyItemSlate}
                           selectedLevel={selectedLevel}
-                          groupId={data.id}
+                          groupId={item.id}
                           selectedGroupId={selectedGroupId}
                         />
                       );
@@ -253,6 +350,41 @@ function TreeList({
 
       {children}
     </TreeListWrapper>
+  );
+}
+
+interface TreeListActionProps {
+  isSelected?: boolean;
+  isActive?: boolean;
+  onClick?: () => void;
+  style?: CSSProp;
+  icon?: RemixiconComponentType;
+  caption?: string;
+}
+
+function TreeListAction({
+  isSelected,
+  isActive,
+  onClick,
+  caption,
+  icon: Icon,
+  style,
+}: TreeListActionProps) {
+  if (!onClick) onClick = () => {};
+
+  return (
+    <ActionItem
+      $isActive={isActive}
+      $isSelected={isSelected}
+      role="button"
+      tabIndex={0}
+      aria-label="tree-list-action"
+      onClick={() => onClick()}
+      $style={style}
+    >
+      {Icon && <Icon size={16} />}
+      <div>{caption}</div>
+    </ActionItem>
   );
 }
 
@@ -593,23 +725,42 @@ const ActionsWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  gap: 0.25rem;
   margin-bottom: 1em;
 `;
 
-const ActionItem = styled.div<{ $style?: CSSProp }>`
+const ActionItem = styled.div<{
+  $style?: CSSProp;
+  $isSelected?: boolean;
+  $isActive?: boolean;
+}>`
   display: flex;
   flex-direction: row;
   position: relative;
   width: 100%;
   align-items: center;
-  padding: 0.25rem 0.75rem;
-  padding-left: 1.4rem;
+  padding: 0.25rem 1.2rem;
   gap: 0.5rem;
   cursor: pointer;
+  border-left: 3px solid transparent;
+  user-select: none;
+  min-height: 36px;
+
   &:hover {
     background-color: #f5f5f5;
   }
+
+  ${({ $isActive }) =>
+    $isActive &&
+    css`
+      background-color: #f5f5f5;
+    `}
+
+  ${({ $isSelected }) =>
+    $isSelected &&
+    css`
+      background-color: #f5f5f5;
+      border-left: 3px solid #3b82f6;
+    `}
   ${(props) => props.$style}
 `;
 
@@ -776,5 +927,4 @@ function escapeRegExp(string: string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-TreeList.Item = TreeListItem;
 export { TreeList };
