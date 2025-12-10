@@ -172,16 +172,19 @@ describe("Table", () => {
 
   const columns: ColumnTableProps[] = [
     {
+      id: "title",
       caption: "Title",
       sortable: false,
       width: "45%",
     },
     {
+      id: "category",
       caption: "Category",
       sortable: false,
       width: "30%",
     },
     {
+      id: "author",
       caption: "Author",
       sortable: false,
       width: "25%",
@@ -223,6 +226,217 @@ describe("Table", () => {
       },
     ];
   };
+
+  context("with summary", () => {
+    interface TableSummaryProps {
+      id?: string;
+      title: string;
+      subtitle?: string;
+      items: {
+        itemId?: string;
+        name: string;
+        cost: string;
+        quantity: string;
+      }[];
+    }
+
+    const TABLE_SUMMARY: TableSummaryProps[] = [
+      {
+        id: "food",
+        title: "Food",
+        subtitle: "List of Food Items",
+        items: [
+          {
+            itemId: "F1583",
+            name: "Ayam Geprek",
+            cost: "5,000",
+            quantity: "5",
+          },
+          {
+            itemId: "F9311",
+            name: "Laksa Singapore",
+            cost: "4,500",
+            quantity: "1",
+          },
+          { itemId: "F2210", name: "Nasi Lemak", cost: "3,500", quantity: "2" },
+          {
+            itemId: "F7721",
+            name: "Soto Betawi",
+            cost: "4,000",
+            quantity: "1",
+          },
+          {
+            itemId: "F6622",
+            name: "Bakso Malang",
+            cost: "6,000",
+            quantity: "4",
+          },
+        ],
+      },
+      {
+        id: "beverages",
+        title: "Beverages",
+        subtitle: "Cold and Hot Refreshments",
+        items: [
+          { itemId: "B1010", name: "Iced Tea", cost: "1,000", quantity: "3" },
+          {
+            itemId: "B3911",
+            name: "Mineral Water",
+            cost: "500",
+            quantity: "1",
+          },
+          { itemId: "B5512", name: "Lemonade", cost: "2,000", quantity: "2" },
+          { itemId: "B6619", name: "Hot Coffee", cost: "3,000", quantity: "1" },
+          {
+            itemId: "B8821",
+            name: "Orange Juice",
+            cost: "2,500",
+            quantity: "2",
+          },
+        ],
+      },
+    ];
+
+    function parseCost(val: string) {
+      return Number(val.replace(/,/g, ""));
+    }
+
+    function calculateTotals(groups: TableSummaryProps[]) {
+      let totalCost = 0;
+      let totalQty = 0;
+
+      groups.map((group) =>
+        group.items.map((item) => {
+          totalCost += parseCost(item.cost);
+          totalQty += Number(item.quantity);
+        })
+      );
+
+      return {
+        totalCost,
+        totalQty,
+      };
+    }
+
+    const DEFAULT_TOP_ACTIONS: TableActionsProps[] = [
+      {
+        caption: "Copy",
+        icon: RiArrowUpSLine,
+        onClick: () => {
+          console.log("Copy clicked");
+        },
+      },
+    ];
+
+    const { totalCost, totalQty } = calculateTotals(TABLE_SUMMARY);
+
+    it("renders summary on footer", () => {
+      cy.mount(
+        <Table
+          tableRowContainerStyle={css`
+            max-height: 400px;
+          `}
+          columns={columns}
+          actions={DEFAULT_TOP_ACTIONS}
+          sumRow={[
+            {
+              span: 2,
+              content: "Total",
+              bold: true,
+            },
+            {
+              content: totalCost.toLocaleString("en-US"),
+            },
+            {
+              content: totalQty,
+            },
+          ]}
+          searchable
+        >
+          {TABLE_SUMMARY?.map((groupValue, groupIndex) => (
+            <Table.Row.Group
+              key={groupIndex}
+              title={groupValue.title}
+              subtitle={groupValue.subtitle}
+            >
+              {groupValue.items.map((rowValue, rowIndex) => (
+                <Table.Row
+                  key={rowIndex}
+                  rowId={`${groupValue.id}-${rowValue.cost}-${rowValue.itemId}-${rowValue.name}-${rowValue.quantity}`}
+                  content={[
+                    rowValue.itemId,
+                    rowValue.name,
+                    rowValue.cost,
+                    rowValue.quantity,
+                  ]}
+                  actions={ROW_ACTIONS}
+                />
+              ))}
+            </Table.Row.Group>
+          ))}
+        </Table>
+      );
+
+      cy.findByText("Total").should("have.css", "font-weight", "600");
+      cy.findByText("32,000").should("have.css", "font-weight", "400");
+      cy.findByText("22").should("have.css", "font-weight", "400");
+    });
+
+    context("with selectable", () => {
+      it("renders with selectable and add padding right on wrapper", () => {
+        cy.mount(
+          <Table
+            selectable
+            tableRowContainerStyle={css`
+              max-height: 400px;
+            `}
+            columns={columns}
+            actions={DEFAULT_TOP_ACTIONS}
+            sumRow={[
+              {
+                span: 2,
+                content: "Total",
+                bold: true,
+              },
+              {
+                content: totalCost.toLocaleString("en-US"),
+              },
+              {
+                content: totalQty,
+              },
+            ]}
+            searchable
+          >
+            {TABLE_SUMMARY?.map((groupValue, groupIndex) => (
+              <Table.Row.Group
+                key={groupIndex}
+                title={groupValue.title}
+                subtitle={groupValue.subtitle}
+              >
+                {groupValue.items.map((rowValue, rowIndex) => (
+                  <Table.Row
+                    key={rowIndex}
+                    rowId={`${groupValue.id}-${rowValue.cost}-${rowValue.itemId}-${rowValue.name}-${rowValue.quantity}`}
+                    content={[
+                      rowValue.itemId,
+                      rowValue.name,
+                      rowValue.cost,
+                      rowValue.quantity,
+                    ]}
+                    actions={ROW_ACTIONS}
+                  />
+                ))}
+              </Table.Row.Group>
+            ))}
+          </Table>
+        );
+
+        cy.findAllByLabelText("table-summary-wrapper")
+          .eq(0)
+          .should("have.css", "padding-left", "42px");
+      });
+    });
+  });
 
   context("with top actions", () => {
     context("when given default", () => {
@@ -668,7 +882,8 @@ describe("Table", () => {
         });
 
         cy.findAllByLabelText("table-row").eq(2).trigger("mouseover");
-        cy.findByLabelText("action-button")
+        cy.findAllByLabelText("action-button")
+          .eq(2)
           .should("be.visible")
           .and("have.attr", "title", "Delete")
           .click();
@@ -719,7 +934,10 @@ describe("Table", () => {
         });
 
         cy.findAllByLabelText("table-row").eq(2).trigger("mouseover");
-        cy.findByLabelText("action-button").should("be.visible").click();
+        cy.findAllByLabelText("action-button")
+          .eq(2)
+          .should("be.visible")
+          .click();
         cy.findByText("Edit").click();
 
         cy.wait(100);
