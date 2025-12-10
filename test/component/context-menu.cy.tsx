@@ -402,10 +402,12 @@ describe("context-menu", () => {
 
     const columns: ColumnTableProps[] = [
       {
+        id: "name",
         caption: "Name",
         sortable: false,
       },
       {
+        id: "type",
         caption: "Type",
         sortable: false,
       },

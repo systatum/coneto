@@ -94,7 +94,7 @@ export const Default: Story = {
       },
       {
         name: "access",
-        title: "Has access to login",
+        description: "Has access to login",
         type: "checkbox",
         required: false,
       },
@@ -248,7 +248,7 @@ export const Closable: Story = {
       },
       {
         name: "access",
-        title: "Has access to login",
+        description: "Has access to login",
         type: "checkbox",
         required: false,
       },
@@ -387,7 +387,7 @@ export const FixedLeft: Story = {
       },
       {
         name: "access",
-        title: "Has access to login",
+        description: "Has access to login",
         type: "checkbox",
         required: false,
       },
@@ -490,15 +490,19 @@ export const Nested: Story = {
 
     const columns: ColumnTableProps[] = [
       {
+        id: "name",
         caption: "Name",
       },
       {
+        id: "status",
         caption: "Status",
       },
       {
+        id: "gender",
         caption: "Gender",
       },
       {
+        id: "birthday",
         caption: "Birthday",
       },
     ];
