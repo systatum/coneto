@@ -12,11 +12,9 @@ describe("Tooltip", () => {
           .trigger("mouseover")
           .trigger("mousemove", { clientX: 10, clientY: 10 });
 
-        cy.contains("Hover Tooltip").and(
-          "have.css",
-          "text-decoration-line",
-          "underline"
-        );
+        cy.contains("Hover Tooltip")
+          .parent()
+          .should("have.css", "text-decoration-line", "underline");
         cy.contains("This tooltip appears on hover").should("be.visible");
 
         cy.contains("Hover Tooltip").trigger("mouseout", { force: true });
@@ -44,6 +42,7 @@ describe("Tooltip", () => {
         cy.contains("Styled Tooltip")
           .trigger("mouseover")
           .trigger("mousemove", { clientX: 10, clientY: 10 })
+          .parent()
           .should("have.css", "text-decoration-line", "underline");
 
         cy.contains("Tooltip with custom styling")
