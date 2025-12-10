@@ -2,6 +2,7 @@ import styled, { css, CSSProp } from "styled-components";
 import {
   DetailedHTMLProps,
   InputHTMLAttributes,
+  ReactElement,
   useEffect,
   useRef,
 } from "react";
@@ -21,6 +22,7 @@ export interface CheckboxProps
   highlightOnChecked?: boolean;
   containerStyle?: CSSProp;
   inputStyle?: CSSProp;
+  titleStyle?: CSSProp;
   labelStyle?: CSSProp;
   iconStyle?: CSSProp;
   wrapperStyle?: CSSProp;
@@ -30,6 +32,7 @@ export interface CheckboxProps
 
 function Checkbox({
   label,
+  title,
   name,
   showError,
   description,
@@ -43,6 +46,7 @@ function Checkbox({
   wrapperStyle,
   descriptionStyle,
   errorStyle,
+  titleStyle,
   ...props
 }: CheckboxProps) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -55,8 +59,8 @@ function Checkbox({
     }
   }, [indeterminate]);
 
-  return (
-    <Label
+  const inputElement: ReactElement = (
+    <InputWrapper
       htmlFor={props.disabled ? null : inputId}
       $hasDescription={!!description}
       $highlight={!!highlightOnChecked}
@@ -115,14 +119,38 @@ function Checkbox({
           {description}
         </DescriptionText>
       )}
+
       {showError && errorMessage && (
         <ErrorText $style={errorStyle}>{errorMessage}</ErrorText>
       )}
-    </Label>
+    </InputWrapper>
+  );
+
+  return (
+    <Container>
+      {title && <Title $style={titleStyle}>{title}</Title>}
+      {inputElement}
+    </Container>
   );
 }
 
-const Label = styled.label<{
+const Container = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  position: relative;
+
+  ${({ $style }) => $style}
+`;
+
+const Title = styled.label<{ $style?: CSSProp }>`
+  font-size: 0.75rem;
+  ${({ $style }) => $style}
+`;
+
+const InputWrapper = styled.label<{
   $hasDescription: boolean;
   $highlight: boolean;
   $checked: boolean;
