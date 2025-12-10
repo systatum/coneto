@@ -87,13 +87,7 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
       placement: getFloatingPlacement(dialogPlacement),
       open: isOpen,
       onOpenChange: setIsOpen,
-      middleware: [
-        offset(({ placement }) => {
-          return placement.startsWith("top") ? 16 : 0;
-        }),
-        flip(),
-        shift({ padding: 8 }),
-      ],
+      middleware: [offset(8), flip()],
       whileElementsMounted: autoUpdate,
     });
 
@@ -316,19 +310,19 @@ const TooltipArrow = styled.div<{
   width: 8px;
   height: 8px;
   background-color: #4b5563;
-  transform: translateX(-25%) rotate(45deg);
+  transform: rotate(45deg);
   z-index: -1;
   pointer-events: none;
 
   ${({ $placement }) =>
     $placement === "bottom-start"
       ? css`
-          top: 4px;
+          top: -4px;
           left: 10%;
         `
       : $placement === "bottom-end"
         ? css`
-            top: 4px;
+            top: -4px;
             right: 10%;
           `
         : $placement === "top-start"
@@ -350,7 +344,6 @@ const TooltipDrawer = styled.div<{
   $drawerStyle?: CSSProp;
 }>`
   position: relative;
-  margin-top: 8px;
   background-color: #4b5563;
   color: white;
   font-size: 12px;
