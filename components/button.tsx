@@ -109,6 +109,10 @@ function Button({
         return;
       }
 
+      if (refs.floating.current?.contains(target)) {
+        return;
+      }
+
       if (containerRef.current && !containerRef.current.contains(target)) {
         setIsOpen(false);
         setHovered("original");
