@@ -185,7 +185,7 @@ export const Default: Story = {
       },
       {
         name: "access",
-        title: "I agree",
+        placeholder: "I agree",
         type: "checkbox",
         required: false,
       },
@@ -634,7 +634,7 @@ export const AllCase: Story = {
       },
       {
         name: "check",
-        title: "Check",
+        placeholder: "Check",
         type: "checkbox",
         required: false,
       },
