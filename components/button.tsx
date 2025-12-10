@@ -15,6 +15,7 @@ import {
   shift,
   useFloating,
 } from "@floating-ui/react";
+import { Tooltip } from "./tooltip";
 import { createPortal } from "react-dom";
 import {
   DialogPlacement,
@@ -39,7 +40,10 @@ export interface SubMenuButtonProps {
     subMenuList: TipMenuItemProps[],
     withFilter?: { withFilter?: boolean }
   ) => React.ReactNode;
-  show?: (children: React.ReactNode) => React.ReactNode;
+  show?: (
+    children: React.ReactNode,
+    item?: { withArrow?: boolean; arrowStyle?: CSSProp; drawerStyle?: CSSProp }
+  ) => React.ReactNode;
   render?: (children?: React.ReactNode) => React.ReactNode;
 }
 
@@ -250,8 +254,26 @@ function Button({
                   variant={tipMenuSize}
                 />
               ),
-              show: (children) => (
-                <ButtonTipMenuContainer>{children}</ButtonTipMenuContainer>
+              show: (children, { withArrow, arrowStyle, drawerStyle } = {}) => (
+                <Tooltip.Container
+                  arrowStyle={
+                    !withArrow
+                      ? css`
+                          display: none;
+                        `
+                      : css`
+                          background-color: gray;
+                          ${arrowStyle}
+                        `
+                  }
+                  drawerStyle={css`
+                    padding: 0px;
+                    color: black;
+                    ${drawerStyle}
+                  `}
+                  placement={placement}
+                  dialog={children}
+                />
               ),
               render: (children) => children,
             })}

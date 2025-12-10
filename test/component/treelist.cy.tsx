@@ -1,9 +1,16 @@
+import { Tooltip } from "./../../components/tooltip";
 import {
   TreeList,
   TreeListActionsProps,
   TreeListContentProps,
 } from "./../../components/treelist";
-import { RiAtLine, RiSearchLine } from "@remixicon/react";
+import {
+  RiAddBoxLine,
+  RiAtLine,
+  RiSearchLine,
+  RiTable2,
+} from "@remixicon/react";
+import { StatefulForm } from "./../../components/stateful-form";
 
 describe("Treelist", () => {
   context("initialState", () => {
@@ -89,6 +96,7 @@ describe("Treelist", () => {
         );
 
         cy.contains("Adam Noto Hakarsa")
+          .parent()
           .parent()
           .should("have.css", "border-left-color", "rgb(59, 130, 246)");
       });
@@ -176,9 +184,11 @@ describe("Treelist", () => {
 
         cy.contains("Adam Noto Hakarsa")
           .parent()
+          .parent()
           .should("have.css", "border-left-color", "rgba(0, 0, 0, 0)");
         cy.contains("Adam Noto Hakarsa")
           .click()
+          .parent()
           .parent()
           .should("have.css", "border-left-color", "rgb(59, 130, 246)");
       });
@@ -236,11 +246,13 @@ describe("Treelist", () => {
 
       TREE_LIST_ACTIONS = [
         {
+          id: "discover",
           caption: "Discover",
           onClick: onDiscover,
           icon: RiSearchLine,
         },
         {
+          id: "mention",
           caption: "Mention",
           onClick: onMention,
           icon: RiAtLine,
@@ -263,6 +275,160 @@ describe("Treelist", () => {
 
         cy.findByText("Mention").should("exist").click();
         cy.get("@onMention").should("have.been.calledOnce");
+      });
+    });
+
+    context("with subMenu", () => {
+      context("with show", () => {
+        const TREE_LIST_ACTIONS_WITH_RENDER: TreeListActionsProps[] = [
+          {
+            id: "add-new-branch",
+            icon: RiAddBoxLine,
+            caption: "Add New Branch",
+            subMenu: ({ show }) =>
+              show(
+                <StatefulForm
+                  fields={[
+                    {
+                      name: "division_name",
+                      title: "Division Name",
+                      type: "text",
+                      required: true,
+                    },
+                  ]}
+                  formValues={{
+                    division_name: "",
+                  }}
+                  onChange={({}) => {}}
+                  mode="onChange"
+                />
+              ),
+          },
+          {
+            id: "table-view",
+            caption: "Table View",
+            onClick: ({ setActive }) => {
+              setActive(true);
+            },
+            icon: RiTable2,
+          },
+        ];
+
+        it("renders action with tip drawer & arrow", () => {
+          cy.mount(
+            <TreeList
+              content={TREE_LIST_DATA}
+              actions={TREE_LIST_ACTIONS_WITH_RENDER}
+              emptySlate={<p>Not found.</p>}
+            />
+          );
+
+          cy.findByText("Division Name").should("not.exist");
+
+          cy.findByText("Add New Branch").should("exist").click();
+          cy.findByText("Division Name").should("exist");
+
+          cy.findByLabelText("tooltip-arrow").should("be.visible");
+        });
+      });
+
+      context("with render", () => {
+        const TREE_LIST_ACTIONS_WITH_RENDER: TreeListActionsProps[] = [
+          {
+            id: "add-new-branch",
+            icon: RiAddBoxLine,
+            caption: "Add New Branch",
+            subMenu: ({ render }) =>
+              render(
+                <StatefulForm
+                  fields={[
+                    {
+                      name: "division_name",
+                      title: "Division Name",
+                      type: "text",
+                      required: true,
+                    },
+                  ]}
+                  formValues={{
+                    division_name: "",
+                  }}
+                  onChange={({}) => {}}
+                  mode="onChange"
+                />
+              ),
+          },
+          {
+            id: "table-view",
+            caption: "Table View",
+            onClick: ({ setActive }) => {
+              setActive(true);
+            },
+            icon: RiTable2,
+          },
+        ];
+
+        it("renders action with tip drawer", () => {
+          cy.mount(
+            <TreeList
+              content={TREE_LIST_DATA}
+              actions={TREE_LIST_ACTIONS_WITH_RENDER}
+              emptySlate={<p>Not found.</p>}
+            />
+          );
+
+          cy.findByText("Division Name").should("not.exist");
+
+          cy.findByText("Add New Branch").should("exist").click();
+          cy.findByText("Division Name").should("exist");
+
+          cy.findByLabelText("tooltip-arrow").should("not.be.visible");
+        });
+      });
+    });
+
+    context("with setActive", () => {
+      const TREE_LIST_ACTIONS_WITH_ACTIVE = [
+        {
+          id: "discover",
+          caption: "Discover",
+          onClick: ({ setActive }) => {
+            console.log("discover was selected");
+            setActive(true);
+          },
+          icon: RiSearchLine,
+        },
+        {
+          id: "mention",
+          caption: "Mention",
+          onClick: ({ setActive }) => {
+            console.log("mention was selected");
+            setActive(true);
+          },
+          icon: RiAtLine,
+        },
+      ];
+      context("when clicking", () => {
+        it("renders selected active on actions level", () => {
+          cy.window().then((win) => {
+            cy.spy(win.console, "log").as("consoleLog");
+          });
+          cy.mount(
+            <TreeList
+              content={TREE_LIST_DATA}
+              actions={TREE_LIST_ACTIONS_WITH_ACTIVE}
+              emptySlate={<p>Not found.</p>}
+            />
+          );
+
+          cy.findByText("Discover").should("exist").click();
+          cy.get("@consoleLog").should(
+            "have.been.calledWith",
+            "discover was selected"
+          );
+          cy.findByText("Discover")
+            .parent()
+            .should("have.css", "border-left-color", "rgb(59, 130, 246)");
+        });
       });
     });
   });

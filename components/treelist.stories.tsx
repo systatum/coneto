@@ -7,6 +7,7 @@ import {
   TreeListItemsProps,
 } from "./treelist";
 import {
+  RiAddBoxLine,
   RiAtLine,
   RiDeleteBin2Line,
   RiEdit2Line,
@@ -15,6 +16,7 @@ import {
   RiFolderFill,
   RiSearchLine,
   RiShareForwardLine,
+  RiTable2,
 } from "@remixicon/react";
 import { EmptySlate } from "./empty-slate";
 import { Button } from "./button";
@@ -22,6 +24,8 @@ import styled, { css } from "styled-components";
 import { useMemo, useState } from "react";
 import { Combobox } from "./combobox";
 import { OptionsProps } from "./selectbox";
+import { FormFieldGroup, StatefulForm } from "./stateful-form";
+import { Tooltip } from "./tooltip";
 
 const meta: Meta<typeof TreeList> = {
   title: "Content/TreeList",
@@ -483,6 +487,7 @@ export const WithActions: Story = {
 
     const TREE_LIST_ACTIONS: TreeListActionsProps[] = [
       {
+        id: "discover",
         caption: "Discover",
         onClick: () => {
           console.log("Discover clicked");
@@ -490,6 +495,7 @@ export const WithActions: Story = {
         icon: RiSearchLine,
       },
       {
+        id: "mention",
         caption: "Mention",
         onClick: () => {
           console.log("Mention clicked");
@@ -556,6 +562,37 @@ export const WithActions: Story = {
 
 export const WithoutHeader: Story = {
   render: () => {
+    const [value, setValue] = useState<{ division_name: string }>({
+      division_name: "",
+    });
+
+    const DIVISION_EMPLOYEE_FIELDS: FormFieldGroup[] = [
+      {
+        name: "division_name",
+        title: "Division Name",
+        type: "text",
+        required: true,
+      },
+      {
+        name: "save",
+        title: "Save",
+        type: "button",
+      },
+    ];
+
+    const contentDialog = (
+      <StatefulForm
+        containerStyle={css`
+          min-width: 300px;
+          padding: 8px 8px 4px;
+          background-color: white;
+        `}
+        fields={DIVISION_EMPLOYEE_FIELDS}
+        formValues={value}
+        onChange={({ currentState }) => setValue(currentState)}
+        mode="onChange"
+      />
+    );
     const setPerson = (props) => {
       console.log("Clicked person:", props.item.caption);
     };
@@ -575,18 +612,18 @@ export const WithoutHeader: Story = {
 
     const TREE_LIST_ACTIONS: TreeListActionsProps[] = [
       {
-        caption: "Discover",
-        onClick: () => {
-          console.log("Discover clicked");
-        },
-        icon: RiSearchLine,
+        id: "add-new-branch",
+        icon: RiAddBoxLine,
+        caption: "Add New Branch",
+        subMenu: ({ show }) => show(contentDialog),
       },
       {
-        caption: "Mention",
-        onClick: () => {
-          console.log("Mention clicked");
+        id: "table-view",
+        caption: "Table View",
+        onClick: ({ setActive }) => {
+          setActive(true);
         },
-        icon: RiAtLine,
+        icon: RiTable2,
       },
     ];
 
@@ -615,6 +652,7 @@ export const WithEmptySlate: Story = {
 
     const TREE_LIST_ACTIONS: TreeListActionsProps[] = [
       {
+        id: "discover",
         caption: "Discover",
         onClick: () => {
           console.log("Discover clicked");
@@ -622,6 +660,7 @@ export const WithEmptySlate: Story = {
         icon: RiSearchLine,
       },
       {
+        id: "mention",
         caption: "Mention",
         onClick: () => {
           console.log("Mention clicked");

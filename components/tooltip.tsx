@@ -1,8 +1,4 @@
 import {
-  DialogPlacement,
-  getFloatingPlacement,
-} from "./../lib/floating-placement";
-import {
   arrow,
   autoUpdate,
   flip,
@@ -13,12 +9,14 @@ import {
 } from "@floating-ui/react";
 import React, {
   forwardRef,
+  Fragment,
   ReactNode,
   useEffect,
   useImperativeHandle,
   useRef,
   useState,
 } from "react";
+import { createPortal } from "react-dom";
 import styled, { css, CSSProp } from "styled-components";
 
 export type TooltipProps = {
@@ -26,8 +24,10 @@ export type TooltipProps = {
   children: ReactNode;
   showDialogOn?: "hover" | "click";
   hideDialogOn?: "hover" | "click";
-  drawerStyle?: CSSProp | ((placement?: Placement) => CSSProp);
   containerStyle?: CSSProp;
+  triggerStyle?: CSSProp;
+  spacerStyle?: CSSProp | ((placement?: Placement) => CSSProp);
+  drawerStyle?: CSSProp | ((placement?: Placement) => CSSProp);
   arrowStyle?: CSSProp | ((placement?: Placement) => CSSProp);
   dialogPlacement?: DialogPlacement;
   onVisibilityChange?: (open?: boolean) => void;
@@ -40,7 +40,13 @@ export type TooltipRef = {
   close: () => void;
 };
 
-export const Tooltip = forwardRef<TooltipRef, TooltipProps>(
+type DialogPlacement =
+  | "bottom-left"
+  | "bottom-right"
+  | "top-left"
+  | "top-right";
+
+const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
   (
     {
       dialog,
@@ -49,6 +55,8 @@ export const Tooltip = forwardRef<TooltipRef, TooltipProps>(
       hideDialogOn = "hover",
       drawerStyle,
       containerStyle,
+      triggerStyle,
+      spacerStyle,
       arrowStyle,
       dialogPlacement = "bottom-left",
       onVisibilityChange,
@@ -58,7 +66,6 @@ export const Tooltip = forwardRef<TooltipRef, TooltipProps>(
     ref
   ) => {
     const [isOpen, setIsOpen] = useState(false);
-    const arrowRef = useRef<HTMLDivElement>(null);
     const delayTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     useImperativeHandle(ref, () => ({
@@ -86,7 +93,6 @@ export const Tooltip = forwardRef<TooltipRef, TooltipProps>(
         }),
         flip(),
         shift({ padding: 8 }),
-        arrow({ element: arrowRef }),
       ],
       whileElementsMounted: autoUpdate,
     });
@@ -132,6 +138,7 @@ export const Tooltip = forwardRef<TooltipRef, TooltipProps>(
 
     return (
       <Wrapper
+        $style={containerStyle}
         onMouseEnter={() => {
           if (showDialogOn === "hover") {
             delayTimeoutRef.current = setTimeout(() => {
@@ -168,70 +175,127 @@ export const Tooltip = forwardRef<TooltipRef, TooltipProps>(
             }
           }}
           $showDialogOn={showDialogOn}
-          $containerStyle={containerStyle}
+          $style={triggerStyle}
         >
           {children}
         </ContentTrigger>
-        {isOpen && dialog && (
-          <>
-            <Spacer $placement={placement} />
-            <TooltipArrow
-              ref={arrowRef}
-              $placement={placement}
-              aria-label="tooltip-arrow"
-              $arrowStyle={
-                typeof arrowStyle === "function"
-                  ? arrowStyle(placement as Placement)
-                  : arrowStyle
-              }
-            />
-            <TooltipDrawer
-              aria-label="tooltip-drawer"
-              style={floatingStyles}
-              $drawerStyle={
-                typeof drawerStyle === "function"
-                  ? drawerStyle(placement as Placement)
-                  : drawerStyle
-              }
+        {isOpen &&
+          dialog &&
+          createPortal(
+            <div
               ref={refs.setFloating}
+              style={{ ...floatingStyles, zIndex: 12000 }}
             >
-              {dialog}
-            </TooltipDrawer>
-          </>
-        )}
+              <TooltipContainer
+                arrowStyle={
+                  typeof arrowStyle === "function"
+                    ? arrowStyle(placement as Placement)
+                    : arrowStyle
+                }
+                placement={placement}
+                drawerStyle={
+                  typeof drawerStyle === "function"
+                    ? drawerStyle(placement as Placement)
+                    : drawerStyle
+                }
+                spacerStyle={
+                  typeof spacerStyle === "function"
+                    ? spacerStyle(placement as Placement)
+                    : spacerStyle
+                }
+                dialog={dialog}
+              />
+            </div>,
+            document.body
+          )}
       </Wrapper>
     );
   }
 );
 
-const Wrapper = styled.div`
+interface TooltipContainer {
+  placement?: Placement;
+  drawerStyle?: CSSProp | ((placement?: Placement) => CSSProp);
+  arrowStyle?: CSSProp | ((placement?: Placement) => CSSProp);
+  spacerStyle?: CSSProp | ((placement?: Placement) => CSSProp);
+  dialog?: ReactNode;
+}
+
+function TooltipContainer({
+  placement,
+  arrowStyle,
+  drawerStyle,
+  spacerStyle,
+  dialog,
+}: TooltipContainer) {
+  return (
+    <Fragment>
+      <Spacer
+        aria-label="tooltip-spacer"
+        $placement={placement}
+        $spacerStyle={
+          typeof spacerStyle === "function"
+            ? spacerStyle(placement as Placement)
+            : spacerStyle
+        }
+      />
+      <TooltipArrow
+        $placement={placement}
+        aria-label="tooltip-arrow"
+        $arrowStyle={
+          typeof arrowStyle === "function"
+            ? arrowStyle(placement as Placement)
+            : arrowStyle
+        }
+      />
+      <TooltipDrawer
+        aria-label="tooltip-drawer"
+        $drawerStyle={
+          typeof drawerStyle === "function"
+            ? drawerStyle(placement as Placement)
+            : drawerStyle
+        }
+      >
+        {dialog}
+      </TooltipDrawer>
+    </Fragment>
+  );
+}
+
+const Wrapper = styled.div<{ $style?: CSSProp }>`
   position: relative;
   display: inline-flex;
   align-items: center;
   height: fit-content;
-  width: fit-content;
+  width: 100%;
+
+  ${({ $style }) => $style}
 `;
 
-const Spacer = styled.div<{ $placement?: Placement }>`
+const Spacer = styled.div<{ $placement?: Placement; $spacerStyle?: CSSProp }>`
   position: absolute;
   background-color: transparent;
   width: 100%;
   height: 30px;
+  left: 0;
 
   ${({ $placement }) =>
-    $placement.startsWith("top")
+    $placement?.startsWith("top")
       ? css`
-          bottom: 100%;
+          bottom: -18px;
         `
       : css`
-          top: 100%;
+          top: -8px;
         `}
+
+  ${({ $spacerStyle }) => $spacerStyle}
 `;
 
 const ContentTrigger = styled.div<{
   $showDialogOn: TooltipProps["showDialogOn"];
-  $containerStyle?: CSSProp;
+  $style?: CSSProp;
 }>`
+  width: 100%;
   ${({ $showDialogOn }) =>
     $showDialogOn === "hover"
       ? css`
@@ -241,7 +305,7 @@ const ContentTrigger = styled.div<{
           cursor: pointer;
         `}
 
-  ${({ $containerStyle }) => $containerStyle}
+  ${({ $style }) => $style}
 `;
 
 const TooltipArrow = styled.div<{
@@ -253,31 +317,29 @@ const TooltipArrow = styled.div<{
   height: 8px;
   background-color: #4b5563;
   transform: translateX(-25%) rotate(45deg);
-  z-index: 10;
+  z-index: -1;
+  pointer-events: none;
+
   ${({ $placement }) =>
     $placement === "bottom-start"
       ? css`
-          top: 100%;
-          left: 25%;
-          margin-top: 4px;
+          top: 4px;
+          left: 10%;
         `
       : $placement === "bottom-end"
         ? css`
-            top: 100%;
-            right: 25%;
-            margin-top: 4px;
+            top: 4px;
+            right: 10%;
           `
         : $placement === "top-start"
           ? css`
-              bottom: 100%;
-              left: 25%;
-              margin-bottom: 4px;
+              bottom: -4px;
+              left: 10%;
             `
           : $placement === "top-end"
             ? css`
-                bottom: 100%;
-                right: 25%;
-                margin-bottom: 4px;
+                bottom: -4px;
+                right: 10%;
               `
             : null}
 
@@ -287,18 +349,41 @@ const TooltipArrow = styled.div<{
 const TooltipDrawer = styled.div<{
   $drawerStyle?: CSSProp;
 }>`
-  position: absolute;
-  top: 100%;
-  left: 0;
+  position: relative;
   margin-top: 8px;
   background-color: #4b5563;
   color: white;
   font-size: 12px;
   padding: 4px 8px;
   border-radius: 4px;
-  z-index: 50;
   white-space: nowrap;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 
   ${({ $drawerStyle }) => $drawerStyle}
 `;
+
+function getFloatingPlacement(position?: DialogPlacement): Placement {
+  switch (position) {
+    case "bottom-left":
+      return "bottom-start";
+    case "bottom-right":
+      return "bottom-end";
+    case "top-left":
+      return "top-start";
+    case "top-right":
+      return "top-end";
+    default:
+      return "bottom-start";
+  }
+}
+
+type TooltipComponent = React.ForwardRefExoticComponent<
+  TooltipProps & React.RefAttributes<TooltipRef>
+> & {
+  Container: typeof TooltipContainer;
+};
+
+const Tooltip = TooltipBase as TooltipComponent;
+Tooltip.Container = TooltipContainer;
+
+export { Tooltip };
