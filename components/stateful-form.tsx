@@ -533,7 +533,8 @@ function FormFields<T extends FieldValues>({
                   name={field.name as Path<T>}
                   render={({ field: controllerField }) => (
                     <Checkbox
-                      label={field.title}
+                      title={field.title}
+                      label={field.placeholder}
                       name={field.name}
                       placeholder={field.placeholder}
                       checked={controllerField.value ?? false}
