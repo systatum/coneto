@@ -140,7 +140,6 @@ const Container = styled.div<{ $style?: CSSProp }>`
   flex-direction: column;
   gap: 0.5rem;
   font-size: 0.75rem;
-  position: relative;
 
   ${({ $style }) => $style}
 `;
@@ -157,6 +156,7 @@ const InputWrapper = styled.label<{
   $style?: CSSProp;
   $disabled?: boolean;
 }>`
+  width: 100%;
   display: flex;
   flex-direction: column;
   font-size: 12px;
@@ -175,13 +175,6 @@ const InputWrapper = styled.label<{
       opacity: 0.6;
       user-select: none;
     `}
-
-  ${({ $style }) => $style};
-
-  &:hover {
-    background-color: ${({ $highlight }) =>
-      $highlight ? "rgb(231,242,252)" : "white"};
-  }
 
   ${({ $style }) => $style}
 `;
