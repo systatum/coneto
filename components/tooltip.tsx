@@ -26,6 +26,7 @@ export type TooltipProps = {
   hideDialogOn?: "hover" | "click";
   containerStyle?: CSSProp;
   triggerStyle?: CSSProp;
+  spacerStyle?: CSSProp | ((placement?: Placement) => CSSProp);
   drawerStyle?: CSSProp | ((placement?: Placement) => CSSProp);
   arrowStyle?: CSSProp | ((placement?: Placement) => CSSProp);
   dialogPlacement?: DialogPlacement;
@@ -55,6 +56,7 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
       drawerStyle,
       containerStyle,
       triggerStyle,
+      spacerStyle,
       arrowStyle,
       dialogPlacement = "bottom-left",
       onVisibilityChange,
@@ -196,6 +198,11 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
                     ? drawerStyle(placement as Placement)
                     : drawerStyle
                 }
+                spacerStyle={
+                  typeof spacerStyle === "function"
+                    ? spacerStyle(placement as Placement)
+                    : spacerStyle
+                }
                 dialog={dialog}
               />
             </div>,
@@ -210,6 +217,7 @@ interface TooltipContainer {
   placement?: Placement;
   drawerStyle?: CSSProp | ((placement?: Placement) => CSSProp);
   arrowStyle?: CSSProp | ((placement?: Placement) => CSSProp);
+  spacerStyle?: CSSProp | ((placement?: Placement) => CSSProp);
   dialog?: ReactNode;
 }
 
@@ -217,11 +225,20 @@ function TooltipContainer({
   placement,
   arrowStyle,
   drawerStyle,
+  spacerStyle,
   dialog,
 }: TooltipContainer) {
   return (
     <Fragment>
-      <Spacer $placement={placement} />
+      <Spacer
+        aria-label="tooltip-spacer"
+        $placement={placement}
+        $spacerStyle={
+          typeof spacerStyle === "function"
+            ? spacerStyle(placement as Placement)
+            : spacerStyle
+        }
+      />
       <TooltipArrow
         $placement={placement}
         aria-label="tooltip-arrow"
@@ -255,7 +272,7 @@ const Wrapper = styled.div<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
-const Spacer = styled.div<{ $placement?: Placement }>`
+const Spacer = styled.div<{ $placement?: Placement; $spacerStyle?: CSSProp }>`
   position: absolute;
   background-color: transparent;
   width: 100%;
@@ -265,11 +282,13 @@ const Spacer = styled.div<{ $placement?: Placement }>`
   ${({ $placement }) =>
     $placement?.startsWith("top")
       ? css`
-          bottom: -10px;
+          bottom: -18px;
         `
       : css`
-          top: -10px;
+          top: -8px;
         `}
+
+  ${({ $spacerStyle }) => $spacerStyle}
 `;
 
 const ContentTrigger = styled.div<{
