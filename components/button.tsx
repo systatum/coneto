@@ -11,10 +11,15 @@ import {
   autoUpdate,
   flip,
   offset,
+  Placement,
   shift,
   useFloating,
 } from "@floating-ui/react";
 import { createPortal } from "react-dom";
+import {
+  DialogPlacement,
+  getFloatingPlacement,
+} from "./../lib/floating-placement";
 
 export type ButtonVariants = {
   variant?:
@@ -42,7 +47,7 @@ export type ButtonProps = React.ComponentProps<"button"> &
   ButtonVariants & {
     isLoading?: boolean;
     subMenu?: (props: SubMenuButtonProps) => React.ReactNode;
-    dropdownStyle?: CSSProp;
+    dropdownStyle?: CSSProp | ((placement: Placement) => CSSProp);
     openedIcon?: RemixiconComponentType;
     closedIcon?: RemixiconComponentType;
     buttonStyle?: CSSProp;
@@ -53,6 +58,7 @@ export type ButtonProps = React.ComponentProps<"button"> &
     tipMenuSize?: TipMenuItemVariantType;
     safeAreaAriaLabels?: string[];
     activeBackgroundColor?: string;
+    dialogPlacement?: DialogPlacement;
   };
 
 function Button({
@@ -74,6 +80,7 @@ function Button({
   showSubMenuOn = "caret",
   safeAreaAriaLabels,
   activeBackgroundColor,
+  dialogPlacement = "bottom-left",
   ...props
 }: ButtonProps) {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -81,11 +88,11 @@ function Button({
     "main" | "original" | "dropdown"
   >("original");
 
-  const { refs, floatingStyles } = useFloating({
+  const { refs, floatingStyles, placement } = useFloating({
+    placement: getFloatingPlacement(dialogPlacement),
     open: isOpen,
     whileElementsMounted: autoUpdate,
     middleware: [offset(6), flip({ padding: 40 }), shift()],
-    placement: "bottom-start",
   });
 
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -234,7 +241,11 @@ function Button({
                     setHovered("original");
                   }}
                   withFilter={withFilter ?? false}
-                  style={dropdownStyle}
+                  style={
+                    typeof dropdownStyle === "function"
+                      ? dropdownStyle(placement)
+                      : dropdownStyle
+                  }
                   subMenuList={subMenuList}
                   variant={tipMenuSize}
                 />
