@@ -370,6 +370,8 @@ function TreeListAction({
   icon: Icon,
   style,
 }: TreeListActionProps) {
+  if (!onClick) onClick = () => {};
+
   return (
     <ActionItem
       $isActive={isActive}
@@ -377,11 +379,7 @@ function TreeListAction({
       role="button"
       tabIndex={0}
       aria-label="tree-list-action"
-      onClick={() => {
-        if (onClick) {
-          onClick();
-        }
-      }}
+      onClick={() => onClick()}
       $style={style}
     >
       {Icon && <Icon size={16} />}
