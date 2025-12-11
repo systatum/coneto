@@ -11,6 +11,64 @@ import { OptionsProps } from "./../../components/selectbox";
 import { CapsuleContentProps } from "./../../components/capsule";
 
 describe("StatefulForm", () => {
+  context("checkbox", () => {
+    const value = {
+      access: false,
+    };
+
+    context("with title", () => {
+      const CHECKBOX_TITLE_FIELDS: FormFieldGroup[] = [
+        {
+          name: "access",
+          title: "Access",
+          type: "checkbox",
+          required: false,
+        },
+      ];
+      it("should render on the label field", () => {
+        cy.mount(
+          <StatefulForm
+            fields={CHECKBOX_TITLE_FIELDS}
+            formValues={value}
+            mode="onChange"
+          />
+        );
+
+        cy.findByLabelText("title-wrapper").should(
+          "have.text",
+          CHECKBOX_TITLE_FIELDS[0]["title"]
+        );
+        cy.findByLabelText("label-wrapper").should("not.exist");
+      });
+    });
+
+    context("with placeholder", () => {
+      const CHECKBOX_PLACEHOLDER_FIELDS: FormFieldGroup[] = [
+        {
+          name: "access",
+          placeholder: "Access",
+          type: "checkbox",
+          required: false,
+        },
+      ];
+      it("should render on the right side", () => {
+        cy.mount(
+          <StatefulForm
+            fields={CHECKBOX_PLACEHOLDER_FIELDS}
+            formValues={value}
+            mode="onChange"
+          />
+        );
+
+        cy.findByLabelText("title-wrapper").should("not.exist");
+        cy.findByLabelText("label-wrapper").should(
+          "have.text",
+          CHECKBOX_PLACEHOLDER_FIELDS[0]["placeholder"]
+        );
+      });
+    });
+  });
+
   context("when array of array", () => {
     const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
       (data) => data.id === "US" || COUNTRY_CODES[206]
@@ -613,7 +671,7 @@ describe("StatefulForm", () => {
       },
       {
         name: "check",
-        placeholder: "Check",
+        title: "Check",
         type: "checkbox",
         required: false,
         width: "50%",
