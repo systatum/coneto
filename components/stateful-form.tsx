@@ -574,7 +574,7 @@ function FormFields<T extends FieldValues>({
                           width: ${field.width};
                         `
                       }
-                      wrapperStyle={
+                      boxStyle={
                         fieldSize &&
                         css`
                           width: ${fieldSize};

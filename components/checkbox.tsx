@@ -26,7 +26,7 @@ export interface CheckboxProps
   titleStyle?: CSSProp;
   labelStyle?: CSSProp;
   iconStyle?: CSSProp;
-  wrapperStyle?: CSSProp;
+  boxStyle?: CSSProp;
   descriptionStyle?: CSSProp;
   errorStyle?: CSSProp;
 }
@@ -44,7 +44,7 @@ function Checkbox({
   inputStyle,
   labelStyle,
   iconStyle,
-  wrapperStyle,
+  boxStyle,
   inputWrapperStyle,
   descriptionStyle,
   errorStyle,
@@ -72,7 +72,7 @@ function Checkbox({
       $disabled={props.disabled}
     >
       <InputContainer aria-label="input-container-checkbox">
-        <CheckboxBox $style={wrapperStyle} $highlight={!!highlightOnChecked}>
+        <CheckboxBox $style={boxStyle} $highlight={!!highlightOnChecked}>
           <HiddenCheckbox
             ref={inputRef}
             {...(props as InputHTMLAttributes<HTMLInputElement>)}

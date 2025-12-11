@@ -380,7 +380,7 @@ function Table({
               {selectable && (
                 <CheckboxWrapper>
                   <Checkbox
-                    wrapperStyle={css`
+                    boxStyle={css`
                       width: 100%;
                     `}
                     onChange={handleSelectAll}
@@ -1036,7 +1036,7 @@ function TableRow({
             {...props}
             name={rowId}
             value={isSelected ? "true" : "false"}
-            wrapperStyle={css`
+            boxStyle={css`
               width: 100%;
             `}
             checked={isSelected}
