@@ -95,7 +95,7 @@ describe("Table Component", () => {
         it("renders without total selected and header ", () => {
           cy.findByLabelText("header-wrapper").should("not.exist");
           checkbox().click().should("be.checked");
-          cy.findByText("20 items selected").should("not.exist");
+          cy.findByText("items selected").should("not.exist");
           cy.findByLabelText("header-wrapper").should("not.exist");
         });
       });
