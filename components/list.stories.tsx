@@ -487,7 +487,7 @@ export const WithLoading: Story = {
   },
 };
 
-export const WithCheckbox: Story = {
+export const ReactNodeTitle: Story = {
   render: () => {
     const LIST_GROUPS: ListGroupContentProps[] = [
       {
