@@ -62,20 +62,8 @@ export const Default: Story = {
             onActionClick={() => {
               console.log(`The value is : ${value.normal}`);
             }}
-            activeStyle={css`
-              height: 24px;
-            `}
-            actionStyle={css`
-              height: 24px;
-            `}
           >
             <Textbox
-              containerStyle={css`
-                height: 24px;
-              `}
-              style={css`
-                height: 24px;
-              `}
               value={value.normal}
               onChange={(e) => handleChange(e, "normal")}
             />
