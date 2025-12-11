@@ -10,6 +10,7 @@ import { CountryCodeProps, formatPhoneboxNumber, Phonebox } from "./phonebox";
 import { COUNTRY_CODES } from "./../constants/countries";
 import { CountryCode } from "libphonenumber-js/types.cjs";
 import { Timebox } from "./timebox";
+import { css } from "styled-components";
 
 const meta: Meta<typeof DormantText> = {
   title: "Stage/DormantText",
@@ -61,8 +62,20 @@ export const Default: Story = {
             onActionClick={() => {
               console.log(`The value is : ${value.normal}`);
             }}
+            activeStyle={css`
+              height: 24px;
+            `}
+            actionStyle={css`
+              height: 24px;
+            `}
           >
             <Textbox
+              containerStyle={css`
+                height: 24px;
+              `}
+              style={css`
+                height: 24px;
+              `}
               value={value.normal}
               onChange={(e) => handleChange(e, "normal")}
             />

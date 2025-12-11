@@ -22,6 +22,7 @@ import styled, { css, CSSProp } from "styled-components";
 export interface DormantTextProps {
   dormantedStyle?: CSSProp;
   activeStyle?: CSSProp;
+  actionStyle?: CSSProp;
   onActionClick?: () => void;
   icon?: RemixiconComponentType;
   dormantedFontSize?: number;
@@ -47,6 +48,7 @@ function DormantText({
   dormantedFontSize = 17,
   icon: Icon = RiCheckLine,
   children,
+  actionStyle,
   content,
   fullWidth,
   acceptChangeOn = "click",
@@ -126,6 +128,7 @@ function DormantText({
 
   return dormantedLocal ? (
     <DormantLabel
+      aria-label="dormant-wrapper"
       ref={measureLabelSize}
       onClick={() => {
         if (onActive) {
@@ -143,12 +146,17 @@ function DormantText({
       <PencilIcon className="pencil-icon" size={dormantPencilSize} />
     </DormantLabel>
   ) : (
-    <DormantWrapper $style={activeStyle} $minHeight={labelHeight}>
+    <DormantWrapper
+      aria-label="active-wrapper"
+      $style={activeStyle}
+      $minHeight={labelHeight}
+    >
       <LabelWrapper ref={measureLabelSize} $maxWidth={labelWidth}>
         {dormantChildren}
       </LabelWrapper>
 
       <ActionButton
+        $style={actionStyle}
         $minHeight={32.5 | inputHeight}
         onClick={(e) => {
           e.preventDefault();
@@ -163,6 +171,7 @@ function DormantText({
 
       {cancelable && (
         <ActionButton
+          $style={actionStyle}
           $minHeight={32.5 | inputHeight}
           onClick={(e) => {
             e.preventDefault();
@@ -263,7 +272,6 @@ const DormantWrapper = styled.div<{
   position: relative;
   align-items: center;
   gap: 2px;
-  height: 100%;
   min-height: ${({ $minHeight }) =>
     typeof $minHeight === "number" ? `${$minHeight}px` : $minHeight};
   ${({ $style }) => $style}
@@ -272,6 +280,8 @@ const DormantWrapper = styled.div<{
 const LabelWrapper = styled.div<{ $maxWidth?: number | string }>`
   width: 100%;
   height: 100%;
+  display: flex;
+  align-items: center;
   max-width: ${({ $maxWidth }) =>
     typeof $maxWidth === "number" ? `${$maxWidth}px` : $maxWidth};
 `;
@@ -289,7 +299,7 @@ const ActionButton = styled.button<{
   cursor: pointer;
   color: var(--muted-foreground, #666);
 
-  min-height: ${({ $minHeight }) =>
+  height: ${({ $minHeight }) =>
     typeof $minHeight === "number" ? `${$minHeight}px` : $minHeight};
 
   &:hover {
