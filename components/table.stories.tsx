@@ -383,7 +383,7 @@ export const Appendable: Story = {
         onItemsSelected={handleItemsSelected}
         subMenuList={TIP_MENU_ACTION}
         onLastRowReached={handleFetchData}
-        totalSelectedItemText={(n) => `${n} emails selected`}
+        totalSelectedItemText={null}
       >
         {rows.map((rowValue, rowIndex) => (
           <Table.Row
