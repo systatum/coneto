@@ -51,7 +51,7 @@ function DormantText({
   actionStyle,
   content,
   fullWidth,
-  acceptChangeOn = "click",
+  acceptChangeOn,
   cancelable,
   onActive,
   onCancelRequested,
