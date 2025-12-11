@@ -3,6 +3,7 @@ import {
   List,
   ListGroupActionsProps,
   ListGroupContentProps,
+  ListItemActionProps,
   ListItemProps,
 } from "./list";
 import {
@@ -16,6 +17,7 @@ import {
   RiArrowRightSLine,
   RiDeleteBack2Line,
   RiEdit2Line,
+  RiDeleteBin2Fill,
 } from "@remixicon/react";
 import { Card } from "./card";
 import { ChangeEvent, useMemo, useState } from "react";
@@ -25,6 +27,8 @@ import { OptionsProps } from "./selectbox";
 import z from "zod";
 import { EmptySlate } from "./empty-slate";
 import { Button } from "./button";
+import { Textbox } from "./textbox";
+import { DormantText } from "./dormant-text";
 
 const meta: Meta<typeof List> = {
   title: "Content/List",
@@ -87,212 +91,6 @@ export const Default: Story = {
               subtitle={item.subtitle}
               title={item.title}
             />
-          ))}
-        </List>
-      </Card>
-    );
-  },
-};
-
-export const WithSearch: Story = {
-  render: () => {
-    const LIST_ITEMS: ListItemProps[] = [
-      {
-        id: "home",
-        title: "Home",
-        subtitle: "Go to homepage",
-        leftIcon: RiHome2Fill,
-      },
-      {
-        id: "profile",
-        title: "Profile",
-        subtitle: "View your profile",
-        leftIcon: RiUser3Fill,
-      },
-      {
-        id: "settings",
-        title: "Settings",
-        subtitle: "Adjust preferences",
-        leftIcon: RiSettings3Fill,
-      },
-      {
-        id: "messages",
-        title: "Messages",
-        subtitle: "Check your inbox",
-        leftIcon: RiMailFill,
-      },
-      {
-        id: "notifications",
-        title: "Notifications",
-        subtitle: "View Alerts",
-        leftIcon: RiNotification3Fill,
-      },
-    ];
-
-    const [value, setValue] = useState({
-      search: "",
-    });
-
-    const filteredContent = useMemo(() => {
-      const searchContent = value.search.toLowerCase().trim();
-      return LIST_ITEMS.filter(
-        (list) =>
-          list.title.toLowerCase().includes(searchContent) ||
-          list.subtitle.toLowerCase().includes(searchContent)
-      );
-    }, [value.search]);
-
-    const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
-      const { name, value: inputValue } = e.target;
-
-      setValue((prev) => ({ ...prev, [name]: inputValue }));
-    };
-
-    return (
-      <Card>
-        <List
-          searchable
-          onSearchRequested={onChangeValue}
-          containerStyle={css`
-            padding: 16px;
-          `}
-        >
-          {filteredContent.map((item, index) => (
-            <List.Item
-              containerStyle={css`
-                gap: 4px;
-              `}
-              key={index}
-              id={item.id}
-              leftIcon={item.leftIcon}
-              subtitle={item.subtitle}
-              title={item.title}
-            />
-          ))}
-        </List>
-      </Card>
-    );
-  },
-};
-
-export const WithGroup: Story = {
-  render: () => {
-    const LIST_GROUPS: ListGroupContentProps[] = [
-      {
-        id: "recent-content",
-        title: "Recent Content",
-        items: [
-          {
-            id: "messages",
-            title: "Messages",
-            subtitle: "Check your inbox",
-            leftIcon: RiMailFill,
-          },
-          {
-            id: "notifications",
-            title: "Notifications",
-            subtitle: "View Alerts",
-            leftIcon: RiNotification3Fill,
-          },
-          {
-            id: "calendar",
-            title: "Calendar",
-            subtitle: "Upcoming events",
-            leftIcon: RiCalendar2Fill,
-          },
-        ],
-      },
-      {
-        id: "all-content",
-        title: "All Content",
-        items: [
-          {
-            id: "home",
-            title: "Home",
-            subtitle: "Go to homepage",
-            leftIcon: RiHome2Fill,
-          },
-          {
-            id: "profile",
-            title: "Profile",
-            subtitle: "View your profile",
-            leftIcon: RiUser3Fill,
-          },
-          {
-            id: "settings",
-            title: "Settings",
-            subtitle: "Adjust preferences",
-            leftIcon: RiSettings3Fill,
-          },
-        ],
-      },
-    ];
-
-    const [value, setValue] = useState({
-      search: "",
-    });
-
-    const filteredContent = useMemo(() => {
-      const searchContent = value.search.toLowerCase().trim();
-
-      return LIST_GROUPS.map((group) => {
-        const matchedItems = group.items.filter(
-          (item) =>
-            item.title?.toLowerCase().includes(searchContent) ||
-            item.subtitle?.toLowerCase().includes(searchContent)
-        );
-
-        const groupMatches = group.title.toLowerCase().includes(searchContent);
-
-        if (groupMatches || matchedItems.length > 0) {
-          return {
-            ...group,
-            items: groupMatches ? group.items : matchedItems,
-          };
-        }
-
-        return null;
-      }).filter(Boolean);
-    }, [value.search]);
-
-    const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
-      const { name, value: inputValue } = e.target;
-
-      setValue((prev) => ({ ...prev, [name]: inputValue }));
-    };
-
-    return (
-      <Card>
-        <List
-          searchable
-          onSearchRequested={onChangeValue}
-          containerStyle={css`
-            padding: 16px;
-          `}
-        >
-          {filteredContent.map((group, index) => (
-            <List.Group
-              contentStyle={css`
-                padding-top: 4px;
-              `}
-              key={index}
-              id={group.id}
-              title={group.title}
-            >
-              {group.items.map((list, i) => (
-                <List.Item
-                  key={i}
-                  containerStyle={css`
-                    padding-right: 4px;
-                    padding-left: 4px;
-                  `}
-                  id={list.id}
-                  leftIcon={list.leftIcon}
-                  subtitle={list.subtitle}
-                  title={list.title}
-                />
-              ))}
-            </List.Group>
           ))}
         </List>
       </Card>
@@ -363,11 +161,15 @@ export const Draggable: Story = {
 
       return groups
         .map((group) => {
-          const matchedItems = group.items.filter(
-            (item) =>
-              item.title?.toLowerCase().includes(searchContent) ||
-              item.subtitle?.toLowerCase().includes(searchContent)
-          );
+          const matchedItems = group.items.filter((item) => {
+            const titleMatch =
+              typeof item.title === "string" &&
+              item.title.toLowerCase().includes(searchContent);
+            const subtitleMatch = item.subtitle
+              ?.toLowerCase()
+              .includes(searchContent);
+            return titleMatch || subtitleMatch;
+          });
 
           const groupMatches = group.title
             .toLowerCase()
@@ -465,6 +267,7 @@ export const Draggable: Story = {
           onSearchRequested={onChangeValue}
           containerStyle={css`
             padding: 16px;
+            min-width: 300px;
           `}
         >
           {filteredContent.map((group, index) => {
@@ -552,11 +355,15 @@ export const WithLoading: Story = {
 
       return groups
         .map((group) => {
-          const matchedItems = group.items.filter(
-            (item) =>
-              item.title?.toLowerCase().includes(searchContent) ||
-              item.subtitle?.toLowerCase().includes(searchContent)
-          );
+          const matchedItems = group.items.filter((item) => {
+            const titleMatch =
+              typeof item.title === "string" &&
+              item.title.toLowerCase().includes(searchContent);
+            const subtitleMatch = item.subtitle
+              ?.toLowerCase()
+              .includes(searchContent);
+            return titleMatch || subtitleMatch;
+          });
 
           const groupMatches = group.title
             .toLowerCase()
@@ -655,6 +462,7 @@ export const WithLoading: Story = {
           onSearchRequested={onChangeValue}
           containerStyle={css`
             padding: 16px;
+            min-width: 300px;
           `}
         >
           {filteredContent.map((group, index) => {
@@ -681,19 +489,6 @@ export const WithLoading: Story = {
 
 export const WithCheckbox: Story = {
   render: () => {
-    const [formValues, setFormValues] = useState({
-      field_name: "",
-      type: ["1"],
-    });
-
-    const FIELD_NAME_OPTIONS: OptionsProps[] = [
-      { text: "code", value: "1" },
-      { text: "function", value: "2" },
-      { text: "variable", value: "3" },
-      { text: "loop", value: "4" },
-      { text: "array", value: "5" },
-    ];
-
     const LIST_GROUPS: ListGroupContentProps[] = [
       {
         id: "form-fields",
@@ -704,28 +499,39 @@ export const WithCheckbox: Story = {
           {
             id: "lead",
             title: "Lead",
-            openable: true,
           },
         ],
       },
     ];
 
-    const [groups] = useState(LIST_GROUPS);
-    const [value, setValue] = useState({
+    const [groups, setGroups] = useState(LIST_GROUPS);
+
+    interface InputValueProps {
+      search: string;
+      checked: ListItemProps[];
+      value: { id: string; value: string }[];
+    }
+
+    const [inputValue, setInputValue] = useState<InputValueProps>({
       search: "",
       checked: [] as ListItemProps[],
+      value: [],
     });
 
     const filteredContent = useMemo(() => {
-      const searchContent = value.search.toLowerCase().trim();
+      const searchContent = inputValue.search.toLowerCase().trim();
 
       return groups
         .map((group) => {
-          const matchedItems = group.items.filter(
-            (item) =>
-              item.title?.toLowerCase().includes(searchContent) ||
-              item.subtitle?.toLowerCase().includes(searchContent)
-          );
+          const matchedItems = group.items.filter((item) => {
+            const titleMatch =
+              typeof item.title === "string" &&
+              item.title.toLowerCase().includes(searchContent);
+            const subtitleMatch = item.subtitle
+              ?.toLowerCase()
+              .includes(searchContent);
+            return titleMatch || subtitleMatch;
+          });
 
           const groupMatches = group.title
             .toLowerCase()
@@ -741,22 +547,152 @@ export const WithCheckbox: Story = {
           return null;
         })
         .filter(Boolean);
-    }, [value.search, groups, formValues]);
+    }, [inputValue.search, groups]);
 
     const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
       const { name, value: inputValue, checked, type } = e.target;
 
       if (type === "checkbox") {
         const parsed = JSON.parse(inputValue);
-        setValue((prev) => ({
+        setInputValue((prev) => ({
           ...prev,
           [name]: checked
             ? [...prev[name], parsed]
             : prev[name].filter((val: ListItemProps) => val.id !== parsed.id),
         }));
       } else {
-        setValue((prev) => ({ ...prev, [name]: inputValue }));
+        setInputValue((prev) => ({ ...prev, [name]: inputValue }));
       }
+    };
+
+    const LIST_GROUP_ACTIONS: ListGroupActionsProps[] = [
+      {
+        caption: "Add",
+        onClick: () =>
+          setGroups((prev) => {
+            const count = prev.flatMap((g) => g.items).length + 1;
+
+            const newItem = {
+              id: `new-item-${count}`,
+              title: `New Item ${count}`,
+            };
+
+            const updated = [...prev];
+            updated[0] = {
+              ...updated[0],
+              items: [...updated[0].items, newItem],
+            };
+
+            return updated;
+          }),
+      },
+    ];
+
+    const LIST_ITEM_ACTIONS = (id: string): ListItemActionProps[] => {
+      const selectedByFormFieldsGroup = id.split("form-fields-");
+      return [
+        {
+          caption: "Delete",
+          icon: RiDeleteBin2Fill,
+          onClick: () => {
+            setGroups((prev) =>
+              prev.map((group) => ({
+                ...group,
+                items: group.items.filter(
+                  (item) => item.id !== selectedByFormFieldsGroup[1]
+                ),
+              }))
+            );
+
+            setInputValue((prev) => ({
+              ...prev,
+              value: prev.value.filter(
+                (val) => val.id !== selectedByFormFieldsGroup[1]
+              ),
+            }));
+          },
+        },
+      ];
+    };
+
+    const TitleContent = (id: string, value: string) => {
+      const existing = inputValue.value.find((item) => item.id === id);
+      const currentValue = existing ? existing.value : value;
+      const similiarValue = inputValue.value.find((val) => val.id === id);
+
+      const onCancelRequested = () => {
+        const similiarValue = groups
+          .flatMap((group) => group.items)
+          .find((item) => item.id === id);
+
+        setInputValue((prev) => ({
+          ...prev,
+          value: prev.value.map((val) =>
+            val.id === id ? { id, value: similiarValue.title as string } : val
+          ),
+        }));
+      };
+
+      const onActionClick = () => {
+        setGroups((groups) =>
+          groups.map((group) => ({
+            ...group,
+            items: group.items.map((item) =>
+              item.id === similiarValue?.id
+                ? {
+                    ...item,
+                    id: similiarValue.id,
+                    title: similiarValue.value,
+                  }
+                : item
+            ),
+          }))
+        );
+      };
+
+      const onActive = () => {
+        if (!existing)
+          setInputValue((prev) => ({
+            ...prev,
+            value: [...prev.value, { id: id, value: value }],
+          }));
+      };
+
+      return (
+        <DormantText
+          fullWidth
+          cancelable
+          dormantedStyle={css`
+            &:hover {
+              background-color: transparent;
+              border-color: transparent;
+            }
+            height: 24px;
+          `}
+          acceptChangeOn="all"
+          onCancelRequested={onCancelRequested}
+          dormantedFontSize={14}
+          content={value}
+          onActionClick={onActionClick}
+          onActive={onActive}
+        >
+          <Textbox
+            autoComplete="off"
+            value={currentValue}
+            onChange={(e) => {
+              const val = e.target.value;
+              setInputValue((prev) => ({
+                ...prev,
+                value: prev.value.some((item) => item.id === id)
+                  ? prev.value.map((item) =>
+                      item.id === id ? { ...item, value: val } : item
+                    )
+                  : [...prev.value, { id, value: val }],
+              }));
+            }}
+          />
+        </DormantText>
+      );
     };
 
     return (
@@ -777,88 +713,41 @@ export const WithCheckbox: Story = {
                 id={group.id}
                 subtitle={group.subtitle}
                 title={group.title}
+                actions={LIST_GROUP_ACTIONS}
               >
-                {group.items.map((list, i) => (
-                  <List.Item
-                    key={i}
-                    openable={list.openable}
-                    id={list.id}
-                    subtitle={list.subtitle}
-                    title={list.title}
-                    groupId={group.id}
-                    onSelected={onChangeValue}
-                    selectedOptions={{
-                      checked:
-                        value.checked.some((check) => check.id === list.id) ||
-                        [
-                          { id: "name", title: "Name" },
-                          { id: "code", title: "Code" },
-                        ].some((check) => check.id === list.id),
-                      value: JSON.stringify({
-                        id: list.id,
-                        title: list.title,
-                        subtitle: list.subtitle,
-                      }),
-                    }}
-                  >
-                    {list.children}
-                    {list.id === "lead" && (
-                      <StatefulForm
-                        containerStyle={css`
-                          padding-left: 8px;
-                          padding-right: 8px;
-                          padding-bottom: 8px;
-                        `}
-                        formValues={formValues}
-                        onChange={({ currentState }) => {
-                          setFormValues((prev) => ({
-                            ...prev,
-                            ...currentState,
-                          }));
-                        }}
-                        mode="onChange"
-                        validationSchema={z.object({
-                          field_name: z
-                            .string()
-                            .min(
-                              3,
-                              "First name must be at least 3 characters long"
-                            ),
-                          type: z
-                            .array(z.string().min(1, "Choose one"))
-                            .min(1, "Combo must have at least one item")
-                            .optional(),
-                        })}
-                        fields={[
-                          {
-                            name: "field_name",
-                            title: "Field Name",
-                            type: "text",
-                            required: false,
-                            placeholder: "Enter the field name",
-                          },
-                          {
-                            name: "type",
-                            title: "Type",
-                            type: "combo",
-                            required: false,
-                            placeholder: "Select the type data",
-                            comboboxProps: {
-                              options: FIELD_NAME_OPTIONS,
-                              selectboxStyle: css`
-                                border: 1px solid #d1d5db;
-                                &:focus {
-                                  border-color: #61a9f9;
-                                  box-shadow: 0 0 0 1px #61a9f9;
-                                }
-                              `,
-                            },
-                          },
-                        ]}
-                      />
-                    )}
-                  </List.Item>
-                ))}
+                {group.items.map((list, i) => {
+                  const title = TitleContent(list.id, list.title as string);
+                  return (
+                    <List.Item
+                      key={i}
+                      id={list.id}
+                      subtitle={list.subtitle}
+                      title={title}
+                      actions={LIST_ITEM_ACTIONS}
+                      containerStyle={css`
+                        width: 100%;
+                      `}
+                      titleStyle={css`
+                        width: 100%;
+                      `}
+                      rightSideStyle={css`
+                        width: 6%;
+                      `}
+                      groupId={group.id}
+                      onSelected={onChangeValue}
+                      selectedOptions={{
+                        checked: inputValue.checked.some(
+                          (check) => check.id === list.id
+                        ),
+                        value: JSON.stringify({
+                          id: list.id,
+                          title: list.title,
+                          subtitle: list.subtitle,
+                        }),
+                      }}
+                    />
+                  );
+                })}
               </List.Group>
             );
           })}
@@ -974,11 +863,15 @@ export const WithBadge: Story = {
 
       return groups
         .map((group) => {
-          const matchedItems = group.items.filter(
-            (item) =>
-              item.title?.toLowerCase().includes(searchContent) ||
-              item.subtitle?.toLowerCase().includes(searchContent)
-          );
+          const matchedItems = group.items.filter((item) => {
+            const titleMatch =
+              typeof item.title === "string" &&
+              item.title.toLowerCase().includes(searchContent);
+            const subtitleMatch = item.subtitle
+              ?.toLowerCase()
+              .includes(searchContent);
+            return titleMatch || subtitleMatch;
+          });
 
           const groupMatches = group.title
             .toLowerCase()
@@ -1158,11 +1051,15 @@ export const CustomOpener: Story = {
 
       return groups
         .map((group) => {
-          const matchedItems = group.items.filter(
-            (item) =>
-              item.title?.toLowerCase().includes(searchContent) ||
-              item.subtitle?.toLowerCase().includes(searchContent)
-          );
+          const matchedItems = group.items.filter((item) => {
+            const titleMatch =
+              typeof item.title === "string" &&
+              item.title.toLowerCase().includes(searchContent);
+            const subtitleMatch = item.subtitle
+              ?.toLowerCase()
+              .includes(searchContent);
+            return titleMatch || subtitleMatch;
+          });
 
           const groupMatches = group.title
             .toLowerCase()
