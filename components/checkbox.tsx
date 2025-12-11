@@ -2,6 +2,7 @@ import styled, { css, CSSProp } from "styled-components";
 import {
   DetailedHTMLProps,
   InputHTMLAttributes,
+  ReactElement,
   useEffect,
   useRef,
 } from "react";
@@ -20,7 +21,9 @@ export interface CheckboxProps
   description?: string;
   highlightOnChecked?: boolean;
   containerStyle?: CSSProp;
+  inputWrapperStyle?: CSSProp;
   inputStyle?: CSSProp;
+  titleStyle?: CSSProp;
   labelStyle?: CSSProp;
   iconStyle?: CSSProp;
   wrapperStyle?: CSSProp;
@@ -30,6 +33,7 @@ export interface CheckboxProps
 
 function Checkbox({
   label,
+  title,
   name,
   showError,
   description,
@@ -41,8 +45,10 @@ function Checkbox({
   labelStyle,
   iconStyle,
   wrapperStyle,
+  inputWrapperStyle,
   descriptionStyle,
   errorStyle,
+  titleStyle,
   ...props
 }: CheckboxProps) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -55,13 +61,13 @@ function Checkbox({
     }
   }, [indeterminate]);
 
-  return (
-    <Label
+  const inputElement: ReactElement = (
+    <InputWrapper
       htmlFor={props.disabled ? null : inputId}
       $hasDescription={!!description}
       $highlight={!!highlightOnChecked}
       $checked={isChecked}
-      $style={containerStyle}
+      $style={inputWrapperStyle}
       $disabled={props.disabled}
     >
       <InputContainer aria-label="input-container-checkbox">
@@ -101,7 +107,11 @@ function Checkbox({
         </CheckboxBox>
 
         {label && (
-          <LabelText $highlight={highlightOnChecked} $style={labelStyle}>
+          <LabelText
+            aria-label="label-wrapper"
+            $highlight={highlightOnChecked}
+            $style={labelStyle}
+          >
             {label}
           </LabelText>
         )}
@@ -115,20 +125,48 @@ function Checkbox({
           {description}
         </DescriptionText>
       )}
+
       {showError && errorMessage && (
         <ErrorText $style={errorStyle}>{errorMessage}</ErrorText>
       )}
-    </Label>
+    </InputWrapper>
+  );
+
+  return (
+    <Container $style={containerStyle}>
+      {title && (
+        <Title aria-label="title-wrapper" $style={titleStyle}>
+          {title}
+        </Title>
+      )}
+      {inputElement}
+    </Container>
   );
 }
 
-const Label = styled.label<{
+const Container = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+
+  ${({ $style }) => $style}
+`;
+
+const Title = styled.label<{ $style?: CSSProp }>`
+  font-size: 0.75rem;
+  ${({ $style }) => $style}
+`;
+
+const InputWrapper = styled.label<{
   $hasDescription: boolean;
   $highlight: boolean;
   $checked: boolean;
   $style?: CSSProp;
   $disabled?: boolean;
 }>`
+  width: 100%;
   display: flex;
   flex-direction: column;
   font-size: 12px;
@@ -147,13 +185,6 @@ const Label = styled.label<{
       opacity: 0.6;
       user-select: none;
     `}
-
-  ${({ $style }) => $style};
-
-  &:hover {
-    background-color: ${({ $highlight }) =>
-      $highlight ? "rgb(231,242,252)" : "white"};
-  }
 
   ${({ $style }) => $style}
 `;

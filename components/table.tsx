@@ -380,6 +380,12 @@ function Table({
               {selectable && (
                 <CheckboxWrapper>
                   <Checkbox
+                    containerStyle={css`
+                      background-color: transparent;
+                    `}
+                    wrapperStyle={css`
+                      width: 100%;
+                    `}
                     onChange={handleSelectAll}
                     checked={allRowSelectedLocal}
                     indeterminate={someSelectedLocal}
@@ -721,6 +727,7 @@ const TableLoadingOverlay = styled.div`
 const CheckboxWrapper = styled.div`
   min-width: 2rem;
   display: flex;
+  position: relative;
   justify-content: center;
   align-items: center;
   cursor: pointer;
@@ -1020,7 +1027,7 @@ function TableRow({
       }}
     >
       {selectable && (
-        <CheckboxWrapperRow
+        <CheckboxWrapper
           onClick={(e) => {
             e.stopPropagation();
             if (rowId) {
@@ -1028,8 +1035,19 @@ function TableRow({
             }
           }}
         >
-          <Checkbox {...props} checked={isSelected} />
-        </CheckboxWrapperRow>
+          <Checkbox
+            {...props}
+            name={rowId}
+            value={isSelected ? "true" : "false"}
+            containerStyle={css`
+              background-color: transparent;
+            `}
+            wrapperStyle={css`
+              width: 100%;
+            `}
+            checked={isSelected}
+          />
+        </CheckboxWrapper>
       )}
       {content
         ? content.map((col, i) => {
@@ -1171,15 +1189,6 @@ const DraggableRequest = styled.div`
   transform: translateY(-50%);
   z-index: 8;
   right: 1rem;
-`;
-
-const CheckboxWrapperRow = styled.div`
-  min-width: 2rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  pointer-events: auto;
 `;
 
 function TableRowCell({
