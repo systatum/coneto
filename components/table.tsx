@@ -291,7 +291,7 @@ function Table({
             showPagination ||
             actions ||
             searchable) && (
-            <HeaderActions>
+            <HeaderActions aria-label="header-wrapper">
               {(actions || showPagination) && (
                 <ActionsWrapper>
                   {showPagination && (
