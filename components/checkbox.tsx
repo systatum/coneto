@@ -63,6 +63,7 @@ function Checkbox({
 
   const inputElement: ReactElement = (
     <InputWrapper
+      aria-label="input-wrapper-checkbox"
       htmlFor={props.disabled ? null : inputId}
       $hasDescription={!!description}
       $highlight={!!highlightOnChecked}
