@@ -113,6 +113,14 @@ function DormantText({
           setDormantedLocal(true);
         }
       },
+      onClick: () => {
+        if (acceptChangeOn === "click" || acceptChangeOn === "all") {
+          if (onActionClick) {
+            onActionClick();
+          }
+          setDormantedLocal(true);
+        }
+      },
     });
   });
 
@@ -140,20 +148,18 @@ function DormantText({
         {dormantChildren}
       </LabelWrapper>
 
-      {acceptChangeOn !== "enter" && (
-        <ActionButton
-          $minHeight={32.5 | inputHeight}
-          onClick={(e) => {
-            e.preventDefault();
-            onActionClick?.();
-            setDormantedLocal(true);
-          }}
-        >
-          <IconWrapper>
-            <Icon size={18} />
-          </IconWrapper>
-        </ActionButton>
-      )}
+      <ActionButton
+        $minHeight={32.5 | inputHeight}
+        onClick={(e) => {
+          e.preventDefault();
+          onActionClick?.();
+          setDormantedLocal(true);
+        }}
+      >
+        <IconWrapper>
+          <Icon size={18} />
+        </IconWrapper>
+      </ActionButton>
 
       {cancelable && (
         <ActionButton
