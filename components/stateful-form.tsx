@@ -981,7 +981,7 @@ function FormFields<T extends FieldValues>({
                           border-color: #61a9f9;
                           box-shadow: 0 0 0 1px #61a9f9;
                         }
-                        ${field.dateProps.selectboxStyle}
+                        ${field?.dateProps?.selectboxStyle}
                       `}
                     />
                   )}
@@ -1042,7 +1042,7 @@ function FormFields<T extends FieldValues>({
                           border-color: #61a9f9;
                           box-shadow: 0 0 0 1px #61a9f9;
                         }
-                        ${field.comboboxProps.selectboxStyle}
+                        ${field?.comboboxProps?.selectboxStyle}
                       `}
                     />
                   )}
