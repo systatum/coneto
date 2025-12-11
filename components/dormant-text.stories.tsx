@@ -282,6 +282,7 @@ export const WithDatebox: Story = {
       normal: ["07/25/2025"],
       full: ["07/25/2025"],
       max: ["07/25/2025"],
+      click: ["07/25/2025"],
       keydown: ["07/25/2025"],
     });
 
@@ -289,6 +290,7 @@ export const WithDatebox: Story = {
       normal: value.normal,
       full: value.full,
       max: value.max,
+      click: value.click,
       keydown: value.keydown,
     });
 
@@ -381,6 +383,33 @@ export const WithDatebox: Story = {
           <DormantText
             fullWidth
             acceptChangeOn={"click"}
+            content={value.click?.[0]}
+            cancelable
+            onActive={() => {
+              setOldValue((prev) => ({ ...prev, ["click"]: value.click }));
+            }}
+            onCancelRequested={() => {
+              setValue((prev) => ({ ...prev, ["click"]: oldValue.click }));
+            }}
+            onActionClick={() => {
+              console.log(`Selected value: ${value.click?.[0]}`);
+            }}
+          >
+            <Datebox
+              selectedDates={value.click}
+              dayNames={DAY_NAMES}
+              monthNames={MONTH_NAMES}
+              setSelectedDates={(e) => handleChange(e, "click")}
+            />
+          </DormantText>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <span style={{ fontWeight: 500 }}>
+            Change cancelable, and acceptable by pressing enter
+          </span>
+          <DormantText
+            fullWidth
+            acceptChangeOn={"enter"}
             content={value.keydown?.[0]}
             cancelable
             onActive={() => {
