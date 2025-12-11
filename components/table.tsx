@@ -79,7 +79,7 @@ export interface TableProps {
   disablePreviousPageButton?: boolean;
   disableNextPageButton?: boolean;
   pageNumberText?: string | number;
-  totalSelectedItemText?: (count: number) => string;
+  totalSelectedItemText?: null | ((count: number) => string);
   sumRow?: SummaryRowProps[];
 }
 
@@ -287,7 +287,7 @@ function Table({
     <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
       <TableColumnContext.Provider value={columns}>
         <Wrapper $containerStyle={containerStyle}>
-          {(selectedData.length > 0 ||
+          {((selectedData.length > 0 && totalSelectedItemText !== null) ||
             showPagination ||
             actions ||
             searchable) && (
@@ -363,7 +363,7 @@ function Table({
                       <Divider aria-label="divider" />
                     </>
                   )}
-                  {selectable && (
+                  {selectable && totalSelectedItemText !== null && (
                     <span>
                       {totalSelectedItemText
                         ? totalSelectedItemText(selectedData.length)
@@ -618,6 +618,7 @@ const PaginationInfo = styled.div`
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
+  justify-content: end;
   align-items: center;
   min-width: 140px;
 `;
