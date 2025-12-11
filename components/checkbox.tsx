@@ -171,12 +171,16 @@ const InputWrapper = styled.label<{
   flex-direction: column;
   font-size: 12px;
   background-color: ${({ $highlight, $checked }) =>
-    $highlight && $checked ? "#DBEAFE" : "white"};
+    $highlight && $checked ? "#DBEAFE" : "transparent"};
   border: ${({ $highlight }) =>
     $highlight ? "1px solid transparent" : "none"};
   padding: ${({ $highlight }) => ($highlight ? "12px" : "0")};
   cursor: ${({ $highlight }) => ($highlight ? "pointer" : "default")};
   transition: background-color 0.2s;
+
+  &:hover {
+    background-color: ${({ $highlight }) => ($highlight ? "#E7F2FC" : "none")};
+  }
 
   ${({ $disabled }) =>
     $disabled &&

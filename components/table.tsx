@@ -380,9 +380,6 @@ function Table({
               {selectable && (
                 <CheckboxWrapper>
                   <Checkbox
-                    inputWrapperStyle={css`
-                      background-color: transparent;
-                    `}
                     wrapperStyle={css`
                       width: 100%;
                     `}
@@ -1039,9 +1036,6 @@ function TableRow({
             {...props}
             name={rowId}
             value={isSelected ? "true" : "false"}
-            inputWrapperStyle={css`
-              background-color: transparent;
-            `}
             wrapperStyle={css`
               width: 100%;
             `}
