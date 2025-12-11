@@ -12,9 +12,9 @@ import {
 } from "@remixicon/react";
 import {
   List,
-  ListActionItemProps,
   ListGroupActionsProps,
   ListGroupContentProps,
+  ListItemActionProps,
 } from "./../../components/list";
 import { css } from "styled-components";
 
@@ -363,7 +363,7 @@ describe("List", () => {
 
   context("actions", () => {
     context("when given in the list", () => {
-      const LIST_ACTION_ITEMS_PROPS = (id: string): ListActionItemProps[] => [
+      const LIST_ACTION_ITEMS_PROPS = (id: string): ListItemActionProps[] => [
         {
           caption: "Add",
           icon: RiArrowRightSLine,
@@ -1360,7 +1360,7 @@ describe("List", () => {
               .then(($el) => {
                 const initialHeight = $el.height();
 
-                cy.findByText(groups.items[index].title).click();
+                cy.findByText(groups.items[index].title as string).click();
 
                 cy.findAllByLabelText("list-item-wrapper")
                   .eq(index)

@@ -16,8 +16,8 @@ import {
 } from "@remixicon/react";
 import {
   List,
-  ListActionItemProps,
   ListGroupContentProps,
+  ListItemActionProps,
 } from "./../../components/list";
 import { css } from "styled-components";
 import {
@@ -55,7 +55,7 @@ const checkMenuAlignment = () => {
 
 describe("context-menu", () => {
   context("when given in List component", () => {
-    const LIST_ACTION_ITEMS_PROPS = (id: string): ListActionItemProps[] => [
+    const LIST_ACTION_ITEMS_PROPS = (id: string): ListItemActionProps[] => [
       {
         caption: "Add",
         icon: RiArrowRightSLine,
