@@ -816,14 +816,17 @@ function Calendar({
                 role="option"
                 aria-selected={isHighlighted}
                 id={`option-${idx}`}
-                onClick={async (e) => {
+                onMouseDown={async (e) => {
+                  e.preventDefault();
+
                   if ((isDateWeekend && disableWeekend) || isDisabled) {
                     return;
                   }
 
                   await handleSelect(date, e);
                   if (onClick) {
-                    onClick();
+                    console.log(onClick);
+                    await onClick();
                   }
                 }}
                 onMouseEnter={() => {
