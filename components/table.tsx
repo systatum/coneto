@@ -50,6 +50,7 @@ export interface TableProps {
   selectable?: boolean;
   searchable?: boolean;
   draggable?: boolean;
+  selectedItems?: string[];
   onDragged?: (props: {
     id?: string;
     oldGroupId: string;
@@ -78,7 +79,7 @@ export interface TableProps {
   disablePreviousPageButton?: boolean;
   disableNextPageButton?: boolean;
   pageNumberText?: string | number;
-  totalSelectedItemText?: (count: number) => string;
+  totalSelectedItemText?: null | ((count: number) => string);
   sumRow?: SummaryRowProps[];
 }
 
@@ -146,6 +147,7 @@ function Table({
   selectable = false,
   columns,
   onItemsSelected,
+  selectedItems = [],
   children,
   isLoading,
   containerStyle,
@@ -177,7 +179,7 @@ function Table({
     id: string;
   } | null>(null);
 
-  const [selectedData, setSelectedData] = useState<string[]>([]);
+  const [selectedData, setSelectedData] = useState<string[]>(selectedItems);
   const [allRowsLocal, setAllRowsLocal] = useState<string[]>([]);
   const [rowActions, setRowActions] = useState<TipMenuItemProps[]>([]);
 
@@ -285,11 +287,11 @@ function Table({
     <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
       <TableColumnContext.Provider value={columns}>
         <Wrapper $containerStyle={containerStyle}>
-          {(selectedData.length > 0 ||
+          {((selectedData.length > 0 && totalSelectedItemText !== null) ||
             showPagination ||
             actions ||
             searchable) && (
-            <HeaderActions>
+            <HeaderActions aria-label="header-wrapper">
               {(actions || showPagination) && (
                 <ActionsWrapper>
                   {showPagination && (
@@ -361,7 +363,7 @@ function Table({
                       <Divider aria-label="divider" />
                     </>
                   )}
-                  {selectable && (
+                  {selectable && totalSelectedItemText !== null && (
                     <span>
                       {totalSelectedItemText
                         ? totalSelectedItemText(selectedData.length)
@@ -378,6 +380,9 @@ function Table({
               {selectable && (
                 <CheckboxWrapper>
                   <Checkbox
+                    boxStyle={css`
+                      width: 100%;
+                    `}
                     onChange={handleSelectAll}
                     checked={allRowSelectedLocal}
                     indeterminate={someSelectedLocal}
@@ -444,7 +449,9 @@ function Table({
                             background-color: #d4d4d4;
                           `}
                           variant="none"
-                          subMenuList={subMenuList(`${col.id}`)}
+                          subMenuList={
+                            subMenuList ? subMenuList(col.id) : undefined
+                          }
                         />
                       </Toolbar>
                     )}
@@ -614,6 +621,7 @@ const PaginationInfo = styled.div`
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
+  justify-content: end;
   align-items: center;
   min-width: 140px;
 `;
@@ -716,6 +724,7 @@ const TableLoadingOverlay = styled.div`
 const CheckboxWrapper = styled.div`
   min-width: 2rem;
   display: flex;
+  position: relative;
   justify-content: center;
   align-items: center;
   cursor: pointer;
@@ -1015,7 +1024,7 @@ function TableRow({
       }}
     >
       {selectable && (
-        <CheckboxWrapperRow
+        <CheckboxWrapper
           onClick={(e) => {
             e.stopPropagation();
             if (rowId) {
@@ -1023,8 +1032,16 @@ function TableRow({
             }
           }}
         >
-          <Checkbox {...props} checked={isSelected} />
-        </CheckboxWrapperRow>
+          <Checkbox
+            {...props}
+            name={rowId}
+            value={isSelected ? "true" : "false"}
+            boxStyle={css`
+              width: 100%;
+            `}
+            checked={isSelected}
+          />
+        </CheckboxWrapper>
       )}
       {content
         ? content.map((col, i) => {
@@ -1166,15 +1183,6 @@ const DraggableRequest = styled.div`
   transform: translateY(-50%);
   z-index: 8;
   right: 1rem;
-`;
-
-const CheckboxWrapperRow = styled.div`
-  min-width: 2rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  pointer-events: auto;
 `;
 
 function TableRowCell({

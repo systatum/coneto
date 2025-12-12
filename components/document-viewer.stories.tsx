@@ -122,12 +122,36 @@ export const Default: Story = {
     }, [popupVisibility]);
 
     const columns: ColumnTableProps[] = [
-      { caption: "Page", width: "15%" },
-      { caption: "X", width: "15%" },
-      { caption: "Y", width: "15%" },
-      { caption: "Width", width: "15%" },
-      { caption: "Height", width: "15%" },
-      { caption: "Content", width: "25%" },
+      {
+        id: "page",
+        caption: "Page",
+        width: "15%",
+      },
+      {
+        id: "x",
+        caption: "X",
+        width: "15%",
+      },
+      {
+        id: "y",
+        caption: "Y",
+        width: "15%",
+      },
+      {
+        id: "width",
+        caption: "Width",
+        width: "15%",
+      },
+      {
+        id: "height",
+        caption: "Height",
+        width: "15%",
+      },
+      {
+        id: "content",
+        caption: "Content",
+        width: "25%",
+      },
     ];
 
     const commentPopUp: ReactElement = (

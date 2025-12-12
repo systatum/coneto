@@ -438,6 +438,215 @@ describe("Table", () => {
     });
   });
 
+  context("with selectable", () => {
+    context("checkbox style", () => {
+      it("renders with transparent wrapper", () => {
+        const columns: ColumnTableProps[] = [
+          {
+            id: "name",
+            caption: "Name",
+            sortable: true,
+          },
+          {
+            id: "type",
+            caption: "Type",
+            sortable: true,
+          },
+        ];
+
+        const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
+
+        const rawRows = Array.from({ length: 20 }, (_, i) => ({
+          name: `Load Balancer ${i + 1}`,
+          type: TYPES_DATA[i % TYPES_DATA.length],
+        }));
+
+        cy.mount(
+          <Table selectable columns={columns}>
+            {rawRows?.map((row, index) => (
+              <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
+                {[row.name, row.type].map((rowCell, i) => (
+                  <Table.Row.Cell
+                    key={`${row.name}-${row.type}-${rowCell}`}
+                    width={columns[i].width}
+                  >
+                    {rowCell}
+                  </Table.Row.Cell>
+                ))}
+              </Table.Row>
+            ))}
+          </Table>
+        );
+
+        cy.findAllByLabelText("input-wrapper-checkbox")
+          .eq(0)
+          .should("have.css", "background-color", "rgba(0, 0, 0, 0)");
+        cy.findAllByLabelText("input-wrapper-checkbox")
+          .eq(1)
+          .should("have.css", "background-color", "rgba(0, 0, 0, 0)");
+        cy.findAllByLabelText("input-wrapper-checkbox")
+          .eq(2)
+          .should("have.css", "background-color", "rgba(0, 0, 0, 0)");
+      });
+    });
+
+    context("when initialize", () => {
+      it("renders content with checked value", () => {
+        const columns: ColumnTableProps[] = [
+          {
+            id: "name",
+            caption: "Name",
+            sortable: true,
+          },
+          {
+            id: "type",
+            caption: "Type",
+            sortable: true,
+          },
+        ];
+        const selectedItems = [
+          "Load Balancer 1-HTTP",
+          "Load Balancer 3-TCP",
+          "Load Balancer 4-UDP",
+        ];
+
+        const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
+
+        const rawRows = Array.from({ length: 20 }, (_, i) => ({
+          name: `Load Balancer ${i + 1}`,
+          type: TYPES_DATA[i % TYPES_DATA.length],
+        }));
+
+        cy.mount(
+          <Table selectable selectedItems={selectedItems} columns={columns}>
+            {rawRows?.map((row, index) => (
+              <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
+                {[row.name, row.type].map((rowCell, i) => (
+                  <Table.Row.Cell
+                    key={`${row.name}-${row.type}-${rowCell}`}
+                    width={columns[i].width}
+                  >
+                    {rowCell}
+                  </Table.Row.Cell>
+                ))}
+              </Table.Row>
+            ))}
+          </Table>
+        );
+
+        cy.get('input[type="checkbox"]').eq(0).should("not.be.checked");
+        cy.get('input[type="checkbox"]').eq(1).should("be.checked");
+        cy.get('input[type="checkbox"]').eq(2).should("not.be.checked");
+        cy.get('input[type="checkbox"]').eq(3).should("be.checked");
+        cy.get('input[type="checkbox"]').eq(4).should("be.checked");
+      });
+    });
+
+    context("when given totalSelectedItemText", () => {
+      const columns: ColumnTableProps[] = [
+        {
+          id: "name",
+          caption: "Name",
+          sortable: true,
+        },
+        {
+          id: "type",
+          caption: "Type",
+          sortable: true,
+        },
+      ];
+
+      const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
+
+      const rawRows = Array.from({ length: 20 }, (_, i) => ({
+        name: `Load Balancer ${i + 1}`,
+        type: TYPES_DATA[i % TYPES_DATA.length],
+      }));
+      it("renders with text", () => {
+        cy.mount(
+          <Table selectable columns={columns}>
+            {rawRows?.map((row, index) => (
+              <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
+                {[row.name, row.type].map((rowCell, i) => (
+                  <Table.Row.Cell
+                    key={`${row.name}-${row.type}-${rowCell}`}
+                    width={columns[i].width}
+                  >
+                    {rowCell}
+                  </Table.Row.Cell>
+                ))}
+              </Table.Row>
+            ))}
+          </Table>
+        );
+
+        cy.findByLabelText("header-wrapper").should("not.exist");
+        cy.findByText("20 items selected").should("not.exist");
+        cy.get('input[type="checkbox"]').eq(0).click();
+        cy.findByLabelText("header-wrapper").should("exist");
+        cy.findByText("20 items selected").should("exist");
+      });
+
+      context("when given function", () => {
+        it("renders with customize text", () => {
+          cy.mount(
+            <Table
+              selectable
+              totalSelectedItemText={(count) => `${count} email selected`}
+              columns={columns}
+            >
+              {rawRows?.map((row, index) => (
+                <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
+                  {[row.name, row.type].map((rowCell, i) => (
+                    <Table.Row.Cell
+                      key={`${row.name}-${row.type}-${rowCell}`}
+                      width={columns[i].width}
+                    >
+                      {rowCell}
+                    </Table.Row.Cell>
+                  ))}
+                </Table.Row>
+              ))}
+            </Table>
+          );
+
+          cy.findByLabelText("header-wrapper").should("not.exist");
+          cy.findByText("20 email selected").should("not.exist");
+          cy.get('input[type="checkbox"]').eq(0).click();
+          cy.findByLabelText("header-wrapper").should("exist");
+          cy.findByText("20 email selected").should("exist");
+        });
+      });
+
+      context("when given null", () => {
+        it("renders without number of selected text", () => {
+          cy.mount(
+            <Table selectable totalSelectedItemText={null} columns={columns}>
+              {rawRows?.map((row, index) => (
+                <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
+                  {[row.name, row.type].map((rowCell, i) => (
+                    <Table.Row.Cell
+                      key={`${row.name}-${row.type}-${rowCell}`}
+                      width={columns[i].width}
+                    >
+                      {rowCell}
+                    </Table.Row.Cell>
+                  ))}
+                </Table.Row>
+              ))}
+            </Table>
+          );
+
+          cy.findByLabelText("header-wrapper").should("not.exist");
+          cy.findByText("items selected").should("not.exist");
+          cy.get('input[type="checkbox"]').eq(0).click();
+          cy.findByLabelText("header-wrapper").should("not.exist");
+          cy.findByText("items selected").should("not.exist");
+        });
+      });
+    });
+  });
+
   context("with top actions", () => {
     context("when given default", () => {
       const DEFAULT_TOP_ACTIONS: TableActionsProps[] = [

@@ -182,10 +182,12 @@ export const WithSubItems: Story = {
 
     const columns: ColumnTableProps[] = [
       {
+        id: "name",
         caption: "Name",
         sortable: false,
       },
       {
+        id: "type",
         caption: "Type",
         sortable: false,
       },
