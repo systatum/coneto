@@ -568,12 +568,13 @@ function FormFields<T extends FieldValues>({
                           height: ${fieldSize}-2;
                         `
                       }
-                      containerStyle={
-                        field.width &&
+                      containerStyle={css`
+                        width: 100%;
+                        ${field.width &&
                         css`
                           width: ${field.width};
-                        `
-                      }
+                        `}
+                      `}
                       boxStyle={
                         fieldSize &&
                         css`

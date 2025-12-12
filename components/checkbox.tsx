@@ -147,7 +147,6 @@ function Checkbox({
 
 const Container = styled.div<{ $style?: CSSProp }>`
   display: flex;
-  width: 100%;
   flex-direction: column;
   gap: 0.5rem;
   font-size: 0.75rem;
