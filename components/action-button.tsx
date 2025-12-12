@@ -97,9 +97,6 @@ export function ActionButton(props: ActionButtonProps) {
         ${props.subMenu && props.dividerStyle ? props.dividerStyle : null}
       `}
       dropdownStyle={css`
-        position: absolute;
-        margin-top: 2px;
-        z-index: 9999;
         width: 170px;
         ${props.subMenu && props.dropdownStyle ? props.dropdownStyle : null}
       `}
