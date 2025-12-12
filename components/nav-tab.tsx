@@ -175,6 +175,9 @@ function NavTab({
                   opacity: 0;
                   background-color: transparent;
                 `}
+                containerStyle={css`
+                  width: fit-content;
+                `}
                 drawerStyle={(placement) => css`
                   border-radius: 0px;
                   padding: 0px;
