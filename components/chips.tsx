@@ -567,7 +567,7 @@ function ChipsItem({
     >
       <Checkbox
         checked={isClicked}
-        wrapperStyle={css`
+        boxStyle={css`
           width: 14px;
           height: 14px;
         `}
@@ -577,6 +577,7 @@ function ChipsItem({
         `}
         containerStyle={css`
           margin-bottom: 1px;
+          width: fit-content;
         `}
         iconStyle={css`
           min-width: 9px;

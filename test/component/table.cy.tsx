@@ -439,6 +439,57 @@ describe("Table", () => {
   });
 
   context("with selectable", () => {
+    context("checkbox style", () => {
+      it("renders with transparent wrapper", () => {
+        const columns: ColumnTableProps[] = [
+          {
+            id: "name",
+            caption: "Name",
+            sortable: true,
+          },
+          {
+            id: "type",
+            caption: "Type",
+            sortable: true,
+          },
+        ];
+
+        const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
+
+        const rawRows = Array.from({ length: 20 }, (_, i) => ({
+          name: `Load Balancer ${i + 1}`,
+          type: TYPES_DATA[i % TYPES_DATA.length],
+        }));
+
+        cy.mount(
+          <Table selectable columns={columns}>
+            {rawRows?.map((row, index) => (
+              <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
+                {[row.name, row.type].map((rowCell, i) => (
+                  <Table.Row.Cell
+                    key={`${row.name}-${row.type}-${rowCell}`}
+                    width={columns[i].width}
+                  >
+                    {rowCell}
+                  </Table.Row.Cell>
+                ))}
+              </Table.Row>
+            ))}
+          </Table>
+        );
+
+        cy.findAllByLabelText("input-wrapper-checkbox")
+          .eq(0)
+          .should("have.css", "background-color", "rgba(0, 0, 0, 0)");
+        cy.findAllByLabelText("input-wrapper-checkbox")
+          .eq(1)
+          .should("have.css", "background-color", "rgba(0, 0, 0, 0)");
+        cy.findAllByLabelText("input-wrapper-checkbox")
+          .eq(2)
+          .should("have.css", "background-color", "rgba(0, 0, 0, 0)");
+      });
+    });
+
     context("when initialize", () => {
       it("renders content with checked value", () => {
         const columns: ColumnTableProps[] = [

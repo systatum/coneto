@@ -26,7 +26,7 @@ export interface CheckboxProps
   titleStyle?: CSSProp;
   labelStyle?: CSSProp;
   iconStyle?: CSSProp;
-  wrapperStyle?: CSSProp;
+  boxStyle?: CSSProp;
   descriptionStyle?: CSSProp;
   errorStyle?: CSSProp;
 }
@@ -44,7 +44,7 @@ function Checkbox({
   inputStyle,
   labelStyle,
   iconStyle,
-  wrapperStyle,
+  boxStyle,
   inputWrapperStyle,
   descriptionStyle,
   errorStyle,
@@ -63,6 +63,7 @@ function Checkbox({
 
   const inputElement: ReactElement = (
     <InputWrapper
+      aria-label="input-wrapper-checkbox"
       htmlFor={props.disabled ? null : inputId}
       $hasDescription={!!description}
       $highlight={!!highlightOnChecked}
@@ -71,7 +72,7 @@ function Checkbox({
       $disabled={props.disabled}
     >
       <InputContainer aria-label="input-container-checkbox">
-        <CheckboxBox $style={wrapperStyle} $highlight={!!highlightOnChecked}>
+        <CheckboxBox $style={boxStyle} $highlight={!!highlightOnChecked}>
           <HiddenCheckbox
             ref={inputRef}
             {...(props as InputHTMLAttributes<HTMLInputElement>)}
@@ -146,7 +147,6 @@ function Checkbox({
 
 const Container = styled.div<{ $style?: CSSProp }>`
   display: flex;
-  width: 100%;
   flex-direction: column;
   gap: 0.5rem;
   font-size: 0.75rem;
@@ -171,12 +171,16 @@ const InputWrapper = styled.label<{
   flex-direction: column;
   font-size: 12px;
   background-color: ${({ $highlight, $checked }) =>
-    $highlight && $checked ? "#DBEAFE" : "white"};
+    $highlight && $checked ? "#DBEAFE" : "transparent"};
   border: ${({ $highlight }) =>
     $highlight ? "1px solid transparent" : "none"};
   padding: ${({ $highlight }) => ($highlight ? "12px" : "0")};
   cursor: ${({ $highlight }) => ($highlight ? "pointer" : "default")};
   transition: background-color 0.2s;
+
+  &:hover {
+    background-color: ${({ $highlight }) => ($highlight ? "#E7F2FC" : "none")};
+  }
 
   ${({ $disabled }) =>
     $disabled &&
