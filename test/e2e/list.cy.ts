@@ -11,7 +11,7 @@ describe("List", () => {
 
   context("with search", () => {
     it("should filter items by search input", () => {
-      cy.visit(getIdContent("content-list--with-search"));
+      cy.visit(getIdContent("content-list--draggable"));
       cy.findByLabelText("textbox-search").type("settings");
       cy.contains("Adjust preferences").should("exist");
       cy.contains("Home").should("not.exist");
@@ -20,7 +20,7 @@ describe("List", () => {
 
   context("with group", () => {
     it("should render grouped sections", () => {
-      cy.visit(getIdContent("content-list--with-group"));
+      cy.visit(getIdContent("content-list--draggable"));
       cy.contains("Recent Content").should("exist");
       cy.contains("Messages").should("exist");
       cy.contains("All Content").should("exist");

@@ -20,7 +20,9 @@ import {
 import styled, { css, CSSProp } from "styled-components";
 
 export interface DormantTextProps {
-  style?: CSSProp;
+  dormantedStyle?: CSSProp;
+  activeStyle?: CSSProp;
+  actionStyle?: CSSProp;
   onActionClick?: () => void;
   icon?: RemixiconComponentType;
   dormantedFontSize?: number;
@@ -41,10 +43,12 @@ export interface DormantTextRef {
 
 function DormantText({
   onActionClick,
-  style,
+  dormantedStyle,
+  activeStyle,
   dormantedFontSize = 17,
   icon: Icon = RiCheckLine,
   children,
+  actionStyle,
   content,
   fullWidth,
   acceptChangeOn,
@@ -54,35 +58,12 @@ function DormantText({
   dormantedMaxWidth,
 }: DormantTextProps) {
   const [dormantedLocal, setDormantedLocal] = useState(true);
-
   const [labelHeight, setLabelHeight] = useState<number>(0);
   const [labelWidth, setLabelWidth] = useState<number>(0);
   const [inputHeight, setInputHeight] = useState<number>(0);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const dormantPencilSize = dormantedFontSize * 1.05;
-
-  const combinedRef = useRef<{
-    input: HTMLInputElement | null;
-    doneEditing: () => void;
-    cancelEditing: () => void;
-  }>({
-    input: null,
-    doneEditing: () => {
-      if (onActionClick) onActionClick();
-      setDormantedLocal(true);
-    },
-    cancelEditing: () => {
-      setDormantedLocal(true);
-      if (onCancelRequested) {
-        onCancelRequested();
-      }
-    },
-  });
-
-  useEffect(() => {
-    combinedRef.current.input = inputRef.current;
-  }, [inputRef.current]);
 
   useEffect(() => {
     if (!inputRef.current) return;
@@ -121,25 +102,25 @@ function DormantText({
     return cloneElement(typedChild, {
       ref: (el: HTMLInputElement | null) => {
         inputRef.current = el;
-        combinedRef.current.input = el;
       },
       onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => {
         if (
           e.key === "Enter" &&
           (acceptChangeOn === "enter" || acceptChangeOn === "all")
         ) {
-          combinedRef.current.doneEditing();
+          if (onActionClick) onActionClick();
+          setDormantedLocal(true);
         } else if (e.key === "Escape" && cancelable) {
-          combinedRef.current.cancelEditing();
-          if (onCancelRequested) {
-            onCancelRequested();
-          }
+          if (onCancelRequested) onCancelRequested();
+          setDormantedLocal(true);
         }
       },
-
       onClick: () => {
         if (acceptChangeOn === "click" || acceptChangeOn === "all") {
-          combinedRef.current.doneEditing();
+          if (onActionClick) {
+            onActionClick();
+          }
+          setDormantedLocal(true);
         }
       },
     });
@@ -147,27 +128,35 @@ function DormantText({
 
   return dormantedLocal ? (
     <DormantLabel
+      aria-label="dormant-wrapper"
       ref={measureLabelSize}
       onClick={() => {
+        if (onActive) {
+          onActive();
+        }
         setDormantedLocal(false);
-        if (onActive) onActive();
         setTimeout(() => inputRef.current?.focus(), 0);
       }}
       $fullWidth={fullWidth}
       $dormantedMaxWidth={dormantedMaxWidth}
       $fontSize={dormantedFontSize}
-      $style={style}
+      $style={dormantedStyle}
     >
       <DormantLabelText>{content}</DormantLabelText>
       <PencilIcon className="pencil-icon" size={dormantPencilSize} />
     </DormantLabel>
   ) : (
-    <DormantWrapper $style={style} $minHeight={labelHeight}>
+    <DormantWrapper
+      aria-label="active-wrapper"
+      $style={activeStyle}
+      $minHeight={labelHeight}
+    >
       <LabelWrapper ref={measureLabelSize} $maxWidth={labelWidth}>
         {dormantChildren}
       </LabelWrapper>
 
       <ActionButton
+        $style={actionStyle}
         $minHeight={32.5 | inputHeight}
         onClick={(e) => {
           e.preventDefault();
@@ -182,6 +171,7 @@ function DormantText({
 
       {cancelable && (
         <ActionButton
+          $style={actionStyle}
           $minHeight={32.5 | inputHeight}
           onClick={(e) => {
             e.preventDefault();
@@ -220,7 +210,11 @@ const DormantLabel = styled.label<{
   transition: all 0.1s ease;
   transform: translateZ(0);
 
-  ${({ $fullWidth }) => $fullWidth && `min-width: 100%;`}
+  ${({ $fullWidth }) =>
+    $fullWidth &&
+    css`
+      min-width: 100%;
+    `};
 
   ${({ $dormantedMaxWidth }) =>
     $dormantedMaxWidth &&
@@ -235,7 +229,8 @@ const DormantLabel = styled.label<{
         text-overflow: ellipsis;
         min-width: 0;
       }
-    `}
+    `};
+
   ${({ $fontSize }) =>
     $fontSize &&
     `font-size: ${typeof $fontSize === "number" ? `${$fontSize}px` : $fontSize};`}
@@ -277,7 +272,6 @@ const DormantWrapper = styled.div<{
   position: relative;
   align-items: center;
   gap: 2px;
-  height: 100%;
   min-height: ${({ $minHeight }) =>
     typeof $minHeight === "number" ? `${$minHeight}px` : $minHeight};
   ${({ $style }) => $style}
@@ -286,6 +280,8 @@ const DormantWrapper = styled.div<{
 const LabelWrapper = styled.div<{ $maxWidth?: number | string }>`
   width: 100%;
   height: 100%;
+  display: flex;
+  align-items: center;
   max-width: ${({ $maxWidth }) =>
     typeof $maxWidth === "number" ? `${$maxWidth}px` : $maxWidth};
 `;
@@ -303,7 +299,7 @@ const ActionButton = styled.button<{
   cursor: pointer;
   color: var(--muted-foreground, #666);
 
-  min-height: ${({ $minHeight }) =>
+  height: ${({ $minHeight }) =>
     typeof $minHeight === "number" ? `${$minHeight}px` : $minHeight};
 
   &:hover {

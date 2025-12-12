@@ -12,9 +12,9 @@ import {
 } from "@remixicon/react";
 import {
   List,
-  ListActionItemProps,
   ListGroupActionsProps,
   ListGroupContentProps,
+  ListItemActionProps,
 } from "./../../components/list";
 import { css } from "styled-components";
 
@@ -363,7 +363,7 @@ describe("List", () => {
 
   context("actions", () => {
     context("when given in the list", () => {
-      const LIST_ACTION_ITEMS_PROPS = (id: string): ListActionItemProps[] => [
+      const LIST_ACTION_ITEMS_PROPS = (id: string): ListItemActionProps[] => [
         {
           caption: "Add",
           icon: RiArrowRightSLine,
@@ -1360,7 +1360,7 @@ describe("List", () => {
               .then(($el) => {
                 const initialHeight = $el.height();
 
-                cy.findByText(groups.items[index].title).click();
+                cy.findByText(groups.items[index].title as string).click();
 
                 cy.findAllByLabelText("list-item-wrapper")
                   .eq(index)
@@ -1434,6 +1434,86 @@ describe("List", () => {
             })
           );
         });
+      });
+    });
+  });
+
+  context("title on list", () => {
+    const TitleContent = (id: string) => {
+      return (
+        <div
+          aria-label="title-content-reactnode"
+          style={{
+            minHeight: "30px",
+            backgroundColor: "wheat",
+            color: "white",
+          }}
+        >
+          This is {id} Content
+        </div>
+      );
+    };
+    const LIST_GROUPS_OPENABLE: ListGroupContentProps[] = [
+      {
+        id: "recent-content",
+        title: "Recent Content",
+        subtitle: "Your latest activity",
+        items: [
+          {
+            id: "messages",
+            title: TitleContent("Messages"),
+          },
+          {
+            id: "notifications",
+            title: TitleContent("Notifications"),
+          },
+        ],
+      },
+    ];
+    context("with reactnode", () => {
+      it("renders content with element", () => {
+        cy.mount(
+          <List
+            searchable
+            draggable
+            selectable
+            containerStyle={css`
+              padding: 16px;
+              min-width: 350px;
+            `}
+          >
+            {LIST_GROUPS_OPENABLE.map((group, index) => (
+              <List.Group
+                key={index}
+                id={group.id}
+                title={group.title}
+                subtitle={group.subtitle}
+                actions={group.actions}
+                openerStyle="togglebox"
+              >
+                {group.items.map((list, i) => (
+                  <List.Item
+                    key={i}
+                    id={list.id}
+                    title={list.title}
+                    groupId={group.id}
+                    selectedOptions={{
+                      checked: true,
+                    }}
+                  >
+                    {list.children}
+                  </List.Item>
+                ))}
+              </List.Group>
+            ))}
+          </List>
+        );
+        cy.wait(100);
+
+        cy.findAllByLabelText("title-content-reactnode")
+          .eq(0)
+          .should("have.css", "min-height", "30px")
+          .and("have.css", "background-color", "rgb(245, 222, 179)");
       });
     });
   });

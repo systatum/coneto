@@ -70,7 +70,7 @@ export interface ListGroupContentProps {
   items: ListItemProps[];
 }
 
-export type ListActionItemProps = ContextMenuActionsProps;
+export type ListItemActionProps = ContextMenuActionsProps;
 
 export interface LeftSideContentMenuProps {
   badge?: (badge: ReactNode, withStyle?: { withStyle?: CSSProp }) => ReactNode;
@@ -79,7 +79,7 @@ export interface LeftSideContentMenuProps {
 
 export interface ListItemProps {
   id: string;
-  title?: string;
+  title?: ReactNode | string;
   subtitle?: string;
   imageUrl?: string;
   leftIcon?: RemixiconComponentType | null;
@@ -91,7 +91,7 @@ export interface ListItemProps {
   rightSideContent?: ((prop: string) => ReactNode) | ReactNode;
   containerStyle?: CSSProp;
   rowStyle?: CSSProp;
-  actions?: (id?: string) => ContextMenuActionsProps[];
+  actions?: (id?: string) => ListItemActionProps[];
   children?: ReactNode;
   openable?: boolean;
   selectedOptions?: {
@@ -101,6 +101,8 @@ export interface ListItemProps {
   leftSideContent?: ReactNode;
   titleStyle?: CSSProp;
   subtitleStyle?: CSSProp;
+  leftSideStyle?: CSSProp;
+  rightSideStyle?: CSSProp;
 }
 
 interface ListItemInternal
@@ -122,7 +124,7 @@ const DnDContext = createContext<{
     oldPosition: number;
     item: {
       id: string;
-      title: string;
+      title: ReactNode | string;
       subtitle: string;
       imageUrl?: string;
       leftIcon?: RemixiconComponentType;
@@ -463,6 +465,8 @@ function ListItem({
   leftSideContent,
   titleStyle,
   subtitleStyle,
+  leftSideStyle,
+  rightSideStyle,
 }: ListItemInternal & {
   index?: number;
   onDropItem?: (position: number) => void;
@@ -552,7 +556,7 @@ function ListItem({
           onDropItem?.(clampedPosition);
         }}
       >
-        <ListItemLeft>
+        <ListItemLeft $style={leftSideStyle} aria-label="list-item-left-side">
           {selectable && (
             <Checkbox
               name="checked"
@@ -588,49 +592,63 @@ function ListItem({
           </TextWrapper>
         </ListItemLeft>
 
-        <ListItemRight>
-          {isHovered === idFullname &&
-            actions &&
-            (() => {
-              const list = actions(idFullname);
+        {(actions || rightSideContent || draggable) && (
+          <ListItemRight
+            $style={rightSideStyle}
+            aria-label="list-item-left-side"
+          >
+            {isHovered === idFullname &&
+              actions &&
+              (() => {
+                const list = actions(idFullname);
 
-              const actionsWithIcons = list.map((prop) => ({
-                ...prop,
-                icon: prop.icon ?? RiArrowRightSLine,
-                onClick: (e?: React.MouseEvent) => {
-                  prop.onClick?.(e);
-                  if (list.length > 1) {
-                    setIsHovered(null);
-                  }
-                },
-              }));
+                const actionsWithIcons = list.map((prop) => ({
+                  ...prop,
+                  icon: prop.icon ?? RiArrowRightSLine,
+                  onClick: (e?: React.MouseEvent) => {
+                    prop.onClick?.(e);
+                    if (list.length > 1) {
+                      setIsHovered(null);
+                    }
+                  },
+                }));
 
-              return (
-                <ContextMenu
-                  focusBackgroundColor="#c1d6f1"
-                  hoverBackgroundColor="#c1d6f1"
-                  activeBackgroundColor="#c1d6f1"
-                  actions={actionsWithIcons}
-                />
-              );
-            })()}
-          {rightSideContent && typeof rightSideContent === "function"
-            ? rightSideContent(idFullname)
-            : (rightSideContent as ReactNode)}
+                return (
+                  <ContextMenu
+                    buttonStyle={
+                      !subtitle &&
+                      css`
+                        width: 24px;
+                        height: 24px;
+                        padding: 2px;
+                      `
+                    }
+                    iconSize={!subtitle && 12}
+                    focusBackgroundColor="#c1d6f1"
+                    hoverBackgroundColor="#c1d6f1"
+                    activeBackgroundColor="#c1d6f1"
+                    actions={actionsWithIcons}
+                  />
+                );
+              })()}
+            {rightSideContent && typeof rightSideContent === "function"
+              ? rightSideContent(idFullname)
+              : (rightSideContent as ReactNode)}
 
-          {draggable && (
-            <div
-              aria-label="draggable-request"
-              style={{
-                cursor: "grab",
-                borderRadius: "2px",
-                color: "#4b5563",
-              }}
-            >
-              <RiDraggable size={18} />
-            </div>
-          )}
-        </ListItemRight>
+            {draggable && (
+              <div
+                aria-label="draggable-request"
+                style={{
+                  cursor: "grab",
+                  borderRadius: "2px",
+                  color: "#4b5563",
+                }}
+              >
+                <RiDraggable size={18} />
+              </div>
+            )}
+          </ListItemRight>
+        )}
 
         {isOver && dropPosition && <DragLine position={dropPosition} />}
       </ListItemRow>
@@ -690,6 +708,7 @@ const ListItemRow = styled.div<{
   gap: 0.5rem;
   transition: background-color 300ms;
   border-radius: 3px;
+  width: 100%;
 
   ${({ $isHovered }) =>
     $isHovered &&
@@ -700,18 +719,26 @@ const ListItemRow = styled.div<{
   ${({ $style }) => $style}
 `;
 
-const ListItemLeft = styled.div`
+const ListItemLeft = styled.div<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
   align-items: center;
+  justify-content: start;
+  width: 100%;
+
+  ${({ $style }) => $style}
 `;
 
-const ListItemRight = styled.div`
+const ListItemRight = styled.div<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
   align-items: center;
+  justify-content: end;
+  width: 30%;
+
+  ${({ $style }) => $style}
 `;
 
 const ImageStyle = styled.img`
@@ -724,6 +751,7 @@ const TextWrapper = styled.div`
   display: flex;
   flex-direction: column;
   user-select: none;
+  width: 100%;
 `;
 
 const CustomLeftSideContent = styled.div<{
