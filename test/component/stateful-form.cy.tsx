@@ -11,6 +11,50 @@ import { OptionsProps } from "./../../components/selectbox";
 import { CapsuleContentProps } from "./../../components/capsule";
 
 describe("StatefulForm", () => {
+  context("capsule", () => {
+    const value = {
+      capsule: "unpaid",
+    };
+
+    context("when initial value", () => {
+      const CAPSULE_TABS: CapsuleContentProps[] = [
+        {
+          id: "paid",
+          title: "Paid",
+        },
+        {
+          id: "unpaid",
+          title: "Unpaid",
+        },
+      ];
+
+      const CHECKBOX_TITLE_FIELDS: FormFieldGroup[] = [
+        {
+          name: "capsule",
+          title: "Monetary Value",
+          type: "capsule",
+          required: false,
+          capsuleProps: {
+            tabs: CAPSULE_TABS,
+          },
+        },
+      ];
+
+      it("should render active related with id value", () => {
+        cy.mount(
+          <StatefulForm
+            fields={CHECKBOX_TITLE_FIELDS}
+            formValues={value}
+            mode="onChange"
+          />
+        );
+
+        cy.contains("Paid").should("have.css", "color", "rgb(17, 24, 39)");
+        cy.contains("Unpaid").should("have.css", "color", "rgb(255, 255, 255)");
+      });
+    });
+  });
+
   context("checkbox", () => {
     const value = {
       access: false,
@@ -812,7 +856,6 @@ describe("StatefulForm", () => {
         required: false,
         width: "50%",
         capsuleProps: {
-          activeTab: valueAll.capsule,
           tabs: CAPSULE_TABS,
         },
       },
