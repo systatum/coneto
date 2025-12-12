@@ -1,4 +1,3 @@
-import { c } from "framer-motion/dist/types.d-Cjd591yU";
 import { DormantText } from "./../../components/dormant-text";
 import { Textbox } from "./../../components/textbox";
 import { css } from "styled-components";
