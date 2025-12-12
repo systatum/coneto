@@ -778,6 +778,46 @@ describe("Table", () => {
           "Copy clicked"
         );
       });
+
+      it("renders slightly closer (4px) than usual", () => {
+        cy.mount(
+          <Table
+            selectable
+            tableRowContainerStyle={css`
+              max-height: 400px;
+            `}
+            columns={columns}
+            actions={DEFAULT_TOP_ACTIONS}
+            searchable
+          >
+            {rows?.map((groupValue, groupIndex) => (
+              <Table.Row.Group
+                key={groupIndex}
+                title={groupValue.title}
+                subtitle={groupValue.subtitle}
+              >
+                {groupValue.items.map((rowValue, rowIndex) => (
+                  <Table.Row
+                    key={rowIndex}
+                    rowId={`${groupValue.title}-${rowValue.title}`}
+                    content={[
+                      rowValue.title,
+                      rowValue.category,
+                      rowValue.author,
+                    ]}
+                    actions={ROW_ACTIONS}
+                  />
+                ))}
+              </Table.Row.Group>
+            ))}
+          </Table>
+        );
+
+        cy.findByText("Copy").click();
+        cy.findAllByLabelText("button-tip-menu-container")
+          .eq(0)
+          .should("have.css", "transform", "matrix(1, 0, 0, 1, 0, -4)");
+      });
     });
 
     context("when given capsule", () => {
