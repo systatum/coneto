@@ -769,7 +769,6 @@ export const AllCase: Story = {
         type: "capsule",
         required: false,
         capsuleProps: {
-          activeTab: value.capsule,
           tabs: CAPSULE_TABS,
         },
       },

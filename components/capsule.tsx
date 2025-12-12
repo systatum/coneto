@@ -11,7 +11,7 @@ export interface CapsuleContentProps {
 }
 
 export interface CapsuleProps {
-  activeTab: string | null;
+  activeTab?: string | null;
   tabs: CapsuleContentProps[];
   onTabChange?: (id: string) => void;
   containerStyle?: CSSProp;
