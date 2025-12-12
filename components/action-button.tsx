@@ -16,7 +16,9 @@ export interface ActionButtonProps {
   showSubMenuOn?: "caret" | "self";
 }
 
-export function ActionButton(props: ActionButtonProps) {
+export function ActionButton(
+  props: ActionButtonProps & { forTable?: boolean }
+) {
   return (
     <Button
       onClick={(e) => {
@@ -96,10 +98,17 @@ export function ActionButton(props: ActionButtonProps) {
         border: 1px solid rgb(236 236 236);
         ${props.subMenu && props.dividerStyle ? props.dividerStyle : null}
       `}
-      dropdownStyle={css`
-        position: absolute;
-        margin-top: 2px;
-        z-index: 9999;
+      dropdownStyle={(placement) => css`
+        ${props.forTable && placement?.startsWith("bottom")
+          ? css`
+              transform: translateY(-4px);
+            `
+          : placement?.startsWith("top")
+            ? css`
+                transform: translateY(4px);
+              `
+            : null}
+
         width: 170px;
         ${props.subMenu && props.dropdownStyle ? props.dropdownStyle : null}
       `}

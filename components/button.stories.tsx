@@ -185,7 +185,6 @@ export const WithTipMenu: Story = {
       children: "List",
       dropdownStyle: css`
         min-width: 240px;
-        margin-top: 8px;
       `,
       subMenu: ({ list }) =>
         list([
@@ -228,7 +227,6 @@ export const WithTipMenu: Story = {
       children: "With Filter",
       dropdownStyle: css`
         min-width: 240px;
-        margin-top: 8px;
       `,
       subMenu: ({ list }) =>
         list(
@@ -297,7 +295,6 @@ export const WithTipMenu: Story = {
       children: "Render",
       dropdownStyle: css`
         min-width: 240px;
-        margin-top: 8px;
       `,
       subMenu: ({ render }) =>
         render(
@@ -308,7 +305,6 @@ export const WithTipMenu: Story = {
               flex-direction: column;
               gap: 4px;
               cursor: default;
-              margin-top: 4px;
             `}
           >
             <MenuContainer>
@@ -376,7 +372,7 @@ const SectionTitle = styled.span``;
 const ButtonRow = styled.div`
   display: flex;
   flex-direction: row;
-  gap: 4px;
+  gap: 5px;
 `;
 
 const MenuContainer = styled.div<{ $style?: CSSProp }>`
