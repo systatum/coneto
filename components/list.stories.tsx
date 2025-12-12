@@ -669,7 +669,7 @@ export const ReactNodeTitle: Story = {
             }
             height: 24px;
           `}
-          acceptChangeOn="all"
+          acceptChangeOn="enter"
           onCancelRequested={onCancelRequested}
           dormantedFontSize={14}
           content={value}
