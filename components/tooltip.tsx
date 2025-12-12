@@ -1,10 +1,9 @@
+import { getFloatingPlacement } from "./../lib/floating-placement";
 import {
-  arrow,
   autoUpdate,
   flip,
   offset,
   Placement,
-  shift,
   useFloating,
 } from "@floating-ui/react";
 import React, {
@@ -207,7 +206,7 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
   }
 );
 
-interface TooltipContainer {
+interface TooltipContainerProps {
   placement?: Placement;
   drawerStyle?: CSSProp | ((placement?: Placement) => CSSProp);
   arrowStyle?: CSSProp | ((placement?: Placement) => CSSProp);
@@ -221,7 +220,7 @@ function TooltipContainer({
   drawerStyle,
   spacerStyle,
   dialog,
-}: TooltipContainer) {
+}: TooltipContainerProps) {
   return (
     <Fragment>
       <Spacer
@@ -354,21 +353,6 @@ const TooltipDrawer = styled.div<{
 
   ${({ $drawerStyle }) => $drawerStyle}
 `;
-
-function getFloatingPlacement(position?: DialogPlacement): Placement {
-  switch (position) {
-    case "bottom-left":
-      return "bottom-start";
-    case "bottom-right":
-      return "bottom-end";
-    case "top-left":
-      return "top-start";
-    case "top-right":
-      return "top-end";
-    default:
-      return "bottom-start";
-  }
-}
 
 type TooltipComponent = React.ForwardRefExoticComponent<
   TooltipProps & React.RefAttributes<TooltipRef>

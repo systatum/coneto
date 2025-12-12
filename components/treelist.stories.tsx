@@ -25,7 +25,6 @@ import { useMemo, useState } from "react";
 import { Combobox } from "./combobox";
 import { OptionsProps } from "./selectbox";
 import { FormFieldGroup, StatefulForm } from "./stateful-form";
-import { Tooltip } from "./tooltip";
 
 const meta: Meta<typeof TreeList> = {
   title: "Content/TreeList",

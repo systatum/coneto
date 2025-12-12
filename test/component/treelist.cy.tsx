@@ -1,4 +1,3 @@
-import { Tooltip } from "./../../components/tooltip";
 import {
   TreeList,
   TreeListActionsProps,
@@ -299,7 +298,7 @@ describe("Treelist", () => {
                   formValues={{
                     division_name: "",
                   }}
-                  onChange={({}) => {}}
+                  onChange={({ currentState }) => console.log(currentState)}
                   mode="onChange"
                 />
               ),
@@ -352,7 +351,7 @@ describe("Treelist", () => {
                   formValues={{
                     division_name: "",
                   }}
-                  onChange={({}) => {}}
+                  onChange={({ currentState }) => console.log(currentState)}
                   mode="onChange"
                 />
               ),

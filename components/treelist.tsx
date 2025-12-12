@@ -1,5 +1,5 @@
 import styled, { css, CSSProp } from "styled-components";
-import React, { Fragment, ReactNode, useState } from "react";
+import React, { ReactNode, useState } from "react";
 import { RemixiconComponentType, RiArrowRightSLine } from "@remixicon/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { TipMenuItemProps } from "./tip-menu";
