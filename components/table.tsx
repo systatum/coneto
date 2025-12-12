@@ -313,12 +313,12 @@ function Table({
                     </>
                   )}
                   {actions &&
-                    actions.map((data, index) => {
-                      if (data.type === "capsule") {
-                        return <ActionCapsule key={index} {...data} />;
+                    actions.map((action, index) => {
+                      if (action.type === "capsule") {
+                        return <ActionCapsule key={index} {...action} />;
                       }
 
-                      return <ActionButton key={index} {...data} />;
+                      return <ActionButton key={index} {...action} forTable />;
                     })}
                 </ActionsWrapper>
               )}
