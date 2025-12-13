@@ -66,8 +66,6 @@ export interface TableProps {
   onItemsSelected?: (data: string[]) => void;
   children: ReactNode;
   isLoading?: boolean;
-  containerStyle?: CSSProp;
-  tableRowContainerStyle?: CSSProp;
   isOpen?: boolean;
   setIsOpen?: () => void;
   subMenuList?: (columnCaption: string) => TipMenuItemProps[];
@@ -81,6 +79,11 @@ export interface TableProps {
   pageNumberText?: string | number;
   totalSelectedItemText?: null | ((count: number) => string);
   sumRow?: SummaryRowProps[];
+  containerStyle?: CSSProp;
+  tableRowContainerStyle?: CSSProp;
+  paginationWrapperStyle?: CSSProp;
+  paginationNumberStyle?: CSSProp;
+  totalItemsSelectedStyle?: CSSProp;
 }
 
 interface SummaryRowProps {
@@ -150,8 +153,6 @@ function Table({
   selectedItems = [],
   children,
   isLoading,
-  containerStyle,
-  tableRowContainerStyle,
   isOpen,
   setIsOpen,
   subMenuList,
@@ -170,6 +171,11 @@ function Table({
   draggable,
   onDragged,
   sumRow,
+  containerStyle,
+  tableRowContainerStyle,
+  paginationWrapperStyle,
+  paginationNumberStyle,
+  totalItemsSelectedStyle,
 }: TableProps) {
   const [dragItem, setDragItem] = useState<{
     oldGroupId: string;
@@ -352,23 +358,24 @@ function Table({
                 />
               )}
               {(selectable || showPagination) && (
-                <PaginationInfo>
+                <PaginationInfo $style={paginationWrapperStyle}>
                   {showPagination && (
                     <>
-                      <span>
+                      <PaginationNumberStyle $style={paginationNumberStyle}>
                         {typeof pageNumberText === "number"
                           ? `Pg. ${pageNumberText}`
                           : pageNumberText}
-                      </span>
-                      <Divider aria-label="divider" />
+                      </PaginationNumberStyle>
                     </>
                   )}
                   {selectable && totalSelectedItemText !== null && (
-                    <span>
+                    <PaginationItemsSelectedStyle
+                      $style={totalItemsSelectedStyle}
+                    >
                       {totalSelectedItemText
                         ? totalSelectedItemText(selectedData.length)
                         : `${selectedData.length} items selected`}
-                    </span>
+                    </PaginationItemsSelectedStyle>
                   )}
                 </PaginationInfo>
               )}
@@ -617,19 +624,23 @@ const PaginationButton = styled.button`
   }
 `;
 
-const PaginationInfo = styled.div`
+const PaginationInfo = styled.div<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: row;
-  gap: 0.5rem;
+  gap: 1rem;
   justify-content: end;
   align-items: center;
   min-width: 140px;
+
+  ${({ $style }) => $style}
 `;
 
-const Divider = styled.div`
-  width: 3px;
-  height: 100%;
-  border-left: 1px solid white;
+const PaginationNumberStyle = styled.span<{ $style?: CSSProp }>`
+  ${({ $style }) => $style}
+`;
+
+const PaginationItemsSelectedStyle = styled.span<{ $style?: CSSProp }>`
+  ${({ $style }) => $style}
 `;
 
 const TableContainer = styled.div<{ $hasSelected: boolean }>`
