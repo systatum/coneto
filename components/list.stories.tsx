@@ -258,6 +258,18 @@ export const Draggable: Story = {
       setGroups(updatedGroups);
     };
 
+    const ContentEmptySlate = (groupId: string) => {
+      return (
+        <div
+          onClick={() => {
+            setGroups((prev) => prev.filter((group) => group.id !== groupId));
+          }}
+        >
+          Remove group
+        </div>
+      );
+    };
+
     return (
       <Card>
         <List
@@ -272,7 +284,19 @@ export const Draggable: Story = {
         >
           {filteredContent.map((group, index) => {
             return (
-              <List.Group key={index} id={group.id} title={group.title}>
+              <List.Group
+                key={index}
+                id={group.id}
+                title={group.title}
+                emptySlateStyle={css`
+                  cursor: pointer;
+                  transition: all 200ms ease;
+                  &:hover {
+                    background-color: aliceblue;
+                  }
+                `}
+                emptySlate={ContentEmptySlate(group.id)}
+              >
                 {group.items.map((list, i) => (
                   <List.Item
                     key={i}
@@ -1040,7 +1064,7 @@ export const CustomOpener: Story = {
       },
     ];
 
-    const [groups, setGroups] = useState(LIST_GROUPS);
+    const [groups, setGroups] = useState<ListGroupContentProps[]>(LIST_GROUPS);
     const [value, setValue] = useState({
       search: "",
       checked: [] as ListItemProps[],
