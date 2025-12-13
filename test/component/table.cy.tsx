@@ -227,6 +227,167 @@ describe("Table", () => {
     ];
   };
 
+  context("pagination", () => {
+    const DEFAULT_TOP_ACTIONS: TableActionsProps[] = [
+      {
+        caption: "Copy",
+        icon: RiArrowUpSLine,
+        onClick: () => {
+          console.log("Copy clicked");
+        },
+      },
+    ];
+
+    context("with pagination wrapper style", () => {
+      context("when given width full and justify-end", () => {
+        it("renders on the end content", () => {
+          cy.mount(
+            <Table
+              selectable
+              paginationWrapperStyle={css`
+                width: 100%;
+                justify-content: end;
+              `}
+              tableRowContainerStyle={css`
+                max-height: 400px;
+              `}
+              selectedItems={[
+                "Tech Articles-Understanding React 18-Frontend-John Doe",
+              ]}
+              columns={columns}
+            >
+              {TABLE_ITEMS?.map((groupValue, groupIndex) => (
+                <Table.Row.Group
+                  key={groupIndex}
+                  title={groupValue.title}
+                  subtitle={groupValue.subtitle}
+                >
+                  {groupValue.items.map((rowValue, rowIndex) => (
+                    <Table.Row
+                      key={rowIndex}
+                      rowId={`${groupValue.title}-${rowValue.title}-${rowValue.category}-${rowValue.author}`}
+                      content={[
+                        rowValue.title,
+                        rowValue.category,
+                        rowValue.author,
+                      ]}
+                      actions={ROW_ACTIONS}
+                    />
+                  ))}
+                </Table.Row.Group>
+              ))}
+            </Table>
+          );
+
+          cy.findByLabelText("pagination-wrapper")
+            .should("have.css", "width", "432px")
+            .and("have.css", "justify-content", "end");
+        });
+      });
+    });
+
+    context("with totalSelectedItemStyle", () => {
+      context("when given 100px", () => {
+        it("renders text with 100px", () => {
+          cy.mount(
+            <Table
+              selectable
+              totalSelectedItemStyle={css`
+                font-size: 100px;
+              `}
+              tableRowContainerStyle={css`
+                max-height: 400px;
+              `}
+              selectedItems={[
+                "Tech Articles-Understanding React 18-Frontend-John Doe",
+              ]}
+              columns={columns}
+            >
+              {TABLE_ITEMS?.map((groupValue, groupIndex) => (
+                <Table.Row.Group
+                  key={groupIndex}
+                  title={groupValue.title}
+                  subtitle={groupValue.subtitle}
+                >
+                  {groupValue.items.map((rowValue, rowIndex) => (
+                    <Table.Row
+                      key={rowIndex}
+                      rowId={`${groupValue.title}-${rowValue.title}-${rowValue.category}-${rowValue.author}`}
+                      content={[
+                        rowValue.title,
+                        rowValue.category,
+                        rowValue.author,
+                      ]}
+                      actions={ROW_ACTIONS}
+                    />
+                  ))}
+                </Table.Row.Group>
+              ))}
+            </Table>
+          );
+
+          cy.findByLabelText("pagination-selected-item").should(
+            "have.css",
+            "font-size",
+            "100px"
+          );
+        });
+      });
+    });
+
+    context("with paginationNumberStyle", () => {
+      context("when given 30px", () => {
+        it("renders text with 30px", () => {
+          cy.mount(
+            <Table
+              selectable
+              showPagination
+              pageNumberText={30}
+              paginationNumberStyle={css`
+                font-size: 30px;
+              `}
+              tableRowContainerStyle={css`
+                max-height: 400px;
+              `}
+              selectedItems={[
+                "Tech Articles-Understanding React 18-Frontend-John Doe",
+              ]}
+              columns={columns}
+            >
+              {TABLE_ITEMS?.map((groupValue, groupIndex) => (
+                <Table.Row.Group
+                  key={groupIndex}
+                  title={groupValue.title}
+                  subtitle={groupValue.subtitle}
+                >
+                  {groupValue.items.map((rowValue, rowIndex) => (
+                    <Table.Row
+                      key={rowIndex}
+                      rowId={`${groupValue.title}-${rowValue.title}-${rowValue.category}-${rowValue.author}`}
+                      content={[
+                        rowValue.title,
+                        rowValue.category,
+                        rowValue.author,
+                      ]}
+                      actions={ROW_ACTIONS}
+                    />
+                  ))}
+                </Table.Row.Group>
+              ))}
+            </Table>
+          );
+
+          cy.findByLabelText("pagination-number").should(
+            "have.css",
+            "font-size",
+            "30px"
+          );
+          cy.findByText("Pg. 30");
+        });
+      });
+    });
+  });
+
   context("with summary", () => {
     interface TableSummaryProps {
       id?: string;
