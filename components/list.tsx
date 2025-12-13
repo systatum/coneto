@@ -369,6 +369,7 @@ function ListGroup({
         {childArray.length === 0 && (
           <EmptyContent
             key="drop-here"
+            aria-label="list-group-empty-slate"
             initial="open"
             animate={isOpen ? "open" : "collapsed"}
             $style={emptySlateStyle}
