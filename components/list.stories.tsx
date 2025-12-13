@@ -149,6 +149,11 @@ export const Draggable: Story = {
           },
         ],
       },
+      {
+        id: "deleted",
+        title: "Deleted",
+        items: [],
+      },
     ];
 
     const [groups, setGroups] = useState(LIST_GROUPS);
@@ -258,18 +263,6 @@ export const Draggable: Story = {
       setGroups(updatedGroups);
     };
 
-    const ContentEmptySlate = (groupId: string) => {
-      return (
-        <div
-          onClick={() => {
-            setGroups((prev) => prev.filter((group) => group.id !== groupId));
-          }}
-        >
-          Remove group
-        </div>
-      );
-    };
-
     return (
       <Card>
         <List
@@ -295,7 +288,7 @@ export const Draggable: Story = {
                     background-color: aliceblue;
                   }
                 `}
-                emptySlate={ContentEmptySlate(group.id)}
+                emptySlate={"No content"}
               >
                 {group.items.map((list, i) => (
                   <List.Item
