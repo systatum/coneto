@@ -19,6 +19,332 @@ import {
 import { css } from "styled-components";
 
 describe("List", () => {
+  context("group", () => {
+    context("titleStyle", () => {
+      const LIST_GROUPS_WITH_TITLE_STYLE: ListGroupContentProps[] = [
+        {
+          id: "recent-content",
+          title: "Recent Content",
+          subtitle: "Your latest activity",
+          titleStyle: css`
+            font-size: 30px;
+          `,
+          items: [
+            {
+              id: "messages",
+              title: "Messages",
+              subtitle: "Check your inbox",
+              leftIcon: RiMailFill,
+            },
+            {
+              id: "notifications",
+              title: "Notifications",
+              subtitle: "View Alerts",
+              leftIcon: RiNotification3Fill,
+            },
+            {
+              id: "calendar",
+              title: "Calendar",
+              subtitle: "Upcoming events",
+              leftIcon: RiCalendar2Fill,
+            },
+          ],
+        },
+        {
+          id: "all-content",
+          title: "All Content",
+          subtitle: "With warning rightSideContent",
+          items: [
+            {
+              id: "home",
+              title: "Home",
+              subtitle: "Go to homepage",
+              leftIcon: RiHome2Fill,
+            },
+            {
+              id: "profile",
+              title: "Profile",
+              subtitle: "View your profile",
+              leftIcon: RiUser3Fill,
+            },
+            {
+              id: "settings",
+              title: "Settings",
+              subtitle: "Adjust preferences",
+              leftIcon: RiSettings3Fill,
+            },
+          ],
+        },
+      ];
+
+      context("when given font-size 30px", () => {
+        it("renders title with style", () => {
+          cy.mount(
+            <List
+              searchable
+              draggable
+              selectable
+              containerStyle={css`
+                padding: 16px;
+                min-width: 350px;
+              `}
+            >
+              {LIST_GROUPS_WITH_TITLE_STYLE.map((group, index) => (
+                <List.Group
+                  titleStyle={group.titleStyle}
+                  key={index}
+                  id={group.id}
+                  title={group.title}
+                  subtitle={group.subtitle}
+                  actions={group.actions}
+                  openerStyle="togglebox"
+                >
+                  {group.items.map((list, i) => (
+                    <List.Item
+                      key={i}
+                      id={list.id}
+                      leftIcon={list.leftIcon}
+                      subtitle={list.subtitle}
+                      title={list.title}
+                      groupId={group.id}
+                      selectedOptions={{
+                        checked: true,
+                      }}
+                      rightSideContent={list.rightSideContent}
+                    />
+                  ))}
+                </List.Group>
+              ))}
+            </List>
+          );
+          cy.findAllByLabelText("list-group-title")
+            .eq(0)
+            .should("have.css", "font-size", "30px");
+          cy.findAllByLabelText("list-group-title")
+            .eq(1)
+            .should("not.have.css", "font-size", "30px");
+        });
+      });
+    });
+
+    context("subtitleStyle", () => {
+      const LIST_GROUPS_WITH_SUBTITLE_STYLE: ListGroupContentProps[] = [
+        {
+          id: "recent-content",
+          title: "Recent Content",
+          subtitle: "Your latest activity",
+          subtitleStyle: css`
+            font-size: 30px;
+          `,
+          items: [
+            {
+              id: "messages",
+              title: "Messages",
+              subtitle: "Check your inbox",
+              leftIcon: RiMailFill,
+            },
+            {
+              id: "notifications",
+              title: "Notifications",
+              subtitle: "View Alerts",
+              leftIcon: RiNotification3Fill,
+            },
+            {
+              id: "calendar",
+              title: "Calendar",
+              subtitle: "Upcoming events",
+              leftIcon: RiCalendar2Fill,
+            },
+          ],
+        },
+        {
+          id: "all-content",
+          title: "All Content",
+          subtitle: "With warning rightSideContent",
+          items: [
+            {
+              id: "home",
+              title: "Home",
+              subtitle: "Go to homepage",
+              leftIcon: RiHome2Fill,
+            },
+            {
+              id: "profile",
+              title: "Profile",
+              subtitle: "View your profile",
+              leftIcon: RiUser3Fill,
+            },
+            {
+              id: "settings",
+              title: "Settings",
+              subtitle: "Adjust preferences",
+              leftIcon: RiSettings3Fill,
+            },
+          ],
+        },
+      ];
+
+      it("renders subtitle with style", () => {
+        cy.mount(
+          <List
+            searchable
+            draggable
+            selectable
+            containerStyle={css`
+              padding: 16px;
+              min-width: 350px;
+            `}
+          >
+            {LIST_GROUPS_WITH_SUBTITLE_STYLE.map((group, index) => (
+              <List.Group
+                titleStyle={group.titleStyle}
+                subtitleStyle={group.subtitleStyle}
+                key={index}
+                id={group.id}
+                title={group.title}
+                subtitle={group.subtitle}
+                actions={group.actions}
+                openerStyle="togglebox"
+              >
+                {group.items.map((list, i) => (
+                  <List.Item
+                    key={i}
+                    id={list.id}
+                    leftIcon={list.leftIcon}
+                    subtitle={list.subtitle}
+                    title={list.title}
+                    groupId={group.id}
+                    selectedOptions={{
+                      checked: true,
+                    }}
+                    rightSideContent={list.rightSideContent}
+                  />
+                ))}
+              </List.Group>
+            ))}
+          </List>
+        );
+        cy.findAllByLabelText("list-group-subtitle")
+          .eq(0)
+          .should("have.css", "font-size", "30px");
+        cy.findAllByLabelText("list-group-subtitle")
+          .eq(1)
+          .should("not.have.css", "font-size", "30px");
+      });
+    });
+
+    context("when items is empty", () => {
+      const LIST_GROUPS_WITH_EMPTY: ListGroupContentProps[] = [
+        {
+          id: "recent-content",
+          title: "Recent Content",
+          subtitle: "Your latest activity",
+          items: [],
+        },
+      ];
+
+      context("when given emptySlate", () => {
+        it("renders content with empty slate", () => {
+          cy.mount(
+            <List
+              searchable
+              draggable
+              selectable
+              containerStyle={css`
+                padding: 16px;
+                min-width: 350px;
+              `}
+            >
+              {LIST_GROUPS_WITH_EMPTY.map((group, index) => (
+                <List.Group
+                  key={index}
+                  id={group.id}
+                  title={group.title}
+                  subtitle={group.subtitle}
+                  actions={group.actions}
+                  emptySlate={"This content is not available"}
+                  openerStyle="togglebox"
+                >
+                  {group.items.map((list, i) => (
+                    <List.Item
+                      key={i}
+                      id={list.id}
+                      leftIcon={list.leftIcon}
+                      subtitle={list.subtitle}
+                      title={list.title}
+                      groupId={group.id}
+                      selectedOptions={{
+                        checked: true,
+                      }}
+                      rightSideContent={list.rightSideContent}
+                    />
+                  ))}
+                </List.Group>
+              ))}
+            </List>
+          );
+          cy.findAllByLabelText("list-group-empty-slate")
+            .eq(0)
+            .should("have.css", "border", "1px dashed rgb(209, 213, 219)");
+          cy.findByText("This content is not available");
+        });
+
+        context("when given style", () => {
+          it("renders content empty with style", () => {
+            cy.mount(
+              <List
+                searchable
+                draggable
+                selectable
+                containerStyle={css`
+                  padding: 16px;
+                  min-width: 350px;
+                `}
+              >
+                {LIST_GROUPS_WITH_EMPTY.map((group, index) => (
+                  <List.Group
+                    key={index}
+                    id={group.id}
+                    title={group.title}
+                    subtitle={group.subtitle}
+                    actions={group.actions}
+                    emptySlate={"This content is not available"}
+                    emptySlateStyle={css`
+                      border: 1px solid red;
+                      padding: 30px;
+                    `}
+                    openerStyle="togglebox"
+                  >
+                    {group.items.map((list, i) => (
+                      <List.Item
+                        key={i}
+                        id={list.id}
+                        leftIcon={list.leftIcon}
+                        subtitle={list.subtitle}
+                        title={list.title}
+                        groupId={group.id}
+                        selectedOptions={{
+                          checked: true,
+                        }}
+                        rightSideContent={list.rightSideContent}
+                      />
+                    ))}
+                  </List.Group>
+                ))}
+              </List>
+            );
+
+            cy.findByText("This content is not available");
+            cy.findAllByLabelText("list-group-empty-slate")
+              .eq(0)
+              .should("have.css", "border", "1px solid rgb(255, 0, 0)")
+              .and("have.css", "padding", "30px");
+          });
+        });
+      });
+    });
+  });
+
   context("rightSideContent", () => {
     context("when given in the list", () => {
       const RIGHT_SIDE_CONTENT = (prop: string) => (
@@ -126,8 +452,6 @@ describe("List", () => {
             ))}
           </List>
         );
-        cy.wait(100);
-
         cy.findAllByLabelText("right-side-icon").should("have.length", 3);
       });
 
@@ -174,8 +498,6 @@ describe("List", () => {
           cy.window().then((win) => {
             cy.spy(win.console, "log").as("consoleLog");
           });
-          cy.wait(100);
-
           cy.findAllByLabelText("right-side-icon").eq(0).click();
           cy.get("@consoleLog").should(
             "have.been.calledWith",
@@ -296,8 +618,6 @@ describe("List", () => {
             ))}
           </List>
         );
-        cy.wait(100);
-
         cy.findAllByLabelText("right-side-icon").should("have.length", 2);
       });
 
@@ -344,8 +664,6 @@ describe("List", () => {
           cy.window().then((win) => {
             cy.spy(win.console, "log").as("consoleLog");
           });
-          cy.wait(100);
-
           cy.findAllByLabelText("right-side-icon").eq(0).click();
           cy.get("@consoleLog").should(
             "have.been.calledWith",
@@ -466,8 +784,6 @@ describe("List", () => {
             ))}
           </List>
         );
-        cy.wait(100);
-
         cy.findAllByLabelText("action-button").should("have.length", 0);
         cy.findAllByLabelText("list-item-wrapper")
           .eq(0)
@@ -520,8 +836,6 @@ describe("List", () => {
           cy.window().then((win) => {
             cy.spy(win.console, "log").as("consoleLog");
           });
-          cy.wait(100);
-
           cy.findAllByLabelText("list-item-wrapper")
             .eq(0)
             .realHover()
@@ -596,8 +910,6 @@ describe("List", () => {
           cy.window().then((win) => {
             cy.spy(win.console, "log").as("consoleLog");
           });
-          cy.wait(100);
-
           cy.findAllByLabelText("list-item-wrapper").eq(0).realHover().click();
           cy.findAllByLabelText("action-button").eq(0).click();
           cy.findAllByLabelText("tip-menu-item")
@@ -713,8 +1025,6 @@ describe("List", () => {
             ))}
           </List>
         );
-        cy.wait(100);
-
         cy.findAllByLabelText("action-button").should("have.length", 2);
         cy.findAllByText("Add").should("have.length", 2);
       });
@@ -761,8 +1071,6 @@ describe("List", () => {
           cy.window().then((win) => {
             cy.spy(win.console, "log").as("consoleLog");
           });
-          cy.wait(100);
-
           cy.findAllByLabelText("action-button").eq(0).click();
           cy.get("@consoleLog").should(
             "have.been.calledWith",
@@ -891,8 +1199,6 @@ describe("List", () => {
             ))}
           </List>
         );
-        cy.wait(100);
-
         cy.findAllByLabelText("action-button").should("have.length", 2);
         cy.findAllByLabelText("right-side-icon").should("have.length", 3);
       });
@@ -940,8 +1246,6 @@ describe("List", () => {
           cy.window().then((win) => {
             cy.spy(win.console, "log").as("consoleLog");
           });
-          cy.wait(100);
-
           cy.findAllByLabelText("action-button").eq(0).click();
           cy.get("@consoleLog").should(
             "have.been.calledWith",
@@ -1106,7 +1410,7 @@ describe("List", () => {
     },
   ];
 
-  context("openable ", () => {
+  context("openable", () => {
     context("with children", () => {
       it("should render children list item", () => {
         cy.mount(
@@ -1149,8 +1453,6 @@ describe("List", () => {
             ))}
           </List>
         );
-        cy.wait(100);
-
         LIST_GROUPS_OPENABLE.map((groups) =>
           groups.items.map((list) => {
             if (list.title === "Settings") {
@@ -1204,7 +1506,6 @@ describe("List", () => {
               ))}
             </List>
           );
-          cy.wait(100);
           cy.findByText("Settings").click();
 
           LIST_GROUPS_OPENABLE.map((groups) =>
@@ -1300,7 +1601,6 @@ describe("List", () => {
             ))}
           </List>
         );
-        cy.wait(100);
         cy.findByText("Messages").click();
 
         LIST_GROUPS_OPENABLE_WITHOUT_CHILDREN.map((groups) =>
@@ -1417,7 +1717,6 @@ describe("List", () => {
               ))}
             </List>
           );
-          cy.wait(100);
           cy.findByText("Messages").click();
           cy.findByText("Notifications").click();
 
@@ -1508,8 +1807,6 @@ describe("List", () => {
             ))}
           </List>
         );
-        cy.wait(100);
-
         cy.findAllByLabelText("title-content-reactnode")
           .eq(0)
           .should("have.css", "min-height", "30px")
