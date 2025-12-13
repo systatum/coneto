@@ -69,6 +69,8 @@ export interface ListGroupContentProps {
   id: string;
   title: string;
   subtitle?: string;
+  titleStyle?: CSSProp;
+  subtitleStyle?: CSSProp;
   actions?: ListGroupActionsProps[];
   rightSideContent?: ((prop: string) => ReactNode) | ReactNode;
   items: ListItemProps[];
@@ -254,9 +256,18 @@ function ListGroup({
           }}
           aria-label="list-left-side-wrapper"
         >
-          {title && <TitleText $style={titleStyle}>{title}</TitleText>}
+          {title && (
+            <TitleText aria-label="list-group-title" $style={titleStyle}>
+              {title}
+            </TitleText>
+          )}
           {subtitle && (
-            <SubtitleText $style={subtitleStyle}>{subtitle}</SubtitleText>
+            <SubtitleText
+              aria-label="list-group-subtitle"
+              $style={subtitleStyle}
+            >
+              {subtitle}
+            </SubtitleText>
           )}
         </div>
 
