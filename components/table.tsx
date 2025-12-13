@@ -83,7 +83,7 @@ export interface TableProps {
   tableRowContainerStyle?: CSSProp;
   paginationWrapperStyle?: CSSProp;
   paginationNumberStyle?: CSSProp;
-  totalItemsSelectedStyle?: CSSProp;
+  totalSelectedItemStyle?: CSSProp;
 }
 
 interface SummaryRowProps {
@@ -175,7 +175,7 @@ function Table({
   tableRowContainerStyle,
   paginationWrapperStyle,
   paginationNumberStyle,
-  totalItemsSelectedStyle,
+  totalSelectedItemStyle,
 }: TableProps) {
   const [dragItem, setDragItem] = useState<{
     oldGroupId: string;
@@ -358,24 +358,29 @@ function Table({
                 />
               )}
               {(selectable || showPagination) && (
-                <PaginationInfo $style={paginationWrapperStyle}>
+                <PaginationInfo
+                  aria-label="pagination-wrapper"
+                  $style={paginationWrapperStyle}
+                >
                   {showPagination && (
-                    <>
-                      <PaginationNumberStyle $style={paginationNumberStyle}>
-                        {typeof pageNumberText === "number"
-                          ? `Pg. ${pageNumberText}`
-                          : pageNumberText}
-                      </PaginationNumberStyle>
-                    </>
+                    <PaginationNumber
+                      aria-label="pagination-number"
+                      $style={paginationNumberStyle}
+                    >
+                      {typeof pageNumberText === "number"
+                        ? `Pg. ${pageNumberText}`
+                        : pageNumberText}
+                    </PaginationNumber>
                   )}
                   {selectable && totalSelectedItemText !== null && (
-                    <PaginationItemsSelectedStyle
-                      $style={totalItemsSelectedStyle}
+                    <PaginationSelectedItem
+                      aria-label="pagination-selected-item"
+                      $style={totalSelectedItemStyle}
                     >
                       {totalSelectedItemText
                         ? totalSelectedItemText(selectedData.length)
                         : `${selectedData.length} items selected`}
-                    </PaginationItemsSelectedStyle>
+                    </PaginationSelectedItem>
                   )}
                 </PaginationInfo>
               )}
@@ -635,11 +640,11 @@ const PaginationInfo = styled.div<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
-const PaginationNumberStyle = styled.span<{ $style?: CSSProp }>`
+const PaginationNumber = styled.span<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
-const PaginationItemsSelectedStyle = styled.span<{ $style?: CSSProp }>`
+const PaginationSelectedItem = styled.span<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
