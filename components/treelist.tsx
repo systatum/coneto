@@ -43,16 +43,18 @@ export interface TreeListContentProps {
 export interface TreeListItemsProps {
   id: string;
   caption: string;
-  onClick?: (props: {
-    item?: TreeListItemsProps;
-    preventDefault?: () => void;
-  }) => void;
+  onClick?: (props: TreeListItemsOnClickProps) => void;
   actions?: SubMenuTreeList[];
   items?: TreeListItemsProps[];
   icon?: RemixiconComponentType;
   iconOnActive?: RemixiconComponentType;
   iconColor?: string;
   initialState?: TreeListInitialState;
+}
+
+export interface TreeListItemsOnClickProps {
+  item?: TreeListItemsProps;
+  preventDefault?: () => void;
 }
 
 export interface TreeListActionsProps {
