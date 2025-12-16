@@ -51,6 +51,8 @@ export interface ListGroupProps {
   id: string;
   title: string;
   subtitle?: string;
+  titleStyle?: CSSProp;
+  subtitleStyle?: CSSProp;
   children: ReactNode;
   draggable?: boolean;
   containerStyle?: CSSProp;
@@ -59,12 +61,16 @@ export interface ListGroupProps {
   rightSideContent?: ((prop: string) => ReactNode) | ReactNode;
   actions?: ListGroupActionsProps[];
   openerStyle?: "chevron" | "togglebox" | "none";
+  emptySlate?: ReactNode;
+  emptySlateStyle?: CSSProp;
 }
 
 export interface ListGroupContentProps {
   id: string;
   title: string;
   subtitle?: string;
+  titleStyle?: CSSProp;
+  subtitleStyle?: CSSProp;
   actions?: ListGroupActionsProps[];
   rightSideContent?: ((prop: string) => ReactNode) | ReactNode;
   items: ListItemProps[];
@@ -206,14 +212,18 @@ const OverlayLoading = styled.div`
 function ListGroup({
   id,
   title,
+  subtitle,
+  titleStyle,
+  subtitleStyle,
   children,
   containerStyle,
   draggable,
   selectable,
-  subtitle,
   rightSideContent,
   openerStyle = "chevron",
   actions,
+  emptySlate,
+  emptySlateStyle,
 }: ListGroupProps) {
   const childArray = Children.toArray(children).filter(isValidElement);
   const [isOpen, setIsOpen] = useState(true);
@@ -234,6 +244,7 @@ function ListGroup({
   return (
     <ListGroupContainer $containerStyle={containerStyle}>
       <HeaderButton
+        $isOpen={isOpen}
         onClick={() => setIsOpen((prev) => !prev)}
         aria-expanded={isOpen}
       >
@@ -246,8 +257,19 @@ function ListGroup({
           }}
           aria-label="list-left-side-wrapper"
         >
-          <HeaderText>{title}</HeaderText>
-          {subtitle && <HeaderSubtext>{subtitle}</HeaderSubtext>}
+          {title && (
+            <TitleText aria-label="list-group-title" $style={titleStyle}>
+              {title}
+            </TitleText>
+          )}
+          {subtitle && (
+            <SubtitleText
+              aria-label="list-group-subtitle"
+              $style={subtitleStyle}
+            >
+              {subtitle}
+            </SubtitleText>
+          )}
         </div>
 
         <div
@@ -348,8 +370,10 @@ function ListGroup({
         {childArray.length === 0 && (
           <EmptyContent
             key="drop-here"
+            aria-label="list-group-empty-slate"
             initial="open"
             animate={isOpen ? "open" : "collapsed"}
+            $style={emptySlateStyle}
             exit="collapsed"
             variants={{
               open: { opacity: 1, height: "auto" },
@@ -374,7 +398,7 @@ function ListGroup({
               }
             }}
           >
-            Empty Content
+            {emptySlate ?? "Empty Content"}
           </EmptyContent>
         )}
       </AnimatePresence>
@@ -393,33 +417,39 @@ const ListGroupContainer = styled.div<{
 
 const ListGroupContent = styled(motion.div)<{
   $contentStyle?: CSSProp;
+  $isOpen?: boolean;
 }>`
   display: flex;
   flex-direction: column;
   position: relative;
-  padding-top: 2px;
+  padding-top: ${({ $isOpen }) => ($isOpen ? "2px" : "0px")};
   ${({ $contentStyle }) => $contentStyle}
 `;
 
-const HeaderButton = styled.div`
+const HeaderButton = styled.div<{ $isOpen?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
   padding: 0.5rem 0;
+  padding-bottom: ${({ $isOpen }) => ($isOpen ? "0.5rem" : "0px")};
   cursor: pointer;
 `;
 
-const HeaderText = styled.span`
+const TitleText = styled.span<{ $style?: CSSProp }>`
   font-size: 0.875rem;
   font-weight: 500;
   user-select: none;
   text-align: left;
+
+  ${({ $style }) => $style}
 `;
 
-const HeaderSubtext = styled.span`
+const SubtitleText = styled.span<{ $style?: CSSProp }>`
   font-size: 0.75rem;
   color: #6b7280;
+
+  ${({ $style }) => $style}
 `;
 
 const Divider = styled.div`
@@ -428,7 +458,7 @@ const Divider = styled.div`
   height: fit-content;
 `;
 
-const EmptyContent = styled(motion.div)`
+const EmptyContent = styled(motion.div)<{ $style?: CSSProp }>`
   height: 0.5rem;
   margin-top: 0.25rem;
   padding: 0.5rem 0;
@@ -439,6 +469,8 @@ const EmptyContent = styled(motion.div)`
   justify-content: center;
   font-size: 0.875rem;
   color: #9ca3af;
+
+  ${({ $style }) => $style}
 `;
 
 function ListItem({
@@ -660,6 +692,7 @@ function ListItem({
             initial="collapsed"
             animate={isOpen ? "open" : "collapsed"}
             exit="collapsed"
+            $isOpen={isOpen}
             variants={{
               open: { opacity: 1, height: "auto", display: "flex" },
               collapsed: { opacity: 0, height: 0, display: "none" },
