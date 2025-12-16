@@ -653,7 +653,6 @@ export const AllCase: Story = {
         placeholder: "Select a fruit...",
         comboboxProps: {
           options: FRUIT_OPTIONS,
-          multiple: true,
         },
       },
       {

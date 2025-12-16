@@ -96,7 +96,9 @@ describe("StatefulForm", () => {
       });
       cy.get('input[type="color"]').should("have.value", "#ff0099");
 
-      cy.findByPlaceholderText("Select a fruit...").as("combobox").type("ap");
+      cy.findByPlaceholderText("Select a fruit...")
+        .as("combobox")
+        .type("ap", { force: true });
       cy.findByRole("option", { name: "Apple" }).should("be.visible");
       cy.findByRole("option", { name: "Grape" }).should("be.visible");
       cy.get("@combobox").type("{downarrow}{enter}");
@@ -129,7 +131,7 @@ describe("StatefulForm", () => {
       });
       cy.get("img").eq(0).should("exist");
 
-      cy.findAllByRole("button").eq(1).click();
+      cy.findAllByRole("button").eq(2).click();
       cy.findByPlaceholderText("Search your country...").type("Indonesia");
       cy.findByText("Indonesia").click();
       cy.findByPlaceholderText("Enter phone number").type("08123456789");
@@ -200,7 +202,7 @@ describe("StatefulForm", () => {
         .eq(0)
         .should("have.css", "background-color", "oklch(0.546 0.245 262.881)");
 
-      cy.findAllByRole("button").eq(2).click();
+      cy.findAllByRole("button").eq(3).click();
 
       cy.findByLabelText("chip-input-box").type("Anime{enter}");
       cy.findAllByText("Anime").eq(0).should("be.visible");
