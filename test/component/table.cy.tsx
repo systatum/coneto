@@ -228,16 +228,6 @@ describe("Table", () => {
   };
 
   context("pagination", () => {
-    const DEFAULT_TOP_ACTIONS: TableActionsProps[] = [
-      {
-        caption: "Copy",
-        icon: RiArrowUpSLine,
-        onClick: () => {
-          console.log("Copy clicked");
-        },
-      },
-    ];
-
     context("with pagination wrapper style", () => {
       context("when given width full and justify-end", () => {
         it("renders on the end content", () => {
