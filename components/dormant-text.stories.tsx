@@ -10,7 +10,6 @@ import { CountryCodeProps, formatPhoneboxNumber, Phonebox } from "./phonebox";
 import { COUNTRY_CODES } from "./../constants/countries";
 import { CountryCode } from "libphonenumber-js/types.cjs";
 import { Timebox } from "./timebox";
-import { css } from "styled-components";
 
 const meta: Meta<typeof DormantText> = {
   title: "Stage/DormantText",
