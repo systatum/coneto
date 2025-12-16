@@ -244,6 +244,7 @@ function ListGroup({
   return (
     <ListGroupContainer $containerStyle={containerStyle}>
       <HeaderButton
+        $isOpen={isOpen}
         onClick={() => setIsOpen((prev) => !prev)}
         aria-expanded={isOpen}
       >
@@ -416,20 +417,22 @@ const ListGroupContainer = styled.div<{
 
 const ListGroupContent = styled(motion.div)<{
   $contentStyle?: CSSProp;
+  $isOpen?: boolean;
 }>`
   display: flex;
   flex-direction: column;
   position: relative;
-  padding-top: 2px;
+  padding-top: ${({ $isOpen }) => ($isOpen ? "2px" : "0px")};
   ${({ $contentStyle }) => $contentStyle}
 `;
 
-const HeaderButton = styled.div`
+const HeaderButton = styled.div<{ $isOpen?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
   padding: 0.5rem 0;
+  padding-bottom: ${({ $isOpen }) => ($isOpen ? "0.5rem" : "0px")};
   cursor: pointer;
 `;
 
@@ -689,6 +692,7 @@ function ListItem({
             initial="collapsed"
             animate={isOpen ? "open" : "collapsed"}
             exit="collapsed"
+            $isOpen={isOpen}
             variants={{
               open: { opacity: 1, height: "auto", display: "flex" },
               collapsed: { opacity: 0, height: 0, display: "none" },
