@@ -149,6 +149,11 @@ export const Draggable: Story = {
           },
         ],
       },
+      {
+        id: "deleted",
+        title: "Deleted",
+        items: [],
+      },
     ];
 
     const [groups, setGroups] = useState(LIST_GROUPS);
@@ -272,7 +277,19 @@ export const Draggable: Story = {
         >
           {filteredContent.map((group, index) => {
             return (
-              <List.Group key={index} id={group.id} title={group.title}>
+              <List.Group
+                key={index}
+                id={group.id}
+                title={group.title}
+                emptySlateStyle={css`
+                  cursor: pointer;
+                  transition: all 200ms ease;
+                  &:hover {
+                    background-color: aliceblue;
+                  }
+                `}
+                emptySlate={"No content"}
+              >
                 {group.items.map((list, i) => (
                   <List.Item
                     key={i}
@@ -1040,7 +1057,7 @@ export const CustomOpener: Story = {
       },
     ];
 
-    const [groups, setGroups] = useState(LIST_GROUPS);
+    const [groups, setGroups] = useState<ListGroupContentProps[]>(LIST_GROUPS);
     const [value, setValue] = useState({
       search: "",
       checked: [] as ListItemProps[],
