@@ -11,6 +11,337 @@ import { OptionsProps } from "./../../components/selectbox";
 import { CapsuleContentProps } from "./../../components/capsule";
 
 describe("StatefulForm", () => {
+  context("with style", () => {
+    context("when given background wheat", () => {
+      const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
+        (data) => data.id === "US" || COUNTRY_CODES[206]
+      );
+
+      if (!DEFAULT_COUNTRY_CODES) {
+        throw new Error(
+          "Default country code 'US' not found in COUNTRY_CODES."
+        );
+      }
+
+      const FRUIT_OPTIONS: OptionsProps[] = [
+        { text: "Apple", value: "1" },
+        { text: "Banana", value: "2" },
+        { text: "Orange", value: "3" },
+        { text: "Grape", value: "4" },
+        { text: "Pineapple", value: "5" },
+        { text: "Strawberry", value: "6" },
+        { text: "Watermelon", value: "7" },
+      ];
+
+      const value = {
+        text: "",
+        time: "",
+        email: "",
+        number: "",
+        password: "",
+        textarea: "",
+        rating: "",
+        check: false,
+        chips: {
+          searchText: "",
+          selectedOptions: [],
+        },
+        color: "",
+        combo: [],
+        date: [""],
+        file_drop_box: [] as File[],
+        file: undefined,
+        image: undefined,
+        money: "",
+        phone: "",
+        signature: "",
+        country_code: DEFAULT_COUNTRY_CODES,
+      };
+
+      const MONTH_NAMES = [
+        { text: "JAN", value: "1" },
+        { text: "FEB", value: "2" },
+        { text: "MAR", value: "3" },
+        { text: "APR", value: "4" },
+        { text: "MAY", value: "5" },
+        { text: "JUN", value: "6" },
+        { text: "JUL", value: "7" },
+        { text: "AUG", value: "8" },
+        { text: "SEP", value: "9" },
+        { text: "OCT", value: "10" },
+        { text: "NOV", value: "11" },
+        { text: "DEC", value: "12" },
+      ];
+
+      const FIELDS: FormFieldGroup[] = [
+        {
+          name: "text",
+          title: "Text",
+          type: "text",
+          required: true,
+          placeholder: "Enter text",
+          textboxProps: {
+            style: css`
+              background-color: wheat;
+            `,
+          },
+        },
+        {
+          name: "email",
+          title: "Email",
+          type: "email",
+          required: false,
+          placeholder: "Enter email address",
+          textboxProps: {
+            style: css`
+              background-color: wheat;
+            `,
+          },
+        },
+        {
+          name: "time",
+          title: "Time",
+          type: "time",
+          required: false,
+          placeholder: "Enter email address",
+          timeboxProps: {
+            inputWrapperStyle: css`
+              background-color: wheat;
+            `,
+            inputStyle: css`
+              background-color: wheat;
+            `,
+          },
+        },
+        {
+          name: "number",
+          title: "Number",
+          type: "number",
+          required: false,
+          placeholder: "Enter number",
+          textboxProps: {
+            style: css`
+              background-color: wheat;
+            `,
+          },
+        },
+        {
+          name: "password",
+          title: "Password",
+          type: "password",
+          required: false,
+          placeholder: "Enter password",
+          textboxProps: {
+            style: css`
+              background-color: wheat;
+            `,
+          },
+        },
+        {
+          name: "textarea",
+          title: "Textarea",
+          type: "textarea",
+          rows: 3,
+          required: false,
+          placeholder: "Enter text here",
+          textareaProps: {
+            style: css`
+              background-color: wheat;
+            `,
+          },
+        },
+        {
+          name: "check",
+          placeholder: "Check",
+          type: "checkbox",
+          required: false,
+          checkboxProps: {
+            inputStyle: css`
+              background-color: wheat;
+            `,
+          },
+        },
+        {
+          name: "color",
+          title: "Color",
+          type: "color",
+          required: false,
+          placeholder: "Enter the color here",
+          colorboxProps: {
+            style: css`
+              background-color: wheat;
+            `,
+          },
+        },
+        {
+          name: "combo",
+          title: "Combo",
+          type: "combo",
+          required: false,
+          placeholder: "Select a fruit...",
+          comboboxProps: {
+            options: FRUIT_OPTIONS,
+            selectboxStyle: css`
+              background-color: wheat;
+            `,
+          },
+        },
+        {
+          name: "date",
+          title: "Date",
+          type: "date",
+          required: false,
+          placeholder: "Select a date",
+          dateProps: {
+            monthNames: MONTH_NAMES,
+            selectboxStyle: css`
+              background-color: wheat;
+            `,
+          },
+        },
+        {
+          name: "file_drop_box",
+          title: "File Drop Box",
+          type: "file_drop_box",
+          required: false,
+          fileDropBoxProps: {
+            dragOverStyle: css`
+              background-color: wheat;
+            `,
+          },
+        },
+        {
+          name: "file",
+          title: "File",
+          type: "file",
+          required: false,
+          fileInputBoxProps: {
+            accept: "image/jpeg",
+            inputStyle: css`
+              background-color: wheat;
+            `,
+          },
+        },
+        {
+          name: "image",
+          title: "Image",
+          type: "image",
+          required: false,
+          imageboxProps: {
+            style: css`
+              background-color: wheat;
+            `,
+          },
+        },
+        {
+          name: "money",
+          title: "Money",
+          type: "money",
+          required: false,
+          placeholder: "Enter amount",
+          moneyProps: {
+            separator: "dot",
+            style: css`
+              background-color: wheat;
+            `,
+          },
+        },
+        {
+          name: "phone",
+          title: "Phone",
+          type: "phone",
+          required: false,
+          placeholder: "Enter phone number",
+          phoneboxProps: {
+            inputWrapperStyle: css`
+              background-color: wheat;
+            `,
+            inputStyle: css`
+              background-color: wheat;
+            `,
+          },
+        },
+        {
+          name: "country_code",
+          title: "Country Code",
+          type: "country_code",
+          required: false,
+          placeholder: "Enter country code",
+        },
+        {
+          name: "signature",
+          title: "Signature",
+          type: "signbox",
+          required: false,
+          signboxProps: {
+            canvasStyle: css`
+              background-color: wheat;
+            `,
+          },
+        },
+      ];
+
+      it("renders with background wheat", () => {
+        cy.mount(
+          <StatefulForm fields={FIELDS} formValues={value} mode="onChange" />
+        );
+
+        const isFieldWithPlaceholder = (
+          field: FormFieldGroup
+        ): field is FormFieldProps & { placeholder: string } =>
+          !Array.isArray(field) &&
+          "placeholder" in field &&
+          typeof field.placeholder === "string";
+
+        const PLACEHOLDER_FIELDS = FIELDS.filter(
+          (field): field is FormFieldProps & { placeholder: string } =>
+            isFieldWithPlaceholder(field) &&
+            [
+              "text",
+              "email",
+              "number",
+              "password",
+              "textarea",
+              "money",
+              "phone",
+              "color",
+              "combo",
+              "date",
+              "signature",
+              "image",
+            ].includes(field.type)
+        );
+
+        PLACEHOLDER_FIELDS.forEach((field) => {
+          if (field.type === "image") {
+            cy.findByPlaceholderText("imagebox-input")
+              .should("exist")
+              .and("have.css", "background-color", "rgb(245, 222, 179)");
+          } else if (field.type === "signature") {
+            cy.findByPlaceholderText("signbox-canvas")
+              .should("exist")
+              .and("have.css", "background-color", "rgb(245, 222, 179)");
+          } else if (field.type === "color") {
+            cy.findByPlaceholderText(field.placeholder)
+              .should("exist")
+              .parent()
+              .parent()
+              .and("have.css", "background-color", "rgb(245, 222, 179)");
+          } else if (field.type === "money") {
+            cy.findByPlaceholderText(field.placeholder)
+              .should("exist")
+              .parent()
+              .and("have.css", "background-color", "rgb(245, 222, 179)");
+          } else {
+            cy.findByPlaceholderText(field.placeholder)
+              .should("exist")
+              .and("have.css", "background-color", "rgb(245, 222, 179)");
+          }
+        });
+      });
+    });
+  });
+
   context("capsule", () => {
     const value = {
       capsule: "unpaid",
