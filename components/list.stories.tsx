@@ -26,6 +26,7 @@ import { EmptySlate } from "./empty-slate";
 import { Button } from "./button";
 import { Textbox } from "./textbox";
 import { DormantText } from "./dormant-text";
+import { FormFieldGroup, StatefulForm } from "./stateful-form";
 
 const meta: Meta<typeof List> = {
   title: "Content/List",
@@ -760,6 +761,262 @@ export const ReactNodeTitle: Story = {
                         }),
                       }}
                     />
+                  );
+                })}
+              </List.Group>
+            );
+          })}
+        </List>
+      </Card>
+    );
+  },
+};
+
+export const WithOnlyOneOpener: Story = {
+  render: () => {
+    const LIST_GROUPS: ListGroupContentProps[] = [
+      {
+        id: "form-fields",
+        title: "Form Fields",
+        items: [
+          { id: "name", title: "Name" },
+          { id: "code", title: "Code" },
+          {
+            id: "lead",
+            title: "Lead",
+          },
+        ],
+      },
+    ];
+
+    const [groups, setGroups] = useState(LIST_GROUPS);
+
+    interface InputValueProps {
+      search: string;
+      checked: ListItemProps[];
+      value: { id: string; value: string }[];
+      statefulValue: { id: string; value: string };
+    }
+
+    const [inputValue, setInputValue] = useState<InputValueProps>({
+      search: "",
+      checked: [] as ListItemProps[],
+      value: [],
+      statefulValue: {
+        id: "",
+        value: "",
+      },
+    });
+
+    const filteredContent = useMemo(() => {
+      const searchContent = inputValue.search.toLowerCase().trim();
+
+      return groups
+        .map((group) => {
+          const matchedItems = group.items.filter((item) => {
+            const titleMatch =
+              typeof item.title === "string" &&
+              item.title.toLowerCase().includes(searchContent);
+            const subtitleMatch = item.subtitle
+              ?.toLowerCase()
+              .includes(searchContent);
+            return titleMatch || subtitleMatch;
+          });
+
+          const groupMatches = group.title
+            .toLowerCase()
+            .includes(searchContent);
+
+          if (groupMatches || matchedItems.length > 0) {
+            return {
+              ...group,
+              items: groupMatches ? group.items : matchedItems,
+            };
+          }
+
+          return null;
+        })
+        .filter(Boolean);
+    }, [inputValue, groups]);
+
+    const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
+      const { name, value: inputValue, checked, type } = e.target;
+
+      if (type === "checkbox") {
+        const parsed = JSON.parse(inputValue);
+        setInputValue((prev) => ({
+          ...prev,
+          [name]: checked
+            ? [...prev[name], parsed]
+            : prev[name].filter((val: ListItemProps) => val.id !== parsed.id),
+        }));
+      } else {
+        setInputValue((prev) => ({ ...prev, [name]: inputValue }));
+      }
+    };
+
+    const FIELDS: FormFieldGroup[] = [
+      {
+        name: "value",
+        title: "Name",
+        type: "text",
+        required: true,
+        placeholder: "Enter your name",
+      },
+      {
+        name: "button",
+        title: "Save",
+        type: "button",
+        rowJustifyContent: "end",
+        onClick: () => {
+          setGroups((prev) =>
+            prev.map((group) => ({
+              ...group,
+              items: group.items.map((list) =>
+                list.id === inputValue.statefulValue.id
+                  ? { ...list, title: inputValue.statefulValue.value }
+                  : list
+              ),
+            }))
+          );
+        },
+      },
+    ];
+    console.log(inputValue.statefulValue);
+    const LIST_GROUP_ACTIONS: ListGroupActionsProps[] = [
+      {
+        caption: "Add",
+        onClick: () =>
+          setGroups((prev) => {
+            const count = prev.flatMap((g) => g.items).length + 1;
+
+            const newItem = {
+              id: `new-item-${count}`,
+              title: `New Item ${count}`,
+            };
+
+            const updated = [...prev];
+            updated[0] = {
+              ...updated[0],
+              items: [...updated[0].items, newItem],
+            };
+
+            return updated;
+          }),
+      },
+    ];
+
+    const LIST_ITEM_ACTIONS = (id: string): ListItemActionProps[] => {
+      const selectedByFormFieldsGroup = id.split("form-fields-");
+      return [
+        {
+          caption: "Delete",
+          icon: RiDeleteBin2Fill,
+          onClick: () => {
+            setGroups((prev) =>
+              prev.map((group) => ({
+                ...group,
+                items: group.items.filter(
+                  (item) => item.id !== selectedByFormFieldsGroup[1]
+                ),
+              }))
+            );
+
+            setInputValue((prev) => ({
+              ...prev,
+              value: prev.value.filter(
+                (val) => val.id !== selectedByFormFieldsGroup[1]
+              ),
+            }));
+          },
+        },
+      ];
+    };
+
+    return (
+      <Card>
+        <List
+          searchable
+          selectable
+          openerBehavior="onlyOne"
+          onSearchRequested={onChangeValue}
+          containerStyle={css`
+            padding: 16px;
+            min-width: 500px;
+          `}
+        >
+          {filteredContent.map((group, index) => {
+            return (
+              <List.Group
+                key={index}
+                id={group.id}
+                subtitle={group.subtitle}
+                title={group.title}
+                actions={LIST_GROUP_ACTIONS}
+              >
+                {group.items.map((list, i) => {
+                  return (
+                    <List.Item
+                      key={i}
+                      id={list.id}
+                      subtitle={list.subtitle}
+                      title={list.title}
+                      actions={LIST_ITEM_ACTIONS}
+                      onClick={() =>
+                        setInputValue((prev) => ({
+                          ...prev,
+                          statefulValue:
+                            prev.statefulValue.id === list.id
+                              ? prev.statefulValue
+                              : {
+                                  id: list.id,
+                                  value: list.title as string,
+                                },
+                        }))
+                      }
+                      rowStyle={css`
+                        width: 100%;
+                        min-height: 40px;
+                      `}
+                      titleStyle={css`
+                        width: 100%;
+                      `}
+                      rightSideStyle={css`
+                        width: 6%;
+                      `}
+                      openable
+                      groupId={group.id}
+                      onSelected={onChangeValue}
+                      selectedOptions={{
+                        checked: inputValue.checked.some(
+                          (check) => check.id === list.id
+                        ),
+                        value: JSON.stringify({
+                          id: list.id,
+                          title: list.title,
+                          subtitle: list.subtitle,
+                        }),
+                      }}
+                    >
+                      <StatefulForm
+                        containerStyle={css`
+                          padding-left: 33px;
+                          padding-right: 33px;
+                          padding-bottom: 20px;
+                        `}
+                        formValues={inputValue.statefulValue}
+                        fields={FIELDS}
+                        onChange={({ currentState }) =>
+                          setInputValue((prev) => ({
+                            ...prev,
+                            statefulValue: {
+                              ...prev.statefulValue,
+                              ...currentState,
+                            },
+                          }))
+                        }
+                      />
+                    </List.Item>
                   );
                 })}
               </List.Group>
