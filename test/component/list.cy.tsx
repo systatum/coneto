@@ -1411,6 +1411,119 @@ describe("List", () => {
   ];
 
   context("openable", () => {
+    context("with openerBehavior only one", () => {
+      context("when clicking", () => {
+        it("renders the opener", () => {
+          cy.mount(
+            <List
+              searchable
+              draggable
+              selectable
+              openerBehavior="onlyOne"
+              containerStyle={css`
+                padding: 16px;
+                min-width: 350px;
+              `}
+            >
+              {LIST_GROUPS_OPENABLE.map((group, index) => (
+                <List.Group
+                  key={index}
+                  id={group.id}
+                  title={group.title}
+                  subtitle={group.subtitle}
+                  actions={group.actions}
+                  openerStyle="togglebox"
+                >
+                  {group.items.map((list, i) => (
+                    <List.Item
+                      key={i}
+                      id={list.id}
+                      actions={list.actions}
+                      leftIcon={list.leftIcon}
+                      subtitle={list.subtitle}
+                      title={list.title}
+                      groupId={group.id}
+                      openable
+                      selectedOptions={{
+                        checked: true,
+                      }}
+                    >
+                      {list.children}
+                    </List.Item>
+                  ))}
+                </List.Group>
+              ))}
+            </List>
+          );
+          cy.findByText(
+            "Modify your system preferences, manage privacy and notifications, and fine-tune your user experience to suit your workflow."
+          ).should("not.be.visible");
+          cy.findByText("Settings").click();
+          cy.findByText(
+            "Modify your system preferences, manage privacy and notifications, and fine-tune your user experience to suit your workflow."
+          ).should("be.visible");
+        });
+
+        context("when clicking another list", () => {
+          it("renders display only one opener", () => {
+            cy.mount(
+              <List
+                searchable
+                draggable
+                selectable
+                openerBehavior="onlyOne"
+                containerStyle={css`
+                  padding: 16px;
+                  min-width: 350px;
+                `}
+              >
+                {LIST_GROUPS_OPENABLE.map((group, index) => (
+                  <List.Group
+                    key={index}
+                    id={group.id}
+                    title={group.title}
+                    subtitle={group.subtitle}
+                    actions={group.actions}
+                    openerStyle="togglebox"
+                  >
+                    {group.items.map((list, i) => (
+                      <List.Item
+                        key={i}
+                        id={list.id}
+                        actions={list.actions}
+                        leftIcon={list.leftIcon}
+                        subtitle={list.subtitle}
+                        title={list.title}
+                        groupId={group.id}
+                        openable
+                        selectedOptions={{
+                          checked: true,
+                        }}
+                      >
+                        {list.children}
+                      </List.Item>
+                    ))}
+                  </List.Group>
+                ))}
+              </List>
+            );
+            cy.findByText(
+              "Modify your system preferences, manage privacy and notifications, and fine-tune your user experience to suit your workflow."
+            ).should("not.be.visible");
+            cy.findByText("Settings").click();
+            cy.findByText(
+              "Modify your system preferences, manage privacy and notifications, and fine-tune your user experience to suit your workflow."
+            ).should("be.visible");
+
+            cy.findByText("Profile").click();
+            cy.findByText(
+              "Modify your system preferences, manage privacy and notifications, and fine-tune your user experience to suit your workflow."
+            ).should("not.be.visible");
+          });
+        });
+      });
+    });
+
     context("with children", () => {
       it("should render children list item", () => {
         cy.mount(
