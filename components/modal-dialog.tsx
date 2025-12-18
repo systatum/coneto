@@ -19,7 +19,8 @@ export interface ModalDialogProps {
   subTitle?: string;
   hasCloseButton?: boolean;
   buttons?: ModalButtonProps[];
-  style?: CSSProp;
+  containerStyle?: CSSProp;
+  contentStyle?: CSSProp;
   children?: ReactNode;
   onClick?: (args: { id: string; closeDialog: () => void }) => void;
 }
@@ -32,7 +33,8 @@ function ModalDialog({
   title,
   buttons,
   children,
-  style,
+  containerStyle,
+  contentStyle,
   onClick,
 }: ModalDialogProps) {
   const closeDialog = () => onVisibilityChange(false);
@@ -48,7 +50,7 @@ function ModalDialog({
           max-width: 500px;
           padding: 0px;
           border-radius: 0;
-          ${style}
+          ${containerStyle}
         `}
         hideClose={!hasCloseButton}
       >
@@ -67,7 +69,9 @@ function ModalDialog({
 
           <Divider />
 
-          <Body>{children}</Body>
+          <Body aria-label="modal-dialog-content" $style={contentStyle}>
+            {children}
+          </Body>
         </Container>
 
         <Footer>
@@ -111,12 +115,14 @@ const Divider = styled.div`
   border: 1px solid #3b82f6;
 `;
 
-const Body = styled.div`
+const Body = styled.div<{ $style?: CSSProp }>`
   height: 100%;
   min-height: 250px;
   font-size: 12px;
   width: 100%;
   padding-top: 0.5rem;
+
+  ${({ $style }) => $style}
 `;
 
 const Footer = styled.div`
