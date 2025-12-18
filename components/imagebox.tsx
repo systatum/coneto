@@ -87,6 +87,7 @@ function Imagebox({
 
   const inputElement: ReactElement = (
     <InputBox
+      aria-label="imagebox-input"
       $style={style}
       $dimension={dimension}
       $isDragging={isDragging}
@@ -163,6 +164,8 @@ const InputBox = styled.div<{
     $isDragging ? "#eff6ff" : "#ffffff"};
   color: ${({ $isDragging }) => ($isDragging ? "#3b82f6" : "#6b7280")};
   cursor: pointer;
+
+  ${({ $style }) => $style}
 `;
 
 const Label = styled.label<{ $style?: CSSProp }>`
