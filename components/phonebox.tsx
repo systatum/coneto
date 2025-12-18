@@ -37,7 +37,9 @@ export interface CountryCodeProps {
 export interface PhoneboxProps {
   label?: string;
   name?: string;
-  style?: CSSProp;
+  inputStyle?: CSSProp;
+  inputWrapperStyle?: CSSProp;
+  toggleStyle?: CSSProp;
   labelStyle?: CSSProp;
   value?: string;
   onChange?: (
@@ -58,7 +60,6 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
   (
     {
       label,
-      style,
       value = "",
       onChange,
       placeholder,
@@ -67,6 +68,9 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
       errorMessage,
       onKeyDown,
       countryCodeValue,
+      inputWrapperStyle,
+      toggleStyle,
+      inputStyle,
       labelStyle,
       containerStyle,
     },
@@ -229,7 +233,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
               ? `country-option-${highlightedIndex}`
               : undefined,
           })}
-          $style={style}
+          $style={inputWrapperStyle}
         >
           <CountryButton
             type="button"
@@ -238,7 +242,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
             $disabled={disabled}
             aria-label="Select country code"
             tabIndex={0}
-            $style={style}
+            $style={toggleStyle}
           >
             <span>{selectedCountry.flag}</span>
             <span>{selectedCountry.code}</span>
@@ -248,7 +252,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
           <PhoneInput
             ref={phoneInputRef}
             type="tel"
-            $style={style}
+            $style={inputStyle}
             placeholder={placeholder}
             value={phoneNumber}
             onChange={handlePhoneChange}
@@ -365,8 +369,9 @@ const InputWrapper = styled.div<{
   &:focus-within {
     border-color: ${({ $hasError }) => ($hasError ? "#ef4444" : "#61A9F9")};
   }
+  border-radius: 2px;
 
-  ${({ $style }) => $style}
+  ${({ $style }) => $style};
 `;
 
 const ContainerPhonebox = styled.div<{ $style?: CSSProp }>`
