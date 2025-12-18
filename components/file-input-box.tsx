@@ -4,13 +4,14 @@ import styled, { css, CSSProp } from "styled-components";
 import { Button } from "./button";
 
 export interface FileInputBoxProps {
-  containerStyle?: CSSProp;
   placeholder?: string;
   accept?: string;
   multiple?: boolean;
   onFilesSelected?: (files: File[]) => void;
   label?: string;
+  containerStyle?: CSSProp;
   labelStyle?: CSSProp;
+  inputStyle?: CSSProp;
   showError?: boolean;
   errorMessage?: string;
 }
@@ -25,6 +26,7 @@ function FileInputBox({
   labelStyle,
   errorMessage,
   showError,
+  inputStyle,
 }: FileInputBoxProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -77,6 +79,7 @@ function FileInputBox({
 
   const inputElement: ReactElement = (
     <InputBox
+      $style={inputStyle}
       $isDragging={isDragging}
       $hasFile={selectedFiles.length > 0}
       onClick={handleBrowseClick}
@@ -161,6 +164,8 @@ const InputBox = styled.div<{
   $isDragging: boolean;
   $hasFile: boolean;
   $isError?: boolean;
+  $inputStyle?: CSSProp;
+  $style?: CSSProp;
 }>`
   padding: 12px;
   display: flex;
@@ -205,6 +210,8 @@ const InputBox = styled.div<{
     bottom right,
     bottom left;
   background-repeat: no-repeat;
+
+  ${({ $style }) => $style}
 `;
 
 const InputContent = styled.div`
