@@ -40,6 +40,7 @@ export interface ListProps {
     oldPosition: number;
     newPosition: number;
   }) => void;
+  openerBehavior?: "any" | "onlyOne";
 }
 
 export interface ListGroupActionsProps
@@ -117,6 +118,12 @@ interface ListItemInternal
   onClick?: (e?: React.MouseEvent) => void;
 }
 
+type OpenedContextType = {
+  openedIds: Set<string>;
+  setIsOpen: (id: string) => void;
+  isOpen: (id: string) => boolean;
+};
+
 const DnDContext = createContext<{
   dragItem: {
     id: string;
@@ -142,6 +149,12 @@ const DnDContext = createContext<{
   setDragItem: () => {},
 });
 
+const OpenedContext = createContext<OpenedContextType>({
+  openedIds: new Set(),
+  setIsOpen: () => {},
+  isOpen: () => false,
+});
+
 function List({
   searchable,
   onSearchRequested,
@@ -151,43 +164,76 @@ function List({
   draggable,
   selectable,
   isLoading,
+  openerBehavior = "any",
 }: ListProps) {
+  const [openedIds, setOpenedIds] = useState<Set<string>>(new Set());
   const [dragItem, setDragItem] = useState(null);
   const [value, setValue] = useState("");
 
   const childArray = Children.toArray(children).filter(isValidElement);
 
+  const setIsOpen = (id: string) => {
+    setOpenedIds((prev) => {
+      const next = new Set(prev);
+      if (openerBehavior === "onlyOne") {
+        if (next.has(id)) {
+          next.clear();
+        } else {
+          next.clear();
+          next.add(id);
+        }
+        return next;
+      }
+
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+
+      return next;
+    });
+  };
+
   return (
-    <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
-      <ListContainer role="list" $containerStyle={containerStyle}>
-        {searchable && (
-          <Searchbox
-            name="search"
-            onChange={(e) => {
-              onSearchRequested(e);
-              setValue(e.target.value);
-            }}
-            value={value}
-          />
-        )}
+    <OpenedContext.Provider
+      value={{
+        openedIds,
+        setIsOpen,
+        isOpen: (id) => openedIds.has(id),
+      }}
+    >
+      <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
+        <ListContainer role="list" $containerStyle={containerStyle}>
+          {searchable && (
+            <Searchbox
+              name="search"
+              onChange={(e) => {
+                onSearchRequested(e);
+                setValue(e.target.value);
+              }}
+              value={value}
+            />
+          )}
 
-        {isLoading && (
-          <OverlayLoading>
-            <LoadingSpinner iconSize={24} />
-          </OverlayLoading>
-        )}
+          {isLoading && (
+            <OverlayLoading>
+              <LoadingSpinner iconSize={24} />
+            </OverlayLoading>
+          )}
 
-        {childArray.map((child, index) => {
-          const componentChild = child as ReactElement<ListItemProps>;
-          const modifiedChild = cloneElement(componentChild, {
-            draggable: draggable,
-            selectable: selectable,
-          });
+          {childArray.map((child, index) => {
+            const componentChild = child as ReactElement<ListItemProps>;
+            const modifiedChild = cloneElement(componentChild, {
+              draggable: draggable,
+              selectable: selectable,
+            });
 
-          return <Fragment key={`list-${index}`}>{modifiedChild}</Fragment>;
-        })}
-      </ListContainer>
-    </DnDContext.Provider>
+            return <Fragment key={`list-${index}`}>{modifiedChild}</Fragment>;
+          })}
+        </ListContainer>
+      </DnDContext.Provider>
+    </OpenedContext.Provider>
   );
 }
 
@@ -504,21 +550,23 @@ function ListItem({
   onDropItem?: (position: number) => void;
   groupLength?: number;
 }) {
+  const { isOpen, setIsOpen } = useContext(OpenedContext);
   const { setDragItem, dragItem } = useContext(DnDContext);
   const [isOver, setIsOver] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
   const [isHovered, setIsHovered] = useState<string | null>(null);
   const [dropPosition, setDropPosition] = useState<"top" | "bottom" | null>(
     null
   );
   const idFullname = groupId ? `${groupId}-${id}` : `${id}`;
 
+  const isOpenedChild = isOpen(idFullname);
+
   return (
     <ListItemWrapper
       onMouseEnter={() => setIsHovered(idFullname)}
       onMouseLeave={() => setIsHovered(null)}
       aria-label="list-item-wrapper"
-      $openable={openable && isOpen}
+      $openable={openable && isOpenedChild}
       $style={containerStyle}
     >
       <ListItemRow
@@ -529,7 +577,7 @@ function ListItem({
             onClick();
           }
           if (openable) {
-            setIsOpen((prev) => !prev);
+            setIsOpen(idFullname);
           }
         }}
         draggable={draggable}
@@ -589,7 +637,7 @@ function ListItem({
         }}
       >
         <ListItemLeft $style={leftSideStyle} aria-label="list-item-left-side">
-          {selectable && (
+          {selectable && selectedOptions && (
             <Checkbox
               name="checked"
               value={selectedOptions.value}
@@ -690,9 +738,9 @@ function ListItem({
           <ListGroupContent
             key={`list-group-content-${index}`}
             initial="collapsed"
-            animate={isOpen ? "open" : "collapsed"}
+            animate={isOpenedChild ? "open" : "collapsed"}
             exit="collapsed"
-            $isOpen={isOpen}
+            $isOpen={isOpenedChild}
             variants={{
               open: { opacity: 1, height: "auto", display: "flex" },
               collapsed: { opacity: 0, height: 0, display: "none" },
