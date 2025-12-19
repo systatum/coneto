@@ -772,7 +772,7 @@ export const ReactNodeTitle: Story = {
   },
 };
 
-export const WithOnlyOneOpener: Story = {
+export const WithSubContent: Story = {
   render: () => {
     const LIST_GROUPS: ListGroupContentProps[] = [
       {
@@ -938,7 +938,7 @@ export const WithOnlyOneOpener: Story = {
         <List
           searchable
           selectable
-          openerBehavior="onlyOne"
+          openableBehavior="onlyOne"
           onSearchRequested={onChangeValue}
           containerStyle={css`
             padding: 16px;
