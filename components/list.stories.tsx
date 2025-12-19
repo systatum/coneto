@@ -936,7 +936,6 @@ export const WithOnlyOneOpener: Story = {
     return (
       <Card>
         <List
-          onOpen={({ id, isOpen }) => console.log("id", id, "isOpen", isOpen)}
           searchable
           selectable
           openerBehavior="onlyOne"
