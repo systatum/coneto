@@ -178,6 +178,7 @@ function Signbox({
 
   const inputElement: ReactElement = (
     <SignatureWrapper
+      aria-label="signbox-canvas"
       $error={showError}
       $canvasStyle={canvasStyle}
       $height={height}

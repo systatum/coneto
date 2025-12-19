@@ -16,6 +16,7 @@ export interface TimeboxProps {
   editable?: boolean;
   containerStyle?: CSSProp;
   inputStyle?: CSSProp;
+  inputWrapperStyle?: CSSProp;
   labelStyle?: CSSProp;
   errorStyle?: CSSProp;
   disabled?: boolean;
@@ -43,6 +44,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
       containerStyle,
       inputStyle,
       labelStyle,
+      inputWrapperStyle,
       disabled,
       label,
       errorMessage,
@@ -179,6 +181,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
 
     const inputElement: ReactElement = (
       <InputGroup
+        $style={inputWrapperStyle}
         $focused={isFocused}
         $error={!!showError}
         onKeyDown={(e) => {
@@ -331,7 +334,11 @@ const InputWrapper = styled.div<{
   ${({ $containerStyle }) => $containerStyle}
 `;
 
-const InputGroup = styled.div<{ $focused: boolean; $error: boolean }>`
+const InputGroup = styled.div<{
+  $focused: boolean;
+  $error: boolean;
+  $style?: CSSProp;
+}>`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -341,6 +348,8 @@ const InputGroup = styled.div<{ $focused: boolean; $error: boolean }>`
 
   border-color: ${({ $error, $focused }) =>
     $error ? "#dc2626" : $focused ? "#61A9F9" : "#d1d5db"};
+
+  ${({ $style }) => $style}
 `;
 
 const InputContent = styled.div`

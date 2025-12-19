@@ -637,7 +637,7 @@ function FormFields<T extends FieldValues>({
                           font-size: ${labelSize};
                         `
                       }
-                      style={css`
+                      inputWrapperStyle={css`
                         ${fieldSize &&
                         css`
                           font-size: ${fieldSize};
@@ -968,6 +968,7 @@ function FormFields<T extends FieldValues>({
                           onChange(field.name as keyof T, e);
                         }
                       }}
+                      placeholder={field.placeholder}
                       selectedDates={controllerField.value}
                       disabled={field.disabled}
                       {...field.dateProps}

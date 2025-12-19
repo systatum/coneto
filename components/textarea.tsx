@@ -21,7 +21,9 @@ export interface TextareaProps
   labelStyle?: CSSProp;
   style?: CSSProp;
   onActionClick?: () => void;
-  onChange: (data: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onChange?: (
+    data: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
   icon?: RemixiconComponentType;
   actionIcon?: boolean;
   autogrow?: boolean;

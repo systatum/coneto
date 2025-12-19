@@ -21,7 +21,7 @@ export interface ThumbFieldProps {
   containerStyle?: CSSProp;
   triggerStyle?: CSSProp;
   labelStyle?: CSSProp;
-  style: CSSProp;
+  style?: CSSProp;
   id?: string;
 }
 

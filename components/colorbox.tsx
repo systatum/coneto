@@ -10,7 +10,7 @@ import styled, { CSSProp } from "styled-components";
 
 export interface ColorboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "style"> {
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   value?: string;
   label?: string;
   showError?: boolean;
