@@ -1411,7 +1411,7 @@ describe("List", () => {
   ];
 
   context("openable", () => {
-    context("with openerBehavior only one", () => {
+    context("with openableBehavior only one", () => {
       context("when clicking", () => {
         it("renders the opener", () => {
           cy.mount(
@@ -1419,7 +1419,7 @@ describe("List", () => {
               searchable
               draggable
               selectable
-              openerBehavior="onlyOne"
+              openableBehavior="onlyOne"
               containerStyle={css`
                 padding: 16px;
                 min-width: 350px;
@@ -1471,7 +1471,7 @@ describe("List", () => {
                 searchable
                 draggable
                 selectable
-                openerBehavior="onlyOne"
+                openableBehavior="onlyOne"
                 containerStyle={css`
                   padding: 16px;
                   min-width: 350px;
