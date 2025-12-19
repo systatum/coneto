@@ -938,7 +938,7 @@ export const WithSubcontent: Story = {
         <List
           searchable
           selectable
-          openableBehavior="onlyOne"
+          openerBehavior="onlyOne"
           onSearchRequested={onChangeValue}
           containerStyle={css`
             padding: 16px;
