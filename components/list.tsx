@@ -833,6 +833,7 @@ const TextWrapper = styled.div`
   flex-direction: column;
   user-select: none;
   width: 100%;
+  word-break: break-all;
 `;
 
 const CustomLeftSideContent = styled.div<{
