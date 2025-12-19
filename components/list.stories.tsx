@@ -882,7 +882,7 @@ export const WithOnlyOneOpener: Story = {
         },
       },
     ];
-    console.log(inputValue.statefulValue);
+
     const LIST_GROUP_ACTIONS: ListGroupActionsProps[] = [
       {
         caption: "Add",
@@ -936,6 +936,7 @@ export const WithOnlyOneOpener: Story = {
     return (
       <Card>
         <List
+          onOpen={({ id, isOpen }) => console.log("id", id, "isOpen", isOpen)}
           searchable
           selectable
           openerBehavior="onlyOne"
