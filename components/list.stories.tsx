@@ -772,7 +772,7 @@ export const ReactNodeTitle: Story = {
   },
 };
 
-export const WithSubContent: Story = {
+export const WithSubcontent: Story = {
   render: () => {
     const LIST_GROUPS: ListGroupContentProps[] = [
       {
