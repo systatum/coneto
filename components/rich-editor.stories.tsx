@@ -138,7 +138,7 @@ This is unordered list
               toggleStyle={css`
                 min-height: 40px;
               `}
-              subMenuList={TIP_MENU_EMAIL}
+              subMenu={({ list }) => list(TIP_MENU_EMAIL)}
               className="w-fit"
             >
               Save

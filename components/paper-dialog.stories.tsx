@@ -94,7 +94,7 @@ export const Default: Story = {
       },
       {
         name: "access",
-        description: "Has access to login",
+        placeholder: "Has access to login",
         type: "checkbox",
         required: false,
       },
@@ -248,7 +248,7 @@ export const Closable: Story = {
       },
       {
         name: "access",
-        description: "Has access to login",
+        placeholder: "Has access to login",
         type: "checkbox",
         required: false,
       },
@@ -387,7 +387,7 @@ export const FixedLeft: Story = {
       },
       {
         name: "access",
-        description: "Has access to login",
+        placeholder: "Has access to login",
         type: "checkbox",
         required: false,
       },
