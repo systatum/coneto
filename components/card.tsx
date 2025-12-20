@@ -35,8 +35,8 @@ export interface CardProps {
   footerStyle?: CSSProp;
   titleStyle?: CSSProp;
   subtitleStyle?: CSSProp;
-  title?: string;
-  subtitle?: string;
+  title?: string | ReactNode;
+  subtitle?: string | ReactNode;
   footerContent?: ReactNode;
   closable?: boolean;
   onCloseRequest?: () => void;
