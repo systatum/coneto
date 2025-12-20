@@ -559,14 +559,14 @@ function ListItem({
   );
   const idFullname = groupId ? `${groupId}-${id}` : `${id}`;
 
-  const isOpenedChild = isOpen(idFullname);
+  const isChildOpened = isOpen(idFullname);
 
   return (
     <ListItemWrapper
       onMouseEnter={() => setIsHovered(idFullname)}
       onMouseLeave={() => setIsHovered(null)}
       aria-label="list-item-wrapper"
-      $openable={openable && isOpenedChild}
+      $openable={openable && isChildOpened}
       $style={containerStyle}
     >
       <ListItemRow
@@ -738,9 +738,9 @@ function ListItem({
           <ListGroupContent
             key={`list-group-content-${index}`}
             initial="collapsed"
-            animate={isOpenedChild ? "open" : "collapsed"}
+            animate={isChildOpened ? "open" : "collapsed"}
             exit="collapsed"
-            $isOpen={isOpenedChild}
+            $isOpen={isChildOpened}
             variants={{
               open: { opacity: 1, height: "auto", display: "flex" },
               collapsed: { opacity: 0, height: 0, display: "none" },
