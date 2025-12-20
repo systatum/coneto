@@ -1469,7 +1469,7 @@ describe("List", () => {
       });
     });
 
-    context("with set to any", () => {
+    context("when set to any", () => {
       it("allows opening any list item", () => {
         cy.mount(
           <List
