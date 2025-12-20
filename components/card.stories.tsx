@@ -23,6 +23,8 @@ import { Button } from "./button";
 import { List, ListItemProps } from "./list";
 import { css } from "styled-components";
 import { ColumnTableProps, SubMenuListTableProps, Table } from "./table";
+import { DormantText } from "./dormant-text";
+import { Textbox } from "./textbox";
 
 const meta: Meta<typeof Card> = {
   title: "Content/Card",
@@ -859,6 +861,15 @@ export const WithHeaderAndFooter: Story = {
 
 export const WithFullWidthContent: Story = {
   render: () => {
+    const [value, setValue] = useState({
+      title: "Department",
+      subtitle: "Departments and their leaders",
+    });
+    const [oldValue, setOldValue] = useState({
+      title: value.title,
+      subtitle: value.subtitle,
+    });
+
     const columns: ColumnTableProps[] = [
       {
         id: "name",
@@ -1022,10 +1033,46 @@ export const WithFullWidthContent: Story = {
       ];
     };
 
+    const renderDormantTextField = (
+      name: "title" | "subtitle",
+      sizeText?: number
+    ) => {
+      return (
+        <DormantText
+          acceptChangeOn={"enter"}
+          content={value?.[name]}
+          cancelable
+          onActive={() => {
+            setOldValue(value);
+          }}
+          dormantedStyle={css`
+            padding: 0px;
+          `}
+          dormantedFontSize={sizeText ?? 16}
+          onCancelRequested={() => {
+            setValue((prev) => ({ ...prev, [name]: oldValue.title }));
+          }}
+        >
+          <Textbox
+            value={value?.[name]}
+            onChange={(e) =>
+              setValue((prev) => ({ ...prev, [name]: e.target.value }))
+            }
+          />
+        </DormantText>
+      );
+    };
+
     return (
       <Card
-        title="Departments"
-        subtitle="Departments and their leaders"
+        title={renderDormantTextField("title")}
+        subtitle={renderDormantTextField("subtitle", 14)}
+        titleStyle={css`
+          width: 100%;
+        `}
+        textContainerStyle={css`
+          width: 100%;
+        `}
         containerStyle={css`
           padding-left: 0px;
           padding-right: 0px;
