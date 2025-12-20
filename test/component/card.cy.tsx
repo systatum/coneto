@@ -1,8 +1,79 @@
 import { RiEdit2Line } from "@remixicon/react";
 import { Card } from "./../../components/card";
 import { Button } from "./../../components/button";
+import { DormantText } from "./../../components/dormant-text";
+import { Textbox } from "./../../components/textbox";
+import { css } from "styled-components";
 
 describe("Card", () => {
+  context("with ReactNode", () => {
+    context("when title and subtitle use DormantText", () => {
+      it("renders dormant labels that activate input elements", () => {
+        const value = {
+          title: "Department",
+          subtitle: "Departments and their leaders",
+        };
+
+        const renderDormantTextField = (
+          name: "title" | "subtitle",
+          sizeText?: number
+        ) => {
+          return (
+            <DormantText
+              acceptChangeOn={"enter"}
+              content={value?.[name]}
+              cancelable
+              dormantedStyle={css`
+                padding: 0px;
+              `}
+              dormantedFontSize={sizeText ?? 16}
+            >
+              <Textbox value={value?.[name]} />
+            </DormantText>
+          );
+        };
+
+        cy.mount(
+          <Card
+            title={renderDormantTextField("title")}
+            subtitle={renderDormantTextField("subtitle", 14)}
+            titleStyle={css`
+              width: 100%;
+            `}
+            textContainerStyle={css`
+              width: 100%;
+            `}
+            containerStyle={css`
+              padding-left: 0px;
+              padding-right: 0px;
+              min-width: 1000px;
+              padding-bottom: 0px;
+            `}
+            headerStyle={css`
+              padding-left: 15px;
+              padding-right: 15px;
+              border-bottom: 1px solid #d1d5db;
+            `}
+          >
+            test
+          </Card>
+        );
+
+        cy.get("input[type='text']").should("not.exist");
+        cy.findByText("Department").click();
+        cy.get("input[type='text']")
+          .eq(0)
+          .should("exist")
+          .and("have.value", "Department");
+        cy.findByText("Departments and their leaders").click();
+        cy.get("input[type='text']")
+          .eq(1)
+          .should("exist")
+          .and("have.value", "Departments and their leaders");
+      });
+    });
+  });
+
   context("with header", () => {
     context("with title", () => {
       it("should render the text", () => {
@@ -37,7 +108,7 @@ describe("Card", () => {
             subtitle="Fueling innovation with every bite."
             headerActions={[
               {
-                title: "Edit fields",
+                caption: "Edit fields",
                 icon: RiEdit2Line,
                 onClick: () => {
                   console.log(`Edit button was clicked`);
@@ -67,7 +138,7 @@ describe("Card", () => {
           subtitle="Fueling innovation with every bite."
           headerActions={[
             {
-              title: "Edit fields",
+              caption: "Edit fields",
               icon: RiEdit2Line,
               onClick: () => {
                 console.log(`Edit button was clicked`);
