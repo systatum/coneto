@@ -607,7 +607,7 @@ export const WithHeaderAndFooter: Story = {
         .map((group) => {
           const matchedItems = group.items.filter(
             (item) =>
-              item.title?.toLowerCase().includes(searchContent) ||
+              (item.title as string)?.toLowerCase().includes(searchContent) ||
               item.subtitle?.toLowerCase().includes(searchContent)
           );
 

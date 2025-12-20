@@ -21,11 +21,12 @@ import {
 } from "@remixicon/react";
 import { Card } from "./card";
 import { ChangeEvent, useMemo, useState } from "react";
-import { css } from "styled-components";
+import styled, { css } from "styled-components";
 import { EmptySlate } from "./empty-slate";
 import { Button } from "./button";
 import { Textbox } from "./textbox";
 import { DormantText } from "./dormant-text";
+import { FormFieldGroup, StatefulForm } from "./stateful-form";
 
 const meta: Meta<typeof List> = {
   title: "Content/List",
@@ -770,6 +771,486 @@ export const ReactNodeTitle: Story = {
     );
   },
 };
+
+export const WithSubcontent: Story = {
+  render: () => {
+    const LIST_GROUPS: ListGroupContentProps[] = [
+      {
+        id: "form-fields",
+        title: "Form Fields",
+        items: [
+          { id: "name", title: "Name" },
+          { id: "code", title: "Code" },
+          {
+            id: "lead",
+            title: "Lead",
+          },
+        ],
+      },
+    ];
+
+    interface InputValueProps {
+      search: string;
+      checked: ListItemProps[];
+      value: { id: string; value: string }[];
+      statefulValue: { id: string; value: string }[];
+    }
+
+    function useListController(initialGroups: ListGroupContentProps[]) {
+      const [groups, setGroups] = useState(initialGroups);
+
+      const [inputValue, setInputValue] = useState<InputValueProps>({
+        search: "",
+        checked: [],
+        value: [],
+        statefulValue: [],
+      });
+
+      const filteredContent = useMemo(() => {
+        const searchContent = inputValue.search.toLowerCase().trim();
+
+        return groups
+          .map((group) => {
+            const matchedItems = group.items.filter((item) => {
+              const titleMatch =
+                typeof item.title === "string" &&
+                item.title.toLowerCase().includes(searchContent);
+              const subtitleMatch = item.subtitle
+                ?.toLowerCase()
+                .includes(searchContent);
+              return titleMatch || subtitleMatch;
+            });
+
+            const groupMatches = group.title
+              .toLowerCase()
+              .includes(searchContent);
+
+            if (groupMatches || matchedItems.length > 0) {
+              return {
+                ...group,
+                items: groupMatches ? group.items : matchedItems,
+              };
+            }
+
+            return null;
+          })
+          .filter(Boolean);
+      }, [groups, inputValue.search]);
+
+      const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value, checked, type } = e.target;
+
+        if (type === "checkbox") {
+          const parsed = JSON.parse(value);
+          setInputValue((prev) => ({
+            ...prev,
+            [name]: checked
+              ? [...prev[name], parsed]
+              : prev[name].filter((v: ListItemProps) => v.id !== parsed.id),
+          }));
+        } else {
+          setInputValue((prev) => ({ ...prev, [name]: value }));
+        }
+      };
+
+      return {
+        groups,
+        setGroups,
+        inputValue,
+        setInputValue,
+        filteredContent,
+        onChangeValue,
+      };
+    }
+
+    const FIELDS = (
+      itemId: string,
+      inputValue: InputValueProps,
+      setGroups: React.Dispatch<React.SetStateAction<ListGroupContentProps[]>>
+    ): FormFieldGroup[] => [
+      {
+        name: "value",
+        title: "Name",
+        type: "text",
+        required: true,
+        placeholder: "Enter your name",
+      },
+      {
+        name: "button",
+        title: "Save",
+        type: "button",
+        rowJustifyContent: "end",
+        onClick: () => {
+          const current = inputValue.statefulValue.find((v) => v.id === itemId);
+
+          if (!current) return;
+
+          setGroups((prev) =>
+            prev.map((group) => ({
+              ...group,
+              items: group.items.map((item) =>
+                item.id === itemId ? { ...item, title: current.value } : item
+              ),
+            }))
+          );
+        },
+      },
+    ];
+
+    const LIST_ACTIONS_GROUP = (
+      setGroups: React.Dispatch<React.SetStateAction<ListGroupContentProps[]>>
+    ): ListGroupActionsProps[] => [
+      {
+        caption: "Add",
+        onClick: () =>
+          setGroups((prev) => {
+            const count = prev.flatMap((g) => g.items).length + 1;
+            const newItem = {
+              id: `new-item-${count}`,
+              title: `New Item ${count}`,
+            };
+
+            return [
+              {
+                ...prev[0],
+                items: [...prev[0].items, newItem],
+              },
+            ];
+          }),
+      },
+    ];
+
+    const LIST_ITEM_ACTIONS = (
+      itemId: string,
+      setGroups: React.Dispatch<React.SetStateAction<ListGroupContentProps[]>>,
+      setInputValue: React.Dispatch<React.SetStateAction<InputValueProps>>
+    ): ListItemActionProps[] => {
+      const selectedByFormFieldsGroup = itemId.split("form-fields-");
+
+      return [
+        {
+          caption: "Delete",
+          icon: RiDeleteBin2Fill,
+          onClick: () => {
+            setGroups((prev) =>
+              prev.map((group) => ({
+                ...group,
+                items: group.items.filter(
+                  (item) => item.id !== selectedByFormFieldsGroup[1]
+                ),
+              }))
+            );
+
+            setInputValue((prev) => ({
+              ...prev,
+              value: prev.value.filter((v) => v.id !== itemId),
+              statefulValue: prev.statefulValue.filter(
+                (v) => v.id !== selectedByFormFieldsGroup[1]
+              ),
+              checked: prev.checked.filter((v) => v.id !== itemId),
+            }));
+          },
+        },
+      ];
+    };
+
+    const listAny = useListController(LIST_GROUPS);
+    const listWithOnlyOne = useListController(LIST_GROUPS);
+
+    return (
+      <Wrapper>
+        <div
+          aria-label="nested-with-prevent-default"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+          }}
+        >
+          <h2
+            style={{
+              fontSize: "18px",
+            }}
+          >
+            Allow any to open.
+          </h2>
+          <Card
+            containerStyle={css`
+              height: fit-content;
+            `}
+          >
+            <List
+              searchable
+              selectable
+              onSearchRequested={listAny.onChangeValue}
+              containerStyle={css`
+                padding: 16px;
+                min-width: 350px;
+                max-width: 350px;
+              `}
+            >
+              {listAny.filteredContent.map((group) => {
+                return (
+                  <List.Group
+                    key={group.id}
+                    id={group.id}
+                    subtitle={group.subtitle}
+                    title={group.title}
+                    actions={LIST_ACTIONS_GROUP(listAny.setGroups)}
+                    containerStyle={css`
+                      gap: 4px;
+                    `}
+                  >
+                    {group.items.map((list, i) => {
+                      return (
+                        <List.Item
+                          key={i}
+                          id={list.id}
+                          title={list.title}
+                          rowStyle={css`
+                            width: 100%;
+                            min-height: 40px;
+                          `}
+                          openable
+                          titleStyle={css`
+                            width: 100%;
+                          `}
+                          rightSideStyle={css`
+                            width: 6%;
+                          `}
+                          actions={(id?: string) =>
+                            LIST_ITEM_ACTIONS(
+                              id,
+                              listAny.setGroups,
+                              listAny.setInputValue
+                            )
+                          }
+                          onClick={() => {
+                            listAny.setInputValue((prev) => {
+                              const exists = prev.statefulValue.some(
+                                (item) => item.id === list.id
+                              );
+
+                              return {
+                                ...prev,
+                                statefulValue: exists
+                                  ? prev.statefulValue
+                                  : [
+                                      ...prev.statefulValue,
+                                      {
+                                        id: list.id,
+                                        value: list.title as string,
+                                      },
+                                    ],
+                              };
+                            });
+                          }}
+                          onSelected={listAny.onChangeValue}
+                          selectedOptions={{
+                            checked: listAny.inputValue.checked.some(
+                              (check) => check.id === list.id
+                            ),
+                            value: JSON.stringify({
+                              id: list.id,
+                              title: list.title,
+                              subtitle: list.subtitle,
+                            }),
+                          }}
+                        >
+                          {listAny.inputValue.statefulValue.map((item) => {
+                            if (item.id === list.id)
+                              return (
+                                <StatefulForm
+                                  key={i}
+                                  containerStyle={css`
+                                    padding-left: 33px;
+                                    padding-right: 33px;
+                                    padding-bottom: 20px;
+                                  `}
+                                  formValues={item}
+                                  fields={FIELDS(
+                                    list.id,
+                                    listAny.inputValue,
+                                    listAny.setGroups
+                                  )}
+                                  onChange={({ currentState }) =>
+                                    listAny.setInputValue((prev) => ({
+                                      ...prev,
+                                      statefulValue: prev.statefulValue.map(
+                                        (props) =>
+                                          props.id === item.id
+                                            ? { ...props, ...currentState }
+                                            : props
+                                      ),
+                                    }))
+                                  }
+                                />
+                              );
+                          })}
+                        </List.Item>
+                      );
+                    })}
+                  </List.Group>
+                );
+              })}
+            </List>
+          </Card>
+        </div>
+
+        <div
+          aria-label="nested-with-prevent-default"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+          }}
+        >
+          <h2
+            style={{
+              fontSize: "18px",
+            }}
+          >
+            Allow at most one opened.
+          </h2>
+          <Card
+            containerStyle={css`
+              height: fit-content;
+            `}
+          >
+            <List
+              searchable
+              selectable
+              openerBehavior="onlyOne"
+              onSearchRequested={listWithOnlyOne.onChangeValue}
+              containerStyle={css`
+                padding: 16px;
+                min-width: 350px;
+              `}
+            >
+              {listWithOnlyOne.filteredContent.map((group) => {
+                return (
+                  <List.Group
+                    key={group.id}
+                    id={group.id}
+                    subtitle={group.subtitle}
+                    title={group.title}
+                    actions={LIST_ACTIONS_GROUP(listWithOnlyOne.setGroups)}
+                    containerStyle={css`
+                      gap: 4px;
+                    `}
+                  >
+                    {group.items.map((list, i) => {
+                      return (
+                        <List.Item
+                          key={i}
+                          id={list.id}
+                          title={list.title}
+                          rowStyle={css`
+                            width: 100%;
+                            min-height: 40px;
+                          `}
+                          openable
+                          titleStyle={css`
+                            width: 100%;
+                          `}
+                          rightSideStyle={css`
+                            width: 6%;
+                          `}
+                          actions={(id?: string) =>
+                            LIST_ITEM_ACTIONS(
+                              id,
+                              listWithOnlyOne.setGroups,
+                              listWithOnlyOne.setInputValue
+                            )
+                          }
+                          onClick={() => {
+                            listWithOnlyOne.setInputValue((prev) => {
+                              const exists = prev.statefulValue.some(
+                                (item) => item.id === list.id
+                              );
+
+                              return {
+                                ...prev,
+                                statefulValue: exists
+                                  ? prev.statefulValue
+                                  : [
+                                      ...prev.statefulValue,
+                                      {
+                                        id: list.id,
+                                        value: list.title as string,
+                                      },
+                                    ],
+                              };
+                            });
+                          }}
+                          onSelected={listWithOnlyOne.onChangeValue}
+                          selectedOptions={{
+                            checked: listWithOnlyOne.inputValue.checked.some(
+                              (check) => check.id === list.id
+                            ),
+                            value: JSON.stringify({
+                              id: list.id,
+                              title: list.title,
+                              subtitle: list.subtitle,
+                            }),
+                          }}
+                        >
+                          {listWithOnlyOne.inputValue.statefulValue.map(
+                            (item) => {
+                              if (item.id === list.id)
+                                return (
+                                  <StatefulForm
+                                    key={i}
+                                    containerStyle={css`
+                                      padding-left: 33px;
+                                      padding-right: 33px;
+                                      padding-bottom: 20px;
+                                    `}
+                                    formValues={item}
+                                    fields={FIELDS(
+                                      list.id,
+                                      listWithOnlyOne.inputValue,
+                                      listWithOnlyOne.setGroups
+                                    )}
+                                    onChange={({ currentState }) =>
+                                      listWithOnlyOne.setInputValue((prev) => ({
+                                        ...prev,
+                                        statefulValue: prev.statefulValue.map(
+                                          (props) =>
+                                            props.id === item.id
+                                              ? { ...props, ...currentState }
+                                              : props
+                                        ),
+                                      }))
+                                    }
+                                  />
+                                );
+                            }
+                          )}
+                        </List.Item>
+                      );
+                    })}
+                  </List.Group>
+                );
+              })}
+            </List>
+          </Card>
+        </div>
+      </Wrapper>
+    );
+  },
+};
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 3rem;
+
+  @media (max-width: 500px) {
+    flex-direction: column;
+    gap: 2rem;
+  }
+`;
 
 export const WithBadge: Story = {
   render: () => {
