@@ -6,37 +6,36 @@ import { Textbox } from "./../../components/textbox";
 import { css } from "styled-components";
 
 describe("Card", () => {
-  context("with ReactNode", () => {
-    context("when title and subtitle use DormantText", () => {
-      it("renders dormant labels that activate input elements", () => {
-        const value = {
-          title: "Department",
-          subtitle: "Departments and their leaders",
-        };
+  context("with header", () => {
+    const value = {
+      title: "Department",
+      subtitle: "Departments and their leaders",
+    };
 
-        const renderDormantTextField = (
-          name: "title" | "subtitle",
-          sizeText?: number
-        ) => {
-          return (
-            <DormantText
-              acceptChangeOn={"enter"}
-              content={value?.[name]}
-              cancelable
-              dormantedStyle={css`
-                padding: 0px;
-              `}
-              dormantedFontSize={sizeText ?? 16}
-            >
-              <Textbox value={value?.[name]} />
-            </DormantText>
-          );
-        };
+    const renderDormantTextField = (
+      name: "title" | "subtitle",
+      sizeText?: number
+    ) => {
+      return (
+        <DormantText
+          acceptChangeOn={"enter"}
+          content={value?.[name]}
+          cancelable
+          dormantedStyle={css`
+            padding: 0px;
+          `}
+          dormantedFontSize={sizeText ?? 16}
+        >
+          <Textbox value={value?.[name]} />
+        </DormantText>
+      );
+    };
 
+    context("with title", () => {
+      it("can be given ReactNode to render", () => {
         cy.mount(
           <Card
             title={renderDormantTextField("title")}
-            subtitle={renderDormantTextField("subtitle", 14)}
             titleStyle={css`
               width: 100%;
             `}
@@ -62,37 +61,60 @@ describe("Card", () => {
         cy.get("input[type='text']").should("not.exist");
         cy.findByText("Department").click();
         cy.get("input[type='text']")
-          .eq(0)
           .should("exist")
           .and("have.value", "Department");
-        cy.findByText("Departments and their leaders").click();
-        cy.get("input[type='text']")
-          .eq(1)
-          .should("exist")
-          .and("have.value", "Departments and their leaders");
       });
-    });
-  });
 
-  context("with header", () => {
-    context("with title", () => {
       it("should render the text", () => {
         cy.mount(<Card title="Systatum Food Services">Test`</Card>);
         cy.findByText("Systatum Food Services").should("exist");
       });
+    });
 
-      context("with subtitle", () => {
-        it("should render the text", () => {
-          cy.mount(
-            <Card
-              title="Systatum Food Services"
-              subtitle="Fueling innovation with every bite."
-            >
-              Test`
-            </Card>
-          );
-          cy.findByText("Fueling innovation with every bite.").should("exist");
-        });
+    context("with subtitle", () => {
+      it("can be given ReactNode to render", () => {
+        cy.mount(
+          <Card
+            subtitle={renderDormantTextField("subtitle", 14)}
+            titleStyle={css`
+              width: 100%;
+            `}
+            textContainerStyle={css`
+              width: 100%;
+            `}
+            containerStyle={css`
+              padding-left: 0px;
+              padding-right: 0px;
+              min-width: 1000px;
+              padding-bottom: 0px;
+            `}
+            headerStyle={css`
+              padding-left: 15px;
+              padding-right: 15px;
+              border-bottom: 1px solid #d1d5db;
+            `}
+          >
+            test
+          </Card>
+        );
+
+        cy.get("input[type='text']").should("not.exist");
+        cy.findByText("Departments and their leaders").click();
+        cy.get("input[type='text']")
+          .should("exist")
+          .and("have.value", "Departments and their leaders");
+      });
+
+      it("should render the text", () => {
+        cy.mount(
+          <Card
+            title="Systatum Food Services"
+            subtitle="Fueling innovation with every bite."
+          >
+            Test`
+          </Card>
+        );
+        cy.findByText("Fueling innovation with every bite.").should("exist");
       });
     });
 
