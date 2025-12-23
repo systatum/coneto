@@ -391,55 +391,64 @@ describe("StatefulForm", () => {
       access: false,
     };
 
+    const CHECKBOX_TITLE_FIELDS: FormFieldGroup[] = [
+      {
+        name: "access",
+        title: "Access",
+        placeholder: "Access placeholder",
+        type: "checkbox",
+        required: false,
+      },
+    ];
+    const statefulForCheckbox = () =>
+      cy.mount(
+        <StatefulForm
+          fields={CHECKBOX_TITLE_FIELDS}
+          formValues={value}
+          mode="onChange"
+        />
+      );
+
     context("with title", () => {
-      const CHECKBOX_TITLE_FIELDS: FormFieldGroup[] = [
-        {
-          name: "access",
-          title: "Access",
-          type: "checkbox",
-          required: false,
-        },
-      ];
       it("should render on the label field", () => {
-        cy.mount(
-          <StatefulForm
-            fields={CHECKBOX_TITLE_FIELDS}
-            formValues={value}
-            mode="onChange"
-          />
-        );
+        statefulForCheckbox();
 
         cy.findByLabelText("title-wrapper").should(
           "have.text",
           CHECKBOX_TITLE_FIELDS[0]["title"]
         );
-        cy.findByLabelText("label-wrapper").should("not.exist");
+      });
+
+      context("when clicking", () => {
+        it("renders checked the checkbox", () => {
+          statefulForCheckbox();
+
+          cy.findByRole("checkbox").should("not.be.checked");
+          cy.findByText("Access").click();
+          cy.findByRole("checkbox").should("be.checked");
+        });
       });
     });
 
     context("with placeholder", () => {
-      const CHECKBOX_PLACEHOLDER_FIELDS: FormFieldGroup[] = [
-        {
-          name: "access",
-          placeholder: "Access",
-          type: "checkbox",
-          required: false,
-        },
-      ];
       it("should render on the right side", () => {
-        cy.mount(
-          <StatefulForm
-            fields={CHECKBOX_PLACEHOLDER_FIELDS}
-            formValues={value}
-            mode="onChange"
-          />
-        );
+        statefulForCheckbox();
 
         cy.findByLabelText("title-wrapper").should("not.exist");
         cy.findByLabelText("label-wrapper").should(
           "have.text",
-          CHECKBOX_PLACEHOLDER_FIELDS[0]["placeholder"]
+          CHECKBOX_TITLE_FIELDS[0]["placeholder"]
         );
+      });
+
+      context("when clicking", () => {
+        it("renders checked the checkbox", () => {
+          statefulForCheckbox();
+
+          cy.findByRole("checkbox").should("not.be.checked");
+          cy.findByText("Access placeholder").click();
+          cy.findByRole("checkbox").should("be.checked");
+        });
       });
     });
   });
