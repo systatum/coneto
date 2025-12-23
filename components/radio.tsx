@@ -92,7 +92,13 @@ function Radio({
           $error={showError}
           $style={inputStyle}
         />
-        {Icon && <Icon size={iconSize ?? 16} color={iconColor ?? "black"} />}
+        {Icon && (
+          <Icon
+            aria-label="radio-icon"
+            size={iconSize ?? 16}
+            style={{ color: iconColor ?? "black" }}
+          />
+        )}
         {label && <LabelText $style={labelStyle}>{label}</LabelText>}
       </InputContainer>
       {description && (
