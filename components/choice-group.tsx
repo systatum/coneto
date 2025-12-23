@@ -38,10 +38,6 @@ function ChoiceGroup({
 
         const modifiedChild = cloneElement(componentChild, {
           highlightOnChecked: true,
-          ...(isRadioElement(componentChild) &&
-          componentChild.props.mode === "button"
-            ? { iconSize: componentChild.props.iconSize ?? 25 }
-            : {}),
         });
 
         return (
@@ -101,11 +97,5 @@ const ChoiceGroupDivider = styled.div<{
 
   ${({ $dividerStyle }) => $dividerStyle}
 `;
-
-function isRadioElement(
-  el: ReactElement<RadioProps | CheckboxProps>
-): el is ReactElement<RadioProps> {
-  return "mode" in el.props;
-}
 
 export { ChoiceGroup };

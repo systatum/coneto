@@ -95,7 +95,7 @@ function Radio({
         {Icon && (
           <Icon
             aria-label="radio-icon"
-            size={iconSize ?? 16}
+            size={iconSize ? iconSize : mode === "button" ? 25 : 16}
             style={{ color: iconColor ?? "black" }}
           />
         )}
