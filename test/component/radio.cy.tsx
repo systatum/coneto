@@ -50,7 +50,7 @@ describe("Radio", () => {
     context("when given radio", () => {
       it("renders the radio as usual and direction to row", () => {
         cy.mount(<Radio label="Radio with icon" icon={Ri24HoursFill} />);
-        cy.findByLabelText("input-container-radio")
+        cy.findByLabelText("radio-input-container")
           .should("have.css", "flex-direction", "row")
           .and("have.css", "align-items", "center");
       });
@@ -70,7 +70,7 @@ describe("Radio", () => {
         cy.mount(
           <Radio label="Radio with icon" mode="button" icon={Ri24HoursFill} />
         );
-        cy.findByLabelText("input-container-radio")
+        cy.findByLabelText("radio-input-container")
           .should("have.css", "flex-direction", "column")
           .and("have.css", "align-items", "center");
       });
@@ -102,7 +102,7 @@ describe("Radio", () => {
       cy.findByText("This is radio with title")
         .click()
         .should("have.css", "font-size", "30px");
-      cy.findByLabelText("input-container-radio").should(
+      cy.findByLabelText("radio-input-container").should(
         "have.css",
         "align-items",
         "center"

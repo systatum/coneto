@@ -72,7 +72,7 @@ function Radio({
     >
       <InputContainer
         $style={inputContainerStyle}
-        aria-label="input-container-radio"
+        aria-label="radio-input-container"
         $isRadio={mode === "radio"}
       >
         <HiddenRadio
@@ -99,7 +99,11 @@ function Radio({
             style={{ color: iconColor ?? "black" }}
           />
         )}
-        {label && <LabelText $style={labelStyle}>{label}</LabelText>}
+        {label && (
+          <LabelText aria-label="radio-label-wrapper" $style={labelStyle}>
+            {label}
+          </LabelText>
+        )}
       </InputContainer>
       {description && (
         <DescriptionText
@@ -121,7 +125,7 @@ function Radio({
       {title && (
         <Title
           htmlFor={props.disabled ? null : id}
-          aria-label="title-wrapper"
+          aria-label="radio-title-wrapper"
           $style={titleStyle}
         >
           {title}
