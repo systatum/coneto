@@ -1,7 +1,51 @@
+import { Ri24HoursFill } from "@remixicon/react";
 import { Radio } from "./../../components/radio";
 import { css } from "styled-components";
 
 describe("Radio", () => {
+  context("with icon", () => {
+    it("renders the radio with icon", () => {
+      cy.mount(<Radio label="Radio with icon" value="" icon={Ri24HoursFill} />);
+      cy.findByLabelText("radio-icon")
+        .should("have.css", "width", "16px")
+        .and("have.css", "height", "16px");
+    });
+
+    context("when given iconColor red", () => {
+      it("renders the radio with icon red", () => {
+        cy.mount(
+          <Radio
+            label="Radio with icon"
+            value=""
+            icon={Ri24HoursFill}
+            iconColor="red"
+          />
+        );
+        cy.findByLabelText("radio-icon").should(
+          "have.css",
+          "color",
+          "rgb(255, 0, 0)"
+        );
+      });
+    });
+
+    context("when given iconSize 30px", () => {
+      it("renders the radio with icon 30px", () => {
+        cy.mount(
+          <Radio
+            label="Radio with icon"
+            value=""
+            icon={Ri24HoursFill}
+            iconSize={30}
+          />
+        );
+        cy.findByLabelText("radio-icon")
+          .should("have.css", "width", "30px")
+          .and("have.css", "height", "30px");
+      });
+    });
+  });
+
   context("when adding a large label", () => {
     it("render the radio and label with center alignment", () => {
       cy.mount(
