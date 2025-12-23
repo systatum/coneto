@@ -11,12 +11,12 @@ import styled, { CSSProp } from "styled-components";
 
 export interface SearchboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {
-  name: string;
+  name?: string;
   value?: string;
   style?: CSSProp;
   containerStyle?: CSSProp;
   iconStyle?: CSSProp;
-  onChange: (data: ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (data: ChangeEvent<HTMLInputElement>) => void;
 }
 
 const Searchbox = forwardRef<HTMLInputElement, SearchboxProps>(
@@ -60,8 +60,8 @@ const Searchbox = forwardRef<HTMLInputElement, SearchboxProps>(
             role="button"
             aria-label="delete-input"
             size={14}
-            onClick={() => {
-              inputRef.current?.focus();
+            onMouseDown={(e) => {
+              e.preventDefault();
               const event = {
                 target: {
                   name,
