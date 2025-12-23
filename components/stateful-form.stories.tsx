@@ -634,6 +634,7 @@ export const AllCase: Story = {
       },
       {
         name: "check",
+        title: "Checkbox",
         placeholder: "Check",
         type: "checkbox",
         required: false,
