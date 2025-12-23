@@ -136,7 +136,11 @@ function Checkbox({
   return (
     <Container $style={containerStyle}>
       {title && (
-        <Title aria-label="title-wrapper" $style={titleStyle}>
+        <Title
+          htmlFor={props.disabled ? null : inputId}
+          aria-label="title-wrapper"
+          $style={titleStyle}
+        >
           {title}
         </Title>
       )}
