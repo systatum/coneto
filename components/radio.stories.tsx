@@ -101,8 +101,9 @@ export const WithButton: Story = {
       <div
         style={{
           display: "flex",
-          flexDirection: "row",
-          maxWidth: "400px",
+          flexDirection: "column",
+          width: "fit-content",
+          gap: "4px",
         }}
       >
         {RADIO_OPTIONS_WITH_ICON.map((option, index) => (
