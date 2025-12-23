@@ -15,13 +15,13 @@ export interface RadioProps {
   descriptionStyle?: CSSProp;
   inputStyle?: CSSProp;
   errorStyle?: CSSProp;
+  inputContainerStyle?: CSSProp;
   showError?: boolean;
   errorMessage?: string;
   mode?: "radio" | "button";
   icon?: RemixiconComponentType;
   iconSize?: number;
   iconColor?: string;
-  inputContainer?: CSSProp;
 }
 
 export interface RadioOptionsProps {
@@ -43,7 +43,7 @@ function Radio({
   highlightOnChecked,
   containerStyle,
   labelStyle,
-  inputContainer,
+  inputContainerStyle,
   descriptionStyle,
   showError,
   errorMessage,
@@ -68,7 +68,7 @@ function Radio({
       $disabled={props.disabled}
     >
       <InputContainer
-        $style={inputContainer}
+        $style={inputContainerStyle}
         aria-label="input-container-radio"
         $isRadio={mode === "radio"}
       >
@@ -89,7 +89,7 @@ function Radio({
           $error={showError}
           $style={inputStyle}
         />
-        {Icon && <Icon size={iconSize ?? 11} color={iconColor ?? "black"} />}
+        {Icon && <Icon size={iconSize ?? 16} color={iconColor ?? "black"} />}
         {label && <LabelText $style={labelStyle}>{label}</LabelText>}
       </InputContainer>
       {description && (
