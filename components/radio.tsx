@@ -1,10 +1,10 @@
 import styled, { css, CSSProp } from "styled-components";
-import { ChangeEvent, InputHTMLAttributes } from "react";
+import { ChangeEvent, InputHTMLAttributes, ReactElement } from "react";
 import { RemixiconComponentType } from "@remixicon/react";
 
 export interface RadioProps {
-  value: string;
-  label: string;
+  value?: string;
+  label?: string;
   description?: string;
   checked?: boolean;
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
@@ -15,6 +15,7 @@ export interface RadioProps {
   descriptionStyle?: CSSProp;
   inputStyle?: CSSProp;
   errorStyle?: CSSProp;
+  titleStyle?: CSSProp;
   inputContainerStyle?: CSSProp;
   showError?: boolean;
   errorMessage?: string;
@@ -36,6 +37,7 @@ export interface RadioOptionsProps {
 function Radio({
   value,
   label,
+  title,
   description,
   checked,
   onChange,
@@ -52,12 +54,13 @@ function Radio({
   icon: Icon,
   iconSize,
   iconColor,
+  titleStyle,
   mode = "radio",
   ...props
 }: RadioProps & InputHTMLAttributes<HTMLInputElement>) {
   const id = `radio-${value}`;
 
-  return (
+  const inputElement: ReactElement = (
     <Label
       $isRadio={mode === "radio"}
       htmlFor={props.disabled ? null : id}
@@ -106,7 +109,37 @@ function Radio({
       )}
     </Label>
   );
+
+  return (
+    <Container $style={containerStyle}>
+      {title && (
+        <Title
+          htmlFor={props.disabled ? null : id}
+          aria-label="title-wrapper"
+          $style={titleStyle}
+        >
+          {title}
+        </Title>
+      )}
+      {inputElement}
+    </Container>
+  );
 }
+
+const Container = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  width: 100%;
+
+  ${({ $style }) => $style}
+`;
+
+const Title = styled.label<{ $style?: CSSProp }>`
+  font-size: 0.75rem;
+  ${({ $style }) => $style}
+`;
 
 const Label = styled.label<{
   $highlight?: boolean;
