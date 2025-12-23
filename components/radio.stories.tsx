@@ -1,8 +1,9 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { Radio } from "./radio";
+import { Radio, RadioOptionsProps } from "./radio";
 import { ChangeEvent, ComponentProps, Fragment, useState } from "react";
 import { useArgs } from "@storybook/preview-api";
 import { css } from "styled-components";
+import { RiAlignLeft, RiDatabase2Fill } from "@remixicon/react";
 
 const meta: Meta<typeof Radio> = {
   title: "Input Elements/Radio",
@@ -20,7 +21,7 @@ export const Default: Story = {
     value: "comments",
   },
   render: (args) => {
-    const RADIO_OPTIONS = [
+    const RADIO_OPTIONS: RadioOptionsProps[] = [
       {
         value: "comments",
         label: "Comments",
@@ -67,7 +68,60 @@ export const Default: Story = {
   },
 };
 
-const DAILY_RADIO_OPTIONS = [
+export const WithButton: Story = {
+  args: {
+    value: "comments",
+  },
+  render: (args) => {
+    const RADIO_OPTIONS_WITH_ICON: RadioOptionsProps[] = [
+      {
+        value: "text",
+        label: "Text",
+        icon: RiAlignLeft,
+      },
+      {
+        value: "database",
+        label: "Database",
+        icon: RiDatabase2Fill,
+      },
+    ];
+
+    const [, setUpdateArgs] = useArgs();
+
+    const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+
+      setUpdateArgs({
+        ...args,
+        [name]: value,
+      });
+    };
+
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+        }}
+      >
+        {RADIO_OPTIONS_WITH_ICON.map((option, index) => (
+          <Radio
+            key={index}
+            name="value"
+            value={option.value}
+            label={option.label}
+            mode="button"
+            icon={option.icon}
+            checked={args.value === option.value}
+            onChange={onChangeValue}
+          />
+        ))}
+      </div>
+    );
+  },
+};
+
+const DAILY_RADIO_OPTIONS: RadioOptionsProps[] = [
   {
     value: "daily",
     label: "Daily",
@@ -187,7 +241,7 @@ export const WithError: Story = {
 
 export const Disabled: Story = {
   render: () => {
-    const RADIO_OPTIONS = [
+    const RADIO_OPTIONS: RadioOptionsProps[] = [
       {
         value: "email",
         label: "Email",
