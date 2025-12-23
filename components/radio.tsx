@@ -1,5 +1,6 @@
 import styled, { css, CSSProp } from "styled-components";
 import { ChangeEvent, InputHTMLAttributes } from "react";
+import { RemixiconComponentType } from "@remixicon/react";
 
 export interface RadioProps {
   value: string;
@@ -16,6 +17,20 @@ export interface RadioProps {
   errorStyle?: CSSProp;
   showError?: boolean;
   errorMessage?: string;
+  mode?: "radio" | "button";
+  icon?: RemixiconComponentType;
+  iconSize?: number;
+  iconColor?: string;
+  inputContainer?: CSSProp;
+}
+
+export interface RadioOptionsProps {
+  value?: string;
+  label?: string;
+  description?: string;
+  iconSize?: number;
+  iconColor?: string;
+  icon?: RemixiconComponentType;
 }
 
 function Radio({
@@ -28,17 +43,23 @@ function Radio({
   highlightOnChecked,
   containerStyle,
   labelStyle,
+  inputContainer,
   descriptionStyle,
   showError,
   errorMessage,
   inputStyle,
   errorStyle,
+  icon: Icon,
+  iconSize,
+  iconColor,
+  mode = "radio",
   ...props
 }: RadioProps & InputHTMLAttributes<HTMLInputElement>) {
   const id = `radio-${value}`;
 
   return (
     <Label
+      $isRadio={mode === "radio"}
       htmlFor={props.disabled ? null : id}
       $highlight={highlightOnChecked}
       $checked={checked}
@@ -46,7 +67,11 @@ function Radio({
       $hasDescription={!!description}
       $disabled={props.disabled}
     >
-      <InputContainer aria-label="input-container-radio">
+      <InputContainer
+        $style={inputContainer}
+        aria-label="input-container-radio"
+        $isRadio={mode === "radio"}
+      >
         <HiddenRadio
           type="radio"
           id={id}
@@ -59,11 +84,17 @@ function Radio({
           {...props}
           disabled={props.disabled}
         />
-        <Circle $error={showError} $style={inputStyle} />
+        <Circle
+          $isRadio={mode === "radio"}
+          $error={showError}
+          $style={inputStyle}
+        />
+        {Icon && <Icon size={iconSize ?? 11} color={iconColor ?? "black"} />}
         {label && <LabelText $style={labelStyle}>{label}</LabelText>}
       </InputContainer>
       {description && (
         <DescriptionText
+          $isRadio={mode === "radio"}
           $highlight={highlightOnChecked}
           $style={descriptionStyle}
         >
@@ -83,6 +114,7 @@ const Label = styled.label<{
   $style?: CSSProp;
   $hasDescription?: boolean;
   $disabled?: boolean;
+  $isRadio?: boolean;
 }>`
   display: flex;
   align-items: flex-start;
@@ -94,6 +126,7 @@ const Label = styled.label<{
   background-color: ${({ $highlight, $checked }) =>
     $highlight && $checked ? "#DBEAFE" : "#fff"};
   padding: ${({ $highlight }) => ($highlight ? "0.75rem" : "0")};
+  width: 100%;
 
   &:hover {
     background-color: ${({ $highlight }) => ($highlight ? "#E7F2FC" : "none")};
@@ -105,6 +138,13 @@ const Label = styled.label<{
       cursor: not-allowed;
       opacity: 0.6;
       user-select: none;
+    `}
+
+  ${({ $isRadio }) =>
+    !$isRadio &&
+    css`
+      justify-content: center;
+      align-items: center;
     `}
 
   ${({ $style }) => $style}
@@ -124,7 +164,11 @@ const HiddenRadio = styled.input<{ $disabled?: boolean }>`
     `}
 `;
 
-const Circle = styled.div<{ $style?: CSSProp; $error?: boolean }>`
+const Circle = styled.div<{
+  $style?: CSSProp;
+  $error?: boolean;
+  $isRadio?: boolean;
+}>`
   width: 16px;
   height: 16px;
   border-radius: 9999px;
@@ -141,13 +185,30 @@ const Circle = styled.div<{ $style?: CSSProp; $error?: boolean }>`
     border-width: 5px;
     border-color: #61a9f9;
   }
+
+  ${({ $isRadio }) =>
+    !$isRadio &&
+    css`
+      display: none;
+    `}
 `;
 
-const InputContainer = styled.div`
+const InputContainer = styled.div<{ $style?: CSSProp; $isRadio?: boolean }>`
   display: flex;
-  flex-direction: row;
   align-items: center;
   gap: 0.5rem;
+  width: 100%;
+
+  ${({ $isRadio }) =>
+    $isRadio
+      ? css`
+          flex-direction: row;
+        `
+      : css`
+          flex-direction: column;
+        `}
+
+  ${({ $style }) => $style}
 `;
 
 const LabelText = styled.div<{ $style?: CSSProp }>`
@@ -161,14 +222,23 @@ const ErrorText = styled.span<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
-const DescriptionText = styled.span<{ $highlight?: boolean; $style?: CSSProp }>`
+const DescriptionText = styled.span<{
+  $highlight?: boolean;
+  $style?: CSSProp;
+  $isRadio?: boolean;
+}>`
   ${({ $highlight }) =>
     $highlight &&
     css`
       font-size: 14px;
     `}
   color: #4b5563;
-  margin-left: 24px;
+
+  ${({ $isRadio }) =>
+    $isRadio &&
+    css`
+      margin-left: 24px;
+    `}
   ${({ $style }) => $style};
 `;
 
