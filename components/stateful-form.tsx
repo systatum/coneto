@@ -37,6 +37,7 @@ import { Capsule, CapsuleProps } from "./capsule";
 import { Timebox, TimeboxProps } from "./timebox";
 import { Button, ButtonProps } from "./button";
 import { RemixiconComponentType } from "@remixicon/react";
+import { Radio, RadioProps } from "./radio";
 
 export type StatefulOnChangeType =
   | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -93,6 +94,7 @@ export interface FormFieldProps {
   textboxProps?: TextboxProps;
   textareaProps?: TextareaProps;
   checkboxProps?: CheckboxProps;
+  radioProps?: RadioProps;
   phoneboxProps?: PhoneboxProps;
   colorboxProps?: ColorboxProps;
   moneyProps?: MoneyboxProps;
@@ -594,6 +596,69 @@ function FormFields<T extends FieldValues>({
                       }}
                       disabled={field.disabled}
                       {...field.checkboxProps}
+                    />
+                  )}
+                />
+              ) : field.type === "radio" ? (
+                <Controller
+                  key={index}
+                  control={control}
+                  name={field.name as Path<T>}
+                  render={({ field: controllerField }) => (
+                    <Radio
+                      label={field.placeholder}
+                      name={field.name}
+                      title={field.title}
+                      placeholder={field.placeholder}
+                      checked={controllerField.value ?? false}
+                      errorMessage={
+                        errors[field.name as keyof T]?.message as
+                          | string
+                          | undefined
+                      }
+                      labelStyle={css`
+                        ${labelSize &&
+                        css`
+                          font-size: ${labelSize};
+                        `}
+                        ${field.radioProps?.labelStyle}
+                      `}
+                      titleStyle={css`
+                        ${labelSize &&
+                        css`
+                          font-size: ${labelSize};
+                        `}
+                        ${field.radioProps?.titleStyle}
+                      `}
+                      inputStyle={css`
+                        ${fieldSize &&
+                        css`
+                          width: ${fieldSize};
+                          height: ${fieldSize};
+                        `}
+                        ${field.radioProps?.inputStyle}
+                      `}
+                      containerStyle={css`
+                        width: 100%;
+                        ${field.width &&
+                        css`
+                          width: ${field.width};
+                        `}
+
+                        ${field.radioProps?.containerStyle}
+                      `}
+                      required={field.required}
+                      showError={shouldShowError(field.name)}
+                      onChange={(e) => {
+                        controllerField?.onChange(e);
+                        controllerField?.onBlur();
+                        if (onChange) {
+                          onChange(field.name as keyof T, e.target.checked);
+                        }
+                        field.onChange?.(e);
+                      }}
+                      disabled={field.disabled}
+                      {...field.radioProps}
                     />
                   )}
                 />
