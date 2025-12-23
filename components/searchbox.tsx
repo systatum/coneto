@@ -60,8 +60,8 @@ const Searchbox = forwardRef<HTMLInputElement, SearchboxProps>(
             role="button"
             aria-label="delete-input"
             size={14}
-            onClick={() => {
-              inputRef.current?.focus();
+            onMouseDown={(e) => {
+              e.preventDefault();
               const event = {
                 target: {
                   name,
