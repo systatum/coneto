@@ -41,6 +41,12 @@ export interface ListProps {
     newPosition: number;
   }) => void;
   openerBehavior?: "any" | "onlyOne";
+  onOpen?: (props?: ListOnOpenProps) => void;
+}
+
+export interface ListOnOpenProps {
+  id?: string;
+  isOpen?: boolean;
 }
 
 export interface ListGroupActionsProps
@@ -165,6 +171,7 @@ function List({
   selectable,
   isLoading,
   openerBehavior = "any",
+  onOpen,
 }: ListProps) {
   const [openedIds, setOpenedIds] = useState<Set<string>>(new Set());
   const [dragItem, setDragItem] = useState(null);
@@ -175,6 +182,14 @@ function List({
   const setIsOpen = (id: string) => {
     setOpenedIds((prev) => {
       const next = new Set(prev);
+
+      if (onOpen) {
+        onOpen({
+          id: id,
+          isOpen: !next.has(id),
+        });
+      }
+
       if (openerBehavior === "onlyOne") {
         if (next.has(id)) {
           next.clear();
