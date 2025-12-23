@@ -1,11 +1,12 @@
 import {
   Children,
   cloneElement,
+  Fragment,
   isValidElement,
   ReactElement,
   ReactNode,
 } from "react";
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
 import { RadioProps } from "./radio";
 import { CheckboxProps } from "./checkbox";
 
@@ -13,17 +14,22 @@ export interface ChoiceGroupProps {
   children: ReactNode;
   containerStyle?: CSSProp;
   dividerStyle?: CSSProp;
+  flexDirection?: "row" | "column";
 }
 
 function ChoiceGroup({
   children,
   containerStyle,
   dividerStyle,
+  flexDirection = "column",
 }: ChoiceGroupProps) {
   const childArray = Children.toArray(children).filter(isValidElement);
 
   return (
-    <ChoiceGroupWrapper $containerStyle={containerStyle}>
+    <ChoiceGroupWrapper
+      $isRowDirection={flexDirection === "row"}
+      $containerStyle={containerStyle}
+    >
       {childArray.map((child, index) => {
         const isLast = index === childArray.length - 1;
         const componentChild = child as ReactElement<
@@ -32,18 +38,23 @@ function ChoiceGroup({
 
         const modifiedChild = cloneElement(componentChild, {
           highlightOnChecked: true,
+          ...(isRadioElement(componentChild) &&
+          componentChild.props.mode === "button"
+            ? { iconSize: componentChild.props.iconSize ?? 25 }
+            : {}),
         });
 
         return (
-          <div key={index}>
+          <Fragment key={index}>
             {modifiedChild}
             {!isLast && (
               <ChoiceGroupDivider
+                $isRowDirection={flexDirection === "row"}
                 aria-label="divider for choice group"
-                $divider_style={dividerStyle}
+                $dividerStyle={dividerStyle}
               />
             )}
-          </div>
+          </Fragment>
         );
       })}
     </ChoiceGroupWrapper>
@@ -52,21 +63,49 @@ function ChoiceGroup({
 
 const ChoiceGroupWrapper = styled.div<{
   $containerStyle?: CSSProp;
+  $isRowDirection?: boolean;
 }>`
   display: flex;
-  flex-direction: column;
   border: 1px solid #e5e7eb;
   border-radius: 4px;
   overflow: hidden;
+
+  ${({ $isRowDirection }) =>
+    $isRowDirection
+      ? css`
+          flex-direction: row;
+        `
+      : css`
+          flex-direction: column;
+        `}
   ${({ $containerStyle }) => $containerStyle}
 `;
 
 const ChoiceGroupDivider = styled.div<{
-  $divider_style?: CSSProp;
+  $dividerStyle?: CSSProp;
+  $isRowDirection?: boolean;
 }>`
-  height: 1px;
   background-color: #e5e7eb;
-  ${({ $divider_style }) => $divider_style}
+  flex-shrink: 0;
+
+  ${({ $isRowDirection }) =>
+    $isRowDirection
+      ? css`
+          width: 1px;
+          align-self: stretch;
+        `
+      : css`
+          width: 100%;
+          height: 1px;
+        `}
+
+  ${({ $dividerStyle }) => $dividerStyle}
 `;
+
+function isRadioElement(
+  el: ReactElement<RadioProps | CheckboxProps>
+): el is ReactElement<RadioProps> {
+  return "mode" in el.props;
+}
 
 export { ChoiceGroup };
