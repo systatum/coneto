@@ -11,12 +11,12 @@ import styled, { CSSProp } from "styled-components";
 
 export interface SearchboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {
-  name: string;
+  name?: string;
   value?: string;
   style?: CSSProp;
   containerStyle?: CSSProp;
   iconStyle?: CSSProp;
-  onChange: (data: ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (data: ChangeEvent<HTMLInputElement>) => void;
 }
 
 const Searchbox = forwardRef<HTMLInputElement, SearchboxProps>(
