@@ -102,6 +102,7 @@ export const WithButton: Story = {
         style={{
           display: "flex",
           flexDirection: "row",
+          maxWidth: "400px",
         }}
       >
         {RADIO_OPTIONS_WITH_ICON.map((option, index) => (
