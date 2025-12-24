@@ -223,6 +223,7 @@ export const WithRadioButton: StoryRadio = {
       <Wrapper>
         <div
           style={{
+            minWidth: "400px",
             maxWidth: "400px",
             flexDirection: "column",
             display: "flex",
@@ -250,6 +251,7 @@ export const WithRadioButton: StoryRadio = {
         </div>
         <div
           style={{
+            minWidth: "500px",
             maxWidth: "500px",
             flexDirection: "column",
             display: "flex",
@@ -282,14 +284,8 @@ export const WithRadioButton: StoryRadio = {
 
 const Wrapper = styled.div`
   display: flex;
-  flex-direction: row;
-  gap: 3rem;
-  width: 100%;
-
-  @media (max-width: 500px) {
-    flex-direction: column;
-    gap: 2rem;
-  }
+  flex-direction: column;
+  gap: 2rem;
 `;
 
 export const WithCheckbox: StoryCheckbox = {
