@@ -50,9 +50,8 @@ function ChoiceGroup({
         return (
           <Fragment key={index}>
             {modifiedChild}
-            {!isLast && (
+            {!isLast && !isRowDirection && (
               <ChoiceGroupDivider
-                $isRowDirection={isRowDirection}
                 aria-label="divider for choice group"
                 $dividerStyle={dividerStyle}
               />
@@ -69,14 +68,17 @@ const ChoiceGroupWrapper = styled.div<{
   $isRowDirection?: boolean;
 }>`
   display: flex;
+  position: relative;
   border: 1px solid #e5e7eb;
   border-radius: 4px;
   overflow: hidden;
+  width: 100%;
 
   ${({ $isRowDirection }) =>
     $isRowDirection
       ? css`
-          flex-direction: row;
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
         `
       : css`
           flex-direction: column;
@@ -91,16 +93,8 @@ const ChoiceGroupDivider = styled.div<{
   background-color: #e5e7eb;
   flex-shrink: 0;
 
-  ${({ $isRowDirection }) =>
-    $isRowDirection
-      ? css`
-          width: 1px;
-          align-self: stretch;
-        `
-      : css`
-          width: 100%;
-          height: 1px;
-        `}
+  width: 100%;
+  height: 1px;
 
   ${({ $dividerStyle }) => $dividerStyle}
 `;
