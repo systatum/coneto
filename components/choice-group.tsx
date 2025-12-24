@@ -14,20 +14,27 @@ export interface ChoiceGroupProps {
   children: ReactNode;
   containerStyle?: CSSProp;
   dividerStyle?: CSSProp;
-  flexDirection?: "row" | "column";
 }
 
 function ChoiceGroup({
   children,
   containerStyle,
   dividerStyle,
-  flexDirection = "column",
 }: ChoiceGroupProps) {
   const childArray = Children.toArray(children).filter(isValidElement);
+  const isRowDirection = childArray.some((child) => {
+    if (!isValidElement(child)) return false;
+
+    if (isRadioElement(child)) {
+      return child.props.mode === "button";
+    }
+
+    return false;
+  });
 
   return (
     <ChoiceGroupWrapper
-      $isRowDirection={flexDirection === "row"}
+      $isRowDirection={isRowDirection}
       $containerStyle={containerStyle}
     >
       {childArray.map((child, index) => {
@@ -45,7 +52,7 @@ function ChoiceGroup({
             {modifiedChild}
             {!isLast && (
               <ChoiceGroupDivider
-                $isRowDirection={flexDirection === "row"}
+                $isRowDirection={isRowDirection}
                 aria-label="divider for choice group"
                 $dividerStyle={dividerStyle}
               />
@@ -97,5 +104,11 @@ const ChoiceGroupDivider = styled.div<{
 
   ${({ $dividerStyle }) => $dividerStyle}
 `;
+
+function isRadioElement(
+  el: ReactElement<RadioProps | CheckboxProps>
+): el is ReactElement<RadioProps> {
+  return "mode" in el.props;
+}
 
 export { ChoiceGroup };
