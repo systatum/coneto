@@ -223,7 +223,6 @@ export const WithRadioButton: StoryRadio = {
       <Wrapper>
         <div
           style={{
-            minWidth: "400px",
             maxWidth: "400px",
             flexDirection: "column",
             display: "flex",
@@ -251,8 +250,7 @@ export const WithRadioButton: StoryRadio = {
         </div>
         <div
           style={{
-            minWidth: "500px",
-            maxWidth: "500px",
+            maxWidth: "600px",
             flexDirection: "column",
             display: "flex",
             gap: "4px",
