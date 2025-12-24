@@ -58,7 +58,7 @@ function Radio({
   mode = "radio",
   ...props
 }: RadioProps & InputHTMLAttributes<HTMLInputElement>) {
-  const id = `radio-${value}`;
+  const id = `radio-${name}-${value}`;
 
   const inputElement: ReactElement = (
     <Label
