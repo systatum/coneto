@@ -22,7 +22,7 @@ function ChoiceGroup({
   dividerStyle,
 }: ChoiceGroupProps) {
   const childArray = Children.toArray(children).filter(isValidElement);
-  const isRowDirection = childArray.some((child) => {
+  const isRadioButton = childArray.some((child) => {
     if (!isValidElement(child)) return false;
 
     if (isRadioElement(child)) {
@@ -34,7 +34,7 @@ function ChoiceGroup({
 
   return (
     <ChoiceGroupWrapper
-      $isRowDirection={isRowDirection}
+      $isRowDirection={isRadioButton}
       $containerStyle={containerStyle}
     >
       {childArray.map((child, index) => {
@@ -45,12 +45,23 @@ function ChoiceGroup({
 
         const modifiedChild = cloneElement(componentChild, {
           highlightOnChecked: true,
+          ...(isRadioButton
+            ? {
+                containerStyle:
+                  componentChild.props.containerStyle ??
+                  css`
+                    border: 0.5px solid rgba(229, 231, 235, 0.6);
+                    border-radius: 4px;
+                    overflow: hidden;
+                  `,
+              }
+            : {}),
         });
 
         return (
           <Fragment key={index}>
             {modifiedChild}
-            {!isLast && !isRowDirection && (
+            {!isLast && !isRadioButton && (
               <ChoiceGroupDivider
                 aria-label="divider for choice group"
                 $dividerStyle={dividerStyle}
@@ -78,6 +89,9 @@ const ChoiceGroupWrapper = styled.div<{
     $isRowDirection
       ? css`
           display: grid;
+          border: none;
+          border-radius: none;
+          gap: 2px;
           grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
         `
       : css`
