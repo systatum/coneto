@@ -103,6 +103,7 @@ export const WithButton: Story = {
           display: "flex",
           flexDirection: "column",
           width: "fit-content",
+          justifyContent: "start",
           gap: "4px",
         }}
       >
@@ -118,6 +119,17 @@ export const WithButton: Story = {
             onChange={onChangeValue}
           />
         ))}
+        <a
+          style={{
+            textDecoration: "underline",
+            color: "blue",
+            fontSize: 13,
+            paddingTop: "10px",
+          }}
+          href="/?path=/story/content-choicegroup--with-radio-button"
+        >
+          Also check out choice group with radio buttons
+        </a>
       </div>
     );
   },
