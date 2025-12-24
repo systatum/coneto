@@ -216,27 +216,28 @@ export const WithRadioButton: StoryRadio = {
     };
 
     return (
-      <ChoiceGroup
-        containerStyle={css`
-          max-width: 400px;
-        `}
-        flexDirection="row"
+      <div
+        style={{
+          maxWidth: "400px",
+        }}
       >
-        {RADIO_OPTIONS_WITH_ICON.map((option, index) => {
-          return (
-            <Radio
-              mode="button"
-              key={index}
-              name="radioSelected"
-              value={option.value}
-              label={option.label}
-              icon={option.icon}
-              checked={args.radioSelected === option.value}
-              onChange={onChangeValue}
-            />
-          );
-        })}
-      </ChoiceGroup>
+        <ChoiceGroup>
+          {RADIO_OPTIONS_WITH_ICON.map((option, index) => {
+            return (
+              <Radio
+                mode="button"
+                key={index}
+                name="radioSelected"
+                value={option.value}
+                label={option.label}
+                icon={option.icon}
+                checked={args.radioSelected === option.value}
+                onChange={onChangeValue}
+              />
+            );
+          })}
+        </ChoiceGroup>
+      </div>
     );
   },
 };
