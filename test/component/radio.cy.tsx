@@ -1,7 +1,93 @@
+import { Ri24HoursFill } from "@remixicon/react";
 import { Radio } from "./../../components/radio";
 import { css } from "styled-components";
 
 describe("Radio", () => {
+  context("with icon", () => {
+    it("renders the radio with icon", () => {
+      cy.mount(<Radio label="Radio with icon" value="" icon={Ri24HoursFill} />);
+      cy.findByLabelText("radio-icon")
+        .should("have.css", "width", "16px")
+        .and("have.css", "height", "16px");
+    });
+
+    context("when given iconColor red", () => {
+      it("renders the radio with icon red", () => {
+        cy.mount(
+          <Radio
+            label="Radio with icon"
+            value=""
+            icon={Ri24HoursFill}
+            iconColor="red"
+          />
+        );
+        cy.findByLabelText("radio-icon").should(
+          "have.css",
+          "color",
+          "rgb(255, 0, 0)"
+        );
+      });
+    });
+
+    context("when given iconSize 30px", () => {
+      it("renders the radio with icon 30px", () => {
+        cy.mount(
+          <Radio
+            label="Radio with icon"
+            value=""
+            icon={Ri24HoursFill}
+            iconSize={30}
+          />
+        );
+        cy.findByLabelText("radio-icon")
+          .should("have.css", "width", "30px")
+          .and("have.css", "height", "30px");
+      });
+    });
+  });
+
+  context("mode", () => {
+    context("when given radio", () => {
+      it("renders the radio as usual and direction to row", () => {
+        cy.mount(<Radio label="Radio with icon" icon={Ri24HoursFill} />);
+        cy.findByLabelText("radio-input-container")
+          .should("have.css", "flex-direction", "row")
+          .and("have.css", "align-items", "center");
+      });
+
+      context("when given icon", () => {
+        it("renders the icon with default size (16px)", () => {
+          cy.mount(<Radio label="Radio with icon" icon={Ri24HoursFill} />);
+          cy.findByLabelText("radio-icon")
+            .should("have.css", "width", "16px")
+            .and("have.css", "height", "16px");
+        });
+      });
+    });
+
+    context("when given button", () => {
+      it("renders the radio without circle and direction to column", () => {
+        cy.mount(
+          <Radio label="Radio with icon" mode="button" icon={Ri24HoursFill} />
+        );
+        cy.findByLabelText("radio-input-container")
+          .should("have.css", "flex-direction", "column")
+          .and("have.css", "align-items", "center");
+      });
+
+      context("when given icon", () => {
+        it("renders the icon with default size (25px)", () => {
+          cy.mount(
+            <Radio label="Radio with icon" mode="button" icon={Ri24HoursFill} />
+          );
+          cy.findByLabelText("radio-icon")
+            .should("have.css", "width", "25px")
+            .and("have.css", "height", "25px");
+        });
+      });
+    });
+  });
+
   context("when adding a large label", () => {
     it("render the radio and label with center alignment", () => {
       cy.mount(
@@ -16,7 +102,7 @@ describe("Radio", () => {
       cy.findByText("This is radio with title")
         .click()
         .should("have.css", "font-size", "30px");
-      cy.findByLabelText("input-container-radio").should(
+      cy.findByLabelText("radio-input-container").should(
         "have.css",
         "align-items",
         "center"

@@ -18,6 +18,13 @@ import styled, { css } from "styled-components";
 import { CapsuleContentProps } from "./capsule";
 import { OptionsProps } from "./selectbox";
 import { Messagebox } from "./messagebox";
+import { RadioOptionsProps } from "./radio";
+import {
+  RiAtFill,
+  RiChat3Fill,
+  RiNotificationOffFill,
+  RiUserFollowFill,
+} from "@remixicon/react";
 
 const meta: Meta<typeof StatefulForm> = {
   title: "Input Elements/StatefulForm",
@@ -636,6 +643,13 @@ export const AllCase: Story = {
         name: "check",
         placeholder: "Check",
         type: "checkbox",
+        required: false,
+      },
+      {
+        name: "radio",
+        title: "Radio",
+        placeholder: "Radio",
+        type: "radio",
         required: false,
       },
       {

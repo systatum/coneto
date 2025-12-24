@@ -1,32 +1,21 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { ChoiceGroup } from "./choice-group";
 import { ChangeEvent, ComponentProps, useState } from "react";
-import { Radio } from "./radio";
+import { Radio, RadioOptionsProps } from "./radio";
 import { Checkbox } from "./checkbox";
 import { useArgs } from "@storybook/preview-api";
-
-const RADIO_OPTIONS = [
-  {
-    value: "comments",
-    label: "Comments",
-    description: "Get notified when someone posts a comment",
-  },
-  {
-    value: "mentions",
-    label: "Mentions",
-    description: "Get notified when someone mentions you",
-  },
-  {
-    value: "follows",
-    label: "Follows",
-    description: "Get notified when someone follows you",
-  },
-  {
-    value: "none",
-    label: "None",
-    description: "Don't notify me",
-  },
-];
+import {
+  RiAlignLeft,
+  RiDatabase2Fill,
+  RiChat3Fill,
+  RiAtFill,
+  RiUserFollowFill,
+  RiNotificationOffFill,
+  RiMusic2Fill,
+  RiImage2Fill,
+  RiVideoFill,
+} from "@remixicon/react";
+import styled from "styled-components";
 
 const meta: Meta<typeof ChoiceGroup> = {
   title: "Content/ChoiceGroup",
@@ -63,7 +52,6 @@ export const WithRadio: StoryRadio = {
   argTypes: {
     radioSelected: {
       control: "radio",
-      options: RADIO_OPTIONS.map((val) => val.value),
     },
   },
   args: {
@@ -71,6 +59,29 @@ export const WithRadio: StoryRadio = {
   },
 
   render: (args) => {
+    const RADIO_OPTIONS: RadioOptionsProps[] = [
+      {
+        value: "comments",
+        label: "Comments",
+        description: "Get notified when someone posts a comment",
+      },
+      {
+        value: "mentions",
+        label: "Mentions",
+        description: "Get notified when someone mentions you",
+      },
+      {
+        value: "follows",
+        label: "Follows",
+        description: "Get notified when someone follows you",
+      },
+      {
+        value: "none",
+        label: "None",
+        description: "Don't notify me",
+      },
+    ];
+
     const [, setUpdateArgs] = useArgs();
 
     const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
@@ -101,6 +112,179 @@ export const WithRadio: StoryRadio = {
     );
   },
 };
+
+export const WithRadioAndIcon: StoryRadio = {
+  argTypes: {
+    radioSelected: {
+      control: "radio",
+    },
+  },
+  args: {
+    radioSelected: "comments",
+  },
+
+  render: (args) => {
+    const RADIO_OPTIONS: RadioOptionsProps[] = [
+      {
+        value: "comments",
+        label: "Comments",
+        description: "Get notified when someone posts a comment",
+        icon: RiChat3Fill,
+      },
+      {
+        value: "mentions",
+        label: "Mentions",
+        description: "Get notified when someone mentions you",
+        icon: RiAtFill,
+      },
+      {
+        value: "follows",
+        label: "Follows",
+        description: "Get notified when someone follows you",
+        icon: RiUserFollowFill,
+      },
+      {
+        value: "none",
+        label: "None",
+        description: "Don't notify me",
+        icon: RiNotificationOffFill,
+      },
+    ];
+
+    const [, setUpdateArgs] = useArgs();
+
+    const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+
+      setUpdateArgs({
+        ...args,
+        [name]: value,
+      });
+    };
+
+    return (
+      <ChoiceGroup>
+        {RADIO_OPTIONS.map((option, index) => {
+          return (
+            <Radio
+              key={index}
+              name="radioSelected"
+              value={option.value}
+              label={option.label}
+              icon={option.icon}
+              description={option.description}
+              checked={args.radioSelected === option.value}
+              onChange={onChangeValue}
+            />
+          );
+        })}
+      </ChoiceGroup>
+    );
+  },
+};
+
+export const WithRadioButton: StoryRadio = {
+  render: () => {
+    const [stateA, setStateA] = useState("text");
+    const [stateB, setStateB] = useState("text");
+
+    const GROUP_A = "radio_group_a";
+    const GROUP_B = "radio_group_b";
+
+    const RADIO_OPTIONS_WITH_ICON: RadioOptionsProps[] = [
+      {
+        value: "text",
+        label: "Text",
+        icon: RiAlignLeft,
+      },
+      {
+        value: "database",
+        label: "Database",
+        icon: RiDatabase2Fill,
+      },
+      {
+        value: "music",
+        label: "Music",
+        icon: RiMusic2Fill,
+      },
+      {
+        value: "image",
+        label: "Image",
+        icon: RiImage2Fill,
+      },
+      {
+        value: "video",
+        label: "Video",
+        icon: RiVideoFill,
+      },
+    ];
+
+    return (
+      <Wrapper>
+        <div
+          style={{
+            maxWidth: "400px",
+            flexDirection: "column",
+            display: "flex",
+            gap: "4px",
+            width: "100%",
+          }}
+        >
+          <h2>Default</h2>
+          <ChoiceGroup>
+            {RADIO_OPTIONS_WITH_ICON.slice(0, 2).map((option, index) => {
+              return (
+                <Radio
+                  mode="button"
+                  key={index}
+                  name={GROUP_A}
+                  value={option.value}
+                  label={option.label}
+                  icon={option.icon}
+                  checked={stateA === option.value}
+                  onChange={(e) => setStateA(e.target.value)}
+                />
+              );
+            })}
+          </ChoiceGroup>
+        </div>
+        <div
+          style={{
+            maxWidth: "600px",
+            flexDirection: "column",
+            display: "flex",
+            gap: "4px",
+            width: "100%",
+          }}
+        >
+          <h2>Space constrained</h2>
+          <ChoiceGroup>
+            {RADIO_OPTIONS_WITH_ICON.map((option, index) => {
+              return (
+                <Radio
+                  mode="button"
+                  key={index}
+                  name={GROUP_B}
+                  value={option.value}
+                  label={option.label}
+                  icon={option.icon}
+                  checked={stateB === option.value}
+                  onChange={(e) => setStateB(e.target.value)}
+                />
+              );
+            })}
+          </ChoiceGroup>
+        </div>
+      </Wrapper>
+    );
+  },
+};
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+`;
 
 export const WithCheckbox: StoryCheckbox = {
   args: {

@@ -342,6 +342,55 @@ describe("StatefulForm", () => {
     });
   });
 
+  context("radio", () => {
+    const value = {
+      access: false,
+    };
+
+    const RADIO_FIELDS: FormFieldGroup[] = [
+      {
+        name: "access",
+        title: "Access",
+        placeholder: "Access",
+        type: "radio",
+        required: false,
+      },
+    ];
+    context("with title", () => {
+      it("should render on the label field", () => {
+        cy.mount(
+          <StatefulForm
+            fields={RADIO_FIELDS}
+            formValues={value}
+            mode="onChange"
+          />
+        );
+
+        cy.findByLabelText("radio-title-wrapper").should(
+          "have.text",
+          RADIO_FIELDS[0]["title"]
+        );
+      });
+    });
+
+    context("with placeholder", () => {
+      it("should render on the right side", () => {
+        cy.mount(
+          <StatefulForm
+            fields={RADIO_FIELDS}
+            formValues={value}
+            mode="onChange"
+          />
+        );
+
+        cy.findByLabelText("radio-label-wrapper").should(
+          "have.text",
+          RADIO_FIELDS[0]["placeholder"]
+        );
+      });
+    });
+  });
+
   context("capsule", () => {
     const value = {
       capsule: "unpaid",
