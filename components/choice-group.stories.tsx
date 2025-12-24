@@ -11,8 +11,11 @@ import {
   RiAtFill,
   RiUserFollowFill,
   RiNotificationOffFill,
+  RiMusic2Fill,
+  RiImage2Fill,
+  RiVideoFill,
 } from "@remixicon/react";
-import { css } from "styled-components";
+import styled from "styled-components";
 
 const meta: Meta<typeof ChoiceGroup> = {
   title: "Content/ChoiceGroup",
@@ -181,17 +184,12 @@ export const WithRadioAndIcon: StoryRadio = {
 };
 
 export const WithRadioButton: StoryRadio = {
-  argTypes: {
-    radioSelected: {
-      control: "radio",
-    },
-  },
-  args: {
-    radioSelected: "text",
-  },
+  render: () => {
+    const [stateA, setStateA] = useState("text");
+    const [stateB, setStateB] = useState("text");
 
-  render: (args) => {
-    const [, setUpdateArgs] = useArgs();
+    const GROUP_A = "radio_group_a";
+    const GROUP_B = "radio_group_b";
 
     const RADIO_OPTIONS_WITH_ICON: RadioOptionsProps[] = [
       {
@@ -204,43 +202,95 @@ export const WithRadioButton: StoryRadio = {
         label: "Database",
         icon: RiDatabase2Fill,
       },
+      {
+        value: "music",
+        label: "Music",
+        icon: RiMusic2Fill,
+      },
+      {
+        value: "image",
+        label: "Image",
+        icon: RiImage2Fill,
+      },
+      {
+        value: "video",
+        label: "Video",
+        icon: RiVideoFill,
+      },
     ];
 
-    const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
-      const { name, value } = e.target;
-
-      setUpdateArgs({
-        ...args,
-        [name]: value,
-      });
-    };
-
     return (
-      <div
-        style={{
-          maxWidth: "400px",
-        }}
-      >
-        <ChoiceGroup>
-          {RADIO_OPTIONS_WITH_ICON.map((option, index) => {
-            return (
-              <Radio
-                mode="button"
-                key={index}
-                name="radioSelected"
-                value={option.value}
-                label={option.label}
-                icon={option.icon}
-                checked={args.radioSelected === option.value}
-                onChange={onChangeValue}
-              />
-            );
-          })}
-        </ChoiceGroup>
-      </div>
+      <Wrapper>
+        <div
+          style={{
+            maxWidth: "400px",
+            flexDirection: "column",
+            display: "flex",
+            gap: "4px",
+            width: "100%",
+          }}
+        >
+          <h2>Default</h2>
+          <ChoiceGroup>
+            {RADIO_OPTIONS_WITH_ICON.slice(0, 2).map((option, index) => {
+              return (
+                <Radio
+                  mode="button"
+                  key={index}
+                  name={GROUP_A}
+                  value={option.value}
+                  label={option.label}
+                  icon={option.icon}
+                  checked={stateA === option.value}
+                  onChange={(e) => setStateA(e.target.value)}
+                />
+              );
+            })}
+          </ChoiceGroup>
+        </div>
+        <div
+          style={{
+            maxWidth: "500px",
+            flexDirection: "column",
+            display: "flex",
+            gap: "4px",
+            width: "100%",
+          }}
+        >
+          <h2>Space constrained</h2>
+          <ChoiceGroup>
+            {RADIO_OPTIONS_WITH_ICON.map((option, index) => {
+              return (
+                <Radio
+                  mode="button"
+                  key={index}
+                  name={GROUP_B}
+                  value={option.value}
+                  label={option.label}
+                  icon={option.icon}
+                  checked={stateB === option.value}
+                  onChange={(e) => setStateB(e.target.value)}
+                />
+              );
+            })}
+          </ChoiceGroup>
+        </div>
+      </Wrapper>
     );
   },
 };
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 3rem;
+  width: 100%;
+
+  @media (max-width: 500px) {
+    flex-direction: column;
+    gap: 2rem;
+  }
+`;
 
 export const WithCheckbox: StoryCheckbox = {
   args: {
