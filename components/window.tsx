@@ -49,7 +49,7 @@ function Window({
   const isVertical = orientation === "vertical";
   const childrenArray = Children.toArray(children).filter(isValidElement);
   const sizeState =
-    initialSizes ||
+    normalizeSizes(initialSizes) ||
     new Array(childrenArray.length).fill(1 / childrenArray.length);
   const [sizes, setSizes] = useState<number[]>(sizeState);
   const [isDragging, setIsDragging] = useState(false);
@@ -149,7 +149,12 @@ function Window({
   }, [childrenArray.length]);
 
   return (
-    <Container ref={containerRef} $isVertical={isVertical} $style={style}>
+    <Container
+      aria-label="window"
+      ref={containerRef}
+      $isVertical={isVertical}
+      $style={style}
+    >
       {childrenArray.map((child, index) => (
         <Fragment key={index}>
           {cloneElement(
@@ -297,6 +302,11 @@ const ActionContainer = styled.div`
   pointer-events: auto;
   z-index: 40;
 `;
+
+function normalizeSizes(sizes: number[]) {
+  const total = sizes.reduce((a, b) => a + b, 0);
+  return sizes.map((s) => s / total);
+}
 
 Window.Cell = WindowCell;
 
