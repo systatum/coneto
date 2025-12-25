@@ -2,6 +2,47 @@ import { css } from "styled-components";
 import { Checkbox } from "./../../components/checkbox";
 
 describe("Checkbox", () => {
+  context("selection behavior", () => {
+    const checkboxComponent = () =>
+      cy.mount(
+        <Checkbox
+          title="Checkbox title"
+          label="Checkbox label"
+          description="Checkbox description"
+        />
+      );
+
+    context("when clicking the title", () => {
+      it("renders checked the checkbox", () => {
+        checkboxComponent();
+
+        cy.findByRole("checkbox").should("not.be.checked");
+        cy.findByText("Checkbox title").click();
+        cy.findByRole("checkbox").should("be.checked");
+      });
+    });
+
+    context("when clicking the label", () => {
+      it("renders checked the checkbox", () => {
+        checkboxComponent();
+
+        cy.findByRole("checkbox").should("not.be.checked");
+        cy.findByText("Checkbox label").click();
+        cy.findByRole("checkbox").should("be.checked");
+      });
+    });
+
+    context("when clicking the description", () => {
+      it("renders checked the checkbox", () => {
+        checkboxComponent();
+
+        cy.findByRole("checkbox").should("not.be.checked");
+        cy.findByText("Checkbox description").click();
+        cy.findByRole("checkbox").should("be.checked");
+      });
+    });
+  });
+
   context("when adding a large label", () => {
     it("render the checkbox and label with center alignment", () => {
       cy.mount(

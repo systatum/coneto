@@ -371,25 +371,28 @@ function FormFields<T extends FieldValues>({
                     if (ref) ref(el);
                   }}
                   showError={shouldShowError(field.name)}
-                  labelStyle={
-                    labelSize &&
+                  labelStyle={css`
+                    ${labelSize &&
                     css`
                       font-size: ${labelSize};
-                    `
-                  }
+                    `}
+                    ${field.textboxProps?.labelStyle}
+                  `}
                   style={css`
                     ${fieldSize &&
                     css`
                       font-size: ${fieldSize};
                     `}
                     height: 34px;
+                    ${field.textboxProps?.style}
                   `}
-                  containerStyle={
-                    field.width &&
+                  containerStyle={css`
+                    ${field.width &&
                     css`
                       width: ${field.width};
-                    `
-                  }
+                    `}
+                    ${field.textboxProps?.containerStyle}
+                  `}
                   errorMessage={
                     errors[field.name as keyof T]?.message as string | undefined
                   }
@@ -413,7 +416,6 @@ function FormFields<T extends FieldValues>({
                     width:100%;
                     height: 34px;
                     font-size: ${labelSize ?? "12px"};
-
                     ${field.buttonProps?.buttonStyle};
                   `}
                   containerStyle={css`
@@ -448,24 +450,26 @@ function FormFields<T extends FieldValues>({
                       }
                     },
                   })}
-                  labelStyle={
-                    labelSize &&
+                  labelStyle={css`
+                    ${labelSize &&
                     css`
                       font-size: ${labelSize};
-                    `
-                  }
+                    `}
+                    ${field.timeboxProps?.labelStyle}
+                  `}
                   ref={(el) => {
                     if (el) refs.current[field.name] = el;
                     const { ref } = register(field.name as Path<T>);
                     if (ref) ref(el);
                   }}
                   showError={shouldShowError(field.name)}
-                  containerStyle={
-                    field.width &&
+                  containerStyle={css`
+                    ${field.width &&
                     css`
                       width: ${field.width};
-                    `
-                  }
+                    `}
+                    ${field.timeboxProps?.containerStyle}
+                  `}
                   errorMessage={
                     errors[field.name as keyof T]?.message as string | undefined
                   }
@@ -504,23 +508,26 @@ function FormFields<T extends FieldValues>({
                     if (ref) ref(el);
                   }}
                   showError={shouldShowError(field.name)}
-                  labelStyle={
-                    labelSize &&
+                  labelStyle={css`
+                    ${labelSize &&
                     css`
                       font-size: ${labelSize};
-                    `
-                  }
+                    `}
+                    ${field.textareaProps?.labelStyle}
+                  `}
                   style={css`
                     ${fieldSize &&
                     css`
                       font-size: ${fieldSize};
                     `}
+                    ${field.textareaProps?.style}
                   `}
                   containerStyle={css`
                     ${field.width &&
                     css`
                       width: ${field.width};
                     `}
+                    ${field.textareaProps?.containerStyle}
                   `}
                   errorMessage={
                     errors[field.name as keyof T]?.message as string | undefined
@@ -538,6 +545,13 @@ function FormFields<T extends FieldValues>({
                       title={field.title}
                       label={field.placeholder}
                       name={field.name}
+                      titleStyle={css`
+                        ${labelSize &&
+                        css`
+                          font-size: ${labelSize};
+                        `}
+                        ${field.checkboxProps?.titleStyle}
+                      `}
                       placeholder={field.placeholder}
                       checked={controllerField.value ?? false}
                       ref={(el) => {
@@ -550,40 +564,45 @@ function FormFields<T extends FieldValues>({
                           | string
                           | undefined
                       }
-                      labelStyle={
-                        labelSize &&
+                      labelStyle={css`
+                        ${labelSize &&
                         css`
                           font-size: ${labelSize};
-                        `
-                      }
-                      inputStyle={
-                        fieldSize &&
+                        `}
+                        ${field.checkboxProps?.labelStyle}
+                      `}
+                      inputStyle={css`
+                        ${labelSize &&
                         css`
-                          width: ${fieldSize};
-                          height: ${fieldSize};
-                        `
-                      }
-                      iconStyle={
-                        fieldSize &&
+                          width: calc(${labelSize} + 2px);
+                          height: calc(${labelSize} + 2px);
+                        `}
+                        ${field.checkboxProps?.inputStyle}
+                      `}
+                      iconStyle={css`
+                        ${labelSize &&
                         css`
-                          width: ${fieldSize}-2;
-                          height: ${fieldSize}-2;
-                        `
-                      }
+                          width: calc(${labelSize} - 4px);
+                          height: calc(${labelSize} - 4px);
+                        `}
+                        ${field.checkboxProps?.iconStyle}
+                      `}
                       containerStyle={css`
                         width: 100%;
                         ${field.width &&
                         css`
                           width: ${field.width};
                         `}
+                        ${field.checkboxProps?.containerStyle}
                       `}
-                      boxStyle={
-                        fieldSize &&
+                      boxStyle={css`
+                        ${labelSize &&
                         css`
-                          width: ${fieldSize};
-                          height: ${fieldSize};
-                        `
-                      }
+                          width: calc(${labelSize} + 2px);
+                          height: calc(${labelSize} + 2px);
+                        `}
+                        ${field.checkboxProps?.boxStyle}
+                      `}
                       required={field.required}
                       showError={shouldShowError(field.name)}
                       onChange={(e) => {
@@ -696,24 +715,27 @@ function FormFields<T extends FieldValues>({
                         }
                         field.onChange?.(e);
                       }}
-                      labelStyle={
-                        labelSize &&
+                      labelStyle={css`
+                        ${labelSize &&
                         css`
                           font-size: ${labelSize};
-                        `
-                      }
+                        `}
+                        ${field.phoneboxProps?.labelStyle}
+                      `}
                       inputWrapperStyle={css`
                         ${fieldSize &&
                         css`
                           font-size: ${fieldSize};
                         `}
+                        ${field.phoneboxProps?.inputWrapperStyle}
                       `}
-                      containerStyle={
-                        field.width &&
+                      containerStyle={css`
+                        ${field.width &&
                         css`
                           width: ${field.width};
-                        `
-                      }
+                        `}
+                        ${field.phoneboxProps?.containerStyle}
+                      `}
                       showError={!!errors["phone"]}
                       errorMessage={errors["phone"]?.message as string}
                       disabled={field.disabled}
@@ -736,18 +758,20 @@ function FormFields<T extends FieldValues>({
                         const { ref } = register(field.name as Path<T>);
                         if (ref) ref(el);
                       }}
-                      labelStyle={
-                        labelSize &&
+                      labelStyle={css`
+                        ${labelSize &&
                         css`
                           font-size: ${labelSize};
-                        `
-                      }
-                      containerStyle={
-                        field.width &&
+                        `}
+                        ${field.colorboxProps?.labelStyle}
+                      `}
+                      containerStyle={css`
+                        ${field.width &&
                         css`
                           width: ${field.width};
-                        `
-                      }
+                        `}
+                        ${field.colorboxProps?.containerStyle}
+                      `}
                       value={controllerField.value}
                       onChange={(e) => {
                         controllerField?.onChange(e);
@@ -777,17 +801,19 @@ function FormFields<T extends FieldValues>({
                   key={index}
                   label={field.title}
                   placeholder={field.placeholder}
-                  labelStyle={
-                    labelSize &&
+                  labelStyle={css`
+                    ${labelSize &&
                     css`
                       font-size: ${labelSize};
-                    `
-                  }
+                    `}
+                    ${field.fileDropBoxProps?.labelStyle}
+                  `}
                   containerStyle={css`
                     ${field.width &&
                     css`
                       width: ${field.width};
                     `}
+                    ${field.fileDropBoxProps?.containerStyle}
                   `}
                   {...register(field.name as Path<T>, {
                     onChange: (e) => {
@@ -806,17 +832,19 @@ function FormFields<T extends FieldValues>({
                   key={index}
                   label={field.title}
                   placeholder={field.placeholder}
-                  labelStyle={
-                    labelSize &&
+                  labelStyle={css`
+                    ${labelSize &&
                     css`
                       font-size: ${labelSize};
-                    `
-                  }
+                    `}
+                    ${field.fileInputBoxProps?.labelStyle}
+                  `}
                   containerStyle={css`
                     ${field.width &&
                     css`
                       width: ${field.width};
                     `}
+                    ${field.fileInputBoxProps?.containerStyle}
                   `}
                   showError={shouldShowError(field.name)}
                   errorMessage={
@@ -858,6 +886,7 @@ function FormFields<T extends FieldValues>({
                     css`
                       width: ${field.width};
                     `}
+                    ${field.imageboxProps?.containerStyle}
                   `}
                   onFileSelected={(e: File | undefined) => {
                     const file = e;
@@ -880,12 +909,13 @@ function FormFields<T extends FieldValues>({
                     }
                   }}
                   label={field.title}
-                  labelStyle={
-                    labelSize &&
+                  labelStyle={css`
+                    ${labelSize &&
                     css`
                       font-size: ${labelSize};
-                    `
-                  }
+                    `}
+                    ${field.imageboxProps?.labelStyle}
+                  `}
                   disabled={field.disabled}
                   required={field.required}
                   {...register(field.name as Path<T>, {
@@ -910,17 +940,19 @@ function FormFields<T extends FieldValues>({
                   clearable
                   name={field.name}
                   label={field.title}
-                  labelStyle={
-                    labelSize &&
+                  labelStyle={css`
+                    ${labelSize &&
                     css`
                       font-size: ${labelSize};
-                    `
-                  }
+                    `}
+                    ${field.signboxProps?.labelStyle}
+                  `}
                   containerStyle={css`
                     ${field.width &&
                     css`
                       width: ${field.width};
                     `}
+                    ${field.signboxProps?.containerStyle}
                   `}
                   required={field.required}
                   value={formValues[field.name as keyof T] ?? ""}
@@ -951,17 +983,19 @@ function FormFields<T extends FieldValues>({
                     const { ref } = register(field.name as Path<T>);
                     if (ref) ref(el);
                   }}
-                  labelStyle={
-                    labelSize &&
+                  labelStyle={css`
+                    ${labelSize &&
                     css`
                       font-size: ${labelSize};
-                    `
-                  }
+                    `}
+                    ${field.moneyProps?.labelStyle}
+                  `}
                   containerStyle={css`
                     ${field.width &&
                     css`
                       width: ${field.width};
                     `}
+                    ${field.moneyProps?.containerStyle}
                   `}
                   value={formValues[field.name as keyof T] ?? ""}
                   required={field.required}
@@ -1005,17 +1039,19 @@ function FormFields<T extends FieldValues>({
                         const { ref } = register(field.name as Path<T>);
                         if (ref) ref(el);
                       }}
-                      labelStyle={
-                        labelSize &&
+                      labelStyle={css`
+                        ${labelSize &&
                         css`
                           font-size: ${labelSize};
-                        `
-                      }
+                        `}
+                        ${field.dateProps?.labelStyle}
+                      `}
                       containerStyle={css`
                         ${field.width &&
                         css`
                           width: ${field.width};
                         `}
+                        ${field.dateProps?.containerStyle}
                       `}
                       errorMessage={
                         errors[field.name as keyof T]?.[0]?.message as
@@ -1068,12 +1104,13 @@ function FormFields<T extends FieldValues>({
                         const { ref } = register(field.name as Path<T>);
                         if (ref) ref(el);
                       }}
-                      labelStyle={
-                        labelSize &&
+                      labelStyle={css`
+                        ${labelSize &&
                         css`
                           font-size: ${labelSize};
-                        `
-                      }
+                        `}
+                        ${field.comboboxProps?.labelStyle}
+                      `}
                       errorMessage={
                         errors[field.name as keyof T]?.message as
                           | string
@@ -1084,6 +1121,7 @@ function FormFields<T extends FieldValues>({
                         css`
                           width: ${field.width};
                         `}
+                        ${field.comboboxProps?.containerStyle}
                       `}
                       setSelectedOptions={(e) => {
                         const inputValueEvent = {
@@ -1123,18 +1161,20 @@ function FormFields<T extends FieldValues>({
                     <Chips
                       label={field.title}
                       filterPlaceholder={field.placeholder}
-                      labelStyle={
-                        labelSize &&
+                      labelStyle={css`
+                        ${labelSize &&
                         css`
                           font-size: ${labelSize};
-                        `
-                      }
-                      chipSelectedStyle={
-                        fieldSize &&
+                        `}
+                        ${field.chipsProps?.labelStyle}
+                      `}
+                      chipSelectedStyle={css`
+                        ${fieldSize &&
                         css`
                           font-size: ${fieldSize};
-                        `
-                      }
+                        `}
+                        ${field.chipsProps?.chipSelectedStyle}
+                      `}
                       inputValue={controllerField.value}
                       setInputValue={(e) => {
                         controllerField?.onChange(e);
@@ -1146,6 +1186,7 @@ function FormFields<T extends FieldValues>({
                         css`
                           width: ${field.width};
                         `}
+                        ${field.chipsProps?.containerStyle}
                       `}
                       {...field.chipsProps}
                     />
@@ -1169,12 +1210,13 @@ function FormFields<T extends FieldValues>({
                           onChange(field.name as keyof T, e.target.value);
                         }
                       }}
-                      labelStyle={
-                        labelSize &&
+                      labelStyle={css`
+                        ${labelSize &&
                         css`
                           font-size: ${labelSize};
-                        `
-                      }
+                        `}
+                        ${field.ratingProps?.labelStyle}
+                      `}
                       containerStyle={css`
                         ${fieldSize &&
                         css`
@@ -1184,6 +1226,7 @@ function FormFields<T extends FieldValues>({
                         css`
                           width: ${field.width};
                         `}
+                        ${field.ratingProps?.containerStyle}
                       `}
                       showError={!!fieldState.error}
                       errorMessage={fieldState.error?.message}
@@ -1200,24 +1243,27 @@ function FormFields<T extends FieldValues>({
                   render={({ field: controllerField }) => (
                     <ThumbField
                       label={field.title}
-                      labelStyle={
-                        labelSize &&
+                      labelStyle={css`
+                        ${labelSize &&
                         css`
                           font-size: ${labelSize};
-                        `
-                      }
-                      style={
-                        fieldSize &&
+                        `}
+                        ${field.thumbFieldProps?.labelStyle}
+                      `}
+                      style={css`
+                        ${fieldSize &&
                         css`
                           font-size: ${fieldSize};
-                        `
-                      }
-                      containerStyle={
-                        field.width &&
+                        `}
+                        ${field.thumbFieldProps?.style}
+                      `}
+                      containerStyle={css`
+                        ${field.width &&
                         css`
                           width: ${field.width};
-                        `
-                      }
+                        `}
+                        ${field.thumbFieldProps?.containerStyle}
+                      `}
                       value={controllerField.value ?? false}
                       required={field.required}
                       {...register(field.name as Path<T>, {
@@ -1258,18 +1304,20 @@ function FormFields<T extends FieldValues>({
                     <Togglebox
                       name={controllerField.name}
                       label={field.title}
-                      labelStyle={
-                        labelSize &&
+                      labelStyle={css`
+                        ${labelSize &&
                         css`
                           font-size: ${labelSize};
-                        `
-                      }
-                      containerStyle={
-                        field.width &&
+                        `}
+                        ${field.toggleboxProps?.labelStyle}
+                      `}
+                      containerStyle={css`
+                        ${field.width &&
                         css`
                           width: ${field.width};
-                        `
-                      }
+                        `}
+                        ${field.toggleboxProps?.containerStyle}
+                      `}
                       checked={controllerField.value ?? false}
                       required={field.required}
                       onChange={(e) => {
@@ -1300,12 +1348,14 @@ function FormFields<T extends FieldValues>({
                   render={({ field: controllerField }) => (
                     <Capsule
                       label={field.title}
-                      labelStyle={
-                        labelSize &&
+                      labelStyle={css`
+                        ${labelSize &&
                         css`
                           font-size: ${labelSize};
-                        `
-                      }
+                        `}
+
+                        ${field.capsuleProps?.labelStyle}
+                      `}
                       activeTab={controllerField.value}
                       onTabChange={(e) => {
                         const inputValueEvent = {
@@ -1318,12 +1368,14 @@ function FormFields<T extends FieldValues>({
                           onChange(field.name as keyof T, e);
                         }
                       }}
-                      containerStyle={
-                        field.width &&
+                      containerStyle={css`
+                        ${field.width &&
                         css`
                           width: ${field.width};
-                        `
-                      }
+                        `}
+
+                        ${field.capsuleProps?.containerStyle}
+                      `}
                       showError={shouldShowError(field.name)}
                       errorMessage={
                         errors[field.name as keyof T]?.message as
