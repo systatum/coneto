@@ -82,7 +82,6 @@ export const Closable: Story = {
         style: css`
           background-color: #fee2e2;
           padding: 2.5rem;
-          width: 100%;
         `,
         actions: false,
       },
@@ -91,7 +90,6 @@ export const Closable: Story = {
         style: css`
           background-color: #dcfce7;
           padding: 2.5rem;
-          width: 100%;
         `,
         actions: true,
       },
