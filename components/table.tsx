@@ -300,12 +300,11 @@ function Table({
 
     const handleScroll = () => {
       const delta = Math.abs(el.scrollTop - startScrollTop);
-      const maxScrollable = el.scrollHeight - el.clientHeight;
-      if (maxScrollable <= 0) return;
-
-      if (delta / maxScrollable >= 0.15) {
+      if (delta >= 100) {
         setOpenRowId(null);
       }
+
+      console.log(delta);
     };
 
     el.addEventListener("scroll", handleScroll, { passive: true });
