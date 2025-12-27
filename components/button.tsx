@@ -253,9 +253,14 @@ function Button({
 
       {isOpen &&
         createPortal(
-          <div
+          <DropdownWrapper
             ref={refs.setFloating}
-            style={{ ...floatingStyles, zIndex: 12000 }}
+            style={{ ...floatingStyles }}
+            $style={
+              typeof dropdownStyle === "function"
+                ? dropdownStyle(placement)
+                : dropdownStyle
+            }
             onMouseEnter={() => setHovered("dropdown")}
           >
             {subMenu({
@@ -269,11 +274,6 @@ function Button({
                     setHovered("original");
                   }}
                   withFilter={withFilter ?? false}
-                  style={
-                    typeof dropdownStyle === "function"
-                      ? dropdownStyle(placement)
-                      : dropdownStyle
-                  }
                   subMenuList={subMenuList}
                   variant={tipMenuSize}
                 />
@@ -301,12 +301,18 @@ function Button({
               ),
               render: (children) => children,
             })}
-          </div>,
+          </DropdownWrapper>,
           document.body
         )}
     </ButtonWrapper>
   );
 }
+
+const DropdownWrapper = styled.div<{ $style?: CSSProp }>`
+  z-index: 12000;
+
+  ${({ $style }) => $style};
+`;
 
 function ButtonTipMenuContainer({
   style,
