@@ -757,8 +757,22 @@ function ListItem({
             exit="collapsed"
             $isOpen={isChildOpened}
             variants={{
-              open: { opacity: 1, height: "auto", display: "flex" },
-              collapsed: { opacity: 0, height: 0, display: "none" },
+              open: {
+                opacity: 1,
+                height: "auto",
+                transition: {
+                  height: { duration: 0.3, ease: "easeInOut" },
+                  opacity: { duration: 1 },
+                },
+              },
+              collapsed: {
+                opacity: 0,
+                height: 0,
+                transition: {
+                  height: { duration: 0.25, ease: "easeInOut" },
+                  opacity: { duration: 0.15 },
+                },
+              },
             }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
