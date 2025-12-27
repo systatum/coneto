@@ -1,11 +1,5 @@
 import styled, { css, CSSProp } from "styled-components";
-import React, {
-  createContext,
-  Fragment,
-  ReactNode,
-  useContext,
-  useState,
-} from "react";
+import React, { createContext, ReactNode, useContext, useState } from "react";
 import {
   RemixiconComponentType,
   RiArrowRightSLine,
@@ -881,7 +875,7 @@ function TreeListItem<T extends TreeListItemsProps>({
                     isLoading={isLoading}
                     selectedLevel={selectedLevel}
                     selectedGroupId={selectedGroupId}
-                    parentGroupId={groupId}
+                    parentGroupId={parentGroupId}
                     groupId={item.id}
                     draggable={draggable}
                     groupLength={item?.items?.length}
