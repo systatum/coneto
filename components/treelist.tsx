@@ -1,8 +1,7 @@
 import styled, { css, CSSProp } from "styled-components";
 import React, {
-  Children,
   createContext,
-  isValidElement,
+  Fragment,
   ReactNode,
   useContext,
   useState,
@@ -811,24 +810,33 @@ function TreeListItem<T extends TreeListItemsProps>({
             $isSelected={isSelected === item.id}
           />
         )}
+
+        {isOver && dropPosition && (
+          <DragLine
+            $level={level}
+            $showHierarchyLine={showHierarchyLine}
+            $position={dropPosition}
+          />
+        )}
       </TreeListItemWrapper>
 
-      {showHierarchyLine &&
-        Array.from({ length: level }).map((_, idx) => {
-          const isSameLevelLine =
-            selectedLevel === idx && selectedGroupId === groupId;
+      {Array.from({ length: level }).map((_, idx) => {
+        const isSameLevelLine =
+          selectedLevel === idx && selectedGroupId === groupId;
 
-          return (
-            <TreeListHierarchyVerticalLine
-              key={idx}
-              aria-label="vertical-line-level"
-              $level={idx}
-              $isSameLevel={isSameLevelLine}
-            />
-          );
-        })}
-
-      {isOver && dropPosition && <DragLine $position={dropPosition} />}
+        return (
+          <Fragment key={idx}>
+            {showHierarchyLine && (
+              <TreeListHierarchyVerticalLine
+                key={idx}
+                aria-label="vertical-line-level"
+                $level={idx}
+                $isSameLevel={isSameLevelLine}
+              />
+            )}
+          </Fragment>
+        );
+      })}
 
       <AnimatePresence initial={false}>
         {isOpen[item.id] && (
@@ -953,14 +961,22 @@ const EmptyContent = styled(motion.div)<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
-const DragLine = styled.div<{ $position: "top" | "bottom" }>`
+const DragLine = styled.div<{
+  $position: "top" | "bottom";
+  $level?: number;
+  $showHierarchyLine?: boolean;
+}>`
   position: absolute;
-  left: 0;
   right: 0;
   height: 2px;
   background-color: #3b82f6;
   z-index: 1000;
   border-radius: 2px;
+
+  left: ${({ $level, $showHierarchyLine }) =>
+    $showHierarchyLine
+      ? `${($level ?? 0) * 12 + 9}px`
+      : `${($level ?? 0) * 15 + 0}px`};
   top: ${({ $position }) => ($position === "top" ? "0" : "auto")};
   bottom: ${({ $position }) => ($position === "bottom" ? "0" : "auto")};
 `;
