@@ -751,8 +751,9 @@ function ListItem({
       <AnimatePresence>
         {openable && children && (
           <ListGroupContent
-            key={`list-group-content-${index}`}
+            key={`list-item-children-${index}`}
             initial="collapsed"
+            aria-label="list-item-children"
             animate={isChildOpened ? "open" : "collapsed"}
             exit="collapsed"
             $isOpen={isChildOpened}
@@ -762,7 +763,7 @@ function ListItem({
                 height: "auto",
                 transition: {
                   height: { duration: 0.3, ease: "easeInOut" },
-                  opacity: { duration: 1 },
+                  opacity: { duration: 0.6 },
                 },
               },
               collapsed: {
