@@ -1,6 +1,88 @@
 import { getIdContent } from "test/support/commands";
 
 describe("Treelist", () => {
+  context("draggable", () => {
+    beforeEach(() => {
+      cy.visit(getIdContent("content-treelist--nested"));
+    });
+
+    context("when dragging in the same level", () => {
+      it("keeps the order in the group", () => {
+        cy.findAllByLabelText("tree-list-caption")
+          .eq(9)
+          .should("have.text", "Trip to Bali")
+          .parent()
+          .should("have.attr", "data-group-id", "images");
+        cy.findAllByLabelText("tree-list-caption")
+          .eq(10)
+          .should("have.text", "With family")
+          .parent()
+          .should("have.attr", "data-group-id", "images");
+
+        const dataTransfer = new DataTransfer();
+
+        cy.findAllByLabelText("draggable-request")
+          .eq(9)
+          .trigger("dragstart", { dataTransfer });
+
+        cy.findAllByLabelText("draggable-request")
+          .eq(10)
+          .trigger("dragover", { dataTransfer })
+          .trigger("drop", { dataTransfer });
+
+        cy.wait(100);
+
+        cy.findAllByLabelText("tree-list-caption")
+          .eq(9)
+          .should("have.text", "With family")
+          .parent()
+          .should("have.attr", "data-group-id", "images");
+        cy.findAllByLabelText("tree-list-caption")
+          .eq(10)
+          .should("have.text", "Trip to Bali")
+          .parent()
+          .should("have.attr", "data-group-id", "images");
+      });
+    });
+
+    context("when drag across levels", () => {
+      it("should moves the item to the new group", () => {
+        cy.findAllByLabelText("tree-list-caption")
+          .eq(7)
+          .should("have.text", "My Favourite")
+          .parent()
+          .should("have.attr", "data-group-id", "home");
+        cy.findAllByLabelText("tree-list-caption")
+          .eq(6)
+          .should("have.text", "Work")
+          .parent()
+          .should("have.attr", "data-group-id", "my-documents");
+        const dataTransfer = new DataTransfer();
+
+        cy.findAllByLabelText("draggable-request")
+          .eq(7)
+          .trigger("dragstart", { dataTransfer });
+
+        cy.findAllByLabelText("draggable-request")
+          .eq(6)
+          .trigger("dragover", { dataTransfer })
+          .trigger("drop", { dataTransfer });
+
+        cy.wait(100);
+
+        cy.findAllByLabelText("tree-list-caption")
+          .eq(7)
+          .should("have.text", "My Favourite")
+          .parent()
+          .should("have.attr", "data-group-id", "my-documents");
+        cy.findAllByLabelText("tree-list-caption")
+          .eq(6)
+          .should("have.text", "Work")
+          .parent()
+          .should("have.attr", "data-group-id", "my-documents");
+      });
+    });
+  });
   context("default", () => {
     beforeEach(() => {
       cy.visit(getIdContent("content-treelist--default"));

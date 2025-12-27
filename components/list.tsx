@@ -745,7 +745,7 @@ function ListItem({
           </ListItemRight>
         )}
 
-        {isOver && dropPosition && <DragLine position={dropPosition} />}
+        {isOver && dropPosition && <DragLine $position={dropPosition} />}
       </ListItemRow>
 
       <AnimatePresence>
@@ -877,15 +877,15 @@ const Subtitle = styled.span<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
-const DragLine = styled.div<{ position: "top" | "bottom" }>`
+const DragLine = styled.div<{ $position: "top" | "bottom" }>`
   position: absolute;
   left: 0;
   right: 0;
   height: 2px;
   background-color: #3b82f6;
   border-radius: 2px;
-  top: ${({ position }) => (position === "top" ? "0" : "auto")};
-  bottom: ${({ position }) => (position === "bottom" ? "0" : "auto")};
+  top: ${({ $position }) => ($position === "top" ? "0" : "auto")};
+  bottom: ${({ $position }) => ($position === "bottom" ? "0" : "auto")};
 `;
 
 List.Group = ListGroup;
