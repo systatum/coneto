@@ -63,6 +63,8 @@ export type ButtonProps = React.ComponentProps<"button"> &
     safeAreaAriaLabels?: string[];
     activeBackgroundColor?: string;
     dialogPlacement?: DialogPlacement;
+    onOpen?: (prop: boolean) => void;
+    open?: boolean;
   };
 
 function Button({
@@ -85,9 +87,15 @@ function Button({
   safeAreaAriaLabels,
   activeBackgroundColor,
   dialogPlacement = "bottom-left",
+  onOpen,
+  open,
   ...props
 }: ButtonProps) {
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpenLocal, setIsOpenLocal] = React.useState(false);
+
+  const isControlled = open !== undefined;
+  const isOpen = isControlled ? open : isOpenLocal;
+
   const [hovered, setHovered] = React.useState<
     "main" | "original" | "dropdown"
   >("original");
@@ -103,6 +111,7 @@ function Button({
   const safeAreaAriaLabelsLocal: string[] = [
     "combobox-drawer-month",
     "combobox-drawer-year",
+    "tip-menu",
     ...(safeAreaAriaLabels || []),
   ];
 
@@ -125,7 +134,10 @@ function Button({
       }
 
       if (containerRef.current && !containerRef.current.contains(target)) {
-        setIsOpen(false);
+        setIsOpenLocal(false);
+        if (onOpen) {
+          onOpen(false);
+        }
         setHovered("original");
       }
     };
@@ -152,9 +164,15 @@ function Button({
           }
           if (subMenu && showSubMenuOn === "self") {
             e.stopPropagation();
-            setIsOpen((prev) => !prev);
+            setIsOpenLocal(!isOpen);
+            if (onOpen) {
+              onOpen(!isOpen);
+            }
           } else {
-            setIsOpen(false);
+            setIsOpenLocal(false);
+            if (onOpen) {
+              onOpen(false);
+            }
           }
         }}
         {...props}
@@ -204,7 +222,10 @@ function Button({
             aria-label="button-toggle"
             onClick={(e) => {
               e.stopPropagation();
-              setIsOpen(!isOpen);
+              setIsOpenLocal(!isOpen);
+              if (onOpen) {
+                onOpen(!isOpen);
+              }
             }}
             $variant={variant}
             $isOpen={isOpen}
@@ -241,7 +262,10 @@ function Button({
               list: (subMenuList, { withFilter } = {}) => (
                 <TipMenu
                   setIsOpen={() => {
-                    setIsOpen(false);
+                    setIsOpenLocal(false);
+                    if (onOpen) {
+                      onOpen(false);
+                    }
                     setHovered("original");
                   }}
                   withFilter={withFilter ?? false}
