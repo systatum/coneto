@@ -94,20 +94,6 @@ const meta: Meta<typeof Table> = {
         type: { summary: "string" },
       },
     },
-    isOpen: {
-      description: "Open state for the sorting menu. Controlled externally.",
-      control: "boolean",
-      table: {
-        type: { summary: "boolean" },
-      },
-    },
-    setIsOpen: {
-      description:
-        "Function to toggle the sorting menu. Controlled externally.",
-      table: {
-        type: { summary: "() => void" },
-      },
-    },
     subMenuList: {
       description:
         "Function to generate menu list for sorting options per column.",

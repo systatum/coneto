@@ -270,7 +270,7 @@ describe("Table", () => {
           );
 
           cy.findByLabelText("pagination-wrapper")
-            .should("have.css", "width", "432px")
+            .should("have.css", "width", "417px")
             .and("have.css", "justify-content", "end");
         });
       });
@@ -929,46 +929,6 @@ describe("Table", () => {
           "Copy clicked"
         );
       });
-
-      it("renders slightly closer (4px) than usual", () => {
-        cy.mount(
-          <Table
-            selectable
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
-            columns={columns}
-            actions={DEFAULT_TOP_ACTIONS}
-            searchable
-          >
-            {rows?.map((groupValue, groupIndex) => (
-              <Table.Row.Group
-                key={groupIndex}
-                title={groupValue.title}
-                subtitle={groupValue.subtitle}
-              >
-                {groupValue.items.map((rowValue, rowIndex) => (
-                  <Table.Row
-                    key={rowIndex}
-                    rowId={`${groupValue.title}-${rowValue.title}`}
-                    content={[
-                      rowValue.title,
-                      rowValue.category,
-                      rowValue.author,
-                    ]}
-                    actions={ROW_ACTIONS}
-                  />
-                ))}
-              </Table.Row.Group>
-            ))}
-          </Table>
-        );
-
-        cy.findByText("Copy").click();
-        cy.findAllByLabelText("button-tip-menu-container")
-          .eq(0)
-          .should("have.css", "transform", "matrix(1, 0, 0, 1, 0, -4)");
-      });
     });
 
     context("when given capsule", () => {
@@ -1243,6 +1203,107 @@ describe("Table", () => {
   });
 
   context("with row actions", () => {
+    context("when hover another after opened", () => {
+      it("should always opened", () => {
+        cy.mount(
+          <Table
+            selectable
+            tableRowContainerStyle={css`
+              max-height: 400px;
+            `}
+            columns={columns}
+            actions={TOP_ACTIONS}
+            searchable
+          >
+            {rows?.map((groupValue, groupIndex) => (
+              <Table.Row.Group
+                key={groupIndex}
+                title={groupValue.title}
+                subtitle={groupValue.subtitle}
+              >
+                {groupValue.items.map((rowValue, rowIndex) => (
+                  <Table.Row
+                    key={rowIndex}
+                    rowId={`${groupValue.title}-${rowValue.title}`}
+                    content={[
+                      rowValue.title,
+                      rowValue.category,
+                      rowValue.author,
+                    ]}
+                    actions={ROW_ACTIONS}
+                  />
+                ))}
+              </Table.Row.Group>
+            ))}
+          </Table>
+        );
+        cy.window().then((win) => {
+          cy.spy(win.console, "log").as("consoleLog");
+        });
+
+        cy.findAllByLabelText("table-row").eq(0).trigger("mouseover");
+        cy.findAllByLabelText("action-button").eq(2).should("be.visible");
+        cy.findAllByLabelText("table-row").eq(1).trigger("mouseover");
+        cy.findAllByLabelText("action-button").eq(2).should("be.visible");
+      });
+    });
+
+    context("when scroll after 100px", () => {
+      it("should closed the TipMenu", () => {
+        cy.mount(
+          <Table
+            selectable
+            tableRowContainerStyle={css`
+              max-height: 400px;
+            `}
+            columns={columns}
+            actions={TOP_ACTIONS}
+            searchable
+          >
+            {rows?.map((groupValue, groupIndex) => (
+              <Table.Row.Group
+                key={groupIndex}
+                title={groupValue.title}
+                subtitle={groupValue.subtitle}
+              >
+                {groupValue.items.map((rowValue, rowIndex) => (
+                  <Table.Row
+                    key={rowIndex}
+                    rowId={`${groupValue.title}-${rowValue.title}`}
+                    content={[
+                      rowValue.title,
+                      rowValue.category,
+                      rowValue.author,
+                    ]}
+                    actions={ROW_ACTIONS}
+                  />
+                ))}
+              </Table.Row.Group>
+            ))}
+          </Table>
+        );
+        cy.window().then((win) => {
+          cy.spy(win.console, "log").as("consoleLog");
+        });
+
+        cy.findAllByLabelText("table-row").eq(0).trigger("mouseover");
+        cy.findAllByLabelText("action-button")
+          .eq(2)
+          .should("be.visible")
+          .click();
+        cy.findByLabelText("button-dropdown-wrapper")
+          .should("exist")
+          .and("be.visible");
+
+        cy.findByLabelText("table-scroll-container").then(($el) => {
+          const start = $el[0].scrollTop;
+          cy.wrap($el).scrollTo(0, start + 101);
+        });
+
+        cy.findByLabelText("button-dropdown-wrapper").should("not.exist");
+      });
+    });
+
     context("when only one action", () => {
       it("render action button", () => {
         cy.mount(
@@ -1283,7 +1344,7 @@ describe("Table", () => {
 
         cy.findAllByLabelText("table-row").eq(2).trigger("mouseover");
         cy.findAllByLabelText("action-button")
-          .eq(2)
+          .eq(4)
           .should("be.visible")
           .and("have.attr", "title", "Delete")
           .click();
@@ -1295,6 +1356,7 @@ describe("Table", () => {
         );
       });
     });
+
     context("when given multiple actions", () => {
       it("render with tip menu", () => {
         cy.mount(
@@ -1335,7 +1397,7 @@ describe("Table", () => {
 
         cy.findAllByLabelText("table-row").eq(2).trigger("mouseover");
         cy.findAllByLabelText("action-button")
-          .eq(2)
+          .eq(4)
           .should("be.visible")
           .click();
         cy.findByText("Edit").click();

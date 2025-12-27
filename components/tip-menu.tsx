@@ -117,7 +117,7 @@ function TipMenuItem({
       $variant={variant}
       aria-label="tip-menu-item"
       $isDangerous={isDangerous}
-      onClick={onClick}
+      onMouseDown={onClick}
     >
       {isIconValid ? (
         <StyledIconImage
