@@ -387,6 +387,7 @@ function TreeList({
                             emptyItemSlateStyle={emptyItemSlateStyle}
                             selectedLevel={selectedLevel}
                             groupId={item.id}
+                            parentGroupId={item.id}
                             selectedGroupId={selectedGroupId}
                             groupLength={item.items?.length}
                             index={index}
@@ -526,7 +527,6 @@ function findGroupOfItem(content: TreeListContentProps[], selectedId: string) {
   }
   return null;
 }
-
 function containsId(items: TreeListItemsProps[], id: string) {
   for (const item of items) {
     if (item.id === id) return true;
@@ -551,6 +551,7 @@ interface TreeListItemComponent<T extends TreeListItemsProps> {
   emptyItemSlate?: ReactNode;
   selectedLevel?: number;
   groupId?: string;
+  parentGroupId?: string;
   selectedGroupId?: string;
   index?: number;
   draggable?: boolean;
@@ -579,6 +580,7 @@ function TreeListItem<T extends TreeListItemsProps>({
   index,
   groupLength,
   emptyItemSlateStyle,
+  parentGroupId,
 }: TreeListItemComponent<T>) {
   const { dragItem, setDragItem, onDragged } = useContext(DnDContext);
   const [dropPosition, setDropPosition] = useState<"top" | "bottom" | null>(
@@ -599,7 +601,7 @@ function TreeListItem<T extends TreeListItemsProps>({
   const isSameLevel =
     selectedLevel !== null &&
     selectedLevel === level &&
-    selectedGroupId === groupId;
+    selectedGroupId === parentGroupId;
 
   return (
     <div
@@ -822,23 +824,20 @@ function TreeListItem<T extends TreeListItemsProps>({
         )}
       </TreeListItemWrapper>
 
-      {Array.from({ length: level }).map((_, idx) => {
-        const isSameLevelLine =
-          selectedLevel === idx && selectedGroupId === groupId;
+      {showHierarchyLine &&
+        Array.from({ length: level }).map((_, idx) => {
+          const isSameLevelLine =
+            selectedLevel === idx && selectedGroupId === parentGroupId;
 
-        return (
-          <Fragment key={idx}>
-            {showHierarchyLine && (
-              <TreeListHierarchyVerticalLine
-                key={idx}
-                aria-label="vertical-line-level"
-                $level={idx}
-                $isSameLevel={isSameLevelLine}
-              />
-            )}
-          </Fragment>
-        );
-      })}
+          return (
+            <TreeListHierarchyVerticalLine
+              key={idx}
+              aria-label="vertical-line-level"
+              $level={idx}
+              $isSameLevel={isSameLevelLine}
+            />
+          );
+        })}
 
       <AnimatePresence initial={false}>
         {isOpen[item.id] && (
@@ -882,6 +881,7 @@ function TreeListItem<T extends TreeListItemsProps>({
                     isLoading={isLoading}
                     selectedLevel={selectedLevel}
                     selectedGroupId={selectedGroupId}
+                    parentGroupId={groupId}
                     groupId={item.id}
                     draggable={draggable}
                     groupLength={item?.items?.length}
