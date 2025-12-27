@@ -6,8 +6,8 @@ describe("Treelist", () => {
       cy.visit(getIdContent("content-treelist--nested"));
     });
 
-    context("when drag in the same level", () => {
-      it("should render in the similar hierarchy", () => {
+    context("when dragging in the same level", () => {
+      it("keeps the order in the group", () => {
         cy.findAllByLabelText("tree-list-caption")
           .eq(9)
           .should("have.text", "Trip to Bali")
@@ -45,8 +45,8 @@ describe("Treelist", () => {
       });
     });
 
-    context("when drag to different level", () => {
-      it("should render into another level", () => {
+    context("when drag across levels", () => {
+      it("should moves the item to the new group", () => {
         cy.findAllByLabelText("tree-list-caption")
           .eq(7)
           .should("have.text", "My Favourite")
