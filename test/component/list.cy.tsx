@@ -1696,6 +1696,88 @@ describe("List", () => {
             })
           );
         });
+
+        it("should expand container before content fully fades in", () => {
+          cy.mount(
+            <List
+              searchable
+              draggable
+              selectable
+              containerStyle={css`
+                padding: 16px;
+                min-width: 350px;
+              `}
+            >
+              {LIST_GROUPS_OPENABLE.map((group, index) => (
+                <List.Group
+                  key={index}
+                  id={group.id}
+                  title={group.title}
+                  subtitle={group.subtitle}
+                  actions={group.actions}
+                  openerStyle="togglebox"
+                >
+                  {group.items.map((list, i) => (
+                    <List.Item
+                      key={i}
+                      id={list.id}
+                      actions={list.actions}
+                      leftIcon={list.leftIcon}
+                      subtitle={list.subtitle}
+                      title={list.title}
+                      groupId={group.id}
+                      openable={list.openable}
+                      selectedOptions={{
+                        checked: true,
+                      }}
+                    >
+                      {list.children}
+                    </List.Item>
+                  ))}
+                </List.Group>
+              ))}
+            </List>
+          );
+          cy.findByText("Settings").click();
+
+          cy.findAllByLabelText("list-item-wrapper")
+            .eq(0)
+            .then(($wrapper) => {
+              const startHeight = $wrapper.height();
+
+              // opacity is still fading in
+              cy.findAllByLabelText("list-item-children")
+                .eq(0)
+                .invoke("css", "opacity")
+                .then(Number)
+                .should("be.lt", 1);
+
+              // wait until height should be fully expanded (0.3s)
+              cy.wait(300).then(() => {
+                cy.findAllByLabelText("list-item-wrapper")
+                  .eq(5)
+                  .then(($wrapper2) => {
+                    expect($wrapper2.height()).to.be.greaterThan(startHeight);
+                  });
+
+                // Opacity still < 1 because total duration is 0.8s
+                cy.findAllByLabelText("list-item-children")
+                  .eq(0)
+                  .invoke("css", "opacity")
+                  .then(Number)
+                  .should("be.lt", 1);
+              });
+
+              cy.wait(500).then(() => {
+                // opacity = 1 same with total duration
+                cy.findAllByLabelText("list-item-children")
+                  .eq(0)
+                  .invoke("css", "opacity")
+                  .then(Number)
+                  .should("be.closeTo", 1, 0.01);
+              });
+            });
+        });
       });
     });
 
