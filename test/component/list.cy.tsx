@@ -1767,6 +1767,15 @@ describe("List", () => {
                   .then(Number)
                   .should("be.lt", 1);
               });
+
+              cy.wait(500).then(() => {
+                // opacity = 1 same with total duration
+                cy.findAllByLabelText("list-item-children")
+                  .eq(0)
+                  .invoke("css", "opacity")
+                  .then(Number)
+                  .should("be.closeTo", 1, 0.01);
+              });
             });
         });
       });
