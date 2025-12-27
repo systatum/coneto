@@ -1696,6 +1696,57 @@ describe("List", () => {
             })
           );
         });
+
+        it("should expand container before content fully fades in", () => {
+          cy.mount(
+            <List
+              searchable
+              draggable
+              selectable
+              containerStyle={css`
+                padding: 16px;
+                min-width: 350px;
+              `}
+            >
+              {LIST_GROUPS_OPENABLE.map((group, index) => (
+                <List.Group
+                  key={index}
+                  id={group.id}
+                  title={group.title}
+                  subtitle={group.subtitle}
+                  actions={group.actions}
+                  openerStyle="togglebox"
+                >
+                  {group.items.map((list, i) => (
+                    <List.Item
+                      key={i}
+                      id={list.id}
+                      actions={list.actions}
+                      leftIcon={list.leftIcon}
+                      subtitle={list.subtitle}
+                      title={list.title}
+                      groupId={group.id}
+                      openable={list.openable}
+                      selectedOptions={{
+                        checked: true,
+                      }}
+                    >
+                      {list.children}
+                    </List.Item>
+                  ))}
+                </List.Group>
+              ))}
+            </List>
+          );
+          cy.findByText("Settings").click();
+
+          cy.findAllByLabelText("list-item-children")
+            .eq(0)
+            .should("exist")
+            .invoke("css", "opacity")
+            .then(Number)
+            .should("be.lessThan", 1);
+        });
       });
     });
 
