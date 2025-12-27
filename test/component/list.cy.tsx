@@ -1740,12 +1740,34 @@ describe("List", () => {
           );
           cy.findByText("Settings").click();
 
-          cy.findAllByLabelText("list-item-children")
+          cy.findAllByLabelText("list-item-wrapper")
             .eq(0)
-            .should("exist")
-            .invoke("css", "opacity")
-            .then(Number)
-            .should("be.lessThan", 1);
+            .then(($wrapper) => {
+              const startHeight = $wrapper.height();
+
+              // opacity is still fading in
+              cy.findAllByLabelText("list-item-children")
+                .eq(0)
+                .invoke("css", "opacity")
+                .then(Number)
+                .should("be.lt", 1);
+
+              // wait until height should be fully expanded (0.3s)
+              cy.wait(300).then(() => {
+                cy.findAllByLabelText("list-item-wrapper")
+                  .eq(5)
+                  .then(($wrapper2) => {
+                    expect($wrapper2.height()).to.be.greaterThan(startHeight);
+                  });
+
+                // Opacity still < 1 because total duration is 0.8s
+                cy.findAllByLabelText("list-item-children")
+                  .eq(0)
+                  .invoke("css", "opacity")
+                  .then(Number)
+                  .should("be.lt", 1);
+              });
+            });
         });
       });
     });
