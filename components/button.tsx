@@ -254,6 +254,7 @@ function Button({
       {isOpen &&
         createPortal(
           <DropdownWrapper
+            aria-label="button-dropdown-wrapper"
             ref={refs.setFloating}
             style={{ ...floatingStyles }}
             $style={
