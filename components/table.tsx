@@ -66,8 +66,6 @@ export interface TableProps {
   onItemsSelected?: (data: string[]) => void;
   children: ReactNode;
   isLoading?: boolean;
-  isOpen?: boolean;
-  setIsOpen?: () => void;
   subMenuList?: (columnCaption: string) => TipMenuItemProps[];
   emptySlate?: ReactNode;
   onLastRowReached?: () => void;
@@ -153,8 +151,6 @@ function Table({
   selectedItems = [],
   children,
   isLoading,
-  isOpen,
-  setIsOpen,
   subMenuList,
   emptySlate,
   actions,
@@ -188,6 +184,7 @@ function Table({
   const [selectedData, setSelectedData] = useState<string[]>(selectedItems);
   const [allRowsLocal, setAllRowsLocal] = useState<string[]>([]);
   const [rowActions, setRowActions] = useState<TipMenuItemProps[]>([]);
+  const [openRowId, setOpenRowId] = useState<string | null>("");
 
   const handleSelectAll = () => {
     const currentPageIds = getAllRowContentsFromChildren(children);
@@ -245,6 +242,8 @@ function Table({
         selectedData,
         handleSelect,
         draggable,
+        openRowId,
+        setOpenRowId,
       } as TableRowGroupProps & {
         selectedData?: string[];
         handleSelect?: (data: string) => void;
@@ -267,6 +266,8 @@ function Table({
         isLast,
         onLastRowReached,
         draggable,
+        openRowId,
+        setOpenRowId,
         groupLength: Children?.count(children),
         index: index,
         onDropItem: (newPosition: number) => {
@@ -446,8 +447,6 @@ function Table({
                         <Toolbar.Menu
                           closedIcon={RiArrowUpDownLine}
                           openedIcon={RiArrowUpDownLine}
-                          isOpen={isOpen}
-                          setIsOpen={setIsOpen}
                           dropdownStyle={css`
                             min-width: 235px;
                           `}
@@ -599,6 +598,8 @@ const HeaderActions = styled.div`
   color: #343434;
   background: linear-gradient(to bottom, #fbf9f9, #f0f0f0);
   border-bottom: 0.5px solid #e5e7eb;
+  z-index: 10;
+  position: relative;
 `;
 
 const ActionsWrapper = styled.div`
@@ -747,30 +748,39 @@ const CheckboxWrapper = styled.div`
   pointer-events: auto;
 `;
 
-function TableRowGroup({
-  id,
-  children,
-  title,
-  subtitle,
-  selectable = false,
-  handleSelect,
-  selectedData,
-  isLast,
-  onLastRowReached,
-  draggable,
-}: TableRowGroupProps & {
-  selectedData?: string[];
-  handleSelect?: (data: string) => void;
-  onLastRowReached?: () => void;
-  isLast?: boolean;
-  draggable?: boolean;
-}) {
+function TableRowGroup(
+  props: TableRowGroupProps & {
+    selectedData?: string[];
+    handleSelect?: (data: string) => void;
+    onLastRowReached?: () => void;
+    isLast?: boolean;
+    draggable?: boolean;
+  }
+) {
+  const {
+    id,
+    children,
+    title,
+    subtitle,
+    selectable = false,
+    handleSelect,
+    selectedData,
+    isLast,
+    onLastRowReached,
+    draggable,
+  } = props;
+
+  const { openRowId, setOpenRowId } = props as {
+    openRowId?: string | null;
+    setOpenRowId?: (prop: string | null) => void;
+  };
+
   const { dragItem, setDragItem, onDragged } = useContext(DnDContext);
 
   const rowChildren = Children.map(children, (child, index) => {
-    if (!isValidElement<TableRowProps>(child)) return null;
+    if (!isValidElement<TableRowProps & TableRowOpenWithId>(child)) return null;
     if (child.type === TableRow) {
-      const props = child.props as TableRowProps;
+      const props = child.props as TableRowProps & TableRowOpenWithId;
 
       const isSelected = selectedData.some(
         (d) => JSON.stringify(d) === JSON.stringify(props.rowId)
@@ -786,6 +796,8 @@ function TableRowGroup({
         groupLength: Children?.count(children),
         draggable: draggable,
         groupId: id,
+        openRowId,
+        setOpenRowId,
         onDropItem: (newPosition: number) => {
           if (dragItem) {
             const { oldGroupId, oldPosition, id: rowId } = dragItem;
@@ -900,6 +912,11 @@ const RotatingIcon = styled.span<{ $isOpen?: boolean }>`
     `}
 `;
 
+interface TableRowOpenWithId {
+  openRowId?: string | null;
+  setOpenRowId?: (prop: string | null) => void;
+}
+
 function TableRow({
   content,
   selectable = false,
@@ -929,6 +946,8 @@ function TableRow({
     draggable?: boolean;
   }>) {
   const { setDragItem, dragItem } = useContext(DnDContext);
+  const { openRowId, setOpenRowId } = props as TableRowOpenWithId;
+
   const [isOver, setIsOver] = useState(false);
   const [dropPosition, setDropPosition] = useState<"top" | "bottom" | null>(
     null
@@ -960,7 +979,7 @@ function TableRow({
   return (
     <TableRowWrapper
       ref={rowRef}
-      $isHovered={isHovered === rowId}
+      $isHovered={isHovered === rowId || openRowId === rowId}
       $isSelected={isSelected}
       aria-label="table-row"
       onMouseLeave={() => setIsHovered(null)}
@@ -1099,8 +1118,7 @@ function TableRow({
 
       {isOver && dropPosition && <DragLine position={dropPosition} />}
 
-      {isHovered === rowId &&
-        actions &&
+      {actions &&
         (() => {
           const list = actions(`${rowId}`);
           const actionsWithIcons = list.map((prop) => ({
@@ -1117,12 +1135,29 @@ function TableRow({
 
           return (
             <ContextMenu
+              onOpen={(prop: boolean) => {
+                if (prop) {
+                  setOpenRowId(rowId);
+                } else {
+                  setOpenRowId(null);
+                }
+              }}
+              open={openRowId === rowId}
               containerStyle={css`
                 width: fit-content;
                 position: absolute;
                 top: 50%;
                 transform: translateY(-50%);
                 z-index: 8;
+                display: none;
+
+                ${(isHovered === rowId
+                  ? isHovered === rowId
+                  : openRowId === rowId) &&
+                css`
+                  display: inherit;
+                `}
+
                 ${draggable
                   ? css`
                       right: 2.4rem;
