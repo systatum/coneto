@@ -611,6 +611,7 @@ function TreeListItem<T extends TreeListItemsProps>({
       <TreeListItemWrapper
         draggable={draggable}
         role="button"
+        data-group-id={groupId}
         aria-label="tree-list-item"
         $isSelected={isSelected === item.id}
         $showHierarchyLine={showHierarchyLine}
@@ -737,6 +738,7 @@ function TreeListItem<T extends TreeListItemsProps>({
           />
         )}
         <div
+          aria-label="tree-list-caption"
           style={{
             width: "100%",
           }}
