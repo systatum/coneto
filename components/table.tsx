@@ -290,6 +290,28 @@ function Table({
     return null;
   });
 
+  const tableRowContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = tableRowContainerRef.current;
+    if (!el || openRowId === null) return;
+
+    const startScrollTop = el.scrollTop;
+
+    const handleScroll = () => {
+      const delta = Math.abs(el.scrollTop - startScrollTop);
+      const maxScrollable = el.scrollHeight - el.clientHeight;
+      if (maxScrollable <= 0) return;
+
+      if (delta / maxScrollable >= 0.15) {
+        setOpenRowId(null);
+      }
+    };
+
+    el.addEventListener("scroll", handleScroll, { passive: true });
+    return () => el.removeEventListener("scroll", handleScroll);
+  }, [openRowId]);
+
   return (
     <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
       <TableColumnContext.Provider value={columns}>
@@ -473,6 +495,7 @@ function Table({
 
             {rowChildren.length > 0 ? (
               <TableRowContainer
+                ref={tableRowContainerRef}
                 aria-label="table-scroll-container"
                 $tableRowContainerStyle={tableRowContainerStyle}
               >
@@ -598,13 +621,14 @@ const HeaderActions = styled.div`
   color: #343434;
   background: linear-gradient(to bottom, #fbf9f9, #f0f0f0);
   border-bottom: 0.5px solid #e5e7eb;
-  z-index: 10;
+  z-index: 100;
   position: relative;
 `;
 
 const ActionsWrapper = styled.div`
   display: flex;
   flex-direction: row;
+  position: relative;
   gap: 0.25rem;
 `;
 
