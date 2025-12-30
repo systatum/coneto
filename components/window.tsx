@@ -22,7 +22,7 @@ interface WindowProps {
   onResize?: () => void;
   onResizeComplete?: () => void;
   dividerStyle?: CSSProp;
-  initialSizes?: number[];
+  initialSizeRatio?: number[];
 }
 
 export interface WindowCellProps {
@@ -44,13 +44,13 @@ function Window({
   onResize,
   onResizeComplete,
   dividerStyle,
-  initialSizes,
+  initialSizeRatio,
 }: WindowProps) {
   const isVertical = orientation === "vertical";
   const childrenArray = Children.toArray(children).filter(isValidElement);
-  const sizeState =
-    normalizeSizes(initialSizes) ||
-    new Array(childrenArray.length).fill(1 / childrenArray.length);
+  const sizeState = initialSizeRatio
+    ? normalizeSizes(initialSizeRatio)
+    : new Array(childrenArray.length).fill(1 / childrenArray.length);
   const [sizes, setSizes] = useState<number[]>(sizeState);
   const [isDragging, setIsDragging] = useState(false);
 
