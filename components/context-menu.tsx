@@ -8,6 +8,7 @@ export type ContextMenuActionsProps = TipMenuItemProps;
 
 export interface ContextMenuProps {
   actions: ContextMenuActionsProps[];
+  onOpen?: (prop: boolean) => void;
   children?: ReactNode;
   containerStyle?: CSSProp;
   buttonStyle?: CSSProp;
@@ -17,6 +18,7 @@ export interface ContextMenuProps {
   hoverBackgroundColor?: string;
   maxActionsBeforeCollapsing?: number;
   iconSize?: number;
+  open?: boolean;
 }
 
 export default function ContextMenu({
@@ -30,6 +32,8 @@ export default function ContextMenu({
   focusBackgroundColor,
   maxActionsBeforeCollapsing = 1,
   iconSize = 16,
+  onOpen,
+  open,
 }: ContextMenuProps) {
   const buttonProps: ButtonProps = {
     buttonStyle: css`
@@ -79,6 +83,7 @@ export default function ContextMenu({
               prop.onClick(e);
             }
           }}
+          onOpen={onOpen}
           title={prop.caption}
           aria-label="action-button"
         >
@@ -93,6 +98,8 @@ export default function ContextMenu({
       {...buttonProps}
       aria-label="action-button"
       showSubMenuOn="self"
+      onOpen={onOpen}
+      open={open}
       subMenu={({ list }) => list(actions)}
     >
       {children ?? <RiMoreFill size={iconSize} />}
