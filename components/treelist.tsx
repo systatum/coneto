@@ -88,6 +88,7 @@ function TreeList({
 }: TreeListProps) {
   const [isSelected, setIsSelected] = useState(selectedItem);
   const [isActive, setIsActive] = useState<string | null>("");
+  const [openRowId, setOpenRowId] = useState<string | null>("");
 
   const initialOpenMap = Object.fromEntries(
     content.map((group) => {
@@ -334,6 +335,8 @@ function TreeList({
                           emptyItemSlate={emptyItemSlate}
                           selectedLevel={selectedLevel}
                           groupId={item.id}
+                          openRowId={openRowId}
+                          setOpenRowId={setOpenRowId}
                           selectedGroupId={selectedGroupId}
                         />
                       );
@@ -463,6 +466,11 @@ interface TreeListItemComponent<T extends TreeListItemsProps> {
   selectedGroupId?: string;
 }
 
+interface TreeListOpenWithId {
+  openRowId?: string | null;
+  setOpenRowId?: (prop: string | null) => void;
+}
+
 function TreeListItem<T extends TreeListItemsProps>({
   item,
   isSelected,
@@ -480,7 +488,9 @@ function TreeListItem<T extends TreeListItemsProps>({
   selectedLevel,
   groupId,
   selectedGroupId,
-}: TreeListItemComponent<T>) {
+  openRowId,
+  setOpenRowId,
+}: TreeListItemComponent<T> & TreeListOpenWithId) {
   const [isHovered, setIsHovered] = useState<null | string>(null);
 
   const escapedTerm = escapeRegExp(searchTerm.trim());
@@ -530,13 +540,8 @@ function TreeListItem<T extends TreeListItemsProps>({
             }
           }
         }}
-        $style={css`
-          ${isHovered === item.id &&
-          css`
-            background-color: #f3f4f6;
-          `}
-          ${style}
-        `}
+        $isHovered={isHovered === item.id || openRowId === item.id}
+        $style={style}
         onMouseLeave={() => setIsHovered(null)}
         onMouseEnter={() => setIsHovered(item.id)}
         $level={level + 1}
@@ -585,8 +590,7 @@ function TreeListItem<T extends TreeListItemsProps>({
             )
           )}
         </div>
-        {item.id === isHovered &&
-          item.actions &&
+        {item.actions &&
           (() => {
             const list = item.actions;
 
@@ -611,12 +615,30 @@ function TreeListItem<T extends TreeListItemsProps>({
                 }}
               >
                 <ContextMenu
+                  onOpen={(prop: boolean) => {
+                    if (prop) {
+                      setOpenRowId(item.id);
+                    } else {
+                      setOpenRowId(null);
+                    }
+                  }}
+                  open={openRowId === item.id}
                   maxActionsBeforeCollapsing={2}
                   iconSize={16}
                   focusBackgroundColor="#d4d4d4"
                   hoverBackgroundColor="#d4d4d4"
                   activeBackgroundColor="#d4d4d4"
                   actions={actionsWithIcons}
+                  containerStyle={css`
+                    display: none;
+
+                    ${(isHovered === item.id
+                      ? isHovered === item.id
+                      : openRowId === item.id) &&
+                    css`
+                      display: inherit;
+                    `}
+                  `}
                   buttonStyle={css`
                     width: 20px;
                     height: 20px;
@@ -694,6 +716,8 @@ function TreeListItem<T extends TreeListItemsProps>({
                     selectedLevel={selectedLevel}
                     selectedGroupId={selectedGroupId}
                     groupId={groupId}
+                    openRowId={openRowId}
+                    setOpenRowId={setOpenRowId}
                   />
                 ))
               ) : (
@@ -888,6 +912,7 @@ const TreeListItemWrapper = styled.li<{
   $showHierarchyLine: boolean;
   $style?: CSSProp;
   $level?: number;
+  $isHovered?: boolean;
 }>`
   display: flex;
   flex-direction: row;
@@ -906,6 +931,12 @@ const TreeListItemWrapper = styled.li<{
       border-left: 3px solid ${$isSelected ? "#3b82f6" : "transparent"};
     `}
   background-color: ${(props) => (props.$isSelected ? "#f3f4f6" : "white")};
+  ${({ $isHovered }) =>
+    $isHovered &&
+    css`
+      background-color: #f3f4f6;
+    `}
+
   padding: 0.25rem 1.2rem;
   padding-right: 8px;
   list-style: none;
