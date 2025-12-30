@@ -782,20 +782,35 @@ function ListItem({
           </ListItemRight>
         )}
 
-        {isOver && dropPosition && <DragLine position={dropPosition} />}
+        {isOver && dropPosition && <DragLine $position={dropPosition} />}
       </ListItemRow>
 
       <AnimatePresence>
         {openable && children && (
           <ListGroupContent
-            key={`list-group-content-${index}`}
+            key={`list-item-children-${index}`}
             initial="collapsed"
+            aria-label="list-item-children"
             animate={isChildOpened ? "open" : "collapsed"}
             exit="collapsed"
             $isOpen={isChildOpened}
             variants={{
-              open: { opacity: 1, height: "auto", display: "flex" },
-              collapsed: { opacity: 0, height: 0, display: "none" },
+              open: {
+                opacity: 1,
+                height: "auto",
+                transition: {
+                  height: { duration: 0.3, ease: "easeInOut" },
+                  opacity: { duration: 0.8 },
+                },
+              },
+              collapsed: {
+                opacity: 0,
+                height: 0,
+                transition: {
+                  height: { duration: 0.25, ease: "easeInOut" },
+                  opacity: { duration: 0.15 },
+                },
+              },
             }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
@@ -914,15 +929,15 @@ const Subtitle = styled.span<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
-const DragLine = styled.div<{ position: "top" | "bottom" }>`
+const DragLine = styled.div<{ $position: "top" | "bottom" }>`
   position: absolute;
   left: 0;
   right: 0;
   height: 2px;
   background-color: #3b82f6;
   border-radius: 2px;
-  top: ${({ position }) => (position === "top" ? "0" : "auto")};
-  bottom: ${({ position }) => (position === "bottom" ? "0" : "auto")};
+  top: ${({ $position }) => ($position === "top" ? "0" : "auto")};
+  bottom: ${({ $position }) => ($position === "bottom" ? "0" : "auto")};
 `;
 
 List.Group = ListGroup;

@@ -1,9 +1,11 @@
 import { RemixiconComponentType } from "@remixicon/react";
 import {
   Children,
+  cloneElement,
   Fragment,
   isValidElement,
   MouseEvent,
+  ReactElement,
   ReactNode,
   useCallback,
   useEffect,
@@ -20,6 +22,7 @@ interface WindowProps {
   onResize?: () => void;
   onResizeComplete?: () => void;
   dividerStyle?: CSSProp;
+  initialSizeRatio?: number[];
 }
 
 export interface WindowCellProps {
@@ -41,12 +44,13 @@ function Window({
   onResize,
   onResizeComplete,
   dividerStyle,
+  initialSizeRatio,
 }: WindowProps) {
   const isVertical = orientation === "vertical";
   const childrenArray = Children.toArray(children).filter(isValidElement);
-  const sizeState = new Array(childrenArray.length).fill(
-    1 / childrenArray.length
-  );
+  const sizeState = initialSizeRatio
+    ? normalizeSizes(initialSizeRatio)
+    : new Array(childrenArray.length).fill(1 / childrenArray.length);
   const [sizes, setSizes] = useState<number[]>(sizeState);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -145,16 +149,22 @@ function Window({
   }, [childrenArray.length]);
 
   return (
-    <Container ref={containerRef} $isVertical={isVertical} $style={style}>
+    <Container
+      aria-label="window"
+      ref={containerRef}
+      $isVertical={isVertical}
+      $style={style}
+    >
       {childrenArray.map((child, index) => (
         <Fragment key={index}>
-          <CellWrapper
-            $size={sizes[index]}
-            $isDragging={isDragging}
-            $isVertical={isVertical}
-          >
-            {child}
-          </CellWrapper>
+          {cloneElement(
+            child as ReactElement<WindowCellProps & WindowCellInternalProps>,
+            {
+              size: sizes[index],
+              isDragging: isDragging,
+              isVertical: isVertical,
+            }
+          )}
           {index < childrenArray.length - 1 && (
             <Divider
               $style={dividerStyle}
@@ -170,12 +180,27 @@ function Window({
   );
 }
 
-function WindowCell({ children, style, actions }: WindowCellProps) {
+interface WindowCellInternalProps {
+  size: number;
+  isDragging: boolean;
+  isVertical: boolean;
+}
+
+function WindowCell(props: WindowCellProps) {
+  const { children, style, actions } = props;
+
+  const {
+    size = 1,
+    isDragging = false,
+    isVertical = true,
+  } = props as WindowCellInternalProps;
+
   return (
     <CellWrapper
       aria-label="window-cell"
-      $size={1}
-      $isVertical={true}
+      $size={size}
+      $isDragging={isDragging}
+      $isVertical={isVertical}
       $style={style}
     >
       {actions && (
@@ -198,6 +223,7 @@ function WindowCell({ children, style, actions }: WindowCellProps) {
                 padding: 2px;
                 width: fit-content;
                 height: fit-content;
+                z-index: 50;
               `}
               buttonStyle={css`
                 width: fit-content;
@@ -215,9 +241,7 @@ function WindowCell({ children, style, actions }: WindowCellProps) {
   );
 }
 
-const Container = styled.div.withConfig({
-  shouldForwardProp: (prop) => prop !== "$style" && prop !== "$isVertical",
-})<{ $isVertical: boolean; $style?: CSSProp }>`
+const Container = styled.div<{ $isVertical: boolean; $style?: CSSProp }>`
   display: flex;
   width: 100%;
   height: auto;
@@ -227,10 +251,7 @@ const Container = styled.div.withConfig({
   ${({ $style }) => $style}
 `;
 
-const CellWrapper = styled.div.withConfig({
-  shouldForwardProp: (prop) =>
-    !["$size", "$isVertical", "$style", "$isDragging"].includes(prop),
-})<{
+const CellWrapper = styled.div<{
   $size: number;
   $isVertical: boolean;
   $style?: CSSProp;
@@ -241,16 +262,18 @@ const CellWrapper = styled.div.withConfig({
     $isVertical ? `${$size * 100}%` : "100%"};
   height: ${({ $isVertical, $size }) =>
     !$isVertical ? `${$size * 100}%` : "100%"};
-  ${({ $style }) => $style};
   -webkit-overflow-scrolling: "touch";
   pointer-events: ${({ $isDragging }) => ($isDragging ? "none" : "auto")};
   user-select: ${({ $isDragging }) => ($isDragging ? "none" : "auto")};
+
+  ${({ $style }) => $style};
 `;
 
 const Divider = styled.div<{ $isVertical: boolean; $style?: CSSProp }>`
   position: relative;
   background-color: transparent;
   transition: background-color 0.3s;
+  z-index: 100;
 
   ${({ $isVertical }) =>
     $isVertical
@@ -276,7 +299,14 @@ const ActionContainer = styled.div`
   top: 16px;
   display: flex;
   flex-direction: row;
+  pointer-events: auto;
+  z-index: 40;
 `;
+
+function normalizeSizes(sizes: number[]) {
+  const total = sizes.reduce((a, b) => a + b, 0);
+  return sizes.map((s) => s / total);
+}
 
 Window.Cell = WindowCell;
 
