@@ -188,88 +188,11 @@ export const Default: Story = {
 
 export const Nested: Story = {
   render: () => {
-    function applyContent(
-      tree: TreeListContentProps[],
-      defaultPrevented?: boolean,
-      initialState?: "opened" | "closed"
-    ): TreeListContentProps[] {
-      return tree.map((props) => {
-        const hasChildren =
-          Array.isArray(props.items) && props.items.length > 0;
-
-        let normalizedItems: TreeListItemsProps[] | undefined = undefined;
-
-        if (hasChildren && props.items) {
-          normalizedItems = props.items.map((item) => {
-            const itemHasChildren =
-              Array.isArray(item.items) && item.items.length > 0;
-
-            return {
-              ...item,
-              id: item.id,
-              caption: item.caption,
-              icon: RiFolderFill,
-              iconOnActive: RiFolder6Fill,
-              iconColor:
-                item.id === "cleverfiles"
-                  ? "rgb(252, 231, 154)"
-                  : "rgb(247, 212, 82)",
-              items: itemHasChildren
-                ? applyItemsRecursively(
-                    item.items!,
-                    defaultPrevented,
-                    initialState
-                  )
-                : undefined,
-              onClick: ({ preventDefault }) => {
-                if (defaultPrevented) {
-                  preventDefault();
-                }
-              },
-            };
-          });
-        }
-
-        return {
-          ...props,
-          id: props.id,
-          caption: props.id,
-          items: normalizedItems,
-        };
-      });
-    }
-
-    function applyItemsRecursively(
-      items: TreeListItemsProps[],
-      defaultPrevented?: boolean,
-      initialState?: "opened" | "closed"
-    ): TreeListItemsProps[] {
-      return items.map((item) => {
-        const hasChildren = Array.isArray(item.items) && item.items.length > 0;
-
-        return {
-          ...item,
-          id: item.id,
-          caption: item.caption,
-          icon: RiFolderFill,
-          iconOnActive: RiFolder6Fill,
-          iconColor:
-            item.id === "cleverfiles"
-              ? "rgb(252, 231, 154)"
-              : "rgb(247, 212, 82)",
-          items: hasChildren ? applyItemsRecursively(item.items!) : undefined,
-          initialState:
-            item.id === "contracts" && initialState === "closed"
-              ? "closed"
-              : "opened",
-          onClick: ({ preventDefault }) => {
-            if (defaultPrevented) {
-              preventDefault();
-            }
-          },
-        };
-      });
-    }
+    type UseTreeListControllerOptions = {
+      initialData: TreeListContentProps[];
+      defaultPrevented?: boolean;
+      initialState?: "opened" | "closed";
+    };
 
     const TREE_LIST_DATA: TreeListContentProps[] = [
       {
@@ -316,6 +239,197 @@ export const Nested: Story = {
       },
     ];
 
+    function useTreeListController({
+      initialData,
+      defaultPrevented,
+      initialState,
+    }: UseTreeListControllerOptions) {
+      const [groups, setGroups] = useState(initialData);
+
+      function applyContent(
+        tree: TreeListContentProps[],
+        defaultPrevented?: boolean,
+        initialState?: "opened" | "closed"
+      ): TreeListContentProps[] {
+        return tree.map((props) => {
+          const hasChildren =
+            Array.isArray(props.items) && props.items.length > 0;
+
+          let normalizedItems: TreeListItemsProps[] | undefined = undefined;
+
+          if (hasChildren && props.items) {
+            normalizedItems = props.items.map((item) => {
+              const itemHasChildren =
+                Array.isArray(item.items) && item.items.length > 0;
+
+              return {
+                ...item,
+                id: item.id,
+                caption: item.caption,
+                icon: RiFolderFill,
+                iconOnActive: RiFolder6Fill,
+                iconColor:
+                  item.id === "cleverfiles"
+                    ? "rgb(252, 231, 154)"
+                    : "rgb(247, 212, 82)",
+                items: itemHasChildren
+                  ? applyItemsRecursively(
+                      item.items!,
+                      defaultPrevented,
+                      initialState
+                    )
+                  : undefined,
+                onClick: ({ preventDefault }) => {
+                  if (defaultPrevented) {
+                    preventDefault();
+                  }
+                },
+              };
+            });
+          }
+
+          return {
+            ...props,
+            id: props.id,
+            caption: props.id,
+            items: normalizedItems,
+          };
+        });
+      }
+
+      function applyItemsRecursively(
+        items: TreeListItemsProps[],
+        defaultPrevented?: boolean,
+        initialState?: "opened" | "closed"
+      ): TreeListItemsProps[] {
+        return items.map((item) => {
+          const hasChildren =
+            Array.isArray(item.items) && item.items.length > 0;
+
+          return {
+            ...item,
+            id: item.id,
+            caption: item.caption,
+            icon: RiFolderFill,
+            iconOnActive: RiFolder6Fill,
+            iconColor:
+              item.id === "cleverfiles"
+                ? "rgb(252, 231, 154)"
+                : "rgb(247, 212, 82)",
+            items: hasChildren ? applyItemsRecursively(item.items!) : undefined,
+            initialState:
+              item.id === "contracts" && initialState === "closed"
+                ? "closed"
+                : "opened",
+            onClick: ({ preventDefault }) => {
+              if (defaultPrevented) {
+                preventDefault();
+              }
+            },
+          };
+        });
+      }
+
+      type TreeNode = TreeListContentProps & Partial<TreeListItemsProps>;
+
+      function reorderItems(
+        items: TreeNode[],
+        itemId: string,
+        newGroupId: string,
+        newPosition: number
+      ): TreeNode[] {
+        function helper(nodes: TreeNode[]): {
+          items: TreeNode[];
+          movedItem: TreeNode | null;
+        } {
+          let moved: TreeNode | null = null;
+
+          const cleaned = nodes
+            .map((node) => {
+              const hasChildren =
+                Array.isArray(node.items) && node.items.length > 0;
+
+              if (node.id === itemId) {
+                moved = {
+                  ...node,
+                  items: node.items ? [...node.items] : undefined,
+                };
+                return null;
+              }
+
+              if (hasChildren) {
+                const { items: childItems, movedItem } = helper(node.items!);
+                if (movedItem) moved = movedItem;
+                return { ...node, items: childItems };
+              }
+
+              return node;
+            })
+            .filter(Boolean) as TreeNode[];
+
+          return { items: cleaned, movedItem: moved };
+        }
+
+        const { items: removedItems, movedItem } = helper(items);
+
+        if (!movedItem) return removedItems;
+
+        function insert(nodes: TreeNode[]): TreeNode[] {
+          return nodes.map((node) => {
+            const hasChildren =
+              Array.isArray(node.items) && node.items.length > 0;
+
+            if (node.id === newGroupId) {
+              const newItems = [...(node.items ?? [])];
+              newItems.splice(newPosition, 0, movedItem);
+              return { ...node, items: newItems };
+            }
+
+            return hasChildren ? { ...node, items: insert(node.items!) } : node;
+          });
+        }
+
+        return insert(removedItems);
+      }
+
+      const onDragged = ({
+        id,
+        newPosition,
+        newGroupId,
+      }: {
+        id: string;
+        newPosition: number;
+        newGroupId: string;
+      }) => {
+        const updatedGroups = reorderItems(groups, id, newGroupId, newPosition);
+        setGroups(updatedGroups);
+      };
+
+      const content = useMemo(
+        () => applyContent(groups, defaultPrevented, initialState),
+        [groups]
+      );
+
+      return {
+        groups,
+        setGroups,
+        content,
+        onDragged,
+      };
+    }
+
+    const { content, onDragged } = useTreeListController({
+      initialData: TREE_LIST_DATA,
+      defaultPrevented: false,
+      initialState: "closed",
+    });
+
+    const { content: content2, onDragged: onDragged2 } = useTreeListController({
+      initialData: TREE_LIST_DATA,
+      defaultPrevented: true,
+      initialState: "closed",
+    });
+
     return (
       <Wrapper>
         <div
@@ -338,10 +452,23 @@ export const Nested: Story = {
             containerStyle={css`
               max-width: 300px;
             `}
+            draggable
+            onDragged={({ id, newGroupId, newPosition }) =>
+              onDragged({
+                id,
+                newGroupId,
+                newPosition,
+              })
+            }
+            emptyItemSlateStyle={css`
+              align-items: center;
+            `}
+            emptyItemSlate={"Content Empty."}
             collapsible
             showHierarchyLine
+            alwaysShowDragIcon={false}
             onOpenChange={({ id }) => console.log(id)}
-            content={applyContent(TREE_LIST_DATA, false, "closed")}
+            content={content}
           />
         </div>
 
@@ -367,8 +494,17 @@ export const Nested: Story = {
             `}
             collapsible
             showHierarchyLine
+            alwaysShowDragIcon={false}
+            onDragged={({ id, newGroupId, newPosition }) =>
+              onDragged2({
+                id,
+                newGroupId,
+                newPosition,
+              })
+            }
+            draggable
             onOpenChange={({ id }) => console.log(id)}
-            content={applyContent(TREE_LIST_DATA, true, "closed")}
+            content={content2}
           />
         </div>
       </Wrapper>
