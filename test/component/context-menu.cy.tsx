@@ -234,6 +234,57 @@ describe("context-menu", () => {
           cy.findByText(props.caption).should("be.visible").and("exist");
         });
       });
+
+      context("when hover another list after opened", () => {
+        it("keeps the tip menu open", () => {
+          cy.mount(
+            <List
+              searchable
+              draggable
+              selectable
+              containerStyle={css`
+                padding: 16px;
+                min-width: 350px;
+              `}
+            >
+              {LIST_GROUPS.map((group, index) => (
+                <List.Group
+                  key={index}
+                  id={group.id}
+                  title={group.title}
+                  subtitle={group.subtitle}
+                  actions={group.actions}
+                  openerStyle="togglebox"
+                >
+                  {group.items.map((list, i) => (
+                    <List.Item
+                      key={i}
+                      id={list.id}
+                      groupId={group.id}
+                      actions={ROW_ACTIONS}
+                      leftIcon={list.leftIcon}
+                      subtitle={list.subtitle}
+                      title={list.title}
+                      selectedOptions={{
+                        checked: true,
+                      }}
+                    />
+                  ))}
+                </List.Group>
+              ))}
+            </List>
+          );
+          cy.findAllByLabelText("list-item-wrapper").eq(0).realHover().click();
+          cy.findAllByLabelText("action-button").eq(0).click();
+          cy.findAllByLabelText("tip-menu-item").should("have.length", 2);
+
+          ROW_ACTIONS("").map((props) => {
+            cy.findByText(props.caption).should("be.visible").and("exist");
+          });
+          cy.findAllByLabelText("list-item-wrapper").eq(1).realHover();
+          cy.findAllByLabelText("tip-menu-item").should("have.length", 2);
+        });
+      });
     });
   });
 
@@ -326,7 +377,7 @@ describe("context-menu", () => {
 
         cy.wait(100);
 
-        cy.contains("Adam Noto Hakarsa").trigger("mouseover");
+        cy.contains("Adam Noto Hakarsa").realHover();
         cy.findAllByLabelText("action-button").eq(0).click();
 
         checkMenuAlignment();
@@ -345,18 +396,44 @@ describe("context-menu", () => {
 
         cy.wait(100);
 
-        cy.contains("Adam Noto Hakarsa").trigger("mouseover");
+        cy.contains("Adam Noto Hakarsa").realHover();
         cy.findAllByLabelText("action-button").eq(0).click();
         cy.findAllByLabelText("tip-menu-item").should("have.length", 4);
         ITEM_ACTIONS.map((props) => {
           cy.findByText(props.caption).should("be.visible").and("exist");
         });
 
-        cy.contains("Rina Patel").trigger("mouseover");
+        cy.contains("Rina Patel").realHover();
         cy.findAllByLabelText("action-button").eq(1).click({ force: true });
         cy.findAllByLabelText("tip-menu-item").should("have.length", 4);
         ITEM_ACTIONS.map((props) => {
           cy.findByText(props.caption).should("be.visible").and("exist");
+        });
+      });
+
+      context("when hover another list after opened", () => {
+        it("keeps the tip menu open", () => {
+          cy.mount(
+            <TreeList
+              containerStyle={css`
+                min-width: 300px;
+              `}
+              content={TREE_LIST_DATA}
+              emptySlate={<p>Not found.</p>}
+            />
+          );
+
+          cy.wait(100);
+
+          cy.contains("Rina Patel").realHover();
+          cy.findAllByLabelText("action-button").eq(1).click({ force: true });
+          cy.findAllByLabelText("tip-menu-item").should("have.length", 4);
+          ITEM_ACTIONS.map((props) => {
+            cy.findByText(props.caption).should("be.visible").and("exist");
+          });
+
+          cy.contains("Adam Noto Hakarsa").realHover();
+          cy.findAllByLabelText("tip-menu-item").should("have.length", 4);
         });
       });
     });
@@ -425,7 +502,7 @@ describe("context-menu", () => {
         );
 
         cy.wait(100);
-        cy.findAllByLabelText("table-row").eq(2).trigger("mouseover");
+        cy.findAllByLabelText("table-row").eq(2).realHover();
         cy.findAllByLabelText("action-button").eq(0).click({ force: true });
         checkMenuAlignment();
       });
@@ -443,13 +520,47 @@ describe("context-menu", () => {
         );
 
         cy.wait(100);
-        cy.findAllByLabelText("table-row").eq(2).trigger("mouseover");
+        cy.findAllByLabelText("table-row").eq(2).realHover();
         cy.findAllByLabelText("action-button").eq(2).click({ force: true });
         ROW_ACTION("").map((props) => {
           cy.findAllByText(props.caption)
             .eq(0)
             .should("be.visible")
             .and("exist");
+        });
+      });
+
+      context("when hover another row after opened", () => {
+        it("keeps the tip menu open", () => {
+          cy.mount(
+            <Table
+              tableRowContainerStyle={css`
+                max-height: 400px;
+              `}
+              columns={columns}
+            >
+              {sampleRows}
+            </Table>
+          );
+
+          cy.wait(100);
+          cy.findAllByLabelText("table-row").eq(2).realHover();
+          cy.findAllByLabelText("action-button").eq(2).click({ force: true });
+          ROW_ACTION("").map((props) => {
+            cy.findAllByText(props.caption)
+              .eq(0)
+              .should("be.visible")
+              .and("exist");
+
+            cy.findAllByLabelText("table-row").eq(3).realHover();
+
+            ROW_ACTION("").map((props) => {
+              cy.findAllByText(props.caption)
+                .eq(0)
+                .should("be.visible")
+                .and("exist");
+            });
+          });
         });
       });
     });
@@ -475,6 +586,12 @@ describe("context-menu", () => {
 
     const TAB_WITH_SUB_ITEM = [
       {
+        id: "1",
+        title: "Content",
+        content: "This is review content",
+        actions: SUB_MENU,
+      },
+      {
         id: "2",
         title: "Review",
         content: "This is review content",
@@ -487,10 +604,27 @@ describe("context-menu", () => {
         cy.mount(<NavTab tabs={TAB_WITH_SUB_ITEM} activeTab={"2"} />);
 
         cy.wait(100);
-        cy.findByText("Review").trigger("mouseover");
+        cy.findByText("Review").realHover();
         cy.findAllByLabelText("action-button").eq(0).click();
         SUB_MENU.map((props) => {
           cy.findByText(props.caption).should("be.visible").and("exist");
+        });
+      });
+
+      context("when hover another tab after opened", () => {
+        it("keeps the tip menu open", () => {
+          cy.mount(<NavTab tabs={TAB_WITH_SUB_ITEM} activeTab={"2"} />);
+
+          cy.wait(100);
+          cy.findByText("Review").realHover();
+          cy.findAllByLabelText("action-button").eq(0).click();
+          SUB_MENU.map((props) => {
+            cy.findByText(props.caption).should("be.visible").and("exist");
+          });
+          cy.findByText("Content").realHover();
+          SUB_MENU.map((props) => {
+            cy.findByText(props.caption).should("be.visible").and("exist");
+          });
         });
       });
     });
