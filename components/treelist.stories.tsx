@@ -466,6 +466,7 @@ export const Nested: Story = {
             emptyItemSlate={"Content Empty."}
             collapsible
             showHierarchyLine
+            alwaysShowDragIcon={false}
             onOpenChange={({ id }) => console.log(id)}
             content={content}
           />
@@ -493,6 +494,7 @@ export const Nested: Story = {
             `}
             collapsible
             showHierarchyLine
+            alwaysShowDragIcon={false}
             onDragged={({ id, newGroupId, newPosition }) =>
               onDragged2({
                 id,
