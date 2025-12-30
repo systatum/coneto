@@ -825,7 +825,6 @@ function Calendar({
 
                   await handleSelect(date, e);
                   if (onClick) {
-                    console.log(onClick);
                     await onClick();
                   }
                 }}
