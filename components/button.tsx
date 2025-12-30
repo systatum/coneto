@@ -95,6 +95,15 @@ function Button({
 
   const isControlled = open !== undefined;
   const isOpen = isControlled ? open : isOpenLocal;
+  const setIsOpen = React.useCallback(
+    (next: boolean) => {
+      if (!isControlled) {
+        setIsOpenLocal(next);
+      }
+      onOpen?.(next);
+    },
+    [isControlled, onOpen]
+  );
 
   const [hovered, setHovered] = React.useState<
     "main" | "original" | "dropdown"
@@ -134,10 +143,7 @@ function Button({
       }
 
       if (containerRef.current && !containerRef.current.contains(target)) {
-        setIsOpenLocal(false);
-        if (onOpen) {
-          onOpen(false);
-        }
+        setIsOpen(false);
         setHovered("original");
       }
     };
@@ -164,15 +170,9 @@ function Button({
           }
           if (subMenu && showSubMenuOn === "self") {
             e.stopPropagation();
-            setIsOpenLocal(!isOpen);
-            if (onOpen) {
-              onOpen(!isOpen);
-            }
+            setIsOpen(!isOpen);
           } else {
-            setIsOpenLocal(false);
-            if (onOpen) {
-              onOpen(false);
-            }
+            setIsOpen(false);
           }
         }}
         {...props}
@@ -222,10 +222,7 @@ function Button({
             aria-label="button-toggle"
             onClick={(e) => {
               e.stopPropagation();
-              setIsOpenLocal(!isOpen);
-              if (onOpen) {
-                onOpen(!isOpen);
-              }
+              setIsOpen(!isOpen);
             }}
             $variant={variant}
             $isOpen={isOpen}
@@ -268,10 +265,8 @@ function Button({
               list: (subMenuList, { withFilter } = {}) => (
                 <TipMenu
                   setIsOpen={() => {
-                    setIsOpenLocal(false);
-                    if (onOpen) {
-                      onOpen(false);
-                    }
+                    setIsOpen(false);
+
                     setHovered("original");
                   }}
                   withFilter={withFilter ?? false}
