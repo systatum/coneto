@@ -27,6 +27,7 @@ export interface TreeListProps {
   showHierarchyLine?: boolean;
   collapsible?: boolean;
   draggable?: boolean;
+  alwaysShowDragIcon?: boolean;
   onDragged?: (props: {
     id: string;
     oldGroupId: string;
@@ -123,6 +124,7 @@ function TreeList({
   collapsible,
   draggable,
   onDragged,
+  alwaysShowDragIcon = true,
 }: TreeListProps) {
   const [dragItem, setDragItem] = useState(null);
 
@@ -385,6 +387,7 @@ function TreeList({
                             selectedGroupId={selectedGroupId}
                             groupLength={item.items?.length}
                             index={index}
+                            alwaysShowDragIcon={alwaysShowDragIcon}
                           />
                         );
                       })
@@ -551,6 +554,7 @@ interface TreeListItemComponent<T extends TreeListItemsProps> {
   draggable?: boolean;
   groupLength?: number;
   emptyItemSlateStyle?: CSSProp;
+  alwaysShowDragIcon?: boolean;
 }
 
 function TreeListItem<T extends TreeListItemsProps>({
@@ -575,6 +579,7 @@ function TreeListItem<T extends TreeListItemsProps>({
   groupLength,
   emptyItemSlateStyle,
   parentGroupId,
+  alwaysShowDragIcon,
 }: TreeListItemComponent<T>) {
   const { dragItem, setDragItem, onDragged } = useContext(DnDContext);
   const [dropPosition, setDropPosition] = useState<"top" | "bottom" | null>(
@@ -789,16 +794,13 @@ function TreeListItem<T extends TreeListItemsProps>({
             );
           })()}
         {draggable && (
-          <div
+          <DraggableWrapper
+            $isHovered={isHovered === item.id}
+            $alwaysShowDragIcon={alwaysShowDragIcon}
             aria-label="draggable-request"
-            style={{
-              cursor: "grab",
-              borderRadius: "2px",
-              color: "#4b5563",
-            }}
           >
             <RiDraggable size={18} />
-          </div>
+          </DraggableWrapper>
         )}
         {showHierarchyLine && (
           <TreeListHierarchyVerticalLine
@@ -877,6 +879,7 @@ function TreeListItem<T extends TreeListItemsProps>({
                     selectedGroupId={selectedGroupId}
                     parentGroupId={parentGroupId}
                     groupId={item.id}
+                    alwaysShowDragIcon={alwaysShowDragIcon}
                     draggable={draggable}
                     groupLength={item?.items?.length}
                     index={index}
@@ -939,6 +942,28 @@ const TreeListWrapper = styled.div<{
   width: 100%;
 
   ${(props) => props.$containerStyle}
+`;
+
+const DraggableWrapper = styled.div<{
+  $alwaysShowDragIcon: boolean;
+  $isHovered?: boolean;
+}>`
+  cursor: grab;
+  border-radius: 2px;
+  color: #4b5563;
+  opacity: 0;
+
+  ${({ $isHovered }) =>
+    $isHovered &&
+    css`
+      opacity: 1;
+    `}
+
+  ${({ $alwaysShowDragIcon }) =>
+    $alwaysShowDragIcon &&
+    css`
+      opacity: 1;
+    `}
 `;
 
 const EmptyContent = styled(motion.div)<{ $style?: CSSProp }>`
