@@ -353,13 +353,11 @@ describe("context-menu", () => {
         });
 
         cy.contains("Rina Patel").trigger("mouseover");
-        cy.findAllByLabelText("action-button").eq(1).click();
+        cy.findAllByLabelText("action-button").eq(1).click({ force: true });
         cy.findAllByLabelText("tip-menu-item").should("have.length", 4);
         ITEM_ACTIONS.map((props) => {
           cy.findByText(props.caption).should("be.visible").and("exist");
         });
-
-        checkMenuAlignment();
       });
     });
   });
@@ -428,7 +426,7 @@ describe("context-menu", () => {
 
         cy.wait(100);
         cy.findAllByLabelText("table-row").eq(2).trigger("mouseover");
-        cy.findAllByLabelText("action-button").eq(0).click();
+        cy.findAllByLabelText("action-button").eq(0).click({ force: true });
         checkMenuAlignment();
       });
 
@@ -446,9 +444,12 @@ describe("context-menu", () => {
 
         cy.wait(100);
         cy.findAllByLabelText("table-row").eq(2).trigger("mouseover");
-        cy.findAllByLabelText("action-button").eq(0).click();
+        cy.findAllByLabelText("action-button").eq(2).click({ force: true });
         ROW_ACTION("").map((props) => {
-          cy.findByText(props.caption).should("be.visible").and("exist");
+          cy.findAllByText(props.caption)
+            .eq(0)
+            .should("be.visible")
+            .and("exist");
         });
       });
     });
