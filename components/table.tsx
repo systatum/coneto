@@ -84,6 +84,10 @@ export interface TableProps {
   totalSelectedItemStyle?: CSSProp;
 }
 
+interface TableAlwaysShowDragIconProp {
+  alwaysShowDragIcon?: boolean;
+}
+
 interface SummaryRowProps {
   span?: number;
   content?: ReactNode;
@@ -172,7 +176,8 @@ function Table({
   paginationWrapperStyle,
   paginationNumberStyle,
   totalSelectedItemStyle,
-}: TableProps) {
+  alwaysShowDragIcon,
+}: TableProps & TableAlwaysShowDragIconProp) {
   const [dragItem, setDragItem] = useState<{
     oldGroupId: string;
     oldPosition: number;
@@ -244,11 +249,13 @@ function Table({
         draggable,
         openRowId,
         setOpenRowId,
-      } as TableRowGroupProps & {
-        selectedData?: string[];
-        handleSelect?: (data: string) => void;
-        draggable?: boolean;
-      });
+        alwaysShowDragIcon,
+      } as TableRowGroupProps &
+        TableAlwaysShowDragIconProp & {
+          selectedData?: string[];
+          handleSelect?: (data: string) => void;
+          draggable?: boolean;
+        });
     }
     if (child.type === TableRow) {
       const props = child.props as TableRowProps;
@@ -270,6 +277,7 @@ function Table({
         setOpenRowId,
         groupLength: Children?.count(children),
         index: index,
+        alwaysShowDragIcon,
         onDropItem: (newPosition: number) => {
           if (dragItem) {
             const { oldGroupId, newGroupId, oldPosition, id } = dragItem;
@@ -284,7 +292,7 @@ function Table({
             setDragItem(null);
           }
         },
-      } as TableRowProps);
+      } as TableRowProps & TableAlwaysShowDragIconProp);
     }
 
     return null;
@@ -771,37 +779,32 @@ const CheckboxWrapper = styled.div`
   pointer-events: auto;
 `;
 
-function TableRowGroup(
-  props: TableRowGroupProps & {
-    selectedData?: string[];
-    handleSelect?: (data: string) => void;
-    onLastRowReached?: () => void;
-    isLast?: boolean;
-    draggable?: boolean;
-  }
-) {
-  const {
-    id,
-    children,
-    title,
-    subtitle,
-    selectable = false,
-    handleSelect,
-    selectedData,
-    isLast,
-    onLastRowReached,
-    draggable,
-  } = props;
-
-  const { openRowId, setOpenRowId } = props as {
-    openRowId?: string | null;
-    setOpenRowId?: (prop: string | null) => void;
-  };
+function TableRowGroup({
+  id,
+  children,
+  title,
+  subtitle,
+  selectable = false,
+  handleSelect,
+  selectedData,
+  isLast,
+  onLastRowReached,
+  draggable,
+  ...props
+}: TableRowGroupProps & {
+  selectedData?: string[];
+  handleSelect?: (data: string) => void;
+  onLastRowReached?: () => void;
+  isLast?: boolean;
+  draggable?: boolean;
+}) {
+  const { openRowId, setOpenRowId, alwaysShowDragIcon } =
+    props as TableAlwaysShowDragIconProp & TableRowOpenWithId;
 
   const { dragItem, setDragItem, onDragged } = useContext(DnDContext);
 
   const rowChildren = Children.map(children, (child, index) => {
-    if (!isValidElement<TableRowProps & TableRowOpenWithId>(child)) return null;
+    if (!isValidElement<TableRowProps>(child)) return null;
     if (child.type === TableRow) {
       const props = child.props as TableRowProps & TableRowOpenWithId;
 
@@ -821,6 +824,7 @@ function TableRowGroup(
         groupId: id,
         openRowId,
         setOpenRowId,
+        alwaysShowDragIcon,
         onDropItem: (newPosition: number) => {
           if (dragItem) {
             const { oldGroupId, oldPosition, id: rowId } = dragItem;
@@ -835,12 +839,13 @@ function TableRowGroup(
             setDragItem(null);
           }
         },
-      } as TableRowProps & {
-        index?: number;
-        onDropItem?: (position: number) => void;
-        groupLength?: number;
-        draggable?: boolean;
-      });
+      } as TableRowProps &
+        TableAlwaysShowDragIconProp & {
+          index?: number;
+          onDropItem?: (position: number) => void;
+          groupLength?: number;
+          draggable?: boolean;
+        });
     }
   });
 
@@ -969,7 +974,8 @@ function TableRow({
     draggable?: boolean;
   }>) {
   const { setDragItem, dragItem } = useContext(DnDContext);
-  const { openRowId, setOpenRowId } = props as TableRowOpenWithId;
+  const { openRowId, setOpenRowId, alwaysShowDragIcon } =
+    props as TableRowOpenWithId & TableAlwaysShowDragIconProp;
 
   const [isOver, setIsOver] = useState(false);
   const [dropPosition, setDropPosition] = useState<"top" | "bottom" | null>(
@@ -1198,7 +1204,11 @@ function TableRow({
         })()}
 
       {draggable && (
-        <DraggableRequest aria-label="draggable-request">
+        <DraggableRequest
+          $isHovered={isHovered === rowId}
+          $alwaysShowDragIcon={alwaysShowDragIcon}
+          aria-label="draggable-request"
+        >
           <RiDraggable size={18} />
         </DraggableRequest>
       )}
@@ -1247,7 +1257,10 @@ const DragLine = styled.div<{ position: "top" | "bottom" }>`
   bottom: ${({ position }) => (position === "bottom" ? "0" : "auto")};
 `;
 
-const DraggableRequest = styled.div`
+const DraggableRequest = styled.div<{
+  $isHovered: boolean;
+  $alwaysShowDragIcon?: boolean;
+}>`
   cursor: grab;
   border-radius: 2px;
   color: #4b5563;
@@ -1257,6 +1270,19 @@ const DraggableRequest = styled.div`
   transform: translateY(-50%);
   z-index: 8;
   right: 1rem;
+  opacity: 0;
+
+  ${({ $isHovered }) =>
+    $isHovered &&
+    css`
+      opacity: 1;
+    `}
+
+  ${({ $alwaysShowDragIcon }) =>
+    $alwaysShowDragIcon &&
+    css`
+      opacity: 1;
+    `}
 `;
 
 function TableRowCell({
