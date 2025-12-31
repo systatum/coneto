@@ -29,7 +29,6 @@ export interface TreeListProps {
   draggable?: boolean;
   alwaysShowDragIcon?: boolean;
   onDragged?: (props: TreeListOnDraggedProps) => void;
-  canDropAsParent?: boolean;
 }
 
 export interface TreeListOnDraggedProps {
@@ -60,6 +59,7 @@ export interface TreeListContentProps {
 export interface TreeListItemsProps {
   id: string;
   caption?: string;
+  canDropAsParent?: boolean;
   onClick?: (props: TreeListItemsOnClickProps) => void;
   actions?: SubMenuTreeList[];
   items?: TreeListItemsProps[];
@@ -128,7 +128,6 @@ function TreeList({
   draggable,
   onDragged,
   alwaysShowDragIcon = true,
-  canDropAsParent,
 }: TreeListProps) {
   const [dragItem, setDragItem] = useState(null);
 
@@ -374,7 +373,7 @@ function TreeList({
                           <TreeListItem
                             key={val.id}
                             item={{ ...val }}
-                            canDropAsParent={canDropAsParent}
+                            canDropAsParent={val.canDropAsParent}
                             isSelected={isSelected}
                             onChange={handleOnChange}
                             isLoading={loadingByGroup}
@@ -779,7 +778,10 @@ function TreeListItem<T extends TreeListItemsProps>({
             newPosition: clampedPosition,
           });
         }}
-        onMouseLeave={() => setIsHovered(null)}
+        onMouseLeave={() => {
+          setIsHovered(null);
+          setDropIntent(null);
+        }}
         onMouseEnter={() => setIsHovered(item.id)}
         $level={level + 1}
       >
@@ -976,7 +978,7 @@ function TreeListItem<T extends TreeListItemsProps>({
                     draggable={draggable}
                     groupLength={item?.items?.length}
                     index={index}
-                    canDropAsParent={canDropAsParent}
+                    canDropAsParent={item.canDropAsParent}
                   />
                 ))
               ) : (
