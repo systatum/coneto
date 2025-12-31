@@ -281,7 +281,7 @@ describe("Table", () => {
     });
 
     context("when given true", () => {
-      it("always show the draggable icon", () => {
+      it("always show the drag icon", () => {
         cy.mount(
           <Table
             selectable
