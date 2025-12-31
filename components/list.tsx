@@ -42,6 +42,7 @@ export interface ListProps {
   }) => void;
   openerBehavior?: "any" | "onlyOne";
   onOpen?: (props?: ListOnOpenProps) => void;
+  alwaysShowDragIcon?: boolean;
 }
 
 export interface ListOnOpenProps {
@@ -84,6 +85,10 @@ export interface ListGroupContentProps {
 }
 
 export type ListItemActionProps = ContextMenuActionsProps;
+
+interface ListAlwaysShowDragIconProp {
+  alwaysShowDragIcon?: boolean;
+}
 
 export interface LeftSideContentMenuProps {
   badge?: (badge: ReactNode, withStyle?: { withStyle?: CSSProp }) => ReactNode;
@@ -172,6 +177,7 @@ function List({
   isLoading,
   openerBehavior = "any",
   onOpen,
+  alwaysShowDragIcon,
 }: ListProps) {
   const [openedIds, setOpenedIds] = useState<Set<string>>(new Set());
   const [openTipRowId, setOpenTipRowId] = useState<string | null>("");
@@ -241,13 +247,14 @@ function List({
 
           {childArray.map((child, index) => {
             const componentChild = child as ReactElement<
-              ListItemProps & ListItemWithId
+              ListItemProps & ListItemWithId & ListAlwaysShowDragIconProp
             >;
             const modifiedChild = cloneElement(componentChild, {
               draggable: draggable,
               selectable: selectable,
               openTipRowId,
               setOpenTipRowId,
+              alwaysShowDragIcon,
             });
 
             return <Fragment key={`list-${index}`}>{modifiedChild}</Fragment>;
@@ -293,7 +300,8 @@ function ListGroup({
   emptySlateStyle,
   ...props
 }: ListGroupProps) {
-  const { openTipRowId, setOpenTipRowId } = props as ListItemWithId;
+  const { openTipRowId, setOpenTipRowId, alwaysShowDragIcon } =
+    props as ListItemWithId & ListAlwaysShowDragIconProp;
 
   const childArray = Children.toArray(children).filter(isValidElement);
   const [isOpen, setIsOpen] = useState(true);
@@ -391,7 +399,8 @@ function ListGroup({
         {childArray.map((child, index) => {
           const componentChild = child as ReactElement<
             ListItemProps &
-              ListItemWithId & {
+              ListItemWithId &
+              ListAlwaysShowDragIconProp & {
                 index: number;
                 onDropItem?: (position: number) => void;
                 groupLength?: number;
@@ -406,6 +415,7 @@ function ListGroup({
             groupLength: childArray.length,
             openTipRowId,
             setOpenTipRowId,
+            alwaysShowDragIcon,
             onDropItem: (newPosition: number) => {
               if (dragItem && draggable) {
                 const { id: draggedId, oldGroupId, oldPosition } = dragItem;
@@ -583,7 +593,8 @@ function ListItem({
   onDropItem?: (position: number) => void;
   groupLength?: number;
 }) {
-  const { openTipRowId, setOpenTipRowId } = props as ListItemWithId;
+  const { openTipRowId, setOpenTipRowId, alwaysShowDragIcon } =
+    props as ListItemWithId & ListAlwaysShowDragIconProp;
 
   const { isOpen, setIsOpen } = useContext(OpenedContext);
   const { setDragItem, dragItem } = useContext(DnDContext);
@@ -768,16 +779,13 @@ function ListItem({
               : (rightSideContent as ReactNode)}
 
             {draggable && (
-              <div
+              <DraggableWrapper
+                $isHovered={isHovered === idFullname}
+                $alwaysShowDragIcon={alwaysShowDragIcon}
                 aria-label="draggable-request"
-                style={{
-                  cursor: "grab",
-                  borderRadius: "2px",
-                  color: "#4b5563",
-                }}
               >
                 <RiDraggable size={18} />
-              </div>
+              </DraggableWrapper>
             )}
           </ListItemRight>
         )}
@@ -865,6 +873,28 @@ const ListItemRow = styled.div<{
     `}
 
   ${({ $style }) => $style}
+`;
+
+const DraggableWrapper = styled.div<{
+  $alwaysShowDragIcon: boolean;
+  $isHovered?: boolean;
+}>`
+  cursor: grab;
+  border-radius: 2px;
+  color: #4b5563;
+  opacity: 0;
+
+  ${({ $isHovered }) =>
+    $isHovered &&
+    css`
+      opacity: 1;
+    `}
+
+  ${({ $alwaysShowDragIcon }) =>
+    $alwaysShowDragIcon &&
+    css`
+      opacity: 1;
+    `}
 `;
 
 const ListItemLeft = styled.div<{ $style?: CSSProp }>`
