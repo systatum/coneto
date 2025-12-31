@@ -398,10 +398,8 @@ export const Nested: Story = {
         newPosition,
       }: TreeListOnDraggedProps) => {
         const dragged = TreeList.findTreeListNode(groups, id);
-        const target = TreeList.findTreeListNode(groups, newGroupId);
 
         if (
-          !target ||
           TreeList.isDescendant(dragged, newGroupId) ||
           dragged.id === newGroupId
         ) {
@@ -464,8 +462,9 @@ export const Nested: Story = {
             emptyItemSlateStyle={css`
               align-items: center;
             `}
-            emptyItemSlate={"Content Empty."}
+            emptyItemSlate={null}
             collapsible
+            canDropAsParent
             showHierarchyLine
             alwaysShowDragIcon={false}
             onOpenChange={({ id }) => console.log(id)}
@@ -495,6 +494,8 @@ export const Nested: Story = {
             `}
             collapsible
             showHierarchyLine
+            canDropAsParent
+            emptyItemSlate={null}
             alwaysShowDragIcon={false}
             onDragged={onDragged2}
             draggable
