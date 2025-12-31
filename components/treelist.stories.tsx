@@ -270,6 +270,7 @@ export const Nested: Story = {
                 caption: item.caption,
                 icon: RiFolderFill,
                 iconOnActive: RiFolder6Fill,
+                canDropAsParent: item.id !== "cleverfiles" ? true : false,
                 iconColor:
                   item.id === "cleverfiles"
                     ? "rgb(252, 231, 154)"
@@ -314,6 +315,7 @@ export const Nested: Story = {
             caption: item.caption,
             icon: RiFolderFill,
             iconOnActive: RiFolder6Fill,
+            canDropAsParent: item.id !== "cleverfiles" ? true : false,
             iconColor:
               item.id === "cleverfiles"
                 ? "rgb(252, 231, 154)"
@@ -464,7 +466,6 @@ export const Nested: Story = {
             `}
             emptyItemSlate={null}
             collapsible
-            canDropAsParent
             showHierarchyLine
             alwaysShowDragIcon={false}
             onOpenChange={({ id }) => console.log(id)}
@@ -494,7 +495,6 @@ export const Nested: Story = {
             `}
             collapsible
             showHierarchyLine
-            canDropAsParent
             emptyItemSlate={null}
             alwaysShowDragIcon={false}
             onDragged={onDragged2}
