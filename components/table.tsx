@@ -804,7 +804,7 @@ function TableRowGroup({
   const { dragItem, setDragItem, onDragged } = useContext(DnDContext);
 
   const rowChildren = Children.map(children, (child, index) => {
-    if (!isValidElement<TableRowProps>(child)) return null;
+    if (!isValidElement<TableRowProps & TableRowOpenWithId>(child)) return null;
     if (child.type === TableRow) {
       const props = child.props as TableRowProps & TableRowOpenWithId;
 
