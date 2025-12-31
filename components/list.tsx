@@ -177,7 +177,7 @@ function List({
   isLoading,
   openerBehavior = "any",
   onOpen,
-  alwaysShowDragIcon,
+  alwaysShowDragIcon = true,
 }: ListProps) {
   const [openedIds, setOpenedIds] = useState<Set<string>>(new Set());
   const [openTipRowId, setOpenTipRowId] = useState<string | null>("");
