@@ -227,99 +227,139 @@ describe("Table", () => {
     ];
   };
 
-  context("draggable", () => {
-    context("alwaysShowDragIcon", () => {
-      context("when not given", () => {
-        it("renders when hovered", () => {
-          cy.mount(
-            <Table
-              selectable
-              tableRowContainerStyle={css`
-                max-height: 400px;
-              `}
-              draggable
-              columns={columns}
-              actions={TOP_ACTIONS}
-            >
-              {rows?.map((groupValue, groupIndex) => (
-                <Table.Row.Group
-                  key={groupIndex}
-                  title={groupValue.title}
-                  subtitle={groupValue.subtitle}
-                >
-                  {groupValue.items.map((rowValue, rowIndex) => (
-                    <Table.Row
-                      key={rowIndex}
-                      rowId={`${groupValue.title}-${rowValue.title}`}
-                      content={[
-                        rowValue.title,
-                        rowValue.category,
-                        rowValue.author,
-                      ]}
-                      actions={ROW_ACTIONS}
-                    />
-                  ))}
-                </Table.Row.Group>
-              ))}
-            </Table>
-          );
+  context("alwaysShowDragIcon", () => {
+    context("when given false", () => {
+      it("renders when hovered", () => {
+        cy.mount(
+          <Table
+            selectable
+            tableRowContainerStyle={css`
+              max-height: 400px;
+            `}
+            draggable
+            alwaysShowDragIcon={false}
+            columns={columns}
+            actions={TOP_ACTIONS}
+          >
+            {rows?.map((groupValue, groupIndex) => (
+              <Table.Row.Group
+                key={groupIndex}
+                title={groupValue.title}
+                subtitle={groupValue.subtitle}
+              >
+                {groupValue.items.map((rowValue, rowIndex) => (
+                  <Table.Row
+                    key={rowIndex}
+                    rowId={`${groupValue.title}-${rowValue.title}`}
+                    content={[
+                      rowValue.title,
+                      rowValue.category,
+                      rowValue.author,
+                    ]}
+                    actions={ROW_ACTIONS}
+                  />
+                ))}
+              </Table.Row.Group>
+            ))}
+          </Table>
+        );
 
-          cy.findAllByLabelText("draggable-request")
-            .eq(0)
-            .should("not.be.visible")
-            .and("have.css", "opacity", "0");
-          cy.findAllByLabelText("table-row")
-            .eq(0)
-            .trigger("mouseover")
-            .then(() =>
-              cy
-                .findAllByLabelText("draggable-request")
-                .eq(0)
-                .should("have.css", "opacity", "1")
-            );
-        });
+        cy.findAllByLabelText("draggable-request")
+          .eq(0)
+          .should("not.be.visible")
+          .and("have.css", "opacity", "0");
+        cy.findAllByLabelText("table-row")
+          .eq(0)
+          .trigger("mouseover")
+          .then(() =>
+            cy
+              .findAllByLabelText("draggable-request")
+              .eq(0)
+              .should("have.css", "opacity", "1")
+          );
       });
+    });
 
-      context("when given", () => {
-        it("always show the draggable icon", () => {
-          cy.mount(
-            <Table
-              selectable
-              tableRowContainerStyle={css`
-                max-height: 400px;
-              `}
-              draggable
-              alwaysShowDragIcon
-              columns={columns}
-              actions={TOP_ACTIONS}
-            >
-              {rows?.map((groupValue, groupIndex) => (
-                <Table.Row.Group
-                  key={groupIndex}
-                  title={groupValue.title}
-                  subtitle={groupValue.subtitle}
-                >
-                  {groupValue.items.map((rowValue, rowIndex) => (
-                    <Table.Row
-                      key={rowIndex}
-                      rowId={`${groupValue.title}-${rowValue.title}`}
-                      content={[
-                        rowValue.title,
-                        rowValue.category,
-                        rowValue.author,
-                      ]}
-                      actions={ROW_ACTIONS}
-                    />
-                  ))}
-                </Table.Row.Group>
-              ))}
-            </Table>
-          );
+    context("when given true", () => {
+      it("always show the draggable icon", () => {
+        cy.mount(
+          <Table
+            selectable
+            tableRowContainerStyle={css`
+              max-height: 400px;
+            `}
+            draggable
+            alwaysShowDragIcon={true}
+            columns={columns}
+            actions={TOP_ACTIONS}
+          >
+            {rows?.map((groupValue, groupIndex) => (
+              <Table.Row.Group
+                key={groupIndex}
+                title={groupValue.title}
+                subtitle={groupValue.subtitle}
+              >
+                {groupValue.items.map((rowValue, rowIndex) => (
+                  <Table.Row
+                    key={rowIndex}
+                    rowId={`${groupValue.title}-${rowValue.title}`}
+                    content={[
+                      rowValue.title,
+                      rowValue.category,
+                      rowValue.author,
+                    ]}
+                    actions={ROW_ACTIONS}
+                  />
+                ))}
+              </Table.Row.Group>
+            ))}
+          </Table>
+        );
 
-          cy.findAllByLabelText("draggable-request")
-            .eq(0)
-            .should("have.css", "opacity", "1");
-        });
+        cy.findAllByLabelText("draggable-request")
+          .eq(0)
+          .should("have.css", "opacity", "1");
+      });
+    });
+
+    context("when not given", () => {
+      it("defaults to always showing the drag icon", () => {
+        cy.mount(
+          <Table
+            selectable
+            tableRowContainerStyle={css`
+              max-height: 400px;
+            `}
+            draggable
+            columns={columns}
+            actions={TOP_ACTIONS}
+          >
+            {rows?.map((groupValue, groupIndex) => (
+              <Table.Row.Group
+                key={groupIndex}
+                title={groupValue.title}
+                subtitle={groupValue.subtitle}
+              >
+                {groupValue.items.map((rowValue, rowIndex) => (
+                  <Table.Row
+                    key={rowIndex}
+                    rowId={`${groupValue.title}-${rowValue.title}`}
+                    content={[
+                      rowValue.title,
+                      rowValue.category,
+                      rowValue.author,
+                    ]}
+                    actions={ROW_ACTIONS}
+                  />
+                ))}
+              </Table.Row.Group>
+            ))}
+          </Table>
+        );
+
+        cy.findAllByLabelText("draggable-request")
+          .eq(0)
+          .should("have.css", "opacity", "1");
       });
     });
   });
