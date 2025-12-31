@@ -19,6 +19,105 @@ import {
 import { css } from "styled-components";
 
 describe("List", () => {
+  context("alwaysShowDragIcon", () => {
+    context("when not given", () => {
+      it("always show the draggable icon", () => {
+        cy.mount(
+          <List
+            searchable
+            draggable
+            selectable
+            containerStyle={css`
+              padding: 16px;
+              min-width: 350px;
+            `}
+          >
+            {LIST_GROUPS_OPENABLE.map((group, index) => (
+              <List.Group
+                titleStyle={group.titleStyle}
+                key={index}
+                id={group.id}
+                title={group.title}
+                subtitle={group.subtitle}
+                actions={group.actions}
+                openerStyle="togglebox"
+              >
+                {group.items.map((list, i) => (
+                  <List.Item
+                    key={i}
+                    id={list.id}
+                    leftIcon={list.leftIcon}
+                    subtitle={list.subtitle}
+                    title={list.title}
+                    groupId={group.id}
+                    selectedOptions={{
+                      checked: true,
+                    }}
+                    rightSideContent={list.rightSideContent}
+                  />
+                ))}
+              </List.Group>
+            ))}
+          </List>
+        );
+        cy.findAllByLabelText("draggable-request")
+          .eq(0)
+          .should("have.css", "opacity", "1");
+      });
+    });
+
+    context("when given false", () => {
+      it("renders when hovered", () => {
+        cy.mount(
+          <List
+            searchable
+            draggable
+            selectable
+            alwaysShowDragIcon={false}
+            containerStyle={css`
+              padding: 16px;
+              min-width: 350px;
+            `}
+          >
+            {LIST_GROUPS_OPENABLE.map((group, index) => (
+              <List.Group
+                key={index}
+                id={group.id}
+                title={group.title}
+                subtitle={group.subtitle}
+                actions={group.actions}
+                openerStyle="togglebox"
+              >
+                {group.items.map((list, i) => (
+                  <List.Item
+                    key={i}
+                    id={list.id}
+                    leftIcon={list.leftIcon}
+                    subtitle={list.subtitle}
+                    title={list.title}
+                    groupId={group.id}
+                    selectedOptions={{
+                      checked: true,
+                    }}
+                    rightSideContent={list.rightSideContent}
+                  />
+                ))}
+              </List.Group>
+            ))}
+          </List>
+        );
+        cy.findAllByLabelText("draggable-request")
+          .eq(0)
+          .should("not.be.visible")
+          .and("have.css", "opacity", "0");
+        cy.findAllByLabelText("list-item-wrapper").eq(0).trigger("mouseover");
+        cy.findAllByLabelText("draggable-request")
+          .eq(0)
+          .should("have.css", "opacity", "1");
+      });
+    });
+  });
+
   context("group", () => {
     context("titleStyle", () => {
       const LIST_GROUPS_WITH_TITLE_STYLE: ListGroupContentProps[] = [
