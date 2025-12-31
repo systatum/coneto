@@ -174,6 +174,8 @@ function List({
   onOpen,
 }: ListProps) {
   const [openedIds, setOpenedIds] = useState<Set<string>>(new Set());
+  const [openTipRowId, setOpenTipRowId] = useState<string | null>("");
+
   const [dragItem, setDragItem] = useState(null);
   const [value, setValue] = useState("");
 
@@ -238,10 +240,14 @@ function List({
           )}
 
           {childArray.map((child, index) => {
-            const componentChild = child as ReactElement<ListItemProps>;
+            const componentChild = child as ReactElement<
+              ListItemProps & ListItemWithId
+            >;
             const modifiedChild = cloneElement(componentChild, {
               draggable: draggable,
               selectable: selectable,
+              openTipRowId,
+              setOpenTipRowId,
             });
 
             return <Fragment key={`list-${index}`}>{modifiedChild}</Fragment>;
@@ -285,7 +291,10 @@ function ListGroup({
   actions,
   emptySlate,
   emptySlateStyle,
+  ...props
 }: ListGroupProps) {
+  const { openTipRowId, setOpenTipRowId } = props as ListItemWithId;
+
   const childArray = Children.toArray(children).filter(isValidElement);
   const [isOpen, setIsOpen] = useState(true);
   const { dragItem, setDragItem, onDragged } = useContext(DnDContext);
@@ -381,11 +390,12 @@ function ListGroup({
       <AnimatePresence initial={false}>
         {childArray.map((child, index) => {
           const componentChild = child as ReactElement<
-            ListItemProps & {
-              index: number;
-              onDropItem?: (position: number) => void;
-              groupLength?: number;
-            }
+            ListItemProps &
+              ListItemWithId & {
+                index: number;
+                onDropItem?: (position: number) => void;
+                groupLength?: number;
+              }
           >;
 
           const modifiedChild = cloneElement(componentChild, {
@@ -394,6 +404,8 @@ function ListGroup({
             groupId: id,
             index: index,
             groupLength: childArray.length,
+            openTipRowId,
+            setOpenTipRowId,
             onDropItem: (newPosition: number) => {
               if (dragItem && draggable) {
                 const { id: draggedId, oldGroupId, oldPosition } = dragItem;
@@ -534,6 +546,11 @@ const EmptyContent = styled(motion.div)<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
+interface ListItemWithId {
+  openTipRowId?: string | null;
+  setOpenTipRowId?: (prop: string | null) => void;
+}
+
 function ListItem({
   leftIcon: LeftIcon = null,
   imageUrl,
@@ -560,11 +577,14 @@ function ListItem({
   subtitleStyle,
   leftSideStyle,
   rightSideStyle,
+  ...props
 }: ListItemInternal & {
   index?: number;
   onDropItem?: (position: number) => void;
   groupLength?: number;
 }) {
+  const { openTipRowId, setOpenTipRowId } = props as ListItemWithId;
+
   const { isOpen, setIsOpen } = useContext(OpenedContext);
   const { setDragItem, dragItem } = useContext(DnDContext);
   const [isOver, setIsOver] = useState(false);
@@ -585,7 +605,7 @@ function ListItem({
       $style={containerStyle}
     >
       <ListItemRow
-        $isHovered={isHovered === idFullname}
+        $isHovered={isHovered === idFullname || openTipRowId === idFullname}
         $style={rowStyle}
         onClick={() => {
           if (onClick) {
@@ -692,8 +712,7 @@ function ListItem({
             $style={rightSideStyle}
             aria-label="list-item-left-side"
           >
-            {isHovered === idFullname &&
-              actions &&
+            {actions &&
               (() => {
                 const list = actions(idFullname);
 
@@ -710,6 +729,24 @@ function ListItem({
 
                 return (
                   <ContextMenu
+                    onOpen={(prop: boolean) => {
+                      if (prop) {
+                        setOpenTipRowId(idFullname);
+                      } else {
+                        setOpenTipRowId(null);
+                      }
+                    }}
+                    open={openTipRowId === idFullname}
+                    containerStyle={css`
+                      display: none;
+
+                      ${(isHovered === idFullname
+                        ? isHovered === idFullname
+                        : openTipRowId === idFullname) &&
+                      css`
+                        display: inherit;
+                      `}
+                    `}
                     buttonStyle={
                       !subtitle &&
                       css`

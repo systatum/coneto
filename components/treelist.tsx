@@ -130,6 +130,7 @@ function TreeList({
 
   const [isSelected, setIsSelected] = useState(selectedItem);
   const [isActive, setIsActive] = useState<string | null>("");
+  const [openRowId, setOpenRowId] = useState<string | null>("");
 
   const initialOpenMap = Object.fromEntries(
     content.map((group) => {
@@ -387,6 +388,8 @@ function TreeList({
                             selectedGroupId={selectedGroupId}
                             groupLength={item.items?.length}
                             index={index}
+                            openRowId={openRowId}
+                            setOpenRowId={setOpenRowId}
                             alwaysShowDragIcon={alwaysShowDragIcon}
                           />
                         );
@@ -557,6 +560,27 @@ interface TreeListItemComponent<T extends TreeListItemsProps> {
   alwaysShowDragIcon?: boolean;
 }
 
+interface TreeListOpenWithId {
+  openRowId?: string | null;
+  setOpenRowId?: (prop: string | null) => void;
+}
+
+function findItemById(
+  items: TreeListItemsProps[] | undefined,
+  id: string
+): TreeListItemsProps | undefined {
+  if (!items) return;
+
+  for (const item of items) {
+    if (item.id === id) return item;
+
+    const found = findItemById(item.items, id);
+    if (found) return found;
+  }
+
+  return undefined;
+}
+
 function TreeListItem<T extends TreeListItemsProps>({
   item,
   isSelected,
@@ -580,7 +604,9 @@ function TreeListItem<T extends TreeListItemsProps>({
   emptyItemSlateStyle,
   parentGroupId,
   alwaysShowDragIcon,
-}: TreeListItemComponent<T>) {
+  openRowId,
+  setOpenRowId,
+}: TreeListItemComponent<T> & TreeListOpenWithId) {
   const { dragItem, setDragItem, onDragged } = useContext(DnDContext);
   const [dropPosition, setDropPosition] = useState<"top" | "bottom" | null>(
     null
@@ -638,13 +664,8 @@ function TreeListItem<T extends TreeListItemsProps>({
             }
           }
         }}
-        $style={css`
-          ${isHovered === item.id &&
-          css`
-            background-color: #f3f4f6;
-          `}
-          ${style}
-        `}
+        $isHovered={isHovered === item.id || openRowId === item.id}
+        $style={style}
         onDragStart={() =>
           setDragItem({
             id: item.id,
@@ -752,8 +773,7 @@ function TreeListItem<T extends TreeListItemsProps>({
             )
           )}
         </div>
-        {item.id === isHovered &&
-          item.actions &&
+        {item.actions &&
           (() => {
             const list = item.actions;
 
@@ -778,12 +798,30 @@ function TreeListItem<T extends TreeListItemsProps>({
                 }}
               >
                 <ContextMenu
+                  onOpen={(prop: boolean) => {
+                    if (prop) {
+                      setOpenRowId(item.id);
+                    } else {
+                      setOpenRowId(null);
+                    }
+                  }}
+                  open={openRowId === item.id}
                   maxActionsBeforeCollapsing={2}
                   iconSize={16}
                   focusBackgroundColor="#d4d4d4"
                   hoverBackgroundColor="#d4d4d4"
                   activeBackgroundColor="#d4d4d4"
                   actions={actionsWithIcons}
+                  containerStyle={css`
+                    display: none;
+
+                    ${(isHovered === item.id
+                      ? isHovered === item.id
+                      : openRowId === item.id) &&
+                    css`
+                      display: inherit;
+                    `}
+                  `}
                   buttonStyle={css`
                     width: 20px;
                     height: 20px;
@@ -1167,6 +1205,7 @@ const TreeListItemWrapper = styled.li<{
   $showHierarchyLine: boolean;
   $style?: CSSProp;
   $level?: number;
+  $isHovered?: boolean;
 }>`
   display: flex;
   flex-direction: row;
@@ -1185,6 +1224,12 @@ const TreeListItemWrapper = styled.li<{
       border-left: 3px solid ${$isSelected ? "#3b82f6" : "transparent"};
     `}
   background-color: ${(props) => (props.$isSelected ? "#f3f4f6" : "white")};
+  ${({ $isHovered }) =>
+    $isHovered &&
+    css`
+      background-color: #f3f4f6;
+    `}
+
   padding: 0.25rem 1.2rem;
   padding-right: 8px;
   list-style: none;
@@ -1207,5 +1252,8 @@ const HighlightedText = styled.span`
 function escapeRegExp(string: string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
+
+TreeList.findItemById = findItemById;
+TreeList.findGroupOfItem = findGroupOfItem;
 
 export { TreeList };

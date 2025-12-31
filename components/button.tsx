@@ -63,6 +63,8 @@ export type ButtonProps = React.ComponentProps<"button"> &
     safeAreaAriaLabels?: string[];
     activeBackgroundColor?: string;
     dialogPlacement?: DialogPlacement;
+    onOpen?: (prop: boolean) => void;
+    open?: boolean;
   };
 
 function Button({
@@ -85,9 +87,24 @@ function Button({
   safeAreaAriaLabels,
   activeBackgroundColor,
   dialogPlacement = "bottom-left",
+  onOpen,
+  open,
   ...props
 }: ButtonProps) {
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpenLocal, setIsOpenLocal] = React.useState(false);
+
+  const isControlled = open !== undefined;
+  const isOpen = isControlled ? open : isOpenLocal;
+  const setIsOpen = React.useCallback(
+    (next: boolean) => {
+      if (!isControlled) {
+        setIsOpenLocal(next);
+      }
+      onOpen?.(next);
+    },
+    [isControlled, onOpen]
+  );
+
   const [hovered, setHovered] = React.useState<
     "main" | "original" | "dropdown"
   >("original");
@@ -103,6 +120,7 @@ function Button({
   const safeAreaAriaLabelsLocal: string[] = [
     "combobox-drawer-month",
     "combobox-drawer-year",
+    "tip-menu",
     ...(safeAreaAriaLabels || []),
   ];
 
@@ -152,7 +170,7 @@ function Button({
           }
           if (subMenu && showSubMenuOn === "self") {
             e.stopPropagation();
-            setIsOpen((prev) => !prev);
+            setIsOpen(!isOpen);
           } else {
             setIsOpen(false);
           }
@@ -232,9 +250,15 @@ function Button({
 
       {isOpen &&
         createPortal(
-          <div
+          <DropdownWrapper
+            aria-label="button-dropdown-wrapper"
             ref={refs.setFloating}
-            style={{ ...floatingStyles, zIndex: 12000 }}
+            style={{ ...floatingStyles }}
+            $style={
+              typeof dropdownStyle === "function"
+                ? dropdownStyle(placement)
+                : dropdownStyle
+            }
             onMouseEnter={() => setHovered("dropdown")}
           >
             {subMenu({
@@ -242,14 +266,10 @@ function Button({
                 <TipMenu
                   setIsOpen={() => {
                     setIsOpen(false);
+
                     setHovered("original");
                   }}
                   withFilter={withFilter ?? false}
-                  style={
-                    typeof dropdownStyle === "function"
-                      ? dropdownStyle(placement)
-                      : dropdownStyle
-                  }
                   subMenuList={subMenuList}
                   variant={tipMenuSize}
                 />
@@ -277,12 +297,18 @@ function Button({
               ),
               render: (children) => children,
             })}
-          </div>,
+          </DropdownWrapper>,
           document.body
         )}
     </ButtonWrapper>
   );
 }
+
+const DropdownWrapper = styled.div<{ $style?: CSSProp }>`
+  z-index: 12000;
+
+  ${({ $style }) => $style};
+`;
 
 function ButtonTipMenuContainer({
   style,

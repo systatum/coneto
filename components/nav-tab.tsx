@@ -62,6 +62,7 @@ function NavTab({
 
   const [selected, setSelected] = useState<string>(activeTab);
   const [isHovered, setIsHovered] = useState<string | null>(null);
+  const [isTipMenuOpen, setIsTipMenuOpen] = useState<string | null>(null);
 
   const tabRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [tabSizes, setTabSizes] = useState<{ width: number; left: number }[]>(
@@ -256,13 +257,14 @@ function NavTab({
                   }}
                   onMouseEnter={() => setIsHovered(props.id)}
                   onMouseLeave={() => setIsHovered(null)}
-                  $isHovered={isHovered === props.id}
+                  $isHovered={
+                    isHovered === props.id || isTipMenuOpen === props.id
+                  }
                   $selected={selected === props.id}
                   $isAction={!!props.actions}
                 >
                   {props.title}
-                  {isHovered === props.id &&
-                    props.actions &&
+                  {props.actions &&
                     (() => {
                       const list = props.actions;
                       const actionsWithIcons = list.map((item) => ({
@@ -289,15 +291,25 @@ function NavTab({
                             height: 16px;
                             padding: 0;
                           `}
+                          onOpen={(prop: boolean) => {
+                            if (prop) {
+                              setIsTipMenuOpen(props.id);
+                            } else {
+                              setIsTipMenuOpen(null);
+                            }
+                          }}
+                          open={isTipMenuOpen === props.id}
                           containerStyle={css`
-                            ${isHovered === props.id
-                              ? css`
-                                  opacity: 1;
-                                `
-                              : css`
-                                  opacity: 0;
-                                `}
-                            pointer-events: ${isHovered === props.id
+                            opacity: 0;
+
+                            ${(isHovered === props.id ||
+                              isTipMenuOpen === props.id) &&
+                            css`
+                              opacity: 1;
+                            `};
+
+                            pointer-events: ${isHovered === props.id ||
+                            isTipMenuOpen === props.id
                               ? "auto"
                               : "none"};
                             transition: all 0.3s ease-in-out;
