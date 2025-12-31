@@ -46,3 +46,24 @@ export function expectTextIncludesOrderedLines(text: string, lines: string[]) {
   const regex = new RegExp(pattern);
   expect(text).to.match(regex);
 }
+
+// Helper function to test drag behavior using edge-based drop intent rules
+export function dragOverAtEdge(
+  subject: Cypress.Chainable<JQuery<HTMLElement>>,
+  edge: "top" | "bottom",
+  dataTransfer: DataTransfer
+) {
+  return subject.then(($el) => {
+    const rect = $el[0].getBoundingClientRect();
+    const EDGE = 6;
+
+    const clientY =
+      edge === "top" ? rect.top + EDGE - 5 : rect.top + rect.height - EDGE + 5;
+
+    return cy.wrap($el).trigger("dragover", {
+      dataTransfer,
+      clientY,
+      force: true,
+    });
+  });
+}
