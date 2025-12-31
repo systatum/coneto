@@ -12,6 +12,99 @@ import {
 import { StatefulForm } from "./../../components/stateful-form";
 
 describe("Treelist", () => {
+  context("alwaysShowDragIcon", () => {
+    let TREE_LIST_DATA: TreeListContentProps[];
+
+    beforeEach(() => {
+      const setPerson = cy.stub().as("setPerson");
+
+      TREE_LIST_DATA = [
+        {
+          id: "member",
+          caption: "Member of Technical Staff",
+          items: [
+            { id: "mts-1", caption: "Adam Noto Hakarsa", onClick: setPerson },
+            { id: "mts-2", caption: "Mohamad Naufal Alim", onClick: setPerson },
+          ],
+        },
+        {
+          id: "product",
+          caption: "Product Management Team",
+          items: [
+            { id: "pmt-1", caption: "Samantha Lee", onClick: setPerson },
+            { id: "pmt-2", caption: "Jason Kim", onClick: setPerson },
+            { id: "pmt-3", caption: "Rina Patel", onClick: setPerson },
+          ],
+        },
+      ];
+    });
+
+    context("when given false", () => {
+      it("renders with closed items", () => {
+        cy.mount(
+          <TreeList
+            alwaysShowDragIcon={false}
+            showHierarchyLine
+            collapsible
+            draggable
+            content={TREE_LIST_DATA}
+            emptySlate={<p>Not found.</p>}
+          />
+        );
+
+        cy.findAllByLabelText("draggable-request")
+          .eq(0)
+          .should("not.be.visible")
+          .and("have.css", "opacity", "0");
+        cy.contains("Adam Noto Hakarsa").trigger("mouseover");
+        cy.findAllByLabelText("draggable-request")
+          .eq(0)
+          .should("be.visible")
+          .and("have.css", "opacity", "1");
+      });
+    });
+
+    context("when given true", () => {
+      it("shows the drag icon only on hover", () => {
+        cy.mount(
+          <TreeList
+            alwaysShowDragIcon={true}
+            showHierarchyLine
+            collapsible
+            draggable
+            content={TREE_LIST_DATA}
+            emptySlate={<p>Not found.</p>}
+          />
+        );
+
+        cy.findAllByLabelText("draggable-request")
+          .eq(0)
+          .should("be.visible")
+          .and("have.css", "opacity", "1");
+        cy.contains("Adam Noto Hakarsa").trigger("mouseover");
+      });
+    });
+
+    context("when not given", () => {
+      it("defaults to always showing the drag icon", () => {
+        cy.mount(
+          <TreeList
+            showHierarchyLine
+            collapsible
+            draggable
+            content={TREE_LIST_DATA}
+            emptySlate={<p>Not found.</p>}
+          />
+        );
+
+        cy.findAllByLabelText("draggable-request")
+          .eq(0)
+          .should("be.visible")
+          .and("have.css", "opacity", "1");
+      });
+    });
+  });
+
   context("initialState", () => {
     let TREE_LIST_DATA: TreeListContentProps[];
 
