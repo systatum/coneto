@@ -28,13 +28,15 @@ export interface TreeListProps {
   collapsible?: boolean;
   draggable?: boolean;
   alwaysShowDragIcon?: boolean;
-  onDragged?: (props: {
-    id: string;
-    oldGroupId: string;
-    newGroupId: string;
-    oldPosition: number;
-    newPosition: number;
-  }) => void;
+  onDragged?: (props: TreeListOnDraggedProps) => void;
+}
+
+export interface TreeListOnDraggedProps {
+  id: string;
+  oldGroupId: string;
+  newGroupId: string;
+  oldPosition: number;
+  newPosition: number;
 }
 
 interface TreeListOnOpenChangeProps {
@@ -579,6 +581,29 @@ function findItemById(
   }
 
   return undefined;
+}
+
+export type TreeListNode = TreeListContentProps & Partial<TreeListItemsProps>;
+
+function findTreeListNode(
+  nodes: TreeListNode[],
+  id: string
+): TreeListNode | null {
+  for (const node of nodes) {
+    if (node.id === id) return node;
+    if (node.items) {
+      const found = findTreeListNode(node.items, id);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
+function isDescendant(parent: TreeListNode, childId: string): boolean {
+  if (!parent.items) return false;
+  return parent.items.some(
+    (item) => item.id === childId || isDescendant(item, childId)
+  );
 }
 
 function TreeListItem<T extends TreeListItemsProps>({
@@ -1255,5 +1280,7 @@ function escapeRegExp(string: string) {
 
 TreeList.findItemById = findItemById;
 TreeList.findGroupOfItem = findGroupOfItem;
+TreeList.findTreeListNode = findTreeListNode;
+TreeList.isDescendant = isDescendant;
 
 export { TreeList };
