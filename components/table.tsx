@@ -176,7 +176,7 @@ function Table({
   paginationWrapperStyle,
   paginationNumberStyle,
   totalSelectedItemStyle,
-  alwaysShowDragIcon,
+  alwaysShowDragIcon = true,
 }: TableProps & TableAlwaysShowDragIconProp) {
   const [dragItem, setDragItem] = useState<{
     oldGroupId: string;
