@@ -1,9 +1,74 @@
-import { getIdContent } from "test/support/commands";
+import { dragOverAtEdge, getIdContent } from "test/support/commands";
 
 describe("Treelist", () => {
   context("draggable", () => {
     beforeEach(() => {
       cy.visit(getIdContent("content-treelist--nested"));
+    });
+
+    const dataTransfer = new DataTransfer();
+
+    context("with canContainChildren", () => {
+      context("when the item does not allow dropping", () => {
+        it("prevents moving into the item", () => {
+          cy.findAllByLabelText("tree-list-caption")
+            .eq(8)
+            .should("have.text", "Backup")
+            .parent()
+            .should("have.attr", "data-group-id", "images")
+            .trigger("dragstart", { dataTransfer });
+
+          cy.findAllByLabelText("tree-list-caption")
+            .eq(0)
+            .should("have.text", ".cleverfiles")
+            .parent()
+            .should("have.attr", "data-group-id", "home")
+            .trigger("dragover", { dataTransfer })
+            .trigger("drop", { dataTransfer });
+
+          cy.findAllByLabelText("tree-list-caption")
+            .eq(1)
+            .should("have.text", "Backup")
+            .parent()
+            .should("have.attr", "data-group-id", "home");
+
+          cy.findAllByLabelText("tree-list-caption")
+            .eq(0)
+            .should("have.text", ".cleverfiles")
+            .parent()
+            .should("have.attr", "data-group-id", "home");
+        });
+      });
+
+      context("when the item allows dropping", () => {
+        it("move inside of item", () => {
+          cy.findAllByLabelText("tree-list-caption")
+            .eq(8)
+            .should("have.text", "Backup")
+            .parent()
+            .should("have.attr", "data-group-id", "images")
+            .trigger("dragstart", { dataTransfer });
+
+          cy.findAllByLabelText("tree-list-caption")
+            .eq(9)
+            .should("have.text", "Trip to Bali")
+            .parent()
+            .should("have.attr", "data-group-id", "images")
+            .trigger("dragover", { dataTransfer })
+            .trigger("drop", { dataTransfer });
+
+          cy.findAllByLabelText("tree-list-caption")
+            .eq(8)
+            .should("have.text", "Trip to Bali")
+
+            .parent()
+            .should("have.attr", "data-group-id", "images");
+
+          cy.findAllByLabelText("tree-list-caption")
+            .eq(8)
+            .should("not.have.text", ".cleverfiles");
+        });
+      });
     });
 
     context("when dragging in the same level", () => {
@@ -19,16 +84,14 @@ describe("Treelist", () => {
           .parent()
           .should("have.attr", "data-group-id", "images");
 
-        const dataTransfer = new DataTransfer();
-
         cy.findAllByLabelText("draggable-request")
           .eq(9)
           .trigger("dragstart", { dataTransfer });
-
-        cy.findAllByLabelText("draggable-request")
-          .eq(10)
-          .trigger("dragover", { dataTransfer })
-          .trigger("drop", { dataTransfer });
+        dragOverAtEdge(
+          cy.findAllByLabelText("tree-list-item").eq(10),
+          "bottom",
+          dataTransfer
+        ).trigger("drop", { dataTransfer });
 
         cy.wait(100);
 
@@ -57,16 +120,16 @@ describe("Treelist", () => {
           .should("have.text", "Work")
           .parent()
           .should("have.attr", "data-group-id", "my-documents");
-        const dataTransfer = new DataTransfer();
 
         cy.findAllByLabelText("draggable-request")
           .eq(7)
           .trigger("dragstart", { dataTransfer });
 
-        cy.findAllByLabelText("draggable-request")
-          .eq(6)
-          .trigger("dragover", { dataTransfer })
-          .trigger("drop", { dataTransfer });
+        dragOverAtEdge(
+          cy.findAllByLabelText("tree-list-item").eq(6),
+          "bottom",
+          dataTransfer
+        ).trigger("drop", { dataTransfer });
 
         cy.wait(100);
 
@@ -83,6 +146,7 @@ describe("Treelist", () => {
       });
     });
   });
+
   context("default", () => {
     beforeEach(() => {
       cy.visit(getIdContent("content-treelist--default"));

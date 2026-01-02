@@ -5,6 +5,8 @@ import {
   TreeListActionsProps,
   TreeListContentProps,
   TreeListItemsProps,
+  TreeListNode,
+  TreeListOnDraggedProps,
 } from "./treelist";
 import {
   RiAddBoxLine,
@@ -268,6 +270,7 @@ export const Nested: Story = {
                 caption: item.caption,
                 icon: RiFolderFill,
                 iconOnActive: RiFolder6Fill,
+                canContainChildren: item.id !== "cleverfiles" ? true : false,
                 iconColor:
                   item.id === "cleverfiles"
                     ? "rgb(252, 231, 154)"
@@ -312,6 +315,7 @@ export const Nested: Story = {
             caption: item.caption,
             icon: RiFolderFill,
             iconOnActive: RiFolder6Fill,
+            canContainChildren: item.id !== "cleverfiles" ? true : false,
             iconColor:
               item.id === "cleverfiles"
                 ? "rgb(252, 231, 154)"
@@ -330,19 +334,17 @@ export const Nested: Story = {
         });
       }
 
-      type TreeNode = TreeListContentProps & Partial<TreeListItemsProps>;
-
       function reorderItems(
-        items: TreeNode[],
+        items: TreeListNode[],
         itemId: string,
         newGroupId: string,
         newPosition: number
-      ): TreeNode[] {
-        function helper(nodes: TreeNode[]): {
-          items: TreeNode[];
-          movedItem: TreeNode | null;
+      ): TreeListNode[] {
+        function helper(nodes: TreeListNode[]): {
+          items: TreeListNode[];
+          movedItem: TreeListNode | null;
         } {
-          let moved: TreeNode | null = null;
+          let moved: TreeListNode | null = null;
 
           const cleaned = nodes
             .map((node) => {
@@ -365,7 +367,7 @@ export const Nested: Story = {
 
               return node;
             })
-            .filter(Boolean) as TreeNode[];
+            .filter(Boolean) as TreeListNode[];
 
           return { items: cleaned, movedItem: moved };
         }
@@ -374,7 +376,7 @@ export const Nested: Story = {
 
         if (!movedItem) return removedItems;
 
-        function insert(nodes: TreeNode[]): TreeNode[] {
+        function insert(nodes: TreeListNode[]): TreeListNode[] {
           return nodes.map((node) => {
             const hasChildren =
               Array.isArray(node.items) && node.items.length > 0;
@@ -394,13 +396,18 @@ export const Nested: Story = {
 
       const onDragged = ({
         id,
-        newPosition,
         newGroupId,
-      }: {
-        id: string;
-        newPosition: number;
-        newGroupId: string;
-      }) => {
+        newPosition,
+      }: TreeListOnDraggedProps) => {
+        const dragged = TreeList.findTreeListNode(groups, id);
+
+        if (
+          TreeList.hasChild(dragged, newGroupId) ||
+          dragged.id === newGroupId
+        ) {
+          return;
+        }
+
         const updatedGroups = reorderItems(groups, id, newGroupId, newPosition);
         setGroups(updatedGroups);
       };
@@ -453,17 +460,11 @@ export const Nested: Story = {
               max-width: 300px;
             `}
             draggable
-            onDragged={({ id, newGroupId, newPosition }) =>
-              onDragged({
-                id,
-                newGroupId,
-                newPosition,
-              })
-            }
+            onDragged={onDragged}
             emptyItemSlateStyle={css`
               align-items: center;
             `}
-            emptyItemSlate={"Content Empty."}
+            emptyItemSlate={null}
             collapsible
             showHierarchyLine
             alwaysShowDragIcon={false}
@@ -494,14 +495,9 @@ export const Nested: Story = {
             `}
             collapsible
             showHierarchyLine
+            emptyItemSlate={null}
             alwaysShowDragIcon={false}
-            onDragged={({ id, newGroupId, newPosition }) =>
-              onDragged2({
-                id,
-                newGroupId,
-                newPosition,
-              })
-            }
+            onDragged={onDragged2}
             draggable
             onOpenChange={({ id }) => console.log(id)}
             content={content2}

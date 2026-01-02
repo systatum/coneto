@@ -1,4 +1,5 @@
 /// <reference types="cypress" />
+
 // ***********************************************
 // This example commands.ts shows you how to
 // create various custom commands and overwrite
@@ -45,4 +46,27 @@ export function expectTextIncludesOrderedLines(text: string, lines: string[]) {
   const pattern = escaped.join("[\\s\\S]*");
   const regex = new RegExp(pattern);
   expect(text).to.match(regex);
+}
+
+// Helper function to test drag behavior using edge-based drop intent rules
+export function dragOverAtEdge(
+  subject: Cypress.Chainable<JQuery<HTMLElement>>,
+  edge: "top" | "bottom",
+  dataTransfer: DataTransfer
+) {
+  return subject.then(($el) => {
+    const rect = $el[0].getBoundingClientRect();
+    const DRAG_REORDER_EDGE_THRESHOLD = 6;
+
+    const clientY =
+      edge === "top"
+        ? rect.top + DRAG_REORDER_EDGE_THRESHOLD - 5
+        : rect.top + rect.height - DRAG_REORDER_EDGE_THRESHOLD + 5;
+
+    return cy.wrap($el).trigger("dragover", {
+      dataTransfer,
+      clientY,
+      force: true,
+    });
+  });
 }
