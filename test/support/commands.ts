@@ -1,4 +1,7 @@
 /// <reference types="cypress" />
+
+import { TreeList } from "./../../components/treelist";
+
 // ***********************************************
 // This example commands.ts shows you how to
 // create various custom commands and overwrite
@@ -55,7 +58,7 @@ export function dragOverAtEdge(
 ) {
   return subject.then(($el) => {
     const rect = $el[0].getBoundingClientRect();
-    const EDGE = 6;
+    const EDGE = TreeList.DRAG_EDGE_THRESHOLD;
 
     const clientY =
       edge === "top" ? rect.top + EDGE - 5 : rect.top + rect.height - EDGE + 5;
