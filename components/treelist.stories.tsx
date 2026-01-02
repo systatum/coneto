@@ -270,7 +270,7 @@ export const Nested: Story = {
                 caption: item.caption,
                 icon: RiFolderFill,
                 iconOnActive: RiFolder6Fill,
-                canDropAsParent: item.id !== "cleverfiles" ? true : false,
+                canContainChildren: item.id !== "cleverfiles" ? true : false,
                 iconColor:
                   item.id === "cleverfiles"
                     ? "rgb(252, 231, 154)"
@@ -315,7 +315,7 @@ export const Nested: Story = {
             caption: item.caption,
             icon: RiFolderFill,
             iconOnActive: RiFolder6Fill,
-            canDropAsParent: item.id !== "cleverfiles" ? true : false,
+            canContainChildren: item.id !== "cleverfiles" ? true : false,
             iconColor:
               item.id === "cleverfiles"
                 ? "rgb(252, 231, 154)"
@@ -402,7 +402,7 @@ export const Nested: Story = {
         const dragged = TreeList.findTreeListNode(groups, id);
 
         if (
-          TreeList.isDescendant(dragged, newGroupId) ||
+          TreeList.hasChild(dragged, newGroupId) ||
           dragged.id === newGroupId
         ) {
           return;
