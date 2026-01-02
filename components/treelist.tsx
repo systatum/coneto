@@ -18,7 +18,7 @@ export interface TreeListProps {
   emptyItemSlateStyle?: CSSProp;
   children?: ReactNode;
   emptySlate?: ReactNode;
-  emptyItemSlate?: ReactNode;
+  emptyItemSlate?: ReactNode | null;
   searchTerm?: string;
   actions?: TreeListActionsProps[];
   selectedItem?: string;
@@ -28,13 +28,15 @@ export interface TreeListProps {
   collapsible?: boolean;
   draggable?: boolean;
   alwaysShowDragIcon?: boolean;
-  onDragged?: (props: {
-    id: string;
-    oldGroupId: string;
-    newGroupId: string;
-    oldPosition: number;
-    newPosition: number;
-  }) => void;
+  onDragged?: (props: TreeListOnDraggedProps) => void;
+}
+
+export interface TreeListOnDraggedProps {
+  id: string;
+  oldGroupId: string;
+  newGroupId: string;
+  oldPosition: number;
+  newPosition: number;
 }
 
 interface TreeListOnOpenChangeProps {
@@ -57,6 +59,7 @@ export interface TreeListContentProps {
 export interface TreeListItemsProps {
   id: string;
   caption?: string;
+  canContainChildren?: boolean;
   onClick?: (props: TreeListItemsOnClickProps) => void;
   actions?: SubMenuTreeList[];
   items?: TreeListItemsProps[];
@@ -370,6 +373,7 @@ function TreeList({
                           <TreeListItem
                             key={val.id}
                             item={{ ...val }}
+                            canContainChildren={val.canContainChildren ?? true}
                             isSelected={isSelected}
                             onChange={handleOnChange}
                             isLoading={loadingByGroup}
@@ -395,42 +399,44 @@ function TreeList({
                         );
                       })
                     ) : (
-                      <EmptyContent
-                        key="drop-here"
-                        aria-label="tree-list-empty-slate"
-                        initial="open"
-                        animate={isOpen ? "open" : "collapsed"}
-                        $style={emptyItemSlateStyle}
-                        exit="collapsed"
-                        variants={{
-                          open: { opacity: 1, height: "auto" },
-                          collapsed: { opacity: 0, height: 0 },
-                        }}
-                        transition={{ duration: 0.2, ease: "easeInOut" }}
-                        onDragOver={(e) => e.preventDefault()}
-                        onDrop={(e) => {
-                          e.preventDefault();
-                          if (dragItem && draggable) {
-                            const {
-                              id: draggedId,
-                              oldGroupId,
-                              oldPosition,
-                            } = dragItem;
+                      emptyItemSlate !== null && (
+                        <EmptyContent
+                          key="drop-here"
+                          aria-label="tree-list-empty-slate"
+                          initial="open"
+                          animate={isOpen ? "open" : "collapsed"}
+                          $style={emptyItemSlateStyle}
+                          exit="collapsed"
+                          variants={{
+                            open: { opacity: 1, height: "auto" },
+                            collapsed: { opacity: 0, height: 0 },
+                          }}
+                          transition={{ duration: 0.2, ease: "easeInOut" }}
+                          onDragOver={(e) => e.preventDefault()}
+                          onDrop={(e) => {
+                            e.preventDefault();
+                            if (dragItem && draggable) {
+                              const {
+                                id: draggedId,
+                                oldGroupId,
+                                oldPosition,
+                              } = dragItem;
 
-                            onDragged?.({
-                              id: draggedId,
-                              oldGroupId,
-                              newGroupId: item.id,
-                              oldPosition,
-                              newPosition: 0,
-                            });
+                              onDragged?.({
+                                id: draggedId,
+                                oldGroupId,
+                                newGroupId: item.id,
+                                oldPosition,
+                                newPosition: 0,
+                              });
 
-                            setDragItem(null);
-                          }
-                        }}
-                      >
-                        {emptyItemSlate}
-                      </EmptyContent>
+                              setDragItem(null);
+                            }
+                          }}
+                        >
+                          {emptyItemSlate}
+                        </EmptyContent>
+                      )
                     );
                   })()}
                 </ItemsWrapper>
@@ -558,6 +564,7 @@ interface TreeListItemComponent<T extends TreeListItemsProps> {
   groupLength?: number;
   emptyItemSlateStyle?: CSSProp;
   alwaysShowDragIcon?: boolean;
+  canContainChildren?: boolean;
 }
 
 interface TreeListOpenWithId {
@@ -579,6 +586,29 @@ function findItemById(
   }
 
   return undefined;
+}
+
+export type TreeListNode = TreeListContentProps & Partial<TreeListItemsProps>;
+
+function findTreeListNode(
+  nodes: TreeListNode[],
+  id: string
+): TreeListNode | null {
+  for (const node of nodes) {
+    if (node.id === id) return node;
+    if (node.items) {
+      const found = findTreeListNode(node.items, id);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
+function hasChild(parent: TreeListNode, childId: string): boolean {
+  if (!parent.items) return false;
+  return parent.items.some(
+    (item) => item.id === childId || hasChild(item, childId)
+  );
 }
 
 function TreeListItem<T extends TreeListItemsProps>({
@@ -606,13 +636,17 @@ function TreeListItem<T extends TreeListItemsProps>({
   alwaysShowDragIcon,
   openRowId,
   setOpenRowId,
+  canContainChildren,
 }: TreeListItemComponent<T> & TreeListOpenWithId) {
   const { dragItem, setDragItem, onDragged } = useContext(DnDContext);
   const [dropPosition, setDropPosition] = useState<"top" | "bottom" | null>(
     null
   );
-  const [isOver, setIsOver] = useState(false);
+  const [dropIntent, setDropIntent] = useState<
+    "reordering" | "containment" | null
+  >(null);
 
+  const [isOver, setIsOver] = useState(false);
   const [isHovered, setIsHovered] = useState<null | string>(null);
 
   const escapedTerm = escapeRegExp(searchTerm.trim());
@@ -627,6 +661,10 @@ function TreeListItem<T extends TreeListItemsProps>({
     selectedLevel !== null &&
     selectedLevel === level &&
     selectedGroupId === parentGroupId;
+
+  /** Top/bottom zone inside an item (in pixels) for drag-and-drop.
+      6px is chosen so it's easy to trigger reordering without being too small or too large. */
+  const DRAG_REORDER_EDGE_THRESHOLD = 6;
 
   return (
     <div
@@ -665,6 +703,7 @@ function TreeListItem<T extends TreeListItemsProps>({
           }
         }}
         $isHovered={isHovered === item.id || openRowId === item.id}
+        $isDropParent={dropIntent === "containment" && isOver}
         $style={style}
         onDragStart={() =>
           setDragItem({
@@ -684,10 +723,16 @@ function TreeListItem<T extends TreeListItemsProps>({
             const offsetY = e.clientY - rect.top;
             const half = rect.height / 2;
 
-            if (offsetY < half) {
-              setDropPosition("top");
+            const isEdge =
+              offsetY < DRAG_REORDER_EDGE_THRESHOLD ||
+              offsetY > rect.height - DRAG_REORDER_EDGE_THRESHOLD;
+
+            if (canContainChildren && !isEdge) {
+              setDropIntent("containment");
+              setDropPosition(null);
             } else {
-              setDropPosition("bottom");
+              setDropIntent("reordering");
+              setDropPosition(offsetY < half ? "top" : "bottom");
             }
 
             setIsOver(true);
@@ -700,6 +745,19 @@ function TreeListItem<T extends TreeListItemsProps>({
         onDrop={(e) => {
           e.preventDefault();
           setIsOver(false);
+
+          if (dropIntent === "containment") {
+            onDragged?.({
+              id: dragItem.id,
+              oldGroupId: dragItem.oldGroupId,
+              newGroupId: item.id,
+              oldPosition: dragItem.oldPosition,
+              newPosition: 0,
+            });
+
+            setDropIntent(null);
+            return;
+          }
 
           let position = 0;
           const isSameGroup = dragItem?.oldGroupId === groupId;
@@ -724,7 +782,10 @@ function TreeListItem<T extends TreeListItemsProps>({
             newPosition: clampedPosition,
           });
         }}
-        onMouseLeave={() => setIsHovered(null)}
+        onMouseLeave={() => {
+          setIsHovered(null);
+          setDropIntent(null);
+        }}
         onMouseEnter={() => setIsHovered(item.id)}
         $level={level + 1}
       >
@@ -921,48 +982,51 @@ function TreeListItem<T extends TreeListItemsProps>({
                     draggable={draggable}
                     groupLength={item?.items?.length}
                     index={index}
+                    canContainChildren={item.canContainChildren ?? true}
                   />
                 ))
               ) : (
-                <EmptyContent
-                  key="drop-here"
-                  aria-label="tree-list-empty-slate"
-                  initial="open"
-                  animate={isOpen ? "open" : "collapsed"}
-                  $style={css`
-                    margin-left: ${level * 20 + 12}px;
-                    ${emptyItemSlateStyle}
-                  `}
-                  exit="collapsed"
-                  variants={{
-                    open: { opacity: 1, height: "auto" },
-                    collapsed: { opacity: 0, height: 0 },
-                  }}
-                  transition={{ duration: 0.2, ease: "easeInOut" }}
-                  onDragOver={(e) => e.preventDefault()}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    if (dragItem && draggable) {
-                      const {
-                        id: draggedId,
-                        oldGroupId,
-                        oldPosition,
-                      } = dragItem;
+                emptyItemSlate !== null && (
+                  <EmptyContent
+                    key="drop-here"
+                    aria-label="tree-list-empty-slate"
+                    initial="open"
+                    animate={isOpen ? "open" : "collapsed"}
+                    $style={css`
+                      margin-left: ${level * 20 + 12}px;
+                      ${emptyItemSlateStyle}
+                    `}
+                    exit="collapsed"
+                    variants={{
+                      open: { opacity: 1, height: "auto" },
+                      collapsed: { opacity: 0, height: 0 },
+                    }}
+                    transition={{ duration: 0.2, ease: "easeInOut" }}
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      if (dragItem && draggable) {
+                        const {
+                          id: draggedId,
+                          oldGroupId,
+                          oldPosition,
+                        } = dragItem;
 
-                      onDragged?.({
-                        id: draggedId,
-                        oldGroupId,
-                        newGroupId: item.id,
-                        oldPosition,
-                        newPosition: 0,
-                      });
+                        onDragged?.({
+                          id: draggedId,
+                          oldGroupId,
+                          newGroupId: item.id,
+                          oldPosition,
+                          newPosition: 0,
+                        });
 
-                      setDragItem(null);
-                    }
-                  }}
-                >
-                  {emptyItemSlate}
-                </EmptyContent>
+                        setDragItem(null);
+                      }
+                    }}
+                  >
+                    {emptyItemSlate}
+                  </EmptyContent>
+                )
               );
             })()}
           </motion.div>
@@ -1206,6 +1270,7 @@ const TreeListItemWrapper = styled.li<{
   $style?: CSSProp;
   $level?: number;
   $isHovered?: boolean;
+  $isDropParent?: boolean;
 }>`
   display: flex;
   flex-direction: row;
@@ -1223,7 +1288,8 @@ const TreeListItemWrapper = styled.li<{
     css`
       border-left: 3px solid ${$isSelected ? "#3b82f6" : "transparent"};
     `}
-  background-color: ${(props) => (props.$isSelected ? "#f3f4f6" : "white")};
+  background-color: ${({ $isSelected, $isDropParent }) =>
+    $isDropParent ? "#f3f4f6" : $isSelected ? "#f3f4f6" : "white"};
   ${({ $isHovered }) =>
     $isHovered &&
     css`
@@ -1255,5 +1321,7 @@ function escapeRegExp(string: string) {
 
 TreeList.findItemById = findItemById;
 TreeList.findGroupOfItem = findGroupOfItem;
+TreeList.findTreeListNode = findTreeListNode;
+TreeList.hasChild = hasChild;
 
 export { TreeList };
