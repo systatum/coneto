@@ -662,9 +662,9 @@ function TreeListItem<T extends TreeListItemsProps>({
     selectedLevel === level &&
     selectedGroupId === parentGroupId;
 
+  /** Top/bottom zone inside an item (in pixels) for drag-and-drop.
+      6px is chosen so it's easy to trigger reordering without being too small or too large. */
   const DRAG_REORDER_EDGE_THRESHOLD = 6;
-  // Top/bottom zone inside an item (in pixels) for drag-and-drop.
-  // 6px is chosen so it's easy to trigger reordering without being too small or too large.
 
   return (
     <div
