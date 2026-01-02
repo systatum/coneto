@@ -59,7 +59,7 @@ export interface TreeListContentProps {
 export interface TreeListItemsProps {
   id: string;
   caption?: string;
-  canDropAsParent?: boolean;
+  canContainChildren?: boolean;
   onClick?: (props: TreeListItemsOnClickProps) => void;
   actions?: SubMenuTreeList[];
   items?: TreeListItemsProps[];
@@ -373,7 +373,7 @@ function TreeList({
                           <TreeListItem
                             key={val.id}
                             item={{ ...val }}
-                            canDropAsParent={val.canDropAsParent}
+                            canContainChildren={val.canContainChildren ?? true}
                             isSelected={isSelected}
                             onChange={handleOnChange}
                             isLoading={loadingByGroup}
@@ -564,7 +564,7 @@ interface TreeListItemComponent<T extends TreeListItemsProps> {
   groupLength?: number;
   emptyItemSlateStyle?: CSSProp;
   alwaysShowDragIcon?: boolean;
-  canDropAsParent?: boolean;
+  canContainChildren?: boolean;
 }
 
 interface TreeListOpenWithId {
@@ -604,10 +604,10 @@ function findTreeListNode(
   return null;
 }
 
-function isDescendant(parent: TreeListNode, childId: string): boolean {
+function hasChild(parent: TreeListNode, childId: string): boolean {
   if (!parent.items) return false;
   return parent.items.some(
-    (item) => item.id === childId || isDescendant(item, childId)
+    (item) => item.id === childId || hasChild(item, childId)
   );
 }
 
@@ -636,15 +636,15 @@ function TreeListItem<T extends TreeListItemsProps>({
   alwaysShowDragIcon,
   openRowId,
   setOpenRowId,
-  canDropAsParent,
+  canContainChildren,
 }: TreeListItemComponent<T> & TreeListOpenWithId) {
   const { dragItem, setDragItem, onDragged } = useContext(DnDContext);
   const [dropPosition, setDropPosition] = useState<"top" | "bottom" | null>(
     null
   );
-  const [dropIntent, setDropIntent] = useState<"position" | "parent" | null>(
-    null
-  );
+  const [dropIntent, setDropIntent] = useState<
+    "reordering" | "containment" | null
+  >(null);
 
   const [isOver, setIsOver] = useState(false);
 
@@ -700,7 +700,7 @@ function TreeListItem<T extends TreeListItemsProps>({
           }
         }}
         $isHovered={isHovered === item.id || openRowId === item.id}
-        $isDropParent={dropIntent === "parent"}
+        $isDropParent={dropIntent === "containment"}
         $style={style}
         onDragStart={() =>
           setDragItem({
@@ -719,15 +719,16 @@ function TreeListItem<T extends TreeListItemsProps>({
             const rect = e.currentTarget.getBoundingClientRect();
             const offsetY = e.clientY - rect.top;
             const half = rect.height / 2;
-            const EDGE = 6;
 
-            const isEdge = offsetY < EDGE || offsetY > rect.height - EDGE;
+            const isEdge =
+              offsetY < DRAG_EDGE_THRESHOLD ||
+              offsetY > rect.height - DRAG_EDGE_THRESHOLD;
 
-            if (canDropAsParent && !isEdge) {
-              setDropIntent("parent");
+            if (canContainChildren && !isEdge) {
+              setDropIntent("containment");
               setDropPosition(null);
             } else {
-              setDropIntent("position");
+              setDropIntent("reordering");
               setDropPosition(offsetY < half ? "top" : "bottom");
             }
 
@@ -742,7 +743,7 @@ function TreeListItem<T extends TreeListItemsProps>({
           e.preventDefault();
           setIsOver(false);
 
-          if (dropIntent === "parent") {
+          if (dropIntent === "containment") {
             onDragged?.({
               id: dragItem.id,
               oldGroupId: dragItem.oldGroupId,
@@ -978,7 +979,7 @@ function TreeListItem<T extends TreeListItemsProps>({
                     draggable={draggable}
                     groupLength={item?.items?.length}
                     index={index}
-                    canDropAsParent={item.canDropAsParent}
+                    canContainChildren={item.canContainChildren ?? true}
                   />
                 ))
               ) : (
@@ -1315,9 +1316,14 @@ function escapeRegExp(string: string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+const DRAG_EDGE_THRESHOLD = 6;
+// Top/bottom zone inside an item (in pixels) for drag-and-drop.
+// 6px is chosen so it's easy to trigger reordering without being too small or too large.
+
 TreeList.findItemById = findItemById;
 TreeList.findGroupOfItem = findGroupOfItem;
 TreeList.findTreeListNode = findTreeListNode;
-TreeList.isDescendant = isDescendant;
+TreeList.hasChild = hasChild;
+TreeList.DRAG_EDGE_THRESHOLD = DRAG_EDGE_THRESHOLD;
 
 export { TreeList };
