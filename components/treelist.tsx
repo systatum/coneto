@@ -663,6 +663,10 @@ function TreeListItem<T extends TreeListItemsProps>({
     selectedLevel === level &&
     selectedGroupId === parentGroupId;
 
+  const DRAG_REORDER_EDGE_THRESHOLD = 6;
+  // Top/bottom zone inside an item (in pixels) for drag-and-drop.
+  // 6px is chosen so it's easy to trigger reordering without being too small or too large.
+
   return (
     <div
       style={{
@@ -721,8 +725,8 @@ function TreeListItem<T extends TreeListItemsProps>({
             const half = rect.height / 2;
 
             const isEdge =
-              offsetY < DRAG_EDGE_THRESHOLD ||
-              offsetY > rect.height - DRAG_EDGE_THRESHOLD;
+              offsetY < DRAG_REORDER_EDGE_THRESHOLD ||
+              offsetY > rect.height - DRAG_REORDER_EDGE_THRESHOLD;
 
             if (canContainChildren && !isEdge) {
               setDropIntent("containment");
@@ -1316,14 +1320,9 @@ function escapeRegExp(string: string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-const DRAG_EDGE_THRESHOLD = 6;
-// Top/bottom zone inside an item (in pixels) for drag-and-drop.
-// 6px is chosen so it's easy to trigger reordering without being too small or too large.
-
 TreeList.findItemById = findItemById;
 TreeList.findGroupOfItem = findGroupOfItem;
 TreeList.findTreeListNode = findTreeListNode;
 TreeList.hasChild = hasChild;
-TreeList.DRAG_EDGE_THRESHOLD = DRAG_EDGE_THRESHOLD;
 
 export { TreeList };

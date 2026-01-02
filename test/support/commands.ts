@@ -58,10 +58,12 @@ export function dragOverAtEdge(
 ) {
   return subject.then(($el) => {
     const rect = $el[0].getBoundingClientRect();
-    const EDGE = TreeList.DRAG_EDGE_THRESHOLD;
+    const DRAG_REORDER_EDGE_THRESHOLD = 6;
 
     const clientY =
-      edge === "top" ? rect.top + EDGE - 5 : rect.top + rect.height - EDGE + 5;
+      edge === "top"
+        ? rect.top + DRAG_REORDER_EDGE_THRESHOLD - 5
+        : rect.top + rect.height - DRAG_REORDER_EDGE_THRESHOLD + 5;
 
     return cy.wrap($el).trigger("dragover", {
       dataTransfer,
