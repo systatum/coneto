@@ -647,7 +647,6 @@ function TreeListItem<T extends TreeListItemsProps>({
   >(null);
 
   const [isOver, setIsOver] = useState(false);
-
   const [isHovered, setIsHovered] = useState<null | string>(null);
 
   const escapedTerm = escapeRegExp(searchTerm.trim());
@@ -704,7 +703,7 @@ function TreeListItem<T extends TreeListItemsProps>({
           }
         }}
         $isHovered={isHovered === item.id || openRowId === item.id}
-        $isDropParent={dropIntent === "containment"}
+        $isDropParent={dropIntent === "containment" && isOver}
         $style={style}
         onDragStart={() =>
           setDragItem({
@@ -1290,7 +1289,7 @@ const TreeListItemWrapper = styled.li<{
       border-left: 3px solid ${$isSelected ? "#3b82f6" : "transparent"};
     `}
   background-color: ${({ $isSelected, $isDropParent }) =>
-    $isDropParent ? "#e3e4e6" : $isSelected ? "#f3f4f6" : "white"};
+    $isDropParent ? "#f3f4f6" : $isSelected ? "#f3f4f6" : "white"};
   ${({ $isHovered }) =>
     $isHovered &&
     css`
