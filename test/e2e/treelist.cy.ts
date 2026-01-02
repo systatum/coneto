@@ -8,7 +8,7 @@ describe("Treelist", () => {
 
     const dataTransfer = new DataTransfer();
 
-    context("with canDropAsParent", () => {
+    context("with canContainChildren", () => {
       context("when the item does not allow dropping", () => {
         it("prevents moving into the item", () => {
           cy.findAllByLabelText("tree-list-caption")
