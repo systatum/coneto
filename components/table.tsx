@@ -311,8 +311,6 @@ function Table({
       if (delta >= 100) {
         setOpenRowId(null);
       }
-
-      console.log(delta);
     };
 
     el.addEventListener("scroll", handleScroll, { passive: true });
