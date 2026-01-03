@@ -17,8 +17,669 @@ import {
   ListItemActionProps,
 } from "./../../components/list";
 import { css } from "styled-components";
+import { ListItemProps } from "dist/components/list";
 
 describe("List", () => {
+  const LIST_ITEMS: ListItemProps[] = [
+    {
+      id: "home",
+      title: "Home",
+      subtitle: "Go to homepage",
+      leftIcon: RiHome2Fill,
+    },
+    {
+      id: "profile",
+      title: "Profile",
+      subtitle: "View your profile",
+      leftIcon: RiUser3Fill,
+    },
+    {
+      id: "settings",
+      title: "Settings",
+      subtitle: "Adjust preferences",
+      leftIcon: RiSettings3Fill,
+    },
+    {
+      id: "messages",
+      title: "Messages",
+      subtitle: "Check your inbox",
+      leftIcon: RiMailFill,
+    },
+    {
+      id: "notifications",
+      title: "Notifications",
+      subtitle: "View Alerts",
+      leftIcon: RiNotification3Fill,
+    },
+  ];
+
+  const LIST_GROUPS_OPENABLE: ListGroupContentProps[] = [
+    {
+      id: "recent-content",
+      title: "Recent Content",
+      subtitle: "Your latest activity",
+      items: [
+        {
+          id: "messages",
+          title: "Messages",
+          subtitle: "Check your inbox",
+          leftIcon: RiMailFill,
+          children:
+            "Stay connected with your contacts by checking and replying to your recent messages. Keep conversations organized and never miss important updates.",
+        },
+        {
+          id: "notifications",
+          title: "Notifications",
+          subtitle: "View Alerts",
+          leftIcon: RiNotification3Fill,
+          children:
+            "See what's new at a glance. Review recent alerts, mentions, and important reminders to stay on top of your activities.",
+        },
+        {
+          id: "calendar",
+          title: "Calendar",
+          subtitle: "Upcoming events",
+          leftIcon: RiCalendar2Fill,
+          children:
+            "View your scheduled events and upcoming meetings in one place. Manage your time effectively and plan your week with confidence.",
+        },
+      ],
+    },
+    {
+      id: "all-content",
+      title: "All Content",
+      subtitle: "With warning rightSideContent",
+      items: [
+        {
+          id: "home",
+          title: "Home",
+          subtitle: "Go to homepage",
+          leftIcon: RiHome2Fill,
+          children:
+            "Return to your main dashboard where you can quickly access all your essential tools, updates, and recent highlights in one glance.",
+        },
+        {
+          id: "profile",
+          title: "Profile",
+          subtitle: "View your profile",
+          leftIcon: RiUser3Fill,
+          children:
+            "Customize your personal information, update your avatar, and manage your account preferences to reflect your identity and style.",
+        },
+        {
+          id: "settings",
+          title: "Settings",
+          subtitle: "Adjust preferences",
+          leftIcon: RiSettings3Fill,
+          openable: true,
+          children:
+            "Modify your system preferences, manage privacy and notifications, and fine-tune your user experience to suit your workflow.",
+        },
+      ],
+    },
+  ];
+
+  context("maxItems", () => {
+    context("when given 2", () => {
+      it("shows only the first 2 items", () => {
+        cy.mount(
+          <List
+            maxItems={2}
+            containerStyle={css`
+              padding: 16px;
+              min-width: 280px;
+              gap: 8px;
+            `}
+          >
+            {LIST_ITEMS.map((item, index) => (
+              <List.Item
+                key={index}
+                id={item.id}
+                leftIcon={item.leftIcon}
+                subtitle={item.subtitle}
+                title={item.title}
+              />
+            ))}
+          </List>
+        );
+        LIST_ITEMS.map((props) => {
+          if (props.title === "Home" || props.title === "Profile") {
+            cy.findByText(String(props.title)).should("exist");
+          } else {
+            cy.findByText(String(props.title)).should("not.exist");
+          }
+        });
+      });
+
+      context("when click show more", () => {
+        it("show all items", () => {
+          cy.mount(
+            <List
+              maxItems={2}
+              containerStyle={css`
+                padding: 16px;
+                min-width: 280px;
+                gap: 8px;
+              `}
+            >
+              {LIST_ITEMS.map((item, index) => (
+                <List.Item
+                  key={index}
+                  id={item.id}
+                  leftIcon={item.leftIcon}
+                  subtitle={item.subtitle}
+                  title={item.title}
+                />
+              ))}
+            </List>
+          );
+          LIST_ITEMS.map((props) => {
+            if (props.title === "Home" || props.title === "Profile") {
+              cy.findByText(String(props.title)).should("exist");
+            } else {
+              cy.findByText(String(props.title)).should("not.exist");
+            }
+          });
+
+          cy.findAllByLabelText("list-show-more-button").eq(0).click();
+
+          LIST_ITEMS.map((props) => {
+            cy.findByText(String(props.title)).should("exist");
+          });
+        });
+      });
+    });
+
+    context("with group", () => {
+      context("when given 2", () => {
+        it("shows only the first 2 items", () => {
+          cy.mount(
+            <List
+              searchable
+              draggable
+              selectable
+              maxItems={2}
+              alwaysShowDragIcon={false}
+              containerStyle={css`
+                padding: 16px;
+                min-width: 350px;
+              `}
+            >
+              {LIST_GROUPS_OPENABLE.map((group, index) => (
+                <List.Group
+                  key={index}
+                  id={group.id}
+                  title={group.title}
+                  subtitle={group.subtitle}
+                  actions={group.actions}
+                  openerStyle="togglebox"
+                >
+                  {group.items.map((list, i) => (
+                    <List.Item
+                      key={i}
+                      id={list.id}
+                      leftIcon={list.leftIcon}
+                      subtitle={list.subtitle}
+                      title={list.title}
+                      groupId={group.id}
+                      selectedOptions={{
+                        checked: true,
+                      }}
+                      rightSideContent={list.rightSideContent}
+                    />
+                  ))}
+                </List.Group>
+              ))}
+            </List>
+          );
+
+          LIST_GROUPS_OPENABLE.map((groups) =>
+            groups.items.map((props) => {
+              if (
+                props.title === "Message" ||
+                props.title === "Notifications" ||
+                props.title === "Home" ||
+                props.title === "Profile"
+              ) {
+                cy.findByText(String(props.title)).should("exist");
+              } else {
+                cy.findByText(String(props.title)).should("not.exist");
+              }
+            })
+          );
+        });
+
+        context("when click show more", () => {
+          it("show all items", () => {
+            cy.mount(
+              <List
+                searchable
+                draggable
+                selectable
+                maxItems={2}
+                alwaysShowDragIcon={false}
+                containerStyle={css`
+                  padding: 16px;
+                  min-width: 350px;
+                `}
+              >
+                {LIST_GROUPS_OPENABLE.map((group, index) => (
+                  <List.Group
+                    key={index}
+                    id={group.id}
+                    title={group.title}
+                    subtitle={group.subtitle}
+                    actions={group.actions}
+                    openerStyle="togglebox"
+                  >
+                    {group.items.map((list, i) => (
+                      <List.Item
+                        key={i}
+                        id={list.id}
+                        leftIcon={list.leftIcon}
+                        subtitle={list.subtitle}
+                        title={list.title}
+                        groupId={group.id}
+                        selectedOptions={{
+                          checked: true,
+                        }}
+                        rightSideContent={list.rightSideContent}
+                      />
+                    ))}
+                  </List.Group>
+                ))}
+              </List>
+            );
+
+            LIST_GROUPS_OPENABLE.map((groups) =>
+              groups.items.map((props) => {
+                if (
+                  props.title === "Message" ||
+                  props.title === "Notifications" ||
+                  props.title === "Home" ||
+                  props.title === "Profile"
+                ) {
+                  cy.findByText(String(props.title)).should("exist");
+                } else {
+                  cy.findByText(String(props.title)).should("not.exist");
+                }
+              })
+            );
+
+            cy.findAllByLabelText("list-show-more-button").eq(0).click();
+            cy.findAllByLabelText("list-show-more-button").eq(1).click();
+
+            LIST_GROUPS_OPENABLE.map((groups) =>
+              groups.items.map((props) => {
+                cy.findByText(String(props.title)).should("exist");
+              })
+            );
+          });
+        });
+      });
+    });
+  });
+
+  context("labels", () => {
+    context("when given style", () => {
+      it("renders with style", () => {
+        cy.mount(
+          <List
+            searchable
+            draggable
+            selectable
+            maxItems={2}
+            labels={{
+              style: css`
+                border-style: dotted;
+                text-decoration: underline;
+              `,
+            }}
+            alwaysShowDragIcon={false}
+            containerStyle={css`
+              padding: 16px;
+              min-width: 350px;
+            `}
+          >
+            {LIST_GROUPS_OPENABLE.map((group, index) => (
+              <List.Group
+                key={index}
+                id={group.id}
+                title={group.title}
+                subtitle={group.subtitle}
+                actions={group.actions}
+                openerStyle="togglebox"
+              >
+                {group.items.map((list, i) => (
+                  <List.Item
+                    key={i}
+                    id={list.id}
+                    leftIcon={list.leftIcon}
+                    subtitle={list.subtitle}
+                    title={list.title}
+                    groupId={group.id}
+                    selectedOptions={{
+                      checked: true,
+                    }}
+                    rightSideContent={list.rightSideContent}
+                  />
+                ))}
+              </List.Group>
+            ))}
+          </List>
+        );
+        cy.findAllByLabelText("list-show-more-button")
+          .eq(0)
+          .should("have.css", "border-style", "dotted")
+          .and(
+            "have.css",
+            "text-decoration",
+            "underline solid rgb(97, 97, 97)"
+          );
+      });
+    });
+
+    context("when given moreItemsText", () => {
+      it("renders with the text", () => {
+        cy.mount(
+          <List
+            searchable
+            draggable
+            selectable
+            maxItems={2}
+            labels={{
+              moreItemsText: "Show all content",
+            }}
+            alwaysShowDragIcon={false}
+            containerStyle={css`
+              padding: 16px;
+              min-width: 350px;
+            `}
+          >
+            {LIST_GROUPS_OPENABLE.map((group, index) => (
+              <List.Group
+                key={index}
+                id={group.id}
+                title={group.title}
+                subtitle={group.subtitle}
+                actions={group.actions}
+                openerStyle="togglebox"
+              >
+                {group.items.map((list, i) => (
+                  <List.Item
+                    key={i}
+                    id={list.id}
+                    leftIcon={list.leftIcon}
+                    subtitle={list.subtitle}
+                    title={list.title}
+                    groupId={group.id}
+                    selectedOptions={{
+                      checked: true,
+                    }}
+                    rightSideContent={list.rightSideContent}
+                  />
+                ))}
+              </List.Group>
+            ))}
+          </List>
+        );
+        cy.findAllByLabelText("list-show-more-button")
+          .eq(0)
+          .should("have.text", "Show all content");
+      });
+    });
+
+    context("when given lessItemsText", () => {
+      it("renders with the text", () => {
+        cy.mount(
+          <List
+            searchable
+            draggable
+            selectable
+            maxItems={2}
+            labels={{
+              lessItemsText: "Collapsed all content",
+            }}
+            alwaysShowDragIcon={false}
+            containerStyle={css`
+              padding: 16px;
+              min-width: 350px;
+            `}
+          >
+            {LIST_GROUPS_OPENABLE.map((group, index) => (
+              <List.Group
+                key={index}
+                id={group.id}
+                title={group.title}
+                subtitle={group.subtitle}
+                actions={group.actions}
+                openerStyle="togglebox"
+              >
+                {group.items.map((list, i) => (
+                  <List.Item
+                    key={i}
+                    id={list.id}
+                    leftIcon={list.leftIcon}
+                    subtitle={list.subtitle}
+                    title={list.title}
+                    groupId={group.id}
+                    selectedOptions={{
+                      checked: true,
+                    }}
+                    rightSideContent={list.rightSideContent}
+                  />
+                ))}
+              </List.Group>
+            ))}
+          </List>
+        );
+        cy.findAllByLabelText("list-show-more-button")
+          .eq(0)
+          .click()
+          .should("have.text", "Collapsed all content");
+      });
+    });
+
+    context("withIcon", () => {
+      context("when given false", () => {
+        it("renders without icon", () => {
+          cy.mount(
+            <List
+              searchable
+              draggable
+              selectable
+              maxItems={2}
+              labels={{
+                withIcon: false,
+              }}
+              alwaysShowDragIcon={false}
+              containerStyle={css`
+                padding: 16px;
+                min-width: 350px;
+              `}
+            >
+              {LIST_GROUPS_OPENABLE.map((group, index) => (
+                <List.Group
+                  key={index}
+                  id={group.id}
+                  title={group.title}
+                  subtitle={group.subtitle}
+                  actions={group.actions}
+                  openerStyle="togglebox"
+                >
+                  {group.items.map((list, i) => (
+                    <List.Item
+                      key={i}
+                      id={list.id}
+                      leftIcon={list.leftIcon}
+                      subtitle={list.subtitle}
+                      title={list.title}
+                      groupId={group.id}
+                      selectedOptions={{
+                        checked: true,
+                      }}
+                      rightSideContent={list.rightSideContent}
+                    />
+                  ))}
+                </List.Group>
+              ))}
+            </List>
+          );
+          cy.findByLabelText("list-show-more-arrow").should("not.exist");
+        });
+      });
+
+      context("when given true", () => {
+        it("renders with icon", () => {
+          cy.mount(
+            <List
+              searchable
+              draggable
+              selectable
+              maxItems={2}
+              labels={{
+                withIcon: false,
+              }}
+              alwaysShowDragIcon={false}
+              containerStyle={css`
+                padding: 16px;
+                min-width: 350px;
+              `}
+            >
+              {LIST_GROUPS_OPENABLE.map((group, index) => (
+                <List.Group
+                  key={index}
+                  id={group.id}
+                  title={group.title}
+                  subtitle={group.subtitle}
+                  actions={group.actions}
+                  openerStyle="togglebox"
+                >
+                  {group.items.map((list, i) => (
+                    <List.Item
+                      key={i}
+                      id={list.id}
+                      leftIcon={list.leftIcon}
+                      subtitle={list.subtitle}
+                      title={list.title}
+                      groupId={group.id}
+                      selectedOptions={{
+                        checked: true,
+                      }}
+                      rightSideContent={list.rightSideContent}
+                    />
+                  ))}
+                </List.Group>
+              ))}
+            </List>
+          );
+          cy.findAllByLabelText("list-show-more-arrow").eq(0).should("exist");
+        });
+      });
+
+      context("when not given", () => {
+        it("renders with icon", () => {
+          cy.mount(
+            <List
+              searchable
+              draggable
+              selectable
+              maxItems={2}
+              labels={{
+                withIcon: false,
+              }}
+              alwaysShowDragIcon={false}
+              containerStyle={css`
+                padding: 16px;
+                min-width: 350px;
+              `}
+            >
+              {LIST_GROUPS_OPENABLE.map((group, index) => (
+                <List.Group
+                  key={index}
+                  id={group.id}
+                  title={group.title}
+                  subtitle={group.subtitle}
+                  actions={group.actions}
+                  openerStyle="togglebox"
+                >
+                  {group.items.map((list, i) => (
+                    <List.Item
+                      key={i}
+                      id={list.id}
+                      leftIcon={list.leftIcon}
+                      subtitle={list.subtitle}
+                      title={list.title}
+                      groupId={group.id}
+                      selectedOptions={{
+                        checked: true,
+                      }}
+                      rightSideContent={list.rightSideContent}
+                    />
+                  ))}
+                </List.Group>
+              ))}
+            </List>
+          );
+          cy.findAllByLabelText("list-show-more-arrow").eq(0).should("exist");
+        });
+      });
+    });
+
+    context("iconSize", () => {
+      context("when given 20", () => {
+        it("renders at 20px", () => {
+          cy.mount(
+            <List
+              searchable
+              draggable
+              selectable
+              maxItems={2}
+              labels={{
+                iconSize: 20,
+              }}
+              alwaysShowDragIcon={false}
+              containerStyle={css`
+                padding: 16px;
+                min-width: 350px;
+              `}
+            >
+              {LIST_GROUPS_OPENABLE.map((group, index) => (
+                <List.Group
+                  key={index}
+                  id={group.id}
+                  title={group.title}
+                  subtitle={group.subtitle}
+                  actions={group.actions}
+                  openerStyle="togglebox"
+                >
+                  {group.items.map((list, i) => (
+                    <List.Item
+                      key={i}
+                      id={list.id}
+                      leftIcon={list.leftIcon}
+                      subtitle={list.subtitle}
+                      title={list.title}
+                      groupId={group.id}
+                      selectedOptions={{
+                        checked: true,
+                      }}
+                      rightSideContent={list.rightSideContent}
+                    />
+                  ))}
+                </List.Group>
+              ))}
+            </List>
+          );
+          cy.findAllByLabelText("list-show-more-arrow")
+            .eq(0)
+            .should("have.css", "width", "20px")
+            .and("have.css", "height", "20px");
+        });
+      });
+    });
+  });
+
   context("alwaysShowDragIcon", () => {
     context("when given false", () => {
       it("renders when hovered", () => {
@@ -1486,72 +2147,6 @@ describe("List", () => {
       });
     });
   });
-
-  const LIST_GROUPS_OPENABLE: ListGroupContentProps[] = [
-    {
-      id: "recent-content",
-      title: "Recent Content",
-      subtitle: "Your latest activity",
-      items: [
-        {
-          id: "messages",
-          title: "Messages",
-          subtitle: "Check your inbox",
-          leftIcon: RiMailFill,
-          children:
-            "Stay connected with your contacts by checking and replying to your recent messages. Keep conversations organized and never miss important updates.",
-        },
-        {
-          id: "notifications",
-          title: "Notifications",
-          subtitle: "View Alerts",
-          leftIcon: RiNotification3Fill,
-          children:
-            "See what's new at a glance. Review recent alerts, mentions, and important reminders to stay on top of your activities.",
-        },
-        {
-          id: "calendar",
-          title: "Calendar",
-          subtitle: "Upcoming events",
-          leftIcon: RiCalendar2Fill,
-          children:
-            "View your scheduled events and upcoming meetings in one place. Manage your time effectively and plan your week with confidence.",
-        },
-      ],
-    },
-    {
-      id: "all-content",
-      title: "All Content",
-      subtitle: "With warning rightSideContent",
-      items: [
-        {
-          id: "home",
-          title: "Home",
-          subtitle: "Go to homepage",
-          leftIcon: RiHome2Fill,
-          children:
-            "Return to your main dashboard where you can quickly access all your essential tools, updates, and recent highlights in one glance.",
-        },
-        {
-          id: "profile",
-          title: "Profile",
-          subtitle: "View your profile",
-          leftIcon: RiUser3Fill,
-          children:
-            "Customize your personal information, update your avatar, and manage your account preferences to reflect your identity and style.",
-        },
-        {
-          id: "settings",
-          title: "Settings",
-          subtitle: "Adjust preferences",
-          leftIcon: RiSettings3Fill,
-          openable: true,
-          children:
-            "Modify your system preferences, manage privacy and notifications, and fine-tune your user experience to suit your workflow.",
-        },
-      ],
-    },
-  ];
 
   context("onOpen", () => {
     context("when clicking", () => {
