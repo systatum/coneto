@@ -370,6 +370,8 @@ function ListGroup({
     alwaysShowDragIcon,
     labels,
     maxItems,
+    maxItemsStyle,
+    maxItemsWithIcon,
   } = props as ListItemWithId &
     ListAlwaysShowDragIconProp &
     ListMaxItemsProp & { labels?: ListLabelsProps };
@@ -563,6 +565,8 @@ function ListGroup({
             isOpen={isOpen}
             setExpanded={setExpanded}
             key={`list-show-more-${isOpen}`}
+            maxItemsStyle={maxItemsStyle}
+            maxItemsWithIcon={maxItemsWithIcon}
             labels={labels}
             maxItems={maxItems}
           />
