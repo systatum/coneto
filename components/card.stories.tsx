@@ -20,7 +20,7 @@ import { Searchbox } from "./searchbox";
 import { ChangeEvent, useMemo, useState } from "react";
 import { Checkbox } from "./checkbox";
 import { Button } from "./button";
-import { List, ListItemProps } from "./list";
+import { List, ListGroupContentProps, ListItemProps } from "./list";
 import { css } from "styled-components";
 import { ColumnTableProps, SubMenuListTableProps, Table } from "./table";
 import { DormantText } from "./dormant-text";
@@ -507,11 +507,7 @@ export const WithHeader: Story = {
 
 export const WithHeaderAndFooter: Story = {
   render: () => {
-    const LIST_GROUPS: {
-      id: string;
-      title: string;
-      items: ListItemProps[];
-    }[] = [
+    const LIST_GROUPS: ListGroupContentProps[] = [
       {
         id: "breakfast",
         title: "Breakfast",
