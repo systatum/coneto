@@ -196,11 +196,17 @@ function List({
   const [openedIds, setOpenedIds] = useState<Set<string>>(new Set());
   const [openTipRowId, setOpenTipRowId] = useState<string | null>("");
 
+  const childArray = Children.toArray(children).filter(isValidElement);
+
+  const hasGroup = childArray.some((child) => {
+    if (!isValidElement(child)) return false;
+
+    return (child as ReactElement).type === List.Group;
+  });
+
   const [dragItem, setDragItem] = useState(null);
   const [value, setValue] = useState("");
-  const [expanded, setExpanded] = useState(true);
-
-  const childArray = Children.toArray(children).filter(isValidElement);
+  const [expanded, setExpanded] = useState(hasGroup ? true : false);
 
   const setIsOpen = (id: string) => {
     setOpenedIds((prev) => {
@@ -232,12 +238,6 @@ function List({
       return next;
     });
   };
-
-  const hasGroup = childArray.some((child) => {
-    if (!isValidElement(child)) return false;
-
-    return (child as ReactElement).type === List.Group;
-  });
 
   return (
     <OpenedContext.Provider
@@ -374,7 +374,7 @@ function ListGroup({
   const childArray = Children.toArray(children).filter(isValidElement);
 
   const [isOpen, setIsOpen] = useState(true);
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
 
   const finalActions =
     actions &&
