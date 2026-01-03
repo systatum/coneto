@@ -333,6 +333,14 @@ function ComboboxDrawer({
                 rowStyle={css`
                   border-radius: 0px;
                   padding: 0.5rem 0.75rem;
+
+                  ${isSelected &&
+                  !multiple &&
+                  css`
+                    background-color: #61a9f9;
+                    font-weight: 600;
+                    color: white;
+                  `}
                 `}
                 containerStyle={css`
                   padding: 0px;
@@ -354,7 +362,6 @@ function ComboboxDrawer({
                     transform: translateY(-4px);
                   `}
                 `}
-                selectedItem={isSelected && !multiple}
                 selectedOptions={{
                   checked: isSelected,
                 }}

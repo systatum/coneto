@@ -560,7 +560,6 @@ interface ListItemInternal
     Omit<ListItemProps, "leftSideContent" | "onClick"> {
   leftSideContent?: (props?: LeftSideContentMenuProps) => React.ReactNode;
   onClick?: (e?: React.MouseEvent<HTMLDivElement>) => void;
-  selectedItem?: boolean;
 }
 
 interface ListItemWithId {
@@ -594,7 +593,6 @@ function ListItem({
   subtitleStyle,
   leftSideStyle,
   rightSideStyle,
-  selectedItem,
   ...props
 }: ListItemInternal & {
   index?: number;
@@ -628,7 +626,6 @@ function ListItem({
         $isHovered={isHovered === idFullname || openTipRowId === idFullname}
         $style={rowStyle}
         draggable={draggable}
-        $selected={selectedItem}
         onClick={() => {
           if (onClick) {
             onClick();
@@ -871,7 +868,6 @@ const ListItemWrapper = styled.div<{
 const ListItemRow = styled.div<{
   $style?: CSSProp;
   $isHovered?: boolean;
-  $selected?: boolean;
 }>`
   display: flex;
   flex-direction: row;
@@ -890,14 +886,6 @@ const ListItemRow = styled.div<{
     css`
       background-color: #dbeafe;
     `}
-
-  ${({ $selected }) =>
-    $selected &&
-    css`
-      background-color: #61a9f9;
-      font-weight: 600;
-      color: white;
-    `};
 
   ${({ $style }) => $style}
 `;
