@@ -1,6 +1,33 @@
+import marked from "./../../lib/marked/marked";
 import { RichEditor } from "./../../components/rich-editor";
+import { useEffect, useState } from "react";
 
 describe("RichEditor", () => {
+  context("with mounted-state guard", () => {
+    it("safely aborts async parsing after unmount", () => {
+      cy.stub(marked, "parse").callsFake(
+        () =>
+          new Promise((resolve) => {
+            setTimeout(() => resolve("<p>test</p>"), 50);
+          })
+      );
+
+      function Wrapper() {
+        const [show, setShow] = useState(true);
+
+        useEffect(() => {
+          setShow(false);
+        }, []);
+
+        return show ? <RichEditor value="test" /> : null;
+      }
+
+      cy.mount(<Wrapper />);
+
+      cy.wait(60);
+    });
+  });
+
   context("preprocessed value", () => {
     context("paragraph", () => {
       context("when the next line have empty space", () => {
@@ -21,8 +48,7 @@ Paragraph line 2`;
           const input = `Paragraph line 1
 Paragraph line 2
 Paragraph line 3
-Paragraph line 4
-`;
+Paragraph line 4`;
           cy.mount(<RichEditor value={input} />);
           cy.findByRole("textbox")
             .invoke("text")

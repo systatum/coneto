@@ -387,14 +387,15 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     }, [mode]);
 
     useEffect(() => {
-      if (!editorRef.current || editorRef.current.innerHTML) return;
+      let isMounted = true;
 
       const initializeEditor = async () => {
-        let processedValue = value;
+        if (!editorRef.current || editorRef.current.innerHTML) return;
 
-        processedValue = preprocessMarkdown(processedValue);
-
+        let processedValue = preprocessMarkdown(value);
         let html = await marked.parse(processedValue);
+
+        if (!isMounted || !editorRef.current) return;
 
         html = html.replace(/<p>&nbsp;<\/p>/g, "<p><br></p>");
 
@@ -409,6 +410,10 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       };
 
       initializeEditor();
+
+      return () => {
+        isMounted = false;
+      };
     }, []);
 
     const handleFilteringCheckbox = () => {
