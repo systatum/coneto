@@ -75,13 +75,17 @@ export interface TableProps {
   disablePreviousPageButton?: boolean;
   disableNextPageButton?: boolean;
   pageNumberText?: string | number;
-  labels?: null | ((count: number) => string);
+  labels?: TableLabelsProps | null;
   sumRow?: SummaryRowProps[];
   containerStyle?: CSSProp;
   tableRowContainerStyle?: CSSProp;
   paginationWrapperStyle?: CSSProp;
   paginationNumberStyle?: CSSProp;
-  totalSelectedItemStyle?: CSSProp;
+}
+
+interface TableLabelsProps {
+  totalSelectedItem?: (count: number) => string;
+  style?: CSSProp;
 }
 
 interface TableAlwaysShowDragIconProp {
@@ -175,7 +179,6 @@ function Table({
   tableRowContainerStyle,
   paginationWrapperStyle,
   paginationNumberStyle,
-  totalSelectedItemStyle,
   alwaysShowDragIcon = true,
 }: TableProps & TableAlwaysShowDragIconProp) {
   const [dragItem, setDragItem] = useState<{
@@ -403,10 +406,10 @@ function Table({
                   {selectable && labels !== null && (
                     <PaginationSelectedItem
                       aria-label="pagination-selected-item"
-                      $style={totalSelectedItemStyle}
+                      $style={labels?.style}
                     >
                       {labels
-                        ? labels(selectedData.length)
+                        ? labels?.totalSelectedItem(selectedData.length)
                         : `${selectedData.length} items selected`}
                     </PaginationSelectedItem>
                   )}
