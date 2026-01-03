@@ -1,8 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { Sidebar } from "./sidebar";
+import { Sidebar, SidebarListProps, SidebarSearchProps } from "./sidebar";
 import { ChangeEvent, useMemo, useState } from "react";
-import { Searchbox } from "./searchbox";
-import { TreeList } from "./treelist";
 import { EmptySlate } from "./empty-slate";
 import { Button } from "./button";
 
@@ -65,6 +63,54 @@ export const Default: Story = {
       })).filter((data) => data.items.length > 0);
     }, [TREE_LIST_DATA, value]);
 
+    const searchboxProps: SidebarSearchProps = useMemo(
+      () => ({
+        name: "caption",
+        value: value.caption,
+        onChange: onChangeValue,
+      }),
+      [value.caption, onChangeValue]
+    );
+
+    const listProps: SidebarListProps = {
+      content: FILTERED_CONTENT,
+      emptySlate: (
+        <EmptySlate
+          imageUrl="https://picsum.photos/200?random=1"
+          title="No Matches"
+          subtitle="We couldn't find any person or team that matches your search."
+          containerStyle={{
+            textAlign: "center",
+            alignItems: "center",
+          }}
+          imageStyle={{
+            maxWidth: "200px",
+          }}
+          actions={
+            <>
+              <Button
+                variant="default"
+                buttonStyle={{
+                  fontSize: "12px",
+                }}
+              >
+                Clear Search
+              </Button>
+              <Button
+                variant="primary"
+                buttonStyle={{
+                  fontSize: "12px",
+                }}
+              >
+                Add Member
+              </Button>
+            </>
+          }
+        />
+      ),
+      searchTerm: value.caption,
+    };
+
     return (
       <div
         style={{
@@ -74,55 +120,11 @@ export const Default: Story = {
           justifyContent: "space-between",
         }}
       >
-        <Sidebar position="left">
-          <Sidebar.Item>
-            <Searchbox
-              name="caption"
-              value={value.caption}
-              onChange={onChangeValue}
-            />
-          </Sidebar.Item>
-          <Sidebar.Item>
-            <TreeList
-              content={FILTERED_CONTENT}
-              emptySlate={
-                <EmptySlate
-                  imageUrl="https://picsum.photos/200?random=1"
-                  title="No Matches"
-                  subtitle="We couldn't find any person or team that matches your search."
-                  containerStyle={{
-                    textAlign: "center",
-                    alignItems: "center",
-                  }}
-                  imageStyle={{
-                    maxWidth: "200px",
-                  }}
-                  actions={
-                    <>
-                      <Button
-                        variant="default"
-                        buttonStyle={{
-                          fontSize: "12px",
-                        }}
-                      >
-                        Clear Search
-                      </Button>
-                      <Button
-                        variant="primary"
-                        buttonStyle={{
-                          fontSize: "12px",
-                        }}
-                      >
-                        Add Member
-                      </Button>
-                    </>
-                  }
-                />
-              }
-              searchTerm={value.caption}
-            />
-          </Sidebar.Item>
-        </Sidebar>
+        <Sidebar
+          searchbox={{ props: searchboxProps }}
+          list={{ props: listProps }}
+          position="left"
+        />
         <Sidebar.Spacer />
         <div
           style={{
@@ -186,6 +188,54 @@ export const FixedRight: Story = {
       })).filter((data) => data.items.length > 0);
     }, [TREE_LIST_DATA, value]);
 
+    const searchboxProps: SidebarSearchProps = useMemo(
+      () => ({
+        name: "caption",
+        value: value.caption,
+        onChange: onChangeValue,
+      }),
+      [value.caption, onChangeValue]
+    );
+
+    const listProps: SidebarListProps = {
+      content: FILTERED_CONTENT,
+      emptySlate: (
+        <EmptySlate
+          imageUrl="https://picsum.photos/200?random=1"
+          title="No Matches"
+          subtitle="We couldn't find any person or team that matches your search."
+          containerStyle={{
+            textAlign: "center",
+            alignItems: "center",
+          }}
+          imageStyle={{
+            maxWidth: "200px",
+          }}
+          actions={
+            <>
+              <Button
+                variant="default"
+                buttonStyle={{
+                  fontSize: "12px",
+                }}
+              >
+                Clear Search
+              </Button>
+              <Button
+                variant="primary"
+                buttonStyle={{
+                  fontSize: "12px",
+                }}
+              >
+                Add Member
+              </Button>
+            </>
+          }
+        />
+      ),
+      searchTerm: value.caption,
+    };
+
     return (
       <div
         style={{
@@ -207,55 +257,11 @@ export const FixedRight: Story = {
           Empty Content
         </div>
         <Sidebar.Spacer />
-        <Sidebar position="right">
-          <Sidebar.Item>
-            <Searchbox
-              name="caption"
-              value={value.caption}
-              onChange={onChangeValue}
-            />
-          </Sidebar.Item>
-          <Sidebar.Item>
-            <TreeList
-              content={FILTERED_CONTENT}
-              emptySlate={
-                <EmptySlate
-                  imageUrl="https://picsum.photos/200?random=1"
-                  title="No Matches"
-                  subtitle="We couldn't find any person or team that matches your search."
-                  containerStyle={{
-                    textAlign: "center",
-                    alignItems: "center",
-                  }}
-                  imageStyle={{
-                    maxWidth: "200px",
-                  }}
-                  actions={
-                    <>
-                      <Button
-                        variant="default"
-                        buttonStyle={{
-                          fontSize: "12px",
-                        }}
-                      >
-                        Clear Search
-                      </Button>
-                      <Button
-                        variant="primary"
-                        buttonStyle={{
-                          fontSize: "12px",
-                        }}
-                      >
-                        Add Member
-                      </Button>
-                    </>
-                  }
-                />
-              }
-              searchTerm={value.caption}
-            />
-          </Sidebar.Item>
-        </Sidebar>
+        <Sidebar
+          searchbox={{ props: searchboxProps }}
+          list={{ props: listProps }}
+          position="right"
+        />
       </div>
     );
   },
