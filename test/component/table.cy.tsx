@@ -830,7 +830,7 @@ describe("Table", () => {
       });
     });
 
-    context("when given totalSelectedItemText", () => {
+    context("when given labels", () => {
       const columns: ColumnTableProps[] = [
         {
           id: "name",
@@ -880,7 +880,7 @@ describe("Table", () => {
           cy.mount(
             <Table
               selectable
-              totalSelectedItemText={(count) => `${count} email selected`}
+              labels={(count) => `${count} email selected`}
               columns={columns}
             >
               {rawRows?.map((row, index) => (
@@ -909,7 +909,7 @@ describe("Table", () => {
       context("when given null", () => {
         it("renders without number of selected text", () => {
           cy.mount(
-            <Table selectable totalSelectedItemText={null} columns={columns}>
+            <Table selectable labels={null} columns={columns}>
               {rawRows?.map((row, index) => (
                 <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
                   {[row.name, row.type].map((rowCell, i) => (
