@@ -43,6 +43,12 @@ export interface ListProps extends ListMaxItemsProp {
   openerBehavior?: "any" | "onlyOne";
   onOpen?: (props?: ListOnOpenProps) => void;
   alwaysShowDragIcon?: boolean;
+  labels?: ListLabelsProps;
+}
+
+interface ListLabelsProps {
+  moreItemsText?: ReactNode;
+  lessItemsText?: ReactNode;
 }
 
 export interface ListOnOpenProps {
@@ -92,13 +98,8 @@ interface ListAlwaysShowDragIconProp {
 
 interface ListMaxItemsProp {
   maxItems?: number;
-  labels?: {
-    moreItemsText?: ReactNode;
-    style?: CSSProp;
-    lessItemsText?: ReactNode;
-    withIcon?: boolean;
-    iconSize?: number;
-  };
+  maxItemsStyle?: CSSProp;
+  maxItemsWithIcon?: boolean;
 }
 
 export interface LeftSideContentMenuProps {
@@ -191,6 +192,8 @@ function List({
   alwaysShowDragIcon = true,
   maxItems,
   labels,
+  maxItemsStyle,
+  maxItemsWithIcon,
 }: ListProps) {
   const [openedIds, setOpenedIds] = useState<Set<string>>(new Set());
   const [openTipRowId, setOpenTipRowId] = useState<string | null>("");
@@ -270,7 +273,7 @@ function List({
               ListItemProps &
                 ListItemWithId &
                 ListAlwaysShowDragIconProp &
-                ListMaxItemsProp
+                ListMaxItemsProp & { labels?: ListLabelsProps }
             >;
 
             const isHidden = maxItems && !expanded && index >= maxItems;
@@ -282,6 +285,7 @@ function List({
               setOpenTipRowId,
               alwaysShowDragIcon,
               maxItems,
+              maxItemsStyle,
               labels,
             });
 
@@ -313,6 +317,8 @@ function List({
               expanded={expanded}
               setExpanded={setExpanded}
               labels={labels}
+              maxItemsStyle={maxItemsStyle}
+              maxItemsWithIcon={maxItemsWithIcon}
               maxItems={maxItems}
               isOpen={undefined}
             />
@@ -364,7 +370,9 @@ function ListGroup({
     alwaysShowDragIcon,
     labels,
     maxItems,
-  } = props as ListItemWithId & ListAlwaysShowDragIconProp & ListMaxItemsProp;
+  } = props as ListItemWithId &
+    ListAlwaysShowDragIconProp &
+    ListMaxItemsProp & { labels?: ListLabelsProps };
 
   const { dragItem, setDragItem, onDragged } = useContext(DnDContext);
   const childArray = Children.toArray(children).filter(isValidElement);
@@ -604,16 +612,19 @@ function ListShowMoreButton({
   isOpen,
   setExpanded,
   labels,
+  maxItemsStyle,
+  maxItemsWithIcon,
 }: {
   expanded: boolean;
   setExpanded: (prop: boolean) => void;
   isOpen?: boolean | undefined;
+  labels?: ListLabelsProps;
 } & ListMaxItemsProp) {
   return (
     <ShowMoreButton
       aria-label="list-show-more-button"
       $style={css`
-        ${labels?.style}
+        ${maxItemsStyle}
         ${isOpen !== undefined &&
         !isOpen &&
         css`
@@ -626,12 +637,12 @@ function ListShowMoreButton({
         ? (labels?.lessItemsText ?? "Show less")
         : (labels?.moreItemsText ?? "Show more")}
 
-      {(labels?.withIcon ? labels?.withIcon : true) && (
+      {(maxItemsWithIcon ? maxItemsWithIcon : true) && (
         <RiArrowDownSLine
           aria-label="list-show-more-arrow"
           style={{
-            width: labels?.iconSize ?? 16,
-            height: labels?.iconSize ?? 16,
+            width: 16,
+            height: 16,
             marginLeft: 8,
             transition: "transform 0.3s ease",
             transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
