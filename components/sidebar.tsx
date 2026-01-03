@@ -1,18 +1,31 @@
-import { ReactNode, useEffect, useLayoutEffect, useState } from "react";
+import { memo, ReactNode, useEffect, useLayoutEffect, useState } from "react";
 import { useSwipeable } from "react-swipeable";
 import { useAnimation } from "framer-motion";
 import { RiArrowLeftSLine, RiArrowRightSLine } from "@remixicon/react";
 import { motion } from "framer-motion";
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
+import { TreeList, TreeListProps } from "./treelist";
+import { Searchbox, SearchboxProps } from "./searchbox";
 
-interface SidebarProps {
+export interface SidebarProps {
   children?: ReactNode;
   mobileStyle?: CSSProp;
   desktopStyle?: CSSProp;
   position?: "left" | "right";
+  searchbox?: {
+    containerStyle?: CSSProp;
+    props: SearchboxProps;
+  };
+  list?: {
+    containerStyle?: CSSProp;
+    props: TreeListProps;
+  };
 }
 
-interface SidebarItemProps {
+export type SidebarListProps = TreeListProps;
+export type SidebarSearchProps = SearchboxProps;
+
+export interface SidebarItemProps {
   isFixed?: boolean;
   style?: CSSProp;
   children?: ReactNode;
@@ -23,6 +36,8 @@ function Sidebar({
   mobileStyle,
   desktopStyle,
   position = "left",
+  list,
+  searchbox,
 }: SidebarProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(true);
@@ -89,6 +104,15 @@ function Sidebar({
         $position={position}
         $style={mobileStyle}
       >
+        {searchbox && (
+          <SidebarSearchbox
+            props={searchbox.props}
+            style={searchbox.containerStyle}
+          />
+        )}
+        {list && (
+          <SidebarTreeList props={list.props} style={list.containerStyle} />
+        )}
         {children}
       </MotionSidebar>
 
@@ -103,11 +127,54 @@ function Sidebar({
       )}
 
       <DesktopSidebar $position={position} $style={desktopStyle}>
+        {searchbox && (
+          <SidebarSearchbox
+            props={searchbox.props}
+            style={searchbox.containerStyle}
+          />
+        )}
+        {list && (
+          <SidebarTreeList props={list.props} style={list.containerStyle} />
+        )}
         {children}
       </DesktopSidebar>
     </>
   );
 }
+
+const SidebarSearchbox = memo(function SearchboxComponent({
+  props,
+  style,
+}: {
+  props: SearchboxProps;
+  style?: CSSProp;
+}) {
+  return (
+    <Sidebar.Item style={style}>
+      <Searchbox
+        {...props}
+        style={css`
+          height: 30px;
+          ${props.style}
+        `}
+      />
+    </Sidebar.Item>
+  );
+});
+
+const SidebarTreeList = memo(function TreeListComponent({
+  props,
+  style,
+}: {
+  props: TreeListProps;
+  style?: CSSProp;
+}) {
+  return (
+    <Sidebar.Item style={style}>
+      <TreeList {...props} />
+    </Sidebar.Item>
+  );
+});
 
 const Overlay = styled.div<{ $isOpen: boolean; $position: "left" | "right" }>`
   position: fixed;
