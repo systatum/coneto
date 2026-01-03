@@ -75,7 +75,7 @@ export interface TableProps {
   disablePreviousPageButton?: boolean;
   disableNextPageButton?: boolean;
   pageNumberText?: string | number;
-  totalSelectedItemText?: null | ((count: number) => string);
+  labels?: null | ((count: number) => string);
   sumRow?: SummaryRowProps[];
   containerStyle?: CSSProp;
   tableRowContainerStyle?: CSSProp;
@@ -165,7 +165,7 @@ function Table({
   onNextPageRequested,
   onPreviousPageRequested,
   pageNumberText = 1,
-  totalSelectedItemText,
+  labels,
   searchable,
   onSearchboxChange,
   draggable,
@@ -321,7 +321,7 @@ function Table({
     <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
       <TableColumnContext.Provider value={columns}>
         <Wrapper $containerStyle={containerStyle}>
-          {((selectedData.length > 0 && totalSelectedItemText !== null) ||
+          {((selectedData.length > 0 && labels !== null) ||
             showPagination ||
             actions ||
             searchable) && (
@@ -400,13 +400,13 @@ function Table({
                         : pageNumberText}
                     </PaginationNumber>
                   )}
-                  {selectable && totalSelectedItemText !== null && (
+                  {selectable && labels !== null && (
                     <PaginationSelectedItem
                       aria-label="pagination-selected-item"
                       $style={totalSelectedItemStyle}
                     >
-                      {totalSelectedItemText
-                        ? totalSelectedItemText(selectedData.length)
+                      {labels
+                        ? labels(selectedData.length)
                         : `${selectedData.length} items selected`}
                     </PaginationSelectedItem>
                   )}
