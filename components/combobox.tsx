@@ -325,10 +325,6 @@ function ComboboxDrawer({
         >
           {options.map((option, index) => {
             const isSelected = selectedOptions.includes(option.value);
-            const shouldHighlight =
-              highlightOnMatch && isSelected
-                ? true
-                : highlightedIndex === index + (actions?.length || 0);
 
             return (
               <List.Item
@@ -452,37 +448,6 @@ const Divider = styled.div`
   height: 1px;
   border-bottom: 1px solid #d1d5db;
   margin: 2px 0;
-`;
-
-const OptionItem = styled.li<{
-  $selected?: boolean;
-  $highlighted?: boolean;
-  $optionDisplay: boolean;
-}>`
-  cursor: pointer;
-  padding: 0.5rem 0.75rem;
-  display: flex;
-  flex-direction: row;
-  gap: 8px;
-
-  ${({ $optionDisplay }) =>
-    $optionDisplay
-      ? css`
-          align-items: start;
-        `
-      : css`
-          align-items: center;
-        `}
-
-  ${({ $highlighted }) => ($highlighted ? "background-color: #dbeafe;" : "")}
-  ${({ $selected }) =>
-    $selected
-      ? `
-    background-color: #61A9F9;
-    font-weight: 600;
-    color: white;
-  `
-      : ""}
 `;
 
 const EmptyState = styled.li`
