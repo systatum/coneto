@@ -695,6 +695,14 @@ function ListItem({
         <ListItemLeft $style={leftSideStyle} aria-label="list-item-left-side">
           {selectable && selectedOptions && (
             <Checkbox
+              iconStyle={css`
+                width: 8px;
+                height: 8px;
+              `}
+              inputStyle={css`
+                width: 14px;
+                height: 14px;
+              `}
               name="checked"
               value={selectedOptions.value}
               checked={selectedOptions.checked}
