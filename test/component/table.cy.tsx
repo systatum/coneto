@@ -413,55 +413,6 @@ describe("Table", () => {
       });
     });
 
-    context("with totalSelectedItemStyle", () => {
-      context("when given 100px", () => {
-        it("renders text with 100px", () => {
-          cy.mount(
-            <Table
-              selectable
-              totalSelectedItemStyle={css`
-                font-size: 100px;
-              `}
-              tableRowContainerStyle={css`
-                max-height: 400px;
-              `}
-              selectedItems={[
-                "Tech Articles-Understanding React 18-Frontend-John Doe",
-              ]}
-              columns={columns}
-            >
-              {TABLE_ITEMS?.map((groupValue, groupIndex) => (
-                <Table.Row.Group
-                  key={groupIndex}
-                  title={groupValue.title}
-                  subtitle={groupValue.subtitle}
-                >
-                  {groupValue.items.map((rowValue, rowIndex) => (
-                    <Table.Row
-                      key={rowIndex}
-                      rowId={`${groupValue.title}-${rowValue.title}-${rowValue.category}-${rowValue.author}`}
-                      content={[
-                        rowValue.title,
-                        rowValue.category,
-                        rowValue.author,
-                      ]}
-                      actions={ROW_ACTIONS}
-                    />
-                  ))}
-                </Table.Row.Group>
-              ))}
-            </Table>
-          );
-
-          cy.findByLabelText("pagination-selected-item").should(
-            "have.css",
-            "font-size",
-            "100px"
-          );
-        });
-      });
-    });
-
     context("with paginationNumberStyle", () => {
       context("when given 30px", () => {
         it("renders text with 30px", () => {
@@ -875,12 +826,65 @@ describe("Table", () => {
         cy.findByText("20 items selected").should("exist");
       });
 
+      context("with style", () => {
+        context("when given 100px", () => {
+          it("renders text with 100px", () => {
+            cy.mount(
+              <Table
+                selectable
+                labels={{
+                  style: css`
+                    font-size: 100px;
+                  `,
+                }}
+                tableRowContainerStyle={css`
+                  max-height: 400px;
+                `}
+                selectedItems={[
+                  "Tech Articles-Understanding React 18-Frontend-John Doe",
+                ]}
+                columns={columns}
+              >
+                {TABLE_ITEMS?.map((groupValue, groupIndex) => (
+                  <Table.Row.Group
+                    key={groupIndex}
+                    title={groupValue.title}
+                    subtitle={groupValue.subtitle}
+                  >
+                    {groupValue.items.map((rowValue, rowIndex) => (
+                      <Table.Row
+                        key={rowIndex}
+                        rowId={`${groupValue.title}-${rowValue.title}-${rowValue.category}-${rowValue.author}`}
+                        content={[
+                          rowValue.title,
+                          rowValue.category,
+                          rowValue.author,
+                        ]}
+                        actions={ROW_ACTIONS}
+                      />
+                    ))}
+                  </Table.Row.Group>
+                ))}
+              </Table>
+            );
+
+            cy.findByLabelText("pagination-selected-item").should(
+              "have.css",
+              "font-size",
+              "100px"
+            );
+          });
+        });
+      });
+
       context("when given function", () => {
         it("renders with customize text", () => {
           cy.mount(
             <Table
               selectable
-              labels={(count) => `${count} email selected`}
+              labels={{
+                totalSelectedItem: (count) => `${count} email selected`,
+              }}
               columns={columns}
             >
               {rawRows?.map((row, index) => (
