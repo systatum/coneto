@@ -14,7 +14,7 @@ import { DrawerProps, OptionsProps, Selectbox } from "./selectbox";
 import { RemixiconComponentType } from "@remixicon/react";
 import styled, { css, CSSProp } from "styled-components";
 import { Searchbox } from "./searchbox";
-import { Checkbox } from "./checkbox";
+import { List } from "./list";
 
 export type ComboboxProps = Partial<BaseComboboxProps> & {
   label?: string;
@@ -315,78 +315,85 @@ function ComboboxDrawer({
           <Divider aria-label="divider" />
         </ActionWrapper>
       )}
-      {options.length > 0 ? (
-        options.map((option, index) => {
-          const isSelected = selectedOptions.includes(option.value);
-          const shouldHighlight =
-            highlightOnMatch && isSelected
-              ? true
-              : highlightedIndex === index + (actions?.length || 0);
-          return (
-            <OptionItem
-              key={option.value}
-              id={`option-${index}`}
-              role="option"
-              aria-selected={isSelected && !multiple}
-              data-highlighted={shouldHighlight}
-              $selected={isSelected && !multiple}
-              $highlighted={shouldHighlight}
-              $optionDisplay={!!option.render}
-              onMouseDown={(e) => {
-                e.preventDefault();
-                if (multiple) {
-                  if (!selectedOptions.includes(option.value)) {
-                    if (
-                      !maxSelectableItems ||
-                      selectedOptions.length < maxSelectableItems
-                    ) {
-                      setSelectedOptions([...selectedOptions, option.value]);
-                    }
-                  } else {
-                    setSelectedOptions(
-                      selectedOptions.filter((val) => val !== option.value)
-                    );
-                  }
-                  (inputRef as RefObject<HTMLInputElement>)?.current?.focus();
-                } else {
-                  setIsOpen(false);
-                  setSelectedOptionsLocal(option);
-                  setSelectedOptions([option.value]);
-                  setHasInteracted(false);
-                }
 
-                onClick?.();
-              }}
-              onMouseEnter={() =>
-                setHighlightedIndex(index + (actions?.length || 0))
-              }
-              ref={(el) => {
-                listRef.current[index + (actions?.length || 0)] = el;
-              }}
-            >
-              {multiple && (
-                <Checkbox
-                  iconStyle={css`
-                    width: 8px;
-                    height: 8px;
+      {options.length > 0 ? (
+        <List
+          containerStyle={css`
+            gap: 0px;
+          `}
+          selectable={multiple}
+        >
+          {options.map((option, index) => {
+            const isSelected = selectedOptions.includes(option.value);
+            const shouldHighlight =
+              highlightOnMatch && isSelected
+                ? true
+                : highlightedIndex === index + (actions?.length || 0);
+
+            return (
+              <List.Item
+                id={option.value}
+                title={option.render ? option.render : option.text}
+                rowStyle={css`
+                  border-radius: 0px;
+                  padding: 0.5rem 0.75rem;
+                `}
+                containerStyle={css`
+                  padding: 0px;
+                `}
+                leftSideStyle={css`
+                  padding: 0px;
+                  ${option.render &&
+                  css`
+                    align-items: start;
+                    padding-top: 3px;
                   `}
-                  inputStyle={css`
-                    width: 14px;
-                    height: 14px;
+                `}
+                titleStyle={css`
+                  font-weight: 400;
+                  padding: 0px;
+                  font-size: 12px;
+                  ${option.render &&
+                  css`
+                    transform: translateY(-4px);
                   `}
-                  containerStyle={css`
-                    ${option?.render &&
-                    css`
-                      margin-top: 3px;
-                    `}
-                  `}
-                  checked={isSelected}
-                />
-              )}
-              {option?.render ? option?.render : option.text}
-            </OptionItem>
-          );
-        })
+                `}
+                selectedItem={isSelected && !multiple}
+                selectedOptions={{
+                  checked: isSelected,
+                }}
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  if (multiple) {
+                    if (!selectedOptions.includes(option.value)) {
+                      if (
+                        !maxSelectableItems ||
+                        selectedOptions.length < maxSelectableItems
+                      ) {
+                        setSelectedOptions([...selectedOptions, option.value]);
+                      }
+                    } else {
+                      setSelectedOptions(
+                        selectedOptions.filter((val) => val !== option.value)
+                      );
+                    }
+                    (inputRef as RefObject<HTMLInputElement>)?.current?.focus();
+                  } else {
+                    setIsOpen(false);
+                    setSelectedOptionsLocal(option);
+                    setSelectedOptions([option.value]);
+                    setHasInteracted(false);
+                  }
+
+                  onClick?.();
+                }}
+                onMouseEnter={() =>
+                  setHighlightedIndex(index + (actions?.length || 0))
+                }
+              />
+            );
+          })}
+        </List>
       ) : (
         <EmptyState>{emptySlate}</EmptyState>
       )}
