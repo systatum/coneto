@@ -76,7 +76,7 @@ export const Default: Story = {
     return (
       <Card>
         <List
-          maxItems={1}
+          maxItems={2}
           containerStyle={css`
             padding: 16px;
             min-width: 280px;
@@ -274,6 +274,7 @@ export const Draggable: Story = {
             padding: 16px;
             min-width: 300px;
           `}
+          maxItems={1}
         >
           {filteredContent.map((group, index) => {
             return (

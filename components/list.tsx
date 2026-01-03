@@ -661,10 +661,6 @@ const ShowMoreButton = styled.button<{ $style?: CSSProp }>`
   justify-content: center;
   align-items: center;
 
-  &:hover {
-    text-decoration: underline;
-  }
-
   ${({ $style }) => $style}
 `;
 
