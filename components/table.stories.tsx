@@ -27,10 +27,16 @@ const meta: Meta<typeof Table> = {
   tags: ["autodocs"],
   args: {
     selectable: false,
+    searchable: false,
+    draggable: false,
     isLoading: false,
+    showPagination: false,
     columns: [],
     actions: [],
     emptySlate: "No data available.",
+    pageNumberText: 1,
+    disableNextPageButton: false,
+    disablePreviousPageButton: false,
   },
   argTypes: {
     selectable: {
@@ -41,71 +47,67 @@ const meta: Meta<typeof Table> = {
         defaultValue: { summary: "false" },
       },
     },
-    isLoading: {
-      description: "Show loading overlay on the table.",
+    searchable: {
+      description: "Show search box in the table header.",
       control: "boolean",
       table: {
         type: { summary: "boolean" },
-        defaultValue: { summary: "false" },
+      },
+    },
+    draggable: {
+      description: "Enable drag-and-drop reordering for rows.",
+      control: "boolean",
+      table: {
+        type: { summary: "boolean" },
+      },
+    },
+    isLoading: {
+      description: "Show loading overlay on top of the table.",
+      control: "boolean",
+      table: {
+        type: { summary: "boolean" },
       },
     },
     columns: {
-      description: "Defines the column headers of the table.",
-      control: "object",
+      description: "Defines table columns.",
+      control: false,
       table: {
         type: { summary: "ColumnTableProps[]" },
       },
     },
     actions: {
-      description:
-        "Array of actions displayed when one or more rows are selected.",
-      control: "object",
+      description: "Action buttons shown in the header when rows are selected.",
+      control: false,
       table: {
         type: { summary: "TableActionsProps[]" },
       },
     },
     onItemsSelected: {
-      description:
-        "Callback triggered with selected rowId array when selection changes.",
-      action: "items selected",
+      description: "Triggered when selected row IDs change.",
+      action: "items-selected",
       table: {
-        type: { summary: "(data: string[]) => void" },
+        type: { summary: "(ids: string[]) => void" },
       },
     },
     children: {
       description:
-        "Table rows (`Table.Row`) or groups (`TableRow.Group`) passed as children.",
+        "Table rows (`Table.Row`) or grouped rows (`TableRow.Group`).",
       control: false,
       table: {
         type: { summary: "ReactNode" },
       },
     },
-    containerStyle: {
-      description: "Class applied to the main container.",
-      control: "text",
-      table: {
-        type: { summary: "string" },
-      },
-    },
-    tableRowContainerStyle: {
-      description: "Class applied to the container holding all table rows.",
-      control: "text",
-      table: {
-        type: { summary: "string" },
-      },
-    },
     subMenuList: {
-      description:
-        "Function to generate menu list for sorting options per column.",
+      description: "Generate sorting menu per column (by column id).",
+      control: false,
       table: {
         type: {
-          summary: "(columnCaption: string) => SubMenuListTableProps[]",
+          summary: "(columnId: string) => SubMenuListTableProps[]",
         },
       },
     },
     emptySlate: {
-      description:
-        "Fallback content shown when no rows are rendered (e.g., 'No data').",
+      description: "Content shown when there are no rows.",
       control: "text",
       table: {
         type: { summary: "ReactNode" },
@@ -113,9 +115,94 @@ const meta: Meta<typeof Table> = {
     },
     onLastRowReached: {
       description:
-        "Callback fired when the last row becomes visible (used for infinite scrolling).",
+        "Called when the last row becomes visible (infinite scroll).",
+      action: "last-row-reached",
       table: {
         type: { summary: "() => void" },
+      },
+    },
+    showPagination: {
+      description: "Enable pagination controls.",
+      control: "boolean",
+      table: {
+        type: { summary: "boolean" },
+      },
+    },
+    onNextPageRequested: {
+      description: "Called when next page button is clicked.",
+      action: "next-page",
+      table: {
+        type: { summary: "() => void" },
+      },
+    },
+    onPreviousPageRequested: {
+      description: "Called when previous page button is clicked.",
+      action: "previous-page",
+      table: {
+        type: { summary: "() => void" },
+      },
+    },
+    disableNextPageButton: {
+      description: "Disable next page button.",
+      control: "boolean",
+      table: {
+        type: { summary: "boolean" },
+      },
+    },
+    disablePreviousPageButton: {
+      description: "Disable previous page button.",
+      control: "boolean",
+      table: {
+        type: { summary: "boolean" },
+      },
+    },
+    pageNumberText: {
+      description: "Text or number displayed in pagination.",
+      control: "text",
+      table: {
+        type: { summary: "string | number" },
+      },
+    },
+    labels: {
+      description: "Custom labels for selected items text.",
+      control: false,
+      table: {
+        type: { summary: "TableLabelsProps | null" },
+      },
+    },
+    sumRow: {
+      description: "Summary row displayed at the bottom of the table.",
+      control: false,
+      table: {
+        type: { summary: "SummaryRowProps[]" },
+      },
+    },
+    containerStyle: {
+      description: "Custom styles for the table wrapper.",
+      control: false,
+      table: {
+        type: { summary: "CSSProp" },
+      },
+    },
+    tableRowContainerStyle: {
+      description: "Custom styles for scrollable row container.",
+      control: false,
+      table: {
+        type: { summary: "CSSProp" },
+      },
+    },
+    paginationWrapperStyle: {
+      description: "Custom styles for pagination wrapper.",
+      control: false,
+      table: {
+        type: { summary: "CSSProp" },
+      },
+    },
+    paginationNumberStyle: {
+      description: "Custom styles for pagination number text.",
+      control: false,
+      table: {
+        type: { summary: "CSSProp" },
       },
     },
   },
@@ -593,7 +680,7 @@ export const WithOneAction: Story = {
         onItemsSelected={handleItemsSelected}
         subMenuList={TIP_MENU_ACTION}
         onLastRowReached={handleFetchData}
-        labels={(n) => `${n} emails selected`}
+        labels={{ totalSelectedItem: (n) => `${n} emails selected` }}
       >
         {rows.map((rowValue, rowIndex) => (
           <Table.Row
