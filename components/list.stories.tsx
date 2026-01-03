@@ -76,7 +76,6 @@ export const Default: Story = {
     return (
       <Card>
         <List
-          maxItems={2}
           containerStyle={css`
             padding: 16px;
             min-width: 280px;
