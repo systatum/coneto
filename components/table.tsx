@@ -83,7 +83,7 @@ export interface TableProps {
   totalSelectedItemStyle?: CSSProp;
 }
 
-interface TableLabelsProps {
+export interface TableLabelsProps {
   totalSelectedItem?: ((count: number) => string) | null;
   pageNumberText?: string | number;
 }

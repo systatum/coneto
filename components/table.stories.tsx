@@ -34,7 +34,6 @@ const meta: Meta<typeof Table> = {
     columns: [],
     actions: [],
     emptySlate: "No data available.",
-    pageNumberText: 1,
     disableNextPageButton: false,
     disablePreviousPageButton: false,
   },
@@ -154,13 +153,6 @@ const meta: Meta<typeof Table> = {
       control: "boolean",
       table: {
         type: { summary: "boolean" },
-      },
-    },
-    pageNumberText: {
-      description: "Text or number displayed in pagination.",
-      control: "text",
-      table: {
-        type: { summary: "string | number" },
       },
     },
     labels: {
@@ -452,11 +444,11 @@ export const Appendable: Story = {
         tableRowContainerStyle={css`
           max-height: 400px;
         `}
+        labels={{ totalSelectedItem: null }}
         columns={columns}
         onItemsSelected={handleItemsSelected}
         subMenuList={TIP_MENU_ACTION}
         onLastRowReached={handleFetchData}
-        labels={null}
       >
         {rows.map((rowValue, rowIndex) => (
           <Table.Row
@@ -851,7 +843,7 @@ export const SortableWithPagination: Story = {
           columns={columns}
           onItemsSelected={handleItemsSelected}
           subMenuList={TIP_MENU_ACTION}
-          pageNumberText={page}
+          labels={{ pageNumberText: page }}
           onPreviousPageRequested={handlePrevious}
           onNextPageRequested={handleNext}
           disableNextPageButton={isDisabledNext}
