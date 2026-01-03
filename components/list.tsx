@@ -92,9 +92,9 @@ interface ListAlwaysShowDragIconProp {
 
 interface ListMaxItemsProp {
   maxItems?: number;
-  maxItemsStyle?: CSSProp;
   labels?: {
     moreItemsText?: ReactNode;
+    style?: CSSProp;
     lessItemsText?: ReactNode;
     withIcon?: boolean;
     iconSize?: number;
@@ -191,7 +191,6 @@ function List({
   alwaysShowDragIcon = true,
   maxItems,
   labels,
-  maxItemsStyle,
 }: ListProps) {
   const [openedIds, setOpenedIds] = useState<Set<string>>(new Set());
   const [openTipRowId, setOpenTipRowId] = useState<string | null>("");
@@ -283,7 +282,6 @@ function List({
               setOpenTipRowId,
               alwaysShowDragIcon,
               maxItems,
-              maxItemsStyle,
               labels,
             });
 
@@ -316,7 +314,6 @@ function List({
               setExpanded={setExpanded}
               labels={labels}
               maxItems={maxItems}
-              maxItemsStyle={maxItemsStyle}
               isOpen={undefined}
             />
           )}
@@ -367,7 +364,6 @@ function ListGroup({
     alwaysShowDragIcon,
     labels,
     maxItems,
-    maxItemsStyle,
   } = props as ListItemWithId & ListAlwaysShowDragIconProp & ListMaxItemsProp;
 
   const { dragItem, setDragItem, onDragged } = useContext(DnDContext);
@@ -520,6 +516,7 @@ function ListGroup({
                 <AnimatePresence>
                   {!isHidden && (
                     <motion.div
+                      aria-label="list-with-max-item"
                       key={`list-${index}`}
                       layout
                       initial={{ opacity: 0, height: 0 }}
@@ -560,7 +557,6 @@ function ListGroup({
             key={`list-show-more-${isOpen}`}
             labels={labels}
             maxItems={maxItems}
-            maxItemsStyle={maxItemsStyle}
           />
         )}
 
@@ -608,7 +604,6 @@ function ListShowMoreButton({
   isOpen,
   setExpanded,
   labels,
-  maxItemsStyle,
 }: {
   expanded: boolean;
   setExpanded: (prop: boolean) => void;
@@ -616,8 +611,9 @@ function ListShowMoreButton({
 } & ListMaxItemsProp) {
   return (
     <ShowMoreButton
+      aria-label="list-show-more-button"
       $style={css`
-        ${maxItemsStyle}
+        ${labels?.style}
         ${isOpen !== undefined &&
         !isOpen &&
         css`
@@ -630,10 +626,12 @@ function ListShowMoreButton({
         ? (labels?.lessItemsText ?? "Show less")
         : (labels?.moreItemsText ?? "Show more")}
 
-      {(labels?.withIcon ?? true) && (
+      {(labels?.withIcon ? labels?.withIcon : true) && (
         <RiArrowDownSLine
-          size={labels?.iconSize ?? 16}
+          aria-label="list-show-more-arrow"
           style={{
+            width: labels?.iconSize ?? 16,
+            height: labels?.iconSize ?? 16,
             marginLeft: 8,
             transition: "transform 0.3s ease",
             transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
