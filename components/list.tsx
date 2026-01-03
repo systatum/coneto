@@ -95,40 +95,6 @@ export interface LeftSideContentMenuProps {
   render?: (children?: ReactNode) => ReactNode;
 }
 
-export interface ListItemProps {
-  id: string;
-  title?: ReactNode | string;
-  subtitle?: string;
-  imageUrl?: string;
-  leftIcon?: RemixiconComponentType | null;
-  draggable?: boolean;
-  groupId?: string;
-  selectable?: boolean;
-  onSelected?: (selected: ChangeEvent<HTMLInputElement>) => void;
-  onClick?: () => void;
-  rightSideContent?: ((prop: string) => ReactNode) | ReactNode;
-  containerStyle?: CSSProp;
-  rowStyle?: CSSProp;
-  actions?: (id?: string) => ListItemActionProps[];
-  children?: ReactNode;
-  openable?: boolean;
-  selectedOptions?: {
-    value?: string;
-    checked?: boolean;
-  };
-  leftSideContent?: ReactNode;
-  titleStyle?: CSSProp;
-  subtitleStyle?: CSSProp;
-  leftSideStyle?: CSSProp;
-  rightSideStyle?: CSSProp;
-}
-
-interface ListItemInternal
-  extends Omit<ListItemProps, "leftSideContent" | "onClick"> {
-  leftSideContent?: (props?: LeftSideContentMenuProps) => ReactNode;
-  onClick?: (e?: React.MouseEvent) => void;
-}
-
 type OpenedContextType = {
   openedIds: Set<string>;
   setIsOpen: (id: string) => void;
@@ -556,6 +522,47 @@ const EmptyContent = styled(motion.div)<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
+export interface ListItemProps {
+  id: string;
+  title?: ReactNode | string;
+  subtitle?: string;
+  imageUrl?: string;
+  leftIcon?: RemixiconComponentType | null;
+  draggable?: boolean;
+  groupId?: string;
+  selectable?: boolean;
+  onSelected?: (selected: ChangeEvent<HTMLInputElement>) => void;
+  onClick?: () => void;
+  rightSideContent?: ((prop: string) => ReactNode) | ReactNode;
+  containerStyle?: CSSProp;
+  rowStyle?: CSSProp;
+  actions?: (id?: string) => ListItemActionProps[];
+  children?: ReactNode;
+  openable?: boolean;
+  selectedOptions?: {
+    value?: string;
+    checked?: boolean;
+  };
+  leftSideContent?: ReactNode;
+  titleStyle?: CSSProp;
+  subtitleStyle?: CSSProp;
+  leftSideStyle?: CSSProp;
+  rightSideStyle?: CSSProp;
+}
+
+type DivProps = Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  "title" | "onClick" | "draggable" | "id"
+>;
+
+interface ListItemInternal
+  extends DivProps,
+    Omit<ListItemProps, "leftSideContent" | "onClick"> {
+  leftSideContent?: (props?: LeftSideContentMenuProps) => React.ReactNode;
+  onClick?: (e?: React.MouseEvent<HTMLDivElement>) => void;
+  selectedItem?: boolean;
+}
+
 interface ListItemWithId {
   openTipRowId?: string | null;
   setOpenTipRowId?: (prop: string | null) => void;
@@ -587,6 +594,7 @@ function ListItem({
   subtitleStyle,
   leftSideStyle,
   rightSideStyle,
+  selectedItem,
   ...props
 }: ListItemInternal & {
   index?: number;
@@ -616,8 +624,11 @@ function ListItem({
       $style={containerStyle}
     >
       <ListItemRow
+        {...props}
         $isHovered={isHovered === idFullname || openTipRowId === idFullname}
         $style={rowStyle}
+        draggable={draggable}
+        $selected={selectedItem}
         onClick={() => {
           if (onClick) {
             onClick();
@@ -626,7 +637,6 @@ function ListItem({
             setIsOpen(idFullname);
           }
         }}
-        draggable={draggable}
         onDragStart={() =>
           setDragItem({
             id: id,
@@ -853,6 +863,7 @@ const ListItemWrapper = styled.div<{
 const ListItemRow = styled.div<{
   $style?: CSSProp;
   $isHovered?: boolean;
+  $selected?: boolean;
 }>`
   display: flex;
   flex-direction: row;
@@ -871,6 +882,14 @@ const ListItemRow = styled.div<{
     css`
       background-color: #dbeafe;
     `}
+
+  ${({ $selected }) =>
+    $selected &&
+    css`
+      background-color: #61a9f9;
+      font-weight: 600;
+      color: white;
+    `};
 
   ${({ $style }) => $style}
 `;
