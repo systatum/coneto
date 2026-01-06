@@ -245,7 +245,7 @@ function ComboboxDrawer({
       $width={refs.reference.current?.getBoundingClientRect().width}
       style={{ ...floatingStyles }}
     >
-      {options.length > 0 ? (
+      {(options || actions) && (
         <List
           containerStyle={listContainerStyle}
           inputRef={inputRef}
@@ -325,77 +325,84 @@ function ComboboxDrawer({
               );
             })}
 
-          {options.map((option, index) => {
-            const isSelected = selectedOptions.includes(option.value);
-            const shouldHighlight =
-              highlightOnMatch && isSelected
-                ? true
-                : highlightedIndex === index + (actions?.length || 0);
+          {options.length > 0 ? (
+            options.map((option, index) => {
+              const isSelected = selectedOptions.includes(option.value);
+              const shouldHighlight =
+                highlightOnMatch && isSelected
+                  ? true
+                  : highlightedIndex === index + (actions?.length || 0);
 
-            return (
-              <List.Item
-                id={option.value}
-                title={option.render ? option.render : option.text}
-                rowStyle={listItemRowStyle({
-                  shouldHighlight,
-                  interactionMode,
-                  isSelected,
-                  multiple,
-                })}
-                containerStyle={listItemContainerStyle}
-                leftSideStyle={[
-                  listItemLeftSideStyle,
-                  option.render && listItemLeftSideWithRender,
-                ]}
-                titleStyle={[
-                  listItemTitleStyle,
-                  option.render && listItemTitleWithRender,
-                ]}
-                selectedOptions={{ checked: isSelected }}
-                onMouseDown={(e) => {
-                  e.preventDefault();
-                  if (multiple) {
-                    if (!selectedOptions.includes(option.value)) {
-                      if (
-                        !maxSelectableItems ||
-                        selectedOptions.length < maxSelectableItems
-                      ) {
-                        setSelectedOptions([...selectedOptions, option.value]);
+              return (
+                <List.Item
+                  id={option.value}
+                  title={option.render ? option.render : option.text}
+                  rowStyle={listItemRowStyle({
+                    shouldHighlight,
+                    interactionMode,
+                    isSelected,
+                    multiple,
+                  })}
+                  containerStyle={listItemContainerStyle}
+                  leftSideStyle={[
+                    listItemLeftSideStyle,
+                    option.render && listItemLeftSideWithRender,
+                  ]}
+                  titleStyle={[
+                    listItemTitleStyle,
+                    option.render && listItemTitleWithRender,
+                  ]}
+                  selectedOptions={{ checked: isSelected }}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    if (multiple) {
+                      if (!selectedOptions.includes(option.value)) {
+                        if (
+                          !maxSelectableItems ||
+                          selectedOptions.length < maxSelectableItems
+                        ) {
+                          setSelectedOptions([
+                            ...selectedOptions,
+                            option.value,
+                          ]);
+                        }
+                      } else {
+                        setSelectedOptions(
+                          selectedOptions.filter((val) => val !== option.value)
+                        );
                       }
+                      (
+                        inputRef as RefObject<HTMLInputElement>
+                      )?.current?.focus();
                     } else {
-                      setSelectedOptions(
-                        selectedOptions.filter((val) => val !== option.value)
-                      );
+                      setIsOpen(false);
+                      setSelectedOptionsLocal(option);
+                      setSelectedOptions([option.value]);
+                      setHasInteracted(false);
                     }
-                    (inputRef as RefObject<HTMLInputElement>)?.current?.focus();
-                  } else {
-                    setIsOpen(false);
-                    setSelectedOptionsLocal(option);
-                    setSelectedOptions([option.value]);
-                    setHasInteracted(false);
-                  }
 
-                  onClick?.();
-                }}
-                onMouseMove={() => {
-                  if (interactionMode !== "mouse") {
-                    setInteractionMode("mouse");
-                  }
-                }}
-                onMouseEnter={() => {
-                  if (interactionMode !== "mouse") return;
+                    onClick?.();
+                  }}
+                  onMouseMove={() => {
+                    if (interactionMode !== "mouse") {
+                      setInteractionMode("mouse");
+                    }
+                  }}
+                  onMouseEnter={() => {
+                    if (interactionMode !== "mouse") return;
 
-                  setHighlightedIndex(index + (actions?.length || 0));
-                }}
-                ref={(el) => {
-                  listRef.current[index + (actions?.length || 0)] = el;
-                }}
-              />
-            );
-          })}
+                    setHighlightedIndex(index + (actions?.length || 0));
+                  }}
+                  ref={(el) => {
+                    listRef.current[index + (actions?.length || 0)] = el;
+                  }}
+                />
+              );
+            })
+          ) : (
+            <EmptyState>{emptySlate}</EmptyState>
+          )}
         </List>
-      ) : (
-        <EmptyState>{emptySlate}</EmptyState>
       )}
     </DrawerWrapper>
   );
