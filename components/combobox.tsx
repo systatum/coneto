@@ -245,47 +245,6 @@ function ComboboxDrawer({
       $width={refs.reference.current?.getBoundingClientRect().width}
       style={{ ...floatingStyles }}
     >
-      {actions && (
-        <List containerStyle={listContainerStyle}>
-          {actions.map((data, index) => {
-            const shouldHighlight = highlightedIndex === index;
-
-            return (
-              <List.Item
-                key={index}
-                id={`action-${index}`}
-                ref={(el) => {
-                  listRef.current[index] = el;
-                }}
-                titleStyle={listItemTitleStyle}
-                rowStyle={listItemRowStyle({
-                  shouldHighlight,
-                  interactionMode,
-                })}
-                containerStyle={listItemContainerStyle}
-                leftSideStyle={listItemLeftSideStyle}
-                title={
-                  <>
-                    {data.title}
-                    {data.icon && (
-                      <IconWrapper>
-                        <data.icon size={16} />
-                      </IconWrapper>
-                    )}
-                  </>
-                }
-                onMouseEnter={() => setHighlightedIndex(index)}
-                onClick={() => {
-                  data.onClick?.();
-                  setIsOpen(false);
-                }}
-              />
-            );
-          })}
-          <Divider aria-label="divider" />
-        </List>
-      )}
-
       {options.length > 0 ? (
         <List
           containerStyle={listContainerStyle}
@@ -325,6 +284,47 @@ function ComboboxDrawer({
             `,
           }}
         >
+          {actions &&
+            actions.map((props, index) => {
+              const shouldHighlight = highlightedIndex === index;
+              const isLast = index === actions.length - 1;
+
+              return (
+                <Fragment key={index}>
+                  <List.Item
+                    id={`action-${index}`}
+                    ref={(el) => {
+                      listRef.current[index] = el;
+                    }}
+                    titleStyle={listItemTitleStyle}
+                    rowStyle={listItemRowStyle({
+                      shouldHighlight,
+                      interactionMode,
+                    })}
+                    containerStyle={listItemContainerStyle}
+                    leftSideStyle={listItemLeftSideStyle}
+                    title={
+                      <>
+                        {props.title}
+                        {props.icon && (
+                          <IconWrapper>
+                            <props.icon size={16} />
+                          </IconWrapper>
+                        )}
+                      </>
+                    }
+                    onMouseEnter={() => setHighlightedIndex(index)}
+                    onClick={() => {
+                      props.onClick?.();
+                      setIsOpen(false);
+                    }}
+                  />
+
+                  {isLast && <Divider aria-label="divider" aria-hidden />}
+                </Fragment>
+              );
+            })}
+
           {options.map((option, index) => {
             const isSelected = selectedOptions.includes(option.value);
             const shouldHighlight =
