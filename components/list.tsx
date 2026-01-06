@@ -9,10 +9,13 @@ import React, {
   Children,
   cloneElement,
   createContext,
+  forwardRef,
   Fragment,
   isValidElement,
+  KeyboardEvent,
   ReactElement,
   ReactNode,
+  Ref,
   useContext,
   useState,
 } from "react";
@@ -33,6 +36,8 @@ export interface ListProps {
   isLoading?: boolean;
   draggable?: boolean;
   selectable?: boolean;
+  searchValue?: string;
+  searchboxStyles?: SearchboxStylesProps;
   onDragged?: (props: {
     id: string;
     oldGroupId: string;
@@ -43,6 +48,14 @@ export interface ListProps {
   openerBehavior?: "any" | "onlyOne";
   onOpen?: (props?: ListOnOpenProps) => void;
   alwaysShowDragIcon?: boolean;
+  inputRef?: Ref<HTMLInputElement>;
+  onSearchKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
+}
+
+interface SearchboxStylesProps {
+  containerStyle?: CSSProp;
+  iconStyle?: CSSProp;
+  style?: CSSProp;
 }
 
 export interface ListOnOpenProps {
@@ -135,6 +148,9 @@ const OpenedContext = createContext<OpenedContextType>({
 function List({
   searchable,
   onSearchRequested,
+  searchValue,
+  inputRef,
+  searchboxStyles,
   children,
   containerStyle,
   onDragged,
@@ -144,14 +160,28 @@ function List({
   openerBehavior = "any",
   onOpen,
   alwaysShowDragIcon = true,
+  onSearchKeyDown,
 }: ListProps) {
   const [openedIds, setOpenedIds] = useState<Set<string>>(new Set());
   const [openTipRowId, setOpenTipRowId] = useState<string | null>("");
 
   const [dragItem, setDragItem] = useState(null);
-  const [value, setValue] = useState("");
+  const [searchValueLocal, setSearchValueLocal] = useState("");
+
+  const isControlled = searchValue !== undefined;
+  const value = isControlled ? searchValue : searchValueLocal;
 
   const childArray = Children.toArray(children).filter(isValidElement);
+
+  const setValue = (e: ChangeEvent<HTMLInputElement>) => {
+    const finalValue = e.target.value;
+    if (!isControlled) {
+      setSearchValueLocal(finalValue);
+    }
+    if (onSearchRequested) {
+      onSearchRequested(e);
+    }
+  };
 
   const setIsOpen = (id: string) => {
     setOpenedIds((prev) => {
@@ -196,12 +226,17 @@ function List({
         <ListContainer role="list" $containerStyle={containerStyle}>
           {searchable && (
             <Searchbox
+              ref={inputRef}
               name="search"
+              autoComplete="off"
               onChange={(e) => {
-                onSearchRequested(e);
-                setValue(e.target.value);
+                setValue(e);
               }}
+              onKeyDown={onSearchKeyDown}
               value={value}
+              containerStyle={searchboxStyles?.containerStyle}
+              iconStyle={searchboxStyles?.iconStyle}
+              style={searchboxStyles?.style}
             />
           )}
 
@@ -567,285 +602,297 @@ interface ListItemWithId {
   setOpenTipRowId?: (prop: string | null) => void;
 }
 
-function ListItem({
-  leftIcon: LeftIcon = null,
-  imageUrl,
-  subtitle,
-  title,
-  containerStyle,
-  rowStyle,
-  draggable,
-  index,
-  onDropItem,
-  groupId,
-  groupLength,
-  selectable,
-  onSelected,
-  selectedOptions,
-  onClick,
-  rightSideContent,
-  id,
-  actions,
-  children,
-  openable,
-  leftSideContent,
-  titleStyle,
-  subtitleStyle,
-  leftSideStyle,
-  rightSideStyle,
-  ...props
-}: ListItemInternal & {
-  index?: number;
-  onDropItem?: (position: number) => void;
-  groupLength?: number;
-}) {
-  const { openTipRowId, setOpenTipRowId, alwaysShowDragIcon } =
-    props as ListItemWithId & ListAlwaysShowDragIconProp;
+const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
+  (
+    {
+      leftIcon: LeftIcon = null,
+      imageUrl,
+      subtitle,
+      title,
+      containerStyle,
+      rowStyle,
+      draggable,
+      groupId,
+      selectable,
+      onSelected,
+      selectedOptions,
+      onClick,
+      rightSideContent,
+      id,
+      actions,
+      children,
+      openable,
+      leftSideContent,
+      titleStyle,
+      subtitleStyle,
+      leftSideStyle,
+      rightSideStyle,
+      ...props
+    },
+    ref
+  ) => {
+    const {
+      openTipRowId,
+      setOpenTipRowId,
+      alwaysShowDragIcon,
+      groupLength,
+      index,
+      onDropItem,
+    } = props as ListItemWithId &
+      ListAlwaysShowDragIconProp & {
+        index?: number;
+        onDropItem?: (position: number) => void;
+        groupLength?: number;
+      };
 
-  const { isOpen, setIsOpen } = useContext(OpenedContext);
-  const { setDragItem, dragItem } = useContext(DnDContext);
-  const [isOver, setIsOver] = useState(false);
-  const [isHovered, setIsHovered] = useState<string | null>(null);
-  const [dropPosition, setDropPosition] = useState<"top" | "bottom" | null>(
-    null
-  );
-  const idFullname = groupId ? `${groupId}-${id}` : `${id}`;
+    const { isOpen, setIsOpen } = useContext(OpenedContext);
+    const { setDragItem, dragItem } = useContext(DnDContext);
+    const [isOver, setIsOver] = useState(false);
+    const [isHovered, setIsHovered] = useState<string | null>(null);
+    const [dropPosition, setDropPosition] = useState<"top" | "bottom" | null>(
+      null
+    );
+    const idFullname = groupId ? `${groupId}-${id}` : `${id}`;
 
-  const isChildOpened = isOpen(idFullname);
+    const isChildOpened = isOpen(idFullname);
 
-  return (
-    <ListItemWrapper
-      onMouseEnter={() => setIsHovered(idFullname)}
-      onMouseLeave={() => setIsHovered(null)}
-      aria-label="list-item-wrapper"
-      $openable={openable && isChildOpened}
-      $style={containerStyle}
-    >
-      <ListItemRow
-        {...props}
-        $isHovered={isHovered === idFullname || openTipRowId === idFullname}
-        $style={rowStyle}
-        draggable={draggable}
-        onClick={() => {
-          if (onClick) {
-            onClick();
-          }
-          if (openable) {
-            setIsOpen(idFullname);
-          }
-        }}
-        onDragStart={() =>
-          setDragItem({
-            id: id,
-            oldGroupId: groupId!,
-            oldPosition: index,
-            item: {
+    return (
+      <ListItemWrapper
+        ref={ref}
+        onMouseEnter={() => setIsHovered(idFullname)}
+        onMouseLeave={() => setIsHovered(null)}
+        aria-label="list-item-wrapper"
+        $openable={openable && isChildOpened}
+        $style={containerStyle}
+      >
+        <ListItemRow
+          {...props}
+          $isHovered={isHovered === idFullname || openTipRowId === idFullname}
+          $style={rowStyle}
+          draggable={draggable}
+          onClick={() => {
+            if (onClick) {
+              onClick();
+            }
+            if (openable) {
+              setIsOpen(idFullname);
+            }
+          }}
+          onDragStart={() =>
+            setDragItem({
               id: id,
-              title,
-              subtitle,
-              ...(imageUrl ? { imageUrl } : { leftIcon: LeftIcon }),
-            },
-          })
-        }
-        onDragOver={(e) => {
-          e.preventDefault();
-          if (draggable) {
-            const rect = e.currentTarget.getBoundingClientRect();
-            const offsetY = e.clientY - rect.top;
-            const half = rect.height / 2;
+              oldGroupId: groupId!,
+              oldPosition: index,
+              item: {
+                id: id,
+                title,
+                subtitle,
+                ...(imageUrl ? { imageUrl } : { leftIcon: LeftIcon }),
+              },
+            })
+          }
+          onDragOver={(e) => {
+            e.preventDefault();
+            if (draggable) {
+              const rect = e.currentTarget.getBoundingClientRect();
+              const offsetY = e.clientY - rect.top;
+              const half = rect.height / 2;
 
-            if (offsetY < half) {
-              setDropPosition("top");
+              if (offsetY < half) {
+                setDropPosition("top");
+              } else {
+                setDropPosition("bottom");
+              }
+
+              setIsOver(true);
+            }
+          }}
+          onDragLeave={() => {
+            setIsOver(false);
+            setDropPosition(null);
+          }}
+          onDrop={(e) => {
+            e.preventDefault();
+            setIsOver(false);
+
+            let position = 0;
+            const isSameGroup = dragItem?.oldGroupId === groupId;
+
+            if (dropPosition === "top") {
+              position = index;
             } else {
-              setDropPosition("bottom");
+              position = index + 1;
             }
 
-            setIsOver(true);
-          }
-        }}
-        onDragLeave={() => {
-          setIsOver(false);
-          setDropPosition(null);
-        }}
-        onDrop={(e) => {
-          e.preventDefault();
-          setIsOver(false);
+            if (isSameGroup && dragItem?.oldPosition < position) {
+              position -= 1;
+            }
 
-          let position = 0;
-          const isSameGroup = dragItem?.oldGroupId === groupId;
+            const clampedPosition = Math.min(position, groupLength ?? 0);
 
-          if (dropPosition === "top") {
-            position = index;
-          } else {
-            position = index + 1;
-          }
-
-          if (isSameGroup && dragItem?.oldPosition < position) {
-            position -= 1;
-          }
-
-          const clampedPosition = Math.min(position, groupLength ?? 0);
-
-          onDropItem?.(clampedPosition);
-        }}
-      >
-        <ListItemLeft $style={leftSideStyle} aria-label="list-item-left-side">
-          {selectable && selectedOptions && (
-            <Checkbox
-              iconStyle={css`
-                width: 8px;
-                height: 8px;
-              `}
-              inputStyle={css`
-                width: 14px;
-                height: 14px;
-              `}
-              name="checked"
-              value={selectedOptions.value}
-              checked={selectedOptions.checked}
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-              onChange={onSelected}
-            />
-          )}
-          {leftSideContent &&
-            typeof leftSideContent === "function" &&
-            leftSideContent({
-              badge: (children, style = { withStyle: css`` }) => (
-                <CustomLeftSideContent
-                  aria-label="left-side-content"
-                  $style={style.withStyle}
-                >
-                  {children}
-                </CustomLeftSideContent>
-              ),
-              render: (children) => children,
-            })}
-          {imageUrl ? (
-            <ImageStyle src={imageUrl} alt="Image from coneto, Systatum." />
-          ) : (
-            LeftIcon && <LeftIcon size={22} color="#4b5563" />
-          )}
-          <TextWrapper>
-            {title && <Title $style={titleStyle}>{title}</Title>}
-            {subtitle && <Subtitle $style={subtitleStyle}>{subtitle}</Subtitle>}
-          </TextWrapper>
-        </ListItemLeft>
-
-        {(actions || rightSideContent || draggable) && (
-          <ListItemRight
-            $style={rightSideStyle}
-            aria-label="list-item-left-side"
-          >
-            {actions &&
-              (() => {
-                const list = actions(idFullname);
-
-                const actionsWithIcons = list.map((prop) => ({
-                  ...prop,
-                  icon: prop.icon ?? RiArrowRightSLine,
-                  onClick: (e?: React.MouseEvent) => {
-                    prop.onClick?.(e);
-                    if (list.length > 1) {
-                      setIsHovered(null);
-                    }
-                  },
-                }));
-
-                return (
-                  <ContextMenu
-                    onOpen={(prop: boolean) => {
-                      if (prop) {
-                        setOpenTipRowId(idFullname);
-                      } else {
-                        setOpenTipRowId(null);
-                      }
-                    }}
-                    open={openTipRowId === idFullname}
-                    containerStyle={css`
-                      display: none;
-
-                      ${(isHovered === idFullname
-                        ? isHovered === idFullname
-                        : openTipRowId === idFullname) &&
-                      css`
-                        display: inherit;
-                      `}
-                    `}
-                    buttonStyle={
-                      !subtitle &&
-                      css`
-                        width: 24px;
-                        height: 24px;
-                        padding: 2px;
-                      `
-                    }
-                    iconSize={!subtitle && 12}
-                    focusBackgroundColor="#c1d6f1"
-                    hoverBackgroundColor="#c1d6f1"
-                    activeBackgroundColor="#c1d6f1"
-                    actions={actionsWithIcons}
-                  />
-                );
-              })()}
-            {rightSideContent && typeof rightSideContent === "function"
-              ? rightSideContent(idFullname)
-              : (rightSideContent as ReactNode)}
-
-            {draggable && (
-              <DraggableWrapper
-                $isHovered={isHovered === idFullname}
-                $alwaysShowDragIcon={alwaysShowDragIcon}
-                aria-label="draggable-request"
-              >
-                <RiDraggable size={18} />
-              </DraggableWrapper>
+            onDropItem?.(clampedPosition);
+          }}
+        >
+          <ListItemLeft $style={leftSideStyle} aria-label="list-item-left-side">
+            {selectable && selectedOptions && (
+              <Checkbox
+                iconStyle={css`
+                  width: 8px;
+                  height: 8px;
+                `}
+                inputStyle={css`
+                  width: 14px;
+                  height: 14px;
+                `}
+                name="checked"
+                value={selectedOptions.value}
+                checked={selectedOptions.checked}
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+                onChange={onSelected}
+              />
             )}
-          </ListItemRight>
-        )}
+            {leftSideContent &&
+              typeof leftSideContent === "function" &&
+              leftSideContent({
+                badge: (children, style = { withStyle: css`` }) => (
+                  <CustomLeftSideContent
+                    aria-label="left-side-content"
+                    $style={style.withStyle}
+                  >
+                    {children}
+                  </CustomLeftSideContent>
+                ),
+                render: (children) => children,
+              })}
+            {imageUrl ? (
+              <ImageStyle src={imageUrl} alt="Image from coneto, Systatum." />
+            ) : (
+              LeftIcon && <LeftIcon size={22} color="#4b5563" />
+            )}
+            <TextWrapper>
+              {title && <Title $style={titleStyle}>{title}</Title>}
+              {subtitle && (
+                <Subtitle $style={subtitleStyle}>{subtitle}</Subtitle>
+              )}
+            </TextWrapper>
+          </ListItemLeft>
 
-        {isOver && dropPosition && <DragLine $position={dropPosition} />}
-      </ListItemRow>
+          {(actions || rightSideContent || draggable) && (
+            <ListItemRight
+              $style={rightSideStyle}
+              aria-label="list-item-left-side"
+            >
+              {actions &&
+                (() => {
+                  const list = actions(idFullname);
 
-      <AnimatePresence>
-        {openable && children && (
-          <ListGroupContent
-            key={`list-item-children-${index}`}
-            initial="collapsed"
-            aria-label="list-item-children"
-            animate={isChildOpened ? "open" : "collapsed"}
-            exit="collapsed"
-            $isOpen={isChildOpened}
-            variants={{
-              open: {
-                opacity: 1,
-                height: "auto",
-                transition: {
-                  height: { duration: 0.3, ease: "easeInOut" },
-                  opacity: { duration: 0.8 },
+                  const actionsWithIcons = list.map((prop) => ({
+                    ...prop,
+                    icon: prop.icon ?? RiArrowRightSLine,
+                    onClick: (e?: React.MouseEvent) => {
+                      prop.onClick?.(e);
+                      if (list.length > 1) {
+                        setIsHovered(null);
+                      }
+                    },
+                  }));
+
+                  return (
+                    <ContextMenu
+                      onOpen={(prop: boolean) => {
+                        if (prop) {
+                          setOpenTipRowId(idFullname);
+                        } else {
+                          setOpenTipRowId(null);
+                        }
+                      }}
+                      open={openTipRowId === idFullname}
+                      containerStyle={css`
+                        display: none;
+
+                        ${(isHovered === idFullname
+                          ? isHovered === idFullname
+                          : openTipRowId === idFullname) &&
+                        css`
+                          display: inherit;
+                        `}
+                      `}
+                      buttonStyle={
+                        !subtitle &&
+                        css`
+                          width: 24px;
+                          height: 24px;
+                          padding: 2px;
+                        `
+                      }
+                      iconSize={!subtitle && 12}
+                      focusBackgroundColor="#c1d6f1"
+                      hoverBackgroundColor="#c1d6f1"
+                      activeBackgroundColor="#c1d6f1"
+                      actions={actionsWithIcons}
+                    />
+                  );
+                })()}
+              {rightSideContent && typeof rightSideContent === "function"
+                ? rightSideContent(idFullname)
+                : (rightSideContent as ReactNode)}
+
+              {draggable && (
+                <DraggableWrapper
+                  $isHovered={isHovered === idFullname}
+                  $alwaysShowDragIcon={alwaysShowDragIcon}
+                  aria-label="draggable-request"
+                >
+                  <RiDraggable size={18} />
+                </DraggableWrapper>
+              )}
+            </ListItemRight>
+          )}
+
+          {isOver && dropPosition && <DragLine $position={dropPosition} />}
+        </ListItemRow>
+
+        <AnimatePresence>
+          {openable && children && (
+            <ListGroupContent
+              key={`list-item-children-${index}`}
+              initial="collapsed"
+              aria-label="list-item-children"
+              animate={isChildOpened ? "open" : "collapsed"}
+              exit="collapsed"
+              $isOpen={isChildOpened}
+              variants={{
+                open: {
+                  opacity: 1,
+                  height: "auto",
+                  transition: {
+                    height: { duration: 0.3, ease: "easeInOut" },
+                    opacity: { duration: 0.8 },
+                  },
                 },
-              },
-              collapsed: {
-                opacity: 0,
-                height: 0,
-                transition: {
-                  height: { duration: 0.25, ease: "easeInOut" },
-                  opacity: { duration: 0.15 },
+                collapsed: {
+                  opacity: 0,
+                  height: 0,
+                  transition: {
+                    height: { duration: 0.25, ease: "easeInOut" },
+                    opacity: { duration: 0.15 },
+                  },
                 },
-              },
-            }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-          >
-            {children}
-          </ListGroupContent>
-        )}
-      </AnimatePresence>
-    </ListItemWrapper>
-  );
-}
+              }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
+              {children}
+            </ListGroupContent>
+          )}
+        </AnimatePresence>
+      </ListItemWrapper>
+    );
+  }
+);
 
-const ListItemWrapper = styled.div<{
+const ListItemWrapper = styled.li<{
   $style?: CSSProp;
   $openable?: boolean;
 }>`
