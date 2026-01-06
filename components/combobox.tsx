@@ -181,6 +181,8 @@ function ComboboxDrawer({
   handleKeyDown,
   maxSelectableItems,
   name,
+  interactionMode,
+  setInteractionMode,
 }: ComboboxDrawerProps) {
   const [hasScrolled, setHasScrolled] = useState(false);
   const floatingRef = useRef<HTMLUListElement>(null);
@@ -243,15 +245,66 @@ function ComboboxDrawer({
       $width={refs.reference.current?.getBoundingClientRect().width}
       style={{ ...floatingStyles }}
     >
-      {multiple && (
-        <Fragment>
-          <Searchbox
-            ref={inputRef}
-            autoComplete="off"
-            onKeyDown={handleKeyDown}
-            name="multiple"
-            value={selectedOptionsLocal.text}
-            containerStyle={css`
+      {actions && (
+        <List containerStyle={listContainerStyle}>
+          {actions.map((data, index) => {
+            const shouldHighlight = highlightedIndex === index;
+
+            return (
+              <List.Item
+                key={index}
+                id={`action-${index}`}
+                ref={(el) => {
+                  listRef.current[index] = el;
+                }}
+                titleStyle={listItemTitleStyle}
+                rowStyle={listItemRowStyle({
+                  shouldHighlight,
+                  interactionMode,
+                })}
+                containerStyle={listItemContainerStyle}
+                leftSideStyle={listItemLeftSideStyle}
+                title={
+                  <>
+                    {data.title}
+                    {data.icon && (
+                      <IconWrapper>
+                        <data.icon size={16} />
+                      </IconWrapper>
+                    )}
+                  </>
+                }
+                onMouseEnter={() => setHighlightedIndex(index)}
+                onClick={() => {
+                  data.onClick?.();
+                  setIsOpen(false);
+                }}
+              />
+            );
+          })}
+          <Divider aria-label="divider" />
+        </List>
+      )}
+
+      {options.length > 0 ? (
+        <List
+          containerStyle={listContainerStyle}
+          inputRef={inputRef}
+          selectable={multiple}
+          searchable={multiple}
+          onSearchKeyDown={handleKeyDown}
+          searchValue={selectedOptionsLocal.text}
+          onSearchRequested={(e) => {
+            const { value } = e.target;
+            setHasInteracted(true);
+            setHighlightedIndex(0);
+            setSelectedOptionsLocal({
+              ...selectedOptionsLocal,
+              text: value,
+            });
+          }}
+          searchboxStyles={{
+            containerStyle: css`
               position: sticky;
               top: 0;
               background-color: white;
@@ -259,112 +312,46 @@ function ComboboxDrawer({
               height: 38px;
               padding-right: 7px;
               padding-left: 7px;
-            `}
-            iconStyle={css`
+            `,
+            iconStyle: css`
               left: 16px;
-            `}
-            style={css`
+            `,
+            style: css`
               max-height: 35px;
               margin-top: 7px;
               margin-bottom: 7px;
               padding-bottom: 7px;
               padding-top: 7px;
-            `}
-            onChange={(e) => {
-              const { value } = e.target;
-              setHasInteracted(true);
-              setHighlightedIndex(0);
-              setSelectedOptionsLocal({
-                ...selectedOptionsLocal,
-                text: value,
-              });
-            }}
-          />
-        </Fragment>
-      )}
-
-      {actions && (
-        <ActionWrapper>
-          {actions.map((data, index) => {
-            const shouldHighlight = highlightedIndex === index;
-
-            return (
-              <ActionItem
-                key={index}
-                id={`action-${index}`}
-                ref={(el: HTMLLIElement) => {
-                  listRef.current[index] = el;
-                }}
-                $highlighted={shouldHighlight}
-                onMouseEnter={() => setHighlightedIndex(index)}
-                onClick={() => {
-                  data.onClick?.();
-                  setIsOpen(false);
-                }}
-                $style={data.style}
-              >
-                <div>{data.title}</div>
-                {data.icon && (
-                  <IconWrapper>
-                    <data.icon size={16} />
-                  </IconWrapper>
-                )}
-              </ActionItem>
-            );
-          })}
-          <Divider aria-label="divider" />
-        </ActionWrapper>
-      )}
-
-      {options.length > 0 ? (
-        <List
-          containerStyle={css`
-            gap: 0px;
-          `}
-          selectable={multiple}
+            `,
+          }}
         >
           {options.map((option, index) => {
             const isSelected = selectedOptions.includes(option.value);
+            const shouldHighlight =
+              highlightOnMatch && isSelected
+                ? true
+                : highlightedIndex === index + (actions?.length || 0);
 
             return (
               <List.Item
                 id={option.value}
                 title={option.render ? option.render : option.text}
-                rowStyle={css`
-                  border-radius: 0px;
-                  padding: 0.5rem 0.75rem;
-
-                  ${isSelected &&
-                  !multiple &&
-                  css`
-                    background-color: #61a9f9;
-                    font-weight: 600;
-                    color: white;
-                  `}
-                `}
-                containerStyle={css`
-                  padding: 0px;
-                `}
-                leftSideStyle={css`
-                  padding: 0px;
-                  ${option.render &&
-                  css`
-                    align-items: start;
-                    padding-top: 3px;
-                  `}
-                `}
-                titleStyle={css`
-                  font-weight: 400;
-                  padding: 0px;
-                  font-size: 12px;
-                  ${option.render &&
-                  css`
-                    transform: translateY(-4px);
-                  `}
-                `}
-                selectedOptions={{
-                  checked: isSelected,
-                }}
+                rowStyle={listItemRowStyle({
+                  shouldHighlight,
+                  interactionMode,
+                  isSelected,
+                  multiple,
+                })}
+                containerStyle={listItemContainerStyle}
+                leftSideStyle={[
+                  listItemLeftSideStyle,
+                  option.render && listItemLeftSideWithRender,
+                ]}
+                titleStyle={[
+                  listItemTitleStyle,
+                  option.render && listItemTitleWithRender,
+                ]}
+                selectedOptions={{ checked: isSelected }}
                 onMouseDown={(e) => {
                   e.preventDefault();
                   if (multiple) {
@@ -390,9 +377,19 @@ function ComboboxDrawer({
 
                   onClick?.();
                 }}
-                onMouseEnter={() =>
-                  setHighlightedIndex(index + (actions?.length || 0))
-                }
+                onMouseMove={() => {
+                  if (interactionMode !== "mouse") {
+                    setInteractionMode("mouse");
+                  }
+                }}
+                onMouseEnter={() => {
+                  if (interactionMode !== "mouse") return;
+
+                  setHighlightedIndex(index + (actions?.length || 0));
+                }}
+                ref={(el) => {
+                  listRef.current[index + (actions?.length || 0)] = el;
+                }}
               />
             );
           })}
@@ -403,6 +400,67 @@ function ComboboxDrawer({
     </DrawerWrapper>
   );
 }
+
+const listContainerStyle = css`
+  gap: 0px;
+`;
+
+const listItemContainerStyle = css`
+  padding: 0px;
+`;
+
+const listItemLeftSideStyle = css`
+  padding: 0px;
+`;
+
+const listItemTitleStyle = css`
+  font-weight: 400;
+  padding: 0px;
+  font-size: 12px;
+`;
+
+const listItemRowStyle = ({
+  shouldHighlight,
+  interactionMode,
+  isSelected,
+  multiple,
+}: {
+  shouldHighlight?: boolean;
+  interactionMode?: "mouse" | "keyboard";
+  isSelected?: boolean;
+  multiple?: boolean;
+}) => css`
+  border-radius: 0px;
+  padding: 0.5rem 0.75rem;
+  transition: background-color 0ms;
+
+  ${interactionMode !== "mouse" &&
+  css`
+    background-color: white;
+  `}
+
+  ${shouldHighlight &&
+  css`
+    background-color: #dbeafe;
+  `}
+
+  ${isSelected &&
+  !multiple &&
+  css`
+    background-color: #61a9f9;
+    font-weight: 600;
+    color: white;
+  `}
+`;
+
+const listItemLeftSideWithRender = css`
+  align-items: start;
+  padding-top: 3px;
+`;
+
+const listItemTitleWithRender = css`
+  transform: translateY(-4px);
+`;
 
 const DrawerWrapper = styled.ul<{ $width?: number }>`
   position: absolute;
@@ -416,31 +474,6 @@ const DrawerWrapper = styled.ul<{ $width?: number }>`
     0 10px 15px -3px rgba(0, 0, 0, 0.1),
     0 4px 6px -2px rgba(0, 0, 0, 0.05);
   width: ${({ $width }) => ($width ? `${$width}px` : "100%")};
-`;
-
-const ActionWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-`;
-
-const ActionItem = styled.li<{ $style?: CSSProp; $highlighted?: boolean }>`
-  display: flex;
-  flex-direction: row;
-  position: relative;
-  width: 100%;
-  align-items: center;
-  cursor: pointer;
-  padding: 0.5rem 0.75rem;
-  gap: 0.5rem;
-
-  ${({ $highlighted }) => ($highlighted ? "background-color: #dbeafe;" : "")}
-
-  &:hover {
-    background-color: #dbeafe;
-  }
-
-  ${({ $style }) => $style}
 `;
 
 const IconWrapper = styled.span`
