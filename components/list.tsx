@@ -250,6 +250,11 @@ function List({
             const componentChild = child as ReactElement<
               ListItemProps & ListItemWithId & ListAlwaysShowDragIconProp
             >;
+
+            if (child.type === React.Fragment) {
+              return child;
+            }
+
             const modifiedChild = cloneElement(componentChild, {
               draggable: draggable,
               selectable: selectable,
@@ -638,6 +643,7 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
       groupLength,
       index,
       onDropItem,
+      ...domProps
     } = props as ListItemWithId &
       ListAlwaysShowDragIconProp & {
         index?: number;
@@ -666,7 +672,7 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
         $style={containerStyle}
       >
         <ListItemRow
-          {...props}
+          {...domProps}
           $isHovered={isHovered === idFullname || openTipRowId === idFullname}
           $style={rowStyle}
           draggable={draggable}
