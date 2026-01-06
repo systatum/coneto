@@ -291,11 +291,12 @@ function List({
 
             if (maxItems) {
               return (
-                <AnimatePresence key={index}>
+                <AnimatePresence initial={false} key={index}>
                   {!isHidden && (
                     <motion.div
                       key={`list-${index}`}
                       layout
+                      initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
                       exit={{ opacity: 0, height: 0 }}
                       transition={{ duration: 0.2, ease: "easeInOut" }}
