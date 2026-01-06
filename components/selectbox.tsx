@@ -49,18 +49,19 @@ export interface SelectboxProps {
   actions?: any[];
   maxSelectableItems?: number | undefined;
   children?: (
-    props: DrawerProps & {
-      options: OptionsProps[];
-      handleKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
-      selectedOptionsLocal: OptionsProps;
-      setSelectedOptionsLocal: (value: OptionsProps) => void;
-      setHasInteracted?: (value: boolean) => void;
-      ref?: Ref<HTMLInputElement>;
-    }
+    props: DrawerProps &
+      InteractionModeProps & {
+        options: OptionsProps[];
+        handleKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
+        selectedOptionsLocal: OptionsProps;
+        setSelectedOptionsLocal: (value: OptionsProps) => void;
+        setHasInteracted?: (value: boolean) => void;
+        ref?: Ref<HTMLInputElement>;
+      }
   ) => ReactNode;
 }
 
-export interface DrawerProps {
+export interface DrawerProps extends InteractionModeProps {
   highlightedIndex: number | null;
   setHighlightedIndex: (index: number | null) => void;
   setIsOpen: (open: boolean) => void;
@@ -74,6 +75,11 @@ export interface DrawerProps {
   isOpen: boolean;
   style?: CSSProp;
   onClick?: () => void;
+}
+
+interface InteractionModeProps {
+  interactionMode: "keyboard" | "mouse";
+  setInteractionMode: (props: "keyboard" | "mouse") => void;
 }
 
 export interface OptionsProps {
@@ -127,6 +133,10 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
     const [hasInteracted, setHasInteracted] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
+    const [interactionMode, setInteractionMode] = useState<
+      "keyboard" | "mouse"
+    >("mouse");
+
     const [confirmedValue, setConfirmedValue] = useState<OptionsProps | null>(
       null
     );
@@ -183,8 +193,13 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
 
       const totalItems = (actions?.length ?? 0) + FILTERED_OPTIONS.length - 1;
 
-      if ((e.key === "ArrowDown" || e.key === "ArrowUp") && !isOpen) {
-        setIsOpen(true);
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        setInteractionMode("keyboard");
+
+        if (!isOpen) {
+          setIsOpen(true);
+        }
+
         e.preventDefault();
       }
 
@@ -363,7 +378,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
               aria-label="clearable-content"
-              onClick={() => {
+              onMouseDown={() => {
                 setSelectedOptions?.([]);
                 setSelectedOptionsLocal({ text: "", value: "0" });
                 setHasInteracted(false);
@@ -423,6 +438,8 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
             listRef,
             setHasInteracted,
             handleKeyDown,
+            interactionMode,
+            setInteractionMode,
             ref: multiple ? inputRef : undefined,
           })}
       </Container>
