@@ -340,6 +340,16 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     const updateFormatStates = () => {
       if (!editorRef.current || mode === "view-only") return;
 
+      const sel = window.getSelection();
+      if (!sel || !sel.rangeCount) return;
+
+      const node = sel.anchorNode;
+
+      if (!node || !editorRef.current.contains(node)) {
+        setFormatStates({ bold: false, italic: false });
+        return;
+      }
+
       try {
         const bold = document.queryCommandState("bold");
         const italic = document.queryCommandState("italic");
