@@ -1210,6 +1210,7 @@ function RichEditorToolbarButton({
       }}
       $isActive={isActive}
       aria-label="rich-editor-toolbar-button"
+      aria-pressed={isActive}
     >
       {Icon && <Icon size={16} />}
       {children && <span>{children}</span>}
