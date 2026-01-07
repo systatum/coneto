@@ -2091,7 +2091,6 @@ describe("List", () => {
             searchable
             draggable
             selectable
-            openerBehavior="onlyOne"
             onOpen={({ id, isOpen }) =>
               console.log(`for id ${id} isOpen is ${isOpen ? "true" : "false"}`)
             }
@@ -2136,6 +2135,226 @@ describe("List", () => {
         cy.get("@consoleLog").should(
           "have.been.calledWith",
           "for id all-content-settings isOpen is true"
+        );
+      });
+    });
+
+    context("with group", () => {
+      context("when clicking", () => {
+        it("renders log id & isOpen condition", () => {
+          cy.mount(
+            <List
+              searchable
+              draggable
+              selectable
+              onOpen={({ id, isOpen }) =>
+                console.log(
+                  `for id ${id} isOpen is ${isOpen ? "true" : "false"}`
+                )
+              }
+              containerStyle={css`
+                padding: 16px;
+                min-width: 350px;
+              `}
+            >
+              {LIST_GROUPS_OPENABLE.map((group, index) => (
+                <List.Group
+                  key={index}
+                  id={group.id}
+                  title={group.title}
+                  subtitle={group.subtitle}
+                  actions={group.actions}
+                  openerStyle="togglebox"
+                >
+                  {group.items.map((list, i) => (
+                    <List.Item
+                      key={i}
+                      id={list.id}
+                      actions={list.actions}
+                      leftIcon={list.leftIcon}
+                      subtitle={list.subtitle}
+                      title={list.title}
+                      openable
+                      selectedOptions={{
+                        checked: true,
+                      }}
+                    >
+                      {list.children}
+                    </List.Item>
+                  ))}
+                </List.Group>
+              ))}
+            </List>
+          );
+          cy.window().then((win) => {
+            cy.spy(win.console, "log").as("consoleLog");
+          });
+          cy.findByText("Recent Content").click();
+          cy.get("@consoleLog").should(
+            "have.been.calledWith",
+            "for id recent-content isOpen is false"
+          );
+        });
+      });
+    });
+  });
+
+  context("initialState on group level", () => {
+    context("when given closed", () => {
+      it("should not renders text (hide)", () => {
+        cy.mount(
+          <List
+            searchable
+            draggable
+            selectable
+            onOpen={({ id, isOpen }) =>
+              console.log(`for id ${id} isOpen is ${isOpen ? "true" : "false"}`)
+            }
+            containerStyle={css`
+              padding: 16px;
+              min-width: 350px;
+            `}
+          >
+            {LIST_GROUPS_OPENABLE.map((group, index) => (
+              <List.Group
+                key={index}
+                id={group.id}
+                initialState="closed"
+                title={group.title}
+                subtitle={group.subtitle}
+                actions={group.actions}
+                openerStyle="togglebox"
+              >
+                {group.items.map((list, i) => (
+                  <List.Item
+                    key={i}
+                    id={list.id}
+                    actions={list.actions}
+                    leftIcon={list.leftIcon}
+                    subtitle={list.subtitle}
+                    title={list.title}
+                    openable
+                    selectedOptions={{
+                      checked: true,
+                    }}
+                  >
+                    {list.children}
+                  </List.Item>
+                ))}
+              </List.Group>
+            ))}
+          </List>
+        );
+        LIST_GROUPS_OPENABLE.map((group) =>
+          group.items.map((list) => {
+            cy.findByText(list.title as string).should("not.be.visible");
+          })
+        );
+      });
+    });
+
+    context("when given opened", () => {
+      it("should renders text", () => {
+        cy.mount(
+          <List
+            searchable
+            draggable
+            selectable
+            onOpen={({ id, isOpen }) =>
+              console.log(`for id ${id} isOpen is ${isOpen ? "true" : "false"}`)
+            }
+            containerStyle={css`
+              padding: 16px;
+              min-width: 350px;
+            `}
+          >
+            {LIST_GROUPS_OPENABLE.map((group, index) => (
+              <List.Group
+                key={index}
+                id={group.id}
+                initialState="opened"
+                title={group.title}
+                subtitle={group.subtitle}
+                actions={group.actions}
+                openerStyle="togglebox"
+              >
+                {group.items.map((list, i) => (
+                  <List.Item
+                    key={i}
+                    id={list.id}
+                    actions={list.actions}
+                    leftIcon={list.leftIcon}
+                    subtitle={list.subtitle}
+                    title={list.title}
+                    openable
+                    selectedOptions={{
+                      checked: true,
+                    }}
+                  >
+                    {list.children}
+                  </List.Item>
+                ))}
+              </List.Group>
+            ))}
+          </List>
+        );
+        LIST_GROUPS_OPENABLE.map((group) =>
+          group.items.map((list) => {
+            cy.findByText(list.title as string).should("be.visible");
+          })
+        );
+      });
+    });
+
+    context("when not given", () => {
+      it("should renders text", () => {
+        cy.mount(
+          <List
+            searchable
+            draggable
+            selectable
+            onOpen={({ id, isOpen }) =>
+              console.log(`for id ${id} isOpen is ${isOpen ? "true" : "false"}`)
+            }
+            containerStyle={css`
+              padding: 16px;
+              min-width: 350px;
+            `}
+          >
+            {LIST_GROUPS_OPENABLE.map((group, index) => (
+              <List.Group
+                key={index}
+                id={group.id}
+                initialState="opened"
+                title={group.title}
+                subtitle={group.subtitle}
+                actions={group.actions}
+                openerStyle="togglebox"
+              >
+                {group.items.map((list, i) => (
+                  <List.Item
+                    key={i}
+                    id={list.id}
+                    actions={list.actions}
+                    leftIcon={list.leftIcon}
+                    subtitle={list.subtitle}
+                    title={list.title}
+                    openable
+                    selectedOptions={{
+                      checked: true,
+                    }}
+                  >
+                    {list.children}
+                  </List.Item>
+                ))}
+              </List.Group>
+            ))}
+          </List>
+        );
+        LIST_GROUPS_OPENABLE.map((group) =>
+          group.items.map((list) => {
+            cy.findByText(list.title as string).should("be.visible");
+          })
         );
       });
     });
@@ -2188,12 +2407,12 @@ describe("List", () => {
         cy.findByText(
           "Modify your system preferences, manage privacy and notifications, and fine-tune your user experience to suit your workflow."
         ).should("not.be.visible");
-        cy.findByText("Settings").click();
+        cy.findByText("Settings").click({ force: true });
         cy.findByText(
           "Modify your system preferences, manage privacy and notifications, and fine-tune your user experience to suit your workflow."
         ).should("be.visible");
 
-        cy.findByText("Profile").click();
+        cy.findByText("Profile").click({ force: true });
         cy.findByText(
           "Modify your system preferences, manage privacy and notifications, and fine-tune your user experience to suit your workflow."
         ).should("not.be.visible");
