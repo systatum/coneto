@@ -25,7 +25,7 @@ import styled, { css, CSSProp } from "styled-components";
 import ContextMenu, { ContextMenuActionsProps } from "./context-menu";
 import { ActionButton, ActionButtonProps } from "./action-button";
 
-export interface ListProps {
+export interface ListProps extends ListMaxItemsProp {
   searchable?: boolean;
   onSearchRequested?: (search: ChangeEvent<HTMLInputElement>) => void;
   children: ReactNode;
@@ -43,6 +43,12 @@ export interface ListProps {
   openerBehavior?: "any" | "onlyOne";
   onOpen?: (props?: ListOnOpenProps) => void;
   alwaysShowDragIcon?: boolean;
+  labels?: ListLabelsProps;
+}
+
+interface ListLabelsProps {
+  moreItemsText?: ReactNode;
+  lessItemsText?: ReactNode;
 }
 
 export interface ListOnOpenProps {
@@ -88,6 +94,12 @@ export type ListItemActionProps = ContextMenuActionsProps;
 
 interface ListAlwaysShowDragIconProp {
   alwaysShowDragIcon?: boolean;
+}
+
+interface ListMaxItemsProp {
+  maxItems?: number;
+  maxItemsStyle?: CSSProp;
+  maxItemsWithIcon?: boolean;
 }
 
 export interface LeftSideContentMenuProps {
@@ -178,14 +190,25 @@ function List({
   openerBehavior = "any",
   onOpen,
   alwaysShowDragIcon = true,
+  maxItems,
+  labels,
+  maxItemsStyle,
+  maxItemsWithIcon,
 }: ListProps) {
   const [openedIds, setOpenedIds] = useState<Set<string>>(new Set());
   const [openTipRowId, setOpenTipRowId] = useState<string | null>("");
 
+  const childArray = Children.toArray(children).filter(isValidElement);
+
+  const hasGroup = childArray.some((child) => {
+    if (!isValidElement(child)) return false;
+
+    return (child as ReactElement).type === List.Group;
+  });
+
   const [dragItem, setDragItem] = useState(null);
   const [value, setValue] = useState("");
-
-  const childArray = Children.toArray(children).filter(isValidElement);
+  const [expanded, setExpanded] = useState(hasGroup ? true : false);
 
   const setIsOpen = (id: string) => {
     setOpenedIds((prev) => {
@@ -247,18 +270,59 @@ function List({
 
           {childArray.map((child, index) => {
             const componentChild = child as ReactElement<
-              ListItemProps & ListItemWithId & ListAlwaysShowDragIconProp
+              ListItemProps &
+                ListItemWithId &
+                ListAlwaysShowDragIconProp &
+                ListMaxItemsProp & { labels?: ListLabelsProps }
             >;
+
+            const isHidden = maxItems && !expanded && index >= maxItems;
+
             const modifiedChild = cloneElement(componentChild, {
               draggable: draggable,
               selectable: selectable,
               openTipRowId,
               setOpenTipRowId,
               alwaysShowDragIcon,
+              maxItems,
+              maxItemsStyle,
+              labels,
             });
+
+            if (maxItems) {
+              return (
+                <AnimatePresence initial={false} key={index}>
+                  {!isHidden && (
+                    <motion.div
+                      key={`list-${index}`}
+                      layout
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.2, ease: "easeInOut" }}
+                    >
+                      {modifiedChild}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              );
+            }
 
             return <Fragment key={`list-${index}`}>{modifiedChild}</Fragment>;
           })}
+
+          {!hasGroup && maxItems && childArray.length > maxItems && (
+            <ListShowMoreButton
+              key={`list-show-more`}
+              expanded={expanded}
+              setExpanded={setExpanded}
+              labels={labels}
+              maxItemsStyle={maxItemsStyle}
+              maxItemsWithIcon={maxItemsWithIcon}
+              maxItems={maxItems}
+              isOpen={undefined}
+            />
+          )}
         </ListContainer>
       </DnDContext.Provider>
     </OpenedContext.Provider>
@@ -300,12 +364,23 @@ function ListGroup({
   emptySlateStyle,
   ...props
 }: ListGroupProps) {
-  const { openTipRowId, setOpenTipRowId, alwaysShowDragIcon } =
-    props as ListItemWithId & ListAlwaysShowDragIconProp;
+  const {
+    openTipRowId,
+    setOpenTipRowId,
+    alwaysShowDragIcon,
+    labels,
+    maxItems,
+    maxItemsStyle,
+    maxItemsWithIcon,
+  } = props as ListItemWithId &
+    ListAlwaysShowDragIconProp &
+    ListMaxItemsProp & { labels?: ListLabelsProps };
 
-  const childArray = Children.toArray(children).filter(isValidElement);
-  const [isOpen, setIsOpen] = useState(true);
   const { dragItem, setDragItem, onDragged } = useContext(DnDContext);
+  const childArray = Children.toArray(children).filter(isValidElement);
+
+  const [isOpen, setIsOpen] = useState(true);
+  const [expanded, setExpanded] = useState(false);
 
   const finalActions =
     actions &&
@@ -433,6 +508,40 @@ function ListGroup({
             },
           });
 
+          const isHidden = maxItems && !expanded && index >= maxItems;
+
+          if (maxItems) {
+            return (
+              <ListGroupContent
+                key={`list-group-content-${index}`}
+                initial="open"
+                animate={isOpen ? "open" : "collapsed"}
+                exit="collapsed"
+                variants={{
+                  open: { opacity: 1, height: "auto" },
+                  collapsed: { opacity: 0, height: 0 },
+                }}
+                transition={{ duration: 0.2, ease: "easeInOut" }}
+              >
+                <AnimatePresence>
+                  {!isHidden && (
+                    <motion.div
+                      aria-label="list-with-max-item"
+                      key={`list-${index}`}
+                      layout
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.2, ease: "easeInOut" }}
+                    >
+                      {modifiedChild}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </ListGroupContent>
+            );
+          }
+
           return (
             <ListGroupContent
               key={`list-group-content-${index}`}
@@ -449,6 +558,19 @@ function ListGroup({
             </ListGroupContent>
           );
         })}
+
+        {maxItems && childArray.length > maxItems && (
+          <ListShowMoreButton
+            expanded={expanded}
+            isOpen={isOpen}
+            setExpanded={setExpanded}
+            key={`list-show-more-${isOpen}`}
+            maxItemsStyle={maxItemsStyle}
+            maxItemsWithIcon={maxItemsWithIcon}
+            labels={labels}
+            maxItems={maxItems}
+          />
+        )}
 
         {childArray.length === 0 && (
           <EmptyContent
@@ -488,6 +610,72 @@ function ListGroup({
     </ListGroupContainer>
   );
 }
+
+function ListShowMoreButton({
+  expanded,
+  isOpen,
+  setExpanded,
+  labels,
+  maxItemsStyle,
+  maxItemsWithIcon,
+}: {
+  expanded: boolean;
+  setExpanded: (prop: boolean) => void;
+  isOpen?: boolean | undefined;
+  labels?: ListLabelsProps;
+} & ListMaxItemsProp) {
+  return (
+    <ShowMoreButton
+      aria-label="list-show-more-button"
+      $style={css`
+        ${maxItemsStyle}
+        ${isOpen !== undefined &&
+        !isOpen &&
+        css`
+          display: none;
+        `}
+      `}
+      onClick={() => setExpanded(!expanded)}
+    >
+      {expanded
+        ? (labels?.lessItemsText ?? "Show less")
+        : (labels?.moreItemsText ?? "Show more")}
+
+      {(maxItemsWithIcon ? maxItemsWithIcon : true) && (
+        <RiArrowDownSLine
+          aria-label="list-show-more-arrow"
+          style={{
+            width: 16,
+            height: 16,
+            marginLeft: 8,
+            transition: "transform 0.3s ease",
+            transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
+          }}
+        />
+      )}
+    </ShowMoreButton>
+  );
+}
+
+const ShowMoreButton = styled.button<{ $style?: CSSProp }>`
+  margin-top: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  border: 1px solid #cccccc;
+  border-radius: 2px;
+  text-align: center;
+  color: #616161;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  ${({ $style }) => $style}
+`;
 
 const ListGroupContainer = styled.div<{
   $containerStyle?: CSSProp;

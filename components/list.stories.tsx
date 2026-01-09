@@ -78,6 +78,7 @@ export const Default: Story = {
         <List
           containerStyle={css`
             padding: 16px;
+            min-width: 280px;
             gap: 8px;
           `}
         >
@@ -1719,6 +1720,186 @@ export const CustomOpener: Story = {
               </List.Group>
             );
           })}
+        </List>
+      </Card>
+    );
+  },
+};
+
+export const WithMaxItems: Story = {
+  render: () => {
+    const LIST_ITEMS: ListItemProps[] = [
+      {
+        id: "1",
+        title: "French Toast",
+        imageUrl: "https://picsum.photos/seed/frenchtoast/200",
+        rightSideContent: "13$",
+      },
+      {
+        id: "2",
+        title: "Sushi Deluxe",
+        imageUrl: "https://picsum.photos/seed/sushi/200",
+        rightSideContent: "22$",
+      },
+      {
+        id: "3",
+        title: "Pad Thai",
+        imageUrl: "https://picsum.photos/seed/padthai/200",
+        rightSideContent: "15$",
+      },
+      {
+        id: "4",
+        title: "Tacos Al Pastor",
+        imageUrl: "https://picsum.photos/seed/tacos/200",
+        rightSideContent: "12$",
+      },
+      {
+        id: "5",
+        title: "Margherita Pizza",
+        imageUrl: "https://picsum.photos/seed/pizza/200",
+        rightSideContent: "18$",
+      },
+      {
+        id: "6",
+        title: "Butter Chicken",
+        imageUrl: "https://picsum.photos/seed/butterchicken/200",
+        rightSideContent: "16$",
+      },
+      {
+        id: "7",
+        title: "Pho Bo",
+        imageUrl: "https://picsum.photos/seed/phobo/200",
+        rightSideContent: "14$",
+      },
+      {
+        id: "8",
+        title: "Croissant & Coffee",
+        imageUrl: "https://picsum.photos/seed/croissant/200",
+        rightSideContent: "10$",
+      },
+      {
+        id: "9",
+        title: "Cheeseburger",
+        imageUrl: "https://picsum.photos/seed/cheeseburger/200",
+        rightSideContent: "11$",
+      },
+      {
+        id: "10",
+        title: "Falafel Wrap",
+        imageUrl: "https://picsum.photos/seed/falafel/200",
+        rightSideContent: "13$",
+      },
+    ];
+
+    const [value, setValue] = useState({
+      search: "",
+      checked: [] as ListItemProps[],
+    });
+
+    const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
+      const { name, value: inputValue, checked, type } = e.target;
+
+      if (type === "checkbox") {
+        const parsed = JSON.parse(inputValue);
+        setValue((prev) => ({
+          ...prev,
+          [name]: checked
+            ? [...prev[name], parsed]
+            : prev[name].filter((val: ListItemProps) => val.id !== parsed.id),
+        }));
+      } else {
+        setValue((prev) => ({ ...prev, [name]: inputValue }));
+      }
+    };
+
+    const filteredContent = useMemo(() => {
+      const searchContent = value.search.toLowerCase().trim();
+      return LIST_ITEMS.filter((list) =>
+        String(list.title).toLowerCase().includes(searchContent)
+      );
+    }, [value.search]);
+
+    return (
+      <Card
+        title="Systatum Food Services"
+        subtitle="Fueling innovation with every bite."
+        headerActions={[
+          {
+            caption: "Edit fields",
+            disabled: value.checked.length === 0,
+            icon: RiEdit2Line,
+            onClick: () => {
+              console.log(`Delete ${value.checked.length} clicked`);
+            },
+          },
+        ]}
+        containerStyle={css`
+          padding-left: 0px;
+          padding-right: 0px;
+        `}
+        headerStyle={css`
+          padding-left: 15px;
+          padding-right: 15px;
+          border-bottom: 1px solid #d1d5db;
+        `}
+        footerStyle={css`
+          padding-left: 20px;
+          padding-right: 20px;
+          border-top: 1px solid #d1d5db;
+        `}
+      >
+        <List
+          searchable
+          selectable
+          onSearchRequested={onChangeValue}
+          containerStyle={css`
+            padding: 16px;
+            min-width: 400px;
+          `}
+          maxItems={5}
+        >
+          {filteredContent.map((list, i) => (
+            <List.Item
+              key={i}
+              containerStyle={css`
+                min-width: 300px;
+              `}
+              id={list.id}
+              subtitle={list.subtitle}
+              title={list.title}
+              imageUrl={list.imageUrl}
+              onClick={() => {
+                const isAlreadyChecked = value.checked.some(
+                  (check) => check.id.toString() === list.id.toString()
+                );
+
+                onChangeValue({
+                  target: {
+                    name: "checked",
+                    value: JSON.stringify({
+                      id: list.id,
+                      title: list.title,
+                      subtitle: list.subtitle,
+                    }),
+                    type: "checkbox",
+                    checked: !isAlreadyChecked,
+                  },
+                } as ChangeEvent<HTMLInputElement>);
+              }}
+              rightSideContent={list.rightSideContent}
+              onSelected={onChangeValue}
+              selectedOptions={{
+                checked: value.checked.some(
+                  (check) => check.id.toString() === list.id.toString()
+                ),
+                value: JSON.stringify({
+                  id: list.id,
+                  title: list.title,
+                  subtitle: list.subtitle,
+                }),
+              }}
+            />
+          ))}
         </List>
       </Card>
     );
