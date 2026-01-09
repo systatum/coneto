@@ -1102,7 +1102,7 @@ export const WithFullWidthContent: Story = {
           columns={columns}
           onItemsSelected={handleItemsSelected}
           subMenuList={TIP_MENU_ACTION}
-          labels={(n) => `${n} Department selected`}
+          labels={{ totalSelectedItem: (n) => `${n} Department selected` }}
         >
           {rows.map((rowValue, rowIndex) => (
             <Table.Row
