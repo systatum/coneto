@@ -101,16 +101,20 @@ export const Default: Story = {
                     <>
                       <Button
                         variant="default"
-                        buttonStyle={{
-                          fontSize: "12px",
+                        styles={{
+                          buttonStyle: {
+                            fontSize: "12px",
+                          },
                         }}
                       >
                         Clear Search
                       </Button>
                       <Button
                         variant="primary"
-                        buttonStyle={{
-                          fontSize: "12px",
+                        styles={{
+                          buttonStyle: {
+                            fontSize: "12px",
+                          },
                         }}
                       >
                         Add Member
@@ -234,16 +238,20 @@ export const FixedRight: Story = {
                     <>
                       <Button
                         variant="default"
-                        buttonStyle={{
-                          fontSize: "12px",
+                        styles={{
+                          buttonStyle: {
+                            fontSize: "12px",
+                          },
                         }}
                       >
                         Clear Search
                       </Button>
                       <Button
                         variant="primary"
-                        buttonStyle={{
-                          fontSize: "12px",
+                        styles={{
+                          buttonStyle: {
+                            fontSize: "12px",
+                          },
                         }}
                       >
                         Add Member

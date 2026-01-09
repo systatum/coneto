@@ -336,7 +336,7 @@ function PaperDialogTrigger({
       onClick={() => {
         setDialogState("restored");
       }}
-      buttonStyle={style}
+      styles={{ buttonStyle: style }}
     >
       {Icon && <Icon size={20} />}
       {children}

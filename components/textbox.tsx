@@ -119,34 +119,36 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
               }}
               showSubMenuOn="self"
               variant="outline"
-              containerStyle={css`
-                border-right: 0;
-                border-top-right-radius: 0;
-                border-bottom-right-radius: 0;
-                ${index > 0 &&
-                css`
-                  border-top-left-radius: 0;
-                  border-bottom-left-radius: 0;
-                `}
-                ${dropdown.width &&
-                css`
-                  width: ${dropdown.width};
-                `}
+              styles={{
+                containerStyle: css`
+                  border-right: 0;
+                  border-top-right-radius: 0;
+                  border-bottom-right-radius: 0;
+                  ${index > 0 &&
+                  css`
+                    border-top-left-radius: 0;
+                    border-bottom-left-radius: 0;
+                  `}
+                  ${dropdown.width &&
+                  css`
+                    width: ${dropdown.width};
+                  `}
 
                 ${dropdown.containerStyle}
-              `}
-              buttonStyle={css`
-                font-size: 12px;
-                ${dropdown.width &&
-                css`
-                  width: ${dropdown.width};
-                `}
-                ${dropdown.containerStyle}
-              `}
-              dropdownStyle={css`
-                min-width: 200px;
-                ${dropdown.drawerStyle}
-              `}
+                `,
+                buttonStyle: css`
+                  font-size: 12px;
+                  ${dropdown.width &&
+                  css`
+                    width: ${dropdown.width};
+                  `}
+                  ${dropdown.containerStyle}
+                `,
+                dropdownStyle: css`
+                  min-width: 200px;
+                  ${dropdown.drawerStyle}
+                `,
+              }}
             >
               {dropdown.caption}
             </Button>
@@ -187,36 +189,38 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
                   }
                 }}
                 disabled={props.disabled}
-                containerStyle={css`
-                  position: absolute;
-                  top: 50%;
-                  transform: translateY(-50%);
-                  right: ${`${offset}px`};
-                  z-index: 10;
-                  height: 23px;
-                `}
-                buttonStyle={css`
-                  padding: 2px;
-                  border-radius: 2px;
-                  cursor: pointer;
-                  background: transparent;
-                  position: relative;
-                  z-index: 10;
-                  height: 23px;
-                  color: ${showError
-                    ? "#f87171"
-                    : props.iconColor
-                      ? props.iconColor
-                      : "#6b7280"};
-
-                  &:hover {
+                styles={{
+                  containerStyle: css`
+                    position: absolute;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    right: ${`${offset}px`};
+                    z-index: 10;
+                    height: 23px;
+                  `,
+                  buttonStyle: css`
+                    padding: 2px;
+                    border-radius: 2px;
+                    cursor: pointer;
+                    background: transparent;
+                    position: relative;
+                    z-index: 10;
+                    height: 23px;
                     color: ${showError
-                      ? "#ef4444"
+                      ? "#f87171"
                       : props.iconColor
                         ? props.iconColor
-                        : "#374151"};
-                  }
-                `}
+                        : "#6b7280"};
+
+                    &:hover {
+                      color: ${showError
+                        ? "#ef4444"
+                        : props.iconColor
+                          ? props.iconColor
+                          : "#374151"};
+                    }
+                  `,
+                }}
               >
                 <Tooltip
                   containerStyle={css`
@@ -261,25 +265,27 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => setShowPassword((prev) => !prev)}
             aria-label="toggle-password"
-            containerStyle={css`
-              position: absolute;
-              top: 50%;
-              transform: translateY(-50%);
-              right: ${showError ? "30px" : "8px"};
-              z-index: 10;
-            `}
-            buttonStyle={css`
-              padding: 2px;
-              border-radius: 2px;
-              cursor: pointer;
-              background: transparent;
-              z-index: 10;
-              height: 25px;
-              color: ${showError ? "#f87171" : "#6b7280"};
-              &:hover {
-                color: ${showError ? "#ef4444" : "#374151"};
-              }
-            `}
+            styles={{
+              containerStyle: css`
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                right: ${showError ? "30px" : "8px"};
+                z-index: 10;
+              `,
+              buttonStyle: css`
+                padding: 2px;
+                border-radius: 2px;
+                cursor: pointer;
+                background: transparent;
+                z-index: 10;
+                height: 25px;
+                color: ${showError ? "#f87171" : "#6b7280"};
+                &:hover {
+                  color: ${showError ? "#ef4444" : "#374151"};
+                }
+              `,
+            }}
           >
             {showPassword ? (
               <RiEyeLine size={22} />

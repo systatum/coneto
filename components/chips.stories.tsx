@@ -210,8 +210,10 @@ export const Default: Story = {
                 await closeForm();
               }}
               size="sm"
-              buttonStyle={{
-                fontSize: "12px",
+              styles={{
+                buttonStyle: {
+                  fontSize: "12px",
+                },
               }}
             >
               Cancel
@@ -220,8 +222,10 @@ export const Default: Story = {
               onClick={handleNewTagClicked}
               size="sm"
               variant="primary"
-              buttonStyle={{
-                fontSize: "12px",
+              styles={{
+                buttonStyle: {
+                  fontSize: "12px",
+                },
               }}
             >
               Add
@@ -563,8 +567,10 @@ export const Deletable: Story = {
                 await closeForm();
               }}
               size="sm"
-              buttonStyle={{
-                fontSize: "12px",
+              styles={{
+                buttonStyle: {
+                  fontSize: "12px",
+                },
               }}
             >
               Cancel
@@ -573,8 +579,10 @@ export const Deletable: Story = {
               onClick={handleNewTagClicked}
               size="sm"
               variant="primary"
-              buttonStyle={{
-                fontSize: "12px",
+              styles={{
+                buttonStyle: {
+                  fontSize: "12px",
+                },
               }}
             >
               Add
@@ -805,8 +813,10 @@ export const CustomRenderer: Story = {
                 await closeForm();
               }}
               size="sm"
-              buttonStyle={{
-                fontSize: "12px",
+              styles={{
+                buttonStyle: {
+                  fontSize: "12px",
+                },
               }}
             >
               Cancel
@@ -815,8 +825,10 @@ export const CustomRenderer: Story = {
               onClick={handleNewTagClicked}
               size="sm"
               variant="primary"
-              buttonStyle={{
-                fontSize: "12px",
+              styles={{
+                buttonStyle: {
+                  fontSize: "12px",
+                },
               }}
             >
               Add
@@ -902,7 +914,15 @@ export const CustomRenderer: Story = {
             justifyContent: "flex-end",
           }}
         >
-          <Button style={{ fontSize: "0.75rem" }}>Save</Button>
+          <Button
+            styles={{
+              buttonStyle: {
+                fontSize: "12px",
+              },
+            }}
+          >
+            Save
+          </Button>
         </div>
       </div>
     );

@@ -945,16 +945,20 @@ export const WithEmptySlate: Story = {
           <>
             <Button
               variant="default"
-              buttonStyle={{
-                fontSize: "12px",
+              styles={{
+                buttonStyle: {
+                  fontSize: "12px",
+                },
               }}
             >
               Add Item
             </Button>
             <Button
               variant="primary"
-              buttonStyle={{
-                fontSize: "12px",
+              styles={{
+                buttonStyle: {
+                  fontSize: "12px",
+                },
               }}
             >
               Learn More

@@ -408,23 +408,25 @@ function FormFields<T extends FieldValues>({
                       ? field.buttonProps?.title
                       : field.placeholder
                   }
-                  buttonStyle={css`
-                    ${field.icon &&
-                    css`
-                      gap: 2px;
-                    `}
-                    width:100%;
-                    height: 34px;
-                    font-size: ${labelSize ?? "12px"};
-                    ${field.buttonProps?.buttonStyle};
-                  `}
-                  containerStyle={css`
-                    ${field.width &&
-                    css`
-                      width: ${field.width};
-                    `}
-                    ${field.buttonProps?.containerStyle}
-                  `}
+                  styles={{
+                    buttonStyle: css`
+                      ${field.icon &&
+                      css`
+                        gap: 2px;
+                      `}
+                      width:100%;
+                      height: 34px;
+                      font-size: ${labelSize ?? "12px"};
+                      ${field.buttonProps?.styles?.buttonStyle};
+                    `,
+                    containerStyle: css`
+                      ${field.width &&
+                      css`
+                        width: ${field.width};
+                      `}
+                      ${field.buttonProps?.styles?.containerStyle}
+                    `,
+                  }}
                   onClick={field.onClick}
                   disabled={field.disabled}
                 >

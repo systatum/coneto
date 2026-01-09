@@ -151,21 +151,23 @@ function DialogContent({
             variant="transparent"
             onClick={() => setIsOpen(false)}
             aria-label="Close dialog"
-            containerStyle={css`
-              position: absolute;
-              top: 1rem;
-              right: 1.2rem;
-              cursor: pointer;
-              transition: all 0.3s;
-              border-radius: 2px;
-              padding: 2px;
-            `}
-            buttonStyle={css`
-              width: 20px;
-              height: 20px;
-              padding: 2px;
-              ${closeButtonStyle}
-            `}
+            styles={{
+              containerStyle: css`
+                position: absolute;
+                top: 1rem;
+                right: 1.2rem;
+                cursor: pointer;
+                transition: all 0.3s;
+                border-radius: 2px;
+                padding: 2px;
+              `,
+              buttonStyle: css`
+                width: 20px;
+                height: 20px;
+                padding: 2px;
+                ${closeButtonStyle}
+              `,
+            }}
           >
             <RiCloseLine />
           </Button>

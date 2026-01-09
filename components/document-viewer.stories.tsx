@@ -193,14 +193,14 @@ export const Default: Story = {
             }}
           >
             <Button
-              style={{ fontSize: "0.75rem" }}
+              styles={{ buttonStyle: { fontSize: "0.75rem" } }}
               onClick={() => handleCancelSubmission()}
             >
               Cancel
             </Button>
             <Button
               variant="primary"
-              style={{ fontSize: "0.75rem" }}
+              styles={{ buttonStyle: { fontSize: "0.75rem" } }}
               onClick={() => handleCommentSubmission()}
             >
               Save

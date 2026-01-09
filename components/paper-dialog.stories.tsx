@@ -161,10 +161,12 @@ export const Default: Story = {
               >
                 <Button
                   disabled={!isFormValid}
-                  buttonStyle={{
-                    width: "100%",
-                    cursor: "pointer",
-                    maxWidth: "180px",
+                  styles={{
+                    buttonStyle: {
+                      width: "100%",
+                      cursor: "pointer",
+                      maxWidth: "180px",
+                    },
                   }}
                   type="submit"
                 >
@@ -301,10 +303,12 @@ export const Closable: Story = {
             >
               <Button
                 disabled={!isFormValid}
-                buttonStyle={{
-                  width: "100%",
-                  cursor: "pointer",
-                  maxWidth: "180px",
+                styles={{
+                  buttonStyle: {
+                    width: "100%",
+                    cursor: "pointer",
+                    maxWidth: "180px",
+                  },
                 }}
                 type="submit"
               >
@@ -440,10 +444,12 @@ export const FixedLeft: Story = {
             >
               <Button
                 disabled={!isFormValid}
-                buttonStyle={{
-                  width: "100%",
-                  cursor: "pointer",
-                  maxWidth: "180px",
+                styles={{
+                  buttonStyle: {
+                    width: "100%",
+                    cursor: "pointer",
+                    maxWidth: "180px",
+                  },
                 }}
                 type="submit"
               >

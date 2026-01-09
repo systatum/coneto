@@ -36,38 +36,40 @@ export default function ContextMenu({
   open,
 }: ContextMenuProps) {
   const buttonProps: ButtonProps = {
-    buttonStyle: css`
-      padding: 8px;
-      width: 32px;
-      height: 32px;
+    variant: "ghost",
+    activeBackgroundColor: activeBackgroundColor,
+    styles: {
+      buttonStyle: css`
+        padding: 8px;
+        width: 32px;
+        height: 32px;
 
-      ${focusBackgroundColor &&
-      css`
-        &:focus-visible {
-          background-color: ${focusBackgroundColor};
-        }
-      `}
+        ${focusBackgroundColor &&
+        css`
+          &:focus-visible {
+            background-color: ${focusBackgroundColor};
+          }
+        `}
 
-      ${hoverBackgroundColor &&
-      css`
-        &:hover {
-          background-color: ${hoverBackgroundColor};
-        }
-      `}
+        ${hoverBackgroundColor &&
+        css`
+          &:hover {
+            background-color: ${hoverBackgroundColor};
+          }
+        `}
 
     ${buttonStyle}
-    `,
-    variant: "ghost",
-    containerStyle: css`
-      width: fit-content;
-      height: fit-content;
-      ${containerStyle}
-    `,
-    dropdownStyle: css`
-      margin-top: 2px;
-      ${dropdownStyle}
-    `,
-    activeBackgroundColor: activeBackgroundColor,
+      `,
+      containerStyle: css`
+        width: fit-content;
+        height: fit-content;
+        ${containerStyle}
+      `,
+      dropdownStyle: css`
+        margin-top: 2px;
+        ${dropdownStyle}
+      `,
+    },
   };
 
   if (actions.length <= maxActionsBeforeCollapsing) {

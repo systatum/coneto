@@ -213,23 +213,25 @@ function WindowCell(props: WindowCellProps) {
               onClick={() => {
                 if (data.onClick) data.onClick();
               }}
-              containerStyle={css`
-                position: absolute;
-                top: 0.5rem;
-                right: 0.5rem;
-                cursor: pointer;
-                transition: all 0.3s;
-                border-radius: 2px;
-                padding: 2px;
-                width: fit-content;
-                height: fit-content;
-                z-index: 50;
-              `}
-              buttonStyle={css`
-                width: fit-content;
-                height: fit-content;
-                padding: 2px;
-              `}
+              styles={{
+                containerStyle: css`
+                  position: absolute;
+                  top: 0.5rem;
+                  right: 0.5rem;
+                  cursor: pointer;
+                  transition: all 0.3s;
+                  border-radius: 2px;
+                  padding: 2px;
+                  width: fit-content;
+                  height: fit-content;
+                  z-index: 50;
+                `,
+                buttonStyle: css`
+                  width: fit-content;
+                  height: fit-content;
+                  padding: 2px;
+                `,
+              }}
             >
               {data.icon && <data.icon size={16} />}
             </Button>
