@@ -47,17 +47,12 @@ export interface SubMenuButtonProps {
   render?: (children?: React.ReactNode) => React.ReactNode;
 }
 
-export type ButtonProps = React.ComponentProps<"button"> &
+export type ButtonProps = Omit<React.ComponentProps<"button">, "style"> &
   ButtonVariants & {
     isLoading?: boolean;
     subMenu?: (props: SubMenuButtonProps) => React.ReactNode;
-    dropdownStyle?: CSSProp | ((placement: Placement) => CSSProp);
     openedIcon?: RemixiconComponentType;
     closedIcon?: RemixiconComponentType;
-    buttonStyle?: CSSProp;
-    toggleStyle?: CSSProp;
-    containerStyle?: CSSProp;
-    dividerStyle?: CSSProp;
     showSubMenuOn?: "caret" | "self";
     tipMenuSize?: TipMenuItemVariantType;
     safeAreaAriaLabels?: string[];
@@ -65,22 +60,27 @@ export type ButtonProps = React.ComponentProps<"button"> &
     dialogPlacement?: DialogPlacement;
     onOpen?: (prop: boolean) => void;
     open?: boolean;
+    styles?: ButtonStylesProps;
   };
+
+interface ButtonStylesProps {
+  dropdownStyle?: CSSProp | ((placement: Placement) => CSSProp);
+  buttonStyle?: CSSProp;
+  toggleStyle?: CSSProp;
+  containerStyle?: CSSProp;
+  dividerStyle?: CSSProp;
+}
 
 function Button({
   variant = "default",
   size = "md",
   isLoading,
-  dropdownStyle,
   openedIcon: OpenedIcon = RiArrowDownSLine,
   closedIcon: ClosedIcon = RiArrowUpSLine,
   children,
   disabled,
-  containerStyle,
-  buttonStyle,
-  toggleStyle,
+  styles,
   onClick,
-  dividerStyle,
   tipMenuSize,
   subMenu,
   showSubMenuOn = "caret",
@@ -159,7 +159,7 @@ function Button({
         containerRef.current = node;
         refs.setReference(node);
       }}
-      $style={containerStyle}
+      $style={styles?.containerStyle}
       $isOpen={isOpen}
       $variant={variant}
     >
@@ -195,7 +195,7 @@ function Button({
             props.onMouseLeave(e);
           }
         }}
-        $style={buttonStyle}
+        $style={styles?.buttonStyle}
       >
         {children}
         {isLoading && <LoadingSpinner />}
@@ -215,7 +215,7 @@ function Button({
             $hovered={hovered === "main" || hovered === "dropdown" || isOpen}
             $variant={variant}
             $isOpen={isOpen}
-            $style={dividerStyle}
+            $style={styles?.dividerStyle}
           />
 
           <BaseButtonToggle
@@ -241,7 +241,7 @@ function Button({
                 props.onMouseLeave(e);
               }
             }}
-            $style={toggleStyle}
+            $style={styles?.toggleStyle}
           >
             {isOpen ? <OpenedIcon size={20} /> : <ClosedIcon size={20} />}
           </BaseButtonToggle>
@@ -255,9 +255,9 @@ function Button({
             ref={refs.setFloating}
             style={{ ...floatingStyles }}
             $style={
-              typeof dropdownStyle === "function"
-                ? dropdownStyle(placement)
-                : dropdownStyle
+              typeof styles?.dropdownStyle === "function"
+                ? styles?.dropdownStyle(placement)
+                : styles?.dropdownStyle
             }
             onMouseEnter={() => setHovered("dropdown")}
           >
