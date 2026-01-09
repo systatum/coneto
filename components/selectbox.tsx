@@ -285,6 +285,8 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
           setIsHovered(false);
         }}
         role="combobox"
+        onMouseLeave={() => setIsHovered(false)}
+        onMouseEnter={() => setIsHovered(true)}
         $style={containerStyle}
         aria-expanded={isOpen}
         onClick={() => {
@@ -326,7 +328,6 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
           }}
           onBlur={() => {
             setIsFocused(false);
-            setIsHovered(false);
             setHasInteracted(false);
 
             if (strict) {
@@ -365,18 +366,14 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
             }
           }}
           placeholder={placeholder || "Search your item..."}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
           $focused={isFocused && !multiple}
           $hovered={isHovered && !multiple}
           $highlight={highlightOnMatch && FILTERED_ACTIVE}
         />
 
-        {clearable && selectedOptions?.length !== 0 && (
+        {clearable && selectedOptionsLocal?.text.length !== 0 && (
           <>
             <ClearIcon
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
               aria-label="clearable-content"
               onMouseDown={() => {
                 setSelectedOptions?.([]);
@@ -386,11 +383,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
               $highlight={highlightOnMatch && FILTERED_ACTIVE}
               size={16}
             />
-            <Divider
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
-              aria-label="divider"
-            />
+            <Divider aria-label="divider" />
           </>
         )}
 
@@ -413,7 +406,6 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
             />
           ) : (
             <IconClosed
-              onMouseEnter={() => setIsHovered(true)}
               size={18}
               color={
                 highlightOnMatch && FILTERED_ACTIVE ? "#61a9f9" : "#9ca3af"
