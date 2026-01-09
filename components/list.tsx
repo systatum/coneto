@@ -17,6 +17,7 @@ import React, {
   ReactNode,
   Ref,
   useContext,
+  useMemo,
   useState,
 } from "react";
 import { Searchbox } from "./searchbox";
@@ -90,6 +91,7 @@ export interface ListGroupProps {
   openerStyle?: "chevron" | "togglebox" | "none";
   emptySlate?: ReactNode;
   emptySlateStyle?: CSSProp;
+  initialState?: "opened" | "closed";
 }
 
 export interface ListGroupContentProps {
@@ -100,6 +102,7 @@ export interface ListGroupContentProps {
   subtitleStyle?: CSSProp;
   actions?: ListGroupActionsProps[];
   rightSideContent?: ((prop: string) => ReactNode) | ReactNode;
+  initialState?: "opened" | "closed";
   items: ListItemProps[];
 }
 
@@ -178,9 +181,6 @@ function List({
   maxItemsStyle,
   maxItemsWithIcon,
 }: ListProps) {
-  const [openedIds, setOpenedIds] = useState<Set<string>>(new Set());
-  const [openTipRowId, setOpenTipRowId] = useState<string | null>("");
-
   const childArray = Children.toArray(children).filter(isValidElement);
 
   const hasGroup = childArray.some((child) => {
@@ -189,13 +189,32 @@ function List({
     return (child as ReactElement).type === List.Group;
   });
 
+  const initialOpenedIds = useMemo(() => {
+    const initialIds = new Set<string>();
+
+    childArray.forEach((child) => {
+      if (isValidElement(child)) {
+        const childElement = child as ReactElement<ListGroupProps>;
+        if (childElement.props && "id" in childElement.props) {
+          if (childElement.props.initialState !== "closed") {
+            initialIds.add(childElement.props.id);
+          }
+        }
+      }
+    });
+
+    return initialIds;
+  }, []);
+
+  const [openedIds, setOpenedIds] = useState<Set<string>>(initialOpenedIds);
+  const [openTipRowId, setOpenTipRowId] = useState<string | null>("");
+
   const [dragItem, setDragItem] = useState(null);
   const [searchValueLocal, setSearchValueLocal] = useState("");
+  const [expanded, setExpanded] = useState(hasGroup ? true : false);
 
   const isControlled = searchValue !== undefined;
   const value = isControlled ? searchValue : searchValueLocal;
-
-  const [expanded, setExpanded] = useState(hasGroup ? true : false);
 
   const setValue = (e: ChangeEvent<HTMLInputElement>) => {
     const finalValue = e.target.value;
@@ -281,6 +300,7 @@ function List({
             if (child.type === React.Fragment) {
               return child;
             }
+
             const isHidden = maxItems && !expanded && index >= maxItems;
 
             const modifiedChild = cloneElement(componentChild, {
@@ -367,6 +387,7 @@ function ListGroup({
   actions,
   emptySlate,
   emptySlateStyle,
+  initialState = "opened",
   ...props
 }: ListGroupProps) {
   const {
@@ -381,11 +402,12 @@ function ListGroup({
     ListAlwaysShowDragIconProp &
     ListMaxItemsProp & { labels?: ListLabelsProps };
 
-  const { dragItem, setDragItem, onDragged } = useContext(DnDContext);
   const childArray = Children.toArray(children).filter(isValidElement);
-
-  const [isOpen, setIsOpen] = useState(true);
+  const { dragItem, setDragItem, onDragged } = useContext(DnDContext);
+  const { isOpen, setIsOpen } = useContext(OpenedContext);
   const [expanded, setExpanded] = useState(false);
+
+  const opened = isOpen(id);
 
   const finalActions =
     actions &&
@@ -402,9 +424,9 @@ function ListGroup({
   return (
     <ListGroupContainer $containerStyle={containerStyle}>
       <HeaderButton
-        $isOpen={isOpen}
-        onClick={() => setIsOpen((prev) => !prev)}
-        aria-expanded={isOpen}
+        $isOpen={opened}
+        onClick={() => setIsOpen(id)}
+        aria-expanded={opened}
       >
         <div
           style={{
@@ -457,7 +479,7 @@ function ListGroup({
             <RiArrowDownSLine
               style={{
                 transition: "transform 200ms",
-                transform: isOpen ? "rotate(0deg)" : "rotate(-180deg)",
+                transform: opened ? "rotate(0deg)" : "rotate(-180deg)",
               }}
               size={18}
             />
@@ -466,8 +488,8 @@ function ListGroup({
               containerStyle={css`
                 width: fit-content;
               `}
-              checked={isOpen}
-              onChange={() => setIsOpen((prev) => !prev)}
+              checked={opened}
+              onChange={() => setIsOpen(id)}
             />
           ) : null}
         </div>
@@ -551,7 +573,7 @@ function ListGroup({
             <ListGroupContent
               key={`list-group-content-${index}`}
               initial="open"
-              animate={isOpen ? "open" : "collapsed"}
+              animate={opened ? "open" : "collapsed"}
               exit="collapsed"
               variants={{
                 open: { opacity: 1, height: "auto" },
@@ -567,9 +589,9 @@ function ListGroup({
         {maxItems && childArray.length > maxItems && (
           <ListShowMoreButton
             expanded={expanded}
-            isOpen={isOpen}
+            isOpen={opened}
             setExpanded={setExpanded}
-            key={`list-show-more-${isOpen}`}
+            key={`list-show-more-${opened}`}
             maxItemsStyle={maxItemsStyle}
             maxItemsWithIcon={maxItemsWithIcon}
             labels={labels}
@@ -582,7 +604,7 @@ function ListGroup({
             key="drop-here"
             aria-label="list-group-empty-slate"
             initial="open"
-            animate={isOpen ? "open" : "collapsed"}
+            animate={opened ? "open" : "collapsed"}
             $style={emptySlateStyle}
             exit="collapsed"
             variants={{
@@ -691,7 +713,7 @@ const ListGroupContainer = styled.div<{
   ${({ $containerStyle }) => $containerStyle}
 `;
 
-const ListGroupContent = styled(motion.div)<{
+const ListGroupContent = styled(motion.ul)<{
   $contentStyle?: CSSProp;
   $isOpen?: boolean;
 }>`
