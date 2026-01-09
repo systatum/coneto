@@ -14,7 +14,7 @@ import { DrawerProps, OptionsProps, Selectbox } from "./selectbox";
 import { RemixiconComponentType } from "@remixicon/react";
 import styled, { css, CSSProp } from "styled-components";
 import { Searchbox } from "./searchbox";
-import { Checkbox } from "./checkbox";
+import { List } from "./list";
 
 export type ComboboxProps = Partial<BaseComboboxProps> & {
   label?: string;
@@ -181,6 +181,8 @@ function ComboboxDrawer({
   handleKeyDown,
   maxSelectableItems,
   name,
+  interactionMode,
+  setInteractionMode,
 }: ComboboxDrawerProps) {
   const [hasScrolled, setHasScrolled] = useState(false);
   const floatingRef = useRef<HTMLUListElement>(null);
@@ -243,15 +245,25 @@ function ComboboxDrawer({
       $width={refs.reference.current?.getBoundingClientRect().width}
       style={{ ...floatingStyles }}
     >
-      {multiple && (
-        <Fragment>
-          <Searchbox
-            ref={inputRef}
-            autoComplete="off"
-            onKeyDown={handleKeyDown}
-            name="multiple"
-            value={selectedOptionsLocal.text}
-            containerStyle={css`
+      {(options || actions) && (
+        <List
+          containerStyle={listContainerStyle}
+          inputRef={inputRef}
+          selectable={multiple}
+          searchable={multiple}
+          onSearchKeyDown={handleKeyDown}
+          searchValue={selectedOptionsLocal.text}
+          onSearchRequested={(e) => {
+            const { value } = e.target;
+            setHasInteracted(true);
+            setHighlightedIndex(0);
+            setSelectedOptionsLocal({
+              ...selectedOptionsLocal,
+              text: value,
+            });
+          }}
+          searchboxStyles={{
+            containerStyle: css`
               position: sticky;
               top: 0;
               background-color: white;
@@ -259,140 +271,203 @@ function ComboboxDrawer({
               height: 38px;
               padding-right: 7px;
               padding-left: 7px;
-            `}
-            iconStyle={css`
+            `,
+            iconStyle: css`
               left: 16px;
-            `}
-            style={css`
+            `,
+            style: css`
               max-height: 35px;
               margin-top: 7px;
               margin-bottom: 7px;
               padding-bottom: 7px;
               padding-top: 7px;
-            `}
-            onChange={(e) => {
-              const { value } = e.target;
-              setHasInteracted(true);
-              setHighlightedIndex(0);
-              setSelectedOptionsLocal({
-                ...selectedOptionsLocal,
-                text: value,
-              });
-            }}
-          />
-        </Fragment>
-      )}
+            `,
+          }}
+        >
+          {actions &&
+            actions.map((props, index) => {
+              const shouldHighlight = highlightedIndex === index;
+              const isLast = index === actions.length - 1;
 
-      {actions && (
-        <ActionWrapper>
-          {actions.map((data, index) => {
-            const shouldHighlight = highlightedIndex === index;
-
-            return (
-              <ActionItem
-                key={index}
-                id={`action-${index}`}
-                ref={(el: HTMLLIElement) => {
-                  listRef.current[index] = el;
-                }}
-                $highlighted={shouldHighlight}
-                onMouseEnter={() => setHighlightedIndex(index)}
-                onClick={() => {
-                  data.onClick?.();
-                  setIsOpen(false);
-                }}
-                $style={data.style}
-              >
-                <div>{data.title}</div>
-                {data.icon && (
-                  <IconWrapper>
-                    <data.icon size={16} />
-                  </IconWrapper>
-                )}
-              </ActionItem>
-            );
-          })}
-          <Divider aria-label="divider" />
-        </ActionWrapper>
-      )}
-      {options.length > 0 ? (
-        options.map((option, index) => {
-          const isSelected = selectedOptions.includes(option.value);
-          const shouldHighlight =
-            highlightOnMatch && isSelected
-              ? true
-              : highlightedIndex === index + (actions?.length || 0);
-          return (
-            <OptionItem
-              key={option.value}
-              id={`option-${index}`}
-              role="option"
-              aria-selected={isSelected && !multiple}
-              data-highlighted={shouldHighlight}
-              $selected={isSelected && !multiple}
-              $highlighted={shouldHighlight}
-              $optionDisplay={!!option.render}
-              onMouseDown={(e) => {
-                e.preventDefault();
-                if (multiple) {
-                  if (!selectedOptions.includes(option.value)) {
-                    if (
-                      !maxSelectableItems ||
-                      selectedOptions.length < maxSelectableItems
-                    ) {
-                      setSelectedOptions([...selectedOptions, option.value]);
+              return (
+                <Fragment key={index}>
+                  <List.Item
+                    id={`action-${index}`}
+                    ref={(el) => {
+                      listRef.current[index] = el;
+                    }}
+                    titleStyle={listItemTitleStyle}
+                    rowStyle={listItemRowStyle({
+                      shouldHighlight,
+                      interactionMode,
+                    })}
+                    containerStyle={listItemContainerStyle}
+                    leftSideStyle={listItemLeftSideStyle}
+                    title={
+                      <>
+                        {props.title}
+                        {props.icon && (
+                          <IconWrapper>
+                            <props.icon size={16} />
+                          </IconWrapper>
+                        )}
+                      </>
                     }
-                  } else {
-                    setSelectedOptions(
-                      selectedOptions.filter((val) => val !== option.value)
-                    );
-                  }
-                  (inputRef as RefObject<HTMLInputElement>)?.current?.focus();
-                } else {
-                  setIsOpen(false);
-                  setSelectedOptionsLocal(option);
-                  setSelectedOptions([option.value]);
-                  setHasInteracted(false);
-                }
+                    onMouseEnter={() => setHighlightedIndex(index)}
+                    onClick={() => {
+                      props.onClick?.();
+                      setIsOpen(false);
+                    }}
+                  />
 
-                onClick?.();
-              }}
-              onMouseEnter={() =>
-                setHighlightedIndex(index + (actions?.length || 0))
-              }
-              ref={(el) => {
-                listRef.current[index + (actions?.length || 0)] = el;
-              }}
-            >
-              {multiple && (
-                <Checkbox
-                  iconStyle={css`
-                    width: 8px;
-                    height: 8px;
-                  `}
-                  inputStyle={css`
-                    width: 14px;
-                    height: 14px;
-                  `}
-                  containerStyle={css`
-                    ${option?.render &&
-                    css`
-                      margin-top: 3px;
-                    `}
-                  `}
-                  checked={isSelected}
+                  {isLast && <Divider aria-label="divider" aria-hidden />}
+                </Fragment>
+              );
+            })}
+
+          {options.length > 0 ? (
+            options.map((option, index) => {
+              const isSelected = selectedOptions.includes(option.value);
+              const shouldHighlight =
+                highlightOnMatch && isSelected
+                  ? true
+                  : highlightedIndex === index + (actions?.length || 0);
+
+              return (
+                <List.Item
+                  id={option.value}
+                  title={option.render ? option.render : option.text}
+                  rowStyle={listItemRowStyle({
+                    shouldHighlight,
+                    interactionMode,
+                    isSelected,
+                    multiple,
+                  })}
+                  containerStyle={listItemContainerStyle}
+                  leftSideStyle={[
+                    listItemLeftSideStyle,
+                    option.render && listItemLeftSideWithRender,
+                  ]}
+                  titleStyle={[
+                    listItemTitleStyle,
+                    option.render && listItemTitleWithRender,
+                  ]}
+                  selectedOptions={{ checked: isSelected }}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    if (multiple) {
+                      if (!selectedOptions.includes(option.value)) {
+                        if (
+                          !maxSelectableItems ||
+                          selectedOptions.length < maxSelectableItems
+                        ) {
+                          setSelectedOptions([
+                            ...selectedOptions,
+                            option.value,
+                          ]);
+                        }
+                      } else {
+                        setSelectedOptions(
+                          selectedOptions.filter((val) => val !== option.value)
+                        );
+                      }
+                      (
+                        inputRef as RefObject<HTMLInputElement>
+                      )?.current?.focus();
+                    } else {
+                      setIsOpen(false);
+                      setSelectedOptionsLocal(option);
+                      setSelectedOptions([option.value]);
+                      setHasInteracted(false);
+                    }
+
+                    onClick?.();
+                  }}
+                  onMouseMove={() => {
+                    if (interactionMode !== "mouse") {
+                      setInteractionMode("mouse");
+                    }
+                  }}
+                  onMouseEnter={() => {
+                    if (interactionMode !== "mouse") return;
+
+                    setHighlightedIndex(index + (actions?.length || 0));
+                  }}
+                  ref={(el) => {
+                    listRef.current[index + (actions?.length || 0)] = el;
+                  }}
                 />
-              )}
-              {option?.render ? option?.render : option.text}
-            </OptionItem>
-          );
-        })
-      ) : (
-        <EmptyState>{emptySlate}</EmptyState>
+              );
+            })
+          ) : (
+            <EmptyState>{emptySlate}</EmptyState>
+          )}
+        </List>
       )}
     </DrawerWrapper>
   );
 }
+
+const listContainerStyle = css`
+  gap: 0px;
+`;
+
+const listItemContainerStyle = css`
+  padding: 0px;
+`;
+
+const listItemLeftSideStyle = css`
+  padding: 0px;
+`;
+
+const listItemTitleStyle = css`
+  font-weight: 400;
+  padding: 0px;
+  font-size: 12px;
+`;
+
+const listItemRowStyle = ({
+  shouldHighlight,
+  interactionMode,
+  isSelected,
+  multiple,
+}: {
+  shouldHighlight?: boolean;
+  interactionMode?: "mouse" | "keyboard";
+  isSelected?: boolean;
+  multiple?: boolean;
+}) => css`
+  border-radius: 0px;
+  padding: 0.5rem 0.75rem;
+  transition: background-color 0ms;
+
+  ${interactionMode !== "mouse" &&
+  css`
+    background-color: white;
+  `}
+
+  ${shouldHighlight &&
+  css`
+    background-color: #dbeafe;
+  `}
+
+  ${isSelected &&
+  !multiple &&
+  css`
+    background-color: #61a9f9;
+    font-weight: 600;
+    color: white;
+  `}
+`;
+
+const listItemLeftSideWithRender = css`
+  align-items: start;
+  padding-top: 3px;
+`;
+
+const listItemTitleWithRender = css`
+  transform: translateY(-4px);
+`;
 
 const DrawerWrapper = styled.ul<{ $width?: number }>`
   position: absolute;
@@ -408,31 +483,6 @@ const DrawerWrapper = styled.ul<{ $width?: number }>`
   width: ${({ $width }) => ($width ? `${$width}px` : "100%")};
 `;
 
-const ActionWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-`;
-
-const ActionItem = styled.li<{ $style?: CSSProp; $highlighted?: boolean }>`
-  display: flex;
-  flex-direction: row;
-  position: relative;
-  width: 100%;
-  align-items: center;
-  cursor: pointer;
-  padding: 0.5rem 0.75rem;
-  gap: 0.5rem;
-
-  ${({ $highlighted }) => ($highlighted ? "background-color: #dbeafe;" : "")}
-
-  &:hover {
-    background-color: #dbeafe;
-  }
-
-  ${({ $style }) => $style}
-`;
-
 const IconWrapper = styled.span`
   position: absolute;
   right: 0.5rem;
@@ -445,37 +495,6 @@ const Divider = styled.div`
   height: 1px;
   border-bottom: 1px solid #d1d5db;
   margin: 2px 0;
-`;
-
-const OptionItem = styled.li<{
-  $selected?: boolean;
-  $highlighted?: boolean;
-  $optionDisplay: boolean;
-}>`
-  cursor: pointer;
-  padding: 0.5rem 0.75rem;
-  display: flex;
-  flex-direction: row;
-  gap: 8px;
-
-  ${({ $optionDisplay }) =>
-    $optionDisplay
-      ? css`
-          align-items: start;
-        `
-      : css`
-          align-items: center;
-        `}
-
-  ${({ $highlighted }) => ($highlighted ? "background-color: #dbeafe;" : "")}
-  ${({ $selected }) =>
-    $selected
-      ? `
-    background-color: #61A9F9;
-    font-weight: 600;
-    color: white;
-  `
-      : ""}
 `;
 
 const EmptyState = styled.li`

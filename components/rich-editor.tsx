@@ -340,6 +340,16 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     const updateFormatStates = () => {
       if (!editorRef.current || mode === "view-only") return;
 
+      const sel = window.getSelection();
+      if (!sel || !sel.rangeCount) return;
+
+      const node = sel.anchorNode;
+
+      if (!node || !editorRef.current.contains(node)) {
+        setFormatStates({ bold: false, italic: false });
+        return;
+      }
+
       try {
         const bold = document.queryCommandState("bold");
         const italic = document.queryCommandState("italic");
@@ -387,14 +397,15 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     }, [mode]);
 
     useEffect(() => {
-      if (!editorRef.current || editorRef.current.innerHTML) return;
+      let isMounted = true;
 
       const initializeEditor = async () => {
-        let processedValue = value;
+        if (!editorRef.current || editorRef.current.innerHTML) return;
 
-        processedValue = preprocessMarkdown(processedValue);
-
+        let processedValue = preprocessMarkdown(value);
         let html = await marked.parse(processedValue);
+
+        if (!isMounted || !editorRef.current) return;
 
         html = html.replace(/<p>&nbsp;<\/p>/g, "<p><br></p>");
 
@@ -409,6 +420,10 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       };
 
       initializeEditor();
+
+      return () => {
+        isMounted = false;
+      };
     }, []);
 
     const handleFilteringCheckbox = () => {
@@ -1195,6 +1210,7 @@ function RichEditorToolbarButton({
       }}
       $isActive={isActive}
       aria-label="rich-editor-toolbar-button"
+      aria-pressed={isActive}
     >
       {Icon && <Icon size={16} />}
       {children && <span>{children}</span>}
