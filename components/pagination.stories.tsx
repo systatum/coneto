@@ -6,15 +6,46 @@ const meta: Meta<typeof Pagination> = {
   title: "Controls/Pagination",
   component: Pagination,
   tags: ["autodocs"],
+
   argTypes: {
-    currentPage: { control: { type: "number", min: 1 } },
-    totalPages: { control: { type: "number", min: 1 } },
-    showNumbers: { control: "boolean" },
-  },
-  args: {
-    currentPage: 1,
-    totalPages: 5,
-    showNumbers: true,
+    currentPage: {
+      control: { type: "number", min: 1 },
+      description: "Current active page",
+    },
+    totalPages: {
+      control: { type: "number", min: 1 },
+      description: "Total number of pages",
+    },
+    onPageChange: {
+      action: "page changed",
+      description: "Callback fired when page changes",
+    },
+    showNumbers: {
+      control: "boolean",
+      description: "Show page numbers and combobox",
+      defaultValue: true,
+    },
+    style: {
+      control: "object",
+      description: "Custom CSS for pagination wrapper",
+      table: {
+        category: "Styles",
+      },
+    },
+    buttonStyle: {
+      control: "object",
+      description: "Custom CSS for pagination buttons",
+      table: {
+        category: "Styles",
+      },
+    },
+    selectboxStyle: {
+      control: "object",
+      description: "Custom CSS for combobox",
+      table: {
+        category: "Styles",
+      },
+    },
   },
 };
 
@@ -23,6 +54,11 @@ export default meta;
 type Story = StoryObj<typeof Pagination>;
 
 export const Default: Story = {
+  args: {
+    currentPage: 1,
+    totalPages: 5,
+    showNumbers: true,
+  },
   render: (args) => {
     const [, setUpdateArgs] = useArgs();
 
