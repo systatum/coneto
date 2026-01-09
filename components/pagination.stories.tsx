@@ -47,6 +47,11 @@ const meta: Meta<typeof Pagination> = {
       },
     },
   },
+  args: {
+    currentPage: 1,
+    totalPages: 5,
+    showNumbers: true,
+  },
 };
 
 export default meta;
@@ -54,11 +59,6 @@ export default meta;
 type Story = StoryObj<typeof Pagination>;
 
 export const Default: Story = {
-  args: {
-    currentPage: 1,
-    totalPages: 5,
-    showNumbers: true,
-  },
   render: (args) => {
     const [, setUpdateArgs] = useArgs();
 

@@ -23,7 +23,7 @@ describe("Pagination", () => {
       });
 
       context("when disabled", () => {
-        it("shouldn't pressing ", () => {
+        it("should not pressing ", () => {
           cy.findAllByLabelText("pagination-button")
             .eq(0)
             .should("be.visible")
@@ -67,8 +67,9 @@ describe("Pagination", () => {
     beforeEach(() => {
       cy.visit(getIdContent("controls-pagination--over-five-page"));
     });
+
     context("combobox", () => {
-      context("when selected", () => {
+      context("when selecting number", () => {
         it("should be select page", () => {
           cy.findByPlaceholderText("1").click();
           cy.findByRole("listbox").scrollTo("bottom", {
@@ -84,7 +85,7 @@ describe("Pagination", () => {
       });
 
       context("when pressing not include number", () => {
-        it("shouldn't have active style", () => {
+        it("should not have active style", () => {
           cy.findByPlaceholderText("1").click();
           cy.findByRole("listbox").scrollTo("bottom", {
             duration: 1000,
@@ -112,6 +113,30 @@ describe("Pagination", () => {
         cy.findAllByLabelText("pagination-button")
           .eq(3)
           .should("have.css", "border", "1px solid rgb(97, 169, 249)");
+      });
+
+      context("when hover selectbox and move out", () => {
+        it("should not renders hover/active style", () => {
+          cy.findByPlaceholderText("1").should(
+            "have.css",
+            "border",
+            "1px solid rgb(97, 169, 249)"
+          );
+          cy.findByText("50").click();
+          cy.findAllByLabelText("pagination-button")
+            .eq(3)
+            .should("have.css", "border", "1px solid rgb(97, 169, 249)");
+
+          cy.findByPlaceholderText("1")
+            .trigger("mouseover")
+            .should("have.css", "border", "1px solid rgb(243, 244, 246)")
+            .trigger("mouseout");
+          cy.findByPlaceholderText("1").should(
+            "have.css",
+            "border",
+            "1px solid rgb(243, 244, 246)"
+          );
+        });
       });
     });
   });
