@@ -74,14 +74,18 @@ export interface TableProps {
   onPreviousPageRequested?: () => void;
   disablePreviousPageButton?: boolean;
   disableNextPageButton?: boolean;
-  pageNumberText?: string | number;
-  totalSelectedItemText?: null | ((count: number) => string);
+  labels?: TableLabelsProps;
   sumRow?: SummaryRowProps[];
   containerStyle?: CSSProp;
   tableRowContainerStyle?: CSSProp;
   paginationWrapperStyle?: CSSProp;
   paginationNumberStyle?: CSSProp;
-  totalSelectedItemStyle?: CSSProp;
+  totalSelectedItemTextStyle?: CSSProp;
+}
+
+export interface TableLabelsProps {
+  totalSelectedItemText?: ((count: number) => string) | null;
+  pageNumberText?: string | number;
 }
 
 interface TableAlwaysShowDragIconProp {
@@ -164,8 +168,7 @@ function Table({
   disablePreviousPageButton = false,
   onNextPageRequested,
   onPreviousPageRequested,
-  pageNumberText = 1,
-  totalSelectedItemText,
+  labels,
   searchable,
   onSearchboxChange,
   draggable,
@@ -175,8 +178,8 @@ function Table({
   tableRowContainerStyle,
   paginationWrapperStyle,
   paginationNumberStyle,
-  totalSelectedItemStyle,
   alwaysShowDragIcon = true,
+  totalSelectedItemTextStyle,
 }: TableProps & TableAlwaysShowDragIconProp) {
   const [dragItem, setDragItem] = useState<{
     oldGroupId: string;
@@ -321,7 +324,8 @@ function Table({
     <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
       <TableColumnContext.Provider value={columns}>
         <Wrapper $containerStyle={containerStyle}>
-          {((selectedData.length > 0 && totalSelectedItemText !== null) ||
+          {((selectedData.length > 0 &&
+            labels?.totalSelectedItemText !== null) ||
             showPagination ||
             actions ||
             searchable) && (
@@ -395,18 +399,18 @@ function Table({
                       aria-label="pagination-number"
                       $style={paginationNumberStyle}
                     >
-                      {typeof pageNumberText === "number"
-                        ? `Pg. ${pageNumberText}`
-                        : pageNumberText}
+                      {typeof labels.pageNumberText === "number"
+                        ? `Pg. ${labels.pageNumberText}`
+                        : labels.pageNumberText}
                     </PaginationNumber>
                   )}
-                  {selectable && totalSelectedItemText !== null && (
+                  {selectable && (
                     <PaginationSelectedItem
                       aria-label="pagination-selected-item"
-                      $style={totalSelectedItemStyle}
+                      $style={totalSelectedItemTextStyle}
                     >
-                      {totalSelectedItemText
-                        ? totalSelectedItemText(selectedData.length)
+                      {labels?.totalSelectedItemText
+                        ? labels?.totalSelectedItemText(selectedData.length)
                         : `${selectedData.length} items selected`}
                     </PaginationSelectedItem>
                   )}

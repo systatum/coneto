@@ -90,7 +90,7 @@ describe("Table Component", () => {
       });
     });
 
-    context("when totalSelectedItemText is null", () => {
+    context("when labels is null", () => {
       context("when selecting item", () => {
         it("renders without total selected and header ", () => {
           cy.findByLabelText("header-wrapper").should("not.exist");
