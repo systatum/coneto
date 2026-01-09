@@ -3,6 +3,100 @@ import { RichEditor } from "./../../components/rich-editor";
 import { useEffect, useState } from "react";
 
 describe("RichEditor", () => {
+  context("selection behavior", () => {
+    context("when selecting bold text outside the editor", () => {
+      it("does not update the editor bold state", () => {
+        function Wrapper() {
+          return (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "4px",
+              }}
+            >
+              <RichEditor value="test" />
+              <div
+                data-testid="external-bold"
+                style={{
+                  fontWeight: "bold",
+                }}
+              >
+                This is text with font bold
+              </div>
+            </div>
+          );
+        }
+
+        cy.mount(<Wrapper />);
+        cy.findAllByLabelText("rich-editor-toolbar-button")
+          .eq(0)
+          .should("have.attr", "aria-pressed", "false");
+
+        cy.get('[data-testid="external-bold"]').then(($el) => {
+          cy.window().then((win) => {
+            const range = win.document.createRange();
+            range.selectNodeContents($el[0]);
+
+            const sel = win.getSelection();
+            sel?.removeAllRanges();
+            sel?.addRange(range);
+          });
+        });
+
+        cy.findAllByLabelText("rich-editor-toolbar-button")
+          .eq(0)
+          .should("have.attr", "aria-pressed", "false");
+      });
+    });
+
+    context("when selecting italic text outside the editor", () => {
+      it("does not update the editor italic state", () => {
+        function Wrapper() {
+          return (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "4px",
+              }}
+            >
+              <RichEditor value="test" />
+              <div
+                data-testid="external-italic"
+                style={{
+                  fontStyle: "italic",
+                }}
+              >
+                This is text with font italic
+              </div>
+            </div>
+          );
+        }
+
+        cy.mount(<Wrapper />);
+        cy.findAllByLabelText("rich-editor-toolbar-button")
+          .eq(1)
+          .should("have.attr", "aria-pressed", "false");
+
+        cy.get('[data-testid="external-italic"]').then(($el) => {
+          cy.window().then((win) => {
+            const range = win.document.createRange();
+            range.selectNodeContents($el[0]);
+
+            const sel = win.getSelection();
+            sel?.removeAllRanges();
+            sel?.addRange(range);
+          });
+        });
+
+        cy.findAllByLabelText("rich-editor-toolbar-button")
+          .eq(1)
+          .should("have.attr", "aria-pressed", "false");
+      });
+    });
+  });
+
   context("with mounted-state guard", () => {
     it("safely aborts async parsing after unmount", () => {
       cy.stub(marked, "parse").callsFake(
