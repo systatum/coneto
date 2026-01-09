@@ -80,11 +80,11 @@ export interface TableProps {
   tableRowContainerStyle?: CSSProp;
   paginationWrapperStyle?: CSSProp;
   paginationNumberStyle?: CSSProp;
-  totalSelectedItemStyle?: CSSProp;
+  totalSelectedItemTextStyle?: CSSProp;
 }
 
 export interface TableLabelsProps {
-  totalSelectedItem?: ((count: number) => string) | null;
+  totalSelectedItemText?: ((count: number) => string) | null;
   pageNumberText?: string | number;
 }
 
@@ -179,7 +179,7 @@ function Table({
   paginationWrapperStyle,
   paginationNumberStyle,
   alwaysShowDragIcon = true,
-  totalSelectedItemStyle,
+  totalSelectedItemTextStyle,
 }: TableProps & TableAlwaysShowDragIconProp) {
   const [dragItem, setDragItem] = useState<{
     oldGroupId: string;
@@ -324,7 +324,8 @@ function Table({
     <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
       <TableColumnContext.Provider value={columns}>
         <Wrapper $containerStyle={containerStyle}>
-          {((selectedData.length > 0 && labels?.totalSelectedItem !== null) ||
+          {((selectedData.length > 0 &&
+            labels?.totalSelectedItemText !== null) ||
             showPagination ||
             actions ||
             searchable) && (
@@ -406,10 +407,10 @@ function Table({
                   {selectable && (
                     <PaginationSelectedItem
                       aria-label="pagination-selected-item"
-                      $style={totalSelectedItemStyle}
+                      $style={totalSelectedItemTextStyle}
                     >
-                      {labels?.totalSelectedItem
-                        ? labels?.totalSelectedItem(selectedData.length)
+                      {labels?.totalSelectedItemText
+                        ? labels?.totalSelectedItemText(selectedData.length)
                         : `${selectedData.length} items selected`}
                     </PaginationSelectedItem>
                   )}

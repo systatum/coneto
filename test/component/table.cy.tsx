@@ -270,7 +270,7 @@ describe("Table", () => {
       });
     });
 
-    context("totalSelectedItem", () => {
+    context("totalSelectedItemText", () => {
       const columns: ColumnTableProps[] = [
         {
           id: "name",
@@ -322,7 +322,7 @@ describe("Table", () => {
             <Table
               selectable
               labels={{
-                totalSelectedItem: (count) => `${count} email selected`,
+                totalSelectedItemText: (count) => `${count} email selected`,
               }}
               columns={columns}
             >
@@ -354,7 +354,7 @@ describe("Table", () => {
           cy.mount(
             <Table
               selectable
-              labels={{ totalSelectedItem: null }}
+              labels={{ totalSelectedItemText: null }}
               columns={columns}
             >
               {rawRows?.map((row, index) => (
@@ -933,13 +933,13 @@ describe("Table", () => {
       });
     });
 
-    context("with totalSelectedItemStyle", () => {
+    context("with totalSelectedItemTextStyle", () => {
       context("when given 100px", () => {
         it("renders text with 100px", () => {
           cy.mount(
             <Table
               selectable
-              totalSelectedItemStyle={css`
+              totalSelectedItemTextStyle={css`
                 font-size: 100px;
               `}
               tableRowContainerStyle={css`

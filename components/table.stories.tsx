@@ -444,7 +444,7 @@ export const Appendable: Story = {
         tableRowContainerStyle={css`
           max-height: 400px;
         `}
-        labels={{ totalSelectedItem: null }}
+        labels={{ totalSelectedItemText: null }}
         columns={columns}
         onItemsSelected={handleItemsSelected}
         subMenuList={TIP_MENU_ACTION}
@@ -672,7 +672,7 @@ export const WithOneAction: Story = {
         onItemsSelected={handleItemsSelected}
         subMenuList={TIP_MENU_ACTION}
         onLastRowReached={handleFetchData}
-        labels={{ totalSelectedItem: (n) => `${n} emails selected` }}
+        labels={{ totalSelectedItemText: (n) => `${n} emails selected` }}
       >
         {rows.map((rowValue, rowIndex) => (
           <Table.Row
