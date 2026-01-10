@@ -52,13 +52,15 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
           ref={ref}
           selectedOptions={selectedDates}
           setSelectedOptions={setSelectedDates}
-          selectboxStyle={css`
-            ${props.selectboxStyle}
-            ${props.showError &&
-            css`
-              border-color: #f87171;
-            `}
-          `}
+          styles={{
+            selectboxStyle: css`
+              ${props.selectboxStyle}
+              ${props.showError &&
+              css`
+                border-color: #f87171;
+              `}
+            `,
+          }}
           placeholder={placeholder}
           iconClosed={RiCalendar2Line}
           iconOpened={RiCalendar2Line}

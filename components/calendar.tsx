@@ -581,10 +581,12 @@ function Calendar({
                 options={monthNames}
                 selectedOptions={calendarState.month}
                 placeholder={monthNames[0].text}
-                containerStyle={css`
-                  min-width: 90px;
-                  max-width: 90px;
-                `}
+                styles={{
+                  containerStyle: css`
+                    min-width: 90px;
+                    max-width: 90px;
+                  `,
+                }}
                 setSelectedOptions={(value) => {
                   onChangeValueDate({
                     target: { name: "month", value },
@@ -596,10 +598,12 @@ function Calendar({
                 options={yearOptions}
                 selectedOptions={calendarState.year}
                 placeholder={String(currentYear)}
-                containerStyle={css`
-                  min-width: 75px;
-                  max-width: 75px;
-                `}
+                styles={{
+                  containerStyle: css`
+                    min-width: 75px;
+                    max-width: 75px;
+                  `,
+                }}
                 setSelectedOptions={(value) => {
                   onChangeValueDate({
                     target: { name: "year", value },

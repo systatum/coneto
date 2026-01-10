@@ -1116,25 +1116,11 @@ function FormFields<T extends FieldValues>({
                         const { ref } = register(field.name as Path<T>);
                         if (ref) ref(el);
                       }}
-                      labelStyle={css`
-                        ${labelSize &&
-                        css`
-                          font-size: ${labelSize};
-                        `}
-                        ${field.comboboxProps?.labelStyle}
-                      `}
                       errorMessage={
                         errors[field.name as keyof T]?.message as
                           | string
                           | undefined
                       }
-                      containerStyle={css`
-                        ${field.width &&
-                        css`
-                          width: ${field.width};
-                        `}
-                        ${field.comboboxProps?.containerStyle}
-                      `}
                       setSelectedOptions={(e) => {
                         const inputValueEvent = {
                           target: { name: field.name, value: e },
@@ -1148,19 +1134,35 @@ function FormFields<T extends FieldValues>({
                       }}
                       selectedOptions={controllerField.value}
                       {...field.comboboxProps}
-                      selectboxStyle={css`
-                        ${fieldSize &&
-                        css`
-                          font-size: ${fieldSize};
-                        `}
-                        border: 1px solid #d1d5db;
-                        max-height: 34px;
-                        &:focus {
-                          border-color: #61a9f9;
-                          box-shadow: 0 0 0 1px #61a9f9;
-                        }
-                        ${field?.comboboxProps?.selectboxStyle}
-                      `}
+                      styles={{
+                        selectboxStyle: css`
+                          ${fieldSize &&
+                          css`
+                            font-size: ${fieldSize};
+                          `}
+                          border: 1px solid #d1d5db;
+                          max-height: 34px;
+                          &:focus {
+                            border-color: #61a9f9;
+                            box-shadow: 0 0 0 1px #61a9f9;
+                          }
+                          ${field?.comboboxProps?.styles?.selectboxStyle}
+                        `,
+                        containerStyle: css`
+                          ${field.width &&
+                          css`
+                            width: ${field.width};
+                          `}
+                          ${field.comboboxProps?.styles?.containerStyle}
+                        `,
+                        labelStyle: css`
+                          ${labelSize &&
+                          css`
+                            font-size: ${labelSize};
+                          `}
+                          ${field.comboboxProps?.styles?.labelStyle}
+                        `,
+                      }}
                     />
                   )}
                 />

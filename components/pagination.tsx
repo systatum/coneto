@@ -4,24 +4,26 @@ import { ReactNode, useEffect, useMemo, useState } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { clamp } from "./../lib/math";
 
-type PaginationProps = {
+export interface PaginationProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
   showNumbers?: boolean;
+  styles?: PaginationStylesProps;
+}
+
+export interface PaginationStylesProps {
   style?: CSSProp;
   buttonStyle?: CSSProp;
   comboboxStyle?: CSSProp;
-};
+}
 
 function Pagination({
   currentPage,
   totalPages,
   onPageChange,
   showNumbers = true,
-  style,
-  buttonStyle,
-  comboboxStyle,
+  styles,
 }: PaginationProps) {
   const [currentPageLocal, setCurrentPageLocal] = useState<string[]>([]);
 
@@ -54,9 +56,9 @@ function Pagination({
   }, []);
 
   return (
-    <PaginationWrapper $style={style}>
+    <PaginationWrapper $style={styles?.style}>
       <PaginationButton
-        style={buttonStyle}
+        style={styles?.buttonStyle}
         onClick={handlePrevious}
         disabled={currentPage === 1}
       >
@@ -65,8 +67,7 @@ function Pagination({
 
       {showNumbers && (
         <PaginationItem
-          comboboxStyle={comboboxStyle}
-          buttonStyle={buttonStyle}
+          styles={styles}
           currentPage={currentPage}
           currentPageLocal={currentPageLocal}
           onPageChange={onPageChange}
@@ -77,7 +78,7 @@ function Pagination({
       )}
 
       <PaginationButton
-        style={buttonStyle}
+        style={styles?.buttonStyle}
         onClick={handleNext}
         disabled={currentPage === totalPages}
       >
@@ -102,8 +103,7 @@ const PaginationItem = ({
   onPageChange,
   setCurrentPageLocal,
   comboboxPagesNumber,
-  buttonStyle,
-  comboboxStyle,
+  styles,
 }: {
   totalPages: number;
   currentPage: number;
@@ -111,8 +111,7 @@ const PaginationItem = ({
   onPageChange: (page: number) => void;
   setCurrentPageLocal: (page: string[]) => void;
   comboboxPagesNumber?: number;
-  buttonStyle?: CSSProp;
-  comboboxStyle?: CSSProp;
+  styles?: PaginationStylesProps;
 }) => {
   const highlightOnMatch = useMemo(() => {
     return currentPage <= comboboxPagesNumber;
@@ -152,19 +151,21 @@ const PaginationItem = ({
               onPageChange(Number(val[0]));
               setCurrentPageLocal(val);
             }}
-            selectboxStyle={comboboxStyle}
+            styles={{
+              selectboxStyle: styles?.comboboxStyle,
+              containerStyle: css`
+                width: 80px;
+                font-size: 14px;
+              `,
+            }}
             placeholder="1"
-            containerStyle={css`
-              width: 80px;
-              font-size: 14px;
-            `}
           />
 
           {lastPages.map((page) => {
             const isActive = currentPage === page;
             return (
               <PaginationButton
-                style={buttonStyle}
+                style={styles?.buttonStyle}
                 key={page}
                 onClick={() => {
                   onPageChange(page);
@@ -185,7 +186,7 @@ const PaginationItem = ({
             const isActive = currentPage === page;
             return (
               <PaginationButton
-                style={buttonStyle}
+                style={styles?.buttonStyle}
                 key={page}
                 onClick={() => {
                   onPageChange(page);

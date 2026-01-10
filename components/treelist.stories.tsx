@@ -687,9 +687,11 @@ export const WithActions: Story = {
             setSelectedOptions={(e: string[]) =>
               setShowItem((prev) => ({ ...prev, length: e }))
             }
-            containerStyle={css`
-              width: 30%;
-            `}
+            styles={{
+              containerStyle: css`
+                width: 30%;
+              `,
+            }}
           />
         </div>
       </div>

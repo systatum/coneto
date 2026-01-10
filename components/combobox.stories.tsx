@@ -52,17 +52,19 @@ const meta: Meta<typeof Combobox> = {
       control: "text",
       description: "Label displayed above the input field.",
     },
-    containerStyle: {
-      control: "object",
-      description: "Custom CSS style for the wrapper.",
-    },
-    selectboxStyle: {
-      control: "object",
-      description: "Custom CSS style for the input/select area.",
-    },
-    labelStyle: {
-      control: "object",
-      description: "Custom CSS style for the label element.",
+    styles: {
+      containerStyle: {
+        control: "object",
+        description: "Custom CSS style for the wrapper.",
+      },
+      selectboxStyle: {
+        control: "object",
+        description: "Custom CSS style for the input/select area.",
+      },
+      labelStyle: {
+        control: "object",
+        description: "Custom CSS style for the label element.",
+      },
     },
     actions: {
       control: "object",
