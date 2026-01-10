@@ -125,11 +125,13 @@ describe("List", () => {
         cy.mount(
           <List
             maxItems={2}
-            containerStyle={css`
-              padding: 16px;
-              min-width: 280px;
-              gap: 8px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 280px;
+                gap: 8px;
+              `,
+            }}
           >
             {LIST_ITEMS.map((item, index) => (
               <List.Item
@@ -156,11 +158,13 @@ describe("List", () => {
           cy.mount(
             <List
               maxItems={2}
-              containerStyle={css`
-                padding: 16px;
-                min-width: 280px;
-                gap: 8px;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 280px;
+                  gap: 8px;
+                `,
+              }}
             >
               {LIST_ITEMS.map((item, index) => (
                 <List.Item
@@ -200,10 +204,12 @@ describe("List", () => {
               selectable
               maxItems={2}
               alwaysShowDragIcon={false}
-              containerStyle={css`
-                padding: 16px;
-                min-width: 350px;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
             >
               {LIST_GROUPS_OPENABLE.map((group, index) => (
                 <List.Group
@@ -258,10 +264,12 @@ describe("List", () => {
                 selectable
                 maxItems={2}
                 alwaysShowDragIcon={false}
-                containerStyle={css`
-                  padding: 16px;
-                  min-width: 350px;
-                `}
+                styles={{
+                  containerStyle: css`
+                    padding: 16px;
+                    min-width: 350px;
+                  `,
+                }}
               >
                 {LIST_GROUPS_OPENABLE.map((group, index) => (
                   <List.Group
@@ -333,10 +341,12 @@ describe("List", () => {
               moreItemsText: "Show all content",
             }}
             alwaysShowDragIcon={false}
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS_OPENABLE.map((group, index) => (
               <List.Group
@@ -383,10 +393,12 @@ describe("List", () => {
               lessItemsText: "Collapsed all content",
             }}
             alwaysShowDragIcon={false}
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS_OPENABLE.map((group, index) => (
               <List.Group
@@ -434,10 +446,12 @@ describe("List", () => {
             maxItems={2}
             maxItemsWithIcon={false}
             alwaysShowDragIcon={false}
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS_OPENABLE.map((group, index) => (
               <List.Group
@@ -480,10 +494,12 @@ describe("List", () => {
             maxItems={2}
             maxItemsWithIcon={true}
             alwaysShowDragIcon={false}
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS_OPENABLE.map((group, index) => (
               <List.Group
@@ -526,10 +542,12 @@ describe("List", () => {
             maxItems={2}
             maxItemsWithIcon={false}
             alwaysShowDragIcon={false}
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS_OPENABLE.map((group, index) => (
               <List.Group
@@ -571,15 +589,17 @@ describe("List", () => {
           draggable
           selectable
           maxItems={2}
-          maxItemsStyle={css`
-            border-style: dotted;
-            text-decoration: underline;
-          `}
+          styles={{
+            maxItemsStyle: css`
+              border-style: dotted;
+              text-decoration: underline;
+            `,
+            containerStyle: css`
+              padding: 16px;
+              min-width: 350px;
+            `,
+          }}
           alwaysShowDragIcon={false}
-          containerStyle={css`
-            padding: 16px;
-            min-width: 350px;
-          `}
         >
           {LIST_GROUPS_OPENABLE.map((group, index) => (
             <List.Group
@@ -624,10 +644,12 @@ describe("List", () => {
             draggable
             selectable
             alwaysShowDragIcon={false}
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS_OPENABLE.map((group, index) => (
               <List.Group
@@ -674,10 +696,12 @@ describe("List", () => {
             searchable
             draggable
             selectable
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS_OPENABLE.map((group, index) => (
               <List.Group
@@ -719,10 +743,12 @@ describe("List", () => {
             searchable
             draggable
             selectable
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS_OPENABLE.map((group, index) => (
               <List.Group
@@ -825,10 +851,12 @@ describe("List", () => {
               searchable
               draggable
               selectable
-              containerStyle={css`
-                padding: 16px;
-                min-width: 350px;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
             >
               {LIST_GROUPS_WITH_TITLE_STYLE.map((group, index) => (
                 <List.Group
@@ -933,10 +961,12 @@ describe("List", () => {
             searchable
             draggable
             selectable
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS_WITH_SUBTITLE_STYLE.map((group, index) => (
               <List.Group
@@ -998,10 +1028,12 @@ describe("List", () => {
               searchable
               draggable
               selectable
-              containerStyle={css`
-                padding: 16px;
-                min-width: 350px;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
             >
               {LIST_GROUPS_WITH_EMPTY.map((group, index) => (
                 <List.Group
@@ -1044,10 +1076,12 @@ describe("List", () => {
                 searchable
                 draggable
                 selectable
-                containerStyle={css`
-                  padding: 16px;
-                  min-width: 350px;
-                `}
+                styles={{
+                  containerStyle: css`
+                    padding: 16px;
+                    min-width: 350px;
+                  `,
+                }}
               >
                 {LIST_GROUPS_WITH_EMPTY.map((group, index) => (
                   <List.Group
@@ -1165,10 +1199,12 @@ describe("List", () => {
             searchable
             draggable
             selectable
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS.map((group, index) => (
               <List.Group
@@ -1207,10 +1243,12 @@ describe("List", () => {
               searchable
               draggable
               selectable
-              containerStyle={css`
-                padding: 16px;
-                min-width: 350px;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
             >
               {LIST_GROUPS.map((group, index) => (
                 <List.Group
@@ -1330,10 +1368,12 @@ describe("List", () => {
             searchable
             draggable
             selectable
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS.map((group, index) => (
               <List.Group
@@ -1373,10 +1413,12 @@ describe("List", () => {
               searchable
               draggable
               selectable
-              containerStyle={css`
-                padding: 16px;
-                min-width: 350px;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
             >
               {LIST_GROUPS.map((group, index) => (
                 <List.Group
@@ -1497,10 +1539,12 @@ describe("List", () => {
             searchable
             draggable
             selectable
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS.map((group, index) => (
               <List.Group
@@ -1545,10 +1589,12 @@ describe("List", () => {
               searchable
               draggable
               selectable
-              containerStyle={css`
-                padding: 16px;
-                min-width: 350px;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
             >
               {LIST_GROUPS.map((group, index) => (
                 <List.Group
@@ -1604,10 +1650,12 @@ describe("List", () => {
               searchable
               draggable
               selectable
-              containerStyle={css`
-                padding: 16px;
-                min-width: 350px;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
             >
               {LIST_GROUPS.map((group, index) => (
                 <List.Group
@@ -1739,10 +1787,12 @@ describe("List", () => {
             searchable
             draggable
             selectable
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS.map((group, index) => (
               <List.Group
@@ -1781,10 +1831,12 @@ describe("List", () => {
               searchable
               draggable
               selectable
-              containerStyle={css`
-                padding: 16px;
-                min-width: 350px;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
             >
               {LIST_GROUPS.map((group, index) => (
                 <List.Group
@@ -1912,10 +1964,12 @@ describe("List", () => {
             searchable
             draggable
             selectable
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS.map((group, index) => (
               <List.Group
@@ -1955,10 +2009,12 @@ describe("List", () => {
               searchable
               draggable
               selectable
-              containerStyle={css`
-                padding: 16px;
-                min-width: 350px;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
             >
               {LIST_GROUPS.map((group, index) => (
                 <List.Group
@@ -2047,10 +2103,12 @@ describe("List", () => {
         cy.mount(
           <List
             searchable
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS.map((group, index) => (
               <List.Group
@@ -2100,10 +2158,12 @@ describe("List", () => {
             onOpen={({ id, isOpen }) =>
               console.log(`for id ${id} isOpen is ${isOpen ? "true" : "false"}`)
             }
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS_OPENABLE.map((group, index) => (
               <List.Group
@@ -2158,10 +2218,12 @@ describe("List", () => {
                   `for id ${id} isOpen is ${isOpen ? "true" : "false"}`
                 )
               }
-              containerStyle={css`
-                padding: 16px;
-                min-width: 350px;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
             >
               {LIST_GROUPS_OPENABLE.map((group, index) => (
                 <List.Group
@@ -2216,10 +2278,12 @@ describe("List", () => {
             onOpen={({ id, isOpen }) =>
               console.log(`for id ${id} isOpen is ${isOpen ? "true" : "false"}`)
             }
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS_OPENABLE.map((group, index) => (
               <List.Group
@@ -2269,10 +2333,12 @@ describe("List", () => {
             onOpen={({ id, isOpen }) =>
               console.log(`for id ${id} isOpen is ${isOpen ? "true" : "false"}`)
             }
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS_OPENABLE.map((group, index) => (
               <List.Group
@@ -2322,10 +2388,12 @@ describe("List", () => {
             onOpen={({ id, isOpen }) =>
               console.log(`for id ${id} isOpen is ${isOpen ? "true" : "false"}`)
             }
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS_OPENABLE.map((group, index) => (
               <List.Group
@@ -2375,10 +2443,12 @@ describe("List", () => {
             draggable
             selectable
             openerBehavior="onlyOne"
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS_OPENABLE.map((group, index) => (
               <List.Group
@@ -2433,10 +2503,12 @@ describe("List", () => {
             draggable
             selectable
             openerBehavior="any"
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS_OPENABLE.map((group, index) => (
               <List.Group
@@ -2487,10 +2559,12 @@ describe("List", () => {
             searchable
             draggable
             selectable
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS_OPENABLE.map((group, index) => (
               <List.Group
@@ -2540,10 +2614,12 @@ describe("List", () => {
               searchable
               draggable
               selectable
-              containerStyle={css`
-                padding: 16px;
-                min-width: 350px;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
             >
               {LIST_GROUPS_OPENABLE.map((group, index) => (
                 <List.Group
@@ -2601,10 +2677,12 @@ describe("List", () => {
               searchable
               draggable
               selectable
-              containerStyle={css`
-                padding: 16px;
-                min-width: 350px;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
             >
               {LIST_GROUPS_OPENABLE.map((group, index) => (
                 <List.Group
@@ -2717,10 +2795,12 @@ describe("List", () => {
             searchable
             draggable
             selectable
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS_OPENABLE_WITHOUT_CHILDREN.map((group, index) => (
               <List.Group
@@ -2768,10 +2848,12 @@ describe("List", () => {
               searchable
               draggable
               selectable
-              containerStyle={css`
-                padding: 16px;
-                min-width: 350px;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
             >
               {LIST_GROUPS_OPENABLE_WITHOUT_CHILDREN.map((group, index) => (
                 <List.Group
@@ -2833,10 +2915,12 @@ describe("List", () => {
               searchable
               draggable
               selectable
-              containerStyle={css`
-                padding: 16px;
-                min-width: 350px;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
             >
               {LIST_GROUPS_OPENABLE.map((group, index) => (
                 <List.Group
@@ -2927,10 +3011,12 @@ describe("List", () => {
             searchable
             draggable
             selectable
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS_OPENABLE.map((group, index) => (
               <List.Group

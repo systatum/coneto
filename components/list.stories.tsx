@@ -76,11 +76,13 @@ export const Default: Story = {
     return (
       <Card>
         <List
-          containerStyle={css`
-            padding: 16px;
-            min-width: 280px;
-            gap: 8px;
-          `}
+          styles={{
+            containerStyle: css`
+              padding: 16px;
+              min-width: 280px;
+              gap: 8px;
+            `,
+          }}
         >
           {LIST_ITEMS.map((item, index) => (
             <List.Item
@@ -269,10 +271,12 @@ export const Draggable: Story = {
           draggable
           onDragged={onDragged}
           onSearchRequested={onChangeValue}
-          containerStyle={css`
-            padding: 16px;
-            min-width: 300px;
-          `}
+          styles={{
+            containerStyle: css`
+              padding: 16px;
+              min-width: 300px;
+            `,
+          }}
         >
           {filteredContent.map((group, index) => {
             return (
@@ -478,10 +482,12 @@ export const WithLoading: Story = {
           isLoading
           onDragged={onDragged}
           onSearchRequested={onChangeValue}
-          containerStyle={css`
-            padding: 16px;
-            min-width: 300px;
-          `}
+          styles={{
+            containerStyle: css`
+              padding: 16px;
+              min-width: 300px;
+            `,
+          }}
         >
           {filteredContent.map((group, index) => {
             return (
@@ -721,10 +727,12 @@ export const ReactNodeTitle: Story = {
           searchable
           selectable
           onSearchRequested={onChangeValue}
-          containerStyle={css`
-            padding: 16px;
-            min-width: 500px;
-          `}
+          styles={{
+            containerStyle: css`
+              padding: 16px;
+              min-width: 400px;
+            `,
+          }}
         >
           {filteredContent.map((group, index) => {
             return (
@@ -992,11 +1000,13 @@ export const WithSubcontent: Story = {
               searchable
               selectable
               onSearchRequested={listAny.onChangeValue}
-              containerStyle={css`
-                padding: 16px;
-                min-width: 350px;
-                max-width: 350px;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                  max-width: 350px;
+                `,
+              }}
             >
               {listAny.filteredContent.map((group) => {
                 return (
@@ -1137,10 +1147,12 @@ export const WithSubcontent: Story = {
               selectable
               openerBehavior="onlyOne"
               onSearchRequested={listWithOnlyOne.onChangeValue}
-              containerStyle={css`
-                padding: 16px;
-                min-width: 350px;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 300px;
+                `,
+              }}
             >
               {listWithOnlyOne.filteredContent.map((group) => {
                 return (
@@ -1408,10 +1420,12 @@ export const WithBadge: Story = {
         <List
           searchable
           onSearchRequested={(e) => setSearch(e.target.value)}
-          containerStyle={css`
-            padding: 16px;
-            min-width: 500px;
-          `}
+          styles={{
+            containerStyle: css`
+              padding: 16px;
+              min-width: 400px;
+            `,
+          }}
         >
           {filteredContent.map((group, index) => {
             return (
@@ -1680,10 +1694,12 @@ export const CustomOpener: Story = {
           selectable
           onDragged={onDragged}
           onSearchRequested={onChangeValue}
-          containerStyle={css`
-            padding: 16px;
-            min-width: 500px;
-          `}
+          styles={{
+            containerStyle: css`
+              padding: 16px;
+              min-width: 500px;
+            `,
+          }}
         >
           {filteredContent.map((group, index) => {
             return (
@@ -1872,10 +1888,12 @@ export const WithMaxItems: Story = {
           searchable
           selectable
           onSearchRequested={onChangeValue}
-          containerStyle={css`
-            padding: 16px;
-            min-width: 400px;
-          `}
+          styles={{
+            containerStyle: css`
+              padding: 16px;
+              min-width: 400px;
+            `,
+          }}
           maxItems={5}
         >
           {filteredContent.map((list, i) => (
