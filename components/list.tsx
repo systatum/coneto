@@ -408,7 +408,7 @@ function ListGroup({
       style: css`
         font-size: 11px;
         height: 24px;
-        ${action.style}
+        ${action.styles?.style}
       `,
       onClick: () => action.onClick && action.onClick?.(id),
     }));
