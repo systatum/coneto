@@ -27,6 +27,16 @@ export interface CardProps {
     | "9"
     | "10";
   children: ReactNode;
+  title?: ReactNode;
+  subtitle?: ReactNode;
+  footerContent?: ReactNode;
+  closable?: boolean;
+  onCloseRequest?: () => void;
+  headerActions?: CardActionsProps[];
+  styles?: CardStylesProps;
+}
+
+export interface CardStylesProps {
   textContainerStyle?: CSSProp;
   actionContainerStyle?: CSSProp;
   containerStyle?: CSSProp;
@@ -35,12 +45,6 @@ export interface CardProps {
   footerStyle?: CSSProp;
   titleStyle?: CSSProp;
   subtitleStyle?: CSSProp;
-  title?: ReactNode;
-  subtitle?: ReactNode;
-  footerContent?: ReactNode;
-  closable?: boolean;
-  onCloseRequest?: () => void;
-  headerActions?: CardActionsProps[];
 }
 
 export type CardActionsProps = ActionButtonProps;
@@ -50,14 +54,7 @@ function Card({
   shadow = "sm",
   radius = "xs",
   padding = "sm",
-  containerStyle,
-  actionContainerStyle,
-  textContainerStyle,
-  contentStyle,
-  headerStyle,
-  footerStyle,
-  titleStyle,
-  subtitleStyle,
+  styles,
   title,
   subtitle,
   footerContent,
@@ -70,20 +67,24 @@ function Card({
       $shadow={shadow}
       $radius={radius}
       $padding={padding}
-      $containerStyle={containerStyle}
+      $containerStyle={styles?.containerStyle}
     >
       {(title || subtitle || headerActions) && (
-        <Header $headerStyle={headerStyle}>
+        <Header $headerStyle={styles?.headerStyle}>
           {(title || subtitle) && (
-            <HeaderTextContainer $style={textContainerStyle}>
-              {title && <HeaderTitle $style={titleStyle}>{title}</HeaderTitle>}
+            <HeaderTextContainer $style={styles?.textContainerStyle}>
+              {title && (
+                <HeaderTitle $style={styles?.titleStyle}>{title}</HeaderTitle>
+              )}
               {subtitle && (
-                <HeaderSubitle $style={subtitleStyle}>{subtitle}</HeaderSubitle>
+                <HeaderSubitle $style={styles?.subtitleStyle}>
+                  {subtitle}
+                </HeaderSubitle>
               )}
             </HeaderTextContainer>
           )}
           {headerActions && (
-            <ActionGroup $style={actionContainerStyle}>
+            <ActionGroup $style={styles?.actionContainerStyle}>
               {headerActions.map((props, index) => (
                 <ActionButton key={index} {...props} />
               ))}
@@ -92,10 +93,10 @@ function Card({
         </Header>
       )}
 
-      <Contain $style={contentStyle}>{children}</Contain>
+      <Contain $style={styles?.contentStyle}>{children}</Contain>
 
       {footerContent && (
-        <Footer $footerStyle={footerStyle}>{footerContent}</Footer>
+        <Footer $footerStyle={styles?.footerStyle}>{footerContent}</Footer>
       )}
 
       {closable && (
