@@ -9,11 +9,9 @@ import {
   useRef,
   useState,
 } from "react";
-
 import { DrawerProps, OptionsProps, Selectbox } from "./selectbox";
 import { RemixiconComponentType } from "@remixicon/react";
 import styled, { css, CSSProp } from "styled-components";
-import { Searchbox } from "./searchbox";
 import { List } from "./list";
 
 export type ComboboxProps = Partial<BaseComboboxProps> & {
@@ -296,13 +294,15 @@ function ComboboxDrawer({
                     ref={(el) => {
                       listRef.current[index] = el;
                     }}
-                    titleStyle={listItemTitleStyle}
-                    rowStyle={listItemRowStyle({
-                      shouldHighlight,
-                      interactionMode,
-                    })}
-                    containerStyle={listItemContainerStyle}
-                    leftSideStyle={listItemLeftSideStyle}
+                    styles={{
+                      titleStyle: listItemTitleStyle,
+                      rowStyle: listItemRowStyle({
+                        shouldHighlight,
+                        interactionMode,
+                      }),
+                      containerStyle: listItemContainerStyle,
+                      leftSideStyle: listItemLeftSideStyle,
+                    }}
                     title={
                       <>
                         {props.title}
@@ -337,21 +337,23 @@ function ComboboxDrawer({
                 <List.Item
                   id={option.value}
                   title={option.render ? option.render : option.text}
-                  rowStyle={listItemRowStyle({
-                    shouldHighlight,
-                    interactionMode,
-                    isSelected,
-                    multiple,
-                  })}
-                  containerStyle={listItemContainerStyle}
-                  leftSideStyle={[
-                    listItemLeftSideStyle,
-                    option.render && listItemLeftSideWithRender,
-                  ]}
-                  titleStyle={[
-                    listItemTitleStyle,
-                    option.render && listItemTitleWithRender,
-                  ]}
+                  styles={{
+                    rowStyle: listItemRowStyle({
+                      shouldHighlight,
+                      interactionMode,
+                      isSelected,
+                      multiple,
+                    }),
+                    containerStyle: listItemContainerStyle,
+                    leftSideStyle: [
+                      listItemLeftSideStyle,
+                      option.render && listItemLeftSideWithRender,
+                    ],
+                    titleStyle: [
+                      listItemTitleStyle,
+                      option.render && listItemTitleWithRender,
+                    ],
+                  }}
                   selectedOptions={{ checked: isSelected }}
                   onMouseDown={(e) => {
                     e.preventDefault();

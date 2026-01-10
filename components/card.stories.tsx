@@ -803,13 +803,7 @@ export const WithHeaderAndFooter: Story = {
                   <List.Item
                     key={i}
                     groupId={group.id}
-                    containerStyle={css`
-                      min-width: 300px;
-                      padding-right: 8px;
-                      padding-left: 8px;
-                      padding-top: 10px;
-                      padding-bottom: 10px;
-                    `}
+                    styles={list.styles}
                     id={list.id}
                     subtitle={list.subtitle}
                     title={list.title}

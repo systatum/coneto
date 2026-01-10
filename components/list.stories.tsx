@@ -280,13 +280,15 @@ export const Draggable: Story = {
                 key={index}
                 id={group.id}
                 title={group.title}
-                emptySlateStyle={css`
-                  cursor: pointer;
-                  transition: all 200ms ease;
-                  &:hover {
-                    background-color: aliceblue;
-                  }
-                `}
+                styles={{
+                  emptySlateStyle: css`
+                    cursor: pointer;
+                    transition: all 200ms ease;
+                    &:hover {
+                      background-color: aliceblue;
+                    }
+                  `,
+                }}
                 emptySlate={"No content"}
               >
                 {group.items.map((list, i) => (
@@ -740,15 +742,17 @@ export const ReactNodeTitle: Story = {
                       subtitle={list.subtitle}
                       title={title}
                       actions={LIST_ITEM_ACTIONS}
-                      containerStyle={css`
-                        width: 100%;
-                      `}
-                      titleStyle={css`
-                        width: 100%;
-                      `}
-                      rightSideStyle={css`
-                        width: 6%;
-                      `}
+                      styles={{
+                        containerStyle: css`
+                          width: 100%;
+                        `,
+                        titleStyle: css`
+                          width: 100%;
+                        `,
+                        rightSideStyle: css`
+                          width: 6%;
+                        `,
+                      }}
                       groupId={group.id}
                       onSelected={onChangeValue}
                       selectedOptions={{
@@ -998,9 +1002,11 @@ export const WithSubcontent: Story = {
                     subtitle={group.subtitle}
                     title={group.title}
                     actions={LIST_ACTIONS_GROUP(listAny.setGroups)}
-                    containerStyle={css`
-                      gap: 4px;
-                    `}
+                    styles={{
+                      containerStyle: css`
+                        gap: 4px;
+                      `,
+                    }}
                   >
                     {group.items.map((list, i) => {
                       return (
@@ -1008,17 +1014,19 @@ export const WithSubcontent: Story = {
                           key={i}
                           id={list.id}
                           title={list.title}
-                          rowStyle={css`
-                            width: 100%;
-                            min-height: 40px;
-                          `}
+                          styles={{
+                            rowStyle: css`
+                              width: 100%;
+                              min-height: 40px;
+                            `,
+                            titleStyle: css`
+                              width: 100%;
+                            `,
+                            rightSideStyle: css`
+                              width: 6%;
+                            `,
+                          }}
                           openable
-                          titleStyle={css`
-                            width: 100%;
-                          `}
-                          rightSideStyle={css`
-                            width: 6%;
-                          `}
                           actions={(id?: string) =>
                             LIST_ITEM_ACTIONS(
                               id,
@@ -1136,9 +1144,11 @@ export const WithSubcontent: Story = {
                     subtitle={group.subtitle}
                     title={group.title}
                     actions={LIST_ACTIONS_GROUP(listWithOnlyOne.setGroups)}
-                    containerStyle={css`
-                      gap: 4px;
-                    `}
+                    styles={{
+                      containerStyle: css`
+                        gap: 4px;
+                      `,
+                    }}
                   >
                     {group.items.map((list, i) => {
                       return (
@@ -1146,17 +1156,19 @@ export const WithSubcontent: Story = {
                           key={i}
                           id={list.id}
                           title={list.title}
-                          rowStyle={css`
-                            width: 100%;
-                            min-height: 40px;
-                          `}
                           openable
-                          titleStyle={css`
-                            width: 100%;
-                          `}
-                          rightSideStyle={css`
-                            width: 6%;
-                          `}
+                          styles={{
+                            rowStyle: css`
+                              width: 100%;
+                              min-height: 40px;
+                            `,
+                            titleStyle: css`
+                              width: 100%;
+                            `,
+                            rightSideStyle: css`
+                              width: 6%;
+                            `,
+                          }}
                           actions={(id?: string) =>
                             LIST_ITEM_ACTIONS(
                               id,
@@ -1861,9 +1873,11 @@ export const WithMaxItems: Story = {
           {filteredContent.map((list, i) => (
             <List.Item
               key={i}
-              containerStyle={css`
-                min-width: 300px;
-              `}
+              styles={{
+                containerStyle: css`
+                  min-width: 300px;
+                `,
+              }}
               id={list.id}
               subtitle={list.subtitle}
               title={list.title}

@@ -33,12 +33,12 @@ export interface ListProps extends ListMaxItemsProp {
   searchable?: boolean;
   onSearchRequested?: (search: ChangeEvent<HTMLInputElement>) => void;
   children: ReactNode;
-  containerStyle?: CSSProp;
   isLoading?: boolean;
   draggable?: boolean;
   selectable?: boolean;
   searchValue?: string;
   searchboxStyles?: SearchboxStylesProps;
+  containerStyle?: CSSProp;
   onDragged?: (props: {
     id: string;
     oldGroupId: string;
@@ -68,42 +68,6 @@ interface ListLabelsProps {
 export interface ListOnOpenProps {
   id?: string;
   isOpen?: boolean;
-}
-
-export interface ListGroupActionsProps
-  extends Omit<ActionButtonProps, "onClick"> {
-  onClick?: (e?: string) => void;
-}
-
-export interface ListGroupProps {
-  id: string;
-  title: string;
-  subtitle?: string;
-  titleStyle?: CSSProp;
-  subtitleStyle?: CSSProp;
-  children: ReactNode;
-  draggable?: boolean;
-  containerStyle?: CSSProp;
-  contentStyle?: CSSProp;
-  selectable?: boolean;
-  rightSideContent?: ((prop: string) => ReactNode) | ReactNode;
-  actions?: ListGroupActionsProps[];
-  openerStyle?: "chevron" | "togglebox" | "none";
-  emptySlate?: ReactNode;
-  emptySlateStyle?: CSSProp;
-  initialState?: "opened" | "closed";
-}
-
-export interface ListGroupContentProps {
-  id: string;
-  title: string;
-  subtitle?: string;
-  titleStyle?: CSSProp;
-  subtitleStyle?: CSSProp;
-  actions?: ListGroupActionsProps[];
-  rightSideContent?: ((prop: string) => ReactNode) | ReactNode;
-  initialState?: "opened" | "closed";
-  items: ListItemProps[];
 }
 
 export type ListItemActionProps = ContextMenuActionsProps;
@@ -165,8 +129,8 @@ function List({
   onSearchRequested,
   searchValue,
   inputRef,
-  searchboxStyles,
   children,
+  searchboxStyles,
   containerStyle,
   onDragged,
   draggable,
@@ -372,22 +336,58 @@ const OverlayLoading = styled.div`
   z-index: 30;
 `;
 
+export interface ListGroupActionsProps
+  extends Omit<ActionButtonProps, "onClick"> {
+  onClick?: (e?: string) => void;
+}
+
+export interface ListGroupProps {
+  id: string;
+  title: string;
+  subtitle?: string;
+  children: ReactNode;
+  draggable?: boolean;
+  rightSideContent?: ((prop: string) => ReactNode) | ReactNode;
+  actions?: ListGroupActionsProps[];
+  openerStyle?: "chevron" | "togglebox" | "none";
+  emptySlate?: ReactNode;
+  initialState?: "opened" | "closed";
+  selectable?: boolean;
+  styles?: ListGroupStylesProps;
+}
+
+interface ListGroupStylesProps {
+  containerStyle?: CSSProp;
+  titleStyle?: CSSProp;
+  subtitleStyle?: CSSProp;
+  contentStyle?: CSSProp;
+  emptySlateStyle?: CSSProp;
+}
+
+export interface ListGroupContentProps {
+  id: string;
+  title: string;
+  subtitle?: string;
+  actions?: ListGroupActionsProps[];
+  rightSideContent?: ((prop: string) => ReactNode) | ReactNode;
+  initialState?: "opened" | "closed";
+  items: ListItemProps[];
+  styles?: ListGroupStylesProps;
+}
+
 function ListGroup({
   id,
   title,
   subtitle,
-  titleStyle,
-  subtitleStyle,
   children,
-  containerStyle,
   draggable,
   selectable,
   rightSideContent,
   openerStyle = "chevron",
   actions,
   emptySlate,
-  emptySlateStyle,
   initialState = "opened",
+  styles,
   ...props
 }: ListGroupProps) {
   const {
@@ -422,7 +422,7 @@ function ListGroup({
     }));
 
   return (
-    <ListGroupContainer $containerStyle={containerStyle}>
+    <ListGroupContainer $containerStyle={styles?.containerStyle}>
       <HeaderButton
         $isOpen={opened}
         onClick={() => setIsOpen(id)}
@@ -438,14 +438,17 @@ function ListGroup({
           aria-label="list-left-side-wrapper"
         >
           {title && (
-            <TitleText aria-label="list-group-title" $style={titleStyle}>
+            <TitleText
+              aria-label="list-group-title"
+              $style={styles?.titleStyle}
+            >
               {title}
             </TitleText>
           )}
           {subtitle && (
             <SubtitleText
               aria-label="list-group-subtitle"
-              $style={subtitleStyle}
+              $style={styles?.subtitleStyle}
             >
               {subtitle}
             </SubtitleText>
@@ -605,7 +608,7 @@ function ListGroup({
             aria-label="list-group-empty-slate"
             initial="open"
             animate={opened ? "open" : "collapsed"}
-            $style={emptySlateStyle}
+            $style={styles?.emptySlateStyle}
             exit="collapsed"
             variants={{
               open: { opacity: 1, height: "auto" },
@@ -773,7 +776,7 @@ const EmptyContent = styled(motion.div)<{ $style?: CSSProp }>`
 
 export interface ListItemProps {
   id: string;
-  title?: ReactNode | string;
+  title?: ReactNode;
   subtitle?: string;
   imageUrl?: string;
   leftIcon?: RemixiconComponentType | null;
@@ -783,8 +786,6 @@ export interface ListItemProps {
   onSelected?: (selected: ChangeEvent<HTMLInputElement>) => void;
   onClick?: () => void;
   rightSideContent?: ((prop: string) => ReactNode) | ReactNode;
-  containerStyle?: CSSProp;
-  rowStyle?: CSSProp;
   actions?: (id?: string) => ListItemActionProps[];
   children?: ReactNode;
   openable?: boolean;
@@ -793,6 +794,12 @@ export interface ListItemProps {
     checked?: boolean;
   };
   leftSideContent?: ReactNode;
+  styles?: ListItemStylesProps;
+}
+
+interface ListItemStylesProps {
+  containerStyle?: CSSProp;
+  rowStyle?: CSSProp;
   titleStyle?: CSSProp;
   subtitleStyle?: CSSProp;
   leftSideStyle?: CSSProp;
@@ -823,8 +830,6 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
       imageUrl,
       subtitle,
       title,
-      containerStyle,
-      rowStyle,
       draggable,
       groupId,
       selectable,
@@ -837,10 +842,7 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
       children,
       openable,
       leftSideContent,
-      titleStyle,
-      subtitleStyle,
-      leftSideStyle,
-      rightSideStyle,
+      styles,
       ...props
     },
     ref
@@ -878,12 +880,12 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
         onMouseLeave={() => setIsHovered(null)}
         aria-label="list-item-wrapper"
         $openable={openable && isChildOpened}
-        $style={containerStyle}
+        $style={styles?.containerStyle}
       >
         <ListItemRow
           {...domProps}
           $isHovered={isHovered === idFullname || openTipRowId === idFullname}
-          $style={rowStyle}
+          $style={styles?.rowStyle}
           draggable={draggable}
           onClick={() => {
             if (onClick) {
@@ -948,7 +950,10 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
             onDropItem?.(clampedPosition);
           }}
         >
-          <ListItemLeft $style={leftSideStyle} aria-label="list-item-left-side">
+          <ListItemLeft
+            $style={styles?.leftSideStyle}
+            aria-label="list-item-left-side"
+          >
             {selectable && selectedOptions && (
               <Checkbox
                 iconStyle={css`
@@ -987,16 +992,16 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
               LeftIcon && <LeftIcon size={22} color="#4b5563" />
             )}
             <TextWrapper>
-              {title && <Title $style={titleStyle}>{title}</Title>}
+              {title && <Title $style={styles?.titleStyle}>{title}</Title>}
               {subtitle && (
-                <Subtitle $style={subtitleStyle}>{subtitle}</Subtitle>
+                <Subtitle $style={styles?.subtitleStyle}>{subtitle}</Subtitle>
               )}
             </TextWrapper>
           </ListItemLeft>
 
           {(actions || rightSideContent || draggable) && (
             <ListItemRight
-              $style={rightSideStyle}
+              $style={styles?.rightSideStyle}
               aria-label="list-item-left-side"
             >
               {actions &&
