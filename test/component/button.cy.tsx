@@ -158,7 +158,7 @@ describe("Button", () => {
               );
             });
           cy.findByText("This button using show function").should("exist");
-          cy.findByLabelText("button-tip-menu-container").should("exist");
+          cy.findByLabelText("tooltip-drawer").should("exist");
         });
       });
 

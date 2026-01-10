@@ -873,6 +873,7 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
         onMouseEnter={() => setIsHovered(idFullname)}
         onMouseLeave={() => setIsHovered(null)}
         aria-label="list-item-wrapper"
+        role="listbox"
         $openable={openable && isChildOpened}
         $style={styles?.containerStyle}
       >
@@ -988,7 +989,11 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
               LeftIcon && <LeftIcon size={22} color="#4b5563" />
             )}
             <TextWrapper>
-              {title && <Title $style={styles?.titleStyle}>{title}</Title>}
+              {title && (
+                <Title role="option" $style={styles?.titleStyle}>
+                  {title}
+                </Title>
+              )}
               {subtitle && (
                 <Subtitle $style={styles?.subtitleStyle}>{subtitle}</Subtitle>
               )}
