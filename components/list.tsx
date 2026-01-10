@@ -37,8 +37,7 @@ export interface ListProps extends ListMaxItemsProp {
   draggable?: boolean;
   selectable?: boolean;
   searchValue?: string;
-  searchboxStyles?: SearchboxStylesProps;
-  containerStyle?: CSSProp;
+  styles?: ListStylesProps;
   onDragged?: (props: {
     id: string;
     oldGroupId: string;
@@ -72,8 +71,13 @@ interface ListAlwaysShowDragIconProp {
 
 interface ListMaxItemsProp {
   maxItems?: number;
-  maxItemsStyle?: CSSProp;
   maxItemsWithIcon?: boolean;
+}
+
+interface ListStylesProps {
+  maxItemsStyle?: CSSProp;
+  searchboxStyles?: SearchboxStylesProps;
+  containerStyle?: CSSProp;
 }
 
 export interface LeftSideContentMenuProps {
@@ -124,8 +128,7 @@ function List({
   searchValue,
   inputRef,
   children,
-  searchboxStyles,
-  containerStyle,
+  styles,
   onDragged,
   draggable,
   selectable,
@@ -136,7 +139,6 @@ function List({
   onSearchKeyDown,
   maxItems,
   labels,
-  maxItemsStyle,
   maxItemsWithIcon,
 }: ListProps) {
   const childArray = Children.toArray(children).filter(isValidElement);
@@ -224,7 +226,7 @@ function List({
       }}
     >
       <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
-        <ListContainer role="list" $containerStyle={containerStyle}>
+        <ListContainer role="listbox" $containerStyle={styles?.containerStyle}>
           {searchable && (
             <Searchbox
               ref={inputRef}
@@ -235,7 +237,7 @@ function List({
               }}
               onKeyDown={onSearchKeyDown}
               value={value}
-              styles={searchboxStyles}
+              styles={styles?.searchboxStyles}
             />
           )}
 
@@ -266,8 +268,14 @@ function List({
               setOpenTipRowId,
               alwaysShowDragIcon,
               maxItems,
-              maxItemsStyle,
               labels,
+              ...(maxItems &&
+                styles?.maxItemsStyle && {
+                  styles: {
+                    maxItemsStyle: styles?.maxItemsStyle,
+                    ...componentChild.props.styles,
+                  },
+                }),
             });
 
             if (maxItems) {
@@ -298,7 +306,7 @@ function List({
               expanded={expanded}
               setExpanded={setExpanded}
               labels={labels}
-              maxItemsStyle={maxItemsStyle}
+              maxItemsStyle={styles?.maxItemsStyle}
               maxItemsWithIcon={maxItemsWithIcon}
               maxItems={maxItems}
               isOpen={undefined}
@@ -354,6 +362,7 @@ interface ListGroupStylesProps {
   subtitleStyle?: CSSProp;
   contentStyle?: CSSProp;
   emptySlateStyle?: CSSProp;
+  maxItemsStyle?: CSSProp;
 }
 
 export interface ListGroupContentProps {
@@ -388,7 +397,6 @@ function ListGroup({
     alwaysShowDragIcon,
     labels,
     maxItems,
-    maxItemsStyle,
     maxItemsWithIcon,
   } = props as ListItemWithId &
     ListAlwaysShowDragIconProp &
@@ -589,7 +597,7 @@ function ListGroup({
             isOpen={opened}
             setExpanded={setExpanded}
             key={`list-show-more-${opened}`}
-            maxItemsStyle={maxItemsStyle}
+            maxItemsStyle={styles?.maxItemsStyle}
             maxItemsWithIcon={maxItemsWithIcon}
             labels={labels}
             maxItems={maxItems}
@@ -647,6 +655,7 @@ function ListShowMoreButton({
   setExpanded: (prop: boolean) => void;
   isOpen?: boolean | undefined;
   labels?: ListLabelsProps;
+  maxItemsStyle?: CSSProp;
 } & ListMaxItemsProp) {
   return (
     <ShowMoreButton
@@ -798,6 +807,7 @@ interface ListItemStylesProps {
   subtitleStyle?: CSSProp;
   leftSideStyle?: CSSProp;
   rightSideStyle?: CSSProp;
+  maxItemsStyle?: CSSProp;
 }
 
 type DivProps = Omit<
@@ -873,7 +883,6 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
         onMouseEnter={() => setIsHovered(idFullname)}
         onMouseLeave={() => setIsHovered(null)}
         aria-label="list-item-wrapper"
-        role="listbox"
         $openable={openable && isChildOpened}
         $style={styles?.containerStyle}
       >
