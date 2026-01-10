@@ -723,31 +723,33 @@ function FormFields<T extends FieldValues>({
                         }
                         field.onChange?.(e);
                       }}
-                      labelStyle={css`
-                        ${labelSize &&
-                        css`
-                          font-size: ${labelSize};
-                        `}
-                        ${field.phoneboxProps?.labelStyle}
-                      `}
-                      inputWrapperStyle={css`
-                        ${fieldSize &&
-                        css`
-                          font-size: ${fieldSize};
-                        `}
-                        ${field.phoneboxProps?.inputWrapperStyle}
-                      `}
-                      containerStyle={css`
-                        ${field.width &&
-                        css`
-                          width: ${field.width};
-                        `}
-                        ${field.phoneboxProps?.containerStyle}
-                      `}
                       showError={!!errors["phone"]}
                       errorMessage={errors["phone"]?.message as string}
                       disabled={field.disabled}
                       {...field.phoneboxProps}
+                      styles={{
+                        labelStyle: css`
+                          ${labelSize &&
+                          css`
+                            font-size: ${labelSize};
+                          `}
+                          ${field.phoneboxProps?.styles?.labelStyle}
+                        `,
+                        inputWrapperStyle: css`
+                          ${fieldSize &&
+                          css`
+                            font-size: ${fieldSize};
+                          `}
+                          ${field.phoneboxProps?.styles?.inputWrapperStyle}
+                        `,
+                        containerStyle: css`
+                          ${field.width &&
+                          css`
+                            width: ${field.width};
+                          `}
+                          ${field.phoneboxProps?.styles?.containerStyle}
+                        `,
+                      }}
                     />
                   )}
                 />
