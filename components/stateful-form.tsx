@@ -452,39 +452,41 @@ function FormFields<T extends FieldValues>({
                       }
                     },
                   })}
-                  labelStyle={css`
-                    ${labelSize &&
-                    css`
-                      font-size: ${labelSize};
-                    `}
-                    ${field.timeboxProps?.labelStyle}
-                  `}
-                  ref={(el) => {
-                    if (el) refs.current[field.name] = el;
-                    const { ref } = register(field.name as Path<T>);
-                    if (ref) ref(el);
-                  }}
                   showError={shouldShowError(field.name)}
-                  containerStyle={css`
-                    ${field.width &&
-                    css`
-                      width: ${field.width};
-                    `}
-                    ${field.timeboxProps?.containerStyle}
-                  `}
                   errorMessage={
                     errors[field.name as keyof T]?.message as string | undefined
                   }
                   disabled={field.disabled}
                   {...field.timeboxProps}
-                  inputStyle={css`
-                    ${fieldSize &&
-                    css`
-                      font-size: ${fieldSize};
-                    `}
-                    height:34px;
-                    ${field.timeboxProps?.inputStyle}
-                  `}
+                  styles={{
+                    inputStyle: css`
+                      ${fieldSize &&
+                      css`
+                        font-size: ${fieldSize};
+                      `}
+                      height: 34px;
+                      ${field.timeboxProps?.styles?.inputStyle}
+                    `,
+                    containerStyle: css`
+                      ${field.width &&
+                      css`
+                        width: ${field.width};
+                      `}
+                      ${field.timeboxProps?.styles?.containerStyle}
+                    `,
+                    labelStyle: css`
+                      ${labelSize &&
+                      css`
+                        font-size: ${labelSize};
+                      `}
+                      ${field.timeboxProps?.styles?.labelStyle}
+                    `,
+                  }}
+                  ref={(el) => {
+                    if (el) refs.current[field.name] = el;
+                    const { ref } = register(field.name as Path<T>);
+                    if (ref) ref(el);
+                  }}
                 />
               ) : field.type === "textarea" ? (
                 <Textarea
