@@ -514,32 +514,34 @@ function FormFields<T extends FieldValues>({
                     if (ref) ref(el);
                   }}
                   showError={shouldShowError(field.name)}
-                  labelStyle={css`
-                    ${labelSize &&
-                    css`
-                      font-size: ${labelSize};
-                    `}
-                    ${field.textareaProps?.labelStyle}
-                  `}
-                  style={css`
-                    ${fieldSize &&
-                    css`
-                      font-size: ${fieldSize};
-                    `}
-                    ${field.textareaProps?.style}
-                  `}
-                  containerStyle={css`
-                    ${field.width &&
-                    css`
-                      width: ${field.width};
-                    `}
-                    ${field.textareaProps?.containerStyle}
-                  `}
                   errorMessage={
                     errors[field.name as keyof T]?.message as string | undefined
                   }
                   disabled={field.disabled}
                   {...field.textareaProps}
+                  styles={{
+                    labelStyle: css`
+                      ${labelSize &&
+                      css`
+                        font-size: ${labelSize};
+                      `}
+                      ${field.textareaProps?.styles?.labelStyle}
+                    `,
+                    style: css`
+                      ${fieldSize &&
+                      css`
+                        font-size: ${fieldSize};
+                      `}
+                      ${field.textareaProps?.styles?.style}
+                    `,
+                    containerStyle: css`
+                      ${field.width &&
+                      css`
+                        width: ${field.width};
+                      `}
+                      ${field.textareaProps?.styles?.containerStyle}
+                    `,
+                  }}
                 />
               ) : field.type === "checkbox" ? (
                 <Controller
