@@ -997,20 +997,6 @@ function FormFields<T extends FieldValues>({
                     const { ref } = register(field.name as Path<T>);
                     if (ref) ref(el);
                   }}
-                  labelStyle={css`
-                    ${labelSize &&
-                    css`
-                      font-size: ${labelSize};
-                    `}
-                    ${field.moneyProps?.labelStyle}
-                  `}
-                  containerStyle={css`
-                    ${field.width &&
-                    css`
-                      width: ${field.width};
-                    `}
-                    ${field.moneyProps?.containerStyle}
-                  `}
                   value={formValues[field.name as keyof T] ?? ""}
                   required={field.required}
                   {...register(field.name as Path<T>, {
@@ -1029,14 +1015,30 @@ function FormFields<T extends FieldValues>({
                   }
                   disabled={field.disabled}
                   {...field.moneyProps}
-                  style={css`
-                    ${fieldSize &&
-                    css`
-                      font-size: ${fieldSize};
-                    `}
-                    height: 34px;
-                    ${field.moneyProps.style}
-                  `}
+                  styles={{
+                    style: css`
+                      ${fieldSize &&
+                      css`
+                        font-size: ${fieldSize};
+                      `}
+                      height: 34px;
+                      ${field.moneyProps?.styles?.style}
+                    `,
+                    labelStyle: css`
+                      ${labelSize &&
+                      css`
+                        font-size: ${labelSize};
+                      `}
+                      ${field.moneyProps?.styles?.labelStyle}
+                    `,
+                    containerStyle: css`
+                      ${field.width &&
+                      css`
+                        width: ${field.width};
+                      `}
+                      ${field.moneyProps?.styles?.containerStyle}
+                    `,
+                  }}
                 />
               ) : field.type === "date" ? (
                 <Controller
