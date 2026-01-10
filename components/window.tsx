@@ -15,14 +15,18 @@ import {
 import styled, { css, CSSProp } from "styled-components";
 import { Button } from "./button";
 
-interface WindowProps {
+export interface WindowProps {
   orientation?: "horizontal" | "vertical";
   children?: ReactNode;
-  style?: CSSProp;
   onResize?: () => void;
   onResizeComplete?: () => void;
-  dividerStyle?: CSSProp;
   initialSizeRatio?: number[];
+  styles?: WindowStylesProps;
+}
+
+export interface WindowStylesProps {
+  style?: CSSProp;
+  dividerStyle?: CSSProp;
 }
 
 export interface WindowCellProps {
@@ -40,10 +44,9 @@ export interface WindowActionProps {
 function Window({
   orientation = "vertical",
   children,
-  style,
+  styles,
   onResize,
   onResizeComplete,
-  dividerStyle,
   initialSizeRatio,
 }: WindowProps) {
   const isVertical = orientation === "vertical";
@@ -153,7 +156,7 @@ function Window({
       aria-label="window"
       ref={containerRef}
       $isVertical={isVertical}
-      $style={style}
+      $style={styles?.style}
     >
       {childrenArray.map((child, index) => (
         <Fragment key={index}>
@@ -167,7 +170,7 @@ function Window({
           )}
           {index < childrenArray.length - 1 && (
             <Divider
-              $style={dividerStyle}
+              $style={styles?.dividerStyle}
               className="divider"
               aria-label={`window-divider`}
               onMouseDown={startDrag(index)}
