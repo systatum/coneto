@@ -24,9 +24,6 @@ export type ComboboxProps = Partial<BaseComboboxProps> & {
 
 interface BaseComboboxProps {
   options: OptionsProps[];
-  containerStyle?: CSSProp;
-  selectboxStyle?: CSSProp;
-  labelStyle?: CSSProp;
   selectedOptions: string[];
   setSelectedOptions: (data: string[]) => void;
   clearable?: boolean;
@@ -38,6 +35,13 @@ interface BaseComboboxProps {
   name?: string;
   multiple?: boolean;
   maxSelectableItems?: number | undefined;
+  styles?: ComboboxStylesProps;
+}
+
+interface ComboboxStylesProps {
+  containerStyle?: CSSProp;
+  selectboxStyle?: CSSProp;
+  labelStyle?: CSSProp;
 }
 
 export interface ComboboxActionProps {
@@ -67,9 +71,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       setSelectedOptions,
       clearable = false,
       placeholder,
-      containerStyle,
-      selectboxStyle,
-      labelStyle,
+      styles,
       highlightOnMatch = false,
       emptySlate = "Not available.",
       errorMessage,
@@ -87,18 +89,23 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
     ref
   ) => {
     return (
-      <ComboboxWrapper $style={containerStyle} aria-label={`combobox-${name}`}>
-        {label && <Label $style={labelStyle}>{label}</Label>}
+      <ComboboxWrapper
+        $style={styles?.containerStyle}
+        aria-label={`combobox-${name}`}
+      >
+        {label && <Label $style={styles?.labelStyle}>{label}</Label>}
         <Selectbox
           ref={ref}
           highlightOnMatch={highlightOnMatch}
-          selectboxStyle={css`
-            ${selectboxStyle}
-            ${showError &&
-            css`
-              border-color: #f87171;
-            `}
-          `}
+          styles={{
+            selectboxStyle: css`
+              ${styles?.selectboxStyle}
+              ${showError &&
+              css`
+                border-color: #f87171;
+              `}
+            `,
+          }}
           options={options}
           selectedOptions={selectedOptions}
           setSelectedOptions={setSelectedOptions}
