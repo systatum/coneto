@@ -18,13 +18,6 @@ import styled, { css } from "styled-components";
 import { CapsuleContentProps } from "./capsule";
 import { OptionsProps } from "./selectbox";
 import { Messagebox } from "./messagebox";
-import { RadioOptionsProps } from "./radio";
-import {
-  RiAtFill,
-  RiChat3Fill,
-  RiNotificationOffFill,
-  RiUserFollowFill,
-} from "@remixicon/react";
 
 const meta: Meta<typeof StatefulForm> = {
   title: "Input Elements/StatefulForm",
@@ -760,17 +753,19 @@ export const AllCase: Story = {
         required: false,
         chipsProps: {
           options: BADGE_OPTIONS,
-          chipStyle: css`
-            width: 100%;
-            gap: 0.5rem;
-            border-color: transparent;
-          `,
-          chipContainerStyle: css`
-            gap: 4px;
-          `,
-          chipsDrawerStyle: css`
-            min-width: 250px;
-          `,
+          styles: {
+            chipStyle: css`
+              width: 100%;
+              gap: 0.5rem;
+              border-color: transparent;
+            `,
+            chipContainerStyle: css`
+              gap: 4px;
+            `,
+            chipsDrawerStyle: css`
+              min-width: 250px;
+            `,
+          },
           onOptionClicked: handleOptionClicked,
           selectedOptions: value.chips.selectedOptions,
           inputValue: value.chips.searchText,

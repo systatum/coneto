@@ -1051,20 +1051,6 @@ function FormFields<T extends FieldValues>({
                         const { ref } = register(field.name as Path<T>);
                         if (ref) ref(el);
                       }}
-                      labelStyle={css`
-                        ${labelSize &&
-                        css`
-                          font-size: ${labelSize};
-                        `}
-                        ${field.dateProps?.labelStyle}
-                      `}
-                      containerStyle={css`
-                        ${field.width &&
-                        css`
-                          width: ${field.width};
-                        `}
-                        ${field.dateProps?.containerStyle}
-                      `}
                       errorMessage={
                         errors[field.name as keyof T]?.[0]?.message as
                           | string
@@ -1085,19 +1071,35 @@ function FormFields<T extends FieldValues>({
                       selectedDates={controllerField.value}
                       disabled={field.disabled}
                       {...field.dateProps}
-                      selectboxStyle={css`
-                        ${fieldSize &&
-                        css`
-                          font-size: ${fieldSize};
-                        `}
-                        border: 1px solid #d1d5db;
-                        max-height: 34px;
-                        &:focus {
-                          border-color: #61a9f9;
-                          box-shadow: 0 0 0 1px #61a9f9;
-                        }
-                        ${field?.dateProps?.selectboxStyle}
-                      `}
+                      styles={{
+                        selectboxStyle: css`
+                          ${fieldSize &&
+                          css`
+                            font-size: ${fieldSize};
+                          `}
+                          border: 1px solid #d1d5db;
+                          max-height: 34px;
+                          &:focus {
+                            border-color: #61a9f9;
+                            box-shadow: 0 0 0 1px #61a9f9;
+                          }
+                          ${field?.dateProps?.styles?.selectboxStyle}
+                        `,
+                        labelStyle: css`
+                          ${labelSize &&
+                          css`
+                            font-size: ${labelSize};
+                          `}
+                          ${field.dateProps?.styles?.labelStyle}
+                        `,
+                        containerStyle: css`
+                          ${field.width &&
+                          css`
+                            width: ${field.width};
+                          `}
+                          ${field.dateProps?.styles?.containerStyle}
+                        `,
+                      }}
                     />
                   )}
                 />
