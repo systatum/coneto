@@ -223,34 +223,36 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
                 }}
               >
                 <Tooltip
-                  containerStyle={css`
-                    cursor: pointer;
-                    pointer-events: none;
-                  `}
                   key={index}
-                  arrowStyle={(placement) => css`
-                    ${placement === "bottom-start"
-                      ? css`
-                          margin-left: 2px;
-                          margin-top: 6px;
-                        `
-                      : placement === "bottom-end"
+                  styles={{
+                    containerStyle: css`
+                      cursor: pointer;
+                      pointer-events: none;
+                    `,
+                    arrowStyle: (placement) => css`
+                      ${placement === "bottom-start"
                         ? css`
-                            margin-right: 2px;
+                            margin-left: 2px;
                             margin-top: 6px;
                           `
-                        : placement === "top-start"
+                        : placement === "bottom-end"
                           ? css`
-                              margin-left: 2px;
-                              margin-bottom: 6px;
+                              margin-right: 2px;
+                              margin-top: 6px;
                             `
-                          : placement === "top-end"
+                          : placement === "top-start"
                             ? css`
-                                margin-right: 2px;
+                                margin-left: 2px;
                                 margin-bottom: 6px;
                               `
-                            : null}
-                  `}
+                            : placement === "top-end"
+                              ? css`
+                                  margin-right: 2px;
+                                  margin-bottom: 6px;
+                                `
+                              : null}
+                    `,
+                  }}
                   showDelayPeriod={titleShowDelay}
                   dialog={props.title}
                 >

@@ -261,35 +261,37 @@ function TreeList({
                       key={index}
                       {...tooltipBaseProps}
                       dialog={children}
-                      arrowStyle={(placement) => {
-                        return (
-                          withArrow &&
-                          css`
-                            background-color: #e5e7eb;
-                            border: 2px solid #e5e7eb;
-                            ${placement === "bottom-start" ||
-                            placement === "top-start"
-                              ? css`
-                                  left: 8%;
-                                `
-                              : placement === "bottom-end" ||
-                                  placement === "top-end"
+                      styles={{
+                        arrowStyle: (placement) => {
+                          return (
+                            withArrow &&
+                            css`
+                              background-color: #e5e7eb;
+                              border: 2px solid #e5e7eb;
+                              ${placement === "bottom-start" ||
+                              placement === "top-start"
                                 ? css`
-                                    right: 8%;
+                                    left: 8%;
                                   `
-                                : null}
+                                : placement === "bottom-end" ||
+                                    placement === "top-end"
+                                  ? css`
+                                      right: 8%;
+                                    `
+                                  : null}
 
-                            ${arrowStyle}
-                          `
-                        );
+                              ${arrowStyle}
+                            `
+                          );
+                        },
+                        drawerStyle: css`
+                          width: fit-content;
+                          background-color: white;
+                          color: black;
+                          border: 1px solid #e5e7eb;
+                          ${drawerStyle}
+                        `,
                       }}
-                      drawerStyle={css`
-                        width: fit-content;
-                        background-color: white;
-                        color: black;
-                        border: 1px solid #e5e7eb;
-                        ${drawerStyle}
-                      `}
                     >
                       {TreeAction}
                     </Tooltip>
@@ -300,15 +302,17 @@ function TreeList({
                       key={index}
                       {...tooltipBaseProps}
                       dialog={children}
-                      arrowStyle={css`
-                        display: none;
-                      `}
-                      drawerStyle={css`
-                        width: fit-content;
-                        background-color: white;
-                        color: black;
-                        border: 1px solid #e5e7eb;
-                      `}
+                      styles={{
+                        arrowStyle: css`
+                          display: none;
+                        `,
+                        drawerStyle: css`
+                          width: fit-content;
+                          background-color: white;
+                          color: black;
+                          border: 1px solid #e5e7eb;
+                        `,
+                      }}
                     >
                       {TreeAction}
                     </Tooltip>

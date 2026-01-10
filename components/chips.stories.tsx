@@ -967,20 +967,22 @@ export const CustomRenderer: Story = {
                 setOpenMap((prev) => ({ ...prev, [id]: isOpen }));
               }}
               dialog={contentDialog}
-              containerStyle={css`
-                width: fit-content;
-              `}
-              arrowStyle={css`
-                background-color: #e5e7eb;
-                border: 1px solid #e5e7eb;
-              `}
-              drawerStyle={css`
-                width: fit-content;
-                left: 1rem;
-                background-color: white;
-                color: black;
-                border: 1px solid #e5e7eb;
-              `}
+              styles={{
+                containerStyle: css`
+                  width: fit-content;
+                `,
+                arrowStyle: css`
+                  background-color: #e5e7eb;
+                  border: 1px solid #e5e7eb;
+                `,
+                drawerStyle: css`
+                  width: fit-content;
+                  left: 1rem;
+                  background-color: white;
+                  color: black;
+                  border: 1px solid #e5e7eb;
+                `,
+              }}
             >
               <Badge
                 id={id}

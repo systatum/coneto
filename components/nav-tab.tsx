@@ -172,43 +172,45 @@ function NavTab({
                   tooltipRefs.current[index] = el;
                 }}
                 key={props.id}
-                arrowStyle={css`
-                  opacity: 0;
-                  background-color: transparent;
-                `}
-                containerStyle={css`
-                  width: fit-content;
-                `}
-                drawerStyle={(placement) => css`
-                  border-radius: 0px;
-                  padding: 0px;
-                  background-color: white;
-                  color: black;
-                  opacity: 0;
+                styles={{
+                  arrowStyle: css`
+                    opacity: 0;
+                    background-color: transparent;
+                  `,
+                  containerStyle: css`
+                    width: fit-content;
+                  `,
+                  drawerStyle: (placement) => css`
+                    border-radius: 0px;
+                    padding: 0px;
+                    background-color: white;
+                    color: black;
+                    opacity: 0;
 
-                  ${placement === "bottom-start"
-                    ? css`
-                        margin-top: 3px;
-                      `
-                    : placement === "bottom-end"
+                    ${placement === "bottom-start"
                       ? css`
                           margin-top: 3px;
                         `
-                      : placement === "top-start"
+                      : placement === "bottom-end"
                         ? css`
-                            margin-bottom: 3px;
+                            margin-top: 3px;
                           `
-                        : placement === "top-end"
+                        : placement === "top-start"
                           ? css`
                               margin-bottom: 3px;
                             `
-                          : null}
+                          : placement === "top-end"
+                            ? css`
+                                margin-bottom: 3px;
+                              `
+                            : null}
 
-                  ${props.subItems &&
-                  css`
-                    opacity: 1;
-                  `}
-                `}
+                    ${props.subItems &&
+                    css`
+                      opacity: 1;
+                    `}
+                  `,
+                }}
                 dialogPlacement="bottom-left"
                 dialog={
                   <>
