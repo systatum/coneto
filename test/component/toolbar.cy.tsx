@@ -80,9 +80,11 @@ describe("Toolbar", () => {
         cy.mount(
           <Toolbar>
             <Toolbar.Menu
-              dropdownStyle={css`
-                min-width: 235px;
-              `}
+              styles={{
+                dropdownStyle: css`
+                  min-width: 235px;
+                `,
+              }}
               onClick={() => {
                 console.log("test");
               }}
@@ -109,9 +111,11 @@ describe("Toolbar", () => {
         cy.mount(
           <Toolbar>
             <Toolbar.Menu
-              dropdownStyle={css`
-                min-width: 235px;
-              `}
+              styles={{
+                dropdownStyle: css`
+                  min-width: 235px;
+                `,
+              }}
               onClick={() => {
                 console.log("test");
               }}
@@ -138,7 +142,11 @@ describe("Toolbar", () => {
               caption="Test"
               variant="default"
               subMenuList={TIP_MENU_ITEMS}
-              dropdownStyle={{ minWidth: "240px" }}
+              styles={{
+                dropdownStyle: css`
+                  min-width: 240px;
+                `,
+              }}
             />
           </Toolbar>
         );

@@ -37,10 +37,12 @@ describe("Modal Dialog", () => {
       cy.mount(
         <ModalDialog
           {...args}
-          contentStyle={css`
-            min-height: 150px;
-            background-color: wheat;
-          `}
+          styles={{
+            contentStyle: css`
+              min-height: 150px;
+              background-color: wheat;
+            `,
+          }}
         />
       );
 

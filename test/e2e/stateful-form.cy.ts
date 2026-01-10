@@ -112,8 +112,9 @@ describe("StatefulForm", () => {
       cy.findByText("2024").click();
       cy.findByText("3").click();
       const expectedDate = "01/03/2024";
-      cy.findByPlaceholderText("mm/dd/yyyy").as("datebox");
-      cy.get("@datebox").should("have.value", expectedDate);
+      cy.get('[data-type="selectbox"]')
+        .eq(1)
+        .should("have.value", expectedDate);
 
       const testFile = "test/fixtures/test-images/sample-1.jpg";
       cy.findByLabelText("filedropbox").selectFile(testFile, {

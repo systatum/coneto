@@ -7,13 +7,16 @@ export interface RatingProps {
   editable?: boolean;
   withLabel?: boolean;
   size?: "sm" | "md" | "lg";
-  errorMessage?: string;
-  containerStyle?: CSSProp;
-  labelStyle?: CSSProp;
   disabled?: boolean;
   showError?: boolean;
   label?: string;
   name?: string;
+  styles?: RatingStylesProps;
+  errorMessage?: string;
+}
+export interface RatingStylesProps {
+  containerStyle?: CSSProp;
+  labelStyle?: CSSProp;
 }
 
 function Rating({
@@ -25,9 +28,8 @@ function Rating({
   label,
   showError,
   errorMessage,
-  containerStyle,
   disabled,
-  labelStyle,
+  styles,
   name,
 }: RatingProps) {
   const ratingState = Number(rating || 0);
@@ -147,8 +149,8 @@ function Rating({
   );
 
   return (
-    <InputWrapper $disabled={disabled} $containerStyle={containerStyle}>
-      {label && <Label $style={labelStyle}>{label}</Label>}
+    <InputWrapper $disabled={disabled} $containerStyle={styles?.containerStyle}>
+      {label && <Label $style={styles?.labelStyle}>{label}</Label>}
       <InputContent>
         {inputElement}
         {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}

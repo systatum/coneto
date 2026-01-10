@@ -29,9 +29,11 @@ export const Dollar: Story = {
     return (
       <Moneybox
         {...args}
-        style={css`
-          max-width: 300px;
-        `}
+        styles={{
+          style: css`
+            max-width: 300px;
+          `,
+        }}
         value={currentArgs.value}
         onChange={onChangeValue}
         separator="dot"
@@ -56,9 +58,11 @@ export const Euro: Story = {
     return (
       <Moneybox
         {...args}
-        style={css`
-          max-width: 300px;
-        `}
+        styles={{
+          style: css`
+            max-width: 300px;
+          `,
+        }}
         value={currentArgs.value}
         onChange={onChangeValue}
       />
@@ -82,9 +86,11 @@ export const Yen: Story = {
     return (
       <Moneybox
         {...args}
-        style={css`
-          max-width: 300px;
-        `}
+        styles={{
+          style: css`
+            max-width: 300px;
+          `,
+        }}
         value={currentArgs.value}
         onChange={onChangeValue}
       />
@@ -108,9 +114,11 @@ export const Pound: Story = {
     return (
       <Moneybox
         {...args}
-        style={css`
-          max-width: 300px;
-        `}
+        styles={{
+          style: css`
+            max-width: 300px;
+          `,
+        }}
         value={currentArgs.value}
         onChange={onChangeValue}
       />
@@ -134,9 +142,11 @@ export const Rupiah: Story = {
     return (
       <Moneybox
         {...args}
-        style={css`
-          max-width: 300px;
-        `}
+        styles={{
+          style: css`
+            max-width: 300px;
+          `,
+        }}
         value={currentArgs.value}
         onChange={onChangeValue}
       />
@@ -161,9 +171,11 @@ export const WithLabel: Story = {
     return (
       <Moneybox
         {...args}
-        style={css`
-          max-width: 300px;
-        `}
+        styles={{
+          style: css`
+            max-width: 300px;
+          `,
+        }}
         value={currentArgs.value}
         onChange={onChangeValue}
       />
@@ -201,9 +213,11 @@ export const ErrorState: Story = {
     return (
       <Moneybox
         {...args}
-        style={css`
-          max-width: 300px;
-        `}
+        styles={{
+          style: css`
+            max-width: 300px;
+          `,
+        }}
         onChange={onChangeValue}
       />
     );

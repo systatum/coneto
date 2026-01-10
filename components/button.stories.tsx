@@ -183,9 +183,11 @@ export const WithTipMenu: Story = {
     const LIST_SUB_MENU: ButtonProps = {
       variant: "default",
       children: "List",
-      dropdownStyle: css`
-        min-width: 240px;
-      `,
+      styles: {
+        dropdownStyle: css`
+          min-width: 240px;
+        `,
+      },
       subMenu: ({ list }) =>
         list([
           {
@@ -225,9 +227,11 @@ export const WithTipMenu: Story = {
     const LIST_SUB_WITH_FILTER: ButtonProps = {
       variant: "default",
       children: "With Filter",
-      dropdownStyle: css`
-        min-width: 240px;
-      `,
+      styles: {
+        dropdownStyle: css`
+          min-width: 240px;
+        `,
+      },
       subMenu: ({ list }) =>
         list(
           [
@@ -284,18 +288,22 @@ export const WithTipMenu: Story = {
     const SHOW_SUB_MENU: ButtonProps = {
       variant: "default",
       children: "Show",
-      dropdownStyle: css`
-        min-width: 240px;
-      `,
+      styles: {
+        dropdownStyle: css`
+          min-width: 240px;
+        `,
+      },
       subMenu: ({ show }) => show(<Calendar monthNames={MONTH_NAMES} />),
     };
 
     const RENDER_SUB_MENU: ButtonProps = {
       variant: "default",
       children: "Render",
-      dropdownStyle: css`
-        min-width: 240px;
-      `,
+      styles: {
+        dropdownStyle: css`
+          min-width: 240px;
+        `,
+      },
       subMenu: ({ render }) =>
         render(
           <Button.TipMenuContainer

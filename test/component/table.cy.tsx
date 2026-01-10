@@ -235,9 +235,11 @@ describe("Table", () => {
             selectable
             showPagination
             labels={{ pageNumberText: 10 }}
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             selectedItems={[
               "Tech Articles-Understanding React 18-Frontend-John Doe",
             ]}
@@ -388,9 +390,11 @@ describe("Table", () => {
         cy.mount(
           <Table
             selectable
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             draggable
             alwaysShowDragIcon={false}
             columns={columns}
@@ -440,9 +444,11 @@ describe("Table", () => {
         cy.mount(
           <Table
             selectable
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             draggable
             alwaysShowDragIcon={true}
             columns={columns}
@@ -482,9 +488,11 @@ describe("Table", () => {
         cy.mount(
           <Table
             selectable
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             draggable
             columns={columns}
             actions={TOP_ACTIONS}
@@ -526,13 +534,12 @@ describe("Table", () => {
           cy.mount(
             <Table
               selectable
-              paginationWrapperStyle={css`
-                width: 100%;
-                justify-content: end;
-              `}
-              tableRowContainerStyle={css`
-                max-height: 400px;
-              `}
+              styles={{
+                paginationWrapperStyle: css`
+                  width: 100%;
+                  justify-content: end;
+                `,
+              }}
               selectedItems={[
                 "Tech Articles-Understanding React 18-Frontend-John Doe",
               ]}
@@ -576,12 +583,14 @@ describe("Table", () => {
               selectable
               showPagination
               labels={{ pageNumberText: 10 }}
-              paginationNumberStyle={css`
-                font-size: 30px;
-              `}
-              tableRowContainerStyle={css`
-                max-height: 400px;
-              `}
+              styles={{
+                paginationNumberStyle: css`
+                  font-size: 30px;
+                `,
+                tableRowContainerStyle: css`
+                  max-height: 400px;
+                `,
+              }}
               selectedItems={[
                 "Tech Articles-Understanding React 18-Frontend-John Doe",
               ]}
@@ -724,9 +733,11 @@ describe("Table", () => {
     it("renders summary on footer", () => {
       cy.mount(
         <Table
-          tableRowContainerStyle={css`
-            max-height: 400px;
-          `}
+          styles={{
+            tableRowContainerStyle: css`
+              max-height: 400px;
+            `,
+          }}
           columns={columns}
           actions={DEFAULT_TOP_ACTIONS}
           sumRow={[
@@ -778,9 +789,11 @@ describe("Table", () => {
         cy.mount(
           <Table
             selectable
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             columns={columns}
             actions={DEFAULT_TOP_ACTIONS}
             sumRow={[
@@ -939,12 +952,14 @@ describe("Table", () => {
           cy.mount(
             <Table
               selectable
-              totalSelectedItemTextStyle={css`
-                font-size: 100px;
-              `}
-              tableRowContainerStyle={css`
-                max-height: 400px;
-              `}
+              styles={{
+                totalSelectedItemTextStyle: css`
+                  font-size: 100px;
+                `,
+                tableRowContainerStyle: css`
+                  max-height: 400px;
+                `,
+              }}
               selectedItems={[
                 "Tech Articles-Understanding React 18-Frontend-John Doe",
               ]}
@@ -999,9 +1014,11 @@ describe("Table", () => {
         cy.mount(
           <Table
             selectable
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             columns={columns}
             actions={DEFAULT_TOP_ACTIONS}
             searchable
@@ -1072,9 +1089,11 @@ describe("Table", () => {
         cy.mount(
           <Table
             selectable
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             columns={columns}
             actions={DEFAULT_TOP_ACTIONS}
             searchable
@@ -1142,9 +1161,11 @@ describe("Table", () => {
         cy.mount(
           <Table
             selectable
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             columns={columns}
             actions={DEFAULT_TOP_ACTIONS}
             searchable
@@ -1184,9 +1205,11 @@ describe("Table", () => {
         cy.mount(
           <Table
             selectable
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             columns={columns}
             actions={TOP_ACTIONS}
             searchable
@@ -1236,9 +1259,11 @@ describe("Table", () => {
         cy.mount(
           <Table
             selectable
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             columns={columns}
             searchable
           >
@@ -1287,9 +1312,11 @@ describe("Table", () => {
       it("renders searchbox in the right side", () => {
         cy.mount(
           <Table
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             columns={columns}
             actions={TOP_ACTIONS}
             searchable
@@ -1339,9 +1366,11 @@ describe("Table", () => {
       it("renders searchbox in the all row", () => {
         cy.mount(
           <Table
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             columns={columns}
             searchable
           >
@@ -1393,9 +1422,11 @@ describe("Table", () => {
         cy.mount(
           <Table
             selectable
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             columns={columns}
             actions={TOP_ACTIONS}
             searchable
@@ -1438,9 +1469,11 @@ describe("Table", () => {
         cy.mount(
           <Table
             selectable
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             columns={columns}
             actions={TOP_ACTIONS}
             searchable
@@ -1494,9 +1527,11 @@ describe("Table", () => {
         cy.mount(
           <Table
             selectable
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             columns={columns}
             actions={TOP_ACTIONS}
             searchable
@@ -1547,9 +1582,11 @@ describe("Table", () => {
         cy.mount(
           <Table
             selectable
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             columns={columns}
             actions={TOP_ACTIONS}
             searchable

@@ -15,10 +15,14 @@ export interface ColorboxProps
   label?: string;
   showError?: boolean;
   errorMessage?: string;
+  onClick?: () => void;
+  styles?: ColorboxStylesProps;
+}
+
+export interface ColorboxStylesProps {
   style?: CSSProp;
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
-  onClick?: () => void;
 }
 
 const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
@@ -29,11 +33,9 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
       label,
       errorMessage,
       showError,
-      style,
-      containerStyle,
       placeholder,
       onClick,
-      labelStyle,
+      styles,
       ...props
     },
     ref
@@ -44,7 +46,7 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
 
     const inputElement: ReactElement = (
       <ColorInputContainer
-        $style={style}
+        $style={styles?.style}
         $hovered={hovered}
         $showError={!!showError}
       >
@@ -102,9 +104,12 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
     );
 
     return (
-      <InputWrapper $containerStyle={containerStyle} $disabled={props.disabled}>
+      <InputWrapper
+        $containerStyle={styles?.containerStyle}
+        $disabled={props.disabled}
+      >
         {label && (
-          <Label htmlFor={inputId} $style={labelStyle}>
+          <Label htmlFor={inputId} $style={styles?.labelStyle}>
             {label}
           </Label>
         )}

@@ -2,7 +2,8 @@ import styled, { css, CSSProp } from "styled-components";
 import { ChangeEvent, InputHTMLAttributes, ReactElement } from "react";
 import { RemixiconComponentType } from "@remixicon/react";
 
-export interface RadioProps {
+export interface RadioProps
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {
   value?: string;
   label?: string;
   description?: string;
@@ -10,6 +11,16 @@ export interface RadioProps {
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
   name?: string;
   highlightOnChecked?: boolean;
+  styles?: RadioStylesProps;
+  showError?: boolean;
+  errorMessage?: string;
+  mode?: "radio" | "button";
+  icon?: RemixiconComponentType;
+  iconSize?: number;
+  iconColor?: string;
+}
+
+interface RadioStylesProps {
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
   descriptionStyle?: CSSProp;
@@ -17,12 +28,7 @@ export interface RadioProps {
   errorStyle?: CSSProp;
   titleStyle?: CSSProp;
   inputContainerStyle?: CSSProp;
-  showError?: boolean;
-  errorMessage?: string;
-  mode?: "radio" | "button";
-  icon?: RemixiconComponentType;
-  iconSize?: number;
-  iconColor?: string;
+  style?: CSSProp;
 }
 
 export interface RadioOptionsProps {
@@ -43,21 +49,15 @@ function Radio({
   onChange,
   name,
   highlightOnChecked,
-  containerStyle,
-  labelStyle,
-  inputContainerStyle,
-  descriptionStyle,
   showError,
   errorMessage,
-  inputStyle,
-  errorStyle,
   icon: Icon,
   iconSize,
   iconColor,
-  titleStyle,
+  styles,
   mode = "radio",
   ...props
-}: RadioProps & InputHTMLAttributes<HTMLInputElement>) {
+}: RadioProps) {
   const id = `radio-${name}-${value}`;
 
   const inputElement: ReactElement = (
@@ -66,12 +66,12 @@ function Radio({
       htmlFor={props.disabled ? null : id}
       $highlight={highlightOnChecked}
       $checked={checked}
-      $style={containerStyle}
+      $style={styles?.containerStyle}
       $hasDescription={!!description}
       $disabled={props.disabled}
     >
       <InputContainer
-        $style={inputContainerStyle}
+        $style={styles?.inputContainerStyle}
         aria-label="radio-input-container"
         $isRadio={mode === "radio"}
       >
@@ -85,12 +85,13 @@ function Radio({
           $disabled={props.disabled}
           readOnly
           {...props}
+          $style={styles?.style}
           disabled={props.disabled}
         />
         <Circle
           $isRadio={mode === "radio"}
           $error={showError}
-          $style={inputStyle}
+          $style={styles?.inputStyle}
         />
         {Icon && (
           <Icon
@@ -100,7 +101,10 @@ function Radio({
           />
         )}
         {label && (
-          <LabelText aria-label="radio-label-wrapper" $style={labelStyle}>
+          <LabelText
+            aria-label="radio-label-wrapper"
+            $style={styles?.labelStyle}
+          >
             {label}
           </LabelText>
         )}
@@ -109,24 +113,24 @@ function Radio({
         <DescriptionText
           $isRadio={mode === "radio"}
           $highlight={highlightOnChecked}
-          $style={descriptionStyle}
+          $style={styles?.descriptionStyle}
         >
           {description}
         </DescriptionText>
       )}
       {showError && errorMessage && (
-        <ErrorText $style={errorStyle}>{errorMessage}</ErrorText>
+        <ErrorText $style={styles?.errorStyle}>{errorMessage}</ErrorText>
       )}
     </Label>
   );
 
   return (
-    <Container $style={containerStyle}>
+    <Container $style={styles?.containerStyle}>
       {title && (
         <Title
           htmlFor={props.disabled ? null : id}
           aria-label="radio-title-wrapper"
-          $style={titleStyle}
+          $style={styles?.titleStyle}
         >
           {title}
         </Title>
@@ -193,7 +197,7 @@ const Label = styled.label<{
   ${({ $style }) => $style}
 `;
 
-const HiddenRadio = styled.input<{ $disabled?: boolean }>`
+const HiddenRadio = styled.input<{ $disabled?: boolean; $style?: CSSProp }>`
   position: absolute;
   opacity: 0;
   pointer-events: none;
@@ -205,6 +209,8 @@ const HiddenRadio = styled.input<{ $disabled?: boolean }>`
       opacity: 0.6;
       user-select: none;
     `}
+
+  ${({ $style }) => $style}
 `;
 
 const Circle = styled.div<{

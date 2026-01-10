@@ -13,13 +13,18 @@ export type DateboxProps = BaseCalendarProps & {
   showError?: boolean;
   errorMessage?: string;
   disabled?: boolean;
-  labelStyle?: CSSProp;
-  selectboxStyle?: CSSProp;
   calendarFooter?: ReactNode;
   calendarTodayButtonCaption?: string;
   calendarSelectabilityMode?: SelectabilityModeState;
   placeholder?: string;
+  styles?: DateboxStylesProps;
 };
+
+export interface DateboxStylesProps {
+  labelStyle?: CSSProp;
+  selectboxStyle?: CSSProp;
+  containerStyle?: CSSProp;
+}
 
 type CalendarDrawerProps = BaseCalendarProps &
   Partial<
@@ -38,27 +43,29 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
     selectedDates,
     setSelectedDates,
     errorMessage,
-    containerStyle,
     placeholder = "mm/dd/yyyy",
+    styles,
     ...rest
   } = props;
 
   return (
-    <InputWrapper $style={containerStyle} $disabled={props.disabled}>
-      {props.label && <Label $style={props.labelStyle}>{props.label}</Label>}
+    <InputWrapper $style={styles?.containerStyle} $disabled={props.disabled}>
+      {props.label && <Label $style={styles?.labelStyle}>{props.label}</Label>}
       <InputContent>
         <Selectbox
           {...rest}
           ref={ref}
           selectedOptions={selectedDates}
           setSelectedOptions={setSelectedDates}
-          selectboxStyle={css`
-            ${props.selectboxStyle}
-            ${props.showError &&
-            css`
-              border-color: #f87171;
-            `}
-          `}
+          styles={{
+            selectboxStyle: css`
+              ${styles?.selectboxStyle}
+              ${props.showError &&
+              css`
+                border-color: #f87171;
+              `}
+            `,
+          }}
           placeholder={placeholder}
           iconClosed={RiCalendar2Line}
           iconOpened={RiCalendar2Line}

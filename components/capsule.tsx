@@ -14,28 +14,30 @@ export interface CapsuleProps {
   activeTab?: string | null;
   tabs: CapsuleContentProps[];
   onTabChange?: (id: string) => void;
-  containerStyle?: CSSProp;
   label?: string;
-  labelStyle?: CSSProp;
-  tabStyle?: CSSProp;
   full?: boolean;
   activeBackgroundColor?: string;
   showError?: boolean;
   errorMessage?: string;
   fontSize?: number;
   iconSize?: number;
+  styles?: CapsuleStylesProps;
+}
+
+export interface CapsuleStylesProps {
+  containerStyle?: CSSProp;
+  labelStyle?: CSSProp;
+  tabStyle?: CSSProp;
 }
 
 function Capsule({
   tabs,
   activeTab,
   onTabChange,
-  containerStyle,
-  tabStyle,
   full,
   activeBackgroundColor = "oklch(54.6% .245 262.881)",
   label,
-  labelStyle,
+  styles,
   showError,
   errorMessage,
   fontSize = 12,
@@ -147,14 +149,14 @@ function Capsule({
   const inputElement: ReactElement = (
     <CapsuleWrapper
       aria-label="capsule"
-      $containerStyle={containerStyle}
+      $containerStyle={styles?.containerStyle}
       $full={full}
       ref={containerRef}
       role="tablist"
     >
       <ActiveBackground
         aria-label="active-capsule-box"
-        $style={tabStyle}
+        $style={styles?.tabStyle}
         $activeBackgroundColor={activeBackgroundColor}
         initial={{
           left: initialPosition.left,
@@ -173,7 +175,7 @@ function Capsule({
 
       <HoverBorder
         aria-label="hover-capsule-box"
-        $style={tabStyle}
+        $style={styles?.tabStyle}
         $activeBackgroundColor={activeBackgroundColor}
         initial={{
           left: hoverPosition.left,
@@ -200,7 +202,7 @@ function Capsule({
             role="tab"
             key={index}
             ref={setTabRef(index)}
-            $activeTabStyle={tabStyle}
+            $activeTabStyle={styles?.tabStyle}
             onMouseEnter={() => setHovered(data.id)}
             onMouseLeave={() => setHovered(null)}
             onClick={() => onTabChange(data.id)}
@@ -214,9 +216,9 @@ function Capsule({
   );
 
   return (
-    <Container $fontSize={fontSize} $style={containerStyle}>
+    <Container $fontSize={fontSize} $style={styles?.containerStyle}>
       {label && (
-        <Label $style={labelStyle} htmlFor="capsule">
+        <Label $style={styles?.labelStyle} htmlFor="capsule">
           {label}
         </Label>
       )}

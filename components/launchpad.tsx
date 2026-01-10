@@ -20,16 +20,24 @@ export interface LaunchpadProps {
 export interface LaunchpadSectionProps {
   children: ReactNode;
   title?: string;
+  styles?: LaunchpadSectionStylesProps;
+  gridPreset?: GridPresetKey;
+}
+
+export interface LaunchpadSectionStylesProps {
   containerStyle?: CSSProp;
   gridStyle?: CSSProp;
   separatorStyle?: CSSProp;
-  gridPreset?: GridPresetKey;
 }
 
 export interface LaunchpadSectionItemProps {
   href: string;
   iconUrl: string;
   label: string;
+  styles?: LaunchpadSectionItemStylesProps;
+}
+
+export interface LaunchpadSectionItemStylesProps {
   containerStyle?: CSSProp;
   iconStyle?: CSSProp;
 }
@@ -147,17 +155,17 @@ function Launchpad({
 function LaunchpadSection({
   children,
   title,
-  gridStyle,
-  containerStyle,
-  separatorStyle,
+  styles,
   gridPreset = "2-to-4",
 }: LaunchpadSectionProps) {
   return (
-    <LaunchpadSectionContainer $containerStyle={containerStyle}>
-      <LaunchPadSectionSeparatorWrapper $separatorStyle={separatorStyle}>
+    <LaunchpadSectionContainer $containerStyle={styles?.containerStyle}>
+      <LaunchPadSectionSeparatorWrapper
+        $separatorStyle={styles?.separatorStyle}
+      >
         <Separator title={title} depth="0" />
       </LaunchPadSectionSeparatorWrapper>
-      <Grid preset={gridPreset} containerStyle={gridStyle}>
+      <Grid preset={gridPreset} containerStyle={styles?.gridStyle}>
         {children}
       </Grid>
     </LaunchpadSectionContainer>
@@ -168,13 +176,15 @@ function LaunchpadSectionItem({
   href,
   label,
   iconUrl,
-  containerStyle,
-  iconStyle,
+  styles,
 }: LaunchpadSectionItemProps) {
   return (
-    <LaunchpadSectionItemLink $containerStyle={containerStyle} href={href}>
+    <LaunchpadSectionItemLink
+      $containerStyle={styles?.containerStyle}
+      href={href}
+    >
       {iconUrl && (
-        <LaunchpadSectionIconWrapper $iconStyle={iconStyle}>
+        <LaunchpadSectionIconWrapper $iconStyle={styles?.iconStyle}>
           <img width={400} height={400} src={iconUrl} />
         </LaunchpadSectionIconWrapper>
       )}

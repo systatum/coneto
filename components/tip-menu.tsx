@@ -52,25 +52,27 @@ function TipMenu({
           autoFocus
           name="tip-menu-search"
           value={search}
-          containerStyle={css`
-            position: sticky;
-            top: 0;
-            background-color: white;
-            z-index: 30;
-            height: 38px;
-            padding-right: 5px;
-            padding-left: 5px;
-          `}
-          iconStyle={css`
-            left: 16px;
-          `}
-          style={css`
-            max-height: 35px;
-            margin-top: 7px;
-            margin-bottom: 7px;
-            padding-bottom: 7px;
-            padding-top: 7px;
-          `}
+          styles={{
+            containerStyle: css`
+              position: sticky;
+              top: 0;
+              background-color: white;
+              z-index: 30;
+              height: 38px;
+              padding-right: 5px;
+              padding-left: 5px;
+            `,
+            iconStyle: css`
+              left: 16px;
+            `,
+            style: css`
+              max-height: 35px;
+              margin-top: 7px;
+              margin-bottom: 7px;
+              padding-bottom: 7px;
+              padding-top: 7px;
+            `,
+          }}
           onChange={(e) => {
             setHasInteracted(true);
             setSearch(e.target.value);

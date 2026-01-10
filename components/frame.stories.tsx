@@ -14,13 +14,15 @@ const meta: Meta<typeof Frame> = {
       description: "Title shown on top of the frame",
       control: "text",
     },
-    style: {
-      description: "Custom class for the frame container",
-      control: "text",
-    },
-    styleTitle: {
-      description: "Custom class for the title container",
-      control: "text",
+    styles: {
+      style: {
+        description: "Custom class for the frame container",
+        control: "text",
+      },
+      styleTitle: {
+        description: "Custom class for the title container",
+        control: "text",
+      },
     },
     children: {
       description: "Content inside the frame",
@@ -35,9 +37,11 @@ type Story = StoryObj<typeof Frame>;
 
 export const Default: Story = {
   args: {
-    style: css`
-      font-size: 14px;
-    `,
+    styles: {
+      style: css`
+        font-size: 14px;
+      `,
+    },
     children: <>This is inside the frame.</>,
   },
   render: (args) => {
@@ -48,9 +52,11 @@ export const Default: Story = {
 export const WithTitle: Story = {
   args: {
     title: "Frame Title",
-    style: css`
-      font-size: 14px;
-    `,
+    styles: {
+      style: css`
+        font-size: 14px;
+      `,
+    },
     children: <>This frame has a title.</>,
   },
   render: (args) => {
@@ -61,13 +67,15 @@ export const WithTitle: Story = {
 export const Custom: Story = {
   args: {
     title: "Frame w/ Class",
-    style: css`
-      font-size: 14px;
-      background-color: #f5f5f5;
-    `,
-    styleTitle: css`
-      background-color: #f5f5f5;
-    `,
+    styles: {
+      style: css`
+        font-size: 14px;
+        background-color: #f5f5f5;
+      `,
+      titleStyle: css`
+        background-color: #f5f5f5;
+      `,
+    },
     children: <>This frame has a custom background color.</>,
   },
   render: (args) => {

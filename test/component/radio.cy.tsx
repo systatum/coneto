@@ -94,9 +94,11 @@ describe("Radio", () => {
         <Radio
           label="This is radio with title"
           value=""
-          labelStyle={css`
-            font-size: 30px;
-          `}
+          styles={{
+            labelStyle: css`
+              font-size: 30px;
+            `,
+          }}
         />
       );
       cy.findByText("This is radio with title")
@@ -129,9 +131,11 @@ describe("Radio", () => {
                     `The name is ${e.target.name} and the value is ${e.target.value}`
                   )
                 }
-                labelStyle={css`
-                  font-size: 30px;
-                `}
+                styles={{
+                  labelStyle: css`
+                    font-size: 30px;
+                  `,
+                }}
               />
             ))}
           </div>

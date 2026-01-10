@@ -119,7 +119,7 @@ describe("NavTab", () => {
 
       cy.mount(<NavTab tabs={TABS_ITEMS} activeTab={"2"} />);
       cy.findByText("Write").realHover();
-      cy.findByLabelText("action-button").should("be.visible").click();
+      cy.findAllByLabelText("action-button").eq(0).should("be.visible").click();
       cy.get("@consoleLog").should("have.been.calledWith", "Discover clicked");
     });
 
@@ -131,7 +131,10 @@ describe("NavTab", () => {
 
         cy.mount(<NavTab tabs={TABS_ITEMS} activeTab={"2"} />);
         cy.findByText("Review").realHover();
-        cy.findByLabelText("action-button").should("be.visible").click();
+        cy.findAllByLabelText("action-button")
+          .eq(1)
+          .should("be.visible")
+          .click();
         cy.findByText("Mention").should("be.visible").click();
 
         cy.get("@consoleLog").should("have.been.calledWith", "Mention clicked");
@@ -161,10 +164,12 @@ describe("NavTab", () => {
           <NavTab
             tabs={TABS_ITEMS}
             activeTab={"2"}
-            boxStyle={css`
-              padding: 20px;
-              color: red;
-            `}
+            styles={{
+              boxStyle: css`
+                padding: 20px;
+                color: red;
+              `,
+            }}
           />
         );
         cy.wait(200);
@@ -183,10 +188,12 @@ describe("NavTab", () => {
           <NavTab
             tabs={TABS_ITEMS}
             activeTab={"2"}
-            boxStyle={css`
-              padding: 20px;
-              background-color: white;
-            `}
+            styles={{
+              boxStyle: css`
+                padding: 20px;
+                background-color: white;
+              `,
+            }}
           >
             <div
               style={{

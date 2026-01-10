@@ -18,11 +18,15 @@ export interface ThumbFieldProps {
   label?: string;
   showError?: boolean;
   errorMessage?: string;
+  styles?: ThumbFieldStylesProps;
+  id?: string;
+}
+
+export interface ThumbFieldStylesProps {
+  style?: CSSProp;
   containerStyle?: CSSProp;
   triggerStyle?: CSSProp;
   labelStyle?: CSSProp;
-  style?: CSSProp;
-  id?: string;
 }
 
 export type ThumbFieldValue = "up" | "down" | "blank";
@@ -37,10 +41,7 @@ function ThumbField({
   errorMessage,
   label,
   showError,
-  containerStyle,
-  labelStyle,
-  style,
-  triggerStyle,
+  styles,
   id,
 }: ThumbFieldProps) {
   const thumbStateValue = value === true ? "up" : value ? "down" : "blank";
@@ -67,7 +68,7 @@ function ThumbField({
   };
 
   const inputElement: ReactElement = (
-    <InputGroup $style={style}>
+    <InputGroup $style={styles?.style}>
       <input
         aria-label="thumbfield-input"
         ref={thumbInputRef}
@@ -81,7 +82,7 @@ function ThumbField({
       <TriggerWrapper
         aria-label="thumb-up"
         onClick={() => handleChangeValue("up")}
-        $triggerStyle={triggerStyle}
+        $triggerStyle={styles?.triggerStyle}
         $active={thumbValue === "up"}
         $activeColor={thumbsUpBackgroundColor}
         $showError={showError}
@@ -96,7 +97,7 @@ function ThumbField({
       <TriggerWrapper
         aria-label="thumb-down"
         onClick={() => handleChangeValue("down")}
-        $triggerStyle={triggerStyle}
+        $triggerStyle={styles?.triggerStyle}
         $active={thumbValue === "down"}
         $activeColor={thumbsDownBackgroundColor}
         $showError={showError}
@@ -117,9 +118,9 @@ function ThumbField({
   );
 
   return (
-    <InputWrapper $containerStyle={containerStyle} $disabled={disabled}>
+    <InputWrapper $containerStyle={styles?.containerStyle} $disabled={disabled}>
       {label && (
-        <Label $style={labelStyle} htmlFor={id}>
+        <Label $style={styles?.labelStyle} htmlFor={id}>
           {label}
         </Label>
       )}

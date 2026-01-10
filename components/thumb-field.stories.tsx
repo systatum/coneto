@@ -36,10 +36,12 @@ export const WithLabel: Story = {
     label: "Would you recommend this employer?",
     value: null,
     name: "value",
-    containerStyle: css`
-      font-size: 14px;
-      font-family: monospace;
-    `,
+    styles: {
+      containerStyle: css`
+        font-size: 14px;
+        font-family: monospace;
+      `,
+    },
   },
   render: (args) => {
     const [, setUpdateArgs] = useArgs();
@@ -58,10 +60,12 @@ export const WithError: Story = {
     label: "How would you rate this employee’s performance?",
     value: null,
     name: "value",
-    containerStyle: css`
-      font-size: 14px;
-      font-weight: 500;
-    `,
+    styles: {
+      containerStyle: css`
+        font-size: 14px;
+        font-weight: 500;
+      `,
+    },
     showError: true,
     errorMessage: "This field is required",
   },

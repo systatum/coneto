@@ -16,7 +16,7 @@ const meta: Meta<typeof Searchbox> = {
       description: "Input value",
     },
     onChange: { action: "changed" },
-    style: { control: false },
+    styles: { control: false },
   },
   parameters: {
     layout: "centered",

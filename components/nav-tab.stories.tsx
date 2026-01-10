@@ -230,9 +230,11 @@ export const WithSubItems: Story = {
                   Table Content
                 </h2>
                 <Table
-                  tableRowContainerStyle={css`
-                    max-height: 400px;
-                  `}
+                  styles={{
+                    tableRowContainerStyle: css`
+                      max-height: 400px;
+                    `,
+                  }}
                   columns={columns}
                 >
                   {sampleRows}

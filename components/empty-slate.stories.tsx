@@ -25,20 +25,32 @@ const meta: Meta<typeof EmptySlate> = {
       description:
         "Optional React node to render interactive elements like buttons.",
     },
-    containerStyle: {
-      control: false,
-      description:
-        "Optional styled-components CSS for container customization.",
-    },
-    imageStyle: {
-      control: false,
-      description:
-        "Optional styled-components CSS for image wrapper customization.",
-    },
-    childStyle: {
-      control: false,
-      description:
-        "Optional styled-components CSS for content area customization.",
+    styles: {
+      containerStyle: {
+        control: false,
+        description:
+          "Optional styled-components CSS to customize the root EmptySlate container.",
+      },
+      imageStyle: {
+        control: false,
+        description:
+          "Optional styled-components CSS to customize the image wrapper container.",
+      },
+      contentStyle: {
+        control: false,
+        description:
+          "Optional styled-components CSS to customize the content section layout.",
+      },
+      titleStyle: {
+        control: false,
+        description:
+          "Optional styled-components CSS to customize the title typography and styling.",
+      },
+      subtitleStyle: {
+        control: false,
+        description:
+          "Optional styled-components CSS to customize the subtitle typography and styling.",
+      },
     },
   },
 };
@@ -58,9 +70,11 @@ export const Default: Story = {
         <Button variant="primary">Learn More</Button>
       </>
     ),
-    containerStyle: css`
-      text-align: center;
-    `,
+    styles: {
+      containerStyle: css`
+        text-align: center;
+      `,
+    },
   },
   render: (args) => {
     return <EmptySlate {...args} />;

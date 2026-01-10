@@ -119,19 +119,21 @@ export const Default: Story = {
           <Launchpad.Section gridPreset="1-to-3" title={data.title} key={index}>
             {data.items.map((item, itemIndex) => (
               <Launchpad.Section.Item
-                containerStyle={css`
-                  display: flex;
-                  flex-direction: row;
-                  align-items: center;
-                  padding-left: 1rem;
-                  padding-right: 1rem;
+                styles={{
+                  containerStyle: css`
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    padding-left: 1rem;
+                    padding-right: 1rem;
 
-                  @media (min-width: 640px) {
-                    flex-direction: column;
-                    padding-left: 0;
-                    padding-right: 0;
-                  }
-                `}
+                    @media (min-width: 640px) {
+                      flex-direction: column;
+                      padding-left: 0;
+                      padding-right: 0;
+                    }
+                  `,
+                }}
                 key={itemIndex}
                 {...item}
               />
