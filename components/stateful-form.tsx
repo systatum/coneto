@@ -813,20 +813,6 @@ function FormFields<T extends FieldValues>({
                   key={index}
                   label={field.title}
                   placeholder={field.placeholder}
-                  labelStyle={css`
-                    ${labelSize &&
-                    css`
-                      font-size: ${labelSize};
-                    `}
-                    ${field.fileDropBoxProps?.labelStyle}
-                  `}
-                  containerStyle={css`
-                    ${field.width &&
-                    css`
-                      width: ${field.width};
-                    `}
-                    ${field.fileDropBoxProps?.containerStyle}
-                  `}
                   {...register(field.name as Path<T>, {
                     onChange: (e) => {
                       if (field.onChange) {
@@ -838,6 +824,22 @@ function FormFields<T extends FieldValues>({
                     },
                   })}
                   {...field.fileDropBoxProps}
+                  styles={{
+                    labelStyle: css`
+                      ${labelSize &&
+                      css`
+                        font-size: ${labelSize};
+                      `}
+                      ${field.fileDropBoxProps?.styles?.labelStyle}
+                    `,
+                    containerStyle: css`
+                      ${field.width &&
+                      css`
+                        width: ${field.width};
+                      `}
+                      ${field.fileDropBoxProps?.styles?.containerStyle}
+                    `,
+                  }}
                 />
               ) : field.type === "file" ? (
                 <FileInputBox

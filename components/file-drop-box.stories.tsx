@@ -79,9 +79,11 @@ export const Default: Story = {
           }
           columns={[
             {
+              id: "file_name",
               caption: "File Name",
             },
             {
+              id: "date",
               caption: "Date",
             },
           ]}

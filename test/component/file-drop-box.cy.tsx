@@ -198,10 +198,12 @@ describe("FileDropBox", () => {
       it("should render style", () => {
         cy.mount(
           <FileDropBox
-            successStyle={css`
-              padding: 30px;
-              border: 1px solid red;
-            `}
+            styles={{
+              successStyle: css`
+                padding: 30px;
+                border: 1px solid red;
+              `,
+            }}
             onFileDropped={onFileDropped}
             onComplete={onComplete}
           />
@@ -268,10 +270,12 @@ describe("FileDropBox", () => {
       it("should render style", () => {
         cy.mount(
           <FileDropBox
-            dragOverStyle={css`
-              padding: 30px;
-              border: 1px solid red;
-            `}
+            styles={{
+              dragOverStyle: css`
+                padding: 30px;
+                border: 1px solid red;
+              `,
+            }}
             onFileDropped={onFileDropped}
             onComplete={onComplete}
           />
