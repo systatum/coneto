@@ -480,18 +480,20 @@ function Table({
                         <Toolbar.Menu
                           closedIcon={RiArrowUpDownLine}
                           openedIcon={RiArrowUpDownLine}
-                          dropdownStyle={css`
-                            min-width: 235px;
-                          `}
-                          triggerStyle={css`
-                            color: black;
-                            &:hover {
+                          styles={{
+                            dropdownStyle: css`
+                              min-width: 235px;
+                            `,
+                            triggerStyle: css`
+                              color: black;
+                              &:hover {
+                                background-color: #d4d4d4;
+                              }
+                            `,
+                            toggleActiveStyle: css`
                               background-color: #d4d4d4;
-                            }
-                          `}
-                          toggleActiveStyle={css`
-                            background-color: #d4d4d4;
-                          `}
+                            `,
+                          }}
                           variant="none"
                           subMenuList={
                             subMenuList ? subMenuList(col.id) : undefined

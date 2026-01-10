@@ -109,9 +109,11 @@ export const Default: Story = {
       <Card>
         <Toolbar>
           <Toolbar.Menu
-            dropdownStyle={css`
-              min-width: 235px;
-            `}
+            styles={{
+              dropdownStyle: css`
+                min-width: 235px;
+              `,
+            }}
             onClick={() => {
               console.log("test");
             }}
@@ -178,9 +180,11 @@ export const Default: Story = {
             ]}
           />
           <Toolbar.Menu
-            dropdownStyle={css`
-              min-width: 235px;
-            `}
+            styles={{
+              dropdownStyle: css`
+                min-width: 235px;
+              `,
+            }}
             caption="Primary"
             icon={RiSpam2Line}
             iconColor="white"
@@ -245,9 +249,11 @@ export const Default: Story = {
             ]}
           />
           <Toolbar.Menu
-            dropdownStyle={css`
-              min-width: 235px;
-            `}
+            styles={{
+              dropdownStyle: css`
+                min-width: 235px;
+              `,
+            }}
             caption="Danger"
             icon={RiSpam2Line}
             iconColor="white"
