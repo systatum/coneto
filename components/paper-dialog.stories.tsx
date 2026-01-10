@@ -646,17 +646,19 @@ export const Nested: Story = {
         <Card
           title="Employee"
           subtitle="Overview of all employee and their key personel"
-          containerStyle={css`
-            padding-left: 0px;
-            padding-right: 0px;
-            min-width: 1000px;
-            padding-bottom: 0px;
-          `}
-          headerStyle={css`
-            padding-left: 15px;
-            padding-right: 15px;
-            border-bottom: 1px solid #d1d5db;
-          `}
+          styles={{
+            containerStyle: css`
+              padding-left: 0px;
+              padding-right: 0px;
+              min-width: 1000px;
+              padding-bottom: 0px;
+            `,
+            headerStyle: css`
+              padding-left: 15px;
+              padding-right: 15px;
+              border-bottom: 1px solid #d1d5db;
+            `,
+          }}
         >
           <Table
             searchable
@@ -694,17 +696,19 @@ export const Nested: Story = {
             <Card
               title="Family Registry"
               subtitle="Detailed view of employees and their family registry records"
-              containerStyle={css`
-                padding-left: 0px;
-                padding-right: 0px;
-                min-width: 1000px;
-                padding-bottom: 0px;
-              `}
-              headerStyle={css`
-                padding-left: 15px;
-                padding-right: 15px;
-                border-bottom: 1px solid #d1d5db;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding-left: 0px;
+                  padding-right: 0px;
+                  min-width: 1000px;
+                  padding-bottom: 0px;
+                `,
+                headerStyle: css`
+                  padding-left: 15px;
+                  padding-right: 15px;
+                  border-bottom: 1px solid #d1d5db;
+                `,
+              }}
             >
               <Table
                 searchable

@@ -980,9 +980,11 @@ export const WithSubcontent: Story = {
             Allow any to open.
           </h2>
           <Card
-            containerStyle={css`
-              height: fit-content;
-            `}
+            styles={{
+              containerStyle: css`
+                height: fit-content;
+              `,
+            }}
           >
             <List
               searchable
@@ -1122,9 +1124,11 @@ export const WithSubcontent: Story = {
             Allow at most one opened.
           </h2>
           <Card
-            containerStyle={css`
-              height: fit-content;
-            `}
+            styles={{
+              containerStyle: css`
+                height: fit-content;
+              `,
+            }}
           >
             <List
               searchable
@@ -1845,20 +1849,22 @@ export const WithMaxItems: Story = {
             },
           },
         ]}
-        containerStyle={css`
-          padding-left: 0px;
-          padding-right: 0px;
-        `}
-        headerStyle={css`
-          padding-left: 15px;
-          padding-right: 15px;
-          border-bottom: 1px solid #d1d5db;
-        `}
-        footerStyle={css`
-          padding-left: 20px;
-          padding-right: 20px;
-          border-top: 1px solid #d1d5db;
-        `}
+        styles={{
+          containerStyle: css`
+            padding-left: 0px;
+            padding-right: 0px;
+          `,
+          headerStyle: css`
+            padding-left: 15px;
+            padding-right: 15px;
+            border-bottom: 1px solid #d1d5db;
+          `,
+          footerStyle: css`
+            padding-left: 20px;
+            padding-right: 20px;
+            border-top: 1px solid #d1d5db;
+          `,
+        }}
       >
         <List
           searchable

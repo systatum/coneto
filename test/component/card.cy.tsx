@@ -36,23 +36,25 @@ describe("Card", () => {
         cy.mount(
           <Card
             title={renderDormantTextField("title")}
-            titleStyle={css`
-              width: 100%;
-            `}
-            textContainerStyle={css`
-              width: 100%;
-            `}
-            containerStyle={css`
-              padding-left: 0px;
-              padding-right: 0px;
-              min-width: 1000px;
-              padding-bottom: 0px;
-            `}
-            headerStyle={css`
-              padding-left: 15px;
-              padding-right: 15px;
-              border-bottom: 1px solid #d1d5db;
-            `}
+            styles={{
+              titleStyle: css`
+                width: 100%;
+              `,
+              textContainerStyle: css`
+                width: 100%;
+              `,
+              containerStyle: css`
+                padding-left: 0px;
+                padding-right: 0px;
+                min-width: 1000px;
+                padding-bottom: 0px;
+              `,
+              headerStyle: css`
+                padding-left: 15px;
+                padding-right: 15px;
+                border-bottom: 1px solid #d1d5db;
+              `,
+            }}
           >
             test
           </Card>
@@ -76,23 +78,25 @@ describe("Card", () => {
         cy.mount(
           <Card
             subtitle={renderDormantTextField("subtitle", 14)}
-            titleStyle={css`
-              width: 100%;
-            `}
-            textContainerStyle={css`
-              width: 100%;
-            `}
-            containerStyle={css`
-              padding-left: 0px;
-              padding-right: 0px;
-              min-width: 1000px;
-              padding-bottom: 0px;
-            `}
-            headerStyle={css`
-              padding-left: 15px;
-              padding-right: 15px;
-              border-bottom: 1px solid #d1d5db;
-            `}
+            styles={{
+              titleStyle: css`
+                width: 100%;
+              `,
+              textContainerStyle: css`
+                width: 100%;
+              `,
+              containerStyle: css`
+                padding-left: 0px;
+                padding-right: 0px;
+                min-width: 1000px;
+                padding-bottom: 0px;
+              `,
+              headerStyle: css`
+                padding-left: 15px;
+                padding-right: 15px;
+                border-bottom: 1px solid #d1d5db;
+              `,
+            }}
           >
             test
           </Card>

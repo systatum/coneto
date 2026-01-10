@@ -70,17 +70,19 @@ const meta: Meta<typeof Card> = {
       description: "Padding size",
       defaultValue: "sm",
     },
-    containerStyle: {
-      control: "text",
-      description: "Additional custom container classes",
-    },
-    headerStyle: {
-      control: "text",
-      description: "Additional custom title classes",
-    },
-    footerStyle: {
-      control: "text",
-      description: "Additional custom footer classes",
+    styles: {
+      containerStyle: {
+        control: "text",
+        description: "Additional custom container classes",
+      },
+      headerStyle: {
+        control: "text",
+        description: "Additional custom title classes",
+      },
+      footerStyle: {
+        control: "text",
+        description: "Additional custom footer classes",
+      },
     },
     title: {
       control: "text",
@@ -425,12 +427,14 @@ export const WithHeader: Story = {
     return (
       <Card
         {...args}
-        containerStyle={css`
-          padding: 0px;
-        `}
-        headerStyle={css`
-          border-bottom: 1px solid #d1d5db;
-        `}
+        styles={{
+          containerStyle: css`
+            padding: 0px;
+          `,
+          headerStyle: css`
+            border-bottom: 1px solid #d1d5db;
+          `,
+        }}
       >
         <div
           style={{
@@ -769,20 +773,22 @@ export const WithHeaderAndFooter: Story = {
             },
           },
         ]}
-        containerStyle={css`
-          padding-left: 0px;
-          padding-right: 0px;
-        `}
-        headerStyle={css`
-          padding-left: 15px;
-          padding-right: 15px;
-          border-bottom: 1px solid #d1d5db;
-        `}
-        footerStyle={css`
-          padding-left: 20px;
-          padding-right: 20px;
-          border-top: 1px solid #d1d5db;
-        `}
+        styles={{
+          containerStyle: css`
+            padding-left: 0px;
+            padding-right: 0px;
+          `,
+          headerStyle: css`
+            padding-left: 15px;
+            padding-right: 15px;
+            border-bottom: 1px solid #d1d5db;
+          `,
+          footerStyle: css`
+            padding-left: 20px;
+            padding-right: 20px;
+            border-top: 1px solid #d1d5db;
+          `,
+        }}
         footerContent={ContentCard}
       >
         <List
@@ -1057,23 +1063,25 @@ export const WithFullWidthContent: Story = {
       <Card
         title={renderDormantTextField("title")}
         subtitle={renderDormantTextField("subtitle", 14)}
-        titleStyle={css`
-          width: 100%;
-        `}
-        textContainerStyle={css`
-          width: 100%;
-        `}
-        containerStyle={css`
-          padding-left: 0px;
-          padding-right: 0px;
-          min-width: 1000px;
-          padding-bottom: 0px;
-        `}
-        headerStyle={css`
-          padding-left: 15px;
-          padding-right: 15px;
-          border-bottom: 1px solid #d1d5db;
-        `}
+        styles={{
+          titleStyle: css`
+            width: 100%;
+          `,
+          textContainerStyle: css`
+            width: 100%;
+          `,
+          containerStyle: css`
+            padding-left: 0px;
+            padding-right: 0px;
+            min-width: 1000px;
+            padding-bottom: 0px;
+          `,
+          headerStyle: css`
+            padding-left: 15px;
+            padding-right: 15px;
+            border-bottom: 1px solid #d1d5db;
+          `,
+        }}
         headerActions={[
           {
             caption: "Add",
