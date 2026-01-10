@@ -1255,27 +1255,6 @@ function FormFields<T extends FieldValues>({
                   render={({ field: controllerField }) => (
                     <ThumbField
                       label={field.title}
-                      labelStyle={css`
-                        ${labelSize &&
-                        css`
-                          font-size: ${labelSize};
-                        `}
-                        ${field.thumbFieldProps?.labelStyle}
-                      `}
-                      style={css`
-                        ${fieldSize &&
-                        css`
-                          font-size: ${fieldSize};
-                        `}
-                        ${field.thumbFieldProps?.style}
-                      `}
-                      containerStyle={css`
-                        ${field.width &&
-                        css`
-                          width: ${field.width};
-                        `}
-                        ${field.thumbFieldProps?.containerStyle}
-                      `}
                       value={controllerField.value ?? false}
                       required={field.required}
                       {...register(field.name as Path<T>, {
@@ -1304,6 +1283,29 @@ function FormFields<T extends FieldValues>({
                       }
                       disabled={field.disabled}
                       {...field.thumbFieldProps}
+                      styles={{
+                        labelStyle: css`
+                          ${labelSize &&
+                          css`
+                            font-size: ${labelSize};
+                          `}
+                          ${field.thumbFieldProps?.styles?.labelStyle}
+                        `,
+                        style: css`
+                          ${fieldSize &&
+                          css`
+                            font-size: ${fieldSize};
+                          `}
+                          ${field.thumbFieldProps?.styles?.style}
+                        `,
+                        containerStyle: css`
+                          ${field.width &&
+                          css`
+                            width: ${field.width};
+                          `}
+                          ${field.thumbFieldProps?.styles?.containerStyle}
+                        `,
+                      }}
                     />
                   )}
                 />
