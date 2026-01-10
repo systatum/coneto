@@ -26,12 +26,16 @@ export interface TextboxProps
   label?: string;
   showError?: boolean;
   errorMessage?: string;
-  containerStyle?: CSSProp;
-  labelStyle?: CSSProp;
-  style?: CSSProp;
   onChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   actions?: ActionsProps[];
   dropdowns?: DropdownProps[];
+  styles?: TextboxStylesProps;
+}
+
+export interface TextboxStylesProps {
+  containerStyle?: CSSProp;
+  labelStyle?: CSSProp;
+  style?: CSSProp;
 }
 
 interface DropdownProps {
@@ -39,13 +43,17 @@ interface DropdownProps {
   caption?: string;
   onChange?: (id: string) => void;
   width?: string;
-  drawerStyle?: CSSProp;
-  containerStyle?: CSSProp;
+  styles?: DropdownStylesProps;
   withFilter?: boolean;
   render?: (props: {
     render?: (children?: ReactNode) => ReactNode;
     setCaption?: (caption?: string) => void;
   }) => ReactNode;
+}
+
+interface DropdownStylesProps {
+  drawerStyle?: CSSProp;
+  containerStyle?: CSSProp;
 }
 
 export interface DropdownOptionProps {
@@ -71,9 +79,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
       showError,
       errorMessage,
       onChange,
-      style,
-      containerStyle,
-      labelStyle,
+      styles,
       type = "text",
       dropdowns,
       actions,
@@ -134,7 +140,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
                     width: ${dropdown.width};
                   `}
 
-                ${dropdown.containerStyle}
+                ${dropdown.styles?.containerStyle}
                 `,
                 buttonStyle: css`
                   font-size: 12px;
@@ -142,11 +148,11 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
                   css`
                     width: ${dropdown.width};
                   `}
-                  ${dropdown.containerStyle}
+                  ${dropdown.styles?.containerStyle}
                 `,
                 dropdownStyle: css`
                   min-width: 200px;
-                  ${dropdown.drawerStyle}
+                  ${dropdown.styles?.drawerStyle}
                 `,
               }}
             >
@@ -162,7 +168,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
           $dropdown={!!dropdowns}
           type={type === "password" && showPassword ? "text" : type}
           $error={showError}
-          $style={style}
+          $style={styles?.style}
           {...(props as InputHTMLAttributes<HTMLInputElement>)}
         />
         {actions &&
@@ -312,9 +318,9 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
     );
 
     return (
-      <Container $style={containerStyle}>
+      <Container $style={styles?.containerStyle}>
         {label && (
-          <Label $style={labelStyle} htmlFor={inputId}>
+          <Label $style={styles?.labelStyle} htmlFor={inputId}>
             {label}
           </Label>
         )}
