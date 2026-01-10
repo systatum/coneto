@@ -946,20 +946,6 @@ function FormFields<T extends FieldValues>({
                   clearable
                   name={field.name}
                   label={field.title}
-                  labelStyle={css`
-                    ${labelSize &&
-                    css`
-                      font-size: ${labelSize};
-                    `}
-                    ${field.signboxProps?.labelStyle}
-                  `}
-                  containerStyle={css`
-                    ${field.width &&
-                    css`
-                      width: ${field.width};
-                    `}
-                    ${field.signboxProps?.containerStyle}
-                  `}
                   required={field.required}
                   value={formValues[field.name as keyof T] ?? ""}
                   {...register(field.name as Path<T>, {
@@ -978,6 +964,22 @@ function FormFields<T extends FieldValues>({
                   }
                   disabled={field.disabled}
                   {...field.signboxProps}
+                  styles={{
+                    labelStyle: css`
+                      ${labelSize &&
+                      css`
+                        font-size: ${labelSize};
+                      `}
+                      ${field.signboxProps?.styles?.labelStyle}
+                    `,
+                    containerStyle: css`
+                      ${field.width &&
+                      css`
+                        width: ${field.width};
+                      `}
+                      ${field.signboxProps?.styles?.containerStyle}
+                    `,
+                  }}
                 />
               ) : field.type === "money" ? (
                 <Moneybox
