@@ -15,7 +15,7 @@ export interface PaginationProps {
 export interface PaginationStylesProps {
   style?: CSSProp;
   buttonStyle?: CSSProp;
-  comboboxStyle?: CSSProp;
+  selectboxStyle?: CSSProp;
 }
 
 function Pagination({
@@ -152,7 +152,10 @@ const PaginationItem = ({
               setCurrentPageLocal(val);
             }}
             styles={{
-              selectboxStyle: styles?.comboboxStyle,
+              selectboxStyle: css`
+                height: 39px;
+                ${styles?.selectboxStyle}
+              `,
               containerStyle: css`
                 width: 80px;
                 font-size: 14px;
