@@ -98,19 +98,23 @@ function DialogClose({ children }: { children: ReactNode }) {
   );
 }
 
-function DialogContent({
-  children,
-  hideClose = false,
-  style,
-  overlayStyle,
-  closeButtonStyle,
-}: {
+export interface DialogContentProps {
   children: ReactNode;
   hideClose?: boolean;
+  styles?: DialogContentStylesProps;
+}
+
+export interface DialogContentStylesProps {
   style?: CSSProp;
   overlayStyle?: CSSProp;
   closeButtonStyle?: CSSProp;
-}) {
+}
+
+function DialogContent({
+  children,
+  hideClose = false,
+  styles,
+}: DialogContentProps) {
   const [isVisible, setIsVisible] = useState(false);
   const { isOpen, setIsOpen } = useDialogContext();
   const { mounted, target } = usePortal();
@@ -142,10 +146,10 @@ function DialogContent({
     <>
       <StyledOverlay
         $isOpen={isOpen}
-        $style={overlayStyle}
+        $style={styles?.overlayStyle}
         onClick={() => setIsOpen(false)}
       />
-      <StyledContent $isOpen={isOpen} $style={style}>
+      <StyledContent $isOpen={isOpen} $style={styles?.style}>
         {!hideClose && (
           <Button
             variant="transparent"
@@ -165,7 +169,7 @@ function DialogContent({
                 width: 20px;
                 height: 20px;
                 padding: 2px;
-                ${closeButtonStyle}
+                ${styles?.closeButtonStyle}
               `,
             }}
           >
