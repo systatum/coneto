@@ -138,6 +138,29 @@ describe("Pagination", () => {
           );
         });
       });
+
+      context("when selecting previous on +1 limit", () => {
+        it("renders the page number normally", () => {
+          cy.findByPlaceholderText("1").should(
+            "have.css",
+            "border",
+            "1px solid rgb(97, 169, 249)"
+          );
+          cy.findByText("50").click();
+          cy.findAllByLabelText("pagination-button")
+            .eq(3)
+            .should("have.css", "border", "1px solid rgb(97, 169, 249)");
+
+          cy.findAllByLabelText("pagination-button").eq(0).dblclick();
+          cy.findAllByLabelText("pagination-button").eq(0).click();
+
+          cy.findByPlaceholderText("1").should(
+            "have.css",
+            "border",
+            "1px solid rgb(243, 244, 246)"
+          );
+        });
+      });
     });
   });
 });
