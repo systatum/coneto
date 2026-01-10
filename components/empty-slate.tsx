@@ -5,10 +5,16 @@ export interface EmptySlateProps {
   imageUrl: string;
   title: string;
   subtitle?: string;
+  actions?: ReactNode;
+  styles?: EmptySlateStylesProps;
+}
+
+export interface EmptySlateStylesProps {
   containerStyle?: CSSProp;
   imageStyle?: CSSProp;
-  childStyle?: CSSProp;
-  actions?: ReactNode;
+  contentStyle?: CSSProp;
+  titleStyle?: CSSProp;
+  subtitleStyle?: CSSProp;
 }
 
 function EmptySlate({
@@ -16,30 +22,30 @@ function EmptySlate({
   title,
   subtitle,
   actions,
-  containerStyle,
-  imageStyle,
-  childStyle,
+  styles,
 }: EmptySlateProps) {
   return (
-    <Container $containerStyle={containerStyle}>
+    <Container $style={styles?.containerStyle}>
       {imageUrl && (
-        <ImageWrapper $imageStyle={imageStyle}>
+        <ImageWrapper $style={styles?.imageStyle}>
           <StyledImage
             src={imageUrl}
             alt="Image for Empty Slate Coneto Product from Systatum."
           />
         </ImageWrapper>
       )}
-      <Content $contentStyle={childStyle}>
-        <Title>{title}</Title>
-        {subtitle && <Subtitle>{subtitle}</Subtitle>}
+      <Content $style={styles?.contentStyle}>
+        <Title $style={styles?.titleStyle}>{title}</Title>
+        {subtitle && (
+          <Subtitle $style={styles?.titleStyle}>{subtitle}</Subtitle>
+        )}
         {actions && <Actions>{actions}</Actions>}
       </Content>
     </Container>
   );
 }
 
-const Container = styled.div<{ $containerStyle?: CSSProp }>`
+const Container = styled.div<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
@@ -47,10 +53,10 @@ const Container = styled.div<{ $containerStyle?: CSSProp }>`
   justify-content: center;
   padding-top: 5rem;
   padding-bottom: 5rem;
-  ${({ $containerStyle }) => $containerStyle}
+  ${({ $style }) => $style}
 `;
 
-const ImageWrapper = styled.div<{ $imageStyle?: CSSProp }>`
+const ImageWrapper = styled.div<{ $style?: CSSProp }>`
   width: 250px;
   height: 150px;
 
@@ -64,7 +70,7 @@ const ImageWrapper = styled.div<{ $imageStyle?: CSSProp }>`
     height: 200px;
   }
 
-  ${({ $imageStyle }) => $imageStyle}
+  ${({ $style }) => $style}
 `;
 
 const StyledImage = styled.img`
@@ -73,22 +79,24 @@ const StyledImage = styled.img`
   object-fit: cover;
 `;
 
-const Content = styled.div<{ $contentStyle?: CSSProp }>`
+const Content = styled.div<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
   align-items: center;
   justify-content: center;
-  ${({ $contentStyle }) => $contentStyle}
+  ${({ $style }) => $style}
 `;
 
-const Title = styled.h2`
+const Title = styled.h2<{ $style?: CSSProp }>`
   font-size: 1.25rem;
   font-weight: 600;
+  ${({ $style }) => $style}
 `;
 
-const Subtitle = styled.span`
+const Subtitle = styled.span<{ $style?: CSSProp }>`
   font-size: 0.875rem;
+  ${({ $style }) => $style}
 `;
 
 const Actions = styled.div`
