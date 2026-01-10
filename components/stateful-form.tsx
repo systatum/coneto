@@ -1167,34 +1167,36 @@ function FormFields<T extends FieldValues>({
                     <Chips
                       label={field.title}
                       filterPlaceholder={field.placeholder}
-                      labelStyle={css`
-                        ${labelSize &&
-                        css`
-                          font-size: ${labelSize};
-                        `}
-                        ${field.chipsProps?.labelStyle}
-                      `}
-                      chipSelectedStyle={css`
-                        ${fieldSize &&
-                        css`
-                          font-size: ${fieldSize};
-                        `}
-                        ${field.chipsProps?.chipSelectedStyle}
-                      `}
                       inputValue={controllerField.value}
                       setInputValue={(e) => {
                         controllerField?.onChange(e);
                         controllerField?.onBlur();
                         field.onChange?.(e);
                       }}
-                      containerStyle={css`
-                        ${field.width &&
-                        css`
-                          width: ${field.width};
-                        `}
-                        ${field.chipsProps?.containerStyle}
-                      `}
                       {...field.chipsProps}
+                      styles={{
+                        labelStyle: css`
+                          ${labelSize &&
+                          css`
+                            font-size: ${labelSize};
+                          `}
+                          ${field.chipsProps?.styles?.labelStyle}
+                        `,
+                        chipSelectedStyle: css`
+                          ${fieldSize &&
+                          css`
+                            font-size: ${fieldSize};
+                          `}
+                          ${field.chipsProps?.styles?.chipSelectedStyle}
+                        `,
+                        containerStyle: css`
+                          ${field.width &&
+                          css`
+                            width: ${field.width};
+                          `}
+                          ${field.chipsProps?.styles?.containerStyle}
+                        `,
+                      }}
                     />
                   )}
                 />

@@ -239,17 +239,19 @@ export const Default: Story = {
       <Chips
         inputValue={inputValue.search}
         setInputValue={onChangeValue}
-        chipStyle={css`
-          min-width: 300px;
-          gap: 8px;
-          border-color: transparent;
-        `}
-        chipContainerStyle={css`
-          gap: 4px;
-        `}
-        chipsDrawerStyle={css`
-          max-width: 300px;
-        `}
+        styles={{
+          chipStyle: css`
+            width: 100%;
+            gap: 8px;
+            border-color: transparent;
+          `,
+          chipContainerStyle: css`
+            gap: 4px;
+          `,
+          chipsDrawerStyle: css`
+            max-width: 300px;
+          `,
+        }}
         onOptionClicked={handleOptionClicked}
         selectedOptions={inputValue.selectedOptions}
         options={BADGE_OPTIONS as BadgeProps[]}
@@ -363,15 +365,17 @@ export const DarkBackground: Story = {
         setInputValue={(e) =>
           setInputValue((prev) => ({ ...prev, searchText: e.target.value }))
         }
-        chipStyle={css`
-          width: 100%;
-          gap: 8px;
-          border-color: transparent;
-        `}
-        chipContainerStyle={css`
-          gap: 8px;
-          justify-content: start;
-        `}
+        styles={{
+          chipStyle: css`
+            width: 100%;
+            gap: 8px;
+            border-color: transparent;
+          `,
+          chipContainerStyle: css`
+            gap: 8px;
+            justify-content: start;
+          `,
+        }}
         onOptionClicked={handleOptionClicked}
         selectedOptions={inputValue.selectedOptions}
         options={BADGE_OPTIONS as BadgeProps[]}
@@ -596,17 +600,19 @@ export const Deletable: Story = {
       <Chips
         inputValue={inputValue.search}
         setInputValue={onChangeValue}
-        chipStyle={css`
-          width: 100%;
-          gap: 8px;
-          border-color: transparent;
-        `}
-        chipContainerStyle={css`
-          gap: 4px;
-        `}
-        chipsDrawerStyle={css`
-          max-width: 250px;
-        `}
+        styles={{
+          chipStyle: css`
+            width: 100%;
+            gap: 8px;
+            border-color: transparent;
+          `,
+          chipContainerStyle: css`
+            gap: 4px;
+          `,
+          chipsDrawerStyle: css`
+            max-width: 250px;
+          `,
+        }}
         onOptionClicked={handleOptionClicked}
         selectedOptions={inputValue.selectedOptions}
         options={BADGE_OPTIONS as BadgeProps[]}
@@ -931,17 +937,19 @@ export const CustomRenderer: Story = {
       <Chips
         inputValue={inputValue.search}
         setInputValue={onChangeValue}
-        chipStyle={css`
-          width: 100%;
-          gap: 8px;
-          border-color: transparent;
-        `}
-        chipContainerStyle={css`
-          gap: 4px;
-        `}
-        chipsDrawerStyle={css`
-          max-width: 250px;
-        `}
+        styles={{
+          chipStyle: css`
+            width: 100%;
+            gap: 8px;
+            border-color: transparent;
+          `,
+          chipContainerStyle: css`
+            gap: 4px;
+          `,
+          chipsDrawerStyle: css`
+            max-width: 250px;
+          `,
+        }}
         renderer={({ id, caption }) => {
           const isOpen = openMap[id] || false;
           return (
