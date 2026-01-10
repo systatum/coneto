@@ -14,8 +14,6 @@ import { Tooltip } from "./tooltip";
 
 export interface TreeListProps {
   content: TreeListContentProps[];
-  containerStyle?: CSSProp;
-  emptyItemSlateStyle?: CSSProp;
   children?: ReactNode;
   emptySlate?: ReactNode;
   emptyItemSlate?: ReactNode | null;
@@ -29,6 +27,12 @@ export interface TreeListProps {
   draggable?: boolean;
   alwaysShowDragIcon?: boolean;
   onDragged?: (props: TreeListOnDraggedProps) => void;
+  styles?: TreeListStylesProps;
+}
+
+export interface TreeListStylesProps {
+  containerStyle?: CSSProp;
+  emptyItemSlateStyle?: CSSProp;
 }
 
 export interface TreeListOnDraggedProps {
@@ -113,7 +117,6 @@ const DnDContext = createContext<{
 
 function TreeList({
   content,
-  containerStyle,
   children,
   emptySlate,
   searchTerm = "",
@@ -122,12 +125,12 @@ function TreeList({
   selectedItem = "",
   onOpenChange,
   emptyItemSlate = "Empty Content",
-  emptyItemSlateStyle,
   showHierarchyLine,
   collapsible,
   draggable,
   onDragged,
   alwaysShowDragIcon = true,
+  styles,
 }: TreeListProps) {
   const [dragItem, setDragItem] = useState(null);
 
@@ -207,7 +210,7 @@ function TreeList({
 
   return (
     <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
-      <TreeListWrapper $containerStyle={containerStyle}>
+      <TreeListWrapper $containerStyle={styles?.containerStyle}>
         {actions && (
           <ActionsWrapper>
             {actions.map((action, index) => {
@@ -385,7 +388,7 @@ function TreeList({
                             setIsOpen={handleSelected}
                             isOpen={isOpen}
                             emptyItemSlate={emptyItemSlate}
-                            emptyItemSlateStyle={emptyItemSlateStyle}
+                            emptyItemSlateStyle={styles?.emptyItemSlateStyle}
                             selectedLevel={selectedLevel}
                             groupId={item.id}
                             parentGroupId={item.id}
@@ -405,7 +408,7 @@ function TreeList({
                           aria-label="tree-list-empty-slate"
                           initial="open"
                           animate={isOpen ? "open" : "collapsed"}
-                          $style={emptyItemSlateStyle}
+                          $style={styles?.emptyItemSlateStyle}
                           exit="collapsed"
                           variants={{
                             open: { opacity: 1, height: "auto" },
