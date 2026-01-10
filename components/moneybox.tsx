@@ -24,10 +24,13 @@ export interface MoneyboxProps
   showError?: boolean;
   errorMessage?: string;
   label?: string;
+  onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
+  styles?: MoneyboxStylesProps;
+}
+export interface MoneyboxStylesProps {
   style?: CSSProp;
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
-  onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
 }
 
 const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
@@ -42,9 +45,7 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
       separator = "comma",
       errorMessage,
       showError,
-      style,
-      containerStyle,
-      labelStyle,
+      styles,
       onKeyDown,
       ...props
     },
@@ -88,14 +89,14 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
     };
 
     return (
-      <InputWrapper $style={containerStyle}>
-        {label && <Label $style={labelStyle}>{label}</Label>}
+      <InputWrapper $style={styles?.containerStyle}>
+        {label && <Label $style={styles?.labelStyle}>{label}</Label>}
         <InputContent>
           <Box
             $disabled={props.disabled}
             $error={showError}
             $focus={focus}
-            $style={style}
+            $style={styles?.style}
           >
             <Currency>{currency}</Currency>
             <MoneyboxInput
