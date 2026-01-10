@@ -846,20 +846,6 @@ function FormFields<T extends FieldValues>({
                   key={index}
                   label={field.title}
                   placeholder={field.placeholder}
-                  labelStyle={css`
-                    ${labelSize &&
-                    css`
-                      font-size: ${labelSize};
-                    `}
-                    ${field.fileInputBoxProps?.labelStyle}
-                  `}
-                  containerStyle={css`
-                    ${field.width &&
-                    css`
-                      width: ${field.width};
-                    `}
-                    ${field.fileInputBoxProps?.containerStyle}
-                  `}
                   showError={shouldShowError(field.name)}
                   errorMessage={
                     errors[field.name as keyof T]?.message as string | undefined
@@ -889,6 +875,22 @@ function FormFields<T extends FieldValues>({
                         target: { name: field.name, value: undefined },
                       });
                     }
+                  }}
+                  styles={{
+                    labelStyle: css`
+                      ${labelSize &&
+                      css`
+                        font-size: ${labelSize};
+                      `}
+                      ${field.fileInputBoxProps?.styles?.labelStyle}
+                    `,
+                    containerStyle: css`
+                      ${field.width &&
+                      css`
+                        width: ${field.width};
+                      `}
+                      ${field.fileInputBoxProps?.styles?.containerStyle}
+                    `,
                   }}
                 />
               ) : field.type === "image" ? (
