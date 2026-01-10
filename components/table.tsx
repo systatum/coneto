@@ -590,19 +590,21 @@ function ActionCapsule(data: TableActionsProps) {
     <Capsule
       {...data.capsuleProps}
       activeBackgroundColor="rgb(226, 224, 224)"
-      containerStyle={css`
-        box-shadow: none;
-        min-height: 32px;
-        max-height: 32px;
-        border-radius: 6px;
-        font-size: 14px;
-        ${data.capsuleProps.containerStyle}
-      `}
-      tabStyle={css`
-        border-radius: 6px;
-        color: rgb(86, 85, 85);
-        ${data.capsuleProps.tabStyle}
-      `}
+      styles={{
+        containerStyle: css`
+          box-shadow: none;
+          min-height: 32px;
+          max-height: 32px;
+          border-radius: 6px;
+          font-size: 14px;
+          ${data.capsuleProps.styles?.containerStyle}
+        `,
+        tabStyle: css`
+          border-radius: 6px;
+          color: rgb(86, 85, 85);
+          ${data.capsuleProps.styles?.tabStyle}
+        `,
+      }}
     />
   );
 }

@@ -760,6 +760,19 @@ function FormFields<T extends FieldValues>({
                         const { ref } = register(field.name as Path<T>);
                         if (ref) ref(el);
                       }}
+                      value={controllerField.value}
+                      onChange={(e) => {
+                        controllerField?.onChange(e);
+                        controllerField?.onBlur();
+                        field.onChange?.(e);
+                        if (onChange) {
+                          onChange(field.name as keyof T, e.target.value);
+                        }
+                      }}
+                      showError={shouldShowError(field.name)}
+                      errorMessage={fieldState.error?.message}
+                      disabled={field.disabled}
+                      {...field.colorboxProps}
                       styles={{
                         labelStyle: css`
                           ${labelSize &&
@@ -784,19 +797,6 @@ function FormFields<T extends FieldValues>({
                           ${field.colorboxProps?.styles?.style}
                         `,
                       }}
-                      value={controllerField.value}
-                      onChange={(e) => {
-                        controllerField?.onChange(e);
-                        controllerField?.onBlur();
-                        field.onChange?.(e);
-                        if (onChange) {
-                          onChange(field.name as keyof T, e.target.value);
-                        }
-                      }}
-                      showError={shouldShowError(field.name)}
-                      errorMessage={fieldState.error?.message}
-                      disabled={field.disabled}
-                      {...field.colorboxProps}
                     />
                   )}
                 />
@@ -1352,14 +1352,6 @@ function FormFields<T extends FieldValues>({
                   render={({ field: controllerField }) => (
                     <Capsule
                       label={field.title}
-                      labelStyle={css`
-                        ${labelSize &&
-                        css`
-                          font-size: ${labelSize};
-                        `}
-
-                        ${field.capsuleProps?.labelStyle}
-                      `}
                       activeTab={controllerField.value}
                       onTabChange={(e) => {
                         const inputValueEvent = {
@@ -1372,14 +1364,6 @@ function FormFields<T extends FieldValues>({
                           onChange(field.name as keyof T, e);
                         }
                       }}
-                      containerStyle={css`
-                        ${field.width &&
-                        css`
-                          width: ${field.width};
-                        `}
-
-                        ${field.capsuleProps?.containerStyle}
-                      `}
                       showError={shouldShowError(field.name)}
                       errorMessage={
                         errors[field.name as keyof T]?.message as
@@ -1387,6 +1371,22 @@ function FormFields<T extends FieldValues>({
                           | undefined
                       }
                       {...field.capsuleProps}
+                      styles={{
+                        labelStyle: css`
+                          ${labelSize &&
+                          css`
+                            font-size: ${labelSize};
+                          `}
+                          ${field.capsuleProps?.styles?.labelStyle}
+                        `,
+                        containerStyle: css`
+                          ${field.width &&
+                          css`
+                            width: ${field.width};
+                          `}
+                          ${field.capsuleProps?.styles?.containerStyle}
+                        `,
+                      }}
                     />
                   )}
                 />
