@@ -13,15 +13,19 @@ export interface ToggleboxProps
   name?: string;
   label?: string;
   description?: string;
+  showError?: boolean;
+  errorMessage?: string;
+  size?: number;
+  styles?: ToggleboxStylesProps;
+}
+
+export interface ToggleboxStylesProps {
   containerStyle?: CSSProp;
   descriptionStyle?: CSSProp;
   rowStyle?: CSSProp;
   textWrapperStyle?: CSSProp;
   errorStyle?: CSSProp;
   labelStyle?: CSSProp;
-  showError?: boolean;
-  errorMessage?: string;
-  size?: number;
 }
 
 function Togglebox({
@@ -32,14 +36,9 @@ function Togglebox({
   isLoading = false,
   label,
   description,
-  containerStyle,
   showError,
-  errorStyle,
   errorMessage,
-  descriptionStyle,
-  rowStyle,
-  textWrapperStyle,
-  labelStyle,
+  styles,
   size = 24,
   ...props
 }: ToggleboxProps) {
@@ -49,9 +48,12 @@ function Togglebox({
   return (
     <ToggleboxContainer
       aria-label="togglebox-container"
-      $style={containerStyle}
+      $style={styles?.containerStyle}
     >
-      <ToggleboxWrapper $style={rowStyle} aria-label="togglebox-row-wrapper">
+      <ToggleboxWrapper
+        $style={styles?.rowStyle}
+        aria-label="togglebox-row-wrapper"
+      >
         <StyledLabel
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.8 }}
@@ -60,6 +62,8 @@ function Togglebox({
           style={{
             width: widthWrapper,
             height: heightWrapper,
+            minWidth: widthWrapper,
+            minHeight: heightWrapper,
           }}
         >
           <StyledInput
@@ -92,18 +96,20 @@ function Togglebox({
 
         {(label || description) && (
           <ToggleboxTextWrapper
-            $style={textWrapperStyle}
+            $style={styles?.textWrapperStyle}
             aria-label="togglebox-text-wrapper"
           >
-            {label && <Label $style={labelStyle}>{label}</Label>}
+            {label && <Label $style={styles?.labelStyle}>{label}</Label>}
             {description && (
-              <Description $style={descriptionStyle}>{description}</Description>
+              <Description $style={styles?.descriptionStyle}>
+                {description}
+              </Description>
             )}
           </ToggleboxTextWrapper>
         )}
       </ToggleboxWrapper>
       {showError && errorMessage && (
-        <ErrorText $style={errorStyle}>{errorMessage}</ErrorText>
+        <ErrorText $style={styles?.errorStyle}>{errorMessage}</ErrorText>
       )}
     </ToggleboxContainer>
   );
