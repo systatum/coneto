@@ -12,15 +12,15 @@ import { CheckboxProps } from "./checkbox";
 
 export interface ChoiceGroupProps {
   children: ReactNode;
+  styles?: ChoiceGroupStylesProps;
+}
+
+export interface ChoiceGroupStylesProps {
   containerStyle?: CSSProp;
   dividerStyle?: CSSProp;
 }
 
-function ChoiceGroup({
-  children,
-  containerStyle,
-  dividerStyle,
-}: ChoiceGroupProps) {
+function ChoiceGroup({ children, styles }: ChoiceGroupProps) {
   const childArray = Children.toArray(children).filter(isValidElement);
   const isRadioButton = childArray.some((child) => {
     if (!isValidElement(child)) return false;
@@ -35,7 +35,7 @@ function ChoiceGroup({
   return (
     <ChoiceGroupWrapper
       $isRowDirection={isRadioButton}
-      $containerStyle={containerStyle}
+      $containerStyle={styles?.containerStyle}
     >
       {childArray.map((child, index) => {
         const isLast = index === childArray.length - 1;
@@ -64,7 +64,7 @@ function ChoiceGroup({
             {!isLast && !isRadioButton && (
               <ChoiceGroupDivider
                 aria-label="divider for choice group"
-                $dividerStyle={dividerStyle}
+                $dividerStyle={styles?.dividerStyle}
               />
             )}
           </Fragment>
