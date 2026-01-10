@@ -45,16 +45,18 @@ function ModalDialog({
   return (
     <Dialog isOpen={isOpen} onVisibilityChange={onVisibilityChange}>
       <Dialog.Content
-        style={css`
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          overflow: hidden;
-          max-width: 500px;
-          padding: 0px;
-          border-radius: 0;
-          ${styles?.containerStyle}
-        `}
+        styles={{
+          style: css`
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow: hidden;
+            max-width: 500px;
+            padding: 0px;
+            border-radius: 0;
+            ${styles?.containerStyle}
+          `,
+        }}
         hideClose={!hasCloseButton}
       >
         <Container>
