@@ -865,13 +865,15 @@ export const CustomRenderer: Story = {
         comboboxProps: {
           placeholder: "Search your role...",
           options: EMPLOYEE_OPTIONS,
-          selectboxStyle: css`
-            border: 1px solid #d1d5db;
-            &:focus {
-              border-color: #61a9f9;
-              box-shadow: 0 0 0 1px #61a9f9;
-            }
-          `,
+          styles: {
+            selectboxStyle: css`
+              border: 1px solid #d1d5db;
+              &:focus {
+                border-color: #61a9f9;
+                box-shadow: 0 0 0 1px #61a9f9;
+              }
+            `,
+          },
         },
       },
     ];

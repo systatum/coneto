@@ -214,14 +214,16 @@ export const Default: Story = {
       <>
         <Window
           orientation="horizontal"
-          style={css`
-            height: 100vh;
-          `}
-          dividerStyle={css`
-            padding-top: 6px;
-            border-bottom: 6px solid #d1d5db;
-            background-color: white;
-          `}
+          styles={{
+            style: css`
+              height: 100vh;
+            `,
+            dividerStyle: css`
+              padding-top: 6px;
+              border-bottom: 6px solid #d1d5db;
+              background-color: white;
+            `,
+          }}
         >
           <Window.Cell>
             <DocumentViewer
