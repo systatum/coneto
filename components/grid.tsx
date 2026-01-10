@@ -69,9 +69,11 @@ function GridCard({
         {selectable && (isSelected || isHovered) && (
           <Checkbox
             checked={isSelected}
-            containerStyle={css`
-              border-radius: 2px;
-            `}
+            styles={{
+              containerStyle: css`
+                border-radius: 2px;
+              `,
+            }}
             readOnly
           />
         )}

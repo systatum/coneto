@@ -567,22 +567,24 @@ function ChipsItem({
     >
       <Checkbox
         checked={isClicked}
-        boxStyle={css`
-          width: 14px;
-          height: 14px;
-        `}
-        inputStyle={css`
-          width: 14px;
-          height: 14px;
-        `}
-        containerStyle={css`
-          margin-bottom: 1px;
-          width: fit-content;
-        `}
-        iconStyle={css`
-          min-width: 9px;
-          min-height: 9px;
-        `}
+        styles={{
+          boxStyle: css`
+            width: 14px;
+            height: 14px;
+          `,
+          inputStyle: css`
+            width: 14px;
+            height: 14px;
+          `,
+          containerStyle: css`
+            margin-bottom: 1px;
+            width: fit-content;
+          `,
+          iconStyle: css`
+            min-width: 9px;
+            min-height: 9px;
+          `,
+        }}
         readOnly
       />
       <Badge

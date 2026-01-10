@@ -956,14 +956,16 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
           >
             {selectable && selectedOptions && (
               <Checkbox
-                iconStyle={css`
-                  width: 8px;
-                  height: 8px;
-                `}
-                inputStyle={css`
-                  width: 14px;
-                  height: 14px;
-                `}
+                styles={{
+                  iconStyle: css`
+                    width: 8px;
+                    height: 8px;
+                  `,
+                  inputStyle: css`
+                    width: 14px;
+                    height: 14px;
+                  `,
+                }}
                 name="checked"
                 value={selectedOptions.value}
                 checked={selectedOptions.checked}

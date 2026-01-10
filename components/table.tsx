@@ -424,9 +424,11 @@ function Table({
               {selectable && (
                 <CheckboxWrapper>
                   <Checkbox
-                    boxStyle={css`
-                      width: 100%;
-                    `}
+                    styles={{
+                      boxStyle: css`
+                        width: 100%;
+                      `,
+                    }}
                     onChange={handleSelectAll}
                     checked={allRowSelectedLocal}
                     indeterminate={someSelectedLocal}
@@ -1104,9 +1106,11 @@ function TableRow({
             {...props}
             name={rowId}
             value={isSelected ? "true" : "false"}
-            boxStyle={css`
-              width: 100%;
-            `}
+            styles={{
+              boxStyle: css`
+                width: 100%;
+              `,
+            }}
             checked={isSelected}
           />
         </CheckboxWrapper>

@@ -547,13 +547,6 @@ function FormFields<T extends FieldValues>({
                       title={field.title}
                       label={field.placeholder}
                       name={field.name}
-                      titleStyle={css`
-                        ${labelSize &&
-                        css`
-                          font-size: ${labelSize};
-                        `}
-                        ${field.checkboxProps?.titleStyle}
-                      `}
                       placeholder={field.placeholder}
                       checked={controllerField.value ?? false}
                       ref={(el) => {
@@ -566,45 +559,6 @@ function FormFields<T extends FieldValues>({
                           | string
                           | undefined
                       }
-                      labelStyle={css`
-                        ${labelSize &&
-                        css`
-                          font-size: ${labelSize};
-                        `}
-                        ${field.checkboxProps?.labelStyle}
-                      `}
-                      inputStyle={css`
-                        ${labelSize &&
-                        css`
-                          width: calc(${labelSize} + 2px);
-                          height: calc(${labelSize} + 2px);
-                        `}
-                        ${field.checkboxProps?.inputStyle}
-                      `}
-                      iconStyle={css`
-                        ${labelSize &&
-                        css`
-                          width: calc(${labelSize} - 4px);
-                          height: calc(${labelSize} - 4px);
-                        `}
-                        ${field.checkboxProps?.iconStyle}
-                      `}
-                      containerStyle={css`
-                        width: 100%;
-                        ${field.width &&
-                        css`
-                          width: ${field.width};
-                        `}
-                        ${field.checkboxProps?.containerStyle}
-                      `}
-                      boxStyle={css`
-                        ${labelSize &&
-                        css`
-                          width: calc(${labelSize} + 2px);
-                          height: calc(${labelSize} + 2px);
-                        `}
-                        ${field.checkboxProps?.boxStyle}
-                      `}
                       required={field.required}
                       showError={shouldShowError(field.name)}
                       onChange={(e) => {
@@ -617,6 +571,54 @@ function FormFields<T extends FieldValues>({
                       }}
                       disabled={field.disabled}
                       {...field.checkboxProps}
+                      styles={{
+                        titleStyle: css`
+                          ${labelSize &&
+                          css`
+                            font-size: ${labelSize};
+                          `}
+                          ${field.checkboxProps?.styles?.titleStyle}
+                        `,
+                        labelStyle: css`
+                          ${labelSize &&
+                          css`
+                            font-size: ${labelSize};
+                          `}
+                          ${field.checkboxProps?.styles?.labelStyle}
+                        `,
+                        inputStyle: css`
+                          ${labelSize &&
+                          css`
+                            width: calc(${labelSize} + 2px);
+                            height: calc(${labelSize} + 2px);
+                          `}
+                          ${field.checkboxProps?.styles?.inputStyle}
+                        `,
+                        iconStyle: css`
+                          ${labelSize &&
+                          css`
+                            width: calc(${labelSize} - 4px);
+                            height: calc(${labelSize} - 4px);
+                          `}
+                          ${field.checkboxProps?.styles?.iconStyle}
+                        `,
+                        containerStyle: css`
+                          width: 100%;
+                          ${field.width &&
+                          css`
+                            width: ${field.width};
+                          `}
+                          ${field.checkboxProps?.styles?.containerStyle}
+                        `,
+                        boxStyle: css`
+                          ${labelSize &&
+                          css`
+                            width: calc(${labelSize} + 2px);
+                            height: calc(${labelSize} + 2px);
+                          `}
+                          ${field.checkboxProps?.styles?.boxStyle}
+                        `,
+                      }}
                     />
                   )}
                 />
