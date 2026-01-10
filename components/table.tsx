@@ -108,13 +108,18 @@ export interface TableRowProps {
   isSelected?: boolean;
   selectable?: boolean;
   handleSelect?: (data: string) => void;
-  rowStyle?: CSSProp;
-  rowCellStyle?: CSSProp;
+
   rowId?: string;
   children?: ReactNode;
   actions?: (columnCaption: string) => TipMenuItemProps[];
   onClick?: (args?: { toggleCheckbox: () => void }) => void;
   groupId?: string;
+  styles?: TableRowStylesProps;
+}
+
+export interface TableRowStylesProps {
+  rowStyle?: CSSProp;
+  rowCellStyle?: CSSProp;
 }
 
 export interface TableRowGroupProps {
@@ -960,8 +965,7 @@ function TableRow({
   selectable = false,
   isSelected = false,
   handleSelect,
-  rowStyle,
-  rowCellStyle,
+  styles,
   rowId,
   children,
   actions,
@@ -1035,7 +1039,7 @@ function TableRow({
         }
       }}
       $rowCellStyle={css`
-        ${rowStyle};
+        ${styles?.rowStyle};
         ${onClick &&
         css`
           cursor: pointer;
@@ -1132,9 +1136,9 @@ function TableRow({
                   isLast
                     ? css`
                         padding-right: 36px;
-                        ${rowCellStyle}
+                        ${styles?.rowCellStyle}
                       `
-                    : rowCellStyle
+                    : styles?.rowCellStyle
                 }
               >
                 {col}
