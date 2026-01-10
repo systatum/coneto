@@ -765,9 +765,11 @@ describe("List", () => {
           id: "recent-content",
           title: "Recent Content",
           subtitle: "Your latest activity",
-          titleStyle: css`
-            font-size: 30px;
-          `,
+          styles: {
+            titleStyle: css`
+              font-size: 30px;
+            `,
+          },
           items: [
             {
               id: "messages",
@@ -830,13 +832,13 @@ describe("List", () => {
             >
               {LIST_GROUPS_WITH_TITLE_STYLE.map((group, index) => (
                 <List.Group
-                  titleStyle={group.titleStyle}
                   key={index}
                   id={group.id}
                   title={group.title}
                   subtitle={group.subtitle}
                   actions={group.actions}
                   openerStyle="togglebox"
+                  styles={group.styles}
                 >
                   {group.items.map((list, i) => (
                     <List.Item
@@ -872,9 +874,11 @@ describe("List", () => {
           id: "recent-content",
           title: "Recent Content",
           subtitle: "Your latest activity",
-          subtitleStyle: css`
-            font-size: 30px;
-          `,
+          styles: {
+            subtitleStyle: css`
+              font-size: 30px;
+            `,
+          },
           items: [
             {
               id: "messages",
@@ -936,8 +940,7 @@ describe("List", () => {
           >
             {LIST_GROUPS_WITH_SUBTITLE_STYLE.map((group, index) => (
               <List.Group
-                titleStyle={group.titleStyle}
-                subtitleStyle={group.subtitleStyle}
+                styles={group.styles}
                 key={index}
                 id={group.id}
                 title={group.title}
@@ -979,6 +982,12 @@ describe("List", () => {
           title: "Recent Content",
           subtitle: "Your latest activity",
           items: [],
+          styles: {
+            emptySlateStyle: css`
+              border: 1px solid rgb(255, 0, 0);
+              padding: 30px;
+            `,
+          },
         },
       ];
 
@@ -1048,10 +1057,7 @@ describe("List", () => {
                     subtitle={group.subtitle}
                     actions={group.actions}
                     emptySlate={"This content is not available"}
-                    emptySlateStyle={css`
-                      border: 1px solid red;
-                      padding: 30px;
-                    `}
+                    styles={group.styles}
                     openerStyle="togglebox"
                   >
                     {group.items.map((list, i) => (
