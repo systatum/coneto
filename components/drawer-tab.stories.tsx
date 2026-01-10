@@ -76,13 +76,13 @@ export const Default: Story = {
 
     const tabs: DrawerTabContentProps[] = [
       {
-        id: 1,
+        id: "1",
         title: "File Attributes",
         icon: RiListCheck,
         content: <WriteTabContent />,
       },
       {
-        id: 2,
+        id: "2",
         title: "Page Structure",
         icon: RiNodeTree,
         content: <ReviewTabContent />,
@@ -151,13 +151,13 @@ export const FixedRight: Story = {
     };
     const tabs: DrawerTabContentProps[] = [
       {
-        id: 1,
+        id: "1",
         title: "File Attributes",
         icon: RiListCheck,
         content: <WriteTabContent />,
       },
       {
-        id: 2,
+        id: "2",
         title: "Page Structure",
         icon: RiNodeTree,
         content: <ReviewTabContent />,
