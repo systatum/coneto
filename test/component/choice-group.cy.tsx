@@ -24,9 +24,11 @@ describe("ChoiceGroup", () => {
                       `The name is ${e.target.name} and the value is ${e.target.value}`
                     )
                   }
-                  labelStyle={css`
-                    font-size: 30px;
-                  `}
+                  styles={{
+                    labelStyle: css`
+                      font-size: 30px;
+                    `,
+                  }}
                 />
               ))}
             </ChoiceGroup>

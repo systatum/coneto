@@ -236,16 +236,18 @@ export const WithError: Story = {
             name="value"
             onChange={(e) => setChecked(e.target.value)}
             showError={!checked && index === RADIO_OPTIONS.length - 1}
-            inputStyle={
-              !checked &&
-              css`
-                border-color: red;
-              `
-            }
+            styles={{
+              inputStyle: css`
+                ${!checked &&
+                css`
+                  border-color: red;
+                `}
+              `,
+              errorStyle: css`
+                font-size: 14px;
+              `,
+            }}
             errorMessage="Please select an option before continuing."
-            errorStyle={css`
-              font-size: 14px;
-            `}
           />
         ))}
       </Fragment>

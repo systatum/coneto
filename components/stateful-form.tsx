@@ -645,37 +645,6 @@ function FormFields<T extends FieldValues>({
                           | string
                           | undefined
                       }
-                      labelStyle={css`
-                        ${labelSize &&
-                        css`
-                          font-size: ${labelSize};
-                        `}
-                        ${field.radioProps?.labelStyle}
-                      `}
-                      titleStyle={css`
-                        ${labelSize &&
-                        css`
-                          font-size: ${labelSize};
-                        `}
-                        ${field.radioProps?.titleStyle}
-                      `}
-                      inputStyle={css`
-                        ${fieldSize &&
-                        css`
-                          width: ${fieldSize};
-                          height: ${fieldSize};
-                        `}
-                        ${field.radioProps?.inputStyle}
-                      `}
-                      containerStyle={css`
-                        width: 100%;
-                        ${field.width &&
-                        css`
-                          width: ${field.width};
-                        `}
-
-                        ${field.radioProps?.containerStyle}
-                      `}
                       required={field.required}
                       showError={shouldShowError(field.name)}
                       onChange={(e) => {
@@ -688,6 +657,35 @@ function FormFields<T extends FieldValues>({
                       }}
                       disabled={field.disabled}
                       {...field.radioProps}
+                      styles={{
+                        labelStyle: css`
+                          ${labelSize &&
+                          css`
+                            font-size: ${labelSize};
+                          `}
+                          ${field.radioProps?.styles?.labelStyle}
+                        `,
+                        titleStyle: css`
+                          ${labelSize && `font-size: ${labelSize};`}
+                          ${field.radioProps?.styles?.titleStyle}
+                        `,
+                        inputStyle: css`
+                          ${fieldSize &&
+                          css`
+                            width: ${fieldSize};
+                            height: ${fieldSize};
+                          `}
+                          ${field.radioProps?.styles?.inputStyle}
+                        `,
+                        containerStyle: css`
+                          width: 100%;
+                          ${field.width &&
+                          css`
+                            width: ${field.width};
+                          `}
+                          ${field.radioProps?.styles?.containerStyle}
+                        `,
+                      }}
                     />
                   )}
                 />

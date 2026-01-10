@@ -47,13 +47,15 @@ function ChoiceGroup({ children, styles }: ChoiceGroupProps) {
           highlightOnChecked: true,
           ...(isRadioButton
             ? {
-                containerStyle:
-                  componentChild.props.containerStyle ??
-                  css`
-                    border: 0.5px solid rgba(229, 231, 235, 0.6);
-                    border-radius: 4px;
-                    overflow: hidden;
-                  `,
+                styles: {
+                  containerStyle:
+                    componentChild.props.styles?.containerStyle ??
+                    css`
+                      border: 0.5px solid rgba(229, 231, 235, 0.6);
+                      border-radius: 4px;
+                      overflow: hidden;
+                    `,
+                },
               }
             : {}),
         });
