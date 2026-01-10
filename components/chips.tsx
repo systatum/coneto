@@ -375,10 +375,12 @@ function ChipsDrawer({
             aria-label="chip-input-box"
             placeholder={filterPlaceholder}
             value={inputValue}
-            style={{
-              border: "none",
-              minHeight: "34px",
-              borderRadius: 0,
+            styles={{
+              style: {
+                border: "none",
+                minHeight: "34px",
+                borderRadius: 0,
+              },
             }}
             autoComplete="off"
             onChange={(e) => {

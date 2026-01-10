@@ -341,12 +341,14 @@ describe("DormantText", () => {
           dormantedFontSize={14}
         >
           <Textbox
-            containerStyle={css`
-              height: 24px;
-            `}
-            style={css`
-              height: 24px;
-            `}
+            styles={{
+              containerStyle: css`
+                height: 24px;
+              `,
+              style: css`
+                height: 24px;
+              `,
+            }}
             autoComplete="off"
             value={value}
           />

@@ -371,33 +371,35 @@ function FormFields<T extends FieldValues>({
                     if (ref) ref(el);
                   }}
                   showError={shouldShowError(field.name)}
-                  labelStyle={css`
-                    ${labelSize &&
-                    css`
-                      font-size: ${labelSize};
-                    `}
-                    ${field.textboxProps?.labelStyle}
-                  `}
-                  style={css`
-                    ${fieldSize &&
-                    css`
-                      font-size: ${fieldSize};
-                    `}
-                    height: 34px;
-                    ${field.textboxProps?.style}
-                  `}
-                  containerStyle={css`
-                    ${field.width &&
-                    css`
-                      width: ${field.width};
-                    `}
-                    ${field.textboxProps?.containerStyle}
-                  `}
                   errorMessage={
                     errors[field.name as keyof T]?.message as string | undefined
                   }
                   disabled={field.disabled}
                   {...field.textboxProps}
+                  styles={{
+                    labelStyle: css`
+                      ${labelSize &&
+                      css`
+                        font-size: ${labelSize};
+                      `}
+                      ${field.textboxProps?.styles?.labelStyle}
+                    `,
+                    style: css`
+                      ${fieldSize &&
+                      css`
+                        font-size: ${fieldSize};
+                      `}
+                      height: 34px;
+                      ${field.textboxProps?.styles?.style}
+                    `,
+                    containerStyle: css`
+                      ${field.width &&
+                      css`
+                        width: ${field.width};
+                      `}
+                      ${field.textboxProps?.styles?.containerStyle}
+                    `,
+                  }}
                 />
               ) : field.type === "button" ? (
                 <Button
