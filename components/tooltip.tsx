@@ -23,16 +23,20 @@ export type TooltipProps = {
   children: ReactNode;
   showDialogOn?: "hover" | "click";
   hideDialogOn?: "hover" | "click";
+  dialogPlacement?: DialogPlacement;
+  onVisibilityChange?: (open?: boolean) => void;
+  safeAreaAriaLabels?: string[];
+  showDelayPeriod?: number;
+  styles?: TooltipStyles;
+};
+
+export interface TooltipStyles {
   containerStyle?: CSSProp;
   triggerStyle?: CSSProp;
   spacerStyle?: CSSProp | ((placement?: Placement) => CSSProp);
   drawerStyle?: CSSProp | ((placement?: Placement) => CSSProp);
   arrowStyle?: CSSProp | ((placement?: Placement) => CSSProp);
-  dialogPlacement?: DialogPlacement;
-  onVisibilityChange?: (open?: boolean) => void;
-  safeAreaAriaLabels?: string[];
-  showDelayPeriod?: number;
-};
+}
 
 export type TooltipRef = {
   open: () => void;
@@ -52,15 +56,11 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
       children,
       showDialogOn = "hover",
       hideDialogOn = "hover",
-      drawerStyle,
-      containerStyle,
-      triggerStyle,
-      spacerStyle,
-      arrowStyle,
       dialogPlacement = "bottom-left",
       onVisibilityChange,
       safeAreaAriaLabels,
       showDelayPeriod = 0,
+      styles,
     },
     ref
   ) => {
@@ -131,7 +131,7 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
 
     return (
       <Wrapper
-        $style={containerStyle}
+        $style={styles?.containerStyle}
         onMouseEnter={() => {
           if (showDialogOn === "hover") {
             delayTimeoutRef.current = setTimeout(() => {
@@ -168,7 +168,7 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
             }
           }}
           $showDialogOn={showDialogOn}
-          $style={triggerStyle}
+          $style={styles?.triggerStyle}
         >
           {children}
         </ContentTrigger>
@@ -181,20 +181,20 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
             >
               <TooltipContainer
                 arrowStyle={
-                  typeof arrowStyle === "function"
-                    ? arrowStyle(placement as Placement)
-                    : arrowStyle
+                  typeof styles?.arrowStyle === "function"
+                    ? styles?.arrowStyle(placement as Placement)
+                    : styles?.arrowStyle
                 }
                 placement={placement}
                 drawerStyle={
-                  typeof drawerStyle === "function"
-                    ? drawerStyle(placement as Placement)
-                    : drawerStyle
+                  typeof styles?.drawerStyle === "function"
+                    ? styles?.drawerStyle(placement as Placement)
+                    : styles?.drawerStyle
                 }
                 spacerStyle={
-                  typeof spacerStyle === "function"
-                    ? spacerStyle(placement as Placement)
-                    : spacerStyle
+                  typeof styles?.spacerStyle === "function"
+                    ? styles?.spacerStyle(placement as Placement)
+                    : styles?.spacerStyle
                 }
                 dialog={dialog}
               />
