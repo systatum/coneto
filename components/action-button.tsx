@@ -8,12 +8,16 @@ export interface ActionButtonProps {
   icon?: RemixiconComponentType;
   iconSize?: number;
   onClick?: () => void;
-  style?: CSSProp;
-  dividerStyle?: CSSProp;
-  dropdownStyle?: CSSProp;
+  styles?: ActionButtonStylesProps;
   subMenu?: (props: SubMenuButtonProps) => ReactNode;
   disabled?: boolean;
   showSubMenuOn?: "caret" | "self";
+}
+
+export interface ActionButtonStylesProps {
+  style?: CSSProp;
+  dividerStyle?: CSSProp;
+  dropdownStyle?: CSSProp;
 }
 
 export function ActionButton(
@@ -63,7 +67,7 @@ export function ActionButton(
             opacity: 0.5;
             cursor: not-allowed;
           }
-          ${props.style}
+          ${props.styles?.style}
         `,
         toggleStyle: css`
           ${props.subMenu &&
@@ -92,12 +96,14 @@ export function ActionButton(
               opacity: 0.5;
               cursor: not-allowed;
             }
-            ${props.style}
+            ${props.styles?.style}
           `}
         `,
         dividerStyle: css`
           border: 1px solid rgb(236 236 236);
-          ${props.subMenu && props.dividerStyle ? props.dividerStyle : null}
+          ${props.subMenu && props.styles?.dividerStyle
+            ? props.styles?.dividerStyle
+            : null}
         `,
         dropdownStyle: (placement) => css`
           ${props.forTable && placement?.startsWith("bottom")
@@ -111,7 +117,9 @@ export function ActionButton(
               : null}
 
           width: 170px;
-          ${props.subMenu && props.dropdownStyle ? props.dropdownStyle : null}
+          ${props.subMenu && props.styles?.dropdownStyle
+            ? props.styles?.dropdownStyle
+            : null}
         `,
       }}
     >
