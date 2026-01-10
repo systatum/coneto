@@ -760,20 +760,30 @@ function FormFields<T extends FieldValues>({
                         const { ref } = register(field.name as Path<T>);
                         if (ref) ref(el);
                       }}
-                      labelStyle={css`
-                        ${labelSize &&
-                        css`
-                          font-size: ${labelSize};
-                        `}
-                        ${field.colorboxProps?.labelStyle}
-                      `}
-                      containerStyle={css`
-                        ${field.width &&
-                        css`
-                          width: ${field.width};
-                        `}
-                        ${field.colorboxProps?.containerStyle}
-                      `}
+                      styles={{
+                        labelStyle: css`
+                          ${labelSize &&
+                          css`
+                            font-size: ${labelSize};
+                          `}
+                          ${field.colorboxProps?.styles?.labelStyle}
+                        `,
+                        containerStyle: css`
+                          ${field.width &&
+                          css`
+                            width: ${field.width};
+                          `}
+                          ${field.colorboxProps?.styles?.containerStyle}
+                        `,
+                        style: css`
+                          ${fieldSize &&
+                          css`
+                            font-size: ${fieldSize};
+                          `}
+                          height:34px;
+                          ${field.colorboxProps?.styles?.style}
+                        `,
+                      }}
                       value={controllerField.value}
                       onChange={(e) => {
                         controllerField?.onChange(e);
@@ -787,14 +797,6 @@ function FormFields<T extends FieldValues>({
                       errorMessage={fieldState.error?.message}
                       disabled={field.disabled}
                       {...field.colorboxProps}
-                      style={css`
-                        ${fieldSize &&
-                        css`
-                          font-size: ${fieldSize};
-                        `}
-                        height:34px;
-                        ${field.colorboxProps?.style}
-                      `}
                     />
                   )}
                 />

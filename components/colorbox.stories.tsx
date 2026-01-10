@@ -27,9 +27,11 @@ export const Default: Story = {
 
     return (
       <Colorbox
-        containerStyle={css`
-          max-width: 250px;
-        `}
+        styles={{
+          containerStyle: css`
+            max-width: 250px;
+          `,
+        }}
         {...args}
         label="Color"
         value={args.color}
@@ -68,9 +70,11 @@ export const WithError: Story = {
 
     return (
       <Colorbox
-        containerStyle={css`
-          max-width: 250px;
-        `}
+        styles={{
+          containerStyle: css`
+            max-width: 250px;
+          `,
+        }}
         {...args}
         label="Color"
         value={args.color}
