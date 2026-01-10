@@ -21,12 +21,12 @@ import {
 } from "@floating-ui/react";
 import styled, { css, CSSProp } from "styled-components";
 
-interface ToolbarProps {
+export interface ToolbarProps {
   children: ReactNode;
   style?: CSSProp;
 }
 
-interface ToolbarMenuProps {
+export interface ToolbarMenuProps {
   caption?: string;
   icon?: RemixiconComponentType;
   openedIcon?: RemixiconComponentType;
@@ -36,11 +36,15 @@ interface ToolbarMenuProps {
   isOpen?: boolean;
   setIsOpen?: (data?: boolean) => void;
   onClick?: () => void;
+  styles?: ToolbarMenuSylesProps;
+  variant?: ToolbarVariantType;
+}
+
+interface ToolbarMenuSylesProps {
   dropdownStyle?: CSSProp;
   containerStyle?: CSSProp;
   triggerStyle?: CSSProp;
   toggleActiveStyle?: CSSProp;
-  variant?: ToolbarVariantType;
 }
 
 type ToolbarVariantType = "default" | "primary" | "danger" | "none";
@@ -253,10 +257,7 @@ function ToolbarMenu({
   isOpen,
   setIsOpen,
   onClick,
-  dropdownStyle,
-  containerStyle,
-  triggerStyle,
-  toggleActiveStyle,
+  styles,
   variant = "default",
 }: ToolbarMenuProps) {
   const [hovered, setHovered] = useState<"main" | "original" | "dropdown">(
@@ -309,7 +310,7 @@ function ToolbarMenu({
     <ToolbarContainer
       aria-label="toolbar-menu"
       ref={containerRef}
-      $style={containerStyle}
+      $style={styles?.containerStyle}
     >
       <MenuWrapper
         ref={refs.setReference}
@@ -332,7 +333,7 @@ function ToolbarMenu({
                 ${isOpen && menuBorderActive};
                 ${menuFocusVisible};
                 ${menuActive};
-                ${triggerStyle}
+                ${styles?.triggerStyle}
               `}
             >
               {Icon && (
@@ -358,8 +359,8 @@ function ToolbarMenu({
             ${isOpen && menuBorderActive};
             ${menuActive};
             ${menuFocusVisible};
-            ${triggerStyle};
-            ${isOpen && toggleActiveStyle};
+            ${styles?.triggerStyle};
+            ${isOpen && styles?.toggleActiveStyle};
           `}
         >
           {isOpen ? (
@@ -388,7 +389,7 @@ function ToolbarMenu({
               setIsOpen(false);
               setHovered("original");
             }}
-            style={dropdownStyle}
+            style={styles?.dropdownStyle}
             subMenuList={subMenuList}
           />
         </div>
