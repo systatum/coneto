@@ -10,23 +10,25 @@ export interface ContextMenuProps {
   actions: ContextMenuActionsProps[];
   onOpen?: (prop: boolean) => void;
   children?: ReactNode;
-  containerStyle?: CSSProp;
-  buttonStyle?: CSSProp;
-  dropdownStyle?: CSSProp;
   focusBackgroundColor?: string;
   activeBackgroundColor?: string;
   hoverBackgroundColor?: string;
   maxActionsBeforeCollapsing?: number;
   iconSize?: number;
   open?: boolean;
+  styles?: ContextMenuStylesProps;
+}
+
+export interface ContextMenuStylesProps {
+  containerStyle?: CSSProp;
+  buttonStyle?: CSSProp;
+  dropdownStyle?: CSSProp;
 }
 
 export default function ContextMenu({
   children,
   actions,
-  buttonStyle,
-  dropdownStyle,
-  containerStyle,
+  styles,
   activeBackgroundColor,
   hoverBackgroundColor,
   focusBackgroundColor,
@@ -43,7 +45,6 @@ export default function ContextMenu({
         padding: 8px;
         width: 32px;
         height: 32px;
-
         ${focusBackgroundColor &&
         css`
           &:focus-visible {
@@ -57,17 +58,16 @@ export default function ContextMenu({
             background-color: ${hoverBackgroundColor};
           }
         `}
-
-    ${buttonStyle}
+      ${styles?.buttonStyle}
       `,
       containerStyle: css`
         width: fit-content;
         height: fit-content;
-        ${containerStyle}
+        ${styles?.containerStyle}
       `,
       dropdownStyle: css`
         margin-top: 2px;
-        ${dropdownStyle}
+        ${styles?.dropdownStyle}
       `,
     },
   };
