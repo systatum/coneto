@@ -1184,29 +1184,31 @@ function TableRow({
                 }
               }}
               open={openRowId === rowId}
-              containerStyle={css`
-                width: fit-content;
-                position: absolute;
-                top: 50%;
-                transform: translateY(-50%);
-                z-index: 8;
-                display: none;
+              styles={{
+                containerStyle: css`
+                  width: fit-content;
+                  position: absolute;
+                  top: 50%;
+                  transform: translateY(-50%);
+                  z-index: 8;
+                  display: none;
 
-                ${(isHovered === rowId
-                  ? isHovered === rowId
-                  : openRowId === rowId) &&
-                css`
-                  display: inherit;
-                `}
+                  ${(isHovered === rowId
+                    ? isHovered === rowId
+                    : openRowId === rowId) &&
+                  css`
+                    display: inherit;
+                  `}
 
-                ${draggable
-                  ? css`
-                      right: 2.4rem;
-                    `
-                  : css`
-                      right: 0.5rem;
-                    `}
-              `}
+                  ${draggable
+                    ? css`
+                        right: 2.4rem;
+                      `
+                    : css`
+                        right: 0.5rem;
+                      `}
+                `,
+              }}
               focusBackgroundColor="#d4d4d4"
               hoverBackgroundColor="#d4d4d4"
               activeBackgroundColor="#d4d4d4"

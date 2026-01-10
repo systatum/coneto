@@ -15,6 +15,7 @@ export interface NavTabProps {
   actions?: NavTabActionsProps[];
   styles?: NavTabStylesProps;
 }
+
 export interface NavTabStylesProps {
   contentStyle?: CSSProp;
   containerStyle?: CSSProp;
@@ -286,11 +287,34 @@ function NavTab({
                           hoverBackgroundColor="#d4d4d4"
                           activeBackgroundColor="#d4d4d4"
                           actions={actionsWithIcons}
-                          buttonStyle={css`
-                            width: 16px;
-                            height: 16px;
-                            padding: 0;
-                          `}
+                          styles={{
+                            buttonStyle: css`
+                              width: 16px;
+                              height: 16px;
+                              padding: 0;
+                            `,
+                            containerStyle: css`
+                              opacity: 0;
+
+                              ${(isHovered === props.id ||
+                                isTipMenuOpen === props.id) &&
+                              css`
+                                opacity: 1;
+                              `};
+
+                              pointer-events: ${isHovered === props.id ||
+                              isTipMenuOpen === props.id
+                                ? "auto"
+                                : "none"};
+                              transition: all 0.3s ease-in-out;
+                              width: fit-content;
+                              position: absolute;
+                              top: 50%;
+                              right: 12px;
+                              transform: translateY(-50%);
+                              z-index: 8;
+                            `,
+                          }}
                           onOpen={(prop: boolean) => {
                             if (prop) {
                               setIsTipMenuOpen(props.id);
@@ -299,27 +323,6 @@ function NavTab({
                             }
                           }}
                           open={isTipMenuOpen === props.id}
-                          containerStyle={css`
-                            opacity: 0;
-
-                            ${(isHovered === props.id ||
-                              isTipMenuOpen === props.id) &&
-                            css`
-                              opacity: 1;
-                            `};
-
-                            pointer-events: ${isHovered === props.id ||
-                            isTipMenuOpen === props.id
-                              ? "auto"
-                              : "none"};
-                            transition: all 0.3s ease-in-out;
-                            width: fit-content;
-                            position: absolute;
-                            top: 50%;
-                            right: 12px;
-                            transform: translateY(-50%);
-                            z-index: 8;
-                          `}
                         />
                       );
                     })()}

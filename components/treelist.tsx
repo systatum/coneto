@@ -880,21 +880,23 @@ function TreeListItem<T extends TreeListItemsProps>({
                   hoverBackgroundColor="#d4d4d4"
                   activeBackgroundColor="#d4d4d4"
                   actions={actionsWithIcons}
-                  containerStyle={css`
-                    display: none;
+                  styles={{
+                    containerStyle: css`
+                      display: none;
 
-                    ${(isHovered === item.id
-                      ? isHovered === item.id
-                      : openRowId === item.id) &&
-                    css`
-                      display: inherit;
-                    `}
-                  `}
-                  buttonStyle={css`
-                    width: 20px;
-                    height: 20px;
-                    padding: 0;
-                  `}
+                      ${(isHovered === item.id
+                        ? isHovered === item.id
+                        : openRowId === item.id) &&
+                      css`
+                        display: inherit;
+                      `}
+                    `,
+                    buttonStyle: css`
+                      width: 20px;
+                      height: 20px;
+                      padding: 0;
+                    `,
+                  }}
                 />
               </div>
             );

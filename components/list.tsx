@@ -1025,24 +1025,26 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
                         }
                       }}
                       open={openTipRowId === idFullname}
-                      containerStyle={css`
-                        display: none;
+                      styles={{
+                        containerStyle: css`
+                          display: none;
 
-                        ${(isHovered === idFullname
-                          ? isHovered === idFullname
-                          : openTipRowId === idFullname) &&
-                        css`
-                          display: inherit;
-                        `}
-                      `}
-                      buttonStyle={
-                        !subtitle &&
-                        css`
-                          width: 24px;
-                          height: 24px;
-                          padding: 2px;
-                        `
-                      }
+                          ${(isHovered === idFullname
+                            ? isHovered === idFullname
+                            : openTipRowId === idFullname) &&
+                          css`
+                            display: inherit;
+                          `}
+                        `,
+                        buttonStyle: css`
+                          ${!subtitle &&
+                          css`
+                            width: 24px;
+                            height: 24px;
+                            padding: 2px;
+                          `}
+                        `,
+                      }}
                       iconSize={!subtitle && 12}
                       focusBackgroundColor="#c1d6f1"
                       hoverBackgroundColor="#c1d6f1"
