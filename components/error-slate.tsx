@@ -1,4 +1,4 @@
-import styled, { css, keyframes } from "styled-components";
+import styled, { css, CSSProp, keyframes } from "styled-components";
 import { CSSProperties, ReactNode } from "react";
 
 export interface ErrorSlateProps {
@@ -23,7 +23,7 @@ export interface ErrorSlateProps {
     | "505";
   children?: ReactNode;
   title?: string;
-  cubeFaceStyle?: CSSProperties;
+  cubeFaceStyle?: CSSProp;
 }
 
 const rotateUp = keyframes`
@@ -83,7 +83,8 @@ function ErrorSlate({ code, children, title, cubeFaceStyle }: ErrorSlateProps) {
               aria-label="face-error-slate"
               key={i}
               $transform={face}
-              style={{ ...defaultFaceStyle, ...cubeFaceStyle }}
+              style={{ ...defaultFaceStyle }}
+              $style={cubeFaceStyle}
             >
               {content}
             </Face>
@@ -121,7 +122,10 @@ const Cube = styled.div`
   transform: rotateY(-20deg) rotateX(-20deg);
 `;
 
-const Face = styled.div<{ $transform: keyof typeof transformStyles }>`
+const Face = styled.div<{
+  $transform: keyof typeof transformStyles;
+  $style?: CSSProp;
+}>`
   position: absolute;
   width: 100px;
   height: 100px;
@@ -131,6 +135,8 @@ const Face = styled.div<{ $transform: keyof typeof transformStyles }>`
   align-items: center;
   justify-content: center;
   ${({ $transform }) => transformStyles[$transform]}
+
+  ${({ $style }) => $style}
 `;
 
 const ErrorSlateTitle = styled.span`
