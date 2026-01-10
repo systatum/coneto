@@ -367,9 +367,11 @@ describe("context-menu", () => {
       it("renders tip menu aligned to the right of the action button", () => {
         cy.mount(
           <TreeList
-            containerStyle={css`
-              min-width: 300px;
-            `}
+            styles={{
+              containerStyle: css`
+                min-width: 300px;
+              `,
+            }}
             content={TREE_LIST_DATA}
             emptySlate={<p>Not found.</p>}
           />
@@ -386,9 +388,11 @@ describe("context-menu", () => {
       it("renders all tip menu actions", () => {
         cy.mount(
           <TreeList
-            containerStyle={css`
-              min-width: 300px;
-            `}
+            styles={{
+              containerStyle: css`
+                min-width: 300px;
+              `,
+            }}
             content={TREE_LIST_DATA}
             emptySlate={<p>Not found.</p>}
           />
@@ -415,9 +419,11 @@ describe("context-menu", () => {
         it("keeps the tip menu open", () => {
           cy.mount(
             <TreeList
-              containerStyle={css`
-                min-width: 300px;
-              `}
+              styles={{
+                containerStyle: css`
+                  min-width: 300px;
+                `,
+              }}
               content={TREE_LIST_DATA}
               emptySlate={<p>Not found.</p>}
             />

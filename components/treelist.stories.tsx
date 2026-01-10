@@ -456,14 +456,16 @@ export const Nested: Story = {
             Caret and item opening and closing.
           </h2>
           <TreeList
-            containerStyle={css`
-              max-width: 300px;
-            `}
+            styles={{
+              containerStyle: css`
+                max-width: 300px;
+              `,
+              emptyItemSlateStyle: css`
+                align-items: center;
+              `,
+            }}
             draggable
             onDragged={onDragged}
-            emptyItemSlateStyle={css`
-              align-items: center;
-            `}
             emptyItemSlate={null}
             collapsible
             showHierarchyLine
@@ -490,9 +492,11 @@ export const Nested: Story = {
             Caret-only opening and closing.
           </h2>
           <TreeList
-            containerStyle={css`
-              max-width: 300px;
-            `}
+            styles={{
+              containerStyle: css`
+                max-width: 300px;
+              `,
+            }}
             collapsible
             showHierarchyLine
             emptyItemSlate={null}
@@ -654,9 +658,11 @@ export const WithActions: Story = {
       >
         <TreeList
           key={Number(showItem.length[0])}
-          containerStyle={css`
-            min-width: 300px;
-          `}
+          styles={{
+            containerStyle: css`
+              min-width: 300px;
+            `,
+          }}
           content={TREE_LIST_DATA}
           actions={TREE_LIST_ACTIONS}
           emptySlate={<p>Not found.</p>}
