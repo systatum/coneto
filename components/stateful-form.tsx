@@ -897,13 +897,6 @@ function FormFields<T extends FieldValues>({
                 <Imagebox
                   key={index}
                   name={field.name}
-                  containerStyle={css`
-                    ${field.width &&
-                    css`
-                      width: ${field.width};
-                    `}
-                    ${field.imageboxProps?.containerStyle}
-                  `}
                   onFileSelected={(e: File | undefined) => {
                     const file = e;
                     if (file instanceof File) {
@@ -925,13 +918,6 @@ function FormFields<T extends FieldValues>({
                     }
                   }}
                   label={field.title}
-                  labelStyle={css`
-                    ${labelSize &&
-                    css`
-                      font-size: ${labelSize};
-                    `}
-                    ${field.imageboxProps?.labelStyle}
-                  `}
                   disabled={field.disabled}
                   required={field.required}
                   {...register(field.name as Path<T>, {
@@ -949,6 +935,22 @@ function FormFields<T extends FieldValues>({
                     errors[field.name as keyof T]?.message as string | undefined
                   }
                   {...field.imageboxProps}
+                  styles={{
+                    containerStyle: css`
+                      ${field.width &&
+                      css`
+                        width: ${field.width};
+                      `}
+                      ${field.imageboxProps?.styles?.containerStyle}
+                    `,
+                    labelStyle: css`
+                      ${labelSize &&
+                      css`
+                        font-size: ${labelSize};
+                      `}
+                      ${field.imageboxProps?.styles?.labelStyle}
+                    `,
+                  }}
                 />
               ) : field.type === "signbox" ? (
                 <Signbox
