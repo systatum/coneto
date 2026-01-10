@@ -362,27 +362,29 @@ function Table({
               )}
               {searchable && (
                 <Searchbox
-                  containerStyle={css`
-                    ${actions &&
-                    css`
-                      margin-left: 40px;
-                    `}
-                    ${(showPagination || selectable) &&
-                    css`
-                      margin-right: 40px;
-                    `}
+                  styles={{
+                    containerStyle: css`
+                      ${actions &&
+                      css`
+                        margin-left: 40px;
+                      `}
+                      ${(showPagination || selectable) &&
+                      css`
+                        margin-right: 40px;
+                      `}
                     max-height: 33px;
-                  `}
-                  style={css`
-                    background-color: transparent;
-                    &:hover {
-                      border-color: #61a9f9;
-                      background-color: white;
-                    }
-                    &:focus {
-                      background-color: white;
-                    }
-                  `}
+                    `,
+                    style: css`
+                      background-color: transparent;
+                      &:hover {
+                        border-color: #61a9f9;
+                        background-color: white;
+                      }
+                      &:focus {
+                        background-color: white;
+                      }
+                    `,
+                  }}
                   name="search"
                   onChange={(e) => {
                     if (searchable) onSearchboxChange?.(e);

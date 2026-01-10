@@ -20,7 +20,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { Searchbox } from "./searchbox";
+import { Searchbox, SearchboxStylesProps } from "./searchbox";
 import { AnimatePresence, motion } from "framer-motion";
 import { LoadingSpinner } from "./loading-spinner";
 import { Checkbox } from "./checkbox";
@@ -52,12 +52,6 @@ export interface ListProps extends ListMaxItemsProp {
   inputRef?: Ref<HTMLInputElement>;
   onSearchKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
   labels?: ListLabelsProps;
-}
-
-interface SearchboxStylesProps {
-  containerStyle?: CSSProp;
-  iconStyle?: CSSProp;
-  style?: CSSProp;
 }
 
 interface ListLabelsProps {
@@ -241,9 +235,7 @@ function List({
               }}
               onKeyDown={onSearchKeyDown}
               value={value}
-              containerStyle={searchboxStyles?.containerStyle}
-              iconStyle={searchboxStyles?.iconStyle}
-              style={searchboxStyles?.style}
+              styles={searchboxStyles}
             />
           )}
 
