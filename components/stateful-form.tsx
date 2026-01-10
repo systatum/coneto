@@ -1228,28 +1228,30 @@ function FormFields<T extends FieldValues>({
                           onChange(field.name as keyof T, e.target.value);
                         }
                       }}
-                      labelStyle={css`
-                        ${labelSize &&
-                        css`
-                          font-size: ${labelSize};
-                        `}
-                        ${field.ratingProps?.labelStyle}
-                      `}
-                      containerStyle={css`
-                        ${fieldSize &&
-                        css`
-                          font-size: ${fieldSize};
-                        `}
-                        ${field.width &&
-                        css`
-                          width: ${field.width};
-                        `}
-                        ${field.ratingProps?.containerStyle}
-                      `}
                       showError={!!fieldState.error}
                       errorMessage={fieldState.error?.message}
                       disabled={field.disabled}
                       {...field.ratingProps}
+                      styles={{
+                        labelStyle: css`
+                          ${labelSize &&
+                          css`
+                            font-size: ${labelSize};
+                          `}
+                          ${field.ratingProps?.styles?.labelStyle}
+                        `,
+                        containerStyle: css`
+                          ${fieldSize &&
+                          css`
+                            font-size: ${fieldSize};
+                          `}
+                          ${field.width &&
+                          css`
+                            width: ${field.width};
+                          `}
+                          ${field.ratingProps?.styles?.containerStyle}
+                        `,
+                      }}
                     />
                   )}
                 />
