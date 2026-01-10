@@ -76,6 +76,10 @@ export interface TableProps {
   disableNextPageButton?: boolean;
   labels?: TableLabelsProps;
   sumRow?: SummaryRowProps[];
+  styles?: TableStylesProps;
+}
+
+export interface TableStylesProps {
   containerStyle?: CSSProp;
   tableRowContainerStyle?: CSSProp;
   paginationWrapperStyle?: CSSProp;
@@ -174,12 +178,8 @@ function Table({
   draggable,
   onDragged,
   sumRow,
-  containerStyle,
-  tableRowContainerStyle,
-  paginationWrapperStyle,
-  paginationNumberStyle,
+  styles,
   alwaysShowDragIcon = true,
-  totalSelectedItemTextStyle,
 }: TableProps & TableAlwaysShowDragIconProp) {
   const [dragItem, setDragItem] = useState<{
     oldGroupId: string;
@@ -323,7 +323,7 @@ function Table({
   return (
     <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
       <TableColumnContext.Provider value={columns}>
-        <Wrapper $containerStyle={containerStyle}>
+        <Wrapper $containerStyle={styles?.containerStyle}>
           {((selectedData.length > 0 &&
             labels?.totalSelectedItemText !== null) ||
             showPagination ||
@@ -394,12 +394,12 @@ function Table({
               {(selectable || showPagination) && (
                 <PaginationInfo
                   aria-label="pagination-wrapper"
-                  $style={paginationWrapperStyle}
+                  $style={styles?.paginationWrapperStyle}
                 >
                   {showPagination && (
                     <PaginationNumber
                       aria-label="pagination-number"
-                      $style={paginationNumberStyle}
+                      $style={styles?.paginationNumberStyle}
                     >
                       {typeof labels.pageNumberText === "number"
                         ? `Pg. ${labels.pageNumberText}`
@@ -409,7 +409,7 @@ function Table({
                   {selectable && (
                     <PaginationSelectedItem
                       aria-label="pagination-selected-item"
-                      $style={totalSelectedItemTextStyle}
+                      $style={styles?.totalSelectedItemTextStyle}
                     >
                       {labels?.totalSelectedItemText
                         ? labels?.totalSelectedItemText(selectedData.length)
@@ -512,7 +512,7 @@ function Table({
               <TableRowContainer
                 ref={tableRowContainerRef}
                 aria-label="table-scroll-container"
-                $tableRowContainerStyle={tableRowContainerStyle}
+                $tableRowContainerStyle={styles?.tableRowContainerStyle}
               >
                 {rowChildren}
               </TableRowContainer>
