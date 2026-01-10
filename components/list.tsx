@@ -488,9 +488,11 @@ function ListGroup({
             />
           ) : openerStyle === "togglebox" ? (
             <Togglebox
-              containerStyle={css`
-                width: fit-content;
-              `}
+              styles={{
+                containerStyle: css`
+                  width: fit-content;
+                `,
+              }}
               checked={opened}
               onChange={() => setIsOpen(id)}
             />

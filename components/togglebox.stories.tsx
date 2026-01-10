@@ -108,9 +108,11 @@ export const WithDescription: Story = {
     isLoading: false,
     label: "Click and load",
     description: "Click and you will see a loading icon",
-    labelStyle: css`
-      font-size: 14px;
-    `,
+    styles: {
+      labelStyle: css`
+        font-size: 14px;
+      `,
+    },
   },
   render: (args) => {
     const [, setUpdateArgs] = useArgs();

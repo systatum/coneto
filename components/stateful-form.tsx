@@ -1312,20 +1312,6 @@ function FormFields<T extends FieldValues>({
                     <Togglebox
                       name={controllerField.name}
                       label={field.title}
-                      labelStyle={css`
-                        ${labelSize &&
-                        css`
-                          font-size: ${labelSize};
-                        `}
-                        ${field.toggleboxProps?.labelStyle}
-                      `}
-                      containerStyle={css`
-                        ${field.width &&
-                        css`
-                          width: ${field.width};
-                        `}
-                        ${field.toggleboxProps?.containerStyle}
-                      `}
                       checked={controllerField.value ?? false}
                       required={field.required}
                       onChange={(e) => {
@@ -1345,6 +1331,22 @@ function FormFields<T extends FieldValues>({
                       }
                       disabled={field.disabled}
                       {...field.toggleboxProps}
+                      styles={{
+                        labelStyle: css`
+                          ${labelSize &&
+                          css`
+                            font-size: ${labelSize};
+                          `}
+                          ${field.toggleboxProps?.styles?.labelStyle}
+                        `,
+                        containerStyle: css`
+                          ${field.width &&
+                          css`
+                            width: ${field.width};
+                          `}
+                          ${field.toggleboxProps?.styles?.containerStyle}
+                        `,
+                      }}
                     />
                   )}
                 />
