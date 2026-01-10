@@ -180,22 +180,21 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
               style={{ ...floatingStyles, zIndex: 12000 }}
             >
               <TooltipContainer
-                arrowStyle={
-                  typeof styles?.arrowStyle === "function"
-                    ? styles?.arrowStyle(placement as Placement)
-                    : styles?.arrowStyle
-                }
                 placement={placement}
-                drawerStyle={
-                  typeof styles?.drawerStyle === "function"
-                    ? styles?.drawerStyle(placement as Placement)
-                    : styles?.drawerStyle
-                }
-                spacerStyle={
-                  typeof styles?.spacerStyle === "function"
-                    ? styles?.spacerStyle(placement as Placement)
-                    : styles?.spacerStyle
-                }
+                styles={{
+                  arrowStyle:
+                    typeof styles?.arrowStyle === "function"
+                      ? styles?.arrowStyle(placement as Placement)
+                      : styles?.arrowStyle,
+                  drawerStyle:
+                    typeof styles?.drawerStyle === "function"
+                      ? styles?.drawerStyle(placement as Placement)
+                      : styles?.drawerStyle,
+                  spacerStyle:
+                    typeof styles?.spacerStyle === "function"
+                      ? styles?.spacerStyle(placement as Placement)
+                      : styles?.spacerStyle,
+                }}
                 dialog={dialog}
               />
             </div>,
@@ -208,17 +207,18 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
 
 interface TooltipContainerProps {
   placement?: Placement;
+  styles?: TooltipContainerStylesProps;
+  dialog?: ReactNode;
+}
+interface TooltipContainerStylesProps {
   drawerStyle?: CSSProp | ((placement?: Placement) => CSSProp);
   arrowStyle?: CSSProp | ((placement?: Placement) => CSSProp);
   spacerStyle?: CSSProp | ((placement?: Placement) => CSSProp);
-  dialog?: ReactNode;
 }
 
 function TooltipContainer({
   placement,
-  arrowStyle,
-  drawerStyle,
-  spacerStyle,
+  styles,
   dialog,
 }: TooltipContainerProps) {
   return (
@@ -227,26 +227,26 @@ function TooltipContainer({
         aria-label="tooltip-spacer"
         $placement={placement}
         $spacerStyle={
-          typeof spacerStyle === "function"
-            ? spacerStyle(placement as Placement)
-            : spacerStyle
+          typeof styles?.spacerStyle === "function"
+            ? styles?.spacerStyle(placement as Placement)
+            : styles?.spacerStyle
         }
       />
       <TooltipArrow
         $placement={placement}
         aria-label="tooltip-arrow"
         $arrowStyle={
-          typeof arrowStyle === "function"
-            ? arrowStyle(placement as Placement)
-            : arrowStyle
+          typeof styles?.arrowStyle === "function"
+            ? styles?.arrowStyle(placement as Placement)
+            : styles?.arrowStyle
         }
       />
       <TooltipDrawer
         aria-label="tooltip-drawer"
         $drawerStyle={
-          typeof drawerStyle === "function"
-            ? drawerStyle(placement as Placement)
-            : drawerStyle
+          typeof styles?.drawerStyle === "function"
+            ? styles?.drawerStyle(placement as Placement)
+            : styles?.drawerStyle
         }
       >
         {dialog}

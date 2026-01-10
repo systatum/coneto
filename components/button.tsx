@@ -276,21 +276,23 @@ function Button({
               ),
               show: (children, { withArrow, arrowStyle, drawerStyle } = {}) => (
                 <Tooltip.Container
-                  arrowStyle={
-                    !withArrow
-                      ? css`
-                          display: none;
-                        `
-                      : css`
-                          background-color: gray;
-                          ${arrowStyle}
-                        `
-                  }
-                  drawerStyle={css`
-                    padding: 0px;
-                    color: black;
-                    ${drawerStyle}
-                  `}
+                  styles={{
+                    arrowStyle: css`
+                      ${!withArrow
+                        ? css`
+                            display: none;
+                          `
+                        : css`
+                            background-color: gray;
+                            ${arrowStyle}
+                          `}
+                    `,
+                    drawerStyle: css`
+                      padding: 0px;
+                      color: black;
+                      ${drawerStyle}
+                    `,
+                  }}
                   placement={placement}
                   dialog={children}
                 />
