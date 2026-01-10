@@ -10,15 +10,18 @@ import { ActionButton, ActionButtonProps } from "./action-button";
 export interface NavTabProps {
   tabs?: NavTabContentProps[];
   activeTab?: string;
+  activeColor?: string;
+  children?: ReactNode;
+  actions?: NavTabActionsProps[];
+  styles?: NavTabStylesProps;
+}
+export interface NavTabStylesProps {
   contentStyle?: CSSProp;
   containerStyle?: CSSProp;
   containerBoxStyle?: CSSProp;
   containerRowStyle?: CSSProp;
   containerActionsStyle?: CSSProp;
   boxStyle?: CSSProp;
-  activeColor?: string;
-  children?: ReactNode;
-  actions?: NavTabActionsProps[];
 }
 
 export type NavTabActionsProps = ActionButtonProps;
@@ -47,13 +50,8 @@ export interface SubMenuNavTab extends Omit<TipMenuItemProps, "onClick"> {
 
 function NavTab({
   activeTab = "1",
-  containerStyle,
-  contentStyle,
-  boxStyle,
-  containerBoxStyle,
-  containerRowStyle,
+  styles,
   actions,
-  containerActionsStyle,
   tabs = [],
   activeColor = "rgb(59, 130, 246)",
   children,
@@ -141,9 +139,9 @@ function NavTab({
   );
 
   return (
-    <NavTabWrapper $containerStyle={containerStyle}>
-      <NavTabRowWrapper $style={containerRowStyle}>
-        <NavTabHeader $style={containerBoxStyle} ref={containerRef}>
+    <NavTabWrapper $containerStyle={styles?.containerStyle}>
+      <NavTabRowWrapper $style={styles?.containerRowStyle}>
+        <NavTabHeader $style={styles?.containerBoxStyle} ref={containerRef}>
           <NavTabList
             aria-label="nav-tab-list"
             $activeColor={activeColor}
@@ -243,7 +241,7 @@ function NavTab({
                 <NavTabItem
                   aria-label="nav-tab-item"
                   key={props.id}
-                  $boxStyle={boxStyle}
+                  $boxStyle={styles?.boxStyle}
                   ref={setTabRef(index)}
                   role="tab"
                   onClick={(e) => {
@@ -332,7 +330,10 @@ function NavTab({
         </NavTabHeader>
 
         {actions && (
-          <NavTabHeader $actions={!!actions} $style={containerActionsStyle}>
+          <NavTabHeader
+            $actions={!!actions}
+            $style={styles?.containerActionsStyle}
+          >
             {actions.map((props, index) => (
               <ActionButton key={index} {...props} />
             ))}
@@ -340,7 +341,7 @@ function NavTab({
         )}
       </NavTabRowWrapper>
 
-      <NavContent $contentStyle={contentStyle}>
+      <NavContent $contentStyle={styles?.contentStyle}>
         {activeContent.map((props, index) => {
           const selectedItemContent = props.subItems?.find(
             (item) => item.id === selected
