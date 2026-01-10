@@ -22,14 +22,18 @@ import styled, { css, CSSProp } from "styled-components";
 type DialogState = "restored" | "closed" | "minimized";
 
 export interface PaperDialogProps {
-  style?: CSSProp;
-  tabStyle?: CSSProp;
-  tabCloseStyle?: CSSProp;
-  paperDialogStyle?: CSSProp;
   position?: "left" | "right";
   children: ReactNode;
   closable?: boolean;
   width?: string;
+  styles?: PaperDialogStylesProps;
+}
+
+export interface PaperDialogStylesProps {
+  style?: CSSProp;
+  tabStyle?: CSSProp;
+  tabCloseStyle?: CSSProp;
+  paperDialogStyle?: CSSProp;
 }
 
 interface PaperDialogTriggerProps {
@@ -59,19 +63,7 @@ export interface PaperDialogRef {
 }
 
 const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
-  (
-    {
-      style,
-      paperDialogStyle,
-      position = "right",
-      tabStyle,
-      tabCloseStyle,
-      children,
-      closable,
-      width,
-    },
-    ref
-  ) => {
+  ({ position = "right", children, closable, width, styles }, ref) => {
     const [dialogState, setDialogState] = useState<DialogState>("closed");
     const controls = useAnimation();
     const isLeft = position === "left";
@@ -124,7 +116,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
         {dialogState !== "closed" && (
           <DialogOverlay
             $dialogState={dialogState}
-            $paperDialogStyle={paperDialogStyle}
+            $paperDialogStyle={styles?.paperDialogStyle}
           >
             {dialogState === "restored" && (
               <BackgroundBlur aria-hidden="true" />
@@ -136,10 +128,13 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
               initial={{ x: isLeft ? "-100%" : "100%" }}
               animate={controls}
               $isLeft={isLeft}
-              $style={style}
+              $style={styles?.style}
             >
               {closable && (
-                <CloseButtonWrapper $isLeft={isLeft} $tabStyle={tabCloseStyle}>
+                <CloseButtonWrapper
+                  $isLeft={isLeft}
+                  $tabStyle={styles?.tabCloseStyle}
+                >
                   <IconButton
                     $isLeft={isLeft}
                     aria-label="button-close"
@@ -150,7 +145,10 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                 </CloseButtonWrapper>
               )}
 
-              <MinimizeButtonWrapper $isLeft={isLeft} $tabStyle={tabStyle}>
+              <MinimizeButtonWrapper
+                $isLeft={isLeft}
+                $tabStyle={styles?.tabStyle}
+              >
                 <IconButton
                   $isLeft={isLeft}
                   aria-label="paper-dialog-toggle"
