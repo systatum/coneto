@@ -1372,11 +1372,13 @@ export const WithBadge: Story = {
               <Button variant="primary">Learn More</Button>
             </>
           }
-          containerStyle={css`
-            text-align: center;
-            padding-top: 30px;
-            padding-bottom: 30px;
-          `}
+          styles={{
+            containerStyle: css`
+              text-align: center;
+              padding-top: 30px;
+              padding-bottom: 30px;
+            `,
+          }}
         />
       );
     };

@@ -824,13 +824,15 @@ export const WithEmptySlate: Story = {
             <EmptySlate
               imageUrl="https://picsum.photos/200?random=1"
               title="Manage your inventory transfers"
-              containerStyle={css`
-                text-align: center;
-                margin: auto;
-              `}
-              imageStyle={css`
-                max-width: 200px;
-              `}
+              styles={{
+                containerStyle: css`
+                  text-align: center;
+                  margin: auto;
+                `,
+                imageStyle: css`
+                  max-width: 200px;
+                `,
+              }}
               subtitle="Track and receive your incoming inventory from suppliers."
               actions={
                 <>

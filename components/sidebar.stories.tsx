@@ -90,12 +90,14 @@ export const Default: Story = {
                   imageUrl="https://picsum.photos/200?random=1"
                   title="No Matches"
                   subtitle="We couldn't find any person or team that matches your search."
-                  containerStyle={{
-                    textAlign: "center",
-                    alignItems: "center",
-                  }}
-                  imageStyle={{
-                    maxWidth: "200px",
+                  styles={{
+                    containerStyle: {
+                      textAlign: "center",
+                      alignItems: "center",
+                    },
+                    imageStyle: {
+                      maxWidth: "200px",
+                    },
                   }}
                   actions={
                     <>
@@ -227,12 +229,14 @@ export const FixedRight: Story = {
                   imageUrl="https://picsum.photos/200?random=1"
                   title="No Matches"
                   subtitle="We couldn't find any person or team that matches your search."
-                  containerStyle={{
-                    textAlign: "center",
-                    alignItems: "center",
-                  }}
-                  imageStyle={{
-                    maxWidth: "200px",
+                  styles={{
+                    containerStyle: {
+                      textAlign: "center",
+                      alignItems: "center",
+                    },
+                    imageStyle: {
+                      maxWidth: "200px",
+                    },
                   }}
                   actions={
                     <>
