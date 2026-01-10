@@ -353,6 +353,11 @@ describe("StatefulForm", () => {
             cy.findByPlaceholderText("signbox-canvas")
               .should("exist")
               .and("have.css", "background-color", "rgb(245, 222, 179)");
+          } else if (field.type === "phone") {
+            cy.findByPlaceholderText(field.placeholder)
+              .should("exist")
+              .parent()
+              .and("have.css", "background-color", "rgb(245, 222, 179)");
           } else if (field.type === "color") {
             cy.findByPlaceholderText(field.placeholder)
               .should("exist")
