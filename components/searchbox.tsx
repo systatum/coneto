@@ -13,17 +13,18 @@ export interface SearchboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {
   name?: string;
   value?: string;
+  onChange?: (data: ChangeEvent<HTMLInputElement>) => void;
+  styles?: SearchboxStylesProps;
+}
+
+export interface SearchboxStylesProps {
   style?: CSSProp;
   containerStyle?: CSSProp;
   iconStyle?: CSSProp;
-  onChange?: (data: ChangeEvent<HTMLInputElement>) => void;
 }
 
 const Searchbox = forwardRef<HTMLInputElement, SearchboxProps>(
-  (
-    { name, value, onChange, style, containerStyle, iconStyle, ...props },
-    ref
-  ) => {
+  ({ name, value, onChange, styles, ...props }, ref) => {
     const searchboxValue = value ? value : "";
     const [inputValueLocal, setInputValueLocal] = useState(searchboxValue);
 
@@ -37,9 +38,9 @@ const Searchbox = forwardRef<HTMLInputElement, SearchboxProps>(
     return (
       <SearchboxWrapper
         aria-label="textbox-search-wrapper"
-        $style={containerStyle}
+        $style={styles?.containerStyle}
       >
-        <SearchIcon $style={iconStyle} size={14} />
+        <SearchIcon $style={styles?.iconStyle} size={14} />
 
         <SearchboxInput
           ref={inputRef}
@@ -51,7 +52,7 @@ const Searchbox = forwardRef<HTMLInputElement, SearchboxProps>(
             setInputValueLocal(e.target.value);
             onChange(e);
           }}
-          $style={style}
+          $style={styles?.style}
           {...(props as InputHTMLAttributes<HTMLInputElement>)}
         />
 
