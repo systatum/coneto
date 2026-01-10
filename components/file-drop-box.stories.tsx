@@ -71,12 +71,14 @@ export const Default: Story = {
     return (
       <FileDropBox onFileDropped={onFileDropped} onComplete={onComplete}>
         <Table
-          containerStyle={
-            files.length === 0 &&
-            css`
-              display: none;
-            `
-          }
+          styles={{
+            containerStyle: css`
+              ${files.length === 0 &&
+              css`
+                display: none;
+              `}
+            `,
+          }}
           columns={[
             {
               id: "file_name",

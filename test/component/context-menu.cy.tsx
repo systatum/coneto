@@ -498,9 +498,11 @@ describe("context-menu", () => {
       it("renders tip menu aligned to the right of the action button", () => {
         cy.mount(
           <Table
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             columns={columns}
           >
             {sampleRows}
@@ -516,9 +518,11 @@ describe("context-menu", () => {
       it("renders all tip menu actions", () => {
         cy.mount(
           <Table
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             columns={columns}
           >
             {sampleRows}
@@ -540,9 +544,11 @@ describe("context-menu", () => {
         it("keeps the tip menu open", () => {
           cy.mount(
             <Table
-              tableRowContainerStyle={css`
-                max-height: 400px;
-              `}
+              styles={{
+                tableRowContainerStyle: css`
+                  max-height: 400px;
+                `,
+              }}
               columns={columns}
             >
               {sampleRows}

@@ -1102,9 +1102,11 @@ export const WithFullWidthContent: Story = {
       >
         <Table
           selectable
-          tableRowContainerStyle={css`
-            max-height: 400px;
-          `}
+          styles={{
+            tableRowContainerStyle: css`
+              max-height: 400px;
+            `,
+          }}
           columns={columns}
           onItemsSelected={handleItemsSelected}
           subMenuList={TIP_MENU_ACTION}

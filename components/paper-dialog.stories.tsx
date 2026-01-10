@@ -662,9 +662,11 @@ export const Nested: Story = {
         >
           <Table
             searchable
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             onSearchboxChange={(e) => setSearch(e.target.value)}
             columns={columns}
           >
@@ -712,9 +714,11 @@ export const Nested: Story = {
             >
               <Table
                 searchable
-                tableRowContainerStyle={css`
-                  max-height: 400px;
-                `}
+                styles={{
+                  tableRowContainerStyle: css`
+                    max-height: 400px;
+                  `,
+                }}
                 actions={[
                   {
                     caption: "Add Family",
