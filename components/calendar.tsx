@@ -24,12 +24,16 @@ export interface BaseCalendarProps {
   monthNames?: OptionsProps[];
   disableWeekend?: boolean;
   format?: FormatProps;
-  containerStyle?: CSSProp;
-  style?: CSSProp;
   yearPastReach?: number;
   futurePastReach?: number;
   onClick?: () => void;
   onCalendarPeriodChanged?: (data: Date) => void;
+  styles?: CalendarStylesProps;
+}
+
+export interface CalendarStylesProps {
+  style?: CSSProp;
+  containerStyle?: CSSProp;
 }
 
 type CalendarProps = BaseCalendarProps &
@@ -103,7 +107,7 @@ function Calendar({
   showError,
   errorMessage,
   onClick,
-  containerStyle,
+  styles,
   footer,
   todayButtonCaption = "Today",
   onCalendarPeriodChanged,
@@ -922,7 +926,7 @@ function Calendar({
   );
 
   return (
-    <Container $style={containerStyle}>
+    <Container $style={styles?.containerStyle}>
       {label && <label>{label}</label>}
       <InputContent>
         {inputElement}
