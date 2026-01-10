@@ -13,9 +13,11 @@ describe("DormantText", () => {
               fullWidth
               cancelable
               content={value}
-              dormantedStyle={css`
-                max-height: 24px;
-              `}
+              styles={{
+                dormantedStyle: css`
+                  max-height: 24px;
+                `,
+              }}
               acceptChangeOn="click"
               dormantedFontSize={14}
             >
@@ -36,9 +38,11 @@ describe("DormantText", () => {
                 fullWidth
                 cancelable
                 content={value}
-                dormantedStyle={css`
-                  max-height: 24px;
-                `}
+                styles={{
+                  dormantedStyle: css`
+                    max-height: 24px;
+                  `,
+                }}
                 acceptChangeOn="click"
                 dormantedFontSize={14}
                 onActionClick={() => console.log("acceptChangeOn was succeed")}
@@ -72,9 +76,11 @@ describe("DormantText", () => {
                 fullWidth
                 cancelable
                 content={value}
-                dormantedStyle={css`
-                  max-height: 24px;
-                `}
+                styles={{
+                  dormantedStyle: css`
+                    max-height: 24px;
+                  `,
+                }}
                 acceptChangeOn="click"
                 dormantedFontSize={14}
                 onActionClick={() => console.log("acceptChangeOn was succeed")}
@@ -110,9 +116,11 @@ describe("DormantText", () => {
               fullWidth
               cancelable
               content={value}
-              dormantedStyle={css`
-                max-height: 24px;
-              `}
+              styles={{
+                dormantedStyle: css`
+                  max-height: 24px;
+                `,
+              }}
               acceptChangeOn="enter"
               dormantedFontSize={14}
             >
@@ -133,9 +141,11 @@ describe("DormantText", () => {
                 fullWidth
                 cancelable
                 content={value}
-                dormantedStyle={css`
-                  max-height: 24px;
-                `}
+                styles={{
+                  dormantedStyle: css`
+                    max-height: 24px;
+                  `,
+                }}
                 acceptChangeOn="enter"
                 dormantedFontSize={14}
                 onActionClick={() => console.log("acceptChangeOn was succeed")}
@@ -169,9 +179,11 @@ describe("DormantText", () => {
                 fullWidth
                 cancelable
                 content={value}
-                dormantedStyle={css`
-                  max-height: 24px;
-                `}
+                styles={{
+                  dormantedStyle: css`
+                    max-height: 24px;
+                  `,
+                }}
                 acceptChangeOn="enter"
                 dormantedFontSize={14}
                 onActionClick={() => console.log("acceptChangeOn was succeed")}
@@ -208,9 +220,11 @@ describe("DormantText", () => {
               fullWidth
               cancelable
               content={value}
-              dormantedStyle={css`
-                max-height: 24px;
-              `}
+              styles={{
+                dormantedStyle: css`
+                  max-height: 24px;
+                `,
+              }}
               acceptChangeOn="all"
               dormantedFontSize={14}
             >
@@ -231,9 +245,11 @@ describe("DormantText", () => {
                 fullWidth
                 cancelable
                 content={value}
-                dormantedStyle={css`
-                  max-height: 24px;
-                `}
+                styles={{
+                  dormantedStyle: css`
+                    max-height: 24px;
+                  `,
+                }}
                 acceptChangeOn="all"
                 dormantedFontSize={14}
                 onActionClick={() => console.log("acceptChangeOn was succeed")}
@@ -267,9 +283,11 @@ describe("DormantText", () => {
                 fullWidth
                 cancelable
                 content={value}
-                dormantedStyle={css`
-                  max-height: 24px;
-                `}
+                styles={{
+                  dormantedStyle: css`
+                    max-height: 24px;
+                  `,
+                }}
                 acceptChangeOn="all"
                 dormantedFontSize={14}
                 onActionClick={() => console.log("acceptChangeOn was succeed")}
@@ -306,9 +324,11 @@ describe("DormantText", () => {
           fullWidth
           cancelable
           content={value}
-          dormantedStyle={css`
-            max-height: 24px;
-          `}
+          styles={{
+            dormantedStyle: css`
+              max-height: 24px;
+            `,
+          }}
           acceptChangeOn="all"
           dormantedFontSize={14}
         >
@@ -331,12 +351,14 @@ describe("DormantText", () => {
           fullWidth
           cancelable
           content={value}
-          activeStyle={css`
-            min-height: 24px;
-          `}
-          actionStyle={css`
-            height: 24px;
-          `}
+          styles={{
+            activeStyle: css`
+              min-height: 24px;
+            `,
+            actionStyle: css`
+              height: 24px;
+            `,
+          }}
           acceptChangeOn="all"
           dormantedFontSize={14}
         >

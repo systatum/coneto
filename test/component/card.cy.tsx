@@ -21,9 +21,11 @@ describe("Card", () => {
           acceptChangeOn={"enter"}
           content={value?.[name]}
           cancelable
-          dormantedStyle={css`
-            padding: 0px;
-          `}
+          styles={{
+            dormantedStyle: css`
+              padding: 0px;
+            `,
+          }}
           dormantedFontSize={sizeText ?? 16}
         >
           <Textbox value={value?.[name]} />

@@ -680,13 +680,15 @@ export const ReactNodeTitle: Story = {
         <DormantText
           fullWidth
           cancelable
-          dormantedStyle={css`
-            &:hover {
-              background-color: transparent;
-              border-color: transparent;
-            }
-            height: 24px;
-          `}
+          styles={{
+            dormantedStyle: css`
+              &:hover {
+                background-color: transparent;
+                border-color: transparent;
+              }
+              height: 24px;
+            `,
+          }}
           acceptChangeOn="enter"
           onCancelRequested={onCancelRequested}
           dormantedFontSize={14}

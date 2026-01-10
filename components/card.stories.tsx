@@ -1047,9 +1047,11 @@ export const WithFullWidthContent: Story = {
           onActive={() => {
             setOldValue(value);
           }}
-          dormantedStyle={css`
-            padding: 0px;
-          `}
+          styles={{
+            dormantedStyle: css`
+              padding: 0px;
+            `,
+          }}
           dormantedFontSize={sizeText ?? 16}
           onCancelRequested={() => {
             setValue((prev) => ({ ...prev, [name]: oldValue.title }));
