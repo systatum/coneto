@@ -226,7 +226,7 @@ function List({
       }}
     >
       <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
-        <ListContainer role="listbox" $containerStyle={styles?.containerStyle}>
+        <ListContainer $containerStyle={styles?.containerStyle}>
           {searchable && (
             <Searchbox
               ref={inputRef}

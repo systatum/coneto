@@ -252,7 +252,30 @@ function ComboboxDrawer({
     >
       {(options || actions) && (
         <List
-          containerStyle={listContainerStyle}
+          styles={{
+            containerStyle: listContainerStyle,
+            searchboxStyles: {
+              containerStyle: css`
+                position: sticky;
+                top: 0;
+                background-color: white;
+                z-index: 30;
+                height: 38px;
+                padding-right: 7px;
+                padding-left: 7px;
+              `,
+              iconStyle: css`
+                left: 16px;
+              `,
+              style: css`
+                max-height: 35px;
+                margin-top: 7px;
+                margin-bottom: 7px;
+                padding-bottom: 7px;
+                padding-top: 7px;
+              `,
+            },
+          }}
           inputRef={inputRef}
           selectable={multiple}
           searchable={multiple}
@@ -266,27 +289,6 @@ function ComboboxDrawer({
               ...selectedOptionsLocal,
               text: value,
             });
-          }}
-          searchboxStyles={{
-            containerStyle: css`
-              position: sticky;
-              top: 0;
-              background-color: white;
-              z-index: 30;
-              height: 38px;
-              padding-right: 7px;
-              padding-left: 7px;
-            `,
-            iconStyle: css`
-              left: 16px;
-            `,
-            style: css`
-              max-height: 35px;
-              margin-top: 7px;
-              margin-bottom: 7px;
-              padding-bottom: 7px;
-              padding-top: 7px;
-            `,
           }}
         >
           {actions &&
