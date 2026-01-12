@@ -22,6 +22,46 @@ const meta: Meta<typeof NavTab> = {
     layout: "fullscreen",
   },
   excludeStories: ["WriteTabContent", "ReviewTabContent"],
+  argTypes: {
+    tabs: {
+      control: "object",
+      description: "Main tab configuration including sub items and content",
+    },
+    activeTab: {
+      control: "text",
+      description:
+        "Currently selected tab or sub-item ID. When undefined or null, no tab content is shown.",
+    },
+    activeColor: {
+      control: "color",
+      description: "Underline color for the active tab",
+    },
+    actions: {
+      control: "object",
+      description: "Right-side header action buttons",
+    },
+    children: {
+      control: false,
+    },
+    contentStyle: {
+      control: false,
+    },
+    containerStyle: {
+      control: false,
+    },
+    containerRowStyle: {
+      control: false,
+    },
+    containerBoxStyle: {
+      control: false,
+    },
+    containerActionsStyle: {
+      control: false,
+    },
+    boxStyle: {
+      control: false,
+    },
+  },
 };
 
 export default meta;
