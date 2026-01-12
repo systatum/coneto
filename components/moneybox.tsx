@@ -5,10 +5,19 @@ import {
   InputHTMLAttributes,
   KeyboardEvent,
   useEffect,
+  useRef,
   useState,
 } from "react";
+import { Button } from "./button";
+import { List } from "./list";
 
 type SeparatorTypeProps = "dot" | "comma";
+
+export interface CurrencyOptionsProps {
+  id: string;
+  name: string;
+  symbol: string;
+}
 
 export interface MoneyboxProps
   extends Omit<
@@ -28,13 +37,15 @@ export interface MoneyboxProps
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
+  editableCurrency?: boolean;
+  currencyOptions?: CurrencyOptionsProps[];
 }
 
 const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
   (
     {
       value,
-      currency = "$",
+      currency = "IDR",
       name,
       label,
       onChange,
@@ -46,11 +57,16 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
       containerStyle,
       labelStyle,
       onKeyDown,
+      editableCurrency,
+      currencyOptions = [
+        { id: "IDR", name: "Indonesian Rupiah", symbol: "Rp" },
+      ],
       ...props
     },
     ref
   ) => {
     const [focus, setFocus] = useState(false);
+    const [isTipMenuOpen, setIsTipMenuOpen] = useState(false);
 
     const [inputValue, setInputValue] = useState(() =>
       formatMoneyboxNumber(
@@ -70,6 +86,12 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
         }
       }
     }, [value, focus]);
+
+    const selectionCurrency = editableCurrency
+      ? currencyOptions.find((props) => props.id === currency)?.symbol
+      : currency;
+
+    const boxRef = useRef<HTMLDivElement>(null);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
       const raw = e.target.value;
@@ -92,12 +114,101 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
         {label && <Label $style={labelStyle}>{label}</Label>}
         <InputContent>
           <Box
+            onBlur={() => setFocus(false)}
+            ref={boxRef}
             $disabled={props.disabled}
             $error={showError}
             $focus={focus}
             $style={style}
           >
-            <Currency>{currency}</Currency>
+            <Button
+              aria-label="currency"
+              open={isTipMenuOpen}
+              onOpen={(prop: boolean) => setIsTipMenuOpen(prop)}
+              anchorRef={boxRef}
+              showSubMenuOn="self"
+              variant="ghost"
+              containerStyle={css`
+                position: absolute;
+                left: 4px;
+                top: 50%;
+                transform: translateY(-50%);
+                ${props.disabled &&
+                css`
+                  cursor: not-allowed;
+                `}
+              `}
+              buttonStyle={css`
+                height: 24px;
+                width: 24px;
+                padding: 0px;
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+                font-size: 12px;
+                ${(!editableCurrency || props.disabled) &&
+                css`
+                  pointer-events: none;
+                  background-color: transparent;
+                `}
+              `}
+              subMenu={
+                editableCurrency && !props.disabled
+                  ? ({ show }) =>
+                      show(
+                        <List
+                          containerStyle={css`
+                            gap: 0px;
+                            border: 1px solid #d1d5db;
+                            max-height: 200px;
+                            overflow: auto;
+                          `}
+                        >
+                          {currencyOptions.map((props) => {
+                            return (
+                              <List.Item
+                                onMouseDown={async () => {
+                                  const syntheticEvent = {
+                                    target: {
+                                      name: "currency",
+                                      value: props.id,
+                                    },
+                                  } as ChangeEvent<HTMLInputElement>;
+                                  await onChange(syntheticEvent);
+
+                                  await setIsTipMenuOpen(false);
+                                }}
+                                id={props.id}
+                                title={props.name}
+                                rowStyle={css`
+                                  border-radius: 0px;
+                                  padding: 0.5rem 0.75rem;
+                                  transition: background-color 0ms;
+                                  overflow: hidden;
+                                `}
+                                titleStyle={css`
+                                  font-size: 12px;
+                                `}
+                                rightSideContent={props.symbol}
+                              />
+                            );
+                          })}
+                        </List>,
+                        {
+                          drawerStyle: css`
+                            background-color: white;
+                            overflow: hidden;
+                            border-radius: 2px;
+                          `,
+                        }
+                      )
+                  : undefined
+              }
+            >
+              {selectionCurrency}
+            </Button>
             <MoneyboxInput
               aria-label="input-moneybox"
               autoComplete="off"
@@ -107,7 +218,6 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
               onChange={handleChange}
               placeholder={placeholder}
               onFocus={() => setFocus(true)}
-              onBlur={() => setFocus(false)}
               onKeyDown={onKeyDown}
               type="text"
               inputMode="decimal"
@@ -175,17 +285,10 @@ const Box = styled.div<{
   ${({ $style }) => $style}
 `;
 
-const Currency = styled.span`
-  position: absolute;
-  left: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-`;
-
 const MoneyboxInput = styled.input<{ $disabled?: boolean }>`
   background: transparent;
   text-align: right;
-  padding-left: 12px;
+  padding-left: 20px;
   outline: none;
   min-width: 0;
   flex: 1;
