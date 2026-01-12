@@ -114,6 +114,7 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
         {label && <Label $style={labelStyle}>{label}</Label>}
         <InputContent>
           <Box
+            onBlur={() => setFocus(false)}
             ref={boxRef}
             $disabled={props.disabled}
             $error={showError}
@@ -176,6 +177,7 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
                                     },
                                   } as ChangeEvent<HTMLInputElement>;
                                   await onChange(syntheticEvent);
+
                                   await setIsTipMenuOpen(false);
                                 }}
                                 id={props.id}
@@ -216,7 +218,6 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
               onChange={handleChange}
               placeholder={placeholder}
               onFocus={() => setFocus(true)}
-              onBlur={() => setFocus(false)}
               onKeyDown={onKeyDown}
               type="text"
               inputMode="decimal"
