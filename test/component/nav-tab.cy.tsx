@@ -12,6 +12,37 @@ import {
 } from "@remixicon/react";
 
 describe("NavTab", () => {
+  context("activeTab", () => {
+    context("when given", () => {
+      it("renders with content active tab", () => {
+        cy.mount(<NavTab tabs={TABS_ITEMS} activeTab={"2"} />);
+        cy.findByText(
+          "This tab is meant to review the content that has been submitted. It includes multiple paragraphs to simulate a longer layout."
+        ).should("be.visible");
+      });
+    });
+
+    context("when not given (undefined)", () => {
+      it("renders without content", () => {
+        cy.mount(<NavTab tabs={TABS_ITEMS} />);
+
+        ["Review Tab", "Write Tab"].map((text) =>
+          cy.findByText(text).should("not.exist")
+        );
+      });
+    });
+
+    context("when given null", () => {
+      it("renders without content", () => {
+        cy.mount(<NavTab tabs={TABS_ITEMS} />);
+
+        ["Review Tab", "Write Tab"].map((text) =>
+          cy.findByText(text).should("not.exist")
+        );
+      });
+    });
+  });
+
   context("actions", () => {
     context("when clicking", () => {
       it("renders the console", () => {
@@ -119,7 +150,7 @@ describe("NavTab", () => {
 
       cy.mount(<NavTab tabs={TABS_ITEMS} activeTab={"2"} />);
       cy.findByText("Write").realHover();
-      cy.findByLabelText("action-button").should("be.visible").click();
+      cy.findAllByLabelText("action-button").eq(0).should("be.visible").click();
       cy.get("@consoleLog").should("have.been.calledWith", "Discover clicked");
     });
 
@@ -131,7 +162,11 @@ describe("NavTab", () => {
 
         cy.mount(<NavTab tabs={TABS_ITEMS} activeTab={"2"} />);
         cy.findByText("Review").realHover();
-        cy.findByLabelText("action-button").should("be.visible").click();
+        cy.findAllByLabelText("action-button")
+          .eq(1)
+          .should("be.visible")
+          .click();
+
         cy.findByText("Mention").should("be.visible").click();
 
         cy.get("@consoleLog").should("have.been.calledWith", "Mention clicked");
