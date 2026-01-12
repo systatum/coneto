@@ -22,9 +22,9 @@ describe("NavTab", () => {
       });
     });
 
-    context("when not given (undefined)", () => {
+    context("when not given", () => {
       it("renders without content", () => {
-        cy.mount(<NavTab tabs={TABS_ITEMS} />);
+        cy.mount(<NavTab tabs={TABS_ITEMS} activeTab={undefined} />);
 
         ["Review Tab", "Write Tab"].map((text) =>
           cy.findByText(text).should("not.exist")
@@ -34,7 +34,7 @@ describe("NavTab", () => {
 
     context("when given null", () => {
       it("renders without content", () => {
-        cy.mount(<NavTab tabs={TABS_ITEMS} />);
+        cy.mount(<NavTab tabs={TABS_ITEMS} activeTab={null} />);
 
         ["Review Tab", "Write Tab"].map((text) =>
           cy.findByText(text).should("not.exist")
