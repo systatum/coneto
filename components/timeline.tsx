@@ -59,15 +59,17 @@ function Timeline({ children, isClickable = false }: TimelineProps) {
             }}
           >
             <IndicatorWrapper>
-              <OuterCircle
-                aria-label="outer-circle-timeline"
-                $color={OUTER_CIRCLE_VARIANT_COLOR[variant]}
-                $isHovered={hoveredIndex === index}
-              />
-              <InnerCircle
-                aria-label="inner-circle-timeline"
-                $color={INNER_CIRCLE_VARIANT_COLOR[variant]}
-              />
+              <CircleWrapper>
+                <OuterCircle
+                  aria-label="outer-circle-timeline"
+                  $color={OUTER_CIRCLE_VARIANT_COLOR[variant]}
+                  $isHovered={hoveredIndex === index}
+                />
+                <InnerCircle
+                  aria-label="inner-circle-timeline"
+                  $color={INNER_CIRCLE_VARIANT_COLOR[variant]}
+                />
+              </CircleWrapper>
               <Divider
                 $line={line}
                 aria-label="timeline-connector"
@@ -89,14 +91,14 @@ function Timeline({ children, isClickable = false }: TimelineProps) {
   );
 }
 
-export const TimelineWrapper = styled.div`
+const TimelineWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
   position: relative;
 `;
 
-export const TimelineContent = styled.div<{ $isClickable: boolean }>`
+const TimelineContent = styled.div<{ $isClickable: boolean }>`
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
@@ -104,7 +106,7 @@ export const TimelineContent = styled.div<{ $isClickable: boolean }>`
   ${({ $isClickable }) => $isClickable && "cursor: pointer;"}
 `;
 
-export const IndicatorWrapper = styled.div`
+const IndicatorWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -112,15 +114,28 @@ export const IndicatorWrapper = styled.div`
   position: relative;
 `;
 
-export const OuterCircle = styled.div<{
+const CircleWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+`;
+
+const OuterCircle = styled.div<{
   $color: string;
   $isHovered: boolean;
 }>`
-  width: 0.25rem;
-  height: 0.25rem;
+  min-width: 0.5rem;
+  min-height: 0.5rem;
+  max-width: 0.5rem;
+  max-height: 0.5rem;
   border-radius: 9999px;
   position: absolute;
-  left: 7px;
+  top: 50%;
+  left: 50%;
+  z-index: 20;
+  transform: translate(-50%, -50%);
 
   transition:
     transform 0.2s ease,
@@ -129,29 +144,34 @@ export const OuterCircle = styled.div<{
   ${({ $isHovered, $color }) =>
     $isHovered &&
     css`
-      transform: scale(3) translateY(0.6px);
+      transform: translate(-50%, -50%) scale(1.5);
       background-color: ${$color};
     `}
 `;
 
-export const InnerCircle = styled.div<{ $color: string }>`
+const InnerCircle = styled.div<{ $color: string }>`
   min-width: 0.5rem;
   min-height: 0.5rem;
   max-width: 0.5rem;
   max-height: 0.5rem;
   border-radius: 9999px;
-  left: 5.4px;
+  top: 50%;
+  left: 50%;
+  z-index: 20;
+  transform: translate(-50%, -50%);
+
   position: absolute;
   background-color: ${(props) => props.$color};
 `;
 
-export const Divider = styled.div<{
+const Divider = styled.div<{
   $color: string;
   $isLast: boolean;
   $line: "solid" | "dash" | "dot";
 }>`
   width: 1px;
   height: 100%;
+  position: absolute;
   background-color: ${({ $line, $color }) =>
     $line === "dash" || $line === "dot" ? "transparent" : $color};
 
@@ -169,7 +189,7 @@ export const Divider = styled.div<{
     `}
 `;
 
-export const ContentWrapper = styled.div<{ $isLast: boolean }>`
+const ContentWrapper = styled.div<{ $isLast: boolean }>`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -250,4 +270,5 @@ const TitleText = styled.span`
 `;
 
 Timeline.Item = TimelineItem;
+
 export { Timeline };
