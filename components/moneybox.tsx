@@ -121,6 +121,7 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
             $style={style}
           >
             <Button
+              aria-label="currency"
               open={isTipMenuOpen}
               onOpen={(prop: boolean) => setIsTipMenuOpen(prop)}
               anchorRef={boxRef}
