@@ -115,7 +115,7 @@ export default meta;
 
 type Story = StoryObj<typeof Moneybox>;
 
-export const WithCurrencyOptions: Story = {
+export const Default: Story = {
   args: {
     value: "2000",
     name: "value",
@@ -149,33 +149,6 @@ export const WithCurrencyOptions: Story = {
         value={currentArgs.value}
         onChange={onChangeValue}
         separator="dot"
-      />
-    );
-  },
-};
-
-export const WithLabel: Story = {
-  args: {
-    value: "2000",
-    name: "value",
-    currency: "$",
-    separator: "dot",
-    label: "Money",
-  },
-  render: (args) => {
-    const [currentArgs, setUpdateArgs] = useArgs();
-    const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
-      const { name, value } = e.target;
-      setUpdateArgs({ ...currentArgs, [name]: value });
-    };
-    return (
-      <Moneybox
-        {...args}
-        style={css`
-          max-width: 300px;
-        `}
-        value={currentArgs.value}
-        onChange={onChangeValue}
       />
     );
   },
