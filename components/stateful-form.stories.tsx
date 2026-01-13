@@ -18,6 +18,7 @@ import styled, { css } from "styled-components";
 import { CapsuleContentProps } from "./capsule";
 import { OptionsProps } from "./selectbox";
 import { Messagebox } from "./messagebox";
+import { CurrencyOptionsProps } from "./moneybox";
 
 const meta: Meta<typeof StatefulForm> = {
   title: "Input Elements/StatefulForm",
@@ -322,6 +323,19 @@ export const AllCase: Story = {
       },
     ];
 
+    const CURRENCY_OPTIONS: CurrencyOptionsProps[] = [
+      { id: "IDR", name: "Indonesian Rupiah", symbol: "Rp" },
+      { id: "USD", name: "US Dollar", symbol: "$" },
+      { id: "EUR", name: "Euro", symbol: "€" },
+      { id: "JPY", name: "Japanese Yen", symbol: "¥" },
+      { id: "GBP", name: "British Pound", symbol: "£" },
+      { id: "SGD", name: "Singapore Dollar", symbol: "$" },
+      { id: "AUD", name: "Australian Dollar", symbol: "$" },
+      { id: "MYR", name: "Malaysian Ringgit", symbol: "RM" },
+      { id: "KRW", name: "South Korean Won", symbol: "₩" },
+      { id: "CNY", name: "Chinese Yuan", symbol: "¥" },
+    ];
+
     interface AllCaseValueProps {
       text: string;
       time: string;
@@ -348,6 +362,7 @@ export const AllCase: Story = {
       signature: string;
       capsule: string;
       country_code?: CountryCodeProps;
+      currency: string;
     }
 
     const [value, setValue] = useState<AllCaseValueProps>({
@@ -376,6 +391,7 @@ export const AllCase: Story = {
       signature: "",
       capsule: "",
       country_code: DEFAULT_COUNTRY_CODES,
+      currency: "USD",
     });
 
     const CAPSULE_TABS: CapsuleContentProps[] = [
@@ -438,7 +454,6 @@ export const AllCase: Story = {
           (arr) =>
             arr.every((val) =>
               FRUIT_OPTIONS.some((opt) => {
-                console.log(opt.value, val);
                 return opt.value === val;
               })
             ),
@@ -526,8 +541,6 @@ export const AllCase: Story = {
         }
       }
     };
-
-    console.log(value);
 
     const onFileDropped = async ({
       error,
@@ -706,6 +719,9 @@ export const AllCase: Story = {
         placeholder: "Enter amount",
         moneyProps: {
           separator: "dot",
+          editableCurrency: true,
+          currencyOptions: CURRENCY_OPTIONS,
+          currency: value.currency,
         },
       },
       {

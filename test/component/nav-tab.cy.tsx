@@ -12,6 +12,64 @@ import {
 } from "@remixicon/react";
 
 describe("NavTab", () => {
+  context("activeTab", () => {
+    context("when given", () => {
+      it("renders with content active tab", () => {
+        cy.mount(<NavTab tabs={TABS_ITEMS} activeTab={"2"} />);
+        cy.findByText(
+          "This tab is meant to review the content that has been submitted. It includes multiple paragraphs to simulate a longer layout."
+        ).should("be.visible");
+
+        cy.findAllByLabelText("nav-tab-item")
+          .eq(1)
+          .should("have.css", "background-color", "rgba(243, 244, 246, 0.5)");
+
+        cy.findAllByLabelText("nav-tab-list")
+          .eq(0)
+          .should("have.css", "background-color", "rgb(59, 130, 246)")
+          .and("have.css", "opacity", "1");
+      });
+    });
+
+    context("when not given", () => {
+      it("renders without content", () => {
+        cy.mount(<NavTab tabs={TABS_ITEMS} activeTab={undefined} />);
+
+        ["Review Tab", "Write Tab"].map((text) =>
+          cy.findByText(text).should("not.exist")
+        );
+
+        cy.findAllByLabelText("nav-tab-item")
+          .eq(1)
+          .should("have.css", "background-color", "rgba(0, 0, 0, 0)");
+
+        cy.findAllByLabelText("nav-tab-list")
+          .eq(0)
+          .should("have.css", "background-color", "rgb(59, 130, 246)")
+          .and("have.css", "opacity", "0");
+      });
+    });
+
+    context("when given null", () => {
+      it("renders without content", () => {
+        cy.mount(<NavTab tabs={TABS_ITEMS} activeTab={null} />);
+
+        ["Review Tab", "Write Tab"].map((text) =>
+          cy.findByText(text).should("not.exist")
+        );
+
+        cy.findAllByLabelText("nav-tab-item")
+          .eq(1)
+          .should("have.css", "background-color", "rgba(0, 0, 0, 0)");
+
+        cy.findAllByLabelText("nav-tab-list")
+          .eq(0)
+          .should("have.css", "background-color", "rgb(59, 130, 246)")
+          .and("have.css", "opacity", "0");
+      });
+    });
+  });
+
   context("actions", () => {
     context("when clicking", () => {
       it("renders the console", () => {

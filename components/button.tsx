@@ -14,6 +14,7 @@ import {
   Placement,
   shift,
   useFloating,
+  size as floatingSize,
 } from "@floating-ui/react";
 import { Tooltip } from "./tooltip";
 import { createPortal } from "react-dom";
@@ -61,6 +62,7 @@ export type ButtonProps = Omit<React.ComponentProps<"button">, "style"> &
     onOpen?: (prop: boolean) => void;
     open?: boolean;
     styles?: ButtonStylesProps;
+    anchorRef?: React.RefObject<HTMLElement>;
   };
 
 interface ButtonStylesProps {
@@ -89,6 +91,7 @@ function Button({
   dialogPlacement = "bottom-left",
   onOpen,
   open,
+  anchorRef,
   ...props
 }: ButtonProps) {
   const [isOpenLocal, setIsOpenLocal] = React.useState(false);
@@ -113,8 +116,25 @@ function Button({
     placement: getFloatingPlacement(dialogPlacement),
     open: isOpen,
     whileElementsMounted: autoUpdate,
-    middleware: [offset(6), flip({ padding: 40 }), shift()],
+    middleware: [
+      offset(6),
+      flip({ padding: 40 }),
+      shift(),
+      floatingSize({
+        apply({ rects, elements }) {
+          Object.assign(elements.floating.style, {
+            width: `${rects.reference.width}px`,
+          });
+        },
+      }),
+    ],
   });
+
+  React.useEffect(() => {
+    if (anchorRef) {
+      refs.setReference(anchorRef.current);
+    }
+  }, []);
 
   const containerRef = React.useRef<HTMLDivElement>(null);
   const safeAreaAriaLabelsLocal: string[] = [
@@ -157,7 +177,9 @@ function Button({
       $disabled={disabled}
       ref={(node: HTMLDivElement | null) => {
         containerRef.current = node;
-        refs.setReference(node);
+        if (!anchorRef) {
+          refs.setReference(node);
+        }
       }}
       $style={styles?.containerStyle}
       $isOpen={isOpen}

@@ -50,7 +50,7 @@ export interface SubMenuNavTab extends Omit<TipMenuItemProps, "onClick"> {
 }
 
 function NavTab({
-  activeTab = "1",
+  activeTab,
   styles,
   actions,
   tabs = [],

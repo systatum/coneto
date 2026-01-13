@@ -994,57 +994,69 @@ function FormFields<T extends FieldValues>({
                   }}
                 />
               ) : field.type === "money" ? (
-                <Moneybox
-                  key={index}
-                  label={field.title}
-                  placeholder={field.placeholder}
-                  ref={(el) => {
-                    if (el) refs.current[field.name] = el;
-                    const { ref } = register(field.name as Path<T>);
-                    if (ref) ref(el);
-                  }}
-                  value={formValues[field.name as keyof T] ?? ""}
-                  required={field.required}
-                  {...register(field.name as Path<T>, {
-                    onChange: (e) => {
-                      if (field.onChange) {
-                        field.onChange(e);
-                      }
-                      if (onChange) {
-                        onChange(field.name as keyof T, e.target.value);
-                      }
-                    },
-                  })}
-                  showError={shouldShowError(field.name)}
-                  errorMessage={
-                    errors[field.name as keyof T]?.message as string | undefined
-                  }
-                  disabled={field.disabled}
-                  {...field.moneyProps}
-                  styles={{
-                    style: css`
-                      ${fieldSize &&
-                      css`
-                        font-size: ${fieldSize};
-                      `}
-                      height: 34px;
-                      ${field.moneyProps?.styles?.style}
-                    `,
-                    labelStyle: css`
-                      ${labelSize &&
-                      css`
-                        font-size: ${labelSize};
-                      `}
-                      ${field.moneyProps?.styles?.labelStyle}
-                    `,
-                    containerStyle: css`
-                      ${field.width &&
-                      css`
-                        width: ${field.width};
-                      `}
-                      ${field.moneyProps?.styles?.containerStyle}
-                    `,
-                  }}
+                <Controller
+                  name={field.name as Path<T>}
+                  control={control}
+                  render={({ field: rhf, fieldState }) => (
+                    <Moneybox
+                      key={index}
+                      ref={(el) => {
+                        if (el) refs.current[field.name] = el;
+                        rhf.ref(el);
+                      }}
+                      label={field.title}
+                      placeholder={field.placeholder}
+                      value={rhf.value ?? ""}
+                      required={field.required}
+                      disabled={field.disabled}
+                      onChange={(e) => {
+                        const { name, value } = e.target;
+
+                        if (field.onChange) {
+                          field.onChange(e);
+                        }
+
+                        if (onChange && name === "currency") {
+                          onChange("currency", value);
+                        } else {
+                          onChange(field.name as keyof T, value);
+                          setValue(field.name as Path<T>, value as any, {
+                            shouldValidate: true,
+                            shouldTouch: true,
+                            shouldDirty: true,
+                          });
+                        }
+                      }}
+                      onBlur={rhf.onBlur}
+                      showError={!!fieldState.error}
+                      errorMessage={fieldState.error?.message}
+                      {...field.moneyProps}
+                      styles={{
+                        style: css`
+                          ${fieldSize &&
+                          css`
+                            font-size: ${fieldSize};
+                          `}
+                          height: 34px;
+                          ${field.moneyProps?.styles?.style}
+                        `,
+                        labelStyle: css`
+                          ${labelSize &&
+                          css`
+                            font-size: ${labelSize};
+                          `}
+                          ${field.moneyProps?.styles?.labelStyle}
+                        `,
+                        containerStyle: css`
+                          ${field.width &&
+                          css`
+                            width: ${field.width};
+                          `}
+                          ${field.moneyProps?.styles?.containerStyle}
+                        `,
+                      }}
+                    />
+                  )}
                 />
               ) : field.type === "date" ? (
                 <Controller
