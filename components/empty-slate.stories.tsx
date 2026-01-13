@@ -26,31 +26,20 @@ const meta: Meta<typeof EmptySlate> = {
         "Optional React node to render interactive elements like buttons.",
     },
     styles: {
-      containerStyle: {
-        control: false,
-        description:
-          "Optional styled-components CSS to customize the root EmptySlate container.",
-      },
-      imageStyle: {
-        control: false,
-        description:
-          "Optional styled-components CSS to customize the image wrapper container.",
-      },
-      contentStyle: {
-        control: false,
-        description:
-          "Optional styled-components CSS to customize the content section layout.",
-      },
-      titleStyle: {
-        control: false,
-        description:
-          "Optional styled-components CSS to customize the title typography and styling.",
-      },
-      subtitleStyle: {
-        control: false,
-        description:
-          "Optional styled-components CSS to customize the subtitle typography and styling.",
-      },
+      description: `
+Custom styles for the Radio component. This object allows you to override styles for individual parts:
+
+- **containerStyle**: Outer wrapper of the Radio
+- **titleStyle**: Title displayed above the radio
+- **inputContainerStyle**: Wrapper for input, icon, and label
+- **self / selfStyle**: Radio input and visual circle
+- **labelStyle**: Label text
+- **descriptionStyle**: Description text below the label
+- **errorStyle**: Error message when validation fails
+
+Each field accepts a \`CSSProp\` (styled-components compatible) and can be used to customize layout, spacing, colors, and other visual properties.
+    `,
+      control: false,
     },
   },
 };

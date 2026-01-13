@@ -11,7 +11,7 @@ export interface EmptySlateProps {
 
 export interface EmptySlateStylesProps {
   containerStyle?: CSSProp;
-  imageStyle?: CSSProp;
+  self?: CSSProp;
   contentStyle?: CSSProp;
   titleStyle?: CSSProp;
   subtitleStyle?: CSSProp;
@@ -27,7 +27,7 @@ function EmptySlate({
   return (
     <Container $style={styles?.containerStyle}>
       {imageUrl && (
-        <ImageWrapper $style={styles?.imageStyle}>
+        <ImageWrapper $style={styles?.self}>
           <StyledImage
             src={imageUrl}
             alt="Image for Empty Slate Coneto Product from Systatum."
