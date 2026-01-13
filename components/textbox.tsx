@@ -142,7 +142,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
 
                 ${dropdown.styles?.containerStyle}
                 `,
-                buttonStyle: css`
+                self: css`
                   font-size: 12px;
                   ${dropdown.width &&
                   css`
@@ -204,7 +204,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
                     z-index: 10;
                     height: 23px;
                   `,
-                  buttonStyle: css`
+                  self: css`
                     padding: 2px;
                     border-radius: 2px;
                     cursor: pointer;
@@ -281,7 +281,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
                 right: ${showError ? "30px" : "8px"};
                 z-index: 10;
               `,
-              buttonStyle: css`
+              self: css`
                 padding: 2px;
                 border-radius: 2px;
                 cursor: pointer;

@@ -21,7 +21,7 @@ export interface ContextMenuProps {
 
 export interface ContextMenuStylesProps {
   containerStyle?: CSSProp;
-  buttonStyle?: CSSProp;
+  self?: CSSProp;
   dropdownStyle?: CSSProp;
 }
 
@@ -41,7 +41,7 @@ export default function ContextMenu({
     variant: "ghost",
     activeBackgroundColor: activeBackgroundColor,
     styles: {
-      buttonStyle: css`
+      self: css`
         padding: 8px;
         width: 32px;
         height: 32px;
@@ -58,7 +58,7 @@ export default function ContextMenu({
             background-color: ${hoverBackgroundColor};
           }
         `}
-      ${styles?.buttonStyle}
+      ${styles?.self}
       `,
       containerStyle: css`
         width: fit-content;

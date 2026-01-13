@@ -162,7 +162,7 @@ export const Default: Story = {
                 <Button
                   disabled={!isFormValid}
                   styles={{
-                    buttonStyle: {
+                    self: {
                       width: "100%",
                       cursor: "pointer",
                       maxWidth: "180px",
@@ -304,7 +304,7 @@ export const Closable: Story = {
               <Button
                 disabled={!isFormValid}
                 styles={{
-                  buttonStyle: {
+                  self: {
                     width: "100%",
                     cursor: "pointer",
                     maxWidth: "180px",
@@ -445,7 +445,7 @@ export const FixedLeft: Story = {
               <Button
                 disabled={!isFormValid}
                 styles={{
-                  buttonStyle: {
+                  self: {
                     width: "100%",
                     cursor: "pointer",
                     maxWidth: "180px",

@@ -954,7 +954,7 @@ export const WithEmptySlate: Story = {
             <Button
               variant="default"
               styles={{
-                buttonStyle: {
+                self: {
                   fontSize: "12px",
                 },
               }}
@@ -964,7 +964,7 @@ export const WithEmptySlate: Story = {
             <Button
               variant="primary"
               styles={{
-                buttonStyle: {
+                self: {
                   fontSize: "12px",
                 },
               }}

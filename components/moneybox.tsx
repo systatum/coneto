@@ -140,7 +140,7 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
                     cursor: not-allowed;
                   `}
                 `,
-                buttonStyle: css`
+                self: css`
                   height: 24px;
                   width: 24px;
                   padding: 0px;

@@ -288,7 +288,7 @@ function NavTab({
                           activeBackgroundColor="#d4d4d4"
                           actions={actionsWithIcons}
                           styles={{
-                            buttonStyle: css`
+                            self: css`
                               width: 16px;
                               height: 16px;
                               padding: 0;

@@ -67,7 +67,7 @@ export type ButtonProps = Omit<React.ComponentProps<"button">, "style"> &
 
 interface ButtonStylesProps {
   dropdownStyle?: CSSProp | ((placement: Placement) => CSSProp);
-  buttonStyle?: CSSProp;
+  self?: CSSProp;
   toggleStyle?: CSSProp;
   containerStyle?: CSSProp;
   dividerStyle?: CSSProp;
@@ -217,7 +217,7 @@ function Button({
             props.onMouseLeave(e);
           }
         }}
-        $style={styles?.buttonStyle}
+        $style={styles?.self}
       >
         {children}
         {isLoading && <LoadingSpinner />}

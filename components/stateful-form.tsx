@@ -411,7 +411,7 @@ function FormFields<T extends FieldValues>({
                       : field.placeholder
                   }
                   styles={{
-                    buttonStyle: css`
+                    self: css`
                       ${field.icon &&
                       css`
                         gap: 2px;
@@ -419,7 +419,7 @@ function FormFields<T extends FieldValues>({
                       width:100%;
                       height: 34px;
                       font-size: ${labelSize ?? "12px"};
-                      ${field.buttonProps?.styles?.buttonStyle};
+                      ${field.buttonProps?.styles?.self};
                     `,
                     containerStyle: css`
                       ${field.width &&

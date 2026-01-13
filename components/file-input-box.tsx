@@ -103,7 +103,7 @@ function FileInputBox({
                     width: fit-content;
                     height: fit-content;
                   `,
-                  buttonStyle: css`
+                  self: css`
                     padding: 2px;
                     width: fit-content;
                     height: fit-content;

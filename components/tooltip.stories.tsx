@@ -208,9 +208,7 @@ export const WithForm: Story = {
             justifyContent: "flex-end",
           }}
         >
-          <Button styles={{ buttonStyle: { fontSize: "0.75rem" } }}>
-            Save
-          </Button>
+          <Button styles={{ self: { fontSize: "0.75rem" } }}>Save</Button>
         </div>
       </div>
     );
@@ -336,9 +334,7 @@ export const WithBadge: Story = {
             justifyContent: "flex-end",
           }}
         >
-          <Button styles={{ buttonStyle: { fontSize: "0.75rem" } }}>
-            Save
-          </Button>
+          <Button styles={{ self: { fontSize: "0.75rem" } }}>Save</Button>
         </div>
       </div>
     );

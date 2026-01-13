@@ -416,7 +416,7 @@ function ListGroup({
       style: css`
         font-size: 11px;
         height: 24px;
-        ${action.styles?.style}
+        ${action.styles?.self}
       `,
       onClick: () => action.onClick && action.onClick?.(id),
     }));
@@ -1050,7 +1050,7 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
                             display: inherit;
                           `}
                         `,
-                        buttonStyle: css`
+                        self: css`
                           ${!subtitle &&
                           css`
                             width: 24px;

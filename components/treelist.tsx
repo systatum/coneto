@@ -891,7 +891,7 @@ function TreeListItem<T extends TreeListItemsProps>({
                         display: inherit;
                       `}
                     `,
-                    buttonStyle: css`
+                    self: css`
                       width: 20px;
                       height: 20px;
                       padding: 0;

@@ -110,23 +110,25 @@ function Messagebox({
       {closable && (
         <Button
           variant="transparent"
-          containerStyle={css`
-            position: absolute;
-            top: 1rem;
-            right: 0.5rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            border-radius: 2px;
-            padding: 2px;
-            width: fit-content;
-            height: fit-content;
-          `}
-          buttonStyle={css`
-            width: fit-content;
-            height: fit-content;
-            padding: 2px;
-            color: ${VARIATION_STYLES[variant].text};
-          `}
+          styles={{
+            containerStyle: css`
+              position: absolute;
+              top: 1rem;
+              right: 0.5rem;
+              cursor: pointer;
+              transition: all 0.3s;
+              border-radius: 2px;
+              padding: 2px;
+              width: fit-content;
+              height: fit-content;
+            `,
+            self: css`
+              width: fit-content;
+              height: fit-content;
+              padding: 2px;
+              color: ${VARIATION_STYLES[variant].text};
+            `,
+          }}
         >
           <RiCloseLine
             role="button"

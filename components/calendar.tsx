@@ -550,7 +550,7 @@ function Calendar({
             <Button
               variant="transparent"
               styles={{
-                buttonStyle: css`
+                self: css`
                   width: fit-content;
                   padding: 0.5rem;
                   font-size: 0.75rem;
@@ -627,7 +627,7 @@ function Calendar({
                   width: fit-content;
                   height: fit-content;
                 `,
-                buttonStyle: css`
+                self: css`
                   width: fit-content;
                   height: fit-content;
                   padding: 2px;
@@ -663,7 +663,7 @@ function Calendar({
                   width: fit-content;
                   height: fit-content;
                 `,
-                buttonStyle: css`
+                self: css`
                   width: fit-content;
                   height: fit-content;
                   padding: 0px;
@@ -688,7 +688,7 @@ function Calendar({
                   width: fit-content;
                   height: fit-content;
                 `,
-                buttonStyle: css`
+                self: css`
                   width: fit-content;
                   height: fit-content;
                   padding: 0px;
@@ -710,7 +710,7 @@ function Calendar({
             variant="outline"
             aria-label="today-button"
             styles={{
-              buttonStyle: css`
+              self: css`
                 border-color: #f3f4f6;
                 width: 100%;
                 max-height: 34px;

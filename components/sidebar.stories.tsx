@@ -104,7 +104,7 @@ export const Default: Story = {
                       <Button
                         variant="default"
                         styles={{
-                          buttonStyle: {
+                          self: {
                             fontSize: "12px",
                           },
                         }}
@@ -114,7 +114,7 @@ export const Default: Story = {
                       <Button
                         variant="primary"
                         styles={{
-                          buttonStyle: {
+                          self: {
                             fontSize: "12px",
                           },
                         }}
@@ -243,7 +243,7 @@ export const FixedRight: Story = {
                       <Button
                         variant="default"
                         styles={{
-                          buttonStyle: {
+                          self: {
                             fontSize: "12px",
                           },
                         }}
@@ -253,7 +253,7 @@ export const FixedRight: Story = {
                       <Button
                         variant="primary"
                         styles={{
-                          buttonStyle: {
+                          self: {
                             fontSize: "12px",
                           },
                         }}

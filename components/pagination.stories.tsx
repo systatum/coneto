@@ -25,25 +25,27 @@ const meta: Meta<typeof Pagination> = {
       description: "Show page numbers and combobox",
       defaultValue: true,
     },
-    style: {
-      control: "object",
-      description: "Custom CSS for pagination wrapper",
-      table: {
-        category: "Styles",
+    styles: {
+      style: {
+        control: "object",
+        description: "Custom CSS for pagination wrapper",
+        table: {
+          category: "Styles",
+        },
       },
-    },
-    buttonStyle: {
-      control: "object",
-      description: "Custom CSS for pagination buttons",
-      table: {
-        category: "Styles",
+      buttonStyle: {
+        control: "object",
+        description: "Custom CSS for pagination buttons",
+        table: {
+          category: "Styles",
+        },
       },
-    },
-    selectboxStyle: {
-      control: "object",
-      description: "Custom CSS for combobox",
-      table: {
-        category: "Styles",
+      selectboxStyle: {
+        control: "object",
+        description: "Custom CSS for combobox",
+        table: {
+          category: "Styles",
+        },
       },
     },
   },

@@ -229,7 +229,7 @@ function WindowCell(props: WindowCellProps) {
                   height: fit-content;
                   z-index: 50;
                 `,
-                buttonStyle: css`
+                self: css`
                   width: fit-content;
                   height: fit-content;
                   padding: 2px;

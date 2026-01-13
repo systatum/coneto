@@ -15,7 +15,8 @@ export interface ActionButtonProps {
 }
 
 export interface ActionButtonStylesProps {
-  style?: CSSProp;
+  self?: CSSProp;
+  toggleStyle?: CSSProp;
   dividerStyle?: CSSProp;
   dropdownStyle?: CSSProp;
 }
@@ -38,7 +39,7 @@ export function ActionButton(
       size="sm"
       tipMenuSize="sm"
       styles={{
-        buttonStyle: css`
+        self: css`
           display: flex;
           flex-direction: row;
           gap: 0.25rem;
@@ -67,7 +68,7 @@ export function ActionButton(
             opacity: 0.5;
             cursor: not-allowed;
           }
-          ${props.styles?.style}
+          ${props.styles?.self}
         `,
         toggleStyle: css`
           ${props.subMenu &&
@@ -96,7 +97,7 @@ export function ActionButton(
               opacity: 0.5;
               cursor: not-allowed;
             }
-            ${props.styles?.style}
+            ${props.styles?.toggleStyle}
           `}
         `,
         dividerStyle: css`

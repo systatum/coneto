@@ -211,7 +211,7 @@ export const Default: Story = {
               }}
               size="sm"
               styles={{
-                buttonStyle: {
+                self: {
                   fontSize: "12px",
                 },
               }}
@@ -223,7 +223,7 @@ export const Default: Story = {
               size="sm"
               variant="primary"
               styles={{
-                buttonStyle: {
+                self: {
                   fontSize: "12px",
                 },
               }}
@@ -572,7 +572,7 @@ export const Deletable: Story = {
               }}
               size="sm"
               styles={{
-                buttonStyle: {
+                self: {
                   fontSize: "12px",
                 },
               }}
@@ -584,7 +584,7 @@ export const Deletable: Story = {
               size="sm"
               variant="primary"
               styles={{
-                buttonStyle: {
+                self: {
                   fontSize: "12px",
                 },
               }}
@@ -820,7 +820,7 @@ export const CustomRenderer: Story = {
               }}
               size="sm"
               styles={{
-                buttonStyle: {
+                self: {
                   fontSize: "12px",
                 },
               }}
@@ -832,7 +832,7 @@ export const CustomRenderer: Story = {
               size="sm"
               variant="primary"
               styles={{
-                buttonStyle: {
+                self: {
                   fontSize: "12px",
                 },
               }}
@@ -924,7 +924,7 @@ export const CustomRenderer: Story = {
         >
           <Button
             styles={{
-              buttonStyle: {
+              self: {
                 fontSize: "12px",
               },
             }}

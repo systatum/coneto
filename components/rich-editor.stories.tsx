@@ -132,7 +132,7 @@ This is unordered list
                 dropdownStyle: css`
                   min-width: 200px;
                 `,
-                buttonStyle: css`
+                self: css`
                   min-height: 40px;
                 `,
                 toggleStyle: css`
