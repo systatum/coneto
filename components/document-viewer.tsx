@@ -24,12 +24,12 @@ interface DocumentViewerProps {
   }) => string;
   libPdfJsWorkerSrc?: string;
   zoomPlaceholderText?: string;
-  zoomStyle?: CSSProp;
   styles?: DocumentViewerStylesProps;
 }
 
 interface DocumentViewerStylesProps {
   containerStyle?: CSSProp;
+  zoomStyle?: CSSProp;
   selectionStyle?: CSSProp;
 }
 
@@ -88,7 +88,6 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
       totalPagesText,
       title = "Document",
       zoomPlaceholderText = "zoom your pdf...",
-      zoomStyle,
       libPdfJsWorkerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.54/pdf.worker.min.mjs",
     },
     ref
@@ -502,7 +501,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
                 `,
                 selectboxStyle: css`
                   background-color: white;
-                  ${zoomStyle}
+                  ${styles?.zoomStyle}
                 `,
               }}
               options={SCALE_OPTIONS}

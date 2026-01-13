@@ -215,7 +215,7 @@ export const Default: Story = {
         <Window
           orientation="horizontal"
           styles={{
-            style: css`
+            self: css`
               height: 100vh;
             `,
             dividerStyle: css`
