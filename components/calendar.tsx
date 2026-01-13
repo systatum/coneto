@@ -32,7 +32,7 @@ export interface BaseCalendarProps {
 }
 
 export interface CalendarStylesProps {
-  style?: CSSProp;
+  self?: CSSProp;
   containerStyle?: CSSProp;
 }
 
@@ -102,7 +102,6 @@ function Calendar({
   yearPastReach = 80,
   futurePastReach = 50,
   format = "mm/dd/yyyy",
-  style,
   label,
   showError,
   errorMessage,
@@ -433,6 +432,8 @@ function Calendar({
     }
   };
 
+  console.log(styles?.self);
+
   const emptyCellsCount = new Date(
     currentDate.getFullYear(),
     currentDate.getMonth(),
@@ -518,7 +519,7 @@ function Calendar({
     <CalendarContainer
       $style={
         floatingStyles
-          ? style
+          ? styles?.self
           : css`
               padding: 0.5rem;
               font-size: 0.875rem;
@@ -533,7 +534,7 @@ function Calendar({
               box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
               list-style: none;
               outline: none;
-              ${style}
+              ${styles?.self}
             `
       }
     >

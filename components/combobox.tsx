@@ -98,7 +98,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
           ref={ref}
           highlightOnMatch={highlightOnMatch}
           styles={{
-            selectboxStyle: css`
+            self: css`
               ${styles?.selectboxStyle}
               ${showError &&
               css`
@@ -121,6 +121,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
             return (
               <ComboboxDrawer
                 {...props}
+                styles={styles}
                 inputRef={props.ref}
                 name={name}
                 selectedOptions={selectedOptions}

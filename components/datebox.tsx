@@ -58,7 +58,7 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
           selectedOptions={selectedDates}
           setSelectedOptions={setSelectedDates}
           styles={{
-            selectboxStyle: css`
+            self: css`
               ${styles?.selectboxStyle}
               ${props.showError &&
               css`
@@ -77,6 +77,9 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
               <CalendarDrawer
                 {...rest}
                 {...selectBoxProps}
+                styles={{
+                  containerStyle: styles?.self,
+                }}
                 setSelectedDates={setSelectedDates}
                 selectedDates={selectedDates}
               />

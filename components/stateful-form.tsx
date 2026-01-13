@@ -1121,6 +1121,7 @@ function FormFields<T extends FieldValues>({
                           `}
                           ${field.dateProps?.styles?.containerStyle}
                         `,
+                        self: field?.dateProps?.styles?.self,
                       }}
                     />
                   )}

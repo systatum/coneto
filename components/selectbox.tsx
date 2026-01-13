@@ -62,7 +62,7 @@ export interface SelectboxProps {
 
 export interface SelectboxStylesProps {
   containerStyle?: CSSProp;
-  selectboxStyle?: CSSProp;
+  self?: CSSProp;
 }
 
 export interface DrawerProps extends InteractionModeProps {
@@ -77,7 +77,6 @@ export interface DrawerProps extends InteractionModeProps {
   listRef: MutableRefObject<(HTMLLIElement | null)[]>;
   isOpen: boolean;
   floatingStyles: CSSProperties;
-  style?: CSSProp;
   onClick?: () => void;
 }
 
@@ -295,7 +294,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
         }}
       >
         <Input
-          $style={styles?.selectboxStyle}
+          $style={styles?.self}
           {...getReferenceProps()}
           data-type="selectbox"
           $clearable={clearable}
