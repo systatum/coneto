@@ -91,20 +91,18 @@ const meta: Meta<typeof Moneybox> = {
       description: "Keyboard event handler for the input field.",
     },
     styles: {
-      style: {
-        control: "object",
-        description:
-          "Custom styles for the main input box (border, padding, background, etc).",
-      },
-      containerStyle: {
-        control: "object",
-        description: "Custom styles for the outer container.",
-      },
-      labelStyle: {
-        control: "object",
-        description: "Custom styles for the label.",
-      },
+      control: false,
+      description: `
+Custom styles for this input component. This object allows you to override styles for individual visual parts:
+
+- **style**: Styles applied to the main input box (border, padding, background, focus ring, etc)
+- **containerStyle**: Outer wrapper of the input (layout, spacing, width, alignment)
+- **labelStyle**: Label text styling (font, color, spacing, positioning)
+
+Each field accepts a \`CSSProp\` (styled-components compatible) and can be used to customize layout, colors, spacing, and visual appearance without touching component logic.
+  `,
     },
+
     inputMode: {
       control: "text",
       description:

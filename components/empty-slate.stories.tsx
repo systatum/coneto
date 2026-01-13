@@ -32,13 +32,12 @@ Custom styles for the Radio component. This object allows you to override styles
 - **containerStyle**: Outer wrapper of the Radio
 - **titleStyle**: Title displayed above the radio
 - **inputContainerStyle**: Wrapper for input, icon, and label
-- **self / selfStyle**: Radio input and visual circle
+- **imageStyle**: Radio input and visual circle
 - **labelStyle**: Label text
 - **descriptionStyle**: Description text below the label
 - **errorStyle**: Error message when validation fails
-
-Each field accepts a \`CSSProp\` (styled-components compatible) and can be used to customize layout, spacing, colors, and other visual properties.
-    `,
+...
+`,
       control: false,
     },
   },

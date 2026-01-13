@@ -6,6 +6,62 @@ const meta: Meta<typeof Grid> = {
   title: "Content/Grid",
   component: Grid,
   tags: ["autodocs"],
+  argTypes: {
+    children: {
+      control: false,
+      description: "Grid items. Usually `Grid.Card` components.",
+    },
+    gap: {
+      control: "text",
+      description:
+        "Spacing between grid items. Can be a number (px) or any valid CSS size (e.g. `1rem`, `8px`).",
+    },
+    height: {
+      control: "text",
+      description:
+        "Optional height for the grid container. Accepts number (px) or any valid CSS value.",
+    },
+    width: {
+      control: "text",
+      description:
+        "Optional width for the grid container. Accepts number (px) or any valid CSS value.",
+    },
+    preset: {
+      control: { type: "select" },
+      options: [
+        "1-col",
+        "2-col",
+        "3-col",
+        "4-col",
+        "5-col",
+        "6-col",
+        "13-col",
+        "16-col",
+        "1-to-3",
+        "1-to-4",
+        "2-to-4",
+        "3-to-5",
+        "1-to-6",
+        "auto-fit-400",
+        "auto-fit-350",
+        "auto-fit-300",
+        "auto-fit-250",
+        "auto-fit-200",
+      ],
+      description:
+        "Predefined responsive grid layouts. These control how many columns are shown at different breakpoints.",
+    },
+    containerStyle: {
+      control: false,
+      description: `
+Custom styles for the Grid container.
+
+This allows you to override layout and visual styles of the grid wrapper (e.g. padding, background, borders, max-width, etc).
+
+Accepts a \`CSSProp\` (styled-components compatible).
+    `,
+    },
+  },
 };
 
 export default meta;

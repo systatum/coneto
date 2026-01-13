@@ -6,6 +6,22 @@ const meta: Meta<typeof Launchpad> = {
   title: "Content/Launchpad",
   component: Launchpad,
   tags: ["autodocs"],
+  argTypes: {
+    children: {
+      control: false,
+      description:
+        "Launchpad content. Use `Launchpad.Section` components as children.",
+    },
+    containerStyle: {
+      control: false,
+      description: "Custom CSSProp applied to the root Launchpad container.",
+    },
+    maxSection: {
+      control: "number",
+      description:
+        "Maximum number of sections shown per page. Additional sections will be paginated and swipeable.",
+    },
+  },
 };
 
 export default meta;

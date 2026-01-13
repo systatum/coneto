@@ -43,23 +43,20 @@ const meta: Meta<typeof NavTab> = {
     children: {
       control: false,
     },
-    contentStyle: {
+    styles: {
       control: false,
-    },
-    containerStyle: {
-      control: false,
-    },
-    containerRowStyle: {
-      control: false,
-    },
-    containerBoxStyle: {
-      control: false,
-    },
-    containerActionsStyle: {
-      control: false,
-    },
-    boxStyle: {
-      control: false,
+      description: `
+Custom styles for the NavTab component. This object allows you to override styles for individual structural parts of the navigation layout:
+
+- **containerStyle**: Root wrapper of the NavTab (positioning, sizing, layout of the whole view)
+- **containerRowStyle**: Wrapper for the top navigation bar row (tabs + actions)
+- **containerBoxStyle**: Container that wraps the tab list (background, borders, spacing of the tab strip)
+- **containerActionsStyle**: Right-side container that holds ActionButton components
+- **boxStyle**: Style applied to each tab item (padding, spacing, hover area, typography)
+- **contentStyle**: Wrapper around the rendered tab content below the tab bar
+
+Each field accepts a \`CSSProp\` (styled-components compatible) and can be used to control layout, spacing, colors, borders, and visual behavior without modifying the component’s logic.
+  `,
     },
   },
 };

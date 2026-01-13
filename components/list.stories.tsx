@@ -32,6 +32,109 @@ const meta: Meta<typeof List> = {
   title: "Content/List",
   component: List,
   tags: ["autodocs"],
+  argTypes: {
+    searchable: {
+      control: "boolean",
+      description: "Enables the search input at the top of the list.",
+    },
+    searchValue: {
+      control: "text",
+      description:
+        "Controlled value for the search input. If provided, List becomes controlled.",
+    },
+    onSearchRequested: {
+      control: false,
+      description: "Callback fired when the user types in the search input.",
+    },
+    onSearchKeyDown: {
+      control: false,
+      description: "Keyboard event handler for the search input.",
+    },
+    inputRef: {
+      control: false,
+      description: "Ref forwarded to the internal Searchbox input element.",
+    },
+    children: {
+      control: false,
+      description:
+        "List content. Use `List.Group` and/or `List.Item` as children.",
+    },
+    isLoading: {
+      control: "boolean",
+      description: "Shows a loading overlay above the list when true.",
+    },
+    draggable: {
+      control: "boolean",
+      description: "Enables drag-and-drop reordering of list items.",
+    },
+    selectable: {
+      control: "boolean",
+      description: "Enables checkbox selection for list items.",
+    },
+    alwaysShowDragIcon: {
+      control: "boolean",
+      description:
+        "If true, the drag handle is always visible instead of only on hover.",
+    },
+    openerBehavior: {
+      control: { type: "select" },
+      options: ["any", "onlyOne"],
+      description:
+        "Controls how group open state behaves. `onlyOne` allows only one group open at a time.",
+    },
+    onOpen: {
+      control: false,
+      description:
+        "Callback fired when a group or openable item is opened or closed.",
+    },
+    onDragged: {
+      control: false,
+      description: `
+Callback fired when an item is dragged and dropped.
+
+Receives:
+- **id**: dragged item id
+- **oldGroupId**
+- **newGroupId**
+- **oldPosition**
+- **newPosition**
+    `,
+    },
+    maxItems: {
+      control: "number",
+      description:
+        "Limits the number of visible items and enables the 'Show more' behavior.",
+    },
+    maxItemsWithIcon: {
+      control: "boolean",
+      description:
+        "Whether to show the expand/collapse arrow icon in the Show more button.",
+    },
+    labels: {
+      control: false,
+      description: `
+Custom labels for the maxItems UI.
+
+Supports:
+- **moreItemsText**
+- **lessItemsText**
+    `,
+    },
+    styles: {
+      control: false,
+      description: `
+Custom styles for the List component.
+
+This object allows you to override styles for specific parts:
+
+- **containerStyle** – Root wrapper of the list
+- **maxItemsStyle** – Styles for the "Show more / Show less" button
+- **searchboxStyles** – Forwarded styles for the Searchbox
+
+Each field accepts a \`CSSProp\` (styled-components compatible).
+    `,
+    },
+  },
 };
 
 export default meta;

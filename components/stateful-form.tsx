@@ -597,13 +597,13 @@ function FormFields<T extends FieldValues>({
                           `}
                           ${field.checkboxProps?.styles?.labelStyle}
                         `,
-                        inputStyle: css`
+                        self: css`
                           ${labelSize &&
                           css`
                             width: calc(${labelSize} + 2px);
                             height: calc(${labelSize} + 2px);
                           `}
-                          ${field.checkboxProps?.styles?.inputStyle}
+                          ${field.checkboxProps?.styles?.self}
                         `,
                         iconStyle: css`
                           ${labelSize &&

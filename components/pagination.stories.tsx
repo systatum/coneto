@@ -26,27 +26,16 @@ const meta: Meta<typeof Pagination> = {
       defaultValue: true,
     },
     styles: {
-      containerStyle: {
-        control: "object",
-        description: "Custom CSS for pagination wrapper",
-        table: {
-          category: "Styles",
-        },
-      },
-      buttonStyle: {
-        control: "object",
-        description: "Custom CSS for pagination buttons",
-        table: {
-          category: "Styles",
-        },
-      },
-      selectboxStyle: {
-        control: "object",
-        description: "Custom CSS for combobox",
-        table: {
-          category: "Styles",
-        },
-      },
+      control: false,
+      description: `
+Custom styles for the Pagination component. This object allows you to override styles for individual parts:
+
+- **containerStyle**: Wrapper around the entire pagination (layout, spacing, alignment)
+- **buttonStyle**: Styles applied to each pagination button (size, colors, borders, hover state)
+- **selectboxStyle**: Styles for the page size / page selector combobox
+
+Each field accepts a \`CSSProp\` (styled-components compatible) and can be used to control layout, colors, spacing, borders, and visual appearance.
+  `,
     },
   },
   args: {
