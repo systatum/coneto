@@ -46,7 +46,7 @@ function ModalDialog({
     <Dialog isOpen={isOpen} onVisibilityChange={onVisibilityChange}>
       <Dialog.Content
         styles={{
-          style: css`
+          self: css`
             display: flex;
             flex-direction: column;
             justify-content: center;

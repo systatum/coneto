@@ -80,7 +80,7 @@ export const DialogWithButton: Story = {
         </Dialog.Trigger>
         <Dialog.Content
           styles={{
-            style: css`
+            self: css`
               max-width: 400px;
             `,
           }}
@@ -168,7 +168,7 @@ export const HideCloseButton: Story = {
         <Dialog.Content
           hideClose={args.hideClose}
           styles={{
-            style: css`
+            self: css`
               max-width: 500px;
             `,
           }}

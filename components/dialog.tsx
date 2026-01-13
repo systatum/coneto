@@ -105,7 +105,7 @@ export interface DialogContentProps {
 }
 
 export interface DialogContentStylesProps {
-  style?: CSSProp;
+  self?: CSSProp;
   overlayStyle?: CSSProp;
   closeButtonStyle?: CSSProp;
 }
@@ -149,7 +149,7 @@ function DialogContent({
         $style={styles?.overlayStyle}
         onClick={() => setIsOpen(false)}
       />
-      <StyledContent $isOpen={isOpen} $style={styles?.style}>
+      <StyledContent $isOpen={isOpen} $style={styles?.self}>
         {!hideClose && (
           <Button
             variant="transparent"
