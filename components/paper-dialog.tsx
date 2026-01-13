@@ -30,7 +30,7 @@ export interface PaperDialogProps {
 }
 
 export interface PaperDialogStylesProps {
-  style?: CSSProp;
+  self?: CSSProp;
   tabStyle?: CSSProp;
   tabCloseStyle?: CSSProp;
   paperDialogStyle?: CSSProp;
@@ -128,7 +128,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
               initial={{ x: isLeft ? "-100%" : "100%" }}
               animate={controls}
               $isLeft={isLeft}
-              $style={styles?.style}
+              $style={styles?.self}
             >
               {closable && (
                 <CloseButtonWrapper
