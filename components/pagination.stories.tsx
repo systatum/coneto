@@ -26,7 +26,7 @@ const meta: Meta<typeof Pagination> = {
       defaultValue: true,
     },
     styles: {
-      style: {
+      containerStyle: {
         control: "object",
         description: "Custom CSS for pagination wrapper",
         table: {

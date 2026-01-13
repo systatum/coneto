@@ -13,7 +13,7 @@ export interface PaginationProps {
 }
 
 export interface PaginationStylesProps {
-  style?: CSSProp;
+  containerStyle?: CSSProp;
   buttonStyle?: CSSProp;
   selectboxStyle?: CSSProp;
 }
@@ -56,7 +56,7 @@ function Pagination({
   }, []);
 
   return (
-    <PaginationWrapper $style={styles?.style}>
+    <PaginationWrapper $style={styles?.containerStyle}>
       <PaginationButton
         style={styles?.buttonStyle}
         onClick={handlePrevious}
