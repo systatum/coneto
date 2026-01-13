@@ -461,13 +461,13 @@ function FormFields<T extends FieldValues>({
                   disabled={field.disabled}
                   {...field.timeboxProps}
                   styles={{
-                    inputStyle: css`
+                    self: css`
                       ${fieldSize &&
                       css`
                         font-size: ${fieldSize};
                       `}
                       height: 34px;
-                      ${field.timeboxProps?.styles?.inputStyle}
+                      ${field.timeboxProps?.styles?.self}
                     `,
                     containerStyle: css`
                       ${field.width &&

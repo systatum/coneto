@@ -27,7 +27,7 @@ export interface TimeboxProps {
 
 export interface TimeboxStylesProps {
   containerStyle?: CSSProp;
-  inputStyle?: CSSProp;
+  self?: CSSProp;
   inputWrapperStyle?: CSSProp;
   labelStyle?: CSSProp;
   errorStyle?: CSSProp;
@@ -205,7 +205,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
           onBlur={() => setIsFocused(false)}
           min={0}
           max={24}
-          $inputStyle={styles?.inputStyle}
+          $inputStyle={styles?.self}
           onKeyDown={(e) => {
             const { selectionEnd, value } = e.currentTarget;
 
@@ -234,7 +234,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
           onBlur={() => setIsFocused(false)}
           min={0}
           max={59}
-          $inputStyle={styles?.inputStyle}
+          $inputStyle={styles?.self}
           onKeyDown={(e) => {
             const { selectionStart, selectionEnd, value } = e.currentTarget;
 
@@ -275,7 +275,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
               onBlur={() => setIsFocused(false)}
               min={0}
               max={59}
-              $inputStyle={styles?.inputStyle}
+              $inputStyle={styles?.self}
               onKeyDown={(e) => {
                 const { selectionStart } = e.currentTarget;
                 if (e.key === "Backspace" && selectionStart === 0) {
