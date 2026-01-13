@@ -25,7 +25,7 @@ export interface WindowProps {
 }
 
 export interface WindowStylesProps {
-  style?: CSSProp;
+  self?: CSSProp;
   dividerStyle?: CSSProp;
 }
 
@@ -156,7 +156,7 @@ function Window({
       aria-label="window"
       ref={containerRef}
       $isVertical={isVertical}
-      $style={styles?.style}
+      $style={styles?.self}
     >
       {childrenArray.map((child, index) => (
         <Fragment key={index}>

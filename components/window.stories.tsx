@@ -20,11 +20,11 @@ const meta: Meta<typeof Window> = {
       control: { type: "object" },
     },
     styles: {
-      style: {
+      self: {
         description: "Custom CSS style applied to the window container.",
         control: { type: "object" },
       },
-      dividerStyle: {
+      dividerself: {
         description:
           "Custom CSS style applied to the dividers between window cells.",
         control: { type: "object" },
@@ -57,7 +57,7 @@ export const Default: Story = {
       <Window
         orientation="vertical"
         styles={{
-          style: css`
+          self: css`
             height: 500px;
           `,
         }}
@@ -90,7 +90,7 @@ export const Horizontal: Story = {
       <Window
         orientation="horizontal"
         styles={{
-          style: css`
+          self: css`
             height: 400px;
           `,
         }}
@@ -151,7 +151,7 @@ export const Closable: Story = {
     return (
       <Window
         styles={{
-          style: css`
+          self: css`
             height: 400px;
           `,
         }}
