@@ -54,7 +54,7 @@ export interface PhoneboxProps {
 
 export interface PhoneboxStylesProps {
   containerStyle?: CSSProp;
-  inputStyle?: CSSProp;
+  self?: CSSProp;
   inputWrapperStyle?: CSSProp;
   toggleStyle?: CSSProp;
   labelStyle?: CSSProp;
@@ -252,7 +252,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
           <PhoneInput
             ref={phoneInputRef}
             type="tel"
-            $style={styles?.inputStyle}
+            $style={styles?.self}
             placeholder={placeholder}
             value={phoneNumber}
             onChange={handlePhoneChange}

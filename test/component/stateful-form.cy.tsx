@@ -240,7 +240,7 @@ describe("StatefulForm", () => {
           fileInputBoxProps: {
             accept: "image/jpeg",
             styles: {
-              inputStyle: css`
+              self: css`
                 background-color: wheat;
               `,
             },
@@ -285,7 +285,7 @@ describe("StatefulForm", () => {
               inputWrapperStyle: css`
                 background-color: wheat;
               `,
-              inputStyle: css`
+              self: css`
                 background-color: wheat;
               `,
             },

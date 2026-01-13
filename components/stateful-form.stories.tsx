@@ -658,13 +658,6 @@ export const AllCase: Story = {
         placeholder: "Radio",
         type: "radio",
         required: false,
-        radioProps: {
-          styles: {
-            self: css`
-              width: 200px;
-            `,
-          },
-        },
       },
       {
         name: "color",

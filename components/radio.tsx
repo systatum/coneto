@@ -24,7 +24,6 @@ interface RadioStylesProps {
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
   descriptionStyle?: CSSProp;
-  selfStyle?: CSSProp;
   self?: CSSProp;
   errorStyle?: CSSProp;
   titleStyle?: CSSProp;

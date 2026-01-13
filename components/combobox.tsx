@@ -268,7 +268,7 @@ function ComboboxDrawer({
               iconStyle: css`
                 left: 16px;
               `,
-              style: css`
+              self: css`
                 max-height: 35px;
                 margin-top: 7px;
                 margin-bottom: 7px;

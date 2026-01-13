@@ -260,7 +260,6 @@ function Pinbox({
               onKeyDown={(e) => handleKeyDown(e, index)}
               $isStatic={isStatic}
               $fontSize={fontSize}
-              onChange={() => {}}
               $isAnimate={isAnimate}
             />
             <PinboxIndicator $error={showError} />

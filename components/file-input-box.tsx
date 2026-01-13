@@ -17,7 +17,7 @@ export interface FileInputBoxProps {
 export interface FileInputBoxStylesProps {
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
-  inputStyle?: CSSProp;
+  self?: CSSProp;
 }
 
 function FileInputBox({
@@ -81,7 +81,7 @@ function FileInputBox({
 
   const inputElement: ReactElement = (
     <InputBox
-      $style={styles?.inputStyle}
+      $style={styles?.self}
       $isDragging={isDragging}
       $hasFile={selectedFiles.length > 0}
       onClick={handleBrowseClick}
@@ -168,7 +168,7 @@ const InputBox = styled.div<{
   $isDragging: boolean;
   $hasFile: boolean;
   $isError?: boolean;
-  $inputStyle?: CSSProp;
+  $self?: CSSProp;
   $style?: CSSProp;
 }>`
   padding: 12px;

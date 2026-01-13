@@ -37,6 +37,7 @@ export interface FileDropBoxProps {
   children?: ReactNode;
   styles?: FileDropBoxStylesProps;
 }
+
 export interface FileDropBoxStylesProps {
   containerStyle?: CSSProp;
   dragOverStyle?: CSSProp;

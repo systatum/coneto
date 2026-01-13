@@ -377,6 +377,7 @@ function FormFields<T extends FieldValues>({
                   disabled={field.disabled}
                   {...field.textboxProps}
                   styles={{
+                    ...field.textboxProps?.styles,
                     labelStyle: css`
                       ${labelSize &&
                       css`
@@ -411,6 +412,7 @@ function FormFields<T extends FieldValues>({
                       : field.placeholder
                   }
                   styles={{
+                    ...field.buttonProps?.styles,
                     self: css`
                       ${field.icon &&
                       css`
@@ -461,6 +463,7 @@ function FormFields<T extends FieldValues>({
                   disabled={field.disabled}
                   {...field.timeboxProps}
                   styles={{
+                    ...field.timeboxProps?.styles,
                     self: css`
                       ${fieldSize &&
                       css`
@@ -520,6 +523,7 @@ function FormFields<T extends FieldValues>({
                   disabled={field.disabled}
                   {...field.textareaProps}
                   styles={{
+                    ...field.textareaProps?.styles,
                     labelStyle: css`
                       ${labelSize &&
                       css`
@@ -578,6 +582,7 @@ function FormFields<T extends FieldValues>({
                       disabled={field.disabled}
                       {...field.checkboxProps}
                       styles={{
+                        ...field.checkboxProps?.styles,
                         titleStyle: css`
                           ${labelSize &&
                           css`
@@ -658,6 +663,7 @@ function FormFields<T extends FieldValues>({
                       disabled={field.disabled}
                       {...field.radioProps}
                       styles={{
+                        ...field.radioProps?.styles,
                         labelStyle: css`
                           ${labelSize &&
                           css`
@@ -728,6 +734,7 @@ function FormFields<T extends FieldValues>({
                       disabled={field.disabled}
                       {...field.phoneboxProps}
                       styles={{
+                        ...field.phoneboxProps?.styles,
                         labelStyle: css`
                           ${labelSize &&
                           css`
@@ -782,6 +789,7 @@ function FormFields<T extends FieldValues>({
                       disabled={field.disabled}
                       {...field.colorboxProps}
                       styles={{
+                        ...field.colorboxProps?.styles,
                         labelStyle: css`
                           ${labelSize &&
                           css`
@@ -825,6 +833,7 @@ function FormFields<T extends FieldValues>({
                   })}
                   {...field.fileDropBoxProps}
                   styles={{
+                    ...field.fileDropBoxProps?.styles,
                     labelStyle: css`
                       ${labelSize &&
                       css`
@@ -877,6 +886,7 @@ function FormFields<T extends FieldValues>({
                     }
                   }}
                   styles={{
+                    ...field.fileInputBoxProps?.styles,
                     labelStyle: css`
                       ${labelSize &&
                       css`
@@ -936,6 +946,7 @@ function FormFields<T extends FieldValues>({
                   }
                   {...field.imageboxProps}
                   styles={{
+                    ...field.imageboxProps?.styles,
                     containerStyle: css`
                       ${field.width &&
                       css`
@@ -977,6 +988,7 @@ function FormFields<T extends FieldValues>({
                   disabled={field.disabled}
                   {...field.signboxProps}
                   styles={{
+                    ...field.signboxProps?.styles,
                     labelStyle: css`
                       ${labelSize &&
                       css`
@@ -995,6 +1007,7 @@ function FormFields<T extends FieldValues>({
                 />
               ) : field.type === "money" ? (
                 <Controller
+                  key={index}
                   name={field.name as Path<T>}
                   control={control}
                   render={({ field: rhf, fieldState }) => (
@@ -1032,6 +1045,7 @@ function FormFields<T extends FieldValues>({
                       errorMessage={fieldState.error?.message}
                       {...field.moneyProps}
                       styles={{
+                        ...field.moneyProps?.styles,
                         self: css`
                           ${fieldSize &&
                           css`
@@ -1094,6 +1108,7 @@ function FormFields<T extends FieldValues>({
                       disabled={field.disabled}
                       {...field.dateProps}
                       styles={{
+                        ...field?.dateProps?.styles,
                         selectboxStyle: css`
                           ${fieldSize &&
                           css`
@@ -1160,6 +1175,7 @@ function FormFields<T extends FieldValues>({
                       selectedOptions={controllerField.value}
                       {...field.comboboxProps}
                       styles={{
+                        ...field?.comboboxProps?.styles,
                         selectboxStyle: css`
                           ${fieldSize &&
                           css`
@@ -1208,6 +1224,7 @@ function FormFields<T extends FieldValues>({
                       }}
                       {...field.chipsProps}
                       styles={{
+                        ...field.chipsProps?.styles,
                         labelStyle: css`
                           ${labelSize &&
                           css`
@@ -1256,6 +1273,7 @@ function FormFields<T extends FieldValues>({
                       disabled={field.disabled}
                       {...field.ratingProps}
                       styles={{
+                        ...field.ratingProps?.styles,
                         labelStyle: css`
                           ${labelSize &&
                           css`
@@ -1315,6 +1333,7 @@ function FormFields<T extends FieldValues>({
                       disabled={field.disabled}
                       {...field.thumbFieldProps}
                       styles={{
+                        ...field.thumbFieldProps?.styles,
                         labelStyle: css`
                           ${labelSize &&
                           css`
@@ -1369,6 +1388,7 @@ function FormFields<T extends FieldValues>({
                       disabled={field.disabled}
                       {...field.toggleboxProps}
                       styles={{
+                        ...field.toggleboxProps?.styles,
                         labelStyle: css`
                           ${labelSize &&
                           css`
@@ -1415,6 +1435,7 @@ function FormFields<T extends FieldValues>({
                       }
                       {...field.capsuleProps}
                       styles={{
+                        ...field.capsuleProps?.styles,
                         labelStyle: css`
                           ${labelSize &&
                           css`
