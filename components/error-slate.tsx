@@ -57,14 +57,6 @@ const transformStyles = {
 };
 
 function ErrorSlate({ code, children, title, cubeFaceStyle }: ErrorSlateProps) {
-  const defaultFaceStyle: CSSProperties = {
-    background: "#dd0b0b",
-    borderWidth: "1px",
-    borderColor: "#a80000",
-    borderStyle: "solid",
-    color: "white",
-  };
-
   const FACE_DATA = [
     { face: "front", content: code[0] },
     { face: "back", content: code[0] },
@@ -83,7 +75,6 @@ function ErrorSlate({ code, children, title, cubeFaceStyle }: ErrorSlateProps) {
               aria-label="face-error-slate"
               key={i}
               $transform={face}
-              style={{ ...defaultFaceStyle }}
               $style={cubeFaceStyle}
             >
               {content}
@@ -134,6 +125,10 @@ const Face = styled.div<{
   display: flex;
   align-items: center;
   justify-content: center;
+  background: #dd0b0b;
+  border: 1px solid #a80000;
+  color: white;
+
   ${({ $transform }) => transformStyles[$transform]}
 
   ${({ $style }) => $style}

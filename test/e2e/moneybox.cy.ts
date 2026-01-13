@@ -3,7 +3,7 @@ import { getIdContent } from "test/support/commands";
 describe("Moneybox", () => {
   context("Default", () => {
     beforeEach(() => {
-      cy.visit(getIdContent("input-elements-moneybox--dollar"));
+      cy.visit(getIdContent("input-elements-moneybox--default"));
     });
 
     context("when pressing number", () => {

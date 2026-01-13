@@ -8,7 +8,7 @@ describe("Window", () => {
         <Window
           orientation="horizontal"
           styles={{
-            style: css`
+            self: css`
               height: 500px;
             `,
           }}
@@ -47,7 +47,7 @@ describe("Window", () => {
           <Window
             orientation="horizontal"
             styles={{
-              style: css`
+              self: css`
                 height: 500px;
               `,
             }}
