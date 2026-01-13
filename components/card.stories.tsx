@@ -803,10 +803,12 @@ export const WithHeaderAndFooter: Story = {
           draggable
           onDragged={onDragged}
           onSearchRequested={onChangeValue}
-          containerStyle={css`
-            padding: 16px;
-            min-width: 400px;
-          `}
+          styles={{
+            containerStyle: css`
+              padding: 16px;
+              min-width: 400px;
+            `,
+          }}
         >
           {filteredContent.map((group, index) => {
             return (

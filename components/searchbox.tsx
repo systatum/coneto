@@ -18,7 +18,7 @@ export interface SearchboxProps
 }
 
 export interface SearchboxStylesProps {
-  style?: CSSProp;
+  self?: CSSProp;
   containerStyle?: CSSProp;
   iconStyle?: CSSProp;
 }
@@ -52,7 +52,7 @@ const Searchbox = forwardRef<HTMLInputElement, SearchboxProps>(
             setInputValueLocal(e.target.value);
             onChange(e);
           }}
-          $style={styles?.style}
+          $style={styles?.self}
           {...(props as InputHTMLAttributes<HTMLInputElement>)}
         />
 

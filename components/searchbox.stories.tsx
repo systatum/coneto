@@ -16,7 +16,18 @@ const meta: Meta<typeof Searchbox> = {
       description: "Input value",
     },
     onChange: { action: "changed" },
-    styles: { control: false },
+    styles: {
+      description: `
+Custom styles for the Searchbox component. This object allows you to override styles for individual parts:
+
+- **self**: Styles applied directly to the input element.
+- **containerStyle**: Styles applied to the outer wrapper div.
+- **iconStyle**: Styles applied to the search icon.
+
+Each field accepts a \`CSSProp\` (styled-components compatible). Use it to adjust spacing, colors, or any CSS properties.
+    `,
+      control: false,
+    },
   },
   parameters: {
     layout: "centered",
