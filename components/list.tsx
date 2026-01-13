@@ -965,7 +965,7 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
                     width: 8px;
                     height: 8px;
                   `,
-                  inputStyle: css`
+                  self: css`
                     width: 14px;
                     height: 14px;
                   `,

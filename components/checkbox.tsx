@@ -25,7 +25,7 @@ export interface CheckboxProps
 
 export interface CheckboxStylesProps {
   containerStyle?: CSSProp;
-  inputStyle?: CSSProp;
+  self?: CSSProp;
   inputWrapperStyle?: CSSProp;
   titleStyle?: CSSProp;
   labelStyle?: CSSProp;
@@ -83,7 +83,7 @@ function Checkbox({
             $isError={showError}
             $indeterminate={indeterminate}
             $checked={isChecked}
-            $style={styles?.inputStyle}
+            $style={styles?.self}
             $disabled={props.disabled}
             disabled={props.disabled}
             readOnly

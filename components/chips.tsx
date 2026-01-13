@@ -376,7 +376,7 @@ function ChipsDrawer({
             placeholder={filterPlaceholder}
             value={inputValue}
             styles={{
-              style: {
+              self: {
                 border: "none",
                 minHeight: "34px",
                 borderRadius: 0,
@@ -578,7 +578,7 @@ function ChipsItem({
             width: 14px;
             height: 14px;
           `,
-          inputStyle: css`
+          self: css`
             width: 14px;
             height: 14px;
           `,
