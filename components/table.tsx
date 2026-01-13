@@ -379,7 +379,7 @@ function Table({
                       `}
                     max-height: 33px;
                     `,
-                    style: css`
+                    self: css`
                       background-color: transparent;
                       &:hover {
                         border-color: #61a9f9;
