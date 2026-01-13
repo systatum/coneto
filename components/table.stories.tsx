@@ -170,33 +170,19 @@ const meta: Meta<typeof Table> = {
       },
     },
     styles: {
-      containerStyle: {
-        description: "Custom styles for the table wrapper.",
-        control: false,
-        table: {
-          type: { summary: "CSSProp" },
-        },
-      },
-      tableRowContainerStyle: {
-        description: "Custom styles for scrollable row container.",
-        control: false,
-        table: {
-          type: { summary: "CSSProp" },
-        },
-      },
-      paginationWrapperStyle: {
-        description: "Custom styles for pagination wrapper.",
-        control: false,
-        table: {
-          type: { summary: "CSSProp" },
-        },
-      },
-      paginationNumberStyle: {
-        description: "Custom styles for pagination number text.",
-        control: false,
-        table: {
-          type: { summary: "CSSProp" },
-        },
+      description: `
+Custom styles for the Table component. This object allows you to override styles for individual parts:
+
+- **containerStyle**: Table wrapper
+- **tableRowContainerStyle**: Scrollable row container
+- **paginationWrapperStyle**: Pagination wrapper
+- **paginationNumberStyle**: Pagination number text
+
+Each field accepts a \`CSSProp\` (styled-components compatible) and can be used to customize layout, spacing, colors, and other visual properties.
+    `,
+      control: false,
+      table: {
+        type: { summary: "TableStylesProps" },
       },
     },
   },
