@@ -100,7 +100,7 @@ const meta: Meta<typeof Textbox> = {
         control: false,
         description: "Custom style applied to the label.",
       },
-      style: {
+      self: {
         control: false,
         description: "Custom style applied directly to the input element.",
       },
@@ -126,7 +126,7 @@ export const Input: Story = {
     value: "",
     type: "text",
     styles: {
-      style: css`
+      self: css`
         min-width: 400px;
         max-width: 400px;
       `,
@@ -312,7 +312,7 @@ export const WithAction: Story = {
     value: "",
     type: "text",
     styles: {
-      style: css`
+      self: css`
         min-width: 400px;
         max-width: 400px;
       `,
@@ -366,7 +366,7 @@ export const Password: Story = {
     value: "",
     type: "password",
     styles: {
-      style: css`
+      self: css`
         min-width: 400px;
         max-width: 400px;
       `,
@@ -403,7 +403,7 @@ export const WithErrorMessage: Story = {
     showError: true,
     errorMessage: "This field is required",
     styles: {
-      style: css`
+      self: css`
         min-width: 400px;
         max-width: 400px;
       `,

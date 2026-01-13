@@ -35,7 +35,7 @@ export interface TextboxProps
 export interface TextboxStylesProps {
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
-  style?: CSSProp;
+  self?: CSSProp;
 }
 
 interface DropdownProps {
@@ -168,7 +168,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
           $dropdown={!!dropdowns}
           type={type === "password" && showPassword ? "text" : type}
           $error={showError}
-          $style={styles?.style}
+          $style={styles?.self}
           {...(props as InputHTMLAttributes<HTMLInputElement>)}
         />
         {actions &&

@@ -23,7 +23,7 @@ export interface ThumbFieldProps {
 }
 
 export interface ThumbFieldStylesProps {
-  style?: CSSProp;
+  triggerWrapperStyle?: CSSProp;
   containerStyle?: CSSProp;
   triggerStyle?: CSSProp;
   labelStyle?: CSSProp;
@@ -68,7 +68,7 @@ function ThumbField({
   };
 
   const inputElement: ReactElement = (
-    <InputGroup $style={styles?.style}>
+    <InputGroup $style={styles?.triggerWrapperStyle}>
       <input
         aria-label="thumbfield-input"
         ref={thumbInputRef}

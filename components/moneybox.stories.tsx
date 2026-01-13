@@ -146,7 +146,7 @@ export const Default: Story = {
       <Moneybox
         {...args}
         styles={{
-          style: css`
+          self: css`
             max-width: 300px;
           `,
         }}
@@ -189,7 +189,7 @@ export const ErrorState: Story = {
       <Moneybox
         {...args}
         styles={{
-          style: css`
+          self: css`
             max-width: 300px;
           `,
         }}

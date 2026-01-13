@@ -30,7 +30,7 @@ export interface TextareaProps
 interface TextareaStylesProps {
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
-  style?: CSSProp;
+  self?: CSSProp;
 }
 
 const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
@@ -83,7 +83,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           }}
           rows={rows ?? 3}
           $error={showError}
-          $style={styles?.style}
+          $style={styles?.self}
           {...(props as TextareaHTMLAttributes<HTMLTextAreaElement>)}
         />
         {actionIcon && (

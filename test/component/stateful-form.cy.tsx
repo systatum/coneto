@@ -82,7 +82,7 @@ describe("StatefulForm", () => {
           placeholder: "Enter text",
           textboxProps: {
             styles: {
-              style: css`
+              self: css`
                 background-color: wheat;
               `,
             },
@@ -96,7 +96,7 @@ describe("StatefulForm", () => {
           placeholder: "Enter email address",
           textboxProps: {
             styles: {
-              style: css`
+              self: css`
                 background-color: wheat;
               `,
             },
@@ -113,7 +113,7 @@ describe("StatefulForm", () => {
               inputWrapperStyle: css`
                 background-color: wheat;
               `,
-              inputStyle: css`
+              self: css`
                 background-color: wheat;
               `,
             },
@@ -127,7 +127,7 @@ describe("StatefulForm", () => {
           placeholder: "Enter number",
           textboxProps: {
             styles: {
-              style: css`
+              self: css`
                 background-color: wheat;
               `,
             },
@@ -141,7 +141,7 @@ describe("StatefulForm", () => {
           placeholder: "Enter password",
           textboxProps: {
             styles: {
-              style: css`
+              self: css`
                 background-color: wheat;
               `,
             },
@@ -156,7 +156,7 @@ describe("StatefulForm", () => {
           placeholder: "Enter text here",
           textareaProps: {
             styles: {
-              style: css`
+              self: css`
                 background-color: wheat;
               `,
             },
@@ -183,7 +183,7 @@ describe("StatefulForm", () => {
           placeholder: "Enter the color here",
           colorboxProps: {
             styles: {
-              style: css`
+              self: css`
                 background-color: wheat;
               `,
             },
@@ -253,7 +253,7 @@ describe("StatefulForm", () => {
           required: false,
           imageboxProps: {
             styles: {
-              style: css`
+              self: css`
                 background-color: wheat;
               `,
             },
@@ -268,7 +268,7 @@ describe("StatefulForm", () => {
           moneyProps: {
             separator: "dot",
             styles: {
-              style: css`
+              self: css`
                 background-color: wheat;
               `,
             },

@@ -39,7 +39,7 @@ export interface MoneyboxProps
   currencyOptions?: CurrencyOptionsProps[];
 }
 export interface MoneyboxStylesProps {
-  style?: CSSProp;
+  self?: CSSProp;
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
 }
@@ -120,7 +120,7 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
             $disabled={props.disabled}
             $error={showError}
             $focus={focus}
-            $style={styles?.style}
+            $style={styles?.self}
           >
             <Button
               aria-label="currency"

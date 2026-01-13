@@ -384,13 +384,13 @@ function FormFields<T extends FieldValues>({
                       `}
                       ${field.textboxProps?.styles?.labelStyle}
                     `,
-                    style: css`
+                    self: css`
                       ${fieldSize &&
                       css`
                         font-size: ${fieldSize};
                       `}
                       height: 34px;
-                      ${field.textboxProps?.styles?.style}
+                      ${field.textboxProps?.styles?.self}
                     `,
                     containerStyle: css`
                       ${field.width &&
@@ -527,12 +527,12 @@ function FormFields<T extends FieldValues>({
                       `}
                       ${field.textareaProps?.styles?.labelStyle}
                     `,
-                    style: css`
+                    self: css`
                       ${fieldSize &&
                       css`
                         font-size: ${fieldSize};
                       `}
-                      ${field.textareaProps?.styles?.style}
+                      ${field.textareaProps?.styles?.self}
                     `,
                     containerStyle: css`
                       ${field.width &&
@@ -796,13 +796,13 @@ function FormFields<T extends FieldValues>({
                           `}
                           ${field.colorboxProps?.styles?.containerStyle}
                         `,
-                        style: css`
+                        self: css`
                           ${fieldSize &&
                           css`
                             font-size: ${fieldSize};
                           `}
                           height:34px;
-                          ${field.colorboxProps?.styles?.style}
+                          ${field.colorboxProps?.styles?.self}
                         `,
                       }}
                     />
@@ -1032,13 +1032,13 @@ function FormFields<T extends FieldValues>({
                       errorMessage={fieldState.error?.message}
                       {...field.moneyProps}
                       styles={{
-                        style: css`
+                        self: css`
                           ${fieldSize &&
                           css`
                             font-size: ${fieldSize};
                           `}
                           height: 34px;
-                          ${field.moneyProps?.styles?.style}
+                          ${field.moneyProps?.styles?.self}
                         `,
                         labelStyle: css`
                           ${labelSize &&
@@ -1322,12 +1322,12 @@ function FormFields<T extends FieldValues>({
                           `}
                           ${field.thumbFieldProps?.styles?.labelStyle}
                         `,
-                        style: css`
+                        triggerWrapperStyle: css`
                           ${fieldSize &&
                           css`
                             font-size: ${fieldSize};
                           `}
-                          ${field.thumbFieldProps?.styles?.style}
+                          ${field.thumbFieldProps?.styles?.triggerWrapperStyle}
                         `,
                         containerStyle: css`
                           ${field.width &&

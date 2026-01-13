@@ -15,7 +15,7 @@ export interface ImageboxProps {
 export interface ImageboxStylesProps {
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
-  style?: CSSProp;
+  self?: CSSProp;
 }
 
 const SIZE_STYLES = {
@@ -90,7 +90,7 @@ function Imagebox({
   const inputElement: ReactElement = (
     <InputBox
       aria-label="imagebox-input"
-      $style={styles?.style}
+      $style={styles?.self}
       $dimension={dimension}
       $isDragging={isDragging}
       onClick={handleBrowseClick}

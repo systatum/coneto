@@ -20,7 +20,7 @@ export interface ColorboxProps
 }
 
 export interface ColorboxStylesProps {
-  style?: CSSProp;
+  self?: CSSProp;
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
 }
@@ -46,7 +46,7 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
 
     const inputElement: ReactElement = (
       <ColorInputContainer
-        $style={styles?.style}
+        $style={styles?.self}
         $hovered={hovered}
         $showError={!!showError}
       >
