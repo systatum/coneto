@@ -24,11 +24,11 @@ interface RadioStylesProps {
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
   descriptionStyle?: CSSProp;
-  inputStyle?: CSSProp;
+  selfStyle?: CSSProp;
+  self?: CSSProp;
   errorStyle?: CSSProp;
   titleStyle?: CSSProp;
   inputContainerStyle?: CSSProp;
-  style?: CSSProp;
 }
 
 export interface RadioOptionsProps {
@@ -85,13 +85,13 @@ function Radio({
           $disabled={props.disabled}
           readOnly
           {...props}
-          $style={styles?.style}
+          $style={styles?.self}
           disabled={props.disabled}
         />
         <Circle
           $isRadio={mode === "radio"}
           $error={showError}
-          $style={styles?.inputStyle}
+          $style={styles?.self}
         />
         {Icon && (
           <Icon

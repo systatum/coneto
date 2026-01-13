@@ -669,13 +669,13 @@ function FormFields<T extends FieldValues>({
                           ${labelSize && `font-size: ${labelSize};`}
                           ${field.radioProps?.styles?.titleStyle}
                         `,
-                        inputStyle: css`
+                        self: css`
                           ${fieldSize &&
                           css`
                             width: ${fieldSize};
                             height: ${fieldSize};
                           `}
-                          ${field.radioProps?.styles?.inputStyle}
+                          ${field.radioProps?.styles?.self}
                         `,
                         containerStyle: css`
                           width: 100%;
