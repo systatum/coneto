@@ -15,7 +15,7 @@ const meta: Meta<typeof Frame> = {
       control: "text",
     },
     styles: {
-      style: {
+      containerStyle: {
         description: "Custom class for the frame container",
         control: "text",
       },
@@ -38,7 +38,7 @@ type Story = StoryObj<typeof Frame>;
 export const Default: Story = {
   args: {
     styles: {
-      style: css`
+      containerStyle: css`
         font-size: 14px;
       `,
     },
@@ -53,7 +53,7 @@ export const WithTitle: Story = {
   args: {
     title: "Frame Title",
     styles: {
-      style: css`
+      containerStyle: css`
         font-size: 14px;
       `,
     },
@@ -68,7 +68,7 @@ export const Custom: Story = {
   args: {
     title: "Frame w/ Class",
     styles: {
-      style: css`
+      containerStyle: css`
         font-size: 14px;
         background-color: #f5f5f5;
       `,

@@ -8,13 +8,13 @@ export interface FrameProps {
 }
 
 interface FrameStyles {
-  style?: CSSProp;
+  containerStyle?: CSSProp;
   titleStyle?: CSSProp;
 }
 
 const Frame: React.FC<FrameProps> = ({ title, children, styles }) => {
   return (
-    <FrameContainer $style={styles?.style}>
+    <FrameContainer $style={styles?.containerStyle}>
       {title && (
         <TitleContainer $style={styles?.titleStyle}>
           <TitleOverlay aria-hidden="true" />
