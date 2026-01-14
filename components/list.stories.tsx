@@ -1188,11 +1188,13 @@ export const WithSubcontent: Story = {
                               return (
                                 <StatefulForm
                                   key={i}
-                                  containerStyle={css`
-                                    padding-left: 33px;
-                                    padding-right: 33px;
-                                    padding-bottom: 20px;
-                                  `}
+                                  styles={{
+                                    containerStyle: css`
+                                      padding-left: 33px;
+                                      padding-right: 33px;
+                                      padding-bottom: 20px;
+                                    `,
+                                  }}
                                   formValues={item}
                                   fields={FIELDS(
                                     list.id,
@@ -1335,11 +1337,13 @@ export const WithSubcontent: Story = {
                                 return (
                                   <StatefulForm
                                     key={i}
-                                    containerStyle={css`
-                                      padding-left: 33px;
-                                      padding-right: 33px;
-                                      padding-bottom: 20px;
-                                    `}
+                                    styles={{
+                                      containerStyle: css`
+                                        padding-left: 33px;
+                                        padding-right: 33px;
+                                        padding-bottom: 20px;
+                                      `,
+                                    }}
                                     formValues={item}
                                     fields={FIELDS(
                                       list.id,
