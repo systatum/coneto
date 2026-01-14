@@ -120,13 +120,17 @@ function Button({
       offset(6),
       flip({ padding: 40 }),
       shift(),
-      floatingSize({
-        apply({ rects, elements }) {
-          Object.assign(elements.floating.style, {
-            width: `${rects.reference.width}px`,
-          });
-        },
-      }),
+      ...(anchorRef
+        ? [
+            floatingSize({
+              apply({ rects, elements }) {
+                Object.assign(elements.floating.style, {
+                  width: `${rects.reference.width}px`,
+                });
+              },
+            }),
+          ]
+        : []),
     ],
   });
 
@@ -141,6 +145,7 @@ function Button({
     "combobox-drawer-month",
     "combobox-drawer-year",
     "tip-menu",
+    "list-container",
     ...(safeAreaAriaLabels || []),
   ];
 
