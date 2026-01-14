@@ -1255,7 +1255,8 @@ export const WithSubcontent: Story = {
               styles={{
                 containerStyle: css`
                   padding: 16px;
-                  min-width: 300px;
+                  min-width: 350px;
+                  max-width: 350px;
                 `,
               }}
             >
