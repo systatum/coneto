@@ -23,6 +23,11 @@ export interface ErrorSlateProps {
     | "505";
   children?: ReactNode;
   title?: string;
+  styles?: ErrorSlateStylesProps;
+}
+
+export interface ErrorSlateStylesProps {
+  titleStyle?: CSSProp;
   cubeFaceStyle?: CSSProp;
 }
 
@@ -56,7 +61,7 @@ const transformStyles = {
   `,
 };
 
-function ErrorSlate({ code, children, title, cubeFaceStyle }: ErrorSlateProps) {
+function ErrorSlate({ code, children, title, styles }: ErrorSlateProps) {
   const FACE_DATA = [
     { face: "front", content: code[0] },
     { face: "back", content: code[0] },
@@ -75,7 +80,7 @@ function ErrorSlate({ code, children, title, cubeFaceStyle }: ErrorSlateProps) {
               aria-label="face-error-slate"
               key={i}
               $transform={face}
-              $style={cubeFaceStyle}
+              $style={styles?.cubeFaceStyle}
             >
               {content}
             </Face>
@@ -83,7 +88,7 @@ function ErrorSlate({ code, children, title, cubeFaceStyle }: ErrorSlateProps) {
         </Cube>
       </ErrorSlatePerspective>
 
-      <ErrorSlateTitle>{title}</ErrorSlateTitle>
+      <ErrorSlateTitle $style={styles?.titleStyle}>{title}</ErrorSlateTitle>
       {children}
     </ErrorSlateWrapper>
   );
@@ -134,8 +139,10 @@ const Face = styled.div<{
   ${({ $style }) => $style}
 `;
 
-const ErrorSlateTitle = styled.span`
+const ErrorSlateTitle = styled.span<{ $style?: CSSProp }>`
   font-size: 90px;
+
+  ${({ $style }) => $style}
 `;
 
 export { ErrorSlate };
