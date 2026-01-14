@@ -67,6 +67,7 @@ export default function ContextMenu({
       `,
       dropdownStyle: css`
         margin-top: 2px;
+        min-width: 150px;
         ${styles?.dropdownStyle}
       `,
     },
