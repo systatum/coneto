@@ -506,63 +506,63 @@ function ListGroup({
         </div>
       </HeaderButton>
 
-      {isOpen && <Divider aria-label="divider" />}
+      {opened && <Divider aria-label="divider" />}
 
       <AnimatePresence initial={false}>
-        {childArray.map((child, index) => {
-          const componentChild = child as ReactElement<
-            ListItemProps &
-              ListItemWithId &
-              ListAlwaysShowDragIconProp & {
-                index: number;
-                onDropItem?: (position: number) => void;
-                groupLength?: number;
-              }
-          >;
+        <ListGroupContent
+          key={`list-group-content`}
+          initial="open"
+          animate={opened ? "open" : "collapsed"}
+          exit="collapsed"
+          variants={{
+            open: { opacity: 1, height: "auto" },
+            collapsed: { opacity: 0, height: 0 },
+          }}
+          transition={{ duration: 0.2, ease: "easeInOut" }}
+          $contentStyle={styles?.contentStyle}
+        >
+          {childArray.map((child, index) => {
+            const componentChild = child as ReactElement<
+              ListItemProps &
+                ListItemWithId &
+                ListAlwaysShowDragIconProp & {
+                  index: number;
+                  onDropItem?: (position: number) => void;
+                  groupLength?: number;
+                }
+            >;
 
-          const modifiedChild = cloneElement(componentChild, {
-            draggable: draggable,
-            selectable: selectable,
-            groupId: id,
-            index: index,
-            groupLength: childArray.length,
-            openTipRowId,
-            setOpenTipRowId,
-            alwaysShowDragIcon,
-            onDropItem: (newPosition: number) => {
-              if (dragItem && draggable) {
-                const { id: draggedId, oldGroupId, oldPosition } = dragItem;
+            const modifiedChild = cloneElement(componentChild, {
+              draggable: draggable,
+              selectable: selectable,
+              groupId: id,
+              index: index,
+              groupLength: childArray.length,
+              openTipRowId,
+              setOpenTipRowId,
+              alwaysShowDragIcon,
+              onDropItem: (newPosition: number) => {
+                if (dragItem && draggable) {
+                  const { id: draggedId, oldGroupId, oldPosition } = dragItem;
 
-                onDragged?.({
-                  id: draggedId,
-                  oldGroupId,
-                  newGroupId: id,
-                  oldPosition,
-                  newPosition: newPosition,
-                });
+                  onDragged?.({
+                    id: draggedId,
+                    oldGroupId,
+                    newGroupId: id,
+                    oldPosition,
+                    newPosition: newPosition,
+                  });
 
-                setDragItem(null);
-              }
-            },
-          });
+                  setDragItem(null);
+                }
+              },
+            });
 
-          const isHidden = maxItems && !expanded && index >= maxItems;
+            const isHidden = maxItems && !expanded && index >= maxItems;
 
-          if (maxItems) {
-            return (
-              <ListGroupContent
-                key={`list-group-content-${index}`}
-                initial="open"
-                animate={isOpen ? "open" : "collapsed"}
-                exit="collapsed"
-                variants={{
-                  open: { opacity: 1, height: "auto" },
-                  collapsed: { opacity: 0, height: 0 },
-                }}
-                transition={{ duration: 0.2, ease: "easeInOut" }}
-                $contentStyle={styles?.contentStyle}
-              >
-                <AnimatePresence>
+            if (maxItems) {
+              return (
+                <AnimatePresence key={index}>
                   {!isHidden && (
                     <motion.div
                       aria-label="list-with-max-item"
@@ -577,27 +577,12 @@ function ListGroup({
                     </motion.div>
                   )}
                 </AnimatePresence>
-              </ListGroupContent>
-            );
-          }
+              );
+            }
 
-          return (
-            <ListGroupContent
-              key={`list-group-content-${index}`}
-              initial="open"
-              animate={opened ? "open" : "collapsed"}
-              exit="collapsed"
-              variants={{
-                open: { opacity: 1, height: "auto" },
-                collapsed: { opacity: 0, height: 0 },
-              }}
-              transition={{ duration: 0.2, ease: "easeInOut" }}
-              $contentStyle={styles?.contentStyle}
-            >
-              {modifiedChild}
-            </ListGroupContent>
-          );
-        })}
+            return <Fragment key={index}>{modifiedChild}</Fragment>;
+          })}
+        </ListGroupContent>
 
         {maxItems && childArray.length > maxItems && (
           <ListShowMoreButton
@@ -735,6 +720,8 @@ const ListGroupContent = styled(motion.ul)<{
   flex-direction: column;
   position: relative;
   padding-top: ${({ $isOpen }) => ($isOpen ? "2px" : "0px")};
+  gap: 4px;
+
   ${({ $contentStyle }) => $contentStyle}
 `;
 
