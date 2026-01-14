@@ -643,7 +643,6 @@ const HeaderActions = styled.div`
   color: #343434;
   background: linear-gradient(to bottom, #fbf9f9, #f0f0f0);
   border-bottom: 0.5px solid #e5e7eb;
-  z-index: 100;
   position: relative;
 `;
 
