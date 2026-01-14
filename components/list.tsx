@@ -261,21 +261,25 @@ function List({
 
             const isHidden = maxItems && !expanded && index >= maxItems;
 
+            const isGroup = componentChild.type === List.Group;
+
             const modifiedChild = cloneElement(componentChild, {
               draggable: draggable,
               selectable: selectable,
               openTipRowId,
               setOpenTipRowId,
               alwaysShowDragIcon,
-              maxItems,
-              labels,
-              ...(maxItems &&
-                styles?.maxItemsStyle && {
-                  styles: {
-                    maxItemsStyle: styles?.maxItemsStyle,
-                    ...componentChild.props.styles,
-                  },
-                }),
+              ...(isGroup && {
+                maxItems,
+                labels,
+                ...(maxItems &&
+                  styles?.maxItemsStyle && {
+                    styles: {
+                      maxItemsStyle: styles?.maxItemsStyle,
+                      ...componentChild.props.styles,
+                    },
+                  }),
+              }),
             });
 
             if (maxItems) {
@@ -860,6 +864,7 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
       groupLength,
       index,
       onDropItem,
+
       ...domProps
     } = props as ListItemWithId &
       ListAlwaysShowDragIconProp & {
