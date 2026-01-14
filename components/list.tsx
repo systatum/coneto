@@ -413,11 +413,13 @@ function ListGroup({
     actions &&
     actions?.map((action) => ({
       ...action,
-      style: css`
-        font-size: 11px;
-        height: 24px;
-        ${action.styles?.self}
-      `,
+      styles: {
+        self: css`
+          font-size: 11px;
+          height: 24px;
+          ${action.styles?.self}
+        `,
+      },
       onClick: () => action.onClick && action.onClick?.(id),
     }));
 
