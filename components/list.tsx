@@ -560,6 +560,7 @@ function ListGroup({
                   collapsed: { opacity: 0, height: 0 },
                 }}
                 transition={{ duration: 0.2, ease: "easeInOut" }}
+                $contentStyle={styles?.contentStyle}
               >
                 <AnimatePresence>
                   {!isHidden && (
@@ -591,6 +592,7 @@ function ListGroup({
                 collapsed: { opacity: 0, height: 0 },
               }}
               transition={{ duration: 0.2, ease: "easeInOut" }}
+              $contentStyle={styles?.contentStyle}
             >
               {modifiedChild}
             </ListGroupContent>
