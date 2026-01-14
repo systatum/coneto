@@ -219,9 +219,11 @@ export const Default: Story = {
           onChange={({ currentState }) => {
             setValue((prev) => ({ ...prev, ...currentState }));
           }}
-          rowStyle={css`
-            align-items: end;
-          `}
+          styles={{
+            rowStyle: css`
+              align-items: end;
+            `,
+          }}
           fields={EMPLOYEE_FIELDS}
           formValues={value}
           validationSchema={employeeSchema}

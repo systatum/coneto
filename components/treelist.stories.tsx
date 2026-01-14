@@ -721,11 +721,13 @@ export const WithoutHeader: Story = {
 
     const contentDialog = (
       <StatefulForm
-        containerStyle={css`
-          min-width: 300px;
-          padding: 8px 8px 4px;
-          background-color: white;
-        `}
+        styles={{
+          containerStyle: css`
+            min-width: 300px;
+            padding: 8px 8px 4px;
+            background-color: white;
+          `,
+        }}
         fields={DIVISION_EMPLOYEE_FIELDS}
         formValues={value}
         onChange={({ currentState }) => setValue(currentState)}

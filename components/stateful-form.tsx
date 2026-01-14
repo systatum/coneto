@@ -69,9 +69,13 @@ interface StatefulFormProps<Z extends ZodTypeAny> {
   labelSize?: string;
   fieldSize?: string;
   onChange?: (args: { currentState: any }) => void;
+  autoFocusField?: string;
+  styles?: StatefulFormStylesProps;
+}
+
+export interface StatefulFormStylesProps {
   containerStyle?: CSSProp;
   rowStyle?: CSSProp;
-  autoFocusField?: string;
 }
 
 export type FormFieldGroup = FormFieldProps | FormFieldProps[];
@@ -122,8 +126,7 @@ function StatefulForm<Z extends ZodTypeAny>({
   fieldSize,
   labelSize,
   onChange,
-  containerStyle,
-  rowStyle,
+  styles,
   autoFocusField,
 }: StatefulFormProps<Z>) {
   const handleFieldChange = (name: keyof TypeOf<Z>, value: FormValueType) => {
@@ -223,8 +226,7 @@ function StatefulForm<Z extends ZodTypeAny>({
         setValue={setValue}
         onChange={handleFieldChange}
         autoFocusField={autoFocusField}
-        rowStyle={rowStyle}
-        containerStyle={containerStyle}
+        styles={styles}
         shouldShowError={(name) => shouldShowError(name as keyof TypeOf<Z>)}
       />
     </>
@@ -276,9 +278,8 @@ interface FormFieldsProps<T extends FieldValues> {
   fieldSize?: string;
   setValue?: UseFormSetValue<T>;
   onChange?: (name: keyof T, value: FormValueType) => void;
-  containerStyle?: CSSProp;
-  rowStyle?: CSSProp;
   autoFocusField?: string;
+  styles?: StatefulFormStylesProps;
 }
 
 function FormFields<T extends FieldValues>({
@@ -292,8 +293,7 @@ function FormFields<T extends FieldValues>({
   labelSize,
   setValue,
   onChange,
-  containerStyle,
-  rowStyle,
+  styles,
   autoFocusField,
 }: FormFieldsProps<T>) {
   const refs = useRef<Record<string, HTMLElement | null>>({});
@@ -308,7 +308,7 @@ function FormFields<T extends FieldValues>({
   }, []);
 
   return (
-    <ContainerFormField $style={containerStyle}>
+    <ContainerFormField $style={styles?.containerStyle}>
       {fields.map((group: FormFieldGroup, indexGroup: number) => {
         const visibleFields = (Array.isArray(group) ? group : [group]).filter(
           (field) => !field.hidden
@@ -326,7 +326,7 @@ function FormFields<T extends FieldValues>({
           <RowFormField
             aria-label="stateful-form-row"
             $style={css`
-              ${rowStyle}
+              ${styles?.rowStyle}
               ${rowJustifiedContent &&
               css`
                 justify-content: ${rowJustifiedContent === "end"

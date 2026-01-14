@@ -169,7 +169,7 @@ describe("StatefulForm", () => {
           required: false,
           checkboxProps: {
             styles: {
-              inputStyle: css`
+              self: css`
                 background-color: wheat;
               `,
             },
