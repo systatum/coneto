@@ -26,12 +26,16 @@ export interface TextboxProps
   label?: string;
   showError?: boolean;
   errorMessage?: string;
-  containerStyle?: CSSProp;
-  labelStyle?: CSSProp;
-  style?: CSSProp;
   onChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   actions?: ActionsProps[];
   dropdowns?: DropdownProps[];
+  styles?: TextboxStylesProps;
+}
+
+export interface TextboxStylesProps {
+  containerStyle?: CSSProp;
+  labelStyle?: CSSProp;
+  self?: CSSProp;
 }
 
 interface DropdownProps {
@@ -39,13 +43,17 @@ interface DropdownProps {
   caption?: string;
   onChange?: (id: string) => void;
   width?: string;
-  drawerStyle?: CSSProp;
-  containerStyle?: CSSProp;
+  styles?: DropdownStylesProps;
   withFilter?: boolean;
   render?: (props: {
     render?: (children?: ReactNode) => ReactNode;
     setCaption?: (caption?: string) => void;
   }) => ReactNode;
+}
+
+interface DropdownStylesProps {
+  drawerStyle?: CSSProp;
+  containerStyle?: CSSProp;
 }
 
 export interface DropdownOptionProps {
@@ -71,9 +79,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
       showError,
       errorMessage,
       onChange,
-      style,
-      containerStyle,
-      labelStyle,
+      styles,
       type = "text",
       dropdowns,
       actions,
@@ -119,34 +125,36 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
               }}
               showSubMenuOn="self"
               variant="outline"
-              containerStyle={css`
-                border-right: 0;
-                border-top-right-radius: 0;
-                border-bottom-right-radius: 0;
-                ${index > 0 &&
-                css`
-                  border-top-left-radius: 0;
-                  border-bottom-left-radius: 0;
-                `}
-                ${dropdown.width &&
-                css`
-                  width: ${dropdown.width};
-                `}
+              styles={{
+                containerStyle: css`
+                  border-right: 0;
+                  border-top-right-radius: 0;
+                  border-bottom-right-radius: 0;
+                  ${index > 0 &&
+                  css`
+                    border-top-left-radius: 0;
+                    border-bottom-left-radius: 0;
+                  `}
+                  ${dropdown.width &&
+                  css`
+                    width: ${dropdown.width};
+                  `}
 
-                ${dropdown.containerStyle}
-              `}
-              buttonStyle={css`
-                font-size: 12px;
-                ${dropdown.width &&
-                css`
-                  width: ${dropdown.width};
-                `}
-                ${dropdown.containerStyle}
-              `}
-              dropdownStyle={css`
-                min-width: 200px;
-                ${dropdown.drawerStyle}
-              `}
+                ${dropdown.styles?.containerStyle}
+                `,
+                self: css`
+                  font-size: 12px;
+                  ${dropdown.width &&
+                  css`
+                    width: ${dropdown.width};
+                  `}
+                  ${dropdown.styles?.containerStyle}
+                `,
+                dropdownStyle: css`
+                  min-width: 200px;
+                  ${dropdown.styles?.drawerStyle}
+                `,
+              }}
             >
               {dropdown.caption}
             </Button>
@@ -160,7 +168,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
           $dropdown={!!dropdowns}
           type={type === "password" && showPassword ? "text" : type}
           $error={showError}
-          $style={style}
+          $style={styles?.self}
           {...(props as InputHTMLAttributes<HTMLInputElement>)}
         />
         {actions &&
@@ -187,66 +195,70 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
                   }
                 }}
                 disabled={props.disabled}
-                containerStyle={css`
-                  position: absolute;
-                  top: 50%;
-                  transform: translateY(-50%);
-                  right: ${`${offset}px`};
-                  z-index: 10;
-                  height: 23px;
-                `}
-                buttonStyle={css`
-                  padding: 2px;
-                  border-radius: 2px;
-                  cursor: pointer;
-                  background: transparent;
-                  position: relative;
-                  z-index: 10;
-                  height: 23px;
-                  color: ${showError
-                    ? "#f87171"
-                    : props.iconColor
-                      ? props.iconColor
-                      : "#6b7280"};
-
-                  &:hover {
+                styles={{
+                  containerStyle: css`
+                    position: absolute;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    right: ${`${offset}px`};
+                    z-index: 10;
+                    height: 23px;
+                  `,
+                  self: css`
+                    padding: 2px;
+                    border-radius: 2px;
+                    cursor: pointer;
+                    background: transparent;
+                    position: relative;
+                    z-index: 10;
+                    height: 23px;
                     color: ${showError
-                      ? "#ef4444"
+                      ? "#f87171"
                       : props.iconColor
                         ? props.iconColor
-                        : "#374151"};
-                  }
-                `}
+                        : "#6b7280"};
+
+                    &:hover {
+                      color: ${showError
+                        ? "#ef4444"
+                        : props.iconColor
+                          ? props.iconColor
+                          : "#374151"};
+                    }
+                  `,
+                }}
               >
                 <Tooltip
-                  containerStyle={css`
-                    cursor: pointer;
-                    pointer-events: none;
-                  `}
                   key={index}
-                  arrowStyle={(placement) => css`
-                    ${placement === "bottom-start"
-                      ? css`
-                          margin-left: 2px;
-                          margin-top: 6px;
-                        `
-                      : placement === "bottom-end"
+                  styles={{
+                    containerStyle: css`
+                      cursor: pointer;
+                      pointer-events: none;
+                    `,
+                    arrowStyle: (placement) => css`
+                      ${placement === "bottom-start"
                         ? css`
-                            margin-right: 2px;
+                            margin-left: 2px;
                             margin-top: 6px;
                           `
-                        : placement === "top-start"
+                        : placement === "bottom-end"
                           ? css`
-                              margin-left: 2px;
-                              margin-bottom: 6px;
+                              margin-right: 2px;
+                              margin-top: 6px;
                             `
-                          : placement === "top-end"
+                          : placement === "top-start"
                             ? css`
-                                margin-right: 2px;
+                                margin-left: 2px;
                                 margin-bottom: 6px;
                               `
-                            : null}
-                  `}
+                            : placement === "top-end"
+                              ? css`
+                                  margin-right: 2px;
+                                  margin-bottom: 6px;
+                                `
+                              : null}
+                    `,
+                  }}
                   showDelayPeriod={titleShowDelay}
                   dialog={props.title}
                 >
@@ -261,25 +273,27 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => setShowPassword((prev) => !prev)}
             aria-label="toggle-password"
-            containerStyle={css`
-              position: absolute;
-              top: 50%;
-              transform: translateY(-50%);
-              right: ${showError ? "30px" : "8px"};
-              z-index: 10;
-            `}
-            buttonStyle={css`
-              padding: 2px;
-              border-radius: 2px;
-              cursor: pointer;
-              background: transparent;
-              z-index: 10;
-              height: 25px;
-              color: ${showError ? "#f87171" : "#6b7280"};
-              &:hover {
-                color: ${showError ? "#ef4444" : "#374151"};
-              }
-            `}
+            styles={{
+              containerStyle: css`
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                right: ${showError ? "30px" : "8px"};
+                z-index: 10;
+              `,
+              self: css`
+                padding: 2px;
+                border-radius: 2px;
+                cursor: pointer;
+                background: transparent;
+                z-index: 10;
+                height: 25px;
+                color: ${showError ? "#f87171" : "#6b7280"};
+                &:hover {
+                  color: ${showError ? "#ef4444" : "#374151"};
+                }
+              `,
+            }}
           >
             {showPassword ? (
               <RiEyeLine size={22} />
@@ -304,9 +318,9 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
     );
 
     return (
-      <Container $style={containerStyle}>
+      <Container $style={styles?.containerStyle}>
         {label && (
-          <Label $style={labelStyle} htmlFor={inputId}>
+          <Label $style={styles?.labelStyle} htmlFor={inputId}>
             {label}
           </Label>
         )}

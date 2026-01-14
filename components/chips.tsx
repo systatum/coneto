@@ -36,6 +36,7 @@ export type ChipsProps = BaseChipsProps & {
   errorMessage?: string;
   type?: string;
   name?: string;
+  styles?: ChipsStylesProps;
 };
 interface BaseChipsProps {
   options?: BadgeProps[];
@@ -43,13 +44,6 @@ interface BaseChipsProps {
   setInputValue?: (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
-  chipsContainerStyle?: CSSProp;
-  chipContainerStyle?: CSSProp;
-  chipSelectedStyle?: CSSProp;
-  chipStyle?: CSSProp;
-  labelStyle?: CSSProp;
-  chipsDrawerStyle?: CSSProp;
-  containerStyle?: CSSProp;
   filterPlaceholder?: string;
   missingOptionLabel?: string;
   creatable?: boolean;
@@ -60,6 +54,16 @@ interface BaseChipsProps {
     | ((props?: MissingOptionFormProps) => ReactNode);
   emptySlate?: ReactNode;
   renderer?: (props: ChipRendererProps) => ReactNode;
+}
+
+export interface ChipsStylesProps {
+  chipsContainerStyle?: CSSProp;
+  chipContainerStyle?: CSSProp;
+  chipSelectedStyle?: CSSProp;
+  chipStyle?: CSSProp;
+  labelStyle?: CSSProp;
+  chipsDrawerStyle?: CSSProp;
+  containerStyle?: CSSProp;
 }
 
 export interface ChipRendererProps {
@@ -121,7 +125,7 @@ function Chips(props: ChipsProps) {
 
   const inputElement: ReactElement = (
     <>
-      <InputGroup $containerStyle={props.chipsContainerStyle}>
+      <InputGroup $containerStyle={props?.styles?.chipsContainerStyle}>
         {CLICKED_OPTIONS.map((data) =>
           typeof props.renderer === "function" ? (
             props.renderer({
@@ -141,7 +145,7 @@ function Chips(props: ChipsProps) {
               circleColor={data.circleColor}
               badgeStyle={css`
                 border-radius: 4px;
-                ${props.chipSelectedStyle}
+                ${props.styles?.chipSelectedStyle}
               `}
               textColor={data.textColor}
               caption={data.caption}
@@ -172,8 +176,10 @@ function Chips(props: ChipsProps) {
   );
 
   return (
-    <InputWrapper $style={props.containerStyle}>
-      {props.label && <Label $style={props.labelStyle}>{props.label}</Label>}
+    <InputWrapper $style={props.styles?.containerStyle}>
+      {props.label && (
+        <Label $style={props.styles?.labelStyle}>{props.label}</Label>
+      )}
       <InputContent>
         {inputElement}
         {props.showError && props.errorMessage && (
@@ -259,9 +265,6 @@ function ChipsDrawer({
   getFloatingProps,
   refs,
   setHasInteracted,
-  chipStyle,
-  chipContainerStyle,
-  chipsDrawerStyle,
   filterPlaceholder = "Change or add labels...",
   inputValue,
   missingOptionLabel = "Create a new label:",
@@ -273,6 +276,7 @@ function ChipsDrawer({
   missingOptionForm,
   emptySlate,
   name = "chips",
+  styles,
 }: ChipsDrawerProps) {
   const [hovered, setHovered] = useState<string | null>(null);
   const [mode, setMode] = useState<"idle" | "create">("idle");
@@ -359,7 +363,7 @@ function ChipsDrawer({
       style={floatingStyles}
       tabIndex={-1}
       role="listbox"
-      $style={chipsDrawerStyle}
+      $style={styles?.chipsDrawerStyle}
       onKeyDown={handleKeyDown}
     >
       {mode === "idle" && (
@@ -371,10 +375,12 @@ function ChipsDrawer({
             aria-label="chip-input-box"
             placeholder={filterPlaceholder}
             value={inputValue}
-            style={{
-              border: "none",
-              minHeight: "34px",
-              borderRadius: 0,
+            styles={{
+              self: {
+                border: "none",
+                minHeight: "34px",
+                borderRadius: 0,
+              },
             }}
             autoComplete="off"
             onChange={(e) => {
@@ -435,13 +441,13 @@ function ChipsDrawer({
 
                       <Chips.Item
                         badge={data}
-                        chipContainerStyle={chipContainerStyle}
+                        chipContainerStyle={styles?.chipContainerStyle}
                         hovered={hovered}
                         isClicked={isClicked}
                         inputRef={inputRef}
                         setHovered={setHovered}
                         onOptionClicked={onOptionClicked}
-                        chipStyle={chipStyle}
+                        chipStyle={styles?.chipStyle}
                       />
                     </div>
                   );
@@ -567,22 +573,24 @@ function ChipsItem({
     >
       <Checkbox
         checked={isClicked}
-        boxStyle={css`
-          width: 14px;
-          height: 14px;
-        `}
-        inputStyle={css`
-          width: 14px;
-          height: 14px;
-        `}
-        containerStyle={css`
-          margin-bottom: 1px;
-          width: fit-content;
-        `}
-        iconStyle={css`
-          min-width: 9px;
-          min-height: 9px;
-        `}
+        styles={{
+          boxStyle: css`
+            width: 14px;
+            height: 14px;
+          `,
+          self: css`
+            width: 14px;
+            height: 14px;
+          `,
+          containerStyle: css`
+            margin-bottom: 1px;
+            width: fit-content;
+          `,
+          iconStyle: css`
+            min-width: 9px;
+            min-height: 9px;
+          `,
+        }}
         readOnly
       />
       <Badge

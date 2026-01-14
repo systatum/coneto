@@ -9,24 +9,26 @@ export interface FileInputBoxProps {
   multiple?: boolean;
   onFilesSelected?: (files: File[]) => void;
   label?: string;
-  containerStyle?: CSSProp;
-  labelStyle?: CSSProp;
-  inputStyle?: CSSProp;
   showError?: boolean;
   errorMessage?: string;
+  styles?: FileInputBoxStylesProps;
+}
+
+export interface FileInputBoxStylesProps {
+  containerStyle?: CSSProp;
+  labelStyle?: CSSProp;
+  self?: CSSProp;
 }
 
 function FileInputBox({
-  containerStyle,
   placeholder = "Drop files here or browse",
   accept = "*",
   multiple = false,
   onFilesSelected,
   label,
-  labelStyle,
   errorMessage,
   showError,
-  inputStyle,
+  styles,
 }: FileInputBoxProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -79,7 +81,7 @@ function FileInputBox({
 
   const inputElement: ReactElement = (
     <InputBox
-      $style={inputStyle}
+      $style={styles?.self}
       $isDragging={isDragging}
       $hasFile={selectedFiles.length > 0}
       onClick={handleBrowseClick}
@@ -95,20 +97,22 @@ function FileInputBox({
             <FileItem key={index}>
               <Button
                 aria-label="delete-button"
-                containerStyle={css`
-                  cursor: pointer;
-                  width: fit-content;
-                  height: fit-content;
-                `}
-                buttonStyle={css`
-                  padding: 2px;
-                  width: fit-content;
-                  height: fit-content;
-                  background-color: white;
-                  &:hover {
-                    background-color: #e5e7eb;
-                  }
-                `}
+                styles={{
+                  containerStyle: css`
+                    cursor: pointer;
+                    width: fit-content;
+                    height: fit-content;
+                  `,
+                  self: css`
+                    padding: 2px;
+                    width: fit-content;
+                    height: fit-content;
+                    background-color: white;
+                    &:hover {
+                      background-color: #e5e7eb;
+                    }
+                  `,
+                }}
                 onClick={(e) => {
                   e.stopPropagation();
                   handleDeleteFile(index);
@@ -135,8 +139,8 @@ function FileInputBox({
   );
 
   return (
-    <InputWrapper $containerStyle={containerStyle}>
-      {label && <Label $style={labelStyle}>{label}</Label>}
+    <InputWrapper $containerStyle={styles?.containerStyle}>
+      {label && <Label $style={styles?.labelStyle}>{label}</Label>}
       <InputContent>
         {inputElement}
         {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
@@ -164,7 +168,7 @@ const InputBox = styled.div<{
   $isDragging: boolean;
   $hasFile: boolean;
   $isError?: boolean;
-  $inputStyle?: CSSProp;
+  $self?: CSSProp;
   $style?: CSSProp;
 }>`
   padding: 12px;

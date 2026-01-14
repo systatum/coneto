@@ -15,14 +15,18 @@ import {
 import styled, { css, CSSProp } from "styled-components";
 import { Button } from "./button";
 
-interface WindowProps {
+export interface WindowProps {
   orientation?: "horizontal" | "vertical";
   children?: ReactNode;
-  style?: CSSProp;
   onResize?: () => void;
   onResizeComplete?: () => void;
-  dividerStyle?: CSSProp;
   initialSizeRatio?: number[];
+  styles?: WindowStylesProps;
+}
+
+export interface WindowStylesProps {
+  self?: CSSProp;
+  dividerStyle?: CSSProp;
 }
 
 export interface WindowCellProps {
@@ -40,10 +44,9 @@ export interface WindowActionProps {
 function Window({
   orientation = "vertical",
   children,
-  style,
+  styles,
   onResize,
   onResizeComplete,
-  dividerStyle,
   initialSizeRatio,
 }: WindowProps) {
   const isVertical = orientation === "vertical";
@@ -153,7 +156,7 @@ function Window({
       aria-label="window"
       ref={containerRef}
       $isVertical={isVertical}
-      $style={style}
+      $style={styles?.self}
     >
       {childrenArray.map((child, index) => (
         <Fragment key={index}>
@@ -167,7 +170,7 @@ function Window({
           )}
           {index < childrenArray.length - 1 && (
             <Divider
-              $style={dividerStyle}
+              $style={styles?.dividerStyle}
               className="divider"
               aria-label={`window-divider`}
               onMouseDown={startDrag(index)}
@@ -213,23 +216,25 @@ function WindowCell(props: WindowCellProps) {
               onClick={() => {
                 if (data.onClick) data.onClick();
               }}
-              containerStyle={css`
-                position: absolute;
-                top: 0.5rem;
-                right: 0.5rem;
-                cursor: pointer;
-                transition: all 0.3s;
-                border-radius: 2px;
-                padding: 2px;
-                width: fit-content;
-                height: fit-content;
-                z-index: 50;
-              `}
-              buttonStyle={css`
-                width: fit-content;
-                height: fit-content;
-                padding: 2px;
-              `}
+              styles={{
+                containerStyle: css`
+                  position: absolute;
+                  top: 0.5rem;
+                  right: 0.5rem;
+                  cursor: pointer;
+                  transition: all 0.3s;
+                  border-radius: 2px;
+                  padding: 2px;
+                  width: fit-content;
+                  height: fit-content;
+                  z-index: 50;
+                `,
+                self: css`
+                  width: fit-content;
+                  height: fit-content;
+                  padding: 2px;
+                `,
+              }}
             >
               {data.icon && <data.icon size={16} />}
             </Button>

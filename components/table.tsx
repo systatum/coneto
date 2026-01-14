@@ -76,6 +76,10 @@ export interface TableProps {
   disableNextPageButton?: boolean;
   labels?: TableLabelsProps;
   sumRow?: SummaryRowProps[];
+  styles?: TableStylesProps;
+}
+
+export interface TableStylesProps {
   containerStyle?: CSSProp;
   tableRowContainerStyle?: CSSProp;
   paginationWrapperStyle?: CSSProp;
@@ -104,13 +108,18 @@ export interface TableRowProps {
   isSelected?: boolean;
   selectable?: boolean;
   handleSelect?: (data: string) => void;
-  rowStyle?: CSSProp;
-  rowCellStyle?: CSSProp;
+
   rowId?: string;
   children?: ReactNode;
   actions?: (columnCaption: string) => TipMenuItemProps[];
   onClick?: (args?: { toggleCheckbox: () => void }) => void;
   groupId?: string;
+  styles?: TableRowStylesProps;
+}
+
+export interface TableRowStylesProps {
+  rowStyle?: CSSProp;
+  rowCellStyle?: CSSProp;
 }
 
 export interface TableRowGroupProps {
@@ -174,12 +183,8 @@ function Table({
   draggable,
   onDragged,
   sumRow,
-  containerStyle,
-  tableRowContainerStyle,
-  paginationWrapperStyle,
-  paginationNumberStyle,
+  styles,
   alwaysShowDragIcon = true,
-  totalSelectedItemTextStyle,
 }: TableProps & TableAlwaysShowDragIconProp) {
   const [dragItem, setDragItem] = useState<{
     oldGroupId: string;
@@ -323,7 +328,7 @@ function Table({
   return (
     <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
       <TableColumnContext.Provider value={columns}>
-        <Wrapper $containerStyle={containerStyle}>
+        <Wrapper $containerStyle={styles?.containerStyle}>
           {((selectedData.length > 0 &&
             labels?.totalSelectedItemText !== null) ||
             showPagination ||
@@ -362,27 +367,29 @@ function Table({
               )}
               {searchable && (
                 <Searchbox
-                  containerStyle={css`
-                    ${actions &&
-                    css`
-                      margin-left: 40px;
-                    `}
-                    ${(showPagination || selectable) &&
-                    css`
-                      margin-right: 40px;
-                    `}
+                  styles={{
+                    containerStyle: css`
+                      ${actions &&
+                      css`
+                        margin-left: 40px;
+                      `}
+                      ${(showPagination || selectable) &&
+                      css`
+                        margin-right: 40px;
+                      `}
                     max-height: 33px;
-                  `}
-                  style={css`
-                    background-color: transparent;
-                    &:hover {
-                      border-color: #61a9f9;
-                      background-color: white;
-                    }
-                    &:focus {
-                      background-color: white;
-                    }
-                  `}
+                    `,
+                    self: css`
+                      background-color: transparent;
+                      &:hover {
+                        border-color: #61a9f9;
+                        background-color: white;
+                      }
+                      &:focus {
+                        background-color: white;
+                      }
+                    `,
+                  }}
                   name="search"
                   onChange={(e) => {
                     if (searchable) onSearchboxChange?.(e);
@@ -392,12 +399,12 @@ function Table({
               {(selectable || showPagination) && (
                 <PaginationInfo
                   aria-label="pagination-wrapper"
-                  $style={paginationWrapperStyle}
+                  $style={styles?.paginationWrapperStyle}
                 >
                   {showPagination && (
                     <PaginationNumber
                       aria-label="pagination-number"
-                      $style={paginationNumberStyle}
+                      $style={styles?.paginationNumberStyle}
                     >
                       {typeof labels.pageNumberText === "number"
                         ? `Pg. ${labels.pageNumberText}`
@@ -407,7 +414,7 @@ function Table({
                   {selectable && (
                     <PaginationSelectedItem
                       aria-label="pagination-selected-item"
-                      $style={totalSelectedItemTextStyle}
+                      $style={styles?.totalSelectedItemTextStyle}
                     >
                       {labels?.totalSelectedItemText
                         ? labels?.totalSelectedItemText(selectedData.length)
@@ -424,9 +431,11 @@ function Table({
               {selectable && (
                 <CheckboxWrapper>
                   <Checkbox
-                    boxStyle={css`
-                      width: 100%;
-                    `}
+                    styles={{
+                      boxStyle: css`
+                        width: 100%;
+                      `,
+                    }}
                     onChange={handleSelectAll}
                     checked={allRowSelectedLocal}
                     indeterminate={someSelectedLocal}
@@ -478,18 +487,20 @@ function Table({
                         <Toolbar.Menu
                           closedIcon={RiArrowUpDownLine}
                           openedIcon={RiArrowUpDownLine}
-                          dropdownStyle={css`
-                            min-width: 235px;
-                          `}
-                          triggerStyle={css`
-                            color: black;
-                            &:hover {
+                          styles={{
+                            dropdownStyle: css`
+                              min-width: 235px;
+                            `,
+                            triggerStyle: css`
+                              color: black;
+                              &:hover {
+                                background-color: #d4d4d4;
+                              }
+                            `,
+                            toggleActiveStyle: css`
                               background-color: #d4d4d4;
-                            }
-                          `}
-                          toggleActiveStyle={css`
-                            background-color: #d4d4d4;
-                          `}
+                            `,
+                          }}
                           variant="none"
                           subMenuList={
                             subMenuList ? subMenuList(col.id) : undefined
@@ -506,7 +517,7 @@ function Table({
               <TableRowContainer
                 ref={tableRowContainerRef}
                 aria-label="table-scroll-container"
-                $tableRowContainerStyle={tableRowContainerStyle}
+                $tableRowContainerStyle={styles?.tableRowContainerStyle}
               >
                 {rowChildren}
               </TableRowContainer>
@@ -590,19 +601,21 @@ function ActionCapsule(data: TableActionsProps) {
     <Capsule
       {...data.capsuleProps}
       activeBackgroundColor="rgb(226, 224, 224)"
-      containerStyle={css`
-        box-shadow: none;
-        min-height: 32px;
-        max-height: 32px;
-        border-radius: 6px;
-        font-size: 14px;
-        ${data.capsuleProps.containerStyle}
-      `}
-      tabStyle={css`
-        border-radius: 6px;
-        color: rgb(86, 85, 85);
-        ${data.capsuleProps.tabStyle}
-      `}
+      styles={{
+        containerStyle: css`
+          box-shadow: none;
+          min-height: 32px;
+          max-height: 32px;
+          border-radius: 6px;
+          font-size: 14px;
+          ${data.capsuleProps.styles?.containerStyle}
+        `,
+        tabStyle: css`
+          border-radius: 6px;
+          color: rgb(86, 85, 85);
+          ${data.capsuleProps.styles?.tabStyle}
+        `,
+      }}
     />
   );
 }
@@ -630,7 +643,6 @@ const HeaderActions = styled.div`
   color: #343434;
   background: linear-gradient(to bottom, #fbf9f9, #f0f0f0);
   border-bottom: 0.5px solid #e5e7eb;
-  z-index: 100;
   position: relative;
 `;
 
@@ -952,8 +964,7 @@ function TableRow({
   selectable = false,
   isSelected = false,
   handleSelect,
-  rowStyle,
-  rowCellStyle,
+  styles,
   rowId,
   children,
   actions,
@@ -1027,7 +1038,7 @@ function TableRow({
         }
       }}
       $rowCellStyle={css`
-        ${rowStyle};
+        ${styles?.rowStyle};
         ${onClick &&
         css`
           cursor: pointer;
@@ -1102,9 +1113,11 @@ function TableRow({
             {...props}
             name={rowId}
             value={isSelected ? "true" : "false"}
-            boxStyle={css`
-              width: 100%;
-            `}
+            styles={{
+              boxStyle: css`
+                width: 100%;
+              `,
+            }}
             checked={isSelected}
           />
         </CheckboxWrapper>
@@ -1122,9 +1135,9 @@ function TableRow({
                   isLast
                     ? css`
                         padding-right: 36px;
-                        ${rowCellStyle}
+                        ${styles?.rowCellStyle}
                       `
-                    : rowCellStyle
+                    : styles?.rowCellStyle
                 }
               >
                 {col}
@@ -1174,29 +1187,31 @@ function TableRow({
                 }
               }}
               open={openRowId === rowId}
-              containerStyle={css`
-                width: fit-content;
-                position: absolute;
-                top: 50%;
-                transform: translateY(-50%);
-                z-index: 8;
-                display: none;
+              styles={{
+                containerStyle: css`
+                  width: fit-content;
+                  position: absolute;
+                  top: 50%;
+                  transform: translateY(-50%);
+                  z-index: 8;
+                  display: none;
 
-                ${(isHovered === rowId
-                  ? isHovered === rowId
-                  : openRowId === rowId) &&
-                css`
-                  display: inherit;
-                `}
+                  ${(isHovered === rowId
+                    ? isHovered === rowId
+                    : openRowId === rowId) &&
+                  css`
+                    display: inherit;
+                  `}
 
-                ${draggable
-                  ? css`
-                      right: 2.4rem;
-                    `
-                  : css`
-                      right: 0.5rem;
-                    `}
-              `}
+                  ${draggable
+                    ? css`
+                        right: 2.4rem;
+                      `
+                    : css`
+                        right: 0.5rem;
+                      `}
+                `,
+              }}
               focusBackgroundColor="#d4d4d4"
               hoverBackgroundColor="#d4d4d4"
               activeBackgroundColor="#d4d4d4"

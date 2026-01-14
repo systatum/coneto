@@ -10,15 +10,19 @@ import { ActionButton, ActionButtonProps } from "./action-button";
 export interface NavTabProps {
   tabs?: NavTabContentProps[];
   activeTab?: string;
+  activeColor?: string;
+  children?: ReactNode;
+  actions?: NavTabActionsProps[];
+  styles?: NavTabStylesProps;
+}
+
+export interface NavTabStylesProps {
   contentStyle?: CSSProp;
   containerStyle?: CSSProp;
   containerBoxStyle?: CSSProp;
   containerRowStyle?: CSSProp;
   containerActionsStyle?: CSSProp;
   boxStyle?: CSSProp;
-  activeColor?: string;
-  children?: ReactNode;
-  actions?: NavTabActionsProps[];
 }
 
 export type NavTabActionsProps = ActionButtonProps;
@@ -47,13 +51,8 @@ export interface SubMenuNavTab extends Omit<TipMenuItemProps, "onClick"> {
 
 function NavTab({
   activeTab,
-  containerStyle,
-  contentStyle,
-  boxStyle,
-  containerBoxStyle,
-  containerRowStyle,
+  styles,
   actions,
-  containerActionsStyle,
   tabs = [],
   activeColor = "rgb(59, 130, 246)",
   children,
@@ -141,9 +140,9 @@ function NavTab({
   );
 
   return (
-    <NavTabWrapper $containerStyle={containerStyle}>
-      <NavTabRowWrapper $style={containerRowStyle}>
-        <NavTabHeader $style={containerBoxStyle} ref={containerRef}>
+    <NavTabWrapper $containerStyle={styles?.containerStyle}>
+      <NavTabRowWrapper $style={styles?.containerRowStyle}>
+        <NavTabHeader $style={styles?.containerBoxStyle} ref={containerRef}>
           <NavTabList
             aria-label="nav-tab-list"
             $activeColor={activeColor}
@@ -172,43 +171,45 @@ function NavTab({
                   tooltipRefs.current[index] = el;
                 }}
                 key={props.id}
-                arrowStyle={css`
-                  opacity: 0;
-                  background-color: transparent;
-                `}
-                containerStyle={css`
-                  width: fit-content;
-                `}
-                drawerStyle={(placement) => css`
-                  border-radius: 0px;
-                  padding: 0px;
-                  background-color: white;
-                  color: black;
-                  opacity: 0;
+                styles={{
+                  arrowStyle: css`
+                    opacity: 0;
+                    background-color: transparent;
+                  `,
+                  containerStyle: css`
+                    width: fit-content;
+                  `,
+                  drawerStyle: (placement) => css`
+                    border-radius: 0px;
+                    padding: 0px;
+                    background-color: white;
+                    color: black;
+                    opacity: 0;
 
-                  ${placement === "bottom-start"
-                    ? css`
-                        margin-top: 3px;
-                      `
-                    : placement === "bottom-end"
+                    ${placement === "bottom-start"
                       ? css`
                           margin-top: 3px;
                         `
-                      : placement === "top-start"
+                      : placement === "bottom-end"
                         ? css`
-                            margin-bottom: 3px;
+                            margin-top: 3px;
                           `
-                        : placement === "top-end"
+                        : placement === "top-start"
                           ? css`
                               margin-bottom: 3px;
                             `
-                          : null}
+                          : placement === "top-end"
+                            ? css`
+                                margin-bottom: 3px;
+                              `
+                            : null}
 
-                  ${props.subItems &&
-                  css`
-                    opacity: 1;
-                  `}
-                `}
+                    ${props.subItems &&
+                    css`
+                      opacity: 1;
+                    `}
+                  `,
+                }}
                 dialogPlacement="bottom-left"
                 dialog={
                   <>
@@ -241,7 +242,7 @@ function NavTab({
                 <NavTabItem
                   aria-label="nav-tab-item"
                   key={props.id}
-                  $boxStyle={boxStyle}
+                  $boxStyle={styles?.boxStyle}
                   ref={setTabRef(index)}
                   role="tab"
                   onClick={(e) => {
@@ -286,11 +287,34 @@ function NavTab({
                           hoverBackgroundColor="#d4d4d4"
                           activeBackgroundColor="#d4d4d4"
                           actions={actionsWithIcons}
-                          buttonStyle={css`
-                            width: 16px;
-                            height: 16px;
-                            padding: 0;
-                          `}
+                          styles={{
+                            self: css`
+                              width: 16px;
+                              height: 16px;
+                              padding: 0;
+                            `,
+                            containerStyle: css`
+                              opacity: 0;
+
+                              ${(isHovered === props.id ||
+                                isTipMenuOpen === props.id) &&
+                              css`
+                                opacity: 1;
+                              `};
+
+                              pointer-events: ${isHovered === props.id ||
+                              isTipMenuOpen === props.id
+                                ? "auto"
+                                : "none"};
+                              transition: all 0.3s ease-in-out;
+                              width: fit-content;
+                              position: absolute;
+                              top: 50%;
+                              right: 12px;
+                              transform: translateY(-50%);
+                              z-index: 8;
+                            `,
+                          }}
                           onOpen={(prop: boolean) => {
                             if (prop) {
                               setIsTipMenuOpen(props.id);
@@ -299,27 +323,6 @@ function NavTab({
                             }
                           }}
                           open={isTipMenuOpen === props.id}
-                          containerStyle={css`
-                            opacity: 0;
-
-                            ${(isHovered === props.id ||
-                              isTipMenuOpen === props.id) &&
-                            css`
-                              opacity: 1;
-                            `};
-
-                            pointer-events: ${isHovered === props.id ||
-                            isTipMenuOpen === props.id
-                              ? "auto"
-                              : "none"};
-                            transition: all 0.3s ease-in-out;
-                            width: fit-content;
-                            position: absolute;
-                            top: 50%;
-                            right: 12px;
-                            transform: translateY(-50%);
-                            z-index: 8;
-                          `}
                         />
                       );
                     })()}
@@ -330,7 +333,10 @@ function NavTab({
         </NavTabHeader>
 
         {actions && (
-          <NavTabHeader $actions={!!actions} $style={containerActionsStyle}>
+          <NavTabHeader
+            $actions={!!actions}
+            $style={styles?.containerActionsStyle}
+          >
             {actions.map((props, index) => (
               <ActionButton key={index} {...props} />
             ))}
@@ -338,7 +344,7 @@ function NavTab({
         )}
       </NavTabRowWrapper>
 
-      <NavContent $contentStyle={contentStyle}>
+      <NavContent $contentStyle={styles?.contentStyle}>
         {activeContent.map((props, index) => {
           const selectedItemContent = props.subItems?.find(
             (item) => item.id === selected

@@ -10,23 +10,25 @@ export interface ContextMenuProps {
   actions: ContextMenuActionsProps[];
   onOpen?: (prop: boolean) => void;
   children?: ReactNode;
-  containerStyle?: CSSProp;
-  buttonStyle?: CSSProp;
-  dropdownStyle?: CSSProp;
   focusBackgroundColor?: string;
   activeBackgroundColor?: string;
   hoverBackgroundColor?: string;
   maxActionsBeforeCollapsing?: number;
   iconSize?: number;
   open?: boolean;
+  styles?: ContextMenuStylesProps;
+}
+
+export interface ContextMenuStylesProps {
+  containerStyle?: CSSProp;
+  self?: CSSProp;
+  dropdownStyle?: CSSProp;
 }
 
 export default function ContextMenu({
   children,
   actions,
-  buttonStyle,
-  dropdownStyle,
-  containerStyle,
+  styles,
   activeBackgroundColor,
   hoverBackgroundColor,
   focusBackgroundColor,
@@ -36,38 +38,38 @@ export default function ContextMenu({
   open,
 }: ContextMenuProps) {
   const buttonProps: ButtonProps = {
-    buttonStyle: css`
-      padding: 8px;
-      width: 32px;
-      height: 32px;
-
-      ${focusBackgroundColor &&
-      css`
-        &:focus-visible {
-          background-color: ${focusBackgroundColor};
-        }
-      `}
-
-      ${hoverBackgroundColor &&
-      css`
-        &:hover {
-          background-color: ${hoverBackgroundColor};
-        }
-      `}
-
-    ${buttonStyle}
-    `,
     variant: "ghost",
-    containerStyle: css`
-      width: fit-content;
-      height: fit-content;
-      ${containerStyle}
-    `,
-    dropdownStyle: css`
-      margin-top: 2px;
-      ${dropdownStyle}
-    `,
     activeBackgroundColor: activeBackgroundColor,
+    styles: {
+      self: css`
+        padding: 8px;
+        width: 32px;
+        height: 32px;
+        ${focusBackgroundColor &&
+        css`
+          &:focus-visible {
+            background-color: ${focusBackgroundColor};
+          }
+        `}
+
+        ${hoverBackgroundColor &&
+        css`
+          &:hover {
+            background-color: ${hoverBackgroundColor};
+          }
+        `}
+      ${styles?.self}
+      `,
+      containerStyle: css`
+        width: fit-content;
+        height: fit-content;
+        ${styles?.containerStyle}
+      `,
+      dropdownStyle: css`
+        margin-top: 2px;
+        ${styles?.dropdownStyle}
+      `,
+    },
   };
 
   if (actions.length <= maxActionsBeforeCollapsing) {

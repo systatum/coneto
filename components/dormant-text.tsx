@@ -20,9 +20,6 @@ import {
 import styled, { css, CSSProp } from "styled-components";
 
 export interface DormantTextProps {
-  dormantedStyle?: CSSProp;
-  activeStyle?: CSSProp;
-  actionStyle?: CSSProp;
   onActionClick?: () => void;
   icon?: RemixiconComponentType;
   dormantedFontSize?: number;
@@ -34,8 +31,14 @@ export interface DormantTextProps {
   onActive?: () => void;
   onCancelRequested?: () => void;
   dormantedMaxWidth?: string;
+  styles?: DormantTextStylesProps;
 }
 
+export interface DormantTextStylesProps {
+  dormantedStyle?: CSSProp;
+  activeStyle?: CSSProp;
+  actionStyle?: CSSProp;
+}
 export interface DormantTextRef {
   doneEditing: () => void;
   cancelEditing: () => void;
@@ -43,12 +46,10 @@ export interface DormantTextRef {
 
 function DormantText({
   onActionClick,
-  dormantedStyle,
-  activeStyle,
+  styles,
   dormantedFontSize = 17,
   icon: Icon = RiCheckLine,
   children,
-  actionStyle,
   content,
   fullWidth,
   acceptChangeOn,
@@ -140,7 +141,7 @@ function DormantText({
       $fullWidth={fullWidth}
       $dormantedMaxWidth={dormantedMaxWidth}
       $fontSize={dormantedFontSize}
-      $style={dormantedStyle}
+      $style={styles?.dormantedStyle}
     >
       <DormantLabelText>{content}</DormantLabelText>
       <PencilIcon className="pencil-icon" size={dormantPencilSize} />
@@ -148,7 +149,7 @@ function DormantText({
   ) : (
     <DormantWrapper
       aria-label="active-wrapper"
-      $style={activeStyle}
+      $style={styles?.activeStyle}
       $minHeight={labelHeight}
     >
       <LabelWrapper ref={measureLabelSize} $maxWidth={labelWidth}>
@@ -156,7 +157,7 @@ function DormantText({
       </LabelWrapper>
 
       <ActionButton
-        $style={actionStyle}
+        $style={styles?.actionStyle}
         $minHeight={32.5 | inputHeight}
         onClick={(e) => {
           e.preventDefault();
@@ -171,7 +172,7 @@ function DormantText({
 
       {cancelable && (
         <ActionButton
-          $style={actionStyle}
+          $style={styles?.actionStyle}
           $minHeight={32.5 | inputHeight}
           onClick={(e) => {
             e.preventDefault();

@@ -19,10 +19,14 @@ export interface ModalDialogProps {
   subTitle?: string;
   hasCloseButton?: boolean;
   buttons?: ModalButtonProps[];
-  containerStyle?: CSSProp;
-  contentStyle?: CSSProp;
   children?: ReactNode;
   onClick?: (args: { id: string; closeDialog: () => void }) => void;
+  styles?: ModalDialogStylesProps;
+}
+
+export interface ModalDialogStylesProps {
+  containerStyle?: CSSProp;
+  contentStyle?: CSSProp;
 }
 
 function ModalDialog({
@@ -33,8 +37,7 @@ function ModalDialog({
   title,
   buttons,
   children,
-  containerStyle,
-  contentStyle,
+  styles,
   onClick,
 }: ModalDialogProps) {
   const closeDialog = () => onVisibilityChange(false);
@@ -42,16 +45,18 @@ function ModalDialog({
   return (
     <Dialog isOpen={isOpen} onVisibilityChange={onVisibilityChange}>
       <Dialog.Content
-        style={css`
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          overflow: hidden;
-          max-width: 500px;
-          padding: 0px;
-          border-radius: 0;
-          ${containerStyle}
-        `}
+        styles={{
+          self: css`
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow: hidden;
+            max-width: 500px;
+            padding: 0px;
+            border-radius: 0;
+            ${styles?.containerStyle}
+          `,
+        }}
         hideClose={!hasCloseButton}
       >
         <Container>
@@ -69,7 +74,7 @@ function ModalDialog({
 
           <Divider />
 
-          <Body aria-label="modal-dialog-content" $style={contentStyle}>
+          <Body aria-label="modal-dialog-content" $style={styles?.contentStyle}>
             {children}
           </Body>
         </Container>

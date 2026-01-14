@@ -19,9 +19,16 @@ const meta: Meta<typeof Window> = {
         "The content of the window. Can include one or more `Window.Cell` components.",
       control: { type: "object" },
     },
-    style: {
-      description: "Custom CSS style applied to the window container.",
-      control: { type: "object" },
+    styles: {
+      self: {
+        description: "Custom CSS style applied to the window container.",
+        control: { type: "object" },
+      },
+      dividerself: {
+        description:
+          "Custom CSS style applied to the dividers between window cells.",
+        control: { type: "object" },
+      },
     },
     onResize: {
       description:
@@ -31,11 +38,6 @@ const meta: Meta<typeof Window> = {
     onResizeComplete: {
       description: "Callback fired when a resize drag operation is completed.",
       action: "onResizeComplete",
-    },
-    dividerStyle: {
-      description:
-        "Custom CSS style applied to the dividers between window cells.",
-      control: { type: "object" },
     },
     initialSizeRatio: {
       description:
@@ -54,9 +56,11 @@ export const Default: Story = {
     return (
       <Window
         orientation="vertical"
-        style={css`
-          height: 500px;
-        `}
+        styles={{
+          self: css`
+            height: 500px;
+          `,
+        }}
         {...args}
       >
         <Window.Cell
@@ -85,9 +89,11 @@ export const Horizontal: Story = {
     return (
       <Window
         orientation="horizontal"
-        style={css`
-          height: 400px;
-        `}
+        styles={{
+          self: css`
+            height: 400px;
+          `,
+        }}
         {...args}
       >
         <Window.Cell
@@ -144,9 +150,11 @@ export const Closable: Story = {
 
     return (
       <Window
-        style={css`
-          height: 400px;
-        `}
+        styles={{
+          self: css`
+            height: 400px;
+          `,
+        }}
         {...args}
       >
         {value.map((data) => (

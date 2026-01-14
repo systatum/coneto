@@ -3,15 +3,19 @@ import { RiAddLine, RiImageLine } from "@remixicon/react";
 import styled, { CSSProp } from "styled-components";
 
 export interface ImageboxProps {
-  containerStyle?: CSSProp;
-  labelStyle?: CSSProp;
-  style?: CSSProp;
   onFileSelected?: (file: File | undefined) => void;
   size?: "xs" | "sm" | "md" | "lg";
   label?: string;
   showError?: boolean;
   errorMessage?: string;
   name?: string;
+  styles?: ImageboxStylesProps;
+}
+
+export interface ImageboxStylesProps {
+  containerStyle?: CSSProp;
+  labelStyle?: CSSProp;
+  self?: CSSProp;
 }
 
 const SIZE_STYLES = {
@@ -34,15 +38,13 @@ const SIZE_STYLES = {
 };
 
 function Imagebox({
-  containerStyle,
-  labelStyle,
   onFileSelected,
   size = "md",
   label,
   errorMessage,
   showError,
   name,
-  style,
+  styles,
 }: ImageboxProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
@@ -88,7 +90,7 @@ function Imagebox({
   const inputElement: ReactElement = (
     <InputBox
       aria-label="imagebox-input"
-      $style={style}
+      $style={styles?.self}
       $dimension={dimension}
       $isDragging={isDragging}
       onClick={handleBrowseClick}
@@ -120,8 +122,8 @@ function Imagebox({
   );
 
   return (
-    <InputWrapper $containerStyle={containerStyle}>
-      {label && <Label $style={labelStyle}>{label}</Label>}
+    <InputWrapper $containerStyle={styles?.containerStyle}>
+      {label && <Label $style={styles?.labelStyle}>{label}</Label>}
       <InputContent>
         {inputElement}
         {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}

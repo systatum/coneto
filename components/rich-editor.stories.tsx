@@ -128,15 +128,17 @@ This is unordered list
           </Boxbar>
           <div>
             <Button
-              dropdownStyle={css`
-                min-width: 200px;
-              `}
-              buttonStyle={css`
-                min-height: 40px;
-              `}
-              toggleStyle={css`
-                min-height: 40px;
-              `}
+              styles={{
+                dropdownStyle: css`
+                  min-width: 200px;
+                `,
+                self: css`
+                  min-height: 40px;
+                `,
+                toggleStyle: css`
+                  min-height: 40px;
+                `,
+              }}
               subMenu={({ list }) => list(TIP_MENU_EMAIL)}
               className="w-fit"
             >

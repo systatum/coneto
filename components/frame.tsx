@@ -4,20 +4,19 @@ import styled, { CSSProp } from "styled-components";
 export interface FrameProps {
   title?: string;
   children: React.ReactNode;
-  style?: CSSProp;
-  styleTitle?: CSSProp;
+  styles?: FrameStyles;
 }
 
-const Frame: React.FC<FrameProps> = ({
-  title,
-  children,
-  style,
-  styleTitle,
-}) => {
+interface FrameStyles {
+  containerStyle?: CSSProp;
+  titleStyle?: CSSProp;
+}
+
+const Frame: React.FC<FrameProps> = ({ title, children, styles }) => {
   return (
-    <FrameContainer $style={style}>
+    <FrameContainer $style={styles?.containerStyle}>
       {title && (
-        <TitleContainer $style={styleTitle}>
+        <TitleContainer $style={styles?.titleStyle}>
           <TitleOverlay aria-hidden="true" />
           <TitleText>{title}</TitleText>
         </TitleContainer>

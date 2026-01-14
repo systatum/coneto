@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
 
-interface PinboxProps {
+export interface PinboxProps {
   fontSize?: number;
   label?: string;
   showError?: boolean;
@@ -20,9 +20,13 @@ interface PinboxProps {
     data: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
   value?: string;
+  disabled?: boolean;
+  styles?: PinboxStylesProps;
+}
+
+export interface PinboxStylesProps {
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
-  disabled?: boolean;
 }
 
 export interface PinboxState {
@@ -39,11 +43,10 @@ function Pinbox({
   masked,
   parts,
   showError,
-  labelStyle,
   name = "pinbox",
   value,
   onChange,
-  containerStyle,
+  styles,
   disabled,
 }: PinboxProps) {
   const getDefaultValue = () => {
@@ -257,7 +260,6 @@ function Pinbox({
               onKeyDown={(e) => handleKeyDown(e, index)}
               $isStatic={isStatic}
               $fontSize={fontSize}
-              onChange={() => {}}
               $isAnimate={isAnimate}
             />
             <PinboxIndicator $error={showError} />
@@ -282,9 +284,9 @@ function Pinbox({
   const inputId = `textbox-${name}`;
 
   return (
-    <Container $containerStyle={containerStyle}>
+    <Container $containerStyle={styles?.containerStyle}>
       {label && (
-        <Label $style={labelStyle} htmlFor={inputId}>
+        <Label $style={styles?.labelStyle} htmlFor={inputId}>
           {label}
         </Label>
       )}

@@ -43,8 +43,7 @@ const meta: Meta<typeof Textarea> = {
       mapping: RemixIcons,
     },
     onChange: { action: "changed" },
-    style: { control: false },
-    containerStyle: { control: false },
+    styles: { self: { control: false }, containerStyle: { control: false } },
   },
   args: {
     value: "",
@@ -66,10 +65,12 @@ export const Default: Story = {
     placeholder: "Type your message...",
     value: "",
     rows: 3,
-    style: css`
-      min-width: 400px;
-      max-width: 400px;
-    `,
+    styles: {
+      self: css`
+        min-width: 400px;
+        max-width: 400px;
+      `,
+    },
   },
   render: (args: TextareaProps) => {
     const [, setUpdateArgs] = useArgs();
@@ -93,10 +94,12 @@ export const Autogrow: Story = {
     placeholder: "Type your message...",
     value: "",
     rows: 3,
-    style: css`
-      min-width: 400px;
-      max-width: 400px;
-    `,
+    styles: {
+      self: css`
+        min-width: 400px;
+        max-width: 400px;
+      `,
+    },
   },
   render: (args: TextareaProps) => {
     const [, setUpdateArgs] = useArgs();
@@ -121,10 +124,12 @@ export const WithErrorMessage: Story = {
     value: "",
     showError: true,
     errorMessage: "This field is required",
-    style: css`
-      min-width: 400px;
-      max-width: 400px;
-    `,
+    styles: {
+      self: css`
+        min-width: 400px;
+        max-width: 400px;
+      `,
+    },
   },
   render: (args: TextareaProps) => {
     const [, setUpdateArgs] = useArgs();

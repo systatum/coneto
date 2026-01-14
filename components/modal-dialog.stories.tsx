@@ -10,6 +10,64 @@ const meta: Meta<typeof ModalDialog> = {
     layout: "centered",
   },
   tags: ["autodocs"],
+  argTypes: {
+    isOpen: {
+      control: "boolean",
+      description: "Controls whether the modal dialog is visible.",
+    },
+    onVisibilityChange: {
+      control: false,
+      description:
+        "Callback fired when the dialog open state changes. Used to open or close the modal.",
+    },
+    title: {
+      control: "text",
+      description: "Main title displayed at the top of the modal.",
+    },
+    subTitle: {
+      control: "text",
+      description: "Optional subtitle displayed below the main title.",
+    },
+    hasCloseButton: {
+      control: "boolean",
+      description:
+        "Whether the close (×) button should be shown in the dialog header.",
+    },
+    buttons: {
+      control: false,
+      description: `
+List of action buttons displayed in the modal footer.
+
+Each button object supports:
+- **id**: Unique identifier for the button
+- **caption**: Button label
+- **variant**: Button visual style (from \`ButtonVariants\`)
+- **isLoading**: Shows loading spinner
+- **disabled**: Disables the button
+    `,
+    },
+    children: {
+      control: false,
+      description:
+        "Content rendered inside the modal body. Can be any React node.",
+    },
+    onClick: {
+      control: false,
+      description:
+        "Callback fired when any footer button is clicked. Receives the button id and a \`closeDialog\` helper.",
+    },
+    styles: {
+      control: false,
+      description: `
+Custom styles for the ModalDialog component. This object allows you to override styles for individual parts:
+
+- **containerStyle**: Styles applied to the dialog container (width, border, padding, shadow, etc)
+- **contentStyle**: Styles applied to the modal body content area
+
+Each field accepts a \`CSSProp\` (styled-components compatible) and can be used to customize layout, spacing, colors, and visual appearance.
+    `,
+    },
+  },
 };
 
 export default meta;

@@ -5,9 +5,13 @@ import styled, { css, CSSProp } from "styled-components";
 export interface CapsuleTabProps {
   tabs: CapsuleTabContentProps[];
   activeTab?: string;
-  style?: CSSProp;
-  tabStyle?: CSSProp;
   activeBackgroundColor?: string;
+  styles?: CapsuleTabStylesProps;
+}
+
+export interface CapsuleTabStylesProps {
+  containerStyle?: CSSProp;
+  tabStyle?: CSSProp;
 }
 
 export interface CapsuleTabContentProps {
@@ -18,9 +22,8 @@ export interface CapsuleTabContentProps {
 
 function CapsuleTab({
   tabs,
-  style,
+  styles,
   activeTab = "1",
-  tabStyle,
   activeBackgroundColor = "black",
 }: CapsuleTabProps) {
   const [selected, setSelected] = useState<string>(activeTab);
@@ -28,13 +31,15 @@ function CapsuleTab({
   const activeContent = tabs.filter((data) => data.id === selected);
 
   return (
-    <CapsuleTabWrapper $containerStyle={style}>
+    <CapsuleTabWrapper $containerStyle={styles?.containerStyle}>
       <Capsule
-        containerStyle={css`
-          border-top-left-radius: 2px;
-          border-top-right-radius: 2px;
-          ${tabStyle};
-        `}
+        styles={{
+          containerStyle: css`
+            border-top-left-radius: 2px;
+            border-top-right-radius: 2px;
+            ${styles?.tabStyle};
+          `,
+        }}
         tabs={tabs}
         onTabChange={setSelected}
         activeTab={selected}

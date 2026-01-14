@@ -25,20 +25,20 @@ const meta: Meta<typeof EmptySlate> = {
       description:
         "Optional React node to render interactive elements like buttons.",
     },
-    containerStyle: {
+    styles: {
+      description: `
+Custom styles for the Radio component. This object allows you to override styles for individual parts:
+
+- **containerStyle**: Outer wrapper of the Radio
+- **titleStyle**: Title displayed above the radio
+- **inputContainerStyle**: Wrapper for input, icon, and label
+- **imageStyle**: Radio input and visual circle
+- **labelStyle**: Label text
+- **descriptionStyle**: Description text below the label
+- **errorStyle**: Error message when validation fails
+...
+`,
       control: false,
-      description:
-        "Optional styled-components CSS for container customization.",
-    },
-    imageStyle: {
-      control: false,
-      description:
-        "Optional styled-components CSS for image wrapper customization.",
-    },
-    childStyle: {
-      control: false,
-      description:
-        "Optional styled-components CSS for content area customization.",
     },
   },
 };
@@ -58,9 +58,11 @@ export const Default: Story = {
         <Button variant="primary">Learn More</Button>
       </>
     ),
-    containerStyle: css`
-      text-align: center;
-    `,
+    styles: {
+      containerStyle: css`
+        text-align: center;
+      `,
+    },
   },
   render: (args) => {
     return <EmptySlate {...args} />;

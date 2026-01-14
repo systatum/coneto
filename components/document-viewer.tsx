@@ -13,8 +13,6 @@ import { Combobox } from "./combobox";
 import type { PDFDocumentProxy } from "pdfjs-dist";
 
 interface DocumentViewerProps {
-  containerStyle?: CSSProp;
-  selectionStyle?: CSSProp;
   source?: string;
   title?: string;
   onRegionSelected?: (region: BoundingBoxState) => void;
@@ -26,7 +24,13 @@ interface DocumentViewerProps {
   }) => string;
   libPdfJsWorkerSrc?: string;
   zoomPlaceholderText?: string;
+  styles?: DocumentViewerStylesProps;
+}
+
+interface DocumentViewerStylesProps {
+  containerStyle?: CSSProp;
   zoomStyle?: CSSProp;
+  selectionStyle?: CSSProp;
 }
 
 export interface BoundingBoxesProps {
@@ -78,14 +82,12 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
     {
       source,
       onRegionSelected,
-      containerStyle,
-      selectionStyle,
+      styles,
       boundingBoxes = [],
       initialZoom = 100,
       totalPagesText,
       title = "Document",
       zoomPlaceholderText = "zoom your pdf...",
-      zoomStyle,
       libPdfJsWorkerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.54/pdf.worker.min.mjs",
     },
     ref
@@ -492,14 +494,16 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
               selectedOptions={scaleValue}
               setSelectedOptions={handleScale}
               placeholder={zoomPlaceholderText}
-              containerStyle={css`
-                width: 100px;
-                color: black;
-              `}
-              selectboxStyle={css`
-                background-color: white;
-                ${zoomStyle}
-              `}
+              styles={{
+                containerStyle: css`
+                  width: 100px;
+                  color: black;
+                `,
+                selectboxStyle: css`
+                  background-color: white;
+                  ${styles?.zoomStyle}
+                `,
+              }}
               options={SCALE_OPTIONS}
             />
           </ComboboxWrapper>
@@ -533,7 +537,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
 
         <ContainerDocumentViewer
           aria-label="container-content"
-          $containerStyle={containerStyle}
+          $containerStyle={styles?.containerStyle}
           ref={containerRef}
           onMouseUp={handleMouseUp}
         >
@@ -600,7 +604,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
                       backgroundColor: data.boxStyle?.backgroundColor,
                     }}
                     $selectionStyle={css`
-                      ${selectionStyle}
+                      ${styles?.selectionStyle}
                       ${selection &&
                       css`
                         pointer-events: none;
@@ -640,7 +644,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
                 width: selection.width * canvasLocal.clientWidth,
                 height: selection.height * canvasLocal.clientHeight,
               }}
-              $selectionStyle={selectionStyle}
+              $selectionStyle={styles?.selectionStyle}
             />
           )}
         </ContainerDocumentViewer>

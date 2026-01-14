@@ -82,8 +82,10 @@ describe("Button", () => {
             cy.mount(
               <Button
                 variant="default"
-                dropdownStyle={{
-                  minWidth: "240px",
+                styles={{
+                  dropdownStyle: css`
+                    min-width: 240px;
+                  `,
                 }}
                 subMenu={({ list }) => list(TIP_MENU_ITEMS)}
               >
@@ -103,8 +105,10 @@ describe("Button", () => {
             cy.mount(
               <Button
                 variant="default"
-                dropdownStyle={{
-                  minWidth: "240px",
+                styles={{
+                  dropdownStyle: css`
+                    min-width: 240px;
+                  `,
                 }}
                 subMenu={({ list }) => list(TIP_MENU_ITEMS)}
               >
@@ -124,8 +128,10 @@ describe("Button", () => {
           cy.mount(
             <Button
               variant="default"
-              dropdownStyle={{
-                minWidth: "240px",
+              styles={{
+                dropdownStyle: css`
+                  min-width: 240px;
+                `,
               }}
               subMenu={({ show }) =>
                 show(
@@ -152,7 +158,7 @@ describe("Button", () => {
               );
             });
           cy.findByText("This button using show function").should("exist");
-          cy.findByLabelText("button-tip-menu-container").should("exist");
+          cy.findByLabelText("tooltip-drawer").should("exist");
         });
       });
 
@@ -161,8 +167,10 @@ describe("Button", () => {
           cy.mount(
             <Button
               variant="default"
-              dropdownStyle={{
-                minWidth: "240px",
+              styles={{
+                dropdownStyle: css`
+                  min-width: 240px;
+                `,
               }}
               subMenu={({ render }) =>
                 render(
@@ -214,8 +222,10 @@ describe("Button", () => {
           cy.mount(
             <Button
               variant="default"
-              dropdownStyle={{
-                minWidth: "240px",
+              styles={{
+                dropdownStyle: css`
+                  min-width: 240px;
+                `,
               }}
               subMenu={({ render }) =>
                 render(
@@ -261,8 +271,10 @@ describe("Button", () => {
           cy.mount(
             <Button
               variant="default"
-              dropdownStyle={{
-                minWidth: "240px",
+              styles={{
+                dropdownStyle: css`
+                  min-width: 240px;
+                `,
               }}
               showSubMenuOn="self"
               onClick={() => {
@@ -316,8 +328,10 @@ describe("Button", () => {
           cy.mount(
             <Button
               variant="default"
-              dropdownStyle={{
-                minWidth: "240px",
+              styles={{
+                dropdownStyle: css`
+                  min-width: 240px;
+                `,
               }}
               subMenu={({ show }) =>
                 show(<Calendar monthNames={MONTH_NAMES} />)

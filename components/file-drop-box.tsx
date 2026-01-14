@@ -28,10 +28,6 @@ export interface OnCompleteFunctionProps {
 }
 
 export interface FileDropBoxProps {
-  containerStyle?: CSSProp;
-  dragOverStyle?: CSSProp;
-  successStyle?: CSSProp;
-  labelStyle?: CSSProp;
   placeholder?: string;
   accept?: string;
   label?: string;
@@ -39,21 +35,26 @@ export interface FileDropBoxProps {
   onComplete?: (props: OnCompleteFunctionProps) => void;
   progressPercentage?: number;
   children?: ReactNode;
+  styles?: FileDropBoxStylesProps;
+}
+
+export interface FileDropBoxStylesProps {
+  containerStyle?: CSSProp;
+  dragOverStyle?: CSSProp;
+  successStyle?: CSSProp;
+  labelStyle?: CSSProp;
 }
 
 type ProgressProps = "idle" | "loading" | "succeed" | null;
 
 function FileDropBox({
-  containerStyle,
-  labelStyle,
-  dragOverStyle,
-  successStyle,
   placeholder = "Drag and Drop Your File",
   accept = "*",
   onFileDropped,
   onComplete,
   label,
   children,
+  styles,
 }: FileDropBoxProps) {
   const FILE_ICON = [
     { id: 1, icon: RiImageLine, size: 50 },
@@ -152,8 +153,8 @@ function FileDropBox({
 
   const inputElement: ReactElement = (
     <DropArea
-      $dragOverStyle={dragOverStyle}
-      $successStyle={successStyle}
+      $dragOverStyle={styles?.dragOverStyle}
+      $successStyle={styles?.successStyle}
       $isDragging={isDragging}
       $progress={progress}
       aria-label="filedropbox"
@@ -208,9 +209,9 @@ function FileDropBox({
     <InputWrapper
       aria-label="file-drop-box-container"
       $hide={progress === null}
-      $containerStyle={containerStyle}
+      $containerStyle={styles?.containerStyle}
     >
-      {label && <Label $style={labelStyle}> {label}</Label>}
+      {label && <Label $style={styles?.labelStyle}> {label}</Label>}
       {inputElement}
 
       {errorMessages.length > 0 && (

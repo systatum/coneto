@@ -17,9 +17,7 @@ export interface TextareaProps
   label?: string;
   showError?: boolean;
   errorMessage?: string;
-  containerStyle?: CSSProp;
-  labelStyle?: CSSProp;
-  style?: CSSProp;
+  styles?: TextareaStylesProps;
   onActionClick?: () => void;
   onChange?: (
     data: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -27,6 +25,12 @@ export interface TextareaProps
   icon?: RemixiconComponentType;
   actionIcon?: boolean;
   autogrow?: boolean;
+}
+
+interface TextareaStylesProps {
+  containerStyle?: CSSProp;
+  labelStyle?: CSSProp;
+  self?: CSSProp;
 }
 
 const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
@@ -38,12 +42,10 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       rows,
       onChange,
       onActionClick,
-      style,
-      containerStyle,
       actionIcon,
       icon: Icon = RiCheckLine,
       autogrow,
-      labelStyle,
+      styles,
       ...props
     },
     ref
@@ -81,7 +83,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           }}
           rows={rows ?? 3}
           $error={showError}
-          $style={style}
+          $style={styles?.self}
           {...(props as TextareaHTMLAttributes<HTMLTextAreaElement>)}
         />
         {actionIcon && (
@@ -115,9 +117,9 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     );
 
     return (
-      <Container $style={containerStyle}>
+      <Container $style={styles?.containerStyle}>
         {label && (
-          <Label $style={labelStyle} htmlFor={inputId}>
+          <Label $style={styles?.labelStyle} htmlFor={inputId}>
             {label}
           </Label>
         )}

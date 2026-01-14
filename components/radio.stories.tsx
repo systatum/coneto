@@ -9,6 +9,78 @@ const meta: Meta<typeof Radio> = {
   title: "Input Elements/Radio",
   component: Radio,
   tags: ["autodocs"],
+  argTypes: {
+    value: {
+      description: "The value associated with this radio option.",
+    },
+    label: {
+      description: "Primary label text displayed next to the radio.",
+    },
+    description: {
+      description:
+        "Secondary text shown below the label to provide more context.",
+    },
+    checked: {
+      description: "Controls whether the radio is selected.",
+      control: "boolean",
+    },
+    name: {
+      description:
+        "Name of the radio group. Radios with the same name behave as a group.",
+    },
+    onChange: {
+      description: "Callback fired when the radio value changes.",
+      action: "changed",
+    },
+    highlightOnChecked: {
+      description: "Highlights the radio container when it is checked.",
+      control: "boolean",
+    },
+    showError: {
+      description: "Displays the error state for the radio.",
+      control: "boolean",
+    },
+    errorMessage: {
+      description: "Text displayed when the radio is in an error state.",
+    },
+    mode: {
+      description: "Rendering mode of the radio.",
+      control: "radio",
+      options: ["radio", "button"],
+    },
+    icon: {
+      description: "Optional icon displayed inside the radio (button mode).",
+      control: false,
+    },
+    iconSize: {
+      description: "Size of the icon in pixels.",
+      control: "number",
+    },
+    iconColor: {
+      description: "Color of the icon.",
+      control: "color",
+    },
+    disabled: {
+      description: "Disables user interaction with the radio.",
+      control: "boolean",
+    },
+    styles: {
+      description: `
+Custom styles for the Radio component. This object allows you to override styles for individual parts:
+
+- **containerStyle**: Outer wrapper of the Radio
+- **titleStyle**: Title displayed above the radio
+- **inputContainerStyle**: Wrapper for input, icon, and label
+- **self / selfStyle**: Radio input and visual circle
+- **labelStyle**: Label text
+- **descriptionStyle**: Description text below the label
+- **errorStyle**: Error message when validation fails
+
+Each field accepts a \`CSSProp\` (styled-components compatible) and can be used to customize layout, spacing, colors, and other visual properties.
+    `,
+      control: false,
+    },
+  },
 };
 
 export default meta;
@@ -236,16 +308,18 @@ export const WithError: Story = {
             name="value"
             onChange={(e) => setChecked(e.target.value)}
             showError={!checked && index === RADIO_OPTIONS.length - 1}
-            inputStyle={
-              !checked &&
-              css`
-                border-color: red;
-              `
-            }
+            styles={{
+              self: css`
+                ${!checked &&
+                css`
+                  border-color: red;
+                `}
+              `,
+              errorStyle: css`
+                font-size: 14px;
+              `,
+            }}
             errorMessage="Please select an option before continuing."
-            errorStyle={css`
-              font-size: 14px;
-            `}
           />
         ))}
       </Fragment>

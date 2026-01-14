@@ -219,9 +219,11 @@ export const Default: Story = {
           onChange={({ currentState }) => {
             setValue((prev) => ({ ...prev, ...currentState }));
           }}
-          rowStyle={css`
-            align-items: end;
-          `}
+          styles={{
+            rowStyle: css`
+              align-items: end;
+            `,
+          }}
           fields={EMPLOYEE_FIELDS}
           formValues={value}
           validationSchema={employeeSchema}
@@ -769,17 +771,19 @@ export const AllCase: Story = {
         required: false,
         chipsProps: {
           options: BADGE_OPTIONS,
-          chipStyle: css`
-            width: 100%;
-            gap: 0.5rem;
-            border-color: transparent;
-          `,
-          chipContainerStyle: css`
-            gap: 4px;
-          `,
-          chipsDrawerStyle: css`
-            min-width: 250px;
-          `,
+          styles: {
+            chipStyle: css`
+              width: 100%;
+              gap: 0.5rem;
+              border-color: transparent;
+            `,
+            chipContainerStyle: css`
+              gap: 4px;
+            `,
+            chipsDrawerStyle: css`
+              min-width: 250px;
+            `,
+          },
           onOptionClicked: handleOptionClicked,
           selectedOptions: value.chips.selectedOptions,
           inputValue: value.chips.searchText,

@@ -5,11 +5,15 @@ import { RiArrowLeftSLine, RiArrowRightSLine } from "@remixicon/react";
 import { motion } from "framer-motion";
 import styled, { CSSProp } from "styled-components";
 
-interface SidebarProps {
+export interface SidebarProps {
   children?: ReactNode;
+  styles?: SidebarStylesProps;
+  position?: "left" | "right";
+}
+
+export interface SidebarStylesProps {
   mobileStyle?: CSSProp;
   desktopStyle?: CSSProp;
-  position?: "left" | "right";
 }
 
 interface SidebarItemProps {
@@ -18,12 +22,7 @@ interface SidebarItemProps {
   children?: ReactNode;
 }
 
-function Sidebar({
-  children,
-  mobileStyle,
-  desktopStyle,
-  position = "left",
-}: SidebarProps) {
+function Sidebar({ children, styles, position = "left" }: SidebarProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(true);
   const controls = useAnimation();
@@ -87,7 +86,7 @@ function Sidebar({
         initial={{ x: position === "left" ? "-100%" : "+100%" }}
         animate={isMobile ? controls : { x: 0 }}
         $position={position}
-        $style={mobileStyle}
+        $style={styles?.mobileStyle}
       >
         {children}
       </MotionSidebar>
@@ -102,7 +101,7 @@ function Sidebar({
         </ToggleButton>
       )}
 
-      <DesktopSidebar $position={position} $style={desktopStyle}>
+      <DesktopSidebar $position={position} $style={styles?.desktopStyle}>
         {children}
       </DesktopSidebar>
     </>

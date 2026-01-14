@@ -28,10 +28,14 @@ interface RichEditorProps {
   value?: string;
   onChange?: (value: string) => void;
   toolbarRightPanel?: ReactNode;
-  editorStyle?: CSSProp;
-  containerStyle?: CSSProp;
+  styles?: RichEditorStylesProps;
   mode?: RichEditorModeState;
   toolbarPosition?: RichEditorToolbarPositionState;
+}
+
+interface RichEditorStylesProps {
+  editorStyle?: CSSProp;
+  containerStyle?: CSSProp;
 }
 
 type RichEditorToolbarPositionState = "top" | "bottom";
@@ -66,8 +70,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       toolbarPosition = "top",
       onChange,
       toolbarRightPanel,
-      editorStyle,
-      containerStyle,
+      styles,
     },
     ref
   ) => {
@@ -1100,7 +1103,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     return (
       <Wrapper
         aria-label="wrapper-editor"
-        $containerStyle={containerStyle}
+        $containerStyle={styles?.containerStyle}
         $mode={mode}
       >
         {mode !== "view-only" && (
@@ -1164,7 +1167,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           ref={editorRef}
           role="textbox"
           contentEditable
-          $editorStyle={editorStyle}
+          $editorStyle={styles?.editorStyle}
           $toolbarPosition={toolbarPosition}
           $mode={mode}
           onInput={() => {

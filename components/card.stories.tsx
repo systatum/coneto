@@ -70,17 +70,19 @@ const meta: Meta<typeof Card> = {
       description: "Padding size",
       defaultValue: "sm",
     },
-    containerStyle: {
-      control: "text",
-      description: "Additional custom container classes",
-    },
-    headerStyle: {
-      control: "text",
-      description: "Additional custom title classes",
-    },
-    footerStyle: {
-      control: "text",
-      description: "Additional custom footer classes",
+    styles: {
+      containerStyle: {
+        control: "text",
+        description: "Additional custom container classes",
+      },
+      headerStyle: {
+        control: "text",
+        description: "Additional custom title classes",
+      },
+      footerStyle: {
+        control: "text",
+        description: "Additional custom footer classes",
+      },
     },
     title: {
       control: "text",
@@ -107,9 +109,11 @@ export const Default: Story = {
       <Card>
         <Toolbar>
           <Toolbar.Menu
-            dropdownStyle={css`
-              min-width: 235px;
-            `}
+            styles={{
+              dropdownStyle: css`
+                min-width: 235px;
+              `,
+            }}
             onClick={() => {
               console.log("test");
             }}
@@ -176,9 +180,11 @@ export const Default: Story = {
             ]}
           />
           <Toolbar.Menu
-            dropdownStyle={css`
-              min-width: 235px;
-            `}
+            styles={{
+              dropdownStyle: css`
+                min-width: 235px;
+              `,
+            }}
             caption="Primary"
             icon={RiSpam2Line}
             iconColor="white"
@@ -243,9 +249,11 @@ export const Default: Story = {
             ]}
           />
           <Toolbar.Menu
-            dropdownStyle={css`
-              min-width: 235px;
-            `}
+            styles={{
+              dropdownStyle: css`
+                min-width: 235px;
+              `,
+            }}
             caption="Danger"
             icon={RiSpam2Line}
             iconColor="white"
@@ -425,12 +433,14 @@ export const WithHeader: Story = {
     return (
       <Card
         {...args}
-        containerStyle={css`
-          padding: 0px;
-        `}
-        headerStyle={css`
-          border-bottom: 1px solid #d1d5db;
-        `}
+        styles={{
+          containerStyle: css`
+            padding: 0px;
+          `,
+          headerStyle: css`
+            border-bottom: 1px solid #d1d5db;
+          `,
+        }}
       >
         <div
           style={{
@@ -769,20 +779,22 @@ export const WithHeaderAndFooter: Story = {
             },
           },
         ]}
-        containerStyle={css`
-          padding-left: 0px;
-          padding-right: 0px;
-        `}
-        headerStyle={css`
-          padding-left: 15px;
-          padding-right: 15px;
-          border-bottom: 1px solid #d1d5db;
-        `}
-        footerStyle={css`
-          padding-left: 20px;
-          padding-right: 20px;
-          border-top: 1px solid #d1d5db;
-        `}
+        styles={{
+          containerStyle: css`
+            padding-left: 0px;
+            padding-right: 0px;
+          `,
+          headerStyle: css`
+            padding-left: 15px;
+            padding-right: 15px;
+            border-bottom: 1px solid #d1d5db;
+          `,
+          footerStyle: css`
+            padding-left: 20px;
+            padding-right: 20px;
+            border-top: 1px solid #d1d5db;
+          `,
+        }}
         footerContent={ContentCard}
       >
         <List
@@ -791,10 +803,12 @@ export const WithHeaderAndFooter: Story = {
           draggable
           onDragged={onDragged}
           onSearchRequested={onChangeValue}
-          containerStyle={css`
-            padding: 16px;
-            min-width: 400px;
-          `}
+          styles={{
+            containerStyle: css`
+              padding: 16px;
+              min-width: 400px;
+            `,
+          }}
         >
           {filteredContent.map((group, index) => {
             return (
@@ -803,13 +817,7 @@ export const WithHeaderAndFooter: Story = {
                   <List.Item
                     key={i}
                     groupId={group.id}
-                    containerStyle={css`
-                      min-width: 300px;
-                      padding-right: 8px;
-                      padding-left: 8px;
-                      padding-top: 10px;
-                      padding-bottom: 10px;
-                    `}
+                    styles={list.styles}
                     id={list.id}
                     subtitle={list.subtitle}
                     title={list.title}
@@ -1041,9 +1049,11 @@ export const WithFullWidthContent: Story = {
           onActive={() => {
             setOldValue(value);
           }}
-          dormantedStyle={css`
-            padding: 0px;
-          `}
+          styles={{
+            dormantedStyle: css`
+              padding: 0px;
+            `,
+          }}
           dormantedFontSize={sizeText ?? 16}
           onCancelRequested={() => {
             setValue((prev) => ({ ...prev, [name]: oldValue.title }));
@@ -1063,23 +1073,25 @@ export const WithFullWidthContent: Story = {
       <Card
         title={renderDormantTextField("title")}
         subtitle={renderDormantTextField("subtitle", 14)}
-        titleStyle={css`
-          width: 100%;
-        `}
-        textContainerStyle={css`
-          width: 100%;
-        `}
-        containerStyle={css`
-          padding-left: 0px;
-          padding-right: 0px;
-          min-width: 1000px;
-          padding-bottom: 0px;
-        `}
-        headerStyle={css`
-          padding-left: 15px;
-          padding-right: 15px;
-          border-bottom: 1px solid #d1d5db;
-        `}
+        styles={{
+          titleStyle: css`
+            width: 100%;
+          `,
+          textContainerStyle: css`
+            width: 100%;
+          `,
+          containerStyle: css`
+            padding-left: 0px;
+            padding-right: 0px;
+            min-width: 1000px;
+            padding-bottom: 0px;
+          `,
+          headerStyle: css`
+            padding-left: 15px;
+            padding-right: 15px;
+            border-bottom: 1px solid #d1d5db;
+          `,
+        }}
         headerActions={[
           {
             caption: "Add",
@@ -1092,9 +1104,11 @@ export const WithFullWidthContent: Story = {
       >
         <Table
           selectable
-          tableRowContainerStyle={css`
-            max-height: 400px;
-          `}
+          styles={{
+            tableRowContainerStyle: css`
+              max-height: 400px;
+            `,
+          }}
           columns={columns}
           onItemsSelected={handleItemsSelected}
           subMenuList={TIP_MENU_ACTION}

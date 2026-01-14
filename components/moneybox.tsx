@@ -33,12 +33,15 @@ export interface MoneyboxProps
   showError?: boolean;
   errorMessage?: string;
   label?: string;
-  style?: CSSProp;
-  containerStyle?: CSSProp;
-  labelStyle?: CSSProp;
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
+  styles?: MoneyboxStylesProps;
   editableCurrency?: boolean;
   currencyOptions?: CurrencyOptionsProps[];
+}
+export interface MoneyboxStylesProps {
+  self?: CSSProp;
+  containerStyle?: CSSProp;
+  labelStyle?: CSSProp;
 }
 
 const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
@@ -53,9 +56,7 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
       separator = "comma",
       errorMessage,
       showError,
-      style,
-      containerStyle,
-      labelStyle,
+      styles,
       onKeyDown,
       editableCurrency,
       currencyOptions = [
@@ -110,8 +111,8 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
     };
 
     return (
-      <InputWrapper $style={containerStyle}>
-        {label && <Label $style={labelStyle}>{label}</Label>}
+      <InputWrapper $style={styles?.containerStyle}>
+        {label && <Label $style={styles?.labelStyle}>{label}</Label>}
         <InputContent>
           <Box
             onBlur={() => setFocus(false)}
@@ -119,7 +120,7 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
             $disabled={props.disabled}
             $error={showError}
             $focus={focus}
-            $style={style}
+            $style={styles?.self}
           >
             <Button
               aria-label="currency"
@@ -128,43 +129,47 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
               anchorRef={boxRef}
               showSubMenuOn="self"
               variant="ghost"
-              containerStyle={css`
-                position: absolute;
-                left: 4px;
-                top: 50%;
-                transform: translateY(-50%);
-                ${props.disabled &&
-                css`
-                  cursor: not-allowed;
-                `}
-              `}
-              buttonStyle={css`
-                height: 24px;
-                width: 24px;
-                padding: 0px;
-                display: flex;
-                flex-direction: row;
-                justify-content: center;
-                align-items: center;
-                text-align: center;
-                font-size: 12px;
-                ${(!editableCurrency || props.disabled) &&
-                css`
-                  pointer-events: none;
-                  background-color: transparent;
-                `}
-              `}
+              styles={{
+                containerStyle: css`
+                  position: absolute;
+                  left: 4px;
+                  top: 50%;
+                  transform: translateY(-50%);
+                  ${props.disabled &&
+                  css`
+                    cursor: not-allowed;
+                  `}
+                `,
+                self: css`
+                  height: 24px;
+                  width: 24px;
+                  padding: 0px;
+                  display: flex;
+                  flex-direction: row;
+                  justify-content: center;
+                  align-items: center;
+                  text-align: center;
+                  font-size: 12px;
+                  ${(!editableCurrency || props.disabled) &&
+                  css`
+                    pointer-events: none;
+                    background-color: transparent;
+                  `}
+                `,
+              }}
               subMenu={
                 editableCurrency && !props.disabled
                   ? ({ show }) =>
                       show(
                         <List
-                          containerStyle={css`
-                            gap: 0px;
-                            border: 1px solid #d1d5db;
-                            max-height: 200px;
-                            overflow: auto;
-                          `}
+                          styles={{
+                            containerStyle: css`
+                              gap: 0px;
+                              border: 1px solid #d1d5db;
+                              max-height: 200px;
+                              overflow: auto;
+                            `,
+                          }}
                         >
                           {currencyOptions.map((props) => {
                             return (
@@ -182,15 +187,17 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
                                 }}
                                 id={props.id}
                                 title={props.name}
-                                rowStyle={css`
-                                  border-radius: 0px;
-                                  padding: 0.5rem 0.75rem;
-                                  transition: background-color 0ms;
-                                  overflow: hidden;
-                                `}
-                                titleStyle={css`
-                                  font-size: 12px;
-                                `}
+                                styles={{
+                                  rowStyle: css`
+                                    border-radius: 0px;
+                                    padding: 0.5rem 0.75rem;
+                                    transition: background-color 0ms;
+                                    overflow: hidden;
+                                  `,
+                                  titleStyle: css`
+                                    font-size: 12px;
+                                  `,
+                                }}
                                 rightSideContent={props.symbol}
                               />
                             );

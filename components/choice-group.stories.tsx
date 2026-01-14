@@ -26,14 +26,17 @@ const meta: Meta<typeof ChoiceGroup> = {
       control: "text",
       description: "Content children on Choice Group",
     },
-    containerStyle: {
-      control: "text",
-      description:
-        "Style class with styled component on Choice Group Container",
-    },
-    dividerStyle: {
-      control: "text",
-      description: "Style class with styled component on Choice Group Divider",
+    styles: {
+      containerStyle: {
+        control: "text",
+        description:
+          "Style class with styled component on Choice Group Container",
+      },
+      dividerStyle: {
+        control: "text",
+        description:
+          "Style class with styled component on Choice Group Divider",
+      },
     },
   },
 };

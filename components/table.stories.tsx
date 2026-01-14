@@ -169,32 +169,20 @@ const meta: Meta<typeof Table> = {
         type: { summary: "SummaryRowProps[]" },
       },
     },
-    containerStyle: {
-      description: "Custom styles for the table wrapper.",
+    styles: {
+      description: `
+Custom styles for the Table component. This object allows you to override styles for individual parts:
+
+- **containerStyle**: Table wrapper
+- **tableRowContainerStyle**: Scrollable row container
+- **paginationWrapperStyle**: Pagination wrapper
+- **paginationNumberStyle**: Pagination number text
+
+Each field accepts a \`CSSProp\` (styled-components compatible) and can be used to customize layout, spacing, colors, and other visual properties.
+    `,
       control: false,
       table: {
-        type: { summary: "CSSProp" },
-      },
-    },
-    tableRowContainerStyle: {
-      description: "Custom styles for scrollable row container.",
-      control: false,
-      table: {
-        type: { summary: "CSSProp" },
-      },
-    },
-    paginationWrapperStyle: {
-      description: "Custom styles for pagination wrapper.",
-      control: false,
-      table: {
-        type: { summary: "CSSProp" },
-      },
-    },
-    paginationNumberStyle: {
-      description: "Custom styles for pagination number text.",
-      control: false,
-      table: {
-        type: { summary: "CSSProp" },
+        type: { summary: "TableStylesProps" },
       },
     },
   },
@@ -234,9 +222,11 @@ export const Default: Story = {
 
     return (
       <Table
-        tableRowContainerStyle={css`
-          max-height: 400px;
-        `}
+        styles={{
+          tableRowContainerStyle: css`
+            max-height: 400px;
+          `,
+        }}
         columns={columns}
       >
         {sampleRows}
@@ -441,9 +431,11 @@ export const Appendable: Story = {
     return (
       <Table
         selectable
-        tableRowContainerStyle={css`
-          max-height: 400px;
-        `}
+        styles={{
+          tableRowContainerStyle: css`
+            max-height: 400px;
+          `,
+        }}
         labels={{ totalSelectedItemText: null }}
         columns={columns}
         onItemsSelected={handleItemsSelected}
@@ -665,9 +657,11 @@ export const WithOneAction: Story = {
     return (
       <Table
         selectable
-        tableRowContainerStyle={css`
-          max-height: 400px;
-        `}
+        styles={{
+          tableRowContainerStyle: css`
+            max-height: 400px;
+          `,
+        }}
         columns={columns}
         onItemsSelected={handleItemsSelected}
         subMenuList={TIP_MENU_ACTION}
@@ -945,16 +939,20 @@ export const WithEmptySlate: Story = {
           <>
             <Button
               variant="default"
-              buttonStyle={{
-                fontSize: "12px",
+              styles={{
+                self: {
+                  fontSize: "12px",
+                },
               }}
             >
               Add Item
             </Button>
             <Button
               variant="primary"
-              buttonStyle={{
-                fontSize: "12px",
+              styles={{
+                self: {
+                  fontSize: "12px",
+                },
               }}
             >
               Learn More
@@ -1211,9 +1209,11 @@ export const WithSummary: Story = {
         </h3>
 
         <Table
-          tableRowContainerStyle={css`
-            max-height: 400px;
-          `}
+          styles={{
+            tableRowContainerStyle: css`
+              max-height: 400px;
+            `,
+          }}
           columns={columns}
           subMenuList={TIP_MENU_ACTION}
           onSearchboxChange={(e) => setSearch(e.target.value)}
@@ -1692,9 +1692,11 @@ export const WithRowGroup: Story = {
 
         <Table
           selectable
-          tableRowContainerStyle={css`
-            max-height: 400px;
-          `}
+          styles={{
+            tableRowContainerStyle: css`
+              max-height: 400px;
+            `,
+          }}
           columns={columns}
           onItemsSelected={handleItemsSelected}
           subMenuList={TIP_MENU_ACTION}
@@ -2216,9 +2218,11 @@ export const Draggable: Story = {
           </h3>
 
           <Table
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             columns={columnsDefault(false)}
             subMenuList={(props) => TIP_MENU_ACTION(props, 1, "simple")}
             onItemsSelected={handleItemsSelected}
@@ -2260,9 +2264,11 @@ export const Draggable: Story = {
 
           <Table
             selectable
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             columns={columnsDefault(true)}
             onItemsSelected={handleItemsSelected}
             subMenuList={(props) => TIP_MENU_ACTION(props, 2, "simple")}
@@ -2305,9 +2311,11 @@ export const Draggable: Story = {
 
           <Table
             selectable
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             columns={columnsGroup}
             onItemsSelected={handleItemsSelected}
             subMenuList={(props) => TIP_MENU_ACTION(props, 1, "group")}

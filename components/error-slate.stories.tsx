@@ -23,10 +23,11 @@ const meta: Meta<typeof ErrorSlate> = {
       description:
         "Optional ReactNode to render below the title (e.g. message, actions).",
     },
-    cubeFaceStyle: {
+    styles: {
       control: false,
       description:
-        "Inline style to customize cube faces (background, border, etc).",
+        "- `titleStyle`: Custom CSS for the error title text (typography, color, spacing).\n" +
+        "- `cubeFaceStyle`: Custom CSS for each cube face (background, border, color, font styles, visual effects). Does not affect layout or 3D transforms.",
     },
   },
 };
@@ -67,10 +68,12 @@ export const CustomColor: Story = {
   args: {
     code: "403",
     title: "AccessDenied",
-    cubeFaceStyle: {
-      background: "gold",
-      borderColor: "black",
-      color: "black",
+    styles: {
+      cubeFaceStyle: {
+        background: "gold",
+        borderColor: "black",
+        color: "black",
+      },
     },
     children: (
       <div

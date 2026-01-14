@@ -90,27 +90,33 @@ export const Default: Story = {
                   imageUrl="https://picsum.photos/200?random=1"
                   title="No Matches"
                   subtitle="We couldn't find any person or team that matches your search."
-                  containerStyle={{
-                    textAlign: "center",
-                    alignItems: "center",
-                  }}
-                  imageStyle={{
-                    maxWidth: "200px",
+                  styles={{
+                    containerStyle: {
+                      textAlign: "center",
+                      alignItems: "center",
+                    },
+                    imageStyle: {
+                      maxWidth: "200px",
+                    },
                   }}
                   actions={
                     <>
                       <Button
                         variant="default"
-                        buttonStyle={{
-                          fontSize: "12px",
+                        styles={{
+                          self: {
+                            fontSize: "12px",
+                          },
                         }}
                       >
                         Clear Search
                       </Button>
                       <Button
                         variant="primary"
-                        buttonStyle={{
-                          fontSize: "12px",
+                        styles={{
+                          self: {
+                            fontSize: "12px",
+                          },
                         }}
                       >
                         Add Member
@@ -223,27 +229,33 @@ export const FixedRight: Story = {
                   imageUrl="https://picsum.photos/200?random=1"
                   title="No Matches"
                   subtitle="We couldn't find any person or team that matches your search."
-                  containerStyle={{
-                    textAlign: "center",
-                    alignItems: "center",
-                  }}
-                  imageStyle={{
-                    maxWidth: "200px",
+                  styles={{
+                    containerStyle: {
+                      textAlign: "center",
+                      alignItems: "center",
+                    },
+                    imageStyle: {
+                      maxWidth: "200px",
+                    },
                   }}
                   actions={
                     <>
                       <Button
                         variant="default"
-                        buttonStyle={{
-                          fontSize: "12px",
+                        styles={{
+                          self: {
+                            fontSize: "12px",
+                          },
                         }}
                       >
                         Clear Search
                       </Button>
                       <Button
                         variant="primary"
-                        buttonStyle={{
-                          fontSize: "12px",
+                        styles={{
+                          self: {
+                            fontSize: "12px",
+                          },
                         }}
                       >
                         Add Member

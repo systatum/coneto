@@ -20,9 +20,13 @@ export interface CheckboxProps
   indeterminate?: boolean;
   description?: string;
   highlightOnChecked?: boolean;
+  styles?: CheckboxStylesProps;
+}
+
+export interface CheckboxStylesProps {
   containerStyle?: CSSProp;
+  self?: CSSProp;
   inputWrapperStyle?: CSSProp;
-  inputStyle?: CSSProp;
   titleStyle?: CSSProp;
   labelStyle?: CSSProp;
   iconStyle?: CSSProp;
@@ -40,15 +44,7 @@ function Checkbox({
   highlightOnChecked,
   errorMessage,
   indeterminate = false,
-  containerStyle,
-  inputStyle,
-  labelStyle,
-  iconStyle,
-  boxStyle,
-  inputWrapperStyle,
-  descriptionStyle,
-  errorStyle,
-  titleStyle,
+  styles,
   ...props
 }: CheckboxProps) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -68,11 +64,14 @@ function Checkbox({
       $hasDescription={!!description}
       $highlight={!!highlightOnChecked}
       $checked={isChecked}
-      $style={inputWrapperStyle}
+      $style={styles?.inputWrapperStyle}
       $disabled={props.disabled}
     >
       <InputContainer aria-label="input-container-checkbox">
-        <CheckboxBox $style={boxStyle} $highlight={!!highlightOnChecked}>
+        <CheckboxBox
+          $style={styles?.boxStyle}
+          $highlight={!!highlightOnChecked}
+        >
           <HiddenCheckbox
             ref={inputRef}
             {...(props as InputHTMLAttributes<HTMLInputElement>)}
@@ -84,7 +83,7 @@ function Checkbox({
             $isError={showError}
             $indeterminate={indeterminate}
             $checked={isChecked}
-            $style={inputStyle}
+            $style={styles?.self}
             $disabled={props.disabled}
             disabled={props.disabled}
             readOnly
@@ -96,7 +95,7 @@ function Checkbox({
             strokeWidth="3"
             strokeLinecap="round"
             strokeLinejoin="round"
-            $style={iconStyle}
+            $style={styles?.iconStyle}
             $visible={indeterminate || isChecked}
           >
             {indeterminate ? (
@@ -111,7 +110,7 @@ function Checkbox({
           <LabelText
             aria-label="label-wrapper"
             $highlight={highlightOnChecked}
-            $style={labelStyle}
+            $style={styles?.labelStyle}
           >
             {label}
           </LabelText>
@@ -121,25 +120,25 @@ function Checkbox({
       {description && (
         <DescriptionText
           $highlight={highlightOnChecked}
-          $style={descriptionStyle}
+          $style={styles?.descriptionStyle}
         >
           {description}
         </DescriptionText>
       )}
 
       {showError && errorMessage && (
-        <ErrorText $style={errorStyle}>{errorMessage}</ErrorText>
+        <ErrorText $style={styles?.errorStyle}>{errorMessage}</ErrorText>
       )}
     </InputWrapper>
   );
 
   return (
-    <Container $style={containerStyle}>
+    <Container $style={styles?.containerStyle}>
       {title && (
         <Title
           htmlFor={props.disabled ? null : inputId}
           aria-label="title-wrapper"
-          $style={titleStyle}
+          $style={styles?.titleStyle}
         >
           {title}
         </Title>

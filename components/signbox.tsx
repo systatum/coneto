@@ -11,11 +11,15 @@ export interface SignboxProps {
   label?: string;
   showError?: boolean;
   errorMessage?: string;
+  height?: string;
+  width?: string;
+  styles?: SignboxStylesProps;
+}
+
+export interface SignboxStylesProps {
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
   canvasStyle?: CSSProp;
-  height?: string;
-  width?: string;
 }
 
 function Signbox({
@@ -27,9 +31,7 @@ function Signbox({
   label,
   showError,
   errorMessage,
-  containerStyle,
-  canvasStyle,
-  labelStyle,
+  styles,
   height,
   width,
 }: SignboxProps) {
@@ -180,7 +182,7 @@ function Signbox({
     <SignatureWrapper
       aria-label="signbox-canvas"
       $error={showError}
-      $canvasStyle={canvasStyle}
+      $canvasStyle={styles?.canvasStyle}
       $height={height}
       $width={width}
     >
@@ -205,9 +207,9 @@ function Signbox({
   );
 
   return (
-    <InputWrapper $containerStyle={containerStyle} $disabled={disabled}>
+    <InputWrapper $containerStyle={styles?.containerStyle} $disabled={disabled}>
       {label && (
-        <Label $style={labelStyle} htmlFor="signbox">
+        <Label $style={styles?.labelStyle} htmlFor="signbox">
           {label}
         </Label>
       )}

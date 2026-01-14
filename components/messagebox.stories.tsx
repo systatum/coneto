@@ -10,12 +10,15 @@ const meta: Meta<typeof Messagebox> = {
     variant: {
       control: { type: "select" },
       options: ["primary", "success", "danger", "warning"],
+      description: "Visual style variant of the message box.",
     },
     title: {
       control: "text",
+      description: "Main title displayed at the top of the message box.",
     },
     children: {
       control: "text",
+      description: "Main message content displayed below the title.",
     },
     icon: {
       control: {
@@ -23,6 +26,32 @@ const meta: Meta<typeof Messagebox> = {
       },
       options: Object.keys(RemixIcons),
       mapping: RemixIcons,
+      description: "Icon displayed next to the message content.",
+    },
+    actionLinks: {
+      control: false,
+      description: `
+List of action links displayed below the message content.
+
+Each action supports:
+- **caption**: Label text
+- **type**: \`"button"\` or \`"link"\`
+- **onClick**: Click handler (for buttons)
+- **href**: URL (for links)
+    `,
+    },
+    closable: {
+      control: "boolean",
+      description: "Whether the message box can be closed by the user.",
+    },
+    onCloseRequest: {
+      control: false,
+      description: "Callback fired when the close (×) button is clicked.",
+    },
+    style: {
+      control: false,
+      description:
+        "Custom styled-components CSS applied to the message box root container.",
     },
   },
 };

@@ -39,8 +39,6 @@ export interface SelectboxProps {
   iconClosed?: RemixiconComponentType;
   type?: "calendar" | "default";
   clearable?: boolean;
-  containerStyle?: CSSProp;
-  selectboxStyle?: CSSProp;
   highlightOnMatch?: boolean;
   strict?: boolean;
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
@@ -59,6 +57,12 @@ export interface SelectboxProps {
         ref?: Ref<HTMLInputElement>;
       }
   ) => ReactNode;
+  styles?: SelectboxStylesProps;
+}
+
+export interface SelectboxStylesProps {
+  containerStyle?: CSSProp;
+  self?: CSSProp;
 }
 
 export interface DrawerProps extends InteractionModeProps {
@@ -70,10 +74,9 @@ export interface DrawerProps extends InteractionModeProps {
     userProps?: HTMLAttributes<HTMLUListElement>
   ) => HTMLAttributes<HTMLUListElement>;
   refs: { setFloating: Ref<HTMLUListElement>; setReference: Ref<HTMLElement> };
-  floatingStyles: CSSProperties;
   listRef: MutableRefObject<(HTMLLIElement | null)[]>;
   isOpen: boolean;
-  style?: CSSProp;
+  floatingStyles: CSSProperties;
   onClick?: () => void;
 }
 
@@ -100,12 +103,11 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       iconOpened: IconOpened = RiArrowDownSLine,
       iconClosed: IconClosed = RiArrowUpSLine,
       clearable = false,
-      containerStyle,
       highlightOnMatch,
       strict,
       onKeyDown,
       onClick,
-      selectboxStyle,
+      styles,
       multiple,
       actions,
       maxSelectableItems,
@@ -285,16 +287,14 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
           setIsHovered(false);
         }}
         role="combobox"
-        onMouseLeave={() => setIsHovered(false)}
-        onMouseEnter={() => setIsHovered(true)}
-        $style={containerStyle}
+        $style={styles?.containerStyle}
         aria-expanded={isOpen}
         onClick={() => {
           if (multiple) inputRef.current?.focus();
         }}
       >
         <Input
-          $style={selectboxStyle}
+          $style={styles?.self}
           {...getReferenceProps()}
           data-type="selectbox"
           $clearable={clearable}

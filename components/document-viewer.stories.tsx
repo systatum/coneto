@@ -193,14 +193,14 @@ export const Default: Story = {
             }}
           >
             <Button
-              style={{ fontSize: "0.75rem" }}
+              styles={{ self: { fontSize: "0.75rem" } }}
               onClick={() => handleCancelSubmission()}
             >
               Cancel
             </Button>
             <Button
               variant="primary"
-              style={{ fontSize: "0.75rem" }}
+              styles={{ self: { fontSize: "0.75rem" } }}
               onClick={() => handleCommentSubmission()}
             >
               Save
@@ -214,14 +214,16 @@ export const Default: Story = {
       <>
         <Window
           orientation="horizontal"
-          style={css`
-            height: 100vh;
-          `}
-          dividerStyle={css`
-            padding-top: 6px;
-            border-bottom: 6px solid #d1d5db;
-            background-color: white;
-          `}
+          styles={{
+            self: css`
+              height: 100vh;
+            `,
+            dividerStyle: css`
+              padding-top: 6px;
+              border-bottom: 6px solid #d1d5db;
+              background-color: white;
+            `,
+          }}
         >
           <Window.Cell>
             <DocumentViewer

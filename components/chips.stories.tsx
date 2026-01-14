@@ -210,8 +210,10 @@ export const Default: Story = {
                 await closeForm();
               }}
               size="sm"
-              buttonStyle={{
-                fontSize: "12px",
+              styles={{
+                self: {
+                  fontSize: "12px",
+                },
               }}
             >
               Cancel
@@ -220,8 +222,10 @@ export const Default: Story = {
               onClick={handleNewTagClicked}
               size="sm"
               variant="primary"
-              buttonStyle={{
-                fontSize: "12px",
+              styles={{
+                self: {
+                  fontSize: "12px",
+                },
               }}
             >
               Add
@@ -235,17 +239,19 @@ export const Default: Story = {
       <Chips
         inputValue={inputValue.search}
         setInputValue={onChangeValue}
-        chipStyle={css`
-          min-width: 300px;
-          gap: 8px;
-          border-color: transparent;
-        `}
-        chipContainerStyle={css`
-          gap: 4px;
-        `}
-        chipsDrawerStyle={css`
-          max-width: 300px;
-        `}
+        styles={{
+          chipStyle: css`
+            width: 100%;
+            gap: 8px;
+            border-color: transparent;
+          `,
+          chipContainerStyle: css`
+            gap: 4px;
+          `,
+          chipsDrawerStyle: css`
+            max-width: 300px;
+          `,
+        }}
         onOptionClicked={handleOptionClicked}
         selectedOptions={inputValue.selectedOptions}
         options={BADGE_OPTIONS as BadgeProps[]}
@@ -359,15 +365,17 @@ export const DarkBackground: Story = {
         setInputValue={(e) =>
           setInputValue((prev) => ({ ...prev, searchText: e.target.value }))
         }
-        chipStyle={css`
-          width: 100%;
-          gap: 8px;
-          border-color: transparent;
-        `}
-        chipContainerStyle={css`
-          gap: 8px;
-          justify-content: start;
-        `}
+        styles={{
+          chipStyle: css`
+            width: 100%;
+            gap: 8px;
+            border-color: transparent;
+          `,
+          chipContainerStyle: css`
+            gap: 8px;
+            justify-content: start;
+          `,
+        }}
         onOptionClicked={handleOptionClicked}
         selectedOptions={inputValue.selectedOptions}
         options={BADGE_OPTIONS as BadgeProps[]}
@@ -563,8 +571,10 @@ export const Deletable: Story = {
                 await closeForm();
               }}
               size="sm"
-              buttonStyle={{
-                fontSize: "12px",
+              styles={{
+                self: {
+                  fontSize: "12px",
+                },
               }}
             >
               Cancel
@@ -573,8 +583,10 @@ export const Deletable: Story = {
               onClick={handleNewTagClicked}
               size="sm"
               variant="primary"
-              buttonStyle={{
-                fontSize: "12px",
+              styles={{
+                self: {
+                  fontSize: "12px",
+                },
               }}
             >
               Add
@@ -588,17 +600,19 @@ export const Deletable: Story = {
       <Chips
         inputValue={inputValue.search}
         setInputValue={onChangeValue}
-        chipStyle={css`
-          width: 100%;
-          gap: 8px;
-          border-color: transparent;
-        `}
-        chipContainerStyle={css`
-          gap: 4px;
-        `}
-        chipsDrawerStyle={css`
-          max-width: 250px;
-        `}
+        styles={{
+          chipStyle: css`
+            width: 100%;
+            gap: 8px;
+            border-color: transparent;
+          `,
+          chipContainerStyle: css`
+            gap: 4px;
+          `,
+          chipsDrawerStyle: css`
+            max-width: 250px;
+          `,
+        }}
         onOptionClicked={handleOptionClicked}
         selectedOptions={inputValue.selectedOptions}
         options={BADGE_OPTIONS as BadgeProps[]}
@@ -805,8 +819,10 @@ export const CustomRenderer: Story = {
                 await closeForm();
               }}
               size="sm"
-              buttonStyle={{
-                fontSize: "12px",
+              styles={{
+                self: {
+                  fontSize: "12px",
+                },
               }}
             >
               Cancel
@@ -815,8 +831,10 @@ export const CustomRenderer: Story = {
               onClick={handleNewTagClicked}
               size="sm"
               variant="primary"
-              buttonStyle={{
-                fontSize: "12px",
+              styles={{
+                self: {
+                  fontSize: "12px",
+                },
               }}
             >
               Add
@@ -847,13 +865,15 @@ export const CustomRenderer: Story = {
         comboboxProps: {
           placeholder: "Search your role...",
           options: EMPLOYEE_OPTIONS,
-          selectboxStyle: css`
-            border: 1px solid #d1d5db;
-            &:focus {
-              border-color: #61a9f9;
-              box-shadow: 0 0 0 1px #61a9f9;
-            }
-          `,
+          styles: {
+            selectboxStyle: css`
+              border: 1px solid #d1d5db;
+              &:focus {
+                border-color: #61a9f9;
+                box-shadow: 0 0 0 1px #61a9f9;
+              }
+            `,
+          },
         },
       },
     ];
@@ -902,7 +922,15 @@ export const CustomRenderer: Story = {
             justifyContent: "flex-end",
           }}
         >
-          <Button style={{ fontSize: "0.75rem" }}>Save</Button>
+          <Button
+            styles={{
+              self: {
+                fontSize: "12px",
+              },
+            }}
+          >
+            Save
+          </Button>
         </div>
       </div>
     );
@@ -911,17 +939,19 @@ export const CustomRenderer: Story = {
       <Chips
         inputValue={inputValue.search}
         setInputValue={onChangeValue}
-        chipStyle={css`
-          width: 100%;
-          gap: 8px;
-          border-color: transparent;
-        `}
-        chipContainerStyle={css`
-          gap: 4px;
-        `}
-        chipsDrawerStyle={css`
-          max-width: 250px;
-        `}
+        styles={{
+          chipStyle: css`
+            width: 100%;
+            gap: 8px;
+            border-color: transparent;
+          `,
+          chipContainerStyle: css`
+            gap: 4px;
+          `,
+          chipsDrawerStyle: css`
+            max-width: 250px;
+          `,
+        }}
         renderer={({ id, caption }) => {
           const isOpen = openMap[id] || false;
           return (
@@ -939,20 +969,22 @@ export const CustomRenderer: Story = {
                 setOpenMap((prev) => ({ ...prev, [id]: isOpen }));
               }}
               dialog={contentDialog}
-              containerStyle={css`
-                width: fit-content;
-              `}
-              arrowStyle={css`
-                background-color: #e5e7eb;
-                border: 1px solid #e5e7eb;
-              `}
-              drawerStyle={css`
-                width: fit-content;
-                left: 1rem;
-                background-color: white;
-                color: black;
-                border: 1px solid #e5e7eb;
-              `}
+              styles={{
+                containerStyle: css`
+                  width: fit-content;
+                `,
+                arrowStyle: css`
+                  background-color: #e5e7eb;
+                  border: 1px solid #e5e7eb;
+                `,
+                drawerStyle: css`
+                  width: fit-content;
+                  left: 1rem;
+                  background-color: white;
+                  color: black;
+                  border: 1px solid #e5e7eb;
+                `,
+              }}
             >
               <Badge
                 id={id}

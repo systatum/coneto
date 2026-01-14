@@ -305,7 +305,8 @@
     "build-chromatic": "chromatic --project-token=$CHROMATIC_PROJECT_TOKEN",
     "prepare": "node generate-export.cjs",
     "test-open": "cypress open",
-    "test-run": "cypress run"
+    "test-run": "cypress run",
+    "test-run-component": "cypress run --component"
   },
   "peerDependencies": {
     "react": "^19.1.0",

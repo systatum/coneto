@@ -48,9 +48,11 @@ describe("Checkbox", () => {
       cy.mount(
         <Checkbox
           label="This is checkbox with title"
-          labelStyle={css`
-            font-size: 30px;
-          `}
+          styles={{
+            labelStyle: css`
+              font-size: 30px;
+            `,
+          }}
         />
       );
       cy.findByRole("checkbox").click();

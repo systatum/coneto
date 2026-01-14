@@ -52,17 +52,17 @@ const meta: Meta<typeof Combobox> = {
       control: "text",
       description: "Label displayed above the input field.",
     },
-    containerStyle: {
-      control: "object",
-      description: "Custom CSS style for the wrapper.",
-    },
-    selectboxStyle: {
-      control: "object",
-      description: "Custom CSS style for the input/select area.",
-    },
-    labelStyle: {
-      control: "object",
-      description: "Custom CSS style for the label element.",
+    styles: {
+      control: false,
+      description: `
+Custom styles for the SelectBox component. This object allows you to override styles for individual parts:
+
+- **containerStyle**: Root wrapper of the SelectBox
+- **selectboxStyle**: Input and dropdown trigger area
+- **labelStyle**: Label text element
+
+Each field accepts a \`CSSProp\` (styled-components compatible) and can be used to control layout, spacing, typography, colors, and visual appearance.
+    `,
     },
     actions: {
       control: "object",

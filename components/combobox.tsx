@@ -9,11 +9,9 @@ import {
   useRef,
   useState,
 } from "react";
-
 import { DrawerProps, OptionsProps, Selectbox } from "./selectbox";
 import { RemixiconComponentType } from "@remixicon/react";
 import styled, { css, CSSProp } from "styled-components";
-import { Searchbox } from "./searchbox";
 import { List } from "./list";
 
 export type ComboboxProps = Partial<BaseComboboxProps> & {
@@ -26,9 +24,6 @@ export type ComboboxProps = Partial<BaseComboboxProps> & {
 
 interface BaseComboboxProps {
   options: OptionsProps[];
-  containerStyle?: CSSProp;
-  selectboxStyle?: CSSProp;
-  labelStyle?: CSSProp;
   selectedOptions: string[];
   setSelectedOptions: (data: string[]) => void;
   clearable?: boolean;
@@ -40,6 +35,13 @@ interface BaseComboboxProps {
   name?: string;
   multiple?: boolean;
   maxSelectableItems?: number | undefined;
+  styles?: ComboboxStylesProps;
+}
+
+interface ComboboxStylesProps {
+  containerStyle?: CSSProp;
+  selectboxStyle?: CSSProp;
+  labelStyle?: CSSProp;
 }
 
 export interface ComboboxActionProps {
@@ -69,9 +71,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       setSelectedOptions,
       clearable = false,
       placeholder,
-      containerStyle,
-      selectboxStyle,
-      labelStyle,
+      styles,
       highlightOnMatch = false,
       emptySlate = "Not available.",
       errorMessage,
@@ -89,18 +89,23 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
     ref
   ) => {
     return (
-      <ComboboxWrapper $style={containerStyle} aria-label={`combobox-${name}`}>
-        {label && <Label $style={labelStyle}>{label}</Label>}
+      <ComboboxWrapper
+        $style={styles?.containerStyle}
+        aria-label={`combobox-${name}`}
+      >
+        {label && <Label $style={styles?.labelStyle}>{label}</Label>}
         <Selectbox
           ref={ref}
           highlightOnMatch={highlightOnMatch}
-          selectboxStyle={css`
-            ${selectboxStyle}
-            ${showError &&
-            css`
-              border-color: #f87171;
-            `}
-          `}
+          styles={{
+            self: css`
+              ${styles?.selectboxStyle}
+              ${showError &&
+              css`
+                border-color: #f87171;
+              `}
+            `,
+          }}
           options={options}
           selectedOptions={selectedOptions}
           setSelectedOptions={setSelectedOptions}
@@ -116,6 +121,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
             return (
               <ComboboxDrawer
                 {...props}
+                styles={styles}
                 inputRef={props.ref}
                 name={name}
                 selectedOptions={selectedOptions}
@@ -247,7 +253,30 @@ function ComboboxDrawer({
     >
       {(options || actions) && (
         <List
-          containerStyle={listContainerStyle}
+          styles={{
+            containerStyle: listContainerStyle,
+            searchboxStyles: {
+              containerStyle: css`
+                position: sticky;
+                top: 0;
+                background-color: white;
+                z-index: 30;
+                height: 38px;
+                padding-right: 7px;
+                padding-left: 7px;
+              `,
+              iconStyle: css`
+                left: 16px;
+              `,
+              self: css`
+                max-height: 35px;
+                margin-top: 7px;
+                margin-bottom: 7px;
+                padding-bottom: 7px;
+                padding-top: 7px;
+              `,
+            },
+          }}
           inputRef={inputRef}
           selectable={multiple}
           searchable={multiple}
@@ -262,27 +291,6 @@ function ComboboxDrawer({
               text: value,
             });
           }}
-          searchboxStyles={{
-            containerStyle: css`
-              position: sticky;
-              top: 0;
-              background-color: white;
-              z-index: 30;
-              height: 38px;
-              padding-right: 7px;
-              padding-left: 7px;
-            `,
-            iconStyle: css`
-              left: 16px;
-            `,
-            style: css`
-              max-height: 35px;
-              margin-top: 7px;
-              margin-bottom: 7px;
-              padding-bottom: 7px;
-              padding-top: 7px;
-            `,
-          }}
         >
           {actions &&
             actions.map((props, index) => {
@@ -296,13 +304,15 @@ function ComboboxDrawer({
                     ref={(el) => {
                       listRef.current[index] = el;
                     }}
-                    titleStyle={listItemTitleStyle}
-                    rowStyle={listItemRowStyle({
-                      shouldHighlight,
-                      interactionMode,
-                    })}
-                    containerStyle={listItemContainerStyle}
-                    leftSideStyle={listItemLeftSideStyle}
+                    styles={{
+                      titleStyle: listItemTitleStyle,
+                      rowStyle: listItemRowStyle({
+                        shouldHighlight,
+                        interactionMode,
+                      }),
+                      containerStyle: listItemContainerStyle,
+                      leftSideStyle: listItemLeftSideStyle,
+                    }}
                     title={
                       <>
                         {props.title}
@@ -337,21 +347,23 @@ function ComboboxDrawer({
                 <List.Item
                   id={option.value}
                   title={option.render ? option.render : option.text}
-                  rowStyle={listItemRowStyle({
-                    shouldHighlight,
-                    interactionMode,
-                    isSelected,
-                    multiple,
-                  })}
-                  containerStyle={listItemContainerStyle}
-                  leftSideStyle={[
-                    listItemLeftSideStyle,
-                    option.render && listItemLeftSideWithRender,
-                  ]}
-                  titleStyle={[
-                    listItemTitleStyle,
-                    option.render && listItemTitleWithRender,
-                  ]}
+                  styles={{
+                    rowStyle: listItemRowStyle({
+                      shouldHighlight,
+                      interactionMode,
+                      isSelected,
+                      multiple,
+                    }),
+                    containerStyle: listItemContainerStyle,
+                    leftSideStyle: [
+                      listItemLeftSideStyle,
+                      option.render && listItemLeftSideWithRender,
+                    ],
+                    titleStyle: [
+                      listItemTitleStyle,
+                      option.render && listItemTitleWithRender,
+                    ],
+                  }}
                   selectedOptions={{ checked: isSelected }}
                   onMouseDown={(e) => {
                     e.preventDefault();

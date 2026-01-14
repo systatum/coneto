@@ -81,9 +81,11 @@ describe("StatefulForm", () => {
           required: true,
           placeholder: "Enter text",
           textboxProps: {
-            style: css`
-              background-color: wheat;
-            `,
+            styles: {
+              self: css`
+                background-color: wheat;
+              `,
+            },
           },
         },
         {
@@ -93,9 +95,11 @@ describe("StatefulForm", () => {
           required: false,
           placeholder: "Enter email address",
           textboxProps: {
-            style: css`
-              background-color: wheat;
-            `,
+            styles: {
+              self: css`
+                background-color: wheat;
+              `,
+            },
           },
         },
         {
@@ -105,12 +109,14 @@ describe("StatefulForm", () => {
           required: false,
           placeholder: "Enter email address",
           timeboxProps: {
-            inputWrapperStyle: css`
-              background-color: wheat;
-            `,
-            inputStyle: css`
-              background-color: wheat;
-            `,
+            styles: {
+              inputWrapperStyle: css`
+                background-color: wheat;
+              `,
+              self: css`
+                background-color: wheat;
+              `,
+            },
           },
         },
         {
@@ -120,9 +126,11 @@ describe("StatefulForm", () => {
           required: false,
           placeholder: "Enter number",
           textboxProps: {
-            style: css`
-              background-color: wheat;
-            `,
+            styles: {
+              self: css`
+                background-color: wheat;
+              `,
+            },
           },
         },
         {
@@ -132,9 +140,11 @@ describe("StatefulForm", () => {
           required: false,
           placeholder: "Enter password",
           textboxProps: {
-            style: css`
-              background-color: wheat;
-            `,
+            styles: {
+              self: css`
+                background-color: wheat;
+              `,
+            },
           },
         },
         {
@@ -145,9 +155,11 @@ describe("StatefulForm", () => {
           required: false,
           placeholder: "Enter text here",
           textareaProps: {
-            style: css`
-              background-color: wheat;
-            `,
+            styles: {
+              self: css`
+                background-color: wheat;
+              `,
+            },
           },
         },
         {
@@ -156,9 +168,11 @@ describe("StatefulForm", () => {
           type: "checkbox",
           required: false,
           checkboxProps: {
-            inputStyle: css`
-              background-color: wheat;
-            `,
+            styles: {
+              self: css`
+                background-color: wheat;
+              `,
+            },
           },
         },
         {
@@ -168,9 +182,11 @@ describe("StatefulForm", () => {
           required: false,
           placeholder: "Enter the color here",
           colorboxProps: {
-            style: css`
-              background-color: wheat;
-            `,
+            styles: {
+              self: css`
+                background-color: wheat;
+              `,
+            },
           },
         },
         {
@@ -181,9 +197,11 @@ describe("StatefulForm", () => {
           placeholder: "Select a fruit...",
           comboboxProps: {
             options: FRUIT_OPTIONS,
-            selectboxStyle: css`
-              background-color: wheat;
-            `,
+            styles: {
+              selectboxStyle: css`
+                background-color: wheat;
+              `,
+            },
           },
         },
         {
@@ -194,9 +212,11 @@ describe("StatefulForm", () => {
           placeholder: "Select a date",
           dateProps: {
             monthNames: MONTH_NAMES,
-            selectboxStyle: css`
-              background-color: wheat;
-            `,
+            styles: {
+              selectboxStyle: css`
+                background-color: wheat;
+              `,
+            },
           },
         },
         {
@@ -205,9 +225,11 @@ describe("StatefulForm", () => {
           type: "file_drop_box",
           required: false,
           fileDropBoxProps: {
-            dragOverStyle: css`
-              background-color: wheat;
-            `,
+            styles: {
+              dragOverStyle: css`
+                background-color: wheat;
+              `,
+            },
           },
         },
         {
@@ -217,9 +239,11 @@ describe("StatefulForm", () => {
           required: false,
           fileInputBoxProps: {
             accept: "image/jpeg",
-            inputStyle: css`
-              background-color: wheat;
-            `,
+            styles: {
+              self: css`
+                background-color: wheat;
+              `,
+            },
           },
         },
         {
@@ -228,9 +252,11 @@ describe("StatefulForm", () => {
           type: "image",
           required: false,
           imageboxProps: {
-            style: css`
-              background-color: wheat;
-            `,
+            styles: {
+              self: css`
+                background-color: wheat;
+              `,
+            },
           },
         },
         {
@@ -241,9 +267,11 @@ describe("StatefulForm", () => {
           placeholder: "Enter amount",
           moneyProps: {
             separator: "dot",
-            style: css`
-              background-color: wheat;
-            `,
+            styles: {
+              self: css`
+                background-color: wheat;
+              `,
+            },
           },
         },
         {
@@ -253,12 +281,14 @@ describe("StatefulForm", () => {
           required: false,
           placeholder: "Enter phone number",
           phoneboxProps: {
-            inputWrapperStyle: css`
-              background-color: wheat;
-            `,
-            inputStyle: css`
-              background-color: wheat;
-            `,
+            styles: {
+              inputWrapperStyle: css`
+                background-color: wheat;
+              `,
+              self: css`
+                background-color: wheat;
+              `,
+            },
           },
         },
         {
@@ -274,9 +304,11 @@ describe("StatefulForm", () => {
           type: "signbox",
           required: false,
           signboxProps: {
-            canvasStyle: css`
-              background-color: wheat;
-            `,
+            styles: {
+              canvasStyle: css`
+                background-color: wheat;
+              `,
+            },
           },
         },
       ];
@@ -320,6 +352,11 @@ describe("StatefulForm", () => {
           } else if (field.type === "signature") {
             cy.findByPlaceholderText("signbox-canvas")
               .should("exist")
+              .and("have.css", "background-color", "rgb(245, 222, 179)");
+          } else if (field.type === "phone") {
+            cy.findByPlaceholderText(field.placeholder)
+              .should("exist")
+              .parent()
               .and("have.css", "background-color", "rgb(245, 222, 179)");
           } else if (field.type === "color") {
             cy.findByPlaceholderText(field.placeholder)
@@ -1223,17 +1260,19 @@ describe("StatefulForm", () => {
         width: "50%",
         chipsProps: {
           options: BADGE_OPTIONS,
-          chipStyle: css`
-            width: 100%;
-            gap: 0.5rem;
-            border-color: transparent;
-          `,
-          chipContainerStyle: css`
-            gap: 4px;
-          `,
-          chipsDrawerStyle: css`
-            min-width: 250px;
-          `,
+          styles: {
+            chipStyle: css`
+              width: 100%;
+              gap: 0.5rem;
+              border-color: transparent;
+            `,
+            chipContainerStyle: css`
+              gap: 4px;
+            `,
+            chipsDrawerStyle: css`
+              min-width: 250px;
+            `,
+          },
           selectedOptions: valueAll.chips.selectedOptions,
           inputValue: valueAll.chips.searchText,
         },

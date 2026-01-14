@@ -20,7 +20,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { Searchbox } from "./searchbox";
+import { Searchbox, SearchboxStylesProps } from "./searchbox";
 import { AnimatePresence, motion } from "framer-motion";
 import { LoadingSpinner } from "./loading-spinner";
 import { Checkbox } from "./checkbox";
@@ -33,12 +33,11 @@ export interface ListProps extends ListMaxItemsProp {
   searchable?: boolean;
   onSearchRequested?: (search: ChangeEvent<HTMLInputElement>) => void;
   children: ReactNode;
-  containerStyle?: CSSProp;
   isLoading?: boolean;
   draggable?: boolean;
   selectable?: boolean;
   searchValue?: string;
-  searchboxStyles?: SearchboxStylesProps;
+  styles?: ListStylesProps;
   onDragged?: (props: {
     id: string;
     oldGroupId: string;
@@ -54,12 +53,6 @@ export interface ListProps extends ListMaxItemsProp {
   labels?: ListLabelsProps;
 }
 
-interface SearchboxStylesProps {
-  containerStyle?: CSSProp;
-  iconStyle?: CSSProp;
-  style?: CSSProp;
-}
-
 interface ListLabelsProps {
   moreItemsText?: ReactNode;
   lessItemsText?: ReactNode;
@@ -70,42 +63,6 @@ export interface ListOnOpenProps {
   isOpen?: boolean;
 }
 
-export interface ListGroupActionsProps
-  extends Omit<ActionButtonProps, "onClick"> {
-  onClick?: (e?: string) => void;
-}
-
-export interface ListGroupProps {
-  id: string;
-  title: string;
-  subtitle?: string;
-  titleStyle?: CSSProp;
-  subtitleStyle?: CSSProp;
-  children: ReactNode;
-  draggable?: boolean;
-  containerStyle?: CSSProp;
-  contentStyle?: CSSProp;
-  selectable?: boolean;
-  rightSideContent?: ((prop: string) => ReactNode) | ReactNode;
-  actions?: ListGroupActionsProps[];
-  openerStyle?: "chevron" | "togglebox" | "none";
-  emptySlate?: ReactNode;
-  emptySlateStyle?: CSSProp;
-  initialState?: "opened" | "closed";
-}
-
-export interface ListGroupContentProps {
-  id: string;
-  title: string;
-  subtitle?: string;
-  titleStyle?: CSSProp;
-  subtitleStyle?: CSSProp;
-  actions?: ListGroupActionsProps[];
-  rightSideContent?: ((prop: string) => ReactNode) | ReactNode;
-  initialState?: "opened" | "closed";
-  items: ListItemProps[];
-}
-
 export type ListItemActionProps = ContextMenuActionsProps;
 
 interface ListAlwaysShowDragIconProp {
@@ -114,8 +71,13 @@ interface ListAlwaysShowDragIconProp {
 
 interface ListMaxItemsProp {
   maxItems?: number;
-  maxItemsStyle?: CSSProp;
   maxItemsWithIcon?: boolean;
+}
+
+interface ListStylesProps {
+  maxItemsStyle?: CSSProp;
+  searchboxStyles?: SearchboxStylesProps;
+  containerStyle?: CSSProp;
 }
 
 export interface LeftSideContentMenuProps {
@@ -165,9 +127,8 @@ function List({
   onSearchRequested,
   searchValue,
   inputRef,
-  searchboxStyles,
   children,
-  containerStyle,
+  styles,
   onDragged,
   draggable,
   selectable,
@@ -178,7 +139,6 @@ function List({
   onSearchKeyDown,
   maxItems,
   labels,
-  maxItemsStyle,
   maxItemsWithIcon,
 }: ListProps) {
   const childArray = Children.toArray(children).filter(isValidElement);
@@ -266,7 +226,7 @@ function List({
       }}
     >
       <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
-        <ListContainer role="list" $containerStyle={containerStyle}>
+        <ListContainer $containerStyle={styles?.containerStyle}>
           {searchable && (
             <Searchbox
               ref={inputRef}
@@ -277,9 +237,7 @@ function List({
               }}
               onKeyDown={onSearchKeyDown}
               value={value}
-              containerStyle={searchboxStyles?.containerStyle}
-              iconStyle={searchboxStyles?.iconStyle}
-              style={searchboxStyles?.style}
+              styles={styles?.searchboxStyles}
             />
           )}
 
@@ -303,15 +261,25 @@ function List({
 
             const isHidden = maxItems && !expanded && index >= maxItems;
 
+            const isGroup = componentChild.type === List.Group;
+
             const modifiedChild = cloneElement(componentChild, {
               draggable: draggable,
               selectable: selectable,
               openTipRowId,
               setOpenTipRowId,
               alwaysShowDragIcon,
-              maxItems,
-              maxItemsStyle,
-              labels,
+              ...(isGroup && {
+                maxItems,
+                labels,
+                ...(maxItems &&
+                  styles?.maxItemsStyle && {
+                    styles: {
+                      maxItemsStyle: styles?.maxItemsStyle,
+                      ...componentChild.props.styles,
+                    },
+                  }),
+              }),
             });
 
             if (maxItems) {
@@ -342,7 +310,7 @@ function List({
               expanded={expanded}
               setExpanded={setExpanded}
               labels={labels}
-              maxItemsStyle={maxItemsStyle}
+              maxItemsStyle={styles?.maxItemsStyle}
               maxItemsWithIcon={maxItemsWithIcon}
               maxItems={maxItems}
               isOpen={undefined}
@@ -372,22 +340,59 @@ const OverlayLoading = styled.div`
   z-index: 30;
 `;
 
+export interface ListGroupActionsProps
+  extends Omit<ActionButtonProps, "onClick"> {
+  onClick?: (e?: string) => void;
+}
+
+export interface ListGroupProps {
+  id: string;
+  title: string;
+  subtitle?: string;
+  children: ReactNode;
+  draggable?: boolean;
+  rightSideContent?: ((prop: string) => ReactNode) | ReactNode;
+  actions?: ListGroupActionsProps[];
+  openerStyle?: "chevron" | "togglebox" | "none";
+  emptySlate?: ReactNode;
+  initialState?: "opened" | "closed";
+  selectable?: boolean;
+  styles?: ListGroupStylesProps;
+}
+
+interface ListGroupStylesProps {
+  containerStyle?: CSSProp;
+  titleStyle?: CSSProp;
+  subtitleStyle?: CSSProp;
+  contentStyle?: CSSProp;
+  emptySlateStyle?: CSSProp;
+  maxItemsStyle?: CSSProp;
+}
+
+export interface ListGroupContentProps {
+  id: string;
+  title: string;
+  subtitle?: string;
+  actions?: ListGroupActionsProps[];
+  rightSideContent?: ((prop: string) => ReactNode) | ReactNode;
+  initialState?: "opened" | "closed";
+  items: ListItemProps[];
+  styles?: ListGroupStylesProps;
+}
+
 function ListGroup({
   id,
   title,
   subtitle,
-  titleStyle,
-  subtitleStyle,
   children,
-  containerStyle,
   draggable,
   selectable,
   rightSideContent,
   openerStyle = "chevron",
   actions,
   emptySlate,
-  emptySlateStyle,
   initialState = "opened",
+  styles,
   ...props
 }: ListGroupProps) {
   const {
@@ -396,7 +401,6 @@ function ListGroup({
     alwaysShowDragIcon,
     labels,
     maxItems,
-    maxItemsStyle,
     maxItemsWithIcon,
   } = props as ListItemWithId &
     ListAlwaysShowDragIconProp &
@@ -413,16 +417,18 @@ function ListGroup({
     actions &&
     actions?.map((action) => ({
       ...action,
-      style: css`
-        font-size: 11px;
-        height: 24px;
-        ${action.style}
-      `,
+      styles: {
+        self: css`
+          font-size: 11px;
+          height: 24px;
+          ${action.styles?.self}
+        `,
+      },
       onClick: () => action.onClick && action.onClick?.(id),
     }));
 
   return (
-    <ListGroupContainer $containerStyle={containerStyle}>
+    <ListGroupContainer $containerStyle={styles?.containerStyle}>
       <HeaderButton
         $isOpen={opened}
         onClick={() => setIsOpen(id)}
@@ -438,14 +444,17 @@ function ListGroup({
           aria-label="list-left-side-wrapper"
         >
           {title && (
-            <TitleText aria-label="list-group-title" $style={titleStyle}>
+            <TitleText
+              aria-label="list-group-title"
+              $style={styles?.titleStyle}
+            >
               {title}
             </TitleText>
           )}
           {subtitle && (
             <SubtitleText
               aria-label="list-group-subtitle"
-              $style={subtitleStyle}
+              $style={styles?.subtitleStyle}
             >
               {subtitle}
             </SubtitleText>
@@ -485,9 +494,11 @@ function ListGroup({
             />
           ) : openerStyle === "togglebox" ? (
             <Togglebox
-              containerStyle={css`
-                width: fit-content;
-              `}
+              styles={{
+                containerStyle: css`
+                  width: fit-content;
+                `,
+              }}
               checked={opened}
               onChange={() => setIsOpen(id)}
             />
@@ -495,62 +506,63 @@ function ListGroup({
         </div>
       </HeaderButton>
 
-      {isOpen && <Divider aria-label="divider" />}
+      {opened && <Divider aria-label="divider" />}
 
       <AnimatePresence initial={false}>
-        {childArray.map((child, index) => {
-          const componentChild = child as ReactElement<
-            ListItemProps &
-              ListItemWithId &
-              ListAlwaysShowDragIconProp & {
-                index: number;
-                onDropItem?: (position: number) => void;
-                groupLength?: number;
-              }
-          >;
+        <ListGroupContent
+          key={`list-group-content`}
+          initial="open"
+          animate={opened ? "open" : "collapsed"}
+          exit="collapsed"
+          variants={{
+            open: { opacity: 1, height: "auto" },
+            collapsed: { opacity: 0, height: 0 },
+          }}
+          transition={{ duration: 0.2, ease: "easeInOut" }}
+          $contentStyle={styles?.contentStyle}
+        >
+          {childArray.map((child, index) => {
+            const componentChild = child as ReactElement<
+              ListItemProps &
+                ListItemWithId &
+                ListAlwaysShowDragIconProp & {
+                  index: number;
+                  onDropItem?: (position: number) => void;
+                  groupLength?: number;
+                }
+            >;
 
-          const modifiedChild = cloneElement(componentChild, {
-            draggable: draggable,
-            selectable: selectable,
-            groupId: id,
-            index: index,
-            groupLength: childArray.length,
-            openTipRowId,
-            setOpenTipRowId,
-            alwaysShowDragIcon,
-            onDropItem: (newPosition: number) => {
-              if (dragItem && draggable) {
-                const { id: draggedId, oldGroupId, oldPosition } = dragItem;
+            const modifiedChild = cloneElement(componentChild, {
+              draggable: draggable,
+              selectable: selectable,
+              groupId: id,
+              index: index,
+              groupLength: childArray.length,
+              openTipRowId,
+              setOpenTipRowId,
+              alwaysShowDragIcon,
+              onDropItem: (newPosition: number) => {
+                if (dragItem && draggable) {
+                  const { id: draggedId, oldGroupId, oldPosition } = dragItem;
 
-                onDragged?.({
-                  id: draggedId,
-                  oldGroupId,
-                  newGroupId: id,
-                  oldPosition,
-                  newPosition: newPosition,
-                });
+                  onDragged?.({
+                    id: draggedId,
+                    oldGroupId,
+                    newGroupId: id,
+                    oldPosition,
+                    newPosition: newPosition,
+                  });
 
-                setDragItem(null);
-              }
-            },
-          });
+                  setDragItem(null);
+                }
+              },
+            });
 
-          const isHidden = maxItems && !expanded && index >= maxItems;
+            const isHidden = maxItems && !expanded && index >= maxItems;
 
-          if (maxItems) {
-            return (
-              <ListGroupContent
-                key={`list-group-content-${index}`}
-                initial="open"
-                animate={isOpen ? "open" : "collapsed"}
-                exit="collapsed"
-                variants={{
-                  open: { opacity: 1, height: "auto" },
-                  collapsed: { opacity: 0, height: 0 },
-                }}
-                transition={{ duration: 0.2, ease: "easeInOut" }}
-              >
-                <AnimatePresence>
+            if (maxItems) {
+              return (
+                <AnimatePresence key={index}>
                   {!isHidden && (
                     <motion.div
                       aria-label="list-with-max-item"
@@ -565,26 +577,12 @@ function ListGroup({
                     </motion.div>
                   )}
                 </AnimatePresence>
-              </ListGroupContent>
-            );
-          }
+              );
+            }
 
-          return (
-            <ListGroupContent
-              key={`list-group-content-${index}`}
-              initial="open"
-              animate={opened ? "open" : "collapsed"}
-              exit="collapsed"
-              variants={{
-                open: { opacity: 1, height: "auto" },
-                collapsed: { opacity: 0, height: 0 },
-              }}
-              transition={{ duration: 0.2, ease: "easeInOut" }}
-            >
-              {modifiedChild}
-            </ListGroupContent>
-          );
-        })}
+            return <Fragment key={index}>{modifiedChild}</Fragment>;
+          })}
+        </ListGroupContent>
 
         {maxItems && childArray.length > maxItems && (
           <ListShowMoreButton
@@ -592,7 +590,7 @@ function ListGroup({
             isOpen={opened}
             setExpanded={setExpanded}
             key={`list-show-more-${opened}`}
-            maxItemsStyle={maxItemsStyle}
+            maxItemsStyle={styles?.maxItemsStyle}
             maxItemsWithIcon={maxItemsWithIcon}
             labels={labels}
             maxItems={maxItems}
@@ -605,7 +603,7 @@ function ListGroup({
             aria-label="list-group-empty-slate"
             initial="open"
             animate={opened ? "open" : "collapsed"}
-            $style={emptySlateStyle}
+            $style={styles?.emptySlateStyle}
             exit="collapsed"
             variants={{
               open: { opacity: 1, height: "auto" },
@@ -650,6 +648,7 @@ function ListShowMoreButton({
   setExpanded: (prop: boolean) => void;
   isOpen?: boolean | undefined;
   labels?: ListLabelsProps;
+  maxItemsStyle?: CSSProp;
 } & ListMaxItemsProp) {
   return (
     <ShowMoreButton
@@ -721,6 +720,8 @@ const ListGroupContent = styled(motion.ul)<{
   flex-direction: column;
   position: relative;
   padding-top: ${({ $isOpen }) => ($isOpen ? "2px" : "0px")};
+  gap: 4px;
+
   ${({ $contentStyle }) => $contentStyle}
 `;
 
@@ -773,7 +774,7 @@ const EmptyContent = styled(motion.div)<{ $style?: CSSProp }>`
 
 export interface ListItemProps {
   id: string;
-  title?: ReactNode | string;
+  title?: ReactNode;
   subtitle?: string;
   imageUrl?: string;
   leftIcon?: RemixiconComponentType | null;
@@ -783,8 +784,6 @@ export interface ListItemProps {
   onSelected?: (selected: ChangeEvent<HTMLInputElement>) => void;
   onClick?: () => void;
   rightSideContent?: ((prop: string) => ReactNode) | ReactNode;
-  containerStyle?: CSSProp;
-  rowStyle?: CSSProp;
   actions?: (id?: string) => ListItemActionProps[];
   children?: ReactNode;
   openable?: boolean;
@@ -793,10 +792,17 @@ export interface ListItemProps {
     checked?: boolean;
   };
   leftSideContent?: ReactNode;
+  styles?: ListItemStylesProps;
+}
+
+interface ListItemStylesProps {
+  containerStyle?: CSSProp;
+  rowStyle?: CSSProp;
   titleStyle?: CSSProp;
   subtitleStyle?: CSSProp;
   leftSideStyle?: CSSProp;
   rightSideStyle?: CSSProp;
+  maxItemsStyle?: CSSProp;
 }
 
 type DivProps = Omit<
@@ -823,8 +829,6 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
       imageUrl,
       subtitle,
       title,
-      containerStyle,
-      rowStyle,
       draggable,
       groupId,
       selectable,
@@ -837,10 +841,7 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
       children,
       openable,
       leftSideContent,
-      titleStyle,
-      subtitleStyle,
-      leftSideStyle,
-      rightSideStyle,
+      styles,
       ...props
     },
     ref
@@ -852,6 +853,7 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
       groupLength,
       index,
       onDropItem,
+
       ...domProps
     } = props as ListItemWithId &
       ListAlwaysShowDragIconProp & {
@@ -878,12 +880,12 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
         onMouseLeave={() => setIsHovered(null)}
         aria-label="list-item-wrapper"
         $openable={openable && isChildOpened}
-        $style={containerStyle}
+        $style={styles?.containerStyle}
       >
         <ListItemRow
           {...domProps}
           $isHovered={isHovered === idFullname || openTipRowId === idFullname}
-          $style={rowStyle}
+          $style={styles?.rowStyle}
           draggable={draggable}
           onClick={() => {
             if (onClick) {
@@ -948,17 +950,22 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
             onDropItem?.(clampedPosition);
           }}
         >
-          <ListItemLeft $style={leftSideStyle} aria-label="list-item-left-side">
+          <ListItemLeft
+            $style={styles?.leftSideStyle}
+            aria-label="list-item-left-side"
+          >
             {selectable && selectedOptions && (
               <Checkbox
-                iconStyle={css`
-                  width: 8px;
-                  height: 8px;
-                `}
-                inputStyle={css`
-                  width: 14px;
-                  height: 14px;
-                `}
+                styles={{
+                  iconStyle: css`
+                    width: 8px;
+                    height: 8px;
+                  `,
+                  self: css`
+                    width: 14px;
+                    height: 14px;
+                  `,
+                }}
                 name="checked"
                 value={selectedOptions.value}
                 checked={selectedOptions.checked}
@@ -987,16 +994,20 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
               LeftIcon && <LeftIcon size={22} color="#4b5563" />
             )}
             <TextWrapper>
-              {title && <Title $style={titleStyle}>{title}</Title>}
+              {title && (
+                <Title role="option" $style={styles?.titleStyle}>
+                  {title}
+                </Title>
+              )}
               {subtitle && (
-                <Subtitle $style={subtitleStyle}>{subtitle}</Subtitle>
+                <Subtitle $style={styles?.subtitleStyle}>{subtitle}</Subtitle>
               )}
             </TextWrapper>
           </ListItemLeft>
 
           {(actions || rightSideContent || draggable) && (
             <ListItemRight
-              $style={rightSideStyle}
+              $style={styles?.rightSideStyle}
               aria-label="list-item-left-side"
             >
               {actions &&
@@ -1024,24 +1035,26 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
                         }
                       }}
                       open={openTipRowId === idFullname}
-                      containerStyle={css`
-                        display: none;
+                      styles={{
+                        containerStyle: css`
+                          display: none;
 
-                        ${(isHovered === idFullname
-                          ? isHovered === idFullname
-                          : openTipRowId === idFullname) &&
-                        css`
-                          display: inherit;
-                        `}
-                      `}
-                      buttonStyle={
-                        !subtitle &&
-                        css`
-                          width: 24px;
-                          height: 24px;
-                          padding: 2px;
-                        `
-                      }
+                          ${(isHovered === idFullname
+                            ? isHovered === idFullname
+                            : openTipRowId === idFullname) &&
+                          css`
+                            display: inherit;
+                          `}
+                        `,
+                        self: css`
+                          ${!subtitle &&
+                          css`
+                            width: 24px;
+                            height: 24px;
+                            padding: 2px;
+                          `}
+                        `,
+                      }}
                       iconSize={!subtitle && 12}
                       focusBackgroundColor="#c1d6f1"
                       hoverBackgroundColor="#c1d6f1"

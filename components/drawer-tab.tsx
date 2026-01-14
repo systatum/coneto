@@ -5,24 +5,22 @@ import styled, { css, CSSProp } from "styled-components";
 
 export interface DrawerTabProps {
   tabs: DrawerTabContentProps[];
+  position?: "left" | "right";
+  styles?: DrawerTabStylesProps;
+}
+export interface DrawerTabStylesProps {
   tabStyle?: CSSProp;
   drawerTabStyle?: CSSProp;
-  position?: "left" | "right";
 }
 
 export interface DrawerTabContentProps {
-  id: string | number;
+  id: string;
   title: string;
   icon: RemixiconComponentType;
   content: ReactNode;
 }
 
-function DrawerTab({
-  tabs,
-  drawerTabStyle,
-  tabStyle,
-  position = "right",
-}: DrawerTabProps) {
+function DrawerTab({ tabs, styles, position = "right" }: DrawerTabProps) {
   const [isDrawerTab, setIsDrawerTab] = useState(false);
   const [selected, setSelected] = useState<string | number | null>(null);
 
@@ -54,9 +52,9 @@ function DrawerTab({
       initial={{ x: isLeft ? "-100%" : "+100%" }}
       animate={controls}
       $position={position}
-      $style={drawerTabStyle}
+      $style={styles?.drawerTabStyle}
     >
-      <TabButtonsContainer $position={position} $style={tabStyle}>
+      <TabButtonsContainer $position={position} $style={styles?.tabStyle}>
         {tabs.map((tab) => (
           <TabButton
             key={tab.id}
