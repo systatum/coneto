@@ -1595,21 +1595,25 @@ export const WithRowGroup: Story = {
       setSelected(ids);
     };
 
-    const allItems = filteredRows.flatMap((section) => section.items);
+    const allItems = rows.flatMap((section) => section.items);
 
-    const courseItems = Array.from(
-      new Set(allItems.map((item) => item.title))
-    ).map((title) => ({
-      id: title,
-      title: title,
-    }));
+    const courseItems = Array.from(new Set(allItems.map((item) => item.title)))
+      .map((title) => ({
+        id: title,
+        title: title,
+      }))
+      .filter((props) =>
+        props.title.toLowerCase().includes(search.toLowerCase())
+      );
 
-    const authorItems = Array.from(
-      new Set(allItems.map((item) => item.author))
-    ).map((author) => ({
-      id: author,
-      title: author,
-    }));
+    const authorItems = Array.from(new Set(allItems.map((item) => item.author)))
+      .map((author) => ({
+        id: author,
+        title: author,
+      }))
+      .filter((props) =>
+        props.title.toLowerCase().includes(search.toLowerCase())
+      );
 
     const SearchSubMenu = () => {
       return (
