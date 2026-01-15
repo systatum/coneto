@@ -667,7 +667,7 @@ export const Nested: Story = {
                 max-height: 400px;
               `,
             }}
-            onSearchboxChange={(e) => setSearch(e.target.value)}
+            searchbox={{ onChange: (e) => setSearch(e.target.value) }}
             columns={columns}
           >
             {filteredRows.map((rowValue, rowIndex) => (
@@ -728,7 +728,7 @@ export const Nested: Story = {
                     },
                   },
                 ]}
-                onSearchboxChange={(e) => setFamilySearch(e.target.value)}
+                searchbox={{ onChange: (e) => setFamilySearch(e.target.value) }}
                 columns={columns}
                 onItemsSelected={handleItemsSelected}
               >
