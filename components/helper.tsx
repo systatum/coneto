@@ -23,7 +23,12 @@ export default function Helper({ value }: { value: string }) {
       showDelayPeriod={700}
       dialog={value}
     >
-      <RiInformationLine size={18} />
+      <RiInformationLine
+        style={{
+          cursor: "help",
+        }}
+        size={18}
+      />
     </Tooltip>
   );
 }
