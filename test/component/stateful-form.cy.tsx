@@ -11,6 +11,195 @@ import { OptionsProps } from "./../../components/selectbox";
 import { CapsuleContentProps } from "./../../components/capsule";
 
 describe("StatefulForm", () => {
+  context("helper", () => {
+    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
+      (data) => data.id === "US" || COUNTRY_CODES[206]
+    );
+
+    if (!DEFAULT_COUNTRY_CODES) {
+      throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
+    }
+
+    const value = {
+      text: "",
+      time: "",
+      email: "",
+      number: "",
+      password: "",
+      textarea: "",
+      rating: "",
+      check: false,
+      chips: {
+        searchText: "",
+        selectedOptions: [],
+      },
+      color: "",
+      combo: [],
+      date: [""],
+      file_drop_box: [] as File[],
+      file: undefined,
+      image: undefined,
+      money: "",
+      phone: "",
+      signature: "",
+      country_code: DEFAULT_COUNTRY_CODES,
+    };
+
+    const FIELDS: FormFieldGroup[] = [
+      {
+        name: "text",
+        title: "Text",
+        type: "text",
+        required: true,
+        placeholder: "Enter text",
+        helper: "This is a text input field",
+      },
+      {
+        name: "email",
+        title: "Email",
+        type: "email",
+        required: false,
+        placeholder: "Enter email address",
+        helper: "This field is used to enter an email address",
+      },
+      {
+        name: "time",
+        title: "Time",
+        type: "time",
+        required: false,
+        placeholder: "Select time",
+        helper: "This field allows you to select a time",
+      },
+      {
+        name: "number",
+        title: "Number",
+        type: "number",
+        required: false,
+        placeholder: "Enter number",
+        helper: "This field only accepts numeric values",
+      },
+      {
+        name: "password",
+        title: "Password",
+        type: "password",
+        required: false,
+        placeholder: "Enter password",
+        helper: "This field is used to enter a secure password",
+      },
+      {
+        name: "textarea",
+        title: "Textarea",
+        type: "textarea",
+        rows: 3,
+        required: false,
+        placeholder: "Enter text here",
+        helper: "This field allows you to enter multiple lines of text",
+      },
+      {
+        name: "check",
+        title: "Check",
+        placeholder: "Check",
+        type: "checkbox",
+        required: false,
+        helper: "This checkbox allows you to toggle a boolean value",
+      },
+      {
+        name: "radio",
+        title: "Radio",
+        placeholder: "Radio",
+        type: "radio",
+        required: false,
+        helper: "This radio allows you to toggle a boolean value",
+      },
+      {
+        name: "color",
+        title: "Color",
+        type: "color",
+        required: false,
+        placeholder: "Enter the color here",
+        helper: "This field allows you to pick or input a color value",
+      },
+      {
+        name: "combo",
+        title: "Combo",
+        type: "combo",
+        required: false,
+        placeholder: "Select a fruit...",
+        helper:
+          "This field allows you to select one or more options from a list",
+      },
+      {
+        name: "date",
+        title: "Date",
+        type: "date",
+        required: false,
+        placeholder: "Select a date",
+        helper: "This field allows you to select a date",
+      },
+      {
+        name: "file_drop_box",
+        title: "File Drop Box",
+        type: "file_drop_box",
+        required: false,
+        helper: "This field allows you to upload files via drag and drop",
+      },
+      {
+        name: "file",
+        title: "File",
+        type: "file",
+        required: false,
+        helper: "This field allows you to upload one or more files",
+      },
+      {
+        name: "image",
+        title: "Image",
+        type: "image",
+        required: false,
+        helper: "This field allows you to upload and preview an image",
+      },
+      {
+        name: "money",
+        title: "Money",
+        type: "money",
+        required: false,
+        placeholder: "Enter amount",
+        helper: "This field is used to input a monetary value",
+      },
+      {
+        name: "phone",
+        title: "Phone",
+        type: "phone",
+        required: false,
+        placeholder: "Enter phone number",
+        helper:
+          "This field allows you to enter a phone number with country code",
+      },
+      {
+        name: "country_code",
+        title: "Country Code",
+        type: "country_code",
+        required: false,
+        placeholder: "Enter country code",
+        helper: "This field is used to select or enter a country calling code",
+      },
+      {
+        name: "signature",
+        title: "Signature",
+        type: "signbox",
+        required: false,
+        helper: "This is signbox type",
+      },
+    ];
+
+    it("renders with tooltip", () => {
+      cy.mount(
+        <StatefulForm fields={FIELDS} formValues={value} mode="onChange" />
+      );
+
+      cy.findAllByLabelText("tooltip-trigger").should("have.length", 17);
+    });
+  });
+
   context("with style", () => {
     context("when given background wheat", () => {
       const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
@@ -700,6 +889,7 @@ describe("StatefulForm", () => {
         rowJustifyContent: "end",
       },
     ];
+
     it("render style align on the one row", () => {
       cy.mount(
         <StatefulForm
