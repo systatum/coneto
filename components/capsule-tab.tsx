@@ -37,7 +37,11 @@ function CapsuleTab({
           containerStyle: css`
             border-top-left-radius: 2px;
             border-top-right-radius: 2px;
+
             ${styles?.tabStyle};
+          `,
+          tabStyle: css`
+            border-radius: 12px;
           `,
         }}
         tabs={tabs}

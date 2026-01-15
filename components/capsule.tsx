@@ -88,9 +88,13 @@ function Capsule({
         if (!tabRef) return { width: 0, left: 0 };
 
         const rect = tabRef.getBoundingClientRect();
+        const tabWidth = rect.width;
+        const bgWidth = tabWidth - 4;
+        const leftOffset = (tabWidth - bgWidth) / 4;
+
         return {
-          width: rect.width,
-          left: rect.left - parentRect.left,
+          width: bgWidth,
+          left: rect.left - parentRect.left + leftOffset,
         };
       });
 
@@ -115,35 +119,35 @@ function Capsule({
   const getInitialPosition = () => {
     if (!isInitialized && tabs.length > 0) {
       if (activeIndex === 0) {
-        return { left: 4, width: 60 };
+        return { left: 0, width: 60 };
       }
     }
 
     if (isInitialized && activeIndex !== -1 && tabSizes[activeIndex]) {
       return {
         left: tabSizes[activeIndex].left,
-        width: tabSizes[activeIndex].width - 3,
+        width: tabSizes[activeIndex].width,
       };
     }
 
-    return { left: 4, width: 60 };
+    return { left: 0, width: 60 };
   };
 
   const getHoverPosition = () => {
     if (!isInitialized && tabs.length > 0) {
       if (hoverIndex === 0) {
-        return { left: 4, width: 60 };
+        return { left: 0, width: 60 };
       }
     }
 
     if (isInitialized && hoverIndex !== -1 && tabSizes[hoverIndex]) {
       return {
         left: tabSizes[hoverIndex].left,
-        width: tabSizes[hoverIndex].width - 3,
+        width: tabSizes[hoverIndex].width,
       };
     }
 
-    return { left: 4, width: 60 };
+    return { left: 0, width: 60 };
   };
 
   const hoverPosition = getHoverPosition();
@@ -244,11 +248,11 @@ const CapsuleWrapper = styled.div<{
   flex-direction: row;
   align-items: center;
   overflow: hidden;
-  padding-left: 0.25rem;
-  padding-right: 0.25rem;
+  padding-left: 0.1rem;
+  padding-right: 0.1rem;
   border-color: #ebebeb;
   box-shadow:
-    0 1px 4px -3px #5b5b5b,
+    0 1px 1px -2px #5b5b5b,
     0 1px 1px rgba(0, 0, 0, 0.05);
 
   ${({ $full }) =>
@@ -261,7 +265,7 @@ const CapsuleWrapper = styled.div<{
       : css`
           width: fit-content;
           border-width: 1px;
-          border-radius: 0.75rem;
+          border-radius: 12px;
         `}
 
   ${({ $containerStyle }) => $containerStyle}
@@ -299,10 +303,10 @@ const ActiveBackground = styled(motion.div)<{
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-
-  border-radius: 12px;
+  border-radius: 8px;
   z-index: 10;
   height: 25px;
+
   background-color: ${({ $activeBackgroundColor }) => $activeBackgroundColor};
   ${({ $style }) => $style}
 `;
@@ -315,10 +319,11 @@ const HoverBorder = styled(motion.div)<{
   top: 50%;
   transform: translateY(-50%);
 
-  border-radius: 12px;
+  border-radius: 8px;
   z-index: 0;
   height: 25px;
   border: 2px solid ${({ $activeBackgroundColor }) => $activeBackgroundColor};
+
   ${({ $style }) => $style}
 `;
 
@@ -329,16 +334,15 @@ const Tab = styled.div<{
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 3px;
   z-index: 10;
   cursor: pointer;
-  padding: 0.3rem 1rem;
-  padding-left: 12px;
+  padding: 0.25rem 1rem;
   text-align: center;
   font-weight: 500;
   transition: color 0.2s;
   margin-top: 4px;
   margin-bottom: 4px;
+  gap: 4px;
 
   ${({ $isActive }) =>
     $isActive
