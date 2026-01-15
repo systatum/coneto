@@ -2487,11 +2487,86 @@ describe("List", () => {
         cy.findByText(
           "Modify your system preferences, manage privacy and notifications, and fine-tune your user experience to suit your workflow."
         ).should("be.visible");
+        cy.findByText(
+          "Customize your personal information, update your avatar, and manage your account preferences to reflect your identity and style."
+        ).should("not.be.visible");
 
         cy.findByText("Profile").click({ force: true });
         cy.findByText(
           "Modify your system preferences, manage privacy and notifications, and fine-tune your user experience to suit your workflow."
         ).should("not.be.visible");
+        cy.findByText(
+          "Customize your personal information, update your avatar, and manage your account preferences to reflect your identity and style."
+        ).should("be.visible");
+      });
+
+      context("when clicking on the group", () => {
+        it("should not closed the opener", () => {
+          cy.mount(
+            <List
+              searchable
+              draggable
+              selectable
+              openerBehavior="onlyOne"
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
+            >
+              {LIST_GROUPS_OPENABLE.map((group, index) => (
+                <List.Group
+                  key={index}
+                  id={group.id}
+                  title={group.title}
+                  subtitle={group.subtitle}
+                  actions={group.actions}
+                  openerStyle="togglebox"
+                >
+                  {group.items.map((list, i) => (
+                    <List.Item
+                      key={i}
+                      id={list.id}
+                      actions={list.actions}
+                      leftIcon={list.leftIcon}
+                      subtitle={list.subtitle}
+                      title={list.title}
+                      groupId={group.id}
+                      openable
+                      selectedOptions={{
+                        checked: true,
+                      }}
+                    >
+                      {list.children}
+                    </List.Item>
+                  ))}
+                </List.Group>
+              ))}
+            </List>
+          );
+          cy.findByText(
+            "Modify your system preferences, manage privacy and notifications, and fine-tune your user experience to suit your workflow."
+          ).should("not.be.visible");
+
+          cy.findByText("Settings").click({ force: true });
+          cy.findByText(
+            "Modify your system preferences, manage privacy and notifications, and fine-tune your user experience to suit your workflow."
+          ).should("be.visible");
+
+          cy.findByText("Profile").click({ force: true });
+          cy.findByText(
+            "Customize your personal information, update your avatar, and manage your account preferences to reflect your identity and style."
+          ).should("be.visible");
+          cy.findByText(
+            "Modify your system preferences, manage privacy and notifications, and fine-tune your user experience to suit your workflow."
+          ).should("not.be.visible");
+
+          cy.findByText("Recent Content").click();
+          cy.findByText(
+            "Customize your personal information, update your avatar, and manage your account preferences to reflect your identity and style."
+          ).should("be.visible");
+        });
       });
     });
 
