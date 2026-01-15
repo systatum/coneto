@@ -262,6 +262,7 @@ const ContentWrapper = styled.div<{
   flex-direction: column;
   align-items: start;
   text-align: start;
+  cursor: default;
 
   ${({ $style }) => $style}
 `;
