@@ -1,7 +1,19 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Searchbox } from "./searchbox";
+import { Searchbox, SearchboxResultMenuItemProps } from "./searchbox";
 import { useArgs } from "@storybook/preview-api";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useMemo, useState } from "react";
+import {
+  RiUserLine,
+  RiUserStarLine,
+  RiUserSmileLine,
+  RiUserHeartLine,
+  RiUserVoiceLine,
+  RiUserSettingsLine,
+  RiUserSharedLine,
+  RiUserSearchLine,
+  RiUserAddLine,
+  RiUserUnfollowLine,
+} from "@remixicon/react";
 
 const meta: Meta<typeof Searchbox> = {
   title: "Input Elements/Searchbox",
@@ -53,5 +65,94 @@ export const Default: Story = {
     };
 
     return <Searchbox {...args} value={value} onChange={handleChange} />;
+  },
+};
+
+export const WithResultMenu: Story = {
+  args: {
+    name: "search",
+    value: "",
+    placeholder: "Search here...",
+  },
+  render: (args) => {
+    const PEOPLE_MENU: SearchboxResultMenuItemProps[] = [
+      {
+        caption: "Adam Noto Hakarsa",
+        icon: RiUserSmileLine,
+        onClick: () => console.log("Clicked Adam"),
+      },
+      {
+        caption: "Alim Naufal",
+        icon: RiUserStarLine,
+        onClick: () => console.log("Clicked Alim"),
+      },
+      {
+        caption: "Michael Chen",
+        icon: RiUserLine,
+        onClick: () => console.log("Clicked Michael"),
+      },
+      {
+        caption: "Ayu Pratama",
+        icon: RiUserHeartLine,
+        onClick: () => console.log("Clicked Ayu"),
+      },
+      {
+        caption: "Daniel Rodriguez",
+        icon: RiUserVoiceLine,
+        onClick: () => console.log("Clicked Daniel"),
+      },
+      {
+        caption: "Rina Sari",
+        icon: RiUserSettingsLine,
+        onClick: () => console.log("Clicked Rina"),
+      },
+      {
+        caption: "Tom Williams",
+        icon: RiUserSharedLine,
+        onClick: () => console.log("Clicked Tom"),
+      },
+      {
+        caption: "Nabila Zahra",
+        icon: RiUserSearchLine,
+        onClick: () => console.log("Clicked Nabila"),
+      },
+      {
+        caption: "Kevin Park",
+        icon: RiUserAddLine,
+        onClick: () => console.log("Clicked Kevin"),
+      },
+      {
+        caption: "Remove User",
+        icon: RiUserUnfollowLine,
+        isDangerous: true,
+        onClick: () => console.log("Remove user"),
+      },
+    ];
+
+    const [{ value }, setUpdateArgs] = useArgs();
+    const [people, setPeople] = useState(PEOPLE_MENU);
+
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+      setUpdateArgs({ value: e.target.value });
+      args.onChange?.(e);
+    };
+
+    const filteredContent = useMemo(() => {
+      const search = args.value.toLowerCase();
+      return people.filter((props) =>
+        props.caption.toLowerCase().includes(search)
+      );
+    }, [args.value]);
+
+    return (
+      <Searchbox
+        {...args}
+        value={value}
+        showResultMenu
+        autoComplete="off"
+        onChange={handleChange}
+        resultMenu={({ list }) => list(filteredContent)}
+      />
+    );
   },
 };
