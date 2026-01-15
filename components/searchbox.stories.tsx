@@ -79,58 +79,43 @@ export const WithResultMenu: Story = {
       {
         caption: "Adam Noto Hakarsa",
         icon: RiUserSmileLine,
-        onClick: () => console.log("Clicked Adam"),
       },
       {
         caption: "Alim Naufal",
         icon: RiUserStarLine,
-        onClick: () => console.log("Clicked Alim"),
       },
       {
         caption: "Michael Chen",
         icon: RiUserLine,
-        onClick: () => console.log("Clicked Michael"),
       },
       {
         caption: "Ayu Pratama",
         icon: RiUserHeartLine,
-        onClick: () => console.log("Clicked Ayu"),
       },
       {
         caption: "Daniel Rodriguez",
         icon: RiUserVoiceLine,
-        onClick: () => console.log("Clicked Daniel"),
       },
       {
         caption: "Rina Sari",
         icon: RiUserSettingsLine,
-        onClick: () => console.log("Clicked Rina"),
       },
       {
         caption: "Tom Williams",
         icon: RiUserSharedLine,
-        onClick: () => console.log("Clicked Tom"),
       },
       {
         caption: "Nabila Zahra",
         icon: RiUserSearchLine,
-        onClick: () => console.log("Clicked Nabila"),
       },
       {
         caption: "Kevin Park",
         icon: RiUserAddLine,
-        onClick: () => console.log("Clicked Kevin"),
-      },
-      {
-        caption: "Remove User",
-        icon: RiUserUnfollowLine,
-        isDangerous: true,
-        onClick: () => console.log("Remove user"),
       },
     ];
 
     const [{ value }, setUpdateArgs] = useArgs();
-    const [people, setPeople] = useState(PEOPLE_MENU);
+    const [people] = useState(PEOPLE_MENU);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
       setUpdateArgs({ value: e.target.value });
@@ -139,9 +124,12 @@ export const WithResultMenu: Story = {
 
     const filteredContent = useMemo(() => {
       const search = args.value.toLowerCase();
-      return people.filter((props) =>
-        props.caption.toLowerCase().includes(search)
-      );
+      return people
+        .filter((props) => props.caption.toLowerCase().includes(search))
+        .map((props) => ({
+          ...props,
+          onClick: () => setUpdateArgs({ ...args, value: props.caption }),
+        }));
     }, [args.value]);
 
     return (
