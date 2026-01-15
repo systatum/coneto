@@ -144,10 +144,12 @@ describe("context-menu", () => {
             searchable
             draggable
             selectable
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS.map((group, index) => (
               <List.Group
@@ -191,10 +193,12 @@ describe("context-menu", () => {
             searchable
             draggable
             selectable
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS.map((group, index) => (
               <List.Group
@@ -242,10 +246,12 @@ describe("context-menu", () => {
               searchable
               draggable
               selectable
-              containerStyle={css`
-                padding: 16px;
-                min-width: 350px;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
             >
               {LIST_GROUPS.map((group, index) => (
                 <List.Group
