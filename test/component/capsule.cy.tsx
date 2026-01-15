@@ -9,6 +9,23 @@ describe("Capsule", () => {
       cy.findByText("New").should("exist");
       cy.findAllByLabelText("capsule-icon").should("have.length", 0);
     });
+
+    it("renders capsule with 8px for active", () => {
+      cy.mount(<Capsule activeTab="new" tabs={VIEW_ONLY_TITLE_MODES} />);
+      cy.findByText("List").should("exist");
+      cy.findByText("New").should("exist");
+      cy.findAllByLabelText("capsule-icon").should("have.length", 0);
+
+      cy.findAllByLabelText("capsule")
+        .eq(0)
+        .should("have.css", "border-radius", "12px");
+      cy.findAllByLabelText("active-capsule-box")
+        .eq(0)
+        .should("have.css", "border-radius", "8px");
+      cy.findAllByLabelText("hover-capsule-box")
+        .eq(0)
+        .should("have.css", "border-radius", "8px");
+    });
   });
 
   context("when only icon", () => {
@@ -30,7 +47,7 @@ describe("Capsule", () => {
       cy.findAllByLabelText("capsule-icon").eq(1).should("exist");
       cy.findAllByRole("tab")
         .eq(0)
-        .should("have.css", "gap", "3px")
+        .should("have.css", "gap", "4px")
         .and("have.css", "font-size", "12px");
     });
   });
