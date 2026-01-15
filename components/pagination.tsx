@@ -27,21 +27,20 @@ function Pagination({
 }: PaginationProps) {
   const [currentPageLocal, setCurrentPageLocal] = useState<string[]>([]);
 
-  const currentPageNumber = currentPage;
   const comboboxPagesNumber = totalPages - 3;
 
   const handlePrevious = () => {
-    if (currentPageNumber > 1) {
+    if (currentPage > 1) {
       const newValue = currentPage - 1;
       onPageChange(newValue);
-      if (currentPage < totalPages) {
+      if (currentPage + 1 < totalPages) {
         setCurrentPageLocal([String(newValue)]);
       }
     }
   };
 
   const handleNext = () => {
-    if (currentPageNumber < totalPages) {
+    if (currentPage < totalPages) {
       const newValue = currentPage + 1;
       onPageChange(newValue);
       if (currentPage < comboboxPagesNumber) {

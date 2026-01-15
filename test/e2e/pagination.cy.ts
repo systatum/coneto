@@ -138,6 +138,35 @@ describe("Pagination", () => {
           );
         });
       });
+
+      context("when clicking previous button", () => {
+        context("when 1 page number away from the combo box max number", () => {
+          it("traverse the previous page correct", () => {
+            cy.findByPlaceholderText("1").as("combobox");
+            cy.get("@combobox").should(
+              "have.css",
+              "border",
+              "1px solid rgb(97, 169, 249)"
+            );
+
+            cy.findByText("50").click();
+            cy.get("@combobox").should("have.value", "1");
+
+            cy.findAllByLabelText("pagination-button")
+              .eq(3)
+              .should("have.css", "border", "1px solid rgb(97, 169, 249)");
+
+            cy.findAllByLabelText("pagination-button").eq(0).click();
+            cy.get("@combobox").should("have.value", "1");
+
+            cy.findAllByLabelText("pagination-button").eq(0).click();
+            cy.get("@combobox").should("have.value", "1");
+
+            cy.findAllByLabelText("pagination-button").eq(0).click();
+            cy.get("@combobox").should("have.value", "47");
+          });
+        });
+      });
     });
   });
 });
