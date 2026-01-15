@@ -43,6 +43,7 @@ export interface FileDropBoxStylesProps {
   dragOverStyle?: CSSProp;
   successStyle?: CSSProp;
   labelStyle?: CSSProp;
+  contentStyle?: CSSProp;
 }
 
 type ProgressProps = "idle" | "loading" | "succeed" | null;
@@ -186,7 +187,14 @@ function FileDropBox({
               <LinkText>Select some files</LinkText> from your computer
             </div>
           </UploadContent>
-          {children && <Fragment>{children}</Fragment>}
+          {children && (
+            <ContentWrapper
+              $style={styles?.contentStyle}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {children}
+            </ContentWrapper>
+          )}
         </Fragment>
       ) : progress === "succeed" ? (
         <Fragment>{progressLabel}</Fragment>
@@ -243,6 +251,19 @@ const InputWrapper = styled.div<{
     `}
 
   ${({ $containerStyle }) => $containerStyle}
+`;
+
+const ContentWrapper = styled.div<{
+  $style?: CSSProp;
+}>`
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  align-items: start;
+  text-align: start;
+
+  ${({ $style }) => $style}
 `;
 
 const Label = styled.label<{
