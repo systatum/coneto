@@ -10,6 +10,7 @@ import {
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { LoadingSpinner } from "./loading-spinner";
+import Helper from "./helper";
 
 export interface OnFileDroppedFunctionProps {
   files: File[];
@@ -34,6 +35,7 @@ export interface FileDropBoxProps {
   onFileDropped?: (props: OnFileDroppedFunctionProps) => void;
   onComplete?: (props: OnCompleteFunctionProps) => void;
   progressPercentage?: number;
+  helper?: string;
   children?: ReactNode;
   styles?: FileDropBoxStylesProps;
 }
@@ -55,6 +57,7 @@ function FileDropBox({
   label,
   children,
   styles,
+  helper,
 }: FileDropBoxProps) {
   const FILE_ICON = [
     { id: 1, icon: RiImageLine, size: 50 },
@@ -211,7 +214,13 @@ function FileDropBox({
       $hide={progress === null}
       $containerStyle={styles?.containerStyle}
     >
-      {label && <Label $style={styles?.labelStyle}> {label}</Label>}
+      {label && (
+        <Label $style={styles?.labelStyle}>
+          {label}
+
+          {helper && <Helper value={helper} />}
+        </Label>
+      )}
       {inputElement}
 
       {errorMessages.length > 0 && (
@@ -245,10 +254,12 @@ const InputWrapper = styled.div<{
   ${({ $containerStyle }) => $containerStyle}
 `;
 
-const Label = styled.label<{
-  $style?: CSSProp;
-}>`
+const Label = styled.label<{ $style?: CSSProp }>`
   font-size: 0.75rem;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  align-items: center;
 
   ${({ $style }) => $style}
 `;

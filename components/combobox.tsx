@@ -13,6 +13,7 @@ import { DrawerProps, OptionsProps, Selectbox } from "./selectbox";
 import { RemixiconComponentType } from "@remixicon/react";
 import styled, { css, CSSProp } from "styled-components";
 import { List } from "./list";
+import Helper from "./helper";
 
 export type ComboboxProps = Partial<BaseComboboxProps> & {
   label?: string;
@@ -36,6 +37,7 @@ interface BaseComboboxProps {
   multiple?: boolean;
   maxSelectableItems?: number | undefined;
   styles?: ComboboxStylesProps;
+  helper?: string;
 }
 
 interface ComboboxStylesProps {
@@ -85,6 +87,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       name,
       multiple,
       maxSelectableItems,
+      helper,
     },
     ref
   ) => {
@@ -93,7 +96,13 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
         $style={styles?.containerStyle}
         aria-label={`combobox-${name}`}
       >
-        {label && <Label $style={styles?.labelStyle}>{label}</Label>}
+        {label && (
+          <Label $style={styles?.labelStyle}>
+            {label}
+
+            {helper && <Helper value={helper} />}
+          </Label>
+        )}
         <Selectbox
           ref={ref}
           highlightOnMatch={highlightOnMatch}
@@ -157,6 +166,12 @@ const ComboboxWrapper = styled.div<{
 `;
 
 const Label = styled.label<{ $style?: CSSProp }>`
+  font-size: 0.75rem;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  align-items: center;
+
   ${({ $style }) => $style}
 `;
 

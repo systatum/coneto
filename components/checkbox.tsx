@@ -6,6 +6,7 @@ import {
   useEffect,
   useRef,
 } from "react";
+import Helper from "./helper";
 
 type WithoutStyle<T> = Omit<T, "style">;
 
@@ -21,6 +22,7 @@ export interface CheckboxProps
   description?: string;
   highlightOnChecked?: boolean;
   styles?: CheckboxStylesProps;
+  helper?: string;
 }
 
 export interface CheckboxStylesProps {
@@ -45,6 +47,7 @@ function Checkbox({
   errorMessage,
   indeterminate = false,
   styles,
+  helper,
   ...props
 }: CheckboxProps) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -141,6 +144,8 @@ function Checkbox({
           $style={styles?.titleStyle}
         >
           {title}
+
+          {helper && <Helper value={helper} />}
         </Title>
       )}
       {inputElement}
@@ -159,6 +164,11 @@ const Container = styled.div<{ $style?: CSSProp }>`
 
 const Title = styled.label<{ $style?: CSSProp }>`
   font-size: 0.75rem;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  align-items: center;
+
   ${({ $style }) => $style}
 `;
 

@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 import styled, { CSSProp } from "styled-components";
+import Helper from "./helper";
 
 export interface TimeboxProps {
   withSeconds?: boolean;
@@ -23,6 +24,7 @@ export interface TimeboxProps {
   name?: string;
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement | HTMLDivElement>) => void;
   placeholder?: TimeboxPlaceholderProps;
+  helper?: string;
 }
 
 export interface TimeboxStylesProps {
@@ -53,6 +55,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
       name,
       onKeyDown,
       placeholder,
+      helper,
       styles,
     },
     ref
@@ -306,6 +309,8 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
         {label && (
           <Label $style={styles?.labelStyle} htmlFor={inputId}>
             {label}
+
+            {helper && <Helper value={helper} />}
           </Label>
         )}
         <InputContent>
@@ -360,6 +365,12 @@ const InputContent = styled.div`
 `;
 
 const Label = styled.label<{ $style?: CSSProp }>`
+  font-size: 0.75rem;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  align-items: center;
+
   ${({ $style }) => $style}
 `;
 

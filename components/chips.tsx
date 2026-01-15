@@ -27,6 +27,7 @@ import {
 } from "@floating-ui/react";
 import { Textbox } from "./textbox";
 import styled, { css, CSSProp } from "styled-components";
+import Helper from "./helper";
 
 export type ChipActionsProps = BadgeActionProps;
 
@@ -37,7 +38,9 @@ export type ChipsProps = BaseChipsProps & {
   type?: string;
   name?: string;
   styles?: ChipsStylesProps;
+  helper?: string;
 };
+
 interface BaseChipsProps {
   options?: BadgeProps[];
   inputValue?: string;
@@ -178,7 +181,11 @@ function Chips(props: ChipsProps) {
   return (
     <InputWrapper $style={props.styles?.containerStyle}>
       {props.label && (
-        <Label $style={props.styles?.labelStyle}>{props.label}</Label>
+        <Label $style={props.styles?.labelStyle}>
+          {props.label}
+
+          {props.helper && <Helper value={props.helper} />}
+        </Label>
       )}
       <InputContent>
         {inputElement}
@@ -219,9 +226,13 @@ const InputContent = styled.div`
   font-size: 12px;
 `;
 
-const Label = styled.label<{
-  $style?: CSSProp;
-}>`
+const Label = styled.label<{ $style?: CSSProp }>`
+  font-size: 0.75rem;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  align-items: center;
+
   ${({ $style }) => $style}
 `;
 

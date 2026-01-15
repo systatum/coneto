@@ -7,6 +7,7 @@ import {
 } from "@remixicon/react";
 import { ChangeEvent, ReactElement, useRef, useState } from "react";
 import styled, { css, CSSProp } from "styled-components";
+import Helper from "./helper";
 
 export interface ThumbFieldProps {
   value?: boolean | null;
@@ -20,6 +21,7 @@ export interface ThumbFieldProps {
   errorMessage?: string;
   styles?: ThumbFieldStylesProps;
   id?: string;
+  helper?: string;
 }
 
 export interface ThumbFieldStylesProps {
@@ -43,6 +45,7 @@ function ThumbField({
   showError,
   styles,
   id,
+  helper,
 }: ThumbFieldProps) {
   const thumbStateValue = value === true ? "up" : value ? "down" : "blank";
   const [thumbValue, setThumbValue] =
@@ -122,6 +125,8 @@ function ThumbField({
       {label && (
         <Label $style={styles?.labelStyle} htmlFor={id}>
           {label}
+
+          {helper && <Helper value={helper} />}
         </Label>
       )}
       <InputContent>
@@ -168,6 +173,12 @@ const InputContent = styled.div`
 `;
 
 const Label = styled.label<{ $style?: CSSProp }>`
+  font-size: 0.75rem;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  align-items: center;
+
   ${({ $style }) => $style}
 `;
 

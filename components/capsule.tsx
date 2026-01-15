@@ -2,6 +2,7 @@ import { ReactElement, ReactNode, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import styled, { css, CSSProp } from "styled-components";
 import { RemixiconComponentType } from "@remixicon/react";
+import Helper from "./helper";
 
 export interface CapsuleContentProps {
   id: string;
@@ -22,6 +23,7 @@ export interface CapsuleProps {
   fontSize?: number;
   iconSize?: number;
   styles?: CapsuleStylesProps;
+  helper?: string;
 }
 
 export interface CapsuleStylesProps {
@@ -42,6 +44,7 @@ function Capsule({
   errorMessage,
   fontSize = 12,
   iconSize = 14,
+  helper,
 }: CapsuleProps) {
   const [hovered, setHovered] = useState<string | null>(null);
 
@@ -220,6 +223,8 @@ function Capsule({
       {label && (
         <Label $style={styles?.labelStyle} htmlFor="capsule">
           {label}
+
+          {helper && <Helper value={helper} />}
         </Label>
       )}
       <div>
@@ -275,6 +280,11 @@ const Container = styled.div<{ $style?: CSSProp; $fontSize?: number }>`
 
 const Label = styled.label<{ $style?: CSSProp }>`
   font-size: 0.75rem;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  align-items: center;
+
   ${({ $style }) => $style}
 `;
 

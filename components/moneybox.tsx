@@ -10,6 +10,7 @@ import {
 } from "react";
 import { Button } from "./button";
 import { List } from "./list";
+import Helper from "./helper";
 
 type SeparatorTypeProps = "dot" | "comma";
 
@@ -37,7 +38,9 @@ export interface MoneyboxProps
   styles?: MoneyboxStylesProps;
   editableCurrency?: boolean;
   currencyOptions?: CurrencyOptionsProps[];
+  helper?: string;
 }
+
 export interface MoneyboxStylesProps {
   self?: CSSProp;
   containerStyle?: CSSProp;
@@ -59,6 +62,7 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
       styles,
       onKeyDown,
       editableCurrency,
+      helper,
       currencyOptions = [
         { id: "IDR", name: "Indonesian Rupiah", symbol: "Rp" },
       ],
@@ -112,7 +116,13 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
 
     return (
       <InputWrapper $style={styles?.containerStyle}>
-        {label && <Label $style={styles?.labelStyle}>{label}</Label>}
+        {label && (
+          <Label $style={styles?.labelStyle}>
+            {label}
+
+            {helper && <Helper value={helper} />}
+          </Label>
+        )}
         <InputContent>
           <Box
             onBlur={() => setFocus(false)}
@@ -252,6 +262,12 @@ const InputWrapper = styled.div<{ $style?: CSSProp }>`
 `;
 
 const Label = styled.label<{ $style?: CSSProp }>`
+  font-size: 0.75rem;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  align-items: center;
+
   ${({ $style }) => $style}
 `;
 

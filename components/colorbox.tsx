@@ -7,6 +7,7 @@ import {
   useState,
 } from "react";
 import styled, { CSSProp } from "styled-components";
+import Helper from "./helper";
 
 export interface ColorboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "style"> {
@@ -17,6 +18,7 @@ export interface ColorboxProps
   errorMessage?: string;
   onClick?: () => void;
   styles?: ColorboxStylesProps;
+  helper?: string;
 }
 
 export interface ColorboxStylesProps {
@@ -36,6 +38,7 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
       placeholder,
       onClick,
       styles,
+      helper,
       ...props
     },
     ref
@@ -111,6 +114,8 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
         {label && (
           <Label htmlFor={inputId} $style={styles?.labelStyle}>
             {label}
+
+            {helper && <Helper value={helper} />}
           </Label>
         )}
         <InputContent>
@@ -137,8 +142,14 @@ const InputWrapper = styled.div<{
   ${({ $containerStyle }) => $containerStyle}
 `;
 
-const Label = styled.label<{ $highlight?: boolean; $style?: CSSProp }>`
-  ${({ $style }) => $style};
+const Label = styled.label<{ $style?: CSSProp }>`
+  font-size: 0.75rem;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  align-items: center;
+
+  ${({ $style }) => $style}
 `;
 
 const InputContent = styled.div`
