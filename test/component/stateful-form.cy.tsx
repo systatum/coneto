@@ -196,7 +196,10 @@ describe("StatefulForm", () => {
         <StatefulForm fields={FIELDS} formValues={value} mode="onChange" />
       );
 
-      cy.findAllByLabelText("tooltip-trigger").should("have.length", 17);
+      cy.findAllByLabelText("tooltip-trigger")
+        .should("have.length", 17)
+        .children()
+        .should("have.css", "cursor", "help");
     });
   });
 
