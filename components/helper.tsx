@@ -20,7 +20,7 @@ export default function Helper({ value }: { value: string }) {
           `}
         `,
       }}
-      showDelayPeriod={700}
+      showDelayPeriod={400}
       dialog={value}
     >
       <RiInformationLine
