@@ -1,6 +1,7 @@
 import { ChangeEvent, DragEvent, ReactElement, useRef, useState } from "react";
 import { RiAddLine, RiImageLine } from "@remixicon/react";
 import styled, { CSSProp } from "styled-components";
+import Helper from "./helper";
 
 export interface ImageboxProps {
   onFileSelected?: (file: File | undefined) => void;
@@ -10,6 +11,7 @@ export interface ImageboxProps {
   errorMessage?: string;
   name?: string;
   styles?: ImageboxStylesProps;
+  helper?: string;
 }
 
 export interface ImageboxStylesProps {
@@ -45,6 +47,7 @@ function Imagebox({
   showError,
   name,
   styles,
+  helper,
 }: ImageboxProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
@@ -123,7 +126,13 @@ function Imagebox({
 
   return (
     <InputWrapper $containerStyle={styles?.containerStyle}>
-      {label && <Label $style={styles?.labelStyle}>{label}</Label>}
+      {label && (
+        <Label $style={styles?.labelStyle}>
+          {label}
+
+          {helper && <Helper value={helper} />}
+        </Label>
+      )}
       <InputContent>
         {inputElement}
         {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
@@ -171,6 +180,12 @@ const InputBox = styled.div<{
 `;
 
 const Label = styled.label<{ $style?: CSSProp }>`
+  font-size: 0.75rem;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  align-items: center;
+
   ${({ $style }) => $style}
 `;
 

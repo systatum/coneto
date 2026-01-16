@@ -4,6 +4,7 @@ import {
   RiErrorWarningLine,
   RiEyeLine,
   RiEyeOffLine,
+  RiInformationLine,
 } from "@remixicon/react";
 import React, {
   ChangeEvent,
@@ -17,6 +18,7 @@ import React, {
 import styled, { css, CSSProp } from "styled-components";
 import { Button } from "./button";
 import { Tooltip } from "./tooltip";
+import Helper from "./helper";
 
 export interface TextboxProps
   extends Omit<
@@ -30,6 +32,7 @@ export interface TextboxProps
   actions?: ActionsProps[];
   dropdowns?: DropdownProps[];
   styles?: TextboxStylesProps;
+  helper?: string;
 }
 
 export interface TextboxStylesProps {
@@ -83,6 +86,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
       type = "text",
       dropdowns,
       actions,
+      helper,
       ...props
     },
     ref
@@ -322,8 +326,11 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
         {label && (
           <Label $style={styles?.labelStyle} htmlFor={inputId}>
             {label}
+
+            {helper && <Helper value={helper} />}
           </Label>
         )}
+
         <div>
           {inputElement}
           {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
@@ -346,6 +353,11 @@ const Container = styled.div<{ $style?: CSSProp }>`
 
 const Label = styled.label<{ $style?: CSSProp }>`
   font-size: 0.75rem;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  align-items: center;
+
   ${({ $style }) => $style}
 `;
 

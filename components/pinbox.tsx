@@ -7,10 +7,12 @@ import React, {
   useState,
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
+import Helper from "./helper";
 
 export interface PinboxProps {
   fontSize?: number;
   label?: string;
+  helper?: string;
   showError?: boolean;
   errorMessage?: string;
   masked?: boolean;
@@ -48,6 +50,7 @@ function Pinbox({
   onChange,
   styles,
   disabled,
+  helper,
 }: PinboxProps) {
   const getDefaultValue = () => {
     let valIndex = 0;
@@ -288,6 +291,8 @@ function Pinbox({
       {label && (
         <Label $style={styles?.labelStyle} htmlFor={inputId}>
           {label}
+
+          {helper && <Helper value={helper} />}
         </Label>
       )}
       {inputElements}
@@ -439,6 +444,11 @@ const PinboxInput = styled.input<{
 
 const Label = styled.label<{ $style?: CSSProp }>`
   font-size: 0.75rem;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  align-items: center;
+
   ${({ $style }) => $style}
 `;
 

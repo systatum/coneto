@@ -1,5 +1,6 @@
 import { ChangeEvent, MouseEvent, ReactElement, useState } from "react";
 import styled, { css, CSSProp } from "styled-components";
+import Helper from "./helper";
 
 export interface RatingProps {
   rating?: string;
@@ -13,6 +14,7 @@ export interface RatingProps {
   name?: string;
   styles?: RatingStylesProps;
   errorMessage?: string;
+  helper?: string;
 }
 export interface RatingStylesProps {
   containerStyle?: CSSProp;
@@ -31,6 +33,7 @@ function Rating({
   disabled,
   styles,
   name,
+  helper,
 }: RatingProps) {
   const ratingState = Number(rating || 0);
   const [ratingLocal, setRatingLocal] = useState(ratingState);
@@ -150,7 +153,13 @@ function Rating({
 
   return (
     <InputWrapper $disabled={disabled} $containerStyle={styles?.containerStyle}>
-      {label && <Label $style={styles?.labelStyle}>{label}</Label>}
+      {label && (
+        <Label $style={styles?.labelStyle}>
+          {label}
+
+          {helper && <Helper value={helper} />}
+        </Label>
+      )}
       <InputContent>
         {inputElement}
         {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
@@ -175,6 +184,12 @@ const InputWrapper = styled.div<{
 `;
 
 const Label = styled.label<{ $style?: CSSProp }>`
+  font-size: 0.75rem;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  align-items: center;
+
   ${({ $style }) => $style}
 `;
 

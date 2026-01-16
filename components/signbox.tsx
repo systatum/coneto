@@ -1,6 +1,7 @@
 import { RiEraserLine } from "@remixicon/react";
 import React, { useRef, useEffect, ChangeEvent, ReactElement } from "react";
 import styled, { CSSProp } from "styled-components";
+import Helper from "./helper";
 
 export interface SignboxProps {
   name?: string;
@@ -14,6 +15,7 @@ export interface SignboxProps {
   height?: string;
   width?: string;
   styles?: SignboxStylesProps;
+  helper?: string;
 }
 
 export interface SignboxStylesProps {
@@ -34,6 +36,7 @@ function Signbox({
   styles,
   height,
   width,
+  helper,
 }: SignboxProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isDrawing = useRef(false);
@@ -211,6 +214,8 @@ function Signbox({
       {label && (
         <Label $style={styles?.labelStyle} htmlFor="signbox">
           {label}
+
+          {helper && <Helper value={helper} />}
         </Label>
       )}
       <InputContent>
@@ -237,10 +242,11 @@ const InputWrapper = styled.div<{
 `;
 
 const Label = styled.label<{ $style?: CSSProp }>`
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
+  font-size: 0.75rem;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  align-items: center;
 
   ${({ $style }) => $style}
 `;

@@ -11,12 +11,14 @@ import {
   forwardRef,
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
+import Helper from "./helper";
 
 export interface TextareaProps
   extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "style"> {
   label?: string;
   showError?: boolean;
   errorMessage?: string;
+  helper?: string;
   styles?: TextareaStylesProps;
   onActionClick?: () => void;
   onChange?: (
@@ -46,6 +48,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       icon: Icon = RiCheckLine,
       autogrow,
       styles,
+      helper,
       ...props
     },
     ref
@@ -121,6 +124,8 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         {label && (
           <Label $style={styles?.labelStyle} htmlFor={inputId}>
             {label}
+
+            {helper && <Helper value={helper} />}
           </Label>
         )}
         <div>
@@ -145,6 +150,11 @@ const Container = styled.div<{ $style?: CSSProp }>`
 
 const Label = styled.label<{ $style?: CSSProp }>`
   font-size: 0.75rem;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  align-items: center;
+
   ${({ $style }) => $style}
 `;
 
