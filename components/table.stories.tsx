@@ -1606,15 +1606,6 @@ export const WithRowGroup: Story = {
         props.title.toLowerCase().includes(search.toLowerCase())
       );
 
-    const authorItems = Array.from(new Set(allItems.map((item) => item.author)))
-      .map((author) => ({
-        id: author,
-        title: author,
-      }))
-      .filter((props) =>
-        props.title.toLowerCase().includes(search.toLowerCase())
-      );
-
     const SearchSubMenu = () => {
       return (
         <List
@@ -1641,30 +1632,6 @@ export const WithRowGroup: Story = {
             title={"Course"}
           >
             {courseItems.map((item) => (
-              <List.Item
-                onMouseDown={async () => {
-                  await setIsFocus(false);
-                  await setSearch(item.title);
-                }}
-                key={item.title}
-                id={item.title}
-                title={item.title}
-              />
-            ))}
-          </List.Group>
-          <List.Group
-            styles={{
-              emptySlateStyle:
-                authorItems.length === 0 &&
-                css`
-                  display: none;
-                `,
-            }}
-            key={"author"}
-            id={"author"}
-            title={"Author"}
-          >
-            {authorItems.map((item) => (
               <List.Item
                 onMouseDown={async () => {
                   await setIsFocus(false);
