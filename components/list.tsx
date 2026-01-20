@@ -362,11 +362,14 @@ export interface ListGroupProps {
 
 interface ListGroupStylesProps {
   containerStyle?: CSSProp;
+  rowStyle?: CSSProp;
   titleStyle?: CSSProp;
   subtitleStyle?: CSSProp;
   contentStyle?: CSSProp;
   emptySlateStyle?: CSSProp;
   maxItemsStyle?: CSSProp;
+  leftSideStyle?: CSSProp;
+  rightSideStyle?: CSSProp;
 }
 
 export interface ListGroupContentProps {
@@ -433,14 +436,10 @@ function ListGroup({
         $isOpen={opened}
         onClick={() => setIsOpen(id)}
         aria-expanded={opened}
+        $style={styles?.rowStyle}
       >
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            width: "100%",
-            alignItems: "start",
-          }}
+        <ListItemLeft
+          $style={styles?.leftSideStyle}
           aria-label="list-left-side-wrapper"
         >
           {title && (
@@ -459,18 +458,13 @@ function ListGroup({
               {subtitle}
             </SubtitleText>
           )}
-        </div>
+        </ListItemLeft>
 
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            gap: "4px",
-            alignItems: "center",
-            width: "100%",
-            justifyContent: "end",
-            paddingRight: "0.5rem",
-          }}
+        <ListItemRight
+          $style={css`
+            padding-right: 0.5rem;
+            ${styles?.rightSideStyle};
+          `}
           aria-label="list-right-side-wrapper"
         >
           {finalActions &&
@@ -503,7 +497,7 @@ function ListGroup({
               onChange={() => setIsOpen(id)}
             />
           ) : null}
-        </div>
+        </ListItemRight>
       </HeaderButton>
 
       {opened && <Divider aria-label="divider" />}
@@ -725,7 +719,7 @@ const ListGroupContent = styled(motion.ul)<{
   ${({ $contentStyle }) => $contentStyle}
 `;
 
-const HeaderButton = styled.div<{ $isOpen?: boolean }>`
+const HeaderButton = styled.div<{ $isOpen?: boolean; $style?: CSSProp }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -733,6 +727,8 @@ const HeaderButton = styled.div<{ $isOpen?: boolean }>`
   padding: 0.5rem 0;
   padding-bottom: ${({ $isOpen }) => ($isOpen ? "0.5rem" : "0px")};
   cursor: pointer;
+
+  ${({ $style }) => $style}
 `;
 
 const TitleText = styled.span<{ $style?: CSSProp }>`
