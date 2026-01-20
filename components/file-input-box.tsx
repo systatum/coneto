@@ -1,10 +1,18 @@
-import { ChangeEvent, DragEvent, ReactElement, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  DragEvent,
+  InputHTMLAttributes,
+  ReactElement,
+  useRef,
+  useState,
+} from "react";
 import { RiCloseLine } from "@remixicon/react";
 import styled, { css, CSSProp } from "styled-components";
 import { Button } from "./button";
 import { StatefulForm } from "./stateful-form";
 
-export interface FileInputBoxProps {
+export interface FileInputBoxProps
+  extends InputHTMLAttributes<HTMLInputElement> {
   placeholder?: string;
   accept?: string;
   multiple?: boolean;
@@ -32,6 +40,7 @@ function FileInputBox({
   showError,
   styles,
   helper,
+  ...props
 }: FileInputBoxProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -136,6 +145,7 @@ function FileInputBox({
         accept={accept}
         multiple={multiple}
         onChange={handleFileChange}
+        id={props.id}
         hidden
       />
     </InputBox>
@@ -145,6 +155,7 @@ function FileInputBox({
     <InputWrapper $containerStyle={styles?.containerStyle}>
       {label && (
         <StatefulForm.Label
+          htmlFor={props.disabled ? null : props.id}
           style={styles?.labelStyle}
           helper={helper}
           label={label}

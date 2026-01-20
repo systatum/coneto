@@ -50,6 +50,8 @@ function Togglebox({
   const { heightWrapper, widthWrapper, thumbShift, iconSize } =
     getToggleboxSize(size);
 
+  const id = `togglebox-${name}-${checked}`;
+
   const inputElements = (
     <ToggleboxWrapper
       $style={styles?.rowStyle}
@@ -69,7 +71,7 @@ function Togglebox({
       >
         <StyledInput
           aria-label="togglebox-input"
-          id={props.id}
+          id={id}
           name={name}
           type="checkbox"
           checked={checked}
@@ -101,7 +103,11 @@ function Togglebox({
           aria-label="togglebox-text-wrapper"
         >
           {label && (
-            <StatefulForm.Label style={styles?.labelStyle} label={label} />
+            <StatefulForm.Label
+              htmlFor={props.disabled ? null : id}
+              style={styles?.labelStyle}
+              label={label}
+            />
           )}
           {description && (
             <Description $style={styles?.descriptionStyle}>
@@ -120,6 +126,7 @@ function Togglebox({
     >
       {title && (
         <StatefulForm.Label
+          htmlFor={props.disabled ? null : id}
           style={styles?.titleStyle}
           helper={helper}
           label={title}

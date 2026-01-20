@@ -69,7 +69,6 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
 
         <HiddenColorInput
           {...props}
-          id={inputId}
           type="color"
           value={value}
           onChange={onChange}
@@ -80,6 +79,7 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
           <TextInput
             {...props}
             type="text"
+            id={inputId}
             ref={ref}
             value={value?.replace(/^#/, "")}
             onChange={(e) => {
@@ -113,6 +113,7 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
       >
         {label && (
           <StatefulForm.Label
+            htmlFor={props.disabled ? null : inputId}
             style={styles?.labelStyle}
             helper={helper}
             label={label}

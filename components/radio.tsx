@@ -130,6 +130,7 @@ function Radio({
     <Container $style={styles?.containerStyle}>
       {title && (
         <StatefulForm.Label
+          htmlFor={props.disabled ? null : id}
           aria-label="radio-title-wrapper"
           style={styles?.titleStyle}
           helper={helper}

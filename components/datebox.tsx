@@ -51,10 +51,13 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
     ...rest
   } = props;
 
+  const inputId = `datebox-${props.label}`;
+
   return (
     <InputWrapper $style={styles?.containerStyle} $disabled={props.disabled}>
       {props.label && (
         <StatefulForm.Label
+          htmlFor={props.disabled ? null : inputId}
           style={styles?.labelStyle}
           helper={helper}
           label={props.label}
@@ -64,6 +67,7 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
         <Selectbox
           {...rest}
           ref={ref}
+          id={inputId}
           selectedOptions={selectedDates}
           setSelectedOptions={setSelectedDates}
           styles={{

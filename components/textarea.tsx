@@ -123,6 +123,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       <Container $style={styles?.containerStyle}>
         {label && (
           <StatefulForm.Label
+            htmlFor={props.disabled ? null : inputId}
             style={styles?.labelStyle}
             helper={helper}
             label={label}

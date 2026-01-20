@@ -139,6 +139,8 @@ function Checkbox({
     <Container $style={styles?.containerStyle}>
       {title && (
         <StatefulForm.Label
+          htmlFor={props.disabled ? null : inputId}
+          aria-label="title-wrapper"
           style={styles?.titleStyle}
           helper={helper}
           label={title}

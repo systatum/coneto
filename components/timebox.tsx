@@ -308,6 +308,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
       >
         {label && (
           <StatefulForm.Label
+            htmlFor={disabled ? null : inputId}
             style={styles?.labelStyle}
             helper={helper}
             label={label}

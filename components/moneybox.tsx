@@ -45,6 +45,7 @@ export interface MoneyboxStylesProps {
   self?: CSSProp;
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
+  inputWrapperStyle?: CSSProp;
 }
 
 const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
@@ -130,7 +131,7 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
             $disabled={props.disabled}
             $error={showError}
             $focus={focus}
-            $style={styles?.self}
+            $style={styles?.inputWrapperStyle}
           >
             <Button
               aria-label="currency"
@@ -237,6 +238,7 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
               onFocus={() => setFocus(true)}
               onKeyDown={onKeyDown}
               type="text"
+              $style={styles?.self}
               inputMode="decimal"
               $disabled={props.disabled}
               {...props}
@@ -298,7 +300,7 @@ const Box = styled.div<{
   ${({ $style }) => $style}
 `;
 
-const MoneyboxInput = styled.input<{ $disabled?: boolean }>`
+const MoneyboxInput = styled.input<{ $disabled?: boolean; $style?: CSSProp }>`
   background: transparent;
   text-align: right;
   padding-left: 20px;
@@ -315,6 +317,8 @@ const MoneyboxInput = styled.input<{ $disabled?: boolean }>`
       user-select: none;
       cursor: not-allowed;
     `}
+
+  ${({ $style }) => $style}
 `;
 
 const ErrorText = styled.span`

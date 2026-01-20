@@ -754,7 +754,7 @@ function FormFields<T extends FieldValues>({
                           `}
                           ${field.phoneboxProps?.styles?.labelStyle}
                         `,
-                        inputWrapperStyle: css`
+                        self: css`
                           ${fieldSize &&
                           css`
                             font-size: ${fieldSize};

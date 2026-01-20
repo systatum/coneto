@@ -38,6 +38,7 @@ interface BaseComboboxProps {
   maxSelectableItems?: number | undefined;
   styles?: ComboboxStylesProps;
   helper?: string;
+  disabled?: boolean;
 }
 
 interface ComboboxStylesProps {
@@ -88,9 +89,12 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       multiple,
       maxSelectableItems,
       helper,
+      disabled,
     },
     ref
   ) => {
+    const inputId = `combobox-${name}`;
+
     return (
       <ComboboxWrapper
         $style={styles?.containerStyle}
@@ -98,6 +102,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       >
         {label && (
           <StatefulForm.Label
+            htmlFor={disabled ? null : inputId}
             style={styles?.labelStyle}
             helper={helper}
             label={label}
@@ -115,6 +120,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
               `}
             `,
           }}
+          id={inputId}
           options={options}
           selectedOptions={selectedOptions}
           setSelectedOptions={setSelectedOptions}
