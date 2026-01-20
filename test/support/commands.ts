@@ -50,7 +50,7 @@ export function expectTextIncludesOrderedLines(text: string, lines: string[]) {
 
 // Helper function to test drag behavior using edge-based drop intent rules
 export function dragOverAtEdge(
-  subject: Cypress.Chainable<JQuery<HTMLElement>>,
+  subject: Cypress.Chainable,
   edge: "top" | "bottom",
   dataTransfer: DataTransfer
 ) {
