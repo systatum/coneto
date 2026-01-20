@@ -1606,6 +1606,15 @@ export const WithRowGroup: Story = {
         props.title.toLowerCase().includes(search.toLowerCase())
       );
 
+    const authorItems = Array.from(new Set(allItems.map((item) => item.author)))
+      .map((author) => ({
+        id: author,
+        title: author,
+      }))
+      .filter((props) =>
+        props.title.toLowerCase().includes(search.toLowerCase())
+      );
+
     const SearchSubMenu = () => {
       return (
         <List
@@ -1616,33 +1625,74 @@ export const WithRowGroup: Story = {
               background-color: white;
               border-radius: 4px;
               border: 1px solid #bcb9b9;
+              max-height: 500px;
+              overflow: auto;
+
+              scrollbar-width: thin;
+              scrollbar-color: rgba(0, 0, 0, 0.25) transparent;
+
+              &::-webkit-scrollbar {
+                width: 6px;
+                height: 6px;
+              }
+
+              &::-webkit-scrollbar-track {
+                background: transparent;
+              }
+
+              &::-webkit-scrollbar-thumb {
+                background-color: rgba(0, 0, 0, 0.25);
+                border-radius: 999px;
+              }
+
+              &::-webkit-scrollbar-thumb:hover {
+                background-color: rgba(0, 0, 0, 0.4);
+              }
             `,
           }}
         >
-          <List.Group
-            styles={{
-              emptySlateStyle:
-                courseItems.length === 0 &&
-                css`
-                  display: none;
-                `,
-            }}
-            key={"course"}
-            id={"course"}
-            title={"Course"}
-          >
-            {courseItems.map((item) => (
-              <List.Item
-                onMouseDown={async () => {
-                  await setIsFocus(false);
-                  await setSearch(item.title);
-                }}
-                key={item.title}
-                id={item.title}
-                title={item.title}
-              />
-            ))}
-          </List.Group>
+          {courseItems.length > 0 && (
+            <List.Group key={"course"} id={"course"} title={"Course"}>
+              {courseItems.map((item) => (
+                <List.Item
+                  onMouseDown={async () => {
+                    await setIsFocus(false);
+                    await setSearch(item.title);
+                  }}
+                  key={item.title}
+                  id={item.title}
+                  title={item.title}
+                />
+              ))}
+            </List.Group>
+          )}
+
+          {authorItems.length > 0 && (
+            <List.Group
+              styles={{
+                emptySlateStyle:
+                  authorItems.length === 0 &&
+                  css`
+                    display: none;
+                  `,
+              }}
+              key={"author"}
+              id={"author"}
+              title={"Author"}
+            >
+              {authorItems.map((item) => (
+                <List.Item
+                  onMouseDown={async () => {
+                    await setIsFocus(false);
+                    await setSearch(item.title);
+                  }}
+                  key={item.title}
+                  id={item.title}
+                  title={item.title}
+                />
+              ))}
+            </List.Group>
+          )}
         </List>
       );
     };
