@@ -83,17 +83,13 @@ describe("StatefulForm", () => {
 
       cy.findByLabelText("Check").check().should("be.checked");
 
-      cy.get('input[type="color"]').then(($input) => {
-        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-          window.HTMLInputElement.prototype,
-          "value"
-        ).set;
+      cy.get('input[type="color"]')
+        .invoke("val", "#ff0099")
+        .trigger("input")
+        .trigger("change");
 
-        nativeInputValueSetter.call($input[0], "#ff0099");
+      cy.wait(10);
 
-        $input[0].dispatchEvent(new Event("input", { bubbles: true }));
-        $input[0].dispatchEvent(new Event("change", { bubbles: true }));
-      });
       cy.get('input[type="color"]').should("have.value", "#ff0099");
 
       cy.findByPlaceholderText("Select a fruit...")
