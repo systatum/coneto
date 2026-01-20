@@ -1064,12 +1064,15 @@ function FormFields<T extends FieldValues>({
                       {...field.moneyProps}
                       styles={{
                         ...field.moneyProps?.styles,
+                        inputWrapperStyle: css`
+                          height: 34px;
+                          ${field.moneyProps?.styles?.inputWrapperStyle}
+                        `,
                         self: css`
                           ${fieldSize &&
                           css`
                             font-size: ${fieldSize};
                           `}
-                          height: 34px;
                           ${field.moneyProps?.styles?.self}
                         `,
                         labelStyle: css`

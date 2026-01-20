@@ -4,6 +4,8 @@ import {
   forwardRef,
   InputHTMLAttributes,
   ReactElement,
+  useCallback,
+  useRef,
   useState,
 } from "react";
 import styled, { CSSProp } from "styled-components";
@@ -47,31 +49,56 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
 
     const inputId = `colorbox-${props.name}`;
 
+    const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
+
+    const handleColorChange = useCallback(
+      (e: ChangeEvent<HTMLInputElement>) => {
+        const newValue = e.target.value;
+
+        if (debounceTimeout.current) {
+          clearTimeout(debounceTimeout.current);
+        }
+
+        debounceTimeout.current = setTimeout(() => {
+          if (onChange) {
+            onChange({
+              target: {
+                name: props.name,
+                value: newValue,
+              },
+            } as ChangeEvent<HTMLInputElement>);
+          }
+        }, 2);
+      },
+      [onChange, props.name]
+    );
+
     const inputElement: ReactElement = (
       <ColorInputContainer
         $style={styles?.self}
         $hovered={hovered}
         $showError={!!showError}
+        onBlur={() => {
+          setHovered(false);
+        }}
       >
         <ColorBox
-          tabIndex={0}
-          $bgColor={value}
-          $showError={!!showError}
           onClick={() => {
             document.getElementById(inputId)?.click();
             setHovered(true);
-          }}
-          onBlur={() => {
-            setHovered(false);
             if (onClick) onClick();
           }}
+          tabIndex={0}
+          $bgColor={value}
+          $showError={!!showError}
         />
 
         <HiddenColorInput
           {...props}
+          id={inputId}
           type="color"
           value={value}
-          onChange={onChange}
+          onChange={handleColorChange}
         />
 
         <TextInputGroup $hovered={hovered} $showError={!!showError}>
@@ -79,7 +106,6 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
           <TextInput
             {...props}
             type="text"
-            id={inputId}
             ref={ref}
             value={value?.replace(/^#/, "")}
             onChange={(e) => {
@@ -114,6 +140,12 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
         {label && (
           <StatefulForm.Label
             htmlFor={props.disabled ? null : inputId}
+            onClick={() => {
+              document.getElementById(inputId)?.click();
+              setHovered(true);
+
+              if (onClick) onClick();
+            }}
             style={styles?.labelStyle}
             helper={helper}
             label={label}
