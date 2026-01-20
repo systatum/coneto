@@ -4,6 +4,7 @@ import z, { ZodTypeAny, TypeOf, ZodObject } from "zod";
 import React, {
   ChangeEvent,
   Fragment,
+  LabelHTMLAttributes,
   ReactNode,
   useEffect,
   useRef,
@@ -38,6 +39,7 @@ import { Timebox, TimeboxProps } from "./timebox";
 import { Button, ButtonProps } from "./button";
 import { RemixiconComponentType } from "@remixicon/react";
 import { Radio, RadioProps } from "./radio";
+import Helper from "./helper";
 
 export type StatefulOnChangeType =
   | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -1495,6 +1497,38 @@ function FormFields<T extends FieldValues>({
   );
 }
 
+interface StatefulFormLabelProps
+  extends Omit<LabelHTMLAttributes<HTMLLabelElement>, "label" | "style"> {
+  label?: string;
+  helper?: string;
+  style?: CSSProp;
+}
+
+function StatefulFormLabel({
+  label,
+  helper,
+  style,
+  ...props
+}: StatefulFormLabelProps) {
+  return (
+    <Label {...props} $style={style}>
+      {label}
+
+      {helper && <Helper value={helper} />}
+    </Label>
+  );
+}
+
+const Label = styled.label<{ $style?: CSSProp }>`
+  font-size: 0.75rem;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  align-items: center;
+
+  ${({ $style }) => $style}
+`;
+
 const ContainerFormField = styled.div<{ $style: CSSProp }>`
   display: flex;
   flex-direction: column;
@@ -1511,5 +1545,7 @@ const RowFormField = styled.div<{ $style: CSSProp }>`
 
   ${({ $style }) => $style}
 `;
+
+StatefulForm.Label = StatefulFormLabel;
 
 export { StatefulForm };
