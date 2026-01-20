@@ -85,12 +85,6 @@ export interface LeftSideContentMenuProps {
   render?: (children?: ReactNode) => ReactNode;
 }
 
-type OpenedContextType = {
-  openedIds: Set<string>;
-  setIsOpen: (id: string) => void;
-  isOpen: (id: string) => boolean;
-};
-
 const DnDContext = createContext<{
   dragItem: {
     id: string;
@@ -116,8 +110,16 @@ const DnDContext = createContext<{
   setDragItem: () => {},
 });
 
+type OpenedContextType = {
+  openedGroupIds: Set<string>;
+  openedItemIds: Set<string>;
+  setIsOpen: (id: string, level?: "group" | "item") => void;
+  isOpen: (id: string, level?: "group" | "item") => boolean;
+};
+
 const OpenedContext = createContext<OpenedContextType>({
-  openedIds: new Set(),
+  openedGroupIds: new Set(),
+  openedItemIds: new Set(),
   setIsOpen: () => {},
   isOpen: () => false,
 });
@@ -166,7 +168,9 @@ function List({
     return initialIds;
   }, []);
 
-  const [openedIds, setOpenedIds] = useState<Set<string>>(initialOpenedIds);
+  const [openedGroupIds, setOpenedGroupIds] =
+    useState<Set<string>>(initialOpenedIds);
+  const [openedItemIds, setOpenedItemIds] = useState<Set<string>>(new Set());
   const [openTipRowId, setOpenTipRowId] = useState<string | null>("");
 
   const [dragItem, setDragItem] = useState(null);
@@ -186,47 +190,71 @@ function List({
     }
   };
 
-  const setIsOpen = (id: string) => {
-    setOpenedIds((prev) => {
-      const next = new Set(prev);
+  const setIsOpen = (id: string, level: "group" | "item" = "item") => {
+    if (level === "group") {
+      setOpenedGroupIds((prev) => {
+        const next = new Set(prev);
+        if (onOpen) {
+          onOpen({
+            id: id,
+            isOpen: !next.has(id),
+          });
+        }
 
-      if (onOpen) {
-        onOpen({
-          id: id,
-          isOpen: !next.has(id),
-        });
-      }
-
-      if (openerBehavior === "onlyOne") {
         if (next.has(id)) {
-          next.clear();
+          next.delete(id);
         } else {
-          next.clear();
           next.add(id);
         }
+
         return next;
-      }
+      });
+    } else {
+      setOpenedItemIds((prev) => {
+        const next = new Set(prev);
+        if (onOpen) {
+          onOpen({
+            id: id,
+            isOpen: !next.has(id),
+          });
+        }
 
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-
-      return next;
-    });
+        if (openerBehavior === "onlyOne") {
+          if (next.has(id)) {
+            next.delete(id);
+          } else {
+            next.clear();
+            next.add(id);
+          }
+        } else {
+          if (next.has(id)) {
+            next.delete(id);
+          } else {
+            next.add(id);
+          }
+        }
+        return next;
+      });
+    }
   };
+
+  const isOpen = (id: string, level: "group" | "item" = "item") =>
+    level === "group" ? openedGroupIds.has(id) : openedItemIds.has(id);
 
   return (
     <OpenedContext.Provider
       value={{
-        openedIds,
+        openedGroupIds,
+        openedItemIds,
         setIsOpen,
-        isOpen: (id) => openedIds.has(id),
+        isOpen,
       }}
     >
       <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
-        <ListContainer $containerStyle={styles?.containerStyle}>
+        <ListContainer
+          aria-label="list-container"
+          $containerStyle={styles?.containerStyle}
+        >
           {searchable && (
             <Searchbox
               ref={inputRef}
@@ -262,24 +290,31 @@ function List({
             const isHidden = maxItems && !expanded && index >= maxItems;
 
             const isGroup = componentChild.type === List.Group;
+            const isList = componentChild.type === List.Item;
 
             const modifiedChild = cloneElement(componentChild, {
-              draggable: draggable,
-              selectable: selectable,
-              openTipRowId,
-              setOpenTipRowId,
-              alwaysShowDragIcon,
-              ...(isGroup && {
-                maxItems,
-                labels,
-                ...(maxItems &&
-                  styles?.maxItemsStyle && {
-                    styles: {
-                      maxItemsStyle: styles?.maxItemsStyle,
-                      ...componentChild.props.styles,
-                    },
-                  }),
-              }),
+              ...(isList || isGroup
+                ? {
+                    draggable,
+                    selectable,
+                    openTipRowId,
+                    setOpenTipRowId,
+                    alwaysShowDragIcon,
+                    ...(isGroup
+                      ? {
+                          maxItems,
+                          labels,
+                          ...(maxItems &&
+                            styles?.maxItemsStyle && {
+                              styles: {
+                                maxItemsStyle: styles.maxItemsStyle,
+                                ...componentChild.props.styles,
+                              },
+                            }),
+                        }
+                      : {}),
+                  }
+                : {}),
             });
 
             if (maxItems) {
@@ -368,8 +403,8 @@ interface ListGroupStylesProps {
   contentStyle?: CSSProp;
   emptySlateStyle?: CSSProp;
   maxItemsStyle?: CSSProp;
-  leftSideStyle?: CSSProp;
-  rightSideStyle?: CSSProp;
+  leftSideWrapperStyle?: CSSProp;
+  rightSideWrapperStyle?: CSSProp;
 }
 
 export interface ListGroupContentProps {
@@ -414,7 +449,7 @@ function ListGroup({
   const { isOpen, setIsOpen } = useContext(OpenedContext);
   const [expanded, setExpanded] = useState(false);
 
-  const opened = isOpen(id);
+  const opened = isOpen(id, "group");
 
   const finalActions =
     actions &&
@@ -434,12 +469,12 @@ function ListGroup({
     <ListGroupContainer $containerStyle={styles?.containerStyle}>
       <HeaderButton
         $isOpen={opened}
-        onClick={() => setIsOpen(id)}
+        onClick={() => setIsOpen(id, "group")}
         aria-expanded={opened}
         $style={styles?.rowStyle}
       >
-        <ListItemLeft
-          $style={styles?.leftSideStyle}
+        <ListGroupLeftSideWrapper
+          $style={styles?.leftSideWrapperStyle}
           aria-label="list-left-side-wrapper"
         >
           {title && (
@@ -458,13 +493,10 @@ function ListGroup({
               {subtitle}
             </SubtitleText>
           )}
-        </ListItemLeft>
+        </ListGroupLeftSideWrapper>
 
-        <ListItemRight
-          $style={css`
-            padding-right: 0.5rem;
-            ${styles?.rightSideStyle};
-          `}
+        <ListGroupRightSideWrapper
+          $style={styles?.rightSideWrapperStyle}
           aria-label="list-right-side-wrapper"
         >
           {finalActions &&
@@ -494,10 +526,12 @@ function ListGroup({
                 `,
               }}
               checked={opened}
-              onChange={() => setIsOpen(id)}
+              onChange={() => {
+                setIsOpen(id, "group");
+              }}
             />
           ) : null}
-        </ListItemRight>
+        </ListGroupRightSideWrapper>
       </HeaderButton>
 
       {opened && <Divider aria-label="divider" />}
@@ -677,6 +711,25 @@ function ListShowMoreButton({
   );
 }
 
+const ListGroupLeftSideWrapper = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: flex-start;
+`;
+
+const ListGroupRightSideWrapper = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  align-items: center;
+  width: 100%;
+  justify-content: flex-end;
+  padding-right: 0.5rem;
+
+  ${({ $style }) => $style}
+`;
+
 const ShowMoreButton = styled.button<{ $style?: CSSProp }>`
   margin-top: 0.25rem;
   padding: 0.25rem 0.5rem;
@@ -803,7 +856,7 @@ interface ListItemStylesProps {
 
 type DivProps = Omit<
   React.HTMLAttributes<HTMLDivElement>,
-  "title" | "onClick" | "draggable" | "id"
+  "title" | "onClick" | "draggable" | "id" | "style"
 >;
 
 interface ListItemInternal
@@ -849,7 +902,6 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
       groupLength,
       index,
       onDropItem,
-
       ...domProps
     } = props as ListItemWithId &
       ListAlwaysShowDragIconProp & {
@@ -867,7 +919,7 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
     );
     const idFullname = groupId ? `${groupId}-${id}` : `${id}`;
 
-    const isChildOpened = isOpen(idFullname);
+    const isChildOpened = isOpen(idFullname, "item");
 
     return (
       <ListItemWrapper
@@ -888,7 +940,7 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
               onClick();
             }
             if (openable) {
-              setIsOpen(idFullname);
+              setIsOpen(idFullname, "item");
             }
           }}
           onDragStart={() =>
