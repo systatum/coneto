@@ -1,6 +1,7 @@
 import styled, { css, CSSProp } from "styled-components";
 import { ChangeEvent, InputHTMLAttributes, ReactElement } from "react";
 import { RemixiconComponentType } from "@remixicon/react";
+import { StatefulForm } from "./stateful-form";
 
 export interface RadioProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {
@@ -18,6 +19,7 @@ export interface RadioProps
   icon?: RemixiconComponentType;
   iconSize?: number;
   iconColor?: string;
+  helper?: string;
 }
 
 interface RadioStylesProps {
@@ -54,6 +56,7 @@ function Radio({
   iconSize,
   iconColor,
   styles,
+  helper,
   mode = "radio",
   ...props
 }: RadioProps) {
@@ -126,13 +129,13 @@ function Radio({
   return (
     <Container $style={styles?.containerStyle}>
       {title && (
-        <Title
+        <StatefulForm.Label
           htmlFor={props.disabled ? null : id}
           aria-label="radio-title-wrapper"
-          $style={styles?.titleStyle}
-        >
-          {title}
-        </Title>
+          style={styles?.titleStyle}
+          helper={helper}
+          label={title}
+        />
       )}
       {inputElement}
     </Container>
@@ -151,6 +154,11 @@ const Container = styled.div<{ $style?: CSSProp }>`
 
 const Title = styled.label<{ $style?: CSSProp }>`
   font-size: 0.75rem;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  align-items: center;
+
   ${({ $style }) => $style}
 `;
 

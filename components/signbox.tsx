@@ -1,6 +1,7 @@
 import { RiEraserLine } from "@remixicon/react";
 import React, { useRef, useEffect, ChangeEvent, ReactElement } from "react";
 import styled, { CSSProp } from "styled-components";
+import { StatefulForm } from "./stateful-form";
 
 export interface SignboxProps {
   name?: string;
@@ -14,6 +15,7 @@ export interface SignboxProps {
   height?: string;
   width?: string;
   styles?: SignboxStylesProps;
+  helper?: string;
 }
 
 export interface SignboxStylesProps {
@@ -34,6 +36,7 @@ function Signbox({
   styles,
   height,
   width,
+  helper,
 }: SignboxProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isDrawing = useRef(false);
@@ -209,9 +212,11 @@ function Signbox({
   return (
     <InputWrapper $containerStyle={styles?.containerStyle} $disabled={disabled}>
       {label && (
-        <Label $style={styles?.labelStyle} htmlFor="signbox">
-          {label}
-        </Label>
+        <StatefulForm.Label
+          style={styles?.labelStyle}
+          helper={helper}
+          label={label}
+        />
       )}
       <InputContent>
         {inputElement}
@@ -234,15 +239,6 @@ const InputWrapper = styled.div<{
 
   ${({ $disabled }) => $disabled && `cursor: not-allowed; opacity: 0.5;`}
   ${({ $containerStyle }) => $containerStyle}
-`;
-
-const Label = styled.label<{ $style?: CSSProp }>`
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-
-  ${({ $style }) => $style}
 `;
 
 const InputContent = styled.div`

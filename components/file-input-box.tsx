@@ -1,9 +1,18 @@
-import { ChangeEvent, DragEvent, ReactElement, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  DragEvent,
+  InputHTMLAttributes,
+  ReactElement,
+  useRef,
+  useState,
+} from "react";
 import { RiCloseLine } from "@remixicon/react";
 import styled, { css, CSSProp } from "styled-components";
 import { Button } from "./button";
+import { StatefulForm } from "./stateful-form";
 
-export interface FileInputBoxProps {
+export interface FileInputBoxProps
+  extends InputHTMLAttributes<HTMLInputElement> {
   placeholder?: string;
   accept?: string;
   multiple?: boolean;
@@ -12,6 +21,7 @@ export interface FileInputBoxProps {
   showError?: boolean;
   errorMessage?: string;
   styles?: FileInputBoxStylesProps;
+  helper?: string;
 }
 
 export interface FileInputBoxStylesProps {
@@ -29,6 +39,8 @@ function FileInputBox({
   errorMessage,
   showError,
   styles,
+  helper,
+  ...props
 }: FileInputBoxProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -133,6 +145,7 @@ function FileInputBox({
         accept={accept}
         multiple={multiple}
         onChange={handleFileChange}
+        id={props.id}
         hidden
       />
     </InputBox>
@@ -140,7 +153,14 @@ function FileInputBox({
 
   return (
     <InputWrapper $containerStyle={styles?.containerStyle}>
-      {label && <Label $style={styles?.labelStyle}>{label}</Label>}
+      {label && (
+        <StatefulForm.Label
+          htmlFor={props.disabled ? null : props.id}
+          style={styles?.labelStyle}
+          helper={helper}
+          label={label}
+        />
+      )}
       <InputContent>
         {inputElement}
         {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
@@ -223,10 +243,6 @@ const InputContent = styled.div`
   flex-direction: column;
   gap: 4px;
   font-size: 12px;
-`;
-
-const Label = styled.label<{ $style?: CSSProp }>`
-  ${({ $style }) => $style}
 `;
 
 const ErrorText = styled.span`

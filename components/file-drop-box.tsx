@@ -10,6 +10,7 @@ import {
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { LoadingSpinner } from "./loading-spinner";
+import { StatefulForm } from "./stateful-form";
 
 export interface OnFileDroppedFunctionProps {
   files: File[];
@@ -34,6 +35,7 @@ export interface FileDropBoxProps {
   onFileDropped?: (props: OnFileDroppedFunctionProps) => void;
   onComplete?: (props: OnCompleteFunctionProps) => void;
   progressPercentage?: number;
+  helper?: string;
   children?: ReactNode;
   styles?: FileDropBoxStylesProps;
 }
@@ -56,6 +58,7 @@ function FileDropBox({
   label,
   children,
   styles,
+  helper,
 }: FileDropBoxProps) {
   const FILE_ICON = [
     { id: 1, icon: RiImageLine, size: 50 },
@@ -219,7 +222,13 @@ function FileDropBox({
       $hide={progress === null}
       $containerStyle={styles?.containerStyle}
     >
-      {label && <Label $style={styles?.labelStyle}> {label}</Label>}
+      {label && (
+        <StatefulForm.Label
+          style={styles?.labelStyle}
+          helper={helper}
+          label={label}
+        />
+      )}
       {inputElement}
 
       {errorMessages.length > 0 && (
@@ -263,14 +272,6 @@ const ContentWrapper = styled.div<{
   align-items: start;
   text-align: start;
   cursor: default;
-
-  ${({ $style }) => $style}
-`;
-
-const Label = styled.label<{
-  $style?: CSSProp;
-}>`
-  font-size: 0.75rem;
 
   ${({ $style }) => $style}
 `;

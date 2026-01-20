@@ -6,6 +6,7 @@ import {
   useEffect,
   useRef,
 } from "react";
+import { StatefulForm } from "./stateful-form";
 
 type WithoutStyle<T> = Omit<T, "style">;
 
@@ -21,6 +22,7 @@ export interface CheckboxProps
   description?: string;
   highlightOnChecked?: boolean;
   styles?: CheckboxStylesProps;
+  helper?: string;
 }
 
 export interface CheckboxStylesProps {
@@ -45,6 +47,7 @@ function Checkbox({
   errorMessage,
   indeterminate = false,
   styles,
+  helper,
   ...props
 }: CheckboxProps) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -135,13 +138,13 @@ function Checkbox({
   return (
     <Container $style={styles?.containerStyle}>
       {title && (
-        <Title
+        <StatefulForm.Label
           htmlFor={props.disabled ? null : inputId}
           aria-label="title-wrapper"
-          $style={styles?.titleStyle}
-        >
-          {title}
-        </Title>
+          style={styles?.titleStyle}
+          helper={helper}
+          label={title}
+        />
       )}
       {inputElement}
     </Container>
@@ -159,6 +162,11 @@ const Container = styled.div<{ $style?: CSSProp }>`
 
 const Title = styled.label<{ $style?: CSSProp }>`
   font-size: 0.75rem;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  align-items: center;
+
   ${({ $style }) => $style}
 `;
 

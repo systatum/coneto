@@ -4,9 +4,12 @@ import {
   forwardRef,
   InputHTMLAttributes,
   ReactElement,
+  useCallback,
+  useRef,
   useState,
 } from "react";
 import styled, { CSSProp } from "styled-components";
+import { StatefulForm } from "./stateful-form";
 
 export interface ColorboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "style"> {
@@ -17,6 +20,7 @@ export interface ColorboxProps
   errorMessage?: string;
   onClick?: () => void;
   styles?: ColorboxStylesProps;
+  helper?: string;
 }
 
 export interface ColorboxStylesProps {
@@ -36,6 +40,7 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
       placeholder,
       onClick,
       styles,
+      helper,
       ...props
     },
     ref
@@ -44,24 +49,48 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
 
     const inputId = `colorbox-${props.name}`;
 
+    const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
+
+    const handleColorChange = useCallback(
+      (e: ChangeEvent<HTMLInputElement>) => {
+        const newValue = e.target.value;
+
+        if (debounceTimeout.current) {
+          clearTimeout(debounceTimeout.current);
+        }
+
+        debounceTimeout.current = setTimeout(() => {
+          if (onChange) {
+            onChange({
+              target: {
+                name: props.name,
+                value: newValue,
+              },
+            } as ChangeEvent<HTMLInputElement>);
+          }
+        }, 2);
+      },
+      [onChange, props.name]
+    );
+
     const inputElement: ReactElement = (
       <ColorInputContainer
         $style={styles?.self}
         $hovered={hovered}
         $showError={!!showError}
+        onBlur={() => {
+          setHovered(false);
+        }}
       >
         <ColorBox
-          tabIndex={0}
-          $bgColor={value}
-          $showError={!!showError}
           onClick={() => {
             document.getElementById(inputId)?.click();
             setHovered(true);
-          }}
-          onBlur={() => {
-            setHovered(false);
             if (onClick) onClick();
           }}
+          tabIndex={0}
+          $bgColor={value}
+          $showError={!!showError}
         />
 
         <HiddenColorInput
@@ -69,7 +98,7 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
           id={inputId}
           type="color"
           value={value}
-          onChange={onChange}
+          onChange={handleColorChange}
         />
 
         <TextInputGroup $hovered={hovered} $showError={!!showError}>
@@ -109,9 +138,18 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
         $disabled={props.disabled}
       >
         {label && (
-          <Label htmlFor={inputId} $style={styles?.labelStyle}>
-            {label}
-          </Label>
+          <StatefulForm.Label
+            htmlFor={props.disabled ? null : inputId}
+            onClick={() => {
+              document.getElementById(inputId)?.click();
+              setHovered(true);
+
+              if (onClick) onClick();
+            }}
+            style={styles?.labelStyle}
+            helper={helper}
+            label={label}
+          />
         )}
         <InputContent>
           {inputElement}
@@ -135,10 +173,6 @@ const InputWrapper = styled.div<{
 
   ${({ $disabled }) => $disabled && `cursor: not-allowed; opacity: 0.5;`}
   ${({ $containerStyle }) => $containerStyle}
-`;
-
-const Label = styled.label<{ $highlight?: boolean; $style?: CSSProp }>`
-  ${({ $style }) => $style};
 `;
 
 const InputContent = styled.div`

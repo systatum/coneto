@@ -7,6 +7,7 @@ import {
 } from "@remixicon/react";
 import { ChangeEvent, ReactElement, useRef, useState } from "react";
 import styled, { css, CSSProp } from "styled-components";
+import { StatefulForm } from "./stateful-form";
 
 export interface ThumbFieldProps {
   value?: boolean | null;
@@ -20,6 +21,7 @@ export interface ThumbFieldProps {
   errorMessage?: string;
   styles?: ThumbFieldStylesProps;
   id?: string;
+  helper?: string;
 }
 
 export interface ThumbFieldStylesProps {
@@ -43,6 +45,7 @@ function ThumbField({
   showError,
   styles,
   id,
+  helper,
 }: ThumbFieldProps) {
   const thumbStateValue = value === true ? "up" : value ? "down" : "blank";
   const [thumbValue, setThumbValue] =
@@ -120,9 +123,11 @@ function ThumbField({
   return (
     <InputWrapper $containerStyle={styles?.containerStyle} $disabled={disabled}>
       {label && (
-        <Label $style={styles?.labelStyle} htmlFor={id}>
-          {label}
-        </Label>
+        <StatefulForm.Label
+          style={styles?.labelStyle}
+          helper={helper}
+          label={label}
+        />
       )}
       <InputContent>
         {inputElement}
@@ -165,10 +170,6 @@ const InputContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4px;
-`;
-
-const Label = styled.label<{ $style?: CSSProp }>`
-  ${({ $style }) => $style}
 `;
 
 const ErrorText = styled.span`

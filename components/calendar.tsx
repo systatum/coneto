@@ -15,6 +15,7 @@ import {
   isWeekend,
   removeWeekend,
 } from "../lib/date";
+import { StatefulForm } from "./stateful-form";
 
 export interface BaseCalendarProps {
   options?: OptionsProps[];
@@ -34,6 +35,7 @@ export interface BaseCalendarProps {
 export interface CalendarStylesProps {
   self?: CSSProp;
   containerStyle?: CSSProp;
+  labelStyle?: CSSProp;
 }
 
 type CalendarProps = BaseCalendarProps &
@@ -44,6 +46,7 @@ type CalendarProps = BaseCalendarProps &
     footer?: ReactNode;
     todayButtonCaption?: string;
     selectabilityMode?: SelectabilityModeState;
+    helper?: string;
   };
 
 interface CalendarStateProps {
@@ -110,6 +113,7 @@ function Calendar({
   footer,
   todayButtonCaption = "Today",
   onCalendarPeriodChanged,
+  helper,
   selectabilityMode = "single",
 }: CalendarProps) {
   const today = new Date();
@@ -928,7 +932,13 @@ function Calendar({
 
   return (
     <Container $style={styles?.containerStyle}>
-      {label && <label>{label}</label>}
+      {label && (
+        <StatefulForm.Label
+          style={styles?.labelStyle}
+          helper={helper}
+          label={label}
+        />
+      )}
       <InputContent>
         {inputElement}
         {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}

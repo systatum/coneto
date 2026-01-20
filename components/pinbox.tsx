@@ -7,10 +7,12 @@ import React, {
   useState,
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
+import { StatefulForm } from "./stateful-form";
 
 export interface PinboxProps {
   fontSize?: number;
   label?: string;
+  helper?: string;
   showError?: boolean;
   errorMessage?: string;
   masked?: boolean;
@@ -48,6 +50,7 @@ function Pinbox({
   onChange,
   styles,
   disabled,
+  helper,
 }: PinboxProps) {
   const getDefaultValue = () => {
     let valIndex = 0;
@@ -286,9 +289,11 @@ function Pinbox({
   return (
     <Container $containerStyle={styles?.containerStyle}>
       {label && (
-        <Label $style={styles?.labelStyle} htmlFor={inputId}>
-          {label}
-        </Label>
+        <StatefulForm.Label
+          style={styles?.labelStyle}
+          helper={helper}
+          label={label}
+        />
       )}
       {inputElements}
       {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
@@ -435,11 +440,6 @@ const PinboxInput = styled.input<{
             cursor: not-allowed;
           }
         `}
-`;
-
-const Label = styled.label<{ $style?: CSSProp }>`
-  font-size: 0.75rem;
-  ${({ $style }) => $style}
 `;
 
 const ErrorText = styled.span`

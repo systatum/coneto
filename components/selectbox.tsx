@@ -45,6 +45,7 @@ export interface SelectboxProps {
   onClick?: () => void;
   multiple?: boolean;
   actions?: any[];
+  id?: string;
   maxSelectableItems?: number | undefined;
   children?: (
     props: DrawerProps &
@@ -111,6 +112,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       multiple,
       actions,
       maxSelectableItems,
+      id,
     },
     ref
   ) => {
@@ -297,6 +299,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
           $style={styles?.self}
           {...getReferenceProps()}
           data-type="selectbox"
+          id={id}
           $clearable={clearable}
           ref={(el) => {
             refs.setReference(el);

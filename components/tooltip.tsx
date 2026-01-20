@@ -155,6 +155,7 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
         ref={refs.setReference}
       >
         <ContentTrigger
+          aria-label="tooltip-trigger"
           onClick={(e: React.MouseEvent) => {
             e.stopPropagation();
             if (showDialogOn === "click") {

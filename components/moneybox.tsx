@@ -10,6 +10,7 @@ import {
 } from "react";
 import { Button } from "./button";
 import { List } from "./list";
+import { StatefulForm } from "./stateful-form";
 
 type SeparatorTypeProps = "dot" | "comma";
 
@@ -37,11 +38,14 @@ export interface MoneyboxProps
   styles?: MoneyboxStylesProps;
   editableCurrency?: boolean;
   currencyOptions?: CurrencyOptionsProps[];
+  helper?: string;
 }
+
 export interface MoneyboxStylesProps {
   self?: CSSProp;
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
+  inputWrapperStyle?: CSSProp;
 }
 
 const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
@@ -59,6 +63,7 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
       styles,
       onKeyDown,
       editableCurrency,
+      helper,
       currencyOptions = [
         { id: "IDR", name: "Indonesian Rupiah", symbol: "Rp" },
       ],
@@ -112,7 +117,13 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
 
     return (
       <InputWrapper $style={styles?.containerStyle}>
-        {label && <Label $style={styles?.labelStyle}>{label}</Label>}
+        {label && (
+          <StatefulForm.Label
+            style={styles?.labelStyle}
+            helper={helper}
+            label={label}
+          />
+        )}
         <InputContent>
           <Box
             onBlur={() => setFocus(false)}
@@ -120,7 +131,7 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
             $disabled={props.disabled}
             $error={showError}
             $focus={focus}
-            $style={styles?.self}
+            $style={styles?.inputWrapperStyle}
           >
             <Button
               aria-label="currency"
@@ -227,6 +238,7 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
               onFocus={() => setFocus(true)}
               onKeyDown={onKeyDown}
               type="text"
+              $style={styles?.self}
               inputMode="decimal"
               $disabled={props.disabled}
               {...props}
@@ -248,10 +260,6 @@ const InputWrapper = styled.div<{ $style?: CSSProp }>`
   position: relative;
   font-size: 0.75rem;
 
-  ${({ $style }) => $style}
-`;
-
-const Label = styled.label<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
@@ -292,7 +300,7 @@ const Box = styled.div<{
   ${({ $style }) => $style}
 `;
 
-const MoneyboxInput = styled.input<{ $disabled?: boolean }>`
+const MoneyboxInput = styled.input<{ $disabled?: boolean; $style?: CSSProp }>`
   background: transparent;
   text-align: right;
   padding-left: 20px;
@@ -309,6 +317,8 @@ const MoneyboxInput = styled.input<{ $disabled?: boolean }>`
       user-select: none;
       cursor: not-allowed;
     `}
+
+  ${({ $style }) => $style}
 `;
 
 const ErrorText = styled.span`

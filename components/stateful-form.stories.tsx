@@ -610,6 +610,7 @@ export const AllCase: Story = {
         type: "text",
         required: true,
         placeholder: "Enter text",
+        helper: "This field is used to enter a single line of text",
       },
       {
         name: "email",
@@ -617,13 +618,15 @@ export const AllCase: Story = {
         type: "email",
         required: false,
         placeholder: "Enter email address",
+        helper: "This field is used to enter an email address",
       },
       {
         name: "time",
         title: "Time",
         type: "time",
         required: false,
-        placeholder: "Enter email address",
+        placeholder: "Enter time",
+        helper: "This field allows you to select a time",
       },
       {
         name: "number",
@@ -631,6 +634,7 @@ export const AllCase: Story = {
         type: "number",
         required: false,
         placeholder: "Enter number",
+        helper: "This field only accepts numeric values",
       },
       {
         name: "password",
@@ -638,6 +642,7 @@ export const AllCase: Story = {
         type: "password",
         required: false,
         placeholder: "Enter password",
+        helper: "This field is used to enter a secure password",
       },
       {
         name: "textarea",
@@ -646,6 +651,7 @@ export const AllCase: Story = {
         rows: 3,
         required: false,
         placeholder: "Enter text here",
+        helper: "This field allows you to enter multiple lines of text",
       },
       {
         name: "check",
@@ -653,6 +659,7 @@ export const AllCase: Story = {
         placeholder: "Check",
         type: "checkbox",
         required: false,
+        helper: "This checkbox allows you to toggle a boolean value",
       },
       {
         name: "radio",
@@ -660,6 +667,7 @@ export const AllCase: Story = {
         placeholder: "Radio",
         type: "radio",
         required: false,
+        helper: "This radio allows you to select one option",
       },
       {
         name: "color",
@@ -667,6 +675,7 @@ export const AllCase: Story = {
         type: "color",
         required: false,
         placeholder: "Enter the color here",
+        helper: "This field allows you to pick or input a color value",
       },
       {
         name: "combo",
@@ -674,6 +683,7 @@ export const AllCase: Story = {
         type: "combo",
         required: false,
         placeholder: "Select a fruit...",
+        helper: "This field allows you to select one or more options",
         comboboxProps: {
           options: FRUIT_OPTIONS,
         },
@@ -684,6 +694,7 @@ export const AllCase: Story = {
         type: "date",
         required: false,
         placeholder: "Select a date",
+        helper: "This field allows you to select a date",
         dateProps: {
           monthNames: MONTH_NAMES,
         },
@@ -693,9 +704,10 @@ export const AllCase: Story = {
         title: "File Drop Box",
         type: "file_drop_box",
         required: false,
+        helper: "This field allows you to upload files via drag and drop",
         fileDropBoxProps: {
-          onComplete: onComplete,
-          onFileDropped: onFileDropped,
+          onComplete,
+          onFileDropped,
         },
       },
       {
@@ -703,6 +715,7 @@ export const AllCase: Story = {
         title: "File",
         type: "file",
         required: false,
+        helper: "This field allows you to upload one or more files",
         fileInputBoxProps: {
           accept: "image/jpeg",
         },
@@ -712,6 +725,7 @@ export const AllCase: Story = {
         title: "Image",
         type: "image",
         required: false,
+        helper: "This field allows you to upload and preview an image",
       },
       {
         name: "money",
@@ -719,6 +733,7 @@ export const AllCase: Story = {
         type: "money",
         required: false,
         placeholder: "Enter amount",
+        helper: "This field is used to input a monetary value",
         moneyProps: {
           separator: "dot",
           editableCurrency: true,
@@ -732,6 +747,7 @@ export const AllCase: Story = {
         type: "phone",
         required: false,
         placeholder: "Enter phone number",
+        helper: "This field allows you to enter a phone number",
       },
       {
         name: "country_code",
@@ -739,36 +755,43 @@ export const AllCase: Story = {
         type: "country_code",
         required: false,
         placeholder: "Enter country code",
+        helper: "This field is used to enter a country calling code",
       },
       {
         name: "signature",
         title: "Signature",
         type: "signbox",
         required: false,
+        helper: "This field allows you to draw a signature",
       },
       {
         name: "rating",
         title: "Rating",
         type: "rating",
         required: false,
+        helper: "This field allows you to provide a rating",
       },
       {
         name: "thumb_field",
         title: "Thumb Field",
         type: "thumbfield",
         required: false,
+        helper: "This field allows you to select a thumbs-up or down value",
       },
       {
         name: "togglebox",
         title: "Togglebox",
         type: "toggle",
+        placeholder: "Toggle",
         required: false,
+        helper: "This field allows you to toggle a boolean state",
       },
       {
         name: "chips",
         title: "Chips",
         type: "chips",
         required: false,
+        helper: "This field allows you to select multiple items",
         chipsProps: {
           options: BADGE_OPTIONS,
           styles: {
@@ -795,6 +818,7 @@ export const AllCase: Story = {
         title: "Monetary Value",
         type: "capsule",
         required: false,
+        helper: "This field allows you to switch between monetary options",
         capsuleProps: {
           tabs: CAPSULE_TABS,
         },
@@ -805,7 +829,6 @@ export const AllCase: Story = {
         type: "button",
         required: true,
         disabled: !isFormValid,
-        placeholder: "Enter text",
         rowJustifyContent: "end",
       },
     ];

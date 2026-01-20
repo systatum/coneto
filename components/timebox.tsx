@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 import styled, { CSSProp } from "styled-components";
+import { StatefulForm } from "./stateful-form";
 
 export interface TimeboxProps {
   withSeconds?: boolean;
@@ -23,6 +24,7 @@ export interface TimeboxProps {
   name?: string;
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement | HTMLDivElement>) => void;
   placeholder?: TimeboxPlaceholderProps;
+  helper?: string;
 }
 
 export interface TimeboxStylesProps {
@@ -53,6 +55,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
       name,
       onKeyDown,
       placeholder,
+      helper,
       styles,
     },
     ref
@@ -304,9 +307,12 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
         $disabled={disabled}
       >
         {label && (
-          <Label $style={styles?.labelStyle} htmlFor={inputId}>
-            {label}
-          </Label>
+          <StatefulForm.Label
+            htmlFor={disabled ? null : inputId}
+            style={styles?.labelStyle}
+            helper={helper}
+            label={label}
+          />
         )}
         <InputContent>
           {inputElement}
@@ -357,10 +363,6 @@ const InputContent = styled.div`
   flex-direction: column;
   gap: 4px;
   font-size: 12px;
-`;
-
-const Label = styled.label<{ $style?: CSSProp }>`
-  ${({ $style }) => $style}
 `;
 
 const ErrorText = styled.span<{ $style?: CSSProp }>`

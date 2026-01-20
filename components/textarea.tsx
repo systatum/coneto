@@ -11,12 +11,14 @@ import {
   forwardRef,
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
+import { StatefulForm } from "./stateful-form";
 
 export interface TextareaProps
   extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "style"> {
   label?: string;
   showError?: boolean;
   errorMessage?: string;
+  helper?: string;
   styles?: TextareaStylesProps;
   onActionClick?: () => void;
   onChange?: (
@@ -46,6 +48,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       icon: Icon = RiCheckLine,
       autogrow,
       styles,
+      helper,
       ...props
     },
     ref
@@ -119,9 +122,12 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <Container $style={styles?.containerStyle}>
         {label && (
-          <Label $style={styles?.labelStyle} htmlFor={inputId}>
-            {label}
-          </Label>
+          <StatefulForm.Label
+            htmlFor={props.disabled ? null : inputId}
+            style={styles?.labelStyle}
+            helper={helper}
+            label={label}
+          />
         )}
         <div>
           {inputElement}
@@ -140,11 +146,6 @@ const Container = styled.div<{ $style?: CSSProp }>`
   font-size: 0.75rem;
   position: relative;
 
-  ${({ $style }) => $style}
-`;
-
-const Label = styled.label<{ $style?: CSSProp }>`
-  font-size: 0.75rem;
   ${({ $style }) => $style}
 `;
 

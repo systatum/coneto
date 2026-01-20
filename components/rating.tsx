@@ -1,5 +1,6 @@
 import { ChangeEvent, MouseEvent, ReactElement, useState } from "react";
 import styled, { css, CSSProp } from "styled-components";
+import { StatefulForm } from "./stateful-form";
 
 export interface RatingProps {
   rating?: string;
@@ -13,6 +14,7 @@ export interface RatingProps {
   name?: string;
   styles?: RatingStylesProps;
   errorMessage?: string;
+  helper?: string;
 }
 export interface RatingStylesProps {
   containerStyle?: CSSProp;
@@ -31,6 +33,7 @@ function Rating({
   disabled,
   styles,
   name,
+  helper,
 }: RatingProps) {
   const ratingState = Number(rating || 0);
   const [ratingLocal, setRatingLocal] = useState(ratingState);
@@ -150,7 +153,13 @@ function Rating({
 
   return (
     <InputWrapper $disabled={disabled} $containerStyle={styles?.containerStyle}>
-      {label && <Label $style={styles?.labelStyle}>{label}</Label>}
+      {label && (
+        <StatefulForm.Label
+          style={styles?.labelStyle}
+          helper={helper}
+          label={label}
+        />
+      )}
       <InputContent>
         {inputElement}
         {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
@@ -172,10 +181,6 @@ const InputWrapper = styled.div<{
 
   ${({ $disabled }) => $disabled && `cursor: not-allowed; opacity: 0.5;`}
   ${({ $containerStyle }) => $containerStyle}
-`;
-
-const Label = styled.label<{ $style?: CSSProp }>`
-  ${({ $style }) => $style}
 `;
 
 const InputContent = styled.div`
