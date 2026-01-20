@@ -1628,7 +1628,18 @@ export const WithRowGroup: Story = {
             `,
           }}
         >
-          <List.Group key={"course"} id={"course"} title={"Course"}>
+          <List.Group
+            styles={{
+              emptySlateStyle:
+                courseItems.length === 0 &&
+                css`
+                  display: none;
+                `,
+            }}
+            key={"course"}
+            id={"course"}
+            title={"Course"}
+          >
             {courseItems.map((item) => (
               <List.Item
                 onMouseDown={async () => {
@@ -1641,7 +1652,18 @@ export const WithRowGroup: Story = {
               />
             ))}
           </List.Group>
-          <List.Group key={"author"} id={"author"} title={"Author"}>
+          <List.Group
+            styles={{
+              emptySlateStyle:
+                authorItems.length === 0 &&
+                css`
+                  display: none;
+                `,
+            }}
+            key={"author"}
+            id={"author"}
+            title={"Author"}
+          >
             {authorItems.map((item) => (
               <List.Item
                 onMouseDown={async () => {
