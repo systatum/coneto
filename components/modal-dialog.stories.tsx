@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { ModalDialog, ModalDialogProps } from "./modal-dialog";
 import { Button } from "./button";
 import { useArgs } from "@storybook/preview-api";
+import { css } from "styled-components";
 
 const meta: Meta<typeof ModalDialog> = {
   title: "Stage/ModalDialog",
@@ -53,8 +54,7 @@ Each button object supports:
     },
     onClick: {
       control: false,
-      description:
-        "Callback fired when any footer button is clicked. Receives the button id and a \`closeDialog\` helper.",
+      description: `Callback fired when any footer button is clicked. Receives the button id and a \`closeDialog\` helper.`,
     },
     styles: {
       control: false,

@@ -136,7 +136,7 @@ const CardContainer = styled.div<{
   ${({ $containerStyle }) => $containerStyle}
 `;
 
-const Header = styled.span<{
+const Header = styled.div<{
   $headerStyle?: CSSProp;
 }>`
   padding: 0.75rem 1.5rem;

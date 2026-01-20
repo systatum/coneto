@@ -4,7 +4,6 @@ import {
   RiErrorWarningLine,
   RiEyeLine,
   RiEyeOffLine,
-  RiInformationLine,
 } from "@remixicon/react";
 import React, {
   ChangeEvent,

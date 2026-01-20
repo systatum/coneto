@@ -160,16 +160,6 @@ const Container = styled.div<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
-const Title = styled.label<{ $style?: CSSProp }>`
-  font-size: 0.75rem;
-  display: flex;
-  flex-direction: row;
-  gap: 4px;
-  align-items: center;
-
-  ${({ $style }) => $style}
-`;
-
 const InputWrapper = styled.label<{
   $hasDescription: boolean;
   $highlight: boolean;

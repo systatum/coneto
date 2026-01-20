@@ -460,7 +460,7 @@ describe("StatefulForm", () => {
           moneyProps: {
             separator: "dot",
             styles: {
-              self: css`
+              inputWrapperStyle: css`
                 background-color: wheat;
               `,
             },

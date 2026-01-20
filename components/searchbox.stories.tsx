@@ -12,7 +12,6 @@ import {
   RiUserSharedLine,
   RiUserSearchLine,
   RiUserAddLine,
-  RiUserUnfollowLine,
 } from "@remixicon/react";
 
 const meta: Meta<typeof Searchbox> = {
