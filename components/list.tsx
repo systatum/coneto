@@ -397,6 +397,7 @@ export interface ListGroupProps {
 
 interface ListGroupStylesProps {
   containerStyle?: CSSProp;
+  rowStyle?: CSSProp;
   titleStyle?: CSSProp;
   subtitleStyle?: CSSProp;
   contentStyle?: CSSProp;
@@ -470,6 +471,7 @@ function ListGroup({
         $isOpen={opened}
         onClick={() => setIsOpen(id, "group")}
         aria-expanded={opened}
+        $style={styles?.rowStyle}
       >
         <ListGroupLeftSideWrapper
           $style={styles?.leftSideWrapperStyle}
@@ -770,7 +772,7 @@ const ListGroupContent = styled(motion.ul)<{
   ${({ $contentStyle }) => $contentStyle}
 `;
 
-const HeaderButton = styled.div<{ $isOpen?: boolean }>`
+const HeaderButton = styled.div<{ $isOpen?: boolean; $style?: CSSProp }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -778,6 +780,8 @@ const HeaderButton = styled.div<{ $isOpen?: boolean }>`
   padding: 0.5rem 0;
   padding-bottom: ${({ $isOpen }) => ($isOpen ? "0.5rem" : "0px")};
   cursor: pointer;
+
+  ${({ $style }) => $style}
 `;
 
 const TitleText = styled.span<{ $style?: CSSProp }>`

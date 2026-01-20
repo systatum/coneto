@@ -69,7 +69,7 @@ describe("List", () => {
       it("renders in the right side", () => {
         cy.findAllByLabelText("list-right-side-wrapper")
           .eq(0)
-          .should("have.css", "justify-content", "end")
+          .should("have.css", "justify-content", "flex-end")
           .and("have.css", "gap", "4px");
       });
 

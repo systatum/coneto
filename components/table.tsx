@@ -24,7 +24,11 @@ import {
 } from "@remixicon/react";
 import { AnimatePresence, motion } from "framer-motion";
 import styled, { css, CSSProp } from "styled-components";
-import { Searchbox } from "./searchbox";
+import {
+  Searchbox,
+  SearchboxProps,
+  SearchboxResultMenuProps,
+} from "./searchbox";
 import { Capsule, CapsuleProps } from "./capsule";
 import ContextMenu from "./context-menu";
 import { ActionButton, ActionButtonProps } from "./action-button";
@@ -58,9 +62,6 @@ export interface TableProps {
     oldPosition: number;
     newPosition: number;
   }) => void;
-  onSearchboxChange?: (
-    e?: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void;
   actions?: TableActionsProps[];
   columns: ColumnTableProps[];
   onItemsSelected?: (data: string[]) => void;
@@ -77,6 +78,7 @@ export interface TableProps {
   labels?: TableLabelsProps;
   sumRow?: SummaryRowProps[];
   styles?: TableStylesProps;
+  searchbox?: SearchboxProps;
 }
 
 export interface TableStylesProps {
@@ -108,7 +110,6 @@ export interface TableRowProps {
   isSelected?: boolean;
   selectable?: boolean;
   handleSelect?: (data: string) => void;
-
   rowId?: string;
   children?: ReactNode;
   actions?: (columnCaption: string) => TipMenuItemProps[];
@@ -136,6 +137,8 @@ export interface TableRowCellProps {
   width?: string;
   onClick?: () => void;
 }
+
+export type TableResultMenuProps = SearchboxResultMenuProps;
 
 const DnDContext = createContext<{
   dragItem: {
@@ -179,12 +182,12 @@ function Table({
   onPreviousPageRequested,
   labels,
   searchable,
-  onSearchboxChange,
   draggable,
   onDragged,
   sumRow,
   styles,
   alwaysShowDragIcon = true,
+  searchbox,
 }: TableProps & TableAlwaysShowDragIconProp) {
   const [dragItem, setDragItem] = useState<{
     oldGroupId: string;
@@ -367,17 +370,22 @@ function Table({
               )}
               {searchable && (
                 <Searchbox
+                  autoComplete="off"
+                  name="search"
+                  {...searchbox}
                   styles={{
+                    ...searchbox?.styles,
                     containerStyle: css`
                       ${actions &&
                       css`
                         margin-left: 40px;
-                      `}
+                      `};
                       ${(showPagination || selectable) &&
                       css`
                         margin-right: 40px;
-                      `}
-                    max-height: 33px;
+                      `};
+                      max-height: 33px;
+                      ${searchbox?.styles?.containerStyle}
                     `,
                     self: css`
                       background-color: transparent;
@@ -388,11 +396,8 @@ function Table({
                       &:focus {
                         background-color: white;
                       }
+                      ${searchbox?.styles?.self}
                     `,
-                  }}
-                  name="search"
-                  onChange={(e) => {
-                    if (searchable) onSearchboxChange?.(e);
                   }}
                 />
               )}

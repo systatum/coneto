@@ -20,6 +20,7 @@ import { EmptySlate } from "./empty-slate";
 import { Button } from "./button";
 import { css } from "styled-components";
 import { CapsuleContentProps } from "./capsule";
+import { List } from "./list";
 
 const meta: Meta<typeof Table> = {
   title: "Content/Table",
@@ -1216,7 +1217,7 @@ export const WithSummary: Story = {
           }}
           columns={columns}
           subMenuList={TIP_MENU_ACTION}
-          onSearchboxChange={(e) => setSearch(e.target.value)}
+          searchbox={{ onChange: (e) => setSearch(e.target.value) }}
           sumRow={[
             {
               span: 2,
@@ -1297,62 +1298,32 @@ export const WithRowGroup: Story = {
           {
             title: "Understanding React 18",
             category: "Frontend",
-            author: "John Doe",
+            author: "Systatum",
             taken: true,
           },
           {
             title: "TypeScript Deep Dive",
             category: "Backend",
-            author: "Jane Smith",
+            author: "Pluralsight",
             taken: false,
           },
           {
             title: "Async Patterns in JS",
             category: "Frontend",
-            author: "Ali Rahman",
+            author: "Egghead",
             taken: true,
           },
           {
             title: "Clean Code Practices",
             category: "General",
-            author: "Nina Hart",
+            author: "Coursera",
             taken: false,
           },
           {
             title: "Intro to WebAssembly",
             category: "Experimental",
-            author: "Tom K.",
+            author: "Systatum",
             taken: false,
-          },
-          {
-            title: "Rust for JavaScript Devs",
-            category: "Backend",
-            author: "Lia Wang",
-            taken: true,
-          },
-          {
-            title: "Next.js Performance Tips",
-            category: "Frontend",
-            author: "Hugo Lin",
-            taken: false,
-          },
-          {
-            title: "Database Indexing 101",
-            category: "Backend",
-            author: "Sara Lee",
-            taken: true,
-          },
-          {
-            title: "Scaling with Redis",
-            category: "DevOps",
-            author: "David Kim",
-            taken: false,
-          },
-          {
-            title: "AI in the Browser",
-            category: "AI/ML",
-            author: "Zara T.",
-            taken: true,
           },
         ],
       },
@@ -1363,7 +1334,7 @@ export const WithRowGroup: Story = {
           {
             title: "React & Redux Bootcamp",
             category: "Frontend",
-            author: "Codecademy",
+            author: "Coursera",
             taken: false,
           },
           {
@@ -1375,50 +1346,20 @@ export const WithRowGroup: Story = {
           {
             title: "Fullstack with Node.js",
             category: "Backend",
-            author: "Udemy",
+            author: "Egghead",
             taken: false,
           },
           {
             title: "GraphQL Mastery",
             category: "API",
-            author: "Frontend Masters",
+            author: "Systatum",
             taken: true,
           },
           {
             title: "Design Systems",
             category: "UI/UX",
-            author: "Figma Academy",
-            taken: false,
-          },
-          {
-            title: "AI with TensorFlow.js",
-            category: "AI/ML",
             author: "Coursera",
-            taken: true,
-          },
-          {
-            title: "Intro to TypeScript",
-            category: "Frontend",
-            author: "FreeCodeCamp",
             taken: false,
-          },
-          {
-            title: "AWS Lambda in Practice",
-            category: "Cloud",
-            author: "Egghead.io",
-            taken: true,
-          },
-          {
-            title: "Security for Developers",
-            category: "Security",
-            author: "HackerOne",
-            taken: false,
-          },
-          {
-            title: "Building Design Tools",
-            category: "DevTools",
-            author: "ToolingLab",
-            taken: true,
           },
         ],
       },
@@ -1429,57 +1370,27 @@ export const WithRowGroup: Story = {
           {
             title: "Vite",
             category: "Frontend",
-            author: "Evan You",
+            author: "Systatum",
             taken: false,
           },
           {
             title: "Zod",
             category: "Validation",
-            author: "Colin McDonnell",
+            author: "Egghead",
             taken: true,
           },
-          {
-            title: "tRPC",
-            category: "API",
-            author: "Julian Fahrer",
-            taken: false,
-          },
+          { title: "tRPC", category: "API", author: "Coursera", taken: false },
           {
             title: "Remix",
             category: "Fullstack",
-            author: "Remix Team",
-            taken: true,
-          },
-          { title: "Nx", category: "Monorepo", author: "Nrwl", taken: false },
-          {
-            title: "SWR",
-            category: "Data Fetching",
-            author: "Vercel",
+            author: "Pluralsight",
             taken: true,
           },
           {
-            title: "Drizzle ORM",
-            category: "Database",
-            author: "Drizzle Team",
+            title: "Nx",
+            category: "Monorepo",
+            author: "Systatum",
             taken: false,
-          },
-          {
-            title: "Playwright",
-            category: "Testing",
-            author: "Microsoft",
-            taken: true,
-          },
-          {
-            title: "Astro",
-            category: "Static Site",
-            author: "Astro Team",
-            taken: false,
-          },
-          {
-            title: "React Hook Form",
-            category: "Forms",
-            author: "Bluebill",
-            taken: true,
           },
         ],
       },
@@ -1489,6 +1400,7 @@ export const WithRowGroup: Story = {
     const [search, setSearch] = useState("");
     const [selected, setSelected] = useState([]);
     const [activeTab, setActiveTab] = useState("taken");
+    const [isFocus, setIsFocus] = useState(false);
 
     const columns: ColumnTableProps[] = [
       {
@@ -1598,6 +1510,11 @@ export const WithRowGroup: Story = {
           console.log("Copy clicked");
         },
         subMenu: ({ list }) => list(COPY_ACTIONS),
+        styles: {
+          dropdownStyle: css`
+            min-width: 150px;
+          `,
+        },
       },
     ];
 
@@ -1678,6 +1595,108 @@ export const WithRowGroup: Story = {
       setSelected(ids);
     };
 
+    const allItems = rows.flatMap((section) => section.items);
+
+    const courseItems = Array.from(new Set(allItems.map((item) => item.title)))
+      .map((title) => ({
+        id: title,
+        title: title,
+      }))
+      .filter((props) =>
+        props.title.toLowerCase().includes(search.toLowerCase())
+      );
+
+    const authorItems = Array.from(new Set(allItems.map((item) => item.author)))
+      .map((author) => ({
+        id: author,
+        title: author,
+      }))
+      .filter((props) =>
+        props.title.toLowerCase().includes(search.toLowerCase())
+      );
+
+    const SearchSubMenu = () => {
+      return (
+        <List
+          styles={{
+            containerStyle: css`
+              min-width: 300px;
+              padding: 20px;
+              background-color: white;
+              border-radius: 4px;
+              border: 1px solid #bcb9b9;
+              max-height: 500px;
+              overflow: auto;
+
+              scrollbar-width: thin;
+              scrollbar-color: rgba(0, 0, 0, 0.25) transparent;
+
+              &::-webkit-scrollbar {
+                width: 6px;
+                height: 6px;
+              }
+
+              &::-webkit-scrollbar-track {
+                background: transparent;
+              }
+
+              &::-webkit-scrollbar-thumb {
+                background-color: rgba(0, 0, 0, 0.25);
+                border-radius: 999px;
+              }
+
+              &::-webkit-scrollbar-thumb:hover {
+                background-color: rgba(0, 0, 0, 0.4);
+              }
+            `,
+          }}
+        >
+          {courseItems.length > 0 && (
+            <List.Group key={"course"} id={"course"} title={"Course"}>
+              {courseItems.map((item) => (
+                <List.Item
+                  onMouseDown={async () => {
+                    await setIsFocus(false);
+                    await setSearch(item.title);
+                  }}
+                  key={item.title}
+                  id={item.title}
+                  title={item.title}
+                />
+              ))}
+            </List.Group>
+          )}
+
+          {authorItems.length > 0 && (
+            <List.Group
+              styles={{
+                emptySlateStyle:
+                  authorItems.length === 0 &&
+                  css`
+                    display: none;
+                  `,
+              }}
+              key={"author"}
+              id={"author"}
+              title={"Author"}
+            >
+              {authorItems.map((item) => (
+                <List.Item
+                  onMouseDown={async () => {
+                    await setIsFocus(false);
+                    await setSearch(item.title);
+                  }}
+                  key={item.title}
+                  id={item.title}
+                  title={item.title}
+                />
+              ))}
+            </List.Group>
+          )}
+        </List>
+      );
+    };
+
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
         <h3
@@ -1701,8 +1720,14 @@ export const WithRowGroup: Story = {
           onItemsSelected={handleItemsSelected}
           subMenuList={TIP_MENU_ACTION}
           actions={TOP_ACTIONS}
-          onSearchboxChange={(e) => setSearch(e.target.value)}
           searchable
+          searchbox={{
+            onChange: (e) => setSearch(e.target.value),
+            resultMenu: ({ render }) => render(<SearchSubMenu />),
+            showResultMenu: isFocus,
+            onMouseDown: () => setIsFocus(true),
+            value: search,
+          }}
         >
           {filteredRows?.map((groupValue, groupIndex) => (
             <Table.Row.Group
@@ -2226,9 +2251,11 @@ export const Draggable: Story = {
             columns={columnsDefault(false)}
             subMenuList={(props) => TIP_MENU_ACTION(props, 1, "simple")}
             onItemsSelected={handleItemsSelected}
-            onSearchboxChange={(e) => {
-              const { setSearch } = getSearchState(1);
-              setSearch(e.target.value);
+            searchbox={{
+              onChange: (e) => {
+                const { setSearch } = getSearchState(1);
+                setSearch(e.target.value);
+              },
             }}
             onDragged={(props) =>
               onDragged({
@@ -2273,9 +2300,11 @@ export const Draggable: Story = {
             onItemsSelected={handleItemsSelected}
             subMenuList={(props) => TIP_MENU_ACTION(props, 2, "simple")}
             actions={TOP_ACTIONS}
-            onSearchboxChange={(e) => {
-              const { setSearch } = getSearchState(2);
-              setSearch(e.target.value);
+            searchbox={{
+              onChange: (e) => {
+                const { setSearch } = getSearchState(2);
+                setSearch(e.target.value);
+              },
             }}
             onDragged={(props) =>
               onDragged({
@@ -2320,9 +2349,11 @@ export const Draggable: Story = {
             onItemsSelected={handleItemsSelected}
             subMenuList={(props) => TIP_MENU_ACTION(props, 1, "group")}
             actions={TOP_ACTIONS}
-            onSearchboxChange={(e) => {
-              const { setSearch } = getSearchState(3);
-              setSearch(e.target.value);
+            searchbox={{
+              onChange: (e) => {
+                const { setSearch } = getSearchState(3);
+                setSearch(e.target.value);
+              },
             }}
             onDragged={(props) =>
               onDragged({

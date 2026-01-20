@@ -569,7 +569,7 @@ describe("Table", () => {
           );
 
           cy.findByLabelText("pagination-wrapper")
-            .should("have.css", "width", "432px")
+            .should("have.css", "width", "417px")
             .and("have.css", "justify-content", "end");
         });
       });
