@@ -559,30 +559,34 @@ function ListGroup({
                 }
             >;
 
+            const isList = componentChild.type === List.Item;
+
             const modifiedChild = cloneElement(componentChild, {
-              draggable: draggable,
-              selectable: selectable,
-              groupId: id,
-              index: index,
-              groupLength: childArray.length,
-              openTipRowId,
-              setOpenTipRowId,
-              alwaysShowDragIcon,
-              onDropItem: (newPosition: number) => {
-                if (dragItem && draggable) {
-                  const { id: draggedId, oldGroupId, oldPosition } = dragItem;
+              ...(isList && {
+                draggable,
+                selectable,
+                groupId: id,
+                index,
+                groupLength: childArray.length,
+                openTipRowId,
+                setOpenTipRowId,
+                alwaysShowDragIcon,
+                onDropItem: (newPosition: number) => {
+                  if (dragItem && draggable) {
+                    const { id: draggedId, oldGroupId, oldPosition } = dragItem;
 
-                  onDragged?.({
-                    id: draggedId,
-                    oldGroupId,
-                    newGroupId: id,
-                    oldPosition,
-                    newPosition: newPosition,
-                  });
+                    onDragged?.({
+                      id: draggedId,
+                      oldGroupId,
+                      newGroupId: id,
+                      oldPosition,
+                      newPosition,
+                    });
 
-                  setDragItem(null);
-                }
-              },
+                    setDragItem(null);
+                  }
+                },
+              }),
             });
 
             const isHidden = maxItems && !expanded && index >= maxItems;
