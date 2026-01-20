@@ -1,7 +1,7 @@
 import { ChangeEvent, DragEvent, ReactElement, useRef, useState } from "react";
 import { RiAddLine, RiImageLine } from "@remixicon/react";
 import styled, { CSSProp } from "styled-components";
-import Helper from "./helper";
+import { StatefulForm } from "./stateful-form";
 
 export interface ImageboxProps {
   onFileSelected?: (file: File | undefined) => void;
@@ -127,11 +127,11 @@ function Imagebox({
   return (
     <InputWrapper $containerStyle={styles?.containerStyle}>
       {label && (
-        <Label $style={styles?.labelStyle}>
-          {label}
-
-          {helper && <Helper value={helper} />}
-        </Label>
+        <StatefulForm.Label
+          style={styles?.labelStyle}
+          helper={helper}
+          label={label}
+        />
       )}
       <InputContent>
         {inputElement}
@@ -175,16 +175,6 @@ const InputBox = styled.div<{
     $isDragging ? "#eff6ff" : "#ffffff"};
   color: ${({ $isDragging }) => ($isDragging ? "#3b82f6" : "#6b7280")};
   cursor: pointer;
-
-  ${({ $style }) => $style}
-`;
-
-const Label = styled.label<{ $style?: CSSProp }>`
-  font-size: 0.75rem;
-  display: flex;
-  flex-direction: row;
-  gap: 4px;
-  align-items: center;
 
   ${({ $style }) => $style}
 `;

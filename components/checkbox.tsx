@@ -6,7 +6,7 @@ import {
   useEffect,
   useRef,
 } from "react";
-import Helper from "./helper";
+import { StatefulForm } from "./stateful-form";
 
 type WithoutStyle<T> = Omit<T, "style">;
 
@@ -138,15 +138,11 @@ function Checkbox({
   return (
     <Container $style={styles?.containerStyle}>
       {title && (
-        <Title
-          htmlFor={props.disabled ? null : inputId}
-          aria-label="title-wrapper"
-          $style={styles?.titleStyle}
-        >
-          {title}
-
-          {helper && <Helper value={helper} />}
-        </Title>
+        <StatefulForm.Label
+          style={styles?.titleStyle}
+          helper={helper}
+          label={title}
+        />
       )}
       {inputElement}
     </Container>

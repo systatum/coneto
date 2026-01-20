@@ -2,7 +2,7 @@ import { ChangeEvent, DragEvent, ReactElement, useRef, useState } from "react";
 import { RiCloseLine } from "@remixicon/react";
 import styled, { css, CSSProp } from "styled-components";
 import { Button } from "./button";
-import Helper from "./helper";
+import { StatefulForm } from "./stateful-form";
 
 export interface FileInputBoxProps {
   placeholder?: string;
@@ -144,11 +144,11 @@ function FileInputBox({
   return (
     <InputWrapper $containerStyle={styles?.containerStyle}>
       {label && (
-        <Label $style={styles?.labelStyle}>
-          {label}
-
-          {helper && <Helper value={helper} />}
-        </Label>
+        <StatefulForm.Label
+          style={styles?.labelStyle}
+          helper={helper}
+          label={label}
+        />
       )}
       <InputContent>
         {inputElement}
@@ -232,16 +232,6 @@ const InputContent = styled.div`
   flex-direction: column;
   gap: 4px;
   font-size: 12px;
-`;
-
-const Label = styled.label<{ $style?: CSSProp }>`
-  font-size: 0.75rem;
-  display: flex;
-  flex-direction: row;
-  gap: 4px;
-  align-items: center;
-
-  ${({ $style }) => $style}
 `;
 
 const ErrorText = styled.span`

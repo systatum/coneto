@@ -10,7 +10,7 @@ import {
 } from "react";
 import { Button } from "./button";
 import { List } from "./list";
-import Helper from "./helper";
+import { StatefulForm } from "./stateful-form";
 
 type SeparatorTypeProps = "dot" | "comma";
 
@@ -117,11 +117,11 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
     return (
       <InputWrapper $style={styles?.containerStyle}>
         {label && (
-          <Label $style={styles?.labelStyle}>
-            {label}
-
-            {helper && <Helper value={helper} />}
-          </Label>
+          <StatefulForm.Label
+            style={styles?.labelStyle}
+            helper={helper}
+            label={label}
+          />
         )}
         <InputContent>
           <Box
@@ -257,16 +257,6 @@ const InputWrapper = styled.div<{ $style?: CSSProp }>`
   font-size: 0.75rem;
   position: relative;
   font-size: 0.75rem;
-
-  ${({ $style }) => $style}
-`;
-
-const Label = styled.label<{ $style?: CSSProp }>`
-  font-size: 0.75rem;
-  display: flex;
-  flex-direction: row;
-  gap: 4px;
-  align-items: center;
 
   ${({ $style }) => $style}
 `;

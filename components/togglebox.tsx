@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { RemixiconComponentType } from "@remixicon/react";
 import { LoadingSpinner } from "./loading-spinner";
 import styled, { CSSProp } from "styled-components";
-import Helper from "./helper";
+import { StatefulForm } from "./stateful-form";
 
 export interface ToggleboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {
@@ -100,7 +100,9 @@ function Togglebox({
           $style={styles?.textWrapperStyle}
           aria-label="togglebox-text-wrapper"
         >
-          {label && <Label $style={styles?.labelStyle}>{label}</Label>}
+          {label && (
+            <StatefulForm.Label style={styles?.labelStyle} label={label} />
+          )}
           {description && (
             <Description $style={styles?.descriptionStyle}>
               {description}
@@ -117,11 +119,11 @@ function Togglebox({
       $style={styles?.containerStyle}
     >
       {title && (
-        <Title $style={styles?.titleStyle}>
-          {title}
-
-          {helper && <Helper value={helper} />}
-        </Title>
+        <StatefulForm.Label
+          style={styles?.titleStyle}
+          helper={helper}
+          label={title}
+        />
       )}
       {inputElements}
       {showError && errorMessage && (
@@ -218,12 +220,6 @@ const ToggleButton = styled(motion.div)`
   background-color: white;
   border-radius: 9999px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-`;
-
-const Label = styled.span<{ $style?: CSSProp }>`
-  width: 100%;
-
-  ${({ $style }) => $style}
 `;
 
 const Description = styled.span<{ $style?: CSSProp }>`

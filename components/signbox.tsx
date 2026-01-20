@@ -1,7 +1,7 @@
 import { RiEraserLine } from "@remixicon/react";
 import React, { useRef, useEffect, ChangeEvent, ReactElement } from "react";
 import styled, { CSSProp } from "styled-components";
-import Helper from "./helper";
+import { StatefulForm } from "./stateful-form";
 
 export interface SignboxProps {
   name?: string;
@@ -212,11 +212,11 @@ function Signbox({
   return (
     <InputWrapper $containerStyle={styles?.containerStyle} $disabled={disabled}>
       {label && (
-        <Label $style={styles?.labelStyle} htmlFor="signbox">
-          {label}
-
-          {helper && <Helper value={helper} />}
-        </Label>
+        <StatefulForm.Label
+          style={styles?.labelStyle}
+          helper={helper}
+          label={label}
+        />
       )}
       <InputContent>
         {inputElement}
@@ -239,16 +239,6 @@ const InputWrapper = styled.div<{
 
   ${({ $disabled }) => $disabled && `cursor: not-allowed; opacity: 0.5;`}
   ${({ $containerStyle }) => $containerStyle}
-`;
-
-const Label = styled.label<{ $style?: CSSProp }>`
-  font-size: 0.75rem;
-  display: flex;
-  flex-direction: row;
-  gap: 4px;
-  align-items: center;
-
-  ${({ $style }) => $style}
 `;
 
 const InputContent = styled.div`

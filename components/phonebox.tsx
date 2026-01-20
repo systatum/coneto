@@ -26,7 +26,7 @@ import {
 import { COUNTRY_CODES } from "../constants/countries";
 import { AsYouType, CountryCode } from "libphonenumber-js/max";
 import styled, { css, CSSProp } from "styled-components";
-import Helper from "./helper";
+import { StatefulForm } from "./stateful-form";
 
 export interface CountryCodeProps {
   id: string;
@@ -217,11 +217,11 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
     return (
       <ContainerPhonebox $style={styles?.containerStyle}>
         {label && (
-          <Label $style={styles?.labelStyle} htmlFor={label}>
-            {label}
-
-            {helper && <Helper value={helper} />}
-          </Label>
+          <StatefulForm.Label
+            style={styles?.labelStyle}
+            helper={helper}
+            label={label}
+          />
         )}
         <InputWrapper
           $hasError={showError}
@@ -384,16 +384,6 @@ const ContainerPhonebox = styled.div<{ $style?: CSSProp }>`
   flex-direction: column;
   gap: 4px;
   width: 100%;
-
-  ${({ $style }) => $style}
-`;
-
-const Label = styled.label<{ $style?: CSSProp }>`
-  font-size: 0.75rem;
-  display: flex;
-  flex-direction: row;
-  gap: 4px;
-  align-items: center;
 
   ${({ $style }) => $style}
 `;

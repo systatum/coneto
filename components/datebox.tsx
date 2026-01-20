@@ -7,7 +7,7 @@ import {
 } from "./calendar";
 import styled, { css, CSSProp } from "styled-components";
 import { forwardRef, ReactNode } from "react";
-import Helper from "./helper";
+import { StatefulForm } from "./stateful-form";
 
 export type DateboxProps = BaseCalendarProps & {
   label?: string;
@@ -54,11 +54,11 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
   return (
     <InputWrapper $style={styles?.containerStyle} $disabled={props.disabled}>
       {props.label && (
-        <Label $style={styles?.labelStyle}>
-          {props.label}
-
-          {helper && <Helper value={helper} />}
-        </Label>
+        <StatefulForm.Label
+          style={styles?.labelStyle}
+          helper={helper}
+          label={props.label}
+        />
       )}
       <InputContent>
         <Selectbox
@@ -115,16 +115,6 @@ const InputWrapper = styled.div<{
   position: relative;
 
   ${({ $disabled }) => $disabled && `cursor: not-allowed; opacity: 0.5;`}
-  ${({ $style }) => $style}
-`;
-
-const Label = styled.label<{ $style?: CSSProp }>`
-  font-size: 0.75rem;
-  display: flex;
-  flex-direction: row;
-  gap: 4px;
-  align-items: center;
-
   ${({ $style }) => $style}
 `;
 

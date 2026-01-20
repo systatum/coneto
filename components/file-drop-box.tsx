@@ -10,7 +10,7 @@ import {
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { LoadingSpinner } from "./loading-spinner";
-import Helper from "./helper";
+import { StatefulForm } from "./stateful-form";
 
 export interface OnFileDroppedFunctionProps {
   files: File[];
@@ -223,11 +223,11 @@ function FileDropBox({
       $containerStyle={styles?.containerStyle}
     >
       {label && (
-        <Label $style={styles?.labelStyle}>
-          {label}
-
-          {helper && <Helper value={helper} />}
-        </Label>
+        <StatefulForm.Label
+          style={styles?.labelStyle}
+          helper={helper}
+          label={label}
+        />
       )}
       {inputElement}
 
@@ -272,18 +272,6 @@ const ContentWrapper = styled.div<{
   align-items: start;
   text-align: start;
   cursor: default;
-
-  ${({ $style }) => $style}
-`;
-
-const Label = styled.label<{
-  $style?: CSSProp;
-}>`
-  font-size: 0.75rem;
-  display: flex;
-  flex-direction: row;
-  gap: 4px;
-  align-items: center;
 
   ${({ $style }) => $style}
 `;

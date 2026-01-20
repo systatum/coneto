@@ -2,7 +2,7 @@ import { ReactElement, ReactNode, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import styled, { css, CSSProp } from "styled-components";
 import { RemixiconComponentType } from "@remixicon/react";
-import Helper from "./helper";
+import { StatefulForm } from "./stateful-form";
 
 export interface CapsuleContentProps {
   id: string;
@@ -225,11 +225,11 @@ function Capsule({
   return (
     <Container $fontSize={fontSize} $style={styles?.containerStyle}>
       {label && (
-        <Label $style={styles?.labelStyle} htmlFor="capsule">
-          {label}
-
-          {helper && <Helper value={helper} />}
-        </Label>
+        <StatefulForm.Label
+          style={styles?.labelStyle}
+          helper={helper}
+          label={label}
+        />
       )}
       <div>
         {inputElement}
@@ -278,16 +278,6 @@ const Container = styled.div<{ $style?: CSSProp; $fontSize?: number }>`
   gap: 0.5rem;
   font-size: ${({ $fontSize }) => `${$fontSize}px`};
   position: relative;
-
-  ${({ $style }) => $style}
-`;
-
-const Label = styled.label<{ $style?: CSSProp }>`
-  font-size: 0.75rem;
-  display: flex;
-  flex-direction: row;
-  gap: 4px;
-  align-items: center;
 
   ${({ $style }) => $style}
 `;
