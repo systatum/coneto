@@ -8,6 +8,33 @@ const meta: Meta<typeof CapsuleTab> = {
   title: "Stage/CapsuleTab",
   component: CapsuleTab,
   tags: ["autodocs"],
+  argTypes: {
+    tabs: {
+      description:
+        "List of tabs with id, title, and content to render inside the CapsuleTab layout.",
+      control: false,
+    },
+    activeTab: {
+      description:
+        "ID of the initially active tab. Defaults to the first tab if not provided.",
+      control: "text",
+    },
+    activeBackgroundColor: {
+      description: "Background color of the active capsule indicator.",
+      control: "color",
+    },
+    styles: {
+      control: false,
+      description: `
+Custom styles for the CapsuleTab component. This object allows you to override styles for individual parts:
+
+- **containerStyle**: Outer wrapper of the CapsuleTab (border, spacing, layout)
+- **tabStyle**: Styles applied to the capsule tabs area (forwarded into the internal Capsule)
+
+Each field accepts a \`CSSProp\` (styled-components compatible) and can be used to control layout, borders, colors, and visual appearance.
+      `,
+    },
+  },
 };
 
 export default meta;

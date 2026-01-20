@@ -285,7 +285,7 @@ describe("DormantText", () => {
             .should("have.value", "100,000")
             .clear()
             .type("500000");
-          cy.findAllByRole("button").eq(0).click();
+          cy.findAllByRole("button").eq(1).click();
           cy.findByText("$ 500,000").should("be.visible");
         });
       });

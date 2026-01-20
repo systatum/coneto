@@ -1,4 +1,4 @@
-import styled, { css, keyframes } from "styled-components";
+import styled, { css, CSSProp, keyframes } from "styled-components";
 import { CSSProperties, ReactNode } from "react";
 
 export interface ErrorSlateProps {
@@ -23,7 +23,12 @@ export interface ErrorSlateProps {
     | "505";
   children?: ReactNode;
   title?: string;
-  cubeFaceStyle?: CSSProperties;
+  styles?: ErrorSlateStylesProps;
+}
+
+export interface ErrorSlateStylesProps {
+  titleStyle?: CSSProp;
+  cubeFaceStyle?: CSSProp;
 }
 
 const rotateUp = keyframes`
@@ -56,15 +61,7 @@ const transformStyles = {
   `,
 };
 
-function ErrorSlate({ code, children, title, cubeFaceStyle }: ErrorSlateProps) {
-  const defaultFaceStyle: CSSProperties = {
-    background: "#dd0b0b",
-    borderWidth: "1px",
-    borderColor: "#a80000",
-    borderStyle: "solid",
-    color: "white",
-  };
-
+function ErrorSlate({ code, children, title, styles }: ErrorSlateProps) {
   const FACE_DATA = [
     { face: "front", content: code[0] },
     { face: "back", content: code[0] },
@@ -83,7 +80,7 @@ function ErrorSlate({ code, children, title, cubeFaceStyle }: ErrorSlateProps) {
               aria-label="face-error-slate"
               key={i}
               $transform={face}
-              style={{ ...defaultFaceStyle, ...cubeFaceStyle }}
+              $style={styles?.cubeFaceStyle}
             >
               {content}
             </Face>
@@ -91,7 +88,7 @@ function ErrorSlate({ code, children, title, cubeFaceStyle }: ErrorSlateProps) {
         </Cube>
       </ErrorSlatePerspective>
 
-      <ErrorSlateTitle>{title}</ErrorSlateTitle>
+      <ErrorSlateTitle $style={styles?.titleStyle}>{title}</ErrorSlateTitle>
       {children}
     </ErrorSlateWrapper>
   );
@@ -121,7 +118,10 @@ const Cube = styled.div`
   transform: rotateY(-20deg) rotateX(-20deg);
 `;
 
-const Face = styled.div<{ $transform: keyof typeof transformStyles }>`
+const Face = styled.div<{
+  $transform: keyof typeof transformStyles;
+  $style?: CSSProp;
+}>`
   position: absolute;
   width: 100px;
   height: 100px;
@@ -130,11 +130,19 @@ const Face = styled.div<{ $transform: keyof typeof transformStyles }>`
   display: flex;
   align-items: center;
   justify-content: center;
+  background: #dd0b0b;
+  border: 1px solid #a80000;
+  color: white;
+
   ${({ $transform }) => transformStyles[$transform]}
+
+  ${({ $style }) => $style}
 `;
 
-const ErrorSlateTitle = styled.span`
+const ErrorSlateTitle = styled.span<{ $style?: CSSProp }>`
   font-size: 90px;
+
+  ${({ $style }) => $style}
 `;
 
 export { ErrorSlate };

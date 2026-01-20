@@ -91,17 +91,19 @@ const meta: Meta<typeof Textbox> = {
       action: "changed",
       description: "Triggered when the input value changes.",
     },
-    containerStyle: {
-      control: false,
-      description: "Custom style applied to the outer container.",
-    },
-    labelStyle: {
-      control: false,
-      description: "Custom style applied to the label.",
-    },
-    style: {
-      control: false,
-      description: "Custom style applied directly to the input element.",
+    styles: {
+      containerStyle: {
+        control: false,
+        description: "Custom style applied to the outer container.",
+      },
+      labelStyle: {
+        control: false,
+        description: "Custom style applied to the label.",
+      },
+      self: {
+        control: false,
+        description: "Custom style applied directly to the input element.",
+      },
     },
   },
 
@@ -123,10 +125,12 @@ export const Input: Story = {
     placeholder: "Type here...",
     value: "",
     type: "text",
-    style: css`
-      min-width: 400px;
-      max-width: 400px;
-    `,
+    styles: {
+      self: css`
+        min-width: 400px;
+        max-width: 400px;
+      `,
+    },
   },
   render: (args: TextboxProps) => {
     const [, setUpdateArgs] = useArgs();
@@ -153,10 +157,12 @@ export const WithDropdown: Story = {
   args: {
     placeholder: "Type here...",
     type: "text",
-    containerStyle: css`
-      min-width: 700px;
-      max-width: 700px;
-    `,
+    styles: {
+      containerStyle: css`
+        min-width: 700px;
+        max-width: 700px;
+      `,
+    },
   },
   parameters: {
     layout: "padded",
@@ -270,9 +276,11 @@ export const WithDropdown: Story = {
             },
             {
               width: "300px",
-              drawerStyle: css`
-                width: 300px;
-              `,
+              styles: {
+                drawerStyle: css`
+                  width: 300px;
+                `,
+              },
               caption: value2.selectedText2,
               options: ATTENDANCE_OPTIONS,
               onChange: (id) => {
@@ -303,10 +311,12 @@ export const WithAction: Story = {
     placeholder: "Type a message...",
     value: "",
     type: "text",
-    style: css`
-      min-width: 400px;
-      max-width: 400px;
-    `,
+    styles: {
+      self: css`
+        min-width: 400px;
+        max-width: 400px;
+      `,
+    },
   },
   render: (args: TextboxProps) => {
     const [, setUpdateArgs] = useArgs();
@@ -355,10 +365,12 @@ export const Password: Story = {
     placeholder: "Enter password...",
     value: "",
     type: "password",
-    style: css`
-      min-width: 400px;
-      max-width: 400px;
-    `,
+    styles: {
+      self: css`
+        min-width: 400px;
+        max-width: 400px;
+      `,
+    },
   },
   render: (args: TextboxProps) => {
     const [, setUpdateArgs] = useArgs();
@@ -390,10 +402,12 @@ export const WithErrorMessage: Story = {
     type: "text",
     showError: true,
     errorMessage: "This field is required",
-    style: css`
-      min-width: 400px;
-      max-width: 400px;
-    `,
+    styles: {
+      self: css`
+        min-width: 400px;
+        max-width: 400px;
+      `,
+    },
   },
   render: (args: TextboxProps) => {
     const [, setUpdateArgs] = useArgs();

@@ -7,9 +7,11 @@ describe("Window", () => {
       cy.mount(
         <Window
           orientation="horizontal"
-          style={css`
-            height: 500px;
-          `}
+          styles={{
+            self: css`
+              height: 500px;
+            `,
+          }}
           initialSizeRatio={[90, 10]}
         >
           <Window.Cell
@@ -44,9 +46,11 @@ describe("Window", () => {
         cy.mount(
           <Window
             orientation="horizontal"
-            style={css`
-              height: 500px;
-            `}
+            styles={{
+              self: css`
+                height: 500px;
+              `,
+            }}
           >
             <Window.Cell
               style={css`

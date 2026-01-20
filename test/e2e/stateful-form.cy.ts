@@ -21,7 +21,7 @@ describe("StatefulForm", () => {
         cy.findByText("Note").click().type("This is additional");
         cy.findByRole("checkbox").click();
 
-        cy.findAllByRole("button").eq(1).should("not.be.disabled");
+        cy.findAllByRole("button").eq(2).should("not.be.disabled");
 
         cy.findByLabelText("First Name").should("have.value", "Alim");
         cy.findByLabelText("Last Name").should("have.value", "Naufal");
@@ -112,8 +112,9 @@ describe("StatefulForm", () => {
       cy.findByText("2024").click();
       cy.findByText("3").click();
       const expectedDate = "01/03/2024";
-      cy.findByPlaceholderText("mm/dd/yyyy").as("datebox");
-      cy.get("@datebox").should("have.value", expectedDate);
+      cy.get('[data-type="selectbox"]')
+        .eq(1)
+        .should("have.value", expectedDate);
 
       const testFile = "test/fixtures/test-images/sample-1.jpg";
       cy.findByLabelText("filedropbox").selectFile(testFile, {
@@ -131,15 +132,18 @@ describe("StatefulForm", () => {
       });
       cy.get("img").eq(0).should("exist");
 
-      cy.findAllByRole("button").eq(2).click();
-      cy.findByPlaceholderText("Search your country...").type("Indonesia");
+      cy.findAllByRole("button").eq(3).click();
+      cy.findAllByPlaceholderText("Search your country...")
+        .eq(0)
+        .type("Indonesia");
       cy.findByText("Indonesia").click();
-      cy.findByPlaceholderText("Enter phone number").type("08123456789");
+      cy.findAllByPlaceholderText("Enter phone number")
+        .eq(0)
+        .type("08123456789");
       cy.findByText("+62").should("exist");
-      cy.findByPlaceholderText("Enter phone number").should(
-        "have.value",
-        "812-3456-789"
-      );
+      cy.findAllByPlaceholderText("Enter phone number")
+        .eq(0)
+        .should("have.value", "812-3456-789");
 
       cy.get("canvas").should("exist").and("be.visible");
       cy.get("canvas").then(($canvas) => {
@@ -202,9 +206,9 @@ describe("StatefulForm", () => {
         .eq(0)
         .should("have.css", "background-color", "oklch(0.546 0.245 262.881)");
 
-      cy.findAllByRole("button").eq(3).click();
+      cy.findAllByRole("button").eq(4).click();
 
-      cy.findByLabelText("chip-input-box").type("Anime{enter}");
+      cy.findAllByLabelText("chip-input-box").eq(0).type("Anime{enter}");
       cy.findAllByText("Anime").eq(0).should("be.visible");
     });
   });

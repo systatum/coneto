@@ -14,8 +14,6 @@ import { Tooltip } from "./tooltip";
 
 export interface TreeListProps {
   content: TreeListContentProps[];
-  containerStyle?: CSSProp;
-  emptyItemSlateStyle?: CSSProp;
   children?: ReactNode;
   emptySlate?: ReactNode;
   emptyItemSlate?: ReactNode | null;
@@ -29,6 +27,12 @@ export interface TreeListProps {
   draggable?: boolean;
   alwaysShowDragIcon?: boolean;
   onDragged?: (props: TreeListOnDraggedProps) => void;
+  styles?: TreeListStylesProps;
+}
+
+export interface TreeListStylesProps {
+  containerStyle?: CSSProp;
+  emptyItemSlateStyle?: CSSProp;
 }
 
 export interface TreeListOnDraggedProps {
@@ -113,7 +117,6 @@ const DnDContext = createContext<{
 
 function TreeList({
   content,
-  containerStyle,
   children,
   emptySlate,
   searchTerm = "",
@@ -122,12 +125,12 @@ function TreeList({
   selectedItem = "",
   onOpenChange,
   emptyItemSlate = "Empty Content",
-  emptyItemSlateStyle,
   showHierarchyLine,
   collapsible,
   draggable,
   onDragged,
   alwaysShowDragIcon = true,
+  styles,
 }: TreeListProps) {
   const [dragItem, setDragItem] = useState(null);
 
@@ -207,7 +210,7 @@ function TreeList({
 
   return (
     <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
-      <TreeListWrapper $containerStyle={containerStyle}>
+      <TreeListWrapper $containerStyle={styles?.containerStyle}>
         {actions && (
           <ActionsWrapper>
             {actions.map((action, index) => {
@@ -258,35 +261,37 @@ function TreeList({
                       key={index}
                       {...tooltipBaseProps}
                       dialog={children}
-                      arrowStyle={(placement) => {
-                        return (
-                          withArrow &&
-                          css`
-                            background-color: #e5e7eb;
-                            border: 2px solid #e5e7eb;
-                            ${placement === "bottom-start" ||
-                            placement === "top-start"
-                              ? css`
-                                  left: 8%;
-                                `
-                              : placement === "bottom-end" ||
-                                  placement === "top-end"
+                      styles={{
+                        arrowStyle: (placement) => {
+                          return (
+                            withArrow &&
+                            css`
+                              background-color: #e5e7eb;
+                              border: 2px solid #e5e7eb;
+                              ${placement === "bottom-start" ||
+                              placement === "top-start"
                                 ? css`
-                                    right: 8%;
+                                    left: 8%;
                                   `
-                                : null}
+                                : placement === "bottom-end" ||
+                                    placement === "top-end"
+                                  ? css`
+                                      right: 8%;
+                                    `
+                                  : null}
 
-                            ${arrowStyle}
-                          `
-                        );
+                              ${arrowStyle}
+                            `
+                          );
+                        },
+                        drawerStyle: css`
+                          width: fit-content;
+                          background-color: white;
+                          color: black;
+                          border: 1px solid #e5e7eb;
+                          ${drawerStyle}
+                        `,
                       }}
-                      drawerStyle={css`
-                        width: fit-content;
-                        background-color: white;
-                        color: black;
-                        border: 1px solid #e5e7eb;
-                        ${drawerStyle}
-                      `}
                     >
                       {TreeAction}
                     </Tooltip>
@@ -297,15 +302,17 @@ function TreeList({
                       key={index}
                       {...tooltipBaseProps}
                       dialog={children}
-                      arrowStyle={css`
-                        display: none;
-                      `}
-                      drawerStyle={css`
-                        width: fit-content;
-                        background-color: white;
-                        color: black;
-                        border: 1px solid #e5e7eb;
-                      `}
+                      styles={{
+                        arrowStyle: css`
+                          display: none;
+                        `,
+                        drawerStyle: css`
+                          width: fit-content;
+                          background-color: white;
+                          color: black;
+                          border: 1px solid #e5e7eb;
+                        `,
+                      }}
                     >
                       {TreeAction}
                     </Tooltip>
@@ -385,7 +392,7 @@ function TreeList({
                             setIsOpen={handleSelected}
                             isOpen={isOpen}
                             emptyItemSlate={emptyItemSlate}
-                            emptyItemSlateStyle={emptyItemSlateStyle}
+                            emptyItemSlateStyle={styles?.emptyItemSlateStyle}
                             selectedLevel={selectedLevel}
                             groupId={item.id}
                             parentGroupId={item.id}
@@ -405,7 +412,7 @@ function TreeList({
                           aria-label="tree-list-empty-slate"
                           initial="open"
                           animate={isOpen ? "open" : "collapsed"}
-                          $style={emptyItemSlateStyle}
+                          $style={styles?.emptyItemSlateStyle}
                           exit="collapsed"
                           variants={{
                             open: { opacity: 1, height: "auto" },
@@ -873,21 +880,23 @@ function TreeListItem<T extends TreeListItemsProps>({
                   hoverBackgroundColor="#d4d4d4"
                   activeBackgroundColor="#d4d4d4"
                   actions={actionsWithIcons}
-                  containerStyle={css`
-                    display: none;
+                  styles={{
+                    containerStyle: css`
+                      display: none;
 
-                    ${(isHovered === item.id
-                      ? isHovered === item.id
-                      : openRowId === item.id) &&
-                    css`
-                      display: inherit;
-                    `}
-                  `}
-                  buttonStyle={css`
-                    width: 20px;
-                    height: 20px;
-                    padding: 0;
-                  `}
+                      ${(isHovered === item.id
+                        ? isHovered === item.id
+                        : openRowId === item.id) &&
+                      css`
+                        display: inherit;
+                      `}
+                    `,
+                    self: css`
+                      width: 20px;
+                      height: 20px;
+                      padding: 0;
+                    `,
+                  }}
                 />
               </div>
             );

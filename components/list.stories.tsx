@@ -32,6 +32,109 @@ const meta: Meta<typeof List> = {
   title: "Content/List",
   component: List,
   tags: ["autodocs"],
+  argTypes: {
+    searchable: {
+      control: "boolean",
+      description: "Enables the search input at the top of the list.",
+    },
+    searchValue: {
+      control: "text",
+      description:
+        "Controlled value for the search input. If provided, List becomes controlled.",
+    },
+    onSearchRequested: {
+      control: false,
+      description: "Callback fired when the user types in the search input.",
+    },
+    onSearchKeyDown: {
+      control: false,
+      description: "Keyboard event handler for the search input.",
+    },
+    inputRef: {
+      control: false,
+      description: "Ref forwarded to the internal Searchbox input element.",
+    },
+    children: {
+      control: false,
+      description:
+        "List content. Use `List.Group` and/or `List.Item` as children.",
+    },
+    isLoading: {
+      control: "boolean",
+      description: "Shows a loading overlay above the list when true.",
+    },
+    draggable: {
+      control: "boolean",
+      description: "Enables drag-and-drop reordering of list items.",
+    },
+    selectable: {
+      control: "boolean",
+      description: "Enables checkbox selection for list items.",
+    },
+    alwaysShowDragIcon: {
+      control: "boolean",
+      description:
+        "If true, the drag handle is always visible instead of only on hover.",
+    },
+    openerBehavior: {
+      control: { type: "select" },
+      options: ["any", "onlyOne"],
+      description:
+        "Controls how group open state behaves. `onlyOne` allows only one group open at a time.",
+    },
+    onOpen: {
+      control: false,
+      description:
+        "Callback fired when a group or openable item is opened or closed.",
+    },
+    onDragged: {
+      control: false,
+      description: `
+Callback fired when an item is dragged and dropped.
+
+Receives:
+- **id**: dragged item id
+- **oldGroupId**
+- **newGroupId**
+- **oldPosition**
+- **newPosition**
+    `,
+    },
+    maxItems: {
+      control: "number",
+      description:
+        "Limits the number of visible items and enables the 'Show more' behavior.",
+    },
+    maxItemsWithIcon: {
+      control: "boolean",
+      description:
+        "Whether to show the expand/collapse arrow icon in the Show more button.",
+    },
+    labels: {
+      control: false,
+      description: `
+Custom labels for the maxItems UI.
+
+Supports:
+- **moreItemsText**
+- **lessItemsText**
+    `,
+    },
+    styles: {
+      control: false,
+      description: `
+Custom styles for the List component.
+
+This object allows you to override styles for specific parts:
+
+- **containerStyle** – Root wrapper of the list
+- **maxItemsStyle** – Styles for the "Show more / Show less" button
+- **searchboxStyles** – Forwarded styles for the Searchbox
+
+Each field accepts a \`CSSProp\` (styled-components compatible).
+    `,
+    },
+  },
 };
 
 export default meta;
@@ -76,10 +179,13 @@ export const Default: Story = {
     return (
       <Card>
         <List
-          containerStyle={css`
-            padding: 16px;
-            gap: 8px;
-          `}
+          styles={{
+            containerStyle: css`
+              padding: 16px;
+              min-width: 280px;
+              gap: 8px;
+            `,
+          }}
         >
           {LIST_ITEMS.map((item, index) => (
             <List.Item
@@ -268,10 +374,12 @@ export const Draggable: Story = {
           draggable
           onDragged={onDragged}
           onSearchRequested={onChangeValue}
-          containerStyle={css`
-            padding: 16px;
-            min-width: 300px;
-          `}
+          styles={{
+            containerStyle: css`
+              padding: 16px;
+              min-width: 300px;
+            `,
+          }}
         >
           {filteredContent.map((group, index) => {
             return (
@@ -279,13 +387,15 @@ export const Draggable: Story = {
                 key={index}
                 id={group.id}
                 title={group.title}
-                emptySlateStyle={css`
-                  cursor: pointer;
-                  transition: all 200ms ease;
-                  &:hover {
-                    background-color: aliceblue;
-                  }
-                `}
+                styles={{
+                  emptySlateStyle: css`
+                    cursor: pointer;
+                    transition: all 200ms ease;
+                    &:hover {
+                      background-color: aliceblue;
+                    }
+                  `,
+                }}
                 emptySlate={"No content"}
               >
                 {group.items.map((list, i) => (
@@ -475,10 +585,12 @@ export const WithLoading: Story = {
           isLoading
           onDragged={onDragged}
           onSearchRequested={onChangeValue}
-          containerStyle={css`
-            padding: 16px;
-            min-width: 300px;
-          `}
+          styles={{
+            containerStyle: css`
+              padding: 16px;
+              min-width: 300px;
+            `,
+          }}
         >
           {filteredContent.map((group, index) => {
             return (
@@ -677,13 +789,15 @@ export const ReactNodeTitle: Story = {
         <DormantText
           fullWidth
           cancelable
-          dormantedStyle={css`
-            &:hover {
-              background-color: transparent;
-              border-color: transparent;
-            }
-            height: 24px;
-          `}
+          styles={{
+            dormantedStyle: css`
+              &:hover {
+                background-color: transparent;
+                border-color: transparent;
+              }
+              height: 24px;
+            `,
+          }}
           acceptChangeOn="enter"
           onCancelRequested={onCancelRequested}
           dormantedFontSize={14}
@@ -716,10 +830,12 @@ export const ReactNodeTitle: Story = {
           searchable
           selectable
           onSearchRequested={onChangeValue}
-          containerStyle={css`
-            padding: 16px;
-            min-width: 500px;
-          `}
+          styles={{
+            containerStyle: css`
+              padding: 16px;
+              min-width: 400px;
+            `,
+          }}
         >
           {filteredContent.map((group, index) => {
             return (
@@ -739,15 +855,17 @@ export const ReactNodeTitle: Story = {
                       subtitle={list.subtitle}
                       title={title}
                       actions={LIST_ITEM_ACTIONS}
-                      containerStyle={css`
-                        width: 100%;
-                      `}
-                      titleStyle={css`
-                        width: 100%;
-                      `}
-                      rightSideStyle={css`
-                        width: 6%;
-                      `}
+                      styles={{
+                        containerStyle: css`
+                          width: 100%;
+                        `,
+                        titleStyle: css`
+                          width: 100%;
+                        `,
+                        rightSideStyle: css`
+                          width: 6%;
+                        `,
+                      }}
                       groupId={group.id}
                       onSelected={onChangeValue}
                       selectedOptions={{
@@ -975,19 +1093,23 @@ export const WithSubcontent: Story = {
             Allow any to open.
           </h2>
           <Card
-            containerStyle={css`
-              height: fit-content;
-            `}
+            styles={{
+              containerStyle: css`
+                height: fit-content;
+              `,
+            }}
           >
             <List
               searchable
               selectable
               onSearchRequested={listAny.onChangeValue}
-              containerStyle={css`
-                padding: 16px;
-                min-width: 350px;
-                max-width: 350px;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                  max-width: 350px;
+                `,
+              }}
             >
               {listAny.filteredContent.map((group) => {
                 return (
@@ -997,9 +1119,11 @@ export const WithSubcontent: Story = {
                     subtitle={group.subtitle}
                     title={group.title}
                     actions={LIST_ACTIONS_GROUP(listAny.setGroups)}
-                    containerStyle={css`
-                      gap: 4px;
-                    `}
+                    styles={{
+                      containerStyle: css`
+                        gap: 4px;
+                      `,
+                    }}
                   >
                     {group.items.map((list, i) => {
                       return (
@@ -1007,17 +1131,19 @@ export const WithSubcontent: Story = {
                           key={i}
                           id={list.id}
                           title={list.title}
-                          rowStyle={css`
-                            width: 100%;
-                            min-height: 40px;
-                          `}
+                          styles={{
+                            rowStyle: css`
+                              width: 100%;
+                              min-height: 40px;
+                            `,
+                            titleStyle: css`
+                              width: 100%;
+                            `,
+                            rightSideStyle: css`
+                              width: 6%;
+                            `,
+                          }}
                           openable
-                          titleStyle={css`
-                            width: 100%;
-                          `}
-                          rightSideStyle={css`
-                            width: 6%;
-                          `}
                           actions={(id?: string) =>
                             LIST_ITEM_ACTIONS(
                               id,
@@ -1062,11 +1188,13 @@ export const WithSubcontent: Story = {
                               return (
                                 <StatefulForm
                                   key={i}
-                                  containerStyle={css`
-                                    padding-left: 33px;
-                                    padding-right: 33px;
-                                    padding-bottom: 20px;
-                                  `}
+                                  styles={{
+                                    containerStyle: css`
+                                      padding-left: 33px;
+                                      padding-right: 33px;
+                                      padding-bottom: 20px;
+                                    `,
+                                  }}
                                   formValues={item}
                                   fields={FIELDS(
                                     list.id,
@@ -1113,19 +1241,24 @@ export const WithSubcontent: Story = {
             Allow at most one opened.
           </h2>
           <Card
-            containerStyle={css`
-              height: fit-content;
-            `}
+            styles={{
+              containerStyle: css`
+                height: fit-content;
+              `,
+            }}
           >
             <List
               searchable
               selectable
               openerBehavior="onlyOne"
               onSearchRequested={listWithOnlyOne.onChangeValue}
-              containerStyle={css`
-                padding: 16px;
-                min-width: 350px;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                  max-width: 350px;
+                `,
+              }}
             >
               {listWithOnlyOne.filteredContent.map((group) => {
                 return (
@@ -1135,9 +1268,11 @@ export const WithSubcontent: Story = {
                     subtitle={group.subtitle}
                     title={group.title}
                     actions={LIST_ACTIONS_GROUP(listWithOnlyOne.setGroups)}
-                    containerStyle={css`
-                      gap: 4px;
-                    `}
+                    styles={{
+                      containerStyle: css`
+                        gap: 4px;
+                      `,
+                    }}
                   >
                     {group.items.map((list, i) => {
                       return (
@@ -1145,17 +1280,19 @@ export const WithSubcontent: Story = {
                           key={i}
                           id={list.id}
                           title={list.title}
-                          rowStyle={css`
-                            width: 100%;
-                            min-height: 40px;
-                          `}
                           openable
-                          titleStyle={css`
-                            width: 100%;
-                          `}
-                          rightSideStyle={css`
-                            width: 6%;
-                          `}
+                          styles={{
+                            rowStyle: css`
+                              width: 100%;
+                              min-height: 40px;
+                            `,
+                            titleStyle: css`
+                              width: 100%;
+                            `,
+                            rightSideStyle: css`
+                              width: 6%;
+                            `,
+                          }}
                           actions={(id?: string) =>
                             LIST_ITEM_ACTIONS(
                               id,
@@ -1201,11 +1338,13 @@ export const WithSubcontent: Story = {
                                 return (
                                   <StatefulForm
                                     key={i}
-                                    containerStyle={css`
-                                      padding-left: 33px;
-                                      padding-right: 33px;
-                                      padding-bottom: 20px;
-                                    `}
+                                    styles={{
+                                      containerStyle: css`
+                                        padding-left: 33px;
+                                        padding-right: 33px;
+                                        padding-bottom: 20px;
+                                      `,
+                                    }}
                                     formValues={item}
                                     fields={FIELDS(
                                       list.id,
@@ -1341,11 +1480,13 @@ export const WithBadge: Story = {
               <Button variant="primary">Learn More</Button>
             </>
           }
-          containerStyle={css`
-            text-align: center;
-            padding-top: 30px;
-            padding-bottom: 30px;
-          `}
+          styles={{
+            containerStyle: css`
+              text-align: center;
+              padding-top: 30px;
+              padding-bottom: 30px;
+            `,
+          }}
         />
       );
     };
@@ -1389,10 +1530,12 @@ export const WithBadge: Story = {
         <List
           searchable
           onSearchRequested={(e) => setSearch(e.target.value)}
-          containerStyle={css`
-            padding: 16px;
-            min-width: 500px;
-          `}
+          styles={{
+            containerStyle: css`
+              padding: 16px;
+              min-width: 400px;
+            `,
+          }}
         >
           {filteredContent.map((group, index) => {
             return (
@@ -1661,10 +1804,12 @@ export const CustomOpener: Story = {
           selectable
           onDragged={onDragged}
           onSearchRequested={onChangeValue}
-          containerStyle={css`
-            padding: 16px;
-            min-width: 500px;
-          `}
+          styles={{
+            containerStyle: css`
+              padding: 16px;
+              min-width: 500px;
+            `,
+          }}
         >
           {filteredContent.map((group, index) => {
             return (
@@ -1719,6 +1864,192 @@ export const CustomOpener: Story = {
               </List.Group>
             );
           })}
+        </List>
+      </Card>
+    );
+  },
+};
+
+export const WithMaxItems: Story = {
+  render: () => {
+    const LIST_ITEMS: ListItemProps[] = [
+      {
+        id: "1",
+        title: "French Toast",
+        imageUrl: "https://picsum.photos/seed/frenchtoast/200",
+        rightSideContent: "13$",
+      },
+      {
+        id: "2",
+        title: "Sushi Deluxe",
+        imageUrl: "https://picsum.photos/seed/sushi/200",
+        rightSideContent: "22$",
+      },
+      {
+        id: "3",
+        title: "Pad Thai",
+        imageUrl: "https://picsum.photos/seed/padthai/200",
+        rightSideContent: "15$",
+      },
+      {
+        id: "4",
+        title: "Tacos Al Pastor",
+        imageUrl: "https://picsum.photos/seed/tacos/200",
+        rightSideContent: "12$",
+      },
+      {
+        id: "5",
+        title: "Margherita Pizza",
+        imageUrl: "https://picsum.photos/seed/pizza/200",
+        rightSideContent: "18$",
+      },
+      {
+        id: "6",
+        title: "Butter Chicken",
+        imageUrl: "https://picsum.photos/seed/butterchicken/200",
+        rightSideContent: "16$",
+      },
+      {
+        id: "7",
+        title: "Pho Bo",
+        imageUrl: "https://picsum.photos/seed/phobo/200",
+        rightSideContent: "14$",
+      },
+      {
+        id: "8",
+        title: "Croissant & Coffee",
+        imageUrl: "https://picsum.photos/seed/croissant/200",
+        rightSideContent: "10$",
+      },
+      {
+        id: "9",
+        title: "Cheeseburger",
+        imageUrl: "https://picsum.photos/seed/cheeseburger/200",
+        rightSideContent: "11$",
+      },
+      {
+        id: "10",
+        title: "Falafel Wrap",
+        imageUrl: "https://picsum.photos/seed/falafel/200",
+        rightSideContent: "13$",
+      },
+    ];
+
+    const [value, setValue] = useState({
+      search: "",
+      checked: [] as ListItemProps[],
+    });
+
+    const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
+      const { name, value: inputValue, checked, type } = e.target;
+
+      if (type === "checkbox") {
+        const parsed = JSON.parse(inputValue);
+        setValue((prev) => ({
+          ...prev,
+          [name]: checked
+            ? [...prev[name], parsed]
+            : prev[name].filter((val: ListItemProps) => val.id !== parsed.id),
+        }));
+      } else {
+        setValue((prev) => ({ ...prev, [name]: inputValue }));
+      }
+    };
+
+    const filteredContent = useMemo(() => {
+      const searchContent = value.search.toLowerCase().trim();
+      return LIST_ITEMS.filter((list) =>
+        String(list.title).toLowerCase().includes(searchContent)
+      );
+    }, [value.search]);
+
+    return (
+      <Card
+        title="Systatum Food Services"
+        subtitle="Fueling innovation with every bite."
+        headerActions={[
+          {
+            caption: "Edit fields",
+            disabled: value.checked.length === 0,
+            icon: RiEdit2Line,
+            onClick: () => {
+              console.log(`Delete ${value.checked.length} clicked`);
+            },
+          },
+        ]}
+        styles={{
+          containerStyle: css`
+            padding-left: 0px;
+            padding-right: 0px;
+          `,
+          headerStyle: css`
+            padding-left: 15px;
+            padding-right: 15px;
+            border-bottom: 1px solid #d1d5db;
+          `,
+          footerStyle: css`
+            padding-left: 20px;
+            padding-right: 20px;
+            border-top: 1px solid #d1d5db;
+          `,
+        }}
+      >
+        <List
+          searchable
+          selectable
+          onSearchRequested={onChangeValue}
+          styles={{
+            containerStyle: css`
+              padding: 16px;
+              min-width: 400px;
+            `,
+          }}
+          maxItems={5}
+        >
+          {filteredContent.map((list, i) => (
+            <List.Item
+              key={i}
+              styles={{
+                containerStyle: css`
+                  min-width: 300px;
+                `,
+              }}
+              id={list.id}
+              subtitle={list.subtitle}
+              title={list.title}
+              imageUrl={list.imageUrl}
+              onClick={() => {
+                const isAlreadyChecked = value.checked.some(
+                  (check) => check.id.toString() === list.id.toString()
+                );
+
+                onChangeValue({
+                  target: {
+                    name: "checked",
+                    value: JSON.stringify({
+                      id: list.id,
+                      title: list.title,
+                      subtitle: list.subtitle,
+                    }),
+                    type: "checkbox",
+                    checked: !isAlreadyChecked,
+                  },
+                } as ChangeEvent<HTMLInputElement>);
+              }}
+              rightSideContent={list.rightSideContent}
+              onSelected={onChangeValue}
+              selectedOptions={{
+                checked: value.checked.some(
+                  (check) => check.id.toString() === list.id.toString()
+                ),
+                value: JSON.stringify({
+                  id: list.id,
+                  title: list.title,
+                  subtitle: list.subtitle,
+                }),
+              }}
+            />
+          ))}
         </List>
       </Card>
     );

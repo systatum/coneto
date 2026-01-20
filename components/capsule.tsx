@@ -2,6 +2,7 @@ import { ReactElement, ReactNode, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import styled, { css, CSSProp } from "styled-components";
 import { RemixiconComponentType } from "@remixicon/react";
+import { StatefulForm } from "./stateful-form";
 
 export interface CapsuleContentProps {
   id: string;
@@ -14,32 +15,36 @@ export interface CapsuleProps {
   activeTab?: string | null;
   tabs: CapsuleContentProps[];
   onTabChange?: (id: string) => void;
-  containerStyle?: CSSProp;
   label?: string;
-  labelStyle?: CSSProp;
-  tabStyle?: CSSProp;
   full?: boolean;
   activeBackgroundColor?: string;
   showError?: boolean;
   errorMessage?: string;
   fontSize?: number;
   iconSize?: number;
+  styles?: CapsuleStylesProps;
+  helper?: string;
+}
+
+export interface CapsuleStylesProps {
+  containerStyle?: CSSProp;
+  labelStyle?: CSSProp;
+  tabStyle?: CSSProp;
 }
 
 function Capsule({
   tabs,
   activeTab,
   onTabChange,
-  containerStyle,
-  tabStyle,
   full,
   activeBackgroundColor = "oklch(54.6% .245 262.881)",
   label,
-  labelStyle,
+  styles,
   showError,
   errorMessage,
   fontSize = 12,
   iconSize = 14,
+  helper,
 }: CapsuleProps) {
   const [hovered, setHovered] = useState<string | null>(null);
 
@@ -83,9 +88,13 @@ function Capsule({
         if (!tabRef) return { width: 0, left: 0 };
 
         const rect = tabRef.getBoundingClientRect();
+        const tabWidth = rect.width;
+        const bgWidth = tabWidth - 4;
+        const leftOffset = (tabWidth - bgWidth) / 4;
+
         return {
-          width: rect.width,
-          left: rect.left - parentRect.left,
+          width: bgWidth,
+          left: rect.left - parentRect.left + leftOffset,
         };
       });
 
@@ -110,35 +119,35 @@ function Capsule({
   const getInitialPosition = () => {
     if (!isInitialized && tabs.length > 0) {
       if (activeIndex === 0) {
-        return { left: 4, width: 60 };
+        return { left: 0, width: 60 };
       }
     }
 
     if (isInitialized && activeIndex !== -1 && tabSizes[activeIndex]) {
       return {
         left: tabSizes[activeIndex].left,
-        width: tabSizes[activeIndex].width - 3,
+        width: tabSizes[activeIndex].width,
       };
     }
 
-    return { left: 4, width: 60 };
+    return { left: 0, width: 60 };
   };
 
   const getHoverPosition = () => {
     if (!isInitialized && tabs.length > 0) {
       if (hoverIndex === 0) {
-        return { left: 4, width: 60 };
+        return { left: 0, width: 60 };
       }
     }
 
     if (isInitialized && hoverIndex !== -1 && tabSizes[hoverIndex]) {
       return {
         left: tabSizes[hoverIndex].left,
-        width: tabSizes[hoverIndex].width - 3,
+        width: tabSizes[hoverIndex].width,
       };
     }
 
-    return { left: 4, width: 60 };
+    return { left: 0, width: 60 };
   };
 
   const hoverPosition = getHoverPosition();
@@ -147,14 +156,14 @@ function Capsule({
   const inputElement: ReactElement = (
     <CapsuleWrapper
       aria-label="capsule"
-      $containerStyle={containerStyle}
+      $containerStyle={styles?.containerStyle}
       $full={full}
       ref={containerRef}
       role="tablist"
     >
       <ActiveBackground
         aria-label="active-capsule-box"
-        $style={tabStyle}
+        $style={styles?.tabStyle}
         $activeBackgroundColor={activeBackgroundColor}
         initial={{
           left: initialPosition.left,
@@ -173,7 +182,7 @@ function Capsule({
 
       <HoverBorder
         aria-label="hover-capsule-box"
-        $style={tabStyle}
+        $style={styles?.tabStyle}
         $activeBackgroundColor={activeBackgroundColor}
         initial={{
           left: hoverPosition.left,
@@ -200,7 +209,7 @@ function Capsule({
             role="tab"
             key={index}
             ref={setTabRef(index)}
-            $activeTabStyle={tabStyle}
+            $activeTabStyle={styles?.tabStyle}
             onMouseEnter={() => setHovered(data.id)}
             onMouseLeave={() => setHovered(null)}
             onClick={() => onTabChange(data.id)}
@@ -214,11 +223,13 @@ function Capsule({
   );
 
   return (
-    <Container $fontSize={fontSize} $style={containerStyle}>
+    <Container $fontSize={fontSize} $style={styles?.containerStyle}>
       {label && (
-        <Label $style={labelStyle} htmlFor="capsule">
-          {label}
-        </Label>
+        <StatefulForm.Label
+          style={styles?.labelStyle}
+          helper={helper}
+          label={label}
+        />
       )}
       <div>
         {inputElement}
@@ -237,11 +248,11 @@ const CapsuleWrapper = styled.div<{
   flex-direction: row;
   align-items: center;
   overflow: hidden;
-  padding-left: 0.25rem;
-  padding-right: 0.25rem;
+  padding-left: 0.1rem;
+  padding-right: 0.1rem;
   border-color: #ebebeb;
   box-shadow:
-    0 1px 4px -3px #5b5b5b,
+    0 1px 1px -2px #5b5b5b,
     0 1px 1px rgba(0, 0, 0, 0.05);
 
   ${({ $full }) =>
@@ -254,7 +265,7 @@ const CapsuleWrapper = styled.div<{
       : css`
           width: fit-content;
           border-width: 1px;
-          border-radius: 0.75rem;
+          border-radius: 12px;
         `}
 
   ${({ $containerStyle }) => $containerStyle}
@@ -271,11 +282,6 @@ const Container = styled.div<{ $style?: CSSProp; $fontSize?: number }>`
   ${({ $style }) => $style}
 `;
 
-const Label = styled.label<{ $style?: CSSProp }>`
-  font-size: 0.75rem;
-  ${({ $style }) => $style}
-`;
-
 const ErrorText = styled.span`
   color: #dc2626;
 `;
@@ -287,10 +293,10 @@ const ActiveBackground = styled(motion.div)<{
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-
-  border-radius: 12px;
+  border-radius: 8px;
   z-index: 10;
   height: 25px;
+
   background-color: ${({ $activeBackgroundColor }) => $activeBackgroundColor};
   ${({ $style }) => $style}
 `;
@@ -303,10 +309,11 @@ const HoverBorder = styled(motion.div)<{
   top: 50%;
   transform: translateY(-50%);
 
-  border-radius: 12px;
+  border-radius: 8px;
   z-index: 0;
   height: 25px;
   border: 2px solid ${({ $activeBackgroundColor }) => $activeBackgroundColor};
+
   ${({ $style }) => $style}
 `;
 
@@ -317,16 +324,15 @@ const Tab = styled.div<{
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 3px;
   z-index: 10;
   cursor: pointer;
-  padding: 0.3rem 1rem;
-  padding-left: 12px;
+  padding: 0.25rem 1rem;
   text-align: center;
   font-weight: 500;
   transition: color 0.2s;
   margin-top: 4px;
   margin-bottom: 4px;
+  gap: 4px;
 
   ${({ $isActive }) =>
     $isActive

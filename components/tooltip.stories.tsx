@@ -31,100 +31,112 @@ export const Link: Story = {
       children: "Hover Tooltip",
       showDialogOn: "hover",
       dialog: "This tooltip appears on hover",
-      containerStyle: css`
-        font-size: 0.875rem;
-        text-decoration: underline;
-      `,
+      styles: {
+        containerStyle: css`
+          font-size: 0.875rem;
+          text-decoration: underline;
+        `,
+      },
     } as const;
 
     const Click: TooltipProps = {
       children: "Click Tooltip",
       showDialogOn: "click",
       dialog: "This tooltip appears on click",
-      containerStyle: css`
-        font-size: 0.875rem;
-        color: #2563eb;
-        cursor: pointer;
-      `,
-      drawerStyle: css`
-        background-color: #2563eb;
-        color: white;
-      `,
-      arrowStyle: css`
-        background-color: #2563eb;
-      `,
+      styles: {
+        containerStyle: css`
+          font-size: 0.875rem;
+          color: #2563eb;
+          cursor: pointer;
+        `,
+        drawerStyle: css`
+          background-color: #2563eb;
+          color: white;
+        `,
+        arrowStyle: css`
+          background-color: #2563eb;
+        `,
+      },
     } as const;
 
     const StyledTooltip: TooltipProps = {
       children: "Styled Tooltip",
       showDialogOn: "hover",
       dialog: "Tooltip with custom styling",
-      containerStyle: css`
-        font-size: 0.875rem;
-        color: #16a34a;
-        text-decoration: underline wavy;
-      `,
-      drawerStyle: css`
-        background-color: #15803d;
-        color: white;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        border-radius: 4px;
-        padding: 4px 12px;
-        font-size: 0.875rem;
-      `,
-      arrowStyle: css`
-        background-color: #15803d;
-      `,
+      styles: {
+        containerStyle: css`
+          font-size: 0.875rem;
+          color: #16a34a;
+          text-decoration: underline wavy;
+        `,
+        drawerStyle: css`
+          background-color: #15803d;
+          color: white;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+          border-radius: 4px;
+          padding: 4px 12px;
+          font-size: 0.875rem;
+        `,
+        arrowStyle: css`
+          background-color: #15803d;
+        `,
+      },
     } as const;
 
     const DottedUnderlineTooltip: TooltipProps = {
       children: "Dotted Underline Tooltip",
       showDialogOn: "hover",
       dialog: "Tooltip with dotted underline trigger",
-      containerStyle: css`
-        font-size: 0.875rem;
-      `,
-      drawerStyle: css`
-        background-color: #1f2937;
-        color: white;
-      `,
-      arrowStyle: css`
-        background-color: #1f2937;
-      `,
+      styles: {
+        containerStyle: css`
+          font-size: 0.875rem;
+        `,
+        drawerStyle: css`
+          background-color: #1f2937;
+          color: white;
+        `,
+        arrowStyle: css`
+          background-color: #1f2937;
+        `,
+      },
     } as const;
 
     const NoUnderlineTooltip: TooltipProps = {
       children: "No Underline Tooltip",
       showDialogOn: "hover",
       dialog: "Trigger text without underline",
-      containerStyle: css`
-        font-weight: 600;
-        font-size: 0.875rem;
-        color: #ef4444;
-      `,
-      drawerStyle: css`
-        background-color: #dc2626;
-        color: white;
-      `,
-      arrowStyle: css`
-        background-color: #dc2626;
-      `,
+      styles: {
+        containerStyle: css`
+          font-weight: 600;
+          font-size: 0.875rem;
+          color: #ef4444;
+        `,
+        drawerStyle: css`
+          background-color: #dc2626;
+          color: white;
+        `,
+        arrowStyle: css`
+          background-color: #dc2626;
+        `,
+      },
     } as const;
 
     const BlueUnderlineTooltip: TooltipProps = {
       children: "Blue Underline Tooltip",
       showDialogOn: "click",
-      containerStyle: css`
-        font-size: 0.875rem;
-      `,
       dialog: "Clicked tooltip with blue underline",
-      drawerStyle: css`
-        background-color: #1d4ed8;
-        color: white;
-      `,
-      arrowStyle: css`
-        background-color: #1d4ed8;
-      `,
+      styles: {
+        containerStyle: css`
+          font-size: 0.875rem;
+        `,
+        drawerStyle: css`
+          background-color: #1d4ed8;
+          color: white;
+        `,
+        arrowStyle: css`
+          background-color: #1d4ed8;
+        `,
+      },
     } as const;
 
     return (
@@ -196,7 +208,7 @@ export const WithForm: Story = {
             justifyContent: "flex-end",
           }}
         >
-          <Button style={{ fontSize: "0.75rem" }}>Save</Button>
+          <Button styles={{ self: { fontSize: "0.75rem" } }}>Save</Button>
         </div>
       </div>
     );
@@ -214,21 +226,23 @@ export const WithForm: Story = {
           showDialogOn="click"
           hideDialogOn="click"
           dialog={contentDialog}
-          containerStyle={css`
-            width: fit-content;
-            padding: 0 12px;
-          `}
-          arrowStyle={css`
-            background-color: #e5e7eb;
-            border: 1px solid #e5e7eb;
-          `}
-          drawerStyle={css`
-            width: fit-content;
-            left: 1rem;
-            background-color: white;
-            color: black;
-            border: 1px solid #e5e7eb;
-          `}
+          styles={{
+            containerStyle: css`
+              width: fit-content;
+              padding: 0 12px;
+            `,
+            arrowStyle: css`
+              background-color: #e5e7eb;
+              border: 1px solid #e5e7eb;
+            `,
+            drawerStyle: css`
+              width: fit-content;
+              left: 1rem;
+              background-color: white;
+              color: black;
+              border: 1px solid #e5e7eb;
+            `,
+          }}
         >
           <div
             style={{
@@ -320,7 +334,7 @@ export const WithBadge: Story = {
             justifyContent: "flex-end",
           }}
         >
-          <Button style={{ fontSize: "0.75rem" }}>Save</Button>
+          <Button styles={{ self: { fontSize: "0.75rem" } }}>Save</Button>
         </div>
       </div>
     );
@@ -334,21 +348,23 @@ export const WithBadge: Story = {
           setIsOpen(isOpen);
         }}
         dialog={contentDialog}
-        containerStyle={css`
-          width: fit-content;
-          padding: 0 12px;
-        `}
-        arrowStyle={css`
-          background-color: #e5e7eb;
-          border: 1px solid #e5e7eb;
-        `}
-        drawerStyle={css`
-          width: fit-content;
-          left: 1rem;
-          background-color: white;
-          color: black;
-          border: 1px solid #e5e7eb;
-        `}
+        styles={{
+          containerStyle: css`
+            width: fit-content;
+            padding: 0 12px;
+          `,
+          arrowStyle: css`
+            background-color: #e5e7eb;
+            border: 1px solid #e5e7eb;
+          `,
+          drawerStyle: css`
+            width: fit-content;
+            left: 1rem;
+            background-color: white;
+            color: black;
+            border: 1px solid #e5e7eb;
+          `,
+        }}
       >
         <Badge
           badgeStyle={css`

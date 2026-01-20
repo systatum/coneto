@@ -7,10 +7,12 @@ import React, {
   useState,
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
+import { StatefulForm } from "./stateful-form";
 
-interface PinboxProps {
+export interface PinboxProps {
   fontSize?: number;
   label?: string;
+  helper?: string;
   showError?: boolean;
   errorMessage?: string;
   masked?: boolean;
@@ -20,9 +22,13 @@ interface PinboxProps {
     data: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
   value?: string;
+  disabled?: boolean;
+  styles?: PinboxStylesProps;
+}
+
+export interface PinboxStylesProps {
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
-  disabled?: boolean;
 }
 
 export interface PinboxState {
@@ -39,12 +45,12 @@ function Pinbox({
   masked,
   parts,
   showError,
-  labelStyle,
   name = "pinbox",
   value,
   onChange,
-  containerStyle,
+  styles,
   disabled,
+  helper,
 }: PinboxProps) {
   const getDefaultValue = () => {
     let valIndex = 0;
@@ -257,7 +263,6 @@ function Pinbox({
               onKeyDown={(e) => handleKeyDown(e, index)}
               $isStatic={isStatic}
               $fontSize={fontSize}
-              onChange={() => {}}
               $isAnimate={isAnimate}
             />
             <PinboxIndicator $error={showError} />
@@ -282,11 +287,13 @@ function Pinbox({
   const inputId = `textbox-${name}`;
 
   return (
-    <Container $containerStyle={containerStyle}>
+    <Container $containerStyle={styles?.containerStyle}>
       {label && (
-        <Label $style={labelStyle} htmlFor={inputId}>
-          {label}
-        </Label>
+        <StatefulForm.Label
+          style={styles?.labelStyle}
+          helper={helper}
+          label={label}
+        />
       )}
       {inputElements}
       {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
@@ -433,11 +440,6 @@ const PinboxInput = styled.input<{
             cursor: not-allowed;
           }
         `}
-`;
-
-const Label = styled.label<{ $style?: CSSProp }>`
-  font-size: 0.75rem;
-  ${({ $style }) => $style}
 `;
 
 const ErrorText = styled.span`

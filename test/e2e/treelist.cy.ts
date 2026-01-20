@@ -443,7 +443,8 @@ describe("Treelist", () => {
     context("with actions item", () => {
       it("renders action on the item", () => {
         cy.contains("Adam Noto Hakarsa").trigger("mouseover");
-        cy.findByLabelText("action-button")
+        cy.findAllByLabelText("action-button")
+          .eq(0)
           .should("be.visible")
           .and("have.attr", "title", "Edit")
           .click();
@@ -458,7 +459,10 @@ describe("Treelist", () => {
           cy.findByPlaceholderText("Search your item...").click();
           cy.findByText("3").click();
           cy.contains("Adam Noto Hakarsa").trigger("mouseover");
-          cy.findByLabelText("action-button").should("be.visible").click();
+          cy.findAllByLabelText("action-button")
+            .eq(0)
+            .should("be.visible")
+            .click();
           cy.findByText("Copy").click();
 
           cy.get("@consoleLog").should(

@@ -26,6 +26,7 @@ import {
 import { COUNTRY_CODES } from "../constants/countries";
 import { AsYouType, CountryCode } from "libphonenumber-js/max";
 import styled, { css, CSSProp } from "styled-components";
+import { StatefulForm } from "./stateful-form";
 
 export interface CountryCodeProps {
   id: string;
@@ -37,10 +38,6 @@ export interface CountryCodeProps {
 export interface PhoneboxProps {
   label?: string;
   name?: string;
-  inputStyle?: CSSProp;
-  inputWrapperStyle?: CSSProp;
-  toggleStyle?: CSSProp;
-  labelStyle?: CSSProp;
   value?: string;
   onChange?: (
     e:
@@ -48,12 +45,21 @@ export interface PhoneboxProps {
       | ChangeEvent<HTMLInputElement>
   ) => void;
   placeholder?: string;
+  helper?: string;
   disabled?: boolean;
   showError?: boolean;
   errorMessage?: string;
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
   countryCodeValue?: CountryCodeProps;
+  styles?: PhoneboxStylesProps;
+}
+
+export interface PhoneboxStylesProps {
   containerStyle?: CSSProp;
+  self?: CSSProp;
+  inputWrapperStyle?: CSSProp;
+  toggleStyle?: CSSProp;
+  labelStyle?: CSSProp;
 }
 
 const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
@@ -67,12 +73,9 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
       showError = false,
       errorMessage,
       onKeyDown,
+      helper,
       countryCodeValue,
-      inputWrapperStyle,
-      toggleStyle,
-      inputStyle,
-      labelStyle,
-      containerStyle,
+      styles,
     },
     ref
   ) => {
@@ -212,11 +215,13 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
     };
 
     return (
-      <ContainerPhonebox $style={containerStyle}>
+      <ContainerPhonebox $style={styles?.containerStyle}>
         {label && (
-          <Label $style={labelStyle} htmlFor={label}>
-            {label}
-          </Label>
+          <StatefulForm.Label
+            style={styles?.labelStyle}
+            helper={helper}
+            label={label}
+          />
         )}
         <InputWrapper
           $hasError={showError}
@@ -233,7 +238,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
               ? `country-option-${highlightedIndex}`
               : undefined,
           })}
-          $style={inputWrapperStyle}
+          $style={styles?.inputWrapperStyle}
         >
           <CountryButton
             type="button"
@@ -242,7 +247,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
             $disabled={disabled}
             aria-label="Select country code"
             tabIndex={0}
-            $style={toggleStyle}
+            $style={styles?.toggleStyle}
           >
             <span>{selectedCountry.flag}</span>
             <span>{selectedCountry.code}</span>
@@ -252,7 +257,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
           <PhoneInput
             ref={phoneInputRef}
             type="tel"
-            $style={inputStyle}
+            $style={styles?.self}
             placeholder={placeholder}
             value={phoneNumber}
             onChange={handlePhoneChange}
@@ -380,11 +385,6 @@ const ContainerPhonebox = styled.div<{ $style?: CSSProp }>`
   gap: 4px;
   width: 100%;
 
-  ${({ $style }) => $style}
-`;
-
-const Label = styled.label<{ $style?: CSSProp }>`
-  font-size: 0.75rem;
   ${({ $style }) => $style}
 `;
 

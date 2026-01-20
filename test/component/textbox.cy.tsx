@@ -174,7 +174,7 @@ describe("Textbox", () => {
 
       cy.findByLabelText("button-tip-menu-container").should(
         "have.css",
-        "min-width",
+        "width",
         "200px"
       );
     });

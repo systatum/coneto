@@ -17,8 +17,624 @@ import {
   ListItemActionProps,
 } from "./../../components/list";
 import { css } from "styled-components";
+import { ListItemProps } from "dist/components/list";
 
 describe("List", () => {
+  const LIST_ITEMS: ListItemProps[] = [
+    {
+      id: "home",
+      title: "Home",
+      subtitle: "Go to homepage",
+      leftIcon: RiHome2Fill,
+    },
+    {
+      id: "profile",
+      title: "Profile",
+      subtitle: "View your profile",
+      leftIcon: RiUser3Fill,
+    },
+    {
+      id: "settings",
+      title: "Settings",
+      subtitle: "Adjust preferences",
+      leftIcon: RiSettings3Fill,
+    },
+    {
+      id: "messages",
+      title: "Messages",
+      subtitle: "Check your inbox",
+      leftIcon: RiMailFill,
+    },
+    {
+      id: "notifications",
+      title: "Notifications",
+      subtitle: "View Alerts",
+      leftIcon: RiNotification3Fill,
+    },
+  ];
+
+  const LIST_GROUPS_OPENABLE: ListGroupContentProps[] = [
+    {
+      id: "recent-content",
+      title: "Recent Content",
+      subtitle: "Your latest activity",
+      items: [
+        {
+          id: "messages",
+          title: "Messages",
+          subtitle: "Check your inbox",
+          leftIcon: RiMailFill,
+          children:
+            "Stay connected with your contacts by checking and replying to your recent messages. Keep conversations organized and never miss important updates.",
+        },
+        {
+          id: "notifications",
+          title: "Notifications",
+          subtitle: "View Alerts",
+          leftIcon: RiNotification3Fill,
+          children:
+            "See what's new at a glance. Review recent alerts, mentions, and important reminders to stay on top of your activities.",
+        },
+        {
+          id: "calendar",
+          title: "Calendar",
+          subtitle: "Upcoming events",
+          leftIcon: RiCalendar2Fill,
+          children:
+            "View your scheduled events and upcoming meetings in one place. Manage your time effectively and plan your week with confidence.",
+        },
+      ],
+    },
+    {
+      id: "all-content",
+      title: "All Content",
+      subtitle: "With warning rightSideContent",
+      items: [
+        {
+          id: "home",
+          title: "Home",
+          subtitle: "Go to homepage",
+          leftIcon: RiHome2Fill,
+          children:
+            "Return to your main dashboard where you can quickly access all your essential tools, updates, and recent highlights in one glance.",
+        },
+        {
+          id: "profile",
+          title: "Profile",
+          subtitle: "View your profile",
+          leftIcon: RiUser3Fill,
+          children:
+            "Customize your personal information, update your avatar, and manage your account preferences to reflect your identity and style.",
+        },
+        {
+          id: "settings",
+          title: "Settings",
+          subtitle: "Adjust preferences",
+          leftIcon: RiSettings3Fill,
+          openable: true,
+          children:
+            "Modify your system preferences, manage privacy and notifications, and fine-tune your user experience to suit your workflow.",
+        },
+      ],
+    },
+  ];
+
+  context("maxItems", () => {
+    context("when given 2", () => {
+      it("shows only the first 2 items", () => {
+        cy.mount(
+          <List
+            maxItems={2}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 280px;
+                gap: 8px;
+              `,
+            }}
+          >
+            {LIST_ITEMS.map((item, index) => (
+              <List.Item
+                key={index}
+                id={item.id}
+                leftIcon={item.leftIcon}
+                subtitle={item.subtitle}
+                title={item.title}
+              />
+            ))}
+          </List>
+        );
+        LIST_ITEMS.map((props) => {
+          if (props.title === "Home" || props.title === "Profile") {
+            cy.findByText(String(props.title)).should("exist");
+          } else {
+            cy.findByText(String(props.title)).should("not.exist");
+          }
+        });
+      });
+
+      context("when click show more", () => {
+        it("show all items", () => {
+          cy.mount(
+            <List
+              maxItems={2}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 280px;
+                  gap: 8px;
+                `,
+              }}
+            >
+              {LIST_ITEMS.map((item, index) => (
+                <List.Item
+                  key={index}
+                  id={item.id}
+                  leftIcon={item.leftIcon}
+                  subtitle={item.subtitle}
+                  title={item.title}
+                />
+              ))}
+            </List>
+          );
+          LIST_ITEMS.map((props) => {
+            if (props.title === "Home" || props.title === "Profile") {
+              cy.findByText(String(props.title)).should("exist");
+            } else {
+              cy.findByText(String(props.title)).should("not.exist");
+            }
+          });
+
+          cy.findAllByLabelText("list-show-more-button").eq(0).click();
+
+          LIST_ITEMS.map((props) => {
+            cy.findByText(String(props.title)).should("exist");
+          });
+        });
+      });
+    });
+
+    context("with group", () => {
+      context("when given 2", () => {
+        it("shows only the first 2 items", () => {
+          cy.mount(
+            <List
+              searchable
+              draggable
+              selectable
+              maxItems={2}
+              alwaysShowDragIcon={false}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
+            >
+              {LIST_GROUPS_OPENABLE.map((group, index) => (
+                <List.Group
+                  key={index}
+                  id={group.id}
+                  title={group.title}
+                  subtitle={group.subtitle}
+                  actions={group.actions}
+                  openerStyle="togglebox"
+                >
+                  {group.items.map((list, i) => (
+                    <List.Item
+                      key={i}
+                      id={list.id}
+                      leftIcon={list.leftIcon}
+                      subtitle={list.subtitle}
+                      title={list.title}
+                      groupId={group.id}
+                      selectedOptions={{
+                        checked: true,
+                      }}
+                      rightSideContent={list.rightSideContent}
+                    />
+                  ))}
+                </List.Group>
+              ))}
+            </List>
+          );
+
+          LIST_GROUPS_OPENABLE.map((groups) =>
+            groups.items.map((props) => {
+              if (
+                props.title === "Message" ||
+                props.title === "Notifications" ||
+                props.title === "Home" ||
+                props.title === "Profile"
+              ) {
+                cy.findByText(String(props.title)).should("exist");
+              } else {
+                cy.findByText(String(props.title)).should("not.exist");
+              }
+            })
+          );
+        });
+
+        context("when click show more", () => {
+          it("show all items", () => {
+            cy.mount(
+              <List
+                searchable
+                draggable
+                selectable
+                maxItems={2}
+                alwaysShowDragIcon={false}
+                styles={{
+                  containerStyle: css`
+                    padding: 16px;
+                    min-width: 350px;
+                  `,
+                }}
+              >
+                {LIST_GROUPS_OPENABLE.map((group, index) => (
+                  <List.Group
+                    key={index}
+                    id={group.id}
+                    title={group.title}
+                    subtitle={group.subtitle}
+                    actions={group.actions}
+                    openerStyle="togglebox"
+                  >
+                    {group.items.map((list, i) => (
+                      <List.Item
+                        key={i}
+                        id={list.id}
+                        leftIcon={list.leftIcon}
+                        subtitle={list.subtitle}
+                        title={list.title}
+                        groupId={group.id}
+                        selectedOptions={{
+                          checked: true,
+                        }}
+                        rightSideContent={list.rightSideContent}
+                      />
+                    ))}
+                  </List.Group>
+                ))}
+              </List>
+            );
+
+            LIST_GROUPS_OPENABLE.map((groups) =>
+              groups.items.map((props) => {
+                if (
+                  props.title === "Message" ||
+                  props.title === "Notifications" ||
+                  props.title === "Home" ||
+                  props.title === "Profile"
+                ) {
+                  cy.findByText(String(props.title)).should("exist");
+                } else {
+                  cy.findByText(String(props.title)).should("not.exist");
+                }
+              })
+            );
+
+            cy.findAllByLabelText("list-show-more-button").eq(0).click();
+            cy.findAllByLabelText("list-show-more-button").eq(1).click();
+
+            LIST_GROUPS_OPENABLE.map((groups) =>
+              groups.items.map((props) => {
+                cy.findByText(String(props.title)).should("exist");
+              })
+            );
+          });
+        });
+      });
+    });
+  });
+
+  context("labels", () => {
+    context("moreItemsText", () => {
+      it("renders with the text", () => {
+        cy.mount(
+          <List
+            searchable
+            draggable
+            selectable
+            maxItems={2}
+            labels={{
+              moreItemsText: "Show all content",
+            }}
+            alwaysShowDragIcon={false}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
+          >
+            {LIST_GROUPS_OPENABLE.map((group, index) => (
+              <List.Group
+                key={index}
+                id={group.id}
+                title={group.title}
+                subtitle={group.subtitle}
+                actions={group.actions}
+                openerStyle="togglebox"
+              >
+                {group.items.map((list, i) => (
+                  <List.Item
+                    key={i}
+                    id={list.id}
+                    leftIcon={list.leftIcon}
+                    subtitle={list.subtitle}
+                    title={list.title}
+                    groupId={group.id}
+                    selectedOptions={{
+                      checked: true,
+                    }}
+                    rightSideContent={list.rightSideContent}
+                  />
+                ))}
+              </List.Group>
+            ))}
+          </List>
+        );
+        cy.findAllByLabelText("list-show-more-button")
+          .eq(0)
+          .should("have.text", "Show all content");
+      });
+    });
+
+    context("lessItemsText", () => {
+      it("renders with the text", () => {
+        cy.mount(
+          <List
+            searchable
+            draggable
+            selectable
+            maxItems={2}
+            labels={{
+              lessItemsText: "Collapsed all content",
+            }}
+            alwaysShowDragIcon={false}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
+          >
+            {LIST_GROUPS_OPENABLE.map((group, index) => (
+              <List.Group
+                key={index}
+                id={group.id}
+                title={group.title}
+                subtitle={group.subtitle}
+                actions={group.actions}
+                openerStyle="togglebox"
+              >
+                {group.items.map((list, i) => (
+                  <List.Item
+                    key={i}
+                    id={list.id}
+                    leftIcon={list.leftIcon}
+                    subtitle={list.subtitle}
+                    title={list.title}
+                    groupId={group.id}
+                    selectedOptions={{
+                      checked: true,
+                    }}
+                    rightSideContent={list.rightSideContent}
+                  />
+                ))}
+              </List.Group>
+            ))}
+          </List>
+        );
+        cy.findAllByLabelText("list-show-more-button")
+          .eq(0)
+          .click()
+          .should("have.text", "Collapsed all content");
+      });
+    });
+  });
+
+  context("maxItemswithIcon", () => {
+    context("when given false", () => {
+      it("renders without icon", () => {
+        cy.mount(
+          <List
+            searchable
+            draggable
+            selectable
+            maxItems={2}
+            maxItemsWithIcon={false}
+            alwaysShowDragIcon={false}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
+          >
+            {LIST_GROUPS_OPENABLE.map((group, index) => (
+              <List.Group
+                key={index}
+                id={group.id}
+                title={group.title}
+                subtitle={group.subtitle}
+                actions={group.actions}
+                openerStyle="togglebox"
+              >
+                {group.items.map((list, i) => (
+                  <List.Item
+                    key={i}
+                    id={list.id}
+                    leftIcon={list.leftIcon}
+                    subtitle={list.subtitle}
+                    title={list.title}
+                    groupId={group.id}
+                    selectedOptions={{
+                      checked: true,
+                    }}
+                    rightSideContent={list.rightSideContent}
+                  />
+                ))}
+              </List.Group>
+            ))}
+          </List>
+        );
+        cy.findByLabelText("list-show-more-arrow").should("not.exist");
+      });
+    });
+
+    context("when given true", () => {
+      it("renders with icon", () => {
+        cy.mount(
+          <List
+            searchable
+            draggable
+            selectable
+            maxItems={2}
+            maxItemsWithIcon={true}
+            alwaysShowDragIcon={false}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
+          >
+            {LIST_GROUPS_OPENABLE.map((group, index) => (
+              <List.Group
+                key={index}
+                id={group.id}
+                title={group.title}
+                subtitle={group.subtitle}
+                actions={group.actions}
+                openerStyle="togglebox"
+              >
+                {group.items.map((list, i) => (
+                  <List.Item
+                    key={i}
+                    id={list.id}
+                    leftIcon={list.leftIcon}
+                    subtitle={list.subtitle}
+                    title={list.title}
+                    groupId={group.id}
+                    selectedOptions={{
+                      checked: true,
+                    }}
+                    rightSideContent={list.rightSideContent}
+                  />
+                ))}
+              </List.Group>
+            ))}
+          </List>
+        );
+        cy.findAllByLabelText("list-show-more-arrow").eq(0).should("exist");
+      });
+    });
+
+    context("when not given", () => {
+      it("renders with icon", () => {
+        cy.mount(
+          <List
+            searchable
+            draggable
+            selectable
+            maxItems={2}
+            maxItemsWithIcon={false}
+            alwaysShowDragIcon={false}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
+          >
+            {LIST_GROUPS_OPENABLE.map((group, index) => (
+              <List.Group
+                key={index}
+                id={group.id}
+                title={group.title}
+                subtitle={group.subtitle}
+                actions={group.actions}
+                openerStyle="togglebox"
+              >
+                {group.items.map((list, i) => (
+                  <List.Item
+                    key={i}
+                    id={list.id}
+                    leftIcon={list.leftIcon}
+                    subtitle={list.subtitle}
+                    title={list.title}
+                    groupId={group.id}
+                    selectedOptions={{
+                      checked: true,
+                    }}
+                    rightSideContent={list.rightSideContent}
+                  />
+                ))}
+              </List.Group>
+            ))}
+          </List>
+        );
+        cy.findAllByLabelText("list-show-more-arrow").eq(0).should("exist");
+      });
+    });
+  });
+
+  context("maxItemsStyle", () => {
+    it("renders with style", () => {
+      cy.mount(
+        <List
+          searchable
+          draggable
+          selectable
+          maxItems={2}
+          styles={{
+            maxItemsStyle: css`
+              border-style: dotted;
+              text-decoration: underline;
+            `,
+            containerStyle: css`
+              padding: 16px;
+              min-width: 350px;
+            `,
+          }}
+          alwaysShowDragIcon={false}
+        >
+          {LIST_GROUPS_OPENABLE.map((group, index) => (
+            <List.Group
+              key={index}
+              id={group.id}
+              title={group.title}
+              subtitle={group.subtitle}
+              actions={group.actions}
+              openerStyle="togglebox"
+            >
+              {group.items.map((list, i) => (
+                <List.Item
+                  key={i}
+                  id={list.id}
+                  leftIcon={list.leftIcon}
+                  subtitle={list.subtitle}
+                  title={list.title}
+                  groupId={group.id}
+                  selectedOptions={{
+                    checked: true,
+                  }}
+                  rightSideContent={list.rightSideContent}
+                />
+              ))}
+            </List.Group>
+          ))}
+        </List>
+      );
+      cy.findAllByLabelText("list-show-more-button")
+        .eq(0)
+        .should("have.css", "border-style", "dotted")
+        .and("have.css", "text-decoration", "underline solid rgb(97, 97, 97)");
+    });
+  });
+
   context("alwaysShowDragIcon", () => {
     context("when given false", () => {
       it("renders when hovered", () => {
@@ -28,10 +644,12 @@ describe("List", () => {
             draggable
             selectable
             alwaysShowDragIcon={false}
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS_OPENABLE.map((group, index) => (
               <List.Group
@@ -78,10 +696,12 @@ describe("List", () => {
             searchable
             draggable
             selectable
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS_OPENABLE.map((group, index) => (
               <List.Group
@@ -123,10 +743,12 @@ describe("List", () => {
             searchable
             draggable
             selectable
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS_OPENABLE.map((group, index) => (
               <List.Group
@@ -169,9 +791,11 @@ describe("List", () => {
           id: "recent-content",
           title: "Recent Content",
           subtitle: "Your latest activity",
-          titleStyle: css`
-            font-size: 30px;
-          `,
+          styles: {
+            titleStyle: css`
+              font-size: 30px;
+            `,
+          },
           items: [
             {
               id: "messages",
@@ -227,20 +851,22 @@ describe("List", () => {
               searchable
               draggable
               selectable
-              containerStyle={css`
-                padding: 16px;
-                min-width: 350px;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
             >
               {LIST_GROUPS_WITH_TITLE_STYLE.map((group, index) => (
                 <List.Group
-                  titleStyle={group.titleStyle}
                   key={index}
                   id={group.id}
                   title={group.title}
                   subtitle={group.subtitle}
                   actions={group.actions}
                   openerStyle="togglebox"
+                  styles={group.styles}
                 >
                   {group.items.map((list, i) => (
                     <List.Item
@@ -276,9 +902,11 @@ describe("List", () => {
           id: "recent-content",
           title: "Recent Content",
           subtitle: "Your latest activity",
-          subtitleStyle: css`
-            font-size: 30px;
-          `,
+          styles: {
+            subtitleStyle: css`
+              font-size: 30px;
+            `,
+          },
           items: [
             {
               id: "messages",
@@ -333,15 +961,16 @@ describe("List", () => {
             searchable
             draggable
             selectable
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS_WITH_SUBTITLE_STYLE.map((group, index) => (
               <List.Group
-                titleStyle={group.titleStyle}
-                subtitleStyle={group.subtitleStyle}
+                styles={group.styles}
                 key={index}
                 id={group.id}
                 title={group.title}
@@ -383,6 +1012,12 @@ describe("List", () => {
           title: "Recent Content",
           subtitle: "Your latest activity",
           items: [],
+          styles: {
+            emptySlateStyle: css`
+              border: 1px solid rgb(255, 0, 0);
+              padding: 30px;
+            `,
+          },
         },
       ];
 
@@ -393,10 +1028,12 @@ describe("List", () => {
               searchable
               draggable
               selectable
-              containerStyle={css`
-                padding: 16px;
-                min-width: 350px;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
             >
               {LIST_GROUPS_WITH_EMPTY.map((group, index) => (
                 <List.Group
@@ -439,10 +1076,12 @@ describe("List", () => {
                 searchable
                 draggable
                 selectable
-                containerStyle={css`
-                  padding: 16px;
-                  min-width: 350px;
-                `}
+                styles={{
+                  containerStyle: css`
+                    padding: 16px;
+                    min-width: 350px;
+                  `,
+                }}
               >
                 {LIST_GROUPS_WITH_EMPTY.map((group, index) => (
                   <List.Group
@@ -452,10 +1091,7 @@ describe("List", () => {
                     subtitle={group.subtitle}
                     actions={group.actions}
                     emptySlate={"This content is not available"}
-                    emptySlateStyle={css`
-                      border: 1px solid red;
-                      padding: 30px;
-                    `}
+                    styles={group.styles}
                     openerStyle="togglebox"
                   >
                     {group.items.map((list, i) => (
@@ -563,10 +1199,12 @@ describe("List", () => {
             searchable
             draggable
             selectable
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS.map((group, index) => (
               <List.Group
@@ -605,10 +1243,12 @@ describe("List", () => {
               searchable
               draggable
               selectable
-              containerStyle={css`
-                padding: 16px;
-                min-width: 350px;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
             >
               {LIST_GROUPS.map((group, index) => (
                 <List.Group
@@ -728,10 +1368,12 @@ describe("List", () => {
             searchable
             draggable
             selectable
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS.map((group, index) => (
               <List.Group
@@ -771,10 +1413,12 @@ describe("List", () => {
               searchable
               draggable
               selectable
-              containerStyle={css`
-                padding: 16px;
-                min-width: 350px;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
             >
               {LIST_GROUPS.map((group, index) => (
                 <List.Group
@@ -895,10 +1539,12 @@ describe("List", () => {
             searchable
             draggable
             selectable
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS.map((group, index) => (
               <List.Group
@@ -943,10 +1589,12 @@ describe("List", () => {
               searchable
               draggable
               selectable
-              containerStyle={css`
-                padding: 16px;
-                min-width: 350px;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
             >
               {LIST_GROUPS.map((group, index) => (
                 <List.Group
@@ -1002,10 +1650,12 @@ describe("List", () => {
               searchable
               draggable
               selectable
-              containerStyle={css`
-                padding: 16px;
-                min-width: 350px;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
             >
               {LIST_GROUPS.map((group, index) => (
                 <List.Group
@@ -1137,10 +1787,12 @@ describe("List", () => {
             searchable
             draggable
             selectable
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS.map((group, index) => (
               <List.Group
@@ -1179,10 +1831,12 @@ describe("List", () => {
               searchable
               draggable
               selectable
-              containerStyle={css`
-                padding: 16px;
-                min-width: 350px;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
             >
               {LIST_GROUPS.map((group, index) => (
                 <List.Group
@@ -1310,10 +1964,12 @@ describe("List", () => {
             searchable
             draggable
             selectable
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS.map((group, index) => (
               <List.Group
@@ -1353,10 +2009,12 @@ describe("List", () => {
               searchable
               draggable
               selectable
-              containerStyle={css`
-                padding: 16px;
-                min-width: 350px;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
             >
               {LIST_GROUPS.map((group, index) => (
                 <List.Group
@@ -1445,10 +2103,12 @@ describe("List", () => {
         cy.mount(
           <List
             searchable
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS.map((group, index) => (
               <List.Group
@@ -1487,72 +2147,6 @@ describe("List", () => {
     });
   });
 
-  const LIST_GROUPS_OPENABLE: ListGroupContentProps[] = [
-    {
-      id: "recent-content",
-      title: "Recent Content",
-      subtitle: "Your latest activity",
-      items: [
-        {
-          id: "messages",
-          title: "Messages",
-          subtitle: "Check your inbox",
-          leftIcon: RiMailFill,
-          children:
-            "Stay connected with your contacts by checking and replying to your recent messages. Keep conversations organized and never miss important updates.",
-        },
-        {
-          id: "notifications",
-          title: "Notifications",
-          subtitle: "View Alerts",
-          leftIcon: RiNotification3Fill,
-          children:
-            "See what's new at a glance. Review recent alerts, mentions, and important reminders to stay on top of your activities.",
-        },
-        {
-          id: "calendar",
-          title: "Calendar",
-          subtitle: "Upcoming events",
-          leftIcon: RiCalendar2Fill,
-          children:
-            "View your scheduled events and upcoming meetings in one place. Manage your time effectively and plan your week with confidence.",
-        },
-      ],
-    },
-    {
-      id: "all-content",
-      title: "All Content",
-      subtitle: "With warning rightSideContent",
-      items: [
-        {
-          id: "home",
-          title: "Home",
-          subtitle: "Go to homepage",
-          leftIcon: RiHome2Fill,
-          children:
-            "Return to your main dashboard where you can quickly access all your essential tools, updates, and recent highlights in one glance.",
-        },
-        {
-          id: "profile",
-          title: "Profile",
-          subtitle: "View your profile",
-          leftIcon: RiUser3Fill,
-          children:
-            "Customize your personal information, update your avatar, and manage your account preferences to reflect your identity and style.",
-        },
-        {
-          id: "settings",
-          title: "Settings",
-          subtitle: "Adjust preferences",
-          leftIcon: RiSettings3Fill,
-          openable: true,
-          children:
-            "Modify your system preferences, manage privacy and notifications, and fine-tune your user experience to suit your workflow.",
-        },
-      ],
-    },
-  ];
-
   context("onOpen", () => {
     context("when clicking", () => {
       it("renders log id & isOpen condition", () => {
@@ -1561,14 +2155,15 @@ describe("List", () => {
             searchable
             draggable
             selectable
-            openerBehavior="onlyOne"
             onOpen={({ id, isOpen }) =>
               console.log(`for id ${id} isOpen is ${isOpen ? "true" : "false"}`)
             }
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS_OPENABLE.map((group, index) => (
               <List.Group
@@ -1609,6 +2204,234 @@ describe("List", () => {
         );
       });
     });
+
+    context("with group", () => {
+      context("when clicking", () => {
+        it("renders log id & isOpen condition", () => {
+          cy.mount(
+            <List
+              searchable
+              draggable
+              selectable
+              onOpen={({ id, isOpen }) =>
+                console.log(
+                  `for id ${id} isOpen is ${isOpen ? "true" : "false"}`
+                )
+              }
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
+            >
+              {LIST_GROUPS_OPENABLE.map((group, index) => (
+                <List.Group
+                  key={index}
+                  id={group.id}
+                  title={group.title}
+                  subtitle={group.subtitle}
+                  actions={group.actions}
+                  openerStyle="togglebox"
+                >
+                  {group.items.map((list, i) => (
+                    <List.Item
+                      key={i}
+                      id={list.id}
+                      actions={list.actions}
+                      leftIcon={list.leftIcon}
+                      subtitle={list.subtitle}
+                      title={list.title}
+                      openable
+                      selectedOptions={{
+                        checked: true,
+                      }}
+                    >
+                      {list.children}
+                    </List.Item>
+                  ))}
+                </List.Group>
+              ))}
+            </List>
+          );
+          cy.window().then((win) => {
+            cy.spy(win.console, "log").as("consoleLog");
+          });
+          cy.findByText("Recent Content").click();
+          cy.get("@consoleLog").should(
+            "have.been.calledWith",
+            "for id recent-content isOpen is false"
+          );
+        });
+      });
+    });
+  });
+
+  context("initialState on group level", () => {
+    context("when given closed", () => {
+      it("should not renders text (hide)", () => {
+        cy.mount(
+          <List
+            searchable
+            draggable
+            selectable
+            onOpen={({ id, isOpen }) =>
+              console.log(`for id ${id} isOpen is ${isOpen ? "true" : "false"}`)
+            }
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
+          >
+            {LIST_GROUPS_OPENABLE.map((group, index) => (
+              <List.Group
+                key={index}
+                id={group.id}
+                initialState="closed"
+                title={group.title}
+                subtitle={group.subtitle}
+                actions={group.actions}
+                openerStyle="togglebox"
+              >
+                {group.items.map((list, i) => (
+                  <List.Item
+                    key={i}
+                    id={list.id}
+                    actions={list.actions}
+                    leftIcon={list.leftIcon}
+                    subtitle={list.subtitle}
+                    title={list.title}
+                    openable
+                    selectedOptions={{
+                      checked: true,
+                    }}
+                  >
+                    {list.children}
+                  </List.Item>
+                ))}
+              </List.Group>
+            ))}
+          </List>
+        );
+        LIST_GROUPS_OPENABLE.map((group) =>
+          group.items.map((list) => {
+            cy.findByText(list.title as string).should("not.be.visible");
+          })
+        );
+      });
+    });
+
+    context("when given opened", () => {
+      it("should renders text", () => {
+        cy.mount(
+          <List
+            searchable
+            draggable
+            selectable
+            onOpen={({ id, isOpen }) =>
+              console.log(`for id ${id} isOpen is ${isOpen ? "true" : "false"}`)
+            }
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
+          >
+            {LIST_GROUPS_OPENABLE.map((group, index) => (
+              <List.Group
+                key={index}
+                id={group.id}
+                initialState="opened"
+                title={group.title}
+                subtitle={group.subtitle}
+                actions={group.actions}
+                openerStyle="togglebox"
+              >
+                {group.items.map((list, i) => (
+                  <List.Item
+                    key={i}
+                    id={list.id}
+                    actions={list.actions}
+                    leftIcon={list.leftIcon}
+                    subtitle={list.subtitle}
+                    title={list.title}
+                    openable
+                    selectedOptions={{
+                      checked: true,
+                    }}
+                  >
+                    {list.children}
+                  </List.Item>
+                ))}
+              </List.Group>
+            ))}
+          </List>
+        );
+        LIST_GROUPS_OPENABLE.map((group) =>
+          group.items.map((list) => {
+            cy.findByText(list.title as string).should("be.visible");
+          })
+        );
+      });
+    });
+
+    context("when not given", () => {
+      it("should renders text", () => {
+        cy.mount(
+          <List
+            searchable
+            draggable
+            selectable
+            onOpen={({ id, isOpen }) =>
+              console.log(`for id ${id} isOpen is ${isOpen ? "true" : "false"}`)
+            }
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
+          >
+            {LIST_GROUPS_OPENABLE.map((group, index) => (
+              <List.Group
+                key={index}
+                id={group.id}
+                initialState="opened"
+                title={group.title}
+                subtitle={group.subtitle}
+                actions={group.actions}
+                openerStyle="togglebox"
+              >
+                {group.items.map((list, i) => (
+                  <List.Item
+                    key={i}
+                    id={list.id}
+                    actions={list.actions}
+                    leftIcon={list.leftIcon}
+                    subtitle={list.subtitle}
+                    title={list.title}
+                    openable
+                    selectedOptions={{
+                      checked: true,
+                    }}
+                  >
+                    {list.children}
+                  </List.Item>
+                ))}
+              </List.Group>
+            ))}
+          </List>
+        );
+        LIST_GROUPS_OPENABLE.map((group) =>
+          group.items.map((list) => {
+            cy.findByText(list.title as string).should("be.visible");
+          })
+        );
+      });
+    });
   });
 
   context("openerBehavior", () => {
@@ -1620,10 +2443,12 @@ describe("List", () => {
             draggable
             selectable
             openerBehavior="onlyOne"
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS_OPENABLE.map((group, index) => (
               <List.Group
@@ -1658,15 +2483,90 @@ describe("List", () => {
         cy.findByText(
           "Modify your system preferences, manage privacy and notifications, and fine-tune your user experience to suit your workflow."
         ).should("not.be.visible");
-        cy.findByText("Settings").click();
+        cy.findByText("Settings").click({ force: true });
         cy.findByText(
           "Modify your system preferences, manage privacy and notifications, and fine-tune your user experience to suit your workflow."
         ).should("be.visible");
+        cy.findByText(
+          "Customize your personal information, update your avatar, and manage your account preferences to reflect your identity and style."
+        ).should("not.be.visible");
 
-        cy.findByText("Profile").click();
+        cy.findByText("Profile").click({ force: true });
         cy.findByText(
           "Modify your system preferences, manage privacy and notifications, and fine-tune your user experience to suit your workflow."
         ).should("not.be.visible");
+        cy.findByText(
+          "Customize your personal information, update your avatar, and manage your account preferences to reflect your identity and style."
+        ).should("be.visible");
+      });
+
+      context("when clicking on the group", () => {
+        it("should not closed the opener", () => {
+          cy.mount(
+            <List
+              searchable
+              draggable
+              selectable
+              openerBehavior="onlyOne"
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
+            >
+              {LIST_GROUPS_OPENABLE.map((group, index) => (
+                <List.Group
+                  key={index}
+                  id={group.id}
+                  title={group.title}
+                  subtitle={group.subtitle}
+                  actions={group.actions}
+                  openerStyle="togglebox"
+                >
+                  {group.items.map((list, i) => (
+                    <List.Item
+                      key={i}
+                      id={list.id}
+                      actions={list.actions}
+                      leftIcon={list.leftIcon}
+                      subtitle={list.subtitle}
+                      title={list.title}
+                      groupId={group.id}
+                      openable
+                      selectedOptions={{
+                        checked: true,
+                      }}
+                    >
+                      {list.children}
+                    </List.Item>
+                  ))}
+                </List.Group>
+              ))}
+            </List>
+          );
+          cy.findByText(
+            "Modify your system preferences, manage privacy and notifications, and fine-tune your user experience to suit your workflow."
+          ).should("not.be.visible");
+
+          cy.findByText("Settings").click({ force: true });
+          cy.findByText(
+            "Modify your system preferences, manage privacy and notifications, and fine-tune your user experience to suit your workflow."
+          ).should("be.visible");
+
+          cy.findByText("Profile").click({ force: true });
+          cy.findByText(
+            "Customize your personal information, update your avatar, and manage your account preferences to reflect your identity and style."
+          ).should("be.visible");
+          cy.findByText(
+            "Modify your system preferences, manage privacy and notifications, and fine-tune your user experience to suit your workflow."
+          ).should("not.be.visible");
+
+          cy.findByText("Recent Content").click();
+          cy.findByText(
+            "Customize your personal information, update your avatar, and manage your account preferences to reflect your identity and style."
+          ).should("be.visible");
+        });
       });
     });
 
@@ -1678,10 +2578,12 @@ describe("List", () => {
             draggable
             selectable
             openerBehavior="any"
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS_OPENABLE.map((group, index) => (
               <List.Group
@@ -1732,10 +2634,12 @@ describe("List", () => {
             searchable
             draggable
             selectable
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS_OPENABLE.map((group, index) => (
               <List.Group
@@ -1785,10 +2689,12 @@ describe("List", () => {
               searchable
               draggable
               selectable
-              containerStyle={css`
-                padding: 16px;
-                min-width: 350px;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
             >
               {LIST_GROUPS_OPENABLE.map((group, index) => (
                 <List.Group
@@ -1846,10 +2752,12 @@ describe("List", () => {
               searchable
               draggable
               selectable
-              containerStyle={css`
-                padding: 16px;
-                min-width: 350px;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
             >
               {LIST_GROUPS_OPENABLE.map((group, index) => (
                 <List.Group
@@ -1962,10 +2870,12 @@ describe("List", () => {
             searchable
             draggable
             selectable
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS_OPENABLE_WITHOUT_CHILDREN.map((group, index) => (
               <List.Group
@@ -2013,10 +2923,12 @@ describe("List", () => {
               searchable
               draggable
               selectable
-              containerStyle={css`
-                padding: 16px;
-                min-width: 350px;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
             >
               {LIST_GROUPS_OPENABLE_WITHOUT_CHILDREN.map((group, index) => (
                 <List.Group
@@ -2078,10 +2990,12 @@ describe("List", () => {
               searchable
               draggable
               selectable
-              containerStyle={css`
-                padding: 16px;
-                min-width: 350px;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
             >
               {LIST_GROUPS_OPENABLE.map((group, index) => (
                 <List.Group
@@ -2172,10 +3086,12 @@ describe("List", () => {
             searchable
             draggable
             selectable
-            containerStyle={css`
-              padding: 16px;
-              min-width: 350px;
-            `}
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
           >
             {LIST_GROUPS_OPENABLE.map((group, index) => (
               <List.Group

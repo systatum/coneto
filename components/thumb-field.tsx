@@ -7,6 +7,7 @@ import {
 } from "@remixicon/react";
 import { ChangeEvent, ReactElement, useRef, useState } from "react";
 import styled, { css, CSSProp } from "styled-components";
+import { StatefulForm } from "./stateful-form";
 
 export interface ThumbFieldProps {
   value?: boolean | null;
@@ -18,11 +19,16 @@ export interface ThumbFieldProps {
   label?: string;
   showError?: boolean;
   errorMessage?: string;
+  styles?: ThumbFieldStylesProps;
+  id?: string;
+  helper?: string;
+}
+
+export interface ThumbFieldStylesProps {
+  triggerWrapperStyle?: CSSProp;
   containerStyle?: CSSProp;
   triggerStyle?: CSSProp;
   labelStyle?: CSSProp;
-  style?: CSSProp;
-  id?: string;
 }
 
 export type ThumbFieldValue = "up" | "down" | "blank";
@@ -37,11 +43,9 @@ function ThumbField({
   errorMessage,
   label,
   showError,
-  containerStyle,
-  labelStyle,
-  style,
-  triggerStyle,
+  styles,
   id,
+  helper,
 }: ThumbFieldProps) {
   const thumbStateValue = value === true ? "up" : value ? "down" : "blank";
   const [thumbValue, setThumbValue] =
@@ -67,7 +71,7 @@ function ThumbField({
   };
 
   const inputElement: ReactElement = (
-    <InputGroup $style={style}>
+    <InputGroup $style={styles?.triggerWrapperStyle}>
       <input
         aria-label="thumbfield-input"
         ref={thumbInputRef}
@@ -81,7 +85,7 @@ function ThumbField({
       <TriggerWrapper
         aria-label="thumb-up"
         onClick={() => handleChangeValue("up")}
-        $triggerStyle={triggerStyle}
+        $triggerStyle={styles?.triggerStyle}
         $active={thumbValue === "up"}
         $activeColor={thumbsUpBackgroundColor}
         $showError={showError}
@@ -96,7 +100,7 @@ function ThumbField({
       <TriggerWrapper
         aria-label="thumb-down"
         onClick={() => handleChangeValue("down")}
-        $triggerStyle={triggerStyle}
+        $triggerStyle={styles?.triggerStyle}
         $active={thumbValue === "down"}
         $activeColor={thumbsDownBackgroundColor}
         $showError={showError}
@@ -117,11 +121,13 @@ function ThumbField({
   );
 
   return (
-    <InputWrapper $containerStyle={containerStyle} $disabled={disabled}>
+    <InputWrapper $containerStyle={styles?.containerStyle} $disabled={disabled}>
       {label && (
-        <Label $style={labelStyle} htmlFor={id}>
-          {label}
-        </Label>
+        <StatefulForm.Label
+          style={styles?.labelStyle}
+          helper={helper}
+          label={label}
+        />
       )}
       <InputContent>
         {inputElement}
@@ -164,10 +170,6 @@ const InputContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4px;
-`;
-
-const Label = styled.label<{ $style?: CSSProp }>`
-  ${({ $style }) => $style}
 `;
 
 const ErrorText = styled.span`

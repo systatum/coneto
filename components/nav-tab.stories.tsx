@@ -22,6 +22,43 @@ const meta: Meta<typeof NavTab> = {
     layout: "fullscreen",
   },
   excludeStories: ["WriteTabContent", "ReviewTabContent"],
+  argTypes: {
+    tabs: {
+      control: "object",
+      description: "Main tab configuration including sub items and content",
+    },
+    activeTab: {
+      control: "text",
+      description:
+        "Currently selected tab or sub-item ID. When undefined or null, no tab content is shown.",
+    },
+    activeColor: {
+      control: "color",
+      description: "Underline color for the active tab",
+    },
+    actions: {
+      control: "object",
+      description: "Right-side header action buttons",
+    },
+    children: {
+      control: false,
+    },
+    styles: {
+      control: false,
+      description: `
+Custom styles for the NavTab component. This object allows you to override styles for individual structural parts of the navigation layout:
+
+- **containerStyle**: Root wrapper of the NavTab (positioning, sizing, layout of the whole view)
+- **containerRowStyle**: Wrapper for the top navigation bar row (tabs + actions)
+- **containerBoxStyle**: Container that wraps the tab list (background, borders, spacing of the tab strip)
+- **containerActionsStyle**: Right-side container that holds ActionButton components
+- **boxStyle**: Style applied to each tab item (padding, spacing, hover area, typography)
+- **contentStyle**: Wrapper around the rendered tab content below the tab bar
+
+Each field accepts a \`CSSProp\` (styled-components compatible) and can be used to control layout, spacing, colors, borders, and visual behavior without modifying the component’s logic.
+  `,
+    },
+  },
 };
 
 export default meta;
@@ -230,9 +267,11 @@ export const WithSubItems: Story = {
                   Table Content
                 </h2>
                 <Table
-                  tableRowContainerStyle={css`
-                    max-height: 400px;
-                  `}
+                  styles={{
+                    tableRowContainerStyle: css`
+                      max-height: 400px;
+                    `,
+                  }}
                   columns={columns}
                 >
                   {sampleRows}

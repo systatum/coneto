@@ -11,15 +11,15 @@ import {
   forwardRef,
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
+import { StatefulForm } from "./stateful-form";
 
 export interface TextareaProps
   extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "style"> {
   label?: string;
   showError?: boolean;
   errorMessage?: string;
-  containerStyle?: CSSProp;
-  labelStyle?: CSSProp;
-  style?: CSSProp;
+  helper?: string;
+  styles?: TextareaStylesProps;
   onActionClick?: () => void;
   onChange?: (
     data: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -27,6 +27,12 @@ export interface TextareaProps
   icon?: RemixiconComponentType;
   actionIcon?: boolean;
   autogrow?: boolean;
+}
+
+interface TextareaStylesProps {
+  containerStyle?: CSSProp;
+  labelStyle?: CSSProp;
+  self?: CSSProp;
 }
 
 const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
@@ -38,12 +44,11 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       rows,
       onChange,
       onActionClick,
-      style,
-      containerStyle,
       actionIcon,
       icon: Icon = RiCheckLine,
       autogrow,
-      labelStyle,
+      styles,
+      helper,
       ...props
     },
     ref
@@ -81,7 +86,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           }}
           rows={rows ?? 3}
           $error={showError}
-          $style={style}
+          $style={styles?.self}
           {...(props as TextareaHTMLAttributes<HTMLTextAreaElement>)}
         />
         {actionIcon && (
@@ -115,11 +120,14 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     );
 
     return (
-      <Container $style={containerStyle}>
+      <Container $style={styles?.containerStyle}>
         {label && (
-          <Label $style={labelStyle} htmlFor={inputId}>
-            {label}
-          </Label>
+          <StatefulForm.Label
+            htmlFor={props.disabled ? null : inputId}
+            style={styles?.labelStyle}
+            helper={helper}
+            label={label}
+          />
         )}
         <div>
           {inputElement}
@@ -138,11 +146,6 @@ const Container = styled.div<{ $style?: CSSProp }>`
   font-size: 0.75rem;
   position: relative;
 
-  ${({ $style }) => $style}
-`;
-
-const Label = styled.label<{ $style?: CSSProp }>`
-  font-size: 0.75rem;
   ${({ $style }) => $style}
 `;
 

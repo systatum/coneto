@@ -39,28 +39,34 @@ export interface SelectboxProps {
   iconClosed?: RemixiconComponentType;
   type?: "calendar" | "default";
   clearable?: boolean;
-  containerStyle?: CSSProp;
-  selectboxStyle?: CSSProp;
   highlightOnMatch?: boolean;
   strict?: boolean;
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
   onClick?: () => void;
   multiple?: boolean;
   actions?: any[];
+  id?: string;
   maxSelectableItems?: number | undefined;
   children?: (
-    props: DrawerProps & {
-      options: OptionsProps[];
-      handleKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
-      selectedOptionsLocal: OptionsProps;
-      setSelectedOptionsLocal: (value: OptionsProps) => void;
-      setHasInteracted?: (value: boolean) => void;
-      ref?: Ref<HTMLInputElement>;
-    }
+    props: DrawerProps &
+      InteractionModeProps & {
+        options: OptionsProps[];
+        handleKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
+        selectedOptionsLocal: OptionsProps;
+        setSelectedOptionsLocal: (value: OptionsProps) => void;
+        setHasInteracted?: (value: boolean) => void;
+        ref?: Ref<HTMLInputElement>;
+      }
   ) => ReactNode;
+  styles?: SelectboxStylesProps;
 }
 
-export interface DrawerProps {
+export interface SelectboxStylesProps {
+  containerStyle?: CSSProp;
+  self?: CSSProp;
+}
+
+export interface DrawerProps extends InteractionModeProps {
   highlightedIndex: number | null;
   setHighlightedIndex: (index: number | null) => void;
   setIsOpen: (open: boolean) => void;
@@ -69,11 +75,15 @@ export interface DrawerProps {
     userProps?: HTMLAttributes<HTMLUListElement>
   ) => HTMLAttributes<HTMLUListElement>;
   refs: { setFloating: Ref<HTMLUListElement>; setReference: Ref<HTMLElement> };
-  floatingStyles: CSSProperties;
   listRef: MutableRefObject<(HTMLLIElement | null)[]>;
   isOpen: boolean;
-  style?: CSSProp;
+  floatingStyles: CSSProperties;
   onClick?: () => void;
+}
+
+interface InteractionModeProps {
+  interactionMode: "keyboard" | "mouse";
+  setInteractionMode: (props: "keyboard" | "mouse") => void;
 }
 
 export interface OptionsProps {
@@ -94,15 +104,15 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       iconOpened: IconOpened = RiArrowDownSLine,
       iconClosed: IconClosed = RiArrowUpSLine,
       clearable = false,
-      containerStyle,
       highlightOnMatch,
       strict,
       onKeyDown,
       onClick,
-      selectboxStyle,
+      styles,
       multiple,
       actions,
       maxSelectableItems,
+      id,
     },
     ref
   ) => {
@@ -127,6 +137,10 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
     const [hasInteracted, setHasInteracted] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
+    const [interactionMode, setInteractionMode] = useState<
+      "keyboard" | "mouse"
+    >("mouse");
+
     const [confirmedValue, setConfirmedValue] = useState<OptionsProps | null>(
       null
     );
@@ -183,8 +197,13 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
 
       const totalItems = (actions?.length ?? 0) + FILTERED_OPTIONS.length - 1;
 
-      if ((e.key === "ArrowDown" || e.key === "ArrowUp") && !isOpen) {
-        setIsOpen(true);
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        setInteractionMode("keyboard");
+
+        if (!isOpen) {
+          setIsOpen(true);
+        }
+
         e.preventDefault();
       }
 
@@ -270,16 +289,17 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
           setIsHovered(false);
         }}
         role="combobox"
-        $style={containerStyle}
+        $style={styles?.containerStyle}
         aria-expanded={isOpen}
         onClick={() => {
           if (multiple) inputRef.current?.focus();
         }}
       >
         <Input
-          $style={selectboxStyle}
+          $style={styles?.self}
           {...getReferenceProps()}
           data-type="selectbox"
+          id={id}
           $clearable={clearable}
           ref={(el) => {
             refs.setReference(el);
@@ -311,7 +331,6 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
           }}
           onBlur={() => {
             setIsFocused(false);
-            setIsHovered(false);
             setHasInteracted(false);
 
             if (strict) {
@@ -350,20 +369,16 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
             }
           }}
           placeholder={placeholder || "Search your item..."}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
           $focused={isFocused && !multiple}
           $hovered={isHovered && !multiple}
           $highlight={highlightOnMatch && FILTERED_ACTIVE}
         />
 
-        {clearable && selectedOptions?.length !== 0 && (
+        {clearable && selectedOptionsLocal?.text.length !== 0 && (
           <>
             <ClearIcon
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
               aria-label="clearable-content"
-              onClick={() => {
+              onMouseDown={() => {
                 setSelectedOptions?.([]);
                 setSelectedOptionsLocal({ text: "", value: "0" });
                 setHasInteracted(false);
@@ -371,11 +386,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
               $highlight={highlightOnMatch && FILTERED_ACTIVE}
               size={16}
             />
-            <Divider
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
-              aria-label="divider"
-            />
+            <Divider aria-label="divider" />
           </>
         )}
 
@@ -398,7 +409,6 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
             />
           ) : (
             <IconClosed
-              onMouseEnter={() => setIsHovered(true)}
               size={18}
               color={
                 highlightOnMatch && FILTERED_ACTIVE ? "#61a9f9" : "#9ca3af"
@@ -423,6 +433,8 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
             listRef,
             setHasInteracted,
             handleKeyDown,
+            interactionMode,
+            setInteractionMode,
             ref: multiple ? inputRef : undefined,
           })}
       </Container>

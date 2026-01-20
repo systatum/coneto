@@ -161,10 +161,12 @@ export const Default: Story = {
               >
                 <Button
                   disabled={!isFormValid}
-                  buttonStyle={{
-                    width: "100%",
-                    cursor: "pointer",
-                    maxWidth: "180px",
+                  styles={{
+                    self: {
+                      width: "100%",
+                      cursor: "pointer",
+                      maxWidth: "180px",
+                    },
                   }}
                   type="submit"
                 >
@@ -301,10 +303,12 @@ export const Closable: Story = {
             >
               <Button
                 disabled={!isFormValid}
-                buttonStyle={{
-                  width: "100%",
-                  cursor: "pointer",
-                  maxWidth: "180px",
+                styles={{
+                  self: {
+                    width: "100%",
+                    cursor: "pointer",
+                    maxWidth: "180px",
+                  },
                 }}
                 type="submit"
               >
@@ -440,10 +444,12 @@ export const FixedLeft: Story = {
             >
               <Button
                 disabled={!isFormValid}
-                buttonStyle={{
-                  width: "100%",
-                  cursor: "pointer",
-                  maxWidth: "180px",
+                styles={{
+                  self: {
+                    width: "100%",
+                    cursor: "pointer",
+                    maxWidth: "180px",
+                  },
                 }}
                 type="submit"
               >
@@ -640,24 +646,28 @@ export const Nested: Story = {
         <Card
           title="Employee"
           subtitle="Overview of all employee and their key personel"
-          containerStyle={css`
-            padding-left: 0px;
-            padding-right: 0px;
-            min-width: 1000px;
-            padding-bottom: 0px;
-          `}
-          headerStyle={css`
-            padding-left: 15px;
-            padding-right: 15px;
-            border-bottom: 1px solid #d1d5db;
-          `}
+          styles={{
+            containerStyle: css`
+              padding-left: 0px;
+              padding-right: 0px;
+              min-width: 1000px;
+              padding-bottom: 0px;
+            `,
+            headerStyle: css`
+              padding-left: 15px;
+              padding-right: 15px;
+              border-bottom: 1px solid #d1d5db;
+            `,
+          }}
         >
           <Table
             searchable
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
-            onSearchboxChange={(e) => setSearch(e.target.value)}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
+            searchbox={{ onChange: (e) => setSearch(e.target.value) }}
             columns={columns}
           >
             {filteredRows.map((rowValue, rowIndex) => (
@@ -688,23 +698,27 @@ export const Nested: Story = {
             <Card
               title="Family Registry"
               subtitle="Detailed view of employees and their family registry records"
-              containerStyle={css`
-                padding-left: 0px;
-                padding-right: 0px;
-                min-width: 1000px;
-                padding-bottom: 0px;
-              `}
-              headerStyle={css`
-                padding-left: 15px;
-                padding-right: 15px;
-                border-bottom: 1px solid #d1d5db;
-              `}
+              styles={{
+                containerStyle: css`
+                  padding-left: 0px;
+                  padding-right: 0px;
+                  min-width: 1000px;
+                  padding-bottom: 0px;
+                `,
+                headerStyle: css`
+                  padding-left: 15px;
+                  padding-right: 15px;
+                  border-bottom: 1px solid #d1d5db;
+                `,
+              }}
             >
               <Table
                 searchable
-                tableRowContainerStyle={css`
-                  max-height: 400px;
-                `}
+                styles={{
+                  tableRowContainerStyle: css`
+                    max-height: 400px;
+                  `,
+                }}
                 actions={[
                   {
                     caption: "Add Family",
@@ -714,7 +728,7 @@ export const Nested: Story = {
                     },
                   },
                 ]}
-                onSearchboxChange={(e) => setFamilySearch(e.target.value)}
+                searchbox={{ onChange: (e) => setFamilySearch(e.target.value) }}
                 columns={columns}
                 onItemsSelected={handleItemsSelected}
               >

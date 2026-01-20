@@ -1,32 +1,46 @@
-import { ChangeEvent, DragEvent, ReactElement, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  DragEvent,
+  InputHTMLAttributes,
+  ReactElement,
+  useRef,
+  useState,
+} from "react";
 import { RiCloseLine } from "@remixicon/react";
 import styled, { css, CSSProp } from "styled-components";
 import { Button } from "./button";
+import { StatefulForm } from "./stateful-form";
 
-export interface FileInputBoxProps {
+export interface FileInputBoxProps
+  extends InputHTMLAttributes<HTMLInputElement> {
   placeholder?: string;
   accept?: string;
   multiple?: boolean;
   onFilesSelected?: (files: File[]) => void;
   label?: string;
-  containerStyle?: CSSProp;
-  labelStyle?: CSSProp;
-  inputStyle?: CSSProp;
   showError?: boolean;
   errorMessage?: string;
+  styles?: FileInputBoxStylesProps;
+  helper?: string;
+}
+
+export interface FileInputBoxStylesProps {
+  containerStyle?: CSSProp;
+  labelStyle?: CSSProp;
+  self?: CSSProp;
 }
 
 function FileInputBox({
-  containerStyle,
   placeholder = "Drop files here or browse",
   accept = "*",
   multiple = false,
   onFilesSelected,
   label,
-  labelStyle,
   errorMessage,
   showError,
-  inputStyle,
+  styles,
+  helper,
+  ...props
 }: FileInputBoxProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -79,7 +93,7 @@ function FileInputBox({
 
   const inputElement: ReactElement = (
     <InputBox
-      $style={inputStyle}
+      $style={styles?.self}
       $isDragging={isDragging}
       $hasFile={selectedFiles.length > 0}
       onClick={handleBrowseClick}
@@ -95,20 +109,22 @@ function FileInputBox({
             <FileItem key={index}>
               <Button
                 aria-label="delete-button"
-                containerStyle={css`
-                  cursor: pointer;
-                  width: fit-content;
-                  height: fit-content;
-                `}
-                buttonStyle={css`
-                  padding: 2px;
-                  width: fit-content;
-                  height: fit-content;
-                  background-color: white;
-                  &:hover {
-                    background-color: #e5e7eb;
-                  }
-                `}
+                styles={{
+                  containerStyle: css`
+                    cursor: pointer;
+                    width: fit-content;
+                    height: fit-content;
+                  `,
+                  self: css`
+                    padding: 2px;
+                    width: fit-content;
+                    height: fit-content;
+                    background-color: white;
+                    &:hover {
+                      background-color: #e5e7eb;
+                    }
+                  `,
+                }}
                 onClick={(e) => {
                   e.stopPropagation();
                   handleDeleteFile(index);
@@ -129,14 +145,22 @@ function FileInputBox({
         accept={accept}
         multiple={multiple}
         onChange={handleFileChange}
+        id={props.id}
         hidden
       />
     </InputBox>
   );
 
   return (
-    <InputWrapper $containerStyle={containerStyle}>
-      {label && <Label $style={labelStyle}>{label}</Label>}
+    <InputWrapper $containerStyle={styles?.containerStyle}>
+      {label && (
+        <StatefulForm.Label
+          htmlFor={props.disabled ? null : props.id}
+          style={styles?.labelStyle}
+          helper={helper}
+          label={label}
+        />
+      )}
       <InputContent>
         {inputElement}
         {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
@@ -164,7 +188,7 @@ const InputBox = styled.div<{
   $isDragging: boolean;
   $hasFile: boolean;
   $isError?: boolean;
-  $inputStyle?: CSSProp;
+  $self?: CSSProp;
   $style?: CSSProp;
 }>`
   padding: 12px;
@@ -219,10 +243,6 @@ const InputContent = styled.div`
   flex-direction: column;
   gap: 4px;
   font-size: 12px;
-`;
-
-const Label = styled.label<{ $style?: CSSProp }>`
-  ${({ $style }) => $style}
 `;
 
 const ErrorText = styled.span`

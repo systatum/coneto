@@ -8,12 +8,17 @@ export interface ActionButtonProps {
   icon?: RemixiconComponentType;
   iconSize?: number;
   onClick?: () => void;
-  style?: CSSProp;
-  dividerStyle?: CSSProp;
-  dropdownStyle?: CSSProp;
+  styles?: ActionButtonStylesProps;
   subMenu?: (props: SubMenuButtonProps) => ReactNode;
   disabled?: boolean;
   showSubMenuOn?: "caret" | "self";
+}
+
+export interface ActionButtonStylesProps {
+  self?: CSSProp;
+  toggleStyle?: CSSProp;
+  dividerStyle?: CSSProp;
+  dropdownStyle?: CSSProp;
 }
 
 export function ActionButton(
@@ -33,54 +38,26 @@ export function ActionButton(
       showSubMenuOn={props.showSubMenuOn}
       size="sm"
       tipMenuSize="sm"
-      buttonStyle={css`
-        display: flex;
-        flex-direction: row;
-        gap: 0.25rem;
-        align-items: center;
-        cursor: pointer;
-        background-color: transparent;
-        color: #565555;
-        ${props.subMenu && props.showSubMenuOn === "caret"
-          ? css`
-              border-top: 1px solid #e5e7eb;
-              border-left: 1px solid #e5e7eb;
-              border-bottom: 1px solid #e5e7eb;
-            `
-          : css`
-              border: 1px solid #e5e7eb;
-            `}
-        border-radius: 6px;
-        position: relative;
-
-        &:hover {
-          background-color: #e2e0e0;
-        }
-
-        &:disabled {
-          background-color: rgb(227 227 227);
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
-        ${props.style}
-      `}
-      toggleStyle={
-        props.subMenu &&
-        css`
+      styles={{
+        self: css`
           display: flex;
           flex-direction: row;
           gap: 0.25rem;
           align-items: center;
           cursor: pointer;
-          color: #565555;
-          padding: 0.25rem 0.5rem;
           background-color: transparent;
+          color: #565555;
+          ${props.subMenu && props.showSubMenuOn === "caret"
+            ? css`
+                border-top: 1px solid #e5e7eb;
+                border-left: 1px solid #e5e7eb;
+                border-bottom: 1px solid #e5e7eb;
+              `
+            : css`
+                border: 1px solid #e5e7eb;
+              `}
+          border-radius: 6px;
           position: relative;
-          border-top: 1px solid #e5e7eb;
-          border-right: 1px solid #e5e7eb;
-          border-bottom: 1px solid #e5e7eb;
-          border-top-right-radius: 6px;
-          border-bottom-right-radius: 6px;
 
           &:hover {
             background-color: #e2e0e0;
@@ -91,27 +68,61 @@ export function ActionButton(
             opacity: 0.5;
             cursor: not-allowed;
           }
-          ${props.style}
-        `
-      }
-      dividerStyle={css`
-        border: 1px solid rgb(236 236 236);
-        ${props.subMenu && props.dividerStyle ? props.dividerStyle : null}
-      `}
-      dropdownStyle={(placement) => css`
-        ${props.forTable && placement?.startsWith("bottom")
-          ? css`
-              transform: translateY(-4px);
-            `
-          : placement?.startsWith("top")
-            ? css`
-                transform: translateY(4px);
-              `
-            : null}
+          ${props.styles?.self}
+        `,
+        toggleStyle: css`
+          ${props.subMenu &&
+          css`
+            display: flex;
+            flex-direction: row;
+            gap: 0.25rem;
+            align-items: center;
+            cursor: pointer;
+            color: #565555;
+            padding: 0.25rem 0.5rem;
+            background-color: transparent;
+            position: relative;
+            border-top: 1px solid #e5e7eb;
+            border-right: 1px solid #e5e7eb;
+            border-bottom: 1px solid #e5e7eb;
+            border-top-right-radius: 6px;
+            border-bottom-right-radius: 6px;
 
-        width: 170px;
-        ${props.subMenu && props.dropdownStyle ? props.dropdownStyle : null}
-      `}
+            &:hover {
+              background-color: #e2e0e0;
+            }
+
+            &:disabled {
+              background-color: rgb(227 227 227);
+              opacity: 0.5;
+              cursor: not-allowed;
+            }
+            ${props.styles?.toggleStyle}
+          `}
+        `,
+        dividerStyle: css`
+          border: 1px solid rgb(236 236 236);
+          ${props.subMenu && props.styles?.dividerStyle
+            ? props.styles?.dividerStyle
+            : null}
+        `,
+        dropdownStyle: (placement) => css`
+          ${props.forTable && placement?.startsWith("bottom")
+            ? css`
+                transform: translateY(-4px);
+              `
+            : placement?.startsWith("top")
+              ? css`
+                  transform: translateY(4px);
+                `
+              : null}
+
+          width: 170px;
+          ${props.subMenu && props.styles?.dropdownStyle
+            ? props.styles?.dropdownStyle
+            : null}
+        `,
+      }}
     >
       {props.icon && <props.icon size={props.iconSize ?? 14} />}
 

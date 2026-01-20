@@ -3,56 +3,101 @@ import {
   ChangeEvent,
   forwardRef,
   InputHTMLAttributes,
+  ReactNode,
   useImperativeHandle,
   useRef,
   useState,
 } from "react";
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
+import { Button, SubMenuButtonProps } from "./button";
+import { TipMenuItemProps } from "./tip-menu";
 
 export interface SearchboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {
   name?: string;
   value?: string;
-  style?: CSSProp;
-  containerStyle?: CSSProp;
-  iconStyle?: CSSProp;
   onChange?: (data: ChangeEvent<HTMLInputElement>) => void;
+  styles?: SearchboxStylesProps;
+  resultMenu?: SearchboxResultMenuProps;
+  showResultMenu?: boolean;
+  safeAriaLabelSubMenu?: string[];
 }
 
-const Searchbox = forwardRef<HTMLInputElement, SearchboxProps>(
+export interface SearchboxStylesProps {
+  self?: CSSProp;
+  containerStyle?: CSSProp;
+  iconStyle?: CSSProp;
+}
+
+export type SearchboxResultMenuProps = (props: SubMenuButtonProps) => ReactNode;
+export type SearchboxResultMenuItemProps = TipMenuItemProps;
+
+const Searchbox = forwardRef<Omit<HTMLInputElement, "style">, SearchboxProps>(
   (
-    { name, value, onChange, style, containerStyle, iconStyle, ...props },
+    {
+      name,
+      value,
+      onChange,
+      styles,
+      safeAriaLabelSubMenu,
+      resultMenu,
+      showResultMenu,
+      ...props
+    },
     ref
   ) => {
-    const searchboxValue = value ? value : "";
-    const [inputValueLocal, setInputValueLocal] = useState(searchboxValue);
+    const [inputValueLocal, setInputValueLocal] = useState("");
+    const isControlled = value !== undefined;
+    const finalValue = isControlled ? value : inputValueLocal;
+
+    const [isFocus, setIsFocus] = useState(false);
 
     const inputId = `textbox-${name}`;
     const inputRef = useRef<HTMLInputElement>(null);
+    const anchorRef = useRef<HTMLInputElement>(null);
 
     useImperativeHandle(ref, () => inputRef.current!);
 
-    const valueLengthChecker = inputValueLocal.length > 0;
+    const valueLengthChecker = finalValue.length > 0;
+
+    const isOpenShowMenu = isFocus && showResultMenu;
 
     return (
       <SearchboxWrapper
+        ref={anchorRef}
         aria-label="textbox-search-wrapper"
-        $style={containerStyle}
+        $style={styles?.containerStyle}
+        onFocus={() => setIsFocus(true)}
       >
-        <SearchIcon $style={iconStyle} size={14} />
+        <SearchIcon $style={styles?.iconStyle} size={14} />
 
         <SearchboxInput
           ref={inputRef}
           id={inputId}
           aria-label="textbox-search"
           name={name}
-          value={inputValueLocal}
           onChange={(e) => {
             setInputValueLocal(e.target.value);
             onChange(e);
           }}
-          $style={style}
+          $focus={isFocus}
           {...(props as InputHTMLAttributes<HTMLInputElement>)}
+          value={finalValue}
+          $style={styles?.self}
+        />
+
+        <Button
+          onOpen={(prop: boolean) => setIsFocus(prop)}
+          open={isOpenShowMenu}
+          anchorRef={anchorRef}
+          showSubMenuOn="self"
+          styles={{
+            self: css`
+              display: none;
+            `,
+          }}
+          safeAreaAriaLabels={safeAriaLabelSubMenu}
+          subMenu={(props) => resultMenu?.(props)}
         />
 
         {valueLengthChecker && (
@@ -87,7 +132,7 @@ const SearchboxWrapper = styled.div<{ $style?: CSSProp }>`
   ${({ $style }) => $style};
 `;
 
-const SearchboxInput = styled.input<{ $style?: CSSProp }>`
+const SearchboxInput = styled.input<{ $style?: CSSProp; $focus?: boolean }>`
   border-radius: 9999px;
   padding: 8px 36px 8px 30px;
   width: 100%;
@@ -100,6 +145,13 @@ const SearchboxInput = styled.input<{ $style?: CSSProp }>`
     border-color: #61a9f9;
     box-shadow: 0 0 0 1px #61a9f9;
   }
+
+  ${({ $focus }) =>
+    $focus &&
+    css`
+      border-color: #61a9f9;
+      box-shadow: 0 0 0 1px #61a9f9;
+    `}
 
   ${({ $style }) => $style}
 `;

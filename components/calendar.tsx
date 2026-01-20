@@ -15,6 +15,7 @@ import {
   isWeekend,
   removeWeekend,
 } from "../lib/date";
+import { StatefulForm } from "./stateful-form";
 
 export interface BaseCalendarProps {
   options?: OptionsProps[];
@@ -24,12 +25,17 @@ export interface BaseCalendarProps {
   monthNames?: OptionsProps[];
   disableWeekend?: boolean;
   format?: FormatProps;
-  containerStyle?: CSSProp;
-  style?: CSSProp;
   yearPastReach?: number;
   futurePastReach?: number;
   onClick?: () => void;
   onCalendarPeriodChanged?: (data: Date) => void;
+  styles?: CalendarStylesProps;
+}
+
+export interface CalendarStylesProps {
+  self?: CSSProp;
+  containerStyle?: CSSProp;
+  labelStyle?: CSSProp;
 }
 
 type CalendarProps = BaseCalendarProps &
@@ -40,6 +46,7 @@ type CalendarProps = BaseCalendarProps &
     footer?: ReactNode;
     todayButtonCaption?: string;
     selectabilityMode?: SelectabilityModeState;
+    helper?: string;
   };
 
 interface CalendarStateProps {
@@ -98,15 +105,15 @@ function Calendar({
   yearPastReach = 80,
   futurePastReach = 50,
   format = "mm/dd/yyyy",
-  style,
   label,
   showError,
   errorMessage,
   onClick,
-  containerStyle,
+  styles,
   footer,
   todayButtonCaption = "Today",
   onCalendarPeriodChanged,
+  helper,
   selectabilityMode = "single",
 }: CalendarProps) {
   const today = new Date();
@@ -429,6 +436,8 @@ function Calendar({
     }
   };
 
+  console.log(styles?.self);
+
   const emptyCellsCount = new Date(
     currentDate.getFullYear(),
     currentDate.getMonth(),
@@ -514,7 +523,7 @@ function Calendar({
     <CalendarContainer
       $style={
         floatingStyles
-          ? style
+          ? styles?.self
           : css`
               padding: 0.5rem;
               font-size: 0.875rem;
@@ -529,7 +538,7 @@ function Calendar({
               box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
               list-style: none;
               outline: none;
-              ${style}
+              ${styles?.self}
             `
       }
     >
@@ -545,11 +554,13 @@ function Calendar({
           >
             <Button
               variant="transparent"
-              buttonStyle={css`
-                width: fit-content;
-                padding: 0.5rem;
-                font-size: 0.75rem;
-              `}
+              styles={{
+                self: css`
+                  width: fit-content;
+                  padding: 0.5rem;
+                  font-size: 0.75rem;
+                `,
+              }}
               aria-label="calendar-select-date"
               onClick={() => {
                 if (!calendarState.open) {
@@ -579,10 +590,12 @@ function Calendar({
                 options={monthNames}
                 selectedOptions={calendarState.month}
                 placeholder={monthNames[0].text}
-                containerStyle={css`
-                  min-width: 90px;
-                  max-width: 90px;
-                `}
+                styles={{
+                  containerStyle: css`
+                    min-width: 90px;
+                    max-width: 90px;
+                  `,
+                }}
                 setSelectedOptions={(value) => {
                   onChangeValueDate({
                     target: { name: "month", value },
@@ -594,10 +607,12 @@ function Calendar({
                 options={yearOptions}
                 selectedOptions={calendarState.year}
                 placeholder={String(currentYear)}
-                containerStyle={css`
-                  min-width: 75px;
-                  max-width: 75px;
-                `}
+                styles={{
+                  containerStyle: css`
+                    min-width: 75px;
+                    max-width: 75px;
+                  `,
+                }}
                 setSelectedOptions={(value) => {
                   onChangeValueDate({
                     target: { name: "year", value },
@@ -608,19 +623,21 @@ function Calendar({
 
             <Button
               variant="transparent"
-              containerStyle={css`
-                cursor: pointer;
-                transition: all 0.3s;
-                border-radius: 2px;
-                padding: 0px;
-                width: fit-content;
-                height: fit-content;
-              `}
-              buttonStyle={css`
-                width: fit-content;
-                height: fit-content;
-                padding: 2px;
-              `}
+              styles={{
+                containerStyle: css`
+                  cursor: pointer;
+                  transition: all 0.3s;
+                  border-radius: 2px;
+                  padding: 0px;
+                  width: fit-content;
+                  height: fit-content;
+                `,
+                self: css`
+                  width: fit-content;
+                  height: fit-content;
+                  padding: 2px;
+                `,
+              }}
             >
               <RiCheckLine
                 size={20}
@@ -642,19 +659,21 @@ function Calendar({
           >
             <Button
               variant="transparent"
-              containerStyle={css`
-                cursor: pointer;
-                transition: all 0.3s;
-                border-radius: 2px;
-                padding: 0px;
-                width: fit-content;
-                height: fit-content;
-              `}
-              buttonStyle={css`
-                width: fit-content;
-                height: fit-content;
-                padding: 0px;
-              `}
+              styles={{
+                containerStyle: css`
+                  cursor: pointer;
+                  transition: all 0.3s;
+                  border-radius: 2px;
+                  padding: 0px;
+                  width: fit-content;
+                  height: fit-content;
+                `,
+                self: css`
+                  width: fit-content;
+                  height: fit-content;
+                  padding: 0px;
+                `,
+              }}
             >
               <RiArrowLeftSLine
                 onClick={handleClickPrevMonth}
@@ -665,19 +684,21 @@ function Calendar({
 
             <Button
               variant="transparent"
-              containerStyle={css`
-                cursor: pointer;
-                transition: all 0.3s;
-                border-radius: 2px;
-                padding: 0px;
-                width: fit-content;
-                height: fit-content;
-              `}
-              buttonStyle={css`
-                width: fit-content;
-                height: fit-content;
-                padding: 0px;
-              `}
+              styles={{
+                containerStyle: css`
+                  cursor: pointer;
+                  transition: all 0.3s;
+                  border-radius: 2px;
+                  padding: 0px;
+                  width: fit-content;
+                  height: fit-content;
+                `,
+                self: css`
+                  width: fit-content;
+                  height: fit-content;
+                  padding: 0px;
+                `,
+              }}
             >
               <RiArrowRightSLine
                 onClick={handleClickNextMonth}
@@ -693,20 +714,22 @@ function Calendar({
             onClick={handleMoveToToday}
             variant="outline"
             aria-label="today-button"
-            buttonStyle={css`
-              border-color: #f3f4f6;
-              width: 100%;
-              max-height: 34px;
-              max-width: 60px;
-              font-size: 0.75rem;
-              padding-left: 0.5rem;
-              padding-right: 0.5rem;
-              box-shadow: none;
+            styles={{
+              self: css`
+                border-color: #f3f4f6;
+                width: 100%;
+                max-height: 34px;
+                max-width: 60px;
+                font-size: 0.75rem;
+                padding-left: 0.5rem;
+                padding-right: 0.5rem;
+                box-shadow: none;
 
-              &:hover {
-                background-color: #e5e7eb;
-              }
-            `}
+                &:hover {
+                  background-color: #e5e7eb;
+                }
+              `,
+            }}
           >
             {todayButtonCaption}
           </Button>
@@ -908,8 +931,14 @@ function Calendar({
   );
 
   return (
-    <Container $style={containerStyle}>
-      {label && <label>{label}</label>}
+    <Container $style={styles?.containerStyle}>
+      {label && (
+        <StatefulForm.Label
+          style={styles?.labelStyle}
+          helper={helper}
+          label={label}
+        />
+      )}
       <InputContent>
         {inputElement}
         {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}

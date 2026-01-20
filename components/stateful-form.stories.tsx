@@ -18,13 +18,7 @@ import styled, { css } from "styled-components";
 import { CapsuleContentProps } from "./capsule";
 import { OptionsProps } from "./selectbox";
 import { Messagebox } from "./messagebox";
-import { RadioOptionsProps } from "./radio";
-import {
-  RiAtFill,
-  RiChat3Fill,
-  RiNotificationOffFill,
-  RiUserFollowFill,
-} from "@remixicon/react";
+import { CurrencyOptionsProps } from "./moneybox";
 
 const meta: Meta<typeof StatefulForm> = {
   title: "Input Elements/StatefulForm",
@@ -225,9 +219,11 @@ export const Default: Story = {
           onChange={({ currentState }) => {
             setValue((prev) => ({ ...prev, ...currentState }));
           }}
-          rowStyle={css`
-            align-items: end;
-          `}
+          styles={{
+            rowStyle: css`
+              align-items: end;
+            `,
+          }}
           fields={EMPLOYEE_FIELDS}
           formValues={value}
           validationSchema={employeeSchema}
@@ -329,6 +325,19 @@ export const AllCase: Story = {
       },
     ];
 
+    const CURRENCY_OPTIONS: CurrencyOptionsProps[] = [
+      { id: "IDR", name: "Indonesian Rupiah", symbol: "Rp" },
+      { id: "USD", name: "US Dollar", symbol: "$" },
+      { id: "EUR", name: "Euro", symbol: "€" },
+      { id: "JPY", name: "Japanese Yen", symbol: "¥" },
+      { id: "GBP", name: "British Pound", symbol: "£" },
+      { id: "SGD", name: "Singapore Dollar", symbol: "$" },
+      { id: "AUD", name: "Australian Dollar", symbol: "$" },
+      { id: "MYR", name: "Malaysian Ringgit", symbol: "RM" },
+      { id: "KRW", name: "South Korean Won", symbol: "₩" },
+      { id: "CNY", name: "Chinese Yuan", symbol: "¥" },
+    ];
+
     interface AllCaseValueProps {
       text: string;
       time: string;
@@ -355,6 +364,7 @@ export const AllCase: Story = {
       signature: string;
       capsule: string;
       country_code?: CountryCodeProps;
+      currency: string;
     }
 
     const [value, setValue] = useState<AllCaseValueProps>({
@@ -383,6 +393,7 @@ export const AllCase: Story = {
       signature: "",
       capsule: "",
       country_code: DEFAULT_COUNTRY_CODES,
+      currency: "USD",
     });
 
     const CAPSULE_TABS: CapsuleContentProps[] = [
@@ -445,7 +456,6 @@ export const AllCase: Story = {
           (arr) =>
             arr.every((val) =>
               FRUIT_OPTIONS.some((opt) => {
-                console.log(opt.value, val);
                 return opt.value === val;
               })
             ),
@@ -534,8 +544,6 @@ export const AllCase: Story = {
       }
     };
 
-    console.log(value);
-
     const onFileDropped = async ({
       error,
       files,
@@ -602,6 +610,7 @@ export const AllCase: Story = {
         type: "text",
         required: true,
         placeholder: "Enter text",
+        helper: "This field is used to enter a single line of text",
       },
       {
         name: "email",
@@ -609,13 +618,15 @@ export const AllCase: Story = {
         type: "email",
         required: false,
         placeholder: "Enter email address",
+        helper: "This field is used to enter an email address",
       },
       {
         name: "time",
         title: "Time",
         type: "time",
         required: false,
-        placeholder: "Enter email address",
+        placeholder: "Enter time",
+        helper: "This field allows you to select a time",
       },
       {
         name: "number",
@@ -623,6 +634,7 @@ export const AllCase: Story = {
         type: "number",
         required: false,
         placeholder: "Enter number",
+        helper: "This field only accepts numeric values",
       },
       {
         name: "password",
@@ -630,6 +642,7 @@ export const AllCase: Story = {
         type: "password",
         required: false,
         placeholder: "Enter password",
+        helper: "This field is used to enter a secure password",
       },
       {
         name: "textarea",
@@ -638,6 +651,7 @@ export const AllCase: Story = {
         rows: 3,
         required: false,
         placeholder: "Enter text here",
+        helper: "This field allows you to enter multiple lines of text",
       },
       {
         name: "check",
@@ -645,6 +659,7 @@ export const AllCase: Story = {
         placeholder: "Check",
         type: "checkbox",
         required: false,
+        helper: "This checkbox allows you to toggle a boolean value",
       },
       {
         name: "radio",
@@ -652,6 +667,7 @@ export const AllCase: Story = {
         placeholder: "Radio",
         type: "radio",
         required: false,
+        helper: "This radio allows you to select one option",
       },
       {
         name: "color",
@@ -659,6 +675,7 @@ export const AllCase: Story = {
         type: "color",
         required: false,
         placeholder: "Enter the color here",
+        helper: "This field allows you to pick or input a color value",
       },
       {
         name: "combo",
@@ -666,6 +683,7 @@ export const AllCase: Story = {
         type: "combo",
         required: false,
         placeholder: "Select a fruit...",
+        helper: "This field allows you to select one or more options",
         comboboxProps: {
           options: FRUIT_OPTIONS,
         },
@@ -676,6 +694,7 @@ export const AllCase: Story = {
         type: "date",
         required: false,
         placeholder: "Select a date",
+        helper: "This field allows you to select a date",
         dateProps: {
           monthNames: MONTH_NAMES,
         },
@@ -685,9 +704,10 @@ export const AllCase: Story = {
         title: "File Drop Box",
         type: "file_drop_box",
         required: false,
+        helper: "This field allows you to upload files via drag and drop",
         fileDropBoxProps: {
-          onComplete: onComplete,
-          onFileDropped: onFileDropped,
+          onComplete,
+          onFileDropped,
         },
       },
       {
@@ -695,6 +715,7 @@ export const AllCase: Story = {
         title: "File",
         type: "file",
         required: false,
+        helper: "This field allows you to upload one or more files",
         fileInputBoxProps: {
           accept: "image/jpeg",
         },
@@ -704,6 +725,7 @@ export const AllCase: Story = {
         title: "Image",
         type: "image",
         required: false,
+        helper: "This field allows you to upload and preview an image",
       },
       {
         name: "money",
@@ -711,8 +733,12 @@ export const AllCase: Story = {
         type: "money",
         required: false,
         placeholder: "Enter amount",
+        helper: "This field is used to input a monetary value",
         moneyProps: {
           separator: "dot",
+          editableCurrency: true,
+          currencyOptions: CURRENCY_OPTIONS,
+          currency: value.currency,
         },
       },
       {
@@ -721,6 +747,7 @@ export const AllCase: Story = {
         type: "phone",
         required: false,
         placeholder: "Enter phone number",
+        helper: "This field allows you to enter a phone number",
       },
       {
         name: "country_code",
@@ -728,49 +755,58 @@ export const AllCase: Story = {
         type: "country_code",
         required: false,
         placeholder: "Enter country code",
+        helper: "This field is used to enter a country calling code",
       },
       {
         name: "signature",
         title: "Signature",
         type: "signbox",
         required: false,
+        helper: "This field allows you to draw a signature",
       },
       {
         name: "rating",
         title: "Rating",
         type: "rating",
         required: false,
+        helper: "This field allows you to provide a rating",
       },
       {
         name: "thumb_field",
         title: "Thumb Field",
         type: "thumbfield",
         required: false,
+        helper: "This field allows you to select a thumbs-up or down value",
       },
       {
         name: "togglebox",
         title: "Togglebox",
         type: "toggle",
+        placeholder: "Toggle",
         required: false,
+        helper: "This field allows you to toggle a boolean state",
       },
       {
         name: "chips",
         title: "Chips",
         type: "chips",
         required: false,
+        helper: "This field allows you to select multiple items",
         chipsProps: {
           options: BADGE_OPTIONS,
-          chipStyle: css`
-            width: 100%;
-            gap: 0.5rem;
-            border-color: transparent;
-          `,
-          chipContainerStyle: css`
-            gap: 4px;
-          `,
-          chipsDrawerStyle: css`
-            min-width: 250px;
-          `,
+          styles: {
+            chipStyle: css`
+              width: 100%;
+              gap: 0.5rem;
+              border-color: transparent;
+            `,
+            chipContainerStyle: css`
+              gap: 4px;
+            `,
+            chipsDrawerStyle: css`
+              min-width: 250px;
+            `,
+          },
           onOptionClicked: handleOptionClicked,
           selectedOptions: value.chips.selectedOptions,
           inputValue: value.chips.searchText,
@@ -782,6 +818,7 @@ export const AllCase: Story = {
         title: "Monetary Value",
         type: "capsule",
         required: false,
+        helper: "This field allows you to switch between monetary options",
         capsuleProps: {
           tabs: CAPSULE_TABS,
         },
@@ -792,7 +829,6 @@ export const AllCase: Story = {
         type: "button",
         required: true,
         disabled: !isFormValid,
-        placeholder: "Enter text",
         rowJustifyContent: "end",
       },
     ];

@@ -9,16 +9,13 @@ import {
   useState,
 } from "react";
 import styled, { CSSProp } from "styled-components";
+import { StatefulForm } from "./stateful-form";
 
 export interface TimeboxProps {
   withSeconds?: boolean;
   onChange?: (value: ChangeEvent<HTMLInputElement>) => void;
   editable?: boolean;
-  containerStyle?: CSSProp;
-  inputStyle?: CSSProp;
-  inputWrapperStyle?: CSSProp;
-  labelStyle?: CSSProp;
-  errorStyle?: CSSProp;
+  styles?: TimeboxStylesProps;
   disabled?: boolean;
   label?: string;
   showError?: boolean;
@@ -27,6 +24,15 @@ export interface TimeboxProps {
   name?: string;
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement | HTMLDivElement>) => void;
   placeholder?: TimeboxPlaceholderProps;
+  helper?: string;
+}
+
+export interface TimeboxStylesProps {
+  containerStyle?: CSSProp;
+  self?: CSSProp;
+  inputWrapperStyle?: CSSProp;
+  labelStyle?: CSSProp;
+  errorStyle?: CSSProp;
 }
 
 interface TimeboxPlaceholderProps {
@@ -41,10 +47,6 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
       withSeconds = false,
       onChange,
       editable = true,
-      containerStyle,
-      inputStyle,
-      labelStyle,
-      inputWrapperStyle,
       disabled,
       label,
       errorMessage,
@@ -52,8 +54,9 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
       value,
       name,
       onKeyDown,
-      errorStyle,
       placeholder,
+      helper,
+      styles,
     },
     ref
   ) => {
@@ -181,7 +184,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
 
     const inputElement: ReactElement = (
       <InputGroup
-        $style={inputWrapperStyle}
+        $style={styles?.inputWrapperStyle}
         $focused={isFocused}
         $error={!!showError}
         onKeyDown={(e) => {
@@ -205,7 +208,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
           onBlur={() => setIsFocused(false)}
           min={0}
           max={24}
-          $inputStyle={inputStyle}
+          $inputStyle={styles?.self}
           onKeyDown={(e) => {
             const { selectionEnd, value } = e.currentTarget;
 
@@ -234,7 +237,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
           onBlur={() => setIsFocused(false)}
           min={0}
           max={59}
-          $inputStyle={inputStyle}
+          $inputStyle={styles?.self}
           onKeyDown={(e) => {
             const { selectionStart, selectionEnd, value } = e.currentTarget;
 
@@ -275,7 +278,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
               onBlur={() => setIsFocused(false)}
               min={0}
               max={59}
-              $inputStyle={inputStyle}
+              $inputStyle={styles?.self}
               onKeyDown={(e) => {
                 const { selectionStart } = e.currentTarget;
                 if (e.key === "Backspace" && selectionStart === 0) {
@@ -300,18 +303,21 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
     return (
       <InputWrapper
         ref={ref}
-        $containerStyle={containerStyle}
+        $containerStyle={styles?.containerStyle}
         $disabled={disabled}
       >
         {label && (
-          <Label $style={labelStyle} htmlFor={inputId}>
-            {label}
-          </Label>
+          <StatefulForm.Label
+            htmlFor={disabled ? null : inputId}
+            style={styles?.labelStyle}
+            helper={helper}
+            label={label}
+          />
         )}
         <InputContent>
           {inputElement}
           {showError && errorMessage && (
-            <ErrorText $style={errorStyle}>{errorMessage}</ErrorText>
+            <ErrorText $style={styles?.errorStyle}>{errorMessage}</ErrorText>
           )}
         </InputContent>
       </InputWrapper>
@@ -357,10 +363,6 @@ const InputContent = styled.div`
   flex-direction: column;
   gap: 4px;
   font-size: 12px;
-`;
-
-const Label = styled.label<{ $style?: CSSProp }>`
-  ${({ $style }) => $style}
 `;
 
 const ErrorText = styled.span<{ $style?: CSSProp }>`

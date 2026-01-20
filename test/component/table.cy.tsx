@@ -227,15 +227,174 @@ describe("Table", () => {
     ];
   };
 
+  context("labels", () => {
+    context("pageNumberText", () => {
+      it("renders the page number", () => {
+        cy.mount(
+          <Table
+            selectable
+            showPagination
+            labels={{ pageNumberText: 10 }}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
+            selectedItems={[
+              "Tech Articles-Understanding React 18-Frontend-John Doe",
+            ]}
+            columns={columns}
+          >
+            {TABLE_ITEMS?.map((groupValue, groupIndex) => (
+              <Table.Row.Group
+                key={groupIndex}
+                title={groupValue.title}
+                subtitle={groupValue.subtitle}
+              >
+                {groupValue.items.map((rowValue, rowIndex) => (
+                  <Table.Row
+                    key={rowIndex}
+                    rowId={`${groupValue.title}-${rowValue.title}-${rowValue.category}-${rowValue.author}`}
+                    content={[
+                      rowValue.title,
+                      rowValue.category,
+                      rowValue.author,
+                    ]}
+                    actions={ROW_ACTIONS}
+                  />
+                ))}
+              </Table.Row.Group>
+            ))}
+          </Table>
+        );
+
+        cy.findByLabelText("pagination-number").should("have.text", "Pg. 10");
+      });
+    });
+
+    context("totalSelectedItemText", () => {
+      const columns: ColumnTableProps[] = [
+        {
+          id: "name",
+          caption: "Name",
+          sortable: true,
+        },
+        {
+          id: "type",
+          caption: "Type",
+          sortable: true,
+        },
+      ];
+
+      const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
+
+      const rawRows = Array.from({ length: 20 }, (_, i) => ({
+        name: `Load Balancer ${i + 1}`,
+        type: TYPES_DATA[i % TYPES_DATA.length],
+      }));
+
+      it("renders with selected text", () => {
+        cy.mount(
+          <Table selectable columns={columns}>
+            {rawRows?.map((row, index) => (
+              <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
+                {[row.name, row.type].map((rowCell, i) => (
+                  <Table.Row.Cell
+                    key={`${row.name}-${row.type}-${rowCell}`}
+                    width={columns[i].width}
+                  >
+                    {rowCell}
+                  </Table.Row.Cell>
+                ))}
+              </Table.Row>
+            ))}
+          </Table>
+        );
+
+        cy.findByLabelText("header-wrapper").should("not.exist");
+        cy.findByText("20 items selected").should("not.exist");
+        cy.get('input[type="checkbox"]').eq(0).click();
+        cy.findByLabelText("header-wrapper").should("exist");
+        cy.findByText("20 items selected").should("exist");
+      });
+
+      context("when given function", () => {
+        it("renders with customize text", () => {
+          cy.mount(
+            <Table
+              selectable
+              labels={{
+                totalSelectedItemText: (count) => `${count} email selected`,
+              }}
+              columns={columns}
+            >
+              {rawRows?.map((row, index) => (
+                <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
+                  {[row.name, row.type].map((rowCell, i) => (
+                    <Table.Row.Cell
+                      key={`${row.name}-${row.type}-${rowCell}`}
+                      width={columns[i].width}
+                    >
+                      {rowCell}
+                    </Table.Row.Cell>
+                  ))}
+                </Table.Row>
+              ))}
+            </Table>
+          );
+
+          cy.findByLabelText("header-wrapper").should("not.exist");
+          cy.findByText("20 email selected").should("not.exist");
+          cy.get('input[type="checkbox"]').eq(0).click();
+          cy.findByLabelText("header-wrapper").should("exist");
+          cy.findByText("20 email selected").should("exist");
+        });
+      });
+
+      context("when given null", () => {
+        it("renders without number of selected text", () => {
+          cy.mount(
+            <Table
+              selectable
+              labels={{ totalSelectedItemText: null }}
+              columns={columns}
+            >
+              {rawRows?.map((row, index) => (
+                <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
+                  {[row.name, row.type].map((rowCell, i) => (
+                    <Table.Row.Cell
+                      key={`${row.name}-${row.type}-${rowCell}`}
+                      width={columns[i].width}
+                    >
+                      {rowCell}
+                    </Table.Row.Cell>
+                  ))}
+                </Table.Row>
+              ))}
+            </Table>
+          );
+
+          cy.findByLabelText("header-wrapper").should("not.exist");
+          cy.findByText("items selected").should("not.exist");
+          cy.get('input[type="checkbox"]').eq(0).click();
+          cy.findByLabelText("header-wrapper").should("not.exist");
+          cy.findByText("items selected").should("not.exist");
+        });
+      });
+    });
+  });
+
   context("alwaysShowDragIcon", () => {
     context("when given false", () => {
       it("renders when hovered", () => {
         cy.mount(
           <Table
             selectable
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             draggable
             alwaysShowDragIcon={false}
             columns={columns}
@@ -285,9 +444,11 @@ describe("Table", () => {
         cy.mount(
           <Table
             selectable
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             draggable
             alwaysShowDragIcon={true}
             columns={columns}
@@ -327,9 +488,11 @@ describe("Table", () => {
         cy.mount(
           <Table
             selectable
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             draggable
             columns={columns}
             actions={TOP_ACTIONS}
@@ -371,13 +534,12 @@ describe("Table", () => {
           cy.mount(
             <Table
               selectable
-              paginationWrapperStyle={css`
-                width: 100%;
-                justify-content: end;
-              `}
-              tableRowContainerStyle={css`
-                max-height: 400px;
-              `}
+              styles={{
+                paginationWrapperStyle: css`
+                  width: 100%;
+                  justify-content: end;
+                `,
+              }}
               selectedItems={[
                 "Tech Articles-Understanding React 18-Frontend-John Doe",
               ]}
@@ -413,55 +575,6 @@ describe("Table", () => {
       });
     });
 
-    context("with totalSelectedItemStyle", () => {
-      context("when given 100px", () => {
-        it("renders text with 100px", () => {
-          cy.mount(
-            <Table
-              selectable
-              totalSelectedItemStyle={css`
-                font-size: 100px;
-              `}
-              tableRowContainerStyle={css`
-                max-height: 400px;
-              `}
-              selectedItems={[
-                "Tech Articles-Understanding React 18-Frontend-John Doe",
-              ]}
-              columns={columns}
-            >
-              {TABLE_ITEMS?.map((groupValue, groupIndex) => (
-                <Table.Row.Group
-                  key={groupIndex}
-                  title={groupValue.title}
-                  subtitle={groupValue.subtitle}
-                >
-                  {groupValue.items.map((rowValue, rowIndex) => (
-                    <Table.Row
-                      key={rowIndex}
-                      rowId={`${groupValue.title}-${rowValue.title}-${rowValue.category}-${rowValue.author}`}
-                      content={[
-                        rowValue.title,
-                        rowValue.category,
-                        rowValue.author,
-                      ]}
-                      actions={ROW_ACTIONS}
-                    />
-                  ))}
-                </Table.Row.Group>
-              ))}
-            </Table>
-          );
-
-          cy.findByLabelText("pagination-selected-item").should(
-            "have.css",
-            "font-size",
-            "100px"
-          );
-        });
-      });
-    });
-
     context("with paginationNumberStyle", () => {
       context("when given 30px", () => {
         it("renders text with 30px", () => {
@@ -469,13 +582,15 @@ describe("Table", () => {
             <Table
               selectable
               showPagination
-              pageNumberText={30}
-              paginationNumberStyle={css`
-                font-size: 30px;
-              `}
-              tableRowContainerStyle={css`
-                max-height: 400px;
-              `}
+              labels={{ pageNumberText: 10 }}
+              styles={{
+                paginationNumberStyle: css`
+                  font-size: 30px;
+                `,
+                tableRowContainerStyle: css`
+                  max-height: 400px;
+                `,
+              }}
               selectedItems={[
                 "Tech Articles-Understanding React 18-Frontend-John Doe",
               ]}
@@ -504,12 +619,9 @@ describe("Table", () => {
             </Table>
           );
 
-          cy.findByLabelText("pagination-number").should(
-            "have.css",
-            "font-size",
-            "30px"
-          );
-          cy.findByText("Pg. 30");
+          cy.findByLabelText("pagination-number")
+            .should("have.css", "font-size", "30px")
+            .and("have.text", "Pg. 10");
         });
       });
     });
@@ -621,9 +733,11 @@ describe("Table", () => {
     it("renders summary on footer", () => {
       cy.mount(
         <Table
-          tableRowContainerStyle={css`
-            max-height: 400px;
-          `}
+          styles={{
+            tableRowContainerStyle: css`
+              max-height: 400px;
+            `,
+          }}
           columns={columns}
           actions={DEFAULT_TOP_ACTIONS}
           sumRow={[
@@ -675,9 +789,11 @@ describe("Table", () => {
         cy.mount(
           <Table
             selectable
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             columns={columns}
             actions={DEFAULT_TOP_ACTIONS}
             sumRow={[
@@ -830,106 +946,53 @@ describe("Table", () => {
       });
     });
 
-    context("when given totalSelectedItemText", () => {
-      const columns: ColumnTableProps[] = [
-        {
-          id: "name",
-          caption: "Name",
-          sortable: true,
-        },
-        {
-          id: "type",
-          caption: "Type",
-          sortable: true,
-        },
-      ];
-
-      const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
-
-      const rawRows = Array.from({ length: 20 }, (_, i) => ({
-        name: `Load Balancer ${i + 1}`,
-        type: TYPES_DATA[i % TYPES_DATA.length],
-      }));
-      it("renders with text", () => {
-        cy.mount(
-          <Table selectable columns={columns}>
-            {rawRows?.map((row, index) => (
-              <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
-                {[row.name, row.type].map((rowCell, i) => (
-                  <Table.Row.Cell
-                    key={`${row.name}-${row.type}-${rowCell}`}
-                    width={columns[i].width}
-                  >
-                    {rowCell}
-                  </Table.Row.Cell>
-                ))}
-              </Table.Row>
-            ))}
-          </Table>
-        );
-
-        cy.findByLabelText("header-wrapper").should("not.exist");
-        cy.findByText("20 items selected").should("not.exist");
-        cy.get('input[type="checkbox"]').eq(0).click();
-        cy.findByLabelText("header-wrapper").should("exist");
-        cy.findByText("20 items selected").should("exist");
-      });
-
-      context("when given function", () => {
-        it("renders with customize text", () => {
+    context("with totalSelectedItemTextStyle", () => {
+      context("when given 100px", () => {
+        it("renders text with 100px", () => {
           cy.mount(
             <Table
               selectable
-              totalSelectedItemText={(count) => `${count} email selected`}
+              styles={{
+                totalSelectedItemTextStyle: css`
+                  font-size: 100px;
+                `,
+                tableRowContainerStyle: css`
+                  max-height: 400px;
+                `,
+              }}
+              selectedItems={[
+                "Tech Articles-Understanding React 18-Frontend-John Doe",
+              ]}
               columns={columns}
             >
-              {rawRows?.map((row, index) => (
-                <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
-                  {[row.name, row.type].map((rowCell, i) => (
-                    <Table.Row.Cell
-                      key={`${row.name}-${row.type}-${rowCell}`}
-                      width={columns[i].width}
-                    >
-                      {rowCell}
-                    </Table.Row.Cell>
+              {TABLE_ITEMS?.map((groupValue, groupIndex) => (
+                <Table.Row.Group
+                  key={groupIndex}
+                  title={groupValue.title}
+                  subtitle={groupValue.subtitle}
+                >
+                  {groupValue.items.map((rowValue, rowIndex) => (
+                    <Table.Row
+                      key={rowIndex}
+                      rowId={`${groupValue.title}-${rowValue.title}-${rowValue.category}-${rowValue.author}`}
+                      content={[
+                        rowValue.title,
+                        rowValue.category,
+                        rowValue.author,
+                      ]}
+                      actions={ROW_ACTIONS}
+                    />
                   ))}
-                </Table.Row>
+                </Table.Row.Group>
               ))}
             </Table>
           );
 
-          cy.findByLabelText("header-wrapper").should("not.exist");
-          cy.findByText("20 email selected").should("not.exist");
-          cy.get('input[type="checkbox"]').eq(0).click();
-          cy.findByLabelText("header-wrapper").should("exist");
-          cy.findByText("20 email selected").should("exist");
-        });
-      });
-
-      context("when given null", () => {
-        it("renders without number of selected text", () => {
-          cy.mount(
-            <Table selectable totalSelectedItemText={null} columns={columns}>
-              {rawRows?.map((row, index) => (
-                <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
-                  {[row.name, row.type].map((rowCell, i) => (
-                    <Table.Row.Cell
-                      key={`${row.name}-${row.type}-${rowCell}`}
-                      width={columns[i].width}
-                    >
-                      {rowCell}
-                    </Table.Row.Cell>
-                  ))}
-                </Table.Row>
-              ))}
-            </Table>
+          cy.findByLabelText("pagination-selected-item").should(
+            "have.css",
+            "font-size",
+            "100px"
           );
-
-          cy.findByLabelText("header-wrapper").should("not.exist");
-          cy.findByText("items selected").should("not.exist");
-          cy.get('input[type="checkbox"]').eq(0).click();
-          cy.findByLabelText("header-wrapper").should("not.exist");
-          cy.findByText("items selected").should("not.exist");
         });
       });
     });
@@ -951,9 +1014,11 @@ describe("Table", () => {
         cy.mount(
           <Table
             selectable
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             columns={columns}
             actions={DEFAULT_TOP_ACTIONS}
             searchable
@@ -1024,9 +1089,11 @@ describe("Table", () => {
         cy.mount(
           <Table
             selectable
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             columns={columns}
             actions={DEFAULT_TOP_ACTIONS}
             searchable
@@ -1094,9 +1161,11 @@ describe("Table", () => {
         cy.mount(
           <Table
             selectable
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             columns={columns}
             actions={DEFAULT_TOP_ACTIONS}
             searchable
@@ -1136,9 +1205,11 @@ describe("Table", () => {
         cy.mount(
           <Table
             selectable
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             columns={columns}
             actions={TOP_ACTIONS}
             searchable
@@ -1188,9 +1259,11 @@ describe("Table", () => {
         cy.mount(
           <Table
             selectable
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             columns={columns}
             searchable
           >
@@ -1239,9 +1312,11 @@ describe("Table", () => {
       it("renders searchbox in the right side", () => {
         cy.mount(
           <Table
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             columns={columns}
             actions={TOP_ACTIONS}
             searchable
@@ -1291,9 +1366,11 @@ describe("Table", () => {
       it("renders searchbox in the all row", () => {
         cy.mount(
           <Table
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             columns={columns}
             searchable
           >
@@ -1345,9 +1422,11 @@ describe("Table", () => {
         cy.mount(
           <Table
             selectable
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             columns={columns}
             actions={TOP_ACTIONS}
             searchable
@@ -1390,9 +1469,11 @@ describe("Table", () => {
         cy.mount(
           <Table
             selectable
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             columns={columns}
             actions={TOP_ACTIONS}
             searchable
@@ -1446,9 +1527,11 @@ describe("Table", () => {
         cy.mount(
           <Table
             selectable
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             columns={columns}
             actions={TOP_ACTIONS}
             searchable
@@ -1499,9 +1582,11 @@ describe("Table", () => {
         cy.mount(
           <Table
             selectable
-            tableRowContainerStyle={css`
-              max-height: 400px;
-            `}
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
             columns={columns}
             actions={TOP_ACTIONS}
             searchable

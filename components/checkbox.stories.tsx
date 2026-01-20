@@ -91,9 +91,11 @@ export const WithDescription: StoryWithDescription = {
           <Checkbox
             key={index}
             name="checked"
-            containerStyle={css`
-              font-size: 14px;
-            `}
+            styles={{
+              containerStyle: css`
+                font-size: 14px;
+              `,
+            }}
             value={JSON.stringify(option)}
             description={option.description}
             label={option.label}
@@ -177,9 +179,11 @@ export const Disabled: StoryWithDescription = {
           <Checkbox
             key={index}
             name="checked"
-            containerStyle={css`
-              font-size: 14px;
-            `}
+            styles={{
+              containerStyle: css`
+                font-size: 14px;
+              `,
+            }}
             disabled
             value={JSON.stringify(option)}
             description={option.description}

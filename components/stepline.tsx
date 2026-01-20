@@ -85,7 +85,13 @@ function SteplineItem({
 }: SteplineItemProps) {
   return (
     <StepItemWrapper id={String(id)} $style={containerStyle}>
-      <div style={{ position: "relative" }}>
+      <div
+        style={{
+          position: "relative",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         <OuterCircle
           aria-label="outer-circle"
           $active={active || hoveredIndex === id}
@@ -190,14 +196,15 @@ const OuterCircle = styled.div<{ $active?: boolean; $variant: string }>`
   max-width: 30px;
   max-height: 30px;
   border-radius: 9999px;
-  transform: translateY(-50%);
-  top: 50%;
   transition: transform 0.2s;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 
   ${({ $active }) =>
     $active &&
     css`
-      transform: scale(1.3) translateY(-40%);
+      transform: translate(-50%, -50%) scale(1.3);
     `}
   ${({ $variant }) => css`
     background-color: ${OUTER_CIRCLE_VARIANT_COLOR[$variant]};
@@ -214,6 +221,7 @@ const InnerCircle = styled.div<{ $variant: string }>`
   max-width: 30px;
   max-height: 30px;
   border-radius: 9999px;
+
   color: white;
   background-color: #4b5563;
   ${({ $variant }) => css`

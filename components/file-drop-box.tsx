@@ -10,6 +10,7 @@ import {
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { LoadingSpinner } from "./loading-spinner";
+import { StatefulForm } from "./stateful-form";
 
 export interface OnFileDroppedFunctionProps {
   files: File[];
@@ -28,32 +29,36 @@ export interface OnCompleteFunctionProps {
 }
 
 export interface FileDropBoxProps {
-  containerStyle?: CSSProp;
-  dragOverStyle?: CSSProp;
-  successStyle?: CSSProp;
-  labelStyle?: CSSProp;
   placeholder?: string;
   accept?: string;
   label?: string;
   onFileDropped?: (props: OnFileDroppedFunctionProps) => void;
   onComplete?: (props: OnCompleteFunctionProps) => void;
   progressPercentage?: number;
+  helper?: string;
   children?: ReactNode;
+  styles?: FileDropBoxStylesProps;
+}
+
+export interface FileDropBoxStylesProps {
+  containerStyle?: CSSProp;
+  dragOverStyle?: CSSProp;
+  successStyle?: CSSProp;
+  labelStyle?: CSSProp;
+  contentStyle?: CSSProp;
 }
 
 type ProgressProps = "idle" | "loading" | "succeed" | null;
 
 function FileDropBox({
-  containerStyle,
-  labelStyle,
-  dragOverStyle,
-  successStyle,
   placeholder = "Drag and Drop Your File",
   accept = "*",
   onFileDropped,
   onComplete,
   label,
   children,
+  styles,
+  helper,
 }: FileDropBoxProps) {
   const FILE_ICON = [
     { id: 1, icon: RiImageLine, size: 50 },
@@ -152,8 +157,8 @@ function FileDropBox({
 
   const inputElement: ReactElement = (
     <DropArea
-      $dragOverStyle={dragOverStyle}
-      $successStyle={successStyle}
+      $dragOverStyle={styles?.dragOverStyle}
+      $successStyle={styles?.successStyle}
       $isDragging={isDragging}
       $progress={progress}
       aria-label="filedropbox"
@@ -185,7 +190,14 @@ function FileDropBox({
               <LinkText>Select some files</LinkText> from your computer
             </div>
           </UploadContent>
-          {children && <Fragment>{children}</Fragment>}
+          {children && (
+            <ContentWrapper
+              $style={styles?.contentStyle}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {children}
+            </ContentWrapper>
+          )}
         </Fragment>
       ) : progress === "succeed" ? (
         <Fragment>{progressLabel}</Fragment>
@@ -208,9 +220,15 @@ function FileDropBox({
     <InputWrapper
       aria-label="file-drop-box-container"
       $hide={progress === null}
-      $containerStyle={containerStyle}
+      $containerStyle={styles?.containerStyle}
     >
-      {label && <Label $style={labelStyle}> {label}</Label>}
+      {label && (
+        <StatefulForm.Label
+          style={styles?.labelStyle}
+          helper={helper}
+          label={label}
+        />
+      )}
       {inputElement}
 
       {errorMessages.length > 0 && (
@@ -244,10 +262,16 @@ const InputWrapper = styled.div<{
   ${({ $containerStyle }) => $containerStyle}
 `;
 
-const Label = styled.label<{
+const ContentWrapper = styled.div<{
   $style?: CSSProp;
 }>`
-  font-size: 0.75rem;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  align-items: start;
+  text-align: start;
+  cursor: default;
 
   ${({ $style }) => $style}
 `;

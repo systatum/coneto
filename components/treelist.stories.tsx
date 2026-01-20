@@ -456,14 +456,16 @@ export const Nested: Story = {
             Caret and item opening and closing.
           </h2>
           <TreeList
-            containerStyle={css`
-              max-width: 300px;
-            `}
+            styles={{
+              containerStyle: css`
+                max-width: 300px;
+              `,
+              emptyItemSlateStyle: css`
+                align-items: center;
+              `,
+            }}
             draggable
             onDragged={onDragged}
-            emptyItemSlateStyle={css`
-              align-items: center;
-            `}
             emptyItemSlate={null}
             collapsible
             showHierarchyLine
@@ -490,9 +492,11 @@ export const Nested: Story = {
             Caret-only opening and closing.
           </h2>
           <TreeList
-            containerStyle={css`
-              max-width: 300px;
-            `}
+            styles={{
+              containerStyle: css`
+                max-width: 300px;
+              `,
+            }}
             collapsible
             showHierarchyLine
             emptyItemSlate={null}
@@ -654,9 +658,11 @@ export const WithActions: Story = {
       >
         <TreeList
           key={Number(showItem.length[0])}
-          containerStyle={css`
-            min-width: 300px;
-          `}
+          styles={{
+            containerStyle: css`
+              min-width: 300px;
+            `,
+          }}
           content={TREE_LIST_DATA}
           actions={TREE_LIST_ACTIONS}
           emptySlate={<p>Not found.</p>}
@@ -681,9 +687,11 @@ export const WithActions: Story = {
             setSelectedOptions={(e: string[]) =>
               setShowItem((prev) => ({ ...prev, length: e }))
             }
-            containerStyle={css`
-              width: 30%;
-            `}
+            styles={{
+              containerStyle: css`
+                width: 30%;
+              `,
+            }}
           />
         </div>
       </div>
@@ -713,11 +721,13 @@ export const WithoutHeader: Story = {
 
     const contentDialog = (
       <StatefulForm
-        containerStyle={css`
-          min-width: 300px;
-          padding: 8px 8px 4px;
-          background-color: white;
-        `}
+        styles={{
+          containerStyle: css`
+            min-width: 300px;
+            padding: 8px 8px 4px;
+            background-color: white;
+          `,
+        }}
         fields={DIVISION_EMPLOYEE_FIELDS}
         formValues={value}
         onChange={({ currentState }) => setValue(currentState)}
@@ -816,32 +826,20 @@ export const WithEmptySlate: Story = {
             <EmptySlate
               imageUrl="https://picsum.photos/200?random=1"
               title="Manage your inventory transfers"
-              containerStyle={css`
-                text-align: center;
-                margin: auto;
-              `}
-              imageStyle={css`
-                max-width: 200px;
-              `}
+              styles={{
+                containerStyle: css`
+                  text-align: center;
+                  margin: auto;
+                `,
+                imageStyle: css`
+                  max-width: 200px;
+                `,
+              }}
               subtitle="Track and receive your incoming inventory from suppliers."
               actions={
                 <>
-                  <Button
-                    variant="default"
-                    style={{
-                      fontSize: "12px",
-                    }}
-                  >
-                    Add Item
-                  </Button>
-                  <Button
-                    variant="primary"
-                    style={{
-                      fontSize: "12px",
-                    }}
-                  >
-                    Learn More
-                  </Button>
+                  <Button variant="default">Add Item</Button>
+                  <Button variant="primary">Learn More</Button>
                 </>
               }
             />
