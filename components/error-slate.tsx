@@ -1,5 +1,5 @@
 import styled, { css, CSSProp, keyframes } from "styled-components";
-import { CSSProperties, ReactNode } from "react";
+import { ReactNode } from "react";
 
 export interface ErrorSlateProps {
   code?:

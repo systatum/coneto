@@ -49,7 +49,7 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
 
     const inputId = `colorbox-${props.name}`;
 
-    const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
+    const debounceTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const handleColorChange = useCallback(
       (e: ChangeEvent<HTMLInputElement>) => {

@@ -124,6 +124,7 @@ function ThumbField({
     <InputWrapper $containerStyle={styles?.containerStyle} $disabled={disabled}>
       {label && (
         <StatefulForm.Label
+          htmlFor={disabled ? undefined : id}
           style={styles?.labelStyle}
           helper={helper}
           label={label}

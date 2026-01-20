@@ -284,12 +284,13 @@ function Pinbox({
     </PinboxInputWrapper>
   );
 
-  const inputId = `textbox-${name}`;
+  const inputId = `pinbox-${name}`;
 
   return (
     <Container $containerStyle={styles?.containerStyle}>
       {label && (
         <StatefulForm.Label
+          htmlFor={disabled ? null : inputId}
           style={styles?.labelStyle}
           helper={helper}
           label={label}

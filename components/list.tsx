@@ -429,7 +429,6 @@ function ListGroup({
   openerStyle = "chevron",
   actions,
   emptySlate,
-  initialState = "opened",
   styles,
   ...props
 }: ListGroupProps) {

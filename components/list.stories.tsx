@@ -20,7 +20,7 @@ import {
   RiDeleteBin2Fill,
 } from "@remixicon/react";
 import { Card } from "./card";
-import { ChangeEvent, useMemo, useState } from "react";
+import React, { ChangeEvent, useMemo, useState } from "react";
 import styled, { css } from "styled-components";
 import { EmptySlate } from "./empty-slate";
 import { Button } from "./button";
