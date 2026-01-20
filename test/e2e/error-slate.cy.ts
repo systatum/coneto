@@ -56,9 +56,9 @@ context("ErrorSlate component", () => {
     });
 
     it("Has custom styling on the cube face (if testable)", () => {
-      cy.get("[style]")
-        .should("have.attr", "style")
-        .and("include", "background: gold");
+      cy.findAllByLabelText("face-error-slate")
+        .eq(0)
+        .should("have.css", "background-color", "rgb(255, 215, 0)");
     });
   });
 });
