@@ -267,6 +267,7 @@ function Table({
           draggable?: boolean;
         });
     }
+
     if (child.type === TableRow) {
       const props = child.props as TableRowProps;
 
@@ -1114,7 +1115,6 @@ function TableRow({
           }}
         >
           <Checkbox
-            {...props}
             name={rowId}
             value={isSelected ? "true" : "false"}
             styles={{
@@ -1150,17 +1150,24 @@ function TableRow({
           })
         : childArray.map((child, i) => {
             if (!isValidElement<TableRowCellProps>(child)) return child;
+
             const widthColumn = columns[i].width;
             const isLast = actions && i === childArray.length - 1;
 
+            const isTableRowCell = child.type === Table.Row.Cell;
+
             return cloneElement(child, {
-              width: child.props.width ?? widthColumn,
-              contentStyle: isLast
-                ? css`
-                    padding-right: 36px;
-                    ${child.props.contentStyle};
-                  `
-                : child.props.contentStyle,
+              ...(isTableRowCell
+                ? {
+                    width: child.props.width ?? widthColumn,
+                    contentStyle: isLast
+                      ? css`
+                          padding-right: 36px;
+                          ${child.props.contentStyle};
+                        `
+                      : child.props.contentStyle,
+                  }
+                : {}),
             });
           })}
 
