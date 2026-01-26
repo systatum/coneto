@@ -436,8 +436,6 @@ function Calendar({
     }
   };
 
-  console.log(styles?.self);
-
   const emptyCellsCount = new Date(
     currentDate.getFullYear(),
     currentDate.getMonth(),
