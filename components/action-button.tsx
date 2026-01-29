@@ -1,6 +1,6 @@
 import { RemixiconComponentType } from "@remixicon/react";
 import { css, CSSProp } from "styled-components";
-import { Button, SubMenuButtonProps } from "./button";
+import { Button, ButtonVariants, SubMenuButtonProps } from "./button";
 import { ReactNode } from "react";
 
 export interface ActionButtonProps {
@@ -12,6 +12,7 @@ export interface ActionButtonProps {
   subMenu?: (props: SubMenuButtonProps) => ReactNode;
   disabled?: boolean;
   showSubMenuOn?: "caret" | "self";
+  variant?: ButtonVariants["variant"];
 }
 
 export interface ActionButtonStylesProps {
@@ -21,23 +22,33 @@ export interface ActionButtonStylesProps {
   dropdownStyle?: CSSProp;
 }
 
-export function ActionButton(
-  props: ActionButtonProps & { forTable?: boolean }
-) {
+export function ActionButton({
+  caption,
+  icon: Icon,
+  iconSize,
+  onClick,
+  styles,
+  subMenu,
+  disabled,
+  showSubMenuOn,
+  variant = "default",
+  forTable,
+}: ActionButtonProps & { forTable?: boolean }) {
   return (
     <Button
       onClick={(e) => {
         e.stopPropagation();
-        if (props.onClick) {
-          props.onClick();
+        if (onClick) {
+          onClick();
         }
       }}
       aria-label="action-button"
-      subMenu={props.subMenu}
-      disabled={props.disabled}
-      showSubMenuOn={props.showSubMenuOn}
+      subMenu={subMenu}
+      disabled={disabled}
+      showSubMenuOn={showSubMenuOn}
       size="sm"
       tipMenuSize="sm"
+      variant={variant}
       styles={{
         self: css`
           display: flex;
@@ -45,49 +56,13 @@ export function ActionButton(
           gap: 0.25rem;
           align-items: center;
           cursor: pointer;
-          background-color: transparent;
-          color: #565555;
-          ${props.subMenu && props.showSubMenuOn === "caret"
-            ? css`
-                border-top: 1px solid #e5e7eb;
-                border-left: 1px solid #e5e7eb;
-                border-bottom: 1px solid #e5e7eb;
-              `
-            : css`
-                border: 1px solid #e5e7eb;
-              `}
           border-radius: 6px;
           position: relative;
 
-          &:hover {
-            background-color: #e2e0e0;
-          }
-
-          &:disabled {
-            background-color: rgb(227 227 227);
-            opacity: 0.5;
-            cursor: not-allowed;
-          }
-          ${props.styles?.self}
-        `,
-        toggleStyle: css`
-          ${props.subMenu &&
+          ${variant === "default" &&
           css`
-            display: flex;
-            flex-direction: row;
-            gap: 0.25rem;
-            align-items: center;
-            cursor: pointer;
-            color: #565555;
-            padding: 0.25rem 0.5rem;
             background-color: transparent;
-            position: relative;
-            border-top: 1px solid #e5e7eb;
-            border-right: 1px solid #e5e7eb;
-            border-bottom: 1px solid #e5e7eb;
-            border-top-right-radius: 6px;
-            border-bottom-right-radius: 6px;
-
+            color: #565555;
             &:hover {
               background-color: #e2e0e0;
             }
@@ -97,17 +72,58 @@ export function ActionButton(
               opacity: 0.5;
               cursor: not-allowed;
             }
-            ${props.styles?.toggleStyle}
+
+            ${subMenu && showSubMenuOn === "caret"
+              ? css`
+                  border-top: 1px solid #e5e7eb;
+                  border-left: 1px solid #e5e7eb;
+                  border-bottom: 1px solid #e5e7eb;
+                `
+              : css`
+                  border: 1px solid #e5e7eb;
+                `}
+          `}
+          ${styles?.self}
+        `,
+        toggleStyle: css`
+          ${subMenu &&
+          css`
+            display: flex;
+            flex-direction: row;
+            gap: 0.25rem;
+            align-items: center;
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            position: relative;
+            border-top-right-radius: 6px;
+            border-bottom-right-radius: 6px;
+
+            ${variant === "default" &&
+            css`
+              background-color: transparent;
+              color: #565555;
+              border-top: 1px solid #e5e7eb;
+              border-right: 1px solid #e5e7eb;
+              border-bottom: 1px solid #e5e7eb;
+              &:hover {
+                background-color: #e2e0e0;
+              }
+
+              &:disabled {
+                background-color: rgb(227 227 227);
+                opacity: 0.5;
+                cursor: not-allowed;
+              }
+            `}
+            ${styles?.toggleStyle}
           `}
         `,
         dividerStyle: css`
           border: 1px solid rgb(236 236 236);
-          ${props.subMenu && props.styles?.dividerStyle
-            ? props.styles?.dividerStyle
-            : null}
+          ${subMenu && styles?.dividerStyle ? styles.dividerStyle : null}
         `,
         dropdownStyle: (placement) => css`
-          ${props.forTable && placement?.startsWith("bottom")
+          ${forTable && placement?.startsWith("bottom")
             ? css`
                 transform: translateY(-4px);
               `
@@ -118,15 +134,12 @@ export function ActionButton(
               : null}
 
           width: 170px;
-          ${props.subMenu && props.styles?.dropdownStyle
-            ? props.styles?.dropdownStyle
-            : null}
+          ${subMenu && styles?.dropdownStyle ? styles.dropdownStyle : null}
         `,
       }}
     >
-      {props.icon && <props.icon size={props.iconSize ?? 14} />}
-
-      {props.caption && props.caption}
+      {Icon && <Icon size={iconSize ?? 14} />}
+      {caption && caption}
     </Button>
   );
 }
