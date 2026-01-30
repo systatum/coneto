@@ -65,7 +65,7 @@ export type ButtonProps = Omit<React.ComponentProps<"button">, "style"> &
     anchorRef?: React.RefObject<HTMLElement>;
   };
 
-interface ButtonStylesProps {
+export interface ButtonStylesProps {
   dropdownStyle?: CSSProp | ((placement: Placement) => CSSProp);
   self?: CSSProp;
   toggleStyle?: CSSProp;

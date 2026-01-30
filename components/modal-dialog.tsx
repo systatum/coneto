@@ -2,7 +2,7 @@
 
 import { ReactNode } from "react";
 import { Dialog } from "./dialog";
-import { Button, ButtonVariants } from "./button";
+import { Button, ButtonStylesProps, ButtonVariants } from "./button";
 import styled, { css, CSSProp } from "styled-components";
 
 export interface ModalButtonProps extends Pick<ButtonVariants, "variant"> {
@@ -10,6 +10,7 @@ export interface ModalButtonProps extends Pick<ButtonVariants, "variant"> {
   caption: string;
   isLoading?: boolean;
   disabled?: boolean;
+  styles?: ButtonStylesProps;
 }
 
 export interface ModalDialogProps {
@@ -80,16 +81,30 @@ function ModalDialog({
         </Container>
 
         <Footer>
-          {buttons.map((data, index) => (
-            <StyledButton
+          {buttons.map((props, index) => (
+            <Button
               key={index}
-              isLoading={data.isLoading}
-              disabled={data.disabled}
-              variant={data.variant}
-              onClick={() => onClick?.({ id: data.id, closeDialog })}
+              isLoading={props.isLoading}
+              disabled={props.disabled}
+              variant={props.variant}
+              onClick={() => onClick?.({ id: props.id, closeDialog })}
+              styles={{
+                ...props?.styles,
+                self: css`
+                  min-width: 140px;
+                  max-width: 140px;
+                  align-items: flex-start;
+                  justify-content: start;
+                  padding-top: 1rem;
+                  padding-bottom: 2.5rem;
+                  padding-left: 1rem;
+                  padding-right: 1rem;
+                  ${props?.styles?.self}
+                `,
+              }}
             >
-              {data.caption}
-            </StyledButton>
+              {props.caption}
+            </Button>
           ))}
         </Footer>
       </Dialog.Content>
@@ -135,17 +150,6 @@ const Footer = styled.div`
   width: 100%;
   flex-direction: row;
   justify-content: flex-end;
-`;
-
-const StyledButton = styled(Button)`
-  width: 140px;
-  min-width: 100px;
-  align-items: flex-start;
-  padding-top: 1rem;
-  padding-right: 5rem;
-  padding-bottom: 2.5rem;
-  padding-left: 1rem;
-  display: flex;
 `;
 
 export { ModalDialog };
