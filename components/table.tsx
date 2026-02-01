@@ -360,11 +360,13 @@ function Table({
                   )}
                   {actions &&
                     actions.map((action, index) => {
+                      const { capsuleProps, ...rest } = action;
+
                       if (action.type === "capsule") {
                         return <ActionCapsule key={index} {...action} />;
                       }
 
-                      return <ActionButton key={index} {...action} forTable />;
+                      return <ActionButton key={index} {...rest} forTable />;
                     })}
                 </ActionsWrapper>
               )}

@@ -455,10 +455,16 @@ function ListGroup({
     actions?.map((action) => ({
       ...action,
       styles: {
+        ...action.styles,
         self: css`
           font-size: 11px;
           height: 24px;
           ${action.styles?.self}
+        `,
+        toggleStyle: css`
+          font-size: 11px;
+          height: 24px;
+          ${action.styles?.toggleStyle}
         `,
       },
       onClick: () => action.onClick && action.onClick?.(id),
