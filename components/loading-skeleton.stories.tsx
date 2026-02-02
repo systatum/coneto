@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { LoadingSkeleton } from "./loading-skeleton";
+import { LoadingSkeleton, LoadingSkeletonFlash } from "./loading-skeleton";
 import { css } from "styled-components";
 import { Grid } from "./grid";
 
@@ -10,12 +10,40 @@ const meta: Meta<typeof LoadingSkeleton> = {
   argTypes: {
     children: {
       control: false,
-      description: "Skeleton items rendered inside the wrapper.",
+      description:
+        "Skeleton items rendered inside the wrapper. Use `LoadingSkeleton.Item` to define individual loading blocks.",
     },
     style: {
       control: false,
       description:
-        "Custom styled-components CSS applied to the skeleton wrapper.",
+        "Custom styled-components CSS applied to the skeleton wrapper. Useful for layout styling such as borders, padding, width, or background.",
+    },
+    flashDirection: {
+      control: {
+        type: "select",
+      },
+      options: [
+        "left-to-right",
+        "right-to-left",
+        "top-to-bottom",
+        "bottom-to-top",
+      ],
+      description:
+        "Controls the shimmer animation direction applied to all skeleton items inside the wrapper.",
+      table: {
+        defaultValue: { summary: "left-to-right" },
+      },
+    },
+    flashRate: {
+      control: {
+        type: "select",
+      },
+      options: ["slow", "normal", "fast"],
+      description:
+        "Controls the shimmer animation speed. You can also pass a number to define a custom duration in seconds.",
+      table: {
+        defaultValue: { summary: "normal" },
+      },
     },
   },
 };
@@ -24,31 +52,69 @@ export default meta;
 type Story = StoryObj<typeof LoadingSkeleton>;
 
 export const Card: Story = {
-  render: () => (
-    <Grid>
-      {Array.from({ length: 3 }).map((_, i) => (
-        <LoadingSkeleton
-          key={i}
-          style={css`
-            border: 1px solid #eee;
-            border-radius: 8px;
-            width: 300px;
-          `}
-        >
-          <LoadingSkeleton.Item height={180} />
-          <LoadingSkeleton.Item
-            height={21}
-            width="70%"
-            style={{ marginTop: 16 }}
-          />
-          <LoadingSkeleton.Item height={16} style={{ marginTop: 8 }} />
-          <LoadingSkeleton.Item
-            height={16}
-            width="80%"
-            style={{ marginTop: 6 }}
-          />
-        </LoadingSkeleton>
-      ))}
-    </Grid>
-  ),
+  render: () => {
+    const CARD_SAMPLE: LoadingSkeletonFlash[] = [
+      {
+        flashDirection: "left-to-right",
+        flashRate: "normal",
+      },
+      {
+        flashDirection: "right-to-left",
+        flashRate: "fast",
+      },
+      {
+        flashDirection: "top-to-bottom",
+        flashRate: "slow",
+      },
+      {
+        flashDirection: "bottom-to-top",
+        flashRate: 1.2,
+      },
+    ];
+
+    return (
+      <Grid gap={20} preset="1-to-3">
+        {CARD_SAMPLE.map((props, i) => (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 4,
+            }}
+          >
+            <span>
+              Card with {props.flashDirection} flash direction and{" "}
+              {typeof props.flashRate === "number"
+                ? `${props.flashRate}s speed (custom number)`
+                : `${props.flashRate} speed`}
+            </span>
+
+            <LoadingSkeleton
+              key={i}
+              flashDirection={props.flashDirection}
+              flashRate={props.flashRate}
+              style={css`
+                border: 1px solid #eee;
+                border-radius: 8px;
+                width: 300px;
+              `}
+            >
+              <LoadingSkeleton.Item height={180} />
+              <LoadingSkeleton.Item
+                height={21}
+                width="70%"
+                style={{ marginTop: 16 }}
+              />
+              <LoadingSkeleton.Item height={16} style={{ marginTop: 8 }} />
+              <LoadingSkeleton.Item
+                height={16}
+                width="80%"
+                style={{ marginTop: 6 }}
+              />
+            </LoadingSkeleton>
+          </div>
+        ))}
+      </Grid>
+    );
+  },
 };
