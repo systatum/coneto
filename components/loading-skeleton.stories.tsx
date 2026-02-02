@@ -1,5 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { LoadingSkeleton, LoadingSkeletonFlash } from "./loading-skeleton";
+import {
+  LoadingSkeleton,
+  LoadingSkeletonOptionsProps,
+} from "./loading-skeleton";
 import { css } from "styled-components";
 import { Grid } from "./grid";
 
@@ -45,6 +48,24 @@ const meta: Meta<typeof LoadingSkeleton> = {
         defaultValue: { summary: "normal" },
       },
     },
+    baseColor: {
+      control: "color",
+      description:
+        "The base color of the skeleton background. This is the main color behind the shimmer effect.",
+      table: {
+        type: { summary: "string" },
+        defaultValue: { summary: "#eee" },
+      },
+    },
+    highlightColor: {
+      control: "color",
+      description:
+        "The highlight color used in the shimmer animation. This creates the glowing effect over the `baseColor`.",
+      table: {
+        type: { summary: "string" },
+        defaultValue: { summary: "#f5f5f5" },
+      },
+    },
   },
 };
 
@@ -53,7 +74,7 @@ type Story = StoryObj<typeof LoadingSkeleton>;
 
 export const Card: Story = {
   render: () => {
-    const CARD_SAMPLE: LoadingSkeletonFlash[] = [
+    const CARD_SAMPLE: LoadingSkeletonOptionsProps[] = [
       {
         flashDirection: "left-to-right",
         flashRate: "normal",
