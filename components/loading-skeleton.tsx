@@ -63,10 +63,12 @@ function LoadingSkeleton({
         return cloneElement(componentChild, {
           key: index,
           ...(isItem && {
-            flashDirection,
-            flashRate,
-            baseColor,
-            highlightColor,
+            flashDirection:
+              componentChild.props.flashDirection ?? flashDirection,
+            flashRate: componentChild.props.flashRate ?? flashRate,
+            baseColor: componentChild.props.baseColor ?? baseColor,
+            highlightColor:
+              componentChild.props.highlightColor ?? highlightColor,
           }),
         });
       })}
@@ -82,7 +84,8 @@ const LoadingSkeletonWrapper = styled.div<{ $style?: CSSProp }>`
 `;
 
 export interface LoadingSkeletonItemProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "style"> {
+  extends Omit<HTMLAttributes<HTMLDivElement>, "style">,
+    LoadingSkeletonOptionsProps {
   style?: CSSProp;
   height?: number | string;
   width?: number | string;
@@ -92,15 +95,16 @@ function LoadingSkeletonItem({
   style,
   height,
   width,
+  flashDirection,
+  flashRate,
+  baseColor,
+  highlightColor,
   ...props
 }: LoadingSkeletonItemProps) {
-  const { flashDirection, flashRate, baseColor, highlightColor, ...rest } =
-    props as LoadingSkeletonOptionsProps;
-
   return (
     <LoadingSkeletonItemStyled
       aria-label="loading-skeleton-item"
-      {...rest}
+      {...props}
       $width={width}
       $height={height}
       $style={style}
