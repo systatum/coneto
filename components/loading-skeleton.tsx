@@ -1,20 +1,69 @@
-import React, { HTMLAttributes, ReactNode } from "react";
-import styled, { CSSProp, keyframes } from "styled-components";
+import {
+  Children,
+  cloneElement,
+  HTMLAttributes,
+  isValidElement,
+  ReactElement,
+  ReactNode,
+} from "react";
+import styled, { css, CSSProp, keyframes } from "styled-components";
 
-export interface LoadingSkeletonProps
+type FlashDirection =
+  | "left-to-right"
+  | "right-to-left"
+  | "top-to-bottom"
+  | "bottom-to-top";
+
+type FlashRate = "slow" | "normal" | "fast" | number;
+
+export interface LoadingSkeletonFlash {
+  flashDirection?: FlashDirection;
+  flashRate?: FlashRate;
+}
+
+interface LoadingSkeletonBaseProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "style"> {
   style?: CSSProp;
   children?: ReactNode;
 }
 
-function LoadingSkeleton({ style, children, ...props }: LoadingSkeletonProps) {
+export interface LoadingSkeletonProps
+  extends LoadingSkeletonBaseProps,
+    LoadingSkeletonFlash {
+  height?: number | string;
+  width?: number | string;
+}
+
+function LoadingSkeleton({
+  style,
+  children,
+  flashRate = "normal",
+  flashDirection = "left-to-right",
+  ...props
+}: LoadingSkeletonProps) {
+  const childArray = Children.toArray(children).filter(isValidElement);
+
   return (
     <LoadingSkeletonWrapper
       aria-label="loading-skeleton-wrapper"
       {...props}
       $style={style}
     >
-      {children}
+      {childArray.map((child, index) => {
+        const componentChild = child as ReactElement<
+          LoadingSkeletonItemProps & LoadingSkeletonFlash
+        >;
+
+        const isItem = componentChild.type === LoadingSkeleton.Item;
+
+        return cloneElement(componentChild, {
+          key: index,
+          ...(isItem && {
+            flashDirection,
+            flashRate,
+          }),
+        });
+      })}
     </LoadingSkeletonWrapper>
   );
 }
@@ -39,42 +88,107 @@ function LoadingSkeletonItem({
   width,
   ...props
 }: LoadingSkeletonItemProps) {
+  const { flashDirection, flashRate, ...rest } = props as LoadingSkeletonFlash;
+
   return (
     <LoadingSkeletonItemStyled
       aria-label="loading-skeleton-item"
-      {...props}
+      {...rest}
       $width={width}
       $height={height}
       $style={style}
+      $flashDirection={flashDirection}
+      $flashRate={flashRate}
     />
   );
 }
 
-const shimmer = keyframes`
-  0% {
-    background-position: -400px 0;
-  }
-  100% {
-    background-position: 400px 0;
-  }
+const shimmerX = keyframes`
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+`;
+
+const shimmerXReverse = keyframes`
+  0% { background-position: 400px 0; }
+  100% { background-position: -400px 0; }
+`;
+
+const shimmerY = keyframes`
+  0% { background-position: 0 -400px; }
+  100% { background-position: 0 400px; }
+`;
+
+const shimmerYReverse = keyframes`
+  0% { background-position: 0 400px; }
+  100% { background-position: 0 -400px; }
 `;
 
 const LoadingSkeletonItemStyled = styled.div<{
   $height?: string | number;
   $width?: string | number;
   $style?: CSSProp;
+  $flashDirection?: FlashDirection;
+  $flashRate?: FlashRate;
 }>`
   height: ${({ $height }) =>
     typeof $height === "number" ? `${$height}px` : $height || "16px"};
   width: ${({ $width }) =>
     typeof $width === "number" ? `${$width}px` : $width || "100%"};
+
   border-radius: 6px;
-  background: linear-gradient(90deg, #eeeeee 25%, #dddddd 37%, #eeeeee 63%);
-  background-size: 400px 100%;
-  animation: ${shimmer} 1.4s ease infinite;
+
+  background: ${({ $flashDirection }) =>
+    $flashDirection === "top-to-bottom" || $flashDirection === "bottom-to-top"
+      ? css`linear-gradient(
+          180deg,
+          #eeeeee 25%,
+          #dddddd 37%,
+          #eeeeee 63%
+        )`
+      : css`linear-gradient(
+          90deg,
+          #eeeeee 25%,
+          #dddddd 37%,
+          #eeeeee 63%
+        )`};
+
+  background-size: ${({ $flashDirection }) =>
+    $flashDirection === "top-to-bottom" || $flashDirection === "bottom-to-top"
+      ? "100% 400px"
+      : "400px 100%"};
+
+  animation: ${({ $flashDirection }) => resolveAnimation($flashDirection)}
+    ${({ $flashRate }) => resolveRate($flashRate)} ease infinite;
 
   ${({ $style }) => $style}
 `;
+
+const resolveAnimation = (direction?: FlashDirection) => {
+  switch (direction) {
+    case "right-to-left":
+      return shimmerXReverse;
+    case "top-to-bottom":
+      return shimmerY;
+    case "bottom-to-top":
+      return shimmerYReverse;
+    case "left-to-right":
+    default:
+      return shimmerX;
+  }
+};
+
+const resolveRate = (rate?: "slow" | "normal" | "fast" | number) => {
+  if (typeof rate === "number") return `${rate}s`;
+
+  switch (rate) {
+    case "slow":
+      return "2s";
+    case "fast":
+      return "0.8s";
+    default:
+      return "1.4s";
+  }
+};
 
 LoadingSkeleton.Item = LoadingSkeletonItem;
 
