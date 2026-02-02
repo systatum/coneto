@@ -73,7 +73,7 @@ export const Card: Story = {
     ];
 
     return (
-      <Grid gap={20} preset="1-to-3">
+      <Grid gap={20} preset="1-to-4">
         {CARD_SAMPLE.map((props, i) => (
           <div
             style={{
