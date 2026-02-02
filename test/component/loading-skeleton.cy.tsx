@@ -69,4 +69,85 @@ describe("Loading Skeleton", () => {
         });
     });
   });
+
+  context("flashRate", () => {
+    const rates: Array<{
+      label: string;
+      flashRate: "slow" | "normal" | "fast" | number;
+      expected: string;
+    }> = [
+      { label: "slow", flashRate: "slow", expected: "2s" },
+      { label: "normal", flashRate: "normal", expected: "1.4s" },
+      { label: "fast", flashRate: "fast", expected: "0.8s" },
+      { label: "custom", flashRate: 1.2, expected: "1.2s" },
+    ];
+
+    rates.forEach(({ label, flashRate, expected }) => {
+      context(`when given ${label}`, () => {
+        it(`renders with ${expected} flashRate`, () => {
+          cy.mount(
+            <LoadingSkeleton flashRate={flashRate}>
+              <LoadingSkeleton.Item height={16} />
+            </LoadingSkeleton>
+          );
+
+          cy.findByLabelText("loading-skeleton-item").should(
+            "have.css",
+            "animation-duration",
+            expected
+          );
+        });
+      });
+    });
+  });
+
+  context("flashDirection", () => {
+    const directions: Array<{
+      label: string;
+      flashDirection:
+        | "left-to-right"
+        | "right-to-left"
+        | "top-to-bottom"
+        | "bottom-to-top";
+      backgroundSize: string;
+    }> = [
+      {
+        label: "left-to-right",
+        flashDirection: "left-to-right",
+        backgroundSize: "400px 100%",
+      },
+      {
+        label: "right-to-left",
+        flashDirection: "right-to-left",
+        backgroundSize: "400px 100%",
+      },
+      {
+        label: "top-to-bottom",
+        flashDirection: "top-to-bottom",
+        backgroundSize: "100% 400px",
+      },
+      {
+        label: "bottom-to-top",
+        flashDirection: "bottom-to-top",
+        backgroundSize: "100% 400px",
+      },
+    ];
+
+    directions.forEach(({ label, flashDirection, backgroundSize }) => {
+      context(`when given ${label}`, () => {
+        it(`renders with ${label} flashDirection`, () => {
+          cy.mount(
+            <LoadingSkeleton flashDirection={flashDirection}>
+              <LoadingSkeleton.Item height={16} />
+            </LoadingSkeleton>
+          );
+
+          cy.findByLabelText("loading-skeleton-item")
+            .should("have.css", "background-size", backgroundSize)
+            .and("have.css", "animation-name")
+            .and("not.eq", "none");
+        });
+      });
+    });
+  });
 });
