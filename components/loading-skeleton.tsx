@@ -16,9 +16,11 @@ type FlashDirection =
 
 type FlashRate = "slow" | "normal" | "fast" | number;
 
-export interface LoadingSkeletonFlash {
+export interface LoadingSkeletonOptionsProps {
   flashDirection?: FlashDirection;
   flashRate?: FlashRate;
+  baseColor?: string;
+  highlightColor?: string;
 }
 
 interface LoadingSkeletonBaseProps
@@ -29,7 +31,7 @@ interface LoadingSkeletonBaseProps
 
 export interface LoadingSkeletonProps
   extends LoadingSkeletonBaseProps,
-    LoadingSkeletonFlash {
+    LoadingSkeletonOptionsProps {
   height?: number | string;
   width?: number | string;
 }
@@ -39,6 +41,8 @@ function LoadingSkeleton({
   children,
   flashRate = "normal",
   flashDirection = "left-to-right",
+  baseColor,
+  highlightColor,
   ...props
 }: LoadingSkeletonProps) {
   const childArray = Children.toArray(children).filter(isValidElement);
@@ -51,7 +55,7 @@ function LoadingSkeleton({
     >
       {childArray.map((child, index) => {
         const componentChild = child as ReactElement<
-          LoadingSkeletonItemProps & LoadingSkeletonFlash
+          LoadingSkeletonItemProps & LoadingSkeletonOptionsProps
         >;
 
         const isItem = componentChild.type === LoadingSkeleton.Item;
@@ -61,6 +65,8 @@ function LoadingSkeleton({
           ...(isItem && {
             flashDirection,
             flashRate,
+            baseColor,
+            highlightColor,
           }),
         });
       })}
@@ -88,7 +94,8 @@ function LoadingSkeletonItem({
   width,
   ...props
 }: LoadingSkeletonItemProps) {
-  const { flashDirection, flashRate, ...rest } = props as LoadingSkeletonFlash;
+  const { flashDirection, flashRate, baseColor, highlightColor, ...rest } =
+    props as LoadingSkeletonOptionsProps;
 
   return (
     <LoadingSkeletonItemStyled
@@ -99,6 +106,8 @@ function LoadingSkeletonItem({
       $style={style}
       $flashDirection={flashDirection}
       $flashRate={flashRate}
+      $baseColor={baseColor}
+      $highlightColor={highlightColor}
     />
   );
 }
@@ -129,6 +138,8 @@ const LoadingSkeletonItemStyled = styled.div<{
   $style?: CSSProp;
   $flashDirection?: FlashDirection;
   $flashRate?: FlashRate;
+  $baseColor?: string;
+  $highlightColor?: string;
 }>`
   height: ${({ $height }) =>
     typeof $height === "number" ? `${$height}px` : $height || "16px"};
@@ -137,19 +148,23 @@ const LoadingSkeletonItemStyled = styled.div<{
 
   border-radius: 6px;
 
-  background: ${({ $flashDirection }) =>
+  background: ${({
+    $flashDirection,
+    $baseColor = "#eeeeee",
+    $highlightColor = "#dddddd",
+  }) =>
     $flashDirection === "top-to-bottom" || $flashDirection === "bottom-to-top"
       ? css`linear-gradient(
           180deg,
-          #eeeeee 25%,
-          #dddddd 37%,
-          #eeeeee 63%
+          ${$baseColor} 25%,
+          ${$highlightColor} 37%,
+          ${$baseColor} 63%
         )`
       : css`linear-gradient(
           90deg,
-          #eeeeee 25%,
-          #dddddd 37%,
-          #eeeeee 63%
+          ${$baseColor} 25%,
+          ${$highlightColor} 37%,
+          ${$baseColor} 63%
         )`};
 
   background-size: ${({ $flashDirection }) =>
