@@ -124,13 +124,22 @@ export const Card: Story = {
               <LoadingSkeleton.Item
                 height={21}
                 width="70%"
-                style={{ marginTop: 16 }}
+                style={css`
+                  margin-top: 6px;
+                `}
               />
-              <LoadingSkeleton.Item height={16} style={{ marginTop: 8 }} />
+              <LoadingSkeleton.Item
+                height={16}
+                style={css`
+                  margin-top: 8px;
+                `}
+              />
               <LoadingSkeleton.Item
                 height={16}
                 width="80%"
-                style={{ marginTop: 6 }}
+                style={css`
+                  margin-top: 6px;
+                `}
               />
             </LoadingSkeleton>
           </div>

@@ -63,6 +63,7 @@ function LoadingSkeleton({
         return cloneElement(componentChild, {
           key: index,
           ...(isItem && {
+            ...componentChild.props,
             flashDirection:
               componentChild.props.flashDirection ?? flashDirection,
             flashRate: componentChild.props.flashRate ?? flashRate,
