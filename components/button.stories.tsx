@@ -82,9 +82,10 @@ export const CustomSizing: Story = {
   },
   render: (args) => {
     const BUTTONS_ITEMS: ButtonProps[] = [
-      { size: "lg", children: "Button Large" },
-      { size: "md", children: "Button" },
+      { size: "xs", children: "Button Extra Small" },
       { size: "sm", children: "Button Small" },
+      { size: "md", children: "Button Medium" },
+      { size: "lg", children: "Button Large" },
       { size: "icon", children: <RiMovie2Fill aria-label="Movie" /> },
     ];
 
