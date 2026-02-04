@@ -125,6 +125,10 @@
       "import": "./dist/components/list.js",
       "types": "./dist/components/list.d.ts"
     },
+    "./loading-skeleton": {
+      "import": "./dist/components/loading-skeleton.js",
+      "types": "./dist/components/loading-skeleton.d.ts"
+    },
     "./loading-spinner": {
       "import": "./dist/components/loading-spinner.js",
       "types": "./dist/components/loading-spinner.d.ts"
