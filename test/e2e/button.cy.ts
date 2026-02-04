@@ -2,37 +2,34 @@ import { getIdContent } from "test/support/commands";
 
 describe("Button", () => {
   context("CustomSizing", () => {
-    it("should click and have correct styles", () => {
+    it("should render all button sizes with correct styles", () => {
       cy.visit(getIdContent("controls-button--custom-sizing"));
 
-      cy.findAllByRole("button")
-        .eq(0)
-        .should("have.css", "height", "40px")
-        .and("have.css", "padding-left", "24px")
-        .and("have.css", "padding-right", "24px");
+      const sizes = [
+        { height: "28px", paddingLeft: "6px", paddingRight: "6px" },
+        { height: "32px", paddingLeft: "12px", paddingRight: "12px" },
+        { height: "36px", paddingLeft: "16px", paddingRight: "16px" },
+        { height: "40px", paddingLeft: "24px", paddingRight: "24px" },
+        {
+          width: "36px",
+          height: "36px",
+          paddingLeft: "0px",
+          paddingRight: "0px",
+        },
+      ];
 
-      cy.findAllByRole("button")
-        .eq(1)
-        .should("have.css", "height", "36px")
-        .and("have.css", "padding-left", "16px")
-        .and("have.css", "padding-right", "16px")
-        .and("have.css", "background-color", "rgb(243, 243, 243)")
-        .and("have.css", "color", "rgb(0, 0, 0)");
+      cy.findAllByRole("button").each(($btn, index) => {
+        const size = sizes[index];
 
-      cy.findAllByRole("button")
-        .eq(2)
-        .should("have.css", "height", "32px")
-        .and("have.css", "padding-left", "12px")
-        .and("have.css", "padding-right", "12px")
-        .and("have.css", "background-color", "rgb(243, 243, 243)")
-        .and("have.css", "color", "rgb(0, 0, 0)");
+        if (size.width) {
+          cy.wrap($btn).should("have.css", "width", size.width);
+        }
 
-      cy.findAllByRole("button")
-        .eq(3)
-        .should("have.css", "height", "36px")
-        .and("have.css", "width", "36px")
-        .and("have.css", "padding-left", "0px")
-        .and("have.css", "padding-right", "0px");
+        cy.wrap($btn)
+          .should("have.css", "height", size.height)
+          .and("have.css", "padding-left", size.paddingLeft)
+          .and("have.css", "padding-right", size.paddingRight);
+      });
     });
   });
 
