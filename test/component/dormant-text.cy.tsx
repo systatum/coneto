@@ -3,6 +3,31 @@ import { Textbox } from "./../../components/textbox";
 import { css } from "styled-components";
 
 describe("DormantText", () => {
+  context("style", () => {
+    context("when hovered", () => {
+      it("renders with cursor text", () => {
+        const value = "Test";
+        cy.mount(
+          <DormantText
+            fullWidth
+            cancelable
+            content={value}
+            acceptChangeOn="all"
+            dormantedFontSize={14}
+          >
+            <Textbox autoComplete="off" value={value} />
+          </DormantText>
+        );
+
+        cy.findByLabelText("dormant-wrapper").should(
+          "have.css",
+          "cursor",
+          "text"
+        );
+      });
+    });
+  });
+
   context("acceptChangeOn", () => {
     context("when given click", () => {
       context("when clicking dormant", () => {
@@ -367,7 +392,7 @@ describe("DormantText", () => {
               containerStyle: css`
                 height: 24px;
               `,
-              style: css`
+              self: css`
                 height: 24px;
               `,
             }}
