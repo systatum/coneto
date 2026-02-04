@@ -205,7 +205,7 @@ const DormantLabel = styled.label<{
 
   padding: 0.5rem;
   border-radius: 2px;
-  cursor: pointer;
+  cursor: text;
 
   border: 1px solid transparent;
   transition: all 0.1s ease;
