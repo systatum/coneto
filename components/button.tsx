@@ -26,13 +26,17 @@ import {
 export type ButtonVariants = {
   variant?:
     | "link"
-    | "outline"
     | "default"
     | "primary"
     | "danger"
     | "secondary"
     | "ghost"
-    | "transparent";
+    | "transparent"
+    | "success"
+    | "outline-default"
+    | "outline-success"
+    | "outline-primary"
+    | "outline-danger";
   size?: "icon" | "xs" | "md" | "sm" | "lg";
 };
 
@@ -397,7 +401,7 @@ const ButtonWrapper = styled.div<{
   ${({ $isOpen, $variant }) => {
     const { border } = getButtonColors($variant, $isOpen);
     return css`
-      ${$variant === "outline" &&
+      ${$variant?.startsWith("outline") &&
       css`
         border: ${border};
         border-radius: 2px;
@@ -496,20 +500,27 @@ const BaseButton = styled.button<{
             inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
             inset 0 -0.5px 0.5px ${getActiveColor($variant)};
           border-radius: inherit;
+          overflow: hidden;
           pointer-events: none;
         }
-      `}
+      `};
 
       ${underline
         ? css`
             text-decoration: underline;
           `
-        : ""}
+        : ""};
 
       &:hover {
         ${!$isOpen &&
         css`
           background-color: ${getHoverColor($variant)};
+        `}
+
+        ${$variant?.startsWith("outline") &&
+        $variant !== "outline-default" &&
+        css`
+          color: white;
         `}
       }
     `;
@@ -575,7 +586,7 @@ const Divider = styled.div<{
     return css`
       border-color: ${$variant === "default" ||
       $variant === "ghost" ||
-      $variant === "outline"
+      $variant === "outline-default"
         ? "gray"
         : color};
     `;
@@ -593,17 +604,33 @@ const getButtonColors = (
     ? customActiveColor
     : getActiveColor(variant);
 
+  if (variant === "outline-default") {
+    return {
+      bg: isOpen ? activeColor : "white",
+      color: "#9b9b9b",
+      border: "1px solid #9b9b9b",
+    };
+  }
+
+  const outlineMatch = variant?.match(/^outline-(.+)$/);
+  if (outlineMatch) {
+    const baseVariant = outlineMatch[1] as ButtonVariants["variant"];
+    const baseColors = getButtonColors(baseVariant);
+    return {
+      bg: isOpen ? activeColor : "white",
+      color: baseColors.bg,
+      border: `1px solid ${baseColors.bg}`,
+    };
+  }
+
   switch (variant) {
+    case "success":
+      return { bg: isOpen ? activeColor : "#42A340", color: "white" };
     case "primary":
       return { bg: isOpen ? activeColor : "#569aec", color: "white" };
     case "danger":
       return { bg: isOpen ? activeColor : "#ce375d", color: "white" };
-    case "outline":
-      return {
-        bg: isOpen ? activeColor : "white",
-        color: "black",
-        border: "1px solid #ccc",
-      };
+
     case "secondary":
       return { bg: isOpen ? activeColor : "#dddddd", color: "#111" };
     case "ghost":
@@ -625,12 +652,20 @@ const getButtonColors = (
 };
 
 const getHoverColor = (variant: ButtonVariants["variant"]) => {
+  const outlineMatch = variant?.match(/^outline-(.+)$/);
+  if (outlineMatch) {
+    const baseVariant = outlineMatch[1] as ButtonVariants["variant"];
+    return getHoverColor(baseVariant);
+  }
+
   switch (variant) {
+    case "success":
+      return "#2B8C29";
     case "primary":
       return "#3e7dd3";
     case "danger":
       return "#a12f4b";
-    case "outline":
+    case "outline-default":
       return "#f0f0f0";
     case "secondary":
       return "#cccccc";
@@ -644,12 +679,20 @@ const getHoverColor = (variant: ButtonVariants["variant"]) => {
 };
 
 const getActiveColor = (variant: ButtonVariants["variant"]) => {
+  const outlineMatch = variant?.match(/^outline-(.+)$/);
+  if (outlineMatch) {
+    const baseVariant = outlineMatch[1] as ButtonVariants["variant"];
+    return getActiveColor(baseVariant);
+  }
+
   switch (variant) {
+    case "success":
+      return "#146512";
     case "primary":
       return "#2a73c3";
     case "danger":
       return "#802036";
-    case "outline":
+    case "outline-default":
       return "#e6e6e6";
     case "secondary":
       return "#b3b3b3";
@@ -665,12 +708,20 @@ const getActiveColor = (variant: ButtonVariants["variant"]) => {
 };
 
 const getFocusColor = (variant: ButtonVariants["variant"]) => {
+  const outlineMatch = variant?.match(/^outline-(.+)$/);
+  if (outlineMatch) {
+    const baseVariant = outlineMatch[1] as ButtonVariants["variant"];
+    return getFocusColor(baseVariant);
+  }
+
   switch (variant) {
+    case "success":
+      return "#0f4f0e";
     case "primary":
       return "#569AEC80";
     case "danger":
       return "#CE375D80";
-    case "outline":
+    case "outline-default":
       return "#00000040";
     case "secondary":
       return "#B4B4B480";
