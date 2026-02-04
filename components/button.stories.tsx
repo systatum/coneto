@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Button, ButtonProps } from "./button";
+import { Button, ButtonProps, ButtonVariants } from "./button";
 import {
   RiMovie2Fill,
   RiSpam2Line,
@@ -76,93 +76,60 @@ Use this component for all user-interactive button actions — from primary call
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+export const CustomSizing: Story = {
   args: {
     variant: "default",
-    children: "Button",
   },
   render: (args) => {
-    return <Button {...args} />;
+    const BUTTONS_ITEMS: ButtonProps[] = [
+      { size: "xs", children: "Button Extra Small" },
+      { size: "sm", children: "Button Small" },
+      { size: "md", children: "Button Medium" },
+      { size: "lg", children: "Button Large" },
+      { size: "icon", children: <RiMovie2Fill aria-label="Movie" /> },
+    ];
+
+    return (
+      <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+        {BUTTONS_ITEMS.map((item, index) => (
+          <Button key={index} {...args} size={item.size}>
+            {item.children}
+          </Button>
+        ))}
+      </div>
+    );
   },
 };
 
-export const DefaultLarge: Story = {
+export const AllVariants: Story = {
   args: {
-    size: "lg",
     children: "Button",
   },
   render: (args) => {
-    return <Button {...args} />;
-  },
-};
+    const VARIANTS: ButtonVariants["variant"][] = [
+      "link",
+      "outline-default",
+      "outline-primary",
+      "outline-danger",
+      "outline-success",
+      "default",
+      "primary",
+      "danger",
+      "secondary",
+      "ghost",
+      "transparent",
+      "success",
+    ] as const;
 
-export const DefaultSmall: Story = {
-  args: {
-    size: "sm",
-    children: "Button",
-  },
-  render: (args) => {
-    return <Button {...args} />;
-  },
-};
-
-export const DefaultIcon: Story = {
-  args: {
-    size: "icon",
-    children: <RiMovie2Fill aria-label="Movie" />,
-  },
-  render: (args) => {
-    return <Button {...args} />;
-  },
-};
-
-export const Primary: Story = {
-  args: {
-    variant: "primary",
-    children: "Button",
-  },
-  render: (args) => {
-    return <Button {...args} />;
-  },
-};
-
-export const Secondary: Story = {
-  args: {
-    variant: "secondary",
-    children: "Button",
-  },
-  render: (args) => {
-    return <Button {...args} />;
-  },
-};
-
-export const Danger: Story = {
-  args: {
-    variant: "danger",
-    children: "Button",
-  },
-  render: (args) => {
-    return <Button {...args} />;
-  },
-};
-
-export const Outline: Story = {
-  args: {
-    variant: "outline",
-    children: "Button",
-  },
-  render: (args) => {
-    return <Button {...args} />;
-  },
-};
-
-export const Transparent: Story = {
-  args: {
-    variant: "transparent",
-    children: "Button",
-  },
-  render: (args) => {
-    return <Button {...args} />;
+    return (
+      <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+        {VARIANTS.map((variant) => (
+          <Button key={variant} {...args} variant={variant}>
+            {variant.charAt(0).toUpperCase() + variant.slice(1)}
+          </Button>
+        ))}
+      </div>
+    );
   },
 };
 
