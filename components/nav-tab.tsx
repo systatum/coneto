@@ -186,23 +186,15 @@ function NavTab({
                     color: black;
                     opacity: 0;
 
-                    ${placement === "bottom-start"
+                    ${placement?.startsWith("bottom")
                       ? css`
-                          margin-top: 3px;
+                          top: -4px;
                         `
-                      : placement === "bottom-end"
+                      : placement?.startsWith("top")
                         ? css`
-                            margin-top: 3px;
+                            bottom: -4px;
                           `
-                        : placement === "top-start"
-                          ? css`
-                              margin-bottom: 3px;
-                            `
-                          : placement === "top-end"
-                            ? css`
-                                margin-bottom: 3px;
-                              `
-                            : null}
+                        : null}
 
                     ${props.subItems &&
                     css`
