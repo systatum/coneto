@@ -25,8 +25,12 @@ export interface LoadingSkeletonOptionsProps {
 
 interface LoadingSkeletonBaseProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "style"> {
-  style?: CSSProp;
   children?: ReactNode;
+  styles?: LoadingSkeletonStyles;
+}
+
+export interface LoadingSkeletonStyles {
+  self?: CSSProp;
 }
 
 export interface LoadingSkeletonProps
@@ -37,7 +41,7 @@ export interface LoadingSkeletonProps
 }
 
 function LoadingSkeleton({
-  style,
+  styles,
   children,
   flashRate = "normal",
   flashDirection = "left-to-right",
@@ -51,7 +55,7 @@ function LoadingSkeleton({
     <LoadingSkeletonWrapper
       aria-label="loading-skeleton-wrapper"
       {...props}
-      $style={style}
+      $style={styles?.self}
     >
       {childArray.map((child, index) => {
         const componentChild = child as ReactElement<
@@ -87,13 +91,13 @@ const LoadingSkeletonWrapper = styled.div<{ $style?: CSSProp }>`
 export interface LoadingSkeletonItemProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "style">,
     LoadingSkeletonOptionsProps {
-  style?: CSSProp;
+  styles?: LoadingSkeletonStyles;
   height?: number | string;
   width?: number | string;
 }
 
 function LoadingSkeletonItem({
-  style,
+  styles,
   height,
   width,
   flashDirection,
@@ -108,7 +112,7 @@ function LoadingSkeletonItem({
       {...props}
       $width={width}
       $height={height}
-      $style={style}
+      $style={styles?.self}
       $flashDirection={flashDirection}
       $flashRate={flashRate}
       $baseColor={baseColor}

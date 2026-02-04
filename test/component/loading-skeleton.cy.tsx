@@ -11,24 +11,29 @@ describe("Loading Skeleton", () => {
             {Array.from({ length: 3 }).map((_, i) => (
               <LoadingSkeleton
                 key={i}
-                style={css`
-                  border: 1px solid #eee;
-                  border-radius: 8px;
-                  min-width: 300px;
-                  max-width: 300px;
-                `}
+                styles={{
+                  self: css`
+                    border: 1px solid #eee;
+                    border-radius: 8px;
+                    min-width: 300px;
+                    max-width: 300px;
+                  `,
+                }}
               >
                 <LoadingSkeleton.Item height={180} />
                 <LoadingSkeleton.Item
                   height={21}
                   width="70%"
-                  style={{ marginTop: 16 }}
+                  styles={{ self: { marginTop: 16 } }}
                 />
-                <LoadingSkeleton.Item height={16} style={{ marginTop: 8 }} />
+                <LoadingSkeleton.Item
+                  height={16}
+                  styles={{ self: { marginTop: 8 } }}
+                />
                 <LoadingSkeleton.Item
                   height={16}
                   width="80%"
-                  style={{ marginTop: 6 }}
+                  styles={{ self: { marginTop: 6 } }}
                 />
               </LoadingSkeleton>
             ))}

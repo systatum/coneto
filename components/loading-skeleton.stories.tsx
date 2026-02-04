@@ -16,7 +16,7 @@ const meta: Meta<typeof LoadingSkeleton> = {
       description:
         "Skeleton items rendered inside the wrapper. Use `LoadingSkeleton.Item` to define individual loading blocks.",
     },
-    style: {
+    styles: {
       control: false,
       description:
         "Custom styled-components CSS applied to the skeleton wrapper. Useful for layout styling such as borders, padding, width, or background.",
@@ -114,32 +114,40 @@ export const Card: Story = {
               key={i}
               flashDirection={props.flashDirection}
               flashRate={props.flashRate}
-              style={css`
-                border: 1px solid #eee;
-                border-radius: 8px;
-                width: 300px;
-              `}
+              styles={{
+                self: css`
+                  border: 1px solid #eee;
+                  border-radius: 8px;
+                  width: 300px;
+                `,
+              }}
             >
               <LoadingSkeleton.Item height={180} />
               <LoadingSkeleton.Item
                 height={21}
                 width="70%"
-                style={css`
-                  margin-top: 6px;
-                `}
+                styles={{
+                  self: css`
+                    margin-top: 6px;
+                  `,
+                }}
               />
               <LoadingSkeleton.Item
                 height={16}
-                style={css`
-                  margin-top: 8px;
-                `}
+                styles={{
+                  self: css`
+                    margin-top: 8px;
+                  `,
+                }}
               />
               <LoadingSkeleton.Item
                 height={16}
                 width="80%"
-                style={css`
-                  margin-top: 6px;
-                `}
+                styles={{
+                  self: css`
+                    margin-top: 6px;
+                  `,
+                }}
               />
             </LoadingSkeleton>
           </div>
