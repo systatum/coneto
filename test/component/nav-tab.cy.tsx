@@ -127,10 +127,18 @@ describe("NavTab", () => {
       cy.mount(<NavTab tabs={tabsWithSubItems} activeTab={"2"} />);
       cy.findByText("This is review content").should("exist");
       cy.findByText("Review").realHover();
-      cy.findByText("Chart").click();
+      cy.findByText("Chart").click({ force: true });
       cy.findByText("This is review content").should("not.exist");
       cy.findByText("This is chart content").should("exist");
       cy.get("@consoleLog").should("have.been.calledWith", "chart was clicked");
+    });
+
+    it("renders with top -4px", () => {
+      cy.mount(<NavTab tabs={tabsWithSubItems} activeTab={"2"} />);
+      cy.findByText("This is review content").should("exist");
+      cy.findByText("Review").realHover();
+      cy.wait(100);
+      cy.findByLabelText("tooltip-drawer").should("have.css", "top", "-4px");
     });
 
     context("when empty content", () => {
