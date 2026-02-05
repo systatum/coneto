@@ -12,6 +12,7 @@ import { Tooltip } from "./tooltip";
 export interface FieldLaneProps {
   label?: string;
   showError?: boolean;
+  errorIconPosition?: "absolute" | "relative";
   errorMessage?: string;
   dropdowns?: DropdownProps[];
   styles?: FieldLaneStylesProps;
@@ -75,6 +76,7 @@ function FieldLane({
   inputId,
   actions,
   type,
+  errorIconPosition = "absolute",
 }: FieldLaneProps) {
   const inputElement: ReactElement = (
     <InputWrapper>
@@ -251,7 +253,7 @@ function FieldLane({
           );
         })}
       {showError && (
-        <ErrorIconWrapper>
+        <ErrorIconWrapper $isAbsolute={errorIconPosition === "absolute"}>
           <RiErrorWarningLine
             size={17}
             style={{
@@ -300,16 +302,23 @@ const InputWrapper = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
+  justify-content: center;
+  gap: 4px;
 `;
 
-const ErrorIconWrapper = styled.button`
-  position: absolute;
-  top: 50%;
-  right: 8px;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  z-index: 10;
+const ErrorIconWrapper = styled.button<{ $isAbsolute?: boolean }>`
+  position: relative;
+  ${({ $isAbsolute }) =>
+    $isAbsolute &&
+    css`
+      position: absolute;
+      top: 50%;
+      right: 8px;
+      transform: translateY(-50%);
+      border: none;
+      z-index: 10;
+    `};
+
   cursor: default;
 `;
 
