@@ -88,11 +88,6 @@ export const Default: Story = {
     return (
       <Toolbar>
         <Toolbar.Menu
-          styles={{
-            dropdownStyle: css`
-              min-width: 235px;
-            `,
-          }}
           onClick={() => {
             console.log("test");
           }}
@@ -102,11 +97,6 @@ export const Default: Story = {
           subMenuList={subMenuList}
         />
         <Toolbar.Menu
-          styles={{
-            dropdownStyle: css`
-              min-width: 235px;
-            `,
-          }}
           caption="Primary Mode"
           icon={RiMessage2Line}
           iconColor="white"
@@ -114,11 +104,6 @@ export const Default: Story = {
           subMenuList={subMenuList}
         />
         <Toolbar.Menu
-          styles={{
-            dropdownStyle: css`
-              min-width: 235px;
-            `,
-          }}
           caption="Danger Mode"
           icon={RiMessage2Line}
           iconColor="white"
