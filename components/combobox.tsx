@@ -99,73 +99,67 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
     const inputId = `combobox-${name}`;
 
     return (
-      <FieldLane
-        inputId={inputId}
+      <Selectbox
+        ref={ref}
+        helper={helper}
         dropdowns={dropdowns}
         showError={showError}
         errorMessage={errorMessage}
         label={label}
-        helper={helper}
         disabled={disabled}
+        highlightOnMatch={highlightOnMatch}
         styles={{
           containerStyle: styles?.containerStyle,
           labelStyle: styles?.labelStyle,
-        }}
-      >
-        <Selectbox
-          ref={ref}
-          highlightOnMatch={highlightOnMatch}
-          styles={{
-            self: css`
-              border: 1px solid #d1d5db;
-              &:focus {
-                border-color: ${showError ? "#f87171" : "#61a9f9"};
-              }
-              ${dropdowns &&
-              css`
-                border-top-left-radius: 0px;
-                border-bottom-left-radius: 0px;
-              `}
-              ${styles?.selectboxStyle}
+          self: css`
+            border: 1px solid #d1d5db;
+            &:focus {
+              border-color: ${showError ? "#f87171" : "#61a9f9"};
+            }
+            ${dropdowns &&
+            css`
+              border-top-left-radius: 0px;
+              border-bottom-left-radius: 0px;
+            `}
+            ${styles?.selectboxStyle}
               ${showError &&
-              css`
-                border-color: #f87171;
-              `}
-            `,
-          }}
-          id={inputId}
-          options={options}
-          selectedOptions={selectedOptions}
-          setSelectedOptions={setSelectedOptions}
-          placeholder={placeholder}
-          clearable={clearable}
-          strict={strict}
-          onKeyDown={onKeyDown}
-          multiple={multiple}
-          maxSelectableItems={maxSelectableItems}
-          actions={actions}
-        >
-          {(props) => {
-            return (
-              <ComboboxDrawer
-                {...props}
-                styles={styles}
-                inputRef={props.ref}
-                name={name}
-                disabled={disabled}
-                selectedOptions={selectedOptions}
-                setSelectedOptions={setSelectedOptions}
-                highlightOnMatch={highlightOnMatch}
-                emptySlate={emptySlate}
-                actions={actions}
-                onClick={onClick}
-                maxSelectableItems={maxSelectableItems}
-                multiple={multiple}
-              />
-            );
-          }}
-        </Selectbox>
-      </FieldLane>
+            css`
+              border-color: #f87171;
+            `}
+          `,
+        }}
+        id={inputId}
+        options={options}
+        selectedOptions={selectedOptions}
+        setSelectedOptions={setSelectedOptions}
+        placeholder={placeholder}
+        clearable={clearable}
+        strict={strict}
+        onKeyDown={onKeyDown}
+        multiple={multiple}
+        maxSelectableItems={maxSelectableItems}
+        actions={actions}
+      >
+        {(props) => {
+          return (
+            <ComboboxDrawer
+              {...props}
+              styles={styles}
+              inputRef={props.ref}
+              name={name}
+              disabled={disabled}
+              selectedOptions={selectedOptions}
+              setSelectedOptions={setSelectedOptions}
+              highlightOnMatch={highlightOnMatch}
+              emptySlate={emptySlate}
+              actions={actions}
+              onClick={onClick}
+              maxSelectableItems={maxSelectableItems}
+              multiple={multiple}
+            />
+          );
+        }}
+      </Selectbox>
     );
   }
 );
@@ -268,8 +262,6 @@ function ComboboxDrawer({
                 background-color: white;
                 z-index: 30;
                 height: 38px;
-                padding-right: 7px;
-                padding-left: 7px;
               `,
               iconStyle: css`
                 left: 16px;
@@ -280,6 +272,8 @@ function ComboboxDrawer({
                 margin-bottom: 7px;
                 padding-bottom: 7px;
                 padding-top: 7px;
+                margin-left: 4px;
+                margin-right: 4px;
               `,
             },
           }}
