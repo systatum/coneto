@@ -56,7 +56,7 @@ const meta: Meta<typeof Textbox> = {
         "Array of action buttons displayed inside the input. Each action can include an icon, title tooltip, and click handler.",
       table: {
         type: {
-          summary: `ActionsProps[]`,
+          summary: `TextboxActionsProps[]`,
           detail: `{
   title?: string;
   icon?: RemixiconComponentType;

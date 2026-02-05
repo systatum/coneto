@@ -34,7 +34,24 @@ const meta: Meta<typeof Textarea> = {
     errorMessage: {
       control: "text",
     },
-    onActionClick: { action: "sendClicked" },
+    actions: {
+      control: false,
+      description:
+        "Array of action buttons displayed inside the input. Each action can include an icon, title tooltip, and click handler.",
+      table: {
+        type: {
+          summary: `TextareaActionsProps[]`,
+          detail: `{
+  title?: string;
+  icon?: RemixiconComponentType;
+  iconColor?: string;
+  onClick?: (e: React.MouseEvent) => void;
+  disabled?: boolean;
+  titleShowDelay?: number;
+}`,
+        },
+      },
+    },
     icon: {
       control: {
         type: "select",
