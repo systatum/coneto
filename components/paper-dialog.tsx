@@ -16,7 +16,7 @@ import {
   useImperativeHandle,
   forwardRef,
 } from "react";
-import { Button } from "./button";
+import { Button, ButtonVariants } from "./button";
 import styled, { css, CSSProp } from "styled-components";
 
 type DialogState = "restored" | "closed" | "minimized";
@@ -41,14 +41,7 @@ interface PaperDialogTriggerProps {
   setDialogState?: (dialogState: DialogState) => void;
   icon?: RemixiconComponentType;
   style?: CSSProp;
-  variant?:
-    | "link"
-    | "outline"
-    | "default"
-    | "primary"
-    | "danger"
-    | "secondary"
-    | "ghost";
+  variant?: ButtonVariants["variant"];
 }
 
 interface PaperDialogContentProps {
