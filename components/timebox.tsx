@@ -2,37 +2,30 @@ import {
   ChangeEvent,
   forwardRef,
   KeyboardEvent,
-  ReactElement,
   useEffect,
   useImperativeHandle,
   useRef,
   useState,
 } from "react";
-import styled, { CSSProp } from "styled-components";
-import { StatefulForm } from "./stateful-form";
+import styled, { css, CSSProp } from "styled-components";
+import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 
-export interface TimeboxProps {
+export interface BaseTimeboxProps {
   withSeconds?: boolean;
   onChange?: (value: ChangeEvent<HTMLInputElement>) => void;
   editable?: boolean;
   styles?: TimeboxStylesProps;
   disabled?: boolean;
-  label?: string;
   showError?: boolean;
-  errorMessage?: string;
   value?: string;
   name?: string;
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement | HTMLDivElement>) => void;
   placeholder?: TimeboxPlaceholderProps;
-  helper?: string;
 }
 
 export interface TimeboxStylesProps {
-  containerStyle?: CSSProp;
   self?: CSSProp;
   inputWrapperStyle?: CSSProp;
-  labelStyle?: CSSProp;
-  errorStyle?: CSSProp;
 }
 
 interface TimeboxPlaceholderProps {
@@ -41,21 +34,18 @@ interface TimeboxPlaceholderProps {
   second?: string;
 }
 
-const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
+const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
   (
     {
       withSeconds = false,
       onChange,
       editable = true,
       disabled,
-      label,
-      errorMessage,
       showError,
       value,
       name,
       onKeyDown,
       placeholder,
-      helper,
       styles,
     },
     ref
@@ -182,7 +172,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
       setValueLocal(formatted);
     };
 
-    const inputElement: ReactElement = (
+    return (
       <InputGroup
         $style={styles?.inputWrapperStyle}
         $focused={isFocused}
@@ -299,46 +289,69 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
         )}
       </InputGroup>
     );
-
-    return (
-      <InputWrapper
-        ref={ref}
-        $containerStyle={styles?.containerStyle}
-        $disabled={disabled}
-      >
-        {label && (
-          <StatefulForm.Label
-            htmlFor={disabled ? null : inputId}
-            style={styles?.labelStyle}
-            helper={helper}
-            label={label}
-          />
-        )}
-        <InputContent>
-          {inputElement}
-          {showError && errorMessage && (
-            <ErrorText $style={styles?.errorStyle}>{errorMessage}</ErrorText>
-          )}
-        </InputContent>
-      </InputWrapper>
-    );
   }
 );
 
-const InputWrapper = styled.div<{
-  $containerStyle?: CSSProp;
-  $disabled?: boolean;
-}>`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  font-size: 0.75rem;
-  width: 100%;
-  position: relative;
+export interface TimeboxProps
+  extends Omit<BaseTimeboxProps, "styles" | "inputId">,
+    Omit<FieldLaneProps, "styles" | "inputId" | "type"> {
+  styles?: TimeboxStylesProps & FieldLaneStylesProps;
+}
 
-  ${({ $disabled }) => $disabled && `cursor: not-allowed; opacity: 0.5;`}
-  ${({ $containerStyle }) => $containerStyle}
-`;
+const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
+  ({ ...props }, ref) => {
+    const {
+      dropdowns,
+      label,
+      showError,
+      styles,
+      errorMessage,
+      actions,
+      helper,
+      disabled,
+      ...rest
+    } = props;
+    const inputId = `Timebox-${props?.name}`;
+
+    return (
+      <FieldLane
+        inputId={inputId}
+        dropdowns={dropdowns}
+        showError={showError}
+        errorMessage={errorMessage}
+        label={label}
+        actions={actions}
+        helper={helper}
+        disabled={disabled}
+        errorIconPosition="relative"
+        styles={{
+          containerStyle: css`
+            width: fit-content;
+            ${styles?.containerStyle}
+          `,
+          labelStyle: styles?.labelStyle,
+        }}
+      >
+        <BaseTimebox
+          {...rest}
+          showError={showError}
+          styles={{
+            inputWrapperStyle: styles?.inputWrapperStyle,
+            self: css`
+              ${dropdowns &&
+              css`
+                border-top-left-radius: 0px;
+                border-bottom-left-radius: 0px;
+              `}
+              ${styles?.self}
+            `,
+          }}
+          ref={ref}
+        />
+      </FieldLane>
+    );
+  }
+);
 
 const InputGroup = styled.div<{
   $focused: boolean;
@@ -355,19 +368,6 @@ const InputGroup = styled.div<{
   border-color: ${({ $error, $focused }) =>
     $error ? "#dc2626" : $focused ? "#61A9F9" : "#d1d5db"};
 
-  ${({ $style }) => $style}
-`;
-
-const InputContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: 12px;
-`;
-
-const ErrorText = styled.span<{ $style?: CSSProp }>`
-  color: #dc2626;
-  font-size: 0.75rem;
   ${({ $style }) => $style}
 `;
 
