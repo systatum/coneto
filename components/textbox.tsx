@@ -99,7 +99,7 @@ const BaseTextbox = forwardRef<HTMLInputElement, BaseTextboxProps>(
 );
 
 export interface TextboxProps
-  extends Omit<BaseTextboxProps, "styles" | "inputId" | "withDropdown">,
+  extends Omit<BaseTextboxProps, "styles" | "inputId">,
     Omit<FieldLaneProps, "styles" | "inputId" | "type"> {
   styles?: TextboxStylesProps & FieldLaneStylesProps;
 }

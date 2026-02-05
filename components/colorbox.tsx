@@ -126,7 +126,7 @@ const BaseColorbox = forwardRef<HTMLInputElement, BaseColorboxProps>(
 );
 
 export interface ColorboxProps
-  extends Omit<BaseColorboxProps, "styles" | "inputId" | "withDropdown">,
+  extends Omit<BaseColorboxProps, "styles" | "inputId">,
     Omit<FieldLaneProps, "styles" | "inputId" | "type"> {
   styles?: ColorboxStylesProps & FieldLaneStylesProps;
 }

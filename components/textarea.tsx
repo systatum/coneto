@@ -82,7 +82,7 @@ const BaseTextarea = forwardRef<HTMLTextAreaElement, BaseTextareaProps>(
 );
 
 export interface TextareaProps
-  extends Omit<BaseTextareaProps, "styles" | "inputId" | "withDropdown">,
+  extends Omit<BaseTextareaProps, "styles" | "inputId">,
     Omit<FieldLaneProps, "styles" | "inputId"> {
   styles?: TextareaStylesProps & FieldLaneStylesProps;
 }
