@@ -127,12 +127,14 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
                 });
               }}
               showSubMenuOn="self"
-              variant="outline"
+              variant="outline-default"
               styles={{
                 containerStyle: css`
                   border-right: 0;
                   border-top-right-radius: 0;
                   border-bottom-right-radius: 0;
+                  border-color: #d1d5db;
+
                   ${index > 0 &&
                   css`
                     border-top-left-radius: 0;
@@ -147,6 +149,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
                 `,
                 self: css`
                   font-size: 12px;
+                  color: black;
                   ${dropdown.width &&
                   css`
                     width: ${dropdown.width};
