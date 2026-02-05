@@ -1,10 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { DropdownOptionProps, Textbox, TextboxProps } from "./textbox";
+import { Textbox, TextboxProps } from "./textbox";
 import { useArgs } from "@storybook/preview-api";
 import { useEffect, useState, type ChangeEvent } from "react";
 import * as RemixIcons from "@remixicon/react";
 import { css } from "styled-components";
 import { Calendar } from "./calendar";
+import { DropdownOptionProps } from "./field-lane";
 
 const meta: Meta<typeof Textbox> = {
   title: "Input Elements/Textbox",
