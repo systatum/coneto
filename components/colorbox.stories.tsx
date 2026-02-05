@@ -72,6 +72,7 @@ export const Default: Story = {
     const [currentArgs, setUpdateArgs] = useArgs();
     const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
+
       setUpdateArgs({ ...currentArgs, [name]: value });
     };
 
@@ -79,7 +80,7 @@ export const Default: Story = {
       <Colorbox
         styles={{
           containerStyle: css`
-            max-width: 250px;
+            max-width: 300px;
           `,
         }}
         {...args}
@@ -122,7 +123,7 @@ export const WithError: Story = {
       <Colorbox
         styles={{
           containerStyle: css`
-            max-width: 250px;
+            max-width: 300px;
           `,
         }}
         {...args}
