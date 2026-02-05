@@ -10,6 +10,7 @@ import {
   Ref,
   CSSProperties,
   forwardRef,
+  InputHTMLAttributes,
 } from "react";
 import {
   useFloating,
@@ -29,8 +30,10 @@ import {
 } from "@remixicon/react";
 import styled, { css, CSSProp } from "styled-components";
 import { isValidDateString } from "../lib/date";
+import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 
-export interface SelectboxProps {
+export interface BaseSelectboxProps
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "children"> {
   options?: OptionsProps[];
   selectedOptions?: string[];
   setSelectedOptions?: (data: string[]) => void;
@@ -45,7 +48,8 @@ export interface SelectboxProps {
   onClick?: () => void;
   multiple?: boolean;
   actions?: any[];
-  id?: string;
+  inputId?: string;
+  showError?: boolean;
   maxSelectableItems?: number | undefined;
   children?: (
     props: DrawerProps &
@@ -62,7 +66,7 @@ export interface SelectboxProps {
 }
 
 export interface SelectboxStylesProps {
-  containerStyle?: CSSProp;
+  selectboxStyle?: CSSProp;
   self?: CSSProp;
 }
 
@@ -92,7 +96,7 @@ export interface OptionsProps {
   value: string;
 }
 
-const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
+const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
   (
     {
       setSelectedOptions,
@@ -112,6 +116,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       multiple,
       actions,
       maxSelectableItems,
+      showError,
       id,
     },
     ref
@@ -274,6 +279,15 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       }
     }, [highlightedIndex, isOpen]);
 
+    useEffect(() => {
+      if (!isOpen && multiple) {
+        setSelectedOptionsLocal({
+          text: "",
+          value: "",
+        });
+      }
+    }, [isOpen]);
+
     const multipleOptionsJoinedText = selectedOptions
       ?.map((val) => options.find((o) => o.value === val)?.text)
       .filter(Boolean)
@@ -283,13 +297,19 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       ? multipleOptionsJoinedText
       : selectedOptionsLocal.text;
 
+    const isClearable =
+      clearable &&
+      (multiple
+        ? selectedOptions?.length
+        : selectedOptionsLocal?.text.length) !== 0;
+
     return (
       <Container
         onBlur={() => {
           setIsHovered(false);
         }}
         role="combobox"
-        $style={styles?.containerStyle}
+        $style={styles?.selectboxStyle}
         aria-expanded={isOpen}
         onClick={() => {
           if (multiple) inputRef.current?.focus();
@@ -320,14 +340,6 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
           onFocus={() => {
             if (type === "calendar" || selectedOptionsLocal) setIsOpen(true);
             setIsFocused(true);
-          }}
-          onMouseOver={() => {
-            if (multiple) {
-              setSelectedOptionsLocal({
-                text: "",
-                value: "",
-              });
-            }
           }}
           onBlur={() => {
             setIsFocused(false);
@@ -374,7 +386,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
           $highlight={highlightOnMatch && FILTERED_ACTIVE}
         />
 
-        {clearable && selectedOptionsLocal?.text.length !== 0 && (
+        {isClearable && (
           <>
             <ClearIcon
               aria-label="clearable-content"
@@ -438,6 +450,70 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
             ref: multiple ? inputRef : undefined,
           })}
       </Container>
+    );
+  }
+);
+
+export interface SelectboxProps
+  extends Omit<BaseSelectboxProps, "styles" | "inputId">,
+    Omit<
+      FieldLaneProps,
+      "styles" | "inputId" | "type" | "actions" | "children"
+    > {
+  styles?: SelectboxStylesProps & FieldLaneStylesProps;
+}
+
+const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
+  ({ ...props }, ref) => {
+    const {
+      dropdowns,
+      label,
+      showError,
+      styles,
+      errorMessage,
+      actions,
+      type,
+      helper,
+      disabled,
+      name,
+      ...rest
+    } = props;
+    const inputId = `Selectbox-${props?.name}`;
+
+    return (
+      <FieldLane
+        inputId={inputId}
+        dropdowns={dropdowns}
+        showError={showError}
+        errorMessage={errorMessage}
+        label={label}
+        actions={actions}
+        type={type}
+        helper={helper}
+        disabled={disabled}
+        styles={{
+          containerStyle: styles?.containerStyle,
+          labelStyle: styles?.labelStyle,
+        }}
+      >
+        <BaseSelectbox
+          {...rest}
+          inputId={inputId}
+          showError={showError}
+          styles={{
+            self: css`
+              ${dropdowns &&
+              css`
+                border-top-left-radius: 0px;
+                border-bottom-left-radius: 0px;
+              `}
+              ${styles?.self}
+            `,
+          }}
+          type={type}
+          ref={ref}
+        />
+      </FieldLane>
     );
   }
 );
