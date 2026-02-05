@@ -8,46 +8,39 @@ import {
   useRef,
   useState,
 } from "react";
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
+import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 
-export interface ColorboxProps
+export interface BaseColorboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "style"> {
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   value?: string;
-  label?: string;
   showError?: boolean;
-  errorMessage?: string;
   onClick?: () => void;
   styles?: ColorboxStylesProps;
-  helper?: string;
+  inputId?: string;
 }
 
 export interface ColorboxStylesProps {
   self?: CSSProp;
-  containerStyle?: CSSProp;
-  labelStyle?: CSSProp;
 }
 
-const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
+const BaseColorbox = forwardRef<HTMLInputElement, BaseColorboxProps>(
   (
     {
       onChange,
       value,
-      label,
-      errorMessage,
       showError,
       placeholder,
       onClick,
       styles,
-      helper,
+      inputId,
       ...props
     },
     ref
   ) => {
     const [hovered, setHovered] = useState(false);
-
-    const inputId = `colorbox-${props.name}`;
 
     const debounceTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -73,7 +66,7 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
       [onChange, props.name]
     );
 
-    const inputElement: ReactElement = (
+    return (
       <ColorInputContainer
         $style={styles?.self}
         $hovered={hovered}
@@ -127,60 +120,71 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
             $showError={!!showError}
           />
         </TextInputGroup>
-
-        {showError && <StyledErrorIcon size={18} />}
       </ColorInputContainer>
-    );
-
-    return (
-      <InputWrapper
-        $containerStyle={styles?.containerStyle}
-        $disabled={props.disabled}
-      >
-        {label && (
-          <StatefulForm.Label
-            htmlFor={props.disabled ? null : inputId}
-            onClick={() => {
-              document.getElementById(inputId)?.click();
-              setHovered(true);
-
-              if (onClick) onClick();
-            }}
-            style={styles?.labelStyle}
-            helper={helper}
-            label={label}
-          />
-        )}
-        <InputContent>
-          {inputElement}
-          {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
-        </InputContent>
-      </InputWrapper>
     );
   }
 );
 
-const InputWrapper = styled.div<{
-  $containerStyle?: CSSProp;
-  $disabled?: boolean;
-}>`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  font-size: 0.75rem;
-  width: 100%;
-  position: relative;
+export interface ColorboxProps
+  extends Omit<BaseColorboxProps, "styles" | "inputId" | "withDropdown">,
+    Omit<FieldLaneProps, "styles" | "inputId" | "type"> {
+  styles?: ColorboxStylesProps & FieldLaneStylesProps;
+}
 
-  ${({ $disabled }) => $disabled && `cursor: not-allowed; opacity: 0.5;`}
-  ${({ $containerStyle }) => $containerStyle}
-`;
+const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
+  ({ ...props }, ref) => {
+    const {
+      dropdowns,
+      label,
+      showError,
+      styles,
+      errorMessage,
+      actions,
+      type,
+      helper,
+      disabled,
+      ...rest
+    } = props;
 
-const InputContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: 12px;
-`;
+    const inputId = `colorbox-${props.name}`;
+
+    return (
+      <FieldLane
+        inputId={inputId}
+        dropdowns={dropdowns}
+        showError={showError}
+        errorMessage={errorMessage}
+        label={label}
+        actions={actions}
+        type={type}
+        helper={helper}
+        disabled={disabled}
+        styles={{
+          containerStyle: styles?.containerStyle,
+          labelStyle: styles?.labelStyle,
+        }}
+      >
+        <BaseColorbox
+          inputId={inputId}
+          showError={showError}
+          disabled={disabled}
+          styles={{
+            self: css`
+              ${dropdowns &&
+              css`
+                border-top-left-radius: 0px;
+                border-bottom-left-radius: 0px;
+              `}
+              ${styles?.self}
+            `,
+          }}
+          ref={ref}
+          {...rest}
+        />
+      </FieldLane>
+    );
+  }
+);
 
 const ColorInputContainer = styled.div<{
   $hovered: boolean;
@@ -196,7 +200,7 @@ const ColorInputContainer = styled.div<{
   width: 100%;
   border: 1px solid
     ${({ $showError, $hovered }) =>
-      $showError ? "#ef4444" : $hovered ? "#61A9F9" : "#d1d5db"};
+      $showError ? "#f87171" : $hovered ? "#61A9F9" : "#d1d5db"};
 
   ${({ $style }) => $style}
 `;
@@ -209,7 +213,7 @@ const ColorBox = styled.div<{
   min-height: 24px;
   margin: 4px;
   border-radius: 2px;
-  border: 1px solid ${({ $showError }) => ($showError ? "#ef4444" : "#d1d5db")};
+  border: 1px solid ${({ $showError }) => ($showError ? "#f87171" : "#d1d5db")};
   background-color: ${({ $bgColor }) => ($bgColor ? $bgColor : "#ffffff")};
   overflow: hidden;
   cursor: pointer;
@@ -224,11 +228,6 @@ const HiddenColorInput = styled.input`
   opacity: 0;
 `;
 
-const ErrorText = styled.span`
-  color: #dc2626;
-  font-size: 0.75rem;
-`;
-
 const TextInputGroup = styled.span<{
   $hovered: boolean;
   $showError: boolean;
@@ -240,12 +239,12 @@ const TextInputGroup = styled.span<{
   padding: 2px 12px;
   border-left: 1px solid
     ${({ $showError, $hovered }) =>
-      $showError ? "#ef4444" : $hovered ? "#61A9F9" : "#d1d5db"};
+      $showError ? "#f87171" : $hovered ? "#61A9F9" : "#d1d5db"};
   width: 100%;
 `;
 
 const Prefix = styled.span<{ $showError: boolean }>`
-  color: ${({ $showError }) => ($showError ? "#ef4444" : "#6b7280")};
+  color: ${({ $showError }) => ($showError ? "#f87171" : "#6b7280")};
 `;
 
 const TextInput = styled.input<{ $showError: boolean }>`
@@ -256,17 +255,7 @@ const TextInput = styled.input<{ $showError: boolean }>`
   background: transparent;
   border: none;
   outline: none;
-  color: ${({ $showError }) => ($showError ? "#ef4444" : "#1f2937")};
-`;
-
-const StyledErrorIcon = styled(RiErrorWarningLine)`
-  position: absolute;
-  top: 50%;
-  right: 12px;
-  transform: translateY(-50%);
-  background-color: #dc2626;
-  color: white;
-  border-radius: 9999px;
+  color: ${({ $showError }) => ($showError ? "#f87171" : "#1f2937")};
 `;
 
 export { Colorbox };
