@@ -14,24 +14,15 @@ import { RemixiconComponentType } from "@remixicon/react";
 import styled, { css, CSSProp } from "styled-components";
 import { List } from "./list";
 import { StatefulForm } from "./stateful-form";
-
-export type ComboboxProps = Partial<BaseComboboxProps> & {
-  label?: string;
-  showError?: boolean;
-  errorMessage?: string;
-  onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
-  onClick?: () => void;
-};
+import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 
 interface BaseComboboxProps {
-  options: OptionsProps[];
-  selectedOptions: string[];
-  setSelectedOptions: (data: string[]) => void;
+  selectedOptions?: string[];
+  setSelectedOptions?: (data: string[]) => void;
   clearable?: boolean;
   placeholder?: string;
   emptySlate?: string;
   highlightOnMatch?: boolean;
-  strict?: boolean;
   actions?: ComboboxActionProps[];
   name?: string;
   multiple?: boolean;
@@ -39,6 +30,10 @@ interface BaseComboboxProps {
   styles?: ComboboxStylesProps;
   helper?: string;
   disabled?: boolean;
+  onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
+  onClick?: () => void;
+  strict?: boolean;
+  options: OptionsProps[];
 }
 
 interface ComboboxStylesProps {
@@ -67,6 +62,13 @@ type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
     };
   };
 
+export interface ComboboxProps
+  extends Omit<BaseComboboxProps, "inputId">,
+    Omit<
+      FieldLaneProps,
+      "styles" | "inputId" | "type" | "children" | "actions"
+    > {}
+
 const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
   (
     {
@@ -90,29 +92,40 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       maxSelectableItems,
       helper,
       disabled,
+      dropdowns,
     },
     ref
   ) => {
     const inputId = `combobox-${name}`;
 
     return (
-      <ComboboxWrapper
-        $style={styles?.containerStyle}
-        aria-label={`combobox-${name}`}
+      <FieldLane
+        inputId={inputId}
+        dropdowns={dropdowns}
+        showError={showError}
+        errorMessage={errorMessage}
+        label={label}
+        helper={helper}
+        disabled={disabled}
+        styles={{
+          containerStyle: styles?.containerStyle,
+          labelStyle: styles?.labelStyle,
+        }}
       >
-        {label && (
-          <StatefulForm.Label
-            htmlFor={disabled ? null : inputId}
-            style={styles?.labelStyle}
-            helper={helper}
-            label={label}
-          />
-        )}
         <Selectbox
           ref={ref}
           highlightOnMatch={highlightOnMatch}
           styles={{
             self: css`
+              border: 1px solid #d1d5db;
+              &:focus {
+                border-color: ${showError ? "#f87171" : "#61a9f9"};
+              }
+              ${dropdowns &&
+              css`
+                border-top-left-radius: 0px;
+                border-bottom-left-radius: 0px;
+              `}
               ${styles?.selectboxStyle}
               ${showError &&
               css`
@@ -139,6 +152,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
                 styles={styles}
                 inputRef={props.ref}
                 name={name}
+                disabled={disabled}
                 selectedOptions={selectedOptions}
                 setSelectedOptions={setSelectedOptions}
                 highlightOnMatch={highlightOnMatch}
@@ -151,29 +165,10 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
             );
           }}
         </Selectbox>
-
-        {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
-      </ComboboxWrapper>
+      </FieldLane>
     );
   }
 );
-
-const ComboboxWrapper = styled.div<{
-  $style?: CSSProp;
-}>`
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  gap: 8px;
-  font-size: 12px;
-  position: relative;
-
-  ${({ $style }) => $style}
-`;
-
-const ErrorText = styled.span`
-  color: #dc2626;
-`;
 
 function ComboboxDrawer({
   floatingStyles,
