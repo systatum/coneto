@@ -65,10 +65,14 @@ export interface BaseSelectboxProps
   styles?: SelectboxStylesProps;
 }
 
-export interface SelectboxStylesProps {
+export interface BaseSelectboxStylesProps {
   selectboxStyle?: CSSProp;
   self?: CSSProp;
 }
+
+export interface SelectboxStylesProps
+  extends FieldLaneStylesProps,
+    BaseSelectboxStylesProps {}
 
 export interface DrawerProps extends InteractionModeProps {
   highlightedIndex: number | null;
@@ -319,6 +323,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
           $style={styles?.self}
           {...getReferenceProps()}
           data-type="selectbox"
+          $hasError={showError}
           id={id}
           $clearable={clearable}
           ref={(el) => {
@@ -460,7 +465,7 @@ export interface SelectboxProps
       FieldLaneProps,
       "styles" | "inputId" | "type" | "actions" | "children"
     > {
-  styles?: SelectboxStylesProps & FieldLaneStylesProps;
+  styles?: SelectboxStylesProps;
 }
 
 const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
@@ -476,6 +481,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       helper,
       disabled,
       name,
+      errorIconPosition,
       ...rest
     } = props;
     const inputId = `Selectbox-${props?.name}`;
@@ -491,6 +497,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
         type={type}
         helper={helper}
         disabled={disabled}
+        errorIconPosition={errorIconPosition}
         styles={{
           containerStyle: styles?.containerStyle,
           labelStyle: styles?.labelStyle,
@@ -531,6 +538,7 @@ const Input = styled.input<{
   $hovered?: boolean;
   $style?: CSSProp;
   $clearable?: boolean;
+  $hasError?: boolean;
 }>`
   width: 100%;
   border-radius: 2px;
@@ -545,11 +553,19 @@ const Input = styled.input<{
       border-color: #61a9f9;
     `}
 
-  ${({ $highlight, $hovered }) =>
-    ($highlight || $hovered) &&
-    css`
-      border-color: #61a9f9;
-    `}
+  ${({ $highlight, $hovered, $hasError }) =>
+    $hasError
+      ? css`
+          border-color: #ef4444;
+        `
+      : $highlight || $hovered
+        ? css`
+            border-color: #61a9f9;
+          `
+        : css`
+            border-color: #d1d5db;
+          `}
+
   ${({ $style }) => $style}
 `;
 
