@@ -6,7 +6,12 @@ import {
   forwardRef,
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
-import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import {
+  FieldLaneActionsProps,
+  FieldLane,
+  FieldLaneProps,
+  FieldLaneStylesProps,
+} from "./field-lane";
 
 export interface BaseTextareaProps
   extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "style"> {
@@ -19,6 +24,8 @@ export interface BaseTextareaProps
   autogrow?: boolean;
   inputId?: string;
 }
+
+export type TextareaActionsProps = FieldLaneActionsProps;
 
 interface TextareaStylesProps {
   self?: CSSProp;

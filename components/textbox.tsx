@@ -1,8 +1,4 @@
-import {
-  RemixiconComponentType,
-  RiEyeLine,
-  RiEyeOffLine,
-} from "@remixicon/react";
+import { RiEyeLine, RiEyeOffLine } from "@remixicon/react";
 import {
   ChangeEvent,
   InputHTMLAttributes,
@@ -12,7 +8,12 @@ import {
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { Button } from "./button";
-import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import {
+  FieldLaneActionsProps,
+  FieldLane,
+  FieldLaneProps,
+  FieldLaneStylesProps,
+} from "./field-lane";
 
 export interface BaseTextboxProps
   extends Omit<
@@ -29,6 +30,8 @@ export interface BaseTextboxProps
 export interface TextboxStylesProps {
   self?: CSSProp;
 }
+
+export type TextareaActions = FieldLaneActionsProps;
 
 const BaseTextbox = forwardRef<HTMLInputElement, BaseTextboxProps>(
   (
