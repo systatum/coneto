@@ -67,7 +67,9 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
     <Selectbox
       {...rest}
       ref={ref}
+      errorIconPosition="relative"
       id={inputId}
+      showError={showError}
       selectedOptions={selectedDates}
       setSelectedOptions={setSelectedDates}
       helper={helper}
@@ -86,7 +88,7 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
           `}
 
           ${styles?.selectboxStyle}
-          ${props.showError &&
+          ${showError &&
           css`
             border-color: #f87171;
           `}
