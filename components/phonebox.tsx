@@ -26,7 +26,7 @@ import {
 import { COUNTRY_CODES } from "../constants/countries";
 import { AsYouType, CountryCode } from "libphonenumber-js/max";
 import styled, { css, CSSProp } from "styled-components";
-import { StatefulForm } from "./stateful-form";
+import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 
 export interface CountryCodeProps {
   id: string;
@@ -35,7 +35,7 @@ export interface CountryCodeProps {
   flag: string;
 }
 
-export interface PhoneboxProps {
+export interface BasePhoneboxProps {
   label?: string;
   name?: string;
   value?: string;
@@ -52,28 +52,24 @@ export interface PhoneboxProps {
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
   countryCodeValue?: CountryCodeProps;
   styles?: PhoneboxStylesProps;
+  inputId?: string;
 }
 
 export interface PhoneboxStylesProps {
-  containerStyle?: CSSProp;
   self?: CSSProp;
   inputWrapperStyle?: CSSProp;
   toggleStyle?: CSSProp;
-  labelStyle?: CSSProp;
 }
 
-const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
+const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
   (
     {
-      label,
       value = "",
       onChange,
       placeholder,
       disabled = false,
       showError = false,
-      errorMessage,
       onKeyDown,
-      helper,
       countryCodeValue,
       styles,
     },
@@ -88,6 +84,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
       useState<CountryCodeProps>(countryCodeState);
     const [phoneNumber, setPhoneNumber] = useState("");
     const [highlightedIndex, setHighlightedIndex] = useState(0);
+    const [isFocus, setIsFocus] = useState(false);
 
     const searchInputRef = useRef<HTMLInputElement>(null);
     const phoneInputRef = useRef<HTMLInputElement>(null);
@@ -215,18 +212,12 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
     };
 
     return (
-      <ContainerPhonebox $style={styles?.containerStyle}>
-        {label && (
-          <StatefulForm.Label
-            style={styles?.labelStyle}
-            helper={helper}
-            label={label}
-          />
-        )}
+      <>
         <InputWrapper
           $hasError={showError}
           $isOpen={isOpen}
           $disabled={disabled}
+          $isFocus={isFocus}
           {...getReferenceProps({
             ref: refs.setReference,
             tabIndex: -1,
@@ -242,11 +233,13 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
         >
           <CountryButton
             type="button"
+            $isFocus={isFocus}
             onClick={handleToggleDropdown}
             disabled={disabled}
             $disabled={disabled}
             aria-label="Select country code"
             tabIndex={0}
+            $hasError={showError}
             $style={styles?.toggleStyle}
           >
             <span>{selectedCountry.flag}</span>
@@ -265,6 +258,12 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
             disabled={disabled}
             $disabled={disabled}
             aria-label="Phone number input"
+            onMouseDown={() => {
+              setIsFocus(true);
+            }}
+            onBlur={() => {
+              setIsFocus(false);
+            }}
           />
         </InputWrapper>
 
@@ -345,9 +344,70 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
             )}
           </DropdownContainer>
         )}
+      </>
+    );
+  }
+);
 
-        {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
-      </ContainerPhonebox>
+export interface PhoneboxProps
+  extends Omit<BasePhoneboxProps, "styles" | "inputId">,
+    Omit<FieldLaneProps, "styles" | "inputId" | "onChange"> {
+  styles?: PhoneboxStylesProps & FieldLaneStylesProps;
+}
+
+const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
+  ({ ...props }, ref) => {
+    const {
+      dropdowns,
+      label,
+      showError,
+      styles,
+      errorMessage,
+      actions,
+      type,
+      helper,
+      disabled,
+      onChange,
+      ...rest
+    } = props;
+    const inputId = `Phonebox-${props?.name}`;
+
+    return (
+      <FieldLane
+        inputId={inputId}
+        dropdowns={dropdowns}
+        showError={showError}
+        errorMessage={errorMessage}
+        label={label}
+        actions={actions}
+        type={type}
+        helper={helper}
+        disabled={disabled}
+        styles={{
+          containerStyle: styles?.containerStyle,
+          labelStyle: styles?.labelStyle,
+        }}
+      >
+        <BasePhonebox
+          {...rest}
+          inputId={inputId}
+          showError={showError}
+          styles={{
+            self: styles?.self,
+            toggleStyle: styles?.toggleStyle,
+            inputWrapperStyle: css`
+              ${dropdowns &&
+              css`
+                border-top-left-radius: 0px;
+                border-bottom-left-radius: 0px;
+              `}
+              ${styles?.self}
+            `,
+          }}
+          onChange={onChange}
+          ref={ref}
+        />
+      </FieldLane>
     );
   }
 );
@@ -356,6 +416,7 @@ const InputWrapper = styled.div<{
   $hasError?: boolean;
   $isOpen?: boolean;
   $disabled?: boolean;
+  $isFocus?: boolean;
   $style?: CSSProp;
 }>`
   display: flex;
@@ -371,34 +432,32 @@ const InputWrapper = styled.div<{
     css`
       opacity: 0.5;
     `}
-  &:focus-within {
-    border-color: ${({ $hasError }) => ($hasError ? "#ef4444" : "#61A9F9")};
-  }
+  border-color: ${({ $hasError, $isFocus }) =>
+    $hasError ? "#ef4444" : $isFocus ? "#61A9F9" : "#d1d5db"};
   border-radius: 2px;
 
   ${({ $style }) => $style};
 `;
 
-const ContainerPhonebox = styled.div<{ $style?: CSSProp }>`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  width: 100%;
-
-  ${({ $style }) => $style}
-`;
-
-const CountryButton = styled.button<{ $disabled?: boolean; $style?: CSSProp }>`
+const CountryButton = styled.button<{
+  $disabled?: boolean;
+  $hasError?: boolean;
+  $style?: CSSProp;
+  $isFocus?: boolean;
+}>`
   display: flex;
   flex-direction: row;
   min-height: 32px;
   align-items: center;
   gap: 4px;
-  border-right: 1px solid #d1d5db;
+  border-right: 1px solid
+    ${({ $hasError, $isFocus }) =>
+      $hasError ? "#ef4444" : $isFocus ? "#61A9F9" : "#d1d5db"};
   padding: 0 8px;
   font-size: 12px;
   border-top-left-radius: var(--radius-xs);
   border-bottom-left-radius: var(--radius-xs);
+
   ${({ $disabled }) =>
     $disabled
       ? css`
