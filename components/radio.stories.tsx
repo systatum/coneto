@@ -52,8 +52,8 @@ const meta: Meta<typeof Radio> = {
       description: "Optional icon displayed inside the radio (button mode).",
       control: false,
     },
-    iconSize: {
-      description: "Size of the icon in pixels.",
+    visualSize: {
+      description: "Size of the icon or image in pixels.",
       control: "number",
     },
     iconColor: {
