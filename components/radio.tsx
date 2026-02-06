@@ -16,8 +16,8 @@ export interface RadioProps
   showError?: boolean;
   errorMessage?: string;
   mode?: "radio" | "button";
-  icon?: RemixiconComponentType;
-  visualSize?: number;
+  icon?: RemixiconComponentType | string;
+  iconSize?: number;
   iconColor?: string;
   helper?: string;
   imageUrl?: string;
@@ -37,10 +37,9 @@ export interface RadioOptionsProps {
   value?: string;
   label?: string;
   description?: string;
-  visualSize?: number;
+  iconSize?: number;
   iconColor?: string;
-  icon?: RemixiconComponentType;
-  imageUrl?: string;
+  icon?: RemixiconComponentType | string;
 }
 
 function Radio({
@@ -55,17 +54,16 @@ function Radio({
   showError,
   errorMessage,
   icon: Icon,
-  visualSize,
+  iconSize,
   iconColor,
   styles,
   helper,
-  imageUrl,
   mode = "radio",
   ...props
 }: RadioProps) {
   const id = `radio-${name}-${value}`;
 
-  const resolvedVisualSize = visualSize ?? (mode === "button" ? 25 : 16);
+  const resolvediconSize = iconSize ?? (mode === "button" ? 25 : 16);
 
   const inputElement: ReactElement = (
     <Label
@@ -100,19 +98,19 @@ function Radio({
           $error={showError}
           $style={styles?.self}
         />
-        {imageUrl ? (
+        {typeof Icon === "string" ? (
           <img
             aria-label="radio-image"
-            src={imageUrl}
-            width={resolvedVisualSize}
-            height={resolvedVisualSize}
-            alt={imageUrl}
+            src={Icon as string}
+            width={resolvediconSize}
+            height={resolvediconSize}
+            alt={Icon as string}
           />
         ) : (
           Icon && (
             <Icon
               aria-label="radio-icon"
-              size={resolvedVisualSize}
+              size={resolvediconSize}
               style={{ color: iconColor ?? "black" }}
             />
           )
