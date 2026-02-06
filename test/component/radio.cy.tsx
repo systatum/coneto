@@ -29,14 +29,14 @@ describe("Radio", () => {
       });
     });
 
-    context("when given iconSize 30px", () => {
+    context("when given visualSize 30px", () => {
       it("renders the radio with icon 30px", () => {
         cy.mount(
           <Radio
             label="Radio with icon"
             value=""
             icon={Ri24HoursFill}
-            iconSize={30}
+            visualSize={30}
           />
         );
         cy.findByLabelText("radio-icon")
@@ -83,6 +83,39 @@ describe("Radio", () => {
           cy.findByLabelText("radio-icon")
             .should("have.css", "width", "25px")
             .and("have.css", "height", "25px");
+        });
+      });
+    });
+
+    context("when given image", () => {
+      it("renders the radio with image", () => {
+        cy.mount(
+          <Radio
+            label="Radio with icon"
+            imageUrl={"https://picsum.photos/seed/text/64/64"}
+          />
+        );
+        cy.findByLabelText("radio-icon").should("not.exist");
+        cy.findByLabelText("radio-image")
+          .should("exist")
+          .and("have.css", "width", "16px")
+          .and("have.css", "height", "16px");
+      });
+
+      context("when given visualSize 30px", () => {
+        it("renders the radio with image 30px", () => {
+          cy.mount(
+            <Radio
+              label="Radio with icon"
+              visualSize={30}
+              imageUrl={"https://picsum.photos/seed/text/64/64"}
+            />
+          );
+          cy.findByLabelText("radio-icon").should("not.exist");
+          cy.findByLabelText("radio-image")
+            .should("exist")
+            .and("have.css", "width", "30px")
+            .and("have.css", "height", "30px");
         });
       });
     });
