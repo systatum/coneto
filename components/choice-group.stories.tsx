@@ -190,9 +190,11 @@ export const WithRadioButton: StoryRadio = {
   render: () => {
     const [stateA, setStateA] = useState("text");
     const [stateB, setStateB] = useState("text");
+    const [stateC, setStateC] = useState("text");
 
     const GROUP_A = "radio_group_a";
     const GROUP_B = "radio_group_b";
+    const GROUP_C = "radio_group_c";
 
     const RADIO_OPTIONS_WITH_ICON: RadioOptionsProps[] = [
       {
@@ -219,6 +221,34 @@ export const WithRadioButton: StoryRadio = {
         value: "video",
         label: "Video",
         icon: RiVideoFill,
+      },
+    ];
+
+    const RADIO_OPTIONS_WITH_IMAGE: RadioOptionsProps[] = [
+      {
+        value: "text",
+        label: "Text",
+        imageUrl: "https://picsum.photos/seed/text/64/64",
+      },
+      {
+        value: "database",
+        label: "Database",
+        imageUrl: "https://picsum.photos/seed/database/64/64",
+      },
+      {
+        value: "music",
+        label: "Music",
+        imageUrl: "https://picsum.photos/seed/music/64/64",
+      },
+      {
+        value: "image",
+        label: "Image",
+        imageUrl: "https://picsum.photos/seed/image/64/64",
+      },
+      {
+        value: "video",
+        label: "Video",
+        imageUrl: "https://picsum.photos/seed/video/64/64",
       },
     ];
 
@@ -273,6 +303,33 @@ export const WithRadioButton: StoryRadio = {
                   icon={option.icon}
                   checked={stateB === option.value}
                   onChange={(e) => setStateB(e.target.value)}
+                />
+              );
+            })}
+          </ChoiceGroup>
+        </div>
+        <div
+          style={{
+            maxWidth: "600px",
+            flexDirection: "column",
+            display: "flex",
+            gap: "4px",
+            width: "100%",
+          }}
+        >
+          <h2>With Image</h2>
+          <ChoiceGroup>
+            {RADIO_OPTIONS_WITH_IMAGE.map((option, index) => {
+              return (
+                <Radio
+                  mode="button"
+                  key={index}
+                  name={GROUP_C}
+                  value={option.value}
+                  label={option.label}
+                  imageUrl={option.imageUrl}
+                  checked={stateC === option.value}
+                  onChange={(e) => setStateC(e.target.value)}
                 />
               );
             })}
