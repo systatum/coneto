@@ -29,14 +29,14 @@ describe("Radio", () => {
       });
     });
 
-    context("when given visualSize 30px", () => {
+    context("when given iconSize 30px", () => {
       it("renders the radio with icon 30px", () => {
         cy.mount(
           <Radio
             label="Radio with icon"
             value=""
             icon={Ri24HoursFill}
-            visualSize={30}
+            iconSize={30}
           />
         );
         cy.findByLabelText("radio-icon")
@@ -102,12 +102,12 @@ describe("Radio", () => {
           .and("have.css", "height", "16px");
       });
 
-      context("when given visualSize 30px", () => {
+      context("when given iconSize 30px", () => {
         it("renders the radio with image 30px", () => {
           cy.mount(
             <Radio
               label="Radio with icon"
-              visualSize={30}
+              iconSize={30}
               imageUrl={"https://picsum.photos/seed/text/64/64"}
             />
           );
