@@ -70,6 +70,7 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
       errorIconPosition="relative"
       id={inputId}
       showError={showError}
+      dropdowns={dropdowns}
       selectedOptions={selectedDates}
       setSelectedOptions={setSelectedDates}
       helper={helper}

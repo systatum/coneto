@@ -163,7 +163,7 @@ const TextareaInput = styled.textarea<{
   width: 100%;
   outline: none;
   border: 1px solid ${({ $error }) => ($error ? "#f87171" : "#d1d5db")};
-
+  z-index: 10;
   resize: none;
 
   ${({ $autogrow }) =>

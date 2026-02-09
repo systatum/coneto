@@ -128,13 +128,13 @@ function FieldLane({
               self: css`
                 font-size: 12px;
                 color: black;
-                height: 34px;
+                height: 100%;
 
                 ${dropdown.width &&
                 css`
                   width: ${dropdown.width};
                 `}
-                ${dropdown.styles?.self}
+                ${dropdown.styles?.self};
               `,
               dropdownStyle: (placement) => css`
                 min-width: 200px;
@@ -311,14 +311,16 @@ const InputWrapper = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
-  justify-content: center;
+  justify-content: flex-start;
 `;
 
 const ErrorIconWrapper = styled.button<{ $isAbsolute?: boolean }>`
   position: relative;
+  margin-left: 4px;
   ${({ $isAbsolute }) =>
     $isAbsolute &&
     css`
+      margin-left: 0px;
       position: absolute;
       top: 50%;
       right: 8px;

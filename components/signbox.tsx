@@ -205,10 +205,7 @@ function BaseSignbox({
 }
 
 export interface SignboxProps
-  extends Omit<
-      BaseSignboxProps,
-      "styles" | "inputId" | "children" | "height" | "width"
-    >,
+  extends Omit<BaseSignboxProps, "styles" | "inputId" | "children">,
     Omit<FieldLaneProps, "styles" | "inputId" | "type" | "children"> {
   styles?: SignboxStylesProps & FieldLaneStylesProps;
 }
@@ -227,6 +224,8 @@ function Signbox({
   clearable,
   onChange,
   value,
+  height,
+  width,
 }: SignboxProps) {
   const inputId = `Signbox-${name}`;
 
@@ -247,6 +246,8 @@ function Signbox({
       }}
     >
       <BaseSignbox
+        height={height}
+        width={width}
         value={value}
         onChange={onChange}
         clearable={clearable}
