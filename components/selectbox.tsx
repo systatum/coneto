@@ -122,6 +122,8 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       maxSelectableItems,
       showError,
       id,
+      autoComplete = "off",
+      ...props
     },
     ref
   ) => {
@@ -320,6 +322,8 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
         }}
       >
         <Input
+          {...props}
+          autoComplete="off"
           $style={styles?.self}
           {...getReferenceProps()}
           data-type="selectbox"
