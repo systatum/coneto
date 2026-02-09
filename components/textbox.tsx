@@ -56,6 +56,7 @@ const BaseTextbox = forwardRef<HTMLInputElement, BaseTextboxProps>(
           $error={showError}
           $style={styles?.self}
           {...(props as InputHTMLAttributes<HTMLInputElement>)}
+          autoComplete={type === "password" ? "off" : props.autoComplete}
         />
 
         {type === "password" && (
