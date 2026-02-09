@@ -268,7 +268,16 @@ function FieldLane({
   );
 
   return (
-    <Container $style={styles?.containerStyle}>
+    <Container
+      $style={css`
+        ${!children &&
+        css`
+          width: fit-content;
+          border-right: 1px solid #d1d5db;
+        `}
+        ${styles?.containerStyle}
+      `}
+    >
       {label && (
         <StatefulForm.Label
           htmlFor={disabled ? null : inputId}
@@ -303,7 +312,6 @@ const InputWrapper = styled.div`
   flex-direction: row;
   width: 100%;
   justify-content: center;
-  gap: 4px;
 `;
 
 const ErrorIconWrapper = styled.button<{ $isAbsolute?: boolean }>`
