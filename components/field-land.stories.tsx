@@ -17,12 +17,11 @@ type Story = StoryObj<typeof FieldLane>;
 
 export const Default: Story = {
   render: () => {
-    const [value2, setValue2] = useState({
+    const [value, setValue] = useState({
       selectedText1: "11/12/2025",
       selectedOption1: "11/12/2025",
       selectedText2: "WFH",
       selectedOption2: "2",
-      value: "",
     });
 
     const MONTH_NAMES = [
@@ -60,14 +59,14 @@ export const Default: Story = {
         dropdowns={[
           {
             width: "100px",
-            caption: value2.selectedText1,
+            caption: value.selectedText1,
             render: ({ render }) =>
               render(
                 <Calendar
-                  selectedDates={[value2.selectedOption1]}
+                  selectedDates={[value.selectedOption1]}
                   monthNames={MONTH_NAMES}
                   setSelectedDates={(date: string[]) =>
-                    setValue2((prev) => ({
+                    setValue((prev) => ({
                       ...prev,
                       selectedText1: date[0],
                       selectedOption1: date[0],
@@ -83,14 +82,14 @@ export const Default: Story = {
                 width: 300px;
               `,
             },
-            caption: value2.selectedText2,
+            caption: value.selectedText2,
             options: ATTENDANCE_OPTIONS,
             onChange: (id) => {
               const selected = ATTENDANCE_OPTIONS.find(
                 (item) => item.value === id
               );
               if (selected) {
-                setValue2((prev) => ({
+                setValue((prev) => ({
                   ...prev,
                   selectedOption2: id,
                   selectedText2: selected.text,
