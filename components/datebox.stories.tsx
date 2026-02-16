@@ -2,7 +2,6 @@ import { Meta, StoryObj } from "@storybook/react";
 import { ReactElement, useState } from "react";
 import { Datebox } from "./datebox";
 import { Messagebox } from "./messagebox";
-import { Calendar } from "./calendar";
 import * as RemixIcons from "@remixicon/react";
 import { DropdownOptionProps } from "./field-lane";
 import { css } from "styled-components";
@@ -70,10 +69,8 @@ export const Default: Story = {
 export const WithDropdown: Story = {
   render: () => {
     const [value, setValue] = useState({
-      selectedText1: "11/12/2025",
-      selectedOption1: "11/12/2025",
-      selectedText2: "WFH",
-      selectedOption2: "2",
+      selectedText: "WFH",
+      selectedOption: "2",
       value: ["1"],
     });
 
@@ -117,31 +114,13 @@ export const WithDropdown: Story = {
         label="With Dropdown"
         dropdowns={[
           {
-            width: "100px",
-            caption: value.selectedText1,
-            render: ({ render }) =>
-              render(
-                <Calendar
-                  selectedDates={[value.selectedOption1]}
-                  monthNames={MONTH_NAMES}
-                  setSelectedDates={(date: string[]) =>
-                    setValue((prev) => ({
-                      ...prev,
-                      selectedText1: date[0],
-                      selectedOption1: date[0],
-                    }))
-                  }
-                />
-              ),
-          },
-          {
             width: "150px",
             styles: {
               drawerStyle: css`
                 width: 300px;
               `,
             },
-            caption: value.selectedText2,
+            caption: value.selectedText,
             options: ATTENDANCE_OPTIONS,
             onChange: (id) => {
               const selected = ATTENDANCE_OPTIONS.find(
@@ -150,8 +129,8 @@ export const WithDropdown: Story = {
               if (selected) {
                 setValue((prev) => ({
                   ...prev,
-                  selectedOption2: id,
-                  selectedText2: selected.text,
+                  selectedOption: id,
+                  selectedText: selected.text,
                 }));
               }
             },

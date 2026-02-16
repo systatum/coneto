@@ -3,7 +3,6 @@ import { Colorbox } from "./colorbox";
 import { useArgs } from "@storybook/preview-api";
 import { ChangeEvent, useState } from "react";
 import { css } from "styled-components";
-import { Calendar } from "./calendar";
 import { DropdownOptionProps } from "./field-lane";
 import * as RemixIcons from "@remixicon/react";
 
@@ -96,19 +95,17 @@ export const Default: Story = {
   },
 };
 
-export const WithDropdowns: Story = {
+export const WithDropdown: Story = {
   render: () => {
     const [inputValue, setInputValue] = useState({
-      selectedText1: "11/12/2025",
-      selectedOption1: "11/12/2025",
-      selectedText2: "WFH",
-      selectedOption2: "2",
+      selectedText: "WFH",
+      selectedOption: "1",
       value: "",
     });
 
     const ATTENDANCE_OPTIONS: DropdownOptionProps[] = [
       { text: "On-site", value: "1", icon: RemixIcons.RiHome2Line },
-      { text: "WFH", value: "2", icon: RemixIcons.RiUser2Line },
+      { text: "WFH", value: "1", icon: RemixIcons.RiUser2Line },
       {
         text: "Sick leave",
         value: "3",
@@ -121,21 +118,6 @@ export const WithDropdowns: Story = {
       },
     ];
 
-    const MONTH_NAMES = [
-      { text: "JAN", value: "1" },
-      { text: "FEB", value: "2" },
-      { text: "MAR", value: "3" },
-      { text: "APR", value: "4" },
-      { text: "MAY", value: "5" },
-      { text: "JUN", value: "6" },
-      { text: "JUL", value: "7" },
-      { text: "AUG", value: "8" },
-      { text: "SEP", value: "9" },
-      { text: "OCT", value: "10" },
-      { text: "NOV", value: "11" },
-      { text: "DEC", value: "12" },
-    ];
-
     return (
       <Colorbox
         styles={{
@@ -146,31 +128,13 @@ export const WithDropdowns: Story = {
         placeholder="Add color"
         dropdowns={[
           {
-            width: "100px",
-            caption: inputValue.selectedText1,
-            render: ({ render }) =>
-              render(
-                <Calendar
-                  selectedDates={[inputValue.selectedOption1]}
-                  monthNames={MONTH_NAMES}
-                  setSelectedDates={(date: string[]) =>
-                    setInputValue((prev) => ({
-                      ...prev,
-                      selectedText1: date[0],
-                      selectedOption1: date[0],
-                    }))
-                  }
-                />
-              ),
-          },
-          {
-            width: "120px",
+            width: "110px",
             styles: {
               drawerStyle: css`
                 width: 300px;
               `,
             },
-            caption: inputValue.selectedText2,
+            caption: inputValue.selectedText,
             options: ATTENDANCE_OPTIONS,
             onChange: (id) => {
               const selected = ATTENDANCE_OPTIONS.find(
@@ -179,8 +143,8 @@ export const WithDropdowns: Story = {
               if (selected) {
                 setInputValue((prev) => ({
                   ...prev,
-                  selectedOption2: id,
-                  selectedText2: selected.text,
+                  selectedOption: id,
+                  selectedText: selected.text,
                 }));
               }
             },
