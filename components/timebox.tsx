@@ -1,6 +1,7 @@
 import {
   ChangeEvent,
   forwardRef,
+  InputHTMLAttributes,
   KeyboardEvent,
   useEffect,
   useImperativeHandle,
@@ -10,12 +11,14 @@ import {
 import styled, { css, CSSProp } from "styled-components";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 
-export interface BaseTimeboxProps {
+export interface BaseTimeboxProps
+  extends Omit<
+    InputHTMLAttributes<HTMLInputElement>,
+    "style" | "placeholder" | "value" | "name"
+  > {
   withSeconds?: boolean;
-  onChange?: (value: ChangeEvent<HTMLInputElement>) => void;
   editable?: boolean;
   styles?: TimeboxStylesProps;
-  disabled?: boolean;
   showError?: boolean;
   value?: string;
   name?: string;
@@ -47,6 +50,7 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
       onKeyDown,
       placeholder,
       styles,
+      id,
     },
     ref
   ) => {
@@ -70,7 +74,6 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
 
     useImperativeHandle(ref, () => hourRef.current!);
 
-    const inputId = `timebox-${name}`;
     const dataType = withSeconds ? `timebox-with-second` : `timebox`;
 
     useEffect(() => {
@@ -184,7 +187,7 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
         }}
       >
         <Input
-          id={inputId}
+          id={id}
           aria-label="timebox-hour"
           ref={hourRef}
           data-type={dataType}
@@ -334,6 +337,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
       >
         <BaseTimebox
           {...rest}
+          id={inputId}
           showError={showError}
           styles={{
             inputWrapperStyle: css`
