@@ -281,15 +281,15 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
           inputId={inputId}
           showError={showError}
           styles={{
-            inputWrapperStyle: styles?.inputWrapperStyle,
-            self: css`
+            inputWrapperStyle: css`
               ${dropdowns &&
               css`
                 border-top-left-radius: 0px;
                 border-bottom-left-radius: 0px;
               `}
-              ${styles?.self}
+              ${styles?.inputWrapperStyle}
             `,
+            self: styles?.self,
           }}
           type={type}
           ref={ref}

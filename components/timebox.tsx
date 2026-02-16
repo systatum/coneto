@@ -336,15 +336,15 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
           {...rest}
           showError={showError}
           styles={{
-            inputWrapperStyle: styles?.inputWrapperStyle,
-            self: css`
+            inputWrapperStyle: css`
               ${dropdowns &&
               css`
                 border-top-left-radius: 0px;
                 border-bottom-left-radius: 0px;
               `}
-              ${styles?.self}
+              ${styles?.inputWrapperStyle}
             `,
+            self: styles?.self,
           }}
           ref={ref}
         />

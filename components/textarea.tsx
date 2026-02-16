@@ -103,13 +103,13 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     } = props;
     const inputId = `textarea-${props?.name}`;
 
-    const DropdownProps = dropdowns?.map((props) => ({
-      ...props,
+    const DropdownProps = dropdowns?.map((dropdown) => ({
+      ...dropdown,
       styles: {
-        ...props?.styles,
+        ...dropdown?.styles,
         self: css`
           height: 100%;
-          ${props?.styles?.self}
+          ${dropdown?.styles?.self}
         `,
       },
     }));
