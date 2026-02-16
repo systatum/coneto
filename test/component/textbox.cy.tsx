@@ -144,7 +144,7 @@ describe("Textbox", () => {
     });
   });
 
-  context("Dropdown", () => {
+  context("with dropdowns", () => {
     it("renders initialize drawer with min-width 200px", () => {
       cy.mount(
         <Textbox
