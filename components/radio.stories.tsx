@@ -53,7 +53,7 @@ const meta: Meta<typeof Radio> = {
       control: false,
     },
     iconSize: {
-      description: "Size of the icon in pixels.",
+      description: "Size of the icon or image in pixels.",
       control: "number",
     },
     iconColor: {
