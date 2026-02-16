@@ -24,6 +24,7 @@ import styled, { css, CSSProp } from "styled-components";
 export interface ToolbarProps {
   children: ReactNode;
   style?: CSSProp;
+  big?: boolean;
 }
 
 export interface ToolbarMenuProps {
@@ -38,6 +39,7 @@ export interface ToolbarMenuProps {
   onClick?: () => void;
   styles?: ToolbarMenuSylesProps;
   variant?: ToolbarVariantType;
+  iconSize?: number;
 }
 
 interface ToolbarMenuSylesProps {
@@ -208,7 +210,7 @@ const VARIANT_ACTIVE = {
   },
 };
 
-function Toolbar({ children, style }: ToolbarProps) {
+function Toolbar({ children, style, big }: ToolbarProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const toolbarRef = useRef<HTMLDivElement>(null);
 
@@ -231,12 +233,34 @@ function Toolbar({ children, style }: ToolbarProps) {
   }, []);
 
   const childrenWithProps = Children.map(children, (child, index) => {
-    if (isToolbarMenuElement(child)) {
-      return cloneElement(child, {
+    if (!isValidElement(child)) return child;
+
+    if (child.type === React.Fragment) return child;
+
+    if (child.type === Toolbar.Menu) {
+      const menuChild = child as ReactElement<ToolbarMenuProps>;
+
+      return cloneElement(menuChild, {
         isOpen: openIndex === index,
         setIsOpen: () => handleOpen(index),
+        key: index,
+        ...(big
+          ? {
+              ...menuChild.props,
+              iconSize: 30,
+              styles: {
+                ...menuChild.props.styles,
+                triggerStyle: css`
+                  display: flex;
+                  flex-direction: column;
+                  ${menuChild.props.styles?.triggerStyle}
+                `,
+              },
+            }
+          : {}),
       });
     }
+
     return child;
   });
 
@@ -258,6 +282,7 @@ function ToolbarMenu({
   setIsOpen,
   onClick,
   styles,
+  iconSize = 20,
   variant = "default",
 }: ToolbarMenuProps) {
   const [hovered, setHovered] = useState<"main" | "original" | "dropdown">(
@@ -337,7 +362,10 @@ function ToolbarMenu({
               `}
             >
               {Icon && (
-                <Icon size={20} style={{ color: COLOR_STYLE_MAP[iconColor] }} />
+                <Icon
+                  size={iconSize}
+                  style={{ color: COLOR_STYLE_MAP[iconColor] }}
+                />
               )}
               {caption && <Caption>{caption}</Caption>}
             </TriggerButton>
@@ -477,12 +505,6 @@ const Caption = styled.span`
     display: flex;
   }
 `;
-
-function isToolbarMenuElement(
-  element: ReactNode
-): element is ReactElement<ToolbarMenuProps> {
-  return isValidElement(element) && typeof element.type !== "string";
-}
 
 Toolbar.Menu = ToolbarMenu;
 export { Toolbar };
