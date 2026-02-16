@@ -33,7 +33,7 @@ export interface ToolbarMenuProps {
   openedIcon?: RemixiconComponentType;
   closedIcon?: RemixiconComponentType;
   iconColor?: string;
-  subMenuList: TipMenuItemProps[];
+  subMenuList?: TipMenuItemProps[];
   isOpen?: boolean;
   setIsOpen?: (data?: boolean) => void;
   onClick?: () => void;
@@ -247,12 +247,16 @@ function Toolbar({ children, style, big }: ToolbarProps) {
         ...(big
           ? {
               ...menuChild.props,
-              iconSize: 30,
+              iconSize: 33,
               styles: {
                 ...menuChild.props.styles,
                 triggerStyle: css`
+                  padding-top: 13px;
+                  padding-bottom: 13px;
                   display: flex;
                   flex-direction: column;
+                  align-items: center;
+                  justify-content: center;
                   ${menuChild.props.styles?.triggerStyle}
                 `,
               },
@@ -363,49 +367,54 @@ function ToolbarMenu({
             >
               {Icon && (
                 <Icon
+                  aria-label="toolbar-icon"
                   size={iconSize}
                   style={{ color: COLOR_STYLE_MAP[iconColor] }}
                 />
               )}
               {caption && <Caption>{caption}</Caption>}
             </TriggerButton>
-            <Divider
-              $style={css`
-                height: ${hovered === "original" && !isOpen ? "80%" : "100%"};
-              `}
-            />
+            {subMenuList && (
+              <Divider
+                $style={css`
+                  height: ${hovered === "original" && !isOpen ? "80%" : "100%"};
+                `}
+              />
+            )}
           </>
         )}
-        <ToggleButton
-          aria-label="toolbar-menu-toggle"
-          onMouseEnter={() => setHovered("dropdown")}
-          onMouseLeave={() => setHovered("original")}
-          onClick={handleClickOpen}
-          $style={css`
-            ${hovered === "dropdown" && menuHover};
-            ${isOpen && menuBackgroundActive};
-            ${isOpen && menuBorderActive};
-            ${menuActive};
-            ${menuFocusVisible};
-            ${styles?.triggerStyle};
-            ${isOpen && styles?.toggleActiveStyle};
-          `}
-        >
-          {isOpen ? (
-            <OpenedIcon
-              size={20}
-              style={variant === "default" ? { color: "#9ca3af" } : undefined}
-            />
-          ) : (
-            <ClosedIcon
-              size={20}
-              style={variant === "default" ? { color: "#9ca3af" } : undefined}
-            />
-          )}
-        </ToggleButton>
+        {subMenuList && (
+          <ToggleButton
+            aria-label="toolbar-menu-toggle"
+            onMouseEnter={() => setHovered("dropdown")}
+            onMouseLeave={() => setHovered("original")}
+            onClick={handleClickOpen}
+            $style={css`
+              ${hovered === "dropdown" && menuHover};
+              ${isOpen && menuBackgroundActive};
+              ${isOpen && menuBorderActive};
+              ${menuActive};
+              ${menuFocusVisible};
+              ${styles?.triggerStyle};
+              ${isOpen && styles?.toggleActiveStyle};
+            `}
+          >
+            {isOpen ? (
+              <OpenedIcon
+                size={20}
+                style={variant === "default" ? { color: "#9ca3af" } : undefined}
+              />
+            ) : (
+              <ClosedIcon
+                size={20}
+                style={variant === "default" ? { color: "#9ca3af" } : undefined}
+              />
+            )}
+          </ToggleButton>
+        )}
       </MenuWrapper>
 
-      {isOpen && (
+      {isOpen && subMenuList && (
         <div
           ref={refs.setFloating}
           style={{ ...floatingStyles, zIndex: 9999 }}
@@ -445,6 +454,7 @@ const MenuWrapper = styled.div<{ $style?: CSSProp }>`
   display: flex;
   align-items: center;
   width: 100%;
+  height: 100%;
   border: 1px solid transparent;
   position: relative;
   user-select: none;
@@ -457,6 +467,7 @@ const MenuWrapper = styled.div<{ $style?: CSSProp }>`
 const TriggerButton = styled.button<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: row;
+  height: 100%;
   align-items: center;
   gap: 0.5rem;
   padding-top: 0.5rem;
@@ -498,7 +509,6 @@ const Divider = styled.span<{ $style?: CSSProp }>`
 
 const Caption = styled.span`
   font-size: 0.875rem;
-  padding-left: 0.5rem;
   display: none;
 
   @media (min-width: 768px) {
