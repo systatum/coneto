@@ -6,7 +6,7 @@ import * as RemixIcons from "@remixicon/react";
 import { Calendar } from "./calendar";
 
 const meta: Meta<typeof FieldLane> = {
-  title: "Content/FieldLane",
+  title: "Stage/FieldLane",
   component: FieldLane,
   tags: ["autodocs"],
 };
@@ -76,7 +76,7 @@ export const Default: Story = {
               ),
           },
           {
-            width: "300px",
+            width: "200px",
             styles: {
               drawerStyle: css`
                 width: 300px;
