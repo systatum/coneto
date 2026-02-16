@@ -169,6 +169,7 @@ export const WithDropdown: Story = {
         setSelectedOptions={(value) =>
           setValue((prev) => ({ ...prev, value: value }))
         }
+        name="with-dropdown"
         label="With Dropdown"
         dropdowns={[
           {

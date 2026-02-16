@@ -23,7 +23,6 @@ export interface BaseTextboxProps
   showError?: boolean;
   onChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   styles?: TextboxStylesProps;
-  helper?: string;
   inputId?: string;
 }
 
@@ -34,10 +33,7 @@ export interface TextboxStylesProps {
 export type TextareaActions = FieldLaneActionsProps;
 
 const BaseTextbox = forwardRef<HTMLInputElement, BaseTextboxProps>(
-  (
-    { showError, onChange, styles, type = "text", helper, inputId, ...props },
-    ref
-  ) => {
+  ({ showError, onChange, styles, type = "text", inputId, ...props }, ref) => {
     const [showPassword, setShowPassword] = useState<boolean>(false);
 
     useEffect(() => {
