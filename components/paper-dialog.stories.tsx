@@ -117,7 +117,7 @@ export const Default: Story = {
               gap: "24px",
             }}
           >
-            <Button onClick={() => dialogRef.current?.minimizedDialog()}>
+            <Button onClick={() => dialogRef.current?.minimizeDialog()}>
               Minimize here.
             </Button>
             <div
