@@ -312,6 +312,8 @@ const InputWrapper = styled.div`
   flex-direction: row;
   width: 100%;
   justify-content: flex-start;
+  height: 100%;
+  min-height: 34px;
 `;
 
 const ErrorIconWrapper = styled.button<{ $isAbsolute?: boolean }>`
