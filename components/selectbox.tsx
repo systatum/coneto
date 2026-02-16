@@ -323,7 +323,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       >
         <Input
           {...props}
-          autoComplete="off"
+          autoComplete={autoComplete}
           $style={styles?.self}
           {...getReferenceProps()}
           data-type="selectbox"

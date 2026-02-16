@@ -13,8 +13,7 @@ import { DrawerProps, OptionsProps, Selectbox } from "./selectbox";
 import { RemixiconComponentType } from "@remixicon/react";
 import styled, { css, CSSProp } from "styled-components";
 import { List } from "./list";
-import { StatefulForm } from "./stateful-form";
-import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { FieldLaneProps } from "./field-lane";
 
 interface BaseComboboxProps {
   selectedOptions?: string[];
@@ -93,6 +92,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       helper,
       disabled,
       dropdowns,
+      errorIconPosition,
     },
     ref
   ) => {
@@ -102,6 +102,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       <Selectbox
         ref={ref}
         helper={helper}
+        errorIconPosition={errorIconPosition}
         dropdowns={dropdowns}
         showError={showError}
         errorMessage={errorMessage}

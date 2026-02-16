@@ -52,7 +52,6 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
   const {
     selectedDates,
     setSelectedDates,
-    errorMessage,
     placeholder = "mm/dd/yyyy",
     styles,
     helper,
@@ -117,33 +116,6 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
     </Selectbox>
   );
 });
-
-const InputWrapper = styled.div<{
-  $style?: CSSProp;
-  $disabled?: boolean;
-}>`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  font-size: 0.75rem;
-  width: 100%;
-  position: relative;
-
-  ${({ $disabled }) => $disabled && `cursor: not-allowed; opacity: 0.5;`}
-  ${({ $style }) => $style}
-`;
-
-const InputContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: 12px;
-`;
-
-const ErrorText = styled.span`
-  color: #dc2626;
-  font-size: 0.75rem;
-`;
 
 function CalendarDrawer(props: CalendarDrawerProps) {
   return (

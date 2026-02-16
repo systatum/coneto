@@ -1,4 +1,3 @@
-import { RemixiconComponentType, RiCheckLine } from "@remixicon/react";
 import {
   ChangeEvent,
   MutableRefObject,
@@ -20,7 +19,6 @@ export interface BaseTextareaProps
   onChange?: (
     data: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
-  icon?: RemixiconComponentType;
   autogrow?: boolean;
   inputId?: string;
 }
@@ -32,19 +30,7 @@ interface TextareaStylesProps {
 }
 
 const BaseTextarea = forwardRef<HTMLTextAreaElement, BaseTextareaProps>(
-  (
-    {
-      inputId,
-      showError,
-      rows,
-      onChange,
-      icon: Icon = RiCheckLine,
-      autogrow,
-      styles,
-      ...props
-    },
-    ref
-  ) => {
+  ({ inputId, showError, rows, onChange, autogrow, styles, ...props }, ref) => {
     const autoResize = (el: HTMLTextAreaElement | null) => {
       if (el) {
         el.style.height = "auto";

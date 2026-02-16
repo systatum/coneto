@@ -569,11 +569,6 @@ const EmptyOption = styled.div`
   color: #6b7280;
 `;
 
-const ErrorText = styled.span`
-  color: #dc2626;
-  font-size: 0.75rem;
-`;
-
 function trimPhone(input: string): string {
   const onlyNumber = input.replace(/[^0-9]/g, "");
   return onlyNumber.startsWith("0") ? onlyNumber.slice(1) : onlyNumber;

@@ -3,7 +3,7 @@ import {
   RiCheckLine,
   RiErrorWarningLine,
 } from "@remixicon/react";
-import { ReactElement, ReactNode } from "react";
+import React, { ReactElement, ReactNode } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { Button } from "./button";
 import { StatefulForm } from "./stateful-form";
