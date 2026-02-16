@@ -314,6 +314,12 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
         onBlur={() => {
           setIsHovered(false);
         }}
+        onMouseEnter={() => {
+          setIsHovered(true);
+        }}
+        onMouseLeave={() => {
+          setIsHovered(false);
+        }}
         role="combobox"
         $style={styles?.selectboxStyle}
         aria-expanded={isOpen}
@@ -328,6 +334,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
           {...getReferenceProps()}
           data-type="selectbox"
           $hasError={showError}
+          aria-label={id}
           id={id}
           $clearable={clearable}
           ref={(el) => {
@@ -486,9 +493,10 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       disabled,
       name,
       errorIconPosition,
+      id,
       ...rest
     } = props;
-    const inputId = `Selectbox-${props?.name}`;
+    const inputId = id ?? `Selectbox-${name}`;
 
     return (
       <FieldLane
@@ -497,7 +505,6 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
         showError={showError}
         errorMessage={errorMessage}
         label={label}
-        actions={actions}
         type={type}
         helper={helper}
         disabled={disabled}
@@ -509,7 +516,8 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       >
         <BaseSelectbox
           {...rest}
-          inputId={inputId}
+          id={inputId}
+          actions={actions}
           showError={showError}
           styles={{
             self: css`
@@ -546,29 +554,23 @@ const Input = styled.input<{
 }>`
   width: 100%;
   border-radius: 2px;
-  border: 1px solid #f3f4f6;
+  border: 1px solid #d1d5db;
   padding: 0.5rem 0.75rem;
   outline: none;
   padding-right: ${({ $clearable }) => ($clearable ? "50px" : "24px")};
 
-  ${({ $focused }) =>
-    $focused &&
-    css`
-      border-color: #61a9f9;
-    `}
-
-  ${({ $highlight, $hovered, $hasError }) =>
+  ${({ $highlight, $hovered, $hasError, $focused }) =>
     $hasError
       ? css`
           border-color: #ef4444;
         `
-      : $highlight || $hovered
+      : $highlight || $hovered || $focused
         ? css`
             border-color: #61a9f9;
           `
         : css`
             border-color: #d1d5db;
-          `}
+          `};
 
   ${({ $style }) => $style}
 `;

@@ -113,7 +113,6 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
           containerStyle: styles?.containerStyle,
           labelStyle: styles?.labelStyle,
           self: css`
-            border: 1px solid #d1d5db;
             &:focus {
               border-color: ${showError ? "#f87171" : "#61a9f9"};
             }
