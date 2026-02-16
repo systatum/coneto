@@ -72,6 +72,7 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
       onKeyDown,
       countryCodeValue,
       styles,
+      inputId,
     },
     ref
   ) => {
@@ -84,7 +85,6 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
       useState<CountryCodeProps>(countryCodeState);
     const [phoneNumber, setPhoneNumber] = useState("");
     const [highlightedIndex, setHighlightedIndex] = useState(0);
-    const [isFocus, setIsFocus] = useState(false);
 
     const searchInputRef = useRef<HTMLInputElement>(null);
     const phoneInputRef = useRef<HTMLInputElement>(null);
@@ -217,7 +217,6 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
           $hasError={showError}
           $isOpen={isOpen}
           $disabled={disabled}
-          $isFocus={isFocus}
           {...getReferenceProps({
             ref: refs.setReference,
             tabIndex: -1,
@@ -233,7 +232,6 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
         >
           <CountryButton
             type="button"
-            $isFocus={isFocus}
             onClick={handleToggleDropdown}
             disabled={disabled}
             $disabled={disabled}
@@ -249,6 +247,7 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
 
           <PhoneInput
             ref={phoneInputRef}
+            id={inputId}
             type="tel"
             $style={styles?.self}
             placeholder={placeholder}
@@ -257,13 +256,7 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
             onKeyDown={(e) => onKeyDown?.(e)}
             disabled={disabled}
             $disabled={disabled}
-            aria-label="Phone number input"
-            onMouseDown={() => {
-              setIsFocus(true);
-            }}
-            onBlur={() => {
-              setIsFocus(false);
-            }}
+            aria-label="phonebox-number"
           />
         </InputWrapper>
 
@@ -392,6 +385,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
           {...rest}
           inputId={inputId}
           showError={showError}
+          disabled={disabled}
           styles={{
             self: styles?.self,
             toggleStyle: styles?.toggleStyle,
@@ -416,7 +410,6 @@ const InputWrapper = styled.div<{
   $hasError?: boolean;
   $isOpen?: boolean;
   $disabled?: boolean;
-  $isFocus?: boolean;
   $style?: CSSProp;
 }>`
   display: flex;
@@ -427,13 +420,18 @@ const InputWrapper = styled.div<{
   border: 1px solid
     ${({ $hasError, $isOpen }) =>
       $hasError ? "#ef4444" : $isOpen ? "#d1d5db" : "#d1d5db"};
+
+  &:focus-within {
+    border-color: ${({ $hasError }) => ($hasError ? "#ef4444" : "#61A9F9")};
+  }
+
   ${({ $disabled }) =>
     $disabled &&
     css`
+      border-color: #d1d5db;
       opacity: 0.5;
     `}
-  border-color: ${({ $hasError, $isFocus }) =>
-    $hasError ? "#ef4444" : $isFocus ? "#61A9F9" : "#d1d5db"};
+
   border-radius: 2px;
 
   ${({ $style }) => $style};
@@ -443,7 +441,6 @@ const CountryButton = styled.button<{
   $disabled?: boolean;
   $hasError?: boolean;
   $style?: CSSProp;
-  $isFocus?: boolean;
 }>`
   display: flex;
   flex-direction: row;
@@ -451,8 +448,12 @@ const CountryButton = styled.button<{
   align-items: center;
   gap: 4px;
   border-right: 1px solid
-    ${({ $hasError, $isFocus }) =>
-      $hasError ? "#ef4444" : $isFocus ? "#61A9F9" : "#d1d5db"};
+    ${({ $hasError }) => ($hasError ? "#ef4444" : "#d1d5db")};
+
+  ${InputWrapper}:focus-within & {
+    border-color: ${({ $hasError }) => ($hasError ? "#ef4444" : "#61A9F9")};
+  }
+
   padding: 0 8px;
   font-size: 12px;
   border-top-left-radius: var(--radius-xs);
