@@ -19,7 +19,7 @@ import {
 import { Button, ButtonVariants } from "./button";
 import styled, { css, CSSProp } from "styled-components";
 
-type DialogState = "restored" | "closed" | "minimized";
+export type DialogState = "restored" | "closed" | "minimized";
 
 export interface PaperDialogProps {
   position?: "left" | "right";
@@ -52,7 +52,7 @@ interface PaperDialogContentProps {
 export interface PaperDialogRef {
   openDialog: () => void;
   closeDialog: () => void;
-  minimizedDialog: () => void;
+  minimizeDialog: () => void;
 }
 
 const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
@@ -78,7 +78,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
         await setDialogState("closed");
         await handleToggleDrawer("closed");
       },
-      minimizedDialog: async () => {
+      minimizeDialog: async () => {
         await setDialogState("minimized");
         await handleToggleDrawer("minimized");
       },
