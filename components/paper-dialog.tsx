@@ -19,7 +19,7 @@ import {
 import { Button, ButtonVariants } from "./button";
 import styled, { css, CSSProp } from "styled-components";
 
-export type DialogState = "restore" | "close" | "minimize";
+export type DialogState = "restored" | "closed" | "minimized";
 
 export interface PaperDialogProps {
   position?: "left" | "right";
@@ -57,30 +57,30 @@ export interface PaperDialogRef {
 
 const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
   ({ position = "right", children, closable, width, styles }, ref) => {
-    const [dialogState, setDialogState] = useState<DialogState>("close");
+    const [dialogState, setDialogState] = useState<DialogState>("closed");
     const controls = useAnimation();
     const isLeft = position === "left";
 
     const handleToggleDrawer = (open: DialogState) => {
       setDialogState(open);
       controls.start({
-        x: open === "minimize" ? (isLeft ? "-100%" : "100%") : 0,
+        x: open === "minimized" ? (isLeft ? "-100%" : "100%") : 0,
         transition: { type: "spring", stiffness: 400, damping: 40 },
       });
     };
 
     useImperativeHandle(ref, () => ({
       openDialog: async () => {
-        await setDialogState("restore");
-        await handleToggleDrawer("restore");
+        await setDialogState("restored");
+        await handleToggleDrawer("restored");
       },
       closeDialog: async () => {
-        await setDialogState("close");
-        await handleToggleDrawer("close");
+        await setDialogState("closed");
+        await handleToggleDrawer("closed");
       },
       minimizeDialog: async () => {
-        await setDialogState("minimize");
-        await handleToggleDrawer("minimize");
+        await setDialogState("minimized");
+        await handleToggleDrawer("minimized");
       },
     }));
 
@@ -101,17 +101,19 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
         {trigger &&
           cloneElement(trigger, {
             setDialogState: async () => {
-              await setDialogState("restore");
-              await handleToggleDrawer("restore");
+              await setDialogState("restored");
+              await handleToggleDrawer("restored");
             },
           })}
 
-        {dialogState !== "close" && (
+        {dialogState !== "closed" && (
           <DialogOverlay
             $dialogState={dialogState}
             $paperDialogStyle={styles?.paperDialogStyle}
           >
-            {dialogState === "restore" && <BackgroundBlur aria-hidden="true" />}
+            {dialogState === "restored" && (
+              <BackgroundBlur aria-hidden="true" />
+            )}
 
             <MotionDialog
               aria-label="paper-dialog-content"
@@ -129,7 +131,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                   <IconButton
                     $isLeft={isLeft}
                     aria-label="button-close"
-                    onClick={() => setDialogState("close")}
+                    onClick={() => setDialogState("closed")}
                   >
                     <RiCloseLine size={20} />
                   </IconButton>
@@ -145,7 +147,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                   aria-label="paper-dialog-toggle"
                   onClick={() =>
                     handleToggleDrawer(
-                      dialogState === "minimize" ? "restore" : "minimize"
+                      dialogState === "minimized" ? "restored" : "minimized"
                     )
                   }
                 >
@@ -154,7 +156,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                       style={{
                         transition: "transform 0.5s ease-in-out",
                         transform:
-                          dialogState === "restore"
+                          dialogState === "restored"
                             ? "rotate(180deg)"
                             : "rotate(0deg)",
                       }}
@@ -165,7 +167,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                       style={{
                         transition: "transform 0.5s ease-in-out",
                         transform:
-                          dialogState === "restore"
+                          dialogState === "restored"
                             ? "rotate(180deg)"
                             : "rotate(0deg)",
                       }}
@@ -191,7 +193,7 @@ const DialogOverlay = styled.div<{
   position: fixed;
   z-index: 9999;
   ${({ $dialogState }) =>
-    $dialogState === "restore" &&
+    $dialogState === "restored" &&
     css`
       inset: 0;
     `}
@@ -323,7 +325,7 @@ function PaperDialogTrigger({
       variant={variant}
       aria-label="paper-dialog-trigger"
       onClick={() => {
-        setDialogState("restore");
+        setDialogState("restored");
       }}
       styles={{ self: style }}
     >
