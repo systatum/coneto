@@ -15,16 +15,20 @@ describe("Window", () => {
           initialSizeRatio={[90, 10]}
         >
           <Window.Cell
-            style={css`
-              background-color: #fee2e2;
-            `}
+            styles={{
+              self: css`
+                background-color: #fee2e2;
+              `,
+            }}
           >
             Up
           </Window.Cell>
           <Window.Cell
-            style={css`
-              background-color: #dcfce7;
-            `}
+            styles={{
+              self: css`
+                background-color: #dcfce7;
+              `,
+            }}
           >
             Down
           </Window.Cell>
@@ -53,16 +57,20 @@ describe("Window", () => {
             }}
           >
             <Window.Cell
-              style={css`
-                background-color: #fee2e2;
-              `}
+              styles={{
+                self: css`
+                  background-color: #fee2e2;
+                `,
+              }}
             >
               Up
             </Window.Cell>
             <Window.Cell
-              style={css`
-                background-color: #dcfce7;
-              `}
+              styles={{
+                self: css`
+                  background-color: #dcfce7;
+                `,
+              }}
             >
               Down
             </Window.Cell>

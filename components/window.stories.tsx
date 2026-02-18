@@ -64,18 +64,22 @@ export const Default: Story = {
         {...args}
       >
         <Window.Cell
-          style={css`
-            background-color: #fee2e2;
-            padding: 2.5rem;
-          `}
+          styles={{
+            self: css`
+              background-color: #fee2e2;
+              padding: 2.5rem;
+            `,
+          }}
         >
           Left
         </Window.Cell>
         <Window.Cell
-          style={css`
-            background-color: #dcfce7;
-            padding: 2.5rem;
-          `}
+          styles={{
+            self: css`
+              background-color: #dcfce7;
+              padding: 2.5rem;
+            `,
+          }}
         >
           Right
         </Window.Cell>
@@ -97,18 +101,22 @@ export const Horizontal: Story = {
         {...args}
       >
         <Window.Cell
-          style={css`
-            background-color: #fee2e2;
-            padding: 2.5rem;
-          `}
+          styles={{
+            self: css`
+              background-color: #fee2e2;
+              padding: 2.5rem;
+            `,
+          }}
         >
           Up
         </Window.Cell>
         <Window.Cell
-          style={css`
-            background-color: #dcfce7;
-            padding: 2.5rem;
-          `}
+          styles={{
+            self: css`
+              background-color: #dcfce7;
+              padding: 2.5rem;
+            `,
+          }}
         >
           Down
         </Window.Cell>
@@ -160,7 +168,7 @@ export const Closable: Story = {
         {value.map((data) => (
           <Window.Cell
             key={data.title}
-            style={data.style}
+            styles={{ self: data.style }}
             actions={data.actions ? WINDOW_ACTIONS(data.title) : undefined}
           >
             {data.title}
