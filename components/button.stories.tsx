@@ -35,18 +35,14 @@ Use this component for all user-interactive button actions — from primary call
       description:
         "Defines the visual style of the button. Commonly used to indicate semantic importance.",
       options: [
-        "link",
         "default",
         "primary",
         "danger",
+        "outline",
         "secondary",
         "ghost",
+        "link",
         "transparent",
-        "success",
-        "outline-default",
-        "outline-success",
-        "outline-primary",
-        "outline-danger",
       ],
     },
     size: {
