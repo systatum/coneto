@@ -87,9 +87,6 @@ export const Default: Story = {
     return (
       <Toolbar>
         <Toolbar.Menu
-          onClick={() => {
-            console.log("test");
-          }}
           caption="Default Mode"
           icon={RiMessage2Line}
           iconColor="red"
@@ -196,6 +193,8 @@ export const Big: Story = {
           variant="danger"
           subMenuList={subMenuList}
         />
+        <Toolbar.Menu caption="Danger Mode" subMenuList={subMenuList} />
+        <Toolbar.Menu caption="Save" />
       </Toolbar>
     );
   },
