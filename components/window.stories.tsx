@@ -1,8 +1,10 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { Window } from "./window";
 import { RiCloseFill } from "@remixicon/react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { css } from "styled-components";
+import { Textarea } from "./textarea";
+import { ColumnTableProps, Table } from "./table";
 
 const meta: Meta<typeof Window> = {
   title: "Content/Window",
@@ -64,18 +66,22 @@ export const Default: Story = {
         {...args}
       >
         <Window.Cell
-          style={css`
-            background-color: #fee2e2;
-            padding: 2.5rem;
-          `}
+          styles={{
+            self: css`
+              background-color: #fee2e2;
+              padding: 2.5rem;
+            `,
+          }}
         >
           Left
         </Window.Cell>
         <Window.Cell
-          style={css`
-            background-color: #dcfce7;
-            padding: 2.5rem;
-          `}
+          styles={{
+            self: css`
+              background-color: #dcfce7;
+              padding: 2.5rem;
+            `,
+          }}
         >
           Right
         </Window.Cell>
@@ -97,18 +103,22 @@ export const Horizontal: Story = {
         {...args}
       >
         <Window.Cell
-          style={css`
-            background-color: #fee2e2;
-            padding: 2.5rem;
-          `}
+          styles={{
+            self: css`
+              background-color: #fee2e2;
+              padding: 2.5rem;
+            `,
+          }}
         >
           Up
         </Window.Cell>
         <Window.Cell
-          style={css`
-            background-color: #dcfce7;
-            padding: 2.5rem;
-          `}
+          styles={{
+            self: css`
+              background-color: #dcfce7;
+              padding: 2.5rem;
+            `,
+          }}
         >
           Down
         </Window.Cell>
@@ -160,12 +170,103 @@ export const Closable: Story = {
         {value.map((data) => (
           <Window.Cell
             key={data.title}
-            style={data.style}
+            styles={{ self: data.style }}
             actions={data.actions ? WINDOW_ACTIONS(data.title) : undefined}
           >
             {data.title}
           </Window.Cell>
         ))}
+      </Window>
+    );
+  },
+};
+
+export const WithCellRef: Story = {
+  parameters: {
+    layout: "fullscreen",
+  },
+  render: () => {
+    const [textareaHeight, setTextareaHeight] = useState<number | null>(null);
+    const [value, setValue] = useState("");
+
+    const secondCellRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setValue((prev) =>
+          prev ? `${prev}\nHello world from Coneto` : "Hello world from Coneto"
+        );
+      }, 1000);
+      return () => clearInterval(interval);
+    }, []);
+
+    const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
+
+    const sampleRows = Array.from({ length: 20 }, (_, i) => {
+      const type = TYPES_DATA[i % TYPES_DATA.length];
+      return (
+        <Table.Row
+          rowId={`${type}`}
+          key={i}
+          content={[`Load Balancer ${i + 1}`, type]}
+        />
+      );
+    });
+
+    const columns: ColumnTableProps[] = [
+      {
+        id: "name",
+        caption: "Name",
+        sortable: false,
+      },
+      {
+        id: "type",
+        caption: "Type",
+        sortable: false,
+      },
+    ];
+
+    return (
+      <Window
+        styles={{
+          self: css`
+            height: 100dvh;
+          `,
+          dividerStyle: css`
+            border-width: 2px;
+          `,
+        }}
+        orientation="horizontal"
+        onResizeComplete={() => {
+          if (secondCellRef.current) {
+            const height = secondCellRef.current.clientHeight;
+            setTextareaHeight(height);
+          }
+        }}
+      >
+        <Window.Cell>
+          <Table columns={columns}>{sampleRows}</Table>
+        </Window.Cell>
+        <Window.Cell
+          ref={secondCellRef}
+          styles={{
+            self: css`
+              z-index: 10;
+              background-color: white;
+            `,
+          }}
+        >
+          <Textarea
+            value={value}
+            styles={{
+              self: css`
+                height: ${textareaHeight ? `${textareaHeight}px` : "50dvh"};
+                border-color: white;
+              `,
+            }}
+            onChange={(e) => setValue(e.target.value)}
+          />
+        </Window.Cell>
       </Window>
     );
   },
