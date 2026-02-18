@@ -97,7 +97,7 @@ interface TableAlwaysShowDragIconProp {
   alwaysShowDragIcon?: boolean;
 }
 
-interface SummaryRowProps {
+export interface SummaryRowProps {
   span?: number;
   content?: ReactNode;
   bold?: boolean;

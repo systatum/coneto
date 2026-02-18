@@ -1,6 +1,6 @@
 import styled, { CSSProp, keyframes } from "styled-components";
 
-interface LoadingSpinnerProps {
+export interface LoadingSpinnerProps {
   iconSize?: number;
   textSize?: number;
   label?: string;

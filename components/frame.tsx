@@ -7,7 +7,7 @@ export interface FrameProps {
   styles?: FrameStyles;
 }
 
-interface FrameStyles {
+export interface FrameStyles {
   containerStyle?: CSSProp;
   titleStyle?: CSSProp;
 }

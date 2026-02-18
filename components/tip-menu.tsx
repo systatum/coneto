@@ -6,7 +6,7 @@ import { Button } from "./button";
 import { Searchbox } from "./searchbox";
 
 export type TipMenuItemVariantType = "sm" | "md";
-interface TipMenuProps {
+export interface TipMenuProps {
   children?: ReactNode;
   subMenuList?: TipMenuItemProps[];
   style?: CSSProp;

@@ -3,7 +3,7 @@ import { RiArrowRightSLine } from "@remixicon/react";
 import { motion } from "framer-motion";
 import styled, { CSSProp } from "styled-components";
 
-interface BoxbarProps {
+export interface BoxbarProps {
   children: ReactNode;
   containerStyle?: CSSProp;
 }

@@ -206,12 +206,13 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
   }
 );
 
-interface TooltipContainerProps {
+export interface TooltipContainerProps {
   placement?: Placement;
   styles?: TooltipContainerStylesProps;
   dialog?: ReactNode;
 }
-interface TooltipContainerStylesProps {
+
+export interface TooltipContainerStylesProps {
   drawerStyle?: CSSProp | ((placement?: Placement) => CSSProp);
   arrowStyle?: CSSProp | ((placement?: Placement) => CSSProp);
   spacerStyle?: CSSProp | ((placement?: Placement) => CSSProp);

@@ -14,7 +14,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { forwardRef, ReactNode } from "react";
 import { FieldLaneProps } from "./field-lane";
 
-export type BaseDateboxProps = BaseCalendarProps & {
+type BaseDateboxProps = BaseCalendarProps & {
   label?: string;
   showError?: boolean;
   errorMessage?: string;

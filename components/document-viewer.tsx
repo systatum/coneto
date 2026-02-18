@@ -12,7 +12,7 @@ import styled, { css, type CSSProp } from "styled-components";
 import { Combobox } from "./combobox";
 import type { PDFDocumentProxy } from "pdfjs-dist";
 
-interface DocumentViewerProps {
+export interface DocumentViewerProps {
   source?: string;
   title?: string;
   onRegionSelected?: (region: BoundingBoxState) => void;
@@ -27,7 +27,7 @@ interface DocumentViewerProps {
   styles?: DocumentViewerStylesProps;
 }
 
-interface DocumentViewerStylesProps {
+export interface DocumentViewerStylesProps {
   containerStyle?: CSSProp;
   zoomStyle?: CSSProp;
   selectionStyle?: CSSProp;

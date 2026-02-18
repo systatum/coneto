@@ -40,7 +40,7 @@ export interface ToolbarMenuProps {
   variant?: ToolbarVariantType;
 }
 
-interface ToolbarMenuSylesProps {
+export interface ToolbarMenuSylesProps {
   dropdownStyle?: CSSProp;
   containerStyle?: CSSProp;
   triggerStyle?: CSSProp;
