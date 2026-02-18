@@ -1,7 +1,11 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { Phonebox } from "./phonebox";
-import { useArgs } from "@storybook/preview-api";
-import { ChangeEvent } from "react";
+import { CountryCodeProps, Phonebox } from "./phonebox";
+import { useState } from "react";
+import { COUNTRY_CODES } from "./../constants/countries";
+import { StatefulOnChangeType } from "./stateful-form";
+import { DropdownOptionProps } from "./field-lane";
+import * as RemixIcons from "@remixicon/react";
+import { css } from "styled-components";
 
 const meta: Meta = {
   title: "Input Elements/Phonebox",
@@ -31,19 +35,103 @@ export const DefaultPhonebox: Story = {
   args: {
     label: "Phone Number",
     placeholder: "Enter your phone number",
-    value: "",
   },
   render: (args) => {
-    const [_, setUpdateArgs] = useArgs();
+    interface ValueProps {
+      phone?: string;
+      country_code?: CountryCodeProps;
+    }
 
-    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-      if (!e || !("target" in e)) return;
+    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
+      (data) => data.id === "US"
+    )!;
+
+    const [value, setValue] = useState<ValueProps>({
+      phone: "",
+      country_code: DEFAULT_COUNTRY_CODES,
+    });
+
+    const handleChange = (e: StatefulOnChangeType) => {
       const { name, value } = e.target;
-
-      setUpdateArgs({ [name]: value });
+      setValue((prev) => ({ ...prev, [name]: value }));
     };
 
-    return <Phonebox {...args} value={args.value} onChange={handleChange} />;
+    return (
+      <Phonebox
+        {...args}
+        value={value.phone}
+        countryCodeValue={value.country_code}
+        onChange={handleChange}
+      />
+    );
+  },
+};
+
+export const WithDropdown: Story = {
+  render: () => {
+    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
+      (data) => data.id === "US"
+    )!;
+    const [value, setValue] = useState({
+      selectedText: "WFH",
+      selectedOption: "2",
+      phone: "",
+      country_code: DEFAULT_COUNTRY_CODES,
+    });
+
+    const handleChange = (e: StatefulOnChangeType) => {
+      const { name, value } = e.target;
+      setValue((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const ATTENDANCE_OPTIONS: DropdownOptionProps[] = [
+      { text: "On-site", value: "1", icon: RemixIcons.RiHome2Line },
+      { text: "WFH", value: "2", icon: RemixIcons.RiUser2Line },
+      {
+        text: "Sick leave",
+        value: "3",
+        icon: RemixIcons.RiSettings2Line,
+      },
+      {
+        text: "Annual leave",
+        value: "4",
+        icon: RemixIcons.RiLogoutBoxLine,
+      },
+    ];
+
+    return (
+      <Phonebox
+        value={value.phone}
+        countryCodeValue={value.country_code}
+        onChange={handleChange}
+        label="With Dropdown"
+        dropdowns={[
+          {
+            width: "120px",
+            styles: {
+              drawerStyle: css`
+                width: 300px;
+              `,
+            },
+            caption: value.selectedText,
+            options: ATTENDANCE_OPTIONS,
+            onChange: (id) => {
+              const selected = ATTENDANCE_OPTIONS.find(
+                (option) => option.value === id
+              );
+              if (selected) {
+                setValue((prev) => ({
+                  ...prev,
+                  selectedOption: id,
+                  selectedText: selected.text,
+                }));
+              }
+            },
+            withFilter: true,
+          },
+        ]}
+      />
+    );
   },
 };
 
@@ -54,16 +142,50 @@ export const DisablePhonebox: Story = {
     value: "+1234567890",
     disabled: true,
   },
-  render: (args) => <Phonebox {...args} />,
+  render: (args) => {
+    return <Phonebox {...args} />;
+  },
 };
 
 export const PhoneboxWithError: Story = {
   args: {
     label: "Phone Number",
     placeholder: "Enter phone number",
-    value: "",
-    showError: true,
     errorMessage: "Invalid phone number",
   },
-  render: (args) => <Phonebox {...args} />,
+
+  render: (args) => {
+    interface ValueProps {
+      phone?: string;
+      country_code?: CountryCodeProps;
+    }
+
+    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
+      (data) => data.id === "US"
+    )!;
+
+    const [value, setValue] = useState<ValueProps>({
+      phone: "",
+      country_code: DEFAULT_COUNTRY_CODES,
+    });
+
+    const handleChange = (e: StatefulOnChangeType) => {
+      const { name, value } = e.target;
+      setValue((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const phoneDigitsLength = value.phone?.replace(/\D/g, "").length ?? 0;
+
+    const isValidPhone = phoneDigitsLength >= 8 && phoneDigitsLength <= 15;
+
+    return (
+      <Phonebox
+        {...args}
+        value={value.phone}
+        countryCodeValue={value.country_code}
+        onChange={handleChange}
+        showError={!isValidPhone}
+      />
+    );
+  },
 };

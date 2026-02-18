@@ -3,7 +3,9 @@ import { useState } from "react";
 import { Combobox, ComboboxActionProps } from "./combobox";
 import { OptionsProps } from "./selectbox";
 import { RiAddLine } from "@remixicon/react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
+import { DropdownOptionProps } from "./field-lane";
+import * as RemixIcons from "@remixicon/react";
 
 const meta: Meta<typeof Combobox> = {
   title: "Input Elements/Combobox",
@@ -123,6 +125,78 @@ export const Default: Story = {
           placeholder="Select a fruit..."
         />
       </div>
+    );
+  },
+};
+
+export const WithDropdown: Story = {
+  render: () => {
+    const [value, setValue] = useState({
+      selectedText: "WFH",
+      selectedOption: "2",
+      value: ["1"],
+    });
+
+    const FRUIT_OPTIONS: OptionsProps[] = [
+      { text: "Apple", value: "1" },
+      { text: "Banana", value: "2" },
+      { text: "Orange", value: "3" },
+      { text: "Grape", value: "4" },
+      { text: "Pineapple", value: "5" },
+      { text: "Strawberry", value: "6" },
+      { text: "Watermelon", value: "7" },
+    ];
+
+    const ATTENDANCE_OPTIONS: DropdownOptionProps[] = [
+      { text: "On-site", value: "1", icon: RemixIcons.RiHome2Line },
+      { text: "WFH", value: "2", icon: RemixIcons.RiUser2Line },
+      {
+        text: "Sick leave",
+        value: "3",
+        icon: RemixIcons.RiSettings2Line,
+      },
+      {
+        text: "Annual leave",
+        value: "4",
+        icon: RemixIcons.RiLogoutBoxLine,
+      },
+    ];
+
+    return (
+      <Combobox
+        selectedOptions={value.value}
+        options={FRUIT_OPTIONS}
+        setSelectedOptions={(value) =>
+          setValue((prev) => ({ ...prev, value: value }))
+        }
+        name="with-dropdown"
+        label="With Dropdown"
+        dropdowns={[
+          {
+            width: "150px",
+            styles: {
+              drawerStyle: css`
+                width: 300px;
+              `,
+            },
+            caption: value.selectedText,
+            options: ATTENDANCE_OPTIONS,
+            onChange: (id) => {
+              const selected = ATTENDANCE_OPTIONS.find(
+                (option) => option.value === id
+              );
+              if (selected) {
+                setValue((prev) => ({
+                  ...prev,
+                  selectedOption: id,
+                  selectedText: selected.text,
+                }));
+              }
+            },
+            withFilter: true,
+          },
+        ]}
+      />
     );
   },
 };
@@ -298,6 +372,7 @@ export const MultipleSelection: Story = {
       >
         <Combobox
           label="Default"
+          name="default"
           multiple
           clearable
           selectedOptions={value1}
@@ -307,6 +382,7 @@ export const MultipleSelection: Story = {
         />
         <Combobox
           label="Maximal 2 Items"
+          name="maximal"
           multiple
           clearable
           maxSelectableItems={2}

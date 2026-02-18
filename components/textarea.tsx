@@ -1,60 +1,36 @@
 import {
-  RemixiconComponentType,
-  RiCheckLine,
-  RiErrorWarningLine,
-} from "@remixicon/react";
-import {
   ChangeEvent,
   MutableRefObject,
-  ReactElement,
   TextareaHTMLAttributes,
   forwardRef,
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
-import { StatefulForm } from "./stateful-form";
+import {
+  FieldLaneActionsProps,
+  FieldLane,
+  FieldLaneProps,
+  FieldLaneStylesProps,
+} from "./field-lane";
 
-export interface TextareaProps
+export interface BaseTextareaProps
   extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "style"> {
-  label?: string;
   showError?: boolean;
-  errorMessage?: string;
-  helper?: string;
   styles?: TextareaStylesProps;
-  onActionClick?: () => void;
   onChange?: (
     data: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
-  icon?: RemixiconComponentType;
-  actionIcon?: boolean;
   autogrow?: boolean;
+  inputId?: string;
 }
 
+export type TextareaActionsProps = FieldLaneActionsProps;
+
 interface TextareaStylesProps {
-  containerStyle?: CSSProp;
-  labelStyle?: CSSProp;
   self?: CSSProp;
 }
 
-const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
-  (
-    {
-      label,
-      showError,
-      errorMessage,
-      rows,
-      onChange,
-      onActionClick,
-      actionIcon,
-      icon: Icon = RiCheckLine,
-      autogrow,
-      styles,
-      helper,
-      ...props
-    },
-    ref
-  ) => {
-    const inputId = `textarea-${props.name}`;
-
+const BaseTextarea = forwardRef<HTMLTextAreaElement, BaseTextareaProps>(
+  ({ inputId, showError, rows, onChange, autogrow, styles, ...props }, ref) => {
     const autoResize = (el: HTMLTextAreaElement | null) => {
       if (el) {
         el.style.height = "auto";
@@ -62,97 +38,105 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       }
     };
 
-    const inputElement: ReactElement = (
-      <TextAreaWrapper>
-        <TextareaInput
-          $autogrow={autogrow}
-          id={inputId}
-          ref={(el) => {
-            if (autogrow) {
-              autoResize(el);
-            }
-            if (typeof ref === "function") {
-              ref(el);
-            } else if (ref) {
-              (ref as MutableRefObject<HTMLTextAreaElement | null>).current =
-                el;
-            }
-          }}
-          onChange={(e) => {
-            if (autogrow) {
-              autoResize(e.target);
-            }
-            onChange(e);
-          }}
-          rows={rows ?? 3}
-          $error={showError}
-          $style={styles?.self}
-          {...(props as TextareaHTMLAttributes<HTMLTextAreaElement>)}
-        />
-        {actionIcon && (
-          <ActionButton
-            type="button"
-            aria-label="action-icon"
-            onClick={(e) => {
-              e.preventDefault();
-              onActionClick?.();
-            }}
-            $error={showError}
-          >
-            <Icon size={18} />
-          </ActionButton>
-        )}
-        {showError && errorMessage && (
-          <RiErrorWarningLine
-            size={18}
-            style={{
-              position: "absolute",
-              top: "50%",
-              right: "8px",
-              transform: "translateY(-50%)",
-              borderRadius: "9999px",
-              background: "#dc2626",
-              color: "white",
-            }}
-          />
-        )}
-      </TextAreaWrapper>
-    );
-
     return (
-      <Container $style={styles?.containerStyle}>
-        {label && (
-          <StatefulForm.Label
-            htmlFor={props.disabled ? null : inputId}
-            style={styles?.labelStyle}
-            helper={helper}
-            label={label}
-          />
-        )}
-        <div>
-          {inputElement}
-          {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
-        </div>
-      </Container>
+      <TextareaInput
+        $autogrow={autogrow}
+        id={inputId}
+        ref={(el) => {
+          if (autogrow) {
+            autoResize(el);
+          }
+          if (typeof ref === "function") {
+            ref(el);
+          } else if (ref) {
+            (ref as MutableRefObject<HTMLTextAreaElement | null>).current = el;
+          }
+        }}
+        onChange={(e) => {
+          if (autogrow) {
+            autoResize(e.target);
+          }
+          onChange(e);
+        }}
+        rows={rows ?? 3}
+        $error={showError}
+        $style={styles?.self}
+        {...(props as TextareaHTMLAttributes<HTMLTextAreaElement>)}
+      />
     );
   }
 );
 
-const Container = styled.div<{ $style?: CSSProp }>`
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  gap: 0.5rem;
-  font-size: 0.75rem;
-  position: relative;
+export interface TextareaProps
+  extends Omit<BaseTextareaProps, "styles" | "inputId">,
+    Omit<FieldLaneProps, "styles" | "inputId"> {
+  styles?: TextareaStylesProps & FieldLaneStylesProps;
+}
 
-  ${({ $style }) => $style}
-`;
+const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
+  ({ ...props }, ref) => {
+    const {
+      dropdowns,
+      label,
+      showError,
+      styles,
+      errorMessage,
+      actions,
+      type,
+      helper,
+      disabled,
+      ...rest
+    } = props;
+    const inputId = `textarea-${props?.name}`;
 
-const TextAreaWrapper = styled.div`
-  position: relative;
-  width: 100%;
-`;
+    const DropdownProps = dropdowns?.map((dropdown) => ({
+      ...dropdown,
+      styles: {
+        ...dropdown?.styles,
+        self: css`
+          height: 100%;
+          ${dropdown?.styles?.self}
+        `,
+      },
+    }));
+
+    return (
+      <FieldLane
+        inputId={inputId}
+        dropdowns={DropdownProps}
+        showError={showError}
+        errorMessage={errorMessage}
+        label={label}
+        actions={actions}
+        type={type}
+        helper={helper}
+        disabled={disabled}
+        styles={{
+          containerStyle: styles?.containerStyle,
+          labelStyle: styles?.labelStyle,
+        }}
+      >
+        <BaseTextarea
+          inputId={inputId}
+          showError={showError}
+          styles={{
+            self: css`
+              ${dropdowns &&
+              css`
+                border-top-left-radius: 0px;
+                border-bottom-left-radius: 0px;
+              `}
+
+              ${styles?.self}
+            `,
+          }}
+          {...rest}
+          ref={ref}
+        />
+      </FieldLane>
+    );
+  }
+);
 
 const TextareaInput = styled.textarea<{
   $error?: boolean;
@@ -165,7 +149,7 @@ const TextareaInput = styled.textarea<{
   width: 100%;
   outline: none;
   border: 1px solid ${({ $error }) => ($error ? "#f87171" : "#d1d5db")};
-
+  z-index: 10;
   resize: none;
 
   ${({ $autogrow }) =>
@@ -181,40 +165,20 @@ const TextareaInput = styled.textarea<{
 
   ${({ $error }) =>
     $error
-      ? `
-    color: #991b1b;
-    &:focus {
-      border-color: #f87171;
-      box-shadow: 0 0 0 1px #f87171;
-    }
-  `
-      : `
-    &:focus {
-      border-color: #61A9F9;
-      box-shadow: 0 0 0 1px #61A9F9;
-    }
-  `}
+      ? css`
+          color: #991b1b;
+          &:focus {
+            border-color: #f87171;
+            box-shadow: 0 0 0 1px #f87171;
+          }
+        `
+      : css`
+          &:focus {
+            border-color: #61a9f9;
+            box-shadow: 0 0 0 1px #61a9f9;
+          }
+        `}
   ${({ $style }) => $style}
-`;
-
-const ActionButton = styled.button<{ $error?: boolean }>`
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  right: ${({ $error }) => ($error ? "30px" : "8px")};
-  padding: 2px;
-  border-radius: 2px;
-  cursor: pointer;
-  background: transparent;
-  color: ${({ $error }) => ($error ? "#f87171" : "#6b7280")};
-
-  &:hover {
-    color: ${({ $error }) => ($error ? "#ef4444" : "#374151")};
-  }
-`;
-
-const ErrorText = styled.span`
-  color: #dc2626;
 `;
 
 export { Textarea };

@@ -4,6 +4,8 @@ import { useArgs } from "@storybook/preview-api";
 import * as RemixIcons from "@remixicon/react";
 import { css } from "styled-components";
 import { StatefulOnChangeType } from "./stateful-form";
+import { useState } from "react";
+import { DropdownOptionProps } from "./field-lane";
 
 const meta: Meta<typeof Textarea> = {
   title: "Input Elements/Textarea",
@@ -34,13 +36,23 @@ const meta: Meta<typeof Textarea> = {
     errorMessage: {
       control: "text",
     },
-    onActionClick: { action: "sendClicked" },
-    icon: {
-      control: {
-        type: "select",
+    actions: {
+      control: false,
+      description:
+        "Array of action buttons displayed inside the input. Each action can include an icon, title tooltip, and click handler.",
+      table: {
+        type: {
+          summary: `TextareaActionsProps[]`,
+          detail: `{
+  title?: string;
+  icon?: RemixiconComponentType;
+  iconColor?: string;
+  onClick?: (e: React.MouseEvent) => void;
+  disabled?: boolean;
+  titleShowDelay?: number;
+}`,
+        },
       },
-      options: Object.keys(RemixIcons),
-      mapping: RemixIcons,
     },
     onChange: { action: "changed" },
     styles: { self: { control: false }, containerStyle: { control: false } },
@@ -112,6 +124,71 @@ export const Autogrow: Story = {
     };
 
     return <Textarea {...args} value={args.value} onChange={handleChange} />;
+  },
+};
+
+export const WithDropdown: Story = {
+  render: () => {
+    const [value, setValue] = useState({
+      selectedText: "WFH",
+      selectedOption: "2",
+      value: "",
+    });
+
+    const ATTENDANCE_OPTIONS: DropdownOptionProps[] = [
+      { text: "On-site", value: "1", icon: RemixIcons.RiHome2Line },
+      { text: "WFH", value: "2", icon: RemixIcons.RiUser2Line },
+      {
+        text: "Sick leave",
+        value: "3",
+        icon: RemixIcons.RiSettings2Line,
+      },
+      {
+        text: "Annual leave",
+        value: "4",
+        icon: RemixIcons.RiLogoutBoxLine,
+      },
+    ];
+
+    return (
+      <Textarea
+        value={value.value}
+        autogrow
+        onChange={(e) =>
+          setValue((prev) => ({ ...prev, value: e.target.value }))
+        }
+        dropdowns={[
+          {
+            width: "150px",
+            styles: {
+              drawerStyle: css`
+                width: 300px;
+              `,
+            },
+            caption: value.selectedText,
+            options: ATTENDANCE_OPTIONS,
+            onChange: (id) => {
+              const selected = ATTENDANCE_OPTIONS.find(
+                (option) => option.value === id
+              );
+              if (selected) {
+                setValue((prev) => ({
+                  ...prev,
+                  selectedOption: id,
+                  selectedText: selected.text,
+                }));
+              }
+            },
+            withFilter: true,
+          },
+        ]}
+        styles={{
+          self: css`
+            min-width: 300px;
+          `,
+        }}
+      />
+    );
   },
 };
 

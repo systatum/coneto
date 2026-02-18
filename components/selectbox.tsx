@@ -10,6 +10,7 @@ import {
   Ref,
   CSSProperties,
   forwardRef,
+  InputHTMLAttributes,
 } from "react";
 import {
   useFloating,
@@ -29,8 +30,10 @@ import {
 } from "@remixicon/react";
 import styled, { css, CSSProp } from "styled-components";
 import { isValidDateString } from "../lib/date";
+import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 
-export interface SelectboxProps {
+export interface BaseSelectboxProps
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "children"> {
   options?: OptionsProps[];
   selectedOptions?: string[];
   setSelectedOptions?: (data: string[]) => void;
@@ -45,7 +48,8 @@ export interface SelectboxProps {
   onClick?: () => void;
   multiple?: boolean;
   actions?: any[];
-  id?: string;
+  inputId?: string;
+  showError?: boolean;
   maxSelectableItems?: number | undefined;
   children?: (
     props: DrawerProps &
@@ -61,10 +65,14 @@ export interface SelectboxProps {
   styles?: SelectboxStylesProps;
 }
 
-export interface SelectboxStylesProps {
-  containerStyle?: CSSProp;
+export interface BaseSelectboxStylesProps {
+  selectboxStyle?: CSSProp;
   self?: CSSProp;
 }
+
+export interface SelectboxStylesProps
+  extends FieldLaneStylesProps,
+    BaseSelectboxStylesProps {}
 
 export interface DrawerProps extends InteractionModeProps {
   highlightedIndex: number | null;
@@ -92,7 +100,7 @@ export interface OptionsProps {
   value: string;
 }
 
-const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
+const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
   (
     {
       setSelectedOptions,
@@ -112,7 +120,10 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       multiple,
       actions,
       maxSelectableItems,
+      showError,
       id,
+      autoComplete = "off",
+      ...props
     },
     ref
   ) => {
@@ -274,6 +285,15 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       }
     }, [highlightedIndex, isOpen]);
 
+    useEffect(() => {
+      if (!isOpen && multiple) {
+        setSelectedOptionsLocal({
+          text: "",
+          value: "",
+        });
+      }
+    }, [isOpen]);
+
     const multipleOptionsJoinedText = selectedOptions
       ?.map((val) => options.find((o) => o.value === val)?.text)
       .filter(Boolean)
@@ -283,22 +303,38 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       ? multipleOptionsJoinedText
       : selectedOptionsLocal.text;
 
+    const isClearable =
+      clearable &&
+      (multiple
+        ? selectedOptions?.length
+        : selectedOptionsLocal?.text.length) !== 0;
+
     return (
       <Container
         onBlur={() => {
           setIsHovered(false);
         }}
+        onMouseEnter={() => {
+          setIsHovered(true);
+        }}
+        onMouseLeave={() => {
+          setIsHovered(false);
+        }}
         role="combobox"
-        $style={styles?.containerStyle}
+        $style={styles?.selectboxStyle}
         aria-expanded={isOpen}
         onClick={() => {
           if (multiple) inputRef.current?.focus();
         }}
       >
         <Input
+          {...props}
+          autoComplete={autoComplete}
           $style={styles?.self}
           {...getReferenceProps()}
           data-type="selectbox"
+          $hasError={showError}
+          aria-label={id}
           id={id}
           $clearable={clearable}
           ref={(el) => {
@@ -320,14 +356,6 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
           onFocus={() => {
             if (type === "calendar" || selectedOptionsLocal) setIsOpen(true);
             setIsFocused(true);
-          }}
-          onMouseOver={() => {
-            if (multiple) {
-              setSelectedOptionsLocal({
-                text: "",
-                value: "",
-              });
-            }
           }}
           onBlur={() => {
             setIsFocused(false);
@@ -374,7 +402,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
           $highlight={highlightOnMatch && FILTERED_ACTIVE}
         />
 
-        {clearable && selectedOptionsLocal?.text.length !== 0 && (
+        {isClearable && (
           <>
             <ClearIcon
               aria-label="clearable-content"
@@ -442,6 +470,73 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
   }
 );
 
+export interface SelectboxProps
+  extends Omit<BaseSelectboxProps, "styles" | "inputId">,
+    Omit<
+      FieldLaneProps,
+      "styles" | "inputId" | "type" | "actions" | "children"
+    > {
+  styles?: SelectboxStylesProps;
+}
+
+const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
+  ({ ...props }, ref) => {
+    const {
+      dropdowns,
+      label,
+      showError,
+      styles,
+      errorMessage,
+      actions,
+      type,
+      helper,
+      disabled,
+      name,
+      errorIconPosition,
+      id,
+      ...rest
+    } = props;
+    const inputId = id ?? `Selectbox-${name}`;
+
+    return (
+      <FieldLane
+        inputId={inputId}
+        dropdowns={dropdowns}
+        showError={showError}
+        errorMessage={errorMessage}
+        label={label}
+        type={type}
+        helper={helper}
+        disabled={disabled}
+        errorIconPosition={errorIconPosition}
+        styles={{
+          containerStyle: styles?.containerStyle,
+          labelStyle: styles?.labelStyle,
+        }}
+      >
+        <BaseSelectbox
+          {...rest}
+          id={inputId}
+          actions={actions}
+          showError={showError}
+          styles={{
+            self: css`
+              ${dropdowns &&
+              css`
+                border-top-left-radius: 0px;
+                border-bottom-left-radius: 0px;
+              `}
+              ${styles?.self}
+            `,
+          }}
+          type={type}
+          ref={ref}
+        />
+      </FieldLane>
+    );
+  }
+);
+
 const Container = styled.div<{ $style?: CSSProp }>`
   position: relative;
   width: 100%;
@@ -455,25 +550,28 @@ const Input = styled.input<{
   $hovered?: boolean;
   $style?: CSSProp;
   $clearable?: boolean;
+  $hasError?: boolean;
 }>`
   width: 100%;
   border-radius: 2px;
-  border: 1px solid #f3f4f6;
+  border: 1px solid #d1d5db;
   padding: 0.5rem 0.75rem;
   outline: none;
   padding-right: ${({ $clearable }) => ($clearable ? "50px" : "24px")};
 
-  ${({ $focused }) =>
-    $focused &&
-    css`
-      border-color: #61a9f9;
-    `}
+  ${({ $highlight, $hovered, $hasError, $focused }) =>
+    $hasError
+      ? css`
+          border-color: #ef4444;
+        `
+      : $highlight || $hovered || $focused
+        ? css`
+            border-color: #61a9f9;
+          `
+        : css`
+            border-color: #d1d5db;
+          `};
 
-  ${({ $highlight, $hovered }) =>
-    ($highlight || $hovered) &&
-    css`
-      border-color: #61a9f9;
-    `}
   ${({ $style }) => $style}
 `;
 

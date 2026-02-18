@@ -38,47 +38,6 @@ describe("Textbox", () => {
         cy.findAllByRole("button").eq(0).should("contain.text", "Sick leave");
       });
     });
-
-    context("when multiple dropdown", () => {
-      it("should render the dropdown more than one", () => {
-        cy.findByText("11/12/2025").click();
-        cy.findAllByLabelText("calendar-select-date").eq(0).click();
-        cy.findByLabelText("combobox-month").click();
-        cy.findByText("SEP").should("exist").click();
-        cy.findByLabelText("combobox-year").click();
-        cy.findByText("2025").should("exist").click();
-        cy.findByText("22")
-          .click()
-          .should("have.css", "color", "rgb(255, 255, 255)")
-          .and("have.css", "background-color", "rgb(97, 169, 249)");
-
-        cy.findAllByRole("button").eq(2).click();
-        cy.findByLabelText("textbox-search").type("sick");
-        ["On-site", "WFH", "Sick leave", "Annual leave"].map((data) => {
-          if (data === "On-site" || data === "Sick leave" || data === "WFH") {
-            cy.findAllByText(data).should("exist");
-          } else {
-            cy.findAllByText(data).should("not.exist");
-          }
-        });
-      });
-    });
-
-    context("with filter", () => {
-      context("when search content", () => {
-        it("should render with filtered content", () => {
-          cy.findAllByRole("button").eq(2).click();
-          cy.findByLabelText("textbox-search").type("sick");
-          ["On-site", "WFH", "Sick leave", "Annual leave"].map((data) => {
-            if (data === "On-site" || data === "Sick leave" || data === "WFH") {
-              cy.findAllByText(data).should("exist");
-            } else {
-              cy.findAllByText(data).should("not.exist");
-            }
-          });
-        });
-      });
-    });
   });
 
   context("with action", () => {

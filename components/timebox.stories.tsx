@@ -2,6 +2,9 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { Timebox } from "./timebox";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useArgs } from "@storybook/preview-api";
+import { css } from "styled-components";
+import * as RemixIcons from "@remixicon/react";
+import { DropdownOptionProps } from "./field-lane";
 
 const meta: Meta<typeof Timebox> = {
   title: "Input Elements/Timebox",
@@ -49,6 +52,66 @@ export const WithSeconds: Story = {
     };
 
     return <Timebox {...args} onChange={onChangeValue} />;
+  },
+};
+
+export const WithDropdown: Story = {
+  render: () => {
+    const [value, setValue] = useState({
+      selectedText: "WFH",
+      selectedOption: "2",
+      value: "",
+    });
+
+    const ATTENDANCE_OPTIONS: DropdownOptionProps[] = [
+      { text: "On-site", value: "1", icon: RemixIcons.RiHome2Line },
+      { text: "WFH", value: "2", icon: RemixIcons.RiUser2Line },
+      {
+        text: "Sick leave",
+        value: "3",
+        icon: RemixIcons.RiSettings2Line,
+      },
+      {
+        text: "Annual leave",
+        value: "4",
+        icon: RemixIcons.RiLogoutBoxLine,
+      },
+    ];
+
+    return (
+      <Timebox
+        label="With Dropdowns"
+        value={value.value}
+        onChange={(e) =>
+          setValue((prev) => ({ ...prev, value: e.target.value }))
+        }
+        dropdowns={[
+          {
+            width: "120px",
+            styles: {
+              drawerStyle: css`
+                width: 300px;
+              `,
+            },
+            caption: value.selectedText,
+            options: ATTENDANCE_OPTIONS,
+            onChange: (id) => {
+              const selected = ATTENDANCE_OPTIONS.find(
+                (option) => option.value === id
+              );
+              if (selected) {
+                setValue((prev) => ({
+                  ...prev,
+                  selectedOption: id,
+                  selectedText: selected.text,
+                }));
+              }
+            },
+            withFilter: true,
+          },
+        ]}
+      />
+    );
   },
 };
 

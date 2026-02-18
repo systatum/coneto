@@ -1,5 +1,10 @@
 import { RiCalendar2Line } from "@remixicon/react";
-import { DrawerProps, OptionsProps, Selectbox } from "./selectbox";
+import {
+  DrawerProps,
+  OptionsProps,
+  Selectbox,
+  SelectboxStylesProps,
+} from "./selectbox";
 import {
   Calendar,
   BaseCalendarProps,
@@ -7,9 +12,9 @@ import {
 } from "./calendar";
 import styled, { css, CSSProp } from "styled-components";
 import { forwardRef, ReactNode } from "react";
-import { StatefulForm } from "./stateful-form";
+import { FieldLaneProps } from "./field-lane";
 
-export type DateboxProps = BaseCalendarProps & {
+export type BaseDateboxProps = BaseCalendarProps & {
   label?: string;
   showError?: boolean;
   errorMessage?: string;
@@ -22,11 +27,7 @@ export type DateboxProps = BaseCalendarProps & {
   helper?: string;
 };
 
-export interface DateboxStylesProps {
-  labelStyle?: CSSProp;
-  selectboxStyle?: CSSProp;
-  containerStyle?: CSSProp;
-}
+export type DateboxStylesProps = SelectboxStylesProps;
 
 type CalendarDrawerProps = BaseCalendarProps &
   Partial<
@@ -40,99 +41,81 @@ type CalendarDrawerProps = BaseCalendarProps &
     }
   >;
 
+export interface DateboxProps
+  extends Omit<BaseDateboxProps, "inputId">,
+    Omit<
+      FieldLaneProps,
+      "styles" | "inputId" | "type" | "children" | "actions"
+    > {}
+
 const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
   const {
     selectedDates,
     setSelectedDates,
-    errorMessage,
     placeholder = "mm/dd/yyyy",
     styles,
     helper,
+    dropdowns,
+    showError,
     ...rest
   } = props;
 
   const inputId = `datebox-${props.label}`;
 
   return (
-    <InputWrapper $style={styles?.containerStyle} $disabled={props.disabled}>
-      {props.label && (
-        <StatefulForm.Label
-          htmlFor={props.disabled ? null : inputId}
-          style={styles?.labelStyle}
-          helper={helper}
-          label={props.label}
-        />
-      )}
-      <InputContent>
-        <Selectbox
-          {...rest}
-          ref={ref}
-          id={inputId}
-          selectedOptions={selectedDates}
-          setSelectedOptions={setSelectedDates}
-          styles={{
-            self: css`
-              ${styles?.selectboxStyle}
-              ${props.showError &&
-              css`
-                border-color: #f87171;
-              `}
-            `,
-          }}
-          placeholder={placeholder}
-          iconClosed={RiCalendar2Line}
-          iconOpened={RiCalendar2Line}
-          type="calendar"
-          clearable
-        >
-          {(selectBoxProps) => {
-            return (
-              <CalendarDrawer
-                {...rest}
-                {...selectBoxProps}
-                styles={{
-                  containerStyle: styles?.self,
-                }}
-                setSelectedDates={setSelectedDates}
-                selectedDates={selectedDates}
-              />
-            );
-          }}
-        </Selectbox>
-        {props.showError && errorMessage && (
-          <ErrorText>{errorMessage}</ErrorText>
-        )}
-      </InputContent>
-    </InputWrapper>
+    <Selectbox
+      {...rest}
+      ref={ref}
+      errorIconPosition="relative"
+      id={inputId}
+      showError={showError}
+      dropdowns={dropdowns}
+      selectedOptions={selectedDates}
+      setSelectedOptions={setSelectedDates}
+      helper={helper}
+      disabled={props.disabled}
+      styles={{
+        ...styles,
+        self: css`
+          border: 1px solid #d1d5db;
+          &:focus {
+            border-color: ${showError ? "#f87171" : "#61a9f9"};
+          }
+          ${dropdowns &&
+          css`
+            border-top-left-radius: 0px;
+            border-bottom-left-radius: 0px;
+          `}
+
+          ${styles?.selectboxStyle}
+          ${showError &&
+          css`
+            border-color: #f87171;
+          `}
+        `,
+      }}
+      placeholder={placeholder}
+      iconClosed={RiCalendar2Line}
+      iconOpened={RiCalendar2Line}
+      type="calendar"
+      clearable
+    >
+      {(selectBoxProps) => {
+        return (
+          <CalendarDrawer
+            {...rest}
+            {...selectBoxProps}
+            styles={{
+              containerStyle: styles?.self,
+            }}
+            setSelectedDates={setSelectedDates}
+            selectedDates={selectedDates}
+          />
+        );
+      }}
+    </Selectbox>
   );
 });
-
-const InputWrapper = styled.div<{
-  $style?: CSSProp;
-  $disabled?: boolean;
-}>`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  font-size: 0.75rem;
-  width: 100%;
-  position: relative;
-
-  ${({ $disabled }) => $disabled && `cursor: not-allowed; opacity: 0.5;`}
-  ${({ $style }) => $style}
-`;
-
-const InputContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: 12px;
-`;
-
-const ErrorText = styled.span`
-  color: #dc2626;
-  font-size: 0.75rem;
-`;
 
 function CalendarDrawer(props: CalendarDrawerProps) {
   return (

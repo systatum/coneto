@@ -26,7 +26,7 @@ import {
 import { COUNTRY_CODES } from "../constants/countries";
 import { AsYouType, CountryCode } from "libphonenumber-js/max";
 import styled, { css, CSSProp } from "styled-components";
-import { StatefulForm } from "./stateful-form";
+import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 
 export interface CountryCodeProps {
   id: string;
@@ -35,7 +35,7 @@ export interface CountryCodeProps {
   flag: string;
 }
 
-export interface PhoneboxProps {
+export interface BasePhoneboxProps {
   label?: string;
   name?: string;
   value?: string;
@@ -52,30 +52,27 @@ export interface PhoneboxProps {
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
   countryCodeValue?: CountryCodeProps;
   styles?: PhoneboxStylesProps;
+  inputId?: string;
 }
 
 export interface PhoneboxStylesProps {
-  containerStyle?: CSSProp;
   self?: CSSProp;
   inputWrapperStyle?: CSSProp;
   toggleStyle?: CSSProp;
-  labelStyle?: CSSProp;
 }
 
-const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
+const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
   (
     {
-      label,
       value = "",
       onChange,
       placeholder,
       disabled = false,
       showError = false,
-      errorMessage,
       onKeyDown,
-      helper,
       countryCodeValue,
       styles,
+      inputId,
     },
     ref
   ) => {
@@ -215,14 +212,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
     };
 
     return (
-      <ContainerPhonebox $style={styles?.containerStyle}>
-        {label && (
-          <StatefulForm.Label
-            style={styles?.labelStyle}
-            helper={helper}
-            label={label}
-          />
-        )}
+      <>
         <InputWrapper
           $hasError={showError}
           $isOpen={isOpen}
@@ -247,6 +237,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
             $disabled={disabled}
             aria-label="Select country code"
             tabIndex={0}
+            $hasError={showError}
             $style={styles?.toggleStyle}
           >
             <span>{selectedCountry.flag}</span>
@@ -256,6 +247,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
 
           <PhoneInput
             ref={phoneInputRef}
+            id={inputId}
             type="tel"
             $style={styles?.self}
             placeholder={placeholder}
@@ -264,7 +256,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
             onKeyDown={(e) => onKeyDown?.(e)}
             disabled={disabled}
             $disabled={disabled}
-            aria-label="Phone number input"
+            aria-label="phonebox-number"
           />
         </InputWrapper>
 
@@ -345,9 +337,71 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
             )}
           </DropdownContainer>
         )}
+      </>
+    );
+  }
+);
 
-        {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
-      </ContainerPhonebox>
+export interface PhoneboxProps
+  extends Omit<BasePhoneboxProps, "styles" | "inputId">,
+    Omit<FieldLaneProps, "styles" | "inputId" | "onChange"> {
+  styles?: PhoneboxStylesProps & FieldLaneStylesProps;
+}
+
+const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
+  ({ ...props }, ref) => {
+    const {
+      dropdowns,
+      label,
+      showError,
+      styles,
+      errorMessage,
+      actions,
+      type,
+      helper,
+      disabled,
+      onChange,
+      ...rest
+    } = props;
+    const inputId = `Phonebox-${props?.name}`;
+
+    return (
+      <FieldLane
+        inputId={inputId}
+        dropdowns={dropdowns}
+        showError={showError}
+        errorMessage={errorMessage}
+        label={label}
+        actions={actions}
+        type={type}
+        helper={helper}
+        disabled={disabled}
+        styles={{
+          containerStyle: styles?.containerStyle,
+          labelStyle: styles?.labelStyle,
+        }}
+      >
+        <BasePhonebox
+          {...rest}
+          inputId={inputId}
+          showError={showError}
+          disabled={disabled}
+          styles={{
+            self: styles?.self,
+            toggleStyle: styles?.toggleStyle,
+            inputWrapperStyle: css`
+              ${dropdowns &&
+              css`
+                border-top-left-radius: 0px;
+                border-bottom-left-radius: 0px;
+              `}
+              ${styles?.self}
+            `,
+          }}
+          onChange={onChange}
+          ref={ref}
+        />
+      </FieldLane>
     );
   }
 );
@@ -366,39 +420,45 @@ const InputWrapper = styled.div<{
   border: 1px solid
     ${({ $hasError, $isOpen }) =>
       $hasError ? "#ef4444" : $isOpen ? "#d1d5db" : "#d1d5db"};
-  ${({ $disabled }) =>
-    $disabled &&
-    css`
-      opacity: 0.5;
-    `}
+
   &:focus-within {
     border-color: ${({ $hasError }) => ($hasError ? "#ef4444" : "#61A9F9")};
   }
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      border-color: #d1d5db;
+      opacity: 0.5;
+    `}
+
   border-radius: 2px;
 
   ${({ $style }) => $style};
 `;
 
-const ContainerPhonebox = styled.div<{ $style?: CSSProp }>`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  width: 100%;
-
-  ${({ $style }) => $style}
-`;
-
-const CountryButton = styled.button<{ $disabled?: boolean; $style?: CSSProp }>`
+const CountryButton = styled.button<{
+  $disabled?: boolean;
+  $hasError?: boolean;
+  $style?: CSSProp;
+}>`
   display: flex;
   flex-direction: row;
   min-height: 32px;
   align-items: center;
   gap: 4px;
-  border-right: 1px solid #d1d5db;
+  border-right: 1px solid
+    ${({ $hasError }) => ($hasError ? "#ef4444" : "#d1d5db")};
+
+  ${InputWrapper}:focus-within & {
+    border-color: ${({ $hasError }) => ($hasError ? "#ef4444" : "#61A9F9")};
+  }
+
   padding: 0 8px;
   font-size: 12px;
   border-top-left-radius: var(--radius-xs);
   border-bottom-left-radius: var(--radius-xs);
+
   ${({ $disabled }) =>
     $disabled
       ? css`
@@ -508,11 +568,6 @@ const EmptyOption = styled.div`
   text-align: center;
   font-size: 12px;
   color: #6b7280;
-`;
-
-const ErrorText = styled.span`
-  color: #dc2626;
-  font-size: 0.75rem;
 `;
 
 function trimPhone(input: string): string {

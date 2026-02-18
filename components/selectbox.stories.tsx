@@ -39,8 +39,6 @@ export const Default: Story = {
         >
           {(props) =>
             props.options.map((option, index) => {
-              const { style: _style } = props;
-
               return (
                 <ul
                   key={index}
@@ -97,8 +95,6 @@ export const Clearable: Story = {
         >
           {(props) =>
             props.options.map((option, index) => {
-              const { style: _style } = props;
-
               return (
                 <ul
                   key={index}

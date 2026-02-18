@@ -714,6 +714,7 @@ function Calendar({
             aria-label="today-button"
             styles={{
               self: css`
+                color: black;
                 border-color: #f3f4f6;
                 width: 100%;
                 max-height: 34px;

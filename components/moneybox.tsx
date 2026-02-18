@@ -10,7 +10,7 @@ import {
 } from "react";
 import { Button } from "./button";
 import { List } from "./list";
-import { StatefulForm } from "./stateful-form";
+import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 
 type SeparatorTypeProps = "dot" | "comma";
 
@@ -20,7 +20,7 @@ export interface CurrencyOptionsProps {
   symbol: string;
 }
 
-export interface MoneyboxProps
+export interface BaseMoneyboxProps
   extends Omit<
     InputHTMLAttributes<HTMLInputElement>,
     "name" | "placeholder" | "style"
@@ -32,38 +32,31 @@ export interface MoneyboxProps
   placeholder?: string;
   separator?: SeparatorTypeProps;
   showError?: boolean;
-  errorMessage?: string;
-  label?: string;
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
   styles?: MoneyboxStylesProps;
   editableCurrency?: boolean;
   currencyOptions?: CurrencyOptionsProps[];
-  helper?: string;
+  inputId?: string;
 }
 
 export interface MoneyboxStylesProps {
   self?: CSSProp;
-  containerStyle?: CSSProp;
-  labelStyle?: CSSProp;
   inputWrapperStyle?: CSSProp;
 }
 
-const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
+const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
   (
     {
       value,
       currency = "IDR",
       name,
-      label,
       onChange,
       placeholder,
       separator = "comma",
-      errorMessage,
       showError,
       styles,
       onKeyDown,
       editableCurrency,
-      helper,
       currencyOptions = [
         { id: "IDR", name: "Indonesian Rupiah", symbol: "Rp" },
       ],
@@ -116,158 +109,195 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
     };
 
     return (
-      <InputWrapper $style={styles?.containerStyle}>
-        {label && (
-          <StatefulForm.Label
-            style={styles?.labelStyle}
-            helper={helper}
-            label={label}
-          />
-        )}
-        <InputContent>
-          <Box
-            onBlur={() => setFocus(false)}
-            ref={boxRef}
-            $disabled={props.disabled}
-            $error={showError}
-            $focus={focus}
-            $style={styles?.inputWrapperStyle}
-          >
-            <Button
-              aria-label="currency"
-              open={isTipMenuOpen}
-              onOpen={(prop: boolean) => setIsTipMenuOpen(prop)}
-              anchorRef={boxRef}
-              showSubMenuOn="self"
-              variant="ghost"
-              styles={{
-                containerStyle: css`
-                  position: absolute;
-                  left: 4px;
-                  top: 50%;
-                  transform: translateY(-50%);
-                  ${props.disabled &&
-                  css`
-                    cursor: not-allowed;
-                  `}
-                `,
-                self: css`
-                  height: 24px;
-                  width: 24px;
-                  padding: 0px;
-                  display: flex;
-                  flex-direction: row;
-                  justify-content: center;
-                  align-items: center;
-                  text-align: center;
-                  font-size: 12px;
-                  ${(!editableCurrency || props.disabled) &&
-                  css`
-                    pointer-events: none;
-                    background-color: transparent;
-                  `}
-                `,
-              }}
-              subMenu={
-                editableCurrency && !props.disabled
-                  ? ({ show }) =>
-                      show(
-                        <List
-                          styles={{
-                            containerStyle: css`
-                              gap: 0px;
-                              border: 1px solid #d1d5db;
-                              max-height: 200px;
-                              overflow: auto;
-                            `,
-                          }}
-                        >
-                          {currencyOptions.map((props) => {
-                            return (
-                              <List.Item
-                                onMouseDown={async () => {
-                                  const syntheticEvent = {
-                                    target: {
-                                      name: "currency",
-                                      value: props.id,
-                                    },
-                                  } as ChangeEvent<HTMLInputElement>;
-                                  await onChange(syntheticEvent);
+      <Box
+        onBlur={() => setFocus(false)}
+        ref={boxRef}
+        $disabled={props.disabled}
+        $error={showError}
+        $focus={focus}
+        $style={styles?.inputWrapperStyle}
+      >
+        <Button
+          aria-label="currency"
+          open={isTipMenuOpen}
+          onOpen={(prop: boolean) => setIsTipMenuOpen(prop)}
+          anchorRef={boxRef}
+          showSubMenuOn="self"
+          variant="ghost"
+          styles={{
+            containerStyle: css`
+              position: absolute;
+              left: 4px;
+              top: 50%;
+              transform: translateY(-50%);
 
-                                  await setIsTipMenuOpen(false);
-                                }}
-                                id={props.id}
-                                title={props.name}
-                                styles={{
-                                  rowStyle: css`
-                                    border-radius: 0px;
-                                    padding: 0.5rem 0.75rem;
-                                    transition: background-color 0ms;
-                                    overflow: hidden;
-                                  `,
-                                  titleStyle: css`
-                                    font-size: 12px;
-                                  `,
-                                }}
-                                rightSideContent={props.symbol}
-                              />
-                            );
-                          })}
-                        </List>,
-                        {
-                          drawerStyle: css`
-                            background-color: white;
-                            overflow: hidden;
-                            border-radius: 2px;
-                          `,
-                        }
-                      )
-                  : undefined
-              }
-            >
-              {selectionCurrency}
-            </Button>
-            <MoneyboxInput
-              aria-label="input-moneybox"
-              autoComplete="off"
-              ref={ref}
-              name={name}
-              value={inputValue}
-              onChange={handleChange}
-              placeholder={placeholder}
-              onFocus={() => setFocus(true)}
-              onKeyDown={onKeyDown}
-              type="text"
-              $style={styles?.self}
-              inputMode="decimal"
-              $disabled={props.disabled}
-              {...props}
-            />
-          </Box>
-          {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
-        </InputContent>
-      </InputWrapper>
+              ${!editableCurrency &&
+              css`
+                cursor: default;
+              `}
+
+              ${props.disabled &&
+              css`
+                cursor: not-allowed;
+              `}
+            `,
+            self: css`
+              height: 24px;
+              width: 24px;
+              padding: 0px;
+              display: flex;
+              flex-direction: row;
+              justify-content: center;
+              align-items: center;
+              text-align: center;
+              font-size: 12px;
+              ${(!editableCurrency || props.disabled) &&
+              css`
+                pointer-events: none;
+                background-color: transparent;
+                cursor: default;
+              `}
+            `,
+          }}
+          subMenu={
+            editableCurrency && !props.disabled
+              ? ({ show }) =>
+                  show(
+                    <List
+                      styles={{
+                        containerStyle: css`
+                          gap: 0px;
+                          border: 1px solid #d1d5db;
+                          max-height: 200px;
+                          overflow: auto;
+                        `,
+                      }}
+                    >
+                      {currencyOptions.map((props) => {
+                        return (
+                          <List.Item
+                            onMouseDown={async () => {
+                              const syntheticEvent = {
+                                target: {
+                                  name: "currency",
+                                  value: props.id,
+                                },
+                              } as ChangeEvent<HTMLInputElement>;
+                              await onChange(syntheticEvent);
+
+                              await setIsTipMenuOpen(false);
+                            }}
+                            id={props.id}
+                            title={props.name}
+                            styles={{
+                              rowStyle: css`
+                                border-radius: 0px;
+                                padding: 0.5rem 0.75rem;
+                                transition: background-color 0ms;
+                                overflow: hidden;
+                              `,
+                              titleStyle: css`
+                                font-size: 12px;
+                              `,
+                            }}
+                            rightSideContent={props.symbol}
+                          />
+                        );
+                      })}
+                    </List>,
+                    {
+                      drawerStyle: css`
+                        background-color: white;
+                        overflow: hidden;
+                        border-radius: 2px;
+                      `,
+                    }
+                  )
+              : undefined
+          }
+        >
+          {selectionCurrency}
+        </Button>
+        <MoneyboxInput
+          aria-label="input-moneybox"
+          autoComplete="off"
+          ref={ref}
+          name={name}
+          value={inputValue}
+          onChange={handleChange}
+          placeholder={placeholder}
+          onFocus={() => setFocus(true)}
+          onKeyDown={onKeyDown}
+          type="text"
+          $style={styles?.self}
+          inputMode="decimal"
+          $disabled={props.disabled}
+          {...props}
+        />
+      </Box>
     );
   }
 );
 
-const InputWrapper = styled.div<{ $style?: CSSProp }>`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: 0.5rem;
-  font-size: 0.75rem;
-  position: relative;
-  font-size: 0.75rem;
+export interface MoneyboxProps
+  extends Omit<BaseMoneyboxProps, "styles" | "inputId" | "actions">,
+    Omit<FieldLaneProps, "styles" | "inputId" | "type" | "actions"> {
+  styles?: MoneyboxStylesProps & FieldLaneStylesProps;
+}
 
-  ${({ $style }) => $style}
-`;
+const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
+  ({ ...props }, ref) => {
+    const {
+      dropdowns,
+      label,
+      showError,
+      styles,
+      errorMessage,
+      type,
+      helper,
+      disabled,
+      ...rest
+    } = props;
+    const inputId = `Moneybox-${props?.name}`;
 
-const InputContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-`;
+    return (
+      <FieldLane
+        inputId={inputId}
+        dropdowns={dropdowns}
+        showError={showError}
+        errorMessage={errorMessage}
+        label={label}
+        type={type}
+        helper={helper}
+        disabled={disabled}
+        errorIconPosition="relative"
+        styles={{
+          containerStyle: styles?.containerStyle,
+          labelStyle: styles?.labelStyle,
+        }}
+      >
+        <BaseMoneybox
+          {...rest}
+          inputId={inputId}
+          showError={showError}
+          styles={{
+            inputWrapperStyle: css`
+              ${dropdowns &&
+              css`
+                border-top-left-radius: 0px;
+                border-bottom-left-radius: 0px;
+              `}
+              ${styles?.inputWrapperStyle}
+            `,
+            self: styles?.self,
+          }}
+          type={type}
+          ref={ref}
+        />
+      </FieldLane>
+    );
+  }
+);
 
 const Box = styled.div<{
   $error?: boolean;
@@ -319,11 +349,6 @@ const MoneyboxInput = styled.input<{ $disabled?: boolean; $style?: CSSProp }>`
     `}
 
   ${({ $style }) => $style}
-`;
-
-const ErrorText = styled.span`
-  color: #dc2626;
-  font-size: 0.75rem;
 `;
 
 const unformatMoneyboxNumber = (

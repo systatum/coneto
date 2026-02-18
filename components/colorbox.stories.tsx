@@ -1,8 +1,10 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { Colorbox } from "./colorbox";
 import { useArgs } from "@storybook/preview-api";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useState } from "react";
 import { css } from "styled-components";
+import { DropdownOptionProps } from "./field-lane";
+import * as RemixIcons from "@remixicon/react";
 
 const meta: Meta<typeof Colorbox> = {
   title: "Input Elements/Colorbox",
@@ -72,6 +74,7 @@ export const Default: Story = {
     const [currentArgs, setUpdateArgs] = useArgs();
     const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
+
       setUpdateArgs({ ...currentArgs, [name]: value });
     };
 
@@ -79,7 +82,7 @@ export const Default: Story = {
       <Colorbox
         styles={{
           containerStyle: css`
-            max-width: 250px;
+            max-width: 300px;
           `,
         }}
         {...args}
@@ -87,6 +90,73 @@ export const Default: Story = {
         value={args.color}
         name="color"
         onChange={onChangeValue}
+      />
+    );
+  },
+};
+
+export const WithDropdown: Story = {
+  render: () => {
+    const [inputValue, setInputValue] = useState({
+      selectedText: "WFH",
+      selectedOption: "1",
+      value: "",
+    });
+
+    const ATTENDANCE_OPTIONS: DropdownOptionProps[] = [
+      { text: "On-site", value: "1", icon: RemixIcons.RiHome2Line },
+      { text: "WFH", value: "1", icon: RemixIcons.RiUser2Line },
+      {
+        text: "Sick leave",
+        value: "3",
+        icon: RemixIcons.RiSettings2Line,
+      },
+      {
+        text: "Annual leave",
+        value: "4",
+        icon: RemixIcons.RiLogoutBoxLine,
+      },
+    ];
+
+    return (
+      <Colorbox
+        styles={{
+          containerStyle: css`
+            max-width: 700px;
+          `,
+        }}
+        placeholder="Add color"
+        dropdowns={[
+          {
+            width: "110px",
+            styles: {
+              drawerStyle: css`
+                width: 300px;
+              `,
+            },
+            caption: inputValue.selectedText,
+            options: ATTENDANCE_OPTIONS,
+            onChange: (id) => {
+              const selected = ATTENDANCE_OPTIONS.find(
+                (item) => item.value === id
+              );
+              if (selected) {
+                setInputValue((prev) => ({
+                  ...prev,
+                  selectedOption: id,
+                  selectedText: selected.text,
+                }));
+              }
+            },
+            withFilter: true,
+          },
+        ]}
+        label="Color"
+        value={inputValue.value}
+        name="color"
+        onChange={(e) =>
+          setInputValue((prev) => ({ ...prev, value: e.target.value }))
+        }
       />
     );
   },
@@ -122,7 +192,7 @@ export const WithError: Story = {
       <Colorbox
         styles={{
           containerStyle: css`
-            max-width: 250px;
+            max-width: 300px;
           `,
         }}
         {...args}

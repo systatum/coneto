@@ -2,6 +2,9 @@ import { Meta, StoryObj } from "@storybook/react";
 import { ReactElement, useState } from "react";
 import { Datebox } from "./datebox";
 import { Messagebox } from "./messagebox";
+import * as RemixIcons from "@remixicon/react";
+import { DropdownOptionProps } from "./field-lane";
+import { css } from "styled-components";
 
 const meta: Meta<typeof Datebox> = {
   title: "Input Elements/Datebox",
@@ -59,6 +62,82 @@ export const Default: Story = {
           monthNames={MONTH_NAMES}
         />
       </div>
+    );
+  },
+};
+
+export const WithDropdown: Story = {
+  render: () => {
+    const [value, setValue] = useState({
+      selectedText: "WFH",
+      selectedOption: "2",
+      value: ["1"],
+    });
+
+    const MONTH_NAMES = [
+      { text: "JAN", value: "1" },
+      { text: "FEB", value: "2" },
+      { text: "MAR", value: "3" },
+      { text: "APR", value: "4" },
+      { text: "MAY", value: "5" },
+      { text: "JUN", value: "6" },
+      { text: "JUL", value: "7" },
+      { text: "AUG", value: "8" },
+      { text: "SEP", value: "9" },
+      { text: "OCT", value: "10" },
+      { text: "NOV", value: "11" },
+      { text: "DEC", value: "12" },
+    ];
+
+    const ATTENDANCE_OPTIONS: DropdownOptionProps[] = [
+      { text: "On-site", value: "1", icon: RemixIcons.RiHome2Line },
+      { text: "WFH", value: "2", icon: RemixIcons.RiUser2Line },
+      {
+        text: "Sick leave",
+        value: "3",
+        icon: RemixIcons.RiSettings2Line,
+      },
+      {
+        text: "Annual leave",
+        value: "4",
+        icon: RemixIcons.RiLogoutBoxLine,
+      },
+    ];
+
+    return (
+      <Datebox
+        selectedDates={value.value}
+        setSelectedDates={(value) =>
+          setValue((prev) => ({ ...prev, value: value }))
+        }
+        monthNames={MONTH_NAMES}
+        label="With Dropdown"
+        dropdowns={[
+          {
+            width: "150px",
+            styles: {
+              drawerStyle: css`
+                width: 300px;
+              `,
+            },
+            caption: value.selectedText,
+            options: ATTENDANCE_OPTIONS,
+            onChange: (id) => {
+              const selected = ATTENDANCE_OPTIONS.find(
+                (item) => item.value === id
+              );
+              if (selected) {
+                setValue((prev) => ({
+                  ...prev,
+                  selectedOption: id,
+                  selectedText: selected.text,
+                }));
+              }
+            },
+            withFilter: true,
+          },
+        ]}
+      />
     );
   },
 };

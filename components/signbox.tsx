@@ -1,9 +1,9 @@
 import { RiEraserLine } from "@remixicon/react";
-import React, { useRef, useEffect, ChangeEvent, ReactElement } from "react";
-import styled, { CSSProp } from "styled-components";
-import { StatefulForm } from "./stateful-form";
+import React, { useRef, useEffect, ChangeEvent } from "react";
+import styled, { css, CSSProp } from "styled-components";
+import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 
-export interface SignboxProps {
+export interface BaseSignboxProps {
   name?: string;
   value?: string;
   clearable?: boolean;
@@ -19,25 +19,19 @@ export interface SignboxProps {
 }
 
 export interface SignboxStylesProps {
-  containerStyle?: CSSProp;
-  labelStyle?: CSSProp;
-  canvasStyle?: CSSProp;
+  self?: CSSProp;
 }
 
-function Signbox({
+function BaseSignbox({
   name = "signature",
   onChange,
   clearable,
-  disabled,
   value,
-  label,
   showError,
-  errorMessage,
   styles,
   height,
   width,
-  helper,
-}: SignboxProps) {
+}: BaseSignboxProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isDrawing = useRef(false);
   const lastPoint = useRef<{ x: number; y: number } | null>(null);
@@ -181,11 +175,11 @@ function Signbox({
     }
   };
 
-  const inputElement: ReactElement = (
+  return (
     <SignatureWrapper
       aria-label="signbox-canvas"
       $error={showError}
-      $canvasStyle={styles?.canvasStyle}
+      $canvasStyle={styles?.self}
       $height={height}
       $width={width}
     >
@@ -208,50 +202,70 @@ function Signbox({
       )}
     </SignatureWrapper>
   );
-
-  return (
-    <InputWrapper $containerStyle={styles?.containerStyle} $disabled={disabled}>
-      {label && (
-        <StatefulForm.Label
-          style={styles?.labelStyle}
-          helper={helper}
-          label={label}
-        />
-      )}
-      <InputContent>
-        {inputElement}
-        {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
-      </InputContent>
-    </InputWrapper>
-  );
 }
 
-const InputWrapper = styled.div<{
-  $containerStyle?: CSSProp;
-  $disabled?: boolean;
-}>`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  font-size: 0.75rem;
-  width: 100%;
-  position: relative;
+export interface SignboxProps
+  extends Omit<BaseSignboxProps, "styles" | "inputId" | "children">,
+    Omit<FieldLaneProps, "styles" | "inputId" | "type" | "children"> {
+  styles?: SignboxStylesProps & FieldLaneStylesProps;
+}
 
-  ${({ $disabled }) => $disabled && `cursor: not-allowed; opacity: 0.5;`}
-  ${({ $containerStyle }) => $containerStyle}
-`;
+function Signbox({
+  dropdowns,
+  label,
+  showError,
+  styles,
+  errorMessage,
+  actions,
+  helper,
+  disabled,
+  errorIconPosition,
+  name,
+  clearable,
+  onChange,
+  value,
+  height,
+  width,
+}: SignboxProps) {
+  const inputId = `Signbox-${name}`;
 
-const InputContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: 12px;
-`;
-
-const ErrorText = styled.span`
-  color: #dc2626;
-  font-size: 0.75rem;
-`;
+  return (
+    <FieldLane
+      inputId={inputId}
+      dropdowns={dropdowns}
+      showError={showError}
+      errorMessage={errorMessage}
+      label={label}
+      actions={actions}
+      helper={helper}
+      errorIconPosition={errorIconPosition}
+      disabled={disabled}
+      styles={{
+        containerStyle: styles?.containerStyle,
+        labelStyle: styles?.labelStyle,
+      }}
+    >
+      <BaseSignbox
+        height={height}
+        width={width}
+        value={value}
+        onChange={onChange}
+        clearable={clearable}
+        showError={showError}
+        styles={{
+          self: css`
+            ${dropdowns &&
+            css`
+              border-top-left-radius: 0px;
+              border-bottom-left-radius: 0px;
+            `}
+            ${styles?.self}
+          `,
+        }}
+      />
+    </FieldLane>
+  );
+}
 
 const penSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="black"><path d="M15.7279 9.57627L14.3137 8.16206L5 17.4758V18.89H6.41421L15.7279 9.57627ZM17.1421 8.16206L18.5563 6.74785L17.1421 5.33363L15.7279 6.74785L17.1421 8.16206ZM7.24264 20.89H3V16.6473L16.435 3.21231C16.8256 2.82179 17.4587 2.82179 17.8492 3.21231L20.6777 6.04074C21.0682 6.43126 21.0682 7.06443 20.6777 7.45495L7.24264 20.89Z"></path></svg>`;
 const base64SVG = btoa(penSVG);
