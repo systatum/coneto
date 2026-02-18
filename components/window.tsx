@@ -2,6 +2,7 @@ import { RemixiconComponentType } from "@remixicon/react";
 import {
   Children,
   cloneElement,
+  forwardRef,
   Fragment,
   isValidElement,
   MouseEvent,
@@ -31,8 +32,12 @@ export interface WindowStylesProps {
 
 export interface WindowCellProps {
   children?: ReactNode;
-  style?: CSSProp;
+  styles?: WindowCellStylesProps;
   actions?: WindowActionProps[];
+}
+
+export interface WindowCellStylesProps {
+  self?: CSSProp;
 }
 
 export interface WindowActionProps {
@@ -189,62 +194,63 @@ interface WindowCellInternalProps {
   isVertical: boolean;
 }
 
-function WindowCell(props: WindowCellProps) {
-  const { children, style, actions } = props;
+const WindowCell = forwardRef<HTMLDivElement, WindowCellProps>(
+  ({ children, styles, actions, ...props }, ref) => {
+    const {
+      size = 1,
+      isDragging = false,
+      isVertical = true,
+    } = props as WindowCellInternalProps;
 
-  const {
-    size = 1,
-    isDragging = false,
-    isVertical = true,
-  } = props as WindowCellInternalProps;
-
-  return (
-    <CellWrapper
-      aria-label="window-cell"
-      $size={size}
-      $isDragging={isDragging}
-      $isVertical={isVertical}
-      $style={style}
-    >
-      {actions && (
-        <ActionContainer>
-          {actions.map((data, index) => (
-            <Button
-              variant="transparent"
-              key={index}
-              aria-label="window-button"
-              onClick={() => {
-                if (data.onClick) data.onClick();
-              }}
-              styles={{
-                containerStyle: css`
-                  position: absolute;
-                  top: 0.5rem;
-                  right: 0.5rem;
-                  cursor: pointer;
-                  transition: all 0.3s;
-                  border-radius: 2px;
-                  padding: 2px;
-                  width: fit-content;
-                  height: fit-content;
-                  z-index: 50;
-                `,
-                self: css`
-                  width: fit-content;
-                  height: fit-content;
-                  padding: 2px;
-                `,
-              }}
-            >
-              {data.icon && <data.icon size={16} />}
-            </Button>
-          ))}
-        </ActionContainer>
-      )}
-      {children}
-    </CellWrapper>
-  );
-}
+    return (
+      <CellWrapper
+        ref={ref}
+        aria-label="window-cell"
+        $size={size}
+        $isDragging={isDragging}
+        $isVertical={isVertical}
+        $style={styles?.self}
+      >
+        {actions && (
+          <ActionContainer>
+            {actions.map((data, index) => (
+              <Button
+                variant="transparent"
+                key={index}
+                aria-label="window-button"
+                onClick={() => {
+                  if (data.onClick) data.onClick();
+                }}
+                styles={{
+                  containerStyle: css`
+                    position: absolute;
+                    top: 0.5rem;
+                    right: 0.5rem;
+                    cursor: pointer;
+                    transition: all 0.3s;
+                    border-radius: 2px;
+                    padding: 2px;
+                    width: fit-content;
+                    height: fit-content;
+                    z-index: 50;
+                  `,
+                  self: css`
+                    width: fit-content;
+                    height: fit-content;
+                    padding: 2px;
+                  `,
+                }}
+              >
+                {data.icon && <data.icon size={16} />}
+              </Button>
+            ))}
+          </ActionContainer>
+        )}
+        {children}
+      </CellWrapper>
+    );
+  }
+);
 
 const Container = styled.div<{ $isVertical: boolean; $style?: CSSProp }>`
   display: flex;
