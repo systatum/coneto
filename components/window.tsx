@@ -188,6 +188,30 @@ function Window({
   );
 }
 
+/**
+ * useRafThrottle
+ *
+ * A hook that returns a throttled version of a callback using `requestAnimationFrame`.
+ * Ensures the callback runs at most once per animation frame, regardless of how
+ * many times the throttled function is called.
+ *
+ * Useful for performance-heavy operations like dragging, resizing, or scroll events.
+ *
+ * @template T - Function type to be throttled
+ * @param callback - The function to throttle
+ * @returns A throttled version of the callback
+ *
+ * How it works:
+ * 1. Store the latest arguments in `lastArgs`.
+ * 2. If a frame is already scheduled (`frame.current`), ignore the call.
+ * 3. Otherwise, schedule the callback via `requestAnimationFrame`.
+ * 4. Once executed, clear `frame.current` so the next frame can be scheduled.
+ *
+ * This ensures:
+ * - At most one callback per animation frame.
+ * - Calls are synced to the browser’s repaint cycle (~60fps, or higher on high-refresh monitors).
+ */
+
 function useRafThrottle<T extends (...args: any[]) => void>(callback?: T) {
   const frame = useRef<number | null>(null);
   const lastArgs = useRef<Parameters<T> | null>(null);
