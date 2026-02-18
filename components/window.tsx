@@ -66,6 +66,7 @@ function Window({
   const draggingIndex = useRef<number | null>(null);
   const startPosition = useRef<number>(0);
   const startSizes = useRef<number[]>([]);
+  const runOnResize = useRafThrottle(onResize);
 
   const onMouseMove = useCallback(
     (e: globalThis.MouseEvent) => {
@@ -109,6 +110,8 @@ function Window({
       newSizes[nextIndex] = newNextSize;
 
       setSizes(newSizes);
+
+      runOnResize();
     },
     [isVertical]
   );
@@ -129,9 +132,6 @@ function Window({
       e.preventDefault();
 
       draggingIndex.current = index;
-      if (onResize) {
-        onResize();
-      }
       startSizes.current = [...sizes];
       setIsDragging(true);
 
@@ -188,6 +188,29 @@ function Window({
   );
 }
 
+function useRafThrottle<T extends (...args: any[]) => void>(callback?: T) {
+  const frame = useRef<number | null>(null);
+  const lastArgs = useRef<Parameters<T> | null>(null);
+
+  const throttled = useCallback(
+    (...args: Parameters<T>) => {
+      lastArgs.current = args;
+
+      if (frame.current !== null) return;
+
+      frame.current = requestAnimationFrame(() => {
+        if (callback && lastArgs.current) {
+          callback(...lastArgs.current);
+        }
+        frame.current = null;
+      });
+    },
+    [callback]
+  );
+
+  return throttled;
+}
+
 interface WindowCellInternalProps {
   size: number;
   isDragging: boolean;
@@ -205,10 +228,12 @@ const WindowCell = forwardRef<HTMLDivElement, WindowCellProps>(
     return (
       <CellWrapper
         ref={ref}
+        style={{
+          width: isVertical ? `${size * 100}%` : "100%",
+          height: !isVertical ? `${size * 100}%` : "100%",
+        }}
         aria-label="window-cell"
-        $size={size}
         $isDragging={isDragging}
-        $isVertical={isVertical}
         $style={styles?.self}
       >
         {actions && (
@@ -263,16 +288,10 @@ const Container = styled.div<{ $isVertical: boolean; $style?: CSSProp }>`
 `;
 
 const CellWrapper = styled.div<{
-  $size: number;
-  $isVertical: boolean;
   $style?: CSSProp;
   $isDragging?: boolean;
 }>`
   position: relative;
-  width: ${({ $isVertical, $size }) =>
-    $isVertical ? `${$size * 100}%` : "100%"};
-  height: ${({ $isVertical, $size }) =>
-    !$isVertical ? `${$size * 100}%` : "100%"};
   -webkit-overflow-scrolling: "touch";
   pointer-events: ${({ $isDragging }) => ($isDragging ? "none" : "auto")};
   user-select: ${({ $isDragging }) => ($isDragging ? "none" : "auto")};
