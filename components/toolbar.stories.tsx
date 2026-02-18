@@ -193,7 +193,7 @@ export const Big: Story = {
           variant="danger"
           subMenuList={subMenuList}
         />
-        <Toolbar.Menu caption="Danger Mode" subMenuList={subMenuList} />
+        <Toolbar.Menu caption="Default Mode" subMenuList={subMenuList} />
         <Toolbar.Menu caption="Save" />
       </Toolbar>
     );
