@@ -372,9 +372,9 @@ function ToolbarMenu({
                   style={{ color: COLOR_STYLE_MAP[iconColor] }}
                 />
               )}
-              {caption && <Caption>{caption}</Caption>}
+              {caption && <Caption $hasIcon={!!Icon}>{caption}</Caption>}
             </TriggerButton>
-            {subMenuList && (
+            {subMenuList && caption && (
               <Divider
                 $style={css`
                   height: ${hovered === "original" && !isOpen ? "80%" : "100%"};
@@ -507,9 +507,9 @@ const Divider = styled.span<{ $style?: CSSProp }>`
   ${(props) => props.$style}
 `;
 
-const Caption = styled.span`
+const Caption = styled.span<{ $hasIcon?: boolean }>`
   font-size: 0.875rem;
-  display: none;
+  display: ${({ $hasIcon }) => ($hasIcon ? "none" : "flex")};
 
   @media (min-width: 768px) {
     display: flex;
