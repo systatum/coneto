@@ -15,7 +15,7 @@ import {
   FieldLaneStylesProps,
 } from "./field-lane";
 
-export interface BaseTextboxProps
+interface BaseTextboxProps
   extends Omit<
     InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement>,
     "style"

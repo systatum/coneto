@@ -12,7 +12,7 @@ import {
   FieldLaneStylesProps,
 } from "./field-lane";
 
-export interface BaseTextareaProps
+interface BaseTextareaProps
   extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "style"> {
   showError?: boolean;
   styles?: TextareaStylesProps;

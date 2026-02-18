@@ -12,7 +12,7 @@ import { Button } from "./button";
 import { List } from "./list";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 
-type SeparatorTypeProps = "dot" | "comma";
+export type SeparatorTypeProps = "dot" | "comma";
 
 export interface CurrencyOptionsProps {
   id: string;
@@ -20,7 +20,7 @@ export interface CurrencyOptionsProps {
   symbol: string;
 }
 
-export interface BaseMoneyboxProps
+interface BaseMoneyboxProps
   extends Omit<
     InputHTMLAttributes<HTMLInputElement>,
     "name" | "placeholder" | "style"
