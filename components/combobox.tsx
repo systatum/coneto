@@ -35,7 +35,7 @@ interface BaseComboboxProps {
   options: OptionsProps[];
 }
 
-interface ComboboxStylesProps {
+export interface ComboboxStylesProps {
   containerStyle?: CSSProp;
   selectboxStyle?: CSSProp;
   labelStyle?: CSSProp;

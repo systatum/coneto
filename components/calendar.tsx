@@ -38,7 +38,7 @@ export interface CalendarStylesProps {
   labelStyle?: CSSProp;
 }
 
-type CalendarProps = BaseCalendarProps &
+export type CalendarProps = BaseCalendarProps &
   Partial<DrawerProps> & {
     label?: string;
     showError?: boolean;

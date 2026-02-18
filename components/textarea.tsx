@@ -25,7 +25,7 @@ interface BaseTextareaProps
 
 export type TextareaActionsProps = FieldLaneActionsProps;
 
-interface TextareaStylesProps {
+export interface TextareaStylesProps {
   self?: CSSProp;
 }
 

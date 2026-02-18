@@ -65,7 +65,7 @@ interface BaseSelectboxProps
   styles?: SelectboxStylesProps;
 }
 
-export interface BaseSelectboxStylesProps {
+interface BaseSelectboxStylesProps {
   selectboxStyle?: CSSProp;
   self?: CSSProp;
 }

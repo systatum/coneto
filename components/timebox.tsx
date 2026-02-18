@@ -31,7 +31,7 @@ export interface TimeboxStylesProps {
   inputWrapperStyle?: CSSProp;
 }
 
-interface TimeboxPlaceholderProps {
+export interface TimeboxPlaceholderProps {
   hour?: string;
   minute?: string;
   second?: string;
