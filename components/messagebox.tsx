@@ -7,8 +7,14 @@ import {
 import { ReactNode } from "react";
 import { Button } from "./button";
 
-interface MessageboxProps {
-  variant?: "primary" | "success" | "danger" | "warning";
+export type MessageboxVariantState =
+  | "primary"
+  | "success"
+  | "danger"
+  | "warning";
+
+export interface MessageboxProps {
+  variant?: MessageboxVariantState;
   title: string;
   icon?: RemixiconComponentType;
   children: ReactNode;
@@ -18,7 +24,7 @@ interface MessageboxProps {
   style?: CSSProp;
 }
 
-interface ActionLinkProps {
+export interface ActionLinkProps {
   caption: string;
   onClick?: () => void;
   href?: string;

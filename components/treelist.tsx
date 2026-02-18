@@ -43,7 +43,7 @@ export interface TreeListOnDraggedProps {
   newPosition: number;
 }
 
-interface TreeListOnOpenChangeProps {
+export interface TreeListOnOpenChangeProps {
   id?: string;
   isOpen?: boolean;
   setIsLoading?: (isLoading: boolean, caption?: string) => void;
@@ -460,7 +460,7 @@ function TreeList({
   );
 }
 
-interface TreeListActionProps {
+interface TreeListActionInternalProps {
   isSelected?: boolean;
   isActive?: boolean;
   onClick?: () => void;
@@ -476,7 +476,7 @@ function TreeListAction({
   caption,
   icon: Icon,
   style,
-}: TreeListActionProps) {
+}: TreeListActionInternalProps) {
   if (!onClick) onClick = () => {};
 
   return (

@@ -35,7 +35,7 @@ export interface CountryCodeProps {
   flag: string;
 }
 
-export interface BasePhoneboxProps {
+interface BasePhoneboxProps {
   label?: string;
   name?: string;
   value?: string;

@@ -36,7 +36,7 @@ export interface PaperDialogStylesProps {
   paperDialogStyle?: CSSProp;
 }
 
-interface PaperDialogTriggerProps {
+export interface PaperDialogTriggerProps {
   children?: ReactNode;
   setDialogState?: (dialogState: DialogState) => void;
   icon?: RemixiconComponentType;

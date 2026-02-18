@@ -23,7 +23,7 @@ export interface RadioProps
   imageUrl?: string;
 }
 
-interface RadioStylesProps {
+export interface RadioStylesProps {
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
   descriptionStyle?: CSSProp;

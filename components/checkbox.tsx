@@ -10,6 +10,12 @@ import { StatefulForm } from "./stateful-form";
 
 type WithoutStyle<T> = Omit<T, "style">;
 
+export interface CheckboxOptionsProps {
+  value: string;
+  label: string;
+  description: string;
+}
+
 export interface CheckboxProps
   extends WithoutStyle<
     DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>

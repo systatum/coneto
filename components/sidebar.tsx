@@ -16,7 +16,7 @@ export interface SidebarStylesProps {
   desktopStyle?: CSSProp;
 }
 
-interface SidebarItemProps {
+export interface SidebarItemProps {
   isFixed?: boolean;
   style?: CSSProp;
   children?: ReactNode;
@@ -221,7 +221,7 @@ const StyledSidebarItem = styled.div<{
   ${({ $style }) => $style}
 `;
 
-interface SidebarSpacerProps {
+export interface SidebarSpacerProps {
   mobileWidth?: string;
   desktopWidth?: string;
 }

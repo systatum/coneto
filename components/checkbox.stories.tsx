@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Checkbox, CheckboxProps } from "./checkbox";
+import { Checkbox, CheckboxOptionsProps, CheckboxProps } from "./checkbox";
 import { ChangeEvent, useState } from "react";
 import { css } from "styled-components";
 
@@ -39,12 +39,6 @@ export const WithDescription: StoryWithDescription = {
     valueSelected: [],
   },
   render: () => {
-    interface CheckboxOptionsProps {
-      value: string;
-      label: string;
-      description: string;
-    }
-
     const CHECKBOX_OPTIONS: CheckboxOptionsProps[] = [
       {
         value: "email",
@@ -132,12 +126,6 @@ export const Disabled: StoryWithDescription = {
     valueSelected: [],
   },
   render: () => {
-    interface CheckboxOptionsProps {
-      value: string;
-      label: string;
-      description: string;
-    }
-
     const CHECKBOX_OPTIONS: CheckboxOptionsProps[] = [
       {
         value: "email",

@@ -11,7 +11,7 @@ import {
 import styled, { css, CSSProp } from "styled-components";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 
-export interface BaseTimeboxProps
+interface BaseTimeboxProps
   extends Omit<
     InputHTMLAttributes<HTMLInputElement>,
     "style" | "placeholder" | "value" | "name"
@@ -31,7 +31,7 @@ export interface TimeboxStylesProps {
   inputWrapperStyle?: CSSProp;
 }
 
-interface TimeboxPlaceholderProps {
+export interface TimeboxPlaceholderProps {
   hour?: string;
   minute?: string;
   second?: string;

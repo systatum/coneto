@@ -62,7 +62,7 @@ export type FormValueType =
   | undefined
   | CountryCodeProps;
 
-interface StatefulFormProps<Z extends ZodTypeAny> {
+export interface StatefulFormProps<Z extends ZodTypeAny> {
   fields: FormFieldGroup[];
   formValues: TypeOf<Z>;
   validationSchema?: Z;
@@ -1500,7 +1500,7 @@ function FormFields<T extends FieldValues>({
   );
 }
 
-interface StatefulFormLabelProps
+export interface StatefulFormLabelProps
   extends Omit<LabelHTMLAttributes<HTMLLabelElement>, "label" | "style"> {
   label?: string;
   helper?: string;

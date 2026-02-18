@@ -53,7 +53,7 @@ export interface ListProps extends ListMaxItemsProp {
   labels?: ListLabelsProps;
 }
 
-interface ListLabelsProps {
+export interface ListLabelsProps {
   moreItemsText?: ReactNode;
   lessItemsText?: ReactNode;
 }
@@ -74,7 +74,7 @@ interface ListMaxItemsProp {
   maxItemsWithIcon?: boolean;
 }
 
-interface ListStylesProps {
+export interface ListStylesProps {
   maxItemsStyle?: CSSProp;
   searchboxStyles?: SearchboxStylesProps;
   containerStyle?: CSSProp;

@@ -24,7 +24,7 @@ import { marked } from "./../lib/marked/marked";
 import { TipMenu } from "./tip-menu";
 import styled, { css, CSSProp } from "styled-components";
 
-interface RichEditorProps {
+export interface RichEditorProps {
   value?: string;
   onChange?: (value: string) => void;
   toolbarRightPanel?: ReactNode;
@@ -33,13 +33,13 @@ interface RichEditorProps {
   toolbarPosition?: RichEditorToolbarPositionState;
 }
 
-interface RichEditorStylesProps {
+export interface RichEditorStylesProps {
   editorStyle?: CSSProp;
   containerStyle?: CSSProp;
 }
 
-type RichEditorToolbarPositionState = "top" | "bottom";
-type RichEditorModeState = "view-only" | "page-editor" | "text-editor";
+export type RichEditorToolbarPositionState = "top" | "bottom";
+export type RichEditorModeState = "view-only" | "page-editor" | "text-editor";
 
 export interface RichEditorToolbarButtonProps {
   icon?: RemixiconComponentType;

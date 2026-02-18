@@ -3,7 +3,7 @@ import React, { useRef, useEffect, ChangeEvent } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 
-export interface BaseSignboxProps {
+interface BaseSignboxProps {
   name?: string;
   value?: string;
   clearable?: boolean;

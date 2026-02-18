@@ -9,7 +9,7 @@ import {
 import styled, { css, CSSProp } from "styled-components";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 
-export interface BaseColorboxProps
+interface BaseColorboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "style"> {
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   value?: string;
