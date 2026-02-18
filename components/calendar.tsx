@@ -710,12 +710,14 @@ function Calendar({
         {selectabilityMode === "single" && (
           <Button
             onClick={handleMoveToToday}
-            variant="outline"
+            variant="outline-default"
             aria-label="today-button"
             styles={{
+              containerStyle: css`
+                border-color: #d1d5db;
+              `,
               self: css`
                 color: black;
-                border-color: #f3f4f6;
                 width: 100%;
                 max-height: 34px;
                 max-width: 60px;

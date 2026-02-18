@@ -18,6 +18,35 @@ describe("Calendar ", () => {
     { text: "DEC", value: "12" },
   ];
 
+  context("style", () => {
+    const valueWeekend = ["09/21/2025"];
+
+    it("renders with similar border-color", () => {
+      cy.mount(
+        <Calendar
+          selectedDates={valueWeekend}
+          monthNames={MONTH_NAMES}
+          disableWeekend
+        />
+      );
+      const borderColor = "rgb(209, 213, 219)";
+      cy.findAllByLabelText("calendar-select-date").eq(0).click();
+      cy.findByLabelText("combobox-month").should(
+        "have.css",
+        "border-color",
+        borderColor
+      );
+      cy.findByLabelText("combobox-year").should(
+        "have.css",
+        "border-color",
+        borderColor
+      );
+      cy.findByLabelText("today-button")
+        .parent()
+        .should("have.css", "border-color", borderColor);
+    });
+  });
+
   context("disable weekend", () => {
     context("when given", () => {
       const valueWeekend = ["09/21/2025"];
