@@ -237,7 +237,7 @@ export const WithCellRef: Story = {
           `,
         }}
         orientation="horizontal"
-        onResizeComplete={() => {
+        onResize={() => {
           if (secondCellRef.current) {
             const height = secondCellRef.current.clientHeight;
             setTextareaHeight(height);

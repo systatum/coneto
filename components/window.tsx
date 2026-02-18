@@ -66,6 +66,7 @@ function Window({
   const draggingIndex = useRef<number | null>(null);
   const startPosition = useRef<number>(0);
   const startSizes = useRef<number[]>([]);
+  const runOnResize = useRafThrottle(onResize);
 
   const onMouseMove = useCallback(
     (e: globalThis.MouseEvent) => {
@@ -109,6 +110,8 @@ function Window({
       newSizes[nextIndex] = newNextSize;
 
       setSizes(newSizes);
+
+      runOnResize();
     },
     [isVertical]
   );
@@ -129,9 +132,6 @@ function Window({
       e.preventDefault();
 
       draggingIndex.current = index;
-      if (onResize) {
-        onResize();
-      }
       startSizes.current = [...sizes];
       setIsDragging(true);
 
@@ -188,6 +188,53 @@ function Window({
   );
 }
 
+/**
+ * useRafThrottle
+ *
+ * A hook that returns a throttled version of a callback using `requestAnimationFrame`.
+ * Ensures the callback runs at most once per animation frame, regardless of how
+ * many times the throttled function is called.
+ *
+ * Useful for performance-heavy operations like dragging, resizing, or scroll events.
+ *
+ * @template T - Function type to be throttled
+ * @param callback - The function to throttle
+ * @returns A throttled version of the callback
+ *
+ * How it works:
+ * 1. Store the latest arguments in `lastArgs`.
+ * 2. If a frame is already scheduled (`frame.current`), ignore the call.
+ * 3. Otherwise, schedule the callback via `requestAnimationFrame`.
+ * 4. Once executed, clear `frame.current` so the next frame can be scheduled.
+ *
+ * This ensures:
+ * - At most one callback per animation frame.
+ * - Calls are synced to the browser’s repaint cycle (~60fps, or higher on high-refresh monitors).
+ */
+
+function useRafThrottle<T extends (...args: any[]) => void>(callback?: T) {
+  const frame = useRef<number | null>(null);
+  const lastArgs = useRef<Parameters<T> | null>(null);
+
+  const throttled = useCallback(
+    (...args: Parameters<T>) => {
+      lastArgs.current = args;
+
+      if (frame.current !== null) return;
+
+      frame.current = requestAnimationFrame(() => {
+        if (callback && lastArgs.current) {
+          callback(...lastArgs.current);
+        }
+        frame.current = null;
+      });
+    },
+    [callback]
+  );
+
+  return throttled;
+}
+
 interface WindowCellInternalProps {
   size: number;
   isDragging: boolean;
@@ -205,10 +252,12 @@ const WindowCell = forwardRef<HTMLDivElement, WindowCellProps>(
     return (
       <CellWrapper
         ref={ref}
+        style={{
+          width: isVertical ? `${size * 100}%` : "100%",
+          height: !isVertical ? `${size * 100}%` : "100%",
+        }}
         aria-label="window-cell"
-        $size={size}
         $isDragging={isDragging}
-        $isVertical={isVertical}
         $style={styles?.self}
       >
         {actions && (
@@ -263,16 +312,10 @@ const Container = styled.div<{ $isVertical: boolean; $style?: CSSProp }>`
 `;
 
 const CellWrapper = styled.div<{
-  $size: number;
-  $isVertical: boolean;
   $style?: CSSProp;
   $isDragging?: boolean;
 }>`
   position: relative;
-  width: ${({ $isVertical, $size }) =>
-    $isVertical ? `${$size * 100}%` : "100%"};
-  height: ${({ $isVertical, $size }) =>
-    !$isVertical ? `${$size * 100}%` : "100%"};
   -webkit-overflow-scrolling: "touch";
   pointer-events: ${({ $isDragging }) => ($isDragging ? "none" : "auto")};
   user-select: ${({ $isDragging }) => ($isDragging ? "none" : "auto")};
