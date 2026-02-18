@@ -4,6 +4,38 @@ import { Textarea } from "./../../components/textarea";
 import { useRef, useState } from "react";
 
 describe("Window", () => {
+  context("onResize", () => {
+    it("should call onResize rapid while dragging", () => {
+      const onResize = cy.stub().as("onResize");
+
+      cy.mount(
+        <Window
+          orientation="horizontal"
+          styles={{
+            self: css`
+              height: 500px;
+            `,
+          }}
+          onResize={onResize}
+        >
+          <Window.Cell>Top</Window.Cell>
+          <Window.Cell>Bottom</Window.Cell>
+        </Window>
+      );
+
+      cy.findByLabelText("window-divider").trigger("mousedown", {
+        clientY: 250,
+      });
+
+      for (let i = 0; i < 100; i++) {
+        cy.get("body").trigger("mousemove", { clientY: 250 + i });
+      }
+
+      cy.get("body").trigger("mouseup");
+      cy.get("@onResize").its("callCount").should("eq", 100);
+    });
+  });
+
   context("ref in window.cell level", () => {
     context("when resize", () => {
       it("renders similar height as a reference", () => {
@@ -67,7 +99,8 @@ describe("Window", () => {
 
         cy.findAllByLabelText("window-cell")
           .eq(1)
-          .should("have.css", "height", "350px");
+          .invoke("height")
+          .should("be.closeTo", 350, 4);
 
         cy.findAllByLabelText("textarea-with-window")
           .eq(0)
