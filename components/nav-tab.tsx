@@ -14,6 +14,7 @@ export interface NavTabProps {
   children?: ReactNode;
   actions?: NavTabActionsProps[];
   styles?: NavTabStylesProps;
+  size?: NavTabSize;
 }
 
 export interface NavTabStylesProps {
@@ -26,6 +27,8 @@ export interface NavTabStylesProps {
 }
 
 export type NavTabActionsProps = ActionButtonProps;
+
+export type NavTabSize = "md" | "sm";
 
 export interface NavTabContentProps {
   id: string;
@@ -56,6 +59,7 @@ function NavTab({
   tabs = [],
   activeColor = "rgb(59, 130, 246)",
   children,
+  size = "md",
 }: NavTabProps) {
   const tooltipRefs = useRef<Array<TooltipRef | null>>([]);
 
@@ -164,13 +168,13 @@ function NavTab({
             }}
           />
 
-          {tabs.map((props, index) => {
+          {tabs.map((tab, index) => {
             return (
               <Tooltip
                 ref={(el) => {
                   tooltipRefs.current[index] = el;
                 }}
-                key={props.id}
+                key={tab.id}
                 styles={{
                   arrowStyle: css`
                     opacity: 0;
@@ -196,7 +200,7 @@ function NavTab({
                           `
                         : null}
 
-                    ${props.subItems &&
+                    ${tab.subItems &&
                     css`
                       opacity: 1;
                     `}
@@ -205,8 +209,8 @@ function NavTab({
                 dialogPlacement="bottom-left"
                 dialog={
                   <>
-                    {props.subItems &&
-                      props.subItems.map((item, idx) => (
+                    {tab.subItems &&
+                      tab.subItems.map((item, idx) => (
                         <NavTabItem
                           key={idx}
                           onClick={() => {
@@ -232,40 +236,39 @@ function NavTab({
                 }
               >
                 <NavTabItem
+                  $size={size}
                   aria-label="nav-tab-item"
-                  key={props.id}
+                  key={tab.id}
                   $boxStyle={styles?.boxStyle}
                   ref={setTabRef(index)}
                   role="tab"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setSelected(props.id);
-                    if (props.onClick) {
-                      props.onClick();
+                    setSelected(tab.id);
+                    if (tab.onClick) {
+                      tab.onClick();
                     }
 
                     tooltipRefs.current.forEach((ref, i) => {
                       if (i !== index) ref?.close();
                     });
                   }}
-                  onMouseEnter={() => setIsHovered(props.id)}
+                  onMouseEnter={() => setIsHovered(tab.id)}
                   onMouseLeave={() => setIsHovered(null)}
-                  $isHovered={
-                    isHovered === props.id || isTipMenuOpen === props.id
-                  }
-                  $selected={selected === props.id}
-                  $isAction={!!props.actions}
+                  $isHovered={isHovered === tab.id || isTipMenuOpen === tab.id}
+                  $selected={selected === tab.id}
+                  $isAction={!!tab.actions}
                 >
-                  {props.title}
-                  {props.actions &&
+                  {tab.title}
+                  {tab.actions &&
                     (() => {
-                      const list = props.actions;
+                      const list = tab.actions;
                       const actionsWithIcons = list.map((item) => ({
                         ...item,
                         icon: item.icon ?? RiArrowRightSLine,
                         onClick: (e?: React.MouseEvent) => {
                           e?.stopPropagation();
-                          item.onClick?.(props.id);
+                          item.onClick?.(tab.id);
                           if (list.length > 1) {
                             setIsHovered(null);
                           }
@@ -288,14 +291,14 @@ function NavTab({
                             containerStyle: css`
                               opacity: 0;
 
-                              ${(isHovered === props.id ||
-                                isTipMenuOpen === props.id) &&
+                              ${(isHovered === tab.id ||
+                                isTipMenuOpen === tab.id) &&
                               css`
                                 opacity: 1;
                               `};
 
-                              pointer-events: ${isHovered === props.id ||
-                              isTipMenuOpen === props.id
+                              pointer-events: ${isHovered === tab.id ||
+                              isTipMenuOpen === tab.id
                                 ? "auto"
                                 : "none"};
                               transition: all 0.3s ease-in-out;
@@ -309,12 +312,12 @@ function NavTab({
                           }}
                           onOpen={(prop: boolean) => {
                             if (prop) {
-                              setIsTipMenuOpen(props.id);
+                              setIsTipMenuOpen(tab.id);
                             } else {
                               setIsTipMenuOpen(null);
                             }
                           }}
-                          open={isTipMenuOpen === props.id}
+                          open={isTipMenuOpen === tab.id}
                         />
                       );
                     })()}
@@ -329,9 +332,21 @@ function NavTab({
             $actions={!!actions}
             $style={styles?.containerActionsStyle}
           >
-            {actions.map((props, index) => (
-              <ActionButton key={index} {...props} />
-            ))}
+            {actions.map((action, index) => {
+              return (
+                <ActionButton
+                  key={index}
+                  {...action}
+                  styles={{
+                    ...action?.styles,
+                    self: css`
+                      height: ${size === "sm" && "27px"};
+                      ${action?.styles?.self}
+                    `,
+                  }}
+                />
+              );
+            })}
           </NavTabHeader>
         )}
       </NavTabRowWrapper>
@@ -423,11 +438,11 @@ const NavTabItem = styled.div<{
   $isHovered?: boolean;
   $isAction?: boolean;
   $subMenu?: boolean;
+  $size?: NavTabSize;
 }>`
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 12px 12px;
   cursor: pointer;
   font-weight: 500;
   position: relative;
@@ -437,6 +452,7 @@ const NavTabItem = styled.div<{
   width: fit-content;
   justify-content: center;
   user-select: none;
+  padding: ${({ $size }) => ($size === "md" ? "12px 12px" : "7px 12px")};
 
   ${({ $selected }) =>
     $selected &&
