@@ -73,6 +73,74 @@ describe("Toolbar", () => {
     },
   ];
 
+  context("big", () => {
+    it("renders flex direction column and big icon", () => {
+      cy.viewport(1200, 700);
+      cy.mount(
+        <Toolbar big>
+          <Toolbar.Menu
+            styles={{
+              dropdownStyle: css`
+                min-width: 235px;
+              `,
+            }}
+            caption="Default Mode"
+            icon={RiMessage2Line}
+            subMenuList={TIP_MENU_ITEMS}
+          />
+        </Toolbar>
+      );
+
+      cy.findByLabelText("toolbar-menu-button").should(
+        "have.css",
+        "flex-direction",
+        "column"
+      );
+      cy.findByLabelText("toolbar-icon")
+        .should("have.css", "width", "33px")
+        .and("have.css", "height", "33px");
+    });
+
+    context("when have multiple menu", () => {
+      it("applied to all toolbar item for style big", () => {
+        cy.viewport(1200, 700);
+        cy.mount(
+          <Toolbar big>
+            <Toolbar.Menu
+              caption="Default Mode"
+              icon={RiMessage2Line}
+              subMenuList={TIP_MENU_ITEMS}
+            />
+            <Toolbar.Menu
+              caption="Danger Mode"
+              variant="danger"
+              icon={RiMessage2Line}
+              subMenuList={TIP_MENU_ITEMS}
+            />
+          </Toolbar>
+        );
+
+        cy.findAllByLabelText("toolbar-menu-button")
+          .eq(0)
+          .should("have.css", "flex-direction", "column");
+        cy.findAllByLabelText("toolbar-menu-button")
+          .eq(1)
+          .should("have.css", "flex-direction", "column");
+        cy.findAllByLabelText("toolbar-menu-button")
+          .eq(0)
+          .should("have.css", "flex-direction", "column");
+        cy.findAllByLabelText("toolbar-icon")
+          .eq(0)
+          .should("have.css", "width", "33px")
+          .and("have.css", "height", "33px");
+        cy.findAllByLabelText("toolbar-icon")
+          .eq(1)
+          .should("have.css", "width", "33px")
+          .and("have.css", "height", "33px");
+      });
+    });
+  });
+
   context("tipMenu", () => {
     context("when click", () => {
       it("renders background color active by variant", () => {

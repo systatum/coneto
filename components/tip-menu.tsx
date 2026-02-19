@@ -23,6 +23,7 @@ export interface TipMenuItemProps {
   isDangerous?: boolean;
   iconUrl?: string | null | undefined;
   variant?: TipMenuItemVariantType;
+  iconSize?: number;
 }
 
 function TipMenu({
@@ -38,7 +39,7 @@ function TipMenu({
 
   const filteredSubMenuList = useMemo(() => {
     const searchContent = search.toLowerCase().trim();
-    return subMenuList.filter((list) =>
+    return subMenuList?.filter((list) =>
       isHasInteracted
         ? list.caption.toLowerCase().includes(searchContent)
         : list
@@ -80,7 +81,7 @@ function TipMenu({
         />
       )}
       {filteredSubMenuList?.map((data, index) => (
-        <TipMenuItem
+        <TipMenu.Item
           key={index}
           variant={data.variant ?? variant}
           caption={data.caption}
@@ -111,6 +112,7 @@ function TipMenuItem({
   isDangerous = false,
   iconUrl,
   variant,
+  iconSize = 20,
 }: TipMenuItemProps) {
   const isIconValid = iconUrl && iconUrl !== "";
 
@@ -129,6 +131,10 @@ function TipMenuItem({
       ) : (
         <StyledIcon
           as={Icon}
+          style={{
+            minWidth: `${iconSize}px`,
+            minHeight: `${iconSize}px`,
+          }}
           $variant={variant}
           $color={isDangerous ? "white" : COLOR_STYLE_MAP[iconColor]}
         />
@@ -211,6 +217,7 @@ const StyledIcon = styled.div<{
 
 const StyledCaption = styled.span`
   font-size: 0.875rem;
+  white-space: nowrap;
 `;
 
 TipMenu.Item = TipMenuItem;

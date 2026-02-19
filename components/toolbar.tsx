@@ -24,6 +24,7 @@ import styled, { css, CSSProp } from "styled-components";
 export interface ToolbarProps {
   children: ReactNode;
   style?: CSSProp;
+  big?: boolean;
 }
 
 export interface ToolbarMenuProps {
@@ -32,12 +33,13 @@ export interface ToolbarMenuProps {
   openedIcon?: RemixiconComponentType;
   closedIcon?: RemixiconComponentType;
   iconColor?: string;
-  subMenuList: TipMenuItemProps[];
+  subMenuList?: TipMenuItemProps[];
   isOpen?: boolean;
   setIsOpen?: (data?: boolean) => void;
   onClick?: () => void;
   styles?: ToolbarMenuSylesProps;
   variant?: ToolbarVariantType;
+  iconSize?: number;
 }
 
 export interface ToolbarMenuSylesProps {
@@ -208,7 +210,7 @@ const VARIANT_ACTIVE = {
   },
 };
 
-function Toolbar({ children, style }: ToolbarProps) {
+function Toolbar({ children, style, big }: ToolbarProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const toolbarRef = useRef<HTMLDivElement>(null);
 
@@ -231,12 +233,38 @@ function Toolbar({ children, style }: ToolbarProps) {
   }, []);
 
   const childrenWithProps = Children.map(children, (child, index) => {
-    if (isToolbarMenuElement(child)) {
-      return cloneElement(child, {
+    if (!isValidElement(child)) return child;
+
+    if (child.type === React.Fragment) return child;
+
+    if (child.type === Toolbar.Menu) {
+      const menuChild = child as ReactElement<ToolbarMenuProps>;
+
+      return cloneElement(menuChild, {
         isOpen: openIndex === index,
         setIsOpen: () => handleOpen(index),
+        key: index,
+        ...(big
+          ? {
+              ...menuChild.props,
+              iconSize: 33,
+              styles: {
+                ...menuChild.props.styles,
+                triggerStyle: css`
+                  padding-top: 13px;
+                  padding-bottom: 13px;
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  justify-content: center;
+                  ${menuChild.props.styles?.triggerStyle}
+                `,
+              },
+            }
+          : {}),
       });
     }
+
     return child;
   });
 
@@ -258,6 +286,7 @@ function ToolbarMenu({
   setIsOpen,
   onClick,
   styles,
+  iconSize = 20,
   variant = "default",
 }: ToolbarMenuProps) {
   const [hovered, setHovered] = useState<"main" | "original" | "dropdown">(
@@ -337,47 +366,55 @@ function ToolbarMenu({
               `}
             >
               {Icon && (
-                <Icon size={20} style={{ color: COLOR_STYLE_MAP[iconColor] }} />
+                <Icon
+                  aria-label="toolbar-icon"
+                  size={iconSize}
+                  style={{ color: COLOR_STYLE_MAP[iconColor] }}
+                />
               )}
-              {caption && <Caption>{caption}</Caption>}
+              {caption && <Caption $hasIcon={!!Icon}>{caption}</Caption>}
             </TriggerButton>
-            <Divider
-              $style={css`
-                height: ${hovered === "original" && !isOpen ? "80%" : "100%"};
-              `}
-            />
+            {subMenuList && caption && (
+              <Divider
+                $style={css`
+                  height: ${hovered === "original" && !isOpen ? "80%" : "100%"};
+                `}
+              />
+            )}
           </>
         )}
-        <ToggleButton
-          aria-label="toolbar-menu-toggle"
-          onMouseEnter={() => setHovered("dropdown")}
-          onMouseLeave={() => setHovered("original")}
-          onClick={handleClickOpen}
-          $style={css`
-            ${hovered === "dropdown" && menuHover};
-            ${isOpen && menuBackgroundActive};
-            ${isOpen && menuBorderActive};
-            ${menuActive};
-            ${menuFocusVisible};
-            ${styles?.triggerStyle};
-            ${isOpen && styles?.toggleActiveStyle};
-          `}
-        >
-          {isOpen ? (
-            <OpenedIcon
-              size={20}
-              style={variant === "default" ? { color: "#9ca3af" } : undefined}
-            />
-          ) : (
-            <ClosedIcon
-              size={20}
-              style={variant === "default" ? { color: "#9ca3af" } : undefined}
-            />
-          )}
-        </ToggleButton>
+        {subMenuList && (
+          <ToggleButton
+            aria-label="toolbar-menu-toggle"
+            onMouseEnter={() => setHovered("dropdown")}
+            onMouseLeave={() => setHovered("original")}
+            onClick={handleClickOpen}
+            $style={css`
+              ${hovered === "dropdown" && menuHover};
+              ${isOpen && menuBackgroundActive};
+              ${isOpen && menuBorderActive};
+              ${menuActive};
+              ${menuFocusVisible};
+              ${styles?.triggerStyle};
+              ${isOpen && styles?.toggleActiveStyle};
+            `}
+          >
+            {isOpen ? (
+              <OpenedIcon
+                size={20}
+                style={variant === "default" ? { color: "#9ca3af" } : undefined}
+              />
+            ) : (
+              <ClosedIcon
+                size={20}
+                style={variant === "default" ? { color: "#9ca3af" } : undefined}
+              />
+            )}
+          </ToggleButton>
+        )}
       </MenuWrapper>
 
-      {isOpen && (
+      {isOpen && subMenuList && (
         <div
           ref={refs.setFloating}
           style={{ ...floatingStyles, zIndex: 9999 }}
@@ -417,6 +454,7 @@ const MenuWrapper = styled.div<{ $style?: CSSProp }>`
   display: flex;
   align-items: center;
   width: 100%;
+  height: 100%;
   border: 1px solid transparent;
   position: relative;
   user-select: none;
@@ -429,6 +467,7 @@ const MenuWrapper = styled.div<{ $style?: CSSProp }>`
 const TriggerButton = styled.button<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: row;
+  height: 100%;
   align-items: center;
   gap: 0.5rem;
   padding-top: 0.5rem;
@@ -468,21 +507,14 @@ const Divider = styled.span<{ $style?: CSSProp }>`
   ${(props) => props.$style}
 `;
 
-const Caption = styled.span`
+const Caption = styled.span<{ $hasIcon?: boolean }>`
   font-size: 0.875rem;
-  padding-left: 0.5rem;
-  display: none;
+  display: ${({ $hasIcon }) => ($hasIcon ? "none" : "flex")};
 
   @media (min-width: 768px) {
     display: flex;
   }
 `;
-
-function isToolbarMenuElement(
-  element: ReactNode
-): element is ReactElement<ToolbarMenuProps> {
-  return isValidElement(element) && typeof element.type !== "string";
-}
 
 Toolbar.Menu = ToolbarMenu;
 export { Toolbar };
