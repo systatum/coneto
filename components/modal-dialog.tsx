@@ -28,6 +28,9 @@ export interface ModalDialogProps {
 export interface ModalDialogStylesProps {
   containerStyle?: CSSProp;
   contentStyle?: CSSProp;
+  textWrapperStyle?: CSSProp;
+  titleStyle?: CSSProp;
+  subtitleStyle?: CSSProp;
 }
 
 function ModalDialog({
@@ -61,16 +64,26 @@ function ModalDialog({
         hideClose={!hasCloseButton}
       >
         <Container>
-          <Header>
+          <Header
+            aria-label="modal-dialog-text-wrapper"
+            $style={styles?.textWrapperStyle}
+          >
             <Dialog.Title
-              style={{
-                fontSize: "16px",
-                fontWeight: 500,
-              }}
+              ariaLabel="modal-dialog-title"
+              style={css`
+                font-size: 16px;
+                font-weight: 500;
+                ${styles?.titleStyle}
+              `}
             >
               {title}
             </Dialog.Title>
-            <Subtitle>{subTitle}</Subtitle>
+            <Subtitle
+              aria-label="modal-dialog-subtitle"
+              $style={styles?.subtitleStyle}
+            >
+              {subTitle}
+            </Subtitle>
           </Header>
 
           <Divider />
@@ -116,17 +129,20 @@ const Container = styled.div`
   padding: 0.75rem 1rem;
 `;
 
-const Header = styled.div`
+const Header = styled.div<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 8px;
   padding: 0.5rem;
   padding-bottom: 1rem;
+
+  ${({ $style }) => $style}
 `;
 
-const Subtitle = styled.h3`
+const Subtitle = styled.h3<{ $style?: CSSProp }>`
   font-size: 11px;
   color: #6b7280;
+  ${({ $style }) => $style}
 `;
 
 const Divider = styled.div`
