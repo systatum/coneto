@@ -1,5 +1,11 @@
 import styled, { css, CSSProp } from "styled-components";
-import React, { createContext, ReactNode, useContext, useState } from "react";
+import React, {
+  createContext,
+  HTMLAttributes,
+  ReactNode,
+  useContext,
+  useState,
+} from "react";
 import {
   RemixiconComponentType,
   RiArrowRightSLine,
@@ -12,7 +18,11 @@ import { LoadingSpinner } from "./loading-spinner";
 import { SubMenuButtonProps } from "./button";
 import { Tooltip } from "./tooltip";
 
-export interface TreeListProps {
+export interface TreeListProps
+  extends Omit<
+    HTMLAttributes<HTMLDivElement>,
+    "style" | "onChange" | "content"
+  > {
   content: TreeListContentProps[];
   children?: ReactNode;
   emptySlate?: ReactNode;
@@ -131,6 +141,7 @@ function TreeList({
   onDragged,
   alwaysShowDragIcon = true,
   styles,
+  ...props
 }: TreeListProps) {
   const [dragItem, setDragItem] = useState(null);
 
@@ -210,7 +221,11 @@ function TreeList({
 
   return (
     <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
-      <TreeListWrapper $containerStyle={styles?.containerStyle}>
+      <TreeListWrapper
+        {...props}
+        aria-label="tree-list-wrapper"
+        $containerStyle={styles?.containerStyle}
+      >
         {actions && (
           <ActionsWrapper>
             {actions.map((action, index) => {
