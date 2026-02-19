@@ -7,7 +7,7 @@ import { css } from "styled-components";
 import { Grid } from "./grid";
 
 const meta: Meta<typeof LoadingSkeleton> = {
-  title: "Feedback/LoadingSkeleton",
+  title: "Content/LoadingSkeleton",
   component: LoadingSkeleton,
   tags: ["autodocs"],
   argTypes: {
