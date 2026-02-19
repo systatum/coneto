@@ -1,7 +1,8 @@
-import React from "react";
+import React, { HTMLAttributes } from "react";
 import styled, { CSSProp } from "styled-components";
 
-export interface FrameProps {
+export interface FrameProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "title" | "style"> {
   title?: string;
   children: React.ReactNode;
   styles?: FrameStyles;
@@ -12,9 +13,13 @@ export interface FrameStyles {
   titleStyle?: CSSProp;
 }
 
-const Frame: React.FC<FrameProps> = ({ title, children, styles }) => {
+function Frame({ title, children, styles, ...props }: FrameProps) {
   return (
-    <FrameContainer $style={styles?.containerStyle}>
+    <FrameContainer
+      aria-label="frame"
+      {...props}
+      $style={styles?.containerStyle}
+    >
       {title && (
         <TitleContainer $style={styles?.titleStyle}>
           <TitleOverlay aria-hidden="true" />
@@ -24,7 +29,7 @@ const Frame: React.FC<FrameProps> = ({ title, children, styles }) => {
       {children}
     </FrameContainer>
   );
-};
+}
 
 const FrameContainer = styled.div<{ $style?: CSSProp }>`
   position: relative;
