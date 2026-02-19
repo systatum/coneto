@@ -4,6 +4,79 @@ import { Textarea } from "./../../components/textarea";
 import { useRef, useState } from "react";
 
 describe("Window", () => {
+  context("Window.Cell", () => {
+    function WindowCellDefault() {
+      return (
+        <Window.Cell
+          onMouseEnter={() => console.log("now is hovering window-cell")}
+          onMouseLeave={() => console.log("now is leaving window-cell")}
+          onClick={() => console.log("now is clicking window-cell")}
+        >
+          Test
+        </Window.Cell>
+      );
+    }
+    context("onMouseEnter", () => {
+      context("when hovering", () => {
+        it("should give callback", () => {
+          cy.window().then((win) => {
+            cy.spy(win.console, "log").as("consoleLog");
+          });
+
+          cy.mount(<WindowCellDefault />);
+          cy.findByLabelText("window-cell").trigger("mouseover");
+
+          cy.get("@consoleLog").should(
+            "have.been.calledWith",
+            "now is hovering window-cell"
+          );
+        });
+      });
+    });
+
+    context("onMouseLeave", () => {
+      context("when hover & leave", () => {
+        it("should give callback", () => {
+          cy.window().then((win) => {
+            cy.spy(win.console, "log").as("consoleLog");
+          });
+
+          cy.mount(<WindowCellDefault />);
+          cy.findByLabelText("window-cell")
+            .trigger("mouseover")
+            .trigger("mouseout");
+
+          cy.get("@consoleLog").should(
+            "have.been.calledWith",
+            "now is hovering window-cell"
+          );
+          cy.get("@consoleLog").should(
+            "have.been.calledWith",
+            "now is leaving window-cell"
+          );
+        });
+      });
+    });
+
+    context("onClick", () => {
+      context("when clicking", () => {
+        it("should give callback", () => {
+          cy.window().then((win) => {
+            cy.spy(win.console, "log").as("consoleLog");
+          });
+
+          cy.mount(<WindowCellDefault />);
+          cy.findByLabelText("window-cell").click();
+
+          cy.get("@consoleLog").should(
+            "have.been.calledWith",
+            "now is clicking window-cell"
+          );
+        });
+      });
+    });
+  });
+
   context("onResize", () => {
     it("should call onResize rapid while dragging", () => {
       const onResize = cy.stub().as("onResize");
