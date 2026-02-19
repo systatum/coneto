@@ -12,6 +12,73 @@ import {
 } from "@remixicon/react";
 
 describe("NavTab", () => {
+  const ACTION_BUTTON = [
+    {
+      caption: "Add",
+      icon: RiAddBoxLine,
+      onClick: () => {
+        console.log(`Add button was clicked`);
+      },
+    },
+  ];
+
+  context("size", () => {
+    context("when given sm", () => {
+      it("renders tab with 35px and action button with 27px", () => {
+        cy.mount(
+          <NavTab
+            actions={ACTION_BUTTON}
+            size="sm"
+            tabs={TABS_ITEMS}
+            activeTab={"2"}
+          />
+        );
+
+        cy.findAllByLabelText("nav-tab-item")
+          .eq(0)
+          .should("have.css", "height", "35px");
+        cy.findAllByLabelText("action-button")
+          .eq(2)
+          .should("have.css", "height", "27px");
+      });
+    });
+
+    context("when given md", () => {
+      it("renders tab with 45px and action button with 32px", () => {
+        cy.mount(
+          <NavTab
+            actions={ACTION_BUTTON}
+            size="md"
+            tabs={TABS_ITEMS}
+            activeTab={"2"}
+          />
+        );
+
+        cy.findAllByLabelText("nav-tab-item")
+          .eq(0)
+          .should("have.css", "height", "45px");
+        cy.findAllByLabelText("action-button")
+          .eq(2)
+          .should("have.css", "height", "32px");
+      });
+    });
+
+    context("when not given", () => {
+      it("renders tab with 45px and action button with 32px", () => {
+        cy.mount(
+          <NavTab actions={ACTION_BUTTON} tabs={TABS_ITEMS} activeTab={"2"} />
+        );
+
+        cy.findAllByLabelText("nav-tab-item")
+          .eq(0)
+          .should("have.css", "height", "45px");
+        cy.findAllByLabelText("action-button")
+          .eq(2)
+          .should("have.css", "height", "32px");
+      });
+    });
+  });
+
   context("activeTab", () => {
     context("when given", () => {
       it("renders with content active tab", () => {
