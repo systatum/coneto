@@ -1,30 +1,39 @@
 import styled, { css, CSSProp } from "styled-components";
-import { CSSProperties, ReactNode, useState } from "react";
+import { CSSProperties, HTMLAttributes, ReactNode, useState } from "react";
 import { Checkbox } from "./checkbox";
 
-export interface GridProps {
+export interface GridProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "style"> {
   children?: ReactNode;
   height?: number | string;
   width?: number | string;
   gap?: number | string;
-  containerStyle?: CSSProp;
+  styles?: GridStylesProps;
   preset?: GridPresetKey;
 }
 
-export interface GridCardProps {
+export interface GridCardProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "style"> {
+  styles?: GridCardStylesProps;
   children?: ReactNode;
   thumbnail?: string;
   isSelected?: boolean;
-  containerStyle?: CSSProp;
   onSelected?: () => void;
   selectable?: boolean;
 }
 
+export interface GridStylesProps {
+  self?: CSSProp;
+}
+
+export type GridCardStylesProps = GridStylesProps;
+
 function Grid({
   children,
   gap = 8,
-  containerStyle,
+  styles,
   preset = "1-to-4",
+  ...props
 }: GridProps) {
   const style: CSSProperties = {
     gap: typeof gap === "number" ? `${gap}px` : gap,
@@ -32,10 +41,12 @@ function Grid({
 
   return (
     <GridBase
+      {...props}
       style={style}
-      $containerStyle={css`
+      aria-label="grid"
+      $style={css`
         ${gridPresets[preset]}
-        ${containerStyle}
+        ${styles?.self}
       `}
     >
       {children}
@@ -46,7 +57,7 @@ function Grid({
 function GridCard({
   children,
   thumbnail,
-  containerStyle,
+  styles,
   onSelected,
   isSelected,
   selectable,
@@ -58,12 +69,29 @@ function GridCard({
     <GridCardWrapper
       {...props}
       aria-label="grid-card"
-      $containerStyle={containerStyle}
-      isSelected={isSelected}
-      selectable={selectable}
-      onClick={() => selectable && onSelected?.()}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      $style={styles?.self}
+      $isSelected={isSelected}
+      $selectable={selectable}
+      onClick={(e) => {
+        if (selectable) {
+          onSelected?.();
+        }
+        if (props.onClick) {
+          props.onClick(e);
+        }
+      }}
+      onMouseEnter={(e) => {
+        setIsHovered(true);
+        if (props.onMouseEnter) {
+          props.onMouseEnter(e);
+        }
+      }}
+      onMouseLeave={(e) => {
+        setIsHovered(false);
+        if (props.onMouseLeave) {
+          props.onMouseLeave(e);
+        }
+      }}
     >
       <CheckboxWrapper>
         {selectable && (isSelected || isHovered) && (
@@ -92,21 +120,21 @@ function GridCard({
 }
 
 const GridBase = styled.div<{
-  $containerStyle?: CSSProp;
+  $style?: CSSProp;
 }>`
   display: grid;
   width: 100%;
-  ${({ $containerStyle }) => $containerStyle}
+  ${({ $style }) => $style}
 `;
 
 const GridCardWrapper = styled.div.attrs<{
-  isSelected?: boolean;
-}>(({ isSelected }) => ({
+  $isSelected?: boolean;
+}>(({ $isSelected }) => ({
   "aria-label": "grid-card",
-  "data-selected": isSelected,
+  "data-selected": $isSelected,
 }))<{
-  selectable?: boolean;
-  $containerStyle?: CSSProp;
+  $selectable?: boolean;
+  $style?: CSSProp;
 }>`
   position: relative;
   display: flex;
@@ -119,15 +147,15 @@ const GridCardWrapper = styled.div.attrs<{
   font-size: 12px;
   border-radius: 4px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  ${({ selectable }) =>
-    selectable &&
+  ${({ $selectable }) =>
+    $selectable &&
     css`
       cursor: pointer;
       &:hover {
         background-color: #f3f3f3;
       }
     `}
-  ${({ $containerStyle }) => $containerStyle}
+  ${({ $style }) => $style}
 `;
 
 const CheckboxWrapper = styled.div`
