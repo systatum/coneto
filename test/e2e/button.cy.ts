@@ -46,7 +46,6 @@ describe("Button", () => {
           border: "rgb(155, 155, 155)",
           hoverBg: "rgb(240, 240, 240)",
         },
-
         "outline-primary": {
           bg: "rgb(255, 255, 255)",
           color: "rgb(86, 154, 236)",
@@ -65,7 +64,7 @@ describe("Button", () => {
           border: "rgb(66, 163, 64)",
           hoverBg: "rgb(66, 163, 64)",
         },
-        default: { bg: "rgb(243, 243, 243)", color: "rgb(0, 0, 0)" },
+        default: { bg: "rgb(236, 236, 236)", color: "rgb(0, 0, 0)" },
         primary: { bg: "rgb(86, 154, 236)", color: "rgb(255, 255, 255)" },
         danger: { bg: "rgb(206, 55, 93)", color: "rgb(255, 255, 255)" },
         secondary: { bg: "rgb(221, 221, 221)", color: "rgb(17, 17, 17)" },
@@ -109,7 +108,7 @@ describe("Button", () => {
       );
 
       cy.findByRole("button", { name: /Button/i })
-        .should("have.css", "background-color", "rgb(243, 243, 243)")
+        .should("have.css", "background-color", "rgb(236, 236, 236)")
         .and("have.css", "opacity", "0.6")
         .and("have.css", "pointer-events", "none");
     });

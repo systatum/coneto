@@ -647,7 +647,7 @@ const getButtonColors = (
         color: "black",
       };
     default:
-      return { bg: isOpen ? activeColor : "#f3f3f3", color: "black" };
+      return { bg: isOpen ? activeColor : "#ececec", color: "black" };
   }
 };
 
