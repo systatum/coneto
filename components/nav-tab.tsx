@@ -14,7 +14,7 @@ export interface NavTabProps {
   children?: ReactNode;
   actions?: NavTabActionsProps[];
   styles?: NavTabStylesProps;
-  size?: NavTabSizeState;
+  size?: NavTabSize;
 }
 
 export interface NavTabStylesProps {
@@ -28,7 +28,7 @@ export interface NavTabStylesProps {
 
 export type NavTabActionsProps = ActionButtonProps;
 
-export type NavTabSizeState = "md" | "sm";
+export type NavTabSize = "md" | "sm";
 
 export interface NavTabContentProps {
   id: string;
@@ -438,7 +438,7 @@ const NavTabItem = styled.div<{
   $isHovered?: boolean;
   $isAction?: boolean;
   $subMenu?: boolean;
-  $size?: NavTabSizeState;
+  $size?: NavTabSize;
 }>`
   display: flex;
   flex-direction: row;
