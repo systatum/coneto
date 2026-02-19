@@ -90,6 +90,46 @@ export const Default: Story = {
   },
 };
 
+export const Small: Story = {
+  render: () => {
+    const TABS_ITEMS: NavTabContentProps[] = [
+      {
+        id: "1",
+        title: "Write",
+        content: <WriteTabContent />,
+        onClick: () => {
+          console.log("test tab 1");
+        },
+      },
+      {
+        id: "2",
+        title: "Review",
+        content: <ReviewTabContent />,
+        onClick: () => {
+          console.log("test tab 2");
+        },
+      },
+    ];
+
+    return (
+      <NavTab
+        tabs={TABS_ITEMS}
+        activeTab={"2"}
+        size="sm"
+        actions={[
+          {
+            caption: "Add",
+            icon: RiAddBoxLine,
+            onClick: () => {
+              console.log(`Add button was clicked`);
+            },
+          },
+        ]}
+      />
+    );
+  },
+};
+
 export const WithActions: Story = {
   render: () => {
     const TABS_ITEMS: NavTabContentProps[] = [
