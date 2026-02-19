@@ -14,6 +14,7 @@ export interface NavTabProps {
   children?: ReactNode;
   actions?: NavTabActionsProps[];
   styles?: NavTabStylesProps;
+  size?: NavTabSizeState;
 }
 
 export interface NavTabStylesProps {
@@ -26,6 +27,8 @@ export interface NavTabStylesProps {
 }
 
 export type NavTabActionsProps = ActionButtonProps;
+
+export type NavTabSizeState = "md" | "sm";
 
 export interface NavTabContentProps {
   id: string;
@@ -56,6 +59,7 @@ function NavTab({
   tabs = [],
   activeColor = "rgb(59, 130, 246)",
   children,
+  size = "md",
 }: NavTabProps) {
   const tooltipRefs = useRef<Array<TooltipRef | null>>([]);
 
@@ -232,6 +236,7 @@ function NavTab({
                 }
               >
                 <NavTabItem
+                  $size={size}
                   aria-label="nav-tab-item"
                   key={props.id}
                   $boxStyle={styles?.boxStyle}
@@ -329,9 +334,21 @@ function NavTab({
             $actions={!!actions}
             $style={styles?.containerActionsStyle}
           >
-            {actions.map((props, index) => (
-              <ActionButton key={index} {...props} />
-            ))}
+            {actions.map((props, index) => {
+              return (
+                <ActionButton
+                  key={index}
+                  {...props}
+                  styles={{
+                    ...props?.styles,
+                    self: css`
+                      height: ${size === "sm" && "27px"};
+                      ${props?.styles?.self}
+                    `,
+                  }}
+                />
+              );
+            })}
           </NavTabHeader>
         )}
       </NavTabRowWrapper>
@@ -423,11 +440,11 @@ const NavTabItem = styled.div<{
   $isHovered?: boolean;
   $isAction?: boolean;
   $subMenu?: boolean;
+  $size?: NavTabSizeState;
 }>`
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 12px 12px;
   cursor: pointer;
   font-weight: 500;
   position: relative;
@@ -437,6 +454,7 @@ const NavTabItem = styled.div<{
   width: fit-content;
   justify-content: center;
   user-select: none;
+  padding: ${({ $size }) => ($size === "md" ? "12px 12px" : "7px 12px")};
 
   ${({ $selected }) =>
     $selected &&
