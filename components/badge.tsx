@@ -1,11 +1,12 @@
 import styled, { css, CSSProp } from "styled-components";
-import { ChangeEvent, MouseEvent } from "react";
+import { ChangeEvent, HTMLAttributes, MouseEvent } from "react";
 import { strToColor } from "./../lib/code-color";
 import { RemixiconComponentType } from "@remixicon/react";
 
 export type BadgeVariantProps = null | "neutral" | "green" | "yellow" | "red";
 
-export interface BadgeProps {
+export interface BadgeProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "style"> {
   id?: string;
   metadata?: Record<string, unknown>;
   variant?: BadgeVariantProps;
@@ -93,6 +94,8 @@ function Badge({
   badgeStyle,
   id,
   actions,
+  metadata,
+  ...props
 }: BadgeProps) {
   const { bg: backgroundColorVariant, color: colorVariant } =
     VARIANTS_BADGE[variant];
@@ -124,8 +127,10 @@ function Badge({
 
   return (
     <BadgeWrapper
+      {...props}
       id={String(id)}
       onClick={onClick}
+      aria-label="badge"
       $backgroundColor={badgeBackgroundColor}
       $textColor={badgeTextColor}
       $hasCaption={caption.length > 0}
