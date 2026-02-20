@@ -132,9 +132,10 @@ const Container = styled.div`
 const Header = styled.div<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   padding: 0.5rem;
   padding-bottom: 1rem;
+  padding-right: 30px;
 
   ${({ $style }) => $style}
 `;
@@ -142,6 +143,8 @@ const Header = styled.div<{ $style?: CSSProp }>`
 const Subtitle = styled.h3<{ $style?: CSSProp }>`
   font-size: 11px;
   color: #6b7280;
+  text-align: justify;
+
   ${({ $style }) => $style}
 `;
 
