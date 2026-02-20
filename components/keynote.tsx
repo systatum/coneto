@@ -39,7 +39,7 @@ function Keynote<T extends Record<string, unknown>>({
     data && keys && keyLabels && keys.length === keyLabels.length;
 
   return (
-    <KeynoteWrapper $style={styles?.self}>
+    <KeynoteWrapper aria-label="keynote-wrapper" $style={styles?.self}>
       {shouldRenderFromData
         ? keys?.map((key, index) => {
             const value = data[key];
@@ -63,9 +63,16 @@ function Keynote<T extends Record<string, unknown>>({
 
 function KeynotePoint({ label, children, styles }: KeynotePointProps) {
   return (
-    <KeynotePointWrapper $style={styles?.containerStyle}>
-      <Label $style={styles?.labelStyle}>{label}</Label>
-      <Value $style={styles?.valueStyle}>{children}</Value>
+    <KeynotePointWrapper
+      aria-label="keynote-point-wrapper"
+      $style={styles?.containerStyle}
+    >
+      <Label aria-label="keynote-point-label" $style={styles?.labelStyle}>
+        {label}
+      </Label>
+      <Value aria-label="keynote-point-value" $style={styles?.valueStyle}>
+        {children}
+      </Value>
     </KeynotePointWrapper>
   );
 }
