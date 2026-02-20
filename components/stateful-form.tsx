@@ -62,6 +62,33 @@ export type FormValueType =
   | undefined
   | CountryCodeProps;
 
+export type FormFieldType =
+  | "text"
+  | "message"
+  | "number"
+  | "email"
+  | "password"
+  | "textarea"
+  | "checkbox"
+  | "radio"
+  | "phone"
+  | "color"
+  | "file_drop_box"
+  | "file"
+  | "image"
+  | "signbox"
+  | "money"
+  | "date"
+  | "combo"
+  | "chips"
+  | "rating"
+  | "thumbfield"
+  | "toggle"
+  | "capsule"
+  | "time"
+  | "button"
+  | "custom";
+
 export interface StatefulFormProps<Z extends ZodTypeAny> {
   fields: FormFieldGroup[];
   formValues: TypeOf<Z>;
@@ -87,7 +114,7 @@ export interface FormFieldProps {
   title?: string;
   helper?: string;
   required?: boolean;
-  type?: string;
+  type?: FormFieldType;
   placeholder?: string;
   render?: ReactNode;
   hidden?: boolean;
