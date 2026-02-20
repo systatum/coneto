@@ -3,6 +3,7 @@ import {
   WriteTabContent,
 } from "./../../components/nav-tab.stories";
 import { NavTab, NavTabContentProps } from "./../../components/nav-tab";
+import { Button } from "./../../components/button";
 import { css } from "styled-components";
 import {
   RiAddBoxLine,
@@ -10,6 +11,7 @@ import {
   RiCharacterRecognitionLine,
   RiSearchLine,
 } from "@remixicon/react";
+import { useState } from "react";
 
 describe("NavTab", () => {
   const ACTION_BUTTON = [
@@ -21,6 +23,51 @@ describe("NavTab", () => {
       },
     },
   ];
+
+  context("when triggering externally (without tab)", () => {
+    it("should switch to the corresponding tab", () => {
+      function NavTabWithState() {
+        const [activeTab, setActiveTab] = useState("1");
+
+        return (
+          <NavTab
+            actions={ACTION_BUTTON}
+            size="sm"
+            tabs={[
+              {
+                id: "1",
+                title: "Write",
+                content: (
+                  <Button onClick={() => setActiveTab("2")}>
+                    Move to tab Review
+                  </Button>
+                ),
+              },
+              {
+                id: "2",
+                title: "Review",
+                content: (
+                  <Button onClick={() => setActiveTab("1")}>
+                    Move to tab Write
+                  </Button>
+                ),
+              },
+            ]}
+            onChange={(activeTab) => setActiveTab(activeTab)}
+            activeTab={activeTab}
+          />
+        );
+      }
+
+      cy.mount(<NavTabWithState />);
+
+      cy.findByText("Move to tab Write").should("not.exist");
+      cy.findByText("Move to tab Review").click();
+
+      cy.findByText("Move to tab Review").should("not.exist");
+      cy.findByText("Move to tab Write").click();
+    });
+  });
 
   context("size", () => {
     context("when given sm", () => {
