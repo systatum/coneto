@@ -19,7 +19,7 @@ const meta: Meta<typeof Combobox> = {
       control: "text",
       description: "Currently selected value of the combobox. Example: [5, 6]",
     },
-    setSelectedOptions: {
+    onChange: {
       control: false,
       description:
         "Callback function to update selectedOptions. Should not be controlled directly in Storybook.",
@@ -121,7 +121,7 @@ export const Default: Story = {
         <Combobox
           selectedOptions={value}
           options={FRUIT_OPTIONS}
-          setSelectedOptions={setValue}
+          onChange={setValue}
           placeholder="Select a fruit..."
         />
       </div>
@@ -166,9 +166,7 @@ export const WithDropdown: Story = {
       <Combobox
         selectedOptions={value.value}
         options={FRUIT_OPTIONS}
-        setSelectedOptions={(value) =>
-          setValue((prev) => ({ ...prev, value: value }))
-        }
+        onChange={(value) => setValue((prev) => ({ ...prev, value: value }))}
         name="with-dropdown"
         label="With Dropdown"
         dropdowns={[
@@ -238,7 +236,7 @@ export const Clearable: Story = {
           clearable
           selectedOptions={value}
           options={FRUIT_OPTIONS}
-          setSelectedOptions={setValue}
+          onChange={setValue}
           placeholder="Select a fruit..."
         />
       </div>
@@ -281,7 +279,7 @@ export const WithActions: Story = {
           actions={FRUIT_ACTIONS}
           selectedOptions={value}
           options={FRUIT_OPTIONS}
-          setSelectedOptions={setValue}
+          onChange={setValue}
           placeholder="Select a fruit..."
         />
       </div>
@@ -325,7 +323,7 @@ export const StrictValue: Story = {
           actions={FRUIT_ACTIONS}
           selectedOptions={value}
           options={FRUIT_OPTIONS}
-          setSelectedOptions={setValue}
+          onChange={setValue}
           placeholder="Select a fruit..."
         />
       </div>
@@ -377,7 +375,7 @@ export const MultipleSelection: Story = {
           clearable
           selectedOptions={value1}
           options={FRUIT_OPTIONS}
-          setSelectedOptions={setValue1}
+          onChange={setValue1}
           placeholder="Select a fruit..."
         />
         <Combobox
@@ -388,7 +386,7 @@ export const MultipleSelection: Story = {
           maxSelectableItems={2}
           selectedOptions={value2}
           options={FRUIT_OPTIONS}
-          setSelectedOptions={setValue2}
+          onChange={setValue2}
           placeholder="Select a fruit..."
         />
       </div>
@@ -626,7 +624,7 @@ export const WithCustomRenderer: Story = {
           clearable
           selectedOptions={value}
           options={FRUIT_OPTIONS}
-          setSelectedOptions={setValue}
+          onChange={setValue}
           placeholder="Select a fruit..."
         />
       </div>
