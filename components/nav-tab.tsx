@@ -77,7 +77,7 @@ function NavTab({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  const isControlled = activeTab !== undefined;
+  const isControlled = activeTab !== undefined && onChange;
   const selected = isControlled ? activeTab : selectedLocal;
 
   const getHoverPosition = () => {
