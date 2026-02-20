@@ -206,11 +206,17 @@ function DialogFooter({
 function DialogTitle({
   children,
   style,
+  ariaLabel = "dialog-title",
 }: {
   children: ReactNode;
   style?: CSSProp;
+  ariaLabel?: string;
 }) {
-  return <StyledTitle $style={style}>{children}</StyledTitle>;
+  return (
+    <StyledTitle aria-label={ariaLabel} $style={style}>
+      {children}
+    </StyledTitle>
+  );
 }
 
 function DialogDescription({
