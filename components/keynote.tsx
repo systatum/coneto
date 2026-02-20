@@ -70,15 +70,21 @@ const KeynotePointWrapper = styled.div`
   justify-content: space-between;
   padding: 4px 0;
   position: relative;
+  width: 100%;
 `;
 
 const Label = styled.span`
+  width: 100%;
+  font-size: 14px;
   color: #374151;
   font-weight: 600;
 `;
 
 const Value = styled.span`
+  width: 100%;
+  font-size: 14px;
   color: #111827;
+  text-align: end;
 `;
 
 Keynote.Point = KeynotePoint;
