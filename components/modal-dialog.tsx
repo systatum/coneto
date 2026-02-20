@@ -143,8 +143,6 @@ const Header = styled.div<{ $style?: CSSProp }>`
 const Subtitle = styled.h3<{ $style?: CSSProp }>`
   font-size: 11px;
   color: #6b7280;
-  text-align: justify;
-
   ${({ $style }) => $style}
 `;
 
