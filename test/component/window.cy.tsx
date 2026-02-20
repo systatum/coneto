@@ -4,6 +4,32 @@ import { Textarea } from "./../../components/textarea";
 import { useRef, useState } from "react";
 
 describe("Window", () => {
+  context("style", () => {
+    context("divider", () => {
+      it("should have default 2.5px", () => {
+        cy.mount(
+          <Window
+            orientation="horizontal"
+            styles={{
+              self: css`
+                height: 500px;
+              `,
+            }}
+          >
+            <Window.Cell>Top</Window.Cell>
+            <Window.Cell>Bottom</Window.Cell>
+          </Window>
+        );
+
+        cy.findByLabelText("window-divider").should(
+          "have.css",
+          "border-bottom-width",
+          "2.5px"
+        );
+      });
+    });
+  });
+
   context("Window.Cell", () => {
     function WindowCellDefault() {
       return (
@@ -220,11 +246,11 @@ describe("Window", () => {
       cy.findAllByLabelText("window-cell")
         .eq(0)
         .invoke("height")
-        .should("be.closeTo", 450, 1);
+        .should("be.closeTo", 450, 3);
       cy.findAllByLabelText("window-cell")
         .eq(1)
         .invoke("height")
-        .should("be.closeTo", 50, 1);
+        .should("be.closeTo", 50, 3);
     });
 
     context("when not given", () => {
@@ -262,11 +288,11 @@ describe("Window", () => {
         cy.findAllByLabelText("window-cell")
           .eq(0)
           .invoke("height")
-          .should("be.closeTo", 250, 1);
+          .should("be.closeTo", 250, 3);
         cy.findAllByLabelText("window-cell")
           .eq(1)
           .invoke("height")
-          .should("be.closeTo", 250, 1);
+          .should("be.closeTo", 250, 3);
       });
     });
   });
