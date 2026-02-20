@@ -12,6 +12,105 @@ import {
 import { StatefulForm } from "./../../components/stateful-form";
 
 describe("Treelist", () => {
+  context("common behavior", () => {
+    let TREE_LIST_DATA: TreeListContentProps[];
+
+    beforeEach(() => {
+      const setPerson = cy.stub().as("setPerson");
+
+      TREE_LIST_DATA = [
+        {
+          id: "member",
+          caption: "Member of Technical Staff",
+          items: [
+            { id: "mts-1", caption: "Adam Noto Hakarsa", onClick: setPerson },
+            { id: "mts-2", caption: "Mohamad Naufal Alim", onClick: setPerson },
+          ],
+        },
+        {
+          id: "product",
+          caption: "Product Management Team",
+          items: [
+            { id: "pmt-1", caption: "Samantha Lee", onClick: setPerson },
+            { id: "pmt-2", caption: "Jason Kim", onClick: setPerson },
+            { id: "pmt-3", caption: "Rina Patel", onClick: setPerson },
+          ],
+        },
+      ];
+    });
+
+    function TreeListDefault() {
+      return (
+        <TreeList
+          content={TREE_LIST_DATA}
+          onMouseEnter={() => console.log("now is hovering treelist")}
+          onMouseLeave={() => console.log("now is leaving treelist")}
+          onClick={() => console.log("now is clicking treelist")}
+        />
+      );
+    }
+
+    context("onMouseEnter", () => {
+      context("when hovering", () => {
+        it("should give callback", () => {
+          cy.window().then((win) => {
+            cy.spy(win.console, "log").as("consoleLog");
+          });
+
+          cy.mount(<TreeListDefault />);
+          cy.findByLabelText("tree-list-wrapper").trigger("mouseover");
+
+          cy.get("@consoleLog").should(
+            "have.been.calledWith",
+            "now is hovering treelist"
+          );
+        });
+      });
+    });
+
+    context("onMouseLeave", () => {
+      context("when hover & leave", () => {
+        it("should give callback", () => {
+          cy.window().then((win) => {
+            cy.spy(win.console, "log").as("consoleLog");
+          });
+
+          cy.mount(<TreeListDefault />);
+          cy.findByLabelText("tree-list-wrapper")
+            .trigger("mouseover")
+            .trigger("mouseout");
+
+          cy.get("@consoleLog").should(
+            "have.been.calledWith",
+            "now is hovering treelist"
+          );
+          cy.get("@consoleLog").should(
+            "have.been.calledWith",
+            "now is leaving treelist"
+          );
+        });
+      });
+    });
+
+    context("onClick", () => {
+      context("when clicking", () => {
+        it("should give callback", () => {
+          cy.window().then((win) => {
+            cy.spy(win.console, "log").as("consoleLog");
+          });
+
+          cy.mount(<TreeListDefault />);
+          cy.findByLabelText("tree-list-wrapper").click();
+
+          cy.get("@consoleLog").should(
+            "have.been.calledWith",
+            "now is clicking treelist"
+          );
+        });
+      });
+    });
+  });
+
   context("alwaysShowDragIcon", () => {
     let TREE_LIST_DATA: TreeListContentProps[];
 

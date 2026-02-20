@@ -3,6 +3,74 @@ import { Badge, BadgeActionProps } from "./../../components/badge";
 import { strToColor } from "./../../lib/code-color";
 
 describe("Badge", () => {
+  function BadgeDefault() {
+    return (
+      <Badge
+        onMouseEnter={() => console.log("now is hovering badge")}
+        onMouseLeave={() => console.log("now is leaving badge")}
+        onClick={() => console.log("now is clicking badge")}
+        caption="Badge"
+      />
+    );
+  }
+  context("onMouseEnter", () => {
+    context("when hovering", () => {
+      it("should give callback", () => {
+        cy.window().then((win) => {
+          cy.spy(win.console, "log").as("consoleLog");
+        });
+
+        cy.mount(<BadgeDefault />);
+        cy.findByLabelText("badge").trigger("mouseover");
+
+        cy.get("@consoleLog").should(
+          "have.been.calledWith",
+          "now is hovering badge"
+        );
+      });
+    });
+  });
+
+  context("onMouseLeave", () => {
+    context("when hover & leave", () => {
+      it("should give callback", () => {
+        cy.window().then((win) => {
+          cy.spy(win.console, "log").as("consoleLog");
+        });
+
+        cy.mount(<BadgeDefault />);
+        cy.findByLabelText("badge").trigger("mouseover").trigger("mouseout");
+
+        cy.get("@consoleLog").should(
+          "have.been.calledWith",
+          "now is hovering badge"
+        );
+        cy.get("@consoleLog").should(
+          "have.been.calledWith",
+          "now is leaving badge"
+        );
+      });
+    });
+  });
+
+  context("onClick", () => {
+    context("when clicking", () => {
+      it("should give callback", () => {
+        cy.window().then((win) => {
+          cy.spy(win.console, "log").as("consoleLog");
+        });
+
+        cy.mount(<BadgeDefault />);
+        cy.findByLabelText("badge").click();
+
+        cy.get("@consoleLog").should(
+          "have.been.calledWith",
+          "now is clicking badge"
+        );
+      });
+    });
+  });
+
   context("with actions", () => {
     const contentAction: BadgeActionProps[] = [
       {

@@ -4,6 +4,7 @@ import {
   cloneElement,
   forwardRef,
   Fragment,
+  HTMLAttributes,
   isValidElement,
   MouseEvent,
   ReactElement,
@@ -30,7 +31,8 @@ export interface WindowStylesProps {
   dividerStyle?: CSSProp;
 }
 
-export interface WindowCellProps {
+export interface WindowCellProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "style"> {
   children?: ReactNode;
   styles?: WindowCellStylesProps;
   actions?: WindowActionProps[];
@@ -247,10 +249,12 @@ const WindowCell = forwardRef<HTMLDivElement, WindowCellProps>(
       size = 1,
       isDragging = false,
       isVertical = true,
+      ...rest
     } = props as WindowCellInternalProps;
 
     return (
       <CellWrapper
+        {...rest}
         ref={ref}
         style={{
           width: isVertical ? `${size * 100}%` : "100%",

@@ -51,10 +51,10 @@ const meta: Meta<typeof Grid> = {
       description:
         "Predefined responsive grid layouts. These control how many columns are shown at different breakpoints.",
     },
-    containerStyle: {
+    styles: {
       control: false,
       description: `
-Custom styles for the Grid container.
+Custom styles for the Grid container (self).
 
 This allows you to override layout and visual styles of the grid wrapper (e.g. padding, background, borders, max-width, etc).
 

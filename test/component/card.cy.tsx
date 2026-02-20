@@ -6,6 +6,77 @@ import { Textbox } from "./../../components/textbox";
 import { css } from "styled-components";
 
 describe("Card", () => {
+  function CardDefault() {
+    return (
+      <Card
+        aria-label="card"
+        onMouseEnter={() => console.log("now is hovering card")}
+        onMouseLeave={() => console.log("now is leaving card")}
+        onClick={() => console.log("now is clicking card")}
+        title="Systatum Food Services"
+      >
+        Test`
+      </Card>
+    );
+  }
+  context("onMouseEnter", () => {
+    context("when hovering", () => {
+      it("should give callback", () => {
+        cy.window().then((win) => {
+          cy.spy(win.console, "log").as("consoleLog");
+        });
+
+        cy.mount(<CardDefault />);
+        cy.findByLabelText("card").trigger("mouseover");
+
+        cy.get("@consoleLog").should(
+          "have.been.calledWith",
+          "now is hovering card"
+        );
+      });
+    });
+  });
+
+  context("onMouseLeave", () => {
+    context("when hover & leave", () => {
+      it("should give callback", () => {
+        cy.window().then((win) => {
+          cy.spy(win.console, "log").as("consoleLog");
+        });
+
+        cy.mount(<CardDefault />);
+        cy.findByLabelText("card").trigger("mouseover").trigger("mouseout");
+
+        cy.get("@consoleLog").should(
+          "have.been.calledWith",
+          "now is hovering card"
+        );
+        cy.get("@consoleLog").should(
+          "have.been.calledWith",
+          "now is leaving card"
+        );
+      });
+    });
+  });
+
+  context("onClick", () => {
+    context("when clicking", () => {
+      it("should give callback", () => {
+        cy.window().then((win) => {
+          cy.spy(win.console, "log").as("consoleLog");
+        });
+
+        cy.mount(<CardDefault />);
+        cy.findByLabelText("card").click();
+
+        cy.get("@consoleLog").should(
+          "have.been.calledWith",
+          "now is clicking card"
+        );
+      });
+    });
+  });
+
   context("with header", () => {
     const value = {
       title: "Department",

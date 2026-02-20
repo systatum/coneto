@@ -1,10 +1,11 @@
 "use client";
 
 import { strToColor } from "./../lib/code-color";
-import { ChangeEvent, useRef } from "react";
+import { ChangeEvent, HTMLAttributes, useRef } from "react";
 import styled, { CSSProp } from "styled-components";
 
-export interface AvatarProps {
+export interface AvatarProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "title" | "style" | "onChange"> {
   firstName: string;
   lastName?: string;
   profileImageUrl?: string | null | undefined;
@@ -12,8 +13,11 @@ export interface AvatarProps {
   onChange?: (e: ChangeEvent<HTMLInputElement>, file?: File) => void;
   frameSize?: number;
   fontSize?: number;
-  style?: CSSProp;
-  onClick?: () => void;
+  styles?: AvatarStylesProps;
+}
+
+export interface AvatarStylesProps {
+  self?: CSSProp;
 }
 
 const AVATAR_BACKGROUND_COLORS: string[] = [
@@ -40,11 +44,12 @@ function Avatar({
   lastName,
   profileImageUrl,
   changeable,
-  onChange,
   frameSize = 70,
   fontSize = 23,
-  style,
+  styles,
+  onChange,
   onClick,
+  ...props
 }: AvatarProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -71,6 +76,7 @@ function Avatar({
 
   return (
     <AvatarContainer
+      {...props}
       onClick={changeable ? handleClick : onClick}
       onChange={changeable ? handleFileChange : onChange}
       aria-label="avatar-content"
@@ -80,7 +86,7 @@ function Avatar({
       $backgroundColor={!isImageValid ? backgroundColor : undefined}
       $fontSize={fontSize}
       $frameSize={frameSize}
-      $avatarStyle={style}
+      $avatarStyle={styles?.self}
     >
       {isImageValid ? (
         <AvatarImage

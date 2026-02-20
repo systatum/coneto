@@ -4,11 +4,12 @@ import {
   SHADOW_MAP,
 } from "./../constants/global-style";
 import { RiCloseLine } from "@remixicon/react";
-import { ReactNode } from "react";
+import { HTMLAttributes, ReactNode } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { ActionButton, ActionButtonProps } from "./action-button";
 
-export interface CardProps {
+export interface CardProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "title" | "style"> {
   shadow?: "none" | "sm" | "md" | "lg" | "xl" | "2xl";
   radius?: "none" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "full";
   padding?:
@@ -61,9 +62,11 @@ function Card({
   onCloseRequest,
   headerActions,
   closable = false,
+  ...props
 }: CardProps) {
   return (
     <CardContainer
+      {...props}
       $shadow={shadow}
       $radius={radius}
       $padding={padding}
