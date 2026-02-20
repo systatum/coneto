@@ -51,7 +51,7 @@ export interface DateboxProps
 const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
   const {
     selectedDates,
-    setSelectedDates,
+    onChange,
     placeholder = "mm/dd/yyyy",
     styles,
     helper,
@@ -71,7 +71,7 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
       showError={showError}
       dropdowns={dropdowns}
       selectedOptions={selectedDates}
-      setSelectedOptions={setSelectedDates}
+      onChange={onChange}
       helper={helper}
       disabled={props.disabled}
       styles={{
@@ -108,7 +108,7 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
             styles={{
               containerStyle: styles?.self,
             }}
-            setSelectedDates={setSelectedDates}
+            onChange={onChange}
             selectedDates={selectedDates}
           />
         );
@@ -133,9 +133,9 @@ function CalendarDrawer(props: CalendarDrawerProps) {
       <Calendar
         {...props}
         footer={props.calendarFooter}
-        setSelectedDates={(data: string[]) => {
-          if (props.setSelectedDates) {
-            props.setSelectedDates(data);
+        onChange={(data: string[]) => {
+          if (props.onChange) {
+            props.onChange(data);
           }
           props.setSelectedOptionsLocal({
             text: data[0],

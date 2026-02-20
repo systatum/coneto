@@ -57,8 +57,8 @@ export const Default: Story = {
               if (selected) {
                 setValue((prev) => ({
                   ...prev,
-                  selectedOption2: id,
-                  selectedText2: selected.text,
+                  selectedOption: id,
+                  selectedText: selected.text,
                 }));
               }
             },
@@ -182,11 +182,11 @@ export const CustomRenderer: Story = {
                   <Calendar
                     selectedDates={[value2.selectedOption1]}
                     monthNames={MONTH_NAMES}
-                    setSelectedDates={(date: string[]) =>
+                    onChange={(dates: string[]) =>
                       setValue2((prev) => ({
                         ...prev,
-                        selectedText1: date[0],
-                        selectedOption1: date[0],
+                        selectedText1: dates[0],
+                        selectedOption1: dates[0],
                       }))
                     }
                   />
