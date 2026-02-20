@@ -1141,7 +1141,7 @@ function FormFields<T extends FieldValues>({
                           | string
                           | undefined
                       }
-                      setSelectedDates={(e) => {
+                      onChange={(e) => {
                         const inputValueEvent = {
                           target: { name: field.name, value: e },
                         };
@@ -1211,7 +1211,7 @@ function FormFields<T extends FieldValues>({
                           | undefined
                       }
                       helper={field.helper}
-                      setSelectedOptions={(e) => {
+                      onChange={(e) => {
                         const inputValueEvent = {
                           target: { name: field.name, value: e },
                         };

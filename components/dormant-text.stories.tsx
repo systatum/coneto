@@ -186,7 +186,7 @@ export const WithCombobox: Story = {
               strict
               selectedOptions={value.normal}
               options={FRUIT_OPTIONS}
-              setSelectedOptions={(e) => handleChange(e, "normal")}
+              onChange={(e) => handleChange(e, "normal")}
             />
           </DormantText>
         </div>
@@ -204,7 +204,7 @@ export const WithCombobox: Story = {
               strict
               selectedOptions={value.full}
               options={FRUIT_OPTIONS}
-              setSelectedOptions={(e) => handleChange(e, "full")}
+              onChange={(e) => handleChange(e, "full")}
             />
           </DormantText>
         </div>
@@ -222,7 +222,7 @@ export const WithCombobox: Story = {
               strict
               selectedOptions={value.max}
               options={FRUIT_OPTIONS}
-              setSelectedOptions={(e) => handleChange(e, "max")}
+              onChange={(e) => handleChange(e, "max")}
             />
           </DormantText>
         </div>
@@ -250,7 +250,7 @@ export const WithCombobox: Story = {
               strict
               selectedOptions={value.keydown}
               options={FRUIT_OPTIONS}
-              setSelectedOptions={(e) => handleChange(e, "keydown")}
+              onChange={(e) => handleChange(e, "keydown")}
             />
           </DormantText>
         </div>
@@ -325,7 +325,7 @@ export const WithDatebox: Story = {
               selectedDates={value.normal}
               dayNames={DAY_NAMES}
               monthNames={MONTH_NAMES}
-              setSelectedDates={(e) => handleChange(e, "normal")}
+              onChange={(e) => handleChange(e, "normal")}
             />
           </DormantText>
         </div>
@@ -342,7 +342,7 @@ export const WithDatebox: Story = {
               selectedDates={value.full}
               dayNames={DAY_NAMES}
               monthNames={MONTH_NAMES}
-              setSelectedDates={(e) => handleChange(e, "full")}
+              onChange={(e) => handleChange(e, "full")}
             />
           </DormantText>
         </div>
@@ -359,7 +359,7 @@ export const WithDatebox: Story = {
               selectedDates={value.max}
               dayNames={DAY_NAMES}
               monthNames={MONTH_NAMES}
-              setSelectedDates={(e) => handleChange(e, "max")}
+              onChange={(e) => handleChange(e, "max")}
             />
           </DormantText>
         </div>
@@ -386,7 +386,7 @@ export const WithDatebox: Story = {
               selectedDates={value.click}
               dayNames={DAY_NAMES}
               monthNames={MONTH_NAMES}
-              setSelectedDates={(e) => handleChange(e, "click")}
+              onChange={(e) => handleChange(e, "click")}
             />
           </DormantText>
         </div>
@@ -413,7 +413,7 @@ export const WithDatebox: Story = {
               selectedDates={value.keydown}
               dayNames={DAY_NAMES}
               monthNames={MONTH_NAMES}
-              setSelectedDates={(e) => handleChange(e, "keydown")}
+              onChange={(e) => handleChange(e, "keydown")}
             />
           </DormantText>
         </div>

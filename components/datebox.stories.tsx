@@ -57,7 +57,7 @@ export const Default: Story = {
         <Datebox
           options={DAY_NAMES}
           selectedDates={value}
-          setSelectedDates={setValue}
+          onChange={setValue}
           dayNames={DAY_NAMES}
           monthNames={MONTH_NAMES}
         />
@@ -107,9 +107,7 @@ export const WithDropdown: Story = {
     return (
       <Datebox
         selectedDates={value.value}
-        setSelectedDates={(value) =>
-          setValue((prev) => ({ ...prev, value: value }))
-        }
+        onChange={(value) => setValue((prev) => ({ ...prev, value: value }))}
         monthNames={MONTH_NAMES}
         label="With Dropdown"
         dropdowns={[
@@ -180,7 +178,7 @@ export const NoWeekends: Story = {
         <Datebox
           options={DAY_NAMES}
           selectedDates={value}
-          setSelectedDates={setValue}
+          onChange={setValue}
           dayNames={DAY_NAMES}
           monthNames={MONTH_NAMES}
           disableWeekend
@@ -228,7 +226,7 @@ export const Multiple: Story = {
         <Datebox
           options={DAY_NAMES}
           selectedDates={value}
-          setSelectedDates={setValue}
+          onChange={setValue}
           dayNames={DAY_NAMES}
           monthNames={MONTH_NAMES}
           calendarSelectabilityMode="multiple"
@@ -276,7 +274,7 @@ export const MultipleNoWeekends: Story = {
         <Datebox
           options={DAY_NAMES}
           selectedDates={value}
-          setSelectedDates={setValue}
+          onChange={setValue}
           dayNames={DAY_NAMES}
           monthNames={MONTH_NAMES}
           calendarSelectabilityMode="multiple"
@@ -325,7 +323,7 @@ export const Ranged: Story = {
         <Datebox
           options={DAY_NAMES}
           selectedDates={value}
-          setSelectedDates={setValue}
+          onChange={setValue}
           dayNames={DAY_NAMES}
           monthNames={MONTH_NAMES}
           calendarSelectabilityMode="ranged"
@@ -373,7 +371,7 @@ export const RangedNoWeekends: Story = {
         <Datebox
           options={DAY_NAMES}
           selectedDates={value}
-          setSelectedDates={setValue}
+          onChange={setValue}
           dayNames={DAY_NAMES}
           monthNames={MONTH_NAMES}
           calendarSelectabilityMode="ranged"
@@ -435,7 +433,7 @@ export const WithFooter: Story = {
         <Datebox
           options={DAY_NAMES}
           selectedDates={value}
-          setSelectedDates={setValue}
+          onChange={setValue}
           dayNames={DAY_NAMES}
           monthNames={MONTH_NAMES}
           disableWeekend
