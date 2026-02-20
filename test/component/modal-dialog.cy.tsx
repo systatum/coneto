@@ -33,13 +33,13 @@ describe("Modal Dialog", () => {
   };
 
   context("textWrapperStyle", () => {
-    it("renders with gap 8px", () => {
+    it("renders with gap 6px", () => {
       cy.mount(<ModalDialog {...args} />);
 
       cy.findByLabelText("modal-dialog-text-wrapper").should(
         "have.css",
         "gap",
-        "8px"
+        "6px"
       );
     });
 
