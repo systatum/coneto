@@ -750,14 +750,6 @@ export const AllCase: Story = {
         helper: "This field allows you to enter a phone number",
       },
       {
-        name: "country_code",
-        title: "Country Code",
-        type: "country_code",
-        required: false,
-        placeholder: "Enter country code",
-        helper: "This field is used to enter a country calling code",
-      },
-      {
         name: "signature",
         title: "Signature",
         type: "signbox",

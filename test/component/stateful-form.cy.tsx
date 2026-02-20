@@ -175,14 +175,6 @@ describe("StatefulForm", () => {
           "This field allows you to enter a phone number with country code",
       },
       {
-        name: "country_code",
-        title: "Country Code",
-        type: "country_code",
-        required: false,
-        placeholder: "Enter country code",
-        helper: "This field is used to select or enter a country calling code",
-      },
-      {
         name: "signature",
         title: "Signature",
         type: "signbox",
@@ -484,20 +476,13 @@ describe("StatefulForm", () => {
           },
         },
         {
-          name: "country_code",
-          title: "Country Code",
-          type: "country_code",
-          required: false,
-          placeholder: "Enter country code",
-        },
-        {
           name: "signature",
           title: "Signature",
           type: "signbox",
           required: false,
           signboxProps: {
             styles: {
-              canvasStyle: css`
+              self: css`
                 background-color: wheat;
               `,
             },
@@ -541,7 +526,7 @@ describe("StatefulForm", () => {
             cy.findByPlaceholderText("imagebox-input")
               .should("exist")
               .and("have.css", "background-color", "rgb(245, 222, 179)");
-          } else if (field.type === "signature") {
+          } else if (field.type === "signbox") {
             cy.findByPlaceholderText("signbox-canvas")
               .should("exist")
               .and("have.css", "background-color", "rgb(245, 222, 179)");
@@ -1407,14 +1392,6 @@ describe("StatefulForm", () => {
         type: "phone",
         required: false,
         placeholder: "Enter phone number",
-        width: "50%",
-      },
-      {
-        name: "country_code",
-        title: "Country Code",
-        type: "country_code",
-        required: false,
-        placeholder: "Enter country code",
         width: "50%",
       },
       {
