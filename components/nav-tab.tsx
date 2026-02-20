@@ -15,6 +15,7 @@ export interface NavTabProps {
   actions?: NavTabActionsProps[];
   styles?: NavTabStylesProps;
   size?: NavTabSize;
+  onChange?: (activeTab: string) => void;
 }
 
 export interface NavTabStylesProps {
@@ -60,10 +61,11 @@ function NavTab({
   activeColor = "rgb(59, 130, 246)",
   children,
   size = "md",
+  onChange,
 }: NavTabProps) {
   const tooltipRefs = useRef<Array<TooltipRef | null>>([]);
 
-  const [selected, setSelected] = useState<string>(activeTab);
+  const [selectedLocal, setSelectedLocal] = useState<string>(activeTab);
   const [isHovered, setIsHovered] = useState<string | null>(null);
   const [isTipMenuOpen, setIsTipMenuOpen] = useState<string | null>(null);
 
@@ -74,6 +76,9 @@ function NavTab({
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
+
+  const isControlled = activeTab !== undefined && onChange;
+  const selected = isControlled ? activeTab : selectedLocal;
 
   const getHoverPosition = () => {
     if (!isInitialized || tabSizes.length === 0) {
@@ -138,7 +143,7 @@ function NavTab({
   };
 
   const hoverPosition = getHoverPosition();
-  const activeContent = tabs.filter(
+  const filteredTabs = tabs.filter(
     (tab) =>
       tab.id === selected || tab.subItems?.some((item) => item.id === selected)
   );
@@ -215,7 +220,10 @@ function NavTab({
                           key={idx}
                           onClick={() => {
                             if (item.content) {
-                              setSelected(item.id);
+                              setSelectedLocal(item.id);
+                            }
+                            if (onChange) {
+                              onChange(item.id);
                             }
                             tooltipRefs.current.forEach((ref) => {
                               ref?.close();
@@ -236,17 +244,21 @@ function NavTab({
                 }
               >
                 <NavTabItem
+                  key={tab.id}
                   $size={size}
                   aria-label="nav-tab-item"
-                  key={tab.id}
                   $boxStyle={styles?.boxStyle}
                   ref={setTabRef(index)}
                   role="tab"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setSelected(tab.id);
+                    setSelectedLocal(tab.id);
                     if (tab.onClick) {
                       tab.onClick();
+                    }
+
+                    if (onChange) {
+                      onChange(tab.id);
                     }
 
                     tooltipRefs.current.forEach((ref, i) => {
@@ -352,15 +364,15 @@ function NavTab({
       </NavTabRowWrapper>
 
       <NavContent $contentStyle={styles?.contentStyle}>
-        {activeContent.map((props, index) => {
-          const selectedItemContent = props.subItems?.find(
-            (item) => item.id === selected
+        {filteredTabs.map((tab, index) => {
+          const selectedSubItem = tab.subItems?.find(
+            (subItem) => subItem.id === selected
           );
-          if (selectedItemContent) {
-            return <Fragment>{selectedItemContent.content}</Fragment>;
+          if (selectedSubItem) {
+            return <Fragment key={index}>{selectedSubItem.content}</Fragment>;
           }
 
-          return <Fragment key={index}>{props.content}</Fragment>;
+          return <Fragment key={index}>{tab.content}</Fragment>;
         })}
         {children}
       </NavContent>
