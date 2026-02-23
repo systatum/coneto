@@ -114,12 +114,12 @@ export const WithIcon: Story = {
       {
         id: "new",
         title: "New",
-        icon: RiFile2Line,
+        icon: { image: RiFile2Line },
       },
       {
         id: "list",
         title: "List",
-        icon: RiNewspaperLine,
+        icon: { image: RiNewspaperLine },
       },
     ],
     activeTab: "new",

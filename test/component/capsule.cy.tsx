@@ -57,7 +57,25 @@ describe("Capsule", () => {
   context("with iconSize", () => {
     it("renders with given number", () => {
       cy.mount(
-        <Capsule iconSize={20} activeTab="new" tabs={VIEW_ONLY_ICON_MODES} />
+        <Capsule
+          activeTab="new"
+          tabs={[
+            {
+              id: "new",
+              icon: {
+                image: RiFile2Line,
+                size: 20,
+              },
+            },
+            {
+              id: "list",
+              icon: {
+                image: RiNewspaperLine,
+                size: 20,
+              },
+            },
+          ]}
+        />
       );
 
       cy.findAllByLabelText("capsule-icon")
@@ -89,12 +107,16 @@ const VIEW_WITH_ICON_MODES: CapsuleContentProps[] = [
   {
     id: "new",
     title: "New",
-    icon: RiFile2Line,
+    icon: {
+      image: RiFile2Line,
+    },
   },
   {
     id: "list",
     title: "List",
-    icon: RiNewspaperLine,
+    icon: {
+      image: RiNewspaperLine,
+    },
   },
 ];
 
@@ -112,10 +134,14 @@ const VIEW_ONLY_TITLE_MODES: CapsuleContentProps[] = [
 const VIEW_ONLY_ICON_MODES: CapsuleContentProps[] = [
   {
     id: "new",
-    icon: RiFile2Line,
+    icon: {
+      image: RiFile2Line,
+    },
   },
   {
     id: "list",
-    icon: RiNewspaperLine,
+    icon: {
+      image: RiNewspaperLine,
+    },
   },
 ];
