@@ -70,9 +70,9 @@ function KeynotePoint({ label, children, styles }: KeynotePointProps) {
       aria-label="keynote-point-wrapper"
       $style={styles?.rowStyle}
     >
-      <Label aria-label="keynote-point-label" $style={styles?.rowKeyStyle}>
+      <Key aria-label="keynote-point-key" $style={styles?.rowKeyStyle}>
         {label}
-      </Label>
+      </Key>
       <Value aria-label="keynote-point-value" $style={styles?.rowValueStyle}>
         {children}
       </Value>
@@ -98,15 +98,18 @@ const KeynotePointWrapper = styled.div<{
   justify-content: space-between;
   padding: 4px 0;
   position: relative;
+  width: 100%;
 
   ${({ $style }) => $style}
 `;
 
-const Label = styled.span<{
+const Key = styled.span<{
   $style?: CSSProp;
 }>`
   color: #374151;
   font-weight: 600;
+  width: 30%;
+  font-size: 14px;
 
   ${({ $style }) => $style}
 `;
@@ -114,6 +117,10 @@ const Label = styled.span<{
 const Value = styled.span<{
   $style?: CSSProp;
 }>`
+  width: 70%;
+  font-size: 14px;
+  color: #111827;
+  text-align: end;
   color: #111827;
 
   ${({ $style }) => $style}

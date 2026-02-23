@@ -84,5 +84,41 @@ describe("Keynote", () => {
         });
       });
     });
+
+    context("key label", () => {
+      it("renders with 14px and width 30%", () => {
+        cy.mount(<ProductKeyNote />);
+
+        Array.from({ length: 5 }).map((_, index) => {
+          cy.findAllByLabelText("keynote-point-key")
+            .eq(index)
+            .should("have.css", "font-size", "14px")
+            .and("have.css", "width", "138px");
+        });
+      });
+    });
+
+    context("value label", () => {
+      it("renders with 14px and width 70%", () => {
+        cy.mount(<ProductKeyNote />);
+
+        Array.from({ length: 5 }).map((_, index) => {
+          cy.findAllByLabelText("keynote-point-value")
+            .eq(index)
+            .should("have.css", "font-size", "14px")
+            .and("have.css", "width", "322px");
+        });
+      });
+
+      it("renders with text-align end", () => {
+        cy.mount(<ProductKeyNote />);
+
+        Array.from({ length: 5 }).map((_, index) => {
+          cy.findAllByLabelText("keynote-point-value")
+            .eq(index)
+            .should("have.css", "text-align", "end");
+        });
+      });
+    });
   });
 });
