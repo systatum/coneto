@@ -70,7 +70,7 @@ export const Default: Story = {
   },
 };
 
-export const NoAutoClose: Story = {
+export const NoAutoclose: Story = {
   render: () => {
     const ref = useRef<OverlayBlockerRef>(null);
 
