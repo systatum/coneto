@@ -1,6 +1,5 @@
 import styled, { css, CSSProp } from "styled-components";
 import { ChangeEvent, InputHTMLAttributes, ReactElement } from "react";
-import { RemixiconComponentType } from "@remixicon/react";
 import { StatefulForm } from "./stateful-form";
 import { Figure, FigureProps } from "./figure";
 
