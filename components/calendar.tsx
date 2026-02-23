@@ -20,7 +20,7 @@ import { StatefulForm } from "./stateful-form";
 export interface BaseCalendarProps {
   options?: OptionsProps[];
   selectedDates?: string[];
-  setSelectedDates?: (data: string[]) => void;
+  onChange?: (dates: string[]) => void;
   dayNames?: OptionsProps[];
   monthNames?: OptionsProps[];
   disableWeekend?: boolean;
@@ -28,7 +28,7 @@ export interface BaseCalendarProps {
   yearPastReach?: number;
   futurePastReach?: number;
   onClick?: () => void;
-  onCalendarPeriodChanged?: (data: Date) => void;
+  onCalendarPeriodChanged?: (date: Date) => void;
   styles?: CalendarStylesProps;
 }
 
@@ -94,7 +94,7 @@ const DEFAULT_MONTH_NAMES = [
 function Calendar({
   highlightedIndex,
   setHighlightedIndex,
-  setSelectedDates,
+  onChange,
   selectedDates,
   setIsOpen,
   floatingStyles,
@@ -303,8 +303,8 @@ function Calendar({
       onCalendarPeriodChanged(today);
     }
     setCurrentDate(today);
-    if (setSelectedDates) {
-      setSelectedDates([formatDate(today, format)]);
+    if (onChange) {
+      onChange([formatDate(today, format)]);
     }
 
     setHighlightedIndexChange(0);
@@ -355,8 +355,8 @@ function Calendar({
         }
 
         const finalValues = newValues.join(", ");
-        if (setSelectedDates) {
-          setSelectedDates([finalValues]);
+        if (onChange) {
+          onChange([finalValues]);
         }
 
         return finalValues;
@@ -414,8 +414,8 @@ function Calendar({
 
         const newValuesLocal = `${firstValueLocal}${latestValueLocal}`;
 
-        if (setSelectedDates) {
-          setSelectedDates([finalValues]);
+        if (onChange) {
+          onChange([finalValues]);
         }
 
         return newValuesLocal;
@@ -423,8 +423,8 @@ function Calendar({
     }
 
     if (selectabilityMode === "single") {
-      if (setSelectedDates) {
-        await setSelectedDates([formatDate(date, format)]);
+      if (onChange) {
+        await onChange([formatDate(date, format)]);
       }
       await setSelectedDatesLocal(formatDate(date, format));
     }
@@ -475,8 +475,8 @@ function Calendar({
         setSelectedDatesLocal(formatDate(validDate, format));
 
         if (selectedDates[0].length > 9) {
-          if (setSelectedDates) {
-            setSelectedDates([formatDate(validDate, format)]);
+          if (onChange) {
+            onChange([formatDate(validDate, format)]);
           }
         }
       }
@@ -594,7 +594,7 @@ function Calendar({
                     max-width: 90px;
                   `,
                 }}
-                setSelectedOptions={(value) => {
+                onChange={(value) => {
                   onChangeValueDate({
                     target: { name: "month", value },
                   });
@@ -611,7 +611,7 @@ function Calendar({
                     max-width: 75px;
                   `,
                 }}
-                setSelectedOptions={(value) => {
+                onChange={(value) => {
                   onChangeValueDate({
                     target: { name: "year", value },
                   });

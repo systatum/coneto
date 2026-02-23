@@ -492,7 +492,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
             <Combobox
               strict
               selectedOptions={scaleValue}
-              setSelectedOptions={handleScale}
+              onChange={handleScale}
               placeholder={zoomPlaceholderText}
               styles={{
                 containerStyle: css`

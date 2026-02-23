@@ -6,13 +6,24 @@ export interface KeynoteProps<T extends Record<string, unknown>> {
   keys?: (keyof T)[];
   keyLabels?: string[];
   children?: ReactNode;
-  style?: CSSProp;
+  styles?: KeynoteStyles;
   renderer?: Partial<Record<keyof T, (value: T[keyof T]) => ReactNode>>;
 }
 
 export interface KeynotePointProps {
   label: string;
   children: ReactNode;
+  styles?: KeynotePointStyles;
+}
+
+export interface KeynoteStyles extends KeynotePointStyles {
+  self?: CSSProp;
+}
+
+export interface KeynotePointStyles {
+  rowStyle?: CSSProp;
+  rowKeyStyle?: CSSProp;
+  rowValueStyle?: CSSProp;
 }
 
 function Keynote<T extends Record<string, unknown>>({
@@ -21,19 +32,27 @@ function Keynote<T extends Record<string, unknown>>({
   keyLabels,
   children,
   renderer,
-  style,
+  styles,
 }: KeynoteProps<T>) {
   const shouldRenderFromData =
     data && keys && keyLabels && keys.length === keyLabels.length;
 
   return (
-    <KeynoteWrapper $style={style}>
+    <KeynoteWrapper aria-label="keynote-wrapper" $style={styles?.self}>
       {shouldRenderFromData
         ? keys?.map((key, index) => {
             const value = data[key];
             const renderFn = renderer?.[key];
             return (
-              <KeynotePoint key={String(key)} label={keyLabels[index]}>
+              <KeynotePoint
+                styles={{
+                  rowStyle: styles?.rowStyle,
+                  rowKeyStyle: styles?.rowKeyStyle,
+                  rowValueStyle: styles?.rowValueStyle,
+                }}
+                key={String(key)}
+                label={keyLabels[index]}
+              >
                 {renderFn ? renderFn(value) : String(value ?? "-")}
               </KeynotePoint>
             );
@@ -45,11 +64,18 @@ function Keynote<T extends Record<string, unknown>>({
   );
 }
 
-function KeynotePoint({ label, children }: KeynotePointProps) {
+function KeynotePoint({ label, children, styles }: KeynotePointProps) {
   return (
-    <KeynotePointWrapper>
-      <Label>{label}</Label>
-      <Value>{children}</Value>
+    <KeynotePointWrapper
+      aria-label="keynote-point-wrapper"
+      $style={styles?.rowStyle}
+    >
+      <Label aria-label="keynote-point-label" $style={styles?.rowKeyStyle}>
+        {label}
+      </Label>
+      <Value aria-label="keynote-point-value" $style={styles?.rowValueStyle}>
+        {children}
+      </Value>
     </KeynotePointWrapper>
   );
 }
@@ -64,7 +90,9 @@ const KeynoteWrapper = styled.div<{
   ${({ $style }) => $style}
 `;
 
-const KeynotePointWrapper = styled.div`
+const KeynotePointWrapper = styled.div<{
+  $style?: CSSProp;
+}>`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -73,18 +101,27 @@ const KeynotePointWrapper = styled.div`
   width: 100%;
 `;
 
-const Label = styled.span`
-  width: 100%;
-  font-size: 14px;
+const Label = styled.span<{
+  $style?: CSSProp;
+}>`
   color: #374151;
   font-weight: 600;
+  width: 100%;
+  font-size: 14px;
+
+  ${({ $style }) => $style}
 `;
 
-const Value = styled.span`
+const Value = styled.span<{
+  $style?: CSSProp;
+}>`
   width: 100%;
   font-size: 14px;
   color: #111827;
   text-align: end;
+  color: #111827;
+
+  ${({ $style }) => $style}
 `;
 
 Keynote.Point = KeynotePoint;

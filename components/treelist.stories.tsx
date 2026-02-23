@@ -684,7 +684,7 @@ export const WithActions: Story = {
           <Combobox
             options={SHOW_OPTIONS}
             selectedOptions={showItem.length}
-            setSelectedOptions={(e: string[]) =>
+            onChange={(e: string[]) =>
               setShowItem((prev) => ({ ...prev, length: e }))
             }
             styles={{
