@@ -13,11 +13,11 @@ describe("Textbox", () => {
   context("with actions", () => {
     const ACTIONS_OPTION = [
       {
-        icon: RiSendPlaneFill,
+        icon: { image: RiSendPlaneFill },
         onClick: () => console.log("send the message"),
       },
       {
-        icon: RiDeleteBinLine,
+        icon: { image: RiDeleteBinLine },
         onClick: () => console.log("delete the message"),
       },
     ].filter(Boolean);
@@ -75,16 +75,6 @@ describe("Textbox", () => {
     });
 
     context("with type password", () => {
-      const ACTIONS_OPTION = [
-        {
-          icon: RiSendPlaneFill,
-          onClick: () => console.log("send the message"),
-        },
-        {
-          icon: RiDeleteBinLine,
-          onClick: () => console.log("delete the message"),
-        },
-      ].filter(Boolean);
       it("should render the actions & show password button", () => {
         cy.mount(<Textbox value="" type="password" actions={ACTIONS_OPTION} />);
 
@@ -103,17 +93,6 @@ describe("Textbox", () => {
       });
 
       context("when having error", () => {
-        const ACTIONS_OPTION = [
-          {
-            icon: RiSendPlaneFill,
-            onClick: () => console.log("send the message"),
-          },
-          {
-            icon: RiDeleteBinLine,
-            onClick: () => console.log("delete the message"),
-          },
-        ].filter(Boolean);
-
         it("should render the actions, error, and password button", () => {
           cy.mount(
             <Textbox
@@ -152,17 +131,25 @@ describe("Textbox", () => {
             {
               caption: "Button",
               options: [
-                { text: "On-site", value: "1", icon: RiHome2Line },
-                { text: "WFH", value: "2", icon: RiUser2Line },
+                {
+                  text: "On-site",
+                  value: "1",
+                  icon: { image: RiHome2Line },
+                },
+                {
+                  text: "WFH",
+                  value: "2",
+                  icon: { image: RiUser2Line },
+                },
                 {
                   text: "Sick leave",
                   value: "3",
-                  icon: RiSettings2Line,
+                  icon: { image: RiSettings2Line },
                 },
                 {
                   text: "Annual leave",
                   value: "4",
-                  icon: RiLogoutBoxLine,
+                  icon: { image: RiLogoutBoxLine },
                 },
               ],
             },
