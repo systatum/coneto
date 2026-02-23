@@ -1,11 +1,8 @@
 import styled, { css, CSSProp } from "styled-components";
-import {
-  RemixiconComponentType,
-  RiCloseLine,
-  RiInformation2Fill,
-} from "@remixicon/react";
+import { RiCloseLine, RiInformation2Fill } from "@remixicon/react";
 import { ReactNode } from "react";
 import { Button } from "./button";
+import { Figure, FigureProps } from "./figure";
 
 export type MessageboxVariantState =
   | "primary"
@@ -16,7 +13,7 @@ export type MessageboxVariantState =
 export interface MessageboxProps {
   variant?: MessageboxVariantState;
   title: string;
-  icon?: RemixiconComponentType;
+  icon?: FigureProps;
   children: ReactNode;
   actionLinks?: ActionLinkProps[];
   closable?: boolean;
@@ -57,7 +54,7 @@ const VARIATION_STYLES = {
 function Messagebox({
   variant = "primary",
   title,
-  icon: Icon = RiInformation2Fill,
+  icon,
   children,
   actionLinks,
   onCloseRequest,
@@ -67,11 +64,17 @@ function Messagebox({
   return (
     <Wrapper $variant={variant} $style={style}>
       <BorderAccent $variant={variant} />
-      {Icon && (
-        <IconWrapper $variant={variant}>
-          <Icon size={16} />
-        </IconWrapper>
-      )}
+      <Figure
+        {...icon}
+        styles={{
+          self: css`
+            padding-top: 4px;
+            ${icon?.styles?.self}
+          `,
+        }}
+        image={icon?.image ?? RiInformation2Fill}
+        color={icon?.color ?? VARIATION_STYLES[variant].text}
+      />
       <Content>
         <span
           style={{
@@ -179,13 +182,6 @@ const BorderAccent = styled.div<{
   left: 0;
   width: 100%;
   border-top: 2px solid ${({ $variant }) => VARIATION_STYLES[$variant].text};
-`;
-
-const IconWrapper = styled.div<{
-  $variant: keyof typeof VARIATION_STYLES;
-}>`
-  margin-top: 4px;
-  color: ${({ $variant }) => VARIATION_STYLES[$variant].text};
 `;
 
 const Content = styled.div`

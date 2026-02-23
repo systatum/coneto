@@ -100,7 +100,7 @@ export const WithCustomIcon: Story = {
     variant: "primary",
     title: "Custom Icon",
     children: "This message uses a custom RemixIcon.",
-    icon: RemixIcons.RiAlarmWarningFill,
+    icon: { image: RemixIcons.RiAlarmWarningFill },
   },
   render: (args) => <Messagebox {...args} />,
 };
