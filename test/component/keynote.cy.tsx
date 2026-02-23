@@ -109,6 +109,16 @@ describe("Keynote", () => {
             .and("have.css", "width", "322px");
         });
       });
+
+      it("renders with text-align end", () => {
+        cy.mount(<ProductKeyNote />);
+
+        Array.from({ length: 5 }).map((_, index) => {
+          cy.findAllByLabelText("keynote-point-value")
+            .eq(index)
+            .should("have.css", "text-align", "end");
+        });
+      });
     });
   });
 });
