@@ -1,9 +1,4 @@
-import {
-  RemixiconComponentType,
-  RiCheckLine,
-  RiCloseLine,
-  RiPencilFill,
-} from "@remixicon/react";
+import { RiCheckLine, RiCloseLine, RiPencilFill } from "@remixicon/react";
 import {
   Children,
   cloneElement,
@@ -18,10 +13,11 @@ import {
   useState,
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
+import { Figure, FigureProps } from "./figure";
 
 export interface DormantTextProps {
   onActionClick?: () => void;
-  icon?: RemixiconComponentType;
+  icon?: FigureProps;
   dormantedFontSize?: number;
   children?: ReactNode;
   content?: string | number;
@@ -48,7 +44,7 @@ function DormantText({
   onActionClick,
   styles,
   dormantedFontSize = 17,
-  icon: Icon = RiCheckLine,
+  icon,
   children,
   content,
   fullWidth,
@@ -166,7 +162,7 @@ function DormantText({
         }}
       >
         <IconWrapper>
-          <Icon size={18} />
+          <Figure {...icon} image={icon?.image ?? RiCheckLine} size={18} />
         </IconWrapper>
       </ActionButton>
 

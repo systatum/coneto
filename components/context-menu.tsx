@@ -3,6 +3,7 @@ import { Button, ButtonProps } from "./button";
 import { RiMoreFill } from "@remixicon/react";
 import { TipMenuItemProps } from "./tip-menu";
 import { ReactNode } from "react";
+import { Figure } from "./figure";
 
 export type ContextMenuActionsProps = TipMenuItemProps;
 
@@ -33,9 +34,9 @@ export default function ContextMenu({
   hoverBackgroundColor,
   focusBackgroundColor,
   maxActionsBeforeCollapsing = 1,
-  iconSize = 16,
   onOpen,
   open,
+  iconSize = 16,
 }: ContextMenuProps) {
   const buttonProps: ButtonProps = {
     variant: "ghost",
@@ -73,26 +74,29 @@ export default function ContextMenu({
   };
 
   if (actions.length <= maxActionsBeforeCollapsing) {
-    return actions.map((prop, index) => {
-      const { icon: Icon } = prop;
-      return (
-        <Button
-          {...buttonProps}
-          key={index}
-          onClick={(e) => {
-            e.stopPropagation();
-            if (prop.onClick) {
-              prop.onClick(e);
-            }
-          }}
-          onOpen={onOpen}
-          title={prop.caption}
-          aria-label="action-button"
-        >
-          <Icon size={iconSize} />
-        </Button>
-      );
-    });
+    return actions.map((action, index) => (
+      <Button
+        {...buttonProps}
+        key={index}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (action.onClick) {
+            action.onClick(e);
+          }
+        }}
+        onOpen={onOpen}
+        title={action.caption}
+        aria-label="action-button"
+      >
+        {action.icon && (
+          <Figure
+            {...action.icon}
+            size={iconSize ?? action.icon.size}
+            color={action?.icon?.color ?? "black"}
+          />
+        )}
+      </Button>
+    ));
   }
 
   return (
@@ -104,7 +108,7 @@ export default function ContextMenu({
       open={open}
       subMenu={({ list }) => list(actions)}
     >
-      {children ?? <RiMoreFill size={iconSize} />}
+      {children ?? <Figure image={RiMoreFill} size={iconSize} />}
     </Button>
   );
 }
