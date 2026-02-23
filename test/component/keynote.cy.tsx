@@ -7,7 +7,7 @@ import {
 
 describe("Keynote", () => {
   context("styles", () => {
-    function KeynoteDefault({ styles }: { styles?: KeynoteStyles }) {
+    function ProductKeyNote({ styles }: { styles?: KeynoteStyles }) {
       const data = {
         modelType: "MXQ83700F3",
         requestCreatedBy: "adam@systatum.com",
@@ -41,7 +41,7 @@ describe("Keynote", () => {
     context("when given gap by 8px between content", () => {
       it("renders with 8px gap", () => {
         cy.mount(
-          <KeynoteDefault
+          <ProductKeyNote
             styles={{
               self: css`
                 gap: 8px;
@@ -58,7 +58,7 @@ describe("Keynote", () => {
       context("when given with font size 20px and padding-y 12px", () => {
         it("renders custom font-size styles to label and value", () => {
           cy.mount(
-            <KeynoteDefault
+            <ProductKeyNote
               styles={{
                 rowStyle: css`
                   padding: 12px 0;
