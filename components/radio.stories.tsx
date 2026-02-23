@@ -48,7 +48,7 @@ const meta: Meta<typeof Radio> = {
       control: "radio",
       options: ["radio", "button"],
     },
-    iconProps: {
+    icon: {
       description: "Optional icon displayed inside the radio (button mode).",
       control: false,
     },
@@ -141,12 +141,12 @@ export const WithButton: Story = {
       {
         value: "text",
         label: "Text",
-        icon: RiAlignLeft,
+        icon: { image: RiAlignLeft },
       },
       {
         value: "database",
         label: "Database",
-        icon: RiDatabase2Fill,
+        icon: { image: RiDatabase2Fill },
       },
     ];
 
@@ -178,8 +178,8 @@ export const WithButton: Story = {
             value={option.value}
             label={option.label}
             mode="button"
-            iconProps={{
-              icon: option.icon as string,
+            icon={{
+              image: option.icon.image as string,
             }}
             checked={args.value === option.value}
             onChange={onChangeValue}

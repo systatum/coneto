@@ -9,8 +9,8 @@ describe("Radio", () => {
         <Radio
           label="Radio with icon"
           value=""
-          iconProps={{
-            icon: Ri24HoursFill,
+          icon={{
+            image: Ri24HoursFill,
           }}
         />
       );
@@ -25,9 +25,9 @@ describe("Radio", () => {
           <Radio
             label="Radio with icon"
             value=""
-            iconProps={{
-              icon: Ri24HoursFill,
-              iconColor: "red",
+            icon={{
+              image: Ri24HoursFill,
+              color: "red",
             }}
           />
         );
@@ -45,9 +45,9 @@ describe("Radio", () => {
           <Radio
             label="Radio with icon"
             value=""
-            iconProps={{
-              icon: Ri24HoursFill,
-              iconSize: 30,
+            icon={{
+              image: Ri24HoursFill,
+              size: 30,
             }}
           />
         );
@@ -64,8 +64,8 @@ describe("Radio", () => {
         cy.mount(
           <Radio
             label="Radio with icon"
-            iconProps={{
-              icon: Ri24HoursFill,
+            icon={{
+              image: Ri24HoursFill,
             }}
           />
         );
@@ -79,8 +79,8 @@ describe("Radio", () => {
           cy.mount(
             <Radio
               label="Radio with icon"
-              iconProps={{
-                icon: Ri24HoursFill,
+              icon={{
+                image: Ri24HoursFill,
               }}
             />
           );
@@ -97,8 +97,8 @@ describe("Radio", () => {
           <Radio
             label="Radio with icon"
             mode="button"
-            iconProps={{
-              icon: Ri24HoursFill,
+            icon={{
+              image: Ri24HoursFill,
             }}
           />
         );
@@ -113,8 +113,8 @@ describe("Radio", () => {
             <Radio
               label="Radio with icon"
               mode="button"
-              iconProps={{
-                icon: Ri24HoursFill,
+              icon={{
+                image: Ri24HoursFill,
               }}
             />
           );
@@ -130,8 +130,8 @@ describe("Radio", () => {
         cy.mount(
           <Radio
             label="Radio with icon"
-            iconProps={{
-              icon: "https://picsum.photos/seed/text/64/64",
+            icon={{
+              image: "https://picsum.photos/seed/text/64/64",
             }}
           />
         );
@@ -147,9 +147,9 @@ describe("Radio", () => {
           cy.mount(
             <Radio
               label="Radio with icon"
-              iconProps={{
-                iconSize: 30,
-                icon: "https://picsum.photos/seed/text/64/64",
+              icon={{
+                size: 30,
+                image: "https://picsum.photos/seed/text/64/64",
               }}
             />
           );
