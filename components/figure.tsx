@@ -1,4 +1,4 @@
-import { ComponentType, ImgHTMLAttributes, HTMLAttributes } from "react";
+import { ComponentType, HTMLAttributes } from "react";
 import styled, { CSSProp } from "styled-components";
 
 export interface FigureProps

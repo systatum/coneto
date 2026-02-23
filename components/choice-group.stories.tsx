@@ -14,7 +14,6 @@ import {
   RiMusic2Fill,
   RiImage2Fill,
   RiVideoFill,
-  RemixiconComponentType,
 } from "@remixicon/react";
 import styled from "styled-components";
 
