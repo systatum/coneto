@@ -1,9 +1,9 @@
 import styled, { css, CSSProp } from "styled-components";
-import { RemixiconComponentType } from "@remixicon/react";
 import { COLOR_STYLE_MAP } from "../constants/color-map";
 import React, { ReactNode, useMemo, useState } from "react";
 import { Button } from "./button";
 import { Searchbox } from "./searchbox";
+import { Figure, FigureProps } from "./figure";
 
 export type TipMenuItemVariantType = "sm" | "md";
 export interface TipMenuProps {
@@ -17,13 +17,10 @@ export interface TipMenuProps {
 
 export interface TipMenuItemProps {
   caption: string;
-  icon: RemixiconComponentType;
+  icon: FigureProps;
   onClick?: (e?: React.MouseEvent) => void;
-  iconColor?: string;
   isDangerous?: boolean;
-  iconUrl?: string | null | undefined;
   variant?: TipMenuItemVariantType;
-  iconSize?: number;
 }
 
 function TipMenu({
@@ -80,23 +77,21 @@ function TipMenu({
           }}
         />
       )}
-      {filteredSubMenuList?.map((data, index) => (
+      {filteredSubMenuList?.map((menu, index) => (
         <TipMenu.Item
           key={index}
-          variant={data.variant ?? variant}
-          caption={data.caption}
-          icon={data.icon}
-          iconColor={data.iconColor}
-          isDangerous={data.isDangerous}
+          variant={menu.variant ?? variant}
+          caption={menu.caption}
+          icon={menu.icon}
+          isDangerous={menu.isDangerous}
           onClick={(e) => {
             e.stopPropagation();
 
-            if (data.onClick) {
-              data.onClick();
+            if (menu.onClick) {
+              menu.onClick();
             }
             setIsOpen?.();
           }}
-          iconUrl={data.iconUrl}
         />
       ))}
       {children}
@@ -106,16 +101,11 @@ function TipMenu({
 
 function TipMenuItem({
   caption,
-  icon: Icon,
+  icon,
   onClick,
-  iconColor = "gray",
   isDangerous = false,
-  iconUrl,
   variant,
-  iconSize = 20,
 }: TipMenuItemProps) {
-  const isIconValid = iconUrl && iconUrl !== "";
-
   return (
     <StyledTipMenuItem
       $variant={variant}
@@ -123,20 +113,14 @@ function TipMenuItem({
       $isDangerous={isDangerous}
       onMouseDown={onClick}
     >
-      {isIconValid ? (
-        <StyledIconImage
-          alt={`${caption} icon on the Systatum superapp`}
-          src={iconUrl}
-        />
-      ) : (
-        <StyledIcon
-          as={Icon}
-          style={{
-            minWidth: `${iconSize}px`,
-            minHeight: `${iconSize}px`,
-          }}
-          $variant={variant}
-          $color={isDangerous ? "white" : COLOR_STYLE_MAP[iconColor]}
+      {icon && (
+        <Figure
+          {...icon}
+          color={
+            isDangerous
+              ? "white"
+              : (COLOR_STYLE_MAP[icon?.color] ?? icon?.color)
+          }
         />
       )}
       <StyledCaption>{caption}</StyledCaption>
@@ -187,32 +171,6 @@ const StyledTipMenuItem = styled.div<{
     border-color: ${(props) =>
       props.$isDangerous ? "#e71f29" : "transparent"};
   }
-`;
-
-const StyledIconImage = styled.img`
-  width: 30px;
-  height: 30px;
-  object-fit: contain;
-  padding-left: 1em;
-`;
-
-const StyledIcon = styled.div<{
-  $variant?: TipMenuItemVariantType;
-  $color?: string;
-}>`
-  color: ${({ $color }) => $color};
-
-  ${({ $variant }) =>
-    $variant === "sm"
-      ? css`
-          margin-left: 0.5em;
-          width: 15px;
-          height: 15px;
-        `
-      : css`
-          width: 20px;
-          height: 20px;
-        `}
 `;
 
 const StyledCaption = styled.span`

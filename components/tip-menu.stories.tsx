@@ -56,66 +56,83 @@ export const Default: Story = {
           subMenuList={[
             {
               caption: "Report Phishing",
-              icon: RiSpam2Line,
-              iconColor: "blue",
+              icon: {
+                image: RiSpam2Line,
+                color: "blue",
+              },
               onClick: () => console.log("Phishing reported"),
             },
             {
               caption: "Report Junk",
-              icon: RiForbid2Line,
-              iconColor: "red",
+              icon: {
+                image: RiForbid2Line,
+                color: "red",
+              },
               onClick: () => console.log("Junk reported"),
             },
             {
               caption: "Block Sender",
-              icon: RiShieldLine,
-              iconColor: "orange",
+              icon: {
+                image: RiShieldLine,
+                color: "orange",
+              },
               isDangerous: true,
               onClick: () => console.log("Sender blocked"),
             },
             {
               caption: "Mark as Read",
-              icon: RiCheckLine,
-              iconColor: "green",
+              icon: {
+                image: RiCheckLine,
+                color: "green",
+              },
               onClick: () => console.log("Marked as read"),
             },
             {
               caption: "Move to Spam",
-              icon: RiInboxArchiveLine,
-              iconColor: "purple",
+              icon: {
+                image: RiInboxArchiveLine,
+                color: "purple",
+              },
               onClick: () => console.log("Moved to spam"),
             },
             {
               caption: "Download Attachment",
-              icon: RiDownloadLine,
-              iconColor: "teal",
+              icon: {
+                image: RiDownloadLine,
+                color: "teal",
+              },
               onClick: () => console.log("Downloading"),
             },
             {
               caption: "Copy Link",
-              icon: RiLink,
-              iconColor: "gray",
+              icon: {
+                image: RiLink,
+                color: "gray",
+              },
               onClick: () => console.log("Link copied"),
             },
             {
               caption: "Share",
-              icon: RiShareLine,
-              iconColor: "indigo",
+              icon: {
+                image: RiShareLine,
+                color: "indigo",
+              },
               isDangerous: true,
               onClick: () => console.log("Shared"),
             },
             {
               caption: "Edit",
-              icon: RiEditLine,
-              iconColor: "yellow",
+              icon: {
+                image: RiEditLine,
+                color: "yellow",
+              },
               onClick: () => console.log("Edit mode"),
             },
           ]}
         >
           <TipMenu.Item
             caption="Delete"
-            icon={RiDeleteBinLine}
-            iconColor="red"
+            icon={{ image: RiDeleteBinLine, color: "red" }}
             onClick={() => setIsOpen(!isOpen)}
           />
         </TipMenu>
