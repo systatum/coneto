@@ -1069,14 +1069,17 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
             >
               {actions &&
                 (() => {
-                  const list = actions(idFullname);
+                  const listActions = actions(idFullname);
 
-                  const actionsWithIcons = list.map((prop) => ({
-                    ...prop,
-                    icon: prop.icon ?? RiArrowRightSLine,
+                  const actionsWithIcons = listActions.map((action) => ({
+                    ...action,
+                    icon: {
+                      ...action?.icon,
+                      image: action?.icon?.image ?? RiArrowRightSLine,
+                    },
                     onClick: (e?: React.MouseEvent) => {
-                      prop.onClick?.(e);
-                      if (list.length > 1) {
+                      action?.onClick?.(e);
+                      if (listActions?.length > 1) {
                         setIsHovered(null);
                       }
                     },
@@ -1108,11 +1111,10 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
                           css`
                             width: 24px;
                             height: 24px;
-                            padding: 2px;
                           `}
                         `,
                       }}
-                      iconSize={!subtitle && 12}
+                      iconSize={subtitle ? 16 : 12}
                       focusBackgroundColor="#c1d6f1"
                       hoverBackgroundColor="#c1d6f1"
                       activeBackgroundColor="#c1d6f1"
