@@ -1,13 +1,10 @@
-import {
-  RemixiconComponentType,
-  RiCheckLine,
-  RiErrorWarningLine,
-} from "@remixicon/react";
+import { RiCheckLine, RiErrorWarningLine } from "@remixicon/react";
 import React, { ReactElement, ReactNode } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { Button } from "./button";
 import { StatefulForm } from "./stateful-form";
 import { Tooltip } from "./tooltip";
+import { Figure, FigureProps } from "./figure";
 
 export interface FieldLaneProps {
   label?: string;
@@ -31,7 +28,7 @@ export interface FieldLaneStylesProps {
 
 export interface FieldLaneActionsProps {
   title?: string;
-  icon?: RemixiconComponentType;
+  icon?: FigureProps;
   iconColor?: string;
   onClick?: (e: React.MouseEvent) => void;
   disabled?: boolean;
@@ -60,8 +57,7 @@ export interface DropdownStylesProps {
 export interface DropdownOptionProps {
   text: string;
   value: string;
-  icon?: RemixiconComponentType;
-  iconColor?: string;
+  icon?: FigureProps;
 }
 
 function FieldLane({
@@ -92,7 +88,6 @@ function FieldLane({
               const dropdownData = dropdown.options.map((prop) => ({
                 caption: prop.text,
                 icon: prop.icon,
-                iconColor: prop.iconColor,
                 onClick: () => dropdown.onChange(prop.value),
               }));
 
@@ -158,7 +153,7 @@ function FieldLane({
 
       {actions &&
         actions.map((props, index) => {
-          const { icon: Icon = RiCheckLine, titleShowDelay = 1250 } = props;
+          const { icon, titleShowDelay = 1250 } = props;
           const offsetBase = 8;
           const offsetEach = 22;
           const reverseIndex = actions.length - 1 - index;
@@ -247,7 +242,13 @@ function FieldLane({
                 showDelayPeriod={titleShowDelay}
                 dialog={props.title}
               >
-                <Icon size={18} />
+                {icon && (
+                  <Figure
+                    {...icon}
+                    image={icon?.image ?? RiCheckLine}
+                    size={icon?.size ?? 18}
+                  />
+                )}
               </Tooltip>
             </Button>
           );
