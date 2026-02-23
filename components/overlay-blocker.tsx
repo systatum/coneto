@@ -83,6 +83,7 @@ export const OverlayBlocker = forwardRef<
 
     return (
       <StyledOverlay
+        aria-label="overlay-blocker"
         $zIndex={zIndex}
         onClick={handleClick}
         $style={styles?.self}
