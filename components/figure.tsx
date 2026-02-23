@@ -3,9 +3,9 @@ import styled, { CSSProp } from "styled-components";
 
 export interface FigureProps
   extends Omit<HTMLAttributes<HTMLSpanElement>, "style"> {
-  icon?: ComponentType<any> | string;
-  iconSize?: number;
-  iconColor?: string;
+  image?: ComponentType<any> | string;
+  size?: number;
+  color?: string;
   styles?: FigureStylesProps;
 }
 
@@ -14,9 +14,9 @@ export interface FigureStylesProps {
 }
 
 function Figure({
-  icon: Icon,
-  iconSize = 16,
-  iconColor,
+  image: Icon,
+  size = 16,
+  color,
   styles,
   "aria-label": ariaLabel,
   ...rest
@@ -24,20 +24,20 @@ function Figure({
   if (!Icon) return null;
 
   return (
-    <Wrapper {...rest}>
+    <Wrapper {...rest} $style={styles?.self}>
       {typeof Icon === "string" ? (
         <img
           alt="figure-icon"
           src={Icon}
-          width={iconSize}
-          height={iconSize}
+          width={size}
+          height={size}
           aria-label={ariaLabel}
         />
       ) : (
         <Icon
-          size={iconSize}
+          size={size}
           aria-label={ariaLabel}
-          style={{ color: iconColor ?? "black" }}
+          style={{ color: color ?? "black" }}
         />
       )}
     </Wrapper>
