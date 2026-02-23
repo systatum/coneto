@@ -1,12 +1,11 @@
-import { RemixiconComponentType } from "@remixicon/react";
 import { css, CSSProp } from "styled-components";
 import { Button, ButtonVariants, SubMenuButtonProps } from "./button";
 import { ReactNode } from "react";
+import { Figure, FigureProps } from "./figure";
 
 export interface ActionButtonProps {
   caption?: string;
-  icon?: RemixiconComponentType;
-  iconSize?: number;
+  icon?: FigureProps;
   onClick?: () => void;
   styles?: ActionButtonStylesProps;
   subMenu?: (props: SubMenuButtonProps) => ReactNode;
@@ -24,8 +23,7 @@ export interface ActionButtonStylesProps {
 
 export function ActionButton({
   caption,
-  icon: Icon,
-  iconSize,
+  icon,
   onClick,
   styles,
   subMenu,
@@ -138,7 +136,7 @@ export function ActionButton({
         `,
       }}
     >
-      {Icon && <Icon size={iconSize ?? 14} />}
+      {icon && <Figure {...icon} size={icon?.size ?? 14} />}
       {caption && caption}
     </Button>
   );
