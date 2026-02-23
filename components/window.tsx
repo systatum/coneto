@@ -339,13 +339,13 @@ const Divider = styled.div<{ $isVertical: boolean; $style?: CSSProp }>`
           width: 1px;
           height: 100%;
           cursor: col-resize;
-          border-right: 1px solid #d1d5db;
+          border-right: 2.5px solid #d1d5db;
         `
       : css`
           height: 1px;
           width: 100%;
           cursor: row-resize;
-          border-bottom: 1px solid #d1d5db;
+          border-bottom: 2.5px solid #d1d5db;
         `}
 
   ${({ $style }) => $style}
