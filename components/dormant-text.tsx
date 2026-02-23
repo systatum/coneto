@@ -162,7 +162,12 @@ function DormantText({
         }}
       >
         <IconWrapper>
-          <Figure {...icon} image={icon?.image ?? RiCheckLine} size={18} />
+          <Figure
+            {...icon}
+            image={icon?.image ?? RiCheckLine}
+            color={icon?.color ?? "#666"}
+            size={18}
+          />
         </IconWrapper>
       </ActionButton>
 
