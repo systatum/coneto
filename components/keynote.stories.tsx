@@ -31,19 +31,17 @@ const meta: Meta<typeof Keynote> = {
     styles: {
       control: false,
       description: `
-Custom styles for the Keynote component. This object allows you to override styles for different parts of the component:
+Custom styles for the Keynote component. This object allows you to override styles for different parts of the component.
 
-- **self**: Styles applied to the root wrapper of the Keynote component (layout, spacing, positioning).
-- **keynotePointStyles**: Styles forwarded to each KeynotePoint item.
+### Keynote Level
 
-Inside \`keynotePointStyles\`, you can customize:
+- **containerStyle**: Styles applied to the root wrapper of the Keynote component (layout, spacing, positioning).
+- **rowStyle**: Styles applied to each keynote row wrapper.
+- **rowKeyStyle**: Styles applied to the label text inside each row.
+- **rowValueStyle**: Styles applied to the value content inside each row.
 
-- **containerStyle**: Wrapper of each keynote row (row layout, spacing, borders).
-- **labelStyle**: Styles for the label text (color, typography, spacing).
-- **valueStyle**: Styles for the value content (color, alignment, emphasis).
-
-Each field accepts a \`CSSProp\` (styled-components compatible) and allows full visual customization.
-  `,
+Each field accepts a \`CSSProp\` (styled-components compatible) and allows full visual customization of the component.
+`,
     },
   },
 };
