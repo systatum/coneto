@@ -60,7 +60,7 @@ export const Default: Story = {
 export const WithIcon: Story = {
   args: {
     checked: false,
-    icon: RemixIcons.RiLock2Fill,
+    icon: { image: RemixIcons.RiLock2Fill },
   },
   render: (args) => {
     const [, setUpdateArgs] = useArgs();
@@ -77,7 +77,7 @@ export const WithIcon: Story = {
 export const WithIconAndLoading: Story = {
   args: {
     checked: false,
-    icon: RemixIcons.RiLock2Fill,
+    icon: { image: RemixIcons.RiLock2Fill },
     isLoading: false,
   },
   render: (args) => {
@@ -104,7 +104,7 @@ export const WithIconAndLoading: Story = {
 export const WithDescription: Story = {
   args: {
     checked: false,
-    icon: RemixIcons.RiLock2Fill,
+    icon: { image: RemixIcons.RiLock2Fill },
     isLoading: false,
     label: "Click and load",
     description: "Click and you will see a loading icon",
@@ -138,7 +138,7 @@ export const WithDescription: Story = {
 export const WithError: Story = {
   args: {
     checked: false,
-    icon: RemixIcons.RiLock2Fill,
+    icon: { image: RemixIcons.RiLock2Fill },
     isLoading: false,
     showError: true,
     label: "With Error",

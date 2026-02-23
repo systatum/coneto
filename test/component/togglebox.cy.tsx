@@ -4,7 +4,9 @@ import { Togglebox } from "./../../components/togglebox";
 describe("Togglebox", () => {
   context("with size", () => {
     it("render with calculate icon, wrapper, and thumb-shift value", () => {
-      cy.mount(<Togglebox size={30} icon={Ri24HoursFill} checked={true} />);
+      cy.mount(
+        <Togglebox size={30} icon={{ image: Ri24HoursFill }} checked={true} />
+      );
       const size = 30;
       const widthWrapper = size * 2;
       const heightWrapper = size * 1;
