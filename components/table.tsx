@@ -363,7 +363,7 @@ function Table({
                       const { capsuleProps, ...rest } = action;
 
                       if (action.type === "capsule") {
-                        return <ActionCapsule key={index} {...action} />;
+                        return <ActionCapsule key={index} {...capsuleProps} />;
                       }
 
                       return <ActionButton key={index} {...rest} forTable />;
@@ -603,10 +603,10 @@ function Table({
   );
 }
 
-function ActionCapsule(data: TableActionsProps) {
+function ActionCapsule(capsule: CapsuleProps) {
   return (
     <Capsule
-      {...data.capsuleProps}
+      {...capsule}
       activeBackgroundColor="rgb(226, 224, 224)"
       styles={{
         containerStyle: css`
@@ -615,12 +615,12 @@ function ActionCapsule(data: TableActionsProps) {
           max-height: 32px;
           border-radius: 6px;
           font-size: 14px;
-          ${data.capsuleProps.styles?.containerStyle}
+          ${capsule.styles?.containerStyle}
         `,
         tabStyle: css`
           border-radius: 6px;
           color: rgb(86, 85, 85);
-          ${data.capsuleProps.styles?.tabStyle}
+          ${capsule.styles?.tabStyle}
         `,
       }}
     />
@@ -1177,14 +1177,18 @@ function TableRow({
 
       {actions &&
         (() => {
-          const list = actions(`${rowId}`);
-          const actionsWithIcons = list.map((prop) => ({
-            ...prop,
-            icon: prop.icon ?? RiArrowRightSLine,
+          const listActions = actions(`${rowId}`);
+          const actionsWithIcons = listActions.map((action) => ({
+            ...action,
+            icon: {
+              ...action.icon,
+              image: action.icon?.image ?? RiArrowRightSLine,
+              color: action.icon?.color ?? "black",
+            },
             onClick: (e?: React.MouseEvent) => {
               e?.stopPropagation();
-              prop.onClick?.(e);
-              if (list.length > 1) {
+              action.onClick?.(e);
+              if (listActions.length > 1) {
                 setIsHovered(null);
               }
             },
