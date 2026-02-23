@@ -4,6 +4,7 @@ import React, {
   useState,
   useCallback,
   useEffect,
+  ReactNode,
 } from "react";
 import styled, { CSSProp } from "styled-components";
 
@@ -22,6 +23,7 @@ export interface OverlayBlockerProps {
   zIndex?: number;
   onClick?: OverlayBlockerClickHandler;
   styles?: OverlayBlockerStylesProps;
+  children?: ReactNode;
 }
 
 export interface OverlayBlockerStylesProps {
@@ -31,58 +33,65 @@ export interface OverlayBlockerStylesProps {
 export const OverlayBlocker = forwardRef<
   OverlayBlockerRef,
   OverlayBlockerProps
->(({ show = false, zIndex = 9991999, onClick = "close", styles }, ref) => {
-  const [visible, setVisible] = useState(show);
+>(
+  (
+    { show = false, zIndex = 9991999, onClick = "close", styles, children },
+    ref
+  ) => {
+    const [visible, setVisible] = useState(show);
 
-  useEffect(() => {
-    setVisible(show);
-  }, [show]);
+    useEffect(() => {
+      setVisible(show);
+    }, [show]);
 
-  const close = useCallback(() => {
-    setVisible(false);
-  }, []);
+    const close = useCallback(() => {
+      setVisible(false);
+    }, []);
 
-  const open = useCallback(() => {
-    setVisible(true);
-  }, []);
+    const open = useCallback(() => {
+      setVisible(true);
+    }, []);
 
-  useImperativeHandle(ref, () => ({
-    close,
-    open,
-  }));
+    useImperativeHandle(ref, () => ({
+      close,
+      open,
+    }));
 
-  const handleClick = () => {
-    let defaultPrevented = false;
+    const handleClick = () => {
+      let defaultPrevented = false;
 
-    const preventDefault = () => {
-      defaultPrevented = true;
+      const preventDefault = () => {
+        defaultPrevented = true;
+      };
+
+      if (typeof onClick === "function") {
+        onClick({ close, preventDefault });
+      } else if (onClick === "preventDefault") {
+        preventDefault();
+        return;
+      } else if (onClick === "close") {
+        close();
+        return;
+      }
+
+      if (!defaultPrevented) {
+        close();
+      }
     };
 
-    if (typeof onClick === "function") {
-      onClick({ close, preventDefault });
-    } else if (onClick === "preventDefault") {
-      preventDefault();
-      return;
-    } else if (onClick === "close") {
-      close();
-      return;
-    }
+    if (!visible) return null;
 
-    if (!defaultPrevented) {
-      close();
-    }
-  };
-
-  if (!visible) return null;
-
-  return (
-    <StyledOverlay
-      $zIndex={zIndex}
-      onClick={handleClick}
-      $style={styles?.self}
-    />
-  );
-});
+    return (
+      <StyledOverlay
+        $zIndex={zIndex}
+        onClick={handleClick}
+        $style={styles?.self}
+      >
+        {children}
+      </StyledOverlay>
+    );
+  }
+);
 
 const StyledOverlay = styled.div<{ $zIndex: number; $style?: CSSProp }>`
   position: absolute;
@@ -90,6 +99,7 @@ const StyledOverlay = styled.div<{ $zIndex: number; $style?: CSSProp }>`
   background: rgba(3, 3, 3, 0.2);
   backdrop-filter: blur(2px);
   pointer-events: auto;
+
   z-index: ${({ $zIndex }) => $zIndex};
 
   ${({ $style }) => $style}
