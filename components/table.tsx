@@ -31,6 +31,7 @@ import {
 import { Capsule, CapsuleProps } from "./capsule";
 import ContextMenu from "./context-menu";
 import { ActionButton, ActionButtonProps } from "./action-button";
+import { OverlayBlocker } from "./overlay-blocker";
 
 export type RowData = (string | ReactNode)[];
 
@@ -592,9 +593,20 @@ function Table({
             )}
 
             {isLoading && (
-              <TableLoadingOverlay>
+              <OverlayBlocker
+                styles={{
+                  self: css`
+                    display: flex;
+                    justify-content: center;
+                    backdrop-filter: blur(0.5px);
+                    background-color: rgba(255, 255, 255, 0.6);
+                  `,
+                }}
+                show={isLoading}
+                onClick="preventDefault"
+              >
                 <LoadingSpinner iconSize={24} />
-              </TableLoadingOverlay>
+              </OverlayBlocker>
             )}
           </TableContainer>
         </Wrapper>
@@ -778,16 +790,6 @@ const EmptyState = styled.div`
   border-bottom: 1px solid #d1d5db;
   border-left: 1px solid #d1d5db;
   border-right: 1px solid #d1d5db;
-`;
-
-const TableLoadingOverlay = styled.div`
-  position: absolute;
-  inset: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(255, 255, 255, 0.6);
-  z-index: 30;
 `;
 
 const CheckboxWrapper = styled.div`

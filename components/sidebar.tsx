@@ -4,6 +4,7 @@ import { useAnimation } from "framer-motion";
 import { RiArrowLeftSLine, RiArrowRightSLine } from "@remixicon/react";
 import { motion } from "framer-motion";
 import styled, { CSSProp } from "styled-components";
+import { OverlayBlocker } from "./overlay-blocker";
 
 export interface SidebarProps {
   children?: ReactNode;
@@ -74,11 +75,9 @@ function Sidebar({ children, styles, position = "left" }: SidebarProps) {
   return (
     <>
       {isSidebarOpen && isMobile && (
-        <Overlay
-          {...handlers}
+        <OverlayBlocker
+          show={isSidebarOpen}
           onClick={() => handleToggleSidebar(false)}
-          $isOpen={isSidebarOpen}
-          $position={position}
         />
       )}
 
@@ -108,26 +107,12 @@ function Sidebar({ children, styles, position = "left" }: SidebarProps) {
   );
 }
 
-const Overlay = styled.div<{ $isOpen: boolean; $position: "left" | "right" }>`
-  position: fixed;
-  top: 0;
-  height: 100%;
-  z-index: 30;
-  width: ${({ $isOpen }) => ($isOpen ? "100%" : "5%")};
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(4px);
-  ${({ $position }) => ($position === "left" ? "left: 0;" : "right: 0;")}
-  @media (min-width: 768px) {
-    display: none;
-  }
-`;
-
 const MotionSidebar = styled(motion.div)<{
   $position: "left" | "right";
   $style?: CSSProp;
 }>`
   position: fixed;
-  z-index: 40;
+  z-index: 9999999;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -138,6 +123,7 @@ const MotionSidebar = styled(motion.div)<{
   border-color: #d1d5db;
   background-color: white;
   padding: 2.5rem 1.5rem 1.5rem;
+
   ${({ $position }) =>
     $position === "left"
       ? "left: 0; border-right: 1px solid #d1d5db;"

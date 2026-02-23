@@ -28,6 +28,7 @@ import { Togglebox } from "./togglebox";
 import styled, { css, CSSProp } from "styled-components";
 import ContextMenu, { ContextMenuActionsProps } from "./context-menu";
 import { ActionButton, ActionButtonProps } from "./action-button";
+import { OverlayBlocker } from "./overlay-blocker";
 
 export interface ListProps extends ListMaxItemsProp {
   searchable?: boolean;
@@ -270,9 +271,20 @@ function List({
           )}
 
           {isLoading && (
-            <OverlayLoading>
+            <OverlayBlocker
+              show={isLoading}
+              onClick={"preventDefault"}
+              styles={{
+                self: css`
+                  display: flex;
+                  justify-content: center;
+                  background-color: rgba(255, 255, 255, 0.6);
+                  backdrop-filter: blur(0.5px);
+                `,
+              }}
+            >
               <LoadingSpinner iconSize={24} />
-            </OverlayLoading>
+            </OverlayBlocker>
           )}
 
           {childArray.map((child, index) => {
@@ -363,16 +375,6 @@ const ListContainer = styled.div<{ $containerStyle?: CSSProp }>`
   gap: 0.5rem;
   position: relative;
   ${(props) => props.$containerStyle}
-`;
-
-const OverlayLoading = styled.div`
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(255, 255, 255, 0.6);
-  z-index: 30;
 `;
 
 export interface ListGroupActionsProps
