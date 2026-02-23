@@ -175,7 +175,9 @@ export const WithRadioAndIcon: StoryRadio = {
               name="radioSelected"
               value={option.value}
               label={option.label}
-              icon={option.icon as RemixiconComponentType}
+              iconProps={{
+                icon: option.icon as string,
+              }}
               description={option.description}
               checked={args.radioSelected === option.value}
               onChange={onChangeValue}
@@ -274,7 +276,9 @@ export const WithRadioButton: StoryRadio = {
                   name={GROUP_A}
                   value={option.value}
                   label={option.label}
-                  icon={option.icon as RemixiconComponentType}
+                  iconProps={{
+                    icon: option.icon as string,
+                  }}
                   checked={stateA === option.value}
                   onChange={(e) => setStateA(e.target.value)}
                 />
@@ -301,7 +305,9 @@ export const WithRadioButton: StoryRadio = {
                   name={GROUP_B}
                   value={option.value}
                   label={option.label}
-                  icon={option.icon as RemixiconComponentType}
+                  iconProps={{
+                    icon: option.icon as string,
+                  }}
                   checked={stateB === option.value}
                   onChange={(e) => setStateB(e.target.value)}
                 />
@@ -328,7 +334,9 @@ export const WithRadioButton: StoryRadio = {
                   name={GROUP_C}
                   value={option.value}
                   label={option.label}
-                  icon={option.icon as string}
+                  iconProps={{
+                    icon: option.icon as string,
+                  }}
                   checked={stateC === option.value}
                   onChange={(e) => setStateC(e.target.value)}
                 />

@@ -48,17 +48,9 @@ const meta: Meta<typeof Radio> = {
       control: "radio",
       options: ["radio", "button"],
     },
-    icon: {
+    iconProps: {
       description: "Optional icon displayed inside the radio (button mode).",
       control: false,
-    },
-    iconSize: {
-      description: "Size of the icon or image in pixels.",
-      control: "number",
-    },
-    iconColor: {
-      description: "Color of the icon.",
-      control: "color",
     },
     disabled: {
       description: "Disables user interaction with the radio.",
@@ -186,7 +178,9 @@ export const WithButton: Story = {
             value={option.value}
             label={option.label}
             mode="button"
-            icon={option.icon}
+            iconProps={{
+              icon: option.icon as string,
+            }}
             checked={args.value === option.value}
             onChange={onChangeValue}
           />

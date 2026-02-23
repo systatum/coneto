@@ -5,7 +5,15 @@ import { css } from "styled-components";
 describe("Radio", () => {
   context("with icon", () => {
     it("renders the radio with icon", () => {
-      cy.mount(<Radio label="Radio with icon" value="" icon={Ri24HoursFill} />);
+      cy.mount(
+        <Radio
+          label="Radio with icon"
+          value=""
+          iconProps={{
+            icon: Ri24HoursFill,
+          }}
+        />
+      );
       cy.findByLabelText("radio-icon")
         .should("have.css", "width", "16px")
         .and("have.css", "height", "16px");
@@ -17,8 +25,10 @@ describe("Radio", () => {
           <Radio
             label="Radio with icon"
             value=""
-            icon={Ri24HoursFill}
-            iconColor="red"
+            iconProps={{
+              icon: Ri24HoursFill,
+              iconColor: "red",
+            }}
           />
         );
         cy.findByLabelText("radio-icon").should(
@@ -35,8 +45,10 @@ describe("Radio", () => {
           <Radio
             label="Radio with icon"
             value=""
-            icon={Ri24HoursFill}
-            iconSize={30}
+            iconProps={{
+              icon: Ri24HoursFill,
+              iconSize: 30,
+            }}
           />
         );
         cy.findByLabelText("radio-icon")
@@ -49,7 +61,14 @@ describe("Radio", () => {
   context("mode", () => {
     context("when given radio", () => {
       it("renders the radio as usual and direction to row", () => {
-        cy.mount(<Radio label="Radio with icon" icon={Ri24HoursFill} />);
+        cy.mount(
+          <Radio
+            label="Radio with icon"
+            iconProps={{
+              icon: Ri24HoursFill,
+            }}
+          />
+        );
         cy.findByLabelText("radio-input-container")
           .should("have.css", "flex-direction", "row")
           .and("have.css", "align-items", "center");
@@ -57,7 +76,14 @@ describe("Radio", () => {
 
       context("when given icon", () => {
         it("renders the icon with default size (16px)", () => {
-          cy.mount(<Radio label="Radio with icon" icon={Ri24HoursFill} />);
+          cy.mount(
+            <Radio
+              label="Radio with icon"
+              iconProps={{
+                icon: Ri24HoursFill,
+              }}
+            />
+          );
           cy.findByLabelText("radio-icon")
             .should("have.css", "width", "16px")
             .and("have.css", "height", "16px");
@@ -68,7 +94,13 @@ describe("Radio", () => {
     context("when given button", () => {
       it("renders the radio without circle and direction to column", () => {
         cy.mount(
-          <Radio label="Radio with icon" mode="button" icon={Ri24HoursFill} />
+          <Radio
+            label="Radio with icon"
+            mode="button"
+            iconProps={{
+              icon: Ri24HoursFill,
+            }}
+          />
         );
         cy.findByLabelText("radio-input-container")
           .should("have.css", "flex-direction", "column")
@@ -78,7 +110,13 @@ describe("Radio", () => {
       context("when given icon", () => {
         it("renders the icon with default size (25px)", () => {
           cy.mount(
-            <Radio label="Radio with icon" mode="button" icon={Ri24HoursFill} />
+            <Radio
+              label="Radio with icon"
+              mode="button"
+              iconProps={{
+                icon: Ri24HoursFill,
+              }}
+            />
           );
           cy.findByLabelText("radio-icon")
             .should("have.css", "width", "25px")
@@ -92,7 +130,9 @@ describe("Radio", () => {
         cy.mount(
           <Radio
             label="Radio with icon"
-            imageUrl={"https://picsum.photos/seed/text/64/64"}
+            iconProps={{
+              icon: "https://picsum.photos/seed/text/64/64",
+            }}
           />
         );
         cy.findByLabelText("radio-icon").should("not.exist");
@@ -107,8 +147,10 @@ describe("Radio", () => {
           cy.mount(
             <Radio
               label="Radio with icon"
-              iconSize={30}
-              imageUrl={"https://picsum.photos/seed/text/64/64"}
+              iconProps={{
+                iconSize: 30,
+                icon: "https://picsum.photos/seed/text/64/64",
+              }}
             />
           );
           cy.findByLabelText("radio-icon").should("not.exist");
