@@ -532,32 +532,28 @@ export const WithActions: Story = {
     const ITEM_ACTIONS: SubMenuTreeList[] = [
       {
         caption: "Edit",
-        icon: RiEdit2Line,
-        iconColor: "gray",
+        icon: { image: RiEdit2Line, color: "gray" },
         onClick: (id: string) => {
           console.log(`${id} was edited`);
         },
       },
       {
         caption: "Delete",
-        icon: RiDeleteBin2Line,
-        iconColor: "gray",
+        icon: { image: RiDeleteBin2Line, color: "gray" },
         onClick: (id: string) => {
           console.log(`${id} was deleted`);
         },
       },
       {
         caption: "Copy",
-        icon: RiFileCopyLine,
-        iconColor: "gray",
+        icon: { image: RiFileCopyLine, color: "gray" },
         onClick: (id: string) => {
           console.log(`${id} was copied`);
         },
       },
       {
         caption: "Share",
-        icon: RiShareForwardLine,
-        iconColor: "gray",
+        icon: { image: RiShareForwardLine, color: "gray" },
         onClick: (id: string) => {
           console.log(`${id} was shared`);
         },
@@ -627,7 +623,7 @@ export const WithActions: Story = {
         onClick: () => {
           console.log("Discover clicked");
         },
-        icon: RiSearchLine,
+        icon: { image: RiSearchLine },
       },
       {
         id: "mention",
@@ -635,7 +631,7 @@ export const WithActions: Story = {
         onClick: () => {
           console.log("Mention clicked");
         },
-        icon: RiAtLine,
+        icon: { image: RiAtLine },
       },
     ];
 
@@ -754,7 +750,7 @@ export const WithoutHeader: Story = {
     const TREE_LIST_ACTIONS: TreeListActionsProps[] = [
       {
         id: "add-new-branch",
-        icon: RiAddBoxLine,
+        icon: { image: RiAddBoxLine },
         caption: "Add New Branch",
         subMenu: ({ show }) => show(contentDialog),
       },
@@ -764,7 +760,7 @@ export const WithoutHeader: Story = {
         onClick: ({ setActive }) => {
           setActive(true);
         },
-        icon: RiTable2,
+        icon: { image: RiTable2 },
       },
     ];
 
@@ -798,7 +794,7 @@ export const WithEmptySlate: Story = {
         onClick: () => {
           console.log("Discover clicked");
         },
-        icon: RiSearchLine,
+        icon: { image: RiSearchLine },
       },
       {
         id: "mention",
@@ -806,7 +802,7 @@ export const WithEmptySlate: Story = {
         onClick: () => {
           console.log("Mention clicked");
         },
-        icon: RiAtLine,
+        icon: { image: RiAtLine },
       },
     ];
 

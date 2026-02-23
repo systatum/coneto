@@ -440,13 +440,13 @@ describe("Treelist", () => {
           id: "discover",
           caption: "Discover",
           onClick: onDiscover,
-          icon: RiSearchLine,
+          icon: { image: RiSearchLine },
         },
         {
           id: "mention",
           caption: "Mention",
           onClick: onMention,
-          icon: RiAtLine,
+          icon: { image: RiAtLine },
         },
       ];
     });
@@ -474,7 +474,7 @@ describe("Treelist", () => {
         const TREE_LIST_ACTIONS_WITH_RENDER: TreeListActionsProps[] = [
           {
             id: "add-new-branch",
-            icon: RiAddBoxLine,
+            icon: { image: RiAddBoxLine },
             caption: "Add New Branch",
             subMenu: ({ show }) =>
               show(
@@ -501,7 +501,7 @@ describe("Treelist", () => {
             onClick: ({ setActive }) => {
               setActive(true);
             },
-            icon: RiTable2,
+            icon: { image: RiTable2 },
           },
         ];
 
@@ -527,7 +527,7 @@ describe("Treelist", () => {
         const TREE_LIST_ACTIONS_WITH_RENDER: TreeListActionsProps[] = [
           {
             id: "add-new-branch",
-            icon: RiAddBoxLine,
+            icon: { image: RiAddBoxLine },
             caption: "Add New Branch",
             subMenu: ({ render }) =>
               render(
@@ -554,7 +554,7 @@ describe("Treelist", () => {
             onClick: ({ setActive }) => {
               setActive(true);
             },
-            icon: RiTable2,
+            icon: { image: RiTable2 },
           },
         ];
 
@@ -586,7 +586,7 @@ describe("Treelist", () => {
             console.log("discover was selected");
             setActive(true);
           },
-          icon: RiSearchLine,
+          icon: { image: RiSearchLine },
         },
         {
           id: "mention",
@@ -595,7 +595,7 @@ describe("Treelist", () => {
             console.log("mention was selected");
             setActive(true);
           },
-          icon: RiAtLine,
+          icon: { image: RiAtLine },
         },
       ];
       context("when clicking", () => {
