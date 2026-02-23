@@ -47,18 +47,20 @@ export const Default: Story = {
     const TIP_MENU_EMAIL = [
       {
         caption: "Duplicate",
-        icon: RiFileCopyLine,
-        iconColor: "",
+        icon: {
+          image: RiFileCopyLine,
+        },
         onClick: () => console.log("Phishing reported"),
       },
       {
         caption: "Report Junk",
-        icon: RiDeleteBinLine,
+        icon: {
+          image: RiDeleteBinLine,
+        },
         isDangerous: true,
         onClick: () => console.log("Junk reported"),
       },
     ];
-
     const BADGE_ITEMS = [
       {
         title: "Markdown Example",
@@ -80,7 +82,7 @@ This is unordered list
 
     const TOOLBAR_RIGHT_PANEL_ACTIONS = (
       <RichEditor.ToolbarButton
-        icon={RiPrinterFill}
+        icon={{ image: RiPrinterFill }}
         onClick={() => {
           setPrintValue(value);
           console.log(value);
@@ -170,7 +172,7 @@ export const ToolbarPositionBottom: Story = {
 
     const TOOLBAR_RIGHT_PANEL_ACTIONS = (
       <RichEditor.ToolbarButton
-        icon={RiPrinterFill}
+        icon={{ image: RiPrinterFill }}
         onClick={() => {
           setPrintValue(value);
           console.log(value);
@@ -215,7 +217,7 @@ export const PageEditor: Story = {
 
     const TOOLBAR_RIGHT_PANEL_ACTIONS = (
       <RichEditor.ToolbarButton
-        icon={RiPrinterFill}
+        icon={{ image: RiPrinterFill }}
         onClick={() => {
           setPrintValue(value);
           console.log(value);
