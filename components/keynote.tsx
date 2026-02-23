@@ -106,7 +106,7 @@ const Label = styled.span<{
 }>`
   color: #374151;
   font-weight: 600;
-  width: 100%;
+  width: 30%;
   font-size: 14px;
 
   ${({ $style }) => $style}
@@ -115,7 +115,7 @@ const Label = styled.span<{
 const Value = styled.span<{
   $style?: CSSProp;
 }>`
-  width: 100%;
+  width: 70%;
   font-size: 14px;
   color: #111827;
   text-align: end;
