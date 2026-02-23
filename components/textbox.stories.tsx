@@ -175,17 +175,25 @@ export const WithDropdown: Story = {
     });
 
     const ATTENDANCE_OPTIONS: DropdownOptionProps[] = [
-      { text: "On-site", value: "1", icon: RemixIcons.RiHome2Line },
-      { text: "WFH", value: "2", icon: RemixIcons.RiUser2Line },
+      {
+        text: "On-site",
+        value: "1",
+        icon: { image: RemixIcons.RiHome2Line },
+      },
+      {
+        text: "WFH",
+        value: "2",
+        icon: { image: RemixIcons.RiUser2Line },
+      },
       {
         text: "Sick leave",
         value: "3",
-        icon: RemixIcons.RiSettings2Line,
+        icon: { image: RemixIcons.RiSettings2Line },
       },
       {
         text: "Annual leave",
         value: "4",
-        icon: RemixIcons.RiLogoutBoxLine,
+        icon: { image: RemixIcons.RiLogoutBoxLine },
       },
     ];
 
@@ -267,13 +275,13 @@ export const WithAction: Story = {
         value={args.value}
         actions={[
           {
-            icon: RemixIcons.RiSendPlaneFill,
+            icon: { image: RemixIcons.RiSendPlaneFill },
             onClick: () => console.log(`Send message has been successful.`),
             title: "Send message",
           },
 
           {
-            icon: RemixIcons.RiCloseLine,
+            icon: { image: RemixIcons.RiCloseLine },
             onClick: () => setUpdateArgs({ value: "" }),
             title: "Delete message",
           },
