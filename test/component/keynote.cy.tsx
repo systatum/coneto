@@ -43,7 +43,7 @@ describe("Keynote", () => {
         cy.mount(
           <KeynoteDefault
             styles={{
-              self: css`
+              containerStyle: css`
                 gap: 8px;
               `,
             }}
@@ -60,17 +60,15 @@ describe("Keynote", () => {
           cy.mount(
             <KeynoteDefault
               styles={{
-                keynotePointStyles: {
-                  labelStyle: css`
-                    font-size: 20px;
-                  `,
-                  valueStyle: css`
-                    font-size: 20px;
-                  `,
-                  containerStyle: css`
-                    padding: 12px 0;
-                  `,
-                },
+                rowStyle: css`
+                  padding: 12px 0;
+                `,
+                rowKeyStyle: css`
+                  font-size: 20px;
+                `,
+                rowValueStyle: css`
+                  font-size: 20px;
+                `,
               }}
             />
           );
