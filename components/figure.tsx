@@ -6,8 +6,6 @@ export interface FigureProps
   icon?: ComponentType<any> | string;
   iconSize?: number;
   iconColor?: string;
-  imgProps?: ImgHTMLAttributes<HTMLImageElement>;
-  iconProps?: Record<string, unknown>;
   styles?: FigureStylesProps;
 }
 
@@ -19,8 +17,6 @@ function Figure({
   icon: Icon,
   iconSize = 16,
   iconColor,
-  imgProps,
-  iconProps,
   styles,
   "aria-label": ariaLabel,
   ...rest
@@ -31,7 +27,6 @@ function Figure({
     <Wrapper {...rest}>
       {typeof Icon === "string" ? (
         <img
-          {...imgProps}
           alt="figure-icon"
           src={Icon}
           width={iconSize}
@@ -40,7 +35,6 @@ function Figure({
         />
       ) : (
         <Icon
-          {...iconProps}
           size={iconSize}
           aria-label={ariaLabel}
           style={{ color: iconColor ?? "black" }}
