@@ -28,9 +28,18 @@ const meta: Meta<typeof Keynote> = {
       description:
         "Optional children (used if no data/keys/keyLabels are provided).",
     },
-    style: {
+    styles: {
       control: false,
-      description: "Optional styled-components style override for wrapper.",
+      description: `
+Custom styles for the Keynote component. This object allows you to override styles for different parts of the component.
+
+- **self**: Styles applied to the root wrapper of the Keynote component (layout, spacing, positioning).
+- **rowStyle**: Styles applied to each keynote row wrapper.
+- **rowKeyStyle**: Styles applied to the label text inside each row.
+- **rowValueStyle**: Styles applied to the value content inside each row.
+
+Each field accepts a \`CSSProp\` (styled-components compatible) and allows full visual customization of the component.
+`,
     },
   },
 };
