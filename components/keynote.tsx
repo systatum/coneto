@@ -17,7 +17,7 @@ export interface KeynotePointProps {
 }
 
 export interface KeynoteStyles extends KeynotePointStyles {
-  containerStyle?: CSSProp;
+  self?: CSSProp;
 }
 
 export interface KeynotePointStyles {
@@ -38,10 +38,7 @@ function Keynote<T extends Record<string, unknown>>({
     data && keys && keyLabels && keys.length === keyLabels.length;
 
   return (
-    <KeynoteWrapper
-      aria-label="keynote-wrapper"
-      $style={styles?.containerStyle}
-    >
+    <KeynoteWrapper aria-label="keynote-wrapper" $style={styles?.self}>
       {shouldRenderFromData
         ? keys?.map((key, index) => {
             const value = data[key];

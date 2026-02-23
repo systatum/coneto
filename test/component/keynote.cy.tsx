@@ -43,7 +43,7 @@ describe("Keynote", () => {
         cy.mount(
           <KeynoteDefault
             styles={{
-              containerStyle: css`
+              self: css`
                 gap: 8px;
               `,
             }}
