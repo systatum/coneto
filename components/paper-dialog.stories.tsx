@@ -689,8 +689,6 @@ export const Nested: Story = {
         <PaperDialog ref={dialogRef1} closable width="90vw">
           <PaperDialog.Content
             style={css`
-              padding: 36px;
-              padding-left: 20px;
               gap: 24px;
               overflow: auto;
             `}
@@ -700,14 +698,10 @@ export const Nested: Story = {
               subtitle="Detailed view of employees and their family registry records"
               styles={{
                 containerStyle: css`
-                  padding-left: 0px;
-                  padding-right: 0px;
+                  padding: 0px;
                   min-width: 1000px;
-                  padding-bottom: 0px;
                 `,
                 headerStyle: css`
-                  padding-left: 15px;
-                  padding-right: 15px;
                   border-bottom: 1px solid #d1d5db;
                 `,
               }}

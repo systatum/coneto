@@ -18,6 +18,7 @@ import {
 } from "react";
 import { Button, ButtonVariants } from "./button";
 import styled, { css, CSSProp } from "styled-components";
+import { OverlayBlocker } from "./overlay-blocker";
 
 export type DialogState = "restored" | "closed" | "minimized";
 
@@ -112,7 +113,10 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
             $paperDialogStyle={styles?.paperDialogStyle}
           >
             {dialogState === "restored" && (
-              <BackgroundBlur aria-hidden="true" />
+              <OverlayBlocker
+                onClick={"preventDefault"}
+                show={dialogState === "restored"}
+              />
             )}
 
             <MotionDialog
@@ -191,7 +195,7 @@ const DialogOverlay = styled.div<{
   $paperDialogStyle?: CSSProp;
 }>`
   position: fixed;
-  z-index: 9999;
+  z-index: 9999999;
   ${({ $dialogState }) =>
     $dialogState === "restored" &&
     css`
@@ -199,15 +203,6 @@ const DialogOverlay = styled.div<{
     `}
 
   ${({ $paperDialogStyle }) => $paperDialogStyle}
-`;
-
-const BackgroundBlur = styled.div`
-  position: absolute;
-  inset: 0;
-  background-color: #f3f4f6;
-  opacity: 0.7;
-  transition: all 0.5s ease;
-  backdrop-filter: blur(2px);
 `;
 
 const MotionDialog = styled(motion.div)<{
@@ -234,8 +229,9 @@ const MotionDialog = styled(motion.div)<{
   border: 1px solid #ebebeb;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   padding-bottom: 1rem;
+  z-index: 9999999;
 
-  ${({ $style }) => $style}
+  ${({ $style }) => $style};
 `;
 
 const CloseButtonWrapper = styled.div<{
