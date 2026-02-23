@@ -1,5 +1,4 @@
 import {
-  RemixiconComponentType,
   RiArrowLeftSLine,
   RiArrowRightSLine,
   RiCloseLine,
@@ -18,6 +17,7 @@ import {
 } from "react";
 import { Button, ButtonVariants } from "./button";
 import styled, { css, CSSProp } from "styled-components";
+import { Figure, FigureProps } from "./figure";
 
 export type DialogState = "restored" | "closed" | "minimized";
 
@@ -39,7 +39,7 @@ export interface PaperDialogStylesProps {
 export interface PaperDialogTriggerProps {
   children?: ReactNode;
   setDialogState?: (dialogState: DialogState) => void;
-  icon?: RemixiconComponentType;
+  icon?: FigureProps;
   style?: CSSProp;
   variant?: ButtonVariants["variant"];
 }
@@ -315,7 +315,7 @@ const IconButton = styled.button<{ $isLeft: boolean }>`
 
 function PaperDialogTrigger({
   children,
-  icon: Icon,
+  icon,
   setDialogState,
   variant = "default",
   style,
@@ -329,7 +329,7 @@ function PaperDialogTrigger({
       }}
       styles={{ self: style }}
     >
-      {Icon && <Icon size={20} />}
+      {icon && <Figure {...icon} size={icon?.size ?? 20} />}
       {children}
     </Button>
   );
