@@ -17,7 +17,7 @@ describe("NavTab", () => {
   const ACTION_BUTTON = [
     {
       caption: "Add",
-      icon: RiAddBoxLine,
+      icon: { image: RiAddBoxLine },
       onClick: () => {
         console.log(`Add button was clicked`);
       },
@@ -196,7 +196,7 @@ describe("NavTab", () => {
             actions={[
               {
                 caption: "Add",
-                icon: RiAddBoxLine,
+                icon: { image: RiAddBoxLine },
                 onClick: () => {
                   console.log(`Add button was clicked`);
                 },
@@ -404,7 +404,7 @@ const TABS_ITEMS: NavTabContentProps[] = [
         onClick: () => {
           console.log("Discover clicked");
         },
-        icon: RiSearchLine,
+        icon: { image: RiSearchLine },
       },
     ],
   },
@@ -421,14 +421,14 @@ const TABS_ITEMS: NavTabContentProps[] = [
         onClick: () => {
           console.log("Discover clicked");
         },
-        icon: RiSearchLine,
+        icon: { image: RiSearchLine },
       },
       {
         caption: "Mention",
         onClick: () => {
           console.log("Mention clicked");
         },
-        icon: RiAtLine,
+        icon: { image: RiAtLine },
       },
     ],
   },

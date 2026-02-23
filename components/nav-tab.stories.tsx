@@ -130,7 +130,7 @@ export const Small: Story = {
         actions={[
           {
             caption: "Add",
-            icon: RiAddBoxLine,
+            icon: { image: RiAddBoxLine },
             onClick: () => {
               console.log(`Add button was clicked`);
             },
@@ -159,7 +159,7 @@ export const WithActions: Story = {
             onClick: () => {
               console.log("Discover clicked");
             },
-            icon: RiSearchLine,
+            icon: { image: RiSearchLine },
           },
         ],
       },
@@ -176,14 +176,14 @@ export const WithActions: Story = {
             onClick: () => {
               console.log("Discover clicked");
             },
-            icon: RiSearchLine,
+            icon: { image: RiSearchLine },
           },
           {
             caption: "Mention",
             onClick: () => {
               console.log("Mention clicked");
             },
-            icon: RiAtLine,
+            icon: { image: RiAtLine },
           },
         ],
       },
@@ -197,7 +197,7 @@ export const WithActions: Story = {
         actions={[
           {
             caption: "Add",
-            icon: RiAddBoxLine,
+            icon: { image: RiAddBoxLine },
             onClick: () => {
               console.log(`Add button was clicked`);
             },

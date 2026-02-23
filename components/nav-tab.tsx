@@ -274,14 +274,17 @@ function NavTab({
                   {tab.title}
                   {tab.actions &&
                     (() => {
-                      const list = tab.actions;
-                      const actionsWithIcons = list.map((item) => ({
-                        ...item,
-                        icon: item.icon ?? RiArrowRightSLine,
+                      const listActions = tab.actions;
+                      const actionsWithIcons = listActions.map((action) => ({
+                        ...action,
+                        icon: {
+                          ...action?.icon,
+                          image: action.icon?.image ?? RiArrowRightSLine,
+                        },
                         onClick: (e?: React.MouseEvent) => {
                           e?.stopPropagation();
-                          item.onClick?.(tab.id);
-                          if (list.length > 1) {
+                          action.onClick?.(tab.id);
+                          if (listActions.length > 1) {
                             setIsHovered(null);
                           }
                         },
