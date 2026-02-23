@@ -216,7 +216,7 @@ export const WithDropdown: Story = {
                 <Calendar
                   selectedDates={[value.selectedOption1]}
                   monthNames={MONTH_NAMES}
-                  setSelectedDates={(date: string[]) =>
+                  onChange={(date: string[]) =>
                     setValue((prev) => ({
                       ...prev,
                       selectedText1: date[0],

@@ -36,7 +36,7 @@ interface BaseSelectboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "children"> {
   options?: OptionsProps[];
   selectedOptions?: string[];
-  setSelectedOptions?: (data: string[]) => void;
+  onChange?: (data: string[]) => void;
   placeholder?: string;
   iconOpened?: RemixiconComponentType;
   iconClosed?: RemixiconComponentType;
@@ -103,7 +103,7 @@ export interface OptionsProps {
 const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
   (
     {
-      setSelectedOptions,
+      onChange,
       selectedOptions,
       options = [],
       placeholder,
@@ -196,7 +196,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
             "/" +
             value.slice(4, 8);
         }
-        setSelectedOptions([value]);
+        onChange([value]);
       }
       setSelectedOptionsLocal({ ...selectedOptionsLocal, text: value });
       setIsOpen(value.length > 0);
@@ -254,18 +254,15 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
                   !maxSelectableItems ||
                   selectedOptions.length < maxSelectableItems
                 ) {
-                  setSelectedOptions([
-                    ...selectedOptions,
-                    selectedOption.value,
-                  ]);
+                  onChange([...selectedOptions, selectedOption.value]);
                 }
               } else {
-                setSelectedOptions(
+                onChange(
                   selectedOptions.filter((val) => val !== selectedOption.value)
                 );
               }
             } else {
-              setSelectedOptions([selectedOption.value]);
+              onChange([selectedOption.value]);
               setSelectedOptionsLocal(selectedOption);
               setIsOpen(false);
             }
@@ -369,18 +366,18 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
                 setConfirmedValue(matched);
                 setSelectedOptionsLocal(matched);
                 if (multiple) {
-                  setSelectedOptions?.(
+                  onChange?.(
                     selectedOptions?.includes(matched.value)
                       ? selectedOptions.filter((val) => val !== matched.value)
                       : [...selectedOptions, matched.value]
                   );
                 } else {
-                  setSelectedOptions?.([matched.value]);
+                  onChange?.([matched.value]);
                 }
               } else if (confirmedValue) {
                 setSelectedOptionsLocal(confirmedValue);
                 if (multiple) {
-                  setSelectedOptions?.(
+                  onChange?.(
                     selectedOptions?.includes(confirmedValue.value)
                       ? selectedOptions.filter(
                           (val) => val !== confirmedValue.value
@@ -388,7 +385,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
                       : [...selectedOptions, confirmedValue.value]
                   );
                 } else {
-                  setSelectedOptions?.([confirmedValue.value]);
+                  onChange?.([confirmedValue.value]);
                 }
               } else {
                 const empty = { text: "", value: "0" };
@@ -407,7 +404,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
             <ClearIcon
               aria-label="clearable-content"
               onMouseDown={() => {
-                setSelectedOptions?.([]);
+                onChange?.([]);
                 setSelectedOptionsLocal({ text: "", value: "0" });
                 setHasInteracted(false);
               }}
