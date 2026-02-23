@@ -10,10 +10,10 @@ import {
   useState,
 } from "react";
 import { DrawerProps, OptionsProps, Selectbox } from "./selectbox";
-import { RemixiconComponentType } from "@remixicon/react";
 import styled, { css, CSSProp } from "styled-components";
 import { List } from "./list";
 import { FieldLaneProps } from "./field-lane";
+import { Figure, FigureProps } from "./figure";
 
 interface BaseComboboxProps {
   selectedOptions?: string[];
@@ -43,7 +43,7 @@ export interface ComboboxStylesProps {
 
 export interface ComboboxActionProps {
   onClick?: () => void;
-  icon?: RemixiconComponentType;
+  icon?: FigureProps;
   title: string;
   style?: CSSProp;
 }
@@ -293,7 +293,7 @@ function ComboboxDrawer({
           }}
         >
           {actions &&
-            actions.map((props, index) => {
+            actions.map((action, index) => {
               const shouldHighlight = highlightedIndex === index;
               const isLast = index === actions.length - 1;
 
@@ -315,17 +315,13 @@ function ComboboxDrawer({
                     }}
                     title={
                       <>
-                        {props.title}
-                        {props.icon && (
-                          <IconWrapper>
-                            <props.icon size={16} />
-                          </IconWrapper>
-                        )}
+                        {action.title}
+                        {action.icon && <Figure {...action.icon} />}
                       </>
                     }
                     onMouseEnter={() => setHighlightedIndex(index)}
                     onClick={() => {
-                      props.onClick?.();
+                      action.onClick?.();
                       setIsOpen(false);
                     }}
                   />
@@ -493,13 +489,6 @@ const DrawerWrapper = styled.ul<{ $width?: number }>`
     0 10px 15px -3px rgba(0, 0, 0, 0.1),
     0 4px 6px -2px rgba(0, 0, 0, 0.05);
   width: ${({ $width }) => ($width ? `${$width}px` : "100%")};
-`;
-
-const IconWrapper = styled.span`
-  position: absolute;
-  right: 0.5rem;
-  top: 50%;
-  transform: translateY(-50%);
 `;
 
 const Divider = styled.div`
