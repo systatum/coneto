@@ -16,15 +16,14 @@ export interface KeynotePointProps {
   styles?: KeynotePointStyles;
 }
 
-export interface KeynoteStyles {
-  self?: CSSProp;
-  keynotePointStyles?: KeynotePointStyles;
+export interface KeynoteStyles extends KeynotePointStyles {
+  containerStyle?: CSSProp;
 }
 
 export interface KeynotePointStyles {
-  containerStyle?: CSSProp;
-  labelStyle?: CSSProp;
-  valueStyle?: CSSProp;
+  rowStyle?: CSSProp;
+  rowKeyStyle?: CSSProp;
+  rowValueStyle?: CSSProp;
 }
 
 function Keynote<T extends Record<string, unknown>>({
@@ -39,14 +38,21 @@ function Keynote<T extends Record<string, unknown>>({
     data && keys && keyLabels && keys.length === keyLabels.length;
 
   return (
-    <KeynoteWrapper aria-label="keynote-wrapper" $style={styles?.self}>
+    <KeynoteWrapper
+      aria-label="keynote-wrapper"
+      $style={styles?.containerStyle}
+    >
       {shouldRenderFromData
         ? keys?.map((key, index) => {
             const value = data[key];
             const renderFn = renderer?.[key];
             return (
               <KeynotePoint
-                styles={styles?.keynotePointStyles}
+                styles={{
+                  rowStyle: styles?.rowStyle,
+                  rowKeyStyle: styles?.rowKeyStyle,
+                  rowValueStyle: styles?.rowValueStyle,
+                }}
                 key={String(key)}
                 label={keyLabels[index]}
               >
@@ -65,12 +71,12 @@ function KeynotePoint({ label, children, styles }: KeynotePointProps) {
   return (
     <KeynotePointWrapper
       aria-label="keynote-point-wrapper"
-      $style={styles?.containerStyle}
+      $style={styles?.rowStyle}
     >
-      <Label aria-label="keynote-point-label" $style={styles?.labelStyle}>
+      <Label aria-label="keynote-point-label" $style={styles?.rowKeyStyle}>
         {label}
       </Label>
-      <Value aria-label="keynote-point-value" $style={styles?.valueStyle}>
+      <Value aria-label="keynote-point-value" $style={styles?.rowValueStyle}>
         {children}
       </Value>
     </KeynotePointWrapper>
