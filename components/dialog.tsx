@@ -13,6 +13,7 @@ import ReactDOM from "react-dom";
 import styled, { keyframes, CSSProp, css } from "styled-components";
 import { RiCloseLine } from "@remixicon/react";
 import { Button } from "./button";
+import { OverlayBlocker } from "./overlay-blocker";
 
 const fadeIn = keyframes`from {opacity: 0;} to {opacity: 1;}`;
 const fadeOut = keyframes`from {opacity: 1;} to {opacity: 0;}`;
@@ -144,9 +145,9 @@ function DialogContent({
 
   return ReactDOM.createPortal(
     <>
-      <StyledOverlay
-        $isOpen={isOpen}
-        $style={styles?.overlayStyle}
+      <OverlayBlocker
+        show={isOpen}
+        styles={{ self: styles?.overlayStyle }}
         onClick={() => setIsOpen(false)}
       />
       <StyledContent $isOpen={isOpen} $style={styles?.self}>
@@ -229,26 +230,12 @@ function DialogDescription({
   return <StyledDescription $style={style}>{children}</StyledDescription>;
 }
 
-const StyledOverlay = styled.div<{ $isOpen: boolean } & StyleProp>`
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 50;
-
-  animation: ${({ $isOpen }) => ($isOpen ? fadeIn : fadeOut)} 0.2s forwards;
-  ${({ $style }) => $style}
-`;
-
 const StyledContent = styled.div<{ $isOpen: boolean } & StyleProp>`
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 50;
+  z-index: 9991999;
   background: white;
   padding: 1.5rem;
   border-radius: 2px;

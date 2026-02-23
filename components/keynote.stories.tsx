@@ -28,9 +28,18 @@ const meta: Meta<typeof Keynote> = {
       description:
         "Optional children (used if no data/keys/keyLabels are provided).",
     },
-    style: {
+    styles: {
       control: false,
-      description: "Optional styled-components style override for wrapper.",
+      description: `
+Custom styles for the Keynote component. This object allows you to override styles for different parts of the component.
+
+- **self**: Styles applied to the root wrapper of the Keynote component (layout, spacing, positioning).
+- **rowStyle**: Styles applied to each keynote row wrapper.
+- **rowKeyStyle**: Styles applied to the label text inside each row.
+- **rowValueStyle**: Styles applied to the value content inside each row.
+
+Each field accepts a \`CSSProp\` (styled-components compatible) and allows full visual customization of the component.
+`,
     },
   },
 };
@@ -78,7 +87,7 @@ export const CustomRendering: Story = {
       requestCreatedBy: "alim@systatum.com",
       lastSynced: "2025-06-20",
       createdOn: "2025-06-19",
-      desc: "Backup unit installed on site",
+      desc: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
     };
 
     return (

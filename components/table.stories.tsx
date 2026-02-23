@@ -894,6 +894,9 @@ export const SortableWithPagination: Story = {
 };
 
 export const WithLoading: Story = {
+  parameters: {
+    layout: "fullscreen",
+  },
   render: () => {
     const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
 

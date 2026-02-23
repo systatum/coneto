@@ -50,7 +50,7 @@ export const Default: Story = {
         dayNames={DAY_NAMES}
         monthNames={MONTH_NAMES}
         selectedDates={value}
-        setSelectedDates={setValue}
+        onChange={setValue}
         format="mm/dd/yyyy"
       />
     );
@@ -91,7 +91,7 @@ export const NoWeekends: Story = {
         dayNames={DAY_NAMES}
         monthNames={MONTH_NAMES}
         selectedDates={value}
-        setSelectedDates={setValue}
+        onChange={setValue}
         format="mm/dd/yyyy"
         disableWeekend
       />
@@ -133,7 +133,7 @@ export const Multiple: Story = {
         dayNames={DAY_NAMES}
         monthNames={MONTH_NAMES}
         selectedDates={value}
-        setSelectedDates={setValue}
+        onChange={setValue}
         format="mm/dd/yyyy"
         selectabilityMode="multiple"
       />
@@ -175,7 +175,7 @@ export const MultipleNoWeekend: Story = {
         dayNames={DAY_NAMES}
         monthNames={MONTH_NAMES}
         selectedDates={value}
-        setSelectedDates={setValue}
+        onChange={setValue}
         format="mm/dd/yyyy"
         selectabilityMode="multiple"
         disableWeekend
@@ -218,7 +218,7 @@ export const Ranged: Story = {
         dayNames={DAY_NAMES}
         monthNames={MONTH_NAMES}
         selectedDates={value}
-        setSelectedDates={setValue}
+        onChange={setValue}
         format="mm/dd/yyyy"
         selectabilityMode="ranged"
       />
@@ -260,7 +260,7 @@ export const RangedNoWeekends: Story = {
         dayNames={DAY_NAMES}
         monthNames={MONTH_NAMES}
         selectedDates={value}
-        setSelectedDates={setValue}
+        onChange={setValue}
         format="mm/dd/yyyy"
         disableWeekend
         selectabilityMode="ranged"
@@ -320,7 +320,7 @@ export const WithFooter: Story = {
         dayNames={DAY_NAMES}
         monthNames={MONTH_NAMES}
         selectedDates={value}
-        setSelectedDates={setValue}
+        onChange={setValue}
         format="mm/dd/yyyy"
         footer={footerContent}
         selectabilityMode="ranged"

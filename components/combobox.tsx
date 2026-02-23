@@ -17,7 +17,7 @@ import { Figure, FigureProps } from "./figure";
 
 interface BaseComboboxProps {
   selectedOptions?: string[];
-  setSelectedOptions?: (data: string[]) => void;
+  onChange?: (data: string[]) => void;
   clearable?: boolean;
   placeholder?: string;
   emptySlate?: string;
@@ -72,7 +72,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
   (
     {
       options,
-      setSelectedOptions,
+      onChange,
       clearable = false,
       placeholder,
       styles,
@@ -131,7 +131,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
         id={inputId}
         options={options}
         selectedOptions={selectedOptions}
-        setSelectedOptions={setSelectedOptions}
+        onChange={onChange}
         placeholder={placeholder}
         clearable={clearable}
         strict={strict}
@@ -149,7 +149,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
               name={name}
               disabled={disabled}
               selectedOptions={selectedOptions}
-              setSelectedOptions={setSelectedOptions}
+              onChange={onChange}
               highlightOnMatch={highlightOnMatch}
               emptySlate={emptySlate}
               actions={actions}
@@ -173,7 +173,7 @@ function ComboboxDrawer({
   options,
   refs,
   setHighlightedIndex,
-  setSelectedOptions,
+  onChange,
   setSelectedOptionsLocal,
   selectedOptionsLocal,
   selectedOptions,
@@ -369,13 +369,10 @@ function ComboboxDrawer({
                           !maxSelectableItems ||
                           selectedOptions.length < maxSelectableItems
                         ) {
-                          setSelectedOptions([
-                            ...selectedOptions,
-                            option.value,
-                          ]);
+                          onChange([...selectedOptions, option.value]);
                         }
                       } else {
-                        setSelectedOptions(
+                        onChange(
                           selectedOptions.filter((val) => val !== option.value)
                         );
                       }
@@ -385,7 +382,7 @@ function ComboboxDrawer({
                     } else {
                       setIsOpen(false);
                       setSelectedOptionsLocal(option);
-                      setSelectedOptions([option.value]);
+                      onChange([option.value]);
                       setHasInteracted(false);
                     }
 
