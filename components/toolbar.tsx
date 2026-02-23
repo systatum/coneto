@@ -20,6 +20,7 @@ import {
   autoUpdate,
 } from "@floating-ui/react";
 import styled, { css, CSSProp } from "styled-components";
+import { Figure, FigureProps } from "./figure";
 
 export interface ToolbarProps {
   children: ReactNode;
@@ -29,11 +30,10 @@ export interface ToolbarProps {
 
 export interface ToolbarMenuProps {
   caption?: string;
-  icon?: RemixiconComponentType;
+  icon?: FigureProps;
   openedIcon?: RemixiconComponentType;
   closedIcon?: RemixiconComponentType;
-  iconColor?: string;
-  subMenuList?: TipMenuItemProps[];
+  subMenuList?: ToolbarSubMenuProps[];
   isOpen?: boolean;
   setIsOpen?: (data?: boolean) => void;
   onClick?: () => void;
@@ -41,6 +41,8 @@ export interface ToolbarMenuProps {
   variant?: ToolbarVariantType;
   iconSize?: number;
 }
+
+export type ToolbarSubMenuProps = TipMenuItemProps;
 
 export interface ToolbarMenuSylesProps {
   dropdownStyle?: CSSProp;
@@ -247,7 +249,10 @@ function Toolbar({ children, style, big }: ToolbarProps) {
         ...(big
           ? {
               ...menuChild.props,
-              iconSize: 33,
+              icon: {
+                ...menuChild?.props?.icon,
+                size: menuChild?.props?.icon?.size ?? 33,
+              },
               styles: {
                 ...menuChild.props.styles,
                 triggerStyle: css`
@@ -277,16 +282,14 @@ function Toolbar({ children, style, big }: ToolbarProps) {
 
 function ToolbarMenu({
   caption,
-  icon: Icon,
+  icon,
   openedIcon: OpenedIcon = RiArrowDownSLine,
   closedIcon: ClosedIcon = RiArrowUpSLine,
-  iconColor = "gray",
   subMenuList,
   isOpen,
   setIsOpen,
   onClick,
   styles,
-  iconSize = 20,
   variant = "default",
 }: ToolbarMenuProps) {
   const [hovered, setHovered] = useState<"main" | "original" | "dropdown">(
@@ -349,7 +352,7 @@ function ToolbarMenu({
           ${isOpen && menuBorderActive};
         `}
       >
-        {(Icon || caption) && (
+        {(icon || caption) && (
           <>
             <TriggerButton
               type="button"
@@ -365,14 +368,15 @@ function ToolbarMenu({
                 ${styles?.triggerStyle}
               `}
             >
-              {Icon && (
-                <Icon
+              {icon && (
+                <Figure
                   aria-label="toolbar-icon"
-                  size={iconSize}
-                  style={{ color: COLOR_STYLE_MAP[iconColor] }}
+                  {...icon}
+                  color={COLOR_STYLE_MAP[icon?.color] ?? icon?.color}
+                  size={icon?.size ?? 20}
                 />
               )}
-              {caption && <Caption $hasIcon={!!Icon}>{caption}</Caption>}
+              {caption && <Caption $hasIcon={!!icon?.image}>{caption}</Caption>}
             </TriggerButton>
             {subMenuList && caption && (
               <Divider
