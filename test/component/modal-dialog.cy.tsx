@@ -1,40 +1,73 @@
 import { css } from "styled-components";
 import { ModalDialog, ModalDialogProps } from "./../../components/modal-dialog";
+import { useState } from "react";
 
 describe("Modal Dialog", () => {
-  const args: ModalDialogProps = {
-    title: "Default Modal",
-    subTitle: "This is a subtitle",
-    hasCloseButton: true,
-    buttons: [
-      {
-        id: "confirm",
-        caption: "Confirm",
-        variant: "primary",
-      },
-      {
-        id: "cancel",
-        caption: "Cancel",
-        variant: "default",
-      },
-    ],
-    isOpen: true,
-    children: (
-      <div
-        style={{
-          fontSize: "0.875rem",
-          color: "#374151",
-        }}
+  function ProductModalDialog(props: ModalDialogProps) {
+    const [isOpen, setIsOpen] = useState(true);
+
+    return (
+      <ModalDialog
+        escapable={true}
+        title="Default Modal"
+        subTitle="This is a subtitle"
+        hasCloseButton={true}
+        buttons={[
+          { id: "confirm", caption: "Confirm", variant: "primary" },
+          { id: "cancel", caption: "Cancel", variant: "default" },
+        ]}
+        isOpen={isOpen}
+        onVisibilityChange={setIsOpen}
+        {...props}
       >
-        Here is the content of the modal dialog.
-      </div>
-    ),
-    onVisibilityChange: (isOpen) => console.log(isOpen),
-  };
+        <div style={{ fontSize: "0.875rem", color: "#374151" }}>
+          Here is the content of the modal dialog.
+        </div>
+      </ModalDialog>
+    );
+  }
+
+  context("escapable", () => {
+    context("when given true", () => {
+      context("when pressing escape", () => {
+        it("should close the modal", () => {
+          cy.mount(<ProductModalDialog />);
+
+          cy.findByLabelText("dialog-content").should("exist");
+          cy.get("body").type("{esc}");
+          cy.findByLabelText("dialog-content").should("not.exist");
+        });
+      });
+    });
+
+    context("when given false", () => {
+      context("when pressing escape", () => {
+        it("should not close the modal", () => {
+          cy.mount(<ProductModalDialog escapable={false} />);
+
+          cy.findByLabelText("dialog-content").should("exist");
+          cy.get("body").type("{esc}");
+          cy.findByLabelText("dialog-content").should("exist");
+        });
+      });
+    });
+
+    context("when not given (default)", () => {
+      context("when pressing escape", () => {
+        it("should close the modal", () => {
+          cy.mount(<ProductModalDialog />);
+
+          cy.findByLabelText("dialog-content").should("exist");
+          cy.get("body").type("{esc}");
+          cy.findByLabelText("dialog-content").should("not.exist");
+        });
+      });
+    });
+  });
 
   context("textWrapperStyle", () => {
     it("renders with gap 6px", () => {
-      cy.mount(<ModalDialog {...args} />);
+      cy.mount(<ProductModalDialog />);
 
       cy.findByLabelText("modal-dialog-text-wrapper").should(
         "have.css",
@@ -46,8 +79,7 @@ describe("Modal Dialog", () => {
     context("when given gap 16px", () => {
       it("renders with gap 16px", () => {
         cy.mount(
-          <ModalDialog
-            {...args}
+          <ProductModalDialog
             styles={{
               textWrapperStyle: css`
                 gap: 16px;
@@ -69,8 +101,7 @@ describe("Modal Dialog", () => {
     context("when given 30px", () => {
       it("renders title with 30px", () => {
         cy.mount(
-          <ModalDialog
-            {...args}
+          <ProductModalDialog
             styles={{
               titleStyle: css`
                 font-size: 30px;
@@ -92,8 +123,7 @@ describe("Modal Dialog", () => {
     context("when given 20px", () => {
       it("renders title with 20px", () => {
         cy.mount(
-          <ModalDialog
-            {...args}
+          <ProductModalDialog
             styles={{
               subtitleStyle: css`
                 font-size: 20px;
@@ -114,8 +144,7 @@ describe("Modal Dialog", () => {
   context("contentStyle", () => {
     it("renders content-level with style", () => {
       cy.mount(
-        <ModalDialog
-          {...args}
+        <ProductModalDialog
           styles={{
             contentStyle: css`
               min-height: 150px;
@@ -134,8 +163,7 @@ describe("Modal Dialog", () => {
   context("button", () => {
     it("renders with properly padding", () => {
       cy.mount(
-        <ModalDialog
-          {...args}
+        <ProductModalDialog
           buttons={[
             {
               id: "add-draft",
