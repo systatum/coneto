@@ -14,15 +14,16 @@ export interface ModalButtonProps extends Pick<ButtonVariants, "variant"> {
 }
 
 export interface ModalDialogProps {
-  isOpen: boolean;
-  onVisibilityChange: (isOpen: boolean) => void;
-  title: string;
+  isOpen?: boolean;
+  onVisibilityChange?: (isOpen?: boolean) => void;
+  title?: string;
   subTitle?: string;
   hasCloseButton?: boolean;
   buttons?: ModalButtonProps[];
   children?: ReactNode;
   onClick?: (args: { id: string; closeDialog: () => void }) => void;
   styles?: ModalDialogStylesProps;
+  escapable?: boolean;
 }
 
 export interface ModalDialogStylesProps {
@@ -43,11 +44,16 @@ function ModalDialog({
   children,
   styles,
   onClick,
+  escapable = true,
 }: ModalDialogProps) {
   const closeDialog = () => onVisibilityChange(false);
 
   return (
-    <Dialog isOpen={isOpen} onVisibilityChange={onVisibilityChange}>
+    <Dialog
+      escapable={escapable}
+      isOpen={isOpen}
+      onVisibilityChange={onVisibilityChange}
+    >
       <Dialog.Content
         styles={{
           self: css`

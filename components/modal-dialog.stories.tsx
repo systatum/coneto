@@ -162,3 +162,49 @@ export const NoCloseButton: Story = {
     );
   },
 };
+
+export const NonEscapable: Story = {
+  args: {
+    title: "Non Escapable",
+    subTitle: "This modal cannot be closed using the Escape key",
+    hasCloseButton: true,
+    isOpen: false,
+    buttons: [
+      {
+        id: "ok",
+        caption: "OK",
+        variant: "primary",
+      },
+      {
+        id: "cancel",
+        caption: "Cancel",
+      },
+    ],
+    onClick: ({ closeDialog }) => {
+      closeDialog();
+    },
+    escapable: false,
+    children: (
+      <p>
+        Pressing the Escape key will not close this modal. Use the buttons or
+        the close icon to dismiss it.
+      </p>
+    ),
+  },
+  render: (args: ModalDialogProps) => {
+    const [{ isOpen }, setUpdateArgs] = useArgs();
+
+    return (
+      <>
+        <Button onClick={() => setUpdateArgs({ isOpen: true })}>
+          Non Escapable Dialog
+        </Button>
+        <ModalDialog
+          {...args}
+          isOpen={isOpen}
+          onVisibilityChange={(isOpen) => setUpdateArgs({ isOpen })}
+        />
+      </>
+    );
+  },
+};
