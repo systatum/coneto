@@ -178,8 +178,25 @@ function StatefulForm<Z extends ZodTypeAny>({
     register,
     control,
     setValue,
+    reset,
     formState: { errors, touchedFields, isValid },
   } = useForm<TypeOf<Z>>(formConfig);
+
+  const customFieldNames = fields
+    .flat()
+    .filter((field) => (field as FormFieldProps).type === "custom")
+    .map((field) => (field as FormFieldProps).name);
+
+  const customValues = customFieldNames.map(
+    (name) => formValues[name as keyof TypeOf<Z>]
+  );
+
+  useEffect(() => {
+    reset(formValues, {
+      keepErrors: true,
+      keepTouched: true,
+    });
+  }, [JSON.stringify(customValues), reset]);
 
   useEffect(() => {
     if (onValidityChange) {
