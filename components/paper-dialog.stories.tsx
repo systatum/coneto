@@ -181,6 +181,50 @@ export const Default: Story = {
   },
 };
 
+export const NonEscapable: Story = {
+  render: () => {
+    const dialogRef = useRef<PaperDialogRef>(null);
+
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "8px",
+        }}
+      >
+        <Button onClick={() => dialogRef.current?.openDialog()}>Open</Button>
+        <Button onClick={() => dialogRef.current?.closeDialog()}>Close</Button>
+
+        <PaperDialog escapable={false} closable width="35vw" ref={dialogRef}>
+          <PaperDialog.Content
+            style={{
+              padding: "36px",
+              gap: "16px",
+            }}
+          >
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "8px" }}
+            >
+              <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>
+                Non-Escapable Dialog
+              </h2>
+              <p style={{ fontSize: "14px", color: "#4B5563" }}>
+                This dialog cannot be closed by pressing the Escape key. Use the
+                close button or action buttons to dismiss it.
+              </p>
+              <p style={{ fontSize: "14px", color: "#4B5563" }}>
+                You can still interact with the content and action buttons
+                inside the dialog.
+              </p>
+            </div>
+          </PaperDialog.Content>
+        </PaperDialog>
+      </div>
+    );
+  },
+};
+
 export const Closable: Story = {
   render: () => {
     const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(

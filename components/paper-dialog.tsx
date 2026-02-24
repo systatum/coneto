@@ -14,6 +14,8 @@ import {
   useState,
   useImperativeHandle,
   forwardRef,
+  useCallback,
+  useEffect,
 } from "react";
 import { Button, ButtonVariants } from "./button";
 import styled, { css, CSSProp } from "styled-components";
@@ -24,10 +26,11 @@ export type DialogState = "restored" | "closed" | "minimized";
 
 export interface PaperDialogProps {
   position?: "left" | "right";
-  children: ReactNode;
+  children?: ReactNode;
   closable?: boolean;
   width?: string;
   styles?: PaperDialogStylesProps;
+  escapable?: boolean;
 }
 
 export interface PaperDialogStylesProps {
@@ -57,10 +60,25 @@ export interface PaperDialogRef {
 }
 
 const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
-  ({ position = "right", children, closable, width, styles }, ref) => {
+  (
+    { position = "right", children, closable, width, styles, escapable = true },
+    ref
+  ) => {
     const [dialogState, setDialogState] = useState<DialogState>("closed");
     const controls = useAnimation();
     const isLeft = position === "left";
+
+    const handleEscape = useCallback(
+      (e: KeyboardEvent) => {
+        if (e.key === "Escape" && escapable) setDialogState("closed");
+      },
+      [setDialogState]
+    );
+
+    useEffect(() => {
+      document.addEventListener("keydown", handleEscape);
+      return () => document.removeEventListener("keydown", handleEscape);
+    }, [handleEscape]);
 
     const handleToggleDrawer = (open: DialogState) => {
       setDialogState(open);
