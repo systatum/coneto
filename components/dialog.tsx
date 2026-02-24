@@ -27,6 +27,7 @@ type StyleProp = {
 const DialogContext = createContext<{
   isOpen: boolean;
   setIsOpen: (val: boolean) => void;
+  escapable?: boolean;
 } | null>(null);
 
 function useDialogContext() {
@@ -49,17 +50,23 @@ function usePortal() {
   return { mounted, target: ref.current };
 }
 
+export interface DialogProps {
+  children?: ReactNode;
+  isOpen?: boolean;
+  onVisibilityChange?: (isOpen?: boolean) => void;
+  escapable?: boolean;
+}
+
 function Dialog({
   children,
   isOpen,
   onVisibilityChange,
-}: {
-  children: ReactNode;
-  isOpen: boolean;
-  onVisibilityChange: (isOpen: boolean) => void;
-}) {
+  escapable = true,
+}: DialogProps) {
   return (
-    <DialogContext.Provider value={{ isOpen, setIsOpen: onVisibilityChange }}>
+    <DialogContext.Provider
+      value={{ isOpen, setIsOpen: onVisibilityChange, escapable }}
+    >
       {children}
     </DialogContext.Provider>
   );
@@ -117,12 +124,12 @@ function DialogContent({
   styles,
 }: DialogContentProps) {
   const [isVisible, setIsVisible] = useState(false);
-  const { isOpen, setIsOpen } = useDialogContext();
+  const { isOpen, setIsOpen, escapable } = useDialogContext();
   const { mounted, target } = usePortal();
 
   const handleEscape = useCallback(
     (e: KeyboardEvent) => {
-      if (e.key === "Escape") setIsOpen(false);
+      if (e.key === "Escape" && escapable) setIsOpen(false);
     },
     [setIsOpen]
   );
@@ -150,7 +157,11 @@ function DialogContent({
         styles={{ self: styles?.overlayStyle }}
         onClick={() => setIsOpen(false)}
       />
-      <StyledContent $isOpen={isOpen} $style={styles?.self}>
+      <StyledContent
+        aria-label="dialog-content"
+        $isOpen={isOpen}
+        $style={styles?.self}
+      >
         {!hideClose && (
           <Button
             variant="transparent"

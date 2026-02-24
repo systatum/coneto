@@ -197,3 +197,58 @@ export const HideCloseButton: Story = {
     );
   },
 };
+
+export const NonEscapable: Story = {
+  args: {
+    isOpen: false,
+    hideClose: true,
+  },
+  render: (args: Args) => {
+    const [{ isOpen }, updateArgs] = useArgs();
+
+    return (
+      <Dialog
+        isOpen={isOpen}
+        onVisibilityChange={(newOpen) => updateArgs({ isOpen: newOpen })}
+        escapable={false}
+      >
+        <Dialog.Trigger>
+          <Button>Open Non-Escapable Dialog</Button>
+        </Dialog.Trigger>
+
+        <Dialog.Content
+          hideClose={args.hideClose}
+          styles={{
+            self: css`
+              max-width: 500px;
+            `,
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "8px",
+              alignItems: "start",
+            }}
+          >
+            <Dialog.Header>
+              <Dialog.Title>Non-Escapable Dialog</Dialog.Title>
+            </Dialog.Header>
+
+            <p
+              style={{
+                fontSize: "12px",
+                color: "#374151",
+              }}
+            >
+              This dialog cannot be closed by pressing the Escape key. If the
+              close button is hidden, use the provided action buttons to dismiss
+              the dialog.
+            </p>
+          </div>
+        </Dialog.Content>
+      </Dialog>
+    );
+  },
+};
