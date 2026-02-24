@@ -3,12 +3,13 @@ import { motion } from "framer-motion";
 import styled, { css, CSSProp } from "styled-components";
 import { RemixiconComponentType } from "@remixicon/react";
 import { StatefulForm } from "./stateful-form";
+import { Figure, FigureProps } from "./figure";
 
 export interface CapsuleContentProps {
   id: string;
   title?: string;
   content?: ReactNode;
-  icon?: RemixiconComponentType | null;
+  icon?: FigureProps;
 }
 
 export interface CapsuleProps {
@@ -21,7 +22,6 @@ export interface CapsuleProps {
   showError?: boolean;
   errorMessage?: string;
   fontSize?: number;
-  iconSize?: number;
   styles?: CapsuleStylesProps;
   helper?: string;
 }
@@ -43,7 +43,6 @@ function Capsule({
   showError,
   errorMessage,
   fontSize = 12,
-  iconSize = 14,
   helper,
 }: CapsuleProps) {
   const [hovered, setHovered] = useState<string | null>(null);
@@ -199,9 +198,8 @@ function Capsule({
         }}
       />
 
-      {tabs.map((data, index) => {
-        const Icon = data.icon as RemixiconComponentType;
-        const isActive = activeTab === data.id;
+      {tabs.map((tab, index) => {
+        const isActive = activeTab === tab.id;
 
         return (
           <Tab
@@ -210,12 +208,18 @@ function Capsule({
             key={index}
             ref={setTabRef(index)}
             $activeTabStyle={styles?.tabStyle}
-            onMouseEnter={() => setHovered(data.id)}
+            onMouseEnter={() => setHovered(tab.id)}
             onMouseLeave={() => setHovered(null)}
-            onClick={() => onTabChange(data.id)}
+            onClick={() => onTabChange(tab.id)}
           >
-            {Icon && <Icon aria-label="capsule-icon" size={iconSize} />}
-            {data.title && data.title}
+            {tab.icon && (
+              <Figure
+                aria-label="capsule-icon"
+                {...tab.icon}
+                size={tab.icon?.size ?? 14}
+              />
+            )}
+            {tab.title && tab.title}
           </Tab>
         );
       })}

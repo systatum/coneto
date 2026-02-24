@@ -16,17 +16,17 @@ describe("FieldLane", () => {
             {
               caption: "Button",
               options: [
-                { text: "On-site", value: "1", icon: RiHome2Line },
-                { text: "WFH", value: "2", icon: RiUser2Line },
+                { text: "On-site", value: "1", icon: { image: RiHome2Line } },
+                { text: "WFH", value: "2", icon: { image: RiUser2Line } },
                 {
                   text: "Sick leave",
                   value: "3",
-                  icon: RiSettings2Line,
+                  icon: { image: RiSettings2Line },
                 },
                 {
                   text: "Annual leave",
                   value: "4",
-                  icon: RiLogoutBoxLine,
+                  icon: { image: RiLogoutBoxLine },
                 },
               ],
             },
@@ -48,22 +48,40 @@ describe("FieldLane", () => {
             {
               caption: "Button",
               options: [
-                { text: "On-site", value: "1", icon: RiHome2Line },
-                { text: "WFH", value: "2", icon: RiUser2Line },
+                {
+                  text: "On-site",
+                  value: "1",
+                  icon: {
+                    image: RiHome2Line,
+                  },
+                },
+                {
+                  text: "WFH",
+                  value: "2",
+                  icon: {
+                    image: RiUser2Line,
+                  },
+                },
                 {
                   text: "Sick leave",
                   value: "3",
-                  icon: RiSettings2Line,
+                  icon: {
+                    image: RiSettings2Line,
+                  },
                 },
                 {
                   text: "Annual leave",
                   value: "4",
-                  icon: RiLogoutBoxLine,
+                  icon: {
+                    image: RiLogoutBoxLine,
+                  },
                 },
               ],
             },
           ]}
-        />
+        >
+          This is a children
+        </FieldLane>
       );
 
       cy.findByText("Button").click();

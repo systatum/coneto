@@ -13,27 +13,23 @@ describe("TipMenu", () => {
     TIP_MENU_ITEMS = [
       {
         caption: "Report Phishing",
-        icon: RiSpam2Line,
-        iconColor: "blue",
+        icon: { image: RiSpam2Line, color: "blue" },
         onClick: cy.stub().as("phishingClick"),
       },
       {
         caption: "Report Junk",
-        icon: RiForbid2Line,
-        iconColor: "red",
+        icon: { image: RiForbid2Line, color: "red" },
         onClick: cy.stub().as("junkClick"),
       },
       {
         caption: "Block Sender",
-        icon: RiShieldLine,
-        iconColor: "orange",
+        icon: { image: RiShieldLine, color: "orange" },
         isDangerous: true,
         onClick: cy.stub().as("blockClick"),
       },
       {
         caption: "Mark as Read",
-        icon: RiCheckLine,
-        iconColor: "green",
+        icon: { image: RiCheckLine, color: "green" },
         onClick: cy.stub().as("readClick"),
       },
     ];

@@ -156,14 +156,14 @@ describe("Table", () => {
   const TOP_ACTIONS: TableActionsProps[] = [
     {
       caption: "Delete",
-      icon: RiDeleteBin2Line,
+      icon: { image: RiDeleteBin2Line },
       onClick: () => {
         console.log("Delete clicked");
       },
     },
     {
       caption: "Copy",
-      icon: RiClipboardFill,
+      icon: { image: RiClipboardFill },
       onClick: () => {
         console.log("Copy clicked");
       },
@@ -197,8 +197,7 @@ describe("Table", () => {
     return [
       {
         caption: "Delete",
-        icon: RiDeleteBin2Fill,
-        iconColor: "gray",
+        icon: { image: RiDeleteBin2Fill, color: "gray" },
         onClick: () => {
           console.log(`${rowId} was deleted`);
         },
@@ -210,16 +209,14 @@ describe("Table", () => {
     return [
       {
         caption: "Edit",
-        icon: RiArrowUpSLine,
-        iconColor: "gray",
+        icon: { image: RiArrowUpSLine, color: "gray" },
         onClick: () => {
           console.log(`${rowId} was edited`);
         },
       },
       {
         caption: "Delete",
-        icon: RiDeleteBin2Fill,
-        iconColor: "gray",
+        icon: { image: RiDeleteBin2Fill, color: "gray" },
         onClick: () => {
           console.log(`${rowId} was deleted`);
         },
@@ -721,13 +718,12 @@ describe("Table", () => {
     const DEFAULT_TOP_ACTIONS: TableActionsProps[] = [
       {
         caption: "Copy",
-        icon: RiArrowUpSLine,
+        icon: { image: RiArrowUpSLine },
         onClick: () => {
           console.log("Copy clicked");
         },
       },
     ];
-
     const { totalCost, totalQty } = calculateTotals(TABLE_SUMMARY);
 
     it("renders summary on footer", () => {
@@ -1003,7 +999,7 @@ describe("Table", () => {
       const DEFAULT_TOP_ACTIONS: TableActionsProps[] = [
         {
           caption: "Copy",
-          icon: RiArrowUpSLine,
+          icon: { image: RiArrowUpSLine },
           onClick: () => {
             console.log("Copy clicked");
           },
@@ -1061,14 +1057,12 @@ describe("Table", () => {
       const TIP_MENU_ITEMS = [
         {
           caption: "Report Phishing",
-          icon: RiSpam2Line,
-          iconColor: "blue",
+          icon: { image: RiSpam2Line, color: "blue" },
           onClick: () => console.log("Phishing reported"),
         },
         {
           caption: "Report Junk",
-          icon: RiForbid2Line,
-          iconColor: "red",
+          icon: { image: RiForbid2Line, color: "red" },
           onClick: () => console.log("Junk reported"),
         },
       ];
@@ -1076,7 +1070,7 @@ describe("Table", () => {
       const DEFAULT_TOP_ACTIONS: TableActionsProps[] = [
         {
           caption: "Copy",
-          icon: RiArrowUpSLine,
+          icon: { image: RiArrowUpSLine },
           onClick: () => {
             console.log("Copy clicked");
           },

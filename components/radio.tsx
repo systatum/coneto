@@ -1,7 +1,7 @@
 import styled, { css, CSSProp } from "styled-components";
 import { ChangeEvent, InputHTMLAttributes, ReactElement } from "react";
-import { RemixiconComponentType } from "@remixicon/react";
 import { StatefulForm } from "./stateful-form";
+import { Figure, FigureProps } from "./figure";
 
 export interface RadioProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {
@@ -16,12 +16,11 @@ export interface RadioProps
   showError?: boolean;
   errorMessage?: string;
   mode?: "radio" | "button";
-  icon?: RemixiconComponentType | string;
-  iconSize?: number;
-  iconColor?: string;
   helper?: string;
-  imageUrl?: string;
+  icon?: RadioIconProps;
 }
+
+export type RadioIconProps = FigureProps;
 
 export interface RadioStylesProps {
   containerStyle?: CSSProp;
@@ -37,9 +36,7 @@ export interface RadioOptionsProps {
   value?: string;
   label?: string;
   description?: string;
-  iconSize?: number;
-  iconColor?: string;
-  icon?: RemixiconComponentType | string;
+  icon?: RadioIconProps;
 }
 
 function Radio({
@@ -53,17 +50,15 @@ function Radio({
   highlightOnChecked,
   showError,
   errorMessage,
-  icon: Icon,
-  iconSize,
-  iconColor,
   styles,
   helper,
   mode = "radio",
+  icon,
   ...props
 }: RadioProps) {
   const id = `radio-${name}-${value}`;
 
-  const resolvediconSize = iconSize ?? (mode === "button" ? 25 : 16);
+  const resolvediconSize = icon?.size ?? (mode === "button" ? 25 : 16);
 
   const inputElement: ReactElement = (
     <Label
@@ -98,23 +93,13 @@ function Radio({
           $error={showError}
           $style={styles?.self}
         />
-        {typeof Icon === "string" ? (
-          <img
-            aria-label="radio-image"
-            src={Icon as string}
-            width={resolvediconSize}
-            height={resolvediconSize}
-            alt={Icon as string}
-          />
-        ) : (
-          Icon && (
-            <Icon
-              aria-label="radio-icon"
-              size={resolvediconSize}
-              style={{ color: iconColor ?? "black" }}
-            />
-          )
-        )}
+        <Figure
+          {...icon}
+          aria-label={
+            typeof icon?.image === "string" ? "radio-image" : "radio-icon"
+          }
+          size={resolvediconSize}
+        />
         {label && (
           <LabelText
             aria-label="radio-label-wrapper"

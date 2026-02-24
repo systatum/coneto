@@ -86,7 +86,7 @@ describe("FileDropBox", () => {
                   actions={(id) => [
                     {
                       caption: "Delete",
-                      icon: RiDeleteBin2Fill,
+                      icon: { image: RiDeleteBin2Fill },
                       onClick: () => {
                         if (id) {
                           setFiles((prev) =>

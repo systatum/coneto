@@ -720,7 +720,7 @@ export const ReactNodeTitle: Story = {
       return [
         {
           caption: "Delete",
-          icon: RiDeleteBin2Fill,
+          icon: { image: RiDeleteBin2Fill },
           onClick: () => {
             setGroups((prev) =>
               prev.map((group) => ({
@@ -1048,7 +1048,8 @@ export const WithSubcontent: Story = {
       return [
         {
           caption: "Delete",
-          icon: RiDeleteBin2Fill,
+          isDangerous: true,
+          icon: { image: RiDeleteBin2Fill },
           onClick: () => {
             setGroups((prev) =>
               prev.map((group) => ({
@@ -1836,14 +1837,19 @@ export const CustomOpener: Story = {
                     actions={(id: string) => [
                       {
                         caption: "Edit",
-                        icon: RiEdit2Line,
+                        icon: {
+                          image: RiEdit2Line,
+                        },
                         onClick: () => {
                           console.log(`Edit content for ${id}`);
                         },
                       },
                       {
                         caption: "Delete",
-                        icon: RiDeleteBack2Line,
+                        isDangerous: true,
+                        icon: {
+                          image: RiDeleteBack2Line,
+                        },
                         onClick: () => {
                           console.log(`Delete content for ${id}`);
                         },
@@ -1971,9 +1977,11 @@ export const WithMaxItems: Story = {
           {
             caption: "Edit fields",
             disabled: value.checked.length === 0,
-            icon: RiEdit2Line,
+            icon: {
+              image: RiEdit2Line,
+            },
             onClick: () => {
-              console.log(`Delete ${value.checked.length} clicked`);
+              console.log(`Edit ${value.checked.length} clicked`);
             },
           },
         ]}

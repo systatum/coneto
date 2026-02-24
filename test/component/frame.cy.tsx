@@ -1,4 +1,4 @@
-import { Frame, FrameProps } from "./../../components/frame";
+import { Frame } from "./../../components/frame";
 
 describe("Frame", () => {
   function FrameComponent() {

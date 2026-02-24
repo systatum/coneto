@@ -1,15 +1,15 @@
 import { ChangeEvent, InputHTMLAttributes } from "react";
 import { motion } from "framer-motion";
-import { RemixiconComponentType } from "@remixicon/react";
 import { LoadingSpinner } from "./loading-spinner";
 import styled, { CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
+import { Figure, FigureProps } from "./figure";
 
 export interface ToggleboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {
   checked?: boolean;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
-  icon?: RemixiconComponentType | null;
+  icon?: FigureProps;
   isLoading?: boolean;
   name?: string;
   label?: string;
@@ -35,7 +35,7 @@ function Togglebox({
   name,
   checked = false,
   onChange,
-  icon: Icon = null,
+  icon,
   isLoading = false,
   label,
   description,
@@ -92,7 +92,13 @@ function Togglebox({
           {isLoading ? (
             <LoadingSpinner iconSize={iconSize} />
           ) : (
-            Icon && <Icon aria-label="togglebox-icon" size={iconSize} />
+            icon && (
+              <Figure
+                {...icon}
+                aria-label="togglebox-icon"
+                size={icon?.size ?? iconSize}
+              />
+            )
           )}
         </ToggleButton>
       </StyledLabel>

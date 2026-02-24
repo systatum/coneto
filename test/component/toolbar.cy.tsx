@@ -17,58 +17,49 @@ describe("Toolbar", () => {
   const TIP_MENU_ITEMS = [
     {
       caption: "Report Phishing",
-      icon: RiSpam2Line,
-      iconColor: "blue",
+      icon: { image: RiSpam2Line, color: "blue" },
       onClick: () => console.log("Phishing reported"),
     },
     {
       caption: "Report Junk",
-      icon: RiForbid2Line,
-      iconColor: "red",
+      icon: { image: RiForbid2Line, color: "red" },
       onClick: () => console.log("Junk reported"),
     },
     {
       caption: "Block Sender",
-      icon: RiShieldLine,
-      iconColor: "orange",
+      icon: { image: RiShieldLine, color: "orange" },
       isDangerous: true,
       onClick: () => console.log("Sender blocked"),
     },
     {
       caption: "Mark as Read",
-      icon: RiCheckLine,
-      iconColor: "green",
+      icon: { image: RiCheckLine, color: "green" },
       onClick: () => console.log("Marked as read"),
     },
     {
       caption: "Move to Spam",
-      icon: RiInboxArchiveLine,
-      iconColor: "purple",
+      icon: { image: RiInboxArchiveLine, color: "purple" },
       onClick: () => console.log("Moved to spam"),
     },
     {
       caption: "Download Attachment",
-      icon: RiDownloadLine,
-      iconColor: "teal",
+      icon: { image: RiDownloadLine, color: "teal" },
       onClick: () => console.log("Downloading"),
     },
     {
       caption: "Copy Link",
-      icon: RiLink,
-      iconColor: "gray",
+      icon: { image: RiLink, color: "gray" },
       onClick: () => console.log("Link copied"),
     },
     {
       caption: "Share",
-      icon: RiShareLine,
-      iconColor: "indigo",
+      icon: { image: RiShareLine, color: "indigo" },
       isDangerous: true,
       onClick: () => console.log("Shared"),
     },
     {
       caption: "Edit",
-      icon: RiEditLine,
-      iconColor: "yellow",
+      icon: { image: RiEditLine, color: "yellow" },
       onClick: () => console.log("Edit mode"),
     },
   ];
@@ -85,7 +76,7 @@ describe("Toolbar", () => {
               `,
             }}
             caption="Default Mode"
-            icon={RiMessage2Line}
+            icon={{ image: RiMessage2Line }}
             subMenuList={TIP_MENU_ITEMS}
           />
         </Toolbar>
@@ -108,13 +99,13 @@ describe("Toolbar", () => {
           <Toolbar big>
             <Toolbar.Menu
               caption="Default Mode"
-              icon={RiMessage2Line}
+              icon={{ image: RiMessage2Line }}
               subMenuList={TIP_MENU_ITEMS}
             />
             <Toolbar.Menu
               caption="Danger Mode"
               variant="danger"
-              icon={RiMessage2Line}
+              icon={{ image: RiMessage2Line }}
               subMenuList={TIP_MENU_ITEMS}
             />
           </Toolbar>
@@ -157,8 +148,7 @@ describe("Toolbar", () => {
                 console.log("test");
               }}
               caption="Default Mode"
-              icon={RiMessage2Line}
-              iconColor="red"
+              icon={{ image: RiMessage2Line, color: "red" }}
               subMenuList={TIP_MENU_ITEMS}
             />
           </Toolbar>
@@ -188,8 +178,7 @@ describe("Toolbar", () => {
                 console.log("test");
               }}
               caption="Default Mode"
-              icon={RiMessage2Line}
-              iconColor="red"
+              icon={{ image: RiMessage2Line, color: "red" }}
               subMenuList={TIP_MENU_ITEMS}
             />
           </Toolbar>

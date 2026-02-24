@@ -17,6 +17,7 @@ import ContextMenu from "./context-menu";
 import { LoadingSpinner } from "./loading-spinner";
 import { SubMenuButtonProps } from "./button";
 import { Tooltip } from "./tooltip";
+import { Figure, FigureProps } from "./figure";
 
 export interface TreeListProps
   extends Omit<
@@ -92,7 +93,7 @@ export interface TreeListActionsProps {
   id: string;
   caption?: string;
   onClick?: (props?: { setActive?: (prop: boolean) => void }) => void;
-  icon?: RemixiconComponentType;
+  icon?: FigureProps;
   style?: CSSProp;
   subMenu?: (props: SubMenuTreeListProps) => ReactNode;
 }
@@ -480,7 +481,7 @@ interface TreeListActionInternalProps {
   isActive?: boolean;
   onClick?: () => void;
   style?: CSSProp;
-  icon?: RemixiconComponentType;
+  icon?: FigureProps;
   caption?: string;
 }
 
@@ -489,7 +490,7 @@ function TreeListAction({
   isActive,
   onClick,
   caption,
-  icon: Icon,
+  icon,
   style,
 }: TreeListActionInternalProps) {
   if (!onClick) onClick = () => {};
@@ -504,7 +505,7 @@ function TreeListAction({
       onClick={() => onClick()}
       $style={style}
     >
-      {Icon && <Icon size={16} />}
+      {icon && <Figure {...icon} />}
       <div>{caption}</div>
     </ActionItem>
   );
@@ -858,15 +859,18 @@ function TreeListItem<T extends TreeListItemsProps>({
         </div>
         {item.actions &&
           (() => {
-            const list = item.actions;
+            const listActions = item.actions;
 
-            const actionsWithIcons = list.map((prop) => ({
-              ...prop,
-              icon: prop.icon ?? RiArrowRightSLine,
+            const actionsWithIcons = listActions.map((action) => ({
+              ...action,
+              icon: {
+                ...action.icon,
+                image: action.icon.image ?? RiArrowRightSLine,
+              },
               onClick: (e?: React.MouseEvent) => {
                 e?.stopPropagation();
-                prop.onClick?.(item.id);
-                if (list.length > 2) setIsHovered(null);
+                action.onClick?.(item.id);
+                if (listActions.length > 2) setIsHovered(null);
               },
             }));
 
@@ -890,7 +894,6 @@ function TreeListItem<T extends TreeListItemsProps>({
                   }}
                   open={openRowId === item.id}
                   maxActionsBeforeCollapsing={2}
-                  iconSize={16}
                   focusBackgroundColor="#d4d4d4"
                   hoverBackgroundColor="#d4d4d4"
                   activeBackgroundColor="#d4d4d4"

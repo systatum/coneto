@@ -8,7 +8,6 @@ import React, {
   useState,
 } from "react";
 import {
-  RemixiconComponentType,
   RiBold,
   RiCheckboxLine,
   RiH1,
@@ -21,8 +20,9 @@ import {
 } from "@remixicon/react";
 import TurndownService from "./../lib/turndown/turndown";
 import { marked } from "./../lib/marked/marked";
-import { TipMenu } from "./tip-menu";
+import { TipMenu, TipMenuItemProps } from "./tip-menu";
 import styled, { css, CSSProp } from "styled-components";
+import { Figure, FigureProps } from "./figure";
 
 export interface RichEditorProps {
   value?: string;
@@ -42,7 +42,7 @@ export type RichEditorToolbarPositionState = "top" | "bottom";
 export type RichEditorModeState = "view-only" | "page-editor" | "text-editor";
 
 export interface RichEditorToolbarButtonProps {
-  icon?: RemixiconComponentType;
+  icon?: FigureProps;
   onClick?: () => void;
   children?: ReactNode;
   style?: CSSProp;
@@ -1053,11 +1053,13 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       handleEditorChange();
     };
 
-    const TIP_MENU_RICH_EDITOR = [
+    const TIP_MENU_RICH_EDITOR: TipMenuItemProps[] = [
       {
         caption: "Heading 1",
-        icon: RiH1,
-        iconColor: "black",
+        icon: {
+          image: RiH1,
+          color: "black",
+        },
         onClick: async () => {
           await editorRef.current?.focus();
           await handleHeading(1);
@@ -1065,8 +1067,10 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       },
       {
         caption: "Heading 2",
-        icon: RiH2,
-        iconColor: "black",
+        icon: {
+          image: RiH2,
+          color: "black",
+        },
         onClick: async () => {
           await editorRef.current?.focus();
           await handleHeading(2);
@@ -1074,8 +1078,10 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       },
       {
         caption: "Heading 3",
-        icon: RiH3,
-        iconColor: "black",
+        icon: {
+          image: RiH3,
+          color: "black",
+        },
         onClick: async () => {
           await editorRef.current?.focus();
           await handleHeading(3);
@@ -1115,28 +1121,45 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
               <ToolbarGroup>
                 <RichEditorToolbarButton
                   isActive={formatStates.bold}
-                  icon={RiBold}
+                  icon={{
+                    image: RiBold,
+                  }}
                   onClick={() => handleCommand("bold")}
                 />
+
                 <RichEditorToolbarButton
                   isActive={formatStates.italic}
-                  icon={RiItalic}
+                  icon={{
+                    image: RiItalic,
+                  }}
                   onClick={() => handleCommand("italic")}
                 />
+
                 <RichEditorToolbarButton
-                  icon={RiListOrdered}
+                  icon={{
+                    image: RiListOrdered,
+                  }}
                   onClick={() => handleCommand("insertOrderedList")}
                 />
+
                 <RichEditorToolbarButton
-                  icon={RiListUnordered}
+                  icon={{
+                    image: RiListUnordered,
+                  }}
                   onClick={() => handleCommand("insertUnorderedList")}
                 />
+
                 <RichEditorToolbarButton
-                  icon={RiCheckboxLine}
+                  icon={{
+                    image: RiCheckboxLine,
+                  }}
                   onClick={() => handleCommand("checkbox")}
                 />
+
                 <RichEditorToolbarButton
-                  icon={RiHeading}
+                  icon={{
+                    image: RiHeading,
+                  }}
                   isOpen={isOpen}
                   onClick={() => {
                     const sel = window.getSelection();
@@ -1195,7 +1218,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 ) as RichEditorComponent;
 
 function RichEditorToolbarButton({
-  icon: Icon,
+  icon,
   onClick,
   children,
   style,
@@ -1215,7 +1238,7 @@ function RichEditorToolbarButton({
       aria-label="rich-editor-toolbar-button"
       aria-pressed={isActive}
     >
-      {Icon && <Icon size={16} />}
+      {icon && <Figure {...icon} />}
       {children && <span>{children}</span>}
     </ToolbarButton>
   );

@@ -52,14 +52,6 @@ const meta: Meta<typeof Radio> = {
       description: "Optional icon displayed inside the radio (button mode).",
       control: false,
     },
-    iconSize: {
-      description: "Size of the icon or image in pixels.",
-      control: "number",
-    },
-    iconColor: {
-      description: "Color of the icon.",
-      control: "color",
-    },
     disabled: {
       description: "Disables user interaction with the radio.",
       control: "boolean",
@@ -149,12 +141,12 @@ export const WithButton: Story = {
       {
         value: "text",
         label: "Text",
-        icon: RiAlignLeft,
+        icon: { image: RiAlignLeft },
       },
       {
         value: "database",
         label: "Database",
-        icon: RiDatabase2Fill,
+        icon: { image: RiDatabase2Fill },
       },
     ];
 
@@ -186,7 +178,9 @@ export const WithButton: Story = {
             value={option.value}
             label={option.label}
             mode="button"
-            icon={option.icon}
+            icon={{
+              image: option.icon.image as string,
+            }}
             checked={args.value === option.value}
             onChange={onChangeValue}
           />

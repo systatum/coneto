@@ -611,8 +611,10 @@ export const Nested: Story = {
       return [
         {
           caption: "Edit",
-          icon: RiEdit2Line,
-          iconColor: "gray",
+          icon: {
+            image: RiEdit2Line,
+            color: "gray",
+          },
           onClick: async () => {
             await setFamilyRows(dataFamily);
             await dialogRef1.current.openDialog();
@@ -716,7 +718,9 @@ export const Nested: Story = {
                 actions={[
                   {
                     caption: "Add Family",
-                    icon: RiAddBoxLine,
+                    icon: {
+                      image: RiAddBoxLine,
+                    },
                     onClick: async () => {
                       await dialogRef2.current.openDialog();
                     },

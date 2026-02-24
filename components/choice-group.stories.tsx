@@ -14,7 +14,6 @@ import {
   RiMusic2Fill,
   RiImage2Fill,
   RiVideoFill,
-  RemixiconComponentType,
 } from "@remixicon/react";
 import styled from "styled-components";
 
@@ -133,25 +132,25 @@ export const WithRadioAndIcon: StoryRadio = {
         value: "comments",
         label: "Comments",
         description: "Get notified when someone posts a comment",
-        icon: RiChat3Fill,
+        icon: { image: RiChat3Fill },
       },
       {
         value: "mentions",
         label: "Mentions",
         description: "Get notified when someone mentions you",
-        icon: RiAtFill,
+        icon: { image: RiAtFill },
       },
       {
         value: "follows",
         label: "Follows",
         description: "Get notified when someone follows you",
-        icon: RiUserFollowFill,
+        icon: { image: RiUserFollowFill },
       },
       {
         value: "none",
         label: "None",
         description: "Don't notify me",
-        icon: RiNotificationOffFill,
+        icon: { image: RiNotificationOffFill },
       },
     ];
 
@@ -175,7 +174,9 @@ export const WithRadioAndIcon: StoryRadio = {
               name="radioSelected"
               value={option.value}
               label={option.label}
-              icon={option.icon as RemixiconComponentType}
+              icon={{
+                image: option.icon.image as string,
+              }}
               description={option.description}
               checked={args.radioSelected === option.value}
               onChange={onChangeValue}
@@ -201,27 +202,27 @@ export const WithRadioButton: StoryRadio = {
       {
         value: "text",
         label: "Text",
-        icon: RiAlignLeft,
+        icon: { image: RiAlignLeft },
       },
       {
         value: "database",
         label: "Database",
-        icon: RiDatabase2Fill,
+        icon: { image: RiDatabase2Fill },
       },
       {
         value: "music",
         label: "Music",
-        icon: RiMusic2Fill,
+        icon: { image: RiMusic2Fill },
       },
       {
         value: "image",
         label: "Image",
-        icon: RiImage2Fill,
+        icon: { image: RiImage2Fill },
       },
       {
         value: "video",
         label: "Video",
-        icon: RiVideoFill,
+        icon: { image: RiVideoFill },
       },
     ];
 
@@ -229,27 +230,27 @@ export const WithRadioButton: StoryRadio = {
       {
         value: "text",
         label: "Text",
-        icon: "https://picsum.photos/seed/text/64/64",
+        icon: { image: "https://picsum.photos/seed/text/64/64" },
       },
       {
         value: "database",
         label: "Database",
-        icon: "https://picsum.photos/seed/database/64/64",
+        icon: { image: "https://picsum.photos/seed/database/64/64" },
       },
       {
         value: "music",
         label: "Music",
-        icon: "https://picsum.photos/seed/music/64/64",
+        icon: { image: "https://picsum.photos/seed/music/64/64" },
       },
       {
         value: "image",
         label: "Image",
-        icon: "https://picsum.photos/seed/image/64/64",
+        icon: { image: "https://picsum.photos/seed/image/64/64" },
       },
       {
         value: "video",
         label: "Video",
-        icon: "https://picsum.photos/seed/video/64/64",
+        icon: { image: "https://picsum.photos/seed/video/64/64" },
       },
     ];
 
@@ -274,7 +275,9 @@ export const WithRadioButton: StoryRadio = {
                   name={GROUP_A}
                   value={option.value}
                   label={option.label}
-                  icon={option.icon as RemixiconComponentType}
+                  icon={{
+                    image: option.icon.image as string,
+                  }}
                   checked={stateA === option.value}
                   onChange={(e) => setStateA(e.target.value)}
                 />
@@ -301,7 +304,9 @@ export const WithRadioButton: StoryRadio = {
                   name={GROUP_B}
                   value={option.value}
                   label={option.label}
-                  icon={option.icon as RemixiconComponentType}
+                  icon={{
+                    image: option.icon.image as string,
+                  }}
                   checked={stateB === option.value}
                   onChange={(e) => setStateB(e.target.value)}
                 />
@@ -328,7 +333,9 @@ export const WithRadioButton: StoryRadio = {
                   name={GROUP_C}
                   value={option.value}
                   label={option.label}
-                  icon={option.icon as string}
+                  icon={{
+                    image: option.icon.image as string,
+                  }}
                   checked={stateC === option.value}
                   onChange={(e) => setStateC(e.target.value)}
                 />

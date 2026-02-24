@@ -15,9 +15,9 @@ import {
   ListGroupActionsProps,
   ListGroupContentProps,
   ListItemActionProps,
+  ListItemProps,
 } from "./../../components/list";
 import { css } from "styled-components";
-import { ListItemProps } from "dist/components/list";
 
 describe("List", () => {
   const LIST_ITEMS: ListItemProps[] = [
@@ -1471,7 +1471,7 @@ describe("List", () => {
       const LIST_ACTION_ITEMS_PROPS = (id: string): ListItemActionProps[] => [
         {
           caption: "Add",
-          icon: RiArrowRightSLine,
+          icon: { image: RiArrowRightSLine },
           onClick: () => {
             console.log(`action was clicked ${id}`);
           },
@@ -1674,14 +1674,14 @@ describe("List", () => {
                       actions={(id: string) => [
                         {
                           caption: "Edit",
-                          icon: RiEdit2Line,
+                          icon: { image: RiEdit2Line },
                           onClick: () => {
                             console.log(`Edit content for ${id}`);
                           },
                         },
                         {
                           caption: "Delete",
-                          icon: RiDeleteBack2Line,
+                          icon: { image: RiDeleteBack2Line },
                           onClick: () => {
                             console.log(`Delete content for ${id}`);
                           },

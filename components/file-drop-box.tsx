@@ -11,6 +11,7 @@ import {
 import styled, { css, CSSProp } from "styled-components";
 import { LoadingSpinner } from "./loading-spinner";
 import { StatefulForm } from "./stateful-form";
+import { Figure } from "./figure";
 
 export interface OnFileDroppedFunctionProps {
   files: File[];
@@ -179,8 +180,8 @@ function FileDropBox({
         <Fragment>
           <UploadContent>
             <IconsRow>
-              {FILE_ICON.map(({ id, icon: Icon, size }) => (
-                <Icon key={id} size={size} />
+              {FILE_ICON.map(({ id, icon, size }) => (
+                <Figure key={id} color="#6b7280" image={icon} size={size} />
               ))}
             </IconsRow>
             <PlaceholderText $isDragging={isDragging}>

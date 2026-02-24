@@ -364,7 +364,7 @@ describe("DormantText", () => {
       cy.findByLabelText("dormant-wrapper")
         .should("have.css", "height", "24px")
         .click();
-      cy.findByLabelText("active-wrapper").should("have.css", "height", "34px");
+      cy.findByLabelText("active-wrapper").should("have.css", "height", "36px");
     });
   });
 

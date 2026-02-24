@@ -374,24 +374,30 @@ export const Appendable: Story = {
       return [
         {
           caption: "Sort Ascending",
-          icon: RiArrowUpSLine,
-          iconColor: "gray",
+          icon: {
+            image: RiArrowUpSLine,
+            color: "gray",
+          },
           onClick: () => {
             handleSortingRequested({ mode: "asc", column: columnCaption });
           },
         },
         {
           caption: "Sort Descending",
-          icon: RiArrowDownSLine,
-          iconColor: "gray",
+          icon: {
+            image: RiArrowDownSLine,
+            color: "gray",
+          },
           onClick: () => {
             handleSortingRequested({ mode: "desc", column: columnCaption });
           },
         },
         {
           caption: "Reset Sorting",
-          icon: RiRefreshLine,
-          iconColor: "gray",
+          icon: {
+            image: RiRefreshLine,
+            color: "gray",
+          },
           onClick: () => {
             handleSortingRequested({ mode: "original", column: columnCaption });
           },
@@ -403,16 +409,21 @@ export const Appendable: Story = {
       return [
         {
           caption: "Edit",
-          icon: RiArrowUpSLine,
-          iconColor: "gray",
+          icon: {
+            image: RiArrowUpSLine,
+            color: "gray",
+          },
           onClick: () => {
             console.log(`${rowId} was edited`);
           },
         },
         {
           caption: "Delete",
-          icon: RiDeleteBin2Fill,
-          iconColor: "gray",
+          icon: {
+            image: RiDeleteBin2Fill,
+            color: "gray",
+          },
+          isDangerous: true,
           onClick: () => {
             console.log(`${rowId} was deleted`);
           },
@@ -608,24 +619,30 @@ export const WithOneAction: Story = {
       return [
         {
           caption: "Sort Ascending",
-          icon: RiArrowUpSLine,
-          iconColor: "gray",
+          icon: {
+            image: RiArrowUpSLine,
+            color: "gray",
+          },
           onClick: () => {
             handleSortingRequested({ mode: "asc", column: columnCaption });
           },
         },
         {
           caption: "Sort Descending",
-          icon: RiArrowDownSLine,
-          iconColor: "gray",
+          icon: {
+            image: RiArrowDownSLine,
+            color: "gray",
+          },
           onClick: () => {
             handleSortingRequested({ mode: "desc", column: columnCaption });
           },
         },
         {
           caption: "Reset Sorting",
-          icon: RiRefreshLine,
-          iconColor: "gray",
+          icon: {
+            image: RiRefreshLine,
+            color: "gray",
+          },
           onClick: () => {
             handleSortingRequested({ mode: "original", column: columnCaption });
           },
@@ -637,8 +654,9 @@ export const WithOneAction: Story = {
       return [
         {
           caption: "Delete",
-          icon: RiDeleteBin2Fill,
-          iconColor: "gray",
+          icon: {
+            image: RiDeleteBin2Fill,
+          },
           onClick: () => {
             console.log(`${rowId} was deleted`);
           },
@@ -787,27 +805,34 @@ export const SortableWithPagination: Story = {
       columnCaption: string
     ): SubMenuListTableProps[] => {
       const column = columnCaption.toLowerCase() as keyof (typeof rawRows)[0];
+
       return [
         {
           caption: "Sort Ascending",
-          icon: RiArrowUpSLine,
-          iconColor: "gray",
+          icon: {
+            image: RiArrowUpSLine,
+            color: "gray",
+          },
           onClick: () => {
             handleSortingRequested({ mode: "asc", column });
           },
         },
         {
           caption: "Sort Descending",
-          icon: RiArrowDownSLine,
-          iconColor: "gray",
+          icon: {
+            image: RiArrowDownSLine,
+            color: "gray",
+          },
           onClick: () => {
             handleSortingRequested({ mode: "desc", column });
           },
         },
         {
           caption: "Reset Sorting",
-          icon: RiRefreshLine,
-          iconColor: "gray",
+          icon: {
+            image: RiRefreshLine,
+            color: "gray",
+          },
           onClick: () => {
             handleSortingRequested({ mode: "original", column });
           },
@@ -1113,27 +1138,34 @@ export const WithSummary: Story = {
       columnCaption: string
     ): SubMenuListTableProps[] => {
       const column = columnCaption as keyof (typeof TABLE_ITEMS)[0]["items"][0];
+
       return [
         {
           caption: "Sort Ascending",
-          icon: RiArrowUpSLine,
-          iconColor: "gray",
+          icon: {
+            image: RiArrowUpSLine,
+            color: "gray",
+          },
           onClick: () => {
             handleSortingRequested({ mode: "asc", column });
           },
         },
         {
           caption: "Sort Descending",
-          icon: RiArrowDownSLine,
-          iconColor: "gray",
+          icon: {
+            image: RiArrowDownSLine,
+            color: "gray",
+          },
           onClick: () => {
             handleSortingRequested({ mode: "desc", column });
           },
         },
         {
           caption: "Reset Sorting",
-          icon: RiRefreshLine,
-          iconColor: "gray",
+          icon: {
+            image: RiRefreshLine,
+            color: "gray",
+          },
           onClick: () => {
             handleSortingRequested({ mode: "original", column });
           },
@@ -1145,16 +1177,20 @@ export const WithSummary: Story = {
       return [
         {
           caption: "Edit",
-          icon: RiArrowUpSLine,
-          iconColor: "gray",
+          icon: {
+            image: RiArrowUpSLine,
+            color: "gray",
+          },
           onClick: () => {
             console.log(`${rowId} was edited`);
           },
         },
         {
           caption: "Delete",
-          icon: RiDeleteBin2Fill,
-          iconColor: "gray",
+          icon: {
+            image: RiDeleteBin2Fill,
+            color: "gray",
+          },
           onClick: () => {
             console.log(`${rowId} was deleted`);
           },
@@ -1468,12 +1504,13 @@ export const WithRowGroup: Story = {
         title: "All",
       },
     ];
-
     const COPY_ACTIONS: SubMenuListTableProps[] = [
       {
         caption: "Copy to parent",
-        icon: RiFileCopy2Line,
-        iconColor: "gray",
+        icon: {
+          image: RiFileCopy2Line,
+          color: "gray",
+        },
         isDangerous: true,
         onClick: () => {
           console.log(`${selected} copied to parent`);
@@ -1481,8 +1518,10 @@ export const WithRowGroup: Story = {
       },
       {
         caption: "Copy to link",
-        icon: RiClipboardLine,
-        iconColor: "gray",
+        icon: {
+          image: RiClipboardLine,
+          color: "gray",
+        },
         onClick: () => {
           console.log(`${selected} was copied to link`);
         },
@@ -1501,14 +1540,18 @@ export const WithRowGroup: Story = {
       {
         caption: "Delete",
         disabled: selected.length === 0,
-        icon: RiDeleteBin2Line,
+        icon: {
+          image: RiDeleteBin2Line,
+        },
         onClick: () => {
           console.log(`Delete ${selected.length} clicked`);
         },
       },
       {
         caption: "Copy",
-        icon: RiClipboardFill,
+        icon: {
+          image: RiClipboardFill,
+        },
         onClick: () => {
           console.log("Copy clicked");
         },
@@ -1526,27 +1569,34 @@ export const WithRowGroup: Story = {
     ): SubMenuListTableProps[] => {
       const column =
         columnCaption.toLowerCase() as keyof (typeof TABLE_ITEMS)[0]["items"][0];
+
       return [
         {
           caption: "Sort Ascending",
-          icon: RiArrowUpSLine,
-          iconColor: "gray",
+          icon: {
+            image: RiArrowUpSLine,
+            color: "gray",
+          },
           onClick: () => {
             handleSortingRequested({ mode: "asc", column });
           },
         },
         {
           caption: "Sort Descending",
-          icon: RiArrowDownSLine,
-          iconColor: "gray",
+          icon: {
+            image: RiArrowDownSLine,
+            color: "gray",
+          },
           onClick: () => {
             handleSortingRequested({ mode: "desc", column });
           },
         },
         {
           caption: "Reset Sorting",
-          icon: RiRefreshLine,
-          iconColor: "gray",
+          icon: {
+            image: RiRefreshLine,
+            color: "gray",
+          },
           onClick: () => {
             handleSortingRequested({ mode: "original", column });
           },
@@ -1558,16 +1608,20 @@ export const WithRowGroup: Story = {
       return [
         {
           caption: "Edit",
-          icon: RiArrowUpSLine,
-          iconColor: "gray",
+          icon: {
+            image: RiArrowUpSLine,
+            color: "gray",
+          },
           onClick: () => {
             console.log(`${rowId} was edited`);
           },
         },
         {
           caption: "Delete",
-          icon: RiDeleteBin2Fill,
-          iconColor: "gray",
+          icon: {
+            image: RiDeleteBin2Fill,
+            color: "gray",
+          },
           onClick: () => {
             console.log(`${rowId} was deleted`);
           },
@@ -1996,8 +2050,10 @@ export const Draggable: Story = {
     const COPY_ACTIONS: SubMenuListTableProps[] = [
       {
         caption: "Copy to parent",
-        icon: RiFileCopy2Line,
-        iconColor: "gray",
+        icon: {
+          image: RiFileCopy2Line,
+          color: "gray",
+        },
         isDangerous: true,
         onClick: () => {
           console.log(`${selected} copied to parent`);
@@ -2005,8 +2061,10 @@ export const Draggable: Story = {
       },
       {
         caption: "Copy to link",
-        icon: RiClipboardLine,
-        iconColor: "gray",
+        icon: {
+          image: RiClipboardLine,
+          color: "gray",
+        },
         onClick: () => {
           console.log(`${selected} was copied to link`);
         },
@@ -2017,14 +2075,18 @@ export const Draggable: Story = {
       {
         caption: "Delete",
         disabled: selected.length === 0,
-        icon: RiDeleteBin2Line,
+        icon: {
+          image: RiDeleteBin2Line,
+        },
         onClick: () => {
           console.log(`Delete ${selected.length} clicked`);
         },
       },
       {
         caption: "Copy",
-        icon: RiClipboardFill,
+        icon: {
+          image: RiClipboardFill,
+        },
         onClick: () => {
           console.log("Copy clicked");
         },
@@ -2039,11 +2101,14 @@ export const Draggable: Story = {
     ): SubMenuListTableProps[] => {
       const column =
         columnCaption.toLowerCase() as keyof (typeof TABLE_ITEMS_GROUPS)[0]["items"][0];
+
       return [
         {
           caption: "Sort Ascending",
-          icon: RiArrowUpSLine,
-          iconColor: "gray",
+          icon: {
+            image: RiArrowUpSLine,
+            color: "gray",
+          },
           onClick: () => {
             handleSortingRequested({
               mode: "asc",
@@ -2055,8 +2120,10 @@ export const Draggable: Story = {
         },
         {
           caption: "Sort Descending",
-          icon: RiArrowDownSLine,
-          iconColor: "gray",
+          icon: {
+            image: RiArrowDownSLine,
+            color: "gray",
+          },
           onClick: () => {
             handleSortingRequested({
               mode: "desc",
@@ -2068,8 +2135,10 @@ export const Draggable: Story = {
         },
         {
           caption: "Reset Sorting",
-          icon: RiRefreshLine,
-          iconColor: "gray",
+          icon: {
+            image: RiRefreshLine,
+            color: "gray",
+          },
           onClick: () => {
             handleSortingRequested({
               mode: "original",
@@ -2086,16 +2155,20 @@ export const Draggable: Story = {
       return [
         {
           caption: "Edit",
-          icon: RiArrowUpSLine,
-          iconColor: "gray",
+          icon: {
+            image: RiArrowUpSLine,
+            color: "gray",
+          },
           onClick: () => {
             console.log(`${rowId} was edited`);
           },
         },
         {
           caption: "Delete",
-          icon: RiDeleteBin2Fill,
-          iconColor: "gray",
+          icon: {
+            image: RiDeleteBin2Fill,
+            color: "gray",
+          },
           onClick: () => {
             console.log(`${rowId} was deleted`);
           },

@@ -91,7 +91,7 @@ describe("ActionButton", () => {
               actions={[
                 {
                   caption: "Add",
-                  icon: RiAddBoxLine,
+                  icon: { image: RiAddBoxLine },
                   onClick: () => {
                     console.log(`Add button was clicked`);
                   },
@@ -120,7 +120,7 @@ describe("ActionButton", () => {
                 actions={[
                   {
                     caption: "Add",
-                    icon: RiAddBoxLine,
+                    icon: { image: RiAddBoxLine },
                     onClick: () => {
                       console.log(`Add button was clicked`);
                     },
@@ -416,12 +416,16 @@ const LIST_GROUPS: ListGroupContentProps[] = [
 const TOP_ACTIONS: TableActionsProps[] = [
   {
     caption: "Delete",
-    icon: RiDeleteBin2Line,
+    icon: {
+      image: RiDeleteBin2Line,
+    },
     onClick: () => {},
   },
   {
     caption: "Copy",
-    icon: RiClipboardFill,
+    icon: {
+      image: RiClipboardFill,
+    },
     onClick: () => {},
     subMenu: ({ list }) => list(LIST_OPTIONS),
     variant: "danger",
@@ -447,7 +451,9 @@ const TABS_ITEMS: NavTabContentProps[] = [
         onClick: () => {
           console.log("Discover clicked");
         },
-        icon: RiSearchLine,
+        icon: {
+          image: RiSearchLine,
+        },
       },
     ],
   },
@@ -464,14 +470,18 @@ const TABS_ITEMS: NavTabContentProps[] = [
         onClick: () => {
           console.log("Discover clicked");
         },
-        icon: RiSearchLine,
+        icon: {
+          image: RiSearchLine,
+        },
       },
       {
         caption: "Mention",
         onClick: () => {
           console.log("Mention clicked");
         },
-        icon: RiAtLine,
+        icon: {
+          image: RiAtLine,
+        },
       },
     ],
   },
@@ -480,33 +490,43 @@ const TABS_ITEMS: NavTabContentProps[] = [
 const LIST_OPTIONS: TipMenuItemProps[] = [
   {
     caption: "Report Phishing",
-    icon: RiSpam2Line,
-    iconColor: "blue",
+    icon: {
+      image: RiSpam2Line,
+      color: "blue",
+    },
     onClick: () => console.log("Phishing reported"),
   },
   {
     caption: "Report Junk",
-    icon: RiForbid2Line,
-    iconColor: "red",
+    icon: {
+      image: RiForbid2Line,
+      color: "red",
+    },
     onClick: () => console.log("Junk reported"),
   },
   {
     caption: "Block Sender",
-    icon: RiShieldLine,
-    iconColor: "orange",
+    icon: {
+      image: RiShieldLine,
+      color: "orange",
+    },
     isDangerous: true,
     onClick: () => console.log("Sender blocked"),
   },
   {
     caption: "Mark as Read",
-    icon: RiCheckLine,
-    iconColor: "green",
+    icon: {
+      image: RiCheckLine,
+      color: "green",
+    },
     onClick: () => console.log("Marked as read"),
   },
   {
     caption: "Move to Spam",
-    icon: RiInboxArchiveLine,
-    iconColor: "purple",
+    icon: {
+      image: RiInboxArchiveLine,
+      color: "purple",
+    },
     onClick: () => console.log("Moved to spam"),
   },
 ];

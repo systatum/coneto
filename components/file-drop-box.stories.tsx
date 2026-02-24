@@ -95,7 +95,7 @@ export const Default: Story = {
               actions={(id) => [
                 {
                   caption: "Delete",
-                  icon: RiDeleteBin2Fill,
+                  icon: { image: RiDeleteBin2Fill },
                   onClick: () => {
                     if (id) {
                       setFiles((prev) => prev.filter((val) => val.name !== id));
