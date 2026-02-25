@@ -29,8 +29,10 @@ function Figure({
         <img
           alt="figure-icon"
           src={Icon}
-          width={size}
-          height={size}
+          style={{
+            minWidth: `${size}px`,
+            minHeight: `${size}px`,
+          }}
           aria-label={ariaLabel}
         />
       ) : (
