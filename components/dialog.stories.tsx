@@ -201,7 +201,6 @@ export const HideCloseButton: Story = {
 export const NonEscapable: Story = {
   args: {
     isOpen: false,
-    hideClose: true,
   },
   render: (args: Args) => {
     const [{ isOpen }, updateArgs] = useArgs();
@@ -242,9 +241,9 @@ export const NonEscapable: Story = {
                 color: "#374151",
               }}
             >
-              This dialog cannot be closed by pressing the Escape key. If the
-              close button is hidden, use the provided action buttons to dismiss
-              the dialog.
+              This dialog cannot be closed by pressing the Escape key or
+              clicking the background overlay. If the close button is hidden,
+              use the provided action buttons to dismiss the dialog.
             </p>
           </div>
         </Dialog.Content>

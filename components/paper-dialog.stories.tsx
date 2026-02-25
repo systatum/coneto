@@ -210,8 +210,9 @@ export const NonEscapable: Story = {
                 Non-Escapable Dialog
               </h2>
               <p style={{ fontSize: "14px", color: "#4B5563" }}>
-                This dialog cannot be closed by pressing the Escape key. Use the
-                close button or action buttons to dismiss it.
+                This dialog cannot be closed by pressing the Escape key or
+                clicking the background overlay. Use the close button or action
+                buttons to dismiss it.
               </p>
               <p style={{ fontSize: "14px", color: "#4B5563" }}>
                 You can still interact with the content and action buttons

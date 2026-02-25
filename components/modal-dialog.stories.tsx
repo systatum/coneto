@@ -186,8 +186,8 @@ export const NonEscapable: Story = {
     escapable: false,
     children: (
       <p>
-        Pressing the Escape key will not close this modal. Use the buttons or
-        the close icon to dismiss it.
+        Pressing the Escape key or clicking the background overlay will not
+        close this modal. Use the buttons or the close icon to dismiss it.
       </p>
     ),
   },
