@@ -28,7 +28,7 @@ const meta: Meta<typeof ModalDialog> = {
       control: "text",
       description: "Optional subtitle displayed below the main title.",
     },
-    hasCloseButton: {
+    closable: {
       control: "boolean",
       description:
         "Whether the close (×) button should be shown in the dialog header.",
@@ -76,7 +76,7 @@ export const Default: Story = {
   args: {
     title: "Default Modal",
     subTitle: "This is a subtitle",
-    hasCloseButton: true,
+    closable: true,
     isOpen: false,
     buttons: [
       {
@@ -122,28 +122,32 @@ export const Default: Story = {
   },
 };
 
-export const NoCloseButton: Story = {
+export const NonEscapable: Story = {
   args: {
-    title: "No Close Button",
-    subTitle: "Close icon hidden",
-    hasCloseButton: false,
+    title: "Non Elosable",
+    subTitle: "This modal cannot be closed using the Escape key",
     isOpen: false,
     buttons: [
       {
         id: "ok",
         caption: "OK",
-        variant: "danger",
+        variant: "primary",
       },
       {
         id: "cancel",
         caption: "Cancel",
-        variant: "default",
       },
     ],
     onClick: ({ closeDialog }) => {
       closeDialog();
     },
-    children: <p>Modal without the top-right close button.</p>,
+    closable: false,
+    children: (
+      <p>
+        Pressing the Escape key or clicking the background overlay will not
+        close this modal. Use the buttons or the close icon to dismiss it.
+      </p>
+    ),
   },
   render: (args: ModalDialogProps) => {
     const [{ isOpen }, setUpdateArgs] = useArgs();
@@ -151,7 +155,7 @@ export const NoCloseButton: Story = {
     return (
       <>
         <Button onClick={() => setUpdateArgs({ isOpen: true })}>
-          Default With HideClose
+          Non closable Dialog
         </Button>
         <ModalDialog
           {...args}

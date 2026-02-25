@@ -13,7 +13,7 @@ const meta: Meta = {
   tags: ["autodocs"],
   argTypes: {
     isOpen: { control: "boolean" },
-    hideClose: { control: "boolean" },
+    closable: { control: "boolean" },
   },
 };
 
@@ -145,28 +145,24 @@ export const DialogWithButton: Story = {
   },
 };
 
-export const HideCloseButton: Story = {
+export const NonEscapable: Story = {
   args: {
     isOpen: false,
-    hideClose: true,
   },
-  argTypes: {
-    isOpen: { control: "boolean" },
-    hideClose: { control: "boolean" },
-  },
-
   render: (args: Args) => {
     const [{ isOpen }, updateArgs] = useArgs();
+
     return (
       <Dialog
         isOpen={isOpen}
         onVisibilityChange={(newOpen) => updateArgs({ isOpen: newOpen })}
+        closable={false}
       >
         <Dialog.Trigger>
-          <Button>Dialog (HideClose)</Button>
+          <Button>Open Non-Escapable Dialog</Button>
         </Dialog.Trigger>
+
         <Dialog.Content
-          hideClose={args.hideClose}
           styles={{
             self: css`
               max-width: 500px;
@@ -182,15 +178,23 @@ export const HideCloseButton: Story = {
             }}
           >
             <Dialog.Header>
-              <Dialog.Title>Dialog (HideClose)</Dialog.Title>
+              <Dialog.Title>Non-Escapable Dialog</Dialog.Title>
             </Dialog.Header>
+
             <p
               style={{
                 fontSize: "12px",
+                color: "#374151",
               }}
             >
-              This dialog does not include the close button in the top corner.
+              This dialog cannot be closed by pressing the Escape key or
+              clicking the background overlay. If the close button is hidden,
+              use the provided action buttons to dismiss the dialog.
             </p>
+
+            <Dialog.Trigger>
+              <Button>Close the dialog</Button>
+            </Dialog.Trigger>
           </div>
         </Dialog.Content>
       </Dialog>

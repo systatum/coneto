@@ -27,6 +27,7 @@ type StyleProp = {
 const DialogContext = createContext<{
   isOpen: boolean;
   setIsOpen: (val: boolean) => void;
+  closable?: boolean;
 } | null>(null);
 
 function useDialogContext() {
@@ -49,17 +50,23 @@ function usePortal() {
   return { mounted, target: ref.current };
 }
 
+export interface DialogProps {
+  children?: ReactNode;
+  isOpen?: boolean;
+  onVisibilityChange?: (isOpen?: boolean) => void;
+  closable?: boolean;
+}
+
 function Dialog({
   children,
   isOpen,
   onVisibilityChange,
-}: {
-  children: ReactNode;
-  isOpen: boolean;
-  onVisibilityChange: (isOpen: boolean) => void;
-}) {
+  closable = true,
+}: DialogProps) {
   return (
-    <DialogContext.Provider value={{ isOpen, setIsOpen: onVisibilityChange }}>
+    <DialogContext.Provider
+      value={{ isOpen, setIsOpen: onVisibilityChange, closable }}
+    >
       {children}
     </DialogContext.Provider>
   );
@@ -101,7 +108,6 @@ function DialogClose({ children }: { children: ReactNode }) {
 
 export interface DialogContentProps {
   children: ReactNode;
-  hideClose?: boolean;
   styles?: DialogContentStylesProps;
 }
 
@@ -111,18 +117,14 @@ export interface DialogContentStylesProps {
   closeButtonStyle?: CSSProp;
 }
 
-function DialogContent({
-  children,
-  hideClose = false,
-  styles,
-}: DialogContentProps) {
+function DialogContent({ children, styles }: DialogContentProps) {
   const [isVisible, setIsVisible] = useState(false);
-  const { isOpen, setIsOpen } = useDialogContext();
+  const { isOpen, setIsOpen, closable } = useDialogContext();
   const { mounted, target } = usePortal();
 
   const handleEscape = useCallback(
     (e: KeyboardEvent) => {
-      if (e.key === "Escape") setIsOpen(false);
+      if (e.key === "Escape" && closable) setIsOpen(false);
     },
     [setIsOpen]
   );
@@ -148,10 +150,20 @@ function DialogContent({
       <OverlayBlocker
         show={isOpen}
         styles={{ self: styles?.overlayStyle }}
-        onClick={() => setIsOpen(false)}
+        onClick={async ({ preventDefault, close }) => {
+          await preventDefault();
+          if (closable) {
+            await setIsOpen(false);
+            await close();
+          }
+        }}
       />
-      <StyledContent $isOpen={isOpen} $style={styles?.self}>
-        {!hideClose && (
+      <StyledContent
+        aria-label="dialog-content"
+        $isOpen={isOpen}
+        $style={styles?.self}
+      >
+        {closable && (
           <Button
             variant="transparent"
             onClick={() => setIsOpen(false)}

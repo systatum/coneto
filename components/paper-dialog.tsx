@@ -14,6 +14,8 @@ import {
   useState,
   useImperativeHandle,
   forwardRef,
+  useCallback,
+  useEffect,
 } from "react";
 import { Button, ButtonVariants } from "./button";
 import styled, { css, CSSProp } from "styled-components";
@@ -24,7 +26,7 @@ export type DialogState = "restored" | "closed" | "minimized";
 
 export interface PaperDialogProps {
   position?: "left" | "right";
-  children: ReactNode;
+  children?: ReactNode;
   closable?: boolean;
   width?: string;
   styles?: PaperDialogStylesProps;
@@ -57,10 +59,22 @@ export interface PaperDialogRef {
 }
 
 const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
-  ({ position = "right", children, closable, width, styles }, ref) => {
+  ({ position = "right", children, closable = true, width, styles }, ref) => {
     const [dialogState, setDialogState] = useState<DialogState>("closed");
     const controls = useAnimation();
     const isLeft = position === "left";
+
+    const handleEscape = useCallback(
+      (e: KeyboardEvent) => {
+        if (e.key === "Escape" && closable) setDialogState("closed");
+      },
+      [setDialogState]
+    );
+
+    useEffect(() => {
+      document.addEventListener("keydown", handleEscape);
+      return () => document.removeEventListener("keydown", handleEscape);
+    }, [handleEscape]);
 
     const handleToggleDrawer = (open: DialogState) => {
       setDialogState(open);
@@ -114,7 +128,13 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
           >
             {dialogState === "restored" && (
               <OverlayBlocker
-                onClick={"preventDefault"}
+                onClick={async ({ preventDefault, close }) => {
+                  await preventDefault();
+                  if (closable) {
+                    await setDialogState("closed");
+                    await close();
+                  }
+                }}
                 show={dialogState === "restored"}
               />
             )}

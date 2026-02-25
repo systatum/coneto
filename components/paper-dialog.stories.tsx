@@ -181,143 +181,47 @@ export const Default: Story = {
   },
 };
 
-export const Closable: Story = {
+export const NonEscapable: Story = {
   render: () => {
-    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
-      (data) => data.id === "US" || COUNTRY_CODES[206]
-    );
-
-    if (!DEFAULT_COUNTRY_CODES) {
-      throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
-    }
-
-    const [value, setValue] = useState({
-      first_name: "",
-      last_name: "",
-      email: "",
-      phone: "",
-      note: "",
-      access: false,
-      country_code: DEFAULT_COUNTRY_CODES,
-    });
-    const [isFormValid, setIsFormValid] = useState(false);
-
-    const employeeSchema = z.object({
-      first_name: z
-        .string()
-        .min(3, "First name must be at least 3 characters long"),
-      last_name: z.string().optional(),
-      email: z.string().email("Please enter a valid email address"),
-      phone: z
-        .string()
-        .regex(/^\d{10,15}$/, "Phone number must be between 10 and 15 digits")
-        .optional(),
-      note: z.string().optional(),
-      access: z.boolean().optional(),
-    });
-
-    const EMPLOYEE_FIELDS: FormFieldProps[] = [
-      {
-        name: "first_name",
-        title: "First Name",
-        type: "text",
-        required: true,
-      },
-      {
-        name: "last_name",
-        title: "Last Name",
-        type: "text",
-        required: false,
-      },
-      {
-        name: "email",
-        title: "Email",
-        type: "email",
-        required: true,
-      },
-      {
-        name: "phone",
-        title: "Phone Number",
-        type: "phone",
-        required: false,
-      },
-      {
-        name: "note",
-        title: "Note",
-        type: "textarea",
-        rows: 3,
-        required: false,
-      },
-      {
-        name: "access",
-        placeholder: "Has access to login",
-        type: "checkbox",
-        required: false,
-      },
-    ];
+    const dialogRef = useRef<PaperDialogRef>(null);
 
     return (
-      <PaperDialog closable>
-        <PaperDialog.Trigger>Trigger</PaperDialog.Trigger>
-        <PaperDialog.Content
-          style={{
-            padding: "36px",
-            gap: "24px",
-          }}
-        >
-          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-            <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>
-              Add New Employee
-            </h2>
-            <p style={{ fontSize: "14px", color: "#4B5563" }}>
-              Fill out the information below to add a new employee to your team.
-            </p>
-          </div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "8px",
+        }}
+      >
+        <Button onClick={() => dialogRef.current?.openDialog()}>Open</Button>
+        <Button onClick={() => dialogRef.current?.closeDialog()}>Close</Button>
 
-          <div
+        <PaperDialog closable={false} width="35vw" ref={dialogRef}>
+          <PaperDialog.Content
             style={{
-              maxWidth: "400px",
-              display: "flex",
-              flexDirection: "column",
-              gap: "4px",
+              padding: "36px",
+              gap: "16px",
             }}
           >
-            <StatefulForm
-              fields={EMPLOYEE_FIELDS}
-              formValues={value}
-              validationSchema={employeeSchema}
-              onValidityChange={setIsFormValid}
-              onChange={({ currentState }) =>
-                setValue((prev) => ({ ...prev, ...currentState }))
-              }
-              mode="onChange"
-            />
-
             <div
-              style={{
-                display: "flex",
-                width: "100%",
-                flexDirection: "row",
-                justifyContent: "flex-end",
-              }}
+              style={{ display: "flex", flexDirection: "column", gap: "8px" }}
             >
-              <Button
-                disabled={!isFormValid}
-                styles={{
-                  self: {
-                    width: "100%",
-                    cursor: "pointer",
-                    maxWidth: "180px",
-                  },
-                }}
-                type="submit"
-              >
-                Save
-              </Button>
+              <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>
+                Non-Escapable Dialog
+              </h2>
+              <p style={{ fontSize: "14px", color: "#4B5563" }}>
+                This dialog cannot be closed by pressing the Escape key or
+                clicking the background overlay. Use the close button or action
+                buttons to dismiss it.
+              </p>
+              <p style={{ fontSize: "14px", color: "#4B5563" }}>
+                You can still interact with the content and action buttons
+                inside the dialog.
+              </p>
             </div>
-          </div>
-        </PaperDialog.Content>
-      </PaperDialog>
+          </PaperDialog.Content>
+        </PaperDialog>
+      </div>
     );
   },
 };

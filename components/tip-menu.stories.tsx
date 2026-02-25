@@ -141,7 +141,7 @@ export const Default: Story = {
           onVisibilityChange={setIsOpen}
           title="Confirm Action"
           subTitle="Are you sure you want to delete?"
-          hasCloseButton={true}
+          closable={true}
           buttons={BUTTONS}
           onClick={({ closeDialog }) => {
             closeDialog();
