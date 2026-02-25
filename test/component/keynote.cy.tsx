@@ -6,6 +6,102 @@ import {
 } from "./../../components/keynote";
 
 describe("Keynote", () => {
+  context("rendered condition", () => {
+    context("when keyLabels is less than the key", () => {
+      it("should not rendered keynote", () => {
+        const data = {
+          modelType: "MXQ83700F3",
+          requestCreatedBy: "adam@systatum.com",
+          lastSynced: "2025-06-20",
+          createdOn: "2025-06-19",
+          desc: "Backup unit installed on site",
+        };
+
+        cy.mount(
+          <Keynote
+            data={data}
+            keys={[
+              "modelType",
+              "requestCreatedBy",
+              "lastSynced",
+              "createdOn",
+              "desc",
+            ]}
+            keyLabels={["Model Type", "Request Created By", "Last Synced"]}
+          />
+        );
+
+        cy.findByLabelText("keynote-point-wrapper").should("not.exist");
+      });
+    });
+
+    context("when key is less than the keyLabels", () => {
+      it("should not rendered keynote", () => {
+        const data = {
+          modelType: "MXQ83700F3",
+          requestCreatedBy: "adam@systatum.com",
+          lastSynced: "2025-06-20",
+          createdOn: "2025-06-19",
+          desc: "Backup unit installed on site",
+        };
+
+        cy.mount(
+          <Keynote
+            data={data}
+            keys={["modelType", "requestCreatedBy"]}
+            keyLabels={[
+              "Model Type",
+              "Request Created By",
+              "Last Synced",
+              "Created On",
+              "Description",
+            ]}
+          />
+        );
+
+        cy.findByLabelText("keynote-point-wrapper").should("not.exist");
+      });
+    });
+
+    context("when key and keyLabels is equal ", () => {
+      it("should rendered keynote", () => {
+        const data = {
+          modelType: "MXQ83700F3",
+          requestCreatedBy: "adam@systatum.com",
+          lastSynced: "2025-06-20",
+          createdOn: "2025-06-19",
+          desc: "Backup unit installed on site",
+        };
+
+        cy.mount(
+          <Keynote
+            data={data}
+            keys={[
+              "modelType",
+              "requestCreatedBy",
+              "lastSynced",
+              "createdOn",
+              "desc",
+            ]}
+            keyLabels={[
+              "Model Type",
+              "Request Created By",
+              "Last Synced",
+              "Created On",
+              "Description",
+            ]}
+          />
+        );
+
+        Array.from({ length: 5 }).map((_, index) => {
+          cy.findAllByLabelText("keynote-point-wrapper")
+            .eq(index)
+            .should("exist");
+        });
+      });
+    });
+  });
+
   context("styles", () => {
     function ProductKeyNote({ styles }: { styles?: KeynoteStyles }) {
       const data = {
