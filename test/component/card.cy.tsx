@@ -1,24 +1,35 @@
 import { RiEdit2Line } from "@remixicon/react";
-import { Card } from "./../../components/card";
+import { Card, CardProps } from "./../../components/card";
 import { Button } from "./../../components/button";
 import { DormantText } from "./../../components/dormant-text";
 import { Textbox } from "./../../components/textbox";
 import { css } from "styled-components";
 
 describe("Card", () => {
-  function CardDefault() {
+  function ProductCard(props: Omit<CardProps, "children">) {
     return (
       <Card
+        title="Systatum Food Services"
+        subtitle="Fueling innovation with every bite."
+        headerActions={[
+          {
+            caption: "Edit fields",
+            onClick: () => {
+              console.log(`Edit button was clicked`);
+            },
+          },
+        ]}
         aria-label="card"
         onMouseEnter={() => console.log("now is hovering card")}
         onMouseLeave={() => console.log("now is leaving card")}
         onClick={() => console.log("now is clicking card")}
-        title="Systatum Food Services"
+        {...props}
       >
-        Test`
+        Test
       </Card>
     );
   }
+
   context("onMouseEnter", () => {
     context("when hovering", () => {
       it("should give callback", () => {
@@ -26,7 +37,7 @@ describe("Card", () => {
           cy.spy(win.console, "log").as("consoleLog");
         });
 
-        cy.mount(<CardDefault />);
+        cy.mount(<ProductCard />);
         cy.findByLabelText("card").trigger("mouseover");
 
         cy.get("@consoleLog").should(
@@ -44,7 +55,7 @@ describe("Card", () => {
           cy.spy(win.console, "log").as("consoleLog");
         });
 
-        cy.mount(<CardDefault />);
+        cy.mount(<ProductCard />);
         cy.findByLabelText("card").trigger("mouseover").trigger("mouseout");
 
         cy.get("@consoleLog").should(
@@ -66,7 +77,7 @@ describe("Card", () => {
           cy.spy(win.console, "log").as("consoleLog");
         });
 
-        cy.mount(<CardDefault />);
+        cy.mount(<ProductCard />);
         cy.findByLabelText("card").click();
 
         cy.get("@consoleLog").should(
@@ -194,37 +205,49 @@ describe("Card", () => {
         cy.findByText("Fueling innovation with every bite.").should("exist");
       });
     });
+  });
 
-    context("when having action buttons", () => {
-      it("should render the action button", () => {
+  context("headerActions", () => {
+    it("should render the action button", () => {
+      cy.window().then((win) => {
+        cy.spy(win.console, "log").as("consoleLog");
+      });
+
+      cy.mount(<ProductCard />);
+
+      cy.findByText("Edit fields").should("exist").click();
+
+      cy.get("@consoleLog").should(
+        "have.been.calledWith",
+        "Edit button was clicked"
+      );
+
+      cy.findByLabelText("action-button-icon").should("not.exist");
+    });
+
+    context("when given with icon", () => {
+      it("should render the action button with button", () => {
         cy.window().then((win) => {
           cy.spy(win.console, "log").as("consoleLog");
         });
 
         cy.mount(
-          <Card
-            title="Systatum Food Services"
-            subtitle="Fueling innovation with every bite."
+          <ProductCard
             headerActions={[
               {
                 caption: "Edit fields",
-                icon: RiEdit2Line,
+                icon: { image: RiEdit2Line },
                 onClick: () => {
                   console.log(`Edit button was clicked`);
                 },
               },
             ]}
-          >
-            Test
-          </Card>
+          />
         );
 
         cy.findByText("Edit fields").should("exist").click();
 
-        cy.get("@consoleLog").should(
-          "have.been.calledWith",
-          "Edit button was clicked"
-        );
+        cy.findByLabelText("action-button-icon").should("exist");
       });
     });
   });
@@ -232,18 +255,7 @@ describe("Card", () => {
   context("with footer", () => {
     it("should render the footer content", () => {
       cy.mount(
-        <Card
-          title="Systatum Food Services"
-          subtitle="Fueling innovation with every bite."
-          headerActions={[
-            {
-              caption: "Edit fields",
-              icon: RiEdit2Line,
-              onClick: () => {
-                console.log(`Edit button was clicked`);
-              },
-            },
-          ]}
+        <ProductCard
           footerContent={
             <div
               style={{
@@ -256,9 +268,7 @@ describe("Card", () => {
               <Button variant="primary">Import</Button>
             </div>
           }
-        >
-          Test
-        </Card>
+        />
       );
 
       cy.findByText("Cancel").should("exist");

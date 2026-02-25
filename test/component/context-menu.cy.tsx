@@ -58,7 +58,7 @@ describe("context-menu", () => {
     const LIST_ACTION_ITEMS_PROPS = (id: string): ListItemActionProps[] => [
       {
         caption: "Add",
-        icon: RiArrowRightSLine,
+        icon: { image: RiArrowRightSLine },
         onClick: () => {
           console.log(`action was clicked ${id}`);
         },
@@ -123,14 +123,14 @@ describe("context-menu", () => {
     const ROW_ACTIONS = (id: string) => [
       {
         caption: "Edit",
-        icon: RiEdit2Line,
+        icon: { image: RiEdit2Line },
         onClick: () => {
           console.log(`Edit content for ${id}`);
         },
       },
       {
         caption: "Delete",
-        icon: RiDeleteBack2Line,
+        icon: { image: RiDeleteBack2Line },
         onClick: () => {
           console.log(`Delete content for ${id}`);
         },
@@ -298,37 +298,34 @@ describe("context-menu", () => {
     const ITEM_ACTIONS: SubMenuTreeList[] = [
       {
         caption: "Edit",
-        icon: RiEdit2Line,
-        iconColor: "gray",
+        icon: { image: RiEdit2Line, color: "gray" },
         onClick: (id: string) => {
           console.log(`${id} was edited`);
         },
       },
       {
         caption: "Delete",
-        icon: RiDeleteBin2Line,
-        iconColor: "gray",
+        icon: { image: RiDeleteBin2Line, color: "gray" },
         onClick: (id: string) => {
           console.log(`${id} was deleted`);
         },
       },
       {
         caption: "Copy",
-        icon: RiFileCopyLine,
-        iconColor: "gray",
+        icon: { image: RiFileCopyLine, color: "gray" },
         onClick: (id: string) => {
           console.log(`${id} was copied`);
         },
       },
       {
         caption: "Share",
-        icon: RiShareForwardLine,
-        iconColor: "gray",
+        icon: { image: RiShareForwardLine, color: "gray" },
         onClick: (id: string) => {
           console.log(`${id} was shared`);
         },
       },
     ];
+
     const TREE_LIST_DATA: TreeListContentProps[] = [
       {
         id: "member",
@@ -458,16 +455,14 @@ describe("context-menu", () => {
       return [
         {
           caption: "Edit",
-          icon: RiEdit2Line,
-          iconColor: "gray",
+          icon: { image: RiEdit2Line, color: "gray" },
           onClick: () => {
             console.log(`${rowId} was edited`);
           },
         },
         {
           caption: "Delete",
-          icon: RiDeleteBin2Line,
-          iconColor: "gray",
+          icon: { image: RiDeleteBin2Line, color: "gray" },
           onClick: () => {
             console.log(`${rowId} was deleted`);
           },
@@ -591,14 +586,14 @@ describe("context-menu", () => {
         onClick: () => {
           console.log("Discover clicked");
         },
-        icon: RiSearchLine,
+        icon: { image: RiSearchLine },
       },
       {
         caption: "Mention",
         onClick: () => {
           console.log("Mention clicked");
         },
-        icon: RiAtLine,
+        icon: { image: RiAtLine },
       },
     ];
 

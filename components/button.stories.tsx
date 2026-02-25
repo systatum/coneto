@@ -163,33 +163,28 @@ export const WithTipMenu: Story = {
         list([
           {
             caption: "Report Phishing",
-            icon: RiSpam2Line,
-            iconColor: "blue",
+            icon: { image: RiSpam2Line, color: "blue" },
             onClick: () => console.log("Phishing reported"),
           },
           {
             caption: "Report Junk",
-            icon: RiForbid2Line,
-            iconColor: "red",
+            icon: { image: RiForbid2Line, color: "red" },
             onClick: () => console.log("Junk reported"),
           },
           {
             caption: "Block Sender",
-            icon: RiShieldLine,
-            iconColor: "orange",
+            icon: { image: RiShieldLine, color: "orange" },
             isDangerous: true,
             onClick: () => console.log("Sender blocked"),
           },
           {
             caption: "Mark as Read",
-            icon: RiCheckLine,
-            iconColor: "green",
+            icon: { image: RiCheckLine, color: "green" },
             onClick: () => console.log("Marked as read"),
           },
           {
             caption: "Move to Spam",
-            icon: RiInboxArchiveLine,
-            iconColor: "purple",
+            icon: { image: RiInboxArchiveLine, color: "purple" },
             onClick: () => console.log("Moved to spam"),
           },
         ]),
@@ -204,42 +199,34 @@ export const WithTipMenu: Story = {
         `,
       },
       subMenu: ({ list }) =>
-        list(
-          [
-            {
-              caption: "Report Phishing",
-              icon: RiSpam2Line,
-              iconColor: "blue",
-              onClick: () => console.log("Phishing reported"),
-            },
-            {
-              caption: "Report Junk",
-              icon: RiForbid2Line,
-              iconColor: "red",
-              onClick: () => console.log("Junk reported"),
-            },
-            {
-              caption: "Block Sender",
-              icon: RiShieldLine,
-              iconColor: "orange",
-              isDangerous: true,
-              onClick: () => console.log("Sender blocked"),
-            },
-            {
-              caption: "Mark as Read",
-              icon: RiCheckLine,
-              iconColor: "green",
-              onClick: () => console.log("Marked as read"),
-            },
-            {
-              caption: "Move to Spam",
-              icon: RiInboxArchiveLine,
-              iconColor: "purple",
-              onClick: () => console.log("Moved to spam"),
-            },
-          ],
-          { withFilter: true }
-        ),
+        list([
+          {
+            caption: "Report Phishing",
+            icon: { image: RiSpam2Line, color: "blue" },
+            onClick: () => console.log("Phishing reported"),
+          },
+          {
+            caption: "Report Junk",
+            icon: { image: RiForbid2Line, color: "red" },
+            onClick: () => console.log("Junk reported"),
+          },
+          {
+            caption: "Block Sender",
+            icon: { image: RiShieldLine, color: "orange" },
+            isDangerous: true,
+            onClick: () => console.log("Sender blocked"),
+          },
+          {
+            caption: "Mark as Read",
+            icon: { image: RiCheckLine, color: "green" },
+            onClick: () => console.log("Marked as read"),
+          },
+          {
+            caption: "Move to Spam",
+            icon: { image: RiInboxArchiveLine, color: "purple" },
+            onClick: () => console.log("Moved to spam"),
+          },
+        ]),
     };
     const MONTH_NAMES = [
       { text: "JAN", value: "1" },
