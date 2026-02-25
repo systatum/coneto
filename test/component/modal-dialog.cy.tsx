@@ -26,11 +26,11 @@ describe("Modal Dialog", () => {
     );
   }
 
-  context("escapable", () => {
+  context("closable", () => {
     context("when given true", () => {
       context("when pressing escape", () => {
         it("should close the modal", () => {
-          cy.mount(<ProductModalDialog escapable={true} />);
+          cy.mount(<ProductModalDialog closable={true} />);
 
           cy.findByLabelText("dialog-content").should("exist");
           cy.get("body").type("{esc}");
@@ -40,7 +40,7 @@ describe("Modal Dialog", () => {
 
       context("when clicking overlay-background", () => {
         it("should close the modal", () => {
-          cy.mount(<ProductModalDialog escapable={true} />);
+          cy.mount(<ProductModalDialog closable={true} />);
 
           cy.findByLabelText("dialog-content").should("exist");
           cy.findByLabelText("overlay-blocker")
@@ -54,7 +54,7 @@ describe("Modal Dialog", () => {
     context("when given false", () => {
       context("when pressing escape", () => {
         it("should not close the modal", () => {
-          cy.mount(<ProductModalDialog escapable={false} />);
+          cy.mount(<ProductModalDialog closable={false} />);
 
           cy.findByLabelText("dialog-content").should("exist");
           cy.get("body").type("{esc}");
@@ -64,7 +64,7 @@ describe("Modal Dialog", () => {
 
       context("when clicking overlay-background", () => {
         it("should not close the modal", () => {
-          cy.mount(<ProductModalDialog escapable={false} />);
+          cy.mount(<ProductModalDialog closable={false} />);
 
           cy.findByLabelText("dialog-content").should("exist");
           cy.findByLabelText("overlay-blocker")

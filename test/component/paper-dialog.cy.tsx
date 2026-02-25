@@ -35,7 +35,7 @@ describe("PaperDialog", () => {
                 Escapable Feature
               </h2>
               <p style={{ fontSize: "14px", color: "#4B5563" }}>
-                When escapable with value false, the dialog cannot be closed by
+                When closable with value false, the dialog cannot be closed by
                 pressing the Escape key or clicking the background. Use the
                 close button or action buttons to dismiss it.
               </p>
@@ -50,11 +50,11 @@ describe("PaperDialog", () => {
     );
   }
 
-  context("escapable", () => {
+  context("closable", () => {
     context("when given true", () => {
       context("when pressing escape", () => {
         it("should close the modal", () => {
-          cy.mount(<ProductPaperDialog escapable={true} />);
+          cy.mount(<ProductPaperDialog closable={true} />);
 
           cy.findAllByRole("button").eq(0).should("exist").click();
           cy.findByLabelText("paper-dialog-content").should("exist");
@@ -65,7 +65,7 @@ describe("PaperDialog", () => {
 
       context("when clicking overlay-background", () => {
         it("should close the modal", () => {
-          cy.mount(<ProductPaperDialog escapable={true} />);
+          cy.mount(<ProductPaperDialog closable={true} />);
 
           cy.findAllByRole("button").eq(0).should("exist").click();
           cy.findByLabelText("paper-dialog-content").should("exist");
@@ -80,7 +80,7 @@ describe("PaperDialog", () => {
     context("when given false", () => {
       context("when pressing escape", () => {
         it("should not close the modal", () => {
-          cy.mount(<ProductPaperDialog escapable={false} />);
+          cy.mount(<ProductPaperDialog closable={false} />);
 
           cy.findAllByRole("button").eq(0).should("exist").click();
           cy.findByLabelText("paper-dialog-content").should("exist");
@@ -91,7 +91,7 @@ describe("PaperDialog", () => {
 
       context("when clicking overlay-background", () => {
         it("should close the modal", () => {
-          cy.mount(<ProductPaperDialog escapable={false} />);
+          cy.mount(<ProductPaperDialog closable={false} />);
 
           cy.findAllByRole("button").eq(0).should("exist").click();
           cy.findByLabelText("paper-dialog-content").should("exist");
