@@ -1,9 +1,5 @@
 import { css } from "styled-components";
-import {
-  Keynote,
-  KeynoteProps,
-  KeynoteStyles,
-} from "./../../components/keynote";
+import { Keynote, KeynoteStyles } from "./../../components/keynote";
 
 describe("Keynote", () => {
   context("rendered condition", () => {
