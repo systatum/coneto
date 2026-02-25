@@ -368,7 +368,7 @@ function ButtonTipMenuContainer({
 const TipMenuContainer = styled.div<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: column;
-  border: 1px solid #f3f4f6;
+  border: 1px solid #e5e7eb;
   padding: 4px;
   background-color: white;
   gap: 2px;
