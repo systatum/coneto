@@ -14,6 +14,7 @@ import {
   RiDeleteBin2Fill,
   RiDeleteBin2Line,
   RiFileCopy2Line,
+  RiReactjsLine,
   RiRefreshLine,
 } from "@remixicon/react";
 import { EmptySlate } from "./empty-slate";
@@ -21,6 +22,7 @@ import { Button } from "./button";
 import { css } from "styled-components";
 import { CapsuleContentProps } from "./capsule";
 import { List } from "./list";
+import { VscServerProcess } from "react-icons/vsc";
 
 const meta: Meta<typeof Table> = {
   title: "Content/Table",
@@ -1435,10 +1437,18 @@ export const WithRowGroup: Story = {
       },
     ];
 
+    const CATEGORY_MAP: Record<string, string[]> = {
+      frontend: ["frontend", "fullstack", "monorepo"],
+      backend: ["backend", "api", "devops", "validation"],
+    };
+
     const [rows, setRows] = useState(TABLE_ITEMS);
     const [search, setSearch] = useState("");
     const [selected, setSelected] = useState([]);
-    const [activeTab, setActiveTab] = useState("taken");
+    const [activeTab, setActiveTab] = useState({
+      taken: "taken",
+      category: "frontend",
+    });
     const [isFocus, setIsFocus] = useState(false);
 
     const columns: ColumnTableProps[] = [
@@ -1504,6 +1514,22 @@ export const WithRowGroup: Story = {
         title: "All",
       },
     ];
+
+    const VIEW_MODES_WITH_ICON: CapsuleContentProps[] = [
+      {
+        id: "frontend",
+        icon: {
+          image: RiReactjsLine,
+        },
+      },
+      {
+        id: "backend",
+        icon: {
+          image: VscServerProcess,
+        },
+      },
+    ];
+
     const COPY_ACTIONS: SubMenuListTableProps[] = [
       {
         caption: "Copy to parent",
@@ -1532,9 +1558,18 @@ export const WithRowGroup: Story = {
       {
         type: "capsule",
         capsuleProps: {
-          activeTab: activeTab,
+          activeTab: activeTab.taken,
           tabs: VIEW_MODES,
-          onTabChange: setActiveTab,
+          onTabChange: (id) => setActiveTab((prev) => ({ ...prev, taken: id })),
+        },
+      },
+      {
+        type: "capsule",
+        capsuleProps: {
+          activeTab: activeTab.category,
+          tabs: VIEW_MODES_WITH_ICON,
+          onTabChange: (id) =>
+            setActiveTab((prev) => ({ ...prev, category: id })),
         },
       },
       {
@@ -1638,7 +1673,16 @@ export const WithRowGroup: Story = {
               item.category.toLowerCase().includes(search.toLowerCase()) ||
               item.author.toLowerCase().includes(search.toLowerCase())
           )
-          .filter((item) => (activeTab === "taken" ? item.taken : item));
+          .filter((item) =>
+            activeTab.category === "taken" ? item.taken : item
+          )
+          .filter((item) => {
+            const active = activeTab.category.toLowerCase();
+
+            if (!CATEGORY_MAP[active]) return true;
+
+            return CATEGORY_MAP[active].includes(item.category.toLowerCase());
+          });
 
         return {
           ...props,
