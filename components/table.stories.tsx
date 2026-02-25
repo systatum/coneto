@@ -22,7 +22,6 @@ import { Button } from "./button";
 import { css } from "styled-components";
 import { CapsuleContentProps } from "./capsule";
 import { List } from "./list";
-import { VscServerProcess } from "react-icons/vsc";
 
 const meta: Meta<typeof Table> = {
   title: "Content/Table",
@@ -1525,7 +1524,7 @@ export const WithRowGroup: Story = {
       {
         id: "backend",
         icon: {
-          image: VscServerProcess,
+          image: "/backend.png",
         },
       },
     ];
