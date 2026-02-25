@@ -232,7 +232,7 @@ const BadgeWrapper = styled.div<{
   align-items: center;
   padding: 2px 8px;
   font-size: 0.75rem;
-  border: 1px solid #f3f4f6;
+  border: 1px solid #e5e7eb;
   border-radius: 6px;
   width: fit-content;
   gap: 0.5rem;

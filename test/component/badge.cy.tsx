@@ -13,6 +13,21 @@ describe("Badge", () => {
       />
     );
   }
+  context("default", () => {
+    it("renders with border-color #e5e7eb", () => {
+      cy.window().then((win) => {
+        cy.spy(win.console, "log").as("consoleLog");
+      });
+
+      cy.mount(<BadgeDefault />);
+      cy.findByLabelText("badge").should(
+        "have.css",
+        "border-color",
+        "rgb(229, 231, 235)"
+      );
+    });
+  });
+
   context("onMouseEnter", () => {
     context("when hovering", () => {
       it("should give callback", () => {
