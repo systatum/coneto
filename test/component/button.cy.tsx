@@ -12,63 +12,55 @@ import {
   RiEditLine,
 } from "@remixicon/react";
 import { Calendar } from "./../../components/calendar";
+import { TipMenuItemProps } from "./../../components/tip-menu";
 
 describe("Button", () => {
-  const TIP_MENU_ITEMS = [
+  const TIP_MENU_ITEMS: TipMenuItemProps[] = [
     {
       caption: "Report Phishing",
-      icon: RiSpam2Line,
-      iconColor: "blue",
+      icon: { image: RiSpam2Line, color: "blue" },
       onClick: () => console.log("Phishing reported"),
     },
     {
       caption: "Report Junk",
-      icon: RiForbid2Line,
-      iconColor: "red",
+      icon: { image: RiForbid2Line, color: "red" },
       onClick: () => console.log("Junk reported"),
     },
     {
       caption: "Block Sender",
-      icon: RiShieldLine,
-      iconColor: "orange",
+      icon: { image: RiShieldLine, color: "orange" },
       isDangerous: true,
       onClick: () => console.log("Sender blocked"),
     },
     {
       caption: "Mark as Read",
-      icon: RiCheckLine,
-      iconColor: "green",
+      icon: { image: RiCheckLine, color: "green" },
       onClick: () => console.log("Marked as read"),
     },
     {
       caption: "Move to Spam",
-      icon: RiInboxArchiveLine,
-      iconColor: "purple",
+      icon: { image: RiInboxArchiveLine, color: "purple" },
       onClick: () => console.log("Moved to spam"),
     },
     {
       caption: "Download Attachment",
-      icon: RiDownloadLine,
-      iconColor: "teal",
+      icon: { image: RiDownloadLine, color: "teal" },
       onClick: () => console.log("Downloading"),
     },
     {
       caption: "Copy Link",
-      icon: RiLink,
-      iconColor: "gray",
+      icon: { image: RiLink, color: "gray" },
       onClick: () => console.log("Link copied"),
     },
     {
       caption: "Share",
-      icon: RiShareLine,
-      iconColor: "indigo",
+      icon: { image: RiShareLine, color: "indigo" },
       isDangerous: true,
       onClick: () => console.log("Shared"),
     },
     {
       caption: "Edit",
-      icon: RiEditLine,
-      iconColor: "yellow",
+      icon: { image: RiEditLine, color: "yellow" },
       onClick: () => console.log("Edit mode"),
     },
   ];
@@ -97,6 +89,30 @@ describe("Button", () => {
             TIP_MENU_ITEMS.forEach((item) => {
               cy.contains(item.caption).should("exist");
             });
+          });
+
+          it("renders with border tip menu #e5e7eb", () => {
+            cy.viewport(800, 700);
+            cy.mount(
+              <Button
+                variant="default"
+                styles={{
+                  dropdownStyle: css`
+                    min-width: 240px;
+                  `,
+                }}
+                subMenu={({ list }) => list(TIP_MENU_ITEMS)}
+              >
+                Test
+              </Button>
+            );
+
+            cy.findByLabelText("button-toggle").click();
+            cy.findByLabelText("button-tip-menu-container").should(
+              "have.css",
+              "border-color",
+              "rgb(229, 231, 235)"
+            );
           });
         });
 
