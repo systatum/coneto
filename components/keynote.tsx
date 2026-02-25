@@ -35,14 +35,20 @@ function Keynote<T extends Record<string, unknown>>({
   styles,
 }: KeynoteProps<T>) {
   const shouldRenderFromData =
-    data && keys && keyLabels && keys.length === keyLabels.length;
+    data &&
+    keys &&
+    keyLabels &&
+    keys.length === keyLabels.length &&
+    keys.length === Object.keys(data).length;
 
   return (
     <KeynoteWrapper aria-label="keynote-wrapper" $style={styles?.self}>
       {shouldRenderFromData
         ? keys?.map((key, index) => {
-            const value = data[key];
+            const keyLabel = keyLabels[index];
+            const keyValue = data[key];
             const renderFn = renderer?.[key];
+
             return (
               <KeynotePoint
                 styles={{
@@ -51,9 +57,9 @@ function Keynote<T extends Record<string, unknown>>({
                   rowValueStyle: styles?.rowValueStyle,
                 }}
                 key={String(key)}
-                label={keyLabels[index]}
+                label={keyLabel}
               >
-                {renderFn ? renderFn(value) : String(value ?? "-")}
+                {renderFn ? renderFn(keyValue) : String(keyValue ?? "-")}
               </KeynotePoint>
             );
           })
