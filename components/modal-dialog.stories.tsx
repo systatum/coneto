@@ -122,52 +122,10 @@ export const Default: Story = {
   },
 };
 
-export const NoCloseButton: Story = {
-  args: {
-    title: "No Close Button",
-    subTitle: "Close icon hidden",
-    closable: false,
-    isOpen: false,
-    buttons: [
-      {
-        id: "ok",
-        caption: "OK",
-        variant: "danger",
-      },
-      {
-        id: "cancel",
-        caption: "Cancel",
-        variant: "default",
-      },
-    ],
-    onClick: ({ closeDialog }) => {
-      closeDialog();
-    },
-    children: <p>Modal without the top-right close button.</p>,
-  },
-  render: (args: ModalDialogProps) => {
-    const [{ isOpen }, setUpdateArgs] = useArgs();
-
-    return (
-      <>
-        <Button onClick={() => setUpdateArgs({ isOpen: true })}>
-          Default With Closable
-        </Button>
-        <ModalDialog
-          {...args}
-          isOpen={isOpen}
-          onVisibilityChange={(isOpen) => setUpdateArgs({ isOpen })}
-        />
-      </>
-    );
-  },
-};
-
 export const NonEscapable: Story = {
   args: {
-    title: "Non Escapable",
+    title: "Non Elosable",
     subTitle: "This modal cannot be closed using the Escape key",
-    closable: true,
     isOpen: false,
     buttons: [
       {
@@ -183,7 +141,7 @@ export const NonEscapable: Story = {
     onClick: ({ closeDialog }) => {
       closeDialog();
     },
-    escapable: false,
+    closable: false,
     children: (
       <p>
         Pressing the Escape key or clicking the background overlay will not
@@ -197,7 +155,7 @@ export const NonEscapable: Story = {
     return (
       <>
         <Button onClick={() => setUpdateArgs({ isOpen: true })}>
-          Non Escapable Dialog
+          Non closable Dialog
         </Button>
         <ModalDialog
           {...args}

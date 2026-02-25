@@ -30,7 +30,6 @@ export interface PaperDialogProps {
   closable?: boolean;
   width?: string;
   styles?: PaperDialogStylesProps;
-  escapable?: boolean;
 }
 
 export interface PaperDialogStylesProps {
@@ -60,17 +59,14 @@ export interface PaperDialogRef {
 }
 
 const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
-  (
-    { position = "right", children, closable, width, styles, escapable = true },
-    ref
-  ) => {
+  ({ position = "right", children, closable = true, width, styles }, ref) => {
     const [dialogState, setDialogState] = useState<DialogState>("closed");
     const controls = useAnimation();
     const isLeft = position === "left";
 
     const handleEscape = useCallback(
       (e: KeyboardEvent) => {
-        if (e.key === "Escape" && escapable) setDialogState("closed");
+        if (e.key === "Escape" && closable) setDialogState("closed");
       },
       [setDialogState]
     );
@@ -134,7 +130,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
               <OverlayBlocker
                 onClick={async ({ preventDefault, close }) => {
                   await preventDefault();
-                  if (escapable) {
+                  if (closable) {
                     await setDialogState("closed");
                     await close();
                   }

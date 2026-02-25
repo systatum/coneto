@@ -27,7 +27,7 @@ type StyleProp = {
 const DialogContext = createContext<{
   isOpen: boolean;
   setIsOpen: (val: boolean) => void;
-  escapable?: boolean;
+  closable?: boolean;
 } | null>(null);
 
 function useDialogContext() {
@@ -54,18 +54,18 @@ export interface DialogProps {
   children?: ReactNode;
   isOpen?: boolean;
   onVisibilityChange?: (isOpen?: boolean) => void;
-  escapable?: boolean;
+  closable?: boolean;
 }
 
 function Dialog({
   children,
   isOpen,
   onVisibilityChange,
-  escapable = true,
+  closable = true,
 }: DialogProps) {
   return (
     <DialogContext.Provider
-      value={{ isOpen, setIsOpen: onVisibilityChange, escapable }}
+      value={{ isOpen, setIsOpen: onVisibilityChange, closable }}
     >
       {children}
     </DialogContext.Provider>
@@ -108,7 +108,6 @@ function DialogClose({ children }: { children: ReactNode }) {
 
 export interface DialogContentProps {
   children: ReactNode;
-  closable?: boolean;
   styles?: DialogContentStylesProps;
 }
 
@@ -118,18 +117,14 @@ export interface DialogContentStylesProps {
   closeButtonStyle?: CSSProp;
 }
 
-function DialogContent({
-  children,
-  closable = false,
-  styles,
-}: DialogContentProps) {
+function DialogContent({ children, styles }: DialogContentProps) {
   const [isVisible, setIsVisible] = useState(false);
-  const { isOpen, setIsOpen, escapable } = useDialogContext();
+  const { isOpen, setIsOpen, closable } = useDialogContext();
   const { mounted, target } = usePortal();
 
   const handleEscape = useCallback(
     (e: KeyboardEvent) => {
-      if (e.key === "Escape" && escapable) setIsOpen(false);
+      if (e.key === "Escape" && closable) setIsOpen(false);
     },
     [setIsOpen]
   );
@@ -157,7 +152,7 @@ function DialogContent({
         styles={{ self: styles?.overlayStyle }}
         onClick={async ({ preventDefault, close }) => {
           await preventDefault();
-          if (escapable) {
+          if (closable) {
             await setIsOpen(false);
             await close();
           }
@@ -168,7 +163,7 @@ function DialogContent({
         $isOpen={isOpen}
         $style={styles?.self}
       >
-        {!closable && (
+        {closable && (
           <Button
             variant="transparent"
             onClick={() => setIsOpen(false)}

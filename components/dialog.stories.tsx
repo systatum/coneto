@@ -145,59 +145,6 @@ export const DialogWithButton: Story = {
   },
 };
 
-export const ClosableButton: Story = {
-  args: {
-    isOpen: false,
-    closable: true,
-  },
-  argTypes: {
-    isOpen: { control: "boolean" },
-    closable: { control: "boolean" },
-  },
-
-  render: (args: Args) => {
-    const [{ isOpen }, updateArgs] = useArgs();
-    return (
-      <Dialog
-        isOpen={isOpen}
-        onVisibilityChange={(newOpen) => updateArgs({ isOpen: newOpen })}
-      >
-        <Dialog.Trigger>
-          <Button>Dialog (closable)</Button>
-        </Dialog.Trigger>
-        <Dialog.Content
-          closable={args.closable}
-          styles={{
-            self: css`
-              max-width: 500px;
-            `,
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "8px",
-              alignItems: "start",
-            }}
-          >
-            <Dialog.Header>
-              <Dialog.Title>Dialog (Closable)</Dialog.Title>
-            </Dialog.Header>
-            <p
-              style={{
-                fontSize: "12px",
-              }}
-            >
-              This dialog does not include the close button in the top corner.
-            </p>
-          </div>
-        </Dialog.Content>
-      </Dialog>
-    );
-  },
-};
-
 export const NonEscapable: Story = {
   args: {
     isOpen: false,
@@ -209,14 +156,13 @@ export const NonEscapable: Story = {
       <Dialog
         isOpen={isOpen}
         onVisibilityChange={(newOpen) => updateArgs({ isOpen: newOpen })}
-        escapable={false}
+        closable={false}
       >
         <Dialog.Trigger>
           <Button>Open Non-Escapable Dialog</Button>
         </Dialog.Trigger>
 
         <Dialog.Content
-          closable={args.closable}
           styles={{
             self: css`
               max-width: 500px;
@@ -245,6 +191,10 @@ export const NonEscapable: Story = {
               clicking the background overlay. If the close button is hidden,
               use the provided action buttons to dismiss the dialog.
             </p>
+
+            <Dialog.Trigger>
+              <Button>Close the dialog</Button>
+            </Dialog.Trigger>
           </div>
         </Dialog.Content>
       </Dialog>

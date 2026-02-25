@@ -23,7 +23,6 @@ export interface ModalDialogProps {
   children?: ReactNode;
   onClick?: (args: { id: string; closeDialog: () => void }) => void;
   styles?: ModalDialogStylesProps;
-  escapable?: boolean;
 }
 
 export interface ModalDialogStylesProps {
@@ -37,20 +36,19 @@ export interface ModalDialogStylesProps {
 function ModalDialog({
   onVisibilityChange,
   isOpen,
-  closable,
   subTitle,
   title,
   buttons,
   children,
   styles,
   onClick,
-  escapable = true,
+  closable = true,
 }: ModalDialogProps) {
   const closeDialog = () => onVisibilityChange(false);
 
   return (
     <Dialog
-      escapable={escapable}
+      closable={closable}
       isOpen={isOpen}
       onVisibilityChange={onVisibilityChange}
     >
@@ -67,7 +65,6 @@ function ModalDialog({
             ${styles?.containerStyle}
           `,
         }}
-        closable={!closable}
       >
         <Container>
           <Header
