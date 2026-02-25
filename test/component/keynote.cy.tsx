@@ -4,7 +4,7 @@ import { Keynote, KeynoteStyles } from "./../../components/keynote";
 describe("Keynote", () => {
   context("rendered condition", () => {
     context("when keyLabels is less than the key", () => {
-      it("should not rendered keynote", () => {
+      it("should rendered with key", () => {
         const data = {
           modelType: "MXQ83700F3",
           requestCreatedBy: "adam@systatum.com",
@@ -27,12 +27,22 @@ describe("Keynote", () => {
           />
         );
 
-        cy.findByLabelText("keynote-point-wrapper").should("not.exist");
+        const expectedValue = [
+          "Model Type",
+          "Request Created By",
+          "Last Synced",
+          "createdOn",
+          "desc",
+        ];
+
+        expectedValue.map((value) => {
+          cy.findByText(value).should("exist");
+        });
       });
     });
 
-    context("when key is less than the keyLabels", () => {
-      it("should not rendered keynote", () => {
+    context("when key is less than data", () => {
+      it("should rendered data by keys", () => {
         const data = {
           modelType: "MXQ83700F3",
           requestCreatedBy: "adam@systatum.com",
@@ -55,7 +65,18 @@ describe("Keynote", () => {
           />
         );
 
-        cy.findByLabelText("keynote-point-wrapper").should("not.exist");
+        cy.findAllByLabelText("keynote-point-wrapper").should("have.length", 2);
+
+        const renderedKeys = Object.keys(data).slice(0, 2);
+        const notRenderedKeys = Object.keys(data).slice(3, 5);
+
+        renderedKeys.map((key) => {
+          cy.findByText(data[key]).should("exist");
+        });
+
+        notRenderedKeys.map((key) => {
+          cy.findByText(data[key]).should("not.exist");
+        });
       });
     });
 
