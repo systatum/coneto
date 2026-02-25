@@ -41,7 +41,7 @@ function Keynote<T extends Record<string, unknown>>({
       {shouldRenderFromData
         ? keys?.map((key, index) => {
             const keyLabel = keyLabels[index] ?? String(key);
-            const keyValue = data[key];
+            const value = data[key];
             const renderFn = renderer?.[key];
 
             return (
@@ -54,7 +54,7 @@ function Keynote<T extends Record<string, unknown>>({
                 key={String(key)}
                 label={keyLabel}
               >
-                {renderFn ? renderFn(keyValue) : String(keyValue ?? "-")}
+                {renderFn ? renderFn(value) : String(value ?? "-")}
               </KeynotePoint>
             );
           })
