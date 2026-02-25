@@ -155,7 +155,13 @@ function DialogContent({
       <OverlayBlocker
         show={isOpen}
         styles={{ self: styles?.overlayStyle }}
-        onClick={() => setIsOpen(false)}
+        onClick={async ({ preventDefault, close }) => {
+          await preventDefault();
+          if (escapable) {
+            await setIsOpen(false);
+            await close();
+          }
+        }}
       />
       <StyledContent
         aria-label="dialog-content"
