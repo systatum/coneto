@@ -4,6 +4,7 @@ import {
   RiDeleteBin2Fill,
   RiDeleteBin2Line,
   RiForbid2Line,
+  RiReactjsLine,
   RiSpam2Line,
 } from "@remixicon/react";
 import {
@@ -14,6 +15,7 @@ import {
 import { TipMenuItemProps } from "./../../components/tip-menu";
 import { css } from "styled-components";
 import { CapsuleContentProps } from "./../../components/capsule";
+import { VscServerProcess } from "react-icons/vsc";
 
 interface TableItemProps {
   title: string;
@@ -1189,6 +1191,74 @@ describe("Table", () => {
 
         cy.findByText("New").should("exist");
         cy.findByText("List").should("exist");
+      });
+
+      context("when given only with icon", () => {
+        const VIEW_MODES_WITH_ICON: CapsuleContentProps[] = [
+          {
+            id: "frontend",
+            icon: {
+              image: RiReactjsLine,
+            },
+          },
+          {
+            id: "backend",
+            icon: {
+              image: VscServerProcess,
+            },
+          },
+        ];
+
+        const DEFAULT_TOP_ACTIONS: TableActionsProps[] = [
+          {
+            type: "capsule",
+            capsuleProps: {
+              activeTab: "new",
+              tabs: VIEW_MODES_WITH_ICON,
+            },
+          },
+        ];
+
+        it("renders capsule only with icon", () => {
+          cy.mount(
+            <Table
+              selectable
+              styles={{
+                tableRowContainerStyle: css`
+                  max-height: 400px;
+                `,
+              }}
+              columns={columns}
+              actions={DEFAULT_TOP_ACTIONS}
+              searchable
+            >
+              {rows?.map((groupValue, groupIndex) => (
+                <Table.Row.Group
+                  key={groupIndex}
+                  title={groupValue.title}
+                  subtitle={groupValue.subtitle}
+                >
+                  {groupValue.items.map((rowValue, rowIndex) => (
+                    <Table.Row
+                      key={rowIndex}
+                      rowId={`${groupValue.title}-${rowValue.title}`}
+                      content={[
+                        rowValue.title,
+                        rowValue.category,
+                        rowValue.author,
+                      ]}
+                      actions={ROW_ACTIONS}
+                    />
+                  ))}
+                </Table.Row.Group>
+              ))}
+            </Table>
+          );
+
+          cy.findAllByLabelText("capsule-icon")
+            .should("have.length", 2)
+            .should("exist");
+        });
       });
     });
   });
