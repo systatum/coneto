@@ -136,7 +136,13 @@ export function ActionButton({
         `,
       }}
     >
-      {icon && <Figure {...icon} size={icon?.size ?? 14} />}
+      {icon && (
+        <Figure
+          {...icon}
+          aria-label="action-button-icon"
+          size={icon?.size ?? 14}
+        />
+      )}
       {caption && caption}
     </Button>
   );

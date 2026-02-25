@@ -178,8 +178,23 @@ function StatefulForm<Z extends ZodTypeAny>({
     register,
     control,
     setValue,
+    reset,
     formState: { errors, touchedFields, isValid },
   } = useForm<TypeOf<Z>>(formConfig);
+
+  const customFieldNames = fields
+    .flat()
+    .filter((field) => field.type === "custom")
+    .map((field) => field.name);
+
+  const customValues = customFieldNames.map((name) => formValues[name]);
+
+  useEffect(() => {
+    reset(formValues, {
+      keepErrors: true,
+      keepTouched: true,
+    });
+  }, [JSON.stringify(customValues), reset]);
 
   useEffect(() => {
     if (onValidityChange) {
@@ -187,10 +202,8 @@ function StatefulForm<Z extends ZodTypeAny>({
     }
   }, [isValid, onValidityChange]);
 
-  const shouldShowError = (field: keyof TypeOf<Z>): boolean => {
-    const fieldConfig = fields
-      .flat()
-      .find((f) => (f as FormFieldProps).name === field) as FormFieldProps;
+  const shouldShowError = (name: keyof TypeOf<Z>): boolean => {
+    const fieldConfig = fields.flat().find((field) => field.name === name);
 
     if (
       !fieldConfig ||
@@ -201,9 +214,9 @@ function StatefulForm<Z extends ZodTypeAny>({
       return false;
     }
 
-    const value = formValues[field];
-    const touched = touchedFields[field];
-    const error = errors[field];
+    const value = formValues[name];
+    const touched = touchedFields[name];
+    const error = errors[name];
 
     const isFile = (val: unknown): val is File => val instanceof File;
 
@@ -257,7 +270,7 @@ function StatefulForm<Z extends ZodTypeAny>({
         onChange={handleFieldChange}
         autoFocusField={autoFocusField}
         styles={styles}
-        shouldShowError={(name) => shouldShowError(name as keyof TypeOf<Z>)}
+        shouldShowError={shouldShowError}
       />
     </>
   );

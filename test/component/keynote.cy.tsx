@@ -1,11 +1,124 @@
 import { css } from "styled-components";
-import {
-  Keynote,
-  KeynoteProps,
-  KeynoteStyles,
-} from "./../../components/keynote";
+import { Keynote, KeynoteStyles } from "./../../components/keynote";
 
 describe("Keynote", () => {
+  context("rendered condition", () => {
+    context("when keyLabels is less than the key", () => {
+      it("should rendered with key", () => {
+        const data = {
+          modelType: "MXQ83700F3",
+          requestCreatedBy: "adam@systatum.com",
+          lastSynced: "2025-06-20",
+          createdOn: "2025-06-19",
+          desc: "Backup unit installed on site",
+        };
+
+        cy.mount(
+          <Keynote
+            data={data}
+            keys={[
+              "modelType",
+              "requestCreatedBy",
+              "lastSynced",
+              "createdOn",
+              "desc",
+            ]}
+            keyLabels={["Model Type", "Request Created By", "Last Synced"]}
+          />
+        );
+
+        const expectedValue = [
+          "Model Type",
+          "Request Created By",
+          "Last Synced",
+          "createdOn",
+          "desc",
+        ];
+
+        expectedValue.map((value) => {
+          cy.findByText(value).should("exist");
+        });
+      });
+    });
+
+    context("when key is less than data", () => {
+      it("should rendered data by keys", () => {
+        const data = {
+          modelType: "MXQ83700F3",
+          requestCreatedBy: "adam@systatum.com",
+          lastSynced: "2025-06-20",
+          createdOn: "2025-06-19",
+          desc: "Backup unit installed on site",
+        };
+
+        cy.mount(
+          <Keynote
+            data={data}
+            keys={["modelType", "requestCreatedBy"]}
+            keyLabels={[
+              "Model Type",
+              "Request Created By",
+              "Last Synced",
+              "Created On",
+              "Description",
+            ]}
+          />
+        );
+
+        cy.findAllByLabelText("keynote-point-wrapper").should("have.length", 2);
+
+        const renderedKeys = Object.keys(data).slice(0, 2);
+        const notRenderedKeys = Object.keys(data).slice(3, 5);
+
+        renderedKeys.map((key) => {
+          cy.findByText(data[key]).should("exist");
+        });
+
+        notRenderedKeys.map((key) => {
+          cy.findByText(data[key]).should("not.exist");
+        });
+      });
+    });
+
+    context("when key and keyLabels is equal ", () => {
+      it("should rendered keynote", () => {
+        const data = {
+          modelType: "MXQ83700F3",
+          requestCreatedBy: "adam@systatum.com",
+          lastSynced: "2025-06-20",
+          createdOn: "2025-06-19",
+          desc: "Backup unit installed on site",
+        };
+
+        cy.mount(
+          <Keynote
+            data={data}
+            keys={[
+              "modelType",
+              "requestCreatedBy",
+              "lastSynced",
+              "createdOn",
+              "desc",
+            ]}
+            keyLabels={[
+              "Model Type",
+              "Request Created By",
+              "Last Synced",
+              "Created On",
+              "Description",
+            ]}
+          />
+        );
+
+        Array.from({ length: 5 }).map((_, index) => {
+          cy.findAllByLabelText("keynote-point-wrapper")
+            .eq(index)
+            .should("exist");
+        });
+      });
+    });
+  });
+
   context("styles", () => {
     function ProductKeyNote({ styles }: { styles?: KeynoteStyles }) {
       const data = {

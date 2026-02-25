@@ -9,8 +9,315 @@ import { Badge, BadgeProps } from "./../../components/badge";
 import { css } from "styled-components";
 import { OptionsProps } from "./../../components/selectbox";
 import { CapsuleContentProps } from "./../../components/capsule";
+import { useState } from "react";
+import {
+  OnCompleteFunctionProps,
+  FileDropBox,
+  OnFileDroppedFunctionProps,
+} from "./../../components/file-drop-box";
+import { Table } from "./../../components/table";
+import { RiDeleteBin2Fill } from "@remixicon/react";
+import z from "zod";
 
 describe("StatefulForm", () => {
+  context("with type custom", () => {
+    const BADGE_OPTIONS = [
+      {
+        id: 1,
+        caption: "Anime",
+      },
+      {
+        id: 2,
+        caption: "Manga",
+      },
+      {
+        id: 3,
+        caption: "Comics",
+      },
+      {
+        id: 4,
+        caption: "Movies",
+      },
+      {
+        id: 5,
+        caption: "Podcasts",
+      },
+      {
+        id: 6,
+        caption: "TV Shows",
+      },
+      {
+        id: 7,
+        caption: "Novels",
+      },
+      {
+        id: 8,
+        caption: "Music",
+      },
+      {
+        id: 9,
+        caption: "Games",
+      },
+      {
+        id: 10,
+        caption: "Webtoons",
+      },
+    ];
+
+    function StatefulFormCustom() {
+      const [value, setValue] = useState({
+        first_name: "",
+        access: false,
+        files: [],
+      });
+
+      const [isFormValid, setIsFormValid] = useState(false);
+
+      const onFileDropped = async ({
+        error,
+        files,
+        setProgressLabel,
+        succeed,
+      }: OnFileDroppedFunctionProps) => {
+        const file = files[0];
+        setValue((prev) => ({ ...prev, files: [...prev.files, file] }));
+        setProgressLabel(`Uploading ${file.name}`);
+
+        return new Promise<void>((resolve) => {
+          let progress = 0;
+          const interval = setInterval(() => {
+            progress += 20;
+
+            if (progress >= 100) {
+              clearInterval(interval);
+              if (file === null) {
+                error(file, `file ${file.name} is not uploaded`);
+              } else {
+                succeed(file);
+              }
+              setProgressLabel(`Uploaded ${files[0].name}`);
+              resolve();
+            }
+          }, 300);
+        });
+      };
+
+      const onComplete = async ({
+        failedFiles,
+        setProgressLabel,
+        succeedFiles,
+        hideProgressLabel,
+        showUploaderForm,
+      }: OnCompleteFunctionProps) => {
+        console.log(succeedFiles, "This is succeedFiles");
+        console.log(failedFiles, "This is failedFiles");
+        await setProgressLabel(
+          `Upload complete! Success: ${succeedFiles.length}, Failed: ${failedFiles.length}`
+        );
+        await hideProgressLabel();
+        await showUploaderForm();
+      };
+
+      const CUSTOM_FIELDS: FormFieldGroup[] = [
+        {
+          name: "first_name",
+          title: "First Name",
+          type: "text",
+          required: true,
+          placeholder: "Enter first name",
+        },
+        {
+          name: "boxbar",
+          type: "custom",
+          render: (
+            <Boxbar>
+              {BADGE_OPTIONS.map((badge) => (
+                <Badge
+                  badgeStyle={css`
+                    width: 100%;
+                    max-width: 100px;
+
+                    &:hover {
+                      border-color: #4cbbf7;
+                      cursor: pointer;
+                      transition: all 0.5s ease-in-out;
+                    }
+                  `}
+                  key={badge.id}
+                  caption={badge.caption}
+                  withCircle
+                />
+              ))}
+            </Boxbar>
+          ),
+        },
+        {
+          name: "files",
+          type: "custom",
+          render: (
+            <FileDropBox
+              label="Files"
+              onFileDropped={onFileDropped}
+              onComplete={onComplete}
+            >
+              <Table
+                styles={{
+                  containerStyle: css`
+                    ${value.files.length === 0 &&
+                    css`
+                      display: none;
+                    `}
+                  `,
+                }}
+                columns={[
+                  {
+                    id: "file_name",
+                    caption: "File Name",
+                  },
+                  {
+                    id: "date",
+                    caption: "Date",
+                  },
+                ]}
+              >
+                {value.files.map((props) => (
+                  <Table.Row
+                    actions={(id) => [
+                      {
+                        caption: "Delete",
+                        icon: { image: RiDeleteBin2Fill },
+                        onClick: () => {
+                          if (id) {
+                            setValue((prev) => ({
+                              ...prev,
+                              files: prev.files.filter(
+                                (val) => val.name !== id
+                              ),
+                            }));
+                          }
+                        },
+                      },
+                    ]}
+                    rowId={props.name}
+                    content={[
+                      props.name,
+                      new Date(props.lastModified).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "2-digit",
+                      }),
+                    ]}
+                  />
+                ))}
+              </Table>
+            </FileDropBox>
+          ),
+        },
+        {
+          name: "access",
+          type: "checkbox",
+          placeholder: "Access",
+          required: false,
+        },
+        {
+          name: "verify",
+          title: "Verify",
+          type: "button",
+          required: false,
+          disabled: !isFormValid,
+          rowJustifyContent: "end",
+        },
+      ];
+
+      const customSchema = z.object({
+        first_name: z
+          .string()
+          .min(3, "First name must be at least 3 characters long"),
+        access: z.boolean().refine((val) => val === true, {
+          message: "Access must be true",
+        }),
+        files: z
+          .array(
+            z.instanceof(File).refine(
+              (file) => {
+                if (!file) return false;
+
+                const allowedExtensions = ["png", "jpg", "jpeg", "gif"];
+                const ext = file.name.split(".").pop()?.toLowerCase();
+
+                const isImage =
+                  (file.type && file.type.startsWith("image/")) ||
+                  (ext ? allowedExtensions.includes(ext) : false);
+
+                if (!isImage) return false;
+
+                if (file.size > 5 * 1024 * 1024) return false;
+
+                return true;
+              },
+              {
+                message:
+                  "File must be an image (png, jpg, jpeg, gif) and ≤ 5 MB",
+              }
+            )
+          )
+          .min(1, "At least one file must be selected"),
+      });
+
+      return (
+        <StatefulForm
+          fields={CUSTOM_FIELDS}
+          formValues={value}
+          validationSchema={customSchema}
+          onValidityChange={setIsFormValid}
+          onChange={({ currentState }) =>
+            setValue((prev) => ({ ...prev, ...currentState }))
+          }
+          mode="onChange"
+        />
+      );
+    }
+
+    it("should render custom renderer", () => {
+      cy.mount(<StatefulFormCustom />);
+
+      cy.findByLabelText("boxbar-toggle").click();
+
+      BADGE_OPTIONS.map((data) => {
+        cy.findByText(data.caption).should("exist");
+      });
+    });
+
+    context("when given validationSchema", () => {
+      it("should synchronize values after all fields valid", () => {
+        cy.mount(<StatefulFormCustom />);
+        cy.findAllByRole("button").eq(1).and("be.disabled");
+
+        cy.get("#textbox-first_name").type("Alim Naufal");
+        cy.findByLabelText("filedropbox").selectFile(
+          [
+            "test/fixtures/test-images/sample-1.jpg",
+            "test/fixtures/test-images/sample-2.jpg",
+          ],
+          {
+            action: "drag-drop",
+            force: true,
+          }
+        );
+        cy.wait(1000);
+
+        cy.findByLabelText("filedropbox").then(($input) => {
+          cy.spy($input[0], "click").as("fileClick");
+        });
+        cy.findByText("sample-1.jpg").should("be.visible").click();
+        cy.findByText("sample-2.jpg").should("be.visible").click();
+        cy.findByText("Access").should("be.visible").click();
+
+        cy.findAllByRole("button").eq(1).and("not.be.disabled");
+      });
+    });
+  });
+
   context("helper", () => {
     const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
       (data) => data.id === "US" || COUNTRY_CODES[206]
@@ -1021,119 +1328,6 @@ describe("StatefulForm", () => {
       });
       TITLE_EMPLOYEE_FIELD.map((data) => {
         cy.findByText(data).should("not.exist");
-      });
-    });
-  });
-
-  context("with type custom", () => {
-    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
-      (data) => data.id === "US" || COUNTRY_CODES[206]
-    );
-
-    if (!DEFAULT_COUNTRY_CODES) {
-      throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
-    }
-
-    const value = {
-      first_name: "",
-      access: false,
-    };
-
-    const BADGE_OPTIONS = [
-      {
-        id: 1,
-        caption: "Anime",
-      },
-      {
-        id: 2,
-        caption: "Manga",
-      },
-      {
-        id: 3,
-        caption: "Comics",
-      },
-      {
-        id: 4,
-        caption: "Movies",
-      },
-      {
-        id: 5,
-        caption: "Podcasts",
-      },
-      {
-        id: 6,
-        caption: "TV Shows",
-      },
-      {
-        id: 7,
-        caption: "Novels",
-      },
-      {
-        id: 8,
-        caption: "Music",
-      },
-      {
-        id: 9,
-        caption: "Games",
-      },
-      {
-        id: 10,
-        caption: "Webtoons",
-      },
-    ];
-
-    const EMPLOYEE_FIELDS: FormFieldGroup[] = [
-      {
-        name: "first_name",
-        type: "text",
-        required: true,
-        placeholder: "Enter first name",
-      },
-      {
-        name: "custom",
-        type: "custom",
-        render: (
-          <Boxbar>
-            {BADGE_OPTIONS.map((badge) => (
-              <Badge
-                badgeStyle={css`
-                  width: 100%;
-                  max-width: 100px;
-
-                  &:hover {
-                    border-color: #4cbbf7;
-                    cursor: pointer;
-                    transition: all 0.5s ease-in-out;
-                  }
-                `}
-                key={badge.id}
-                caption={badge.caption}
-                withCircle
-              />
-            ))}
-          </Boxbar>
-        ),
-      },
-      {
-        name: "access",
-        type: "checkbox",
-        required: false,
-      },
-    ];
-
-    it("should render custom renderer", () => {
-      cy.mount(
-        <StatefulForm
-          fields={EMPLOYEE_FIELDS}
-          formValues={value}
-          mode="onChange"
-        />
-      );
-
-      cy.findByLabelText("boxbar-toggle").click();
-
-      BADGE_OPTIONS.map((data) => {
-        cy.findByText(data.caption).should("exist");
       });
     });
   });
