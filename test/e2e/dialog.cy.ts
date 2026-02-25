@@ -23,9 +23,9 @@ describe("Dialog Component", () => {
 
   describe("Hide Close Button", () => {
     it("Should open dialog and not render close button", () => {
-      cy.visit(getIdContent("stage-dialog--hide-close-button"));
+      cy.visit(getIdContent("stage-dialog--closable-button"));
 
-      cy.findByRole("button", { name: /Dialog \(HideClose\)/i }).click();
+      cy.findByRole("button", { name: /Dialog \(Closable\)/i }).click();
       cy.contains(/does not include the close button/i).should("exist");
     });
   });

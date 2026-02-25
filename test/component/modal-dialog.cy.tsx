@@ -10,7 +10,7 @@ describe("Modal Dialog", () => {
       <ModalDialog
         title="Default Modal"
         subTitle="This is a subtitle"
-        hasCloseButton={true}
+        closable={true}
         buttons={[
           { id: "confirm", caption: "Confirm", variant: "primary" },
           { id: "cancel", caption: "Cancel", variant: "default" },

@@ -16,7 +16,7 @@ context("ModalDialog Component", () => {
     it("should open modal without close button", () => {
       cy.visit(getIdContent("stage-modaldialog--no-close-button"));
 
-      cy.findByRole("button", { name: /Default With HideClose/i }).click();
+      cy.findByRole("button", { name: /Default With Closable/i }).click();
       cy.findByText(/Modal without the top-right close button./i).should(
         "exist"
       );
