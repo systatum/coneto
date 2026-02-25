@@ -7,6 +7,7 @@ import { RiCloseLine } from "@remixicon/react";
 import { HTMLAttributes, ReactNode } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { ActionButton, ActionButtonProps } from "./action-button";
+import { Togglebox } from "./togglebox";
 
 export interface CardProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "title" | "style"> {
@@ -35,6 +36,9 @@ export interface CardProps
   onCloseRequest?: () => void;
   headerActions?: CardActionsProps[];
   styles?: CardStylesProps;
+  toggleable?: boolean;
+  onToggleChange?: (isOpen?: boolean) => void;
+  open?: boolean;
 }
 
 export interface CardStylesProps {
@@ -62,6 +66,9 @@ function Card({
   onCloseRequest,
   headerActions,
   closable = false,
+  toggleable,
+  onToggleChange,
+  open,
   ...props
 }: CardProps) {
   return (
@@ -86,11 +93,18 @@ function Card({
               )}
             </HeaderTextContainer>
           )}
-          {headerActions && (
+          {(headerActions || toggleable) && (
             <ActionGroup $style={styles?.actionContainerStyle}>
               {headerActions.map((props, index) => (
                 <ActionButton key={index} {...props} />
               ))}
+              {toggleable && (
+                <Togglebox
+                  name="toggle"
+                  checked={open}
+                  onChange={(e) => onToggleChange(e.target.checked)}
+                />
+              )}
             </ActionGroup>
           )}
         </Header>
