@@ -13,7 +13,7 @@ const meta: Meta = {
   tags: ["autodocs"],
   argTypes: {
     isOpen: { control: "boolean" },
-    hideClose: { control: "boolean" },
+    closable: { control: "boolean" },
   },
 };
 
@@ -145,14 +145,14 @@ export const DialogWithButton: Story = {
   },
 };
 
-export const HideCloseButton: Story = {
+export const ClosableButton: Story = {
   args: {
     isOpen: false,
-    hideClose: true,
+    closable: true,
   },
   argTypes: {
     isOpen: { control: "boolean" },
-    hideClose: { control: "boolean" },
+    closable: { control: "boolean" },
   },
 
   render: (args: Args) => {
@@ -163,10 +163,10 @@ export const HideCloseButton: Story = {
         onVisibilityChange={(newOpen) => updateArgs({ isOpen: newOpen })}
       >
         <Dialog.Trigger>
-          <Button>Dialog (HideClose)</Button>
+          <Button>Dialog (closable)</Button>
         </Dialog.Trigger>
         <Dialog.Content
-          hideClose={args.hideClose}
+          closable={args.closable}
           styles={{
             self: css`
               max-width: 500px;
@@ -182,7 +182,7 @@ export const HideCloseButton: Story = {
             }}
           >
             <Dialog.Header>
-              <Dialog.Title>Dialog (HideClose)</Dialog.Title>
+              <Dialog.Title>Dialog (Closable)</Dialog.Title>
             </Dialog.Header>
             <p
               style={{
@@ -216,7 +216,7 @@ export const NonEscapable: Story = {
         </Dialog.Trigger>
 
         <Dialog.Content
-          hideClose={args.hideClose}
+          closable={args.closable}
           styles={{
             self: css`
               max-width: 500px;
