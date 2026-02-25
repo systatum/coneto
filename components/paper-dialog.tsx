@@ -132,7 +132,13 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
           >
             {dialogState === "restored" && (
               <OverlayBlocker
-                onClick={"preventDefault"}
+                onClick={async ({ preventDefault, close }) => {
+                  await preventDefault();
+                  if (escapable) {
+                    await setDialogState("closed");
+                    await close();
+                  }
+                }}
                 show={dialogState === "restored"}
               />
             )}
