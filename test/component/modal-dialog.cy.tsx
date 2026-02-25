@@ -8,7 +8,6 @@ describe("Modal Dialog", () => {
 
     return (
       <ModalDialog
-        escapable={true}
         title="Default Modal"
         subTitle="This is a subtitle"
         hasCloseButton={true}
@@ -31,10 +30,22 @@ describe("Modal Dialog", () => {
     context("when given true", () => {
       context("when pressing escape", () => {
         it("should close the modal", () => {
-          cy.mount(<ProductModalDialog />);
+          cy.mount(<ProductModalDialog escapable={true} />);
 
           cy.findByLabelText("dialog-content").should("exist");
           cy.get("body").type("{esc}");
+          cy.findByLabelText("dialog-content").should("not.exist");
+        });
+      });
+
+      context("when clicking overlay-background", () => {
+        it("should close the modal", () => {
+          cy.mount(<ProductModalDialog escapable={true} />);
+
+          cy.findByLabelText("dialog-content").should("exist");
+          cy.findByLabelText("overlay-blocker")
+            .should("exist")
+            .click("topLeft");
           cy.findByLabelText("dialog-content").should("not.exist");
         });
       });
@@ -50,6 +61,18 @@ describe("Modal Dialog", () => {
           cy.findByLabelText("dialog-content").should("exist");
         });
       });
+
+      context("when clicking overlay-background", () => {
+        it("should not close the modal", () => {
+          cy.mount(<ProductModalDialog escapable={false} />);
+
+          cy.findByLabelText("dialog-content").should("exist");
+          cy.findByLabelText("overlay-blocker")
+            .should("exist")
+            .click("topLeft");
+          cy.findByLabelText("dialog-content").should("exist");
+        });
+      });
     });
 
     context("when not given (default)", () => {
@@ -59,6 +82,18 @@ describe("Modal Dialog", () => {
 
           cy.findByLabelText("dialog-content").should("exist");
           cy.get("body").type("{esc}");
+          cy.findByLabelText("dialog-content").should("not.exist");
+        });
+      });
+
+      context("when clicking overlay-background", () => {
+        it("should close the modal", () => {
+          cy.mount(<ProductModalDialog />);
+
+          cy.findByLabelText("dialog-content").should("exist");
+          cy.findByLabelText("overlay-blocker")
+            .should("exist")
+            .click("topLeft");
           cy.findByLabelText("dialog-content").should("not.exist");
         });
       });

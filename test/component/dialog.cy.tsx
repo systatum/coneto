@@ -25,6 +25,18 @@ describe("Dialog", () => {
           cy.findByLabelText("dialog-content").should("not.exist");
         });
       });
+
+      context("when clicking overlay-background", () => {
+        it("should close the modal", () => {
+          cy.mount(<ProductDialog escapable={true} />);
+
+          cy.findByLabelText("dialog-content").should("exist");
+          cy.findByLabelText("overlay-blocker")
+            .should("exist")
+            .click("topLeft");
+          cy.findByLabelText("dialog-content").should("not.exist");
+        });
+      });
     });
 
     context("when given false", () => {
@@ -37,6 +49,18 @@ describe("Dialog", () => {
           cy.findByLabelText("dialog-content").should("exist");
         });
       });
+
+      context("when clicking overlay-background", () => {
+        it("should not close the modal", () => {
+          cy.mount(<ProductDialog escapable={true} />);
+
+          cy.findByLabelText("dialog-content").should("exist");
+          cy.findByLabelText("overlay-blocker")
+            .should("exist")
+            .click("topLeft");
+          cy.findByLabelText("dialog-content").should("exist");
+        });
+      });
     });
 
     context("when not given (default)", () => {
@@ -46,6 +70,18 @@ describe("Dialog", () => {
 
           cy.findByLabelText("dialog-content").should("exist");
           cy.get("body").type("{esc}");
+          cy.findByLabelText("dialog-content").should("not.exist");
+        });
+      });
+
+      context("when clicking overlay-background", () => {
+        it("should close the modal", () => {
+          cy.mount(<ProductDialog />);
+
+          cy.findByLabelText("dialog-content").should("exist");
+          cy.findByLabelText("overlay-blocker")
+            .should("exist")
+            .click("topLeft");
           cy.findByLabelText("dialog-content").should("not.exist");
         });
       });

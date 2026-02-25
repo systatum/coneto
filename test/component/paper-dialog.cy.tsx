@@ -32,10 +32,11 @@ describe("PaperDialog", () => {
               style={{ display: "flex", flexDirection: "column", gap: "8px" }}
             >
               <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>
-                Non-Escapable Dialog
+                Escapable Feature
               </h2>
               <p style={{ fontSize: "14px", color: "#4B5563" }}>
-                This dialog cannot be closed by pressing the Escape key. Use the
+                When escapable with value false, the dialog cannot be closed by
+                pressing the Escape key or clicking the background. Use the
                 close button or action buttons to dismiss it.
               </p>
               <p style={{ fontSize: "14px", color: "#4B5563" }}>
@@ -61,6 +62,19 @@ describe("PaperDialog", () => {
           cy.findByLabelText("paper-dialog-content").should("not.exist");
         });
       });
+
+      context("when clicking overlay-background", () => {
+        it("should close the modal", () => {
+          cy.mount(<ProductPaperDialog escapable={true} />);
+
+          cy.findAllByRole("button").eq(0).should("exist").click();
+          cy.findByLabelText("paper-dialog-content").should("exist");
+          cy.findByLabelText("overlay-blocker")
+            .should("exist")
+            .click("topLeft");
+          cy.findByLabelText("paper-dialog-content").should("not.exist");
+        });
+      });
     });
 
     context("when given false", () => {
@@ -74,6 +88,19 @@ describe("PaperDialog", () => {
           cy.findByLabelText("paper-dialog-content").should("exist");
         });
       });
+
+      context("when clicking overlay-background", () => {
+        it("should close the modal", () => {
+          cy.mount(<ProductPaperDialog escapable={false} />);
+
+          cy.findAllByRole("button").eq(0).should("exist").click();
+          cy.findByLabelText("paper-dialog-content").should("exist");
+          cy.findByLabelText("overlay-blocker")
+            .should("exist")
+            .click("topLeft");
+          cy.findByLabelText("paper-dialog-content").should("exist");
+        });
+      });
     });
 
     context("when not given (default)", () => {
@@ -84,6 +111,19 @@ describe("PaperDialog", () => {
           cy.findAllByRole("button").eq(0).should("exist").click();
           cy.findByLabelText("paper-dialog-content").should("exist");
           cy.get("body").type("{esc}");
+          cy.findByLabelText("paper-dialog-content").should("not.exist");
+        });
+      });
+
+      context("when clicking overlay-background", () => {
+        it("should close the modal", () => {
+          cy.mount(<ProductPaperDialog />);
+
+          cy.findAllByRole("button").eq(0).should("exist").click();
+          cy.findByLabelText("paper-dialog-content").should("exist");
+          cy.findByLabelText("overlay-blocker")
+            .should("exist")
+            .click("topLeft");
           cy.findByLabelText("paper-dialog-content").should("not.exist");
         });
       });
