@@ -18,7 +18,7 @@ export interface ModalDialogProps {
   onVisibilityChange?: (isOpen?: boolean) => void;
   title?: string;
   subTitle?: string;
-  hasCloseButton?: boolean;
+  closable?: boolean;
   buttons?: ModalButtonProps[];
   children?: ReactNode;
   onClick?: (args: { id: string; closeDialog: () => void }) => void;
@@ -37,7 +37,7 @@ export interface ModalDialogStylesProps {
 function ModalDialog({
   onVisibilityChange,
   isOpen,
-  hasCloseButton,
+  closable,
   subTitle,
   title,
   buttons,
@@ -67,7 +67,7 @@ function ModalDialog({
             ${styles?.containerStyle}
           `,
         }}
-        hideClose={!hasCloseButton}
+        closable={!closable}
       >
         <Container>
           <Header

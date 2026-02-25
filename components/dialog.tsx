@@ -108,7 +108,7 @@ function DialogClose({ children }: { children: ReactNode }) {
 
 export interface DialogContentProps {
   children: ReactNode;
-  hideClose?: boolean;
+  closable?: boolean;
   styles?: DialogContentStylesProps;
 }
 
@@ -120,7 +120,7 @@ export interface DialogContentStylesProps {
 
 function DialogContent({
   children,
-  hideClose = false,
+  closable = false,
   styles,
 }: DialogContentProps) {
   const [isVisible, setIsVisible] = useState(false);
@@ -168,7 +168,7 @@ function DialogContent({
         $isOpen={isOpen}
         $style={styles?.self}
       >
-        {!hideClose && (
+        {!closable && (
           <Button
             variant="transparent"
             onClick={() => setIsOpen(false)}
