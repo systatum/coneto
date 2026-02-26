@@ -129,7 +129,7 @@ export const WithSubtitle: Story = {
   args: {
     title: "Default Modal with Subtitle",
     subtitle:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nunc vel tincidunt luctus, nunc nisl aliquam nunc, eget aliquam nisl nunc vel nisl. Integer vel turpis at ipsum facilisis posuere.",
+      "Temper, ex minor ipsum ego sit nostrud nisi Romana temper officia et sic labore conditum amet ex quis proident est, Asianus lorem. Nummifer ipsum Republicae exercitation quis.",
     closable: true,
     isOpen: false,
     buttons: [
