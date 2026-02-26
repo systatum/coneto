@@ -14,6 +14,7 @@ function ModalDialog({
   children,
   styles,
   onClick,
+  onClosed,
   closable = true,
   icon,
 }: ModalDialogProps) {
@@ -43,6 +44,7 @@ function ModalDialog({
       title={title}
       onClick={onClick}
       onVisibilityChange={onVisibilityChange}
+      onClosed={onClosed}
       subtitle={subtitle}
       styles={{
         ...styles,

@@ -35,6 +35,7 @@ export interface DialogProps {
   title?: ReactNode;
   subtitle?: ReactNode;
   icon?: FigureProps;
+  onClosed?: () => void;
 }
 
 export interface DialogStylesProps {
@@ -68,11 +69,17 @@ function Dialog({
   buttons,
   onClick,
   icon,
+  onClosed,
 }: DialogProps) {
   const [isVisible, setIsVisible] = useState(false);
   const { mounted, target } = usePortal();
 
-  const closeDialog = () => onVisibilityChange(false);
+  const closeDialog = () => {
+    onVisibilityChange(false);
+    if (onClosed) {
+      onClosed();
+    }
+  };
 
   const handleEscape = useCallback(
     (e: KeyboardEvent) => {
@@ -107,6 +114,10 @@ function Dialog({
           if (closable) {
             await onVisibilityChange(false);
             await close();
+
+            if (onClosed) {
+              await onClosed();
+            }
           }
         }}
       />
