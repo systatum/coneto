@@ -1,42 +1,16 @@
 "use client";
 
-import {
-  ReactNode,
-  useEffect,
-  useRef,
-  useState,
-  useCallback,
-  useContext,
-  createContext,
-} from "react";
+import { ReactNode, useEffect, useRef, useState, useCallback } from "react";
 import ReactDOM from "react-dom";
 import styled, { keyframes, CSSProp, css } from "styled-components";
 import { RiCloseLine } from "@remixicon/react";
-import { Button } from "./button";
+import { Button, ButtonStylesProps, ButtonVariants } from "./button";
 import { OverlayBlocker } from "./overlay-blocker";
+import { Figure, FigureProps } from "./figure";
+import { lightenColor } from "./../lib/lighten-color";
 
-const fadeIn = keyframes`from {opacity: 0;} to {opacity: 1;}`;
-const fadeOut = keyframes`from {opacity: 1;} to {opacity: 0;}`;
 const zoomIn = keyframes`from {transform: translate(-50%, -50%) scale(0.95); opacity: 0;} to {transform: translate(-50%, -50%) scale(1); opacity: 1;}`;
 const zoomOut = keyframes`from {transform: translate(-50%, -50%) scale(1); opacity: 1;} to {transform: translate(-50%, -50%) scale(0.95); opacity: 0;}`;
-
-type StyleProp = {
-  $style?: CSSProp;
-};
-
-const DialogContext = createContext<{
-  isOpen: boolean;
-  setIsOpen: (val: boolean) => void;
-  closable?: boolean;
-} | null>(null);
-
-function useDialogContext() {
-  const context = useContext(DialogContext);
-  if (!context) {
-    throw new Error("Dialog components must be used within <Dialog />");
-  }
-  return context;
-}
 
 function usePortal() {
   const [mounted, setMounted] = useState(false);
@@ -55,6 +29,32 @@ export interface DialogProps {
   isOpen?: boolean;
   onVisibilityChange?: (isOpen?: boolean) => void;
   closable?: boolean;
+  styles?: DialogStylesProps;
+  onClick?: (args: { id: string; closeDialog: () => void }) => void;
+  buttons?: DialogButtonProps[];
+  title?: ReactNode;
+  subtitle?: ReactNode;
+  icon?: FigureProps;
+}
+
+export interface DialogStylesProps {
+  overlayStyle?: CSSProp;
+  closeButtonStyle?: CSSProp;
+  headerStyle?: CSSProp;
+  titleStyle?: CSSProp;
+  subtitleStyle?: CSSProp;
+  containerStyle?: CSSProp;
+  contentStyle?: CSSProp;
+  textWrapperStyle?: CSSProp;
+  buttonWrapperStyle?: CSSProp;
+}
+
+export interface DialogButtonProps extends Pick<ButtonVariants, "variant"> {
+  id: string;
+  caption: string;
+  isLoading?: boolean;
+  disabled?: boolean;
+  styles?: ButtonStylesProps;
 }
 
 function Dialog({
@@ -62,71 +62,23 @@ function Dialog({
   isOpen,
   onVisibilityChange,
   closable = true,
-}: DialogProps) {
-  return (
-    <DialogContext.Provider
-      value={{ isOpen, setIsOpen: onVisibilityChange, closable }}
-    >
-      {children}
-    </DialogContext.Provider>
-  );
-}
-
-function DialogTrigger({
-  children,
+  styles,
+  title,
+  subtitle,
+  buttons,
   onClick,
-}: {
-  children: ReactNode;
-  onClick?: () => void;
-}) {
-  const { isOpen, setIsOpen } = useDialogContext();
-  return (
-    <div
-      onClick={() => {
-        if (onClick) {
-          onClick();
-        } else {
-          setIsOpen(!isOpen);
-        }
-      }}
-      style={{ display: "inline-block", cursor: "pointer" }}
-    >
-      {children}
-    </div>
-  );
-}
-
-function DialogClose({ children }: { children: ReactNode }) {
-  const { setIsOpen } = useDialogContext();
-
-  return (
-    <div onClick={() => setIsOpen(false)} style={{ display: "inline-block" }}>
-      {children}
-    </div>
-  );
-}
-
-export interface DialogContentProps {
-  children: ReactNode;
-  styles?: DialogContentStylesProps;
-}
-
-export interface DialogContentStylesProps {
-  self?: CSSProp;
-  overlayStyle?: CSSProp;
-  closeButtonStyle?: CSSProp;
-}
-
-function DialogContent({ children, styles }: DialogContentProps) {
+  icon,
+}: DialogProps) {
   const [isVisible, setIsVisible] = useState(false);
-  const { isOpen, setIsOpen, closable } = useDialogContext();
   const { mounted, target } = usePortal();
+
+  const closeDialog = () => onVisibilityChange(false);
 
   const handleEscape = useCallback(
     (e: KeyboardEvent) => {
-      if (e.key === "Escape" && closable) setIsOpen(false);
+      if (e.key === "Escape" && closable) closeDialog();
     },
-    [setIsOpen]
+    [closeDialog]
   );
 
   useEffect(() => {
@@ -153,20 +105,107 @@ function DialogContent({ children, styles }: DialogContentProps) {
         onClick={async ({ preventDefault, close }) => {
           await preventDefault();
           if (closable) {
-            await setIsOpen(false);
+            await onVisibilityChange(false);
             await close();
           }
         }}
       />
-      <StyledContent
-        aria-label="dialog-content"
+      <Wrapper
+        aria-label="dialog-wrapper"
         $isOpen={isOpen}
-        $style={styles?.self}
+        $style={styles?.containerStyle}
       >
+        {(icon || title || subtitle) && (
+          <Header aria-label="dialog-head-wrapper" $style={styles?.headerStyle}>
+            {icon &&
+              (() => {
+                const iconProps: FigureProps = {
+                  ...icon,
+                  size: icon?.size ?? 28,
+                  styles: {
+                    self: css`
+                      min-width: ${icon?.size
+                        ? `${icon?.size * 1.5}px`
+                        : `42px`};
+                      min-height: ${icon?.size
+                        ? `${icon?.size * 1.5}px`
+                        : `42px`};
+                      background-color: ${lightenColor(
+                        icon?.color ?? "black",
+                        0.9
+                      )};
+                      border-radius: 99999px;
+                      justify-content: center;
+                      align-items: center;
+                      display: flex;
+                      overflow: hidden;
+                      ${icon?.styles?.self}
+                    `,
+                  },
+                };
+                return <Figure {...iconProps} />;
+              })()}
+
+            {(title || subtitle) && (
+              <TextWrapper
+                aria-label="dialog-text-wrapper"
+                $style={styles?.textWrapperStyle}
+              >
+                {title && (
+                  <Title
+                    aria-label={"dialog-title"}
+                    $style={styles?.titleStyle}
+                  >
+                    {title}
+                  </Title>
+                )}
+
+                {subtitle && (
+                  <Subtitle
+                    aria-label="dialog-subtitle"
+                    $style={styles?.subtitleStyle}
+                  >
+                    {subtitle}
+                  </Subtitle>
+                )}
+              </TextWrapper>
+            )}
+          </Header>
+        )}
+
+        {children && (
+          <Body aria-label="dialog-content" $style={styles?.contentStyle}>
+            {children}
+          </Body>
+        )}
+
+        {buttons && (
+          <Footer $style={styles?.buttonWrapperStyle}>
+            {buttons.map((props, index) => (
+              <Button
+                key={index}
+                isLoading={props.isLoading}
+                disabled={props.disabled}
+                variant={props.variant}
+                onClick={() => onClick?.({ id: props.id, closeDialog })}
+                styles={{
+                  ...props?.styles,
+                  self: css`
+                    min-width: 100px;
+                    ${props?.styles?.self}
+                  `,
+                }}
+              >
+                {props.caption}
+              </Button>
+            ))}
+          </Footer>
+        )}
+
         {closable && (
           <Button
             variant="transparent"
-            onClick={() => setIsOpen(false)}
+            onClick={() => onVisibilityChange(false)}
             aria-label="Close dialog"
             styles={{
               containerStyle: css`
@@ -189,60 +228,13 @@ function DialogContent({ children, styles }: DialogContentProps) {
             <RiCloseLine />
           </Button>
         )}
-        {children}
-      </StyledContent>
+      </Wrapper>
     </>,
     target
   );
 }
 
-function DialogHeader({
-  children,
-  style,
-}: {
-  children: ReactNode;
-  style?: CSSProp;
-}) {
-  return <StyledHeader $style={style}>{children}</StyledHeader>;
-}
-
-function DialogFooter({
-  children,
-  style,
-}: {
-  children: ReactNode;
-  style?: CSSProp;
-}) {
-  return <StyledFooter $style={style}>{children}</StyledFooter>;
-}
-
-function DialogTitle({
-  children,
-  style,
-  ariaLabel = "dialog-title",
-}: {
-  children: ReactNode;
-  style?: CSSProp;
-  ariaLabel?: string;
-}) {
-  return (
-    <StyledTitle aria-label={ariaLabel} $style={style}>
-      {children}
-    </StyledTitle>
-  );
-}
-
-function DialogDescription({
-  children,
-  style,
-}: {
-  children: ReactNode;
-  style?: CSSProp;
-}) {
-  return <StyledDescription $style={style}>{children}</StyledDescription>;
-}
-
-const StyledContent = styled.div<{ $isOpen: boolean } & StyleProp>`
+const Wrapper = styled.div<{ $isOpen: boolean; $style?: CSSProp }>`
   position: fixed;
   top: 50%;
   left: 50%;
@@ -252,53 +244,78 @@ const StyledContent = styled.div<{ $isOpen: boolean } & StyleProp>`
   padding: 1.5rem;
   border-radius: 2px;
   max-width: calc(100% - 2rem);
-  width: 100%;
-  max-width: 640px;
+  width: 380px;
+  justify-content: space-between;
+  align-items: center;
   max-height: calc(100vh - 2rem);
   overflow-y: auto;
   box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
-  animation: ${({ $isOpen }) => ($isOpen ? zoomIn : zoomOut)} 0.2s forwards;
-  ${({ $style }) => $style}
-`;
-
-const StyledHeader = styled.div<StyleProp>`
+  border-radius: 12px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  text-align: left;
+  gap: 14px;
+  animation: ${({ $isOpen }) => ($isOpen ? zoomIn : zoomOut)} 0.2s forwards;
 
   ${({ $style }) => $style}
 `;
 
-const StyledFooter = styled.div<StyleProp>`
+const Header = styled.div<{ $style?: CSSProp }>`
   display: flex;
-  flex-direction: column-reverse;
-  gap: 0.5rem;
-  flex-direction: row;
-  justify-content: flex-end;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
 
   ${({ $style }) => $style}
 `;
 
-const StyledTitle = styled.h2<StyleProp>`
+const TextWrapper = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+
+  ${({ $style }) => $style}
+`;
+
+const Title = styled.h2<{
+  $style?: CSSProp;
+}>`
   font-size: 1.125rem;
   font-weight: 600;
   line-height: 1.25;
+  text-align: center;
+
   ${({ $style }) => $style}
 `;
 
-const StyledDescription = styled.p<StyleProp>`
-  font-size: 0.875rem;
-  color: #6b7280;
+const Subtitle = styled.h3<{ $style?: CSSProp }>`
+  font-size: 13px;
+  color: #5a606b;
+  text-align: center;
+
   ${({ $style }) => $style}
 `;
 
-Dialog.Content = DialogContent;
-Dialog.Description = DialogDescription;
-Dialog.Footer = DialogFooter;
-Dialog.Header = DialogHeader;
-Dialog.Title = DialogTitle;
-Dialog.Trigger = DialogTrigger;
-Dialog.Close = DialogClose;
+const Body = styled.div<{ $style?: CSSProp }>`
+  height: 100%;
+  min-height: 250px;
+  font-size: 12px;
+  width: 100%;
+  padding-top: 0.5rem;
+
+  ${({ $style }) => $style}
+`;
+
+const Footer = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: center;
+  gap: 10px;
+
+  ${({ $style }) => $style}
+`;
 
 export { Dialog };
