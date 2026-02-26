@@ -216,8 +216,8 @@ function Dialog({
         {closable && (
           <Button
             variant="transparent"
-            onClick={() => onVisibilityChange(false)}
-            aria-label="Close dialog"
+            onClick={() => closeDialog()}
+            aria-label="close-dialog"
             styles={{
               containerStyle: css`
                 position: absolute;
