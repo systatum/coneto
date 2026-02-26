@@ -154,7 +154,7 @@ function Dialog({
                     `,
                   },
                 };
-                return <Figure {...iconProps} />;
+                return <Figure {...iconProps} aria-label="dialog-icon" />;
               })()}
 
             {(title || subtitle) && (
