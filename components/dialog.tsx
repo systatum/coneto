@@ -28,6 +28,7 @@ const DialogContext = createContext<{
   isOpen: boolean;
   setIsOpen: (val: boolean) => void;
   closable?: boolean;
+  onClosed?: () => void;
 } | null>(null);
 
 function useDialogContext() {
@@ -55,6 +56,7 @@ export interface DialogProps {
   isOpen?: boolean;
   onVisibilityChange?: (isOpen?: boolean) => void;
   closable?: boolean;
+  onClosed?: () => void;
 }
 
 function Dialog({
@@ -62,10 +64,11 @@ function Dialog({
   isOpen,
   onVisibilityChange,
   closable = true,
+  onClosed,
 }: DialogProps) {
   return (
     <DialogContext.Provider
-      value={{ isOpen, setIsOpen: onVisibilityChange, closable }}
+      value={{ isOpen, setIsOpen: onVisibilityChange, onClosed, closable }}
     >
       {children}
     </DialogContext.Provider>
@@ -97,10 +100,18 @@ function DialogTrigger({
 }
 
 function DialogClose({ children }: { children: ReactNode }) {
-  const { setIsOpen } = useDialogContext();
+  const { setIsOpen, onClosed } = useDialogContext();
 
   return (
-    <div onClick={() => setIsOpen(false)} style={{ display: "inline-block" }}>
+    <div
+      onClick={() => {
+        setIsOpen(false);
+        if (onClosed) {
+          onClosed();
+        }
+      }}
+      style={{ display: "inline-block" }}
+    >
       {children}
     </div>
   );
@@ -119,12 +130,18 @@ export interface DialogContentStylesProps {
 
 function DialogContent({ children, styles }: DialogContentProps) {
   const [isVisible, setIsVisible] = useState(false);
-  const { isOpen, setIsOpen, closable } = useDialogContext();
+  const { isOpen, setIsOpen, closable, onClosed } = useDialogContext();
   const { mounted, target } = usePortal();
 
   const handleEscape = useCallback(
     (e: KeyboardEvent) => {
-      if (e.key === "Escape" && closable) setIsOpen(false);
+      if (e.key === "Escape" && closable) {
+        setIsOpen(false);
+
+        if (onClosed) {
+          onClosed();
+        }
+      }
     },
     [setIsOpen]
   );
@@ -155,6 +172,10 @@ function DialogContent({ children, styles }: DialogContentProps) {
           if (closable) {
             await setIsOpen(false);
             await close();
+
+            if (onClosed) {
+              await onClosed();
+            }
           }
         }}
       />

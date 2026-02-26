@@ -22,6 +22,7 @@ export interface ModalDialogProps {
   buttons?: ModalButtonProps[];
   children?: ReactNode;
   onClick?: (args: { id: string; closeDialog: () => void }) => void;
+  onClosed?: () => void;
   styles?: ModalDialogStylesProps;
 }
 
@@ -42,14 +43,21 @@ function ModalDialog({
   children,
   styles,
   onClick,
+  onClosed,
   closable = true,
 }: ModalDialogProps) {
-  const closeDialog = () => onVisibilityChange(false);
+  const closeDialog = () => {
+    onVisibilityChange(false);
+    if (onClosed) {
+      onClosed();
+    }
+  };
 
   return (
     <Dialog
       closable={closable}
       isOpen={isOpen}
+      onClosed={onClosed}
       onVisibilityChange={onVisibilityChange}
     >
       <Dialog.Content
