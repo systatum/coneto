@@ -125,10 +125,11 @@ export const Default: Story = {
   },
 };
 
-export const DefaultWithSubtitle: Story = {
+export const WithSubtitle: Story = {
   args: {
     title: "Default Modal with Subtitle",
-    subtitle: "This is a subtitle",
+    subtitle:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nunc vel tincidunt luctus, nunc nisl aliquam nunc, eget aliquam nisl nunc vel nisl. Integer vel turpis at ipsum facilisis posuere.",
     closable: true,
     isOpen: false,
     buttons: [
