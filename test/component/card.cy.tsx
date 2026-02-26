@@ -4,9 +4,12 @@ import { Button } from "./../../components/button";
 import { DormantText } from "./../../components/dormant-text";
 import { Textbox } from "./../../components/textbox";
 import { css } from "styled-components";
+import { useState } from "react";
 
 describe("Card", () => {
   function ProductCard(props: Omit<CardProps, "children">) {
+    const [isOpen, setIsOpen] = useState(true);
+
     return (
       <Card
         title="Systatum Food Services"
@@ -24,11 +27,32 @@ describe("Card", () => {
         onMouseLeave={() => console.log("now is leaving card")}
         onClick={() => console.log("now is clicking card")}
         {...props}
+        toggleable={props?.toggleable ?? false}
+        onToggleChange={(isOpen) => setIsOpen(isOpen)}
+        open={isOpen}
       >
         Test
       </Card>
     );
   }
+
+  context("toggleable", () => {
+    context("when given", () => {
+      it("renders the card using togglebox", () => {
+        cy.mount(<ProductCard toggleable />);
+        cy.findByLabelText("togglebox-wrapper").should("exist");
+      });
+
+      context("when clicking", () => {
+        it("should collapsing the card content", () => {
+          cy.mount(<ProductCard toggleable />);
+          cy.findByLabelText("card-content").should("exist");
+          cy.findByLabelText("togglebox-wrapper").should("exist").click();
+          cy.findByLabelText("card-content").should("not.exist");
+        });
+      });
+    });
+  });
 
   context("onMouseEnter", () => {
     context("when hovering", () => {

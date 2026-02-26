@@ -102,7 +102,7 @@ function Card({
                 ))}
               {toggleable && (
                 <Togglebox
-                  name="toggle"
+                  name="card-toggle"
                   checked={open}
                   onChange={(e) => onToggleChange(e.target.checked)}
                 />
@@ -117,7 +117,7 @@ function Card({
           <Contain
             key={`card-content`}
             initial="collapsed"
-            aria-label="list-item-children"
+            aria-label="card-content"
             animate={open ? "open" : "collapsed"}
             exit="collapsed"
             $style={styles?.contentStyle}
@@ -147,7 +147,9 @@ function Card({
       </AnimatePresence>
 
       {footerContent && (
-        <Footer $footerStyle={styles?.footerStyle}>{footerContent}</Footer>
+        <Footer aria-label="card-footer" $footerStyle={styles?.footerStyle}>
+          {footerContent}
+        </Footer>
       )}
 
       {closable && (
