@@ -30,6 +30,7 @@ export interface PaperDialogProps {
   closable?: boolean;
   width?: string;
   styles?: PaperDialogStylesProps;
+  onClosed?: () => void;
 }
 
 export interface PaperDialogStylesProps {
@@ -59,14 +60,22 @@ export interface PaperDialogRef {
 }
 
 const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
-  ({ position = "right", children, closable = true, width, styles }, ref) => {
+  (
+    { position = "right", children, closable = true, width, styles, onClosed },
+    ref
+  ) => {
     const [dialogState, setDialogState] = useState<DialogState>("closed");
     const controls = useAnimation();
     const isLeft = position === "left";
 
     const handleEscape = useCallback(
       (e: KeyboardEvent) => {
-        if (e.key === "Escape" && closable) setDialogState("closed");
+        if (e.key === "Escape" && closable) {
+          setDialogState("closed");
+          if (onClosed) {
+            onClosed();
+          }
+        }
       },
       [setDialogState]
     );
@@ -92,6 +101,9 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
       closeDialog: async () => {
         await setDialogState("closed");
         await handleToggleDrawer("closed");
+        if (onClosed) {
+          await onClosed();
+        }
       },
       minimizeDialog: async () => {
         await setDialogState("minimized");
@@ -133,6 +145,10 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                   if (closable) {
                     await setDialogState("closed");
                     await close();
+
+                    if (onClosed) {
+                      await onClosed();
+                    }
                   }
                 }}
                 show={dialogState === "restored"}
@@ -155,7 +171,12 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                   <IconButton
                     $isLeft={isLeft}
                     aria-label="button-close"
-                    onClick={() => setDialogState("closed")}
+                    onClick={() => {
+                      setDialogState("closed");
+                      if (onClosed) {
+                        onClosed();
+                      }
+                    }}
                   >
                     <RiCloseLine size={20} />
                   </IconButton>
