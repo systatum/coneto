@@ -1,6 +1,7 @@
 import { css } from "styled-components";
 import { ModalDialog, ModalDialogProps } from "./../../components/modal-dialog";
 import { useState } from "react";
+import { RiAB } from "@remixicon/react";
 
 describe("Modal Dialog", () => {
   function ProductModalDialog(props: ModalDialogProps) {
@@ -25,6 +26,58 @@ describe("Modal Dialog", () => {
       </ModalDialog>
     );
   }
+
+  context("when given icon", () => {
+    it("renders icon 28px (by default)", () => {
+      cy.mount(
+        <ProductModalDialog
+          icon={{
+            image: RiAB,
+          }}
+        />
+      );
+
+      cy.findByLabelText("dialog-icon")
+        .should("exist")
+        .and("have.css", "width", "28px");
+    });
+
+    context("when given size 35px", () => {
+      it("renders icon 28px (by default)", () => {
+        cy.mount(
+          <ProductModalDialog
+            icon={{
+              image: RiAB,
+              size: 35,
+            }}
+          />
+        );
+
+        cy.findByLabelText("dialog-icon")
+          .should("exist")
+          .and("have.css", "width", "35px");
+      });
+    });
+
+    context("when given red color", () => {
+      it("renders icon with red color and lightened background color", () => {
+        cy.mount(
+          <ProductModalDialog
+            icon={{
+              image: RiAB,
+              color: "red",
+            }}
+          />
+        );
+
+        cy.findByLabelText("dialog-icon")
+          .should("exist")
+          .and("have.css", "color", "rgb(255, 0, 0)")
+          .parent()
+          .and("have.css", "background-color", "rgb(255, 230, 230)");
+      });
+    });
+  });
 
   context("onClosed", () => {
     context("when pressing escape", () => {

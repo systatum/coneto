@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Dialog, DialogProps } from "./../../components/dialog";
+import { RiAB } from "@remixicon/react";
 
 describe("Dialog", () => {
   function ProductDialog(props: DialogProps) {
@@ -11,6 +12,58 @@ describe("Dialog", () => {
       </Dialog>
     );
   }
+
+  context("when given icon", () => {
+    it("renders icon 28px (by default)", () => {
+      cy.mount(
+        <ProductDialog
+          icon={{
+            image: RiAB,
+          }}
+        />
+      );
+
+      cy.findByLabelText("dialog-icon")
+        .should("exist")
+        .and("have.css", "width", "28px");
+    });
+
+    context("when given size 35px", () => {
+      it("renders icon 28px (by default)", () => {
+        cy.mount(
+          <ProductDialog
+            icon={{
+              image: RiAB,
+              size: 35,
+            }}
+          />
+        );
+
+        cy.findByLabelText("dialog-icon")
+          .should("exist")
+          .and("have.css", "width", "35px");
+      });
+    });
+
+    context("when given red color", () => {
+      it("renders icon with red color and lightened background color", () => {
+        cy.mount(
+          <ProductDialog
+            icon={{
+              image: RiAB,
+              color: "red",
+            }}
+          />
+        );
+
+        cy.findByLabelText("dialog-icon")
+          .should("exist")
+          .and("have.css", "color", "rgb(255, 0, 0)")
+          .parent()
+          .and("have.css", "background-color", "rgb(255, 230, 230)");
+      });
+    });
+  });
 
   context("onClosed", () => {
     context("when pressing escape", () => {
