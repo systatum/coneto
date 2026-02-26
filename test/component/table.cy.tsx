@@ -15,7 +15,6 @@ import {
 import { TipMenuItemProps } from "./../../components/tip-menu";
 import { css } from "styled-components";
 import { CapsuleContentProps } from "./../../components/capsule";
-import { VscServerProcess } from "react-icons/vsc";
 
 interface TableItemProps {
   title: string;
@@ -1204,7 +1203,7 @@ describe("Table", () => {
           {
             id: "backend",
             icon: {
-              image: VscServerProcess,
+              image: "/backend.png",
             },
           },
         ];
