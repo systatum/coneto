@@ -7,9 +7,7 @@ describe("Dialog", () => {
 
     return (
       <Dialog isOpen={isOpen} onVisibilityChange={setIsOpen} {...props}>
-        <Dialog.Content>
-          Here is the content of the modal dialog.
-        </Dialog.Content>
+        Here is the content of the modal dialog.
       </Dialog>
     );
   }

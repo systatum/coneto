@@ -9,7 +9,7 @@ describe("Modal Dialog", () => {
     return (
       <ModalDialog
         title="Default Modal"
-        subTitle="This is a subtitle"
+        subtitle="This is a subtitle"
         closable={true}
         buttons={[
           { id: "confirm", caption: "Confirm", variant: "primary" },
@@ -104,7 +104,7 @@ describe("Modal Dialog", () => {
     it("renders with gap 6px", () => {
       cy.mount(<ProductModalDialog />);
 
-      cy.findByLabelText("modal-dialog-text-wrapper").should(
+      cy.findByLabelText("dialog-text-wrapper").should(
         "have.css",
         "gap",
         "6px"
@@ -123,7 +123,7 @@ describe("Modal Dialog", () => {
           />
         );
 
-        cy.findByLabelText("modal-dialog-text-wrapper").should(
+        cy.findByLabelText("dialog-text-wrapper").should(
           "have.css",
           "gap",
           "16px"
@@ -145,7 +145,7 @@ describe("Modal Dialog", () => {
           />
         );
 
-        cy.findByLabelText("modal-dialog-title").should(
+        cy.findByLabelText("dialog-title").should(
           "have.css",
           "font-size",
           "30px"
@@ -167,7 +167,7 @@ describe("Modal Dialog", () => {
           />
         );
 
-        cy.findByLabelText("modal-dialog-subtitle").should(
+        cy.findByLabelText("dialog-subtitle").should(
           "have.css",
           "font-size",
           "20px"
@@ -189,7 +189,7 @@ describe("Modal Dialog", () => {
         />
       );
 
-      cy.findByLabelText("modal-dialog-content")
+      cy.findByLabelText("dialog-content")
         .should("have.css", "min-height", "150px")
         .and("have.css", "background-color", "rgb(245, 222, 179)");
     });
