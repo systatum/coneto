@@ -76,6 +76,58 @@ type Story = StoryObj<typeof ModalDialog>;
 export const Default: Story = {
   args: {
     title: "Default Modal",
+    closable: true,
+    isOpen: false,
+    buttons: [
+      {
+        id: "confirm",
+        caption: "Confirm",
+        variant: "primary",
+      },
+      {
+        id: "cancel",
+        caption: "Cancel",
+        variant: "default",
+      },
+    ],
+    onClick: ({ closeDialog }) => {
+      closeDialog();
+    },
+    children: (
+      <div
+        style={{
+          fontSize: "0.875rem",
+          color: "#374151",
+        }}
+      >
+        Here is the content of the modal dialog.
+      </div>
+    ),
+    icon: {
+      image: Ri24HoursFill,
+    },
+  },
+  render: (args: ModalDialogProps) => {
+    const [{ isOpen }, setUpdateArgs] = useArgs();
+
+    return (
+      <>
+        <Button onClick={() => setUpdateArgs({ isOpen: true })}>
+          Default Modal
+        </Button>
+        <ModalDialog
+          {...args}
+          isOpen={isOpen}
+          onVisibilityChange={(isOpen) => setUpdateArgs({ isOpen })}
+        />
+      </>
+    );
+  },
+};
+
+export const DefaultWithSubtitle: Story = {
+  args: {
+    title: "Default Modal with Subtitle",
     subtitle: "This is a subtitle",
     closable: true,
     isOpen: false,
