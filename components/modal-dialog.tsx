@@ -71,6 +71,10 @@ function ModalDialog({
           justify-content: start;
           align-items: start;
           gap: 6px;
+          ${icon &&
+          css`
+            padding-left: 5px;
+          `}
           ${styles?.textWrapperStyle};
         `,
         contentStyle: css`
