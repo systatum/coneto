@@ -46,7 +46,12 @@ function ModalDialog({
   onClosed,
   closable = true,
 }: ModalDialogProps) {
-  const closeDialog = () => onVisibilityChange(false);
+  const closeDialog = () => {
+    onVisibilityChange(false);
+    if (onClosed) {
+      onClosed();
+    }
+  };
 
   return (
     <Dialog
