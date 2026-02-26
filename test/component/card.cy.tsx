@@ -52,6 +52,21 @@ describe("Card", () => {
         });
       });
     });
+
+    context("when given footer", () => {
+      context("when clicking", () => {
+        it("should collapsing the card content and the footer", () => {
+          cy.mount(
+            <ProductCard toggleable footerContent="Card footer content" />
+          );
+          cy.findByLabelText("card-content").should("exist");
+          cy.findByLabelText("card-footer").should("exist");
+          cy.findByLabelText("togglebox-wrapper").should("exist").click();
+          cy.findByLabelText("card-content").should("not.exist");
+          cy.findByLabelText("card-footer").should("not.exist");
+        });
+      });
+    });
   });
 
   context("onMouseEnter", () => {
