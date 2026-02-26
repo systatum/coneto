@@ -994,3 +994,295 @@ export const WithFullWidthContent: Story = {
     );
   },
 };
+
+export const Toggleable: Story = {
+  render: () => {
+    const [isOpen1, setIsOpen1] = useState(true);
+    const [isOpen2, setIsOpen2] = useState(true);
+
+    const sortRows = <T,>(
+      rows: T[],
+      original: T[],
+      mode: "asc" | "desc" | "original",
+      column: keyof T
+    ): T[] => {
+      if (mode === "original") return [...original];
+
+      return [...rows].sort((a, b) => {
+        const aVal = a[column];
+        const bVal = b[column];
+
+        if (typeof aVal === "string" && typeof bVal === "string") {
+          return mode === "asc"
+            ? aVal.localeCompare(bVal)
+            : bVal.localeCompare(aVal);
+        }
+
+        return 0;
+      });
+    };
+
+    const renderTable = <T extends Record<string, any>>({
+      columns,
+      rows,
+      setRows,
+      originalData,
+      getRowId,
+    }: {
+      columns: ColumnTableProps[];
+      rows: T[];
+      setRows: React.Dispatch<React.SetStateAction<T[]>>;
+      originalData: T[];
+      getRowId: (row: T) => string;
+    }) => {
+      const handleSorting = ({
+        mode,
+        column,
+      }: {
+        mode: "asc" | "desc" | "original";
+        column: keyof T;
+      }) => {
+        const sorted = sortRows(rows, originalData, mode, column);
+        setRows(sorted);
+      };
+
+      const tipMenu = (column: keyof T): SubMenuListTableProps[] => [
+        {
+          caption: "Sort Ascending",
+          icon: { image: RiArrowUpSLine, color: "gray" },
+          onClick: () => handleSorting({ mode: "asc", column }),
+        },
+        {
+          caption: "Sort Descending",
+          icon: { image: RiArrowDownSLine, color: "gray" },
+          onClick: () => handleSorting({ mode: "desc", column }),
+        },
+        {
+          caption: "Reset Sorting",
+          icon: { image: RiRefreshLine, color: "gray" },
+          onClick: () => handleSorting({ mode: "original", column }),
+        },
+      ];
+
+      return (
+        <Table
+          styles={{
+            tableRowContainerStyle: css`
+              max-height: 160px;
+            `,
+          }}
+          selectable
+          columns={columns}
+          subMenuList={tipMenu}
+        >
+          {rows.map((row, index) => (
+            <Table.Row
+              key={index}
+              rowId={getRowId(row)}
+              content={columns.map((col) => row[col.id])}
+            />
+          ))}
+        </Table>
+      );
+    };
+
+    const DEPARTMENTS = [
+      {
+        departmentName: "Excecutive",
+        head: "Adam Hakarsa",
+        employeeCount: "25",
+        budget: "$1,020,000",
+      },
+      {
+        departmentName: "Engineering",
+        head: "Alim Naufal",
+        employeeCount: "12",
+        budget: "$100,000",
+      },
+      {
+        departmentName: "Human Resources",
+        head: "Rizky Pratama",
+        employeeCount: "8",
+        budget: "$30,000",
+      },
+      {
+        departmentName: "Finance",
+        head: "Aira Amira Fairuz",
+        employeeCount: "6",
+        budget: "$60,000",
+      },
+      {
+        departmentName: "Customer Support",
+        head: "Dewi Lestari",
+        employeeCount: "15",
+        budget: "$50,000",
+      },
+    ];
+
+    const departmentColumns: ColumnTableProps[] = [
+      { id: "departmentName", caption: "Department", sortable: true },
+      { id: "head", caption: "Department Head", sortable: true },
+      { id: "employeeCount", caption: "Employees", sortable: true },
+      { id: "budget", caption: "Annual Budget", sortable: true },
+    ];
+
+    const [departmentRows, setDepartmentRows] = useState(DEPARTMENTS);
+
+    const ASSETS = [
+      {
+        assetName: "MacBook Pro M4",
+        category: "Laptop",
+        assignedTo: "Adam Hakarsa",
+        condition: "Excellent",
+      },
+      {
+        assetName: "MacBook Pro M3",
+        category: "Laptop",
+        assignedTo: "Alim Naufal",
+        condition: "Excellent",
+      },
+      {
+        assetName: "iPhone 15",
+        category: "Mobile Device",
+        assignedTo: "Siti Azzahra",
+        condition: "Excellent",
+      },
+      {
+        assetName: "Ergonomic Chair",
+        category: "Furniture",
+        assignedTo: "Gunawan Saputra",
+        condition: "Good",
+      },
+      {
+        assetName: "Meeting Room Projector",
+        category: "Equipment",
+        assignedTo: "Shared",
+        condition: "Needs Maintenance",
+      },
+    ];
+
+    const assetColumns: ColumnTableProps[] = [
+      { id: "assetName", caption: "Asset Name", sortable: true },
+      { id: "category", caption: "Category", sortable: true },
+      { id: "assignedTo", caption: "Assigned To", sortable: true },
+      { id: "condition", caption: "Condition", sortable: true },
+    ];
+
+    const [assetRows, setAssetRows] = useState(ASSETS);
+
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "32px",
+          padding: "16px",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 8,
+          }}
+        >
+          <h2
+            style={{
+              fontSize: 18,
+            }}
+          >
+            Toggleable without actions
+          </h2>
+          <Card
+            title="Organizational Structure"
+            subtitle="Overview of departments, leadership, workforce distribution, and allocated budgets"
+            toggleable
+            open={isOpen1}
+            onToggleChange={setIsOpen1}
+            styles={{
+              containerStyle: css`
+                padding-left: 0px;
+                padding-right: 0px;
+                min-width: 1000px;
+                padding-bottom: 0px;
+              `,
+              headerStyle: css`
+                padding-left: 15px;
+                padding-right: 15px;
+                border-bottom: 1px solid #d1d5db;
+              `,
+            }}
+          >
+            {renderTable({
+              columns: departmentColumns,
+              rows: departmentRows,
+              setRows: setDepartmentRows,
+              originalData: DEPARTMENTS,
+              getRowId: (row) => row.departmentName,
+            })}
+          </Card>
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 8,
+          }}
+        >
+          <h2
+            style={{
+              fontSize: 18,
+            }}
+          >
+            Toggleable with actions
+          </h2>
+          <Card
+            title="Asset Inventory Management"
+            subtitle="Tracking company equipment, assigned personnel, and asset condition"
+            toggleable
+            open={isOpen2}
+            onToggleChange={setIsOpen2}
+            headerActions={[
+              {
+                caption: "Add",
+                icon: { image: RiAddBoxLine },
+                onClick: () => {
+                  console.log(`Add button was clicked`);
+                },
+              },
+              {
+                caption: "Archive",
+                icon: { image: RiInboxArchiveLine },
+                onClick: () => {
+                  console.log(`Archive button was clicked`);
+                },
+              },
+            ]}
+            styles={{
+              containerStyle: css`
+                padding-left: 0px;
+                padding-right: 0px;
+                min-width: 1000px;
+                padding-bottom: 0px;
+              `,
+              headerStyle: css`
+                padding-left: 15px;
+                padding-right: 15px;
+                border-bottom: 1px solid #d1d5db;
+              `,
+            }}
+          >
+            {renderTable({
+              columns: assetColumns,
+              rows: assetRows,
+              setRows: setAssetRows,
+              originalData: ASSETS,
+              getRowId: (row) => row.assetName,
+            })}
+          </Card>
+        </div>
+      </div>
+    );
+  },
+};
