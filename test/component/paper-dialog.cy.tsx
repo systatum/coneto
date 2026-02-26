@@ -50,7 +50,7 @@ describe("PaperDialog", () => {
     );
   }
 
-  context("onClose", () => {
+  context("onClosed", () => {
     context("when pressing escape", () => {
       it("should give the callback", () => {
         cy.mount(
@@ -144,6 +144,76 @@ describe("PaperDialog", () => {
           "the modal is closed"
         );
         cy.findByLabelText("paper-dialog-content").should("not.exist");
+      });
+    });
+
+    context("when given closable false", () => {
+      context("when pressing escape", () => {
+        it("should not give the callback", () => {
+          cy.mount(
+            <ProductPaperDialog
+              closable={false}
+              onClosed={() => {
+                console.log("the modal is closed");
+              }}
+            />
+          );
+
+          cy.window().then((win) => {
+            cy.spy(win.console, "log").as("consoleLog");
+          });
+
+          cy.findAllByRole("button").eq(0).should("exist").click();
+
+          cy.get("@consoleLog").should(
+            "not.have.been.calledWith",
+            "the modal is closed"
+          );
+
+          cy.findByLabelText("paper-dialog-content").should("exist");
+          cy.get("body").type("{esc}");
+
+          cy.get("@consoleLog").should(
+            "not.have.been.calledWith",
+            "the modal is closed"
+          );
+          cy.findByLabelText("paper-dialog-content").should("exist");
+        });
+      });
+
+      context("when clicking overlay-blocker", () => {
+        it("should not give the callback", () => {
+          cy.mount(
+            <ProductPaperDialog
+              closable={false}
+              onClosed={() => {
+                console.log("the modal is closed");
+              }}
+            />
+          );
+
+          cy.window().then((win) => {
+            cy.spy(win.console, "log").as("consoleLog");
+          });
+
+          cy.findAllByRole("button").eq(0).should("exist").click();
+
+          cy.get("@consoleLog").should(
+            "not.have.been.calledWith",
+            "the modal is closed"
+          );
+
+          cy.findByLabelText("paper-dialog-content").should("exist");
+          cy.findByLabelText("overlay-blocker")
+            .should("exist")
+            .click("topLeft");
+
+          cy.get("@consoleLog").should(
+            "not.have.been.calledWith",
+            "the modal is closed"
+          );
+          cy.findByLabelText("paper-dialog-content").should("exist");
+        });
       });
     });
   });
