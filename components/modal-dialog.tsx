@@ -62,9 +62,12 @@ function ModalDialog({
         headerStyle: css`
           padding: 20px;
           flex-direction: row;
-          align-items: center;
-          justify-content: center;
           padding-bottom: 8px;
+          ${subtitle &&
+          css`
+            align-items: start;
+            justify-content: start;
+          `}
           ${styles?.headerStyle};
         `,
         textWrapperStyle: css`
@@ -84,13 +87,14 @@ function ModalDialog({
           ${styles?.contentStyle};
         `,
         titleStyle: css`
-          font-size: 16px;
+          font-size: 18px;
           font-weight: 500;
           text-align: start;
           ${styles?.titleStyle};
         `,
         subtitleStyle: css`
           font-size: 11px;
+          text-align: start;
           color: #6b7280;
 
           ${styles?.subtitleStyle}
