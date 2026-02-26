@@ -8,6 +8,7 @@ import { HTMLAttributes, ReactNode } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { ActionButton, ActionButtonProps } from "./action-button";
 import { Togglebox } from "./togglebox";
+import { AnimatePresence, motion } from "framer-motion";
 
 export interface CardProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "title" | "style"> {
@@ -68,7 +69,7 @@ function Card({
   closable = false,
   toggleable,
   onToggleChange,
-  open,
+  open = true,
   ...props
 }: CardProps) {
   return (
@@ -94,10 +95,11 @@ function Card({
             </HeaderTextContainer>
           )}
           {(headerActions || toggleable) && (
-            <ActionGroup $style={styles?.actionContainerStyle}>
-              {headerActions.map((props, index) => (
-                <ActionButton key={index} {...props} />
-              ))}
+            <HeaderActionGroup $style={styles?.actionContainerStyle}>
+              {headerActions &&
+                headerActions.map((props, index) => (
+                  <ActionButton key={index} {...props} />
+                ))}
               {toggleable && (
                 <Togglebox
                   name="toggle"
@@ -105,12 +107,44 @@ function Card({
                   onChange={(e) => onToggleChange(e.target.checked)}
                 />
               )}
-            </ActionGroup>
+            </HeaderActionGroup>
           )}
         </Header>
       )}
 
-      <Contain $style={styles?.contentStyle}>{children}</Contain>
+      <AnimatePresence initial={false}>
+        {open && children && (
+          <Contain
+            key={`card-content`}
+            initial="collapsed"
+            aria-label="list-item-children"
+            animate={open ? "open" : "collapsed"}
+            exit="collapsed"
+            $style={styles?.contentStyle}
+            variants={{
+              open: {
+                opacity: 1,
+                height: "auto",
+                transition: {
+                  height: { duration: 0.3, ease: "easeInOut" },
+                  opacity: { duration: 0.8 },
+                },
+              },
+              collapsed: {
+                opacity: 0,
+                height: 0,
+                transition: {
+                  height: { duration: 0.25, ease: "easeInOut" },
+                  opacity: { duration: 0.15 },
+                },
+              },
+            }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+          >
+            {children}
+          </Contain>
+        )}
+      </AnimatePresence>
 
       {footerContent && (
         <Footer $footerStyle={styles?.footerStyle}>{footerContent}</Footer>
@@ -179,7 +213,7 @@ const HeaderSubitle = styled.span<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
-const Contain = styled.span<{
+const Contain = styled(motion.div)<{
   $style?: CSSProp;
 }>`
   ${({ $style }) => $style}
@@ -203,9 +237,13 @@ const HeaderTextContainer = styled.div<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
-const ActionGroup = styled.div<{ $style?: CSSProp }>`
+const HeaderActionGroup = styled.div<{ $style?: CSSProp }>`
   display: flex;
-  gap: 0.5rem;
+  gap: 6px;
+  justify-content: center;
+  flex-direction: row;
+  align-items: center;
+
   ${({ $style }) => $style}
 `;
 
