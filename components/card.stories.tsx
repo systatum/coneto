@@ -1179,109 +1179,79 @@ export const Toggleable: Story = {
           padding: "16px",
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 8,
+        <Card
+          title="Toggleable without actions"
+          subtitle="Organizational Structure"
+          toggleable
+          open={isOpen1}
+          onToggleChange={setIsOpen1}
+          styles={{
+            containerStyle: css`
+              padding-left: 0px;
+              padding-right: 0px;
+              min-width: 1000px;
+              padding-bottom: 0px;
+            `,
+            headerStyle: css`
+              padding-left: 15px;
+              padding-right: 15px;
+              border-bottom: 1px solid #d1d5db;
+            `,
           }}
         >
-          <h2
-            style={{
-              fontSize: 18,
-            }}
-          >
-            Toggleable without actions
-          </h2>
-          <Card
-            title="Organizational Structure"
-            subtitle="Overview of departments, leadership, workforce distribution, and allocated budgets"
-            toggleable
-            open={isOpen1}
-            onToggleChange={setIsOpen1}
-            styles={{
-              containerStyle: css`
-                padding-left: 0px;
-                padding-right: 0px;
-                min-width: 1000px;
-                padding-bottom: 0px;
-              `,
-              headerStyle: css`
-                padding-left: 15px;
-                padding-right: 15px;
-                border-bottom: 1px solid #d1d5db;
-              `,
-            }}
-          >
-            {renderTable({
-              columns: departmentColumns,
-              rows: departmentRows,
-              setRows: setDepartmentRows,
-              originalData: DEPARTMENTS,
-              getRowId: (row) => row.departmentName,
-            })}
-          </Card>
-        </div>
+          {renderTable({
+            columns: departmentColumns,
+            rows: departmentRows,
+            setRows: setDepartmentRows,
+            originalData: DEPARTMENTS,
+            getRowId: (row) => row.departmentName,
+          })}
+        </Card>
 
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 8,
+        <Card
+          title="Toggleable with actions"
+          subtitle="Asset Inventory Management"
+          toggleable
+          open={isOpen2}
+          onToggleChange={setIsOpen2}
+          headerActions={[
+            {
+              caption: "Add",
+              icon: { image: RiAddBoxLine },
+              onClick: () => {
+                console.log(`Add button was clicked`);
+              },
+            },
+            {
+              caption: "Archive",
+              icon: { image: RiInboxArchiveLine },
+              onClick: () => {
+                console.log(`Archive button was clicked`);
+              },
+            },
+          ]}
+          styles={{
+            containerStyle: css`
+              padding-left: 0px;
+              padding-right: 0px;
+              min-width: 1000px;
+              padding-bottom: 0px;
+            `,
+            headerStyle: css`
+              padding-left: 15px;
+              padding-right: 15px;
+              border-bottom: 1px solid #d1d5db;
+            `,
           }}
         >
-          <h2
-            style={{
-              fontSize: 18,
-            }}
-          >
-            Toggleable with actions
-          </h2>
-          <Card
-            title="Asset Inventory Management"
-            subtitle="Tracking company equipment, assigned personnel, and asset condition"
-            toggleable
-            open={isOpen2}
-            onToggleChange={setIsOpen2}
-            headerActions={[
-              {
-                caption: "Add",
-                icon: { image: RiAddBoxLine },
-                onClick: () => {
-                  console.log(`Add button was clicked`);
-                },
-              },
-              {
-                caption: "Archive",
-                icon: { image: RiInboxArchiveLine },
-                onClick: () => {
-                  console.log(`Archive button was clicked`);
-                },
-              },
-            ]}
-            styles={{
-              containerStyle: css`
-                padding-left: 0px;
-                padding-right: 0px;
-                min-width: 1000px;
-                padding-bottom: 0px;
-              `,
-              headerStyle: css`
-                padding-left: 15px;
-                padding-right: 15px;
-                border-bottom: 1px solid #d1d5db;
-              `,
-            }}
-          >
-            {renderTable({
-              columns: assetColumns,
-              rows: assetRows,
-              setRows: setAssetRows,
-              originalData: ASSETS,
-              getRowId: (row) => row.assetName,
-            })}
-          </Card>
-        </div>
+          {renderTable({
+            columns: assetColumns,
+            rows: assetRows,
+            setRows: setAssetRows,
+            originalData: ASSETS,
+            getRowId: (row) => row.assetName,
+          })}
+        </Card>
       </div>
     );
   },
