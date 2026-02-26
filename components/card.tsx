@@ -7,6 +7,8 @@ import { RiCloseLine } from "@remixicon/react";
 import { HTMLAttributes, ReactNode } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { ActionButton, ActionButtonProps } from "./action-button";
+import { Togglebox } from "./togglebox";
+import { AnimatePresence, motion } from "framer-motion";
 
 export interface CardProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "title" | "style"> {
@@ -35,6 +37,9 @@ export interface CardProps
   onCloseRequest?: () => void;
   headerActions?: CardActionsProps[];
   styles?: CardStylesProps;
+  toggleable?: boolean;
+  onToggleChange?: (isOpen?: boolean) => void;
+  open?: boolean;
 }
 
 export interface CardStylesProps {
@@ -62,6 +67,9 @@ function Card({
   onCloseRequest,
   headerActions,
   closable = false,
+  toggleable,
+  onToggleChange,
+  open = true,
   ...props
 }: CardProps) {
   return (
@@ -86,21 +94,55 @@ function Card({
               )}
             </HeaderTextContainer>
           )}
-          {headerActions && (
-            <ActionGroup $style={styles?.actionContainerStyle}>
-              {headerActions.map((props, index) => (
-                <ActionButton key={index} {...props} />
-              ))}
-            </ActionGroup>
+          {(headerActions || toggleable) && (
+            <HeaderActionGroup $style={styles?.actionContainerStyle}>
+              {headerActions &&
+                headerActions.map((props, index) => (
+                  <ActionButton key={index} {...props} />
+                ))}
+              {toggleable && (
+                <Togglebox
+                  name="card-toggle"
+                  checked={open}
+                  onChange={(e) => onToggleChange(e.target.checked)}
+                />
+              )}
+            </HeaderActionGroup>
           )}
         </Header>
       )}
 
-      <Contain $style={styles?.contentStyle}>{children}</Contain>
+      <AnimatePresence initial={false}>
+        {open && children && (
+          <Contain
+            key="card-content"
+            initial="collapsed"
+            animate="open"
+            exit="collapsed"
+            aria-label="card-content"
+            $style={styles?.contentStyle}
+            variants={EXPAND_COLLAPSE_VARIANTS}
+            transition={EXPAND_COLLAPSE_TRANSITION}
+          >
+            {children}
+          </Contain>
+        )}
 
-      {footerContent && (
-        <Footer $footerStyle={styles?.footerStyle}>{footerContent}</Footer>
-      )}
+        {open && footerContent && (
+          <Footer
+            key="card-footer"
+            initial="collapsed"
+            animate="open"
+            exit="collapsed"
+            aria-label="card-footer"
+            $footerStyle={styles?.footerStyle}
+            variants={EXPAND_COLLAPSE_VARIANTS}
+            transition={EXPAND_COLLAPSE_TRANSITION}
+          >
+            {footerContent}
+          </Footer>
+        )}
+      </AnimatePresence>
 
       {closable && (
         <CloseIcon
@@ -116,6 +158,30 @@ function Card({
     </CardContainer>
   );
 }
+
+const EXPAND_COLLAPSE_VARIANTS = {
+  open: {
+    opacity: 1,
+    height: "auto",
+    transition: {
+      height: { duration: 0.3, ease: "easeInOut" },
+      opacity: { duration: 0.8 },
+    },
+  },
+  collapsed: {
+    opacity: 0,
+    height: 0,
+    transition: {
+      height: { duration: 0.25, ease: "easeInOut" },
+      opacity: { duration: 0.15 },
+    },
+  },
+} as const;
+
+const EXPAND_COLLAPSE_TRANSITION = {
+  duration: 0.3,
+  ease: "easeInOut",
+} as const;
 
 const CardContainer = styled.div<{
   $shadow: CardProps["shadow"];
@@ -165,13 +231,13 @@ const HeaderSubitle = styled.span<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
-const Contain = styled.span<{
+const Contain = styled(motion.div)<{
   $style?: CSSProp;
 }>`
   ${({ $style }) => $style}
 `;
 
-const Footer = styled.div<{
+const Footer = styled(motion.div)<{
   $footerStyle?: CSSProp;
 }>`
   display: flex;
@@ -189,9 +255,13 @@ const HeaderTextContainer = styled.div<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
-const ActionGroup = styled.div<{ $style?: CSSProp }>`
+const HeaderActionGroup = styled.div<{ $style?: CSSProp }>`
   display: flex;
-  gap: 0.5rem;
+  gap: 6px;
+  justify-content: center;
+  flex-direction: row;
+  align-items: center;
+
   ${({ $style }) => $style}
 `;
 
