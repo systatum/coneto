@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { ModalDialog, ModalDialogProps } from "./modal-dialog";
 import { Button } from "./button";
 import { useArgs } from "@storybook/preview-api";
+import { Ri24HoursFill } from "@remixicon/react";
 
 const meta: Meta<typeof ModalDialog> = {
   title: "Stage/ModalDialog",
@@ -24,7 +25,7 @@ const meta: Meta<typeof ModalDialog> = {
       control: "text",
       description: "Main title displayed at the top of the modal.",
     },
-    subTitle: {
+    subtitle: {
       control: "text",
       description: "Optional subtitle displayed below the main title.",
     },
@@ -75,7 +76,7 @@ type Story = StoryObj<typeof ModalDialog>;
 export const Default: Story = {
   args: {
     title: "Default Modal",
-    subTitle: "This is a subtitle",
+    subtitle: "This is a subtitle",
     closable: true,
     isOpen: false,
     buttons: [
@@ -103,6 +104,9 @@ export const Default: Story = {
         Here is the content of the modal dialog.
       </div>
     ),
+    icon: {
+      image: Ri24HoursFill,
+    },
   },
   render: (args: ModalDialogProps) => {
     const [{ isOpen }, setUpdateArgs] = useArgs();
@@ -125,7 +129,7 @@ export const Default: Story = {
 export const NonEscapable: Story = {
   args: {
     title: "Non Elosable",
-    subTitle: "This modal cannot be closed using the Escape key",
+    subtitle: "This modal cannot be closed using the Escape key",
     isOpen: false,
     buttons: [
       {
