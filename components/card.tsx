@@ -115,42 +115,34 @@ function Card({
       <AnimatePresence initial={false}>
         {open && children && (
           <Contain
-            key={`card-content`}
+            key="card-content"
             initial="collapsed"
-            aria-label="card-content"
-            animate={open ? "open" : "collapsed"}
+            animate="open"
             exit="collapsed"
+            aria-label="card-content"
             $style={styles?.contentStyle}
-            variants={{
-              open: {
-                opacity: 1,
-                height: "auto",
-                transition: {
-                  height: { duration: 0.3, ease: "easeInOut" },
-                  opacity: { duration: 0.8 },
-                },
-              },
-              collapsed: {
-                opacity: 0,
-                height: 0,
-                transition: {
-                  height: { duration: 0.25, ease: "easeInOut" },
-                  opacity: { duration: 0.15 },
-                },
-              },
-            }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
+            variants={EXPAND_COLLAPSE_VARIANTS}
+            transition={EXPAND_COLLAPSE_TRANSITION}
           >
             {children}
           </Contain>
         )}
-      </AnimatePresence>
 
-      {footerContent && (
-        <Footer aria-label="card-footer" $footerStyle={styles?.footerStyle}>
-          {footerContent}
-        </Footer>
-      )}
+        {open && footerContent && (
+          <Footer
+            key="card-footer"
+            initial="collapsed"
+            animate="open"
+            exit="collapsed"
+            aria-label="card-footer"
+            $footerStyle={styles?.footerStyle}
+            variants={EXPAND_COLLAPSE_VARIANTS}
+            transition={EXPAND_COLLAPSE_TRANSITION}
+          >
+            {footerContent}
+          </Footer>
+        )}
+      </AnimatePresence>
 
       {closable && (
         <CloseIcon
@@ -166,6 +158,30 @@ function Card({
     </CardContainer>
   );
 }
+
+const EXPAND_COLLAPSE_VARIANTS = {
+  open: {
+    opacity: 1,
+    height: "auto",
+    transition: {
+      height: { duration: 0.3, ease: "easeInOut" },
+      opacity: { duration: 0.8 },
+    },
+  },
+  collapsed: {
+    opacity: 0,
+    height: 0,
+    transition: {
+      height: { duration: 0.25, ease: "easeInOut" },
+      opacity: { duration: 0.15 },
+    },
+  },
+} as const;
+
+const EXPAND_COLLAPSE_TRANSITION = {
+  duration: 0.3,
+  ease: "easeInOut",
+} as const;
 
 const CardContainer = styled.div<{
   $shadow: CardProps["shadow"];
@@ -221,7 +237,7 @@ const Contain = styled(motion.div)<{
   ${({ $style }) => $style}
 `;
 
-const Footer = styled.div<{
+const Footer = styled(motion.div)<{
   $footerStyle?: CSSProp;
 }>`
   display: flex;
