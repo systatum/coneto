@@ -117,7 +117,9 @@ export const Default: Story = {
             { id: "archive", caption: "Archive", variant: "primary" },
           ]}
         />
-        <Button onClick={() => updateArgs({ isOpen: !isOpen })}>Toggle</Button>
+        <Button onClick={() => updateArgs({ isOpen: !isOpen })}>
+          Open Dialog
+        </Button>
       </>
     );
   },
@@ -152,7 +154,9 @@ export const NonEscapable: Story = {
             },
           ]}
         />
-        <Button onClick={() => updateArgs({ isOpen: !isOpen })}>Toggle</Button>
+        <Button onClick={() => updateArgs({ isOpen: !isOpen })}>
+          Open Dialog
+        </Button>
       </>
     );
   },
