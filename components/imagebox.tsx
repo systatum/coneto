@@ -1,6 +1,13 @@
-import { ChangeEvent, DragEvent, ReactElement, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  DragEvent,
+  ReactElement,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { RiAddLine, RiImageLine } from "@remixicon/react";
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
 
 export interface ImageboxProps {
@@ -12,8 +19,10 @@ export interface ImageboxProps {
   name?: string;
   styles?: ImageboxStylesProps;
   helper?: string;
+  value?: File | string | null;
+  borderless?: boolean;
+  editable?: boolean;
 }
-
 export interface ImageboxStylesProps {
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
@@ -48,6 +57,9 @@ function Imagebox({
   name,
   styles,
   helper,
+  value,
+  borderless,
+  editable = true,
 }: ImageboxProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
@@ -55,17 +67,49 @@ function Imagebox({
 
   const { dimension, icon } = SIZE_STYLES[size];
 
+  const isControlled = value !== undefined;
+
+  useEffect(() => {
+    if (!isControlled) return;
+
+    try {
+      if (value instanceof File) {
+        const objectUrl = URL.createObjectURL(value);
+        setSelectedFile(objectUrl);
+
+        return () => {
+          URL.revokeObjectURL(objectUrl);
+        };
+      }
+
+      if (typeof value === "string") {
+        setSelectedFile(value);
+      }
+
+      if (value === null) {
+        setSelectedFile(null);
+      }
+    } catch (err) {
+      console.error("Imagebox: Failed to render value", err);
+      setSelectedFile(null);
+    }
+  }, [value, isControlled]);
+
   const handleBrowseClick = () => {
-    fileInputRef.current?.click();
+    if (editable) fileInputRef.current?.click();
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const file = e.target.files;
+    if (e.target.files && editable) {
+      const file = e.target.files[0];
       if (onFileSelected) {
-        onFileSelected?.(file[0]);
+        onFileSelected?.(file);
       }
-      setSelectedFile(URL.createObjectURL(file[0]));
+
+      if (!isControlled) {
+        const objectUrl = URL.createObjectURL(file);
+        setSelectedFile(objectUrl);
+      }
     }
   };
 
@@ -73,21 +117,31 @@ function Imagebox({
     e.preventDefault();
     setIsDragging(false);
     if (e.dataTransfer.files && onFileSelected) {
-      const file = e.dataTransfer.files;
+      const file = e.dataTransfer.files[0];
+      if (!file) return;
+
       if (onFileSelected) {
-        onFileSelected(file[0]);
+        onFileSelected(file);
       }
-      setSelectedFile(URL.createObjectURL(file[0]));
+
+      if (!isControlled) {
+        const objectUrl = URL.createObjectURL(file);
+        setSelectedFile(objectUrl);
+      }
     }
   };
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragging(true);
+    if (editable) {
+      e.preventDefault();
+      setIsDragging(true);
+    }
   };
 
   const handleDragLeave = () => {
-    setIsDragging(false);
+    if (editable) {
+      setIsDragging(false);
+    }
   };
 
   const inputElement: ReactElement = (
@@ -96,13 +150,22 @@ function Imagebox({
       $style={styles?.self}
       $dimension={dimension}
       $isDragging={isDragging}
+      $borderless={borderless}
+      $editable={editable}
       onClick={handleBrowseClick}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
     >
       {selectedFile ? (
-        <PreviewImage src={selectedFile} alt="preview" />
+        <PreviewImage
+          src={selectedFile}
+          alt="preview"
+          onError={() => {
+            console.error("Imagebox: Unable to render image source");
+            setSelectedFile(null);
+          }}
+        />
       ) : (
         <IconPlaceholder>
           <RiImageLine size={icon} />
@@ -118,7 +181,7 @@ function Imagebox({
         onChange={handleFileChange}
       />
 
-      <AddIconWrapper $isDragging={isDragging}>
+      <AddIconWrapper $isDragging={isDragging} $editable={editable}>
         <RiAddLine size={icon} />
       </AddIconWrapper>
     </InputBox>
@@ -160,6 +223,8 @@ const InputBox = styled.div<{
   $dimension: string;
   $isDragging: boolean;
   $style?: CSSProp;
+  $editable?: boolean;
+  $borderless?: boolean;
 }>`
   position: relative;
   width: ${({ $dimension }) => $dimension};
@@ -169,12 +234,19 @@ const InputBox = styled.div<{
   max-width: ${({ $dimension }) => $dimension};
   max-height: ${({ $dimension }) => $dimension};
   border-radius: 2px;
-  border: 1px solid
-    ${({ $isDragging }) => ($isDragging ? "#3b82f6" : "#d1d5db")};
+  ${({ $borderless, $isDragging }) =>
+    !$borderless &&
+    css`
+      border: 1px solid ${$isDragging ? "#3b82f6" : "#d1d5db"};
+    `}
   background-color: ${({ $isDragging }) =>
     $isDragging ? "#eff6ff" : "#ffffff"};
   color: ${({ $isDragging }) => ($isDragging ? "#3b82f6" : "#6b7280")};
-  cursor: pointer;
+  ${({ $editable }) =>
+    $editable &&
+    css`
+      cursor: pointer;
+    `};
 
   ${({ $style }) => $style}
 `;
@@ -207,7 +279,10 @@ const PreviewImage = styled.img`
   object-fit: cover;
 `;
 
-const AddIconWrapper = styled.div<{ $isDragging: boolean }>`
+const AddIconWrapper = styled.div<{
+  $isDragging: boolean;
+  $editable?: boolean;
+}>`
   position: absolute;
   bottom: -4px;
   right: -4px;
@@ -218,6 +293,12 @@ const AddIconWrapper = styled.div<{ $isDragging: boolean }>`
   width: fit-content;
   height: fit-content;
   color: #c3c3c3;
+
+  ${({ $editable }) =>
+    !$editable &&
+    css`
+      display: none;
+    `}
 `;
 
 const HiddenInput = styled.input`
