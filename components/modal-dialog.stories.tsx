@@ -5,6 +5,7 @@ import { useArgs } from "@storybook/preview-api";
 import { Ri24HoursFill } from "@remixicon/react";
 import { useState } from "react";
 import { Textbox } from "./textbox";
+import { css } from "styled-components";
 
 const meta: Meta<typeof ModalDialog> = {
   title: "Stage/ModalDialog",
@@ -222,7 +223,7 @@ export const WithSubtitle: Story = {
   },
 };
 
-export const NonEscapable: Story = {
+export const NonClosable: Story = {
   render: () => {
     const [{ isOpen }, setUpdateArgs] = useArgs();
 
@@ -230,13 +231,17 @@ export const NonEscapable: Story = {
       const [value, setValue] = useState("");
 
       return (
-        <div>
-          <Textbox value={value} onChange={(e) => setValue(e.target.value)} />
+        <>
           <p>
             Pressing the Escape key or clicking the background overlay will not
             close this modal. Use the buttons or the close icon to dismiss it.
           </p>
-        </div>
+          <Textbox
+            label="Type close and press OK to close"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+          />
+        </>
       );
     }
 
@@ -249,11 +254,12 @@ export const NonEscapable: Story = {
           caption: "OK",
           variant: "primary",
         },
-        {
-          id: "cancel",
-          caption: "Cancel",
-        },
       ],
+      styles: {
+        contentStyle: css`
+          gap: 5px;
+        `,
+      },
       onClick: ({ closeDialog }) => {
         closeDialog();
       },
