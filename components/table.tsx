@@ -1356,11 +1356,10 @@ const TableRowContent = styled(motion.div)<{
 }>`
   display: flex;
   position: relative;
-  align-items: stretch;
   border-left: 1px solid #e5e7eb;
   border-right: 1px solid #e5e7eb;
   border-bottom: 1px solid #e5e7eb;
-  cursor: default;
+  box-shadow: inset 0 0 0 2px #00000033;
 
   ${({ $style }) => $style}
 `;
