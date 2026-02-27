@@ -132,23 +132,17 @@ type ModalDialogConfig = Omit<
   "isOpen" | "onVisibilityChange"
 >;
 
-let setConfigState: ((config: ModalDialogConfig | null) => void) | null = null;
 let setDialogOpen: ((isOpen: boolean) => void) | null = null;
 
 let mounted = false;
 
-function ModalDialogProvider() {
-  const [config, setConfig] = useState<ModalDialogConfig | null>(null);
+function ModalDialogProvider(config: ModalDialogConfig) {
   const [isOpen, setIsOpen] = useState(false);
 
-  setConfigState = setConfig;
   setDialogOpen = setIsOpen;
 
   const closeDialog = () => {
     setIsOpen(false);
-    setTimeout(() => {
-      setConfig(null);
-    }, 300);
   };
 
   return (
@@ -171,28 +165,27 @@ function ModalDialogProvider() {
   );
 }
 
-function ensureProvider() {
+function ensureProvider(config: ModalDialogConfig) {
   if (mounted) return;
 
   const el = document.createElement("div");
   document.body.appendChild(el);
 
-  createRoot(el).render(<ModalDialogProvider />);
+  createRoot(el).render(<ModalDialogProvider {...config} />);
   mounted = true;
 }
 
 const ModalDialogController = {
   show(config: ModalDialogConfig) {
-    ensureProvider();
-    setTimeout(() => {
-      setConfigState?.(config);
-    }, 0);
+    ensureProvider(config);
+    // Introduce a slight delay to ensure the component is fully mounted
+    // before triggering the open state, preserving animation consistency.
     setTimeout(() => {
       setDialogOpen?.(true);
     }, 100);
   },
   hide() {
-    setConfigState?.(null);
+    setDialogOpen?.(false);
   },
 };
 
