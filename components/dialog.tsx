@@ -331,23 +331,17 @@ const Footer = styled.div<{ $style?: CSSProp }>`
 
 type DialogConfig = Omit<DialogProps, "isOpen" | "onVisibilityChange">;
 
-let setConfigState: ((config: DialogConfig | null) => void) | null = null;
 let setDialogOpen: ((isOpen: boolean) => void) | null = null;
 
 let mounted = false;
 
-function DialogProvider() {
-  const [config, setConfig] = useState<DialogConfig | null>(null);
+function DialogProvider(config: DialogConfig) {
   const [isOpen, setIsOpen] = useState(false);
 
-  setConfigState = setConfig;
   setDialogOpen = setIsOpen;
 
   const closeDialog = () => {
     setIsOpen(false);
-    setTimeout(() => {
-      setConfig(null);
-    }, 300);
   };
 
   return (
@@ -370,28 +364,27 @@ function DialogProvider() {
   );
 }
 
-function ensureProvider() {
+function ensureProvider(config: DialogConfig) {
   if (mounted) return;
 
   const el = document.createElement("div");
   document.body.appendChild(el);
 
-  createRoot(el).render(<DialogProvider />);
+  createRoot(el).render(<DialogProvider {...config} />);
   mounted = true;
 }
 
 const DialogController = {
   show(config: DialogConfig) {
-    ensureProvider();
-    setTimeout(() => {
-      setConfigState?.(config);
-    }, 0);
+    ensureProvider(config);
+    // Introduce a slight delay to ensure the component is fully mounted
+    // before triggering the open state, preserving animation consistency.
     setTimeout(() => {
       setDialogOpen?.(true);
-    }, 100);
+    }, 50);
   },
   hide() {
-    setConfigState?.(null);
+    setDialogOpen?.(false);
   },
 };
 
