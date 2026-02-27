@@ -1,9 +1,12 @@
 "use client";
 
-import { Dialog, DialogProps } from "./dialog";
+import { createRoot } from "react-dom/client";
+import { Dialog, DialogProps, DialogStylesProps } from "./dialog";
 import styled, { css } from "styled-components";
+import { useState } from "react";
 
 export type ModalDialogProps = DialogProps;
+export type ModalDialogStylesProps = DialogStylesProps;
 
 function ModalDialog({
   onVisibilityChange,
@@ -18,7 +21,7 @@ function ModalDialog({
   closable = true,
   icon,
 }: ModalDialogProps) {
-  const customizeButtons = buttons.map((button) => ({
+  const customizeButtons = buttons?.map((button) => ({
     ...button,
     styles: {
       ...button?.styles,
@@ -84,6 +87,8 @@ function ModalDialog({
           padding-left: 20px;
           padding-right: 20px;
           padding-bottom: 20px;
+          min-height: 200px;
+
           ${styles?.contentStyle};
         `,
         titleStyle: css`
@@ -121,5 +126,77 @@ const Divider = styled.div`
   border: 1px solid #3b82f6;
   margin-bottom: 8px;
 `;
+
+type ModalDialogConfig = Omit<
+  ModalDialogProps,
+  "isOpen" | "onVisibilityChange"
+>;
+
+let setConfigState: ((config: ModalDialogConfig | null) => void) | null = null;
+let setDialogOpen: ((isOpen: boolean) => void) | null = null;
+
+let mounted = false;
+
+function ModalDialogProvider() {
+  const [config, setConfig] = useState<ModalDialogConfig | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+
+  setConfigState = setConfig;
+  setDialogOpen = setIsOpen;
+
+  const closeDialog = () => {
+    setIsOpen(false);
+    setTimeout(() => {
+      setConfig(null);
+    }, 300);
+  };
+
+  return (
+    <ModalDialog
+      {...config}
+      isOpen={isOpen}
+      onVisibilityChange={(open) => {
+        if (!open) {
+          closeDialog();
+        }
+      }}
+      onClick={({ id }) => {
+        config.onClick({ id, closeDialog });
+      }}
+      onClosed={() => {
+        config.onClosed?.();
+        closeDialog();
+      }}
+    />
+  );
+}
+
+function ensureProvider() {
+  if (mounted) return;
+
+  const el = document.createElement("div");
+  document.body.appendChild(el);
+
+  createRoot(el).render(<ModalDialogProvider />);
+  mounted = true;
+}
+
+const ModalDialogController = {
+  show(config: ModalDialogConfig) {
+    ensureProvider();
+    setTimeout(() => {
+      setConfigState?.(config);
+    }, 0);
+    setTimeout(() => {
+      setDialogOpen?.(true);
+    }, 100);
+  },
+  hide() {
+    setConfigState?.(null);
+  },
+};
+
+ModalDialog.show = ModalDialogController.show;
+ModalDialog.hide = ModalDialogController.hide;
 
 export { ModalDialog };
