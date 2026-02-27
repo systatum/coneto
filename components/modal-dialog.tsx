@@ -2,7 +2,7 @@
 
 import { createRoot } from "react-dom/client";
 import { Dialog, DialogProps, DialogStylesProps } from "./dialog";
-import styled, { css } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
 import { useState } from "react";
 
 export type ModalDialogProps = DialogProps;
@@ -88,8 +88,6 @@ function ModalDialog({
           padding-right: 20px;
           padding-bottom: 20px;
           min-height: 200px;
-
-          ${styles?.contentStyle};
         `,
         titleStyle: css`
           font-size: 18px;
@@ -101,7 +99,6 @@ function ModalDialog({
           font-size: 11px;
           text-align: start;
           color: #6b7280;
-
           ${styles?.subtitleStyle}
         `,
         buttonWrapperStyle: css`
@@ -115,16 +112,27 @@ function ModalDialog({
     >
       <Divider />
 
-      {children}
+      <Body $style={styles?.contentStyle}>{children}</Body>
     </Dialog>
   );
 }
+
+const Body = styled.div<{ $style?: CSSProp }>`
+  height: 100%;
+  width: 100%;
+  padding-right: 5px;
+  padding-left: 5px;
+  display: flex;
+  flex-direction: column;
+
+  ${({ $style }) => $style}
+`;
 
 const Divider = styled.div`
   height: 1px;
   width: 100%;
   border: 1px solid #3b82f6;
-  margin-bottom: 8px;
+  margin-bottom: 25px;
 `;
 
 type ModalDialogConfig = Omit<
@@ -132,17 +140,27 @@ type ModalDialogConfig = Omit<
   "isOpen" | "onVisibilityChange"
 >;
 
+let setConfigState: ((config: ModalDialogConfig | null) => void) | null = null;
 let setDialogOpen: ((isOpen: boolean) => void) | null = null;
 
 let mounted = false;
 
-function ModalDialogProvider(config: ModalDialogConfig) {
+function ModalDialogProvider() {
+  const [config, setConfig] = useState<ModalDialogConfig | null>(null);
   const [isOpen, setIsOpen] = useState(false);
 
+  setConfigState = setConfig;
   setDialogOpen = setIsOpen;
 
+  if (!config) return null;
+
   const closeDialog = () => {
+    // Closes the dialog by first updating the visibility state,
+    // then delaying config cleanup to allow the exit animation
     setIsOpen(false);
+    setTimeout(() => {
+      setConfig(null);
+    }, 300);
   };
 
   return (
@@ -165,27 +183,28 @@ function ModalDialogProvider(config: ModalDialogConfig) {
   );
 }
 
-function ensureProvider(config: ModalDialogConfig) {
+function ensureProvider() {
   if (mounted) return;
 
   const el = document.createElement("div");
   document.body.appendChild(el);
 
-  createRoot(el).render(<ModalDialogProvider {...config} />);
+  createRoot(el).render(<ModalDialogProvider />);
   mounted = true;
 }
 
 const ModalDialogController = {
   show(config: ModalDialogConfig) {
-    ensureProvider(config);
-    // Introduce a slight delay to ensure the component is fully mounted
-    // before triggering the open state, preserving animation consistency.
+    ensureProvider();
     setTimeout(() => {
+      // Introduce a slight delay to ensure the component is fully mounted
+      // before triggering the open state, preserving animation consistency.
+      setConfigState?.(config);
       setDialogOpen?.(true);
-    }, 100);
+    }, 50);
   },
   hide() {
-    setDialogOpen?.(false);
+    setConfigState?.(null);
   },
 };
 
