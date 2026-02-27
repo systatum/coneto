@@ -22,6 +22,7 @@ import { Button } from "./button";
 import { css } from "styled-components";
 import { CapsuleContentProps } from "./capsule";
 import { List } from "./list";
+import { Card } from "./card";
 
 const meta: Meta<typeof Table> = {
   title: "Content/Table",
@@ -1842,6 +1843,407 @@ export const WithRowGroup: Story = {
                   content={[rowValue.title, rowValue.category, rowValue.author]}
                   actions={ROW_ACTION}
                 />
+              ))}
+            </Table.Row.Group>
+          ))}
+        </Table>
+      </div>
+    );
+  },
+};
+
+export const WithRowAppendix: Story = {
+  render: () => {
+    interface TableItemProps {
+      id?: string;
+      title: string;
+      subtitle?: string;
+      items: {
+        itemId?: string;
+        name: string;
+        cost: string;
+        quantity: string;
+      }[];
+    }
+
+    const TABLE_ITEMS: TableItemProps[] = [
+      {
+        id: "food",
+        title: "Food",
+        subtitle: "List of Food Items",
+        items: [
+          {
+            itemId: "F1583",
+            name: "Ayam Geprek",
+            cost: "5,000",
+            quantity: "5",
+          },
+          {
+            itemId: "F9311",
+            name: "Laksa Singapore",
+            cost: "4,500",
+            quantity: "1",
+          },
+          { itemId: "F2210", name: "Nasi Lemak", cost: "3,500", quantity: "2" },
+          {
+            itemId: "F7721",
+            name: "Soto Betawi",
+            cost: "4,000",
+            quantity: "1",
+          },
+          {
+            itemId: "F6622",
+            name: "Bakso Malang",
+            cost: "6,000",
+            quantity: "4",
+          },
+        ],
+      },
+      {
+        id: "beverages",
+        title: "Beverages",
+        subtitle: "Cold and Hot Refreshments",
+        items: [
+          { itemId: "B1010", name: "Iced Tea", cost: "1,000", quantity: "3" },
+          {
+            itemId: "B3911",
+            name: "Mineral Water",
+            cost: "500",
+            quantity: "1",
+          },
+          { itemId: "B5512", name: "Lemonade", cost: "2,000", quantity: "2" },
+          { itemId: "B6619", name: "Hot Coffee", cost: "3,000", quantity: "1" },
+          {
+            itemId: "B8821",
+            name: "Orange Juice",
+            cost: "2,500",
+            quantity: "2",
+          },
+        ],
+      },
+    ];
+
+    const [rows, setRows] = useState(TABLE_ITEMS);
+    const [search, setSearch] = useState("");
+
+    const columns: ColumnTableProps[] = [
+      {
+        id: "itemId",
+        caption: "Item ID",
+        sortable: true,
+      },
+      {
+        id: "name",
+        caption: "Name",
+        sortable: true,
+        width: "40%",
+      },
+      {
+        id: "cost",
+        caption: "Cost",
+        sortable: true,
+      },
+      {
+        id: "quantity",
+        caption: "Quantity",
+        sortable: true,
+        width: "20%",
+      },
+    ];
+
+    const handleSortingRequested = ({
+      mode,
+      column,
+    }: {
+      mode: "asc" | "desc" | "original";
+      column: keyof (typeof TABLE_ITEMS)[0]["items"][0];
+    }) => {
+      if (mode === "original") {
+        setRows([...TABLE_ITEMS]);
+        return;
+      }
+
+      const sortedRows = rows.map((row) => {
+        const sortedItems = [...row.items].sort((a, b) => {
+          const aVal = a[column];
+          const bVal = b[column];
+          return typeof aVal === "string" && typeof bVal === "string"
+            ? mode === "asc"
+              ? aVal.localeCompare(bVal)
+              : bVal.localeCompare(aVal)
+            : 0;
+        });
+
+        return {
+          ...row,
+          items: sortedItems,
+        };
+      });
+
+      setRows(sortedRows);
+    };
+
+    const TIP_MENU_ACTION = (
+      columnCaption: string
+    ): SubMenuListTableProps[] => {
+      const column = columnCaption as keyof (typeof TABLE_ITEMS)[0]["items"][0];
+
+      return [
+        {
+          caption: "Sort Ascending",
+          icon: {
+            image: RiArrowUpSLine,
+            color: "gray",
+          },
+          onClick: () => {
+            handleSortingRequested({ mode: "asc", column });
+          },
+        },
+        {
+          caption: "Sort Descending",
+          icon: {
+            image: RiArrowDownSLine,
+            color: "gray",
+          },
+          onClick: () => {
+            handleSortingRequested({ mode: "desc", column });
+          },
+        },
+        {
+          caption: "Reset Sorting",
+          icon: {
+            image: RiRefreshLine,
+            color: "gray",
+          },
+          onClick: () => {
+            handleSortingRequested({ mode: "original", column });
+          },
+        },
+      ];
+    };
+
+    const ROW_ACTION = (rowId: string): SubMenuListTableProps[] => {
+      return [
+        {
+          caption: "Edit",
+          icon: {
+            image: RiArrowUpSLine,
+            color: "gray",
+          },
+          onClick: () => {
+            console.log(`${rowId} was edited`);
+          },
+        },
+        {
+          caption: "Delete",
+          icon: {
+            image: RiDeleteBin2Fill,
+            color: "gray",
+          },
+          onClick: () => {
+            console.log(`${rowId} was deleted`);
+          },
+        },
+      ];
+    };
+
+    const filteredRows = rows
+      .map((group) => {
+        const filteredItems = group.items.filter((item) => {
+          return Object.values(item).some((val) =>
+            val.toLowerCase().includes(search.toLowerCase())
+          );
+        });
+
+        return {
+          ...group,
+          items: filteredItems,
+        };
+      })
+      .filter((group) => group.items.length > 0);
+
+    function parseCost(val: string) {
+      return Number(val.replace(/,/g, ""));
+    }
+
+    function calculateTotals(groups: TableItemProps[]) {
+      let totalCost = 0;
+      let totalQty = 0;
+
+      groups.map((group) =>
+        group.items.map((item) => {
+          totalCost += parseCost(item.cost) * Number(item.quantity);
+          totalQty += Number(item.quantity);
+        })
+      );
+
+      return {
+        totalCost,
+        totalQty,
+      };
+    }
+
+    const { totalCost, totalQty } = calculateTotals(TABLE_ITEMS);
+
+    function RowContent({
+      name,
+      cost,
+      quantity,
+      onClose,
+    }: {
+      name: string;
+      cost: string;
+      quantity: string;
+      onClose: () => void;
+    }) {
+      return (
+        <Card
+          title={
+            <>
+              <div>{name}</div>
+              <div
+                style={{
+                  fontSize: 14,
+                }}
+              >
+                Qty: {quantity}
+              </div>
+            </>
+          }
+          subtitle={
+            <>
+              <div>IDR {cost}</div>
+              <Button
+                styles={{
+                  self: css`
+                    padding: 4px 10px;
+                    height: 24px;
+                  `,
+                }}
+                onClick={() => onClose()}
+              >
+                Close
+              </Button>
+            </>
+          }
+          styles={{
+            textContainerStyle: css`
+              width: 100%;
+            `,
+            titleStyle: css`
+              width: 100%;
+              display: flex;
+              flex-direction: row;
+              font-size: 18px;
+              justify-content: space-between;
+            `,
+            subtitleStyle: css`
+              width: 100%;
+              display: flex;
+              font-size: 14px;
+              flex-direction: row;
+              justify-content: space-between;
+            `,
+            contentStyle: css`
+              padding-left: 24px;
+              padding-right: 24px;
+              padding-bottom: 10px;
+            `,
+          }}
+        >
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vel
+          lectus nec ipsum posuere tristique. Sed consequat, nisi at facilisis
+          dignissim, lorem urna fermentum odio, vitae bibendum massa arcu sed
+          nisl. Praesent ac mi non augue gravida cursus. Vivamus euismod, turpis
+          in suscipit cursus, lorem sem viverra mauris, sit amet pulvinar neque
+          velit a justo.
+        </Card>
+      );
+    }
+
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <h3
+          style={{
+            fontWeight: 600,
+            fontSize: "1.25rem",
+            fontFamily: "monospace",
+          }}
+        >
+          Dine-in Tab
+        </h3>
+
+        <Table
+          styles={{
+            tableRowContainerStyle: css`
+              max-height: 400px;
+            `,
+          }}
+          columns={columns}
+          subMenuList={TIP_MENU_ACTION}
+          searchbox={{ onChange: (e) => setSearch(e.target.value) }}
+          sumRow={[
+            {
+              span: 2,
+              content: "Total",
+              bold: true,
+            },
+            {
+              content: totalCost.toLocaleString("en-US"),
+              style: css`
+                justify-content: end;
+              `,
+            },
+            {
+              content: totalQty,
+              style: css`
+                justify-content: end;
+              `,
+            },
+          ]}
+          searchable
+        >
+          {filteredRows?.map((groupValue, groupIndex) => (
+            <Table.Row.Group
+              key={groupIndex}
+              title={groupValue.title}
+              subtitle={groupValue.subtitle}
+            >
+              {groupValue.items.map((rowValue, rowIndex) => (
+                <Table.Row
+                  key={rowIndex}
+                  rowId={`${groupValue.id}-${rowValue.cost}-${rowValue.itemId}-${rowValue.name}-${rowValue.quantity}`}
+                  actions={ROW_ACTION}
+                  onClick={({ isFirstClick, open, close }) => {
+                    isFirstClick
+                      ? close()
+                      : open(
+                          <RowContent
+                            name={rowValue.name}
+                            cost={rowValue.cost}
+                            quantity={rowValue.quantity}
+                            onClose={close}
+                          />
+                        );
+                  }}
+                >
+                  <Table.Row.Cell>{rowValue.itemId}</Table.Row.Cell>
+                  <Table.Row.Cell>{rowValue.name}</Table.Row.Cell>
+                  <Table.Row.Cell
+                    contentStyle={css`
+                      justify-content: end;
+                    `}
+                  >
+                    {rowValue.cost}
+                  </Table.Row.Cell>
+                  <Table.Row.Cell
+                    contentStyle={css`
+                      justify-content: end;
+                    `}
+                  >
+                    {rowValue.quantity}
+                  </Table.Row.Cell>
+                </Table.Row>
               ))}
             </Table.Row.Group>
           ))}
