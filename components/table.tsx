@@ -105,39 +105,6 @@ export interface SummaryRowProps {
   style?: CSSProp;
 }
 
-export interface TableRowProps {
-  content?: RowData;
-  isSelected?: boolean;
-  selectable?: boolean;
-  handleSelect?: (data: string) => void;
-  rowId?: string;
-  children?: ReactNode;
-  actions?: (columnCaption: string) => TipMenuItemProps[];
-  onClick?: (args?: { toggleCheckbox: () => void }) => void;
-  groupId?: string;
-  styles?: TableRowStylesProps;
-}
-
-export interface TableRowStylesProps {
-  rowStyle?: CSSProp;
-  rowCellStyle?: CSSProp;
-}
-
-export interface TableRowGroupProps {
-  id?: string;
-  children?: ReactNode;
-  title?: string;
-  subtitle?: string;
-  selectable?: boolean;
-}
-
-export interface TableRowCellProps {
-  children: ReactNode;
-  contentStyle?: CSSProp;
-  width?: string;
-  onClick?: () => void;
-}
-
 export type TableResultMenuProps = SearchboxResultMenuProps;
 
 const DnDContext = createContext<{
@@ -802,6 +769,21 @@ const CheckboxWrapper = styled.div`
   pointer-events: auto;
 `;
 
+export interface TableRowGroupProps {
+  id?: string;
+  children?: ReactNode;
+  title?: string;
+  subtitle?: string;
+  selectable?: boolean;
+}
+
+export interface TableRowCellProps {
+  children: ReactNode;
+  contentStyle?: CSSProp;
+  width?: string;
+  onClick?: () => void;
+}
+
 function TableRowGroup({
   id,
   children,
@@ -963,6 +945,31 @@ const RotatingIcon = styled.span<{ $isOpen?: boolean }>`
     `}
 `;
 
+export interface TableRowProps {
+  content?: RowData;
+  isSelected?: boolean;
+  selectable?: boolean;
+  handleSelect?: (data: string) => void;
+  rowId?: string;
+  children?: ReactNode;
+  actions?: (columnCaption: string) => TipMenuItemProps[];
+  onClick?: (args?: {
+    toggleCheckbox: () => void;
+    isFirstClick?: boolean;
+    open?: (content: ReactNode) => void;
+    close?: () => void;
+  }) => void;
+  groupId?: string;
+  styles?: TableRowStylesProps;
+}
+
+export interface TableRowStylesProps {
+  containerStyle?: CSSProp;
+  contentStyle?: CSSProp;
+  rowStyle?: CSSProp;
+  rowCellStyle?: CSSProp;
+}
+
 interface TableRowOpenWithId {
   openRowId?: string | null;
   setOpenRowId?: (prop: string | null) => void;
@@ -1024,233 +1031,295 @@ function TableRow({
   }, [isLast, onLastRowReached]);
 
   const [isHovered, setIsHovered] = useState<null | string>(null);
+  const [isFirstClick, setIsFirstClick] = useState<boolean>(false);
+  const [rowContent, setRowContent] = useState<ReactNode | null>(null);
 
   const childArray = Children.toArray(children).filter(isValidElement);
 
   return (
-    <TableRowWrapper
-      ref={rowRef}
-      $isHovered={isHovered === rowId || openRowId === rowId}
-      $isSelected={isSelected}
-      aria-label="table-row"
-      onMouseLeave={() => setIsHovered(null)}
-      onMouseEnter={() => setIsHovered(rowId)}
-      onClick={() => {
-        if (onClick) {
-          onClick?.({
-            toggleCheckbox: () => {
-              if (rowId && selectable) {
+    <RowWrapper $style={styles?.containerStyle}>
+      <TableRowWrapper
+        ref={rowRef}
+        $isHovered={isHovered === rowId || openRowId === rowId || !!rowContent}
+        $isSelected={isSelected}
+        aria-label="table-row"
+        onMouseLeave={() => setIsHovered(null)}
+        onMouseEnter={() => setIsHovered(rowId)}
+        onClick={async () => {
+          if (onClick) {
+            await onClick?.({
+              toggleCheckbox: () => {
+                if (rowId && selectable) {
+                  handleSelect?.(rowId);
+                }
+              },
+              close: () => {
+                setRowContent(null);
+                setIsFirstClick((prev) => !prev);
+              },
+              open: (content) => {
+                setRowContent(content);
+                setIsFirstClick((prev) => !prev);
+              },
+              isFirstClick,
+            });
+          }
+        }}
+        $rowCellStyle={css`
+          ${styles?.rowStyle};
+          ${onClick &&
+          css`
+            cursor: pointer;
+          `}
+        `}
+        draggable={draggable}
+        onDragStart={() =>
+          setDragItem({
+            oldGroupId: groupId!,
+            oldPosition: index,
+            id: rowId ?? "",
+          })
+        }
+        onDragOver={(e) => {
+          e.preventDefault();
+          const rect = e.currentTarget.getBoundingClientRect();
+          const offsetY = e.clientY - rect.top;
+          const half = rect.height / 2;
+
+          if (offsetY < half) {
+            setDropPosition("top");
+          } else {
+            setDropPosition("bottom");
+          }
+
+          setIsOver(true);
+        }}
+        onDragLeave={() => {
+          setIsOver(false);
+          setDropPosition(null);
+        }}
+        onDrop={(e) => {
+          e.preventDefault();
+          setIsOver(false);
+
+          let position = 0;
+          const isSameGroup = dragItem?.oldGroupId === groupId;
+
+          if (dropPosition === "top") {
+            position = index;
+          } else {
+            position = index + 1;
+          }
+
+          if (isSameGroup && dragItem?.oldPosition < position) {
+            position -= 1;
+          }
+
+          const clampedPosition = Math.min(position, groupLength ?? 0);
+
+          if (dragItem) {
+            setDragItem({
+              ...dragItem,
+              id: rowId,
+              newGroupId: groupId || "default",
+            });
+          }
+
+          onDropItem?.(clampedPosition);
+        }}
+      >
+        {selectable && (
+          <CheckboxWrapper
+            onClick={(e) => {
+              e.stopPropagation();
+              if (rowId) {
                 handleSelect?.(rowId);
               }
-            },
-          });
-        }
-      }}
-      $rowCellStyle={css`
-        ${styles?.rowStyle};
-        ${onClick &&
-        css`
-          cursor: pointer;
-        `}
-      `}
-      draggable={draggable}
-      onDragStart={() =>
-        setDragItem({
-          oldGroupId: groupId!,
-          oldPosition: index,
-          id: rowId ?? "",
-        })
-      }
-      onDragOver={(e) => {
-        e.preventDefault();
-        const rect = e.currentTarget.getBoundingClientRect();
-        const offsetY = e.clientY - rect.top;
-        const half = rect.height / 2;
-
-        if (offsetY < half) {
-          setDropPosition("top");
-        } else {
-          setDropPosition("bottom");
-        }
-
-        setIsOver(true);
-      }}
-      onDragLeave={() => {
-        setIsOver(false);
-        setDropPosition(null);
-      }}
-      onDrop={(e) => {
-        e.preventDefault();
-        setIsOver(false);
-
-        let position = 0;
-        const isSameGroup = dragItem?.oldGroupId === groupId;
-
-        if (dropPosition === "top") {
-          position = index;
-        } else {
-          position = index + 1;
-        }
-
-        if (isSameGroup && dragItem?.oldPosition < position) {
-          position -= 1;
-        }
-
-        const clampedPosition = Math.min(position, groupLength ?? 0);
-
-        if (dragItem) {
-          setDragItem({
-            ...dragItem,
-            id: rowId,
-            newGroupId: groupId || "default",
-          });
-        }
-
-        onDropItem?.(clampedPosition);
-      }}
-    >
-      {selectable && (
-        <CheckboxWrapper
-          onClick={(e) => {
-            e.stopPropagation();
-            if (rowId) {
-              handleSelect?.(rowId);
-            }
-          }}
-        >
-          <Checkbox
-            name={rowId}
-            value={isSelected ? "true" : "false"}
-            styles={{
-              boxStyle: css`
-                width: 100%;
-              `,
             }}
-            checked={isSelected}
-          />
-        </CheckboxWrapper>
-      )}
-      {content
-        ? content.map((col, i) => {
-            const column = columns[i];
-            const isLast = actions && i === childArray.length - 1;
-
-            return (
-              <TableRowCell
-                key={i}
-                width={column?.width}
-                contentStyle={
-                  isLast
-                    ? css`
-                        padding-right: 36px;
-                        ${styles?.rowCellStyle}
-                      `
-                    : styles?.rowCellStyle
-                }
-              >
-                {col}
-              </TableRowCell>
-            );
-          })
-        : childArray.map((child, i) => {
-            if (!isValidElement<TableRowCellProps>(child)) return child;
-
-            const widthColumn = columns[i].width;
-            const isLast = actions && i === childArray.length - 1;
-
-            const isTableRowCell = child.type === Table.Row.Cell;
-
-            return cloneElement(child, {
-              ...(isTableRowCell
-                ? {
-                    width: child.props.width ?? widthColumn,
-                    contentStyle: isLast
-                      ? css`
-                          padding-right: 36px;
-                          ${child.props.contentStyle};
-                        `
-                      : child.props.contentStyle,
-                  }
-                : {}),
-            });
-          })}
-
-      {isOver && dropPosition && <DragLine position={dropPosition} />}
-
-      {actions &&
-        (() => {
-          const listActions = actions(`${rowId}`);
-          const actionsWithIcons = listActions.map((action) => ({
-            ...action,
-            icon: {
-              ...action.icon,
-              image: action.icon?.image ?? RiArrowRightSLine,
-              color: action.icon?.color ?? "black",
-            },
-            onClick: (e?: React.MouseEvent) => {
-              e?.stopPropagation();
-              action.onClick?.(e);
-              if (listActions.length > 1) {
-                setIsHovered(null);
-              }
-            },
-          }));
-
-          return (
-            <ContextMenu
-              onOpen={(prop: boolean) => {
-                if (prop) {
-                  setOpenRowId(rowId);
-                } else {
-                  setOpenRowId(null);
-                }
-              }}
-              open={openRowId === rowId}
+          >
+            <Checkbox
+              name={rowId}
+              value={isSelected ? "true" : "false"}
               styles={{
-                containerStyle: css`
-                  width: fit-content;
-                  position: absolute;
-                  top: 50%;
-                  transform: translateY(-50%);
-                  z-index: 8;
-                  display: none;
-
-                  ${(isHovered === rowId
-                    ? isHovered === rowId
-                    : openRowId === rowId) &&
-                  css`
-                    display: inherit;
-                  `}
-
-                  ${draggable
-                    ? css`
-                        right: 2.4rem;
-                      `
-                    : css`
-                        right: 0.5rem;
-                      `}
+                boxStyle: css`
+                  width: 100%;
                 `,
               }}
-              focusBackgroundColor="#d4d4d4"
-              hoverBackgroundColor="#d4d4d4"
-              activeBackgroundColor="#d4d4d4"
-              actions={actionsWithIcons}
+              checked={isSelected}
             />
-          );
-        })()}
+          </CheckboxWrapper>
+        )}
+        {content
+          ? content.map((col, i) => {
+              const column = columns[i];
+              const isLast = actions && i === childArray.length - 1;
 
-      {draggable && (
-        <DraggableRequest
-          $isHovered={isHovered === rowId}
-          $alwaysShowDragIcon={alwaysShowDragIcon}
-          aria-label="draggable-request"
-        >
-          <RiDraggable size={18} />
-        </DraggableRequest>
-      )}
-    </TableRowWrapper>
+              return (
+                <TableRowCell
+                  key={i}
+                  width={column?.width}
+                  contentStyle={
+                    isLast
+                      ? css`
+                          padding-right: 36px;
+                          ${styles?.rowCellStyle}
+                        `
+                      : styles?.rowCellStyle
+                  }
+                >
+                  {col}
+                </TableRowCell>
+              );
+            })
+          : childArray.map((child, i) => {
+              if (!isValidElement<TableRowCellProps>(child)) return child;
+
+              const widthColumn = columns[i].width;
+              const isLast = actions && i === childArray.length - 1;
+
+              const isTableRowCell = child.type === Table.Row.Cell;
+
+              return cloneElement(child, {
+                ...(isTableRowCell
+                  ? {
+                      width: child.props.width ?? widthColumn,
+                      contentStyle: isLast
+                        ? css`
+                            padding-right: 36px;
+                            ${child.props.contentStyle};
+                          `
+                        : child.props.contentStyle,
+                    }
+                  : {}),
+              });
+            })}
+
+        {isOver && dropPosition && <DragLine position={dropPosition} />}
+
+        {actions &&
+          (() => {
+            const listActions = actions(`${rowId}`);
+            const actionsWithIcons = listActions.map((action) => ({
+              ...action,
+              icon: {
+                ...action.icon,
+                image: action.icon?.image ?? RiArrowRightSLine,
+                color: action.icon?.color ?? "black",
+              },
+              onClick: (e?: React.MouseEvent) => {
+                e?.stopPropagation();
+                action.onClick?.(e);
+                if (listActions.length > 1) {
+                  setIsHovered(null);
+                }
+              },
+            }));
+
+            return (
+              <ContextMenu
+                onOpen={(prop: boolean) => {
+                  if (prop) {
+                    setOpenRowId(rowId);
+                  } else {
+                    setOpenRowId(null);
+                  }
+                }}
+                open={openRowId === rowId}
+                styles={{
+                  containerStyle: css`
+                    width: fit-content;
+                    position: absolute;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    z-index: 8;
+                    display: none;
+
+                    ${(isHovered === rowId
+                      ? isHovered === rowId
+                      : openRowId === rowId) &&
+                    css`
+                      display: inherit;
+                    `}
+
+                    ${draggable
+                      ? css`
+                          right: 2.4rem;
+                        `
+                      : css`
+                          right: 0.5rem;
+                        `}
+                  `,
+                }}
+                focusBackgroundColor="#d4d4d4"
+                hoverBackgroundColor="#d4d4d4"
+                activeBackgroundColor="#d4d4d4"
+                actions={actionsWithIcons}
+              />
+            );
+          })()}
+
+        {draggable && (
+          <DraggableRequest
+            $isHovered={isHovered === rowId}
+            $alwaysShowDragIcon={alwaysShowDragIcon}
+            aria-label="draggable-request"
+          >
+            <RiDraggable size={18} />
+          </DraggableRequest>
+        )}
+      </TableRowWrapper>
+      <AnimatePresence initial={false}>
+        {rowContent && (
+          <TableRowContent
+            initial="collapsed"
+            animate="open"
+            exit="collapsed"
+            aria-label="table-row-content"
+            variants={EXPAND_COLLAPSE_VARIANTS}
+            transition={EXPAND_COLLAPSE_TRANSITION}
+            $style={styles?.contentStyle}
+          >
+            {rowContent}
+          </TableRowContent>
+        )}
+      </AnimatePresence>
+    </RowWrapper>
   );
 }
+
+const EXPAND_COLLAPSE_VARIANTS = {
+  open: {
+    opacity: 1,
+    height: "auto",
+    transition: {
+      height: { duration: 0.3, ease: "easeInOut" },
+      opacity: { duration: 0.8 },
+    },
+  },
+  collapsed: {
+    opacity: 0,
+    height: 0,
+    transition: {
+      height: { duration: 0.25, ease: "easeInOut" },
+      opacity: { duration: 0.15 },
+    },
+  },
+} as const;
+
+const EXPAND_COLLAPSE_TRANSITION = {
+  duration: 0.3,
+  ease: "easeInOut",
+} as const;
+
+const RowWrapper = styled.div<{
+  $style?: CSSProp;
+}>`
+  display: flex;
+  flex-direction: column;
+  position: relative;
+
+  ${({ $style }) => $style}
+`;
 
 const TableRowWrapper = styled.div<{
   $isSelected?: boolean;
@@ -1280,6 +1349,19 @@ const TableRowWrapper = styled.div<{
         `}
 
   ${({ $rowCellStyle }) => $rowCellStyle}
+`;
+
+const TableRowContent = styled(motion.div)<{
+  $style?: CSSProp;
+}>`
+  display: flex;
+  position: relative;
+  border-left: 1px solid #e5e7eb;
+  border-right: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: inset 0 0 0 2px #00000033;
+
+  ${({ $style }) => $style}
 `;
 
 const DragLine = styled.div<{ position: "top" | "bottom" }>`
