@@ -3,6 +3,8 @@ import { ModalDialog, ModalDialogProps } from "./modal-dialog";
 import { Button } from "./button";
 import { useArgs } from "@storybook/preview-api";
 import { Ri24HoursFill } from "@remixicon/react";
+import { useState } from "react";
+import { Textbox } from "./textbox";
 
 const meta: Meta<typeof ModalDialog> = {
   title: "Stage/ModalDialog",
@@ -221,34 +223,43 @@ export const WithSubtitle: Story = {
 };
 
 export const NonEscapable: Story = {
-  args: {
-    title: "Non Closable",
-    subtitle: "This modal cannot be closed using the Escape key",
-    isOpen: false,
-    buttons: [
-      {
-        id: "ok",
-        caption: "OK",
-        variant: "primary",
-      },
-      {
-        id: "cancel",
-        caption: "Cancel",
-      },
-    ],
-    onClick: ({ closeDialog }) => {
-      closeDialog();
-    },
-    closable: false,
-    children: (
-      <p>
-        Pressing the Escape key or clicking the background overlay will not
-        close this modal. Use the buttons or the close icon to dismiss it.
-      </p>
-    ),
-  },
-  render: (args: ModalDialogProps) => {
+  render: () => {
     const [{ isOpen }, setUpdateArgs] = useArgs();
+
+    function ProductTextbox() {
+      const [value, setValue] = useState("");
+
+      return (
+        <div>
+          <Textbox value={value} onChange={(e) => setValue(e.target.value)} />
+          <p>
+            Pressing the Escape key or clicking the background overlay will not
+            close this modal. Use the buttons or the close icon to dismiss it.
+          </p>
+        </div>
+      );
+    }
+
+    const args: ModalDialogProps = {
+      title: "Non Closable",
+      subtitle: "This modal cannot be closed using the Escape key",
+      buttons: [
+        {
+          id: "ok",
+          caption: "OK",
+          variant: "primary",
+        },
+        {
+          id: "cancel",
+          caption: "Cancel",
+        },
+      ],
+      onClick: ({ closeDialog }) => {
+        closeDialog();
+      },
+      closable: false,
+      children: <ProductTextbox />,
+    };
 
     return (
       <div
