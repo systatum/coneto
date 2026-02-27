@@ -55,14 +55,21 @@ export default meta;
 
 type Story = StoryObj<typeof Imagebox>;
 
-export const ExtraSmall: Story = {
+export const NonEditable: Story = {
   render: () => {
-    const [, setValue] = useState();
-    const onChangeValue = (e) => {
-      setValue(e);
-    };
+    const [value, setValue] = useState<string | File | undefined>(
+      "https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d"
+    );
 
-    return <Imagebox size="xs" onFileSelected={onChangeValue} />;
+    return (
+      <Imagebox
+        value={value}
+        editable={false}
+        size="xs"
+        onFileSelected={setValue}
+        borderless
+      />
+    );
   },
 };
 
