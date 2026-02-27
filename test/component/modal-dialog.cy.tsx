@@ -2,6 +2,8 @@ import { css } from "styled-components";
 import { ModalDialog, ModalDialogProps } from "./../../components/modal-dialog";
 import { useState } from "react";
 import { RiAB } from "@remixicon/react";
+import { Button } from "./../../components/button";
+import { Textbox } from "./../../components/textbox";
 
 describe("Modal Dialog", () => {
   function ProductModalDialog(props: ModalDialogProps) {
@@ -26,6 +28,76 @@ describe("Modal Dialog", () => {
       </ModalDialog>
     );
   }
+
+  context("with ModalDialog.show()", () => {
+    function ProductTextbox() {
+      const [value, setValue] = useState("");
+
+      return (
+        <Textbox value={value} onChange={(e) => setValue(e.target.value)} />
+      );
+    }
+
+    it("renders the modal dialog", () => {
+      cy.mount(
+        <Button
+          onClick={() =>
+            ModalDialog.show({
+              title: "Default Modal",
+              subtitle: "This is a subtitle",
+              closable: true,
+              buttons: [
+                { id: "confirm", caption: "Confirm", variant: "primary" },
+                { id: "cancel", caption: "Cancel", variant: "default" },
+              ],
+              children: <ProductTextbox />,
+            })
+          }
+        >
+          Open modal
+        </Button>
+      );
+
+      cy.findByLabelText("dialog-wrapper").should("not.exist");
+      cy.findAllByRole("button").eq(0).click();
+
+      cy.findByLabelText("dialog-wrapper").should("exist");
+      cy.findAllByRole("button").eq(3).click();
+    });
+
+    context("given input element", () => {
+      it("renders the modal dialog", () => {
+        cy.wait(300);
+        cy.mount(
+          <Button
+            onClick={() =>
+              ModalDialog.show({
+                title: "Default Modal",
+                subtitle: "This is a subtitle",
+                closable: true,
+                buttons: [
+                  { id: "confirm", caption: "Confirm", variant: "primary" },
+                  { id: "cancel", caption: "Cancel", variant: "default" },
+                ],
+                children: <ProductTextbox />,
+              })
+            }
+          >
+            Open modal
+          </Button>
+        );
+
+        cy.findByLabelText("dialog-wrapper").should("not.exist");
+        cy.findAllByRole("button").eq(0).click();
+
+        cy.findByLabelText("dialog-wrapper").should("exist");
+        cy.findByRole("textbox")
+          .type("Add the textbox")
+          .should("have.value", "Add the textbox");
+        cy.findAllByRole("button").eq(3).click();
+      });
+    });
+  });
 
   context("when given icon", () => {
     it("renders icon 28px (by default)", () => {
@@ -400,7 +472,7 @@ describe("Modal Dialog", () => {
         />
       );
 
-      cy.findByLabelText("dialog-content")
+      cy.findByLabelText("modal-dialog-content")
         .should("have.css", "min-height", "150px")
         .and("have.css", "background-color", "rgb(245, 222, 179)");
     });

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Dialog, DialogProps } from "./../../components/dialog";
 import { RiAB } from "@remixicon/react";
+import { Button } from "./../../components/button";
 
 describe("Dialog", () => {
   function ProductDialog(props: DialogProps) {
@@ -12,6 +13,35 @@ describe("Dialog", () => {
       </Dialog>
     );
   }
+
+  context("with Dialog.show()", () => {
+    it("renders the modal dialog", () => {
+      cy.mount(
+        <Button
+          onClick={() =>
+            Dialog.show({
+              title: "Default Modal",
+              subtitle: "This is a subtitle",
+              closable: true,
+              buttons: [
+                { id: "confirm", caption: "Confirm", variant: "primary" },
+                { id: "cancel", caption: "Cancel", variant: "default" },
+              ],
+            })
+          }
+        >
+          Open modal
+        </Button>
+      );
+
+      cy.findByLabelText("dialog-wrapper").should("not.exist");
+      cy.findByRole("button").click();
+
+      cy.findByLabelText("dialog-wrapper").should("exist");
+      cy.findByText("Default Modal").should("exist");
+      cy.findByText("This is a subtitle").should("exist");
+    });
+  });
 
   context("when given icon", () => {
     it("renders icon 28px (by default)", () => {

@@ -181,7 +181,7 @@ export const Default: Story = {
   },
 };
 
-export const NonEscapable: Story = {
+export const NonClosable: Story = {
   render: () => {
     const dialogRef = useRef<PaperDialogRef>(null);
 

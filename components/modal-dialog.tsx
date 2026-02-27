@@ -1,9 +1,16 @@
 "use client";
 
-import { Dialog, DialogProps } from "./dialog";
-import styled, { css } from "styled-components";
+import { createRoot } from "react-dom/client";
+import {
+  createDialogController,
+  Dialog,
+  DialogProps,
+  DialogStylesProps,
+} from "./dialog";
+import styled, { css, CSSProp } from "styled-components";
 
 export type ModalDialogProps = DialogProps;
+export type ModalDialogStylesProps = DialogStylesProps;
 
 function ModalDialog({
   onVisibilityChange,
@@ -18,7 +25,7 @@ function ModalDialog({
   closable = true,
   icon,
 }: ModalDialogProps) {
-  const customizeButtons = buttons.map((button) => ({
+  const customizeButtons = buttons?.map((button) => ({
     ...button,
     styles: {
       ...button?.styles,
@@ -84,7 +91,7 @@ function ModalDialog({
           padding-left: 20px;
           padding-right: 20px;
           padding-bottom: 20px;
-          ${styles?.contentStyle};
+          min-height: 200px;
         `,
         titleStyle: css`
           font-size: 18px;
@@ -96,7 +103,6 @@ function ModalDialog({
           font-size: 11px;
           text-align: start;
           color: #6b7280;
-
           ${styles?.subtitleStyle}
         `,
         buttonWrapperStyle: css`
@@ -108,18 +114,36 @@ function ModalDialog({
         `,
       }}
     >
-      <Divider />
+      <Divider aria-label="modal-dialog-divider" />
 
-      {children}
+      <Body aria-label="modal-dialog-content" $style={styles?.contentStyle}>
+        {children}
+      </Body>
     </Dialog>
   );
 }
+
+const Body = styled.div<{ $style?: CSSProp }>`
+  height: 100%;
+  width: 100%;
+  padding-right: 5px;
+  padding-left: 5px;
+  display: flex;
+  flex-direction: column;
+
+  ${({ $style }) => $style}
+`;
 
 const Divider = styled.div`
   height: 1px;
   width: 100%;
   border: 1px solid #3b82f6;
-  margin-bottom: 8px;
+  margin-bottom: 25px;
 `;
+
+const ModalDialogController = createDialogController(ModalDialog);
+
+ModalDialog.show = ModalDialogController.show;
+ModalDialog.hide = ModalDialogController.hide;
 
 export { ModalDialog };
