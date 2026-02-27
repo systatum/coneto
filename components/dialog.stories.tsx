@@ -150,7 +150,7 @@ export const Default: Story = {
   },
 };
 
-export const NonEscapable: Story = {
+export const NonClosable: Story = {
   args: {
     isOpen: false,
   },
