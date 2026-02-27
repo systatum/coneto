@@ -1,9 +1,13 @@
 "use client";
 
 import { createRoot } from "react-dom/client";
-import { Dialog, DialogProps, DialogStylesProps } from "./dialog";
+import {
+  createDialogController,
+  Dialog,
+  DialogProps,
+  DialogStylesProps,
+} from "./dialog";
 import styled, { css, CSSProp } from "styled-components";
-import { useState } from "react";
 
 export type ModalDialogProps = DialogProps;
 export type ModalDialogStylesProps = DialogStylesProps;
@@ -137,92 +141,7 @@ const Divider = styled.div`
   margin-bottom: 25px;
 `;
 
-type ModalDialogConfig = Omit<
-  ModalDialogProps,
-  "isOpen" | "onVisibilityChange"
->;
-
-let setConfigState: ((config: ModalDialogConfig | null) => void) | null = null;
-let setDialogOpen: ((isOpen: boolean) => void) | null = null;
-
-let mounted = false;
-let root: ReturnType<typeof createRoot> | null = null;
-let container: HTMLDivElement | null = null;
-
-function ModalDialogProvider() {
-  const [config, setConfig] = useState<ModalDialogConfig | null>(null);
-  const [isOpen, setIsOpen] = useState(false);
-
-  setConfigState = setConfig;
-  setDialogOpen = setIsOpen;
-
-  if (!config) return null;
-
-  const closeDialog = () => {
-    // Closes the dialog by first updating the visibility state,
-    // then delaying config cleanup to allow the exit animation
-    setIsOpen(false);
-    setTimeout(() => {
-      setConfig(null);
-    }, 300);
-  };
-
-  return (
-    <ModalDialog
-      {...config}
-      isOpen={isOpen}
-      onVisibilityChange={(open) => {
-        if (!open) {
-          closeDialog();
-        }
-      }}
-      onClick={({ id }) => {
-        config.onClick({ id, closeDialog });
-      }}
-      onClosed={() => {
-        config.onClosed?.();
-        closeDialog();
-      }}
-    />
-  );
-}
-
-function ensureProvider() {
-  // If a container reference exists but is no longer attached to the DOM
-  // reset all internal references so the provider can be recreated safely.
-  if (container && !document.body.contains(container)) {
-    root = null;
-    container = null;
-    mounted = false;
-  }
-
-  // If the provider is already mounted and valid, do nothing.
-  // This ensures the modal system behaves as a singleton.
-  if (mounted) return;
-
-  container = document.createElement("div");
-  document.body.appendChild(container);
-
-  root = createRoot(container);
-  root.render(<ModalDialogProvider />);
-
-  mounted = true;
-}
-
-const ModalDialogController = {
-  show(config: ModalDialogConfig) {
-    ensureProvider();
-    setTimeout(() => {
-      // Introduce a slight delay to ensure the component is fully mounted
-      // before triggering the open state, preserving animation consistency.
-      setConfigState?.(config);
-      setDialogOpen?.(true);
-    }, 50);
-  },
-  hide() {
-    setConfigState?.(null);
-  },
-};
+const ModalDialogController = createDialogController(ModalDialog);
 
 ModalDialog.show = ModalDialogController.show;
 ModalDialog.hide = ModalDialogController.hide;

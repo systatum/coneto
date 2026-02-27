@@ -1,6 +1,13 @@
 "use client";
 
-import { ReactNode, useEffect, useRef, useState, useCallback } from "react";
+import {
+  ReactNode,
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  ComponentType,
+} from "react";
 import ReactDOM from "react-dom";
 import styled, { keyframes, CSSProp, css } from "styled-components";
 import { RiCloseLine } from "@remixicon/react";
@@ -331,19 +338,31 @@ const Footer = styled.div<{ $style?: CSSProp }>`
 
 type DialogConfig = Omit<DialogProps, "isOpen" | "onVisibilityChange">;
 
-let setConfigState: ((config: DialogConfig | null) => void) | null = null;
-let setDialogOpen: ((isOpen: boolean) => void) | null = null;
+interface DialogMountState {
+  mounted: boolean;
+  root: ReturnType<typeof createRoot> | null;
+  container: HTMLDivElement | null;
+  setConfig?: (props: DialogConfig | null) => void;
+  setIsOpen?: (isOpen: boolean) => void;
+}
 
-let mounted = false;
-let root: ReturnType<typeof createRoot> | null = null;
-let container: HTMLDivElement | null = null;
+const mountedStates = new Map<ComponentType<DialogConfig>, DialogMountState>();
 
-function DialogProvider() {
+function DialogProvider({
+  component: Dialog,
+}: {
+  component: ComponentType<DialogProps>;
+}) {
   const [config, setConfig] = useState<DialogConfig | null>(null);
   const [isOpen, setIsOpen] = useState(false);
 
-  setConfigState = setConfig;
-  setDialogOpen = setIsOpen;
+  useState(() => {
+    const state = mountedStates.get(Dialog);
+    if (state) {
+      state.setConfig = setConfig;
+      state.setIsOpen = setIsOpen;
+    }
+  });
 
   if (!config) return null;
 
@@ -353,17 +372,15 @@ function DialogProvider() {
     setIsOpen(false);
     setTimeout(() => {
       setConfig(null);
-    }, 300);
+    }, 200);
   };
 
   return (
     <Dialog
       {...config}
       isOpen={isOpen}
-      onVisibilityChange={(open) => {
-        if (!open) {
-          closeDialog();
-        }
+      onVisibilityChange={(open?: boolean) => {
+        if (!open) closeDialog();
       }}
       onClick={({ id }) => {
         config.onClick({ id, closeDialog });
@@ -376,42 +393,72 @@ function DialogProvider() {
   );
 }
 
-function ensureProvider() {
+function ensureProvider(component: ComponentType<DialogProps>) {
   // If a container reference exists but is no longer attached to the DOM
   // reset all internal references so the provider can be recreated safely.
-  if (container && !document.body.contains(container)) {
-    root = null;
-    container = null;
-    mounted = false;
+  if (!mountedStates.has(component)) {
+    mountedStates.set(component, {
+      mounted: false,
+      root: null,
+      container: null,
+    });
   }
 
+  const state = mountedStates.get(component)!;
+
+  if (state.container && !document.body.contains(state.container)) {
+    state.root?.unmount();
+    state.root = null;
+    state.container = null;
+    state.mounted = false;
+  }
   // If the provider is already mounted and valid, do nothing.
   // This ensures the modal system behaves as a singleton.
-  if (mounted) return;
+  if (state.mounted) return;
 
-  container = document.createElement("div");
+  const container = document.createElement("div");
   document.body.appendChild(container);
 
-  root = createRoot(container);
-  root.render(<DialogProvider />);
+  const root = createRoot(container);
+  root.render(<DialogProvider component={component} />);
 
-  mounted = true;
+  state.container = container;
+  state.root = root;
+  state.mounted = true;
 }
 
-const DialogController = {
-  show(config: DialogConfig) {
-    ensureProvider();
-    // Introduce a slight delay to ensure the component is fully mounted
-    // before triggering the open state, preserving animation consistency.
-    setTimeout(() => {
-      setConfigState?.(config);
-      setDialogOpen?.(true);
-    }, 50);
-  },
-  hide() {
-    setConfigState?.(null);
-  },
-};
+export function createDialogController(component: ComponentType<DialogProps>) {
+  return {
+    show(config: DialogConfig) {
+      ensureProvider(component);
+      // Introduce a slight delay to ensure the component is fully mounted
+      // before triggering the open state, preserving animation consistency.
+
+      const state = mountedStates.get(component);
+
+      setTimeout(() => {
+        state?.setConfig?.(config);
+        state?.setIsOpen?.(true);
+      }, 10);
+    },
+
+    hide() {
+      const state = mountedStates.get(component);
+      state?.setIsOpen?.(false);
+    },
+
+    destroy() {
+      const state = mountedStates.get(component);
+      if (!state) return;
+
+      state.root?.unmount();
+      state.container?.remove();
+      mountedStates.delete(component);
+    },
+  };
+}
+
+const DialogController = createDialogController(Dialog);
 
 Dialog.show = DialogController.show;
 Dialog.hide = DialogController.hide;
