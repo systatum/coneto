@@ -110,9 +110,11 @@ function ModalDialog({
         `,
       }}
     >
-      <Divider />
+      <Divider aria-label="modal-dialog-divider" />
 
-      <Body $style={styles?.contentStyle}>{children}</Body>
+      <Body aria-label="modal-dialog-content" $style={styles?.contentStyle}>
+        {children}
+      </Body>
     </Dialog>
   );
 }
@@ -144,6 +146,8 @@ let setConfigState: ((config: ModalDialogConfig | null) => void) | null = null;
 let setDialogOpen: ((isOpen: boolean) => void) | null = null;
 
 let mounted = false;
+let root: ReturnType<typeof createRoot> | null = null;
+let container: HTMLDivElement | null = null;
 
 function ModalDialogProvider() {
   const [config, setConfig] = useState<ModalDialogConfig | null>(null);
@@ -184,12 +188,24 @@ function ModalDialogProvider() {
 }
 
 function ensureProvider() {
+  // If a container reference exists but is no longer attached to the DOM
+  // reset all internal references so the provider can be recreated safely.
+  if (container && !document.body.contains(container)) {
+    root = null;
+    container = null;
+    mounted = false;
+  }
+
+  // If the provider is already mounted and valid, do nothing.
+  // This ensures the modal system behaves as a singleton.
   if (mounted) return;
 
-  const el = document.createElement("div");
-  document.body.appendChild(el);
+  container = document.createElement("div");
+  document.body.appendChild(container);
 
-  createRoot(el).render(<ModalDialogProvider />);
+  root = createRoot(container);
+  root.render(<ModalDialogProvider />);
+
   mounted = true;
 }
 
