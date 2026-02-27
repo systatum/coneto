@@ -8,6 +8,7 @@ import { Button, ButtonStylesProps, ButtonVariants } from "./button";
 import { OverlayBlocker } from "./overlay-blocker";
 import { Figure, FigureProps } from "./figure";
 import { lightenColor } from "./../lib/lighten-color";
+import { createRoot } from "react-dom/client";
 
 const zoomIn = keyframes`from {transform: translate(-50%, -50%) scale(0.95); opacity: 0;} to {transform: translate(-50%, -50%) scale(1); opacity: 1;}`;
 const zoomOut = keyframes`from {transform: translate(-50%, -50%) scale(1); opacity: 1;} to {transform: translate(-50%, -50%) scale(0.95); opacity: 0;}`;
@@ -311,7 +312,6 @@ const Subtitle = styled.h3<{ $style?: CSSProp }>`
 
 const Body = styled.div<{ $style?: CSSProp }>`
   height: 100%;
-  min-height: 250px;
   font-size: 12px;
   width: 100%;
   padding-top: 0.5rem;
@@ -328,5 +328,74 @@ const Footer = styled.div<{ $style?: CSSProp }>`
 
   ${({ $style }) => $style}
 `;
+
+type DialogConfig = Omit<DialogProps, "isOpen" | "onVisibilityChange">;
+
+let setConfigState: ((config: DialogConfig | null) => void) | null = null;
+let setDialogOpen: ((isOpen: boolean) => void) | null = null;
+
+let mounted = false;
+
+function DialogProvider() {
+  const [config, setConfig] = useState<DialogConfig | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+
+  setConfigState = setConfig;
+  setDialogOpen = setIsOpen;
+
+  const closeDialog = () => {
+    setIsOpen(false);
+    setTimeout(() => {
+      setConfig(null);
+    }, 300);
+  };
+
+  return (
+    <Dialog
+      {...config}
+      isOpen={isOpen}
+      onVisibilityChange={(open) => {
+        if (!open) {
+          closeDialog();
+        }
+      }}
+      onClick={({ id }) => {
+        config.onClick({ id, closeDialog });
+      }}
+      onClosed={() => {
+        config.onClosed?.();
+        closeDialog();
+      }}
+    />
+  );
+}
+
+function ensureProvider() {
+  if (mounted) return;
+
+  const el = document.createElement("div");
+  document.body.appendChild(el);
+
+  createRoot(el).render(<DialogProvider />);
+  mounted = true;
+}
+
+const DialogController = {
+  show(config: DialogConfig) {
+    ensureProvider();
+    setTimeout(() => {
+      setConfigState?.(config);
+    }, 0);
+    setTimeout(() => {
+      setDialogOpen?.(true);
+    }, 100);
+  },
+  hide() {
+    setConfigState?.(null);
+  },
+};
+
+Dialog.show = DialogController.show;
+Dialog.hide = DialogController.hide;
 
 export { Dialog };
