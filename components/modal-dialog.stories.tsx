@@ -14,25 +14,41 @@ const meta: Meta<typeof ModalDialog> = {
   argTypes: {
     isOpen: {
       control: "boolean",
-      description: "Controls whether the modal dialog is visible.",
+      description:
+        "Controls the visibility of the ModalDialog. This is a controlled prop and must be managed externally.",
+      table: {
+        type: { summary: "boolean" },
+        defaultValue: { summary: "false" },
+      },
     },
     onVisibilityChange: {
-      control: false,
       description:
-        "Callback fired when the dialog open state changes. Used to open or close the modal.",
-    },
-    title: {
-      control: "text",
-      description: "Main title displayed at the top of the modal.",
-    },
-    subtitle: {
-      control: "text",
-      description: "Optional subtitle displayed below the main title.",
+        "Callback triggered when the visibility state changes. Usually used to control `isOpen` externally.",
+      table: {
+        type: { summary: "(isOpen?: boolean) => void" },
+      },
     },
     closable: {
       control: "boolean",
       description:
-        "Whether the close (×) button should be shown in the dialog header.",
+        "Determines whether the ModalDialog can be closed via the Escape key, overlay click, or close button.",
+      table: {
+        type: { summary: "boolean" },
+        defaultValue: { summary: "true" },
+      },
+    },
+    title: {
+      description: "Title content displayed in the ModalDialog header.",
+      table: {
+        type: { summary: "ReactNode" },
+      },
+    },
+    subtitle: {
+      description:
+        "Subtitle content displayed below the title in the ModalDialog header.",
+      table: {
+        type: { summary: "ReactNode" },
+      },
     },
     buttons: {
       control: false,
@@ -48,24 +64,18 @@ Each button object supports:
     `,
     },
     children: {
-      control: false,
       description:
-        "Content rendered inside the modal body. Can be any React node.",
-    },
-    onClick: {
-      control: false,
-      description: `Callback fired when any footer button is clicked. Receives the button id and a \`closeDialog\` helper.`,
+        "Optional custom content rendered inside the ModalDialog body section.",
+      table: {
+        type: { summary: "ReactNode" },
+      },
     },
     styles: {
-      control: false,
-      description: `
-Custom styles for the ModalDialog component. This object allows you to override styles for individual parts:
-
-- **containerStyle**: Styles applied to the dialog container (width, border, padding, shadow, etc)
-- **contentStyle**: Styles applied to the modal body content area
-
-Each field accepts a \`CSSProp\` (styled-components compatible) and can be used to customize layout, spacing, colors, and visual appearance.
-    `,
+      description:
+        "Custom style overrides for different ModalDialog sections (container, content, overlay, etc.).",
+      table: {
+        type: { summary: "ModalDialogStylesProps" },
+      },
     },
   },
 };
@@ -111,16 +121,32 @@ export const Default: Story = {
     const [{ isOpen }, setUpdateArgs] = useArgs();
 
     return (
-      <>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 12,
+        }}
+      >
         <Button onClick={() => setUpdateArgs({ isOpen: true })}>
           Default Modal
         </Button>
+
+        <Button
+          onClick={() => {
+            ModalDialog.show(args);
+          }}
+        >
+          Default modal with show()
+        </Button>
+
         <ModalDialog
           {...args}
           isOpen={isOpen}
+          onClosed={() => console.log("testted")}
           onVisibilityChange={(isOpen) => setUpdateArgs({ isOpen })}
         />
-      </>
+      </div>
     );
   },
 };
@@ -165,23 +191,38 @@ export const WithSubtitle: Story = {
     const [{ isOpen }, setUpdateArgs] = useArgs();
 
     return (
-      <>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 12,
+        }}
+      >
         <Button onClick={() => setUpdateArgs({ isOpen: true })}>
           Default Modal
         </Button>
+
+        <Button
+          onClick={() => {
+            ModalDialog.show(args);
+          }}
+        >
+          Default modal with show()
+        </Button>
+
         <ModalDialog
           {...args}
           isOpen={isOpen}
           onVisibilityChange={(isOpen) => setUpdateArgs({ isOpen })}
         />
-      </>
+      </div>
     );
   },
 };
 
 export const NonEscapable: Story = {
   args: {
-    title: "Non Elosable",
+    title: "Non Closable",
     subtitle: "This modal cannot be closed using the Escape key",
     isOpen: false,
     buttons: [
@@ -210,16 +251,31 @@ export const NonEscapable: Story = {
     const [{ isOpen }, setUpdateArgs] = useArgs();
 
     return (
-      <>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 12,
+        }}
+      >
         <Button onClick={() => setUpdateArgs({ isOpen: true })}>
           Non closable Dialog
         </Button>
+
+        <Button
+          onClick={() => {
+            ModalDialog.show(args);
+          }}
+        >
+          Non closable Dialog with show()
+        </Button>
+
         <ModalDialog
           {...args}
           isOpen={isOpen}
           onVisibilityChange={(isOpen) => setUpdateArgs({ isOpen })}
         />
-      </>
+      </div>
     );
   },
 };

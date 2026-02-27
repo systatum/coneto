@@ -1,6 +1,6 @@
 import { useArgs } from "@storybook/preview-api";
 import type { Args, Meta, StoryObj } from "@storybook/react";
-import { Dialog } from "./dialog";
+import { Dialog, DialogProps } from "./dialog";
 import { Button } from "./button";
 import { RiErrorWarningFill, RiInboxArchiveFill } from "@remixicon/react";
 
@@ -58,11 +58,17 @@ const meta: Meta<typeof Dialog> = {
       },
     },
     buttons: {
-      description:
-        "Array of action buttons rendered in the footer. Each button supports `id`, `caption`, `variant`, `isLoading`, and `disabled`.",
-      table: {
-        type: { summary: "DialogButtonProps[]" },
-      },
+      control: false,
+      description: `
+List of action buttons displayed in the modal footer.
+
+Each button object supports:
+- **id**: Unique identifier for the button
+- **caption**: Button label
+- **variant**: Button visual style (from \`ButtonVariants\`)
+- **isLoading**: Shows loading spinner
+- **disabled**: Disables the button
+    `,
     },
     onClick: {
       description:
@@ -103,24 +109,43 @@ export const Default: Story = {
   },
   render: () => {
     const [{ isOpen }, updateArgs] = useArgs();
+
+    const args: DialogProps = {
+      title: "Archive Project",
+      subtitle:
+        "The project will be moved to the archive section and will no longer appear in your active projects list.",
+      icon: { image: RiInboxArchiveFill, color: "#2563eb" },
+      onClick: ({ closeDialog }) => closeDialog(),
+      buttons: [
+        { id: "cancel", caption: "Cancel" },
+        { id: "archive", caption: "Archive", variant: "primary" },
+      ],
+    };
     return (
-      <>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 12,
+        }}
+      >
         <Dialog
           isOpen={isOpen}
           onVisibilityChange={(newOpen) => updateArgs({ isOpen: newOpen })}
-          title="Archive Project"
-          subtitle="The project will be moved to the archive section and will no longer appear in your active projects list."
-          icon={{ image: RiInboxArchiveFill, color: "#2563eb" }}
-          onClick={({ closeDialog }) => closeDialog()}
-          buttons={[
-            { id: "cancel", caption: "Cancel" },
-            { id: "archive", caption: "Archive", variant: "primary" },
-          ]}
+          {...args}
         />
         <Button onClick={() => updateArgs({ isOpen: !isOpen })}>
           Open Dialog
         </Button>
-      </>
+
+        <Button
+          onClick={() => {
+            Dialog.show(args);
+          }}
+        >
+          Open Dialog with show()
+        </Button>
+      </div>
     );
   },
 };
@@ -129,35 +154,55 @@ export const NonEscapable: Story = {
   args: {
     isOpen: false,
   },
-  render: (args: Args) => {
+  render: () => {
     const [{ isOpen }, updateArgs] = useArgs();
 
+    const args: DialogProps = {
+      title: "Delete Project",
+      closable: false,
+      subtitle: "You're going to delete the demo project. Are you sure?",
+      icon: { image: RiErrorWarningFill, color: "#ce375d" },
+      onClick: ({ closeDialog }) => {
+        closeDialog();
+      },
+      buttons: [
+        {
+          id: "no",
+          caption: "No",
+        },
+        {
+          id: "delete",
+          caption: "Yes, Delete!",
+          variant: "danger",
+        },
+      ],
+    };
+
     return (
-      <>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 12,
+        }}
+      >
         <Dialog
           isOpen={isOpen}
           onVisibilityChange={(newOpen) => updateArgs({ isOpen: newOpen })}
-          title="Delete Project"
-          closable={false}
-          onClick={({ closeDialog }) => closeDialog()}
-          subtitle="Youre going to delete the demo project. Are you sure?"
-          icon={{ image: RiErrorWarningFill, color: "#ce375d" }}
-          buttons={[
-            {
-              id: "no",
-              caption: "No",
-            },
-            {
-              id: "delete",
-              caption: "Yes, Delete!",
-              variant: "danger",
-            },
-          ]}
+          {...args}
         />
         <Button onClick={() => updateArgs({ isOpen: !isOpen })}>
           Open Dialog
         </Button>
-      </>
+
+        <Button
+          onClick={() => {
+            Dialog.show(args);
+          }}
+        >
+          Open Dialog with show()
+        </Button>
+      </div>
     );
   },
 };
