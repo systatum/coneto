@@ -23,6 +23,33 @@ import {
 
 describe("ActionButton", () => {
   context("card", () => {
+    context("when given className", () => {
+      it("should render the class", () => {
+        function CardComponent() {
+          return (
+            <Card
+              title="This is title"
+              subtitle="This is subtitle"
+              headerActions={[
+                {
+                  caption: "Button",
+                  variant: "primary",
+                  className: "card-button-in-header",
+                },
+              ]}
+            >
+              Test
+            </Card>
+          );
+        }
+        cy.mount(<CardComponent />);
+
+        cy.findAllByLabelText("action-button")
+          .eq(0)
+          .should("have.class", "card-button-in-header");
+      });
+    });
+
     context("when given variant", () => {
       it("should render button with variant", () => {
         function CardComponent() {
@@ -83,6 +110,35 @@ describe("ActionButton", () => {
   });
 
   context("nav-tab", () => {
+    context("when given className", () => {
+      it("should render the class", () => {
+        function NavTabComponent() {
+          return (
+            <NavTab
+              actions={[
+                {
+                  caption: "Add",
+                  icon: { image: RiAddBoxLine },
+                  onClick: () => {
+                    console.log(`Add button was clicked`);
+                  },
+                  variant: "secondary",
+                  className: "nav-tab-actions",
+                },
+              ]}
+              tabs={TABS_ITEMS}
+              activeTab={"2"}
+            />
+          );
+        }
+        cy.mount(<NavTabComponent />);
+
+        cy.findAllByLabelText("action-button")
+          .eq(2)
+          .should("have.class", "nav-tab-actions");
+      });
+    });
+
     context("when given variant", () => {
       it("should render button with variant", () => {
         function NavTabComponent() {
@@ -148,6 +204,69 @@ describe("ActionButton", () => {
   });
 
   context("list", () => {
+    context("when given className", () => {
+      it("should render the class", () => {
+        function ListComponent() {
+          return (
+            <List
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 400px;
+                `,
+              }}
+            >
+              {LIST_GROUPS.map((group, index) => {
+                return (
+                  <List.Group
+                    key={index}
+                    id={group.id}
+                    subtitle={group.subtitle}
+                    title={group.title}
+                    actions={[
+                      {
+                        className: "list-group-back-action",
+                        caption: "Back",
+                        onClick: () => {},
+                      },
+                    ].filter(Boolean)}
+                  >
+                    {group.items.map((list, i) => (
+                      <List.Item
+                        key={i}
+                        openable={list.openable}
+                        id={list.id}
+                        subtitle={list.subtitle}
+                        title={list.title}
+                        groupId={group.id}
+                        leftSideContent={({ badge }) =>
+                          badge(list.leftSideContent, {
+                            withStyle: css`
+                              background-color: #488cac;
+                              color: white;
+                              min-width: 30px;
+                              max-width: 30px;
+                            `,
+                          })
+                        }
+                      >
+                        {list.children}
+                      </List.Item>
+                    ))}
+                  </List.Group>
+                );
+              })}
+            </List>
+          );
+        }
+        cy.mount(<ListComponent />);
+
+        cy.findAllByLabelText("action-button")
+          .eq(0)
+          .should("have.class", "list-group-back-action");
+      });
+    });
+
     context("when given variant", () => {
       it("should render button with variant", () => {
         function ListComponent() {
@@ -281,6 +400,58 @@ describe("ActionButton", () => {
   });
 
   context("table", () => {
+    context("when given className", () => {
+      it("should render the class", () => {
+        function TableComponent() {
+          const columns: ColumnTableProps[] = [
+            {
+              id: "name",
+              caption: "Name",
+              sortable: false,
+            },
+            {
+              id: "type",
+              caption: "Type",
+              sortable: false,
+            },
+          ];
+
+          const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
+
+          const sampleRows = Array.from({ length: 20 }, (_, i) => {
+            const type = TYPES_DATA[i % TYPES_DATA.length];
+            return (
+              <Table.Row
+                rowId={`${type}`}
+                key={i}
+                content={[`Load Balancer ${i + 1}`, type]}
+              />
+            );
+          });
+
+          return (
+            <Table
+              selectable
+              styles={{
+                tableRowContainerStyle: css`
+                  max-height: 400px;
+                `,
+              }}
+              columns={columns}
+              actions={TOP_ACTIONS}
+            >
+              {sampleRows}
+            </Table>
+          );
+        }
+        cy.mount(<TableComponent />);
+
+        cy.findAllByLabelText("action-button")
+          .eq(0)
+          .should("have.class", "table-delete-action");
+      });
+    });
+
     context("when given variant", () => {
       it("should render button with variant", () => {
         function TableComponent() {
@@ -415,6 +586,7 @@ const LIST_GROUPS: ListGroupContentProps[] = [
 
 const TOP_ACTIONS: TableActionsProps[] = [
   {
+    className: "table-delete-action",
     caption: "Delete",
     icon: {
       image: RiDeleteBin2Line,
