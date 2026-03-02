@@ -23,39 +23,39 @@ describe("Searchbox", () => {
       const PEOPLE_MENU: SearchboxResultMenuItemProps[] = [
         {
           caption: "Adam Noto Hakarsa",
-          icon: RiUserSmileLine,
+          icon: { image: RiUserSmileLine },
         },
         {
           caption: "Alim Naufal",
-          icon: RiUserStarLine,
+          icon: { image: RiUserStarLine },
         },
         {
           caption: "Michael Chen",
-          icon: RiUserLine,
+          icon: { image: RiUserLine },
         },
         {
           caption: "Ayu Pratama",
-          icon: RiUserHeartLine,
+          icon: { image: RiUserHeartLine },
         },
         {
           caption: "Daniel Rodriguez",
-          icon: RiUserVoiceLine,
+          icon: { image: RiUserVoiceLine },
         },
         {
           caption: "Rina Sari",
-          icon: RiUserSettingsLine,
+          icon: { image: RiUserSettingsLine },
         },
         {
           caption: "Tom Williams",
-          icon: RiUserSharedLine,
+          icon: { image: RiUserSharedLine },
         },
         {
           caption: "Nabila Zahra",
-          icon: RiUserSearchLine,
+          icon: { image: RiUserSearchLine },
         },
         {
           caption: "Kevin Park",
-          icon: RiUserAddLine,
+          icon: { image: RiUserAddLine },
         },
       ];
 
