@@ -12,6 +12,7 @@ export interface ActionButtonProps {
   disabled?: boolean;
   showSubMenuOn?: "caret" | "self";
   variant?: ButtonVariants["variant"];
+  className?: string;
 }
 
 export interface ActionButtonStylesProps {
@@ -31,6 +32,7 @@ export function ActionButton({
   showSubMenuOn,
   variant = "default",
   forTable,
+  className,
 }: ActionButtonProps & { forTable?: boolean }) {
   return (
     <Button
@@ -47,6 +49,7 @@ export function ActionButton({
       size="sm"
       tipMenuSize="sm"
       variant={variant}
+      className={className}
       styles={{
         self: css`
           display: flex;
@@ -139,6 +142,7 @@ export function ActionButton({
       {icon && (
         <Figure
           {...icon}
+          color={variant === "danger" ? "white" : icon?.color}
           aria-label="action-button-icon"
           size={icon?.size ?? 14}
         />
