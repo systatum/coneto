@@ -201,21 +201,21 @@ export const WithActions: Story = {
             caption: "Settings",
             icon: { image: RiSettings5Line },
             onClick: () => {
-              console.log(`Add button was clicked`);
+              console.log("Settings button was clicked");
             },
           },
           {
             caption: "Crop",
             icon: { image: RiCropLine },
             onClick: () => {
-              console.log(`Add button was clicked`);
+              console.log("Crop button was clicked");
             },
           },
           {
             caption: "Add",
             icon: { image: RiAddBoxLine },
             onClick: () => {
-              console.log(`Add button was clicked`);
+              console.log("Add button was clicked");
             },
           },
         ]}
