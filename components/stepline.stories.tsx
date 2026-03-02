@@ -70,3 +70,50 @@ export const Reversable: Story = {
     );
   },
 };
+
+export const Collapsed: Story = {
+  render: () => {
+    const [active, setActive] = useState(10);
+
+    const STEPLINE_ITEMS: SteplineItemProps[] = [
+      {
+        title: "Application Submitted",
+        subtitle: "Your application has been received",
+        variant: "completed",
+      },
+      {
+        title: "Initial Screening",
+        subtitle: "Resume and profile review",
+        variant: "completed",
+      },
+      {
+        title: "Technical Interview",
+        subtitle: "Assessment of technical skills",
+        variant: "error",
+      },
+      {
+        title: "Final Interview",
+        subtitle: "Discussion with the team lead",
+        line: "dash",
+      },
+      {
+        title: "Offer Sent",
+        subtitle: "Waiting for your confirmation",
+        line: "dash",
+      },
+    ];
+
+    return (
+      <Stepline collapsed gap={4}>
+        {STEPLINE_ITEMS.map((data, index) => (
+          <Stepline.Item
+            {...data}
+            onClick={() => setActive(index)}
+            active={active === index}
+            key={index}
+          />
+        ))}
+      </Stepline>
+    );
+  },
+};
