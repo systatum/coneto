@@ -30,7 +30,7 @@ import {
   SubMenuListTableProps,
   Table,
 } from "./../../components/table";
-import { NavTab } from "./../../components/nav-tab";
+import { NavTab, SubMenuNavTab } from "./../../components/nav-tab";
 
 const checkMenuAlignment = () => {
   return cy
@@ -120,8 +120,9 @@ describe("context-menu", () => {
       },
     ];
 
-    const ROW_ACTIONS = (id: string) => [
+    const ROW_ACTIONS = (id: string): ListItemActionProps[] => [
       {
+        className: "test-classname",
         caption: "Edit",
         icon: { image: RiEdit2Line },
         onClick: () => {
@@ -136,6 +137,58 @@ describe("context-menu", () => {
         },
       },
     ];
+
+    context("className", () => {
+      it("renders with custom className", () => {
+        cy.mount(
+          <List
+            searchable
+            draggable
+            selectable
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 350px;
+              `,
+            }}
+          >
+            {LIST_GROUPS.map((group, index) => (
+              <List.Group
+                key={index}
+                id={group.id}
+                title={group.title}
+                subtitle={group.subtitle}
+                actions={group.actions}
+                openerStyle="togglebox"
+              >
+                {group.items.map((list, i) => (
+                  <List.Item
+                    key={i}
+                    id={list.id}
+                    groupId={group.id}
+                    actions={ROW_ACTIONS}
+                    leftIcon={list.leftIcon}
+                    subtitle={list.subtitle}
+                    title={list.title}
+                    selectedOptions={{
+                      checked: true,
+                    }}
+                  />
+                ))}
+              </List.Group>
+            ))}
+          </List>
+        );
+
+        cy.wait(100);
+
+        cy.findAllByLabelText("list-item-wrapper").eq(0).realHover().click();
+        cy.findAllByLabelText("action-button").eq(0).click();
+        cy.findAllByLabelText("tip-menu-item")
+          .eq(0)
+          .should("have.class", "test-classname");
+      });
+    });
 
     context("when multiple content", () => {
       it("renders tip menu aligned to the right of the action button", () => {
@@ -297,6 +350,7 @@ describe("context-menu", () => {
   context("when given in TreeList component", () => {
     const ITEM_ACTIONS: SubMenuTreeList[] = [
       {
+        className: "editable-action-tip",
         caption: "Edit",
         icon: { image: RiEdit2Line, color: "gray" },
         onClick: (id: string) => {
@@ -365,6 +419,31 @@ describe("context-menu", () => {
         ],
       },
     ];
+
+    context("className", () => {
+      it("renders with custom className", () => {
+        cy.mount(
+          <TreeList
+            styles={{
+              containerStyle: css`
+                min-width: 300px;
+              `,
+            }}
+            content={TREE_LIST_DATA}
+            emptySlate={<p>Not found.</p>}
+          />
+        );
+
+        cy.wait(100);
+
+        cy.contains("Adam Noto Hakarsa").realHover();
+        cy.findAllByLabelText("action-button").eq(0).click();
+
+        cy.findAllByLabelText("tip-menu-item")
+          .eq(0)
+          .should("have.class", "editable-action-tip");
+      });
+    });
 
     context("when multiple content", () => {
       it("renders tip menu aligned to the right of the action button", () => {
@@ -455,6 +534,7 @@ describe("context-menu", () => {
       return [
         {
           caption: "Edit",
+          className: "table-editable",
           icon: { image: RiEdit2Line, color: "gray" },
           onClick: () => {
             console.log(`${rowId} was edited`);
@@ -494,6 +574,30 @@ describe("context-menu", () => {
         sortable: false,
       },
     ];
+
+    context("className", () => {
+      it("renders with custom className", () => {
+        cy.mount(
+          <Table
+            styles={{
+              tableRowContainerStyle: css`
+                max-height: 400px;
+              `,
+            }}
+            columns={columns}
+          >
+            {sampleRows}
+          </Table>
+        );
+
+        cy.wait(100);
+        cy.findAllByLabelText("table-row").eq(2).realHover();
+        cy.findAllByLabelText("action-button").eq(0).click({ force: true });
+        cy.findAllByLabelText("tip-menu-item")
+          .eq(0)
+          .should("have.class", "table-editable");
+      });
+    });
 
     context("when multiple content", () => {
       it("renders tip menu aligned to the right of the action button", () => {
@@ -580,13 +684,14 @@ describe("context-menu", () => {
   });
 
   context("when given in Navtab component", () => {
-    const SUB_MENU = [
+    const SUB_MENU: SubMenuNavTab[] = [
       {
         caption: "Discover",
         onClick: () => {
           console.log("Discover clicked");
         },
         icon: { image: RiSearchLine },
+        className: "discover-action",
       },
       {
         caption: "Mention",
@@ -611,6 +716,19 @@ describe("context-menu", () => {
         actions: SUB_MENU,
       },
     ];
+
+    context("className", () => {
+      it("renders with custom className", () => {
+        cy.mount(<NavTab tabs={TAB_WITH_SUB_ITEM} activeTab={"2"} />);
+
+        cy.wait(100);
+        cy.findByText("Review").realHover();
+        cy.findAllByLabelText("action-button").eq(0).click();
+        cy.findAllByLabelText("tip-menu-item")
+          .eq(0)
+          .should("have.class", "discover-action");
+      });
+    });
 
     context("when multiple content", () => {
       it("renders all tip menu actions", () => {
