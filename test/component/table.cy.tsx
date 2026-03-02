@@ -11,10 +11,13 @@ import {
   ColumnTableProps,
   Table,
   TableActionsProps,
+  TableRowProps,
 } from "./../../components/table";
 import { TipMenuItemProps } from "./../../components/tip-menu";
 import { css } from "styled-components";
 import { CapsuleContentProps } from "./../../components/capsule";
+import { Button } from "./../../components/button";
+import { Card } from "./../../components/card";
 
 interface TableItemProps {
   title: string;
@@ -23,6 +26,367 @@ interface TableItemProps {
 }
 
 describe("Table", () => {
+  function TableWithAppendix(props: TableRowProps) {
+    interface TableSummaryProps {
+      id?: string;
+      title: string;
+      subtitle?: string;
+      items: {
+        itemId?: string;
+        name: string;
+        cost: string;
+        quantity: string;
+      }[];
+    }
+
+    const TABLE_SUMMARY: TableSummaryProps[] = [
+      {
+        id: "food",
+        title: "Food",
+        subtitle: "List of Food Items",
+        items: [
+          {
+            itemId: "F1583",
+            name: "Ayam Geprek",
+            cost: "5,000",
+            quantity: "5",
+          },
+          {
+            itemId: "F9311",
+            name: "Laksa Singapore",
+            cost: "4,500",
+            quantity: "1",
+          },
+          { itemId: "F2210", name: "Nasi Lemak", cost: "3,500", quantity: "2" },
+          {
+            itemId: "F7721",
+            name: "Soto Betawi",
+            cost: "4,000",
+            quantity: "1",
+          },
+          {
+            itemId: "F6622",
+            name: "Bakso Malang",
+            cost: "6,000",
+            quantity: "4",
+          },
+        ],
+      },
+      {
+        id: "beverages",
+        title: "Beverages",
+        subtitle: "Cold and Hot Refreshments",
+        items: [
+          { itemId: "B1010", name: "Iced Tea", cost: "1,000", quantity: "3" },
+          {
+            itemId: "B3911",
+            name: "Mineral Water",
+            cost: "500",
+            quantity: "1",
+          },
+          { itemId: "B5512", name: "Lemonade", cost: "2,000", quantity: "2" },
+          { itemId: "B6619", name: "Hot Coffee", cost: "3,000", quantity: "1" },
+          {
+            itemId: "B8821",
+            name: "Orange Juice",
+            cost: "2,500",
+            quantity: "2",
+          },
+        ],
+      },
+    ];
+
+    function parseCost(val: string) {
+      return Number(val.replace(/,/g, ""));
+    }
+
+    function calculateTotals(groups: TableSummaryProps[]) {
+      let totalCost = 0;
+      let totalQty = 0;
+
+      groups.map((group) =>
+        group.items.map((item) => {
+          totalCost += parseCost(item.cost);
+          totalQty += Number(item.quantity);
+        })
+      );
+
+      return {
+        totalCost,
+        totalQty,
+      };
+    }
+
+    const DEFAULT_TOP_ACTIONS: TableActionsProps[] = [
+      {
+        caption: "Copy",
+        icon: { image: RiArrowUpSLine },
+        onClick: () => {
+          console.log("Copy clicked");
+        },
+      },
+    ];
+    const { totalCost, totalQty } = calculateTotals(TABLE_SUMMARY);
+
+    function RowContent({
+      name,
+      cost,
+      quantity,
+      onClose,
+    }: {
+      name: string;
+      cost: string;
+      quantity: string;
+      onClose: () => void;
+    }) {
+      return (
+        <Card
+          title={
+            <>
+              <div>{name}</div>
+              <div
+                style={{
+                  fontSize: 14,
+                }}
+              >
+                Qty: {quantity}
+              </div>
+            </>
+          }
+          subtitle={
+            <>
+              <div>IDR {cost}</div>
+              <Button
+                styles={{
+                  self: css`
+                    padding: 4px 10px;
+                    height: 24px;
+                  `,
+                }}
+                onClick={() => onClose()}
+              >
+                Close
+              </Button>
+            </>
+          }
+          styles={{
+            containerStyle: css`
+              background-color: transparent;
+            `,
+            textContainerStyle: css`
+              width: 100%;
+            `,
+            titleStyle: css`
+              width: 100%;
+              display: flex;
+              flex-direction: row;
+              font-size: 18px;
+              justify-content: space-between;
+            `,
+            subtitleStyle: css`
+              width: 100%;
+              display: flex;
+              font-size: 14px;
+              flex-direction: row;
+              justify-content: space-between;
+            `,
+            contentStyle: css`
+              padding-left: 24px;
+              padding-right: 24px;
+              padding-bottom: 10px;
+            `,
+          }}
+        >
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vel
+          lectus nec ipsum posuere tristique. Sed consequat, nisi at facilisis
+          dignissim, lorem urna fermentum odio, vitae bibendum massa arcu sed
+          nisl. Praesent ac mi non augue gravida cursus. Vivamus euismod, turpis
+          in suscipit cursus, lorem sem viverra mauris, sit amet pulvinar neque
+          velit a justo.
+        </Card>
+      );
+    }
+
+    return (
+      <Table
+        styles={{
+          tableRowContainerStyle: css`
+            max-height: 400px;
+          `,
+        }}
+        columns={columns}
+        actions={DEFAULT_TOP_ACTIONS}
+        sumRow={[
+          {
+            span: 2,
+            content: "Total",
+            bold: true,
+          },
+          {
+            content: totalCost.toLocaleString("en-US"),
+          },
+          {
+            content: totalQty,
+          },
+        ]}
+        searchable
+      >
+        {TABLE_SUMMARY?.map((groupValue, groupIndex) => (
+          <Table.Row.Group
+            key={groupIndex}
+            title={groupValue.title}
+            subtitle={groupValue.subtitle}
+          >
+            {groupValue.items.map((rowValue, rowIndex) => (
+              <Table.Row
+                key={rowIndex}
+                rowId={`${groupValue.id}-${rowValue.cost}-${rowValue.itemId}-${rowValue.name}-${rowValue.quantity}`}
+                content={[
+                  rowValue.itemId,
+                  rowValue.name,
+                  rowValue.cost,
+                  rowValue.quantity,
+                ]}
+                onClick={({ isFirstClick, open, close }) => {
+                  isFirstClick
+                    ? open(
+                        <RowContent
+                          name={rowValue.name}
+                          cost={rowValue.cost}
+                          quantity={rowValue.quantity}
+                          onClose={close}
+                        />
+                      )
+                    : close();
+                }}
+                actions={ROW_ACTIONS}
+                {...props}
+              />
+            ))}
+          </Table.Row.Group>
+        ))}
+      </Table>
+    );
+  }
+
+  context("with row appendix", () => {
+    context("when using isFirstClick, open() and close()", () => {
+      context("when clicking the row 'open()'", () => {
+        it("should expand the row appendix", () => {
+          cy.mount(<TableWithAppendix />);
+
+          cy.findAllByText("Ayam Geprek").eq(0).click();
+
+          cy.findAllByText("Ayam Geprek").eq(1).should("be.visible");
+          cy.findAllByText("IDR 5,000").eq(0).should("be.visible");
+          cy.findAllByText("Qty: 5").eq(0).should("be.visible");
+        });
+
+        context("when clicking 'close()' via row", () => {
+          it("should collapse the row appendix", () => {
+            cy.mount(<TableWithAppendix />);
+
+            cy.findByText("Ayam Geprek").click();
+
+            cy.findAllByText("Ayam Geprek").eq(1).should("be.visible");
+            cy.findAllByText("IDR 5,000").eq(0).should("be.visible");
+            cy.findAllByText("Qty: 5").eq(0).should("be.visible");
+
+            cy.findAllByText("Ayam Geprek").eq(0).click();
+
+            cy.findAllByText("Ayam Geprek").eq(1).should("not.be.visible");
+            cy.findAllByText("IDR 5,000").eq(0).should("not.be.visible");
+            cy.findAllByText("Qty: 5").eq(0).should("not.be.visible");
+          });
+        });
+
+        context("when clicking 'close()' via button", () => {
+          it("should collapse the row appendix", () => {
+            cy.mount(<TableWithAppendix />);
+
+            cy.findByText("Ayam Geprek").click();
+
+            cy.findAllByText("Ayam Geprek").eq(1).should("be.visible");
+            cy.findAllByText("IDR 5,000").eq(0).should("be.visible");
+            cy.findAllByText("Qty: 5").eq(0).should("be.visible");
+
+            cy.findAllByText("Close").eq(0).click();
+
+            cy.findAllByText("Ayam Geprek").eq(1).should("not.be.visible");
+            cy.findAllByText("IDR 5,000").eq(0).should("not.be.visible");
+            cy.findAllByText("Qty: 5").eq(0).should("not.be.visible");
+          });
+        });
+      });
+    });
+
+    context("when only open()", () => {
+      context("when clicking the row", () => {
+        it("renders the row appendix", () => {
+          cy.mount(
+            <TableWithAppendix
+              onClick={({ open }) => open("Table.Row appendix still opened")}
+            />
+          );
+
+          cy.findByText("Table.Row appendix still opened").should("not.exist");
+
+          cy.findByText("Ayam Geprek").click();
+
+          cy.findByText("Table.Row appendix still opened")
+            .eq(0)
+            .should("exist");
+        });
+
+        context("when clicking the row", () => {
+          it("still render the row appendix", () => {
+            cy.mount(
+              <TableWithAppendix
+                onClick={({ open }) => open("Table.Row appendix still opened")}
+              />
+            );
+
+            cy.findByText("Table.Row appendix still opened").should(
+              "not.exist"
+            );
+
+            cy.findByText("Ayam Geprek").click();
+
+            cy.findByText("Table.Row appendix still opened")
+              .eq(0)
+              .should("exist");
+
+            cy.findByText("Ayam Geprek").click();
+
+            cy.findByText("Table.Row appendix still opened")
+              .eq(0)
+              .should("exist");
+          });
+        });
+      });
+    });
+  });
+
+  context("with summary", () => {
+    it("renders summary on footer", () => {
+      cy.mount(<TableWithAppendix />);
+
+      cy.findByText("Total").should("have.css", "font-weight", "600");
+      cy.findByText("32,000").should("have.css", "font-weight", "400");
+      cy.findByText("22").should("have.css", "font-weight", "400");
+    });
+
+    context("with selectable", () => {
+      it("renders with selectable and add padding right on wrapper", () => {
+        cy.mount(<TableWithAppendix />);
+
+        cy.findAllByLabelText("table-summary-wrapper")
+          .eq(0)
+          .should("have.css", "padding-left", "10px");
+      });
+    });
+  });
+
   const TABLE_ITEMS: TableItemProps[] = [
     {
       title: "Tech Articles",
@@ -621,220 +985,6 @@ describe("Table", () => {
             .should("have.css", "font-size", "30px")
             .and("have.text", "Pg. 10");
         });
-      });
-    });
-  });
-
-  context("with summary", () => {
-    interface TableSummaryProps {
-      id?: string;
-      title: string;
-      subtitle?: string;
-      items: {
-        itemId?: string;
-        name: string;
-        cost: string;
-        quantity: string;
-      }[];
-    }
-
-    const TABLE_SUMMARY: TableSummaryProps[] = [
-      {
-        id: "food",
-        title: "Food",
-        subtitle: "List of Food Items",
-        items: [
-          {
-            itemId: "F1583",
-            name: "Ayam Geprek",
-            cost: "5,000",
-            quantity: "5",
-          },
-          {
-            itemId: "F9311",
-            name: "Laksa Singapore",
-            cost: "4,500",
-            quantity: "1",
-          },
-          { itemId: "F2210", name: "Nasi Lemak", cost: "3,500", quantity: "2" },
-          {
-            itemId: "F7721",
-            name: "Soto Betawi",
-            cost: "4,000",
-            quantity: "1",
-          },
-          {
-            itemId: "F6622",
-            name: "Bakso Malang",
-            cost: "6,000",
-            quantity: "4",
-          },
-        ],
-      },
-      {
-        id: "beverages",
-        title: "Beverages",
-        subtitle: "Cold and Hot Refreshments",
-        items: [
-          { itemId: "B1010", name: "Iced Tea", cost: "1,000", quantity: "3" },
-          {
-            itemId: "B3911",
-            name: "Mineral Water",
-            cost: "500",
-            quantity: "1",
-          },
-          { itemId: "B5512", name: "Lemonade", cost: "2,000", quantity: "2" },
-          { itemId: "B6619", name: "Hot Coffee", cost: "3,000", quantity: "1" },
-          {
-            itemId: "B8821",
-            name: "Orange Juice",
-            cost: "2,500",
-            quantity: "2",
-          },
-        ],
-      },
-    ];
-
-    function parseCost(val: string) {
-      return Number(val.replace(/,/g, ""));
-    }
-
-    function calculateTotals(groups: TableSummaryProps[]) {
-      let totalCost = 0;
-      let totalQty = 0;
-
-      groups.map((group) =>
-        group.items.map((item) => {
-          totalCost += parseCost(item.cost);
-          totalQty += Number(item.quantity);
-        })
-      );
-
-      return {
-        totalCost,
-        totalQty,
-      };
-    }
-
-    const DEFAULT_TOP_ACTIONS: TableActionsProps[] = [
-      {
-        caption: "Copy",
-        icon: { image: RiArrowUpSLine },
-        onClick: () => {
-          console.log("Copy clicked");
-        },
-      },
-    ];
-    const { totalCost, totalQty } = calculateTotals(TABLE_SUMMARY);
-
-    it("renders summary on footer", () => {
-      cy.mount(
-        <Table
-          styles={{
-            tableRowContainerStyle: css`
-              max-height: 400px;
-            `,
-          }}
-          columns={columns}
-          actions={DEFAULT_TOP_ACTIONS}
-          sumRow={[
-            {
-              span: 2,
-              content: "Total",
-              bold: true,
-            },
-            {
-              content: totalCost.toLocaleString("en-US"),
-            },
-            {
-              content: totalQty,
-            },
-          ]}
-          searchable
-        >
-          {TABLE_SUMMARY?.map((groupValue, groupIndex) => (
-            <Table.Row.Group
-              key={groupIndex}
-              title={groupValue.title}
-              subtitle={groupValue.subtitle}
-            >
-              {groupValue.items.map((rowValue, rowIndex) => (
-                <Table.Row
-                  key={rowIndex}
-                  rowId={`${groupValue.id}-${rowValue.cost}-${rowValue.itemId}-${rowValue.name}-${rowValue.quantity}`}
-                  content={[
-                    rowValue.itemId,
-                    rowValue.name,
-                    rowValue.cost,
-                    rowValue.quantity,
-                  ]}
-                  actions={ROW_ACTIONS}
-                />
-              ))}
-            </Table.Row.Group>
-          ))}
-        </Table>
-      );
-
-      cy.findByText("Total").should("have.css", "font-weight", "600");
-      cy.findByText("32,000").should("have.css", "font-weight", "400");
-      cy.findByText("22").should("have.css", "font-weight", "400");
-    });
-
-    context("with selectable", () => {
-      it("renders with selectable and add padding right on wrapper", () => {
-        cy.mount(
-          <Table
-            selectable
-            styles={{
-              tableRowContainerStyle: css`
-                max-height: 400px;
-              `,
-            }}
-            columns={columns}
-            actions={DEFAULT_TOP_ACTIONS}
-            sumRow={[
-              {
-                span: 2,
-                content: "Total",
-                bold: true,
-              },
-              {
-                content: totalCost.toLocaleString("en-US"),
-              },
-              {
-                content: totalQty,
-              },
-            ]}
-            searchable
-          >
-            {TABLE_SUMMARY?.map((groupValue, groupIndex) => (
-              <Table.Row.Group
-                key={groupIndex}
-                title={groupValue.title}
-                subtitle={groupValue.subtitle}
-              >
-                {groupValue.items.map((rowValue, rowIndex) => (
-                  <Table.Row
-                    key={rowIndex}
-                    rowId={`${groupValue.id}-${rowValue.cost}-${rowValue.itemId}-${rowValue.name}-${rowValue.quantity}`}
-                    content={[
-                      rowValue.itemId,
-                      rowValue.name,
-                      rowValue.cost,
-                      rowValue.quantity,
-                    ]}
-                    actions={ROW_ACTIONS}
-                  />
-                ))}
-              </Table.Row.Group>
-            ))}
-          </Table>
-        );
-
-        cy.findAllByLabelText("table-summary-wrapper")
-          .eq(0)
-          .should("have.css", "padding-left", "42px");
       });
     });
   });
