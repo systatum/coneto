@@ -251,8 +251,6 @@ function SteplineItem({
               css`
                 right: 12px;
               `}
-
-              background-color: ${INNER_CIRCLE_VARIANT_COLOR[variant]};
             `,
             drawerStyle: (placement) => css`
               ${placement?.startsWith("top") &&
@@ -263,8 +261,6 @@ function SteplineItem({
               css`
                 top: 3px;
               `}
-
-              background-color: ${OUTER_CIRCLE_VARIANT_COLOR[variant]};
             `,
           }}
           dialog={<StepLabel />}
