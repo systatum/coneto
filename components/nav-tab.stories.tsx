@@ -203,18 +203,19 @@ export const WithActions: Story = {
               console.log("Settings button was clicked");
             },
           },
-          {
-            caption: "Crop",
-            icon: { image: RiCropLine },
-            onClick: () => {
-              console.log("Crop button was clicked");
-            },
-          },
+
           {
             caption: "Add",
             icon: { image: RiAddBoxLine },
             onClick: () => {
               console.log("Add button was clicked");
+            },
+          },
+          {
+            caption: "Crop",
+            icon: { image: RiCropLine },
+            onClick: () => {
+              console.log("Crop button was clicked");
             },
           },
         ]}
