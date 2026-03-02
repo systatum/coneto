@@ -21,6 +21,7 @@ export interface TipMenuItemProps {
   onClick?: (e?: React.MouseEvent) => void;
   isDangerous?: boolean;
   variant?: TipMenuItemVariantType;
+  className?: string;
 }
 
 function TipMenu({
@@ -84,6 +85,7 @@ function TipMenu({
           caption={menu.caption}
           icon={menu.icon}
           isDangerous={menu.isDangerous}
+          className={menu.className}
           onClick={(e) => {
             e.stopPropagation();
 
@@ -105,6 +107,7 @@ function TipMenuItem({
   onClick,
   isDangerous = false,
   variant,
+  className,
 }: TipMenuItemProps) {
   return (
     <StyledTipMenuItem
@@ -112,6 +115,7 @@ function TipMenuItem({
       aria-label="tip-menu-item"
       $isDangerous={isDangerous}
       onMouseDown={onClick}
+      className={className}
     >
       {icon && (
         <Figure

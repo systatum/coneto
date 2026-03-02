@@ -18,6 +18,7 @@ export interface ContextMenuProps {
   iconSize?: number;
   open?: boolean;
   styles?: ContextMenuStylesProps;
+  className?: string;
 }
 
 export interface ContextMenuStylesProps {
@@ -37,6 +38,7 @@ export default function ContextMenu({
   onOpen,
   open,
   iconSize = 16,
+  className,
 }: ContextMenuProps) {
   const buttonProps: ButtonProps = {
     variant: "ghost",
@@ -86,6 +88,7 @@ export default function ContextMenu({
         }}
         onOpen={onOpen}
         title={action.caption}
+        className={action.className}
         aria-label="action-button"
       >
         {action.icon && (
