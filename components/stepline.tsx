@@ -31,7 +31,11 @@ function Stepline({ children, styles, gap, collapsed }: SteplineProps) {
   const childArray = Children.toArray(children).filter(isValidElement);
 
   return (
-    <SteplineWrapper $containerStyle={styles?.self} $gap={gap}>
+    <SteplineWrapper
+      aria-label="stepline-wrapper"
+      $containerStyle={styles?.self}
+      $gap={gap}
+    >
       {childArray.map((child, index) => {
         if (
           !isValidElement<
@@ -52,6 +56,7 @@ function Stepline({ children, styles, gap, collapsed }: SteplineProps) {
         return (
           <StepGroup
             key={index}
+            aria-label="stepline-group-wrapper"
             $clickable={Boolean(variant && onClick)}
             onClick={() => variant && onClick?.()}
             onMouseEnter={() => setHoveredIndex(index + 1)}
@@ -204,21 +209,23 @@ function SteplineItem({
 
   function StepLabel() {
     return (
-      <TextWrapper
-        $variant={variant}
-        $style={css`
-          ${collapsed &&
-          css`
-            gap: 5px;
+      (title || subtitle) && (
+        <TextWrapper
+          $variant={variant}
+          $style={css`
+            ${collapsed &&
+            css`
+              gap: 5px;
+            `}
+            ${styles?.textWrapperStyle}
           `}
-          ${styles?.textWrapperStyle}
-        `}
-      >
-        {title && <Title $style={styles?.titleStyle}>{title}</Title>}
-        {subtitle && (
-          <Subtitle $style={styles?.subtitleStyle}>{subtitle}</Subtitle>
-        )}
-      </TextWrapper>
+        >
+          {title && <Title $style={styles?.titleStyle}>{title}</Title>}
+          {subtitle && (
+            <Subtitle $style={styles?.subtitleStyle}>{subtitle}</Subtitle>
+          )}
+        </TextWrapper>
+      )
     );
   }
 
@@ -267,8 +274,7 @@ function SteplineItem({
       ) : (
         <>
           <StepCicle />
-          (title || subtitle) && (
-          <StepLabel />)
+          <StepLabel />
         </>
       )}
     </StepItemWrapper>
