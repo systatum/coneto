@@ -13,24 +13,25 @@ import {
 } from "react";
 import styled, { css } from "styled-components";
 import type { CSSProp } from "styled-components";
+import { Tooltip } from "./tooltip";
 
 export interface SteplineProps {
   children?: ReactNode;
-  style?: CSSProp;
+  styles?: SteplineStylesProps;
+  gap?: number;
+  collapsed?: boolean;
 }
 
-export type SteplineItemProps = SteplineItemState &
-  Partial<{
-    hoveredIndex?: number | null;
-    containerStyle?: CSSProp;
-  }>;
+export interface SteplineStylesProps {
+  self?: CSSProp;
+}
 
-function Stepline({ children, style }: SteplineProps) {
+function Stepline({ children, styles, gap, collapsed }: SteplineProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const childArray = Children.toArray(children).filter(isValidElement);
 
   return (
-    <SteplineWrapper $containerStyle={style}>
+    <SteplineWrapper $containerStyle={styles?.self} $gap={gap}>
       {childArray.map((child, index) => {
         if (
           !isValidElement<
@@ -46,6 +47,8 @@ function Stepline({ children, style }: SteplineProps) {
         const onClick = child.props.onClick;
         const line = child.props.line ?? "solid";
 
+        const isSteplineItem = child.type === Stepline.Item;
+
         return (
           <StepGroup
             key={index}
@@ -53,6 +56,7 @@ function Stepline({ children, style }: SteplineProps) {
             onClick={() => variant && onClick?.()}
             onMouseEnter={() => setHoveredIndex(index + 1)}
             onMouseLeave={() => setHoveredIndex(null)}
+            $gap={gap}
           >
             {index > 0 && (
               <StepLine
@@ -65,6 +69,11 @@ function Stepline({ children, style }: SteplineProps) {
               {cloneElement(child, {
                 id: index + 1,
                 hoveredIndex,
+                ...(isSteplineItem
+                  ? {
+                      collapsed,
+                    }
+                  : {}),
               })}
             </StepContent>
           </StepGroup>
@@ -74,58 +83,10 @@ function Stepline({ children, style }: SteplineProps) {
   );
 }
 
-function SteplineItem({
-  subtitle,
-  title,
-  variant = "todo",
-  containerStyle,
-  id,
-  hoveredIndex,
-  active,
-}: SteplineItemProps) {
-  return (
-    <StepItemWrapper id={String(id)} $style={containerStyle}>
-      <div
-        style={{
-          position: "relative",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <OuterCircle
-          aria-label="outer-circle"
-          $active={active || hoveredIndex === id}
-          $variant={variant}
-        />
-        <InnerCircle aria-label="inner-circle" $variant={variant}>
-          {id}
-        </InnerCircle>
-      </div>
-      {(title || subtitle) && (
-        <TextWrapper $variant={variant}>
-          {title && (
-            <span style={{ fontWeight: 500, fontSize: "0.875rem" }}>
-              {title}
-            </span>
-          )}
-          {subtitle && (
-            <span
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                fontSize: "12px",
-              }}
-            >
-              {subtitle}
-            </span>
-          )}
-        </TextWrapper>
-      )}
-    </StepItemWrapper>
-  );
-}
-
-const SteplineWrapper = styled.div<{ $containerStyle?: CSSProp }>`
+const SteplineWrapper = styled.div<{
+  $containerStyle?: CSSProp;
+  $gap?: number;
+}>`
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
@@ -135,10 +96,16 @@ const SteplineWrapper = styled.div<{ $containerStyle?: CSSProp }>`
   &::-webkit-scrollbar {
     height: 6px;
   }
+
+  ${({ $gap }) =>
+    $gap &&
+    css`
+      gap: ${`${$gap}px`};
+    `}
   ${({ $containerStyle }) => $containerStyle}
 `;
 
-const StepGroup = styled.div<{ $clickable?: boolean }>`
+const StepGroup = styled.div<{ $clickable?: boolean; $gap?: number }>`
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
@@ -147,6 +114,12 @@ const StepGroup = styled.div<{ $clickable?: boolean }>`
     $clickable &&
     css`
       cursor: pointer;
+    `}
+
+  ${({ $gap }) =>
+    $gap &&
+    css`
+      gap: ${`${$gap}px`};
     `}
 `;
 
@@ -175,6 +148,133 @@ const StepLine = styled.div<{
         : "#9ca3af"};
 `;
 
+export type SteplineItemProps = SteplineItemState &
+  Partial<{
+    hoveredIndex?: number | null;
+    styles?: SteplineItemStylesProps;
+  }>;
+
+export interface SteplineItemStylesProps {
+  containerStyle?: CSSProp;
+  outerCircleStyle?: CSSProp;
+  innerCircleStyle?: CSSProp;
+  textWrapperStyle?: CSSProp;
+  titleStyle?: CSSProp;
+  subtitleStyle?: CSSProp;
+}
+
+function SteplineItem({
+  subtitle,
+  title,
+  variant = "todo",
+  styles,
+  id,
+  hoveredIndex,
+  active,
+  ...props
+}: SteplineItemProps) {
+  const { collapsed } = props as SteplineProps;
+
+  function StepCicle() {
+    return (
+      <div
+        style={{
+          position: "relative",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <OuterCircle
+          aria-label="outer-circle"
+          $active={active || hoveredIndex === id}
+          $variant={variant}
+          $style={styles?.outerCircleStyle}
+        />
+        <InnerCircle
+          aria-label="inner-circle"
+          $variant={variant}
+          $style={styles?.innerCircleStyle}
+        >
+          {id}
+        </InnerCircle>
+      </div>
+    );
+  }
+
+  function StepLabel() {
+    return (
+      <TextWrapper
+        $variant={variant}
+        $style={css`
+          ${collapsed &&
+          css`
+            gap: 5px;
+          `}
+          ${styles?.textWrapperStyle}
+        `}
+      >
+        {title && <Title $style={styles?.titleStyle}>{title}</Title>}
+        {subtitle && (
+          <Subtitle $style={styles?.subtitleStyle}>{subtitle}</Subtitle>
+        )}
+      </TextWrapper>
+    );
+  }
+
+  return (
+    <StepItemWrapper id={String(id)} $style={styles?.containerStyle}>
+      {collapsed ? (
+        <Tooltip
+          styles={{
+            arrowStyle: (placement) => css`
+              ${placement?.startsWith("top") &&
+              css`
+                bottom: 1.5px;
+              `}
+              ${placement?.startsWith("bottom") &&
+              css`
+                top: 1.5px;
+              `}
+              ${placement?.endsWith("start") &&
+              css`
+                left: 12px;
+              `}
+              ${placement?.endsWith("end") &&
+              css`
+                right: 12px;
+              `}
+
+              background-color: ${INNER_CIRCLE_VARIANT_COLOR[variant]};
+            `,
+            drawerStyle: (placement) => css`
+              ${placement?.startsWith("top") &&
+              css`
+                bottom: 3px;
+              `}
+              ${placement?.startsWith("bottom") &&
+              css`
+                top: 3px;
+              `}
+
+              background-color: ${OUTER_CIRCLE_VARIANT_COLOR[variant]};
+            `,
+          }}
+          dialog={<StepLabel />}
+        >
+          <StepCicle />
+        </Tooltip>
+      ) : (
+        <>
+          <StepCicle />
+          (title || subtitle) && (
+          <StepLabel />)
+        </>
+      )}
+    </StepItemWrapper>
+  );
+}
+
 const StepItemWrapper = styled.div<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: row;
@@ -186,7 +286,24 @@ const StepItemWrapper = styled.div<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
-const OuterCircle = styled.div<{ $active?: boolean; $variant: string }>`
+const Title = styled.span<{ $style?: CSSProp }>`
+  font-weight: 500;
+  font-size: 0.875rem;
+  ${({ $style }) => $style}
+`;
+
+const Subtitle = styled.span<{ $style?: CSSProp }>`
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  ${({ $style }) => $style}
+`;
+
+const OuterCircle = styled.div<{
+  $active?: boolean;
+  $variant: string;
+  $style?: CSSProp;
+}>`
   position: absolute;
   display: flex;
   align-items: center;
@@ -208,10 +325,15 @@ const OuterCircle = styled.div<{ $active?: boolean; $variant: string }>`
     `}
   ${({ $variant }) => css`
     background-color: ${OUTER_CIRCLE_VARIANT_COLOR[$variant]};
-  `}
+  `};
+
+  ${({ $style }) => $style}
 `;
 
-const InnerCircle = styled.div<{ $variant: string }>`
+const InnerCircle = styled.div<{
+  $variant: string;
+  $style?: CSSProp;
+}>`
   position: relative;
   display: flex;
   align-items: center;
@@ -227,12 +349,16 @@ const InnerCircle = styled.div<{ $variant: string }>`
   ${({ $variant }) => css`
     background-color: ${INNER_CIRCLE_VARIANT_COLOR[$variant]};
   `}
+
+  ${({ $style }) => $style}
 `;
 
-const TextWrapper = styled.div<{ $variant: string }>`
+const TextWrapper = styled.div<{ $variant: string; $style?: CSSProp }>`
   display: flex;
   flex-direction: column;
   ${({ $variant }) => TEXT_VARIANT_COLOR[$variant]}
+
+  ${({ $style }) => $style}
 `;
 
 Stepline.Item = SteplineItem;
