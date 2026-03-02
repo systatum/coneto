@@ -407,6 +407,7 @@ const NavTabHeader = styled.div<{
   flex-direction: row;
   position: relative;
   background-color: white;
+  gap: 6px;
 
   ${({ $actions }) =>
     $actions &&
