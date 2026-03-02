@@ -345,7 +345,11 @@ function NavTab({
         {actions && (
           <NavTabHeader
             $actions={!!actions}
-            $style={styles?.containerActionsStyle}
+            $style={css`
+              gap: 6px;
+
+              ${styles?.containerActionsStyle}
+            `}
           >
             {actions.map((action, index) => {
               return (
@@ -407,7 +411,6 @@ const NavTabHeader = styled.div<{
   flex-direction: row;
   position: relative;
   background-color: white;
-  gap: 6px;
 
   ${({ $actions }) =>
     $actions &&
