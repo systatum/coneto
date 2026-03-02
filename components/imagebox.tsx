@@ -181,7 +181,11 @@ function Imagebox({
         onChange={handleFileChange}
       />
 
-      <AddIconWrapper $isDragging={isDragging} $editable={editable}>
+      <AddIconWrapper
+        aria-label="imagebox-add-icon"
+        $isDragging={isDragging}
+        $editable={editable}
+      >
         <RiAddLine size={icon} />
       </AddIconWrapper>
     </InputBox>
