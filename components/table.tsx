@@ -1031,7 +1031,7 @@ function TableRow({
   }, [isLast, onLastRowReached]);
 
   const [isHovered, setIsHovered] = useState<null | string>(null);
-  const [isFirstClick, setIsFirstClick] = useState<boolean>(false);
+  const [isFirstClick, setIsFirstClick] = useState<boolean>(true);
   const [rowContent, setRowContent] = useState<ReactNode | null>(null);
 
   const childArray = Children.toArray(children).filter(isValidElement);
@@ -1053,13 +1053,13 @@ function TableRow({
                   handleSelect?.(rowId);
                 }
               },
-              close: () => {
-                setRowContent(null);
-                setIsFirstClick((prev) => !prev);
+              close: async () => {
+                await setIsFirstClick((prev) => !prev);
+                await setRowContent(null);
               },
-              open: (content) => {
-                setRowContent(content);
-                setIsFirstClick((prev) => !prev);
+              open: async (content) => {
+                await setIsFirstClick((prev) => !prev);
+                await setRowContent(content);
               },
               isFirstClick,
             });
@@ -1356,10 +1356,9 @@ const TableRowContent = styled(motion.div)<{
 }>`
   display: flex;
   position: relative;
-  border-left: 1px solid #e5e7eb;
-  border-right: 1px solid #e5e7eb;
-  border-bottom: 1px solid #e5e7eb;
-  box-shadow: inset 0 0 0 2px #00000033;
+  box-shadow: inset 0 4px 5px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(to bottom, #ececec 0%, #f6f6f6 35%, #f0f0f0 100%);
+  border: 0;
 
   ${({ $style }) => $style}
 `;
