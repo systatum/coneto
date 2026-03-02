@@ -198,7 +198,6 @@ export const WithActions: Story = {
         onChange={(activeTab) => setActiveTab(activeTab)}
         actions={[
           {
-            caption: "Settings",
             icon: { image: RiSettings5Line },
             onClick: () => {
               console.log("Settings button was clicked");
