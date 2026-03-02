@@ -75,33 +75,24 @@ export const NonEditable: Story = {
 
 export const Small: Story = {
   render: () => {
-    const [, setValue] = useState();
-    const onChangeValue = (e) => {
-      setValue(e);
-    };
+    const [value, setValue] = useState<string | File | undefined>(undefined);
 
-    return <Imagebox size="sm" onFileSelected={onChangeValue} />;
+    return <Imagebox value={value} size="sm" onFileSelected={setValue} />;
   },
 };
 
 export const Medium: Story = {
   render: () => {
-    const [, setValue] = useState();
-    const onChangeValue = (e) => {
-      setValue(e);
-    };
+    const [value, setValue] = useState<string | File | undefined>(undefined);
 
-    return <Imagebox size="md" onFileSelected={onChangeValue} />;
+    return <Imagebox value={value} size="md" onFileSelected={setValue} />;
   },
 };
 
 export const Large: Story = {
   render: () => {
-    const [, setValue] = useState();
-    const onChangeValue = (e) => {
-      setValue(e);
-    };
+    const [value, setValue] = useState<string | File | undefined>(undefined);
 
-    return <Imagebox size="lg" onFileSelected={onChangeValue} />;
+    return <Imagebox value={value} size="lg" onFileSelected={setValue} />;
   },
 };
