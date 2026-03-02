@@ -2127,6 +2127,9 @@ export const WithRowAppendix: Story = {
             </>
           }
           styles={{
+            containerStyle: css`
+              background-color: transparent;
+            `,
             textContainerStyle: css`
               width: 100%;
             `,
@@ -2216,15 +2219,15 @@ export const WithRowAppendix: Story = {
                   actions={ROW_ACTION}
                   onClick={({ isFirstClick, open, close }) => {
                     isFirstClick
-                      ? close()
-                      : open(
+                      ? open(
                           <RowContent
                             name={rowValue.name}
                             cost={rowValue.cost}
                             quantity={rowValue.quantity}
                             onClose={close}
                           />
-                        );
+                        )
+                      : close();
                   }}
                 >
                   <Table.Row.Cell>{rowValue.itemId}</Table.Row.Cell>
