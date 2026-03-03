@@ -7,8 +7,161 @@ import {
   RiUser2Line,
 } from "@remixicon/react";
 import { OptionsProps } from "@/components/selectbox";
+import { useState } from "react";
 
 describe("Combobox", () => {
+  context("selectedOptions", () => {
+    context("when using string value", () => {
+      it("should update and return string value", () => {
+        const onChange = cy.stub().as("onChange");
+
+        function ComboWithString() {
+          const [value, setValue] = useState<string>("");
+
+          return (
+            <Combobox
+              options={[
+                { text: "Apple", value: "1" },
+                { text: "Banana", value: "2" },
+              ]}
+              selectedOptions={value}
+              onChange={(selectedOptions: string) => {
+                setValue(selectedOptions);
+                onChange(selectedOptions);
+              }}
+              placeholder="Select a fruit..."
+            />
+          );
+        }
+        cy.mount(<ComboWithString />);
+
+        cy.findByPlaceholderText("Select a fruit...").click();
+        cy.findByRole("option", { name: "Apple" }).click();
+
+        cy.findByPlaceholderText("Select a fruit...").should(
+          "have.value",
+          "Apple"
+        );
+
+        cy.findByDisplayValue("Apple").should("be.visible");
+        cy.get("@onChange").should("have.been.calledWith", "1");
+      });
+    });
+
+    context("when using number value", () => {
+      it("should give callback number value", () => {
+        const onChange = cy.stub().as("onChange");
+
+        function ComboWithNumber() {
+          const [value, setValue] = useState<number>(0);
+
+          return (
+            <Combobox
+              options={[
+                { text: "Apple", value: "1" },
+                { text: "Banana", value: "2" },
+              ]}
+              selectedOptions={value}
+              onChange={(selectedOptions: number) => {
+                setValue(selectedOptions);
+                onChange(selectedOptions);
+              }}
+              placeholder="Select a fruit..."
+            />
+          );
+        }
+
+        cy.mount(<ComboWithNumber />);
+
+        cy.findByPlaceholderText("Select a fruit...").click();
+        cy.findByRole("option", { name: "Apple" }).click();
+
+        cy.findByPlaceholderText("Select a fruit...").should(
+          "have.value",
+          "Apple"
+        );
+
+        cy.findByDisplayValue("Apple").should("be.visible");
+
+        cy.get("@onChange").should("have.been.calledWith", 1);
+      });
+    });
+
+    context("when using string[] value", () => {
+      it("should update and return string[] value", () => {
+        const onChange = cy.stub().as("onChange");
+
+        function ComboWithStringArray() {
+          const [value, setValue] = useState<string[]>([]);
+
+          return (
+            <Combobox
+              multiple
+              options={[
+                { text: "Apple", value: "1" },
+                { text: "Banana", value: "2" },
+              ]}
+              selectedOptions={value}
+              onChange={(selectedOptions: string[]) => {
+                setValue(selectedOptions);
+                onChange(selectedOptions);
+              }}
+              placeholder="Select a fruit..."
+            />
+          );
+        }
+
+        cy.mount(<ComboWithStringArray />);
+
+        cy.findByPlaceholderText("Select a fruit...").click();
+
+        cy.findByRole("option", { name: "Apple" }).click();
+        cy.findByRole("option", { name: "Banana" }).click();
+
+        cy.findByDisplayValue("Apple, Banana").should("be.visible");
+
+        cy.get("@onChange").should("have.been.calledWith", ["1", "2"]);
+      });
+    });
+
+    context("when using number[] value", () => {
+      it("should give callback number[] value", () => {
+        const onChange = cy.stub().as("onChange");
+
+        function ComboWithStringArray() {
+          const [value, setValue] = useState<number[]>([0]);
+
+          return (
+            <Combobox
+              multiple
+              options={[
+                { text: "Apple", value: "1" },
+                { text: "Banana", value: "2" },
+              ]}
+              selectedOptions={value}
+              onChange={(selectedOptions: number[]) => {
+                setValue(selectedOptions);
+                onChange(selectedOptions);
+              }}
+              placeholder="Select a fruit..."
+            />
+          );
+        }
+
+        cy.mount(<ComboWithStringArray />);
+
+        cy.findByPlaceholderText("Select a fruit...").click();
+
+        cy.findByRole("option", { name: "Apple" }).click();
+        cy.findByRole("option", { name: "Banana" }).click();
+
+        cy.findByDisplayValue("Apple, Banana").should("be.visible");
+
+        cy.get("@onChange").should("have.been.calledWith", [0, 1, 2]);
+      });
+    });
+  });
+
   context("with dropdowns", () => {
     it("renders initialize drawer with min-width 200px", () => {
       cy.mount(
