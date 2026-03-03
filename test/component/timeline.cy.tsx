@@ -99,7 +99,7 @@ describe("Timeline", () => {
         });
 
         TIMELINE_ITEMS.map((props) => {
-          cy.findByText(props.title).click();
+          cy.findByText(String(props.title)).click();
           cy.get("@consoleLog").should("have.been.calledWith", props.title);
         });
       });

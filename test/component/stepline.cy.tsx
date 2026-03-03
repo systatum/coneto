@@ -45,6 +45,81 @@ describe("Stepline", () => {
     },
   ];
 
+  context("collapsed", () => {
+    it("should not render the text", () => {
+      cy.mount(
+        <Stepline collapsed>
+          {STEPLINE_ITEMS.map((props, index) => (
+            <Stepline.Item key={index} {...props} />
+          ))}
+        </Stepline>
+      );
+
+      cy.findByText(String(STEPLINE_ITEMS[0].title)).should("not.exist");
+      cy.findByText(String(STEPLINE_ITEMS[0].subtitle)).should("not.exist");
+    });
+
+    context("when hovering", () => {
+      it("should render in the center (inside or outside)", () => {
+        cy.mount(
+          <Stepline collapsed>
+            {STEPLINE_ITEMS.map((props, index) => (
+              <Stepline.Item key={index} {...props} />
+            ))}
+          </Stepline>
+        );
+
+        cy.findByText(String(STEPLINE_ITEMS[0].title)).should("not.exist");
+        cy.findByText(String(STEPLINE_ITEMS[0].subtitle)).should("not.exist");
+
+        cy.findAllByLabelText("inner-circle").eq(0).realHover();
+
+        cy.wait(200);
+
+        cy.findByText(String(STEPLINE_ITEMS[0].title)).should("exist");
+        cy.findByText(String(STEPLINE_ITEMS[0].subtitle)).should("exist");
+      });
+    });
+  });
+
+  context("gap", () => {
+    it("should render with gap 8px (by default)", () => {
+      cy.mount(
+        <Stepline>
+          {STEPLINE_ITEMS.map((props, index) => (
+            <Stepline.Item key={index} {...props} />
+          ))}
+        </Stepline>
+      );
+
+      cy.findByLabelText("stepline-wrapper").should("have.css", "gap", "8px");
+      cy.findAllByLabelText("stepline-group-wrapper")
+        .eq(0)
+        .should("have.css", "gap", "8px");
+    });
+
+    context("when given 16px", () => {
+      it("should render with gap 16px", () => {
+        cy.mount(
+          <Stepline gap={16}>
+            {STEPLINE_ITEMS.map((props, index) => (
+              <Stepline.Item key={index} {...props} />
+            ))}
+          </Stepline>
+        );
+
+        cy.findByLabelText("stepline-wrapper").should(
+          "have.css",
+          "gap",
+          "16px"
+        );
+        cy.findAllByLabelText("stepline-group-wrapper")
+          .eq(0)
+          .should("have.css", "gap", "16px");
+      });
+    });
+  });
+
   context("position", () => {
     context("when hovering", () => {
       it("should render in the center (inside or outside)", () => {
@@ -103,10 +178,10 @@ describe("Stepline", () => {
         });
 
         STEPLINE_ITEMS.map((props) => {
-          cy.findByText(props.title).click();
+          cy.findByText(String(props.title)).click();
 
           const noLogTitles = ["Offer Sent", "Final Interview"];
-          if (noLogTitles.includes(props.title)) {
+          if (noLogTitles.includes(String(props.title))) {
             cy.get("@consoleLog").should(
               "not.have.been.calledWith",
               props.title

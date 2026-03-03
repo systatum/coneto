@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { CSSProp } from "styled-components";
 
 export interface SteplineItemState {
-  title?: string;
+  title?: ReactNode;
   subtitle?: ReactNode;
   variant?: "current" | "todo" | "error" | "completed";
   line?: "dash" | "dot" | "solid";
