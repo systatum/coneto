@@ -47,6 +47,21 @@ This object allows you to override styles for individual parts:
 
 Each field accepts a \`CSSProp\` (styled-components compatible) and can be used to control layout, spacing, borders, colors, and visual appearance.
     `,
+      url: {
+        control: "text",
+        description: `
+Initial image source to display inside the Imagebox.
+
+### Render Priority
+1. Selected file preview (if user uploads)
+2. \`url\` prop (initial value)
+3. Placeholder icon (when empty)
+
+Accepts:
+- External URL (recommended)
+- Relative public path (e.g. \`/images/product.png\`)
+`,
+      },
     },
   },
 };
@@ -55,46 +70,47 @@ export default meta;
 
 type Story = StoryObj<typeof Imagebox>;
 
-export const ExtraSmall: Story = {
+export const NonEditable: Story = {
   render: () => {
-    const [, setValue] = useState();
-    const onChangeValue = (e) => {
-      setValue(e);
-    };
-
-    return <Imagebox size="xs" onFileSelected={onChangeValue} />;
+    return (
+      <Imagebox
+        editable={false}
+        size="xs"
+        url="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d"
+        borderless
+      />
+    );
   },
 };
 
-export const Small: Story = {
+export const Size: Story = {
   render: () => {
-    const [, setValue] = useState();
-    const onChangeValue = (e) => {
-      setValue(e);
-    };
+    const [value, setValue] = useState<string | File | undefined>(undefined);
 
-    return <Imagebox size="sm" onFileSelected={onChangeValue} />;
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 10,
+          justifyContent: "start",
+        }}
+      >
+        <Imagebox value={value} size="xs" onFileSelected={setValue} />
+        <Imagebox value={value} size="sm" onFileSelected={setValue} />
+        <Imagebox value={value} size="md" onFileSelected={setValue} />
+        <Imagebox value={value} size="lg" onFileSelected={setValue} />
+      </div>
+    );
   },
 };
 
-export const Medium: Story = {
+export const Borderless: Story = {
   render: () => {
-    const [, setValue] = useState();
-    const onChangeValue = (e) => {
-      setValue(e);
-    };
+    const [value, setValue] = useState<string | File | undefined>(undefined);
 
-    return <Imagebox size="md" onFileSelected={onChangeValue} />;
-  },
-};
-
-export const Large: Story = {
-  render: () => {
-    const [, setValue] = useState();
-    const onChangeValue = (e) => {
-      setValue(e);
-    };
-
-    return <Imagebox size="lg" onFileSelected={onChangeValue} />;
+    return (
+      <Imagebox value={value} size="md" borderless onFileSelected={setValue} />
+    );
   },
 };
