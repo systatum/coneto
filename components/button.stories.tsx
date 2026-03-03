@@ -10,6 +10,7 @@ import {
 } from "@remixicon/react";
 import styled, { css, CSSProp } from "styled-components";
 import { Calendar } from "./calendar";
+import { useState } from "react";
 
 const meta = {
   title: "Controls/Button",
@@ -79,6 +80,56 @@ Use this component for all user-interactive button actions — from primary call
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+export const Pressed: Story = {
+  args: {
+    variant: "default",
+  },
+  render: (args) => {
+    const [isPressed, setIsPressed] = useState<Set<string>>(new Set());
+
+    const VARIANTS: ButtonVariants["variant"][] = [
+      "link",
+      "outline-default",
+      "outline-primary",
+      "outline-danger",
+      "outline-success",
+      "default",
+      "primary",
+      "danger",
+      "secondary",
+      "ghost",
+      "transparent",
+      "success",
+    ] as const;
+
+    return (
+      <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+        {VARIANTS.map((variant) => (
+          <Button
+            pressed={isPressed.has(variant)}
+            onClick={() =>
+              setIsPressed((prev) => {
+                const next = new Set(prev);
+                if (next.has(variant)) {
+                  next.delete(variant);
+                } else {
+                  next.add(variant);
+                }
+                return next;
+              })
+            }
+            key={variant}
+            {...args}
+            variant={variant}
+          >
+            {variant.charAt(0).toUpperCase() + variant.slice(1)}
+          </Button>
+        ))}
+      </div>
+    );
+  },
+};
 
 export const CustomSizing: Story = {
   args: {
