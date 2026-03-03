@@ -9,15 +9,20 @@ import {
   useRef,
   useState,
 } from "react";
-import { DrawerProps, OptionsProps, Selectbox } from "./selectbox";
+import {
+  DrawerProps,
+  OptionsProps,
+  Selectbox,
+  SelectboxSelectedOptions,
+} from "./selectbox";
 import styled, { css, CSSProp } from "styled-components";
 import { List } from "./list";
 import { FieldLaneProps } from "./field-lane";
 import { Figure, FigureProps } from "./figure";
 
 interface BaseComboboxProps {
-  selectedOptions?: string[];
-  onChange?: (data: string[]) => void;
+  selectedOptions?: SelectboxSelectedOptions;
+  onChange?: (selectedOptions: SelectboxSelectedOptions) => void;
   clearable?: boolean;
   placeholder?: string;
   emptySlate?: string;
@@ -193,15 +198,47 @@ function ComboboxDrawer({
   const [hasScrolled, setHasScrolled] = useState(false);
   const floatingRef = useRef<HTMLUListElement>(null);
 
+  const finalSelectedOptions = Array.isArray(selectedOptions)
+    ? selectedOptions.map(String)
+    : selectedOptions !== undefined
+      ? [String(selectedOptions)]
+      : [];
+
   const selectedIndex = useMemo(
     () =>
-      options.findIndex((option) => selectedOptions.includes(option.value)) +
-      (actions?.length ?? 0),
-    [options, selectedOptions, actions]
+      options.findIndex((option) =>
+        finalSelectedOptions.includes(option.value)
+      ) + (actions?.length ?? 0),
+    [options, finalSelectedOptions, actions]
   );
 
+  const handleOnChange = (values: string[]) => {
+    if (!onChange) return;
+
+    if (Array.isArray(selectedOptions)) {
+      const isNumberArray =
+        selectedOptions.length > 0 && typeof selectedOptions[0] === "number";
+
+      if (isNumberArray) {
+        onChange(values.map(Number));
+      } else {
+        onChange(values);
+      }
+
+      return;
+    }
+
+    if (typeof selectedOptions === "number") {
+      const val = values[0];
+      onChange(val !== undefined ? Number(val) : 0);
+      return;
+    }
+
+    onChange(values[0] ?? "");
+  };
+
   useEffect(() => {
-    if (!hasScrolled && selectedOptions.length > 0 && options.length > 0) {
+    if (!hasScrolled && finalSelectedOptions.length > 0 && options.length > 0) {
       const selectedEl = listRef.current[selectedIndex];
       if (selectedEl) {
         requestAnimationFrame(() => {
@@ -333,7 +370,7 @@ function ComboboxDrawer({
 
           {options.length > 0 ? (
             options.map((option, index) => {
-              const isSelected = selectedOptions.includes(option.value);
+              const isSelected = finalSelectedOptions.includes(option.value);
               const shouldHighlight =
                 highlightOnMatch && isSelected
                   ? true
@@ -364,16 +401,21 @@ function ComboboxDrawer({
                   onMouseDown={(e) => {
                     e.preventDefault();
                     if (multiple) {
-                      if (!selectedOptions.includes(option.value)) {
+                      if (!finalSelectedOptions.includes(option.value)) {
                         if (
                           !maxSelectableItems ||
-                          selectedOptions.length < maxSelectableItems
+                          finalSelectedOptions.length < maxSelectableItems
                         ) {
-                          onChange([...selectedOptions, option.value]);
+                          handleOnChange([
+                            ...finalSelectedOptions,
+                            option.value,
+                          ]);
                         }
                       } else {
-                        onChange(
-                          selectedOptions.filter((val) => val !== option.value)
+                        handleOnChange(
+                          finalSelectedOptions.filter(
+                            (val) => val !== option.value
+                          )
                         );
                       }
                       (
@@ -382,7 +424,7 @@ function ComboboxDrawer({
                     } else {
                       setIsOpen(false);
                       setSelectedOptionsLocal(option);
-                      onChange([option.value]);
+                      handleOnChange([option.value]);
                       setHasInteracted(false);
                     }
 
@@ -413,6 +455,24 @@ function ComboboxDrawer({
   );
 }
 
+type SelectedOptionType<T extends number | string | (number | string)[]> =
+  T extends (number | string)[] ? string[] : T extends number ? number : string;
+
+export function castValue<T extends number | string | (number | string)[]>(
+  value: any,
+  original: T
+): SelectedOptionType<T> {
+  if (Array.isArray(original)) {
+    return (
+      Array.isArray(value) ? value.map(String) : [String(value)]
+    ) as SelectedOptionType<T>;
+  }
+  if (typeof original === "number") {
+    return Number(value) as SelectedOptionType<T>;
+  }
+  return String(value) as SelectedOptionType<T>;
+}
+
 const listContainerStyle = css`
   gap: 0px;
 `;
@@ -429,6 +489,9 @@ const listItemTitleStyle = css`
   font-weight: 400;
   padding: 0px;
   font-size: 12px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 `;
 
 const listItemRowStyle = ({

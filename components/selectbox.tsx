@@ -32,11 +32,13 @@ import styled, { css, CSSProp } from "styled-components";
 import { isValidDateString } from "../lib/date";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 
+export type SelectboxSelectedOptions = number | string | (string | number)[];
+
 interface BaseSelectboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "children"> {
   options?: OptionsProps[];
-  selectedOptions?: string[];
-  onChange?: (data: string[]) => void;
+  selectedOptions?: SelectboxSelectedOptions;
+  onChange?: (selectedOptions: SelectboxSelectedOptions) => void;
   placeholder?: string;
   iconOpened?: RemixiconComponentType;
   iconClosed?: RemixiconComponentType;
@@ -127,21 +129,58 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
     },
     ref
   ) => {
+    const finalSelectedOptions = Array.isArray(selectedOptions)
+      ? selectedOptions.map(String)
+      : selectedOptions !== undefined
+        ? [String(selectedOptions)]
+        : [];
+
     const initialState = options.find(
-      (opt) => opt.value === selectedOptions?.[0]
+      (opt) => opt.value === finalSelectedOptions?.[0]
     ) ?? {
-      text: isValidDateString(selectedOptions?.[0]) ? selectedOptions?.[0] : "",
+      text: isValidDateString(finalSelectedOptions?.[0])
+        ? finalSelectedOptions?.[0]
+        : "",
       value: "0",
+    };
+
+    const handleOnChange = (values: string[]) => {
+      if (!onChange) return;
+
+      if (Array.isArray(selectedOptions)) {
+        const isNumberArray =
+          selectedOptions.length > 0 && typeof selectedOptions[0] === "number";
+
+        if (isNumberArray) {
+          onChange(values.map(Number));
+        } else {
+          onChange(values);
+        }
+
+        return;
+      }
+
+      if (typeof selectedOptions === "number") {
+        const val = values[0];
+        onChange(val !== undefined ? Number(val) : 0);
+        return;
+      }
+
+      onChange(values[0] ?? "");
     };
 
     const [selectedOptionsLocal, setSelectedOptionsLocal] =
       useState<OptionsProps>(initialState);
 
     useEffect(() => {
-      if (selectedOptions?.length > 0 && !multiple) {
+      if (
+        finalSelectedOptions?.length > 0 &&
+        finalSelectedOptions[0] !== "" &&
+        !multiple
+      ) {
         setSelectedOptionsLocal(initialState);
       }
-    }, [selectedOptions, multiple]);
+    }, [finalSelectedOptions, multiple]);
 
     const [isOpen, setIsOpen] = useState(false);
     const [highlightedIndex, setHighlightedIndex] = useState<number | null>(0);
@@ -196,7 +235,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
             "/" +
             value.slice(4, 8);
         }
-        onChange([value]);
+        handleOnChange([value]);
       }
       setSelectedOptionsLocal({ ...selectedOptionsLocal, text: value });
       setIsOpen(value.length > 0);
@@ -249,20 +288,25 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
               FILTERED_OPTIONS[highlightedIndex - (actions?.length ?? 0)];
 
             if (multiple) {
-              if (!selectedOptions.includes(selectedOption.value)) {
+              if (!finalSelectedOptions.includes(selectedOption.value)) {
                 if (
                   !maxSelectableItems ||
-                  selectedOptions.length < maxSelectableItems
+                  finalSelectedOptions.length < maxSelectableItems
                 ) {
-                  onChange([...selectedOptions, selectedOption.value]);
+                  handleOnChange([
+                    ...finalSelectedOptions,
+                    selectedOption.value,
+                  ]);
                 }
               } else {
-                onChange(
-                  selectedOptions.filter((val) => val !== selectedOption.value)
+                handleOnChange(
+                  finalSelectedOptions.filter(
+                    (val) => val !== selectedOption.value
+                  )
                 );
               }
             } else {
-              onChange([selectedOption.value]);
+              handleOnChange([selectedOption.value]);
               setSelectedOptionsLocal(selectedOption);
               setIsOpen(false);
             }
@@ -291,7 +335,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       }
     }, [isOpen]);
 
-    const multipleOptionsJoinedText = selectedOptions
+    const multipleOptionsJoinedText = finalSelectedOptions
       ?.map((val) => options.find((o) => o.value === val)?.text)
       .filter(Boolean)
       .join(", ");
@@ -303,7 +347,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
     const isClearable =
       clearable &&
       (multiple
-        ? selectedOptions?.length
+        ? finalSelectedOptions?.length
         : selectedOptionsLocal?.text.length) !== 0;
 
     return (
@@ -366,26 +410,28 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
                 setConfirmedValue(matched);
                 setSelectedOptionsLocal(matched);
                 if (multiple) {
-                  onChange?.(
-                    selectedOptions?.includes(matched.value)
-                      ? selectedOptions.filter((val) => val !== matched.value)
-                      : [...selectedOptions, matched.value]
+                  handleOnChange?.(
+                    finalSelectedOptions?.includes(matched.value)
+                      ? finalSelectedOptions.filter(
+                          (val) => val !== matched.value
+                        )
+                      : [...finalSelectedOptions, matched.value]
                   );
                 } else {
-                  onChange?.([matched.value]);
+                  handleOnChange?.([matched.value]);
                 }
               } else if (confirmedValue) {
                 setSelectedOptionsLocal(confirmedValue);
                 if (multiple) {
-                  onChange?.(
-                    selectedOptions?.includes(confirmedValue.value)
-                      ? selectedOptions.filter(
+                  handleOnChange?.(
+                    finalSelectedOptions?.includes(confirmedValue.value)
+                      ? finalSelectedOptions.filter(
                           (val) => val !== confirmedValue.value
                         )
-                      : [...selectedOptions, confirmedValue.value]
+                      : [...finalSelectedOptions, confirmedValue.value]
                   );
                 } else {
-                  onChange?.([confirmedValue.value]);
+                  handleOnChange?.([confirmedValue.value]);
                 }
               } else {
                 const empty = { text: "", value: "0" };
@@ -404,7 +450,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
             <ClearIcon
               aria-label="clearable-content"
               onMouseDown={() => {
-                onChange?.([]);
+                handleOnChange?.([]);
                 setSelectedOptionsLocal({ text: "", value: "0" });
                 setHasInteracted(false);
               }}
