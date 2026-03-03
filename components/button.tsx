@@ -67,6 +67,7 @@ export type ButtonProps = Omit<React.ComponentProps<"button">, "style"> &
     open?: boolean;
     styles?: ButtonStylesProps;
     anchorRef?: React.RefObject<HTMLElement>;
+    pressed?: boolean;
   };
 
 export interface ButtonStylesProps {
@@ -96,6 +97,7 @@ function Button({
   onOpen,
   open,
   anchorRef,
+  pressed,
   ...props
 }: ButtonProps) {
   const [isOpenLocal, setIsOpenLocal] = React.useState(false);
@@ -195,6 +197,7 @@ function Button({
       $variant={variant}
     >
       <BaseButton
+        $pressed={pressed}
         onClick={(e) => {
           if (onClick && showSubMenuOn === "caret") {
             onClick(e);
@@ -426,6 +429,7 @@ const BaseButton = styled.button<{
   $size: NonNullable<ButtonVariants["size"]>;
   $isOpen?: boolean;
   $activeBackgroundColor?: string;
+  $pressed?: boolean;
 }>`
   display: flex;
   flex-direction: row;
@@ -524,7 +528,16 @@ const BaseButton = styled.button<{
         `}
       }
     `;
-  }}
+  }};
+
+  ${({ $pressed, $variant }) =>
+    $pressed &&
+    css`
+      background-color: ${getActiveColor($variant)};
+      box-shadow:
+        inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
+        inset 0 -0.5px 0.5px ${getActiveColor($variant)};
+    `};
 
   &:active {
     background-color: ${({ $variant }) => getActiveColor($variant)};
