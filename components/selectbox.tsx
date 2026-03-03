@@ -32,7 +32,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { isValidDateString } from "../lib/date";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 
-export type SelectboxSelectedOptions = number | string | (string | number)[];
+export type SelectboxSelectedOptions = number | string | number[] | string[];
 
 interface BaseSelectboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "children"> {

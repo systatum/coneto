@@ -594,7 +594,7 @@ function Calendar({
                     max-width: 90px;
                   `,
                 }}
-                onChange={(value) => {
+                onChange={(value: string[]) => {
                   onChangeValueDate({
                     target: { name: "month", value },
                   });
@@ -611,7 +611,7 @@ function Calendar({
                     max-width: 75px;
                   `,
                 }}
-                onChange={(value) => {
+                onChange={(value: string[]) => {
                   onChangeValueDate({
                     target: { name: "year", value },
                   });

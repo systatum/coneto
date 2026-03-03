@@ -57,10 +57,11 @@ export type FormValueType =
   | File
   | FileList
   | File[]
-  | string[]
   | null
   | undefined
-  | CountryCodeProps;
+  | CountryCodeProps
+  | string[]
+  | number[];
 
 export type FormFieldType =
   | "text"
