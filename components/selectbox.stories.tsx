@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { OptionsProps, Selectbox } from "./selectbox";
+import { OptionsProps, Selectbox, SelectboxSelectedOptions } from "./selectbox";
 import { useState } from "react";
 
 const meta: Meta<typeof Selectbox> = {
@@ -17,7 +17,7 @@ type Story = StoryObj<typeof Selectbox>;
 
 export const Default: Story = {
   render: () => {
-    const [value, setValue] = useState<string[]>([]);
+    const [value, setValue] = useState<SelectboxSelectedOptions>([]);
 
     const SELECTBOX_DATA: OptionsProps[] = [
       {
@@ -34,7 +34,7 @@ export const Default: Story = {
         <Selectbox
           options={SELECTBOX_DATA}
           selectedOptions={value}
-          onChange={(value: string[]) => setValue(value)}
+          onChange={setValue}
           placeholder="click this place holder"
         >
           {(props) =>
@@ -75,7 +75,7 @@ export const Default: Story = {
 
 export const Clearable: Story = {
   render: () => {
-    const [value, setValue] = useState<string[]>([]);
+    const [value, setValue] = useState<SelectboxSelectedOptions>([]);
 
     const SELECTBOX_DATA: OptionsProps[] = [
       {
@@ -89,7 +89,7 @@ export const Clearable: Story = {
         <Selectbox
           options={SELECTBOX_DATA}
           selectedOptions={value}
-          onChange={(value: string[]) => setValue(value)}
+          onChange={setValue}
           placeholder="click this place holder"
           clearable
         >

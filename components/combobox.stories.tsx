@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { Combobox, ComboboxActionProps } from "./combobox";
-import { OptionsProps } from "./selectbox";
+import { OptionsProps, SelectboxSelectedOptions } from "./selectbox";
 import { RiAddLine } from "@remixicon/react";
 import styled, { css } from "styled-components";
 import { DropdownOptionProps } from "./field-lane";
@@ -100,7 +100,7 @@ type Story = StoryObj<typeof Combobox>;
 
 export const Default: Story = {
   render: () => {
-    const [value, setValue] = useState<string>("");
+    const [value, setValue] = useState<SelectboxSelectedOptions>("");
 
     const FRUIT_OPTIONS: OptionsProps[] = [
       { text: "Apple", value: "1" },
@@ -121,7 +121,7 @@ export const Default: Story = {
         <Combobox
           selectedOptions={value}
           options={FRUIT_OPTIONS}
-          onChange={(value: string) => setValue(value)}
+          onChange={setValue}
           placeholder="Select a fruit..."
         />
       </div>
@@ -211,7 +211,7 @@ export const WithDropdown: Story = {
 
 export const Clearable: Story = {
   render: () => {
-    const [value, setValue] = useState<string>(undefined);
+    const [value, setValue] = useState<SelectboxSelectedOptions>("");
 
     const FRUIT_OPTIONS = [
       { text: "Apple", value: "1" },
@@ -256,7 +256,7 @@ export const Clearable: Story = {
 
 export const WithActions: Story = {
   render: () => {
-    const [value, setValue] = useState<string>("");
+    const [value, setValue] = useState<SelectboxSelectedOptions>("");
 
     const FRUIT_OPTIONS: OptionsProps[] = [
       { text: "Apple", value: "1" },
@@ -291,7 +291,7 @@ export const WithActions: Story = {
           actions={FRUIT_ACTIONS}
           selectedOptions={value}
           options={FRUIT_OPTIONS}
-          onChange={(value: string) => setValue(value)}
+          onChange={setValue}
           placeholder="Select a fruit..."
         />
       </div>
@@ -347,8 +347,8 @@ export const StrictValue: Story = {
 
 export const MultipleSelection: Story = {
   render: () => {
-    const [value1, setValue1] = useState<string[]>([]);
-    const [value2, setValue2] = useState<string[]>([]);
+    const [value1, setValue1] = useState<SelectboxSelectedOptions>([]);
+    const [value2, setValue2] = useState<SelectboxSelectedOptions>([]);
 
     const FRUIT_OPTIONS = [
       { text: "Apple", value: "1" },
@@ -389,7 +389,7 @@ export const MultipleSelection: Story = {
           clearable
           selectedOptions={value1}
           options={FRUIT_OPTIONS}
-          onChange={(value: string[]) => setValue1(value)}
+          onChange={setValue1}
           placeholder="Select a fruit..."
         />
         <Combobox
@@ -400,7 +400,7 @@ export const MultipleSelection: Story = {
           maxSelectableItems={2}
           selectedOptions={value2}
           options={FRUIT_OPTIONS}
-          onChange={(value: string[]) => setValue2(value)}
+          onChange={setValue2}
           placeholder="Select a fruit..."
         />
       </div>
@@ -410,7 +410,7 @@ export const MultipleSelection: Story = {
 
 export const WithCustomRenderer: Story = {
   render: () => {
-    const [value, setValue] = useState<string[]>([]);
+    const [value, setValue] = useState<SelectboxSelectedOptions>([]);
 
     const FruitDisplay = ({ title, description }: FruitDisplayProps) => {
       return (
@@ -638,7 +638,7 @@ export const WithCustomRenderer: Story = {
           clearable
           selectedOptions={value}
           options={FRUIT_OPTIONS}
-          onChange={(value: string[]) => setValue(value)}
+          onChange={setValue}
           placeholder="Select a fruit..."
         />
       </div>
