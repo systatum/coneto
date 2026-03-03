@@ -1,5 +1,5 @@
 import styled, { css } from "styled-components";
-import { Button, ButtonVariants } from "./../../components/button";
+import { Button, ButtonProps, ButtonVariants } from "./../../components/button";
 import {
   RiSpam2Line,
   RiForbid2Line,
@@ -67,49 +67,49 @@ describe("Button", () => {
   ];
 
   context("pressed", () => {
+    function PressedButton(props: ButtonProps) {
+      const [isPressed, setIsPressed] = useState<Set<string>>(new Set());
+
+      const VARIANTS: ButtonVariants["variant"][] = [
+        "link",
+        "outline-default",
+        "outline-primary",
+        "outline-danger",
+        "outline-success",
+        "default",
+        "primary",
+        "danger",
+        "secondary",
+        "ghost",
+        "transparent",
+        "success",
+      ] as const;
+
+      return (
+        <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+          {VARIANTS.map((variant) => (
+            <Button
+              key={variant}
+              variant={variant}
+              pressed={isPressed.has(variant)}
+              onClick={() =>
+                setIsPressed((prev) => {
+                  const next = new Set(prev);
+                  if (next.has(variant)) next.delete(variant);
+                  else next.add(variant);
+                  return next;
+                })
+              }
+              {...props}
+            >
+              {variant.charAt(0).toUpperCase() + variant.slice(1)}
+            </Button>
+          ))}
+        </div>
+      );
+    }
     context("when clicking", () => {
       it("renders with the focus content", () => {
-        cy.viewport(800, 700);
-        function PressedButton() {
-          const [isPressed, setIsPressed] = useState<Set<string>>(new Set());
-
-          const VARIANTS: ButtonVariants["variant"][] = [
-            "link",
-            "outline-default",
-            "outline-primary",
-            "outline-danger",
-            "outline-success",
-            "default",
-            "primary",
-            "danger",
-            "secondary",
-            "ghost",
-            "transparent",
-            "success",
-          ] as const;
-
-          return (
-            <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-              {VARIANTS.map((variant) => (
-                <Button
-                  key={variant}
-                  variant={variant}
-                  pressed={isPressed.has(variant)}
-                  onClick={() =>
-                    setIsPressed((prev) => {
-                      const next = new Set(prev);
-                      if (next.has(variant)) next.delete(variant);
-                      else next.add(variant);
-                      return next;
-                    })
-                  }
-                >
-                  {variant.charAt(0).toUpperCase() + variant.slice(1)}
-                </Button>
-              ))}
-            </div>
-          );
-        }
         cy.mount(<PressedButton />);
         const VARIANTS_ACTIVE_COLOR = [
           { label: "Link", color: "rgb(30, 91, 168)" },
@@ -126,10 +126,48 @@ describe("Button", () => {
           { label: "Success", color: "rgb(20, 101, 18)" },
         ] as const;
 
-        VARIANTS_ACTIVE_COLOR.forEach(({ label, color }) => {
+        VARIANTS_ACTIVE_COLOR.map(({ label, color }) => {
+          cy.contains(label).should("not.have.css", "background-color", color);
           cy.contains(label)
             .click()
             .should("have.css", "background-color", color);
+        });
+      });
+    });
+
+    context("when using with tip menu", () => {
+      context("when given true", () => {
+        it("should renders pressed only on main button", () => {
+          cy.mount(
+            <PressedButton
+              pressed={true}
+              subMenu={({ list }) => list(TIP_MENU_ITEMS)}
+            />
+          );
+          const VARIANTS_ACTIVE_COLOR = [
+            { label: "Link", color: "rgb(30, 91, 168)" },
+            { label: "Outline-default", color: "rgb(207, 207, 207)" },
+            { label: "Outline-primary", color: "rgb(42, 115, 195)" },
+            { label: "Outline-danger", color: "rgb(128, 32, 54)" },
+            { label: "Outline-success", color: "rgb(20, 101, 18)" },
+            { label: "Default", color: "rgb(207, 207, 207)" },
+            { label: "Primary", color: "rgb(42, 115, 195)" },
+            { label: "Danger", color: "rgb(128, 32, 54)" },
+            { label: "Secondary", color: "rgb(179, 179, 179)" },
+            { label: "Ghost", color: "rgb(234, 234, 234)" },
+            { label: "Transparent", color: "rgb(207, 207, 207)" },
+            { label: "Success", color: "rgb(20, 101, 18)" },
+          ] as const;
+
+          VARIANTS_ACTIVE_COLOR.map(({ label, color }) => {
+            cy.contains(label).should("have.css", "background-color", color);
+          });
+
+          VARIANTS_ACTIVE_COLOR.map(({ color }, index) => {
+            cy.findAllByLabelText("button-toggle")
+              .eq(index)
+              .should("not.have.css", "background-color", color);
+          });
         });
       });
     });
@@ -156,7 +194,7 @@ describe("Button", () => {
             );
 
             cy.findByLabelText("button-toggle").click();
-            TIP_MENU_ITEMS.forEach((item) => {
+            TIP_MENU_ITEMS.map((item) => {
               cy.contains(item.caption).should("exist");
             });
           });
