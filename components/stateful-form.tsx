@@ -822,6 +822,7 @@ function FormFields<T extends FieldValues>({
                   control={control}
                   render={({ field: controllerField, fieldState }) => (
                     <Colorbox
+                      name={field.name}
                       label={field.title}
                       required={field.required}
                       placeholder={field.placeholder}
@@ -878,6 +879,7 @@ function FormFields<T extends FieldValues>({
                   label={field.title}
                   placeholder={field.placeholder}
                   helper={field.helper}
+                  name={field.name}
                   {...register(field.name as Path<T>, {
                     onChange: (e) => {
                       if (field.onChange) {
@@ -914,6 +916,7 @@ function FormFields<T extends FieldValues>({
                   placeholder={field.placeholder}
                   showError={shouldShowError(field.name)}
                   helper={field.helper}
+                  name={field.name}
                   errorMessage={
                     errors[field.name as keyof T]?.message as string | undefined
                   }
@@ -1077,6 +1080,7 @@ function FormFields<T extends FieldValues>({
                         if (el) refs.current[field.name] = el;
                         rhf.ref(el);
                       }}
+                      name={field.name}
                       label={field.title}
                       helper={field.helper}
                       placeholder={field.placeholder}
