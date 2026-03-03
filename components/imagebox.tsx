@@ -69,11 +69,9 @@ function Imagebox({
 
   const { dimension, icon } = SIZE_STYLES[size];
 
-  const isControlled = value !== undefined;
+  const isControlled = !value && !url;
 
   useEffect(() => {
-    if (!isControlled) return;
-
     try {
       if (value instanceof File) {
         const objectUrl = URL.createObjectURL(value);
