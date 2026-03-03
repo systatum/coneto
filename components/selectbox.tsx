@@ -11,6 +11,7 @@ import {
   CSSProperties,
   forwardRef,
   InputHTMLAttributes,
+  useMemo,
 } from "react";
 import {
   useFloating,
@@ -129,11 +130,15 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
     },
     ref
   ) => {
-    const finalSelectedOptions = Array.isArray(selectedOptions)
-      ? selectedOptions.map(String)
-      : selectedOptions !== undefined
-        ? [String(selectedOptions)]
-        : [];
+    const finalSelectedOptions = useMemo(() => {
+      if (Array.isArray(selectedOptions)) {
+        return selectedOptions.map(String);
+      }
+      if (selectedOptions !== undefined) {
+        return [String(selectedOptions)];
+      }
+      return [];
+    }, [selectedOptions]);
 
     const initialState = options.find(
       (opt) => opt.value === finalSelectedOptions?.[0]
@@ -148,25 +153,11 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       if (!onChange) return;
 
       if (Array.isArray(selectedOptions)) {
-        const isNumberArray =
-          selectedOptions.length > 0 && typeof selectedOptions[0] === "number";
-
-        if (isNumberArray) {
-          onChange(values.map(Number));
-        } else {
-          onChange(values);
-        }
-
+        onChange(castValue(values, selectedOptions));
         return;
       }
 
-      if (typeof selectedOptions === "number") {
-        const val = values[0];
-        onChange(val !== undefined ? Number(val) : 0);
-        return;
-      }
-
-      onChange(values[0] ?? "");
+      onChange(castValue(values[0], selectedOptions));
     };
 
     const [selectedOptionsLocal, setSelectedOptionsLocal] =
@@ -579,6 +570,26 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
     );
   }
 );
+
+export function castValue<T extends SelectboxSelectedOptions>(
+  value: any,
+  original: T
+): T {
+  if (Array.isArray(original)) {
+    if (Array.isArray(value)) {
+      return value.map((v) =>
+        typeof original[0] === "number" ? Number(v) : String(v)
+      ) as T;
+    }
+    return [value] as T;
+  }
+
+  if (typeof original === "number") {
+    return Number(value) as T;
+  }
+
+  return String(value) as T;
+}
 
 const Container = styled.div<{ $style?: CSSProp }>`
   position: relative;

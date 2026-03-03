@@ -10,6 +10,7 @@ import {
   useState,
 } from "react";
 import {
+  castValue,
   DrawerProps,
   OptionsProps,
   Selectbox,
@@ -198,11 +199,15 @@ function ComboboxDrawer({
   const [hasScrolled, setHasScrolled] = useState(false);
   const floatingRef = useRef<HTMLUListElement>(null);
 
-  const finalSelectedOptions = Array.isArray(selectedOptions)
-    ? selectedOptions.map(String)
-    : selectedOptions !== undefined
-      ? [String(selectedOptions)]
-      : [];
+  const finalSelectedOptions = useMemo(() => {
+    if (Array.isArray(selectedOptions)) {
+      return selectedOptions.map(String);
+    }
+    if (selectedOptions !== undefined) {
+      return [String(selectedOptions)];
+    }
+    return [];
+  }, [selectedOptions]);
 
   const selectedIndex = useMemo(
     () =>
@@ -216,25 +221,11 @@ function ComboboxDrawer({
     if (!onChange) return;
 
     if (Array.isArray(selectedOptions)) {
-      const isNumberArray =
-        selectedOptions.length > 0 && typeof selectedOptions[0] === "number";
-
-      if (isNumberArray) {
-        onChange(values.map(Number));
-      } else {
-        onChange(values);
-      }
-
+      onChange(castValue(values, selectedOptions));
       return;
     }
 
-    if (typeof selectedOptions === "number") {
-      const val = values[0];
-      onChange(val !== undefined ? Number(val) : 0);
-      return;
-    }
-
-    onChange(values[0] ?? "");
+    onChange(castValue(values[0], selectedOptions));
   };
 
   useEffect(() => {
@@ -247,7 +238,7 @@ function ComboboxDrawer({
         setHasScrolled(true);
       }
     }
-  }, [selectedIndex]);
+  }, [selectedIndex, hasScrolled, finalSelectedOptions.length, options.length]);
 
   useEffect(() => {
     if (highlightedIndex !== null && listRef.current[highlightedIndex]) {
@@ -457,21 +448,6 @@ function ComboboxDrawer({
 
 type SelectedOptionType<T extends number | string | (number | string)[]> =
   T extends (number | string)[] ? string[] : T extends number ? number : string;
-
-export function castValue<T extends number | string | (number | string)[]>(
-  value: any,
-  original: T
-): SelectedOptionType<T> {
-  if (Array.isArray(original)) {
-    return (
-      Array.isArray(value) ? value.map(String) : [String(value)]
-    ) as SelectedOptionType<T>;
-  }
-  if (typeof original === "number") {
-    return Number(value) as SelectedOptionType<T>;
-  }
-  return String(value) as SelectedOptionType<T>;
-}
 
 const listContainerStyle = css`
   gap: 0px;
