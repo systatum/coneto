@@ -57,6 +57,7 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
       styles,
       onKeyDown,
       editableCurrency,
+      inputId,
       currencyOptions = [
         { id: "IDR", name: "Indonesian Rupiah", symbol: "Rp" },
       ],
@@ -228,6 +229,7 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
           placeholder={placeholder}
           onFocus={() => setFocus(true)}
           onKeyDown={onKeyDown}
+          id={inputId}
           type="text"
           $style={styles?.self}
           inputMode="decimal"
