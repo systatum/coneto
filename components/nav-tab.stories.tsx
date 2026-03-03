@@ -8,7 +8,9 @@ import {
   RiAddBoxLine,
   RiAtLine,
   RiCharacterRecognitionLine,
+  RiCropLine,
   RiSearchLine,
+  RiSettings5Line,
   RiTable2,
 } from "@remixicon/react";
 import { ColumnTableProps, Table } from "./table";
@@ -196,10 +198,24 @@ export const WithActions: Story = {
         onChange={(activeTab) => setActiveTab(activeTab)}
         actions={[
           {
+            icon: { image: RiSettings5Line },
+            onClick: () => {
+              console.log("Settings button was clicked");
+            },
+          },
+
+          {
             caption: "Add",
             icon: { image: RiAddBoxLine },
             onClick: () => {
-              console.log(`Add button was clicked`);
+              console.log("Add button was clicked");
+            },
+          },
+          {
+            caption: "Crop",
+            icon: { image: RiCropLine },
+            onClick: () => {
+              console.log("Crop button was clicked");
             },
           },
         ]}

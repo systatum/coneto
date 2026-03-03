@@ -151,7 +151,11 @@ function NavTab({
   return (
     <NavTabWrapper $containerStyle={styles?.containerStyle}>
       <NavTabRowWrapper $style={styles?.containerRowStyle}>
-        <NavTabHeader $style={styles?.containerBoxStyle} ref={containerRef}>
+        <NavTabHeader
+          aria-label="nav-tab-wrapper"
+          $style={styles?.containerBoxStyle}
+          ref={containerRef}
+        >
           <NavTabList
             aria-label="nav-tab-list"
             $activeColor={activeColor}
@@ -344,8 +348,13 @@ function NavTab({
 
         {actions && (
           <NavTabHeader
+            aria-label="nav-tab-actions-wrapper"
             $actions={!!actions}
-            $style={styles?.containerActionsStyle}
+            $style={css`
+              gap: 6px;
+
+              ${styles?.containerActionsStyle}
+            `}
           >
             {actions.map((action, index) => {
               return (

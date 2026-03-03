@@ -10,6 +10,7 @@ import {
   RiAtLine,
   RiCharacterRecognitionLine,
   RiSearchLine,
+  RiSettings5Line,
 } from "@remixicon/react";
 import { useState } from "react";
 
@@ -185,6 +186,37 @@ describe("NavTab", () => {
   });
 
   context("actions", () => {
+    it("renders with gap 6px (by default)", () => {
+      cy.mount(
+        <NavTab
+          actions={[
+            {
+              caption: "Settings",
+              icon: { image: RiSettings5Line },
+              onClick: () => {
+                console.log("Settings button was clicked");
+              },
+            },
+            {
+              caption: "Add",
+              icon: { image: RiAddBoxLine },
+              onClick: () => {
+                console.log("Add button was clicked");
+              },
+            },
+          ]}
+          tabs={TABS_ITEMS}
+          activeTab={"2"}
+        />
+      );
+
+      cy.findByLabelText("nav-tab-actions-wrapper").should(
+        "have.css",
+        "gap",
+        "6px"
+      );
+    });
+
     context("when clicking", () => {
       it("renders the console", () => {
         cy.window().then((win) => {
