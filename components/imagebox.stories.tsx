@@ -47,6 +47,21 @@ This object allows you to override styles for individual parts:
 
 Each field accepts a \`CSSProp\` (styled-components compatible) and can be used to control layout, spacing, borders, colors, and visual appearance.
     `,
+      url: {
+        control: "text",
+        description: `
+Initial image source to display inside the Imagebox.
+
+### Render Priority
+1. Selected file preview (if user uploads)
+2. \`url\` prop (initial value)
+3. Placeholder icon (when empty)
+
+Accepts:
+- External URL (recommended)
+- Relative public path (e.g. \`/images/product.png\`)
+`,
+      },
     },
   },
 };
