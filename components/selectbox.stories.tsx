@@ -34,7 +34,7 @@ export const Default: Story = {
         <Selectbox
           options={SELECTBOX_DATA}
           selectedOptions={value}
-          onChange={setValue}
+          onChange={(value: string[]) => setValue(value)}
           placeholder="click this place holder"
         >
           {(props) =>
@@ -89,7 +89,7 @@ export const Clearable: Story = {
         <Selectbox
           options={SELECTBOX_DATA}
           selectedOptions={value}
-          onChange={setValue}
+          onChange={(value: string[]) => setValue(value)}
           placeholder="click this place holder"
           clearable
         >
