@@ -22,6 +22,7 @@ export interface ImageboxProps {
   value?: File | string | null;
   borderless?: boolean;
   editable?: boolean;
+  url?: string;
 }
 export interface ImageboxStylesProps {
   containerStyle?: CSSProp;
@@ -60,6 +61,7 @@ function Imagebox({
   value,
   borderless,
   editable = true,
+  url,
 }: ImageboxProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
@@ -89,11 +91,15 @@ function Imagebox({
       if (value === null) {
         setSelectedFile(null);
       }
+
+      if (!value && url) {
+        setSelectedFile(url);
+      }
     } catch (err) {
       console.error("Imagebox: Failed to render value", err);
       setSelectedFile(null);
     }
-  }, [value, isControlled]);
+  }, [value, isControlled, url]);
 
   const handleBrowseClick = () => {
     if (editable) fileInputRef.current?.click();
