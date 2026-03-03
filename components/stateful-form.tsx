@@ -604,6 +604,7 @@ function FormFields<T extends FieldValues>({
                       title={field.title}
                       label={field.placeholder}
                       name={field.name}
+                      value={field.name}
                       placeholder={field.placeholder}
                       checked={controllerField.value ?? false}
                       helper={field.helper}
@@ -754,6 +755,7 @@ function FormFields<T extends FieldValues>({
                   name={"phone" as Path<T>}
                   render={({ field: controllerField }) => (
                     <Phonebox
+                      name={field.name}
                       label={field.title}
                       value={controllerField.value}
                       ref={(el) => {
@@ -1142,6 +1144,7 @@ function FormFields<T extends FieldValues>({
                   render={({ field: controllerField }) => (
                     <Datebox
                       key={index}
+                      name={field.name}
                       label={field.title}
                       helper={field.helper}
                       showError={shouldShowError(field.name)}
@@ -1211,6 +1214,7 @@ function FormFields<T extends FieldValues>({
                   control={control}
                   render={({ field: controllerField }) => (
                     <Combobox
+                      name={field.name}
                       placeholder={field.placeholder}
                       label={field.title}
                       showError={shouldShowError(field.name)}
