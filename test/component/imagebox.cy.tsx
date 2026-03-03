@@ -15,10 +15,11 @@ describe("Imagebox", () => {
       />
     );
   }
+  const base64with2px =
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAE0lEQVR42mP8/5+hHgAHggJ/P6CcgQAAAABJRU5ErkJggg==";
+  const url = "https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d";
 
   context("value", () => {
-    const base64with2px =
-      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAE0lEQVR42mP8/5+hHgAHggJ/P6CcgQAAAABJRU5ErkJggg==";
     context("when given a string (base64)", () => {
       it("renders the image", () => {
         cy.mount(<ProductImagebox value={base64with2px} />);
@@ -30,14 +31,7 @@ describe("Imagebox", () => {
 
       context("when given url", () => {
         it("renders the image from base64", () => {
-          cy.mount(
-            <ProductImagebox
-              value={base64with2px}
-              url={
-                "https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d"
-              }
-            />
-          );
+          cy.mount(<ProductImagebox value={base64with2px} url={url} />);
 
           cy.get("img")
             .should("have.attr", "src")
@@ -50,11 +44,7 @@ describe("Imagebox", () => {
   context("url", () => {
     context("when given url", () => {
       it("renders the image", () => {
-        cy.mount(
-          <ProductImagebox
-            url={"https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d"}
-          />
-        );
+        cy.mount(<ProductImagebox url={url} />);
 
         cy.get("img")
           .should("exist")
