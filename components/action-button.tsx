@@ -64,6 +64,7 @@ export function ActionButton({
           position: relative;
 
           ${variant === "default" &&
+          !pressed &&
           css`
             background-color: transparent;
             color: #565555;
