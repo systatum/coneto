@@ -135,10 +135,10 @@ export const WithCombobox: Story = {
 
   render: () => {
     const [value, setValue] = useState({
-      normal: ["1"],
-      full: ["2"],
-      max: ["3"],
-      keydown: ["4"],
+      normal: "1",
+      full: "2",
+      max: "3",
+      keydown: "4",
     });
 
     const [oldValue, setOldValue] = useState({
@@ -158,18 +158,20 @@ export const WithCombobox: Story = {
       { text: "Watermelon", value: "7" },
     ];
 
-    const valueMatcher = (content: string[]) =>
-      FRUIT_OPTIONS.find((data) => content.includes(data.value));
+    const valueMatcher = (content: string) =>
+      FRUIT_OPTIONS.find((option) => content === option.value);
 
     const valueNormal = valueMatcher(value.normal);
     const valueFull = valueMatcher(value.full);
     const valueMax = valueMatcher(value.max);
     const valueKeydown = valueMatcher(value.keydown);
 
-    const handleChange = (e: string[], name: string) => {
+    const handleChange = (e: string, name: string) => {
       const newValue = e;
       setValue((prev) => ({ ...prev, [name]: newValue }));
     };
+
+    console.log(value);
 
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
@@ -178,7 +180,7 @@ export const WithCombobox: Story = {
           <DormantText
             content={valueNormal.text}
             onActionClick={() => {
-              console.log(`Selected value: ${value.normal?.[0]}`);
+              console.log(`Selected value: ${value.normal}`);
             }}
           >
             <Combobox
@@ -186,7 +188,7 @@ export const WithCombobox: Story = {
               strict
               selectedOptions={value.normal}
               options={FRUIT_OPTIONS}
-              onChange={(e) => handleChange(e, "normal")}
+              onChange={(value: string) => handleChange(value, "normal")}
             />
           </DormantText>
         </div>
@@ -204,7 +206,7 @@ export const WithCombobox: Story = {
               strict
               selectedOptions={value.full}
               options={FRUIT_OPTIONS}
-              onChange={(e) => handleChange(e, "full")}
+              onChange={(value: string) => handleChange(value, "full")}
             />
           </DormantText>
         </div>
@@ -222,7 +224,7 @@ export const WithCombobox: Story = {
               strict
               selectedOptions={value.max}
               options={FRUIT_OPTIONS}
-              onChange={(e) => handleChange(e, "max")}
+              onChange={(value: string) => handleChange(value, "max")}
             />
           </DormantText>
         </div>
@@ -250,7 +252,7 @@ export const WithCombobox: Story = {
               strict
               selectedOptions={value.keydown}
               options={FRUIT_OPTIONS}
-              onChange={(e) => handleChange(e, "keydown")}
+              onChange={(value: string) => handleChange(value, "keydown")}
             />
           </DormantText>
         </div>
