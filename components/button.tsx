@@ -479,7 +479,7 @@ const BaseButton = styled.button<{
     }
   }}
 
-  ${({ $variant, $isOpen, $activeBackgroundColor }) => {
+  ${({ $variant, $isOpen, $activeBackgroundColor, $pressed }) => {
     const { bg, color, underline } = getButtonColors(
       $variant,
       $isOpen,
@@ -515,42 +515,64 @@ const BaseButton = styled.button<{
           `
         : ""};
 
-      &:hover {
-        ${!$isOpen &&
-        css`
-          background-color: ${getHoverColor($variant)};
-        `}
+      ${!$pressed &&
+      css`
+        &:hover {
+          ${!$isOpen &&
+          css`
+            background-color: ${getHoverColor($variant)};
+          `}
 
-        ${$variant?.startsWith("outline") &&
-        $variant !== "outline-default" &&
-        css`
-          color: white;
-        `}
-      }
+          ${$variant === "link"
+            ? css`
+                color: white;
+              `
+            : $variant === "outline-default"
+              ? css`
+                  color: black;
+                `
+              : $variant.startsWith("outline") &&
+                css`
+                  color: white;
+                `}
+        }
+      `}
     `;
   }};
 
-  ${({ $pressed, $variant }) =>
-    $pressed &&
+  ${({ $pressed, $variant }) => css`
+    ${$pressed &&
     css`
+      color: ${$variant === "link"
+        ? "white"
+        : $variant === "outline-default"
+          ? "black"
+          : $variant.startsWith("outline")
+            ? "white"
+            : undefined};
       background-color: ${getActiveColor($variant)};
       box-shadow:
         inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
         inset 0 -0.5px 0.5px ${getActiveColor($variant)};
-    `};
+    `}
+  `};
 
-  &:active {
-    background-color: ${({ $variant }) => getActiveColor($variant)};
-    box-shadow:
-      inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
-      inset 0 -0.5px 0.5px ${({ $variant }) => getActiveColor($variant)};
-  }
+  ${({ $pressed, $variant }) =>
+    !$pressed &&
+    css`
+      &:active {
+        background-color: ${getActiveColor($variant)};
+        box-shadow:
+          inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
+          inset 0 -0.5px 0.5px ${getActiveColor($variant)};
+      }
 
-  &:focus-visible {
-    outline: none;
-    box-shadow: inset 0 0 0 2px ${({ $variant }) => getFocusColor($variant)};
-    transition: box-shadow 0.2s ease;
-  }
+      &:focus-visible {
+        outline: none;
+        box-shadow: inset 0 0 0 2px ${getFocusColor($variant)};
+        transition: box-shadow 0.2s ease;
+      }
+    `}
 
   ${({ $style }) =>
     $style &&
