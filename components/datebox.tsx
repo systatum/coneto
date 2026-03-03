@@ -57,6 +57,8 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
     helper,
     dropdowns,
     showError,
+    monthNames,
+    dayNames,
     ...rest
   } = props;
 
@@ -105,6 +107,8 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
           <CalendarDrawer
             {...rest}
             {...selectBoxProps}
+            dayNames={dayNames}
+            monthNames={monthNames}
             styles={{
               containerStyle: styles?.self,
             }}
