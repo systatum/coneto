@@ -227,7 +227,9 @@ function Signbox({
   height,
   width,
 }: SignboxProps) {
-  const inputId = `Signbox-${name}`;
+  const inputId = name
+    ? `signbox-${name.replace(/\s+/g, "_").toLowerCase()}`
+    : "signbox";
 
   return (
     <FieldLane

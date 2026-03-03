@@ -115,7 +115,9 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
       disabled,
       ...rest
     } = props;
-    const inputId = `textbox-${props?.name}`;
+    const inputId = props?.name
+      ? `textbox-${props.name.replace(/\s+/g, "_").toLowerCase()}`
+      : "textbox";
 
     return (
       <FieldLane

@@ -284,7 +284,9 @@ function Pinbox({
     </PinboxInputWrapper>
   );
 
-  const inputId = `pinbox-${name}`;
+  const inputId = name
+    ? `pinbox-${name.replace(/\s+/g, "_").toLowerCase()}`
+    : "pinbox";
 
   return (
     <Container $containerStyle={styles?.containerStyle}>

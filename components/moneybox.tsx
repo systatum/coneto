@@ -258,7 +258,9 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
       disabled,
       ...rest
     } = props;
-    const inputId = `Moneybox-${props?.name}`;
+    const inputId = props?.name
+      ? `moneybox-${props.name.replace(/\s+/g, "_").toLowerCase()}`
+      : "moneybox";
 
     return (
       <FieldLane

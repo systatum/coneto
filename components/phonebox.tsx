@@ -363,7 +363,9 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
       onChange,
       ...rest
     } = props;
-    const inputId = `Phonebox-${props?.name}`;
+    const inputId = props?.name
+      ? `phonebox-${props.name.replace(/\s+/g, "_").toLowerCase()}`
+      : "phonebox";
 
     return (
       <FieldLane

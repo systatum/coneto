@@ -143,7 +143,9 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
       ...rest
     } = props;
 
-    const inputId = `colorbox-${props.name}`;
+    const inputId = props.name
+      ? `colorbox-${props.name.replace(/\s+/g, "_").toLowerCase()}`
+      : "colorbox";
 
     return (
       <FieldLane
