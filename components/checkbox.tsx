@@ -57,7 +57,9 @@ function Checkbox({
   ...props
 }: CheckboxProps) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const inputId = `checkbox-${name}-${props.value}`;
+  const inputId = name
+    ? `checkbox-${name.replace(/\s+/g, "_").toLowerCase()}`
+    : "checkbox";
   const isChecked = Boolean(props.checked);
 
   useEffect(() => {

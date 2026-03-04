@@ -604,6 +604,7 @@ function FormFields<T extends FieldValues>({
                       title={field.title}
                       label={field.placeholder}
                       name={field.name}
+                      value={field.name}
                       placeholder={field.placeholder}
                       checked={controllerField.value ?? false}
                       helper={field.helper}
@@ -754,6 +755,7 @@ function FormFields<T extends FieldValues>({
                   name={"phone" as Path<T>}
                   render={({ field: controllerField }) => (
                     <Phonebox
+                      name={field.name}
                       label={field.title}
                       value={controllerField.value}
                       ref={(el) => {
@@ -820,6 +822,7 @@ function FormFields<T extends FieldValues>({
                   control={control}
                   render={({ field: controllerField, fieldState }) => (
                     <Colorbox
+                      name={field.name}
                       label={field.title}
                       required={field.required}
                       placeholder={field.placeholder}
@@ -876,6 +879,7 @@ function FormFields<T extends FieldValues>({
                   label={field.title}
                   placeholder={field.placeholder}
                   helper={field.helper}
+                  name={field.name}
                   {...register(field.name as Path<T>, {
                     onChange: (e) => {
                       if (field.onChange) {
@@ -912,6 +916,7 @@ function FormFields<T extends FieldValues>({
                   placeholder={field.placeholder}
                   showError={shouldShowError(field.name)}
                   helper={field.helper}
+                  name={field.name}
                   errorMessage={
                     errors[field.name as keyof T]?.message as string | undefined
                   }
@@ -1075,6 +1080,7 @@ function FormFields<T extends FieldValues>({
                         if (el) refs.current[field.name] = el;
                         rhf.ref(el);
                       }}
+                      name={field.name}
                       label={field.title}
                       helper={field.helper}
                       placeholder={field.placeholder}
@@ -1142,6 +1148,7 @@ function FormFields<T extends FieldValues>({
                   render={({ field: controllerField }) => (
                     <Datebox
                       key={index}
+                      name={field.name}
                       label={field.title}
                       helper={field.helper}
                       showError={shouldShowError(field.name)}
@@ -1211,6 +1218,7 @@ function FormFields<T extends FieldValues>({
                   control={control}
                   render={({ field: controllerField }) => (
                     <Combobox
+                      name={field.name}
                       placeholder={field.placeholder}
                       label={field.title}
                       showError={shouldShowError(field.name)}

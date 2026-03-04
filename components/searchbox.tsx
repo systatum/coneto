@@ -52,7 +52,6 @@ const Searchbox = forwardRef<Omit<HTMLInputElement, "style">, SearchboxProps>(
 
     const [isFocus, setIsFocus] = useState(false);
 
-    const inputId = `textbox-${name}`;
     const inputRef = useRef<HTMLInputElement>(null);
     const anchorRef = useRef<HTMLInputElement>(null);
 
@@ -61,6 +60,10 @@ const Searchbox = forwardRef<Omit<HTMLInputElement, "style">, SearchboxProps>(
     const valueLengthChecker = finalValue.length > 0;
 
     const isOpenShowMenu = isFocus && showResultMenu;
+
+    const inputId = name
+      ? `searchbox-${name.replace(/\s+/g, "_").toLowerCase()}`
+      : "searchbox";
 
     return (
       <SearchboxWrapper

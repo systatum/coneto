@@ -63,6 +63,10 @@ function Imagebox({
   editable = true,
   url,
 }: ImageboxProps) {
+  const inputId = name
+    ? `imagebox-${name.replace(/\s+/g, "_").toLowerCase()}`
+    : "imagebox";
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -180,6 +184,7 @@ function Imagebox({
         ref={fileInputRef}
         type="file"
         accept="image/*"
+        id={inputId}
         name={name}
         aria-label="imagebox"
         onChange={handleFileChange}

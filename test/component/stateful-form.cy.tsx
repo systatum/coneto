@@ -1,6 +1,7 @@
 import {
   FormFieldGroup,
   FormFieldProps,
+  FormFieldType,
   StatefulForm,
 } from "./../../components/stateful-form";
 import { COUNTRY_CODES } from "./../../constants/countries";
@@ -20,6 +21,235 @@ import { RiDeleteBin2Fill } from "@remixicon/react";
 import z from "zod";
 
 describe("StatefulForm", () => {
+  const typeToIdPrefix: Record<FormFieldType, string> = {
+    text: "textbox",
+    message: "textbox",
+    number: "textbox",
+    email: "textbox",
+    password: "textbox",
+    textarea: "textarea",
+    checkbox: "checkbox",
+    radio: "radio",
+    phone: "phonebox",
+    color: "colorbox",
+    file_drop_box: "file-drop-box",
+    file: "file-input-box",
+    image: "imagebox",
+    signbox: "signbox",
+    money: "moneybox",
+    date: "datebox",
+    combo: "combobox",
+    rating: "ratingbox",
+    thumbfield: "thumbfield",
+    toggle: "togglebox",
+    capsule: "capsulebox",
+    time: "timebox",
+    button: "button",
+    chips: "chips",
+    custom: "custom",
+  };
+
+  context("id", () => {
+    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
+      (data) => data.id === "US" || COUNTRY_CODES[206]
+    );
+
+    if (!DEFAULT_COUNTRY_CODES) {
+      throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
+    }
+
+    const FRUIT_OPTIONS: OptionsProps[] = [
+      { text: "Apple", value: "1" },
+      { text: "Banana", value: "2" },
+      { text: "Orange", value: "3" },
+      { text: "Grape", value: "4" },
+      { text: "Pineapple", value: "5" },
+      { text: "Strawberry", value: "6" },
+      { text: "Watermelon", value: "7" },
+    ];
+
+    const value = {
+      text: "",
+      time: "",
+      email: "",
+      number: "",
+      password: "",
+      textarea: "",
+      rating: "",
+      check: false,
+      color: "",
+      combo: [],
+      date: [""],
+      file_drop_box: [] as File[],
+      file: undefined,
+      image: undefined,
+      money: "",
+      phone: "",
+      thumb_field: false,
+      togglebox: false,
+      signature: "",
+      capsule: "",
+      country_code: DEFAULT_COUNTRY_CODES,
+      currency: "USD",
+    };
+
+    const MONTH_NAMES = [
+      { text: "JAN", value: "1" },
+      { text: "FEB", value: "2" },
+      { text: "MAR", value: "3" },
+      { text: "APR", value: "4" },
+      { text: "MAY", value: "5" },
+      { text: "JUN", value: "6" },
+      { text: "JUL", value: "7" },
+      { text: "AUG", value: "8" },
+      { text: "SEP", value: "9" },
+      { text: "OCT", value: "10" },
+      { text: "NOV", value: "11" },
+      { text: "DEC", value: "12" },
+    ];
+
+    const FIELDS: FormFieldGroup[] = [
+      {
+        name: "text",
+        title: "Text",
+        type: "text",
+        required: true,
+        placeholder: "Enter text",
+      },
+      {
+        name: "email",
+        title: "Email",
+        type: "email",
+        required: false,
+        placeholder: "Enter email address",
+      },
+      {
+        name: "time",
+        title: "Time",
+        type: "time",
+        required: false,
+        placeholder: "Enter email address",
+      },
+      {
+        name: "number",
+        title: "Number",
+        type: "number",
+        required: false,
+        placeholder: "Enter number",
+      },
+      {
+        name: "password",
+        title: "Password",
+        type: "password",
+        required: false,
+        placeholder: "Enter password",
+      },
+      {
+        name: "textarea",
+        title: "Textarea",
+        type: "textarea",
+        rows: 3,
+        required: false,
+        placeholder: "Enter text here",
+      },
+      {
+        name: "check",
+        placeholder: "Check",
+        type: "checkbox",
+        required: false,
+      },
+      {
+        name: "color",
+        title: "Color",
+        type: "color",
+        required: false,
+        placeholder: "Enter the color here",
+      },
+      {
+        name: "combo",
+        title: "Combo",
+        type: "combo",
+        required: false,
+        placeholder: "Select a fruit...",
+        comboboxProps: {
+          options: FRUIT_OPTIONS,
+        },
+      },
+      {
+        name: "date",
+        title: "Date",
+        type: "date",
+        required: false,
+        placeholder: "Select a date",
+        dateProps: {
+          monthNames: MONTH_NAMES,
+        },
+      },
+      {
+        name: "file_drop_box",
+        title: "File Drop Box",
+        type: "file_drop_box",
+        required: false,
+      },
+      {
+        name: "file",
+        title: "File",
+        type: "file",
+        required: false,
+      },
+      {
+        name: "image",
+        title: "Image",
+        type: "image",
+        required: false,
+      },
+      {
+        name: "money",
+        title: "Money",
+        type: "money",
+        required: false,
+        placeholder: "Enter amount",
+      },
+      {
+        name: "phone",
+        title: "Phone",
+        type: "phone",
+        required: false,
+        placeholder: "Enter phone number",
+      },
+      {
+        name: "signature",
+        title: "Signature",
+        type: "signbox",
+        required: false,
+      },
+    ];
+
+    it("renders each field with a proper and unique ID", () => {
+      cy.mount(
+        <StatefulForm fields={FIELDS} formValues={value} mode="onChange" />
+      );
+
+      const flattenFields = (groups: FormFieldGroup[]): FormFieldProps[] =>
+        groups.flatMap((group) =>
+          Array.isArray(group) ? flattenFields(group) : [group]
+        );
+
+      const allFields = flattenFields(FIELDS);
+
+      allFields.map((field) => {
+        const prefix =
+          typeToIdPrefix[field.type] ??
+          field.type.replace(/\s+/g, "_").toLowerCase();
+        const expectedId = field.name
+          ? `${prefix}-${field.name.replace(/\s+/g, "_").toLowerCase()}`
+          : prefix;
+
+        cy.get(`#${expectedId}`).should("exist");
+      });
+    });
+  });
+
   context("with type custom", () => {
     const BADGE_OPTIONS = [
       {

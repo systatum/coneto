@@ -314,7 +314,9 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
       disabled,
       ...rest
     } = props;
-    const inputId = `Timebox-${props?.name}`;
+    const inputId = props?.name
+      ? `timebox-${props.name.replace(/\s+/g, "_").toLowerCase()}`
+      : "timebox";
 
     return (
       <FieldLane

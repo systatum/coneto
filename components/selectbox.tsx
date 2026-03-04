@@ -535,7 +535,11 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       id,
       ...rest
     } = props;
-    const inputId = id ?? `Selectbox-${name}`;
+    const inputId =
+      id ??
+      (name
+        ? `selectbox-${name.replace(/\s+/g, "_").toLowerCase()}`
+        : "selectbox");
 
     return (
       <FieldLane

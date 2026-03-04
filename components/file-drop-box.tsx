@@ -39,6 +39,7 @@ export interface FileDropBoxProps {
   helper?: string;
   children?: ReactNode;
   styles?: FileDropBoxStylesProps;
+  name?: string;
 }
 
 export interface FileDropBoxStylesProps {
@@ -60,12 +61,17 @@ function FileDropBox({
   children,
   styles,
   helper,
+  name,
 }: FileDropBoxProps) {
   const FILE_ICON = [
     { id: 1, icon: RiImageLine, size: 50 },
     { id: 2, icon: RiFileUploadLine, size: 80 },
     { id: 3, icon: RiFile2Line, size: 50 },
   ];
+
+  const inputId = name
+    ? `file-drop-box-${name.replace(/\s+/g, "_").toLowerCase()}`
+    : "file-drop-box";
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -207,6 +213,7 @@ function FileDropBox({
       {progress === "idle" && (
         <input
           ref={fileInputRef}
+          id={inputId}
           type="file"
           accept={accept}
           onChange={handleFileChange}

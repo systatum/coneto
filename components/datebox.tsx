@@ -15,6 +15,7 @@ import { forwardRef, ReactNode } from "react";
 import { FieldLaneProps } from "./field-lane";
 
 type BaseDateboxProps = BaseCalendarProps & {
+  name?: string;
   label?: string;
   showError?: boolean;
   errorMessage?: string;
@@ -57,6 +58,7 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
     helper,
     dropdowns,
     showError,
+    name,
     monthNames,
     dayNames,
     calendarFooter,
@@ -65,7 +67,9 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
     ...rest
   } = props;
 
-  const inputId = `datebox-${props.label}`;
+  const inputId = name
+    ? `datebox-${name.replace(/\s+/g, "_").toLowerCase()}`
+    : "datebox";
 
   return (
     <Selectbox

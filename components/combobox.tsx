@@ -102,7 +102,9 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
     },
     ref
   ) => {
-    const inputId = `combobox-${name}`;
+    const inputId = name
+      ? `combobox-${name.replace(/\s+/g, "_").toLowerCase()}`
+      : "combobox";
 
     return (
       <Selectbox

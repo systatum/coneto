@@ -16,6 +16,7 @@ interface BaseSignboxProps {
   width?: string;
   styles?: SignboxStylesProps;
   helper?: string;
+  inputId?: string;
 }
 
 export interface SignboxStylesProps {
@@ -31,6 +32,7 @@ function BaseSignbox({
   styles,
   height,
   width,
+  inputId,
 }: BaseSignboxProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isDrawing = useRef(false);
@@ -185,6 +187,7 @@ function BaseSignbox({
     >
       <SignatureCanvas
         ref={canvasRef}
+        id={inputId}
         onMouseDown={(e) => startDrawing(e.nativeEvent)}
         onMouseMove={(e) => draw(e.nativeEvent)}
         onMouseUp={stopDrawing}
@@ -227,7 +230,9 @@ function Signbox({
   height,
   width,
 }: SignboxProps) {
-  const inputId = `Signbox-${name}`;
+  const inputId = name
+    ? `signbox-${name.replace(/\s+/g, "_").toLowerCase()}`
+    : "signbox";
 
   return (
     <FieldLane
@@ -247,6 +252,7 @@ function Signbox({
     >
       <BaseSignbox
         height={height}
+        inputId={inputId}
         width={width}
         value={value}
         onChange={onChange}

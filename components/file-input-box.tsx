@@ -40,8 +40,13 @@ function FileInputBox({
   showError,
   styles,
   helper,
+  name,
   ...props
 }: FileInputBoxProps) {
+  const inputId = name
+    ? `file-input-box-${name.replace(/\s+/g, "_").toLowerCase()}`
+    : "file-input-box";
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -145,7 +150,7 @@ function FileInputBox({
         accept={accept}
         multiple={multiple}
         onChange={handleFileChange}
-        id={props.id}
+        id={inputId}
         hidden
       />
     </InputBox>

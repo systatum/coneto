@@ -87,7 +87,9 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       disabled,
       ...rest
     } = props;
-    const inputId = `textarea-${props?.name}`;
+    const inputId = props?.name
+      ? `textarea-${props.name.replace(/\s+/g, "_").toLowerCase()}`
+      : "textarea";
 
     const DropdownProps = dropdowns?.map((dropdown) => ({
       ...dropdown,
