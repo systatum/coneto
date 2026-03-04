@@ -139,7 +139,7 @@ function DormantText({
       $fontSize={dormantedFontSize}
       $style={styles?.dormantedStyle}
     >
-      <DormantLabelText>{content}</DormantLabelText>
+      <DormantLabelText aria-label="dormant-label">{content}</DormantLabelText>
       <PencilIcon
         className="pencil-icon"
         style={{
