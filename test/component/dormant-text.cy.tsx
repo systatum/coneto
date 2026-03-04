@@ -3,6 +3,44 @@ import { Textbox } from "./../../components/textbox";
 import { css } from "styled-components";
 
 describe("DormantText", () => {
+  context("ellipsis", () => {
+    context("when container is smaller than content", () => {
+      it("should truncate text with ellipsis", () => {
+        const content =
+          "This is a very long text that should truncate when the screen is small";
+
+        // simulate small screen/container
+        cy.mount(
+          <div style={{ width: "150px" }}>
+            <DormantText
+              fullWidth
+              cancelable
+              content={content}
+              dormantedFontSize={14}
+            >
+              <Textbox autoComplete="off" value={content} />
+            </DormantText>
+          </div>
+        );
+
+        cy.findByLabelText("dormant-label").then(($dormantElement) => {
+          const dom = $dormantElement[0];
+
+          //Confirm the text is actually truncated
+          expect(dom.scrollWidth).to.be.greaterThan(dom.clientWidth);
+
+          cy.wrap($dormantElement).should("have.css", "overflow", "hidden");
+          cy.wrap($dormantElement).should("have.css", "white-space", "nowrap");
+          cy.wrap($dormantElement).should(
+            "have.css",
+            "text-overflow",
+            "ellipsis"
+          );
+        });
+      });
+    });
+  });
+
   context("style", () => {
     context("when hovered", () => {
       it("renders with cursor text", () => {
