@@ -180,7 +180,6 @@ function StatefulForm<Z extends ZodTypeAny>({
     register,
     control,
     setValue,
-    reset,
     formState: { errors, touchedFields, isValid },
   } = useForm<TypeOf<Z>>(formConfig);
 
@@ -192,11 +191,14 @@ function StatefulForm<Z extends ZodTypeAny>({
   const customValues = customFieldNames.map((name) => formValues[name]);
 
   useEffect(() => {
-    reset(formValues, {
-      keepErrors: true,
-      keepTouched: true,
+    customFieldNames.map((name) => {
+      setValue(name as any, formValues[name as any], {
+        shouldValidate: true,
+        shouldTouch: true,
+        shouldDirty: true,
+      });
     });
-  }, [JSON.stringify(customValues), reset]);
+  }, [JSON.stringify(customValues), setValue]);
 
   useEffect(() => {
     if (onValidityChange) {
