@@ -395,10 +395,31 @@ describe("StatefulForm", () => {
 
         const allFields = flattenFields(FIELDS_NOT_NORMAL_ASCII);
 
-        allFields.forEach((field) => {
-          const sanitizedId = StatefulForm.SanitizeId({ id: field.id });
+        const sanitized = allFields.map((field) =>
+          StatefulForm.SanitizeId({ id: field.id })
+        );
 
-          cy.get(`#${sanitizedId}`).should("exist");
+        const expected = [
+          "field-text-_hello_world",
+          "field-email-_123",
+          "field-time-_something",
+          "field-number-_test_id",
+          "field-password-_secret",
+          "field-textarea-_multi_words",
+          "field-check-_yesno",
+          "field-color-_rainbow_",
+          "field-combo-_choose_one",
+          "field-date-_01012026",
+          "field-file_drop_box-_drop_here",
+          "field-file-_upload_file",
+          "field-image-_my_image",
+          "field-money-_1000",
+          "field-phone-_askdaosdk",
+          "field-signature-_sign_here",
+        ];
+
+        sanitized.map((result, i) => {
+          expect(result).to.equal(expected[i]);
         });
       });
     });
