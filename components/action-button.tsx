@@ -13,6 +13,7 @@ export interface ActionButtonProps {
   showSubMenuOn?: "caret" | "self";
   variant?: ButtonVariants["variant"];
   className?: string;
+  pressed?: boolean;
 }
 
 export interface ActionButtonStylesProps {
@@ -33,6 +34,7 @@ export function ActionButton({
   variant = "default",
   forTable,
   className,
+  pressed,
 }: ActionButtonProps & { forTable?: boolean }) {
   return (
     <Button
@@ -50,6 +52,7 @@ export function ActionButton({
       tipMenuSize="sm"
       variant={variant}
       className={className}
+      pressed={pressed}
       styles={{
         self: css`
           display: flex;
@@ -61,6 +64,7 @@ export function ActionButton({
           position: relative;
 
           ${variant === "default" &&
+          !pressed &&
           css`
             background-color: transparent;
             color: #565555;
