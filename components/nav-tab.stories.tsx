@@ -145,7 +145,7 @@ export const Small: Story = {
 
 export const WithActions: Story = {
   render: () => {
-    const [activeTab, setActiveTab] = useState("2");
+    const [activeTab, setActiveTab] = useState("3");
 
     const TABS_ITEMS: NavTabContentProps[] = [
       {
