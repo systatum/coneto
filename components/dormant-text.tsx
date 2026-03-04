@@ -140,7 +140,15 @@ function DormantText({
       $style={styles?.dormantedStyle}
     >
       <DormantLabelText>{content}</DormantLabelText>
-      <PencilIcon className="pencil-icon" size={dormantPencilSize} />
+      <PencilIcon
+        className="pencil-icon"
+        style={{
+          minWidth: dormantPencilSize,
+          minHeight: dormantPencilSize,
+          maxWidth: dormantPencilSize,
+          maxHeight: dormantPencilSize,
+        }}
+      />
     </DormantLabel>
   ) : (
     <DormantWrapper
@@ -200,38 +208,20 @@ const DormantLabel = styled.label<{
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  width: fit-content;
-  position: relative;
+  width: ${({ $fullWidth, $dormantedMaxWidth }) =>
+    $dormantedMaxWidth
+      ? $dormantedMaxWidth
+      : $fullWidth
+        ? "100%"
+        : "fit-content"};
+  max-width: 100%;
   gap: 0.25rem;
-
   padding: 0.5rem;
   border-radius: 2px;
   cursor: text;
-
   border: 1px solid transparent;
   transition: all 0.1s ease;
   transform: translateZ(0);
-
-  ${({ $fullWidth }) =>
-    $fullWidth &&
-    css`
-      min-width: 100%;
-    `};
-
-  ${({ $dormantedMaxWidth }) =>
-    $dormantedMaxWidth &&
-    css`
-      width: ${$dormantedMaxWidth};
-      overflow: hidden;
-      min-width: 0;
-
-      & > :first-child {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        min-width: 0;
-      }
-    `};
 
   ${({ $fontSize }) =>
     $fontSize &&
@@ -245,6 +235,7 @@ const DormantLabel = styled.label<{
       opacity: 1;
     }
   }
+
   ${({ $style }) => $style}
 `;
 
