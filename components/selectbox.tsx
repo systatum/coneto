@@ -100,7 +100,7 @@ interface InteractionModeProps {
 export interface OptionsProps {
   text: string;
   render?: ReactNode;
-  value: string;
+  value: string | number;
 }
 
 const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
@@ -141,12 +141,12 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
     }, [selectedOptions]);
 
     const initialState = options.find(
-      (opt) => opt.value === finalSelectedOptions?.[0]
+      (opt) => String(opt.value) === finalSelectedOptions?.[0]
     ) ?? {
       text: isValidDateString(finalSelectedOptions?.[0])
         ? finalSelectedOptions?.[0]
         : "",
-      value: "0",
+      value: typeof selectedOptions === "number" ? 0 : "0",
     };
 
     const handleOnChange = (values: string[]) => {
@@ -278,26 +278,28 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
             const selectedOption =
               FILTERED_OPTIONS[highlightedIndex - (actions?.length ?? 0)];
 
+            const selectedOptionValue = String(selectedOption.value);
+
             if (multiple) {
-              if (!finalSelectedOptions.includes(selectedOption.value)) {
+              if (!finalSelectedOptions.includes(selectedOptionValue)) {
                 if (
                   !maxSelectableItems ||
                   finalSelectedOptions.length < maxSelectableItems
                 ) {
                   handleOnChange([
                     ...finalSelectedOptions,
-                    selectedOption.value,
+                    selectedOptionValue,
                   ]);
                 }
               } else {
                 handleOnChange(
                   finalSelectedOptions.filter(
-                    (val) => val !== selectedOption.value
+                    (val) => val !== selectedOptionValue
                   )
                 );
               }
             } else {
-              handleOnChange([selectedOption.value]);
+              handleOnChange([selectedOptionValue]);
               setSelectedOptionsLocal(selectedOption);
               setIsOpen(false);
             }
@@ -397,32 +399,35 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
               const matched = options.find(
                 (opt) => opt.text === selectedOptionsLocal.text
               );
+
+              const matchedValue = String(matched.value);
               if (matched) {
                 setConfirmedValue(matched);
                 setSelectedOptionsLocal(matched);
                 if (multiple) {
                   handleOnChange?.(
-                    finalSelectedOptions?.includes(matched.value)
+                    finalSelectedOptions?.includes(matchedValue)
                       ? finalSelectedOptions.filter(
-                          (val) => val !== matched.value
+                          (val) => val !== matchedValue
                         )
-                      : [...finalSelectedOptions, matched.value]
+                      : [...finalSelectedOptions, matchedValue]
                   );
                 } else {
-                  handleOnChange?.([matched.value]);
+                  handleOnChange?.([matchedValue]);
                 }
               } else if (confirmedValue) {
+                const finalConfirmedValue = String(confirmedValue.value);
                 setSelectedOptionsLocal(confirmedValue);
                 if (multiple) {
                   handleOnChange?.(
-                    finalSelectedOptions?.includes(confirmedValue.value)
+                    finalSelectedOptions?.includes(finalConfirmedValue)
                       ? finalSelectedOptions.filter(
-                          (val) => val !== confirmedValue.value
+                          (val) => val !== finalConfirmedValue
                         )
-                      : [...finalSelectedOptions, confirmedValue.value]
+                      : [...finalSelectedOptions, finalConfirmedValue]
                   );
                 } else {
-                  handleOnChange?.([confirmedValue.value]);
+                  handleOnChange?.([finalConfirmedValue]);
                 }
               } else {
                 const empty = { text: "", value: "0" };

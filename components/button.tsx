@@ -67,6 +67,7 @@ export type ButtonProps = Omit<React.ComponentProps<"button">, "style"> &
     open?: boolean;
     styles?: ButtonStylesProps;
     anchorRef?: React.RefObject<HTMLElement>;
+    pressed?: boolean;
   };
 
 export interface ButtonStylesProps {
@@ -96,6 +97,7 @@ function Button({
   onOpen,
   open,
   anchorRef,
+  pressed,
   ...props
 }: ButtonProps) {
   const [isOpenLocal, setIsOpenLocal] = React.useState(false);
@@ -195,6 +197,7 @@ function Button({
       $variant={variant}
     >
       <BaseButton
+        $pressed={pressed}
         onClick={(e) => {
           if (onClick && showSubMenuOn === "caret") {
             onClick(e);
@@ -426,6 +429,7 @@ const BaseButton = styled.button<{
   $size: NonNullable<ButtonVariants["size"]>;
   $isOpen?: boolean;
   $activeBackgroundColor?: string;
+  $pressed?: boolean;
 }>`
   display: flex;
   flex-direction: row;
@@ -475,7 +479,7 @@ const BaseButton = styled.button<{
     }
   }}
 
-  ${({ $variant, $isOpen, $activeBackgroundColor }) => {
+  ${({ $variant, $isOpen, $activeBackgroundColor, $pressed }) => {
     const { bg, color, underline } = getButtonColors(
       $variant,
       $isOpen,
@@ -511,33 +515,64 @@ const BaseButton = styled.button<{
           `
         : ""};
 
-      &:hover {
-        ${!$isOpen &&
-        css`
-          background-color: ${getHoverColor($variant)};
-        `}
+      ${!$pressed &&
+      css`
+        &:hover {
+          ${!$isOpen &&
+          css`
+            background-color: ${getHoverColor($variant)};
+          `}
 
-        ${$variant?.startsWith("outline") &&
-        $variant !== "outline-default" &&
-        css`
-          color: white;
-        `}
-      }
+          ${$variant === "link"
+            ? css`
+                color: white;
+              `
+            : $variant === "outline-default"
+              ? css`
+                  color: black;
+                `
+              : $variant.startsWith("outline") &&
+                css`
+                  color: white;
+                `}
+        }
+      `}
     `;
-  }}
+  }};
 
-  &:active {
-    background-color: ${({ $variant }) => getActiveColor($variant)};
-    box-shadow:
-      inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
-      inset 0 -0.5px 0.5px ${({ $variant }) => getActiveColor($variant)};
-  }
+  ${({ $pressed, $variant }) => css`
+    ${$pressed &&
+    css`
+      color: ${$variant === "link"
+        ? "white"
+        : $variant === "outline-default"
+          ? "black"
+          : $variant.startsWith("outline")
+            ? "white"
+            : undefined};
+      background-color: ${getActiveColor($variant)};
+      box-shadow:
+        inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
+        inset 0 -0.5px 0.5px ${getActiveColor($variant)};
+    `}
+  `};
 
-  &:focus-visible {
-    outline: none;
-    box-shadow: inset 0 0 0 2px ${({ $variant }) => getFocusColor($variant)};
-    transition: box-shadow 0.2s ease;
-  }
+  ${({ $pressed, $variant }) =>
+    !$pressed &&
+    css`
+      &:active {
+        background-color: ${getActiveColor($variant)};
+        box-shadow:
+          inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
+          inset 0 -0.5px 0.5px ${getActiveColor($variant)};
+      }
+
+      &:focus-visible {
+        outline: none;
+        box-shadow: inset 0 0 0 2px ${getFocusColor($variant)};
+        transition: box-shadow 0.2s ease;
+      }
+    `}
 
   ${({ $style }) =>
     $style &&

@@ -1,4 +1,4 @@
-import { Combobox } from "./../../components/combobox";
+import { Combobox, ComboboxProps } from "./../../components/combobox";
 import { Button } from "./../../components/button";
 import {
   RiHome2Line,
@@ -6,10 +6,155 @@ import {
   RiSettings2Line,
   RiUser2Line,
 } from "@remixicon/react";
-import { OptionsProps } from "@/components/selectbox";
+import { OptionsProps, SelectboxSelectedOptions } from "@/components/selectbox";
 import { useState } from "react";
 
 describe("Combobox", () => {
+  context("options", () => {
+    function ProductCombobox(props: ComboboxProps) {
+      return <Combobox {...props} />;
+    }
+    context("when using option.value number", () => {
+      context("when initialize with selectedOptions string", () => {
+        it("should select the option when values match", () => {
+          cy.mount(
+            <ProductCombobox
+              options={[
+                { text: "Apple", value: 1 },
+                { text: "Banana", value: 2 },
+              ]}
+              placeholder="Select a fruit..."
+              selectedOptions={"1"}
+            />
+          );
+
+          cy.findByDisplayValue("Apple").should("be.visible");
+        });
+      });
+
+      context("when initialize with selectedOptions number", () => {
+        it("should select the option when values match", () => {
+          cy.mount(
+            <ProductCombobox
+              options={[
+                { text: "Apple", value: 1 },
+                { text: "Banana", value: 2 },
+              ]}
+              placeholder="Select a fruit..."
+              selectedOptions={1}
+            />
+          );
+
+          cy.findByDisplayValue("Apple").should("be.visible");
+        });
+      });
+
+      context("when initialize with selectedOptions string[]", () => {
+        it("should select the option when values match", () => {
+          cy.mount(
+            <ProductCombobox
+              options={[
+                { text: "Apple", value: 1 },
+                { text: "Banana", value: 2 },
+              ]}
+              placeholder="Select a fruit..."
+              selectedOptions={["2"]}
+            />
+          );
+
+          cy.findByDisplayValue("Banana").should("be.visible");
+        });
+      });
+
+      context("when initialize with selectedOptions number[]", () => {
+        it("should select the option when values match", () => {
+          cy.mount(
+            <ProductCombobox
+              options={[
+                { text: "Apple", value: 1 },
+                { text: "Banana", value: 2 },
+              ]}
+              placeholder="Select a fruit..."
+              selectedOptions={[2]}
+            />
+          );
+
+          cy.findByDisplayValue("Banana").should("be.visible");
+        });
+      });
+    });
+
+    context("when using option.value string", () => {
+      context("when initialize with selectedOptions string", () => {
+        it("should select the option when values match", () => {
+          cy.mount(
+            <ProductCombobox
+              options={[
+                { text: "Apple", value: "1" },
+                { text: "Banana", value: "2" },
+              ]}
+              placeholder="Select a fruit..."
+              selectedOptions={"1"}
+            />
+          );
+
+          cy.findByDisplayValue("Apple").should("be.visible");
+        });
+      });
+
+      context("when initialize with selectedOptions number", () => {
+        it("should select the option when values match", () => {
+          cy.mount(
+            <ProductCombobox
+              options={[
+                { text: "Apple", value: "1" },
+                { text: "Banana", value: "2" },
+              ]}
+              placeholder="Select a fruit..."
+              selectedOptions={1}
+            />
+          );
+
+          cy.findByDisplayValue("Apple").should("be.visible");
+        });
+      });
+
+      context("when initialize with selectedOptions string[]", () => {
+        it("should select the option when values match", () => {
+          cy.mount(
+            <ProductCombobox
+              options={[
+                { text: "Apple", value: "1" },
+                { text: "Banana", value: "2" },
+              ]}
+              placeholder="Select a fruit..."
+              selectedOptions={["2"]}
+            />
+          );
+
+          cy.findByDisplayValue("Banana").should("be.visible");
+        });
+      });
+
+      context("when initialize with selectedOptions number[]", () => {
+        it("should select the option when values match", () => {
+          cy.mount(
+            <ProductCombobox
+              options={[
+                { text: "Apple", value: "1" },
+                { text: "Banana", value: "2" },
+              ]}
+              placeholder="Select a fruit..."
+              selectedOptions={[2]}
+            />
+          );
+
+          cy.findByDisplayValue("Banana").should("be.visible");
+        });
+      });
+    });
+  });
+
   context("selectedOptions", () => {
     context("when using string value", () => {
       it("should update and return string value", () => {
