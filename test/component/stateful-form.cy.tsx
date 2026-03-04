@@ -248,6 +248,160 @@ describe("StatefulForm", () => {
         cy.get(`#${expectedId}`).should("exist");
       });
     });
+
+    context("when given with non-ASCII IDs", () => {
+      const FIELDS_NOT_NORMAL_ASCII: FormFieldGroup[] = [
+        {
+          name: "text",
+          title: "Text",
+          type: "text",
+          required: true,
+          placeholder: "Enter text",
+          id: "field-text-📝 hello world",
+        },
+        {
+          name: "email",
+          title: "Email",
+          type: "email",
+          required: false,
+          placeholder: "Enter email address",
+          id: "field-email-📧 123!",
+        },
+        {
+          name: "time",
+          title: "Time",
+          type: "time",
+          required: false,
+          placeholder: "Enter time",
+          id: "field-time-⏰ something",
+        },
+        {
+          name: "number",
+          title: "Number",
+          type: "number",
+          required: false,
+          placeholder: "Enter number",
+          id: "field-number-🔢 test id",
+        },
+        {
+          name: "password",
+          title: "Password",
+          type: "password",
+          required: false,
+          placeholder: "Enter password",
+          id: "field-password-🔑 secret💡",
+        },
+        {
+          name: "textarea",
+          title: "Textarea",
+          type: "textarea",
+          rows: 3,
+          required: false,
+          placeholder: "Enter text here",
+          id: "field-textarea-📝 multi words!",
+        },
+        {
+          name: "check",
+          placeholder: "Check",
+          type: "checkbox",
+          required: false,
+          id: "field-check-☑️ yes/no?",
+        },
+        {
+          name: "color",
+          title: "Color",
+          type: "color",
+          required: false,
+          placeholder: "Enter the color here",
+          id: "field-color-🎨 rainbow 🌈",
+        },
+        {
+          name: "combo",
+          title: "Combo",
+          type: "combo",
+          required: false,
+          placeholder: "Select a fruit...",
+          comboboxProps: { options: FRUIT_OPTIONS },
+          id: "field-combo-🍎 choose one",
+        },
+        {
+          name: "date",
+          title: "Date",
+          type: "date",
+          required: false,
+          placeholder: "Select a date",
+          dateProps: { monthNames: MONTH_NAMES },
+          id: "field-date-📅 01/01/2026",
+        },
+        {
+          name: "file_drop_box",
+          title: "File Drop Box",
+          type: "file_drop_box",
+          required: false,
+          id: "field-file_drop_box-📂 drop here",
+        },
+        {
+          name: "file",
+          title: "File",
+          type: "file",
+          required: false,
+          id: "field-file-📄 upload file!",
+        },
+        {
+          name: "image",
+          title: "Image",
+          type: "image",
+          required: false,
+          id: "field-image-🖼️ my image",
+        },
+        {
+          name: "money",
+          title: "Money",
+          type: "money",
+          required: false,
+          placeholder: "Enter amount",
+          id: "field-money-💰 $1000",
+        },
+        {
+          name: "phone",
+          title: "Phone",
+          type: "phone",
+          required: false,
+          placeholder: "Enter phone number",
+          id: "field-phone-📞 askdaosdk",
+        },
+        {
+          name: "signature",
+          title: "Signature",
+          type: "signbox",
+          required: false,
+          id: "field-signature-✍️ sign here!",
+        },
+      ];
+
+      it("renders sanitized ASCII-only IDs for input elements", () => {
+        cy.mount(
+          <StatefulForm
+            fields={FIELDS_NOT_NORMAL_ASCII}
+            formValues={value}
+            mode="onChange"
+          />
+        );
+
+        const flattenFields = (groups: FormFieldGroup[]): FormFieldProps[] =>
+          groups.flatMap((group) =>
+            Array.isArray(group) ? flattenFields(group) : [group]
+          );
+
+        const allFields = flattenFields(FIELDS_NOT_NORMAL_ASCII);
+
+        allFields.forEach((field) => {
+          const sanitizedId = StatefulForm.GenerateId({ id: field.id });
+
+          cy.get(`#${sanitizedId}`).should("exist");
+        });
+      });
+    });
   });
 
   context("with type custom", () => {
