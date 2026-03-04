@@ -541,7 +541,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
 
     return (
       <FieldLane
-        id={id}
+        id={inputId}
         dropdowns={dropdowns}
         showError={showError}
         errorMessage={errorMessage}
@@ -557,7 +557,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       >
         <BaseSelectbox
           {...rest}
-          id={id}
+          id={inputId}
           actions={actions}
           showError={showError}
           styles={{

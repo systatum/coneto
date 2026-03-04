@@ -122,6 +122,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         }}
       >
         <BaseTextarea
+          {...rest}
           id={inputId}
           showError={showError}
           styles={{
@@ -135,7 +136,6 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
               ${styles?.self}
             `,
           }}
-          {...rest}
           ref={ref}
         />
       </FieldLane>

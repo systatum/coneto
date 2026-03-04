@@ -76,7 +76,7 @@ function Checkbox({
   const inputElement: ReactElement = (
     <InputWrapper
       aria-label="input-wrapper-checkbox"
-      htmlFor={props.disabled ? null : id}
+      htmlFor={props.disabled ? null : inputId}
       $hasDescription={!!description}
       $highlight={!!highlightOnChecked}
       $checked={isChecked}
@@ -152,7 +152,7 @@ function Checkbox({
     <Container $style={styles?.containerStyle}>
       {title && (
         <StatefulForm.Label
-          htmlFor={props.disabled ? null : id}
+          htmlFor={props.disabled ? null : inputId}
           aria-label="title-wrapper"
           style={styles?.titleStyle}
           helper={helper}

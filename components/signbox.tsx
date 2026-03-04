@@ -233,7 +233,7 @@ function Signbox({
   id,
 }: SignboxProps) {
   const inputId = StatefulForm.GenerateId({
-    prefix: "textarea",
+    prefix: "signbox",
     name,
     id,
   });

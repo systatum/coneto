@@ -158,6 +158,7 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
         }}
       >
         <BaseColorbox
+          {...rest}
           id={inputId}
           showError={showError}
           disabled={disabled}
@@ -172,7 +173,6 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
             `,
           }}
           ref={ref}
-          {...rest}
         />
       </FieldLane>
     );

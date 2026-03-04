@@ -1601,18 +1601,14 @@ function StatefulFormGenerateId({
   id,
   prefix = "input",
 }: StatefulFormGenerateIdProps): string {
-  if (id) return id;
-  if (name) {
-    const safeName = name
-      .replace(/\s+/g, "_")
+  const sanitize = (str: string) =>
+    str
       .toLowerCase()
-      .replace(/[^0-9a-zA-Z_-]/g, "");
-    // 1. Replace spaces with underscores
-    // 2. Convert to lowercase
-    // 3. Remove all non-ASCII characters (allow only 0-9, a-z, A-Z, _ and -)
+      .replace(/\s+/g, "_") // 1. spaces → underscores
+      .replace(/[^0-9a-z_-]/g, ""); // 2. Remove all non-ASCII characters (allow only 0-9, a-z, A-Z, _ and -)
 
-    return `${prefix}-${safeName}`;
-  }
+  if (id) return sanitize(id);
+  if (name) return `${prefix}-${sanitize(name)}`;
   return prefix;
 }
 
