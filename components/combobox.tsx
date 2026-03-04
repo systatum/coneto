@@ -20,6 +20,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { List } from "./list";
 import { FieldLaneProps } from "./field-lane";
 import { Figure, FigureProps } from "./figure";
+import { StatefulForm } from "./stateful-form";
 
 interface BaseComboboxProps {
   selectedOptions?: SelectboxSelectedOptions;
@@ -68,11 +69,8 @@ type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
   };
 
 export interface ComboboxProps
-  extends Omit<BaseComboboxProps, "inputId">,
-    Omit<
-      FieldLaneProps,
-      "styles" | "inputId" | "type" | "children" | "actions"
-    > {}
+  extends BaseComboboxProps,
+    Omit<FieldLaneProps, "styles" | "type" | "children" | "actions"> {}
 
 const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
   (
@@ -99,12 +97,15 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       disabled,
       dropdowns,
       errorIconPosition,
+      id,
     },
     ref
   ) => {
-    const inputId = name
-      ? `combobox-${name.replace(/\s+/g, "_").toLowerCase()}`
-      : "combobox";
+    const inputId = StatefulForm.GenerateId({
+      prefix: "file-input-box",
+      name,
+      id,
+    });
 
     return (
       <Selectbox

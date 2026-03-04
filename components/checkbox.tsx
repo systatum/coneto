@@ -54,12 +54,17 @@ function Checkbox({
   indeterminate = false,
   styles,
   helper,
+  id,
   ...props
 }: CheckboxProps) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const inputId = name
-    ? `checkbox-${name.replace(/\s+/g, "_").toLowerCase()}`
-    : "checkbox";
+
+  const inputId = StatefulForm.GenerateId({
+    name,
+    id,
+    prefix: "checkbox",
+  });
+
   const isChecked = Boolean(props.checked);
 
   useEffect(() => {
@@ -71,7 +76,7 @@ function Checkbox({
   const inputElement: ReactElement = (
     <InputWrapper
       aria-label="input-wrapper-checkbox"
-      htmlFor={props.disabled ? null : inputId}
+      htmlFor={props.disabled ? null : id}
       $hasDescription={!!description}
       $highlight={!!highlightOnChecked}
       $checked={isChecked}
@@ -147,7 +152,7 @@ function Checkbox({
     <Container $style={styles?.containerStyle}>
       {title && (
         <StatefulForm.Label
-          htmlFor={props.disabled ? null : inputId}
+          htmlFor={props.disabled ? null : id}
           aria-label="title-wrapper"
           style={styles?.titleStyle}
           helper={helper}

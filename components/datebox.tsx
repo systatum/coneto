@@ -13,6 +13,7 @@ import {
 import styled, { css, CSSProp } from "styled-components";
 import { forwardRef, ReactNode } from "react";
 import { FieldLaneProps } from "./field-lane";
+import { StatefulForm } from "./stateful-form";
 
 type BaseDateboxProps = BaseCalendarProps & {
   name?: string;
@@ -26,6 +27,7 @@ type BaseDateboxProps = BaseCalendarProps & {
   placeholder?: string;
   styles?: DateboxStylesProps;
   helper?: string;
+  id?: string;
 };
 
 export type DateboxStylesProps = SelectboxStylesProps;
@@ -43,11 +45,8 @@ type CalendarDrawerProps = BaseCalendarProps &
   >;
 
 export interface DateboxProps
-  extends Omit<BaseDateboxProps, "inputId">,
-    Omit<
-      FieldLaneProps,
-      "styles" | "inputId" | "type" | "children" | "actions"
-    > {}
+  extends BaseDateboxProps,
+    Omit<FieldLaneProps, "styles" | "id" | "type" | "children" | "actions"> {}
 
 const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
   const {
@@ -64,12 +63,15 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
     calendarFooter,
     disableWeekend,
     calendarSelectabilityMode,
+    id,
     ...rest
   } = props;
 
-  const inputId = name
-    ? `datebox-${name.replace(/\s+/g, "_").toLowerCase()}`
-    : "datebox";
+  const inputId = StatefulForm.GenerateId({
+    prefix: "datebox",
+    name,
+    id,
+  });
 
   return (
     <Selectbox

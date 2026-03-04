@@ -11,6 +11,7 @@ import {
 import styled, { css, CSSProp } from "styled-components";
 import { Button, SubMenuButtonProps } from "./button";
 import { TipMenuItemProps } from "./tip-menu";
+import { StatefulForm } from "./stateful-form";
 
 export interface SearchboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {
@@ -42,6 +43,7 @@ const Searchbox = forwardRef<Omit<HTMLInputElement, "style">, SearchboxProps>(
       safeAriaLabelSubMenu,
       resultMenu,
       showResultMenu,
+      id,
       ...props
     },
     ref
@@ -61,9 +63,11 @@ const Searchbox = forwardRef<Omit<HTMLInputElement, "style">, SearchboxProps>(
 
     const isOpenShowMenu = isFocus && showResultMenu;
 
-    const inputId = name
-      ? `searchbox-${name.replace(/\s+/g, "_").toLowerCase()}`
-      : "searchbox";
+    const inputId = StatefulForm.GenerateId({
+      prefix: "searchbox",
+      name,
+      id,
+    });
 
     return (
       <SearchboxWrapper

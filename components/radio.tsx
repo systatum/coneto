@@ -54,9 +54,14 @@ function Radio({
   helper,
   mode = "radio",
   icon,
+  id,
   ...props
 }: RadioProps) {
-  const id = `radio-${name}-${value}`;
+  const inputId = StatefulForm.GenerateId({
+    prefix: "radio",
+    name,
+    id,
+  });
 
   const resolvediconSize = icon?.size ?? (mode === "button" ? 25 : 16);
 
@@ -77,7 +82,7 @@ function Radio({
       >
         <HiddenRadio
           type="radio"
-          id={id}
+          id={inputId}
           name={name}
           value={value}
           onChange={onChange}

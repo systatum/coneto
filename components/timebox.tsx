@@ -10,6 +10,7 @@ import {
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { StatefulForm } from "./stateful-form";
 
 interface BaseTimeboxProps
   extends Omit<
@@ -314,13 +315,16 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
       disabled,
       ...rest
     } = props;
-    const inputId = props?.name
-      ? `timebox-${props.name.replace(/\s+/g, "_").toLowerCase()}`
-      : "timebox";
+
+    const inputId = StatefulForm.GenerateId({
+      prefix: "timebox",
+      name: props.name,
+      id: props.id,
+    });
 
     return (
       <FieldLane
-        inputId={inputId}
+        id={inputId}
         dropdowns={dropdowns}
         showError={showError}
         errorMessage={errorMessage}

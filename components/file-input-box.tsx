@@ -41,11 +41,14 @@ function FileInputBox({
   styles,
   helper,
   name,
+  id,
   ...props
 }: FileInputBoxProps) {
-  const inputId = name
-    ? `file-input-box-${name.replace(/\s+/g, "_").toLowerCase()}`
-    : "file-input-box";
+  const inputId = StatefulForm.GenerateId({
+    prefix: "file-input-box",
+    name,
+    id,
+  });
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -160,7 +163,7 @@ function FileInputBox({
     <InputWrapper $containerStyle={styles?.containerStyle}>
       {label && (
         <StatefulForm.Label
-          htmlFor={props.disabled ? null : props.id}
+          htmlFor={props.disabled ? null : inputId}
           style={styles?.labelStyle}
           helper={helper}
           label={label}

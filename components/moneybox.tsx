@@ -11,6 +11,7 @@ import {
 import { Button } from "./button";
 import { List } from "./list";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { StatefulForm } from "./stateful-form";
 
 export type SeparatorTypeProps = "dot" | "comma";
 
@@ -36,7 +37,7 @@ interface BaseMoneyboxProps
   styles?: MoneyboxStylesProps;
   editableCurrency?: boolean;
   currencyOptions?: CurrencyOptionsProps[];
-  inputId?: string;
+  id?: string;
 }
 
 export interface MoneyboxStylesProps {
@@ -57,7 +58,7 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
       styles,
       onKeyDown,
       editableCurrency,
-      inputId,
+      id,
       currencyOptions = [
         { id: "IDR", name: "Indonesian Rupiah", symbol: "Rp" },
       ],
@@ -229,7 +230,7 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
           placeholder={placeholder}
           onFocus={() => setFocus(true)}
           onKeyDown={onKeyDown}
-          id={inputId}
+          id={id}
           type="text"
           $style={styles?.self}
           inputMode="decimal"
@@ -242,8 +243,8 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
 );
 
 export interface MoneyboxProps
-  extends Omit<BaseMoneyboxProps, "styles" | "inputId" | "actions">,
-    Omit<FieldLaneProps, "styles" | "inputId" | "type" | "actions"> {
+  extends Omit<BaseMoneyboxProps, "styles" | "actions">,
+    Omit<FieldLaneProps, "styles" | "type" | "actions"> {
   styles?: MoneyboxStylesProps & FieldLaneStylesProps;
 }
 
@@ -260,13 +261,16 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
       disabled,
       ...rest
     } = props;
-    const inputId = props?.name
-      ? `moneybox-${props.name.replace(/\s+/g, "_").toLowerCase()}`
-      : "moneybox";
+
+    const inputId = StatefulForm.GenerateId({
+      prefix: "moneybox",
+      name: props.name,
+      id: props.id,
+    });
 
     return (
       <FieldLane
-        inputId={inputId}
+        id={inputId}
         dropdowns={dropdowns}
         showError={showError}
         errorMessage={errorMessage}
@@ -282,7 +286,7 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
       >
         <BaseMoneybox
           {...rest}
-          inputId={inputId}
+          id={inputId}
           showError={showError}
           styles={{
             inputWrapperStyle: css`
