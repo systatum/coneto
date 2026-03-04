@@ -14,6 +14,54 @@ describe("Combobox", () => {
     function ProductCombobox(props: ComboboxProps) {
       return <Combobox {...props} />;
     }
+
+    context("when given empty array ([])", () => {
+      it("should not have option", () => {
+        cy.mount(
+          <ProductCombobox options={[]} placeholder="Select a fruit..." />
+        );
+
+        cy.findByPlaceholderText("Select a fruit...")
+          .should("have.value", "")
+          .click();
+        cy.findByText("Not available.").should("be.visible");
+      });
+
+      context("when given selectedOptions null", () => {
+        it("should render normally and not available", () => {
+          cy.mount(
+            <ProductCombobox
+              options={[]}
+              placeholder="Select a fruit..."
+              selectedOptions={null}
+            />
+          );
+
+          cy.findByPlaceholderText("Select a fruit...")
+            .should("have.value", "")
+            .click();
+          cy.findByText("Not available.").should("be.visible");
+        });
+      });
+
+      context("when given selectedOptions any value", () => {
+        it("should not match render value and option still not available", () => {
+          cy.mount(
+            <ProductCombobox
+              options={[]}
+              placeholder="Select a fruit..."
+              selectedOptions={null}
+            />
+          );
+
+          cy.findByPlaceholderText("Select a fruit...")
+            .should("have.value", "")
+            .click();
+          cy.findByText("Not available.").should("be.visible");
+        });
+      });
+    });
+
     context("when using option.value number", () => {
       context("when initialize with selectedOptions string", () => {
         it("should select the option when values match", () => {

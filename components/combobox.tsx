@@ -205,7 +205,7 @@ function ComboboxDrawer({
     if (Array.isArray(selectedOptions)) {
       return selectedOptions.map(String);
     }
-    if (selectedOptions !== undefined) {
+    if (selectedOptions != null) {
       return [String(selectedOptions)];
     }
     return [];
