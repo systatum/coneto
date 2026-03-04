@@ -23,6 +23,7 @@ export interface NavTabProps {
   styles?: NavTabStylesProps;
   size?: NavTabSize;
   onChange?: (activeTab: string) => void;
+  active?: boolean;
 }
 
 export interface NavTabStylesProps {
@@ -34,7 +35,9 @@ export interface NavTabStylesProps {
   boxStyle?: CSSProp;
 }
 
-export type NavTabActionsProps = ActionButtonProps;
+export interface NavTabActionsProps extends ActionButtonProps {
+  active?: boolean;
+}
 
 export type NavTabSize = "md" | "sm";
 
@@ -375,6 +378,12 @@ function NavTab({
                     ...action?.styles,
                     self: css`
                       height: ${size === "sm" && "27px"};
+                      border-width: 2px;
+
+                      ${action.active &&
+                      css`
+                        border-bottom: 2px solid rgb(59, 130, 246);
+                      `}
                       ${action?.styles?.self}
                     `,
                   }}
