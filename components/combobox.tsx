@@ -212,7 +212,7 @@ function ComboboxDrawer({
   const selectedIndex = useMemo(
     () =>
       options.findIndex((option) =>
-        finalSelectedOptions.includes(option.value)
+        finalSelectedOptions.includes(String(option.value))
       ) + (actions?.length ?? 0),
     [options, finalSelectedOptions, actions]
   );
@@ -361,7 +361,8 @@ function ComboboxDrawer({
 
           {options.length > 0 ? (
             options.map((option, index) => {
-              const isSelected = finalSelectedOptions.includes(option.value);
+              const optionValue = String(option.value);
+              const isSelected = finalSelectedOptions.includes(optionValue);
               const shouldHighlight =
                 highlightOnMatch && isSelected
                   ? true
@@ -369,7 +370,7 @@ function ComboboxDrawer({
 
               return (
                 <List.Item
-                  id={option.value}
+                  id={String(option.value)}
                   title={option.render ? option.render : option.text}
                   styles={{
                     rowStyle: listItemRowStyle({
@@ -392,14 +393,14 @@ function ComboboxDrawer({
                   onMouseDown={(e) => {
                     e.preventDefault();
                     if (multiple) {
-                      if (!finalSelectedOptions.includes(option.value)) {
+                      if (!finalSelectedOptions.includes(optionValue)) {
                         if (
                           !maxSelectableItems ||
                           finalSelectedOptions.length < maxSelectableItems
                         ) {
                           handleOnChange([
                             ...finalSelectedOptions,
-                            option.value,
+                            optionValue,
                           ]);
                         }
                       } else {
@@ -415,7 +416,7 @@ function ComboboxDrawer({
                     } else {
                       setIsOpen(false);
                       setSelectedOptionsLocal(option);
-                      handleOnChange([option.value]);
+                      handleOnChange([optionValue]);
                       setHasInteracted(false);
                     }
 
