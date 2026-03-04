@@ -47,6 +47,12 @@ function ThumbField({
   id,
   helper,
 }: ThumbFieldProps) {
+  const inputId = StatefulForm.GenerateId({
+    prefix: "thumbfield",
+    name,
+    id,
+  });
+
   const thumbStateValue = value === true ? "up" : value ? "down" : "blank";
   const [thumbValue, setThumbValue] =
     useState<ThumbFieldValue>(thumbStateValue);
@@ -77,6 +83,7 @@ function ThumbField({
         ref={thumbInputRef}
         name={name}
         type="hidden"
+        id={inputId}
         value={
           thumbValue === "up" ? "true" : thumbValue === "down" ? "false" : ""
         }
