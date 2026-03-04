@@ -47,7 +47,7 @@ function ThumbField({
   id,
   helper,
 }: ThumbFieldProps) {
-  const inputId = StatefulForm.GenerateId({
+  const inputId = StatefulForm.SanitizeId({
     prefix: "thumbfield",
     name,
     id,

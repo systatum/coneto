@@ -59,7 +59,7 @@ function Checkbox({
 }: CheckboxProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const inputId = StatefulForm.GenerateId({
+  const inputId = StatefulForm.SanitizeId({
     name,
     id,
     prefix: "checkbox",

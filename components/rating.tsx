@@ -41,7 +41,7 @@ function Rating({
   const [ratingLocal, setRatingLocal] = useState(ratingState);
   const [hoverRating, setHoverRating] = useState(0);
 
-  const inputId = StatefulForm.GenerateId({
+  const inputId = StatefulForm.SanitizeId({
     prefix: "rating",
     name,
     id,

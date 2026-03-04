@@ -88,7 +88,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       disabled,
       ...rest
     } = props;
-    const inputId = StatefulForm.GenerateId({
+    const inputId = StatefulForm.SanitizeId({
       prefix: "textarea",
       name: props.name,
       id: props.id,

@@ -63,7 +63,7 @@ const Searchbox = forwardRef<Omit<HTMLInputElement, "style">, SearchboxProps>(
 
     const isOpenShowMenu = isFocus && showResultMenu;
 
-    const inputId = StatefulForm.GenerateId({
+    const inputId = StatefulForm.SanitizeId({
       prefix: "searchbox",
       name,
       id,

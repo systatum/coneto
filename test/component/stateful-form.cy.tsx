@@ -396,7 +396,7 @@ describe("StatefulForm", () => {
         const allFields = flattenFields(FIELDS_NOT_NORMAL_ASCII);
 
         allFields.forEach((field) => {
-          const sanitizedId = StatefulForm.GenerateId({ id: field.id });
+          const sanitizedId = StatefulForm.SanitizeId({ id: field.id });
 
           cy.get(`#${sanitizedId}`).should("exist");
         });

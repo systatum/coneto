@@ -533,7 +533,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       id,
       ...rest
     } = props;
-    const inputId = StatefulForm.GenerateId({
+    const inputId = StatefulForm.SanitizeId({
       name,
       id,
       prefix: "selectbox",

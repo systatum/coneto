@@ -65,7 +65,7 @@ function Imagebox({
   url,
   id,
 }: ImageboxProps) {
-  const inputId = StatefulForm.GenerateId({
+  const inputId = StatefulForm.SanitizeId({
     prefix: "imagebox",
     name,
     id,

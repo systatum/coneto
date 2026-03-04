@@ -316,7 +316,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
       ...rest
     } = props;
 
-    const inputId = StatefulForm.GenerateId({
+    const inputId = StatefulForm.SanitizeId({
       prefix: "timebox",
       name: props.name,
       id: props.id,

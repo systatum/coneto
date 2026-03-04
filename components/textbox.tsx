@@ -116,7 +116,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
       ...rest
     } = props;
 
-    const inputId = StatefulForm.GenerateId({
+    const inputId = StatefulForm.SanitizeId({
       prefix: "textbox",
       name: props.name,
       id: props.id,

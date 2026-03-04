@@ -365,7 +365,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
       ...rest
     } = props;
 
-    const inputId = StatefulForm.GenerateId({
+    const inputId = StatefulForm.SanitizeId({
       prefix: "phonebox",
       name: props.name,
       id: props.id,

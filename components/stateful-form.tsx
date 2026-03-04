@@ -1592,17 +1592,17 @@ function StatefulFormLabel({
   );
 }
 
-interface StatefulFormGenerateIdProps {
+interface StatefulFormSanitizeIdProps {
   name?: string;
   id?: string;
   prefix?: string;
 }
 
-function StatefulFormGenerateId({
+function StatefulFormSanitizeId({
   name,
   id,
   prefix = "input",
-}: StatefulFormGenerateIdProps): string {
+}: StatefulFormSanitizeIdProps): string {
   const sanitize = (str: string) =>
     str
       .toLowerCase()
@@ -1642,6 +1642,6 @@ const RowFormField = styled.div<{ $style: CSSProp }>`
 `;
 
 StatefulForm.Label = StatefulFormLabel;
-StatefulForm.GenerateId = StatefulFormGenerateId;
+StatefulForm.SanitizeId = StatefulFormSanitizeId;
 
 export { StatefulForm };

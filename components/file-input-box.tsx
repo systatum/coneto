@@ -44,7 +44,7 @@ function FileInputBox({
   id,
   ...props
 }: FileInputBoxProps) {
-  const inputId = StatefulForm.GenerateId({
+  const inputId = StatefulForm.SanitizeId({
     prefix: "file-input-box",
     name,
     id,
