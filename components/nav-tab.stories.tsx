@@ -189,6 +189,12 @@ export const WithActions: Story = {
           },
         ],
       },
+      {
+        id: "3",
+        title: "Setting",
+        content: <p>This is the setting page</p>,
+        hidden: true,
+      },
     ];
 
     return (
@@ -200,10 +206,9 @@ export const WithActions: Story = {
           {
             icon: { image: RiSettings5Line },
             onClick: () => {
-              console.log("Settings button was clicked");
+              setActiveTab("3");
             },
           },
-
           {
             caption: "Add",
             icon: { image: RiAddBoxLine },
