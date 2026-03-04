@@ -1571,6 +1571,32 @@ function StatefulFormLabel({
   );
 }
 
+interface StatefulFormGenerateIdProps {
+  name?: string;
+  id?: string;
+  prefix?: string;
+}
+
+function StatefulFormGenerateId({
+  name,
+  id,
+  prefix = "input",
+}: StatefulFormGenerateIdProps): string {
+  if (id) return id;
+  if (name) {
+    const safeName = name
+      .replace(/\s+/g, "_")
+      .toLowerCase()
+      .replace(/[^0-9a-zA-Z_-]/g, "");
+    // 1. Replace spaces with underscores
+    // 2. Convert to lowercase
+    // 3. Remove all non-ASCII characters (allow only 0-9, a-z, A-Z, _ and -)
+
+    return `${prefix}-${safeName}`;
+  }
+  return prefix;
+}
+
 const Label = styled.label<{ $style?: CSSProp }>`
   font-size: 0.75rem;
   display: flex;
@@ -1599,5 +1625,6 @@ const RowFormField = styled.div<{ $style: CSSProp }>`
 `;
 
 StatefulForm.Label = StatefulFormLabel;
+StatefulForm.GenerateId = StatefulFormGenerateId;
 
 export { StatefulForm };
