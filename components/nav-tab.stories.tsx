@@ -40,7 +40,23 @@ const meta: Meta<typeof NavTab> = {
     },
     actions: {
       control: "object",
-      description: "Right-side header action buttons",
+      description: `
+Configuration for right-side action buttons in the NavTab component. Each action object allows you to define behavior, appearance, and optional submenus for the header actions:
+
+- **caption**: Optional text label displayed on the action button.
+- **icon**: FigureProps object to render a custom icon inside the button.
+- **onClick**: Callback function triggered when the button is clicked.
+- **styles**: Optional styling overrides using \`ActionButtonStylesProps\` (styled-components compatible).
+- **subMenu**: Function returning a ReactNode to render a dropdown or sub-menu associated with the button.
+- **disabled**: Boolean to disable the button interaction.
+- **showSubMenuOn**: Determines how the sub-menu is triggered: "caret" (click on caret) or "self" (click anywhere on button).
+- **variant**: Optional style variant of the button, compatible with NavTab button variants.
+- **className**: Optional CSS class for additional styling or testing purposes.
+- **pressed**: Boolean indicating if the button is currently in an active/pressed state.
+- **active**: Boolean indicating if this action corresponds to the currently active tab state.
+
+This object allows fine-grained control over the layout, interaction, and styling of the action buttons in the NavTab’s header without altering the component logic.
+`,
     },
     children: {
       control: false,
@@ -145,7 +161,7 @@ export const Small: Story = {
 
 export const WithActions: Story = {
   render: () => {
-    const [activeTab, setActiveTab] = useState("2");
+    const [activeTab, setActiveTab] = useState("3");
 
     const TABS_ITEMS: NavTabContentProps[] = [
       {
@@ -189,6 +205,12 @@ export const WithActions: Story = {
           },
         ],
       },
+      {
+        id: "3",
+        title: "Setting",
+        content: <p>This is the setting page</p>,
+        hidden: true,
+      },
     ];
 
     return (
@@ -200,10 +222,10 @@ export const WithActions: Story = {
           {
             icon: { image: RiSettings5Line },
             onClick: () => {
-              console.log("Settings button was clicked");
+              setActiveTab("3");
             },
+            active: activeTab === "3",
           },
-
           {
             caption: "Add",
             icon: { image: RiAddBoxLine },

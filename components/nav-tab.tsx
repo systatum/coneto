@@ -1,4 +1,11 @@
-import React, { Fragment, ReactNode, useEffect, useRef, useState } from "react";
+import React, {
+  Fragment,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { motion } from "framer-motion";
 import { RemixiconComponentType, RiArrowRightSLine } from "@remixicon/react";
@@ -16,6 +23,7 @@ export interface NavTabProps {
   styles?: NavTabStylesProps;
   size?: NavTabSize;
   onChange?: (activeTab: string) => void;
+  active?: boolean;
 }
 
 export interface NavTabStylesProps {
@@ -27,7 +35,9 @@ export interface NavTabStylesProps {
   boxStyle?: CSSProp;
 }
 
-export type NavTabActionsProps = ActionButtonProps;
+export interface NavTabActionsProps extends ActionButtonProps {
+  active?: boolean;
+}
 
 export type NavTabSize = "md" | "sm";
 
@@ -38,6 +48,7 @@ export interface NavTabContentProps {
   onClick?: () => void;
   actions?: SubMenuNavTab[];
   subItems?: NavTabSubItemsContentProps[];
+  hidden?: boolean;
 }
 
 export interface NavTabSubItemsContentProps {
@@ -80,12 +91,14 @@ function NavTab({
   const isControlled = activeTab !== undefined && onChange;
   const selected = isControlled ? activeTab : selectedLocal;
 
+  const visibleTabs = useMemo(() => tabs.filter((tab) => !tab.hidden), [tabs]);
+
   const getHoverPosition = () => {
     if (!isInitialized || tabSizes.length === 0) {
       return { left: 0, width: 0, opacity: 0 };
     }
 
-    const targetIndex = tabs.findIndex(
+    const targetIndex = visibleTabs.findIndex(
       (tab) =>
         tab.id === selected ||
         tab.subItems?.some((item) => item.id === selected)
@@ -107,7 +120,7 @@ function NavTab({
       if (
         !tabRefs.current.length ||
         !containerRef.current ||
-        tabs.length === 0
+        visibleTabs.length === 0
       ) {
         return;
       }
@@ -136,7 +149,7 @@ function NavTab({
       window.removeEventListener("resize", calculateTabSizes);
       clearTimeout(timeoutId);
     };
-  }, [tabs.length]);
+  }, [visibleTabs.length]);
 
   const setTabRef = (index: number) => (element: HTMLDivElement | null) => {
     tabRefs.current[index] = element;
@@ -177,7 +190,7 @@ function NavTab({
             }}
           />
 
-          {tabs.map((tab, index) => {
+          {visibleTabs.map((tab, index) => {
             return (
               <Tooltip
                 ref={(el) => {
@@ -365,6 +378,12 @@ function NavTab({
                     ...action?.styles,
                     self: css`
                       height: ${size === "sm" && "27px"};
+                      border-width: 2px;
+
+                      ${action.active &&
+                      css`
+                        border-bottom: 2px solid rgb(59, 130, 246);
+                      `}
                       ${action?.styles?.self}
                     `,
                   }}

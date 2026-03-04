@@ -25,6 +25,101 @@ describe("NavTab", () => {
     },
   ];
 
+  context("hidden tab", () => {
+    function NavTabWithHidden({ hidden }: { hidden?: boolean }) {
+      const [activeTab, setActiveTab] = useState("2");
+
+      return (
+        <NavTab
+          size="sm"
+          tabs={[
+            {
+              id: "1",
+              title: "Write",
+              content: "Write tab content",
+            },
+            {
+              id: "2",
+              title: "Review",
+              content: "Review tab content",
+              ...(hidden ? { hidden: true } : {}),
+            },
+          ]}
+          actions={[
+            {
+              icon: { image: RiSettings5Line },
+              onClick: () => {
+                setActiveTab("2");
+              },
+              active: activeTab === "2",
+            },
+          ]}
+          onChange={(activeTab) => setActiveTab(activeTab)}
+          activeTab={activeTab}
+        />
+      );
+    }
+    context("when given true", () => {
+      it("should not render the hidden tab in the navigation", () => {
+        cy.mount(<NavTabWithHidden hidden={true} />);
+
+        cy.findAllByLabelText("nav-tab-item").should("have.length", 1);
+      });
+
+      context("when given active tab", () => {
+        it("renders the action button with a bottom border", () => {
+          cy.mount(<NavTabWithHidden hidden={true} />);
+
+          cy.findAllByLabelText("action-button")
+            .eq(0)
+            .should("have.css", "border-bottom", "2px solid rgb(59, 130, 246)");
+        });
+
+        it("should still render the hidden tab content", () => {
+          cy.mount(<NavTabWithHidden hidden={true} />);
+
+          cy.findByText("Review tab content").should("exist");
+        });
+      });
+
+      context("when pressing action with setActive function", () => {
+        it("should render the hidden content", () => {
+          cy.mount(<NavTabWithHidden hidden={true} />);
+
+          // Initially active: Review (hidden)
+          cy.findByText("Review tab content").should("exist");
+          cy.findByText("Write tab content").should("not.exist");
+
+          // Click visible tab (Write)
+          cy.findAllByLabelText("nav-tab-item").eq(0).click();
+          cy.findByText("Review tab content").should("not.exist");
+          cy.findByText("Write tab content").should("exist");
+
+          // Trigger action to activate hidden tab again
+          cy.findAllByLabelText("action-button").eq(0).click();
+          cy.findByText("Review tab content").should("exist");
+          cy.findByText("Write tab content").should("not.exist");
+        });
+      });
+    });
+
+    context("when given false", () => {
+      it("should render all tabs normally", () => {
+        cy.mount(<NavTabWithHidden hidden={false} />);
+
+        cy.findAllByLabelText("nav-tab-item").should("have.length", 2);
+      });
+    });
+
+    context("when not given", () => {
+      it("should render all tabs normally", () => {
+        cy.mount(<NavTabWithHidden />);
+
+        cy.findAllByLabelText("nav-tab-item").should("have.length", 2);
+      });
+    });
+  });
+
   context("when triggering externally (without tab)", () => {
     it("should switch to the corresponding tab", () => {
       function NavTabWithState() {
