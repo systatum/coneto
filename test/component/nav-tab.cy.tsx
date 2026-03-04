@@ -51,6 +51,7 @@ describe("NavTab", () => {
               onClick: () => {
                 setActiveTab("2");
               },
+              active: activeTab === "2",
             },
           ]}
           onChange={(activeTab) => setActiveTab(activeTab)}
@@ -66,6 +67,14 @@ describe("NavTab", () => {
       });
 
       context("when given active tab", () => {
+        it("renders the action button with a bottom border", () => {
+          cy.mount(<NavTabWithHidden hidden={true} />);
+
+          cy.findAllByLabelText("action-button")
+            .eq(0)
+            .should("have.css", "border-bottom", "2px solid rgb(59, 130, 246)");
+        });
+
         it("should still render the hidden tab content", () => {
           cy.mount(<NavTabWithHidden hidden={true} />);
 
