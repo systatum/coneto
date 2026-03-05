@@ -2,6 +2,7 @@ import { RiEraserLine } from "@remixicon/react";
 import React, { useRef, useEffect, ChangeEvent } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { StatefulForm } from "./stateful-form";
 
 interface BaseSignboxProps {
   name?: string;
@@ -16,7 +17,7 @@ interface BaseSignboxProps {
   width?: string;
   styles?: SignboxStylesProps;
   helper?: string;
-  inputId?: string;
+  id?: string;
 }
 
 export interface SignboxStylesProps {
@@ -32,7 +33,7 @@ function BaseSignbox({
   styles,
   height,
   width,
-  inputId,
+  id,
 }: BaseSignboxProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isDrawing = useRef(false);
@@ -187,7 +188,7 @@ function BaseSignbox({
     >
       <SignatureCanvas
         ref={canvasRef}
-        id={inputId}
+        id={id}
         onMouseDown={(e) => startDrawing(e.nativeEvent)}
         onMouseMove={(e) => draw(e.nativeEvent)}
         onMouseUp={stopDrawing}
@@ -208,8 +209,8 @@ function BaseSignbox({
 }
 
 export interface SignboxProps
-  extends Omit<BaseSignboxProps, "styles" | "inputId" | "children">,
-    Omit<FieldLaneProps, "styles" | "inputId" | "type" | "children"> {
+  extends Omit<BaseSignboxProps, "styles" | "children">,
+    Omit<FieldLaneProps, "styles" | "type" | "children"> {
   styles?: SignboxStylesProps & FieldLaneStylesProps;
 }
 
@@ -229,14 +230,17 @@ function Signbox({
   value,
   height,
   width,
+  id,
 }: SignboxProps) {
-  const inputId = name
-    ? `signbox-${name.replace(/\s+/g, "_").toLowerCase()}`
-    : "signbox";
+  const inputId = StatefulForm.sanitizeId({
+    prefix: "signbox",
+    name,
+    id,
+  });
 
   return (
     <FieldLane
-      inputId={inputId}
+      id={inputId}
       dropdowns={dropdowns}
       showError={showError}
       errorMessage={errorMessage}
@@ -252,7 +256,7 @@ function Signbox({
     >
       <BaseSignbox
         height={height}
-        inputId={inputId}
+        id={inputId}
         width={width}
         value={value}
         onChange={onChange}

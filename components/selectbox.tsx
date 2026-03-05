@@ -32,6 +32,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { isValidDateString } from "../lib/date";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 import { FigureProps } from "./figure";
+import { StatefulForm } from "./stateful-form";
 
 export type SelectboxSelectedOptions = number | string | number[] | string[];
 
@@ -51,7 +52,7 @@ interface BaseSelectboxProps
   onClick?: () => void;
   multiple?: boolean;
   actions?: any[];
-  inputId?: string;
+  id?: string;
   showError?: boolean;
   maxSelectableItems?: number | undefined;
   children?: (
@@ -510,11 +511,8 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
 );
 
 export interface SelectboxProps
-  extends Omit<BaseSelectboxProps, "styles" | "inputId">,
-    Omit<
-      FieldLaneProps,
-      "styles" | "inputId" | "type" | "actions" | "children"
-    > {
+  extends Omit<BaseSelectboxProps, "styles">,
+    Omit<FieldLaneProps, "styles" | "type" | "actions" | "children"> {
   styles?: SelectboxStylesProps;
 }
 
@@ -535,15 +533,15 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       id,
       ...rest
     } = props;
-    const inputId =
-      id ??
-      (name
-        ? `selectbox-${name.replace(/\s+/g, "_").toLowerCase()}`
-        : "selectbox");
+    const inputId = StatefulForm.sanitizeId({
+      prefix: "selectbox",
+      name,
+      id,
+    });
 
     return (
       <FieldLane
-        inputId={inputId}
+        id={inputId}
         dropdowns={dropdowns}
         showError={showError}
         errorMessage={errorMessage}

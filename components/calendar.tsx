@@ -47,6 +47,7 @@ export type CalendarProps = BaseCalendarProps &
     todayButtonCaption?: string;
     selectabilityMode?: SelectabilityModeState;
     helper?: string;
+    id?: string;
   };
 
 interface CalendarStateProps {

@@ -27,6 +27,7 @@ import { AsYouType, CountryCode } from "libphonenumber-js/max";
 import styled, { css, CSSProp } from "styled-components";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 import { Figure } from "./figure";
+import { StatefulForm } from "./stateful-form";
 
 export interface CountryCodeProps {
   id: string;
@@ -52,7 +53,7 @@ interface BasePhoneboxProps {
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
   countryCodeValue?: CountryCodeProps;
   styles?: PhoneboxStylesProps;
-  inputId?: string;
+  id?: string;
 }
 
 export interface PhoneboxStylesProps {
@@ -72,7 +73,7 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
       onKeyDown,
       countryCodeValue,
       styles,
-      inputId,
+      id,
     },
     ref
   ) => {
@@ -251,7 +252,7 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
 
           <PhoneInput
             ref={phoneInputRef}
-            id={inputId}
+            id={id}
             type="tel"
             $style={styles?.self}
             placeholder={placeholder}
@@ -347,8 +348,8 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
 );
 
 export interface PhoneboxProps
-  extends Omit<BasePhoneboxProps, "styles" | "inputId">,
-    Omit<FieldLaneProps, "styles" | "inputId" | "onChange"> {
+  extends Omit<BasePhoneboxProps, "styles">,
+    Omit<FieldLaneProps, "styles" | "onChange"> {
   styles?: PhoneboxStylesProps & FieldLaneStylesProps;
 }
 
@@ -367,13 +368,16 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
       onChange,
       ...rest
     } = props;
-    const inputId = props?.name
-      ? `phonebox-${props.name.replace(/\s+/g, "_").toLowerCase()}`
-      : "phonebox";
+
+    const inputId = StatefulForm.sanitizeId({
+      prefix: "phonebox",
+      name: props.name,
+      id: props.id,
+    });
 
     return (
       <FieldLane
-        inputId={inputId}
+        id={inputId}
         dropdowns={dropdowns}
         showError={showError}
         errorMessage={errorMessage}
@@ -389,7 +393,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
       >
         <BasePhonebox
           {...rest}
-          inputId={inputId}
+          id={inputId}
           showError={showError}
           disabled={disabled}
           styles={{

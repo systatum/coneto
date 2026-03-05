@@ -8,6 +8,7 @@ import {
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { StatefulForm } from "./stateful-form";
 
 interface BaseColorboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "style"> {
@@ -16,7 +17,7 @@ interface BaseColorboxProps
   showError?: boolean;
   onClick?: () => void;
   styles?: ColorboxStylesProps;
-  inputId?: string;
+  id?: string;
 }
 
 export interface ColorboxStylesProps {
@@ -25,16 +26,7 @@ export interface ColorboxStylesProps {
 
 const BaseColorbox = forwardRef<HTMLInputElement, BaseColorboxProps>(
   (
-    {
-      onChange,
-      value,
-      showError,
-      placeholder,
-      onClick,
-      styles,
-      inputId,
-      ...props
-    },
+    { onChange, value, showError, placeholder, onClick, styles, id, ...props },
     ref
   ) => {
     const [hovered, setHovered] = useState(false);
@@ -74,7 +66,7 @@ const BaseColorbox = forwardRef<HTMLInputElement, BaseColorboxProps>(
       >
         <ColorBox
           onClick={() => {
-            document.getElementById(inputId)?.click();
+            document.getElementById(id)?.click();
             setHovered(true);
             if (onClick) onClick();
           }}
@@ -85,7 +77,7 @@ const BaseColorbox = forwardRef<HTMLInputElement, BaseColorboxProps>(
 
         <HiddenColorInput
           {...props}
-          id={inputId}
+          id={id}
           type="color"
           value={value}
           onChange={handleColorChange}
@@ -123,8 +115,8 @@ const BaseColorbox = forwardRef<HTMLInputElement, BaseColorboxProps>(
 );
 
 export interface ColorboxProps
-  extends Omit<BaseColorboxProps, "styles" | "inputId">,
-    Omit<FieldLaneProps, "styles" | "inputId" | "type"> {
+  extends Omit<BaseColorboxProps, "styles">,
+    Omit<FieldLaneProps, "styles" | "type"> {
   styles?: ColorboxStylesProps & FieldLaneStylesProps;
 }
 
@@ -143,13 +135,15 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
       ...rest
     } = props;
 
-    const inputId = props.name
-      ? `colorbox-${props.name.replace(/\s+/g, "_").toLowerCase()}`
-      : "colorbox";
+    const inputId = StatefulForm.sanitizeId({
+      prefix: "colorbox",
+      name: props.name,
+      id: props.id,
+    });
 
     return (
       <FieldLane
-        inputId={inputId}
+        id={inputId}
         dropdowns={dropdowns}
         showError={showError}
         errorMessage={errorMessage}
@@ -164,7 +158,8 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
         }}
       >
         <BaseColorbox
-          inputId={inputId}
+          {...rest}
+          id={inputId}
           showError={showError}
           disabled={disabled}
           styles={{
@@ -178,7 +173,6 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
             `,
           }}
           ref={ref}
-          {...rest}
         />
       </FieldLane>
     );

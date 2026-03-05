@@ -15,6 +15,7 @@ export interface RatingProps {
   styles?: RatingStylesProps;
   errorMessage?: string;
   helper?: string;
+  id?: string;
 }
 export interface RatingStylesProps {
   containerStyle?: CSSProp;
@@ -22,6 +23,7 @@ export interface RatingStylesProps {
 }
 
 function Rating({
+  id,
   rating,
   onChange,
   editable,
@@ -38,6 +40,12 @@ function Rating({
   const ratingState = Number(rating || 0);
   const [ratingLocal, setRatingLocal] = useState(ratingState);
   const [hoverRating, setHoverRating] = useState(0);
+
+  const inputId = StatefulForm.sanitizeId({
+    prefix: "rating",
+    name,
+    id,
+  });
 
   const handleMouseMove = (e: MouseEvent<HTMLSpanElement>, index: number) => {
     const { left, width } = e.currentTarget.getBoundingClientRect();
@@ -144,6 +152,7 @@ function Rating({
           </StarSpan>
         ))}
       </StarsWrapper>
+      <input type="hidden" name={name} value={ratingLocal} id={inputId} />
 
       {withLabel && (
         <RatingLabel $size={size}>{ratingLocal.toFixed(1)} / 5</RatingLabel>

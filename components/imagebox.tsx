@@ -23,6 +23,7 @@ export interface ImageboxProps {
   borderless?: boolean;
   editable?: boolean;
   url?: string;
+  id?: string;
 }
 export interface ImageboxStylesProps {
   containerStyle?: CSSProp;
@@ -62,10 +63,13 @@ function Imagebox({
   borderless,
   editable = true,
   url,
+  id,
 }: ImageboxProps) {
-  const inputId = name
-    ? `imagebox-${name.replace(/\s+/g, "_").toLowerCase()}`
-    : "imagebox";
+  const inputId = StatefulForm.sanitizeId({
+    prefix: "imagebox",
+    name,
+    id,
+  });
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
@@ -204,6 +208,7 @@ function Imagebox({
     <InputWrapper $containerStyle={styles?.containerStyle}>
       {label && (
         <StatefulForm.Label
+          htmlFor={editable ? inputId : null}
           style={styles?.labelStyle}
           helper={helper}
           label={label}

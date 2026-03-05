@@ -45,12 +45,17 @@ function Togglebox({
   title,
   helper,
   size = 24,
+  id,
   ...props
 }: ToggleboxProps) {
   const { heightWrapper, widthWrapper, thumbShift, iconSize } =
     getToggleboxSize(size);
 
-  const id = `togglebox-${name}-${checked}`;
+  const inputId = StatefulForm.sanitizeId({
+    prefix: "togglebox",
+    name,
+    id,
+  });
 
   const inputElements = (
     <ToggleboxWrapper
@@ -71,7 +76,7 @@ function Togglebox({
       >
         <StyledInput
           aria-label="togglebox-input"
-          id={id}
+          id={inputId}
           name={name}
           type="checkbox"
           checked={checked}

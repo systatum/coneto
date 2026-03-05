@@ -112,6 +112,7 @@ export type FormFieldGroup = FormFieldProps | FormFieldProps[];
 
 export interface FormFieldProps {
   name: string;
+  id?: string;
   title?: string;
   helper?: string;
   required?: boolean;
@@ -179,7 +180,6 @@ function StatefulForm<Z extends ZodTypeAny>({
     register,
     control,
     setValue,
-    reset,
     formState: { errors, touchedFields, isValid },
   } = useForm<TypeOf<Z>>(formConfig);
 
@@ -191,11 +191,14 @@ function StatefulForm<Z extends ZodTypeAny>({
   const customValues = customFieldNames.map((name) => formValues[name]);
 
   useEffect(() => {
-    reset(formValues, {
-      keepErrors: true,
-      keepTouched: true,
+    customFieldNames.map((name) => {
+      setValue(name as any, formValues[name as any], {
+        shouldValidate: true,
+        shouldTouch: true,
+        shouldDirty: true,
+      });
     });
-  }, [JSON.stringify(customValues), reset]);
+  }, [JSON.stringify(customValues), setValue]);
 
   useEffect(() => {
     if (onValidityChange) {
@@ -394,6 +397,7 @@ function FormFields<T extends FieldValues>({
                 field.type === "password" ? (
                 <Textbox
                   key={index}
+                  id={field.id}
                   label={field.title}
                   type={field.type}
                   placeholder={field.placeholder}
@@ -451,6 +455,7 @@ function FormFields<T extends FieldValues>({
                 <Button
                   key={index}
                   {...field.buttonProps}
+                  id={field.id}
                   title={
                     field.buttonProps?.title
                       ? field.buttonProps?.title
@@ -488,6 +493,7 @@ function FormFields<T extends FieldValues>({
               ) : field.type === "time" ? (
                 <Timebox
                   key={index}
+                  id={field.id}
                   label={field.title}
                   value={formValues[field.name as keyof T] ?? ""}
                   required={field.required}
@@ -542,6 +548,7 @@ function FormFields<T extends FieldValues>({
               ) : field.type === "textarea" ? (
                 <Textarea
                   key={index}
+                  id={field.id}
                   label={field.title}
                   rows={field.rows}
                   placeholder={field.placeholder}
@@ -601,6 +608,7 @@ function FormFields<T extends FieldValues>({
                   name={field.name as Path<T>}
                   render={({ field: controllerField }) => (
                     <Checkbox
+                      id={field.id}
                       title={field.title}
                       label={field.placeholder}
                       name={field.name}
@@ -689,6 +697,7 @@ function FormFields<T extends FieldValues>({
                   name={field.name as Path<T>}
                   render={({ field: controllerField }) => (
                     <Radio
+                      id={field.id}
                       label={field.placeholder}
                       name={field.name}
                       title={field.title}
@@ -755,6 +764,7 @@ function FormFields<T extends FieldValues>({
                   name={"phone" as Path<T>}
                   render={({ field: controllerField }) => (
                     <Phonebox
+                      id={field.id}
                       name={field.name}
                       label={field.title}
                       value={controllerField.value}
@@ -822,6 +832,7 @@ function FormFields<T extends FieldValues>({
                   control={control}
                   render={({ field: controllerField, fieldState }) => (
                     <Colorbox
+                      id={field.id}
                       name={field.name}
                       label={field.title}
                       required={field.required}
@@ -876,6 +887,7 @@ function FormFields<T extends FieldValues>({
               ) : field.type === "file_drop_box" ? (
                 <FileDropBox
                   key={index}
+                  id={field.id}
                   label={field.title}
                   placeholder={field.placeholder}
                   helper={field.helper}
@@ -912,6 +924,7 @@ function FormFields<T extends FieldValues>({
               ) : field.type === "file" ? (
                 <FileInputBox
                   key={index}
+                  id={field.id}
                   label={field.title}
                   placeholder={field.placeholder}
                   showError={shouldShowError(field.name)}
@@ -967,6 +980,7 @@ function FormFields<T extends FieldValues>({
               ) : field.type === "image" ? (
                 <Imagebox
                   key={index}
+                  id={field.id}
                   name={field.name}
                   helper={field.helper}
                   onFileSelected={(e: File | undefined) => {
@@ -1028,6 +1042,7 @@ function FormFields<T extends FieldValues>({
               ) : field.type === "signbox" ? (
                 <Signbox
                   key={index}
+                  id={field.id}
                   clearable
                   name={field.name}
                   label={field.title}
@@ -1076,6 +1091,7 @@ function FormFields<T extends FieldValues>({
                   render={({ field: rhf, fieldState }) => (
                     <Moneybox
                       key={index}
+                      id={field.id}
                       ref={(el) => {
                         if (el) refs.current[field.name] = el;
                         rhf.ref(el);
@@ -1148,6 +1164,7 @@ function FormFields<T extends FieldValues>({
                   render={({ field: controllerField }) => (
                     <Datebox
                       key={index}
+                      id={field.id}
                       name={field.name}
                       label={field.title}
                       helper={field.helper}
@@ -1218,6 +1235,7 @@ function FormFields<T extends FieldValues>({
                   control={control}
                   render={({ field: controllerField }) => (
                     <Combobox
+                      id={field.id}
                       name={field.name}
                       placeholder={field.placeholder}
                       label={field.title}
@@ -1331,6 +1349,7 @@ function FormFields<T extends FieldValues>({
                   render={({ field: controllerField, fieldState }) => (
                     <Rating
                       editable
+                      id={field.id}
                       label={field.title}
                       helper={field.helper}
                       rating={controllerField.value}
@@ -1377,6 +1396,7 @@ function FormFields<T extends FieldValues>({
                   name={field.name as Path<T>}
                   render={({ field: controllerField }) => (
                     <ThumbField
+                      id={field.id}
                       label={field.title}
                       value={controllerField.value ?? false}
                       required={field.required}
@@ -1441,6 +1461,7 @@ function FormFields<T extends FieldValues>({
                   name={field.name as Path<T>}
                   render={({ field: controllerField }) => (
                     <Togglebox
+                      id={field.id}
                       name={controllerField.name}
                       placeholder={field.placeholder}
                       checked={controllerField.value ?? false}
@@ -1571,6 +1592,28 @@ function StatefulFormLabel({
   );
 }
 
+interface StatefulFormSanitizeIdProps {
+  name?: string;
+  id?: string;
+  prefix?: string;
+}
+
+function sanitizeId({
+  name,
+  id,
+  prefix = "input",
+}: StatefulFormSanitizeIdProps): string {
+  const sanitize = (str: string) =>
+    str
+      .toLowerCase()
+      .replace(/\s+/g, "_") // 1. spaces → underscores
+      .replace(/[^0-9a-z_-]/g, ""); // 2. Remove all non-ASCII characters (allow only 0-9, a-z, A-Z, _ and -)
+
+  if (id) return sanitize(id);
+  if (name) return `${prefix}-${sanitize(name)}`;
+  return prefix;
+}
+
 const Label = styled.label<{ $style?: CSSProp }>`
   font-size: 0.75rem;
   display: flex;
@@ -1599,5 +1642,6 @@ const RowFormField = styled.div<{ $style: CSSProp }>`
 `;
 
 StatefulForm.Label = StatefulFormLabel;
+StatefulForm.sanitizeId = sanitizeId;
 
 export { StatefulForm };

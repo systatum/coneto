@@ -40,6 +40,7 @@ export interface FileDropBoxProps {
   children?: ReactNode;
   styles?: FileDropBoxStylesProps;
   name?: string;
+  id?: string;
 }
 
 export interface FileDropBoxStylesProps {
@@ -62,6 +63,7 @@ function FileDropBox({
   styles,
   helper,
   name,
+  id,
 }: FileDropBoxProps) {
   const FILE_ICON = [
     { id: 1, icon: RiImageLine, size: 50 },
@@ -69,9 +71,11 @@ function FileDropBox({
     { id: 3, icon: RiFile2Line, size: 50 },
   ];
 
-  const inputId = name
-    ? `file-drop-box-${name.replace(/\s+/g, "_").toLowerCase()}`
-    : "file-drop-box";
+  const inputId = StatefulForm.sanitizeId({
+    prefix: "file-drop-box",
+    name,
+    id,
+  });
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -232,6 +236,7 @@ function FileDropBox({
     >
       {label && (
         <StatefulForm.Label
+          htmlFor={inputId}
           style={styles?.labelStyle}
           helper={helper}
           label={label}
