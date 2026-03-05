@@ -16,7 +16,7 @@ export interface FieldLaneProps {
   helper?: string;
   disabled?: boolean;
   children?: ReactNode;
-  inputId?: string;
+  id?: string;
   actions?: FieldLaneActionsProps[];
   type?: string;
 }
@@ -69,7 +69,7 @@ function FieldLane({
   helper,
   children,
   disabled,
-  inputId,
+  id,
   actions,
   type,
   errorIconPosition = "absolute",
@@ -281,7 +281,7 @@ function FieldLane({
     >
       {label && (
         <StatefulForm.Label
-          htmlFor={disabled ? null : inputId}
+          htmlFor={disabled ? null : id}
           style={styles?.labelStyle}
           helper={helper}
           label={label}

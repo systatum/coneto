@@ -14,6 +14,7 @@ import {
   FieldLaneProps,
   FieldLaneStylesProps,
 } from "./field-lane";
+import { StatefulForm } from "./stateful-form";
 
 interface BaseTextboxProps
   extends Omit<
@@ -23,7 +24,6 @@ interface BaseTextboxProps
   showError?: boolean;
   onChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   styles?: TextboxStylesProps;
-  inputId?: string;
 }
 
 export interface TextboxStylesProps {
@@ -33,7 +33,7 @@ export interface TextboxStylesProps {
 export type TextareaActions = FieldLaneActionsProps;
 
 const BaseTextbox = forwardRef<HTMLInputElement, BaseTextboxProps>(
-  ({ showError, onChange, styles, type = "text", inputId, ...props }, ref) => {
+  ({ showError, onChange, styles, type = "text", id, ...props }, ref) => {
     const [showPassword, setShowPassword] = useState<boolean>(false);
 
     useEffect(() => {
@@ -45,7 +45,7 @@ const BaseTextbox = forwardRef<HTMLInputElement, BaseTextboxProps>(
     return (
       <>
         <Input
-          id={inputId}
+          id={id}
           ref={ref}
           onChange={onChange}
           type={type === "password" && showPassword ? "text" : type}
@@ -96,8 +96,8 @@ const BaseTextbox = forwardRef<HTMLInputElement, BaseTextboxProps>(
 );
 
 export interface TextboxProps
-  extends Omit<BaseTextboxProps, "styles" | "inputId">,
-    Omit<FieldLaneProps, "styles" | "inputId" | "type"> {
+  extends Omit<BaseTextboxProps, "styles">,
+    Omit<FieldLaneProps, "styles" | "id" | "type"> {
   styles?: TextboxStylesProps & FieldLaneStylesProps;
 }
 
@@ -115,13 +115,16 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
       disabled,
       ...rest
     } = props;
-    const inputId = props?.name
-      ? `textbox-${props.name.replace(/\s+/g, "_").toLowerCase()}`
-      : "textbox";
+
+    const inputId = StatefulForm.sanitizeId({
+      prefix: "textbox",
+      name: props.name,
+      id: props.id,
+    });
 
     return (
       <FieldLane
-        inputId={inputId}
+        id={inputId}
         dropdowns={dropdowns}
         showError={showError}
         errorMessage={errorMessage}
@@ -137,7 +140,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
       >
         <BaseTextbox
           {...rest}
-          inputId={inputId}
+          id={inputId}
           showError={showError}
           styles={{
             self: css`

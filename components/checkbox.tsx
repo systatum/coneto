@@ -54,12 +54,17 @@ function Checkbox({
   indeterminate = false,
   styles,
   helper,
+  id,
   ...props
 }: CheckboxProps) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const inputId = name
-    ? `checkbox-${name.replace(/\s+/g, "_").toLowerCase()}`
-    : "checkbox";
+
+  const inputId = StatefulForm.sanitizeId({
+    prefix: "checkbox",
+    name,
+    id,
+  });
+
   const isChecked = Boolean(props.checked);
 
   useEffect(() => {

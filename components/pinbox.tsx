@@ -24,6 +24,7 @@ export interface PinboxProps {
   value?: string;
   disabled?: boolean;
   styles?: PinboxStylesProps;
+  id?: string;
 }
 
 export interface PinboxStylesProps {
@@ -51,6 +52,7 @@ function Pinbox({
   styles,
   disabled,
   helper,
+  id,
 }: PinboxProps) {
   const getDefaultValue = () => {
     let valIndex = 0;
@@ -284,9 +286,11 @@ function Pinbox({
     </PinboxInputWrapper>
   );
 
-  const inputId = name
-    ? `pinbox-${name.replace(/\s+/g, "_").toLowerCase()}`
-    : "pinbox";
+  const inputId = StatefulForm.sanitizeId({
+    prefix: "pinbox",
+    name,
+    id,
+  });
 
   return (
     <Container $containerStyle={styles?.containerStyle}>

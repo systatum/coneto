@@ -11,6 +11,7 @@ import {
   FieldLaneProps,
   FieldLaneStylesProps,
 } from "./field-lane";
+import { StatefulForm } from "./stateful-form";
 
 interface BaseTextareaProps
   extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "style"> {
@@ -20,7 +21,7 @@ interface BaseTextareaProps
     data: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
   autogrow?: boolean;
-  inputId?: string;
+  id?: string;
 }
 
 export type TextareaActionsProps = FieldLaneActionsProps;
@@ -30,7 +31,7 @@ export interface TextareaStylesProps {
 }
 
 const BaseTextarea = forwardRef<HTMLTextAreaElement, BaseTextareaProps>(
-  ({ inputId, showError, rows, onChange, autogrow, styles, ...props }, ref) => {
+  ({ id, showError, rows, onChange, autogrow, styles, ...props }, ref) => {
     const autoResize = (el: HTMLTextAreaElement | null) => {
       if (el) {
         el.style.height = "auto";
@@ -41,7 +42,7 @@ const BaseTextarea = forwardRef<HTMLTextAreaElement, BaseTextareaProps>(
     return (
       <TextareaInput
         $autogrow={autogrow}
-        id={inputId}
+        id={id}
         ref={(el) => {
           if (autogrow) {
             autoResize(el);
@@ -68,8 +69,8 @@ const BaseTextarea = forwardRef<HTMLTextAreaElement, BaseTextareaProps>(
 );
 
 export interface TextareaProps
-  extends Omit<BaseTextareaProps, "styles" | "inputId">,
-    Omit<FieldLaneProps, "styles" | "inputId"> {
+  extends Omit<BaseTextareaProps, "styles">,
+    Omit<FieldLaneProps, "styles"> {
   styles?: TextareaStylesProps & FieldLaneStylesProps;
 }
 
@@ -87,9 +88,11 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       disabled,
       ...rest
     } = props;
-    const inputId = props?.name
-      ? `textarea-${props.name.replace(/\s+/g, "_").toLowerCase()}`
-      : "textarea";
+    const inputId = StatefulForm.sanitizeId({
+      prefix: "textarea",
+      name: props.name,
+      id: props.id,
+    });
 
     const DropdownProps = dropdowns?.map((dropdown) => ({
       ...dropdown,
@@ -104,7 +107,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
 
     return (
       <FieldLane
-        inputId={inputId}
+        id={inputId}
         dropdowns={DropdownProps}
         showError={showError}
         errorMessage={errorMessage}
@@ -119,7 +122,8 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         }}
       >
         <BaseTextarea
-          inputId={inputId}
+          {...rest}
+          id={inputId}
           showError={showError}
           styles={{
             self: css`
@@ -132,7 +136,6 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
               ${styles?.self}
             `,
           }}
-          {...rest}
           ref={ref}
         />
       </FieldLane>
