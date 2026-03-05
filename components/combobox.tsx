@@ -101,7 +101,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
     },
     ref
   ) => {
-    const inputId = StatefulForm.SanitizeId({
+    const inputId = StatefulForm.sanitizeId({
       prefix: "combobox",
       name,
       id,

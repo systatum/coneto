@@ -1598,7 +1598,7 @@ interface StatefulFormSanitizeIdProps {
   prefix?: string;
 }
 
-function StatefulFormSanitizeId({
+function sanitizeId({
   name,
   id,
   prefix = "input",
@@ -1642,6 +1642,6 @@ const RowFormField = styled.div<{ $style: CSSProp }>`
 `;
 
 StatefulForm.Label = StatefulFormLabel;
-StatefulForm.SanitizeId = StatefulFormSanitizeId;
+StatefulForm.sanitizeId = sanitizeId;
 
 export { StatefulForm };

@@ -262,7 +262,7 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
       ...rest
     } = props;
 
-    const inputId = StatefulForm.SanitizeId({
+    const inputId = StatefulForm.sanitizeId({
       prefix: "moneybox",
       name: props.name,
       id: props.id,

@@ -67,7 +67,7 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
     ...rest
   } = props;
 
-  const inputId = StatefulForm.SanitizeId({
+  const inputId = StatefulForm.sanitizeId({
     prefix: "datebox",
     name,
     id,

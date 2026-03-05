@@ -71,7 +71,7 @@ function FileDropBox({
     { id: 3, icon: RiFile2Line, size: 50 },
   ];
 
-  const inputId = StatefulForm.SanitizeId({
+  const inputId = StatefulForm.sanitizeId({
     prefix: "file-drop-box",
     name,
     id,

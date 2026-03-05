@@ -396,7 +396,7 @@ describe("StatefulForm", () => {
         const allFields = flattenFields(FIELDS_NOT_NORMAL_ASCII);
 
         const sanitized = allFields.map((field) =>
-          StatefulForm.SanitizeId({ id: field.id })
+          StatefulForm.sanitizeId({ id: field.id })
         );
 
         const expected = [

@@ -57,7 +57,7 @@ function Radio({
   id,
   ...props
 }: RadioProps) {
-  const inputId = StatefulForm.SanitizeId({
+  const inputId = StatefulForm.sanitizeId({
     prefix: "radio",
     name,
     id,

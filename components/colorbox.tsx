@@ -135,10 +135,10 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
       ...rest
     } = props;
 
-    const inputId = StatefulForm.SanitizeId({
+    const inputId = StatefulForm.sanitizeId({
+      prefix: "colorbox",
       name: props.name,
       id: props.id,
-      prefix: "colorbox",
     });
 
     return (

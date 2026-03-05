@@ -59,10 +59,10 @@ function Checkbox({
 }: CheckboxProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const inputId = StatefulForm.SanitizeId({
+  const inputId = StatefulForm.sanitizeId({
+    prefix: "checkbox",
     name,
     id,
-    prefix: "checkbox",
   });
 
   const isChecked = Boolean(props.checked);

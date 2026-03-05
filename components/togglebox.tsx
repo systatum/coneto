@@ -51,8 +51,8 @@ function Togglebox({
   const { heightWrapper, widthWrapper, thumbShift, iconSize } =
     getToggleboxSize(size);
 
-  const inputId = StatefulForm.SanitizeId({
-    prefix: "imagebox",
+  const inputId = StatefulForm.sanitizeId({
+    prefix: "togglebox",
     name,
     id,
   });

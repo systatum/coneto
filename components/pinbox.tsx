@@ -286,7 +286,7 @@ function Pinbox({
     </PinboxInputWrapper>
   );
 
-  const inputId = StatefulForm.SanitizeId({
+  const inputId = StatefulForm.sanitizeId({
     prefix: "pinbox",
     name,
     id,

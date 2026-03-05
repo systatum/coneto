@@ -232,7 +232,7 @@ function Signbox({
   width,
   id,
 }: SignboxProps) {
-  const inputId = StatefulForm.SanitizeId({
+  const inputId = StatefulForm.sanitizeId({
     prefix: "signbox",
     name,
     id,
