@@ -75,6 +75,7 @@ function Crumb({
     return (
       <Figure
         color={arrowColor}
+        size={iconSize}
         image={iconSeparator}
         styles={{
           self: css`

@@ -132,6 +132,7 @@ function Badge({
           color 0.2s ease;
         border-radius: 9999px;
         padding: 1px;
+        opacity: 1;
 
         &:hover {
           background-color: #d1d5db;
@@ -211,10 +212,7 @@ const BadgeIconWrapper = styled.div<{
 }>`
   display: flex;
   flex-direction: row;
-
-  & > *:not(:last-child) {
-    margin-right: 2px;
-  }
+  gap: 2px;
 
   ${({ $style }) => $style};
 `;
