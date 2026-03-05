@@ -148,13 +148,13 @@ export const Closable: Story = {
       },
     ];
 
-    const [value, setValue] = useState(stateValue);
+    const [windows, setWindows] = useState(stateValue);
 
     const WINDOW_ACTIONS = (title: string) => [
       {
         onClick: () =>
-          setValue((prev) => prev.filter((item) => item.title !== title)),
-        icon: RiCloseFill,
+          setWindows((prev) => prev.filter((item) => item.title !== title)),
+        icon: { image: RiCloseFill },
       },
     ];
 
@@ -167,13 +167,13 @@ export const Closable: Story = {
         }}
         {...args}
       >
-        {value.map((data) => (
+        {windows.map((window) => (
           <Window.Cell
-            key={data.title}
-            styles={{ self: data.style }}
-            actions={data.actions ? WINDOW_ACTIONS(data.title) : undefined}
+            key={window.title}
+            styles={{ self: window.style }}
+            actions={window.actions ? WINDOW_ACTIONS(window.title) : undefined}
           >
-            {data.title}
+            {window.title}
           </Window.Cell>
         ))}
       </Window>
