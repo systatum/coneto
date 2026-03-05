@@ -89,7 +89,7 @@ describe("Badge", () => {
   context("with actions", () => {
     const contentAction: BadgeActionProps[] = [
       {
-        icon: RiCloseLine,
+        image: RiCloseLine,
         onClick: () => {
           console.log("Data was deleted");
         },
@@ -99,14 +99,14 @@ describe("Badge", () => {
 
     const contentActions: BadgeActionProps[] = [
       {
-        icon: RiCheckLine,
+        image: RiCheckLine,
         onClick: () => {
           console.log("Data was deleted");
         },
         size: 14,
       },
       {
-        icon: RiCloseLine,
+        image: RiCloseLine,
         onClick: () => {
           console.log("Data was deleted");
         },
@@ -171,12 +171,10 @@ describe("Badge", () => {
             .click();
 
           cy.findAllByLabelText("badge-action")
+            .parent()
+            .parent()
             .eq(0)
-            .should("have.css", "margin-right", "2px");
-
-          cy.findAllByLabelText("badge-action")
-            .eq(1)
-            .should("not.have.css", "margin-right", "2px");
+            .should("have.css", "gap", "2px");
 
           cy.findAllByLabelText("badge-action")
             .eq(0)
