@@ -401,8 +401,8 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
                 (opt) => opt.text === selectedOptionsLocal.text
               );
 
-              const matchedValue = String(matched.value);
               if (matched) {
+                const matchedValue = String(matched.value);
                 setConfirmedValue(matched);
                 setSelectedOptionsLocal(matched);
                 if (multiple) {
