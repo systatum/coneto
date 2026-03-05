@@ -11,7 +11,6 @@ import React, {
   useState,
 } from "react";
 import { TipMenu, TipMenuItemProps } from "./tip-menu";
-import { RemixiconComponentType } from "@remixicon/react";
 import {
   useFloating,
   offset,
@@ -31,8 +30,8 @@ export interface ToolbarProps {
 export interface ToolbarMenuProps {
   caption?: string;
   icon?: FigureProps;
-  openedIcon?: RemixiconComponentType;
-  closedIcon?: RemixiconComponentType;
+  openedIcon?: FigureProps["image"];
+  closedIcon?: FigureProps["image"];
   subMenuList?: ToolbarSubMenuProps[];
   isOpen?: boolean;
   setIsOpen?: (data?: boolean) => void;
