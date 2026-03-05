@@ -38,6 +38,7 @@ We don't actively using Chromatic anymore.
 3. Commit and push your changes to the repository.
 4. To run tests locally:
    1. Ensure that you have `cypress` installed:
+
       ```bash
       pnpm add --save-dev cypress # you may need to do this
       ./node_modules/.bin/cypress install # install the cypress app locally
@@ -52,6 +53,7 @@ We don't actively using Chromatic anymore.
 
       Cypress executable not found at: /Users/adam.h/Library/Caches/Cypress/14.5.3/Cypress.app/Contents/MacOS/Cypress
       ```
+
    1. Run the storybook server, used for E2E testing: `pnpm run storybook`
    1. Execute either use one of the following commands:
       - `pnpm test-open` – opens the Cypress Test Runner with an interactive UI.
@@ -63,7 +65,6 @@ This repository uses:
 
 - `@storybook/react-vite` – the core framework that runs Storybook using Vite for faster builds and hot reloads
 - `@storybook/addon-essentials` – a set of essential addons like docs, controls, actions, and viewport to enhance Storybook functionality
-- `@storybook/addon-onboarding` – used for testing individual React components in isolation to ensure they behave correctly, integrated with Storybook for a consistent testing environment
 
 ## Code Quality Checks
 
