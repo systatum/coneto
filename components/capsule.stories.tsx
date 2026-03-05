@@ -49,10 +49,6 @@ const meta: Meta<typeof Capsule> = {
       description: "Font size (in pixels) applied to the capsule container.",
       control: "number",
     },
-    iconSize: {
-      description: "Size of the tab icons (in pixels).",
-      control: "number",
-    },
     showError: {
       description:
         "Displays the error state and shows the error message below the capsule.",

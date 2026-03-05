@@ -1,7 +1,6 @@
 import { ReactElement, ReactNode, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import styled, { css, CSSProp } from "styled-components";
-import { RemixiconComponentType } from "@remixicon/react";
 import { StatefulForm } from "./stateful-form";
 import { Figure, FigureProps } from "./figure";
 

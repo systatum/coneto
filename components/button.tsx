@@ -1,10 +1,6 @@
 import * as React from "react";
 import { LoadingSpinner } from "./loading-spinner";
-import {
-  RemixiconComponentType,
-  RiArrowDownSLine,
-  RiArrowUpSLine,
-} from "@remixicon/react";
+import { RiArrowDownSLine, RiArrowUpSLine } from "@remixicon/react";
 import { TipMenu, TipMenuItemProps, TipMenuItemVariantType } from "./tip-menu";
 import styled, { css, CSSProp } from "styled-components";
 import {
@@ -22,6 +18,7 @@ import {
   DialogPlacement,
   getFloatingPlacement,
 } from "./../lib/floating-placement";
+import { Figure, FigureProps } from "./figure";
 
 export type ButtonVariants = {
   variant?:
@@ -56,8 +53,8 @@ export type ButtonProps = Omit<React.ComponentProps<"button">, "style"> &
   ButtonVariants & {
     isLoading?: boolean;
     subMenu?: (props: SubMenuButtonProps) => React.ReactNode;
-    openedIcon?: RemixiconComponentType;
-    closedIcon?: RemixiconComponentType;
+    openedIcon?: FigureProps["image"];
+    closedIcon?: FigureProps["image"];
     showSubMenuOn?: "caret" | "self";
     tipMenuSize?: TipMenuItemVariantType;
     safeAreaAriaLabels?: string[];
@@ -82,8 +79,8 @@ function Button({
   variant = "default",
   size = "md",
   isLoading,
-  openedIcon: OpenedIcon = RiArrowDownSLine,
-  closedIcon: ClosedIcon = RiArrowUpSLine,
+  openedIcon = RiArrowDownSLine,
+  closedIcon = RiArrowUpSLine,
   children,
   disabled,
   styles,
@@ -277,7 +274,11 @@ function Button({
             }}
             $style={styles?.toggleStyle}
           >
-            {isOpen ? <OpenedIcon size={20} /> : <ClosedIcon size={20} />}
+            {isOpen ? (
+              <Figure image={openedIcon} size={20} />
+            ) : (
+              <Figure image={closedIcon} size={20} />
+            )}
           </BaseButtonToggle>
         </div>
       )}
