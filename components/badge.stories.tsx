@@ -48,7 +48,7 @@ export const WithActions: Story = {
     withCircle: true,
     actions: [
       {
-        icon: RiCloseLine,
+        image: RiCloseLine,
         onClick: () => {
           console.log("Data was deleted");
         },

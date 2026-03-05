@@ -1,7 +1,7 @@
 import styled, { css, CSSProp } from "styled-components";
 import { ChangeEvent, HTMLAttributes, MouseEvent } from "react";
 import { strToColor } from "./../lib/code-color";
-import { RemixiconComponentType } from "@remixicon/react";
+import { Figure, FigureProps } from "./figure";
 
 export type BadgeVariantProps = null | "neutral" | "green" | "yellow" | "red";
 
@@ -22,13 +22,9 @@ export interface BadgeProps
   actions?: BadgeActionProps[];
 }
 
-export interface BadgeActionProps {
-  icon?: RemixiconComponentType;
+export interface BadgeActionProps extends Omit<FigureProps, "onClick"> {
   onClick?: (badge?: BadgeProps) => void;
   disabled?: boolean;
-  title?: string;
-  style?: CSSProp;
-  size?: number;
 }
 
 const BADGE_BACKGROUND_COLORS: string[] = [
@@ -125,6 +121,43 @@ function Badge({
         ? colorVariant
         : (circleColorLocal ?? "black");
 
+  const actionWithStyles = actions?.map((action) => ({
+    ...action,
+    size: action?.size ?? 12,
+    styles: {
+      self: css`
+        cursor: pointer;
+        transition:
+          background-color 0.2s ease,
+          color 0.2s ease;
+        border-radius: 9999px;
+        padding: 1px;
+
+        &:hover {
+          background-color: #d1d5db;
+        }
+
+        &:active {
+          background-color: #999999;
+        }
+
+        &:focus-visible {
+          outline: none;
+          box-shadow: inset 0 0 0 2px #00000033;
+          transition: box-shadow 0.2s ease;
+        }
+
+        ${action?.disabled &&
+        css`
+          cursor: not-allowed;
+          opacity: 40%;
+        `};
+
+        ${action?.styles?.self}
+      `,
+    },
+  }));
+
   return (
     <BadgeWrapper
       {...props}
@@ -144,17 +177,26 @@ function Badge({
       </BadgeContent>
       {actions && (
         <BadgeIconWrapper>
-          {actions.map((data, index) => (
-            <BadgeIcon
+          {actionWithStyles.map((action, index) => (
+            <Figure
               key={index}
               aria-label="badge-action"
-              as={data.icon}
-              $style={data.style}
-              $size={data.size}
-              $disabled={data.disabled}
+              {...action}
+              title={action.title}
               onClick={(e) => {
                 e.stopPropagation();
-                if (data.onClick) data.onClick();
+                if (action.onClick) {
+                  action.onClick({
+                    id,
+                    caption,
+                    metadata,
+                    variant,
+                    backgroundColor,
+                    textColor,
+                    circleColor,
+                    withCircle,
+                  });
+                }
               }}
             />
           ))}
@@ -175,49 +217,6 @@ const BadgeIconWrapper = styled.div<{
   }
 
   ${({ $style }) => $style};
-`;
-
-const BadgeIcon = styled.div<{
-  $disabled?: boolean;
-  $style?: CSSProp;
-  $size?: number;
-}>`
-  cursor: pointer;
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease;
-  border-radius: 9999px;
-  padding: 1px;
-
-  &:hover {
-    background-color: #d1d5db;
-  }
-
-  &:active {
-    background-color: #999999;
-  }
-
-  &:focus-visible {
-    outline: none;
-    box-shadow: inset 0 0 0 2px #00000033;
-    transition: box-shadow 0.2s ease;
-  }
-
-  ${({ $size }) =>
-    $size &&
-    css`
-      width: ${`${$size}px`};
-      height: ${`${$size}px`};
-    `};
-
-  ${({ $disabled }) =>
-    $disabled &&
-    css`
-      cursor: not-allowed;
-      opacity: 40%;
-    `};
-
-  ${({ $style }) => $style}
 `;
 
 const BadgeWrapper = styled.div<{
