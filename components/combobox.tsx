@@ -202,6 +202,11 @@ function ComboboxDrawer({
   const [hasScrolled, setHasScrolled] = useState(false);
   const floatingRef = useRef<HTMLUListElement>(null);
 
+  const finalOptions = useMemo(
+    () => (Array.isArray(options) ? options : []),
+    [options]
+  );
+
   const finalSelectedOptions = useMemo(() => {
     if (Array.isArray(selectedOptions)) {
       return selectedOptions.map(String);
@@ -214,10 +219,10 @@ function ComboboxDrawer({
 
   const selectedIndex = useMemo(
     () =>
-      options.findIndex((option) =>
+      finalOptions.findIndex((option) =>
         finalSelectedOptions.includes(String(option.value))
       ) + (actions?.length ?? 0),
-    [options, finalSelectedOptions, actions]
+    [finalOptions, finalSelectedOptions, actions]
   );
 
   const handleOnChange = (values: string[]) => {
@@ -232,7 +237,11 @@ function ComboboxDrawer({
   };
 
   useEffect(() => {
-    if (!hasScrolled && finalSelectedOptions.length > 0 && options.length > 0) {
+    if (
+      !hasScrolled &&
+      finalSelectedOptions.length > 0 &&
+      finalOptions.length > 0
+    ) {
       const selectedEl = listRef.current[selectedIndex];
       if (selectedEl) {
         requestAnimationFrame(() => {
@@ -241,7 +250,12 @@ function ComboboxDrawer({
         setHasScrolled(true);
       }
     }
-  }, [selectedIndex, hasScrolled, finalSelectedOptions.length, options.length]);
+  }, [
+    selectedIndex,
+    hasScrolled,
+    finalSelectedOptions.length,
+    finalOptions.length,
+  ]);
 
   useEffect(() => {
     if (highlightedIndex !== null && listRef.current[highlightedIndex]) {
@@ -282,7 +296,7 @@ function ComboboxDrawer({
       $width={refs.reference.current?.getBoundingClientRect().width}
       style={{ ...floatingStyles }}
     >
-      {(options || actions) && (
+      {(finalOptions || actions) && (
         <List
           styles={{
             containerStyle: listContainerStyle,
@@ -362,8 +376,8 @@ function ComboboxDrawer({
               );
             })}
 
-          {options.length > 0 ? (
-            options.map((option, index) => {
+          {finalOptions.length > 0 ? (
+            finalOptions.map((option, index) => {
               const optionValue = String(option.value);
               const isSelected = finalSelectedOptions.includes(optionValue);
               const shouldHighlight =
