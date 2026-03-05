@@ -22,6 +22,7 @@ import {
   DialogPlacement,
   getFloatingPlacement,
 } from "./../lib/floating-placement";
+import { Figure, FigureProps } from "./figure";
 
 export type ButtonVariants = {
   variant?:
@@ -68,6 +69,7 @@ export type ButtonProps = Omit<React.ComponentProps<"button">, "style"> &
     styles?: ButtonStylesProps;
     anchorRef?: React.RefObject<HTMLElement>;
     pressed?: boolean;
+    icon?: FigureProps;
   };
 
 export interface ButtonStylesProps {
@@ -98,6 +100,7 @@ function Button({
   open,
   anchorRef,
   pressed,
+  icon,
   ...props
 }: ButtonProps) {
   const [isOpenLocal, setIsOpenLocal] = React.useState(false);
@@ -231,6 +234,14 @@ function Button({
         }}
         $style={styles?.self}
       >
+        {icon && (
+          <Figure
+            {...icon}
+            color={variant === "danger" ? "white" : icon?.color}
+            aria-label="action-button-icon"
+            size={icon?.size ?? 14}
+          />
+        )}
         {children}
         {isLoading && <LoadingSpinner />}
       </BaseButton>
