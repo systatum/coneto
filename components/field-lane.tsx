@@ -24,6 +24,8 @@ export interface FieldLaneProps {
 export interface FieldLaneStylesProps {
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
+  controlStyle?: CSSProp;
+  bodyStyle?: CSSProp;
 }
 
 export interface FieldLaneActionsProps {
@@ -75,7 +77,7 @@ function FieldLane({
   errorIconPosition = "absolute",
 }: FieldLaneProps) {
   const inputElement: ReactElement = (
-    <InputWrapper>
+    <InputWrapper $style={styles?.controlStyle}>
       {dropdowns?.map((dropdown, index) => {
         return (
           <Button
@@ -279,19 +281,20 @@ function FieldLane({
         ${styles?.containerStyle}
       `}
     >
-      {label && (
-        <StatefulForm.Label
-          htmlFor={disabled ? null : id}
-          style={styles?.labelStyle}
-          helper={helper}
-          label={label}
-        />
-      )}
+      <Body $style={styles?.bodyStyle}>
+        {label && (
+          <StatefulForm.Label
+            htmlFor={disabled ? null : id}
+            style={styles?.labelStyle}
+            helper={helper}
+            label={label}
+          />
+        )}
 
-      <div>
         {inputElement}
-        {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
-      </div>
+      </Body>
+
+      {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
     </Container>
   );
 }
@@ -299,15 +302,28 @@ function FieldLane({
 const Container = styled.div<{ $style?: CSSProp }>`
   display: flex;
   width: 100%;
+  height: 100%;
   flex-direction: column;
-  gap: 0.5rem;
   font-size: 0.75rem;
   position: relative;
+  height: 100%;
 
   ${({ $style }) => $style}
 `;
 
-const InputWrapper = styled.div`
+const Body = styled.div<{ $style?: CSSProp }>`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 34px;
+  gap: 0.5rem;
+
+  ${({ $style }) => $style}
+`;
+
+const InputWrapper = styled.div<{ $style?: CSSProp }>`
   position: relative;
   display: flex;
   flex-direction: row;
@@ -315,9 +331,10 @@ const InputWrapper = styled.div`
   justify-content: flex-start;
   height: 100%;
   min-height: 34px;
+  ${({ $style }) => $style}
 `;
 
-const ErrorIconWrapper = styled.button<{ $isAbsolute?: boolean }>`
+const ErrorIconWrapper = styled.div<{ $isAbsolute?: boolean }>`
   position: relative;
   margin-left: 4px;
   ${({ $isAbsolute }) =>
