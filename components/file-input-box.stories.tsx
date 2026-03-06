@@ -51,27 +51,6 @@ export const WithError: Story = {
 
 export const Disabled: Story = {
   render: () => {
-    const [value, setValue] = useState<File[]>([]);
-    const [isValid, setIsValid] = useState(false);
-
-    useEffect(() => {
-      if (value.length > 0) {
-        setIsValid(false);
-      } else {
-        setIsValid(true);
-      }
-    }, [value]);
-
-    const onFilesSelected = (e) => {
-      setValue(e);
-    };
-    return (
-      <FileInputBox
-        label="asdasd"
-        multiple
-        disabled
-        onFilesSelected={onFilesSelected}
-      />
-    );
+    return <FileInputBox label="Disabled" disabled />;
   },
 };
