@@ -933,12 +933,11 @@ export type CalendarStylesProps = BaseCalendarStylesProps &
 
 export interface CalendarProps
   extends Omit<BaseCalendarProps, "styles">,
-    Omit<FieldLaneProps, "styles" | "type" | "dropdown"> {
+    Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
   styles?: CalendarStylesProps;
 }
 
 function Calendar({
-  dropdowns,
   label,
   showError,
   styles,

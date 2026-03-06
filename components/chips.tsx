@@ -472,12 +472,11 @@ export type ChipsStylesProps = BaseChipsStylesProps & FieldLaneStylesProps;
 
 export interface ChipsProps
   extends Omit<BaseChipsProps, "styles">,
-    Omit<FieldLaneProps, "styles" | "type" | "dropdown"> {
+    Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
   styles?: ChipsStylesProps;
 }
 
 function Chips({
-  dropdowns,
   label,
   showError,
   styles,
@@ -506,7 +505,6 @@ function Chips({
   return (
     <FieldLane
       id={inputId}
-      dropdowns={dropdowns}
       showError={showError}
       errorMessage={errorMessage}
       label={label}
