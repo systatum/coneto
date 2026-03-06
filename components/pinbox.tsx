@@ -8,8 +8,9 @@ import React, {
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
+import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 
-export interface PinboxProps {
+interface BasePinboxProps {
   fontSize?: number;
   label?: string;
   helper?: string;
@@ -23,14 +24,11 @@ export interface PinboxProps {
   ) => void;
   value?: string;
   disabled?: boolean;
-  styles?: PinboxStylesProps;
+  styles?: BasePinboxStylesProps;
   id?: string;
 }
 
-export interface PinboxStylesProps {
-  containerStyle?: CSSProp;
-  labelStyle?: CSSProp;
-}
+interface BasePinboxStylesProps {}
 
 export interface PinboxState {
   type?: PinboxTypeState;
@@ -39,9 +37,8 @@ export interface PinboxState {
 
 type PinboxTypeState = "static" | "digit" | "alphabet" | "alphanumeric";
 
-function Pinbox({
+function BasePinbox({
   fontSize = 24,
-  label,
   errorMessage,
   masked,
   parts,
@@ -49,11 +46,8 @@ function Pinbox({
   name = "pinbox",
   value,
   onChange,
-  styles,
   disabled,
-  helper,
-  id,
-}: PinboxProps) {
+}: BasePinboxProps) {
   const getDefaultValue = () => {
     let valIndex = 0;
     return parts.map((p) => {
@@ -233,7 +227,7 @@ function Pinbox({
     return maskedIndices.has(index) ? "•" : char;
   };
 
-  const inputElements: ReactElement = (
+  return (
     <PinboxInputWrapper $disabled={disabled}>
       {parts.map((part, index) => {
         const isStatic = part.type === "static";
@@ -285,41 +279,69 @@ function Pinbox({
       )}
     </PinboxInputWrapper>
   );
+}
 
+export type PinboxStylesProps = BasePinboxStylesProps & FieldLaneStylesProps;
+
+export interface PinboxProps
+  extends Omit<BasePinboxProps, "styles">,
+    Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
+  styles?: PinboxStylesProps;
+}
+
+function Pinbox({
+  label,
+  showError,
+  styles,
+  errorMessage,
+  actions,
+  helper,
+  disabled,
+  name,
+  id,
+  ...rest
+}: PinboxProps) {
   const inputId = StatefulForm.sanitizeId({
     prefix: "pinbox",
     name,
     id,
   });
 
+  const {
+    bodyStyle,
+    controlStyle,
+    containerStyle,
+    labelStyle,
+    ...pinboxStyles
+  } = styles ?? {};
+
   return (
-    <Container $containerStyle={styles?.containerStyle}>
-      {label && (
-        <StatefulForm.Label
-          htmlFor={disabled ? null : inputId}
-          style={styles?.labelStyle}
-          helper={helper}
-          label={label}
-        />
-      )}
-      {inputElements}
-      {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
-    </Container>
+    <FieldLane
+      id={inputId}
+      showError={showError}
+      errorMessage={errorMessage}
+      actions={actions}
+      helper={helper}
+      disabled={disabled}
+      label={label}
+      errorIconPosition="none"
+      styles={{
+        bodyStyle,
+        controlStyle,
+        containerStyle,
+        labelStyle,
+      }}
+    >
+      <BasePinbox
+        {...rest}
+        id={inputId}
+        disabled={disabled}
+        styles={pinboxStyles}
+        label={label}
+      />
+    </FieldLane>
   );
 }
-
-const Container = styled.div<{
-  $containerStyle?: CSSProp;
-}>`
-  display: flex;
-  flex-direction: column;
-  width: fit-content;
-  height: fit-content;
-  gap: 8px;
-  font-size: 12px;
-
-  ${({ $containerStyle }) => $containerStyle}
-`;
 
 const PinboxInputWrapper = styled.div<{ $disabled?: boolean }>`
   display: flex;
@@ -334,6 +356,7 @@ const PinboxInputWrapper = styled.div<{ $disabled?: boolean }>`
   ${({ $disabled }) =>
     $disabled &&
     css`
+      user-select: none;
       cursor: not-allowed;
     `}
 `;
@@ -446,11 +469,7 @@ const PinboxInput = styled.input<{
             border-color: rgba(0, 0, 0, 0.3);
             cursor: not-allowed;
           }
-        `}
-`;
-
-const ErrorText = styled.span`
-  color: #dc2626;
+        `};
 `;
 
 const switchInputBox = (type: PinboxTypeState) => {
