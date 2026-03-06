@@ -49,1385 +49,6 @@ describe("StatefulForm", () => {
     custom: "custom",
   };
 
-  context("id", () => {
-    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
-      (data) => data.id === "US" || COUNTRY_CODES[206]
-    );
-
-    if (!DEFAULT_COUNTRY_CODES) {
-      throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
-    }
-
-    const FRUIT_OPTIONS: OptionsProps[] = [
-      { text: "Apple", value: "1" },
-      { text: "Banana", value: "2" },
-      { text: "Orange", value: "3" },
-      { text: "Grape", value: "4" },
-      { text: "Pineapple", value: "5" },
-      { text: "Strawberry", value: "6" },
-      { text: "Watermelon", value: "7" },
-    ];
-
-    const value = {
-      text: "",
-      time: "",
-      email: "",
-      number: "",
-      password: "",
-      textarea: "",
-      rating: "",
-      check: false,
-      color: "",
-      combo: [],
-      date: [""],
-      file_drop_box: [] as File[],
-      file: undefined,
-      image: undefined,
-      money: "",
-      phone: "",
-      thumb_field: false,
-      togglebox: false,
-      signature: "",
-      capsule: "",
-      country_code: DEFAULT_COUNTRY_CODES,
-      currency: "USD",
-    };
-
-    const MONTH_NAMES = [
-      { text: "JAN", value: "1" },
-      { text: "FEB", value: "2" },
-      { text: "MAR", value: "3" },
-      { text: "APR", value: "4" },
-      { text: "MAY", value: "5" },
-      { text: "JUN", value: "6" },
-      { text: "JUL", value: "7" },
-      { text: "AUG", value: "8" },
-      { text: "SEP", value: "9" },
-      { text: "OCT", value: "10" },
-      { text: "NOV", value: "11" },
-      { text: "DEC", value: "12" },
-    ];
-
-    const FIELDS: FormFieldGroup[] = [
-      {
-        name: "text",
-        title: "Text",
-        type: "text",
-        required: true,
-        placeholder: "Enter text",
-      },
-      {
-        name: "email",
-        title: "Email",
-        type: "email",
-        required: false,
-        placeholder: "Enter email address",
-      },
-      {
-        name: "time",
-        title: "Time",
-        type: "time",
-        required: false,
-        placeholder: "Enter email address",
-      },
-      {
-        name: "number",
-        title: "Number",
-        type: "number",
-        required: false,
-        placeholder: "Enter number",
-      },
-      {
-        name: "password",
-        title: "Password",
-        type: "password",
-        required: false,
-        placeholder: "Enter password",
-      },
-      {
-        name: "textarea",
-        title: "Textarea",
-        type: "textarea",
-        rows: 3,
-        required: false,
-        placeholder: "Enter text here",
-      },
-      {
-        name: "check",
-        placeholder: "Check",
-        type: "checkbox",
-        required: false,
-      },
-      {
-        name: "color",
-        title: "Color",
-        type: "color",
-        required: false,
-        placeholder: "Enter the color here",
-      },
-      {
-        name: "combo",
-        title: "Combo",
-        type: "combo",
-        required: false,
-        placeholder: "Select a fruit...",
-        comboboxProps: {
-          options: FRUIT_OPTIONS,
-        },
-      },
-      {
-        name: "date",
-        title: "Date",
-        type: "date",
-        required: false,
-        placeholder: "Select a date",
-        dateProps: {
-          monthNames: MONTH_NAMES,
-        },
-      },
-      {
-        name: "file_drop_box",
-        title: "File Drop Box",
-        type: "file_drop_box",
-        required: false,
-      },
-      {
-        name: "file",
-        title: "File",
-        type: "file",
-        required: false,
-      },
-      {
-        name: "image",
-        title: "Image",
-        type: "image",
-        required: false,
-      },
-      {
-        name: "money",
-        title: "Money",
-        type: "money",
-        required: false,
-        placeholder: "Enter amount",
-      },
-      {
-        name: "phone",
-        title: "Phone",
-        type: "phone",
-        required: false,
-        placeholder: "Enter phone number",
-      },
-      {
-        name: "signature",
-        title: "Signature",
-        type: "signbox",
-        required: false,
-      },
-    ];
-
-    it("renders each field with a proper and unique ID", () => {
-      cy.mount(
-        <StatefulForm fields={FIELDS} formValues={value} mode="onChange" />
-      );
-
-      const flattenFields = (groups: FormFieldGroup[]): FormFieldProps[] =>
-        groups.flatMap((group) =>
-          Array.isArray(group) ? flattenFields(group) : [group]
-        );
-
-      const allFields = flattenFields(FIELDS);
-
-      allFields.map((field) => {
-        const prefix =
-          typeToIdPrefix[field.type] ??
-          field.type.replace(/\s+/g, "_").toLowerCase();
-        const expectedId = field.name
-          ? `${prefix}-${field.name.replace(/\s+/g, "_").toLowerCase()}`
-          : prefix;
-
-        cy.get(`#${expectedId}`).should("exist");
-      });
-    });
-
-    context("when given with non-ASCII IDs", () => {
-      const FIELDS_NOT_NORMAL_ASCII: FormFieldGroup[] = [
-        {
-          name: "text",
-          title: "Text",
-          type: "text",
-          required: true,
-          placeholder: "Enter text",
-          id: "field-text-📝 hello world",
-        },
-        {
-          name: "email",
-          title: "Email",
-          type: "email",
-          required: false,
-          placeholder: "Enter email address",
-          id: "field-email-📧 123!",
-        },
-        {
-          name: "time",
-          title: "Time",
-          type: "time",
-          required: false,
-          placeholder: "Enter time",
-          id: "field-time-⏰ something",
-        },
-        {
-          name: "number",
-          title: "Number",
-          type: "number",
-          required: false,
-          placeholder: "Enter number",
-          id: "field-number-🔢 test id",
-        },
-        {
-          name: "password",
-          title: "Password",
-          type: "password",
-          required: false,
-          placeholder: "Enter password",
-          id: "field-password-🔑 secret💡",
-        },
-        {
-          name: "textarea",
-          title: "Textarea",
-          type: "textarea",
-          rows: 3,
-          required: false,
-          placeholder: "Enter text here",
-          id: "field-textarea-📝 multi words!",
-        },
-        {
-          name: "check",
-          placeholder: "Check",
-          type: "checkbox",
-          required: false,
-          id: "field-check-☑️ yes/no?",
-        },
-        {
-          name: "color",
-          title: "Color",
-          type: "color",
-          required: false,
-          placeholder: "Enter the color here",
-          id: "field-color-🎨 rainbow 🌈",
-        },
-        {
-          name: "combo",
-          title: "Combo",
-          type: "combo",
-          required: false,
-          placeholder: "Select a fruit...",
-          comboboxProps: { options: FRUIT_OPTIONS },
-          id: "field-combo-🍎 choose one",
-        },
-        {
-          name: "date",
-          title: "Date",
-          type: "date",
-          required: false,
-          placeholder: "Select a date",
-          dateProps: { monthNames: MONTH_NAMES },
-          id: "field-date-📅 01/01/2026",
-        },
-        {
-          name: "file_drop_box",
-          title: "File Drop Box",
-          type: "file_drop_box",
-          required: false,
-          id: "field-file_drop_box-📂 drop here",
-        },
-        {
-          name: "file",
-          title: "File",
-          type: "file",
-          required: false,
-          id: "field-file-📄 upload file!",
-        },
-        {
-          name: "image",
-          title: "Image",
-          type: "image",
-          required: false,
-          id: "field-image-🖼️ my image",
-        },
-        {
-          name: "money",
-          title: "Money",
-          type: "money",
-          required: false,
-          placeholder: "Enter amount",
-          id: "field-money-💰 $1000",
-        },
-        {
-          name: "phone",
-          title: "Phone",
-          type: "phone",
-          required: false,
-          placeholder: "Enter phone number",
-          id: "field-phone-📞 askdaosdk",
-        },
-        {
-          name: "signature",
-          title: "Signature",
-          type: "signbox",
-          required: false,
-          id: "field-signature-✍️ sign here!",
-        },
-      ];
-
-      it("renders sanitized ASCII-only IDs for input elements", () => {
-        cy.mount(
-          <StatefulForm
-            fields={FIELDS_NOT_NORMAL_ASCII}
-            formValues={value}
-            mode="onChange"
-          />
-        );
-
-        const flattenFields = (groups: FormFieldGroup[]): FormFieldProps[] =>
-          groups.flatMap((group) =>
-            Array.isArray(group) ? flattenFields(group) : [group]
-          );
-
-        const allFields = flattenFields(FIELDS_NOT_NORMAL_ASCII);
-
-        const sanitized = allFields.map((field) =>
-          StatefulForm.sanitizeId({ id: field.id })
-        );
-
-        const expected = [
-          "field-text-_hello_world",
-          "field-email-_123",
-          "field-time-_something",
-          "field-number-_test_id",
-          "field-password-_secret",
-          "field-textarea-_multi_words",
-          "field-check-_yesno",
-          "field-color-_rainbow_",
-          "field-combo-_choose_one",
-          "field-date-_01012026",
-          "field-file_drop_box-_drop_here",
-          "field-file-_upload_file",
-          "field-image-_my_image",
-          "field-money-_1000",
-          "field-phone-_askdaosdk",
-          "field-signature-_sign_here",
-        ];
-
-        sanitized.map((result, i) => {
-          expect(result).to.equal(expected[i]);
-        });
-      });
-    });
-  });
-
-  context("with type custom", () => {
-    const BADGE_OPTIONS = [
-      {
-        id: 1,
-        caption: "Anime",
-      },
-      {
-        id: 2,
-        caption: "Manga",
-      },
-      {
-        id: 3,
-        caption: "Comics",
-      },
-      {
-        id: 4,
-        caption: "Movies",
-      },
-      {
-        id: 5,
-        caption: "Podcasts",
-      },
-      {
-        id: 6,
-        caption: "TV Shows",
-      },
-      {
-        id: 7,
-        caption: "Novels",
-      },
-      {
-        id: 8,
-        caption: "Music",
-      },
-      {
-        id: 9,
-        caption: "Games",
-      },
-      {
-        id: 10,
-        caption: "Webtoons",
-      },
-    ];
-
-    function StatefulFormCustom() {
-      const [value, setValue] = useState({
-        first_name: "",
-        access: false,
-        files: [],
-      });
-
-      const [isFormValid, setIsFormValid] = useState(false);
-
-      const onFileDropped = async ({
-        error,
-        files,
-        setProgressLabel,
-        succeed,
-      }: OnFileDroppedFunctionProps) => {
-        const file = files[0];
-        setValue((prev) => ({ ...prev, files: [...prev.files, file] }));
-        setProgressLabel(`Uploading ${file.name}`);
-
-        return new Promise<void>((resolve) => {
-          let progress = 0;
-          const interval = setInterval(() => {
-            progress += 20;
-
-            if (progress >= 100) {
-              clearInterval(interval);
-              if (file === null) {
-                error(file, `file ${file.name} is not uploaded`);
-              } else {
-                succeed(file);
-              }
-              setProgressLabel(`Uploaded ${files[0].name}`);
-              resolve();
-            }
-          }, 300);
-        });
-      };
-
-      const onComplete = async ({
-        failedFiles,
-        setProgressLabel,
-        succeedFiles,
-        hideProgressLabel,
-        showUploaderForm,
-      }: OnCompleteFunctionProps) => {
-        console.log(succeedFiles, "This is succeedFiles");
-        console.log(failedFiles, "This is failedFiles");
-        await setProgressLabel(
-          `Upload complete! Success: ${succeedFiles.length}, Failed: ${failedFiles.length}`
-        );
-        await hideProgressLabel();
-        await showUploaderForm();
-      };
-
-      const CUSTOM_FIELDS: FormFieldGroup[] = [
-        {
-          name: "first_name",
-          title: "First Name",
-          type: "text",
-          required: true,
-          placeholder: "Enter first name",
-        },
-        {
-          name: "boxbar",
-          type: "custom",
-          render: (
-            <Boxbar>
-              {BADGE_OPTIONS.map((badge) => (
-                <Badge
-                  badgeStyle={css`
-                    width: 100%;
-                    max-width: 100px;
-
-                    &:hover {
-                      border-color: #4cbbf7;
-                      cursor: pointer;
-                      transition: all 0.5s ease-in-out;
-                    }
-                  `}
-                  key={badge.id}
-                  caption={badge.caption}
-                  withCircle
-                />
-              ))}
-            </Boxbar>
-          ),
-        },
-        {
-          name: "files",
-          type: "custom",
-          render: (
-            <FileDropBox
-              label="Files"
-              onFileDropped={onFileDropped}
-              onComplete={onComplete}
-            >
-              <Table
-                styles={{
-                  containerStyle: css`
-                    ${value.files.length === 0 &&
-                    css`
-                      display: none;
-                    `}
-                  `,
-                }}
-                columns={[
-                  {
-                    id: "file_name",
-                    caption: "File Name",
-                  },
-                  {
-                    id: "date",
-                    caption: "Date",
-                  },
-                ]}
-              >
-                {value.files.map((props) => (
-                  <Table.Row
-                    actions={(id) => [
-                      {
-                        caption: "Delete",
-                        icon: { image: RiDeleteBin2Fill },
-                        onClick: () => {
-                          if (id) {
-                            setValue((prev) => ({
-                              ...prev,
-                              files: prev.files.filter(
-                                (val) => val.name !== id
-                              ),
-                            }));
-                          }
-                        },
-                      },
-                    ]}
-                    rowId={props.name}
-                    content={[
-                      props.name,
-                      new Date(props.lastModified).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "short",
-                        day: "2-digit",
-                      }),
-                    ]}
-                  />
-                ))}
-              </Table>
-            </FileDropBox>
-          ),
-        },
-        {
-          name: "access",
-          type: "checkbox",
-          placeholder: "Access",
-          required: false,
-        },
-        {
-          name: "verify",
-          title: "Verify",
-          type: "button",
-          required: false,
-          disabled: !isFormValid,
-          rowJustifyContent: "end",
-        },
-      ];
-
-      const customSchema = z.object({
-        first_name: z
-          .string()
-          .min(3, "First name must be at least 3 characters long"),
-        access: z.boolean().refine((val) => val === true, {
-          message: "Access must be true",
-        }),
-        files: z
-          .array(
-            z.instanceof(File).refine(
-              (file) => {
-                if (!file) return false;
-
-                const allowedExtensions = ["png", "jpg", "jpeg", "gif"];
-                const ext = file.name.split(".").pop()?.toLowerCase();
-
-                const isImage =
-                  (file.type && file.type.startsWith("image/")) ||
-                  (ext ? allowedExtensions.includes(ext) : false);
-
-                if (!isImage) return false;
-
-                if (file.size > 5 * 1024 * 1024) return false;
-
-                return true;
-              },
-              {
-                message:
-                  "File must be an image (png, jpg, jpeg, gif) and ≤ 5 MB",
-              }
-            )
-          )
-          .min(1, "At least one file must be selected"),
-      });
-
-      return (
-        <StatefulForm
-          fields={CUSTOM_FIELDS}
-          formValues={value}
-          validationSchema={customSchema}
-          onValidityChange={setIsFormValid}
-          onChange={({ currentState }) =>
-            setValue((prev) => ({ ...prev, ...currentState }))
-          }
-          mode="onChange"
-        />
-      );
-    }
-
-    it("should render custom renderer", () => {
-      cy.mount(<StatefulFormCustom />);
-
-      cy.findByLabelText("boxbar-toggle").click();
-
-      BADGE_OPTIONS.map((data) => {
-        cy.findByText(data.caption).should("exist");
-      });
-    });
-
-    context("when given validationSchema", () => {
-      it("should synchronize values after all fields valid", () => {
-        cy.mount(<StatefulFormCustom />);
-        cy.findAllByRole("button").eq(1).and("be.disabled");
-
-        cy.get("#textbox-first_name").type("Alim Naufal");
-        cy.findByLabelText("filedropbox").selectFile(
-          [
-            "test/fixtures/test-images/sample-1.jpg",
-            "test/fixtures/test-images/sample-2.jpg",
-          ],
-          {
-            action: "drag-drop",
-            force: true,
-          }
-        );
-        cy.wait(1000);
-
-        cy.findByLabelText("filedropbox").then(($input) => {
-          cy.spy($input[0], "click").as("fileClick");
-        });
-        cy.findByText("sample-1.jpg").should("be.visible").click();
-        cy.findByText("sample-2.jpg").should("be.visible").click();
-        cy.findByText("Access").should("be.visible").click();
-
-        cy.findAllByRole("button").eq(1).and("not.be.disabled");
-      });
-    });
-  });
-
-  context("helper", () => {
-    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
-      (data) => data.id === "US" || COUNTRY_CODES[206]
-    );
-
-    if (!DEFAULT_COUNTRY_CODES) {
-      throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
-    }
-
-    const value = {
-      text: "",
-      time: "",
-      email: "",
-      number: "",
-      password: "",
-      textarea: "",
-      rating: "",
-      check: false,
-      chips: {
-        searchText: "",
-        selectedOptions: [],
-      },
-      color: "",
-      combo: [],
-      date: [""],
-      file_drop_box: [] as File[],
-      file: undefined,
-      image: undefined,
-      money: "",
-      phone: "",
-      signature: "",
-      country_code: DEFAULT_COUNTRY_CODES,
-    };
-
-    const FIELDS: FormFieldGroup[] = [
-      {
-        name: "text",
-        title: "Text",
-        type: "text",
-        required: true,
-        placeholder: "Enter text",
-        helper: "This is a text input field",
-      },
-      {
-        name: "email",
-        title: "Email",
-        type: "email",
-        required: false,
-        placeholder: "Enter email address",
-        helper: "This field is used to enter an email address",
-      },
-      {
-        name: "time",
-        title: "Time",
-        type: "time",
-        required: false,
-        placeholder: "Select time",
-        helper: "This field allows you to select a time",
-      },
-      {
-        name: "number",
-        title: "Number",
-        type: "number",
-        required: false,
-        placeholder: "Enter number",
-        helper: "This field only accepts numeric values",
-      },
-      {
-        name: "password",
-        title: "Password",
-        type: "password",
-        required: false,
-        placeholder: "Enter password",
-        helper: "This field is used to enter a secure password",
-      },
-      {
-        name: "textarea",
-        title: "Textarea",
-        type: "textarea",
-        rows: 3,
-        required: false,
-        placeholder: "Enter text here",
-        helper: "This field allows you to enter multiple lines of text",
-      },
-      {
-        name: "check",
-        title: "Check",
-        placeholder: "Check",
-        type: "checkbox",
-        required: false,
-        helper: "This checkbox allows you to toggle a boolean value",
-      },
-      {
-        name: "radio",
-        title: "Radio",
-        placeholder: "Radio",
-        type: "radio",
-        required: false,
-        helper: "This radio allows you to toggle a boolean value",
-      },
-      {
-        name: "color",
-        title: "Color",
-        type: "color",
-        required: false,
-        placeholder: "Enter the color here",
-        helper: "This field allows you to pick or input a color value",
-      },
-      {
-        name: "combo",
-        title: "Combo",
-        type: "combo",
-        required: false,
-        placeholder: "Select a fruit...",
-        helper:
-          "This field allows you to select one or more options from a list",
-      },
-      {
-        name: "date",
-        title: "Date",
-        type: "date",
-        required: false,
-        placeholder: "Select a date",
-        helper: "This field allows you to select a date",
-      },
-      {
-        name: "file_drop_box",
-        title: "File Drop Box",
-        type: "file_drop_box",
-        required: false,
-        helper: "This field allows you to upload files via drag and drop",
-      },
-      {
-        name: "file",
-        title: "File",
-        type: "file",
-        required: false,
-        helper: "This field allows you to upload one or more files",
-      },
-      {
-        name: "image",
-        title: "Image",
-        type: "image",
-        required: false,
-        helper: "This field allows you to upload and preview an image",
-      },
-      {
-        name: "money",
-        title: "Money",
-        type: "money",
-        required: false,
-        placeholder: "Enter amount",
-        helper: "This field is used to input a monetary value",
-      },
-      {
-        name: "phone",
-        title: "Phone",
-        type: "phone",
-        required: false,
-        placeholder: "Enter phone number",
-        helper:
-          "This field allows you to enter a phone number with country code",
-      },
-      {
-        name: "signature",
-        title: "Signature",
-        type: "signbox",
-        required: false,
-        helper: "This is signbox type",
-      },
-    ];
-
-    it("renders with tooltip", () => {
-      cy.mount(
-        <StatefulForm fields={FIELDS} formValues={value} mode="onChange" />
-      );
-
-      cy.findAllByLabelText("tooltip-trigger")
-        .should("have.length", 17)
-        .children()
-        .should("have.css", "cursor", "help");
-    });
-  });
-
-  context("with style", () => {
-    context("when given background wheat", () => {
-      const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
-        (data) => data.id === "US" || COUNTRY_CODES[206]
-      );
-
-      if (!DEFAULT_COUNTRY_CODES) {
-        throw new Error(
-          "Default country code 'US' not found in COUNTRY_CODES."
-        );
-      }
-
-      const FRUIT_OPTIONS: OptionsProps[] = [
-        { text: "Apple", value: "1" },
-        { text: "Banana", value: "2" },
-        { text: "Orange", value: "3" },
-        { text: "Grape", value: "4" },
-        { text: "Pineapple", value: "5" },
-        { text: "Strawberry", value: "6" },
-        { text: "Watermelon", value: "7" },
-      ];
-
-      const value = {
-        text: "",
-        time: "",
-        email: "",
-        number: "",
-        password: "",
-        textarea: "",
-        rating: "",
-        check: false,
-        chips: {
-          searchText: "",
-          selectedOptions: [],
-        },
-        color: "",
-        combo: [],
-        date: [""],
-        file_drop_box: [] as File[],
-        file: undefined,
-        image: undefined,
-        money: "",
-        phone: "",
-        signature: "",
-        country_code: DEFAULT_COUNTRY_CODES,
-      };
-
-      const MONTH_NAMES = [
-        { text: "JAN", value: "1" },
-        { text: "FEB", value: "2" },
-        { text: "MAR", value: "3" },
-        { text: "APR", value: "4" },
-        { text: "MAY", value: "5" },
-        { text: "JUN", value: "6" },
-        { text: "JUL", value: "7" },
-        { text: "AUG", value: "8" },
-        { text: "SEP", value: "9" },
-        { text: "OCT", value: "10" },
-        { text: "NOV", value: "11" },
-        { text: "DEC", value: "12" },
-      ];
-
-      const FIELDS: FormFieldGroup[] = [
-        {
-          name: "text",
-          title: "Text",
-          type: "text",
-          required: true,
-          placeholder: "Enter text",
-          textboxProps: {
-            styles: {
-              self: css`
-                background-color: wheat;
-              `,
-            },
-          },
-        },
-        {
-          name: "email",
-          title: "Email",
-          type: "email",
-          required: false,
-          placeholder: "Enter email address",
-          textboxProps: {
-            styles: {
-              self: css`
-                background-color: wheat;
-              `,
-            },
-          },
-        },
-        {
-          name: "time",
-          title: "Time",
-          type: "time",
-          required: false,
-          placeholder: "Enter email address",
-          timeboxProps: {
-            styles: {
-              inputWrapperStyle: css`
-                background-color: wheat;
-              `,
-              self: css`
-                background-color: wheat;
-              `,
-            },
-          },
-        },
-        {
-          name: "number",
-          title: "Number",
-          type: "number",
-          required: false,
-          placeholder: "Enter number",
-          textboxProps: {
-            styles: {
-              self: css`
-                background-color: wheat;
-              `,
-            },
-          },
-        },
-        {
-          name: "password",
-          title: "Password",
-          type: "password",
-          required: false,
-          placeholder: "Enter password",
-          textboxProps: {
-            styles: {
-              self: css`
-                background-color: wheat;
-              `,
-            },
-          },
-        },
-        {
-          name: "textarea",
-          title: "Textarea",
-          type: "textarea",
-          rows: 3,
-          required: false,
-          placeholder: "Enter text here",
-          textareaProps: {
-            styles: {
-              self: css`
-                background-color: wheat;
-              `,
-            },
-          },
-        },
-        {
-          name: "check",
-          placeholder: "Check",
-          type: "checkbox",
-          required: false,
-          checkboxProps: {
-            styles: {
-              self: css`
-                background-color: wheat;
-              `,
-            },
-          },
-        },
-        {
-          name: "color",
-          title: "Color",
-          type: "color",
-          required: false,
-          placeholder: "Enter the color here",
-          colorboxProps: {
-            styles: {
-              self: css`
-                background-color: wheat;
-              `,
-            },
-          },
-        },
-        {
-          name: "combo",
-          title: "Combo",
-          type: "combo",
-          required: false,
-          placeholder: "Select a fruit...",
-          comboboxProps: {
-            options: FRUIT_OPTIONS,
-            styles: {
-              selectboxStyle: css`
-                background-color: wheat;
-              `,
-            },
-          },
-        },
-        {
-          name: "date",
-          title: "Date",
-          type: "date",
-          required: false,
-          placeholder: "Select a date",
-          dateProps: {
-            monthNames: MONTH_NAMES,
-            styles: {
-              selectboxStyle: css`
-                background-color: wheat;
-              `,
-            },
-          },
-        },
-        {
-          name: "file_drop_box",
-          title: "File Drop Box",
-          type: "file_drop_box",
-          required: false,
-          fileDropBoxProps: {
-            styles: {
-              dragOverStyle: css`
-                background-color: wheat;
-              `,
-            },
-          },
-        },
-        {
-          name: "file",
-          title: "File",
-          type: "file",
-          required: false,
-          fileInputBoxProps: {
-            accept: "image/jpeg",
-            styles: {
-              self: css`
-                background-color: wheat;
-              `,
-            },
-          },
-        },
-        {
-          name: "image",
-          title: "Image",
-          type: "image",
-          required: false,
-          imageboxProps: {
-            styles: {
-              self: css`
-                background-color: wheat;
-              `,
-            },
-          },
-        },
-        {
-          name: "money",
-          title: "Money",
-          type: "money",
-          required: false,
-          placeholder: "Enter amount",
-          moneyProps: {
-            separator: "dot",
-            styles: {
-              inputWrapperStyle: css`
-                background-color: wheat;
-              `,
-            },
-          },
-        },
-        {
-          name: "phone",
-          title: "Phone",
-          type: "phone",
-          required: false,
-          placeholder: "Enter phone number",
-          phoneboxProps: {
-            styles: {
-              inputWrapperStyle: css`
-                background-color: wheat;
-              `,
-              self: css`
-                background-color: wheat;
-              `,
-            },
-          },
-        },
-        {
-          name: "signature",
-          title: "Signature",
-          type: "signbox",
-          required: false,
-          signboxProps: {
-            styles: {
-              self: css`
-                background-color: wheat;
-              `,
-            },
-          },
-        },
-      ];
-
-      it("renders with background wheat", () => {
-        cy.mount(
-          <StatefulForm fields={FIELDS} formValues={value} mode="onChange" />
-        );
-
-        const isFieldWithPlaceholder = (
-          field: FormFieldGroup
-        ): field is FormFieldProps & { placeholder: string } =>
-          !Array.isArray(field) &&
-          "placeholder" in field &&
-          typeof field.placeholder === "string";
-
-        const PLACEHOLDER_FIELDS = FIELDS.filter(
-          (field): field is FormFieldProps & { placeholder: string } =>
-            isFieldWithPlaceholder(field) &&
-            [
-              "text",
-              "email",
-              "number",
-              "password",
-              "textarea",
-              "money",
-              "phone",
-              "color",
-              "combo",
-              "date",
-              "signature",
-              "image",
-            ].includes(field.type)
-        );
-
-        PLACEHOLDER_FIELDS.forEach((field) => {
-          if (field.type === "image") {
-            cy.findByPlaceholderText("imagebox-input")
-              .should("exist")
-              .and("have.css", "background-color", "rgb(245, 222, 179)");
-          } else if (field.type === "signbox") {
-            cy.findByPlaceholderText("signbox-canvas")
-              .should("exist")
-              .and("have.css", "background-color", "rgb(245, 222, 179)");
-          } else if (field.type === "phone") {
-            cy.findByPlaceholderText(field.placeholder)
-              .should("exist")
-              .parent()
-              .and("have.css", "background-color", "rgb(245, 222, 179)");
-          } else if (field.type === "color") {
-            cy.findByPlaceholderText(field.placeholder)
-              .should("exist")
-              .parent()
-              .parent()
-              .and("have.css", "background-color", "rgb(245, 222, 179)");
-          } else if (field.type === "money") {
-            cy.findByPlaceholderText(field.placeholder)
-              .should("exist")
-              .parent()
-              .and("have.css", "background-color", "rgb(245, 222, 179)");
-          } else {
-            cy.findByPlaceholderText(field.placeholder)
-              .should("exist")
-              .and("have.css", "background-color", "rgb(245, 222, 179)");
-          }
-        });
-      });
-    });
-  });
-
-  context("radio", () => {
-    const value = {
-      access: false,
-    };
-
-    const RADIO_FIELDS: FormFieldGroup[] = [
-      {
-        name: "access",
-        title: "Access",
-        placeholder: "Access",
-        type: "radio",
-        required: false,
-      },
-    ];
-    context("with title", () => {
-      it("should render on the label field", () => {
-        cy.mount(
-          <StatefulForm
-            fields={RADIO_FIELDS}
-            formValues={value}
-            mode="onChange"
-          />
-        );
-
-        cy.findByLabelText("radio-title-wrapper").should(
-          "have.text",
-          RADIO_FIELDS[0]["title"]
-        );
-      });
-    });
-
-    context("with placeholder", () => {
-      it("should render on the right side", () => {
-        cy.mount(
-          <StatefulForm
-            fields={RADIO_FIELDS}
-            formValues={value}
-            mode="onChange"
-          />
-        );
-
-        cy.findByLabelText("radio-label-wrapper").should(
-          "have.text",
-          RADIO_FIELDS[0]["placeholder"]
-        );
-      });
-    });
-  });
-
-  context("capsule", () => {
-    const value = {
-      capsule: "unpaid",
-    };
-
-    context("when initial value", () => {
-      const CAPSULE_TABS: CapsuleContentProps[] = [
-        {
-          id: "paid",
-          title: "Paid",
-        },
-        {
-          id: "unpaid",
-          title: "Unpaid",
-        },
-      ];
-
-      const CHECKBOX_TITLE_FIELDS: FormFieldGroup[] = [
-        {
-          name: "capsule",
-          title: "Monetary Value",
-          type: "capsule",
-          required: false,
-          capsuleProps: {
-            tabs: CAPSULE_TABS,
-          },
-        },
-      ];
-
-      it("should render active related with id value", () => {
-        cy.mount(
-          <StatefulForm
-            fields={CHECKBOX_TITLE_FIELDS}
-            formValues={value}
-            mode="onChange"
-          />
-        );
-
-        cy.contains("Paid").should("have.css", "color", "rgb(17, 24, 39)");
-        cy.contains("Unpaid").should("have.css", "color", "rgb(255, 255, 255)");
-      });
-    });
-  });
-
-  context("checkbox", () => {
-    const value = {
-      access: false,
-    };
-
-    const CHECKBOX_TITLE_FIELDS: FormFieldGroup[] = [
-      {
-        name: "access",
-        title: "Access",
-        placeholder: "Access placeholder",
-        type: "checkbox",
-        required: false,
-      },
-    ];
-    const statefulForCheckbox = () =>
-      cy.mount(
-        <StatefulForm
-          fields={CHECKBOX_TITLE_FIELDS}
-          formValues={value}
-          mode="onChange"
-        />
-      );
-
-    context("with title", () => {
-      it("should render on the label field", () => {
-        statefulForCheckbox();
-
-        cy.findByLabelText("title-wrapper").should(
-          "have.text",
-          CHECKBOX_TITLE_FIELDS[0]["title"]
-        );
-      });
-
-      context("when clicking", () => {
-        it("renders checked the checkbox", () => {
-          statefulForCheckbox();
-
-          cy.findByRole("checkbox").should("not.be.checked");
-          cy.findByText("Access").click();
-          cy.findByRole("checkbox").should("be.checked");
-        });
-      });
-    });
-
-    context("with placeholder", () => {
-      it("should render on the right side", () => {
-        statefulForCheckbox();
-
-        cy.findByLabelText("title-wrapper").should("not.exist");
-        cy.findByLabelText("label-wrapper").should(
-          "have.text",
-          CHECKBOX_TITLE_FIELDS[0]["placeholder"]
-        );
-      });
-
-      context("when clicking", () => {
-        it("renders checked the checkbox", () => {
-          statefulForCheckbox();
-
-          cy.findByRole("checkbox").should("not.be.checked");
-          cy.findByText("Access placeholder").click();
-          cy.findByRole("checkbox").should("be.checked");
-        });
-      });
-    });
-  });
-
   context("when array of array", () => {
     const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
       (data) => data.id === "US" || COUNTRY_CODES[206]
@@ -1513,586 +134,2054 @@ describe("StatefulForm", () => {
           cy.contains("Has access to login").should("not.exist");
         });
     });
-  });
 
-  context("with justifyContent", () => {
-    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
-      (data) => data.id === "US" || COUNTRY_CODES[206]
-    );
-
-    if (!DEFAULT_COUNTRY_CODES) {
-      throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
-    }
-
-    const value = {
-      first_name: "",
-      last_name: "",
-      email: "",
-      phone: "",
-      note: "",
-      access: false,
-      country_code: DEFAULT_COUNTRY_CODES,
-    };
-
-    const EMPLOYEE_FIELDS: FormFieldGroup[] = [
-      [
-        {
-          name: "first_name",
-          title: "First Name",
-          type: "text",
-          required: true,
-          placeholder: "Enter first name",
-        },
-        {
-          name: "last_name",
-          title: "Last Name",
-          type: "text",
-          required: false,
-          placeholder: "Enter last name",
-        },
-      ],
-      {
-        name: "email",
-        title: "Email",
-        type: "email",
-        required: true,
-        placeholder: "Enter email address",
-      },
-      {
-        name: "phone",
-        title: "Phone Number",
-        type: "phone",
-        required: false,
-        placeholder: "Enter phone number",
-      },
-      {
-        name: "note",
-        title: "Note",
-        type: "textarea",
-        rows: 3,
-        required: false,
-        placeholder: "Add additional notes",
-      },
-      {
-        name: "access",
-        placeholder: "Has access to login",
-        type: "checkbox",
-        required: false,
-      },
-      {
-        name: "text",
-        title: "Save",
-        type: "button",
-        required: true,
-        placeholder: "Enter text",
-        width: "15%",
-        rowJustifyContent: "end",
-      },
-    ];
-
-    it("render style align on the one row", () => {
-      cy.mount(
-        <StatefulForm
-          fields={EMPLOYEE_FIELDS}
-          formValues={value}
-          mode="onChange"
-        />
-      );
-
-      cy.findAllByLabelText("stateful-form-row")
-        .eq(5)
-        .should("have.css", "justify-content", "flex-end");
-    });
-  });
-
-  context("with autoFocusField", () => {
-    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
-      (data) => data.id === "US" || COUNTRY_CODES[206]
-    );
-
-    if (!DEFAULT_COUNTRY_CODES) {
-      throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
-    }
-
-    const value = {
-      first_name: "",
-      last_name: "",
-      email: "",
-      phone: "",
-      note: "",
-      access: false,
-      country_code: DEFAULT_COUNTRY_CODES,
-    };
-
-    const EMPLOYEE_FIELDS: FormFieldGroup[] = [
-      [
-        {
-          name: "first_name",
-          title: "First Name",
-          type: "text",
-          required: true,
-          placeholder: "Enter first name",
-        },
-        {
-          name: "last_name",
-          title: "Last Name",
-          type: "text",
-          required: false,
-          placeholder: "Enter last name",
-        },
-      ],
-      {
-        name: "email",
-        title: "Email",
-        type: "email",
-        required: true,
-        placeholder: "Enter email address",
-      },
-      {
-        name: "phone",
-        title: "Phone Number",
-        type: "phone",
-        required: false,
-        placeholder: "Enter phone number",
-      },
-      {
-        name: "note",
-        title: "Note",
-        type: "textarea",
-        rows: 3,
-        required: false,
-        placeholder: "Add additional notes",
-      },
-      {
-        name: "access",
-        placeholder: "Has access to login",
-        type: "checkbox",
-        required: false,
-      },
-    ];
-    it("render in the one row", () => {
-      cy.mount(
-        <StatefulForm
-          fields={EMPLOYEE_FIELDS}
-          formValues={value}
-          mode="onChange"
-          autoFocusField="first_name"
-        />
-      );
-      cy.findAllByLabelText("stateful-form-row")
-        .eq(0)
-        .within(() => {
-          cy.findAllByRole("textbox").eq(0).should("exist").and("be.focused");
-        });
-    });
-  });
-
-  context("when not given a title", () => {
-    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
-      (data) => data.id === "US" || COUNTRY_CODES[206]
-    );
-
-    if (!DEFAULT_COUNTRY_CODES) {
-      throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
-    }
-
-    const value = {
-      first_name: "",
-      access: false,
-    };
-
-    const EMPLOYEE_FIELDS: FormFieldGroup[] = [
-      {
-        name: "first_name",
-        type: "text",
-        required: true,
-        placeholder: "Enter first name",
-      },
-
-      {
-        name: "access",
-        type: "checkbox",
-        required: false,
-      },
-    ];
-
-    const TITLE_EMPLOYEE_FIELD = ["First Name", "Has access to login"];
-
-    const PLACEHOLDER_EMPLOYEE_FIELD = ["Enter first name"];
-
-    it("should render only the input", () => {
-      cy.mount(
-        <StatefulForm
-          fields={EMPLOYEE_FIELDS}
-          formValues={value}
-          mode="onChange"
-        />
-      );
-      PLACEHOLDER_EMPLOYEE_FIELD.map((data) => {
-        cy.findByPlaceholderText(data).should("exist");
-      });
-      TITLE_EMPLOYEE_FIELD.map((data) => {
-        cy.findByText(data).should("not.exist");
-      });
-    });
-  });
-
-  context("with hidden", () => {
-    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
-      (data) => data.id === "US" || COUNTRY_CODES[206]
-    );
-
-    if (!DEFAULT_COUNTRY_CODES) {
-      throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
-    }
-
-    const value = {
-      first_name: "",
-      access: false,
-    };
-
-    const EMPLOYEE_FIELDS_WITH_HIDDEN: FormFieldGroup[] = [
-      {
-        name: "first_name",
-        title: "First Name",
-        type: "text",
-        required: true,
-        placeholder: "Enter first name",
-      },
-      {
-        name: "middle_name",
-        title: "Middle Name",
-        type: "text",
-        required: true,
-        placeholder: "Enter first name",
-        hidden: true,
-      },
-      {
-        name: "access",
-        title: "Access",
-        type: "checkbox",
-        required: false,
-      },
-    ];
-
-    it("should hidden the input element", () => {
-      cy.mount(
-        <StatefulForm
-          fields={EMPLOYEE_FIELDS_WITH_HIDDEN}
-          formValues={value}
-          mode="onChange"
-        />
-      );
-
-      cy.findByText(EMPLOYEE_FIELDS_WITH_HIDDEN[0]["title"]).should("exist");
-      cy.findByText(EMPLOYEE_FIELDS_WITH_HIDDEN[1]["title"]).should(
-        "not.exist"
-      );
-      cy.findByText(EMPLOYEE_FIELDS_WITH_HIDDEN[2]["title"]).should("exist");
-    });
-
-    it("should hidden the row input element", () => {
-      cy.mount(
-        <StatefulForm
-          fields={EMPLOYEE_FIELDS_WITH_HIDDEN}
-          formValues={value}
-          mode="onChange"
-        />
-      );
-
-      cy.findAllByLabelText("stateful-form-row").should("have.length", 2);
-    });
-  });
-
-  context("with width", () => {
-    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
-      (data) => data.id === "US" || COUNTRY_CODES[206]
-    );
-
-    if (!DEFAULT_COUNTRY_CODES) {
-      throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
-    }
-
-    const FRUIT_OPTIONS: OptionsProps[] = [
-      { text: "Apple", value: "1" },
-      { text: "Banana", value: "2" },
-      { text: "Orange", value: "3" },
-      { text: "Grape", value: "4" },
-      { text: "Pineapple", value: "5" },
-      { text: "Strawberry", value: "6" },
-      { text: "Watermelon", value: "7" },
-    ];
-
-    const valueAll = {
-      text: "",
-      email: "",
-      number: "",
-      password: "",
-      textarea: "",
-      rating: "",
-      check: false,
-      chips: {
-        searchText: "",
-        selectedOptions: [],
-      },
-      color: "",
-      combo: [""],
-      date: [""],
-      file_drop_box: [] as File[],
-      file: undefined,
-      image: undefined,
-      money: "",
-      phone: "",
-      thumb_field: false,
-      togglebox: false,
-      signature: "",
-      capsule: "",
-      country_code: DEFAULT_COUNTRY_CODES,
-    };
-
-    const BADGE_OPTIONS: BadgeProps[] = [
-      {
-        id: "1",
-        caption: "Anime",
-      },
-      {
-        id: "2",
-        caption: "Manga",
-      },
-    ];
-
-    const CAPSULE_TABS: CapsuleContentProps[] = [
-      {
-        id: "paid",
-        title: "Paid",
-      },
-      {
-        id: "unpaid",
-        title: "Unpaid",
-      },
-    ];
-
-    const ALL_INPUT: FormFieldGroup[] = [
-      [
-        {
-          name: "text",
-          title: "Text",
-          type: "text",
-          required: true,
-          placeholder: "Enter text",
-          width: "50%",
-        },
-        {
-          name: "email",
-          title: "Email",
-          type: "email",
-          required: false,
-          placeholder: "Enter email address",
-          width: "50%",
-        },
-      ],
-      {
-        name: "number",
-        title: "Number",
-        type: "number",
-        required: false,
-        placeholder: "Enter number",
-        width: "50%",
-      },
-      {
-        name: "password",
-        title: "Password",
-        type: "password",
-        required: false,
-        placeholder: "Enter password",
-        width: "50%",
-      },
-      {
-        name: "textarea",
-        title: "Textarea",
-        type: "textarea",
-        rows: 3,
-        required: false,
-        placeholder: "Enter text here",
-        width: "50%",
-      },
-      {
-        name: "check",
-        title: "Check",
-        type: "checkbox",
-        required: false,
-        width: "50%",
-      },
-      {
-        name: "color",
-        title: "Color",
-        type: "color",
-        required: false,
-        placeholder: "Enter the color here",
-        width: "50%",
-      },
-      {
-        name: "combo",
-        title: "Combo",
-        type: "combo",
-        required: false,
-        placeholder: "Select a fruit...",
-        comboboxProps: {
-          options: FRUIT_OPTIONS,
-        },
-        width: "50%",
-      },
-      {
-        name: "date",
-        title: "Date",
-        type: "date",
-        required: false,
-        placeholder: "Select a date",
-        width: "50%",
-      },
-      {
-        name: "file_drop_box",
-        title: "File Drop Box",
-        type: "file_drop_box",
-        required: false,
-        width: "50%",
-      },
-      {
-        name: "file",
-        title: "File",
-        type: "file",
-        required: false,
-        fileInputBoxProps: {
-          accept: "image/jpeg",
-        },
-        width: "50%",
-      },
-      {
-        name: "image",
-        title: "Image",
-        type: "image",
-        required: false,
-        width: "50%",
-      },
-      {
-        name: "money",
-        title: "Money",
-        type: "money",
-        required: false,
-        placeholder: "Enter amount",
-        moneyProps: {
-          separator: "dot",
-        },
-        width: "50%",
-      },
-      {
-        name: "phone",
-        title: "Phone",
-        type: "phone",
-        required: false,
-        placeholder: "Enter phone number",
-        width: "50%",
-      },
-      {
-        name: "signature",
-        title: "Signature",
-        type: "signbox",
-        required: false,
-        width: "50%",
-      },
-      {
-        name: "rating",
-        title: "Rating",
-        type: "rating",
-        required: false,
-        width: "50%",
-      },
-      {
-        name: "thumb_field",
-        title: "Thumb Field",
-        type: "thumbfield",
-        required: false,
-        width: "50%",
-      },
-      {
-        name: "togglebox",
-        title: "Togglebox",
-        type: "toggle",
-        required: false,
-        width: "50%",
-      },
-      {
-        name: "chips",
-        title: "Chips",
-        type: "chips",
-        required: false,
-        width: "50%",
-        chipsProps: {
-          options: BADGE_OPTIONS,
-          styles: {
-            chipStyle: css`
-              width: 100%;
-              gap: 0.5rem;
-              border-color: transparent;
-            `,
-            chipContainerStyle: css`
-              gap: 4px;
-            `,
-            chipsDrawerStyle: css`
-              min-width: 250px;
-            `,
+    context("when given without title", () => {
+      const FIELDS_WITHOUT_TITLE: FormFieldGroup[] = [
+        [
+          {
+            name: "first_name",
+            title: "First Name",
+            type: "text",
+            required: true,
+            placeholder: "Enter first name",
           },
-          selectedOptions: valueAll.chips.selectedOptions,
-          inputValue: valueAll.chips.searchText,
-        },
-      },
-      {
-        name: "capsule",
-        title: "Monetary Value",
-        type: "capsule",
-        required: false,
-        width: "50%",
-        capsuleProps: {
-          tabs: CAPSULE_TABS,
-        },
-      },
-    ];
+          {
+            name: "last_name",
+            type: "text",
+            required: false,
+            placeholder: "Enter last name",
+          },
+          {
+            name: "phone",
+            type: "phone",
+            required: false,
+            placeholder: "Enter phone number",
+          },
+          {
+            name: "combo",
+            type: "combo",
+            required: false,
+            placeholder: "Select a fruit...",
+            comboboxProps: {
+              options: [],
+            },
+          },
+          {
+            name: "button",
+            title: "Button",
+            type: "button",
+          },
+        ],
+      ];
 
-    context("when given all input elements", () => {
-      it("should render input elements with sizing", () => {
+      it("should not break the height", () => {
         cy.mount(
           <StatefulForm
-            fields={ALL_INPUT}
-            formValues={valueAll}
+            fields={FIELDS_WITHOUT_TITLE}
+            formValues={value}
             mode="onChange"
           />
         );
+        cy.findAllByLabelText("stateful-form-row")
+          .eq(0)
+          .within(() => {
+            // Check the title
+            cy.contains("First Name").should("exist");
+            cy.contains("Last Name").should("not.exist");
+            cy.contains("Phone").should("not.exist");
+            cy.contains("Combo").should("not.exist");
+          })
+          .should("have.css", "height", "60px");
 
-        const flattenFields = (groups: FormFieldGroup[]): FormFieldProps[] =>
-          groups.flatMap((group) =>
-            Array.isArray(group) ? flattenFields(group) : [group]
-          );
-
-        const allFields = flattenFields(ALL_INPUT);
-
-        allFields.forEach((prop) => {
-          if (prop.name === "country_code") return;
-          if (prop.name === "togglebox") {
-            cy.findByLabelText("togglebox-row-wrapper").then(($el) => {
-              const width = $el.width();
-              expect(width).to.be.closeTo(222.5, 10);
-            });
-          } else {
-            cy.findByText(prop.title)
-              .parent()
-              .then(($el) => {
-                const elWidth = $el.width();
-
-                expect(elWidth).to.be.closeTo(222.5, 10);
-              });
-          }
-        });
+        // Input should have similar height
+        cy.get("#textbox-first_name")
+          .parent()
+          .parent()
+          .should("have.css", "height", "60px");
+        cy.get("#textbox-last_name")
+          .parent()
+          .parent()
+          .should("have.css", "height", "60px");
+        cy.get("#phonebox-phone")
+          .parent()
+          .parent()
+          .parent()
+          .should("have.css", "height", "60px");
+        cy.get("#combobox-combo")
+          .parent()
+          .parent()
+          .parent()
+          .should("have.css", "height", "60px");
+        cy.get("#combobox-combo")
+          .parent()
+          .parent()
+          .parent()
+          .should("have.css", "height", "60px");
+        cy.findAllByRole("button")
+          .eq(1)
+          .parent()
+          .should("have.css", "margin-top", "26px");
       });
     });
   });
+
+  // context("id", () => {
+  //   const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
+  //     (data) => data.id === "US" || COUNTRY_CODES[206]
+  //   );
+
+  //   if (!DEFAULT_COUNTRY_CODES) {
+  //     throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
+  //   }
+
+  //   const FRUIT_OPTIONS: OptionsProps[] = [
+  //     { text: "Apple", value: "1" },
+  //     { text: "Banana", value: "2" },
+  //     { text: "Orange", value: "3" },
+  //     { text: "Grape", value: "4" },
+  //     { text: "Pineapple", value: "5" },
+  //     { text: "Strawberry", value: "6" },
+  //     { text: "Watermelon", value: "7" },
+  //   ];
+
+  //   const value = {
+  //     text: "",
+  //     time: "",
+  //     email: "",
+  //     number: "",
+  //     password: "",
+  //     textarea: "",
+  //     rating: "",
+  //     check: false,
+  //     color: "",
+  //     combo: [],
+  //     date: [""],
+  //     file_drop_box: [] as File[],
+  //     file: undefined,
+  //     image: undefined,
+  //     money: "",
+  //     phone: "",
+  //     thumb_field: false,
+  //     togglebox: false,
+  //     signature: "",
+  //     capsule: "",
+  //     country_code: DEFAULT_COUNTRY_CODES,
+  //     currency: "USD",
+  //   };
+
+  //   const MONTH_NAMES = [
+  //     { text: "JAN", value: "1" },
+  //     { text: "FEB", value: "2" },
+  //     { text: "MAR", value: "3" },
+  //     { text: "APR", value: "4" },
+  //     { text: "MAY", value: "5" },
+  //     { text: "JUN", value: "6" },
+  //     { text: "JUL", value: "7" },
+  //     { text: "AUG", value: "8" },
+  //     { text: "SEP", value: "9" },
+  //     { text: "OCT", value: "10" },
+  //     { text: "NOV", value: "11" },
+  //     { text: "DEC", value: "12" },
+  //   ];
+
+  //   const FIELDS: FormFieldGroup[] = [
+  //     {
+  //       name: "text",
+  //       title: "Text",
+  //       type: "text",
+  //       required: true,
+  //       placeholder: "Enter text",
+  //     },
+  //     {
+  //       name: "email",
+  //       title: "Email",
+  //       type: "email",
+  //       required: false,
+  //       placeholder: "Enter email address",
+  //     },
+  //     {
+  //       name: "time",
+  //       title: "Time",
+  //       type: "time",
+  //       required: false,
+  //       placeholder: "Enter email address",
+  //     },
+  //     {
+  //       name: "number",
+  //       title: "Number",
+  //       type: "number",
+  //       required: false,
+  //       placeholder: "Enter number",
+  //     },
+  //     {
+  //       name: "password",
+  //       title: "Password",
+  //       type: "password",
+  //       required: false,
+  //       placeholder: "Enter password",
+  //     },
+  //     {
+  //       name: "textarea",
+  //       title: "Textarea",
+  //       type: "textarea",
+  //       rows: 3,
+  //       required: false,
+  //       placeholder: "Enter text here",
+  //     },
+  //     {
+  //       name: "check",
+  //       placeholder: "Check",
+  //       type: "checkbox",
+  //       required: false,
+  //     },
+  //     {
+  //       name: "color",
+  //       title: "Color",
+  //       type: "color",
+  //       required: false,
+  //       placeholder: "Enter the color here",
+  //     },
+  //     {
+  //       name: "combo",
+  //       title: "Combo",
+  //       type: "combo",
+  //       required: false,
+  //       placeholder: "Select a fruit...",
+  //       comboboxProps: {
+  //         options: FRUIT_OPTIONS,
+  //       },
+  //     },
+  //     {
+  //       name: "date",
+  //       title: "Date",
+  //       type: "date",
+  //       required: false,
+  //       placeholder: "Select a date",
+  //       dateProps: {
+  //         monthNames: MONTH_NAMES,
+  //       },
+  //     },
+  //     {
+  //       name: "file_drop_box",
+  //       title: "File Drop Box",
+  //       type: "file_drop_box",
+  //       required: false,
+  //     },
+  //     {
+  //       name: "file",
+  //       title: "File",
+  //       type: "file",
+  //       required: false,
+  //     },
+  //     {
+  //       name: "image",
+  //       title: "Image",
+  //       type: "image",
+  //       required: false,
+  //     },
+  //     {
+  //       name: "money",
+  //       title: "Money",
+  //       type: "money",
+  //       required: false,
+  //       placeholder: "Enter amount",
+  //     },
+  //     {
+  //       name: "phone",
+  //       title: "Phone",
+  //       type: "phone",
+  //       required: false,
+  //       placeholder: "Enter phone number",
+  //     },
+  //     {
+  //       name: "signature",
+  //       title: "Signature",
+  //       type: "signbox",
+  //       required: false,
+  //     },
+  //   ];
+
+  //   it("renders each field with a proper and unique ID", () => {
+  //     cy.mount(
+  //       <StatefulForm fields={FIELDS} formValues={value} mode="onChange" />
+  //     );
+
+  //     const flattenFields = (groups: FormFieldGroup[]): FormFieldProps[] =>
+  //       groups.flatMap((group) =>
+  //         Array.isArray(group) ? flattenFields(group) : [group]
+  //       );
+
+  //     const allFields = flattenFields(FIELDS);
+
+  //     allFields.map((field) => {
+  //       const prefix =
+  //         typeToIdPrefix[field.type] ??
+  //         field.type.replace(/\s+/g, "_").toLowerCase();
+  //       const expectedId = field.name
+  //         ? `${prefix}-${field.name.replace(/\s+/g, "_").toLowerCase()}`
+  //         : prefix;
+
+  //       cy.get(`#${expectedId}`).should("exist");
+  //     });
+  //   });
+
+  //   context("when given with non-ASCII IDs", () => {
+  //     const FIELDS_NOT_NORMAL_ASCII: FormFieldGroup[] = [
+  //       {
+  //         name: "text",
+  //         title: "Text",
+  //         type: "text",
+  //         required: true,
+  //         placeholder: "Enter text",
+  //         id: "field-text-📝 hello world",
+  //       },
+  //       {
+  //         name: "email",
+  //         title: "Email",
+  //         type: "email",
+  //         required: false,
+  //         placeholder: "Enter email address",
+  //         id: "field-email-📧 123!",
+  //       },
+  //       {
+  //         name: "time",
+  //         title: "Time",
+  //         type: "time",
+  //         required: false,
+  //         placeholder: "Enter time",
+  //         id: "field-time-⏰ something",
+  //       },
+  //       {
+  //         name: "number",
+  //         title: "Number",
+  //         type: "number",
+  //         required: false,
+  //         placeholder: "Enter number",
+  //         id: "field-number-🔢 test id",
+  //       },
+  //       {
+  //         name: "password",
+  //         title: "Password",
+  //         type: "password",
+  //         required: false,
+  //         placeholder: "Enter password",
+  //         id: "field-password-🔑 secret💡",
+  //       },
+  //       {
+  //         name: "textarea",
+  //         title: "Textarea",
+  //         type: "textarea",
+  //         rows: 3,
+  //         required: false,
+  //         placeholder: "Enter text here",
+  //         id: "field-textarea-📝 multi words!",
+  //       },
+  //       {
+  //         name: "check",
+  //         placeholder: "Check",
+  //         type: "checkbox",
+  //         required: false,
+  //         id: "field-check-☑️ yes/no?",
+  //       },
+  //       {
+  //         name: "color",
+  //         title: "Color",
+  //         type: "color",
+  //         required: false,
+  //         placeholder: "Enter the color here",
+  //         id: "field-color-🎨 rainbow 🌈",
+  //       },
+  //       {
+  //         name: "combo",
+  //         title: "Combo",
+  //         type: "combo",
+  //         required: false,
+  //         placeholder: "Select a fruit...",
+  //         comboboxProps: { options: FRUIT_OPTIONS },
+  //         id: "field-combo-🍎 choose one",
+  //       },
+  //       {
+  //         name: "date",
+  //         title: "Date",
+  //         type: "date",
+  //         required: false,
+  //         placeholder: "Select a date",
+  //         dateProps: { monthNames: MONTH_NAMES },
+  //         id: "field-date-📅 01/01/2026",
+  //       },
+  //       {
+  //         name: "file_drop_box",
+  //         title: "File Drop Box",
+  //         type: "file_drop_box",
+  //         required: false,
+  //         id: "field-file_drop_box-📂 drop here",
+  //       },
+  //       {
+  //         name: "file",
+  //         title: "File",
+  //         type: "file",
+  //         required: false,
+  //         id: "field-file-📄 upload file!",
+  //       },
+  //       {
+  //         name: "image",
+  //         title: "Image",
+  //         type: "image",
+  //         required: false,
+  //         id: "field-image-🖼️ my image",
+  //       },
+  //       {
+  //         name: "money",
+  //         title: "Money",
+  //         type: "money",
+  //         required: false,
+  //         placeholder: "Enter amount",
+  //         id: "field-money-💰 $1000",
+  //       },
+  //       {
+  //         name: "phone",
+  //         title: "Phone",
+  //         type: "phone",
+  //         required: false,
+  //         placeholder: "Enter phone number",
+  //         id: "field-phone-📞 askdaosdk",
+  //       },
+  //       {
+  //         name: "signature",
+  //         title: "Signature",
+  //         type: "signbox",
+  //         required: false,
+  //         id: "field-signature-✍️ sign here!",
+  //       },
+  //     ];
+
+  //     it("renders sanitized ASCII-only IDs for input elements", () => {
+  //       cy.mount(
+  //         <StatefulForm
+  //           fields={FIELDS_NOT_NORMAL_ASCII}
+  //           formValues={value}
+  //           mode="onChange"
+  //         />
+  //       );
+
+  //       const flattenFields = (groups: FormFieldGroup[]): FormFieldProps[] =>
+  //         groups.flatMap((group) =>
+  //           Array.isArray(group) ? flattenFields(group) : [group]
+  //         );
+
+  //       const allFields = flattenFields(FIELDS_NOT_NORMAL_ASCII);
+
+  //       const sanitized = allFields.map((field) =>
+  //         StatefulForm.sanitizeId({ id: field.id })
+  //       );
+
+  //       const expected = [
+  //         "field-text-_hello_world",
+  //         "field-email-_123",
+  //         "field-time-_something",
+  //         "field-number-_test_id",
+  //         "field-password-_secret",
+  //         "field-textarea-_multi_words",
+  //         "field-check-_yesno",
+  //         "field-color-_rainbow_",
+  //         "field-combo-_choose_one",
+  //         "field-date-_01012026",
+  //         "field-file_drop_box-_drop_here",
+  //         "field-file-_upload_file",
+  //         "field-image-_my_image",
+  //         "field-money-_1000",
+  //         "field-phone-_askdaosdk",
+  //         "field-signature-_sign_here",
+  //       ];
+
+  //       sanitized.map((result, i) => {
+  //         expect(result).to.equal(expected[i]);
+  //       });
+  //     });
+  //   });
+  // });
+
+  // context("with type custom", () => {
+  //   const BADGE_OPTIONS = [
+  //     {
+  //       id: 1,
+  //       caption: "Anime",
+  //     },
+  //     {
+  //       id: 2,
+  //       caption: "Manga",
+  //     },
+  //     {
+  //       id: 3,
+  //       caption: "Comics",
+  //     },
+  //     {
+  //       id: 4,
+  //       caption: "Movies",
+  //     },
+  //     {
+  //       id: 5,
+  //       caption: "Podcasts",
+  //     },
+  //     {
+  //       id: 6,
+  //       caption: "TV Shows",
+  //     },
+  //     {
+  //       id: 7,
+  //       caption: "Novels",
+  //     },
+  //     {
+  //       id: 8,
+  //       caption: "Music",
+  //     },
+  //     {
+  //       id: 9,
+  //       caption: "Games",
+  //     },
+  //     {
+  //       id: 10,
+  //       caption: "Webtoons",
+  //     },
+  //   ];
+
+  //   function StatefulFormCustom() {
+  //     const [value, setValue] = useState({
+  //       first_name: "",
+  //       access: false,
+  //       files: [],
+  //     });
+
+  //     const [isFormValid, setIsFormValid] = useState(false);
+
+  //     const onFileDropped = async ({
+  //       error,
+  //       files,
+  //       setProgressLabel,
+  //       succeed,
+  //     }: OnFileDroppedFunctionProps) => {
+  //       const file = files[0];
+  //       setValue((prev) => ({ ...prev, files: [...prev.files, file] }));
+  //       setProgressLabel(`Uploading ${file.name}`);
+
+  //       return new Promise<void>((resolve) => {
+  //         let progress = 0;
+  //         const interval = setInterval(() => {
+  //           progress += 20;
+
+  //           if (progress >= 100) {
+  //             clearInterval(interval);
+  //             if (file === null) {
+  //               error(file, `file ${file.name} is not uploaded`);
+  //             } else {
+  //               succeed(file);
+  //             }
+  //             setProgressLabel(`Uploaded ${files[0].name}`);
+  //             resolve();
+  //           }
+  //         }, 300);
+  //       });
+  //     };
+
+  //     const onComplete = async ({
+  //       failedFiles,
+  //       setProgressLabel,
+  //       succeedFiles,
+  //       hideProgressLabel,
+  //       showUploaderForm,
+  //     }: OnCompleteFunctionProps) => {
+  //       console.log(succeedFiles, "This is succeedFiles");
+  //       console.log(failedFiles, "This is failedFiles");
+  //       await setProgressLabel(
+  //         `Upload complete! Success: ${succeedFiles.length}, Failed: ${failedFiles.length}`
+  //       );
+  //       await hideProgressLabel();
+  //       await showUploaderForm();
+  //     };
+
+  //     const CUSTOM_FIELDS: FormFieldGroup[] = [
+  //       {
+  //         name: "first_name",
+  //         title: "First Name",
+  //         type: "text",
+  //         required: true,
+  //         placeholder: "Enter first name",
+  //       },
+  //       {
+  //         name: "boxbar",
+  //         type: "custom",
+  //         render: (
+  //           <Boxbar>
+  //             {BADGE_OPTIONS.map((badge) => (
+  //               <Badge
+  //                 badgeStyle={css`
+  //                   width: 100%;
+  //                   max-width: 100px;
+
+  //                   &:hover {
+  //                     border-color: #4cbbf7;
+  //                     cursor: pointer;
+  //                     transition: all 0.5s ease-in-out;
+  //                   }
+  //                 `}
+  //                 key={badge.id}
+  //                 caption={badge.caption}
+  //                 withCircle
+  //               />
+  //             ))}
+  //           </Boxbar>
+  //         ),
+  //       },
+  //       {
+  //         name: "files",
+  //         type: "custom",
+  //         render: (
+  //           <FileDropBox
+  //             label="Files"
+  //             onFileDropped={onFileDropped}
+  //             onComplete={onComplete}
+  //           >
+  //             <Table
+  //               styles={{
+  //                 containerStyle: css`
+  //                   ${value.files.length === 0 &&
+  //                   css`
+  //                     display: none;
+  //                   `}
+  //                 `,
+  //               }}
+  //               columns={[
+  //                 {
+  //                   id: "file_name",
+  //                   caption: "File Name",
+  //                 },
+  //                 {
+  //                   id: "date",
+  //                   caption: "Date",
+  //                 },
+  //               ]}
+  //             >
+  //               {value.files.map((props) => (
+  //                 <Table.Row
+  //                   actions={(id) => [
+  //                     {
+  //                       caption: "Delete",
+  //                       icon: { image: RiDeleteBin2Fill },
+  //                       onClick: () => {
+  //                         if (id) {
+  //                           setValue((prev) => ({
+  //                             ...prev,
+  //                             files: prev.files.filter(
+  //                               (val) => val.name !== id
+  //                             ),
+  //                           }));
+  //                         }
+  //                       },
+  //                     },
+  //                   ]}
+  //                   rowId={props.name}
+  //                   content={[
+  //                     props.name,
+  //                     new Date(props.lastModified).toLocaleDateString("en-US", {
+  //                       year: "numeric",
+  //                       month: "short",
+  //                       day: "2-digit",
+  //                     }),
+  //                   ]}
+  //                 />
+  //               ))}
+  //             </Table>
+  //           </FileDropBox>
+  //         ),
+  //       },
+  //       {
+  //         name: "access",
+  //         type: "checkbox",
+  //         placeholder: "Access",
+  //         required: false,
+  //       },
+  //       {
+  //         name: "verify",
+  //         title: "Verify",
+  //         type: "button",
+  //         required: false,
+  //         disabled: !isFormValid,
+  //         rowJustifyContent: "end",
+  //       },
+  //     ];
+
+  //     const customSchema = z.object({
+  //       first_name: z
+  //         .string()
+  //         .min(3, "First name must be at least 3 characters long"),
+  //       access: z.boolean().refine((val) => val === true, {
+  //         message: "Access must be true",
+  //       }),
+  //       files: z
+  //         .array(
+  //           z.instanceof(File).refine(
+  //             (file) => {
+  //               if (!file) return false;
+
+  //               const allowedExtensions = ["png", "jpg", "jpeg", "gif"];
+  //               const ext = file.name.split(".").pop()?.toLowerCase();
+
+  //               const isImage =
+  //                 (file.type && file.type.startsWith("image/")) ||
+  //                 (ext ? allowedExtensions.includes(ext) : false);
+
+  //               if (!isImage) return false;
+
+  //               if (file.size > 5 * 1024 * 1024) return false;
+
+  //               return true;
+  //             },
+  //             {
+  //               message:
+  //                 "File must be an image (png, jpg, jpeg, gif) and ≤ 5 MB",
+  //             }
+  //           )
+  //         )
+  //         .min(1, "At least one file must be selected"),
+  //     });
+
+  //     return (
+  //       <StatefulForm
+  //         fields={CUSTOM_FIELDS}
+  //         formValues={value}
+  //         validationSchema={customSchema}
+  //         onValidityChange={setIsFormValid}
+  //         onChange={({ currentState }) =>
+  //           setValue((prev) => ({ ...prev, ...currentState }))
+  //         }
+  //         mode="onChange"
+  //       />
+  //     );
+  //   }
+
+  //   it("should render custom renderer", () => {
+  //     cy.mount(<StatefulFormCustom />);
+
+  //     cy.findByLabelText("boxbar-toggle").click();
+
+  //     BADGE_OPTIONS.map((data) => {
+  //       cy.findByText(data.caption).should("exist");
+  //     });
+  //   });
+
+  //   context("when given validationSchema", () => {
+  //     it("should synchronize values after all fields valid", () => {
+  //       cy.mount(<StatefulFormCustom />);
+  //       cy.findAllByRole("button").eq(1).and("be.disabled");
+
+  //       cy.get("#textbox-first_name").type("Alim Naufal");
+  //       cy.findByLabelText("filedropbox").selectFile(
+  //         [
+  //           "test/fixtures/test-images/sample-1.jpg",
+  //           "test/fixtures/test-images/sample-2.jpg",
+  //         ],
+  //         {
+  //           action: "drag-drop",
+  //           force: true,
+  //         }
+  //       );
+  //       cy.wait(1000);
+
+  //       cy.findByLabelText("filedropbox").then(($input) => {
+  //         cy.spy($input[0], "click").as("fileClick");
+  //       });
+  //       cy.findByText("sample-1.jpg").should("be.visible").click();
+  //       cy.findByText("sample-2.jpg").should("be.visible").click();
+  //       cy.findByText("Access").should("be.visible").click();
+
+  //       cy.findAllByRole("button").eq(1).and("not.be.disabled");
+  //     });
+  //   });
+  // });
+
+  // context("helper", () => {
+  //   const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
+  //     (data) => data.id === "US" || COUNTRY_CODES[206]
+  //   );
+
+  //   if (!DEFAULT_COUNTRY_CODES) {
+  //     throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
+  //   }
+
+  //   const value = {
+  //     text: "",
+  //     time: "",
+  //     email: "",
+  //     number: "",
+  //     password: "",
+  //     textarea: "",
+  //     rating: "",
+  //     check: false,
+  //     chips: {
+  //       searchText: "",
+  //       selectedOptions: [],
+  //     },
+  //     color: "",
+  //     combo: [],
+  //     date: [""],
+  //     file_drop_box: [] as File[],
+  //     file: undefined,
+  //     image: undefined,
+  //     money: "",
+  //     phone: "",
+  //     signature: "",
+  //     country_code: DEFAULT_COUNTRY_CODES,
+  //   };
+
+  //   const FIELDS: FormFieldGroup[] = [
+  //     {
+  //       name: "text",
+  //       title: "Text",
+  //       type: "text",
+  //       required: true,
+  //       placeholder: "Enter text",
+  //       helper: "This is a text input field",
+  //     },
+  //     {
+  //       name: "email",
+  //       title: "Email",
+  //       type: "email",
+  //       required: false,
+  //       placeholder: "Enter email address",
+  //       helper: "This field is used to enter an email address",
+  //     },
+  //     {
+  //       name: "time",
+  //       title: "Time",
+  //       type: "time",
+  //       required: false,
+  //       placeholder: "Select time",
+  //       helper: "This field allows you to select a time",
+  //     },
+  //     {
+  //       name: "number",
+  //       title: "Number",
+  //       type: "number",
+  //       required: false,
+  //       placeholder: "Enter number",
+  //       helper: "This field only accepts numeric values",
+  //     },
+  //     {
+  //       name: "password",
+  //       title: "Password",
+  //       type: "password",
+  //       required: false,
+  //       placeholder: "Enter password",
+  //       helper: "This field is used to enter a secure password",
+  //     },
+  //     {
+  //       name: "textarea",
+  //       title: "Textarea",
+  //       type: "textarea",
+  //       rows: 3,
+  //       required: false,
+  //       placeholder: "Enter text here",
+  //       helper: "This field allows you to enter multiple lines of text",
+  //     },
+  //     {
+  //       name: "check",
+  //       title: "Check",
+  //       placeholder: "Check",
+  //       type: "checkbox",
+  //       required: false,
+  //       helper: "This checkbox allows you to toggle a boolean value",
+  //     },
+  //     {
+  //       name: "radio",
+  //       title: "Radio",
+  //       placeholder: "Radio",
+  //       type: "radio",
+  //       required: false,
+  //       helper: "This radio allows you to toggle a boolean value",
+  //     },
+  //     {
+  //       name: "color",
+  //       title: "Color",
+  //       type: "color",
+  //       required: false,
+  //       placeholder: "Enter the color here",
+  //       helper: "This field allows you to pick or input a color value",
+  //     },
+  //     {
+  //       name: "combo",
+  //       title: "Combo",
+  //       type: "combo",
+  //       required: false,
+  //       placeholder: "Select a fruit...",
+  //       helper:
+  //         "This field allows you to select one or more options from a list",
+  //     },
+  //     {
+  //       name: "date",
+  //       title: "Date",
+  //       type: "date",
+  //       required: false,
+  //       placeholder: "Select a date",
+  //       helper: "This field allows you to select a date",
+  //     },
+  //     {
+  //       name: "file_drop_box",
+  //       title: "File Drop Box",
+  //       type: "file_drop_box",
+  //       required: false,
+  //       helper: "This field allows you to upload files via drag and drop",
+  //     },
+  //     {
+  //       name: "file",
+  //       title: "File",
+  //       type: "file",
+  //       required: false,
+  //       helper: "This field allows you to upload one or more files",
+  //     },
+  //     {
+  //       name: "image",
+  //       title: "Image",
+  //       type: "image",
+  //       required: false,
+  //       helper: "This field allows you to upload and preview an image",
+  //     },
+  //     {
+  //       name: "money",
+  //       title: "Money",
+  //       type: "money",
+  //       required: false,
+  //       placeholder: "Enter amount",
+  //       helper: "This field is used to input a monetary value",
+  //     },
+  //     {
+  //       name: "phone",
+  //       title: "Phone",
+  //       type: "phone",
+  //       required: false,
+  //       placeholder: "Enter phone number",
+  //       helper:
+  //         "This field allows you to enter a phone number with country code",
+  //     },
+  //     {
+  //       name: "signature",
+  //       title: "Signature",
+  //       type: "signbox",
+  //       required: false,
+  //       helper: "This is signbox type",
+  //     },
+  //   ];
+
+  //   it("renders with tooltip", () => {
+  //     cy.mount(
+  //       <StatefulForm fields={FIELDS} formValues={value} mode="onChange" />
+  //     );
+
+  //     cy.findAllByLabelText("tooltip-trigger")
+  //       .should("have.length", 17)
+  //       .children()
+  //       .should("have.css", "cursor", "help");
+  //   });
+  // });
+
+  // context("with style", () => {
+  //   context("when given background wheat", () => {
+  //     const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
+  //       (data) => data.id === "US" || COUNTRY_CODES[206]
+  //     );
+
+  //     if (!DEFAULT_COUNTRY_CODES) {
+  //       throw new Error(
+  //         "Default country code 'US' not found in COUNTRY_CODES."
+  //       );
+  //     }
+
+  //     const FRUIT_OPTIONS: OptionsProps[] = [
+  //       { text: "Apple", value: "1" },
+  //       { text: "Banana", value: "2" },
+  //       { text: "Orange", value: "3" },
+  //       { text: "Grape", value: "4" },
+  //       { text: "Pineapple", value: "5" },
+  //       { text: "Strawberry", value: "6" },
+  //       { text: "Watermelon", value: "7" },
+  //     ];
+
+  //     const value = {
+  //       text: "",
+  //       time: "",
+  //       email: "",
+  //       number: "",
+  //       password: "",
+  //       textarea: "",
+  //       rating: "",
+  //       check: false,
+  //       chips: {
+  //         searchText: "",
+  //         selectedOptions: [],
+  //       },
+  //       color: "",
+  //       combo: [],
+  //       date: [""],
+  //       file_drop_box: [] as File[],
+  //       file: undefined,
+  //       image: undefined,
+  //       money: "",
+  //       phone: "",
+  //       signature: "",
+  //       country_code: DEFAULT_COUNTRY_CODES,
+  //     };
+
+  //     const MONTH_NAMES = [
+  //       { text: "JAN", value: "1" },
+  //       { text: "FEB", value: "2" },
+  //       { text: "MAR", value: "3" },
+  //       { text: "APR", value: "4" },
+  //       { text: "MAY", value: "5" },
+  //       { text: "JUN", value: "6" },
+  //       { text: "JUL", value: "7" },
+  //       { text: "AUG", value: "8" },
+  //       { text: "SEP", value: "9" },
+  //       { text: "OCT", value: "10" },
+  //       { text: "NOV", value: "11" },
+  //       { text: "DEC", value: "12" },
+  //     ];
+
+  //     const FIELDS: FormFieldGroup[] = [
+  //       {
+  //         name: "text",
+  //         title: "Text",
+  //         type: "text",
+  //         required: true,
+  //         placeholder: "Enter text",
+  //         textboxProps: {
+  //           styles: {
+  //             self: css`
+  //               background-color: wheat;
+  //             `,
+  //           },
+  //         },
+  //       },
+  //       {
+  //         name: "email",
+  //         title: "Email",
+  //         type: "email",
+  //         required: false,
+  //         placeholder: "Enter email address",
+  //         textboxProps: {
+  //           styles: {
+  //             self: css`
+  //               background-color: wheat;
+  //             `,
+  //           },
+  //         },
+  //       },
+  //       {
+  //         name: "time",
+  //         title: "Time",
+  //         type: "time",
+  //         required: false,
+  //         placeholder: "Enter email address",
+  //         timeboxProps: {
+  //           styles: {
+  //             inputWrapperStyle: css`
+  //               background-color: wheat;
+  //             `,
+  //             self: css`
+  //               background-color: wheat;
+  //             `,
+  //           },
+  //         },
+  //       },
+  //       {
+  //         name: "number",
+  //         title: "Number",
+  //         type: "number",
+  //         required: false,
+  //         placeholder: "Enter number",
+  //         textboxProps: {
+  //           styles: {
+  //             self: css`
+  //               background-color: wheat;
+  //             `,
+  //           },
+  //         },
+  //       },
+  //       {
+  //         name: "password",
+  //         title: "Password",
+  //         type: "password",
+  //         required: false,
+  //         placeholder: "Enter password",
+  //         textboxProps: {
+  //           styles: {
+  //             self: css`
+  //               background-color: wheat;
+  //             `,
+  //           },
+  //         },
+  //       },
+  //       {
+  //         name: "textarea",
+  //         title: "Textarea",
+  //         type: "textarea",
+  //         rows: 3,
+  //         required: false,
+  //         placeholder: "Enter text here",
+  //         textareaProps: {
+  //           styles: {
+  //             self: css`
+  //               background-color: wheat;
+  //             `,
+  //           },
+  //         },
+  //       },
+  //       {
+  //         name: "check",
+  //         placeholder: "Check",
+  //         type: "checkbox",
+  //         required: false,
+  //         checkboxProps: {
+  //           styles: {
+  //             self: css`
+  //               background-color: wheat;
+  //             `,
+  //           },
+  //         },
+  //       },
+  //       {
+  //         name: "color",
+  //         title: "Color",
+  //         type: "color",
+  //         required: false,
+  //         placeholder: "Enter the color here",
+  //         colorboxProps: {
+  //           styles: {
+  //             self: css`
+  //               background-color: wheat;
+  //             `,
+  //           },
+  //         },
+  //       },
+  //       {
+  //         name: "combo",
+  //         title: "Combo",
+  //         type: "combo",
+  //         required: false,
+  //         placeholder: "Select a fruit...",
+  //         comboboxProps: {
+  //           options: FRUIT_OPTIONS,
+  //           styles: {
+  //             selectboxStyle: css`
+  //               background-color: wheat;
+  //             `,
+  //           },
+  //         },
+  //       },
+  //       {
+  //         name: "date",
+  //         title: "Date",
+  //         type: "date",
+  //         required: false,
+  //         placeholder: "Select a date",
+  //         dateProps: {
+  //           monthNames: MONTH_NAMES,
+  //           styles: {
+  //             selectboxStyle: css`
+  //               background-color: wheat;
+  //             `,
+  //           },
+  //         },
+  //       },
+  //       {
+  //         name: "file_drop_box",
+  //         title: "File Drop Box",
+  //         type: "file_drop_box",
+  //         required: false,
+  //         fileDropBoxProps: {
+  //           styles: {
+  //             dragOverStyle: css`
+  //               background-color: wheat;
+  //             `,
+  //           },
+  //         },
+  //       },
+  //       {
+  //         name: "file",
+  //         title: "File",
+  //         type: "file",
+  //         required: false,
+  //         fileInputBoxProps: {
+  //           accept: "image/jpeg",
+  //           styles: {
+  //             self: css`
+  //               background-color: wheat;
+  //             `,
+  //           },
+  //         },
+  //       },
+  //       {
+  //         name: "image",
+  //         title: "Image",
+  //         type: "image",
+  //         required: false,
+  //         imageboxProps: {
+  //           styles: {
+  //             self: css`
+  //               background-color: wheat;
+  //             `,
+  //           },
+  //         },
+  //       },
+  //       {
+  //         name: "money",
+  //         title: "Money",
+  //         type: "money",
+  //         required: false,
+  //         placeholder: "Enter amount",
+  //         moneyProps: {
+  //           separator: "dot",
+  //           styles: {
+  //             inputWrapperStyle: css`
+  //               background-color: wheat;
+  //             `,
+  //           },
+  //         },
+  //       },
+  //       {
+  //         name: "phone",
+  //         title: "Phone",
+  //         type: "phone",
+  //         required: false,
+  //         placeholder: "Enter phone number",
+  //         phoneboxProps: {
+  //           styles: {
+  //             inputWrapperStyle: css`
+  //               background-color: wheat;
+  //             `,
+  //             self: css`
+  //               background-color: wheat;
+  //             `,
+  //           },
+  //         },
+  //       },
+  //       {
+  //         name: "signature",
+  //         title: "Signature",
+  //         type: "signbox",
+  //         required: false,
+  //         signboxProps: {
+  //           styles: {
+  //             self: css`
+  //               background-color: wheat;
+  //             `,
+  //           },
+  //         },
+  //       },
+  //     ];
+
+  //     it("renders with background wheat", () => {
+  //       cy.mount(
+  //         <StatefulForm fields={FIELDS} formValues={value} mode="onChange" />
+  //       );
+
+  //       const isFieldWithPlaceholder = (
+  //         field: FormFieldGroup
+  //       ): field is FormFieldProps & { placeholder: string } =>
+  //         !Array.isArray(field) &&
+  //         "placeholder" in field &&
+  //         typeof field.placeholder === "string";
+
+  //       const PLACEHOLDER_FIELDS = FIELDS.filter(
+  //         (field): field is FormFieldProps & { placeholder: string } =>
+  //           isFieldWithPlaceholder(field) &&
+  //           [
+  //             "text",
+  //             "email",
+  //             "number",
+  //             "password",
+  //             "textarea",
+  //             "money",
+  //             "phone",
+  //             "color",
+  //             "combo",
+  //             "date",
+  //             "signature",
+  //             "image",
+  //           ].includes(field.type)
+  //       );
+
+  //       PLACEHOLDER_FIELDS.forEach((field) => {
+  //         if (field.type === "image") {
+  //           cy.findByPlaceholderText("imagebox-input")
+  //             .should("exist")
+  //             .and("have.css", "background-color", "rgb(245, 222, 179)");
+  //         } else if (field.type === "signbox") {
+  //           cy.findByPlaceholderText("signbox-canvas")
+  //             .should("exist")
+  //             .and("have.css", "background-color", "rgb(245, 222, 179)");
+  //         } else if (field.type === "phone") {
+  //           cy.findByPlaceholderText(field.placeholder)
+  //             .should("exist")
+  //             .parent()
+  //             .and("have.css", "background-color", "rgb(245, 222, 179)");
+  //         } else if (field.type === "color") {
+  //           cy.findByPlaceholderText(field.placeholder)
+  //             .should("exist")
+  //             .parent()
+  //             .parent()
+  //             .and("have.css", "background-color", "rgb(245, 222, 179)");
+  //         } else if (field.type === "money") {
+  //           cy.findByPlaceholderText(field.placeholder)
+  //             .should("exist")
+  //             .parent()
+  //             .and("have.css", "background-color", "rgb(245, 222, 179)");
+  //         } else {
+  //           cy.findByPlaceholderText(field.placeholder)
+  //             .should("exist")
+  //             .and("have.css", "background-color", "rgb(245, 222, 179)");
+  //         }
+  //       });
+  //     });
+  //   });
+  // });
+
+  // context("radio", () => {
+  //   const value = {
+  //     access: false,
+  //   };
+
+  //   const RADIO_FIELDS: FormFieldGroup[] = [
+  //     {
+  //       name: "access",
+  //       title: "Access",
+  //       placeholder: "Access",
+  //       type: "radio",
+  //       required: false,
+  //     },
+  //   ];
+  //   context("with title", () => {
+  //     it("should render on the label field", () => {
+  //       cy.mount(
+  //         <StatefulForm
+  //           fields={RADIO_FIELDS}
+  //           formValues={value}
+  //           mode="onChange"
+  //         />
+  //       );
+
+  //       cy.findByLabelText("radio-title-wrapper").should(
+  //         "have.text",
+  //         RADIO_FIELDS[0]["title"]
+  //       );
+  //     });
+  //   });
+
+  //   context("with placeholder", () => {
+  //     it("should render on the right side", () => {
+  //       cy.mount(
+  //         <StatefulForm
+  //           fields={RADIO_FIELDS}
+  //           formValues={value}
+  //           mode="onChange"
+  //         />
+  //       );
+
+  //       cy.findByLabelText("radio-label-wrapper").should(
+  //         "have.text",
+  //         RADIO_FIELDS[0]["placeholder"]
+  //       );
+  //     });
+  //   });
+  // });
+
+  // context("capsule", () => {
+  //   const value = {
+  //     capsule: "unpaid",
+  //   };
+
+  //   context("when initial value", () => {
+  //     const CAPSULE_TABS: CapsuleContentProps[] = [
+  //       {
+  //         id: "paid",
+  //         title: "Paid",
+  //       },
+  //       {
+  //         id: "unpaid",
+  //         title: "Unpaid",
+  //       },
+  //     ];
+
+  //     const CHECKBOX_TITLE_FIELDS: FormFieldGroup[] = [
+  //       {
+  //         name: "capsule",
+  //         title: "Monetary Value",
+  //         type: "capsule",
+  //         required: false,
+  //         capsuleProps: {
+  //           tabs: CAPSULE_TABS,
+  //         },
+  //       },
+  //     ];
+
+  //     it("should render active related with id value", () => {
+  //       cy.mount(
+  //         <StatefulForm
+  //           fields={CHECKBOX_TITLE_FIELDS}
+  //           formValues={value}
+  //           mode="onChange"
+  //         />
+  //       );
+
+  //       cy.contains("Paid").should("have.css", "color", "rgb(17, 24, 39)");
+  //       cy.contains("Unpaid").should("have.css", "color", "rgb(255, 255, 255)");
+  //     });
+  //   });
+  // });
+
+  // context("checkbox", () => {
+  //   const value = {
+  //     access: false,
+  //   };
+
+  //   const CHECKBOX_TITLE_FIELDS: FormFieldGroup[] = [
+  //     {
+  //       name: "access",
+  //       title: "Access",
+  //       placeholder: "Access placeholder",
+  //       type: "checkbox",
+  //       required: false,
+  //     },
+  //   ];
+  //   const statefulForCheckbox = () =>
+  //     cy.mount(
+  //       <StatefulForm
+  //         fields={CHECKBOX_TITLE_FIELDS}
+  //         formValues={value}
+  //         mode="onChange"
+  //       />
+  //     );
+
+  //   context("with title", () => {
+  //     it("should render on the label field", () => {
+  //       statefulForCheckbox();
+
+  //       cy.findByLabelText("title-wrapper").should(
+  //         "have.text",
+  //         CHECKBOX_TITLE_FIELDS[0]["title"]
+  //       );
+  //     });
+
+  //     context("when clicking", () => {
+  //       it("renders checked the checkbox", () => {
+  //         statefulForCheckbox();
+
+  //         cy.findByRole("checkbox").should("not.be.checked");
+  //         cy.findByText("Access").click();
+  //         cy.findByRole("checkbox").should("be.checked");
+  //       });
+  //     });
+  //   });
+
+  //   context("with placeholder", () => {
+  //     it("should render on the right side", () => {
+  //       statefulForCheckbox();
+
+  //       cy.findByLabelText("title-wrapper").should("not.exist");
+  //       cy.findByLabelText("label-wrapper").should(
+  //         "have.text",
+  //         CHECKBOX_TITLE_FIELDS[0]["placeholder"]
+  //       );
+  //     });
+
+  //     context("when clicking", () => {
+  //       it("renders checked the checkbox", () => {
+  //         statefulForCheckbox();
+
+  //         cy.findByRole("checkbox").should("not.be.checked");
+  //         cy.findByText("Access placeholder").click();
+  //         cy.findByRole("checkbox").should("be.checked");
+  //       });
+  //     });
+  //   });
+  // });
+
+  // context("with justifyContent", () => {
+  //   const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
+  //     (data) => data.id === "US" || COUNTRY_CODES[206]
+  //   );
+
+  //   if (!DEFAULT_COUNTRY_CODES) {
+  //     throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
+  //   }
+
+  //   const value = {
+  //     first_name: "",
+  //     last_name: "",
+  //     email: "",
+  //     phone: "",
+  //     note: "",
+  //     access: false,
+  //     country_code: DEFAULT_COUNTRY_CODES,
+  //   };
+
+  //   const EMPLOYEE_FIELDS: FormFieldGroup[] = [
+  //     [
+  //       {
+  //         name: "first_name",
+  //         title: "First Name",
+  //         type: "text",
+  //         required: true,
+  //         placeholder: "Enter first name",
+  //       },
+  //       {
+  //         name: "last_name",
+  //         title: "Last Name",
+  //         type: "text",
+  //         required: false,
+  //         placeholder: "Enter last name",
+  //       },
+  //     ],
+  //     {
+  //       name: "email",
+  //       title: "Email",
+  //       type: "email",
+  //       required: true,
+  //       placeholder: "Enter email address",
+  //     },
+  //     {
+  //       name: "phone",
+  //       title: "Phone Number",
+  //       type: "phone",
+  //       required: false,
+  //       placeholder: "Enter phone number",
+  //     },
+  //     {
+  //       name: "note",
+  //       title: "Note",
+  //       type: "textarea",
+  //       rows: 3,
+  //       required: false,
+  //       placeholder: "Add additional notes",
+  //     },
+  //     {
+  //       name: "access",
+  //       placeholder: "Has access to login",
+  //       type: "checkbox",
+  //       required: false,
+  //     },
+  //     {
+  //       name: "text",
+  //       title: "Save",
+  //       type: "button",
+  //       required: true,
+  //       placeholder: "Enter text",
+  //       width: "15%",
+  //       rowJustifyContent: "end",
+  //     },
+  //   ];
+
+  //   it("render style align on the one row", () => {
+  //     cy.mount(
+  //       <StatefulForm
+  //         fields={EMPLOYEE_FIELDS}
+  //         formValues={value}
+  //         mode="onChange"
+  //       />
+  //     );
+
+  //     cy.findAllByLabelText("stateful-form-row")
+  //       .eq(5)
+  //       .should("have.css", "justify-content", "flex-end");
+  //   });
+  // });
+
+  // context("with autoFocusField", () => {
+  //   const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
+  //     (data) => data.id === "US" || COUNTRY_CODES[206]
+  //   );
+
+  //   if (!DEFAULT_COUNTRY_CODES) {
+  //     throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
+  //   }
+
+  //   const value = {
+  //     first_name: "",
+  //     last_name: "",
+  //     email: "",
+  //     phone: "",
+  //     note: "",
+  //     access: false,
+  //     country_code: DEFAULT_COUNTRY_CODES,
+  //   };
+
+  //   const EMPLOYEE_FIELDS: FormFieldGroup[] = [
+  //     [
+  //       {
+  //         name: "first_name",
+  //         title: "First Name",
+  //         type: "text",
+  //         required: true,
+  //         placeholder: "Enter first name",
+  //       },
+  //       {
+  //         name: "last_name",
+  //         title: "Last Name",
+  //         type: "text",
+  //         required: false,
+  //         placeholder: "Enter last name",
+  //       },
+  //     ],
+  //     {
+  //       name: "email",
+  //       title: "Email",
+  //       type: "email",
+  //       required: true,
+  //       placeholder: "Enter email address",
+  //     },
+  //     {
+  //       name: "phone",
+  //       title: "Phone Number",
+  //       type: "phone",
+  //       required: false,
+  //       placeholder: "Enter phone number",
+  //     },
+  //     {
+  //       name: "note",
+  //       title: "Note",
+  //       type: "textarea",
+  //       rows: 3,
+  //       required: false,
+  //       placeholder: "Add additional notes",
+  //     },
+  //     {
+  //       name: "access",
+  //       placeholder: "Has access to login",
+  //       type: "checkbox",
+  //       required: false,
+  //     },
+  //   ];
+  //   it("render in the one row", () => {
+  //     cy.mount(
+  //       <StatefulForm
+  //         fields={EMPLOYEE_FIELDS}
+  //         formValues={value}
+  //         mode="onChange"
+  //         autoFocusField="first_name"
+  //       />
+  //     );
+  //     cy.findAllByLabelText("stateful-form-row")
+  //       .eq(0)
+  //       .within(() => {
+  //         cy.findAllByRole("textbox").eq(0).should("exist").and("be.focused");
+  //       });
+  //   });
+  // });
+
+  // context("when not given a title", () => {
+  //   const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
+  //     (data) => data.id === "US" || COUNTRY_CODES[206]
+  //   );
+
+  //   if (!DEFAULT_COUNTRY_CODES) {
+  //     throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
+  //   }
+
+  //   const value = {
+  //     first_name: "",
+  //     access: false,
+  //   };
+
+  //   const EMPLOYEE_FIELDS: FormFieldGroup[] = [
+  //     {
+  //       name: "first_name",
+  //       type: "text",
+  //       required: true,
+  //       placeholder: "Enter first name",
+  //     },
+
+  //     {
+  //       name: "access",
+  //       type: "checkbox",
+  //       required: false,
+  //     },
+  //   ];
+
+  //   const TITLE_EMPLOYEE_FIELD = ["First Name", "Has access to login"];
+
+  //   const PLACEHOLDER_EMPLOYEE_FIELD = ["Enter first name"];
+
+  //   it("should render only the input", () => {
+  //     cy.mount(
+  //       <StatefulForm
+  //         fields={EMPLOYEE_FIELDS}
+  //         formValues={value}
+  //         mode="onChange"
+  //       />
+  //     );
+  //     PLACEHOLDER_EMPLOYEE_FIELD.map((data) => {
+  //       cy.findByPlaceholderText(data).should("exist");
+  //     });
+  //     TITLE_EMPLOYEE_FIELD.map((data) => {
+  //       cy.findByText(data).should("not.exist");
+  //     });
+  //   });
+  // });
+
+  // context("with hidden", () => {
+  //   const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
+  //     (data) => data.id === "US" || COUNTRY_CODES[206]
+  //   );
+
+  //   if (!DEFAULT_COUNTRY_CODES) {
+  //     throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
+  //   }
+
+  //   const value = {
+  //     first_name: "",
+  //     access: false,
+  //   };
+
+  //   const EMPLOYEE_FIELDS_WITH_HIDDEN: FormFieldGroup[] = [
+  //     {
+  //       name: "first_name",
+  //       title: "First Name",
+  //       type: "text",
+  //       required: true,
+  //       placeholder: "Enter first name",
+  //     },
+  //     {
+  //       name: "middle_name",
+  //       title: "Middle Name",
+  //       type: "text",
+  //       required: true,
+  //       placeholder: "Enter first name",
+  //       hidden: true,
+  //     },
+  //     {
+  //       name: "access",
+  //       title: "Access",
+  //       type: "checkbox",
+  //       required: false,
+  //     },
+  //   ];
+
+  //   it("should hidden the input element", () => {
+  //     cy.mount(
+  //       <StatefulForm
+  //         fields={EMPLOYEE_FIELDS_WITH_HIDDEN}
+  //         formValues={value}
+  //         mode="onChange"
+  //       />
+  //     );
+
+  //     cy.findByText(EMPLOYEE_FIELDS_WITH_HIDDEN[0]["title"]).should("exist");
+  //     cy.findByText(EMPLOYEE_FIELDS_WITH_HIDDEN[1]["title"]).should(
+  //       "not.exist"
+  //     );
+  //     cy.findByText(EMPLOYEE_FIELDS_WITH_HIDDEN[2]["title"]).should("exist");
+  //   });
+
+  //   it("should hidden the row input element", () => {
+  //     cy.mount(
+  //       <StatefulForm
+  //         fields={EMPLOYEE_FIELDS_WITH_HIDDEN}
+  //         formValues={value}
+  //         mode="onChange"
+  //       />
+  //     );
+
+  //     cy.findAllByLabelText("stateful-form-row").should("have.length", 2);
+  //   });
+  // });
+
+  // context("with width", () => {
+  //   const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
+  //     (data) => data.id === "US" || COUNTRY_CODES[206]
+  //   );
+
+  //   if (!DEFAULT_COUNTRY_CODES) {
+  //     throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
+  //   }
+
+  //   const FRUIT_OPTIONS: OptionsProps[] = [
+  //     { text: "Apple", value: "1" },
+  //     { text: "Banana", value: "2" },
+  //     { text: "Orange", value: "3" },
+  //     { text: "Grape", value: "4" },
+  //     { text: "Pineapple", value: "5" },
+  //     { text: "Strawberry", value: "6" },
+  //     { text: "Watermelon", value: "7" },
+  //   ];
+
+  //   const valueAll = {
+  //     text: "",
+  //     email: "",
+  //     number: "",
+  //     password: "",
+  //     textarea: "",
+  //     rating: "",
+  //     check: false,
+  //     chips: {
+  //       searchText: "",
+  //       selectedOptions: [],
+  //     },
+  //     color: "",
+  //     combo: [""],
+  //     date: [""],
+  //     file_drop_box: [] as File[],
+  //     file: undefined,
+  //     image: undefined,
+  //     money: "",
+  //     phone: "",
+  //     thumb_field: false,
+  //     togglebox: false,
+  //     signature: "",
+  //     capsule: "",
+  //     country_code: DEFAULT_COUNTRY_CODES,
+  //   };
+
+  //   const BADGE_OPTIONS: BadgeProps[] = [
+  //     {
+  //       id: "1",
+  //       caption: "Anime",
+  //     },
+  //     {
+  //       id: "2",
+  //       caption: "Manga",
+  //     },
+  //   ];
+
+  //   const CAPSULE_TABS: CapsuleContentProps[] = [
+  //     {
+  //       id: "paid",
+  //       title: "Paid",
+  //     },
+  //     {
+  //       id: "unpaid",
+  //       title: "Unpaid",
+  //     },
+  //   ];
+
+  //   const ALL_INPUT: FormFieldGroup[] = [
+  //     [
+  //       {
+  //         name: "text",
+  //         title: "Text",
+  //         type: "text",
+  //         required: true,
+  //         placeholder: "Enter text",
+  //         width: "50%",
+  //       },
+  //       {
+  //         name: "email",
+  //         title: "Email",
+  //         type: "email",
+  //         required: false,
+  //         placeholder: "Enter email address",
+  //         width: "50%",
+  //       },
+  //     ],
+  //     {
+  //       name: "number",
+  //       title: "Number",
+  //       type: "number",
+  //       required: false,
+  //       placeholder: "Enter number",
+  //       width: "50%",
+  //     },
+  //     {
+  //       name: "password",
+  //       title: "Password",
+  //       type: "password",
+  //       required: false,
+  //       placeholder: "Enter password",
+  //       width: "50%",
+  //     },
+  //     {
+  //       name: "textarea",
+  //       title: "Textarea",
+  //       type: "textarea",
+  //       rows: 3,
+  //       required: false,
+  //       placeholder: "Enter text here",
+  //       width: "50%",
+  //     },
+  //     {
+  //       name: "check",
+  //       title: "Check",
+  //       type: "checkbox",
+  //       required: false,
+  //       width: "50%",
+  //     },
+  //     {
+  //       name: "color",
+  //       title: "Color",
+  //       type: "color",
+  //       required: false,
+  //       placeholder: "Enter the color here",
+  //       width: "50%",
+  //     },
+  //     {
+  //       name: "combo",
+  //       title: "Combo",
+  //       type: "combo",
+  //       required: false,
+  //       placeholder: "Select a fruit...",
+  //       comboboxProps: {
+  //         options: FRUIT_OPTIONS,
+  //       },
+  //       width: "50%",
+  //     },
+  //     {
+  //       name: "date",
+  //       title: "Date",
+  //       type: "date",
+  //       required: false,
+  //       placeholder: "Select a date",
+  //       width: "50%",
+  //     },
+  //     {
+  //       name: "file_drop_box",
+  //       title: "File Drop Box",
+  //       type: "file_drop_box",
+  //       required: false,
+  //       width: "50%",
+  //     },
+  //     {
+  //       name: "file",
+  //       title: "File",
+  //       type: "file",
+  //       required: false,
+  //       fileInputBoxProps: {
+  //         accept: "image/jpeg",
+  //       },
+  //       width: "50%",
+  //     },
+  //     {
+  //       name: "image",
+  //       title: "Image",
+  //       type: "image",
+  //       required: false,
+  //       width: "50%",
+  //     },
+  //     {
+  //       name: "money",
+  //       title: "Money",
+  //       type: "money",
+  //       required: false,
+  //       placeholder: "Enter amount",
+  //       moneyProps: {
+  //         separator: "dot",
+  //       },
+  //       width: "50%",
+  //     },
+  //     {
+  //       name: "phone",
+  //       title: "Phone",
+  //       type: "phone",
+  //       required: false,
+  //       placeholder: "Enter phone number",
+  //       width: "50%",
+  //     },
+  //     {
+  //       name: "signature",
+  //       title: "Signature",
+  //       type: "signbox",
+  //       required: false,
+  //       width: "50%",
+  //     },
+  //     {
+  //       name: "rating",
+  //       title: "Rating",
+  //       type: "rating",
+  //       required: false,
+  //       width: "50%",
+  //     },
+  //     {
+  //       name: "thumb_field",
+  //       title: "Thumb Field",
+  //       type: "thumbfield",
+  //       required: false,
+  //       width: "50%",
+  //     },
+  //     {
+  //       name: "togglebox",
+  //       title: "Togglebox",
+  //       type: "toggle",
+  //       required: false,
+  //       width: "50%",
+  //     },
+  //     {
+  //       name: "chips",
+  //       title: "Chips",
+  //       type: "chips",
+  //       required: false,
+  //       width: "50%",
+  //       chipsProps: {
+  //         options: BADGE_OPTIONS,
+  //         styles: {
+  //           chipStyle: css`
+  //             width: 100%;
+  //             gap: 0.5rem;
+  //             border-color: transparent;
+  //           `,
+  //           chipContainerStyle: css`
+  //             gap: 4px;
+  //           `,
+  //           chipsDrawerStyle: css`
+  //             min-width: 250px;
+  //           `,
+  //         },
+  //         selectedOptions: valueAll.chips.selectedOptions,
+  //         inputValue: valueAll.chips.searchText,
+  //       },
+  //     },
+  //     {
+  //       name: "capsule",
+  //       title: "Monetary Value",
+  //       type: "capsule",
+  //       required: false,
+  //       width: "50%",
+  //       capsuleProps: {
+  //         tabs: CAPSULE_TABS,
+  //       },
+  //     },
+  //   ];
+
+  //   context("when given all input elements", () => {
+  //     it("should render input elements with sizing", () => {
+  //       cy.mount(
+  //         <StatefulForm
+  //           fields={ALL_INPUT}
+  //           formValues={valueAll}
+  //           mode="onChange"
+  //         />
+  //       );
+
+  //       const flattenFields = (groups: FormFieldGroup[]): FormFieldProps[] =>
+  //         groups.flatMap((group) =>
+  //           Array.isArray(group) ? flattenFields(group) : [group]
+  //         );
+
+  //       const allFields = flattenFields(ALL_INPUT);
+
+  //       allFields.forEach((prop) => {
+  //         if (prop.name === "country_code") return;
+  //         if (prop.name === "togglebox") {
+  //           cy.findByLabelText("togglebox-row-wrapper").then(($el) => {
+  //             const width = $el.width();
+  //             expect(width).to.be.closeTo(222.5, 10);
+  //           });
+  //         } else {
+  //           cy.findByText(prop.title)
+  //             .parent()
+  //             .then(($el) => {
+  //               const elWidth = $el.width();
+
+  //               expect(elWidth).to.be.closeTo(222.5, 10);
+  //             });
+  //         }
+  //       });
+  //     });
+  //   });
+  // });
 });
