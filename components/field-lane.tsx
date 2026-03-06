@@ -9,7 +9,7 @@ import { Figure, FigureProps } from "./figure";
 export interface FieldLaneProps {
   label?: string;
   showError?: boolean;
-  errorIconPosition?: "absolute" | "relative";
+  errorIconPosition?: "absolute" | "relative" | "none";
   errorMessage?: string;
   dropdowns?: DropdownProps[];
   styles?: FieldLaneStylesProps;
@@ -256,7 +256,7 @@ function FieldLane({
           );
         })}
       {showError && (
-        <ErrorIconWrapper $isAbsolute={errorIconPosition === "absolute"}>
+        <ErrorIconWrapper $position={errorIconPosition}>
           <RiErrorWarningLine
             size={17}
             style={{
@@ -272,6 +272,7 @@ function FieldLane({
 
   return (
     <Container
+      $disabled={disabled}
       $style={css`
         ${!children &&
         css`
@@ -281,7 +282,7 @@ function FieldLane({
         ${styles?.containerStyle}
       `}
     >
-      <Body $style={styles?.bodyStyle}>
+      <Body $disabled={disabled} $style={styles?.bodyStyle}>
         {label && (
           <StatefulForm.Label
             htmlFor={disabled ? null : id}
@@ -299,7 +300,7 @@ function FieldLane({
   );
 }
 
-const Container = styled.div<{ $style?: CSSProp }>`
+const Container = styled.div<{ $style?: CSSProp; $disabled?: boolean }>`
   display: flex;
   width: 100%;
   height: 100%;
@@ -308,10 +309,16 @@ const Container = styled.div<{ $style?: CSSProp }>`
   position: relative;
   height: 100%;
 
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      cursor: not-allowed;
+    `}
+
   ${({ $style }) => $style}
 `;
 
-const Body = styled.div<{ $style?: CSSProp }>`
+const Body = styled.div<{ $style?: CSSProp; $disabled?: boolean }>`
   position: relative;
   display: flex;
   flex-direction: column;
@@ -319,6 +326,14 @@ const Body = styled.div<{ $style?: CSSProp }>`
   height: 100%;
   min-height: 34px;
   gap: 0.5rem;
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      cursor: not-allowed;
+      opacity: 0.5;
+      user-select: none;
+    `}
 
   ${({ $style }) => $style}
 `;
@@ -330,24 +345,32 @@ const InputWrapper = styled.div<{ $style?: CSSProp }>`
   width: 100%;
   justify-content: flex-start;
   height: 100%;
-  min-height: 34px;
+
   ${({ $style }) => $style}
 `;
 
-const ErrorIconWrapper = styled.div<{ $isAbsolute?: boolean }>`
-  position: relative;
-  margin-left: 4px;
-  ${({ $isAbsolute }) =>
-    $isAbsolute &&
-    css`
-      margin-left: 0px;
-      position: absolute;
-      top: 50%;
-      right: 8px;
-      transform: translateY(-50%);
-      border: none;
-      z-index: 10;
-    `};
+const ErrorIconWrapper = styled.div<{
+  $position?: FieldLaneProps["errorIconPosition"];
+}>`
+  ${({ $position }) =>
+    $position === "absolute"
+      ? css`
+          margin-left: 0px;
+          position: absolute;
+          top: 50%;
+          right: 8px;
+          transform: translateY(-50%);
+          border: none;
+          z-index: 10;
+        `
+      : $position === "relative"
+        ? css`
+            position: relative;
+            margin-left: 4px;
+          `
+        : css`
+            display: none;
+          `};
 
   cursor: default;
 `;
