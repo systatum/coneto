@@ -10,9 +10,9 @@ import { RiCloseLine } from "@remixicon/react";
 import styled, { css, CSSProp } from "styled-components";
 import { Button } from "./button";
 import { StatefulForm } from "./stateful-form";
+import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 
-export interface FileInputBoxProps
-  extends InputHTMLAttributes<HTMLInputElement> {
+interface BaseFileInputBoxProps extends InputHTMLAttributes<HTMLInputElement> {
   placeholder?: string;
   accept?: string;
   multiple?: boolean;
@@ -20,17 +20,17 @@ export interface FileInputBoxProps
   label?: string;
   showError?: boolean;
   errorMessage?: string;
-  styles?: FileInputBoxStylesProps;
+  styles?: BaseFileInputBoxStylesProps;
   helper?: string;
 }
 
-export interface FileInputBoxStylesProps {
+interface BaseFileInputBoxStylesProps {
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
   self?: CSSProp;
 }
 
-function FileInputBox({
+function BaseFileInputBox({
   placeholder = "Drop files here or browse",
   accept = "*",
   multiple = false,
@@ -42,14 +42,9 @@ function FileInputBox({
   helper,
   name,
   id,
+  disabled,
   ...props
-}: FileInputBoxProps) {
-  const inputId = StatefulForm.sanitizeId({
-    prefix: "file-input-box",
-    name,
-    id,
-  });
-
+}: BaseFileInputBoxProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -99,7 +94,7 @@ function FileInputBox({
     setIsDragging(false);
   };
 
-  const inputElement: ReactElement = (
+  return (
     <InputBox
       $style={styles?.self}
       $isDragging={isDragging}
@@ -109,6 +104,7 @@ function FileInputBox({
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       aria-label="fileinputbox"
+      $disabled={disabled}
       $isError={showError}
     >
       {selectedFiles.length > 0 ? (
@@ -148,49 +144,81 @@ function FileInputBox({
         <Placeholder>{placeholder}</Placeholder>
       )}
       <input
+        {...props}
         ref={fileInputRef}
         type="file"
         accept={accept}
+        disabled={disabled}
         multiple={multiple}
         onChange={handleFileChange}
-        id={inputId}
+        id={id}
         hidden
       />
     </InputBox>
   );
-
-  return (
-    <InputWrapper $containerStyle={styles?.containerStyle}>
-      {label && (
-        <StatefulForm.Label
-          htmlFor={props.disabled ? null : inputId}
-          style={styles?.labelStyle}
-          helper={helper}
-          label={label}
-        />
-      )}
-      <InputContent>
-        {inputElement}
-        {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
-      </InputContent>
-    </InputWrapper>
-  );
 }
 
-const InputWrapper = styled.div<{
-  $containerStyle?: CSSProp;
-  $disabled?: boolean;
-}>`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  font-size: 0.75rem;
-  width: 100%;
-  position: relative;
+export type FileInputBoxStylesProps = BaseFileInputBoxStylesProps &
+  FieldLaneStylesProps;
 
-  ${({ $disabled }) => $disabled && `cursor: not-allowed; opacity: 0.5;`}
-  ${({ $containerStyle }) => $containerStyle}
-`;
+export interface FileInputBoxProps
+  extends Omit<BaseFileInputBoxProps, "styles">,
+    Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
+  styles?: FileInputBoxStylesProps;
+}
+
+function FileInputBox({
+  label,
+  showError,
+  styles,
+  errorMessage,
+  actions,
+  helper,
+  disabled,
+  name,
+  id,
+  ...rest
+}: FileInputBoxProps) {
+  const inputId = StatefulForm.sanitizeId({
+    prefix: "FileInputBox",
+    name,
+    id,
+  });
+
+  const {
+    bodyStyle,
+    controlStyle,
+    containerStyle,
+    labelStyle,
+    ...baseFileInputBoxtyles
+  } = styles ?? {};
+
+  return (
+    <FieldLane
+      id={inputId}
+      showError={showError}
+      errorMessage={errorMessage}
+      label={label}
+      actions={actions}
+      helper={helper}
+      disabled={disabled}
+      styles={{
+        bodyStyle,
+        controlStyle,
+        containerStyle,
+        labelStyle,
+      }}
+    >
+      <BaseFileInputBox
+        {...rest}
+        disabled={disabled}
+        showError={showError}
+        id={inputId}
+        styles={baseFileInputBoxtyles}
+      />
+    </FieldLane>
+  );
+}
 
 const InputBox = styled.div<{
   $isDragging: boolean;
@@ -198,34 +226,45 @@ const InputBox = styled.div<{
   $isError?: boolean;
   $self?: CSSProp;
   $style?: CSSProp;
+  $disabled?: boolean;
 }>`
   padding: 12px;
+  user-select: none;
   display: flex;
   flex-direction: column;
   position: relative;
   align-items: flex-start;
   border-radius: 4px;
-  cursor: ${({ $hasFile }) => ($hasFile ? "default" : "pointer")};
+  width: 100%;
+  cursor: ${({ $disabled, $hasFile }) =>
+    $disabled ? "not-allowed" : $hasFile ? "default" : "pointer"};
   font-size: 14px;
   color: ${({ $isDragging }) => ($isDragging ? "#3b82f6" : "#6b7280")};
   background-color: ${({ $isDragging }) => ($isDragging ? "#eff6ff" : "#fff")};
   border: 1px dotted transparent;
-  background-image: ${({ $isDragging, $isError }) =>
-    $isDragging
+  background-image: ${({ $disabled, $isDragging, $isError }) =>
+    $disabled
       ? `
+      repeating-linear-gradient(to right, #9ca3af 0, #9ca3af 8px, transparent 8px, transparent 12px),
+      repeating-linear-gradient(to bottom, #9ca3af 0, #9ca3af 8px, transparent 8px, transparent 12px),
+      repeating-linear-gradient(to left, #9ca3af 0, #9ca3af 8px, transparent 8px, transparent 12px),
+      repeating-linear-gradient(to top, #9ca3af 0, #9ca3af 8px, transparent 8px, transparent 12px)
+  `
+      : $isDragging
+        ? `
       repeating-linear-gradient(to right, #60a5fa 0, #60a5fa 8px, transparent 8px, transparent 12px),
       repeating-linear-gradient(to bottom, #60a5fa 0, #60a5fa 8px, transparent 8px, transparent 12px),
       repeating-linear-gradient(to left, #60a5fa 0, #60a5fa 8px, transparent 8px, transparent 12px),
       repeating-linear-gradient(to top, #60a5fa 0, #60a5fa 8px, transparent 8px, transparent 12px)
     `
-      : $isError
-        ? `
+        : $isError
+          ? `
       repeating-linear-gradient(to right, #dc2626 0, #dc2626 8px, transparent 8px, transparent 12px),
       repeating-linear-gradient(to bottom, #dc2626 0, #dc2626 8px, transparent 8px, transparent 12px),
       repeating-linear-gradient(to left, #dc2626 0, #dc2626 8px, transparent 8px, transparent 12px),
       repeating-linear-gradient(to top, #dc2626 0, #dc2626 8px, transparent 8px, transparent 12px)
     `
-        : `
+          : `
       repeating-linear-gradient(to right, #9ca3af 0, #9ca3af 8px, transparent 8px, transparent 12px),
       repeating-linear-gradient(to bottom, #9ca3af 0, #9ca3af 8px, transparent 8px, transparent 12px),
       repeating-linear-gradient(to left, #9ca3af 0, #9ca3af 8px, transparent 8px, transparent 12px),
@@ -244,18 +283,6 @@ const InputBox = styled.div<{
   background-repeat: no-repeat;
 
   ${({ $style }) => $style}
-`;
-
-const InputContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: 12px;
-`;
-
-const ErrorText = styled.span`
-  color: #dc2626;
-  font-size: 0.75rem;
 `;
 
 const FileList = styled.div`
