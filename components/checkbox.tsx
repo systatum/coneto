@@ -7,6 +7,7 @@ import {
   useRef,
 } from "react";
 import { StatefulForm } from "./stateful-form";
+import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 
 type WithoutStyle<T> = Omit<T, "style">;
 
@@ -16,7 +17,7 @@ export interface CheckboxOptionsProps {
   description: string;
 }
 
-export interface CheckboxProps
+interface BaseCheckboxProps
   extends WithoutStyle<
     DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
   > {
@@ -27,12 +28,11 @@ export interface CheckboxProps
   indeterminate?: boolean;
   description?: string;
   highlightOnChecked?: boolean;
-  styles?: CheckboxStylesProps;
+  styles?: BaseCheckboxStylesProps;
   helper?: string;
 }
 
-export interface CheckboxStylesProps {
-  containerStyle?: CSSProp;
+interface BaseCheckboxStylesProps {
   self?: CSSProp;
   inputWrapperStyle?: CSSProp;
   titleStyle?: CSSProp;
@@ -40,10 +40,9 @@ export interface CheckboxStylesProps {
   iconStyle?: CSSProp;
   boxStyle?: CSSProp;
   descriptionStyle?: CSSProp;
-  errorStyle?: CSSProp;
 }
 
-function Checkbox({
+function BaseCheckbox({
   label,
   title,
   name,
@@ -56,14 +55,8 @@ function Checkbox({
   helper,
   id,
   ...props
-}: CheckboxProps) {
+}: BaseCheckboxProps) {
   const inputRef = useRef<HTMLInputElement>(null);
-
-  const inputId = StatefulForm.sanitizeId({
-    prefix: "checkbox",
-    name,
-    id,
-  });
 
   const isChecked = Boolean(props.checked);
 
@@ -73,10 +66,10 @@ function Checkbox({
     }
   }, [indeterminate]);
 
-  const inputElement: ReactElement = (
+  return (
     <InputWrapper
       aria-label="input-wrapper-checkbox"
-      htmlFor={props.disabled ? null : inputId}
+      htmlFor={props.disabled ? null : id}
       $hasDescription={!!description}
       $highlight={!!highlightOnChecked}
       $checked={isChecked}
@@ -93,7 +86,7 @@ function Checkbox({
             {...(props as InputHTMLAttributes<HTMLInputElement>)}
             type="checkbox"
             name={name}
-            id={inputId}
+            id={id}
             checked={props.checked}
             onChange={props.onChange}
             $isError={showError}
@@ -123,13 +116,12 @@ function Checkbox({
         </CheckboxBox>
 
         {label && (
-          <LabelText
-            aria-label="label-wrapper"
-            $highlight={highlightOnChecked}
-            $style={styles?.labelStyle}
-          >
-            {label}
-          </LabelText>
+          <StatefulForm.Label
+            aria-label="label"
+            style={styles?.labelStyle}
+            htmlFor={props.disabled ? null : id}
+            label={label}
+          />
         )}
       </InputContainer>
 
@@ -141,37 +133,78 @@ function Checkbox({
           {description}
         </DescriptionText>
       )}
-
-      {showError && errorMessage && (
-        <ErrorText $style={styles?.errorStyle}>{errorMessage}</ErrorText>
-      )}
     </InputWrapper>
-  );
-
-  return (
-    <Container $style={styles?.containerStyle}>
-      {title && (
-        <StatefulForm.Label
-          htmlFor={props.disabled ? null : inputId}
-          aria-label="title-wrapper"
-          style={styles?.titleStyle}
-          helper={helper}
-          label={title}
-        />
-      )}
-      {inputElement}
-    </Container>
   );
 }
 
-const Container = styled.div<{ $style?: CSSProp }>`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  font-size: 0.75rem;
+export type CheckboxStylesProps = BaseCheckboxStylesProps &
+  FieldLaneStylesProps;
 
-  ${({ $style }) => $style}
-`;
+export interface CheckboxProps
+  extends Omit<BaseCheckboxProps, "styles">,
+    Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
+  styles?: CheckboxStylesProps;
+}
+
+function Checkbox({
+  label,
+  showError,
+  styles,
+  errorMessage,
+  actions,
+  helper,
+  disabled,
+  name,
+  id,
+  title,
+  description,
+  ...rest
+}: CheckboxProps) {
+  const inputId = StatefulForm.sanitizeId({
+    prefix: "checkbox",
+    name,
+    id,
+  });
+
+  const {
+    bodyStyle,
+    controlStyle,
+    containerStyle,
+    titleStyle,
+    ...CheckboxStyles
+  } = styles ?? {};
+
+  return (
+    <FieldLane
+      id={inputId}
+      showError={showError}
+      errorMessage={errorMessage}
+      actions={actions}
+      helper={helper}
+      disabled={disabled}
+      label={title}
+      errorIconPosition="none"
+      styles={{
+        bodyStyle: css`
+          min-height: 0px;
+        `,
+        controlStyle,
+        containerStyle,
+        labelStyle: titleStyle,
+      }}
+    >
+      <BaseCheckbox
+        {...rest}
+        id={inputId}
+        disabled={disabled}
+        showError={showError}
+        styles={CheckboxStyles}
+        label={label}
+        description={description}
+      />
+    </FieldLane>
+  );
+}
 
 const InputWrapper = styled.label<{
   $hasDescription: boolean;
@@ -276,15 +309,7 @@ const InputContainer = styled.div`
   flex-direction: row;
   align-items: center;
   gap: 0.5rem;
-`;
-
-const LabelText = styled.span<{ $highlight?: boolean; $style?: CSSProp }>`
-  ${({ $highlight }) =>
-    $highlight &&
-    css`
-      font-size: 14px;
-    `}
-  ${({ $style }) => $style};
+  height: 100%;
 `;
 
 const DescriptionText = styled.span<{ $highlight?: boolean; $style?: CSSProp }>`
@@ -297,12 +322,6 @@ const DescriptionText = styled.span<{ $highlight?: boolean; $style?: CSSProp }>`
 
   color: #4b5563;
   ${({ $style }) => $style};
-`;
-
-const ErrorText = styled.span<{ $style?: CSSProp }>`
-  margin-top: 4px;
-  color: #dc2626;
-  ${({ $style }) => $style}
 `;
 
 export { Checkbox };
