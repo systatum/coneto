@@ -128,6 +128,7 @@ export const Default: Story = {
           type: "button",
           required: true,
           placeholder: "Enter text",
+          rowAlignItems: "end",
         },
       ],
       {
@@ -218,11 +219,6 @@ export const Default: Story = {
         <StatefulForm
           onChange={({ currentState }) => {
             setValue((prev) => ({ ...prev, ...currentState }));
-          }}
-          styles={{
-            rowStyle: css`
-              align-items: end;
-            `,
           }}
           fields={EMPLOYEE_FIELDS}
           formValues={value}
