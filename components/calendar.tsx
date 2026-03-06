@@ -3,7 +3,7 @@ import {
   RiArrowRightSLine,
   RiCheckLine,
 } from "@remixicon/react";
-import { Fragment, ReactElement, useMemo, ReactNode } from "react";
+import { Fragment, useMemo, ReactNode } from "react";
 import React, { useState, useEffect } from "react";
 import { Button } from "./button";
 import { Combobox } from "./combobox";
@@ -16,8 +16,9 @@ import {
   removeWeekend,
 } from "../lib/date";
 import { StatefulForm } from "./stateful-form";
+import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 
-export interface BaseCalendarProps {
+export interface BaseCalendarProps extends Partial<DrawerProps> {
   options?: OptionsProps[];
   selectedDates?: string[];
   onChange?: (dates: string[]) => void;
@@ -29,26 +30,19 @@ export interface BaseCalendarProps {
   futurePastReach?: number;
   onClick?: () => void;
   onCalendarPeriodChanged?: (date: Date) => void;
-  styles?: CalendarStylesProps;
+  styles?: BaseCalendarStylesProps;
+  footer?: ReactNode;
+  todayButtonCaption?: string;
+  selectabilityMode?: SelectabilityModeState;
+  id?: string;
+  name?: string;
 }
 
-export interface CalendarStylesProps {
+export interface BaseCalendarStylesProps {
   self?: CSSProp;
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
 }
-
-export type CalendarProps = BaseCalendarProps &
-  Partial<DrawerProps> & {
-    label?: string;
-    showError?: boolean;
-    errorMessage?: string;
-    footer?: ReactNode;
-    todayButtonCaption?: string;
-    selectabilityMode?: SelectabilityModeState;
-    helper?: string;
-    id?: string;
-  };
 
 interface CalendarStateProps {
   open: boolean;
@@ -92,7 +86,7 @@ const DEFAULT_MONTH_NAMES = [
   { text: "December", value: "12" },
 ];
 
-function Calendar({
+function BaseCalendar({
   highlightedIndex,
   setHighlightedIndex,
   onChange,
@@ -106,17 +100,13 @@ function Calendar({
   yearPastReach = 80,
   futurePastReach = 50,
   format = "mm/dd/yyyy",
-  label,
-  showError,
-  errorMessage,
   onClick,
   styles,
   footer,
   todayButtonCaption = "Today",
   onCalendarPeriodChanged,
-  helper,
   selectabilityMode = "single",
-}: CalendarProps) {
+}: BaseCalendarProps) {
   const today = new Date();
   const currentMonth = monthNames.find(
     (data) => Number(data.value) === today.getMonth() + 1
@@ -518,11 +508,15 @@ function Calendar({
     }
   }, [selectedDatesLocal, selectabilityMode]);
 
-  const inputElement: ReactElement = (
+  return (
     <CalendarContainer
       $style={
         floatingStyles
-          ? styles?.self
+          ? css`
+              width: 100%;
+
+              ${styles?.self}
+            `
           : css`
               padding: 0.5rem;
               font-size: 0.875rem;
@@ -537,6 +531,7 @@ function Calendar({
               box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
               list-style: none;
               outline: none;
+
               ${styles?.self}
             `
       }
@@ -931,21 +926,62 @@ function Calendar({
       <>{footer}</>
     </CalendarContainer>
   );
+}
+
+export type CalendarStylesProps = BaseCalendarStylesProps &
+  FieldLaneStylesProps;
+
+export interface CalendarProps
+  extends Omit<BaseCalendarProps, "styles">,
+    Omit<FieldLaneProps, "styles" | "type" | "dropdown"> {
+  styles?: CalendarStylesProps;
+}
+
+function Calendar({
+  dropdowns,
+  label,
+  showError,
+  styles,
+  errorMessage,
+  actions,
+  helper,
+  disabled,
+  name,
+  id,
+  ...rest
+}: CalendarProps) {
+  const inputId = StatefulForm.sanitizeId({
+    prefix: "Calendar",
+    name,
+    id,
+  });
+
+  const {
+    bodyStyle,
+    controlStyle,
+    containerStyle,
+    labelStyle,
+    ...baseCalendartyles
+  } = styles ?? {};
 
   return (
-    <Container $style={styles?.containerStyle}>
-      {label && (
-        <StatefulForm.Label
-          style={styles?.labelStyle}
-          helper={helper}
-          label={label}
-        />
-      )}
-      <InputContent>
-        {inputElement}
-        {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
-      </InputContent>
-    </Container>
+    <FieldLane
+      id={inputId}
+      showError={showError}
+      errorMessage={errorMessage}
+      label={label}
+      actions={actions}
+      helper={helper}
+      disabled={disabled}
+      styles={{
+        bodyStyle,
+        controlStyle,
+        containerStyle,
+        labelStyle,
+      }}
+    >
+      <BaseCalendar {...rest} id={inputId} styles={baseCalendartyles} />
+    </FieldLane>
   );
 }
 
@@ -1239,29 +1275,6 @@ const DateCellTodayDot = styled.div<{
           background-color: #d1d5db;
           border-color: #d1d5db;
         `}
-`;
-
-const Container = styled.div<{ $style?: CSSProp }>`
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  gap: 0.5rem;
-  font-size: 0.75rem;
-  position: relative;
-
-  ${({ $style }) => $style}
-`;
-
-const ErrorText = styled.span`
-  color: #dc2626;
-  font-size: 0.75rem;
-`;
-
-const InputContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: 12px;
 `;
 
 function formatDate(date: Date, format: FormatProps) {
