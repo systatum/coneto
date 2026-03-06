@@ -605,9 +605,7 @@ function ChipsItem({
         readOnly
       />
       <Badge
-        variant={badge.variant}
-        backgroundColor={badge.backgroundColor}
-        circleColor={badge.circleColor}
+        {...badge}
         badgeStyle={css`
           cursor: pointer;
           ${chipStyle}
@@ -617,8 +615,6 @@ function ChipsItem({
           `}
         `}
         actions={finalValueActions}
-        textColor={badge.textColor}
-        caption={badge.caption}
         withCircle
       />
     </ChipItemWrapper>

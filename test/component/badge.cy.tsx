@@ -89,7 +89,7 @@ describe("Badge", () => {
   context("with actions", () => {
     const contentAction: BadgeActionProps[] = [
       {
-        image: RiCloseLine,
+        icon: { image: RiCloseLine },
         onClick: () => {
           console.log("Data was deleted");
         },
@@ -99,14 +99,14 @@ describe("Badge", () => {
 
     const contentActions: BadgeActionProps[] = [
       {
-        image: RiCheckLine,
+        icon: { image: RiCheckLine },
         onClick: () => {
           console.log("Data was deleted");
         },
         size: 14,
       },
       {
-        image: RiCloseLine,
+        icon: { image: RiCloseLine },
         onClick: () => {
           console.log("Data was deleted");
         },

@@ -661,7 +661,7 @@ export const CustomRenderer: Story = {
       })(),
       actions: [
         {
-          icon: RiCloseLine,
+          icon: { image: RiCloseLine },
           onClick: (badge) => {
             console.log(badge);
           },
