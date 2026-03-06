@@ -122,7 +122,7 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
             disableWeekend={disableWeekend}
             calendarSelectabilityMode={calendarSelectabilityMode}
             styles={{
-              containerStyle: styles?.self,
+              self: styles?.self,
             }}
             onChange={onChange}
             selectedDates={selectedDates}

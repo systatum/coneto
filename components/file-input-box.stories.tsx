@@ -48,3 +48,9 @@ export const WithError: Story = {
     );
   },
 };
+
+export const Disabled: Story = {
+  render: () => {
+    return <FileInputBox label="Disabled" disabled />;
+  },
+};

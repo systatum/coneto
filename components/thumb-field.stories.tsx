@@ -37,7 +37,7 @@ export const WithLabel: Story = {
     value: null,
     name: "value",
     styles: {
-      containerStyle: css`
+      labelStyle: css`
         font-size: 14px;
         font-family: monospace;
       `,
@@ -61,7 +61,7 @@ export const WithError: Story = {
     value: null,
     name: "value",
     styles: {
-      containerStyle: css`
+      labelStyle: css`
         font-size: 14px;
         font-weight: 500;
       `,

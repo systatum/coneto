@@ -6,7 +6,7 @@ import {
   RiSettings2Line,
   RiUser2Line,
 } from "@remixicon/react";
-import { OptionsProps, SelectboxSelectedOptions } from "@/components/selectbox";
+import { OptionsProps } from "@/components/selectbox";
 import { useState } from "react";
 
 describe("Combobox", () => {

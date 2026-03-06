@@ -4,8 +4,9 @@ import { LoadingSpinner } from "./loading-spinner";
 import styled, { CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
 import { Figure, FigureProps } from "./figure";
+import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 
-export interface ToggleboxProps
+interface BaseToggleboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {
   checked?: boolean;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -14,15 +15,11 @@ export interface ToggleboxProps
   name?: string;
   label?: string;
   description?: string;
-  showError?: boolean;
-  errorMessage?: string;
   size?: number;
-  styles?: ToggleboxStylesProps;
-  helper?: string;
+  styles?: BaseToggleboxStylesProps;
 }
 
-export interface ToggleboxStylesProps {
-  containerStyle?: CSSProp;
+interface BaseToggleboxStylesProps {
   descriptionStyle?: CSSProp;
   rowStyle?: CSSProp;
   textWrapperStyle?: CSSProp;
@@ -31,7 +28,7 @@ export interface ToggleboxStylesProps {
   titleStyle?: CSSProp;
 }
 
-function Togglebox({
+function BaseTogglebox({
   name,
   checked = false,
   onChange,
@@ -39,25 +36,15 @@ function Togglebox({
   isLoading = false,
   label,
   description,
-  showError,
-  errorMessage,
   styles,
-  title,
-  helper,
   size = 24,
   id,
   ...props
-}: ToggleboxProps) {
+}: BaseToggleboxProps) {
   const { heightWrapper, widthWrapper, thumbShift, iconSize } =
     getToggleboxSize(size);
 
-  const inputId = StatefulForm.sanitizeId({
-    prefix: "togglebox",
-    name,
-    id,
-  });
-
-  const inputElements = (
+  return (
     <ToggleboxWrapper
       $style={styles?.rowStyle}
       aria-label="togglebox-row-wrapper"
@@ -76,7 +63,7 @@ function Togglebox({
       >
         <StyledInput
           aria-label="togglebox-input"
-          id={inputId}
+          id={id}
           name={name}
           type="checkbox"
           checked={checked}
@@ -129,25 +116,71 @@ function Togglebox({
       )}
     </ToggleboxWrapper>
   );
+}
+
+export type ToggleboxStylesProps = BaseToggleboxStylesProps &
+  FieldLaneStylesProps;
+
+export interface ToggleboxProps
+  extends Omit<BaseToggleboxProps, "styles">,
+    Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
+  styles?: ToggleboxStylesProps;
+}
+
+function Togglebox({
+  label,
+  showError,
+  styles,
+  errorMessage,
+  actions,
+  helper,
+  disabled,
+  name,
+  id,
+  title,
+  description,
+  ...rest
+}: ToggleboxProps) {
+  const inputId = StatefulForm.sanitizeId({
+    prefix: "togglebox",
+    name,
+    id,
+  });
+
+  const {
+    bodyStyle,
+    controlStyle,
+    containerStyle,
+    titleStyle,
+    ...toggleboxStyles
+  } = styles ?? {};
 
   return (
-    <ToggleboxContainer
-      aria-label="togglebox-container"
-      $style={styles?.containerStyle}
+    <FieldLane
+      id={inputId}
+      showError={showError}
+      errorMessage={errorMessage}
+      actions={actions}
+      helper={helper}
+      disabled={disabled}
+      label={title}
+      errorIconPosition="none"
+      styles={{
+        bodyStyle,
+        controlStyle,
+        containerStyle,
+        labelStyle: titleStyle,
+      }}
     >
-      {title && (
-        <StatefulForm.Label
-          htmlFor={props.disabled ? null : id}
-          style={styles?.titleStyle}
-          helper={helper}
-          label={title}
-        />
-      )}
-      {inputElements}
-      {showError && errorMessage && (
-        <ErrorText $style={styles?.errorStyle}>{errorMessage}</ErrorText>
-      )}
-    </ToggleboxContainer>
+      <BaseTogglebox
+        {...rest}
+        id={inputId}
+        styles={toggleboxStyles}
+        disabled={disabled}
+        label={label}
+        description={description}
+      />
+    </FieldLane>
   );
 }
 
@@ -164,16 +197,6 @@ const getToggleboxSize = (size: number) => {
     iconSize,
   };
 };
-
-const ToggleboxContainer = styled.div<{ $style?: CSSProp }>`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  font-size: 14px;
-  width: 100%;
-
-  ${({ $style }) => $style}
-`;
 
 const ToggleboxWrapper = styled.div<{ $style?: CSSProp }>`
   display: flex;
@@ -233,13 +256,6 @@ const ToggleButton = styled(motion.div)`
 const Description = styled.span<{ $style?: CSSProp }>`
   font-size: 12px;
   width: 100%;
-  ${({ $style }) => $style}
-`;
-
-const ErrorText = styled.span<{ $style?: CSSProp }>`
-  margin-top: 4px;
-  font-size: 12px;
-  color: #dc2626;
   ${({ $style }) => $style}
 `;
 

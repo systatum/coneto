@@ -8,45 +8,38 @@ import {
 import { ChangeEvent, ReactElement, useRef, useState } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
+import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 
-export interface ThumbFieldProps {
+interface BaseThumbFieldProps {
   value?: boolean | null;
   onChange?: (data: ChangeEvent<HTMLInputElement>) => void;
   thumbsUpBackgroundColor?: string;
   thumbsDownBackgroundColor?: string;
   disabled?: boolean;
   name?: string;
-  label?: string;
-  showError?: boolean;
-  errorMessage?: string;
-  styles?: ThumbFieldStylesProps;
+  styles?: BaseThumbFieldStylesProps;
   id?: string;
-  helper?: string;
+  showError?: boolean;
 }
 
-export interface ThumbFieldStylesProps {
+interface BaseThumbFieldStylesProps {
   triggerWrapperStyle?: CSSProp;
-  containerStyle?: CSSProp;
   triggerStyle?: CSSProp;
-  labelStyle?: CSSProp;
 }
 
 export type ThumbFieldValue = "up" | "down" | "blank";
 
-function ThumbField({
+function BaseThumbField({
   onChange,
   thumbsUpBackgroundColor = "#61A9F9",
   thumbsDownBackgroundColor = "RGB(206, 55, 93)",
   value = null,
   name,
   disabled,
-  errorMessage,
-  label,
   showError,
   styles,
   id,
-  helper,
-}: ThumbFieldProps) {
+}: BaseThumbFieldProps) {
   const inputId = StatefulForm.sanitizeId({
     prefix: "thumbfield",
     name,
@@ -76,7 +69,7 @@ function ThumbField({
     }
   };
 
-  const inputElement: ReactElement = (
+  return (
     <InputGroup $style={styles?.triggerWrapperStyle}>
       <input
         aria-label="thumbfield-input"
@@ -84,6 +77,7 @@ function ThumbField({
         name={name}
         type="hidden"
         id={inputId}
+        disabled={disabled}
         value={
           thumbValue === "up" ? "true" : thumbValue === "down" ? "false" : ""
         }
@@ -119,52 +113,76 @@ function ThumbField({
         )}
       </TriggerWrapper>
 
-      {showError && errorMessage && (
+      {showError && (
         <ErrorIconWrapper>
           <RiErrorWarningLine size={24} />
         </ErrorIconWrapper>
       )}
     </InputGroup>
   );
-
-  return (
-    <InputWrapper $containerStyle={styles?.containerStyle} $disabled={disabled}>
-      {label && (
-        <StatefulForm.Label
-          htmlFor={disabled ? undefined : id}
-          style={styles?.labelStyle}
-          helper={helper}
-          label={label}
-        />
-      )}
-      <InputContent>
-        {inputElement}
-        {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
-      </InputContent>
-    </InputWrapper>
-  );
 }
 
-const InputWrapper = styled.div<{
-  $containerStyle?: CSSProp;
-  $disabled?: boolean;
-}>`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  font-size: 0.75rem;
-  width: 100%;
-  position: relative;
-  font-size: 12px;
+export type ThumbFieldStylesProps = BaseThumbFieldStylesProps &
+  FieldLaneStylesProps;
 
-  ${({ $disabled }) =>
-    $disabled &&
-    css`
-      cursor: not-allowed;
-      opacity: 0.5;
-    `}
-  ${({ $containerStyle }) => $containerStyle}
-`;
+export interface ThumbFieldProps
+  extends Omit<BaseThumbFieldProps, "styles">,
+    Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
+  styles?: ThumbFieldStylesProps;
+}
+
+function ThumbField({
+  label,
+  showError,
+  styles,
+  errorMessage,
+  actions,
+  helper,
+  disabled,
+  name,
+  id,
+  ...rest
+}: ThumbFieldProps) {
+  const inputId = StatefulForm.sanitizeId({
+    prefix: "ThumbField",
+    name,
+    id,
+  });
+
+  const {
+    bodyStyle,
+    controlStyle,
+    containerStyle,
+    labelStyle,
+    ...thumbFieldStyles
+  } = styles ?? {};
+
+  return (
+    <FieldLane
+      id={inputId}
+      showError={showError}
+      errorMessage={errorMessage}
+      actions={actions}
+      helper={helper}
+      disabled={disabled}
+      label={label}
+      errorIconPosition="none"
+      styles={{
+        bodyStyle,
+        controlStyle,
+        containerStyle,
+        labelStyle,
+      }}
+    >
+      <BaseThumbField
+        {...rest}
+        id={inputId}
+        styles={thumbFieldStyles}
+        showError={showError}
+      />
+    </FieldLane>
+  );
+}
 
 const InputGroup = styled.div<{ $style?: CSSProp }>`
   display: flex;
@@ -172,17 +190,6 @@ const InputGroup = styled.div<{ $style?: CSSProp }>`
   gap: 8px;
   align-items: center;
   ${({ $style }) => $style};
-`;
-
-const InputContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-`;
-
-const ErrorText = styled.span`
-  color: #dc2626;
-  font-size: 0.75rem;
 `;
 
 const TriggerWrapper = styled.div<{

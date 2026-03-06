@@ -2,8 +2,9 @@ import styled, { css, CSSProp } from "styled-components";
 import { ChangeEvent, InputHTMLAttributes, ReactElement } from "react";
 import { StatefulForm } from "./stateful-form";
 import { Figure, FigureProps } from "./figure";
+import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 
-export interface RadioProps
+interface BaseRadioProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {
   value?: string;
   label?: string;
@@ -12,7 +13,7 @@ export interface RadioProps
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
   name?: string;
   highlightOnChecked?: boolean;
-  styles?: RadioStylesProps;
+  styles?: BaseRadioStylesProps;
   showError?: boolean;
   errorMessage?: string;
   mode?: "radio" | "button";
@@ -22,14 +23,13 @@ export interface RadioProps
 
 export type RadioIconProps = FigureProps;
 
-export interface RadioStylesProps {
-  containerStyle?: CSSProp;
-  labelStyle?: CSSProp;
+interface BaseRadioStylesProps {
   descriptionStyle?: CSSProp;
   self?: CSSProp;
-  errorStyle?: CSSProp;
   titleStyle?: CSSProp;
-  inputContainerStyle?: CSSProp;
+  inputWrapperStyle?: CSSProp;
+  labelStyle?: CSSProp;
+  textWrapperStyle?: CSSProp;
 }
 
 export interface RadioOptionsProps {
@@ -39,7 +39,7 @@ export interface RadioOptionsProps {
   icon?: RadioIconProps;
 }
 
-function Radio({
+function BaseRadio({
   value,
   label,
   title,
@@ -56,7 +56,7 @@ function Radio({
   icon,
   id,
   ...props
-}: RadioProps) {
+}: BaseRadioProps) {
   const inputId = StatefulForm.sanitizeId({
     prefix: "radio",
     name,
@@ -65,18 +65,18 @@ function Radio({
 
   const resolvediconSize = icon?.size ?? (mode === "button" ? 25 : 16);
 
-  const inputElement: ReactElement = (
+  return (
     <Label
       $isRadio={mode === "radio"}
       htmlFor={props.disabled ? null : id}
       $highlight={highlightOnChecked}
       $checked={checked}
-      $style={styles?.containerStyle}
+      $style={styles?.textWrapperStyle}
       $hasDescription={!!description}
       $disabled={props.disabled}
     >
-      <InputContainer
-        $style={styles?.inputContainerStyle}
+      <InputWrapper
+        $style={styles?.inputWrapperStyle}
         aria-label="radio-input-container"
         $isRadio={mode === "radio"}
       >
@@ -113,7 +113,7 @@ function Radio({
             {label}
           </LabelText>
         )}
-      </InputContainer>
+      </InputWrapper>
       {description && (
         <DescriptionText
           $isRadio={mode === "radio"}
@@ -123,37 +123,74 @@ function Radio({
           {description}
         </DescriptionText>
       )}
-      {showError && errorMessage && (
-        <ErrorText $style={styles?.errorStyle}>{errorMessage}</ErrorText>
-      )}
     </Label>
-  );
-
-  return (
-    <Container $style={styles?.containerStyle}>
-      {title && (
-        <StatefulForm.Label
-          htmlFor={props.disabled ? null : id}
-          aria-label="radio-title-wrapper"
-          style={styles?.titleStyle}
-          helper={helper}
-          label={title}
-        />
-      )}
-      {inputElement}
-    </Container>
   );
 }
 
-const Container = styled.div<{ $style?: CSSProp }>`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  font-size: 0.75rem;
-  width: 100%;
+export type RadioStylesProps = BaseRadioStylesProps & FieldLaneStylesProps;
 
-  ${({ $style }) => $style}
-`;
+export interface RadioProps
+  extends Omit<BaseRadioProps, "styles">,
+    Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
+  styles?: RadioStylesProps;
+}
+
+function Radio({
+  label,
+  showError,
+  styles,
+  errorMessage,
+  actions,
+  helper,
+  disabled,
+  name,
+  id,
+  title,
+  description,
+  ...rest
+}: RadioProps) {
+  const inputId = StatefulForm.sanitizeId({
+    prefix: "radio",
+    name,
+    id,
+  });
+
+  const {
+    bodyStyle,
+    controlStyle,
+    containerStyle,
+    labelStyle,
+    ...baseRadiotyles
+  } = styles ?? {};
+
+  return (
+    <FieldLane
+      id={inputId}
+      showError={showError}
+      errorMessage={errorMessage}
+      label={title}
+      actions={actions}
+      helper={helper}
+      disabled={disabled}
+      styles={{
+        bodyStyle,
+        controlStyle,
+        containerStyle,
+        labelStyle,
+      }}
+    >
+      <BaseRadio
+        {...rest}
+        disabled={disabled}
+        showError={showError}
+        label={label}
+        description={description}
+        id={inputId}
+        styles={baseRadiotyles}
+      />
+    </FieldLane>
+  );
+}
 
 const Label = styled.label<{
   $highlight?: boolean;
@@ -242,7 +279,7 @@ const Circle = styled.div<{
     `}
 `;
 
-const InputContainer = styled.div<{ $style?: CSSProp; $isRadio?: boolean }>`
+const InputWrapper = styled.div<{ $style?: CSSProp; $isRadio?: boolean }>`
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -262,12 +299,6 @@ const InputContainer = styled.div<{ $style?: CSSProp; $isRadio?: boolean }>`
 
 const LabelText = styled.div<{ $style?: CSSProp }>`
   font-size: 14px;
-  ${({ $style }) => $style}
-`;
-
-const ErrorText = styled.span<{ $style?: CSSProp }>`
-  margin-top: 4px;
-  color: #dc2626;
   ${({ $style }) => $style}
 `;
 
