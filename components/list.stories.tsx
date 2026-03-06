@@ -2063,3 +2063,42 @@ export const WithMaxItems: Story = {
     );
   },
 };
+
+export const Accordion: Story = {
+  render: () => {
+    const ACTIONS_GROUPS: ListGroupActionsProps[] = [
+      {
+        caption: "Refresh",
+        onClick: (id: string) => {
+          console.log(`action was added ${id}`);
+        },
+      },
+    ];
+
+    return (
+      <List
+        styles={{
+          containerStyle: css`
+            padding: 16px;
+            min-width: 500px;
+          `,
+        }}
+      >
+        <List.Group id="log" title={"Logs"} actions={ACTIONS_GROUPS}>
+          <List.Item
+            id={"log.id"}
+            styles={{
+              rowStyle: css`
+                background-color: #1f2937;
+                color: white;
+              `,
+            }}
+            hoverColor="black"
+            hoverBackgroundColor="white"
+            title="Container has not been started yet"
+          />
+        </List.Group>
+      </List>
+    );
+  },
+};
