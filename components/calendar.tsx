@@ -641,13 +641,13 @@ function Calendar({
                   padding: 2px;
                 `,
               }}
-            >
-              <RiCheckLine
-                size={20}
-                onClick={() => handleClickMode("open")}
-                aria-label="select-date"
-              />
-            </Button>
+              icon={{
+                image: RiCheckLine,
+                size: 20,
+              }}
+              aria-label="select-date"
+              onClick={() => handleClickMode("open")}
+            />
           </Fragment>
         )}
         {!calendarState.open && (
@@ -677,13 +677,13 @@ function Calendar({
                   padding: 0px;
                 `,
               }}
-            >
-              <RiArrowLeftSLine
-                onClick={handleClickPrevMonth}
-                size={24}
-                aria-label="previous-month"
-              />
-            </Button>
+              icon={{
+                image: RiArrowLeftSLine,
+                size: 24,
+              }}
+              aria-label="previous-month"
+              onClick={handleClickPrevMonth}
+            />
 
             <Button
               variant="transparent"
@@ -702,13 +702,13 @@ function Calendar({
                   padding: 0px;
                 `,
               }}
-            >
-              <RiArrowRightSLine
-                onClick={handleClickNextMonth}
-                size={24}
-                aria-label="next-month"
-              />
-            </Button>
+              onClick={handleClickNextMonth}
+              aria-label="next-month"
+              icon={{
+                image: RiArrowRightSLine,
+                size: 24,
+              }}
+            />
           </div>
         )}
 

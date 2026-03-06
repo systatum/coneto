@@ -10,10 +10,15 @@ import {
   RiLink,
   RiShareLine,
   RiEditLine,
+  RiAddLine,
+  RiSearchLine,
+  RiHeartLine,
+  RiStarLine,
 } from "@remixicon/react";
 import { Calendar } from "./../../components/calendar";
 import { TipMenuItemProps } from "./../../components/tip-menu";
 import { useState } from "react";
+import { FigureProps } from "./../../components/figure";
 
 describe("Button", () => {
   const TIP_MENU_ITEMS: TipMenuItemProps[] = [
@@ -65,6 +70,51 @@ describe("Button", () => {
       onClick: () => console.log("Edit mode"),
     },
   ];
+
+  context("icon", () => {
+    function ButtonWithIcon(props: ButtonProps) {
+      interface ButtonWithIconOptions {
+        icon?: FigureProps;
+        variant?: ButtonVariants["variant"];
+      }
+
+      const OPTIONS_BUTTON: ButtonWithIconOptions[] = [
+        { variant: "link", icon: { image: RiAddLine } },
+        { variant: "outline-default", icon: { image: RiSearchLine } },
+        { variant: "outline-primary", icon: { image: RiHeartLine } },
+        { variant: "outline-danger", icon: { image: RiStarLine } },
+        { variant: "outline-success", icon: { image: RiAddLine } },
+        { variant: "default", icon: { image: RiSearchLine } },
+        { variant: "primary", icon: { image: RiHeartLine } },
+        { variant: "danger", icon: { image: RiStarLine } },
+        { variant: "secondary", icon: { image: RiAddLine } },
+        { variant: "ghost", icon: { image: RiSearchLine } },
+        { variant: "transparent", icon: { image: RiHeartLine } },
+        { variant: "success", icon: { image: RiStarLine } },
+      ];
+
+      return (
+        <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+          {OPTIONS_BUTTON.map((option, index) => (
+            <Button
+              key={index}
+              variant={option.variant}
+              icon={option.icon}
+              {...props}
+            >
+              {option.variant.charAt(0).toUpperCase() + option.variant.slice(1)}
+            </Button>
+          ))}
+        </div>
+      );
+    }
+    it("renders buttons with icons", () => {
+      cy.mount(<ButtonWithIcon />);
+
+      cy.get("button").should("have.length", 12);
+      cy.get("button svg").should("exist");
+    });
+  });
 
   context("pressed", () => {
     function PressedButton(props: ButtonProps) {

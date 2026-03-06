@@ -142,15 +142,8 @@ export function ActionButton({
           ${subMenu && styles?.dropdownStyle ? styles.dropdownStyle : null}
         `,
       }}
+      icon={icon}
     >
-      {icon && (
-        <Figure
-          {...icon}
-          color={variant === "danger" ? "white" : icon?.color}
-          aria-label="action-button-icon"
-          size={icon?.size ?? 14}
-        />
-      )}
       {caption && caption}
     </Button>
   );
