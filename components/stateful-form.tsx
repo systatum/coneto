@@ -1629,6 +1629,8 @@ function FormFields<T extends FieldValues>({
                   name={field.name as Path<T>}
                   render={({ field: controllerField }) => (
                     <Capsule
+                      id={field.id}
+                      name={field.name}
                       label={field.title}
                       activeTab={controllerField.value}
                       helper={field.helper}
@@ -1663,7 +1665,15 @@ function FormFields<T extends FieldValues>({
                           ${field.width &&
                           css`
                             width: ${field.width};
+                          `};
+
+                          ${!field.title &&
+                          hasFieldTitle &&
+                          css`
+                            min-height: 60px;
+                            justify-content: end;
                           `}
+
                           ${field.capsuleProps?.styles?.containerStyle}
                         `,
                       }}
@@ -1694,7 +1704,7 @@ function StatefulFormLabel({
 }: StatefulFormLabelProps) {
   return (
     <Label {...props} $style={style}>
-      {label}
+      <LabelText>{label}</LabelText>
 
       {helper && <Helper value={helper} />}
     </Label>
@@ -1730,7 +1740,16 @@ const Label = styled.label<{ $style?: CSSProp }>`
   gap: 4px;
   align-items: center;
 
+  min-width: 0;
+
   ${({ $style }) => $style}
+`;
+
+const LabelText = styled.span`
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const ContainerFormField = styled.div<{ $style: CSSProp }>`
