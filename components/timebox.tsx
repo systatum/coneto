@@ -334,6 +334,8 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
         disabled={disabled}
         errorIconPosition="relative"
         styles={{
+          bodyStyle: styles?.bodyStyle,
+          controlStyle: styles?.controlStyle,
           containerStyle: css`
             width: fit-content;
             ${styles?.containerStyle}

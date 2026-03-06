@@ -551,6 +551,8 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
         disabled={disabled}
         errorIconPosition={errorIconPosition}
         styles={{
+          bodyStyle: styles?.bodyStyle,
+          controlStyle: styles?.controlStyle,
           containerStyle: styles?.containerStyle,
           labelStyle: styles?.labelStyle,
         }}

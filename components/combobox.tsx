@@ -15,6 +15,7 @@ import {
   OptionsProps,
   Selectbox,
   SelectboxSelectedOptions,
+  SelectboxStylesProps,
 } from "./selectbox";
 import styled, { css, CSSProp } from "styled-components";
 import { List } from "./list";
@@ -42,7 +43,8 @@ interface BaseComboboxProps {
   options: OptionsProps[];
 }
 
-export interface ComboboxStylesProps {
+export interface ComboboxStylesProps
+  extends Omit<SelectboxStylesProps, "self"> {
   containerStyle?: CSSProp;
   selectboxStyle?: CSSProp;
   labelStyle?: CSSProp;
@@ -119,6 +121,8 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
         disabled={disabled}
         highlightOnMatch={highlightOnMatch}
         styles={{
+          bodyStyle: styles?.bodyStyle,
+          controlStyle: styles?.controlStyle,
           containerStyle: styles?.containerStyle,
           labelStyle: styles?.labelStyle,
           self: css`

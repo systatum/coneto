@@ -117,6 +117,8 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         helper={helper}
         disabled={disabled}
         styles={{
+          bodyStyle: styles?.bodyStyle,
+          controlStyle: styles?.controlStyle,
           containerStyle: styles?.containerStyle,
           labelStyle: styles?.labelStyle,
         }}
