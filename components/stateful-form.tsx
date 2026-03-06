@@ -125,6 +125,7 @@ export interface FormFieldProps {
   icon?: RemixiconComponentType;
   disabled?: boolean;
   rowJustifyContent?: "center" | "start" | "end" | "between";
+  rowAlignItems?: "center" | "start" | "end" | "between";
   onChange?: (e?: StatefulOnChangeType) => void;
   onClick?: (e?: React.MouseEvent) => void;
   textboxProps?: TextboxProps;
@@ -369,6 +370,10 @@ function FormFields<T extends FieldValues>({
           (f) => f.rowJustifyContent
         )?.rowJustifyContent;
 
+        const rowAlignedItem = visibleFields.find(
+          (f) => f.rowAlignItems
+        )?.rowAlignItems;
+
         return (
           <RowFormField
             aria-label="stateful-form-row"
@@ -381,6 +386,17 @@ function FormFields<T extends FieldValues>({
                   : rowJustifiedContent === "start"
                     ? "flex-start"
                     : rowJustifiedContent === "between"
+                      ? "space-between"
+                      : "center"};
+              `}
+
+              ${rowAlignedItem &&
+              css`
+                align-items: ${rowAlignedItem === "end"
+                  ? "end"
+                  : rowAlignedItem === "start"
+                    ? "start"
+                    : rowAlignedItem === "between"
                       ? "space-between"
                       : "center"};
               `}
@@ -1637,6 +1653,7 @@ const RowFormField = styled.div<{ $style: CSSProp }>`
   flex-direction: row;
   gap: 6px;
   align-items: start;
+  justify-content: start;
 
   ${({ $style }) => $style}
 `;
