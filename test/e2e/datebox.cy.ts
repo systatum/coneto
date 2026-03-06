@@ -36,8 +36,8 @@ describe("Datebox", () => {
       });
     });
 
-    context("when click month and year", () => {
-      it("should select date", () => {
+    context("when selecting month and year", () => {
+      it("should display the correct date after selection", () => {
         cy.get('[data-type="selectbox"]').click();
         cy.findByLabelText("calendar-select-date").click();
         cy.findByLabelText("combobox-month").click();
@@ -58,7 +58,7 @@ describe("Datebox", () => {
       cy.visit(getIdContent("input-elements-datebox--no-weekends"));
     });
 
-    context("when click on the weekend", () => {
+    context("when clicking on the weekend", () => {
       it("value doesn't change ", () => {
         cy.get('[data-type="selectbox"]').click();
         cy.findByLabelText("calendar-select-date").click();
@@ -85,7 +85,7 @@ describe("Datebox", () => {
 
     const contentClick = ["1", "3", "5", "8"];
 
-    context("when click", () => {
+    context("when clicking dates", () => {
       it("should show multiple date", () => {
         cy.get('[data-type="selectbox"]').click();
         cy.findByLabelText("calendar-select-date").click();
@@ -147,7 +147,7 @@ describe("Datebox", () => {
     const contentClick = ["1", "3", "5", "8"];
     const contentClickWeekend = ["7"];
 
-    context("when click", () => {
+    context("when clicking dates", () => {
       it("should show multiple date but weekend not selected", () => {
         cy.get('[data-type="selectbox"]').click();
         cy.findByLabelText("calendar-select-date").click();
@@ -213,8 +213,8 @@ describe("Datebox", () => {
       cy.visit(getIdContent("input-elements-datebox--ranged"));
     });
 
-    context("when clicked", () => {
-      it("should show range date", () => {
+    context("when clicking different dates", () => {
+      it("should show range dates", () => {
         cy.get('[data-type="selectbox"]').click();
         cy.findByLabelText("calendar-select-date").click();
         cy.findByLabelText("combobox-month").click();
@@ -241,6 +241,36 @@ describe("Datebox", () => {
         cy.get("@input").should("have.value", expectedContent);
       });
     });
+
+    context("when clicking same date", () => {
+      it("should show only one date with format `date-date`", () => {
+        cy.get('[data-type="selectbox"]').click();
+        cy.findByLabelText("calendar-select-date").click();
+        cy.findByLabelText("combobox-month").click();
+        cy.findByText("MAR").click();
+        cy.findByLabelText("combobox-year").click();
+        cy.findByText("2026").click();
+
+        cy.findByText("5").click();
+        cy.findByText("5").click();
+        cy.findByText("5").should(
+          "have.css",
+          "background-color",
+          "rgb(97, 169, 249)"
+        );
+
+        cy.findByText("6").should(
+          "have.css",
+          "background-color",
+          "rgba(0, 0, 0, 0)"
+        );
+
+        const expectedContent = "03/05/2026-03/05/2026";
+
+        cy.findByPlaceholderText("mm/dd/yyyy").as("input");
+        cy.get("@input").should("have.value", expectedContent);
+      });
+    });
   });
 
   context("ranged no weekends", () => {
@@ -248,7 +278,7 @@ describe("Datebox", () => {
       cy.visit(getIdContent("input-elements-datebox--ranged-no-weekends"));
     });
 
-    context("when clicked", () => {
+    context("when clicking different date", () => {
       it("should show range date, without weekend", () => {
         cy.get('[data-type="selectbox"]').click();
         cy.findByLabelText("calendar-select-date").click();
@@ -275,6 +305,36 @@ describe("Datebox", () => {
 
         cy.findByPlaceholderText("mm/dd/yyyy").as("input");
         cy.get("@input").should("have.value", expectedContentNoWeekend);
+      });
+    });
+
+    context("when clicking same date", () => {
+      it("should show only one date", () => {
+        cy.get('[data-type="selectbox"]').click();
+        cy.findByLabelText("calendar-select-date").click();
+        cy.findByLabelText("combobox-month").click();
+        cy.findByText("MAR").click();
+        cy.findByLabelText("combobox-year").click();
+        cy.findByText("2026").click();
+
+        cy.findByText("5").click();
+        cy.findByText("5").click();
+        cy.findByText("5").should(
+          "have.css",
+          "background-color",
+          "rgb(97, 169, 249)"
+        );
+
+        cy.findByText("6").should(
+          "have.css",
+          "background-color",
+          "rgba(0, 0, 0, 0)"
+        );
+
+        const expectedContent = "03/05/2026";
+
+        cy.findByPlaceholderText("mm/dd/yyyy").as("input");
+        cy.get("@input").should("have.value", expectedContent);
       });
     });
   });
