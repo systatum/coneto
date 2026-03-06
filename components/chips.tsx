@@ -28,18 +28,9 @@ import {
 import { Textbox } from "./textbox";
 import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
+import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 
 export type ChipActionsProps = BadgeActionProps;
-
-export type ChipsProps = BaseChipsProps & {
-  label?: string;
-  showError?: boolean;
-  errorMessage?: string;
-  type?: string;
-  name?: string;
-  styles?: ChipsStylesProps;
-  helper?: string;
-};
 
 interface BaseChipsProps {
   options?: BadgeProps[];
@@ -57,9 +48,12 @@ interface BaseChipsProps {
     | ((props?: MissingOptionFormProps) => ReactNode);
   emptySlate?: ReactNode;
   renderer?: (props: ChipRendererProps) => ReactNode;
+  styles?: BaseChipsStylesProps;
+  name?: string;
+  id?: string;
 }
 
-export interface ChipsStylesProps {
+export interface BaseChipsStylesProps {
   chipsContainerStyle?: CSSProp;
   chipContainerStyle?: CSSProp;
   chipSelectedStyle?: CSSProp;
@@ -80,7 +74,7 @@ export interface MissingOptionFormProps {
   closeForm?: () => void;
 }
 
-function Chips(props: ChipsProps) {
+function BaseChips(props: BaseChipsProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
 
@@ -126,7 +120,7 @@ function Chips(props: ChipsProps) {
 
   const CLICKED_OPTIONS = props.selectedOptions;
 
-  const inputElement: ReactElement = (
+  return (
     <>
       <InputGroup $containerStyle={props?.styles?.chipsContainerStyle}>
         {CLICKED_OPTIONS.map((data) =>
@@ -176,24 +170,6 @@ function Chips(props: ChipsProps) {
         />
       )}
     </>
-  );
-
-  return (
-    <InputWrapper $style={props.styles?.containerStyle}>
-      {props.label && (
-        <StatefulForm.Label
-          style={props?.styles?.labelStyle}
-          helper={props?.helper}
-          label={props?.label}
-        />
-      )}
-      <InputContent>
-        {inputElement}
-        {props.showError && props.errorMessage && (
-          <ErrorText>{props.errorMessage}</ErrorText>
-        )}
-      </InputContent>
-    </InputWrapper>
   );
 }
 
@@ -254,7 +230,7 @@ const AddButton = styled(RiAddLine)<{ $isOpen?: boolean }>`
     `}
 `;
 
-type ChipsDrawerProps = ChipsProps & {
+type ChipsDrawerProps = BaseChipsProps & {
   getFloatingProps: ReturnType<typeof useInteractions>["getFloatingProps"];
   floatingStyles: CSSProperties;
   refs: ReturnType<typeof useFloating>["refs"];
@@ -440,7 +416,7 @@ function ChipsDrawer({
                         ) &&
                         !isClicked && <Divider aria-label="divider" />}
 
-                      <Chips.Item
+                      <ChipsItem
                         badge={data}
                         chipContainerStyle={styles?.chipContainerStyle}
                         hovered={hovered}
@@ -491,6 +467,64 @@ function ChipsDrawer({
     </ChipsDrawerWrapper>
   );
 }
+
+export type ChipsStylesProps = BaseChipsStylesProps & FieldLaneStylesProps;
+
+export interface ChipsProps
+  extends Omit<BaseChipsProps, "styles">,
+    Omit<FieldLaneProps, "styles" | "type" | "dropdown"> {
+  styles?: ChipsStylesProps;
+}
+
+function Chips({
+  dropdowns,
+  label,
+  showError,
+  styles,
+  errorMessage,
+  actions,
+  helper,
+  disabled,
+  name,
+  id,
+  ...rest
+}: ChipsProps) {
+  const inputId = StatefulForm.sanitizeId({
+    prefix: "chips",
+    name,
+    id,
+  });
+
+  const {
+    bodyStyle,
+    controlStyle,
+    containerStyle,
+    labelStyle,
+    ...baseChipStyles
+  } = styles ?? {};
+
+  return (
+    <FieldLane
+      id={inputId}
+      dropdowns={dropdowns}
+      showError={showError}
+      errorMessage={errorMessage}
+      label={label}
+      actions={actions}
+      helper={helper}
+      disabled={disabled}
+      styles={{
+        bodyStyle,
+        controlStyle,
+        containerStyle,
+        labelStyle,
+      }}
+    >
+      <BaseChips {...rest} id={inputId} styles={baseChipStyles} />
+    </FieldLane>
+  );
+}
+
 const Divider = styled.div`
   width: 100%;
   height: 1px;
