@@ -745,6 +745,16 @@ function FormFields<T extends FieldValues>({
                           `}
                           ${field.checkboxProps?.styles?.boxStyle}
                         `,
+                        bodyStyle: css`
+                          ${!field.title &&
+                          hasFieldTitle &&
+                          css`
+                            min-height: 60px;
+                            justify-content: end;
+                          `}
+
+                          ${field.checkboxProps?.styles?.bodyStyle}
+                        `,
                       }}
                     />
                   )}
@@ -811,6 +821,16 @@ function FormFields<T extends FieldValues>({
                             width: ${field.width};
                           `}
                           ${field.radioProps?.styles?.containerStyle}
+                        `,
+                        bodyStyle: css`
+                          ${!field.title &&
+                          hasFieldTitle &&
+                          css`
+                            min-height: 60px;
+                            justify-content: end;
+                          `}
+
+                          ${field.radioProps?.styles?.bodyStyle}
                         `,
                       }}
                     />
@@ -1054,6 +1074,16 @@ function FormFields<T extends FieldValues>({
                       `}
                       ${field.fileInputBoxProps?.styles?.containerStyle}
                     `,
+                    bodyStyle: css`
+                      ${!field.title &&
+                      hasFieldTitle &&
+                      css`
+                        margin-top: 26px;
+                        justify-content: end;
+                      `}
+
+                      ${field.fileInputBoxProps?.styles?.bodyStyle}
+                    `,
                   }}
                 />
               ) : field.type === "image" ? (
@@ -1116,6 +1146,16 @@ function FormFields<T extends FieldValues>({
                       `}
                       ${field.imageboxProps?.styles?.labelStyle}
                     `,
+                    bodyStyle: css`
+                      ${!field.title &&
+                      hasFieldTitle &&
+                      css`
+                        margin-top: 26px;
+                        justify-content: end;
+                      `}
+
+                      ${field.imageboxProps?.styles?.bodyStyle}
+                    `,
                   }}
                 />
               ) : field.type === "signbox" ? (
@@ -1159,6 +1199,16 @@ function FormFields<T extends FieldValues>({
                         width: ${field.width};
                       `}
                       ${field.signboxProps?.styles?.containerStyle}
+                    `,
+                    bodyStyle: css`
+                      ${!field.title &&
+                      hasFieldTitle &&
+                      css`
+                        margin-top: 26px;
+                        justify-content: end;
+                      `}
+
+                      ${field.signboxProps?.styles?.bodyStyle}
                     `,
                   }}
                 />
@@ -1618,6 +1668,16 @@ function FormFields<T extends FieldValues>({
                           `}
                           ${field.toggleboxProps?.styles?.containerStyle}
                         `,
+                        bodyStyle: css`
+                          ${!field.title &&
+                          hasFieldTitle &&
+                          css`
+                            margin-top: 26px;
+                            justify-content: end;
+                          `}
+
+                          ${field.toggleboxProps?.styles?.bodyStyle}
+                        `,
                       }}
                     />
                   )}
@@ -1711,6 +1771,25 @@ function StatefulFormLabel({
   );
 }
 
+const Label = styled.label<{ $style?: CSSProp }>`
+  font-size: 0.75rem;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  align-items: center;
+
+  min-width: 0;
+
+  ${({ $style }) => $style}
+`;
+
+const LabelText = styled.span`
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
 interface StatefulFormSanitizeIdProps {
   name?: string;
   id?: string;
@@ -1732,25 +1811,6 @@ function sanitizeId({
   if (name) return `${prefix}-${sanitize(name)}`;
   return prefix;
 }
-
-const Label = styled.label<{ $style?: CSSProp }>`
-  font-size: 0.75rem;
-  display: flex;
-  flex-direction: row;
-  gap: 4px;
-  align-items: center;
-
-  min-width: 0;
-
-  ${({ $style }) => $style}
-`;
-
-const LabelText = styled.span`
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
 
 const ContainerFormField = styled.div<{ $style: CSSProp }>`
   display: flex;
