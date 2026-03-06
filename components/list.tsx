@@ -779,6 +779,7 @@ const ListGroupContent = styled(motion.ul)<{
   position: relative;
   padding-top: ${({ $isOpen }) => ($isOpen ? "2px" : "0px")};
   gap: 4px;
+  margin-top: 4px;
 
   ${({ $contentStyle }) => $contentStyle}
 `;
@@ -853,6 +854,8 @@ export interface ListItemProps {
   };
   leftSideContent?: ReactNode;
   styles?: ListItemStylesProps;
+  hoverColor?: string;
+  hoverBackgroundColor?: string;
 }
 
 interface ListItemStylesProps {
@@ -902,6 +905,8 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
       openable,
       leftSideContent,
       styles,
+      hoverBackgroundColor,
+      hoverColor,
       ...props
     },
     ref
@@ -945,6 +950,8 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
           {...domProps}
           $isHovered={isHovered === idFullname || openTipRowId === idFullname}
           $style={styles?.rowStyle}
+          $hoverColor={hoverColor}
+          $hoverBackgroundColor={hoverBackgroundColor}
           draggable={draggable}
           onClick={() => {
             if (onClick) {
@@ -1204,6 +1211,8 @@ const ListItemWrapper = styled.li<{
 const ListItemRow = styled.div<{
   $style?: CSSProp;
   $isHovered?: boolean;
+  $hoverColor?: string;
+  $hoverBackgroundColor?: string;
 }>`
   display: flex;
   flex-direction: row;
@@ -1217,13 +1226,14 @@ const ListItemRow = styled.div<{
   border-radius: 3px;
   width: 100%;
 
-  ${({ $isHovered }) =>
+  ${({ $style }) => $style}
+
+  ${({ $isHovered, $hoverColor, $hoverBackgroundColor }) =>
     $isHovered &&
     css`
-      background-color: #dbeafe;
+      color: ${$hoverColor ?? "inherit"};
+      background-color: ${$hoverBackgroundColor ?? "#dbeafe"};
     `}
-
-  ${({ $style }) => $style}
 `;
 
 const DraggableWrapper = styled.div<{
