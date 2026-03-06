@@ -22,9 +22,13 @@ export interface BadgeProps
   actions?: BadgeActionProps[];
 }
 
-export interface BadgeActionProps extends Omit<FigureProps, "onClick"> {
+export interface BadgeActionProps {
+  icon?: FigureProps;
   onClick?: (badge?: BadgeProps) => void;
   disabled?: boolean;
+  size?: number;
+  styles?: { self?: CSSProp };
+  title?: string;
 }
 
 const BADGE_BACKGROUND_COLORS: string[] = [
@@ -121,7 +125,7 @@ function Badge({
         ? colorVariant
         : (circleColorLocal ?? "black");
 
-  const actionWithStyles = actions?.map((action) => ({
+  const actionsWithStyles = actions?.map((action) => ({
     ...action,
     size: action?.size ?? 12,
     styles: {
@@ -178,7 +182,7 @@ function Badge({
       </BadgeContent>
       {actions && (
         <BadgeIconWrapper>
-          {actionWithStyles.map((action, index) => (
+          {actionsWithStyles.map((action, index) => (
             <Figure
               key={index}
               aria-label="badge-action"
