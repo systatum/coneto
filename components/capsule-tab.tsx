@@ -11,6 +11,7 @@ export interface CapsuleTabProps {
 
 export interface CapsuleTabStylesProps {
   containerStyle?: CSSProp;
+  capsuleWrapperStyle?: CSSProp;
   tabStyle?: CSSProp;
 }
 
@@ -38,10 +39,11 @@ function CapsuleTab({
             border-top-left-radius: 2px;
             border-top-right-radius: 2px;
 
-            ${styles?.tabStyle};
+            ${styles?.capsuleWrapperStyle};
           `,
           tabStyle: css`
             border-radius: 12px;
+            ${styles?.tabStyle};
           `,
         }}
         tabs={tabs}
