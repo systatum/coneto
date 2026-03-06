@@ -1,4 +1,3 @@
-import { RemixiconComponentType } from "@remixicon/react";
 import {
   Children,
   cloneElement,
@@ -16,6 +15,8 @@ import {
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { Button } from "./button";
+import { Figure, FigureProps } from "./figure";
+import { RiCloseLine } from "@remixicon/react";
 
 export interface WindowProps {
   orientation?: "horizontal" | "vertical";
@@ -44,7 +45,7 @@ export interface WindowCellStylesProps {
 
 export interface WindowActionProps {
   onClick?: () => void;
-  icon?: RemixiconComponentType;
+  icon?: FigureProps;
   style?: string;
 }
 
@@ -266,19 +267,19 @@ const WindowCell = forwardRef<HTMLDivElement, WindowCellProps>(
       >
         {actions && (
           <ActionContainer>
-            {actions.map((data, index) => (
+            {actions.map((action, index) => (
               <Button
                 variant="transparent"
                 key={index}
                 aria-label="window-button"
                 onClick={() => {
-                  if (data.onClick) data.onClick();
+                  if (action.onClick) action.onClick();
                 }}
                 styles={{
                   containerStyle: css`
                     position: absolute;
                     top: 0.5rem;
-                    right: 0.5rem;
+                    right: ${0.5 + index * 1.8}rem;
                     cursor: pointer;
                     transition: all 0.3s;
                     border-radius: 2px;
@@ -294,7 +295,12 @@ const WindowCell = forwardRef<HTMLDivElement, WindowCellProps>(
                   `,
                 }}
               >
-                {data.icon && <data.icon size={16} />}
+                {action.icon && (
+                  <Figure
+                    {...action.icon}
+                    image={action?.icon?.image ?? RiCloseLine}
+                  />
+                )}
               </Button>
             ))}
           </ActionContainer>

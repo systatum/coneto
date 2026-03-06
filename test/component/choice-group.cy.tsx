@@ -55,13 +55,13 @@ describe("ChoiceGroup", () => {
           });
           cy.mount(
             <ChoiceGroup>
-              {OPTIONS.map((props, index) => (
+              {OPTIONS.map((option, index) => (
                 <Checkbox
                   key={index}
-                  name="checked"
-                  value={props.value}
-                  description={props.description}
-                  label={props.label}
+                  value={option.value}
+                  description={option.description}
+                  name={option.label}
+                  label={option.label}
                   onChange={(e) =>
                     console.log(
                       `The name is ${e.target.name} and the value is ${e.target.value}`
@@ -76,7 +76,7 @@ describe("ChoiceGroup", () => {
             cy.findByText(props.label).click();
             cy.get("@consoleLog").should(
               "have.been.calledWith",
-              `The name is checked and the value is ${props.value}`
+              `The name is ${props.label} and the value is ${props.value}`
             );
           });
         });

@@ -57,7 +57,7 @@ export const Default: Story = {
                   role="listbox"
                   aria-label="Calendar"
                   onClick={() => {
-                    setValue([option.value]);
+                    setValue([String(option.value)]);
                     props.setSelectedOptionsLocal(option);
                     props.setIsOpen(false);
                   }}
@@ -113,7 +113,7 @@ export const Clearable: Story = {
                   role="listbox"
                   aria-label="Calendar"
                   onClick={() => {
-                    setValue([option.value]);
+                    setValue([String(option.value)]);
                     props.setSelectedOptionsLocal(option);
                     props.setIsOpen(false);
                   }}

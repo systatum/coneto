@@ -558,6 +558,16 @@ function ChipsItem({
   const finalValueActions =
     badge.actions?.map((action) => ({
       ...action,
+      styles: {
+        self: css`
+          opacity: 0;
+          ${hovered === badge.id &&
+          css`
+            opacity: 1;
+          `}
+        `,
+      },
+      size: 14,
       onClick: () => action.onClick && action.onClick?.(badge),
     })) ?? [];
 
@@ -595,9 +605,7 @@ function ChipsItem({
         readOnly
       />
       <Badge
-        variant={badge.variant}
-        backgroundColor={badge.backgroundColor}
-        circleColor={badge.circleColor}
+        {...badge}
         badgeStyle={css`
           cursor: pointer;
           ${chipStyle}
@@ -607,8 +615,6 @@ function ChipsItem({
           `}
         `}
         actions={finalValueActions}
-        textColor={badge.textColor}
-        caption={badge.caption}
         withCircle
       />
     </ChipItemWrapper>

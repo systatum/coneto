@@ -1,8 +1,4 @@
-import {
-  RemixiconComponentType,
-  RiArrowRightSLine,
-  RiMoreLine,
-} from "@remixicon/react";
+import { RiArrowRightSLine, RiMoreLine } from "@remixicon/react";
 import {
   Children,
   cloneElement,
@@ -13,12 +9,13 @@ import {
 } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import styled, { css, CSSProp } from "styled-components";
+import { Figure, FigureProps } from "./figure";
 
 export interface CrumbProps {
   children?: ReactNode;
   maxShown?: number;
   style?: CSSProp;
-  iconSeparator?: RemixiconComponentType;
+  iconSeparator?: FigureProps["image"];
   fontSize?: number;
   textColor?: string;
   hoverColor?: string;
@@ -39,7 +36,7 @@ export interface CrumbItemProps {
 }
 
 function Crumb({
-  iconSeparator: Icon = RiArrowRightSLine,
+  iconSeparator = RiArrowRightSLine,
   maxShown = 3,
   children,
   style,
@@ -47,7 +44,7 @@ function Crumb({
   hoverColor,
   textColor,
   lastTextColor,
-  arrowColor,
+  arrowColor = "#9ca3af",
 }: CrumbProps) {
   const [expanded, setExpanded] = useState(false);
 
@@ -74,6 +71,26 @@ function Crumb({
     }
   }
 
+  function CrumbArrowIcon({ iconSize }: { iconSize?: number }) {
+    return (
+      <Figure
+        color={arrowColor}
+        size={iconSize}
+        image={iconSeparator}
+        styles={{
+          self: css`
+            margin-left: 0.5rem;
+            margin-right: 0.5rem;
+            width: ${iconSize ?? 16};
+            height: ${iconSize ?? 16};
+            color: ${arrowColor};
+          `,
+        }}
+        aria-label="arrow-icon"
+      />
+    );
+  }
+
   return (
     <CrumbNav aria-label="crumb">
       <AnimatePresence initial={false} mode="popLayout">
@@ -98,14 +115,7 @@ function Crumb({
                   $textColor={textColor}
                 />
 
-                {!isLast && (
-                  <CrumbArrowIcon
-                    as={Icon}
-                    $arrowColor={arrowColor}
-                    size={iconSize}
-                    aria-label="arrow-icon"
-                  />
-                )}
+                {!isLast && <CrumbArrowIcon iconSize={iconSize} />}
               </CrumbEllipsisListItem>
             );
           }
@@ -130,14 +140,7 @@ function Crumb({
                   textColor,
                   lastTextColor,
                 })}
-                {!isLast && (
-                  <CrumbArrowIcon
-                    as={Icon}
-                    $arrowColor={arrowColor}
-                    size={iconSize}
-                    aria-label="arrow-icon"
-                  />
-                )}
+                {!isLast && <CrumbArrowIcon iconSize={iconSize} />}
               </CrumbListEllipsisItem>
             );
           }
@@ -177,19 +180,6 @@ const CrumbEllipsisIcon = styled(RiMoreLine)<{
     &:hover {
       color: ${$hoverColor ? $hoverColor : "#61a9f9"};
     }
-  `}
-`;
-
-const CrumbArrowIcon = styled.div<{
-  $arrowColor?: string;
-  $size?: number;
-}>`
-  ${({ $arrowColor, $size }) => css`
-    margin-left: 0.5rem;
-    margin-right: 0.5rem;
-    color: ${$arrowColor ? $arrowColor : "#9ca3af"};
-    width: ${$size}px;
-    height: ${$size}px;
   `}
 `;
 

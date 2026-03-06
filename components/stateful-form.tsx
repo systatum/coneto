@@ -37,9 +37,9 @@ import { Togglebox, ToggleboxProps } from "./togglebox";
 import { Capsule, CapsuleProps } from "./capsule";
 import { Timebox, TimeboxProps } from "./timebox";
 import { Button, ButtonProps } from "./button";
-import { RemixiconComponentType } from "@remixicon/react";
 import { Radio, RadioProps } from "./radio";
 import Helper from "./helper";
+import { FigureProps } from "./figure";
 
 export type StatefulOnChangeType =
   | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -122,7 +122,7 @@ export interface FormFieldProps {
   hidden?: boolean;
   rows?: number;
   width?: string;
-  icon?: RemixiconComponentType;
+  icon?: FigureProps["image"];
   disabled?: boolean;
   rowJustifyContent?: "center" | "start" | "end" | "between";
   onChange?: (e?: StatefulOnChangeType) => void;

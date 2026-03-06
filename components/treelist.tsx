@@ -6,11 +6,7 @@ import React, {
   useContext,
   useState,
 } from "react";
-import {
-  RemixiconComponentType,
-  RiArrowRightSLine,
-  RiDraggable,
-} from "@remixicon/react";
+import { RiArrowRightSLine, RiDraggable } from "@remixicon/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { TipMenuItemProps } from "./tip-menu";
 import ContextMenu from "./context-menu";
@@ -78,8 +74,8 @@ export interface TreeListItemsProps {
   onClick?: (props: TreeListItemsOnClickProps) => void;
   actions?: SubMenuTreeList[];
   items?: TreeListItemsProps[];
-  icon?: RemixiconComponentType;
-  iconOnActive?: RemixiconComponentType;
+  icon?: FigureProps["image"];
+  iconOnActive?: FigureProps["image"];
   iconColor?: string;
   initialState?: TreeListInitialState;
 }

@@ -1,7 +1,8 @@
-import { RemixiconComponentType, RiCloseLine } from "@remixicon/react";
+import { RiCloseLine } from "@remixicon/react";
 import { useAnimation, motion } from "framer-motion";
 import { ReactNode, useEffect, useState } from "react";
 import styled, { css, CSSProp } from "styled-components";
+import { FigureProps } from "./figure";
 
 export interface DrawerTabProps {
   tabs: DrawerTabContentProps[];
@@ -16,7 +17,7 @@ export interface DrawerTabStylesProps {
 export interface DrawerTabContentProps {
   id: string;
   title: string;
-  icon: RemixiconComponentType;
+  icon: FigureProps["image"];
   content: ReactNode;
 }
 
@@ -60,7 +61,7 @@ function DrawerTab({ tabs, styles, position = "right" }: DrawerTabProps) {
             key={tab.id}
             role="button"
             tabIndex={0}
-            aria-label={`Open ${tab.title} tab`}
+            aria-label={`${tab.title}-tab`}
             $selected={tab.id === selected}
             $position={position}
             onClick={() => {
