@@ -2087,14 +2087,8 @@ export const Accordion: Story = {
         <List.Group id="log" title={"Logs"} actions={ACTIONS_GROUPS}>
           <List.Item
             id={"log.id"}
-            styles={{
-              rowStyle: css`
-                background-color: #1f2937;
-                color: white;
-              `,
-            }}
-            hoverColor="black"
-            hoverBackgroundColor="white"
+            hoverColor="white"
+            hoverBackgroundColor="#1F2937"
             title="Container has not been started yet"
           />
         </List.Group>
