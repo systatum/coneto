@@ -93,6 +93,14 @@
       "import": "./dist/components/error-slate.js",
       "types": "./dist/components/error-slate.d.ts"
     },
+    "./field-lane": {
+      "import": "./dist/components/field-lane.js",
+      "types": "./dist/components/field-lane.d.ts"
+    },
+    "./figure": {
+      "import": "./dist/components/figure.js",
+      "types": "./dist/components/figure.d.ts"
+    },
     "./file-drop-box": {
       "import": "./dist/components/file-drop-box.js",
       "types": "./dist/components/file-drop-box.d.ts"
@@ -148,6 +156,10 @@
     "./nav-tab": {
       "import": "./dist/components/nav-tab.js",
       "types": "./dist/components/nav-tab.d.ts"
+    },
+    "./overlay-blocker": {
+      "import": "./dist/components/overlay-blocker.js",
+      "types": "./dist/components/overlay-blocker.d.ts"
     },
     "./pagination": {
       "import": "./dist/components/pagination.js",
@@ -306,7 +318,6 @@
     "type-check": "tsc --noEmit",
     "lint": "eslint '**/*.{ts,tsx}'",
     "format": "prettier --write .",
-    "build-chromatic": "chromatic --project-token=$CHROMATIC_PROJECT_TOKEN",
     "prepare": "node generate-export.cjs",
     "test-open": "cypress open",
     "test-run": "cypress run",
@@ -317,13 +328,8 @@
     "react-dom": "^19.1.0"
   },
   "dependencies": {
-    "@cypress/vite-dev-server": "^7.0.0",
     "@hookform/resolvers": "^5.0.1",
-    "@radix-ui/react-dialog": "^1.1.13",
-    "@radix-ui/react-dropdown-menu": "^2.1.14",
-    "@radix-ui/react-slot": "^1.2.2",
     "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
     "framer-motion": "^12.12.1",
     "pdfjs-dist": "^5.4.54",
     "react-hook-form": "^7.56.3",
@@ -332,17 +338,12 @@
     "zod": "^3.24.4"
   },
   "devDependencies": {
-    "@chromatic-com/storybook": "^3.2.6",
-    "@cypress/react": "^9.0.1",
-    "@cypress/webpack-dev-server": "^5.1.1",
     "@eslint/js": "^9.26.0",
     "@floating-ui/react": "^0.27.8",
     "@remixicon/react": "^4.6.0",
     "@storybook/addon-essentials": "^8.6.14",
-    "@storybook/addon-onboarding": "^8.6.14",
     "@storybook/addon-storysource": "^8.6.14",
     "@storybook/blocks": "^8.6.14",
-    "@storybook/experimental-addon-test": "^8.6.14",
     "@storybook/manager-api": "^8.6.14",
     "@storybook/preview-api": "^8.6.14",
     "@storybook/react": "^8.6.14",
@@ -354,9 +355,7 @@
     "@typescript-eslint/eslint-plugin": "^8.32.1",
     "@typescript-eslint/parser": "^8.32.1",
     "@vitejs/plugin-react": "^4.4.1",
-    "autoprefixer": "^10.4.21",
     "barrelsby": "^2.8.1",
-    "chromatic": "^11.28.2",
     "cypress": "^14.5.2",
     "cypress-real-events": "^1.14.0",
     "dotenv": "^17.2.0",
@@ -365,7 +364,6 @@
     "eslint-plugin-react": "^7.37.5",
     "globals": "^15.15.0",
     "libphonenumber-js": "^1.12.8",
-    "playwright": "^1.54.1",
     "prettier": "^3.5.3",
     "storybook": "^8.6.14",
     "styled-components": "^6.1.19",

@@ -88,15 +88,8 @@ export default function ContextMenu({
         title={action.caption}
         className={action.className}
         aria-label="action-button"
-      >
-        {action.icon && (
-          <Figure
-            {...action.icon}
-            size={iconSize ?? action.icon.size}
-            color={action?.icon?.color ?? "black"}
-          />
-        )}
-      </Button>
+        icon={action?.icon}
+      />
     ));
   }
 
@@ -108,8 +101,10 @@ export default function ContextMenu({
       onOpen={onOpen}
       open={open}
       subMenu={({ list }) => list(actions)}
-    >
-      {children ?? <Figure image={RiMoreFill} size={iconSize} />}
-    </Button>
+      icon={{
+        image: RiMoreFill,
+        size: iconSize,
+      }}
+    />
   );
 }

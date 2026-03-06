@@ -360,7 +360,11 @@ function BaseCalendar({
           setStartPicked((prev) => ({ ...prev, picked: true }));
         } else {
           if (values.includes(formattedData)) {
-            newValues = [];
+            if (disableWeekend) {
+              newValues = [...new Set([...values, formattedData])];
+            } else {
+              newValues = [formattedData, formattedData];
+            }
           } else {
             if (disableWeekend) {
               const startDate = new Date(values[0]);
@@ -632,13 +636,13 @@ function BaseCalendar({
                   padding: 2px;
                 `,
               }}
-            >
-              <RiCheckLine
-                size={20}
-                onClick={() => handleClickMode("open")}
-                aria-label="select-date"
-              />
-            </Button>
+              icon={{
+                image: RiCheckLine,
+                size: 20,
+              }}
+              aria-label="select-date"
+              onClick={() => handleClickMode("open")}
+            />
           </Fragment>
         )}
         {!calendarState.open && (
@@ -668,13 +672,13 @@ function BaseCalendar({
                   padding: 0px;
                 `,
               }}
-            >
-              <RiArrowLeftSLine
-                onClick={handleClickPrevMonth}
-                size={24}
-                aria-label="previous-month"
-              />
-            </Button>
+              icon={{
+                image: RiArrowLeftSLine,
+                size: 24,
+              }}
+              aria-label="previous-month"
+              onClick={handleClickPrevMonth}
+            />
 
             <Button
               variant="transparent"
@@ -693,13 +697,13 @@ function BaseCalendar({
                   padding: 0px;
                 `,
               }}
-            >
-              <RiArrowRightSLine
-                onClick={handleClickNextMonth}
-                size={24}
-                aria-label="next-month"
-              />
-            </Button>
+              onClick={handleClickNextMonth}
+              aria-label="next-month"
+              icon={{
+                image: RiArrowRightSLine,
+                size: 24,
+              }}
+            />
           </div>
         )}
 
@@ -771,7 +775,7 @@ function BaseCalendar({
                   startPicked?.indexPicked?.getTime();
               }
 
-              if (SELECTED_DATES.length === 2) {
+              if (SELECTED_DATES.length === 2 && !startPicked.picked) {
                 const [startDate, endDate] = SELECTED_DATES;
                 isCurrentDate =
                   date.getTime() >= startDate.getTime() &&
@@ -781,6 +785,8 @@ function BaseCalendar({
                 isInRange =
                   date.getTime() > startDate.getTime() &&
                   date.getTime() < endDate.getTime();
+
+                isSameDate = startDate.getTime() === endDate.getTime();
 
                 isCurrentDate = isRangeStart || isRangeEnd || isInRange;
               } else {
@@ -867,13 +873,20 @@ function BaseCalendar({
                       disableWeekend
                         ? !isDateWeekend &&
                           ((isCurrentDate && !startPicked.picked) ||
-                            (isHighlightedPicked && !isDisabled))
+                            (isHighlightedPicked &&
+                              !isDisabled &&
+                              startPicked.indexPicked?.getTime() !==
+                                SELECTED_DATES[0]?.getTime()))
                         : (isCurrentDate && !startPicked.picked) ||
                           (isHighlightedPicked && !isDisabled)
                     }
                     $isRangeStart={isRangeStart}
                     $isRangeEnd={
                       isRangeEnd || (isHighlighted && startPicked.picked)
+                    }
+                    $isCurrentDate={
+                      isCurrentDate ||
+                      (isHighlighted && startPicked.picked && !isDisabled)
                     }
                     $isSameDate={isSameDate}
                   />
@@ -1196,6 +1209,7 @@ const DataCellRange = styled.span<{
   $isSameDate?: boolean;
   $isPickingProcess?: boolean;
   $disableWeekend?: boolean;
+  $isCurrentDate?: boolean;
 }>`
   position: absolute;
   width: 45px;
@@ -1203,37 +1217,34 @@ const DataCellRange = styled.span<{
   top: 50%;
   left: 0;
   transform: translateY(-50%);
+  background-color: transparent;
+  overflow: hidden;
 
-  ${({ $isInRange }) =>
-    $isInRange &&
-    css`
-      background-color: #dbeafe;
-    `};
+  ${({ $isInRange, $isSameDate, $isPickingProcess }) =>
+    $isSameDate && $isInRange && $isPickingProcess
+      ? css`
+          background-color: transparent;
+        `
+      : $isInRange &&
+        css`
+          background-color: #dbeafe;
+        `};
 
-  ${({ $isSameDate }) =>
-    $isSameDate &&
-    css`
-      width: 0px;
-      background-color: transparent;
-    `};
-
-  ${({ $isRangeStart }) =>
+  ${({ $isRangeStart, $isPickingProcess, $isSameDate }) =>
     $isRangeStart &&
     css`
+      width: ${!$isPickingProcess && $isSameDate ? "0px" : "25px"};
       left: auto;
       right: 6px;
-      width: 25px;
-      border-radius: 9999;
-      overflow: hidden;
       transform: translateX(50%) translateY(-50%);
     `};
 
-  ${({ $isRangeEnd }) =>
+  ${({ $isRangeEnd, $isPickingProcess, $isSameDate }) =>
     $isRangeEnd &&
     css`
-      width: 25px;
+      width: ${!$isPickingProcess && $isSameDate ? "0px" : "25px"};
       transform: translateX(-2%) translateY(-50%);
-    `}
+    `};
 `;
 
 const DateCellTodayDot = styled.div<{

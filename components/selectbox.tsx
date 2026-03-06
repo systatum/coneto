@@ -131,6 +131,11 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
     },
     ref
   ) => {
+    const finalOptions = useMemo(
+      () => (Array.isArray(options) ? options : []),
+      [options]
+    );
+
     const finalSelectedOptions = useMemo(() => {
       if (Array.isArray(selectedOptions)) {
         return selectedOptions.map(String);
@@ -141,7 +146,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       return [];
     }, [selectedOptions]);
 
-    const initialState = options.find(
+    const initialState = finalOptions.find(
       (opt) => String(opt.value) === finalSelectedOptions?.[0]
     ) ?? {
       text: isValidDateString(finalSelectedOptions?.[0])
@@ -191,15 +196,17 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
     const listRef = useRef<(HTMLLIElement | null)[]>([]);
 
     const FILTERED_OPTIONS = hasInteracted
-      ? options.filter((opt) =>
+      ? finalOptions.filter((opt) =>
           opt.text
             .toLowerCase()
             .includes(selectedOptionsLocal.text.toLowerCase())
         )
-      : options;
+      : finalOptions;
 
     const activeValue = selectedOptionsLocal.text;
-    const FILTERED_ACTIVE = options.some((opt) => opt.text === activeValue);
+    const FILTERED_ACTIVE = finalOptions.some(
+      (opt) => opt.text === activeValue
+    );
 
     const { refs, floatingStyles, context } = useFloating({
       placement: "bottom-start" as Placement,
@@ -265,7 +272,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
 
       if (e.key === "Enter") {
         if (!multiple) {
-          const matched = options.find(
+          const matched = finalOptions.find(
             (opt) => opt.text === selectedOptionsLocal.text
           );
           setHasInteracted(false);
@@ -330,7 +337,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
     }, [isOpen]);
 
     const multipleOptionsJoinedText = finalSelectedOptions
-      ?.map((val) => options.find((o) => o.value === val)?.text)
+      ?.map((val) => finalOptions.find((o) => o.value === val)?.text)
       .filter(Boolean)
       .join(", ");
 
@@ -397,7 +404,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
             setHasInteracted(false);
 
             if (strict) {
-              const matched = options.find(
+              const matched = finalOptions.find(
                 (opt) => opt.text === selectedOptionsLocal.text
               );
 

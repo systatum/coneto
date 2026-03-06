@@ -21,23 +21,21 @@ Each main component consists of two parts:
 1. Install dependencies: `pnpm install`
 2. Start Storybook locally: `pnpm storybook`
 
-## How to Submit Changes to Chromatic
+## How to Submit Changes to Deploy Preview
 
-We don't actively using Chromatic anymore.
-
-1. Open Chromatic on your desktop
-2. Make any necessary changes to your component
-3. Commit and push your changes
-4. Publish the changes to Chromatic: `npx chromatic --project-token={{your token}}` or `pnpm build-chromatic`
-5. View your updates in the Chromatic app
+1. Make any necessary changes to your component.
+2. Commit and push your changes.
+3. Create a pull request to the `main` branch.
+4. View your updates on GitHub through the automatically generated deploy preview link.
 
 ## How to Test
 
-1. Create your component test inside the `test/e2e` directory. Each component should have its own test file.
-2. Write your test logic to cover expected behaviors, interactions, and visual, name the file using the format `[component].cy.ts` then save it.
+1. Create your component test inside the `test/e2e` or `test/component` directory. Tests can be written for **E2E** scenarios or **component** behavior. Each component should have its own test file.
+2. Write your test logic to cover expected behaviors, interactions, and visual, name the file using the format `[component].cy.ts` for test **e2e** and `[component].cy.tsx` for test **component** then save it.
 3. Commit and push your changes to the repository.
 4. To run tests locally:
    1. Ensure that you have `cypress` installed:
+
       ```bash
       pnpm add --save-dev cypress # you may need to do this
       ./node_modules/.bin/cypress install # install the cypress app locally
@@ -52,10 +50,11 @@ We don't actively using Chromatic anymore.
 
       Cypress executable not found at: /Users/adam.h/Library/Caches/Cypress/14.5.3/Cypress.app/Contents/MacOS/Cypress
       ```
-   1. Run the storybook server, used for E2E testing: `pnpm run storybook`
-   1. Execute either use one of the following commands:
+
+   2. Run the storybook server, used for E2E testing: `pnpm run storybook`
+   3. Execute either use one of the following commands:
       - `pnpm test-open` – opens the Cypress Test Runner with an interactive UI.
-      - `pnpm test-run` – runs all tests in headless mode via the CLI. Ensure that you see `All specs passed!` eventually.
+      - `pnpm test-run` or `pnpm test-run-component` – runs all tests in headless mode via the CLI. Ensure that you see `All specs passed!` eventually.
 
 ## Tech Stack
 
@@ -63,11 +62,10 @@ This repository uses:
 
 - `@storybook/react-vite` – the core framework that runs Storybook using Vite for faster builds and hot reloads
 - `@storybook/addon-essentials` – a set of essential addons like docs, controls, actions, and viewport to enhance Storybook functionality
-- `@storybook/addon-onboarding` – used for testing individual React components in isolation to ensure they behave correctly, integrated with Storybook for a consistent testing environment
 
 ## Code Quality Checks
 
-1. Run unit tests: `pnpm test-open` or `pnpm test-run`
+1. Run unit tests: `pnpm test-open` or `pnpm test-run` or `pnpm test-run-component`
 2. Run the linter to check for unused code and issues: `pnpm lint`
 
 ## Coding convention
