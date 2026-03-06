@@ -950,6 +950,7 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
           {...domProps}
           $isHovered={isHovered === idFullname || openTipRowId === idFullname}
           $style={styles?.rowStyle}
+          aria-label="list-item-row"
           $hoverColor={hoverColor}
           $hoverBackgroundColor={hoverBackgroundColor}
           draggable={draggable}
