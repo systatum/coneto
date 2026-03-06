@@ -963,7 +963,7 @@ function Calendar({
   ...rest
 }: CalendarProps) {
   const inputId = StatefulForm.sanitizeId({
-    prefix: "Calendar",
+    prefix: "calendar",
     name,
     id,
   });
