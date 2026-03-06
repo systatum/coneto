@@ -128,7 +128,6 @@ export const Default: Story = {
           type: "button",
           required: true,
           placeholder: "Enter text",
-          rowAlignItems: "end",
         },
       ],
       {
