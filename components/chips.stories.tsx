@@ -956,6 +956,7 @@ export const CustomRenderer: Story = {
           const isOpen = openMap[id] || false;
           return (
             <Tooltip
+              key={id}
               showDialogOn="hover"
               hideDialogOn="hover"
               dialogPlacement="top-left"

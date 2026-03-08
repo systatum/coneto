@@ -1,9 +1,16 @@
-import { ReactElement, ReactNode, useEffect, useRef, useState } from "react";
+import {
+  forwardRef,
+  ReactElement,
+  ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { motion } from "framer-motion";
 import styled, { css, CSSProp } from "styled-components";
-import { RemixiconComponentType } from "@remixicon/react";
 import { StatefulForm } from "./stateful-form";
 import { Figure, FigureProps } from "./figure";
+import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 
 export interface CapsuleContentProps {
   id: string;
@@ -12,39 +19,33 @@ export interface CapsuleContentProps {
   icon?: FigureProps;
 }
 
-export interface CapsuleProps {
-  activeTab?: string | null;
+interface BaseCapsuleProps {
   tabs: CapsuleContentProps[];
+  activeTab?: string | null;
   onTabChange?: (id: string) => void;
-  label?: string;
   full?: boolean;
   activeBackgroundColor?: string;
-  showError?: boolean;
-  errorMessage?: string;
+  styles?: BaseCapsuleStylesProps;
+  id?: string;
+  name?: string;
   fontSize?: number;
-  styles?: CapsuleStylesProps;
-  helper?: string;
 }
 
-export interface CapsuleStylesProps {
-  containerStyle?: CSSProp;
-  labelStyle?: CSSProp;
+interface BaseCapsuleStylesProps {
+  capsuleWrapperStyle?: CSSProp;
   tabStyle?: CSSProp;
 }
 
-function Capsule({
+function BaseCapsule({
   tabs,
   activeTab,
   onTabChange,
   full,
   activeBackgroundColor = "oklch(54.6% .245 262.881)",
-  label,
   styles,
-  showError,
-  errorMessage,
+  id,
   fontSize = 12,
-  helper,
-}: CapsuleProps) {
+}: BaseCapsuleProps) {
   const [hovered, setHovered] = useState<string | null>(null);
 
   const activeId = hovered || activeTab;
@@ -152,10 +153,11 @@ function Capsule({
   const hoverPosition = getHoverPosition();
   const initialPosition = getInitialPosition();
 
-  const inputElement: ReactElement = (
+  return (
     <CapsuleWrapper
+      id={id}
       aria-label="capsule"
-      $containerStyle={styles?.containerStyle}
+      $containerStyle={styles?.capsuleWrapperStyle}
       $full={full}
       ref={containerRef}
       role="tablist"
@@ -211,6 +213,7 @@ function Capsule({
             onMouseEnter={() => setHovered(tab.id)}
             onMouseLeave={() => setHovered(null)}
             onClick={() => onTabChange(tab.id)}
+            $fontSize={fontSize}
           >
             {tab.icon && (
               <Figure
@@ -225,21 +228,59 @@ function Capsule({
       })}
     </CapsuleWrapper>
   );
+}
+
+export type CapsuleStylesProps = BaseCapsuleStylesProps & FieldLaneStylesProps;
+
+export interface CapsuleProps
+  extends Omit<BaseCapsuleProps, "styles">,
+    Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
+  styles?: CapsuleStylesProps;
+}
+
+function Capsule({
+  label,
+  showError,
+  styles,
+  errorMessage,
+  actions,
+  helper,
+  disabled,
+  name,
+  id,
+  ...rest
+}: CapsuleProps) {
+  const inputId = StatefulForm.sanitizeId({
+    prefix: "capsule",
+    name,
+    id,
+  });
 
   return (
-    <Container $fontSize={fontSize} $style={styles?.containerStyle}>
-      {label && (
-        <StatefulForm.Label
-          style={styles?.labelStyle}
-          helper={helper}
-          label={label}
-        />
-      )}
-      <div>
-        {inputElement}
-        {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
-      </div>
-    </Container>
+    <FieldLane
+      id={inputId}
+      showError={showError}
+      errorMessage={errorMessage}
+      label={label}
+      actions={actions}
+      helper={helper}
+      disabled={disabled}
+      styles={{
+        bodyStyle: styles?.bodyStyle,
+        controlStyle: styles?.controlStyle,
+        containerStyle: styles?.containerStyle,
+        labelStyle: styles?.labelStyle,
+      }}
+    >
+      <BaseCapsule
+        {...rest}
+        id={inputId}
+        styles={{
+          capsuleWrapperStyle: styles?.capsuleWrapperStyle,
+          tabStyle: styles?.tabStyle,
+        }}
+      />
+    </FieldLane>
   );
 }
 
@@ -273,21 +314,6 @@ const CapsuleWrapper = styled.div<{
         `}
 
   ${({ $containerStyle }) => $containerStyle}
-`;
-
-const Container = styled.div<{ $style?: CSSProp; $fontSize?: number }>`
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  gap: 0.5rem;
-  font-size: ${({ $fontSize }) => `${$fontSize}px`};
-  position: relative;
-
-  ${({ $style }) => $style}
-`;
-
-const ErrorText = styled.span`
-  color: #dc2626;
 `;
 
 const ActiveBackground = styled(motion.div)<{
@@ -324,6 +350,7 @@ const HoverBorder = styled(motion.div)<{
 const Tab = styled.div<{
   $isActive?: boolean;
   $activeTabStyle?: CSSProp;
+  $fontSize?: number;
 }>`
   display: flex;
   flex-direction: row;
@@ -346,6 +373,8 @@ const Tab = styled.div<{
       : css`
           color: #111827;
         `}
+
+  font-size: ${({ $fontSize }) => `${$fontSize}px`};
 
   ${({ $activeTabStyle }) => css`
     ${$activeTabStyle}

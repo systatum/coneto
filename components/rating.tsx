@@ -1,51 +1,36 @@
 import { ChangeEvent, MouseEvent, ReactElement, useState } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
+import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 
-export interface RatingProps {
+interface BaseRatingProps {
   rating?: string;
   onChange?: (rating: ChangeEvent<HTMLInputElement>) => void;
   editable?: boolean;
   withLabel?: boolean;
   size?: "sm" | "md" | "lg";
   disabled?: boolean;
-  showError?: boolean;
-  label?: string;
   name?: string;
-  styles?: RatingStylesProps;
-  errorMessage?: string;
-  helper?: string;
+  styles?: BaseRatingStylesProps;
   id?: string;
 }
-export interface RatingStylesProps {
+interface BaseRatingStylesProps {
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
 }
 
-function Rating({
+function BaseRating({
   id,
   rating,
   onChange,
   editable,
   withLabel = false,
   size = "md",
-  label,
-  showError,
-  errorMessage,
-  disabled,
-  styles,
   name,
-  helper,
-}: RatingProps) {
+}: BaseRatingProps) {
   const ratingState = Number(rating || 0);
   const [ratingLocal, setRatingLocal] = useState(ratingState);
   const [hoverRating, setHoverRating] = useState(0);
-
-  const inputId = StatefulForm.sanitizeId({
-    prefix: "rating",
-    name,
-    id,
-  });
 
   const handleMouseMove = (e: MouseEvent<HTMLSpanElement>, index: number) => {
     const { left, width } = e.currentTarget.getBoundingClientRect();
@@ -136,7 +121,7 @@ function Rating({
     return emptyStar;
   };
 
-  const inputElement: ReactElement = (
+  return (
     <RatingWrapper>
       <StarsWrapper>
         {Array.from({ length: 5 }).map((_, i) => (
@@ -152,57 +137,76 @@ function Rating({
           </StarSpan>
         ))}
       </StarsWrapper>
-      <input type="hidden" name={name} value={ratingLocal} id={inputId} />
+      <input type="hidden" name={name} value={ratingLocal} id={id} />
 
       {withLabel && (
         <RatingLabel $size={size}>{ratingLocal.toFixed(1)} / 5</RatingLabel>
       )}
     </RatingWrapper>
   );
-
-  return (
-    <InputWrapper $disabled={disabled} $containerStyle={styles?.containerStyle}>
-      {label && (
-        <StatefulForm.Label
-          style={styles?.labelStyle}
-          helper={helper}
-          label={label}
-        />
-      )}
-      <InputContent>
-        {inputElement}
-        {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
-      </InputContent>
-    </InputWrapper>
-  );
 }
 
-const InputWrapper = styled.div<{
-  $containerStyle?: CSSProp;
-  $disabled?: boolean;
-}>`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  font-size: 0.75rem;
-  width: 100%;
-  position: relative;
+export type RatingStylesProps = BaseRatingStylesProps & FieldLaneStylesProps;
 
-  ${({ $disabled }) => $disabled && `cursor: not-allowed; opacity: 0.5;`}
-  ${({ $containerStyle }) => $containerStyle}
-`;
+export interface RatingProps
+  extends Omit<BaseRatingProps, "styles">,
+    Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
+  styles?: RatingStylesProps;
+}
 
-const InputContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: 12px;
-`;
+function Rating({
+  label,
+  showError,
+  styles,
+  errorMessage,
+  actions,
+  helper,
+  disabled,
+  name,
+  id,
+  ...rest
+}: RatingProps) {
+  const inputId = StatefulForm.sanitizeId({
+    prefix: "rating",
+    name,
+    id,
+  });
 
-const ErrorText = styled.span`
-  color: #dc2626;
-  font-size: 0.75rem;
-`;
+  const {
+    bodyStyle,
+    controlStyle,
+    containerStyle,
+    labelStyle,
+    ...RatingStyles
+  } = styles ?? {};
+
+  return (
+    <FieldLane
+      id={inputId}
+      showError={showError}
+      errorMessage={errorMessage}
+      actions={actions}
+      helper={helper}
+      disabled={disabled}
+      label={label}
+      errorIconPosition="none"
+      styles={{
+        bodyStyle,
+        controlStyle,
+        containerStyle,
+        labelStyle,
+      }}
+    >
+      <BaseRating
+        {...rest}
+        disabled={disabled}
+        name={name}
+        id={inputId}
+        styles={RatingStyles}
+      />
+    </FieldLane>
+  );
+}
 
 const RatingWrapper = styled.div`
   display: flex;

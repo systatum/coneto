@@ -49,6 +49,214 @@ describe("StatefulForm", () => {
     custom: "custom",
   };
 
+  const CAPSULE_TABS: CapsuleContentProps[] = [
+    {
+      id: "paid",
+      title: "Paid",
+    },
+    {
+      id: "unpaid",
+      title: "Unpaid",
+    },
+  ];
+
+  context("when array of array", () => {
+    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
+      (data) => data.id === "US" || COUNTRY_CODES[206]
+    );
+
+    if (!DEFAULT_COUNTRY_CODES) {
+      throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
+    }
+
+    const value = {
+      first_name: "",
+      last_name: "",
+      email: "",
+      phone: "",
+      note: "",
+      access: false,
+      country_code: DEFAULT_COUNTRY_CODES,
+    };
+
+    const EMPLOYEE_FIELDS: FormFieldGroup[] = [
+      [
+        {
+          name: "first_name",
+          title: "First Name",
+          type: "text",
+          required: true,
+          placeholder: "Enter first name",
+        },
+        {
+          name: "last_name",
+          title: "Last Name",
+          type: "text",
+          required: false,
+          placeholder: "Enter last name",
+        },
+      ],
+      {
+        name: "email",
+        title: "Email",
+        type: "email",
+        required: true,
+        placeholder: "Enter email address",
+      },
+      {
+        name: "phone",
+        title: "Phone Number",
+        type: "phone",
+        required: false,
+        placeholder: "Enter phone number",
+      },
+      {
+        name: "note",
+        title: "Note",
+        type: "textarea",
+        rows: 3,
+        required: false,
+        placeholder: "Add additional notes",
+      },
+      {
+        name: "access",
+        placeholder: "Has access to login",
+        type: "checkbox",
+        required: false,
+      },
+    ];
+    it("render in the one row", () => {
+      cy.mount(
+        <StatefulForm
+          fields={EMPLOYEE_FIELDS}
+          formValues={value}
+          mode="onChange"
+        />
+      );
+      cy.findAllByLabelText("stateful-form-row")
+        .eq(0)
+        .within(() => {
+          cy.contains("First Name").should("exist");
+          cy.contains("Last Name").should("exist");
+
+          cy.contains("Email").should("not.exist");
+          cy.contains("Phone Number").should("not.exist");
+          cy.contains("Note").should("not.exist");
+          cy.contains("Has access to login").should("not.exist");
+        });
+    });
+
+    context("when given without title", () => {
+      const FIELDS_WITHOUT_TITLE: FormFieldGroup[] = [
+        [
+          {
+            name: "first_name",
+            title: "First Name",
+            type: "text",
+            required: true,
+            placeholder: "Enter first name",
+          },
+          {
+            name: "last_name",
+            type: "text",
+            required: false,
+            placeholder: "Enter last name",
+          },
+          {
+            name: "phone",
+            type: "phone",
+            required: false,
+            placeholder: "Enter phone number",
+          },
+          {
+            name: "combo",
+            type: "combo",
+            required: false,
+            placeholder: "Select a fruit...",
+            comboboxProps: {
+              options: [],
+            },
+          },
+          {
+            name: "date",
+            type: "date",
+            required: false,
+            placeholder: "Select a date",
+          },
+          {
+            name: "capsule",
+            type: "capsule",
+            required: false,
+            capsuleProps: {
+              tabs: CAPSULE_TABS,
+            },
+          },
+          {
+            name: "button",
+            title: "Button",
+            type: "button",
+          },
+        ],
+      ];
+
+      it("should not break the height", () => {
+        cy.viewport(1000, 900);
+        cy.mount(
+          <StatefulForm
+            fields={FIELDS_WITHOUT_TITLE}
+            formValues={value}
+            mode="onChange"
+          />
+        );
+
+        // Ensure per row have 60px
+        cy.findAllByLabelText("stateful-form-row")
+          .eq(0)
+          .within(() => {
+            cy.contains("First Name").should("exist");
+            cy.contains("Last Name").should("not.exist");
+            cy.contains("Phone").should("not.exist");
+            cy.contains("Combo").should("not.exist");
+          })
+          .should("have.css", "height", "60px");
+
+        // Input should have similar height
+        cy.get("#textbox-first_name")
+          .parent()
+          .parent()
+          .should("have.css", "height", "60px");
+        cy.get("#textbox-last_name")
+          .parent()
+          .parent()
+          .should("have.css", "height", "60px");
+        cy.get("#phonebox-phone")
+          .parent()
+          .parent()
+          .parent()
+          .should("have.css", "height", "60px");
+        cy.get("#capsule-capsule")
+          .parent()
+          .parent()
+          .parent()
+          .should("have.css", "height", "60px");
+        cy.get("#combobox-combo")
+          .parent()
+          .parent()
+          .parent()
+          .should("have.css", "height", "60px");
+        cy.get("#datebox-date")
+          .parent()
+          .parent()
+          .parent()
+          .should("have.css", "height", "60px");
+        cy.findAllByRole("button")
+          .eq(1)
+          .parent()
+          .should("have.css", "margin-top", "26px");
+      });
+    });
+  });
+
   context("id", () => {
     const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
       (data) => data.id === "US" || COUNTRY_CODES[206]
@@ -1323,17 +1531,6 @@ describe("StatefulForm", () => {
     };
 
     context("when initial value", () => {
-      const CAPSULE_TABS: CapsuleContentProps[] = [
-        {
-          id: "paid",
-          title: "Paid",
-        },
-        {
-          id: "unpaid",
-          title: "Unpaid",
-        },
-      ];
-
       const CHECKBOX_TITLE_FIELDS: FormFieldGroup[] = [
         {
           name: "capsule",
@@ -1425,93 +1622,6 @@ describe("StatefulForm", () => {
           cy.findByRole("checkbox").should("be.checked");
         });
       });
-    });
-  });
-
-  context("when array of array", () => {
-    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
-      (data) => data.id === "US" || COUNTRY_CODES[206]
-    );
-
-    if (!DEFAULT_COUNTRY_CODES) {
-      throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
-    }
-
-    const value = {
-      first_name: "",
-      last_name: "",
-      email: "",
-      phone: "",
-      note: "",
-      access: false,
-      country_code: DEFAULT_COUNTRY_CODES,
-    };
-
-    const EMPLOYEE_FIELDS: FormFieldGroup[] = [
-      [
-        {
-          name: "first_name",
-          title: "First Name",
-          type: "text",
-          required: true,
-          placeholder: "Enter first name",
-        },
-        {
-          name: "last_name",
-          title: "Last Name",
-          type: "text",
-          required: false,
-          placeholder: "Enter last name",
-        },
-      ],
-      {
-        name: "email",
-        title: "Email",
-        type: "email",
-        required: true,
-        placeholder: "Enter email address",
-      },
-      {
-        name: "phone",
-        title: "Phone Number",
-        type: "phone",
-        required: false,
-        placeholder: "Enter phone number",
-      },
-      {
-        name: "note",
-        title: "Note",
-        type: "textarea",
-        rows: 3,
-        required: false,
-        placeholder: "Add additional notes",
-      },
-      {
-        name: "access",
-        placeholder: "Has access to login",
-        type: "checkbox",
-        required: false,
-      },
-    ];
-    it("render in the one row", () => {
-      cy.mount(
-        <StatefulForm
-          fields={EMPLOYEE_FIELDS}
-          formValues={value}
-          mode="onChange"
-        />
-      );
-      cy.findAllByLabelText("stateful-form-row")
-        .eq(0)
-        .within(() => {
-          cy.contains("First Name").should("exist");
-          cy.contains("Last Name").should("exist");
-
-          cy.contains("Email").should("not.exist");
-          cy.contains("Phone Number").should("not.exist");
-          cy.contains("Note").should("not.exist");
-          cy.contains("Has access to login").should("not.exist");
-        });
     });
   });
 

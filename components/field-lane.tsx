@@ -9,7 +9,7 @@ import { Figure, FigureProps } from "./figure";
 export interface FieldLaneProps {
   label?: string;
   showError?: boolean;
-  errorIconPosition?: "absolute" | "relative";
+  errorIconPosition?: "absolute" | "relative" | "none";
   errorMessage?: string;
   dropdowns?: DropdownProps[];
   styles?: FieldLaneStylesProps;
@@ -24,6 +24,8 @@ export interface FieldLaneProps {
 export interface FieldLaneStylesProps {
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
+  controlStyle?: CSSProp;
+  bodyStyle?: CSSProp;
 }
 
 export interface FieldLaneActionsProps {
@@ -75,7 +77,7 @@ function FieldLane({
   errorIconPosition = "absolute",
 }: FieldLaneProps) {
   const inputElement: ReactElement = (
-    <InputWrapper>
+    <InputWrapper $style={styles?.controlStyle}>
       {dropdowns?.map((dropdown, index) => {
         return (
           <Button
@@ -254,7 +256,7 @@ function FieldLane({
           );
         })}
       {showError && (
-        <ErrorIconWrapper $isAbsolute={errorIconPosition === "absolute"}>
+        <ErrorIconWrapper $position={errorIconPosition}>
           <RiErrorWarningLine
             size={17}
             style={{
@@ -270,6 +272,7 @@ function FieldLane({
 
   return (
     <Container
+      $disabled={disabled}
       $style={css`
         ${!children &&
         css`
@@ -279,58 +282,95 @@ function FieldLane({
         ${styles?.containerStyle}
       `}
     >
-      {label && (
-        <StatefulForm.Label
-          htmlFor={disabled ? null : id}
-          style={styles?.labelStyle}
-          helper={helper}
-          label={label}
-        />
-      )}
+      <Body $disabled={disabled} $style={styles?.bodyStyle}>
+        {label && (
+          <StatefulForm.Label
+            htmlFor={disabled ? null : id}
+            style={styles?.labelStyle}
+            helper={helper}
+            label={label}
+          />
+        )}
 
-      <div>
         {inputElement}
-        {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
-      </div>
+      </Body>
+
+      {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
     </Container>
   );
 }
 
-const Container = styled.div<{ $style?: CSSProp }>`
+const Container = styled.div<{ $style?: CSSProp; $disabled?: boolean }>`
   display: flex;
   width: 100%;
+  height: 100%;
   flex-direction: column;
-  gap: 0.5rem;
   font-size: 0.75rem;
   position: relative;
+  height: 100%;
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      cursor: not-allowed;
+    `}
 
   ${({ $style }) => $style}
 `;
 
-const InputWrapper = styled.div`
+const Body = styled.div<{ $style?: CSSProp; $disabled?: boolean }>`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 34px;
+  gap: 0.5rem;
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      cursor: not-allowed;
+      opacity: 0.5;
+      user-select: none;
+    `}
+
+  ${({ $style }) => $style}
+`;
+
+const InputWrapper = styled.div<{ $style?: CSSProp }>`
   position: relative;
   display: flex;
   flex-direction: row;
   width: 100%;
   justify-content: flex-start;
   height: 100%;
-  min-height: 34px;
+
+  ${({ $style }) => $style}
 `;
 
-const ErrorIconWrapper = styled.button<{ $isAbsolute?: boolean }>`
-  position: relative;
-  margin-left: 4px;
-  ${({ $isAbsolute }) =>
-    $isAbsolute &&
-    css`
-      margin-left: 0px;
-      position: absolute;
-      top: 50%;
-      right: 8px;
-      transform: translateY(-50%);
-      border: none;
-      z-index: 10;
-    `};
+const ErrorIconWrapper = styled.div<{
+  $position?: FieldLaneProps["errorIconPosition"];
+}>`
+  ${({ $position }) =>
+    $position === "absolute"
+      ? css`
+          margin-left: 0px;
+          position: absolute;
+          top: 50%;
+          right: 8px;
+          transform: translateY(-50%);
+          border: none;
+          z-index: 10;
+        `
+      : $position === "relative"
+        ? css`
+            position: relative;
+            margin-left: 4px;
+          `
+        : css`
+            display: none;
+          `};
 
   cursor: default;
 `;

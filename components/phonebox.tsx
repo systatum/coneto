@@ -383,6 +383,8 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
         helper={helper}
         disabled={disabled}
         styles={{
+          bodyStyle: styles?.bodyStyle,
+          controlStyle: styles?.controlStyle,
           containerStyle: styles?.containerStyle,
           labelStyle: styles?.labelStyle,
         }}

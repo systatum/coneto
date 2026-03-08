@@ -219,11 +219,6 @@ export const Default: Story = {
           onChange={({ currentState }) => {
             setValue((prev) => ({ ...prev, ...currentState }));
           }}
-          styles={{
-            rowStyle: css`
-              align-items: end;
-            `,
-          }}
           fields={EMPLOYEE_FIELDS}
           formValues={value}
           validationSchema={employeeSchema}

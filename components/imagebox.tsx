@@ -9,25 +9,20 @@ import {
 import { RiAddLine, RiImageLine } from "@remixicon/react";
 import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
+import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 
-export interface ImageboxProps {
+interface BaseImageboxProps {
   onFileSelected?: (file: File | undefined) => void;
   size?: "xs" | "sm" | "md" | "lg";
-  label?: string;
-  showError?: boolean;
-  errorMessage?: string;
   name?: string;
-  styles?: ImageboxStylesProps;
-  helper?: string;
+  styles?: BaseImageboxStylesProps;
   value?: File | string | null;
   borderless?: boolean;
   editable?: boolean;
   url?: string;
   id?: string;
 }
-export interface ImageboxStylesProps {
-  containerStyle?: CSSProp;
-  labelStyle?: CSSProp;
+interface BaseImageboxStylesProps {
   self?: CSSProp;
 }
 
@@ -50,21 +45,17 @@ const SIZE_STYLES = {
   },
 };
 
-function Imagebox({
+function BaseImagebox({
   onFileSelected,
   size = "md",
-  label,
-  errorMessage,
-  showError,
   name,
   styles,
-  helper,
   value,
   borderless,
   editable = true,
   url,
   id,
-}: ImageboxProps) {
+}: BaseImageboxProps) {
   const inputId = StatefulForm.sanitizeId({
     prefix: "imagebox",
     name,
@@ -156,7 +147,7 @@ function Imagebox({
     }
   };
 
-  const inputElement: ReactElement = (
+  return (
     <InputBox
       aria-label="imagebox-input"
       $style={styles?.self}
@@ -203,39 +194,64 @@ function Imagebox({
       </AddIconWrapper>
     </InputBox>
   );
-
-  return (
-    <InputWrapper $containerStyle={styles?.containerStyle}>
-      {label && (
-        <StatefulForm.Label
-          htmlFor={editable ? inputId : null}
-          style={styles?.labelStyle}
-          helper={helper}
-          label={label}
-        />
-      )}
-      <InputContent>
-        {inputElement}
-        {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
-      </InputContent>
-    </InputWrapper>
-  );
 }
 
-const InputWrapper = styled.div<{
-  $containerStyle?: CSSProp;
-  $disabled?: boolean;
-}>`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  font-size: 0.75rem;
-  width: 100%;
-  position: relative;
+export type ImageboxStylesProps = BaseImageboxStylesProps &
+  FieldLaneStylesProps;
 
-  ${({ $disabled }) => $disabled && `cursor: not-allowed; opacity: 0.5;`}
-  ${({ $containerStyle }) => $containerStyle}
-`;
+export interface ImageboxProps
+  extends Omit<BaseImageboxProps, "styles">,
+    Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
+  styles?: ImageboxStylesProps;
+}
+
+function Imagebox({
+  label,
+  showError,
+  styles,
+  errorMessage,
+  actions,
+  helper,
+  disabled,
+  name,
+  id,
+  ...rest
+}: ImageboxProps) {
+  const inputId = StatefulForm.sanitizeId({
+    prefix: "Imagebox",
+    name,
+    id,
+  });
+
+  const {
+    bodyStyle,
+    controlStyle,
+    containerStyle,
+    labelStyle,
+    ...ImageboxStyles
+  } = styles ?? {};
+
+  return (
+    <FieldLane
+      id={inputId}
+      showError={showError}
+      errorMessage={errorMessage}
+      actions={actions}
+      helper={helper}
+      disabled={disabled}
+      label={label}
+      errorIconPosition="none"
+      styles={{
+        bodyStyle,
+        controlStyle,
+        containerStyle,
+        labelStyle,
+      }}
+    >
+      <BaseImagebox {...rest} id={inputId} styles={ImageboxStyles} />
+    </FieldLane>
+  );
+}
 
 const InputBox = styled.div<{
   $dimension: string;
@@ -267,18 +283,6 @@ const InputBox = styled.div<{
     `};
 
   ${({ $style }) => $style}
-`;
-
-const InputContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: 12px;
-`;
-
-const ErrorText = styled.span`
-  color: #dc2626;
-  font-size: 0.75rem;
 `;
 
 const IconPlaceholder = styled.div`
