@@ -624,10 +624,11 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
 
     return (
       <PDFViewerContainer>
-        <ToolbarWrapper>
-          <Title>{title}</Title>
+        <ToolbarWrapper aria-label="doc-viewer-toolbar-wrapper">
+          <Title aria-label="doc-viewer-toolbar-title">{title}</Title>
           <Combobox
             strict
+            id="doc-viewer-toolbar-combo"
             selectedOptions={scaleValue}
             onChange={handleScale}
             placeholder={zoomPlaceholderText}
@@ -646,6 +647,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
           />
           {resolvedSource.type === "pdf" && (
             <div
+              aria-label="doc-viewer-page"
               style={{
                 width: "100%",
                 display: "flex",
@@ -675,7 +677,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
         </ToolbarWrapper>
 
         <ContainerDocumentViewer
-          aria-label="container-content"
+          aria-label="doc-viewer-container"
           $containerStyle={styles?.containerStyle}
           ref={containerRef}
           onMouseUp={handleMouseUp}
