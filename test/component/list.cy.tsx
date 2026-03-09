@@ -119,6 +119,50 @@ describe("List", () => {
     },
   ];
 
+  context("checkbox", () => {
+    it("renders with fit-content", () => {
+      cy.mount(
+        <List
+          searchable
+          selectable
+          styles={{
+            containerStyle: css`
+              padding: 16px;
+              min-width: 400px;
+            `,
+          }}
+        >
+          <List.Group id="test" title="List Group Title">
+            <List.Item
+              key={"list-item"}
+              id={"list-item"}
+              title={"List Item Title"}
+              styles={{
+                containerStyle: css`
+                  width: 100%;
+                `,
+                titleStyle: css`
+                  width: 100%;
+                `,
+                rightSideStyle: css`
+                  width: 6%;
+                `,
+              }}
+              selectedOptions={{
+                checked: "test" === "test",
+                value: "test",
+              }}
+            />
+          </List.Group>
+        </List>
+      );
+
+      cy.findByLabelText("input-wrapper-checkbox")
+        .should("have.css", "width", "14px")
+        .and("have.css", "height", "14px");
+    });
+  });
+
   context("hover in the List.Item level", () => {
     context("when given hoverColor", () => {
       it("should render the text color when hovered", () => {
