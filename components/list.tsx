@@ -855,8 +855,14 @@ export interface ListItemProps {
   };
   leftSideContent?: ReactNode;
   styles?: ListItemStylesProps;
-  hoverColor?: string;
-  hoverBackgroundColor?: string;
+  stateColors?: ListItemstateColorsState;
+}
+
+export interface ListItemstateColorsState {
+  hoverText?: string;
+  hoverBackground?: string;
+  selectedText?: string;
+  selectedBackground?: string;
 }
 
 interface ListItemStylesProps {
@@ -906,8 +912,7 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
       openable,
       leftSideContent,
       styles,
-      hoverBackgroundColor,
-      hoverColor,
+      stateColors,
       ...props
     },
     ref
@@ -946,14 +951,16 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
         aria-label="list-item-wrapper"
         $openable={openable && isChildOpened}
         $style={styles?.containerStyle}
+        $selectedBackground={stateColors?.selectedBackground}
+        $selectedText={stateColors?.selectedText}
       >
         <ListItemRow
           {...domProps}
           $isHovered={isHovered === idFullname || openTipRowId === idFullname}
           $style={styles?.rowStyle}
           aria-label="list-item-row"
-          $hoverColor={hoverColor}
-          $hoverBackgroundColor={hoverBackgroundColor}
+          $hoverColor={stateColors?.hoverText}
+          $hoverBackgroundColor={stateColors?.hoverBackground}
           draggable={draggable}
           onClick={() => {
             if (onClick) {
@@ -1196,6 +1203,8 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
 const ListItemWrapper = styled.li<{
   $style?: CSSProp;
   $openable?: boolean;
+  $selectedBackground?: string;
+  $selectedText?: string;
 }>`
   display: flex;
   flex-direction: column;
@@ -1204,10 +1213,11 @@ const ListItemWrapper = styled.li<{
   transition: background-color 300ms;
   border-radius: 3px;
 
-  ${({ $openable }) =>
+  ${({ $openable, $selectedBackground, $selectedText }) =>
     $openable &&
     css`
-      background-color: #dbeafe;
+      color: ${$selectedText ?? "inherit"};
+      background-color: ${$selectedBackground ?? "#dbeafe"};
     `}
 
   ${({ $style }) => $style}
