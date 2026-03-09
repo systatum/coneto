@@ -14,11 +14,24 @@ describe("Document Viewer", () => {
         );
 
         cy.findByText("Team Collaboration Notes").should("exist");
-        cy.findByLabelText("container-content")
+        cy.findByLabelText("doc-viewer-container")
           .should("exist")
           .within(() => {
             cy.get("canvas", { timeout: 10000 }).should("exist");
           });
+      });
+
+      it("renders with page number", () => {
+        cy.mount(
+          <DocumentViewer
+            source={({ pdf }) => pdf("sample.pdf")}
+            title="Team Collaboration Notes"
+          />
+        );
+
+        cy.findByLabelText("doc-viewer-toolbar-title").should("exist");
+        cy.findByLabelText("doc-viewer-toolbar-combo").should("exist");
+        cy.findByLabelText("doc-viewer-toolbar-page").should("not.exist");
       });
     });
 
@@ -36,11 +49,33 @@ describe("Document Viewer", () => {
         );
 
         cy.findByText("Document Viewer With Image").should("exist");
-        cy.findByLabelText("container-content")
+        cy.findByLabelText("doc-viewer-container")
           .should("exist")
           .within(() => {
             cy.get("canvas", { timeout: 10000 }).should("exist");
           });
+      });
+
+      it("renders without page number", () => {
+        cy.mount(
+          <DocumentViewer
+            title="Document Viewer With Image"
+            source={({ image }) =>
+              image(
+                "https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d"
+              )
+            }
+          />
+        );
+
+        cy.findByLabelText("doc-viewer-toolbar-wrapper").should(
+          "have.css",
+          "justify-content",
+          "space-between"
+        );
+        cy.findByLabelText("doc-viewer-toolbar-title").should("exist");
+        cy.findByLabelText("doc-viewer-toolbar-combo").should("exist");
+        cy.findByLabelText("doc-viewer-toolbar-page").should("not.exist");
       });
     });
 
@@ -65,11 +100,24 @@ describe("Document Viewer", () => {
         cy.mount(<DocumentViewerWithBase64 />);
 
         cy.findByText("Document Viewer with Encode String").should("exist");
-        cy.findByLabelText("container-content")
+        cy.findByLabelText("doc-viewer-container")
           .should("exist")
           .within(() => {
             cy.get("canvas", { timeout: 10000 }).should("exist");
           });
+      });
+
+      it("renders the image from base 64", () => {
+        cy.mount(<DocumentViewerWithBase64 />);
+
+        cy.findByLabelText("doc-viewer-toolbar-wrapper").should(
+          "have.css",
+          "justify-content",
+          "space-between"
+        );
+        cy.findByLabelText("doc-viewer-toolbar-title").should("exist");
+        cy.findByLabelText("doc-viewer-toolbar-combo").should("exist");
+        cy.findByLabelText("doc-viewer-toolbar-page").should("not.exist");
       });
     });
 
@@ -92,11 +140,37 @@ describe("Document Viewer", () => {
 
         cy.findByText("Document Viewer With File").should("exist");
 
-        cy.findByLabelText("container-content")
+        cy.findByLabelText("doc-viewer-container")
           .should("exist")
           .within(() => {
             cy.get("canvas", { timeout: 10000 }).should("exist");
           });
+      });
+
+      it("renders without number page", () => {
+        cy.fixture("test-images/sample-1.jpg", "base64").then((base64) => {
+          const blob = Cypress.Blob.base64StringToBlob(base64, "image/jpeg");
+
+          const file = new File([blob], "sample-1.jpg", {
+            type: "image/jpeg",
+          });
+
+          cy.mount(
+            <DocumentViewer
+              title="Document Viewer With File"
+              source={({ file: fileBuilder }) => fileBuilder(file)}
+            />
+          );
+        });
+
+        cy.findByLabelText("doc-viewer-toolbar-wrapper").should(
+          "have.css",
+          "justify-content",
+          "space-between"
+        );
+        cy.findByLabelText("doc-viewer-toolbar-title").should("exist");
+        cy.findByLabelText("doc-viewer-toolbar-combo").should("exist");
+        cy.findByLabelText("doc-viewer-toolbar-page").should("not.exist");
       });
     });
   });
@@ -112,7 +186,7 @@ describe("Document Viewer", () => {
         );
 
         cy.findByText("Team Collaboration Notes").should("exist");
-        cy.findByLabelText("container-content")
+        cy.findByLabelText("doc-viewer-container")
           .should("exist")
           .scrollTo("bottom");
       });
@@ -192,18 +266,20 @@ describe("Document Viewer", () => {
           />
         );
 
-        cy.findAllByLabelText("container-content")
+        cy.findAllByLabelText("doc-viewer-container")
           .eq(0)
           .trigger("mousemove", { clientX: 100, clientY: 100, force: true });
 
-        cy.findAllByLabelText("container-content").eq(0).trigger("mousedown", {
-          clientX: 100,
-          clientY: 100,
-          button: 0,
-          force: true,
-        });
+        cy.findAllByLabelText("doc-viewer-container")
+          .eq(0)
+          .trigger("mousedown", {
+            clientX: 100,
+            clientY: 100,
+            button: 0,
+            force: true,
+          });
 
-        cy.findAllByLabelText("container-content")
+        cy.findAllByLabelText("doc-viewer-container")
           .eq(0)
           .trigger("mousemove", { clientX: 150, clientY: 150, force: true });
       });
