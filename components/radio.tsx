@@ -155,7 +155,6 @@ function Radio({
     id: id ? `${id}-${rest.value}` : null,
   });
 
-  console.log(inputId);
   const {
     bodyStyle,
     controlStyle,
