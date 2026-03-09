@@ -2074,11 +2074,40 @@ export const Accordion: Story = {
       >
         <List.Group id="log" title={"Logs"} actions={ACTIONS_GROUPS}>
           <List.Item
+            openable
             id={"log.id"}
-            hoverColor="white"
-            hoverBackgroundColor="#1F2937"
+            stateColors={{
+              selectedText: "white",
+              hoverText: "white",
+              hoverBackground: "#1F2937",
+              selectedBackground: "#1F2937",
+            }}
             title="Container has not been started yet"
-          />
+          >
+            <pre
+              style={{
+                margin: 0,
+                padding: 10,
+                paddingTop: 0,
+                fontSize: 12,
+                lineHeight: 1.6,
+              }}
+            >
+              {`[INFO] Initializing container runtime...
+[INFO] Checking image availability
+[WARN] Image not found locally
+[INFO] Pulling image from registry...
+[ERROR] Container failed to start
+
+Reason:
+  The container process exited before initialization.
+
+Suggestion:
+  • Verify the container image exists
+  • Check environment variables
+  • Review startup command configuration`}
+            </pre>
+          </List.Item>
         </List.Group>
       </List>
     );
