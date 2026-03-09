@@ -158,6 +158,9 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
 
     const resolvedSource = resolveSource(source);
 
+    // A standard "document" width — same ballpark as a PDF page at 1x scale
+    const DOCUMENT_BASE_WIDTH = 595;
+
     // For render for the first time to read pdf.
     useEffect(() => {
       if (!resolvedSource || !viewerRef.current) return;
@@ -248,10 +251,16 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
           const ctx = canvas.getContext("2d");
           if (!ctx) return;
 
-          canvas.width = img.width * scale;
-          canvas.height = img.height * scale;
-
+          canvas.width = img.naturalWidth;
+          canvas.height = img.naturalHeight;
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+          const displayWidth = DOCUMENT_BASE_WIDTH * scale;
+          const displayHeight =
+            (img.naturalHeight / img.naturalWidth) * displayWidth;
+          canvas.style.display = "block";
+          canvas.style.width = `${displayWidth}px`;
+          canvas.style.height = `${displayHeight}px`;
 
           const pageWrapper = document.createElement("div");
           pageWrapper.style.display = "flex";
@@ -415,11 +424,11 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
           const draw = () => {
             const ctx = canvas.getContext("2d");
             if (!ctx) return;
-            canvas.width = img.naturalWidth * scale;
-            canvas.height = img.naturalHeight * scale;
-            canvas.style.display = "block";
-            canvas.style.maxWidth = "100%";
-            canvas.style.height = "auto";
+            const aspectRatio = canvas.height / canvas.width;
+            const displayWidth = DOCUMENT_BASE_WIDTH * scale;
+            const displayHeight = displayWidth * aspectRatio;
+            canvas.style.width = `${displayWidth}px`;
+            canvas.style.height = `${displayHeight}px`;
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
           };
 
@@ -842,6 +851,7 @@ const ContainerDocumentViewer = styled.div<{ $containerStyle?: CSSProp }>`
 
 const Viewer = styled.div`
   min-height: 100%;
+  min-width: max-content;
   cursor: crosshair;
   user-select: none;
   padding: 20px;
