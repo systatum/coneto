@@ -20,6 +20,91 @@ const meta: Meta<typeof DocumentViewer> = {
   title: "Content/DocumentViewer",
   component: DocumentViewer,
   tags: ["autodocs"],
+  argTypes: {
+    source: {
+      description:
+        "Defines the document source using a builder function (pdf, image, file, or encodedString).",
+      control: false,
+      table: {
+        type: { summary: "DocumentSource" },
+      },
+    },
+    title: {
+      description: "Title displayed in the viewer toolbar.",
+      control: "text",
+      table: {
+        type: { summary: "string" },
+        defaultValue: { summary: "Document" },
+      },
+    },
+    onRegionSelected: {
+      description:
+        "Callback triggered when the user selects a region on the document.",
+      control: false,
+      table: {
+        type: { summary: "(region: BoundingBoxState) => void" },
+      },
+    },
+    boundingBoxes: {
+      description:
+        "List of bounding boxes displayed on the document with optional hover content.",
+      control: false,
+      table: {
+        type: { summary: "BoundingBoxesProps[]" },
+        defaultValue: { summary: "[]" },
+      },
+    },
+    initialZoom: {
+      description: "Initial zoom level when the document loads.",
+      control: "select",
+      options: [75, 100, 110, 120, 130, 140, 150],
+      table: {
+        type: {
+          summary: "75 | 100 | 110 | 120 | 130 | 140 | 150",
+        },
+        defaultValue: { summary: "100" },
+      },
+    },
+    totalPagesText: {
+      description:
+        "Custom renderer for displaying current page and total pages text.",
+      control: false,
+      table: {
+        type: {
+          summary:
+            "(data: { currentPage?: number; totalPages?: number }) => string",
+        },
+      },
+    },
+    libPdfJsWorkerSrc: {
+      description:
+        "Custom worker source URL used by pdf.js to load the PDF worker.",
+      control: "text",
+      table: {
+        type: { summary: "string" },
+        defaultValue: {
+          summary:
+            "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.54/pdf.worker.min.mjs",
+        },
+      },
+    },
+    zoomPlaceholderText: {
+      description: "Placeholder text displayed in the zoom combobox.",
+      control: "text",
+      table: {
+        type: { summary: "string" },
+        defaultValue: { summary: "zoom your pdf..." },
+      },
+    },
+    styles: {
+      description:
+        "Custom styling overrides for container, zoom combobox, and selection box.",
+      control: false,
+      table: {
+        type: { summary: "DocumentViewerStylesProps" },
+      },
+    },
+  },
 };
 
 export default meta;
@@ -277,11 +362,41 @@ export const PNG: Story = {
   render: () => {
     return (
       <DocumentViewer
-        title="Image"
+        title="Document Viewer with image()"
         source={({ image }) =>
           image("https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d")
         }
       />
+    );
+  },
+};
+
+export const WithFile: Story = {
+  render: () => {
+    const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+
+    useEffect(() => {
+      fetch("/architecture.jpg")
+        .then((res) => res.blob())
+        .then((blob) => {
+          const f = new File([blob], "architecture.jpg", {
+            type: "image/jpeg",
+          });
+          setUploadedFile(f);
+        });
+    }, []);
+
+    const source = useMemo<DocumentSource>(
+      () =>
+        ({ file: fileBuilder }) =>
+          fileBuilder(uploadedFile),
+      [uploadedFile]
+    );
+
+    if (!uploadedFile) return <div>Loading file...</div>;
+
+    return (
+      <DocumentViewer title="Document Viewer with file()" source={source} />
     );
   },
 };
@@ -298,7 +413,7 @@ export const Base64: Story = {
 
     return (
       <DocumentViewer
-        title="Image"
+        title="Document Viewer with encodedString()"
         source={({ encodedString }) => encodedString(base64, "png")}
       />
     );
