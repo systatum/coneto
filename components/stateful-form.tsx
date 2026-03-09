@@ -1158,6 +1158,7 @@ function FormFields<T extends FieldValues>({
                   id={field.id}
                   name={field.name}
                   helper={field.helper}
+                  value={formValues[field.name as keyof T] ?? ""}
                   onFileSelected={(e: File | undefined) => {
                     const file = e;
                     if (file instanceof File) {
