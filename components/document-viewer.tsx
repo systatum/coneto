@@ -7,6 +7,7 @@ import {
   forwardRef,
   useImperativeHandle,
   useReducer,
+  useMemo,
 } from "react";
 import styled, { css, type CSSProp } from "styled-components";
 import { Combobox } from "./combobox";
@@ -156,7 +157,10 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
       height?: number;
     } | null>(null);
 
-    const resolvedSource = resolveSource(source);
+    const resolvedSource = useMemo(
+      () => resolveSource(source),
+      [source, resolveSource]
+    );
 
     // A standard "document" width — same ballpark as a PDF page at 1x scale
     const DOCUMENT_BASE_WIDTH = 595;
@@ -284,7 +288,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
           setLoading(false);
         };
       }
-    }, [source]);
+    }, []);
 
     useEffect(() => {
       if (!viewerRef.current && selection) return;
@@ -620,25 +624,24 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
       <PDFViewerContainer>
         <ToolbarWrapper>
           <Title>{title}</Title>
-          <ComboboxWrapper>
-            <Combobox
-              strict
-              selectedOptions={scaleValue}
-              onChange={handleScale}
-              placeholder={zoomPlaceholderText}
-              styles={{
-                containerStyle: css`
-                  width: 100px;
-                  color: black;
-                `,
-                selectboxStyle: css`
-                  background-color: white;
-                  ${styles?.zoomStyle}
-                `,
-              }}
-              options={SCALE_OPTIONS}
-            />
-          </ComboboxWrapper>
+          <Combobox
+            strict
+            selectedOptions={scaleValue}
+            onChange={handleScale}
+            placeholder={zoomPlaceholderText}
+            styles={{
+              containerStyle: css`
+                width: 100px;
+                color: black;
+              `,
+              selectboxStyle: css`
+                width: 100px;
+                background-color: white;
+                ${styles?.zoomStyle}
+              `,
+            }}
+            options={SCALE_OPTIONS}
+          />
           {resolvedSource.type === "pdf" && (
             <div
               style={{
@@ -818,15 +821,6 @@ const Title = styled.div`
   width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
-`;
-
-const ComboboxWrapper = styled.div`
-  display: flex;
-  position: relative;
-  justify-content: center;
-  width: fit-content;
-  align-content: center;
-  gap: 4px;
 `;
 
 const StatusText = styled.div`
