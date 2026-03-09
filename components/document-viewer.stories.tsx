@@ -4,8 +4,9 @@ import {
   BoundingBoxState,
   DocumentViewerRef,
   DocumentViewer,
+  DocumentSource,
 } from "./document-viewer";
-import { ReactElement, useEffect, useRef, useState } from "react";
+import { ReactElement, useEffect, useMemo, useRef, useState } from "react";
 import { StatefulOnChangeType } from "./stateful-form";
 import { Button } from "./button";
 import { Textbox } from "./textbox";
@@ -13,6 +14,7 @@ import styled, { css } from "styled-components";
 import { Window } from "./window";
 import { ColumnTableProps, Table } from "./table";
 import { createPortal } from "react-dom";
+import { urlToBase64 } from "./../lib/base64";
 
 const meta: Meta<typeof DocumentViewer> = {
   title: "Content/DocumentViewer",
@@ -210,6 +212,13 @@ export const Pdf: Story = {
       </ContentViewer>
     );
 
+    const source = useMemo<DocumentSource>(
+      () =>
+        ({ pdf }) =>
+          pdf("/sample.pdf"),
+      []
+    );
+
     return (
       <>
         <Window
@@ -233,7 +242,7 @@ export const Pdf: Story = {
               }}
               title="Team Collaboration Notes"
               boundingBoxes={boundingBoxes}
-              source={({ pdf }) => pdf("/sample.pdf")}
+              source={source}
             />
           </Window.Cell>
           <Window.Cell
@@ -279,19 +288,6 @@ export const PNG: Story = {
 
 export const Base64: Story = {
   render: () => {
-    async function urlToBase64(url: string): Promise<string> {
-      const response = await fetch(url);
-      const blob = await response.blob();
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          const base64 = (reader.result as string).split(",")[1];
-          resolve(base64);
-        };
-        reader.readAsDataURL(blob);
-      });
-    }
-
     const [base64, setBase64] = useState<string | null>(null);
 
     useEffect(() => {

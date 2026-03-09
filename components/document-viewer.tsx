@@ -157,10 +157,9 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
       height?: number;
     } | null>(null);
 
-    const resolvedSource = useMemo(
-      () => resolveSource(source),
-      [source, resolveSource]
-    );
+    const resolvedSource = useMemo(() => resolveSource(source), [source]);
+
+    const prevResolvedSource = useRef<ResolvedSource | null>(null);
 
     // A standard "document" width — same ballpark as a PDF page at 1x scale
     const DOCUMENT_BASE_WIDTH = 595;
@@ -169,6 +168,9 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
     useEffect(() => {
       if (!resolvedSource || !viewerRef.current) return;
 
+      if (prevResolvedSource.current === resolvedSource) return;
+
+      prevResolvedSource.current = resolvedSource;
       setLoading(true);
       setError(null);
 
@@ -288,7 +290,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
           setLoading(false);
         };
       }
-    }, []);
+    }, [resolvedSource]);
 
     useEffect(() => {
       if (!viewerRef.current && selection) return;
