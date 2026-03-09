@@ -152,9 +152,10 @@ function Radio({
   const inputId = StatefulForm.sanitizeId({
     prefix: `radio-${rest.value}`,
     name,
-    id: `${id}-${rest.value}`,
+    id: id ? `${id}-${rest.value}` : null,
   });
 
+  console.log(inputId);
   const {
     bodyStyle,
     controlStyle,
