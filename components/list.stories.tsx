@@ -133,6 +133,23 @@ This object allows you to override styles for specific parts:
 
 Each field accepts a \`CSSProp\` (styled-components compatible).
     `,
+      colors: {
+        control: false,
+        description: `
+Custom colors for interaction states of the **List.Item** component.
+
+This property allows you to override the text and background colors when the item is hovered or selected.
+
+Available fields:
+
+- **hoverText** – Text color applied when the item is hovered.
+- **hoverBackground** – Background color applied when the item is hovered.
+- **selectedText** – Text color applied when the item is selected or opened.
+- **selectedBackground** – Background color applied when the item is selected or opened.
+
+All values accept any valid CSS color.
+`,
+      },
     },
   },
 };
@@ -2076,7 +2093,7 @@ export const Accordion: Story = {
           <List.Item
             openable
             id={"log.id"}
-            stateColors={{
+            colors={{
               selectedText: "white",
               hoverText: "white",
               hoverBackground: "#1F2937",

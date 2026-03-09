@@ -855,10 +855,10 @@ export interface ListItemProps {
   };
   leftSideContent?: ReactNode;
   styles?: ListItemStylesProps;
-  stateColors?: ListItemstateColorsState;
+  colors?: ListItemcolorsState;
 }
 
-export interface ListItemstateColorsState {
+export interface ListItemcolorsState {
   hoverText?: string;
   hoverBackground?: string;
   selectedText?: string;
@@ -882,7 +882,7 @@ type DivProps = Omit<
 
 interface ListItemInternal
   extends DivProps,
-    Omit<ListItemProps, "leftSideContent" | "onClick"> {
+    Omit<ListItemProps, "leftSideContent" | "onClick" | "color"> {
   leftSideContent?: (props?: LeftSideContentMenuProps) => React.ReactNode;
   onClick?: (e?: React.MouseEvent<HTMLDivElement>) => void;
 }
@@ -912,7 +912,7 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
       openable,
       leftSideContent,
       styles,
-      stateColors,
+      colors,
       ...props
     },
     ref
@@ -951,16 +951,16 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
         aria-label="list-item-wrapper"
         $openable={openable && isChildOpened}
         $style={styles?.containerStyle}
-        $selectedBackground={stateColors?.selectedBackground}
-        $selectedText={stateColors?.selectedText}
+        $selectedBackground={colors?.selectedBackground}
+        $selectedText={colors?.selectedText}
       >
         <ListItemRow
           {...domProps}
           $isHovered={isHovered === idFullname || openTipRowId === idFullname}
           $style={styles?.rowStyle}
           aria-label="list-item-row"
-          $hoverColor={stateColors?.hoverText}
-          $hoverBackgroundColor={stateColors?.hoverBackground}
+          $hoverColor={colors?.hoverText}
+          $hoverBackgroundColor={colors?.hoverBackground}
           draggable={draggable}
           onClick={() => {
             if (onClick) {
