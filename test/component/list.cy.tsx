@@ -119,6 +119,64 @@ describe("List", () => {
     },
   ];
 
+  context("hover in the List.Item level", () => {
+    context("when given hoverColor", () => {
+      it("should render the text color when hovered", () => {
+        cy.mount(
+          <List
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 500px;
+              `,
+            }}
+          >
+            <List.Group id="log" title={"Logs"}>
+              <List.Item
+                id={"log.id"}
+                hoverColor="white"
+                hoverBackgroundColor="#1F2937"
+                title="Container has not been started yet"
+              />
+            </List.Group>
+          </List>
+        );
+
+        cy.findAllByLabelText("list-item-row")
+          .eq(0)
+          .trigger("mouseover")
+          .should("have.css", "color", "rgb(255, 255, 255)");
+      });
+    });
+
+    context("when given hoverBackgroundColor", () => {
+      it("should render the background color when hovered", () => {
+        cy.mount(
+          <List
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 500px;
+              `,
+            }}
+          >
+            <List.Group id="log" title={"Logs"}>
+              <List.Item
+                id={"log.id"}
+                hoverColor="white"
+                hoverBackgroundColor="#1F2937"
+                title="Container has not been started yet"
+              />
+            </List.Group>
+          </List>
+        );
+        cy.findAllByLabelText("list-item-row")
+          .eq(0)
+          .trigger("mouseover")
+          .should("have.css", "background-color", "rgb(31, 41, 55)");
+      });
+    });
+  });
   context("maxItems", () => {
     context("when given 2", () => {
       it("shows only the first 2 items", () => {
