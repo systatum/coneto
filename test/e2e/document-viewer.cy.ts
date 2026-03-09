@@ -2,7 +2,7 @@ import { getIdContent } from "test/support/commands";
 
 describe("DocumentViewer", () => {
   beforeEach(() => {
-    cy.visit(getIdContent("content-documentviewer--default"));
+    cy.visit(getIdContent("content-documentviewer--pdf"));
     cy.wait(1000);
   });
 
