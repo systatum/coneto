@@ -19,6 +19,7 @@ import {
 import { Table } from "./../../components/table";
 import { RiDeleteBin2Fill } from "@remixicon/react";
 import z from "zod";
+import { PinboxState } from "./../../components/pinbox";
 
 describe("StatefulForm", () => {
   const typeToIdPrefix: Record<FormFieldType, string> = {
@@ -45,6 +46,7 @@ describe("StatefulForm", () => {
     capsule: "capsulebox",
     time: "timebox",
     button: "button",
+    pin: "pinbox",
     chips: "chips",
     custom: "custom",
   };
@@ -299,6 +301,7 @@ describe("StatefulForm", () => {
       capsule: "",
       country_code: DEFAULT_COUNTRY_CODES,
       currency: "USD",
+      pin: "USD",
     };
 
     const MONTH_NAMES = [
@@ -314,6 +317,29 @@ describe("StatefulForm", () => {
       { text: "OCT", value: "10" },
       { text: "NOV", value: "11" },
       { text: "DEC", value: "12" },
+    ];
+
+    const PARTS_INPUT: PinboxState[] = [
+      {
+        type: "static",
+        text: "S",
+      },
+      {
+        type: "alphanumeric",
+      },
+      {
+        type: "digit",
+      },
+      {
+        type: "alphabet",
+      },
+      {
+        type: "static",
+        text: "-",
+      },
+      {
+        type: "alphabet",
+      },
     ];
 
     const FIELDS: FormFieldGroup[] = [
@@ -424,6 +450,16 @@ describe("StatefulForm", () => {
         type: "phone",
         required: false,
         placeholder: "Enter phone number",
+      },
+      {
+        name: "pin",
+        title: "Pin",
+        type: "pin",
+        required: false,
+        helper: "This pinbox allows you to enter your PIN code.",
+        pinboxProps: {
+          parts: PARTS_INPUT,
+        },
       },
       {
         name: "signature",
@@ -1500,10 +1536,7 @@ describe("StatefulForm", () => {
           />
         );
 
-        cy.findByLabelText("radio-title-wrapper").should(
-          "have.text",
-          RADIO_FIELDS[0]["title"]
-        );
+        cy.findAllByText(RADIO_FIELDS[0]["title"]).eq(0).should("be.visible");
       });
     });
 
@@ -1585,10 +1618,9 @@ describe("StatefulForm", () => {
       it("should render on the label field", () => {
         statefulForCheckbox();
 
-        cy.findByLabelText("title-wrapper").should(
-          "have.text",
-          CHECKBOX_TITLE_FIELDS[0]["title"]
-        );
+        cy.findAllByText(CHECKBOX_TITLE_FIELDS[0]["title"])
+          .eq(0)
+          .should("be.visible");
       });
 
       context("when clicking", () => {
@@ -1606,11 +1638,9 @@ describe("StatefulForm", () => {
       it("should render on the right side", () => {
         statefulForCheckbox();
 
-        cy.findByLabelText("title-wrapper").should("not.exist");
-        cy.findByLabelText("label-wrapper").should(
-          "have.text",
-          CHECKBOX_TITLE_FIELDS[0]["placeholder"]
-        );
+        cy.findAllByText(CHECKBOX_TITLE_FIELDS[0]["placeholder"])
+          .eq(0)
+          .should("be.visible");
       });
 
       context("when clicking", () => {

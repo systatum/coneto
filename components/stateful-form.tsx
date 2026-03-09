@@ -494,6 +494,7 @@ function FormFields<T extends FieldValues>({
                     <Pinbox
                       key={index}
                       id={field.id}
+                      name={field.name}
                       label={field.title}
                       value={controllerField.value ?? ""}
                       helper={field.helper}
