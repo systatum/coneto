@@ -48,16 +48,22 @@ function ChoiceGroup({ children, styles }: ChoiceGroupProps) {
           ...(isRadioButton
             ? {
                 styles: {
-                  containerStyle:
-                    componentChild.props.styles?.containerStyle ??
-                    css`
-                      border: 0.5px solid rgba(229, 231, 235, 0.6);
-                      border-radius: 4px;
-                      overflow: hidden;
-                    `,
+                  containerStyle: css`
+                    border: 0.5px solid rgba(229, 231, 235, 0.6);
+                    border-radius: 4px;
+                    overflow: hidden;
+                    ${componentChild.props.styles?.containerStyle}
+                  `,
                 },
               }
-            : {}),
+            : {
+                styles: {
+                  labelStyle: css`
+                    font-size: 14px;
+                    ${componentChild.props.styles?.labelStyle}
+                  `,
+                },
+              }),
         });
 
         return (
@@ -116,7 +122,7 @@ const ChoiceGroupDivider = styled.div<{
 `;
 
 function isRadioElement(
-  el: ReactElement<RadioProps | CheckboxProps>
+  el: ReactElement<RadioProps>
 ): el is ReactElement<RadioProps> {
   return "mode" in el.props;
 }
