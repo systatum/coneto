@@ -8,11 +8,12 @@ import React, {
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { motion } from "framer-motion";
-import { RemixiconComponentType, RiArrowRightSLine } from "@remixicon/react";
+import { RiArrowRightSLine } from "@remixicon/react";
 import ContextMenu from "./context-menu";
 import { TipMenuItemProps } from "./tip-menu";
 import { Tooltip, TooltipRef } from "./tooltip";
 import { ActionButton, ActionButtonProps } from "./action-button";
+import { Figure, FigureProps } from "./figure";
 
 export interface NavTabProps {
   tabs?: NavTabContentProps[];
@@ -54,8 +55,7 @@ export interface NavTabContentProps {
 export interface NavTabSubItemsContentProps {
   id: string;
   caption: string;
-  icon?: RemixiconComponentType;
-  iconColor?: string;
+  icon?: FigureProps;
   onClick?: () => void;
   content?: ReactNode;
 }
@@ -251,9 +251,7 @@ function NavTab({
                           }}
                           $subMenu={true}
                         >
-                          {item.icon && (
-                            <item.icon size={16} color={item.iconColor} />
-                          )}
+                          {item.icon && <Figure {...item.icon} />}
                           {item.caption}
                         </NavTabItem>
                       ))}

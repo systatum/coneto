@@ -425,14 +425,11 @@ export const Deletable: Story = {
       })(),
       actions: [
         {
-          icon: RiCloseLine,
+          image: RiCloseLine,
           onClick: (badge) => {
             console.log(badge);
           },
           size: 16,
-          style: css`
-            opacity: 0;
-          `,
         },
       ],
     }));
@@ -615,7 +612,7 @@ export const Deletable: Story = {
         }}
         onOptionClicked={handleOptionClicked}
         selectedOptions={inputValue.selectedOptions}
-        options={BADGE_OPTIONS as BadgeProps[]}
+        options={BADGE_OPTIONS}
         missingOptionForm={MissingOptionForm}
         creatable
       />
@@ -664,7 +661,7 @@ export const CustomRenderer: Story = {
       })(),
       actions: [
         {
-          icon: RiCloseLine,
+          icon: { image: RiCloseLine },
           onClick: (badge) => {
             console.log(badge);
           },

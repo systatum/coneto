@@ -1,7 +1,7 @@
 import { getIdContent } from "test/support/commands";
 
-context("Crumb Component", () => {
-  describe("Default", () => {
+describe("Crumb", () => {
+  context("default", () => {
     beforeEach(() => {
       cy.visit(getIdContent("controls-crumb--default"));
     });
@@ -59,7 +59,7 @@ context("Crumb Component", () => {
     });
   });
 
-  describe("Custom", () => {
+  context("custom", () => {
     beforeEach(() => {
       cy.visit(getIdContent("controls-crumb--custom"));
     });
@@ -121,7 +121,7 @@ context("Crumb Component", () => {
     });
   });
 
-  describe("OneData", () => {
+  context("OneData", () => {
     beforeEach(() => {
       cy.visit(getIdContent("controls-crumb--one-data"));
     });

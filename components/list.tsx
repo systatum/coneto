@@ -1,5 +1,4 @@
 import {
-  RemixiconComponentType,
   RiArrowDownSLine,
   RiArrowRightSLine,
   RiDraggable,
@@ -29,6 +28,7 @@ import styled, { css, CSSProp } from "styled-components";
 import ContextMenu, { ContextMenuActionsProps } from "./context-menu";
 import { ActionButton, ActionButtonProps } from "./action-button";
 import { OverlayBlocker } from "./overlay-blocker";
+import { FigureProps } from "./figure";
 
 export interface ListProps extends ListMaxItemsProp {
   searchable?: boolean;
@@ -102,7 +102,7 @@ const DnDContext = createContext<{
       title: ReactNode | string;
       subtitle: string;
       imageUrl?: string;
-      leftIcon?: RemixiconComponentType;
+      leftIcon?: FigureProps["image"];
     };
   }) => void;
   onDragged?: ListProps["onDragged"];
@@ -838,7 +838,7 @@ export interface ListItemProps {
   title?: ReactNode;
   subtitle?: string;
   imageUrl?: string;
-  leftIcon?: RemixiconComponentType | null;
+  leftIcon?: FigureProps["image"] | null;
   draggable?: boolean;
   groupId?: string;
   selectable?: boolean;

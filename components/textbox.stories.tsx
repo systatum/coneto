@@ -58,7 +58,7 @@ const meta: Meta<typeof Textbox> = {
           summary: `TextboxActionsProps[]`,
           detail: `{
   title?: string;
-  icon?: RemixiconComponentType;
+  icon?: FigureProps;
   iconColor?: string;
   onClick?: (e: React.MouseEvent) => void;
   disabled?: boolean;

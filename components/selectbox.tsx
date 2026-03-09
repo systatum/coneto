@@ -24,7 +24,6 @@ import {
   useInteractions,
 } from "@floating-ui/react";
 import {
-  RemixiconComponentType,
   RiArrowDownSLine,
   RiArrowUpSLine,
   RiCloseLine,
@@ -32,6 +31,7 @@ import {
 import styled, { css, CSSProp } from "styled-components";
 import { isValidDateString } from "../lib/date";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { FigureProps } from "./figure";
 import { StatefulForm } from "./stateful-form";
 
 export type SelectboxSelectedOptions = number | string | number[] | string[];
@@ -42,8 +42,8 @@ interface BaseSelectboxProps
   selectedOptions?: SelectboxSelectedOptions;
   onChange?: (selectedOptions: SelectboxSelectedOptions) => void;
   placeholder?: string;
-  iconOpened?: RemixiconComponentType;
-  iconClosed?: RemixiconComponentType;
+  iconOpened?: FigureProps["image"];
+  iconClosed?: FigureProps["image"];
   type?: "calendar" | "default";
   clearable?: boolean;
   highlightOnMatch?: boolean;
@@ -408,8 +408,8 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
                 (opt) => opt.text === selectedOptionsLocal.text
               );
 
-              const matchedValue = String(matched.value);
               if (matched) {
+                const matchedValue = String(matched.value);
                 setConfirmedValue(matched);
                 setSelectedOptionsLocal(matched);
                 if (multiple) {

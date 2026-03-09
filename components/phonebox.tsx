@@ -18,7 +18,6 @@ import {
   Placement,
 } from "@floating-ui/react";
 import {
-  RemixiconComponentType,
   RiArrowDownSLine,
   RiArrowUpSLine,
   RiSearchLine,
@@ -27,6 +26,7 @@ import { COUNTRY_CODES } from "../constants/countries";
 import { AsYouType, CountryCode } from "libphonenumber-js/max";
 import styled, { css, CSSProp } from "styled-components";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { Figure } from "./figure";
 import { StatefulForm } from "./stateful-form";
 
 export interface CountryCodeProps {
@@ -243,7 +243,11 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
           >
             <span>{selectedCountry.flag}</span>
             <span>{selectedCountry.code}</span>
-            {isOpen ? <ArrowUp /> : <ArrowDown />}
+            {isOpen ? (
+              <Figure image={RiArrowUpSLine} />
+            ) : (
+              <Figure image={RiArrowDownSLine} />
+            )}
           </CountryButton>
 
           <PhoneInput
@@ -481,15 +485,6 @@ const CountryButton = styled.button<{
 
   ${({ $style }) => $style}
 `;
-
-const IconStyled = (icon: RemixiconComponentType) => styled(icon)`
-  width: 1rem;
-  height: 1rem;
-  color: #6b7280;
-`;
-
-const ArrowUp = IconStyled(RiArrowUpSLine);
-const ArrowDown = IconStyled(RiArrowDownSLine);
 
 const PhoneInput = styled.input<{ $disabled?: boolean; $style?: CSSProp }>`
   width: 100%;

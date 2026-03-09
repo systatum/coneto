@@ -295,7 +295,7 @@ export const WithSubItems: Story = {
         subItems: [
           {
             id: "2-1",
-            icon: RiTable2,
+            icon: { image: RiTable2 },
             caption: "Table View",
             content: (
               <div
@@ -327,7 +327,7 @@ export const WithSubItems: Story = {
           },
           {
             id: "2-2",
-            icon: RiCharacterRecognitionLine,
+            icon: { image: RiCharacterRecognitionLine },
             caption: "Chart",
             content: "This is chart content",
           },

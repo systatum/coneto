@@ -45,7 +45,7 @@ const meta: Meta<typeof Textarea> = {
           summary: `TextareaActionsProps[]`,
           detail: `{
   title?: string;
-  icon?: RemixiconComponentType;
+  icon?: FigureProps;
   iconColor?: string;
   onClick?: (e: React.MouseEvent) => void;
   disabled?: boolean;

@@ -383,26 +383,16 @@ export const WithCheckbox: StoryCheckbox = {
       },
     ];
 
-    const [selected, setSelected] = useState({
-      checked: [] as CheckboxOptionsProps[],
-    });
+    const [selected, setSelected] = useState([]);
 
     const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
-      const { name, value: inputValue, checked, type } = e.target;
+      const { value } = e.target;
 
-      if (type === "checkbox") {
-        const parsed = JSON.parse(inputValue);
-        setSelected((prev) => ({
-          ...prev,
-          [name]: checked
-            ? [...prev[name], parsed]
-            : prev[name].filter(
-                (val: CheckboxOptionsProps) => val.value !== parsed.value
-              ),
-        }));
-      } else {
-        setSelected((prev) => ({ ...prev, [name]: inputValue }));
-      }
+      setSelected((prev) =>
+        prev.includes(value)
+          ? prev.filter((val) => val !== value)
+          : [...prev, value]
+      );
     };
 
     return (
@@ -410,13 +400,11 @@ export const WithCheckbox: StoryCheckbox = {
         {CHECKBOX_OPTIONS.map((option, index) => (
           <Checkbox
             key={index}
-            name="checked"
-            value={JSON.stringify(option)}
+            value={option.value}
             description={option.description}
+            name={option.label}
             label={option.label}
-            checked={selected.checked.some(
-              (item) => item.value === option.value
-            )}
+            checked={selected.some((item) => item === option.value)}
             onChange={onChangeValue}
           />
         ))}
