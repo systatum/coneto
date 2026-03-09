@@ -24,7 +24,7 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+export const Pdf: Story = {
   render: () => {
     const ref = useRef<DocumentViewerRef>(null);
 
@@ -233,14 +233,16 @@ export const Default: Story = {
               }}
               title="Team Collaboration Notes"
               boundingBoxes={boundingBoxes}
-              source="/sample.pdf"
+              source={({ pdf }) => pdf("/sample.pdf")}
             />
           </Window.Cell>
           <Window.Cell
-            style={css`
-              padding-top: 6px;
-              background-color: white;
-            `}
+            styles={{
+              self: css`
+                padding-top: 6px;
+                background-color: white;
+              `,
+            }}
           >
             <Table columns={columns}>
               {boundingBoxes.map((data, index) => (
@@ -258,6 +260,51 @@ export const Default: Story = {
         </Window>
         {popupVisibility && createPortal(commentPopUp, document.body)}
       </>
+    );
+  },
+};
+
+export const PNG: Story = {
+  render: () => {
+    return (
+      <DocumentViewer
+        title="Image"
+        source={({ image }) =>
+          image("https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d")
+        }
+      />
+    );
+  },
+};
+
+export const Base64: Story = {
+  render: () => {
+    async function urlToBase64(url: string): Promise<string> {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64 = (reader.result as string).split(",")[1];
+          resolve(base64);
+        };
+        reader.readAsDataURL(blob);
+      });
+    }
+
+    const [base64, setBase64] = useState<string | null>(null);
+
+    useEffect(() => {
+      urlToBase64(
+        "https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d"
+      ).then(setBase64);
+    }, []);
+
+    return (
+      <DocumentViewer
+        title="Image"
+        source={({ encodedString }) => encodedString(base64, "png")}
+      />
     );
   },
 };
