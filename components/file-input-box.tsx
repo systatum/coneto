@@ -180,7 +180,7 @@ function FileInputBox({
   ...rest
 }: FileInputBoxProps) {
   const inputId = StatefulForm.sanitizeId({
-    prefix: "FileInputBox",
+    prefix: "file-input-box",
     name,
     id,
   });
