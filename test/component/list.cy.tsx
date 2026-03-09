@@ -163,28 +163,96 @@ describe("List", () => {
     });
   });
 
-  context("hover in the List.Item level", () => {
-    context("when given hoverColor", () => {
+  context("colors in the List.Item level", () => {
+    function ListItemWithColors() {
+      const ACTIONS_GROUPS: ListGroupActionsProps[] = [
+        {
+          caption: "Refresh",
+          onClick: (id: string) => {
+            console.log(`action was added ${id}`);
+          },
+        },
+      ];
+
+      return (
+        <List
+          styles={{
+            containerStyle: css`
+              padding: 16px;
+              min-width: 500px;
+            `,
+          }}
+        >
+          <List.Group id="log" title={"Logs"} actions={ACTIONS_GROUPS}>
+            <List.Item
+              openable
+              id={"log.id"}
+              colors={{
+                selectedText: "white",
+                hoverText: "white",
+                hoverBackground: "#1F2937",
+                selectedBackground: "#1F2937",
+              }}
+              title="Container has not been started yet"
+            >
+              <pre
+                style={{
+                  margin: 0,
+                  padding: 10,
+                  paddingTop: 0,
+                  fontSize: 12,
+                  lineHeight: 1.6,
+                }}
+              >
+                {`[INFO] Initializing container runtime...
+  [INFO] Checking image availability
+  [WARN] Image not found locally
+  [INFO] Pulling image from registry...
+  [ERROR] Container failed to start
+  
+  Reason:
+    The container process exited before initialization.
+  
+  Suggestion:
+    • Verify the container image exists
+    • Check environment variables
+    • Review startup command configuration`}
+              </pre>
+            </List.Item>
+          </List.Group>
+        </List>
+      );
+    }
+
+    context("when given openable true", () => {
+      context("when given color selectedText", () => {
+        it("should render text color after clicked", () => {
+          cy.mount(<ListItemWithColors />);
+
+          cy.findAllByLabelText("list-item-wrapper")
+            .eq(0)
+            .should("not.have.css", "color", "rgb(255, 255, 255)")
+            .click()
+            .should("have.css", "color", "rgb(255, 255, 255)");
+        });
+      });
+
+      context("when given color selectedBackground", () => {
+        it("should render background color after clicked", () => {
+          cy.mount(<ListItemWithColors />);
+
+          cy.findAllByLabelText("list-item-wrapper")
+            .eq(0)
+            .should("not.have.css", "background-color", "rgb(31, 41, 55)")
+            .click()
+            .should("have.css", "background-color", "rgb(31, 41, 55)");
+        });
+      });
+    });
+
+    context("when given hoverText", () => {
       it("should render the text color when hovered", () => {
-        cy.mount(
-          <List
-            styles={{
-              containerStyle: css`
-                padding: 16px;
-                min-width: 500px;
-              `,
-            }}
-          >
-            <List.Group id="log" title={"Logs"}>
-              <List.Item
-                id={"log.id"}
-                hoverColor="white"
-                hoverBackgroundColor="#1F2937"
-                title="Container has not been started yet"
-              />
-            </List.Group>
-          </List>
-        );
+        cy.mount(<ListItemWithColors />);
 
         cy.findAllByLabelText("list-item-row")
           .eq(0)
@@ -195,25 +263,8 @@ describe("List", () => {
 
     context("when given hoverBackgroundColor", () => {
       it("should render the background color when hovered", () => {
-        cy.mount(
-          <List
-            styles={{
-              containerStyle: css`
-                padding: 16px;
-                min-width: 500px;
-              `,
-            }}
-          >
-            <List.Group id="log" title={"Logs"}>
-              <List.Item
-                id={"log.id"}
-                hoverColor="white"
-                hoverBackgroundColor="#1F2937"
-                title="Container has not been started yet"
-              />
-            </List.Group>
-          </List>
-        );
+        cy.mount(<ListItemWithColors />);
+
         cy.findAllByLabelText("list-item-row")
           .eq(0)
           .trigger("mouseover")
@@ -221,6 +272,7 @@ describe("List", () => {
       });
     });
   });
+
   context("maxItems", () => {
     context("when given 2", () => {
       it("shows only the first 2 items", () => {
