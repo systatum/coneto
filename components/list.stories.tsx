@@ -635,13 +635,13 @@ export const ReactNodeTitle: Story = {
 
     interface InputValueProps {
       search: string;
-      checked: ListItemProps[];
+      checked: string[];
       value: { id: string; value: string }[];
     }
 
     const [inputValue, setInputValue] = useState<InputValueProps>({
       search: "",
-      checked: [] as ListItemProps[],
+      checked: [],
       value: [],
     });
 
@@ -677,16 +677,19 @@ export const ReactNodeTitle: Story = {
     }, [inputValue.search, groups]);
 
     const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
-      const { name, value: inputValue, checked, type } = e.target;
+      const { name, value, checked, type } = e.target;
 
       if (type === "checkbox") {
-        const parsed = JSON.parse(inputValue);
-        setInputValue((prev) => ({
-          ...prev,
-          [name]: checked
-            ? [...prev[name], parsed]
-            : prev[name].filter((val: ListItemProps) => val.id !== parsed.id),
-        }));
+        setInputValue((prev) => {
+          const current: string[] = prev[name] ?? [];
+
+          return {
+            ...prev,
+            [name]: checked
+              ? [...current, value]
+              : current.filter((val) => val !== value),
+          };
+        });
       } else {
         setInputValue((prev) => ({ ...prev, [name]: inputValue }));
       }
@@ -870,13 +873,9 @@ export const ReactNodeTitle: Story = {
                       onSelected={onChangeValue}
                       selectedOptions={{
                         checked: inputValue.checked.some(
-                          (check) => check.id === list.id
+                          (check) => check === list.id
                         ),
-                        value: JSON.stringify({
-                          id: list.id,
-                          title: list.title,
-                          subtitle: list.subtitle,
-                        }),
+                        value: list.id,
                       }}
                     />
                   );
@@ -909,7 +908,7 @@ export const WithSubcontent: Story = {
 
     interface InputValueProps {
       search: string;
-      checked: ListItemProps[];
+      checked: string[];
       value: { id: string; value: string }[];
       statefulValue: { id: string; value: string }[];
     }
@@ -959,15 +958,18 @@ export const WithSubcontent: Story = {
         const { name, value, checked, type } = e.target;
 
         if (type === "checkbox") {
-          const parsed = JSON.parse(value);
-          setInputValue((prev) => ({
-            ...prev,
-            [name]: checked
-              ? [...prev[name], parsed]
-              : prev[name].filter((v: ListItemProps) => v.id !== parsed.id),
-          }));
+          setInputValue((prev) => {
+            const current: string[] = prev[name] ?? [];
+
+            return {
+              ...prev,
+              [name]: checked
+                ? [...current, value]
+                : current.filter((val) => val !== value),
+            };
+          });
         } else {
-          setInputValue((prev) => ({ ...prev, [name]: value }));
+          setInputValue((prev) => ({ ...prev, [name]: inputValue }));
         }
       };
 
@@ -1066,7 +1068,7 @@ export const WithSubcontent: Story = {
               statefulValue: prev.statefulValue.filter(
                 (v) => v.id !== selectedByFormFieldsGroup[1]
               ),
-              checked: prev.checked.filter((v) => v.id !== itemId),
+              checked: prev.checked.filter((v) => v !== itemId),
             }));
           },
         },
@@ -1175,13 +1177,9 @@ export const WithSubcontent: Story = {
                           onSelected={listAny.onChangeValue}
                           selectedOptions={{
                             checked: listAny.inputValue.checked.some(
-                              (check) => check.id === list.id
+                              (check) => check === list.id
                             ),
-                            value: JSON.stringify({
-                              id: list.id,
-                              title: list.title,
-                              subtitle: list.subtitle,
-                            }),
+                            value: list.id,
                           }}
                         >
                           {listAny.inputValue.statefulValue.map((item) => {
@@ -1324,13 +1322,9 @@ export const WithSubcontent: Story = {
                           onSelected={listWithOnlyOne.onChangeValue}
                           selectedOptions={{
                             checked: listWithOnlyOne.inputValue.checked.some(
-                              (check) => check.id === list.id
+                              (check) => check === list.id
                             ),
-                            value: JSON.stringify({
-                              id: list.id,
-                              title: list.title,
-                              subtitle: list.subtitle,
-                            }),
+                            value: list.id,
                           }}
                         >
                           {listWithOnlyOne.inputValue.statefulValue.map(
@@ -1682,7 +1676,7 @@ export const CustomOpener: Story = {
     const [groups, setGroups] = useState<ListGroupContentProps[]>(LIST_GROUPS);
     const [value, setValue] = useState({
       search: "",
-      checked: [] as ListItemProps[],
+      checked: [],
     });
 
     const filteredContent = useMemo(() => {
@@ -1717,18 +1711,21 @@ export const CustomOpener: Story = {
     }, [value.search, groups]);
 
     const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
-      const { name, value: inputValue, checked, type } = e.target;
+      const { name, value, checked, type } = e.target;
 
       if (type === "checkbox") {
-        const parsed = JSON.parse(inputValue);
-        setValue((prev) => ({
-          ...prev,
-          [name]: checked
-            ? [...prev[name], parsed]
-            : prev[name].filter((val: ListItemProps) => val.id !== parsed.id),
-        }));
+        setValue((prev) => {
+          const current: string[] = prev[name] ?? [];
+
+          return {
+            ...prev,
+            [name]: checked
+              ? [...current, value]
+              : current.filter((val) => val !== value),
+          };
+        });
       } else {
-        setValue((prev) => ({ ...prev, [name]: inputValue }));
+        setValue((prev) => ({ ...prev, [name]: value }));
       }
     };
 
@@ -1856,14 +1853,8 @@ export const CustomOpener: Story = {
                       },
                     ]}
                     selectedOptions={{
-                      checked: value.checked.some(
-                        (check) => check.id === list.id
-                      ),
-                      value: JSON.stringify({
-                        id: list.id,
-                        title: list.title,
-                        subtitle: list.subtitle,
-                      }),
+                      checked: value.checked.some((check) => check === list.id),
+                      value: list.id,
                     }}
                   />
                 ))}
@@ -1943,22 +1934,25 @@ export const WithMaxItems: Story = {
 
     const [value, setValue] = useState({
       search: "",
-      checked: [] as ListItemProps[],
+      checked: [],
     });
 
     const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
-      const { name, value: inputValue, checked, type } = e.target;
+      const { name, value, checked, type } = e.target;
 
       if (type === "checkbox") {
-        const parsed = JSON.parse(inputValue);
-        setValue((prev) => ({
-          ...prev,
-          [name]: checked
-            ? [...prev[name], parsed]
-            : prev[name].filter((val: ListItemProps) => val.id !== parsed.id),
-        }));
+        setValue((prev) => {
+          const current: string[] = prev[name] ?? [];
+
+          return {
+            ...prev,
+            [name]: checked
+              ? [...current, value]
+              : current.filter((val) => val !== value),
+          };
+        });
       } else {
-        setValue((prev) => ({ ...prev, [name]: inputValue }));
+        setValue((prev) => ({ ...prev, [name]: value }));
       }
     };
 
@@ -2047,14 +2041,8 @@ export const WithMaxItems: Story = {
               rightSideContent={list.rightSideContent}
               onSelected={onChangeValue}
               selectedOptions={{
-                checked: value.checked.some(
-                  (check) => check.id.toString() === list.id.toString()
-                ),
-                value: JSON.stringify({
-                  id: list.id,
-                  title: list.title,
-                  subtitle: list.subtitle,
-                }),
+                checked: value.checked.some((check) => check === list.id),
+                value: list.id,
               }}
             />
           ))}

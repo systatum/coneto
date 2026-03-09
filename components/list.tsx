@@ -851,6 +851,7 @@ export interface ListItemProps {
   selectedOptions?: {
     value?: string;
     checked?: boolean;
+    name?: string;
   };
   leftSideContent?: ReactNode;
   styles?: ListItemStylesProps;
@@ -1024,6 +1025,9 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
             {selectable && selectedOptions && (
               <Checkbox
                 styles={{
+                  containerStyle: css`
+                    width: fit-content;
+                  `,
                   iconStyle: css`
                     width: 8px;
                     height: 8px;
@@ -1033,7 +1037,7 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
                     height: 14px;
                   `,
                 }}
-                name="checked"
+                name={selectedOptions.name ?? "checked"}
                 value={selectedOptions.value}
                 checked={selectedOptions.checked}
                 onClick={(e) => {
