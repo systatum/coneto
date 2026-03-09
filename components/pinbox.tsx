@@ -258,7 +258,7 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
             >
               <PinboxInput
                 id={index === firstEditableIndex ? id : undefined}
-                readOnly
+                onChange={() => {}}
                 aria-label="pinbox-input"
                 $error={showError}
                 ref={(el: HTMLInputElement) => {
