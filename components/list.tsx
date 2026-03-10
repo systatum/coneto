@@ -953,8 +953,18 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
       >
         <ListItemRow
           {...domProps}
-          onMouseEnter={() => setIsHovered(idFullname)}
-          onMouseLeave={() => setIsHovered(null)}
+          onMouseEnter={(e) => {
+            setIsHovered(idFullname);
+            if (props.onMouseEnter) {
+              props.onMouseEnter(e);
+            }
+          }}
+          onMouseLeave={(e) => {
+            setIsHovered(null);
+            if (props.onMouseLeave) {
+              props.onMouseLeave(e);
+            }
+          }}
           $isHovered={isHovered === idFullname || openTipRowId === idFullname}
           $style={styles?.rowStyle}
           aria-label="list-item-row"
@@ -969,7 +979,7 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
               setIsOpen(idFullname, "item");
             }
           }}
-          onDragStart={() =>
+          onDragStart={(e) => {
             setDragItem({
               id: id,
               oldGroupId: groupId!,
@@ -980,8 +990,12 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
                 subtitle,
                 icon,
               },
-            })
-          }
+            });
+
+            if (props.onDragStart) {
+              props.onDragStart(e);
+            }
+          }}
           onDragOver={(e) => {
             e.preventDefault();
             if (draggable) {
@@ -997,10 +1011,18 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
 
               setIsOver(true);
             }
+
+            if (props.onDragOver) {
+              props.onDragOver(e);
+            }
           }}
-          onDragLeave={() => {
+          onDragLeave={(e) => {
             setIsOver(false);
             setDropPosition(null);
+
+            if (props.onDragLeave) {
+              props.onDragLeave(e);
+            }
           }}
           onDrop={(e) => {
             e.preventDefault();
@@ -1022,6 +1044,10 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
             const clampedPosition = Math.min(position, groupLength ?? 0);
 
             onDropItem?.(clampedPosition);
+
+            if (props.onDrop) {
+              props.onDrop(e);
+            }
           }}
         >
           <ListItemLeft
