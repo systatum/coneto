@@ -498,9 +498,9 @@ function FormFields<T extends FieldValues>({
                       label={field.title}
                       value={controllerField.value ?? ""}
                       helper={field.helper}
+                      onBlur={controllerField.onBlur}
                       onChange={(e) => {
                         controllerField.onChange(e);
-                        controllerField?.onBlur();
 
                         if (field.onChange) {
                           field.onChange(e);
