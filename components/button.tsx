@@ -357,12 +357,16 @@ const DropdownWrapper = styled.div<{ $style?: CSSProp }>`
   ${({ $style }) => $style};
 `;
 
+export interface ButtonTipMenuContainerStylesProps {
+  self?: CSSProp;
+}
+
 function ButtonTipMenuContainer({
-  style,
+  styles,
   children,
   ...props
 }: Omit<React.ComponentProps<"div">, "style"> & {
-  style?: CSSProp;
+  styles?: ButtonTipMenuContainerStylesProps;
   children?: React.ReactNode;
 }) {
   return (
@@ -372,7 +376,7 @@ function ButtonTipMenuContainer({
         if (props.onClick) props.onClick?.(e);
       }}
       aria-label="button-tip-menu-container"
-      $style={style}
+      $style={styles?.self}
     >
       {children}
     </TipMenuContainer>

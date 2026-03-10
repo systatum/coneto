@@ -316,13 +316,15 @@ export const WithTipMenu: Story = {
       subMenu: ({ render }) =>
         render(
           <Button.TipMenuContainer
-            style={css`
-              padding: 10px;
-              display: flex;
-              flex-direction: column;
-              gap: 4px;
-              cursor: default;
-            `}
+            styles={{
+              self: css`
+                padding: 10px;
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                cursor: default;
+              `,
+            }}
           >
             <MenuContainer>
               <MenuTitle>Information</MenuTitle>

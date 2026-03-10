@@ -237,7 +237,7 @@ function FileDropBox({
       {label && (
         <StatefulForm.Label
           htmlFor={inputId}
-          style={styles?.labelStyle}
+          styles={{ self: styles?.labelStyle }}
           helper={helper}
           label={label}
         />

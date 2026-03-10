@@ -103,7 +103,7 @@ function BaseTogglebox({
           {label && (
             <StatefulForm.Label
               htmlFor={props.disabled ? null : id}
-              style={styles?.labelStyle}
+              styles={{ self: styles?.labelStyle }}
               label={label}
             />
           )}

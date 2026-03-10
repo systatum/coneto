@@ -103,7 +103,7 @@ export const WithActions: Story = {
           isOpen={isOpen}
           onVisibilityChange={setIsOpen}
           title="Confirm Action"
-          subTitle="Are you sure you want to continue?"
+          subtitle="Are you sure you want to continue?"
           closable={true}
           buttons={BUTTONS}
           onClick={({ closeDialog }) => {

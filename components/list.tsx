@@ -859,7 +859,7 @@ export interface ListItemProps {
   hoverBackgroundColor?: string;
 }
 
-interface ListItemStylesProps {
+export interface ListItemStylesProps {
   containerStyle?: CSSProp;
   rowStyle?: CSSProp;
   titleStyle?: CSSProp;

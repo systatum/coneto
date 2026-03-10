@@ -14,7 +14,7 @@ import {
   useState,
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
-import { Button } from "./button";
+import { Button, ButtonStylesProps } from "./button";
 import { Figure, FigureProps } from "./figure";
 import { RiCloseLine } from "@remixicon/react";
 
@@ -46,8 +46,10 @@ export interface WindowCellStylesProps {
 export interface WindowActionProps {
   onClick?: () => void;
   icon?: FigureProps;
-  style?: string;
+  styles?: WindowActionStylesProps;
 }
+
+export type WindowActionStylesProps = ButtonStylesProps;
 
 function Window({
   orientation = "vertical",
@@ -276,6 +278,7 @@ const WindowCell = forwardRef<HTMLDivElement, WindowCellProps>(
                   if (action.onClick) action.onClick();
                 }}
                 styles={{
+                  ...action?.styles,
                   containerStyle: css`
                     position: absolute;
                     top: 0.5rem;
@@ -287,11 +290,13 @@ const WindowCell = forwardRef<HTMLDivElement, WindowCellProps>(
                     width: fit-content;
                     height: fit-content;
                     z-index: 50;
+                    ${action?.styles?.containerStyle}
                   `,
                   self: css`
                     width: fit-content;
                     height: fit-content;
                     padding: 2px;
+                    ${action?.styles?.self}
                   `,
                 }}
               >

@@ -18,8 +18,12 @@ export interface BadgeProps
   onClick?: (
     e?: ChangeEvent<HTMLInputElement> | MouseEvent<HTMLDivElement>
   ) => void;
-  badgeStyle?: CSSProp;
   actions?: BadgeActionProps[];
+  styles?: BadgeStylesProps;
+}
+
+export interface BadgeStylesProps {
+  self?: CSSProp;
 }
 
 export interface BadgeActionProps {
@@ -91,7 +95,7 @@ function Badge({
   textColor,
   circleColor,
   onClick,
-  badgeStyle,
+  styles,
   id,
   actions,
   metadata,
@@ -172,7 +176,7 @@ function Badge({
       $backgroundColor={badgeBackgroundColor}
       $textColor={badgeTextColor}
       $hasCaption={caption.length > 0}
-      $badgeStyle={badgeStyle}
+      $badgeStyle={styles?.self}
     >
       <BadgeContent $withCircle={withCircle}>
         {withCircle && (

@@ -2,21 +2,27 @@ import styled, { CSSProp } from "styled-components";
 
 export interface SeparatorProps {
   title?: string;
-  style?: CSSProp;
   textFloat?: "left" | "right";
   depth?: string;
+  styles?: SeparatorStylesProps;
+}
+
+export interface SeparatorStylesProps {
+  containerStyle?: CSSProp;
+  titleStyle?: CSSProp;
+  lineStyle?: CSSProp;
 }
 
 function Separator({
   title,
-  style,
+  styles,
   textFloat = "left",
   depth = "20px",
 }: SeparatorProps) {
   return (
-    <SeparatorContainer $style={style}>
-      <Line />
-      <Title $textFloat={textFloat} $depth={depth}>
+    <SeparatorContainer $style={styles?.containerStyle}>
+      <Line $style={styles?.lineStyle} />
+      <Title $style={styles?.titleStyle} $textFloat={textFloat} $depth={depth}>
         {title}
       </Title>
     </SeparatorContainer>
@@ -31,7 +37,7 @@ const SeparatorContainer = styled.div<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
-const Line = styled.span`
+const Line = styled.span<{ $style?: CSSProp }>`
   position: absolute;
   width: 100%;
   height: 2px;
@@ -40,11 +46,13 @@ const Line = styled.span`
   box-shadow:
     inset 0 2px 2px #ffffff,
     inset 0 -1px 1px #7a7a7a;
+  ${({ $style }) => $style}
 `;
 
 const Title = styled.span<{
   $textFloat: "left" | "right";
   $depth: string;
+  $style?: CSSProp;
 }>`
   position: absolute;
   top: 50%;
@@ -55,6 +63,8 @@ const Title = styled.span<{
 
   ${({ $textFloat, $depth }) =>
     $textFloat === "left" ? `left: ${$depth};` : `right: ${$depth};`}
+
+  ${({ $style }) => $style}
 `;
 
 export { Separator };

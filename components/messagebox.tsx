@@ -18,9 +18,15 @@ export interface MessageboxProps {
   actionLinks?: ActionLinkProps[];
   closable?: boolean;
   onCloseRequest?: () => void;
-  style?: CSSProp;
+  styles?: MessageboxStylesProps;
 }
 
+export interface MessageboxStylesProps {
+  containerStyle?: CSSProp;
+  titleStyle?: CSSProp;
+  contentWrapperStyle?: CSSProp;
+  contentStyle?: CSSProp;
+}
 export interface ActionLinkProps {
   caption: string;
   onClick?: () => void;
@@ -59,10 +65,10 @@ function Messagebox({
   actionLinks,
   onCloseRequest,
   closable = false,
-  style,
+  styles,
 }: MessageboxProps) {
   return (
-    <Wrapper $variant={variant} $style={style}>
+    <Wrapper $variant={variant} $style={styles?.containerStyle}>
       <BorderAccent $variant={variant} />
       <Figure
         {...icon}
@@ -75,21 +81,10 @@ function Messagebox({
         image={icon?.image ?? RiInformation2Fill}
         color={icon?.color ?? VARIATION_STYLES[variant].text}
       />
-      <Content>
-        <span
-          style={{
-            fontWeight: 600,
-          }}
-        >
-          {title}
-        </span>
-        <span
-          style={{
-            fontSize: "14px",
-          }}
-        >
-          {children}
-        </span>
+
+      <Content $style={styles?.contentWrapperStyle}>
+        <Title $style={styles?.titleStyle}>{title}</Title>
+        <Children $style={styles?.contentStyle}>{children}</Children>
         {actionLinks && (
           <ActionList>
             {actionLinks.map((action, index) =>
@@ -174,6 +169,27 @@ const Wrapper = styled.div<{
   ${({ $style }) => $style};
 `;
 
+const Content = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  ${({ $style }) => $style};
+`;
+
+const Title = styled.span<{ $style?: CSSProp }>`
+  font-weight: 600;
+  font-size: 1rem;
+  ${({ $style }) => $style};
+`;
+
+const Children = styled.span<{ $style?: CSSProp }>`
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: inherit;
+  ${({ $style }) => $style};
+`;
+
 const BorderAccent = styled.div<{
   $variant: keyof typeof VARIATION_STYLES;
 }>`
@@ -182,20 +198,6 @@ const BorderAccent = styled.div<{
   left: 0;
   width: 100%;
   border-top: 2px solid ${({ $variant }) => VARIATION_STYLES[$variant].text};
-`;
-
-const Content = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-
-  span.text {
-    font-size: 0.875rem;
-  }
-
-  span.title {
-    font-weight: 600;
-  }
 `;
 
 const ActionList = styled.div`

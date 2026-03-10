@@ -45,9 +45,13 @@ export interface RichEditorToolbarButtonProps {
   icon?: FigureProps;
   onClick?: () => void;
   children?: ReactNode;
-  style?: CSSProp;
   isOpen?: boolean;
   isActive?: boolean;
+  styles?: RichEditorToolbarButtonStylesProps;
+}
+
+export interface RichEditorToolbarButtonStylesProps {
+  self?: CSSProp;
 }
 
 interface RichEditorComponent
@@ -1221,13 +1225,13 @@ function RichEditorToolbarButton({
   icon,
   onClick,
   children,
-  style,
+  styles,
   isOpen,
   isActive,
 }: RichEditorToolbarButtonProps) {
   return (
     <ToolbarButton
-      $style={style}
+      $style={styles?.self}
       type="button"
       $isOpen={isOpen}
       onClick={(e) => {
@@ -1239,7 +1243,7 @@ function RichEditorToolbarButton({
       aria-pressed={isActive}
     >
       {icon && <Figure {...icon} />}
-      {children && <span>{children}</span>}
+      {children}
     </ToolbarButton>
   );
 }

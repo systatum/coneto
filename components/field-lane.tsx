@@ -286,7 +286,7 @@ function FieldLane({
         {label && (
           <StatefulForm.Label
             htmlFor={disabled ? null : id}
-            style={styles?.labelStyle}
+            styles={{ self: styles?.labelStyle }}
             helper={helper}
             label={label}
           />

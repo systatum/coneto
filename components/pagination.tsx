@@ -57,7 +57,7 @@ function Pagination({
   return (
     <PaginationWrapper $style={styles?.containerStyle}>
       <PaginationButton
-        style={styles?.buttonStyle}
+        styles={{ self: styles?.buttonStyle }}
         onClick={handlePrevious}
         disabled={currentPage === 1}
       >
@@ -77,7 +77,7 @@ function Pagination({
       )}
 
       <PaginationButton
-        style={styles?.buttonStyle}
+        styles={{ self: styles?.buttonStyle }}
         onClick={handleNext}
         disabled={currentPage === totalPages}
       >
@@ -171,7 +171,7 @@ const PaginationItem = ({
             const isActive = currentPage === page;
             return (
               <PaginationButton
-                style={styles?.buttonStyle}
+                styles={{ self: styles?.buttonStyle }}
                 key={page}
                 onClick={() => {
                   onPageChange(page);
@@ -192,7 +192,7 @@ const PaginationItem = ({
             const isActive = currentPage === page;
             return (
               <PaginationButton
-                style={styles?.buttonStyle}
+                styles={{ self: styles?.buttonStyle }}
                 key={page}
                 onClick={() => {
                   onPageChange(page);
@@ -217,27 +217,33 @@ const PaginationItemWrapper = styled.div`
   gap: 8px;
 `;
 
+interface PaginationButtonProps {
+  onClick: () => void;
+  children: ReactNode;
+  isActive?: boolean;
+  disabled?: boolean;
+  styles?: PaginationButtonStylesProps;
+}
+
+interface PaginationButtonStylesProps {
+  self?: CSSProp;
+}
+
 const PaginationButton = ({
   onClick,
-  style,
+  styles,
   children,
   isActive,
   disabled,
   ...props
-}: {
-  onClick: () => void;
-  style?: CSSProp;
-  children: ReactNode;
-  isActive?: boolean;
-  disabled?: boolean;
-}) => {
+}: PaginationButtonProps) => {
   return (
     <Button
       {...props}
       aria-label="pagination-button"
       onClick={onClick}
       disabled={disabled}
-      $style={style}
+      $style={styles?.self}
       $isActive={isActive}
     >
       {children}

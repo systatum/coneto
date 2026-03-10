@@ -1267,15 +1267,19 @@ export const WithSummary: Story = {
             },
             {
               content: totalCost.toLocaleString("en-US"),
-              style: css`
-                justify-content: end;
-              `,
+              styles: {
+                self: css`
+                  justify-content: end;
+                `,
+              },
             },
             {
               content: totalQty,
-              style: css`
-                justify-content: end;
-              `,
+              styles: {
+                self: css`
+                  justify-content: end;
+                `,
+              },
             },
           ]}
           searchable
@@ -2193,15 +2197,19 @@ export const WithRowAppendix: Story = {
             },
             {
               content: totalCost.toLocaleString("en-US"),
-              style: css`
-                justify-content: end;
-              `,
+              styles: {
+                self: css`
+                  justify-content: end;
+                `,
+              },
             },
             {
               content: totalQty,
-              style: css`
-                justify-content: end;
-              `,
+              styles: {
+                self: css`
+                  justify-content: end;
+                `,
+              },
             },
           ]}
           searchable

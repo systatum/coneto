@@ -38,7 +38,7 @@ export type RowData = (string | ReactNode)[];
 export interface ColumnTableProps {
   caption: string;
   sortable?: boolean;
-  style?: CSSProp;
+  styles?: { self?: CSSProp };
   width?: string;
   id: string;
 }
@@ -102,7 +102,11 @@ export interface SummaryRowProps {
   span?: number;
   content?: ReactNode;
   bold?: boolean;
-  style?: CSSProp;
+  styles?: SummaryRowStylesProps;
+}
+
+export interface SummaryRowStylesProps {
+  self?: CSSProp;
 }
 
 export type TableResultMenuProps = SearchboxResultMenuProps;
@@ -450,14 +454,16 @@ function Table({
                     </span>
                     {col.sortable && (
                       <Toolbar
-                        style={css`
-                          width: fit-content;
-                          z-index: 20;
-                          ${isLast &&
-                          css`
-                            padding-right: 14px;
-                          `}
-                        `}
+                        styles={{
+                          self: css`
+                            width: fit-content;
+                            z-index: 20;
+                            ${isLast &&
+                            css`
+                              padding-right: 14px;
+                            `}
+                          `,
+                        }}
                       >
                         <Toolbar.Menu
                           closedIcon={RiArrowUpDownLine}
@@ -543,7 +549,7 @@ function Table({
                             css`
                               padding-right: 36px;
                             `}
-                            ${col.style}
+                            ${col.styles?.self}
                           `}
                         >
                           {s === 0 ? col.content : ""}

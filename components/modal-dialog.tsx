@@ -1,9 +1,9 @@
 "use client";
 
-import { createRoot } from "react-dom/client";
 import {
   createDialogController,
   Dialog,
+  DialogButtonProps,
   DialogProps,
   DialogStylesProps,
 } from "./dialog";
@@ -11,6 +11,7 @@ import styled, { css, CSSProp } from "styled-components";
 
 export type ModalDialogProps = DialogProps;
 export type ModalDialogStylesProps = DialogStylesProps;
+export type ModalButtonProps = DialogButtonProps;
 
 function ModalDialog({
   onVisibilityChange,

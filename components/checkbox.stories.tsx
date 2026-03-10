@@ -7,9 +7,60 @@ const meta: Meta<typeof Checkbox> = {
   title: "Input Elements/Checkbox",
   component: Checkbox,
   tags: ["autodocs"],
-  args: {
-    label: "I agree to the terms",
-    name: "agreement",
+  argTypes: {
+    label: {
+      control: "text",
+      description: "The main label text displayed next to the checkbox.",
+    },
+    description: {
+      control: "text",
+      description: "Optional secondary text below the label.",
+    },
+    checked: {
+      control: "boolean",
+      description: "Checkbox checked state.",
+    },
+    indeterminate: {
+      control: "boolean",
+      description: "Shows a horizontal line instead of a checkmark.",
+    },
+    highlightOnChecked: {
+      control: "boolean",
+      description: "If true, highlights background when checkbox is checked.",
+    },
+    disabled: {
+      control: "boolean",
+      description: "Disable the checkbox input.",
+    },
+    showError: {
+      control: "boolean",
+      description: "Shows the checkbox in an error state.",
+    },
+    errorMessage: {
+      control: "text",
+      description: "Error message to display when `showError` is true.",
+    },
+    helper: {
+      control: "text",
+      description: "Optional helper text for forms.",
+    },
+    name: {
+      control: "text",
+      description: "Name attribute for form submission.",
+    },
+    id: {
+      control: "text",
+      description: "Unique ID for associating label with input.",
+    },
+    styles: {
+      control: "object",
+      description:
+        "Override default styles for different elements of the checkbox using CSSProp.",
+    },
+    onChange: {
+      action: "changed",
+      description: "Handler function called on checkbox change.",
+    },
   },
 };
 
