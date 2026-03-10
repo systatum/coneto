@@ -35,6 +35,27 @@ describe("TipMenu", () => {
     ];
   });
 
+  context("when given item without icon", () => {
+    it("should be renders the tip menu and only display caption", () => {
+      cy.mount(
+        <TipMenu
+          subMenuList={[
+            {
+              caption: "Sender",
+              icon: { image: RiShieldLine, color: "orange" },
+              isDangerous: true,
+            },
+            {
+              caption: "Read",
+            },
+          ]}
+        />
+      );
+      cy.findAllByLabelText("tip-menu-item").should("have.length", 2);
+      cy.findAllByLabelText("tip-menu-icon").should("have.length", 1);
+    });
+  });
+
   context("when render", () => {
     it("renders all items", () => {
       cy.mount(<TipMenu subMenuList={TIP_MENU_ITEMS} />);

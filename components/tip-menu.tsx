@@ -120,6 +120,7 @@ function TipMenuItem({
       {icon && (
         <Figure
           {...icon}
+          aria-label="tip-menu-icon"
           color={
             isDangerous
               ? "white"
