@@ -128,19 +128,21 @@ export const Default: Story = {
               },
               onClick: () => console.log("Edit mode"),
             },
+            {
+              caption: "Delete",
+              icon: { image: RiDeleteBinLine, color: "red" },
+              onClick: () => setIsOpen(!isOpen),
+            },
+            {
+              caption: "Quit",
+            },
           ]}
-        >
-          <TipMenu.Item
-            caption="Delete"
-            icon={{ image: RiDeleteBinLine, color: "red" }}
-            onClick={() => setIsOpen(!isOpen)}
-          />
-        </TipMenu>
+        ></TipMenu>
         <ModalDialog
           isOpen={isOpen}
           onVisibilityChange={setIsOpen}
           title="Confirm Action"
-          subTitle="Are you sure you want to delete?"
+          subtitle="Are you sure you want to delete?"
           closable={true}
           buttons={BUTTONS}
           onClick={({ closeDialog }) => {
