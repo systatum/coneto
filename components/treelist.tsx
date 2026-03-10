@@ -248,7 +248,7 @@ function TreeList({
                   onClick={handleActionClick}
                   caption={action.caption}
                   icon={action.icon}
-                  style={action?.styles?.self}
+                  styles={{ self: action?.styles?.self }}
                 />
               );
 
@@ -380,10 +380,12 @@ function TreeList({
 
                     return groupLoading?.isLoading ? (
                       <LoadingSpinner
-                        style={css`
-                          padding-left: 20px;
-                          gap: 8px;
-                        `}
+                        styles={{
+                          containerStyle: css`
+                            padding-left: 20px;
+                            gap: 8px;
+                          `,
+                        }}
                         label={groupLoading.caption}
                       />
                     ) : item.items?.length > 0 ? (
@@ -476,7 +478,7 @@ interface TreeListActionInternalProps {
   isSelected?: boolean;
   isActive?: boolean;
   onClick?: () => void;
-  style?: CSSProp;
+  styles?: { self?: CSSProp };
   icon?: FigureProps;
   caption?: string;
 }
@@ -487,7 +489,7 @@ function TreeListAction({
   onClick,
   caption,
   icon,
-  style,
+  styles,
 }: TreeListActionInternalProps) {
   if (!onClick) onClick = () => {};
 
@@ -499,7 +501,7 @@ function TreeListAction({
       tabIndex={0}
       aria-label="tree-list-action"
       onClick={() => onClick()}
-      $style={style}
+      $style={styles?.self}
     >
       {icon && <Figure {...icon} />}
       <div>{caption}</div>
@@ -566,7 +568,7 @@ interface TreeListItemComponent<T extends TreeListItemsProps> {
   onChange?: (item?: string) => void;
   isSelected?: string;
   showHierarchyLine?: boolean;
-  style?: CSSProp;
+  styles?: { self?: CSSProp };
   level?: number;
   collapsible?: boolean;
   isHavingContent?: boolean;
@@ -636,7 +638,7 @@ function TreeListItem<T extends TreeListItemsProps>({
   onChange,
   searchTerm = "",
   showHierarchyLine,
-  style,
+  styles,
   level = 0,
   collapsible,
   isHavingContent,
@@ -723,7 +725,7 @@ function TreeListItem<T extends TreeListItemsProps>({
         }}
         $isHovered={isHovered === item.id || openRowId === item.id}
         $isDropParent={dropIntent === "containment" && isOver}
-        $style={style}
+        $style={styles?.self}
         onDragStart={() =>
           setDragItem({
             id: item.id,
@@ -974,10 +976,12 @@ function TreeListItem<T extends TreeListItemsProps>({
               return groupLoading?.isLoading ? (
                 <>
                   <LoadingSpinner
-                    style={css`
-                      transform: translateX(${level * 20 + 20}px);
-                      gap: 8px;
-                    `}
+                    styles={{
+                      containerStyle: css`
+                        transform: translateX(${level * 20 + 20}px);
+                        gap: 8px;
+                      `,
+                    }}
                     label={groupLoading.caption}
                   />
                 </>
