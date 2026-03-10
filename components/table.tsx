@@ -102,7 +102,11 @@ export interface SummaryRowProps {
   span?: number;
   content?: ReactNode;
   bold?: boolean;
-  style?: CSSProp;
+  styles?: SummaryRowStylesProps;
+}
+
+export interface SummaryRowStylesProps {
+  self?: CSSProp;
 }
 
 export type TableResultMenuProps = SearchboxResultMenuProps;
@@ -545,7 +549,7 @@ function Table({
                             css`
                               padding-right: 36px;
                             `}
-                            ${col.style}
+                            ${col.styles?.self}
                           `}
                         >
                           {s === 0 ? col.content : ""}
