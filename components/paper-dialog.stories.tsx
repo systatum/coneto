@@ -569,7 +569,7 @@ export const Nested: Story = {
           <Table
             searchable
             styles={{
-              tableRowContainerStyle: css`
+              tableBodyStyle: css`
                 max-height: 400px;
               `,
             }}
@@ -615,7 +615,7 @@ export const Nested: Story = {
               <Table
                 searchable
                 styles={{
-                  tableRowContainerStyle: css`
+                  tableBodyStyle: css`
                     max-height: 400px;
                   `,
                 }}

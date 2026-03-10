@@ -314,7 +314,7 @@ export const WithSubItems: Story = {
                 </h2>
                 <Table
                   styles={{
-                    tableRowContainerStyle: css`
+                    tableBodyStyle: css`
                       max-height: 400px;
                     `,
                   }}

@@ -210,7 +210,7 @@ describe("Table", () => {
     return (
       <Table
         styles={{
-          tableRowContainerStyle: css`
+          tableBodyStyle: css`
             max-height: 400px;
           `,
         }}
@@ -598,7 +598,7 @@ describe("Table", () => {
             showPagination
             labels={{ pageNumberText: 10 }}
             styles={{
-              tableRowContainerStyle: css`
+              tableBodyStyle: css`
                 max-height: 400px;
               `,
             }}
@@ -753,7 +753,7 @@ describe("Table", () => {
           <Table
             selectable
             styles={{
-              tableRowContainerStyle: css`
+              tableBodyStyle: css`
                 max-height: 400px;
               `,
             }}
@@ -807,7 +807,7 @@ describe("Table", () => {
           <Table
             selectable
             styles={{
-              tableRowContainerStyle: css`
+              tableBodyStyle: css`
                 max-height: 400px;
               `,
             }}
@@ -851,7 +851,7 @@ describe("Table", () => {
           <Table
             selectable
             styles={{
-              tableRowContainerStyle: css`
+              tableBodyStyle: css`
                 max-height: 400px;
               `,
             }}
@@ -949,7 +949,7 @@ describe("Table", () => {
                 paginationNumberStyle: css`
                   font-size: 30px;
                 `,
-                tableRowContainerStyle: css`
+                tableBodyStyle: css`
                   max-height: 400px;
                 `,
               }}
@@ -1103,7 +1103,7 @@ describe("Table", () => {
                 totalSelectedItemTextStyle: css`
                   font-size: 100px;
                 `,
-                tableRowContainerStyle: css`
+                tableBodyStyle: css`
                   max-height: 400px;
                 `,
               }}
@@ -1162,7 +1162,7 @@ describe("Table", () => {
           <Table
             selectable
             styles={{
-              tableRowContainerStyle: css`
+              tableBodyStyle: css`
                 max-height: 400px;
               `,
             }}
@@ -1235,7 +1235,7 @@ describe("Table", () => {
           <Table
             selectable
             styles={{
-              tableRowContainerStyle: css`
+              tableBodyStyle: css`
                 max-height: 400px;
               `,
             }}
@@ -1307,7 +1307,7 @@ describe("Table", () => {
           <Table
             selectable
             styles={{
-              tableRowContainerStyle: css`
+              tableBodyStyle: css`
                 max-height: 400px;
               `,
             }}
@@ -1373,7 +1373,7 @@ describe("Table", () => {
             <Table
               selectable
               styles={{
-                tableRowContainerStyle: css`
+                tableBodyStyle: css`
                   max-height: 400px;
                 `,
               }}
@@ -1419,7 +1419,7 @@ describe("Table", () => {
           <Table
             selectable
             styles={{
-              tableRowContainerStyle: css`
+              tableBodyStyle: css`
                 max-height: 400px;
               `,
             }}
@@ -1473,7 +1473,7 @@ describe("Table", () => {
           <Table
             selectable
             styles={{
-              tableRowContainerStyle: css`
+              tableBodyStyle: css`
                 max-height: 400px;
               `,
             }}
@@ -1526,7 +1526,7 @@ describe("Table", () => {
         cy.mount(
           <Table
             styles={{
-              tableRowContainerStyle: css`
+              tableBodyStyle: css`
                 max-height: 400px;
               `,
             }}
@@ -1580,7 +1580,7 @@ describe("Table", () => {
         cy.mount(
           <Table
             styles={{
-              tableRowContainerStyle: css`
+              tableBodyStyle: css`
                 max-height: 400px;
               `,
             }}
@@ -1636,7 +1636,7 @@ describe("Table", () => {
           <Table
             selectable
             styles={{
-              tableRowContainerStyle: css`
+              tableBodyStyle: css`
                 max-height: 400px;
               `,
             }}
@@ -1683,7 +1683,7 @@ describe("Table", () => {
           <Table
             selectable
             styles={{
-              tableRowContainerStyle: css`
+              tableBodyStyle: css`
                 max-height: 400px;
               `,
             }}
@@ -1726,7 +1726,7 @@ describe("Table", () => {
           .should("exist")
           .and("be.visible");
 
-        cy.findByLabelText("table-scroll-container").then(($el) => {
+        cy.findByLabelText("table-body").then(($el) => {
           const start = $el[0].scrollTop;
           cy.wrap($el).scrollTo(0, start + 101);
         });
@@ -1741,7 +1741,7 @@ describe("Table", () => {
           <Table
             selectable
             styles={{
-              tableRowContainerStyle: css`
+              tableBodyStyle: css`
                 max-height: 400px;
               `,
             }}
@@ -1796,7 +1796,7 @@ describe("Table", () => {
           <Table
             selectable
             styles={{
-              tableRowContainerStyle: css`
+              tableBodyStyle: css`
                 max-height: 400px;
               `,
             }}
