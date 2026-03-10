@@ -855,14 +855,9 @@ export interface ListItemProps {
   };
   leftSideContent?: ReactNode;
   styles?: ListItemStylesProps;
-  colors?: ListItemcolorsState;
-}
-
-export interface ListItemcolorsState {
-  hoverText?: string;
-  hoverBackground?: string;
-  selectedText?: string;
-  selectedBackground?: string;
+  hoverTextColor?: string;
+  hoverBackgroundColor?: string;
+  selected?: boolean;
 }
 
 interface ListItemStylesProps {
@@ -912,7 +907,9 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
       openable,
       leftSideContent,
       styles,
-      colors,
+      hoverTextColor,
+      hoverBackgroundColor,
+      selected,
       ...props
     },
     ref
@@ -951,16 +948,17 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
         aria-label="list-item-wrapper"
         $openable={openable && isChildOpened}
         $style={styles?.containerStyle}
-        $selectedBackground={colors?.selectedBackground}
-        $selectedText={colors?.selectedText}
+        $hoverBackgroundColor={hoverBackgroundColor}
+        $hoverTextColor={hoverTextColor}
+        $selected={selected}
       >
         <ListItemRow
           {...domProps}
           $isHovered={isHovered === idFullname || openTipRowId === idFullname}
           $style={styles?.rowStyle}
           aria-label="list-item-row"
-          $hoverColor={colors?.hoverText}
-          $hoverBackgroundColor={colors?.hoverBackground}
+          $hoverTextColor={hoverTextColor}
+          $hoverBackgroundColor={hoverBackgroundColor}
           draggable={draggable}
           onClick={() => {
             if (onClick) {
@@ -1203,8 +1201,9 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
 const ListItemWrapper = styled.li<{
   $style?: CSSProp;
   $openable?: boolean;
-  $selectedBackground?: string;
-  $selectedText?: string;
+  $hoverBackgroundColor?: string;
+  $hoverTextColor?: string;
+  $selected?: boolean;
 }>`
   display: flex;
   flex-direction: column;
@@ -1213,11 +1212,11 @@ const ListItemWrapper = styled.li<{
   transition: background-color 300ms;
   border-radius: 3px;
 
-  ${({ $openable, $selectedBackground, $selectedText }) =>
+  ${({ $openable, $hoverBackgroundColor, $hoverTextColor, $selected }) =>
     $openable &&
     css`
-      color: ${$selectedText ?? "inherit"};
-      background-color: ${$selectedBackground ?? "#dbeafe"};
+      color: ${$selected ? $hoverTextColor : "inherit"};
+      background-color: ${$selected ? $hoverBackgroundColor : "#dbeafe"};
     `}
 
   ${({ $style }) => $style}
@@ -1226,7 +1225,7 @@ const ListItemWrapper = styled.li<{
 const ListItemRow = styled.div<{
   $style?: CSSProp;
   $isHovered?: boolean;
-  $hoverColor?: string;
+  $hoverTextColor?: string;
   $hoverBackgroundColor?: string;
 }>`
   display: flex;
@@ -1243,10 +1242,10 @@ const ListItemRow = styled.div<{
 
   ${({ $style }) => $style}
 
-  ${({ $isHovered, $hoverColor, $hoverBackgroundColor }) =>
+  ${({ $isHovered, $hoverTextColor, $hoverBackgroundColor }) =>
     $isHovered &&
     css`
-      color: ${$hoverColor ?? "inherit"};
+      color: ${$hoverTextColor ?? "inherit"};
       background-color: ${$hoverBackgroundColor ?? "#dbeafe"};
     `}
 `;
