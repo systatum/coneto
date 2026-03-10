@@ -746,16 +746,18 @@ describe("StatefulForm", () => {
             <Boxbar>
               {BADGE_OPTIONS.map((badge) => (
                 <Badge
-                  badgeStyle={css`
-                    width: 100%;
-                    max-width: 100px;
+                  styles={{
+                    self: css`
+                      width: 100%;
+                      max-width: 100px;
 
-                    &:hover {
-                      border-color: #4cbbf7;
-                      cursor: pointer;
-                      transition: all 0.5s ease-in-out;
-                    }
-                  `}
+                      &:hover {
+                        border-color: #4cbbf7;
+                        cursor: pointer;
+                        transition: all 0.5s ease-in-out;
+                      }
+                    `,
+                  }}
                   key={badge.id}
                   caption={badge.caption}
                   withCircle
