@@ -580,7 +580,7 @@ describe("context-menu", () => {
         cy.mount(
           <Table
             styles={{
-              tableRowContainerStyle: css`
+              tableBodyStyle: css`
                 max-height: 400px;
               `,
             }}
@@ -604,7 +604,7 @@ describe("context-menu", () => {
         cy.mount(
           <Table
             styles={{
-              tableRowContainerStyle: css`
+              tableBodyStyle: css`
                 max-height: 400px;
               `,
             }}
@@ -624,7 +624,7 @@ describe("context-menu", () => {
         cy.mount(
           <Table
             styles={{
-              tableRowContainerStyle: css`
+              tableBodyStyle: css`
                 max-height: 400px;
               `,
             }}
@@ -650,7 +650,7 @@ describe("context-menu", () => {
           cy.mount(
             <Table
               styles={{
-                tableRowContainerStyle: css`
+                tableBodyStyle: css`
                   max-height: 400px;
                 `,
               }}

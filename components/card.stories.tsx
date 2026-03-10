@@ -961,7 +961,7 @@ export const WithFullWidthContent: Story = {
         <Table
           selectable
           styles={{
-            tableRowContainerStyle: css`
+            tableBodyStyle: css`
               max-height: 400px;
             `,
           }}
@@ -1067,7 +1067,7 @@ export const Toggleable: Story = {
       return (
         <Table
           styles={{
-            tableRowContainerStyle: css`
+            tableBodyStyle: css`
               max-height: 160px;
             `,
           }}

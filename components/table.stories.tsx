@@ -177,7 +177,8 @@ const meta: Meta<typeof Table> = {
 Custom styles for the Table component. This object allows you to override styles for individual parts:
 
 - **containerStyle**: Table wrapper
-- **tableRowContainerStyle**: Scrollable row container
+- **tableBodyStyle**: Scrollable body content
+- **tableHeaderStyle**: Header container
 - **paginationWrapperStyle**: Pagination wrapper
 - **paginationNumberStyle**: Pagination number text
 
@@ -226,7 +227,7 @@ export const Default: Story = {
     return (
       <Table
         styles={{
-          tableRowContainerStyle: css`
+          tableBodyStyle: css`
             max-height: 400px;
           `,
         }}
@@ -446,7 +447,7 @@ export const Appendable: Story = {
       <Table
         selectable
         styles={{
-          tableRowContainerStyle: css`
+          tableBodyStyle: css`
             max-height: 400px;
           `,
         }}
@@ -679,7 +680,7 @@ export const WithOneAction: Story = {
       <Table
         selectable
         styles={{
-          tableRowContainerStyle: css`
+          tableBodyStyle: css`
             max-height: 400px;
           `,
         }}
@@ -1252,7 +1253,7 @@ export const WithSummary: Story = {
 
         <Table
           styles={{
-            tableRowContainerStyle: css`
+            tableBodyStyle: css`
               max-height: 400px;
             `,
           }}
@@ -1817,7 +1818,7 @@ export const WithRowGroup: Story = {
         <Table
           selectable
           styles={{
-            tableRowContainerStyle: css`
+            tableBodyStyle: css`
               max-height: 400px;
             `,
           }}
@@ -2182,7 +2183,7 @@ export const WithRowAppendix: Story = {
 
         <Table
           styles={{
-            tableRowContainerStyle: css`
+            tableBodyStyle: css`
               max-height: 400px;
             `,
           }}
@@ -2776,7 +2777,7 @@ export const Draggable: Story = {
 
           <Table
             styles={{
-              tableRowContainerStyle: css`
+              tableBodyStyle: css`
                 max-height: 400px;
               `,
             }}
@@ -2824,7 +2825,7 @@ export const Draggable: Story = {
           <Table
             selectable
             styles={{
-              tableRowContainerStyle: css`
+              tableBodyStyle: css`
                 max-height: 400px;
               `,
             }}
@@ -2873,7 +2874,7 @@ export const Draggable: Story = {
           <Table
             selectable
             styles={{
-              tableRowContainerStyle: css`
+              tableBodyStyle: css`
                 max-height: 400px;
               `,
             }}
