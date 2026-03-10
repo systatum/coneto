@@ -559,7 +559,6 @@ const NavTabItem = styled.div<{
 const NavContent = styled.div<{ $contentStyle?: CSSProp }>`
   padding: 16px;
   overflow-y: auto;
-  max-height: calc(100vh - 60px);
 
   ${({ $contentStyle }) => $contentStyle}
 `;
