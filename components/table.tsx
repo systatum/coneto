@@ -38,7 +38,7 @@ export type RowData = (string | ReactNode)[];
 export interface ColumnTableProps {
   caption: string;
   sortable?: boolean;
-  style?: CSSProp;
+  styles?: { self?: CSSProp };
   width?: string;
   id: string;
 }
@@ -450,14 +450,16 @@ function Table({
                     </span>
                     {col.sortable && (
                       <Toolbar
-                        style={css`
-                          width: fit-content;
-                          z-index: 20;
-                          ${isLast &&
-                          css`
-                            padding-right: 14px;
-                          `}
-                        `}
+                        styles={{
+                          self: css`
+                            width: fit-content;
+                            z-index: 20;
+                            ${isLast &&
+                            css`
+                              padding-right: 14px;
+                            `}
+                          `,
+                        }}
                       >
                         <Toolbar.Menu
                           closedIcon={RiArrowUpDownLine}
