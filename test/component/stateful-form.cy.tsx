@@ -60,6 +60,78 @@ describe("StatefulForm", () => {
     },
   ];
 
+  context("button", () => {
+    context("when given an onClick", () => {
+      context("when clicking", () => {
+        it("renders the callback from top-level", () => {
+          cy.window().then((win) => {
+            cy.spy(win.console, "log").as("consoleLog");
+          });
+
+          cy.mount(
+            <StatefulForm
+              fields={[
+                {
+                  name: "button",
+                  title: "Button",
+                  type: "button",
+                  onClick: () =>
+                    console.log("this is callback from the top level"),
+                },
+              ]}
+              formValues={{}}
+              mode="onChange"
+            />
+          );
+
+          cy.findByRole("button").eq(0).click();
+
+          cy.get("@consoleLog").should(
+            "have.been.calledWith",
+            "this is callback from the top level"
+          );
+        });
+      });
+
+      context("when given a buttonProps.onClick", () => {
+        context("when clicking", () => {
+          it("renders the callback from buttonProps instead", () => {
+            cy.window().then((win) => {
+              cy.spy(win.console, "log").as("consoleLog");
+            });
+
+            cy.mount(
+              <StatefulForm
+                fields={[
+                  {
+                    name: "button",
+                    title: "Button",
+                    type: "button",
+                    onClick: () =>
+                      console.log("this is callback from the top level"),
+                    buttonProps: {
+                      onClick: () =>
+                        console.log("this is callback from the specific level"),
+                    },
+                  },
+                ]}
+                formValues={{}}
+                mode="onChange"
+              />
+            );
+
+            cy.findByRole("button").eq(0).click();
+
+            cy.get("@consoleLog").should(
+              "have.been.calledWith",
+              "this is callback from the specific level"
+            );
+          });
+        });
+      });
+    });
+  });
+
   context("when array of array", () => {
     const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
       (data) => data.id === "US" || COUNTRY_CODES[206]
@@ -125,6 +197,7 @@ describe("StatefulForm", () => {
         required: false,
       },
     ];
+
     it("render in the one row", () => {
       cy.mount(
         <StatefulForm
