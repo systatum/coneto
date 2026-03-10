@@ -83,7 +83,8 @@ export interface TableProps {
 
 export interface TableStylesProps {
   containerStyle?: CSSProp;
-  tableRowContainerStyle?: CSSProp;
+  tableHeaderStyle?: CSSProp;
+  tableBodyStyle?: CSSProp;
   paginationWrapperStyle?: CSSProp;
   paginationNumberStyle?: CSSProp;
   totalSelectedItemTextStyle?: CSSProp;
@@ -277,10 +278,10 @@ function Table({
     return null;
   });
 
-  const tableRowContainerRef = useRef<HTMLDivElement>(null);
+  const tableBodyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const el = tableRowContainerRef.current;
+    const el = tableBodyRef.current;
     if (!el || openRowId === null) return;
 
     const startScrollTop = el.scrollTop;
@@ -402,7 +403,10 @@ function Table({
           )}
 
           <TableContainer $hasSelected={selectedData.length > 0}>
-            <TableHeader>
+            <TableHeader
+              aria-label="table-header"
+              $style={styles?.tableHeaderStyle}
+            >
               {selectable && (
                 <CheckboxWrapper>
                   <Checkbox
@@ -489,13 +493,13 @@ function Table({
             </TableHeader>
 
             {rowChildren.length > 0 ? (
-              <TableRowContainer
-                ref={tableRowContainerRef}
-                aria-label="table-scroll-container"
-                $tableRowContainerStyle={styles?.tableRowContainerStyle}
+              <TableBody
+                ref={tableBodyRef}
+                aria-label="table-body"
+                $style={styles?.tableBodyStyle}
               >
                 {rowChildren}
-              </TableRowContainer>
+              </TableBody>
             ) : (
               <EmptyState>{emptySlate}</EmptyState>
             )}
@@ -694,7 +698,7 @@ const TableContainer = styled.div<{ $hasSelected: boolean }>`
     `}
 `;
 
-const TableHeader = styled.div`
+const TableHeader = styled.div<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: row;
   padding: 0.75rem;
@@ -705,30 +709,10 @@ const TableHeader = styled.div`
   border-bottom-width: 1px;
   border-color: #d1d5db;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  ${({ $style }) => $style}
 `;
 
-const TableSummary = styled.div<{ $selectable?: boolean }>`
-  display: flex;
-  flex-direction: row;
-  padding: 10px;
-  ${({ $selectable }) =>
-    $selectable
-      ? css`
-          padding-left: 42px;
-        `
-      : css`
-          padding-left: 10px;
-        `}
-  padding-right: 15px;
-  background: linear-gradient(to bottom, #f0f0f0, #e4e4e4);
-  align-items: center;
-  color: #343434;
-  border-bottom-width: 1px;
-  border-color: #d1d5db;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-`;
-
-const TableRowContainer = styled.div<{ $tableRowContainerStyle?: CSSProp }>`
+const TableBody = styled.div<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: column;
   overflow: auto;
@@ -750,7 +734,28 @@ const TableRowContainer = styled.div<{ $tableRowContainerStyle?: CSSProp }>`
     background: rgba(168, 167, 167, 0.1);
   }
 
-  ${({ $tableRowContainerStyle }) => $tableRowContainerStyle}
+  ${({ $style }) => $style}
+`;
+
+const TableSummary = styled.div<{ $selectable?: boolean }>`
+  display: flex;
+  flex-direction: row;
+  padding: 10px;
+  ${({ $selectable }) =>
+    $selectable
+      ? css`
+          padding-left: 42px;
+        `
+      : css`
+          padding-left: 10px;
+        `}
+  padding-right: 15px;
+  background: linear-gradient(to bottom, #f0f0f0, #e4e4e4);
+  align-items: center;
+  color: #343434;
+  border-bottom-width: 1px;
+  border-color: #d1d5db;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 `;
 
 const EmptyState = styled.div`
