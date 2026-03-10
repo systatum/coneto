@@ -28,7 +28,7 @@ import styled, { css, CSSProp } from "styled-components";
 import ContextMenu, { ContextMenuActionsProps } from "./context-menu";
 import { ActionButton, ActionButtonProps } from "./action-button";
 import { OverlayBlocker } from "./overlay-blocker";
-import { FigureProps } from "./figure";
+import { Figure, FigureProps } from "./figure";
 
 export interface ListProps extends ListMaxItemsProp {
   searchable?: boolean;
@@ -102,7 +102,7 @@ const DnDContext = createContext<{
       title: ReactNode | string;
       subtitle: string;
       imageUrl?: string;
-      leftIcon?: FigureProps["image"];
+      icon?: FigureProps;
     };
   }) => void;
   onDragged?: ListProps["onDragged"];
@@ -531,6 +531,9 @@ function ListGroup({
                 containerStyle: css`
                   width: fit-content;
                 `,
+                bodyStyle: css`
+                  min-height: 0px;
+                `,
               }}
               checked={opened}
               onChange={() => {
@@ -837,8 +840,7 @@ export interface ListItemProps {
   id: string;
   title?: ReactNode;
   subtitle?: string;
-  imageUrl?: string;
-  leftIcon?: FigureProps["image"] | null;
+  icon?: FigureProps;
   draggable?: boolean;
   groupId?: string;
   selectable?: boolean;
@@ -860,7 +862,7 @@ export interface ListItemProps {
   selected?: boolean;
 }
 
-interface ListItemStylesProps {
+export interface ListItemStylesProps {
   containerStyle?: CSSProp;
   rowStyle?: CSSProp;
   titleStyle?: CSSProp;
@@ -890,8 +892,7 @@ interface ListItemWithId {
 const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
   (
     {
-      leftIcon: LeftIcon = null,
-      imageUrl,
+      icon,
       subtitle,
       title,
       draggable,
@@ -943,8 +944,6 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
     return (
       <ListItemWrapper
         ref={ref}
-        onMouseEnter={() => setIsHovered(idFullname)}
-        onMouseLeave={() => setIsHovered(null)}
         aria-label="list-item-wrapper"
         $openable={openable && isChildOpened}
         $style={styles?.containerStyle}
@@ -954,6 +953,8 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
       >
         <ListItemRow
           {...domProps}
+          onMouseEnter={() => setIsHovered(idFullname)}
+          onMouseLeave={() => setIsHovered(null)}
           $isHovered={isHovered === idFullname || openTipRowId === idFullname}
           $style={styles?.rowStyle}
           aria-label="list-item-row"
@@ -977,7 +978,7 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
                 id: id,
                 title,
                 subtitle,
-                ...(imageUrl ? { imageUrl } : { leftIcon: LeftIcon }),
+                icon,
               },
             })
           }
@@ -1064,10 +1065,27 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
                 ),
                 render: (children) => children,
               })}
-            {imageUrl ? (
-              <ImageStyle src={imageUrl} alt="Image from coneto, Systatum." />
-            ) : (
-              LeftIcon && <LeftIcon size={22} color="#4b5563" />
+
+            {icon && (
+              <Figure
+                {...icon}
+                size={icon?.size ?? 22}
+                styles={{
+                  self: css`
+                    ${typeof icon?.image === "string" &&
+                    css`
+                      min-width: 34px;
+                      min-height: 34px;
+                      max-width: 34px;
+                      max-height: 34px;
+                    `}
+                    display: flex;
+                    justify-content: center;
+                    ${icon?.styles?.self}
+                  `,
+                }}
+                color={"#4b5563"}
+              />
             )}
             <TextWrapper>
               {title && (
