@@ -14,32 +14,23 @@ import { Figure, FigureProps } from "./figure";
 export interface CrumbProps {
   children?: ReactNode;
   maxShown?: number;
-  style?: CSSProp;
   iconSeparator?: FigureProps["image"];
   fontSize?: number;
   textColor?: string;
   hoverColor?: string;
   lastTextColor?: string;
   arrowColor?: string;
+  styles?: CrumbStylesProps;
 }
-
-export interface CrumbItemProps {
-  path?: string;
-  children?: ReactNode;
-  isLast?: boolean;
-  style?: CSSProp;
-  onClick?: () => void;
-  fontSize?: number;
-  textColor?: string;
-  hoverColor?: string;
-  lastTextColor?: string;
+export interface CrumbStylesProps {
+  self?: CSSProp;
 }
 
 function Crumb({
   iconSeparator = RiArrowRightSLine,
   maxShown = 3,
   children,
-  style,
+  styles,
   fontSize = 16,
   hoverColor,
   textColor,
@@ -134,7 +125,7 @@ function Crumb({
               >
                 {cloneElement(data, {
                   isLast,
-                  style,
+                  styles,
                   fontSize,
                   hoverColor,
                   textColor,
@@ -183,11 +174,27 @@ const CrumbEllipsisIcon = styled(RiMoreLine)<{
   `}
 `;
 
+export interface CrumbItemProps {
+  path?: string;
+  children?: ReactNode;
+  isLast?: boolean;
+  styles?: CrumbItemStylesProps;
+  onClick?: () => void;
+  fontSize?: number;
+  textColor?: string;
+  hoverColor?: string;
+  lastTextColor?: string;
+}
+
+export interface CrumbItemStylesProps {
+  self?: CSSProp;
+}
+
 function CrumbItem({
   path,
   children,
   isLast = false,
-  style,
+  styles,
   onClick,
   fontSize = 16,
   hoverColor,
@@ -201,7 +208,7 @@ function CrumbItem({
       $hoverColor={hoverColor}
       $textColor={textColor}
       href={path}
-      $style={style}
+      $style={styles?.self}
       $isLast={isLast}
       $lastTextColor={lastTextColor}
     >
@@ -213,7 +220,7 @@ function CrumbItem({
       $fontSize={fontSize}
       $hoverColor={hoverColor}
       $textColor={textColor}
-      $style={style}
+      $style={styles?.self}
       onClick={onClick}
       $isLast={isLast}
       $lastTextColor={lastTextColor}
