@@ -62,6 +62,85 @@ describe("StatefulForm", () => {
     },
   ];
 
+  const PARTS_INPUT: PinboxState[] = [
+    {
+      type: "static",
+      text: "S",
+    },
+    {
+      type: "alphanumeric",
+    },
+    {
+      type: "digit",
+    },
+    {
+      type: "alphabet",
+    },
+    {
+      type: "static",
+      text: "-",
+    },
+    {
+      type: "alphabet",
+    },
+  ];
+
+  const pinboxSchema = z.object({
+    pin: z.string().min(4, "Pinbox does not follow the acceptable format"),
+  });
+
+  const FIELDS: FormFieldGroup[] = [
+    {
+      name: "pin",
+      title: "Pin",
+      type: "pin",
+      required: false,
+      helper: "This pinbox allows you to enter your PIN code.",
+      pinboxProps: {
+        parts: PARTS_INPUT,
+      },
+    },
+  ];
+
+  function PinboxProduct() {
+    const [state, setState] = useState({ pin: "" });
+    return (
+      <StatefulForm
+        validationSchema={pinboxSchema}
+        onChange={({ currentState }) => setState(currentState)}
+        fields={FIELDS}
+        formValues={state}
+      />
+    );
+  }
+
+  context("validation error", () => {
+    context("when pressing 2 character (not eligible)", () => {
+      it("should not show an error", () => {
+        cy.mount(<PinboxProduct />);
+        cy.findAllByRole("textbox").eq(1).click().type("23", { force: true });
+        cy.findByText("Pinbox does not follow the acceptable format").should(
+          "not.exist"
+        );
+      });
+
+      context("when blurring from the input", () => {
+        it("should displaying an error", () => {
+          cy.mount(<PinboxProduct />);
+          cy.findAllByRole("textbox").eq(1).click().type("23", { force: true });
+          cy.findByText("Pinbox does not follow the acceptable format").should(
+            "not.exist"
+          );
+          cy.get("body").click("top");
+          cy.wait(200);
+          cy.findByText("Pinbox does not follow the acceptable format").should(
+            "exist"
+          );
+        });
+      });
+    });
+  });
+
   context("button", () => {
     context("when given an onClick", () => {
       context("when clicking", () => {
