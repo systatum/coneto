@@ -7,13 +7,30 @@ import {
   forwardRef,
   useImperativeHandle,
   useReducer,
+  useMemo,
 } from "react";
 import styled, { css, type CSSProp } from "styled-components";
 import { Combobox } from "./combobox";
 import type { PDFDocumentProxy } from "pdfjs-dist";
 
+type ResolvedSource =
+  | { type: "pdf"; src: string }
+  | { type: "image"; src: string }
+  | { type: "encoded"; src: string }
+  | { type: "file"; src: File };
+
+export type DocumentSource = (builder: {
+  pdf: (url: string) => { type: "pdf"; src: string };
+  image: (url: string) => { type: "image"; src: string };
+  file: (file: File) => { type: "file"; src: File };
+  encodedString: (
+    str: string,
+    type?: "png" | null
+  ) => { type: "encoded"; src: string };
+}) => ResolvedSource;
+
 export interface DocumentViewerProps {
-  source?: string;
+  source?: DocumentSource;
   title?: string;
   onRegionSelected?: (region: BoundingBoxState) => void;
   boundingBoxes?: BoundingBoxesProps[];
@@ -104,6 +121,22 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
       number | null
     >(null);
 
+    const resolveSource = (source?: DocumentSource) => {
+      if (!source) return null;
+
+      return source({
+        pdf: (url) => ({ type: "pdf", src: url }),
+        image: (url) => ({ type: "image", src: url }),
+        file: (file) => ({ type: "file", src: file }),
+        encodedString: (str, type = null) => {
+          if (type) {
+            str = `data:image/${type};base64,${str}`;
+          }
+          return { type: "encoded", src: str };
+        },
+      });
+    };
+
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [totalPages, setTotalPages] = useState(0);
@@ -124,74 +157,140 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
       height?: number;
     } | null>(null);
 
+    const resolvedSource = useMemo(() => resolveSource(source), [source]);
+
+    const prevResolvedSource = useRef<ResolvedSource | null>(null);
+
+    // A standard "document" width — same ballpark as a PDF page at 1x scale
+    const DOCUMENT_BASE_WIDTH = 595;
+
     // For render for the first time to read pdf.
     useEffect(() => {
-      if (!source || !viewerRef.current) return;
+      if (!resolvedSource || !viewerRef.current) return;
+
+      if (prevResolvedSource.current === resolvedSource) return;
+
+      prevResolvedSource.current = resolvedSource;
       setLoading(true);
       setError(null);
 
       let cancelled = false;
 
-      import("pdfjs-dist").then((module) => {
-        /**
-         * We set pdfjsLib.GlobalWorkerOptions.workerSrc to load the PDF.js worker from a CDN, since the built-in worker from the library cannot be used directly at the moment.
-         * In Next.js, the import must be done inside useEffect, because using `import * as ...`
-         * can cause issues with server-side rendering (SSR).
-         */
-        module.GlobalWorkerOptions.workerSrc = libPdfJsWorkerSrc;
+      if (resolvedSource.type === "pdf") {
+        import("pdfjs-dist").then((module) => {
+          /**
+           * We set pdfjsLib.GlobalWorkerOptions.workerSrc to load the PDF.js worker from a CDN, since the built-in worker from the library cannot be used directly at the moment.
+           * In Next.js, the import must be done inside useEffect, because using `import * as ...`
+           * can cause issues with server-side rendering (SSR).
+           */
+          module.GlobalWorkerOptions.workerSrc = libPdfJsWorkerSrc;
 
-        module
-          .getDocument(source)
-          .promise.then((pdf: PDFDocumentProxy) => {
-            if (cancelled) return;
-            setTotalPages(pdf.numPages);
-            const canvases: HTMLCanvasElement[] = [];
+          module
+            .getDocument(resolvedSource.src)
+            .promise.then((pdf: PDFDocumentProxy) => {
+              if (cancelled) return;
+              setTotalPages(pdf.numPages);
+              const canvases: HTMLCanvasElement[] = [];
 
-            const renderPages = async () => {
-              for (let i = 1; i <= pdf.numPages; i++) {
-                const page = await pdf.getPage(i);
-                const viewport = page.getViewport({ scale });
+              const renderPages = async () => {
+                for (let i = 1; i <= pdf.numPages; i++) {
+                  const page = await pdf.getPage(i);
+                  const viewport = page.getViewport({ scale });
 
-                const canvas = document.createElement("canvas");
-                const context = canvas.getContext("2d");
-                if (!context) continue;
+                  const canvas = document.createElement("canvas");
+                  const context = canvas.getContext("2d");
+                  if (!context) continue;
 
-                canvas.width = viewport.width;
-                canvas.height = viewport.height;
+                  canvas.width = viewport.width;
+                  canvas.height = viewport.height;
 
-                await page.render({ canvas, canvasContext: context, viewport })
-                  .promise;
+                  await page.render({
+                    canvas,
+                    canvasContext: context,
+                    viewport,
+                  }).promise;
 
-                const pageWrapper = document.createElement("div");
-                pageWrapper.style.display = "flex";
-                pageWrapper.style.justifyContent = "center";
-                pageWrapper.style.marginBottom = "20px";
-                pageWrapper.style.background = "white";
-                pageWrapper.style.width = "fit-content";
-                pageWrapper.style.margin = "0 auto 20px auto";
+                  const pageWrapper = document.createElement("div");
+                  pageWrapper.style.display = "flex";
+                  pageWrapper.style.justifyContent = "center";
+                  pageWrapper.style.marginBottom = "20px";
+                  pageWrapper.style.background = "white";
+                  pageWrapper.style.width = "fit-content";
+                  pageWrapper.style.margin = "0 auto 20px auto";
 
-                pageWrapper.appendChild(canvas);
-                viewerRef.current?.appendChild(pageWrapper);
-                canvases.push(canvas);
-              }
+                  pageWrapper.appendChild(canvas);
+                  viewerRef.current?.appendChild(pageWrapper);
+                  canvases.push(canvas);
+                }
 
-              pdfRef.current = { pdf, canvases };
+                pdfRef.current = { pdf, canvases };
+                setLoading(false);
+              };
+
+              renderPages();
+            })
+            .catch((err: any) => {
+              if (cancelled) return;
+              setError(`Error loading PDF: ${err.message}`);
               setLoading(false);
-            };
+            });
+        });
 
-            renderPages();
-          })
-          .catch((err: any) => {
-            if (cancelled) return;
-            setError(`Error loading PDF: ${err.message}`);
-            setLoading(false);
-          });
-      });
+        return () => {
+          cancelled = true;
+        };
+      } else if (
+        resolvedSource.type === "image" ||
+        resolvedSource.type === "encoded" ||
+        resolvedSource.type === "file"
+      ) {
+        const img = new Image();
 
-      return () => {
-        cancelled = true;
-      };
-    }, [source]);
+        if (resolvedSource.type === "file") {
+          img.src = URL.createObjectURL(resolvedSource.src);
+        } else {
+          img.src = resolvedSource.src as string;
+        }
+
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+          if (!ctx) return;
+
+          canvas.width = img.naturalWidth;
+          canvas.height = img.naturalHeight;
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+          const displayWidth = DOCUMENT_BASE_WIDTH * scale;
+          const displayHeight =
+            (img.naturalHeight / img.naturalWidth) * displayWidth;
+          canvas.style.display = "block";
+          canvas.style.width = `${displayWidth}px`;
+          canvas.style.height = `${displayHeight}px`;
+
+          const pageWrapper = document.createElement("div");
+          pageWrapper.style.display = "flex";
+          pageWrapper.style.justifyContent = "center";
+          pageWrapper.style.marginBottom = "20px";
+          pageWrapper.appendChild(canvas);
+
+          viewerRef.current?.appendChild(pageWrapper);
+
+          pdfRef.current = {
+            pdf: null as any,
+            canvases: [canvas],
+          };
+
+          setTotalPages(1);
+          setLoading(false);
+        };
+
+        img.onerror = (err) => {
+          setError(`Error loading image: ${err}`);
+          setLoading(false);
+        };
+      }
+    }, [resolvedSource]);
 
     useEffect(() => {
       if (!viewerRef.current && selection) return;
@@ -320,6 +419,45 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
       if (!viewerRef.current || !pdfRef.current) return;
       const { canvases, pdf } = pdfRef.current;
 
+      // Image source: pdf is null, re-draw the image onto the existing canvas at the new scale
+      if (!pdf) {
+        const resolved = resolveSource(source);
+        if (!resolved) return;
+
+        canvases.forEach((canvas) => {
+          const img = new Image();
+
+          const draw = () => {
+            const ctx = canvas.getContext("2d");
+            if (!ctx) return;
+            const aspectRatio = canvas.height / canvas.width;
+            const displayWidth = DOCUMENT_BASE_WIDTH * scale;
+            const displayHeight = displayWidth * aspectRatio;
+            canvas.style.width = `${displayWidth}px`;
+            canvas.style.height = `${displayHeight}px`;
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          };
+
+          if (resolved.type === "file") {
+            img.src = URL.createObjectURL(
+              (resolved as { type: "file"; src: File }).src
+            );
+          } else {
+            img.src = (
+              resolved as { type: "image" | "encoded"; src: string }
+            ).src;
+          }
+
+          if (img.complete && img.naturalWidth > 0) {
+            draw();
+          } else {
+            img.onload = draw;
+          }
+        });
+        return;
+      }
+
+      // PDF source
       canvases.forEach((canvas, index) => {
         pdf.getPage(index + 1).then((page) => {
           const viewport = page.getViewport({ scale });
@@ -486,46 +624,49 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
 
     return (
       <PDFViewerContainer>
-        <ToolbarWrapper>
-          <Title>{title}</Title>
-          <ComboboxWrapper>
-            <Combobox
-              strict
-              selectedOptions={scaleValue}
-              onChange={handleScale}
-              placeholder={zoomPlaceholderText}
-              styles={{
-                containerStyle: css`
-                  width: 100px;
-                  color: black;
-                `,
-                selectboxStyle: css`
-                  background-color: white;
-                  ${styles?.zoomStyle}
-                `,
-              }}
-              options={SCALE_OPTIONS}
-            />
-          </ComboboxWrapper>
-          <div
-            style={{
-              width: "100%",
-              display: "flex",
-              alignContent: "end",
-              justifyContent: "end",
+        <ToolbarWrapper aria-label="doc-viewer-toolbar-wrapper">
+          <Title aria-label="doc-viewer-toolbar-title">{title}</Title>
+          <Combobox
+            strict
+            id="doc-viewer-toolbar-combo"
+            selectedOptions={scaleValue}
+            onChange={handleScale}
+            placeholder={zoomPlaceholderText}
+            styles={{
+              containerStyle: css`
+                width: 100px;
+                color: black;
+              `,
+              selectboxStyle: css`
+                width: 100px;
+                background-color: white;
+                ${styles?.zoomStyle}
+              `,
             }}
-          >
-            {totalPagesText ? (
-              totalPagesText({
-                currentPage: currentPage,
-                totalPages: totalPages,
-              })
-            ) : (
-              <p>
-                Page {currentPage} of {totalPages}
-              </p>
-            )}
-          </div>
+            options={SCALE_OPTIONS}
+          />
+          {resolvedSource.type === "pdf" && (
+            <div
+              aria-label="doc-viewer-page"
+              style={{
+                width: "100%",
+                display: "flex",
+                alignContent: "end",
+                justifyContent: "end",
+              }}
+            >
+              {totalPagesText ? (
+                totalPagesText({
+                  currentPage: currentPage,
+                  totalPages: totalPages,
+                })
+              ) : (
+                <p>
+                  Page {currentPage} of {totalPages}
+                </p>
+              )}
+            </div>
+          )}
 
           {(loading || error) && (
             <StatusText>
@@ -536,7 +677,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
         </ToolbarWrapper>
 
         <ContainerDocumentViewer
-          aria-label="container-content"
+          aria-label="doc-viewer-container"
           $containerStyle={styles?.containerStyle}
           ref={containerRef}
           onMouseUp={handleMouseUp}
@@ -686,15 +827,6 @@ const Title = styled.div`
   text-overflow: ellipsis;
 `;
 
-const ComboboxWrapper = styled.div`
-  display: flex;
-  position: relative;
-  justify-content: center;
-  width: fit-content;
-  align-content: center;
-  gap: 4px;
-`;
-
 const StatusText = styled.div`
   margin-left: auto;
   font-size: 14px;
@@ -717,6 +849,7 @@ const ContainerDocumentViewer = styled.div<{ $containerStyle?: CSSProp }>`
 
 const Viewer = styled.div`
   min-height: 100%;
+  min-width: max-content;
   cursor: crosshair;
   user-select: none;
   padding: 20px;

@@ -18,5 +18,6 @@ export default defineConfig({
     specPattern: "test/component/**/*.cy.{ts,tsx}",
     indexHtmlFile: "test/support/component-index.html",
     supportFile: "test/support/component.tsx",
+    fixturesFolder: "test/fixtures",
   },
 });

@@ -586,7 +586,13 @@ function FormFields<T extends FieldValues>({
                       ${field.buttonProps?.styles?.containerStyle};
                     `,
                   }}
-                  onClick={field.onClick}
+                  onClick={(e) => {
+                    if (field?.buttonProps?.onClick) {
+                      field?.buttonProps?.onClick(e);
+                    } else {
+                      field.onClick(e);
+                    }
+                  }}
                   disabled={field.disabled}
                 >
                   {field.icon && (

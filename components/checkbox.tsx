@@ -200,6 +200,7 @@ function Checkbox({
         showError={showError}
         styles={CheckboxStyles}
         label={label}
+        name={name}
         description={description}
       />
     </FieldLane>
