@@ -109,9 +109,11 @@ This is unordered list
           }}
         >
           <Boxbar
-            containerStyle={css`
-              width: 100%;
-            `}
+            styles={{
+              self: css`
+                width: 100%;
+              `,
+            }}
           >
             {BADGE_ITEMS.map((data, index) => (
               <Badge
