@@ -26,6 +26,96 @@ interface TableItemProps {
 }
 
 describe("Table", () => {
+  const columnsBasic: ColumnTableProps[] = [
+    {
+      id: "name",
+      caption: "Name",
+      sortable: true,
+    },
+    {
+      id: "type",
+      caption: "Type",
+      sortable: true,
+    },
+  ];
+
+  const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
+
+  const rawRows = Array.from({ length: 20 }, (_, i) => ({
+    name: `Load Balancer ${i + 1}`,
+    type: TYPES_DATA[i % TYPES_DATA.length],
+  }));
+
+  context("styles", () => {
+    context("tableBodyStyle", () => {
+      context("when given max-height 250px", () => {
+        it("should render the table body with a height of 250px", () => {
+          cy.mount(
+            <Table
+              styles={{
+                tableBodyStyle: css`
+                  max-height: 250px;
+                `,
+              }}
+              columns={columnsBasic}
+            >
+              {rawRows?.map((row, index) => (
+                <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
+                  {[row.name, row.type].map((rowCell, i) => (
+                    <Table.Row.Cell
+                      key={`${row.name}-${row.type}-${rowCell}`}
+                      width={columns[i].width}
+                    >
+                      {rowCell}
+                    </Table.Row.Cell>
+                  ))}
+                </Table.Row>
+              ))}
+            </Table>
+          );
+
+          cy.findAllByLabelText("table-body")
+            .eq(0)
+            .should("have.css", "height", "250px");
+        });
+      });
+    });
+
+    context("tableHeaderStyle", () => {
+      context("when given padding 20px", () => {
+        it("should render the table header with a padding of 20px", () => {
+          cy.mount(
+            <Table
+              styles={{
+                tableHeaderStyle: css`
+                  padding: 20px;
+                `,
+              }}
+              columns={columnsBasic}
+            >
+              {rawRows?.map((row, index) => (
+                <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
+                  {[row.name, row.type].map((rowCell, i) => (
+                    <Table.Row.Cell
+                      key={`${row.name}-${row.type}-${rowCell}`}
+                      width={columns[i].width}
+                    >
+                      {rowCell}
+                    </Table.Row.Cell>
+                  ))}
+                </Table.Row>
+              ))}
+            </Table>
+          );
+
+          cy.findAllByLabelText("table-header")
+            .eq(0)
+            .should("have.css", "padding", "20px");
+        });
+      });
+    });
+  });
+
   function TableWithAppendix(props: TableRowProps) {
     interface TableSummaryProps {
       id?: string;
@@ -635,29 +725,9 @@ describe("Table", () => {
     });
 
     context("totalSelectedItemText", () => {
-      const columns: ColumnTableProps[] = [
-        {
-          id: "name",
-          caption: "Name",
-          sortable: true,
-        },
-        {
-          id: "type",
-          caption: "Type",
-          sortable: true,
-        },
-      ];
-
-      const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
-
-      const rawRows = Array.from({ length: 20 }, (_, i) => ({
-        name: `Load Balancer ${i + 1}`,
-        type: TYPES_DATA[i % TYPES_DATA.length],
-      }));
-
       it("renders with selected text", () => {
         cy.mount(
-          <Table selectable columns={columns}>
+          <Table selectable columns={columnsBasic}>
             {rawRows?.map((row, index) => (
               <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
                 {[row.name, row.type].map((rowCell, i) => (
@@ -688,7 +758,7 @@ describe("Table", () => {
               labels={{
                 totalSelectedItemText: (count) => `${count} email selected`,
               }}
-              columns={columns}
+              columns={columnsBasic}
             >
               {rawRows?.map((row, index) => (
                 <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
@@ -719,7 +789,7 @@ describe("Table", () => {
             <Table
               selectable
               labels={{ totalSelectedItemText: null }}
-              columns={columns}
+              columns={columnsBasic}
             >
               {rawRows?.map((row, index) => (
                 <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
@@ -931,7 +1001,7 @@ describe("Table", () => {
           );
 
           cy.findByLabelText("pagination-wrapper")
-            .should("have.css", "width", "417px")
+            .should("have.css", "width", "432px")
             .and("have.css", "justify-content", "end");
         });
       });
