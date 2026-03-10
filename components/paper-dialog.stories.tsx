@@ -112,9 +112,11 @@ export const Default: Story = {
         <Button onClick={() => dialogRef.current?.closeDialog()}>Close</Button>
         <PaperDialog width="35vw" ref={dialogRef}>
           <PaperDialog.Content
-            style={{
-              padding: "36px",
-              gap: "24px",
+            styles={{
+              self: {
+                padding: "36px",
+                gap: "24px",
+              },
             }}
           >
             <Button onClick={() => dialogRef.current?.minimizeDialog()}>
@@ -198,9 +200,11 @@ export const NonClosable: Story = {
 
         <PaperDialog closable={false} width="35vw" ref={dialogRef}>
           <PaperDialog.Content
-            style={{
-              padding: "36px",
-              gap: "16px",
+            styles={{
+              self: {
+                padding: "36px",
+                gap: "16px",
+              },
             }}
           >
             <div
@@ -305,9 +309,11 @@ export const FixedLeft: Story = {
       <PaperDialog closable position="left" width="70vw">
         <PaperDialog.Trigger>Trigger</PaperDialog.Trigger>
         <PaperDialog.Content
-          style={{
-            padding: "36px",
-            gap: "24px",
+          styles={{
+            self: {
+              padding: "36px",
+              gap: "16px",
+            },
           }}
         >
           <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
@@ -594,10 +600,12 @@ export const Nested: Story = {
 
         <PaperDialog ref={dialogRef1} closable width="90vw">
           <PaperDialog.Content
-            style={css`
-              gap: 24px;
-              overflow: auto;
-            `}
+            styles={{
+              self: css`
+                gap: 24px;
+                overflow: auto;
+              `,
+            }}
           >
             <Card
               title="Family Registry"
@@ -653,9 +661,8 @@ export const Nested: Story = {
 
         <PaperDialog ref={dialogRef2} closable width="75vw">
           <PaperDialog.Content
-            style={{
-              padding: "36px",
-              gap: "24px",
+            styles={{
+              self: { padding: "36px", gap: "24px" },
             }}
           >
             <div
