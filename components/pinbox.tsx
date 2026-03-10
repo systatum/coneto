@@ -451,7 +451,7 @@ const PinboxInput = styled.input<{
           font-size: ${`${$fontSize}px`};
         `};
 
-  border: 0.5px solid black;
+  border: 1px solid #d1d5db;
   border-radius: 0px;
   outline: none;
   text-align: center;
