@@ -533,7 +533,7 @@ export const AllCase: Story = {
       thumb_field: z.boolean(),
       togglebox: z.boolean(),
       capsule: z.string().max(4, "Paid is required"),
-      pin: z.string().min(4, "PIN must be 6 digits"),
+      pin: z.string().min(4, "Pinbox does not follow the acceptable format"),
       country_code: z
         .object({
           id: z.string(),
