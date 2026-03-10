@@ -22,6 +22,7 @@ interface BasePinboxProps {
   onChange?: (
     data: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
+  onBlur?: () => void;
   value?: string;
   disabled?: boolean;
   styles?: BasePinboxStylesProps;
@@ -50,6 +51,7 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
       onChange,
       disabled,
       id,
+      onBlur,
     },
     ref
   ) => {
@@ -72,6 +74,16 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
     const maskTimeoutsRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(
       new Map()
     );
+
+    const wrapperRef = useRef<HTMLDivElement>(null);
+
+    const handleBlurCapture = (e: React.FocusEvent) => {
+      const next = e.relatedTarget as Node;
+
+      if (!wrapperRef.current?.contains(next)) {
+        onBlur?.();
+      }
+    };
 
     const moveToNextInput = (currentIndex: number) => {
       let nextIndex = currentIndex + 1;
@@ -233,7 +245,11 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
     };
 
     return (
-      <PinboxInputWrapper $disabled={disabled}>
+      <PinboxInputWrapper
+        ref={wrapperRef}
+        onBlurCapture={handleBlurCapture}
+        $disabled={disabled}
+      >
         {parts.map((part, index) => {
           const isStatic = part.type === "static";
 
@@ -271,8 +287,6 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
                       ref as React.MutableRefObject<HTMLInputElement | null>
                     ).current = el;
                   }
-
-                  if (el) el.value = displayChar;
                 }}
                 disabled={disabled}
                 pattern={pattern}
