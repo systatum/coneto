@@ -1753,17 +1753,17 @@ export interface StatefulFormLabelProps
   extends Omit<LabelHTMLAttributes<HTMLLabelElement>, "label" | "style"> {
   label?: string;
   helper?: string;
-  style?: CSSProp;
+  styles: { self?: CSSProp };
 }
 
 function StatefulFormLabel({
   label,
   helper,
-  style,
+  styles,
   ...props
 }: StatefulFormLabelProps) {
   return (
-    <Label {...props} $style={style}>
+    <Label {...props} $style={styles?.self}>
       <LabelText>{label}</LabelText>
 
       {helper && <Helper value={helper} />}
