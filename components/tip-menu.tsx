@@ -17,7 +17,7 @@ export interface TipMenuProps {
 
 export interface TipMenuItemProps {
   caption: string;
-  icon: FigureProps;
+  icon?: FigureProps;
   onClick?: (e?: React.MouseEvent) => void;
   isDangerous?: boolean;
   variant?: TipMenuItemVariantType;
