@@ -7,6 +7,24 @@ const meta: Meta<typeof Badge> = {
   title: "Content/Badge",
   component: Badge,
   tags: ["autodocs"],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+The **Badge** component is a flexible, customizable UI element designed to display small, contextual information such as statuses, labels, or tags. 
+
+Key features include:
+- **Variants**: Predefined color schemes for common states (neutral, green, yellow, red).
+- **Custom Colors**: Override default colors for text, background, and optional circle indicator.
+- **Circle Indicator**: Optional small colored circle to visually highlight status.
+- **Actions**: Optional icons or buttons for additional interactivity.
+- **Accessibility**: Built with ARIA labels for badges, circles, and actions.
+
+This component is ideal for use cases like status indicators, category tags, or badges with interactive actions.
+        `,
+      },
+    },
+  },
   argTypes: {
     variant: {
       control: { type: "select" },
@@ -18,13 +36,33 @@ const meta: Meta<typeof Badge> = {
         red: "red",
         "N/A": null,
       },
+      description: "Select a predefined color variant for the badge.",
     },
-    withCircle: { control: "boolean" },
-    caption: { control: "text" },
-    badgeStyle: { control: false },
-    backgroundColor: { control: "color" },
-    textColor: { control: "color" },
-    circleColor: { control: "color" },
+    withCircle: {
+      control: "boolean",
+      description:
+        "If true, displays a small circle next to the badge caption.",
+    },
+    caption: {
+      control: "text",
+      description: "The text content of the badge.",
+    },
+    styles: {
+      control: false,
+      description: "Custom CSS styles for the badge container.",
+    },
+    backgroundColor: {
+      control: "color",
+      description: "Override the badge background color.",
+    },
+    textColor: {
+      control: "color",
+      description: "Override the badge text color.",
+    },
+    circleColor: {
+      control: "color",
+      description: "Override the circle indicator color.",
+    },
   },
 };
 
@@ -144,10 +182,12 @@ export const Custom: Story = {
       >
         {BADGE_OPTIONS.map((badge) => (
           <Badge
-            badgeStyle={css`
-              width: 100%;
-              max-width: 120px;
-            `}
+            styles={{
+              self: css`
+                width: 100%;
+                max-width: 120px;
+              `,
+            }}
             backgroundColor={badge.backgroundColor}
             textColor={badge.textColor}
             variant={badge.variant as BadgeVariantProps}
