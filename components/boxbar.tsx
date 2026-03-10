@@ -5,10 +5,14 @@ import styled, { CSSProp } from "styled-components";
 
 export interface BoxbarProps {
   children: ReactNode;
-  containerStyle?: CSSProp;
+  styles?: BoxbarStylesProps;
 }
 
-function Boxbar({ containerStyle, children }: BoxbarProps) {
+export interface BoxbarStylesProps {
+  self: CSSProp;
+}
+
+function Boxbar({ styles, children }: BoxbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [contentHeight, setContentHeight] = useState(0);
   const [collapsedHeight, setCollapsedHeight] = useState(0);
@@ -64,7 +68,7 @@ function Boxbar({ containerStyle, children }: BoxbarProps) {
       initial={{ height: collapsedHeight }}
       animate={{ height: isOpen ? contentHeight : collapsedHeight }}
       transition={{ duration: 0.2, ease: "easeInOut" }}
-      $containerStyle={containerStyle}
+      $containerStyle={styles?.self}
     >
       {children}
 
