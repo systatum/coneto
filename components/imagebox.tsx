@@ -218,7 +218,7 @@ function Imagebox({
   ...rest
 }: ImageboxProps) {
   const inputId = StatefulForm.sanitizeId({
-    prefix: "Imagebox",
+    prefix: "imagebox",
     name,
     id,
   });

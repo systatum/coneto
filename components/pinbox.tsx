@@ -1,7 +1,7 @@
 import { RiErrorWarningLine } from "@remixicon/react";
 import React, {
   ChangeEvent,
-  ReactElement,
+  forwardRef,
   useEffect,
   useRef,
   useState,
@@ -19,9 +19,8 @@ interface BasePinboxProps {
   masked?: boolean;
   parts?: PinboxState[];
   name?: string;
-  onChange?: (
-    data: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void;
+  onChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onBlur?: () => void;
   value?: string;
   disabled?: boolean;
   styles?: BasePinboxStylesProps;
@@ -37,249 +36,286 @@ export interface PinboxState {
 
 type PinboxTypeState = "static" | "digit" | "alphabet" | "alphanumeric";
 
-function BasePinbox({
-  fontSize = 24,
-  errorMessage,
-  masked,
-  parts,
-  showError,
-  name = "pinbox",
-  value,
-  onChange,
-  disabled,
-}: BasePinboxProps) {
-  const getDefaultValue = () => {
-    let valIndex = 0;
-    return parts.map((p) => {
-      if (p.type === "static") {
-        return p.text ?? "";
-      }
-      const char = value?.[valIndex] ?? "";
-      valIndex++;
-      return char;
-    });
-  };
-
-  const [valueLocal, setValueLocal] = useState<string[]>(getDefaultValue());
-
-  const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
-  const [maskedIndices, setMaskedIndices] = useState<Set<number>>(new Set());
-  const maskTimeoutsRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(
-    new Map()
-  );
-
-  const moveToNextInput = (currentIndex: number) => {
-    let nextIndex = currentIndex + 1;
-    while (parts[nextIndex] && parts[nextIndex].type === "static") {
-      nextIndex++;
-    }
-    if (parts[nextIndex]) {
-      inputsRef.current[nextIndex]?.focus();
-    }
-  };
-
-  const moveToPrevInput = (currentIndex: number) => {
-    let prevIndex = currentIndex - 1;
-    while (parts[prevIndex] && parts[prevIndex].type === "static") {
-      prevIndex--;
-    }
-    if (inputsRef.current[prevIndex]) {
-      inputsRef.current[prevIndex]?.focus();
-    }
-  };
-
-  useEffect(() => {
-    return () => {
-      maskTimeoutsRef.current.forEach((timeout) => clearTimeout(timeout));
-    };
-  }, []);
-
-  const handleKeyDown = (
-    e: React.KeyboardEvent<HTMLInputElement>,
-    index: number
+const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
+  (
+    {
+      fontSize = 24,
+      errorMessage,
+      masked,
+      parts,
+      showError,
+      name = "pinbox",
+      value,
+      onChange,
+      disabled,
+      id,
+      onBlur,
+    },
+    ref
   ) => {
-    const key = e.key;
-    const type = parts[index].type;
+    const getDefaultValue = () => {
+      let valIndex = 0;
+      return parts.map((p) => {
+        if (p.type === "static") {
+          return p.text ?? "";
+        }
+        const char = value?.[valIndex] ?? "";
+        valIndex++;
+        return char;
+      });
+    };
 
-    if (type === "static") {
-      if (key === "ArrowLeft") moveToPrevInput(index);
-      if (key === "Backspace") moveToPrevInput(index);
-      if (key === "ArrowRight") moveToNextInput(index);
-      if (key === "Tab") moveToNextInput(index);
-      e.preventDefault();
-      return;
-    }
+    const [valueLocal, setValueLocal] = useState<string[]>(getDefaultValue());
 
-    if (
-      type === "digit" &&
-      !/[0-9]/.test(key) &&
-      !["Backspace", "Tab", "ArrowLeft", "ArrowRight"].includes(key)
-    ) {
-      e.preventDefault();
-      return;
-    }
-    if (
-      type === "alphabet" &&
-      !/[A-Za-z]/.test(key) &&
-      !["Backspace", "Tab", "ArrowLeft", "ArrowRight"].includes(key)
-    ) {
-      e.preventDefault();
-      return;
-    }
-    if (
-      type === "alphanumeric" &&
-      !/[A-Za-z0-9]/.test(key) &&
-      !["Backspace", "Tab", "ArrowLeft", "ArrowRight"].includes(key)
-    ) {
-      e.preventDefault();
-      return;
-    }
+    const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
+    const [maskedIndices, setMaskedIndices] = useState<Set<number>>(new Set());
+    const maskTimeoutsRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(
+      new Map()
+    );
 
-    if (key.length === 1) {
-      e.preventDefault();
-      updateValue(index, key);
-      moveToNextInput(index);
-    }
+    const wrapperRef = useRef<HTMLDivElement>(null);
 
-    if (key === "Backspace") {
-      if (valueLocal[index]) {
-        updateValue(index, "");
-      } else {
+    const handleBlurCapture = (e: React.FocusEvent) => {
+      const next = e.relatedTarget as Node;
+
+      if (!wrapperRef.current?.contains(next)) {
+        onBlur?.();
+      }
+    };
+
+    const moveToNextInput = (currentIndex: number) => {
+      let nextIndex = currentIndex + 1;
+      while (parts[nextIndex] && parts[nextIndex].type === "static") {
+        nextIndex++;
+      }
+      if (parts[nextIndex]) {
+        inputsRef.current[nextIndex]?.focus();
+      }
+    };
+
+    const moveToPrevInput = (currentIndex: number) => {
+      let prevIndex = currentIndex - 1;
+      while (parts[prevIndex] && parts[prevIndex].type === "static") {
+        prevIndex--;
+      }
+      if (inputsRef.current[prevIndex]) {
+        inputsRef.current[prevIndex]?.focus();
+      }
+    };
+
+    useEffect(() => {
+      return () => {
+        maskTimeoutsRef.current.forEach((timeout) => clearTimeout(timeout));
+      };
+    }, []);
+
+    const handleKeyDown = (
+      e: React.KeyboardEvent<HTMLInputElement>,
+      index: number
+    ) => {
+      const key = e.key;
+      const type = parts[index].type;
+
+      if (type === "static") {
+        if (key === "ArrowLeft") moveToPrevInput(index);
+        if (key === "Backspace") moveToPrevInput(index);
+        if (key === "ArrowRight") moveToNextInput(index);
+        if (key === "Tab") moveToNextInput(index);
+        e.preventDefault();
+        return;
+      }
+
+      if (
+        type === "digit" &&
+        !/[0-9]/.test(key) &&
+        !["Backspace", "Tab", "ArrowLeft", "ArrowRight"].includes(key)
+      ) {
+        e.preventDefault();
+        return;
+      }
+      if (
+        type === "alphabet" &&
+        !/[A-Za-z]/.test(key) &&
+        !["Backspace", "Tab", "ArrowLeft", "ArrowRight"].includes(key)
+      ) {
+        e.preventDefault();
+        return;
+      }
+      if (
+        type === "alphanumeric" &&
+        !/[A-Za-z0-9]/.test(key) &&
+        !["Backspace", "Tab", "ArrowLeft", "ArrowRight"].includes(key)
+      ) {
+        e.preventDefault();
+        return;
+      }
+
+      if (key.length === 1) {
+        e.preventDefault();
+        updateValue(index, key);
+        moveToNextInput(index);
+      }
+
+      if (key === "Backspace") {
+        if (valueLocal[index]) {
+          updateValue(index, "");
+        } else {
+          moveToPrevInput(index);
+        }
+      }
+
+      if (key === "Tab" && !e.shiftKey) {
+        e.preventDefault();
+        moveToNextInput(index);
+      }
+
+      if (key === "Tab" && e.shiftKey) {
+        e.preventDefault();
         moveToPrevInput(index);
       }
-    }
 
-    if (key === "Tab" && !e.shiftKey) {
-      e.preventDefault();
-      moveToNextInput(index);
-    }
-
-    if (key === "Tab" && e.shiftKey) {
-      e.preventDefault();
-      moveToPrevInput(index);
-    }
-
-    if (key === "ArrowLeft") {
-      moveToPrevInput(index);
-    }
-
-    if (key === "ArrowRight") {
-      moveToNextInput(index);
-    }
-  };
-
-  const updateValue = (index: number, newChar: string) => {
-    const type = parts[index].type;
-    if (type === "alphabet" || type === "alphanumeric") {
-      if (/[a-z]/.test(newChar)) {
-        newChar = newChar.toUpperCase();
-      }
-    }
-
-    const finalValue = [...valueLocal];
-    finalValue[index] = newChar;
-    setValueLocal(finalValue);
-
-    if (masked && newChar) {
-      const existingTimeout = maskTimeoutsRef.current.get(index);
-      if (existingTimeout) {
-        clearTimeout(existingTimeout);
+      if (key === "ArrowLeft") {
+        moveToPrevInput(index);
       }
 
-      setMaskedIndices((prev) => {
-        const newSet = new Set(prev);
-        newSet.delete(index);
-        return newSet;
-      });
+      if (key === "ArrowRight") {
+        moveToNextInput(index);
+      }
+    };
 
-      const timeout = setTimeout(() => {
+    const updateValue = (index: number, newChar: string) => {
+      const type = parts[index].type;
+      if (type === "alphabet" || type === "alphanumeric") {
+        if (/[a-z]/.test(newChar)) {
+          newChar = newChar.toUpperCase();
+        }
+      }
+
+      const finalValue = [...valueLocal];
+      finalValue[index] = newChar;
+      setValueLocal(finalValue);
+
+      if (masked && newChar) {
+        const existingTimeout = maskTimeoutsRef.current.get(index);
+        if (existingTimeout) {
+          clearTimeout(existingTimeout);
+        }
+
         setMaskedIndices((prev) => {
           const newSet = new Set(prev);
-          newSet.add(index);
+          newSet.delete(index);
           return newSet;
         });
-        maskTimeoutsRef.current.delete(index);
-      }, 500);
 
-      maskTimeoutsRef.current.set(index, timeout);
-    }
+        const timeout = setTimeout(() => {
+          setMaskedIndices((prev) => {
+            const newSet = new Set(prev);
+            newSet.add(index);
+            return newSet;
+          });
+          maskTimeoutsRef.current.delete(index);
+        }, 500);
 
-    if (onChange) {
-      const syntheticEvent = {
-        target: {
-          name,
-          value: finalValue
-            .filter((_, i) => parts[i].type !== "static")
-            .join(""),
-        },
-      } as ChangeEvent<HTMLInputElement>;
-      onChange(syntheticEvent);
-    }
-  };
+        maskTimeoutsRef.current.set(index, timeout);
+      }
 
-  const getDisplayChar = (index: number) => {
-    const char = valueLocal[index] || "";
+      if (onChange) {
+        const syntheticEvent = {
+          target: {
+            name,
+            value: finalValue
+              .filter((_, i) => parts[i].type !== "static")
+              .join(""),
+          },
+        } as ChangeEvent<HTMLInputElement>;
+        onChange(syntheticEvent);
+      }
+    };
 
-    if (!masked || !char || parts[index].type === "static") {
-      return char;
-    }
+    const getDisplayChar = (index: number) => {
+      const char = valueLocal[index] || "";
 
-    return maskedIndices.has(index) ? "•" : char;
-  };
+      if (!masked || !char || parts[index].type === "static") {
+        return char;
+      }
 
-  return (
-    <PinboxInputWrapper $disabled={disabled}>
-      {parts.map((part, index) => {
-        const isStatic = part.type === "static";
+      return maskedIndices.has(index) ? "•" : char;
+    };
 
-        const displayChar = getDisplayChar(index);
-        const { type, pattern } = switchInputBox(part.type);
-        const isAnimate = Boolean(
-          masked && !isStatic && !maskedIndices.has(index) && valueLocal[index]
-        );
+    return (
+      <PinboxInputWrapper
+        ref={wrapperRef}
+        onBlurCapture={handleBlurCapture}
+        $disabled={disabled}
+      >
+        {parts.map((part, index) => {
+          const isStatic = part.type === "static";
 
-        return (
-          <PinboxInputContent
-            $fontSize={fontSize}
-            $isStatic={isStatic}
-            key={index}
-          >
-            <PinboxInput
-              aria-label="pinbox-input"
-              $error={showError}
-              ref={(el: HTMLInputElement) => {
-                inputsRef.current[index] = el;
-                if (el) el.value = displayChar;
-              }}
-              disabled={disabled}
-              pattern={pattern}
-              type={type}
-              maxLength={1}
-              value={displayChar}
-              onKeyDown={(e) => handleKeyDown(e, index)}
-              $isStatic={isStatic}
+          const displayChar = getDisplayChar(index);
+          const { type, pattern } = switchInputBox(part.type);
+          const isAnimate = Boolean(
+            masked &&
+              !isStatic &&
+              !maskedIndices.has(index) &&
+              valueLocal[index]
+          );
+
+          const firstEditableIndex = parts.findIndex(
+            (p) => p.type !== "static"
+          );
+
+          return (
+            <PinboxInputContent
               $fontSize={fontSize}
-              $isAnimate={isAnimate}
-            />
-            <PinboxIndicator $error={showError} />
-          </PinboxInputContent>
-        );
-      })}
-      {showError && errorMessage && (
-        <RiErrorWarningLine
-          size={fontSize * 1.25}
-          style={{
-            display: "flex",
-            marginLeft: fontSize * 0.4,
-            borderRadius: "9999px",
-            background: "#dc2626",
-            color: "white",
-          }}
-        />
-      )}
-    </PinboxInputWrapper>
-  );
-}
+              $isStatic={isStatic}
+              key={index}
+            >
+              <PinboxInput
+                id={index === firstEditableIndex ? id : undefined}
+                onChange={() => {}}
+                aria-label="pinbox-input"
+                $error={showError}
+                ref={(el: HTMLInputElement) => {
+                  inputsRef.current[index] = el;
+
+                  if (index === 0 && typeof ref === "function") {
+                    ref(el);
+                  } else if (index === 0 && ref) {
+                    (
+                      ref as React.MutableRefObject<HTMLInputElement | null>
+                    ).current = el;
+                  }
+                }}
+                disabled={disabled}
+                pattern={pattern}
+                type={type}
+                maxLength={1}
+                value={displayChar}
+                onKeyDown={(e) => handleKeyDown(e, index)}
+                $isStatic={isStatic}
+                $fontSize={fontSize}
+                $isAnimate={isAnimate}
+              />
+              <PinboxIndicator $error={showError} />
+            </PinboxInputContent>
+          );
+        })}
+        {showError && errorMessage && (
+          <RiErrorWarningLine
+            size={fontSize * 1.25}
+            style={{
+              display: "flex",
+              marginLeft: fontSize * 0.4,
+              borderRadius: "9999px",
+              background: "#dc2626",
+              color: "white",
+            }}
+          />
+        )}
+      </PinboxInputWrapper>
+    );
+  }
+);
 
 export type PinboxStylesProps = BasePinboxStylesProps & FieldLaneStylesProps;
 
@@ -289,59 +325,67 @@ export interface PinboxProps
   styles?: PinboxStylesProps;
 }
 
-function Pinbox({
-  label,
-  showError,
-  styles,
-  errorMessage,
-  actions,
-  helper,
-  disabled,
-  name,
-  id,
-  ...rest
-}: PinboxProps) {
-  const inputId = StatefulForm.sanitizeId({
-    prefix: "pinbox",
-    name,
-    id,
-  });
+const Pinbox = forwardRef<HTMLInputElement, PinboxProps>(
+  (
+    {
+      label,
+      showError,
+      styles,
+      errorMessage,
+      actions,
+      helper,
+      disabled,
+      name,
+      id,
+      ...rest
+    },
+    ref
+  ) => {
+    const inputId = StatefulForm.sanitizeId({
+      prefix: "pinbox",
+      name,
+      id,
+    });
 
-  const {
-    bodyStyle,
-    controlStyle,
-    containerStyle,
-    labelStyle,
-    ...pinboxStyles
-  } = styles ?? {};
+    const {
+      bodyStyle,
+      controlStyle,
+      containerStyle,
+      labelStyle,
+      ...pinboxStyles
+    } = styles ?? {};
 
-  return (
-    <FieldLane
-      id={inputId}
-      showError={showError}
-      errorMessage={errorMessage}
-      actions={actions}
-      helper={helper}
-      disabled={disabled}
-      label={label}
-      errorIconPosition="none"
-      styles={{
-        bodyStyle,
-        controlStyle,
-        containerStyle,
-        labelStyle,
-      }}
-    >
-      <BasePinbox
-        {...rest}
+    return (
+      <FieldLane
         id={inputId}
+        showError={showError}
+        errorMessage={errorMessage}
+        actions={actions}
+        helper={helper}
         disabled={disabled}
-        styles={pinboxStyles}
         label={label}
-      />
-    </FieldLane>
-  );
-}
+        errorIconPosition="none"
+        styles={{
+          bodyStyle,
+          controlStyle,
+          containerStyle,
+          labelStyle,
+        }}
+      >
+        <BasePinbox
+          {...rest}
+          ref={ref}
+          id={inputId}
+          showError={showError}
+          errorMessage={errorMessage}
+          disabled={disabled}
+          styles={pinboxStyles}
+          label={label}
+        />
+      </FieldLane>
+    );
+  }
+);
 
 const PinboxInputWrapper = styled.div<{ $disabled?: boolean }>`
   display: flex;
@@ -419,7 +463,7 @@ const PinboxInput = styled.input<{
           font-size: ${`${$fontSize}px`};
         `};
 
-  border: 0.5px solid black;
+  border: 1px solid #d1d5db;
   border-radius: 0px;
   outline: none;
   text-align: center;

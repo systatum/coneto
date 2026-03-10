@@ -19,6 +19,7 @@ import { CapsuleContentProps } from "./capsule";
 import { OptionsProps } from "./selectbox";
 import { Messagebox } from "./messagebox";
 import { CurrencyOptionsProps } from "./moneybox";
+import { PinboxState } from "./pinbox";
 
 const meta: Meta<typeof StatefulForm> = {
   title: "Input Elements/StatefulForm",
@@ -360,6 +361,7 @@ export const AllCase: Story = {
       capsule: string;
       country_code?: CountryCodeProps;
       currency: string;
+      pin: string;
     }
 
     const [value, setValue] = useState<AllCaseValueProps>({
@@ -389,6 +391,7 @@ export const AllCase: Story = {
       capsule: "",
       country_code: DEFAULT_COUNTRY_CODES,
       currency: "USD",
+      pin: "",
     });
 
     const CAPSULE_TABS: CapsuleContentProps[] = [
@@ -399,6 +402,29 @@ export const AllCase: Story = {
       {
         id: "unpaid",
         title: "Unpaid",
+      },
+    ];
+
+    const PARTS_INPUT: PinboxState[] = [
+      {
+        type: "static",
+        text: "S",
+      },
+      {
+        type: "alphanumeric",
+      },
+      {
+        type: "digit",
+      },
+      {
+        type: "alphabet",
+      },
+      {
+        type: "static",
+        text: "-",
+      },
+      {
+        type: "alphabet",
       },
     ];
 
@@ -507,6 +533,7 @@ export const AllCase: Story = {
       thumb_field: z.boolean(),
       togglebox: z.boolean(),
       capsule: z.string().max(4, "Paid is required"),
+      pin: z.string().min(4, "Pinbox does not follow the acceptable format"),
       country_code: z
         .object({
           id: z.string(),
@@ -647,6 +674,16 @@ export const AllCase: Story = {
         required: false,
         placeholder: "Enter text here",
         helper: "This field allows you to enter multiple lines of text",
+      },
+      {
+        name: "pin",
+        title: "Pin",
+        type: "pin",
+        required: false,
+        helper: "This pinbox allows you to enter your PIN code.",
+        pinboxProps: {
+          parts: PARTS_INPUT,
+        },
       },
       {
         name: "check",

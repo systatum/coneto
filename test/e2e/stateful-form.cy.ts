@@ -122,11 +122,16 @@ describe("StatefulForm", () => {
         force: true,
       });
       cy.contains("sample-1.jpg").should("exist");
-      cy.findByLabelText("imagebox").selectFile(testFile, {
+      cy.findByLabelText("imagebox-input").selectFile(testFile, {
         action: "drag-drop",
         force: true,
       });
       cy.get("img").eq(0).should("exist");
+
+      cy.findAllByLabelText("pinbox-input").eq(1).type("2");
+      cy.findAllByLabelText("pinbox-input").eq(2).type("1");
+      cy.findAllByLabelText("pinbox-input").eq(3).type("a");
+      cy.findAllByLabelText("pinbox-input").eq(5).type("b");
 
       cy.findAllByRole("button").eq(3).click();
       cy.findAllByPlaceholderText("Search your country...")

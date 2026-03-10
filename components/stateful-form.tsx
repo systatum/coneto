@@ -40,6 +40,7 @@ import { Button, ButtonProps } from "./button";
 import { Radio, RadioProps } from "./radio";
 import Helper from "./helper";
 import { FigureProps } from "./figure";
+import { Pinbox, PinboxProps } from "./pinbox";
 
 export type StatefulOnChangeType =
   | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -88,6 +89,7 @@ export type FormFieldType =
   | "capsule"
   | "time"
   | "button"
+  | "pin"
   | "custom";
 
 export interface StatefulFormProps<Z extends ZodTypeAny> {
@@ -148,6 +150,7 @@ export interface FormFieldProps {
   capsuleProps?: CapsuleProps;
   timeboxProps?: TimeboxProps;
   buttonProps?: ButtonProps;
+  pinboxProps?: PinboxProps;
 }
 
 function StatefulForm<Z extends ZodTypeAny>({
@@ -481,6 +484,69 @@ function FormFields<T extends FieldValues>({
                       ${field.textboxProps?.styles?.bodyStyle}
                     `,
                   }}
+                />
+              ) : field.type === "pin" ? (
+                <Controller
+                  key={index}
+                  control={control}
+                  name={field.name as Path<T>}
+                  render={({ field: controllerField }) => (
+                    <Pinbox
+                      key={index}
+                      id={field.id}
+                      name={field.name}
+                      label={field.title}
+                      value={controllerField.value ?? ""}
+                      helper={field.helper}
+                      onBlur={controllerField.onBlur}
+                      onChange={(e) => {
+                        controllerField.onChange(e);
+
+                        if (field.onChange) {
+                          field.onChange(e);
+                        }
+
+                        if (onChange) {
+                          onChange(field.name as keyof T, e.target.value);
+                        }
+                      }}
+                      showError={shouldShowError(field.name)}
+                      errorMessage={
+                        errors[field.name as keyof T]?.message as
+                          | string
+                          | undefined
+                      }
+                      disabled={field.disabled}
+                      {...field.pinboxProps}
+                      styles={{
+                        ...field.pinboxProps?.styles,
+                        containerStyle: css`
+                          ${field.width &&
+                          css`
+                            width: ${field.width};
+                          `}
+                          ${field.pinboxProps?.styles?.containerStyle}
+                        `,
+                        labelStyle: css`
+                          ${labelSize &&
+                          css`
+                            font-size: ${labelSize};
+                          `}
+                          ${field.pinboxProps?.styles?.labelStyle}
+                        `,
+                        bodyStyle: css`
+                          ${!field.title &&
+                          hasFieldTitle &&
+                          css`
+                            margin-top: 30px;
+                            justify-content: end;
+                          `}
+                          ${field.pinboxProps?.styles?.bodyStyle}
+                        `,
+                      }}
+                      // ref={controllerField.ref}
+                    />
+                  )}
                 />
               ) : field.type === "button" ? (
                 <Button
@@ -1098,6 +1164,7 @@ function FormFields<T extends FieldValues>({
                   id={field.id}
                   name={field.name}
                   helper={field.helper}
+                  value={formValues[field.name as keyof T] ?? ""}
                   onFileSelected={(e: File | undefined) => {
                     const file = e;
                     if (file instanceof File) {
