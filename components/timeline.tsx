@@ -18,12 +18,6 @@ export interface TimelineProps {
   isClickable?: boolean;
 }
 
-export type TimelineItemProps = SteplineItemState &
-  Partial<{
-    sidenote?: ReactNode;
-    isClickable?: boolean;
-  }>;
-
 function Timeline({ children, isClickable = false }: TimelineProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const childArray = Children.toArray(children).filter(isValidElement);
@@ -204,11 +198,25 @@ const ContentWrapper = styled.div<{ $isLast: boolean }>`
     `}
 `;
 
+export type TimelineItemProps = SteplineItemState &
+  Partial<{
+    sidenote?: ReactNode;
+    isClickable?: boolean;
+    styles?: TimelineItemStylesProps;
+  }>;
+
+export type TimelineItemStylesProps = SteplineItemState["styles"] & {
+  textWrapperStyle?: CSSProp;
+  titleStyle?: CSSProp;
+  subtitleStyle?: CSSProp;
+  sidenoteStyle?: CSSProp;
+};
+
 function TimelineItem({
   subtitle,
   title,
   sidenote,
-  containerStyle,
+  styles,
   id,
   variant,
 }: TimelineItemProps) {
@@ -216,21 +224,29 @@ function TimelineItem({
     <TimelineContainer
       aria-label={`timeline-item-${id}`}
       id={String(id)}
-      $containerStyle={containerStyle}
+      $style={styles?.self}
       $variant={variant}
     >
-      <TitleContainer>
-        <TitleText>{title}</TitleText>
-        {subtitle && <SubtitleContainer>{subtitle}</SubtitleContainer>}
-      </TitleContainer>
-      {sidenote && <SidenoteContainer>{sidenote}</SidenoteContainer>}
+      {(title || subtitle) && (
+        <TextWrapper $style={styles?.textWrapperStyle}>
+          {title && <Title $style={styles?.titleStyle}>{title}</Title>}
+          {subtitle && (
+            <Subtitle $style={styles?.subtitleStyle}>{subtitle}</Subtitle>
+          )}
+        </TextWrapper>
+      )}
+      {sidenote && (
+        <SidenoteContainer $style={styles?.sidenoteStyle}>
+          {sidenote}
+        </SidenoteContainer>
+      )}
     </TimelineContainer>
   );
 }
 
 const TimelineContainer = styled.div<{
   $variant: keyof typeof TEXT_VARIANT_COLOR;
-  $containerStyle?: CSSProp;
+  $style?: CSSProp;
 }>`
   display: flex;
   flex-direction: row;
@@ -244,29 +260,37 @@ const TimelineContainer = styled.div<{
       ${TEXT_VARIANT_COLOR[$variant]}
     `}
 
-  ${({ $containerStyle }) => $containerStyle}
+  ${({ $style }) => $style}
 `;
 
-const TitleContainer = styled.div`
+const TextWrapper = styled.div<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: column;
   width: 100%;
+
+  ${({ $style }) => $style}
 `;
 
-const SubtitleContainer = styled.div`
+const Subtitle = styled.div<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: column;
   font-size: 0.875rem;
+
+  ${({ $style }) => $style}
 `;
 
-const SidenoteContainer = styled.div`
+const SidenoteContainer = styled.div<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: column;
   min-width: 100px;
+
+  ${({ $style }) => $style}
 `;
 
-const TitleText = styled.span`
+const Title = styled.span<{ $style?: CSSProp }>`
   font-weight: 500;
+
+  ${({ $style }) => $style}
 `;
 
 Timeline.Item = TimelineItem;
