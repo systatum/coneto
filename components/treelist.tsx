@@ -90,7 +90,7 @@ export interface TreeListActionsProps {
   caption?: string;
   onClick?: (props?: { setActive?: (prop: boolean) => void }) => void;
   icon?: FigureProps;
-  style?: CSSProp;
+  styles?: { self?: CSSProp };
   subMenu?: (props: SubMenuTreeListProps) => ReactNode;
 }
 
@@ -248,7 +248,7 @@ function TreeList({
                   onClick={handleActionClick}
                   caption={action.caption}
                   icon={action.icon}
-                  style={action.style}
+                  style={action?.styles?.self}
                 />
               );
 
