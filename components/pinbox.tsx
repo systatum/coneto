@@ -19,9 +19,7 @@ interface BasePinboxProps {
   masked?: boolean;
   parts?: PinboxState[];
   name?: string;
-  onChange?: (
-    data: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void;
+  onChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   onBlur?: () => void;
   value?: string;
   disabled?: boolean;
