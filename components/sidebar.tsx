@@ -19,8 +19,12 @@ export interface SidebarStylesProps {
 
 export interface SidebarItemProps {
   isFixed?: boolean;
-  style?: CSSProp;
   children?: ReactNode;
+  styles?: SidebarItemStylesProps;
+}
+
+export interface SidebarItemStylesProps {
+  self?: CSSProp;
 }
 
 function Sidebar({ children, styles, position = "left" }: SidebarProps) {
@@ -186,9 +190,9 @@ const DesktopSidebar = styled.div<{
   ${({ $style }) => $style}
 `;
 
-function SidebarItem({ isFixed, style, children }: SidebarItemProps) {
+function SidebarItem({ isFixed, styles, children }: SidebarItemProps) {
   return (
-    <StyledSidebarItem isFixed={isFixed} $style={style}>
+    <StyledSidebarItem isFixed={isFixed} $style={styles?.self}>
       {children}
     </StyledSidebarItem>
   );
