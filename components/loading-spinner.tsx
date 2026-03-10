@@ -5,7 +5,12 @@ export interface LoadingSpinnerProps {
   textSize?: number;
   label?: string;
   gap?: number;
-  style?: CSSProp;
+  styles?: LoadingSpinnerStylesProps;
+}
+export interface LoadingSpinnerStylesProps {
+  containerStyle?: CSSProp;
+  labelStyle?: CSSProp;
+  iconStyle?: CSSProp;
 }
 
 function LoadingSpinner({
@@ -13,16 +18,17 @@ function LoadingSpinner({
   textSize = 16,
   label,
   gap = 2,
-  style,
+  styles,
 }: LoadingSpinnerProps) {
   return (
-    <SpinnerWrapper $style={style} $gap={gap}>
+    <SpinnerWrapper $style={styles?.containerStyle} $gap={gap}>
       <SpinnerIcon
         aria-label="circle"
         $size={iconSize}
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
+        $style={styles?.iconStyle}
       >
         <circle
           opacity="0.25"
@@ -38,7 +44,11 @@ function LoadingSpinner({
           d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
         />
       </SpinnerIcon>
-      {label && <SpinnerLabel $textSize={textSize}>{label}</SpinnerLabel>}
+      {label && (
+        <SpinnerLabel $style={styles?.labelStyle} $textSize={textSize}>
+          {label}
+        </SpinnerLabel>
+      )}
     </SpinnerWrapper>
   );
 }
@@ -57,15 +67,17 @@ const SpinnerWrapper = styled.div<{ $gap: number; $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
-const SpinnerIcon = styled.svg<{ $size: number }>`
+const SpinnerIcon = styled.svg<{ $size: number; $style?: CSSProp }>`
   height: ${({ $size }) => $size}px;
   width: ${({ $size }) => $size}px;
   animation: ${spin} 1s linear infinite;
   color: #3b82f6;
+  ${({ $style }) => $style}
 `;
 
-const SpinnerLabel = styled.span<{ $textSize: number }>`
+const SpinnerLabel = styled.span<{ $textSize: number; $style?: CSSProp }>`
   font-size: ${({ $textSize }) => $textSize}px;
+  ${({ $style }) => $style}
 `;
 
 export { LoadingSpinner };

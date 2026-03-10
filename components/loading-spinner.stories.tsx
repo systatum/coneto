@@ -28,9 +28,17 @@ const meta: Meta<typeof LoadingSpinner> = {
       description: "Space (in px) between the spinner and label.",
       defaultValue: 2,
     },
-    style: {
+    styles: {
       control: false,
-      description: "Custom `styled-components` CSS to override the wrapper.",
+      description: `
+Custom \`styled-components\` CSS to override specific parts of the LoadingSpinner.
+
+- **containerStyle** – CSS applied to the wrapper containing the spinner and label.
+- **iconStyle** – CSS applied to the spinner SVG icon.
+- **labelStyle** – CSS applied to the optional label text.
+
+This allows you to customize layout, colors, sizing, spacing, and other visual aspects without modifying the component code.
+  `,
     },
   },
 };
