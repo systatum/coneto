@@ -17,7 +17,7 @@ export interface TipMenuProps {
 
 export interface TipMenuItemProps {
   caption: string;
-  icon: FigureProps;
+  icon?: FigureProps;
   onClick?: (e?: React.MouseEvent) => void;
   isDangerous?: boolean;
   variant?: TipMenuItemVariantType;
@@ -120,6 +120,7 @@ function TipMenuItem({
       {icon && (
         <Figure
           {...icon}
+          aria-label="tip-menu-icon"
           color={
             isDangerous
               ? "white"
