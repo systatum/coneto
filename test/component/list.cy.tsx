@@ -187,12 +187,9 @@ describe("List", () => {
             <List.Item
               openable
               id={"log.id"}
-              colors={{
-                selectedText: "white",
-                hoverText: "white",
-                hoverBackground: "#1F2937",
-                selectedBackground: "#1F2937",
-              }}
+              hoverTextColor="white"
+              hoverBackgroundColor="#1F2937"
+              selected
               title="Container has not been started yet"
             >
               <pre
@@ -224,32 +221,6 @@ describe("List", () => {
       );
     }
 
-    context("when given openable true", () => {
-      context("when given color selectedText", () => {
-        it("should render text color after clicked", () => {
-          cy.mount(<ListItemWithColors />);
-
-          cy.findAllByLabelText("list-item-wrapper")
-            .eq(0)
-            .should("not.have.css", "color", "rgb(255, 255, 255)")
-            .click()
-            .should("have.css", "color", "rgb(255, 255, 255)");
-        });
-      });
-
-      context("when given color selectedBackground", () => {
-        it("should render background color after clicked", () => {
-          cy.mount(<ListItemWithColors />);
-
-          cy.findAllByLabelText("list-item-wrapper")
-            .eq(0)
-            .should("not.have.css", "background-color", "rgb(31, 41, 55)")
-            .click()
-            .should("have.css", "background-color", "rgb(31, 41, 55)");
-        });
-      });
-    });
-
     context("when given hoverText", () => {
       it("should render the text color when hovered", () => {
         cy.mount(<ListItemWithColors />);
@@ -258,6 +229,18 @@ describe("List", () => {
           .eq(0)
           .trigger("mouseover")
           .should("have.css", "color", "rgb(255, 255, 255)");
+      });
+
+      context("when given selected", () => {
+        it("should render text color after clicked on the children", () => {
+          cy.mount(<ListItemWithColors />);
+
+          cy.findAllByLabelText("list-item-wrapper")
+            .eq(0)
+            .should("not.have.css", "color", "rgb(255, 255, 255)")
+            .click()
+            .should("have.css", "color", "rgb(255, 255, 255)");
+        });
       });
     });
 
@@ -269,6 +252,18 @@ describe("List", () => {
           .eq(0)
           .trigger("mouseover")
           .should("have.css", "background-color", "rgb(31, 41, 55)");
+      });
+
+      context("when given selected", () => {
+        it("should render background color after clicked", () => {
+          cy.mount(<ListItemWithColors />);
+
+          cy.findAllByLabelText("list-item-wrapper")
+            .eq(0)
+            .should("not.have.css", "background-color", "rgb(31, 41, 55)")
+            .click()
+            .should("have.css", "background-color", "rgb(31, 41, 55)");
+        });
       });
     });
   });

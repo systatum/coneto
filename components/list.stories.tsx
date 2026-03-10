@@ -2093,12 +2093,9 @@ export const Accordion: Story = {
           <List.Item
             openable
             id={"log.id"}
-            colors={{
-              selectedText: "white",
-              hoverText: "white",
-              hoverBackground: "#1F2937",
-              selectedBackground: "#1F2937",
-            }}
+            hoverTextColor="white"
+            hoverBackgroundColor="#1F2937"
+            selected
             title="Container has not been started yet"
           >
             <pre
