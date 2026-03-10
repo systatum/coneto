@@ -367,17 +367,19 @@ export const WithBadge: Story = {
         }}
       >
         <Badge
-          badgeStyle={css`
-            cursor: pointer;
-            ${isOpen &&
-            css`
-              border-color: #045e95;
-            `}
-            transition: all ease-in-out 0.2s;
-            &:hover {
-              border-color: #045e95;
-            }
-          `}
+          styles={{
+            self: css`
+              cursor: pointer;
+              ${isOpen &&
+              css`
+                border-color: #045e95;
+              `}
+              transition: all ease-in-out 0.2s;
+              &:hover {
+                border-color: #045e95;
+              }
+            `,
+          }}
           caption="M. Alim"
           withCircle
         />
@@ -402,17 +404,19 @@ export const WithShowDelay: Story = {
         dialog={<div>This is a delay tooltip with 2 second.</div>}
       >
         <Badge
-          badgeStyle={css`
-            cursor: pointer;
-            ${isOpen &&
-            css`
-              border-color: #045e95;
-            `}
-            transition: all ease-in-out 0.2s;
-            &:hover {
-              border-color: #045e95;
-            }
-          `}
+          styles={{
+            self: css`
+              cursor: pointer;
+              ${isOpen &&
+              css`
+                border-color: #045e95;
+              `}
+              transition: all ease-in-out 0.2s;
+              &:hover {
+                border-color: #045e95;
+              }
+            `,
+          }}
           caption="With Show Delay"
           withCircle
         />
