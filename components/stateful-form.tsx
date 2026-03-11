@@ -1928,7 +1928,7 @@ const Label = styled.label<{
   min-width: 0;
 
   width: ${({ $labelWidth, $labelPosition }) =>
-    $labelWidth ?? ($labelPosition === "left" ? "5%" : "100%")};
+    $labelWidth ?? ($labelPosition === "left" ? "25%" : "100%")};
   ${({ $style }) => $style}
 `;
 

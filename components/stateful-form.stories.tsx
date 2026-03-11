@@ -263,7 +263,6 @@ export const LeftLabeled: Story = {
         type: "text",
         required: true,
         labelPosition: "left",
-        labelWidth: "25%",
       },
       {
         name: "phone",
@@ -275,7 +274,6 @@ export const LeftLabeled: Story = {
         },
         required: true,
         labelPosition: "left",
-        labelWidth: "25%",
       },
       {
         name: "email",
@@ -284,7 +282,6 @@ export const LeftLabeled: Story = {
         type: "email",
         required: true,
         labelPosition: "left",
-        labelWidth: "25%",
       },
       {
         name: "password",
@@ -293,7 +290,6 @@ export const LeftLabeled: Story = {
         type: "password",
         required: true,
         labelPosition: "left",
-        labelWidth: "25%",
       },
     ];
 
