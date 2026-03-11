@@ -139,6 +139,9 @@ function Togglebox({
   id,
   title,
   description,
+  labelGap,
+  labelWidth,
+  labelPosition,
   ...rest
 }: ToggleboxProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -158,6 +161,9 @@ function Togglebox({
   return (
     <FieldLane
       id={inputId}
+      labelGap={labelGap}
+      labelWidth={labelWidth}
+      labelPosition={labelPosition}
       showError={showError}
       errorMessage={errorMessage}
       actions={actions}

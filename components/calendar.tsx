@@ -960,6 +960,7 @@ function Calendar({
   disabled,
   name,
   id,
+  labelPosition,
   ...rest
 }: CalendarProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -981,6 +982,7 @@ function Calendar({
       id={inputId}
       showError={showError}
       errorMessage={errorMessage}
+      labelPosition={labelPosition}
       label={label}
       actions={actions}
       helper={helper}

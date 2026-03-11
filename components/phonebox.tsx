@@ -366,6 +366,9 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
       helper,
       disabled,
       onChange,
+      labelGap,
+      labelWidth,
+      labelPosition,
       ...rest
     } = props;
 
@@ -378,6 +381,9 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
     return (
       <FieldLane
         id={inputId}
+        labelGap={labelGap}
+        labelWidth={labelWidth}
+        labelPosition={labelPosition}
         dropdowns={dropdowns}
         showError={showError}
         errorMessage={errorMessage}

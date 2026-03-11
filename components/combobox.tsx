@@ -102,6 +102,9 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       dropdowns,
       errorIconPosition,
       id,
+      labelPosition,
+      labelGap,
+      labelWidth,
     },
     ref
   ) => {
@@ -119,6 +122,9 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
         dropdowns={dropdowns}
         showError={showError}
         errorMessage={errorMessage}
+        labelGap={labelGap}
+        labelWidth={labelWidth}
+        labelPosition={labelPosition}
         label={label}
         disabled={disabled}
         highlightOnMatch={highlightOnMatch}

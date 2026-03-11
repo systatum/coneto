@@ -113,6 +113,9 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
       type,
       helper,
       disabled,
+      labelPosition,
+      labelGap,
+      labelWidth,
       ...rest
     } = props;
 
@@ -132,6 +135,9 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
         actions={actions}
         type={type}
         helper={helper}
+        labelGap={labelGap}
+        labelWidth={labelWidth}
+        labelPosition={labelPosition}
         disabled={disabled}
         styles={{
           bodyStyle: styles?.bodyStyle,

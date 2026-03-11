@@ -248,6 +248,7 @@ function Capsule({
   disabled,
   name,
   id,
+  labelPosition,
   ...rest
 }: CapsuleProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -261,6 +262,7 @@ function Capsule({
       id={inputId}
       showError={showError}
       errorMessage={errorMessage}
+      labelPosition={labelPosition}
       label={label}
       actions={actions}
       helper={helper}

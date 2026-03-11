@@ -215,6 +215,9 @@ function Imagebox({
   disabled,
   name,
   id,
+  labelGap,
+  labelWidth,
+  labelPosition,
   ...rest
 }: ImageboxProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -234,6 +237,9 @@ function Imagebox({
   return (
     <FieldLane
       id={inputId}
+      labelGap={labelGap}
+      labelWidth={labelWidth}
+      labelPosition={labelPosition}
       showError={showError}
       errorMessage={errorMessage}
       actions={actions}

@@ -86,6 +86,9 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       type,
       helper,
       disabled,
+      labelGap,
+      labelWidth,
+      labelPosition,
       ...rest
     } = props;
     const inputId = StatefulForm.sanitizeId({
@@ -108,6 +111,9 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <FieldLane
         id={inputId}
+        labelGap={labelGap}
+        labelWidth={labelWidth}
+        labelPosition={labelPosition}
         dropdowns={DropdownProps}
         showError={showError}
         errorMessage={errorMessage}

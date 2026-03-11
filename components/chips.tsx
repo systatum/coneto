@@ -488,6 +488,9 @@ function Chips({
   disabled,
   name,
   id,
+  labelGap,
+  labelWidth,
+  labelPosition,
   ...rest
 }: ChipsProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -513,6 +516,9 @@ function Chips({
       actions={actions}
       helper={helper}
       disabled={disabled}
+      labelGap={labelGap}
+      labelWidth={labelWidth}
+      labelPosition={labelPosition}
       styles={{
         bodyStyle,
         controlStyle,

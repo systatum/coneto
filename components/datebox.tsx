@@ -64,6 +64,9 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
     disableWeekend,
     calendarSelectabilityMode,
     id,
+    labelGap,
+    labelWidth,
+    labelPosition,
     ...rest
   } = props;
 
@@ -77,6 +80,9 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
     <Selectbox
       {...rest}
       ref={ref}
+      labelGap={labelGap}
+      labelWidth={labelWidth}
+      labelPosition={labelPosition}
       errorIconPosition="relative"
       id={inputId}
       showError={showError}
