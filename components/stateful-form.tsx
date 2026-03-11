@@ -1902,8 +1902,13 @@ function StatefulFormLabel({
   ...props
 }: StatefulFormLabelProps) {
   return (
-    <Label {...props} $style={styles?.self} $labelWidth={labelWidth}>
-      <LabelText $labelPosition={labelPosition}>{label}</LabelText>
+    <Label
+      {...props}
+      $style={styles?.self}
+      $labelPosition={labelPosition}
+      $labelWidth={labelWidth}
+    >
+      <LabelText>{label}</LabelText>
 
       {helper && <Helper value={helper} />}
     </Label>
@@ -1913,6 +1918,7 @@ function StatefulFormLabel({
 const Label = styled.label<{
   $style?: CSSProp;
   $labelWidth?: FieldLaneProps["labelWidth"];
+  $labelPosition?: FieldLaneProps["labelPosition"];
 }>`
   font-size: 0.75rem;
   display: flex;
@@ -1921,22 +1927,16 @@ const Label = styled.label<{
   align-items: center;
   min-width: 0;
 
-  width: ${({ $labelWidth }) => $labelWidth ?? "100%"};
+  width: ${({ $labelWidth, $labelPosition }) =>
+    $labelWidth ?? ($labelPosition === "left" ? "5%" : "100%")};
   ${({ $style }) => $style}
 `;
 
-const LabelText = styled.span<{
-  $labelPosition?: FieldLaneProps["labelPosition"];
-}>`
+const LabelText = styled.span`
   min-width: 0;
   white-space: nowrap;
-
-  ${({ $labelPosition }) =>
-    $labelPosition === "top" &&
-    css`
-      overflow: hidden;
-      text-overflow: ellipsis;
-    `}
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 interface StatefulFormSanitizeIdProps {
