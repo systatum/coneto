@@ -20,6 +20,8 @@ import { OptionsProps } from "./selectbox";
 import { Messagebox } from "./messagebox";
 import { CurrencyOptionsProps } from "./moneybox";
 import { PinboxState } from "./pinbox";
+import { Card } from "./card";
+import { Button } from "./button";
 
 const meta: Meta<typeof StatefulForm> = {
   title: "Input Elements/StatefulForm",
@@ -231,6 +233,168 @@ export const Default: Story = {
     );
   },
 };
+
+export const LeftLabeled: Story = {
+  render: () => {
+    const [isFormValid, setIsFormValid] = useState(false);
+    const [value, setValue] = useState<{
+      name: string;
+      email: string;
+      password: string;
+    }>({
+      name: "",
+      email: "",
+      password: "",
+    });
+
+    const SIGN_UP_FIELDS: FormFieldGroup[] = [
+      {
+        name: "name",
+        title: "Name",
+        placeholder: "Enter your name",
+        type: "text",
+        required: true,
+        labelPosition: "left",
+        labelWidth: "25%",
+      },
+      {
+        name: "email",
+        title: "Email",
+        placeholder: "Enter your email",
+        type: "email",
+        required: true,
+        labelPosition: "left",
+        labelWidth: "25%",
+      },
+      {
+        name: "password",
+        title: "Password",
+        placeholder: "Enter your password",
+        type: "password",
+        required: true,
+        labelPosition: "left",
+        labelWidth: "25%",
+      },
+    ];
+
+    const signUpSchema = z.object({
+      name: z.string().min(3, "Name must be at least 3 characters"),
+      email: z.string().email("Please enter a valid email"),
+      password: z.string().min(8, "Password must be at least 8 characters"),
+    });
+
+    return (
+      <Card
+        styles={{
+          containerStyle: css`
+            padding: 0px;
+            min-width: 400px;
+          `,
+        }}
+      >
+        <FormBody>
+          <Container>
+            <Title>Sign Up</Title>
+            <Description>Create a new account to get started.</Description>
+          </Container>
+
+          <StatefulForm
+            fields={SIGN_UP_FIELDS}
+            formValues={value}
+            validationSchema={signUpSchema}
+            mode="onChange"
+            onValidityChange={setIsFormValid}
+            onChange={({ currentState }) =>
+              setValue((prev) => ({ ...prev, ...currentState }))
+            }
+          />
+
+          <Button
+            type="submit"
+            disabled={!isFormValid}
+            styles={{
+              containerStyle: { width: "100%" },
+              self: { width: "100%" },
+            }}
+          >
+            Sign Up
+          </Button>
+        </FormBody>
+
+        <Footer>
+          <span>Already have an account?</span>
+          <div
+            style={{
+              cursor: "pointer",
+            }}
+            onClick={() => {}}
+          >
+            Sign In
+          </div>
+        </Footer>
+      </Card>
+    );
+  },
+};
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Title = styled.h3`
+  font-family: monospace;
+  font-weight: 600;
+  font-size: 1.125rem;
+  @media (min-width: 640px) {
+    font-size: 1.25rem;
+  }
+  @media (min-width: 768px) {
+    font-size: 1.5rem;
+  }
+`;
+
+const Description = styled.span`
+  font-size: 0.625rem;
+  font-weight: 500;
+  color: #6b7280;
+  @media (min-width: 768px) {
+    font-size: 0.75rem;
+  }
+`;
+
+const FormBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2rem;
+`;
+
+const Footer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: #f3f4f6;
+  padding: 1rem 0;
+  font-size: 0.875rem;
+  text-align: center;
+
+  a {
+    cursor: pointer;
+    font-weight: 500;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    &:hover {
+      color: #4b5563;
+    }
+  }
+
+  .loader {
+    margin-left: 0.5rem;
+  }
+`;
 
 const ScrollBox = styled.div`
   max-height: 120px;
