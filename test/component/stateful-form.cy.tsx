@@ -21,121 +21,420 @@ import { RiDeleteBin2Fill } from "@remixicon/react";
 import z from "zod";
 import { PinboxState } from "./../../components/pinbox";
 
-describe("StatefulForm", () => {
-  const typeToIdPrefix: Record<FormFieldType, string> = {
-    text: "textbox",
-    message: "textbox",
-    number: "textbox",
-    email: "textbox",
-    password: "textbox",
-    textarea: "textarea",
-    checkbox: "checkbox",
-    radio: "radio",
-    phone: "phonebox",
-    color: "colorbox",
-    file_drop_box: "file-drop-box",
-    file: "file-input-box",
-    image: "imagebox",
-    signbox: "signbox",
-    money: "moneybox",
-    date: "datebox",
-    combo: "combobox",
-    rating: "ratingbox",
-    thumbfield: "thumbfield",
-    toggle: "togglebox",
-    capsule: "capsulebox",
-    time: "timebox",
-    button: "button",
-    pin: "pinbox",
-    chips: "chips",
-    custom: "custom",
-  };
+const DEFAULT_COUNTRY_CODES = (() => {
+  const code =
+    COUNTRY_CODES.find((data) => data.id === "US") ?? COUNTRY_CODES[206];
+  if (!code)
+    throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
+  return code;
+})();
 
-  const CAPSULE_TABS: CapsuleContentProps[] = [
-    {
-      id: "paid",
-      title: "Paid",
-    },
-    {
-      id: "unpaid",
-      title: "Unpaid",
-    },
-  ];
+const FRUIT_OPTIONS: OptionsProps[] = [
+  { text: "Apple", value: "1" },
+  { text: "Banana", value: "2" },
+  { text: "Orange", value: "3" },
+  { text: "Grape", value: "4" },
+  { text: "Pineapple", value: "5" },
+  { text: "Strawberry", value: "6" },
+  { text: "Watermelon", value: "7" },
+];
 
-  const PARTS_INPUT: PinboxState[] = [
-    {
-      type: "static",
-      text: "S",
-    },
-    {
-      type: "alphanumeric",
-    },
-    {
-      type: "digit",
-    },
-    {
-      type: "alphabet",
-    },
-    {
-      type: "static",
-      text: "-",
-    },
-    {
-      type: "alphabet",
-    },
-  ];
+const MONTH_NAMES = [
+  { text: "JAN", value: "1" },
+  { text: "FEB", value: "2" },
+  { text: "MAR", value: "3" },
+  { text: "APR", value: "4" },
+  { text: "MAY", value: "5" },
+  { text: "JUN", value: "6" },
+  { text: "JUL", value: "7" },
+  { text: "AUG", value: "8" },
+  { text: "SEP", value: "9" },
+  { text: "OCT", value: "10" },
+  { text: "NOV", value: "11" },
+  { text: "DEC", value: "12" },
+];
 
-  const pinboxSchema = z.object({
-    pin: z.string().min(4, "Pinbox does not follow the acceptable format"),
-  });
+const CAPSULE_TABS: CapsuleContentProps[] = [
+  { id: "paid", title: "Paid" },
+  { id: "unpaid", title: "Unpaid" },
+];
 
-  const FIELDS: FormFieldGroup[] = [
+const PARTS_INPUT: PinboxState[] = [
+  { type: "static", text: "S" },
+  { type: "alphanumeric" },
+  { type: "digit" },
+  { type: "alphabet" },
+  { type: "static", text: "-" },
+  { type: "alphabet" },
+];
+
+const BADGE_OPTIONS_FULL = [
+  { id: 1, caption: "Anime" },
+  { id: 2, caption: "Manga" },
+  { id: 3, caption: "Comics" },
+  { id: 4, caption: "Movies" },
+  { id: 5, caption: "Podcasts" },
+  { id: 6, caption: "TV Shows" },
+  { id: 7, caption: "Novels" },
+  { id: 8, caption: "Music" },
+  { id: 9, caption: "Games" },
+  { id: 10, caption: "Webtoons" },
+];
+
+const BADGE_OPTIONS_SHORT: BadgeProps[] = [
+  { id: "1", caption: "Anime" },
+  { id: "2", caption: "Manga" },
+];
+
+const TYPE_TO_ID_PREFIX: Record<FormFieldType, string> = {
+  text: "textbox",
+  message: "textbox",
+  number: "textbox",
+  email: "textbox",
+  password: "textbox",
+  textarea: "textarea",
+  checkbox: "checkbox",
+  radio: "radio",
+  phone: "phonebox",
+  color: "colorbox",
+  file_drop_box: "file-drop-box",
+  file: "file-input-box",
+  image: "imagebox",
+  signbox: "signbox",
+  money: "moneybox",
+  date: "datebox",
+  combo: "combobox",
+  rating: "ratingbox",
+  thumbfield: "thumbfield",
+  toggle: "togglebox",
+  capsule: "capsulebox",
+  time: "timebox",
+  button: "button",
+  pin: "pinbox",
+  chips: "chips",
+  custom: "custom",
+};
+
+const valueAll = {
+  text: "",
+  email: "",
+  number: "",
+  password: "",
+  textarea: "",
+  rating: "",
+  check: false,
+  chips: {
+    searchText: "",
+    selectedOptions: [],
+  },
+  color: "",
+  combo: [""],
+  date: [""],
+  file_drop_box: [] as File[],
+  file: undefined,
+  image: undefined,
+  money: "",
+  phone: "",
+  thumb_field: false,
+  togglebox: false,
+  signature: "",
+  capsule: "",
+  country_code: DEFAULT_COUNTRY_CODES,
+};
+
+const ALL_INPUT: FormFieldGroup[] = [
+  [
     {
-      name: "pin",
-      title: "Pin",
-      type: "pin",
-      required: false,
-      helper: "This pinbox allows you to enter your PIN code.",
-      pinboxProps: {
-        parts: PARTS_INPUT,
+      name: "text",
+      title: "Text",
+      type: "text",
+      required: true,
+      placeholder: "Enter text",
+      width: "50%",
+    },
+    {
+      name: "email",
+      title: "Email",
+      type: "email",
+      required: true,
+      placeholder: "Enter email address",
+      width: "50%",
+    },
+  ],
+  {
+    name: "time",
+    title: "Time",
+    type: "time",
+    required: true,
+    placeholder: "Enter time",
+    width: "50%",
+  },
+  {
+    name: "number",
+    title: "Number",
+    type: "number",
+    required: true,
+    placeholder: "Enter number",
+    width: "50%",
+  },
+  {
+    name: "password",
+    title: "Password",
+    type: "password",
+    required: true,
+    placeholder: "Enter password",
+    width: "50%",
+  },
+  {
+    name: "textarea",
+    title: "Textarea",
+    type: "textarea",
+    rows: 3,
+    required: true,
+    placeholder: "Enter text here",
+    width: "50%",
+  },
+  {
+    name: "pin",
+    title: "Pin",
+    type: "pin",
+    required: true,
+    width: "50%",
+    pinboxProps: {
+      parts: PARTS_INPUT,
+    },
+  },
+  {
+    name: "check",
+    title: "Checkbox",
+    type: "checkbox",
+    required: false,
+    width: "50%",
+  },
+  {
+    name: "radio",
+    title: "Radio",
+    type: "radio",
+    required: false,
+    width: "50%",
+  },
+  {
+    name: "color",
+    title: "Color",
+    type: "color",
+    required: true,
+    placeholder: "Enter the color here",
+    width: "50%",
+  },
+  {
+    name: "combo",
+    title: "Combo",
+    type: "combo",
+    required: true,
+    placeholder: "Select a fruit...",
+    comboboxProps: {
+      options: FRUIT_OPTIONS,
+    },
+    width: "50%",
+  },
+  {
+    name: "date",
+    title: "Date",
+    type: "date",
+    required: true,
+    placeholder: "Select a date",
+    width: "50%",
+  },
+  {
+    name: "file_drop_box",
+    title: "File Drop Box",
+    type: "file_drop_box",
+    required: true,
+    width: "50%",
+  },
+  {
+    name: "file",
+    title: "File",
+    type: "file",
+    required: true,
+    fileInputBoxProps: {
+      accept: "image/jpeg",
+    },
+    width: "50%",
+  },
+  {
+    name: "image",
+    title: "Image",
+    type: "image",
+    required: true,
+    width: "50%",
+  },
+  {
+    name: "money",
+    title: "Money",
+    type: "money",
+    required: true,
+    placeholder: "Enter amount",
+    moneyProps: {
+      separator: "dot",
+    },
+    width: "50%",
+  },
+  {
+    name: "phone",
+    title: "Phone",
+    type: "phone",
+    required: true,
+    placeholder: "Enter phone number",
+    width: "50%",
+  },
+  {
+    name: "signature",
+    title: "Signature",
+    type: "signbox",
+    required: true,
+    width: "50%",
+  },
+  {
+    name: "rating",
+    title: "Rating",
+    type: "rating",
+    required: true,
+    width: "50%",
+  },
+  {
+    name: "thumb_field",
+    title: "Thumb Field",
+    type: "thumbfield",
+    required: true,
+    width: "50%",
+  },
+  {
+    name: "togglebox",
+    title: "Togglebox",
+    type: "toggle",
+    required: true,
+    width: "50%",
+  },
+  {
+    name: "chips",
+    title: "Chips",
+    type: "chips",
+    required: false,
+    width: "50%",
+    chipsProps: {
+      options: BADGE_OPTIONS_SHORT,
+      styles: {
+        chipStyle: css`
+          width: 100%;
+          gap: 0.5rem;
+          border-color: transparent;
+        `,
+        chipContainerStyle: css`
+          gap: 4px;
+        `,
+        chipsDrawerStyle: css`
+          min-width: 250px;
+        `,
       },
+      selectedOptions: valueAll.chips.selectedOptions,
+      inputValue: valueAll.chips.searchText,
     },
-  ];
+  },
+  {
+    name: "capsule",
+    title: "Monetary Value",
+    type: "capsule",
+    required: true,
+    width: "50%",
+    capsuleProps: {
+      tabs: CAPSULE_TABS,
+    },
+  },
+];
 
-  function PinboxProduct() {
-    const [state, setState] = useState({ pin: "" });
-    return (
-      <StatefulForm
-        validationSchema={pinboxSchema}
-        onChange={({ currentState }) => setState(currentState)}
-        fields={FIELDS}
-        formValues={state}
-      />
-    );
-  }
+const flattenFields = (groups: FormFieldGroup[]): FormFieldProps[] =>
+  groups.flatMap((group) =>
+    Array.isArray(group) ? flattenFields(group) : [group]
+  );
 
-  context("validation error", () => {
-    context("when pressing 2 character (not eligible)", () => {
-      it("should not show an error", () => {
-        cy.mount(<PinboxProduct />);
-        cy.findAllByRole("textbox").eq(1).click().type("23", { force: true });
-        cy.findByText("Pinbox does not follow the acceptable format").should(
-          "not.exist"
+describe("StatefulForm", () => {
+  context("asterisk", () => {
+    context("when given required", () => {
+      it("should render asterisk", () => {
+        cy.mount(
+          <StatefulForm
+            fields={ALL_INPUT}
+            formValues={valueAll}
+            mode="onChange"
+          />
+        );
+
+        const inputWithRequired = flattenFields(ALL_INPUT).filter(
+          (props) => props.required
+        );
+
+        cy.findAllByLabelText("stateful-form-label-asterisk").should(
+          "have.length",
+          inputWithRequired.length
         );
       });
+    });
+  });
 
-      context("when blurring from the input", () => {
-        it("should displaying an error", () => {
+  context("pinbox", () => {
+    const pinboxSchema = z.object({
+      pin: z.string().min(4, "Pinbox does not follow the acceptable format"),
+    });
+
+    const FIELDS: FormFieldGroup[] = [
+      {
+        name: "pin",
+        title: "Pin",
+        type: "pin",
+        required: false,
+        helper: "This pinbox allows you to enter your PIN code.",
+        pinboxProps: {
+          parts: PARTS_INPUT,
+        },
+      },
+    ];
+
+    function PinboxProduct() {
+      const [state, setState] = useState({ pin: "" });
+      return (
+        <StatefulForm
+          validationSchema={pinboxSchema}
+          onChange={({ currentState }) => setState(currentState)}
+          fields={FIELDS}
+          formValues={state}
+        />
+      );
+    }
+
+    context("validation error", () => {
+      context("when pressing 2 character (not eligible)", () => {
+        it("should not show an error", () => {
           cy.mount(<PinboxProduct />);
-          cy.findAllByRole("textbox").eq(1).click().type("23", { force: true });
+          cy.findAllByRole("textbox").eq(1).type("23");
           cy.findByText("Pinbox does not follow the acceptable format").should(
             "not.exist"
           );
-          cy.get("body").click("top");
-          cy.wait(200);
-          cy.findByText("Pinbox does not follow the acceptable format").should(
-            "exist"
-          );
+        });
+
+        context("when blurring from the input", () => {
+          it("should displaying an error", () => {
+            cy.mount(<PinboxProduct />);
+            cy.findAllByRole("textbox").eq(1).type("23");
+            cy.findByText(
+              "Pinbox does not follow the acceptable format"
+            ).should("not.exist");
+            cy.get("body").click("top");
+            cy.wait(200);
+            cy.findByText(
+              "Pinbox does not follow the acceptable format"
+            ).should("exist");
+          });
         });
       });
     });
@@ -214,14 +513,6 @@ describe("StatefulForm", () => {
   });
 
   context("when array of array", () => {
-    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
-      (data) => data.id === "US" || COUNTRY_CODES[206]
-    );
-
-    if (!DEFAULT_COUNTRY_CODES) {
-      throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
-    }
-
     const value = {
       first_name: "",
       last_name: "",
@@ -363,7 +654,6 @@ describe("StatefulForm", () => {
           />
         );
 
-        // Ensure per row have 60px
         cy.findAllByLabelText("stateful-form-row")
           .eq(0)
           .within(() => {
@@ -374,7 +664,6 @@ describe("StatefulForm", () => {
           })
           .should("have.css", "height", "60px");
 
-        // Input should have similar height
         cy.get("#textbox-first_name")
           .parent()
           .parent()
@@ -412,24 +701,6 @@ describe("StatefulForm", () => {
   });
 
   context("id", () => {
-    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
-      (data) => data.id === "US" || COUNTRY_CODES[206]
-    );
-
-    if (!DEFAULT_COUNTRY_CODES) {
-      throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
-    }
-
-    const FRUIT_OPTIONS: OptionsProps[] = [
-      { text: "Apple", value: "1" },
-      { text: "Banana", value: "2" },
-      { text: "Orange", value: "3" },
-      { text: "Grape", value: "4" },
-      { text: "Pineapple", value: "5" },
-      { text: "Strawberry", value: "6" },
-      { text: "Watermelon", value: "7" },
-    ];
-
     const value = {
       text: "",
       time: "",
@@ -455,44 +726,6 @@ describe("StatefulForm", () => {
       currency: "USD",
       pin: "USD",
     };
-
-    const MONTH_NAMES = [
-      { text: "JAN", value: "1" },
-      { text: "FEB", value: "2" },
-      { text: "MAR", value: "3" },
-      { text: "APR", value: "4" },
-      { text: "MAY", value: "5" },
-      { text: "JUN", value: "6" },
-      { text: "JUL", value: "7" },
-      { text: "AUG", value: "8" },
-      { text: "SEP", value: "9" },
-      { text: "OCT", value: "10" },
-      { text: "NOV", value: "11" },
-      { text: "DEC", value: "12" },
-    ];
-
-    const PARTS_INPUT: PinboxState[] = [
-      {
-        type: "static",
-        text: "S",
-      },
-      {
-        type: "alphanumeric",
-      },
-      {
-        type: "digit",
-      },
-      {
-        type: "alphabet",
-      },
-      {
-        type: "static",
-        text: "-",
-      },
-      {
-        type: "alphabet",
-      },
-    ];
 
     const FIELDS: FormFieldGroup[] = [
       {
@@ -626,16 +859,9 @@ describe("StatefulForm", () => {
         <StatefulForm fields={FIELDS} formValues={value} mode="onChange" />
       );
 
-      const flattenFields = (groups: FormFieldGroup[]): FormFieldProps[] =>
-        groups.flatMap((group) =>
-          Array.isArray(group) ? flattenFields(group) : [group]
-        );
-
-      const allFields = flattenFields(FIELDS);
-
-      allFields.map((field) => {
+      flattenFields(FIELDS).map((field) => {
         const prefix =
-          typeToIdPrefix[field.type] ??
+          TYPE_TO_ID_PREFIX[field.type] ??
           field.type.replace(/\s+/g, "_").toLowerCase();
         const expectedId = field.name
           ? `${prefix}-${field.name.replace(/\s+/g, "_").toLowerCase()}`
@@ -784,14 +1010,7 @@ describe("StatefulForm", () => {
           />
         );
 
-        const flattenFields = (groups: FormFieldGroup[]): FormFieldProps[] =>
-          groups.flatMap((group) =>
-            Array.isArray(group) ? flattenFields(group) : [group]
-          );
-
-        const allFields = flattenFields(FIELDS_NOT_NORMAL_ASCII);
-
-        const sanitized = allFields.map((field) =>
+        const sanitized = flattenFields(FIELDS_NOT_NORMAL_ASCII).map((field) =>
           StatefulForm.sanitizeId({ id: field.id })
         );
 
@@ -822,49 +1041,6 @@ describe("StatefulForm", () => {
   });
 
   context("with type custom", () => {
-    const BADGE_OPTIONS = [
-      {
-        id: 1,
-        caption: "Anime",
-      },
-      {
-        id: 2,
-        caption: "Manga",
-      },
-      {
-        id: 3,
-        caption: "Comics",
-      },
-      {
-        id: 4,
-        caption: "Movies",
-      },
-      {
-        id: 5,
-        caption: "Podcasts",
-      },
-      {
-        id: 6,
-        caption: "TV Shows",
-      },
-      {
-        id: 7,
-        caption: "Novels",
-      },
-      {
-        id: 8,
-        caption: "Music",
-      },
-      {
-        id: 9,
-        caption: "Games",
-      },
-      {
-        id: 10,
-        caption: "Webtoons",
-      },
-    ];
-
     function StatefulFormCustom() {
       const [value, setValue] = useState({
         first_name: "",
@@ -932,7 +1108,7 @@ describe("StatefulForm", () => {
           type: "custom",
           render: (
             <Boxbar>
-              {BADGE_OPTIONS.map((badge) => (
+              {BADGE_OPTIONS_FULL.map((badge) => (
                 <Badge
                   styles={{
                     self: css`
@@ -1086,7 +1262,7 @@ describe("StatefulForm", () => {
 
       cy.findByLabelText("boxbar-toggle").click();
 
-      BADGE_OPTIONS.map((data) => {
+      BADGE_OPTIONS_FULL.map((data) => {
         cy.findByText(data.caption).should("exist");
       });
     });
@@ -1122,14 +1298,6 @@ describe("StatefulForm", () => {
   });
 
   context("helper", () => {
-    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
-      (data) => data.id === "US" || COUNTRY_CODES[206]
-    );
-
-    if (!DEFAULT_COUNTRY_CODES) {
-      throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
-    }
-
     const value = {
       text: "",
       time: "",
@@ -1307,26 +1475,6 @@ describe("StatefulForm", () => {
 
   context("with style", () => {
     context("when given background wheat", () => {
-      const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
-        (data) => data.id === "US" || COUNTRY_CODES[206]
-      );
-
-      if (!DEFAULT_COUNTRY_CODES) {
-        throw new Error(
-          "Default country code 'US' not found in COUNTRY_CODES."
-        );
-      }
-
-      const FRUIT_OPTIONS: OptionsProps[] = [
-        { text: "Apple", value: "1" },
-        { text: "Banana", value: "2" },
-        { text: "Orange", value: "3" },
-        { text: "Grape", value: "4" },
-        { text: "Pineapple", value: "5" },
-        { text: "Strawberry", value: "6" },
-        { text: "Watermelon", value: "7" },
-      ];
-
       const value = {
         text: "",
         time: "",
@@ -1351,21 +1499,6 @@ describe("StatefulForm", () => {
         signature: "",
         country_code: DEFAULT_COUNTRY_CODES,
       };
-
-      const MONTH_NAMES = [
-        { text: "JAN", value: "1" },
-        { text: "FEB", value: "2" },
-        { text: "MAR", value: "3" },
-        { text: "APR", value: "4" },
-        { text: "MAY", value: "5" },
-        { text: "JUN", value: "6" },
-        { text: "JUL", value: "7" },
-        { text: "AUG", value: "8" },
-        { text: "SEP", value: "9" },
-        { text: "OCT", value: "10" },
-        { text: "NOV", value: "11" },
-        { text: "DEC", value: "12" },
-      ];
 
       const FIELDS: FormFieldGroup[] = [
         {
@@ -1759,6 +1892,7 @@ describe("StatefulForm", () => {
         required: false,
       },
     ];
+
     const statefulForCheckbox = () =>
       cy.mount(
         <StatefulForm
@@ -1810,14 +1944,6 @@ describe("StatefulForm", () => {
   });
 
   context("with justifyContent", () => {
-    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
-      (data) => data.id === "US" || COUNTRY_CODES[206]
-    );
-
-    if (!DEFAULT_COUNTRY_CODES) {
-      throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
-    }
-
     const value = {
       first_name: "",
       last_name: "",
@@ -1900,14 +2026,6 @@ describe("StatefulForm", () => {
   });
 
   context("with autoFocusField", () => {
-    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
-      (data) => data.id === "US" || COUNTRY_CODES[206]
-    );
-
-    if (!DEFAULT_COUNTRY_CODES) {
-      throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
-    }
-
     const value = {
       first_name: "",
       last_name: "",
@@ -1964,6 +2082,7 @@ describe("StatefulForm", () => {
         required: false,
       },
     ];
+
     it("render in the one row", () => {
       cy.mount(
         <StatefulForm
@@ -1982,14 +2101,6 @@ describe("StatefulForm", () => {
   });
 
   context("when not given a title", () => {
-    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
-      (data) => data.id === "US" || COUNTRY_CODES[206]
-    );
-
-    if (!DEFAULT_COUNTRY_CODES) {
-      throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
-    }
-
     const value = {
       first_name: "",
       access: false,
@@ -2032,14 +2143,6 @@ describe("StatefulForm", () => {
   });
 
   context("with hidden", () => {
-    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
-      (data) => data.id === "US" || COUNTRY_CODES[206]
-    );
-
-    if (!DEFAULT_COUNTRY_CODES) {
-      throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
-    }
-
     const value = {
       first_name: "",
       access: false,
@@ -2099,259 +2202,6 @@ describe("StatefulForm", () => {
   });
 
   context("with width", () => {
-    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
-      (data) => data.id === "US" || COUNTRY_CODES[206]
-    );
-
-    if (!DEFAULT_COUNTRY_CODES) {
-      throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
-    }
-
-    const FRUIT_OPTIONS: OptionsProps[] = [
-      { text: "Apple", value: "1" },
-      { text: "Banana", value: "2" },
-      { text: "Orange", value: "3" },
-      { text: "Grape", value: "4" },
-      { text: "Pineapple", value: "5" },
-      { text: "Strawberry", value: "6" },
-      { text: "Watermelon", value: "7" },
-    ];
-
-    const valueAll = {
-      text: "",
-      email: "",
-      number: "",
-      password: "",
-      textarea: "",
-      rating: "",
-      check: false,
-      chips: {
-        searchText: "",
-        selectedOptions: [],
-      },
-      color: "",
-      combo: [""],
-      date: [""],
-      file_drop_box: [] as File[],
-      file: undefined,
-      image: undefined,
-      money: "",
-      phone: "",
-      thumb_field: false,
-      togglebox: false,
-      signature: "",
-      capsule: "",
-      country_code: DEFAULT_COUNTRY_CODES,
-    };
-
-    const BADGE_OPTIONS: BadgeProps[] = [
-      {
-        id: "1",
-        caption: "Anime",
-      },
-      {
-        id: "2",
-        caption: "Manga",
-      },
-    ];
-
-    const CAPSULE_TABS: CapsuleContentProps[] = [
-      {
-        id: "paid",
-        title: "Paid",
-      },
-      {
-        id: "unpaid",
-        title: "Unpaid",
-      },
-    ];
-
-    const ALL_INPUT: FormFieldGroup[] = [
-      [
-        {
-          name: "text",
-          title: "Text",
-          type: "text",
-          required: true,
-          placeholder: "Enter text",
-          width: "50%",
-        },
-        {
-          name: "email",
-          title: "Email",
-          type: "email",
-          required: false,
-          placeholder: "Enter email address",
-          width: "50%",
-        },
-      ],
-      {
-        name: "number",
-        title: "Number",
-        type: "number",
-        required: false,
-        placeholder: "Enter number",
-        width: "50%",
-      },
-      {
-        name: "password",
-        title: "Password",
-        type: "password",
-        required: false,
-        placeholder: "Enter password",
-        width: "50%",
-      },
-      {
-        name: "textarea",
-        title: "Textarea",
-        type: "textarea",
-        rows: 3,
-        required: false,
-        placeholder: "Enter text here",
-        width: "50%",
-      },
-      {
-        name: "check",
-        title: "Check",
-        type: "checkbox",
-        required: false,
-        width: "50%",
-      },
-      {
-        name: "color",
-        title: "Color",
-        type: "color",
-        required: false,
-        placeholder: "Enter the color here",
-        width: "50%",
-      },
-      {
-        name: "combo",
-        title: "Combo",
-        type: "combo",
-        required: false,
-        placeholder: "Select a fruit...",
-        comboboxProps: {
-          options: FRUIT_OPTIONS,
-        },
-        width: "50%",
-      },
-      {
-        name: "date",
-        title: "Date",
-        type: "date",
-        required: false,
-        placeholder: "Select a date",
-        width: "50%",
-      },
-      {
-        name: "file_drop_box",
-        title: "File Drop Box",
-        type: "file_drop_box",
-        required: false,
-        width: "50%",
-      },
-      {
-        name: "file",
-        title: "File",
-        type: "file",
-        required: false,
-        fileInputBoxProps: {
-          accept: "image/jpeg",
-        },
-        width: "50%",
-      },
-      {
-        name: "image",
-        title: "Image",
-        type: "image",
-        required: false,
-        width: "50%",
-      },
-      {
-        name: "money",
-        title: "Money",
-        type: "money",
-        required: false,
-        placeholder: "Enter amount",
-        moneyProps: {
-          separator: "dot",
-        },
-        width: "50%",
-      },
-      {
-        name: "phone",
-        title: "Phone",
-        type: "phone",
-        required: false,
-        placeholder: "Enter phone number",
-        width: "50%",
-      },
-      {
-        name: "signature",
-        title: "Signature",
-        type: "signbox",
-        required: false,
-        width: "50%",
-      },
-      {
-        name: "rating",
-        title: "Rating",
-        type: "rating",
-        required: false,
-        width: "50%",
-      },
-      {
-        name: "thumb_field",
-        title: "Thumb Field",
-        type: "thumbfield",
-        required: false,
-        width: "50%",
-      },
-      {
-        name: "togglebox",
-        title: "Togglebox",
-        type: "toggle",
-        required: false,
-        width: "50%",
-      },
-      {
-        name: "chips",
-        title: "Chips",
-        type: "chips",
-        required: false,
-        width: "50%",
-        chipsProps: {
-          options: BADGE_OPTIONS,
-          styles: {
-            chipStyle: css`
-              width: 100%;
-              gap: 0.5rem;
-              border-color: transparent;
-            `,
-            chipContainerStyle: css`
-              gap: 4px;
-            `,
-            chipsDrawerStyle: css`
-              min-width: 250px;
-            `,
-          },
-          selectedOptions: valueAll.chips.selectedOptions,
-          inputValue: valueAll.chips.searchText,
-        },
-      },
-      {
-        name: "capsule",
-        title: "Monetary Value",
-        type: "capsule",
-        required: false,
-        width: "50%",
-        capsuleProps: {
-          tabs: CAPSULE_TABS,
-        },
-      },
-    ];
-
     context("when given all input elements", () => {
       it("should render input elements with sizing", () => {
         cy.mount(
@@ -2362,14 +2212,7 @@ describe("StatefulForm", () => {
           />
         );
 
-        const flattenFields = (groups: FormFieldGroup[]): FormFieldProps[] =>
-          groups.flatMap((group) =>
-            Array.isArray(group) ? flattenFields(group) : [group]
-          );
-
-        const allFields = flattenFields(ALL_INPUT);
-
-        allFields.forEach((prop) => {
+        flattenFields(ALL_INPUT).forEach((prop) => {
           if (prop.name === "country_code") return;
           if (prop.name === "togglebox") {
             cy.findByLabelText("togglebox-row-wrapper").then(($el) => {
@@ -2381,7 +2224,6 @@ describe("StatefulForm", () => {
               .parent()
               .then(($el) => {
                 const elWidth = $el.width();
-
                 expect(elWidth).to.be.closeTo(222.5, 10);
               });
           }
