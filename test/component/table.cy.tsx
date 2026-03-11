@@ -39,12 +39,146 @@ describe("Table", () => {
     },
   ];
 
+  const VIEW_MODES: CapsuleContentProps[] = [
+    {
+      id: "new",
+      title: "New",
+    },
+    {
+      id: "list",
+      title: "List",
+    },
+  ];
+
   const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
 
   const rawRows = Array.from({ length: 20 }, (_, i) => ({
     name: `Load Balancer ${i + 1}`,
     type: TYPES_DATA[i % TYPES_DATA.length],
   }));
+
+  context("actions in main table", () => {
+    context("when not given type", () => {
+      it("should render with button", () => {
+        cy.mount(
+          <Table
+            actions={[
+              {
+                caption: "Test Button",
+              },
+            ]}
+            columns={columnsBasic}
+          >
+            {rawRows?.map((row, index) => (
+              <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
+                {[row.name, row.type].map((rowCell, i) => (
+                  <Table.Row.Cell key={`${row.name}-${row.type}-${rowCell}`}>
+                    {rowCell}
+                  </Table.Row.Cell>
+                ))}
+              </Table.Row>
+            ))}
+          </Table>
+        );
+
+        cy.findByLabelText("action-button").should("exist");
+        cy.findByLabelText("capsule").should("not.exist");
+      });
+    });
+
+    context("when given type button", () => {
+      it("should render with button component", () => {
+        cy.mount(
+          <Table
+            actions={[
+              {
+                caption: "Test Button",
+                type: "button",
+              },
+            ]}
+            columns={columnsBasic}
+          >
+            {rawRows?.map((row, index) => (
+              <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
+                {[row.name, row.type].map((rowCell, i) => (
+                  <Table.Row.Cell key={`${row.name}-${row.type}-${rowCell}`}>
+                    {rowCell}
+                  </Table.Row.Cell>
+                ))}
+              </Table.Row>
+            ))}
+          </Table>
+        );
+
+        cy.findByLabelText("action-button").should("exist");
+        cy.findByLabelText("capsule").should("not.exist");
+      });
+    });
+
+    context("when given capsule props with type button", () => {
+      it("should render with button component", () => {
+        cy.mount(
+          <Table
+            actions={[
+              {
+                caption: "Test Button",
+                type: "button",
+                capsuleProps: {
+                  tabs: VIEW_MODES,
+                },
+              },
+            ]}
+            columns={columnsBasic}
+          >
+            {rawRows?.map((row, index) => (
+              <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
+                {[row.name, row.type].map((rowCell, i) => (
+                  <Table.Row.Cell key={`${row.name}-${row.type}-${rowCell}`}>
+                    {rowCell}
+                  </Table.Row.Cell>
+                ))}
+              </Table.Row>
+            ))}
+          </Table>
+        );
+
+        cy.findByLabelText("action-button").should("exist");
+        cy.findByLabelText("capsule").should("not.exist");
+      });
+    });
+
+    context("when given capsule props with type capsule", () => {
+      it("should render with capsule component", () => {
+        cy.mount(
+          <Table
+            actions={[
+              {
+                type: "capsule",
+                capsuleProps: {
+                  activeTab: "1",
+                  tabs: VIEW_MODES,
+                },
+              },
+            ]}
+            columns={columnsBasic}
+          >
+            {rawRows?.map((row, index) => (
+              <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
+                {[row.name, row.type].map((rowCell, i) => (
+                  <Table.Row.Cell key={`${row.name}-${row.type}-${rowCell}`}>
+                    {rowCell}
+                  </Table.Row.Cell>
+                ))}
+              </Table.Row>
+            ))}
+          </Table>
+        );
+
+        cy.findByLabelText("action-button").should("not.exist");
+        cy.findByLabelText("capsule").should("exist");
+      });
+    });
+  });
 
   context("styles", () => {
     context("tableBodyStyle", () => {
