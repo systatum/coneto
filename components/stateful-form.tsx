@@ -41,6 +41,7 @@ import { Radio, RadioProps } from "./radio";
 import Helper from "./helper";
 import { FigureProps } from "./figure";
 import { Pinbox, PinboxProps } from "./pinbox";
+import { FieldLaneProps } from "./field-lane";
 
 export type StatefulOnChangeType =
   | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -125,6 +126,7 @@ export interface FormFieldProps {
   rows?: number;
   width?: string;
   icon?: FigureProps["image"];
+  labelPosition?: FieldLaneProps["labelPosition"];
   disabled?: boolean;
   rowJustifyContent?: "center" | "start" | "end" | "between";
   rowAlignItems?: "center" | "start" | "end" | "between";
@@ -424,6 +426,7 @@ function FormFields<T extends FieldValues>({
                   id={field.id}
                   label={field.title}
                   type={field.type}
+                  labelPosition={field.labelPosition}
                   placeholder={field.placeholder}
                   value={formValues[field.name as keyof T] ?? ""}
                   required={field.required}
@@ -495,6 +498,7 @@ function FormFields<T extends FieldValues>({
                       key={index}
                       id={field.id}
                       name={field.name}
+                      labelPosition={field.labelPosition}
                       label={field.title}
                       value={controllerField.value ?? ""}
                       helper={field.helper}
@@ -606,6 +610,7 @@ function FormFields<T extends FieldValues>({
                   key={index}
                   id={field.id}
                   label={field.title}
+                  labelPosition={field.labelPosition}
                   value={formValues[field.name as keyof T] ?? ""}
                   required={field.required}
                   helper={field.helper}
@@ -672,6 +677,7 @@ function FormFields<T extends FieldValues>({
                   id={field.id}
                   label={field.title}
                   rows={field.rows}
+                  labelPosition={field.labelPosition}
                   placeholder={field.placeholder}
                   value={formValues[field.name as keyof T] ?? ""}
                   required={field.required}
@@ -742,6 +748,7 @@ function FormFields<T extends FieldValues>({
                       id={field.id}
                       title={field.title}
                       label={field.placeholder}
+                      labelPosition={field.labelPosition}
                       name={field.name}
                       value={field.name}
                       placeholder={field.placeholder}
@@ -840,6 +847,7 @@ function FormFields<T extends FieldValues>({
                     <Radio
                       id={field.id}
                       label={field.placeholder}
+                      labelPosition={field.labelPosition}
                       name={field.name}
                       title={field.title}
                       placeholder={field.placeholder}
@@ -917,6 +925,7 @@ function FormFields<T extends FieldValues>({
                     <Phonebox
                       id={field.id}
                       name={field.name}
+                      labelPosition={field.labelPosition}
                       label={field.title}
                       value={controllerField.value}
                       ref={(el) => {
@@ -994,6 +1003,7 @@ function FormFields<T extends FieldValues>({
                   render={({ field: controllerField, fieldState }) => (
                     <Colorbox
                       id={field.id}
+                      labelPosition={field.labelPosition}
                       name={field.name}
                       label={field.title}
                       required={field.required}
@@ -1061,6 +1071,7 @@ function FormFields<T extends FieldValues>({
                   id={field.id}
                   label={field.title}
                   placeholder={field.placeholder}
+                  labelPosition={field.labelPosition}
                   helper={field.helper}
                   name={field.name}
                   {...register(field.name as Path<T>, {
@@ -1096,6 +1107,7 @@ function FormFields<T extends FieldValues>({
                 <FileInputBox
                   key={index}
                   id={field.id}
+                  labelPosition={field.labelPosition}
                   label={field.title}
                   placeholder={field.placeholder}
                   showError={shouldShowError(field.name)}
@@ -1162,6 +1174,7 @@ function FormFields<T extends FieldValues>({
                 <Imagebox
                   key={index}
                   id={field.id}
+                  labelPosition={field.labelPosition}
                   name={field.name}
                   helper={field.helper}
                   value={formValues[field.name as keyof T] ?? ""}
@@ -1238,6 +1251,7 @@ function FormFields<T extends FieldValues>({
                   clearable
                   name={field.name}
                   label={field.title}
+                  labelPosition={field.labelPosition}
                   helper={field.helper}
                   required={field.required}
                   value={formValues[field.name as keyof T] ?? ""}
@@ -1294,6 +1308,7 @@ function FormFields<T extends FieldValues>({
                     <Moneybox
                       key={index}
                       id={field.id}
+                      labelPosition={field.labelPosition}
                       ref={(el) => {
                         if (el) refs.current[field.name] = el;
                         rhf.ref(el);
@@ -1377,6 +1392,7 @@ function FormFields<T extends FieldValues>({
                     <Datebox
                       key={index}
                       id={field.id}
+                      labelPosition={field.labelPosition}
                       name={field.name}
                       label={field.title}
                       helper={field.helper}
@@ -1459,6 +1475,7 @@ function FormFields<T extends FieldValues>({
                     <Combobox
                       id={field.id}
                       name={field.name}
+                      labelPosition={field.labelPosition}
                       placeholder={field.placeholder}
                       label={field.title}
                       showError={shouldShowError(field.name)}
@@ -1538,6 +1555,7 @@ function FormFields<T extends FieldValues>({
                     <Chips
                       label={field.title}
                       helper={field.helper}
+                      labelPosition={field.labelPosition}
                       filterPlaceholder={field.placeholder}
                       inputValue={controllerField.value}
                       setInputValue={(e) => {
@@ -1582,6 +1600,7 @@ function FormFields<T extends FieldValues>({
                     <Rating
                       editable
                       id={field.id}
+                      labelPosition={field.labelPosition}
                       label={field.title}
                       helper={field.helper}
                       rating={controllerField.value}
@@ -1630,6 +1649,7 @@ function FormFields<T extends FieldValues>({
                     <ThumbField
                       id={field.id}
                       label={field.title}
+                      labelPosition={field.labelPosition}
                       value={controllerField.value ?? false}
                       required={field.required}
                       helper={field.helper}
@@ -1695,6 +1715,7 @@ function FormFields<T extends FieldValues>({
                     <Togglebox
                       id={field.id}
                       name={controllerField.name}
+                      labelPosition={field.labelPosition}
                       placeholder={field.placeholder}
                       checked={controllerField.value ?? false}
                       required={field.required}
@@ -1764,6 +1785,7 @@ function FormFields<T extends FieldValues>({
                     <Capsule
                       id={field.id}
                       name={field.name}
+                      labelPosition={field.labelPosition}
                       label={field.title}
                       activeTab={controllerField.value}
                       helper={field.helper}
@@ -1827,17 +1849,19 @@ export interface StatefulFormLabelProps
   label?: string;
   helper?: string;
   styles: { self?: CSSProp };
+  labelPosition?: FieldLaneProps["labelPosition"];
 }
 
 function StatefulFormLabel({
   label,
   helper,
   styles,
+  labelPosition,
   ...props
 }: StatefulFormLabelProps) {
   return (
     <Label {...props} $style={styles?.self}>
-      <LabelText>{label}</LabelText>
+      <LabelText $labelPosition={labelPosition}>{label}</LabelText>
 
       {helper && <Helper value={helper} />}
     </Label>
@@ -1856,11 +1880,18 @@ const Label = styled.label<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
-const LabelText = styled.span`
+const LabelText = styled.span<{
+  $labelPosition?: FieldLaneProps["labelPosition"];
+}>`
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
+
+  ${({ $labelPosition }) =>
+    $labelPosition === "top" &&
+    css`
+      overflow: hidden;
+      text-overflow: ellipsis;
+    `}
 `;
 
 interface StatefulFormSanitizeIdProps {
