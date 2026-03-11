@@ -12,6 +12,7 @@ import React, {
   Fragment,
   isValidElement,
   KeyboardEvent,
+  MouseEvent,
   ReactElement,
   ReactNode,
   Ref,
@@ -28,7 +29,7 @@ import styled, { css, CSSProp } from "styled-components";
 import ContextMenu, { ContextMenuActionsProps } from "./context-menu";
 import { ActionButton, ActionButtonProps } from "./action-button";
 import { OverlayBlocker } from "./overlay-blocker";
-import { FigureProps } from "./figure";
+import { Figure, FigureProps } from "./figure";
 
 export interface ListProps extends ListMaxItemsProp {
   searchable?: boolean;
@@ -102,7 +103,7 @@ const DnDContext = createContext<{
       title: ReactNode | string;
       subtitle: string;
       imageUrl?: string;
-      leftIcon?: FigureProps["image"];
+      icon?: FigureProps;
     };
   }) => void;
   onDragged?: ListProps["onDragged"];
@@ -531,6 +532,9 @@ function ListGroup({
                 containerStyle: css`
                   width: fit-content;
                 `,
+                bodyStyle: css`
+                  min-height: 0px;
+                `,
               }}
               checked={opened}
               onChange={() => {
@@ -837,8 +841,7 @@ export interface ListItemProps {
   id: string;
   title?: ReactNode;
   subtitle?: string;
-  imageUrl?: string;
-  leftIcon?: FigureProps["image"] | null;
+  icon?: FigureProps;
   draggable?: boolean;
   groupId?: string;
   selectable?: boolean;
@@ -853,10 +856,15 @@ export interface ListItemProps {
     checked?: boolean;
     name?: string;
   };
-  leftSideContent?: ReactNode;
+  leftSideContent?: (props?: LeftSideContentMenuProps) => ReactNode;
   styles?: ListItemStylesProps;
-  hoverColor?: string;
+  hoverTextColor?: string;
   hoverBackgroundColor?: string;
+  selected?: boolean;
+  onMouseEnter?: (e: MouseEvent<HTMLDivElement>) => void;
+  onMouseDown?: (e: MouseEvent<HTMLDivElement>) => void;
+  onMouseLeave?: (e: MouseEvent<HTMLDivElement>) => void;
+  onMouseMove?: (e: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 export interface ListItemStylesProps {
@@ -869,28 +877,15 @@ export interface ListItemStylesProps {
   maxItemsStyle?: CSSProp;
 }
 
-type DivProps = Omit<
-  React.HTMLAttributes<HTMLDivElement>,
-  "title" | "onClick" | "draggable" | "id" | "style"
->;
-
-interface ListItemInternal
-  extends DivProps,
-    Omit<ListItemProps, "leftSideContent" | "onClick"> {
-  leftSideContent?: (props?: LeftSideContentMenuProps) => React.ReactNode;
-  onClick?: (e?: React.MouseEvent<HTMLDivElement>) => void;
-}
-
 interface ListItemWithId {
   openTipRowId?: string | null;
   setOpenTipRowId?: (prop: string | null) => void;
 }
 
-const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
+const ListItem = forwardRef<HTMLLIElement, ListItemProps>(
   (
     {
-      leftIcon: LeftIcon = null,
-      imageUrl,
+      icon,
       subtitle,
       title,
       draggable,
@@ -906,8 +901,9 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
       openable,
       leftSideContent,
       styles,
+      hoverTextColor,
       hoverBackgroundColor,
-      hoverColor,
+      selected,
       ...props
     },
     ref
@@ -941,18 +937,31 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
     return (
       <ListItemWrapper
         ref={ref}
-        onMouseEnter={() => setIsHovered(idFullname)}
-        onMouseLeave={() => setIsHovered(null)}
         aria-label="list-item-wrapper"
         $openable={openable && isChildOpened}
         $style={styles?.containerStyle}
+        $hoverBackgroundColor={hoverBackgroundColor}
+        $hoverTextColor={hoverTextColor}
+        $selected={selected}
       >
         <ListItemRow
           {...domProps}
+          onMouseEnter={(e) => {
+            setIsHovered(idFullname);
+            if (props.onMouseEnter) {
+              props.onMouseEnter(e);
+            }
+          }}
+          onMouseLeave={(e) => {
+            setIsHovered(null);
+            if (props.onMouseLeave) {
+              props.onMouseLeave(e);
+            }
+          }}
           $isHovered={isHovered === idFullname || openTipRowId === idFullname}
           $style={styles?.rowStyle}
           aria-label="list-item-row"
-          $hoverColor={hoverColor}
+          $hoverTextColor={hoverTextColor}
           $hoverBackgroundColor={hoverBackgroundColor}
           draggable={draggable}
           onClick={() => {
@@ -963,7 +972,7 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
               setIsOpen(idFullname, "item");
             }
           }}
-          onDragStart={() =>
+          onDragStart={(e) => {
             setDragItem({
               id: id,
               oldGroupId: groupId!,
@@ -972,10 +981,10 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
                 id: id,
                 title,
                 subtitle,
-                ...(imageUrl ? { imageUrl } : { leftIcon: LeftIcon }),
+                icon,
               },
-            })
-          }
+            });
+          }}
           onDragOver={(e) => {
             e.preventDefault();
             if (draggable) {
@@ -992,7 +1001,7 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
               setIsOver(true);
             }
           }}
-          onDragLeave={() => {
+          onDragLeave={(e) => {
             setIsOver(false);
             setDropPosition(null);
           }}
@@ -1059,10 +1068,27 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
                 ),
                 render: (children) => children,
               })}
-            {imageUrl ? (
-              <ImageStyle src={imageUrl} alt="Image from coneto, Systatum." />
-            ) : (
-              LeftIcon && <LeftIcon size={22} color="#4b5563" />
+
+            {icon && (
+              <Figure
+                {...icon}
+                size={icon?.size ?? 22}
+                styles={{
+                  self: css`
+                    ${typeof icon?.image === "string" &&
+                    css`
+                      min-width: 34px;
+                      min-height: 34px;
+                      max-width: 34px;
+                      max-height: 34px;
+                    `}
+                    display: flex;
+                    justify-content: center;
+                    ${icon?.styles?.self}
+                  `,
+                }}
+                color={"#4b5563"}
+              />
             )}
             <TextWrapper>
               {title && (
@@ -1196,6 +1222,9 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
 const ListItemWrapper = styled.li<{
   $style?: CSSProp;
   $openable?: boolean;
+  $hoverBackgroundColor?: string;
+  $hoverTextColor?: string;
+  $selected?: boolean;
 }>`
   display: flex;
   flex-direction: column;
@@ -1204,10 +1233,11 @@ const ListItemWrapper = styled.li<{
   transition: background-color 300ms;
   border-radius: 3px;
 
-  ${({ $openable }) =>
+  ${({ $openable, $hoverBackgroundColor, $hoverTextColor, $selected }) =>
     $openable &&
     css`
-      background-color: #dbeafe;
+      color: ${$selected ? $hoverTextColor : "inherit"};
+      background-color: ${$selected ? $hoverBackgroundColor : "#dbeafe"};
     `}
 
   ${({ $style }) => $style}
@@ -1216,7 +1246,7 @@ const ListItemWrapper = styled.li<{
 const ListItemRow = styled.div<{
   $style?: CSSProp;
   $isHovered?: boolean;
-  $hoverColor?: string;
+  $hoverTextColor?: string;
   $hoverBackgroundColor?: string;
 }>`
   display: flex;
@@ -1233,10 +1263,10 @@ const ListItemRow = styled.div<{
 
   ${({ $style }) => $style}
 
-  ${({ $isHovered, $hoverColor, $hoverBackgroundColor }) =>
+  ${({ $isHovered, $hoverTextColor, $hoverBackgroundColor }) =>
     $isHovered &&
     css`
-      color: ${$hoverColor ?? "inherit"};
+      color: ${$hoverTextColor ?? "inherit"};
       background-color: ${$hoverBackgroundColor ?? "#dbeafe"};
     `}
 `;

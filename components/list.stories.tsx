@@ -148,31 +148,31 @@ export const Default: Story = {
         id: "home",
         title: "Home",
         subtitle: "Go to homepage",
-        leftIcon: RiHome2Fill,
+        icon: { image: RiHome2Fill },
       },
       {
         id: "profile",
         title: "Profile",
         subtitle: "View your profile",
-        leftIcon: RiUser3Fill,
+        icon: { image: RiUser3Fill },
       },
       {
         id: "settings",
         title: "Settings",
         subtitle: "Adjust preferences",
-        leftIcon: RiSettings3Fill,
+        icon: { image: RiSettings3Fill },
       },
       {
         id: "messages",
         title: "Messages",
         subtitle: "Check your inbox",
-        leftIcon: RiMailFill,
+        icon: { image: RiMailFill },
       },
       {
         id: "notifications",
         title: "Notifications",
         subtitle: "View Alerts",
-        leftIcon: RiNotification3Fill,
+        icon: { image: RiNotification3Fill },
       },
     ];
 
@@ -191,7 +191,7 @@ export const Default: Story = {
             <List.Item
               key={index}
               id={item.id}
-              leftIcon={item.leftIcon}
+              icon={item.icon}
               subtitle={item.subtitle}
               title={item.title}
             />
@@ -204,6 +204,8 @@ export const Default: Story = {
 
 export const Draggable: Story = {
   render: () => {
+    "@remixicon/react";
+
     const LIST_GROUPS: ListGroupContentProps[] = [
       {
         id: "recent-content",
@@ -213,19 +215,19 @@ export const Draggable: Story = {
             id: "messages",
             title: "Messages",
             subtitle: "Check your inbox",
-            leftIcon: RiMailFill,
+            icon: { image: RiMailFill },
           },
           {
             id: "notifications",
             title: "Notifications",
             subtitle: "View Alerts",
-            leftIcon: RiNotification3Fill,
+            icon: { image: RiNotification3Fill },
           },
           {
             id: "calendar",
             title: "Calendar",
             subtitle: "Upcoming events",
-            leftIcon: RiCalendar2Fill,
+            icon: { image: RiCalendar2Fill },
           },
         ],
       },
@@ -237,19 +239,19 @@ export const Draggable: Story = {
             id: "home",
             title: "Home",
             subtitle: "Go to homepage",
-            leftIcon: RiHome2Fill,
+            icon: { image: RiHome2Fill },
           },
           {
             id: "profile",
             title: "Profile",
             subtitle: "View your profile",
-            leftIcon: RiUser3Fill,
+            icon: { image: RiUser3Fill },
           },
           {
             id: "settings",
             title: "Settings",
             subtitle: "Adjust preferences",
-            leftIcon: RiSettings3Fill,
+            icon: { image: RiSettings3Fill },
           },
         ],
       },
@@ -402,7 +404,7 @@ export const Draggable: Story = {
                   <List.Item
                     key={i}
                     id={list.id}
-                    leftIcon={list.leftIcon}
+                    icon={list.icon}
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
@@ -428,19 +430,19 @@ export const WithLoading: Story = {
             id: "messages",
             title: "Messages",
             subtitle: "Check your inbox",
-            leftIcon: RiMailFill,
+            icon: { image: RiMailFill },
           },
           {
             id: "notifications",
             title: "Notifications",
             subtitle: "View Alerts",
-            leftIcon: RiNotification3Fill,
+            icon: { image: RiNotification3Fill },
           },
           {
             id: "calendar",
             title: "Calendar",
             subtitle: "Upcoming events",
-            leftIcon: RiCalendar2Fill,
+            icon: { image: RiCalendar2Fill },
           },
         ],
       },
@@ -452,19 +454,19 @@ export const WithLoading: Story = {
             id: "home",
             title: "Home",
             subtitle: "Go to homepage",
-            leftIcon: RiHome2Fill,
+            icon: { image: RiHome2Fill },
           },
           {
             id: "profile",
             title: "Profile",
             subtitle: "View your profile",
-            leftIcon: RiUser3Fill,
+            icon: { image: RiUser3Fill },
           },
           {
             id: "settings",
             title: "Settings",
             subtitle: "Adjust preferences",
-            leftIcon: RiSettings3Fill,
+            icon: { image: RiSettings3Fill },
           },
         ],
       },
@@ -599,7 +601,7 @@ export const WithLoading: Story = {
                   <List.Item
                     key={i}
                     id={list.id}
-                    leftIcon={list.leftIcon}
+                    icon={list.icon}
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
@@ -1626,25 +1628,25 @@ export const CustomOpener: Story = {
             id: "messages",
             title: "Messages",
             subtitle: "Check your inbox",
-            leftIcon: RiMailFill,
+            icon: { image: RiMailFill },
           },
           {
             id: "notifications",
             title: "Notifications",
             subtitle: "View Alerts",
-            leftIcon: RiNotification3Fill,
+            icon: { image: RiNotification3Fill },
           },
           {
             id: "profile",
             title: "Profile",
             subtitle: "View your profile",
-            leftIcon: RiUser3Fill,
+            icon: { image: RiUser3Fill },
           },
           {
             id: "calendar",
             title: "Calendar",
             subtitle: "Upcoming events",
-            leftIcon: RiCalendar2Fill,
+            icon: { image: RiCalendar2Fill },
           },
         ],
       },
@@ -1658,15 +1660,14 @@ export const CustomOpener: Story = {
             id: "home",
             title: "Home",
             subtitle: "Go to homepage",
-            leftIcon: RiHome2Fill,
+            icon: { image: RiHome2Fill },
             rightSideContent: RIGHT_SIDE_CONTENT,
           },
-
           {
             id: "settings",
             title: "Settings",
             subtitle: "Adjust preferences",
-            leftIcon: RiSettings3Fill,
+            icon: { image: RiSettings3Fill },
             rightSideContent: RIGHT_SIDE_CONTENT,
           },
         ],
@@ -1827,7 +1828,7 @@ export const CustomOpener: Story = {
                     id={list.id}
                     title={list.title}
                     groupId={group.id}
-                    leftIcon={list.leftIcon}
+                    icon={list.icon}
                     subtitle={list.subtitle}
                     rightSideContent={list.rightSideContent}
                     onSelected={onChangeValue}
@@ -1873,61 +1874,61 @@ export const WithMaxItems: Story = {
       {
         id: "1",
         title: "French Toast",
-        imageUrl: "https://picsum.photos/seed/frenchtoast/200",
+        icon: { image: "https://picsum.photos/seed/frenchtoast/200" },
         rightSideContent: "13$",
       },
       {
         id: "2",
         title: "Sushi Deluxe",
-        imageUrl: "https://picsum.photos/seed/sushi/200",
+        icon: { image: "https://picsum.photos/seed/sushi/200" },
         rightSideContent: "22$",
       },
       {
         id: "3",
         title: "Pad Thai",
-        imageUrl: "https://picsum.photos/seed/padthai/200",
+        icon: { image: "https://picsum.photos/seed/padthai/200" },
         rightSideContent: "15$",
       },
       {
         id: "4",
         title: "Tacos Al Pastor",
-        imageUrl: "https://picsum.photos/seed/tacos/200",
+        icon: { image: "https://picsum.photos/seed/tacos/200" },
         rightSideContent: "12$",
       },
       {
         id: "5",
         title: "Margherita Pizza",
-        imageUrl: "https://picsum.photos/seed/pizza/200",
+        icon: { image: "https://picsum.photos/seed/pizza/200" },
         rightSideContent: "18$",
       },
       {
         id: "6",
         title: "Butter Chicken",
-        imageUrl: "https://picsum.photos/seed/butterchicken/200",
+        icon: { image: "https://picsum.photos/seed/butterchicken/200" },
         rightSideContent: "16$",
       },
       {
         id: "7",
         title: "Pho Bo",
-        imageUrl: "https://picsum.photos/seed/phobo/200",
+        icon: { image: "https://picsum.photos/seed/phobo/200" },
         rightSideContent: "14$",
       },
       {
         id: "8",
         title: "Croissant & Coffee",
-        imageUrl: "https://picsum.photos/seed/croissant/200",
+        icon: { image: "https://picsum.photos/seed/croissant/200" },
         rightSideContent: "10$",
       },
       {
         id: "9",
         title: "Cheeseburger",
-        imageUrl: "https://picsum.photos/seed/cheeseburger/200",
+        icon: { image: "https://picsum.photos/seed/cheeseburger/200" },
         rightSideContent: "11$",
       },
       {
         id: "10",
         title: "Falafel Wrap",
-        imageUrl: "https://picsum.photos/seed/falafel/200",
+        icon: { image: "https://picsum.photos/seed/falafel/200" },
         rightSideContent: "13$",
       },
     ];
@@ -2019,7 +2020,7 @@ export const WithMaxItems: Story = {
               id={list.id}
               subtitle={list.subtitle}
               title={list.title}
-              imageUrl={list.imageUrl}
+              icon={list.icon}
               onClick={() => {
                 const isAlreadyChecked = value.checked.some(
                   (check) => check.id.toString() === list.id.toString()
@@ -2074,11 +2075,37 @@ export const Accordion: Story = {
       >
         <List.Group id="log" title={"Logs"} actions={ACTIONS_GROUPS}>
           <List.Item
+            openable
             id={"log.id"}
-            hoverColor="white"
+            hoverTextColor="white"
             hoverBackgroundColor="#1F2937"
+            selected
             title="Container has not been started yet"
-          />
+          >
+            <pre
+              style={{
+                margin: 0,
+                padding: 10,
+                paddingTop: 0,
+                fontSize: 12,
+                lineHeight: 1.6,
+              }}
+            >
+              {`[INFO] Initializing container runtime...
+[INFO] Checking image availability
+[WARN] Image not found locally
+[INFO] Pulling image from registry...
+[ERROR] Container failed to start
+
+Reason:
+  The container process exited before initialization.
+
+Suggestion:
+  • Verify the container image exists
+  • Check environment variables
+  • Review startup command configuration`}
+            </pre>
+          </List.Item>
         </List.Group>
       </List>
     );
