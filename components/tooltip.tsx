@@ -1,4 +1,7 @@
-import { getFloatingPlacement } from "./../lib/floating-placement";
+import {
+  DialogPlacement,
+  getFloatingPlacement,
+} from "./../lib/floating-placement";
 import {
   autoUpdate,
   flip,
@@ -42,12 +45,6 @@ export type TooltipRef = {
   open: () => void;
   close: () => void;
 };
-
-type DialogPlacement =
-  | "bottom-left"
-  | "bottom-right"
-  | "top-left"
-  | "top-right";
 
 const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
   (
@@ -262,7 +259,7 @@ const Wrapper = styled.div<{ $style?: CSSProp }>`
   display: inline-flex;
   align-items: center;
   height: fit-content;
-  width: 100%;
+  width: fit-content;
 
   ${({ $style }) => $style}
 `;
@@ -290,7 +287,9 @@ const ContentTrigger = styled.div<{
   $showDialogOn: TooltipProps["showDialogOn"];
   $style?: CSSProp;
 }>`
-  width: 100%;
+  width: fit-content;
+  height: fit-content;
+
   ${({ $showDialogOn }) =>
     $showDialogOn === "hover"
       ? css`
@@ -336,7 +335,27 @@ const TooltipArrow = styled.div<{
                 bottom: -4px;
                 right: 10%;
               `
-            : null}
+            : $placement === "left-start"
+              ? css`
+                  right: -2px;
+                  top: 10%;
+                `
+              : $placement === "left-end"
+                ? css`
+                    right: -2px;
+                    bottom: 10%;
+                  `
+                : $placement === "right-start"
+                  ? css`
+                      left: -2px;
+                      top: 10%;
+                    `
+                  : $placement === "right-end"
+                    ? css`
+                        left: -2px;
+                        bottom: 10%;
+                      `
+                    : null}
 
   ${({ $arrowStyle }) => $arrowStyle}
 `;
