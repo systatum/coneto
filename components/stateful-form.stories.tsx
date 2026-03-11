@@ -287,8 +287,7 @@ export const LeftLabeled: Story = {
       <Card
         styles={{
           containerStyle: css`
-            padding: 0px;
-            min-width: 400px;
+            width: 450px;
           `,
         }}
       >
