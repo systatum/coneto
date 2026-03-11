@@ -164,6 +164,7 @@ function Togglebox({
       helper={helper}
       disabled={disabled}
       label={title}
+      required={rest.required}
       errorIconPosition="none"
       styles={{
         bodyStyle,

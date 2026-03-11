@@ -133,6 +133,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
         type={type}
         helper={helper}
         disabled={disabled}
+        required={rest.required}
         styles={{
           bodyStyle: styles?.bodyStyle,
           controlStyle: styles?.controlStyle,

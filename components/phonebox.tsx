@@ -54,6 +54,7 @@ interface BasePhoneboxProps {
   countryCodeValue?: CountryCodeProps;
   styles?: PhoneboxStylesProps;
   id?: string;
+  required?: boolean;
 }
 
 export interface PhoneboxStylesProps {
@@ -74,6 +75,7 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
       countryCodeValue,
       styles,
       id,
+      required,
     },
     ref
   ) => {
@@ -252,6 +254,7 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
 
           <PhoneInput
             ref={phoneInputRef}
+            required={required}
             id={id}
             type="tel"
             $style={styles?.self}
@@ -386,6 +389,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
         type={type}
         helper={helper}
         disabled={disabled}
+        required={rest.required}
         styles={{
           bodyStyle: styles?.bodyStyle,
           controlStyle: styles?.controlStyle,

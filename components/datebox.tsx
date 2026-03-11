@@ -85,6 +85,7 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
       onChange={onChange}
       helper={helper}
       disabled={props.disabled}
+      required={rest.required}
       styles={{
         ...styles,
         self: css`

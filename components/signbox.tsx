@@ -231,6 +231,7 @@ function Signbox({
   height,
   width,
   id,
+  required,
 }: SignboxProps) {
   const inputId = StatefulForm.sanitizeId({
     prefix: "signbox",
@@ -249,6 +250,7 @@ function Signbox({
       helper={helper}
       errorIconPosition={errorIconPosition}
       disabled={disabled}
+      required={required}
       styles={{
         bodyStyle: styles?.bodyStyle,
         controlStyle: styles?.controlStyle,

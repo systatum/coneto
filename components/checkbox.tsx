@@ -183,6 +183,7 @@ function Checkbox({
       helper={helper}
       disabled={disabled}
       label={title}
+      required={rest.required}
       errorIconPosition="none"
       styles={{
         bodyStyle: css`
