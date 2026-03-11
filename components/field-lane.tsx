@@ -19,6 +19,7 @@ export interface FieldLaneProps {
   id?: string;
   actions?: FieldLaneActionsProps[];
   type?: string;
+  labelPosition?: "top" | "left";
 }
 
 export interface FieldLaneStylesProps {
@@ -75,6 +76,7 @@ function FieldLane({
   actions,
   type,
   errorIconPosition = "absolute",
+  labelPosition = "top",
 }: FieldLaneProps) {
   const inputElement: ReactElement = (
     <InputWrapper $style={styles?.controlStyle}>
@@ -282,7 +284,11 @@ function FieldLane({
         ${styles?.containerStyle}
       `}
     >
-      <Body $disabled={disabled} $style={styles?.bodyStyle}>
+      <Body
+        $labelPosition={labelPosition}
+        $disabled={disabled}
+        $style={styles?.bodyStyle}
+      >
         {label && (
           <StatefulForm.Label
             htmlFor={disabled ? null : id}
@@ -318,10 +324,15 @@ const Container = styled.div<{ $style?: CSSProp; $disabled?: boolean }>`
   ${({ $style }) => $style}
 `;
 
-const Body = styled.div<{ $style?: CSSProp; $disabled?: boolean }>`
+const Body = styled.div<{
+  $style?: CSSProp;
+  $disabled?: boolean;
+  $labelPosition?: FieldLaneProps["labelPosition"];
+}>`
   position: relative;
   display: flex;
-  flex-direction: column;
+  flex-direction: ${({ $labelPosition }) =>
+    $labelPosition === "top" ? "column" : "row"};
   width: 100%;
   height: 100%;
   min-height: 34px;
