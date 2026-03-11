@@ -812,7 +812,7 @@ export const AllCase: Story = {
         name: "chips",
         title: "Chips",
         type: "chips",
-        required: true,
+        required: false,
         helper: "This field allows you to select multiple items",
         chipsProps: {
           options: BADGE_OPTIONS,
