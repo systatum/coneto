@@ -309,9 +309,6 @@ export const WithError: Story = {
                   border-color: red;
                 `}
               `,
-              errorStyle: css`
-                font-size: 14px;
-              `,
             }}
             errorMessage="Please select an option before continuing."
           />

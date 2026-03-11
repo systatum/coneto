@@ -19,10 +19,12 @@ describe("Tooltip", () => {
           }
         >
           <Badge
-            badgeStyle={css`
-              cursor: pointer;
-              transition: all ease-in-out 0.2s;
-            `}
+            styles={{
+              self: css`
+                cursor: pointer;
+                transition: all ease-in-out 0.2s;
+              `,
+            }}
             caption="With Show Delay"
             withCircle
           />
@@ -54,10 +56,12 @@ describe("Tooltip", () => {
             }
           >
             <Badge
-              badgeStyle={css`
-                cursor: pointer;
-                transition: all ease-in-out 0.2s;
-              `}
+              styles={{
+                self: css`
+                  cursor: pointer;
+                  transition: all ease-in-out 0.2s;
+                `,
+              }}
               caption="With Show Delay"
               withCircle
             />
@@ -82,10 +86,12 @@ describe("Tooltip", () => {
             dialog={""}
           >
             <Badge
-              badgeStyle={css`
-                cursor: pointer;
-                transition: all ease-in-out 0.2s;
-              `}
+              styles={{
+                self: css`
+                  cursor: pointer;
+                  transition: all ease-in-out 0.2s;
+                `,
+              }}
               caption="With Show Delay"
               withCircle
             />

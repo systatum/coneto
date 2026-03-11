@@ -8,10 +8,10 @@ const meta: Meta<typeof Boxbar> = {
   component: Boxbar,
   tags: ["autodocs"],
   argTypes: {
-    containerStyle: {
+    styles: {
       control: "text",
       description:
-        "Optional class name to style the container of the children.",
+        "Optional class name to style the container of the children through **self**.",
       table: {
         type: { summary: "string" },
         defaultValue: { summary: "undefined" },
@@ -79,16 +79,18 @@ export const Default: Story = {
       <Boxbar>
         {BADGE_OPTIONS.map((badge) => (
           <Badge
-            badgeStyle={css`
-              width: 100%;
-              max-width: 100px;
+            styles={{
+              self: css`
+                width: 100%;
+                max-width: 100px;
 
-              &:hover {
-                border-color: #4cbbf7;
-                cursor: pointer;
-                transition: all 0.5s ease-in-out;
-              }
-            `}
+                &:hover {
+                  border-color: #4cbbf7;
+                  cursor: pointer;
+                  transition: all 0.5s ease-in-out;
+                }
+              `,
+            }}
             key={badge.id}
             caption={badge.caption}
             withCircle

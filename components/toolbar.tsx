@@ -23,8 +23,12 @@ import { Figure, FigureProps } from "./figure";
 
 export interface ToolbarProps {
   children: ReactNode;
-  style?: CSSProp;
   big?: boolean;
+  styles?: ToolbarStylesProps;
+}
+
+export interface ToolbarStylesProps {
+  self?: CSSProp;
 }
 
 export interface ToolbarMenuProps {
@@ -211,7 +215,7 @@ const VARIANT_ACTIVE = {
   },
 };
 
-function Toolbar({ children, style, big }: ToolbarProps) {
+function Toolbar({ children, styles, big }: ToolbarProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const toolbarRef = useRef<HTMLDivElement>(null);
 
@@ -273,7 +277,7 @@ function Toolbar({ children, style, big }: ToolbarProps) {
   });
 
   return (
-    <ToolbarWrapper ref={toolbarRef} $style={style}>
+    <ToolbarWrapper ref={toolbarRef} $style={styles?.self}>
       {childrenWithProps}
     </ToolbarWrapper>
   );
@@ -429,7 +433,7 @@ function ToolbarMenu({
               setIsOpen(false);
               setHovered("original");
             }}
-            style={styles?.dropdownStyle}
+            styles={{ self: styles?.dropdownStyle }}
             subMenuList={subMenuList}
           />
         </div>

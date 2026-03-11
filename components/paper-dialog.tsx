@@ -17,7 +17,7 @@ import {
   useCallback,
   useEffect,
 } from "react";
-import { Button, ButtonVariants } from "./button";
+import { Button, ButtonStylesProps, ButtonVariants } from "./button";
 import styled, { css, CSSProp } from "styled-components";
 import { Figure, FigureProps } from "./figure";
 import { OverlayBlocker } from "./overlay-blocker";
@@ -44,13 +44,19 @@ export interface PaperDialogTriggerProps {
   children?: ReactNode;
   setDialogState?: (dialogState: DialogState) => void;
   icon?: FigureProps;
-  style?: CSSProp;
   variant?: ButtonVariants["variant"];
+  styles?: PaperDialogTriggerStylesProps;
 }
 
-interface PaperDialogContentProps {
+export type PaperDialogTriggerStylesProps = ButtonStylesProps;
+
+export interface PaperDialogContentProps {
   children?: ReactNode;
-  style?: CSSProp;
+  styles?: PaperDialogContentStylesProps;
+}
+
+export interface PaperDialogContentStylesProps {
+  self?: CSSProp;
 }
 
 export interface PaperDialogRef {
@@ -355,7 +361,7 @@ function PaperDialogTrigger({
   icon,
   setDialogState,
   variant = "default",
-  style,
+  styles,
 }: PaperDialogTriggerProps) {
   return (
     <Button
@@ -364,7 +370,7 @@ function PaperDialogTrigger({
       onClick={() => {
         setDialogState("restored");
       }}
-      styles={{ self: style }}
+      styles={styles}
     >
       {icon && <Figure {...icon} size={icon?.size ?? 20} />}
       {children}
@@ -374,26 +380,21 @@ function PaperDialogTrigger({
 
 export function PaperDialogContent({
   children,
-  style,
+  styles,
 }: PaperDialogContentProps) {
   return (
-    <StyledDialogContentWrapper>
-      <StyledDialogContent $style={style}>{children}</StyledDialogContent>
-    </StyledDialogContentWrapper>
+    <StyledDialogContent $style={styles?.self}>{children}</StyledDialogContent>
   );
 }
 
-const StyledDialogContentWrapper = styled.div`
+const StyledDialogContent = styled.div<{ $style?: CSSProp }>`
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
   position: relative;
   z-index: 9999;
   background-color: white;
-`;
-
-const StyledDialogContent = styled.div<{ $style?: CSSProp }>`
-  min-height: 100vh;
 
   ${({ $style }) => $style}
 `;

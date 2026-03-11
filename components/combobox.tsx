@@ -18,7 +18,7 @@ import {
   SelectboxStylesProps,
 } from "./selectbox";
 import styled, { css, CSSProp } from "styled-components";
-import { List } from "./list";
+import { List, ListItemStylesProps } from "./list";
 import { FieldLaneProps } from "./field-lane";
 import { Figure, FigureProps } from "./figure";
 import { StatefulForm } from "./stateful-form";
@@ -54,8 +54,10 @@ export interface ComboboxActionProps {
   onClick?: () => void;
   icon?: FigureProps;
   title: string;
-  style?: CSSProp;
+  styles?: ComboboxActionStylesProps;
 }
+
+export type ComboboxActionStylesProps = ListItemStylesProps;
 
 type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
   BaseComboboxProps & {
@@ -354,13 +356,26 @@ function ComboboxDrawer({
                       listRef.current[index] = el;
                     }}
                     styles={{
-                      titleStyle: listItemTitleStyle,
-                      rowStyle: listItemRowStyle({
-                        shouldHighlight,
-                        interactionMode,
-                      }),
-                      containerStyle: listItemContainerStyle,
-                      leftSideStyle: listItemLeftSideStyle,
+                      ...action?.styles,
+                      titleStyle: css`
+                        ${listItemTitleStyle}
+                        ${action?.styles?.titleStyle}
+                      `,
+                      rowStyle: css`
+                        ${listItemRowStyle({
+                          shouldHighlight,
+                          interactionMode,
+                        })}
+                        ${action?.styles?.rowStyle}
+                      `,
+                      containerStyle: css`
+                        ${listItemContainerStyle}
+                        ${action?.styles?.containerStyle}
+                      `,
+                      leftSideStyle: css`
+                        ${listItemLeftSideStyle}
+                        ${action?.styles?.leftSideStyle}
+                      `,
                     }}
                     title={
                       <>

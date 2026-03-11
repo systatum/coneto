@@ -81,7 +81,7 @@ describe("Table Component", () => {
 
     context("when scroll to bottom and select", () => {
       it("renders content and have selected item", () => {
-        cy.findByLabelText("table-scroll-container").scrollTo("bottom", {
+        cy.findByLabelText("table-body").scrollTo("bottom", {
           duration: 1000,
         });
 

@@ -48,10 +48,18 @@ Each action supports:
       control: false,
       description: "Callback fired when the close (×) button is clicked.",
     },
-    style: {
+    styles: {
       control: false,
-      description:
-        "Custom styled-components CSS applied to the message box root container.",
+      description: `
+Custom styles for the **Messagebox** component using styled-components CSS.
+
+- **containerStyle**: CSS applied to the root wrapper of the message box.
+- **titleStyle**: CSS applied to the title text of the message box.
+- **contentWrapperStyle**: CSS applied to the content wrapper that contains children and action links.
+- **contentStyle**: CSS applied to the children content text inside the message box.
+
+This allows complete customization of the message box layout, typography, colors, and spacing without modifying the component code.
+  `,
     },
   },
 };

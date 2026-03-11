@@ -118,7 +118,7 @@ function BaseCheckbox({
         {label && (
           <StatefulForm.Label
             aria-label="label"
-            style={styles?.labelStyle}
+            styles={{ self: styles?.labelStyle }}
             htmlFor={props.disabled ? null : id}
             label={label}
           />

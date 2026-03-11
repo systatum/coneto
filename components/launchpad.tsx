@@ -165,7 +165,7 @@ function LaunchpadSection({
       >
         <Separator title={title} depth="0" />
       </LaunchPadSectionSeparatorWrapper>
-      <Grid preset={gridPreset} containerStyle={styles?.gridStyle}>
+      <Grid preset={gridPreset} styles={{ self: styles?.gridStyle }}>
         {children}
       </Grid>
     </LaunchpadSectionContainer>

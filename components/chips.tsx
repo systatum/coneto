@@ -140,10 +140,12 @@ function BaseChips(props: BaseChipsProps) {
               variant={data.variant}
               backgroundColor={data.backgroundColor}
               circleColor={data.circleColor}
-              badgeStyle={css`
-                border-radius: 4px;
-                ${props.styles?.chipSelectedStyle}
-              `}
+              styles={{
+                self: css`
+                  border-radius: 4px;
+                  ${props.styles?.chipSelectedStyle}
+                `,
+              }}
               textColor={data.textColor}
               caption={data.caption}
               withCircle
@@ -638,14 +640,17 @@ function ChipsItem({
       />
       <Badge
         {...badge}
-        badgeStyle={css`
-          cursor: pointer;
-          ${chipStyle}
-          ${finalValueActions &&
-          css`
-            padding-right: 0px;
-          `}
-        `}
+        styles={{
+          self: css`
+            cursor: pointer;
+            ${finalValueActions &&
+            css`
+              padding-right: 0px;
+            `}
+
+            ${chipStyle}
+          `,
+        }}
         actions={finalValueActions}
         withCircle
       />

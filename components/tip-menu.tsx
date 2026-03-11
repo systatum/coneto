@@ -9,15 +9,19 @@ export type TipMenuItemVariantType = "sm" | "md";
 export interface TipMenuProps {
   children?: ReactNode;
   subMenuList?: TipMenuItemProps[];
-  style?: CSSProp;
   setIsOpen?: () => void;
   variant?: TipMenuItemVariantType;
   withFilter?: boolean;
+  styles?: TipMenuStylesProps;
+}
+
+export interface TipMenuStylesProps {
+  self?: CSSProp;
 }
 
 export interface TipMenuItemProps {
   caption: string;
-  icon: FigureProps;
+  icon?: FigureProps;
   onClick?: (e?: React.MouseEvent) => void;
   isDangerous?: boolean;
   variant?: TipMenuItemVariantType;
@@ -27,7 +31,7 @@ export interface TipMenuItemProps {
 function TipMenu({
   children,
   subMenuList,
-  style,
+  styles,
   setIsOpen,
   variant = "md",
   withFilter,
@@ -45,7 +49,10 @@ function TipMenu({
   }, [search, subMenuList]);
 
   return (
-    <Button.TipMenuContainer aria-label="tip-menu" style={style}>
+    <Button.TipMenuContainer
+      aria-label="tip-menu"
+      styles={{ self: styles?.self }}
+    >
       {withFilter && (
         <Searchbox
           autoFocus
@@ -120,6 +127,7 @@ function TipMenuItem({
       {icon && (
         <Figure
           {...icon}
+          aria-label="tip-menu-icon"
           color={
             isDangerous
               ? "white"

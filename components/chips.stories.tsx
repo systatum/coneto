@@ -986,18 +986,20 @@ export const CustomRenderer: Story = {
             >
               <Badge
                 id={id}
-                badgeStyle={css`
-                  width: fit-content;
-                  cursor: pointer;
-                  ${isOpen &&
-                  css`
-                    border-color: #045e95;
-                  `}
-                  transition: all ease-in-out 0.2s;
-                  &:hover {
-                    border-color: #045e95;
-                  }
-                `}
+                styles={{
+                  self: css`
+                    width: fit-content;
+                    cursor: pointer;
+                    ${isOpen &&
+                    css`
+                      border-color: #045e95;
+                    `}
+                    transition: all ease-in-out 0.2s;
+                    &:hover {
+                      border-color: #045e95;
+                    }
+                  `,
+                }}
                 caption={caption}
                 withCircle
               />

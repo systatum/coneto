@@ -549,7 +549,7 @@ describe("ActionButton", () => {
             <Table
               selectable
               styles={{
-                tableRowContainerStyle: css`
+                tableBodyStyle: css`
                   max-height: 400px;
                 `,
               }}
@@ -602,7 +602,7 @@ describe("ActionButton", () => {
             <Table
               selectable
               styles={{
-                tableRowContainerStyle: css`
+                tableBodyStyle: css`
                   max-height: 400px;
                 `,
               }}
@@ -654,7 +654,7 @@ describe("ActionButton", () => {
             <Table
               selectable
               styles={{
-                tableRowContainerStyle: css`
+                tableBodyStyle: css`
                   max-height: 400px;
                 `,
               }}
@@ -707,7 +707,7 @@ describe("ActionButton", () => {
               <Table
                 selectable
                 styles={{
-                  tableRowContainerStyle: css`
+                  tableBodyStyle: css`
                     max-height: 400px;
                   `,
                 }}

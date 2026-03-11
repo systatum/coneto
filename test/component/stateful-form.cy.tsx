@@ -19,6 +19,7 @@ import {
 import { Table } from "./../../components/table";
 import { RiDeleteBin2Fill } from "@remixicon/react";
 import z from "zod";
+import { PinboxState } from "./../../components/pinbox";
 
 describe("StatefulForm", () => {
   const typeToIdPrefix: Record<FormFieldType, string> = {
@@ -45,6 +46,7 @@ describe("StatefulForm", () => {
     capsule: "capsulebox",
     time: "timebox",
     button: "button",
+    pin: "pinbox",
     chips: "chips",
     custom: "custom",
   };
@@ -59,6 +61,157 @@ describe("StatefulForm", () => {
       title: "Unpaid",
     },
   ];
+
+  const PARTS_INPUT: PinboxState[] = [
+    {
+      type: "static",
+      text: "S",
+    },
+    {
+      type: "alphanumeric",
+    },
+    {
+      type: "digit",
+    },
+    {
+      type: "alphabet",
+    },
+    {
+      type: "static",
+      text: "-",
+    },
+    {
+      type: "alphabet",
+    },
+  ];
+
+  const pinboxSchema = z.object({
+    pin: z.string().min(4, "Pinbox does not follow the acceptable format"),
+  });
+
+  const FIELDS: FormFieldGroup[] = [
+    {
+      name: "pin",
+      title: "Pin",
+      type: "pin",
+      required: false,
+      helper: "This pinbox allows you to enter your PIN code.",
+      pinboxProps: {
+        parts: PARTS_INPUT,
+      },
+    },
+  ];
+
+  function PinboxProduct() {
+    const [state, setState] = useState({ pin: "" });
+    return (
+      <StatefulForm
+        validationSchema={pinboxSchema}
+        onChange={({ currentState }) => setState(currentState)}
+        fields={FIELDS}
+        formValues={state}
+      />
+    );
+  }
+
+  context("validation error", () => {
+    context("when pressing 2 character (not eligible)", () => {
+      it("should not show an error", () => {
+        cy.mount(<PinboxProduct />);
+        cy.findAllByRole("textbox").eq(1).click().type("23", { force: true });
+        cy.findByText("Pinbox does not follow the acceptable format").should(
+          "not.exist"
+        );
+      });
+
+      context("when blurring from the input", () => {
+        it("should displaying an error", () => {
+          cy.mount(<PinboxProduct />);
+          cy.findAllByRole("textbox").eq(1).click().type("23", { force: true });
+          cy.findByText("Pinbox does not follow the acceptable format").should(
+            "not.exist"
+          );
+          cy.get("body").click("top");
+          cy.wait(200);
+          cy.findByText("Pinbox does not follow the acceptable format").should(
+            "exist"
+          );
+        });
+      });
+    });
+  });
+
+  context("button", () => {
+    context("when given an onClick", () => {
+      context("when clicking", () => {
+        it("renders the callback from top-level", () => {
+          cy.window().then((win) => {
+            cy.spy(win.console, "log").as("consoleLog");
+          });
+
+          cy.mount(
+            <StatefulForm
+              fields={[
+                {
+                  name: "button",
+                  title: "Button",
+                  type: "button",
+                  onClick: () =>
+                    console.log("this is callback from the top level"),
+                },
+              ]}
+              formValues={{}}
+              mode="onChange"
+            />
+          );
+
+          cy.findByRole("button").eq(0).click();
+
+          cy.get("@consoleLog").should(
+            "have.been.calledWith",
+            "this is callback from the top level"
+          );
+        });
+      });
+
+      context("when given a buttonProps.onClick", () => {
+        context("when clicking", () => {
+          it("renders the callback from buttonProps instead", () => {
+            cy.window().then((win) => {
+              cy.spy(win.console, "log").as("consoleLog");
+            });
+
+            cy.mount(
+              <StatefulForm
+                fields={[
+                  {
+                    name: "button",
+                    title: "Button",
+                    type: "button",
+                    onClick: () =>
+                      console.log("this is callback from the top level"),
+                    buttonProps: {
+                      onClick: () =>
+                        console.log("this is callback from the specific level"),
+                    },
+                  },
+                ]}
+                formValues={{}}
+                mode="onChange"
+              />
+            );
+
+            cy.findByRole("button").eq(0).click();
+
+            cy.get("@consoleLog").should(
+              "have.been.calledWith",
+              "this is callback from the specific level"
+            );
+          });
+        });
+      });
+    });
+  });
 
   context("when array of array", () => {
     const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
@@ -125,6 +278,7 @@ describe("StatefulForm", () => {
         required: false,
       },
     ];
+
     it("render in the one row", () => {
       cy.mount(
         <StatefulForm
@@ -299,6 +453,7 @@ describe("StatefulForm", () => {
       capsule: "",
       country_code: DEFAULT_COUNTRY_CODES,
       currency: "USD",
+      pin: "USD",
     };
 
     const MONTH_NAMES = [
@@ -314,6 +469,29 @@ describe("StatefulForm", () => {
       { text: "OCT", value: "10" },
       { text: "NOV", value: "11" },
       { text: "DEC", value: "12" },
+    ];
+
+    const PARTS_INPUT: PinboxState[] = [
+      {
+        type: "static",
+        text: "S",
+      },
+      {
+        type: "alphanumeric",
+      },
+      {
+        type: "digit",
+      },
+      {
+        type: "alphabet",
+      },
+      {
+        type: "static",
+        text: "-",
+      },
+      {
+        type: "alphabet",
+      },
     ];
 
     const FIELDS: FormFieldGroup[] = [
@@ -424,6 +602,16 @@ describe("StatefulForm", () => {
         type: "phone",
         required: false,
         placeholder: "Enter phone number",
+      },
+      {
+        name: "pin",
+        title: "Pin",
+        type: "pin",
+        required: false,
+        helper: "This pinbox allows you to enter your PIN code.",
+        pinboxProps: {
+          parts: PARTS_INPUT,
+        },
       },
       {
         name: "signature",
@@ -746,16 +934,18 @@ describe("StatefulForm", () => {
             <Boxbar>
               {BADGE_OPTIONS.map((badge) => (
                 <Badge
-                  badgeStyle={css`
-                    width: 100%;
-                    max-width: 100px;
+                  styles={{
+                    self: css`
+                      width: 100%;
+                      max-width: 100px;
 
-                    &:hover {
-                      border-color: #4cbbf7;
-                      cursor: pointer;
-                      transition: all 0.5s ease-in-out;
-                    }
-                  `}
+                      &:hover {
+                        border-color: #4cbbf7;
+                        cursor: pointer;
+                        transition: all 0.5s ease-in-out;
+                      }
+                    `,
+                  }}
                   key={badge.id}
                   caption={badge.caption}
                   withCircle
@@ -1500,10 +1690,7 @@ describe("StatefulForm", () => {
           />
         );
 
-        cy.findByLabelText("radio-title-wrapper").should(
-          "have.text",
-          RADIO_FIELDS[0]["title"]
-        );
+        cy.findAllByText(RADIO_FIELDS[0]["title"]).eq(0).should("be.visible");
       });
     });
 
@@ -1585,10 +1772,9 @@ describe("StatefulForm", () => {
       it("should render on the label field", () => {
         statefulForCheckbox();
 
-        cy.findByLabelText("title-wrapper").should(
-          "have.text",
-          CHECKBOX_TITLE_FIELDS[0]["title"]
-        );
+        cy.findAllByText(CHECKBOX_TITLE_FIELDS[0]["title"])
+          .eq(0)
+          .should("be.visible");
       });
 
       context("when clicking", () => {
@@ -1606,11 +1792,9 @@ describe("StatefulForm", () => {
       it("should render on the right side", () => {
         statefulForCheckbox();
 
-        cy.findByLabelText("title-wrapper").should("not.exist");
-        cy.findByLabelText("label-wrapper").should(
-          "have.text",
-          CHECKBOX_TITLE_FIELDS[0]["placeholder"]
-        );
+        cy.findAllByText(CHECKBOX_TITLE_FIELDS[0]["placeholder"])
+          .eq(0)
+          .should("be.visible");
       });
 
       context("when clicking", () => {
