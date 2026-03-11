@@ -12,6 +12,7 @@ import React, {
   Fragment,
   isValidElement,
   KeyboardEvent,
+  MouseEvent,
   ReactElement,
   ReactNode,
   Ref,
@@ -855,11 +856,15 @@ export interface ListItemProps {
     checked?: boolean;
     name?: string;
   };
-  leftSideContent?: ReactNode;
+  leftSideContent?: (props?: LeftSideContentMenuProps) => ReactNode;
   styles?: ListItemStylesProps;
   hoverTextColor?: string;
   hoverBackgroundColor?: string;
   selected?: boolean;
+  onMouseEnter?: (e: MouseEvent<HTMLDivElement>) => void;
+  onMouseDown?: (e: MouseEvent<HTMLDivElement>) => void;
+  onMouseLeave?: (e: MouseEvent<HTMLDivElement>) => void;
+  onMouseMove?: (e: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 export interface ListItemStylesProps {
@@ -872,24 +877,12 @@ export interface ListItemStylesProps {
   maxItemsStyle?: CSSProp;
 }
 
-type DivProps = Omit<
-  React.HTMLAttributes<HTMLDivElement>,
-  "title" | "onClick" | "draggable" | "id" | "style"
->;
-
-interface ListItemInternal
-  extends DivProps,
-    Omit<ListItemProps, "leftSideContent" | "onClick" | "color"> {
-  leftSideContent?: (props?: LeftSideContentMenuProps) => React.ReactNode;
-  onClick?: (e?: React.MouseEvent<HTMLDivElement>) => void;
-}
-
 interface ListItemWithId {
   openTipRowId?: string | null;
   setOpenTipRowId?: (prop: string | null) => void;
 }
 
-const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
+const ListItem = forwardRef<HTMLLIElement, ListItemProps>(
   (
     {
       icon,
@@ -991,10 +984,6 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
                 icon,
               },
             });
-
-            if (props.onDragStart) {
-              props.onDragStart(e);
-            }
           }}
           onDragOver={(e) => {
             e.preventDefault();
@@ -1011,18 +1000,10 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
 
               setIsOver(true);
             }
-
-            if (props.onDragOver) {
-              props.onDragOver(e);
-            }
           }}
           onDragLeave={(e) => {
             setIsOver(false);
             setDropPosition(null);
-
-            if (props.onDragLeave) {
-              props.onDragLeave(e);
-            }
           }}
           onDrop={(e) => {
             e.preventDefault();
@@ -1044,10 +1025,6 @@ const ListItem = forwardRef<HTMLLIElement, ListItemInternal>(
             const clampedPosition = Math.min(position, groupLength ?? 0);
 
             onDropItem?.(clampedPosition);
-
-            if (props.onDrop) {
-              props.onDrop(e);
-            }
           }}
         >
           <ListItemLeft
