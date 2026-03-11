@@ -236,14 +236,22 @@ export const Default: Story = {
 
 export const LeftLabeled: Story = {
   render: () => {
+    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
+      (country) => country.id === "US"
+    );
+
     const [isFormValid, setIsFormValid] = useState(false);
     const [value, setValue] = useState<{
       name: string;
       email: string;
+      phone: string;
+      country_code: CountryCodeProps;
       password: string;
     }>({
       name: "",
       email: "",
+      phone: "",
+      country_code: DEFAULT_COUNTRY_CODES,
       password: "",
     });
 
@@ -253,6 +261,18 @@ export const LeftLabeled: Story = {
         title: "Name",
         placeholder: "Enter your name",
         type: "text",
+        required: true,
+        labelPosition: "left",
+        labelWidth: "25%",
+      },
+      {
+        name: "phone",
+        title: "Phone",
+        placeholder: "Enter your phone",
+        type: "phone",
+        phoneboxProps: {
+          countryCodeValue: value.country_code,
+        },
         required: true,
         labelPosition: "left",
         labelWidth: "25%",
@@ -279,6 +299,7 @@ export const LeftLabeled: Story = {
 
     const signUpSchema = z.object({
       name: z.string().min(3, "Name must be at least 3 characters"),
+      phone: z.string().min(8, "Phone number must be 8 digits"),
       email: z.string().email("Please enter a valid email"),
       password: z.string().min(8, "Password must be at least 8 characters"),
     });
