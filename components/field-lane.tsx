@@ -20,6 +20,8 @@ export interface FieldLaneProps {
   actions?: FieldLaneActionsProps[];
   type?: string;
   labelPosition?: "top" | "left";
+  labelWidth?: string;
+  labelGap?: number;
 }
 
 export interface FieldLaneStylesProps {
@@ -77,6 +79,8 @@ function FieldLane({
   type,
   errorIconPosition = "absolute",
   labelPosition = "top",
+  labelGap,
+  labelWidth,
 }: FieldLaneProps) {
   const inputElement: ReactElement = (
     <InputWrapper $style={styles?.controlStyle}>
@@ -288,9 +292,12 @@ function FieldLane({
         $labelPosition={labelPosition}
         $disabled={disabled}
         $style={styles?.bodyStyle}
+        $labelGap={labelGap}
       >
         {label && (
           <StatefulForm.Label
+            labelWidth={labelWidth}
+            labelPosition={labelPosition}
             htmlFor={disabled ? null : id}
             styles={{ self: styles?.labelStyle }}
             helper={helper}
@@ -328,6 +335,7 @@ const Body = styled.div<{
   $style?: CSSProp;
   $disabled?: boolean;
   $labelPosition?: FieldLaneProps["labelPosition"];
+  $labelGap?: number;
 }>`
   position: relative;
   display: flex;
@@ -336,7 +344,7 @@ const Body = styled.div<{
   width: 100%;
   height: 100%;
   min-height: 34px;
-  gap: 0.5rem;
+  gap: ${({ $labelGap }) => `${$labelGap ? `${$labelGap}` : "0.5rem"}`};
 
   ${({ $disabled }) =>
     $disabled &&
