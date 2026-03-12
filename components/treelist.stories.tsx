@@ -532,28 +532,28 @@ export const WithActions: Story = {
     const ITEM_ACTIONS: SubMenuTreeList[] = [
       {
         caption: "Edit",
-        icon: { image: RiEdit2Line, color: "gray" },
+        icon: { image: RiEdit2Line },
         onClick: (id: string) => {
           console.log(`${id} was edited`);
         },
       },
       {
         caption: "Delete",
-        icon: { image: RiDeleteBin2Line, color: "gray" },
+        icon: { image: RiDeleteBin2Line },
         onClick: (id: string) => {
           console.log(`${id} was deleted`);
         },
       },
       {
         caption: "Copy",
-        icon: { image: RiFileCopyLine, color: "gray" },
+        icon: { image: RiFileCopyLine },
         onClick: (id: string) => {
           console.log(`${id} was copied`);
         },
       },
       {
         caption: "Share",
-        icon: { image: RiShareForwardLine, color: "gray" },
+        icon: { image: RiShareForwardLine },
         onClick: (id: string) => {
           console.log(`${id} was shared`);
         },
