@@ -31,23 +31,26 @@ export type DocumentSource = (builder: {
 
 export interface DocumentViewerProps {
   source?: DocumentSource;
-  title?: string;
   onRegionSelected?: (region: BoundingBoxState) => void;
   boundingBoxes?: BoundingBoxesProps[];
   initialZoom?: 75 | 100 | 110 | 120 | 130 | 140 | 150;
-  totalPagesText?: (data: {
-    currentPage?: number;
-    totalPages?: number;
-  }) => string;
   libPdfJsWorkerSrc?: string;
-  zoomPlaceholderText?: string;
   styles?: DocumentViewerStylesProps;
+  selectable?: boolean;
+  labels?: DocumentViewerLabelProps;
+}
+
+export interface DocumentViewerLabelProps {
+  title?: string;
+  zoomPlaceholder?: string;
+  totalPages?: (props: { currentPage?: number; totalPages?: number }) => string;
 }
 
 export interface DocumentViewerStylesProps {
   containerStyle?: CSSProp;
   zoomStyle?: CSSProp;
   selectionStyle?: CSSProp;
+  boxStyle?: CSSProp;
 }
 
 export interface BoundingBoxesProps {
@@ -78,20 +81,19 @@ export interface DocumentViewerRef {
    */
   repositionPopUp: (data: HTMLDivElement) => void;
 }
-
 interface BoxStyleProps {
   borderColor?: string;
   backgroundColor?: string;
 }
 
 const SCALE_OPTIONS = [
-  { text: "75%", value: "75" },
-  { text: "100%", value: "100" },
-  { text: "110%", value: "110" },
-  { text: "120%", value: "120" },
-  { text: "130%", value: "130" },
-  { text: "140%", value: "140" },
-  { text: "150%", value: "150" },
+  { text: "75%", value: 75 },
+  { text: "100%", value: 100 },
+  { text: "110%", value: 110 },
+  { text: "120%", value: 120 },
+  { text: "130%", value: 130 },
+  { text: "140%", value: 140 },
+  { text: "150%", value: 150 },
 ];
 
 const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
@@ -102,20 +104,23 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
       styles,
       boundingBoxes = [],
       initialZoom = 100,
-      totalPagesText,
-      title = "Document",
-      zoomPlaceholderText = "zoom your pdf...",
+      labels,
       libPdfJsWorkerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.54/pdf.worker.min.mjs",
+      selectable,
     },
     ref
   ) => {
+    const {
+      title = "Document",
+      totalPages: renderTotalPages,
+      zoomPlaceholder = "zoom your pdf...",
+    } = labels ?? {};
+
     const containerRef = useRef<HTMLDivElement>(null);
     const viewerRef = useRef<HTMLDivElement>(null);
 
     const [scale, setScale] = useState(initialZoom / 100);
-    const [scaleValue, setScaleValue] = useState<string[]>([
-      String(initialZoom),
-    ]);
+    const [scaleValue, setScaleValue] = useState<number>(initialZoom);
 
     const [hoveredContentIndex, sethoveredContentIndex] = useState<
       number | null
@@ -493,9 +498,9 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
       return () => window.removeEventListener("resize", handleResize);
     }, [resizeCanvases]);
 
-    const handleScale = (e: string[]) => {
-      setScaleValue(e);
-      const scalePosition = Number(e[0]) / 100;
+    const handleScale = (scale: number) => {
+      setScaleValue(scale);
+      const scalePosition = Number(scale) / 100;
       preserveScrollPosition(scalePosition);
     };
 
@@ -513,7 +518,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
     };
 
     const handleMouseDown = (e: React.MouseEvent) => {
-      if (!viewerRef.current) return;
+      if (!viewerRef.current || !selectable) return;
       const container = viewerRef.current;
 
       const rect = container.getBoundingClientRect();
@@ -533,7 +538,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
     };
 
     const handleMouseMove = (e: React.MouseEvent) => {
-      if (!start) return;
+      if (!start || !selectable) return;
       const { x: startX, y: startY } = start;
       const canvas = canvasLocal!;
       const container = viewerRef.current!;
@@ -631,7 +636,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
             id="doc-viewer-toolbar-combo"
             selectedOptions={scaleValue}
             onChange={handleScale}
-            placeholder={zoomPlaceholderText}
+            placeholder={zoomPlaceholder}
             styles={{
               containerStyle: css`
                 width: 100px;
@@ -655,8 +660,8 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
                 justifyContent: "end",
               }}
             >
-              {totalPagesText ? (
-                totalPagesText({
+              {renderTotalPages ? (
+                renderTotalPages({
                   currentPage: currentPage,
                   totalPages: totalPages,
                 })
@@ -689,14 +694,14 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
             onMouseMove={handleMouseMove}
           />
           {boundingBoxes &&
-            boundingBoxes.map((data, index) => {
-              const canvas = pdfRef.current?.canvases[data.page! - 1];
+            boundingBoxes.map((box, index) => {
+              const canvas = pdfRef.current?.canvases[box.page! - 1];
               if (!canvas) return null;
 
-              const boxLeft = data.x * canvas.clientWidth + canvas.offsetLeft;
-              const boxTop = data.y * canvas.clientHeight + canvas.offsetTop;
-              const boxWidth = data.width * canvas.clientWidth;
-              const boxHeight = data.height * canvas.clientHeight;
+              const boxLeft = box.x * canvas.clientWidth + canvas.offsetLeft;
+              const boxTop = box.y * canvas.clientHeight + canvas.offsetTop;
+              const boxWidth = box.width * canvas.clientWidth;
+              const boxHeight = box.height * canvas.clientHeight;
 
               const container = viewerRef.current;
               const containerWidth = container?.clientWidth ?? 0;
@@ -741,19 +746,21 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
                       top: boxTop,
                       width: boxWidth,
                       height: boxHeight,
-                      borderColor: data.boxStyle?.borderColor,
-                      backgroundColor: data.boxStyle?.backgroundColor,
                     }}
                     $selectionStyle={css`
-                      ${styles?.selectionStyle}
+                      ${styles?.boxStyle}
+
+                      border-color: ${box.boxStyle?.borderColor};
+                      background-color: ${box.boxStyle?.backgroundColor};
+
                       ${selection &&
                       css`
                         pointer-events: none;
-                      `}
+                      `};
                     `}
                     aria-label="selection-box"
                   />
-                  {data.contentOnHover &&
+                  {box.contentOnHover &&
                     hoveredContentIndex === index &&
                     !selection && (
                       <ContentViewer
@@ -761,12 +768,12 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
                         style={{
                           left: contentLeft,
                           top: contentTop,
-                          borderColor: data.boxStyle?.borderColor,
-                          backgroundColor: data.boxStyle?.backgroundColor,
+                          borderColor: box.boxStyle?.borderColor,
+                          backgroundColor: box.boxStyle?.backgroundColor,
                         }}
                         aria-label="selection-content-hovered"
                       >
-                        {data.contentOnHover}
+                        {box.contentOnHover}
                       </ContentViewer>
                     )}
                 </div>
