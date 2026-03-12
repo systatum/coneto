@@ -1,4 +1,7 @@
-import { getFloatingPlacement } from "./../lib/floating-placement";
+import {
+  DialogPlacement,
+  getFloatingPlacement,
+} from "./../lib/floating-placement";
 import {
   autoUpdate,
   flip,
@@ -18,12 +21,14 @@ import React, {
 import { createPortal } from "react-dom";
 import styled, { css, CSSProp } from "styled-components";
 
+export type TooltipDialogPlacement = DialogPlacement;
+
 export type TooltipProps = {
   dialog: ReactNode;
   children: ReactNode;
   showDialogOn?: "hover" | "click";
   hideDialogOn?: "hover" | "click";
-  dialogPlacement?: DialogPlacement;
+  dialogPlacement?: TooltipDialogPlacement;
   onVisibilityChange?: (open?: boolean) => void;
   safeAreaAriaLabels?: string[];
   showDelayPeriod?: number;
@@ -42,12 +47,6 @@ export type TooltipRef = {
   open: () => void;
   close: () => void;
 };
-
-type DialogPlacement =
-  | "bottom-left"
-  | "bottom-right"
-  | "top-left"
-  | "top-right";
 
 const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
   (
@@ -262,7 +261,7 @@ const Wrapper = styled.div<{ $style?: CSSProp }>`
   display: inline-flex;
   align-items: center;
   height: fit-content;
-  width: 100%;
+  width: fit-content;
 
   ${({ $style }) => $style}
 `;
@@ -290,7 +289,9 @@ const ContentTrigger = styled.div<{
   $showDialogOn: TooltipProps["showDialogOn"];
   $style?: CSSProp;
 }>`
-  width: 100%;
+  width: fit-content;
+  height: fit-content;
+
   ${({ $showDialogOn }) =>
     $showDialogOn === "hover"
       ? css`
@@ -326,17 +327,61 @@ const TooltipArrow = styled.div<{
             top: -4px;
             right: 10%;
           `
-        : $placement === "top-start"
+        : $placement === "bottom"
           ? css`
-              bottom: -4px;
-              left: 10%;
+              top: -4px;
+              left: 50%;
+              transform: translateX(-50%) rotate(45deg);
             `
-          : $placement === "top-end"
+          : $placement === "top-start"
             ? css`
                 bottom: -4px;
-                right: 10%;
+                left: 10%;
               `
-            : null}
+            : $placement === "top-end"
+              ? css`
+                  bottom: -4px;
+                  right: 10%;
+                `
+              : $placement === "top"
+                ? css`
+                    bottom: -4px;
+                    left: 50%;
+                    transform: translateX(-50%) rotate(45deg);
+                  `
+                : $placement === "left-start"
+                  ? css`
+                      right: -2px;
+                      top: 10%;
+                    `
+                  : $placement === "left-end"
+                    ? css`
+                        right: -2px;
+                        bottom: 10%;
+                      `
+                    : $placement === "left"
+                      ? css`
+                          right: -2px;
+                          top: 50%;
+                          transform: translateY(-50%) rotate(45deg);
+                        `
+                      : $placement === "right-start"
+                        ? css`
+                            left: -2px;
+                            top: 10%;
+                          `
+                        : $placement === "right-end"
+                          ? css`
+                              left: -2px;
+                              bottom: 10%;
+                            `
+                          : $placement === "right"
+                            ? css`
+                                left: -2px;
+                                top: 50%;
+                                transform: translateY(-50%) rotate(45deg);
+                              `
+                            : null}
 
   ${({ $arrowStyle }) => $arrowStyle}
 `;
