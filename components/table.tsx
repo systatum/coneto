@@ -64,7 +64,7 @@ export interface TableProps {
   }) => void;
   actions?: TableActionsProps[];
   columns: ColumnTableProps[];
-  onItemsSelected?: (data: string[]) => void;
+  onItemsSelected?: (items: string[]) => void;
   children: ReactNode;
   isLoading?: boolean;
   subMenuList?: (columnCaption: string) => TipMenuItemProps[];
