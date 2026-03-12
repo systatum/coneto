@@ -11,6 +11,7 @@ import {
   ColumnTableProps,
   Table,
   TableActionsProps,
+  TableProps,
   TableRowProps,
 } from "./../../components/table";
 import { TipMenuItemProps } from "./../../components/tip-menu";
@@ -18,6 +19,7 @@ import { css } from "styled-components";
 import { CapsuleContentProps } from "./../../components/capsule";
 import { Button } from "./../../components/button";
 import { Card } from "./../../components/card";
+import { useState } from "react";
 
 interface TableItemProps {
   title: string;
@@ -57,28 +59,71 @@ describe("Table", () => {
     type: TYPES_DATA[i % TYPES_DATA.length],
   }));
 
+  function BasicTable(props: Omit<TableProps, "children" | "columns">) {
+    const [selectedItems, setSelectedItems] = useState([]);
+
+    return (
+      <Table
+        selectable
+        columns={columnsBasic}
+        selectedItems={selectedItems}
+        onItemsSelected={setSelectedItems}
+        {...props}
+      >
+        {rawRows?.map((row, index) => (
+          <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
+            {[row.name, row.type].map((rowCell, i) => (
+              <Table.Row.Cell key={`${row.name}-${row.type}-${rowCell}`}>
+                {rowCell}
+              </Table.Row.Cell>
+            ))}
+          </Table.Row>
+        ))}
+      </Table>
+    );
+  }
+
+  context("selected", () => {
+    context("when selected", () => {
+      it("should render with selected background-color (rgb(219, 234, 254))", () => {
+        cy.mount(<BasicTable />);
+        cy.findAllByLabelText("table-row")
+          .eq(0)
+          .should("have.css", "background-color", "rgb(249, 250, 251)");
+        cy.findAllByRole("checkbox").eq(1).click();
+        cy.findAllByLabelText("table-row")
+          .eq(0)
+          .trigger("mouseout")
+          .should("have.css", "background-color", "rgb(219, 234, 254)");
+      });
+
+      context("when hovering the selected item", () => {
+        it("should render the hover background-color rgb(231, 242, 252)", () => {
+          cy.mount(<BasicTable />);
+          cy.findAllByLabelText("table-row")
+            .eq(0)
+            .should("have.css", "background-color", "rgb(249, 250, 251)");
+          cy.findAllByRole("checkbox").eq(1).click();
+          cy.findAllByLabelText("table-row")
+            .eq(0)
+            .trigger("mouseover")
+            .should("have.css", "background-color", "rgb(231, 242, 252)");
+        });
+      });
+    });
+  });
+
   context("actions in main table", () => {
     context("when not given type", () => {
       it("should render with button", () => {
         cy.mount(
-          <Table
+          <BasicTable
             actions={[
               {
                 caption: "Test Button",
               },
             ]}
-            columns={columnsBasic}
-          >
-            {rawRows?.map((row, index) => (
-              <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
-                {[row.name, row.type].map((rowCell, i) => (
-                  <Table.Row.Cell key={`${row.name}-${row.type}-${rowCell}`}>
-                    {rowCell}
-                  </Table.Row.Cell>
-                ))}
-              </Table.Row>
-            ))}
-          </Table>
+          />
         );
 
         cy.findByLabelText("action-button").should("exist");
@@ -89,25 +134,14 @@ describe("Table", () => {
     context("when given type button", () => {
       it("should render with button component", () => {
         cy.mount(
-          <Table
+          <BasicTable
             actions={[
               {
                 caption: "Test Button",
                 type: "button",
               },
             ]}
-            columns={columnsBasic}
-          >
-            {rawRows?.map((row, index) => (
-              <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
-                {[row.name, row.type].map((rowCell, i) => (
-                  <Table.Row.Cell key={`${row.name}-${row.type}-${rowCell}`}>
-                    {rowCell}
-                  </Table.Row.Cell>
-                ))}
-              </Table.Row>
-            ))}
-          </Table>
+          />
         );
 
         cy.findByLabelText("action-button").should("exist");
@@ -118,7 +152,7 @@ describe("Table", () => {
     context("when given capsule props with type button", () => {
       it("should render with button component", () => {
         cy.mount(
-          <Table
+          <BasicTable
             actions={[
               {
                 caption: "Test Button",
@@ -128,18 +162,7 @@ describe("Table", () => {
                 },
               },
             ]}
-            columns={columnsBasic}
-          >
-            {rawRows?.map((row, index) => (
-              <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
-                {[row.name, row.type].map((rowCell, i) => (
-                  <Table.Row.Cell key={`${row.name}-${row.type}-${rowCell}`}>
-                    {rowCell}
-                  </Table.Row.Cell>
-                ))}
-              </Table.Row>
-            ))}
-          </Table>
+          />
         );
 
         cy.findByLabelText("action-button").should("exist");
@@ -150,7 +173,7 @@ describe("Table", () => {
     context("when given capsule props with type capsule", () => {
       it("should render with capsule component", () => {
         cy.mount(
-          <Table
+          <BasicTable
             actions={[
               {
                 type: "capsule",
@@ -160,18 +183,7 @@ describe("Table", () => {
                 },
               },
             ]}
-            columns={columnsBasic}
-          >
-            {rawRows?.map((row, index) => (
-              <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
-                {[row.name, row.type].map((rowCell, i) => (
-                  <Table.Row.Cell key={`${row.name}-${row.type}-${rowCell}`}>
-                    {rowCell}
-                  </Table.Row.Cell>
-                ))}
-              </Table.Row>
-            ))}
-          </Table>
+          />
         );
 
         cy.findByLabelText("action-button").should("not.exist");
