@@ -29,14 +29,6 @@ const meta: Meta<typeof DocumentViewer> = {
         type: { summary: "DocumentSource" },
       },
     },
-    title: {
-      description: "Title displayed in the viewer toolbar.",
-      control: "text",
-      table: {
-        type: { summary: "string" },
-        defaultValue: { summary: "Document" },
-      },
-    },
     onRegionSelected: {
       description:
         "Callback triggered when the user selects a region on the document.",
@@ -65,17 +57,6 @@ const meta: Meta<typeof DocumentViewer> = {
         defaultValue: { summary: "100" },
       },
     },
-    totalPagesText: {
-      description:
-        "Custom renderer for displaying current page and total pages text.",
-      control: false,
-      table: {
-        type: {
-          summary:
-            "(data: { currentPage?: number; totalPages?: number }) => string",
-        },
-      },
-    },
     libPdfJsWorkerSrc: {
       description:
         "Custom worker source URL used by pdf.js to load the PDF worker.",
@@ -88,12 +69,27 @@ const meta: Meta<typeof DocumentViewer> = {
         },
       },
     },
-    zoomPlaceholderText: {
-      description: "Placeholder text displayed in the zoom combobox.",
-      control: "text",
+    labels: {
+      description: `
+Customizes text labels displayed in the DocumentViewer toolbar.
+
+Available properties:
+
+- **title** — Text displayed as the document title in the toolbar.
+- **zoomPlaceholder** — Placeholder text shown inside the zoom combobox.
+- **totalPages** — Custom renderer for the page indicator. Receives the current page and total pages, allowing full control over how the page information is displayed.
+
+Example:
+(labels: {
+  title: "Invoice Document",
+  zoomPlaceholder: "Select zoom level",
+  totalPages: ({ currentPage, totalPages }) =>
+    \`Page \${currentPage} / \${totalPages}\`
+})
+`,
+      control: false,
       table: {
-        type: { summary: "string" },
-        defaultValue: { summary: "zoom your pdf..." },
+        type: { summary: "DocumentViewerLabelProps" },
       },
     },
     styles: {
@@ -322,10 +318,11 @@ export const PDF: Story = {
           <Window.Cell>
             <DocumentViewer
               ref={ref}
+              selectable
               onRegionSelected={(region: BoundingBoxState) => {
                 handleSetBoxes(region);
               }}
-              title="Team Collaboration Notes"
+              labels={{ title: "Team Collaboration Notes" }}
               boundingBoxes={boundingBoxes}
               source={source}
             />
@@ -522,10 +519,11 @@ export const PNG: Story = {
       <>
         <DocumentViewer
           ref={ref}
+          selectable
           onRegionSelected={(props: BoundingBoxState) => {
             handleSetBoxes(props);
           }}
-          title="Document Viewer with image()"
+          labels={{ title: "Document Viewer with image()" }}
           boundingBoxes={boundingBoxes}
           source={source}
         />
@@ -714,10 +712,11 @@ export const WithFile: Story = {
       <>
         <DocumentViewer
           ref={ref}
+          selectable
           onRegionSelected={(props: BoundingBoxState) => {
             handleSetBoxes(props);
           }}
-          title="Document Viewer with file()"
+          labels={{ title: "Document Viewer with file()" }}
           boundingBoxes={boundingBoxes}
           source={source}
         />
@@ -900,10 +899,11 @@ export const Base64: Story = {
       <>
         <DocumentViewer
           ref={ref}
+          selectable
           onRegionSelected={(props: BoundingBoxState) => {
             handleSetBoxes(props);
           }}
-          title="Document Viewer with encodedString()"
+          labels={{ title: "Document Viewer with encodedString()" }}
           boundingBoxes={boundingBoxes}
           source={source}
         />
