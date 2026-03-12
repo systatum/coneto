@@ -1,24 +1,26 @@
 import { DialogPlacement } from "@/lib/floating-placement";
 import { Badge } from "./../../components/badge";
-import { Tooltip } from "./../../components/tooltip";
+import { Tooltip, TooltipDialogPlacement } from "./../../components/tooltip";
 import { css } from "styled-components";
 
 describe("Tooltip", () => {
   context("dialogPlacement", () => {
-    const placements = [
-      { placement: "bottom-left" },
-      { placement: "bottom-right" },
-      { placement: "top-left" },
-      { placement: "top-right" },
-      { placement: "left-top" },
-      { placement: "left-bottom" },
-      { placement: "right-top" },
-      { placement: "right-bottom" },
-    ] as const satisfies {
-      placement: DialogPlacement;
-    }[];
+    const ALL_PLACEMENTS: TooltipDialogPlacement[] = [
+      "top-left",
+      "top-center",
+      "top-right",
+      "right-top",
+      "right-center",
+      "right-bottom",
+      "bottom-right",
+      "bottom-center",
+      "bottom-left",
+      "left-bottom",
+      "left-center",
+      "left-top",
+    ];
 
-    placements.forEach(({ placement }) => {
+    ALL_PLACEMENTS.map((placement) => {
       context(`when given ${placement}`, () => {
         beforeEach(() => {
           cy.mount(
