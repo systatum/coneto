@@ -1,7 +1,7 @@
 import { ChangeEvent, InputHTMLAttributes } from "react";
 import { motion } from "framer-motion";
 import { LoadingSpinner } from "./loading-spinner";
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
 import { Figure, FigureProps } from "./figure";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
@@ -173,7 +173,10 @@ function Togglebox({
       required={rest.required}
       errorIconPosition="none"
       styles={{
-        bodyStyle,
+        bodyStyle: css`
+          align-items: center;
+          ${bodyStyle}
+        `,
         controlStyle,
         containerStyle,
         labelStyle: titleStyle,

@@ -521,7 +521,10 @@ function Chips({
       labelPosition={labelPosition}
       required={rest.required}
       styles={{
-        bodyStyle,
+        bodyStyle: css`
+          align-items: center;
+          ${bodyStyle}
+        `,
         controlStyle,
         containerStyle,
         labelStyle,

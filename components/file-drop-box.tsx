@@ -280,7 +280,7 @@ const InputWrapper = styled.div<{
   width: 100%;
   flex-direction: ${({ $labelPosition }) =>
     $labelPosition === "top" ? "column" : "row"};
-  gap: ${({ $labelGap }) => `${$labelGap ? `${$labelGap}` : "0.5rem"}`};
+  gap: ${({ $labelGap }) => `${$labelGap ? `${$labelGap}px` : "0.5rem"}`};
   font-size: 0.75rem;
   position: relative;
 
