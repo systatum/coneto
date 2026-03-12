@@ -854,12 +854,17 @@ const ContainerDocumentViewer = styled.div<{ $containerStyle?: CSSProp }>`
   ${({ $containerStyle }) => $containerStyle};
 `;
 
-const Viewer = styled.div`
+const Viewer = styled.div<{ $selectable?: boolean }>`
   min-height: 100%;
   min-width: max-content;
-  cursor: crosshair;
   user-select: none;
   padding: 20px;
+
+  ${({ $selectable }) =>
+    $selectable &&
+    css`
+      cursor: crosshair;
+    `}
 `;
 
 const SelectionBox = styled.div<{ $selectionStyle?: CSSProp }>`
