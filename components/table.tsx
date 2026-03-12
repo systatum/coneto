@@ -44,7 +44,7 @@ export interface ColumnTableProps {
 }
 
 export interface TableActionsProps extends ActionButtonProps {
-  type?: "default" | "capsule";
+  type?: "button" | "capsule";
   capsuleProps?: CapsuleProps;
 }
 
