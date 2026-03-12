@@ -495,6 +495,7 @@ function FormFields<T extends FieldValues>({
                       key={index}
                       id={field.id}
                       name={field.name}
+                      required={field.required}
                       label={field.title}
                       value={controllerField.value ?? ""}
                       helper={field.helper}
@@ -918,6 +919,7 @@ function FormFields<T extends FieldValues>({
                       id={field.id}
                       name={field.name}
                       label={field.title}
+                      required={field.required}
                       value={controllerField.value}
                       ref={(el) => {
                         if (el) refs.current[field.name] = el;
@@ -1063,6 +1065,7 @@ function FormFields<T extends FieldValues>({
                   placeholder={field.placeholder}
                   helper={field.helper}
                   name={field.name}
+                  required={field.required}
                   {...register(field.name as Path<T>, {
                     onChange: (e) => {
                       if (field.onChange) {
@@ -1098,6 +1101,7 @@ function FormFields<T extends FieldValues>({
                   id={field.id}
                   label={field.title}
                   placeholder={field.placeholder}
+                  required={field.required}
                   showError={shouldShowError(field.name)}
                   helper={field.helper}
                   name={field.name}
@@ -1380,6 +1384,7 @@ function FormFields<T extends FieldValues>({
                       name={field.name}
                       label={field.title}
                       helper={field.helper}
+                      required={field.required}
                       showError={shouldShowError(field.name)}
                       ref={(el) => {
                         if (el) refs.current[field.name] = el;
@@ -1461,6 +1466,7 @@ function FormFields<T extends FieldValues>({
                       name={field.name}
                       placeholder={field.placeholder}
                       label={field.title}
+                      required={field.required}
                       showError={shouldShowError(field.name)}
                       ref={(el) => {
                         if (el) refs.current[field.name] = el;
@@ -1538,6 +1544,7 @@ function FormFields<T extends FieldValues>({
                     <Chips
                       label={field.title}
                       helper={field.helper}
+                      required={field.required}
                       filterPlaceholder={field.placeholder}
                       inputValue={controllerField.value}
                       setInputValue={(e) => {
@@ -1584,6 +1591,7 @@ function FormFields<T extends FieldValues>({
                       id={field.id}
                       label={field.title}
                       helper={field.helper}
+                      required={field.required}
                       rating={controllerField.value}
                       onChange={(e) => {
                         controllerField.onChange(e.target.value);
@@ -1765,6 +1773,7 @@ function FormFields<T extends FieldValues>({
                       id={field.id}
                       name={field.name}
                       label={field.title}
+                      required={field.required}
                       activeTab={controllerField.value}
                       helper={field.helper}
                       onTabChange={(e) => {
@@ -1827,17 +1836,24 @@ export interface StatefulFormLabelProps
   label?: string;
   helper?: string;
   styles: { self?: CSSProp };
+  required?: boolean;
 }
 
 function StatefulFormLabel({
   label,
   helper,
   styles,
+  required,
   ...props
 }: StatefulFormLabelProps) {
   return (
     <Label {...props} $style={styles?.self}>
-      <LabelText>{label}</LabelText>
+      <LabelText aria-label="stateful-form-label">
+        {label}
+        {required && (
+          <Asterisk aria-label="stateful-form-label-asterisk">*</Asterisk>
+        )}
+      </LabelText>
 
       {helper && <Helper value={helper} />}
     </Label>
@@ -1854,6 +1870,11 @@ const Label = styled.label<{ $style?: CSSProp }>`
   min-width: 0;
 
   ${({ $style }) => $style}
+`;
+
+const Asterisk = styled.span`
+  color: red;
+  margin-left: 2px;
 `;
 
 const LabelText = styled.span`

@@ -19,6 +19,7 @@ export interface FieldLaneProps {
   id?: string;
   actions?: FieldLaneActionsProps[];
   type?: string;
+  required?: boolean;
 }
 
 export interface FieldLaneStylesProps {
@@ -75,6 +76,7 @@ function FieldLane({
   actions,
   type,
   errorIconPosition = "absolute",
+  required,
 }: FieldLaneProps) {
   const inputElement: ReactElement = (
     <InputWrapper $style={styles?.controlStyle}>
@@ -285,6 +287,7 @@ function FieldLane({
       <Body $disabled={disabled} $style={styles?.bodyStyle}>
         {label && (
           <StatefulForm.Label
+            required={required}
             htmlFor={disabled ? null : id}
             styles={{ self: styles?.labelStyle }}
             helper={helper}

@@ -241,6 +241,7 @@ function Imagebox({
       disabled={disabled}
       label={label}
       errorIconPosition="none"
+      required={rest.required}
       styles={{
         bodyStyle,
         controlStyle,

@@ -332,6 +332,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
         actions={actions}
         helper={helper}
         disabled={disabled}
+        required={rest.required}
         errorIconPosition="relative"
         styles={{
           bodyStyle: styles?.bodyStyle,

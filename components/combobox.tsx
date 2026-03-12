@@ -102,6 +102,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       dropdowns,
       errorIconPosition,
       id,
+      required,
     },
     ref
   ) => {
@@ -122,6 +123,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
         label={label}
         disabled={disabled}
         highlightOnMatch={highlightOnMatch}
+        required={required}
         styles={{
           bodyStyle: styles?.bodyStyle,
           controlStyle: styles?.controlStyle,

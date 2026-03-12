@@ -41,6 +41,7 @@ export interface FileDropBoxProps {
   styles?: FileDropBoxStylesProps;
   name?: string;
   id?: string;
+  required?: boolean;
 }
 
 export interface FileDropBoxStylesProps {
@@ -64,6 +65,7 @@ function FileDropBox({
   helper,
   name,
   id,
+  required,
 }: FileDropBoxProps) {
   const FILE_ICON = [
     { id: 1, icon: RiImageLine, size: 50 },
@@ -220,6 +222,7 @@ function FileDropBox({
           id={inputId}
           type="file"
           accept={accept}
+          required={required}
           onChange={handleFileChange}
           multiple
           hidden
@@ -237,6 +240,7 @@ function FileDropBox({
       {label && (
         <StatefulForm.Label
           htmlFor={inputId}
+          required={required}
           styles={{ self: styles?.labelStyle }}
           helper={helper}
           label={label}

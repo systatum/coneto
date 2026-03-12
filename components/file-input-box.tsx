@@ -202,6 +202,7 @@ function FileInputBox({
       actions={actions}
       helper={helper}
       disabled={disabled}
+      required={rest.required}
       styles={{
         bodyStyle,
         controlStyle,
