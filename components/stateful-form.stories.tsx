@@ -137,7 +137,7 @@ export const Default: Story = {
         name: "phone",
         title: "Phone Number",
         type: "phone",
-        required: false,
+        required: true,
         placeholder: "Enter phone number",
       },
       {
