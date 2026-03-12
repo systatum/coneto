@@ -69,7 +69,7 @@ function FileDropBox({
   helper,
   name,
   id,
-  labelPosition,
+  labelPosition = "top",
   labelGap,
   labelWidth,
   required,
