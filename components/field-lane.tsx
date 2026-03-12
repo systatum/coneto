@@ -19,6 +19,9 @@ export interface FieldLaneProps {
   id?: string;
   actions?: FieldLaneActionsProps[];
   type?: string;
+  labelPosition?: "top" | "left";
+  labelWidth?: string;
+  labelGap?: number;
   required?: boolean;
 }
 
@@ -76,6 +79,9 @@ function FieldLane({
   actions,
   type,
   errorIconPosition = "absolute",
+  labelPosition = "top",
+  labelGap,
+  labelWidth,
   required,
 }: FieldLaneProps) {
   const inputElement: ReactElement = (
@@ -284,9 +290,17 @@ function FieldLane({
         ${styles?.containerStyle}
       `}
     >
-      <Body $disabled={disabled} $style={styles?.bodyStyle}>
+      <Body
+        aria-label="field-lane-wrapper"
+        $labelPosition={labelPosition}
+        $disabled={disabled}
+        $style={styles?.bodyStyle}
+        $labelGap={labelGap}
+      >
         {label && (
           <StatefulForm.Label
+            labelWidth={labelWidth}
+            labelPosition={labelPosition}
             required={required}
             htmlFor={disabled ? null : id}
             styles={{ self: styles?.labelStyle }}
@@ -321,14 +335,20 @@ const Container = styled.div<{ $style?: CSSProp; $disabled?: boolean }>`
   ${({ $style }) => $style}
 `;
 
-const Body = styled.div<{ $style?: CSSProp; $disabled?: boolean }>`
+const Body = styled.div<{
+  $style?: CSSProp;
+  $disabled?: boolean;
+  $labelPosition?: FieldLaneProps["labelPosition"];
+  $labelGap?: number;
+}>`
   position: relative;
   display: flex;
-  flex-direction: column;
+  flex-direction: ${({ $labelPosition }) =>
+    $labelPosition === "top" ? "column" : "row"};
   width: 100%;
   height: 100%;
   min-height: 34px;
-  gap: 0.5rem;
+  gap: ${({ $labelGap }) => `${$labelGap ? `${$labelGap}px` : "0.5rem"}`};
 
   ${({ $disabled }) =>
     $disabled &&

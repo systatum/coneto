@@ -259,6 +259,9 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
       type,
       helper,
       disabled,
+      labelGap,
+      labelWidth,
+      labelPosition,
       ...rest
     } = props;
 
@@ -271,6 +274,9 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
     return (
       <FieldLane
         id={inputId}
+        labelGap={labelGap}
+        labelWidth={labelWidth}
+        labelPosition={labelPosition}
         dropdowns={dropdowns}
         showError={showError}
         errorMessage={errorMessage}

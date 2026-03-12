@@ -141,6 +141,9 @@ function ThumbField({
   disabled,
   name,
   id,
+  labelGap,
+  labelWidth,
+  labelPosition,
   ...rest
 }: ThumbFieldProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -160,6 +163,9 @@ function ThumbField({
   return (
     <FieldLane
       id={inputId}
+      labelGap={labelGap}
+      labelWidth={labelWidth}
+      labelPosition={labelPosition}
       showError={showError}
       errorMessage={errorMessage}
       actions={actions}
