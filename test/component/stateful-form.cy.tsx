@@ -379,7 +379,7 @@ describe("StatefulForm", () => {
     });
 
     context("labelWidth", () => {
-      context("when given 80%", () => {
+      context("when given 70%", () => {
         const INPUT_WITH_LABEL_POSITION_LEFT_AND_WIDTH_MAX: FormFieldGroup[] =
           ALL_INPUT.map((group) =>
             Array.isArray(group)
@@ -423,7 +423,7 @@ describe("StatefulForm", () => {
     });
 
     context("labelGap", () => {
-      context("when given 80%", () => {
+      context("when given 30px", () => {
         const INPUT_WITH_LABEL_POSITION_AND_GAP: FormFieldGroup[] =
           ALL_INPUT.map((group) =>
             Array.isArray(group)
@@ -439,7 +439,7 @@ describe("StatefulForm", () => {
                 }
           );
 
-        it("should render with 70% width", () => {
+        it("should render with 30px width", () => {
           cy.mount(
             <StatefulForm
               fields={INPUT_WITH_LABEL_POSITION_AND_GAP}
