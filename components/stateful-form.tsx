@@ -1764,6 +1764,8 @@ function FormFields<T extends FieldValues>({
                     <Togglebox
                       id={field.id}
                       name={controllerField.name}
+                      labelGap={field.labelGap}
+                      labelWidth={field.labelWidth}
                       labelPosition={field.labelPosition}
                       placeholder={field.placeholder}
                       checked={controllerField.value ?? false}
@@ -1921,8 +1923,9 @@ function StatefulFormLabel({
       $labelPosition={labelPosition}
       $labelWidth={labelWidth}
       $style={styles?.self}
+      aria-label="stateful-form-label-wrapper"
     >
-      <LabelText aria-label="stateful-form-label">
+      <LabelText aria-label="stateful-form-label-text">
         {label}
         {required && (
           <Asterisk aria-label="stateful-form-label-asterisk">*</Asterisk>
