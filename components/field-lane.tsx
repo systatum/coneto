@@ -291,6 +291,7 @@ function FieldLane({
       `}
     >
       <Body
+        aria-label="field-lane-wrapper"
         $labelPosition={labelPosition}
         $disabled={disabled}
         $style={styles?.bodyStyle}
@@ -347,7 +348,7 @@ const Body = styled.div<{
   width: 100%;
   height: 100%;
   min-height: 34px;
-  gap: ${({ $labelGap }) => `${$labelGap ? `${$labelGap}` : "0.5rem"}`};
+  gap: ${({ $labelGap }) => `${$labelGap ? `${$labelGap}px` : "0.5rem"}`};
 
   ${({ $disabled }) =>
     $disabled &&
