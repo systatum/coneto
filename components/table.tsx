@@ -598,7 +598,8 @@ function ActionCapsule(capsule: CapsuleProps) {
       {...capsule}
       activeBackgroundColor="rgb(226, 224, 224)"
       styles={{
-        containerStyle: css`
+        ...capsule?.styles,
+        capsuleWrapperStyle: css`
           box-shadow: none;
           min-height: 32px;
           max-height: 32px;
