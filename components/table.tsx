@@ -1346,18 +1346,19 @@ const TableRowWrapper = styled.div<{
   border-right: 1px solid #e5e7eb;
   border-bottom: 1px solid #e5e7eb;
   cursor: default;
-  background-color: ${({ $isSelected }) =>
-    $isSelected ? "#f3f4f6" : "#f9fafb"};
 
   ${({ $isHovered, $isSelected }) =>
-    $isHovered && $isSelected
+    $isHovered
       ? css`
-          background-color: #f3f4f6;
+          background-color: #e7f2fc;
         `
-      : $isHovered &&
-        css`
-          background-color: #e5e7eb;
-        `}
+      : $isSelected
+        ? css`
+            background-color: rgb(219, 234, 254);
+          `
+        : css`
+            background-color: #f9fafb;
+          `}
 
   ${({ $rowCellStyle }) => $rowCellStyle}
 `;
