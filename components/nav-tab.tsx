@@ -20,7 +20,7 @@ export interface NavTabProps {
   activeTab?: string;
   activeColor?: string;
   children?: ReactNode;
-  actions?: NavTabActionsProps[];
+  actions?: (NavTabActionsProps | false | null | undefined)[];
   styles?: NavTabStylesProps;
   size?: NavTabSize;
   onChange?: (activeTab: string) => void;
@@ -367,27 +367,29 @@ function NavTab({
               ${styles?.containerActionsStyle}
             `}
           >
-            {actions.map((action, index) => {
-              return (
-                <ActionButton
-                  key={index}
-                  {...action}
-                  styles={{
-                    ...action?.styles,
-                    self: css`
-                      height: ${size === "sm" && "27px"};
-                      border-width: 2px;
+            {actions
+              .filter((action): action is NavTabActionsProps => !!action)
+              .map((action, index) => {
+                return (
+                  <ActionButton
+                    key={index}
+                    {...action!}
+                    styles={{
+                      ...action?.styles,
+                      self: css`
+                        height: ${size === "sm" && "27px"};
+                        border-width: 2px;
 
-                      ${action.active &&
-                      css`
-                        border-bottom: 2px solid rgb(59, 130, 246);
-                      `}
-                      ${action?.styles?.self}
-                    `,
-                  }}
-                />
-              );
-            })}
+                        ${action.active &&
+                        css`
+                          border-bottom: 2px solid rgb(59, 130, 246);
+                        `}
+                        ${action?.styles?.self}
+                      `,
+                    }}
+                  />
+                );
+              })}
           </NavTabHeader>
         )}
       </NavTabRowWrapper>
