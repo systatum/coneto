@@ -690,6 +690,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
           <Viewer
             aria-label="view-content"
             ref={viewerRef}
+            $selectable={selectable}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
           />
