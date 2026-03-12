@@ -21,12 +21,14 @@ import React, {
 import { createPortal } from "react-dom";
 import styled, { css, CSSProp } from "styled-components";
 
+export type TooltipDialogPlacement = DialogPlacement;
+
 export type TooltipProps = {
   dialog: ReactNode;
   children: ReactNode;
   showDialogOn?: "hover" | "click";
   hideDialogOn?: "hover" | "click";
-  dialogPlacement?: DialogPlacement;
+  dialogPlacement?: TooltipDialogPlacement;
   onVisibilityChange?: (open?: boolean) => void;
   safeAreaAriaLabels?: string[];
   showDelayPeriod?: number;
@@ -325,37 +327,61 @@ const TooltipArrow = styled.div<{
             top: -4px;
             right: 10%;
           `
-        : $placement === "top-start"
+        : $placement === "bottom"
           ? css`
-              bottom: -4px;
-              left: 10%;
+              top: -4px;
+              left: 50%;
+              transform: translateX(-50%) rotate(45deg);
             `
-          : $placement === "top-end"
+          : $placement === "top-start"
             ? css`
                 bottom: -4px;
-                right: 10%;
+                left: 10%;
               `
-            : $placement === "left-start"
+            : $placement === "top-end"
               ? css`
-                  right: -2px;
-                  top: 10%;
+                  bottom: -4px;
+                  right: 10%;
                 `
-              : $placement === "left-end"
+              : $placement === "top"
                 ? css`
-                    right: -2px;
-                    bottom: 10%;
+                    bottom: -4px;
+                    left: 50%;
+                    transform: translateX(-50%) rotate(45deg);
                   `
-                : $placement === "right-start"
+                : $placement === "left-start"
                   ? css`
-                      left: -2px;
+                      right: -2px;
                       top: 10%;
                     `
-                  : $placement === "right-end"
+                  : $placement === "left-end"
                     ? css`
-                        left: -2px;
+                        right: -2px;
                         bottom: 10%;
                       `
-                    : null}
+                    : $placement === "left"
+                      ? css`
+                          right: -2px;
+                          top: 50%;
+                          transform: translateY(-50%) rotate(45deg);
+                        `
+                      : $placement === "right-start"
+                        ? css`
+                            left: -2px;
+                            top: 10%;
+                          `
+                        : $placement === "right-end"
+                          ? css`
+                              left: -2px;
+                              bottom: 10%;
+                            `
+                          : $placement === "right"
+                            ? css`
+                                left: -2px;
+                                top: 50%;
+                                transform: translateY(-50%) rotate(45deg);
+                              `
+                            : null}
 
   ${({ $arrowStyle }) => $arrowStyle}
 `;
