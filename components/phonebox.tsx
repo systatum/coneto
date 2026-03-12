@@ -51,6 +51,7 @@ interface BasePhoneboxProps {
   showError?: boolean;
   errorMessage?: string;
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
+  onBlur?: () => void;
   countryCodeValue?: CountryCodeProps;
   styles?: PhoneboxStylesProps;
   id?: string;
@@ -76,6 +77,7 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
       styles,
       id,
       required,
+      onBlur,
     },
     ref
   ) => {
@@ -258,6 +260,7 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
             id={id}
             type="tel"
             $style={styles?.self}
+            onBlur={onBlur}
             placeholder={placeholder}
             value={phoneNumber}
             onChange={handlePhoneChange}

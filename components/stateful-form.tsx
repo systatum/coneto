@@ -945,12 +945,12 @@ function FormFields<T extends FieldValues>({
                       labelWidth={field.labelWidth}
                       labelPosition={field.labelPosition}
                       required={field.required}
-                      value={controllerField.value}
                       ref={(el) => {
                         if (el) refs.current[field.name] = el;
-                        const { ref } = register(field.name as Path<T>);
-                        if (ref) ref(el);
+                        controllerField.ref(el);
                       }}
+                      onBlur={controllerField.onBlur}
+                      value={controllerField.value}
                       helper={field.helper}
                       placeholder={field.placeholder}
                       onChange={(
@@ -965,15 +965,18 @@ function FormFields<T extends FieldValues>({
                       ) => {
                         if (e.target.name === "phone") {
                           controllerField.onChange(e);
-                          controllerField.onBlur();
                           onChange?.("phone", e.target.value);
                         } else if (e.target.name === "country_code") {
                           onChange?.("country_code", e.target.value);
                         }
                         field.onChange?.(e);
                       }}
-                      showError={!!errors["phone"]}
-                      errorMessage={errors["phone"]?.message as string}
+                      showError={shouldShowError(field.name)}
+                      errorMessage={
+                        errors[field.name as keyof T]?.message as
+                          | string
+                          | undefined
+                      }
                       disabled={field.disabled}
                       {...field.phoneboxProps}
                       styles={{
