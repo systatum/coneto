@@ -563,6 +563,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
         helper={helper}
         disabled={disabled}
         errorIconPosition={errorIconPosition}
+        required={rest.required}
         styles={{
           bodyStyle: styles?.bodyStyle,
           controlStyle: styles?.controlStyle,

@@ -158,6 +158,7 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
         type={type}
         helper={helper}
         disabled={disabled}
+        required={rest.required}
         styles={{
           containerStyle: styles?.containerStyle,
           labelStyle: styles?.labelStyle,

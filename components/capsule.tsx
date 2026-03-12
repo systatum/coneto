@@ -267,6 +267,7 @@ function Capsule({
       actions={actions}
       helper={helper}
       disabled={disabled}
+      required={rest.required}
       styles={{
         bodyStyle: styles?.bodyStyle,
         controlStyle: styles?.controlStyle,

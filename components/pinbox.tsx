@@ -25,6 +25,7 @@ interface BasePinboxProps {
   disabled?: boolean;
   styles?: BasePinboxStylesProps;
   id?: string;
+  required?: boolean;
 }
 
 interface BasePinboxStylesProps {}
@@ -50,6 +51,7 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
       disabled,
       id,
       onBlur,
+      required,
     },
     ref
   ) => {
@@ -286,6 +288,7 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
                     ).current = el;
                   }
                 }}
+                required={required}
                 disabled={disabled}
                 pattern={pattern}
                 type={type}
@@ -371,6 +374,7 @@ const Pinbox = forwardRef<HTMLInputElement, PinboxProps>(
         disabled={disabled}
         label={label}
         errorIconPosition="none"
+        required={rest.required}
         styles={{
           bodyStyle,
           controlStyle,

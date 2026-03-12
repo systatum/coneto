@@ -139,6 +139,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
         labelWidth={labelWidth}
         labelPosition={labelPosition}
         disabled={disabled}
+        required={rest.required}
         styles={{
           bodyStyle: styles?.bodyStyle,
           controlStyle: styles?.controlStyle,

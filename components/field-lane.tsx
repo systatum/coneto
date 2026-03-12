@@ -22,6 +22,7 @@ export interface FieldLaneProps {
   labelPosition?: "top" | "left";
   labelWidth?: string;
   labelGap?: number;
+  required?: boolean;
 }
 
 export interface FieldLaneStylesProps {
@@ -81,6 +82,7 @@ function FieldLane({
   labelPosition = "top",
   labelGap,
   labelWidth,
+  required,
 }: FieldLaneProps) {
   const inputElement: ReactElement = (
     <InputWrapper $style={styles?.controlStyle}>
@@ -298,6 +300,7 @@ function FieldLane({
           <StatefulForm.Label
             labelWidth={labelWidth}
             labelPosition={labelPosition}
+            required={required}
             htmlFor={disabled ? null : id}
             styles={{ self: styles?.labelStyle }}
             helper={helper}

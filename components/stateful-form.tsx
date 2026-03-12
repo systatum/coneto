@@ -505,6 +505,7 @@ function FormFields<T extends FieldValues>({
                       labelPosition={field.labelPosition}
                       labelGap={field.labelGap}
                       labelWidth={field.labelWidth}
+                      required={field.required}
                       label={field.title}
                       value={controllerField.value ?? ""}
                       helper={field.helper}
@@ -943,6 +944,7 @@ function FormFields<T extends FieldValues>({
                       labelGap={field.labelGap}
                       labelWidth={field.labelWidth}
                       labelPosition={field.labelPosition}
+                      required={field.required}
                       value={controllerField.value}
                       ref={(el) => {
                         if (el) refs.current[field.name] = el;
@@ -1094,6 +1096,7 @@ function FormFields<T extends FieldValues>({
                   labelPosition={field.labelPosition}
                   helper={field.helper}
                   name={field.name}
+                  required={field.required}
                   {...register(field.name as Path<T>, {
                     onChange: (e) => {
                       if (field.onChange) {
@@ -1132,6 +1135,7 @@ function FormFields<T extends FieldValues>({
                   labelPosition={field.labelPosition}
                   label={field.title}
                   placeholder={field.placeholder}
+                  required={field.required}
                   showError={shouldShowError(field.name)}
                   helper={field.helper}
                   name={field.name}
@@ -1423,6 +1427,7 @@ function FormFields<T extends FieldValues>({
                       name={field.name}
                       label={field.title}
                       helper={field.helper}
+                      required={field.required}
                       showError={shouldShowError(field.name)}
                       labelGap={field.labelGap}
                       labelWidth={field.labelWidth}
@@ -1510,6 +1515,7 @@ function FormFields<T extends FieldValues>({
                       labelPosition={field.labelPosition}
                       placeholder={field.placeholder}
                       label={field.title}
+                      required={field.required}
                       showError={shouldShowError(field.name)}
                       ref={(el) => {
                         if (el) refs.current[field.name] = el;
@@ -1590,6 +1596,7 @@ function FormFields<T extends FieldValues>({
                       labelGap={field.labelGap}
                       labelWidth={field.labelWidth}
                       labelPosition={field.labelPosition}
+                      required={field.required}
                       filterPlaceholder={field.placeholder}
                       inputValue={controllerField.value}
                       setInputValue={(e) => {
@@ -1639,6 +1646,7 @@ function FormFields<T extends FieldValues>({
                       labelPosition={field.labelPosition}
                       label={field.title}
                       helper={field.helper}
+                      required={field.required}
                       rating={controllerField.value}
                       onChange={(e) => {
                         controllerField.onChange(e.target.value);
@@ -1827,6 +1835,7 @@ function FormFields<T extends FieldValues>({
                       labelGap={field.labelGap}
                       labelWidth={field.labelWidth}
                       labelPosition={field.labelPosition}
+                      required={field.required}
                       activeTab={controllerField.value}
                       helper={field.helper}
                       onTabChange={(e) => {
@@ -1891,12 +1900,14 @@ export interface StatefulFormLabelProps
   styles: { self?: CSSProp };
   labelPosition?: FieldLaneProps["labelPosition"];
   labelWidth?: FieldLaneProps["labelWidth"];
+  required?: boolean;
 }
 
 function StatefulFormLabel({
   label,
   helper,
   styles,
+  required,
   labelPosition,
   labelWidth,
   ...props
@@ -1904,11 +1915,16 @@ function StatefulFormLabel({
   return (
     <Label
       {...props}
-      $style={styles?.self}
       $labelPosition={labelPosition}
       $labelWidth={labelWidth}
+      $style={styles?.self}
     >
-      <LabelText>{label}</LabelText>
+      <LabelText aria-label="stateful-form-label">
+        {label}
+        {required && (
+          <Asterisk aria-label="stateful-form-label-asterisk">*</Asterisk>
+        )}
+      </LabelText>
 
       {helper && <Helper value={helper} />}
     </Label>
@@ -1930,6 +1946,11 @@ const Label = styled.label<{
   width: ${({ $labelWidth, $labelPosition }) =>
     $labelWidth ?? ($labelPosition === "left" ? "25%" : "100%")};
   ${({ $style }) => $style}
+`;
+
+const Asterisk = styled.span`
+  color: red;
+  margin-left: 2px;
 `;
 
 const LabelText = styled.span`

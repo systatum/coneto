@@ -519,6 +519,7 @@ function Chips({
       labelGap={labelGap}
       labelWidth={labelWidth}
       labelPosition={labelPosition}
+      required={rest.required}
       styles={{
         bodyStyle,
         controlStyle,

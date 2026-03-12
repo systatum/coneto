@@ -45,6 +45,7 @@ export interface FileDropBoxProps {
   labelPosition?: FieldLaneProps["labelPosition"];
   labelGap?: FieldLaneProps["labelGap"];
   labelWidth?: FieldLaneProps["labelWidth"];
+  required?: boolean;
 }
 
 export interface FileDropBoxStylesProps {
@@ -71,6 +72,7 @@ function FileDropBox({
   labelPosition,
   labelGap,
   labelWidth,
+  required,
 }: FileDropBoxProps) {
   const FILE_ICON = [
     { id: 1, icon: RiImageLine, size: 50 },
@@ -227,6 +229,7 @@ function FileDropBox({
           id={inputId}
           type="file"
           accept={accept}
+          required={required}
           onChange={handleFileChange}
           multiple
           hidden
@@ -248,6 +251,7 @@ function FileDropBox({
           htmlFor={inputId}
           labelWidth={labelWidth}
           labelPosition={labelPosition}
+          required={required}
           styles={{ self: styles?.labelStyle }}
           helper={helper}
           label={label}

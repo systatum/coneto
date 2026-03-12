@@ -285,6 +285,7 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
         helper={helper}
         disabled={disabled}
         errorIconPosition="relative"
+        required={rest.required}
         styles={{
           bodyStyle: styles?.bodyStyle,
           controlStyle: styles?.controlStyle,
