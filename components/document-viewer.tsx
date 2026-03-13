@@ -38,10 +38,10 @@ export interface DocumentViewerProps {
   styles?: DocumentViewerStylesProps;
   selectable?: boolean;
   labels?: DocumentViewerLabelProps;
+  title?: string;
 }
 
 export interface DocumentViewerLabelProps {
-  title?: string;
   zoomPlaceholder?: string;
   totalPages?: (props: { currentPage?: number; totalPages?: number }) => string;
 }
@@ -107,11 +107,11 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
       labels,
       libPdfJsWorkerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.54/pdf.worker.min.mjs",
       selectable,
+      title,
     },
     ref
   ) => {
     const {
-      title = "Document",
       totalPages: renderTotalPages,
       zoomPlaceholder = "zoom your pdf...",
     } = labels ?? {};
