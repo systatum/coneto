@@ -3,6 +3,7 @@ import { CapsuleTab, CapsuleTabContentProps } from "./capsule-tab";
 import { Button } from "./button";
 import { ChangeEvent, useState } from "react";
 import { Textbox } from "./textbox";
+import { css } from "styled-components";
 
 const meta: Meta<typeof CapsuleTab> = {
   title: "Stage/CapsuleTab",
@@ -28,11 +29,18 @@ const meta: Meta<typeof CapsuleTab> = {
       description: `
 Custom styles for the CapsuleTab component. This object allows you to override styles for individual parts:
 
-- **containerStyle**: Outer wrapper of the CapsuleTab (border, spacing, layout)
-- **tabStyle**: Styles applied to the capsule tabs area (forwarded into the internal Capsule)
+- **self**: Styles applied to the outer \`CapsuleTabWrapper\`. Useful for controlling borders, spacing, layout, shadows, or overall appearance.
 
-Each field accepts a \`CSSProp\` (styled-components compatible) and can be used to control layout, borders, colors, and visual appearance.
-      `,
+- **contentStyle**: Styles applied to the \`ContentWrapper\` that contains the active tab content. You can control padding, layout direction, background, etc.
+
+- **containerStyle**: Styles applied to the internal capsule container area. This can be used to adjust borders, spacing, or layout of the tab bar wrapper.
+
+- **capsuleWrapperStyle**: Styles forwarded to the \`Capsule\` component's container wrapper. Useful for adjusting border radius, alignment, or capsule layout behavior.
+
+- **tabStyle**: Styles applied to individual capsule tabs inside the \`Capsule\` component. You can control tab border radius, colors, padding, hover states, and visual appearance.
+
+Each field accepts a \`CSSProp\` (styled-components compatible) and can be used to customize the layout and appearance of specific parts of the component.
+`,
     },
   },
 };
@@ -126,7 +134,15 @@ export const Default: Story = {
           width: "100%",
         }}
       >
-        <CapsuleTab tabs={TABS_ITEMS} activeTab={"2"} />
+        <CapsuleTab
+          styles={{
+            self: css`
+              padding: 20px;
+            `,
+          }}
+          tabs={TABS_ITEMS}
+          activeTab={"2"}
+        />
         <div
           style={{
             display: "flex",
