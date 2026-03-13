@@ -68,7 +68,7 @@ export interface TableProps {
   onItemsSelected?: (data: string[]) => void;
   children: ReactNode;
   isLoading?: boolean;
-  subMenuList?: (columnCaption: string) => SubMenuListTable[];
+  subMenuList?: (columnCaption: string) => SubMenuListTableProps[];
   emptySlate?: ReactNode;
   onLastRowReached?: () => void;
   showPagination?: boolean;
@@ -82,7 +82,7 @@ export interface TableProps {
   searchbox?: SearchboxProps;
 }
 
-export type SubMenuListTable = FalsyOr<TipMenuItemProps>;
+export type SubMenuListTableProps = FalsyOr<TipMenuItemProps>;
 
 export interface TableStylesProps {
   containerStyle?: CSSProp;

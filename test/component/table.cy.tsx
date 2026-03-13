@@ -10,7 +10,7 @@ import {
 } from "@remixicon/react";
 import {
   ColumnTableProps,
-  SubMenuListTable,
+  SubMenuListTableProps,
   Table,
   TableActionsProps,
   TableRowProps,
@@ -796,7 +796,7 @@ describe("Table", () => {
     ];
   };
 
-  const ROW_ACTIONS = (rowId: string): SubMenuListTable[] => {
+  const ROW_ACTIONS = (rowId: string): SubMenuListTableProps[] => {
     return [
       {
         caption: "Edit",
@@ -1846,7 +1846,7 @@ describe("Table", () => {
     function TableWithRowActions({
       actions,
     }: {
-      actions?: (columnCaption: string) => SubMenuListTable[];
+      actions?: (columnCaption: string) => SubMenuListTableProps[];
     }) {
       return (
         <Table
