@@ -538,6 +538,9 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       name,
       errorIconPosition,
       id,
+      labelGap,
+      labelWidth,
+      labelPosition,
       ...rest
     } = props;
     const inputId = StatefulForm.sanitizeId({
@@ -549,6 +552,9 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
     return (
       <FieldLane
         id={inputId}
+        labelGap={labelGap}
+        labelWidth={labelWidth}
+        labelPosition={labelPosition}
         dropdowns={dropdowns}
         showError={showError}
         errorMessage={errorMessage}

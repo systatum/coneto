@@ -12,6 +12,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { LoadingSpinner } from "./loading-spinner";
 import { StatefulForm } from "./stateful-form";
 import { Figure } from "./figure";
+import { FieldLaneProps } from "./field-lane";
 
 export interface OnFileDroppedFunctionProps {
   files: File[];
@@ -41,6 +42,9 @@ export interface FileDropBoxProps {
   styles?: FileDropBoxStylesProps;
   name?: string;
   id?: string;
+  labelPosition?: FieldLaneProps["labelPosition"];
+  labelGap?: FieldLaneProps["labelGap"];
+  labelWidth?: FieldLaneProps["labelWidth"];
   required?: boolean;
 }
 
@@ -65,6 +69,9 @@ function FileDropBox({
   helper,
   name,
   id,
+  labelPosition = "top",
+  labelGap,
+  labelWidth,
   required,
 }: FileDropBoxProps) {
   const FILE_ICON = [
@@ -233,13 +240,17 @@ function FileDropBox({
 
   return (
     <InputWrapper
+      $labelPosition={labelPosition}
       aria-label="file-drop-box-container"
       $hide={progress === null}
       $containerStyle={styles?.containerStyle}
+      $labelGap={labelGap}
     >
       {label && (
         <StatefulForm.Label
           htmlFor={inputId}
+          labelWidth={labelWidth}
+          labelPosition={labelPosition}
           required={required}
           styles={{ self: styles?.labelStyle }}
           helper={helper}
@@ -262,11 +273,14 @@ function FileDropBox({
 const InputWrapper = styled.div<{
   $containerStyle?: CSSProp;
   $hide?: boolean;
+  $labelPosition?: FieldLaneProps["labelPosition"];
+  $labelGap?: FieldLaneProps["labelGap"];
 }>`
   display: flex;
   width: 100%;
-  flex-direction: column;
-  gap: 0.5rem;
+  flex-direction: ${({ $labelPosition }) =>
+    $labelPosition === "top" ? "column" : "row"};
+  gap: ${({ $labelGap }) => `${$labelGap ? `${$labelGap}px` : "0.5rem"}`};
   font-size: 0.75rem;
   position: relative;
 

@@ -65,7 +65,6 @@ const PARTS_INPUT: PinboxState[] = [
   { type: "digit" },
   { type: "alphabet" },
   { type: "static", text: "-" },
-  { type: "alphabet" },
 ];
 
 const BADGE_OPTIONS_FULL = [
@@ -115,7 +114,7 @@ const TYPE_TO_ID_PREFIX: Record<FormFieldType, string> = {
   custom: "custom",
 };
 
-const valueAll = {
+const allValue = {
   text: "",
   email: "",
   number: "",
@@ -150,7 +149,6 @@ const ALL_INPUT: FormFieldGroup[] = [
       type: "text",
       required: true,
       placeholder: "Enter text",
-      width: "50%",
     },
     {
       name: "email",
@@ -158,7 +156,6 @@ const ALL_INPUT: FormFieldGroup[] = [
       type: "email",
       required: true,
       placeholder: "Enter email address",
-      width: "50%",
     },
   ],
   {
@@ -167,7 +164,6 @@ const ALL_INPUT: FormFieldGroup[] = [
     type: "time",
     required: true,
     placeholder: "Enter time",
-    width: "50%",
   },
   {
     name: "number",
@@ -175,7 +171,6 @@ const ALL_INPUT: FormFieldGroup[] = [
     type: "number",
     required: true,
     placeholder: "Enter number",
-    width: "50%",
   },
   {
     name: "password",
@@ -183,7 +178,6 @@ const ALL_INPUT: FormFieldGroup[] = [
     type: "password",
     required: true,
     placeholder: "Enter password",
-    width: "50%",
   },
   {
     name: "textarea",
@@ -192,14 +186,12 @@ const ALL_INPUT: FormFieldGroup[] = [
     rows: 3,
     required: true,
     placeholder: "Enter text here",
-    width: "50%",
   },
   {
     name: "pin",
     title: "Pin",
     type: "pin",
     required: true,
-    width: "50%",
     pinboxProps: {
       parts: PARTS_INPUT,
     },
@@ -209,14 +201,12 @@ const ALL_INPUT: FormFieldGroup[] = [
     title: "Checkbox",
     type: "checkbox",
     required: false,
-    width: "50%",
   },
   {
     name: "radio",
     title: "Radio",
     type: "radio",
     required: false,
-    width: "50%",
   },
   {
     name: "color",
@@ -224,7 +214,6 @@ const ALL_INPUT: FormFieldGroup[] = [
     type: "color",
     required: true,
     placeholder: "Enter the color here",
-    width: "50%",
   },
   {
     name: "combo",
@@ -235,7 +224,6 @@ const ALL_INPUT: FormFieldGroup[] = [
     comboboxProps: {
       options: FRUIT_OPTIONS,
     },
-    width: "50%",
   },
   {
     name: "date",
@@ -243,14 +231,12 @@ const ALL_INPUT: FormFieldGroup[] = [
     type: "date",
     required: true,
     placeholder: "Select a date",
-    width: "50%",
   },
   {
     name: "file_drop_box",
     title: "File Drop Box",
     type: "file_drop_box",
     required: true,
-    width: "50%",
   },
   {
     name: "file",
@@ -260,14 +246,12 @@ const ALL_INPUT: FormFieldGroup[] = [
     fileInputBoxProps: {
       accept: "image/jpeg",
     },
-    width: "50%",
   },
   {
     name: "image",
     title: "Image",
     type: "image",
     required: true,
-    width: "50%",
   },
   {
     name: "money",
@@ -278,7 +262,6 @@ const ALL_INPUT: FormFieldGroup[] = [
     moneyProps: {
       separator: "dot",
     },
-    width: "50%",
   },
   {
     name: "phone",
@@ -286,42 +269,36 @@ const ALL_INPUT: FormFieldGroup[] = [
     type: "phone",
     required: true,
     placeholder: "Enter phone number",
-    width: "50%",
   },
   {
     name: "signature",
     title: "Signature",
     type: "signbox",
     required: true,
-    width: "50%",
   },
   {
     name: "rating",
     title: "Rating",
     type: "rating",
     required: true,
-    width: "50%",
   },
   {
     name: "thumb_field",
     title: "Thumb Field",
     type: "thumbfield",
     required: true,
-    width: "50%",
   },
   {
     name: "togglebox",
     title: "Togglebox",
     type: "toggle",
     required: true,
-    width: "50%",
   },
   {
     name: "chips",
     title: "Chips",
     type: "chips",
     required: false,
-    width: "50%",
     chipsProps: {
       options: BADGE_OPTIONS_SHORT,
       styles: {
@@ -337,8 +314,8 @@ const ALL_INPUT: FormFieldGroup[] = [
           min-width: 250px;
         `,
       },
-      selectedOptions: valueAll.chips.selectedOptions,
-      inputValue: valueAll.chips.searchText,
+      selectedOptions: allValue.chips.selectedOptions,
+      inputValue: allValue.chips.searchText,
     },
   },
   {
@@ -346,7 +323,6 @@ const ALL_INPUT: FormFieldGroup[] = [
     title: "Monetary Value",
     type: "capsule",
     required: true,
-    width: "50%",
     capsuleProps: {
       tabs: CAPSULE_TABS,
     },
@@ -359,13 +335,141 @@ const flattenFields = (groups: FormFieldGroup[]): FormFieldProps[] =>
   );
 
 describe("StatefulForm", () => {
+  context("label", () => {
+    context("labelPosition", () => {
+      context("when given labelPosition left", () => {
+        const INPUT_WITH_LABEL_POSITION: FormFieldGroup[] = ALL_INPUT.map(
+          (group) =>
+            Array.isArray(group)
+              ? group.map((item) => ({
+                  ...item,
+                  labelPosition: "left",
+                }))
+              : {
+                  ...group,
+                  labelPosition: "left",
+                }
+        );
+
+        it("should render with flex-row and 25% width label", () => {
+          cy.mount(
+            <StatefulForm
+              fields={INPUT_WITH_LABEL_POSITION}
+              formValues={allValue}
+              mode="onChange"
+            />
+          );
+
+          cy.findAllByLabelText("stateful-form-label-wrapper").each(
+            ($el, i) => {
+              cy.wrap($el)
+                .invoke("css", "width")
+                .then((width) => {
+                  const w = width as unknown as string;
+                  if (i < 2) {
+                    expect(parseFloat(w)).to.be.closeTo(45, 2);
+                  } else {
+                    expect(parseFloat(w)).to.be.closeTo(90, 2);
+                  }
+                });
+            }
+          );
+        });
+      });
+    });
+
+    context("labelWidth", () => {
+      context("when given 70%", () => {
+        const INPUT_WITH_LABEL_POSITION_LEFT_AND_WIDTH_MAX: FormFieldGroup[] =
+          ALL_INPUT.map((group) =>
+            Array.isArray(group)
+              ? group.map((item) => ({
+                  ...item,
+                  labelPosition: "left",
+                  labelWidth: "70%",
+                }))
+              : {
+                  ...group,
+                  labelPosition: "left",
+                  labelWidth: "70%",
+                }
+          );
+
+        it("should render with 70% width", () => {
+          cy.mount(
+            <StatefulForm
+              fields={INPUT_WITH_LABEL_POSITION_LEFT_AND_WIDTH_MAX}
+              formValues={allValue}
+              mode="onChange"
+            />
+          );
+
+          cy.findAllByLabelText("stateful-form-label-wrapper").each(
+            ($el, i) => {
+              cy.wrap($el)
+                .invoke("css", "width")
+                .then((width) => {
+                  const w = width as unknown as string;
+                  if (i < 2) {
+                    expect(parseFloat(w)).to.be.closeTo(93, 5);
+                  } else {
+                    expect(parseFloat(w)).to.be.closeTo(186, 5);
+                  }
+                });
+            }
+          );
+        });
+      });
+    });
+
+    context("labelGap", () => {
+      context("when given 30px", () => {
+        const INPUT_WITH_LABEL_POSITION_AND_GAP: FormFieldGroup[] =
+          ALL_INPUT.map((group) =>
+            Array.isArray(group)
+              ? group.map((item) => ({
+                  ...item,
+                  labelPosition: "left",
+                  labelGap: 30,
+                }))
+              : {
+                  ...group,
+                  labelPosition: "left",
+                  labelGap: 30,
+                }
+          );
+
+        it("should render with 30px width", () => {
+          cy.mount(
+            <StatefulForm
+              fields={INPUT_WITH_LABEL_POSITION_AND_GAP}
+              formValues={allValue}
+              mode="onChange"
+            />
+          );
+
+          cy.findAllByLabelText("field-lane-wrapper")
+            .should("have.length", 22)
+            .each(($el) => {
+              cy.wrap($el).should("have.css", "gap", "30px");
+            });
+          cy.findAllByLabelText("file-drop-box-container")
+            .should("have.length", 1)
+            .each(($el) => {
+              cy.wrap($el).should("have.css", "gap", "30px");
+            });
+        });
+      });
+    });
+  });
+
   context("asterisk", () => {
     context("when given required", () => {
       it("should render asterisk", () => {
         cy.mount(
           <StatefulForm
             fields={ALL_INPUT}
-            formValues={valueAll}
+            formValues={allValue}
             mode="onChange"
           />
         );
@@ -1298,215 +1402,69 @@ describe("StatefulForm", () => {
   });
 
   context("helper", () => {
-    const value = {
-      text: "",
-      time: "",
-      email: "",
-      number: "",
-      password: "",
-      textarea: "",
-      rating: "",
-      check: false,
-      chips: {
-        searchText: "",
-        selectedOptions: [],
-      },
-      color: "",
-      combo: [],
-      date: [""],
-      file_drop_box: [] as File[],
-      file: undefined,
-      image: undefined,
-      money: "",
-      phone: "",
-      signature: "",
-      country_code: DEFAULT_COUNTRY_CODES,
+    const FIELD_HELPERS: Record<string, string> = {
+      text: "Enter any text value.",
+      email: "Enter a valid email address.",
+      number: "Enter a numeric value.",
+      password: "Enter a secure password.",
+      textarea: "Enter a longer message.",
+      time: "Select a time value.",
+      pin: "Enter your PIN code.",
+      checkbox: "Toggle the checkbox.",
+      radio: "Select one option.",
+      color: "Choose a color.",
+      combo: "Select an option from the list.",
+      date: "Select a date.",
+      file_drop_box: "Drag and drop a file here.",
+      file: "Upload a file.",
+      image: "Upload an image.",
+      money: "Enter a monetary value.",
+      phone: "Enter a phone number.",
+      signbox: "Provide your signature.",
+      rating: "Rate the item.",
+      thumbfield: "Upload or select a thumbnail.",
+      toggle: "Toggle the switch.",
+      chips: "Select one or more chips.",
+      capsule: "Choose a monetary option.",
     };
 
-    const FIELDS: FormFieldGroup[] = [
-      {
-        name: "text",
-        title: "Text",
-        type: "text",
-        required: true,
-        placeholder: "Enter text",
-        helper: "This is a text input field",
-      },
-      {
-        name: "email",
-        title: "Email",
-        type: "email",
-        required: false,
-        placeholder: "Enter email address",
-        helper: "This field is used to enter an email address",
-      },
-      {
-        name: "time",
-        title: "Time",
-        type: "time",
-        required: false,
-        placeholder: "Select time",
-        helper: "This field allows you to select a time",
-      },
-      {
-        name: "number",
-        title: "Number",
-        type: "number",
-        required: false,
-        placeholder: "Enter number",
-        helper: "This field only accepts numeric values",
-      },
-      {
-        name: "password",
-        title: "Password",
-        type: "password",
-        required: false,
-        placeholder: "Enter password",
-        helper: "This field is used to enter a secure password",
-      },
-      {
-        name: "textarea",
-        title: "Textarea",
-        type: "textarea",
-        rows: 3,
-        required: false,
-        placeholder: "Enter text here",
-        helper: "This field allows you to enter multiple lines of text",
-      },
-      {
-        name: "check",
-        title: "Check",
-        placeholder: "Check",
-        type: "checkbox",
-        required: false,
-        helper: "This checkbox allows you to toggle a boolean value",
-      },
-      {
-        name: "radio",
-        title: "Radio",
-        placeholder: "Radio",
-        type: "radio",
-        required: false,
-        helper: "This radio allows you to toggle a boolean value",
-      },
-      {
-        name: "color",
-        title: "Color",
-        type: "color",
-        required: false,
-        placeholder: "Enter the color here",
-        helper: "This field allows you to pick or input a color value",
-      },
-      {
-        name: "combo",
-        title: "Combo",
-        type: "combo",
-        required: false,
-        placeholder: "Select a fruit...",
-        helper:
-          "This field allows you to select one or more options from a list",
-      },
-      {
-        name: "date",
-        title: "Date",
-        type: "date",
-        required: false,
-        placeholder: "Select a date",
-        helper: "This field allows you to select a date",
-      },
-      {
-        name: "file_drop_box",
-        title: "File Drop Box",
-        type: "file_drop_box",
-        required: false,
-        helper: "This field allows you to upload files via drag and drop",
-      },
-      {
-        name: "file",
-        title: "File",
-        type: "file",
-        required: false,
-        helper: "This field allows you to upload one or more files",
-      },
-      {
-        name: "image",
-        title: "Image",
-        type: "image",
-        required: false,
-        helper: "This field allows you to upload and preview an image",
-      },
-      {
-        name: "money",
-        title: "Money",
-        type: "money",
-        required: false,
-        placeholder: "Enter amount",
-        helper: "This field is used to input a monetary value",
-      },
-      {
-        name: "phone",
-        title: "Phone",
-        type: "phone",
-        required: false,
-        placeholder: "Enter phone number",
-        helper:
-          "This field allows you to enter a phone number with country code",
-      },
-      {
-        name: "signature",
-        title: "Signature",
-        type: "signbox",
-        required: false,
-        helper: "This is signbox type",
-      },
-    ];
+    const INPUT_WITH_HELPER = ALL_INPUT.map((group) =>
+      Array.isArray(group)
+        ? group.map((item) => ({
+            ...item,
+            helper: FIELD_HELPERS[item.type],
+          }))
+        : {
+            ...group,
+            helper: FIELD_HELPERS[group.type],
+          }
+    );
+
+    const FLAT_INPUT = INPUT_WITH_HELPER.flatMap((props) => props);
 
     it("renders with tooltip", () => {
       cy.mount(
-        <StatefulForm fields={FIELDS} formValues={value} mode="onChange" />
+        <StatefulForm
+          fields={INPUT_WITH_HELPER}
+          formValues={allValue}
+          mode="onChange"
+        />
       );
 
       cy.findAllByLabelText("tooltip-trigger")
-        .should("have.length", 17)
-        .children()
-        .should("have.css", "cursor", "help");
+        .should("have.length", FLAT_INPUT.length)
+        .each(($el, index) => {
+          cy.wrap($el).trigger("mouseover");
+
+          cy.findByText(String(FLAT_INPUT[index].helper));
+        });
     });
   });
 
   context("with style", () => {
     context("when given background wheat", () => {
-      const value = {
-        text: "",
-        time: "",
-        email: "",
-        number: "",
-        password: "",
-        textarea: "",
-        rating: "",
-        check: false,
-        chips: {
-          searchText: "",
-          selectedOptions: [],
-        },
-        color: "",
-        combo: [],
-        date: [""],
-        file_drop_box: [] as File[],
-        file: undefined,
-        image: undefined,
-        money: "",
-        phone: "",
-        signature: "",
-        country_code: DEFAULT_COUNTRY_CODES,
-      };
-
-      const FIELDS: FormFieldGroup[] = [
-        {
-          name: "text",
-          title: "Text",
-          type: "text",
-          required: true,
-          placeholder: "Enter text",
+      const FIELD_STYLES = {
+        text: {
           textboxProps: {
             styles: {
               self: css`
@@ -1515,12 +1473,7 @@ describe("StatefulForm", () => {
             },
           },
         },
-        {
-          name: "email",
-          title: "Email",
-          type: "email",
-          required: false,
-          placeholder: "Enter email address",
+        email: {
           textboxProps: {
             styles: {
               self: css`
@@ -1529,12 +1482,34 @@ describe("StatefulForm", () => {
             },
           },
         },
-        {
-          name: "time",
-          title: "Time",
-          type: "time",
-          required: false,
-          placeholder: "Enter email address",
+        number: {
+          textboxProps: {
+            styles: {
+              self: css`
+                background-color: wheat;
+              `,
+            },
+          },
+        },
+        password: {
+          textboxProps: {
+            styles: {
+              self: css`
+                background-color: wheat;
+              `,
+            },
+          },
+        },
+        textarea: {
+          textareaProps: {
+            styles: {
+              self: css`
+                background-color: wheat;
+              `,
+            },
+          },
+        },
+        time: {
           timeboxProps: {
             styles: {
               inputWrapperStyle: css`
@@ -1546,54 +1521,7 @@ describe("StatefulForm", () => {
             },
           },
         },
-        {
-          name: "number",
-          title: "Number",
-          type: "number",
-          required: false,
-          placeholder: "Enter number",
-          textboxProps: {
-            styles: {
-              self: css`
-                background-color: wheat;
-              `,
-            },
-          },
-        },
-        {
-          name: "password",
-          title: "Password",
-          type: "password",
-          required: false,
-          placeholder: "Enter password",
-          textboxProps: {
-            styles: {
-              self: css`
-                background-color: wheat;
-              `,
-            },
-          },
-        },
-        {
-          name: "textarea",
-          title: "Textarea",
-          type: "textarea",
-          rows: 3,
-          required: false,
-          placeholder: "Enter text here",
-          textareaProps: {
-            styles: {
-              self: css`
-                background-color: wheat;
-              `,
-            },
-          },
-        },
-        {
-          name: "check",
-          placeholder: "Check",
-          type: "checkbox",
-          required: false,
+        checkbox: {
           checkboxProps: {
             styles: {
               self: css`
@@ -1602,12 +1530,7 @@ describe("StatefulForm", () => {
             },
           },
         },
-        {
-          name: "color",
-          title: "Color",
-          type: "color",
-          required: false,
-          placeholder: "Enter the color here",
+        color: {
           colorboxProps: {
             styles: {
               self: css`
@@ -1616,14 +1539,8 @@ describe("StatefulForm", () => {
             },
           },
         },
-        {
-          name: "combo",
-          title: "Combo",
-          type: "combo",
-          required: false,
-          placeholder: "Select a fruit...",
+        combo: {
           comboboxProps: {
-            options: FRUIT_OPTIONS,
             styles: {
               selectboxStyle: css`
                 background-color: wheat;
@@ -1631,14 +1548,8 @@ describe("StatefulForm", () => {
             },
           },
         },
-        {
-          name: "date",
-          title: "Date",
-          type: "date",
-          required: false,
-          placeholder: "Select a date",
+        date: {
           dateProps: {
-            monthNames: MONTH_NAMES,
             styles: {
               selectboxStyle: css`
                 background-color: wheat;
@@ -1646,11 +1557,7 @@ describe("StatefulForm", () => {
             },
           },
         },
-        {
-          name: "file_drop_box",
-          title: "File Drop Box",
-          type: "file_drop_box",
-          required: false,
+        file_drop_box: {
           fileDropBoxProps: {
             styles: {
               dragOverStyle: css`
@@ -1659,13 +1566,8 @@ describe("StatefulForm", () => {
             },
           },
         },
-        {
-          name: "file",
-          title: "File",
-          type: "file",
-          required: false,
+        file: {
           fileInputBoxProps: {
-            accept: "image/jpeg",
             styles: {
               self: css`
                 background-color: wheat;
@@ -1673,11 +1575,7 @@ describe("StatefulForm", () => {
             },
           },
         },
-        {
-          name: "image",
-          title: "Image",
-          type: "image",
-          required: false,
+        image: {
           imageboxProps: {
             styles: {
               self: css`
@@ -1686,14 +1584,8 @@ describe("StatefulForm", () => {
             },
           },
         },
-        {
-          name: "money",
-          title: "Money",
-          type: "money",
-          required: false,
-          placeholder: "Enter amount",
+        money: {
           moneyProps: {
-            separator: "dot",
             styles: {
               inputWrapperStyle: css`
                 background-color: wheat;
@@ -1701,12 +1593,7 @@ describe("StatefulForm", () => {
             },
           },
         },
-        {
-          name: "phone",
-          title: "Phone",
-          type: "phone",
-          required: false,
-          placeholder: "Enter phone number",
+        phone: {
           phoneboxProps: {
             styles: {
               inputWrapperStyle: css`
@@ -1718,11 +1605,7 @@ describe("StatefulForm", () => {
             },
           },
         },
-        {
-          name: "signature",
-          title: "Signature",
-          type: "signbox",
-          required: false,
+        signbox: {
           signboxProps: {
             styles: {
               self: css`
@@ -1731,11 +1614,27 @@ describe("StatefulForm", () => {
             },
           },
         },
-      ];
+      };
+
+      const INPUT_WITH_STYLE = ALL_INPUT.map((group) =>
+        Array.isArray(group)
+          ? group.map((item) => ({
+              ...item,
+              ...FIELD_STYLES[item.type],
+            }))
+          : {
+              ...group,
+              ...FIELD_STYLES[group.type],
+            }
+      );
 
       it("renders with background wheat", () => {
         cy.mount(
-          <StatefulForm fields={FIELDS} formValues={value} mode="onChange" />
+          <StatefulForm
+            fields={INPUT_WITH_STYLE}
+            formValues={allValue}
+            mode="onChange"
+          />
         );
 
         const isFieldWithPlaceholder = (
@@ -1745,7 +1644,7 @@ describe("StatefulForm", () => {
           "placeholder" in field &&
           typeof field.placeholder === "string";
 
-        const PLACEHOLDER_FIELDS = FIELDS.filter(
+        const PLACEHOLDER_FIELDS = INPUT_WITH_STYLE.filter(
           (field): field is FormFieldProps & { placeholder: string } =>
             isFieldWithPlaceholder(field) &&
             [
@@ -2204,15 +2103,21 @@ describe("StatefulForm", () => {
   context("with width", () => {
     context("when given all input elements", () => {
       it("should render input elements with sizing", () => {
+        const INPUT_WITH_WIDTH = ALL_INPUT.map((group) =>
+          Array.isArray(group)
+            ? group.map((item) => ({ ...item, width: "50%" }))
+            : { ...group, width: "50%" }
+        );
+
         cy.mount(
           <StatefulForm
-            fields={ALL_INPUT}
-            formValues={valueAll}
+            fields={INPUT_WITH_WIDTH}
+            formValues={allValue}
             mode="onChange"
           />
         );
 
-        flattenFields(ALL_INPUT).forEach((prop) => {
+        flattenFields(INPUT_WITH_WIDTH).forEach((prop) => {
           if (prop.name === "country_code") return;
           if (prop.name === "togglebox") {
             cy.findByLabelText("togglebox-row-wrapper").then(($el) => {

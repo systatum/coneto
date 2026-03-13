@@ -1,8 +1,73 @@
+import { DialogPlacement } from "@/lib/floating-placement";
 import { Badge } from "./../../components/badge";
-import { Tooltip } from "./../../components/tooltip";
+import { Tooltip, TooltipDialogPlacement } from "./../../components/tooltip";
 import { css } from "styled-components";
 
 describe("Tooltip", () => {
+  context("dialogPlacement", () => {
+    const ALL_PLACEMENTS: TooltipDialogPlacement[] = [
+      "top-left",
+      "top-center",
+      "top-right",
+      "right-top",
+      "right-center",
+      "right-bottom",
+      "bottom-right",
+      "bottom-center",
+      "bottom-left",
+      "left-bottom",
+      "left-center",
+      "left-top",
+    ];
+
+    ALL_PLACEMENTS.map((placement) => {
+      context(`when given ${placement}`, () => {
+        beforeEach(() => {
+          cy.mount(
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "300px",
+              }}
+            >
+              <Tooltip
+                dialog="Tooltip content"
+                showDialogOn="hover"
+                dialogPlacement={placement}
+              >
+                Trigger
+              </Tooltip>
+            </div>
+          );
+        });
+
+        it("should render the drawer on the correct side", () => {
+          cy.findByLabelText("tooltip-trigger").trigger("mouseover");
+
+          cy.findByLabelText("tooltip-trigger").then(($trigger) => {
+            const triggerRect = $trigger[0].getBoundingClientRect();
+
+            cy.findByLabelText("tooltip-drawer").then(($drawer) => {
+              const drawerRect = $drawer[0].getBoundingClientRect();
+
+              if (placement.startsWith("bottom")) {
+                expect(drawerRect.top).to.be.greaterThan(triggerRect.bottom);
+              } else if (placement.startsWith("top")) {
+                expect(drawerRect.bottom).to.be.lessThan(triggerRect.top);
+              } else if (placement.startsWith("left")) {
+                expect(drawerRect.right).to.be.lessThan(triggerRect.left);
+              } else if (placement.startsWith("right")) {
+                expect(drawerRect.left).to.be.greaterThan(triggerRect.right);
+              }
+            });
+          });
+        });
+      });
+    });
+  });
+
   context("With ShowDelayPeriod", () => {
     it("renders drawer with period after hover", () => {
       cy.clock();

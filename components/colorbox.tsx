@@ -132,6 +132,9 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
       type,
       helper,
       disabled,
+      labelGap,
+      labelWidth,
+      labelPosition,
       ...rest
     } = props;
 
@@ -146,6 +149,9 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
         id={inputId}
         dropdowns={dropdowns}
         showError={showError}
+        labelGap={labelGap}
+        labelWidth={labelWidth}
+        labelPosition={labelPosition}
         errorMessage={errorMessage}
         label={label}
         actions={actions}

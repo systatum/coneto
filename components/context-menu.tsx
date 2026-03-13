@@ -46,6 +46,7 @@ export default function ContextMenu({
         padding: 8px;
         width: 32px;
         height: 32px;
+
         ${focusBackgroundColor &&
         css`
           &:focus-visible {
@@ -103,6 +104,7 @@ export default function ContextMenu({
       subMenu={({ list }) => list(actions)}
       icon={{
         image: RiMoreFill,
+        color: "black",
         size: iconSize,
       }}
     />
