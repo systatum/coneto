@@ -1970,9 +1970,9 @@ describe("Table", () => {
             .eq(4)
             .should("be.visible")
             .click();
-          cy.findByText("Edit").should("exist");
-          cy.findByText("Delete").should("exist");
-          cy.findByText("Archive").should("not.exist");
+          cy.findAllByText("Edit").should("exist");
+          cy.findAllByText("Delete").should("exist");
+          cy.findAllByText("Archive").should("not.exist");
         });
       });
     });
