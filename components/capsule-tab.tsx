@@ -49,7 +49,7 @@ function CapsuleTab({
   const activeContent = tabs.filter((tab) => tab.id === selected);
 
   return (
-    <CapsuleTabWrapper $style={styles?.self}>
+    <CapsuleTabWrapper aria-label="capsule-tab-wrapper" $style={styles?.self}>
       <Capsule
         styles={{
           containerStyle: css`
@@ -70,7 +70,10 @@ function CapsuleTab({
         full
       />
 
-      <ContentWrapper $style={styles?.contentStyle}>
+      <ContentWrapper
+        aria-label="capsule-tab-content"
+        $style={styles?.contentStyle}
+      >
         {activeContent.map((props) => props.content)}
       </ContentWrapper>
     </CapsuleTabWrapper>
