@@ -33,8 +33,6 @@ Custom styles for the CapsuleTab component. This object allows you to override s
 
 - **contentStyle**: Styles applied to the \`ContentWrapper\` that contains the active tab content. You can control padding, layout direction, background, etc.
 
-- **containerStyle**: Styles applied to the internal capsule container area. This can be used to adjust borders, spacing, or layout of the tab bar wrapper.
-
 - **capsuleWrapperStyle**: Styles forwarded to the \`Capsule\` component's container wrapper. Useful for adjusting border radius, alignment, or capsule layout behavior.
 
 - **tabStyle**: Styles applied to individual capsule tabs inside the \`Capsule\` component. You can control tab border radius, colors, padding, hover states, and visual appearance.

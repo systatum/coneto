@@ -13,7 +13,6 @@ export interface CapsuleTabProps {
 export interface CapsuleTabStylesProps {
   self?: CSSProp;
   contentStyle?: CSSProp;
-  containerStyle?: CSSProp;
   capsuleWrapperStyle?: CSSProp;
   tabStyle?: CSSProp;
 }
