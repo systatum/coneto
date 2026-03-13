@@ -90,7 +90,8 @@ export const WithActions: Story = {
         onClick: () => {
           console.log("Data was deleted");
         },
-        size: 14,
+        size: 12,
+        title: "This is action on the badge",
       },
     ],
   },
