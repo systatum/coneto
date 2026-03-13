@@ -3,6 +3,7 @@ import { ChangeEvent, HTMLAttributes, MouseEvent } from "react";
 import { strToColor } from "./../lib/code-color";
 import { FigureProps } from "./figure";
 import { Button, ButtonStylesProps } from "./button";
+import { FalsyOr } from "./../lib/falsy";
 
 export type BadgeVariantProps = null | "neutral" | "green" | "yellow" | "red";
 
@@ -19,7 +20,7 @@ export interface BadgeProps
   onClick?: (
     e?: ChangeEvent<HTMLInputElement> | MouseEvent<HTMLDivElement>
   ) => void;
-  actions?: (BadgeActionProps | boolean | null | undefined)[];
+  actions?: FalsyOr<BadgeActionProps>[];
   styles?: BadgeStylesProps;
 }
 
@@ -137,7 +138,7 @@ function Badge({
       ...action,
       icon: {
         ...action.icon,
-        size: action?.size ?? 12,
+        size: action?.size ?? 14,
       },
       styles: {
         ...action?.styles,
