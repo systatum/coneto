@@ -2,6 +2,7 @@ import { css } from "styled-components";
 import { Window } from "./../../components/window";
 import { Textarea } from "./../../components/textarea";
 import { useRef, useState } from "react";
+import { RiCloseFill, RiEdit2Fill } from "@remixicon/react";
 
 describe("Window", () => {
   context("style", () => {
@@ -37,11 +38,32 @@ describe("Window", () => {
           onMouseEnter={() => console.log("now is hovering window-cell")}
           onMouseLeave={() => console.log("now is leaving window-cell")}
           onClick={() => console.log("now is clicking window-cell")}
+          actions={[
+            false && {
+              icon: {
+                image: RiCloseFill,
+              },
+            },
+            {
+              icon: {
+                image: RiEdit2Fill,
+              },
+            },
+          ]}
         >
           Test
         </Window.Cell>
       );
     }
+    context("actions", () => {
+      context("when given with falsy", () => {
+        it("should ignore falsy actions", () => {
+          cy.mount(<WindowCellDefault />);
+          cy.findAllByLabelText("window-button").should("have.length", 1);
+        });
+      });
+    });
+
     context("onMouseEnter", () => {
       context("when hovering", () => {
         it("should give callback", () => {
