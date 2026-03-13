@@ -32,6 +32,7 @@ import { Capsule, CapsuleProps } from "./capsule";
 import ContextMenu from "./context-menu";
 import { ActionButton, ActionButtonProps } from "./action-button";
 import { OverlayBlocker } from "./overlay-blocker";
+import { FalsyOr } from "./../lib/falsy";
 
 export type RowData = (string | ReactNode)[];
 
@@ -43,12 +44,12 @@ export interface ColumnTableProps {
   id: string;
 }
 
-export interface TableActionsProps extends ActionButtonProps {
+export type TableActionsProps = FalsyOr<TableInternalActionsProps>;
+
+interface TableInternalActionsProps extends ActionButtonProps {
   type?: "button" | "capsule";
   capsuleProps?: CapsuleProps;
 }
-
-export type SubMenuListTableProps = TipMenuItemProps;
 
 export interface TableProps {
   selectable?: boolean;
@@ -67,7 +68,7 @@ export interface TableProps {
   onItemsSelected?: (data: string[]) => void;
   children: ReactNode;
   isLoading?: boolean;
-  subMenuList?: (columnCaption: string) => TipMenuItemProps[];
+  subMenuList?: (columnCaption: string) => SubMenuListTable[];
   emptySlate?: ReactNode;
   onLastRowReached?: () => void;
   showPagination?: boolean;
@@ -80,6 +81,8 @@ export interface TableProps {
   styles?: TableStylesProps;
   searchbox?: SearchboxProps;
 }
+
+export type SubMenuListTable = FalsyOr<TipMenuItemProps>;
 
 export interface TableStylesProps {
   containerStyle?: CSSProp;
@@ -301,6 +304,13 @@ function Table({
     return () => el.removeEventListener("scroll", handleScroll);
   }, [openRowId]);
 
+  const filteredActions =
+    actions?.filter((action): action is TableInternalActionsProps =>
+      Boolean(action)
+    ) ?? [];
+
+  const hasActions = filteredActions.length > 0;
+
   return (
     <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
       <TableColumnContext.Provider value={columns}>
@@ -331,8 +341,8 @@ function Table({
                       </PaginationButton>
                     </>
                   )}
-                  {actions &&
-                    actions.map((action, index) => {
+                  {hasActions &&
+                    filteredActions.map((action, index) => {
                       const { capsuleProps, ...rest } = action;
 
                       if (action.type === "capsule") {
@@ -963,7 +973,7 @@ export interface TableRowProps {
   handleSelect?: (data: string) => void;
   rowId?: string;
   children?: ReactNode;
-  actions?: (columnCaption: string) => TipMenuItemProps[];
+  actions?: (columnCaption: string) => FalsyOr<TipMenuItemProps>[];
   onClick?: (args?: {
     toggleCheckbox: () => void;
     isFirstClick?: boolean;
@@ -1210,21 +1220,23 @@ function TableRow({
         {actions &&
           (() => {
             const listActions = actions(`${rowId}`);
-            const actionsWithIcons = listActions.map((action) => ({
-              ...action,
-              icon: {
-                ...action.icon,
-                image: action.icon?.image ?? RiArrowRightSLine,
-                color: action.icon?.color ?? "black",
-              },
-              onClick: (e?: React.MouseEvent) => {
-                e?.stopPropagation();
-                action.onClick?.(e);
-                if (listActions.length > 1) {
-                  setIsHovered(null);
-                }
-              },
-            }));
+            const actionsWithIcons = listActions
+              ?.filter((action): action is TipMenuItemProps => Boolean(action))
+              .map((action) => ({
+                ...action,
+                icon: {
+                  ...action.icon,
+                  image: action.icon?.image ?? RiArrowRightSLine,
+                  color: action.icon?.color ?? "black",
+                },
+                onClick: (e?: React.MouseEvent) => {
+                  e?.stopPropagation();
+                  action.onClick?.(e);
+                  if (listActions.length > 1) {
+                    setIsHovered(null);
+                  }
+                },
+              }));
 
             return (
               <ContextMenu
@@ -1514,7 +1526,10 @@ function getRowActionsFromChildren(children: ReactNode): TipMenuItemProps[] {
 
     if (row.type === TableRow && row.props.actions && row.props.rowId) {
       const actionsForRow = row.props.actions(row.props.rowId);
-      result.push(actionsForRow[0]);
+      const validActions = actionsForRow.filter(
+        (action): action is TipMenuItemProps => Boolean(action)
+      );
+      result.push(...validActions);
     }
   });
 
