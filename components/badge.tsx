@@ -1,7 +1,8 @@
 import styled, { css, CSSProp } from "styled-components";
 import { ChangeEvent, HTMLAttributes, MouseEvent } from "react";
 import { strToColor } from "./../lib/code-color";
-import { Figure, FigureProps } from "./figure";
+import { FigureProps } from "./figure";
+import { Button, ButtonStylesProps } from "./button";
 
 export type BadgeVariantProps = null | "neutral" | "green" | "yellow" | "red";
 
@@ -18,12 +19,13 @@ export interface BadgeProps
   onClick?: (
     e?: ChangeEvent<HTMLInputElement> | MouseEvent<HTMLDivElement>
   ) => void;
-  actions?: BadgeActionProps[];
+  actions?: (BadgeActionProps | boolean | null | undefined)[];
   styles?: BadgeStylesProps;
 }
 
 export interface BadgeStylesProps {
   self?: CSSProp;
+  actionWrapperStyle?: CSSProp;
 }
 
 export interface BadgeActionProps {
@@ -31,7 +33,7 @@ export interface BadgeActionProps {
   onClick?: (badge?: BadgeProps) => void;
   disabled?: boolean;
   size?: number;
-  styles?: { self?: CSSProp };
+  styles?: ButtonStylesProps;
   title?: string;
 }
 
@@ -96,7 +98,7 @@ function Badge({
   circleColor,
   onClick,
   styles,
-  id,
+  id = "badge",
   actions,
   metadata,
   ...props
@@ -129,43 +131,53 @@ function Badge({
         ? colorVariant
         : (circleColorLocal ?? "black");
 
-  const actionsWithStyles = actions?.map((action) => ({
-    ...action,
-    size: action?.size ?? 12,
-    styles: {
-      self: css`
-        cursor: pointer;
-        transition:
-          background-color 0.2s ease,
-          color 0.2s ease;
-        border-radius: 9999px;
-        padding: 1px;
-        opacity: 1;
+  const actionsWithStyles = actions
+    ?.filter((action): action is BadgeActionProps => Boolean(action))
+    .map((action) => ({
+      ...action,
+      icon: {
+        ...action.icon,
+        size: action?.size ?? 12,
+      },
+      styles: {
+        ...action?.styles,
+        self: css`
+          cursor: pointer;
+          transition:
+            background-color 0.2s ease,
+            color 0.2s ease;
+          border-radius: 9999px;
+          padding: 1px;
+          opacity: 1;
+          height: fit-content;
+          background-color: transparent;
 
-        &:hover {
-          background-color: #d1d5db;
-        }
+          &:hover {
+            background-color: #d1d5db;
+          }
 
-        &:active {
-          background-color: #999999;
-        }
+          &:active {
+            background-color: #999999;
+          }
 
-        &:focus-visible {
-          outline: none;
-          box-shadow: inset 0 0 0 2px #00000033;
-          transition: box-shadow 0.2s ease;
-        }
+          &:focus-visible {
+            outline: none;
+            box-shadow: inset 0 0 0 2px #00000033;
+            transition: box-shadow 0.2s ease;
+          }
 
-        ${action?.disabled &&
-        css`
-          cursor: not-allowed;
-          opacity: 40%;
-        `};
+          ${action?.disabled &&
+          css`
+            cursor: not-allowed;
+            opacity: 40%;
+          `};
 
-        ${action?.styles?.self}
-      `,
-    },
-  }));
+          ${action?.icon?.styles?.self}
+        `,
+      },
+    }));
+
+  const hasActions = actionsWithStyles && actionsWithStyles.length > 0;
 
   return (
     <BadgeWrapper
@@ -182,15 +194,19 @@ function Badge({
         {withCircle && (
           <BadgeCircle aria-label="badge-circle" $color={badgeCircleColor} />
         )}
-        {caption}
+        <BadgeLabel>{caption}</BadgeLabel>
       </BadgeContent>
-      {actions && (
-        <BadgeIconWrapper>
+      {hasActions && (
+        <BadgeIconWrapper
+          aria-label="badge-action-wrapper"
+          $style={styles?.actionWrapperStyle}
+        >
           {actionsWithStyles.map((action, index) => (
-            <Figure
+            <Button
               key={index}
               aria-label="badge-action"
-              {...action}
+              icon={action.icon}
+              styles={action?.styles}
               title={action.title}
               onClick={(e) => {
                 e.stopPropagation();
@@ -250,10 +266,19 @@ const BadgeWrapper = styled.div<{
   ${({ $badgeStyle }) => $badgeStyle};
 `;
 
+const BadgeLabel = styled.span`
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
+  flex: 1;
+`;
+
 const BadgeContent = styled.div<{ $withCircle?: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
+  overflow: hidden;
   gap: ${({ $withCircle }) => ($withCircle ? "0.5rem" : "0px")};
 `;
 
