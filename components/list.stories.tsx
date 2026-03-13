@@ -1393,7 +1393,15 @@ export const WithBadge: Story = {
     const [content, setContent] = useState([]);
     const [isOpen, setIsOpen] = useState(false);
 
-    const LIST_GROUPS: ListGroupContentProps[] = [
+    type ListItem = Omit<ListItemProps, "leftSideContent"> & {
+      leftSideContent?: number;
+    };
+
+    type ListGroupContentWithNumber = Omit<ListGroupContentProps, "items"> & {
+      items: ListItem[];
+    };
+
+    const LIST_GROUPS: ListGroupContentWithNumber[] = [
       {
         id: "employees",
         title: "Employees",
