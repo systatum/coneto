@@ -88,7 +88,6 @@ Available properties:
 
 Example:
 (labels: {
-  title: "Invoice Document",
   zoomPlaceholder: "Select zoom level",
   totalPages: ({ currentPage, totalPages }) =>
     \`Page \${currentPage} / \${totalPages}\`
