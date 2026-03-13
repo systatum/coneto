@@ -396,6 +396,7 @@ export interface ListGroupProps {
   initialState?: "opened" | "closed";
   selectable?: boolean;
   styles?: ListGroupStylesProps;
+  onClick?: ({ toggle }: { toggle: () => void }) => void;
 }
 
 interface ListGroupStylesProps {
@@ -433,6 +434,7 @@ function ListGroup({
   actions,
   emptySlate,
   styles,
+  onClick,
   ...props
 }: ListGroupProps) {
   const {
@@ -473,11 +475,21 @@ function ListGroup({
       onClick: () => action.onClick && action.onClick?.(id),
     }));
 
+  const toggle = () => {
+    setIsOpen(id, "group");
+  };
+
   return (
     <ListGroupContainer $containerStyle={styles?.containerStyle}>
       <HeaderButton
         $isOpen={opened}
-        onClick={() => setIsOpen(id, "group")}
+        onClick={() => {
+          if (onClick) {
+            onClick({ toggle });
+          } else {
+            toggle();
+          }
+        }}
         aria-expanded={opened}
         $style={styles?.rowStyle}
       >
