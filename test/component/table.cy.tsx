@@ -57,6 +57,82 @@ describe("Table", () => {
     type: TYPES_DATA[i % TYPES_DATA.length],
   }));
 
+  context("isLoading", () => {
+    it("should render loading-spinner around the row.level", () => {
+      cy.mount(
+        <Table isLoading columns={columnsBasic}>
+          {rawRows?.map((row, index) => (
+            <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
+              {[row.name, row.type].map((rowCell, i) => (
+                <Table.Row.Cell key={`${row.name}-${row.type}-${rowCell}`}>
+                  {rowCell}
+                </Table.Row.Cell>
+              ))}
+            </Table.Row>
+          ))}
+        </Table>
+      );
+
+      cy.findByLabelText("overlay-blocker")
+        .should("exist")
+        .and("have.css", "padding-top", "60px");
+
+      cy.findByLabelText("overlay-blocker").then(($overlay) => {
+        const overlayRect = $overlay[0].getBoundingClientRect();
+
+        cy.findByLabelText("circle").then(($spinner) => {
+          const spinnerRect = $spinner[0].getBoundingClientRect();
+
+          const distance = spinnerRect.top - overlayRect.top;
+
+          expect(distance).to.be.closeTo(60, 10); // 60px is overlay padding-top
+        });
+      });
+    });
+
+    context("when given actions", () => {
+      it("should render loading-spinner around the row.level", () => {
+        cy.mount(
+          <Table
+            actions={[
+              {
+                caption: "Test",
+              },
+            ]}
+            isLoading
+            columns={columnsBasic}
+          >
+            {rawRows?.map((row, index) => (
+              <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
+                {[row.name, row.type].map((rowCell, i) => (
+                  <Table.Row.Cell key={`${row.name}-${row.type}-${rowCell}`}>
+                    {rowCell}
+                  </Table.Row.Cell>
+                ))}
+              </Table.Row>
+            ))}
+          </Table>
+        );
+
+        cy.findByLabelText("overlay-blocker")
+          .should("exist")
+          .and("have.css", "padding-top", "120px");
+
+        cy.findByLabelText("overlay-blocker").then(($overlay) => {
+          const overlayRect = $overlay[0].getBoundingClientRect();
+
+          cy.findByLabelText("circle").then(($spinner) => {
+            const spinnerRect = $spinner[0].getBoundingClientRect();
+
+            const distance = spinnerRect.top - overlayRect.top;
+
+            expect(distance).to.be.closeTo(120, 10); // 120px is overlay padding-top
+          });
+        });
+      });
+    });
+  });
+
   context("actions in main table", () => {
     context("when not given type", () => {
       it("should render with button", () => {
