@@ -85,9 +85,7 @@ const CapsuleTabWrapper = styled.div<{
 }>`
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
   width: 100%;
-  padding-bottom: 5px;
   border: 1px solid #ebebeb;
   border-radius: 2px;
   box-shadow: 0 1px 3px -3px #5b5b5b;

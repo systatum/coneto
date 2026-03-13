@@ -134,15 +134,7 @@ export const Default: Story = {
           width: "100%",
         }}
       >
-        <CapsuleTab
-          styles={{
-            self: css`
-              padding: 20px;
-            `,
-          }}
-          tabs={TABS_ITEMS}
-          activeTab={"2"}
-        />
+        <CapsuleTab tabs={TABS_ITEMS} activeTab={"2"} />
         <div
           style={{
             display: "flex",
