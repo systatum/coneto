@@ -21,6 +21,14 @@ const meta: Meta<typeof DocumentViewer> = {
   component: DocumentViewer,
   tags: ["autodocs"],
   argTypes: {
+    title: {
+      description: "Title displayed in the viewer toolbar.",
+      control: "text",
+      table: {
+        type: { summary: "string" },
+        defaultValue: { summary: "Document" },
+      },
+    },
     source: {
       description:
         "Defines the document source using a builder function (pdf, image, file, or encodedString).",
@@ -75,7 +83,6 @@ Customizes text labels displayed in the DocumentViewer toolbar.
 
 Available properties:
 
-- **title** — Text displayed as the document title in the toolbar.
 - **zoomPlaceholder** — Placeholder text shown inside the zoom combobox.
 - **totalPages** — Custom renderer for the page indicator. Receives the current page and total pages, allowing full control over how the page information is displayed.
 
@@ -322,7 +329,7 @@ export const PDF: Story = {
               onRegionSelected={(region: BoundingBoxState) => {
                 handleSetBoxes(region);
               }}
-              labels={{ title: "Team Collaboration Notes" }}
+              title="Team Collaboration Notes"
               boundingBoxes={boundingBoxes}
               source={source}
             />
@@ -523,7 +530,7 @@ export const PNG: Story = {
           onRegionSelected={(props: BoundingBoxState) => {
             handleSetBoxes(props);
           }}
-          labels={{ title: "Document Viewer with image()" }}
+          title="Document Viewer with image()"
           boundingBoxes={boundingBoxes}
           source={source}
         />
@@ -716,7 +723,7 @@ export const WithFile: Story = {
           onRegionSelected={(props: BoundingBoxState) => {
             handleSetBoxes(props);
           }}
-          labels={{ title: "Document Viewer with file()" }}
+          title="Document Viewer with file()"
           boundingBoxes={boundingBoxes}
           source={source}
         />
@@ -903,7 +910,7 @@ export const Base64: Story = {
           onRegionSelected={(props: BoundingBoxState) => {
             handleSetBoxes(props);
           }}
-          labels={{ title: "Document Viewer with encodedString()" }}
+          title="Document Viewer with encodedString()"
           boundingBoxes={boundingBoxes}
           source={source}
         />

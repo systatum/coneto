@@ -11,7 +11,7 @@ describe("Document Viewer", () => {
           <DocumentViewer
             selectable
             source={({ pdf }) => pdf("sample.pdf")}
-            labels={{ title: "Team Collaboration Notes" }}
+            title="Team Collaboration Notes"
             styles={{
               boxStyle: css`
                 border-color: blue;
@@ -43,7 +43,7 @@ describe("Document Viewer", () => {
             <DocumentViewer
               selectable
               source={({ pdf }) => pdf("sample.pdf")}
-              labels={{ title: "Team Collaboration Notes" }}
+              title="Team Collaboration Notes"
               styles={{
                 boxStyle: css`
                   border-color: blue;
@@ -83,7 +83,7 @@ describe("Document Viewer", () => {
           <DocumentViewer
             selectable
             source={({ pdf }) => pdf("sample.pdf")}
-            labels={{ title: "Team Collaboration Notes" }}
+            title="Team Collaboration Notes"
           />
         );
 
@@ -98,7 +98,7 @@ describe("Document Viewer", () => {
         cy.mount(
           <DocumentViewer
             source={({ pdf }) => pdf("sample.pdf")}
-            labels={{ title: "Team Collaboration Notes" }}
+            title="Team Collaboration Notes"
           />
         );
 
@@ -115,7 +115,7 @@ describe("Document Viewer", () => {
         cy.mount(
           <DocumentViewer
             source={({ pdf }) => pdf("sample.pdf")}
-            labels={{ title: "Team Collaboration Notes" }}
+            title="Team Collaboration Notes"
           />
         );
 
@@ -131,7 +131,7 @@ describe("Document Viewer", () => {
         cy.mount(
           <DocumentViewer
             source={({ pdf }) => pdf("sample.pdf")}
-            labels={{ title: "Team Collaboration Notes" }}
+            title="Team Collaboration Notes"
           />
         );
 
@@ -145,7 +145,7 @@ describe("Document Viewer", () => {
       it("renders the image", () => {
         cy.mount(
           <DocumentViewer
-            labels={{ title: "Document Viewer With Image" }}
+            title="Document Viewer With Image"
             source={({ image }) =>
               image(
                 "https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d"
@@ -165,7 +165,7 @@ describe("Document Viewer", () => {
       it("renders without page number", () => {
         cy.mount(
           <DocumentViewer
-            labels={{ title: "Document Viewer With Image" }}
+            title="Document Viewer With Image"
             source={({ image }) =>
               image(
                 "https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d"
@@ -197,7 +197,7 @@ describe("Document Viewer", () => {
 
         return (
           <DocumentViewer
-            labels={{ title: "Document Viewer with Encode String" }}
+            title="Document Viewer with Encode String"
             source={({ encodedString }) => encodedString(base64, "png")}
           />
         );
@@ -238,7 +238,7 @@ describe("Document Viewer", () => {
 
           cy.mount(
             <DocumentViewer
-              labels={{ title: "Document Viewer With File" }}
+              title="Document Viewer With File"
               source={({ file: fileBuilder }) => fileBuilder(file)}
             />
           );
@@ -263,7 +263,7 @@ describe("Document Viewer", () => {
 
           cy.mount(
             <DocumentViewer
-              labels={{ title: "Document Viewer With File" }}
+              title="Document Viewer With File"
               source={({ file: fileBuilder }) => fileBuilder(file)}
             />
           );
@@ -287,7 +287,7 @@ describe("Document Viewer", () => {
         cy.mount(
           <DocumentViewer
             source={({ pdf }) => pdf("sample.pdf")}
-            labels={{ title: "Team Collaboration Notes" }}
+            title="Team Collaboration Notes"
           />
         );
 
@@ -305,7 +305,7 @@ describe("Document Viewer", () => {
         cy.mount(
           <DocumentViewer
             source={({ pdf }) => pdf("sample.pdf")}
-            labels={{ title: "Team Collaboration Notes" }}
+            title="Team Collaboration Notes"
           />
         );
 
@@ -321,7 +321,7 @@ describe("Document Viewer", () => {
           <DocumentViewer
             initialZoom={75}
             source={({ pdf }) => pdf("sample.pdf")}
-            labels={{ title: "Team Collaboration Notes" }}
+            title="Team Collaboration Notes"
           />
         );
 
@@ -351,7 +351,7 @@ describe("Document Viewer", () => {
           <DocumentViewer
             source={({ pdf }) => pdf("sample.pdf")}
             boundingBoxes={boundingBoxes}
-            labels={{ title: "Team Collaboration Notes" }}
+            title="Team Collaboration Notes"
           />
         );
 
@@ -368,7 +368,7 @@ describe("Document Viewer", () => {
         cy.mount(
           <DocumentViewer
             source={({ pdf }) => pdf("sample.pdf")}
-            labels={{ title: "Team Collaboration Notes" }}
+            title="Team Collaboration Notes"
           />
         );
 
