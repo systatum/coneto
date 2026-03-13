@@ -238,7 +238,7 @@ function Button({
             size={icon?.size ?? 14}
           />
         )}
-        <ButtonLabel>{children}</ButtonLabel>
+        <ButtonLabel aria-label="button-label">{children}</ButtonLabel>
         {isLoading && <LoadingSpinner />}
       </BaseButton>
 
