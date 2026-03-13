@@ -1,1 +1,1 @@
-export type FalsyOr<T> = T | false | null | undefined;
+export type FalsyOr<T> = T | boolean | null | undefined;
