@@ -238,7 +238,7 @@ function Button({
             size={icon?.size ?? 14}
           />
         )}
-        {children}
+        <ButtonLabel aria-label="button-label">{children}</ButtonLabel>
         {isLoading && <LoadingSpinner />}
       </BaseButton>
 
@@ -355,6 +355,14 @@ const DropdownWrapper = styled.div<{ $style?: CSSProp }>`
   z-index: 12000;
 
   ${({ $style }) => $style};
+`;
+
+const ButtonLabel = styled.span`
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
+  flex: 1;
 `;
 
 export interface ButtonTipMenuContainerStylesProps {

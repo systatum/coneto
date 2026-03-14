@@ -171,7 +171,9 @@ describe("Table", () => {
           />
         );
 
-        cy.findByLabelText("action-button").should("exist");
+        cy.findByLabelText("action-button")
+          .should("exist")
+          .should("have.css", "height", "32px");
         cy.findByLabelText("capsule").should("not.exist");
       });
     });
@@ -189,13 +191,16 @@ describe("Table", () => {
           />
         );
 
-        cy.findByLabelText("action-button").should("exist");
+        cy.findByLabelText("action-button")
+          .should("exist")
+          .should("have.css", "height", "32px");
+
         cy.findByLabelText("capsule").should("not.exist");
       });
     });
 
     context("when given capsule props with type button", () => {
-      it("should render with button component", () => {
+      it("should render with button with height 32px", () => {
         cy.mount(
           <BasicTable
             actions={[
@@ -210,13 +215,15 @@ describe("Table", () => {
           />
         );
 
-        cy.findByLabelText("action-button").should("exist");
+        cy.findByLabelText("action-button")
+          .should("exist")
+          .should("have.css", "height", "32px");
         cy.findByLabelText("capsule").should("not.exist");
       });
     });
 
     context("when given capsule props with type capsule", () => {
-      it("should render with capsule component", () => {
+      it("should render with capsule with height 32px", () => {
         cy.mount(
           <BasicTable
             actions={[
@@ -232,7 +239,9 @@ describe("Table", () => {
         );
 
         cy.findByLabelText("action-button").should("not.exist");
-        cy.findByLabelText("capsule").should("exist");
+        cy.findByLabelText("capsule")
+          .should("exist")
+          .should("have.css", "height", "32px");
       });
     });
   });
@@ -1154,7 +1163,7 @@ describe("Table", () => {
     context("with pagination wrapper style", () => {
       context("when given width full and justify-end", () => {
         it("renders on the end content", () => {
-          cy.viewport(800, 760);
+          cy.viewport(515, 720);
           cy.mount(
             <Table
               selectable
@@ -1193,7 +1202,7 @@ describe("Table", () => {
           );
 
           cy.findByLabelText("pagination-wrapper")
-            .should("have.css", "width", "717px")
+            .should("have.css", "width", "447px")
             .and("have.css", "justify-content", "end");
         });
       });
