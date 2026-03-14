@@ -13,6 +13,7 @@ import {
   RiClipboardLine,
   RiDeleteBin2Fill,
   RiDeleteBin2Line,
+  RiDownload2Fill,
   RiFileCopy2Line,
   RiReactjsLine,
   RiRefreshLine,
@@ -1585,6 +1586,21 @@ export const WithRowGroup: Story = {
         },
         onClick: () => {
           console.log(`Delete ${selected.length} clicked`);
+        },
+      },
+      {
+        caption: "Download",
+        disabled: selected.length === 0,
+        icon: {
+          image: RiDownload2Fill,
+        },
+        styles: {
+          self: css`
+            width: 60px;
+          `,
+        },
+        onClick: () => {
+          console.log(`Download ${selected.length} clicked`);
         },
       },
       {
