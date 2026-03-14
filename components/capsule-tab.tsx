@@ -51,11 +51,14 @@ function CapsuleTab({
     <CapsuleTabWrapper aria-label="capsule-tab-wrapper" $style={styles?.self}>
       <Capsule
         styles={{
+          capsuleWrapperStyle: css`
+            gap: 5px;
+
+            ${styles?.capsuleWrapperStyle};
+          `,
           containerStyle: css`
             border-top-left-radius: 2px;
             border-top-right-radius: 2px;
-
-            ${styles?.capsuleWrapperStyle};
           `,
           tabStyle: css`
             border-radius: 12px;
