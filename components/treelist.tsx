@@ -14,6 +14,7 @@ import { LoadingSpinner } from "./loading-spinner";
 import { SubMenuButtonProps } from "./button";
 import { Tooltip } from "./tooltip";
 import { Figure, FigureProps } from "./figure";
+import { FalsyOr } from "./../lib/falsy";
 
 export interface TreeListProps
   extends Omit<
@@ -72,7 +73,7 @@ export interface TreeListItemsProps {
   caption?: string;
   canContainChildren?: boolean;
   onClick?: (props: TreeListItemsOnClickProps) => void;
-  actions?: SubMenuTreeList[];
+  actions?: TreeListItemsActionsProps[];
   items?: TreeListItemsProps[];
   icon?: FigureProps["image"];
   iconOnActive?: FigureProps["image"];
@@ -80,12 +81,19 @@ export interface TreeListItemsProps {
   initialState?: TreeListInitialState;
 }
 
+export type TreeListItemsActionsProps =
+  FalsyOr<TreeListItemsActionsInternalProps>;
+
+type TreeListItemsActionsInternalProps = SubMenuTreeList;
+
 export interface TreeListItemsOnClickProps {
   item?: TreeListItemsProps;
   preventDefault?: () => void;
 }
 
-export interface TreeListActionsProps {
+export type TreeListActionsProps = FalsyOr<TreeListInternalActionsProps>;
+
+interface TreeListInternalActionsProps {
   id: string;
   caption?: string;
   onClick?: (props?: { setActive?: (prop: boolean) => void }) => void;
@@ -216,6 +224,13 @@ function TreeList({
 
   const selectedGroupId = findGroupOfItem(content, isSelected);
 
+  const filteredActions =
+    actions?.filter((action): action is TreeListInternalActionsProps =>
+      Boolean(action)
+    ) ?? [];
+
+  const hasActions = filteredActions.length > 0;
+
   return (
     <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
       <TreeListWrapper
@@ -223,9 +238,9 @@ function TreeList({
         aria-label="tree-list-wrapper"
         $containerStyle={styles?.containerStyle}
       >
-        {actions && (
-          <ActionsWrapper>
-            {actions.map((action, index) => {
+        {hasActions && (
+          <ActionsWrapper aria-label="tree-list-action-wrapper">
+            {filteredActions.map((action, index) => {
               const isActiveAction = action.id === isActive;
               const isSelectedAction = action.id === isSelected;
 
@@ -859,18 +874,22 @@ function TreeListItem<T extends TreeListItemsProps>({
           (() => {
             const listActions = item.actions;
 
-            const actionsWithIcons = listActions.map((action) => ({
-              ...action,
-              icon: {
-                ...action.icon,
-                image: action.icon.image ?? RiArrowRightSLine,
-              },
-              onClick: (e?: React.MouseEvent) => {
-                e?.stopPropagation();
-                action.onClick?.(item.id);
-                if (listActions.length > 2) setIsHovered(null);
-              },
-            }));
+            const actionsWithIcons = item.actions
+              ?.filter((action): action is TreeListItemsActionsInternalProps =>
+                Boolean(action)
+              )
+              .map((action) => ({
+                ...action,
+                icon: {
+                  ...action.icon,
+                  image: action.icon.image ?? RiArrowRightSLine,
+                },
+                onClick: (e?: React.MouseEvent) => {
+                  e?.stopPropagation();
+                  action.onClick?.(item.id);
+                  if (listActions.length > 2) setIsHovered(null);
+                },
+              }));
 
             return (
               <div

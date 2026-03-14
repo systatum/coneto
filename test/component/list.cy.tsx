@@ -25,31 +25,31 @@ describe("List", () => {
       id: "home",
       title: "Home",
       subtitle: "Go to homepage",
-      leftIcon: RiHome2Fill,
+      icon: { image: RiHome2Fill },
     },
     {
       id: "profile",
       title: "Profile",
       subtitle: "View your profile",
-      leftIcon: RiUser3Fill,
+      icon: { image: RiUser3Fill },
     },
     {
       id: "settings",
       title: "Settings",
       subtitle: "Adjust preferences",
-      leftIcon: RiSettings3Fill,
+      icon: { image: RiSettings3Fill },
     },
     {
       id: "messages",
       title: "Messages",
       subtitle: "Check your inbox",
-      leftIcon: RiMailFill,
+      icon: { image: RiMailFill },
     },
     {
       id: "notifications",
       title: "Notifications",
       subtitle: "View Alerts",
-      leftIcon: RiNotification3Fill,
+      icon: { image: RiNotification3Fill },
     },
   ];
 
@@ -63,7 +63,7 @@ describe("List", () => {
           id: "messages",
           title: "Messages",
           subtitle: "Check your inbox",
-          leftIcon: RiMailFill,
+          icon: { image: RiMailFill },
           children:
             "Stay connected with your contacts by checking and replying to your recent messages. Keep conversations organized and never miss important updates.",
         },
@@ -71,7 +71,7 @@ describe("List", () => {
           id: "notifications",
           title: "Notifications",
           subtitle: "View Alerts",
-          leftIcon: RiNotification3Fill,
+          icon: { image: RiNotification3Fill },
           children:
             "See what's new at a glance. Review recent alerts, mentions, and important reminders to stay on top of your activities.",
         },
@@ -79,7 +79,7 @@ describe("List", () => {
           id: "calendar",
           title: "Calendar",
           subtitle: "Upcoming events",
-          leftIcon: RiCalendar2Fill,
+          icon: { image: RiCalendar2Fill },
           children:
             "View your scheduled events and upcoming meetings in one place. Manage your time effectively and plan your week with confidence.",
         },
@@ -94,7 +94,7 @@ describe("List", () => {
           id: "home",
           title: "Home",
           subtitle: "Go to homepage",
-          leftIcon: RiHome2Fill,
+          icon: { image: RiHome2Fill },
           children:
             "Return to your main dashboard where you can quickly access all your essential tools, updates, and recent highlights in one glance.",
         },
@@ -102,7 +102,7 @@ describe("List", () => {
           id: "profile",
           title: "Profile",
           subtitle: "View your profile",
-          leftIcon: RiUser3Fill,
+          icon: { image: RiUser3Fill },
           children:
             "Customize your personal information, update your avatar, and manage your account preferences to reflect your identity and style.",
         },
@@ -110,7 +110,7 @@ describe("List", () => {
           id: "settings",
           title: "Settings",
           subtitle: "Adjust preferences",
-          leftIcon: RiSettings3Fill,
+          icon: { image: RiSettings3Fill },
           openable: true,
           children:
             "Modify your system preferences, manage privacy and notifications, and fine-tune your user experience to suit your workflow.",
@@ -286,7 +286,7 @@ describe("List", () => {
               <List.Item
                 key={index}
                 id={item.id}
-                leftIcon={item.leftIcon}
+                icon={item.icon}
                 subtitle={item.subtitle}
                 title={item.title}
               />
@@ -319,7 +319,7 @@ describe("List", () => {
                 <List.Item
                   key={index}
                   id={item.id}
-                  leftIcon={item.leftIcon}
+                  icon={item.icon}
                   subtitle={item.subtitle}
                   title={item.title}
                 />
@@ -373,7 +373,7 @@ describe("List", () => {
                     <List.Item
                       key={i}
                       id={list.id}
-                      leftIcon={list.leftIcon}
+                      icon={list.icon}
                       subtitle={list.subtitle}
                       title={list.title}
                       groupId={group.id}
@@ -433,7 +433,7 @@ describe("List", () => {
                       <List.Item
                         key={i}
                         id={list.id}
-                        leftIcon={list.leftIcon}
+                        icon={list.icon}
                         subtitle={list.subtitle}
                         title={list.title}
                         groupId={group.id}
@@ -510,7 +510,7 @@ describe("List", () => {
                   <List.Item
                     key={i}
                     id={list.id}
-                    leftIcon={list.leftIcon}
+                    icon={list.icon}
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
@@ -562,7 +562,7 @@ describe("List", () => {
                   <List.Item
                     key={i}
                     id={list.id}
-                    leftIcon={list.leftIcon}
+                    icon={list.icon}
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
@@ -615,7 +615,7 @@ describe("List", () => {
                   <List.Item
                     key={i}
                     id={list.id}
-                    leftIcon={list.leftIcon}
+                    icon={list.icon}
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
@@ -663,7 +663,7 @@ describe("List", () => {
                   <List.Item
                     key={i}
                     id={list.id}
-                    leftIcon={list.leftIcon}
+                    icon={list.icon}
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
@@ -711,7 +711,7 @@ describe("List", () => {
                   <List.Item
                     key={i}
                     id={list.id}
-                    leftIcon={list.leftIcon}
+                    icon={list.icon}
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
@@ -763,7 +763,7 @@ describe("List", () => {
                 <List.Item
                   key={i}
                   id={list.id}
-                  leftIcon={list.leftIcon}
+                  icon={list.icon}
                   subtitle={list.subtitle}
                   title={list.title}
                   groupId={group.id}
@@ -813,7 +813,7 @@ describe("List", () => {
                   <List.Item
                     key={i}
                     id={list.id}
-                    leftIcon={list.leftIcon}
+                    icon={list.icon}
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
@@ -865,7 +865,7 @@ describe("List", () => {
                   <List.Item
                     key={i}
                     id={list.id}
-                    leftIcon={list.leftIcon}
+                    icon={list.icon}
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
@@ -912,7 +912,7 @@ describe("List", () => {
                   <List.Item
                     key={i}
                     id={list.id}
-                    leftIcon={list.leftIcon}
+                    icon={list.icon}
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
@@ -950,19 +950,19 @@ describe("List", () => {
               id: "messages",
               title: "Messages",
               subtitle: "Check your inbox",
-              leftIcon: RiMailFill,
+              icon: { image: RiMailFill },
             },
             {
               id: "notifications",
               title: "Notifications",
               subtitle: "View Alerts",
-              leftIcon: RiNotification3Fill,
+              icon: { image: RiNotification3Fill },
             },
             {
               id: "calendar",
               title: "Calendar",
               subtitle: "Upcoming events",
-              leftIcon: RiCalendar2Fill,
+              icon: { image: RiCalendar2Fill },
             },
           ],
         },
@@ -975,19 +975,19 @@ describe("List", () => {
               id: "home",
               title: "Home",
               subtitle: "Go to homepage",
-              leftIcon: RiHome2Fill,
+              icon: { image: RiHome2Fill },
             },
             {
               id: "profile",
               title: "Profile",
               subtitle: "View your profile",
-              leftIcon: RiUser3Fill,
+              icon: { image: RiUser3Fill },
             },
             {
               id: "settings",
               title: "Settings",
               subtitle: "Adjust preferences",
-              leftIcon: RiSettings3Fill,
+              icon: { image: RiSettings3Fill },
             },
           ],
         },
@@ -1021,7 +1021,7 @@ describe("List", () => {
                     <List.Item
                       key={i}
                       id={list.id}
-                      leftIcon={list.leftIcon}
+                      icon={list.icon}
                       subtitle={list.subtitle}
                       title={list.title}
                       groupId={group.id}
@@ -1061,19 +1061,19 @@ describe("List", () => {
               id: "messages",
               title: "Messages",
               subtitle: "Check your inbox",
-              leftIcon: RiMailFill,
+              icon: { image: RiMailFill },
             },
             {
               id: "notifications",
               title: "Notifications",
               subtitle: "View Alerts",
-              leftIcon: RiNotification3Fill,
+              icon: { image: RiNotification3Fill },
             },
             {
               id: "calendar",
               title: "Calendar",
               subtitle: "Upcoming events",
-              leftIcon: RiCalendar2Fill,
+              icon: { image: RiCalendar2Fill },
             },
           ],
         },
@@ -1086,19 +1086,19 @@ describe("List", () => {
               id: "home",
               title: "Home",
               subtitle: "Go to homepage",
-              leftIcon: RiHome2Fill,
+              icon: { image: RiHome2Fill },
             },
             {
               id: "profile",
               title: "Profile",
               subtitle: "View your profile",
-              leftIcon: RiUser3Fill,
+              icon: { image: RiUser3Fill },
             },
             {
               id: "settings",
               title: "Settings",
               subtitle: "Adjust preferences",
-              leftIcon: RiSettings3Fill,
+              icon: { image: RiSettings3Fill },
             },
           ],
         },
@@ -1131,7 +1131,7 @@ describe("List", () => {
                   <List.Item
                     key={i}
                     id={list.id}
-                    leftIcon={list.leftIcon}
+                    icon={list.icon}
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
@@ -1198,7 +1198,7 @@ describe("List", () => {
                     <List.Item
                       key={i}
                       id={list.id}
-                      leftIcon={list.leftIcon}
+                      icon={list.icon}
                       subtitle={list.subtitle}
                       title={list.title}
                       groupId={group.id}
@@ -1247,7 +1247,7 @@ describe("List", () => {
                       <List.Item
                         key={i}
                         id={list.id}
-                        leftIcon={list.leftIcon}
+                        icon={list.icon}
                         subtitle={list.subtitle}
                         title={list.title}
                         groupId={group.id}
@@ -1296,19 +1296,19 @@ describe("List", () => {
               id: "messages",
               title: "Messages",
               subtitle: "Check your inbox",
-              leftIcon: RiMailFill,
+              icon: { image: RiMailFill },
             },
             {
               id: "notifications",
               title: "Notifications",
               subtitle: "View Alerts",
-              leftIcon: RiNotification3Fill,
+              icon: { image: RiNotification3Fill },
             },
             {
               id: "calendar",
               title: "Calendar",
               subtitle: "Upcoming events",
-              leftIcon: RiCalendar2Fill,
+              icon: { image: RiCalendar2Fill },
             },
           ],
         },
@@ -1321,21 +1321,21 @@ describe("List", () => {
               id: "home",
               title: "Home",
               subtitle: "Go to homepage",
-              leftIcon: RiHome2Fill,
+              icon: { image: RiHome2Fill },
               rightSideContent: RIGHT_SIDE_CONTENT,
             },
             {
               id: "profile",
               title: "Profile",
               subtitle: "View your profile",
-              leftIcon: RiUser3Fill,
+              icon: { image: RiUser3Fill },
               rightSideContent: RIGHT_SIDE_CONTENT,
             },
             {
               id: "settings",
               title: "Settings",
               subtitle: "Adjust preferences",
-              leftIcon: RiSettings3Fill,
+              icon: { image: RiSettings3Fill },
               rightSideContent: RIGHT_SIDE_CONTENT,
             },
           ],
@@ -1368,7 +1368,7 @@ describe("List", () => {
                   <List.Item
                     key={i}
                     id={list.id}
-                    leftIcon={list.leftIcon}
+                    icon={list.icon}
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
@@ -1412,7 +1412,7 @@ describe("List", () => {
                     <List.Item
                       key={i}
                       id={list.id}
-                      leftIcon={list.leftIcon}
+                      icon={list.icon}
                       subtitle={list.subtitle}
                       title={list.title}
                       groupId={group.id}
@@ -1468,19 +1468,19 @@ describe("List", () => {
               id: "messages",
               title: "Messages",
               subtitle: "Check your inbox",
-              leftIcon: RiMailFill,
+              icon: { image: RiMailFill },
             },
             {
               id: "notifications",
               title: "Notifications",
               subtitle: "View Alerts",
-              leftIcon: RiNotification3Fill,
+              icon: { image: RiNotification3Fill },
             },
             {
               id: "calendar",
               title: "Calendar",
               subtitle: "Upcoming events",
-              leftIcon: RiCalendar2Fill,
+              icon: { image: RiCalendar2Fill },
             },
           ],
         },
@@ -1493,19 +1493,19 @@ describe("List", () => {
               id: "home",
               title: "Home",
               subtitle: "Go to homepage",
-              leftIcon: RiHome2Fill,
+              icon: { image: RiHome2Fill },
             },
             {
               id: "profile",
               title: "Profile",
               subtitle: "View your profile",
-              leftIcon: RiUser3Fill,
+              icon: { image: RiUser3Fill },
             },
             {
               id: "settings",
               title: "Settings",
               subtitle: "Adjust preferences",
-              leftIcon: RiSettings3Fill,
+              icon: { image: RiSettings3Fill },
             },
           ],
         },
@@ -1538,7 +1538,7 @@ describe("List", () => {
                   <List.Item
                     key={i}
                     id={list.id}
-                    leftIcon={list.leftIcon}
+                    icon={list.icon}
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
@@ -1583,7 +1583,7 @@ describe("List", () => {
                     <List.Item
                       key={i}
                       id={list.id}
-                      leftIcon={list.leftIcon}
+                      icon={list.icon}
                       subtitle={list.subtitle}
                       title={list.title}
                       groupId={group.id}
@@ -1625,6 +1625,13 @@ describe("List", () => {
             console.log(`action was clicked ${id}`);
           },
         },
+        false && {
+          caption: "Edit",
+          icon: { image: RiArrowRightSLine },
+          onClick: () => {
+            console.log(`${id} was edited`);
+          },
+        },
       ];
 
       const LIST_GROUPS: ListGroupContentProps[] = [
@@ -1637,20 +1644,20 @@ describe("List", () => {
               id: "messages",
               title: "Messages",
               subtitle: "Check your inbox",
-              leftIcon: RiMailFill,
+              icon: { image: RiMailFill },
               actions: LIST_ACTION_ITEMS_PROPS,
             },
             {
               id: "notifications",
               title: "Notifications",
               subtitle: "View Alerts",
-              leftIcon: RiNotification3Fill,
+              icon: { image: RiNotification3Fill },
             },
             {
               id: "calendar",
               title: "Calendar",
               subtitle: "Upcoming events",
-              leftIcon: RiCalendar2Fill,
+              icon: { image: RiCalendar2Fill },
             },
           ],
         },
@@ -1663,20 +1670,20 @@ describe("List", () => {
               id: "home",
               title: "Home",
               subtitle: "Go to homepage",
-              leftIcon: RiHome2Fill,
+              icon: { image: RiHome2Fill },
               actions: LIST_ACTION_ITEMS_PROPS,
             },
             {
               id: "profile",
               title: "Profile",
               subtitle: "View your profile",
-              leftIcon: RiUser3Fill,
+              icon: { image: RiUser3Fill },
             },
             {
               id: "settings",
               title: "Settings",
               subtitle: "Adjust preferences",
-              leftIcon: RiSettings3Fill,
+              icon: { image: RiSettings3Fill },
             },
           ],
         },
@@ -1709,7 +1716,7 @@ describe("List", () => {
                     key={i}
                     id={list.id}
                     actions={list.actions}
-                    leftIcon={list.leftIcon}
+                    icon={list.icon}
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
@@ -1729,6 +1736,57 @@ describe("List", () => {
           .within(() => {
             cy.findAllByLabelText("action-button").should("have.length", 1);
           });
+      });
+
+      context("when given with falsy field", () => {
+        it("renders without falsy action", () => {
+          cy.mount(
+            <List
+              searchable
+              draggable
+              selectable
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
+            >
+              {LIST_GROUPS.map((group, index) => (
+                <List.Group
+                  key={index}
+                  id={group.id}
+                  title={group.title}
+                  subtitle={group.subtitle}
+                  actions={group.actions}
+                  openerStyle="togglebox"
+                >
+                  {group.items.map((list, i) => (
+                    <List.Item
+                      key={i}
+                      id={list.id}
+                      actions={list.actions}
+                      icon={list.icon}
+                      subtitle={list.subtitle}
+                      title={list.title}
+                      groupId={group.id}
+                      selectedOptions={{
+                        checked: true,
+                      }}
+                    />
+                  ))}
+                </List.Group>
+              ))}
+            </List>
+          );
+          cy.findAllByLabelText("action-button").should("have.length", 0);
+          cy.findAllByLabelText("list-item-wrapper")
+            .eq(0)
+            .realHover()
+            .within(() => {
+              cy.findAllByLabelText("action-button").should("have.length", 1);
+            });
+        });
       });
 
       context("when clicking", () => {
@@ -1760,7 +1818,7 @@ describe("List", () => {
                       id={list.id}
                       groupId={group.id}
                       actions={list.actions}
-                      leftIcon={list.leftIcon}
+                      icon={list.icon}
                       subtitle={list.subtitle}
                       title={list.title}
                       selectedOptions={{
@@ -1836,7 +1894,7 @@ describe("List", () => {
                           },
                         },
                       ]}
-                      leftIcon={list.leftIcon}
+                      icon={list.icon}
                       subtitle={list.subtitle}
                       title={list.title}
                       selectedOptions={{
@@ -1865,6 +1923,7 @@ describe("List", () => {
         });
       });
     });
+
     context("when given in the group", () => {
       const ACTIONS_GROUPS: ListGroupActionsProps[] = [
         {
@@ -1872,6 +1931,10 @@ describe("List", () => {
           onClick: (id: string) => {
             console.log(`action was clicked ${id}`);
           },
+        },
+        false && {
+          caption: "False",
+          onClick: (id: string) => {},
         },
       ];
 
@@ -1886,19 +1949,19 @@ describe("List", () => {
               id: "messages",
               title: "Messages",
               subtitle: "Check your inbox",
-              leftIcon: RiMailFill,
+              icon: { image: RiMailFill },
             },
             {
               id: "notifications",
               title: "Notifications",
               subtitle: "View Alerts",
-              leftIcon: RiNotification3Fill,
+              icon: { image: RiNotification3Fill },
             },
             {
               id: "calendar",
               title: "Calendar",
               subtitle: "Upcoming events",
-              leftIcon: RiCalendar2Fill,
+              icon: { image: RiCalendar2Fill },
             },
           ],
         },
@@ -1912,26 +1975,25 @@ describe("List", () => {
               id: "home",
               title: "Home",
               subtitle: "Go to homepage",
-              leftIcon: RiHome2Fill,
+              icon: { image: RiHome2Fill },
             },
             {
               id: "profile",
               title: "Profile",
               subtitle: "View your profile",
-              leftIcon: RiUser3Fill,
+              icon: { image: RiUser3Fill },
             },
             {
               id: "settings",
               title: "Settings",
               subtitle: "Adjust preferences",
-              leftIcon: RiSettings3Fill,
+              icon: { image: RiSettings3Fill },
             },
           ],
         },
       ];
-
-      it("should render the actions", () => {
-        cy.mount(
+      function ListWithAction() {
+        return (
           <List
             searchable
             draggable
@@ -1956,7 +2018,7 @@ describe("List", () => {
                   <List.Item
                     key={i}
                     id={list.id}
-                    leftIcon={list.leftIcon}
+                    icon={list.icon}
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
@@ -1969,50 +2031,26 @@ describe("List", () => {
             ))}
           </List>
         );
+      }
+
+      it("should render the actions", () => {
+        cy.mount(<ListWithAction />);
         cy.findAllByLabelText("action-button").should("have.length", 2);
         cy.findAllByText("Add").should("have.length", 2);
       });
 
+      context("should render the actions", () => {
+        it("should render the actions", () => {
+          cy.mount(<ListWithAction />);
+          cy.findAllByLabelText("action-button").should("have.length", 2);
+          cy.findAllByText("Add").should("have.length", 2);
+          cy.findAllByText("False").should("not.exist");
+        });
+      });
+
       context("when clicking", () => {
         it("should render the console", () => {
-          cy.mount(
-            <List
-              searchable
-              draggable
-              selectable
-              styles={{
-                containerStyle: css`
-                  padding: 16px;
-                  min-width: 350px;
-                `,
-              }}
-            >
-              {LIST_GROUPS.map((group, index) => (
-                <List.Group
-                  key={index}
-                  id={group.id}
-                  title={group.title}
-                  subtitle={group.subtitle}
-                  actions={group.actions}
-                  openerStyle="togglebox"
-                >
-                  {group.items.map((list, i) => (
-                    <List.Item
-                      key={i}
-                      id={list.id}
-                      leftIcon={list.leftIcon}
-                      subtitle={list.subtitle}
-                      title={list.title}
-                      groupId={group.id}
-                      selectedOptions={{
-                        checked: true,
-                      }}
-                    />
-                  ))}
-                </List.Group>
-              ))}
-            </List>
-          );
+          cy.mount(<ListWithAction />);
 
           cy.window().then((win) => {
             cy.spy(win.console, "log").as("consoleLog");
@@ -2060,19 +2098,19 @@ describe("List", () => {
               id: "messages",
               title: "Messages",
               subtitle: "Check your inbox",
-              leftIcon: RiMailFill,
+              icon: { image: RiMailFill },
             },
             {
               id: "notifications",
               title: "Notifications",
               subtitle: "View Alerts",
-              leftIcon: RiNotification3Fill,
+              icon: { image: RiNotification3Fill },
             },
             {
               id: "calendar",
               title: "Calendar",
               subtitle: "Upcoming events",
-              leftIcon: RiCalendar2Fill,
+              icon: { image: RiCalendar2Fill },
             },
           ],
         },
@@ -2086,21 +2124,21 @@ describe("List", () => {
               id: "home",
               title: "Home",
               subtitle: "Go to homepage",
-              leftIcon: RiHome2Fill,
+              icon: { image: RiHome2Fill },
               rightSideContent: RIGHT_SIDE_CONTENT,
             },
             {
               id: "profile",
               title: "Profile",
               subtitle: "View your profile",
-              leftIcon: RiUser3Fill,
+              icon: { image: RiUser3Fill },
               rightSideContent: RIGHT_SIDE_CONTENT,
             },
             {
               id: "settings",
               title: "Settings",
               subtitle: "Adjust preferences",
-              leftIcon: RiSettings3Fill,
+              icon: { image: RiSettings3Fill },
               rightSideContent: RIGHT_SIDE_CONTENT,
             },
           ],
@@ -2133,7 +2171,7 @@ describe("List", () => {
                   <List.Item
                     key={i}
                     id={list.id}
-                    leftIcon={list.leftIcon}
+                    icon={list.icon}
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
@@ -2178,7 +2216,7 @@ describe("List", () => {
                     <List.Item
                       key={i}
                       id={list.id}
-                      leftIcon={list.leftIcon}
+                      icon={list.icon}
                       subtitle={list.subtitle}
                       title={list.title}
                       groupId={group.id}
@@ -2228,7 +2266,15 @@ describe("List", () => {
 
   context("leftSideContent", () => {
     context("when given in the list", () => {
-      const LIST_GROUPS: ListGroupContentProps[] = [
+      type TestListItem = Omit<ListItemProps, "leftSideContent"> & {
+        leftSideContent?: number;
+      };
+
+      type TestListGroup = Omit<ListGroupContentProps, "items"> & {
+        items: TestListItem[];
+      };
+
+      const LIST_GROUPS: TestListGroup[] = [
         {
           id: "employees",
           title: "Employees",
@@ -2273,8 +2319,10 @@ describe("List", () => {
                     key={i}
                     id={list.id}
                     actions={list.actions}
-                    leftIcon={list.leftIcon}
-                    leftSideContent={({ badge }) => badge(list.leftSideContent)}
+                    icon={list.icon}
+                    leftSideContent={({ badge }) =>
+                      badge(String(list.leftSideContent))
+                    }
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
@@ -2328,7 +2376,7 @@ describe("List", () => {
                     key={i}
                     id={list.id}
                     actions={list.actions}
-                    leftIcon={list.leftIcon}
+                    icon={list.icon}
                     subtitle={list.subtitle}
                     title={list.title}
                     openable
@@ -2388,7 +2436,7 @@ describe("List", () => {
                       key={i}
                       id={list.id}
                       actions={list.actions}
-                      leftIcon={list.leftIcon}
+                      icon={list.icon}
                       subtitle={list.subtitle}
                       title={list.title}
                       openable
@@ -2449,7 +2497,7 @@ describe("List", () => {
                     key={i}
                     id={list.id}
                     actions={list.actions}
-                    leftIcon={list.leftIcon}
+                    icon={list.icon}
                     subtitle={list.subtitle}
                     title={list.title}
                     openable
@@ -2504,7 +2552,7 @@ describe("List", () => {
                     key={i}
                     id={list.id}
                     actions={list.actions}
-                    leftIcon={list.leftIcon}
+                    icon={list.icon}
                     subtitle={list.subtitle}
                     title={list.title}
                     openable
@@ -2559,7 +2607,7 @@ describe("List", () => {
                     key={i}
                     id={list.id}
                     actions={list.actions}
-                    leftIcon={list.leftIcon}
+                    icon={list.icon}
                     subtitle={list.subtitle}
                     title={list.title}
                     openable
@@ -2613,7 +2661,7 @@ describe("List", () => {
                     key={i}
                     id={list.id}
                     actions={list.actions}
-                    leftIcon={list.leftIcon}
+                    icon={list.icon}
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
@@ -2678,7 +2726,7 @@ describe("List", () => {
                       key={i}
                       id={list.id}
                       actions={list.actions}
-                      leftIcon={list.leftIcon}
+                      icon={list.icon}
                       subtitle={list.subtitle}
                       title={list.title}
                       groupId={group.id}
@@ -2748,7 +2796,7 @@ describe("List", () => {
                     key={i}
                     id={list.id}
                     actions={list.actions}
-                    leftIcon={list.leftIcon}
+                    icon={list.icon}
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
@@ -2804,7 +2852,7 @@ describe("List", () => {
                     key={i}
                     id={list.id}
                     actions={list.actions}
-                    leftIcon={list.leftIcon}
+                    icon={list.icon}
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
@@ -2859,7 +2907,7 @@ describe("List", () => {
                       key={i}
                       id={list.id}
                       actions={list.actions}
-                      leftIcon={list.leftIcon}
+                      icon={list.icon}
                       subtitle={list.subtitle}
                       title={list.title}
                       groupId={group.id}
@@ -2922,7 +2970,7 @@ describe("List", () => {
                       key={i}
                       id={list.id}
                       actions={list.actions}
-                      leftIcon={list.leftIcon}
+                      icon={list.icon}
                       subtitle={list.subtitle}
                       title={list.title}
                       groupId={group.id}
@@ -2992,21 +3040,21 @@ describe("List", () => {
               id: "messages",
               title: "Messages",
               subtitle: "Check your inbox",
-              leftIcon: RiMailFill,
+              icon: { image: RiMailFill },
               openable: true,
             },
             {
               id: "notifications",
               title: "Notifications",
               subtitle: "View Alerts",
-              leftIcon: RiNotification3Fill,
+              icon: { image: RiNotification3Fill },
               openable: true,
             },
             {
               id: "calendar",
               title: "Calendar",
               subtitle: "Upcoming events",
-              leftIcon: RiCalendar2Fill,
+              icon: { image: RiCalendar2Fill },
               openable: true,
             },
           ],
@@ -3040,7 +3088,7 @@ describe("List", () => {
                     key={i}
                     id={list.id}
                     actions={list.actions}
-                    leftIcon={list.leftIcon}
+                    icon={list.icon}
                     subtitle={list.subtitle}
                     title={list.title}
                     groupId={group.id}
@@ -3093,7 +3141,7 @@ describe("List", () => {
                       key={i}
                       id={list.id}
                       actions={list.actions}
-                      leftIcon={list.leftIcon}
+                      icon={list.icon}
                       subtitle={list.subtitle}
                       title={list.title}
                       groupId={group.id}
@@ -3160,7 +3208,7 @@ describe("List", () => {
                       key={i}
                       id={list.id}
                       actions={list.actions}
-                      leftIcon={list.leftIcon}
+                      icon={list.icon}
                       subtitle={list.subtitle}
                       title={list.title}
                       groupId={group.id}

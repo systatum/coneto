@@ -448,6 +448,11 @@ describe("Treelist", () => {
           onClick: onMention,
           icon: { image: RiAtLine },
         },
+        false && {
+          id: "test",
+          caption: "Test",
+          icon: { image: RiAtLine },
+        },
       ];
     });
 
@@ -466,6 +471,26 @@ describe("Treelist", () => {
 
         cy.findByText("Mention").should("exist").click();
         cy.get("@onMention").should("have.been.calledOnce");
+      });
+    });
+
+    context("when given with falsy field", () => {
+      it("renders without falsy content", () => {
+        cy.mount(
+          <TreeList
+            content={TREE_LIST_DATA}
+            actions={TREE_LIST_ACTIONS}
+            emptySlate={<p>Not found.</p>}
+          />
+        );
+
+        cy.findAllByLabelText("tree-list-action-wrapper")
+          .children()
+          .should("have.length", 2);
+
+        cy.findByText("Discover").should("exist");
+        cy.findByText("Mention").should("exist");
+        cy.findByText("Test").should("not.exist");
       });
     });
 
