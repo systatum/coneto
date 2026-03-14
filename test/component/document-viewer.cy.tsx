@@ -1,8 +1,114 @@
 import { useEffect, useState } from "react";
 import { DocumentViewer } from "./../../components/document-viewer";
 import { urlToBase64 } from "./../../lib/base64";
+import { css } from "styled-components";
 
 describe("Document Viewer", () => {
+  context("styles", () => {
+    context("when given boxStyle", () => {
+      it("renders with the style with the specified styles", () => {
+        cy.mount(
+          <DocumentViewer
+            selectable
+            source={({ pdf }) => pdf("sample.pdf")}
+            title="Team Collaboration Notes"
+            styles={{
+              boxStyle: css`
+                border-color: blue;
+                background-color: rgba(255, 0, 0, 0.2);
+              `,
+            }}
+            boundingBoxes={[
+              {
+                page: 1,
+                x: 0.1319796954314721,
+                y: 0.32014388489208634,
+                width: 0.751269035532995,
+                height: 0.34532374100719426,
+                contentOnHover: <p>heyyy</p>,
+              },
+            ]}
+          />
+        );
+
+        cy.findByLabelText("selection-box")
+          .should("exist")
+          .should("have.css", "border-color", "rgb(0, 0, 255)")
+          .and("have.css", "background-color", "rgba(255, 0, 0, 0.2)");
+      });
+
+      context("when given boxStyle per bounding box", () => {
+        it("renders the bounding box using the individual boxStyle", () => {
+          cy.mount(
+            <DocumentViewer
+              selectable
+              source={({ pdf }) => pdf("sample.pdf")}
+              title="Team Collaboration Notes"
+              styles={{
+                boxStyle: css`
+                  border-color: blue;
+                  background-color: rgba(255, 0, 0, 0.2);
+                `,
+              }}
+              boundingBoxes={[
+                {
+                  page: 1,
+                  x: 0.1319796954314721,
+                  y: 0.32014388489208634,
+                  width: 0.751269035532995,
+                  height: 0.34532374100719426,
+                  contentOnHover: <p>heyyy</p>,
+                  boxStyle: {
+                    borderColor: "red",
+                    backgroundColor: "rgba(255, 0, 0, 0.2)",
+                  },
+                },
+              ]}
+            />
+          );
+
+          cy.findByLabelText("selection-box")
+            .should("exist")
+            .should("have.css", "border-color", "rgb(255, 0, 0)")
+            .and("have.css", "background-color", "rgba(255, 0, 0, 0.2)");
+        });
+      });
+    });
+  });
+
+  context("selectable", () => {
+    context("when given true", () => {
+      it("renders the crosshair cursor", () => {
+        cy.mount(
+          <DocumentViewer
+            selectable
+            source={({ pdf }) => pdf("sample.pdf")}
+            title="Team Collaboration Notes"
+          />
+        );
+
+        cy.findByLabelText("view-content")
+          .should("exist")
+          .should("have.css", "cursor", "crosshair");
+      });
+    });
+
+    context("when given true", () => {
+      it("renders the crosshair cursor", () => {
+        cy.mount(
+          <DocumentViewer
+            source={({ pdf }) => pdf("sample.pdf")}
+            title="Team Collaboration Notes"
+          />
+        );
+
+        cy.findByLabelText("view-content")
+          .should("exist")
+          .should("have.css", "cursor", "auto");
+      });
+    });
+  });
+
   context("source", () => {
     context("when given with pdf()", () => {
       it("renders the pdf", () => {
