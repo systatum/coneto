@@ -40,27 +40,32 @@ describe("Capsule Tab", () => {
 
   context("styles", () => {
     context("capsuleWrapperStyle", () => {
-      it("renders with gap 5px (by default)", () => {
+      it("renders with padding left and right with 5px", () => {
         cy.mount(<ProductCapsuleTab />);
 
-        cy.findAllByLabelText("capsule").eq(0).should("have.css", "gap", "5px");
+        const capsule = cy.findAllByLabelText("capsule").eq(0);
+
+        capsule.should("have.css", "padding-left", "5px");
+        capsule.should("have.css", "padding-right", "5px");
       });
 
-      context("when given gap by 20px", () => {
-        it("renders with gap 20px ", () => {
+      context("when given padding left and right by 20px", () => {
+        it("renders with those styles", () => {
           cy.mount(
             <ProductCapsuleTab
               styles={{
                 capsuleWrapperStyle: css`
-                  gap: 20px;
+                  padding-left: 20px;
+                  padding-right: 20px;
                 `,
               }}
             />
           );
 
-          cy.findAllByLabelText("capsule")
-            .eq(0)
-            .should("have.css", "gap", "20px");
+          const capsule = cy.findAllByLabelText("capsule").eq(0);
+
+          capsule.should("have.css", "padding-left", "20px");
+          capsule.should("have.css", "padding-right", "20px");
         });
       });
     });

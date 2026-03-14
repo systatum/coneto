@@ -52,7 +52,8 @@ function CapsuleTab({
       <Capsule
         styles={{
           capsuleWrapperStyle: css`
-            gap: 5px;
+            padding-left: 5px;
+            padding-right: 5px;
 
             ${styles?.capsuleWrapperStyle};
           `,
