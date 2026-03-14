@@ -19,6 +19,11 @@ const meta: Meta<typeof CapsuleTab> = {
         "ID of the initially active tab. Defaults to the first tab if not provided.",
       control: "text",
     },
+    onTabChange: {
+      description:
+        "Callback triggered when the active tab changes. If provided, the parent component can control the active tab externally. If not provided, CapsuleTab manages the active tab internally.",
+      control: false,
+    },
     activeBackgroundColor: {
       description: "Background color of the active capsule indicator.",
       control: "color",
@@ -28,11 +33,16 @@ const meta: Meta<typeof CapsuleTab> = {
       description: `
 Custom styles for the CapsuleTab component. This object allows you to override styles for individual parts:
 
-- **containerStyle**: Outer wrapper of the CapsuleTab (border, spacing, layout)
-- **tabStyle**: Styles applied to the capsule tabs area (forwarded into the internal Capsule)
+- **self**: Styles applied to the outer \`CapsuleTabWrapper\`. Useful for controlling borders, spacing, layout, shadows, or overall appearance.
 
-Each field accepts a \`CSSProp\` (styled-components compatible) and can be used to control layout, borders, colors, and visual appearance.
-      `,
+- **contentStyle**: Styles applied to the \`ContentWrapper\` that contains the active tab content. You can control padding, layout direction, background, etc.
+
+- **capsuleWrapperStyle**: Styles forwarded to the \`Capsule\` component's container wrapper. Useful for adjusting border radius, alignment, or capsule layout behavior.
+
+- **tabStyle**: Styles applied to individual capsule tabs inside the \`Capsule\` component. You can control tab border radius, colors, padding, hover states, and visual appearance.
+
+Each field accepts a \`CSSProp\` (styled-components compatible) and can be used to customize the layout and appearance of specific parts of the component.
+`,
     },
   },
 };
@@ -113,8 +123,16 @@ export const Default: Story = {
     };
 
     const TABS_ITEMS: CapsuleTabContentProps[] = [
-      { id: "1", title: "Write", content: <WriteTabContent /> },
-      { id: "2", title: "Review", content: <ReviewTabContent /> },
+      {
+        id: "1",
+        title: "Write",
+        content: <WriteTabContent key={"write-tab"} />,
+      },
+      {
+        id: "2",
+        title: "Review",
+        content: <ReviewTabContent key={"review-tab"} />,
+      },
     ];
 
     return (
