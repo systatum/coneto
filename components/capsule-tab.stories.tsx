@@ -119,8 +119,16 @@ export const Default: Story = {
     };
 
     const TABS_ITEMS: CapsuleTabContentProps[] = [
-      { id: "1", title: "Write", content: <WriteTabContent /> },
-      { id: "2", title: "Review", content: <ReviewTabContent /> },
+      {
+        id: "1",
+        title: "Write",
+        content: <WriteTabContent key={"write-tab"} />,
+      },
+      {
+        id: "2",
+        title: "Review",
+        content: <ReviewTabContent key={"review-tab"} />,
+      },
     ];
 
     return (
