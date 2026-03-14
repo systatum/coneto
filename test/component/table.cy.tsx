@@ -87,10 +87,6 @@ describe("Table", () => {
     it("should render loading-spinner around the row.level", () => {
       cy.mount(<BasicTable isLoading />);
 
-      cy.findByLabelText("overlay-blocker")
-        .should("exist")
-        .and("have.css", "padding-top", "60px");
-
       cy.findByLabelText("overlay-blocker").then(($overlay) => {
         const overlayRect = $overlay[0].getBoundingClientRect();
 
@@ -99,7 +95,7 @@ describe("Table", () => {
 
           const distance = spinnerRect.top - overlayRect.top;
 
-          expect(distance).to.be.closeTo(60, 10); // 60px is overlay padding-top
+          expect(distance).to.be.closeTo(0, 10); // render on the left top
         });
       });
     });
@@ -117,10 +113,6 @@ describe("Table", () => {
           />
         );
 
-        cy.findByLabelText("overlay-blocker")
-          .should("exist")
-          .and("have.css", "padding-top", "120px");
-
         cy.findByLabelText("overlay-blocker").then(($overlay) => {
           const overlayRect = $overlay[0].getBoundingClientRect();
 
@@ -129,7 +121,7 @@ describe("Table", () => {
 
             const distance = spinnerRect.top - overlayRect.top;
 
-            expect(distance).to.be.closeTo(120, 10); // 120px is overlay padding-top
+            expect(distance).to.be.closeTo(0, 10); // render on the left top
           });
         });
       });

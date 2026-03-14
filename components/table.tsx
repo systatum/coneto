@@ -576,13 +576,6 @@ function Table({
                 self: css`
                   display: flex;
                   align-items: start;
-                  justify-content: center;
-                  padding-top: 60px;
-
-                  ${(actions || showPagination) &&
-                  css`
-                    padding-top: 120px;
-                  `}
 
                   backdrop-filter: blur(0.5px);
                   background-color: rgba(255, 255, 255, 0.6);
