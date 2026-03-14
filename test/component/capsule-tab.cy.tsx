@@ -39,6 +39,32 @@ describe("Capsule Tab", () => {
   }
 
   context("styles", () => {
+    context("capsuleWrapperStyle", () => {
+      it("renders with gap 5px (by default)", () => {
+        cy.mount(<ProductCapsuleTab />);
+
+        cy.findAllByLabelText("capsule").eq(0).should("have.css", "gap", "5px");
+      });
+
+      context("when given gap by 20px", () => {
+        it("renders with gap 20px ", () => {
+          cy.mount(
+            <ProductCapsuleTab
+              styles={{
+                capsuleWrapperStyle: css`
+                  gap: 20px;
+                `,
+              }}
+            />
+          );
+
+          cy.findAllByLabelText("capsule")
+            .eq(0)
+            .should("have.css", "gap", "20px");
+        });
+      });
+    });
+
     it("renders capsule with 12px for active", () => {
       cy.mount(
         <ProductCapsuleTab
