@@ -95,7 +95,7 @@ describe("Table", () => {
 
           const distance = spinnerRect.top - overlayRect.top;
 
-          expect(distance).to.be.closeTo(0, 10); // render on the left top
+          expect(distance).to.be.closeTo(60, 10); // 60px is overlay padding-top
         });
       });
     });
@@ -121,7 +121,7 @@ describe("Table", () => {
 
             const distance = spinnerRect.top - overlayRect.top;
 
-            expect(distance).to.be.closeTo(0, 10); // render on the left top
+            expect(distance).to.be.closeTo(110, 10); // 110px is overlay padding-top
           });
         });
       });
