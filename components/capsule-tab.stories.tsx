@@ -3,7 +3,6 @@ import { CapsuleTab, CapsuleTabContentProps } from "./capsule-tab";
 import { Button } from "./button";
 import { ChangeEvent, useState } from "react";
 import { Textbox } from "./textbox";
-import { css } from "styled-components";
 
 const meta: Meta<typeof CapsuleTab> = {
   title: "Stage/CapsuleTab",
@@ -19,6 +18,11 @@ const meta: Meta<typeof CapsuleTab> = {
       description:
         "ID of the initially active tab. Defaults to the first tab if not provided.",
       control: "text",
+    },
+    onTabChange: {
+      description:
+        "Callback triggered when the active tab changes. If provided, the parent component can control the active tab externally. If not provided, CapsuleTab manages the active tab internally.",
+      control: false,
     },
     activeBackgroundColor: {
       description: "Background color of the active capsule indicator.",
