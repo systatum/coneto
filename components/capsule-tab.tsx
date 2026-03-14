@@ -32,7 +32,7 @@ function CapsuleTab({
 }: CapsuleTabProps) {
   const [selectedLocal, setSelectedLocal] = useState<string>(activeTab);
 
-  const isControlled = activeTab !== undefined;
+  const isControlled = onTabChange && activeTab !== undefined;
   const selected = isControlled ? activeTab : selectedLocal;
 
   const setSelected = useCallback(
