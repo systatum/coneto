@@ -568,24 +568,31 @@ function Table({
                 })()}
               </TableSummary>
             )}
-
-            {isLoading && (
-              <OverlayBlocker
-                styles={{
-                  self: css`
-                    display: flex;
-                    justify-content: center;
-                    backdrop-filter: blur(0.5px);
-                    background-color: rgba(255, 255, 255, 0.6);
-                  `,
-                }}
-                show={isLoading}
-                onClick="preventDefault"
-              >
-                <LoadingSpinner iconSize={24} />
-              </OverlayBlocker>
-            )}
           </TableContainer>
+
+          {isLoading && (
+            <OverlayBlocker
+              styles={{
+                self: css`
+                  display: flex;
+                  align-items: start;
+                  padding-top: 60px;
+
+                  ${(actions || showPagination) &&
+                  css`
+                    padding-top: 120px;
+                  `}
+
+                  backdrop-filter: blur(0.5px);
+                  background-color: rgba(255, 255, 255, 0.6);
+                `,
+              }}
+              show={isLoading}
+              onClick="preventDefault"
+            >
+              <LoadingSpinner iconSize={24} />
+            </OverlayBlocker>
+          )}
         </Wrapper>
       </TableColumnContext.Provider>
     </DnDContext.Provider>
@@ -692,9 +699,9 @@ const PaginationSelectedItem = styled.span<{ $style?: CSSProp }>`
 `;
 
 const TableContainer = styled.div<{ $hasSelected: boolean }>`
+  position: relative;
   display: flex;
   flex-direction: column;
-  position: relative;
   height: 100%;
   overflow: hidden;
 

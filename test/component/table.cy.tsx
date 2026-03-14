@@ -83,6 +83,51 @@ describe("Table", () => {
     );
   }
 
+  context("isLoading", () => {
+    it("should render loading-spinner around the row.level", () => {
+      cy.mount(<BasicTable isLoading />);
+
+      cy.findByLabelText("overlay-blocker").then(($overlay) => {
+        const overlayRect = $overlay[0].getBoundingClientRect();
+
+        cy.findByLabelText("circle").then(($spinner) => {
+          const spinnerRect = $spinner[0].getBoundingClientRect();
+
+          const distance = spinnerRect.top - overlayRect.top;
+
+          expect(distance).to.be.closeTo(60, 10); // 60px is overlay padding-top
+        });
+      });
+    });
+
+    context("when given actions", () => {
+      it("should render loading-spinner around the row.level", () => {
+        cy.mount(
+          <BasicTable
+            actions={[
+              {
+                caption: "Test",
+              },
+            ]}
+            isLoading
+          />
+        );
+
+        cy.findByLabelText("overlay-blocker").then(($overlay) => {
+          const overlayRect = $overlay[0].getBoundingClientRect();
+
+          cy.findByLabelText("circle").then(($spinner) => {
+            const spinnerRect = $spinner[0].getBoundingClientRect();
+
+            const distance = spinnerRect.top - overlayRect.top;
+
+            expect(distance).to.be.closeTo(110, 10); // 110px is overlay padding-top
+          });
+        });
+      });
+    });
+  });
+
   context("selected", () => {
     context("when selected", () => {
       it("should render with selected background-color (rgb(219, 234, 254))", () => {
@@ -1157,7 +1202,7 @@ describe("Table", () => {
           );
 
           cy.findByLabelText("pagination-wrapper")
-            .should("have.css", "width", "432px")
+            .should("have.css", "width", "447px")
             .and("have.css", "justify-content", "end");
         });
       });
