@@ -8,6 +8,33 @@ import {
 } from "@remixicon/react";
 
 describe("Datebox", () => {
+  context("isLoading", () => {
+    context("when given true", () => {
+      it("should render with gray-ish color", () => {
+        cy.mount(<Datebox id="date-with-loading" isLoading />);
+
+        cy.findByLabelText("circle").should(
+          "have.css",
+          "color",
+          "rgb(128, 128, 128)"
+        );
+
+        cy.findByLabelText("circle")
+          .parent()
+          .should("have.css", "background-color", "rgba(255, 255, 255, 0.6)");
+      });
+
+      it("should disabled the input component", () => {
+        cy.mount(<Datebox isLoading id="date-with-loading" />);
+
+        cy.get("#date-with-loading")
+          .should("have.css", "user-select", "none")
+          .and("have.css", "pointer-events", "none")
+          .and("be.disabled");
+      });
+    });
+  });
+
   context("with dropdowns", () => {
     it("renders initialize drawer with min-width 200px", () => {
       cy.mount(

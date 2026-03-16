@@ -42,22 +42,20 @@ describe("Combobox", () => {
           .should("have.css", "background-color", "rgba(255, 255, 255, 0.6)");
       });
 
-      context("when clicking", () => {
-        it("should not displaying drawer", () => {
-          cy.mount(
-            <ProductCombobox
-              options={null}
-              isLoading
-              id="combo-with-loading"
-              placeholder="Select a fruit..."
-            />
-          );
+      it("should disabled the input component", () => {
+        cy.mount(
+          <ProductCombobox
+            options={null}
+            isLoading
+            id="combo-with-loading"
+            placeholder="Select a fruit..."
+          />
+        );
 
-          cy.get("#combo-with-loading")
-            .should("have.css", "user-select", "none")
-            .and("have.css", "pointer-events", "none")
-            .and("be.disabled");
-        });
+        cy.get("#combo-with-loading")
+          .should("have.css", "user-select", "none")
+          .and("have.css", "pointer-events", "none")
+          .and("be.disabled");
       });
     });
   });
