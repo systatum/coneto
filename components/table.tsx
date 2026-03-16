@@ -584,12 +584,7 @@ function Table({
                   display: flex;
                   align-items: start;
                   padding-left: 16px;
-                  padding-top: ${(() => {
-                    if (showPagination && hasRowGroup) return "152px";
-                    if (showPagination || hasRowGroup) return "140px";
-                    if (actions || searchable) return "126px";
-                    return "60px";
-                  })()};
+                  padding-top: 16px;
 
                   backdrop-filter: blur(0.5px);
                   background-color: rgba(255, 255, 255, 0.6);
@@ -598,7 +593,20 @@ function Table({
               show={isLoading}
               onClick="preventDefault"
             >
-              <LoadingSpinner iconSize={24} />
+              <LoadingSpinner
+                styles={{
+                  containerStyle: css`
+                    background-color: black;
+                    border-radius: 20px;
+                    opacity: 0.7;
+                    color: white;
+                    padding-right: 8px;
+                  `,
+                }}
+                label="Loading"
+                gap={10}
+                iconSize={24}
+              />
             </OverlayBlocker>
           )}
         </Wrapper>
