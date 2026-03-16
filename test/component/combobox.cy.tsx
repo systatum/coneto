@@ -21,7 +21,7 @@ describe("Combobox", () => {
 
   context("isLoading", () => {
     context("when given true", () => {
-      it("should render with gray-ish color", () => {
+      it("should render with gray-ish color and gap 6px", () => {
         cy.mount(
           <ProductCombobox
             options={null}
@@ -30,6 +30,7 @@ describe("Combobox", () => {
             placeholder="Select a fruit..."
           />
         );
+        cy.findByLabelText("circle").parent().should("have.css", "gap", "6px");
 
         cy.findByLabelText("circle").should(
           "have.css",
@@ -56,6 +57,21 @@ describe("Combobox", () => {
           .should("have.css", "user-select", "none")
           .and("have.css", "pointer-events", "none")
           .and("be.disabled");
+      });
+    });
+
+    context("when given false", () => {
+      it("should not render the spinner", () => {
+        cy.mount(
+          <ProductCombobox
+            options={null}
+            isLoading={false}
+            id="combo-with-loading"
+            placeholder="Select a fruit..."
+          />
+        );
+
+        cy.findByLabelText("circle").should("not.exist");
       });
     });
   });

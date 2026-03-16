@@ -10,14 +10,10 @@ import {
 describe("Datebox", () => {
   context("isLoading", () => {
     context("when given true", () => {
-      it("should render with gray-ish color", () => {
+      it("should render with gray-ish color and gap 6px", () => {
         cy.mount(<Datebox id="date-with-loading" isLoading />);
 
-        cy.findByLabelText("circle").should(
-          "have.css",
-          "color",
-          "rgb(128, 128, 128)"
-        );
+        cy.findByLabelText("circle").parent().should("have.css", "gap", "6px");
 
         cy.findByLabelText("circle")
           .parent()
@@ -31,6 +27,14 @@ describe("Datebox", () => {
           .should("have.css", "user-select", "none")
           .and("have.css", "pointer-events", "none")
           .and("be.disabled");
+      });
+    });
+
+    context("when given false", () => {
+      it("should not render the spinner", () => {
+        cy.mount(<Datebox isLoading={false} id="datebox-with-loading" />);
+
+        cy.findByLabelText("circle").should("not.exist");
       });
     });
   });
