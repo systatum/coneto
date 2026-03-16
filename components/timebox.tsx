@@ -313,6 +313,9 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
       actions,
       helper,
       disabled,
+      labelGap,
+      labelWidth,
+      labelPosition,
       ...rest
     } = props;
 
@@ -325,6 +328,9 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
     return (
       <FieldLane
         id={inputId}
+        labelGap={labelGap}
+        labelWidth={labelWidth}
+        labelPosition={labelPosition}
         dropdowns={dropdowns}
         showError={showError}
         errorMessage={errorMessage}
@@ -338,7 +344,6 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
           bodyStyle: styles?.bodyStyle,
           controlStyle: styles?.controlStyle,
           containerStyle: css`
-            width: fit-content;
             ${styles?.containerStyle}
           `,
           labelStyle: styles?.labelStyle,

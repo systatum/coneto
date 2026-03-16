@@ -1,4 +1,5 @@
 import {
+  RiArchive2Fill,
   RiArrowUpSLine,
   RiClipboardFill,
   RiDeleteBin2Fill,
@@ -9,8 +10,10 @@ import {
 } from "@remixicon/react";
 import {
   ColumnTableProps,
+  SubMenuListTableProps,
   Table,
   TableActionsProps,
+  TableProps,
   TableRowProps,
 } from "./../../components/table";
 import { TipMenuItemProps } from "./../../components/tip-menu";
@@ -18,6 +21,7 @@ import { css } from "styled-components";
 import { CapsuleContentProps } from "./../../components/capsule";
 import { Button } from "./../../components/button";
 import { Card } from "./../../components/card";
+import { useState } from "react";
 
 interface TableItemProps {
   title: string;
@@ -57,31 +61,76 @@ describe("Table", () => {
     type: TYPES_DATA[i % TYPES_DATA.length],
   }));
 
+  function BasicTable(props: Omit<TableProps, "children" | "columns">) {
+    const [selectedItems, setSelectedItems] = useState([]);
+
+    return (
+      <Table
+        selectable
+        columns={columnsBasic}
+        selectedItems={selectedItems}
+        onItemsSelected={setSelectedItems}
+        {...props}
+      >
+        {rawRows?.map((row, index) => (
+          <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
+            {[row.name, row.type].map((rowCell, i) => (
+              <Table.Row.Cell key={`${row.name}-${row.type}-${rowCell}`}>
+                {rowCell}
+              </Table.Row.Cell>
+            ))}
+          </Table.Row>
+        ))}
+      </Table>
+    );
+  }
+
+  context("selected", () => {
+    context("when selected", () => {
+      it("should render with selected background-color (rgb(219, 234, 254))", () => {
+        cy.mount(<BasicTable />);
+        cy.findAllByLabelText("table-row")
+          .eq(0)
+          .should("have.css", "background-color", "rgb(249, 250, 251)");
+        cy.findAllByRole("checkbox").eq(1).click();
+        cy.findAllByLabelText("table-row")
+          .eq(0)
+          .trigger("mouseout")
+          .should("have.css", "background-color", "rgb(219, 234, 254)");
+      });
+
+      context("when hovering the selected item", () => {
+        it("should render the hover background-color rgb(231, 242, 252)", () => {
+          cy.mount(<BasicTable />);
+          cy.findAllByLabelText("table-row")
+            .eq(0)
+            .should("have.css", "background-color", "rgb(249, 250, 251)");
+          cy.findAllByRole("checkbox").eq(1).click();
+          cy.findAllByLabelText("table-row")
+            .eq(0)
+            .trigger("mouseover")
+            .should("have.css", "background-color", "rgb(231, 242, 252)");
+        });
+      });
+    });
+  });
+
   context("actions in main table", () => {
     context("when not given type", () => {
       it("should render with button", () => {
         cy.mount(
-          <Table
+          <BasicTable
             actions={[
               {
                 caption: "Test Button",
               },
             ]}
-            columns={columnsBasic}
-          >
-            {rawRows?.map((row, index) => (
-              <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
-                {[row.name, row.type].map((rowCell, i) => (
-                  <Table.Row.Cell key={`${row.name}-${row.type}-${rowCell}`}>
-                    {rowCell}
-                  </Table.Row.Cell>
-                ))}
-              </Table.Row>
-            ))}
-          </Table>
+          />
         );
 
-        cy.findByLabelText("action-button").should("exist");
+        cy.findByLabelText("action-button")
+          .should("exist")
+          .should("have.css", "height", "32px");
         cy.findByLabelText("capsule").should("not.exist");
       });
     });
@@ -89,36 +138,28 @@ describe("Table", () => {
     context("when given type button", () => {
       it("should render with button component", () => {
         cy.mount(
-          <Table
+          <BasicTable
             actions={[
               {
                 caption: "Test Button",
                 type: "button",
               },
             ]}
-            columns={columnsBasic}
-          >
-            {rawRows?.map((row, index) => (
-              <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
-                {[row.name, row.type].map((rowCell, i) => (
-                  <Table.Row.Cell key={`${row.name}-${row.type}-${rowCell}`}>
-                    {rowCell}
-                  </Table.Row.Cell>
-                ))}
-              </Table.Row>
-            ))}
-          </Table>
+          />
         );
 
-        cy.findByLabelText("action-button").should("exist");
+        cy.findByLabelText("action-button")
+          .should("exist")
+          .should("have.css", "height", "32px");
+
         cy.findByLabelText("capsule").should("not.exist");
       });
     });
 
     context("when given capsule props with type button", () => {
-      it("should render with button component", () => {
+      it("should render with button with height 32px", () => {
         cy.mount(
-          <Table
+          <BasicTable
             actions={[
               {
                 caption: "Test Button",
@@ -128,29 +169,20 @@ describe("Table", () => {
                 },
               },
             ]}
-            columns={columnsBasic}
-          >
-            {rawRows?.map((row, index) => (
-              <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
-                {[row.name, row.type].map((rowCell, i) => (
-                  <Table.Row.Cell key={`${row.name}-${row.type}-${rowCell}`}>
-                    {rowCell}
-                  </Table.Row.Cell>
-                ))}
-              </Table.Row>
-            ))}
-          </Table>
+          />
         );
 
-        cy.findByLabelText("action-button").should("exist");
+        cy.findByLabelText("action-button")
+          .should("exist")
+          .should("have.css", "height", "32px");
         cy.findByLabelText("capsule").should("not.exist");
       });
     });
 
     context("when given capsule props with type capsule", () => {
-      it("should render with capsule component", () => {
+      it("should render with capsule with height 32px", () => {
         cy.mount(
-          <Table
+          <BasicTable
             actions={[
               {
                 type: "capsule",
@@ -160,22 +192,13 @@ describe("Table", () => {
                 },
               },
             ]}
-            columns={columnsBasic}
-          >
-            {rawRows?.map((row, index) => (
-              <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
-                {[row.name, row.type].map((rowCell, i) => (
-                  <Table.Row.Cell key={`${row.name}-${row.type}-${rowCell}`}>
-                    {rowCell}
-                  </Table.Row.Cell>
-                ))}
-              </Table.Row>
-            ))}
-          </Table>
+          />
         );
 
         cy.findByLabelText("action-button").should("not.exist");
-        cy.findByLabelText("capsule").should("exist");
+        cy.findByLabelText("capsule")
+          .should("exist")
+          .should("have.css", "height", "32px");
       });
     });
   });
@@ -794,7 +817,7 @@ describe("Table", () => {
     ];
   };
 
-  const ROW_ACTIONS = (rowId: string): TipMenuItemProps[] => {
+  const ROW_ACTIONS = (rowId: string): SubMenuListTableProps[] => {
     return [
       {
         caption: "Edit",
@@ -808,6 +831,13 @@ describe("Table", () => {
         icon: { image: RiDeleteBin2Fill, color: "gray" },
         onClick: () => {
           console.log(`${rowId} was deleted`);
+        },
+      },
+      false && {
+        caption: "Arhive",
+        icon: { image: RiArchive2Fill, color: "gray" },
+        onClick: () => {
+          console.log(`${rowId} was archive`);
         },
       },
     ];
@@ -1097,6 +1127,7 @@ describe("Table", () => {
     context("with pagination wrapper style", () => {
       context("when given width full and justify-end", () => {
         it("renders on the end content", () => {
+          cy.viewport(515, 720);
           cy.mount(
             <Table
               selectable
@@ -1834,42 +1865,45 @@ describe("Table", () => {
   });
 
   context("with row actions", () => {
+    function TableWithRowActions({
+      actions,
+    }: {
+      actions?: (columnCaption: string) => SubMenuListTableProps[];
+    }) {
+      return (
+        <Table
+          selectable
+          styles={{
+            tableBodyStyle: css`
+              max-height: 400px;
+            `,
+          }}
+          columns={columns}
+          actions={TOP_ACTIONS}
+          searchable
+        >
+          {rows?.map((groupValue, groupIndex) => (
+            <Table.Row.Group
+              key={groupIndex}
+              title={groupValue.title}
+              subtitle={groupValue.subtitle}
+            >
+              {groupValue.items.map((rowValue, rowIndex) => (
+                <Table.Row
+                  key={rowIndex}
+                  rowId={`${groupValue.title}-${rowValue.title}`}
+                  content={[rowValue.title, rowValue.category, rowValue.author]}
+                  actions={actions}
+                />
+              ))}
+            </Table.Row.Group>
+          ))}
+        </Table>
+      );
+    }
     context("when hover another after opened", () => {
       it("should always opened", () => {
-        cy.mount(
-          <Table
-            selectable
-            styles={{
-              tableBodyStyle: css`
-                max-height: 400px;
-              `,
-            }}
-            columns={columns}
-            actions={TOP_ACTIONS}
-            searchable
-          >
-            {rows?.map((groupValue, groupIndex) => (
-              <Table.Row.Group
-                key={groupIndex}
-                title={groupValue.title}
-                subtitle={groupValue.subtitle}
-              >
-                {groupValue.items.map((rowValue, rowIndex) => (
-                  <Table.Row
-                    key={rowIndex}
-                    rowId={`${groupValue.title}-${rowValue.title}`}
-                    content={[
-                      rowValue.title,
-                      rowValue.category,
-                      rowValue.author,
-                    ]}
-                    actions={ROW_ACTIONS}
-                  />
-                ))}
-              </Table.Row.Group>
-            ))}
-          </Table>
-        );
+        cy.mount(<TableWithRowActions actions={ROW_ACTIONS} />);
         cy.window().then((win) => {
           cy.spy(win.console, "log").as("consoleLog");
         });
@@ -1883,40 +1917,7 @@ describe("Table", () => {
 
     context("when scroll after 100px", () => {
       it("should closed the TipMenu", () => {
-        cy.mount(
-          <Table
-            selectable
-            styles={{
-              tableBodyStyle: css`
-                max-height: 400px;
-              `,
-            }}
-            columns={columns}
-            actions={TOP_ACTIONS}
-            searchable
-          >
-            {rows?.map((groupValue, groupIndex) => (
-              <Table.Row.Group
-                key={groupIndex}
-                title={groupValue.title}
-                subtitle={groupValue.subtitle}
-              >
-                {groupValue.items.map((rowValue, rowIndex) => (
-                  <Table.Row
-                    key={rowIndex}
-                    rowId={`${groupValue.title}-${rowValue.title}`}
-                    content={[
-                      rowValue.title,
-                      rowValue.category,
-                      rowValue.author,
-                    ]}
-                    actions={ROW_ACTIONS}
-                  />
-                ))}
-              </Table.Row.Group>
-            ))}
-          </Table>
-        );
+        cy.mount(<TableWithRowActions actions={ROW_ACTIONS} />);
         cy.window().then((win) => {
           cy.spy(win.console, "log").as("consoleLog");
         });
@@ -1941,40 +1942,7 @@ describe("Table", () => {
 
     context("when only one action", () => {
       it("render action button", () => {
-        cy.mount(
-          <Table
-            selectable
-            styles={{
-              tableBodyStyle: css`
-                max-height: 400px;
-              `,
-            }}
-            columns={columns}
-            actions={TOP_ACTIONS}
-            searchable
-          >
-            {rows?.map((groupValue, groupIndex) => (
-              <Table.Row.Group
-                key={groupIndex}
-                title={groupValue.title}
-                subtitle={groupValue.subtitle}
-              >
-                {groupValue.items.map((rowValue, rowIndex) => (
-                  <Table.Row
-                    key={rowIndex}
-                    rowId={`${groupValue.title}-${rowValue.title}`}
-                    content={[
-                      rowValue.title,
-                      rowValue.category,
-                      rowValue.author,
-                    ]}
-                    actions={ONE_ROW_ACTION}
-                  />
-                ))}
-              </Table.Row.Group>
-            ))}
-          </Table>
-        );
+        cy.mount(<TableWithRowActions actions={ONE_ROW_ACTION} />);
         cy.window().then((win) => {
           cy.spy(win.console, "log").as("consoleLog");
         });
@@ -1996,40 +1964,7 @@ describe("Table", () => {
 
     context("when given multiple actions", () => {
       it("render with tip menu", () => {
-        cy.mount(
-          <Table
-            selectable
-            styles={{
-              tableBodyStyle: css`
-                max-height: 400px;
-              `,
-            }}
-            columns={columns}
-            actions={TOP_ACTIONS}
-            searchable
-          >
-            {rows?.map((groupValue, groupIndex) => (
-              <Table.Row.Group
-                key={groupIndex}
-                title={groupValue.title}
-                subtitle={groupValue.subtitle}
-              >
-                {groupValue.items.map((rowValue, rowIndex) => (
-                  <Table.Row
-                    key={rowIndex}
-                    rowId={`${groupValue.title}-${rowValue.title}`}
-                    content={[
-                      rowValue.title,
-                      rowValue.category,
-                      rowValue.author,
-                    ]}
-                    actions={ROW_ACTIONS}
-                  />
-                ))}
-              </Table.Row.Group>
-            ))}
-          </Table>
-        );
+        cy.mount(<TableWithRowActions actions={ROW_ACTIONS} />);
         cy.window().then((win) => {
           cy.spy(win.console, "log").as("consoleLog");
         });
@@ -2046,6 +1981,21 @@ describe("Table", () => {
           "have.been.calledWith",
           "Tech Articles-Async Patterns in JS was edited"
         );
+      });
+
+      context("when given with falsy field", () => {
+        it("renders without falsy action", () => {
+          cy.mount(<TableWithRowActions actions={ROW_ACTIONS} />);
+
+          cy.findAllByLabelText("table-row").eq(2).trigger("mouseover");
+          cy.findAllByLabelText("action-button")
+            .eq(4)
+            .should("be.visible")
+            .click();
+          cy.findAllByText("Edit").should("exist");
+          cy.findAllByText("Delete").should("exist");
+          cy.findAllByText("Archive").should("not.exist");
+        });
       });
     });
   });

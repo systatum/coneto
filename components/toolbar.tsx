@@ -20,6 +20,7 @@ import {
 } from "@floating-ui/react";
 import styled, { css, CSSProp } from "styled-components";
 import { Figure, FigureProps } from "./figure";
+import { FalsyOr } from "./../lib/falsy";
 
 export interface ToolbarProps {
   children: ReactNode;
@@ -45,7 +46,7 @@ export interface ToolbarMenuProps {
   iconSize?: number;
 }
 
-export type ToolbarSubMenuProps = TipMenuItemProps;
+export type ToolbarSubMenuProps = FalsyOr<TipMenuItemProps>;
 
 export interface ToolbarMenuSylesProps {
   dropdownStyle?: CSSProp;
@@ -341,6 +342,10 @@ function ToolbarMenu({
   const menuBorderActive = VARIANT_ACTIVE.border[variant];
   const menuBackgroundActive = VARIANT_ACTIVE.background[variant];
 
+  const filteredSubMenuList =
+    subMenuList?.filter((menu): menu is ToolbarSubMenuProps => Boolean(menu)) ??
+    [];
+
   return (
     <ToolbarContainer
       aria-label="toolbar-menu"
@@ -434,7 +439,7 @@ function ToolbarMenu({
               setHovered("original");
             }}
             styles={{ self: styles?.dropdownStyle }}
-            subMenuList={subMenuList}
+            subMenuList={filteredSubMenuList}
           />
         </div>
       )}

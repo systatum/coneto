@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Tooltip, TooltipProps } from "./tooltip";
+import { Tooltip, TooltipDialogPlacement, TooltipProps } from "./tooltip";
 import { Button } from "./button";
 import { Badge } from "./badge";
 import {
@@ -9,7 +9,7 @@ import {
 } from "./stateful-form";
 import { useState } from "react";
 import z from "zod";
-import { RiAddBoxLine } from "@remixicon/react";
+import { RiAddBoxLine, RiImage2Line } from "@remixicon/react";
 import { css } from "styled-components";
 import { OptionsProps } from "./selectbox";
 
@@ -147,6 +147,86 @@ export const Link: Story = {
         <Tooltip {...DottedUnderlineTooltip} />
         <Tooltip {...NoUnderlineTooltip} />
         <Tooltip {...BlueUnderlineTooltip} />
+      </div>
+    );
+  },
+};
+
+export const Positioning: Story = {
+  render: () => {
+    const Content = ({ placement }: { placement: TooltipDialogPlacement }) => (
+      <Tooltip
+        dialog={placement}
+        showDialogOn="hover"
+        dialogPlacement={placement}
+        styles={{
+          drawerStyle: css`
+            font-family: monospace;
+            font-size: 11px;
+            white-space: nowrap;
+          `,
+        }}
+      >
+        <div
+          style={{
+            width: 60,
+            height: 60,
+            borderRadius: 8,
+            background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: "0 2px 8px rgba(99,102,241,0.35)",
+            cursor: "default",
+            flexShrink: 0,
+          }}
+        >
+          <RiImage2Line color="white" size={40} />
+        </div>
+      </Tooltip>
+    );
+
+    const empty = <div style={{ width: 60, height: 60 }} />;
+
+    return (
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(5, 60px)",
+          gridTemplateRows: "repeat(5, 60px)",
+          gap: "16px",
+          padding: "48px",
+        }}
+      >
+        {empty}
+        <Content placement="top-left" />
+        <Content placement="top-center" />
+        <Content placement="top-right" />
+        {empty}
+
+        <Content placement="left-top" />
+        {empty}
+        {empty}
+        {empty}
+        <Content placement="right-top" />
+
+        <Content placement="left-center" />
+        {empty}
+        {empty}
+        {empty}
+        <Content placement="right-center" />
+
+        <Content placement="left-bottom" />
+        {empty}
+        {empty}
+        {empty}
+        <Content placement="right-bottom" />
+
+        {empty}
+        <Content placement="bottom-left" />
+        <Content placement="bottom-center" />
+        <Content placement="bottom-right" />
+        {empty}
       </div>
     );
   },

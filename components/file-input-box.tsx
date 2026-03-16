@@ -177,6 +177,9 @@ function FileInputBox({
   disabled,
   name,
   id,
+  labelGap,
+  labelWidth,
+  labelPosition,
   ...rest
 }: FileInputBoxProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -197,6 +200,9 @@ function FileInputBox({
     <FieldLane
       id={inputId}
       showError={showError}
+      labelGap={labelGap}
+      labelWidth={labelWidth}
+      labelPosition={labelPosition}
       errorMessage={errorMessage}
       label={label}
       actions={actions}

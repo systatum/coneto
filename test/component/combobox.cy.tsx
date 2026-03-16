@@ -1,6 +1,11 @@
-import { Combobox, ComboboxProps } from "./../../components/combobox";
+import {
+  Combobox,
+  ComboboxActionProps,
+  ComboboxProps,
+} from "./../../components/combobox";
 import { Button } from "./../../components/button";
 import {
+  RiAddLine,
   RiHome2Line,
   RiLogoutBoxLine,
   RiSettings2Line,
@@ -10,11 +15,64 @@ import { OptionsProps } from "@/components/selectbox";
 import { useState } from "react";
 
 describe("Combobox", () => {
-  context("options", () => {
-    function ProductCombobox(props: ComboboxProps) {
-      return <Combobox {...props} />;
-    }
+  function ProductCombobox(props: ComboboxProps) {
+    return <Combobox {...props} />;
+  }
+  context("actions", () => {
+    const FRUIT_ACTIONS: ComboboxActionProps[] = [
+      {
+        title: "Add Fruit",
+        onClick: () => {},
+        icon: {
+          image: RiAddLine,
+        },
+      },
+      false && {
+        title: "Delete Fruit",
+        onClick: () => {},
+        icon: {
+          image: RiAddLine,
+        },
+      },
+    ];
 
+    context("actions", () => {
+      it("should render the action", () => {
+        cy.mount(
+          <ProductCombobox
+            options={null}
+            actions={FRUIT_ACTIONS}
+            placeholder="Select a fruit..."
+          />
+        );
+
+        cy.findByPlaceholderText("Select a fruit...")
+          .should("have.value", "")
+          .click();
+        cy.findByText("Add Fruit").should("exist");
+      });
+    });
+
+    context("when given with falsy field", () => {
+      it("renders without falsy action", () => {
+        cy.mount(
+          <ProductCombobox
+            options={null}
+            actions={FRUIT_ACTIONS}
+            placeholder="Select a fruit..."
+          />
+        );
+
+        cy.findByPlaceholderText("Select a fruit...")
+          .should("have.value", "")
+          .click();
+        cy.findByText("Add Fruit").should("exist");
+        cy.findByText("Delete Fruit").should("not.exist");
+      });
+    });
+  });
+
+  context("options", () => {
     context("when given null", () => {
       it("should not have option", () => {
         cy.mount(

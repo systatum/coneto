@@ -21,20 +21,20 @@ const meta: Meta<typeof DocumentViewer> = {
   component: DocumentViewer,
   tags: ["autodocs"],
   argTypes: {
-    source: {
-      description:
-        "Defines the document source using a builder function (pdf, image, file, or encodedString).",
-      control: false,
-      table: {
-        type: { summary: "DocumentSource" },
-      },
-    },
     title: {
       description: "Title displayed in the viewer toolbar.",
       control: "text",
       table: {
         type: { summary: "string" },
         defaultValue: { summary: "Document" },
+      },
+    },
+    source: {
+      description:
+        "Defines the document source using a builder function (pdf, image, file, or encodedString).",
+      control: false,
+      table: {
+        type: { summary: "DocumentSource" },
       },
     },
     onRegionSelected: {
@@ -65,17 +65,6 @@ const meta: Meta<typeof DocumentViewer> = {
         defaultValue: { summary: "100" },
       },
     },
-    totalPagesText: {
-      description:
-        "Custom renderer for displaying current page and total pages text.",
-      control: false,
-      table: {
-        type: {
-          summary:
-            "(data: { currentPage?: number; totalPages?: number }) => string",
-        },
-      },
-    },
     libPdfJsWorkerSrc: {
       description:
         "Custom worker source URL used by pdf.js to load the PDF worker.",
@@ -88,12 +77,25 @@ const meta: Meta<typeof DocumentViewer> = {
         },
       },
     },
-    zoomPlaceholderText: {
-      description: "Placeholder text displayed in the zoom combobox.",
-      control: "text",
+    labels: {
+      description: `
+Customizes text labels displayed in the DocumentViewer toolbar.
+
+Available properties:
+
+- **zoomPlaceholder** — Placeholder text shown inside the zoom combobox.
+- **totalPages** — Custom renderer for the page indicator. Receives the current page and total pages, allowing full control over how the page information is displayed.
+
+Example:
+(labels: {
+  zoomPlaceholder: "Select zoom level",
+  totalPages: ({ currentPage, totalPages }) =>
+    \`Page \${currentPage} / \${totalPages}\`
+})
+`,
+      control: false,
       table: {
-        type: { summary: "string" },
-        defaultValue: { summary: "zoom your pdf..." },
+        type: { summary: "DocumentViewerLabelProps" },
       },
     },
     styles: {
@@ -322,6 +324,7 @@ export const PDF: Story = {
           <Window.Cell>
             <DocumentViewer
               ref={ref}
+              selectable
               onRegionSelected={(region: BoundingBoxState) => {
                 handleSetBoxes(region);
               }}
@@ -522,6 +525,7 @@ export const PNG: Story = {
       <>
         <DocumentViewer
           ref={ref}
+          selectable
           onRegionSelected={(props: BoundingBoxState) => {
             handleSetBoxes(props);
           }}
@@ -714,6 +718,7 @@ export const WithFile: Story = {
       <>
         <DocumentViewer
           ref={ref}
+          selectable
           onRegionSelected={(props: BoundingBoxState) => {
             handleSetBoxes(props);
           }}
@@ -900,6 +905,7 @@ export const Base64: Story = {
       <>
         <DocumentViewer
           ref={ref}
+          selectable
           onRegionSelected={(props: BoundingBoxState) => {
             handleSetBoxes(props);
           }}

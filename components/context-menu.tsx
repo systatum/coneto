@@ -2,15 +2,12 @@ import { css, CSSProp } from "styled-components";
 import { Button, ButtonProps } from "./button";
 import { RiMoreFill } from "@remixicon/react";
 import { TipMenuItemProps } from "./tip-menu";
-import { ReactNode } from "react";
-import { Figure } from "./figure";
 
 export type ContextMenuActionsProps = TipMenuItemProps;
 
 export interface ContextMenuProps {
   actions: ContextMenuActionsProps[];
   onOpen?: (prop: boolean) => void;
-  children?: ReactNode;
   focusBackgroundColor?: string;
   activeBackgroundColor?: string;
   hoverBackgroundColor?: string;
@@ -27,7 +24,6 @@ export interface ContextMenuStylesProps {
 }
 
 export default function ContextMenu({
-  children,
   actions,
   styles,
   activeBackgroundColor,
@@ -46,6 +42,7 @@ export default function ContextMenu({
         padding: 8px;
         width: 32px;
         height: 32px;
+
         ${focusBackgroundColor &&
         css`
           &:focus-visible {
@@ -103,6 +100,7 @@ export default function ContextMenu({
       subMenu={({ list }) => list(actions)}
       icon={{
         image: RiMoreFill,
+        color: "black",
         size: iconSize,
       }}
     />

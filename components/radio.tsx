@@ -147,6 +147,9 @@ function Radio({
   id,
   title,
   description,
+  labelGap,
+  labelWidth,
+  labelPosition,
   ...rest
 }: RadioProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -166,6 +169,9 @@ function Radio({
   return (
     <FieldLane
       id={inputId}
+      labelGap={labelGap}
+      labelWidth={labelWidth}
+      labelPosition={labelPosition}
       showError={showError}
       errorMessage={errorMessage}
       label={title}
@@ -174,7 +180,10 @@ function Radio({
       disabled={disabled}
       required={rest.required}
       styles={{
-        bodyStyle,
+        bodyStyle: css`
+          align-items: center;
+          ${bodyStyle}
+        `,
         controlStyle,
         containerStyle,
         labelStyle,

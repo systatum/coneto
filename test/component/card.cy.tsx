@@ -1,4 +1,4 @@
-import { RiEdit2Line } from "@remixicon/react";
+import { RiDeleteBack2Fill, RiEdit2Line } from "@remixicon/react";
 import { Card, CardProps } from "./../../components/card";
 import { Button } from "./../../components/button";
 import { DormantText } from "./../../components/dormant-text";
@@ -262,6 +262,34 @@ describe("Card", () => {
       );
 
       cy.findByLabelText("action-button-icon").should("not.exist");
+    });
+
+    context("when given falsy action", () => {
+      it("should render without falsy action", () => {
+        cy.mount(
+          <ProductCard
+            headerActions={[
+              {
+                caption: "Edit fields",
+                icon: { image: RiEdit2Line },
+                onClick: () => {
+                  console.log(`Edit button was clicked`);
+                },
+              },
+              false && {
+                caption: "Delete fields",
+                icon: { image: RiDeleteBack2Fill },
+                onClick: () => {
+                  console.log(`Delete button was clicked`);
+                },
+              },
+            ]}
+          />
+        );
+
+        cy.findByText("Edit fields").should("exist");
+        cy.findByText("Delete fields").should("not.exist");
+      });
     });
 
     context("when given with icon", () => {

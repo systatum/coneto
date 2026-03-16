@@ -71,6 +71,33 @@ describe("Button", () => {
     },
   ];
 
+  context("styles", () => {
+    context("self", () => {
+      context("when given max-width", () => {
+        it("renders buttons with ellipsis on the text", () => {
+          cy.mount(
+            <Button
+              styles={{
+                self: css`
+                  max-width: 100px;
+                `,
+              }}
+              icon={{
+                image: RiAddLine,
+              }}
+            >
+              button with max-width 100px
+            </Button>
+          );
+          cy.findByLabelText("button-label")
+            .should("have.css", "width", "46px")
+            .and("have.css", "text-overflow", "ellipsis")
+            .and("have.css", "overflow", "hidden");
+        });
+      });
+    });
+  });
+
   context("icon", () => {
     function ButtonWithIcon(props: ButtonProps) {
       interface ButtonWithIconOptions {
@@ -349,12 +376,14 @@ describe("Button", () => {
               subMenu={({ render }) =>
                 render(
                   <Button.TipMenuContainer
-                    style={css`
-                      padding: 10px;
-                      display: flex;
-                      flex-direction: column;
-                      gap: 4px;
-                    `}
+                    styles={{
+                      self: css`
+                        padding: 10px;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 4px;
+                      `,
+                    }}
                   >
                     <MenuContainer>
                       <MenuTitle>Information</MenuTitle>
@@ -404,12 +433,14 @@ describe("Button", () => {
               subMenu={({ render }) =>
                 render(
                   <Button.TipMenuContainer
-                    style={css`
-                      padding: 10px;
-                      display: flex;
-                      flex-direction: column;
-                      gap: 4px;
-                    `}
+                    styles={{
+                      self: css`
+                        padding: 10px;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 4px;
+                      `,
+                    }}
                   >
                     <MenuContainer>
                       <MenuTitle>Information</MenuTitle>
@@ -457,12 +488,14 @@ describe("Button", () => {
               subMenu={({ render }) =>
                 render(
                   <Button.TipMenuContainer
-                    style={css`
-                      padding: 10px;
-                      display: flex;
-                      flex-direction: column;
-                      gap: 4px;
-                    `}
+                    styles={{
+                      self: css`
+                        padding: 10px;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 4px;
+                      `,
+                    }}
                   >
                     <MenuContainer>
                       <MenuTitle>Information</MenuTitle>

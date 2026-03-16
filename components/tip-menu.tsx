@@ -4,11 +4,13 @@ import React, { ReactNode, useMemo, useState } from "react";
 import { Button } from "./button";
 import { Searchbox } from "./searchbox";
 import { Figure, FigureProps } from "./figure";
+import { FalsyOr } from "./../lib/falsy";
 
 export type TipMenuItemVariantType = "sm" | "md";
+
 export interface TipMenuProps {
   children?: ReactNode;
-  subMenuList?: TipMenuItemProps[];
+  subMenuList?: FalsyOr<TipMenuItemProps>[];
   setIsOpen?: () => void;
   variant?: TipMenuItemVariantType;
   withFilter?: boolean;
@@ -17,15 +19,6 @@ export interface TipMenuProps {
 
 export interface TipMenuStylesProps {
   self?: CSSProp;
-}
-
-export interface TipMenuItemProps {
-  caption: string;
-  icon?: FigureProps;
-  onClick?: (e?: React.MouseEvent) => void;
-  isDangerous?: boolean;
-  variant?: TipMenuItemVariantType;
-  className?: string;
 }
 
 function TipMenu({
@@ -41,11 +34,13 @@ function TipMenu({
 
   const filteredSubMenuList = useMemo(() => {
     const searchContent = search.toLowerCase().trim();
-    return subMenuList?.filter((list) =>
-      isHasInteracted
-        ? list.caption.toLowerCase().includes(searchContent)
-        : list
-    );
+    return subMenuList
+      ?.filter((list): list is TipMenuItemProps => Boolean(list))
+      ?.filter((list) =>
+        isHasInteracted
+          ? list.caption.toLowerCase().includes(searchContent)
+          : list
+      );
   }, [search, subMenuList]);
 
   return (
@@ -106,6 +101,15 @@ function TipMenu({
       {children}
     </Button.TipMenuContainer>
   );
+}
+
+export interface TipMenuItemProps {
+  caption: string;
+  icon?: FigureProps;
+  onClick?: (e?: React.MouseEvent) => void;
+  isDangerous?: boolean;
+  variant?: TipMenuItemVariantType;
+  className?: string;
 }
 
 function TipMenuItem({

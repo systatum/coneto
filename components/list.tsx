@@ -30,6 +30,7 @@ import ContextMenu, { ContextMenuActionsProps } from "./context-menu";
 import { ActionButton, ActionButtonProps } from "./action-button";
 import { OverlayBlocker } from "./overlay-blocker";
 import { Figure, FigureProps } from "./figure";
+import { FalsyOr } from "./../lib/falsy";
 
 export interface ListProps extends ListMaxItemsProp {
   searchable?: boolean;
@@ -65,7 +66,7 @@ export interface ListOnOpenProps {
   isOpen?: boolean;
 }
 
-export type ListItemActionProps = ContextMenuActionsProps;
+export type ListItemActionProps = FalsyOr<ContextMenuActionsProps>;
 
 interface ListAlwaysShowDragIconProp {
   alwaysShowDragIcon?: boolean;
@@ -378,7 +379,9 @@ const ListContainer = styled.div<{ $containerStyle?: CSSProp }>`
   ${(props) => props.$containerStyle}
 `;
 
-export interface ListGroupActionsProps
+export type ListGroupActionsProps = FalsyOr<ListGroupInternalActionsProps>;
+
+interface ListGroupInternalActionsProps
   extends Omit<ActionButtonProps, "onClick"> {
   onClick?: (e?: string) => void;
 }
@@ -455,9 +458,16 @@ function ListGroup({
 
   const opened = isOpen(id, "group");
 
+  const filteredActions =
+    actions?.filter((action): action is ListGroupInternalActionsProps =>
+      Boolean(action)
+    ) ?? [];
+
+  const hasActions = filteredActions?.length > 0;
+
   const finalActions =
-    actions &&
-    actions?.map((action) => ({
+    hasActions &&
+    filteredActions?.map((action) => ({
       ...action,
       styles: {
         ...action.styles,
@@ -1134,19 +1144,23 @@ const ListItem = forwardRef<HTMLLIElement, ListItemProps>(
                 (() => {
                   const listActions = actions(idFullname);
 
-                  const actionsWithIcons = listActions.map((action) => ({
-                    ...action,
-                    icon: {
-                      ...action?.icon,
-                      image: action?.icon?.image ?? RiArrowRightSLine,
-                    },
-                    onClick: (e?: React.MouseEvent) => {
-                      action?.onClick?.(e);
-                      if (listActions?.length > 1) {
-                        setIsHovered(null);
-                      }
-                    },
-                  }));
+                  const actionsWithIcons = listActions
+                    ?.filter((action): action is ContextMenuActionsProps =>
+                      Boolean(action)
+                    )
+                    .map((action) => ({
+                      ...action,
+                      icon: {
+                        ...action?.icon,
+                        image: action?.icon?.image ?? RiArrowRightSLine,
+                      },
+                      onClick: (e?: React.MouseEvent) => {
+                        action?.onClick?.(e);
+                        if (listActions?.length > 1) {
+                          setIsHovered(null);
+                        }
+                      },
+                    }));
 
                   return (
                     <ContextMenu
