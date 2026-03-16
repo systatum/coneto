@@ -182,6 +182,8 @@ describe("FieldLane", () => {
           );
 
           cy.findByText("Width")
+            .parent()
+            .parent()
             .then(($el) => {
               const width = $el.css("width");
 

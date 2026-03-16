@@ -187,6 +187,7 @@ describe("Textbox", () => {
           );
 
           cy.findByText("Width")
+            .parent()
             .then(($el) => {
               const width = $el.css("width");
 

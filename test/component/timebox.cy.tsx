@@ -72,6 +72,7 @@ describe("Timebox", () => {
           );
 
           cy.findByText("Width")
+            .parent()
             .then(($el) => {
               const width = $el.css("width");
 

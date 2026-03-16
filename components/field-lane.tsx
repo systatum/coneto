@@ -139,8 +139,9 @@ function FieldLane({
                     css`
                       border-top-left-radius: 0;
                       border-bottom-left-radius: 0;
-                    `}
-                ${dropdown.width &&
+                    `};
+
+                    ${dropdown.width &&
                     css`
                       width: ${dropdown.width};
                     `};
@@ -151,11 +152,16 @@ function FieldLane({
                     font-size: 12px;
                     color: black;
                     height: 34px;
+                    ${!children &&
+                    css`
+                      border-right: 1px solid #d1d5db;
+                    `}
 
                     ${dropdown.width &&
                     css`
                       width: ${dropdown.width};
                     `}
+                    
                     ${dropdown.styles?.self};
                   `,
                   dropdownStyle: (placement) => css`
@@ -219,6 +225,7 @@ function FieldLane({
                   position: relative;
                   z-index: 10;
                   height: 23px;
+
                   color: ${showError
                     ? "#f87171"
                     : props.iconColor
@@ -299,11 +306,6 @@ function FieldLane({
     <Container
       $disabled={disabled}
       $style={css`
-        ${!children &&
-        css`
-          width: fit-content;
-          border-right: 1px solid #d1d5db;
-        `}
         ${styles?.containerStyle}
       `}
     >
