@@ -381,6 +381,10 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
                 left: 25%;
                 top: 50%;
                 transform: translateX(-75%) translateY(-50%);
+                gap: 6px;
+              `,
+              labelStyle: css`
+                font-size: 14px;
               `,
               iconStyle: css`
                 color: gray;
