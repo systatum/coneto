@@ -304,10 +304,11 @@ function Table({
     return () => el.removeEventListener("scroll", handleScroll);
   }, [openRowId]);
 
-  const filteredActions =
-    actions?.filter((action): action is TableInternalActionsProps =>
-      Boolean(action)
-    ) ?? [];
+  const filteredActions = Array.isArray(actions)
+    ? actions?.filter((action): action is TableInternalActionsProps =>
+        Boolean(action)
+      )
+    : [];
 
   const hasActions = filteredActions.length > 0;
 

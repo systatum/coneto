@@ -456,10 +456,11 @@ function ListGroup({
 
   const opened = isOpen(id, "group");
 
-  const filteredActions =
-    actions?.filter((action): action is ListGroupInternalActionsProps =>
-      Boolean(action)
-    ) ?? [];
+  const filteredActions = Array.isArray(actions)
+    ? actions?.filter((action): action is ListGroupInternalActionsProps =>
+        Boolean(action)
+      )
+    : [];
 
   const hasActions = filteredActions?.length > 0;
 
