@@ -33,6 +33,7 @@ import { isValidDateString } from "../lib/date";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 import { FigureProps } from "./figure";
 import { StatefulForm } from "./stateful-form";
+import { LoadingSpinner } from "./loading-spinner";
 
 export type SelectboxSelectedOptions = number | string | number[] | string[];
 
@@ -55,6 +56,7 @@ interface BaseSelectboxProps
   id?: string;
   showError?: boolean;
   maxSelectableItems?: number | undefined;
+  isLoading?: boolean;
   children?: (
     props: DrawerProps &
       InteractionModeProps & {
@@ -127,6 +129,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       showError,
       id,
       autoComplete = "off",
+      isLoading,
       ...props
     },
     ref
@@ -353,6 +356,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
 
     return (
       <Container
+        $isLoading={isLoading}
         onBlur={() => {
           setIsHovered(false);
         }}
@@ -369,6 +373,22 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
           if (multiple) inputRef.current?.focus();
         }}
       >
+        {isLoading && (
+          <LoadingSpinner
+            styles={{
+              containerStyle: css`
+                position: absolute;
+                left: 25%;
+                top: 50%;
+                transform: translateX(-75%) translateY(-50%);
+              `,
+              iconStyle: css`
+                color: gray;
+              `,
+            }}
+            label="loading"
+          />
+        )}
         <Input
           {...props}
           autoComplete={autoComplete}
@@ -379,6 +399,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
           aria-label={id}
           id={id}
           $clearable={clearable}
+          $isLoading={isLoading}
           ref={(el) => {
             refs.setReference(el);
             if (!multiple) {
@@ -443,7 +464,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
               }
             }
           }}
-          placeholder={placeholder || "Search your item..."}
+          placeholder={isLoading ? "" : placeholder || "Search your item..."}
           $focused={isFocused && !multiple}
           $hovered={isHovered && !multiple}
           $highlight={highlightOnMatch && FILTERED_ACTIVE}
@@ -614,10 +635,19 @@ export function castValue<T extends SelectboxSelectedOptions>(
   return String(value) as T;
 }
 
-const Container = styled.div<{ $style?: CSSProp }>`
+const Container = styled.div<{ $style?: CSSProp; $isLoading?: boolean }>`
   position: relative;
   width: 100%;
   font-size: 12px;
+
+  ${({ $isLoading }) =>
+    $isLoading &&
+    css`
+      user-select: none;
+      pointer-events: none;
+      opacity: 0.5;
+    `}
+
   ${({ $style }) => $style}
 `;
 
@@ -628,6 +658,7 @@ const Input = styled.input<{
   $style?: CSSProp;
   $clearable?: boolean;
   $hasError?: boolean;
+  $isLoading?: boolean;
 }>`
   width: 100%;
   border-radius: 2px;
@@ -648,6 +679,12 @@ const Input = styled.input<{
         : css`
             border-color: #d1d5db;
           `};
+
+  ${({ $isLoading }) =>
+    $isLoading &&
+    css`
+      background-color: rgba(255, 255, 255, 0.6);
+    `}
 
   ${({ $style }) => $style}
 `;
