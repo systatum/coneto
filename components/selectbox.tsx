@@ -358,13 +358,13 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       <Container
         $isLoading={isLoading}
         onBlur={() => {
-          setIsHovered(false);
+          if (!isLoading) setIsHovered(false);
         }}
         onMouseEnter={() => {
-          setIsHovered(true);
+          if (!isLoading) setIsHovered(true);
         }}
         onMouseLeave={() => {
-          setIsHovered(false);
+          if (!isLoading) setIsHovered(false);
         }}
         role="combobox"
         $style={styles?.selectboxStyle}
@@ -378,10 +378,11 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
             styles={{
               containerStyle: css`
                 position: absolute;
-                left: 25%;
+                margin-left: 20px;
                 top: 50%;
-                transform: translateX(-75%) translateY(-50%);
+                transform: translateY(-50%);
                 gap: 6px;
+                background-color: rgba(255, 255, 255, 0.6);
               `,
               labelStyle: css`
                 font-size: 14px;
@@ -403,7 +404,8 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
           aria-label={id}
           id={id}
           $clearable={clearable}
-          $isLoading={isLoading}
+          disabled={isLoading || props?.disabled}
+          $disabled={isLoading || props?.disabled}
           ref={(el) => {
             refs.setReference(el);
             if (!multiple) {
@@ -662,7 +664,7 @@ const Input = styled.input<{
   $style?: CSSProp;
   $clearable?: boolean;
   $hasError?: boolean;
-  $isLoading?: boolean;
+  $disabled?: boolean;
 }>`
   width: 100%;
   border-radius: 2px;
@@ -684,9 +686,11 @@ const Input = styled.input<{
             border-color: #d1d5db;
           `};
 
-  ${({ $isLoading }) =>
-    $isLoading &&
+  ${({ $disabled }) =>
+    $disabled &&
     css`
+      user-select: none;
+      pointer-events: none;
       background-color: rgba(255, 255, 255, 0.6);
     `}
 
