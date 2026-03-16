@@ -583,8 +583,8 @@ function Table({
                 self: css`
                   display: flex;
                   align-items: start;
-                  padding-left: 16px;
-                  padding-top: 16px;
+                  padding-left: 10px;
+                  padding-top: 10px;
 
                   backdrop-filter: blur(0.5px);
                   background-color: rgba(255, 255, 255, 0.6);
@@ -598,8 +598,9 @@ function Table({
                   containerStyle: css`
                     background-color: black;
                     border-radius: 20px;
-                    opacity: 0.7;
+                    opacity: 0.8;
                     color: white;
+                    padding: 4px;
                     padding-right: 8px;
                   `,
                 }}
