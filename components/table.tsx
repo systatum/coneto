@@ -227,7 +227,10 @@ function Table({
   const rowChildren = Children.map(children, (child, index) => {
     if (!isValidElement<TableRowProps | TableRowGroupProps>(child)) return null;
 
-    if (child.type === TableRowGroup) {
+    const hasRowGroup = child.type === TableRowGroup;
+    const hasRow = child.type === TableRow;
+
+    if (hasRowGroup) {
       return cloneElement(child, {
         selectable,
         selectedData,
@@ -244,7 +247,7 @@ function Table({
         });
     }
 
-    if (child.type === TableRow) {
+    if (hasRow) {
       const props = child.props as TableRowProps;
 
       const isSelected = selectedData.some(
@@ -578,24 +581,41 @@ function Table({
                 })()}
               </TableSummary>
             )}
+          </TableContainer>
 
-            {isLoading && (
-              <OverlayBlocker
+          {isLoading && (
+            <OverlayBlocker
+              styles={{
+                self: css`
+                  display: flex;
+                  align-items: start;
+                  padding-left: 10px;
+                  padding-top: 10px;
+
+                  backdrop-filter: blur(0.5px);
+                  background-color: rgba(255, 255, 255, 0.6);
+                `,
+              }}
+              show={isLoading}
+              onClick="preventDefault"
+            >
+              <LoadingSpinner
                 styles={{
-                  self: css`
-                    display: flex;
-                    justify-content: center;
-                    backdrop-filter: blur(0.5px);
-                    background-color: rgba(255, 255, 255, 0.6);
+                  containerStyle: css`
+                    background-color: black;
+                    border-radius: 20px;
+                    opacity: 0.8;
+                    color: white;
+                    padding: 4px;
+                    padding-right: 8px;
                   `,
                 }}
-                show={isLoading}
-                onClick="preventDefault"
-              >
-                <LoadingSpinner iconSize={24} />
-              </OverlayBlocker>
-            )}
-          </TableContainer>
+                label="Loading"
+                gap={10}
+                iconSize={24}
+              />
+            </OverlayBlocker>
+          )}
         </Wrapper>
       </TableColumnContext.Provider>
     </DnDContext.Provider>
@@ -702,9 +722,9 @@ const PaginationSelectedItem = styled.span<{ $style?: CSSProp }>`
 `;
 
 const TableContainer = styled.div<{ $hasSelected: boolean }>`
+  position: relative;
   display: flex;
   flex-direction: column;
-  position: relative;
   height: 100%;
   overflow: hidden;
 
