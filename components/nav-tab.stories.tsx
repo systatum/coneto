@@ -213,15 +213,13 @@ export const WithActions: Story = {
       },
     ];
 
-    const valueee = null;
-
     return (
       <NavTab
         tabs={TABS_ITEMS}
         activeTab={activeTab}
         onChange={(activeTab) => setActiveTab(activeTab)}
         actions={[
-          false && {
+          {
             icon: { image: RiSettings5Line },
             onClick: () => {
               setActiveTab("3");
