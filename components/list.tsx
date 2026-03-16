@@ -789,15 +789,25 @@ const ListGroupContainer = styled.div<{
 const ListGroupContent = styled(motion.ul)<{
   $style?: CSSProp;
   $isOpen?: boolean;
+  $isChildren?: boolean;
 }>`
   display: flex;
   flex-direction: column;
   position: relative;
-  padding-top: ${({ $isOpen }) => ($isOpen ? "2px" : "0px")};
   gap: 4px;
+  ${({ $isOpen, $isChildren }) =>
+    $isChildren && !$isOpen
+      ? css`
+          display: none;
+        `
+      : $isOpen &&
+        css`
+          padding-top: 2px;
+        `};
+
   margin-top: 4px;
 
-  ${({ $style }) => $style}
+  ${({ $style }) => $style};
 `;
 
 const HeaderButton = styled.div<{ $isOpen?: boolean; $style?: CSSProp }>`
@@ -1204,6 +1214,7 @@ const ListItem = forwardRef<HTMLLIElement, ListItemProps>(
               exit="collapsed"
               $style={styles?.openableStyle}
               $isOpen={isChildOpened}
+              $isChildren={true}
               variants={{
                 open: {
                   opacity: 1,
