@@ -114,8 +114,8 @@ describe("Table", () => {
     );
   }
   context("isLoading", () => {
-    context(`when given true`, () => {
-      it(`should render spinner with position padding-top 10px and padding-left 10px`, () => {
+    context("when given true", () => {
+      it("renders spinner positioned ~10px from the top and ~10px from the left", () => {
         cy.mount(<BasicTable isLoading />);
 
         cy.findByLabelText("overlay-blocker").then(($overlay) => {
@@ -133,7 +133,7 @@ describe("Table", () => {
         });
       });
 
-      it(`should render spinner with padding 4px and with caption loading`, () => {
+      it("renders spinner with padding 4px and with caption loading", () => {
         cy.mount(<BasicTable isLoading />);
 
         cy.findByText("Loading").should("exist");
