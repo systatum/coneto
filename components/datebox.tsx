@@ -28,6 +28,7 @@ type BaseDateboxProps = BaseCalendarProps & {
   styles?: DateboxStylesProps;
   helper?: string;
   id?: string;
+  isLoading?: boolean;
 };
 
 export type DateboxStylesProps = SelectboxStylesProps;
@@ -67,6 +68,7 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
     labelGap,
     labelWidth,
     labelPosition,
+    isLoading,
     ...rest
   } = props;
 
@@ -92,6 +94,7 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
       helper={helper}
       disabled={props.disabled}
       required={rest.required}
+      isLoading={isLoading}
       styles={{
         ...styles,
         self: css`
