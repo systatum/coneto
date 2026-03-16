@@ -48,6 +48,7 @@ export interface ListProps extends ListMaxItemsProp {
     oldPosition: number;
     newPosition: number;
   }) => void;
+  groupOpenerBehavior?: "any" | "onlyOne";
   openerBehavior?: "any" | "onlyOne";
   onOpen?: (props?: ListOnOpenProps) => void;
   alwaysShowDragIcon?: boolean;
@@ -139,6 +140,7 @@ function List({
   selectable,
   isLoading,
   openerBehavior = "any",
+  groupOpenerBehavior = "any",
   onOpen,
   alwaysShowDragIcon = true,
   onSearchKeyDown,
@@ -193,48 +195,31 @@ function List({
     }
   };
 
+  const toggleSet = (set: Set<string>, id: string, onlyOne: boolean) => {
+    const next = new Set(set);
+    if (next.has(id)) {
+      next.delete(id);
+    } else {
+      if (onlyOne) next.clear();
+      next.add(id);
+    }
+    return next;
+  };
+
   const setIsOpen = (id: string, level: "group" | "item" = "item") => {
     if (level === "group") {
       setOpenedGroupIds((prev) => {
-        const next = new Set(prev);
+        const next = toggleSet(prev, id, groupOpenerBehavior === "onlyOne");
         if (onOpen) {
-          onOpen({
-            id: id,
-            isOpen: !next.has(id),
-          });
+          onOpen({ id, isOpen: next.has(id) });
         }
-
-        if (next.has(id)) {
-          next.delete(id);
-        } else {
-          next.add(id);
-        }
-
         return next;
       });
     } else {
       setOpenedItemIds((prev) => {
-        const next = new Set(prev);
+        const next = toggleSet(prev, id, openerBehavior === "onlyOne");
         if (onOpen) {
-          onOpen({
-            id: id,
-            isOpen: !next.has(id),
-          });
-        }
-
-        if (openerBehavior === "onlyOne") {
-          if (next.has(id)) {
-            next.delete(id);
-          } else {
-            next.clear();
-            next.add(id);
-          }
-        } else {
-          if (next.has(id)) {
-            next.delete(id);
-          } else {
-            next.add(id);
-          }
+          onOpen({ id, isOpen: next.has(id) });
         }
         return next;
       });
