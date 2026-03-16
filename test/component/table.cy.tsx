@@ -1,4 +1,5 @@
 import {
+  RiArchive2Fill,
   RiArrowUpSLine,
   RiClipboardFill,
   RiDeleteBin2Fill,
@@ -9,6 +10,7 @@ import {
 } from "@remixicon/react";
 import {
   ColumnTableProps,
+  SubMenuListTableProps,
   Table,
   TableActionsProps,
   TableProps,
@@ -815,7 +817,7 @@ describe("Table", () => {
     ];
   };
 
-  const ROW_ACTIONS = (rowId: string): TipMenuItemProps[] => {
+  const ROW_ACTIONS = (rowId: string): SubMenuListTableProps[] => {
     return [
       {
         caption: "Edit",
@@ -829,6 +831,13 @@ describe("Table", () => {
         icon: { image: RiDeleteBin2Fill, color: "gray" },
         onClick: () => {
           console.log(`${rowId} was deleted`);
+        },
+      },
+      false && {
+        caption: "Arhive",
+        icon: { image: RiArchive2Fill, color: "gray" },
+        onClick: () => {
+          console.log(`${rowId} was archive`);
         },
       },
     ];
@@ -1856,42 +1865,45 @@ describe("Table", () => {
   });
 
   context("with row actions", () => {
+    function TableWithRowActions({
+      actions,
+    }: {
+      actions?: (columnCaption: string) => SubMenuListTableProps[];
+    }) {
+      return (
+        <Table
+          selectable
+          styles={{
+            tableBodyStyle: css`
+              max-height: 400px;
+            `,
+          }}
+          columns={columns}
+          actions={TOP_ACTIONS}
+          searchable
+        >
+          {rows?.map((groupValue, groupIndex) => (
+            <Table.Row.Group
+              key={groupIndex}
+              title={groupValue.title}
+              subtitle={groupValue.subtitle}
+            >
+              {groupValue.items.map((rowValue, rowIndex) => (
+                <Table.Row
+                  key={rowIndex}
+                  rowId={`${groupValue.title}-${rowValue.title}`}
+                  content={[rowValue.title, rowValue.category, rowValue.author]}
+                  actions={actions}
+                />
+              ))}
+            </Table.Row.Group>
+          ))}
+        </Table>
+      );
+    }
     context("when hover another after opened", () => {
       it("should always opened", () => {
-        cy.mount(
-          <Table
-            selectable
-            styles={{
-              tableBodyStyle: css`
-                max-height: 400px;
-              `,
-            }}
-            columns={columns}
-            actions={TOP_ACTIONS}
-            searchable
-          >
-            {rows?.map((groupValue, groupIndex) => (
-              <Table.Row.Group
-                key={groupIndex}
-                title={groupValue.title}
-                subtitle={groupValue.subtitle}
-              >
-                {groupValue.items.map((rowValue, rowIndex) => (
-                  <Table.Row
-                    key={rowIndex}
-                    rowId={`${groupValue.title}-${rowValue.title}`}
-                    content={[
-                      rowValue.title,
-                      rowValue.category,
-                      rowValue.author,
-                    ]}
-                    actions={ROW_ACTIONS}
-                  />
-                ))}
-              </Table.Row.Group>
-            ))}
-          </Table>
-        );
+        cy.mount(<TableWithRowActions actions={ROW_ACTIONS} />);
         cy.window().then((win) => {
           cy.spy(win.console, "log").as("consoleLog");
         });
@@ -1905,40 +1917,7 @@ describe("Table", () => {
 
     context("when scroll after 100px", () => {
       it("should closed the TipMenu", () => {
-        cy.mount(
-          <Table
-            selectable
-            styles={{
-              tableBodyStyle: css`
-                max-height: 400px;
-              `,
-            }}
-            columns={columns}
-            actions={TOP_ACTIONS}
-            searchable
-          >
-            {rows?.map((groupValue, groupIndex) => (
-              <Table.Row.Group
-                key={groupIndex}
-                title={groupValue.title}
-                subtitle={groupValue.subtitle}
-              >
-                {groupValue.items.map((rowValue, rowIndex) => (
-                  <Table.Row
-                    key={rowIndex}
-                    rowId={`${groupValue.title}-${rowValue.title}`}
-                    content={[
-                      rowValue.title,
-                      rowValue.category,
-                      rowValue.author,
-                    ]}
-                    actions={ROW_ACTIONS}
-                  />
-                ))}
-              </Table.Row.Group>
-            ))}
-          </Table>
-        );
+        cy.mount(<TableWithRowActions actions={ROW_ACTIONS} />);
         cy.window().then((win) => {
           cy.spy(win.console, "log").as("consoleLog");
         });
@@ -1963,40 +1942,7 @@ describe("Table", () => {
 
     context("when only one action", () => {
       it("render action button", () => {
-        cy.mount(
-          <Table
-            selectable
-            styles={{
-              tableBodyStyle: css`
-                max-height: 400px;
-              `,
-            }}
-            columns={columns}
-            actions={TOP_ACTIONS}
-            searchable
-          >
-            {rows?.map((groupValue, groupIndex) => (
-              <Table.Row.Group
-                key={groupIndex}
-                title={groupValue.title}
-                subtitle={groupValue.subtitle}
-              >
-                {groupValue.items.map((rowValue, rowIndex) => (
-                  <Table.Row
-                    key={rowIndex}
-                    rowId={`${groupValue.title}-${rowValue.title}`}
-                    content={[
-                      rowValue.title,
-                      rowValue.category,
-                      rowValue.author,
-                    ]}
-                    actions={ONE_ROW_ACTION}
-                  />
-                ))}
-              </Table.Row.Group>
-            ))}
-          </Table>
-        );
+        cy.mount(<TableWithRowActions actions={ONE_ROW_ACTION} />);
         cy.window().then((win) => {
           cy.spy(win.console, "log").as("consoleLog");
         });
@@ -2018,40 +1964,7 @@ describe("Table", () => {
 
     context("when given multiple actions", () => {
       it("render with tip menu", () => {
-        cy.mount(
-          <Table
-            selectable
-            styles={{
-              tableBodyStyle: css`
-                max-height: 400px;
-              `,
-            }}
-            columns={columns}
-            actions={TOP_ACTIONS}
-            searchable
-          >
-            {rows?.map((groupValue, groupIndex) => (
-              <Table.Row.Group
-                key={groupIndex}
-                title={groupValue.title}
-                subtitle={groupValue.subtitle}
-              >
-                {groupValue.items.map((rowValue, rowIndex) => (
-                  <Table.Row
-                    key={rowIndex}
-                    rowId={`${groupValue.title}-${rowValue.title}`}
-                    content={[
-                      rowValue.title,
-                      rowValue.category,
-                      rowValue.author,
-                    ]}
-                    actions={ROW_ACTIONS}
-                  />
-                ))}
-              </Table.Row.Group>
-            ))}
-          </Table>
-        );
+        cy.mount(<TableWithRowActions actions={ROW_ACTIONS} />);
         cy.window().then((win) => {
           cy.spy(win.console, "log").as("consoleLog");
         });
@@ -2068,6 +1981,21 @@ describe("Table", () => {
           "have.been.calledWith",
           "Tech Articles-Async Patterns in JS was edited"
         );
+      });
+
+      context("when given with falsy field", () => {
+        it("renders without falsy action", () => {
+          cy.mount(<TableWithRowActions actions={ROW_ACTIONS} />);
+
+          cy.findAllByLabelText("table-row").eq(2).trigger("mouseover");
+          cy.findAllByLabelText("action-button")
+            .eq(4)
+            .should("be.visible")
+            .click();
+          cy.findAllByText("Edit").should("exist");
+          cy.findAllByText("Delete").should("exist");
+          cy.findAllByText("Archive").should("not.exist");
+        });
       });
     });
   });

@@ -14,6 +14,7 @@ import { TipMenuItemProps } from "./tip-menu";
 import { Tooltip, TooltipRef } from "./tooltip";
 import { ActionButton, ActionButtonProps } from "./action-button";
 import { Figure, FigureProps } from "./figure";
+import { FalsyOr } from "./../lib/falsy";
 
 export interface NavTabProps {
   tabs?: NavTabContentProps[];
@@ -36,13 +37,17 @@ export interface NavTabStylesProps {
   boxStyle?: CSSProp;
 }
 
-export interface NavTabActionsProps extends ActionButtonProps {
+export type NavTabActionsProps = FalsyOr<NavTabInternalActionsProps>;
+
+interface NavTabInternalActionsProps extends ActionButtonProps {
   active?: boolean;
 }
 
 export type NavTabSize = "md" | "sm";
 
-export interface NavTabContentProps {
+export type NavTabContentProps = FalsyOr<NavTabContentInternalProps>;
+
+interface NavTabContentInternalProps {
   id: string;
   title: string;
   content?: ReactNode;
@@ -52,7 +57,10 @@ export interface NavTabContentProps {
   hidden?: boolean;
 }
 
-export interface NavTabSubItemsContentProps {
+export type NavTabSubItemsContentProps =
+  FalsyOr<NavTabSubItemsContentInternalProps>;
+
+interface NavTabSubItemsContentInternalProps {
   id: string;
   caption: string;
   icon?: FigureProps;
@@ -60,7 +68,9 @@ export interface NavTabSubItemsContentProps {
   content?: ReactNode;
 }
 
-export interface SubMenuNavTab extends Omit<TipMenuItemProps, "onClick"> {
+export type SubMenuNavTab = FalsyOr<SubMenuInternalNavTab>;
+
+interface SubMenuInternalNavTab extends Omit<TipMenuItemProps, "onClick"> {
   onClick: (id?: string) => void;
 }
 
@@ -91,7 +101,14 @@ function NavTab({
   const isControlled = activeTab !== undefined && onChange;
   const selected = isControlled ? activeTab : selectedLocal;
 
-  const visibleTabs = useMemo(() => tabs.filter((tab) => !tab.hidden), [tabs]);
+  const finalTabs = tabs?.filter((tab): tab is NavTabContentInternalProps =>
+    Boolean(tab)
+  );
+
+  const visibleTabs = useMemo(
+    () => finalTabs.filter((tab) => !tab.hidden),
+    [finalTabs]
+  );
 
   const getHoverPosition = () => {
     if (!isInitialized || tabSizes.length === 0) {
@@ -101,7 +118,11 @@ function NavTab({
     const targetIndex = visibleTabs.findIndex(
       (tab) =>
         tab.id === selected ||
-        tab.subItems?.some((item) => item.id === selected)
+        tab.subItems
+          ?.filter((tab): tab is NavTabSubItemsContentInternalProps =>
+            Boolean(tab)
+          )
+          ?.some((item) => item.id === selected)
     );
 
     if (targetIndex === -1 || !tabSizes[targetIndex]) {
@@ -156,9 +177,14 @@ function NavTab({
   };
 
   const hoverPosition = getHoverPosition();
-  const filteredTabs = tabs.filter(
+  const filteredTabs = finalTabs.filter(
     (tab) =>
-      tab.id === selected || tab.subItems?.some((item) => item.id === selected)
+      tab.id === selected ||
+      tab.subItems
+        ?.filter((item): item is NavTabSubItemsContentInternalProps =>
+          Boolean(item)
+        )
+        .some((item) => item.id === selected)
   );
 
   return (
@@ -232,29 +258,34 @@ function NavTab({
                 dialog={
                   <>
                     {tab.subItems &&
-                      tab.subItems.map((item, idx) => (
-                        <NavTabItem
-                          key={idx}
-                          onClick={() => {
-                            if (item.content) {
-                              setSelectedLocal(item.id);
-                            }
-                            if (onChange) {
-                              onChange(item.id);
-                            }
-                            tooltipRefs.current.forEach((ref) => {
-                              ref?.close();
-                            });
-                            if (item.onClick) {
-                              item.onClick();
-                            }
-                          }}
-                          $subMenu={true}
-                        >
-                          {item.icon && <Figure {...item.icon} />}
-                          {item.caption}
-                        </NavTabItem>
-                      ))}
+                      tab.subItems
+                        ?.filter(
+                          (item): item is NavTabSubItemsContentInternalProps =>
+                            Boolean(item)
+                        )
+                        ?.map((item, idx) => (
+                          <NavTabItem
+                            key={idx}
+                            onClick={() => {
+                              if (item.content) {
+                                setSelectedLocal(item.id);
+                              }
+                              if (onChange) {
+                                onChange(item.id);
+                              }
+                              tooltipRefs.current.forEach((ref) => {
+                                ref?.close();
+                              });
+                              if (item.onClick) {
+                                item.onClick();
+                              }
+                            }}
+                            $subMenu={true}
+                          >
+                            {item.icon && <Figure {...item.icon} />}
+                            {item.caption}
+                          </NavTabItem>
+                        ))}
                   </>
                 }
               >
@@ -290,20 +321,24 @@ function NavTab({
                   {tab.actions &&
                     (() => {
                       const listActions = tab.actions;
-                      const actionsWithIcons = listActions.map((action) => ({
-                        ...action,
-                        icon: {
-                          ...action?.icon,
-                          image: action.icon?.image ?? RiArrowRightSLine,
-                        },
-                        onClick: (e?: React.MouseEvent) => {
-                          e?.stopPropagation();
-                          action.onClick?.(tab.id);
-                          if (listActions.length > 1) {
-                            setIsHovered(null);
-                          }
-                        },
-                      }));
+                      const actionsWithIcons = listActions
+                        ?.filter((action): action is SubMenuInternalNavTab =>
+                          Boolean(action)
+                        )
+                        ?.map((action) => ({
+                          ...action,
+                          icon: {
+                            ...action?.icon,
+                            image: action.icon?.image ?? RiArrowRightSLine,
+                          },
+                          onClick: (e?: React.MouseEvent) => {
+                            e?.stopPropagation();
+                            action.onClick?.(tab.id);
+                            if (listActions.length > 1) {
+                              setIsHovered(null);
+                            }
+                          },
+                        }));
 
                       return (
                         <ContextMenu
@@ -367,36 +402,42 @@ function NavTab({
               ${styles?.containerActionsStyle}
             `}
           >
-            {actions.map((action, index) => {
-              return (
-                <ActionButton
-                  key={index}
-                  {...action}
-                  styles={{
-                    ...action?.styles,
-                    self: css`
-                      height: ${size === "sm" && "27px"};
-                      border-width: 2px;
+            {actions
+              .filter(
+                (action): action is NavTabInternalActionsProps => !!action
+              )
+              .map((action, index) => {
+                return (
+                  <ActionButton
+                    key={index}
+                    {...action!}
+                    styles={{
+                      ...action?.styles,
+                      self: css`
+                        height: ${size === "sm" && "27px"};
+                        border-width: 2px;
 
-                      ${action.active &&
-                      css`
-                        border-bottom: 2px solid rgb(59, 130, 246);
-                      `}
-                      ${action?.styles?.self}
-                    `,
-                  }}
-                />
-              );
-            })}
+                        ${action.active &&
+                        css`
+                          border-bottom: 2px solid rgb(59, 130, 246);
+                        `}
+                        ${action?.styles?.self}
+                      `,
+                    }}
+                  />
+                );
+              })}
           </NavTabHeader>
         )}
       </NavTabRowWrapper>
 
       <NavContent $contentStyle={styles?.contentStyle}>
         {filteredTabs.map((tab, index) => {
-          const selectedSubItem = tab.subItems?.find(
-            (subItem) => subItem.id === selected
-          );
+          const selectedSubItem = tab.subItems
+            ?.filter((item): item is NavTabSubItemsContentInternalProps =>
+              Boolean(item)
+            )
+            ?.find((subItem) => subItem.id === selected);
           if (selectedSubItem) {
             return <Fragment key={index}>{selectedSubItem.content}</Fragment>;
           }

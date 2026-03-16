@@ -22,6 +22,7 @@ import { List, ListItemStylesProps } from "./list";
 import { FieldLaneProps } from "./field-lane";
 import { Figure, FigureProps } from "./figure";
 import { StatefulForm } from "./stateful-form";
+import { FalsyOr } from "./../lib/falsy";
 
 interface BaseComboboxProps {
   selectedOptions?: SelectboxSelectedOptions;
@@ -50,7 +51,9 @@ export interface ComboboxStylesProps
   labelStyle?: CSSProp;
 }
 
-export interface ComboboxActionProps {
+export type ComboboxActionProps = FalsyOr<ComboboxInternalActionProps>;
+
+export interface ComboboxInternalActionProps {
   onClick?: () => void;
   icon?: FigureProps;
   title: string;
@@ -295,6 +298,13 @@ function ComboboxDrawer({
     }
   }, [highlightedIndex, multiple]);
 
+  const filteredActions =
+    actions?.filter((action): action is ComboboxInternalActionProps =>
+      Boolean(action)
+    ) ?? [];
+
+  const hasActions = filteredActions.length > 0;
+
   return (
     <DrawerWrapper
       {...getFloatingProps()}
@@ -351,8 +361,8 @@ function ComboboxDrawer({
             });
           }}
         >
-          {actions &&
-            actions.map((action, index) => {
+          {hasActions &&
+            filteredActions.map((action, index) => {
               const shouldHighlight = highlightedIndex === index;
               const isLast = index === actions.length - 1;
 

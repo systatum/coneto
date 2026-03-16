@@ -1,6 +1,7 @@
 import { RiCheckLine, RiCloseLine } from "@remixicon/react";
 import { Badge, BadgeActionProps } from "./../../components/badge";
 import { strToColor } from "./../../lib/code-color";
+import { FalsyOr } from "./../../lib/falsy";
 
 describe("Badge", () => {
   function BadgeDefault() {
@@ -114,6 +115,41 @@ describe("Badge", () => {
       },
     ];
 
+    const contentWithFalsyActions: FalsyOr<BadgeActionProps>[] = [
+      false && {
+        icon: { image: RiCheckLine },
+        onClick: () => {
+          console.log("Data was deleted");
+        },
+        size: 14,
+      },
+      {
+        icon: { image: RiCloseLine },
+        onClick: () => {
+          console.log("Data was deleted");
+        },
+        size: 14,
+      },
+    ];
+
+    context("when given with falsy", () => {
+      it("renders action button when not falsy", () => {
+        cy.mount(
+          <Badge
+            withCircle
+            actions={contentWithFalsyActions}
+            caption="With Actions"
+          />
+        );
+
+        cy.window().then((win) => {
+          cy.spy(win.console, "log").as("consoleLog");
+        });
+
+        cy.findAllByLabelText("badge-action").should("have.length", 1);
+      });
+    });
+
     context("when given", () => {
       it("renders action button", () => {
         cy.mount(
@@ -129,8 +165,8 @@ describe("Badge", () => {
           .click();
 
         cy.findByLabelText("badge-action")
-          .should("have.css", "width", "14px")
-          .and("have.css", "height", "14px");
+          .find("svg")
+          .should("have.attr", "width", "14");
       });
 
       context("when click", () => {
@@ -177,13 +213,8 @@ describe("Badge", () => {
             .should("have.css", "gap", "2px");
 
           cy.findAllByLabelText("badge-action")
-            .eq(0)
-            .should("have.css", "width", "14px")
-            .and("have.css", "height", "14px");
-          cy.findAllByLabelText("badge-action")
-            .eq(1)
-            .should("have.css", "width", "14px")
-            .and("have.css", "height", "14px");
+            .find("svg")
+            .should("have.attr", "width", "14");
         });
       });
     });

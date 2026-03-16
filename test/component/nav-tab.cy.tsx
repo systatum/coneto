@@ -9,6 +9,8 @@ import {
   RiAddBoxLine,
   RiAtLine,
   RiCharacterRecognitionLine,
+  RiLineChartFill,
+  RiProfileFill,
   RiSearchLine,
   RiSettings5Line,
 } from "@remixicon/react";
@@ -24,6 +26,18 @@ describe("NavTab", () => {
       },
     },
   ];
+
+  context("tabs", () => {
+    context("when given falsy", () => {
+      it("renders without falsy tab", () => {
+        cy.mount(<NavTab tabs={TABS_ITEMS} activeTab={"2"} />);
+        cy.findAllByLabelText("nav-tab-item").should("have.length", 2);
+        cy.findByText("Write").should("exist");
+        cy.findByText("Review").should("exist");
+        cy.findByText("Empty").should("not.exist");
+      });
+    });
+  });
 
   context("hidden tab", () => {
     function NavTabWithHidden({ hidden }: { hidden?: boolean }) {
@@ -281,11 +295,11 @@ describe("NavTab", () => {
   });
 
   context("actions", () => {
-    it("renders with gap 6px (by default)", () => {
-      cy.mount(
+    function NavTabWithActions() {
+      return (
         <NavTab
           actions={[
-            {
+            false && {
               caption: "Settings",
               icon: { image: RiSettings5Line },
               onClick: () => {
@@ -304,6 +318,9 @@ describe("NavTab", () => {
           activeTab={"2"}
         />
       );
+    }
+    it("renders with gap 6px (by default)", () => {
+      cy.mount(<NavTabWithActions />);
 
       cy.findByLabelText("nav-tab-actions-wrapper").should(
         "have.css",
@@ -318,26 +335,24 @@ describe("NavTab", () => {
           cy.spy(win.console, "log").as("consoleLog");
         });
 
-        cy.mount(
-          <NavTab
-            actions={[
-              {
-                caption: "Add",
-                icon: { image: RiAddBoxLine },
-                onClick: () => {
-                  console.log(`Add button was clicked`);
-                },
-              },
-            ]}
-            tabs={TABS_ITEMS}
-            activeTab={"2"}
-          />
-        );
+        cy.mount(<NavTabWithActions />);
         cy.findByText("Add").click();
         cy.get("@consoleLog").should(
           "have.been.calledWith",
           "Add button was clicked"
         );
+      });
+    });
+
+    context("when given with falsy", () => {
+      it("should render without falsy actions", () => {
+        cy.window().then((win) => {
+          cy.spy(win.console, "log").as("consoleLog");
+        });
+
+        cy.mount(<NavTabWithActions />);
+        cy.findByText("Settings").should("not.exist");
+        cy.findByText("Add").should("exist");
       });
     });
   });
@@ -351,9 +366,16 @@ describe("NavTab", () => {
         subItems: [
           {
             id: "2-1",
-            icon: RiCharacterRecognitionLine,
+            icon: { image: RiCharacterRecognitionLine },
             caption: "Chart",
             content: "This is chart content",
+            onClick: () => console.log("chart was clicked"),
+          },
+          false && {
+            id: "2-2",
+            icon: { image: RiProfileFill },
+            caption: "Identity",
+            content: "This is identity content",
             onClick: () => console.log("chart was clicked"),
           },
         ],
@@ -374,6 +396,16 @@ describe("NavTab", () => {
       cy.get("@consoleLog").should("have.been.calledWith", "chart was clicked");
     });
 
+    context("when given with falsy subitem", () => {
+      it("renders without falsy subitem", () => {
+        cy.mount(<NavTab tabs={tabsWithSubItems} activeTab={"2"} />);
+        cy.findByText("This is review content").should("exist");
+        cy.findByText("Review").realHover();
+        cy.findByText("Chart").should("exist");
+        cy.findByText("Identity").should("not.exist");
+      });
+    });
+
     it("renders with top -4px", () => {
       cy.mount(<NavTab tabs={tabsWithSubItems} activeTab={"2"} />);
       cy.findByText("This is review content").should("exist");
@@ -391,7 +423,7 @@ describe("NavTab", () => {
           subItems: [
             {
               id: "2-1",
-              icon: RiCharacterRecognitionLine,
+              icon: { image: RiCharacterRecognitionLine },
               caption: "Chart",
               onClick: () => console.log("chart was clicked"),
             },
@@ -558,5 +590,11 @@ const TABS_ITEMS: NavTabContentProps[] = [
         icon: { image: RiAtLine },
       },
     ],
+  },
+  false && {
+    id: "3",
+    title: "Empty",
+    content: "Empty",
+    onClick: () => {},
   },
 ];
