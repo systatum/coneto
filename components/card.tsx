@@ -112,6 +112,11 @@ function Card({
                 ))}
               {toggleable && (
                 <Togglebox
+                  styles={{
+                    bodyStyle: css`
+                      min-height: 0;
+                    `,
+                  }}
                   name="card-toggle"
                   checked={open}
                   onChange={(e) => onToggleChange(e.target.checked)}
