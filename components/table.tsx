@@ -224,7 +224,10 @@ function Table({
   const rowChildren = Children.map(children, (child, index) => {
     if (!isValidElement<TableRowProps | TableRowGroupProps>(child)) return null;
 
-    if (child.type === TableRowGroup) {
+    const hasRowGroup = child.type === TableRowGroup;
+    const hasRow = child.type === TableRow;
+
+    if (hasRowGroup) {
       return cloneElement(child, {
         selectable,
         selectedData,
@@ -241,7 +244,7 @@ function Table({
         });
     }
 
-    if (child.type === TableRow) {
+    if (hasRow) {
       const props = child.props as TableRowProps;
 
       const isSelected = selectedData.some(
@@ -300,6 +303,10 @@ function Table({
     el.addEventListener("scroll", handleScroll, { passive: true });
     return () => el.removeEventListener("scroll", handleScroll);
   }, [openRowId]);
+
+  const hasRowGroup = Children.toArray(children).some(
+    (child) => isValidElement(child) && child.type === TableRowGroup
+  );
 
   return (
     <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
@@ -576,12 +583,13 @@ function Table({
                 self: css`
                   display: flex;
                   align-items: start;
-                  padding-top: 60px;
-
-                  ${(actions || showPagination) &&
-                  css`
-                    padding-top: 120px;
-                  `}
+                  padding-left: 16px;
+                  padding-top: ${(() => {
+                    if (showPagination && hasRowGroup) return "152px";
+                    if (showPagination || hasRowGroup) return "140px";
+                    if (actions || searchable) return "126px";
+                    return "60px";
+                  })()};
 
                   backdrop-filter: blur(0.5px);
                   background-color: rgba(255, 255, 255, 0.6);
