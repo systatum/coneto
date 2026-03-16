@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useCallback, useState } from "react";
 import { Capsule } from "./capsule";
 import styled, { css, CSSProp } from "styled-components";
 
@@ -7,10 +7,12 @@ export interface CapsuleTabProps {
   activeTab?: string;
   activeBackgroundColor?: string;
   styles?: CapsuleTabStylesProps;
+  onTabChange?: (id: string) => void;
 }
 
 export interface CapsuleTabStylesProps {
-  containerStyle?: CSSProp;
+  self?: CSSProp;
+  contentStyle?: CSSProp;
   capsuleWrapperStyle?: CSSProp;
   tabStyle?: CSSProp;
 }
@@ -26,20 +28,38 @@ function CapsuleTab({
   styles,
   activeTab = "1",
   activeBackgroundColor = "black",
+  onTabChange,
 }: CapsuleTabProps) {
-  const [selected, setSelected] = useState<string>(activeTab);
+  const [selectedLocal, setSelectedLocal] = useState<string>(activeTab);
 
-  const activeContent = tabs.filter((data) => data.id === selected);
+  const isControlled = onTabChange && activeTab !== undefined;
+  const selected = isControlled ? activeTab : selectedLocal;
+
+  const setSelected = useCallback(
+    (next: string) => {
+      if (!isControlled) {
+        setSelectedLocal(next);
+      }
+
+      onTabChange?.(next);
+    },
+    [isControlled, onTabChange]
+  );
+  const activeContent = tabs.filter((tab) => tab.id === selected);
 
   return (
-    <CapsuleTabWrapper $containerStyle={styles?.containerStyle}>
+    <CapsuleTabWrapper aria-label="capsule-tab-wrapper" $style={styles?.self}>
       <Capsule
         styles={{
+          capsuleWrapperStyle: css`
+            padding-left: 5px;
+            padding-right: 5px;
+
+            ${styles?.capsuleWrapperStyle};
+          `,
           containerStyle: css`
             border-top-left-radius: 2px;
             border-top-right-radius: 2px;
-
-            ${styles?.capsuleWrapperStyle};
           `,
           tabStyle: css`
             border-radius: 12px;
@@ -53,42 +73,37 @@ function CapsuleTab({
         full
       />
 
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          width: "100%",
-        }}
+      <ContentWrapper
+        aria-label="capsule-tab-content"
+        $style={styles?.contentStyle}
       >
-        {activeContent.map((data, index) => (
-          <div
-            key={index}
-            style={{
-              width: "100%",
-              height: "100%",
-            }}
-          >
-            {data.content}
-          </div>
-        ))}
-      </div>
+        {activeContent.map((props) => props.content)}
+      </ContentWrapper>
     </CapsuleTabWrapper>
   );
 }
 
 const CapsuleTabWrapper = styled.div<{
-  $containerStyle?: CSSProp;
+  $style?: CSSProp;
 }>`
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
   width: 100%;
-  padding-bottom: 5px;
   border: 1px solid #ebebeb;
   border-radius: 2px;
   box-shadow: 0 1px 3px -3px #5b5b5b;
 
-  ${({ $containerStyle }) => $containerStyle}
+  ${({ $style }) => $style}
+`;
+
+const ContentWrapper = styled.div<{
+  $style?: CSSProp;
+}>`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  ${({ $style }) => $style}
 `;
 
 export { CapsuleTab };
