@@ -1467,12 +1467,7 @@ function FormFields<T extends FieldValues>({
                           css`
                             font-size: ${fieldSize};
                           `}
-                          border: 1px solid #d1d5db;
-                          max-height: 34px;
-                          &:focus {
-                            border-color: #61a9f9;
-                            box-shadow: 0 0 0 1px #61a9f9;
-                          }
+
                           ${field?.dateProps?.styles?.selectboxStyle}
                         `,
                         labelStyle: css`
@@ -1561,12 +1556,7 @@ function FormFields<T extends FieldValues>({
                           css`
                             font-size: ${fieldSize};
                           `}
-                          border: 1px solid #d1d5db;
-                          max-height: 34px;
-                          &:focus {
-                            border-color: #61a9f9;
-                            box-shadow: 0 0 0 1px #61a9f9;
-                          }
+
                           ${field?.comboboxProps?.styles?.selectboxStyle}
                         `,
                         containerStyle: css`
