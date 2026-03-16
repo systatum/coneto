@@ -791,17 +791,20 @@ const ListGroupContent = styled(motion.ul)<{
   flex-direction: column;
   position: relative;
   gap: 4px;
+  margin-top: 4px;
+
   ${({ $isOpen, $isChildren }) =>
     $isChildren && !$isOpen
       ? css`
-          display: none;
+          opacity: 0;
+          height: 0;
+          margin-top: 0px;
+          padding: 0px;
         `
       : $isOpen &&
         css`
           padding-top: 2px;
         `};
-
-  margin-top: 4px;
 
   ${({ $style }) => $style};
 `;
@@ -1338,12 +1341,6 @@ const ListItemRight = styled.div<{ $style?: CSSProp }>`
   width: 30%;
 
   ${({ $style }) => $style}
-`;
-
-const ImageStyle = styled.img`
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 0.25rem;
 `;
 
 const TextWrapper = styled.div`
