@@ -59,8 +59,19 @@ describe("Table", () => {
     type: TYPES_DATA[i % TYPES_DATA.length],
   }));
 
-  function BasicTable(props: Omit<TableProps, "children" | "columns">) {
+  function BasicTable(
+    props: Omit<TableProps, "children" | "columns"> & { hasRowGroup?: boolean }
+  ) {
     const [selectedItems, setSelectedItems] = useState([]);
+
+    const pageNumberText = props?.labels?.pageNumberText ?? "12";
+
+    const groupedRows = props.hasRowGroup
+      ? TYPES_DATA.map((type) => ({
+          type,
+          rows: rawRows.filter((r) => r.type === type),
+        }))
+      : null;
 
     return (
       <Table
@@ -68,60 +79,96 @@ describe("Table", () => {
         columns={columnsBasic}
         selectedItems={selectedItems}
         onItemsSelected={setSelectedItems}
+        labels={{
+          pageNumberText: pageNumberText,
+        }}
         {...props}
       >
-        {rawRows?.map((row, index) => (
-          <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
-            {[row.name, row.type].map((rowCell, i) => (
-              <Table.Row.Cell key={`${row.name}-${row.type}-${rowCell}`}>
-                {rowCell}
-              </Table.Row.Cell>
+        {props.hasRowGroup
+          ? groupedRows?.map((group, gi) => (
+              <Table.Row.Group key={gi} id={group.type}>
+                {group.rows.map((row, ri) => (
+                  <Table.Row
+                    key={`${group.type}-${ri}`}
+                    rowId={`${row.name}-${row.type}`}
+                  >
+                    {[row.name, row.type].map((cell, ci) => (
+                      <Table.Row.Cell key={`${row.name}-${cell}`}>
+                        {cell}
+                      </Table.Row.Cell>
+                    ))}
+                  </Table.Row>
+                ))}
+              </Table.Row.Group>
+            ))
+          : rawRows?.map((row, index) => (
+              <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
+                {[row.name, row.type].map((rowCell, i) => (
+                  <Table.Row.Cell key={`${row.name}-${row.type}-${rowCell}`}>
+                    {rowCell}
+                  </Table.Row.Cell>
+                ))}
+              </Table.Row>
             ))}
-          </Table.Row>
-        ))}
       </Table>
     );
   }
-
   context("isLoading", () => {
-    it("should render loading-spinner around the row.level", () => {
-      cy.mount(<BasicTable isLoading />);
+    const scenarios = [
+      {
+        description: "isLoading only",
+        props: { isLoading: true },
+        expectedPadding: 60,
+      },
+      {
+        description: "isLoading with actions",
+        props: { isLoading: true, actions: [{ caption: "Test" }] },
+        expectedPadding: 126,
+      },
+      {
+        description: "isLoading with showPagination",
+        props: { isLoading: true, showPagination: true },
+        expectedPadding: 140,
+      },
+      {
+        description: "isLoading with showPagination + hasRowGroup",
+        props: {
+          isLoading: true,
+          showPagination: true,
+          labels: { pageNumberText: "12" },
+          hasRowGroup: true,
+        },
+        expectedPadding: 152,
+      },
+      {
+        description: "isLoading with hasRowGroup",
+        props: { isLoading: true, hasRowGroup: true },
+        expectedPadding: 140,
+      },
+      {
+        description: "isLoading with searchable",
+        props: { isLoading: true, searchable: true },
+        expectedPadding: 126,
+      },
+    ];
 
-      cy.findByLabelText("overlay-blocker").then(($overlay) => {
-        const overlayRect = $overlay[0].getBoundingClientRect();
+    scenarios.forEach(({ description, props, expectedPadding }) => {
+      context(`when given ${description}`, () => {
+        it(`should render spinner with padding-top ~${expectedPadding}px and padding-left 16px`, () => {
+          cy.mount(<BasicTable {...props} />);
 
-        cy.findByLabelText("circle").then(($spinner) => {
-          const spinnerRect = $spinner[0].getBoundingClientRect();
+          cy.findByLabelText("overlay-blocker").then(($overlay) => {
+            const overlayRect = $overlay[0].getBoundingClientRect();
 
-          const distance = spinnerRect.top - overlayRect.top;
+            cy.findByLabelText("circle").then(($spinner) => {
+              const spinnerRect = $spinner[0].getBoundingClientRect();
 
-          expect(distance).to.be.closeTo(60, 10); // 60px is overlay padding-top
-        });
-      });
-    });
+              const paddingTop = spinnerRect.top - overlayRect.top;
+              const paddingLeft = spinnerRect.left - overlayRect.left;
 
-    context("when given actions", () => {
-      it("should render loading-spinner around the row.level", () => {
-        cy.mount(
-          <BasicTable
-            actions={[
-              {
-                caption: "Test",
-              },
-            ]}
-            isLoading
-          />
-        );
-
-        cy.findByLabelText("overlay-blocker").then(($overlay) => {
-          const overlayRect = $overlay[0].getBoundingClientRect();
-
-          cy.findByLabelText("circle").then(($spinner) => {
-            const spinnerRect = $spinner[0].getBoundingClientRect();
-
-            const distance = spinnerRect.top - overlayRect.top;
-
-            expect(distance).to.be.closeTo(110, 10); // 110px is overlay padding-top
+              expect(paddingTop).to.be.closeTo(expectedPadding, 10);
+              expect(paddingLeft).to.be.closeTo(16, 4);
+            });
           });
         });
       });
