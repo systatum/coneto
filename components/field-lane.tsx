@@ -89,10 +89,11 @@ function FieldLane({
   labelWidth,
   required,
 }: FieldLaneProps) {
-  const filteredActions =
-    actions?.filter((action): action is FieldLaneInternalActionsProps =>
-      Boolean(action)
-    ) ?? [];
+  const filteredActions = Array.isArray(actions)
+    ? actions?.filter((action): action is FieldLaneInternalActionsProps =>
+        Boolean(action)
+      )
+    : [];
 
   const hasActions = filteredActions.length > 0;
 

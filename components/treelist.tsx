@@ -224,10 +224,11 @@ function TreeList({
 
   const selectedGroupId = findGroupOfItem(content, isSelected);
 
-  const filteredActions =
-    actions?.filter((action): action is TreeListInternalActionsProps =>
-      Boolean(action)
-    ) ?? [];
+  const filteredActions = Array.isArray(actions)
+    ? actions?.filter((action): action is TreeListInternalActionsProps =>
+        Boolean(action)
+      )
+    : [];
 
   const hasActions = filteredActions.length > 0;
 

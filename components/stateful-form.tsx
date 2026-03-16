@@ -1814,6 +1814,7 @@ function FormFields<T extends FieldValues>({
                           ${field.toggleboxProps?.styles?.containerStyle}
                         `,
                         bodyStyle: css`
+                          min-height: 34px;
                           ${!field.title &&
                           hasFieldTitle &&
                           css`
