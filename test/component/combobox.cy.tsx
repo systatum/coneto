@@ -18,6 +18,50 @@ describe("Combobox", () => {
   function ProductCombobox(props: ComboboxProps) {
     return <Combobox {...props} />;
   }
+
+  context("isLoading", () => {
+    context("when given true", () => {
+      it("should render with gray-ish color", () => {
+        cy.mount(
+          <ProductCombobox
+            options={null}
+            isLoading
+            id="combo-with-loading"
+            placeholder="Select a fruit..."
+          />
+        );
+
+        cy.findByLabelText("circle").should(
+          "have.css",
+          "color",
+          "rgb(128, 128, 128)"
+        );
+
+        cy.findByLabelText("circle")
+          .parent()
+          .should("have.css", "background-color", "rgba(255, 255, 255, 0.6)");
+      });
+
+      context("when clicking", () => {
+        it("should not displaying drawer", () => {
+          cy.mount(
+            <ProductCombobox
+              options={null}
+              isLoading
+              id="combo-with-loading"
+              placeholder="Select a fruit..."
+            />
+          );
+
+          cy.get("#combo-with-loading")
+            .should("have.css", "user-select", "none")
+            .and("have.css", "pointer-events", "none")
+            .and("be.disabled");
+        });
+      });
+    });
+  });
+
   context("actions", () => {
     const FRUIT_ACTIONS: ComboboxActionProps[] = [
       {
