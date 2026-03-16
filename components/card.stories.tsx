@@ -347,6 +347,11 @@ export const WithHeader: Story = {
                   <Checkbox
                     onChange={onChangeValue}
                     value={JSON.stringify(dish)}
+                    styles={{
+                      containerStyle: css`
+                        width: fit-content;
+                      `,
+                    }}
                     checked={value.checked.some(
                       (item) => item.name === dish.name
                     )}
