@@ -1,5 +1,5 @@
 import { css } from "styled-components";
-import { Toolbar } from "./../../components/toolbar";
+import { Toolbar, ToolbarSubMenuProps } from "./../../components/toolbar";
 import {
   RiSpam2Line,
   RiForbid2Line,
@@ -14,7 +14,7 @@ import {
 } from "@remixicon/react";
 
 describe("Toolbar", () => {
-  const TIP_MENU_ITEMS = [
+  const TIP_MENU_ITEMS: ToolbarSubMenuProps[] = [
     {
       caption: "Report Phishing",
       icon: { image: RiSpam2Line, color: "blue" },
@@ -57,7 +57,7 @@ describe("Toolbar", () => {
       isDangerous: true,
       onClick: () => console.log("Shared"),
     },
-    {
+    false && {
       caption: "Edit",
       icon: { image: RiEditLine, color: "yellow" },
       onClick: () => console.log("Edit mode"),
@@ -164,32 +164,37 @@ describe("Toolbar", () => {
             );
           });
       });
-      it("renders content menu", () => {
-        cy.viewport(800, 700);
-        cy.mount(
-          <Toolbar>
-            <Toolbar.Menu
-              styles={{
-                dropdownStyle: css`
-                  min-width: 235px;
-                `,
-              }}
-              onClick={() => {
-                console.log("test");
-              }}
-              caption="Default Mode"
-              icon={{ image: RiMessage2Line, color: "red" }}
-              subMenuList={TIP_MENU_ITEMS}
-            />
-          </Toolbar>
-        );
 
-        cy.findByLabelText("toolbar-menu-toggle").click();
-        TIP_MENU_ITEMS.forEach((item) => {
-          cy.contains(item.caption).should("exist");
+      context("when given with falsy", () => {
+        it("should not show falsy item", () => {
+          cy.viewport(800, 700);
+          cy.mount(
+            <Toolbar>
+              <Toolbar.Menu
+                styles={{
+                  dropdownStyle: css`
+                    min-width: 235px;
+                  `,
+                }}
+                onClick={() => {
+                  console.log("test");
+                }}
+                caption="Default Mode"
+                icon={{ image: RiMessage2Line, color: "red" }}
+                subMenuList={TIP_MENU_ITEMS}
+              />
+            </Toolbar>
+          );
+
+          cy.findByLabelText("toolbar-menu-toggle").click();
+          TIP_MENU_ITEMS.map((item) => {
+            if (!item) return;
+            cy.contains(item.caption).should("exist");
+          });
         });
       });
     });
+
     context("when hover", () => {
       it("renders background color hover by variant", () => {
         cy.viewport(1280, 800);

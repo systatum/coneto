@@ -93,6 +93,74 @@ describe("FieldLane", () => {
       );
     });
 
+    context("when given with falsy field", () => {
+      it("renders without falsy dropdown", () => {
+        cy.mount(
+          <FieldLane
+            dropdowns={[
+              {
+                caption: "Button",
+                options: [
+                  {
+                    text: "On-site",
+                    value: "1",
+                    icon: {
+                      image: RiHome2Line,
+                    },
+                  },
+                  {
+                    text: "WFH",
+                    value: "2",
+                    icon: {
+                      image: RiUser2Line,
+                    },
+                  },
+                  {
+                    text: "Sick leave",
+                    value: "3",
+                    icon: {
+                      image: RiSettings2Line,
+                    },
+                  },
+                  {
+                    text: "Annual leave",
+                    value: "4",
+                    icon: {
+                      image: RiLogoutBoxLine,
+                    },
+                  },
+                ],
+              },
+              false && {
+                caption: "False Dropdown",
+                options: [
+                  {
+                    text: "On-site",
+                    value: "1",
+                    icon: {
+                      image: RiHome2Line,
+                    },
+                  },
+                  {
+                    text: "WFH",
+                    value: "2",
+                    icon: {
+                      image: RiUser2Line,
+                    },
+                  },
+                ],
+              },
+            ]}
+          >
+            This is a children
+          </FieldLane>
+        );
+
+        cy.findByText("Button").should("exist");
+        cy.findByText("False Dropdown").should("not.exist");
+      });
+    });
+
     context("width", () => {
       context("when given", () => {
         it("should render the width", () => {

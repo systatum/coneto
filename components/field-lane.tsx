@@ -5,6 +5,7 @@ import { Button } from "./button";
 import { StatefulForm } from "./stateful-form";
 import { Tooltip } from "./tooltip";
 import { Figure, FigureProps } from "./figure";
+import { FalsyOr } from "./../lib/falsy";
 
 export interface FieldLaneProps {
   label?: string;
@@ -32,7 +33,9 @@ export interface FieldLaneStylesProps {
   bodyStyle?: CSSProp;
 }
 
-export interface FieldLaneActionsProps {
+export type FieldLaneActionsProps = FalsyOr<FieldLaneInternalActionsProps>;
+
+interface FieldLaneInternalActionsProps {
   title?: string;
   icon?: FigureProps;
   iconColor?: string;
@@ -41,7 +44,9 @@ export interface FieldLaneActionsProps {
   titleShowDelay?: number;
 }
 
-export interface DropdownProps {
+export type DropdownProps = FalsyOr<DropdownInternalProps>;
+
+interface DropdownInternalProps {
   options?: DropdownOptionProps[];
   caption?: string;
   onChange?: (id: string) => void;
@@ -84,85 +89,96 @@ function FieldLane({
   labelWidth,
   required,
 }: FieldLaneProps) {
+  const filteredActions =
+    actions?.filter((action): action is FieldLaneInternalActionsProps =>
+      Boolean(action)
+    ) ?? [];
+
+  const hasActions = filteredActions.length > 0;
+
   const inputElement: ReactElement = (
     <InputWrapper $style={styles?.controlStyle}>
-      {dropdowns?.map((dropdown, index) => {
-        return (
-          <Button
-            key={index}
-            subMenu={({ list, render }) => {
-              if (dropdown.render) {
-                return dropdown.render({ render });
-              }
+      {dropdowns
+        ?.filter((dropdown): dropdown is DropdownInternalProps =>
+          Boolean(dropdown)
+        )
+        ?.map((dropdown, index) => {
+          return (
+            <Button
+              key={index}
+              subMenu={({ list, render }) => {
+                if (dropdown.render) {
+                  return dropdown.render({ render });
+                }
 
-              const dropdownData = dropdown.options.map((prop) => ({
-                caption: prop.text,
-                icon: prop.icon,
-                onClick: () => dropdown.onChange(prop.value),
-              }));
+                const dropdownData = dropdown.options.map((prop) => ({
+                  caption: prop.text,
+                  icon: prop.icon,
+                  onClick: () => dropdown.onChange(prop.value),
+                }));
 
-              return list(dropdownData, {
-                withFilter: dropdown.withFilter ?? false,
-              });
-            }}
-            showSubMenuOn="self"
-            variant="outline-default"
-            styles={{
-              containerStyle: css`
-                border-right: 0;
-                border-top-right-radius: 0;
-                border-bottom-right-radius: 0;
-                border-color: #d1d5db;
-                ${showError &&
-                css`
-                  border-color: #f87171;
-                `}
+                return list(dropdownData, {
+                  withFilter: dropdown.withFilter ?? false,
+                });
+              }}
+              showSubMenuOn="self"
+              variant="outline-default"
+              styles={{
+                containerStyle: css`
+                  border-right: 0;
+                  border-top-right-radius: 0;
+                  border-bottom-right-radius: 0;
+                  border-color: #d1d5db;
+                  ${showError &&
+                  css`
+                    border-color: #f87171;
+                  `}
 
-                ${index > 0 &&
-                css`
-                  border-top-left-radius: 0;
-                  border-bottom-left-radius: 0;
-                `}
+                  ${index > 0 &&
+                  css`
+                    border-top-left-radius: 0;
+                    border-bottom-left-radius: 0;
+                  `}
                 ${dropdown.width &&
-                css`
-                  width: ${dropdown.width};
-                `}
+                  css`
+                    width: ${dropdown.width};
+                  `}
 
                 ${dropdown.styles?.containerStyle}
-              `,
-              self: css`
-                font-size: 12px;
-                color: black;
-                height: 100%;
+                `,
+                self: css`
+                  font-size: 12px;
+                  color: black;
+                  height: 100%;
 
-                ${dropdown.width &&
-                css`
-                  width: ${dropdown.width};
-                `}
-                ${dropdown.styles?.self};
-              `,
-              dropdownStyle: (placement) => css`
-                min-width: 200px;
-                ${placement?.startsWith("bottom")
-                  ? css`
-                      margin-top: -4px;
-                    `
-                  : css`
-                      margin-bottom: 4px;
-                    `}
-                ${dropdown.styles?.drawerStyle}
-              `,
-            }}
-          >
-            {dropdown.caption}
-          </Button>
-        );
-      })}
+                  ${dropdown.width &&
+                  css`
+                    width: ${dropdown.width};
+                  `}
+                  ${dropdown.styles?.self};
+                `,
+                dropdownStyle: (placement) => css`
+                  min-width: 200px;
+                  ${placement?.startsWith("bottom")
+                    ? css`
+                        margin-top: -4px;
+                      `
+                    : css`
+                        margin-bottom: 4px;
+                      `}
+                  ${dropdown.styles?.drawerStyle}
+                `,
+              }}
+            >
+              {dropdown.caption}
+            </Button>
+          );
+        })}
 
       {children}
 
-      {actions &&
-        actions.map((props, index) => {
+      {hasActions &&
+        filteredActions.map((props, index) => {
           const { icon, titleShowDelay = 1250 } = props;
           const offsetBase = 8;
           const offsetEach = 22;

@@ -386,35 +386,35 @@ export const WithHeaderAndFooter: Story = {
             id: "1",
             title: "French Toast",
             subtitle: "Breakfast",
-            imageUrl: "https://picsum.photos/seed/frenchtoast/200",
+            icon: { image: "https://picsum.photos/seed/frenchtoast/200" },
             rightSideContent: [<span>13$</span>],
           },
           {
             id: "2",
             title: "Croissant & Coffee",
             subtitle: "French",
-            imageUrl: "https://picsum.photos/seed/croissant/200",
+            icon: { image: "https://picsum.photos/seed/croissant/200" },
             rightSideContent: [<span>10$</span>],
           },
           {
             id: "3",
             title: "Sushi Deluxe",
             subtitle: "Japanese",
-            imageUrl: "https://picsum.photos/seed/sushi/200",
+            icon: { image: "https://picsum.photos/seed/sushi/200" },
             rightSideContent: [<span>22$</span>],
           },
           {
             id: "4",
             title: "Pad Thai",
             subtitle: "Thai",
-            imageUrl: "https://picsum.photos/seed/padthai/200",
+            icon: { image: "https://picsum.photos/seed/padthai/200" },
             rightSideContent: [<span>15$</span>],
           },
           {
             id: "5",
             title: "Tacos Al Pastor",
             subtitle: "Mexican",
-            imageUrl: "https://picsum.photos/seed/tacos/200",
+            icon: { image: "https://picsum.photos/seed/tacos/200" },
             rightSideContent: [<span>12$</span>],
           },
         ],
@@ -427,35 +427,35 @@ export const WithHeaderAndFooter: Story = {
             id: "6",
             title: "Margherita Pizza",
             subtitle: "Italian",
-            imageUrl: "https://picsum.photos/seed/pizza/200",
+            icon: { image: "https://picsum.photos/seed/pizza/200" },
             rightSideContent: [<span>18$</span>],
           },
           {
             id: "7",
             title: "Butter Chicken",
             subtitle: "Indian",
-            imageUrl: "https://picsum.photos/seed/butterchicken/200",
+            icon: { image: "https://picsum.photos/seed/butterchicken/200" },
             rightSideContent: [<span>16$</span>],
           },
           {
             id: "8",
             title: "Pho Bo",
             subtitle: "Vietnamese",
-            imageUrl: "https://picsum.photos/seed/phobo/200",
+            icon: { image: "https://picsum.photos/seed/phobo/200" },
             rightSideContent: [<span>14$</span>],
           },
           {
             id: "9",
             title: "Cheeseburger",
             subtitle: "American",
-            imageUrl: "https://picsum.photos/seed/cheeseburger/200",
+            icon: { image: "https://picsum.photos/seed/cheeseburger/200" },
             rightSideContent: [<span>11$</span>],
           },
           {
             id: "10",
             title: "Falafel Wrap",
             subtitle: "Middle Eastern",
-            imageUrl: "https://picsum.photos/seed/falafel/200",
+            icon: { image: "https://picsum.photos/seed/falafel/200" },
             rightSideContent: [<span>13$</span>],
           },
         ],
@@ -681,7 +681,7 @@ export const WithHeaderAndFooter: Story = {
                     id={list.id}
                     subtitle={list.subtitle}
                     title={list.title}
-                    imageUrl={list.imageUrl}
+                    icon={list.icon}
                     onClick={() => {
                       const isAlreadyChecked = value.checked.some(
                         (check) => check.id.toString() === list.id.toString()
