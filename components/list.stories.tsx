@@ -14,19 +14,20 @@ import {
   RiNotification3Fill,
   RiCalendar2Fill,
   RiErrorWarningLine,
-  RiArrowRightSLine,
   RiDeleteBack2Line,
   RiEdit2Line,
   RiDeleteBin2Fill,
+  RiArrowRightSLine,
 } from "@remixicon/react";
 import { Card } from "./card";
 import React, { ChangeEvent, useMemo, useState } from "react";
 import styled, { css } from "styled-components";
-import { EmptySlate } from "./empty-slate";
-import { Button } from "./button";
 import { Textbox } from "./textbox";
 import { DormantText } from "./dormant-text";
 import { FormFieldGroup, StatefulForm } from "./stateful-form";
+import { generateSentence } from "./../lib/text";
+import { EmptySlate } from "./empty-slate";
+import { Button } from "./button";
 
 const meta: Meta<typeof List> = {
   title: "Content/List",
@@ -1382,7 +1383,7 @@ const Wrapper = styled.div`
   flex-direction: row;
   gap: 3rem;
 
-  @media (max-width: 500px) {
+  @media (max-width: 600px) {
     flex-direction: column;
     gap: 2rem;
   }
@@ -2063,6 +2064,70 @@ export const WithMaxItems: Story = {
 
 export const Accordion: Story = {
   render: () => {
+    const WORDS = [
+      "lorem",
+      "ipsum",
+      "dolor",
+      "sit",
+      "forte",
+      "amet",
+      "sic",
+      "edispicit",
+      "ego",
+      "sum",
+      ", ",
+      "minim",
+      "eiusmod",
+      "temper",
+      "labore",
+      "et",
+      "duis",
+      "est",
+      "id",
+      ", ",
+      "nummifer",
+      "Asianus",
+      "ab",
+      "conditum",
+      "divitis",
+      "minor",
+      "quis",
+      "nostrud",
+      "incididunt",
+      "sed",
+      "proident",
+      "sunt",
+      "Romana",
+      "Jacarta",
+      "Palaestinae",
+      "Sigilum",
+      "Massachusetta",
+      "Republicae",
+      "Therania",
+      "res",
+      "officia",
+      "exercitation",
+      "nisi",
+      "ex",
+      "veritas",
+      ", ",
+      "magna",
+      "diversus",
+      "factum",
+      "fides",
+      "intra",
+      "nil",
+      "nobilis",
+      "potis",
+      "quia",
+      "sanus",
+      "tertius",
+      "vox",
+      "urbis",
+      ", ",
+      "alii",
+    ];
+
     const ACTIONS_GROUPS: ListGroupActionsProps[] = [
       {
         caption: "Refresh",
@@ -2072,50 +2137,106 @@ export const Accordion: Story = {
       },
     ];
 
+    const LIST_WIDTH = "380px";
+
+    const ITEM_TITLE = "Container has not been started yet";
+    const ITEM_STYLE = css`
+      font-size: 12px;
+      padding-left: 10px;
+      padding-right: 10px;
+      padding-bottom: 10px;
+    `;
+
+    const HOVER_TEXT_COLOR = "white";
+    const HOVER_BG_COLOR = "#1F2937";
+
     return (
-      <List
-        styles={{
-          containerStyle: css`
-            padding: 16px;
-            min-width: 500px;
-          `,
-        }}
-      >
-        <List.Group id="log" title={"Logs"} actions={ACTIONS_GROUPS}>
-          <List.Item
-            openable
-            id={"log.id"}
-            hoverTextColor="white"
-            hoverBackgroundColor="#1F2937"
-            selected
-            title="Container has not been started yet"
+      <Wrapper>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "8px",
+          }}
+        >
+          <h3>Non-exclusive</h3>
+          <List
+            styles={{
+              containerStyle: css`
+                width: ${LIST_WIDTH};
+              `,
+            }}
           >
-            <pre
-              style={{
-                margin: 0,
-                padding: 10,
-                paddingTop: 0,
-                fontSize: 12,
-                lineHeight: 1.6,
-              }}
-            >
-              {`[INFO] Initializing container runtime...
-[INFO] Checking image availability
-[WARN] Image not found locally
-[INFO] Pulling image from registry...
-[ERROR] Container failed to start
+            {["Inference log", "Compiler log"].map((title, idx) => {
+              const id = title.toLowerCase().split(" ").join("-");
+              return (
+                <List.Group
+                  key={id}
+                  id={id}
+                  title={title}
+                  actions={ACTIONS_GROUPS}
+                >
+                  <List.Item
+                    openable
+                    selected
+                    id={id}
+                    title={ITEM_TITLE}
+                    hoverTextColor={HOVER_TEXT_COLOR}
+                    hoverBackgroundColor={HOVER_BG_COLOR}
+                    styles={{ openableStyle: ITEM_STYLE }}
+                  >
+                    {generateSentence(WORDS)}
+                  </List.Item>
+                </List.Group>
+              );
+            })}
+          </List>
+        </div>
 
-Reason:
-  The container process exited before initialization.
-
-Suggestion:
-  • Verify the container image exists
-  • Check environment variables
-  • Review startup command configuration`}
-            </pre>
-          </List.Item>
-        </List.Group>
-      </List>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "2px",
+          }}
+        >
+          <h3>Exclusive</h3>
+          <List
+            styles={{
+              containerStyle: css`
+                width: ${LIST_WIDTH};
+              `,
+            }}
+            openerBehavior="onlyOne"
+            groupOpenerBehavior="onlyOne"
+          >
+            {["First item", "Second item", "Third item"].map((title, idx) => {
+              const id = `exclusive-${idx}`;
+              return (
+                <List.Group
+                  key={id}
+                  id={id}
+                  title={title}
+                  actions={ACTIONS_GROUPS}
+                  initialState={`exclusive-0` === id ? "opened" : "closed"}
+                >
+                  <List.Item
+                    openable
+                    selected
+                    id={id}
+                    title={ITEM_TITLE}
+                    hoverTextColor={HOVER_TEXT_COLOR}
+                    hoverBackgroundColor={HOVER_BG_COLOR}
+                    styles={{ openableStyle: ITEM_STYLE }}
+                  >
+                    {generateSentence(WORDS)}
+                  </List.Item>
+                </List.Group>
+              );
+            })}
+          </List>
+        </div>
+      </Wrapper>
     );
   },
 };
