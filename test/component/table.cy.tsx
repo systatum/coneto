@@ -114,63 +114,34 @@ describe("Table", () => {
     );
   }
   context("isLoading", () => {
-    const scenarios = [
-      {
-        description: "isLoading only",
-        props: { isLoading: true },
-        expectedPadding: 60,
-      },
-      {
-        description: "isLoading with actions",
-        props: { isLoading: true, actions: [{ caption: "Test" }] },
-        expectedPadding: 126,
-      },
-      {
-        description: "isLoading with showPagination",
-        props: { isLoading: true, showPagination: true },
-        expectedPadding: 140,
-      },
-      {
-        description: "isLoading with showPagination + hasRowGroup",
-        props: {
-          isLoading: true,
-          showPagination: true,
-          labels: { pageNumberText: "12" },
-          hasRowGroup: true,
-        },
-        expectedPadding: 152,
-      },
-      {
-        description: "isLoading with hasRowGroup",
-        props: { isLoading: true, hasRowGroup: true },
-        expectedPadding: 140,
-      },
-      {
-        description: "isLoading with searchable",
-        props: { isLoading: true, searchable: true },
-        expectedPadding: 126,
-      },
-    ];
+    context(`when given true`, () => {
+      it(`should render spinner with position padding-top 10px and padding-left 10px`, () => {
+        cy.mount(<BasicTable isLoading />);
 
-    scenarios.forEach(({ description, props, expectedPadding }) => {
-      context(`when given ${description}`, () => {
-        it(`should render spinner with padding-top ~${expectedPadding}px and padding-left 16px`, () => {
-          cy.mount(<BasicTable {...props} />);
+        cy.findByLabelText("overlay-blocker").then(($overlay) => {
+          const overlayRect = $overlay[0].getBoundingClientRect();
 
-          cy.findByLabelText("overlay-blocker").then(($overlay) => {
-            const overlayRect = $overlay[0].getBoundingClientRect();
+          cy.findByLabelText("circle").then(($spinner) => {
+            const spinnerRect = $spinner[0].getBoundingClientRect();
 
-            cy.findByLabelText("circle").then(($spinner) => {
-              const spinnerRect = $spinner[0].getBoundingClientRect();
+            const paddingTop = spinnerRect.top - overlayRect.top;
+            const paddingLeft = spinnerRect.left - overlayRect.left;
 
-              const paddingTop = spinnerRect.top - overlayRect.top;
-              const paddingLeft = spinnerRect.left - overlayRect.left;
-
-              expect(paddingTop).to.be.closeTo(expectedPadding, 10);
-              expect(paddingLeft).to.be.closeTo(16, 4);
-            });
+            expect(paddingTop).to.be.closeTo(10, 2);
+            expect(paddingLeft).to.be.closeTo(10, 2);
           });
         });
+      });
+
+      it(`should render spinner with padding 4px and with caption loading`, () => {
+        cy.mount(<BasicTable isLoading />);
+
+        cy.findByText("Loading").should("exist");
+
+        cy.findByLabelText("loading-spinner")
+          .should("have.css", "background-color", "rgb(0, 0, 0)")
+          .and("have.css", "opacity", "0.8")
+          .and("have.css", "padding", "4px 8px 4px 4px");
       });
     });
   });
