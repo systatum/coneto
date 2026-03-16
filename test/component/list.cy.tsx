@@ -14,8 +14,10 @@ import {
   List,
   ListGroupActionsProps,
   ListGroupContentProps,
+  ListGroupProps,
   ListItemActionProps,
   ListItemProps,
+  ListProps,
 } from "./../../components/list";
 import { css } from "styled-components";
 
@@ -118,6 +120,126 @@ describe("List", () => {
       ],
     },
   ];
+
+  context("groupOpenerBehavior", () => {
+    function ListWithGroup({
+      groupOpenerBehavior,
+      groupProps,
+    }: {
+      groupOpenerBehavior?: ListProps["groupOpenerBehavior"];
+      groupProps?: Omit<ListGroupProps, "id" | "children" | "title">;
+    }) {
+      const ACTIONS_GROUPS: ListGroupActionsProps[] = [
+        {
+          caption: "Refresh",
+          onClick: (id: string) => {
+            console.log(`action was added ${id}`);
+          },
+        },
+      ];
+
+      const LIST_GROUPS = [
+        {
+          id: "inference-log",
+          title: "Inference log",
+          items: [
+            {
+              id: "inference-log-0",
+              title: "Inference container initialized",
+            },
+          ],
+        },
+        {
+          id: "compiler-log",
+          title: "Compiler log",
+          items: [
+            {
+              id: "compiler-log-0",
+              title: "Compiler container ready",
+            },
+          ],
+        },
+      ];
+
+      return (
+        <List
+          groupOpenerBehavior={groupOpenerBehavior}
+          onOpen={({ id }) => console.log(`id for now is ${id}`)}
+          styles={{
+            containerStyle: css`
+              padding: 16px;
+              min-width: 500px;
+            `,
+          }}
+        >
+          {LIST_GROUPS.map((group) => (
+            <List.Group
+              key={group.id}
+              id={group.id}
+              title={group.title}
+              actions={ACTIONS_GROUPS}
+              initialState="closed"
+              {...groupProps}
+            >
+              {group.items.map((item) => (
+                <List.Item key={item.id} id={item.id} title={item.title} />
+              ))}
+            </List.Group>
+          ))}
+        </List>
+      );
+    }
+
+    context("when given onlyOne", () => {
+      it("should open with one group", () => {
+        cy.mount(<ListWithGroup groupOpenerBehavior="onlyOne" />);
+        cy.findByText("Inference log").click();
+        cy.findByText("Inference container initialized").should("exist");
+        cy.findByText("Compiler container initialized").should("not.exist");
+      });
+
+      context("when clicking another group", () => {
+        it("should close another group", () => {
+          cy.mount(<ListWithGroup groupOpenerBehavior="onlyOne" />);
+
+          cy.findByText("Inference log").click();
+          cy.findByText("Inference container initialized").should("exist");
+          cy.findByText("Compiler container initialized").should("not.exist");
+
+          cy.findByText("Compiler log").click();
+
+          cy.findByText("Inference container initialized").should(
+            "not.be.visible"
+          );
+          cy.findByText("Compiler container ready").should("exist");
+        });
+      });
+    });
+
+    context("when given any", () => {
+      it("allows opening any list item", () => {
+        cy.mount(<ListWithGroup groupOpenerBehavior="any" />);
+        cy.findByText("Inference log").click();
+        cy.findByText("Inference container initialized").should("exist");
+        cy.findByText("Compiler container initialized").should("not.exist");
+      });
+
+      context("when clicking another group", () => {
+        it("should always opened for another group", () => {
+          cy.mount(<ListWithGroup groupOpenerBehavior="any" />);
+
+          cy.findByText("Inference log").click();
+          cy.findByText("Inference container initialized").should("exist");
+          cy.findByText("Compiler container initialized").should("not.exist");
+
+          cy.findByText("Compiler log").click();
+
+          cy.findByText("Inference container initialized").should("exist");
+          cy.findByText("Compiler container ready").should("exist");
+        });
+      });
+    });
+  });
 
   context("checkbox", () => {
     it("renders with fit-content", () => {
