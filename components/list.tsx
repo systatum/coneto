@@ -570,7 +570,7 @@ function ListGroup({
             collapsed: { opacity: 0, height: 0 },
           }}
           transition={{ duration: 0.2, ease: "easeInOut" }}
-          $contentStyle={styles?.contentStyle}
+          $style={styles?.contentStyle}
         >
           {childArray.map((child, index) => {
             const componentChild = child as ReactElement<
@@ -787,7 +787,7 @@ const ListGroupContainer = styled.div<{
 `;
 
 const ListGroupContent = styled(motion.ul)<{
-  $contentStyle?: CSSProp;
+  $style?: CSSProp;
   $isOpen?: boolean;
 }>`
   display: flex;
@@ -797,7 +797,7 @@ const ListGroupContent = styled(motion.ul)<{
   gap: 4px;
   margin-top: 4px;
 
-  ${({ $contentStyle }) => $contentStyle}
+  ${({ $style }) => $style}
 `;
 
 const HeaderButton = styled.div<{ $isOpen?: boolean; $style?: CSSProp }>`
@@ -887,6 +887,7 @@ export interface ListItemStylesProps {
   leftSideStyle?: CSSProp;
   rightSideStyle?: CSSProp;
   maxItemsStyle?: CSSProp;
+  openableStyle?: CSSProp;
 }
 
 interface ListItemWithId {
@@ -1201,6 +1202,7 @@ const ListItem = forwardRef<HTMLLIElement, ListItemProps>(
               aria-label="list-item-children"
               animate={isChildOpened ? "open" : "collapsed"}
               exit="collapsed"
+              $style={styles?.openableStyle}
               $isOpen={isChildOpened}
               variants={{
                 open: {
