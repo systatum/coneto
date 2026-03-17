@@ -577,7 +577,12 @@ const BaseButton = styled.button<{
     `;
   }};
 
-  ${({ $pressed, $variant, $hoverBackgroundColor }) => css`
+  ${({
+    $pressed,
+    $variant,
+    $hoverBackgroundColor,
+    $activeBackgroundColor,
+  }) => css`
     ${$pressed &&
     css`
       color: ${$variant === "link"
@@ -587,20 +592,24 @@ const BaseButton = styled.button<{
           : $variant.startsWith("outline")
             ? "white"
             : undefined};
-      background-color: ${$hoverBackgroundColor
-        ? $hoverBackgroundColor
-        : getActiveColor($variant)};
+      background-color: ${$activeBackgroundColor
+        ? $activeBackgroundColor
+        : $hoverBackgroundColor
+          ? $hoverBackgroundColor
+          : getActiveColor($variant)};
       box-shadow:
         inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
         inset 0 -0.5px 0.5px ${getActiveColor($variant)};
     `}
   `};
 
-  ${({ $pressed, $variant }) =>
+  ${({ $pressed, $variant, $activeBackgroundColor }) =>
     !$pressed &&
     css`
       &:active {
-        background-color: ${getActiveColor($variant)};
+        background-color: ${$activeBackgroundColor
+          ? $activeBackgroundColor
+          : getActiveColor($variant)};
         box-shadow:
           inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
           inset 0 -0.5px 0.5px ${getActiveColor($variant)};

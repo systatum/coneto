@@ -30,7 +30,7 @@ function Statusbar({
   styles,
   content,
   paddingTop,
-  activeBackgroundColor = "#ececec",
+  activeBackgroundColor,
   hoverBackgroundColor,
   transparent,
   size = 8,
@@ -141,7 +141,9 @@ function StatusbarItem({
               : "default"
         }
         activeBackgroundColor={activeBackgroundColor}
-        hoverBackgroundColor={hoverBackgroundColor}
+        hoverBackgroundColor={
+          hoverBackgroundColor ? hoverBackgroundColor : activeBackgroundColor
+        }
         styles={{
           ...button?.styles,
           self: css`
