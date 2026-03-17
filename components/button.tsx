@@ -58,14 +58,15 @@ export type ButtonProps = Omit<React.ComponentProps<"button">, "style"> &
     showSubMenuOn?: "caret" | "self";
     tipMenuSize?: TipMenuItemVariantType;
     safeAreaAriaLabels?: string[];
-    activeBackgroundColor?: string;
     dialogPlacement?: DialogPlacement;
     onOpen?: (prop: boolean) => void;
     open?: boolean;
     styles?: ButtonStylesProps;
     anchorRef?: React.RefObject<HTMLElement>;
-    pressed?: boolean;
     icon?: FigureProps;
+    pressed?: boolean;
+    activeBackgroundColor?: string;
+    hoverBackgroundColor?: string;
   };
 
 export interface ButtonStylesProps {
@@ -97,6 +98,7 @@ function Button({
   anchorRef,
   pressed,
   icon,
+  hoverBackgroundColor,
   ...props
 }: ButtonProps) {
   const [isOpenLocal, setIsOpenLocal] = React.useState(false);
@@ -197,6 +199,7 @@ function Button({
     >
       <BaseButton
         $pressed={pressed}
+        $hoverBackgroundColor={hoverBackgroundColor}
         onClick={(e) => {
           if (onClick && showSubMenuOn === "caret") {
             onClick(e);
@@ -238,7 +241,9 @@ function Button({
             size={icon?.size ?? 14}
           />
         )}
-        <ButtonLabel aria-label="button-label">{children}</ButtonLabel>
+        {children && (
+          <ButtonLabel aria-label="button-label">{children}</ButtonLabel>
+        )}
         {isLoading && <LoadingSpinner />}
       </BaseButton>
 
@@ -453,6 +458,7 @@ const BaseButton = styled.button<{
   $isOpen?: boolean;
   $activeBackgroundColor?: string;
   $pressed?: boolean;
+  $hoverBackgroundColor?: string;
 }>`
   display: flex;
   flex-direction: row;
@@ -502,7 +508,13 @@ const BaseButton = styled.button<{
     }
   }}
 
-  ${({ $variant, $isOpen, $activeBackgroundColor, $pressed }) => {
+  ${({
+    $variant,
+    $isOpen,
+    $activeBackgroundColor,
+    $pressed,
+    $hoverBackgroundColor,
+  }) => {
     const { bg, color, underline } = getButtonColors(
       $variant,
       $isOpen,
@@ -543,7 +555,9 @@ const BaseButton = styled.button<{
         &:hover {
           ${!$isOpen &&
           css`
-            background-color: ${getHoverColor($variant)};
+            background-color: ${$hoverBackgroundColor
+              ? $hoverBackgroundColor
+              : getHoverColor($variant)};
           `}
 
           ${$variant === "link"
@@ -563,7 +577,7 @@ const BaseButton = styled.button<{
     `;
   }};
 
-  ${({ $pressed, $variant }) => css`
+  ${({ $pressed, $variant, $hoverBackgroundColor }) => css`
     ${$pressed &&
     css`
       color: ${$variant === "link"
@@ -573,7 +587,9 @@ const BaseButton = styled.button<{
           : $variant.startsWith("outline")
             ? "white"
             : undefined};
-      background-color: ${getActiveColor($variant)};
+      background-color: ${$hoverBackgroundColor
+        ? $hoverBackgroundColor
+        : getActiveColor($variant)};
       box-shadow:
         inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
         inset 0 -0.5px 0.5px ${getActiveColor($variant)};
