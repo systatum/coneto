@@ -145,7 +145,7 @@ function FieldLane({
 
                     ${dropdown?.disabled &&
                     css`
-                      opacity: 0.7;
+                      opacity: 0.5;
                     `}
 
                     ${dropdown.width &&
