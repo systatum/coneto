@@ -1140,7 +1140,6 @@ export const WithSubcontent: Story = {
                           styles={{
                             rowStyle: css`
                               width: 100%;
-                              min-height: 40px;
                             `,
                             titleStyle: css`
                               width: 100%;
@@ -1192,9 +1191,9 @@ export const WithSubcontent: Story = {
                                   key={i}
                                   styles={{
                                     containerStyle: css`
-                                      padding-left: 33px;
-                                      padding-right: 33px;
-                                      padding-bottom: 20px;
+                                      padding-left: 30px;
+                                      padding-right: 30px;
+                                      padding-bottom: 8px;
                                     `,
                                   }}
                                   formValues={item}
@@ -1286,7 +1285,6 @@ export const WithSubcontent: Story = {
                           styles={{
                             rowStyle: css`
                               width: 100%;
-                              min-height: 40px;
                             `,
                             titleStyle: css`
                               width: 100%;
@@ -1338,9 +1336,9 @@ export const WithSubcontent: Story = {
                                     key={i}
                                     styles={{
                                       containerStyle: css`
-                                        padding-left: 33px;
-                                        padding-right: 33px;
-                                        padding-bottom: 20px;
+                                        padding-left: 30px;
+                                        padding-right: 30px;
+                                        padding-bottom: 8px;
                                       `,
                                     }}
                                     formValues={item}

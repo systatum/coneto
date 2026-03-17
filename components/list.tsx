@@ -801,9 +801,7 @@ const ListGroupContent = styled(motion.ul)<{
         `
       : !$isChildren &&
         css`
-          margin-top: 4px;
-          padding-top: 2px;
-          gap: 4px;
+          gap: 2px;
         `};
 
   ${({ $style }) => $style};
@@ -1177,8 +1175,8 @@ const ListItem = forwardRef<HTMLLIElement, ListItemProps>(
                         self: css`
                           ${!subtitle &&
                           css`
-                            width: 24px;
-                            height: 24px;
+                            width: 20px;
+                            height: 20px;
                           `}
                         `,
                       }}
