@@ -594,9 +594,7 @@ const BaseButton = styled.button<{
             : undefined};
       background-color: ${$activeBackgroundColor
         ? $activeBackgroundColor
-        : $hoverBackgroundColor
-          ? $hoverBackgroundColor
-          : getActiveColor($variant)};
+        : getActiveColor($variant)};
       box-shadow:
         inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
         inset 0 -0.5px 0.5px ${getActiveColor($variant)};
