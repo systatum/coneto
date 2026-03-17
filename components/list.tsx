@@ -790,8 +790,6 @@ const ListGroupContent = styled(motion.ul)<{
   display: flex;
   flex-direction: column;
   position: relative;
-  gap: 4px;
-  margin-top: 4px;
 
   ${({ $isOpen, $isChildren }) =>
     $isChildren && !$isOpen
@@ -801,9 +799,11 @@ const ListGroupContent = styled(motion.ul)<{
           margin-top: 0px;
           padding: 0px;
         `
-      : $isOpen &&
+      : !$isChildren &&
         css`
+          margin-top: 4px;
           padding-top: 2px;
+          gap: 4px;
         `};
 
   ${({ $style }) => $style};
@@ -954,7 +954,9 @@ const ListItem = forwardRef<HTMLLIElement, ListItemProps>(
     );
     const idFullname = groupId ? `${groupId}-${id}` : `${id}`;
 
-    const isChildOpened = isOpen(idFullname, "item");
+    const isChildOpened = useMemo(() => {
+      return isOpen(idFullname, "item");
+    }, [isOpen, idFullname]);
 
     return (
       <ListItemWrapper
@@ -1257,7 +1259,6 @@ const ListItemWrapper = styled.li<{
   display: flex;
   flex-direction: column;
   position: relative;
-  gap: 4px;
   transition: background-color 300ms;
   border-radius: 3px;
 
