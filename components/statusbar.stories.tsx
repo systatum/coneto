@@ -67,7 +67,7 @@ export const Default: Story = {
                 children: "Page 1 of 53",
                 showSubMenuOn: "self",
                 subMenu: ({ show }) =>
-                  show(<Textbox value={"@systatum/coneto 🚀"} />),
+                  show(<Textbox value={"@systatum/coneto 🚀"} readOnly />),
               },
             },
             {
@@ -259,6 +259,8 @@ export const ContainerizedClassicTheme: Story = {
       <CapsuleTab tabs={TABS_ITEMS} activeTab={"2"}>
         <Statusbar
           paddingTop="10px"
+          activeBackgroundColor="red"
+          hoverBackgroundColor="blue"
           content={{
             left: [
               {
@@ -266,7 +268,7 @@ export const ContainerizedClassicTheme: Story = {
                   children: "Page 1 of 53",
                   showSubMenuOn: "self",
                   subMenu: ({ show }) =>
-                    show(<Textbox value={"@systatum/coneto 🚀"} />),
+                    show(<Textbox value={"@systatum/coneto 🚀"} readOnly />),
                 },
               },
               {
@@ -468,7 +470,7 @@ export const ContainerizedModernTheme: Story = {
                   children: "Page 1 of 53",
                   showSubMenuOn: "self",
                   subMenu: ({ show }) =>
-                    show(<Textbox value={"@systatum/coneto 🚀"} />),
+                    show(<Textbox value={"@systatum/coneto 🚀"} readOnly />),
                 },
               },
               {
