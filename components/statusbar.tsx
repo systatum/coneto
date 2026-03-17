@@ -33,10 +33,11 @@ function Statusbar({
   activeBackgroundColor,
   hoverBackgroundColor,
   transparent,
-  size = 8,
+  size = 10,
 }: StatusbarProps) {
   return (
     <StatusbarWrapper
+      aria-label="statusbar-wrapper"
       $transparent={transparent}
       $style={css`
         ${paddingTop &&
@@ -133,6 +134,10 @@ function StatusbarItem({
     return (
       <Button
         {...button}
+        icon={{
+          ...button?.icon,
+          size: button?.icon?.size ? button?.icon?.size : size,
+        }}
         variant={
           button?.variant
             ? button?.variant
@@ -157,6 +162,9 @@ function StatusbarItem({
         }
         styles={{
           ...button?.styles,
+          containerStyle: css`
+            height: 100%;
+          `,
           self: css`
             width: fit-content;
             min-height: 21px;
@@ -190,7 +198,7 @@ function StatusbarItem({
   }
 
   return (
-    <TextWrapper $width={width} $style={styles?.self}>
+    <TextWrapper $size={size} $width={width} $style={styles?.self}>
       {icon && (
         <Figure
           {...icon}
@@ -221,7 +229,6 @@ const StatusbarWrapper = styled.div<{
   left: 0;
   width: 100%;
   display: flex;
-  font-size: 14px;
   flex-direction: row;
   justify-content: space-between;
   position: absolute;
@@ -259,16 +266,22 @@ const ActionWrapper = styled.div<{
 const TextWrapper = styled.div<{
   $style?: CSSProp;
   $width?: string;
+  $size?: number;
 }>`
   text-align: center;
   justify-content: center;
   align-items: center;
   height: 100%;
   display: flex;
-  font-size: 8px;
   gap: 4px;
-  padding-left: 2px;
-  padding-right: 2px;
+  padding-left: 4px;
+  padding-right: 4px;
+  ${({ $size }) =>
+    $size &&
+    css`
+      font-size: ${`${$size}px`};
+    `};
+
   ${({ $width }) =>
     $width &&
     css`

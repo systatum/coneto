@@ -71,11 +71,9 @@ export const Default: Story = {
               },
             },
             {
-              width: "60px",
               text: "17455 words",
             },
             {
-              width: "100px",
               text: "English (United States)",
             },
             {
@@ -272,11 +270,9 @@ export const ContainerizedClassicTheme: Story = {
                 },
               },
               {
-                width: "60px",
                 text: "17455 words",
               },
               {
-                width: "100px",
                 text: "English (United States)",
               },
               {
@@ -476,11 +472,9 @@ export const ContainerizedModernTheme: Story = {
                 },
               },
               {
-                width: "60px",
                 text: "17455 words",
               },
               {
-                width: "100px",
                 text: "English (United States)",
               },
               {
