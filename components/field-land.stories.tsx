@@ -211,6 +211,7 @@ export const CustomRenderer: Story = {
           dropdowns={[
             {
               width: "100px",
+              disabled: true,
               caption: value1.selectedText,
               options: ATTENDANCE_OPTIONS,
               onChange: (id) => {

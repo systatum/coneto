@@ -47,6 +47,7 @@ interface FieldLaneInternalActionsProps {
 export type DropdownProps = FalsyOr<DropdownInternalProps>;
 
 interface DropdownInternalProps {
+  disabled?: boolean;
   options?: DropdownOptionProps[];
   caption?: string;
   onChange?: (id: string) => void;
@@ -107,6 +108,7 @@ function FieldLane({
             return (
               <Button
                 key={index}
+                disabled={dropdown?.disabled}
                 subMenu={({ list, render }) => {
                   if (dropdown.render) {
                     return dropdown.render({ render });
@@ -140,6 +142,11 @@ function FieldLane({
                       border-top-left-radius: 0;
                       border-bottom-left-radius: 0;
                     `};
+
+                    ${dropdown?.disabled &&
+                    css`
+                      opacity: 0.7;
+                    `}
 
                     ${dropdown.width &&
                     css`
