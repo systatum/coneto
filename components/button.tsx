@@ -198,8 +198,6 @@ function Button({
       $variant={variant}
     >
       <BaseButton
-        $pressed={pressed}
-        $hoverBackgroundColor={hoverBackgroundColor}
         onClick={(e) => {
           if (onClick && showSubMenuOn === "caret") {
             onClick(e);
@@ -212,11 +210,13 @@ function Button({
           }
         }}
         {...props}
+        $pressed={pressed}
+        $hoverBackgroundColor={hoverBackgroundColor}
+        $activeBackgroundColor={activeBackgroundColor}
         $variant={variant}
         $size={size}
         disabled={disabled}
         $disabled={disabled}
-        $activeBackgroundColor={activeBackgroundColor}
         $isOpen={showSubMenuOn === "self" && isOpen}
         $tipMenu={subMenu && showSubMenuOn === "caret" ? true : false}
         onMouseEnter={(e) => {
@@ -449,6 +449,41 @@ const ButtonWrapper = styled.div<{
         `}
 `;
 
+const getVariantTextColor = (variant: string) => {
+  if (variant === "link") return "white";
+  if (variant === "outline-default") return "black";
+  if (variant.startsWith("outline")) return "white";
+  return undefined;
+};
+
+const getSizeStyles = ($size: string) => {
+  const map = {
+    xs: css`
+      height: 28px;
+      padding: 0 6px;
+    `,
+    sm: css`
+      height: 32px;
+      padding: 0 12px;
+    `,
+    lg: css`
+      height: 40px;
+      padding: 0 24px;
+    `,
+    icon: css`
+      width: 36px;
+      height: 36px;
+      padding: 0;
+    `,
+    default: css`
+      height: 36px;
+      padding: 0 16px;
+    `,
+  };
+
+  return map[$size as keyof typeof map] || map.default;
+};
+
 const BaseButton = styled.button<{
   $tipMenu?: boolean;
   $style?: CSSProp;
@@ -461,68 +496,54 @@ const BaseButton = styled.button<{
   $hoverBackgroundColor?: string;
 }>`
   display: flex;
-  flex-direction: row;
   align-items: center;
   justify-content: center;
   gap: 8px;
+
   font-size: 14px;
   font-weight: 500;
   white-space: nowrap;
-  transition: all 0.2s ease-in-out;
-  cursor: ${({ $disabled }) => ($disabled ? "not-allowed" : "pointer")};
-  user-select: none;
-  outline: none;
+
   border: none;
+  outline: none;
   border-radius: 2px;
+
+  transition: all 0.2s ease-in-out;
+  user-select: none;
+
+  cursor: ${({ $disabled }) => ($disabled ? "not-allowed" : "pointer")};
   opacity: ${({ $disabled }) => ($disabled ? 0.6 : 1)};
   pointer-events: ${({ $disabled }) => ($disabled ? "none" : "auto")};
 
-  ${({ $size }) => {
-    switch ($size) {
-      case "xs":
-        return css`
-          height: 28px;
-          padding: 0 6px;
-        `;
-      case "sm":
-        return css`
-          height: 32px;
-          padding: 0 12px;
-        `;
-      case "lg":
-        return css`
-          height: 40px;
-          padding: 0 24px;
-        `;
-      case "icon":
-        return css`
-          width: 36px;
-          height: 36px;
-          padding: 0;
-        `;
-      default:
-        return css`
-          height: 36px;
-          padding: 0 16px;
-        `;
-    }
-  }}
+  ${({ $size }) => getSizeStyles($size)}
 
   ${({
     $variant,
     $isOpen,
     $activeBackgroundColor,
-    $pressed,
     $hoverBackgroundColor,
+    $pressed,
   }) => {
     const { bg, color, underline } = getButtonColors(
       $variant,
       $isOpen,
       $activeBackgroundColor
     );
+
+    const activeBg = $activeBackgroundColor
+      ? $activeBackgroundColor
+      : getActiveColor($variant);
+
+    const hoverBg = $hoverBackgroundColor
+      ? $hoverBackgroundColor
+      : getHoverColor($variant);
+
+    const textColor = getVariantTextColor($variant);
+
     return css`
       background-color: ${bg};
       color: ${color};
+      text-decoration: ${underline ? "underline" : "none"};
 
       ${$isOpen &&
       css`
@@ -531,107 +552,55 @@ const BaseButton = styled.button<{
         &::before {
           content: "";
           position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
+          inset: 0;
+          border-radius: inherit;
+          pointer-events: none;
+          overflow: hidden;
           box-shadow:
             inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
             inset 0 -0.5px 0.5px ${getActiveColor($variant)};
-          border-radius: inherit;
-          overflow: hidden;
-          pointer-events: none;
-        }
-      `};
-
-      ${underline
-        ? css`
-            text-decoration: underline;
-          `
-        : ""};
-
-      ${!$pressed &&
-      css`
-        &:hover {
-          ${!$isOpen &&
-          css`
-            background-color: ${$hoverBackgroundColor
-              ? $hoverBackgroundColor
-              : getHoverColor($variant)};
-          `}
-
-          ${$variant === "link"
-            ? css`
-                color: white;
-              `
-            : $variant === "outline-default"
-              ? css`
-                  color: black;
-                `
-              : $variant.startsWith("outline") &&
-                css`
-                  color: white;
-                `}
         }
       `}
+
+      ${$pressed
+        ? css`
+            background-color: ${activeBg};
+            color: ${textColor};
+            box-shadow:
+              inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
+              inset 0 -0.5px 0.5px ${getActiveColor($variant)};
+          `
+        : css`
+            ${!$isOpen &&
+            css`
+              &:hover {
+                background-color: ${hoverBg};
+                color: ${textColor};
+              }
+            `}
+
+            &:active {
+              background-color: ${activeBg};
+              box-shadow:
+                inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
+                inset 0 -0.5px 0.5px ${getActiveColor($variant)};
+            }
+
+            &:focus-visible {
+              box-shadow: inset 0 0 0 2px ${getFocusColor($variant)};
+            }
+          `};
     `;
   }};
-
-  ${({
-    $pressed,
-    $variant,
-    $hoverBackgroundColor,
-    $activeBackgroundColor,
-  }) => css`
-    ${$pressed &&
-    css`
-      color: ${$variant === "link"
-        ? "white"
-        : $variant === "outline-default"
-          ? "black"
-          : $variant.startsWith("outline")
-            ? "white"
-            : undefined};
-      background-color: ${$activeBackgroundColor
-        ? $activeBackgroundColor
-        : getActiveColor($variant)};
-      box-shadow:
-        inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
-        inset 0 -0.5px 0.5px ${getActiveColor($variant)};
-    `}
-  `};
-
-  ${({ $pressed, $variant, $activeBackgroundColor }) =>
-    !$pressed &&
-    css`
-      &:active {
-        background-color: ${$activeBackgroundColor
-          ? $activeBackgroundColor
-          : getActiveColor($variant)};
-        box-shadow:
-          inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
-          inset 0 -0.5px 0.5px ${getActiveColor($variant)};
-      }
-
-      &:focus-visible {
-        outline: none;
-        box-shadow: inset 0 0 0 2px ${getFocusColor($variant)};
-        transition: box-shadow 0.2s ease;
-      }
-    `}
-
-  ${({ $style }) =>
-    $style &&
-    css`
-      ${$style}
-    `}
 
   ${({ $tipMenu }) =>
     $tipMenu &&
     css`
       border-top-right-radius: 0;
       border-bottom-right-radius: 0;
-    `}
+    `};
+
+  ${({ $style }) => $style}
 `;
 
 const BaseButtonToggle = styled(BaseButton)<{
