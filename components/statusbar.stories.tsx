@@ -142,7 +142,7 @@ export const Default: Story = {
   },
 };
 
-export const ContainerizedModernTheme: Story = {
+export const ContainerizedClassicTheme: Story = {
   render: () => {
     const [pressedItems, setPressedItems] = useState<Set<string>>(new Set());
 
@@ -344,7 +344,7 @@ export const ContainerizedModernTheme: Story = {
   },
 };
 
-export const ContainerizedClassicTheme: Story = {
+export const ContainerizedModernTheme: Story = {
   render: () => {
     const [pressedItems, setPressedItems] = useState<Set<string>>(new Set());
 
