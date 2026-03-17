@@ -23,9 +23,153 @@ export default meta;
 
 type Story = StoryObj<typeof Statusbar>;
 
+export const Default: Story = {
+  render: () => {
+    const [pressedItems, setPressedItems] = useState<Set<string>>(new Set());
+
+    return (
+      <Statusbar
+        paddingTop="10px"
+        content={{
+          left: [
+            {
+              button: {
+                children: "Page 1 of 53",
+                showSubMenuOn: "self",
+                subMenu: ({ show }) => show(<Textbox value={"Coneto 🚀"} />),
+              },
+            },
+            {
+              width: "60px",
+              text: "17455 words",
+            },
+            {
+              width: "100px",
+              text: "English (United States)",
+            },
+            {
+              icon: {
+                image: RiUserFollowLine,
+              },
+              text: "Accessibility: Good to go",
+            },
+          ],
+          right: [
+            {
+              button: {
+                showSubMenuOn: "self",
+                icon: {
+                  image: pressedItems.has("focus")
+                    ? RiFullscreenLine
+                    : RiFocus3Line,
+                },
+                subMenu: ({ list }) =>
+                  list([
+                    {
+                      caption: "Full window",
+                      icon: {
+                        image: RiFullscreenLine,
+                      },
+                      onClick: () => {
+                        setPressedItems((prev) => {
+                          const next = new Set(prev);
+                          next.add("focus");
+                          return next;
+                        });
+                      },
+                    },
+                    {
+                      caption: "Zen mode",
+                      icon: {
+                        image: RiFocus3Line,
+                      },
+                      onClick: () => {
+                        setPressedItems((prev) => {
+                          const next = new Set(prev);
+                          next.delete("focus");
+                          return next;
+                        });
+                      },
+                    },
+                  ]),
+                children: "Focus",
+              },
+            },
+            {
+              button: {
+                pressed: pressedItems.has("pages"),
+                onClick: () =>
+                  setPressedItems((prev) => {
+                    const next = new Set(prev);
+                    if (next.has("pages")) {
+                      next.delete("pages");
+                    } else {
+                      next.add("pages");
+                    }
+                    return next;
+                  }),
+                icon: { image: RiPagesLine },
+              },
+            },
+            {
+              button: {
+                pressed: pressedItems.has("window"),
+                onClick: () =>
+                  setPressedItems((prev) => {
+                    const next = new Set(prev);
+                    if (next.has("window")) {
+                      next.delete("window");
+                    } else {
+                      next.add("window");
+                    }
+                    return next;
+                  }),
+                icon: { image: RiWindow2Fill },
+                hoverBackgroundColor: "red",
+              },
+            },
+            {
+              button: {
+                pressed: pressedItems.has("align-item-left"),
+                onClick: () =>
+                  setPressedItems((prev) => {
+                    const next = new Set(prev);
+                    if (next.has("align-item-left")) {
+                      next.delete("align-item-left");
+                    } else {
+                      next.add("align-item-left");
+                    }
+                    return next;
+                  }),
+                icon: { image: RiAlignItemLeftLine },
+              },
+            },
+            {
+              button: {
+                pressed: pressedItems.has("align-left"),
+                onClick: () =>
+                  setPressedItems((prev) => {
+                    const next = new Set(prev);
+                    if (next.has("align-left")) {
+                      next.delete("align-left");
+                    } else {
+                      next.add("align-left");
+                    }
+                    return next;
+                  }),
+                icon: { image: RiAlignLeft },
+              },
+            },
+          ],
+        }}
+      />
+    );
+  },
+};
+
 export const ContainerizedModernTheme: Story = {
   render: () => {
-    const [isPressed, setIsPressed] = useState<Set<string>>(new Set());
+    const [pressedItems, setPressedItems] = useState<Set<string>>(new Set());
 
     const WriteTabContent = () => {
       const [value, setValue] = useState({
@@ -140,7 +284,7 @@ export const ContainerizedModernTheme: Story = {
                 button: {
                   showSubMenuOn: "self",
                   icon: {
-                    image: isPressed.has("focus")
+                    image: pressedItems.has("focus")
                       ? RiFullscreenLine
                       : RiFocus3Line,
                   },
@@ -152,7 +296,7 @@ export const ContainerizedModernTheme: Story = {
                           image: RiFullscreenLine,
                         },
                         onClick: () => {
-                          setIsPressed((prev) => {
+                          setPressedItems((prev) => {
                             const next = new Set(prev);
                             next.add("focus");
                             return next;
@@ -165,7 +309,7 @@ export const ContainerizedModernTheme: Story = {
                           image: RiFocus3Line,
                         },
                         onClick: () => {
-                          setIsPressed((prev) => {
+                          setPressedItems((prev) => {
                             const next = new Set(prev);
                             next.delete("focus");
                             return next;
@@ -178,9 +322,9 @@ export const ContainerizedModernTheme: Story = {
               },
               {
                 button: {
-                  pressed: isPressed.has("pages"),
+                  pressed: pressedItems.has("pages"),
                   onClick: () =>
-                    setIsPressed((prev) => {
+                    setPressedItems((prev) => {
                       const next = new Set(prev);
                       if (next.has("pages")) {
                         next.delete("pages");
@@ -194,9 +338,9 @@ export const ContainerizedModernTheme: Story = {
               },
               {
                 button: {
-                  pressed: isPressed.has("window"),
+                  pressed: pressedItems.has("window"),
                   onClick: () =>
-                    setIsPressed((prev) => {
+                    setPressedItems((prev) => {
                       const next = new Set(prev);
                       if (next.has("window")) {
                         next.delete("window");
@@ -211,9 +355,9 @@ export const ContainerizedModernTheme: Story = {
               },
               {
                 button: {
-                  pressed: isPressed.has("align-item-left"),
+                  pressed: pressedItems.has("align-item-left"),
                   onClick: () =>
-                    setIsPressed((prev) => {
+                    setPressedItems((prev) => {
                       const next = new Set(prev);
                       if (next.has("align-item-left")) {
                         next.delete("align-item-left");
@@ -227,9 +371,9 @@ export const ContainerizedModernTheme: Story = {
               },
               {
                 button: {
-                  pressed: isPressed.has("align-left"),
+                  pressed: pressedItems.has("align-left"),
                   onClick: () =>
-                    setIsPressed((prev) => {
+                    setPressedItems((prev) => {
                       const next = new Set(prev);
                       if (next.has("align-left")) {
                         next.delete("align-left");
@@ -252,7 +396,7 @@ export const ContainerizedModernTheme: Story = {
 
 export const ContainerizedClassicTheme: Story = {
   render: () => {
-    const [isPressed, setIsPressed] = useState<Set<string>>(new Set());
+    const [pressedItems, setPressedItems] = useState<Set<string>>(new Set());
 
     const WriteTabContent = () => {
       const [value, setValue] = useState({
@@ -368,7 +512,7 @@ export const ContainerizedClassicTheme: Story = {
                 button: {
                   showSubMenuOn: "self",
                   icon: {
-                    image: isPressed.has("focus")
+                    image: pressedItems.has("focus")
                       ? RiFullscreenLine
                       : RiFocus3Line,
                   },
@@ -380,7 +524,7 @@ export const ContainerizedClassicTheme: Story = {
                           image: RiFullscreenLine,
                         },
                         onClick: () => {
-                          setIsPressed((prev) => {
+                          setPressedItems((prev) => {
                             const next = new Set(prev);
                             next.add("focus");
                             return next;
@@ -393,7 +537,7 @@ export const ContainerizedClassicTheme: Story = {
                           image: RiFocus3Line,
                         },
                         onClick: () => {
-                          setIsPressed((prev) => {
+                          setPressedItems((prev) => {
                             const next = new Set(prev);
                             next.delete("focus");
                             return next;
@@ -406,9 +550,9 @@ export const ContainerizedClassicTheme: Story = {
               },
               {
                 button: {
-                  pressed: isPressed.has("pages"),
+                  pressed: pressedItems.has("pages"),
                   onClick: () =>
-                    setIsPressed((prev) => {
+                    setPressedItems((prev) => {
                       const next = new Set(prev);
                       if (next.has("pages")) {
                         next.delete("pages");
@@ -422,9 +566,9 @@ export const ContainerizedClassicTheme: Story = {
               },
               {
                 button: {
-                  pressed: isPressed.has("window"),
+                  pressed: pressedItems.has("window"),
                   onClick: () =>
-                    setIsPressed((prev) => {
+                    setPressedItems((prev) => {
                       const next = new Set(prev);
                       if (next.has("window")) {
                         next.delete("window");
@@ -439,9 +583,9 @@ export const ContainerizedClassicTheme: Story = {
               },
               {
                 button: {
-                  pressed: isPressed.has("align-item-left"),
+                  pressed: pressedItems.has("align-item-left"),
                   onClick: () =>
-                    setIsPressed((prev) => {
+                    setPressedItems((prev) => {
                       const next = new Set(prev);
                       if (next.has("align-item-left")) {
                         next.delete("align-item-left");
@@ -455,9 +599,9 @@ export const ContainerizedClassicTheme: Story = {
               },
               {
                 button: {
-                  pressed: isPressed.has("align-left"),
+                  pressed: pressedItems.has("align-left"),
                   onClick: () =>
-                    setIsPressed((prev) => {
+                    setPressedItems((prev) => {
                       const next = new Set(prev);
                       if (next.has("align-left")) {
                         next.delete("align-left");
