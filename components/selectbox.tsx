@@ -416,7 +416,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
               (ref as MutableRefObject<HTMLInputElement | null>).current = el;
           }}
           type="text"
-          value={inputValue}
+          value={isLoading ? "" : inputValue}
           onChange={handleInputChange}
           onKeyDown={(e) => {
             handleKeyDown(e);
