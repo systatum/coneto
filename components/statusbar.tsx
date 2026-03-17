@@ -133,7 +133,13 @@ function StatusbarItem({
     return (
       <Button
         {...button}
-        variant={transparent ? "transparent" : "default"}
+        variant={
+          transparent
+            ? "transparent"
+            : button?.variant
+              ? button?.variant
+              : "default"
+        }
         activeBackgroundColor={activeBackgroundColor}
         hoverBackgroundColor={hoverBackgroundColor}
         styles={{
@@ -146,6 +152,10 @@ function StatusbarItem({
             height: 100%;
             border-radius: 0px;
             font-size: ${`${size}px`};
+            ${width &&
+            css`
+              width: ${width};
+            `}
 
             ${button?.styles?.self ? button?.styles?.self : styles?.self};
           `,
@@ -203,6 +213,8 @@ const StatusbarWrapper = styled.div<{
   justify-content: space-between;
   position: absolute;
   border-top: 1px solid #ececec;
+  overflow: hidden;
+
   ${({ $transparent }) =>
     $transparent &&
     css`
@@ -225,6 +237,7 @@ const ActionWrapper = styled.div<{
 }>`
   display: flex;
   flex-direction: row;
+  overflow: hidden;
 
   ${({ $style }) => $style}
 `;
@@ -240,6 +253,8 @@ const TextWrapper = styled.div<{
   display: flex;
   font-size: 8px;
   gap: 4px;
+  padding-left: 2px;
+  padding-right: 2px;
   ${({ $width }) =>
     $width &&
     css`
