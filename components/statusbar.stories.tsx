@@ -45,6 +45,7 @@ export const ContainerizedModernTheme: Story = {
             display: "flex",
             flexDirection: "column",
             gap: "0.5rem",
+            minHeight: "150px",
           }}
         >
           <h3 style={{ fontWeight: 500 }}>Write</h3>
@@ -73,6 +74,7 @@ export const ContainerizedModernTheme: Story = {
             display: "flex",
             flexDirection: "column",
             gap: "0.5rem",
+            minHeight: "150px",
           }}
         >
           <h3 style={{ fontWeight: 500 }}>Review</h3>
@@ -83,8 +85,10 @@ export const ContainerizedModernTheme: Story = {
           </p>
 
           <p>
-            You can go back to the Write tab if you need to make changes. Once
-            you're satisfied, proceed with submission.
+            If you need to make any adjustments or refine your content, you can
+            always return to the Write tab to review and update it as needed.
+            Take your time to ensure everything is accurate, clear, and meets
+            your expectations.
           </p>
         </div>
       );
@@ -268,6 +272,7 @@ export const ContainerizedClassicTheme: Story = {
             display: "flex",
             flexDirection: "column",
             gap: "0.5rem",
+            minHeight: "150px",
           }}
         >
           <h3 style={{ fontWeight: 500 }}>Write</h3>
@@ -296,6 +301,7 @@ export const ContainerizedClassicTheme: Story = {
             display: "flex",
             flexDirection: "column",
             gap: "0.5rem",
+            minHeight: "150px",
           }}
         >
           <h3 style={{ fontWeight: 500 }}>Review</h3>
@@ -306,8 +312,10 @@ export const ContainerizedClassicTheme: Story = {
           </p>
 
           <p>
-            You can go back to the Write tab if you need to make changes. Once
-            you're satisfied, proceed with submission.
+            If you need to make any adjustments or refine your content, you can
+            always return to the Write tab to review and update it as needed.
+            Take your time to ensure everything is accurate, clear, and meets
+            your expectations.
           </p>
         </div>
       );
