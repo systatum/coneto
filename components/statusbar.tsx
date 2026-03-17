@@ -134,15 +134,26 @@ function StatusbarItem({
       <Button
         {...button}
         variant={
-          transparent
-            ? "transparent"
-            : button?.variant
-              ? button?.variant
+          button?.variant
+            ? button?.variant
+            : transparent
+              ? "transparent"
               : "default"
         }
-        activeBackgroundColor={activeBackgroundColor}
+        tipMenuSize={button?.tipMenuSize ?? "sm"}
+        activeBackgroundColor={
+          button?.activeBackgroundColor
+            ? button?.activeBackgroundColor
+            : activeBackgroundColor
+        }
         hoverBackgroundColor={
-          hoverBackgroundColor ? hoverBackgroundColor : activeBackgroundColor
+          button?.hoverBackgroundColor
+            ? button?.hoverBackgroundColor
+            : button?.activeBackgroundColor
+              ? button?.activeBackgroundColor
+              : hoverBackgroundColor
+                ? hoverBackgroundColor
+                : activeBackgroundColor
         }
         styles={{
           ...button?.styles,
