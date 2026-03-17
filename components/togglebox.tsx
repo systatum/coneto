@@ -175,6 +175,7 @@ function Togglebox({
       styles={{
         bodyStyle: css`
           align-items: center;
+          min-height: 0;
           ${bodyStyle}
         `,
         controlStyle,

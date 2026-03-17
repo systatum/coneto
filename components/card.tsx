@@ -75,10 +75,11 @@ function Card({
   open = true,
   ...props
 }: CardProps) {
-  const filteredHeaderActions =
-    headerActions?.filter((action): action is CardInternalActionsProps =>
-      Boolean(action)
-    ) ?? [];
+  const filteredHeaderActions = Array.isArray(headerActions)
+    ? headerActions?.filter((action): action is CardInternalActionsProps =>
+        Boolean(action)
+      )
+    : [];
 
   const hasActions = filteredHeaderActions.length > 0;
 
@@ -112,6 +113,11 @@ function Card({
                 ))}
               {toggleable && (
                 <Togglebox
+                  styles={{
+                    bodyStyle: css`
+                      min-height: 0;
+                    `,
+                  }}
                   name="card-toggle"
                   checked={open}
                   onChange={(e) => onToggleChange(e.target.checked)}

@@ -298,10 +298,11 @@ function ComboboxDrawer({
     }
   }, [highlightedIndex, multiple]);
 
-  const filteredActions =
-    actions?.filter((action): action is ComboboxInternalActionProps =>
-      Boolean(action)
-    ) ?? [];
+  const filteredActions = Array.isArray(actions)
+    ? actions?.filter((action): action is ComboboxInternalActionProps =>
+        Boolean(action)
+      )
+    : [];
 
   const hasActions = filteredActions.length > 0;
 

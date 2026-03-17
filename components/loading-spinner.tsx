@@ -21,7 +21,11 @@ function LoadingSpinner({
   styles,
 }: LoadingSpinnerProps) {
   return (
-    <SpinnerWrapper $style={styles?.containerStyle} $gap={gap}>
+    <SpinnerWrapper
+      aria-label="loading-spinner"
+      $style={styles?.containerStyle}
+      $gap={gap}
+    >
       <SpinnerIcon
         aria-label="circle"
         $size={iconSize}
