@@ -134,6 +134,7 @@ function StatusbarItem({
     return (
       <Button
         {...button}
+        aria-label="statusbar-button"
         icon={{
           ...button?.icon,
           size: button?.icon?.size ? button?.icon?.size : size,
@@ -176,7 +177,7 @@ function StatusbarItem({
             ${width &&
             css`
               width: ${width};
-            `}
+            `};
 
             ${button?.styles?.self ? button?.styles?.self : styles?.self};
           `,
@@ -198,10 +199,16 @@ function StatusbarItem({
   }
 
   return (
-    <TextWrapper $size={size} $width={width} $style={styles?.self}>
+    <TextWrapper
+      aria-label="statusbar-text-wrapper"
+      $size={size}
+      $width={width}
+      $style={styles?.self}
+    >
       {icon && (
         <Figure
           {...icon}
+          aria-label={"statusbar-icon"}
           size={size}
           styles={{
             self: css`
@@ -271,7 +278,6 @@ const TextWrapper = styled.div<{
   text-align: center;
   justify-content: center;
   align-items: center;
-  height: 100%;
   display: flex;
   gap: 4px;
   padding-left: 4px;
