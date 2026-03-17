@@ -8,6 +8,7 @@ export interface CapsuleTabProps {
   activeBackgroundColor?: string;
   styles?: CapsuleTabStylesProps;
   onTabChange?: (id: string) => void;
+  children?: ReactNode;
 }
 
 export interface CapsuleTabStylesProps {
@@ -29,6 +30,7 @@ function CapsuleTab({
   activeTab = "1",
   activeBackgroundColor = "black",
   onTabChange,
+  children,
 }: CapsuleTabProps) {
   const [selectedLocal, setSelectedLocal] = useState<string>(activeTab);
 
@@ -78,6 +80,7 @@ function CapsuleTab({
         $style={styles?.contentStyle}
       >
         {activeContent.map((props) => props.content)}
+        {children}
       </ContentWrapper>
     </CapsuleTabWrapper>
   );
@@ -102,6 +105,7 @@ const ContentWrapper = styled.div<{
   display: flex;
   flex-direction: column;
   width: 100%;
+  position: relative;
 
   ${({ $style }) => $style}
 `;
