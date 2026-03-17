@@ -22,6 +22,7 @@ import { CapsuleContentProps } from "./../../components/capsule";
 import { Button } from "./../../components/button";
 import { Card } from "./../../components/card";
 import { useState } from "react";
+import { generateSentence } from "./../../lib/text";
 
 interface TableItemProps {
   title: string;
@@ -444,12 +445,7 @@ describe("Table", () => {
             `,
           }}
         >
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vel
-          lectus nec ipsum posuere tristique. Sed consequat, nisi at facilisis
-          dignissim, lorem urna fermentum odio, vitae bibendum massa arcu sed
-          nisl. Praesent ac mi non augue gravida cursus. Vivamus euismod, turpis
-          in suscipit cursus, lorem sem viverra mauris, sit amet pulvinar neque
-          velit a justo.
+          {generateSentence({ minLen: 30, maxLen: 40 })}
         </Card>
       );
     }

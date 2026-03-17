@@ -6,6 +6,7 @@ import { Ri24HoursFill } from "@remixicon/react";
 import { useState } from "react";
 import { Textbox } from "./textbox";
 import { css } from "styled-components";
+import { generateSentence } from "./../lib/text";
 
 const meta: Meta<typeof ModalDialog> = {
   title: "Stage/ModalDialog",
@@ -157,8 +158,7 @@ export const Default: Story = {
 export const WithSubtitle: Story = {
   args: {
     title: "Default Modal with Subtitle",
-    subtitle:
-      "Temper, ex minor ipsum ego sit nostrud nisi Romana temper officia et sic labore conditum amet ex quis proident est, Asianus lorem. Nummifer ipsum Republicae exercitation quis.",
+    subtitle: generateSentence({ minLen: 30, maxLen: 40 }),
     closable: true,
     isOpen: false,
     buttons: [

@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { RichEditor, RichEditorRef } from "./rich-editor";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   RiDeleteBinLine,
   RiFileCopyLine,
@@ -10,6 +10,7 @@ import { Button } from "./button";
 import { css } from "styled-components";
 import { Boxbar } from "./boxbar";
 import { Badge } from "./badge";
+import { generateSentence } from "./../lib/text";
 
 const meta: Meta<typeof RichEditor> = {
   title: "Input Elements/RichEditor",
@@ -61,11 +62,16 @@ export const Default: Story = {
         onClick: () => console.log("Junk reported"),
       },
     ];
+
+    const sentences = useMemo(
+      () => generateSentence({ minLen: 30, maxLen: 40 }),
+      [generateSentence]
+    );
     const BADGE_ITEMS = [
       {
         title: "Markdown Example",
         content: `### Hello there!
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor reprehenderit voluptate velit.
+${sentences}
 
 This is ordered list
 1. [ ] test
@@ -256,9 +262,13 @@ export const PageEditor: Story = {
 
 export const ViewOnly: Story = {
   render: () => {
+    const sentences = useMemo(
+      () => generateSentence({ minLen: 30, maxLen: 40 }),
+      [generateSentence]
+    );
     const [value, setValue] = useState(
       `### Hello there!
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor reprehenderit voluptate velit.
+${sentences}
 
 This is ordered list
 1. [ ] test

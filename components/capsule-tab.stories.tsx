@@ -3,6 +3,7 @@ import { CapsuleTab, CapsuleTabContentProps } from "./capsule-tab";
 import { Button } from "./button";
 import { ChangeEvent, useState } from "react";
 import { Textbox } from "./textbox";
+import { generateSentence } from "./../lib/text";
 
 const meta: Meta<typeof CapsuleTab> = {
   title: "Stage/CapsuleTab",
@@ -79,11 +80,7 @@ export const Default: Story = {
           >
             Write Tab
           </h3>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
-            malesuada, nisl a tincidunt scelerisque, velit sapien sollicitudin
-            arcu, nec faucibus sem justo vitae sapien.
-          </p>
+          <p>{generateSentence()}</p>
 
           <Textbox name="write" value={value.write} onChange={onChangeValue} />
         </div>
