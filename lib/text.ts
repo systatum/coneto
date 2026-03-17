@@ -1,4 +1,4 @@
-export const WORDS = [
+const WORDS = [
   "lorem",
   "ipsum",
   "dolor",
@@ -62,11 +62,15 @@ export const WORDS = [
   "alii",
 ];
 
-export function generateSentence(
-  words: string[],
-  minLen: number = 9,
-  maxLen: number = 25
-) {
+export function generateSentence({
+  words = WORDS,
+  minLen = 9,
+  maxLen = 25,
+}: Partial<{
+  words?: string[];
+  minLen?: number;
+  maxLen?: number;
+}> = {}) {
   // Normalize commas: strip spaces around comma strings
   const normalizedWords = words.map((w) => (w.trim() === "," ? "," : w));
   // Create array excluding commas for selection after a comma or first word

@@ -25,7 +25,7 @@ import styled, { css } from "styled-components";
 import { Textbox } from "./textbox";
 import { DormantText } from "./dormant-text";
 import { FormFieldGroup, StatefulForm } from "./stateful-form";
-import { generateSentence, WORDS } from "./../lib/text";
+import { generateSentence } from "./../lib/text";
 import { EmptySlate } from "./empty-slate";
 import { Button } from "./button";
 
@@ -2086,7 +2086,7 @@ export const Accordion: Story = {
     const HOVER_TEXT_COLOR = "white";
     const HOVER_BG_COLOR = "#1F2937";
 
-    const sentence = useMemo(() => generateSentence(WORDS), []);
+    const sentence = useMemo(() => generateSentence(), []);
 
     return (
       <Wrapper>
