@@ -66,7 +66,8 @@ export const Default: Story = {
               button: {
                 children: "Page 1 of 53",
                 showSubMenuOn: "self",
-                subMenu: ({ show }) => show(<Textbox value={"Coneto 🚀"} />),
+                subMenu: ({ show }) =>
+                  show(<Textbox value={"@systatum/coneto 🚀"} />),
               },
             },
             {
@@ -266,7 +267,8 @@ export const ContainerizedClassicTheme: Story = {
                 button: {
                   children: "Page 1 of 53",
                   showSubMenuOn: "self",
-                  subMenu: ({ show }) => show(<Textbox value={"Coneto 🚀"} />),
+                  subMenu: ({ show }) =>
+                    show(<Textbox value={"@systatum/coneto 🚀"} />),
                 },
               },
               {
@@ -469,7 +471,8 @@ export const ContainerizedModernTheme: Story = {
                 button: {
                   children: "Page 1 of 53",
                   showSubMenuOn: "self",
-                  subMenu: ({ show }) => show(<Textbox value={"Coneto 🚀"} />),
+                  subMenu: ({ show }) =>
+                    show(<Textbox value={"@systatum/coneto 🚀"} />),
                 },
               },
               {
