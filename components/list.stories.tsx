@@ -2086,7 +2086,10 @@ export const Accordion: Story = {
     const HOVER_TEXT_COLOR = "white";
     const HOVER_BG_COLOR = "#1F2937";
 
-    const sentence = useMemo(() => generateSentence(), []);
+    const sentence = useMemo(
+      () => generateSentence({ minLen: 40, maxLen: 50 }),
+      []
+    );
 
     return (
       <Wrapper>
