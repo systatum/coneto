@@ -25,7 +25,7 @@ import styled, { css } from "styled-components";
 import { Textbox } from "./textbox";
 import { DormantText } from "./dormant-text";
 import { FormFieldGroup, StatefulForm } from "./stateful-form";
-import { generateSentence } from "./../lib/text";
+import { generateSentence, WORDS } from "./../lib/text";
 import { EmptySlate } from "./empty-slate";
 import { Button } from "./button";
 
@@ -2064,70 +2064,6 @@ export const WithMaxItems: Story = {
 
 export const Accordion: Story = {
   render: () => {
-    const WORDS = [
-      "lorem",
-      "ipsum",
-      "dolor",
-      "sit",
-      "forte",
-      "amet",
-      "sic",
-      "edispicit",
-      "ego",
-      "sum",
-      ", ",
-      "minim",
-      "eiusmod",
-      "temper",
-      "labore",
-      "et",
-      "duis",
-      "est",
-      "id",
-      ", ",
-      "nummifer",
-      "Asianus",
-      "ab",
-      "conditum",
-      "divitis",
-      "minor",
-      "quis",
-      "nostrud",
-      "incididunt",
-      "sed",
-      "proident",
-      "sunt",
-      "Romana",
-      "Jacarta",
-      "Palaestinae",
-      "Sigilum",
-      "Massachusetta",
-      "Republicae",
-      "Therania",
-      "res",
-      "officia",
-      "exercitation",
-      "nisi",
-      "ex",
-      "veritas",
-      ", ",
-      "magna",
-      "diversus",
-      "factum",
-      "fides",
-      "intra",
-      "nil",
-      "nobilis",
-      "potis",
-      "quia",
-      "sanus",
-      "tertius",
-      "vox",
-      "urbis",
-      ", ",
-      "alii",
-    ];
-
     const ACTIONS_GROUPS: ListGroupActionsProps[] = [
       {
         caption: "Refresh",
@@ -2149,6 +2085,8 @@ export const Accordion: Story = {
 
     const HOVER_TEXT_COLOR = "white";
     const HOVER_BG_COLOR = "#1F2937";
+
+    const sentence = useMemo(() => generateSentence(WORDS), []);
 
     return (
       <Wrapper>
@@ -2185,7 +2123,7 @@ export const Accordion: Story = {
                     hoverBackgroundColor={HOVER_BG_COLOR}
                     styles={{ openableStyle: ITEM_STYLE }}
                   >
-                    {generateSentence(WORDS)}
+                    {sentence}
                   </List.Item>
                 </List.Group>
               );
@@ -2229,7 +2167,7 @@ export const Accordion: Story = {
                     hoverBackgroundColor={HOVER_BG_COLOR}
                     styles={{ openableStyle: ITEM_STYLE }}
                   >
-                    {generateSentence(WORDS)}
+                    {sentence}
                   </List.Item>
                 </List.Group>
               );
