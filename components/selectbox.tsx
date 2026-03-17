@@ -387,9 +387,6 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
               labelStyle: css`
                 font-size: 14px;
               `,
-              iconStyle: css`
-                color: gray;
-              `,
             }}
             label="loading"
           />
