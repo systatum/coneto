@@ -129,6 +129,38 @@ export const Default: Story = {
   },
 };
 
+export const WithLoading: Story = {
+  render: () => {
+    const [value, setValue] = useState<SelectboxSelectedOptions>("");
+
+    const FRUIT_OPTIONS: OptionsProps[] = [
+      { text: "Apple", value: "1" },
+      { text: "Banana", value: "2" },
+      { text: "Orange", value: "3" },
+      { text: "Grape", value: "4" },
+      { text: "Pineapple", value: "5" },
+      { text: "Strawberry", value: "6" },
+      { text: "Watermelon", value: "7" },
+    ];
+
+    return (
+      <div
+        style={{
+          width: "256px",
+        }}
+      >
+        <Combobox
+          selectedOptions={value}
+          options={FRUIT_OPTIONS}
+          onChange={setValue}
+          placeholder="Select a fruit..."
+          isLoading
+        />
+      </div>
+    );
+  },
+};
+
 export const WithDropdown: Story = {
   render: () => {
     const [value, setValue] = useState({
