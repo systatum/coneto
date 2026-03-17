@@ -27,6 +27,36 @@ export const Default: Story = {
   render: () => {
     const [pressedItems, setPressedItems] = useState<Set<string>>(new Set());
 
+    const PRESSED_KEYS = {
+      FOCUS: "focus",
+      PAGES: "pages",
+      WINDOW: "window",
+      ALIGN_ITEM_LEFT: "align-item-left",
+      ALIGN_LEFT: "align-left",
+    } as const;
+
+    const isPressed = (key: string) => pressedItems.has(key);
+
+    const togglePressed = (key: string) => {
+      setPressedItems((prev) => {
+        const next = new Set(prev);
+        next.has(key) ? next.delete(key) : next.add(key);
+        return next;
+      });
+    };
+
+    const setPressed = (key: string, value: boolean) => {
+      setPressedItems((prev) => {
+        const next = new Set(prev);
+        value ? next.add(key) : next.delete(key);
+        return next;
+      });
+    };
+
+    const focusIcon = isPressed(PRESSED_KEYS.FOCUS)
+      ? RiFullscreenLine
+      : RiFocus3Line;
+
     return (
       <Statusbar
         paddingTop="10px"
@@ -59,37 +89,19 @@ export const Default: Story = {
               button: {
                 showSubMenuOn: "self",
                 icon: {
-                  image: pressedItems.has("focus")
-                    ? RiFullscreenLine
-                    : RiFocus3Line,
+                  image: focusIcon,
                 },
                 subMenu: ({ list }) =>
                   list([
                     {
                       caption: "Full window",
-                      icon: {
-                        image: RiFullscreenLine,
-                      },
-                      onClick: () => {
-                        setPressedItems((prev) => {
-                          const next = new Set(prev);
-                          next.add("focus");
-                          return next;
-                        });
-                      },
+                      icon: { image: RiFullscreenLine },
+                      onClick: () => setPressed(PRESSED_KEYS.FOCUS, true),
                     },
                     {
                       caption: "Zen mode",
-                      icon: {
-                        image: RiFocus3Line,
-                      },
-                      onClick: () => {
-                        setPressedItems((prev) => {
-                          const next = new Set(prev);
-                          next.delete("focus");
-                          return next;
-                        });
-                      },
+                      icon: { image: RiFocus3Line },
+                      onClick: () => setPressed(PRESSED_KEYS.FOCUS, false),
                     },
                   ]),
                 children: "Focus",
@@ -97,66 +109,29 @@ export const Default: Story = {
             },
             {
               button: {
-                pressed: pressedItems.has("pages"),
-                onClick: () =>
-                  setPressedItems((prev) => {
-                    const next = new Set(prev);
-                    if (next.has("pages")) {
-                      next.delete("pages");
-                    } else {
-                      next.add("pages");
-                    }
-                    return next;
-                  }),
+                pressed: isPressed(PRESSED_KEYS.PAGES),
+                onClick: () => togglePressed(PRESSED_KEYS.PAGES),
                 icon: { image: RiPagesLine },
               },
             },
             {
               button: {
-                pressed: pressedItems.has("window"),
-                onClick: () =>
-                  setPressedItems((prev) => {
-                    const next = new Set(prev);
-                    if (next.has("window")) {
-                      next.delete("window");
-                    } else {
-                      next.add("window");
-                    }
-                    return next;
-                  }),
+                pressed: isPressed(PRESSED_KEYS.WINDOW),
+                onClick: () => togglePressed(PRESSED_KEYS.WINDOW),
                 icon: { image: RiWindow2Fill },
-                hoverBackgroundColor: "red",
               },
             },
             {
               button: {
-                pressed: pressedItems.has("align-item-left"),
-                onClick: () =>
-                  setPressedItems((prev) => {
-                    const next = new Set(prev);
-                    if (next.has("align-item-left")) {
-                      next.delete("align-item-left");
-                    } else {
-                      next.add("align-item-left");
-                    }
-                    return next;
-                  }),
+                pressed: isPressed(PRESSED_KEYS.ALIGN_ITEM_LEFT),
+                onClick: () => togglePressed(PRESSED_KEYS.ALIGN_ITEM_LEFT),
                 icon: { image: RiAlignItemLeftLine },
               },
             },
             {
               button: {
-                pressed: pressedItems.has("align-left"),
-                onClick: () =>
-                  setPressedItems((prev) => {
-                    const next = new Set(prev);
-                    if (next.has("align-left")) {
-                      next.delete("align-left");
-                    } else {
-                      next.add("align-left");
-                    }
-                    return next;
-                  }),
+                pressed: isPressed(PRESSED_KEYS.ALIGN_LEFT),
+                onClick: () => togglePressed(PRESSED_KEYS.ALIGN_LEFT),
                 icon: { image: RiAlignLeft },
               },
             },
@@ -251,6 +226,36 @@ export const ContainerizedModernTheme: Story = {
       },
     ];
 
+    const PRESSED_KEYS = {
+      FOCUS: "focus",
+      PAGES: "pages",
+      WINDOW: "window",
+      ALIGN_ITEM_LEFT: "align-item-left",
+      ALIGN_LEFT: "align-left",
+    } as const;
+
+    const isPressed = (key: string) => pressedItems.has(key);
+
+    const togglePressed = (key: string) => {
+      setPressedItems((prev) => {
+        const next = new Set(prev);
+        next.has(key) ? next.delete(key) : next.add(key);
+        return next;
+      });
+    };
+
+    const setPressed = (key: string, value: boolean) => {
+      setPressedItems((prev) => {
+        const next = new Set(prev);
+        value ? next.add(key) : next.delete(key);
+        return next;
+      });
+    };
+
+    const focusIcon = isPressed(PRESSED_KEYS.FOCUS)
+      ? RiFullscreenLine
+      : RiFocus3Line;
+
     return (
       <CapsuleTab tabs={TABS_ITEMS} activeTab={"2"}>
         <Statusbar
@@ -284,37 +289,19 @@ export const ContainerizedModernTheme: Story = {
                 button: {
                   showSubMenuOn: "self",
                   icon: {
-                    image: pressedItems.has("focus")
-                      ? RiFullscreenLine
-                      : RiFocus3Line,
+                    image: focusIcon,
                   },
                   subMenu: ({ list }) =>
                     list([
                       {
                         caption: "Full window",
-                        icon: {
-                          image: RiFullscreenLine,
-                        },
-                        onClick: () => {
-                          setPressedItems((prev) => {
-                            const next = new Set(prev);
-                            next.add("focus");
-                            return next;
-                          });
-                        },
+                        icon: { image: RiFullscreenLine },
+                        onClick: () => setPressed(PRESSED_KEYS.FOCUS, true),
                       },
                       {
                         caption: "Zen mode",
-                        icon: {
-                          image: RiFocus3Line,
-                        },
-                        onClick: () => {
-                          setPressedItems((prev) => {
-                            const next = new Set(prev);
-                            next.delete("focus");
-                            return next;
-                          });
-                        },
+                        icon: { image: RiFocus3Line },
+                        onClick: () => setPressed(PRESSED_KEYS.FOCUS, false),
                       },
                     ]),
                   children: "Focus",
@@ -322,66 +309,29 @@ export const ContainerizedModernTheme: Story = {
               },
               {
                 button: {
-                  pressed: pressedItems.has("pages"),
-                  onClick: () =>
-                    setPressedItems((prev) => {
-                      const next = new Set(prev);
-                      if (next.has("pages")) {
-                        next.delete("pages");
-                      } else {
-                        next.add("pages");
-                      }
-                      return next;
-                    }),
+                  pressed: isPressed(PRESSED_KEYS.PAGES),
+                  onClick: () => togglePressed(PRESSED_KEYS.PAGES),
                   icon: { image: RiPagesLine },
                 },
               },
               {
                 button: {
-                  pressed: pressedItems.has("window"),
-                  onClick: () =>
-                    setPressedItems((prev) => {
-                      const next = new Set(prev);
-                      if (next.has("window")) {
-                        next.delete("window");
-                      } else {
-                        next.add("window");
-                      }
-                      return next;
-                    }),
+                  pressed: isPressed(PRESSED_KEYS.WINDOW),
+                  onClick: () => togglePressed(PRESSED_KEYS.WINDOW),
                   icon: { image: RiWindow2Fill },
-                  hoverBackgroundColor: "red",
                 },
               },
               {
                 button: {
-                  pressed: pressedItems.has("align-item-left"),
-                  onClick: () =>
-                    setPressedItems((prev) => {
-                      const next = new Set(prev);
-                      if (next.has("align-item-left")) {
-                        next.delete("align-item-left");
-                      } else {
-                        next.add("align-item-left");
-                      }
-                      return next;
-                    }),
+                  pressed: isPressed(PRESSED_KEYS.ALIGN_ITEM_LEFT),
+                  onClick: () => togglePressed(PRESSED_KEYS.ALIGN_ITEM_LEFT),
                   icon: { image: RiAlignItemLeftLine },
                 },
               },
               {
                 button: {
-                  pressed: pressedItems.has("align-left"),
-                  onClick: () =>
-                    setPressedItems((prev) => {
-                      const next = new Set(prev);
-                      if (next.has("align-left")) {
-                        next.delete("align-left");
-                      } else {
-                        next.add("align-left");
-                      }
-                      return next;
-                    }),
+                  pressed: isPressed(PRESSED_KEYS.ALIGN_LEFT),
+                  onClick: () => togglePressed(PRESSED_KEYS.ALIGN_LEFT),
                   icon: { image: RiAlignLeft },
                 },
               },
@@ -478,6 +428,36 @@ export const ContainerizedClassicTheme: Story = {
       },
     ];
 
+    const PRESSED_KEYS = {
+      FOCUS: "focus",
+      PAGES: "pages",
+      WINDOW: "window",
+      ALIGN_ITEM_LEFT: "align-item-left",
+      ALIGN_LEFT: "align-left",
+    } as const;
+
+    const isPressed = (key: string) => pressedItems.has(key);
+
+    const togglePressed = (key: string) => {
+      setPressedItems((prev) => {
+        const next = new Set(prev);
+        next.has(key) ? next.delete(key) : next.add(key);
+        return next;
+      });
+    };
+
+    const setPressed = (key: string, value: boolean) => {
+      setPressedItems((prev) => {
+        const next = new Set(prev);
+        value ? next.add(key) : next.delete(key);
+        return next;
+      });
+    };
+
+    const focusIcon = isPressed(PRESSED_KEYS.FOCUS)
+      ? RiFullscreenLine
+      : RiFocus3Line;
+
     return (
       <CapsuleTab tabs={TABS_ITEMS} activeTab={"2"}>
         <Statusbar
@@ -512,37 +492,19 @@ export const ContainerizedClassicTheme: Story = {
                 button: {
                   showSubMenuOn: "self",
                   icon: {
-                    image: pressedItems.has("focus")
-                      ? RiFullscreenLine
-                      : RiFocus3Line,
+                    image: focusIcon,
                   },
                   subMenu: ({ list }) =>
                     list([
                       {
                         caption: "Full window",
-                        icon: {
-                          image: RiFullscreenLine,
-                        },
-                        onClick: () => {
-                          setPressedItems((prev) => {
-                            const next = new Set(prev);
-                            next.add("focus");
-                            return next;
-                          });
-                        },
+                        icon: { image: RiFullscreenLine },
+                        onClick: () => setPressed(PRESSED_KEYS.FOCUS, true),
                       },
                       {
                         caption: "Zen mode",
-                        icon: {
-                          image: RiFocus3Line,
-                        },
-                        onClick: () => {
-                          setPressedItems((prev) => {
-                            const next = new Set(prev);
-                            next.delete("focus");
-                            return next;
-                          });
-                        },
+                        icon: { image: RiFocus3Line },
+                        onClick: () => setPressed(PRESSED_KEYS.FOCUS, false),
                       },
                     ]),
                   children: "Focus",
@@ -550,66 +512,29 @@ export const ContainerizedClassicTheme: Story = {
               },
               {
                 button: {
-                  pressed: pressedItems.has("pages"),
-                  onClick: () =>
-                    setPressedItems((prev) => {
-                      const next = new Set(prev);
-                      if (next.has("pages")) {
-                        next.delete("pages");
-                      } else {
-                        next.add("pages");
-                      }
-                      return next;
-                    }),
+                  pressed: isPressed(PRESSED_KEYS.PAGES),
+                  onClick: () => togglePressed(PRESSED_KEYS.PAGES),
                   icon: { image: RiPagesLine },
                 },
               },
               {
                 button: {
-                  pressed: pressedItems.has("window"),
-                  onClick: () =>
-                    setPressedItems((prev) => {
-                      const next = new Set(prev);
-                      if (next.has("window")) {
-                        next.delete("window");
-                      } else {
-                        next.add("window");
-                      }
-                      return next;
-                    }),
+                  pressed: isPressed(PRESSED_KEYS.WINDOW),
+                  onClick: () => togglePressed(PRESSED_KEYS.WINDOW),
                   icon: { image: RiWindow2Fill },
-                  hoverBackgroundColor: "red",
                 },
               },
               {
                 button: {
-                  pressed: pressedItems.has("align-item-left"),
-                  onClick: () =>
-                    setPressedItems((prev) => {
-                      const next = new Set(prev);
-                      if (next.has("align-item-left")) {
-                        next.delete("align-item-left");
-                      } else {
-                        next.add("align-item-left");
-                      }
-                      return next;
-                    }),
+                  pressed: isPressed(PRESSED_KEYS.ALIGN_ITEM_LEFT),
+                  onClick: () => togglePressed(PRESSED_KEYS.ALIGN_ITEM_LEFT),
                   icon: { image: RiAlignItemLeftLine },
                 },
               },
               {
                 button: {
-                  pressed: pressedItems.has("align-left"),
-                  onClick: () =>
-                    setPressedItems((prev) => {
-                      const next = new Set(prev);
-                      if (next.has("align-left")) {
-                        next.delete("align-left");
-                      } else {
-                        next.add("align-left");
-                      }
-                      return next;
-                    }),
+                  pressed: isPressed(PRESSED_KEYS.ALIGN_LEFT),
+                  onClick: () => togglePressed(PRESSED_KEYS.ALIGN_LEFT),
                   icon: { image: RiAlignLeft },
                 },
               },
