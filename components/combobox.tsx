@@ -138,7 +138,6 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
         labelWidth={labelWidth}
         labelPosition={labelPosition}
         label={label}
-        disabled={disabled}
         highlightOnMatch={highlightOnMatch}
         required={required}
         labels={labels}
@@ -174,6 +173,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
         multiple={multiple}
         maxSelectableItems={maxSelectableItems}
         actions={actions}
+        disabled={disabled}
       >
         {(props) => {
           return (
