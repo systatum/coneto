@@ -51,6 +51,7 @@ function Statusbar({
       {renderSection(
         content?.left,
         styles?.leftWrapperStyle,
+        styles?.itemStyle,
         activeBackgroundColor,
         hoverBackgroundColor,
         size,
@@ -59,6 +60,7 @@ function Statusbar({
       {renderSection(
         content?.right,
         styles?.rightWrapperStyle,
+        styles?.itemStyle,
         activeBackgroundColor,
         hoverBackgroundColor,
         size,
@@ -71,6 +73,7 @@ function Statusbar({
 const renderSection = (
   items?: StatusbarItemProps[],
   style?: CSSProp,
+  itemStyle?: CSSProp,
   activeBackgroundColor?: string,
   hoverBackgroundColor?: string,
   size?: number,
@@ -79,11 +82,17 @@ const renderSection = (
   if (!items) return null;
 
   return (
-    <ActionWrapper $style={style}>
+    <ActionWrapper aria-label="statusbar-content-wrapper" $style={style}>
       {items.filter(isValidStatusbarItem).map((component, index) => (
         <StatusbarItem
           key={index}
           {...component}
+          styles={{
+            self: css`
+              ${itemStyle}
+              ${component?.styles?.self}
+            `,
+          }}
           size={size}
           transparent={transparent}
           activeBackgroundColor={activeBackgroundColor}
