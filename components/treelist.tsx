@@ -369,6 +369,7 @@ function TreeList({
             <GroupWrapper key={index}>
               {item.caption && (
                 <GroupTitleWrapper
+                  aria-label="treelist-group-title"
                   onClick={() => {
                     if (collapsible) {
                       handleSelected(item.id);
@@ -380,7 +381,6 @@ function TreeList({
                     setIsHovered(null);
                   }}
                   onMouseEnter={() => {
-                    console.log("test");
                     setIsHovered(item.id);
                   }}
                 >
