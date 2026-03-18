@@ -26,7 +26,17 @@ export interface ColorboxStylesProps {
 
 const BaseColorbox = forwardRef<HTMLInputElement, BaseColorboxProps>(
   (
-    { onChange, value, showError, placeholder, onClick, styles, id, ...props },
+    {
+      onChange,
+      value,
+      showError,
+      placeholder,
+      onClick,
+      styles,
+      id,
+      disabled,
+      ...props
+    },
     ref
   ) => {
     const [hovered, setHovered] = useState(false);
@@ -57,6 +67,7 @@ const BaseColorbox = forwardRef<HTMLInputElement, BaseColorboxProps>(
 
     return (
       <ColorInputContainer
+        $disabled={disabled}
         $style={styles?.self}
         $hovered={hovered}
         $showError={!!showError}
@@ -65,6 +76,7 @@ const BaseColorbox = forwardRef<HTMLInputElement, BaseColorboxProps>(
         }}
       >
         <ColorBox
+          $disabled={disabled}
           onClick={() => {
             document.getElementById(id)?.click();
             setHovered(true);
@@ -77,18 +89,25 @@ const BaseColorbox = forwardRef<HTMLInputElement, BaseColorboxProps>(
 
         <HiddenColorInput
           {...props}
+          disabled={disabled}
           id={id}
           type="color"
           value={value}
           onChange={handleColorChange}
         />
 
-        <TextInputGroup $hovered={hovered} $showError={!!showError}>
+        <TextInputGroup
+          $disabled={disabled}
+          $hovered={hovered}
+          $showError={!!showError}
+        >
           <Prefix $showError={!!showError}>#</Prefix>
           <TextInput
             {...props}
+            $disabled={disabled}
             type="text"
             ref={ref}
+            disabled={disabled}
             value={value?.replace(/^#/, "")}
             onChange={(e) => {
               const cleanValue = e.target.value.replace(/#/g, "");
@@ -190,6 +209,7 @@ const ColorInputContainer = styled.div<{
   $hovered: boolean;
   $showError: boolean;
   $style?: CSSProp;
+  $disabled?: boolean;
 }>`
   position: relative;
   display: flex;
@@ -199,8 +219,21 @@ const ColorInputContainer = styled.div<{
   height: 100%;
   width: 100%;
   border: 1px solid
-    ${({ $showError, $hovered }) =>
-      $showError ? "#f87171" : $hovered ? "#61A9F9" : "#d1d5db"};
+    ${({ $showError, $hovered, $disabled }) =>
+      $disabled
+        ? "#d1d5db"
+        : $showError
+          ? "#f87171"
+          : $hovered
+            ? "#61A9F9"
+            : "#d1d5db"};
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      user-select: none;
+      cursor: not-allowed;
+    `};
 
   ${({ $style }) => $style}
 `;
@@ -208,15 +241,25 @@ const ColorInputContainer = styled.div<{
 const ColorBox = styled.div<{
   $bgColor?: string;
   $showError?: boolean;
+  $disabled?: boolean;
 }>`
   min-width: 24px;
   min-height: 24px;
   margin: 4px;
   border-radius: 2px;
-  border: 1px solid ${({ $showError }) => ($showError ? "#f87171" : "#d1d5db")};
+  border: 1px solid
+    ${({ $showError, $disabled }) =>
+      $disabled ? "#d1d5db" : $showError ? "#f87171" : "#d1d5db"};
   background-color: ${({ $bgColor }) => ($bgColor ? $bgColor : "#ffffff")};
   overflow: hidden;
   cursor: pointer;
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      user-select: none;
+      cursor: not-allowed;
+    `};
 `;
 
 const HiddenColorInput = styled.input`
@@ -231,6 +274,7 @@ const HiddenColorInput = styled.input`
 const TextInputGroup = styled.span<{
   $hovered: boolean;
   $showError: boolean;
+  $disabled?: boolean;
 }>`
   display: flex;
   align-items: center;
@@ -238,8 +282,15 @@ const TextInputGroup = styled.span<{
   height: 34px;
   padding: 2px 12px;
   border-left: 1px solid
-    ${({ $showError, $hovered }) =>
-      $showError ? "#f87171" : $hovered ? "#61A9F9" : "#d1d5db"};
+    ${({ $showError, $hovered, $disabled }) =>
+      $disabled
+        ? "#d1d5db"
+        : $showError
+          ? "#f87171"
+          : $hovered
+            ? "#61A9F9"
+            : "#d1d5db"};
+
   width: 100%;
 `;
 
@@ -247,7 +298,7 @@ const Prefix = styled.span<{ $showError: boolean }>`
   color: ${({ $showError }) => ($showError ? "#f87171" : "#6b7280")};
 `;
 
-const TextInput = styled.input<{ $showError: boolean }>`
+const TextInput = styled.input<{ $showError: boolean; $disabled?: boolean }>`
   flex: 1;
   width: 100%;
   overflow: scroll;
@@ -255,7 +306,16 @@ const TextInput = styled.input<{ $showError: boolean }>`
   background: transparent;
   border: none;
   outline: none;
-  color: ${({ $showError }) => ($showError ? "#f87171" : "#1f2937")};
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      user-select: none;
+      cursor: not-allowed;
+    `};
+
+  color: ${({ $disabled, $showError }) =>
+    $disabled ? "#d1d5db" : $showError ? "#f87171" : "#1f2937"};
 `;
 
 export { Colorbox };
