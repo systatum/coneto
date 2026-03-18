@@ -239,16 +239,50 @@ describe("Statusbar", () => {
   });
 
   context("transparent", () => {
-    it("should render the button, border wrapper to be transparent", () => {
-      cy.mount(<ProductStatusbar transparent />);
-      cy.findAllByLabelText("statusbar-button")
-        .eq(0)
-        .should("exist")
-        .and("have.css", "border-color", "rgb(0, 0, 0)");
+    context("when given false", () => {
+      it("should render the button, border wrapper, with gray-ish", () => {
+        cy.mount(<ProductStatusbar transparent={false} />);
+        cy.findAllByLabelText("statusbar-button")
+          .eq(0)
+          .should("exist")
+          .and("have.css", "background-color", "rgb(236, 236, 236)");
 
-      cy.findByLabelText("statusbar-wrapper")
-        .should("have.css", "border-width", "0px")
-        .and("have.css", "border-width", "0px");
+        cy.findByLabelText("statusbar-wrapper").should(
+          "have.css",
+          "border-width",
+          "1px 0px 0px"
+        );
+      });
+
+      it("should render border radius by 3px", () => {
+        cy.mount(<ProductStatusbar transparent={false} />);
+
+        cy.findByLabelText("statusbar-wrapper").should(
+          "have.css",
+          "border-top-left-radius",
+          "3px"
+        );
+
+        cy.findByLabelText("statusbar-wrapper").should(
+          "have.css",
+          "border-top-right-radius",
+          "3px"
+        );
+      });
+    });
+
+    context("when given true", () => {
+      it("should render the button, border wrapper to be transparent", () => {
+        cy.mount(<ProductStatusbar transparent />);
+        cy.findAllByLabelText("statusbar-button")
+          .eq(0)
+          .should("exist")
+          .and("have.css", "border-color", "rgb(0, 0, 0)");
+
+        cy.findByLabelText("statusbar-wrapper")
+          .should("have.css", "border-width", "0px")
+          .and("have.css", "border-width", "0px");
+      });
     });
   });
 
