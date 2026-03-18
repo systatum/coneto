@@ -8,6 +8,36 @@ import {
 } from "@remixicon/react";
 
 describe("Datebox", () => {
+  context("labels", () => {
+    context("loadingText", () => {
+      context("when not given text within isLoading true", () => {
+        it("shows the `Loading...` text (by default)", () => {
+          cy.mount(<Datebox id="date-with-loading" isLoading />);
+
+          cy.findByText("Loading...").should("exist");
+          cy.findByText("This is loading").should("not.exist");
+        });
+      });
+
+      context("when given text within isLoading true", () => {
+        it("shows the customize loading text", () => {
+          cy.mount(
+            <Datebox
+              id="date-with-loading"
+              labels={{
+                loadingText: "This is loading",
+              }}
+              isLoading
+            />
+          );
+
+          cy.findByText("Loading...").should("not.exist");
+          cy.findByText("This is loading").should("exist");
+        });
+      });
+    });
+  });
+
   context("isLoading", () => {
     context("when given true", () => {
       it("should render with gray-ish color and gap 6px", () => {
