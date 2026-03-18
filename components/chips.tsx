@@ -29,6 +29,7 @@ import { Textbox } from "./textbox";
 import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { isTruthy } from "./../lib/falsy";
 
 export type ChipActionsProps = BadgeActionProps;
 
@@ -51,6 +52,7 @@ interface BaseChipsProps {
   styles?: BaseChipsStylesProps;
   name?: string;
   id?: string;
+  disabled?: boolean;
 }
 
 export interface BaseChipsStylesProps {
@@ -80,7 +82,7 @@ function BaseChips(props: BaseChipsProps) {
 
   const { refs, floatingStyles, context } = useFloating({
     open: isOpen,
-    onOpenChange: setIsOpen,
+    onOpenChange: props?.disabled ? null : setIsOpen,
     middleware: [
       offset(6),
       flip({ fallbackPlacements: ["bottom-end", "top-start", "top-end"] }),
@@ -122,7 +124,10 @@ function BaseChips(props: BaseChipsProps) {
 
   return (
     <>
-      <InputGroup $containerStyle={props?.styles?.chipsContainerStyle}>
+      <InputGroup
+        $disabled={props?.disabled}
+        $containerStyle={props?.styles?.chipsContainerStyle}
+      >
         {CLICKED_OPTIONS.map((data) =>
           typeof props.renderer === "function" ? (
             props.renderer({
@@ -154,6 +159,7 @@ function BaseChips(props: BaseChipsProps) {
         )}
 
         <AddButton
+          $disabled={props?.disabled}
           ref={refs.setReference}
           role="button"
           $isOpen={isOpen}
@@ -177,39 +183,24 @@ function BaseChips(props: BaseChipsProps) {
 
 const InputGroup = styled.div<{
   $containerStyle?: CSSProp;
+  $disabled?: boolean;
 }>`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   gap: 3px;
 
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      user-select: none;
+      cursor: not-allowed;
+    `};
+
   ${({ $containerStyle }) => $containerStyle}
 `;
 
-const InputWrapper = styled.div<{ $style?: CSSProp }>`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  font-size: 0.75rem;
-  width: 100%;
-  position: relative;
-
-  ${({ $style }) => $style}
-`;
-
-const InputContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: 12px;
-`;
-
-const ErrorText = styled.span`
-  color: #dc2626;
-  font-size: 0.75rem;
-`;
-
-const AddButton = styled(RiAddLine)<{ $isOpen?: boolean }>`
+const AddButton = styled(RiAddLine)<{ $isOpen?: boolean; $disabled?: boolean }>`
   cursor: pointer;
   border: 1px solid transparent;
   border-radius: 9999px;
@@ -219,10 +210,18 @@ const AddButton = styled(RiAddLine)<{ $isOpen?: boolean }>`
     box-shadow 0.2s ease,
     border-color 0.2s ease;
 
-  &:hover {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-color: #d1d5db;
-  }
+  ${({ $disabled }) =>
+    $disabled
+      ? css`
+          user-select: none;
+          cursor: not-allowed;
+        `
+      : css`
+          &:hover {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-color: #d1d5db;
+          }
+        `};
 
   ${({ $isOpen }) =>
     $isOpen &&
@@ -256,6 +255,7 @@ function ChipsDrawer({
   emptySlate,
   name = "chips",
   styles,
+  disabled,
 }: ChipsDrawerProps) {
   const [hovered, setHovered] = useState<string | null>(null);
   const [mode, setMode] = useState<"idle" | "create">("idle");
@@ -530,7 +530,12 @@ function Chips({
         labelStyle,
       }}
     >
-      <BaseChips {...rest} id={inputId} styles={baseChipStyles} />
+      <BaseChips
+        {...rest}
+        id={inputId}
+        styles={baseChipStyles}
+        disabled={disabled}
+      />
     </FieldLane>
   );
 }
@@ -556,6 +561,7 @@ const ChipsDrawerWrapper = styled.ul<{
   list-style: none;
   outline: none;
   z-index: 9999;
+
   ${({ $style }) => $style}
 `;
 
@@ -600,7 +606,7 @@ function ChipsItem({
   inputRef?: RefObject<HTMLInputElement>;
 }) {
   const finalValueActions =
-    badge.actions?.map((action) => ({
+    badge.actions?.filter(isTruthy).map((action) => ({
       ...action,
       styles: {
         self: css`
