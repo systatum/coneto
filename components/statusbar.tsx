@@ -7,7 +7,6 @@ import { FalsyOr } from "@/lib/falsy";
 export interface StatusbarProps {
   styles?: StatusbarStylesProps;
   content?: StatusbarContentProps;
-  paddingTop?: string;
   activeBackgroundColor?: string;
   hoverBackgroundColor?: string;
   transparent?: boolean;
@@ -29,22 +28,16 @@ export interface StatusbarStylesProps {
 function Statusbar({
   styles,
   content,
-  paddingTop,
   activeBackgroundColor,
   hoverBackgroundColor,
   transparent,
-  size = 10,
+  size = 11,
 }: StatusbarProps) {
   return (
     <StatusbarWrapper
       aria-label="statusbar-wrapper"
       $transparent={transparent}
       $style={css`
-        ${paddingTop &&
-        css`
-          margin-top: ${paddingTop};
-        `}
-
         ${styles?.self}
       `}
     >
@@ -182,7 +175,7 @@ function StatusbarItem({
             `}
 
             width: fit-content;
-            min-height: 21px;
+            min-height: 24px;
             padding-left: 10px;
             padding-right: 10px;
             height: 100%;
@@ -197,7 +190,7 @@ function StatusbarItem({
           `,
           toggleStyle: css`
             width: fit-content;
-            min-height: 21px;
+            min-height: 24px;
             padding-left: 10px;
             padding-right: 10px;
             height: 100%;
@@ -300,6 +293,7 @@ const TextWrapper = styled.div<{
   gap: 4px;
   padding-left: 6px;
   padding-right: 6px;
+  min-height: 24px;
 
   ${({ $size }) =>
     $size &&

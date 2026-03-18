@@ -59,7 +59,6 @@ export const Default: Story = {
 
     return (
       <Statusbar
-        paddingTop="10px"
         content={{
           left: [
             {
@@ -258,7 +257,6 @@ export const ContainerizedClassicTheme: Story = {
     return (
       <CapsuleTab tabs={TABS_ITEMS} activeTab={"2"}>
         <Statusbar
-          paddingTop="10px"
           content={{
             left: [
               {
@@ -460,7 +458,6 @@ export const ContainerizedModernTheme: Story = {
       <CapsuleTab tabs={TABS_ITEMS} activeTab={"2"}>
         <Statusbar
           transparent
-          paddingTop="10px"
           content={{
             left: [
               {
