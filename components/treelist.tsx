@@ -8,8 +8,7 @@ import React, {
 } from "react";
 import { RiArrowRightSLine, RiDraggable } from "@remixicon/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { TipMenuItemProps } from "./tip-menu";
-import ContextMenu from "./context-menu";
+import ContextMenu, { ContextMenuActionsProps } from "./context-menu";
 import { LoadingSpinner } from "./loading-spinner";
 import { SubMenuButtonProps } from "./button";
 import { Tooltip } from "./tooltip";
@@ -66,6 +65,15 @@ export interface TreeListContentProps {
   caption?: string;
   items?: TreeListItemsProps[];
   initialState?: TreeListInitialState;
+  actions?: TreeListContentActionsProps[];
+}
+
+export type TreeListContentActionsProps =
+  FalsyOr<TreeListContentInternalActions>;
+
+interface TreeListContentInternalActions
+  extends Omit<ContextMenuActionsProps, "onClick"> {
+  onClick?: (id?: string) => void;
 }
 
 export interface TreeListItemsProps {
@@ -81,10 +89,12 @@ export interface TreeListItemsProps {
   initialState?: TreeListInitialState;
 }
 
-export type TreeListItemsActionsProps =
-  FalsyOr<TreeListItemsActionsInternalProps>;
+export type TreeListItemsActionsProps = FalsyOr<TreeListItemInternalActions>;
 
-type TreeListItemsActionsInternalProps = SubMenuTreeList;
+interface TreeListItemInternalActions
+  extends Omit<ContextMenuActionsProps, "onClick"> {
+  onClick?: (id?: string) => void;
+}
 
 export interface TreeListItemsOnClickProps {
   item?: TreeListItemsProps;
@@ -103,10 +113,6 @@ interface TreeListInternalActionsProps {
 }
 
 type SubMenuTreeListProps = Omit<SubMenuButtonProps, "list">;
-
-export interface SubMenuTreeList extends Omit<TipMenuItemProps, "onClick"> {
-  onClick: (id?: string) => void;
-}
 
 const DnDContext = createContext<{
   dragItem: {
@@ -175,6 +181,7 @@ function TreeList({
   }
 
   const [isOpen, setIsOpen] = useState<Record<string, boolean>>(initialOpenMap);
+  const [isHovered, setIsHovered] = useState<string | null>(undefined);
 
   const selectedLevel = content
     .map((group) => {
@@ -367,9 +374,85 @@ function TreeList({
                       handleSelected(item.id);
                     }
                   }}
+                  $isHovered={isHovered === item.id || openRowId === item.id}
                   $collapsible={collapsible}
+                  onMouseLeave={() => {
+                    setIsHovered(null);
+                  }}
+                  onMouseEnter={() => {
+                    console.log("test");
+                    setIsHovered(item.id);
+                  }}
                 >
                   <GroupTitle>{item.caption}</GroupTitle>
+
+                  {item.actions &&
+                    (() => {
+                      const listActions = item.actions;
+
+                      const actionsWithIcons = item.actions
+                        ?.filter(
+                          (action): action is TreeListContentInternalActions =>
+                            Boolean(action)
+                        )
+                        .map((action) => ({
+                          ...action,
+                          icon: {
+                            ...action?.icon,
+                            image: action?.icon?.image ?? RiArrowRightSLine,
+                          },
+                          onClick: (e?: React.MouseEvent) => {
+                            e?.stopPropagation();
+                            action.onClick?.(item.id);
+                            if (listActions.length > 2) setIsHovered(null);
+                          },
+                        }));
+
+                      return (
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: "4px",
+                          }}
+                        >
+                          <ContextMenu
+                            onOpen={(prop: boolean) => {
+                              if (prop) {
+                                setOpenRowId(item.id);
+                              } else {
+                                setOpenRowId(null);
+                              }
+                            }}
+                            open={openRowId === item.id}
+                            maxActionsBeforeCollapsing={2}
+                            focusBackgroundColor="#d4d4d4"
+                            hoverBackgroundColor="#d4d4d4"
+                            activeBackgroundColor="#d4d4d4"
+                            actions={actionsWithIcons}
+                            styles={{
+                              containerStyle: css`
+                                display: none;
+
+                                ${(isHovered === item.id
+                                  ? isHovered === item.id
+                                  : openRowId === item.id) &&
+                                css`
+                                  display: inherit;
+                                `}
+                              `,
+                              self: css`
+                                width: 20px;
+                                height: 20px;
+                                padding: 0;
+                              `,
+                            }}
+                          />
+                        </div>
+                      );
+                    })()}
                   {collapsible && (
                     <ArrowIcon
                       aria-label="arrow-icon"
@@ -642,12 +725,12 @@ function findTreeListNode(
 }
 
 function hasChild(parent: TreeListNode, childId: string): boolean {
-  if (!parent.items) return false;
+  if (!("items" in parent) || !parent.items) return false;
+
   return parent.items.some(
     (item) => item.id === childId || hasChild(item, childId)
   );
 }
-
 function TreeListItem<T extends TreeListItemsProps>({
   item,
   isSelected,
@@ -876,14 +959,14 @@ function TreeListItem<T extends TreeListItemsProps>({
             const listActions = item.actions;
 
             const actionsWithIcons = item.actions
-              ?.filter((action): action is TreeListItemsActionsInternalProps =>
+              ?.filter((action): action is TreeListItemInternalActions =>
                 Boolean(action)
               )
               .map((action) => ({
                 ...action,
                 icon: {
-                  ...action.icon,
-                  image: action.icon.image ?? RiArrowRightSLine,
+                  ...action?.icon,
+                  image: action?.icon?.image ?? RiArrowRightSLine,
                 },
                 onClick: (e?: React.MouseEvent) => {
                   e?.stopPropagation();
@@ -1212,12 +1295,23 @@ const GroupWrapper = styled.div`
   }
 `;
 
-const GroupTitleWrapper = styled.div<{ $collapsible?: boolean }>`
+const GroupTitleWrapper = styled.div<{
+  $collapsible?: boolean;
+  $isHovered?: boolean;
+}>`
   display: flex;
   flex-direction: row;
   position: relative;
   align-items: center;
   user-select: none;
+  justify-content: space-between;
+  padding-right: 8px;
+
+  ${({ $isHovered }) =>
+    $isHovered &&
+    css`
+      background-color: #f3f4f6;
+    `}
 
   ${({ $collapsible }) =>
     $collapsible &&
