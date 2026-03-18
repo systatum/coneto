@@ -1100,6 +1100,7 @@ function FormFields<T extends FieldValues>({
                   helper={field.helper}
                   name={field.name}
                   required={field.required}
+                  disabled={field.disabled}
                   {...register(field.name as Path<T>, {
                     onChange: (e) => {
                       if (field.onChange) {
@@ -1142,6 +1143,7 @@ function FormFields<T extends FieldValues>({
                   showError={shouldShowError(field.name)}
                   helper={field.helper}
                   name={field.name}
+                  disabled={field.disabled}
                   errorMessage={
                     errors[field.name as keyof T]?.message as string | undefined
                   }
@@ -1538,6 +1540,7 @@ function FormFields<T extends FieldValues>({
                         }
                       }}
                       selectedOptions={controllerField.value}
+                      disabled={field.disabled}
                       {...field.comboboxProps}
                       styles={{
                         ...field?.comboboxProps?.styles,
@@ -1591,6 +1594,7 @@ function FormFields<T extends FieldValues>({
                       labelPosition={field.labelPosition}
                       required={field.required}
                       filterPlaceholder={field.placeholder}
+                      disabled={field.disabled}
                       inputValue={controllerField.value}
                       setInputValue={(e) => {
                         controllerField?.onChange(e);
@@ -1834,6 +1838,7 @@ function FormFields<T extends FieldValues>({
                       required={field.required}
                       activeTab={controllerField.value}
                       helper={field.helper}
+                      disabled={field.disabled}
                       onTabChange={(e) => {
                         const inputValueEvent = {
                           target: { name: field.name, value: e },
