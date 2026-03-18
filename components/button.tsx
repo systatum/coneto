@@ -456,8 +456,8 @@ const getVariantTextColor = (variant: string) => {
   return undefined;
 };
 
-const getSizeStyles = ($size: string) => {
-  const map = {
+const getSizeStyles = (size?: ButtonProps["size"]) => {
+  const map: Record<NonNullable<ButtonProps["size"]>, CSSProp> = {
     xs: css`
       height: 28px;
       padding: 0 6px;
@@ -465,6 +465,10 @@ const getSizeStyles = ($size: string) => {
     sm: css`
       height: 32px;
       padding: 0 12px;
+    `,
+    md: css`
+      height: 36px;
+      padding: 0 16px;
     `,
     lg: css`
       height: 40px;
@@ -475,13 +479,9 @@ const getSizeStyles = ($size: string) => {
       height: 36px;
       padding: 0;
     `,
-    default: css`
-      height: 36px;
-      padding: 0 16px;
-    `,
   };
 
-  return map[$size as keyof typeof map] || map.default;
+  return map[size ?? "md"];
 };
 
 const BaseButton = styled.button<{
