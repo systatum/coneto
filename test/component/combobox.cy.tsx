@@ -18,6 +18,20 @@ describe("Combobox", () => {
   function ProductCombobox(props: ComboboxProps) {
     return <Combobox {...props} />;
   }
+  context("style", () => {
+    it("should render the height with 34px", () => {
+      cy.mount(
+        <ProductCombobox options={null} placeholder="Select a fruit..." />
+      );
+
+      cy.findByPlaceholderText("Select a fruit...").should(
+        "have.css",
+        "height",
+        "34px"
+      );
+    });
+  });
+
   context("actions", () => {
     const FRUIT_ACTIONS: ComboboxActionProps[] = [
       {
@@ -36,21 +50,19 @@ describe("Combobox", () => {
       },
     ];
 
-    context("actions", () => {
-      it("should render the action", () => {
-        cy.mount(
-          <ProductCombobox
-            options={null}
-            actions={FRUIT_ACTIONS}
-            placeholder="Select a fruit..."
-          />
-        );
+    it("should render the action", () => {
+      cy.mount(
+        <ProductCombobox
+          options={null}
+          actions={FRUIT_ACTIONS}
+          placeholder="Select a fruit..."
+        />
+      );
 
-        cy.findByPlaceholderText("Select a fruit...")
-          .should("have.value", "")
-          .click();
-        cy.findByText("Add Fruit").should("exist");
-      });
+      cy.findByPlaceholderText("Select a fruit...")
+        .should("have.value", "")
+        .click();
+      cy.findByText("Add Fruit").should("exist");
     });
 
     context("when given with falsy field", () => {
