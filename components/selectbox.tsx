@@ -33,6 +33,7 @@ import { isValidDateString } from "../lib/date";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 import { FigureProps } from "./figure";
 import { StatefulForm } from "./stateful-form";
+import { LoadingSpinner } from "./loading-spinner";
 
 export type SelectboxSelectedOptions = number | string | number[] | string[];
 
@@ -55,6 +56,7 @@ interface BaseSelectboxProps
   id?: string;
   showError?: boolean;
   maxSelectableItems?: number | undefined;
+  isLoading?: boolean;
   children?: (
     props: DrawerProps &
       InteractionModeProps & {
@@ -67,6 +69,11 @@ interface BaseSelectboxProps
       }
   ) => ReactNode;
   styles?: SelectboxStylesProps;
+  labels?: SelectboxLabelsProps;
+}
+
+export interface SelectboxLabelsProps {
+  loadingText?: string;
 }
 
 interface BaseSelectboxStylesProps {
@@ -127,6 +134,8 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       showError,
       id,
       autoComplete = "off",
+      isLoading,
+      labels,
       ...props
     },
     ref
@@ -351,16 +360,19 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
         ? finalSelectedOptions?.length
         : selectedOptionsLocal?.text.length) !== 0;
 
+    const { loadingText = "Loading..." } = labels ?? {};
+
     return (
       <Container
+        $isLoading={isLoading}
         onBlur={() => {
-          setIsHovered(false);
+          if (!isLoading) setIsHovered(false);
         }}
         onMouseEnter={() => {
-          setIsHovered(true);
+          if (!isLoading) setIsHovered(true);
         }}
         onMouseLeave={() => {
-          setIsHovered(false);
+          if (!isLoading) setIsHovered(false);
         }}
         role="combobox"
         $style={styles?.selectboxStyle}
@@ -369,6 +381,24 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
           if (multiple) inputRef.current?.focus();
         }}
       >
+        {isLoading && (
+          <LoadingSpinner
+            styles={{
+              containerStyle: css`
+                position: absolute;
+                margin-left: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                gap: 6px;
+                background-color: rgba(255, 255, 255, 0.6);
+              `,
+              labelStyle: css`
+                font-size: 14px;
+              `,
+            }}
+            label={loadingText}
+          />
+        )}
         <Input
           {...props}
           autoComplete={autoComplete}
@@ -379,6 +409,8 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
           aria-label={id}
           id={id}
           $clearable={clearable}
+          disabled={isLoading || props?.disabled}
+          $disabled={isLoading || props?.disabled}
           ref={(el) => {
             refs.setReference(el);
             if (!multiple) {
@@ -389,7 +421,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
               (ref as MutableRefObject<HTMLInputElement | null>).current = el;
           }}
           type="text"
-          value={inputValue}
+          value={isLoading ? "" : inputValue}
           onChange={handleInputChange}
           onKeyDown={(e) => {
             handleKeyDown(e);
@@ -443,7 +475,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
               }
             }
           }}
-          placeholder={placeholder || "Search your item..."}
+          placeholder={isLoading ? "" : placeholder || "Search your item..."}
           $focused={isFocused && !multiple}
           $hovered={isHovered && !multiple}
           $highlight={highlightOnMatch && FILTERED_ACTIVE}
@@ -614,10 +646,19 @@ export function castValue<T extends SelectboxSelectedOptions>(
   return String(value) as T;
 }
 
-const Container = styled.div<{ $style?: CSSProp }>`
+const Container = styled.div<{ $style?: CSSProp; $isLoading?: boolean }>`
   position: relative;
   width: 100%;
   font-size: 12px;
+
+  ${({ $isLoading }) =>
+    $isLoading &&
+    css`
+      user-select: none;
+      pointer-events: none;
+      opacity: 0.5;
+    `}
+
   ${({ $style }) => $style}
 `;
 
@@ -628,6 +669,7 @@ const Input = styled.input<{
   $style?: CSSProp;
   $clearable?: boolean;
   $hasError?: boolean;
+  $disabled?: boolean;
 }>`
   width: 100%;
   border-radius: 2px;
@@ -649,6 +691,14 @@ const Input = styled.input<{
         : css`
             border-color: #d1d5db;
           `};
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      user-select: none;
+      pointer-events: none;
+      background-color: rgba(255, 255, 255, 0.6);
+    `};
 
   &:focus {
     border-color: #61a9f9;

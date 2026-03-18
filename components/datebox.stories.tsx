@@ -66,6 +66,20 @@ export const Default: Story = {
   },
 };
 
+export const WithLoading: Story = {
+  render: () => {
+    return (
+      <div
+        style={{
+          width: "300px",
+        }}
+      >
+        <Datebox isLoading />
+      </div>
+    );
+  },
+};
+
 export const WithDropdown: Story = {
   render: () => {
     const [value, setValue] = useState({

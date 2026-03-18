@@ -3,6 +3,7 @@ import {
   DrawerProps,
   OptionsProps,
   Selectbox,
+  SelectboxLabelsProps,
   SelectboxStylesProps,
 } from "./selectbox";
 import {
@@ -28,7 +29,11 @@ type BaseDateboxProps = BaseCalendarProps & {
   styles?: DateboxStylesProps;
   helper?: string;
   id?: string;
+  isLoading?: boolean;
+  labels?: ComboboxLabelsProps;
 };
+
+export interface ComboboxLabelsProps extends SelectboxLabelsProps {}
 
 export type DateboxStylesProps = SelectboxStylesProps;
 
@@ -67,6 +72,8 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
     labelGap,
     labelWidth,
     labelPosition,
+    isLoading,
+    labels,
     ...rest
   } = props;
 
@@ -80,6 +87,7 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
     <Selectbox
       {...rest}
       ref={ref}
+      labels={labels}
       labelGap={labelGap}
       labelWidth={labelWidth}
       labelPosition={labelPosition}
@@ -92,6 +100,7 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
       helper={helper}
       disabled={props.disabled}
       required={rest.required}
+      isLoading={isLoading}
       styles={{
         ...styles,
         self: css`

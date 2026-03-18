@@ -18,6 +18,101 @@ describe("Combobox", () => {
   function ProductCombobox(props: ComboboxProps) {
     return <Combobox {...props} />;
   }
+
+  context("labels", () => {
+    context("loadingText", () => {
+      context("when not given text within isLoading true", () => {
+        it("shows the `Loading...` text (by default)", () => {
+          cy.mount(
+            <ProductCombobox
+              options={null}
+              isLoading
+              id="combo-with-loading"
+              placeholder="Select a fruit..."
+            />
+          );
+          cy.findByText("Loading...").should("exist");
+          cy.findByText("This is loading").should("not.exist");
+        });
+      });
+
+      context("when given text within isLoading true", () => {
+        it("shows the customize loading text", () => {
+          cy.mount(
+            <ProductCombobox
+              options={null}
+              isLoading
+              id="combo-with-loading"
+              labels={{
+                loadingText: "This is loading",
+              }}
+              placeholder="Select a fruit..."
+            />
+          );
+          cy.findByText("Loading...").should("not.exist");
+          cy.findByText("This is loading").should("exist");
+        });
+      });
+    });
+  });
+
+  context("isLoading", () => {
+    context("when given true", () => {
+      it("should render with blue color, gray background and gap 6px", () => {
+        cy.mount(
+          <ProductCombobox
+            options={null}
+            isLoading
+            id="combo-with-loading"
+            placeholder="Select a fruit..."
+          />
+        );
+        cy.findByLabelText("circle").parent().should("have.css", "gap", "6px");
+
+        cy.findByLabelText("circle").should(
+          "have.css",
+          "color",
+          "rgb(59, 130, 246)"
+        );
+
+        cy.findByLabelText("circle")
+          .parent()
+          .should("have.css", "background-color", "rgba(255, 255, 255, 0.6)");
+      });
+
+      it("should disabled the input component", () => {
+        cy.mount(
+          <ProductCombobox
+            options={null}
+            isLoading
+            id="combo-with-loading"
+            placeholder="Select a fruit..."
+          />
+        );
+
+        cy.get("#combo-with-loading")
+          .should("have.css", "user-select", "none")
+          .and("have.css", "pointer-events", "none")
+          .and("be.disabled");
+      });
+    });
+
+    context("when given false", () => {
+      it("should not render the spinner", () => {
+        cy.mount(
+          <ProductCombobox
+            options={null}
+            isLoading={false}
+            id="combo-with-loading"
+            placeholder="Select a fruit..."
+          />
+        );
+
+        cy.findByLabelText("circle").should("not.exist");
+      });
+    });
+  });
+
   context("style", () => {
     it("should render the height with 34px", () => {
       cy.mount(
@@ -546,6 +641,7 @@ describe("Combobox", () => {
           );
 
           cy.findByText("Width")
+            .parent()
             .then(($el) => {
               const width = $el.css("width");
 

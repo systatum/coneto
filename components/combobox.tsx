@@ -14,6 +14,7 @@ import {
   DrawerProps,
   OptionsProps,
   Selectbox,
+  SelectboxLabelsProps,
   SelectboxSelectedOptions,
   SelectboxStylesProps,
 } from "./selectbox";
@@ -42,7 +43,11 @@ interface BaseComboboxProps {
   onClick?: () => void;
   strict?: boolean;
   options: OptionsProps[];
+  isLoading?: boolean;
+  labels?: ComboboxLabelsProps;
 }
+
+export interface ComboboxLabelsProps extends SelectboxLabelsProps {}
 
 export interface ComboboxStylesProps
   extends Omit<SelectboxStylesProps, "self"> {
@@ -109,6 +114,8 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       labelGap,
       labelWidth,
       required,
+      isLoading,
+      labels,
     },
     ref
   ) => {
@@ -121,6 +128,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
     return (
       <Selectbox
         ref={ref}
+        isLoading={isLoading}
         helper={helper}
         errorIconPosition={errorIconPosition}
         dropdowns={dropdowns}
@@ -133,6 +141,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
         disabled={disabled}
         highlightOnMatch={highlightOnMatch}
         required={required}
+        labels={labels}
         styles={{
           bodyStyle: styles?.bodyStyle,
           controlStyle: styles?.controlStyle,
@@ -501,9 +510,6 @@ function ComboboxDrawer({
     </DrawerWrapper>
   );
 }
-
-type SelectedOptionType<T extends number | string | (number | string)[]> =
-  T extends (number | string)[] ? string[] : T extends number ? number : string;
 
 const listContainerStyle = css`
   gap: 0px;

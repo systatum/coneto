@@ -5,6 +5,8 @@ import { css } from "styled-components";
 import * as RemixIcons from "@remixicon/react";
 import { Calendar } from "./calendar";
 import { Textbox, TextboxProps } from "./textbox";
+import { Combobox, ComboboxProps } from "./combobox";
+import { OptionsProps } from "./selectbox";
 
 const meta: Meta<typeof FieldLane> = {
   title: "Stage/FieldLane",
@@ -96,7 +98,17 @@ export const CustomRenderer: Story = {
       value: "",
     });
 
-    const MONTH_NAMES = [
+    const FRUIT_OPTIONS: OptionsProps[] = [
+      { text: "Apple", value: "1" },
+      { text: "Banana", value: "2" },
+      { text: "Orange", value: "3" },
+      { text: "Grape", value: "4" },
+      { text: "Pineapple", value: "5" },
+      { text: "Strawberry", value: "6" },
+      { text: "Watermelon", value: "7" },
+    ];
+
+    const MONTH_NAMES: OptionsProps[] = [
       { text: "JAN", value: "1" },
       { text: "FEB", value: "2" },
       { text: "MAR", value: "3" },
@@ -114,6 +126,17 @@ export const CustomRenderer: Story = {
     const argsTextbox: TextboxProps = {
       placeholder: "Type here...",
       type: "text",
+      styles: {
+        containerStyle: css`
+          min-width: 700px;
+          max-width: 700px;
+        `,
+      },
+    };
+
+    const argsCombobox: ComboboxProps = {
+      options: FRUIT_OPTIONS,
+      isLoading: true,
       styles: {
         containerStyle: css`
           min-width: 700px;
@@ -164,6 +187,31 @@ export const CustomRenderer: Story = {
           dropdowns={[
             {
               width: "100px",
+              caption: value1.selectedText,
+              options: ATTENDANCE_OPTIONS,
+              onChange: (id) => {
+                const selected = ATTENDANCE_OPTIONS.find(
+                  (option) => option.value === id
+                );
+                if (selected) {
+                  setValue1((prev) => ({
+                    ...prev,
+                    selectedOption: id,
+                    selectedText: selected.text,
+                  }));
+                }
+              },
+            },
+          ]}
+        />
+        <Combobox
+          {...argsCombobox}
+          name="with-loading"
+          label="With Loading"
+          dropdowns={[
+            {
+              width: "100px",
+              disabled: true,
               caption: value1.selectedText,
               options: ATTENDANCE_OPTIONS,
               onChange: (id) => {

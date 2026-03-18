@@ -8,6 +8,67 @@ import {
 } from "@remixicon/react";
 
 describe("Datebox", () => {
+  context("labels", () => {
+    context("loadingText", () => {
+      context("when not given text within isLoading true", () => {
+        it("shows the `Loading...` text (by default)", () => {
+          cy.mount(<Datebox id="date-with-loading" isLoading />);
+
+          cy.findByText("Loading...").should("exist");
+          cy.findByText("This is loading").should("not.exist");
+        });
+      });
+
+      context("when given text within isLoading true", () => {
+        it("shows the customize loading text", () => {
+          cy.mount(
+            <Datebox
+              id="date-with-loading"
+              labels={{
+                loadingText: "This is loading",
+              }}
+              isLoading
+            />
+          );
+
+          cy.findByText("Loading...").should("not.exist");
+          cy.findByText("This is loading").should("exist");
+        });
+      });
+    });
+  });
+
+  context("isLoading", () => {
+    context("when given true", () => {
+      it("should render with gray-ish color and gap 6px", () => {
+        cy.mount(<Datebox id="date-with-loading" isLoading />);
+
+        cy.findByLabelText("circle").parent().should("have.css", "gap", "6px");
+
+        cy.findByLabelText("circle")
+          .parent()
+          .should("have.css", "background-color", "rgba(255, 255, 255, 0.6)");
+      });
+
+      it("should disabled the input component", () => {
+        cy.mount(<Datebox isLoading id="date-with-loading" />);
+
+        cy.get("#date-with-loading")
+          .should("have.css", "user-select", "none")
+          .and("have.css", "pointer-events", "none")
+          .and("be.disabled");
+      });
+    });
+
+    context("when given false", () => {
+      it("should not render the spinner", () => {
+        cy.mount(<Datebox isLoading={false} id="datebox-with-loading" />);
+
+        cy.findByLabelText("circle").should("not.exist");
+      });
+    });
+  });
+
   context("with dropdowns", () => {
     it("renders initialize drawer with min-width 200px", () => {
       cy.mount(
@@ -72,6 +133,7 @@ describe("Datebox", () => {
           );
 
           cy.findByText("Width")
+            .parent()
             .then(($el) => {
               const width = $el.css("width");
 

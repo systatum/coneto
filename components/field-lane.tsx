@@ -47,6 +47,7 @@ interface FieldLaneInternalActionsProps {
 export type DropdownProps = FalsyOr<DropdownInternalProps>;
 
 interface DropdownInternalProps {
+  disabled?: boolean;
   options?: DropdownOptionProps[];
   caption?: string;
   onChange?: (id: string) => void;
@@ -99,82 +100,95 @@ function FieldLane({
 
   const inputElement: ReactElement = (
     <InputWrapper $style={styles?.controlStyle}>
-      {dropdowns
-        ?.filter((dropdown): dropdown is DropdownInternalProps =>
-          Boolean(dropdown)
-        )
-        ?.map((dropdown, index) => {
-          return (
-            <Button
-              key={index}
-              subMenu={({ list, render }) => {
-                if (dropdown.render) {
-                  return dropdown.render({ render });
-                }
+      {Array.isArray(dropdowns) &&
+        dropdowns
+          ?.filter((dropdown): dropdown is DropdownInternalProps =>
+            Boolean(dropdown)
+          )
+          ?.map((dropdown, index) => {
+            return (
+              <Button
+                key={index}
+                disabled={dropdown?.disabled}
+                subMenu={({ list, render }) => {
+                  if (dropdown.render) {
+                    return dropdown.render({ render });
+                  }
 
-                const dropdownData = dropdown.options.map((prop) => ({
-                  caption: prop.text,
-                  icon: prop.icon,
-                  onClick: () => dropdown.onChange(prop.value),
-                }));
+                  const dropdownData = dropdown.options.map((prop) => ({
+                    caption: prop.text,
+                    icon: prop.icon,
+                    onClick: () => dropdown.onChange(prop.value),
+                  }));
 
-                return list(dropdownData, {
-                  withFilter: dropdown.withFilter ?? false,
-                });
-              }}
-              showSubMenuOn="self"
-              variant="outline-default"
-              styles={{
-                containerStyle: css`
-                  border-right: 0;
-                  border-top-right-radius: 0;
-                  border-bottom-right-radius: 0;
-                  border-color: #d1d5db;
-                  ${showError &&
-                  css`
-                    border-color: #f87171;
-                  `}
+                  return list(dropdownData, {
+                    withFilter: dropdown.withFilter ?? false,
+                  });
+                }}
+                showSubMenuOn="self"
+                variant="outline-default"
+                styles={{
+                  containerStyle: css`
+                    border-right: 0;
+                    border-top-right-radius: 0;
+                    border-bottom-right-radius: 0;
+                    border-color: #d1d5db;
+                    ${showError &&
+                    css`
+                      border-color: #f87171;
+                    `}
 
-                  ${index > 0 &&
-                  css`
-                    border-top-left-radius: 0;
-                    border-bottom-left-radius: 0;
-                  `}
-                ${dropdown.width &&
-                  css`
-                    width: ${dropdown.width};
-                  `}
+                    ${index > 0 &&
+                    css`
+                      border-top-left-radius: 0;
+                      border-bottom-left-radius: 0;
+                    `};
 
-                ${dropdown.styles?.containerStyle}
-                `,
-                self: css`
-                  font-size: 12px;
-                  color: black;
-                  height: 100%;
+                    ${dropdown?.disabled &&
+                    css`
+                      opacity: 0.5;
+                    `}
 
-                  ${dropdown.width &&
-                  css`
-                    width: ${dropdown.width};
-                  `}
-                  ${dropdown.styles?.self};
-                `,
-                dropdownStyle: (placement) => css`
-                  min-width: 200px;
-                  ${placement?.startsWith("bottom")
-                    ? css`
-                        margin-top: -4px;
-                      `
-                    : css`
-                        margin-bottom: 4px;
-                      `}
-                  ${dropdown.styles?.drawerStyle}
-                `,
-              }}
-            >
-              {dropdown.caption}
-            </Button>
-          );
-        })}
+                    ${dropdown.width &&
+                    css`
+                      width: ${dropdown.width};
+                    `};
+
+                    ${dropdown.styles?.containerStyle}
+                  `,
+                  self: css`
+                    font-size: 12px;
+                    color: black;
+                    height: 34px;
+                    ${!children &&
+                    css`
+                      border-right: 1px solid #d1d5db;
+                    `}
+
+                    ${dropdown.width &&
+                    css`
+                      width: ${dropdown.width};
+                    `}
+                    
+                    ${dropdown.styles?.self};
+                  `,
+                  dropdownStyle: (placement) => css`
+                    min-width: 200px;
+                    ${placement?.startsWith("bottom")
+                      ? css`
+                          margin-top: -4px;
+                        `
+                      : css`
+                          margin-bottom: 4px;
+                        `}
+                    ${dropdown.styles?.drawerStyle}
+                  `,
+                }}
+              >
+                {dropdown.caption}
+              </Button>
+            );
+          })}
 
       {children}
 
@@ -219,6 +233,7 @@ function FieldLane({
                   position: relative;
                   z-index: 10;
                   height: 23px;
+
                   color: ${showError
                     ? "#f87171"
                     : props.iconColor
@@ -299,11 +314,6 @@ function FieldLane({
     <Container
       $disabled={disabled}
       $style={css`
-        ${!children &&
-        css`
-          width: fit-content;
-          border-right: 1px solid #d1d5db;
-        `}
         ${styles?.containerStyle}
       `}
     >
