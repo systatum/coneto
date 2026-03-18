@@ -19,9 +19,46 @@ describe("Combobox", () => {
     return <Combobox {...props} />;
   }
 
+  context("labels", () => {
+    context("loadingText", () => {
+      context("when not given text within isLoading true", () => {
+        it("shows the `Loading...` text (by default)", () => {
+          cy.mount(
+            <ProductCombobox
+              options={null}
+              isLoading
+              id="combo-with-loading"
+              placeholder="Select a fruit..."
+            />
+          );
+          cy.findByText("Loading...").should("exist");
+          cy.findByText("This is loading").should("not.exist");
+        });
+      });
+
+      context("when given text within isLoading true", () => {
+        it("shows the customize loading text", () => {
+          cy.mount(
+            <ProductCombobox
+              options={null}
+              isLoading
+              id="combo-with-loading"
+              labels={{
+                loadingText: "This is loading",
+              }}
+              placeholder="Select a fruit..."
+            />
+          );
+          cy.findByText("Loading...").should("not.exist");
+          cy.findByText("This is loading").should("exist");
+        });
+      });
+    });
+  });
+
   context("isLoading", () => {
     context("when given true", () => {
-      it("should render with gray-ish color and gap 6px", () => {
+      it("should render with blue color, gray background and gap 6px", () => {
         cy.mount(
           <ProductCombobox
             options={null}
@@ -35,7 +72,7 @@ describe("Combobox", () => {
         cy.findByLabelText("circle").should(
           "have.css",
           "color",
-          "rgb(128, 128, 128)"
+          "rgb(59, 130, 246)"
         );
 
         cy.findByLabelText("circle")
@@ -75,6 +112,7 @@ describe("Combobox", () => {
       });
     });
   });
+
   context("style", () => {
     it("should render the height with 34px", () => {
       cy.mount(
