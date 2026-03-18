@@ -5,7 +5,7 @@ import {
   FormFieldGroup,
   FormValueType,
 } from "./stateful-form";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { COUNTRY_CODES } from "./../constants/countries";
 import { z } from "zod";
 import {
@@ -230,6 +230,173 @@ export const Default: Story = {
           mode="onChange"
         />
       </div>
+    );
+  },
+};
+
+export const ConditionalElement: Story = {
+  render: () => {
+    const [isFormValid, setIsFormValid] = useState(false);
+    const [formFields, setFormFields] = useState({
+      quantType: "",
+      compEffort: "",
+      scheIterations: "",
+      target: "",
+      hostArch: "",
+    });
+
+    const schema = z.object({
+      quantType: z.string().optional(),
+      compEffort: z.string().optional(),
+      scheIterations: z
+        .string()
+        .regex(/^[0-9]*$/, "Must be a number")
+        .optional(),
+      target: z.string().min(1, "Target is required"),
+      hostArch: z.string().optional(),
+    });
+
+    const HostArchitecture = {
+      x86: 0,
+      x64: 1,
+      ARM: 2,
+      ARM64: 3,
+    } as const;
+
+    const CompilationTarget = {
+      Interpreter: 0,
+      Simulator: 1,
+      IP: 2,
+    } as const;
+
+    const CompilationEffort = {
+      SimpleScheduling: 0,
+      Performance: 1,
+      Aggressive: 2,
+    } as const;
+
+    const Quantization = {
+      Int8: 0,
+      Bf16: 1,
+      Fp16: 2,
+      Fp32: 3,
+    } as const;
+
+    const HOST_ARCHITECTURE_OPTIONS: OptionsProps[] = [
+      { value: String(HostArchitecture.x86), text: "x86" },
+      { value: String(HostArchitecture.x64), text: "x64" },
+      { value: String(HostArchitecture.ARM), text: "ARM" },
+      { value: String(HostArchitecture.ARM64), text: "ARM64" },
+    ];
+
+    const COMPILATION_TARGET_OPTIONS: OptionsProps[] = [
+      { value: String(CompilationTarget.Interpreter), text: "Interpreter" },
+      { value: String(CompilationTarget.Simulator), text: "Simulator" },
+      { value: String(CompilationTarget.IP), text: "IP" },
+    ];
+
+    const COMPILATION_EFFORT_OPTIONS: OptionsProps[] = [
+      {
+        value: String(CompilationEffort.SimpleScheduling),
+        text: "Simple scheduling",
+      },
+      {
+        value: String(CompilationEffort.Performance),
+        text: "Performance",
+      },
+      {
+        value: String(CompilationEffort.Aggressive),
+        text: "Aggressive",
+      },
+    ];
+
+    const QUANTIZATION_TYPE_OPTIONS: OptionsProps[] = [
+      { value: String(Quantization.Int8), text: "INT8" },
+      { value: String(Quantization.Bf16), text: "BF16" },
+      { value: String(Quantization.Fp16), text: "FP16" },
+      { value: String(Quantization.Fp32), text: "FP32" },
+    ];
+
+    const COMPILATION_FIELDS: FormFieldGroup[] = useMemo(() => {
+      const isInt8Quantization =
+        formFields.quantType === String(Quantization.Int8);
+
+      const isPerfCompilation =
+        formFields.compEffort === String(CompilationEffort.Performance);
+
+      return [
+        {
+          name: "quantType",
+          title: "Precision",
+          type: "combo",
+          required: false,
+          placeholder: "Select the quantization",
+          comboboxProps: {
+            options: QUANTIZATION_TYPE_OPTIONS,
+          },
+        },
+        [
+          {
+            name: "compEffort",
+            title: "Compilation Effort",
+            type: "combo",
+            required: false,
+            placeholder: "Compilation effort",
+            hidden: !isInt8Quantization,
+            comboboxProps: {
+              options: COMPILATION_EFFORT_OPTIONS,
+            },
+          },
+          {
+            name: "scheIterations",
+            title: "Scheduling Iterations",
+            type: "text",
+            required: isInt8Quantization && isPerfCompilation,
+            placeholder: "Scheduling iterations",
+            hidden: !(isInt8Quantization && isPerfCompilation),
+          },
+        ],
+        {
+          name: "target",
+          title: "Target",
+          type: "combo",
+          required: true,
+          placeholder: "Select the target platform",
+          comboboxProps: {
+            options: COMPILATION_TARGET_OPTIONS,
+          },
+        },
+        {
+          name: "hostArch",
+          title: "Host Architecture",
+          type: "combo",
+          required: false,
+          placeholder: "Host architecture",
+          comboboxProps: {
+            options: HOST_ARCHITECTURE_OPTIONS,
+          },
+        },
+        {
+          name: "button",
+          title: "Submit",
+          type: "button",
+          disabled: !isFormValid,
+          rowJustifyContent: "end",
+        },
+      ] as FormFieldGroup[];
+    }, [formFields.compEffort, formFields.quantType, isFormValid]);
+
+    return (
+      <StatefulForm
+        onChange={({ currentState }) => {
+          setFormFields((prev) => ({ ...prev, ...currentState }));
+        }}
+        onValidityChange={setIsFormValid}
+        validationSchema={schema}
+        fields={COMPILATION_FIELDS}
+        formValues={formFields}
+        mode="onChange"
+      />
     );
   },
 };
