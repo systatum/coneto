@@ -11,6 +11,7 @@ import {
 import { Statusbar, StatusbarProps } from "./../../components/statusbar";
 import { useState } from "react";
 import { Textbox } from "./../../components/textbox";
+import { css } from "styled-components";
 
 describe("Statusbar", () => {
   function ProductStatusbar(props: StatusbarProps) {
@@ -145,16 +146,135 @@ describe("Statusbar", () => {
         .and("have.css", "bottom", "0px")
         .and("have.css", "justify-content", "space-between");
     });
+
+    context("self", () => {
+      context("when given justify-start", () => {
+        it("should render in the left side", () => {
+          cy.mount(
+            <ProductStatusbar
+              styles={{
+                self: css`
+                  justify-content: start;
+                `,
+              }}
+            />
+          );
+
+          cy.findByLabelText("statusbar-wrapper").should(
+            "have.css",
+            "justify-content",
+            "start"
+          );
+        });
+      });
+    });
+
+    context("itemStyle", () => {
+      context("when given padding 10px", () => {
+        it("should render on each item have padding by 10px", () => {
+          cy.mount(
+            <ProductStatusbar
+              styles={{
+                itemStyle: css`
+                  padding: 10px;
+                `,
+              }}
+            />
+          );
+
+          cy.findAllByLabelText("statusbar-button").should(
+            "have.css",
+            "padding",
+            "10px"
+          );
+        });
+      });
+    });
+
+    context("leftWrapperStyle", () => {
+      context("when given gap 10px", () => {
+        it("should render in the left side have gap 10px", () => {
+          cy.mount(
+            <ProductStatusbar
+              styles={{
+                leftWrapperStyle: css`
+                  gap: 10px;
+                `,
+              }}
+            />
+          );
+
+          cy.findAllByLabelText("statusbar-content-wrapper")
+            .eq(0)
+            .should("have.css", "gap", "10px");
+          cy.findAllByLabelText("statusbar-content-wrapper")
+            .eq(1)
+            .should("not.have.css", "gap", "10px");
+        });
+      });
+    });
+
+    context("rightWrapperStyle", () => {
+      context("when given gap 10px", () => {
+        it("should render in the right side have gap 10px", () => {
+          cy.mount(
+            <ProductStatusbar
+              styles={{
+                rightWrapperStyle: css`
+                  gap: 10px;
+                `,
+              }}
+            />
+          );
+
+          cy.findAllByLabelText("statusbar-content-wrapper")
+            .eq(0)
+            .should("not.have.css", "gap", "10px");
+          cy.findAllByLabelText("statusbar-content-wrapper")
+            .eq(1)
+            .should("have.css", "gap", "10px");
+        });
+      });
+    });
+  });
+
+  context("transparent", () => {
+    it("should render the button, border wrapper to be transparent", () => {
+      cy.mount(<ProductStatusbar transparent />);
+      cy.findAllByLabelText("statusbar-button")
+        .eq(0)
+        .should("exist")
+        .and("have.css", "border-color", "rgb(0, 0, 0)");
+
+      cy.findByLabelText("statusbar-wrapper")
+        .should("have.css", "border-width", "0px")
+        .and("have.css", "border-width", "0px");
+    });
   });
 
   context("size", () => {
-    it("renders in the most bottom, justify-between, and position absolute", () => {
+    it("renders by default is 10 (implementing into text, icon)", () => {
       cy.mount(<ProductStatusbar />);
 
-      cy.findByLabelText("statusbar-wrapper")
-        .should("have.css", "position", "absolute")
-        .and("have.css", "bottom", "0px")
-        .and("have.css", "justify-content", "space-between");
+      cy.findByText("Page 1 of 53").should("have.css", "font-size", "10px");
+      cy.findAllByLabelText("statusbar-icon").should(
+        "have.css",
+        "width",
+        "10px"
+      );
+    });
+
+    context("when given with 14", () => {
+      it("should render with 14px (implementing into text, icon)", () => {
+        cy.mount(<ProductStatusbar size={14} />);
+
+        cy.findByText("Page 1 of 53").should("have.css", "font-size", "14px");
+        cy.findAllByLabelText("statusbar-icon").should(
+          "have.css",
+          "width",
+          "14px"
+        );
+      });
     });
   });
 
