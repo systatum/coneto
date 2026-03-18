@@ -176,6 +176,11 @@ function StatusbarItem({
             height: 100%;
           `,
           self: css`
+            ${!transparent &&
+            css`
+              box-shadow: inset 0 0px 0.5px rgba(0, 0, 0, 0.06);
+            `}
+
             width: fit-content;
             min-height: 21px;
             padding-left: 10px;
@@ -248,17 +253,19 @@ const StatusbarWrapper = styled.div<{
   flex-direction: row;
   justify-content: space-between;
   position: absolute;
-  border-top: 1px solid #ececec;
+  border-top: 1px solid #dedddd;
   overflow: hidden;
   z-index: 9991998;
-  border-top-left-radius: 3px;
-  border-top-right-radius: 3px;
 
   ${({ $transparent }) =>
-    $transparent &&
-    css`
-      border-width: 0px;
-    `};
+    $transparent
+      ? css`
+          border-width: 0px;
+        `
+      : css`
+          background-color: #ececec;
+          box-shadow: inset 0 0px 0.5px rgba(0, 0, 0, 0.06);
+        `};
 
   ${({ $style }) => $style};
 `;
@@ -291,8 +298,9 @@ const TextWrapper = styled.div<{
   align-items: center;
   display: flex;
   gap: 4px;
-  padding-left: 4px;
-  padding-right: 4px;
+  padding-left: 6px;
+  padding-right: 6px;
+
   ${({ $size }) =>
     $size &&
     css`
