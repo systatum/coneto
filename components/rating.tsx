@@ -27,6 +27,7 @@ function BaseRating({
   withLabel = false,
   size = "md",
   name,
+  disabled,
 }: BaseRatingProps) {
   const ratingState = Number(rating || 0);
   const [ratingLocal, setRatingLocal] = useState(ratingState);
@@ -128,10 +129,11 @@ function BaseRating({
           <StarSpan
             role="img"
             key={i}
-            onMouseMove={(e) => editable && handleMouseMove(e, i)}
-            onMouseLeave={() => editable && setHoverRating(0)}
-            onClick={(e) => editable && handleClick(e, i)}
+            onMouseMove={(e) => !disabled && editable && handleMouseMove(e, i)}
+            onMouseLeave={() => !disabled && editable && setHoverRating(0)}
+            onClick={(e) => !disabled && editable && handleClick(e, i)}
             $editable={editable}
+            $disabled={disabled}
           >
             {renderStar(getStarType(i))}
           </StarSpan>
@@ -227,12 +229,18 @@ const StarsWrapper = styled.div`
   gap: 2px;
 `;
 
-const StarSpan = styled.span<{ $editable?: boolean }>`
-  ${({ $editable }) =>
-    $editable &&
-    css`
-      cursor: pointer;
-    `}
+const StarSpan = styled.span<{ $editable?: boolean; $disabled?: boolean }>`
+  ${({ $editable, $disabled }) =>
+    $disabled
+      ? css`
+          cursor: not-allowed;
+          user-select: none;
+          pointer-events: none;
+        `
+      : $editable &&
+        css`
+          cursor: pointer;
+        `}
 `;
 
 const RatingLabel = styled.span<{ $size: "sm" | "md" | "lg" }>`
