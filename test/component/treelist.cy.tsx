@@ -1,11 +1,15 @@
 import {
   TreeList,
   TreeListActionsProps,
+  TreeListContentActionsProps,
   TreeListContentProps,
+  TreeListItemsActionsProps,
 } from "./../../components/treelist";
 import {
   RiAddBoxLine,
   RiAtLine,
+  RiDeleteBack2Line,
+  RiFolderAddLine,
   RiSearchLine,
   RiTable2,
 } from "@remixicon/react";
@@ -106,6 +110,396 @@ describe("Treelist", () => {
             "have.been.calledWith",
             "now is clicking treelist"
           );
+        });
+      });
+    });
+  });
+
+  context("actions", () => {
+    let TREE_LIST_DATA: TreeListContentProps[];
+
+    beforeEach(() => {
+      const setPerson = cy.stub().as("setPerson");
+
+      const HEADER_ACTIONS: TreeListContentActionsProps[] = [
+        {
+          caption: "New File",
+          onClick: () => console.log("add new file in this group"),
+          icon: {
+            image: RiFolderAddLine,
+          },
+        },
+      ];
+
+      const ITEMS_ACTIONS: TreeListItemsActionsProps[] = [
+        {
+          caption: "Delete",
+          onClick: () => console.log("delete this list"),
+          icon: {
+            image: RiDeleteBack2Line,
+          },
+        },
+      ];
+
+      TREE_LIST_DATA = [
+        {
+          id: "member",
+          caption: "Member of Technical Staff",
+          actions: HEADER_ACTIONS,
+          items: [
+            {
+              id: "mts-1",
+              caption: "Adam Noto Hakarsa",
+              onClick: setPerson,
+              actions: ITEMS_ACTIONS,
+            },
+            {
+              id: "mts-2",
+              caption: "Mohamad Naufal Alim",
+              onClick: setPerson,
+              actions: ITEMS_ACTIONS,
+            },
+          ],
+        },
+        {
+          id: "product",
+          caption: "Product Management Team",
+          items: [
+            {
+              id: "pmt-1",
+              caption: "Samantha Lee",
+              onClick: setPerson,
+              actions: ITEMS_ACTIONS,
+            },
+            {
+              id: "pmt-2",
+              caption: "Jason Kim",
+              onClick: setPerson,
+              actions: ITEMS_ACTIONS,
+            },
+            {
+              id: "pmt-3",
+              caption: "Rina Patel",
+              onClick: setPerson,
+              actions: ITEMS_ACTIONS,
+            },
+          ],
+        },
+      ];
+    });
+
+    context("when given actions in the group level", () => {
+      it("should renders when hovering", () => {
+        cy.mount(<TreeList showHierarchyLine content={TREE_LIST_DATA} />);
+
+        cy.findAllByLabelText("action-button").eq(0).should("not.be.visible");
+
+        cy.findAllByLabelText("treelist-group-title")
+          .eq(0)
+          .trigger("mouseover");
+
+        cy.wait(100);
+
+        cy.findAllByLabelText("action-button").eq(0).should("be.visible");
+      });
+
+      context("when clicking", () => {
+        it("should give callback from the onClick action", () => {
+          cy.window().then((win) => {
+            cy.spy(win.console, "log").as("consoleLog");
+          });
+
+          cy.mount(<TreeList showHierarchyLine content={TREE_LIST_DATA} />);
+
+          cy.get("@consoleLog").should(
+            "not.have.been.calledWith",
+            "add new file in this group"
+          );
+
+          cy.findAllByLabelText("action-button").eq(0).should("not.be.visible");
+
+          cy.findAllByLabelText("treelist-group-title")
+            .eq(0)
+            .trigger("mouseover");
+
+          cy.wait(100);
+
+          cy.findAllByLabelText("action-button")
+            .eq(0)
+            .should("be.visible")
+            .click();
+
+          cy.get("@consoleLog").should(
+            "have.been.calledWith",
+            "add new file in this group"
+          );
+        });
+      });
+    });
+
+    context("when given actions in the list level", () => {
+      it("should renders when hovering", () => {
+        cy.mount(<TreeList showHierarchyLine content={TREE_LIST_DATA} />);
+
+        cy.findAllByLabelText("action-button").eq(2).should("not.be.visible");
+
+        cy.findByText("Mohamad Naufal Alim").trigger("mouseover");
+
+        cy.wait(100);
+
+        cy.findAllByLabelText("action-button").eq(2).should("be.visible");
+      });
+
+      context("when clicking", () => {
+        it("should give callback from the onClick action", () => {
+          cy.window().then((win) => {
+            cy.spy(win.console, "log").as("consoleLog");
+          });
+
+          cy.mount(<TreeList showHierarchyLine content={TREE_LIST_DATA} />);
+
+          cy.get("@consoleLog").should(
+            "not.have.been.calledWith",
+            "delete this list"
+          );
+
+          cy.findAllByLabelText("action-button").eq(2).should("not.be.visible");
+
+          cy.findByText("Mohamad Naufal Alim").trigger("mouseover");
+
+          cy.wait(100);
+
+          cy.findAllByLabelText("action-button")
+            .eq(2)
+            .should("be.visible")
+            .click();
+
+          cy.get("@consoleLog").should(
+            "have.been.calledWith",
+            "delete this list"
+          );
+        });
+      });
+    });
+
+    context("when given actions in the main level", () => {
+      let TREE_LIST_ACTIONS: TreeListActionsProps[];
+
+      beforeEach(() => {
+        const onDiscover = cy.stub().as("onDiscover");
+        const onMention = cy.stub().as("onMention");
+
+        TREE_LIST_ACTIONS = [
+          {
+            id: "discover",
+            caption: "Discover",
+            onClick: onDiscover,
+            icon: { image: RiSearchLine },
+          },
+          {
+            id: "mention",
+            caption: "Mention",
+            onClick: onMention,
+            icon: { image: RiAtLine },
+          },
+          false && {
+            id: "test",
+            caption: "Test",
+            icon: { image: RiAtLine },
+          },
+        ];
+      });
+
+      context("when given", () => {
+        it("renders content action", () => {
+          cy.mount(
+            <TreeList
+              content={TREE_LIST_DATA}
+              actions={TREE_LIST_ACTIONS}
+              emptySlate={<p>Not found.</p>}
+            />
+          );
+
+          cy.findByText("Discover").should("exist").click();
+          cy.get("@onDiscover").should("have.been.calledOnce");
+
+          cy.findByText("Mention").should("exist").click();
+          cy.get("@onMention").should("have.been.calledOnce");
+        });
+      });
+
+      context("when given with falsy field", () => {
+        it("renders without falsy content", () => {
+          cy.mount(
+            <TreeList
+              content={TREE_LIST_DATA}
+              actions={TREE_LIST_ACTIONS}
+              emptySlate={<p>Not found.</p>}
+            />
+          );
+
+          cy.findAllByLabelText("tree-list-action-wrapper")
+            .children()
+            .should("have.length", 2);
+
+          cy.findByText("Discover").should("exist");
+          cy.findByText("Mention").should("exist");
+          cy.findByText("Test").should("not.exist");
+        });
+      });
+
+      context("with subMenu", () => {
+        context("with show", () => {
+          const TREE_LIST_ACTIONS_WITH_RENDER: TreeListActionsProps[] = [
+            {
+              id: "add-new-branch",
+              icon: { image: RiAddBoxLine },
+              caption: "Add New Branch",
+              subMenu: ({ show }) =>
+                show(
+                  <StatefulForm
+                    fields={[
+                      {
+                        name: "division_name",
+                        title: "Division Name",
+                        type: "text",
+                        required: true,
+                      },
+                    ]}
+                    formValues={{
+                      division_name: "",
+                    }}
+                    onChange={({ currentState }) => console.log(currentState)}
+                    mode="onChange"
+                  />
+                ),
+            },
+            {
+              id: "table-view",
+              caption: "Table View",
+              onClick: ({ setActive }) => {
+                setActive(true);
+              },
+              icon: { image: RiTable2 },
+            },
+          ];
+
+          it("renders action with tip drawer & arrow", () => {
+            cy.mount(
+              <TreeList
+                content={TREE_LIST_DATA}
+                actions={TREE_LIST_ACTIONS_WITH_RENDER}
+                emptySlate={<p>Not found.</p>}
+              />
+            );
+
+            cy.findByText("Division Name").should("not.exist");
+
+            cy.findByText("Add New Branch").should("exist").click();
+            cy.findByText("Division Name").should("exist");
+
+            cy.findByLabelText("tooltip-arrow").should("be.visible");
+          });
+        });
+
+        context("with render", () => {
+          const TREE_LIST_ACTIONS_WITH_RENDER: TreeListActionsProps[] = [
+            {
+              id: "add-new-branch",
+              icon: { image: RiAddBoxLine },
+              caption: "Add New Branch",
+              subMenu: ({ render }) =>
+                render(
+                  <StatefulForm
+                    fields={[
+                      {
+                        name: "division_name",
+                        title: "Division Name",
+                        type: "text",
+                        required: true,
+                      },
+                    ]}
+                    formValues={{
+                      division_name: "",
+                    }}
+                    onChange={({ currentState }) => console.log(currentState)}
+                    mode="onChange"
+                  />
+                ),
+            },
+            {
+              id: "table-view",
+              caption: "Table View",
+              onClick: ({ setActive }) => {
+                setActive(true);
+              },
+              icon: { image: RiTable2 },
+            },
+          ];
+
+          it("renders action with tip drawer", () => {
+            cy.mount(
+              <TreeList
+                content={TREE_LIST_DATA}
+                actions={TREE_LIST_ACTIONS_WITH_RENDER}
+                emptySlate={<p>Not found.</p>}
+              />
+            );
+
+            cy.findByText("Division Name").should("not.exist");
+
+            cy.findByText("Add New Branch").should("exist").click();
+            cy.findByText("Division Name").should("exist");
+
+            cy.findByLabelText("tooltip-arrow").should("not.be.visible");
+          });
+        });
+      });
+
+      context("with setActive", () => {
+        const TREE_LIST_ACTIONS_WITH_ACTIVE = [
+          {
+            id: "discover",
+            caption: "Discover",
+            onClick: ({ setActive }) => {
+              console.log("discover was selected");
+              setActive(true);
+            },
+            icon: { image: RiSearchLine },
+          },
+          {
+            id: "mention",
+            caption: "Mention",
+            onClick: ({ setActive }) => {
+              console.log("mention was selected");
+              setActive(true);
+            },
+            icon: { image: RiAtLine },
+          },
+        ];
+
+        context("when clicking", () => {
+          it("renders selected active on actions level", () => {
+            cy.window().then((win) => {
+              cy.spy(win.console, "log").as("consoleLog");
+            });
+            cy.mount(
+              <TreeList
+                content={TREE_LIST_DATA}
+                actions={TREE_LIST_ACTIONS_WITH_ACTIVE}
+                emptySlate={<p>Not found.</p>}
+              />
+            );
+
+            cy.findByText("Discover").should("exist").click();
+            cy.get("@consoleLog").should(
+              "have.been.calledWith",
+              "discover was selected"
+            );
+            cy.findByText("Discover")
+              .parent()
+              .should("have.css", "border-left-color", "rgb(59, 130, 246)");
+          });
         });
       });
     });
@@ -402,249 +796,6 @@ describe("Treelist", () => {
 
         cy.contains("Member of Technical Staff").click();
         cy.contains("Adam Noto Hakarsa").should("be.visible");
-      });
-    });
-  });
-
-  context("actions", () => {
-    let TREE_LIST_DATA: TreeListContentProps[];
-    let TREE_LIST_ACTIONS: TreeListActionsProps[];
-
-    beforeEach(() => {
-      const onDiscover = cy.stub().as("onDiscover");
-      const onMention = cy.stub().as("onMention");
-      const setPerson = cy.stub().as("setPerson");
-
-      TREE_LIST_DATA = [
-        {
-          id: "member",
-          caption: "Member of Technical Staff",
-          items: [
-            { id: "mts-1", caption: "Adam Noto Hakarsa", onClick: setPerson },
-            { id: "mts-2", caption: "Mohamad Naufal Alim", onClick: setPerson },
-          ],
-        },
-        {
-          id: "product",
-          caption: "Product Management Team",
-          items: [
-            { id: "pmt-1", caption: "Samantha Lee", onClick: setPerson },
-            { id: "pmt-2", caption: "Jason Kim", onClick: setPerson },
-            { id: "pmt-3", caption: "Rina Patel", onClick: setPerson },
-          ],
-        },
-      ];
-
-      TREE_LIST_ACTIONS = [
-        {
-          id: "discover",
-          caption: "Discover",
-          onClick: onDiscover,
-          icon: { image: RiSearchLine },
-        },
-        {
-          id: "mention",
-          caption: "Mention",
-          onClick: onMention,
-          icon: { image: RiAtLine },
-        },
-        false && {
-          id: "test",
-          caption: "Test",
-          icon: { image: RiAtLine },
-        },
-      ];
-    });
-
-    context("when given", () => {
-      it("renders content action", () => {
-        cy.mount(
-          <TreeList
-            content={TREE_LIST_DATA}
-            actions={TREE_LIST_ACTIONS}
-            emptySlate={<p>Not found.</p>}
-          />
-        );
-
-        cy.findByText("Discover").should("exist").click();
-        cy.get("@onDiscover").should("have.been.calledOnce");
-
-        cy.findByText("Mention").should("exist").click();
-        cy.get("@onMention").should("have.been.calledOnce");
-      });
-    });
-
-    context("when given with falsy field", () => {
-      it("renders without falsy content", () => {
-        cy.mount(
-          <TreeList
-            content={TREE_LIST_DATA}
-            actions={TREE_LIST_ACTIONS}
-            emptySlate={<p>Not found.</p>}
-          />
-        );
-
-        cy.findAllByLabelText("tree-list-action-wrapper")
-          .children()
-          .should("have.length", 2);
-
-        cy.findByText("Discover").should("exist");
-        cy.findByText("Mention").should("exist");
-        cy.findByText("Test").should("not.exist");
-      });
-    });
-
-    context("with subMenu", () => {
-      context("with show", () => {
-        const TREE_LIST_ACTIONS_WITH_RENDER: TreeListActionsProps[] = [
-          {
-            id: "add-new-branch",
-            icon: { image: RiAddBoxLine },
-            caption: "Add New Branch",
-            subMenu: ({ show }) =>
-              show(
-                <StatefulForm
-                  fields={[
-                    {
-                      name: "division_name",
-                      title: "Division Name",
-                      type: "text",
-                      required: true,
-                    },
-                  ]}
-                  formValues={{
-                    division_name: "",
-                  }}
-                  onChange={({ currentState }) => console.log(currentState)}
-                  mode="onChange"
-                />
-              ),
-          },
-          {
-            id: "table-view",
-            caption: "Table View",
-            onClick: ({ setActive }) => {
-              setActive(true);
-            },
-            icon: { image: RiTable2 },
-          },
-        ];
-
-        it("renders action with tip drawer & arrow", () => {
-          cy.mount(
-            <TreeList
-              content={TREE_LIST_DATA}
-              actions={TREE_LIST_ACTIONS_WITH_RENDER}
-              emptySlate={<p>Not found.</p>}
-            />
-          );
-
-          cy.findByText("Division Name").should("not.exist");
-
-          cy.findByText("Add New Branch").should("exist").click();
-          cy.findByText("Division Name").should("exist");
-
-          cy.findByLabelText("tooltip-arrow").should("be.visible");
-        });
-      });
-
-      context("with render", () => {
-        const TREE_LIST_ACTIONS_WITH_RENDER: TreeListActionsProps[] = [
-          {
-            id: "add-new-branch",
-            icon: { image: RiAddBoxLine },
-            caption: "Add New Branch",
-            subMenu: ({ render }) =>
-              render(
-                <StatefulForm
-                  fields={[
-                    {
-                      name: "division_name",
-                      title: "Division Name",
-                      type: "text",
-                      required: true,
-                    },
-                  ]}
-                  formValues={{
-                    division_name: "",
-                  }}
-                  onChange={({ currentState }) => console.log(currentState)}
-                  mode="onChange"
-                />
-              ),
-          },
-          {
-            id: "table-view",
-            caption: "Table View",
-            onClick: ({ setActive }) => {
-              setActive(true);
-            },
-            icon: { image: RiTable2 },
-          },
-        ];
-
-        it("renders action with tip drawer", () => {
-          cy.mount(
-            <TreeList
-              content={TREE_LIST_DATA}
-              actions={TREE_LIST_ACTIONS_WITH_RENDER}
-              emptySlate={<p>Not found.</p>}
-            />
-          );
-
-          cy.findByText("Division Name").should("not.exist");
-
-          cy.findByText("Add New Branch").should("exist").click();
-          cy.findByText("Division Name").should("exist");
-
-          cy.findByLabelText("tooltip-arrow").should("not.be.visible");
-        });
-      });
-    });
-
-    context("with setActive", () => {
-      const TREE_LIST_ACTIONS_WITH_ACTIVE = [
-        {
-          id: "discover",
-          caption: "Discover",
-          onClick: ({ setActive }) => {
-            console.log("discover was selected");
-            setActive(true);
-          },
-          icon: { image: RiSearchLine },
-        },
-        {
-          id: "mention",
-          caption: "Mention",
-          onClick: ({ setActive }) => {
-            console.log("mention was selected");
-            setActive(true);
-          },
-          icon: { image: RiAtLine },
-        },
-      ];
-      context("when clicking", () => {
-        it("renders selected active on actions level", () => {
-          cy.window().then((win) => {
-            cy.spy(win.console, "log").as("consoleLog");
-          });
-          cy.mount(
-            <TreeList
-              content={TREE_LIST_DATA}
-              actions={TREE_LIST_ACTIONS_WITH_ACTIVE}
-              emptySlate={<p>Not found.</p>}
-            />
-          );
-
-          cy.findByText("Discover").should("exist").click();
-          cy.get("@consoleLog").should(
-            "have.been.calledWith",
-            "discover was selected"
-          );
-          cy.findByText("Discover")
-            .parent()
-            .should("have.css", "border-left-color", "rgb(59, 130, 246)");
-        });
       });
     });
   });
