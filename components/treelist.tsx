@@ -375,7 +375,6 @@ function TreeList({
                       handleSelected(item.id);
                     }
                   }}
-                  $isHovered={isHovered === item.id || openRowId === item.id}
                   $collapsible={collapsible}
                   onMouseLeave={() => {
                     setIsHovered(null);
@@ -1297,7 +1296,6 @@ const GroupWrapper = styled.div`
 
 const GroupTitleWrapper = styled.div<{
   $collapsible?: boolean;
-  $isHovered?: boolean;
 }>`
   display: flex;
   flex-direction: row;
@@ -1306,12 +1304,6 @@ const GroupTitleWrapper = styled.div<{
   user-select: none;
   justify-content: space-between;
   padding-right: 8px;
-
-  ${({ $isHovered }) =>
-    $isHovered &&
-    css`
-      background-color: #f3f4f6;
-    `}
 
   ${({ $collapsible }) =>
     $collapsible &&
