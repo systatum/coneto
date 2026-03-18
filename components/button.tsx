@@ -456,32 +456,32 @@ const getVariantTextColor = (variant: string) => {
   return undefined;
 };
 
-const getSizeStyles = (size?: ButtonProps["size"]) => {
-  const map: Record<NonNullable<ButtonProps["size"]>, CSSProp> = {
-    xs: css`
-      height: 28px;
-      padding: 0 6px;
-    `,
-    sm: css`
-      height: 32px;
-      padding: 0 12px;
-    `,
-    md: css`
-      height: 36px;
-      padding: 0 16px;
-    `,
-    lg: css`
-      height: 40px;
-      padding: 0 24px;
-    `,
-    icon: css`
-      width: 36px;
-      height: 36px;
-      padding: 0;
-    `,
-  };
+const SIZE_STYLES: Record<NonNullable<ButtonProps["size"]>, CSSProp> = {
+  xs: css`
+    height: 28px;
+    padding: 0 6px;
+  `,
+  sm: css`
+    height: 32px;
+    padding: 0 12px;
+  `,
+  md: css`
+    height: 36px;
+    padding: 0 16px;
+  `,
+  lg: css`
+    height: 40px;
+    padding: 0 24px;
+  `,
+  icon: css`
+    width: 36px;
+    height: 36px;
+    padding: 0;
+  `,
+};
 
-  return map[size ?? "md"];
+const getSizeStyles = (size?: ButtonProps["size"]) => {
+  return SIZE_STYLES[size ?? "md"];
 };
 
 const BaseButton = styled.button<{
