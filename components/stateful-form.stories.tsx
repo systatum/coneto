@@ -236,12 +236,24 @@ export const Default: Story = {
 
 export const ConditionalElement: Story = {
   render: () => {
+    const [isFormValid, setIsFormValid] = useState(false);
     const [formFields, setFormFields] = useState({
       quantType: "",
       compEffort: "",
       scheIterations: "",
       target: "",
       hostArch: "",
+    });
+
+    const schema = z.object({
+      quantType: z.string().optional(),
+      compEffort: z.string().optional(),
+      scheIterations: z
+        .string()
+        .regex(/^[0-9]*$/, "Must be a number")
+        .optional(),
+      target: z.string().min(1, "Target is required"),
+      hostArch: z.string().optional(),
     });
 
     const HostArchitecture = {
@@ -364,14 +376,22 @@ export const ConditionalElement: Story = {
             options: HOST_ARCHITECTURE_OPTIONS,
           },
         },
+        {
+          name: "button",
+          title: "Submit",
+          type: "button",
+          disabled: !isFormValid,
+        },
       ];
-    }, [formFields.compEffort, formFields.quantType]);
+    }, [formFields.compEffort, formFields.quantType, isFormValid]);
 
     return (
       <StatefulForm
         onChange={({ currentState }) => {
           setFormFields((prev) => ({ ...prev, ...currentState }));
         }}
+        onValidityChange={setIsFormValid}
+        validationSchema={schema}
         fields={COMPILATION_FIELDS}
         formValues={formFields}
         mode="onChange"
