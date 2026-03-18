@@ -69,6 +69,11 @@ interface BaseSelectboxProps
       }
   ) => ReactNode;
   styles?: SelectboxStylesProps;
+  labels?: SelectboxLabelsProps;
+}
+
+export interface SelectboxLabelsProps {
+  loadingText?: string;
 }
 
 interface BaseSelectboxStylesProps {
@@ -130,6 +135,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       id,
       autoComplete = "off",
       isLoading,
+      labels,
       ...props
     },
     ref
@@ -354,6 +360,8 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
         ? finalSelectedOptions?.length
         : selectedOptionsLocal?.text.length) !== 0;
 
+    const { loadingText = "Loading..." } = labels ?? {};
+
     return (
       <Container
         $isLoading={isLoading}
@@ -378,7 +386,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
             styles={{
               containerStyle: css`
                 position: absolute;
-                margin-left: 20px;
+                margin-left: 10px;
                 top: 50%;
                 transform: translateY(-50%);
                 gap: 6px;
@@ -388,7 +396,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
                 font-size: 14px;
               `,
             }}
-            label="loading"
+            label={loadingText}
           />
         )}
         <Input
