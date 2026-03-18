@@ -21,6 +21,7 @@ interface BaseImageboxProps {
   editable?: boolean;
   url?: string;
   id?: string;
+  disabled?: boolean;
 }
 interface BaseImageboxStylesProps {
   self?: CSSProp;
@@ -53,6 +54,7 @@ function BaseImagebox({
   value,
   borderless,
   editable = true,
+  disabled,
   url,
   id,
 }: BaseImageboxProps) {
@@ -149,6 +151,7 @@ function BaseImagebox({
 
   return (
     <InputBox
+      $disabled={disabled}
       aria-label="imagebox-input"
       $style={styles?.self}
       $dimension={dimension}
@@ -255,7 +258,12 @@ function Imagebox({
         labelStyle,
       }}
     >
-      <BaseImagebox {...rest} id={inputId} styles={ImageboxStyles} />
+      <BaseImagebox
+        {...rest}
+        id={inputId}
+        disabled={disabled}
+        styles={ImageboxStyles}
+      />
     </FieldLane>
   );
 }
@@ -266,6 +274,7 @@ const InputBox = styled.div<{
   $style?: CSSProp;
   $editable?: boolean;
   $borderless?: boolean;
+  $disabled?: boolean;
 }>`
   position: relative;
   width: ${({ $dimension }) => $dimension};
@@ -287,6 +296,14 @@ const InputBox = styled.div<{
     $editable &&
     css`
       cursor: pointer;
+    `};
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      user-select: none;
+      pointer-events: none;
+      cursor: not-allowed;
     `};
 
   ${({ $style }) => $style}
