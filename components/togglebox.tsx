@@ -39,6 +39,7 @@ function BaseTogglebox({
   styles,
   size = 24,
   id,
+  disabled,
   ...props
 }: BaseToggleboxProps) {
   const { heightWrapper, widthWrapper, thumbShift, iconSize } =
@@ -46,6 +47,7 @@ function BaseTogglebox({
 
   return (
     <ToggleboxWrapper
+      $disabled={disabled}
       $style={styles?.rowStyle}
       aria-label="togglebox-row-wrapper"
     >
@@ -67,6 +69,7 @@ function BaseTogglebox({
           name={name}
           type="checkbox"
           checked={checked}
+          disabled={disabled}
           onChange={onChange}
         />
         <ToggleBackground checked={checked} />
@@ -102,7 +105,7 @@ function BaseTogglebox({
         >
           {label && (
             <StatefulForm.Label
-              htmlFor={props.disabled ? null : id}
+              htmlFor={disabled ? null : id}
               styles={{ self: styles?.labelStyle }}
               label={label}
             />
@@ -209,7 +212,7 @@ const getToggleboxSize = (size: number) => {
   };
 };
 
-const ToggleboxWrapper = styled.div<{ $style?: CSSProp }>`
+const ToggleboxWrapper = styled.div<{ $style?: CSSProp; $disabled?: boolean }>`
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
@@ -217,6 +220,14 @@ const ToggleboxWrapper = styled.div<{ $style?: CSSProp }>`
   font-size: 0.75rem;
   align-items: center;
   width: 100%;
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      cursor: not-allowed;
+      user-select: none;
+      pointer-events: none;
+    `};
 
   ${({ $style }) => $style}
 `;
