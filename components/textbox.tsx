@@ -52,6 +52,7 @@ const BaseTextbox = forwardRef<HTMLInputElement, BaseTextboxProps>(
           $error={showError}
           $style={styles?.self}
           {...(props as InputHTMLAttributes<HTMLInputElement>)}
+          $disabled={props?.disabled}
           autoComplete={type === "password" ? "off" : props.autoComplete}
         />
 
@@ -151,6 +152,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
           {...rest}
           id={inputId}
           showError={showError}
+          disabled={disabled}
           styles={{
             self: css`
               ${dropdowns &&
@@ -172,6 +174,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
 const Input = styled.input<{
   $error?: boolean;
   $style?: CSSProp;
+  $disabled?: boolean;
 }>`
   border-radius: 2px;
   font-size: 0.75rem;
@@ -197,6 +200,14 @@ const Input = styled.input<{
             box-shadow: 0 0 0 0.5px #61a9f9;
           }
         `}
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      cursor: not-allowed;
+      user-select: none;
+      pointer-events: none;
+    `};
 
   ${({ $style }) => $style}
 `;
