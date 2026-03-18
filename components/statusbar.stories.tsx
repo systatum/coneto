@@ -259,8 +259,6 @@ export const ContainerizedClassicTheme: Story = {
       <CapsuleTab tabs={TABS_ITEMS} activeTab={"2"}>
         <Statusbar
           paddingTop="10px"
-          activeBackgroundColor="red"
-          hoverBackgroundColor="blue"
           content={{
             left: [
               {
