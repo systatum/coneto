@@ -53,6 +53,8 @@ function BaseThumbField({
   const thumbInputRef = useRef<HTMLInputElement>(null);
 
   const handleChangeValue = (data: ThumbFieldValue) => {
+    if (disabled) return;
+
     if (thumbValue !== data) {
       setThumbValue(data);
     }
@@ -90,6 +92,7 @@ function BaseThumbField({
         $active={thumbValue === "up"}
         $activeColor={thumbsUpBackgroundColor}
         $showError={showError}
+        $disabled={disabled}
       >
         {thumbValue === "up" ? (
           <RiThumbUpFill size={24} />
@@ -105,6 +108,7 @@ function BaseThumbField({
         $active={thumbValue === "down"}
         $activeColor={thumbsDownBackgroundColor}
         $showError={showError}
+        $disabled={disabled}
       >
         {thumbValue === "down" ? (
           <RiThumbDownFill size={24} />
@@ -183,6 +187,7 @@ function ThumbField({
     >
       <BaseThumbField
         {...rest}
+        disabled={disabled}
         id={inputId}
         styles={thumbFieldStyles}
         showError={showError}
@@ -204,8 +209,8 @@ const TriggerWrapper = styled.div<{
   $active?: boolean;
   $activeColor?: string;
   $showError?: boolean;
+  $disabled?: boolean;
 }>`
-  cursor: pointer;
   display: flex;
   align-items: center;
 
@@ -221,6 +226,15 @@ const TriggerWrapper = styled.div<{
       css`
         color: #dc2626;
       `}
+
+      ${({ $disabled }) =>
+      $disabled
+        ? css`
+            cursor: not-allowed;
+          `
+        : css`
+            cursor: pointer;
+          `}
   }
 
   ${({ $triggerStyle }) => $triggerStyle}
