@@ -71,6 +71,11 @@ export interface DropdownOptionProps {
   value: string;
   icon?: FigureProps;
 }
+export interface DropdownOptionProps {
+  text: string;
+  value: string;
+  icon?: FigureProps;
+}
 
 function FieldLane({
   label,
@@ -168,8 +173,10 @@ function FieldLane({
                     ${dropdown.width &&
                     css`
                       width: ${dropdown.width};
-                    `}
-                    
+                    `};
+
+                    height: 100%;
+
                     ${dropdown.styles?.self};
                   `,
                   dropdownStyle: (placement) => css`
