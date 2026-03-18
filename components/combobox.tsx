@@ -14,6 +14,7 @@ import {
   DrawerProps,
   OptionsProps,
   Selectbox,
+  SelectboxLabelsProps,
   SelectboxSelectedOptions,
   SelectboxStylesProps,
 } from "./selectbox";
@@ -43,7 +44,10 @@ interface BaseComboboxProps {
   strict?: boolean;
   options: OptionsProps[];
   isLoading?: boolean;
+  labels?: ComboboxLabelsProps;
 }
+
+export interface ComboboxLabelsProps extends SelectboxLabelsProps {}
 
 export interface ComboboxStylesProps
   extends Omit<SelectboxStylesProps, "self"> {
@@ -111,6 +115,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       labelWidth,
       required,
       isLoading,
+      labels,
     },
     ref
   ) => {
@@ -136,6 +141,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
         disabled={disabled}
         highlightOnMatch={highlightOnMatch}
         required={required}
+        labels={labels}
         styles={{
           bodyStyle: styles?.bodyStyle,
           controlStyle: styles?.controlStyle,
