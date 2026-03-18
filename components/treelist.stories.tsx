@@ -1,9 +1,10 @@
 import { Meta, StoryObj } from "@storybook/react";
 import {
-  SubMenuTreeList,
   TreeList,
   TreeListActionsProps,
+  TreeListContentActionsProps,
   TreeListContentProps,
+  TreeListItemsActionsProps,
   TreeListItemsProps,
   TreeListNode,
   TreeListOnDraggedProps,
@@ -15,6 +16,7 @@ import {
   RiEdit2Line,
   RiFileCopyLine,
   RiFolder6Fill,
+  RiFolderAddLine,
   RiFolderFill,
   RiSearchLine,
   RiShareForwardLine,
@@ -196,10 +198,21 @@ export const Nested: Story = {
       initialState?: "opened" | "closed";
     };
 
+    const HEADER_ACTIONS: TreeListContentActionsProps[] = [
+      {
+        caption: "New Folder",
+        onClick: () => console.log("first"),
+        icon: {
+          image: RiFolderAddLine,
+        },
+      },
+    ];
+
     const TREE_LIST_DATA: TreeListContentProps[] = [
       {
         id: "home",
         caption: "Home",
+        actions: HEADER_ACTIONS,
         items: [
           {
             id: "cleverfiles",
@@ -233,6 +246,7 @@ export const Nested: Story = {
       {
         id: "images",
         caption: "Images",
+        actions: HEADER_ACTIONS,
         items: [
           { id: "backup", caption: "Backup" },
           { id: "trip-bali", caption: "Trip to Bali" },
@@ -529,7 +543,7 @@ export const WithActions: Story = {
       console.log("Clicked person:", props.item.caption);
     };
 
-    const ITEM_ACTIONS: SubMenuTreeList[] = [
+    const ITEM_ACTIONS: TreeListItemsActionsProps[] = [
       {
         caption: "Edit",
         icon: { image: RiEdit2Line },
