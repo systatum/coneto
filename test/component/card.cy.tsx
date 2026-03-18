@@ -43,6 +43,13 @@ describe("Card", () => {
         cy.findByLabelText("togglebox-wrapper").should("exist");
       });
 
+      it("renders with height by 24px (by default)", () => {
+        cy.mount(<ProductCard toggleable />);
+        cy.findByLabelText("togglebox-wrapper")
+          .should("exist")
+          .should("have.css", "height", "24px");
+      });
+
       context("when clicking", () => {
         it("should collapsing the card content", () => {
           cy.mount(<ProductCard toggleable />);

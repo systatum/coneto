@@ -256,10 +256,11 @@ const WindowCell = forwardRef<HTMLDivElement, WindowCellProps>(
       ...rest
     } = props as WindowCellInternalProps;
 
-    const filteredActions =
-      actions?.filter((action): action is WindowActionProps =>
-        Boolean(action)
-      ) ?? [];
+    const filteredActions = Array.isArray(actions)
+      ? actions?.filter((action): action is WindowActionProps =>
+          Boolean(action)
+        )
+      : [];
 
     const hasActions = filteredActions.length > 0;
 

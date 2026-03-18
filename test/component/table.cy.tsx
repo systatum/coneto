@@ -22,6 +22,7 @@ import { CapsuleContentProps } from "./../../components/capsule";
 import { Button } from "./../../components/button";
 import { Card } from "./../../components/card";
 import { useState } from "react";
+import { generateSentence } from "./../../lib/text";
 
 interface TableItemProps {
   title: string;
@@ -61,8 +62,19 @@ describe("Table", () => {
     type: TYPES_DATA[i % TYPES_DATA.length],
   }));
 
-  function BasicTable(props: Omit<TableProps, "children" | "columns">) {
+  function BasicTable(
+    props: Omit<TableProps, "children" | "columns"> & { hasRowGroup?: boolean }
+  ) {
     const [selectedItems, setSelectedItems] = useState([]);
+
+    const pageNumberText = props?.labels?.pageNumberText ?? "12";
+
+    const groupedRows = props.hasRowGroup
+      ? TYPES_DATA.map((type) => ({
+          type,
+          rows: rawRows.filter((r) => r.type === type),
+        }))
+      : null;
 
     return (
       <Table
@@ -70,20 +82,72 @@ describe("Table", () => {
         columns={columnsBasic}
         selectedItems={selectedItems}
         onItemsSelected={setSelectedItems}
+        labels={{
+          pageNumberText: pageNumberText,
+        }}
         {...props}
       >
-        {rawRows?.map((row, index) => (
-          <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
-            {[row.name, row.type].map((rowCell, i) => (
-              <Table.Row.Cell key={`${row.name}-${row.type}-${rowCell}`}>
-                {rowCell}
-              </Table.Row.Cell>
+        {props.hasRowGroup
+          ? groupedRows?.map((group, gi) => (
+              <Table.Row.Group key={gi} id={group.type}>
+                {group.rows.map((row, ri) => (
+                  <Table.Row
+                    key={`${group.type}-${ri}`}
+                    rowId={`${row.name}-${row.type}`}
+                  >
+                    {[row.name, row.type].map((cell, ci) => (
+                      <Table.Row.Cell key={`${row.name}-${cell}`}>
+                        {cell}
+                      </Table.Row.Cell>
+                    ))}
+                  </Table.Row>
+                ))}
+              </Table.Row.Group>
+            ))
+          : rawRows?.map((row, index) => (
+              <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
+                {[row.name, row.type].map((rowCell, i) => (
+                  <Table.Row.Cell key={`${row.name}-${row.type}-${rowCell}`}>
+                    {rowCell}
+                  </Table.Row.Cell>
+                ))}
+              </Table.Row>
             ))}
-          </Table.Row>
-        ))}
       </Table>
     );
   }
+  context("isLoading", () => {
+    context("when given true", () => {
+      it("renders spinner positioned ~10px from the top and ~10px from the left", () => {
+        cy.mount(<BasicTable isLoading />);
+
+        cy.findByLabelText("overlay-blocker").then(($overlay) => {
+          const overlayRect = $overlay[0].getBoundingClientRect();
+
+          cy.findByLabelText("circle").then(($spinner) => {
+            const spinnerRect = $spinner[0].getBoundingClientRect();
+
+            const paddingTop = spinnerRect.top - overlayRect.top;
+            const paddingLeft = spinnerRect.left - overlayRect.left;
+
+            expect(paddingTop).to.be.closeTo(10, 2);
+            expect(paddingLeft).to.be.closeTo(10, 2);
+          });
+        });
+      });
+
+      it("renders spinner with padding 4px and with caption loading", () => {
+        cy.mount(<BasicTable isLoading />);
+
+        cy.findByText("Loading").should("exist");
+
+        cy.findByLabelText("loading-spinner")
+          .should("have.css", "background-color", "rgb(0, 0, 0)")
+          .and("have.css", "opacity", "0.8")
+          .and("have.css", "padding", "4px 8px 4px 4px");
+      });
+    });
+  });
 
   context("selected", () => {
     context("when selected", () => {
@@ -444,12 +508,7 @@ describe("Table", () => {
             `,
           }}
         >
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vel
-          lectus nec ipsum posuere tristique. Sed consequat, nisi at facilisis
-          dignissim, lorem urna fermentum odio, vitae bibendum massa arcu sed
-          nisl. Praesent ac mi non augue gravida cursus. Vivamus euismod, turpis
-          in suscipit cursus, lorem sem viverra mauris, sit amet pulvinar neque
-          velit a justo.
+          {generateSentence({ minLen: 30, maxLen: 40 })}
         </Card>
       );
     }
@@ -1166,7 +1225,7 @@ describe("Table", () => {
           );
 
           cy.findByLabelText("pagination-wrapper")
-            .should("have.css", "width", "432px")
+            .should("have.css", "width", "447px")
             .and("have.css", "justify-content", "end");
         });
       });

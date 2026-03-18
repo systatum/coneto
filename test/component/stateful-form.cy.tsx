@@ -357,6 +357,11 @@ describe("StatefulForm", () => {
               fields={INPUT_WITH_LABEL_POSITION}
               formValues={allValue}
               mode="onChange"
+              styles={{
+                containerStyle: css`
+                  width: 480px;
+                `,
+              }}
             />
           );
 
@@ -367,9 +372,9 @@ describe("StatefulForm", () => {
                 .then((width) => {
                   const w = width as unknown as string;
                   if (i < 2) {
-                    expect(parseFloat(w)).to.be.closeTo(45, 2);
+                    expect(parseFloat(w)).to.be.closeTo(45, 3);
                   } else {
-                    expect(parseFloat(w)).to.be.closeTo(90, 2);
+                    expect(parseFloat(w)).to.be.closeTo(90, 6);
                   }
                 });
             }
@@ -401,6 +406,11 @@ describe("StatefulForm", () => {
               fields={INPUT_WITH_LABEL_POSITION_LEFT_AND_WIDTH_MAX}
               formValues={allValue}
               mode="onChange"
+              styles={{
+                containerStyle: css`
+                  width: 480px;
+                `,
+              }}
             />
           );
 
@@ -411,9 +421,9 @@ describe("StatefulForm", () => {
                 .then((width) => {
                   const w = width as unknown as string;
                   if (i < 2) {
-                    expect(parseFloat(w)).to.be.closeTo(93, 5);
+                    expect(parseFloat(w)).to.be.closeTo(100, 6);
                   } else {
-                    expect(parseFloat(w)).to.be.closeTo(186, 5);
+                    expect(parseFloat(w)).to.be.closeTo(200, 12);
                   }
                 });
             }

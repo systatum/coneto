@@ -52,12 +52,17 @@ function ChoiceGroup({ children, styles }: ChoiceGroupProps) {
                     border: 0.5px solid rgba(229, 231, 235, 0.6);
                     border-radius: 4px;
                     overflow: hidden;
+
                     ${componentChild.props.styles?.containerStyle}
                   `,
                 },
               }
             : {
                 styles: {
+                  containerStyle: css`
+                    width: 100%;
+                    ${componentChild.props.styles?.containerStyle}
+                  `,
                   labelStyle: css`
                     font-size: 14px;
                     ${componentChild.props.styles?.labelStyle}

@@ -3,6 +3,7 @@ import { DrawerTab, DrawerTabContentProps } from "./drawer-tab";
 import { Textbox } from "./textbox";
 import { ChangeEvent, useState } from "react";
 import { RiListCheck, RiNodeTree } from "@remixicon/react";
+import { generateSentence } from "./../lib/text";
 
 const meta: Meta<typeof DrawerTab> = {
   title: "Stage/DrawerTab",
@@ -39,11 +40,7 @@ export const Default: Story = {
           }}
         >
           <h3 style={{ fontWeight: 500 }}>Write Tab</h3>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
-            malesuada, nisl a tincidunt scelerisque, velit sapien sollicitudin
-            arcu, nec faucibus sem justo vitae sapien.
-          </p>
+          <p>{generateSentence()}</p>
           <Textbox name="write" value={value.write} onChange={onChangeValue} />
         </div>
       );
@@ -115,11 +112,7 @@ export const FixedRight: Story = {
           }}
         >
           <h3 style={{ fontWeight: 500 }}>Write Tab</h3>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
-            malesuada, nisl a tincidunt scelerisque, velit sapien sollicitudin
-            arcu, nec faucibus sem justo vitae sapien.
-          </p>
+          <p>{generateSentence()}</p>
           <Textbox name="write" value={value.write} onChange={onChangeValue} />
         </div>
       );

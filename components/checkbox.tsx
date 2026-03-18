@@ -194,9 +194,13 @@ function Checkbox({
       styles={{
         bodyStyle: css`
           min-height: 0px;
+          ${bodyStyle}
         `,
         controlStyle,
-        containerStyle,
+        containerStyle: css`
+          width: fit-content;
+          ${containerStyle}
+        `,
         labelStyle: titleStyle,
       }}
     >

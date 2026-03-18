@@ -668,6 +668,7 @@ const Input = styled.input<{
   border: 1px solid #d1d5db;
   padding: 0.5rem 0.75rem;
   outline: none;
+  height: 34px;
   padding-right: ${({ $clearable }) => ($clearable ? "50px" : "24px")};
 
   ${({ $highlight, $hovered, $hasError, $focused }) =>
@@ -689,7 +690,12 @@ const Input = styled.input<{
       user-select: none;
       pointer-events: none;
       background-color: rgba(255, 255, 255, 0.6);
-    `}
+    `};
+
+  &:focus {
+    border-color: #61a9f9;
+    box-shadow: 0 0 0 1px #61a9f9;
+  }
 
   ${({ $style }) => $style}
 `;
