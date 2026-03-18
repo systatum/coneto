@@ -381,8 +381,9 @@ export const ConditionalElement: Story = {
           title: "Submit",
           type: "button",
           disabled: !isFormValid,
+          rowJustifyContent: "end",
         },
-      ];
+      ] as FormFieldGroup[];
     }, [formFields.compEffort, formFields.quantType, isFormValid]);
 
     return (
