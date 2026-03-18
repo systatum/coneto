@@ -48,6 +48,7 @@ export interface ListProps extends ListMaxItemsProp {
     oldPosition: number;
     newPosition: number;
   }) => void;
+  groupOpenerBehavior?: "any" | "onlyOne";
   openerBehavior?: "any" | "onlyOne";
   onOpen?: (props?: ListOnOpenProps) => void;
   alwaysShowDragIcon?: boolean;
@@ -139,6 +140,7 @@ function List({
   selectable,
   isLoading,
   openerBehavior = "any",
+  groupOpenerBehavior = "any",
   onOpen,
   alwaysShowDragIcon = true,
   onSearchKeyDown,
@@ -193,48 +195,31 @@ function List({
     }
   };
 
+  const toggleSet = (set: Set<string>, id: string, onlyOne: boolean) => {
+    const next = new Set(set);
+    if (next.has(id)) {
+      next.delete(id);
+    } else {
+      if (onlyOne) next.clear();
+      next.add(id);
+    }
+    return next;
+  };
+
   const setIsOpen = (id: string, level: "group" | "item" = "item") => {
     if (level === "group") {
       setOpenedGroupIds((prev) => {
-        const next = new Set(prev);
+        const next = toggleSet(prev, id, groupOpenerBehavior === "onlyOne");
         if (onOpen) {
-          onOpen({
-            id: id,
-            isOpen: !next.has(id),
-          });
+          onOpen({ id, isOpen: next.has(id) });
         }
-
-        if (next.has(id)) {
-          next.delete(id);
-        } else {
-          next.add(id);
-        }
-
         return next;
       });
     } else {
       setOpenedItemIds((prev) => {
-        const next = new Set(prev);
+        const next = toggleSet(prev, id, openerBehavior === "onlyOne");
         if (onOpen) {
-          onOpen({
-            id: id,
-            isOpen: !next.has(id),
-          });
-        }
-
-        if (openerBehavior === "onlyOne") {
-          if (next.has(id)) {
-            next.delete(id);
-          } else {
-            next.clear();
-            next.add(id);
-          }
-        } else {
-          if (next.has(id)) {
-            next.delete(id);
-          } else {
-            next.add(id);
-          }
+          onOpen({ id, isOpen: next.has(id) });
         }
         return next;
       });
@@ -399,6 +384,7 @@ export interface ListGroupProps {
   initialState?: "opened" | "closed";
   selectable?: boolean;
   styles?: ListGroupStylesProps;
+  onClick?: ({ toggle }: { toggle: () => void }) => void;
 }
 
 interface ListGroupStylesProps {
@@ -436,6 +422,7 @@ function ListGroup({
   actions,
   emptySlate,
   styles,
+  onClick,
   ...props
 }: ListGroupProps) {
   const {
@@ -484,11 +471,21 @@ function ListGroup({
       onClick: () => action.onClick && action.onClick?.(id),
     }));
 
+  const toggle = () => {
+    setIsOpen(id, "group");
+  };
+
   return (
     <ListGroupContainer $containerStyle={styles?.containerStyle}>
       <HeaderButton
         $isOpen={opened}
-        onClick={() => setIsOpen(id, "group")}
+        onClick={() => {
+          if (onClick) {
+            onClick({ toggle });
+          } else {
+            toggle();
+          }
+        }}
         aria-expanded={opened}
         $style={styles?.rowStyle}
       >
@@ -569,7 +566,7 @@ function ListGroup({
             collapsed: { opacity: 0, height: 0 },
           }}
           transition={{ duration: 0.2, ease: "easeInOut" }}
-          $contentStyle={styles?.contentStyle}
+          $style={styles?.contentStyle}
         >
           {childArray.map((child, index) => {
             const componentChild = child as ReactElement<
@@ -786,17 +783,28 @@ const ListGroupContainer = styled.div<{
 `;
 
 const ListGroupContent = styled(motion.ul)<{
-  $contentStyle?: CSSProp;
+  $style?: CSSProp;
   $isOpen?: boolean;
+  $isChildren?: boolean;
 }>`
   display: flex;
   flex-direction: column;
   position: relative;
-  padding-top: ${({ $isOpen }) => ($isOpen ? "2px" : "0px")};
-  gap: 4px;
-  margin-top: 4px;
 
-  ${({ $contentStyle }) => $contentStyle}
+  ${({ $isOpen, $isChildren }) =>
+    $isChildren && !$isOpen
+      ? css`
+          opacity: 0;
+          height: 0;
+          margin-top: 0px;
+          padding: 0px;
+        `
+      : !$isChildren &&
+        css`
+          gap: 2px;
+        `};
+
+  ${({ $style }) => $style};
 `;
 
 const HeaderButton = styled.div<{ $isOpen?: boolean; $style?: CSSProp }>`
@@ -886,6 +894,7 @@ export interface ListItemStylesProps {
   leftSideStyle?: CSSProp;
   rightSideStyle?: CSSProp;
   maxItemsStyle?: CSSProp;
+  openableStyle?: CSSProp;
 }
 
 interface ListItemWithId {
@@ -943,7 +952,9 @@ const ListItem = forwardRef<HTMLLIElement, ListItemProps>(
     );
     const idFullname = groupId ? `${groupId}-${id}` : `${id}`;
 
-    const isChildOpened = isOpen(idFullname, "item");
+    const isChildOpened = useMemo(() => {
+      return isOpen(idFullname, "item");
+    }, [isOpen, idFullname]);
 
     return (
       <ListItemWrapper
@@ -1164,8 +1175,8 @@ const ListItem = forwardRef<HTMLLIElement, ListItemProps>(
                         self: css`
                           ${!subtitle &&
                           css`
-                            width: 24px;
-                            height: 24px;
+                            width: 20px;
+                            height: 20px;
                           `}
                         `,
                       }}
@@ -1204,7 +1215,9 @@ const ListItem = forwardRef<HTMLLIElement, ListItemProps>(
               aria-label="list-item-children"
               animate={isChildOpened ? "open" : "collapsed"}
               exit="collapsed"
+              $style={styles?.openableStyle}
               $isOpen={isChildOpened}
+              $isChildren={true}
               variants={{
                 open: {
                   opacity: 1,
@@ -1244,7 +1257,6 @@ const ListItemWrapper = styled.li<{
   display: flex;
   flex-direction: column;
   position: relative;
-  gap: 4px;
   transition: background-color 300ms;
   border-radius: 3px;
 
@@ -1328,12 +1340,6 @@ const ListItemRight = styled.div<{ $style?: CSSProp }>`
   width: 30%;
 
   ${({ $style }) => $style}
-`;
-
-const ImageStyle = styled.img`
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 0.25rem;
 `;
 
 const TextWrapper = styled.div`

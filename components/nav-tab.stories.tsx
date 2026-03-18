@@ -15,6 +15,7 @@ import {
 } from "@remixicon/react";
 import { ColumnTableProps, Table } from "./table";
 import { css } from "styled-components";
+import { generateSentence } from "./../lib/text";
 
 const meta: Meta<typeof NavTab> = {
   title: "Stage/NavTab",
@@ -373,11 +374,7 @@ export const WriteTabContent = () => {
       >
         Write Tab
       </h3>
-      <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed malesuada,
-        nisl a tincidunt scelerisque, velit sapien sollicitudin arcu, nec
-        faucibus sem justo vitae sapien.
-      </p>
+      <p>{generateSentence({ minLen: 30, maxLen: 40 })}</p>
 
       <Textbox name="write" value={value.write} onChange={onChangeValue} />
       <div

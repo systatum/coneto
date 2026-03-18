@@ -24,6 +24,7 @@ import { css } from "styled-components";
 import { CapsuleContentProps } from "./capsule";
 import { List } from "./list";
 import { Card } from "./card";
+import { generateSentence } from "./../lib/text";
 
 const meta: Meta<typeof Table> = {
   title: "Content/Table",
@@ -309,15 +310,16 @@ export const Appendable: Story = {
       return subjects;
     };
 
+    const getRandom = (min: number, max: number) =>
+      Math.floor(Math.random() * (max - min + 1)) + min;
+
     const generate20RandomLoremIpsum = () => {
-      const baseText = [
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent sodales dui nec ex commodo, nec volutpat quam viverra.",
-        "Suspendisse potenti. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
-        "Curabitur vitae nunc vel nisi egestas tempus. Sed feugiat sagittis orci, non iaculis justo fermentum ac.",
-        "Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Donec at orci non magna fermentum blandit.",
-        "Integer ac malesuada nulla. Cras ac nisl vel lectus hendrerit cursus. Duis volutpat eros a metus pretium varius.",
-      ];
-      return baseText;
+      return Array.from({ length: 5 }, () =>
+        generateSentence({
+          minLen: getRandom(20, 45),
+          maxLen: getRandom(20, 45),
+        })
+      );
     };
 
     const generate20RandomEmails = ({ senders, subjects, contents }) => {
@@ -554,15 +556,16 @@ export const WithOneAction: Story = {
       return subjects;
     };
 
+    const getRandom = (min: number, max: number) =>
+      Math.floor(Math.random() * (max - min + 1)) + min;
+
     const generate20RandomLoremIpsum = () => {
-      const baseText = [
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent sodales dui nec ex commodo, nec volutpat quam viverra.",
-        "Suspendisse potenti. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
-        "Curabitur vitae nunc vel nisi egestas tempus. Sed feugiat sagittis orci, non iaculis justo fermentum ac.",
-        "Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Donec at orci non magna fermentum blandit.",
-        "Integer ac malesuada nulla. Cras ac nisl vel lectus hendrerit cursus. Duis volutpat eros a metus pretium varius.",
-      ];
-      return baseText;
+      return Array.from({ length: 5 }, () =>
+        generateSentence({
+          minLen: getRandom(20, 45),
+          maxLen: getRandom(20, 45),
+        })
+      );
     };
 
     const generate20RandomEmails = ({ senders, subjects, contents }) => {
@@ -2175,12 +2178,10 @@ export const WithRowAppendix: Story = {
             `,
           }}
         >
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vel
-          lectus nec ipsum posuere tristique. Sed consequat, nisi at facilisis
-          dignissim, lorem urna fermentum odio, vitae bibendum massa arcu sed
-          nisl. Praesent ac mi non augue gravida cursus. Vivamus euismod, turpis
-          in suscipit cursus, lorem sem viverra mauris, sit amet pulvinar neque
-          velit a justo.
+          {generateSentence({
+            minLen: 45,
+            maxLen: 45,
+          })}
         </Card>
       );
     }
