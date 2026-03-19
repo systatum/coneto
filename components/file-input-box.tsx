@@ -97,12 +97,12 @@ function BaseFileInputBox({
   return (
     <InputBox
       $style={styles?.self}
-      $isDragging={isDragging}
+      $isDragging={!disabled && isDragging}
       $hasFile={selectedFiles.length > 0}
-      onClick={handleBrowseClick}
-      onDrop={handleDrop}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
+      onClick={!disabled && handleBrowseClick}
+      onDrop={!disabled && handleDrop}
+      onDragOver={!disabled && handleDragOver}
+      onDragLeave={!disabled && handleDragLeave}
       aria-label="fileinputbox"
       $disabled={disabled}
       $isError={showError}
@@ -288,6 +288,12 @@ const InputBox = styled.div<{
     bottom right,
     bottom left;
   background-repeat: no-repeat;
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      user-select: none;
+    `};
 
   ${({ $style }) => $style}
 `;

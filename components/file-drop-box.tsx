@@ -184,10 +184,10 @@ function FileDropBox({
       $isDragging={isDragging}
       $progress={progress}
       aria-label="filedropbox"
-      onClick={handleBrowseClick}
-      onDrop={handleDrop}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
+      onClick={!disabled && handleBrowseClick}
+      onDrop={!disabled && handleDrop}
+      onDragOver={!disabled && handleDragOver}
+      onDragLeave={!disabled && handleDragLeave}
     >
       {progress === "loading" && currentIndex !== null ? (
         <ProgressContainer>
