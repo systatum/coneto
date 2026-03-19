@@ -322,9 +322,19 @@ export const Appendable: Story = {
       );
     };
 
-    const generate20RandomEmails = ({ senders, subjects, contents }) => {
+    const generateRandomEmails = ({
+      senders,
+      subjects,
+      contents,
+      total,
+    }: {
+      senders: string[];
+      subjects: string[];
+      contents: string[];
+      total: number;
+    }) => {
       const emails = [];
-      for (let i = 0; i < 20; i++) {
+      for (let i = 0; i < total; i++) {
         const from = senders[i % senders.length];
         const subject = subjects[Math.floor(Math.random() * subjects.length)];
         const content = contents[Math.floor(Math.random() * contents.length)];
@@ -337,10 +347,11 @@ export const Appendable: Story = {
       return emails;
     };
 
-    const emails = generate20RandomEmails({
+    const emails = generateRandomEmails({
       senders: generate20RandomSender(),
       subjects: generate20RandomSubject(),
       contents: generate20RandomLoremIpsum(),
+      total: 1000,
     });
 
     const [rows, setRows] = useState(emails);
@@ -438,13 +449,16 @@ export const Appendable: Story = {
     };
 
     const handleFetchData = () => {
-      const moreEmails = generate20RandomEmails({
+      const moreEmails = generateRandomEmails({
         senders: generate20RandomSender(),
         subjects: generate20RandomSubject(),
         contents: generate20RandomLoremIpsum(),
+        total: 20,
       });
       setRows((prev) => [...prev, ...moreEmails]);
     };
+
+    console.log(emails);
 
     return (
       <Table
@@ -469,7 +483,7 @@ export const Appendable: Story = {
               toggleCheckbox();
             }}
             key={rowIndex}
-            rowId={`${rowValue.from}-${rowValue.content}-${rowValue.subject}`}
+            rowId={`${rowIndex}-${rowValue.from}-${rowValue.content}-${rowValue.subject}`}
             actions={ROW_ACTION}
           >
             <Table.Row.Cell>{rowValue.from}</Table.Row.Cell>
