@@ -458,8 +458,6 @@ export const Appendable: Story = {
       setRows((prev) => [...prev, ...moreEmails]);
     };
 
-    console.log(emails);
-
     return (
       <Table
         selectable
