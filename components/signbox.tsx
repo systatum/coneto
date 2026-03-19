@@ -34,6 +34,7 @@ function BaseSignbox({
   height,
   width,
   id,
+  disabled,
 }: BaseSignboxProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isDrawing = useRef(false);
@@ -128,11 +129,13 @@ function BaseSignbox({
   };
 
   const startDrawing = (e: MouseEvent | TouchEvent) => {
+    if (disabled) return;
     isDrawing.current = true;
     lastPoint.current = getCoordinates(e);
   };
 
   const draw = (e: MouseEvent | TouchEvent) => {
+    if (disabled) return;
     if (!isDrawing.current) return;
 
     const ctx = canvasRef.current?.getContext("2d");
@@ -159,11 +162,13 @@ function BaseSignbox({
   };
 
   const stopDrawing = () => {
+    if (disabled) return;
     isDrawing.current = false;
     lastPoint.current = null;
   };
 
   const clearCanvas = (e?: React.MouseEvent) => {
+    if (disabled) return;
     e?.stopPropagation();
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
@@ -180,6 +185,7 @@ function BaseSignbox({
 
   return (
     <SignatureWrapper
+      $disabled={disabled}
       aria-label="signbox-canvas"
       $error={showError}
       $canvasStyle={styles?.self}
@@ -272,6 +278,7 @@ function Signbox({
         onChange={onChange}
         clearable={clearable}
         showError={showError}
+        disabled={disabled}
         styles={{
           self: css`
             ${dropdowns &&
@@ -296,6 +303,7 @@ const SignatureWrapper = styled.div<{
   $height?: string;
   $canvasStyle?: CSSProp;
   $error?: boolean;
+  $disabled?: boolean;
 }>`
   position: relative;
   width: ${({ $width }) => $width ?? "100%"};
@@ -303,6 +311,14 @@ const SignatureWrapper = styled.div<{
   border: 1px solid ${({ $error }) => ($error ? "#f87171" : "#d1d5db")};
   border-radius: 2px;
   cursor: ${cursorDataUrl};
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      cursor: not-allowed;
+      user-select: none;
+      pointer-events: none;
+    `}
 
   ${({ $canvasStyle }) => $canvasStyle};
 `;

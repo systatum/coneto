@@ -87,11 +87,13 @@ function BaseCheckbox({
             type="checkbox"
             name={name}
             id={id}
+            aria-label="checkbox"
             checked={props.checked}
             onChange={props.onChange}
             $isError={showError}
             $indeterminate={indeterminate}
             $checked={isChecked}
+            role="checkbox"
             $style={styles?.self}
             $disabled={props.disabled}
             disabled={props.disabled}

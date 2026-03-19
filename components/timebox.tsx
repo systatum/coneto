@@ -181,6 +181,7 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
         $style={styles?.inputWrapperStyle}
         $focused={isFocused}
         $error={!!showError}
+        $disabled={disabled}
         onKeyDown={(e) => {
           if (onKeyDown) {
             onKeyDown(e);
@@ -353,6 +354,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
           {...rest}
           id={inputId}
           showError={showError}
+          disabled={disabled}
           styles={{
             inputWrapperStyle: css`
               ${dropdowns &&
@@ -375,6 +377,7 @@ const InputGroup = styled.div<{
   $focused: boolean;
   $error: boolean;
   $style?: CSSProp;
+  $disabled?: boolean;
 }>`
   display: flex;
   flex-direction: row;
@@ -385,6 +388,14 @@ const InputGroup = styled.div<{
 
   border-color: ${({ $error, $focused }) =>
     $error ? "#dc2626" : $focused ? "#61A9F9" : "#d1d5db"};
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      cursor: not-allowed;
+      user-select: none;
+      pointer-events: none;
+    `};
 
   ${({ $style }) => $style}
 `;

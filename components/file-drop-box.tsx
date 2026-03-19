@@ -46,6 +46,7 @@ export interface FileDropBoxProps {
   labelGap?: FieldLaneProps["labelGap"];
   labelWidth?: FieldLaneProps["labelWidth"];
   required?: boolean;
+  disabled?: boolean;
 }
 
 export interface FileDropBoxStylesProps {
@@ -73,6 +74,7 @@ function FileDropBox({
   labelGap,
   labelWidth,
   required,
+  disabled,
 }: FileDropBoxProps) {
   const FILE_ICON = [
     { id: 1, icon: RiImageLine, size: 50 },
@@ -182,10 +184,10 @@ function FileDropBox({
       $isDragging={isDragging}
       $progress={progress}
       aria-label="filedropbox"
-      onClick={handleBrowseClick}
-      onDrop={handleDrop}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
+      onClick={!disabled && handleBrowseClick}
+      onDrop={!disabled && handleDrop}
+      onDragOver={!disabled && handleDragOver}
+      onDragLeave={!disabled && handleDragLeave}
     >
       {progress === "loading" && currentIndex !== null ? (
         <ProgressContainer>
@@ -231,6 +233,7 @@ function FileDropBox({
           accept={accept}
           required={required}
           onChange={handleFileChange}
+          disabled={disabled}
           multiple
           hidden
         />
@@ -240,6 +243,7 @@ function FileDropBox({
 
   return (
     <InputWrapper
+      $disabled={disabled}
       $labelPosition={labelPosition}
       aria-label="file-drop-box-container"
       $hide={progress === null}
@@ -248,7 +252,7 @@ function FileDropBox({
     >
       {label && (
         <StatefulForm.Label
-          htmlFor={inputId}
+          htmlFor={disabled ? null : inputId}
           labelWidth={labelWidth}
           labelPosition={labelPosition}
           required={required}
@@ -275,6 +279,7 @@ const InputWrapper = styled.div<{
   $hide?: boolean;
   $labelPosition?: FieldLaneProps["labelPosition"];
   $labelGap?: FieldLaneProps["labelGap"];
+  $disabled?: boolean;
 }>`
   display: flex;
   width: 100%;
@@ -289,6 +294,14 @@ const InputWrapper = styled.div<{
     css`
       display: none;
     `}
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      opacity: 0.5;
+      user-select: none;
+      cursor: not-allowed;
+    `};
 
   ${({ $containerStyle }) => $containerStyle}
 `;
@@ -321,7 +334,6 @@ const DropArea = styled.div<{
   position: relative;
   align-items: center;
   justify-content: space-between;
-  cursor: pointer;
   border-radius: 4px;
   color: #6b7280;
   width: 100%;
@@ -372,7 +384,7 @@ const DropArea = styled.div<{
       background-repeat: no-repeat;
 
       ${$dragOverStyle}
-    `}
+    `};
 
   ${({ $isDragging }) =>
     $isDragging &&
@@ -419,14 +431,14 @@ const DropArea = styled.div<{
         bottom right,
         bottom left;
       background-repeat: no-repeat;
-    `}
+    `};
 
   ${({ $progress, $successStyle }) =>
     $progress === "succeed" &&
     css`
       border: 1px solid #f3f4f6;
       ${$successStyle}
-    `}
+    `};
 `;
 
 const UploadContent = styled.div`

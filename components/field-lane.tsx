@@ -71,6 +71,11 @@ export interface DropdownOptionProps {
   value: string;
   icon?: FigureProps;
 }
+export interface DropdownOptionProps {
+  text: string;
+  value: string;
+  icon?: FigureProps;
+}
 
 function FieldLane({
   label,
@@ -170,8 +175,10 @@ function FieldLane({
                     ${dropdown.width &&
                     css`
                       width: ${dropdown.width};
-                    `}
-                    
+                    `};
+
+                    height: 100%;
+
                     ${dropdown.styles?.self};
                   `,
                   dropdownStyle: (placement) => css`
@@ -214,11 +221,11 @@ function FieldLane({
               onMouseDown={(e) => e.preventDefault()}
               onClick={(e) => {
                 e.stopPropagation();
-                if (props.onClick) {
+                if ((!disabled || !props?.disabled) && props.onClick) {
                   props.onClick(e);
                 }
               }}
-              disabled={props.disabled}
+              disabled={disabled ? disabled : props.disabled}
               styles={{
                 containerStyle: css`
                   position: absolute;

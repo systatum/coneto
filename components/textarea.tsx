@@ -41,6 +41,7 @@ const BaseTextarea = forwardRef<HTMLTextAreaElement, BaseTextareaProps>(
 
     return (
       <TextareaInput
+        $disabled={props?.disabled}
         $autogrow={autogrow}
         id={id}
         ref={(el) => {
@@ -97,24 +98,13 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       id: props.id,
     });
 
-    const DropdownProps = dropdowns?.map((dropdown) => ({
-      ...dropdown,
-      styles: {
-        ...dropdown?.styles,
-        self: css`
-          height: 100%;
-          ${dropdown?.styles?.self}
-        `,
-      },
-    }));
-
     return (
       <FieldLane
         id={inputId}
         labelGap={labelGap}
         labelWidth={labelWidth}
         labelPosition={labelPosition}
-        dropdowns={DropdownProps}
+        dropdowns={dropdowns}
         showError={showError}
         errorMessage={errorMessage}
         label={label}
@@ -133,6 +123,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         <BaseTextarea
           {...rest}
           id={inputId}
+          disabled={disabled}
           showError={showError}
           styles={{
             self: css`
@@ -156,6 +147,7 @@ const TextareaInput = styled.textarea<{
   $error?: boolean;
   $style?: CSSProp;
   $autogrow?: boolean;
+  $disabled?: boolean;
 }>`
   border-radius: 2px;
   font-size: 0.75rem;
@@ -165,6 +157,13 @@ const TextareaInput = styled.textarea<{
   border: 1px solid ${({ $error }) => ($error ? "#f87171" : "#d1d5db")};
   z-index: 10;
   resize: none;
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      cursor: not-allowed;
+      user-select: none;
+      pointer-events: none;
+    `};
 
   ${({ $autogrow }) =>
     $autogrow &&
@@ -175,7 +174,7 @@ const TextareaInput = styled.textarea<{
       &::-webkit-scrollbar {
         display: none;
       }
-    `}
+    `};
 
   ${({ $error }) =>
     $error
@@ -191,7 +190,7 @@ const TextareaInput = styled.textarea<{
             border-color: #61a9f9;
             box-shadow: 0 0 0 1px #61a9f9;
           }
-        `}
+        `};
   ${({ $style }) => $style}
 `;
 
