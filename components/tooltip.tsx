@@ -33,6 +33,7 @@ export type TooltipProps = {
   safeAreaAriaLabels?: string[];
   showDelayPeriod?: number;
   styles?: TooltipStyles;
+  onClick?: (e: React.MouseEvent) => void;
 };
 
 export interface TooltipStyles {
@@ -60,6 +61,7 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
       safeAreaAriaLabels,
       showDelayPeriod = 0,
       styles,
+      onClick,
     },
     ref
   ) => {
@@ -157,6 +159,9 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
           aria-label="tooltip-trigger"
           onClick={(e: React.MouseEvent) => {
             e.stopPropagation();
+            if (onClick) {
+              onClick(e);
+            }
             if (showDialogOn === "click") {
               setIsOpen((prev) => {
                 const next = !prev;
