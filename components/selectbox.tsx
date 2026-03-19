@@ -296,6 +296,16 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
             const selectedOption =
               FILTERED_OPTIONS[highlightedIndex - (actions?.length ?? 0)];
 
+            if (strict && !selectedOption) {
+              setSelectedOptionsLocal({
+                text: "",
+                value: "",
+              });
+              return;
+            } else if (!selectedOption) {
+              return;
+            }
+
             const selectedOptionValue = String(selectedOption.value);
 
             if (multiple) {
