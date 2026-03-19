@@ -154,6 +154,8 @@ function FieldLane({
                       width: ${dropdown.width};
                     `};
 
+                    height: 100%;
+
                     ${dropdown.styles?.containerStyle}
                   `,
                   self: css`
@@ -207,6 +209,7 @@ function FieldLane({
           return (
             <Button
               key={index}
+              displayLabel="flex"
               aria-label="action-icon"
               onMouseDown={(e) => e.preventDefault()}
               onClick={(e) => {
@@ -223,7 +226,6 @@ function FieldLane({
                   transform: translateY(-50%);
                   right: ${`${offset}px`};
                   z-index: 10;
-                  height: 23px;
                 `,
                 self: css`
                   padding: 2px;
@@ -232,7 +234,8 @@ function FieldLane({
                   background: transparent;
                   position: relative;
                   z-index: 10;
-                  height: 23px;
+                  padding: 2px;
+                  height: fit-content;
 
                   color: ${showError
                     ? "#f87171"
@@ -255,7 +258,6 @@ function FieldLane({
                 styles={{
                   containerStyle: css`
                     cursor: pointer;
-                    pointer-events: none;
                   `,
                   arrowStyle: (placement) => css`
                     ${placement === "bottom-start"
@@ -395,6 +397,8 @@ const InputWrapper = styled.div<{ $style?: CSSProp }>`
   width: 100%;
   justify-content: flex-start;
   height: 100%;
+  align-items: center;
+  justify-content: center;
 
   ${({ $style }) => $style}
 `;

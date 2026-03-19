@@ -68,6 +68,7 @@ export type ButtonProps = Omit<React.ComponentProps<"button">, "style"> &
     pressed?: boolean;
     activeBackgroundColor?: string;
     hoverBackgroundColor?: string;
+    displayLabel?: "flex" | "ellipsis";
   };
 
 export interface ButtonStylesProps {
@@ -100,6 +101,7 @@ function Button({
   pressed,
   icon,
   hoverBackgroundColor,
+  displayLabel = "ellipsis",
   ...props
 }: ButtonProps) {
   const [isOpenLocal, setIsOpenLocal] = React.useState(false);
@@ -243,7 +245,12 @@ function Button({
           />
         )}
         {children && (
-          <ButtonLabel aria-label="button-label">{children}</ButtonLabel>
+          <ButtonLabel
+            $withFlex={displayLabel === "flex"}
+            aria-label="button-label"
+          >
+            {children}
+          </ButtonLabel>
         )}
         {isLoading && <LoadingSpinner />}
       </BaseButton>
@@ -363,7 +370,14 @@ const DropdownWrapper = styled.div<{ $style?: CSSProp }>`
   ${({ $style }) => $style};
 `;
 
-const ButtonLabel = styled.span`
+const ButtonLabel = styled.span<{
+  $withFlex?: boolean;
+}>`
+  ${({ $withFlex }) =>
+    $withFlex &&
+    css`
+      display: flex;
+    `}
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
