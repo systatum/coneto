@@ -185,6 +185,7 @@ function BaseImagebox({
         id={inputId}
         name={name}
         aria-label="imagebox"
+        disabled={disabled}
         onChange={handleFileChange}
       />
 

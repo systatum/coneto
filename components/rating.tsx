@@ -139,7 +139,13 @@ function BaseRating({
           </StarSpan>
         ))}
       </StarsWrapper>
-      <input type="hidden" name={name} value={ratingLocal} id={id} />
+      <input
+        disabled={disabled}
+        type="hidden"
+        name={name}
+        value={ratingLocal}
+        id={id}
+      />
 
       {withLabel && (
         <RatingLabel $size={size}>{ratingLocal.toFixed(1)} / 5</RatingLabel>

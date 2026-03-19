@@ -125,6 +125,7 @@ function BaseChips(props: BaseChipsProps) {
   return (
     <>
       <InputGroup
+        aria-label="chip-input"
         $disabled={props?.disabled}
         $containerStyle={props?.styles?.chipsContainerStyle}
       >

@@ -53,6 +53,7 @@ const BaseTextbox = forwardRef<HTMLInputElement, BaseTextboxProps>(
           $style={styles?.self}
           {...(props as InputHTMLAttributes<HTMLInputElement>)}
           $disabled={props?.disabled}
+          disabled={props?.disabled}
           autoComplete={type === "password" ? "off" : props.autoComplete}
         />
 
