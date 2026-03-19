@@ -112,6 +112,45 @@ describe("Datebox", () => {
       );
     });
 
+    it("renders with similar height", () => {
+      cy.mount(
+        <Datebox
+          dropdowns={[
+            {
+              caption: "Button",
+              options: [
+                {
+                  text: "On-site",
+                  value: "1",
+                  icon: { image: RiHome2Line },
+                },
+                {
+                  text: "WFH",
+                  value: "2",
+                  icon: { image: RiUser2Line },
+                },
+                {
+                  text: "Sick leave",
+                  value: "3",
+                  icon: { image: RiSettings2Line },
+                },
+                {
+                  text: "Annual leave",
+                  value: "4",
+                  icon: { image: RiLogoutBoxLine },
+                },
+              ],
+            },
+          ]}
+        />
+      );
+
+      cy.findByRole("button").should("have.css", "height", "32px");
+      cy.findAllByLabelText("field-lane-wrapper")
+        .eq(0)
+        .should("have.css", "height", "34px");
+    });
+
     context("width", () => {
       context("when given", () => {
         it("should render the width", () => {
