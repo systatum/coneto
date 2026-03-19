@@ -159,12 +159,11 @@ function FieldLane({
                       width: ${dropdown.width};
                     `};
 
-                    ${dropdown.styles?.containerStyle}
+                    ${dropdown.styles?.containerStyle};
                   `,
                   self: css`
                     font-size: 12px;
                     color: black;
-                    height: 34px;
                     ${!children &&
                     css`
                       border-right: 1px solid #d1d5db;
@@ -214,6 +213,7 @@ function FieldLane({
           return (
             <Button
               key={index}
+              displayLabel="flex"
               aria-label="action-icon"
               onMouseDown={(e) => e.preventDefault()}
               onClick={(e) => {
@@ -230,7 +230,6 @@ function FieldLane({
                   transform: translateY(-50%);
                   right: ${`${offset}px`};
                   z-index: 10;
-                  height: 23px;
                 `,
                 self: css`
                   padding: 2px;
@@ -239,7 +238,8 @@ function FieldLane({
                   background: transparent;
                   position: relative;
                   z-index: 10;
-                  height: 23px;
+                  padding: 2px;
+                  height: fit-content;
 
                   color: ${showError
                     ? "#f87171"
@@ -259,10 +259,16 @@ function FieldLane({
             >
               <Tooltip
                 key={index}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if ((!disabled || !props?.disabled) && props.onClick) {
+                    props.onClick(e);
+                  }
+                }}
                 styles={{
                   containerStyle: css`
                     cursor: pointer;
-                    pointer-events: none;
                   `,
                   arrowStyle: (placement) => css`
                     ${placement === "bottom-start"

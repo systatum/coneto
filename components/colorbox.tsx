@@ -78,8 +78,8 @@ const BaseColorbox = forwardRef<HTMLInputElement, BaseColorboxProps>(
         <ColorBox
           $disabled={disabled}
           onClick={() => {
-            document.getElementById(id)?.click();
             setHovered(true);
+            document.getElementById(id)?.click();
             if (onClick) onClick();
           }}
           tabIndex={0}
@@ -218,6 +218,7 @@ const ColorInputContainer = styled.div<{
   border-radius: 2px;
   height: 100%;
   width: 100%;
+
   border: 1px solid
     ${({ $showError, $hovered, $disabled }) =>
       $disabled
@@ -279,8 +280,10 @@ const TextInputGroup = styled.span<{
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  height: 34px;
-  padding: 2px 12px;
+  padding: 0px 12px;
+  height: 100%;
+  min-height: 34px;
+
   border-left: 1px solid
     ${({ $showError, $hovered, $disabled }) =>
       $disabled

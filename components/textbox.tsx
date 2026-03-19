@@ -184,7 +184,7 @@ const Input = styled.input<{
   width: 100%;
   outline: none;
   z-index: 10;
-  height: 36px;
+  min-height: 34px;
 
   border: 1px solid ${({ $error }) => ($error ? "#f87171" : "#d1d5db")};
   ${({ $error }) =>

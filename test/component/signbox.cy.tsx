@@ -51,6 +51,45 @@ describe("Signbox", () => {
       );
     });
 
+    it("renders with similar height", () => {
+      cy.mount(
+        <Signbox
+          dropdowns={[
+            {
+              caption: "Button",
+              options: [
+                {
+                  text: "On-site",
+                  value: "1",
+                  icon: { image: RiHome2Line },
+                },
+                {
+                  text: "WFH",
+                  value: "2",
+                  icon: { image: RiUser2Line },
+                },
+                {
+                  text: "Sick leave",
+                  value: "3",
+                  icon: { image: RiSettings2Line },
+                },
+                {
+                  text: "Annual leave",
+                  value: "4",
+                  icon: { image: RiLogoutBoxLine },
+                },
+              ],
+            },
+          ]}
+        />
+      );
+
+      cy.findAllByRole("button").eq(0).should("have.css", "height", "198px");
+      cy.findAllByLabelText("field-lane-wrapper")
+        .eq(0)
+        .should("have.css", "height", "200px");
+    });
+
     context("width", () => {
       context("when given", () => {
         it("should render the width", () => {
