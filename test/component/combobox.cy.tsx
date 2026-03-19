@@ -15,9 +15,91 @@ import { OptionsProps } from "@/components/selectbox";
 import { useState } from "react";
 
 describe("Combobox", () => {
-  function ProductCombobox(props: ComboboxProps) {
-    return <Combobox {...props} />;
+  function ProductCombobox(props: Partial<ComboboxProps>) {
+    const [value, setValue] = useState<string>("");
+
+    return (
+      <Combobox
+        options={[
+          { text: "Apple", value: "1" },
+          { text: "Banana", value: "2" },
+        ]}
+        selectedOptions={value}
+        onChange={(selectedOptions: string) => setValue(selectedOptions)}
+        placeholder="Select a fruit..."
+        {...props}
+      />
+    );
   }
+
+  context("common behavior", () => {
+    const selectApple = (props = {}) => {
+      cy.mount(<ProductCombobox {...props} />);
+      cy.findByPlaceholderText("Select a fruit...").click();
+      cy.findByRole("option", { name: "Apple" }).click();
+      cy.findByPlaceholderText("Select a fruit...").should(
+        "have.value",
+        "Apple"
+      );
+      cy.findByDisplayValue("Apple").should("be.visible");
+    };
+
+    context("default", () => {
+      beforeEach(() => selectApple());
+
+      context("pressing enter", () => {
+        it("should update the content", () => {
+          // Already selected Apple in beforeEach
+        });
+
+        context("when typing and pressing escape", () => {
+          it("should show changes value", () => {
+            cy.findByPlaceholderText("Select a fruit...")
+              .click()
+              .type("{backspace}{backspace}{esc}{esc}")
+              .should("have.value", "App");
+          });
+        });
+
+        context("when typing and pressing enter for empty options", () => {
+          it("should show changes value", () => {
+            cy.findByPlaceholderText("Select a fruit...")
+              .click()
+              .type("Alim{enter}")
+              .should("have.value", "Apple");
+          });
+        });
+      });
+    });
+
+    context("strict mode", () => {
+      beforeEach(() => selectApple({ strict: true }));
+
+      context("pressing enter", () => {
+        it("should update the content", () => {
+          // Already selected Apple in beforeEach
+        });
+
+        context("when typing and pressing escape", () => {
+          it("should still keep previous value", () => {
+            cy.findByPlaceholderText("Select a fruit...")
+              .click()
+              .type("{backspace}{backspace}{esc}{esc}")
+              .should("have.value", "Apple");
+          });
+        });
+
+        context("when typing and pressing enter for empty options", () => {
+          it("should still keep previous value", () => {
+            cy.findByPlaceholderText("Select a fruit...")
+              .click()
+              .type("Alim{enter}")
+              .should("have.value", "Apple");
+          });
+        });
+      });
+    });
+  });
 
   context("labels", () => {
     context("loadingText", () => {
