@@ -216,6 +216,12 @@ function FieldLane({
               displayLabel="flex"
               aria-label="action-icon"
               onMouseDown={(e) => e.preventDefault()}
+              onClick={(e) => {
+                e.stopPropagation();
+                if ((!disabled || !props?.disabled) && props.onClick) {
+                  props.onClick(e);
+                }
+              }}
               disabled={disabled ? disabled : props.disabled}
               styles={{
                 containerStyle: css`
