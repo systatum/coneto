@@ -364,6 +364,10 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
         if (strict && confirmedValue) {
           setSelectedOptionsLocal(confirmedValue);
         }
+
+        if (!isOpen) {
+          inputRef.current?.blur();
+        }
       }
     };
 
