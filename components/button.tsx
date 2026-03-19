@@ -434,6 +434,7 @@ const ButtonWrapper = styled.div<{
   display: flex;
   position: relative;
   align-items: center;
+  width: fit-content;
 
   ${({ $disabled }) =>
     $disabled
@@ -455,13 +456,7 @@ const ButtonWrapper = styled.div<{
     `;
   }}
 
-  ${({ $style }) =>
-    $style
-      ? $style
-      : css`
-          width: fit-content;
-          height: fit-content;
-        `}
+  ${({ $style }) => $style}
 `;
 
 const getVariantTextColor = (variant: string) => {

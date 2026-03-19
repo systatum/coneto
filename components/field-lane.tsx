@@ -159,9 +159,7 @@ function FieldLane({
                       width: ${dropdown.width};
                     `};
 
-                    height: 100%;
-
-                    ${dropdown.styles?.containerStyle}
+                    ${dropdown.styles?.containerStyle};
                   `,
                   self: css`
                     font-size: 12px;
@@ -404,8 +402,6 @@ const InputWrapper = styled.div<{ $style?: CSSProp }>`
   width: 100%;
   justify-content: flex-start;
   height: 100%;
-  align-items: center;
-  justify-content: center;
 
   ${({ $style }) => $style}
 `;
