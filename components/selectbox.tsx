@@ -66,6 +66,7 @@ interface BaseSelectboxProps
         setSelectedOptionsLocal: (value: OptionsProps) => void;
         setHasInteracted?: (value: boolean) => void;
         ref?: Ref<HTMLInputElement>;
+        setConfirmedValue?: (option: OptionsProps | null) => void;
       }
   ) => ReactNode;
   styles?: SelectboxStylesProps;
@@ -543,6 +544,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
             setSelectedOptionsLocal,
             selectedOptionsLocal,
             onClick,
+            setConfirmedValue,
             setIsOpen,
             getFloatingProps,
             refs,
