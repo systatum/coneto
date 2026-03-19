@@ -514,6 +514,62 @@ describe("StatefulForm", () => {
     });
   });
 
+  context("disabled", () => {
+    const INPUT_WITH_DISABLED: FormFieldGroup[] = ALL_INPUT.map((group) =>
+      Array.isArray(group)
+        ? group.map((item) => ({
+            ...item,
+            disabled: true,
+          }))
+        : {
+            ...group,
+            disabled: true,
+          }
+    );
+    context("when given true", () => {
+      it("should render with cursor not-allowed and user-select none", () => {
+        cy.mount(
+          <StatefulForm
+            fields={INPUT_WITH_DISABLED}
+            formValues={allValue}
+            mode="onChange"
+            styles={{
+              containerStyle: css`
+                width: 480px;
+              `,
+            }}
+          />
+        );
+
+        cy.findAllByLabelText("field-lane-wrapper")
+          .should("have.css", "cursor", "not-allowed")
+          .and("have.css", "user-select", "none");
+        cy.findAllByLabelText("chip-input")
+          .should("have.css", "cursor", "not-allowed")
+          .and("have.css", "user-select", "none");
+        cy.findAllByLabelText("file-drop-box-container")
+          .should("have.css", "cursor", "not-allowed")
+          .and("have.css", "user-select", "none");
+      });
+    });
+
+    it("should renders with disabled each input", () => {
+      cy.mount(
+        <StatefulForm
+          fields={INPUT_WITH_DISABLED}
+          formValues={allValue}
+          mode="onChange"
+        />
+      );
+
+      cy.get("input, textarea, [role='radio'], [role='checkbox']").each(
+        ($el) => {
+          cy.wrap($el).should("be.disabled");
+        }
+      );
+    });
+  });
+
   context("label", () => {
     context("labelPosition", () => {
       context("when given labelPosition left", () => {
