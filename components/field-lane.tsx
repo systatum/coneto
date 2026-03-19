@@ -218,11 +218,11 @@ function FieldLane({
               onMouseDown={(e) => e.preventDefault()}
               onClick={(e) => {
                 e.stopPropagation();
-                if (props.onClick) {
+                if ((!disabled || !props?.disabled) && props.onClick) {
                   props.onClick(e);
                 }
               }}
-              disabled={props.disabled}
+              disabled={disabled ? disabled : props.disabled}
               styles={{
                 containerStyle: css`
                   position: absolute;

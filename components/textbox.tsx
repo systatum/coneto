@@ -59,6 +59,7 @@ const BaseTextbox = forwardRef<HTMLInputElement, BaseTextboxProps>(
         {type === "password" && (
           <Button
             type="button"
+            disabled={props?.disabled}
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => setShowPassword((prev) => !prev)}
             aria-label="toggle-password"
