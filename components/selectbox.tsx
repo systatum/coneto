@@ -136,6 +136,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       autoComplete = "off",
       isLoading,
       labels,
+      disabled,
       ...props
     },
     ref
@@ -377,6 +378,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
         role="combobox"
         $style={styles?.selectboxStyle}
         aria-expanded={isOpen}
+        $disabled={disabled}
         onClick={() => {
           if (multiple) inputRef.current?.focus();
         }}
@@ -409,8 +411,8 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
           aria-label={id}
           id={id}
           $clearable={clearable}
-          disabled={isLoading || props?.disabled}
-          $disabled={isLoading || props?.disabled}
+          disabled={disabled || isLoading}
+          $disabled={disabled || isLoading}
           ref={(el) => {
             refs.setReference(el);
             if (!multiple) {
@@ -608,6 +610,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
           id={inputId}
           actions={actions}
           showError={showError}
+          disabled={disabled}
           styles={{
             self: css`
               ${dropdowns &&
@@ -646,7 +649,11 @@ export function castValue<T extends SelectboxSelectedOptions>(
   return String(value) as T;
 }
 
-const Container = styled.div<{ $style?: CSSProp; $isLoading?: boolean }>`
+const Container = styled.div<{
+  $style?: CSSProp;
+  $isLoading?: boolean;
+  $disabled?: boolean;
+}>`
   position: relative;
   width: 100%;
   font-size: 12px;
@@ -657,7 +664,15 @@ const Container = styled.div<{ $style?: CSSProp; $isLoading?: boolean }>`
       user-select: none;
       pointer-events: none;
       opacity: 0.5;
-    `}
+    `};
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      cursor: not-allowed;
+      user-select: none;
+      pointer-events: none;
+    `};
 
   ${({ $style }) => $style}
 `;

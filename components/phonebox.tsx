@@ -168,6 +168,8 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
     };
 
     const handlePhoneChange = (e: ChangeEvent<HTMLInputElement>) => {
+      if (disabled) return;
+
       const raw = e.target.value;
       const trimmed = trimPhone(raw);
       const formatted = formatPhoneboxNumber(
@@ -187,6 +189,8 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
     };
 
     const handleSelectCountry = async (country: CountryCodeProps) => {
+      if (disabled) return;
+
       await setSelectedCountry(country);
       await setIsOpen(false);
       await setSearchTerm("");
@@ -299,6 +303,7 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
                 />
                 <SearchInput
                   type="text"
+                  $disabled={disabled}
                   ref={searchInputRef}
                   placeholder="Search your country..."
                   value={searchTerm}
@@ -447,14 +452,14 @@ const InputWrapper = styled.div<{
       $hasError ? "#ef4444" : $isOpen ? "#d1d5db" : "#d1d5db"};
 
   &:focus-within {
-    border-color: ${({ $hasError }) => ($hasError ? "#ef4444" : "#61A9F9")};
+    border-color: ${({ $hasError, $disabled }) =>
+      $disabled ? "#d1d5db" : $hasError ? "#ef4444" : "#61A9F9"};
   }
 
   ${({ $disabled }) =>
     $disabled &&
     css`
       border-color: #d1d5db;
-      opacity: 0.5;
     `}
 
   border-radius: 2px;
@@ -476,7 +481,8 @@ const CountryButton = styled.button<{
     ${({ $hasError }) => ($hasError ? "#ef4444" : "#d1d5db")};
 
   ${InputWrapper}:focus-within & {
-    border-color: ${({ $hasError }) => ($hasError ? "#ef4444" : "#61A9F9")};
+    border-color: ${({ $hasError, $disabled }) =>
+      $disabled ? "#d1d5db" : $hasError ? "#ef4444" : "#61A9F9"};
   }
 
   padding: 0 8px;
@@ -553,7 +559,7 @@ const SearchWrapper = styled.div`
   position: relative;
 `;
 
-const SearchInput = styled.input`
+const SearchInput = styled.input<{ $disabled?: boolean }>`
   width: 100%;
   border: 1px solid #d1d5db;
   padding: 8px 8px 8px 32px;
@@ -562,8 +568,17 @@ const SearchInput = styled.input`
   outline: none;
 
   &:focus {
-    border-color: #61a9f9;
+    border-color: ${({ $disabled }) => ($disabled ? "#d1d5db" : "#61a9f9")};
   }
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      cursor: not-allowed;
+      user-select: none;
+      pointer-events: none;
+      border-color: #d1d5db;
+    `};
 `;
 
 const CountryOption = styled.div<{ $highlighted?: boolean }>`

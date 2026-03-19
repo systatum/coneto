@@ -29,6 +29,7 @@ interface BaseCapsuleProps {
   id?: string;
   name?: string;
   fontSize?: number;
+  disabled?: boolean;
 }
 
 interface BaseCapsuleStylesProps {
@@ -45,6 +46,7 @@ function BaseCapsule({
   styles,
   id,
   fontSize = 12,
+  disabled,
 }: BaseCapsuleProps) {
   const [hovered, setHovered] = useState<string | null>(null);
 
@@ -156,6 +158,7 @@ function BaseCapsule({
   return (
     <CapsuleWrapper
       id={id}
+      $disabled={disabled}
       aria-label="capsule"
       $containerStyle={styles?.capsuleWrapperStyle}
       $full={full}
@@ -206,13 +209,14 @@ function BaseCapsule({
         return (
           <Tab
             $isActive={isActive}
+            $disabled={disabled}
             role="tab"
             key={index}
             ref={setTabRef(index)}
             $activeTabStyle={styles?.tabStyle}
-            onMouseEnter={() => setHovered(tab.id)}
-            onMouseLeave={() => setHovered(null)}
-            onClick={() => onTabChange(tab.id)}
+            onMouseEnter={() => !disabled && setHovered(tab.id)}
+            onMouseLeave={() => !disabled && setHovered(null)}
+            onClick={() => !disabled && onTabChange(tab.id)}
             $fontSize={fontSize}
           >
             {tab.icon && (
@@ -282,6 +286,7 @@ function Capsule({
       <BaseCapsule
         {...rest}
         id={inputId}
+        disabled={disabled}
         styles={{
           capsuleWrapperStyle: styles?.capsuleWrapperStyle,
           tabStyle: styles?.tabStyle,
@@ -294,6 +299,7 @@ function Capsule({
 const CapsuleWrapper = styled.div<{
   $full?: boolean;
   $containerStyle?: CSSProp;
+  $disabled?: boolean;
 }>`
   position: relative;
   display: flex;
@@ -318,7 +324,14 @@ const CapsuleWrapper = styled.div<{
           width: fit-content;
           border-width: 1px;
           border-radius: 12px;
-        `}
+        `};
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      cursor: not-allowed;
+      user-select: none;
+    `};
 
   ${({ $containerStyle }) => $containerStyle}
 `;
@@ -358,6 +371,7 @@ const Tab = styled.div<{
   $isActive?: boolean;
   $activeTabStyle?: CSSProp;
   $fontSize?: number;
+  $disabled?: boolean;
 }>`
   display: flex;
   flex-direction: row;
@@ -382,6 +396,13 @@ const Tab = styled.div<{
         `}
 
   font-size: ${({ $fontSize }) => `${$fontSize}px`};
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      cursor: not-allowed;
+      user-select: none;
+    `};
 
   ${({ $activeTabStyle }) => css`
     ${$activeTabStyle}

@@ -297,6 +297,7 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
           {...rest}
           id={inputId}
           showError={showError}
+          disabled={disabled}
           styles={{
             inputWrapperStyle: css`
               ${dropdowns &&
@@ -339,8 +340,8 @@ const Box = styled.div<{
   ${({ $disabled }) =>
     $disabled &&
     css`
-      background-color: rgb(227 227 227);
-      opacity: 0.5;
+      user-select: none;
+      pointer-events: none;
       cursor: not-allowed;
     `}
 
