@@ -218,6 +218,8 @@ const ColorInputContainer = styled.div<{
   border-radius: 2px;
   height: 100%;
   width: 100%;
+  min-height: 34px;
+
   border: 1px solid
     ${({ $showError, $hovered, $disabled }) =>
       $disabled
@@ -264,10 +266,6 @@ const ColorBox = styled.div<{
 
 const HiddenColorInput = styled.input`
   position: absolute;
-  bottom: -5px;
-  border: 1px solid transparent;
-  width: 1px;
-  height: 1px;
   opacity: 0;
 `;
 
@@ -279,8 +277,8 @@ const TextInputGroup = styled.span<{
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  height: 34px;
-  padding: 2px 12px;
+  padding: 0px 12px;
+  height: 100%;
   border-left: 1px solid
     ${({ $showError, $hovered, $disabled }) =>
       $disabled
