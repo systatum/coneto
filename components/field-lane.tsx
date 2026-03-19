@@ -164,7 +164,6 @@ function FieldLane({
                   self: css`
                     font-size: 12px;
                     color: black;
-                    height: 34px;
                     ${!children &&
                     css`
                       border-right: 1px solid #d1d5db;
@@ -217,12 +216,6 @@ function FieldLane({
               displayLabel="flex"
               aria-label="action-icon"
               onMouseDown={(e) => e.preventDefault()}
-              onClick={(e) => {
-                e.stopPropagation();
-                if ((!disabled || !props?.disabled) && props.onClick) {
-                  props.onClick(e);
-                }
-              }}
               disabled={disabled ? disabled : props.disabled}
               styles={{
                 containerStyle: css`
@@ -260,6 +253,13 @@ function FieldLane({
             >
               <Tooltip
                 key={index}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if ((!disabled || !props?.disabled) && props.onClick) {
+                    props.onClick(e);
+                  }
+                }}
                 styles={{
                   containerStyle: css`
                     cursor: pointer;
