@@ -338,85 +338,106 @@ const flattenFields = (groups: FormFieldGroup[]): FormFieldProps[] =>
 describe("StatefulForm", () => {
   context("with type frame", () => {
     function StatefulWithFrame() {
-      {
-        const [value, setValue] = useState({
-          start_date: "",
-          end_date: "",
-          purpose: "",
-        });
+      const [isFormValid, setIsFormValid] = useState(false);
+      const [value, setValue] = useState({
+        start_date: [""],
+        end_date: [""],
+        purpose: "",
+      });
 
-        const EMPLOYEE_FIELDS: FormFieldGroup[] = [
-          {
-            name: "business_expense",
-            title: "Business Expense",
-            type: "frame",
-            fields: [
-              [
-                {
-                  name: "start_date",
-                  title: "From",
-                  type: "date",
-                  placeholder: "Select start date",
-                  rowStyle: css`
-                    background-color: #f3f4f6;
-                    padding: 10px;
-                  `,
-                },
-                {
-                  name: "end_date",
-                  title: "To",
-                  type: "date",
-                  placeholder: "Select end date",
-                },
-              ],
+      const EMPLOYEE_FIELDS: FormFieldGroup[] = [
+        {
+          name: "business_expense",
+          title: "Business Expense",
+          type: "frame",
+          fields: [
+            [
               {
-                name: "purpose",
-                title: "Purpose",
-                type: "text",
-                placeholder: "Enter purpose of expense",
+                name: "start_date",
+                title: "From",
+                type: "date",
+                placeholder: "Select start date",
                 rowStyle: css`
                   background-color: #f3f4f6;
                   padding: 10px;
                 `,
               },
+              {
+                name: "end_date",
+                title: "To",
+                type: "date",
+                placeholder: "Select end date",
+              },
             ],
-          },
-        ];
+            {
+              name: "purpose",
+              title: "Purpose",
+              type: "text",
+              placeholder: "Enter purpose of expense",
+              rowStyle: css`
+                background-color: #f3f4f6;
+                padding: 10px;
+              `,
+            },
+          ],
+        },
+        {
+          name: "button",
+          title: "Submit",
+          type: "button",
+          disabled: !isFormValid,
+          rowJustifyContent: "end",
+        },
+      ];
 
-        return (
-          <div
-            style={{
-              marginLeft: "auto",
-              marginRight: "auto",
-              display: "flex",
-              width: "100%",
-              maxWidth: "500px",
-              flexDirection: "column",
-              gap: "0.5rem",
-              paddingTop: "1rem",
-              paddingBottom: "1rem",
+      const dateArraySchema = z
+        .array(
+          z.string().refine((val) => !isNaN(Date.parse(val)), "Invalid date")
+        )
+        .min(1, "At least one date is required");
+
+      const employeeSchema = z.object({
+        start_date: dateArraySchema,
+        end_date: dateArraySchema,
+        purpose: z.string().min(10, "Business purpose is required"),
+      });
+
+      return (
+        <div
+          style={{
+            marginLeft: "auto",
+            marginRight: "auto",
+            display: "flex",
+            width: "100%",
+            maxWidth: "500px",
+            flexDirection: "column",
+            gap: "0.5rem",
+            paddingTop: "1rem",
+            paddingBottom: "1rem",
+          }}
+        >
+          <StatefulForm
+            onChange={({ currentState }) => {
+              setValue((prev) => ({ ...prev, ...currentState }));
             }}
-          >
-            <StatefulForm
-              onChange={({ currentState }) => {
-                setValue((prev) => ({ ...prev, ...currentState }));
-              }}
-              fields={EMPLOYEE_FIELDS}
-              formValues={value}
-              mode="onChange"
-            />
-          </div>
-        );
-      }
+            fields={EMPLOYEE_FIELDS}
+            onValidityChange={setIsFormValid}
+            validationSchema={employeeSchema}
+            formValues={value}
+            mode="onChange"
+          />
+        </div>
+      );
     }
 
     const initializeFrame = () => {
       cy.mount(<StatefulWithFrame />);
       cy.findAllByLabelText("frame").then(() => {
-        cy.findAllByLabelText("stateful-form-row").should("have.length", 3);
+        cy.findAllByLabelText("stateful-form-row").should("have.length", 4);
         cy.get("#datebox-start_date").should("exist");
         cy.get("#datebox-end_date").should("exist");
         cy.get("#textbox-purpose").should("exist");
+        cy.findByRole("button").should("exist").and("be.disabled");
       });
     };
 
@@ -455,6 +476,44 @@ describe("StatefulForm", () => {
         cy.get("#textbox-purpose")
           .type("Getting better life")
           .should("have.value", "Getting better life");
+
+        cy.findByRole("button").should("exist").and("not.be.disabled");
+      });
+    });
+
+    context("when typing but not fully", () => {
+      it("renders error validation", () => {
+        cy.findByText("Business purpose is required").should("not.exist");
+
+        cy.get("#datebox-start_date")
+          .click()
+          .then(($el) => {
+            cy.findByLabelText("calendar-select-date").click();
+            cy.findByLabelText("combobox-month").click();
+            cy.findByText("March").click();
+            cy.findByLabelText("combobox-year").click();
+            cy.findByText("2026").click();
+            cy.findByText("20").click();
+            cy.wrap($el).should("have.value", "03/20/2026");
+          });
+        cy.get("#datebox-end_date")
+          .click()
+          .then(($el) => {
+            cy.findByLabelText("calendar-select-date").click();
+            cy.findByLabelText("combobox-month").click();
+            cy.findByText("March").click();
+            cy.findByLabelText("combobox-year").click();
+            cy.findByText("2026").click();
+            cy.findByText("20").click();
+            cy.wrap($el).should("have.value", "03/20/2026");
+          });
+        cy.get("#textbox-purpose")
+          .type("Getting")
+          .should("have.value", "Getting");
+        cy.get("body").click("bottomRight");
+
+        cy.findByText("Business purpose is required").should("exist");
+        cy.findByRole("button").should("exist").and("be.disabled");
       });
     });
   });
