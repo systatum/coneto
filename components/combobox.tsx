@@ -74,6 +74,7 @@ type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
     selectedOptionsLocal: OptionsProps;
     setSelectedOptionsLocal: (value: OptionsProps) => void;
     setHasInteracted?: (value: boolean) => void;
+    setConfirmedValue?: (option: OptionsProps | null) => void;
     refs?: {
       setFloating?: Ref<HTMLUListElement>;
       reference?: Ref<HTMLElement> & { current?: HTMLElement | null };
@@ -225,6 +226,7 @@ function ComboboxDrawer({
   name,
   interactionMode,
   setInteractionMode,
+  setConfirmedValue,
 }: ComboboxDrawerProps) {
   const [hasScrolled, setHasScrolled] = useState(false);
   const floatingRef = useRef<HTMLUListElement>(null);
@@ -480,6 +482,7 @@ function ComboboxDrawer({
                       )?.current?.focus();
                     } else {
                       setIsOpen(false);
+                      setConfirmedValue(option);
                       setSelectedOptionsLocal(option);
                       handleOnChange([optionValue]);
                       setHasInteracted(false);

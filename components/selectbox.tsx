@@ -66,6 +66,7 @@ interface BaseSelectboxProps
         setSelectedOptionsLocal: (value: OptionsProps) => void;
         setHasInteracted?: (value: boolean) => void;
         ref?: Ref<HTMLInputElement>;
+        setConfirmedValue?: (option: OptionsProps | null) => void;
       }
   ) => ReactNode;
   styles?: SelectboxStylesProps;
@@ -251,6 +252,45 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       setHighlightedIndex(0);
     };
 
+    const justCommittedRef = useRef(false);
+
+    const commitOrRevert = (
+      selectedOption?: OptionsProps,
+      currentLocal: OptionsProps = selectedOptionsLocal,
+      currentConfirmed: OptionsProps | null = confirmedValue
+    ) => {
+      if (selectedOption) {
+        const val = String(selectedOption.value);
+        setConfirmedValue(selectedOption);
+        setSelectedOptionsLocal(selectedOption);
+        handleOnChange?.([val]);
+        setIsOpen(false);
+        return;
+      }
+
+      const matched = finalOptions.find(
+        (opt) => opt.text === currentLocal.text
+      );
+
+      if (matched) {
+        const val = String(matched.value);
+        setConfirmedValue(matched);
+        setSelectedOptionsLocal(matched);
+        handleOnChange?.([val]);
+        setIsOpen(false);
+        return;
+      }
+
+      if (currentConfirmed) {
+        setSelectedOptionsLocal(currentConfirmed);
+        handleOnChange?.([String(currentConfirmed.value)]);
+        return;
+      }
+
+      setSelectedOptionsLocal({ text: "", value: "0" });
+      handleOnChange?.([]);
+    };
+
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
       onKeyDown?.(e);
 
@@ -281,53 +321,54 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       }
 
       if (e.key === "Enter") {
-        if (!multiple) {
-          const matched = finalOptions.find(
-            (opt) => opt.text === selectedOptionsLocal.text
-          );
-          setHasInteracted(false);
-          setConfirmedValue(matched);
+        setHasInteracted(false);
+
+        if (
+          highlightedIndex !== null &&
+          highlightedIndex < (actions?.length || 0)
+        ) {
+          actions?.[highlightedIndex]?.onClick?.();
+          setIsOpen(false);
+          return;
         }
-        if (highlightedIndex !== null) {
-          if (highlightedIndex < (actions?.length || 0)) {
-            actions?.[highlightedIndex]?.onClick?.();
-            setIsOpen(false);
-          } else {
-            const selectedOption =
-              FILTERED_OPTIONS[highlightedIndex - (actions?.length ?? 0)];
 
-            const selectedOptionValue = String(selectedOption.value);
+        const selectedOption =
+          highlightedIndex !== null
+            ? FILTERED_OPTIONS[highlightedIndex - (actions?.length ?? 0)]
+            : undefined;
 
-            if (multiple) {
-              if (!finalSelectedOptions.includes(selectedOptionValue)) {
-                if (
-                  !maxSelectableItems ||
-                  finalSelectedOptions.length < maxSelectableItems
-                ) {
-                  handleOnChange([
-                    ...finalSelectedOptions,
-                    selectedOptionValue,
-                  ]);
-                }
-              } else {
-                handleOnChange(
-                  finalSelectedOptions.filter(
-                    (val) => val !== selectedOptionValue
-                  )
-                );
+        if (multiple) {
+          if (selectedOption) {
+            const val = String(selectedOption.value);
+            if (!finalSelectedOptions.includes(val)) {
+              if (
+                !maxSelectableItems ||
+                finalSelectedOptions.length < maxSelectableItems
+              ) {
+                handleOnChange([...finalSelectedOptions, val]);
               }
             } else {
-              handleOnChange([selectedOptionValue]);
-              setSelectedOptionsLocal(selectedOption);
-              setIsOpen(false);
+              handleOnChange(finalSelectedOptions.filter((v) => v !== val));
             }
           }
+        } else {
+          justCommittedRef.current = true;
+          commitOrRevert(selectedOption, selectedOptionsLocal, confirmedValue);
         }
       }
 
       if (e.key === "Escape") {
         setIsOpen(false);
         setHasInteracted(false);
+        setIsFocused(false);
+
+        if (strict && confirmedValue) {
+          setSelectedOptionsLocal(confirmedValue);
+        }
+
+        if (!isOpen) {
+          inputRef.current?.blur();
+        }
       }
     };
 
@@ -437,44 +478,12 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
             setIsFocused(false);
             setHasInteracted(false);
 
-            if (strict) {
-              const matched = finalOptions.find(
-                (opt) => opt.text === selectedOptionsLocal.text
-              );
-
-              if (matched) {
-                const matchedValue = String(matched.value);
-                setConfirmedValue(matched);
-                setSelectedOptionsLocal(matched);
-                if (multiple) {
-                  handleOnChange?.(
-                    finalSelectedOptions?.includes(matchedValue)
-                      ? finalSelectedOptions.filter(
-                          (val) => val !== matchedValue
-                        )
-                      : [...finalSelectedOptions, matchedValue]
-                  );
-                } else {
-                  handleOnChange?.([matchedValue]);
-                }
-              } else if (confirmedValue) {
-                const finalConfirmedValue = String(confirmedValue.value);
-                setSelectedOptionsLocal(confirmedValue);
-                if (multiple) {
-                  handleOnChange?.(
-                    finalSelectedOptions?.includes(finalConfirmedValue)
-                      ? finalSelectedOptions.filter(
-                          (val) => val !== finalConfirmedValue
-                        )
-                      : [...finalSelectedOptions, finalConfirmedValue]
-                  );
-                } else {
-                  handleOnChange?.([finalConfirmedValue]);
-                }
-              } else {
-                const empty = { text: "", value: "0" };
-                setSelectedOptionsLocal(empty);
+            if (strict && !multiple) {
+              if (justCommittedRef.current) {
+                justCommittedRef.current = false;
+                return;
               }
+              commitOrRevert(undefined, selectedOptionsLocal, confirmedValue);
             }
           }}
           placeholder={isLoading ? "" : placeholder || "Search your item..."}
@@ -535,6 +544,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
             setSelectedOptionsLocal,
             selectedOptionsLocal,
             onClick,
+            setConfirmedValue,
             setIsOpen,
             getFloatingProps,
             refs,
