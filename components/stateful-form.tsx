@@ -220,7 +220,7 @@ function StatefulForm<Z extends ZodTypeAny>({
   }, [isValid, onValidityChange]);
 
   const shouldShowError = (name: keyof TypeOf<Z>): boolean => {
-    const fieldConfig = fields.flat().find((field) => field.name === name);
+    const fieldConfig = findFieldRecursive(fields, name as string);
 
     if (
       !fieldConfig ||
@@ -273,6 +273,24 @@ function StatefulForm<Z extends ZodTypeAny>({
     return !!touched && hasErrorMessage(error);
   };
 
+  function findFieldRecursive(
+    fields: FormFieldGroup[],
+    name: string
+  ): FormFieldProps | undefined {
+    for (const f of fields) {
+      if (Array.isArray(f)) {
+        const found = findFieldRecursive(f, name);
+        if (found) return found;
+      } else if (f.type === "frame" && f.fields) {
+        const found = findFieldRecursive(f.fields, name);
+        if (found) return found;
+      } else if (f.name === name) {
+        return f;
+      }
+    }
+    return undefined;
+  }
+
   return (
     <>
       <FormFields
@@ -305,9 +323,19 @@ function getSchemaForVisibleFields<Z extends ZodTypeAny>(
 
   const objSchema = validationSchema as ZodObject<any>;
 
-  const flatFields: FormFieldProps[] = fields.flatMap((f) =>
-    Array.isArray(f) ? f : [f]
-  );
+  function flattenFields(fields: FormFieldGroup[]): FormFieldProps[] {
+    return fields.flatMap((f) => {
+      if (Array.isArray(f)) return flattenFields(f);
+
+      if (f.type === "frame" && f.fields) {
+        return flattenFields(f.fields as FormFieldGroup[]);
+      }
+
+      return [f];
+    });
+  }
+
+  const flatFields: FormFieldProps[] = flattenFields(fields);
 
   const newShape = Object.fromEntries(
     flatFields.map((field) => {
