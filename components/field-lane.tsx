@@ -308,10 +308,11 @@ function FieldLane({
             </Button>
           );
         })}
+
       {showError && (
         <ErrorIconWrapper $position={errorIconPosition}>
           <RiErrorWarningLine
-            size={17}
+            size={20}
             style={{
               borderRadius: "9999px",
               background: "#dc2626",
@@ -421,7 +422,7 @@ const ErrorIconWrapper = styled.div<{
           margin-left: 0px;
           position: absolute;
           top: 50%;
-          right: 8px;
+          right: 7px;
           transform: translateY(-50%);
           border: none;
           z-index: 10;
