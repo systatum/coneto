@@ -42,6 +42,7 @@ import Helper from "./helper";
 import { FigureProps } from "./figure";
 import { Pinbox, PinboxProps } from "./pinbox";
 import { FieldLaneProps } from "./field-lane";
+import { Frame, FrameProps } from "./frame";
 
 export type StatefulOnChangeType =
   | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -91,7 +92,8 @@ export type FormFieldType =
   | "time"
   | "button"
   | "pin"
-  | "custom";
+  | "custom"
+  | "frame";
 
 export interface StatefulFormProps<Z extends ZodTypeAny> {
   fields: FormFieldGroup[];
@@ -125,6 +127,8 @@ export interface FormFieldProps {
   hidden?: boolean;
   rows?: number;
   width?: string;
+  rowStyle?: CSSProp;
+  fields?: FormFieldGroup[];
   icon?: FigureProps["image"];
   labelPosition?: FieldLaneProps["labelPosition"];
   labelGap?: FieldLaneProps["labelGap"];
@@ -155,6 +159,7 @@ export interface FormFieldProps {
   timeboxProps?: TimeboxProps;
   buttonProps?: ButtonProps;
   pinboxProps?: PinboxProps;
+  frameProps?: FrameProps;
 }
 
 function StatefulForm<Z extends ZodTypeAny>({
@@ -381,6 +386,8 @@ function FormFields<T extends FieldValues>({
           (f) => f.rowAlignItems
         )?.rowAlignItems;
 
+        const rowStyleItem = visibleFields.find((f) => f.rowStyle)?.rowStyle;
+
         const nonButtonFields = visibleFields.filter(
           (f) => f.type !== "button"
         );
@@ -402,6 +409,7 @@ function FormFields<T extends FieldValues>({
                       : "center"};
               `}
 
+
               ${rowAlignedItem &&
               css`
                 align-items: ${rowAlignedItem === "end"
@@ -412,10 +420,54 @@ function FormFields<T extends FieldValues>({
                       ? "space-between"
                       : "center"};
               `}
+
+              ${rowStyleItem}
             `}
             key={indexGroup}
           >
             {visibleFields.map((field: FormFieldProps, index: number) => {
+              if (field.type === "frame") {
+                return (
+                  <Frame
+                    key={index}
+                    title={field.title}
+                    {...field?.frameProps}
+                    styles={{
+                      containerStyle: css`
+                        margin-top: 10px;
+                        min-width: 0;
+                        ${field?.frameProps?.styles?.containerStyle}
+                      `,
+                      titleStyle: css`
+                        font-size: 12px;
+                        color: black;
+                        left: 50%;
+                        transform: translateX(-50%);
+
+                        ${field?.frameProps?.styles?.titleStyle}
+                      `,
+                    }}
+                  >
+                    {field?.fields && (
+                      <FormFields
+                        labelSize={labelSize}
+                        fieldSize={fieldSize}
+                        control={control}
+                        fields={field?.fields}
+                        formValues={formValues}
+                        register={register}
+                        errors={errors}
+                        setValue={setValue}
+                        onChange={onChange}
+                        autoFocusField={autoFocusField}
+                        styles={styles}
+                        shouldShowError={shouldShowError}
+                      />
+                    )}
+                  </Frame>
+                );
+              }
+
               return field.type === "custom" ? (
                 <Fragment key={index}>{field.render}</Fragment>
               ) : field.type === "text" ||
