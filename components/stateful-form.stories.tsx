@@ -234,6 +234,121 @@ export const Default: Story = {
   },
 };
 
+export const WithFrame: Story = {
+  render: () => {
+    const [value, setValue] = useState({
+      name: "",
+      department: "",
+      management_name: "",
+      date_from: "",
+      date_to: "",
+      business_purpose: "",
+    });
+
+    const MANAGER_NAME_OPTIONS: OptionsProps[] = [
+      { text: "Alim Naufal", value: "1" },
+      { text: "Soekarno", value: "2" },
+    ];
+
+    const DEPARTMENT_OPTIONS: OptionsProps[] = [
+      { text: "HR", value: "1" },
+      { text: "IT", value: "2" },
+    ];
+
+    const EMPLOYEE_FIELDS: FormFieldGroup[] = [
+      {
+        name: "Name",
+        title: "Full Name",
+        type: "text",
+        required: true,
+        placeholder: "Enter full name",
+      },
+      [
+        {
+          name: "department",
+          title: "Department",
+          type: "combo",
+          required: true,
+          placeholder: "Select department",
+          comboboxProps: {
+            options: DEPARTMENT_OPTIONS,
+          },
+        },
+        {
+          name: "manager_name",
+          title: "Manager Name",
+          type: "combo",
+          required: true,
+          placeholder: "Select manager",
+          comboboxProps: {
+            options: MANAGER_NAME_OPTIONS,
+          },
+        },
+      ],
+      {
+        name: "business_expense",
+        title: "Business Expense",
+        type: "frame",
+        fields: [
+          [
+            {
+              name: "expense-period-from",
+              title: "From",
+              type: "date",
+              placeholder: "Select start date",
+              rowStyle: css`
+                background-color: #f3f4f6;
+                padding: 10px;
+              `,
+            },
+            {
+              name: "expense-period-end",
+              title: "To",
+              type: "date",
+              placeholder: "Select end date",
+            },
+          ],
+          {
+            name: "purpose",
+            title: "Purpose",
+            type: "text",
+            placeholder: "Enter purpose of expense",
+            rowStyle: css`
+              background-color: #f3f4f6;
+              padding: 10px;
+            `,
+          },
+        ],
+      },
+    ];
+
+    return (
+      <div
+        style={{
+          marginLeft: "auto",
+          marginRight: "auto",
+          display: "flex",
+          width: "100%",
+          maxWidth: "500px",
+          flexDirection: "column",
+          gap: "0.5rem",
+          paddingTop: "1rem",
+          paddingBottom: "1rem",
+        }}
+      >
+        <StatefulForm
+          onChange={({ currentState }) => {
+            setValue((prev) => ({ ...prev, ...currentState }));
+          }}
+          fields={EMPLOYEE_FIELDS}
+          formValues={value}
+          mode="onChange"
+        />
+      </div>
+    );
+  },
+};
+
 export const ConditionalElement: Story = {
   render: () => {
     const [isFormValid, setIsFormValid] = useState(false);
