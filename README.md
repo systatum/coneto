@@ -79,32 +79,3 @@ This repository uses:
 1. Build Storybook: `pnpm build-storybook`
 2. Push the build output
 3. Deploy it using your preferred platform (e.g., Vercel, Netlify, etc.)
-
-## Publishing / Releasing to npm
-
-To publish Coneto to npm, follow these steps:
-
-1. Ensure you are logged in to npm
-
-```bash
-npm login
-```
-
-2. Update the version number in `package.json`
-
-3. Build the package to check the newest component to release (if necessary):
-
-```bash
-pnpm build
-```
-
-4. Publish to npm
-
-```bash
-npm public --access public
-```
-
-5. Verify the release using **2FA** on npmjs (if enabled):
-
-- When you run `npm publish --access public`, npm will prompt you to enter the **one-time code** from your authenticator app.
-- Enter the code to complete the release.
