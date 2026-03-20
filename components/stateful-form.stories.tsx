@@ -236,13 +236,29 @@ export const Default: Story = {
 
 export const WithFrame: Story = {
   render: () => {
+    const [isFormValid, setIsFormValid] = useState(false);
     const [value, setValue] = useState({
       name: "",
       department: "",
       management_name: "",
-      date_from: "",
-      date_to: "",
-      business_purpose: "",
+      start_date: [""],
+      end_date: [""],
+      purpose: "",
+    });
+
+    const dateArraySchema = z
+      .array(
+        z.string().refine((val) => !isNaN(Date.parse(val)), "Invalid date")
+      )
+      .min(1, "At least one date is required");
+
+    const employeeSchema = z.object({
+      name: z.string().min(3, "Name is required"),
+      department: z.string().min(1, "Department is required"),
+      management_name: z.string().min(4, "Management Name is required"),
+      start_date: dateArraySchema,
+      end_date: dateArraySchema,
+      purpose: z.string().min(10, "Business purpose is required"),
     });
 
     const MANAGER_NAME_OPTIONS: OptionsProps[] = [
@@ -257,7 +273,7 @@ export const WithFrame: Story = {
 
     const EMPLOYEE_FIELDS: FormFieldGroup[] = [
       {
-        name: "Name",
+        name: "name",
         title: "Full Name",
         type: "text",
         required: true,
@@ -292,19 +308,21 @@ export const WithFrame: Story = {
         fields: [
           [
             {
-              name: "expense-period-from",
+              name: "start_date",
               title: "From",
               type: "date",
               placeholder: "Select start date",
+              required: true,
               rowStyle: css`
                 background-color: #f3f4f6;
                 padding: 10px;
               `,
             },
             {
-              name: "expense-period-end",
+              name: "end_date",
               title: "To",
               type: "date",
+              required: true,
               placeholder: "Select end date",
             },
           ],
@@ -312,6 +330,7 @@ export const WithFrame: Story = {
             name: "purpose",
             title: "Purpose",
             type: "text",
+            required: true,
             placeholder: "Enter purpose of expense",
             rowStyle: css`
               background-color: #f3f4f6;
@@ -319,6 +338,13 @@ export const WithFrame: Story = {
             `,
           },
         ],
+      },
+      {
+        name: "button",
+        title: "Submit",
+        type: "button",
+        disabled: !isFormValid,
+        rowJustifyContent: "end",
       },
     ];
 
@@ -340,6 +366,8 @@ export const WithFrame: Story = {
           onChange={({ currentState }) => {
             setValue((prev) => ({ ...prev, ...currentState }));
           }}
+          validationSchema={employeeSchema}
+          onValidityChange={setIsFormValid}
           fields={EMPLOYEE_FIELDS}
           formValues={value}
           mode="onChange"
