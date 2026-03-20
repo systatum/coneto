@@ -443,6 +443,7 @@ function FormFields<T extends FieldValues>({
                         color: black;
                         left: 50%;
                         transform: translateX(-50%);
+                        margin-top: 2px;
 
                         ${field?.frameProps?.styles?.titleStyle}
                       `,
