@@ -91,7 +91,6 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
       labelGap={labelGap}
       labelWidth={labelWidth}
       labelPosition={labelPosition}
-      errorIconPosition="relative"
       id={inputId}
       showError={showError}
       dropdowns={dropdowns}
