@@ -469,8 +469,6 @@ function FormFields<T extends FieldValues>({
                       titleStyle: css`
                         font-size: 12px;
                         color: black;
-                        left: 50%;
-                        transform: translateX(-50%);
                         margin-top: 2px;
 
                         ${field?.frameProps?.styles?.titleStyle}
