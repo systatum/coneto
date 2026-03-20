@@ -5,8 +5,10 @@ import React, {
   isValidElement,
   ReactElement,
   ReactNode,
+  useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -115,6 +117,9 @@ export interface SummaryRowStylesProps {
 
 export type TableResultMenuProps = SearchboxResultMenuProps;
 
+const SelectionDataContext = createContext<Set<string>>(new Set());
+const SelectionHandlerContext = createContext<(id: string) => void>(() => {});
+
 const DnDContext = createContext<{
   dragItem: {
     oldGroupId: string;
@@ -172,7 +177,7 @@ function Table({
     id: string;
   } | null>(null);
 
-  const [selectedData, setSelectedData] = useState<string[]>(selectedItems);
+  const [selectedData, setSelectedData] = useState<Set<string>>(new Set());
   const [allRowsLocal, setAllRowsLocal] = useState<string[]>([]);
   const [rowActions, setRowActions] = useState<TipMenuItemProps[]>([]);
   const [openRowId, setOpenRowId] = useState<string | null>("");
@@ -180,113 +185,111 @@ function Table({
   const handleSelectAll = () => {
     const currentPageIds = getAllRowContentsFromChildren(children);
 
-    const allPageSelected = currentPageIds.every((id) =>
-      selectedData.includes(id)
-    );
+    setSelectedData((prev) => {
+      const next = new Set(prev);
 
-    if (allPageSelected) {
-      const newSelected = selectedData.filter(
-        (id) => !currentPageIds.includes(id)
-      );
-      setSelectedData(newSelected);
-      onItemsSelected?.(newSelected);
-    } else {
-      const newSelected = Array.from(
-        new Set([...selectedData, ...currentPageIds])
-      );
-      setSelectedData(newSelected);
-      onItemsSelected?.(newSelected);
-    }
+      const allSelected = currentPageIds.every((id) => next.has(id));
+
+      if (allSelected) {
+        currentPageIds.forEach((id) => next.delete(id));
+      } else {
+        currentPageIds.forEach((id) => next.add(id));
+      }
+
+      onItemsSelected?.(Array.from(next));
+      return next;
+    });
   };
 
   const allRowSelectedLocal =
-    allRowsLocal?.every((id) => selectedData.includes(id)) ?? false;
-  const someSelectedLocal = selectedData.length > 0 && !allRowSelectedLocal;
+    allRowsLocal?.every((id) => selectedData.has(id)) ?? false;
+  const someSelectedLocal = selectedData.size > 0 && !allRowSelectedLocal;
 
   useEffect(() => {
-    const currentIds = getAllRowContentsFromChildren(children);
-    const allRowActions = getRowActionsFromChildren(children);
-
-    setRowActions(allRowActions);
-
-    setAllRowsLocal((prev) => Array.from(new Set([...prev, ...currentIds])));
+    const { ids, actions } = getRowDataFromChildren(children); // single walk
+    setRowActions(actions);
+    setAllRowsLocal((prev) => Array.from(new Set([...prev, ...ids])));
   }, [children]);
 
-  const handleSelect = (data: string) => {
-    const isAlreadySelected = selectedData.some(
-      (d) => JSON.stringify(d) === JSON.stringify(data)
-    );
-    const newData = isAlreadySelected
-      ? selectedData.filter((d) => JSON.stringify(d) !== JSON.stringify(data))
-      : [...selectedData, data];
+  const handleSelect = useCallback(
+    (id: string) => {
+      setSelectedData((prev) => {
+        const next = new Set(prev);
+        next.has(id) ? next.delete(id) : next.add(id);
+        onItemsSelected?.(Array.from(next));
+        return next;
+      });
+    },
+    [onItemsSelected]
+  );
 
-    setSelectedData(newData);
-    onItemsSelected?.(newData);
-  };
+  const rowChildren = useMemo(
+    () =>
+      Children.map(children, (child, index) => {
+        if (!isValidElement<TableRowProps | TableRowGroupProps>(child))
+          return null;
 
-  const rowChildren = Children.map(children, (child, index) => {
-    if (!isValidElement<TableRowProps | TableRowGroupProps>(child)) return null;
+        const hasRowGroup = child.type === TableRowGroup;
+        const hasRow = child.type === TableRow;
 
-    const hasRowGroup = child.type === TableRowGroup;
-    const hasRow = child.type === TableRow;
-
-    if (hasRowGroup) {
-      return cloneElement(child, {
-        selectable,
-        selectedData,
-        handleSelect,
-        draggable,
-        openRowId,
-        setOpenRowId,
-        alwaysShowDragIcon,
-      } as TableRowGroupProps &
-        TableAlwaysShowDragIconProp & {
-          selectedData?: string[];
-          handleSelect?: (data: string) => void;
-          draggable?: boolean;
-        });
-    }
-
-    if (hasRow) {
-      const props = child.props as TableRowProps;
-
-      const isSelected = selectedData.some(
-        (d) => JSON.stringify(d) === JSON.stringify(props.rowId)
-      );
-
-      const isLast = index === Children.count(children) - 1;
-
-      return cloneElement(child, {
-        selectable,
-        isSelected,
-        handleSelect,
-        isLast,
-        onLastRowReached,
-        draggable,
-        openRowId,
-        setOpenRowId,
-        groupLength: Children?.count(children),
-        index: index,
-        alwaysShowDragIcon,
-        onDropItem: (newPosition: number) => {
-          if (dragItem) {
-            const { oldGroupId, newGroupId, oldPosition, id } = dragItem;
-            onDragged?.({
-              oldGroupId: oldGroupId || "",
-              newGroupId: newGroupId || "",
-              oldPosition,
-              newPosition,
-              id: id,
+        if (hasRowGroup) {
+          return cloneElement(child, {
+            selectable,
+            draggable,
+            openRowId,
+            setOpenRowId,
+            alwaysShowDragIcon,
+          } as TableRowGroupProps &
+            TableAlwaysShowDragIconProp & {
+              draggable?: boolean;
             });
+        }
 
-            setDragItem(null);
-          }
-        },
-      } as TableRowProps & TableAlwaysShowDragIconProp);
-    }
+        if (hasRow) {
+          const isLast = index === Children.count(children) - 1;
 
-    return null;
-  });
+          return cloneElement(child, {
+            selectable,
+            isLast,
+            onLastRowReached,
+            draggable,
+            openRowId,
+            setOpenRowId,
+            groupLength: Children?.count(children),
+            index: index,
+            alwaysShowDragIcon,
+            onDropItem: (newPosition: number) => {
+              if (dragItem) {
+                const { oldGroupId, newGroupId, oldPosition, id } = dragItem;
+                onDragged?.({
+                  oldGroupId: oldGroupId || "",
+                  newGroupId: newGroupId || "",
+                  oldPosition,
+                  newPosition,
+                  id: id,
+                });
+
+                setDragItem(null);
+              }
+            },
+          } as TableRowProps & TableAlwaysShowDragIconProp);
+        }
+
+        return null;
+      }),
+    [
+      children,
+      selectable,
+      draggable,
+      openRowId,
+      setOpenRowId,
+      alwaysShowDragIcon,
+      onLastRowReached,
+      dragItem,
+      onDragged,
+      setDragItem,
+    ]
+  );
 
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
@@ -317,308 +320,316 @@ function Table({
 
   return (
     <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
-      <TableColumnContext.Provider value={columns}>
-        <Wrapper $containerStyle={styles?.containerStyle}>
-          {((selectedData.length > 0 &&
-            labels?.totalSelectedItemText !== null) ||
-            showPagination ||
-            actions ||
-            searchable) && (
-            <HeaderActions aria-label="header-wrapper">
-              {(actions || showPagination) && (
-                <ActionsWrapper>
-                  {showPagination && (
-                    <>
-                      <PaginationButton
-                        disabled={disablePreviousPageButton}
-                        aria-label="previous-button-pagination"
-                        onClick={onPreviousPageRequested}
-                      >
-                        <RiArrowLeftSLine size={16} />
-                      </PaginationButton>
-                      <PaginationButton
-                        disabled={disableNextPageButton}
-                        aria-label="next-button-pagination"
-                        onClick={onNextPageRequested}
-                      >
-                        <RiArrowRightSLine size={16} />
-                      </PaginationButton>
-                    </>
-                  )}
-                  {hasActions &&
-                    filteredActions.map((action, index) => {
-                      const { capsuleProps, ...rest } = action;
+      <SelectionHandlerContext.Provider value={handleSelect}>
+        <SelectionDataContext.Provider value={selectedData}>
+          <TableColumnContext.Provider value={columns}>
+            <Wrapper $containerStyle={styles?.containerStyle}>
+              {((selectedData.size > 0 &&
+                labels?.totalSelectedItemText !== null) ||
+                showPagination ||
+                actions ||
+                searchable) && (
+                <HeaderActions aria-label="header-wrapper">
+                  {(actions || showPagination) && (
+                    <ActionsWrapper>
+                      {showPagination && (
+                        <>
+                          <PaginationButton
+                            disabled={disablePreviousPageButton}
+                            aria-label="previous-button-pagination"
+                            onClick={onPreviousPageRequested}
+                          >
+                            <RiArrowLeftSLine size={16} />
+                          </PaginationButton>
+                          <PaginationButton
+                            disabled={disableNextPageButton}
+                            aria-label="next-button-pagination"
+                            onClick={onNextPageRequested}
+                          >
+                            <RiArrowRightSLine size={16} />
+                          </PaginationButton>
+                        </>
+                      )}
+                      {hasActions &&
+                        filteredActions.map((action, index) => {
+                          const { capsuleProps, ...rest } = action;
 
-                      if (action.type === "capsule") {
-                        return <ActionCapsule key={index} {...capsuleProps} />;
-                      }
+                          if (action.type === "capsule") {
+                            return (
+                              <ActionCapsule key={index} {...capsuleProps} />
+                            );
+                          }
 
-                      return <ActionButton key={index} {...rest} forTable />;
-                    })}
-                </ActionsWrapper>
-              )}
-              {searchable && (
-                <Searchbox
-                  autoComplete="off"
-                  name="search"
-                  {...searchbox}
-                  styles={{
-                    ...searchbox?.styles,
-                    containerStyle: css`
-                      ${actions &&
-                      css`
-                        margin-left: 40px;
-                      `};
-                      ${(showPagination || selectable) &&
-                      css`
-                        margin-right: 40px;
-                      `};
-                      max-height: 33px;
-                      ${searchbox?.styles?.containerStyle}
-                    `,
-                    self: css`
-                      background-color: transparent;
-                      &:hover {
-                        border-color: #61a9f9;
-                        background-color: white;
-                      }
-                      &:focus {
-                        background-color: white;
-                      }
-                      ${searchbox?.styles?.self}
-                    `,
-                  }}
-                />
-              )}
-              {(selectable || showPagination) && (
-                <PaginationInfo
-                  aria-label="pagination-wrapper"
-                  $style={styles?.paginationWrapperStyle}
-                >
-                  {showPagination && (
-                    <PaginationNumber
-                      aria-label="pagination-number"
-                      $style={styles?.paginationNumberStyle}
-                    >
-                      {typeof labels.pageNumberText === "number"
-                        ? `Pg. ${labels.pageNumberText}`
-                        : labels.pageNumberText}
-                    </PaginationNumber>
+                          return (
+                            <ActionButton key={index} {...rest} forTable />
+                          );
+                        })}
+                    </ActionsWrapper>
                   )}
-                  {selectable && (
-                    <PaginationSelectedItem
-                      aria-label="pagination-selected-item"
-                      $style={styles?.totalSelectedItemTextStyle}
-                    >
-                      {labels?.totalSelectedItemText
-                        ? labels?.totalSelectedItemText(selectedData.length)
-                        : `${selectedData.length} items selected`}
-                    </PaginationSelectedItem>
-                  )}
-                </PaginationInfo>
-              )}
-            </HeaderActions>
-          )}
-
-          <TableContainer $hasSelected={selectedData.length > 0}>
-            <TableHeader
-              aria-label="table-header"
-              $style={styles?.tableHeaderStyle}
-            >
-              {selectable && (
-                <CheckboxWrapper>
-                  <Checkbox
-                    styles={{
-                      boxStyle: css`
-                        width: 100%;
-                      `,
-                    }}
-                    onChange={handleSelectAll}
-                    checked={allRowSelectedLocal}
-                    indeterminate={someSelectedLocal}
-                  />
-                </CheckboxWrapper>
-              )}
-              {columns.map((col, i) => {
-                const isLast =
-                  rowActions?.length > 0 && columns.length - 1 === i;
-                return (
-                  <TableRowCell
-                    key={i}
-                    width={col.width}
-                    contentStyle={css`
-                      display: flex;
-                      position: relative;
-                      align-items: center;
-                      ${col.width
-                        ? css`
-                            width: ${col.width};
-                            flex-direction: row;
-                          `
-                        : css`
-                            flex: 1;
-                          `}
-                    `}
-                  >
-                    <span
-                      style={{
-                        display: "block",
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
+                  {searchable && (
+                    <Searchbox
+                      autoComplete="off"
+                      name="search"
+                      {...searchbox}
+                      styles={{
+                        ...searchbox?.styles,
+                        containerStyle: css`
+                          ${actions &&
+                          css`
+                            margin-left: 40px;
+                          `};
+                          ${(showPagination || selectable) &&
+                          css`
+                            margin-right: 40px;
+                          `};
+                          max-height: 33px;
+                          ${searchbox?.styles?.containerStyle}
+                        `,
+                        self: css`
+                          background-color: transparent;
+                          &:hover {
+                            border-color: #61a9f9;
+                            background-color: white;
+                          }
+                          &:focus {
+                            background-color: white;
+                          }
+                          ${searchbox?.styles?.self}
+                        `,
                       }}
+                    />
+                  )}
+                  {(selectable || showPagination) && (
+                    <PaginationInfo
+                      aria-label="pagination-wrapper"
+                      $style={styles?.paginationWrapperStyle}
                     >
-                      {col.caption}
-                    </span>
-                    {col.sortable && (
-                      <Toolbar
+                      {showPagination && (
+                        <PaginationNumber
+                          aria-label="pagination-number"
+                          $style={styles?.paginationNumberStyle}
+                        >
+                          {typeof labels.pageNumberText === "number"
+                            ? `Pg. ${labels.pageNumberText}`
+                            : labels.pageNumberText}
+                        </PaginationNumber>
+                      )}
+                      {selectable && (
+                        <PaginationSelectedItem
+                          aria-label="pagination-selected-item"
+                          $style={styles?.totalSelectedItemTextStyle}
+                        >
+                          {labels?.totalSelectedItemText
+                            ? labels?.totalSelectedItemText(selectedData.size)
+                            : `${selectedData.size} items selected`}
+                        </PaginationSelectedItem>
+                      )}
+                    </PaginationInfo>
+                  )}
+                </HeaderActions>
+              )}
+
+              <TableContainer $hasSelected={selectedData.size > 0}>
+                <TableHeader
+                  aria-label="table-header"
+                  $style={styles?.tableHeaderStyle}
+                >
+                  {selectable && (
+                    <CheckboxWrapper>
+                      <Checkbox
                         styles={{
-                          self: css`
-                            width: fit-content;
-                            z-index: 20;
-                            ${isLast &&
-                            css`
-                              padding-right: 14px;
-                            `}
+                          boxStyle: css`
+                            width: 100%;
                           `,
                         }}
+                        onChange={handleSelectAll}
+                        checked={allRowSelectedLocal}
+                        indeterminate={someSelectedLocal}
+                      />
+                    </CheckboxWrapper>
+                  )}
+                  {columns.map((col, i) => {
+                    const isLast =
+                      rowActions?.length > 0 && columns.length - 1 === i;
+                    return (
+                      <TableRowCell
+                        key={i}
+                        width={col.width}
+                        contentStyle={css`
+                          display: flex;
+                          position: relative;
+                          align-items: center;
+                          ${col.width
+                            ? css`
+                                width: ${col.width};
+                                flex-direction: row;
+                              `
+                            : css`
+                                flex: 1;
+                              `}
+                        `}
                       >
-                        <Toolbar.Menu
-                          closedIcon={RiArrowUpDownLine}
-                          openedIcon={RiArrowUpDownLine}
-                          styles={{
-                            dropdownStyle: css`
-                              min-width: 235px;
-                            `,
-                            triggerStyle: css`
-                              color: black;
-                              &:hover {
-                                background-color: #d4d4d4;
-                              }
-                            `,
-                            toggleActiveStyle: css`
-                              background-color: #d4d4d4;
-                            `,
+                        <span
+                          style={{
+                            display: "block",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
                           }}
-                          variant="none"
-                          subMenuList={
-                            subMenuList ? subMenuList(col.id) : undefined
-                          }
-                        />
-                      </Toolbar>
-                    )}
-                  </TableRowCell>
-                );
-              })}
-            </TableHeader>
-
-            {rowChildren.length > 0 ? (
-              <TableBody
-                ref={tableBodyRef}
-                aria-label="table-body"
-                $style={styles?.tableBodyStyle}
-              >
-                {rowChildren}
-              </TableBody>
-            ) : (
-              <EmptyState>{emptySlate}</EmptyState>
-            )}
-
-            {sumRow && (
-              <TableSummary
-                aria-label="table-summary-wrapper"
-                $selectable={selectable}
-              >
-                {(() => {
-                  const cells: ReactNode[] = [];
-                  let colPointer = 0;
-
-                  const totalCells = sumRow.reduce(
-                    (acc, col) => acc + (col.span ?? 1),
-                    0
-                  );
-
-                  sumRow.map((col) => {
-                    const span = col.span ?? 1;
-
-                    for (let s = 0; s < span; s++) {
-                      const columnWidth = columns[colPointer]?.width;
-
-                      const isLast =
-                        rowActions && colPointer === totalCells - 1;
-
-                      cells.push(
-                        <TableRowCell
-                          key={`${colPointer}-${s}`}
-                          width={columnWidth}
-                          bold={col.bold}
-                          contentStyle={css`
-                            display: flex;
-                            align-items: center;
-                            ${columnWidth
-                              ? css`
-                                  width: ${columnWidth};
-                                  flex-direction: row;
-                                `
-                              : css`
-                                  flex: 1;
-                                `}
-                            ${isLast &&
-                            css`
-                              padding-right: 36px;
-                            `}
-                            ${col.styles?.self}
-                          `}
                         >
-                          {s === 0 ? col.content : ""}
-                        </TableRowCell>
+                          {col.caption}
+                        </span>
+                        {col.sortable && (
+                          <Toolbar
+                            styles={{
+                              self: css`
+                                width: fit-content;
+                                z-index: 20;
+                                ${isLast &&
+                                css`
+                                  padding-right: 14px;
+                                `}
+                              `,
+                            }}
+                          >
+                            <Toolbar.Menu
+                              closedIcon={RiArrowUpDownLine}
+                              openedIcon={RiArrowUpDownLine}
+                              styles={{
+                                dropdownStyle: css`
+                                  min-width: 235px;
+                                `,
+                                triggerStyle: css`
+                                  color: black;
+                                  &:hover {
+                                    background-color: #d4d4d4;
+                                  }
+                                `,
+                                toggleActiveStyle: css`
+                                  background-color: #d4d4d4;
+                                `,
+                              }}
+                              variant="none"
+                              subMenuList={
+                                subMenuList ? subMenuList(col.id) : undefined
+                              }
+                            />
+                          </Toolbar>
+                        )}
+                      </TableRowCell>
+                    );
+                  })}
+                </TableHeader>
+
+                {rowChildren.length > 0 ? (
+                  <TableBody
+                    ref={tableBodyRef}
+                    aria-label="table-body"
+                    $style={styles?.tableBodyStyle}
+                  >
+                    {rowChildren}
+                  </TableBody>
+                ) : (
+                  <EmptyState>{emptySlate}</EmptyState>
+                )}
+
+                {sumRow && (
+                  <TableSummary
+                    aria-label="table-summary-wrapper"
+                    $selectable={selectable}
+                  >
+                    {(() => {
+                      const cells: ReactNode[] = [];
+                      let colPointer = 0;
+
+                      const totalCells = sumRow.reduce(
+                        (acc, col) => acc + (col.span ?? 1),
+                        0
                       );
 
-                      colPointer++;
-                    }
-                  });
+                      sumRow.map((col) => {
+                        const span = col.span ?? 1;
 
-                  return cells;
-                })()}
-              </TableSummary>
-            )}
-          </TableContainer>
+                        for (let s = 0; s < span; s++) {
+                          const columnWidth = columns[colPointer]?.width;
 
-          {isLoading && (
-            <OverlayBlocker
-              styles={{
-                self: css`
-                  display: flex;
-                  align-items: start;
-                  padding-left: 10px;
-                  padding-top: 10px;
+                          const isLast =
+                            rowActions && colPointer === totalCells - 1;
 
-                  backdrop-filter: blur(0.5px);
-                  background-color: rgba(255, 255, 255, 0.6);
-                `,
-              }}
-              show={isLoading}
-              onClick="preventDefault"
-            >
-              <LoadingSpinner
-                styles={{
-                  containerStyle: css`
-                    background-color: black;
-                    border-radius: 20px;
-                    opacity: 0.8;
-                    color: white;
-                    padding: 4px;
-                    padding-right: 8px;
-                  `,
-                }}
-                label="Loading"
-                gap={10}
-                iconSize={24}
-              />
-            </OverlayBlocker>
-          )}
-        </Wrapper>
-      </TableColumnContext.Provider>
+                          cells.push(
+                            <TableRowCell
+                              key={`${colPointer}-${s}`}
+                              width={columnWidth}
+                              bold={col.bold}
+                              contentStyle={css`
+                                display: flex;
+                                align-items: center;
+                                ${columnWidth
+                                  ? css`
+                                      width: ${columnWidth};
+                                      flex-direction: row;
+                                    `
+                                  : css`
+                                      flex: 1;
+                                    `}
+                                ${isLast &&
+                                css`
+                                  padding-right: 36px;
+                                `}
+                            ${col.styles?.self}
+                              `}
+                            >
+                              {s === 0 ? col.content : ""}
+                            </TableRowCell>
+                          );
+
+                          colPointer++;
+                        }
+                      });
+
+                      return cells;
+                    })()}
+                  </TableSummary>
+                )}
+              </TableContainer>
+
+              {isLoading && (
+                <OverlayBlocker
+                  styles={{
+                    self: css`
+                      display: flex;
+                      align-items: start;
+                      padding-left: 10px;
+                      padding-top: 10px;
+
+                      backdrop-filter: blur(0.5px);
+                      background-color: rgba(255, 255, 255, 0.6);
+                    `,
+                  }}
+                  show={isLoading}
+                  onClick="preventDefault"
+                >
+                  <LoadingSpinner
+                    styles={{
+                      containerStyle: css`
+                        background-color: black;
+                        border-radius: 20px;
+                        opacity: 0.8;
+                        color: white;
+                        padding: 4px;
+                        padding-right: 8px;
+                      `,
+                    }}
+                    label="Loading"
+                    gap={10}
+                    iconSize={24}
+                  />
+                </OverlayBlocker>
+              )}
+            </Wrapper>
+          </TableColumnContext.Provider>
+        </SelectionDataContext.Provider>
+      </SelectionHandlerContext.Provider>
     </DnDContext.Provider>
   );
 }
@@ -833,15 +844,11 @@ function TableRowGroup({
   title,
   subtitle,
   selectable = false,
-  handleSelect,
-  selectedData,
   isLast,
   onLastRowReached,
   draggable,
   ...props
 }: TableRowGroupProps & {
-  selectedData?: string[];
-  handleSelect?: (data: string) => void;
   onLastRowReached?: () => void;
   isLast?: boolean;
   draggable?: boolean;
@@ -854,16 +861,8 @@ function TableRowGroup({
   const rowChildren = Children.map(children, (child, index) => {
     if (!isValidElement<TableRowProps & TableRowOpenWithId>(child)) return null;
     if (child.type === TableRow) {
-      const props = child.props as TableRowProps & TableRowOpenWithId;
-
-      const isSelected = selectedData.some(
-        (d) => JSON.stringify(d) === JSON.stringify(props.rowId)
-      );
-
       return cloneElement(child, {
         selectable,
-        isSelected,
-        handleSelect,
         isLast,
         onLastRowReached,
         index: index,
@@ -1018,11 +1017,9 @@ interface TableRowOpenWithId {
   setOpenRowId?: (prop: string | null) => void;
 }
 
-function TableRow({
+const TableRow = React.memo(function TableRow({
   content,
   selectable = false,
-  isSelected = false,
-  handleSelect,
   styles,
   rowId,
   children,
@@ -1045,6 +1042,10 @@ function TableRow({
     groupLength?: number;
     draggable?: boolean;
   }>) {
+  const selectedData = useContext(SelectionDataContext);
+  const handleSelect = useContext(SelectionHandlerContext);
+  const isSelected = selectedData.has(rowId ?? "");
+
   const { setDragItem, dragItem } = useContext(DnDContext);
   const { openRowId, setOpenRowId, alwaysShowDragIcon } =
     props as TableRowOpenWithId & TableAlwaysShowDragIconProp;
@@ -1077,7 +1078,10 @@ function TableRow({
   const [isFirstClick, setIsFirstClick] = useState<boolean>(true);
   const [rowContent, setRowContent] = useState<ReactNode | null>(null);
 
-  const childArray = Children.toArray(children).filter(isValidElement);
+  const childArray = useMemo(
+    () => Children.toArray(children).filter(isValidElement),
+    [children]
+  );
 
   return (
     <RowWrapper $style={styles?.containerStyle}>
@@ -1330,7 +1334,7 @@ function TableRow({
       </AnimatePresence>
     </RowWrapper>
   );
-}
+});
 
 const EXPAND_COLLAPSE_VARIANTS = {
   open: {
@@ -1533,8 +1537,12 @@ function getAllRowContentsFromChildren(children: ReactNode): string[] {
   return result;
 }
 
-function getRowActionsFromChildren(children: ReactNode): TipMenuItemProps[] {
-  const result: TipMenuItemProps[] = [];
+function getRowDataFromChildren(children: ReactNode): {
+  ids: string[];
+  actions: TipMenuItemProps[];
+} {
+  const ids: string[] = [];
+  const actions: TipMenuItemProps[] = [];
 
   Children.forEach(children, (child) => {
     if (!isValidElement(child)) return;
@@ -1544,23 +1552,43 @@ function getRowActionsFromChildren(children: ReactNode): TipMenuItemProps[] {
 
     if (rowGroup.type === TableRowGroup) {
       const groupChildren = rowGroup.props.children as ReactNode;
-      result.push(...getRowActionsFromChildren(groupChildren));
+      const nested = getRowDataFromChildren(groupChildren);
+      ids.push(...nested.ids);
+      actions.push(...nested.actions);
     }
 
-    if (row.type === TableRow && row.props.actions && row.props.rowId) {
-      const actionsForRow = row.props.actions(row.props.rowId);
-      const validActions = actionsForRow.filter(
-        (action): action is TipMenuItemProps => Boolean(action)
-      );
-      result.push(...validActions);
+    if (row.type === TableRow) {
+      if (row.props.rowId) {
+        ids.push(row.props.rowId);
+      }
+      if (row.props.actions && row.props.rowId) {
+        const actionsForRow = row.props.actions(row.props.rowId);
+        const validActions = actionsForRow.filter(
+          (action): action is TipMenuItemProps => Boolean(action)
+        );
+        actions.push(...validActions);
+      }
     }
   });
 
-  return result;
+  return { ids, actions };
 }
 
-Table.Row = TableRow;
-TableRow.Group = TableRowGroup;
-TableRow.Cell = TableRowCell;
+(TableRow as any).Group = TableRowGroup;
+(TableRow as any).Cell = TableRowCell;
 
-export { Table };
+const TypedTableRow = TableRow as typeof TableRow & {
+  Group: typeof TableRowGroup;
+  Cell: typeof TableRowCell;
+};
+
+Table.Row = TypedTableRow;
+
+const TypedTable = Table as typeof Table & {
+  Row: typeof TypedTableRow & {
+    Group: typeof TableRowGroup;
+    Cell: typeof TableRowCell;
+  };
+};
+
+export { TypedTable as Table };
