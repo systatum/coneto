@@ -32,6 +32,8 @@ function Figure({
           style={{
             minWidth: `${size}px`,
             minHeight: `${size}px`,
+            maxWidth: `${size}px`,
+            maxHeight: `${size}px`,
           }}
           aria-label={ariaLabel}
         />

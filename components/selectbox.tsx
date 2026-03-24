@@ -321,7 +321,9 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       }
 
       if (e.key === "Enter") {
-        setHasInteracted(false);
+        if (!multiple) {
+          setHasInteracted(false);
+        }
 
         if (
           highlightedIndex !== null &&
@@ -483,6 +485,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
           }}
           onFocus={() => {
             if (type === "calendar" || selectedOptionsLocal) setIsFocused(true);
+            setIsOpen(true);
           }}
           onBlur={() => {
             setIsFocused(false);
@@ -520,6 +523,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
         )}
 
         <IconWrapper
+          aria-label="selectbox-opener"
           onClick={async () => {
             await setIsOpen((prev) => {
               const newState = !prev;

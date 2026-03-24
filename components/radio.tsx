@@ -159,7 +159,7 @@ function Radio({
     bodyStyle,
     controlStyle,
     containerStyle,
-    labelStyle,
+    titleStyle,
     ...baseRadiotyles
   } = styles ?? {};
 
@@ -183,7 +183,7 @@ function Radio({
         `,
         controlStyle,
         containerStyle,
-        labelStyle,
+        labelStyle: titleStyle,
       }}
     >
       <BaseRadio
