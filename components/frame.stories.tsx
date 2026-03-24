@@ -11,21 +11,24 @@ const meta: Meta<typeof Frame> = {
   tags: ["autodocs"],
   argTypes: {
     title: {
-      description: "Title shown on top of the frame",
+      description:
+        "Optional title displayed as an overlay at the top border of the frame.",
       control: "text",
     },
     styles: {
-      containerStyle: {
-        description: "Custom class for the frame container",
-        control: "text",
-      },
-      styleTitle: {
-        description: "Custom class for the title container",
-        control: "text",
-      },
+      description: `
+Custom styles for the Frame component. This object allows you to override styles for specific parts of the frame:
+
+- **containerStyle**: Styles applied to the outer frame container, including border, padding, background, and layout.
+- **titleStyle**: Styles applied to the title container, which controls the positioning, spacing, and typography of the title overlay.
+
+Each field accepts a \`CSSProp\` (styled-components compatible), enabling advanced customization such as spacing, colors, borders, and typography without modifying the component itself.
+      `,
+      control: "object",
     },
     children: {
-      description: "Content inside the frame",
+      description:
+        "Content rendered inside the frame. This is typically used to wrap form sections, grouped inputs, or any structured layout.",
       control: "text",
     },
   },
@@ -38,7 +41,7 @@ type Story = StoryObj<typeof Frame>;
 export const Default: Story = {
   args: {
     styles: {
-      frameContainerStyle: css`
+      containerStyle: css`
         font-size: 14px;
       `,
     },
@@ -53,7 +56,7 @@ export const WithTitle: Story = {
   args: {
     title: "Frame Title",
     styles: {
-      frameContainerStyle: css`
+      containerStyle: css`
         font-size: 14px;
       `,
     },
@@ -68,11 +71,11 @@ export const Custom: Story = {
   args: {
     title: "Frame w/ Class",
     styles: {
-      frameContainerStyle: css`
+      containerStyle: css`
         font-size: 14px;
         background-color: #f5f5f5;
       `,
-      frameTitleStyle: css`
+      titleStyle: css`
         background-color: #f5f5f5;
       `,
     },
