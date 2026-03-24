@@ -1542,6 +1542,7 @@ function FormFields<T extends FieldValues>({
                       selectedOptions={controllerField.value}
                       disabled={field.disabled}
                       {...field.comboboxProps}
+                      strict={field?.comboboxProps?.strict ?? true}
                       styles={{
                         ...field?.comboboxProps?.styles,
                         bodyStyle: css`

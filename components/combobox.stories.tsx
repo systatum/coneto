@@ -98,7 +98,7 @@ export default meta;
 
 type Story = StoryObj<typeof Combobox>;
 
-export const NonStrictValue: Story = {
+export const Default: Story = {
   render: () => {
     const [value, setValue] = useState<SelectboxSelectedOptions>("");
 
@@ -119,7 +119,6 @@ export const NonStrictValue: Story = {
         }}
       >
         <Combobox
-          strict={false}
           selectedOptions={value}
           options={FRUIT_OPTIONS}
           onChange={setValue}

@@ -99,7 +99,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       label,
       showError,
       selectedOptions,
-      strict = true,
+      strict,
       actions,
       onKeyDown,
       onClick,
