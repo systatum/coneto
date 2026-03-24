@@ -111,6 +111,8 @@ export interface StatefulFormProps<Z extends ZodTypeAny> {
 export interface StatefulFormStylesProps {
   containerStyle?: CSSProp;
   rowStyle?: CSSProp;
+  frameContainerStyle?: CSSProp;
+  frameTitleStyle?: CSSProp;
 }
 
 export type FormFieldGroup = FormFieldProps | FormFieldProps[];
@@ -461,17 +463,18 @@ function FormFields<T extends FieldValues>({
                     title={field.title}
                     {...field?.frameProps}
                     styles={{
-                      frameContainerStyle: css`
+                      containerStyle: css`
                         margin-top: 10px;
                         min-width: 0;
-                        ${field?.frameProps?.styles?.frameContainerStyle}
+                        ${styles?.frameContainerStyle}
+                        ${field?.frameProps?.styles?.containerStyle}
                       `,
-                      frameTitleStyle: css`
+                      titleStyle: css`
                         font-size: 12px;
                         color: black;
                         margin-top: 2px;
-
-                        ${field?.frameProps?.styles?.frameTitleStyle}
+                        ${styles?.frameTitleStyle}
+                        ${field?.frameProps?.styles?.titleStyle}
                       `,
                     }}
                   >

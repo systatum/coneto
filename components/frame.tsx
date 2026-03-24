@@ -9,8 +9,8 @@ export interface FrameProps
 }
 
 export interface FrameStyles {
-  frameContainerStyle?: CSSProp;
-  frameTitleStyle?: CSSProp;
+  containerStyle?: CSSProp;
+  titleStyle?: CSSProp;
 }
 
 function Frame({ title, children, styles, ...props }: FrameProps) {
@@ -18,10 +18,10 @@ function Frame({ title, children, styles, ...props }: FrameProps) {
     <FrameContainer
       aria-label="frame"
       {...props}
-      $style={styles?.frameContainerStyle}
+      $style={styles?.containerStyle}
     >
       {title && (
-        <TitleContainer $style={styles?.frameTitleStyle}>
+        <TitleContainer $style={styles?.titleStyle}>
           <TitleOverlay aria-hidden="true" />
           <TitleText>{title}</TitleText>
         </TitleContainer>
