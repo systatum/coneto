@@ -471,7 +471,11 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
           }}
           readOnly={multiple}
           onMouseDown={() => {
-            setIsOpen(!isOpen);
+            if (strict) {
+              if (!isOpen) {
+                setIsOpen(true);
+              }
+            }
           }}
           onFocus={() => {
             if (type === "calendar" || selectedOptionsLocal) setIsFocused(true);
