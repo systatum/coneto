@@ -1,75 +1,152 @@
 const WORDS = [
-  "lorem", "ipsum", "dolor", "sit", "forte", "amet", "sic",
-  "edispicit", "ego", "sum", ", ", "minim", "eiusmod", "temper",
-  "labore", "et", "duis", "est", "id", ", ", "nummifer",
-  "Asianus", "ab", "conditum", "divitis", "minor", "quis",
-  "nostrud", "incididunt", "sed", "proident", "sunt", "Romana",
-  "Jacarta", "Palaestinae", "Sigilum", "Massachusetta",
-  "Republicae", "Therania", "res", "officia", "exercitation",
-  "nisi", "ex", "veritas", ", ", "magna", "diversus", "factum",
-  "fides", "intra", "nil", "nobilis", "potis", "quia", "sanus",
-  "tertius", "vox", "urbis", ", ", "alii", "vestibulum",
-  "feugiat", "libero", "a", "viverra", "consequat", "lacus",
-  "mi", "laoreet", "enim", "at", "tristique", "velit", "quam",
-  "a", "urna", "suspendisse", "potenti", "in", "hac",
-  "habitasse", "platea", "dictumst", "proin", "vel", "justo",
-  "ac", "mauris", "laoreet", "sagittis"
+  "lorem",
+  "ipsum",
+  "dolor",
+  "sit",
+  "forte",
+  "amet",
+  "sic",
+  "edispicit",
+  "ego",
+  "sum",
+  ", ",
+  "minim",
+  "eiusmod",
+  "temper",
+  "labore",
+  "et",
+  "duis",
+  "est",
+  "id",
+  ", ",
+  "nummifer",
+  "Asianus",
+  "ab",
+  "conditum",
+  "divitis",
+  "minor",
+  "quis",
+  "nostrud",
+  "incididunt",
+  "sed",
+  "proident",
+  "sunt",
+  "Romana",
+  "Jacarta",
+  "Palaestinae",
+  "Sigilum",
+  "Massachusetta",
+  "Republicae",
+  "Therania",
+  "res",
+  "officia",
+  "exercitation",
+  "nisi",
+  "ex",
+  "veritas",
+  ", ",
+  "magna",
+  "diversus",
+  "factum",
+  "fides",
+  "intra",
+  "nil",
+  "nobilis",
+  "potis",
+  "quia",
+  "sanus",
+  "tertius",
+  "vox",
+  "urbis",
+  ", ",
+  "alii",
+  "vestibulum",
+  "feugiat",
+  "libero",
+  "a",
+  "viverra",
+  "consequat",
+  "lacus",
+  "mi",
+  "laoreet",
+  "enim",
+  "at",
+  "tristique",
+  "velit",
+  "quam",
+  "a",
+  "urna",
+  "suspendisse",
+  "potenti",
+  "in",
+  "hac",
+  "habitasse",
+  "platea",
+  "dictumst",
+  "proin",
+  "vel",
+  "justo",
+  "ac",
+  "mauris",
+  "laoreet",
+  "sagittis",
 ];
 
 export function generateSentence({
   words = WORDS,
   minLen = 9,
   maxLen = 25,
+  seed,
 }: Partial<{
   words?: string[];
   minLen?: number;
   maxLen?: number;
+  seed?: number;
 }> = {}) {
-  // Normalize commas: strip spaces around comma strings
+  let random = Math.random;
+  if (typeof seed === "number") {
+    // Simple deterministic PRNG (Mulberry32)
+    let s = seed;
+    random = () => {
+      s |= 0;
+      s = (s + 0x6d2b79f5) | 0;
+      let t = Math.imul(s ^ (s >>> 15), 1 | s);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
   const normalizedWords = words.map((w) => (w.trim() === "," ? "," : w));
-  // Create array excluding commas for selection after a comma or first word
   const nonComma = normalizedWords.filter((w) => w !== ",");
-  // Random sentence length between minLen and maxLen
-  const length = Math.floor(Math.random() * (maxLen - minLen + 1)) + minLen;
+  const length = Math.floor(random() * (maxLen - minLen + 1)) + minLen;
 
   const tokens = [];
   let prevComma = false;
 
   for (let i = 0; i < length; i++) {
     let token;
-
     if (i === 0) {
-      // First word must not be a comma
-      token = nonComma[Math.floor(Math.random() * nonComma.length)];
+      token = nonComma[Math.floor(random() * nonComma.length)];
     } else if (prevComma) {
-      // Word after comma must be non-comma
-      token = nonComma[Math.floor(Math.random() * nonComma.length)];
+      token = nonComma[Math.floor(random() * nonComma.length)];
     } else {
-      // Otherwise, any word (including comma) can be selected using double-randomness
-      const a =
-        normalizedWords[Math.floor(Math.random() * normalizedWords.length)];
-      const b =
-        normalizedWords[Math.floor(Math.random() * normalizedWords.length)];
-      token = Math.random() < 0.5 ? a : b;
+      const a = normalizedWords[Math.floor(random() * normalizedWords.length)];
+      const b = normalizedWords[Math.floor(random() * normalizedWords.length)];
+      token = random() < 0.5 ? a : b;
     }
-
     tokens.push(token);
     prevComma = token === ",";
   }
 
-  // Ensure sentence does not end with a comma
   if (tokens[tokens.length - 1] === ",") {
     tokens[tokens.length - 1] =
-      nonComma[Math.floor(Math.random() * nonComma.length)];
+      nonComma[Math.floor(random() * nonComma.length)];
   }
 
-  // Capitalize first word
   tokens[0] = tokens[0][0].toUpperCase() + tokens[0].slice(1);
 
-  // Join tokens with spaces, normalize commas: no space before, one space after
   let sentence = tokens.join(" ");
   sentence = sentence.replace(/\s*,\s*/g, ", ");
-  sentence += "."; // terminate with period
-
+  sentence += ".";
   return sentence;
 }
