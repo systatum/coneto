@@ -92,8 +92,8 @@ export type FormFieldType =
   | "time"
   | "button"
   | "pin"
-  | "custom"
-  | "frame";
+  | "frame"
+  | "custom";
 
 export interface StatefulFormProps<Z extends ZodTypeAny> {
   fields: FormFieldGroup[];
