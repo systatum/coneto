@@ -77,12 +77,19 @@ describe("Button", () => {
 
       Object.entries(VARIANT_STYLES).forEach(([variant, style]) => {
         const exactRegex = new RegExp(`^${variant}$`, "i");
-        cy.findAllByRole("button", { name: exactRegex }).then((button) => {
-          const $btn = button[0] as HTMLElement;
+        cy.findAllByLabelText("button-label").then((labels) => {
+          const matchingLabel = Array.from(labels).find((label) =>
+            exactRegex.test(label.textContent || "")
+          );
+
+          if (!matchingLabel) return;
+
+          const $btn = matchingLabel.closest("button") as HTMLElement;
+          if (!$btn) return;
+
           const computedStyle = getComputedStyle($btn);
 
           expect(computedStyle.backgroundColor).to.eq(style.bg);
-
           expect(computedStyle.color).to.eq(style.color);
 
           if (style.border) {

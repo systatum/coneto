@@ -118,7 +118,7 @@ describe("Table", () => {
   }
   context("isLoading", () => {
     context("when given true", () => {
-      it("renders spinner positioned ~10px from the top and ~10px from the left", () => {
+      it("renders spinner ~14px from top and left relative to overlay", () => {
         cy.mount(<BasicTable isLoading />);
 
         cy.findByLabelText("overlay-blocker").then(($overlay) => {
@@ -130,8 +130,8 @@ describe("Table", () => {
             const paddingTop = spinnerRect.top - overlayRect.top;
             const paddingLeft = spinnerRect.left - overlayRect.left;
 
-            expect(paddingTop).to.be.closeTo(10, 2);
-            expect(paddingLeft).to.be.closeTo(10, 2);
+            expect(paddingTop).to.be.closeTo(14, 1);
+            expect(paddingLeft).to.be.closeTo(14, 1);
           });
         });
       });

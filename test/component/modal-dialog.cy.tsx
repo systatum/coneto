@@ -503,13 +503,15 @@ describe("Modal Dialog", () => {
         />
       );
 
-      cy.findByRole("button", { name: /Add draft/i })
+      cy.findAllByRole("button")
+        .eq(0)
         .should("have.css", "height", "56px")
         .and("have.css", "padding-left", "16px")
         .and("have.css", "padding-right", "16px")
         .and("have.css", "padding-top", "16px")
         .and("have.css", "padding-bottom", "40px");
-      cy.findByRole("button", { name: /Cancel/i })
+      cy.findAllByRole("button")
+        .eq(1)
         .should("have.css", "height", "56px")
         .and("have.css", "padding-left", "16px")
         .and("have.css", "padding-right", "16px")
