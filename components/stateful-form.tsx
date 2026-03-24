@@ -42,6 +42,7 @@ import Helper from "./helper";
 import { FigureProps } from "./figure";
 import { Pinbox, PinboxProps } from "./pinbox";
 import { FieldLaneProps } from "./field-lane";
+import { Frame, FrameProps } from "./frame";
 
 export type StatefulOnChangeType =
   | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -91,6 +92,7 @@ export type FormFieldType =
   | "time"
   | "button"
   | "pin"
+  | "frame"
   | "custom";
 
 export interface StatefulFormProps<Z extends ZodTypeAny> {
@@ -109,6 +111,8 @@ export interface StatefulFormProps<Z extends ZodTypeAny> {
 export interface StatefulFormStylesProps {
   containerStyle?: CSSProp;
   rowStyle?: CSSProp;
+  frameContainerStyle?: CSSProp;
+  frameTitleStyle?: CSSProp;
 }
 
 export type FormFieldGroup = FormFieldProps | FormFieldProps[];
@@ -125,6 +129,8 @@ export interface FormFieldProps {
   hidden?: boolean;
   rows?: number;
   width?: string;
+  rowStyle?: CSSProp;
+  fields?: FormFieldGroup[];
   icon?: FigureProps["image"];
   labelPosition?: FieldLaneProps["labelPosition"];
   labelGap?: FieldLaneProps["labelGap"];
@@ -155,6 +161,7 @@ export interface FormFieldProps {
   timeboxProps?: TimeboxProps;
   buttonProps?: ButtonProps;
   pinboxProps?: PinboxProps;
+  frameProps?: FrameProps;
 }
 
 function StatefulForm<Z extends ZodTypeAny>({
@@ -215,7 +222,7 @@ function StatefulForm<Z extends ZodTypeAny>({
   }, [isValid, onValidityChange]);
 
   const shouldShowError = (name: keyof TypeOf<Z>): boolean => {
-    const fieldConfig = fields.flat().find((field) => field.name === name);
+    const fieldConfig = findField(fields, name as string);
 
     if (
       !fieldConfig ||
@@ -268,6 +275,24 @@ function StatefulForm<Z extends ZodTypeAny>({
     return !!touched && hasErrorMessage(error);
   };
 
+  function findField(
+    fields: FormFieldGroup[],
+    name: string
+  ): FormFieldProps | undefined {
+    for (const f of fields) {
+      if (Array.isArray(f)) {
+        const found = findField(f, name);
+        if (found) return found;
+      } else if (f.type === "frame" && f.fields) {
+        const found = findField(f.fields, name);
+        if (found) return found;
+      } else if (f.name === name) {
+        return f;
+      }
+    }
+    return undefined;
+  }
+
   return (
     <>
       <FormFields
@@ -300,9 +325,19 @@ function getSchemaForVisibleFields<Z extends ZodTypeAny>(
 
   const objSchema = validationSchema as ZodObject<any>;
 
-  const flatFields: FormFieldProps[] = fields.flatMap((f) =>
-    Array.isArray(f) ? f : [f]
-  );
+  function flattenFields(fields: FormFieldGroup[]): FormFieldProps[] {
+    return fields.flatMap((f) => {
+      if (Array.isArray(f)) return flattenFields(f);
+
+      if (f.type === "frame" && f.fields) {
+        return flattenFields(f.fields as FormFieldGroup[]);
+      }
+
+      return [f];
+    });
+  }
+
+  const flatFields: FormFieldProps[] = flattenFields(fields);
 
   const newShape = Object.fromEntries(
     flatFields.map((field) => {
@@ -381,6 +416,8 @@ function FormFields<T extends FieldValues>({
           (f) => f.rowAlignItems
         )?.rowAlignItems;
 
+        const rowStyleItem = visibleFields.find((f) => f.rowStyle)?.rowStyle;
+
         const nonButtonFields = visibleFields.filter(
           (f) => f.type !== "button"
         );
@@ -402,6 +439,7 @@ function FormFields<T extends FieldValues>({
                       : "center"};
               `}
 
+
               ${rowAlignedItem &&
               css`
                 align-items: ${rowAlignedItem === "end"
@@ -412,10 +450,54 @@ function FormFields<T extends FieldValues>({
                       ? "space-between"
                       : "center"};
               `}
+
+              ${rowStyleItem}
             `}
             key={indexGroup}
           >
             {visibleFields.map((field: FormFieldProps, index: number) => {
+              if (field.type === "frame") {
+                return (
+                  <Frame
+                    key={index}
+                    title={field.title}
+                    {...field?.frameProps}
+                    styles={{
+                      containerStyle: css`
+                        margin-top: 10px;
+                        min-width: 0;
+                        ${styles?.frameContainerStyle}
+                        ${field?.frameProps?.styles?.containerStyle}
+                      `,
+                      titleStyle: css`
+                        font-size: 12px;
+                        color: black;
+                        margin-top: 2px;
+                        ${styles?.frameTitleStyle}
+                        ${field?.frameProps?.styles?.titleStyle}
+                      `,
+                    }}
+                  >
+                    {field?.fields && (
+                      <FormFields
+                        labelSize={labelSize}
+                        fieldSize={fieldSize}
+                        control={control}
+                        fields={field?.fields}
+                        formValues={formValues}
+                        register={register}
+                        errors={errors}
+                        setValue={setValue}
+                        onChange={onChange}
+                        autoFocusField={autoFocusField}
+                        styles={styles}
+                        shouldShowError={shouldShowError}
+                      />
+                    )}
+                  </Frame>
+                );
+              }
+
               return field.type === "custom" ? (
                 <Fragment key={index}>{field.render}</Fragment>
               ) : field.type === "text" ||

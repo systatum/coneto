@@ -234,6 +234,149 @@ export const Default: Story = {
   },
 };
 
+export const WithFrame: Story = {
+  render: () => {
+    const [isFormValid, setIsFormValid] = useState(false);
+    const [value, setValue] = useState({
+      name: "",
+      department: "",
+      management_name: "",
+      start_date: [""],
+      end_date: [""],
+      purpose: "",
+    });
+
+    const dateArraySchema = z
+      .array(
+        z.string().refine((val) => !isNaN(Date.parse(val)), "Invalid date")
+      )
+      .min(1, "At least one date is required");
+
+    const employeeSchema = z.object({
+      name: z.string().min(3, "Name is required"),
+      department: z.string().min(1, "Department is required"),
+      management_name: z.string().min(4, "Management Name is required"),
+      start_date: dateArraySchema,
+      end_date: dateArraySchema,
+      purpose: z.string().min(10, "Business purpose is required"),
+    });
+
+    const MANAGER_NAME_OPTIONS: OptionsProps[] = [
+      { text: "Alim Naufal", value: "1" },
+      { text: "Soekarno", value: "2" },
+    ];
+
+    const DEPARTMENT_OPTIONS: OptionsProps[] = [
+      { text: "HR", value: "1" },
+      { text: "IT", value: "2" },
+    ];
+
+    const EMPLOYEE_FIELDS: FormFieldGroup[] = [
+      {
+        name: "name",
+        title: "Full Name",
+        type: "text",
+        required: true,
+        placeholder: "Enter full name",
+      },
+      [
+        {
+          name: "department",
+          title: "Department",
+          type: "combo",
+          required: true,
+          placeholder: "Select department",
+          comboboxProps: {
+            options: DEPARTMENT_OPTIONS,
+          },
+        },
+        {
+          name: "manager_name",
+          title: "Manager Name",
+          type: "combo",
+          required: true,
+          placeholder: "Select manager",
+          comboboxProps: {
+            options: MANAGER_NAME_OPTIONS,
+          },
+        },
+      ],
+      {
+        name: "business_expense",
+        title: "Business Expense",
+        type: "frame",
+        fields: [
+          [
+            {
+              name: "start_date",
+              title: "From",
+              type: "date",
+              placeholder: "Select start date",
+              required: true,
+              rowStyle: css`
+                background-color: #f3f4f6;
+                padding: 10px;
+              `,
+            },
+            {
+              name: "end_date",
+              title: "To",
+              type: "date",
+              required: true,
+              placeholder: "Select end date",
+            },
+          ],
+          {
+            name: "purpose",
+            title: "Purpose",
+            type: "text",
+            required: true,
+            placeholder: "Enter purpose of expense",
+            rowStyle: css`
+              background-color: #f3f4f6;
+              padding: 10px;
+            `,
+          },
+        ],
+      },
+      {
+        name: "button",
+        title: "Submit",
+        type: "button",
+        disabled: !isFormValid,
+        rowJustifyContent: "end",
+      },
+    ];
+
+    return (
+      <div
+        style={{
+          marginLeft: "auto",
+          marginRight: "auto",
+          display: "flex",
+          width: "100%",
+          maxWidth: "500px",
+          flexDirection: "column",
+          gap: "0.5rem",
+          paddingTop: "1rem",
+          paddingBottom: "1rem",
+        }}
+      >
+        <StatefulForm
+          onChange={({ currentState }) => {
+            setValue((prev) => ({ ...prev, ...currentState }));
+          }}
+          validationSchema={employeeSchema}
+          onValidityChange={setIsFormValid}
+          fields={EMPLOYEE_FIELDS}
+          formValues={value}
+          mode="onChange"
+        />
+      </div>
+    );
+  },
+};
+
 export const ConditionalElement: Story = {
   render: () => {
     const [isFormValid, setIsFormValid] = useState(false);
