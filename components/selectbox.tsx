@@ -470,9 +470,11 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
             handleKeyDown(e);
           }}
           readOnly={multiple}
+          onMouseDown={() => {
+            setIsOpen(!isOpen);
+          }}
           onFocus={() => {
-            if (type === "calendar" || selectedOptionsLocal) setIsOpen(true);
-            setIsFocused(true);
+            if (type === "calendar" || selectedOptionsLocal) setIsFocused(true);
           }}
           onBlur={() => {
             setIsFocused(false);
