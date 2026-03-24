@@ -64,7 +64,7 @@ export const Default: Story = {
     ];
 
     const sentences = useMemo(
-      () => generateSentence({ minLen: 30, maxLen: 40 }),
+      () => generateSentence({ minLen: 30, maxLen: 40, seed: 12345 }),
       [generateSentence]
     );
     const BADGE_ITEMS = [
@@ -263,7 +263,7 @@ export const PageEditor: Story = {
 export const ViewOnly: Story = {
   render: () => {
     const sentences = useMemo(
-      () => generateSentence({ minLen: 30, maxLen: 40 }),
+      () => generateSentence({ minLen: 30, maxLen: 40, seed: 12345 }),
       [generateSentence]
     );
     const [value, setValue] = useState(

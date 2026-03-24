@@ -1,3 +1,4 @@
+import { generateSentence } from "./../../lib/text";
 import {
   expectTextIncludesOrderedLines,
   getIdContent,
@@ -6,6 +7,12 @@ import {
 describe("RichEditor", () => {
   beforeEach(() => {
     cy.visit(getIdContent("input-elements-richeditor--default"));
+  });
+
+  const sentences = generateSentence({
+    minLen: 30,
+    maxLen: 40,
+    seed: 12345,
   });
 
   context("toolbar position", () => {
@@ -40,7 +47,7 @@ describe("RichEditor", () => {
       it("renders content on editor", () => {
         cy.findByText("Markdown Example").click();
         const contentHTML = `<h3>Hello there!</h3>
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor reprehenderit voluptate velit.</p>
+<p>${sentences}</p>
 <p><br>This is ordered list</p>
 <ol>
 <li><input type="checkbox" class="custom-checkbox-wrapper" contenteditable="false" data-checked="false" style="cursor: pointer;"> test</li>
@@ -60,7 +67,7 @@ describe("RichEditor", () => {
           .then((text) => {
             expectTextIncludesOrderedLines(text, [
               "### Hello there!",
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor reprehenderit voluptate velit.",
+              `${sentences}`,
               "",
               "This is ordered list",
               "1. [ ] test",
@@ -174,7 +181,7 @@ describe("RichEditor", () => {
           .then((text) => {
             expectTextIncludesOrderedLines(text, [
               "### Hello there!",
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor reprehenderit voluptate velit.",
+              `${sentences}`,
               "",
               "This is ordered list",
               "1. [ ] test",
@@ -201,7 +208,7 @@ describe("RichEditor", () => {
               .then((text) => {
                 expectTextIncludesOrderedLines(text, [
                   "### Hello there!",
-                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor reprehenderit voluptate velit.",
+                  `${sentences}`,
                   "",
                   "This is ordered list",
                   "1. [ ] test",
