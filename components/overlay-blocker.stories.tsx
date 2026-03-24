@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { OverlayBlocker, OverlayBlockerRef } from "./overlay-blocker";
 import { Button } from "./button";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 
 const meta: Meta<typeof OverlayBlocker> = {
   title: "Stage/OverlayBlocker",

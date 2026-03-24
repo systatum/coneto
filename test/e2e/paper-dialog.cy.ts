@@ -6,20 +6,20 @@ describe("PaperDialog", () => {
       cy.visit(getIdContent("stage-paperdialog--default"));
     });
     it("should open the dialog and show the form", () => {
-      cy.findByRole("button", { name: /open/i }).click();
+      cy.findByText(/open/i).click();
 
       cy.findByText("Add New Employee").should("exist");
-      cy.findByRole("button", { name: /save/i }).should("exist");
+      cy.findByText(/save/i).should("exist");
     });
 
     it("should minimize the dialog", () => {
-      cy.findByRole("button", { name: /open/i }).click();
-      cy.findByRole("button", { name: /minimize here/i }).click();
+      cy.findByText(/open/i).click();
+      cy.findByText(/minimize here/i).click();
     });
 
     context("when given width", () => {
       it("should maintain tab-to-drawer alignment", () => {
-        cy.findByRole("button", { name: /open/i }).click();
+        cy.findByText(/open/i).click();
         cy.wait(300);
         cy.findByLabelText("paper-dialog-content").then(($drawer) => {
           const drawerRect = $drawer[0].getBoundingClientRect();

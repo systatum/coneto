@@ -1,6 +1,6 @@
 {
   "name": "@systatum/coneto",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -213,6 +213,10 @@
       "import": "./dist/components/stateful-form.js",
       "types": "./dist/components/stateful-form.d.ts"
     },
+    "./statusbar": {
+      "import": "./dist/components/statusbar.js",
+      "types": "./dist/components/statusbar.d.ts"
+    },
     "./stepline": {
       "import": "./dist/components/stepline.js",
       "types": "./dist/components/stepline.d.ts"
@@ -284,6 +288,14 @@
     "./floating-placement": {
       "import": "./dist/lib/floating-placement.js",
       "types": "./dist/lib/floating-placement.d.ts"
+    },
+    "./falsy": {
+      "import": "./dist/lib/falsy.js",
+      "types": "./dist/lib/falsy.d.ts"
+    },
+    "./text": {
+      "import": "./dist/lib/text.js",
+      "types": "./dist/lib/text.d.ts"
     }
   },
   "files": [

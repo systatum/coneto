@@ -12,7 +12,7 @@ import {
   useRef,
   useState,
 } from "react";
-import styled, { css, CSSProp } from "styled-components";
+import styled, { CSSProp } from "styled-components";
 import { Figure, FigureProps } from "./figure";
 
 export interface DormantTextProps {

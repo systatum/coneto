@@ -248,9 +248,7 @@ function List({
               ref={inputRef}
               name="search"
               autoComplete="off"
-              onChange={(e) => {
-                setValue(e);
-              }}
+              onChange={setValue}
               onKeyDown={onSearchKeyDown}
               value={value}
               styles={styles?.searchboxStyles}
@@ -994,7 +992,7 @@ const ListItem = forwardRef<HTMLLIElement, ListItemProps>(
               setIsOpen(idFullname, "item");
             }
           }}
-          onDragStart={(e) => {
+          onDragStart={() => {
             setDragItem({
               id: id,
               oldGroupId: groupId!,
@@ -1023,7 +1021,7 @@ const ListItem = forwardRef<HTMLLIElement, ListItemProps>(
               setIsOver(true);
             }
           }}
-          onDragLeave={(e) => {
+          onDragLeave={() => {
             setIsOver(false);
             setDropPosition(null);
           }}

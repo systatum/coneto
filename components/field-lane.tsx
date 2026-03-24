@@ -71,11 +71,6 @@ export interface DropdownOptionProps {
   value: string;
   icon?: FigureProps;
 }
-export interface DropdownOptionProps {
-  text: string;
-  value: string;
-  icon?: FigureProps;
-}
 
 function FieldLane({
   label,
@@ -134,6 +129,7 @@ function FieldLane({
                 variant="outline-default"
                 styles={{
                   containerStyle: css`
+                    align-self: stretch;
                     border-right: 0;
                     border-top-right-radius: 0;
                     border-bottom-right-radius: 0;
@@ -407,6 +403,7 @@ const InputWrapper = styled.div<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: row;
   width: 100%;
+  align-items: center;
   justify-content: flex-start;
   height: 100%;
 

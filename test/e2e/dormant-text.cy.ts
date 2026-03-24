@@ -168,7 +168,7 @@ describe("DormantText", () => {
       context("when selecting", () => {
         it("renders date picker and after selecting renders value", () => {
           cy.findAllByText("07/25/2025").eq(3).click();
-          cy.get('[data-type="selectbox"]').click();
+          cy.findByLabelText("selectbox-opener").click();
           cy.findByLabelText("calendar-select-date").click();
           cy.findByLabelText("combobox-month").click();
           cy.findByText("JAN").click();
@@ -205,7 +205,7 @@ describe("DormantText", () => {
       context("when pressing escape", () => {
         it("renders change dormanted label with previously value", () => {
           cy.findAllByText("07/25/2025").eq(3).click();
-          cy.get('[data-type="selectbox"]').click();
+          cy.findByLabelText("selectbox-opener").click();
           cy.findByLabelText("calendar-select-date").click();
           cy.findByLabelText("combobox-month").click();
           cy.findByText("JAN").click();

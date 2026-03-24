@@ -14,7 +14,7 @@ describe("DocumentViewer", () => {
 
   context("scrolling", () => {
     it("scrolls to the bottom", () => {
-      cy.findByLabelText("container-content")
+      cy.findByLabelText("doc-viewer-container")
         .should("exist")
         .scrollTo("bottom");
     });

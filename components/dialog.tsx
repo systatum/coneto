@@ -244,7 +244,7 @@ function Dialog({
               `,
             }}
           >
-            <RiCloseLine />
+            <RiCloseLine size={16} />
           </Button>
         )}
       </Wrapper>

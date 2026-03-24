@@ -6,7 +6,6 @@ import {
   CSSProperties,
   Fragment,
   KeyboardEvent,
-  ReactElement,
   ReactNode,
   Ref,
   RefObject,
@@ -256,7 +255,6 @@ function ChipsDrawer({
   emptySlate,
   name = "chips",
   styles,
-  disabled,
 }: ChipsDrawerProps) {
   const [hovered, setHovered] = useState<string | null>(null);
   const [mode, setMode] = useState<"idle" | "create">("idle");

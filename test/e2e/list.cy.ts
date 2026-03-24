@@ -74,11 +74,11 @@ describe("List", () => {
       });
 
       it("renders with fit-content (48px)", () => {
-        cy.findAllByLabelText("togglebox-container")
+        cy.findAllByLabelText("togglebox-wrapper")
           .eq(0)
           .should("have.css", "width", "48px");
 
-        cy.findAllByLabelText("togglebox-container")
+        cy.findAllByLabelText("togglebox-wrapper")
           .eq(0)
           .then(($el) => {
             const width = $el[0].getBoundingClientRect().width;
@@ -91,7 +91,7 @@ describe("List", () => {
           cy.findAllByLabelText("action-button")
             .eq(0)
             .then(($action) => {
-              cy.findAllByLabelText("togglebox-container").then(($toggle) => {
+              cy.findAllByLabelText("togglebox-wrapper").then(($toggle) => {
                 const a = $action[0].getBoundingClientRect();
                 const t = $toggle[0].getBoundingClientRect();
 

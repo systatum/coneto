@@ -95,7 +95,7 @@ describe("Table", () => {
                     key={`${group.type}-${ri}`}
                     rowId={`${row.name}-${row.type}`}
                   >
-                    {[row.name, row.type].map((cell, ci) => (
+                    {[row.name, row.type].map((cell) => (
                       <Table.Row.Cell key={`${row.name}-${cell}`}>
                         {cell}
                       </Table.Row.Cell>
@@ -106,7 +106,7 @@ describe("Table", () => {
             ))
           : rawRows?.map((row, index) => (
               <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
-                {[row.name, row.type].map((rowCell, i) => (
+                {[row.name, row.type].map((rowCell) => (
                   <Table.Row.Cell key={`${row.name}-${row.type}-${rowCell}`}>
                     {rowCell}
                   </Table.Row.Cell>
@@ -118,7 +118,7 @@ describe("Table", () => {
   }
   context("isLoading", () => {
     context("when given true", () => {
-      it("renders spinner positioned ~10px from the top and ~10px from the left", () => {
+      it("renders spinner ~14px from top and left relative to overlay", () => {
         cy.mount(<BasicTable isLoading />);
 
         cy.findByLabelText("overlay-blocker").then(($overlay) => {
@@ -130,8 +130,8 @@ describe("Table", () => {
             const paddingTop = spinnerRect.top - overlayRect.top;
             const paddingLeft = spinnerRect.left - overlayRect.left;
 
-            expect(paddingTop).to.be.closeTo(10, 2);
-            expect(paddingLeft).to.be.closeTo(10, 2);
+            expect(paddingTop).to.be.closeTo(14, 1);
+            expect(paddingLeft).to.be.closeTo(14, 1);
           });
         });
       });

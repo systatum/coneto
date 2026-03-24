@@ -2056,7 +2056,9 @@ describe("List", () => {
         },
         false && {
           caption: "False",
-          onClick: (id: string) => {},
+          onClick: (id: string) => {
+            console.log(`action was false ${id}`);
+          },
         },
       ];
 

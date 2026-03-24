@@ -1,7 +1,7 @@
 import { css, CSSProp } from "styled-components";
 import { Button, ButtonVariants, SubMenuButtonProps } from "./button";
 import { ReactNode } from "react";
-import { Figure, FigureProps } from "./figure";
+import { FigureProps } from "./figure";
 
 export interface ActionButtonProps {
   caption?: string;

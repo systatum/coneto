@@ -80,6 +80,7 @@ describe("Checkbox", () => {
         .should("have.css", "cursor", "not-allowed")
         .and("have.css", "user-select", "none");
     });
+
     context("when clicking", () => {
       it("should not render the console", () => {
         cy.mount(

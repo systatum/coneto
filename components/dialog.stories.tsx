@@ -1,5 +1,5 @@
 import { useArgs } from "@storybook/preview-api";
-import type { Args, Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react";
 import { Dialog, DialogProps } from "./dialog";
 import { Button } from "./button";
 import { RiErrorWarningFill, RiInboxArchiveFill } from "@remixicon/react";

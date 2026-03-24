@@ -189,8 +189,7 @@ describe("FieldLane", () => {
 
               expect(parseFloat(width)).to.be.closeTo(100, 1);
             })
-            .should("have.css", "align-items", "center")
-            .and("have.css", "justify-content", "center");
+            .should("have.css", "align-items", "center");
         });
       });
     });

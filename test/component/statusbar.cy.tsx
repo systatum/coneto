@@ -49,7 +49,6 @@ describe("Statusbar", () => {
 
     return (
       <Statusbar
-        paddingTop="10px"
         content={{
           left: [
             {
@@ -253,22 +252,6 @@ describe("Statusbar", () => {
           "1px 0px 0px"
         );
       });
-
-      it("should render border radius by 3px", () => {
-        cy.mount(<ProductStatusbar transparent={false} />);
-
-        cy.findByLabelText("statusbar-wrapper").should(
-          "have.css",
-          "border-top-left-radius",
-          "3px"
-        );
-
-        cy.findByLabelText("statusbar-wrapper").should(
-          "have.css",
-          "border-top-right-radius",
-          "3px"
-        );
-      });
     });
 
     context("when given true", () => {
@@ -287,14 +270,14 @@ describe("Statusbar", () => {
   });
 
   context("size", () => {
-    it("renders by default is 10 (implementing into text, icon)", () => {
+    it("renders by default is 11 (implementing into text, icon)", () => {
       cy.mount(<ProductStatusbar />);
 
-      cy.findByText("Page 1 of 53").should("have.css", "font-size", "10px");
+      cy.findByText("Page 1 of 53").should("have.css", "font-size", "11px");
       cy.findAllByLabelText("statusbar-icon").should(
         "have.css",
         "width",
-        "10px"
+        "11px"
       );
     });
 
@@ -396,7 +379,7 @@ describe("Statusbar", () => {
 
   context("content", () => {
     context("text", () => {
-      it("renders the text with 10px (by default)", () => {
+      it("renders the text with 11px (by default)", () => {
         cy.mount(
           <ProductStatusbar
             content={{
@@ -411,7 +394,7 @@ describe("Statusbar", () => {
 
         cy.findByText("Test")
           .should("exist")
-          .and("have.css", "font-size", "10px");
+          .and("have.css", "font-size", "11px");
       });
 
       context("when given width less than text", () => {

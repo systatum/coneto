@@ -64,6 +64,7 @@ function BaseTogglebox({
         }}
       >
         <StyledInput
+          {...props}
           aria-label="togglebox-input"
           id={id}
           name={name}

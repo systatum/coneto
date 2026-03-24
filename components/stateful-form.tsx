@@ -1994,6 +1994,7 @@ export interface StatefulFormLabelProps
   labelPosition?: FieldLaneProps["labelPosition"];
   labelWidth?: FieldLaneProps["labelWidth"];
   required?: boolean;
+  disabled?: boolean;
 }
 
 function StatefulFormLabel({
@@ -2003,11 +2004,13 @@ function StatefulFormLabel({
   required,
   labelPosition,
   labelWidth,
+  disabled,
   ...props
 }: StatefulFormLabelProps) {
   return (
     <Label
       {...props}
+      $disabled={disabled}
       $labelPosition={labelPosition}
       $labelWidth={labelWidth}
       $style={styles?.self}
@@ -2029,6 +2032,7 @@ const Label = styled.label<{
   $style?: CSSProp;
   $labelWidth?: FieldLaneProps["labelWidth"];
   $labelPosition?: FieldLaneProps["labelPosition"];
+  $disabled?: boolean;
 }>`
   font-size: 0.75rem;
   display: flex;
@@ -2039,6 +2043,11 @@ const Label = styled.label<{
 
   width: ${({ $labelWidth, $labelPosition }) =>
     $labelWidth ?? ($labelPosition === "left" ? "25%" : "100%")};
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      cursor: not-allowed;
+    `}
   ${({ $style }) => $style}
 `;
 

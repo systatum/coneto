@@ -202,7 +202,12 @@ function FileDropBox({
           <UploadContent>
             <IconsRow>
               {FILE_ICON.map(({ id, icon, size }) => (
-                <Figure key={id} color="#6b7280" image={icon} size={size} />
+                <Figure
+                  key={id}
+                  color={isDragging ? "#3b82f6" : "#6b7280"}
+                  image={icon}
+                  size={size}
+                />
               ))}
             </IconsRow>
             <PlaceholderText $isDragging={isDragging}>

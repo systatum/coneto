@@ -9,7 +9,6 @@ import {
   RiAddBoxLine,
   RiAtLine,
   RiCharacterRecognitionLine,
-  RiLineChartFill,
   RiProfileFill,
   RiSearchLine,
   RiSettings5Line,

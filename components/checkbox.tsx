@@ -2,7 +2,6 @@ import styled, { css, CSSProp } from "styled-components";
 import {
   DetailedHTMLProps,
   InputHTMLAttributes,
-  ReactElement,
   useEffect,
   useRef,
 } from "react";
@@ -44,15 +43,12 @@ interface BaseCheckboxStylesProps {
 
 function BaseCheckbox({
   label,
-  title,
   name,
   showError,
   description,
   highlightOnChecked,
-  errorMessage,
   indeterminate = false,
   styles,
-  helper,
   id,
   ...props
 }: BaseCheckboxProps) {
@@ -120,6 +116,7 @@ function BaseCheckbox({
         {label && (
           <StatefulForm.Label
             aria-label="label"
+            disabled={props?.disabled}
             styles={{ self: styles?.labelStyle }}
             htmlFor={props.disabled ? null : id}
             label={label}
