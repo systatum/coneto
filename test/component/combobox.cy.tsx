@@ -35,7 +35,7 @@ describe("Combobox", () => {
   context("common behavior", () => {
     const selectApple = (props = {}) => {
       cy.mount(<ProductCombobox {...props} />);
-      cy.findByPlaceholderText("Select a fruit...").click();
+      cy.findByPlaceholderText("Select a fruit...").type("Apple");
       cy.findByRole("option", { name: "Apple" }).click();
       cy.findByPlaceholderText("Select a fruit...").should(
         "have.value",
@@ -44,8 +44,25 @@ describe("Combobox", () => {
       cy.findByDisplayValue("Apple").should("be.visible");
     };
 
-    context("default", () => {
-      beforeEach(() => selectApple());
+    context("non-strict value", () => {
+      beforeEach(() => selectApple({ strict: false }));
+
+      context("when clicking the combobox", () => {
+        it("should not reveal the dropdown", () => {
+          cy.findByPlaceholderText("Select a fruit...").click();
+          cy.findByRole("option", { name: "Apple" }).should("not.exist");
+        });
+
+        context("when typing", () => {
+          it("should reveal the dropdown", () => {
+            cy.findByPlaceholderText("Select a fruit...")
+              .click()
+              .clear()
+              .type("Banana");
+            cy.findByRole("option", { name: "Banana" }).should("exist");
+          });
+        });
+      });
 
       context("pressing enter", () => {
         it("should update the content", () => {
@@ -74,6 +91,23 @@ describe("Combobox", () => {
 
     context("strict mode", () => {
       beforeEach(() => selectApple({ strict: true }));
+
+      context("when clicking the combobox", () => {
+        it("should reveal the dropdown", () => {
+          cy.findByPlaceholderText("Select a fruit...").click();
+          cy.findByRole("option", { name: "Apple" }).should("exist");
+        });
+
+        context("when typing", () => {
+          it("should reveal the dropdown", () => {
+            cy.findByPlaceholderText("Select a fruit...")
+              .click()
+              .clear()
+              .type("Banana");
+            cy.findByRole("option", { name: "Banana" }).should("exist");
+          });
+        });
+      });
 
       context("pressing enter", () => {
         it("should update the content", () => {

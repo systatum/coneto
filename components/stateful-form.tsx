@@ -196,7 +196,7 @@ function StatefulForm<Z extends ZodTypeAny>({
     control,
     setValue,
     formState: { errors, touchedFields, isValid },
-  } = useForm<TypeOf<Z>>(formConfig);
+  } = useForm(formConfig) as ReturnType<typeof useForm<TypeOf<Z>>>;
 
   const customFieldNames = fields
     .flat()
@@ -313,17 +313,26 @@ function StatefulForm<Z extends ZodTypeAny>({
   );
 }
 
+function unwrapSchema(schema: ZodTypeAny): ZodTypeAny {
+  if (schema._def.typeName === "ZodEffects") {
+    return unwrapSchema(schema._def.schema);
+  }
+  return schema;
+}
+
 function getSchemaForVisibleFields<Z extends ZodTypeAny>(
   validationSchema?: Z,
   fields?: FormFieldGroup[]
 ) {
   if (!validationSchema) return undefined;
 
-  if (!(validationSchema instanceof ZodObject)) {
+  const baseSchema = unwrapSchema(validationSchema);
+
+  if (baseSchema._def.typeName !== "ZodObject") {
     throw new Error("StatefulForm only supports Zod object schemas");
   }
 
-  const objSchema = validationSchema as ZodObject<any>;
+  const objSchema = baseSchema as ZodObject<any>;
 
   function flattenFields(fields: FormFieldGroup[]): FormFieldProps[] {
     return fields.flatMap((f) => {
@@ -1624,6 +1633,7 @@ function FormFields<T extends FieldValues>({
                       selectedOptions={controllerField.value}
                       disabled={field.disabled}
                       {...field.comboboxProps}
+                      strict={field?.comboboxProps?.strict ?? true}
                       styles={{
                         ...field?.comboboxProps?.styles,
                         bodyStyle: css`

@@ -470,9 +470,19 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
             handleKeyDown(e);
           }}
           readOnly={multiple}
+          onMouseDown={() => {
+            if (strict) {
+              if (!isOpen) {
+                setIsOpen(true);
+              }
+            } else {
+              if (!isOpen && !isFocused) {
+                setIsOpen(true);
+              }
+            }
+          }}
           onFocus={() => {
-            if (type === "calendar" || selectedOptionsLocal) setIsOpen(true);
-            setIsFocused(true);
+            if (type === "calendar" || selectedOptionsLocal) setIsFocused(true);
           }}
           onBlur={() => {
             setIsFocused(false);
@@ -499,6 +509,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
               onMouseDown={() => {
                 handleOnChange?.([]);
                 setSelectedOptionsLocal({ text: "", value: "0" });
+                setConfirmedValue(null);
                 setHasInteracted(false);
               }}
               $highlight={highlightOnMatch && FILTERED_ACTIVE}
