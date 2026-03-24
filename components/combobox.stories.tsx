@@ -98,7 +98,7 @@ export default meta;
 
 type Story = StoryObj<typeof Combobox>;
 
-export const Default: Story = {
+export const NonStrictValue: Story = {
   render: () => {
     const [value, setValue] = useState<SelectboxSelectedOptions>("");
 
