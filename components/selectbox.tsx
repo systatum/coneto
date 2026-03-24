@@ -475,6 +475,10 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
               if (!isOpen) {
                 setIsOpen(true);
               }
+            } else {
+              if (!isOpen && !isFocused) {
+                setIsOpen(true);
+              }
             }
           }}
           onFocus={() => {
