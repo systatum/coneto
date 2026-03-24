@@ -52,6 +52,7 @@ export default [
       "@typescript-eslint/ban-ts-comment": "warn",
       "react/prop-types": "off",
       "react/react-in-jsx-scope": "off",
+      "no-constant-binary-expression": "off",
     },
   },
   {
