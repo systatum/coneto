@@ -222,7 +222,7 @@ function StatefulForm<Z extends ZodTypeAny>({
   }, [isValid, onValidityChange]);
 
   const shouldShowError = (name: keyof TypeOf<Z>): boolean => {
-    const fieldConfig = findFieldRecursive(fields, name as string);
+    const fieldConfig = findField(fields, name as string);
 
     if (
       !fieldConfig ||
@@ -275,16 +275,16 @@ function StatefulForm<Z extends ZodTypeAny>({
     return !!touched && hasErrorMessage(error);
   };
 
-  function findFieldRecursive(
+  function findField(
     fields: FormFieldGroup[],
     name: string
   ): FormFieldProps | undefined {
     for (const f of fields) {
       if (Array.isArray(f)) {
-        const found = findFieldRecursive(f, name);
+        const found = findField(f, name);
         if (found) return found;
       } else if (f.type === "frame" && f.fields) {
-        const found = findFieldRecursive(f.fields, name);
+        const found = findField(f.fields, name);
         if (found) return found;
       } else if (f.name === name) {
         return f;
