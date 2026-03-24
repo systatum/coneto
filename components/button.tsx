@@ -377,7 +377,8 @@ const ButtonLabel = styled.span<{
     $withFlex &&
     css`
       display: flex;
-    `}
+    `};
+
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;

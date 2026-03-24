@@ -39,6 +39,7 @@ function ModalDialog({
         padding-bottom: 2.5rem;
         padding-left: 1rem;
         padding-right: 1rem;
+        text-align: start;
         ${button?.styles?.self}
       `,
     },
