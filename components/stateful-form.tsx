@@ -461,17 +461,17 @@ function FormFields<T extends FieldValues>({
                     title={field.title}
                     {...field?.frameProps}
                     styles={{
-                      containerStyle: css`
+                      frameContainerStyle: css`
                         margin-top: 10px;
                         min-width: 0;
-                        ${field?.frameProps?.styles?.containerStyle}
+                        ${field?.frameProps?.styles?.frameContainerStyle}
                       `,
-                      titleStyle: css`
+                      frameTitleStyle: css`
                         font-size: 12px;
                         color: black;
                         margin-top: 2px;
 
-                        ${field?.frameProps?.styles?.titleStyle}
+                        ${field?.frameProps?.styles?.frameTitleStyle}
                       `,
                     }}
                   >

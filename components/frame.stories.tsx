@@ -38,7 +38,7 @@ type Story = StoryObj<typeof Frame>;
 export const Default: Story = {
   args: {
     styles: {
-      containerStyle: css`
+      frameContainerStyle: css`
         font-size: 14px;
       `,
     },
@@ -53,7 +53,7 @@ export const WithTitle: Story = {
   args: {
     title: "Frame Title",
     styles: {
-      containerStyle: css`
+      frameContainerStyle: css`
         font-size: 14px;
       `,
     },
@@ -68,11 +68,11 @@ export const Custom: Story = {
   args: {
     title: "Frame w/ Class",
     styles: {
-      containerStyle: css`
+      frameContainerStyle: css`
         font-size: 14px;
         background-color: #f5f5f5;
       `,
-      titleStyle: css`
+      frameTitleStyle: css`
         background-color: #f5f5f5;
       `,
     },
