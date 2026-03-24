@@ -60,6 +60,10 @@ const additionalExports = {
     import: "./dist/lib/falsy.js",
     types: "./dist/lib/falsy.d.ts",
   },
+  "./text": {
+    import: "./dist/lib/text.js",
+    types: "./dist/lib/text.d.ts",
+  },
 };
 
 const pkgPath = path.join(__dirname, "package.json");
