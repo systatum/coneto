@@ -505,6 +505,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
               onMouseDown={() => {
                 handleOnChange?.([]);
                 setSelectedOptionsLocal({ text: "", value: "0" });
+                setConfirmedValue(null);
                 setHasInteracted(false);
               }}
               $highlight={highlightOnMatch && FILTERED_ACTIVE}
