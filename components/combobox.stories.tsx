@@ -119,6 +119,7 @@ export const Default: Story = {
         }}
       >
         <Combobox
+          strict={false}
           selectedOptions={value}
           options={FRUIT_OPTIONS}
           onChange={setValue}
