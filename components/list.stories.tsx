@@ -2106,7 +2106,7 @@ export const Accordion: Story = {
               `,
             }}
           >
-            {["Inference log", "Compiler log"].map((title, idx) => {
+            {["Inference log", "Compiler log"].map((title) => {
               const id = title.toLowerCase().split(" ").join("-");
               return (
                 <List.Group

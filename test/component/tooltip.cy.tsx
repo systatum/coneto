@@ -1,4 +1,3 @@
-import { DialogPlacement } from "@/lib/floating-placement";
 import { Badge } from "./../../components/badge";
 import { Tooltip, TooltipDialogPlacement } from "./../../components/tooltip";
 import { css } from "styled-components";

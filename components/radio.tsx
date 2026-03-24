@@ -1,5 +1,5 @@
 import styled, { css, CSSProp } from "styled-components";
-import { ChangeEvent, InputHTMLAttributes, ReactElement } from "react";
+import { ChangeEvent, InputHTMLAttributes } from "react";
 import { StatefulForm } from "./stateful-form";
 import { Figure, FigureProps } from "./figure";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
@@ -42,16 +42,13 @@ export interface RadioOptionsProps {
 function BaseRadio({
   value,
   label,
-  title,
   description,
   checked,
   onChange,
   name,
   highlightOnChecked,
   showError,
-  errorMessage,
   styles,
-  helper,
   mode = "radio",
   icon,
   id,

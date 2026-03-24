@@ -2,7 +2,6 @@ import styled, { css, CSSProp } from "styled-components";
 import {
   DetailedHTMLProps,
   InputHTMLAttributes,
-  ReactElement,
   useEffect,
   useRef,
 } from "react";
@@ -44,15 +43,12 @@ interface BaseCheckboxStylesProps {
 
 function BaseCheckbox({
   label,
-  title,
   name,
   showError,
   description,
   highlightOnChecked,
-  errorMessage,
   indeterminate = false,
   styles,
-  helper,
   id,
   ...props
 }: BaseCheckboxProps) {

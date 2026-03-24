@@ -95,7 +95,7 @@ describe("Table", () => {
                     key={`${group.type}-${ri}`}
                     rowId={`${row.name}-${row.type}`}
                   >
-                    {[row.name, row.type].map((cell, ci) => (
+                    {[row.name, row.type].map((cell) => (
                       <Table.Row.Cell key={`${row.name}-${cell}`}>
                         {cell}
                       </Table.Row.Cell>
@@ -106,7 +106,7 @@ describe("Table", () => {
             ))
           : rawRows?.map((row, index) => (
               <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
-                {[row.name, row.type].map((rowCell, i) => (
+                {[row.name, row.type].map((rowCell) => (
                   <Table.Row.Cell key={`${row.name}-${row.type}-${rowCell}`}>
                     {rowCell}
                   </Table.Row.Cell>

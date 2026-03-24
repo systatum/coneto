@@ -71,11 +71,6 @@ export interface DropdownOptionProps {
   value: string;
   icon?: FigureProps;
 }
-export interface DropdownOptionProps {
-  text: string;
-  value: string;
-  icon?: FigureProps;
-}
 
 function FieldLane({
   label,

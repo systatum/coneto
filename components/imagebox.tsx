@@ -1,11 +1,4 @@
-import {
-  ChangeEvent,
-  DragEvent,
-  ReactElement,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { ChangeEvent, DragEvent, useEffect, useRef, useState } from "react";
 import { RiAddLine, RiImageLine } from "@remixicon/react";
 import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";

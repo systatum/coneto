@@ -2,7 +2,6 @@ import {
   ChangeEvent,
   DragEvent,
   InputHTMLAttributes,
-  ReactElement,
   useRef,
   useState,
 } from "react";
@@ -35,12 +34,8 @@ function BaseFileInputBox({
   accept = "*",
   multiple = false,
   onFilesSelected,
-  label,
-  errorMessage,
   showError,
   styles,
-  helper,
-  name,
   id,
   disabled,
   ...props
