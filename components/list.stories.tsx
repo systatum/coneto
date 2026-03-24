@@ -2030,17 +2030,13 @@ export const WithMaxItems: Story = {
               icon={list.icon}
               onClick={() => {
                 const isAlreadyChecked = value.checked.some(
-                  (check) => check.id.toString() === list.id.toString()
+                  (check) => check === list.id
                 );
 
                 onChangeValue({
                   target: {
                     name: "checked",
-                    value: JSON.stringify({
-                      id: list.id,
-                      title: list.title,
-                      subtitle: list.subtitle,
-                    }),
+                    value: list.id,
                     type: "checkbox",
                     checked: !isAlreadyChecked,
                   },
