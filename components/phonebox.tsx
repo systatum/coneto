@@ -532,7 +532,7 @@ const DropdownContainer = styled.div`
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   max-height: 240px;
   overflow-y: auto;
-  z-index: 1000;
+  z-index: 9992999;
 
   &::-webkit-scrollbar {
     width: 6px;

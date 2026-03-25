@@ -513,7 +513,7 @@ const Divider = styled.span<{ $style?: CSSProp }>`
   width: 1px;
   border-width: 0.5px;
   color: #bdbdbd;
-  z-index: 10;
+  z-index: 20;
   transition: height 150ms ease-in-out;
 
   ${(props) => props.$style}

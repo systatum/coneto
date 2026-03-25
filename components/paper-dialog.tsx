@@ -242,7 +242,7 @@ const DialogOverlay = styled.div<{
   $paperDialogStyle?: CSSProp;
 }>`
   position: fixed;
-  z-index: 9999999;
+  z-index: 9991999;
   ${({ $dialogState }) =>
     $dialogState === "restored" &&
     css`
@@ -276,7 +276,7 @@ const MotionDialog = styled(motion.div)<{
   border: 1px solid #ebebeb;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   padding-bottom: 1rem;
-  z-index: 9999999;
+  z-index: 9991999;
 
   ${({ $style }) => $style};
 `;

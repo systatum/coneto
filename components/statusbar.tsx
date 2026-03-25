@@ -248,7 +248,7 @@ const StatusbarWrapper = styled.div<{
   position: absolute;
   border-top: 1px solid #dedddd;
   overflow: hidden;
-  z-index: 9991998;
+  z-index: 9991999;
 
   ${({ $transparent }) =>
     $transparent

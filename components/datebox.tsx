@@ -198,7 +198,7 @@ const CalendarWrapper = styled.ul<{
   min-width: 300px;
   list-style: none;
   outline: none;
-  z-index: 9999;
+  z-index: 9992999;
 
   ${({ $style }) => $style}
 `;

@@ -559,7 +559,7 @@ const ChipsDrawerWrapper = styled.ul<{
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   list-style: none;
   outline: none;
-  z-index: 9999;
+  z-index: 9992999;
 
   ${({ $style }) => $style}
 `;
