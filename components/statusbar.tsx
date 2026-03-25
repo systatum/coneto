@@ -2,7 +2,6 @@ import styled, { css, CSSProp } from "styled-components";
 import { Figure, FigureProps } from "./figure";
 import { ReactNode } from "react";
 import { Button, ButtonProps } from "./button";
-import { FalsyOr } from "@/lib/falsy";
 
 export interface StatusbarProps {
   styles?: StatusbarStylesProps;
@@ -76,39 +75,36 @@ const renderSection = (
 
   return (
     <ActionWrapper aria-label="statusbar-content-wrapper" $style={style}>
-      {items.filter(isValidStatusbarItem).map((component, index) => (
-        <StatusbarItem
-          key={index}
-          {...component}
-          styles={{
-            self: css`
-              ${itemStyle}
-              ${component?.styles?.self}
-            `,
-          }}
-          size={size}
-          transparent={transparent}
-          activeBackgroundColor={activeBackgroundColor}
-          hoverBackgroundColor={hoverBackgroundColor}
-        />
-      ))}
+      {items
+        .filter((item) => !item?.hidden)
+        .map((component, index) => (
+          <StatusbarItem
+            key={index}
+            {...component}
+            styles={{
+              self: css`
+                ${itemStyle}
+                ${component?.styles?.self}
+              `,
+            }}
+            size={size}
+            transparent={transparent}
+            activeBackgroundColor={activeBackgroundColor}
+            hoverBackgroundColor={hoverBackgroundColor}
+          />
+        ))}
     </ActionWrapper>
   );
 };
 
-const isValidStatusbarItem = (
-  component?: StatusbarItemInternalProps
-): component is StatusbarItemInternalProps => Boolean(component);
-
-type StatusbarItemProps = FalsyOr<StatusbarItemInternalProps>;
-
-interface StatusbarItemInternalProps {
+export interface StatusbarItemProps {
   text?: string;
   icon?: FigureProps;
   render?: ReactNode;
   button?: ButtonProps;
   styles?: StatusbarItemStylesProps;
   width?: string;
+  hidden?: boolean;
 }
 
 interface StatusbarItemStylesProps {
@@ -126,7 +122,7 @@ function StatusbarItem({
   size,
   width,
   transparent,
-}: StatusbarItemInternalProps & {
+}: StatusbarItemProps & {
   activeBackgroundColor?: string;
   hoverBackgroundColor?: string;
   size?: number;
