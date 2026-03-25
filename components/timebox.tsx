@@ -167,12 +167,14 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
         (ss || "0").padStart(2, "0"),
       ].join(":");
 
-      onChange?.({
-        target: {
-          name,
-          value: formatted,
-        },
-      } as ChangeEvent<HTMLInputElement>);
+      if (onChange) {
+        onChange({
+          target: {
+            name,
+            value: formatted,
+          },
+        } as ChangeEvent<HTMLInputElement>);
+      }
       setValueLocal(formatted);
     };
 
