@@ -14,7 +14,6 @@ import { TipMenuItemProps } from "./tip-menu";
 import { Tooltip, TooltipRef } from "./tooltip";
 import { ActionButton, ActionButtonProps } from "./action-button";
 import { Figure, FigureProps } from "./figure";
-import { FalsyOr } from "./../lib/falsy";
 
 export interface NavTabProps {
   tabs?: NavTabContentProps[];
@@ -37,17 +36,13 @@ export interface NavTabStylesProps {
   boxStyle?: CSSProp;
 }
 
-export type NavTabActionsProps = FalsyOr<NavTabInternalActionsProps>;
-
-interface NavTabInternalActionsProps extends ActionButtonProps {
+export interface NavTabActionsProps extends ActionButtonProps {
   active?: boolean;
 }
 
 export type NavTabSize = "md" | "sm";
 
-export type NavTabContentProps = FalsyOr<NavTabContentInternalProps>;
-
-interface NavTabContentInternalProps {
+export interface NavTabContentProps {
   id: string;
   title: string;
   content?: ReactNode;
@@ -57,20 +52,16 @@ interface NavTabContentInternalProps {
   hidden?: boolean;
 }
 
-export type NavTabSubItemsContentProps =
-  FalsyOr<NavTabSubItemsContentInternalProps>;
-
-interface NavTabSubItemsContentInternalProps {
+export interface NavTabSubItemsContentProps {
   id: string;
   caption: string;
   icon?: FigureProps;
   onClick?: () => void;
   content?: ReactNode;
+  hidden?: boolean;
 }
 
-export type SubMenuNavTab = FalsyOr<SubMenuInternalNavTab>;
-
-interface SubMenuInternalNavTab extends Omit<TipMenuItemProps, "onClick"> {
+export interface SubMenuNavTab extends Omit<TipMenuItemProps, "onClick"> {
   onClick: (id?: string) => void;
 }
 
@@ -101,14 +92,7 @@ function NavTab({
   const isControlled = activeTab !== undefined && onChange;
   const selected = isControlled ? activeTab : selectedLocal;
 
-  const finalTabs = tabs?.filter((tab): tab is NavTabContentInternalProps =>
-    Boolean(tab)
-  );
-
-  const visibleTabs = useMemo(
-    () => finalTabs.filter((tab) => !tab.hidden),
-    [finalTabs]
-  );
+  const visibleTabs = useMemo(() => tabs.filter((tab) => !tab.hidden), [tabs]);
 
   const getHoverPosition = () => {
     if (!isInitialized || tabSizes.length === 0) {
@@ -119,9 +103,7 @@ function NavTab({
       (tab) =>
         tab.id === selected ||
         tab.subItems
-          ?.filter((tab): tab is NavTabSubItemsContentInternalProps =>
-            Boolean(tab)
-          )
+          ?.filter((tab) => !tab?.hidden)
           ?.some((item) => item.id === selected)
     );
 
@@ -177,13 +159,11 @@ function NavTab({
   };
 
   const hoverPosition = getHoverPosition();
-  const filteredTabs = finalTabs.filter(
+  const filteredTabs = tabs.filter(
     (tab) =>
       tab.id === selected ||
       tab.subItems
-        ?.filter((item): item is NavTabSubItemsContentInternalProps =>
-          Boolean(item)
-        )
+        ?.filter((item) => !item?.hidden)
         .some((item) => item.id === selected)
   );
 
@@ -259,10 +239,7 @@ function NavTab({
                   <>
                     {tab.subItems &&
                       tab.subItems
-                        ?.filter(
-                          (item): item is NavTabSubItemsContentInternalProps =>
-                            Boolean(item)
-                        )
+                        ?.filter((item) => !item?.hidden)
                         ?.map((item, idx) => (
                           <NavTabItem
                             key={idx}
@@ -322,9 +299,7 @@ function NavTab({
                     (() => {
                       const listActions = tab.actions;
                       const actionsWithIcons = listActions
-                        ?.filter((action): action is SubMenuInternalNavTab =>
-                          Boolean(action)
-                        )
+                        ?.filter((action) => !action?.hidden)
                         ?.map((action) => ({
                           ...action,
                           icon: {
@@ -403,9 +378,7 @@ function NavTab({
             `}
           >
             {actions
-              .filter(
-                (action): action is NavTabInternalActionsProps => !!action
-              )
+              .filter((action) => !action?.hidden)
               .map((action, index) => {
                 return (
                   <ActionButton
@@ -434,9 +407,7 @@ function NavTab({
       <NavContent $contentStyle={styles?.contentStyle}>
         {filteredTabs.map((tab, index) => {
           const selectedSubItem = tab.subItems
-            ?.filter((item): item is NavTabSubItemsContentInternalProps =>
-              Boolean(item)
-            )
+            ?.filter((item) => !item?.hidden)
             ?.find((subItem) => subItem.id === selected);
           if (selectedSubItem) {
             return <Fragment key={index}>{selectedSubItem.content}</Fragment>;

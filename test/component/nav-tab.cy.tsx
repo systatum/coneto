@@ -27,8 +27,8 @@ describe("NavTab", () => {
   ];
 
   context("tabs", () => {
-    context("when given falsy", () => {
-      it("renders without falsy tab", () => {
+    context("when given hidden", () => {
+      it("renders without hidden tab", () => {
         cy.mount(<NavTab tabs={TABS_ITEMS} activeTab={"2"} />);
         cy.findAllByLabelText("nav-tab-item").should("have.length", 2);
         cy.findByText("Write").should("exist");
@@ -298,7 +298,8 @@ describe("NavTab", () => {
       return (
         <NavTab
           actions={[
-            false && {
+            {
+              hidden: true,
               caption: "Settings",
               icon: { image: RiSettings5Line },
               onClick: () => {
@@ -343,8 +344,8 @@ describe("NavTab", () => {
       });
     });
 
-    context("when given with falsy", () => {
-      it("should render without falsy actions", () => {
+    context("when given with hidden", () => {
+      it("should render without hidden actions", () => {
         cy.window().then((win) => {
           cy.spy(win.console, "log").as("consoleLog");
         });
@@ -370,8 +371,9 @@ describe("NavTab", () => {
             content: "This is chart content",
             onClick: () => console.log("chart was clicked"),
           },
-          false && {
+          {
             id: "2-2",
+            hidden: true,
             icon: { image: RiProfileFill },
             caption: "Identity",
             content: "This is identity content",
@@ -395,8 +397,8 @@ describe("NavTab", () => {
       cy.get("@consoleLog").should("have.been.calledWith", "chart was clicked");
     });
 
-    context("when given with falsy subitem", () => {
-      it("renders without falsy subitem", () => {
+    context("when given with hidden subitem", () => {
+      it("renders without hidden subitem", () => {
         cy.mount(<NavTab tabs={tabsWithSubItems} activeTab={"2"} />);
         cy.findByText("This is review content").should("exist");
         cy.findByText("Review").realHover();
@@ -590,7 +592,8 @@ const TABS_ITEMS: NavTabContentProps[] = [
       },
     ],
   },
-  false && {
+  {
+    hidden: true,
     id: "3",
     title: "Empty",
     content: "Empty",
