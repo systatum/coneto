@@ -4,7 +4,7 @@ import { Combobox, ComboboxActionProps } from "./combobox";
 import { OptionsProps, SelectboxSelectedOptions } from "./selectbox";
 import { RiAddLine } from "@remixicon/react";
 import styled, { css } from "styled-components";
-import { DropdownOptionProps } from "./field-lane";
+import { FieldLaneDropdownsOptionProps } from "./field-lane";
 import * as RemixIcons from "@remixicon/react";
 
 const meta: Meta<typeof Combobox> = {
@@ -179,7 +179,7 @@ export const WithDropdown: Story = {
       { text: "Watermelon", value: "7" },
     ];
 
-    const ATTENDANCE_OPTIONS: DropdownOptionProps[] = [
+    const ATTENDANCE_OPTIONS: FieldLaneDropdownsOptionProps[] = [
       {
         text: "On-site",
         value: "1",

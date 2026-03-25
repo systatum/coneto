@@ -3,7 +3,7 @@ import { CountryCodeProps, Phonebox } from "./phonebox";
 import { useState } from "react";
 import { COUNTRY_CODES } from "./../constants/countries";
 import { StatefulOnChangeType } from "./stateful-form";
-import { DropdownOptionProps } from "./field-lane";
+import { FieldLaneDropdownsOptionProps } from "./field-lane";
 import * as RemixIcons from "@remixicon/react";
 import { css } from "styled-components";
 
@@ -84,7 +84,7 @@ export const WithDropdown: Story = {
       setValue((prev) => ({ ...prev, [name]: value }));
     };
 
-    const ATTENDANCE_OPTIONS: DropdownOptionProps[] = [
+    const ATTENDANCE_OPTIONS: FieldLaneDropdownsOptionProps[] = [
       {
         text: "On-site",
         value: "1",

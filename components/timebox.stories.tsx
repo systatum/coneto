@@ -4,7 +4,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { useArgs } from "@storybook/preview-api";
 import { css } from "styled-components";
 import * as RemixIcons from "@remixicon/react";
-import { DropdownOptionProps } from "./field-lane";
+import { FieldLaneDropdownsOptionProps } from "./field-lane";
 
 const meta: Meta<typeof Timebox> = {
   title: "Input Elements/Timebox",
@@ -63,7 +63,7 @@ export const WithDropdown: Story = {
       value: "",
     });
 
-    const ATTENDANCE_OPTIONS: DropdownOptionProps[] = [
+    const ATTENDANCE_OPTIONS: FieldLaneDropdownsOptionProps[] = [
       {
         text: "On-site",
         value: "1",

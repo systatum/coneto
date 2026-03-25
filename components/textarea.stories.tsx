@@ -5,7 +5,7 @@ import * as RemixIcons from "@remixicon/react";
 import { css } from "styled-components";
 import { StatefulOnChangeType } from "./stateful-form";
 import { useState } from "react";
-import { DropdownOptionProps } from "./field-lane";
+import { FieldLaneDropdownsOptionProps } from "./field-lane";
 
 const meta: Meta<typeof Textarea> = {
   title: "Input Elements/Textarea",
@@ -135,7 +135,7 @@ export const WithDropdown: Story = {
       value: "",
     });
 
-    const ATTENDANCE_OPTIONS: DropdownOptionProps[] = [
+    const ATTENDANCE_OPTIONS: FieldLaneDropdownsOptionProps[] = [
       {
         text: "On-site",
         value: "1",

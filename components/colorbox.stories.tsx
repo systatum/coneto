@@ -3,7 +3,7 @@ import { Colorbox } from "./colorbox";
 import { useArgs } from "@storybook/preview-api";
 import { ChangeEvent, useState } from "react";
 import { css } from "styled-components";
-import { DropdownOptionProps } from "./field-lane";
+import { FieldLaneDropdownsOptionProps } from "./field-lane";
 import * as RemixIcons from "@remixicon/react";
 
 const meta: Meta<typeof Colorbox> = {
@@ -103,7 +103,7 @@ export const WithDropdown: Story = {
       value: "",
     });
 
-    const ATTENDANCE_OPTIONS: DropdownOptionProps[] = [
+    const ATTENDANCE_OPTIONS: FieldLaneDropdownsOptionProps[] = [
       {
         text: "On-site",
         value: "1",
