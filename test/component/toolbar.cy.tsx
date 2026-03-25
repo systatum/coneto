@@ -189,8 +189,11 @@ describe("Toolbar", () => {
 
           cy.findByLabelText("toolbar-menu-toggle").click();
           TIP_MENU_ITEMS.map((item) => {
-            if (!item) return;
-            cy.contains(item.caption).should("exist");
+            if (item.hidden) {
+              cy.contains(item.caption).should("not.exist");
+            } else {
+              cy.contains(item.caption).should("exist");
+            }
           });
         });
       });
