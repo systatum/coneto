@@ -1747,7 +1747,8 @@ describe("List", () => {
             console.log(`action was clicked ${id}`);
           },
         },
-        false && {
+        {
+          hidden: true,
           caption: "Edit",
           icon: { image: RiArrowRightSLine },
           onClick: () => {
@@ -1860,8 +1861,8 @@ describe("List", () => {
           });
       });
 
-      context("when given with falsy field", () => {
-        it("renders without falsy action", () => {
+      context("when given with hidden field", () => {
+        it("renders without hidden action", () => {
           cy.mount(
             <List
               searchable
@@ -2054,7 +2055,8 @@ describe("List", () => {
             console.log(`action was clicked ${id}`);
           },
         },
-        false && {
+        {
+          hidden: true,
           caption: "False",
           onClick: (id: string) => {
             console.log(`action was false ${id}`);
