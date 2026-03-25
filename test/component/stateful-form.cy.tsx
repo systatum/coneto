@@ -3,6 +3,7 @@ import {
   FormFieldProps,
   FormFieldType,
   StatefulForm,
+  StatefulFormProps,
 } from "./../../components/stateful-form";
 import { COUNTRY_CODES } from "./../../constants/countries";
 import { Boxbar } from "./../../components/boxbar";
@@ -336,6 +337,52 @@ const flattenFields = (groups: FormFieldGroup[]): FormFieldProps[] =>
   );
 
 describe("StatefulForm", () => {
+  context("combobox", () => {
+    const comboField = flattenFields(ALL_INPUT).filter(
+      (field) => field.type === "combo"
+    );
+
+    function ComboboxInput(props: Partial<StatefulFormProps<any>>) {
+      const [value, setValue] = useState({ combo: ["4"] });
+
+      return (
+        <StatefulForm
+          fields={comboField}
+          formValues={value}
+          onChange={({ currentState }) =>
+            setValue((prev) => ({ ...prev, ...currentState }))
+          }
+          {...props}
+        />
+      );
+    }
+
+    beforeEach(() => {
+      cy.mount(<ComboboxInput />);
+    });
+
+    it("should shows value from formValues", () => {
+      cy.get("#combobox-combo").should("have.value", "Grape");
+    });
+
+    context("when given value from selectedOptions", () => {
+      const comboFieldWithValue = comboField.map((field) => ({
+        ...field,
+        comboboxProps: {
+          ...field?.comboboxProps,
+          selectedOptions: ["1"],
+        },
+      }));
+
+      beforeEach(() => {
+        cy.mount(<ComboboxInput fields={comboFieldWithValue} />);
+      });
+      it("should shows value from formValues", () => {
+        cy.get("#combobox-combo").should("have.value", "Apple");
+      });
+    });
+  });
+
   context("with type frame", () => {
     function StatefulWithFrame() {
       const [isFormValid, setIsFormValid] = useState(false);
