@@ -32,7 +32,6 @@ import { Capsule, CapsuleProps } from "./capsule";
 import ContextMenu from "./context-menu";
 import { ActionButton, ActionButtonProps } from "./action-button";
 import { OverlayBlocker } from "./overlay-blocker";
-import { FalsyOr } from "./../lib/falsy";
 
 export type RowData = (string | ReactNode)[];
 
@@ -44,9 +43,7 @@ export interface ColumnTableProps {
   id: string;
 }
 
-export type TableActionsProps = FalsyOr<TableInternalActionsProps>;
-
-interface TableInternalActionsProps extends ActionButtonProps {
+export interface TableActionsProps extends ActionButtonProps {
   type?: "button" | "capsule";
   capsuleProps?: CapsuleProps;
 }
@@ -82,7 +79,7 @@ export interface TableProps {
   searchbox?: SearchboxProps;
 }
 
-export type SubMenuListTableProps = FalsyOr<TipMenuItemProps>;
+export type SubMenuListTableProps = TipMenuItemProps;
 
 export interface TableStylesProps {
   containerStyle?: CSSProp;
@@ -308,9 +305,7 @@ function Table({
   }, [openRowId]);
 
   const filteredActions = Array.isArray(actions)
-    ? actions?.filter((action): action is TableInternalActionsProps =>
-        Boolean(action)
-      )
+    ? actions?.filter((action) => !action?.hidden)
     : [];
 
   const hasActions = filteredActions.length > 0;
@@ -995,7 +990,7 @@ export interface TableRowProps {
   handleSelect?: (data: string) => void;
   rowId?: string;
   children?: ReactNode;
-  actions?: (columnCaption: string) => FalsyOr<TipMenuItemProps>[];
+  actions?: (columnCaption: string) => TipMenuItemProps[];
   onClick?: (args?: {
     toggleCheckbox: () => void;
     isFirstClick?: boolean;
