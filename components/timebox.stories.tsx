@@ -33,8 +33,6 @@ export const Default: Story = {
       setValue((prev) => ({ ...prev, [name]: value }));
     };
 
-    console.log(value.timebox);
-
     return (
       <Timebox
         {...args}
