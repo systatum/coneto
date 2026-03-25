@@ -58,7 +58,9 @@ const BaseTextarea = forwardRef<HTMLTextAreaElement, BaseTextareaProps>(
           if (autogrow) {
             autoResize(e.target);
           }
-          onChange(e);
+          if (onChange) {
+            onChange(e);
+          }
         }}
         rows={rows ?? 3}
         $error={showError}
