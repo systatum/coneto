@@ -1,4 +1,4 @@
-import { Colorbox } from "./../../components/colorbox";
+import { Colorbox, ColorboxProps } from "./../../components/colorbox";
 import { Button } from "./../../components/button";
 import {
   RiHome2Line,
@@ -6,8 +6,48 @@ import {
   RiSettings2Line,
   RiUser2Line,
 } from "@remixicon/react";
+import { useState } from "react";
 
 describe("Colorbox", () => {
+  function ProductColorbox(
+    props: ColorboxProps & {
+      withOnChange?: boolean;
+    }
+  ) {
+    const [value, setValue] = useState("");
+    return (
+      <Colorbox
+        label="Color"
+        value={value}
+        onChange={
+          props?.withOnChange ? (e) => setValue(e.target.value) : undefined
+        }
+        {...props}
+      />
+    );
+  }
+
+  context("onChange", () => {
+    context("when given", () => {
+      it("should change the value", () => {
+        cy.mount(<ProductColorbox withOnChange />);
+
+        cy.findByRole("textbox")
+          .click()
+          .type("1234")
+          .should("have.value", "1234");
+      });
+    });
+
+    context("when not given", () => {
+      it("should not changes the value", () => {
+        cy.mount(<ProductColorbox />);
+
+        cy.findByRole("textbox").type("1234").should("have.value", "");
+      });
+    });
+  });
+
   context("with dropdowns", () => {
     it("renders initialize drawer with min-width 200px", () => {
       cy.mount(
