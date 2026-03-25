@@ -118,7 +118,9 @@ const BaseColorbox = forwardRef<HTMLInputElement, BaseColorboxProps>(
                   value: `#${cleanValue}`,
                 },
               } as ChangeEvent<HTMLInputElement>;
-              onChange(inputChangeEvent);
+              if (onChange) {
+                onChange(inputChangeEvent);
+              }
             }}
             placeholder={placeholder}
             onFocus={() => setHovered(true)}

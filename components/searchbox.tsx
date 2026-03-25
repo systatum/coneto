@@ -85,7 +85,9 @@ const Searchbox = forwardRef<Omit<HTMLInputElement, "style">, SearchboxProps>(
           name={name}
           onChange={(e) => {
             setInputValueLocal(e.target.value);
-            onChange(e);
+            if (onChange) {
+              onChange(e);
+            }
           }}
           $focus={isFocus}
           {...(props as InputHTMLAttributes<HTMLInputElement>)}
@@ -121,7 +123,9 @@ const Searchbox = forwardRef<Omit<HTMLInputElement, "style">, SearchboxProps>(
                 },
               } as ChangeEvent<HTMLInputElement>;
               setInputValueLocal("");
-              onChange(event);
+              if (onChange) {
+                onChange(event);
+              }
             }}
           />
         )}

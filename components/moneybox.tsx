@@ -185,7 +185,9 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
                                   value: props.id,
                                 },
                               } as ChangeEvent<HTMLInputElement>;
-                              await onChange(syntheticEvent);
+                              if (onChange) {
+                                await onChange(syntheticEvent);
+                              }
 
                               await setIsTipMenuOpen(false);
                             }}

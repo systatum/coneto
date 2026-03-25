@@ -94,13 +94,21 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
       const newDigit = value.slice(-1);
       const numeric = /^\d$/.test(newDigit);
 
-      if (!numeric && value !== "") {
-        return;
-      }
+      if (!numeric && value !== "") return;
 
-      const setters = { hour: setHour, minute: setMinute, second: setSecond };
-      const values = { hour, minute, second };
       const maxValues = { hour: 24, minute: 59, second: 59 };
+
+      const refMap = {
+        hour: hourRef,
+        minute: minuteRef,
+        second: secondRef,
+      };
+
+      const setters = {
+        hour: setHour,
+        minute: setMinute,
+        second: setSecond,
+      };
 
       let nextType: "minute" | "second" | null =
         type === "hour"
@@ -109,71 +117,76 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
             ? "second"
             : null;
 
+      let nextHour = hour;
+      let nextMinute = minute;
+      let nextSecond = second;
+
+      const setNext = (t: "hour" | "minute" | "second", val: string) => {
+        if (t === "hour") nextHour = val;
+        if (t === "minute") nextMinute = val;
+        if (t === "second") nextSecond = val;
+        setters[t](val);
+      };
+
+      const callOnChange = () => {
+        const formatted = [
+          (nextHour || "0").padStart(2, "0"),
+          (nextMinute || "0").padStart(2, "0"),
+          (nextSecond || "0").padStart(2, "0"),
+        ].join(":");
+
+        setValueLocal(formatted);
+        if (onChange) {
+          onChange({
+            target: { name, value: formatted },
+          } as ChangeEvent<HTMLInputElement>);
+        }
+      };
+
       if (value.length <= 2) {
         let num = Number(value);
-        const refMap = {
-          hour: hourRef,
-          minute: minuteRef,
-          second: secondRef,
-        };
 
         if (value.length === 2 && num > maxValues[type]) {
           const firstDigit = value[0];
           const secondDigit = value[1];
-          setters[type](firstDigit);
+
+          setNext(type, firstDigit);
 
           if (nextType) {
             refMap[nextType].current?.focus();
-            setters[nextType](secondDigit);
+            setNext(nextType, secondDigit);
           }
 
+          callOnChange();
           return;
         } else if (value.length === 2) {
-          setters[type](value);
+          setNext(type, value);
           if (nextType) {
             refMap[nextType].current?.focus();
           }
+          callOnChange();
           return;
         }
 
-        setters[type](value);
+        setNext(type, value);
       }
 
       if (value.length > 2) {
         const overflowDigit = value[value.length - 1];
         const trimmedCurrent = value.slice(0, 2);
-        setters[type](trimmedCurrent);
+
+        setNext(type, trimmedCurrent);
 
         if (nextType) {
-          const refMap = {
-            hour: hourRef,
-            minute: minuteRef,
-            second: secondRef,
-          };
           refMap[nextType].current?.focus();
 
-          const nextValue = values[nextType] + overflowDigit;
-          setters[nextType](nextValue.slice(-2));
+          const base = nextType === "minute" ? nextMinute : nextSecond;
+          const nextValue = (base + overflowDigit).slice(-2);
+          setNext(nextType, nextValue);
         }
       }
 
-      const hh = type === "hour" ? values.hour : hour;
-      const mm = type === "minute" ? values.minute : minute;
-      const ss = type === "second" ? values.second : second;
-
-      const formatted = [
-        (hh || "0").padStart(2, "0"),
-        (mm || "0").padStart(2, "0"),
-        (ss || "0").padStart(2, "0"),
-      ].join(":");
-
-      onChange?.({
-        target: {
-          name,
-          value: formatted,
-        },
-      } as ChangeEvent<HTMLInputElement>);
-      setValueLocal(formatted);
+      callOnChange();
     };
 
     return (

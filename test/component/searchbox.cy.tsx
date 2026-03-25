@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import {
   Searchbox,
+  SearchboxProps,
   SearchboxResultMenuItemProps,
 } from "./../../components/searchbox";
 import {
@@ -18,6 +19,44 @@ import { List } from "./../../components/list";
 import { css } from "styled-components";
 
 describe("Searchbox", () => {
+  function ProductSearchbox(
+    props: SearchboxProps & {
+      withOnChange?: boolean;
+    }
+  ) {
+    const [value, setValue] = useState("");
+    return (
+      <Searchbox
+        value={value}
+        onChange={
+          props?.withOnChange ? (e) => setValue(e.target.value) : undefined
+        }
+        {...props}
+      />
+    );
+  }
+
+  context("onChange", () => {
+    context("when given", () => {
+      it("should change the value", () => {
+        cy.mount(<ProductSearchbox withOnChange />);
+
+        cy.findByRole("textbox")
+          .click()
+          .type("1234")
+          .should("have.value", "1234");
+      });
+    });
+
+    context("when not given", () => {
+      it("should not changes the value", () => {
+        cy.mount(<ProductSearchbox />);
+
+        cy.findByRole("textbox").type("1234").should("have.value", "");
+      });
+    });
+  });
+
   context("resultMenu", () => {
     context("list", () => {
       const PEOPLE_MENU: SearchboxResultMenuItemProps[] = [

@@ -1,4 +1,4 @@
-import { Timebox } from "./../../components/timebox";
+import { Timebox, TimeboxProps } from "./../../components/timebox";
 import { Button } from "./../../components/button";
 import {
   RiHome2Line,
@@ -6,8 +6,64 @@ import {
   RiSettings2Line,
   RiUser2Line,
 } from "@remixicon/react";
+import { useState } from "react";
 
 describe("Timebox", () => {
+  function ProductTimebox(
+    props: TimeboxProps & {
+      withOnChange?: boolean;
+    }
+  ) {
+    const [value, setValue] = useState("");
+    return (
+      <Timebox
+        value={value}
+        onChange={
+          props?.withOnChange
+            ? (e) => {
+                setValue(e.target.value);
+                console.log(e.target.value);
+              }
+            : undefined
+        }
+        {...props}
+      />
+    );
+  }
+
+  context("onChange", () => {
+    context("when given", () => {
+      it("should change the value", () => {
+        cy.window().then((win) => {
+          cy.spy(win.console, "log").as("consoleLog");
+        });
+        cy.mount(<ProductTimebox withOnChange />);
+
+        cy.findAllByRole("textbox").eq(0).click().type("1234", { force: true });
+        cy.wait(200);
+
+        ["01:00:00", "12:00:00", "12:03:00", "12:34:00"].map((clock) => {
+          cy.get("@consoleLog").should("have.been.calledWith", clock);
+        });
+      });
+    });
+
+    context("when not given", () => {
+      it("should not changes the value", () => {
+        cy.window().then((win) => {
+          cy.spy(win.console, "log").as("consoleLog");
+        });
+        cy.mount(<ProductTimebox />);
+
+        cy.findAllByRole("textbox").eq(0).type("1234", { force: true });
+
+        ["01:00:00", "12:00:00", "12:03:00", "12:34:00"].map((clock) => {
+          cy.get("@consoleLog").should("not.have.been.calledWith", clock);
+        });
+      });
+    });
+  });
+
   context("with dropdowns", () => {
     it("renders initialize drawer with min-width 200px", () => {
       cy.mount(

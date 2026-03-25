@@ -1,4 +1,4 @@
-import { Textarea } from "./../../components/textarea";
+import { Textarea, TextareaProps } from "./../../components/textarea";
 import { Button } from "./../../components/button";
 import {
   RiHome2Line,
@@ -6,8 +6,44 @@ import {
   RiSettings2Line,
   RiUser2Line,
 } from "@remixicon/react";
+import { useState } from "react";
 
 describe("Textarea", () => {
+  function ProductTextarea(
+    props: TextareaProps & {
+      withOnChange?: boolean;
+    }
+  ) {
+    const [value, setValue] = useState("");
+    return (
+      <Textarea
+        value={value}
+        onChange={
+          props?.withOnChange ? (e) => setValue(e.target.value) : undefined
+        }
+        {...props}
+      />
+    );
+  }
+
+  context("onChange", () => {
+    context("when given", () => {
+      it("should change the value", () => {
+        cy.mount(<ProductTextarea withOnChange />);
+
+        cy.get("#textarea").type("Test").should("have.value", "Test");
+      });
+    });
+
+    context("when not given", () => {
+      it("should not changes the value", () => {
+        cy.mount(<ProductTextarea />);
+
+        cy.get("#textarea").type("Test").should("have.value", "");
+      });
+    });
+  });
+
   context("with dropdowns", () => {
     it("renders initialize drawer with min-width 200px", () => {
       cy.mount(
