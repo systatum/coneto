@@ -52,7 +52,7 @@ interface FieldLaneDropdownInternalProps {
   caption?: string;
   onChange?: (id: string) => void;
   width?: string;
-  styles?: DropdownStylesProps;
+  styles?: FieldLaneDropdownStylesProps;
   withFilter?: boolean;
   render?: (props: {
     render?: (children?: ReactNode) => ReactNode;
@@ -60,7 +60,7 @@ interface FieldLaneDropdownInternalProps {
   }) => ReactNode;
 }
 
-export interface DropdownStylesProps {
+export interface FieldLaneDropdownStylesProps {
   drawerStyle?: CSSProp;
   containerStyle?: CSSProp;
   self?: CSSProp;
