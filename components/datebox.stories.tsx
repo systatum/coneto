@@ -3,7 +3,7 @@ import { ReactElement, useState } from "react";
 import { Datebox } from "./datebox";
 import { Messagebox } from "./messagebox";
 import * as RemixIcons from "@remixicon/react";
-import { DropdownOptionProps } from "./field-lane";
+import { FieldLaneDropdownsOptionProps } from "./field-lane";
 import { css } from "styled-components";
 
 const meta: Meta<typeof Datebox> = {
@@ -102,7 +102,7 @@ export const WithDropdown: Story = {
       { text: "NOV", value: "11" },
       { text: "DEC", value: "12" },
     ];
-    const ATTENDANCE_OPTIONS: DropdownOptionProps[] = [
+    const ATTENDANCE_OPTIONS: FieldLaneDropdownsOptionProps[] = [
       {
         text: "On-site",
         value: "1",

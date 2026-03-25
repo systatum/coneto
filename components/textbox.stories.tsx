@@ -4,7 +4,7 @@ import { useArgs } from "@storybook/preview-api";
 import { useEffect, useState, type ChangeEvent } from "react";
 import * as RemixIcons from "@remixicon/react";
 import { css } from "styled-components";
-import { DropdownOptionProps } from "./field-lane";
+import { FieldLaneDropdownsOptionProps } from "./field-lane";
 
 const meta: Meta<typeof Textbox> = {
   title: "Input Elements/Textbox",
@@ -73,9 +73,9 @@ const meta: Meta<typeof Textbox> = {
         "Dropdown configuration array supporting custom rendering or list-based selection with optional filtering.",
       table: {
         type: {
-          summary: `DropdownProps[]`,
+          summary: `FieldLaneDropdownProps[]`,
           detail: `{
-  options?: DropdownOptionProps[];
+  options?: FieldLaneDropdownsOptionProps[];
   caption?: string;
   onChange?: (id: string) => void;
   width?: string;
@@ -174,7 +174,7 @@ export const WithDropdown: Story = {
       value: "",
     });
 
-    const ATTENDANCE_OPTIONS: DropdownOptionProps[] = [
+    const ATTENDANCE_OPTIONS: FieldLaneDropdownsOptionProps[] = [
       {
         text: "On-site",
         value: "1",

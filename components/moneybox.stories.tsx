@@ -5,7 +5,7 @@ import { ChangeEvent, useState } from "react";
 import { css } from "styled-components";
 import { Calendar } from "./calendar";
 import * as RemixIcons from "@remixicon/react";
-import { DropdownOptionProps } from "./field-lane";
+import { FieldLaneDropdownsOptionProps } from "./field-lane";
 
 const meta: Meta<typeof Moneybox> = {
   title: "Input Elements/Moneybox",
@@ -185,7 +185,7 @@ export const WithDropdown: Story = {
       { text: "DEC", value: "12" },
     ];
 
-    const ATTENDANCE_OPTIONS: DropdownOptionProps[] = [
+    const ATTENDANCE_OPTIONS: FieldLaneDropdownsOptionProps[] = [
       {
         text: "On-site",
         value: "1",
