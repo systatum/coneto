@@ -19,7 +19,6 @@ import {
   getFloatingPlacement,
 } from "./../lib/floating-placement";
 import { Figure, FigureProps } from "./figure";
-import { FalsyOr } from "./../lib/falsy";
 
 export type ButtonVariants = {
   variant?:
@@ -40,7 +39,7 @@ export type ButtonVariants = {
 
 export interface SubMenuButtonProps {
   list?: (
-    subMenuList: FalsyOr<TipMenuItemProps>[],
+    subMenuList: TipMenuItemProps[],
     withFilter?: { withFilter?: boolean }
   ) => React.ReactNode;
   show?: (
