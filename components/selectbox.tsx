@@ -157,14 +157,18 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       return [];
     }, [selectedOptions]);
 
-    const initialState = finalOptions.find(
-      (opt) => String(opt.value) === finalSelectedOptions?.[0]
-    ) ?? {
-      text: isValidDateString(finalSelectedOptions?.[0])
-        ? finalSelectedOptions?.[0]
-        : "",
-      value: typeof selectedOptions === "number" ? 0 : "0",
-    };
+    const initialState = useMemo(
+      () =>
+        finalOptions.find(
+          (opt) => String(opt.value) === finalSelectedOptions?.[0]
+        ) ?? {
+          text: isValidDateString(finalSelectedOptions?.[0])
+            ? finalSelectedOptions?.[0]
+            : "",
+          value: typeof selectedOptions === "number" ? 0 : "0",
+        },
+      [finalOptions, finalSelectedOptions, selectedOptions]
+    );
 
     const handleOnChange = (values: string[]) => {
       if (!onChange) return;
@@ -188,7 +192,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       ) {
         setSelectedOptionsLocal(initialState);
       }
-    }, [finalSelectedOptions, multiple]);
+    }, [finalSelectedOptions, multiple, initialState]);
 
     const [isOpen, setIsOpen] = useState(false);
     const [highlightedIndex, setHighlightedIndex] = useState<number | null>(0);
