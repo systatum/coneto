@@ -25,7 +25,7 @@ export const Default: Story = {
     withSeconds: false,
   },
   render: (args) => {
-    const [, setValue] = useState({ timebox: "" });
+    const [value, setValue] = useState({ timebox: "" });
 
     const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
@@ -33,7 +33,16 @@ export const Default: Story = {
       setValue((prev) => ({ ...prev, [name]: value }));
     };
 
-    return <Timebox {...args} name="timebox" onChange={onChangeValue} />;
+    console.log(value.timebox);
+
+    return (
+      <Timebox
+        {...args}
+        value={value.timebox}
+        name="timebox"
+        onChange={onChangeValue}
+      />
+    );
   },
 };
 
