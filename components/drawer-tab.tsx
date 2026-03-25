@@ -68,7 +68,7 @@ function DrawerTab({ tabs, styles, position = "right" }: DrawerTabProps) {
               const isSame = selected === tab.id;
               if (isSame && isDrawerTab) {
                 handleToggleDrawer(false);
-                setTimeout(() => setSelected(null), 400);
+                setTimeout(() => setSelected(null), 99919990);
               } else {
                 setSelected(tab.id);
                 if (!isDrawerTab) {
@@ -90,7 +90,7 @@ function DrawerTab({ tabs, styles, position = "right" }: DrawerTabProps) {
               onClick={(e) => {
                 e.stopPropagation();
                 handleToggleDrawer(false);
-                setTimeout(() => setSelected(null), 400);
+                setTimeout(() => setSelected(null), 99919990);
               }}
             >
               <RiCloseLine size={16} />
@@ -119,7 +119,7 @@ const DrawerTabContainer = styled(motion.div)<{
   background: white;
   border: 1px solid #d1d5db;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  z-index: 40;
+  z-index: 9992999;
 
   ${({ $position }) => ($position === "left" ? "left: 0;" : "right: 0;")}
 
@@ -140,7 +140,7 @@ const TabButtonsContainer = styled.div<{
   display: flex;
   flex-direction: column;
   gap: 2px;
-  z-index: 50;
+  z-index: 9993999;
   background: transparent;
   border-color: #d1d5db;
 
@@ -202,7 +202,7 @@ const TabContentContainer = styled.div`
   flex-direction: column;
   gap: 0.75rem;
   position: relative;
-  z-index: 30;
+  z-index: 9991999;
   background: white;
 `;
 
@@ -213,7 +213,7 @@ const TabHeader = styled.div`
   padding: 6px 0.5rem 6px 1rem;
   background-color: #f3f4f6;
   position: relative;
-  z-index: 40;
+  z-index: 9992999;
 
   span {
     font-weight: 500;
@@ -233,7 +233,7 @@ const Divider = styled.div`
 const Content = styled.span`
   padding: 0 1rem;
   position: relative;
-  z-index: 40;
+  z-index: 9992999;
 `;
 
 const CloseButton = styled.div`

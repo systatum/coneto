@@ -182,7 +182,7 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
           createPortal(
             <div
               ref={refs.setFloating}
-              style={{ ...floatingStyles, zIndex: 12000 }}
+              style={{ ...floatingStyles, zIndex: 9992999 }}
             >
               <TooltipContainer
                 placement={placement}

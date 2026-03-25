@@ -8,7 +8,7 @@ import { COUNTRY_CODES } from "./../constants/countries";
 import { css } from "styled-components";
 import { Card } from "./card";
 import { ColumnTableProps, SubMenuListTableProps, Table } from "./table";
-import { RiAddBoxLine, RiEdit2Line } from "@remixicon/react";
+import { RiAddBoxLine, RiDeleteBin2Line, RiEdit2Line } from "@remixicon/react";
 
 const meta: Meta<typeof PaperDialog> = {
   title: "Stage/PaperDialog",
@@ -515,7 +515,10 @@ export const Nested: Story = {
       console.log("Selected rows:", data);
     };
 
-    const ROW_ACTION = (rowId: string): SubMenuListTableProps[] => {
+    const ROW_ACTIONS = (
+      rowId: string,
+      withOnClick?: boolean
+    ): SubMenuListTableProps[] => {
       const name = rowId.split("-")[0];
       const dataFamily = rows.find((props) => props.name === name);
       return [
@@ -526,8 +529,16 @@ export const Nested: Story = {
             color: "gray",
           },
           onClick: async () => {
-            await setFamilyRows(dataFamily);
-            await dialogRef1.current.openDialog();
+            if (withOnClick) {
+              await setFamilyRows(dataFamily);
+              await dialogRef1.current.openDialog();
+            }
+          },
+        },
+        {
+          caption: "Delete",
+          icon: {
+            image: RiDeleteBin2Line,
           },
         },
       ];
@@ -586,7 +597,7 @@ export const Nested: Story = {
               <Table.Row
                 key={rowIndex}
                 rowId={`${rowValue.name}-${rowValue.status}-${rowValue.gender}-${rowValue.birthday}`}
-                actions={ROW_ACTION}
+                actions={(columnCaption) => ROW_ACTIONS(columnCaption, true)}
                 content={[
                   rowValue.name,
                   rowValue.status,
@@ -645,6 +656,7 @@ export const Nested: Story = {
                 {filteredFamilyRows?.map((rowValue, rowIndex) => (
                   <Table.Row
                     key={rowIndex}
+                    actions={ROW_ACTIONS}
                     rowId={`${rowValue.name}-${rowValue.status}-${rowValue.gender}-${rowValue.birthday}`}
                     content={[
                       rowValue.name,

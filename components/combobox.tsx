@@ -581,7 +581,7 @@ const listItemTitleWithRender = css`
 
 const DrawerWrapper = styled.ul<{ $width?: number }>`
   position: absolute;
-  z-index: 1000;
+  z-index: 9992999;
   max-height: 15rem;
   overflow-y: auto;
   border-radius: 4px;

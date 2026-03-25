@@ -365,7 +365,7 @@ function Button({
 }
 
 const DropdownWrapper = styled.div<{ $style?: CSSProp }>`
-  z-index: 12000;
+  z-index: 9992999;
 
   ${({ $style }) => $style};
 `;
