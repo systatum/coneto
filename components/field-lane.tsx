@@ -12,7 +12,7 @@ export interface FieldLaneProps {
   showError?: boolean;
   errorIconPosition?: "absolute" | "relative" | "none";
   errorMessage?: string;
-  dropdowns?: DropdownProps[];
+  dropdowns?: FieldLaneDropdownProps[];
   styles?: FieldLaneStylesProps;
   helper?: string;
   disabled?: boolean;
@@ -44,11 +44,11 @@ interface FieldLaneInternalActionsProps {
   titleShowDelay?: number;
 }
 
-export type DropdownProps = FalsyOr<DropdownInternalProps>;
+export type FieldLaneDropdownProps = FalsyOr<FieldLaneDropdownInternalProps>;
 
-interface DropdownInternalProps {
+interface FieldLaneDropdownInternalProps {
   disabled?: boolean;
-  options?: DropdownOptionProps[];
+  options?: FieldLaneDropdownsOptionProps[];
   caption?: string;
   onChange?: (id: string) => void;
   width?: string;
@@ -66,7 +66,7 @@ export interface DropdownStylesProps {
   self?: CSSProp;
 }
 
-export interface DropdownOptionProps {
+export interface FieldLaneDropdownsOptionProps {
   text: string;
   value: string;
   icon?: FigureProps;
@@ -102,7 +102,7 @@ function FieldLane({
     <InputWrapper $style={styles?.controlStyle}>
       {Array.isArray(dropdowns) &&
         dropdowns
-          ?.filter((dropdown): dropdown is DropdownInternalProps =>
+          ?.filter((dropdown): dropdown is FieldLaneDropdownInternalProps =>
             Boolean(dropdown)
           )
           ?.map((dropdown, index) => {
