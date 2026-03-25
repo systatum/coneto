@@ -88,7 +88,10 @@ export const CustomRendering: Story = {
       requestCreatedBy: "alim@systatum.com",
       lastSynced: "2025-06-20",
       createdOn: "2025-06-19",
-      desc: generateSentence(),
+      desc: generateSentence({
+        minLen: 100,
+        maxLen: 140,
+      }),
     };
 
     return (
