@@ -216,6 +216,7 @@ function BaseCapsule({
               <Figure
                 aria-label="capsule-icon"
                 {...tab.icon}
+                color={isActive ? "white" : "#111827"}
                 size={tab.icon?.size ?? 14}
               />
             )}
