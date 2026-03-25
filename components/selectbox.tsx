@@ -190,7 +190,15 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
         finalSelectedOptions[0] !== "" &&
         !multiple
       ) {
-        setSelectedOptionsLocal(initialState);
+        setSelectedOptionsLocal((prev) => {
+          if (
+            prev.value === initialState.value &&
+            prev.text === initialState.text
+          ) {
+            return prev;
+          }
+          return initialState;
+        });
       }
     }, [finalSelectedOptions, multiple, initialState]);
 
