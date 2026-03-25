@@ -4,13 +4,12 @@ import React, { ReactNode, useMemo, useState } from "react";
 import { Button } from "./button";
 import { Searchbox } from "./searchbox";
 import { Figure, FigureProps } from "./figure";
-import { FalsyOr } from "./../lib/falsy";
 
 export type TipMenuItemVariantType = "sm" | "md";
 
 export interface TipMenuProps {
   children?: ReactNode;
-  subMenuList?: FalsyOr<TipMenuItemProps>[];
+  subMenuList?: TipMenuItemProps[];
   setIsOpen?: () => void;
   variant?: TipMenuItemVariantType;
   withFilter?: boolean;
@@ -88,6 +87,7 @@ function TipMenu({
           icon={menu.icon}
           isDangerous={menu.isDangerous}
           className={menu.className}
+          hidden={menu.hidden}
           onClick={(e) => {
             e.stopPropagation();
 
@@ -110,6 +110,7 @@ export interface TipMenuItemProps {
   isDangerous?: boolean;
   variant?: TipMenuItemVariantType;
   className?: string;
+  hidden?: boolean;
 }
 
 function TipMenuItem({
@@ -119,7 +120,12 @@ function TipMenuItem({
   isDangerous = false,
   variant,
   className,
+  hidden,
 }: TipMenuItemProps) {
+  if (hidden) {
+    return;
+  }
+
   return (
     <StyledTipMenuItem
       $variant={variant}
