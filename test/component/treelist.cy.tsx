@@ -302,7 +302,8 @@ describe("Treelist", () => {
             onClick: onMention,
             icon: { image: RiAtLine },
           },
-          false && {
+          {
+            hidden: true,
             id: "test",
             caption: "Test",
             icon: { image: RiAtLine },
@@ -328,8 +329,8 @@ describe("Treelist", () => {
         });
       });
 
-      context("when given with falsy field", () => {
-        it("renders without falsy content", () => {
+      context("when given with hidden field", () => {
+        it("renders without hidden content", () => {
           cy.mount(
             <TreeList
               content={TREE_LIST_DATA}
