@@ -17,7 +17,6 @@ import styled, { css, CSSProp } from "styled-components";
 import { Button, ButtonStylesProps } from "./button";
 import { Figure, FigureProps } from "./figure";
 import { RiCloseLine } from "@remixicon/react";
-import { FalsyOr } from "./../lib/falsy";
 
 export interface WindowProps {
   orientation?: "horizontal" | "vertical";
@@ -37,7 +36,7 @@ export interface WindowCellProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "style"> {
   children?: ReactNode;
   styles?: WindowCellStylesProps;
-  actions?: FalsyOr<WindowActionProps>[];
+  actions?: WindowActionProps[];
 }
 
 export interface WindowCellStylesProps {
@@ -48,6 +47,7 @@ export interface WindowActionProps {
   onClick?: () => void;
   icon?: FigureProps;
   styles?: WindowActionStylesProps;
+  hidden?: boolean;
 }
 
 export type WindowActionStylesProps = ButtonStylesProps;
@@ -257,9 +257,7 @@ const WindowCell = forwardRef<HTMLDivElement, WindowCellProps>(
     } = props as WindowCellInternalProps;
 
     const filteredActions = Array.isArray(actions)
-      ? actions?.filter((action): action is WindowActionProps =>
-          Boolean(action)
-        )
+      ? actions?.filter((action) => !action?.hidden)
       : [];
 
     const hasActions = filteredActions.length > 0;

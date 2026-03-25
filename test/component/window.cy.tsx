@@ -39,7 +39,8 @@ describe("Window", () => {
           onMouseLeave={() => console.log("now is leaving window-cell")}
           onClick={() => console.log("now is clicking window-cell")}
           actions={[
-            false && {
+            {
+              hidden: true,
               icon: {
                 image: RiCloseFill,
               },
@@ -56,8 +57,8 @@ describe("Window", () => {
       );
     }
     context("actions", () => {
-      context("when given with falsy", () => {
-        it("should ignore falsy actions", () => {
+      context("when given with hidden", () => {
+        it("should ignore hidden actions", () => {
           cy.mount(<WindowCellDefault />);
           cy.findAllByLabelText("window-button").should("have.length", 1);
         });

@@ -252,7 +252,8 @@ describe("Combobox", () => {
           image: RiAddLine,
         },
       },
-      false && {
+      {
+        hidden: true,
         title: "Delete Fruit",
         onClick: () => {},
         icon: {
@@ -276,8 +277,8 @@ describe("Combobox", () => {
       cy.findByText("Add Fruit").should("exist");
     });
 
-    context("when given with falsy field", () => {
-      it("renders without falsy action", () => {
+    context("when given with hidden field", () => {
+      it("renders without hidden action", () => {
         cy.mount(
           <ProductCombobox
             options={null}

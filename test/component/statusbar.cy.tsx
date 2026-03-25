@@ -461,6 +461,31 @@ describe("Statusbar", () => {
           cy.findByText("This is the button").should("exist");
         });
       });
+
+      context("when given hidden", () => {
+        it("should render without hidden button", () => {
+          cy.mount(
+            <ProductStatusbar
+              transparent={false}
+              content={{
+                left: [
+                  {
+                    text: "Test",
+                  },
+                  {
+                    hidden: true,
+                    text: "Hidden",
+                  },
+                ],
+              }}
+            />
+          );
+          cy.findAllByLabelText("statusbar-text-wrapper").eq(0).should("exist");
+          cy.findAllByLabelText("statusbar-text-wrapper")
+            .eq(1)
+            .should("not.exist");
+        });
+      });
     });
 
     context("button", () => {
@@ -482,6 +507,33 @@ describe("Statusbar", () => {
         cy.findByLabelText("statusbar-button")
           .should("exist")
           .and("have.css", "background-color", "rgb(236, 236, 236)");
+      });
+
+      context("when given hidden", () => {
+        it("should render without hidden button", () => {
+          cy.mount(
+            <ProductStatusbar
+              transparent={false}
+              content={{
+                left: [
+                  {
+                    button: {
+                      children: "Button",
+                    },
+                  },
+                  {
+                    hidden: true,
+                    button: {
+                      children: "Button",
+                    },
+                  },
+                ],
+              }}
+            />
+          );
+          cy.findAllByLabelText("statusbar-button").eq(0).should("exist");
+          cy.findAllByLabelText("statusbar-button").eq(1).should("not.exist");
+        });
       });
     });
   });

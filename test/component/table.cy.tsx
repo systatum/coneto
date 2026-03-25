@@ -892,7 +892,8 @@ describe("Table", () => {
           console.log(`${rowId} was deleted`);
         },
       },
-      false && {
+      {
+        hidden: true,
         caption: "Arhive",
         icon: { image: RiArchive2Fill, color: "gray" },
         onClick: () => {
@@ -2042,8 +2043,8 @@ describe("Table", () => {
         );
       });
 
-      context("when given with falsy field", () => {
-        it("renders without falsy action", () => {
+      context("when given with hidden field", () => {
+        it("renders without hidden action", () => {
           cy.mount(<TableWithRowActions actions={ROW_ACTIONS} />);
 
           cy.findAllByLabelText("table-row").eq(2).trigger("mouseover");

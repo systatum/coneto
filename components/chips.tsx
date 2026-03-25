@@ -28,7 +28,6 @@ import { Textbox } from "./textbox";
 import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
-import { isTruthy } from "./../lib/falsy";
 
 export type ChipActionsProps = BadgeActionProps;
 
@@ -605,20 +604,22 @@ function ChipsItem({
   inputRef?: RefObject<HTMLInputElement>;
 }) {
   const finalValueActions =
-    badge.actions?.filter(isTruthy).map((action) => ({
-      ...action,
-      styles: {
-        self: css`
-          opacity: 0;
-          ${hovered === badge.id &&
-          css`
-            opacity: 1;
-          `}
-        `,
-      },
-      size: 14,
-      onClick: () => action.onClick && action.onClick?.(badge),
-    })) ?? [];
+    badge.actions
+      ?.filter((action) => !action?.hidden)
+      .map((action) => ({
+        ...action,
+        styles: {
+          self: css`
+            opacity: 0;
+            ${hovered === badge.id &&
+            css`
+              opacity: 1;
+            `}
+          `,
+        },
+        size: 14,
+        onClick: () => action.onClick && action.onClick?.(badge),
+      })) ?? [];
 
   return (
     <ChipItemWrapper

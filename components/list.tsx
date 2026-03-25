@@ -30,7 +30,6 @@ import ContextMenu, { ContextMenuActionsProps } from "./context-menu";
 import { ActionButton, ActionButtonProps } from "./action-button";
 import { OverlayBlocker } from "./overlay-blocker";
 import { Figure, FigureProps } from "./figure";
-import { FalsyOr } from "./../lib/falsy";
 
 export interface ListProps extends ListMaxItemsProp {
   searchable?: boolean;
@@ -67,7 +66,7 @@ export interface ListOnOpenProps {
   isOpen?: boolean;
 }
 
-export type ListItemActionProps = FalsyOr<ContextMenuActionsProps>;
+export type ListItemActionProps = ContextMenuActionsProps;
 
 interface ListAlwaysShowDragIconProp {
   alwaysShowDragIcon?: boolean;
@@ -362,9 +361,7 @@ const ListContainer = styled.div<{ $containerStyle?: CSSProp }>`
   ${(props) => props.$containerStyle}
 `;
 
-export type ListGroupActionsProps = FalsyOr<ListGroupInternalActionsProps>;
-
-interface ListGroupInternalActionsProps
+export interface ListGroupActionsProps
   extends Omit<ActionButtonProps, "onClick"> {
   onClick?: (e?: string) => void;
 }
@@ -442,9 +439,7 @@ function ListGroup({
   const opened = isOpen(id, "group");
 
   const filteredActions = Array.isArray(actions)
-    ? actions?.filter((action): action is ListGroupInternalActionsProps =>
-        Boolean(action)
-      )
+    ? actions?.filter((action) => !action?.hidden)
     : [];
 
   const hasActions = filteredActions?.length > 0;
@@ -1132,9 +1127,7 @@ const ListItem = forwardRef<HTMLLIElement, ListItemProps>(
                   const listActions = actions(idFullname);
 
                   const actionsWithIcons = listActions
-                    ?.filter((action): action is ContextMenuActionsProps =>
-                      Boolean(action)
-                    )
+                    ?.filter((action) => !action?.hidden)
                     .map((action) => ({
                       ...action,
                       icon: {

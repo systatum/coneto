@@ -1,7 +1,6 @@
 import { RiCheckLine, RiCloseLine } from "@remixicon/react";
 import { Badge, BadgeActionProps } from "./../../components/badge";
 import { strToColor } from "./../../lib/code-color";
-import { FalsyOr } from "./../../lib/falsy";
 
 describe("Badge", () => {
   function BadgeDefault() {
@@ -115,8 +114,9 @@ describe("Badge", () => {
       },
     ];
 
-    const contentWithFalsyActions: FalsyOr<BadgeActionProps>[] = [
-      false && {
+    const contentWithHiddenActions: BadgeActionProps[] = [
+      {
+        hidden: true,
         icon: { image: RiCheckLine },
         onClick: () => {
           console.log("Data was deleted");
@@ -132,12 +132,12 @@ describe("Badge", () => {
       },
     ];
 
-    context("when given with falsy", () => {
-      it("renders action button when not falsy", () => {
+    context("when given with hidden", () => {
+      it("renders action button when not hidden", () => {
         cy.mount(
           <Badge
             withCircle
-            actions={contentWithFalsyActions}
+            actions={contentWithHiddenActions}
             caption="With Actions"
           />
         );

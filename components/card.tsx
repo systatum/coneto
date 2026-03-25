@@ -9,7 +9,6 @@ import styled, { css, CSSProp } from "styled-components";
 import { ActionButton, ActionButtonProps } from "./action-button";
 import { Togglebox } from "./togglebox";
 import { AnimatePresence, motion } from "framer-motion";
-import { FalsyOr } from "./../lib/falsy";
 
 export interface CardProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "title" | "style"> {
@@ -54,9 +53,7 @@ export interface CardStylesProps {
   subtitleStyle?: CSSProp;
 }
 
-export type CardActionsProps = FalsyOr<CardInternalActionsProps>;
-
-type CardInternalActionsProps = ActionButtonProps;
+export type CardActionsProps = ActionButtonProps;
 
 function Card({
   children,
@@ -76,9 +73,7 @@ function Card({
   ...props
 }: CardProps) {
   const filteredHeaderActions = Array.isArray(headerActions)
-    ? headerActions?.filter((action): action is CardInternalActionsProps =>
-        Boolean(action)
-      )
+    ? headerActions?.filter((action) => !action?.hidden)
     : [];
 
   const hasActions = filteredHeaderActions.length > 0;

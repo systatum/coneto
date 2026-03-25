@@ -5,7 +5,6 @@ import { Button } from "./button";
 import { StatefulForm } from "./stateful-form";
 import { Tooltip } from "./tooltip";
 import { Figure, FigureProps } from "./figure";
-import { FalsyOr } from "./../lib/falsy";
 
 export interface FieldLaneProps {
   label?: string;
@@ -33,20 +32,17 @@ export interface FieldLaneStylesProps {
   bodyStyle?: CSSProp;
 }
 
-export type FieldLaneActionsProps = FalsyOr<FieldLaneInternalActionsProps>;
-
-interface FieldLaneInternalActionsProps {
+export interface FieldLaneActionsProps {
   title?: string;
   icon?: FigureProps;
   iconColor?: string;
   onClick?: (e: React.MouseEvent) => void;
   disabled?: boolean;
   titleShowDelay?: number;
+  hidden?: boolean;
 }
 
-export type FieldLaneDropdownProps = FalsyOr<FieldLaneDropdownInternalProps>;
-
-interface FieldLaneDropdownInternalProps {
+export interface FieldLaneDropdownProps {
   disabled?: boolean;
   options?: FieldLaneDropdownsOptionProps[];
   caption?: string;
@@ -58,6 +54,7 @@ interface FieldLaneDropdownInternalProps {
     render?: (children?: ReactNode) => ReactNode;
     setCaption?: (caption?: string) => void;
   }) => ReactNode;
+  hidden?: boolean;
 }
 
 export interface FieldLaneDropdownStylesProps {
@@ -91,9 +88,7 @@ function FieldLane({
   required,
 }: FieldLaneProps) {
   const filteredActions = Array.isArray(actions)
-    ? actions?.filter((action): action is FieldLaneInternalActionsProps =>
-        Boolean(action)
-      )
+    ? actions?.filter((action) => !action?.hidden)
     : [];
 
   const hasActions = filteredActions.length > 0;
@@ -102,9 +97,7 @@ function FieldLane({
     <InputWrapper $style={styles?.controlStyle}>
       {Array.isArray(dropdowns) &&
         dropdowns
-          ?.filter((dropdown): dropdown is FieldLaneDropdownInternalProps =>
-            Boolean(dropdown)
-          )
+          ?.filter((dropdown) => !dropdown?.hidden)
           ?.map((dropdown, index) => {
             return (
               <Button

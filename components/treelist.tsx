@@ -13,7 +13,6 @@ import { LoadingSpinner } from "./loading-spinner";
 import { SubMenuButtonProps } from "./button";
 import { Tooltip } from "./tooltip";
 import { Figure, FigureProps } from "./figure";
-import { FalsyOr } from "./../lib/falsy";
 
 export interface TreeListProps
   extends Omit<
@@ -68,10 +67,7 @@ export interface TreeListContentProps {
   actions?: TreeListContentActionsProps[];
 }
 
-export type TreeListContentActionsProps =
-  FalsyOr<TreeListContentInternalActions>;
-
-interface TreeListContentInternalActions
+export interface TreeListContentActionsProps
   extends Omit<ContextMenuActionsProps, "onClick"> {
   onClick?: (id?: string) => void;
 }
@@ -89,9 +85,7 @@ export interface TreeListItemsProps {
   initialState?: TreeListInitialState;
 }
 
-export type TreeListItemsActionsProps = FalsyOr<TreeListItemInternalActions>;
-
-interface TreeListItemInternalActions
+export interface TreeListItemsActionsProps
   extends Omit<ContextMenuActionsProps, "onClick"> {
   onClick?: (id?: string) => void;
 }
@@ -101,15 +95,14 @@ export interface TreeListItemsOnClickProps {
   preventDefault?: () => void;
 }
 
-export type TreeListActionsProps = FalsyOr<TreeListInternalActionsProps>;
-
-interface TreeListInternalActionsProps {
+export interface TreeListActionsProps {
   id: string;
   caption?: string;
   onClick?: (props?: { setActive?: (prop: boolean) => void }) => void;
   icon?: FigureProps;
   styles?: { self?: CSSProp };
   subMenu?: (props: SubMenuTreeListProps) => ReactNode;
+  hidden?: boolean;
 }
 
 type SubMenuTreeListProps = Omit<SubMenuButtonProps, "list">;
@@ -232,9 +225,7 @@ function TreeList({
   const selectedGroupId = findGroupOfItem(content, isSelected);
 
   const filteredActions = Array.isArray(actions)
-    ? actions?.filter((action): action is TreeListInternalActionsProps =>
-        Boolean(action)
-      )
+    ? actions?.filter((action) => !action?.hidden)
     : [];
 
   const hasActions = filteredActions.length > 0;
@@ -390,10 +381,7 @@ function TreeList({
                       const listActions = item.actions;
 
                       const actionsWithIcons = item.actions
-                        ?.filter(
-                          (action): action is TreeListContentInternalActions =>
-                            Boolean(action)
-                        )
+                        ?.filter((action) => !action?.hidden)
                         .map((action) => ({
                           ...action,
                           icon: {
@@ -958,9 +946,7 @@ function TreeListItem<T extends TreeListItemsProps>({
             const listActions = item.actions;
 
             const actionsWithIcons = item.actions
-              ?.filter((action): action is TreeListItemInternalActions =>
-                Boolean(action)
-              )
+              ?.filter((action) => !action?.hidden)
               .map((action) => ({
                 ...action,
                 icon: {

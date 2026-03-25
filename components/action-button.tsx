@@ -14,6 +14,7 @@ export interface ActionButtonProps {
   variant?: ButtonVariants["variant"];
   className?: string;
   pressed?: boolean;
+  hidden?: boolean;
 }
 
 export interface ActionButtonStylesProps {
@@ -35,7 +36,11 @@ export function ActionButton({
   forTable,
   className,
   pressed,
+  hidden,
 }: ActionButtonProps & { forTable?: boolean }) {
+  if (hidden) {
+    return;
+  }
   return (
     <Button
       onClick={(e) => {

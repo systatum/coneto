@@ -23,7 +23,6 @@ import { List, ListItemStylesProps } from "./list";
 import { FieldLaneProps } from "./field-lane";
 import { Figure, FigureProps } from "./figure";
 import { StatefulForm } from "./stateful-form";
-import { FalsyOr } from "./../lib/falsy";
 
 interface BaseComboboxProps {
   selectedOptions?: SelectboxSelectedOptions;
@@ -56,13 +55,12 @@ export interface ComboboxStylesProps
   labelStyle?: CSSProp;
 }
 
-export type ComboboxActionProps = FalsyOr<ComboboxInternalActionProps>;
-
-export interface ComboboxInternalActionProps {
+export interface ComboboxActionProps {
   onClick?: () => void;
   icon?: FigureProps;
   title: string;
   styles?: ComboboxActionStylesProps;
+  hidden?: boolean;
 }
 
 export type ComboboxActionStylesProps = ListItemStylesProps;
@@ -311,9 +309,7 @@ function ComboboxDrawer({
   }, [highlightedIndex, multiple]);
 
   const filteredActions = Array.isArray(actions)
-    ? actions?.filter((action): action is ComboboxInternalActionProps =>
-        Boolean(action)
-      )
+    ? actions?.filter((action) => !action?.hidden)
     : [];
 
   const hasActions = filteredActions.length > 0;

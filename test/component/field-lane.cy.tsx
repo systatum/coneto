@@ -93,8 +93,8 @@ describe("FieldLane", () => {
       );
     });
 
-    context("when given with falsy field", () => {
-      it("renders without falsy dropdown", () => {
+    context("when given with hidden field", () => {
+      it("renders without hidden dropdown", () => {
         cy.mount(
           <FieldLane
             dropdowns={[
@@ -131,7 +131,8 @@ describe("FieldLane", () => {
                   },
                 ],
               },
-              false && {
+              {
+                hidden: true,
                 caption: "False Dropdown",
                 options: [
                   {
