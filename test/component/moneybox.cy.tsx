@@ -1,7 +1,55 @@
 import { ChangeEvent, useState } from "react";
-import { CurrencyOptionsProps, Moneybox } from "./../../components/moneybox";
+import {
+  CurrencyOptionsProps,
+  Moneybox,
+  MoneyboxProps,
+} from "./../../components/moneybox";
 
 describe("Moneybox", () => {
+  function ProductMoneybox(
+    props: MoneyboxProps & {
+      withOnChange?: boolean;
+    }
+  ) {
+    const [value, setValue] = useState("");
+    return (
+      <Moneybox
+        label="Color"
+        value={value}
+        onChange={
+          props?.withOnChange ? (e) => setValue(e.target.value) : undefined
+        }
+        {...props}
+      />
+    );
+  }
+
+  context("onChange", () => {
+    context("when given", () => {
+      it("should change the value", () => {
+        cy.mount(<ProductMoneybox withOnChange />);
+
+        cy.findByRole("textbox").click().type("1234");
+
+        cy.get("body").click("bottomRight");
+
+        cy.findByRole("textbox").should("have.value", "1,234");
+      });
+    });
+
+    context("when not given", () => {
+      it("should not changes the value", () => {
+        cy.mount(<ProductMoneybox />);
+
+        cy.findByRole("textbox").click().type("1234");
+
+        cy.get("body").click("bottomRight");
+
+        cy.findByRole("textbox").should("have.value", "");
+      });
+    });
+  });
+
   context("editableCurrency", () => {
     const CURRENCY_OPTIONS: CurrencyOptionsProps[] = [
       { id: "IDR", name: "Indonesian Rupiah", symbol: "Rp" },
