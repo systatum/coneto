@@ -58,15 +58,15 @@ describe("PaperDialog", () => {
   });
 
   context("when nested", () => {
-    it("should render nested dialog", () => {
+    beforeEach(() => {
       cy.visit(getIdContent("stage-paperdialog--nested"));
-
       cy.findAllByLabelText("table-row")
         .eq(0)
         .trigger("mouseover")
         .then(() => {
           cy.wait(100);
           cy.findAllByRole("button").eq(0).click();
+          cy.findByText("Edit").eq(0).click();
         });
 
       cy.wait(100);
@@ -74,6 +74,23 @@ describe("PaperDialog", () => {
       cy.findByText(
         "Detailed view of employees and their family registry records"
       ).should("exist");
+    });
+
+    context("when open the action-button inside of Paper", () => {
+      it("should render the drawer", () => {
+        cy.findAllByLabelText("table-row")
+          .eq(5)
+          .trigger("mouseover")
+          .then(() => {
+            cy.wait(100);
+            cy.findAllByRole("button").eq(4).click();
+            cy.findByText("Edit").eq(0).should("exist");
+            cy.findByText("Delete").eq(0).should("exist");
+          });
+      });
+    });
+
+    it("should render nested dialog", () => {
       cy.findByText("Add Family").should("exist").click({ force: true });
       cy.findByText("Nested").should("exist");
     });
