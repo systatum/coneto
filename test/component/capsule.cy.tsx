@@ -19,6 +19,29 @@ describe("Capsule", () => {
         .eq(0)
         .should("have.css", "border-radius", "8px");
     });
+
+    context("with icon", () => {
+      context("when active", () => {
+        it("renders capsule with 8px for active", () => {
+          cy.mount(<Capsule activeTab="new" tabs={VIEW_WITH_ICON_MODES} />);
+          cy.findByText("New")
+            .should("exist")
+            .should("have.css", "color", "rgb(255, 255, 255)");
+          cy.findByText("List")
+            .should("exist")
+            .should("have.css", "color", "rgb(17, 24, 39)");
+
+          cy.findAllByLabelText("capsule-icon")
+            .eq(0)
+            .should("exist")
+            .should("have.css", "color", "rgb(255, 255, 255)");
+          cy.findAllByLabelText("capsule-icon")
+            .eq(1)
+            .should("exist")
+            .should("have.css", "color", "rgb(17, 24, 39)");
+        });
+      });
+    });
   });
 
   context("when only title", () => {
