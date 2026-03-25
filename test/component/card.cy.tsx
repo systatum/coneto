@@ -271,8 +271,8 @@ describe("Card", () => {
       cy.findByLabelText("action-button-icon").should("not.exist");
     });
 
-    context("when given falsy action", () => {
-      it("should render without falsy action", () => {
+    context("when given hidden action", () => {
+      it("should render without hidden action", () => {
         cy.mount(
           <ProductCard
             headerActions={[
@@ -283,7 +283,8 @@ describe("Card", () => {
                   console.log(`Edit button was clicked`);
                 },
               },
-              false && {
+              {
+                hidden: true,
                 caption: "Delete fields",
                 icon: { image: RiDeleteBack2Fill },
                 onClick: () => {
