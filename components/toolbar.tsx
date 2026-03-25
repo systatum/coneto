@@ -20,7 +20,6 @@ import {
 } from "@floating-ui/react";
 import styled, { css, CSSProp } from "styled-components";
 import { Figure, FigureProps } from "./figure";
-import { FalsyOr } from "./../lib/falsy";
 
 export interface ToolbarProps {
   children: ReactNode;
@@ -46,7 +45,7 @@ export interface ToolbarMenuProps {
   iconSize?: number;
 }
 
-export type ToolbarSubMenuProps = FalsyOr<TipMenuItemProps>;
+export type ToolbarSubMenuProps = TipMenuItemProps;
 
 export interface ToolbarMenuSylesProps {
   dropdownStyle?: CSSProp;

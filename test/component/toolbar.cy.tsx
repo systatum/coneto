@@ -57,7 +57,8 @@ describe("Toolbar", () => {
       isDangerous: true,
       onClick: () => console.log("Shared"),
     },
-    false && {
+    {
+      hidden: true,
       caption: "Edit",
       icon: { image: RiEditLine, color: "yellow" },
       onClick: () => console.log("Edit mode"),
@@ -165,8 +166,8 @@ describe("Toolbar", () => {
           });
       });
 
-      context("when given with falsy", () => {
-        it("should not show falsy item", () => {
+      context("when given with hidden", () => {
+        it("should not show hidden item", () => {
           cy.viewport(800, 700);
           cy.mount(
             <Toolbar>
