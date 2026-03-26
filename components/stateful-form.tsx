@@ -746,6 +746,11 @@ function FormFields<T extends FieldValues>({
 
                       ${field.timeboxProps?.styles?.self};
                     `,
+                    inputWrapperStyle: css`
+                      width: 100%;
+                      ${field.timeboxProps?.styles?.inputWrapperStyle};
+                    `,
+
                     containerStyle: css`
                       width: 100%;
 
