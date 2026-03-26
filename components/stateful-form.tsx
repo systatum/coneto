@@ -1739,6 +1739,7 @@ function FormFields<T extends FieldValues>({
                       label={field.title}
                       helper={field.helper}
                       required={field.required}
+                      name={field.name}
                       rating={controllerField.value}
                       onChange={(e) => {
                         controllerField.onChange(e.target.value);
