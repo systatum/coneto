@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { Radio, RadioOptionsProps } from "./radio";
+import { Radio, RadioOptionProps } from "./radio";
 import { ChangeEvent, ComponentProps, Fragment, useState } from "react";
 import { useArgs } from "@storybook/preview-api";
 import { css } from "styled-components";
@@ -85,7 +85,7 @@ export const Default: Story = {
     value: "comments",
   },
   render: (args) => {
-    const RADIO_OPTIONS: RadioOptionsProps[] = [
+    const RADIO_OPTIONS: RadioOptionProps[] = [
       {
         value: "comments",
         label: "Comments",
@@ -137,7 +137,7 @@ export const WithButton: Story = {
     value: "comments",
   },
   render: (args) => {
-    const RADIO_OPTIONS_WITH_ICON: RadioOptionsProps[] = [
+    const RADIO_OPTIONS_WITH_ICON: RadioOptionProps[] = [
       {
         value: "text",
         label: "Text",
@@ -201,7 +201,7 @@ export const WithButton: Story = {
   },
 };
 
-const DAILY_RADIO_OPTIONS: RadioOptionsProps[] = [
+const DAILY_RADIO_OPTIONS: RadioOptionProps[] = [
   {
     value: "daily",
     label: "Daily",
@@ -320,7 +320,7 @@ export const WithError: Story = {
 
 export const Disabled: Story = {
   render: () => {
-    const RADIO_OPTIONS: RadioOptionsProps[] = [
+    const RADIO_OPTIONS: RadioOptionProps[] = [
       {
         value: "email",
         label: "Email",
