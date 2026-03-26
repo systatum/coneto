@@ -39,7 +39,7 @@ export type SelectboxSelectedOptions = number | string | number[] | string[];
 
 interface BaseSelectboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "children"> {
-  options?: OptionsProps[];
+  options?: OptionProps[];
   selectedOptions?: SelectboxSelectedOptions;
   onChange?: (selectedOptions: SelectboxSelectedOptions) => void;
   placeholder?: string;
@@ -60,13 +60,13 @@ interface BaseSelectboxProps
   children?: (
     props: DrawerProps &
       InteractionModeProps & {
-        options: OptionsProps[];
+        options: OptionProps[];
         handleKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
-        selectedOptionsLocal: OptionsProps;
-        setSelectedOptionsLocal: (value: OptionsProps) => void;
+        selectedOptionsLocal: OptionProps;
+        setSelectedOptionsLocal: (value: OptionProps) => void;
         setHasInteracted?: (value: boolean) => void;
         ref?: Ref<HTMLInputElement>;
-        setConfirmedValue?: (option: OptionsProps | null) => void;
+        setConfirmedValue?: (option: OptionProps | null) => void;
       }
   ) => ReactNode;
   styles?: SelectboxStylesProps;
@@ -106,10 +106,11 @@ interface InteractionModeProps {
   setInteractionMode: (props: "keyboard" | "mouse") => void;
 }
 
-export interface OptionsProps {
+export interface OptionProps {
   text: string;
   render?: ReactNode;
   value: string | number;
+  hidden?: boolean;
 }
 
 const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
@@ -182,7 +183,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
     };
 
     const [selectedOptionsLocal, setSelectedOptionsLocal] =
-      useState<OptionsProps>(initialState);
+      useState<OptionProps>(initialState);
 
     const [isOpen, setIsOpen] = useState(false);
     const [highlightedIndex, setHighlightedIndex] = useState<number | null>(0);
@@ -193,7 +194,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       "keyboard" | "mouse"
     >("mouse");
 
-    const [confirmedValue, setConfirmedValue] = useState<OptionsProps | null>(
+    const [confirmedValue, setConfirmedValue] = useState<OptionProps | null>(
       null
     );
 
@@ -249,9 +250,9 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
     const justCommittedRef = useRef(false);
 
     const commitOrRevert = (
-      selectedOption?: OptionsProps,
-      currentLocal: OptionsProps = selectedOptionsLocal,
-      currentConfirmed: OptionsProps | null = confirmedValue
+      selectedOption?: OptionProps,
+      currentLocal: OptionProps = selectedOptionsLocal,
+      currentConfirmed: OptionProps | null = confirmedValue
     ) => {
       if (selectedOption) {
         const val = String(selectedOption.value);
