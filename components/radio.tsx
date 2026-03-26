@@ -54,12 +54,6 @@ function BaseRadio({
   id,
   ...props
 }: BaseRadioProps) {
-  const inputId = StatefulForm.sanitizeId({
-    prefix: "radio",
-    name,
-    id,
-  });
-
   const resolvediconSize = icon?.size ?? (mode === "button" ? 25 : 16);
 
   return (
@@ -79,7 +73,7 @@ function BaseRadio({
       >
         <HiddenRadio
           type="radio"
-          id={inputId}
+          id={id}
           name={name}
           value={value}
           onChange={onChange}
@@ -150,9 +144,9 @@ function Radio({
   ...rest
 }: RadioProps) {
   const inputId = StatefulForm.sanitizeId({
-    prefix: `radio-${rest.value}`,
+    id: id ? `${id}-${rest.value ?? "value"}` : null,
+    prefix: `radio-${rest.value ?? "value"}`,
     name,
-    id: id ? `${id}-${rest.value}` : null,
   });
 
   const {
