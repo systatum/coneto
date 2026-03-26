@@ -3,14 +3,14 @@ import { getIdContent } from "test/support/commands";
 describe("FileInputBox", () => {
   context("when multiple", () => {
     beforeEach(() => {
-      cy.visit(getIdContent("input-elements-fileinputbox--default"));
+      cy.visit(getIdContent("input-elements-file-input-box-wrapper--default"));
     });
 
     context("when drag and drop", () => {
       it("renders multiple file", () => {
         cy.contains("sample-1.jpg").should("not.exist");
         cy.contains("sample-2.jpg").should("not.exist");
-        cy.findByLabelText("fileinputbox").selectFile(
+        cy.findByLabelText("file-input-box-wrapper").selectFile(
           [
             "test/fixtures/test-images/sample-1.jpg",
             "test/fixtures/test-images/sample-2.jpg",
@@ -29,7 +29,7 @@ describe("FileInputBox", () => {
         it("should remove file", () => {
           cy.contains("sample-1.jpg").should("not.exist");
           cy.contains("sample-2.jpg").should("not.exist");
-          cy.findByLabelText("fileinputbox").selectFile(
+          cy.findByLabelText("file-input-box-wrapper").selectFile(
             [
               "test/fixtures/test-images/sample-1.jpg",
               "test/fixtures/test-images/sample-2.jpg",
@@ -52,7 +52,9 @@ describe("FileInputBox", () => {
 
   context("with error", () => {
     beforeEach(() => {
-      cy.visit(getIdContent("input-elements-fileinputbox--with-error"));
+      cy.visit(
+        getIdContent("input-elements-file-input-box-wrapper--with-error")
+      );
     });
 
     it("renders an error message", () => {
@@ -65,7 +67,7 @@ describe("FileInputBox", () => {
 
         cy.contains("sample-1.jpg").should("not.exist");
         cy.contains("sample-2.jpg").should("not.exist");
-        cy.findByLabelText("fileinputbox").selectFile(
+        cy.findByLabelText("file-input-box-wrapper").selectFile(
           [
             "test/fixtures/test-images/sample-1.jpg",
             "test/fixtures/test-images/sample-2.jpg",
