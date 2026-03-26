@@ -147,19 +147,15 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       [options]
     );
 
-    const normalize = (value: typeof selectedOptions) => {
-      if (Array.isArray(value)) return value.map(String);
-      if (value != null) return [String(value)];
+    const finalSelectedOptions = useMemo(() => {
+      if (Array.isArray(selectedOptions)) {
+        return selectedOptions.map(String);
+      }
+      if (selectedOptions != null) {
+        return [String(selectedOptions)];
+      }
       return [];
-    };
-
-    const singleValue = useMemo(() => normalize(selectedOptions), []);
-    const multipleValue = useMemo(
-      () => normalize(selectedOptions),
-      [selectedOptions]
-    );
-
-    const finalSelectedOptions = multiple ? multipleValue : singleValue;
+    }, [selectedOptions]);
 
     const initialState = useMemo(
       () =>
@@ -187,24 +183,6 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
 
     const [selectedOptionsLocal, setSelectedOptionsLocal] =
       useState<OptionsProps>(initialState);
-
-    useEffect(() => {
-      if (
-        finalSelectedOptions?.length > 0 &&
-        finalSelectedOptions[0] !== "" &&
-        !multiple
-      ) {
-        setSelectedOptionsLocal((prev) => {
-          if (
-            prev.value === initialState.value &&
-            prev.text === initialState.text
-          ) {
-            return prev;
-          }
-          return initialState;
-        });
-      }
-    }, [finalSelectedOptions, multiple, initialState]);
 
     const [isOpen, setIsOpen] = useState(false);
     const [highlightedIndex, setHighlightedIndex] = useState<number | null>(0);
