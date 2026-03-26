@@ -147,15 +147,19 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       [options]
     );
 
-    const finalSelectedOptions = useMemo(() => {
-      if (Array.isArray(selectedOptions)) {
-        return selectedOptions.map(String);
-      }
-      if (selectedOptions != null) {
-        return [String(selectedOptions)];
-      }
+    const normalize = (value: typeof selectedOptions) => {
+      if (Array.isArray(value)) return value.map(String);
+      if (value != null) return [String(value)];
       return [];
-    }, [selectedOptions]);
+    };
+
+    const singleValue = useMemo(() => normalize(selectedOptions), []);
+    const multipleValue = useMemo(
+      () => normalize(selectedOptions),
+      [selectedOptions]
+    );
+
+    const finalSelectedOptions = multiple ? multipleValue : singleValue;
 
     const initialState = useMemo(
       () =>
@@ -293,14 +297,18 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
         return;
       }
 
-      if (currentConfirmed) {
+      if (currentConfirmed && strict) {
         setSelectedOptionsLocal(currentConfirmed);
         handleOnChange?.([String(currentConfirmed.value)]);
         return;
       }
 
-      setSelectedOptionsLocal({ text: "", value: "0" });
-      handleOnChange?.([]);
+      if (strict) {
+        setSelectedOptionsLocal({ text: "", value: "0" });
+        handleOnChange?.([]);
+      } else {
+        handleOnChange?.([currentLocal.text]);
+      }
     };
 
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
