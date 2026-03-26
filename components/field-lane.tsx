@@ -94,7 +94,7 @@ function FieldLane({
   const hasActions = filteredActions.length > 0;
 
   const inputElement: ReactElement = (
-    <InputWrapper $style={styles?.controlStyle}>
+    <InputWrapper aria-label="field-lane-control" $style={styles?.controlStyle}>
       {Array.isArray(dropdowns) &&
         dropdowns
           ?.filter((dropdown) => !dropdown?.hidden)
