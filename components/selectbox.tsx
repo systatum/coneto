@@ -184,24 +184,6 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
     const [selectedOptionsLocal, setSelectedOptionsLocal] =
       useState<OptionsProps>(initialState);
 
-    useEffect(() => {
-      if (
-        finalSelectedOptions?.length > 0 &&
-        finalSelectedOptions[0] !== "" &&
-        !multiple
-      ) {
-        setSelectedOptionsLocal((prev) => {
-          if (
-            prev.value === initialState.value &&
-            prev.text === initialState.text
-          ) {
-            return prev;
-          }
-          return initialState;
-        });
-      }
-    }, [finalSelectedOptions, multiple, initialState]);
-
     const [isOpen, setIsOpen] = useState(false);
     const [highlightedIndex, setHighlightedIndex] = useState<number | null>(0);
     const [hasInteracted, setHasInteracted] = useState(false);
@@ -293,14 +275,18 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
         return;
       }
 
-      if (currentConfirmed) {
+      if (currentConfirmed && strict) {
         setSelectedOptionsLocal(currentConfirmed);
         handleOnChange?.([String(currentConfirmed.value)]);
         return;
       }
 
-      setSelectedOptionsLocal({ text: "", value: "0" });
-      handleOnChange?.([]);
+      if (strict) {
+        setSelectedOptionsLocal({ text: "", value: "0" });
+        handleOnChange?.([]);
+      } else {
+        handleOnChange?.([currentLocal.text]);
+      }
     };
 
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
