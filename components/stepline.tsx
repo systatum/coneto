@@ -94,9 +94,7 @@ const SteplineWrapper = styled.div<{
   padding: 0.5rem;
   position: relative;
   overflow-x: auto;
-  &::-webkit-scrollbar {
-    height: 6px;
-  }
+  scrollbar-width: none;
 
   ${({ $gap }) =>
     $gap &&
