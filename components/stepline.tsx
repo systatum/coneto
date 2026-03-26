@@ -27,7 +27,6 @@ export interface SteplineStylesProps {
 }
 
 function Stepline({ children, styles, gap, collapsed }: SteplineProps) {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const childArray = Children.toArray(children).filter(isValidElement);
 
   return (
@@ -59,8 +58,6 @@ function Stepline({ children, styles, gap, collapsed }: SteplineProps) {
             aria-label="stepline-group-wrapper"
             $clickable={Boolean(variant && onClick)}
             onClick={() => variant && onClick?.()}
-            onMouseEnter={() => setHoveredIndex(index + 1)}
-            onMouseLeave={() => setHoveredIndex(null)}
             $gap={gap}
           >
             {index > 0 && (
@@ -73,7 +70,6 @@ function Stepline({ children, styles, gap, collapsed }: SteplineProps) {
             <StepContent>
               {cloneElement(child, {
                 id: index + 1,
-                hoveredIndex,
                 ...(isSteplineItem
                   ? {
                       collapsed,
@@ -98,9 +94,7 @@ const SteplineWrapper = styled.div<{
   padding: 0.5rem;
   position: relative;
   overflow-x: auto;
-  &::-webkit-scrollbar {
-    height: 6px;
-  }
+  scrollbar-width: none;
 
   ${({ $gap }) =>
     $gap &&
@@ -108,24 +102,6 @@ const SteplineWrapper = styled.div<{
       gap: ${`${$gap}px`};
     `}
   ${({ $containerStyle }) => $containerStyle}
-`;
-
-const StepGroup = styled.div<{ $clickable?: boolean; $gap?: number }>`
-  display: flex;
-  flex-direction: row;
-  gap: 0.5rem;
-  position: relative;
-  ${({ $clickable }) =>
-    $clickable &&
-    css`
-      cursor: pointer;
-    `}
-
-  ${({ $gap }) =>
-    $gap &&
-    css`
-      gap: ${`${$gap}px`};
-    `}
 `;
 
 const StepContent = styled.div`
@@ -155,7 +131,6 @@ const StepLine = styled.div<{
 
 export type SteplineItemProps = SteplineItemState &
   Partial<{
-    hoveredIndex?: number | null;
     styles?: SteplineItemStylesProps;
   }>;
 
@@ -174,7 +149,6 @@ function SteplineItem({
   variant = "todo",
   styles,
   id,
-  hoveredIndex,
   active,
   ...props
 }: SteplineItemProps) {
@@ -192,7 +166,7 @@ function SteplineItem({
       >
         <OuterCircle
           aria-label="outer-circle"
-          $active={active || hoveredIndex === id}
+          $active={active}
           $variant={variant}
           $style={styles?.outerCircleStyle}
         />
@@ -315,17 +289,18 @@ const OuterCircle = styled.div<{
   max-width: 30px;
   max-height: 30px;
   border-radius: 9999px;
-  transition: transform 0.2s;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
   z-index: 20;
+  transition: transform 0.2s;
 
   ${({ $active }) =>
     $active &&
     css`
       transform: translate(-50%, -50%) scale(1.3);
-    `}
+    `};
+
   ${({ $variant }) => css`
     background-color: ${OUTER_CIRCLE_VARIANT_COLOR[$variant]};
   `};
@@ -346,6 +321,7 @@ const InnerCircle = styled.div<{
   max-width: 30px;
   max-height: 30px;
   border-radius: 9999px;
+  z-index: 30;
 
   color: white;
   background-color: #4b5563;
@@ -362,6 +338,28 @@ const TextWrapper = styled.div<{ $variant: string; $style?: CSSProp }>`
   ${({ $variant }) => TEXT_VARIANT_COLOR[$variant]}
 
   ${({ $style }) => $style}
+`;
+
+const StepGroup = styled.div<{ $clickable?: boolean; $gap?: number }>`
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  position: relative;
+  ${({ $clickable }) =>
+    $clickable &&
+    css`
+      cursor: pointer;
+    `}
+
+  &:hover ${OuterCircle} {
+    transform: translate(-50%, -50%) scale(1.3);
+  }
+
+  ${({ $gap }) =>
+    $gap &&
+    css`
+      gap: ${`${$gap}px`};
+    `}
 `;
 
 Stepline.Item = SteplineItem;
