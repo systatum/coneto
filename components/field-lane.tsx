@@ -94,7 +94,11 @@ function FieldLane({
   const hasActions = filteredActions.length > 0;
 
   const inputElement: ReactElement = (
-    <InputWrapper aria-label="field-lane-control" $style={styles?.controlStyle}>
+    <InputWrapper
+      htmlFor={disabled ? null : id}
+      aria-label="field-lane-control"
+      $style={styles?.controlStyle}
+    >
       {Array.isArray(dropdowns) &&
         dropdowns
           ?.filter((dropdown) => !dropdown?.hidden)
@@ -391,7 +395,7 @@ const Body = styled.div<{
   ${({ $style }) => $style}
 `;
 
-const InputWrapper = styled.div<{ $style?: CSSProp }>`
+const InputWrapper = styled.label<{ $style?: CSSProp }>`
   position: relative;
   display: flex;
   flex-direction: row;
