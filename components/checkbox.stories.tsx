@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Checkbox, CheckboxOptionsProps, CheckboxProps } from "./checkbox";
+import { Checkbox, CheckboxOptionProps, CheckboxProps } from "./checkbox";
 import { ChangeEvent, useState } from "react";
 import { css } from "styled-components";
 
@@ -90,7 +90,7 @@ export const WithDescription: StoryWithDescription = {
     valueSelected: [],
   },
   render: () => {
-    const CHECKBOX_OPTIONS: CheckboxOptionsProps[] = [
+    const CHECKBOX_OPTIONS: CheckboxOptionProps[] = [
       {
         value: "email",
         label: "Email",
@@ -165,7 +165,7 @@ export const Disabled: StoryWithDescription = {
     valueSelected: [],
   },
   render: () => {
-    const CHECKBOX_OPTIONS: CheckboxOptionsProps[] = [
+    const CHECKBOX_OPTIONS: CheckboxOptionProps[] = [
       {
         value: "email",
         label: "Email",
@@ -179,7 +179,7 @@ export const Disabled: StoryWithDescription = {
     ];
 
     const [, setSelected] = useState({
-      checked: [] as CheckboxOptionsProps[],
+      checked: [] as CheckboxOptionProps[],
     });
 
     const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
@@ -192,7 +192,7 @@ export const Disabled: StoryWithDescription = {
           [name]: checked
             ? [...prev[name], parsed]
             : prev[name].filter(
-                (val: CheckboxOptionsProps) => val.value !== parsed.value
+                (val: CheckboxOptionProps) => val.value !== parsed.value
               ),
         }));
       } else {
