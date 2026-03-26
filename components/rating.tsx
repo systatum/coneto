@@ -123,7 +123,7 @@ function BaseRating({
   };
 
   return (
-    <RatingWrapper>
+    <RatingWrapper aria-label="rating-wrapper">
       <StarsWrapper>
         {Array.from({ length: 5 }).map((_, i) => (
           <StarSpan
