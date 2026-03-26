@@ -114,7 +114,7 @@ describe("FileDropBox", () => {
 
       it("should not open file picker", () => {
         cy.mount(<FileDropBoxContent />);
-        cy.findByLabelText("filedropbox").selectFile(
+        cy.findByLabelText("file-drop-box-area").selectFile(
           [
             "test/fixtures/test-images/sample-1.jpg",
             "test/fixtures/test-images/sample-2.jpg",
@@ -126,7 +126,7 @@ describe("FileDropBox", () => {
         );
         cy.wait(1000);
 
-        cy.findByLabelText("filedropbox").then(($input) => {
+        cy.findByLabelText("file-drop-box-area").then(($input) => {
           cy.spy($input[0], "click").as("fileClick");
         });
         cy.findByText("sample-1.jpg").should("be.visible").click();
@@ -184,7 +184,7 @@ describe("FileDropBox", () => {
         cy.mount(
           <FileDropBox onFileDropped={onFileDropped} onComplete={onComplete} />
         );
-        cy.findByLabelText("filedropbox").selectFile(
+        cy.findByLabelText("file-drop-box-area").selectFile(
           [
             "test/fixtures/test-images/sample-1.jpg",
             "test/fixtures/test-images/sample-2.jpg",
@@ -258,7 +258,7 @@ describe("FileDropBox", () => {
               onComplete={onComplete}
             />
           );
-          cy.findByLabelText("filedropbox").selectFile(
+          cy.findByLabelText("file-drop-box-area").selectFile(
             [
               "test/fixtures/test-images/sample-1.jpg",
               "test/fixtures/test-images/sample-2.jpg",
@@ -339,7 +339,7 @@ describe("FileDropBox", () => {
             onComplete={onComplete}
           />
         );
-        cy.findByLabelText("filedropbox").selectFile(
+        cy.findByLabelText("file-drop-box-area").selectFile(
           [
             "test/fixtures/test-images/sample-1.jpg",
             "test/fixtures/test-images/sample-2.jpg",
@@ -349,11 +349,11 @@ describe("FileDropBox", () => {
             force: true,
           }
         );
-        cy.findByLabelText("filedropbox")
+        cy.findByLabelText("file-drop-box-area")
           .should("not.have.css", "padding", "30px")
           .and("not.have.css", "border", "1px solid rgb(255, 0, 0)");
         cy.wait(600);
-        cy.findByLabelText("filedropbox")
+        cy.findByLabelText("file-drop-box-area")
           .should("have.css", "padding", "30px")
           .and("have.css", "border", "1px solid rgb(255, 0, 0)");
       });
@@ -412,7 +412,7 @@ describe("FileDropBox", () => {
           />
         );
 
-        cy.findByLabelText("filedropbox")
+        cy.findByLabelText("file-drop-box-area")
           .should("have.css", "padding", "30px")
           .and("have.css", "border", "1px solid rgb(255, 0, 0)");
       });
