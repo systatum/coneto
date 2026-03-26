@@ -12,7 +12,7 @@ import {
 import {
   castValue,
   DrawerProps,
-  OptionsProps,
+  OptionProps,
   Selectbox,
   SelectboxLabelsProps,
   SelectboxSelectedOptions,
@@ -41,10 +41,19 @@ interface BaseComboboxProps {
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
   onClick?: () => void;
   strict?: boolean;
-  options: OptionsProps[];
+  options: (SingleOptionProps | GroupedOptionProps)[];
   isLoading?: boolean;
   labels?: ComboboxLabelsProps;
 }
+
+export interface GroupedOptionProps {
+  category?: string;
+  options?: OptionProps[];
+  collapsible?: boolean;
+  hidden?: boolean;
+}
+
+export type SingleOptionProps = OptionProps;
 
 export interface ComboboxLabelsProps extends SelectboxLabelsProps {}
 
@@ -69,10 +78,10 @@ type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
   BaseComboboxProps & {
     inputRef?: Ref<HTMLInputElement>;
     handleKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
-    selectedOptionsLocal: OptionsProps;
-    setSelectedOptionsLocal: (value: OptionsProps) => void;
+    selectedOptionsLocal: OptionProps;
+    setSelectedOptionsLocal: (value: OptionProps) => void;
     setHasInteracted?: (value: boolean) => void;
-    setConfirmedValue?: (option: OptionsProps | null) => void;
+    setConfirmedValue?: (option: OptionProps | null) => void;
     refs?: {
       setFloating?: Ref<HTMLUListElement>;
       reference?: Ref<HTMLElement> & { current?: HTMLElement | null };
@@ -124,6 +133,15 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       id,
     });
 
+    const flatOptions = useMemo(() => {
+      return options.flatMap((item) => {
+        if (isGroupedOption(item)) {
+          return item.options ?? [];
+        }
+        return item;
+      });
+    }, [options]);
+
     return (
       <Selectbox
         ref={ref}
@@ -163,7 +181,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
           `,
         }}
         id={inputId}
-        options={options}
+        options={flatOptions}
         selectedOptions={selectedOptions}
         onChange={onChange}
         placeholder={placeholder}
@@ -189,6 +207,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
               emptySlate={emptySlate}
               actions={actions}
               onClick={onClick}
+              options={options}
               maxSelectableItems={maxSelectableItems}
               multiple={multiple}
             />
@@ -229,10 +248,15 @@ function ComboboxDrawer({
   const [hasScrolled, setHasScrolled] = useState(false);
   const floatingRef = useRef<HTMLUListElement>(null);
 
-  const finalOptions = useMemo(
-    () => (Array.isArray(options) ? options : []),
-    [options]
-  );
+  const finalOptions = useMemo<OptionProps[]>(() => {
+    return options.flatMap((item) => {
+      if (isGroupedOption(item)) {
+        return item.options.filter((option) => !option?.hidden);
+      }
+
+      return item?.hidden ? [] : [item];
+    });
+  }, [options]);
 
   const finalSelectedOptions = useMemo(() => {
     if (Array.isArray(selectedOptions)) {
@@ -306,13 +330,117 @@ function ComboboxDrawer({
         }
       }
     }
-  }, [highlightedIndex, multiple]);
+  }, [multiple]);
 
   const filteredActions = Array.isArray(actions)
     ? actions?.filter((action) => !action?.hidden)
     : [];
 
   const hasActions = filteredActions.length > 0;
+
+  function renderOption(option: OptionProps, index: number) {
+    const optionValue = String(option.value);
+    const isSelected = finalSelectedOptions.includes(optionValue);
+
+    const realIndex = index + (actions?.length || 0);
+
+    const shouldHighlight =
+      highlightOnMatch && isSelected ? true : highlightedIndex === realIndex;
+
+    return (
+      <List.Item
+        id={String(option.value)}
+        title={option.render ? option.render : option.text}
+        styles={{
+          rowStyle: listItemRowStyle({
+            shouldHighlight,
+            interactionMode,
+            isSelected,
+            multiple,
+          }),
+          containerStyle: listItemContainerStyle,
+          leftSideStyle: [
+            listItemLeftSideStyle,
+            option.render && listItemLeftSideWithRender,
+          ],
+          titleStyle: [
+            listItemTitleStyle,
+            option.render && listItemTitleWithRender,
+          ],
+        }}
+        selectedOptions={{ checked: isSelected }}
+        onMouseDown={(e) => {
+          e.preventDefault();
+          if (multiple) {
+            if (!finalSelectedOptions.includes(optionValue)) {
+              if (
+                !maxSelectableItems ||
+                finalSelectedOptions.length < maxSelectableItems
+              ) {
+                handleOnChange([...finalSelectedOptions, optionValue]);
+              }
+            } else {
+              handleOnChange(
+                finalSelectedOptions.filter((val) => val !== option.value)
+              );
+            }
+            (inputRef as RefObject<HTMLInputElement>)?.current?.focus();
+          } else {
+            setIsOpen(false);
+            setConfirmedValue(option);
+            setSelectedOptionsLocal(option);
+            handleOnChange([optionValue]);
+            setHasInteracted(false);
+          }
+
+          onClick?.();
+        }}
+        onMouseMove={() => {
+          if (interactionMode !== "mouse") {
+            setInteractionMode("mouse");
+          }
+        }}
+        onMouseEnter={() => {
+          if (interactionMode !== "mouse") return;
+
+          setHighlightedIndex(index + (actions?.length || 0));
+        }}
+        ref={(el) => {
+          listRef.current[index + (actions?.length || 0)] = el;
+        }}
+      />
+    );
+  }
+
+  const computedOptions = useMemo(() => {
+    let index = actions?.length || 0;
+
+    return options
+      .filter((item) => !item?.hidden)
+      .map((item) => {
+        if (isGroupedOption(item)) {
+          const groupOptions = (item.options ?? [])
+            .filter((option) => !option?.hidden)
+            .map((opt) => ({
+              option: opt,
+              index: index++,
+            }));
+
+          return {
+            type: "group",
+            category: item.category,
+            options: groupOptions,
+            collapsible: item.collapsible ?? true,
+          };
+        }
+
+        return {
+          type: "item",
+          option: item,
+          index: index++,
+        };
+      });
+  }, [options]);
 
   return (
     <DrawerWrapper
@@ -422,85 +550,39 @@ function ComboboxDrawer({
               );
             })}
 
-          {finalOptions.length > 0 ? (
-            finalOptions.map((option, index) => {
-              const optionValue = String(option.value);
-              const isSelected = finalSelectedOptions.includes(optionValue);
-              const shouldHighlight =
-                highlightOnMatch && isSelected
-                  ? true
-                  : highlightedIndex === index + (actions?.length || 0);
-
-              return (
-                <List.Item
-                  id={String(option.value)}
-                  title={option.render ? option.render : option.text}
-                  styles={{
-                    rowStyle: listItemRowStyle({
-                      shouldHighlight,
-                      interactionMode,
-                      isSelected,
-                      multiple,
-                    }),
-                    containerStyle: listItemContainerStyle,
-                    leftSideStyle: [
-                      listItemLeftSideStyle,
-                      option.render && listItemLeftSideWithRender,
-                    ],
-                    titleStyle: [
-                      listItemTitleStyle,
-                      option.render && listItemTitleWithRender,
-                    ],
-                  }}
-                  selectedOptions={{ checked: isSelected }}
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                    if (multiple) {
-                      if (!finalSelectedOptions.includes(optionValue)) {
-                        if (
-                          !maxSelectableItems ||
-                          finalSelectedOptions.length < maxSelectableItems
-                        ) {
-                          handleOnChange([
-                            ...finalSelectedOptions,
-                            optionValue,
-                          ]);
-                        }
-                      } else {
-                        handleOnChange(
-                          finalSelectedOptions.filter(
-                            (val) => val !== option.value
-                          )
-                        );
-                      }
-                      (
-                        inputRef as RefObject<HTMLInputElement>
-                      )?.current?.focus();
-                    } else {
-                      setIsOpen(false);
-                      setConfirmedValue(option);
-                      setSelectedOptionsLocal(option);
-                      handleOnChange([optionValue]);
-                      setHasInteracted(false);
-                    }
-
-                    onClick?.();
-                  }}
-                  onMouseMove={() => {
-                    if (interactionMode !== "mouse") {
-                      setInteractionMode("mouse");
-                    }
-                  }}
-                  onMouseEnter={() => {
-                    if (interactionMode !== "mouse") return;
-
-                    setHighlightedIndex(index + (actions?.length || 0));
-                  }}
-                  ref={(el) => {
-                    listRef.current[index + (actions?.length || 0)] = el;
-                  }}
-                />
-              );
+          {computedOptions.length > 0 ? (
+            computedOptions.map((item) => {
+              if (item.type === "group") {
+                return (
+                  <List.Group
+                    styles={{
+                      containerStyle: css`
+                        background-color: rgb(249, 250, 251);
+                      `,
+                      rowStyle: css`
+                        padding-bottom: 8px;
+                      `,
+                      titleStyle: css`
+                        font-size: 12px;
+                        padding-left: 12px;
+                      `,
+                    }}
+                    onClick={({ toggle }) => {
+                      if (item.collapsible) toggle();
+                    }}
+                    openerStyle={item.collapsible ? "chevron" : "none"}
+                    key={item.category}
+                    id={item.category}
+                    title={item.category}
+                  >
+                    {item.options.map(({ option, index }) =>
+                      renderOption(option, index)
+                    )}
+                  </List.Group>
+                );
+              } else {
+                return renderOption(item.option, item.index);
+              }
             })
           ) : (
             <EmptyState>{emptySlate}</EmptyState>
@@ -601,5 +683,11 @@ const EmptyState = styled.li`
   text-align: center;
   color: #6b7280;
 `;
+
+function isGroupedOption(
+  item: SingleOptionProps | GroupedOptionProps
+): item is GroupedOptionProps {
+  return "options" in item;
+}
 
 export { Combobox };
