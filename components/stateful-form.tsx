@@ -736,11 +736,24 @@ function FormFields<T extends FieldValues>({
                       ${fieldSize &&
                       css`
                         font-size: ${fieldSize};
-                      `}
-                      height: 34px;
-                      ${field.timeboxProps?.styles?.self}
+                      `};
+                      max-width: none;
+                      min-width: 0;
+                      width: 40px;
+                      max-width: 40px;
+                      height: 32px;
+                      max-height: 32px;
+
+                      ${field.timeboxProps?.styles?.self};
                     `,
+                    inputWrapperStyle: css`
+                      width: 100%;
+                      ${field.timeboxProps?.styles?.inputWrapperStyle};
+                    `,
+
                     containerStyle: css`
+                      width: 100%;
+
                       ${field.width &&
                       css`
                         width: ${field.width};
@@ -1162,7 +1175,6 @@ function FormFields<T extends FieldValues>({
                           css`
                             font-size: ${fieldSize};
                           `}
-                          height:34px;
                           ${field.colorboxProps?.styles?.self}
                         `,
                         bodyStyle: css`
@@ -1736,6 +1748,7 @@ function FormFields<T extends FieldValues>({
                       label={field.title}
                       helper={field.helper}
                       required={field.required}
+                      name={field.name}
                       rating={controllerField.value}
                       onChange={(e) => {
                         controllerField.onChange(e.target.value);
@@ -1899,8 +1912,11 @@ function FormFields<T extends FieldValues>({
                           `}
                           ${field.toggleboxProps?.styles?.containerStyle}
                         `,
-                        bodyStyle: css`
+                        controlStyle: css`
                           min-height: 34px;
+                          ${field.toggleboxProps?.styles?.controlStyle}
+                        `,
+                        bodyStyle: css`
                           ${!field.title &&
                           hasFieldTitle &&
                           css`
@@ -1957,6 +1973,10 @@ function FormFields<T extends FieldValues>({
                             font-size: ${labelSize};
                           `}
                           ${field.capsuleProps?.styles?.labelStyle}
+                        `,
+                        capsuleWrapperStyle: css`
+                          height: 34px;
+                          ${field.capsuleProps?.styles?.capsuleWrapperStyle}
                         `,
                         containerStyle: css`
                           ${field.width &&

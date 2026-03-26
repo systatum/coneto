@@ -98,7 +98,7 @@ function BaseFileInputBox({
       onDrop={!disabled && handleDrop}
       onDragOver={!disabled && handleDragOver}
       onDragLeave={!disabled && handleDragLeave}
-      aria-label="fileinputbox"
+      aria-label="file-input-box-wrapper"
       $disabled={disabled}
       $isError={showError}
     >

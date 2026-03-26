@@ -218,8 +218,8 @@ const ColorInputContainer = styled.div<{
   flex-direction: row;
   align-items: center;
   border-radius: 2px;
-  height: 100%;
   width: 100%;
+  height: 34px;
 
   border: 1px solid
     ${({ $showError, $hovered, $disabled }) =>

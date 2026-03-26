@@ -183,7 +183,7 @@ function FileDropBox({
       $successStyle={styles?.successStyle}
       $isDragging={isDragging}
       $progress={progress}
-      aria-label="filedropbox"
+      aria-label="file-drop-box-area"
       onClick={!disabled && handleBrowseClick}
       onDrop={!disabled && handleDrop}
       onDragOver={!disabled && handleDragOver}

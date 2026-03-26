@@ -3,12 +3,12 @@ import { getIdContent } from "test/support/commands";
 describe("FileDropBox", () => {
   context("default", () => {
     beforeEach(() => {
-      cy.visit(getIdContent("input-elements-filedropbox--default"));
+      cy.visit(getIdContent("input-elements-file-drop-box-area--default"));
     });
 
     context("when drag and drop", () => {
       it("should accept and upload multiple files", () => {
-        cy.findByLabelText("filedropbox").selectFile(
+        cy.findByLabelText("file-drop-box-area").selectFile(
           [
             "test/fixtures/test-images/sample-1.jpg",
             "test/fixtures/test-images/sample-2.jpg",
@@ -26,7 +26,7 @@ describe("FileDropBox", () => {
         it("renders the children when back to idle ", () => {
           cy.findByText("sample-1.jpg").should("not.exist");
           cy.findByText("sample-2.jpg").should("not.exist");
-          cy.findByLabelText("filedropbox").selectFile(
+          cy.findByLabelText("file-drop-box-area").selectFile(
             [
               "test/fixtures/test-images/sample-1.jpg",
               "test/fixtures/test-images/sample-2.jpg",
@@ -46,12 +46,12 @@ describe("FileDropBox", () => {
 
   context("with error", () => {
     beforeEach(() => {
-      cy.visit(getIdContent("input-elements-filedropbox--error"));
+      cy.visit(getIdContent("input-elements-file-drop-box-area--error"));
     });
 
     context("when failed", () => {
       it("shows upload error message", () => {
-        cy.findByLabelText("filedropbox").selectFile(
+        cy.findByLabelText("file-drop-box-area").selectFile(
           [
             "test/fixtures/test-images/sample-1.jpg",
             "test/fixtures/test-images/sample-2.jpg",

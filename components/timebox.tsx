@@ -73,6 +73,13 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
     const minuteRef = useRef<HTMLInputElement>(null);
     const secondRef = useRef<HTMLInputElement>(null);
 
+    const hasBeenFocused = useRef(false);
+    const blurTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const hourVal = useRef(hour);
+    const minuteVal = useRef(minute);
+    const secondVal = useRef(second);
+
     useImperativeHandle(ref, () => hourRef.current!);
 
     const dataType = withSeconds ? `timebox-with-second` : `timebox`;
@@ -91,6 +98,10 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
       type: "hour" | "minute" | "second",
       value: string
     ) => {
+      minuteVal.current = minute;
+      hourVal.current = hour;
+      secondVal.current = second;
+
       const newDigit = value.slice(-1);
       const numeric = /^\d$/.test(newDigit);
 
@@ -122,9 +133,18 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
       let nextSecond = second;
 
       const setNext = (t: "hour" | "minute" | "second", val: string) => {
-        if (t === "hour") nextHour = val;
-        if (t === "minute") nextMinute = val;
-        if (t === "second") nextSecond = val;
+        if (t === "hour") {
+          nextHour = val;
+          hourVal.current = val;
+        }
+        if (t === "minute") {
+          nextMinute = val;
+          minuteVal.current = val;
+        }
+        if (t === "second") {
+          nextSecond = val;
+          secondVal.current = val;
+        }
         setters[t](val);
       };
 
@@ -189,6 +209,25 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
       callOnChange();
     };
 
+    const focusSmartField = () => {
+      if (!hourVal.current || hourVal.current.length < 2) {
+        hourRef.current?.focus();
+      } else if (!minuteVal.current || minuteVal.current.length < 2) {
+        minuteRef.current?.focus();
+      } else if (
+        withSeconds &&
+        (!secondVal.current || secondVal.current.length < 2)
+      ) {
+        secondRef.current?.focus();
+      } else {
+        if (withSeconds) {
+          secondRef.current?.focus();
+        } else {
+          minuteRef.current?.focus();
+        }
+      }
+    };
+
     return (
       <InputGroup
         $style={styles?.inputWrapperStyle}
@@ -199,6 +238,18 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
           if (onKeyDown) {
             onKeyDown(e);
           }
+        }}
+        onBlur={() => {
+          setIsFocused(false);
+          if (blurTimeout.current) clearTimeout(blurTimeout.current);
+          blurTimeout.current = setTimeout(() => {
+            const anyFocused = [hourRef, minuteRef, secondRef].some(
+              (r) => r.current === document.activeElement
+            );
+            if (!anyFocused) {
+              hasBeenFocused.current = false;
+            }
+          }, 0);
         }}
       >
         <Input
@@ -212,8 +263,14 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
           disabled={!editable || disabled}
           value={hour}
           onChange={(e) => handleChange("hour", e.target.value)}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
+          onFocus={() => {
+            setIsFocused(true);
+
+            if (!hasBeenFocused.current) {
+              hasBeenFocused.current = true;
+              focusSmartField();
+            }
+          }}
           min={0}
           max={24}
           $inputStyle={styles?.self}
@@ -339,6 +396,9 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
       id: props.id,
     });
 
+    const { bodyStyle, containerStyle, controlStyle, labelStyle } =
+      styles ?? {};
+
     return (
       <FieldLane
         id={inputId}
@@ -355,16 +415,15 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
         required={rest.required}
         errorIconPosition="relative"
         styles={{
-          bodyStyle: styles?.bodyStyle,
-          controlStyle: styles?.controlStyle,
-          containerStyle: css`
-            ${styles?.containerStyle}
-          `,
-          labelStyle: styles?.labelStyle,
+          bodyStyle,
+          controlStyle,
+          containerStyle,
+          labelStyle,
         }}
       >
         <BaseTimebox
           {...rest}
+          ref={ref}
           id={inputId}
           showError={showError}
           disabled={disabled}
@@ -379,7 +438,6 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
             `,
             self: styles?.self,
           }}
-          ref={ref}
         />
       </FieldLane>
     );
