@@ -121,6 +121,23 @@ describe("Stepline", () => {
   });
 
   context("position", () => {
+    it("renders z-index for inner circle higher than outer circle", () => {
+      cy.mount(
+        <Stepline>
+          {STEPLINE_ITEMS.map((props, index) => (
+            <Stepline.Item key={index} {...props} />
+          ))}
+        </Stepline>
+      );
+
+      cy.findAllByLabelText("outer-circle")
+        .eq(1)
+        .should("have.css", "z-index", "20");
+      cy.findAllByLabelText("inner-circle")
+        .eq(1)
+        .should("have.css", "z-index", "30");
+    });
+
     context("when hovering", () => {
       it("should render in the center (inside or outside)", () => {
         cy.mount(
