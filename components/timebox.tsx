@@ -396,6 +396,9 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
       id: props.id,
     });
 
+    const { bodyStyle, containerStyle, controlStyle, labelStyle } =
+      styles ?? {};
+
     return (
       <FieldLane
         id={inputId}
@@ -412,16 +415,15 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
         required={rest.required}
         errorIconPosition="relative"
         styles={{
-          bodyStyle: styles?.bodyStyle,
-          controlStyle: styles?.controlStyle,
-          containerStyle: css`
-            ${styles?.containerStyle}
-          `,
-          labelStyle: styles?.labelStyle,
+          bodyStyle,
+          controlStyle,
+          containerStyle,
+          labelStyle,
         }}
       >
         <BaseTimebox
           {...rest}
+          ref={ref}
           id={inputId}
           showError={showError}
           disabled={disabled}
@@ -436,7 +438,6 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
             `,
             self: styles?.self,
           }}
-          ref={ref}
         />
       </FieldLane>
     );
