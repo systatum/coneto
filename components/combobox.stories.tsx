@@ -344,19 +344,6 @@ export const StrictValue: Story = {
       { text: "Strawberry", value: "6" },
       { text: "Watermelon", value: "7" },
     ];
-
-    const FRUIT_ACTIONS: ComboboxActionProps[] = [
-      {
-        title: "Add Fruit",
-        onClick: () => {
-          console.log(`New fruit added: ${value}`);
-        },
-        icon: {
-          image: RiAddLine,
-        },
-      },
-    ];
-
     return (
       <div
         style={{
@@ -366,7 +353,6 @@ export const StrictValue: Story = {
         <Combobox
           clearable
           strict
-          actions={FRUIT_ACTIONS}
           selectedOptions={value}
           options={FRUIT_OPTIONS}
           onChange={(value: string) => setValue(value)}
