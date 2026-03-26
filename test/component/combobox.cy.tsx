@@ -25,7 +25,10 @@ describe("Combobox", () => {
           { text: "Banana", value: "2" },
         ]}
         selectedOptions={value}
-        onChange={(selectedOptions: string) => setValue(selectedOptions)}
+        onChange={(selectedOptions: string) => {
+          console.log(`the value is ${selectedOptions}`);
+          setValue(selectedOptions);
+        }}
         placeholder="Select a fruit..."
         {...props}
       />
@@ -34,6 +37,10 @@ describe("Combobox", () => {
 
   context("common behavior", () => {
     const selectApple = (props = {}) => {
+      cy.window().then((win) => {
+        cy.spy(win.console, "log").as("consoleLog");
+      });
+
       cy.mount(<ProductCombobox {...props} />);
       cy.findByPlaceholderText("Select a fruit...").type("Apple");
       cy.findByRole("option", { name: "Apple" }).click();
@@ -83,7 +90,18 @@ describe("Combobox", () => {
             cy.findByPlaceholderText("Select a fruit...")
               .click()
               .type("Alim{enter}")
-              .should("have.value", "Apple");
+              .should("have.value", "AppleAlim");
+          });
+
+          it("should not give callback value", () => {
+            cy.findByPlaceholderText("Select a fruit...")
+              .click()
+              .type("Alim{enter}");
+
+            cy.get("@consoleLog").should(
+              "have.been.calledWith",
+              "the value is AppleAlim"
+            );
           });
         });
       });
@@ -129,6 +147,17 @@ describe("Combobox", () => {
               .click()
               .type("Alim{enter}")
               .should("have.value", "Apple");
+          });
+
+          it("should not give callback value", () => {
+            cy.findByPlaceholderText("Select a fruit...")
+              .click()
+              .type("Alim{enter}");
+
+            cy.get("@consoleLog").should(
+              "not.have.been.calledWith",
+              "the value is AppleAlim"
+            );
           });
         });
       });
