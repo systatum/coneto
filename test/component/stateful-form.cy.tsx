@@ -104,10 +104,10 @@ const TYPE_TO_ID_PREFIX: Record<FormFieldType, string> = {
   money: "moneybox",
   date: "datebox",
   combo: "combobox",
-  rating: "ratingbox",
+  rating: "rating",
   thumbfield: "thumbfield",
   toggle: "togglebox",
-  capsule: "capsulebox",
+  capsule: "capsule",
   time: "timebox",
   button: "button",
   pin: "pinbox",
@@ -203,12 +203,14 @@ const ALL_INPUT: FormFieldGroup[] = [
     title: "Checkbox",
     type: "checkbox",
     required: false,
+    placeholder: "check",
   },
   {
     name: "radio",
     title: "Radio",
     type: "radio",
     required: false,
+    placeholder: "radio",
   },
   {
     name: "color",
@@ -337,6 +339,73 @@ const flattenFields = (groups: FormFieldGroup[]): FormFieldProps[] =>
   );
 
 describe("StatefulForm", () => {
+  context("height", () => {
+    it("mostly renders with 34px", () => {
+      cy.mount(
+        <StatefulForm
+          fields={ALL_INPUT}
+          formValues={allValue}
+          mode="onChange"
+        />
+      );
+
+      flattenFields(ALL_INPUT).map((field) => {
+        if (field.type === "frame" || field.type === "chips") {
+          return;
+        } else if (
+          field.type === "radio" ||
+          field.type === "image" ||
+          field.type === "rating" ||
+          field.type === "checkbox" ||
+          field.type === "signbox" ||
+          field.type === "file"
+        ) {
+          cy.findAllByLabelText("radio-input-container").should(
+            "have.css",
+            "height",
+            "21px"
+          );
+          cy.findAllByLabelText("file-input-box-wrapper").should(
+            "have.css",
+            "height",
+            "47px"
+          );
+          cy.findAllByLabelText("imagebox-input").should(
+            "have.css",
+            "height",
+            "120px"
+          );
+          cy.findAllByLabelText("signbox-canvas").should(
+            "have.css",
+            "height",
+            "200px"
+          );
+          cy.findAllByLabelText("file-drop-box-area").should(
+            "have.css",
+            "height",
+            "221px"
+          );
+          cy.findAllByLabelText("signbox-canvas").should(
+            "have.css",
+            "height",
+            "200px"
+          );
+          cy.findAllByLabelText("rating-wrapper").should(
+            "have.css",
+            "height",
+            "24px"
+          );
+        } else {
+          cy.findAllByLabelText("field-lane-control").should(
+            "have.css",
+            "height",
+            "34px"
+          );
+        }
+      });
+    });
+  });
+
   context("combobox", () => {
     const comboField = flattenFields(ALL_INPUT).filter(
       (field) => field.type === "combo"
@@ -1280,173 +1349,30 @@ describe("StatefulForm", () => {
   });
 
   context("id", () => {
-    const value = {
-      text: "",
-      time: "",
-      email: "",
-      number: "",
-      password: "",
-      textarea: "",
-      rating: "",
-      check: false,
-      color: "",
-      combo: [],
-      date: [""],
-      file_drop_box: [] as File[],
-      file: undefined,
-      image: undefined,
-      money: "",
-      phone: "",
-      thumb_field: false,
-      togglebox: false,
-      signature: "",
-      capsule: "",
-      country_code: DEFAULT_COUNTRY_CODES,
-      currency: "USD",
-      pin: "USD",
-    };
-
-    const FIELDS: FormFieldGroup[] = [
-      {
-        name: "text",
-        title: "Text",
-        type: "text",
-        required: true,
-        placeholder: "Enter text",
-      },
-      {
-        name: "email",
-        title: "Email",
-        type: "email",
-        required: false,
-        placeholder: "Enter email address",
-      },
-      {
-        name: "time",
-        title: "Time",
-        type: "time",
-        required: false,
-        placeholder: "Enter email address",
-      },
-      {
-        name: "number",
-        title: "Number",
-        type: "number",
-        required: false,
-        placeholder: "Enter number",
-      },
-      {
-        name: "password",
-        title: "Password",
-        type: "password",
-        required: false,
-        placeholder: "Enter password",
-      },
-      {
-        name: "textarea",
-        title: "Textarea",
-        type: "textarea",
-        rows: 3,
-        required: false,
-        placeholder: "Enter text here",
-      },
-      {
-        name: "check",
-        placeholder: "Check",
-        type: "checkbox",
-        required: false,
-      },
-      {
-        name: "color",
-        title: "Color",
-        type: "color",
-        required: false,
-        placeholder: "Enter the color here",
-      },
-      {
-        name: "combo",
-        title: "Combo",
-        type: "combo",
-        required: false,
-        placeholder: "Select a fruit...",
-        comboboxProps: {
-          options: FRUIT_OPTIONS,
-        },
-      },
-      {
-        name: "date",
-        title: "Date",
-        type: "date",
-        required: false,
-        placeholder: "Select a date",
-        dateProps: {
-          monthNames: MONTH_NAMES,
-        },
-      },
-      {
-        name: "file_drop_box",
-        title: "File Drop Box",
-        type: "file_drop_box",
-        required: false,
-      },
-      {
-        name: "file",
-        title: "File",
-        type: "file",
-        required: false,
-      },
-      {
-        name: "image",
-        title: "Image",
-        type: "image",
-        required: false,
-      },
-      {
-        name: "money",
-        title: "Money",
-        type: "money",
-        required: false,
-        placeholder: "Enter amount",
-      },
-      {
-        name: "phone",
-        title: "Phone",
-        type: "phone",
-        required: false,
-        placeholder: "Enter phone number",
-      },
-      {
-        name: "pin",
-        title: "Pin",
-        type: "pin",
-        required: false,
-        helper: "This pinbox allows you to enter your PIN code.",
-        pinboxProps: {
-          parts: PARTS_INPUT,
-        },
-      },
-      {
-        name: "signature",
-        title: "Signature",
-        type: "signbox",
-        required: false,
-      },
-    ];
-
     it("renders each field with a proper and unique ID", () => {
       cy.mount(
-        <StatefulForm fields={FIELDS} formValues={value} mode="onChange" />
+        <StatefulForm
+          fields={ALL_INPUT}
+          formValues={allValue}
+          mode="onChange"
+        />
       );
 
-      flattenFields(FIELDS).map((field) => {
-        const prefix =
-          TYPE_TO_ID_PREFIX[field.type] ??
-          field.type.replace(/\s+/g, "_").toLowerCase();
-        const expectedId = field.name
-          ? `${prefix}-${field.name.replace(/\s+/g, "_").toLowerCase()}`
-          : prefix;
+      flattenFields(ALL_INPUT).map((field) => {
+        if (field.type === "frame" || field.type === "chips") {
+          return;
+        } else if (field.type === "radio") {
+          cy.get(`#radio-value-radio`).should("exist");
+        } else {
+          const prefix =
+            TYPE_TO_ID_PREFIX[field.type] ??
+            field.type.replace(/\s+/g, "_").toLowerCase();
+          const expectedId = field.name
+            ? `${prefix}-${field.name.replace(/\s+/g, "_").toLowerCase()}`
+            : prefix;
 
-        cy.get(`#${expectedId}`).should("exist");
+          cy.get(`#${expectedId}`).should("exist");
+        }
       });
     });
 
@@ -1584,7 +1510,7 @@ describe("StatefulForm", () => {
         cy.mount(
           <StatefulForm
             fields={FIELDS_NOT_NORMAL_ASCII}
-            formValues={value}
+            formValues={allValue}
             mode="onChange"
           />
         );
@@ -1852,7 +1778,7 @@ describe("StatefulForm", () => {
         cy.findAllByRole("button").eq(1).and("be.disabled");
 
         cy.get("#textbox-first_name").type("Alim Naufal");
-        cy.findByLabelText("filedropbox").selectFile(
+        cy.findByLabelText("file-drop-box-area").selectFile(
           [
             "test/fixtures/test-images/sample-1.jpg",
             "test/fixtures/test-images/sample-2.jpg",
@@ -1864,7 +1790,7 @@ describe("StatefulForm", () => {
         );
         cy.wait(1000);
 
-        cy.findByLabelText("filedropbox").then(($input) => {
+        cy.findByLabelText("file-drop-box-area").then(($input) => {
           cy.spy($input[0], "click").as("fileClick");
         });
         cy.findByText("sample-1.jpg").should("be.visible").click();
