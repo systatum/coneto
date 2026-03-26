@@ -105,87 +105,78 @@ export const Default: Story = {
       useState<TreeListContentProps[]>(TREE_LIST_DATA);
 
     return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "0.25rem",
-          maxWidth: "250px",
-        }}
-      >
-        <TreeList
-          collapsible
-          onOpenChange={async ({
-            id,
-            isOpen,
-            setIsLoading,
-            lastFetch,
-            setLastFetch,
-          }) => {
-            if (!isOpen) return;
+      <TreeList
+        collapsible
+        onOpenChange={async ({
+          id,
+          isOpen,
+          setIsLoading,
+          lastFetch,
+          setLastFetch,
+        }) => {
+          if (!isOpen) return;
 
-            const TWENTY_SECOND = 20 * 1000;
-            const target = content.find((data) => data.id === id);
+          const TWENTY_SECOND = 20 * 1000;
+          const target = content.find((data) => data.id === id);
 
-            const loadingSimulationFetch = () => {
-              setIsLoading(true, "Please wait…");
-              return new Promise((resolve) =>
-                setTimeout(() => {
-                  setIsLoading(false);
-                  resolve(true);
-                }, 2000)
-              );
-            };
+          const loadingSimulationFetch = () => {
+            setIsLoading(true, "Please wait…");
+            return new Promise((resolve) =>
+              setTimeout(() => {
+                setIsLoading(false);
+                resolve(true);
+              }, 2000)
+            );
+          };
 
-            if (!target || (target.items && target.items.length > 13)) return;
+          if (!target || (target.items && target.items.length > 13)) return;
 
-            let shouldFetch = false;
+          let shouldFetch = false;
 
-            if (!lastFetch) {
+          if (!lastFetch) {
+            setLastFetch(new Date());
+            shouldFetch = true;
+          } else {
+            const diff = Date.now() - lastFetch.getTime();
+            if (diff >= TWENTY_SECOND) {
               setLastFetch(new Date());
               shouldFetch = true;
-            } else {
-              const diff = Date.now() - lastFetch.getTime();
-              if (diff >= TWENTY_SECOND) {
-                setLastFetch(new Date());
-                shouldFetch = true;
-              }
             }
+          }
 
-            if (!shouldFetch) return;
+          if (!shouldFetch) return;
 
-            await loadingSimulationFetch();
+          await loadingSimulationFetch();
 
-            await setContent((prev) =>
-              prev.map((group) => {
-                if (group.id !== id) return group;
+          await setContent((prev) =>
+            prev.map((group) => {
+              if (group.id !== id) return group;
 
-                if (!group.items || group.items.length === 0) {
-                  return {
-                    ...group,
-                    items: NEWLY_FETCHED_MEMBERS,
-                  };
-                }
+              if (!group.items || group.items.length === 0) {
+                return {
+                  ...group,
+                  items: NEWLY_FETCHED_MEMBERS,
+                };
+              }
 
-                const startIndex = group.items.length + 1;
-                const prefix = id === "project" ? "pmt" : "mts";
+              const startIndex = group.items.length + 1;
+              const prefix = id === "project" ? "pmt" : "mts";
 
-                const newItems = Array.from({ length: 2 }, (_, i) => {
-                  const n = startIndex + i;
-                  return {
-                    id: `${prefix}-${n}`,
-                    caption: randomName(),
-                    onClick: setPerson,
-                  };
-                });
+              const newItems = Array.from({ length: 2 }, (_, i) => {
+                const n = startIndex + i;
+                return {
+                  id: `${prefix}-${n}`,
+                  caption: randomName(),
+                  onClick: setPerson,
+                };
+              });
 
-                return { ...group, items: [...group.items, ...newItems] };
-              })
-            );
-          }}
-          content={content}
-        />
-      </div>
+              return { ...group, items: [...group.items, ...newItems] };
+            })
+          );
+        }}
+        content={content}
+      />
     );
   },
 };
