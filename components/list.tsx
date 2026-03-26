@@ -784,6 +784,7 @@ const ListGroupContent = styled(motion.ul)<{
   display: flex;
   flex-direction: column;
   position: relative;
+  overflow: hidden;
 
   ${({ $isOpen, $isChildren }) =>
     $isChildren && !$isOpen
