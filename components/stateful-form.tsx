@@ -737,12 +737,17 @@ function FormFields<T extends FieldValues>({
                       css`
                         font-size: ${fieldSize};
                       `};
-                      min-width: 38px;
-                      width: 38px;
+                      max-width: none;
+                      min-width: 0;
+                      width: 100%;
                       height: 32px;
                       max-height: 32px;
 
                       ${field.timeboxProps?.styles?.self};
+                    `,
+                    inputWrapperStyle: css`
+                      width: 100%;
+                      ${field.timeboxProps?.styles?.inputWrapperStyle};
                     `,
                     containerStyle: css`
                       ${field.width &&
