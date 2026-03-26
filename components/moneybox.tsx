@@ -15,7 +15,7 @@ import { StatefulForm } from "./stateful-form";
 
 export type SeparatorTypeProps = "dot" | "comma";
 
-export interface CurrencyOptionsProps {
+export interface CurrencyOptionProps {
   id: string;
   name: string;
   symbol: string;
@@ -36,7 +36,7 @@ interface BaseMoneyboxProps
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
   styles?: MoneyboxStylesProps;
   editableCurrency?: boolean;
-  currencyOptions?: CurrencyOptionsProps[];
+  currencyOptions?: CurrencyOptionProps[];
   id?: string;
 }
 
