@@ -16,7 +16,7 @@ type FlashDirection =
 
 type FlashRate = "slow" | "normal" | "fast" | number;
 
-export interface LoadingSkeletonOptionsProps {
+export interface LoadingSkeletonOptionProps {
   flashDirection?: FlashDirection;
   flashRate?: FlashRate;
   baseColor?: string;
@@ -35,7 +35,7 @@ export interface LoadingSkeletonStyles {
 
 export interface LoadingSkeletonProps
   extends LoadingSkeletonBaseProps,
-    LoadingSkeletonOptionsProps {
+    LoadingSkeletonOptionProps {
   height?: number | string;
   width?: number | string;
 }
@@ -59,7 +59,7 @@ function LoadingSkeleton({
     >
       {childArray.map((child, index) => {
         const componentChild = child as ReactElement<
-          LoadingSkeletonItemProps & LoadingSkeletonOptionsProps
+          LoadingSkeletonItemProps & LoadingSkeletonOptionProps
         >;
 
         const isItem = componentChild.type === LoadingSkeleton.Item;
@@ -90,7 +90,7 @@ const LoadingSkeletonWrapper = styled.div<{ $style?: CSSProp }>`
 
 export interface LoadingSkeletonItemProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "style">,
-    LoadingSkeletonOptionsProps {
+    LoadingSkeletonOptionProps {
   styles?: LoadingSkeletonStyles;
   height?: number | string;
   width?: number | string;

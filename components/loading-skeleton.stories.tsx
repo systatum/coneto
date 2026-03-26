@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import {
   LoadingSkeleton,
-  LoadingSkeletonOptionsProps,
+  LoadingSkeletonOptionProps,
 } from "./loading-skeleton";
 import { css } from "styled-components";
 import { Grid } from "./grid";
@@ -74,7 +74,7 @@ type Story = StoryObj<typeof LoadingSkeleton>;
 
 export const Card: Story = {
   render: () => {
-    const CARD_SAMPLE: LoadingSkeletonOptionsProps[] = [
+    const CARD_SAMPLE: LoadingSkeletonOptionProps[] = [
       {
         flashDirection: "left-to-right",
         flashRate: "normal",
