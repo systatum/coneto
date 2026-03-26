@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { Combobox, ComboboxActionProps } from "./combobox";
-import { OptionsProps, SelectboxSelectedOptions } from "./selectbox";
+import { OptionProps, SelectboxSelectedOptions } from "./selectbox";
 import { RiAddLine } from "@remixicon/react";
 import styled, { css } from "styled-components";
 import { FieldLaneDropdownsOptionProps } from "./field-lane";
@@ -102,7 +102,7 @@ export const Default: Story = {
   render: () => {
     const [value, setValue] = useState<SelectboxSelectedOptions>("");
 
-    const FRUIT_OPTIONS: OptionsProps[] = [
+    const FRUIT_OPTIONS: OptionProps[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
       { text: "Orange", value: "3" },
@@ -133,7 +133,7 @@ export const WithLoading: Story = {
   render: () => {
     const [value, setValue] = useState<SelectboxSelectedOptions>("");
 
-    const FRUIT_OPTIONS: OptionsProps[] = [
+    const FRUIT_OPTIONS: OptionProps[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
       { text: "Orange", value: "3" },
@@ -169,7 +169,7 @@ export const WithDropdown: Story = {
       value: "1",
     });
 
-    const FRUIT_OPTIONS: OptionsProps[] = [
+    const FRUIT_OPTIONS: OptionProps[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
       { text: "Orange", value: "3" },
@@ -290,7 +290,7 @@ export const WithActions: Story = {
   render: () => {
     const [value, setValue] = useState<SelectboxSelectedOptions>("");
 
-    const FRUIT_OPTIONS: OptionsProps[] = [
+    const FRUIT_OPTIONS: OptionProps[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
       { text: "Orange", value: "3" },
@@ -335,7 +335,7 @@ export const StrictValue: Story = {
   render: () => {
     const [value, setValue] = useState<string>("");
 
-    const FRUIT_OPTIONS: OptionsProps[] = [
+    const FRUIT_OPTIONS: OptionProps[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
       { text: "Orange", value: "3" },
@@ -439,7 +439,7 @@ export const WithCustomRenderer: Story = {
       );
     };
 
-    const FRUIT_OPTIONS: OptionsProps[] = [
+    const FRUIT_OPTIONS: OptionProps[] = [
       {
         text: "Apple",
         value: "1",

@@ -27,7 +27,7 @@ import { Button } from "./button";
 import styled, { css } from "styled-components";
 import { useMemo, useState } from "react";
 import { Combobox } from "./combobox";
-import { OptionsProps } from "./selectbox";
+import { OptionProps } from "./selectbox";
 import { FormFieldGroup, StatefulForm } from "./stateful-form";
 
 const meta: Meta<typeof TreeList> = {
@@ -649,7 +649,7 @@ export const WithActions: Story = {
       },
     ];
 
-    const SHOW_OPTIONS: OptionsProps[] = [
+    const SHOW_OPTIONS: OptionProps[] = [
       { text: "1", value: "1" },
       { text: "2", value: "2" },
       { text: "3", value: "3" },

@@ -6,7 +6,7 @@ import * as RemixIcons from "@remixicon/react";
 import { Calendar } from "./calendar";
 import { Textbox, TextboxProps } from "./textbox";
 import { Combobox, ComboboxProps } from "./combobox";
-import { OptionsProps } from "./selectbox";
+import { OptionProps } from "./selectbox";
 
 const meta: Meta<typeof FieldLane> = {
   title: "Stage/FieldLane",
@@ -98,7 +98,7 @@ export const CustomRenderer: Story = {
       value: "",
     });
 
-    const FRUIT_OPTIONS: OptionsProps[] = [
+    const FRUIT_OPTIONS: OptionProps[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
       { text: "Orange", value: "3" },
@@ -108,7 +108,7 @@ export const CustomRenderer: Story = {
       { text: "Watermelon", value: "7" },
     ];
 
-    const MONTH_NAMES: OptionsProps[] = [
+    const MONTH_NAMES: OptionProps[] = [
       { text: "JAN", value: "1" },
       { text: "FEB", value: "2" },
       { text: "MAR", value: "3" },

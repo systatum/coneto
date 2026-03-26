@@ -1,7 +1,7 @@
 import { RiCalendar2Line } from "@remixicon/react";
 import {
   DrawerProps,
-  OptionsProps,
+  OptionProps,
   Selectbox,
   SelectboxLabelsProps,
   SelectboxStylesProps,
@@ -40,8 +40,8 @@ export type DateboxStylesProps = SelectboxStylesProps;
 type CalendarDrawerProps = BaseCalendarProps &
   Partial<
     DrawerProps & {
-      selectedOptionsLocal?: OptionsProps;
-      setSelectedOptionsLocal?: (data: OptionsProps) => void;
+      selectedOptionsLocal?: OptionProps;
+      setSelectedOptionsLocal?: (data: OptionProps) => void;
       calendarFooter?: ReactNode;
       calendarTodayButtonCaption?: string;
       calendarSelectabilityMode?: SelectabilityModeState;

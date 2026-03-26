@@ -11,7 +11,7 @@ import {
   RiSettings2Line,
   RiUser2Line,
 } from "@remixicon/react";
-import { OptionsProps } from "@/components/selectbox";
+import { OptionProps } from "@/components/selectbox";
 import { useState } from "react";
 
 describe("Combobox", () => {
@@ -881,7 +881,7 @@ describe("Combobox", () => {
   });
 });
 
-const FRUIT_OPTIONS: OptionsProps[] = [
+const FRUIT_OPTIONS: OptionProps[] = [
   { text: "Apple", value: "1" },
   { text: "Banana", value: "2" },
   { text: "Orange", value: "3" },
