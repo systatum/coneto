@@ -20,7 +20,7 @@ const meta: Meta<typeof Combobox> = {
     docs: {
       description: {
         component: `
-The **Combobox** component is an enhanced version of Selectbox that supports **searchable, grouped, and interactive dropdown selections**.
+Combobox makes use of the base Selectbox, featuring searchability, options-grouping, multi-options, among other things.
 
 ---
 
