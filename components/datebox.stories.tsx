@@ -85,7 +85,7 @@ export const WithDropdown: Story = {
     const [value, setValue] = useState({
       selectedText: "WFH",
       selectedOption: "2",
-      value: ["1"],
+      value: ["03/27/2026"],
     });
 
     const MONTH_NAMES = [
