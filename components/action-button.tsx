@@ -31,7 +31,7 @@ export function ActionButton({
   styles,
   subMenu,
   disabled,
-  showSubMenuOn,
+  showSubMenuOn = "caret",
   variant = "default",
   forTable,
   className,
@@ -67,6 +67,13 @@ export function ActionButton({
           cursor: pointer;
           border-radius: 6px;
           position: relative;
+
+          ${subMenu &&
+          showSubMenuOn === "caret" &&
+          css`
+            border-top-right-radius: 0px;
+            border-bottom-right-radius: 0px;
+          `};
 
           ${variant === "default" &&
           !pressed &&
