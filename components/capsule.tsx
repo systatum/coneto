@@ -18,6 +18,7 @@ interface BaseCapsuleProps {
   onTabChange?: (id: string) => void;
   full?: boolean;
   activeBackgroundColor?: string;
+  activeColor?: string;
   styles?: BaseCapsuleStylesProps;
   id?: string;
   name?: string;
@@ -36,6 +37,7 @@ function BaseCapsule({
   onTabChange,
   full,
   activeBackgroundColor = "oklch(54.6% .245 262.881)",
+  activeColor = "white",
   styles,
   id,
   fontSize = 12,
@@ -202,6 +204,7 @@ function BaseCapsule({
         return (
           <Tab
             $isActive={isActive}
+            $activeColor={activeColor}
             $disabled={disabled}
             role="tab"
             key={index}
@@ -216,7 +219,6 @@ function BaseCapsule({
               <Figure
                 aria-label="capsule-icon"
                 {...tab.icon}
-                color={isActive ? "white" : "#111827"}
                 size={tab.icon?.size ?? 14}
               />
             )}
@@ -366,6 +368,7 @@ const Tab = styled.div<{
   $activeTabStyle?: CSSProp;
   $fontSize?: number;
   $disabled?: boolean;
+  $activeColor?: string;
 }>`
   display: flex;
   flex-direction: row;
@@ -380,10 +383,10 @@ const Tab = styled.div<{
   margin-bottom: 4px;
   gap: 4px;
 
-  ${({ $isActive }) =>
+  ${({ $isActive, $activeColor }) =>
     $isActive
       ? css`
-          color: white;
+          color: ${$activeColor};
         `
       : css`
           color: #111827;

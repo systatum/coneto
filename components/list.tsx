@@ -870,7 +870,9 @@ export interface ListItemProps {
     checked?: boolean;
     name?: string;
   };
-  leftSideContent?: (props?: LeftSideContentMenuProps) => ReactNode;
+  leftSideContent?:
+    | ReactNode
+    | ((props?: LeftSideContentMenuProps) => ReactNode);
   styles?: ListItemStylesProps;
   hoverTextColor?: string;
   hoverBackgroundColor?: string;
@@ -1073,18 +1075,19 @@ const ListItem = forwardRef<HTMLLIElement, ListItemProps>(
               />
             )}
             {leftSideContent &&
-              typeof leftSideContent === "function" &&
-              leftSideContent({
-                badge: (children, style = { withStyle: css`` }) => (
-                  <CustomLeftSideContent
-                    aria-label="left-side-content"
-                    $style={style.withStyle}
-                  >
-                    {children}
-                  </CustomLeftSideContent>
-                ),
-                render: (children) => children,
-              })}
+              (typeof leftSideContent === "function"
+                ? leftSideContent({
+                    badge: (children, style = { withStyle: css`` }) => (
+                      <CustomLeftSideContent
+                        aria-label="left-side-content"
+                        $style={style.withStyle}
+                      >
+                        {children}
+                      </CustomLeftSideContent>
+                    ),
+                    render: (children) => children,
+                  })
+                : leftSideContent)}
 
             {icon && (
               <Figure
