@@ -76,6 +76,7 @@ const MIX_FRUIT_OPTIONS: ComboboxMixOptionProps[] = [
       { text: "Plum", value: "14" },
     ],
     collapsible: true,
+    hidden: true,
   },
   { text: "Peppers", value: "99" },
   { text: "Eggplants", value: "100", hidden: true },
@@ -249,9 +250,31 @@ describe("Combobox", () => {
 
     it("should not reveal the option", () => {
       MIX_FRUIT_OPTIONS.flatMap((option) => {
-        if ("category" in option) {
+        if ("category" in option && option.category !== "Creamy") {
           cy.findByText(option.category).should("be.visible");
         }
+      });
+    });
+
+    context("hidden", () => {
+      context("when given in the group", () => {
+        it("should not render the group", () => {
+          MIX_FRUIT_OPTIONS.flatMap((option) => {
+            if ("category" in option && option.category === "Creamy") {
+              cy.findByText("Creamy").should("not.exist");
+            }
+          });
+        });
+      });
+
+      context("when given in the text", () => {
+        it("should not render the option", () => {
+          MIX_FRUIT_OPTIONS.flatMap((option) => {
+            if ("text" in option) {
+              cy.findByText("Eggplants").should("not.exist");
+            }
+          });
+        });
       });
     });
 
