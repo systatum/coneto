@@ -86,6 +86,10 @@ type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
     setSelectedOptionsLocal: (value: OptionProps) => void;
     setHasInteracted?: (value: boolean) => void;
     setConfirmedValue?: (option: OptionProps | null) => void;
+    openedCategoryGroup?: Set<String>;
+    setOpenedCategoryGroup?: (
+      updater: (prev: Set<string>) => Set<string>
+    ) => void;
     refs?: {
       setFloating?: Ref<HTMLUListElement>;
       reference?: Ref<HTMLElement> & { current?: HTMLElement | null };
@@ -137,12 +141,31 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       id,
     });
 
+    const finalGroup = useMemo(() => {
+      return options
+        .filter(isGroupedOption)
+        .filter((item) => !item?.hidden)
+        .map((item) => item.category!);
+    }, [options]);
+
+    const [openedCategoryGroup, setOpenedCategoryGroup] = useState<Set<string>>(
+      () => new Set(finalGroup)
+    );
+
     const flatOptions = useMemo(() => {
       return options
-        .map((item) => (isGroupedOption(item) ? (item.options ?? []) : [item]))
+        .map((item) => {
+          if (isGroupedOption(item)) {
+            if (openedCategoryGroup.has(item.category)) {
+              return item.options ?? [];
+            }
+            return [];
+          }
+          return [item];
+        })
         .flat()
         .filter((option) => !option.hidden);
-    }, [options]);
+    }, [options, openedCategoryGroup]);
 
     return (
       <Selectbox
@@ -196,32 +219,38 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
         disabled={disabled}
       >
         {(props) => {
-          const flatPropsOptions = props.options;
+          const filteredForDrawer = props?.hasInteracted
+            ? (options
+                .map((item) => {
+                  if (isGroupedOption(item)) {
+                    const matched = item.options?.filter(
+                      (opt) =>
+                        !opt.hidden &&
+                        opt.text
+                          .toLowerCase()
+                          .includes(
+                            props?.selectedOptionsLocal.text.toLowerCase()
+                          )
+                    );
 
-          const originalOptions = options;
+                    return matched && matched.length > 0
+                      ? { ...item, options: matched }
+                      : null;
+                  }
 
-          const filteredForDrawer = originalOptions
-            .map((item) => {
-              if (isGroupedOption(item)) {
-                const matched = item.options?.filter((opt) =>
-                  flatPropsOptions.some(
-                    (flatOpt) => flatOpt.value === opt.value
-                  )
-                );
-                return matched && matched.length > 0
-                  ? { ...item, options: matched }
-                  : null;
-              }
+                  if (
+                    !item.hidden &&
+                    item.text
+                      .toLowerCase()
+                      .includes(props?.selectedOptionsLocal.text.toLowerCase())
+                  ) {
+                    return item;
+                  }
 
-              if (
-                flatPropsOptions.some((flatOpt) => flatOpt.value === item.value)
-              ) {
-                return item;
-              }
-
-              return null;
-            })
-            .filter(Boolean) as typeof options;
+                  return null;
+                })
+                .filter(Boolean) as typeof options)
+            : options;
 
           return (
             <ComboboxDrawer
@@ -239,6 +268,8 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
               options={filteredForDrawer}
               maxSelectableItems={maxSelectableItems}
               multiple={multiple}
+              openedCategoryGroup={openedCategoryGroup}
+              setOpenedCategoryGroup={setOpenedCategoryGroup}
             />
           );
         }}
@@ -273,6 +304,8 @@ function ComboboxDrawer({
   interactionMode,
   setInteractionMode,
   setConfirmedValue,
+  openedCategoryGroup,
+  setOpenedCategoryGroup,
 }: ComboboxDrawerProps) {
   const [hasScrolled, setHasScrolled] = useState(false);
 
@@ -287,17 +320,6 @@ function ComboboxDrawer({
       return item?.hidden ? [] : [item];
     });
   }, [options]);
-
-  const finalGroup = useMemo(() => {
-    return options
-      .filter(isGroupedOption)
-      .filter((item) => !item?.hidden)
-      .map((item) => item.category!);
-  }, [options]);
-
-  const [openedCategoryGroup, setOpenedCategoryGroup] = useState<Set<string>>(
-    () => new Set(finalGroup)
-  );
 
   const finalSelectedOptions = useMemo(() => {
     if (Array.isArray(selectedOptions)) {
