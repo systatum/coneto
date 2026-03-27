@@ -50,6 +50,8 @@ function Figure({
 
 const Wrapper = styled.span<{ $style?: CSSProp }>`
   color: inherit;
+  align-items: center;
+
   ${({ $style }) => $style}
 `;
 
