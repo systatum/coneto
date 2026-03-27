@@ -64,6 +64,7 @@ interface BaseSelectboxProps
         handleKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
         selectedOptionsLocal: OptionProps;
         setSelectedOptionsLocal: (value: OptionProps) => void;
+        hasInteracted?: boolean;
         setHasInteracted?: (value: boolean) => void;
         ref?: Ref<HTMLInputElement>;
         setConfirmedValue?: (option: OptionProps | null) => void;
@@ -209,9 +210,8 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
         )
       : finalOptions;
 
-    const activeValue = selectedOptionsLocal.text;
     const FILTERED_ACTIVE = finalOptions.some(
-      (opt) => opt.text === activeValue
+      (opt) => opt.text === selectedOptionsLocal.text
     );
 
     const { refs, floatingStyles, context } = useFloating({
@@ -564,6 +564,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
             refs,
             floatingStyles,
             listRef,
+            hasInteracted,
             setHasInteracted,
             handleKeyDown,
             interactionMode,
