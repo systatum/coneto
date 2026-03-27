@@ -51,6 +51,7 @@ export interface ComboboxGroupedOptionProps {
   options?: OptionProps[];
   collapsible?: boolean;
   hidden?: boolean;
+  initialState?: "closed" | "opened";
 }
 
 export type ComboboxSingleOptionProps = OptionProps;
@@ -145,6 +146,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       return options
         .filter(isGroupedOption)
         .filter((item) => !item?.hidden)
+        .filter((item) => (item?.initialState ?? "closed") === "opened")
         .map((item) => item.category!);
     }, [options]);
 
@@ -425,6 +427,7 @@ function ComboboxDrawer({
             category: item.category,
             options: groupOptions,
             collapsible: item.collapsible ?? true,
+            initialState: item.initialState ?? "closed",
           };
         }
 
@@ -652,6 +655,7 @@ function ComboboxDrawer({
                       if (item.collapsible) toggle();
                     }}
                     openerStyle={item.collapsible ? "chevron" : "none"}
+                    initialState={item.initialState}
                     key={item.category}
                     id={item.category}
                     title={item.category}
