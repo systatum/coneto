@@ -144,10 +144,10 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
 
     const finalGroup = useMemo(() => {
       return options
-        .filter(isGroupedOption)
-        .filter((item) => !item?.hidden)
-        .filter((item) => (item?.initialState ?? "closed") === "opened")
-        .map((item) => item.category!);
+        ?.filter(isGroupedOption)
+        ?.filter((item) => !item?.hidden)
+        ?.filter((item) => (item?.initialState ?? "closed") === "opened")
+        ?.map((item) => item.category!);
     }, [options]);
 
     const [openedCategoryGroup, setOpenedCategoryGroup] = useState<Set<string>>(
@@ -156,7 +156,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
 
     const flatOptions = useMemo(() => {
       return options
-        .map((item) => {
+        ?.map((item) => {
           if (isGroupedOption(item)) {
             if (openedCategoryGroup.has(item.category)) {
               return item.options ?? [];
@@ -165,8 +165,8 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
           }
           return [item];
         })
-        .flat()
-        .filter((option) => !option.hidden);
+        ?.flat()
+        ?.filter((option) => !option.hidden);
     }, [options, openedCategoryGroup]);
 
     return (
@@ -223,7 +223,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
         {(props) => {
           const filteredForDrawer = props?.hasInteracted
             ? (options
-                .map((item) => {
+                ?.map((item) => {
                   if (isGroupedOption(item)) {
                     const matched = item.options?.filter(
                       (opt) =>
@@ -251,7 +251,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
 
                   return null;
                 })
-                .filter(Boolean) as typeof options)
+                ?.filter(Boolean) as typeof options)
             : options;
 
           return (
@@ -314,14 +314,16 @@ function ComboboxDrawer({
   const floatingRef = useRef<HTMLUListElement>(null);
 
   const finalOptions = useMemo<OptionProps[]>(() => {
-    return options.flatMap((item) => {
-      if (isGroupedOption(item)) {
-        return item.options.filter((option) => !option?.hidden);
-      }
+    return (
+      options?.flatMap((item) => {
+        if (isGroupedOption(item)) {
+          return item?.options?.filter((option) => !option?.hidden) ?? [];
+        }
 
-      return item?.hidden ? [] : [item];
-    });
-  }, [options]);
+        return item?.hidden ? [] : [item];
+      }) ?? []
+    );
+  }, [options, openedCategoryGroup]);
 
   const finalSelectedOptions = useMemo(() => {
     if (Array.isArray(selectedOptions)) {
@@ -335,8 +337,8 @@ function ComboboxDrawer({
 
   const selectedIndex = useMemo(
     () =>
-      finalOptions.findIndex((option) =>
-        finalSelectedOptions.includes(String(option.value))
+      finalOptions?.findIndex((option) =>
+        finalSelectedOptions?.includes(String(option.value))
       ) + (actions?.length ?? 0),
     [finalOptions, finalSelectedOptions, actions]
   );
@@ -355,8 +357,8 @@ function ComboboxDrawer({
   useEffect(() => {
     if (
       !hasScrolled &&
-      finalSelectedOptions.length > 0 &&
-      finalOptions.length > 0
+      finalSelectedOptions?.length > 0 &&
+      finalOptions?.length > 0
     ) {
       const selectedEl = listRef.current[selectedIndex];
       if (selectedEl) {
@@ -369,8 +371,8 @@ function ComboboxDrawer({
   }, [
     selectedIndex,
     hasScrolled,
-    finalSelectedOptions.length,
-    finalOptions.length,
+    finalSelectedOptions?.length,
+    finalOptions?.length,
   ]);
 
   useEffect(() => {
@@ -406,18 +408,18 @@ function ComboboxDrawer({
     ? actions?.filter((action) => !action?.hidden)
     : [];
 
-  const hasActions = filteredActions.length > 0;
+  const hasActions = filteredActions?.length > 0;
 
   const computedOptions = useMemo(() => {
     let index = actions?.length || 0;
 
-    return options
-      .filter((item) => !item?.hidden)
-      .map((item) => {
+    const mapped = (options ?? [])
+      ?.filter((item) => !item?.hidden)
+      ?.map((item) => {
         if (isGroupedOption(item)) {
           const groupOptions = (item.options ?? [])
-            .filter((option) => !option?.hidden)
-            .map((option) => ({
+            ?.filter((option) => !option?.hidden)
+            ?.map((option) => ({
               option,
               index: openedCategoryGroup.has(item.category) ? index++ : null,
             }));
@@ -437,6 +439,10 @@ function ComboboxDrawer({
           index: index++,
         };
       });
+
+    const totalOptions = mapped.flatMap((item) => item).length;
+
+    return { mapped, totalOptions };
   }, [options, openedCategoryGroup]);
 
   function renderOption(option: OptionProps, index: number) {
@@ -474,7 +480,7 @@ function ComboboxDrawer({
             if (!finalSelectedOptions.includes(optionValue)) {
               if (
                 !maxSelectableItems ||
-                finalSelectedOptions.length < maxSelectableItems
+                finalSelectedOptions?.length < maxSelectableItems
               ) {
                 handleOnChange([...finalSelectedOptions, optionValue]);
               }
@@ -585,7 +591,7 @@ function ComboboxDrawer({
           {hasActions &&
             filteredActions.map((action, index) => {
               const shouldHighlight = highlightedIndex === index;
-              const isLast = index === actions.length - 1;
+              const isLast = index === actions?.length - 1;
 
               return (
                 <Fragment key={index}>
@@ -634,8 +640,8 @@ function ComboboxDrawer({
               );
             })}
 
-          {computedOptions.length > 0 ? (
-            computedOptions.map((item) => {
+          {computedOptions?.totalOptions > 0 ? (
+            computedOptions.mapped?.map((item) => {
               if (item.type === "group") {
                 return (
                   <List.Group
