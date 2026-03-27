@@ -24,6 +24,19 @@ describe("Moneybox", () => {
     );
   }
 
+  context("style", () => {
+    context("currency", () => {
+      it("should renders absolute from left 8px", () => {
+        cy.mount(<ProductMoneybox />);
+
+        cy.findByLabelText("currency")
+          .parent()
+          .should("have.css", "left", "8px")
+          .and("have.css", "position", "absolute");
+      });
+    });
+  });
+
   context("onChange", () => {
     context("when given", () => {
       it("should change the value", () => {

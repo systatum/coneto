@@ -212,6 +212,7 @@ export const WithDropdown: Story = {
       <Moneybox
         value={value.value}
         label="With Dropdown"
+        currency="Rp"
         onChange={(e) =>
           setValue((prev) => ({ ...prev, value: e.target.value }))
         }
