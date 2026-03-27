@@ -729,6 +729,17 @@ export const Categorized: Story = {
       { text: "Eggplants", value: "100", hidden: true },
     ];
 
+    const FRUIT_OPTIONS_WITH_INITIAL_OPENED: ComboboxMixOptionProps[] =
+      FRUIT_OPTIONS.map((item) => {
+        if ("category" in item && item.options) {
+          return {
+            ...item,
+            initialState: "opened",
+          };
+        }
+        return item;
+      });
+
     return (
       <div
         style={{
@@ -742,6 +753,13 @@ export const Categorized: Story = {
           label="Default"
           selectedOptions={value1}
           options={FRUIT_OPTIONS}
+          onChange={setValue1}
+          placeholder="Select a fruit..."
+        />
+        <Combobox
+          label='Default With Initial State "opened"'
+          selectedOptions={value1}
+          options={FRUIT_OPTIONS_WITH_INITIAL_OPENED}
           onChange={setValue1}
           placeholder="Select a fruit..."
         />
