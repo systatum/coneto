@@ -41,7 +41,7 @@ function Figure({
         <Icon
           size={size}
           aria-label={ariaLabel}
-          style={{ color: color ?? "black" }}
+          style={{ color: color ?? "currentColor" }}
         />
       )}
     </Wrapper>
@@ -49,6 +49,7 @@ function Figure({
 }
 
 const Wrapper = styled.span<{ $style?: CSSProp }>`
+  color: inherit;
   ${({ $style }) => $style}
 `;
 
