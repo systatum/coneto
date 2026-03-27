@@ -41,7 +41,7 @@ interface BaseComboboxProps {
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
   onClick?: () => void;
   strict?: boolean;
-  options: ComboboxMixOptionProps[];
+  options: ComboboxOptionProps[];
   isLoading?: boolean;
   labels?: ComboboxLabelsProps;
 }
@@ -56,7 +56,7 @@ export interface ComboboxGroupedOptionProps {
 
 export type ComboboxSingleOptionProps = OptionProps;
 
-export type ComboboxMixOptionProps =
+export type ComboboxOptionProps =
   | ComboboxSingleOptionProps
   | ComboboxGroupedOptionProps;
 

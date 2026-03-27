@@ -3,7 +3,7 @@ import { useState } from "react";
 import {
   Combobox,
   ComboboxActionProps,
-  ComboboxMixOptionProps,
+  ComboboxOptionProps,
   ComboboxSingleOptionProps,
 } from "./combobox";
 import { SelectboxSelectedOptions } from "./selectbox";
@@ -674,7 +674,7 @@ export const Categorized: Story = {
     const [value1, setValue1] = useState<SelectboxSelectedOptions>("");
     const [value2, setValue2] = useState<SelectboxSelectedOptions>([""]);
 
-    const FRUIT_OPTIONS: ComboboxMixOptionProps[] = [
+    const FRUIT_OPTIONS: ComboboxOptionProps[] = [
       {
         category: "Sweet",
         options: [
@@ -729,7 +729,7 @@ export const Categorized: Story = {
       { text: "Eggplants", value: "100", hidden: true },
     ];
 
-    const FRUIT_OPTIONS_WITH_INITIAL_OPENED: ComboboxMixOptionProps[] =
+    const FRUIT_OPTIONS_WITH_INITIAL_OPENED: ComboboxOptionProps[] =
       FRUIT_OPTIONS.map((item) => {
         if ("category" in item && item.options) {
           return {

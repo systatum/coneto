@@ -2,7 +2,7 @@ import {
   Combobox,
   ComboboxActionProps,
   ComboboxGroupedOptionProps,
-  ComboboxMixOptionProps,
+  ComboboxOptionProps,
   ComboboxProps,
   ComboboxSingleOptionProps,
 } from "./../../components/combobox";
@@ -26,7 +26,7 @@ const FRUIT_OPTIONS: ComboboxSingleOptionProps[] = [
   { text: "Watermelon", value: "7" },
 ];
 
-const MIX_FRUIT_OPTIONS: ComboboxMixOptionProps[] = [
+const MIX_FRUIT_OPTIONS: ComboboxOptionProps[] = [
   {
     category: "Sweet",
     options: [
@@ -318,7 +318,7 @@ describe("Combobox", () => {
     });
 
     context("initialState", () => {
-      const MIX_FRUIT_OPTIONS_WITH_INITIAL_OPENED: ComboboxMixOptionProps[] =
+      const MIX_FRUIT_OPTIONS_WITH_INITIAL_OPENED: ComboboxOptionProps[] =
         MIX_FRUIT_OPTIONS.map((item) => {
           if ("category" in item && item.options) {
             return {
