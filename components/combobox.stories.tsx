@@ -61,7 +61,7 @@ The **Combobox** component is an enhanced version of Selectbox that supports **s
 ### 📌 Usage Guidelines
 - Use **grouped options** for large datasets
 - Enable \`multiple\` for multi-select use cases
-- Use **controlled mode** when managed and validate value on the input
+- Use **controlled mode** to keep the value synchronized with the input and ensure it is consistently validated.
 - Use \`maxSelectableItems\` to limit selections
         `,
       },
