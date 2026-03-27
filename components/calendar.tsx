@@ -7,7 +7,7 @@ import { Fragment, useMemo, ReactNode } from "react";
 import React, { useState, useEffect } from "react";
 import { Button } from "./button";
 import { Combobox } from "./combobox";
-import { DrawerProps, OptionsProps } from "./selectbox";
+import { DrawerProps, OptionProps } from "./selectbox";
 import styled, { css, CSSProp } from "styled-components";
 import {
   getValidMultipleDate,
@@ -19,11 +19,11 @@ import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 
 export interface BaseCalendarProps extends Partial<DrawerProps> {
-  options?: OptionsProps[];
+  options?: OptionProps[];
   selectedDates?: string[];
   onChange?: (dates: string[]) => void;
-  dayNames?: OptionsProps[];
-  monthNames?: OptionsProps[];
+  dayNames?: OptionProps[];
+  monthNames?: OptionProps[];
   disableWeekend?: boolean;
   format?: FormatProps;
   yearPastReach?: number;

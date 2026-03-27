@@ -16,9 +16,9 @@ import { BadgeProps } from "./badge";
 import { CountryCodeProps } from "./phonebox";
 import styled, { css } from "styled-components";
 import { CapsuleContentProps } from "./capsule";
-import { OptionsProps } from "./selectbox";
+import { OptionProps } from "./selectbox";
 import { Messagebox } from "./messagebox";
-import { CurrencyOptionsProps } from "./moneybox";
+import { CurrencyOptionProps } from "./moneybox";
 import { PinboxState } from "./pinbox";
 import { Card } from "./card";
 import { Button } from "./button";
@@ -54,7 +54,7 @@ export const Default: Story = {
       country_code: DEFAULT_COUNTRY_CODES,
     });
 
-    const SALUTATION_OPTIONS: OptionsProps[] = [
+    const SALUTATION_OPTIONS: OptionProps[] = [
       { text: "Mr.", value: "1" },
       { text: "Mrs.", value: "2" },
       { text: "Ms.", value: "3" },
@@ -261,12 +261,12 @@ export const WithFrame: Story = {
       purpose: z.string().min(10, "Business purpose is required"),
     });
 
-    const MANAGER_NAME_OPTIONS: OptionsProps[] = [
+    const MANAGER_NAME_OPTIONS: OptionProps[] = [
       { text: "Alim Naufal", value: "1" },
       { text: "Soekarno", value: "2" },
     ];
 
-    const DEPARTMENT_OPTIONS: OptionsProps[] = [
+    const DEPARTMENT_OPTIONS: OptionProps[] = [
       { text: "HR", value: "1" },
       { text: "IT", value: "2" },
     ];
@@ -425,20 +425,20 @@ export const ConditionalElement: Story = {
       Fp32: 3,
     } as const;
 
-    const HOST_ARCHITECTURE_OPTIONS: OptionsProps[] = [
+    const HOST_ARCHITECTURE_OPTIONS: OptionProps[] = [
       { value: String(HostArchitecture.x86), text: "x86" },
       { value: String(HostArchitecture.x64), text: "x64" },
       { value: String(HostArchitecture.ARM), text: "ARM" },
       { value: String(HostArchitecture.ARM64), text: "ARM64" },
     ];
 
-    const COMPILATION_TARGET_OPTIONS: OptionsProps[] = [
+    const COMPILATION_TARGET_OPTIONS: OptionProps[] = [
       { value: String(CompilationTarget.Interpreter), text: "Interpreter" },
       { value: String(CompilationTarget.Simulator), text: "Simulator" },
       { value: String(CompilationTarget.IP), text: "IP" },
     ];
 
-    const COMPILATION_EFFORT_OPTIONS: OptionsProps[] = [
+    const COMPILATION_EFFORT_OPTIONS: OptionProps[] = [
       {
         value: String(CompilationEffort.SimpleScheduling),
         text: "Simple scheduling",
@@ -453,7 +453,7 @@ export const ConditionalElement: Story = {
       },
     ];
 
-    const QUANTIZATION_TYPE_OPTIONS: OptionsProps[] = [
+    const QUANTIZATION_TYPE_OPTIONS: OptionProps[] = [
       { value: String(Quantization.Int8), text: "INT8" },
       { value: String(Quantization.Bf16), text: "BF16" },
       { value: String(Quantization.Fp16), text: "FP16" },
@@ -758,7 +758,7 @@ export const AllCase: Story = {
       throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
     }
 
-    const FRUIT_OPTIONS: OptionsProps[] = [
+    const FRUIT_OPTIONS: OptionProps[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
       { text: "Orange", value: "3" },
@@ -811,7 +811,7 @@ export const AllCase: Story = {
       },
     ];
 
-    const CURRENCY_OPTIONS: CurrencyOptionsProps[] = [
+    const CURRENCY_OPTIONS: CurrencyOptionProps[] = [
       { id: "IDR", name: "Indonesian Rupiah", symbol: "Rp" },
       { id: "USD", name: "US Dollar", symbol: "$" },
       { id: "EUR", name: "Euro", symbol: "€" },

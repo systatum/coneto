@@ -10,7 +10,7 @@ import { Button } from "./button";
 import { Tooltip } from "./tooltip";
 import { FormFieldProps, StatefulForm } from "./stateful-form";
 import z from "zod";
-import { OptionsProps } from "./selectbox";
+import { OptionProps } from "./selectbox";
 
 const meta: Meta<typeof Chips> = {
   title: "Input Elements/Chips",
@@ -841,7 +841,7 @@ export const CustomRenderer: Story = {
       </div>
     );
 
-    const EMPLOYEE_OPTIONS: OptionsProps[] = [
+    const EMPLOYEE_OPTIONS: OptionProps[] = [
       { text: "Organization Owner", value: "1" },
       { text: "HR Manager", value: "2" },
       { text: "Member", value: "3" },

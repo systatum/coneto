@@ -10,7 +10,7 @@ import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 
 type WithoutStyle<T> = Omit<T, "style">;
 
-export interface CheckboxOptionsProps {
+export interface CheckboxOptionProps {
   value: string;
   label: string;
   description: string;

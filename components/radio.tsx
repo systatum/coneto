@@ -32,7 +32,7 @@ interface BaseRadioStylesProps {
   textWrapperStyle?: CSSProp;
 }
 
-export interface RadioOptionsProps {
+export interface RadioOptionProps {
   value?: string;
   label?: string;
   description?: string;

@@ -1,7 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
-import { Combobox, ComboboxActionProps } from "./combobox";
-import { OptionsProps, SelectboxSelectedOptions } from "./selectbox";
+import {
+  Combobox,
+  ComboboxActionProps,
+  ComboboxOptionProps,
+  ComboboxSingleOptionProps,
+} from "./combobox";
+import { SelectboxSelectedOptions } from "./selectbox";
 import { RiAddLine } from "@remixicon/react";
 import styled, { css } from "styled-components";
 import { FieldLaneDropdownsOptionProps } from "./field-lane";
@@ -102,7 +107,7 @@ export const Default: Story = {
   render: () => {
     const [value, setValue] = useState<SelectboxSelectedOptions>("");
 
-    const FRUIT_OPTIONS: OptionsProps[] = [
+    const FRUIT_OPTIONS: ComboboxSingleOptionProps[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
       { text: "Orange", value: "3" },
@@ -133,7 +138,7 @@ export const WithLoading: Story = {
   render: () => {
     const [value, setValue] = useState<SelectboxSelectedOptions>("");
 
-    const FRUIT_OPTIONS: OptionsProps[] = [
+    const FRUIT_OPTIONS: ComboboxSingleOptionProps[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
       { text: "Orange", value: "3" },
@@ -169,7 +174,7 @@ export const WithDropdown: Story = {
       value: "1",
     });
 
-    const FRUIT_OPTIONS: OptionsProps[] = [
+    const FRUIT_OPTIONS: ComboboxSingleOptionProps[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
       { text: "Orange", value: "3" },
@@ -290,7 +295,7 @@ export const WithActions: Story = {
   render: () => {
     const [value, setValue] = useState<SelectboxSelectedOptions>("");
 
-    const FRUIT_OPTIONS: OptionsProps[] = [
+    const FRUIT_OPTIONS: ComboboxSingleOptionProps[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
       { text: "Orange", value: "3" },
@@ -335,7 +340,7 @@ export const StrictValue: Story = {
   render: () => {
     const [value, setValue] = useState<string>("");
 
-    const FRUIT_OPTIONS: OptionsProps[] = [
+    const FRUIT_OPTIONS: ComboboxSingleOptionProps[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
       { text: "Orange", value: "3" },
@@ -439,7 +444,7 @@ export const WithCustomRenderer: Story = {
       );
     };
 
-    const FRUIT_OPTIONS: OptionsProps[] = [
+    const FRUIT_OPTIONS: ComboboxSingleOptionProps[] = [
       {
         text: "Apple",
         value: "1",
@@ -657,6 +662,113 @@ export const WithCustomRenderer: Story = {
           selectedOptions={value}
           options={FRUIT_OPTIONS}
           onChange={setValue}
+          placeholder="Select a fruit..."
+        />
+      </div>
+    );
+  },
+};
+
+export const Categorized: Story = {
+  render: () => {
+    const [value1, setValue1] = useState<SelectboxSelectedOptions>("");
+    const [value2, setValue2] = useState<SelectboxSelectedOptions>([""]);
+
+    const FRUIT_OPTIONS: ComboboxOptionProps[] = [
+      {
+        category: "Sweet",
+        options: [
+          { text: "Banana", value: "2" },
+          { text: "Mango", value: "8" },
+          { text: "Papaya", value: "11" },
+          { text: "Lychee", value: "17" },
+          { text: "Guava", value: "15" },
+        ],
+        collapsible: true,
+      },
+      {
+        category: "Tangy",
+        options: [
+          { text: "Orange", value: "3" },
+          { text: "Kiwi", value: "10" },
+          { text: "Pineapple", value: "5" },
+          { text: "Pomegranate", value: "20" },
+          { text: "Cherry", value: "12" },
+        ],
+        collapsible: true,
+      },
+      {
+        category: "Watery",
+        options: [
+          { text: "Watermelon", value: "7" },
+          { text: "Apple", value: "1" },
+          { text: "Pear", value: "19" },
+          { text: "Grape", value: "4" },
+        ],
+        collapsible: true,
+      },
+      {
+        category: "Berry",
+        options: [
+          { text: "Strawberry", value: "6" },
+          { text: "Blueberry", value: "9" },
+          { text: "Raspberry", value: "16" },
+        ],
+        collapsible: true,
+      },
+      {
+        category: "Creamy",
+        options: [
+          { text: "Coconut", value: "18" },
+          { text: "Peach", value: "13" },
+          { text: "Plum", value: "14" },
+        ],
+        collapsible: true,
+      },
+      { text: "Peppers", value: "99" },
+      { text: "Eggplants", value: "100", hidden: true },
+    ];
+
+    const FRUIT_OPTIONS_WITH_INITIAL_OPENED: ComboboxOptionProps[] =
+      FRUIT_OPTIONS.map((item) => {
+        if ("category" in item && item.options) {
+          return {
+            ...item,
+            initialState: "opened",
+          };
+        }
+        return item;
+      });
+
+    return (
+      <div
+        style={{
+          width: "256px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "4px",
+        }}
+      >
+        <Combobox
+          label="Default"
+          selectedOptions={value1}
+          options={FRUIT_OPTIONS}
+          onChange={setValue1}
+          placeholder="Select a fruit..."
+        />
+        <Combobox
+          label='Default With Initial State "opened"'
+          selectedOptions={value1}
+          options={FRUIT_OPTIONS_WITH_INITIAL_OPENED}
+          onChange={setValue1}
+          placeholder="Select a fruit..."
+        />
+        <Combobox
+          multiple
+          label="Multiple"
+          selectedOptions={value2}
+          options={FRUIT_OPTIONS}
+          onChange={setValue2}
           placeholder="Select a fruit..."
         />
       </div>

@@ -28,7 +28,7 @@ const meta: Meta<typeof Moneybox> = {
         "List of available currencies when `editableCurrency` is enabled. Each item must contain `{ id, name, symbol }`.",
       table: {
         type: {
-          summary: "CurrencyOptionsProps[]",
+          summary: "CurrencyOptionProps[]",
           detail: `{ id: string; name: string; symbol: string }[]`,
         },
       },

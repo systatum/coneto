@@ -472,7 +472,8 @@ function ListGroup({
     <ListGroupContainer $containerStyle={styles?.containerStyle}>
       <HeaderButton
         $isOpen={opened}
-        onClick={() => {
+        onMouseDown={(e) => {
+          e.preventDefault();
           if (onClick) {
             onClick({ toggle });
           } else {
@@ -783,6 +784,7 @@ const ListGroupContent = styled(motion.ul)<{
   display: flex;
   flex-direction: column;
   position: relative;
+  overflow: hidden;
 
   ${({ $isOpen, $isChildren }) =>
     $isChildren && !$isOpen
