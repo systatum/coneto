@@ -349,7 +349,8 @@ function ComboboxDrawer({
     if (
       highlightedIndex !== null &&
       listRef.current[highlightedIndex] &&
-      multiple
+      multiple &&
+      interactionMode === "keyboard"
     ) {
       const element = listRef.current[highlightedIndex];
       const container = floatingRef.current;
@@ -371,7 +372,7 @@ function ComboboxDrawer({
         }
       }
     }
-  }, [highlightedIndex, multiple]);
+  }, [highlightedIndex, multiple, interactionMode]);
 
   const filteredActions = Array.isArray(actions)
     ? actions?.filter((action) => !action?.hidden)
