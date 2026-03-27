@@ -649,10 +649,8 @@ function ComboboxDrawer({
                 return (
                   <List.Group
                     styles={{
-                      containerStyle: css`
-                        background-color: rgb(249, 250, 251);
-                      `,
                       rowStyle: css`
+                        background-color: rgb(249, 250, 251);
                         padding-bottom: 8px;
                       `,
                       titleStyle: css`

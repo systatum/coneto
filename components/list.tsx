@@ -472,7 +472,7 @@ function ListGroup({
     <ListGroupContainer $containerStyle={styles?.containerStyle}>
       <HeaderButton
         $isOpen={opened}
-        onMouseDown={(e) => {
+        onClick={(e) => {
           e.preventDefault();
           if (onClick) {
             onClick({ toggle });
