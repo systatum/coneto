@@ -41,19 +41,23 @@ interface BaseComboboxProps {
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
   onClick?: () => void;
   strict?: boolean;
-  options: (SingleOptionProps | GroupedOptionProps)[];
+  options: ComboboxMixOptionProps[];
   isLoading?: boolean;
   labels?: ComboboxLabelsProps;
 }
 
-export interface GroupedOptionProps {
+export interface ComboboxGroupedOptionProps {
   category?: string;
   options?: OptionProps[];
   collapsible?: boolean;
   hidden?: boolean;
 }
 
-export type SingleOptionProps = OptionProps;
+export type ComboboxSingleOptionProps = OptionProps;
+
+export type ComboboxMixOptionProps =
+  | ComboboxSingleOptionProps
+  | ComboboxGroupedOptionProps;
 
 export interface ComboboxLabelsProps extends SelectboxLabelsProps {}
 
@@ -380,6 +384,36 @@ function ComboboxDrawer({
 
   const hasActions = filteredActions.length > 0;
 
+  const computedOptions = useMemo(() => {
+    let index = actions?.length || 0;
+
+    return options
+      .filter((item) => !item?.hidden)
+      .map((item) => {
+        if (isGroupedOption(item)) {
+          const groupOptions = (item.options ?? [])
+            .filter((option) => !option?.hidden)
+            .map((option) => ({
+              option,
+              index: openedCategoryGroup.has(item.category) ? index++ : null,
+            }));
+
+          return {
+            type: "group",
+            category: item.category,
+            options: groupOptions,
+            collapsible: item.collapsible ?? true,
+          };
+        }
+
+        return {
+          type: "item",
+          option: item,
+          index: index++,
+        };
+      });
+  }, [options, openedCategoryGroup]);
+
   function renderOption(option: OptionProps, index: number) {
     const optionValue = String(option.value);
     const isSelected = finalSelectedOptions.includes(optionValue);
@@ -443,44 +477,18 @@ function ComboboxDrawer({
         onMouseEnter={() => {
           if (interactionMode !== "mouse") return;
 
-          setHighlightedIndex(index);
+          if (typeof index === "number") {
+            setHighlightedIndex(index);
+          }
         }}
         ref={(el) => {
-          listRef.current[index] = el;
+          if (typeof index === "number") {
+            listRef.current[index] = el;
+          }
         }}
       />
     );
   }
-
-  const computedOptions = useMemo(() => {
-    let index = actions?.length || 0;
-
-    return options
-      .filter((item) => !item?.hidden)
-      .map((item) => {
-        if (isGroupedOption(item)) {
-          const groupOptions = (item.options ?? [])
-            .filter((option) => !option?.hidden)
-            .map((opt) => ({
-              option: opt,
-              index: openedCategoryGroup.has(item.category) ? index++ : -1,
-            }));
-
-          return {
-            type: "group",
-            category: item.category,
-            options: groupOptions,
-            collapsible: item.collapsible ?? true,
-          };
-        }
-
-        return {
-          type: "item",
-          option: item,
-          index: index++,
-        };
-      });
-  }, [options, openedCategoryGroup]);
 
   return (
     <DrawerWrapper
@@ -627,7 +635,7 @@ function ComboboxDrawer({
                     title={item.category}
                   >
                     {item.options.map(({ option, index }) =>
-                      renderOption(option, index)
+                      renderOption(option, index!)
                     )}
                   </List.Group>
                 );
@@ -736,8 +744,8 @@ const EmptyState = styled.li`
 `;
 
 function isGroupedOption(
-  item: SingleOptionProps | GroupedOptionProps
-): item is GroupedOptionProps {
+  item: ComboboxSingleOptionProps | ComboboxGroupedOptionProps
+): item is ComboboxGroupedOptionProps {
   return "options" in item;
 }
 
