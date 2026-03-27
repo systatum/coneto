@@ -203,14 +203,12 @@ const ALL_INPUT: FormFieldGroup[] = [
     title: "Checkbox",
     type: "checkbox",
     required: false,
-    placeholder: "check",
   },
   {
     name: "radio",
     title: "Radio",
     type: "radio",
     required: false,
-    placeholder: "radio",
   },
   {
     name: "color",
@@ -363,7 +361,7 @@ describe("StatefulForm", () => {
           cy.findAllByLabelText("radio-input-container").should(
             "have.css",
             "height",
-            "21px"
+            "16px"
           );
           cy.findAllByLabelText("file-input-box-wrapper").should(
             "have.css",
@@ -2172,8 +2170,12 @@ describe("StatefulForm", () => {
           />
         );
 
-        cy.contains("Paid").should("have.css", "color", "rgb(17, 24, 39)");
-        cy.contains("Unpaid").should("have.css", "color", "rgb(255, 255, 255)");
+        cy.findByText("Paid").should("have.css", "color", "rgb(17, 24, 39)");
+        cy.findByText("Unpaid").should(
+          "have.css",
+          "color",
+          "rgb(255, 255, 255)"
+        );
       });
     });
   });

@@ -43,7 +43,7 @@ export function ActionButton({
   }
   return (
     <Button
-      onClick={(e) => {
+      onMouseDown={(e) => {
         e.stopPropagation();
         if (onClick) {
           onClick();

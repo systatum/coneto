@@ -803,6 +803,7 @@ export const Categorized: Story = {
         }}
       >
         <Combobox
+          id="default"
           label="Default"
           selectedOptions={value1}
           options={FRUIT_OPTIONS}
@@ -810,6 +811,7 @@ export const Categorized: Story = {
           placeholder="Select a fruit..."
         />
         <Combobox
+          id="default-with-initial-state"
           label='Default With Initial State "opened"'
           selectedOptions={value1}
           options={FRUIT_OPTIONS_WITH_INITIAL_OPENED}
@@ -817,6 +819,7 @@ export const Categorized: Story = {
           placeholder="Select a fruit..."
         />
         <Combobox
+          id="multiple"
           multiple
           label="Multiple"
           selectedOptions={value2}

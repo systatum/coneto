@@ -3,7 +3,7 @@ import { getIdContent } from "test/support/commands";
 describe("FileInputBox", () => {
   context("when multiple", () => {
     beforeEach(() => {
-      cy.visit(getIdContent("input-elements-file-input-box-wrapper--default"));
+      cy.visit(getIdContent("input-elements-fileinputbox--default"));
     });
 
     context("when drag and drop", () => {
@@ -52,9 +52,7 @@ describe("FileInputBox", () => {
 
   context("with error", () => {
     beforeEach(() => {
-      cy.visit(
-        getIdContent("input-elements-file-input-box-wrapper--with-error")
-      );
+      cy.visit(getIdContent("input-elements-fileinputbox--with-error"));
     });
 
     it("renders an error message", () => {

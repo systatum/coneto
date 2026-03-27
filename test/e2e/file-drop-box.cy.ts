@@ -3,7 +3,7 @@ import { getIdContent } from "test/support/commands";
 describe("FileDropBox", () => {
   context("default", () => {
     beforeEach(() => {
-      cy.visit(getIdContent("input-elements-file-drop-box-area--default"));
+      cy.visit(getIdContent("input-elements-filedropbox--default"));
     });
 
     context("when drag and drop", () => {
@@ -46,7 +46,7 @@ describe("FileDropBox", () => {
 
   context("with error", () => {
     beforeEach(() => {
-      cy.visit(getIdContent("input-elements-file-drop-box-area--error"));
+      cy.visit(getIdContent("input-elements-filedropbox--error"));
     });
 
     context("when failed", () => {

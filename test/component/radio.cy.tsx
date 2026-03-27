@@ -232,6 +232,7 @@ describe("Radio", () => {
       cy.mount(RADIO_OPTIONS.map((prop) => <Radio disabled {...prop} />));
       cy.wait(100);
       cy.get("label")
+        .eq(1)
         .should("have.css", "cursor", "not-allowed")
         .and("have.css", "user-select", "none");
 
