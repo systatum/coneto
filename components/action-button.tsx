@@ -31,7 +31,7 @@ export function ActionButton({
   styles,
   subMenu,
   disabled,
-  showSubMenuOn,
+  showSubMenuOn = "self",
   variant = "default",
   forTable,
   className,
@@ -88,6 +88,8 @@ export function ActionButton({
                   border-top: 1px solid #e5e7eb;
                   border-left: 1px solid #e5e7eb;
                   border-bottom: 1px solid #e5e7eb;
+                  border-top-right-radius: 0px;
+                  border-bottom-right-radius: 0px;
                 `
               : css`
                   border: 1px solid #e5e7eb;
