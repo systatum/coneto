@@ -17,6 +17,55 @@ const meta: Meta<typeof Combobox> = {
   component: Combobox,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+The **Combobox** component is an enhanced version of Selectbox that supports **searchable, grouped, and interactive dropdown selections**.
+
+---
+
+### ✨ Features
+- 🔍 Built-in **search filtering**
+- 📂 Supports **grouped options** with collapsible categories
+- ✅ **Single & multiple selection**
+- 🎯 Keyboard and mouse interaction support
+- ⚡ Dynamic filtering based on user input
+- 🧩 Custom **actions** inside dropdown
+- 🚫 Handles **disabled** and **hidden** options
+- 📊 Supports **controlled and uncontrolled** modes
+
+---
+
+### 📦 Option Types
+
+#### Single Option
+\`\`\`ts
+{
+  text: string;
+  value: string | number;
+}
+\`\`\`
+
+#### Grouped Option
+\`\`\`ts
+{
+  category: string;
+  options: OptionProps[];
+  collapsible?: boolean;
+  initialState?: "opened" | "closed";
+}
+\`\`\`
+
+---
+
+### 📌 Usage Guidelines
+- Use **grouped options** for large datasets
+- Enable \`multiple\` for multi-select use cases
+- Use **controlled mode** when managed and validate value on the input
+- Use \`maxSelectableItems\` to limit selections
+        `,
+      },
+    },
   },
   tags: ["autodocs"],
   argTypes: {
@@ -95,6 +144,10 @@ Each field accepts a \`CSSProp\` (styled-components compatible) and can be used 
     name: {
       control: "text",
       description: "Name/id used for accessibility and aria-label.",
+    },
+    controlled: {
+      description: "Enable controlled mode (external state management)",
+      control: "boolean",
     },
   },
 };
