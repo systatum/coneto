@@ -3,8 +3,8 @@ import { useState } from "react";
 import {
   Combobox,
   ComboboxActionProps,
-  GroupedOptionProps,
-  SingleOptionProps,
+  ComboboxMixOptionProps,
+  ComboboxSingleOptionProps,
 } from "./combobox";
 import { SelectboxSelectedOptions } from "./selectbox";
 import { RiAddLine } from "@remixicon/react";
@@ -107,7 +107,7 @@ export const Default: Story = {
   render: () => {
     const [value, setValue] = useState<SelectboxSelectedOptions>("");
 
-    const FRUIT_OPTIONS: SingleOptionProps[] = [
+    const FRUIT_OPTIONS: ComboboxSingleOptionProps[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
       { text: "Orange", value: "3" },
@@ -138,7 +138,7 @@ export const WithLoading: Story = {
   render: () => {
     const [value, setValue] = useState<SelectboxSelectedOptions>("");
 
-    const FRUIT_OPTIONS: SingleOptionProps[] = [
+    const FRUIT_OPTIONS: ComboboxSingleOptionProps[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
       { text: "Orange", value: "3" },
@@ -174,7 +174,7 @@ export const WithDropdown: Story = {
       value: "1",
     });
 
-    const FRUIT_OPTIONS: SingleOptionProps[] = [
+    const FRUIT_OPTIONS: ComboboxSingleOptionProps[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
       { text: "Orange", value: "3" },
@@ -295,7 +295,7 @@ export const WithActions: Story = {
   render: () => {
     const [value, setValue] = useState<SelectboxSelectedOptions>("");
 
-    const FRUIT_OPTIONS: SingleOptionProps[] = [
+    const FRUIT_OPTIONS: ComboboxSingleOptionProps[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
       { text: "Orange", value: "3" },
@@ -340,7 +340,7 @@ export const StrictValue: Story = {
   render: () => {
     const [value, setValue] = useState<string>("");
 
-    const FRUIT_OPTIONS: SingleOptionProps[] = [
+    const FRUIT_OPTIONS: ComboboxSingleOptionProps[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
       { text: "Orange", value: "3" },
@@ -444,7 +444,7 @@ export const WithCustomRenderer: Story = {
       );
     };
 
-    const FRUIT_OPTIONS: SingleOptionProps[] = [
+    const FRUIT_OPTIONS: ComboboxSingleOptionProps[] = [
       {
         text: "Apple",
         value: "1",
@@ -674,7 +674,7 @@ export const Categorized: Story = {
     const [value1, setValue1] = useState<SelectboxSelectedOptions>("");
     const [value2, setValue2] = useState<SelectboxSelectedOptions>([""]);
 
-    const FRUIT_OPTIONS: (SingleOptionProps | GroupedOptionProps)[] = [
+    const FRUIT_OPTIONS: ComboboxMixOptionProps[] = [
       {
         category: "Sweet",
         options: [
