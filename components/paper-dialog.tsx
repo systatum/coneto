@@ -162,7 +162,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
             )}
 
             <MotionDialog
-              aria-label="paper-dialog-content"
+              aria-label="paper-dialog-wrapper"
               $width={width}
               initial={{ x: isLeft ? "-100%" : "100%" }}
               animate={controls}
@@ -383,7 +383,12 @@ export function PaperDialogContent({
   styles,
 }: PaperDialogContentProps) {
   return (
-    <StyledDialogContent $style={styles?.self}>{children}</StyledDialogContent>
+    <StyledDialogContent
+      aria-label="paper-dialog-content"
+      $style={styles?.self}
+    >
+      {children}
+    </StyledDialogContent>
   );
 }
 

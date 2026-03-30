@@ -21,7 +21,7 @@ describe("PaperDialog", () => {
       it("should maintain tab-to-drawer alignment", () => {
         cy.findByText(/open/i).click();
         cy.wait(300);
-        cy.findByLabelText("paper-dialog-content").then(($drawer) => {
+        cy.findByLabelText("paper-dialog-wrapper").then(($drawer) => {
           const drawerRect = $drawer[0].getBoundingClientRect();
 
           cy.findByLabelText("paper-dialog-toggle").then(($tab) => {
