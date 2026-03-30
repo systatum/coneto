@@ -129,7 +129,7 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
           styles={{
             containerStyle: css`
               position: absolute;
-              left: 4px;
+              left: 8px;
               top: 50%;
               transform: translateY(-50%);
 
@@ -148,10 +148,6 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
               width: 24px;
               padding: 0px;
               display: flex;
-              flex-direction: row;
-              justify-content: center;
-              align-items: center;
-              text-align: center;
               font-size: 12px;
               ${(!editableCurrency || props.disabled) &&
               css`

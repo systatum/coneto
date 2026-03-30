@@ -152,8 +152,12 @@ describe("Capsule Tab", () => {
     context("when given", () => {
       it("renders with initialize and equal with id state", () => {
         cy.mount(<ProductCapsuleTab />);
-        cy.contains("Write").should("have.css", "color", "rgb(17, 24, 39)");
-        cy.contains("Review").should("have.css", "color", "rgb(255, 255, 255)");
+        cy.findByText("Write").should("have.css", "color", "rgb(17, 24, 39)");
+        cy.findByText("Review").should(
+          "have.css",
+          "color",
+          "rgb(255, 255, 255)"
+        );
 
         cy.findByText("Review Tab").should("be.visible");
       });
@@ -164,7 +168,7 @@ describe("Capsule Tab", () => {
           cy.findByText("Write Tab").should("not.exist");
           cy.findByText("Review Tab").should("exist");
 
-          cy.contains("Write").click();
+          cy.findByText("Write").click();
 
           cy.findByText("Write Tab").should("exist");
           cy.findByText("Review Tab").should("not.exist");
@@ -182,7 +186,7 @@ describe("Capsule Tab", () => {
         cy.findByText("Write Tab").should("not.exist");
         cy.findByText("Review Tab").should("exist");
 
-        cy.contains("Write").click();
+        cy.findByText("Write").click();
 
         cy.get("@consoleLog").should(
           "have.been.calledWith",
@@ -192,7 +196,7 @@ describe("Capsule Tab", () => {
         cy.findByText("Write Tab").should("exist");
         cy.findByText("Review Tab").should("not.exist");
 
-        cy.contains("Review").click();
+        cy.findByText("Review").click();
 
         cy.get("@consoleLog").should(
           "have.been.calledWith",

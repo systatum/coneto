@@ -1599,6 +1599,7 @@ export const WithRowGroup: Story = {
         onClick: () => {
           console.log("Copy clicked");
         },
+        showSubMenuOn: "caret",
         subMenu: ({ list }) => list(COPY_ACTIONS),
         styles: {
           dropdownStyle: css`

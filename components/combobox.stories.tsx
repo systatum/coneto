@@ -17,6 +17,55 @@ const meta: Meta<typeof Combobox> = {
   component: Combobox,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+Combobox makes use of the base Selectbox, featuring searchability, options-grouping, multi-options, among other things.
+
+---
+
+### ✨ Features
+- 🔍 Built-in **search filtering**
+- 📂 Supports **grouped options** with collapsible categories
+- ✅ **Single & multiple selection**
+- 🎯 Keyboard and mouse interaction support
+- ⚡ Dynamic filtering based on user input
+- 🧩 Custom **actions** inside dropdown
+- 🚫 Handles **disabled** and **hidden** options
+- 📊 Supports **controlled and uncontrolled** modes
+
+---
+
+### 📦 Option Types
+
+#### Single Option
+\`\`\`ts
+{
+  text: string;
+  value: string | number;
+}
+\`\`\`
+
+#### Grouped Option
+\`\`\`ts
+{
+  category: string;
+  options: OptionProps[];
+  collapsible?: boolean;
+  initialState?: "opened" | "closed";
+}
+\`\`\`
+
+---
+
+### 📌 Usage Guidelines
+- Use **grouped options** for large datasets
+- Enable \`multiple\` for multi-select use cases
+- Use **controlled mode** to keep the value synchronized with the input and ensure it is consistently validated.
+- Use \`maxSelectableItems\` to limit selections
+        `,
+      },
+    },
   },
   tags: ["autodocs"],
   argTypes: {
@@ -95,6 +144,10 @@ Each field accepts a \`CSSProp\` (styled-components compatible) and can be used 
     name: {
       control: "text",
       description: "Name/id used for accessibility and aria-label.",
+    },
+    controlled: {
+      description: "Enable controlled mode (external state management)",
+      control: "boolean",
     },
   },
 };
@@ -750,6 +803,7 @@ export const Categorized: Story = {
         }}
       >
         <Combobox
+          id="default"
           label="Default"
           selectedOptions={value1}
           options={FRUIT_OPTIONS}
@@ -757,6 +811,7 @@ export const Categorized: Story = {
           placeholder="Select a fruit..."
         />
         <Combobox
+          id="default-with-initial-state"
           label='Default With Initial State "opened"'
           selectedOptions={value1}
           options={FRUIT_OPTIONS_WITH_INITIAL_OPENED}
@@ -764,6 +819,7 @@ export const Categorized: Story = {
           placeholder="Select a fruit..."
         />
         <Combobox
+          id="multiple"
           multiple
           label="Multiple"
           selectedOptions={value2}

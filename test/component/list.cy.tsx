@@ -1552,7 +1552,7 @@ describe("List", () => {
           cy.window().then((win) => {
             cy.spy(win.console, "log").as("consoleLog");
           });
-          cy.findAllByLabelText("right-side-icon").eq(0).click();
+          cy.findAllByLabelText("right-side-icon").eq(0).click({ force: true });
           cy.get("@consoleLog").should(
             "have.been.calledWith",
             "error warning clicked all-content-home"

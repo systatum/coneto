@@ -423,86 +423,70 @@ export const Nested: Story = {
       },
     ];
 
+    const FIRST_NAMES = [
+      "Amira",
+      "Tono",
+      "Rizky",
+      "Siti",
+      "Andi",
+      "Putri",
+      "Dimas",
+      "Rina",
+      "Fajar",
+      "Nina",
+      "Agus",
+      "Lina",
+      "Bagus",
+      "Dewi",
+      "Hendra",
+      "Wulan",
+      "Farhan",
+      "Ayu",
+      "Rafi",
+      "Nabila",
+    ];
+
+    const generateFamily = (lastName: string): Employee["familyRegistry"] => {
+      return Array.from({ length: 20 }, (_, i) => {
+        const firstName = FIRST_NAMES[i % FIRST_NAMES.length];
+
+        return {
+          name: `${lastName} ${firstName}`,
+          status: i % 3 === 0 ? "Inactive" : "Active",
+          gender: i % 2 === 0 ? "Male" : "Female",
+          birthday: `200${i % 10}-0${(i % 9) + 1}-${String((i % 28) + 1).padStart(2, "0")}`,
+        };
+      });
+    };
+
     const EMPLOYEE_DATA: Employee[] = [
       {
         name: "Adam Hakarsa",
         status: "Active",
         gender: "Male",
         birthday: "2000-03-12",
-        familyRegistry: [
-          {
-            name: "Hana Hakarsa",
-            status: "Active",
-            gender: "Female",
-            birthday: "2002-05-21",
-          },
-          {
-            name: "Dimas Hakarsa",
-            status: "Active",
-            gender: "Male",
-            birthday: "2004-10-11",
-          },
-        ],
+        familyRegistry: generateFamily("Hakarsa"),
       },
       {
         name: "Mohamad Naufal Alim",
         status: "Active",
         gender: "Male",
         birthday: "2005-07-21",
-        familyRegistry: [
-          {
-            name: "Amira Alim",
-            status: "Active",
-            gender: "Female",
-            birthday: "2008-03-04",
-          },
-          {
-            name: "Tono Alim",
-            status: "Inactive",
-            gender: "Male",
-            birthday: "2010-12-25",
-          },
-        ],
+        familyRegistry: generateFamily("Alim"),
       },
       {
         name: "Aisha Rahman",
         status: "Active",
         gender: "Female",
         birthday: "2000-11-05",
-        familyRegistry: [
-          {
-            name: "Siti Rahman",
-            status: "Active",
-            gender: "Female",
-            birthday: "2003-06-11",
-          },
-          {
-            name: "Amir Rahman",
-            status: "Inactive",
-            gender: "Male",
-            birthday: "2006-08-30",
-          },
-        ],
+        familyRegistry: generateFamily("Rahman"),
       },
       {
         name: "Budi Santoso",
         status: "Inactive",
         gender: "Male",
         birthday: "2002-09-16",
-        familyRegistry: [
-          {
-            name: "Rina Santoso",
-            status: "Active",
-            gender: "Female",
-            birthday: "2005-02-12",
-          },
-          {
-            name: "Andi Santoso",
-            status: "Active",
-            gender: "Male",
-            birthday: "2008-10-01",
-          },
-        ],
+        familyRegistry: generateFamily("Santoso"),
       },
     ];
 
@@ -624,7 +608,7 @@ export const Nested: Story = {
               styles={{
                 containerStyle: css`
                   padding: 0px;
-                  min-width: 1000px;
+                  width: 100%;
                 `,
                 headerStyle: css`
                   border-bottom: 1px solid #d1d5db;
@@ -633,11 +617,6 @@ export const Nested: Story = {
             >
               <Table
                 searchable
-                styles={{
-                  tableBodyStyle: css`
-                    max-height: 400px;
-                  `,
-                }}
                 actions={[
                   {
                     caption: "Add Family",

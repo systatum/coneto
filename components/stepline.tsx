@@ -4,13 +4,7 @@ import {
   SteplineItemState,
   TEXT_VARIANT_COLOR,
 } from "./../constants/step-component-util";
-import {
-  Children,
-  cloneElement,
-  isValidElement,
-  ReactNode,
-  useState,
-} from "react";
+import { Children, cloneElement, isValidElement, ReactNode } from "react";
 import styled, { css } from "styled-components";
 import type { CSSProp } from "styled-components";
 import { Tooltip } from "./tooltip";

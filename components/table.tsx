@@ -623,7 +623,9 @@ function ActionCapsule(capsule: CapsuleProps) {
   return (
     <Capsule
       {...capsule}
-      activeBackgroundColor="rgb(226, 224, 224)"
+      activeBackgroundColor={
+        capsule?.activeBackgroundColor ?? "rgb(226, 224, 224)"
+      }
       styles={{
         ...capsule?.styles,
         capsuleWrapperStyle: css`

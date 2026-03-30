@@ -20,6 +20,7 @@ import {
   Table,
   TableActionsProps,
 } from "./../../components/table";
+import { ReactNode } from "react";
 
 describe("ActionButton", () => {
   context("card", () => {
@@ -105,6 +106,63 @@ describe("ActionButton", () => {
     });
 
     context("with subMenu", () => {
+      context("with caret", () => {
+        it("should render button with 0px radius top-right and bottom-right", () => {
+          function CardComponent() {
+            return (
+              <Card
+                title="This is title"
+                subtitle="This is subtitle"
+                headerActions={[
+                  {
+                    caption: "Button",
+                    variant: "primary",
+                    subMenu: ({ list }) => list(LIST_OPTIONS),
+                  },
+                ]}
+              >
+                Test
+              </Card>
+            );
+          }
+          cy.mount(<CardComponent />);
+
+          cy.findAllByLabelText("action-button")
+            .eq(0)
+            .should("have.css", "border-top-right-radius", "0px")
+            .and("have.css", "border-bottom-right-radius", "0px");
+        });
+      });
+
+      context("with self", () => {
+        it("should render button with 6px radius top-right and bottom-right", () => {
+          function CardComponent() {
+            return (
+              <Card
+                title="This is title"
+                subtitle="This is subtitle"
+                headerActions={[
+                  {
+                    showSubMenuOn: "self",
+                    caption: "Button",
+                    variant: "primary",
+                    subMenu: ({ list }) => list(LIST_OPTIONS),
+                  },
+                ]}
+              >
+                Test
+              </Card>
+            );
+          }
+          cy.mount(<CardComponent />);
+
+          cy.findAllByLabelText("action-button")
+            .eq(0)
+            .should("have.css", "border-top-right-radius", "6px")
+            .and("have.css", "border-bottom-right-radius", "6px");
+        });
+      });
+
       context("when given variant", () => {
         it("should render button with variant", () => {
           function CardComponent() {
@@ -164,6 +222,7 @@ describe("ActionButton", () => {
           .should("have.css", "background-color", "rgb(179, 179, 179)");
       });
     });
+
     context("when given className", () => {
       it("should render the class", () => {
         function NavTabComponent() {
@@ -222,6 +281,68 @@ describe("ActionButton", () => {
     });
 
     context("with subMenu", () => {
+      context("with caret", () => {
+        it("should render button with 0px radius top-right and bottom-right", () => {
+          function NavTabComponent() {
+            return (
+              <NavTab
+                actions={[
+                  {
+                    caption: "Add",
+                    icon: { image: RiAddBoxLine },
+                    onClick: () => {
+                      console.log(`Add button was clicked`);
+                    },
+                    variant: "secondary",
+                    subMenu: ({ list }) => list(LIST_OPTIONS),
+                    showSubMenuOn: "caret",
+                  },
+                ]}
+                tabs={TABS_ITEMS}
+                activeTab={"2"}
+              />
+            );
+          }
+          cy.mount(<NavTabComponent />);
+
+          cy.findAllByLabelText("action-button")
+            .eq(2)
+            .should("have.css", "border-top-right-radius", "0px")
+            .and("have.css", "border-bottom-right-radius", "0px");
+        });
+      });
+
+      context("with self", () => {
+        it("should render button with 6px radius top-right and bottom-right", () => {
+          function NavTabComponent() {
+            return (
+              <NavTab
+                actions={[
+                  {
+                    caption: "Add",
+                    icon: { image: RiAddBoxLine },
+                    onClick: () => {
+                      console.log(`Add button was clicked`);
+                    },
+                    variant: "secondary",
+                    subMenu: ({ list }) => list(LIST_OPTIONS),
+                    showSubMenuOn: "self",
+                  },
+                ]}
+                tabs={TABS_ITEMS}
+                activeTab={"2"}
+              />
+            );
+          }
+          cy.mount(<NavTabComponent />);
+
+          cy.findAllByLabelText("action-button")
+            .eq(2)
+            .should("have.css", "border-top-right-radius", "6px")
+            .and("have.css", "border-bottom-right-radius", "6px");
+        });
+      });
+
       context("when given variant", () => {
         it("should render button with variant", () => {
           function NavTabComponent() {
@@ -293,7 +414,7 @@ describe("ActionButton", () => {
                         title={list.title}
                         groupId={group.id}
                         leftSideContent={({ badge }) =>
-                          badge(list.leftSideContent, {
+                          badge(list.leftSideContent as ReactNode, {
                             withStyle: css`
                               background-color: #488cac;
                               color: white;
@@ -356,7 +477,7 @@ describe("ActionButton", () => {
                         title={list.title}
                         groupId={group.id}
                         leftSideContent={({ badge }) =>
-                          badge(list.leftSideContent, {
+                          badge(list.leftSideContent as ReactNode, {
                             withStyle: css`
                               background-color: #488cac;
                               color: white;
@@ -418,7 +539,7 @@ describe("ActionButton", () => {
                         title={list.title}
                         groupId={group.id}
                         leftSideContent={({ badge }) =>
-                          badge(list.leftSideContent, {
+                          badge(list.leftSideContent as ReactNode, {
                             withStyle: css`
                               background-color: #488cac;
                               color: white;
@@ -446,6 +567,137 @@ describe("ActionButton", () => {
     });
 
     context("with subMenu", () => {
+      context("with caret", () => {
+        it("should render button with 0px radius top-right and bottom-right", () => {
+          function ListComponent() {
+            return (
+              <List
+                styles={{
+                  containerStyle: css`
+                    padding: 16px;
+                    min-width: 400px;
+                  `,
+                }}
+              >
+                {LIST_GROUPS.map((group, index) => {
+                  return (
+                    <List.Group
+                      key={index}
+                      id={group.id}
+                      subtitle={group.subtitle}
+                      title={group.title}
+                      actions={[
+                        {
+                          caption: "Back",
+                          onClick: () => {},
+                          subMenu: ({ list }) => list(LIST_OPTIONS),
+                        },
+                      ].filter(Boolean)}
+                    >
+                      {group.items.map((list, i) => (
+                        <List.Item
+                          key={i}
+                          openable={list.openable}
+                          id={list.id}
+                          subtitle={list.subtitle}
+                          title={list.title}
+                          groupId={group.id}
+                          leftSideContent={({ badge }) =>
+                            badge(list.leftSideContent as ReactNode, {
+                              withStyle: css`
+                                background-color: #488cac;
+                                color: white;
+                                min-width: 30px;
+                                max-width: 30px;
+                              `,
+                            })
+                          }
+                        >
+                          {list.children}
+                        </List.Item>
+                      ))}
+                    </List.Group>
+                  );
+                })}
+              </List>
+            );
+          }
+
+          cy.mount(<ListComponent />);
+
+          cy.findAllByLabelText("action-button")
+            .eq(0)
+            .should("have.css", "border-top-right-radius", "0px")
+            .and("have.css", "border-bottom-right-radius", "0px");
+        });
+      });
+
+      context("with self", () => {
+        it("should render button with 6px radius top-right and bottom-right", () => {
+          function ListComponent() {
+            return (
+              <List
+                styles={{
+                  containerStyle: css`
+                    padding: 16px;
+                    min-width: 400px;
+                  `,
+                }}
+              >
+                {LIST_GROUPS.map((group, index) => {
+                  return (
+                    <List.Group
+                      key={index}
+                      id={group.id}
+                      subtitle={group.subtitle}
+                      title={group.title}
+                      actions={[
+                        {
+                          showSubMenuOn: "self",
+                          caption: "Back",
+                          onClick: () => {},
+                          subMenu: ({ list }) => list(LIST_OPTIONS),
+                        },
+                      ]}
+                    >
+                      {group.items.map((list, i) => (
+                        <List.Item
+                          key={i}
+                          openable={list.openable}
+                          id={list.id}
+                          subtitle={list.subtitle}
+                          title={list.title}
+                          groupId={group.id}
+                          leftSideContent={({ badge }) =>
+                            badge(list.leftSideContent as ReactNode, {
+                              withStyle: css`
+                                background-color: #488cac;
+                                color: white;
+                                min-width: 30px;
+                                max-width: 30px;
+                              `,
+                            })
+                          }
+                        >
+                          {list.children}
+                        </List.Item>
+                      ))}
+                    </List.Group>
+                  );
+                })}
+              </List>
+            );
+          }
+
+          cy.mount(<ListComponent />);
+
+          cy.findAllByLabelText("action-button")
+            .eq(0)
+            .should("have.css", "border-top-right-radius", "6px")
+            .and("have.css", "border-bottom-right-radius", "6px");
+        });
+      });
+
       context("when given variant", () => {
         it("should render button with variant", () => {
           function ListComponent() {
@@ -482,7 +734,7 @@ describe("ActionButton", () => {
                           title={list.title}
                           groupId={group.id}
                           leftSideContent={({ badge }) =>
-                            badge(list.leftSideContent, {
+                            badge(list.leftSideContent as ReactNode, {
                               withStyle: css`
                                 background-color: #488cac;
                                 color: white;
@@ -674,6 +926,128 @@ describe("ActionButton", () => {
     });
 
     context("with subMenu", () => {
+      context("with caret", () => {
+        it("should render button with 0px radius top-right and bottom-right", () => {
+          function TableComponent() {
+            const columns: ColumnTableProps[] = [
+              {
+                id: "name",
+                caption: "Name",
+                sortable: false,
+              },
+              {
+                id: "type",
+                caption: "Type",
+                sortable: false,
+              },
+            ];
+
+            const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
+
+            const sampleRows = Array.from({ length: 20 }, (_, i) => {
+              const type = TYPES_DATA[i % TYPES_DATA.length];
+              return (
+                <Table.Row
+                  rowId={`${type}`}
+                  key={i}
+                  content={[`Load Balancer ${i + 1}`, type]}
+                />
+              );
+            });
+
+            return (
+              <Table
+                selectable
+                styles={{
+                  tableBodyStyle: css`
+                    max-height: 400px;
+                  `,
+                }}
+                columns={columns}
+                actions={TOP_ACTIONS}
+              >
+                {sampleRows}
+              </Table>
+            );
+          }
+          cy.mount(<TableComponent />);
+
+          cy.findAllByLabelText("action-button")
+            .eq(1)
+            .should("have.css", "border-top-right-radius", "0px")
+            .and("have.css", "border-bottom-right-radius", "0px");
+        });
+      });
+
+      context("with self", () => {
+        it("should render button with 6px radius top-right and bottom-right", () => {
+          function TableComponent() {
+            const columns: ColumnTableProps[] = [
+              {
+                id: "name",
+                caption: "Name",
+                sortable: false,
+              },
+              {
+                id: "type",
+                caption: "Type",
+                sortable: false,
+              },
+            ];
+
+            const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
+
+            const sampleRows = Array.from({ length: 20 }, (_, i) => {
+              const type = TYPES_DATA[i % TYPES_DATA.length];
+              return (
+                <Table.Row
+                  rowId={`${type}`}
+                  key={i}
+                  content={[`Load Balancer ${i + 1}`, type]}
+                />
+              );
+            });
+
+            return (
+              <Table
+                selectable
+                styles={{
+                  tableBodyStyle: css`
+                    max-height: 400px;
+                  `,
+                }}
+                columns={columns}
+                actions={[
+                  {
+                    caption: "Copy",
+                    icon: {
+                      image: RiClipboardFill,
+                    },
+                    onClick: () => {},
+                    subMenu: ({ list }) => list(LIST_OPTIONS),
+                    variant: "danger",
+                    showSubMenuOn: "self",
+                    styles: {
+                      dropdownStyle: css`
+                        min-width: 150px;
+                      `,
+                    },
+                  },
+                ]}
+              >
+                {sampleRows}
+              </Table>
+            );
+          }
+          cy.mount(<TableComponent />);
+
+          cy.findAllByLabelText("action-button")
+            .eq(0)
+            .should("have.css", "border-top-right-radius", "6px")
+            .and("have.css", "border-bottom-right-radius", "6px");
+        });
+      });
+
       context("when given variant", () => {
         it("should render button with variant", () => {
           function TableComponent() {
