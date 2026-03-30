@@ -17,6 +17,87 @@ const meta: Meta<typeof Statusbar> = {
   title: "Stage/Statusbar",
   component: Statusbar,
   tags: ["autodocs"],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+**Statusbar** is a flexible bottom bar component to display actions, icons, buttons, or status information.  
+It supports left and right sections, customizable styling, spacing, transparency, and dynamic content.
+
+---
+
+### ✨ Features
+- 🔹 **Left & Right sections** – Display items independently on both sides
+- 🖼 **Icons & Text** – Supports icons, labels, or custom render functions
+- 🔘 **Buttons** – Integrates seamlessly with Button components
+- 🎨 **Custom styles** – Configure styles for container, items, left/right wrappers
+- 🟢 **Active & Hover states** – Custom background colors for active and hover states
+- ⚖ **Flexible sizing** – Adjustable font/icon sizes
+- 🌐 **Transparent mode** – Optionally render a transparent statusbar
+- 🛠 **Spacers** – Add responsive spacing with \`Statusbar.Spacer\`
+
+---
+
+### 🛠 Usage
+
+\`\`\`tsx
+<Statusbar
+  size={12}
+  activeBackgroundColor="#e0e0e0"
+  hoverBackgroundColor="#f5f5f5"
+  transparent={false}
+  content={{
+    left: [
+      { text: "Home", icon: { name: "home" } },
+      { button: { children: "Save", onClick: () => alert("Saved!") } },
+    ],
+    right: [
+      { text: "Profile", icon: { name: "user" } },
+      { render: <CustomComponent /> },
+    ],
+  }}
+  styles={{
+    self: css\`padding: 4px 12px;\`,
+    itemStyle: css\`color: #333;\`,
+    leftWrapperStyle: css\`gap: 8px;\`,
+    rightWrapperStyle: css\`gap: 8px;\`,
+  }}
+/>
+\`\`\`
+        `,
+      },
+    },
+  },
+  argTypes: {
+    content: {
+      description:
+        "Content object for the statusbar. Use \`left\` and \`right\` arrays of StatusbarItemProps to configure items.",
+      control: false,
+    },
+    styles: {
+      description:
+        "Custom styles applied to the statusbar container, items, and wrappers.",
+      control: false,
+    },
+    activeBackgroundColor: {
+      description:
+        "Background color applied when items are active or selected.",
+      control: "color",
+    },
+    hoverBackgroundColor: {
+      description: "Background color applied when items are hovered.",
+      control: "color",
+    },
+    transparent: {
+      description:
+        "If true, the statusbar will render transparent without a background.",
+      control: "boolean",
+    },
+    size: {
+      description: "Font size (and default icon size) of items in pixels.",
+      control: "number",
+    },
+  },
 };
 
 export default meta;
