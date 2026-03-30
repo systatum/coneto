@@ -390,7 +390,7 @@ export function PaperDialogContent({
 const StyledDialogContent = styled.div<{ $style?: CSSProp }>`
   min-height: 100dvh;
   max-height: 100dvh;
-  overflow: scroll;
+  overflow: auto;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
