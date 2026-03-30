@@ -4,7 +4,7 @@ const path = require("path");
 const IGNORED_COMPONENT_FILES = ["context-menu", "action-button", "helper"];
 
 function getFlatExportsFrom(dirPath, baseDistPath) {
-  const abs = path.join(__dirname, "..", dirPath);
+  const abs = path.join(process.cwd(), dirPath);
 
   return fs
     .readdirSync(abs)
@@ -62,7 +62,7 @@ const additionalExports = {
   },
 };
 
-const pkgPath = path.join(__dirname, "package.json");
+const pkgPath = path.join(process.cwd(), "package.json");
 const pkg = require(pkgPath);
 
 pkg.exports = {
