@@ -111,6 +111,120 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
       };
     }, []);
 
+    /** Check whether a character is valid for a given part type */
+    const isCharValidForType = (
+      char: string,
+      type: PinboxTypeState
+    ): boolean => {
+      if (type === "static") return false;
+      if (type === "digit") return /^[0-9]$/.test(char);
+      if (type === "alphabet") return /^[A-Za-z]$/.test(char);
+      if (type === "alphanumeric") return /^[A-Za-z0-9]$/.test(char);
+      return true;
+    };
+
+    /**
+     * Handle paste event on any input box.
+     * Distributes the pasted text across editable boxes starting from
+     * the focused index, skipping static parts and invalid characters.
+     */
+    const handlePaste = (
+      e: React.ClipboardEvent<HTMLInputElement>,
+      startIndex: number
+    ) => {
+      e.preventDefault();
+
+      const pasted = e.clipboardData.getData("text");
+      if (!pasted) return;
+
+      const editableIndices = parts.reduce<number[]>((acc, p, i) => {
+        if (p.type !== "static") acc.push(i);
+        return acc;
+      }, []);
+
+      const startEditablePos = editableIndices.indexOf(startIndex);
+      if (startEditablePos === -1) return;
+
+      const finalValue = [...valueLocal];
+      let pasteCharPos = 0;
+      let lastFilledIndex = startIndex;
+
+      for (
+        let editPos = startEditablePos;
+        editPos < editableIndices.length && pasteCharPos < pasted.length;
+        editPos++
+      ) {
+        const partIndex = editableIndices[editPos];
+        const partType = parts[partIndex].type;
+
+        while (pasteCharPos < pasted.length) {
+          const char = pasted[pasteCharPos];
+          pasteCharPos++;
+
+          if (isCharValidForType(char, partType)) {
+            const normalised =
+              partType === "alphabet" || partType === "alphanumeric"
+                ? char.toUpperCase()
+                : char;
+
+            finalValue[partIndex] = normalised;
+            lastFilledIndex = partIndex;
+
+            if (masked) {
+              const existingTimeout = maskTimeoutsRef.current.get(partIndex);
+              if (existingTimeout) clearTimeout(existingTimeout);
+
+              setMaskedIndices((prev) => {
+                const next = new Set(prev);
+                next.delete(partIndex);
+                return next;
+              });
+
+              const timeout = setTimeout(() => {
+                setMaskedIndices((prev) => {
+                  const next = new Set(prev);
+                  next.add(partIndex);
+                  return next;
+                });
+                maskTimeoutsRef.current.delete(partIndex);
+              }, 500);
+
+              maskTimeoutsRef.current.set(partIndex, timeout);
+            }
+
+            break;
+          }
+        }
+      }
+
+      setValueLocal(finalValue);
+
+      let focusIndex = lastFilledIndex + 1;
+      while (
+        focusIndex < parts.length &&
+        parts[focusIndex]?.type === "static"
+      ) {
+        focusIndex++;
+      }
+      if (focusIndex < parts.length) {
+        inputsRef.current[focusIndex]?.focus();
+      } else {
+        inputsRef.current[lastFilledIndex]?.focus();
+      }
+
+      if (onChange) {
+        const syntheticEvent = {
+          target: {
+            name,
+            value: finalValue
+              .filter((_, i) => parts[i].type !== "static")
+              .join(""),
+          },
+        } as ChangeEvent<HTMLInputElement>;
+        onChange(syntheticEvent);
+      }
+    };
+
     const handleKeyDown = (
       e: React.KeyboardEvent<HTMLInputElement>,
       index: number
@@ -127,10 +241,16 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
         return;
       }
 
+      // Allow browser paste (Ctrl+V / Meta+V) and select-all (Ctrl+A) to
+      // pass through so the native onPaste event fires correctly.
+      const isSystemShortcut =
+        (e.ctrlKey || e.metaKey) && ["v", "a"].includes(key.toLowerCase());
+
       if (
         type === "digit" &&
         !/[0-9]/.test(key) &&
-        !["Backspace", "Tab", "ArrowLeft", "ArrowRight"].includes(key)
+        !["Backspace", "Tab", "ArrowLeft", "ArrowRight"].includes(key) &&
+        !isSystemShortcut
       ) {
         e.preventDefault();
         return;
@@ -138,7 +258,8 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
       if (
         type === "alphabet" &&
         !/[A-Za-z]/.test(key) &&
-        !["Backspace", "Tab", "ArrowLeft", "ArrowRight"].includes(key)
+        !["Backspace", "Tab", "ArrowLeft", "ArrowRight"].includes(key) &&
+        !isSystemShortcut
       ) {
         e.preventDefault();
         return;
@@ -146,13 +267,14 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
       if (
         type === "alphanumeric" &&
         !/[A-Za-z0-9]/.test(key) &&
-        !["Backspace", "Tab", "ArrowLeft", "ArrowRight"].includes(key)
+        !["Backspace", "Tab", "ArrowLeft", "ArrowRight"].includes(key) &&
+        !isSystemShortcut
       ) {
         e.preventDefault();
         return;
       }
 
-      if (key.length === 1) {
+      if (key.length === 1 && !e.ctrlKey && !e.metaKey) {
         e.preventDefault();
         updateValue(index, key);
         moveToNextInput(index);
@@ -288,6 +410,7 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
                     ).current = el;
                   }
                 }}
+                onPaste={(e) => handlePaste(e, index)}
                 required={required}
                 disabled={disabled}
                 pattern={pattern}
