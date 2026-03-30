@@ -32,6 +32,7 @@ export interface RichEditorProps {
   mode?: RichEditorModeState;
   toolbarPosition?: RichEditorToolbarPositionState;
   autogrow?: boolean;
+  height?: number;
 }
 
 export interface RichEditorStylesProps {
@@ -77,6 +78,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       toolbarRightPanel,
       styles,
       autogrow = false,
+      height = 200,
     },
     ref
   ) => {
@@ -1200,6 +1202,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           $editorStyle={styles?.editorStyle}
           $toolbarPosition={toolbarPosition}
           $mode={mode}
+          $height={height}
           $autogrow={autogrow}
           onInput={() => {
             if (mode !== "view-only") {
@@ -1348,12 +1351,13 @@ const EditorArea = styled.div<{
   $editorStyle?: CSSProp;
   $mode?: RichEditorModeState;
   $autogrow?: boolean;
+  $height?: number;
 }>`
   padding: 8px;
   outline: none;
   background-color: white;
 
-  ${({ $mode, $autogrow }) =>
+  ${({ $mode, $autogrow, $height }) =>
     $mode === "page-editor"
       ? css`
           min-height: 100dvh;
@@ -1362,23 +1366,24 @@ const EditorArea = styled.div<{
         `
       : $autogrow
         ? css`
-            min-height: 200px;
+            min-height: ${`${$height}px`};
             overflow: hidden;
           `
         : css`
-            min-height: 200px;
-            max-height: 200px;
+            min-height: ${`${$height}px`};
+            max-height: ${`${$height}px`};
             overflow-y: auto;
           `}
 
   ${({ $toolbarPosition }) =>
     $toolbarPosition === "top"
       ? css`
-          padding-top: 45px;
+          margin-top: 37px;
         `
       : css`
-          padding-bottom: 45px;
+          margin-bottom: 37px;
         `};
+
   ${({ $mode }) =>
     $mode === "view-only" &&
     css`
