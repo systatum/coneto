@@ -21,14 +21,110 @@ const meta: Meta<typeof RichEditor> = {
       description: {
         component: `
 
-✍️ A lightweight Markdown-compatible rich text editor using \`contentEditable\` div, Remix Icons, and inline HTML/Markdown conversion.
+✍️ **RichEditor** is a lightweight, Markdown-compatible rich text editor built on top of \`contentEditable\`. It provides a WYSIWYG editing experience while maintaining clean and structured Markdown output.
 
-- Supports bold, italic, ordered/unordered list, and headings
-- Supports checklists with \`[]\` (unchecked) and \`[x]\` (checked)
-- Uses custom turndown rules for markdown conversion
-- Includes a floating tip menu for H1–H3 heading options
-- Optional right-panel toolbar 
-        `,
+---
+
+### ✨ Features
+
+- **Markdown ↔ HTML sync**
+  - Uses \`marked\` for parsing Markdown → HTML
+  - Uses custom \`TurndownService\` rules for HTML → Markdown
+  - Ensures clean spacing and consistent formatting
+
+- **Rich formatting**
+  - Bold and italic (toolbar + keyboard shortcuts)
+  - Headings (H1–H3) via floating menu
+  - Ordered and unordered lists
+  - Smart inline formatting (auto-detect word styling)
+
+- **Checklist support**
+  - Type \`[ ]\` or \`[x]\` + space to create checkboxes
+  - Interactive checkboxes synced back to Markdown
+  - Preserves state via \`data-checked\`
+
+- **Smart input behavior**
+  - Auto-converts:
+    - \`1.\` → ordered list
+    - \`-\` or \`*\` → unordered list
+  - Handles Enter key for:
+    - Splitting headings properly
+    - Maintaining formatting consistency
+  - Intelligent Backspace behavior for lists and headings
+
+- **Toolbar system**
+  - Built-in formatting controls
+  - Floating heading menu (H1–H3)
+  - Supports custom right-side toolbar via \`toolbarRightPanel\`
+
+- **Flexible layout**
+  - Toolbar position: \`top\` or \`bottom\`
+  - Modes:
+    - \`text-editor\` (default editing)
+    - \`page-editor\` (full height editor)
+    - \`view-only\` (read-only with selectable text)
+
+- **Height control**
+  - \`autogrow\`: expands editor dynamically
+  - Fixed height with scroll support via \`height\`
+
+---
+
+### 🧩 Props
+
+- \`value\` — Initial Markdown content
+- \`onChange\` — Callback returning cleaned Markdown output
+- \`mode\` — Editor mode: \`text-editor\` | \`page-editor\` | \`view-only\`
+- \`toolbarPosition\` — Position of toolbar: \`top\` | \`bottom\`
+- \`toolbarRightPanel\` — Custom React node for right-side toolbar
+- \`autogrow\` — Enable dynamic height
+- \`height\` — Fixed height (used when \`autogrow\` is false)
+- \`styles\` — Custom styling overrides
+
+---
+
+### 🎯 Imperative API
+
+Accessible via \`ref\`:
+
+- \`insertPlainText(text)\`  
+  Inserts raw text at cursor position
+
+- \`insertMarkdownContent(markdown)\`  
+  Parses Markdown → HTML and inserts into editor
+
+---
+
+### ⌨️ Keyboard Shortcuts
+
+- **Cmd/Ctrl + B** → Bold
+- **Cmd/Ctrl + I** → Italic
+- **Enter**
+  - Smart line break handling
+  - Proper heading/list splitting
+- **Space**
+  - Triggers list and checklist auto-format
+
+---
+
+### ⚙️ Notes
+
+- Built using \`document.execCommand\` for formatting
+- Includes custom DOM normalization to:
+  - Prevent invalid list wrapping
+  - Clean unnecessary \`span\` styles
+- Designed for predictable Markdown output rather than raw HTML editing
+
+---
+
+### 🚀 Use Cases
+
+- Blog editors
+- Notes / documentation tools
+- Internal CMS editors
+- Markdown-based content systems
+
+      `,
       },
     },
   },
