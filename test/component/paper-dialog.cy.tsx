@@ -1,13 +1,17 @@
+import { css } from "styled-components";
 import { Button } from "./../../components/button";
 import {
   PaperDialog,
   PaperDialogProps,
   PaperDialogRef,
 } from "./../../components/paper-dialog";
-import { useRef } from "react";
+import { ReactNode, useRef } from "react";
+import { generateSentence } from "./../../lib/text";
 
 describe("PaperDialog", () => {
-  function ProductPaperDialog(props: PaperDialogProps) {
+  function ProductPaperDialog(
+    props: PaperDialogProps & { children?: ReactNode }
+  ) {
     const dialogRef = useRef<PaperDialogRef>(null);
 
     return (
@@ -23,27 +27,30 @@ describe("PaperDialog", () => {
 
         <PaperDialog closable width="35vw" ref={dialogRef} {...props}>
           <PaperDialog.Content
-            style={{
-              padding: "36px",
-              gap: "16px",
+            styles={{
+              self: css`
+                padding: 36px;
+                gap: 16px;
+              `,
             }}
           >
-            <div
-              style={{ display: "flex", flexDirection: "column", gap: "8px" }}
-            >
-              <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>
-                Escapable Feature
-              </h2>
-              <p style={{ fontSize: "14px", color: "#4B5563" }}>
-                When closable with value false, the dialog cannot be closed by
-                pressing the Escape key or clicking the background. Use the
-                close button or action buttons to dismiss it.
-              </p>
-              <p style={{ fontSize: "14px", color: "#4B5563" }}>
-                You can still interact with the content and action buttons
-                inside the dialog.
-              </p>
-            </div>
+            {props?.children ? (
+              props?.children
+            ) : (
+              <div
+                style={{ display: "flex", flexDirection: "column", gap: "8px" }}
+              >
+                <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>
+                  Escapable Feature
+                </h2>
+                <p style={{ fontSize: "14px", color: "#4B5563" }}>
+                  {generateSentence()}
+                </p>
+                <p style={{ fontSize: "14px", color: "#4B5563" }}>
+                  {generateSentence()}
+                </p>
+              </div>
+            )}
           </PaperDialog.Content>
         </PaperDialog>
       </div>
@@ -72,14 +79,14 @@ describe("PaperDialog", () => {
           "the modal is closed"
         );
 
-        cy.findByLabelText("paper-dialog-content").should("exist");
+        cy.findByLabelText("paper-dialog-wrapper").should("exist");
         cy.get("body").type("{esc}");
 
         cy.get("@consoleLog").should(
           "have.been.calledWith",
           "the modal is closed"
         );
-        cy.findByLabelText("paper-dialog-content").should("not.exist");
+        cy.findByLabelText("paper-dialog-wrapper").should("not.exist");
       });
     });
 
@@ -104,14 +111,14 @@ describe("PaperDialog", () => {
           "the modal is closed"
         );
 
-        cy.findByLabelText("paper-dialog-content").should("exist");
+        cy.findByLabelText("paper-dialog-wrapper").should("exist");
         cy.findByLabelText("overlay-blocker").should("exist").click("topLeft");
 
         cy.get("@consoleLog").should(
           "have.been.calledWith",
           "the modal is closed"
         );
-        cy.findByLabelText("paper-dialog-content").should("not.exist");
+        cy.findByLabelText("paper-dialog-wrapper").should("not.exist");
       });
     });
 
@@ -136,14 +143,14 @@ describe("PaperDialog", () => {
           "the modal is closed"
         );
 
-        cy.findByLabelText("paper-dialog-content").should("exist");
+        cy.findByLabelText("paper-dialog-wrapper").should("exist");
         cy.findByLabelText("overlay-blocker").should("exist").click("topLeft");
 
         cy.get("@consoleLog").should(
           "have.been.calledWith",
           "the modal is closed"
         );
-        cy.findByLabelText("paper-dialog-content").should("not.exist");
+        cy.findByLabelText("paper-dialog-wrapper").should("not.exist");
       });
     });
 
@@ -170,14 +177,14 @@ describe("PaperDialog", () => {
             "the modal is closed"
           );
 
-          cy.findByLabelText("paper-dialog-content").should("exist");
+          cy.findByLabelText("paper-dialog-wrapper").should("exist");
           cy.get("body").type("{esc}");
 
           cy.get("@consoleLog").should(
             "not.have.been.calledWith",
             "the modal is closed"
           );
-          cy.findByLabelText("paper-dialog-content").should("exist");
+          cy.findByLabelText("paper-dialog-wrapper").should("exist");
         });
       });
 
@@ -203,7 +210,7 @@ describe("PaperDialog", () => {
             "the modal is closed"
           );
 
-          cy.findByLabelText("paper-dialog-content").should("exist");
+          cy.findByLabelText("paper-dialog-wrapper").should("exist");
           cy.findByLabelText("overlay-blocker")
             .should("exist")
             .click("topLeft");
@@ -212,7 +219,7 @@ describe("PaperDialog", () => {
             "not.have.been.calledWith",
             "the modal is closed"
           );
-          cy.findByLabelText("paper-dialog-content").should("exist");
+          cy.findByLabelText("paper-dialog-wrapper").should("exist");
         });
       });
     });
@@ -225,9 +232,9 @@ describe("PaperDialog", () => {
           cy.mount(<ProductPaperDialog closable={true} />);
 
           cy.findAllByRole("button").eq(0).should("exist").click();
-          cy.findByLabelText("paper-dialog-content").should("exist");
+          cy.findByLabelText("paper-dialog-wrapper").should("exist");
           cy.get("body").type("{esc}");
-          cy.findByLabelText("paper-dialog-content").should("not.exist");
+          cy.findByLabelText("paper-dialog-wrapper").should("not.exist");
         });
       });
 
@@ -236,11 +243,11 @@ describe("PaperDialog", () => {
           cy.mount(<ProductPaperDialog closable={true} />);
 
           cy.findAllByRole("button").eq(0).should("exist").click();
-          cy.findByLabelText("paper-dialog-content").should("exist");
+          cy.findByLabelText("paper-dialog-wrapper").should("exist");
           cy.findByLabelText("overlay-blocker")
             .should("exist")
             .click("topLeft");
-          cy.findByLabelText("paper-dialog-content").should("not.exist");
+          cy.findByLabelText("paper-dialog-wrapper").should("not.exist");
         });
       });
     });
@@ -251,9 +258,9 @@ describe("PaperDialog", () => {
           cy.mount(<ProductPaperDialog closable={false} />);
 
           cy.findAllByRole("button").eq(0).should("exist").click();
-          cy.findByLabelText("paper-dialog-content").should("exist");
+          cy.findByLabelText("paper-dialog-wrapper").should("exist");
           cy.get("body").type("{esc}");
-          cy.findByLabelText("paper-dialog-content").should("exist");
+          cy.findByLabelText("paper-dialog-wrapper").should("exist");
         });
       });
 
@@ -262,11 +269,11 @@ describe("PaperDialog", () => {
           cy.mount(<ProductPaperDialog closable={false} />);
 
           cy.findAllByRole("button").eq(0).should("exist").click();
-          cy.findByLabelText("paper-dialog-content").should("exist");
+          cy.findByLabelText("paper-dialog-wrapper").should("exist");
           cy.findByLabelText("overlay-blocker")
             .should("exist")
             .click("topLeft");
-          cy.findByLabelText("paper-dialog-content").should("exist");
+          cy.findByLabelText("paper-dialog-wrapper").should("exist");
         });
       });
     });
@@ -277,9 +284,9 @@ describe("PaperDialog", () => {
           cy.mount(<ProductPaperDialog />);
 
           cy.findAllByRole("button").eq(0).should("exist").click();
-          cy.findByLabelText("paper-dialog-content").should("exist");
+          cy.findByLabelText("paper-dialog-wrapper").should("exist");
           cy.get("body").type("{esc}");
-          cy.findByLabelText("paper-dialog-content").should("not.exist");
+          cy.findByLabelText("paper-dialog-wrapper").should("not.exist");
         });
       });
 
@@ -288,11 +295,50 @@ describe("PaperDialog", () => {
           cy.mount(<ProductPaperDialog />);
 
           cy.findAllByRole("button").eq(0).should("exist").click();
-          cy.findByLabelText("paper-dialog-content").should("exist");
+          cy.findByLabelText("paper-dialog-wrapper").should("exist");
           cy.findByLabelText("overlay-blocker")
             .should("exist")
             .click("topLeft");
-          cy.findByLabelText("paper-dialog-content").should("not.exist");
+          cy.findByLabelText("paper-dialog-wrapper").should("not.exist");
+        });
+      });
+    });
+  });
+
+  context("style", () => {
+    context("height", () => {
+      it("should be 100% from the screen", () => {
+        cy.mount(<ProductPaperDialog closable={true} />);
+        cy.findAllByRole("button").eq(0).should("exist").click();
+
+        cy.findByLabelText("paper-dialog-content").should(
+          "have.css",
+          "height",
+          "500px"
+        );
+      });
+
+      context("when given a lot of text", () => {
+        it("should render 500px and can scroll to the bottom", () => {
+          cy.mount(
+            <ProductPaperDialog closable={true}>
+              {generateSentence({
+                minLen: 150,
+                maxLen: 200,
+                seed: 1234,
+              })}
+            </ProductPaperDialog>
+          );
+          cy.findAllByRole("button").eq(0).should("exist").click();
+
+          cy.findByLabelText("paper-dialog-content")
+            .should("have.css", "height", "500px")
+            .and("have.css", "overflow", "auto")
+            .scrollTo("bottom")
+            .then(($el) => {
+              const el = $el[0];
+              expect(el.scrollHeight).to.be.greaterThan(el.clientHeight);
+            });
         });
       });
     });
