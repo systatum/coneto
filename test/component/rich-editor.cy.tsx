@@ -7,6 +7,26 @@ describe("RichEditor", () => {
   function ProductRichEditor(props: RichEditorProps) {
     return <RichEditor value="test" {...props} />;
   }
+
+  context("height", () => {
+    context("when given 300px", () => {
+      it("renders a textarea with 300px", () => {
+        cy.mount(
+          <ProductRichEditor
+            autogrow
+            value={generateSentence({ minLen: 200, maxLen: 250, seed: 1234 })}
+            height={300}
+          />
+        );
+        cy.findAllByLabelText("rich-editor-content").should(
+          "have.css",
+          "height",
+          "509px"
+        );
+      });
+    });
+  });
+
   context("autogrow", () => {
     context("when given true", () => {
       it("renders a textarea that grows with content", () => {
