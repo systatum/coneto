@@ -10,6 +10,44 @@ const meta: Meta<typeof LoadingSkeleton> = {
   title: "Content/LoadingSkeleton",
   component: LoadingSkeleton,
   tags: ["autodocs"],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+**LoadingSkeleton** is a versatile skeleton loader component for indicating loading states.  
+It supports multiple skeleton items, customizable shimmer direction, speed, colors, and wrapper styling.
+
+---
+
+### ✨ Features
+- 🔹 **Skeleton wrapper** – Container for multiple skeleton items
+- 🧱 **Skeleton items** – Individual blocks to represent text, avatars, or cards
+- 🔄 **Shimmer animation** – Smooth loading effect with configurable direction
+- ⏱ **Adjustable speed** – Predefined slow, normal, fast, or custom duration
+- 🎨 **Custom colors** – Base and highlight colors for full theme control
+- 🛠 **Custom styles** – Apply styled-components CSS to wrapper or items
+
+---
+
+### 🛠 Usage
+
+\`\`\`tsx
+<LoadingSkeleton
+  flashDirection="left-to-right"
+  flashRate="fast"
+  baseColor="#eee"
+  highlightColor="#ddd"
+  styles={{ self: css\`padding: 12px; border-radius: 4px;\` }}
+>
+  <LoadingSkeleton.Item width={120} height={16} />
+  <LoadingSkeleton.Item width={200} height={16} />
+  <LoadingSkeleton.Item width="100%" height={24} />
+</LoadingSkeleton>
+\`\`\`
+        `,
+      },
+    },
+  },
   argTypes: {
     children: {
       control: false,

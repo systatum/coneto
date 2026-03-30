@@ -9,6 +9,32 @@ const meta: Meta<typeof Dialog> = {
   component: Dialog,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+Dialog is a modal component for displaying messages, forms, or custom content in a focused overlay. It supports headers with title/subtitle/icon, body content, footer actions, and customizable styles.
+
+---
+
+### ✨ Features
+- 🟢 **Controlled visibility** with \`isOpen\`
+- 🔔 **Optional closable** via overlay click, Escape key, or close button
+- 🏷️ **Header** with title, subtitle, and optional icon
+- 🎯 **Custom footer buttons** with callbacks
+- 📝 **Custom content** can be rendered in the body
+- 🎨 Fully **styleable** via \`styles\` prop
+- 🚀 Smooth **zoom in/out animation** on open/close
+
+---
+
+### 📌 Usage
+- Use **Dialog.show(config)** and **Dialog.hide()** for imperative control.
+- Provide \`onVisibilityChange\` to control open/close externally (controlled mode).
+- Footer buttons use **onClick** with \`{ id, closeDialog }\`.
+- Styles are optional and override sections individually.
+  `,
+      },
+    },
   },
   tags: ["autodocs"],
   argTypes: {

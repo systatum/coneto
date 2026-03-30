@@ -12,7 +12,27 @@ const meta: Meta = {
   component: Phonebox,
   parameters: {
     layout: "centered",
+
+    docs: {
+      description: {
+        component: `
+Phonebox is a combined country code selector and phone number input. It supports formatting, validation, search, and keyboard navigation.
+
+---
+
+### ✨ Features
+- 🌐 **Country code selector**: Choose your country code with flags and search.
+- 🔢 **Phone input formatting**: Formats the number automatically based on selected country.
+- 👆 **Keyboard & mouse navigation**: Supports arrow keys, Enter, and Escape in dropdown.
+- ⚠️ **Error handling**: Visual feedback and optional error messages.
+- 📝 **Helper text**: Add helper text below the input.
+- 🔧 **Custom styles**: Styles for wrapper, input, toggle button, and dropdown.
+- 🔄 **Two-way binding**: \`onChange\` triggers for both country code and phone number.
+      `,
+      },
+    },
   },
+
   tags: ["autodocs"],
   argTypes: {
     onChange: { action: "changed" },

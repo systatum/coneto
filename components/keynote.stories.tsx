@@ -6,6 +6,57 @@ const meta: Meta<typeof Keynote> = {
   title: "Content/Keynote",
   component: Keynote,
   tags: ["autodocs"],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+Keynote is a flexible component for displaying key-value pairs in a clean, structured layout. 
+It supports rendering data from an object, custom renderers per key, manual children, and fully customizable styles.
+
+---
+
+### ✨ Features
+- 🗝 **Automatic key-value rendering**: Display selected keys and labels from a data object.
+- 🎨 **Custom rendering**: Provide a \`renderer\` function per key for formatting (e.g., bold numbers, currency formatting, JSX content).
+- 📦 **Children support**: Render any custom JSX as a child if no \`data\` is provided.
+- 🖌 **Styling flexibility**: Customize the wrapper, rows, keys, and values via \`styles\` prop.
+- 🔧 **Composability**: Each row is a \`Keynote.Point\` that can be used independently for nested or dynamic structures.
+
+---
+
+### 📌 Usage
+
+\`\`\`tsx
+<Keynote
+  data={{ name: "Alim Naufal", role: "Frontend Developer", salary: 8500000 }}
+  keys={["name", "role", "salary"]}
+  keyLabels={["Full Name", "Position", "Monthly Salary"]}
+  renderer={{
+    salary: val => <b>{val.toLocaleString()} IDR</b>
+  }}
+  styles={{
+    self: css\`margin-top: 16px;\`,
+    rowStyle: css\`padding: 8px 0;\`,
+    rowKeyStyle: css\`color: #2563eb;\`,
+    rowValueStyle: css\`font-weight: 600;\`
+  }}
+/>
+
+{/* Using children instead of data */}
+<Keynote styles={{ self: css\`margin-top: 16px;\` }}>
+  <Keynote.Point label="Custom Label">Custom Value</Keynote.Point>
+  <Keynote.Point label="Another Label">Another Value</Keynote.Point>
+</Keynote>
+\`\`\`
+
+- Use \`data\` + \`keys\` + \`keyLabels\` to render object values automatically.
+- Use \`renderer\` for custom formatting or JSX output.
+- Fully styleable using the \`styles\` prop.
+- \`Keynote.Point\` can be used individually for custom rows.
+`,
+      },
+    },
+  },
   argTypes: {
     data: {
       control: "object",

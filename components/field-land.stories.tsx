@@ -12,6 +12,145 @@ const meta: Meta<typeof FieldLane> = {
   title: "Stage/FieldLane",
   component: FieldLane,
   tags: ["autodocs"],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+FieldLane is a flexible form field wrapper that supports labels, helper text, error states, dropdowns, custom actions, and additional content. It’s designed for highly customizable forms where inputs need visual clarity, interactivity, and optional validation feedback.
+
+---
+
+### ✨ Features
+- 🏷 **Label support**: Configurable position ("top" or "left"), width, gap, and required indicator.
+- ⚠️ **Error handling**: Show inline error messages with optional error icons positioned absolutely or relatively.
+- 🖱 **Actions & buttons**: Attach multiple action buttons or icons with tooltips, click handlers, and visibility control.
+- ⬇️ **Dropdowns**: Include one or multiple dropdowns with optional filtering, custom renderers, and styling.
+- 🎨 **Customizable styles**: Override styles for container, label, body, and input/control areas.
+- 🧩 **Flexible children**: Embed any ReactNode (input, select, custom component) as field content.
+- ⛔ **Disabled state**: Disable the entire field with visual feedback.
+
+---
+
+### 📌 Usage
+\`\`\`tsx
+<FieldLane
+  label="Username"
+  required
+  helper="Enter your unique username"
+  showError={true}
+  errorMessage="This field is required"
+  errorIconPosition="absolute"
+  dropdowns={[
+    {
+      caption: "Options",
+      options: [
+        { text: "Option 1", value: "1" },
+        { text: "Option 2", value: "2" },
+      ],
+      withFilter: true,
+      onChange: (val) => console.log("Selected:", val),
+    },
+  ]}
+  actions={[
+    {
+      title: "Check",
+      icon: { image: RiCheckLine },
+      onClick: () => console.log("Clicked"),
+    },
+  ]}
+  styles={{
+    containerStyle: css\`border: 1px solid #ccc;\`,
+    labelStyle: css\`font-weight: bold;\`,
+    controlStyle: css\`background: #f9fafb;\`,
+    bodyStyle: css\`gap: 0.5rem;\`,
+  }}
+>
+  <input type="text" placeholder="Enter username" />
+</FieldLane>
+\`\`\`
+
+- Use \`label\` for field names and \`helper\` for guidance.
+- \`showError\` and \`errorMessage\` handle validation display.
+- Attach multiple dropdowns and actions with optional custom rendering.
+- Fully styleable through the \`styles\` prop.
+`,
+      },
+    },
+  },
+  argTypes: {
+    label: {
+      control: "text",
+      description: "Field label text to display above or beside the input.",
+    },
+    showError: {
+      control: "boolean",
+      description: "Whether to show an error icon and/or error message.",
+    },
+    errorIconPosition: {
+      control: { type: "select" },
+      options: ["absolute", "relative", "none"],
+      description: "Position of the error icon relative to the field.",
+    },
+    errorMessage: {
+      control: "text",
+      description: "Text to display when there is a validation error.",
+    },
+    helper: {
+      control: "text",
+      description: "Optional helper text displayed below the label.",
+    },
+    dropdowns: {
+      control: false,
+      description:
+        "Optional array of dropdown configurations for additional field actions.",
+    },
+    actions: {
+      control: false,
+      description:
+        "Optional array of action button configurations with icons and click handlers.",
+    },
+    children: {
+      control: false,
+      description:
+        "ReactNode content rendered inside the field, typically input elements.",
+    },
+    disabled: {
+      control: "boolean",
+      description: "Whether the entire field is disabled.",
+    },
+    type: {
+      control: "text",
+      description: "Optional type of the field (e.g., 'text', 'password').",
+    },
+    labelPosition: {
+      control: { type: "select" },
+      options: ["top", "left"],
+      description: "Position of the label relative to the input field.",
+    },
+    labelWidth: {
+      control: "text",
+      description: "Width of the label when positioned on the left.",
+    },
+    labelGap: {
+      control: "number",
+      description: "Gap between label and input field.",
+    },
+    required: {
+      control: "boolean",
+      description: "Whether the field is required.",
+    },
+    styles: {
+      control: false,
+      description: `
+Custom styles for the FieldLane component:
+
+- **containerStyle**: Outer wrapper for the field
+- **labelStyle**: Style for the label
+- **bodyStyle**: Wrapper around label and input/children
+- **controlStyle**: Style for the input wrapper containing children, dropdowns, and action icons
+`,
+    },
+  },
 };
 
 export default meta;

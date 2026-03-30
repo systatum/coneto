@@ -9,10 +9,111 @@ import { css } from "styled-components";
 const meta: Meta<typeof Datebox> = {
   title: "Input Elements/Datebox",
   component: Datebox,
+  tags: ["autodocs"],
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+Datebox is an input component for selecting dates. It leverages a calendar dropdown for easy date picking, supports single or multiple dates, and integrates with forms.
+
+---
+
+### ✨ Features
+- 📅 **Calendar dropdown** for selecting dates
+- 🖋️ **Placeholder support** for guiding input format
+- 🔒 Supports **disabled** state
+- ⚠️ Handles **error messages** with visual feedback
+- 🎨 Customizable **styles** for input, calendar, and dropdown
+- 🕹️ Optional **today button** and custom footer in calendar
+- 🧩 Supports **selectability modes** and weekday restrictions
+- ⚡ Works with **controlled and uncontrolled forms**
+- 🗑️ Supports **clearable selection**
+
+---
+
+### 📌 Usage Guidelines
+- Use \`selectedDates\` and \`onChange\` for controlled date selection
+- Use \`placeholder\` to show expected input format
+- Use \`showError\` and \`errorMessage\` for validation feedback
+- Customize styles via \`styles\` prop:
+  - **self** – input and selectbox wrapper
+- Use \`calendarFooter\` to render custom footer content inside calendar
+- Use \`calendarTodayButtonCaption\` to customize today button text
+- Use \`calendarSelectabilityMode\` to restrict selectable dates
+- Can be integrated into **StatefulForm** or other controlled forms
+        `,
+      },
+    },
   },
-  tags: ["autodocs"],
+  argTypes: {
+    selectedDates: {
+      control: false,
+      description: "Array of selected dates.",
+    },
+    onChange: {
+      action: "changed",
+      description: "Callback triggered when the date selection changes.",
+    },
+    placeholder: {
+      control: "text",
+      description: "Placeholder text for the input field.",
+      table: { defaultValue: { summary: "mm/dd/yyyy" } },
+    },
+    disabled: {
+      control: "boolean",
+      description: "Disables the input and prevents user interaction.",
+    },
+    showError: {
+      control: "boolean",
+      description: "Toggles error state styling.",
+    },
+    errorMessage: {
+      control: "text",
+      description: "Text displayed when showError is true.",
+    },
+    calendarFooter: {
+      control: false,
+      description: "Custom content rendered in the calendar footer.",
+    },
+    calendarTodayButtonCaption: {
+      control: "text",
+      description: "Text for the 'Today' button inside the calendar.",
+    },
+    calendarSelectabilityMode: {
+      control: false,
+      description: "Controls which dates can be selected.",
+    },
+    isLoading: {
+      control: "boolean",
+      description: "Shows a loading state for async data or UI feedback.",
+    },
+    styles: {
+      control: false,
+      description: `
+Custom styles for the Datebox component:
+
+- **self** – Wrapper for input/selectbox
+- **selectboxStyle** – Styles for the selectbox portion
+      `,
+    },
+    helper: {
+      control: "text",
+      description: "Helper text displayed below the input.",
+    },
+    labels: {
+      control: false,
+      description: "Custom labels configuration for the selectbox.",
+    },
+    name: {
+      control: "text",
+      description: "Name attribute for form submission.",
+    },
+    id: {
+      control: "text",
+      description: "Custom ID for the input element.",
+    },
+  },
 };
 
 export default meta;

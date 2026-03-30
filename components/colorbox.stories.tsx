@@ -10,54 +10,85 @@ const meta: Meta<typeof Colorbox> = {
   title: "Input Elements/Colorbox",
   component: Colorbox,
   tags: ["autodocs"],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+The **Colorbox** component is a flexible color picker input with both visual color preview and hexadecimal text input. It supports error states, labels, and full customization of styles.
+
+---
+
+### ✨ Features
+- 🎨 **Visual color preview** along with hex input
+- 🔁 Supports **real-time color changes** via typing or selecting
+- 🚫 **Disabled state** to prevent interaction
+- 🛠 Shows **error state** with custom message and styling
+- 🧩 Fully **customizable via styles**
+
+---
+
+### ⚙️ Behavior
+- Updates color value on both color picker and text input
+- Automatically prepends '#' in hex input
+- Debounces onChange updates to improve performance
+- Handles focus/hover interactions for UI highlighting
+- Integrates with **FieldLane** for consistent layout, label, and helper text
+
+---
+
+### 📌 Usage Guidelines
+- Use for selecting colors in forms, design tools, or settings
+- Combine with **labels, helper text, and error messages** for clarity
+- Override default styling using the \`styles\` prop
+- Works with controlled components via \`value\` and \`onChange\`
+
+---
+        `,
+      },
+    },
+  },
   argTypes: {
     value: {
       description: "Current color value in hex format (e.g. `#FF5733`).",
-      control: "text",
     },
     onChange: {
-      description: "Called when the color value changes.",
-      action: "changed",
+      description: "Callback triggered when the color value changes.",
     },
     placeholder: {
       description: "Placeholder text for the hex input field.",
-      control: "text",
     },
     disabled: {
-      description: "Disables the Colorbox input and interaction.",
-      control: "boolean",
+      description: "Disables interaction with the Colorbox input.",
     },
     name: {
       description: "Name attribute of the underlying input element.",
-      control: "text",
     },
     label: {
-      description: "Label displayed above the Colorbox.",
-      control: "text",
+      description: "Label displayed above the Colorbox input.",
     },
     showError: {
-      description: "Displays the error state styling and error icon.",
-      control: "boolean",
+      description: "Displays error state styling and icon.",
     },
     errorMessage: {
-      description: "Message shown below the input when `showError` is true.",
-      control: "text",
+      description: "Message displayed when `showError` is true.",
     },
     onClick: {
-      description: "Called when the color input loses focus after interaction.",
-      action: "clicked",
+      description:
+        "Triggered when the color input is clicked or loses focus after interaction.",
     },
     styles: {
       control: false,
       description: `
-Custom styles for the Colorbox component. This object allows you to override styles for individual parts:
+Custom styles for the Colorbox component.
 
-- **self**: Main input container wrapping the color preview and text input
-- **containerStyle**: Outer wrapper of the Colorbox (controls spacing, width, and layout)
-- **labelStyle**: Label text element
+Available fields:
 
-Each field accepts a \`CSSProp\` (styled-components compatible) and can be used to customize layout, spacing, borders, colors, and typography.
-    `,
+- **self** → Main input container wrapping the color preview and text input
+- **containerStyle** → Outer wrapper (via FieldLane)
+- **labelStyle** → Label text
+
+All fields accept \`CSSProp\` and can be used to customize layout, spacing, borders, colors, and typography.
+      `,
     },
   },
 };

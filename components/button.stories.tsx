@@ -15,26 +15,87 @@ import { useState } from "react";
 const meta = {
   title: "Controls/Button",
   component: Button,
+  tags: ["autodocs"],
   parameters: {
     layout: "centered",
     docs: {
       description: {
         component: `
-The **Button** component is a flexible, theme-aware button with full support for loading states, icons, and dropdown submenus.
+The **Button** component is a highly flexible and theme-aware interactive element designed for triggering actions, navigation, and contextual menus.
 
-It supports multiple visual variants and sizes, can include loading indicators, and can display nested actions using \`subMenu\` or \`TipMenu\`.
+It supports multiple visual variants, sizes, loading states, icons, and advanced submenu behaviors using dropdowns and floating elements.
 
-Use this component for all user-interactive button actions — from primary call-to-actions to lightweight menu triggers.
+---
+
+### ✨ Features
+- 🎨 Multiple **variants** (primary, danger, ghost, outline, etc.)
+- 📏 Flexible **sizes** including icon-only buttons
+- ⏳ Built-in **loading state**
+- 🧩 Support for **icons and labels**
+- 📂 Advanced **submenu / dropdown support**
+- 🎯 Controlled & uncontrolled **open state**
+- 📍 Smart positioning via Floating UI
+- ⚡ Smooth interaction and hover states
+
+---
+
+### 🧱 Component Structure
+
+\`\`\`tsx
+<Button variant="primary">
+  Click Me
+</Button>
+\`\`\`
+
+---
+
+### ⚙️ Core Behaviors
+
+#### Variants
+- Use \`variant\` to control visual appearance
+- Includes solid, outline, ghost, and link styles
+
+#### Sizes
+- Use \`size\` to control padding and height
+- \`icon\` size creates a square icon-only button
+
+#### Loading State
+- Enable with \`isLoading\`
+- Displays spinner and disables interaction
+
+#### SubMenu
+- Use \`subMenu\` to attach dropdown content
+- Controlled via \`showSubMenuOn\`:
+  - \`self\`: click entire button
+  - \`caret\`: separate toggle button
+
+#### Controlled State
+- Use \`open\` + \`onOpen\` for controlled dropdown
+- Otherwise handled internally
+
+---
+
+### 🎯 Usage Guidelines
+- Use **primary** for main actions
+- Use **ghost / transparent** for low emphasis actions
+- Use **outline** variants for secondary emphasis
+- Avoid mixing **subMenu + onClick** without clear UX intent
         `,
       },
     },
   },
-  tags: ["autodocs"],
+
+  args: {
+    variant: "default",
+    size: "md",
+    isLoading: false,
+    children: "Button",
+    showSubMenuOn: "caret",
+  },
+
   argTypes: {
     variant: {
       control: "select",
-      description:
-        "Defines the visual style of the button. Commonly used to indicate semantic importance.",
       options: [
         "danger",
         "default",
@@ -49,31 +110,156 @@ Use this component for all user-interactive button actions — from primary call
         "success",
         "transparent",
       ],
+      description: `
+Defines the visual style of the button.
+
+- Controls background, color, and border
+- Includes solid, outline, and minimal variants
+      `,
+      table: {
+        type: { summary: "ButtonVariants['variant']" },
+        defaultValue: { summary: "default" },
+      },
     },
+
     size: {
       control: "select",
-      description:
-        "Determines the button’s size and padding. Use `icon` for circular icon buttons.",
       options: ["xs", "sm", "md", "lg", "icon"],
+      description: `
+Controls button size and padding.
+
+- \`icon\`: square button for icons only
+- Others: standard horizontal buttons
+      `,
+      table: {
+        type: { summary: '"xs" | "sm" | "md" | "lg" | "icon"' },
+        defaultValue: { summary: "md" },
+      },
     },
-    isLoading: {
-      control: "boolean",
-      description: "Shows a loading spinner inside the button.",
-    },
+
     children: {
       control: "text",
-      description: "Button label or content.",
+      description: `
+Button label or content.
+
+- Can be text or JSX
+      `,
+      table: {
+        type: { summary: "ReactNode" },
+      },
     },
+
+    icon: {
+      control: false,
+      description: `
+Optional icon displayed inside the button.
+
+- Rendered before the label
+- Accepts FigureProps
+      `,
+      table: {
+        type: { summary: "FigureProps" },
+      },
+    },
+
+    isLoading: {
+      control: "boolean",
+      description: `
+Displays a loading spinner.
+
+- Disables interaction
+- Replaces or overlays content
+      `,
+      table: {
+        type: { summary: "boolean" },
+        defaultValue: { summary: "false" },
+      },
+    },
+
+    subMenu: {
+      control: false,
+      description: `
+Defines dropdown content.
+
+- Enables advanced menu rendering
+- Works with TipMenu or custom render
+      `,
+      table: {
+        type: { summary: "(props) => ReactNode" },
+      },
+    },
+
     showSubMenuOn: {
       control: "radio",
-      description:
-        "Controls how submenus are triggered. Use `self` to open when clicking the main button, or `caret` for separate toggle area.",
       options: ["self", "caret"],
+      description: `
+Controls how submenu is triggered.
+
+- \`self\`: click main button
+- \`caret\`: separate toggle area
+      `,
+      table: {
+        type: { summary: '"self" | "caret"' },
+        defaultValue: { summary: "caret" },
+      },
     },
+
+    open: {
+      control: false,
+      description: `
+Controlled open state for submenu.
+
+- Use with \`onOpen\`
+      `,
+      table: {
+        type: { summary: "boolean" },
+      },
+    },
+
+    onOpen: {
+      action: "open changed",
+      description: `
+Callback when submenu open state changes.
+
+\`\`\`ts
+(open: boolean) => void
+\`\`\`
+      `,
+      table: {
+        type: { summary: "(open: boolean) => void" },
+      },
+    },
+
     safeAreaAriaLabels: {
-      control: "object",
-      description:
-        "Defines a list of aria-label string values (string[]) that are treated as 'safe zones' when detecting outside clicks. Useful for complex dropdowns or overlay components.",
+      control: false,
+      description: `
+List of aria-labels treated as safe zones.
+
+- Prevents closing when clicking inside these areas
+- Useful for complex overlays
+      `,
+      table: {
+        type: { summary: "string[]" },
+      },
+    },
+
+    styles: {
+      control: false,
+      description: `
+Custom styles override.
+
+Available fields:
+- \`self\`
+- \`containerStyle\`
+- \`toggleStyle\`
+- \`dropdownStyle\`
+- \`dividerStyle\`
+
+Accepts \`CSSProp\`.
+      `,
+      table: {
+        type: { summary: "ButtonStylesProps" },
+      },
     },
   },
 } satisfies Meta<typeof Button>;

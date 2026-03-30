@@ -6,7 +6,37 @@ const meta: Meta<typeof Pagination> = {
   title: "Controls/Pagination",
   component: Pagination,
   tags: ["autodocs"],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+Pagination is a component for navigating through pages of content. It supports numbered buttons, previous/next controls, and a combobox for large page sets.
 
+---
+
+### ✨ Features
+- ⬅️➡️ **Previous & Next buttons** for sequential navigation
+- 🔢 **Numbered page buttons** for direct access
+- 🧩 **Combobox** for selecting pages when total pages exceed a threshold
+- 🎨 Customizable styles for container, buttons, and select box
+- ⚡ Handles active state and disabled state for navigation buttons
+- 📏 Supports flexible page ranges and thresholds
+
+---
+
+### 📌 Usage Guidelines
+- Set \`currentPage\` and \`totalPages\` to control pagination
+- Use \`onPageChange\` to handle page switching
+- Enable \`showNumbers\` to display numbered page buttons
+- Customize styles via the \`styles\` prop:
+  - \`containerStyle\` – for wrapper
+  - \`buttonStyle\` – for individual buttons
+  - \`selectboxStyle\` – for the combobox
+- The combobox automatically appears when pages exceed 5
+        `,
+      },
+    },
+  },
   argTypes: {
     currentPage: {
       control: { type: "number", min: 1 },

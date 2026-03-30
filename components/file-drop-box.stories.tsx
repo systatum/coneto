@@ -13,6 +13,155 @@ const meta: Meta<typeof FileDropBox> = {
   title: "Input Elements/FileDropBox",
   component: FileDropBox,
   tags: ["autodocs"],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+FileDropBox is a versatile drag-and-drop file uploader that supports multiple files, 
+progress tracking, success and error states, custom labels, helper text, and flexible styling. 
+It’s ideal for forms or components where users need to upload files interactively and visually track progress.
+
+---
+
+### ✨ Features
+- 📂 **Drag & Drop**: Drag files directly into the drop area.
+- 🖱 **Browse support**: Click to open file dialog for selecting files manually.
+- ⬆️ **Multiple file uploads**: Supports uploading multiple files at once.
+- 📊 **Progress tracking**: Shows progress bar and label for each uploading file.
+- ✅ **Success state**: Display a success message when files are uploaded successfully.
+- ⚠️ **Error handling**: Display error messages for failed uploads.
+- 🎨 **Customizable styles**: Override container, drag-over, success, label, and content styles.
+- 🏷 **Labels & helpers**: Show optional label, helper text, and required indicator.
+- ⛔ **Disabled state**: Disable the drop area with visual feedback.
+- 🧩 **Flexible children**: Embed any ReactNode inside the drop area.
+
+---
+
+### 📌 Usage
+\`\`\`tsx
+<FileDropBox
+  label="Upload Documents"
+  placeholder="Drag files here or browse"
+  accept=".jpg,.png,.pdf"
+  required
+  helper="Maximum 5 files, each up to 5MB"
+  onFileDropped={({ files, succeed, error, setProgressLabel }) => {
+    files.forEach((file) => {
+      setProgressLabel(\`Uploading \${file.name}...\`);
+      // simulate async upload
+      setTimeout(() => {
+        if (file.size > 5000000) {
+          error(file, "File is too large");
+        } else {
+          succeed(file);
+        }
+      }, 1000);
+    });
+  }}
+  onComplete={({ succeedFiles, failedFiles, setProgressLabel }) => {
+    console.log("Succeeded:", succeedFiles);
+    console.log("Failed:", failedFiles);
+    setProgressLabel("Upload complete!");
+  }}
+  styles={{
+    containerStyle: css\`border: 1px solid #ccc; padding: 1rem;\`,
+    dragOverStyle: css\`background-color: #eef6ff;\`,
+    successStyle: css\`border-color: #10b981;\`,
+    labelStyle: css\`font-weight: bold;\`,
+    contentStyle: css\`gap: 0.5rem;\`,
+  }}
+>
+  <p>Optional additional content inside drop area</p>
+</FileDropBox>
+\`\`\`
+
+- Use \`label\` and \`helper\` for guidance and clarity.
+- Customize accepted file types with \`accept\`.
+- Track upload progress via \`onFileDropped\` and mark success or error.
+- React to completion with \`onComplete\`.
+- Fully styleable using the \`styles\` prop.
+- Supports embedding any ReactNode inside the drop area for additional content.
+`,
+      },
+    },
+  },
+  argTypes: {
+    label: {
+      control: "text",
+      description: "Optional label for the file drop area",
+    },
+    placeholder: {
+      control: "text",
+      description: "Text displayed when no file is selected or dragging",
+    },
+    accept: {
+      control: "text",
+      description: "Accepted file types (e.g., '.jpg,.png')",
+    },
+    onFileDropped: {
+      action: "fileDropped",
+      description: `Callback triggered when a file is dropped or selected. Receives:
+- files: File[]
+- succeed(file)
+- error(file, errorMessage)
+- setProgressLabel(label)
+- progressPercentage (optional)`,
+    },
+    onComplete: {
+      action: "uploadComplete",
+      description: `Callback triggered when all files are processed. Receives:
+- succeedFiles?: File[]
+- failedFiles?: File[]
+- setProgressLabel?: (label: string) => void
+- hideProgressLabel?: () => void
+- showUploaderForm?: () => void`,
+    },
+    progressPercentage: {
+      control: "number",
+      description: "Progress bar percentage (0-100) when uploading",
+    },
+    helper: {
+      control: "text",
+      description: "Optional helper text below the label",
+    },
+    children: {
+      control: false,
+      description: "Optional additional content inside the drop box",
+    },
+    styles: {
+      control: false,
+      description:
+        "Custom styles for container, dragOver, success, label, and content",
+    },
+    name: {
+      control: "text",
+      description: "Input name for form handling",
+    },
+    id: {
+      control: "text",
+      description: "Custom ID for the file input element",
+    },
+    labelPosition: {
+      control: { type: "select", options: ["top", "left"] },
+      description: "Position of the label relative to the drop box",
+    },
+    labelGap: {
+      control: "number",
+      description: "Gap between label and drop box",
+    },
+    labelWidth: {
+      control: "text",
+      description: "Custom width for the label",
+    },
+    required: {
+      control: "boolean",
+      description: "Marks the field as required",
+    },
+    disabled: {
+      control: "boolean",
+      description: "Disables the drop box and prevents interaction",
+    },
+  },
 };
 
 export default meta;

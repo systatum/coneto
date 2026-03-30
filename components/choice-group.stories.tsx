@@ -21,22 +21,65 @@ const meta: Meta<typeof ChoiceGroup> = {
   title: "Content/ChoiceGroup",
   component: ChoiceGroup,
   tags: ["autodocs"],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+The **ChoiceGroup** component is a wrapper for multiple selection inputs (like **Checkbox** or **Radio**) and ensures consistent layout, spacing, and styles. It can automatically detect if the children are radio buttons and switch to a row/grid layout.
+
+---
+
+### ✨ Features
+- ✅ Supports Checkbox and Radio children
+- 🔹 Automatic layout detection:
+  - Radio buttons in "button" mode display in a row/grid
+  - Checkbox default layout is vertical with dividers
+- 🎨 Fully customizable styles via \`styles\` prop
+- 🧩 Each child can still have individual styles
+
+---
+
+### ⚙️ Behavior
+- Adds spacing and optional dividers between children
+- Automatically sets \`highlightOnChecked\` for all children
+- Radio buttons in "button" mode:
+  - Display in a row/grid
+  - Border applied to each button
+  - No dividers between buttons
+- Checkbox children in vertical layout:
+  - Full-width children
+  - Optional divider between each item
+
+---
+
+### 📌 Usage Guidelines
+- Use for grouping related checkboxes or radio buttons in forms
+- Use \`styles.containerStyle\` to adjust layout, width, or spacing
+- Use \`styles.dividerStyle\` to override divider appearance
+- Ideal for forms, selection cards, or segmented button groups
+        `,
+      },
+    },
+  },
   argTypes: {
     children: {
       control: "text",
-      description: "Content children on Choice Group",
+      description:
+        "The content inside the ChoiceGroup, usually `Radio` or `Checkbox` components.",
+      table: { type: { summary: "ReactNode" } },
     },
     styles: {
-      containerStyle: {
-        control: "text",
-        description:
-          "Style class with styled component on Choice Group Container",
-      },
-      dividerStyle: {
-        control: "text",
-        description:
-          "Style class with styled component on Choice Group Divider",
-      },
+      control: false,
+      description: `
+Custom styles for ChoiceGroup.
+
+Available fields:
+
+- **containerStyle** → Outer wrapper of the ChoiceGroup
+- **dividerStyle** → Divider between each child (ignored for row/grid radio layout)
+
+All fields accept \`CSSProp\`.
+  `,
     },
   },
 };

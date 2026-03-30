@@ -10,39 +10,92 @@ import { FieldLaneDropdownsOptionProps } from "./field-lane";
 const meta: Meta<typeof Textarea> = {
   title: "Input Elements/Textarea",
   component: Textarea,
+  parameters: {
+    layout: "centered",
+    docs: {
+      description: {
+        component: `
+Textarea is a multi-line input component with optional auto-growing height, error display, and action buttons. 
+It is built on top of a FieldLane for label, error, and helper support.
+
+---
+
+### ✨ Features
+- 📝 **Multi-line input**: Accepts multiple lines with customizable rows.
+- 📏 **Autogrow**: Automatically increases height as user types if \`autogrow\` is enabled.
+- ⚠️ **Error handling**: Shows visual error indication and optional message with \`showError\` and \`errorMessage\`.
+- 🎨 **Custom styles**: Fully styleable via the \`styles\` prop for both FieldLane and textarea itself.
+- 🔘 **Actions**: Render action buttons inside the input for things like copy, paste, or custom icons.
+- 🔒 **Disabled support**: Proper styling and interaction handling for disabled state.
+
+---
+
+### 📌 Usage
+
+\`\`\`tsx
+<Textarea
+  name="description"
+  label="Description"
+  placeholder="Type something..."
+  rows={4}
+  autogrow
+  showError={false}
+  errorMessage="This field is required"
+  actions={[
+    { title: "Copy", icon: { name: "copy" }, onClick: () => console.log("Copy") }
+  ]}
+  onChange={(e) => console.log(e.target.value)}
+  styles={{
+    self: css\`border-color: blue;\`,
+  }}
+/>
+\`\`\`
+
+- Use \`autogrow\` to let the textarea expand automatically.
+- Use \`actions\` to show buttons/icons inside the input.
+- Use \`showError\` and \`errorMessage\` for validation feedback.
+- Fully styleable via \`styles.self\`.
+      `,
+      },
+    },
+  },
+  tags: ["autodocs"],
   argTypes: {
     name: {
       control: "text",
-      description: "Name attribute for the input",
+      description: "Name attribute for the textarea input (used in forms).",
     },
     label: {
       control: "text",
-      description: "Label text for the Textarea",
+      description: "Label text displayed above the textarea.",
     },
     value: {
       control: "text",
-      description: "Input value",
+      description: "Current value of the textarea input.",
     },
     placeholder: {
       control: "text",
+      description: "Placeholder text displayed when the textarea is empty.",
     },
     rows: {
       control: "number",
-      if: { arg: "type", eq: "textarea" },
+      description: "Initial number of visible rows for the textarea.",
     },
     showError: {
       control: "boolean",
+      description: "If true, the textarea will display an error state.",
     },
     errorMessage: {
       control: "text",
+      description: "Text message to display when \`showError\` is true.",
     },
     actions: {
       control: false,
       description:
-        "Array of action buttons displayed inside the input. Each action can include an icon, title tooltip, and click handler.",
+        "Array of action buttons rendered inside the input. Each action can have an icon, tooltip title, click handler, and optional disabled state.",
       table: {
         type: {
-          summary: `TextareaActionsProps[]`,
+          summary: "TextareaActionsProps[]",
           detail: `{
   title?: string;
   icon?: FigureProps;
@@ -54,16 +107,30 @@ const meta: Meta<typeof Textarea> = {
         },
       },
     },
-    onChange: { action: "changed" },
-    styles: { self: { control: false }, containerStyle: { control: false } },
+    onChange: {
+      action: "changed",
+      description:
+        "Callback triggered on input change. Receives the native event object.",
+    },
+    autogrow: {
+      control: "boolean",
+      description:
+        "If true, the textarea will automatically expand vertically as the user types.",
+    },
+    styles: {
+      control: false,
+      description:
+        "Custom styles for the textarea and container. Use \`self\` to style the textarea itself.",
+    },
+    disabled: {
+      control: "boolean",
+      description:
+        "If true, the textarea will be non-editable and styled as disabled.",
+    },
   },
   args: {
     value: "",
   },
-  parameters: {
-    layout: "centered",
-  },
-  tags: ["autodocs"],
 };
 
 export default meta;

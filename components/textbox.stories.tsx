@@ -13,8 +13,87 @@ const meta: Meta<typeof Textbox> = {
     layout: "centered",
     docs: {
       description: {
-        component:
-          "A flexible input component with support for labels, validation states, action icons, and customizable dropdowns with filtering and custom rendering.",
+        component: `
+Textbox is a highly flexible input component for forms, login pages, or any interactive field. 
+It supports labels, validation states, action icons, dropdowns, and custom styling.
+
+---
+
+### ✨ Features
+- 🖊 **Labels and helper text**: Display a label above or beside the input, with optional helper text.
+- ⚠️ **Validation states**: Show error states and messages with \`showError\` + \`errorMessage\`.
+- 🖱 **Action icons**: Add buttons/icons inside the input for actions like toggling password visibility or clearing content.
+- 🔐 **Password toggle**: Built-in support for showing/hiding password inputs.
+- 📜 **Custom dropdowns**: Attach dropdowns with filtering and custom rendering for autocompletion or suggestions.
+- 🎨 **Custom styling**: Full control over input, label, container, and dropdown styles via the \`styles\` prop.
+- 🚫 **Disabled/readonly**: Prevent user interaction when needed.
+- 📦 **Composable children**: Use nested dropdowns or actions seamlessly.
+
+---
+
+### 🔧 Textbox Props
+- \`name\` (string): Name attribute for forms.
+- \`label\` (string): Text displayed above the input.
+- \`placeholder\` (string): Placeholder text when the input is empty.
+- \`value\` (string): Current input value.
+- \`type\` ('text' | 'password' | 'message' | 'hidden'): Input type.
+- \`showError\` (boolean): Toggle the error state.
+- \`errorMessage\` (string): Message shown when \`showError\` is true.
+- \`actions\` (array): Array of action objects inside the input:
+  - \`icon\` (FigureProps) – optional icon
+  - \`title\` (string) – optional tooltip
+  - \`onClick\` (function) – callback
+  - \`disabled\` (boolean) – disables the action
+- \`dropdowns\` (array): Array of dropdown configurations:
+  - \`options\` (array) – list of selectable options
+  - \`withFilter\` (boolean) – enable search/filter
+  - \`render\` (function) – custom rendering for dropdown content
+  - \`onChange\` (function) – called when an option is selected
+- \`onChange\` (function): Triggered when input value changes.
+- \`helper\` (string): Optional helper text under the input.
+- \`disabled\` (boolean): Disables the input.
+- \`required\` (boolean): Marks input as required.
+- \`labelPosition\` ('top' | 'left' | 'right'): Position of label relative to input.
+- \`labelWidth\` (string): Width of label in horizontal layout.
+- \`labelGap\` (string): Gap between label and input.
+- \`styles\` (object): Customize styles for input and container:
+  - \`self\` – input element
+  - \`containerStyle\` – outer container
+  - \`bodyStyle\` – FieldLane body
+  - \`controlStyle\` – input container
+  - \`labelStyle\` – label text
+
+---
+
+### 📌 Usage
+
+\`\`\`tsx
+<Textbox
+  label="Username"
+  placeholder="Enter your username"
+  type="text"
+  showError={false}
+  errorMessage="Invalid username"
+  actions={[
+    { icon: <RiEyeLine />, onClick: () => console.log('Clicked') },
+  ]}
+  dropdowns={[
+    { options: [{ id: '1', label: 'Option 1' }], withFilter: true }
+  ]}
+  styles={{
+    self: css\`border-color: blue;\`,
+    containerStyle: css\`background: #f0f0f0;\`,
+  }}
+  onChange={(e) => console.log(e.target.value)}
+/>
+\`\`\`
+
+- Use \`actions\` to add icons or buttons inside the input.
+- Add \`dropdowns\` for suggestion lists or autocomplete.
+- Mark errors with \`showError\` and \`errorMessage\`.
+- Customize appearance with \`styles\`.
+- Add helper text or custom label positioning as needed.
+`,
       },
     },
   },
@@ -22,28 +101,28 @@ const meta: Meta<typeof Textbox> = {
   argTypes: {
     name: {
       control: "text",
-      description: "Name attribute for the input element.",
+      description: "Name attribute for the input element (useful in forms).",
     },
     label: {
       control: "text",
-      description: "Label text displayed above the input.",
+      description: "Label text displayed above the input field.",
     },
     value: {
       control: "text",
-      description: "The current value of the input field.",
+      description: "Current value of the input field.",
     },
     placeholder: {
       control: "text",
-      description: "Placeholder text shown when input is empty.",
+      description: "Placeholder text displayed when input is empty.",
     },
     type: {
       control: { type: "select" },
       options: ["text", "password", "message", "hidden"],
-      description: "Input type (text, password, message, hidden).",
+      description: "Type of input (text, password, message, hidden).",
     },
     showError: {
       control: "boolean",
-      description: "Whether to show an error state.",
+      description: "If true, shows error state around the input.",
     },
     errorMessage: {
       control: "text",
@@ -52,10 +131,10 @@ const meta: Meta<typeof Textbox> = {
     actions: {
       control: false,
       description:
-        "Array of action buttons displayed inside the input. Each action can include an icon, title tooltip, and click handler.",
+        "Array of action buttons displayed inside the input. Each action can have icon, tooltip, click handler, and disabled state.",
       table: {
         type: {
-          summary: `TextboxActionsProps[]`,
+          summary: "TextboxActionsProps[]",
           detail: `{
   title?: string;
   icon?: FigureProps;
@@ -70,10 +149,10 @@ const meta: Meta<typeof Textbox> = {
     dropdowns: {
       control: false,
       description:
-        "Dropdown configuration array supporting custom rendering or list-based selection with optional filtering.",
+        "Dropdown configuration array supporting custom rendering, optional filtering, and selection options.",
       table: {
         type: {
-          summary: `FieldLaneDropdownProps[]`,
+          summary: "FieldLaneDropdownProps[]",
           detail: `{
   options?: FieldLaneDropdownsOptionProps[];
   caption?: string;
@@ -89,28 +168,56 @@ const meta: Meta<typeof Textbox> = {
     },
     onChange: {
       action: "changed",
-      description: "Triggered when the input value changes.",
+      description:
+        "Triggered when the input value changes. Returns event with target.value.",
     },
     styles: {
-      containerStyle: {
-        control: false,
-        description: "Custom style applied to the outer container.",
-      },
-      labelStyle: {
-        control: false,
-        description: "Custom style applied to the label.",
-      },
-      self: {
-        control: false,
-        description: "Custom style applied directly to the input element.",
+      control: false,
+      description: "Custom styles for the input and container.",
+      table: {
+        type: {
+          summary: "TextboxStylesProps & FieldLaneStylesProps",
+          detail: `{
+  self?: CSSProp;             // Styles applied to the input
+  bodyStyle?: CSSProp;
+  controlStyle?: CSSProp;
+  containerStyle?: CSSProp;
+  labelStyle?: CSSProp;
+}`,
+        },
       },
     },
+    disabled: {
+      control: "boolean",
+      description: "Disables the input when true.",
+    },
+    helper: {
+      control: "text",
+      description: "Helper text displayed below the input field.",
+    },
+    labelGap: {
+      control: "text",
+      description: "Custom spacing between label and input field.",
+    },
+    labelWidth: {
+      control: "text",
+      description: "Width of the label when using horizontal label layout.",
+    },
+    labelPosition: {
+      control: { type: "select" },
+      options: ["top", "left", "right"],
+      description: "Position of the label relative to the input field.",
+    },
+    required: {
+      control: "boolean",
+      description: "Marks the input field as required.",
+    },
   },
-
   args: {
     label: "Username",
     placeholder: "Enter your username",
     value: "",
+    type: "text",
   },
 };
 
