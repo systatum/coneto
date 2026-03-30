@@ -1,0 +1,2897 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Coneto Storybook</title>
+    <link>https://coneto.systatum.com</link>
+    <description>Component documentation feed</description>
+    <language>en</language>
+    <generator>storybook-rss v2.5.2</generator>
+    <lastBuildDate>Mon, 30 Mar 2026 09:36:52 GMT</lastBuildDate>
+    
+      <item>
+        <title>Avatar - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/content-avatar</link>
+        <guid>81fb671ed5d9c5f2d303e1c0429bf835a7d9502b</guid>
+        <description><![CDATA[The **Avatar** component displays a user profile representation using either an image or generated initials.
+
+It automatically generates a background color and initials when no image is provided, and supports optional interaction such as uploading a new profile picture.
+
+---
+✨ Features
+- 🧑 Displays **profile image** or **generated initials**
+- 🎨 Automatic **background color generation**
+- 🔤 Smart **initials generation** (first + last name)
+- 📷 Optional **image upload (changeable mode)**
+- 🖱️ Clickable interaction support
+- 🧩 Customizable size and styles
+
+---
+🧱 Component Structure
+
+```tsx
+<Avatar
+  firstName="John"
+  lastName="Doe"
+  profileImageUrl="https://example.com/avatar.jpg"
+/>
+```
+
+---
+⚙️ Core Behaviors
+Image Rendering
+- Uses `profileImageUrl` if provided
+- Falls back to initials if image is missing
+Initials Generation
+- Uses first letter of `firstName` + `lastName`
+- If no last name → uses first 2 letters of first name
+Changeable Mode
+- Enable with `changeable`
+- Click avatar to trigger file input
+- Calls `onChange(e, file)`
+Click Handling
+- Supports `onClick` when not in `changeable` mode
+- Automatically becomes clickable if interaction is provided
+
+---
+🎯 Usage Guidelines
+- Use for **user identity representation**
+- Provide `profileImageUrl` when available
+- Enable `changeable` for editable profile flows
+- Adjust `frameSize` and `fontSize` for layout consistency]]></description>
+        <pubDate>Mon, 30 Mar 2026 07:07:05 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Badge - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/content-badge</link>
+        <guid>3900fb22ba02f88e108fee19b60b2ce5391e507b</guid>
+        <description><![CDATA[The **Badge** component is a flexible UI element used to display small pieces of contextual information such as statuses, labels, or tags.
+
+It supports predefined variants, custom colors, optional indicators, and interactive actions.
+
+---
+✨ Features
+- 🎨 Predefined **color variants** (neutral, green, yellow, red)
+- 🎯 Fully customizable **background, text, and circle colors**
+- 🔵 Optional **status indicator circle**
+- ⚡ Support for **interactive actions (icons/buttons)**
+- 🧩 Flexible layout with caption and actions
+- ♿ Accessible with ARIA labels
+
+---
+🧱 Component Structure
+
+```tsx
+<Badge
+  variant="green"
+  caption="Active"
+  withCircle
+/>
+```
+
+---
+⚙️ Core Behaviors
+Variants
+- Use `variant` for predefined styles
+- Can be overridden by custom colors
+Custom Colors
+- `backgroundColor`, `textColor`, `circleColor`
+- Take priority over variant styles
+Circle Indicator
+- Enable with `withCircle`
+- Uses generated or custom color
+Actions
+- Add interactive icons via `actions`
+- Each action supports click handlers and styles
+
+---
+🎯 Usage Guidelines
+- Use for **status indicators** (e.g. Active, Pending, Error)
+- Keep captions **short and meaningful**
+- Use `withCircle` for visual emphasis
+- Use `actions` for quick inline interactions]]></description>
+        <pubDate>Mon, 30 Mar 2026 07:08:00 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Boxbar - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/stage-boxbar</link>
+        <guid>8e6a02bcf3e5684f1d7afb5feb0adacffe33defa</guid>
+        <description><![CDATA[The **Boxbar** component is a responsive container designed to display a collection of items in a horizontal, wrapped layout with automatic collapsing behavior.
+
+It intelligently measures its content and shows a toggle button when items overflow beyond the first row.
+
+---
+✨ Features
+- 📦 Flexible **wrapped layout** using flexbox
+- 📏 Automatically detects **overflow content**
+- 🔽 Collapsible / expandable behavior
+- 🎯 Smart **first-row height calculation**
+- ⚡ Smooth animation using Framer Motion
+- 🧩 Fully customizable styles
+
+---
+🧱 Component Structure
+
+```tsx
+<Boxbar>
+  <Badge caption="Item 1" />
+  <Badge caption="Item 2" />
+  <Badge caption="Item 3" />
+</Boxbar>
+```
+
+---
+⚙️ Core Behaviors
+Collapsing
+- Initially shows only the **first row**
+- Expands when toggle button is clicked
+Auto Measurement
+- Uses `ResizeObserver`
+- Recalculates height when content changes
+Toggle Button
+- Appears only when content overflows
+- Rotates icon on expand/collapse
+
+---
+🎯 Usage Guidelines
+- Use for **tags, filters, or grouped items**
+- Ideal when content can grow dynamically
+- Avoid using with extremely large DOM lists]]></description>
+        <pubDate>Mon, 30 Mar 2026 07:49:24 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Calendar - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/input-elements-calendar</link>
+        <guid>e42896c809582ea969bd37ff705f69f39675376c</guid>
+        <description><![CDATA[The **Calendar** component is a flexible and interactive date picker designed for various selection scenarios such as single, multiple, and ranged dates.
+
+It provides a clean UI for navigating months and years, supports custom formatting, and allows deep customization for styling and behavior.
+
+---
+✨ Features
+- 📅 **Multiple selection modes**: single, multiple, ranged
+- 🔁 **Month & year navigation**
+- 🚫 Optional **weekend disabling**
+- 📆 Custom **day & month labels**
+- 🎯 **Today shortcut button**
+- 🎨 Fully customizable **styles**
+- 🔔 Event callbacks for **changes & interactions**
+
+---
+⚙️ Selection Modes
+
+- `single`: Select one date
+- `multiple`: Select multiple dates
+- `ranged`: Select start and end date
+
+---
+📌 Usage Guidelines
+- Use **single mode** for simple date picking
+- Use **multiple mode** for tagging or event selection
+- Use **ranged mode** for booking or reporting ranges
+- Disable weekends when handling business-only workflows]]></description>
+        <pubDate>Mon, 30 Mar 2026 07:12:57 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>CapsuleTab - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/stage-capsuletab</link>
+        <guid>865ddc45f9d7a80739a78aaff18b59f6a719b5b2</guid>
+        <description><![CDATA[The **CapsuleTab** component is a tab-based layout built on top of the `Capsule` component, providing a clean and modern way to switch between multiple content sections.
+
+It supports both **controlled** and **uncontrolled** modes, allowing flexible state management depending on your use case.
+
+---
+✨ Features
+- 🧭 **Tab navigation** using capsule-style UI
+- 🔁 Supports **controlled & uncontrolled state**
+- 🎨 Customizable **active tab background**
+- 🧩 Flexible **content rendering per tab**
+- 🎯 Fully customizable **styles per section**
+
+---
+⚙️ Behavior
+Uncontrolled Mode
+- Uses internal state
+- Default tab is based on `activeTab`
+Controlled Mode
+- Controlled via `activeTab` + `onTabChange`
+- Parent manages selected tab state
+
+---
+📌 Usage Guidelines
+- Use for **section switching** inside a single page
+- Keep tab titles **short and clear**
+- Use controlled mode when syncing with URL / global state]]></description>
+        <pubDate>Mon, 30 Mar 2026 07:14:22 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Capsule - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/input-elements-capsule</link>
+        <guid>c13b92aaea1a33d268726a0751aa15786cf20bcd</guid>
+        <description><![CDATA[The **Capsule** component is a flexible tab selector built with an animated capsule-style indicator. It is designed for switching between options or views with a smooth and modern UI.
+
+It supports icons, labels, validation states, and integrates seamlessly with form layouts via `FieldLane`.
+
+---
+✨ Features
+- 🧭 **Tab selection** with smooth animated indicator
+- 🎨 Customizable **active background & colors**
+- 🧩 Supports **icons and labels**
+- 📏 Flexible **layout modes** (default / full width)
+- ⚠️ Built-in **error handling & validation UI**
+- 🎯 Fully customizable **styles**
+
+---
+⚙️ Behavior
+
+- If `activeTab` is not provided, the **first tab is selected automatically**
+- Clicking a tab triggers `onTabChange`
+- Hover state shows a preview border animation
+- Disabled state prevents interaction
+
+---
+📌 Usage Guidelines
+- Use for **switching between related views or filters**
+- Keep tab labels **short and clear**
+- Use **icons** for better visual recognition
+- Use `full` mode when integrating into layouts like headers or forms]]></description>
+        <pubDate>Mon, 30 Mar 2026 07:31:35 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Card - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/content-card</link>
+        <guid>09e25069366c28cec4dac571b55c3264e91d6504</guid>
+        <description><![CDATA[The **Card** component is a flexible container used to group related content and actions within a structured layout. It supports optional headers, footers, interactive controls, and animated content visibility.
+
+Key features include:
+- **Flexible Layout**: Supports title, subtitle, content, and footer sections.
+- **Customizable Appearance**: Control shadow, border radius, and padding.
+- **Header Actions**: Add action buttons or controls to the header area.
+- **Closable**: Optional close button for dismissible cards.
+- **Toggleable Content**: Collapse or expand content with smooth animations.
+- **Animation Support**: Built-in expand/collapse transitions using Framer Motion.
+- **Styling Overrides**: Customize each section using CSS props.
+
+This component is ideal for dashboards, panels, grouped content, and modular UI sections.]]></description>
+        <pubDate>Mon, 30 Mar 2026 07:21:07 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Checkbox - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/input-elements-checkbox</link>
+        <guid>187af1a31e77ed02664166984c9795aaa8bc7298</guid>
+        <description><![CDATA[The **Checkbox** component allows users to select or deselect an option. It supports a main label, optional description, error states, helper text, and full style customization.
+
+It works well in forms and can be used in both **standalone** and **form-integrated** contexts.
+
+---
+✨ Features
+- ✅ Supports **checked, unchecked, and indeterminate** states
+- 💡 Optional **highlight background** when checked
+- ❌ Displays **error states** with customizable error messages
+- 📝 Supports **helper text** for guidance
+- 🎨 Fully customizable **styles** for wrapper, label, box, icon, and description
+- 🧩 Compatible with **FieldLane** for form layout
+
+---
+⚙️ Behavior
+Standalone Usage
+- Pass `checked` and `onChange` for controlled usage
+- Pass `indeterminate` to show a horizontal line instead of a checkmark
+- `highlightOnChecked` changes the background when checked
+Form Integration
+- Wraps inside `FieldLane` automatically if `label` or `helper` provided
+- `showError` + `errorMessage` display validation errors
+- `name` and `id` can be set for form submission and accessibility
+
+---
+📌 Usage Guidelines
+- Use for **boolean options** in forms or settings
+- Keep label text **short and descriptive**
+- Use controlled mode when checkbox state needs to **sync with parent / form state**
+- Use `highlightOnChecked` for **visually emphasizing selections**]]></description>
+        <pubDate>Mon, 30 Mar 2026 07:24:43 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Chips - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/input-elements-chips</link>
+        <guid>5306903e9d15a031bc5a31be0235353e180204f5</guid>
+        <description><![CDATA[The **Chips** component allows selection of multiple items from a list, with optional filtering, creation of new chips, and full style customization. It is ideal for tagging systems, multi-select fields, or any case where multiple selections are needed.
+
+---
+✨ Features
+- 🏷️ **Multiple selection** support with badges
+- 🔎 **Filterable input** to quickly search options
+- ➕ **Creatable chips** when enabled, with custom form support
+- ✅ **Selected chips** are displayed prominently with optional custom renderer
+- ❌ Handles **empty states** and custom messages
+- 🎨 Fully **customizable styles** for drawer, chips, labels, and container
+- 🧩 Compatible with **FieldLane** for form integration
+- 🔒 Supports **disabled** state
+
+---
+⚙️ Behavior
+Selection
+- Click on a chip in the dropdown to select/deselect
+- Already selected chips are displayed in the main input area
+- Supports keyboard navigation (ArrowUp, ArrowDown, Enter)
+Filtering
+- Input value filters the list of options
+- Filtering is case-insensitive
+- When no matches, can show empty slate or option to create new chip
+Creatable Chips
+- When `creatable` is true, users can add new chips
+- Displays a special item with `missingOptionLabel` text
+- Supports custom render form via `missingOptionForm`
+Styles
+- Use `styles` prop to override:
+  - container
+  - chips container
+  - individual chips
+  - drawer
+  - labels
+- Each selected chip can have its own styles
+
+---
+📌 Usage Guidelines
+- Use for **tagging or multi-select** input scenarios
+- Keep chip labels **short for readability**
+- Use controlled props (`selectedOptions`, `inputValue`) for syncing state with forms
+- Use `renderer` for fully custom chip rendering]]></description>
+        <pubDate>Mon, 30 Mar 2026 07:25:50 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>ChoiceGroup - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/content-choicegroup</link>
+        <guid>c1c12d80730ce6dab6590bd5c672fb04cc7ce966</guid>
+        <description><![CDATA[The **ChoiceGroup** component is a wrapper for multiple selection inputs (like **Checkbox** or **Radio**) and ensures consistent layout, spacing, and styles. It can automatically detect if the children are radio buttons and switch to a row/grid layout.
+
+---
+✨ Features
+- ✅ Supports Checkbox and Radio children
+- 🔹 Automatic layout detection:
+  - Radio buttons in "button" mode display in a row/grid
+  - Checkbox default layout is vertical with dividers
+- 🎨 Fully customizable styles via `styles` prop
+- 🧩 Each child can still have individual styles
+
+---
+⚙️ Behavior
+- Adds spacing and optional dividers between children
+- Automatically sets `highlightOnChecked` for all children
+- Radio buttons in "button" mode:
+  - Display in a row/grid
+  - Border applied to each button
+  - No dividers between buttons
+- Checkbox children in vertical layout:
+  - Full-width children
+  - Optional divider between each item
+
+---
+📌 Usage Guidelines
+- Use for grouping related checkboxes or radio buttons in forms
+- Use `styles.containerStyle` to adjust layout, width, or spacing
+- Use `styles.dividerStyle` to override divider appearance
+- Ideal for forms, selection cards, or segmented button groups]]></description>
+        <pubDate>Mon, 30 Mar 2026 07:31:47 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Colorbox - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/input-elements-colorbox</link>
+        <guid>5abeb801a7a346d228f58b25ab32a31253f810fd</guid>
+        <description><![CDATA[The **Colorbox** component is a flexible color picker input with both visual color preview and hexadecimal text input. It supports error states, labels, and full customization of styles.
+
+---
+✨ Features
+- 🎨 **Visual color preview** along with hex input
+- 🔁 Supports **real-time color changes** via typing or selecting
+- 🚫 **Disabled state** to prevent interaction
+- 🛠 Shows **error state** with custom message and styling
+- 🧩 Fully **customizable via styles**
+
+---
+⚙️ Behavior
+- Updates color value on both color picker and text input
+- Automatically prepends '#' in hex input
+- Debounces onChange updates to improve performance
+- Handles focus/hover interactions for UI highlighting
+- Integrates with **FieldLane** for consistent layout, label, and helper text
+
+---
+📌 Usage Guidelines
+- Use for selecting colors in forms, design tools, or settings
+- Combine with **labels, helper text, and error messages** for clarity
+- Override default styling using the `styles` prop
+- Works with controlled components via `value` and `onChange`
+
+---]]></description>
+        <pubDate>Mon, 30 Mar 2026 07:33:27 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Combobox - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/input-elements-combobox</link>
+        <guid>95d182a4128560e2044dbc1be07b915dfe09dbf5</guid>
+        <description><![CDATA[Combobox makes use of the base Selectbox, featuring searchability, options-grouping, multi-options, among other things.
+
+---
+✨ Features
+- 🔍 Built-in **search filtering**
+- 📂 Supports **grouped options** with collapsible categories
+- ✅ **Single & multiple selection**
+- 🎯 Keyboard and mouse interaction support
+- ⚡ Dynamic filtering based on user input
+- 🧩 Custom **actions** inside dropdown
+- 🚫 Handles **disabled** and **hidden** options
+- 📊 Supports **controlled and uncontrolled** modes
+
+---
+📦 Option Types
+Single Option
+```ts
+{
+  text: string;
+  value: string | number;
+}
+```
+Grouped Option
+```ts
+{
+  category: string;
+  options: OptionProps[];
+  collapsible?: boolean;
+  initialState?: "opened" | "closed";
+}
+```
+
+---
+📌 Usage Guidelines
+- Use **grouped options** for large datasets
+- Enable `multiple` for multi-select use cases
+- Use **controlled mode** to keep the value synchronized with the input and ensure it is consistently validated.
+- Use `maxSelectableItems` to limit selections]]></description>
+        <pubDate>Mon, 30 Mar 2026 06:11:16 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Crumb - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/controls-crumb</link>
+        <guid>0fbcaf40b30d02dd23fd2e3f1897f29e2ccaf493</guid>
+        <description><![CDATA[Crumb is a breadcrumb navigation component that shows the user's location in a hierarchy.
+
+---
+✨ Features
+- 🔗 Displays a sequence of items representing navigation hierarchy
+- ⚡ Automatically collapses middle items into an ellipsis when exceeding `maxShown`
+- 👆 Click ellipsis to expand hidden items
+- 🎨 Customizable font size, text color, hover color, arrow color, and last item color
+- 🖼 Custom icon separators (default: arrow)
+- 🏃 Smooth animations for item transitions
+- 🖱 Supports clickable or static items
+
+---
+📌 Usage Guidelines
+- Use `Crumb.Item` for each item in the breadcrumb
+- Set `maxShown` to control collapsing behavior
+- Use `arrowColor` or `iconSeparator` for custom icons
+- Customize styles with the `styles` prop for container overrides]]></description>
+        <pubDate>Mon, 30 Mar 2026 07:49:05 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Datebox - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/input-elements-datebox</link>
+        <guid>dc86aad4870289e084bbb928f9a9bc8b0c3ed7cc</guid>
+        <description><![CDATA[Datebox is an input component for selecting dates. It leverages a calendar dropdown for easy date picking, supports single or multiple dates, and integrates with forms.
+
+---
+✨ Features
+- 📅 **Calendar dropdown** for selecting dates
+- 🖋️ **Placeholder support** for guiding input format
+- 🔒 Supports **disabled** state
+- ⚠️ Handles **error messages** with visual feedback
+- 🎨 Customizable **styles** for input, calendar, and dropdown
+- 🕹️ Optional **today button** and custom footer in calendar
+- 🧩 Supports **selectability modes** and weekday restrictions
+- ⚡ Works with **controlled and uncontrolled forms**
+- 🗑️ Supports **clearable selection**
+
+---
+📌 Usage Guidelines
+- Use `selectedDates` and `onChange` for controlled date selection
+- Use `placeholder` to show expected input format
+- Use `showError` and `errorMessage` for validation feedback
+- Customize styles via `styles` prop:
+  - **self** – input and selectbox wrapper
+- Use `calendarFooter` to render custom footer content inside calendar
+- Use `calendarTodayButtonCaption` to customize today button text
+- Use `calendarSelectabilityMode` to restrict selectable dates
+- Can be integrated into **StatefulForm** or other controlled forms]]></description>
+        <pubDate>Mon, 30 Mar 2026 07:50:23 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Dialog - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/stage-dialog</link>
+        <guid>90423904760b049f1ccc00f0bd4f7aeb14a35d65</guid>
+        <description><![CDATA[Dialog is a modal component for displaying messages, forms, or custom content in a focused overlay. It supports headers with title/subtitle/icon, body content, footer actions, and customizable styles.
+
+---
+✨ Features
+- 🟢 **Controlled visibility** with `isOpen`
+- 🔔 **Optional closable** via overlay click, Escape key, or close button
+- 🏷️ **Header** with title, subtitle, and optional icon
+- 🎯 **Custom footer buttons** with callbacks
+- 📝 **Custom content** can be rendered in the body
+- 🎨 Fully **styleable** via `styles` prop
+- 🚀 Smooth **zoom in/out animation** on open/close
+
+---
+📌 Usage
+- Use **Dialog.show(config)** and **Dialog.hide()** for imperative control.
+- Provide `onVisibilityChange` to control open/close externally (controlled mode).
+- Footer buttons use **onClick** with `{ id, closeDialog }`.
+- Styles are optional and override sections individually.]]></description>
+        <pubDate>Mon, 30 Mar 2026 07:51:56 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>DocumentViewer - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/content-documentviewer</link>
+        <guid>84ef2f78722c343db73c89ef03fef84ea71aaf4f</guid>
+        <description><![CDATA[DocumentViewer is a powerful component for displaying documents such as PDFs, images, encoded files, or uploaded files, with interactive features like zooming, bounding boxes, and region selection. It comes with a customizable toolbar and supports full styling.
+
+---
+✨ Features
+- 📝 **Supports multiple sources**: PDF, image, file, or encoded string
+- 🎯 **Region selection** via mouse drag with `onRegionSelected` callback
+- 🔲 **Bounding boxes** for highlighting or annotating sections
+- 🔍 **Zoom control** with predefined levels (75–150%)
+- ⚙️ **Custom PDF.js worker** via `libPdfJsWorkerSrc`
+- 🏷️ **Customizable labels** for toolbar text and page indicators
+- 🎨 **Fully styleable** through `styles` prop
+- 🚀 Smooth **scroll preservation** when zooming
+- 🖱️ **Selectable content** with optional hover popups
+
+---
+📌 Usage
+- Provide a **source** using the builder pattern: `pdf`, `image`, `file`, or `encodedString`.
+- Use `onRegionSelected` to handle region selections with coordinates.
+- Pass **boundingBoxes** to predefine highlights or annotations.
+- Set **initialZoom** to control default zoom level.
+- Customize toolbar labels via the `labels` prop.
+- Apply **custom styles** via `styles` for container, zoom input, selection boxes, or bounding boxes.
+
+```tsx
+<DocumentViewer
+  title="Sample PDF"
+  source={(builder) => builder.pdf("/docs/sample.pdf")}
+  initialZoom={100}
+  boundingBoxes={[
+    { page: 1, x: 0.1, y: 0.1, width: 0.3, height: 0.2, contentOnHover: "Note" }
+  ]}
+  onRegionSelected={(region) => console.log(region)}
+  labels={{ zoomPlaceholder: "Set zoom", totalPages: ({ currentPage, totalPages }) => `${currentPage}/${totalPages}` }}
+  styles={{
+    containerStyle: css`border: 1px solid #ccc;`,
+    boxStyle: css`border-color: red;`,
+    selectionStyle: css`background: rgba(255,0,0,0.2);`,
+  }}
+/>
+```]]></description>
+        <pubDate>Mon, 30 Mar 2026 07:55:10 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>DormantText - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/stage-dormanttext</link>
+        <guid>40bbb8c89ffbad897a7d540d095ff80276ea2975</guid>
+        <description><![CDATA[DormantText is an editable text component that starts in a **dormant (read-only) state** and switches to an **active input** when clicked. It supports optional action buttons, custom icons, and flexible styling, making it ideal for inline editing scenarios such as forms, tables, or settings panels.
+
+---
+✨ Features
+- 📝 **Dormant and active states**: Click to switch from read-only text to editable input.
+- ✍️ **Supports children inputs**: Accepts any React input element (text, number, select, etc.).
+- 🎯 **Custom action icons**: Default check/cancel icons, or override with your own via `icon`.
+- ⌨️ **Flexible input confirmation**: Accept changes on 'Enter', 'click', or 'all' interactions.
+- ❌ **Cancelable editing**: Press Escape or click cancel button to revert changes.
+- 💅 **Fully styleable**: Use `styles` prop to customize dormant label, active wrapper, or action buttons.
+- 📐 **Dynamic sizing**: Automatically measures label and input dimensions to match layout.
+- 🖱️ **Full-width support**: Stretch dormant label to container width or limit via `dormantedMaxWidth`.
+
+---
+📌 Usage
+- Set the **content** prop for the text displayed when dormant.
+- Pass **children** as input elements for editing mode.
+- Use **onActionClick** to handle confirmed edits.
+- Use **onCancelRequested** to handle cancel events.
+- Customize **styles** for each state using CSSProp objects.
+- Optionally set **dormantedFontSize**, **fullWidth**, **acceptChangeOn**, **cancelable**, and **icon**.
+
+```tsx
+<DormantText
+  content="Click to edit"
+  dormantedFontSize={16}
+  fullWidth={false}
+  acceptChangeOn="enter"
+  cancelable={true}
+  onActive={() => console.log("Activated")}
+  onActionClick={() => console.log("Saved")}
+  onCancelRequested={() => console.log("Canceled")}
+  styles={{
+    dormantedStyle: css`color: #333; background: #f9f9f9;`,
+    activeStyle: css`border: 1px solid #ccc;`,
+    actionStyle: css`background: #e0e0e0;`,
+  }}
+>
+  <input type="text" placeholder="Edit me" />
+</DormantText>
+```
+
+- **icon** prop example:
+```tsx
+<DormantText
+  icon={{ image: RiCheckLine, color: "#4caf50", size: 18 }}
+/>
+```]]></description>
+        <pubDate>Mon, 30 Mar 2026 07:57:07 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>DrawerTab - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/stage-drawertab</link>
+        <guid>de565ef318b12177c107b814ea52efb065c97fb9</guid>
+        <description><![CDATA[DrawerTab is a flexible sidebar component that displays multiple tabbed panels which can slide in from the left or right. Each tab can contain custom content and icons, with full control over styling and animations. Ideal for dashboards, side menus, or context-sensitive panels.
+
+---
+✨ Features
+- 🗂️ **Multiple tabs**: Define multiple tabs with unique content and icons.
+- ⬅️➡️ **Slide-in drawer**: Supports left or right positioning via the `position` prop.
+- 🖱️ **Interactive tab selection**: Click a tab button to open the drawer and display content.
+- ❌ **Close button**: Close the drawer manually with a built-in close button.
+- 🎨 **Customizable styles**: Control tab buttons and drawer container via `styles` prop.
+- ⚡ **Smooth animations**: Built using Framer Motion for spring-based drawer transitions.
+- 📐 **Responsive-ready**: Automatically adjusts on larger screens.
+
+---
+📌 Usage
+- Provide a `tabs` array containing `id`, `title`, `icon`, and `content`.
+- Set the `position` prop to either `left` or `right`.
+- Optionally pass `styles` to customize drawer and tab button appearance.
+
+```tsx
+<DrawerTab
+  position="right"
+  tabs={[
+    {
+      id: "tab1",
+      title: "Notifications",
+      icon: RiCloseLine,
+      content: <div>Notification content here</div>,
+    },
+    {
+      id: "tab2",
+      title: "Settings",
+      icon: RiCloseLine,
+      content: <div>Settings content here</div>,
+    },
+  ]}
+  styles={{
+    drawerTabStyle: css`
+      background: #fff;
+      border: 1px solid #ccc;
+    `,
+    tabStyle: css`
+      background: #f9f9f9;
+      border-radius: 0.5rem;
+    `,
+  }}
+/>
+```
+
+- Tabs open the drawer on click. Clicking the selected tab again or the close button closes it.
+- You can replace `icon` with any React component from Remix Icon or custom SVG.]]></description>
+        <pubDate>Mon, 30 Mar 2026 07:58:28 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>EmptySlate - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/content-emptyslate</link>
+        <guid>848f1dc1daa519c041041571e232975e077fc6e5</guid>
+        <description><![CDATA[EmptySlate is a versatile component to display a visually appealing empty state in your UI. It can include an image, title, subtitle, and optional actions like buttons, guiding users on what to do next. Perfect for dashboards, lists, or any content area with no data.
+
+---
+✨ Features
+- 🖼️ **Image support**: Display a visual illustration via the `imageUrl` prop.
+- 📝 **Title and subtitle**: Provide clear messaging with optional subtitle for additional context.
+- 🖱️ **Action support**: Render custom interactive elements like buttons, links, or call-to-action components.
+- 🎨 **Fully styleable**: Customize container, image, title, subtitle, and action styles via the `styles` prop.
+- ⚡ **Lightweight and flexible**: Minimal structure so you can compose complex empty states easily.
+
+---
+📌 Usage
+```tsx
+<EmptySlate
+  imageUrl="/images/empty-state.svg"
+  title="No Items Found"
+  subtitle="Try adjusting your filters or adding a new item."
+  actions={
+    <>
+        <Button variant="default">Add Item</Button>
+        <Button variant="primary">Learn More</Button>
+      </>
+  }
+  styles={{
+    containerStyle: css`padding: 2rem; text-align: center;`,
+    imageStyle: css`max-width: 200px; margin: 0 auto;`,
+    titleStyle: css`font-size: 1.5rem; font-weight: 600;`,
+    subtitleStyle: css`font-size: 1rem; color: #666;`,
+    actionsStyle: css`margin-top: 1rem;`,
+  }}
+/>
+```
+
+- Use `imageUrl` to give a visual cue for the empty state.
+- Titles and subtitles guide the user and provide context.
+- Actions can include buttons or links to direct users on what to do next.
+- Styles can be overridden for each part to match your design system.]]></description>
+        <pubDate>Mon, 30 Mar 2026 08:00:43 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>ErrorSlate - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/content-errorslate</link>
+        <guid>c3e6d6b9b201563dee57ca43682d13115385e824</guid>
+        <description><![CDATA[ErrorSlate is a visually engaging component to display HTTP error codes in a 3D rotating cube format, with optional title and additional content. It’s perfect for error pages, dashboards, or empty states that need an interactive and memorable UI.
+
+---
+✨ Features
+- 🔢 **HTTP error codes**: Supports common HTTP status codes (400, 401, 403, 404, 500, etc.).
+- 🧊 **3D rotating cube**: Each digit of the error code is displayed on a cube face, creating a dynamic, animated effect.
+- 🖋️ **Custom titles**: Optional descriptive title below the cube.
+- 🧩 **Additional content**: Optional children prop to add messages, actions, or guidance below the title.
+- 🎨 **Customizable styles**: Override title typography and cube face appearance via the `styles` prop.
+
+---
+📌 Usage
+```tsx
+<ErrorSlate
+  code="404"
+  title="Page Not Found"
+  children={
+    <div>
+      <p>Sorry, the page you are looking for does not exist.</p>
+      <button onClick={() => navigate("/")}>Go Home</button>
+    </div>
+  }
+  styles={{
+    titleStyle: css`
+      font-size: 3rem;
+      color: #333;
+    `,
+    cubeFaceStyle: css`
+      background-color: #ff4d4f;
+      border-color: #d9363e;
+      font-size: 2rem;
+    `,
+  }}
+/>
+```
+
+- Use `code` to display the HTTP error number on the animated cube.
+- Titles and children provide additional context or actions.
+- Customize appearance using `styles.titleStyle` and `styles.cubeFaceStyle`.
+- Works with any valid ReactNode in the `children` prop for messages, buttons, or links.]]></description>
+        <pubDate>Mon, 30 Mar 2026 08:03:01 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>FieldLane - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/stage-fieldlane</link>
+        <guid>f33309155570d70b138e79b211e6f24f3610296f</guid>
+        <description><![CDATA[FieldLane is a flexible form field wrapper that supports labels, helper text, error states, dropdowns, custom actions, and additional content. It’s designed for highly customizable forms where inputs need visual clarity, interactivity, and optional validation feedback.
+
+---
+✨ Features
+- 🏷 **Label support**: Configurable position ("top" or "left"), width, gap, and required indicator.
+- ⚠️ **Error handling**: Show inline error messages with optional error icons positioned absolutely or relatively.
+- 🖱 **Actions & buttons**: Attach multiple action buttons or icons with tooltips, click handlers, and visibility control.
+- ⬇️ **Dropdowns**: Include one or multiple dropdowns with optional filtering, custom renderers, and styling.
+- 🎨 **Customizable styles**: Override styles for container, label, body, and input/control areas.
+- 🧩 **Flexible children**: Embed any ReactNode (input, select, custom component) as field content.
+- ⛔ **Disabled state**: Disable the entire field with visual feedback.
+
+---
+📌 Usage
+```tsx
+<FieldLane
+  label="Username"
+  required
+  helper="Enter your unique username"
+  showError={true}
+  errorMessage="This field is required"
+  errorIconPosition="absolute"
+  dropdowns={[
+    {
+      caption: "Options",
+      options: [
+        { text: "Option 1", value: "1" },
+        { text: "Option 2", value: "2" },
+      ],
+      withFilter: true,
+      onChange: (val) => console.log("Selected:", val),
+    },
+  ]}
+  actions={[
+    {
+      title: "Check",
+      icon: { image: RiCheckLine },
+      onClick: () => console.log("Clicked"),
+    },
+  ]}
+  styles={{
+    containerStyle: css`border: 1px solid #ccc;`,
+    labelStyle: css`font-weight: bold;`,
+    controlStyle: css`background: #f9fafb;`,
+    bodyStyle: css`gap: 0.5rem;`,
+  }}
+>
+  <input type="text" placeholder="Enter username" />
+</FieldLane>
+```
+
+- Use `label` for field names and `helper` for guidance.
+- `showError` and `errorMessage` handle validation display.
+- Attach multiple dropdowns and actions with optional custom rendering.
+- Fully styleable through the `styles` prop.]]></description>
+        <pubDate>Mon, 30 Mar 2026 08:05:19 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>FileDropBox - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/input-elements-filedropbox</link>
+        <guid>3c4622de7e90c1751bec5f55745d5350bc9148ef</guid>
+        <description><![CDATA[FileDropBox is a versatile drag-and-drop file uploader that supports multiple files, 
+progress tracking, success and error states, custom labels, helper text, and flexible styling. 
+It’s ideal for forms or components where users need to upload files interactively and visually track progress.
+
+---
+✨ Features
+- 📂 **Drag & Drop**: Drag files directly into the drop area.
+- 🖱 **Browse support**: Click to open file dialog for selecting files manually.
+- ⬆️ **Multiple file uploads**: Supports uploading multiple files at once.
+- 📊 **Progress tracking**: Shows progress bar and label for each uploading file.
+- ✅ **Success state**: Display a success message when files are uploaded successfully.
+- ⚠️ **Error handling**: Display error messages for failed uploads.
+- 🎨 **Customizable styles**: Override container, drag-over, success, label, and content styles.
+- 🏷 **Labels & helpers**: Show optional label, helper text, and required indicator.
+- ⛔ **Disabled state**: Disable the drop area with visual feedback.
+- 🧩 **Flexible children**: Embed any ReactNode inside the drop area.
+
+---
+📌 Usage
+```tsx
+<FileDropBox
+  label="Upload Documents"
+  placeholder="Drag files here or browse"
+  accept=".jpg,.png,.pdf"
+  required
+  helper="Maximum 5 files, each up to 5MB"
+  onFileDropped={({ files, succeed, error, setProgressLabel }) => {
+    files.forEach((file) => {
+      setProgressLabel(`Uploading ${file.name}...`);
+      // simulate async upload
+      setTimeout(() => {
+        if (file.size > 5000000) {
+          error(file, "File is too large");
+        } else {
+          succeed(file);
+        }
+      }, 1000);
+    });
+  }}
+  onComplete={({ succeedFiles, failedFiles, setProgressLabel }) => {
+    console.log("Succeeded:", succeedFiles);
+    console.log("Failed:", failedFiles);
+    setProgressLabel("Upload complete!");
+  }}
+  styles={{
+    containerStyle: css`border: 1px solid #ccc; padding: 1rem;`,
+    dragOverStyle: css`background-color: #eef6ff;`,
+    successStyle: css`border-color: #10b981;`,
+    labelStyle: css`font-weight: bold;`,
+    contentStyle: css`gap: 0.5rem;`,
+  }}
+>
+  <p>Optional additional content inside drop area</p>
+</FileDropBox>
+```
+
+- Use `label` and `helper` for guidance and clarity.
+- Customize accepted file types with `accept`.
+- Track upload progress via `onFileDropped` and mark success or error.
+- React to completion with `onComplete`.
+- Fully styleable using the `styles` prop.
+- Supports embedding any ReactNode inside the drop area for additional content.]]></description>
+        <pubDate>Mon, 30 Mar 2026 08:08:49 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>FileInputBox - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/input-elements-fileinputbox</link>
+        <guid>1768232d36252880bda1b12f9b7b52d8181ec016</guid>
+        <description><![CDATA[The **FileInputBox** component provides an intuitive file upload interface with support for drag-and-drop, multiple file selection, and file preview.
+
+---
+✨ Features
+- 📂 Supports **single and multiple file uploads**
+- 🧲 **Drag-and-drop** file upload interaction
+- 📎 Click to **browse files manually**
+- ❌ Remove selected files individually
+- 🎯 Callback via `onFilesSelected(files: File[])`
+- ⚠️ Built-in **error state handling**
+- 🧩 Fully customizable styles
+
+---
+🧱 Component Structure
+
+```tsx
+<FileInputBox
+  label="Upload File"
+  multiple
+  onFilesSelected={(files) => console.log(files)}
+/>
+```
+
+---
+⚙️ Core Behaviors
+File Selection
+- Click area to open file picker
+- Supports `multiple` file selection
+Drag & Drop
+- Drag files over the input area
+- Drop to upload instantly
+File Removal
+- Each file has a delete button
+- Updates state and triggers callback
+
+---
+🎯 Usage Guidelines
+- Use for **file uploads in forms**
+- Enable `multiple` for batch uploads
+- Use `accept` to restrict file types
+- Handle `onFilesSelected` for processing files]]></description>
+        <pubDate>Mon, 30 Mar 2026 07:04:12 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Frame - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/stage-frame</link>
+        <guid>b20431e5dd8b7d4b5471896cec228b0e4872d706</guid>
+        <description><![CDATA[Frame is a flexible container component that provides a bordered, shadowed area to group content visually. 
+It optionally displays a title overlay and supports full customization of container and title styles. 
+Ideal for creating card-like layouts, grouped form sections, or any visually separated content.
+
+---
+✨ Features
+- 🏷 **Title overlay**: Optional title displayed at the top border of the frame.
+- 🎨 **Customizable styles**: Override styles for container and title using styled-components `CSSProp`.
+- 🧩 **Flexible content**: Wrap any ReactNode inside the frame, such as forms, cards, or grouped inputs.
+- 🖼 **Visual separation**: Provides border, padding, rounded corners, and shadow for clear separation.
+- ⛔ **Accessible**: Uses `aria-label="frame"` for semantic clarity.
+
+---
+📌 Usage
+```tsx
+<Frame
+  title="User Information"
+  styles={{
+    containerStyle: css`
+      border: 2px solid #60a5fa;
+      background-color: #f0f9ff;
+      padding: 2rem;
+    `,
+    titleStyle: css`
+      color: #1d4ed8;
+      font-weight: 600;
+    `,
+  }}
+>
+  <form>
+    <label>
+      Name:
+      <input type="text" placeholder="Enter your name" />
+    </label>
+    <label>
+      Email:
+      <input type="email" placeholder="Enter your email" />
+    </label>
+  </form>
+</Frame>
+```
+
+- Use `title` to label the frame visually.
+- Customize `containerStyle` for borders, shadows, background, and spacing.
+- Customize `titleStyle` for color, font size, and spacing of the title overlay.
+- Embed any ReactNode inside to structure content as needed.]]></description>
+        <pubDate>Mon, 30 Mar 2026 08:11:11 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Grid - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/content-grid</link>
+        <guid>8616910fc85b22c98b91ea53ab5519ec95bbc968</guid>
+        <description><![CDATA[Grid is a versatile layout component that provides a responsive, customizable grid system for displaying content. 
+It supports predefined presets, flexible gaps, optional width/height, and individual Grid.Card components with selection, thumbnails, and custom content.
+
+---
+✨ Features
+- 🧱 **Responsive grid presets**: Choose from multiple predefined layouts like `1-to-4`, `2-to-4`, or auto-fit configurations (`auto-fit-300`) for adaptive columns.
+- 📏 **Custom spacing**: Adjust the gap between grid items with `gap` (number in px or any CSS size).
+- 🖼 **Grid.Card support**: Each item can display thumbnails, content, and be selectable with a hover and checkbox state.
+- 🎨 **Customizable styles**: Override container and card styles via `styles.self` using `CSSProp` for full visual control.
+- ⛔ **Selectable items**: Optionally allow Grid.Cards to be selectable with visual feedback.
+- 🧩 **Flexible children**: Embed any ReactNode inside cards, like forms, images, or interactive components.
+- 📐 **Optional container sizing**: Set custom width and height for the grid wrapper.
+
+---
+📌 Usage
+
+```tsx
+<Grid
+  gap="16px"
+  preset="1-to-4"
+  width="100%"
+  styles={{
+    self: css`
+      padding: 16px;
+      background-color: #f9fafb;
+      border-radius: 8px;
+    `,
+  }}
+>
+  <Grid.Card
+    selectable
+    isSelected={true}
+    onSelected={() => console.log("Card selected")}
+    thumbnail="https://via.placeholder.com/150"
+    styles={{
+      self: css`
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+      `,
+    }}
+  >
+    <p>Card content goes here</p>
+  </Grid.Card>
+
+  <Grid.Card thumbnail="https://via.placeholder.com/150">
+    <p>Another card</p>
+  </Grid.Card>
+</Grid>
+```
+
+- Use `preset` to quickly configure responsive layouts.
+- Adjust `gap` for spacing between items.
+- Embed any content inside `Grid.Card` including images, text, or custom components.
+- Use `selectable` and `isSelected` to handle card selection with optional checkboxes.
+- Fully style container and cards using `styles.self` with `CSSProp`.]]></description>
+        <pubDate>Mon, 30 Mar 2026 08:12:22 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Imagebox - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/input-elements-imagebox</link>
+        <guid>9f0056c77928f74d487a255f37cd8c1d0670f719</guid>
+        <description><![CDATA[Imagebox is a user-friendly file input component specifically designed for images. 
+It supports drag-and-drop, file browsing, previewing selected files, optional initial image URLs, and full styling customization. 
+It can be embedded inside forms using FieldLane for labels, helper text, errors, and actions.
+
+---
+✨ Features
+- 🖼 **Image preview**: Automatically displays a preview of the selected image file or an initial `url`.
+- 📂 **File selection**: Supports both drag & drop and browse file selection.
+- ⚡ **Sizes**: Four predefined sizes (`xs`, `sm`, `md`, `lg`) controlling the box and icon dimensions.
+- ⚠️ **Error handling**: Show inline error messages via FieldLane with optional icons.
+- 🎨 **Customizable styles**: Override container, label, and input styles via `styles.self`, `styles.labelStyle`, and `styles.containerStyle`.
+- ⛔ **Disabled state**: Disable interaction and provide visual feedback.
+- ✏️ **Editable toggle**: Control whether the input is editable.
+- ➕ **Add icon overlay**: Optional add icon that changes on drag-over.
+
+---
+📌 Usage
+
+```tsx
+<Imagebox
+  label="Upload Profile Picture"
+  name="profileImage"
+  size="md"
+  url="/images/default-avatar.png"
+  showError={false}
+  errorMessage="Invalid file"
+  onFileSelected={(file) => console.log("Selected file:", file)}
+  styles={{
+    containerStyle: css`padding: 8px; border-radius: 4px;`,
+    labelStyle: css`font-weight: bold;`,
+    self: css`border: 1px dashed #d1d5db;`,
+  }}
+/>
+```
+
+- Use `onFileSelected` to handle file uploads.
+- The `url` prop sets an initial image, used if no file is selected.
+- Drag & drop and clicking the box both allow file selection.
+- Fully styleable using the `styles` prop for container, label, and input box.
+- Use `size` to control the dimensions and icon size.
+- Integrates with FieldLane for label, helper text, errors, and actions.]]></description>
+        <pubDate>Mon, 30 Mar 2026 08:18:22 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Keynote - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/content-keynote</link>
+        <guid>068abcb0f24b53ed78b2d92a09bffbe445932f4d</guid>
+        <description><![CDATA[Keynote is a flexible component for displaying key-value pairs in a clean, structured layout. 
+It supports rendering data from an object, custom renderers per key, manual children, and fully customizable styles.
+
+---
+✨ Features
+- 🗝 **Automatic key-value rendering**: Display selected keys and labels from a data object.
+- 🎨 **Custom rendering**: Provide a `renderer` function per key for formatting (e.g., bold numbers, currency formatting, JSX content).
+- 📦 **Children support**: Render any custom JSX as a child if no `data` is provided.
+- 🖌 **Styling flexibility**: Customize the wrapper, rows, keys, and values via `styles` prop.
+- 🔧 **Composability**: Each row is a `Keynote.Point` that can be used independently for nested or dynamic structures.
+
+---
+📌 Usage
+
+```tsx
+<Keynote
+  data={{ name: "Alim Naufal", role: "Frontend Developer", salary: 8500000 }}
+  keys={["name", "role", "salary"]}
+  keyLabels={["Full Name", "Position", "Monthly Salary"]}
+  renderer={{
+    salary: val => <b>{val.toLocaleString()} IDR</b>
+  }}
+  styles={{
+    self: css`margin-top: 16px;`,
+    rowStyle: css`padding: 8px 0;`,
+    rowKeyStyle: css`color: #2563eb;`,
+    rowValueStyle: css`font-weight: 600;`
+  }}
+/>
+
+{/* Using children instead of data */}
+<Keynote styles={{ self: css`margin-top: 16px;` }}>
+  <Keynote.Point label="Custom Label">Custom Value</Keynote.Point>
+  <Keynote.Point label="Another Label">Another Value</Keynote.Point>
+</Keynote>
+```
+
+- Use `data` + `keys` + `keyLabels` to render object values automatically.
+- Use `renderer` for custom formatting or JSX output.
+- Fully styleable using the `styles` prop.
+- `Keynote.Point` can be used individually for custom rows.]]></description>
+        <pubDate>Mon, 30 Mar 2026 08:20:04 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Launchpad - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/content-launchpad</link>
+        <guid>4c4c544c7d8f2baf2cd94f1839aabbc58789c050</guid>
+        <description><![CDATA[**Launchpad** is a versatile content layout component that organizes sections and items into swipeable pages.  
+It supports custom styling, pagination, draggable pages, and flexible section layouts.
+
+---
+✨ Features
+- 🏗 **Sections** – Divide content into multiple `Launchpad.Section` blocks
+- 📦 **Items** – Each section can have multiple `Launchpad.Section.Item` elements
+- 🔄 **Swipeable pages** – Automatically paginate sections when exceeding `maxSection`
+- 🖌 **Custom styles** – Apply styles at container, section, separator, grid, and item levels
+- 🎛 **Grid presets** – Configure layout of items using predefined grid presets
+- 🖱 **Pagination dots** – Visual indication and navigation for multiple pages
+- 🖐 **Drag & swipe support** – Smooth horizontal dragging with Framer Motion
+
+---
+🛠 Usage
+
+```tsx
+<Launchpad maxSection={2} containerStyle={{ padding: '1rem', border: '1px solid #ccc' }}>
+  <Launchpad.Section title="Featured Apps" styles={{ containerStyle: { background: '#f9f9f9' } }}>
+    <Launchpad.Section.Item
+      href="/app1"
+      iconUrl="https://picsum.photos/30"
+      label="App 1"
+    />
+    <Launchpad.Section.Item
+      href="/app2"
+      iconUrl="https://picsum.photos/30"
+      label="App 2"
+    />
+  </Launchpad.Section>
+
+  <Launchpad.Section title="Utilities">
+    <Launchpad.Section.Item
+      href="/utility1"
+      iconUrl="https://picsum.photos/30"
+      label="Utility 1"
+    />
+  </Launchpad.Section>
+</Launchpad>
+```]]></description>
+        <pubDate>Mon, 30 Mar 2026 09:25:22 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>List - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/content-list</link>
+        <guid>9ccd8607c90e8c36cd5eb272181329eaf18258c8</guid>
+        <description><![CDATA[**List** is a powerful and flexible component for rendering items and groups with rich interactivity.  
+It supports searchable lists, drag-and-drop, selectable items, grouping, and smooth animations.
+
+---
+✨ Features
+- 🔹 **Searchable list** – Add a search box to filter items dynamically
+- 🟢 **Selectable items** – Enable checkboxes for single or multiple selection
+- 🛠 **Draggable items** – Reorder items or groups via drag-and-drop
+- 📦 **Grouping** – Organize items into expandable/collapsible groups
+- 🔄 **Smooth animations** – Animated transitions using Framer Motion
+- ⏱ **Max items with show more/less** – Limit visible items and toggle extra items
+- 🎨 **Custom styles** – Fully styleable via CSS-in-JS or styled-components
+- 💡 **Custom actions** – Render extra content or buttons on items or groups
+
+---
+🛠 Usage
+
+```tsx
+<List
+  searchable={true}
+  draggable={true}
+  selectable={true}
+  maxItems={3}
+  labels={{ moreItemsText: "Show more", lessItemsText: "Show less" }}
+>
+  <List.Item id="1" title="Item 1" subtitle="Subtitle 1" />
+  <List.Item id="2" title="Item 2" subtitle="Subtitle 2" />
+  <List.Item id="3" title="Item 3" subtitle="Subtitle 3" />
+  <List.Group id="group-1" title="Group 1">
+    <List.Item id="g1-1" title="Group 1 - Item 1" />
+    <List.Item id="g1-2" title="Group 1 - Item 2" />
+  </List.Group>
+</List>
+```]]></description>
+        <pubDate>Mon, 30 Mar 2026 09:24:08 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>LoadingSkeleton - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/content-loadingskeleton</link>
+        <guid>e357b54cd03b8ae7bcd3dc923ab4296e25e3f574</guid>
+        <description><![CDATA[**LoadingSkeleton** is a versatile skeleton loader component for indicating loading states.  
+It supports multiple skeleton items, customizable shimmer direction, speed, colors, and wrapper styling.
+
+---
+✨ Features
+- 🔹 **Skeleton wrapper** – Container for multiple skeleton items
+- 🧱 **Skeleton items** – Individual blocks to represent text, avatars, or cards
+- 🔄 **Shimmer animation** – Smooth loading effect with configurable direction
+- ⏱ **Adjustable speed** – Predefined slow, normal, fast, or custom duration
+- 🎨 **Custom colors** – Base and highlight colors for full theme control
+- 🛠 **Custom styles** – Apply styled-components CSS to wrapper or items
+
+---
+🛠 Usage
+
+```tsx
+<LoadingSkeleton
+  flashDirection="left-to-right"
+  flashRate="fast"
+  baseColor="#eee"
+  highlightColor="#ddd"
+  styles={{ self: css`padding: 12px; border-radius: 4px;` }}
+>
+  <LoadingSkeleton.Item width={120} height={16} />
+  <LoadingSkeleton.Item width={200} height={16} />
+  <LoadingSkeleton.Item width="100%" height={24} />
+</LoadingSkeleton>
+```]]></description>
+        <pubDate>Mon, 30 Mar 2026 09:21:03 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>LoadingSpinner - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/content-loadingspinner</link>
+        <guid>6f7b6e19bbb86110a4775cda886fc585bc4c57d6</guid>
+        <description><![CDATA[**LoadingSpinner** ⏳ is a flexible spinner component to indicate loading states.  
+It supports customizable icon size, optional label text, spacing, and fully customizable styles.
+
+---
+✨ Features
+- 🔄 **Spinner icon**: Animated loading indicator
+- 🏷 **Optional label**: Display text next to the spinner
+- 📏 **Customizable sizing**: Adjust icon diameter and text font size
+- ↔️ **Adjustable gap**: Control space between spinner and label
+- 🎨 **Custom styles**: Override container, icon, and label styles with styled-components
+
+---
+🛠 Usage
+
+```tsx
+<LoadingSpinner
+  iconSize={24}
+  textSize={14}
+  label="Loading..."
+  gap={8}
+  styles={{
+    containerStyle: css`display: flex; align-items: center;`,
+    iconStyle: css`stroke: #3498db;`,
+    labelStyle: css`color: #555; font-weight: 500;`,
+  }}
+/>
+```]]></description>
+        <pubDate>Mon, 30 Mar 2026 09:15:04 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Messagebox - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/content-messagebox</link>
+        <guid>8e452b65dd7e7740c1275b4009f97a7c3cde2348</guid>
+        <description><![CDATA[Messagebox is a flexible notification component for displaying information, alerts, warnings, or success messages in a structured, visually distinct box.
+
+---
+✨ Features
+- 🏷️ **Variants**: Supports multiple visual styles (`primary`, `success`, `danger`, `warning`) for contextual messaging.
+- 🖼️ **Icons**: Optional icon displayed alongside the message to indicate type or status.
+- 📄 **Content**: Supports a main title and rich message content (children).
+- 🔗 **Action links**: Buttons or links for user interaction, such as navigating or triggering actions.
+- ❌ **Closable**: Can be dismissed by the user if `closable` is enabled.
+- 🎨 **Custom styles**: Fully customizable via styled-components, including container, title, content, and action list.
+- ♿ **Accessibility**: Proper ARIA roles and keyboard support for interactive elements.]]></description>
+        <pubDate>Mon, 30 Mar 2026 09:07:55 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>ModalDialog - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/stage-modaldialog</link>
+        <guid>a8ac42e7045e012c845c9b47f48d6a700da854f0</guid>
+        <description><![CDATA[ModalDialog is a versatile modal component for displaying important content, forms, or actions in a centered overlay. It supports controlled visibility, custom headers, footers, and styling.
+
+---
+✨ Features
+- 🖼️ **Custom content**: Render any ReactNode in the modal body.
+- 🏷️ **Header & subtitle**: Optional title and subtitle for context.
+- 🔘 **Action buttons**: Footer buttons with loading, disabled state, and custom variants.
+- ❌ **Closable**: Can be closed via Escape key, overlay click, or close button (configurable).
+- 🔄 **Controlled visibility**: `isOpen` prop with `onVisibilityChange` callback for external control.
+- 🎨 **Custom styles**: Override modal container, content, overlay, and other sections.
+- ♿ **Accessibility**: Proper ARIA roles and keyboard navigation support.]]></description>
+        <pubDate>Mon, 30 Mar 2026 09:05:59 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Moneybox - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/input-elements-moneybox</link>
+        <guid>296abea27fff0885b087e2c407ce4f24c3431b49</guid>
+        <description><![CDATA[**Moneybox** 💰 is a flexible numeric input component with optional currency support.  
+It allows formatted numeric input with comma/dot separators, an editable currency dropdown, error handling, labels, placeholders, and full style customization.
+
+---
+✨ Features
+- 💵 **Formatted numeric input**: Supports comma/dot separators for thousands and decimals
+- 💱 **Editable currency**: Optional dropdown to select currency from `currencyOptions`
+- ❌ **Error state**: Visual feedback with customizable error message
+- 🏷 **Label support**: Optional label above the input
+- 🖊 **Placeholder & helper**: Guides users on expected input
+- 🎨 **Customizable styles**: Override input, container, and label styles
+- 📱 **Mobile-friendly**: `inputMode="decimal"` by default for numeric keyboards
+
+---
+🛠 Usage
+
+```tsx
+<Moneybox
+  name="amount"
+  value="123456.78"
+  placeholder="Enter amount"
+  currency="IDR"
+  editableCurrency
+  currencyOptions={[
+    { id: "IDR", name: "Indonesian Rupiah", symbol: "Rp" },
+    { id: "USD", name: "US Dollar", symbol: "$" },
+  ]}
+  separator="comma"
+  showError={false}
+  onChange={(e) => console.log(e.target.name, e.target.value)}
+  styles={{
+    self: css`font-size: 14px; color: #111;`,
+    inputWrapperStyle: css`border-radius: 4px;`,
+  }}
+/>
+```]]></description>
+        <pubDate>Mon, 30 Mar 2026 09:09:51 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>NavTab - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/stage-navtab</link>
+        <guid>482f780515e0cd0839911d6de5f586a1f9977057</guid>
+        <description><![CDATA[📑 **NavTab** is a fully-featured navigation tab component for displaying multiple tabbed sections, sub-items, and header actions. It’s perfect for dashboards, multi-step interfaces, or any UI requiring structured tab navigation.
+
+---
+✨ Features
+- 🏷 **Tabs & Sub-Items**: Support for main tabs and nested sub-items with optional content.
+- 🎨 **Custom Styling**: Override individual parts of the NavTab (tab box, header, actions, content) via `styles`.
+- 🔹 **Active Tab Highlight**: Underline or highlight active tab with `activeColor`.
+- 🖱 **Tab Click Handling**: Automatic or custom behavior when a tab or sub-item is clicked.
+- ⚡ **Actions**: Header action buttons with icons, sub-menus, and fine-grained control.
+- 📏 **Sizes**: Supports `md` and `sm` tab sizes.
+- 🔧 **Controlled & Uncontrolled**: Use `activeTab` + `onChange` for controlled mode, or let the component manage local state.
+
+---
+🛠 Usage
+```tsx
+<NavTab
+  tabs={[
+    {
+      id: "write",
+      title: "Write",
+      content: <WriteTabContent />,
+      subItems: [
+        { id: "draft", caption: "Drafts", content: <DraftContent /> }
+      ]
+    },
+    { id: "review", title: "Review", content: <ReviewTabContent /> }
+  ]}
+  activeTab="write"
+  activeColor="#3b82f6"
+  actions={[
+    {
+      caption: "Save",
+      icon: { image: SaveIcon },
+      onClick: () => console.log("Saved!"),
+    }
+  ]}
+  styles={{
+    containerStyle: "background: white;",
+    boxStyle: "padding: 8px 16px;",
+  }}
+  onChange={(id) => console.log("Active tab:", id)}
+/>
+```
+
+---
+📝 Notes
+- Tabs automatically hide sub-items marked as `hidden`.
+- Action buttons can show sub-menus and support active/pressed state.
+- Combine with custom `children` to render additional content below tab panels.
+- Works in fullscreen layouts and can be fully styled via CSS-in-JS (`styled-components`).
+
+🚀 **Tip:** Use `activeTab` + `onChange` for external control over tab selection or leave uncontrolled to manage tab state internally.]]></description>
+        <pubDate>Mon, 30 Mar 2026 09:01:34 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>OverlayBlocker - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/stage-overlayblocker</link>
+        <guid>b2d641b7ad8c5d7279f9c7e0a5b9842cc64c61a9</guid>
+        <description><![CDATA[🛡 **OverlayBlocker** is a flexible overlay component that blocks interaction with the content beneath it. Ideal for modals, dialogs, and temporary UI states.  
+✨ Features
+- 👀 Show or hide overlay with the `show` prop
+- 🔝 Control stacking order using `zIndex`
+- 🖱 Click handling options:
+  - **"close"**: Closes overlay when clicked (default)
+  - **"preventDefault"**: Prevents automatic closing
+  - **Function**: Custom click behavior with helpers
+- 🎨 Fully styleable via `styles.self` (CSSProp compatible)
+- 🔧 Supports imperative `open` and `close` via `ref`
+🛠 Usage
+```tsx
+<OverlayBlocker
+  show={isOpen}
+  zIndex={9999}
+  onClick={({ close, preventDefault }) => {
+    // custom behavior
+    close();
+  }}
+  styles={{ self: "background: rgba(0,0,0,0.3);" }}
+>
+  <p>Your content here</p>
+</OverlayBlocker>
+```
+📝 Notes
+- Overlay automatically disappears when `show={false}`.
+- Use `ref` to programmatically open or close the overlay.]]></description>
+        <pubDate>Mon, 30 Mar 2026 09:00:29 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Pagination - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/controls-pagination</link>
+        <guid>f0a85bb1390a1295a25a6ed30b693447ac45dd12</guid>
+        <description><![CDATA[Pagination is a component for navigating through pages of content. It supports numbered buttons, previous/next controls, and a combobox for large page sets.
+
+---
+✨ Features
+- ⬅️➡️ **Previous & Next buttons** for sequential navigation
+- 🔢 **Numbered page buttons** for direct access
+- 🧩 **Combobox** for selecting pages when total pages exceed a threshold
+- 🎨 Customizable styles for container, buttons, and select box
+- ⚡ Handles active state and disabled state for navigation buttons
+- 📏 Supports flexible page ranges and thresholds
+
+---
+📌 Usage Guidelines
+- Set `currentPage` and `totalPages` to control pagination
+- Use `onPageChange` to handle page switching
+- Enable `showNumbers` to display numbered page buttons
+- Customize styles via the `styles` prop:
+  - `containerStyle` – for wrapper
+  - `buttonStyle` – for individual buttons
+  - `selectboxStyle` – for the combobox
+- The combobox automatically appears when pages exceed 5]]></description>
+        <pubDate>Mon, 30 Mar 2026 07:48:50 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>PaperDialog - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/stage-paperdialog</link>
+        <guid>c9a880266f60da0b70cccf7caeb7e157f7ae10ac</guid>
+        <description><![CDATA[📄 **PaperDialog** is a fully customizable slide-in dialog component that can appear from the left or right side of the viewport. 
+✨ Features
+- 🎬 Slide-in / Slide-out animations using Framer Motion
+- 🟢 Supports three states: `restored`, `minimized`, and `closed`
+- ❌ Optional close button and minimize toggle
+- 🛡 Overlay blocker when restored to prevent outside interactions
+- 🎛 Trigger component for opening the dialog
+- 📦 Content component for flexible inner content
+- 🎨 Fully styleable via `styles` props
+- ⌨️ Handles Escape key for closing
+🛠 Usage
+```tsx
+<PaperDialog ref={dialogRef} position="right" closable width="400px">
+  <PaperDialog.Trigger>
+    Open Dialog
+  </PaperDialog.Trigger>
+  <PaperDialog.Content>
+    <p>Your content here</p>
+  </PaperDialog.Content>
+</PaperDialog>
+```
+📝 Notes
+- Always include both `PaperDialog.Trigger` and `PaperDialog.Content` as children.
+- Use `styles` prop to override default styles.]]></description>
+        <pubDate>Mon, 30 Mar 2026 08:59:42 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Phonebox - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/input-elements-phonebox</link>
+        <guid>9fd7dd48f3ca90fc5ba1122c81af4d4ce2d5f4e6</guid>
+        <description><![CDATA[Phonebox is a combined country code selector and phone number input. It supports formatting, validation, search, and keyboard navigation.
+
+---
+✨ Features
+- 🌐 **Country code selector**: Choose your country code with flags and search.
+- 🔢 **Phone input formatting**: Formats the number automatically based on selected country.
+- 👆 **Keyboard & mouse navigation**: Supports arrow keys, Enter, and Escape in dropdown.
+- ⚠️ **Error handling**: Visual feedback and optional error messages.
+- 📝 **Helper text**: Add helper text below the input.
+- 🔧 **Custom styles**: Styles for wrapper, input, toggle button, and dropdown.
+- 🔄 **Two-way binding**: `onChange` triggers for both country code and phone number.]]></description>
+        <pubDate>Mon, 30 Mar 2026 08:57:50 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Pinbox - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/input-elements-pinbox</link>
+        <guid>ab456128395b9982b77d8332ca4bb2a90d7acd70</guid>
+        <description><![CDATA[Pinbox is a multi-part input component used for entering codes, PINs, OTPs, or other structured sequences. It supports masked input, static characters, error states, helper text, and keyboard navigation.
+
+---
+✨ Features
+- 🔢 **Multi-part input**: Each character or block is a separate input for better control.
+- 👁️ **Masked input**: Optionally mask sensitive characters.
+- ⬅️➡️ **Keyboard navigation**: Supports arrow keys, backspace, and tab to move between inputs.
+- ⚠️ **Error states**: Visual indication for invalid input.
+- 📝 **Helper text**: Supports extra helper text under the input.
+- 🔧 **Custom styles**: Styles for the wrapper, inputs, and error indicators.]]></description>
+        <pubDate>Mon, 30 Mar 2026 08:56:40 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Radio - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/input-elements-radio</link>
+        <guid>58d9836f325bf0c23b6a9d262011e41a0be2ca51</guid>
+        <description><![CDATA[Radio is a form input component used to select a single option from a group. It supports multiple rendering modes (classic radio or button style), icons, descriptions, error states, and highlight-on-checked behavior.
+
+---
+✨ Features
+- ⚪ **Classic radio / button style**: Choose between traditional radio circles or interactive button style.
+- 🖼 **Optional icons**: Display an icon next to the label (supports images or custom icons).
+- 📝 **Descriptions**: Add secondary text under the label for extra context.
+- 🖌 **Highlighting**: Highlight container when selected.
+- 🚫 **Disabled / error states**: Supports fully disabled or error visuals.
+- 🔧 **Custom styles**: Customize almost every element using a `styles` object.]]></description>
+        <pubDate>Mon, 30 Mar 2026 08:55:40 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Rating - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/input-elements-rating</link>
+        <guid>02ebb7c8c1aa8017488e7654ebffd6e4a3593da9</guid>
+        <description><![CDATA[Rating is a star-based input component for capturing user ratings with optional half-star support.
+
+---
+✨ Features
+- ⭐ **Editable or read-only**: Can be interactive or display-only.
+- 🌓 **Half-star support**: Accurately capture half-star ratings on mouse hover.
+- 🔢 **Optional label**: Display numeric rating (e.g., 3.5 / 5) next to stars.
+- 🖌 **Sizes**: Small (sm), Medium (md), Large (lg).
+- 🔧 **Custom styles**: Can style container, label, or star wrapper.]]></description>
+        <pubDate>Mon, 30 Mar 2026 08:54:42 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>RichEditor - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/input-elements-richeditor</link>
+        <guid>789005b689aa51c6cb2c9f6d25eacaf7e2ccba52</guid>
+        <description><![CDATA[✍️ A lightweight Markdown-compatible rich text editor using `contentEditable` div, Remix Icons, and inline HTML/Markdown conversion.
+
+- Supports bold, italic, ordered/unordered list, and headings
+- Supports checklists with `[]` (unchecked) and `[x]` (checked)
+- Uses custom turndown rules for markdown conversion
+- Includes a floating tip menu for H1–H3 heading options
+- Optional right-panel toolbar]]></description>
+        <pubDate>Thu, 26 Mar 2026 05:44:15 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Searchbox - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/input-elements-searchbox</link>
+        <guid>b950f175f8cfc0c6b66760d2b84b0808e8f8904a</guid>
+        <description><![CDATA[**Searchbox** is a flexible search input component with optional result menu support and clear button.  
+
+---
+✨ Features
+- 📝 **Controlled or uncontrolled input**
+- ❌ **Clearable input**: Delete the current value with a click
+- 📋 **Optional result menu**: Pass a render function for dropdown search results
+- 🎨 **Custom styling** via `styles` prop
+- ⌨️ **Keyboard & focus handling** supported
+- ♿ **Accessible**: ARIA labels and roles included
+
+---
+📌 Usage
+
+```tsx
+<Searchbox
+  name="search"
+  value={searchText}
+  onChange={(e) => setSearchText(e.target.value)}
+  styles={{
+    self: css`border-color: #ccc;`,
+    containerStyle: css`margin: 0 auto; width: 300px;`,
+    iconStyle: css`color: blue;`,
+  }}
+  showResultMenu={true}
+  resultMenu={(props) => <div {...props}>Result Item</div>}
+/>
+```]]></description>
+        <pubDate>Mon, 30 Mar 2026 08:52:24 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Selectbox - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/input-elements-selectbox</link>
+        <guid>ba96ba55f6529877eb9d9abfec307df1526c1bc3</guid>
+        <description><![CDATA[The **Selectbox** is a flexible and customizable input component that supports searchable dropdowns, single and multiple selection, keyboard navigation, and both controlled and uncontrolled usage.
+
+It is designed to handle complex interaction patterns such as filtering, strict validation, async loading states, and fully custom dropdown rendering via render props.
+
+---
+✨ Features
+- Searchable options with filtering
+- Single and multiple selection modes
+- Full keyboard navigation support
+- Controlled and uncontrolled behavior
+- Strict mode validation (enforces valid options)
+- Clearable input support
+- Loading state with customizable label
+- Fully customizable styles
+- Render prop support for custom dropdown UI
+
+---
+🧱 Basic Usage
+```tsx
+<Selectbox
+  options={[
+    { text: "Apple", value: "apple" },
+    { text: "Banana", value: "banana" },
+  ]}
+  placeholder="Select a fruit"
+/>
+```
+
+---
+🔁 Controlled Mode
+Use controlled mode when you need to **synchronize and manage the value from the parent state**.
+
+```tsx
+const [value, setValue] = useState("apple");
+
+<Selectbox
+  options={options}
+  selectedOptions={value}
+  onChange={setValue}
+  controlled
+/>
+```
+
+---
+🎯 Multiple Selection
+```tsx
+<Selectbox
+  options={options}
+  selectedOptions={["apple", "banana"]}
+  multiple
+  onChange={(values) => console.log(values)}
+/>
+```
+
+---
+⚙️ Strict Mode
+When `strict` is enabled:
+- Only values from `options` are allowed  
+- Invalid input will be reverted or cleared  
+
+```tsx
+<Selectbox
+  options={options}
+  strict
+/>
+```
+
+---
+🧩 Custom Dropdown (Render Props)
+```tsx
+<Selectbox options={options}>
+  {({ options, highlightedIndex }) => (
+    <ul>
+      {options.map((opt, index) => (
+        <li key={opt.value}>
+          {opt.text}
+        </li>
+      ))}
+    </ul>
+  )}
+</Selectbox>
+```
+
+---
+⏳ Loading State
+```tsx
+<Selectbox
+  options={[]}
+  isLoading
+  labels={{ loadingText: "Fetching data..." }}
+/>
+```
+
+---
+🎨 Styling
+```tsx
+<Selectbox
+  styles={{
+    self: css`
+      border-radius: 8px;
+    `,
+  }}
+/>]]></description>
+        <pubDate>Mon, 30 Mar 2026 06:11:16 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Separator - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/stage-separator</link>
+        <guid>ff1b8da0c30de1e2ee8407ef92575422eaaf15e6</guid>
+        <description><![CDATA[Separator is a visual divider component that separates content into sections with an optional title.
+
+---
+✨ Features
+- ➖ **Divider line**: Adds a horizontal line across the container.
+- 🔤 **Optional title**: Can display a floating text over the line.
+- ↔️ **Text float**: Title can float left or right.
+- 🧱 **Custom depth**: Adjust distance of the title from the container edge.
+- 🎨 **Customizable styles**: Supports container, line, and title styling via CSS props.]]></description>
+        <pubDate>Mon, 30 Mar 2026 08:53:36 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Sidebar - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/stage-sidebar</link>
+        <guid>c0eb3f5b9a2d96fced61e4374fbf291b74ecafc4</guid>
+        <description><![CDATA[**Sidebar** is a responsive sidebar container for desktop and mobile layouts.
+It supports fixed or scrollable items, swipe gestures on mobile, and fully customizable styles.
+
+---
+✨ Features
+- 🖥 **Responsive layout**: Automatically switches between mobile (toggleable) and desktop (always visible) modes.
+- 📱 **Mobile swipe support**: Swipe left/right to open or close the sidebar.
+- 🖌 **Custom styling**: Customize mobile and desktop styles independently via the `styles` prop.
+- ↔️ **Positioning**: Can be placed on the left or right of the screen using the `position` prop.
+- 🧩 **Composable children**: Add items, spacers, or custom content.
+- 🔧 **Sidebar.Item**: Individual items inside the sidebar, with optional fixed height.
+- ⚡ **Sidebar.Spacer**: Add flexible spacing with configurable widths for mobile and desktop.
+
+---
+📌 Usage
+
+```tsx
+<Sidebar position="left" styles={{ mobileStyle: css`min-width: 200px;`, desktopStyle: css`min-width: 300px;` }}>
+  <Sidebar.Item isFixed>
+    <div>Fixed content</div>
+  </Sidebar.Item>
+
+  <Sidebar.Spacer mobileWidth="50px" desktopWidth="100px" />
+
+  <Sidebar.Item>
+    <div>Scrollable content</div>
+  </Sidebar.Item>
+</Sidebar>
+```]]></description>
+        <pubDate>Mon, 30 Mar 2026 08:48:46 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Signbox - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/input-elements-signbox</link>
+        <guid>725d03f65b17d5de4e413c9edb4c7d0be88dfdbb</guid>
+        <description><![CDATA[Signbox is a signature input component that allows users to draw their signature directly on a canvas. It supports clearing, resizing, and customizing appearance, making it ideal for forms and electronic signing.
+
+---
+✨ Features
+- 🖊 **Draw signature**: Users can draw directly on a canvas.
+- 🧹 **Clearable**: Optional clear button to reset the signature.
+- 🖌 **Customizable style**: Control the canvas, border, and size through styles.
+- ⚡ **Responsive**: Canvas auto-scales on window resize for high-DPI displays.
+- 🔒 **Disabled mode**: Prevent drawing when needed.
+- 💡 **Error state**: Visual feedback when the signature is required or invalid.]]></description>
+        <pubDate>Mon, 30 Mar 2026 08:47:55 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>StatefulForm - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/input-elements-statefulform</link>
+        <guid>6bfe9b094b9d8b4017be5f5bb4a4b40668c3771b</guid>
+        <description><![CDATA[StatefulForm is a dynamic form component built to handle complex form scenarios with validation, nested fields, custom inputs, and reactive state management. 
+It works seamlessly with Zod schemas for type-safe validation.
+
+---
+✨ Features
+- 🖊 **Flexible input types**: Supports text, email, password, textarea, checkbox, radio, phone, file, image, color, date, money, rating, toggle, pin, and fully custom fields.
+- 📦 **Nested/grouped fields**: Organize fields in groups or frames for complex layouts.
+- ⚠️ **Validation**: Integrates with Zod schemas, supporting `onChange`, `onBlur`, or `onSubmit` validation modes.
+- 🔄 **Reactive state**: Emits `onChange` callbacks with current form values.
+- 🎨 **Custom styling**: Customize container, rows, frames, and labels via `styles` prop.
+- 🔍 **Error handling**: Automatically shows validation errors for touched fields.
+- 🖌 **Custom render**: For fields with `type="custom"`, you can render any JSX/component.
+- 🎯 **AutoFocus**: Focus on a specific field when the form mounts.
+
+---
+📌 Usage
+
+```tsx
+const formValues = {
+  username: "",
+  password: "",
+  rememberMe: false,
+};
+
+const fields = [
+  { name: "username", type: "text", placeholder: "Enter username", required: true },
+  { name: "password", type: "password", placeholder: "Enter password", required: true },
+  { name: "rememberMe", type: "checkbox", title: "Remember Me" },
+];
+
+<StatefulForm
+  fields={fields}
+  formValues={formValues}
+  validationSchema={z.object({
+    username: z.string().min(3),
+    password: z.string().min(6),
+  })}
+  onChange={({ currentState }) => console.log(currentState)}
+  onValidityChange={(isValid) => console.log("Form valid:", isValid)}
+  labelSize="14px"
+  fieldSize="16px"
+  styles={{
+    containerStyle: css`padding: 16px; background: #f9f9f9;`,
+    rowStyle: css`margin-bottom: 12px;`,
+  }}
+/>
+```
+
+- Use `fields` to define all form fields, including nested groups or frames.
+- Connect `validationSchema` for type-safe validation.
+- Listen to `onChange` for live updates and `onValidityChange` to track form validity.
+- Customize appearance and spacing using `styles`.
+- Render fully custom inputs using `type="custom"` and the `render` prop.]]></description>
+        <pubDate>Mon, 30 Mar 2026 08:46:40 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Statusbar - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/stage-statusbar</link>
+        <guid>558ac498f0e56cf18ccdcf3582577e74b7412b02</guid>
+        <description><![CDATA[**Statusbar** is a flexible bottom bar component to display actions, icons, buttons, or status information.  
+It supports left and right sections, customizable styling, spacing, transparency, and dynamic content.
+
+---
+✨ Features
+- 🔹 **Left & Right sections** – Display items independently on both sides
+- 🖼 **Icons & Text** – Supports icons, labels, or custom render functions
+- 🔘 **Buttons** – Integrates seamlessly with Button components
+- 🎨 **Custom styles** – Configure styles for container, items, left/right wrappers
+- 🟢 **Active & Hover states** – Custom background colors for active and hover states
+- ⚖ **Flexible sizing** – Adjustable font/icon sizes
+- 🌐 **Transparent mode** – Optionally render a transparent statusbar
+- 🛠 **Spacers** – Add responsive spacing with `Statusbar.Spacer`
+
+---
+🛠 Usage
+
+```tsx
+<Statusbar
+  size={12}
+  activeBackgroundColor="#e0e0e0"
+  hoverBackgroundColor="#f5f5f5"
+  transparent={false}
+  content={{
+    left: [
+      { text: "Home", icon: { name: "home" } },
+      { button: { children: "Save", onClick: () => alert("Saved!") } },
+    ],
+    right: [
+      { text: "Profile", icon: { name: "user" } },
+      { render: <CustomComponent /> },
+    ],
+  }}
+  styles={{
+    self: css`padding: 4px 12px;`,
+    itemStyle: css`color: #333;`,
+    leftWrapperStyle: css`gap: 8px;`,
+    rightWrapperStyle: css`gap: 8px;`,
+  }}
+/>
+```]]></description>
+        <pubDate>Mon, 30 Mar 2026 09:33:17 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Stepline - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/controls-stepline</link>
+        <guid>1f2009e0658646e6420cd05f0ab2a60f0dd39535</guid>
+        <description><![CDATA[Stepline is a horizontal step indicator component designed for workflows, progress tracking, or multi-step forms.
+It supports icons, labels, collapsible tooltips, customizable styles, and click events for individual steps.
+
+---
+✨ Features
+- 🖱 **Clickable steps**: Each step can trigger an `onClick` callback.
+- 📐 **Custom spacing**: Use the `gap` prop to adjust space between steps.
+- 🛠 **Custom styles**: Fully styleable using `styles` prop for wrapper, circles, and text.
+- 🎨 **Variants**: Steps can have different variants (`todo`, `current`, `completed`, `error`).
+- 🖌 **Collapsible mode**: Collapse step labels and show them as tooltips when hovered.
+- 📦 **Composable children**: Each step can have a title, subtitle, and custom sidenotes.
+
+---
+🔧 Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | ReactNode | — | Step components (`Stepline.Item`) to render inside the stepline. |
+| `styles` | SteplineStylesProps | — | Custom CSS styles for the wrapper. |
+| `gap` | number | 8 | Space in pixels between steps. |
+| `collapsed` | boolean | false | Collapses step labels into tooltips. |
+
+---
+🔧 Stepline.Item Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `title` | string | — | Step main title. |
+| `subtitle` | string | — | Step subtitle or description. |
+| `variant` | 'todo' | 'current' | 'completed' | 'error' | 'todo' | Step visual variant affecting circle color and line color. |
+| `active` | boolean | false | Scale the outer circle to indicate active state. |
+| `onClick` | () => void | — | Callback when the step is clicked. |
+| `styles` | SteplineItemStylesProps | — | Custom styles for the item, outer/inner circle, and text wrapper. |
+
+---
+📌 Usage
+
+```tsx
+<Stepline gap={16} collapsed={false} styles={{ self: css`padding: 1rem;` }}>
+  <Stepline.Item
+    title="Step 1"
+    subtitle="Start"
+    variant="completed"
+    onClick={() => console.log("Step 1 clicked")}
+  />
+  <Stepline.Item
+    title="Step 2"
+    subtitle="In progress"
+    variant="current"
+  />
+  <Stepline.Item
+    title="Step 3"
+    subtitle="Review"
+    variant="todo"
+    active
+  />
+  <Stepline.Item
+    title="Step 4"
+    subtitle="Complete"
+    variant="todo"
+  />
+</Stepline>
+```
+
+- Use `gap` to adjust spacing between steps.
+- Set `collapsed` to show labels inside tooltips instead of inline.
+- Pass `onClick` to handle step click events.
+- Fully style via `styles.self` for wrapper or individual step styles.]]></description>
+        <pubDate>Mon, 30 Mar 2026 08:31:41 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Table - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/content-table</link>
+        <guid>1ef7ff150547300be252716c88ee0b4f4827bf2b</guid>
+        <description><![CDATA[The **Table** component is a powerful and flexible data display component designed for handling complex datasets with rich interactions such as selection, drag-and-drop, grouping, and pagination.
+
+---
+✨ Features
+- ✅ **Row selection** with checkbox support (single/multi)
+- 🔍 Optional **search filtering** via integrated Searchbox
+- 🧲 **Drag-and-drop** row reordering (with grouping support)
+- 📂 **Grouped rows** with collapsible sections
+- ⚡ **Infinite scroll** support via last row detection
+- 📊 Built-in **pagination controls**
+- 🎯 Custom **row actions** & contextual menus
+- 🧩 Fully customizable **styles per section**
+- 📌 Support for **summary rows**
+- ⏳ Built-in **loading overlay**
+
+---
+🧱 Component Structure
+
+```tsx
+<Table>
+  // only row
+  <Table.Row rowId="1" content={["Name", "Email"]} />
+  
+  // with group
+  <Table.Row.Group title="Group A">
+    <Table.Row rowId="2" content={["Grouped Row"]} />
+  </Table.Row.Group>
+</Table>
+```
+
+---
+📦 Column Definition
+
+```tsx
+{
+  id: string;
+  caption: string;
+  sortable?: boolean;
+  width?: string;
+  styles?: {
+    self?: CSSProp;
+  };
+}
+```
+
+---
+⚙️ Core Behaviors
+Selection
+- Enable with `selectable`
+- Controlled via `selectedItems`
+- Callback: `onItemsSelected(ids: string[])`
+Drag & Drop
+- Enable with `draggable`
+- Works across groups
+- Callback provides:
+```
+{
+  id: string;
+  oldGroupId: string;
+  newGroupId: string;
+  oldPosition: number;
+  newPosition: number;
+}
+```
+Search
+- Enable with `searchable`
+- Customize using `searchbox` props
+- Integrates seamlessly with header
+Pagination
+- Enable with `showPagination`
+- Supports:
+  - Next / Previous callbacks
+  - Disabled states
+  - Custom labels
+Infinite Scroll
+- Use `onLastRowReached` to detect bottom visibility
+- Ideal for lazy loading / large datasets
+
+---
+🧩 Row Types
+Basic Row
+```tsx
+<Table.Row
+  rowId="1"
+  content={["John Doe", "john@mail.com"]}
+/>
+```
+Custom Cell Rendering
+```tsx
+<Table.Row rowId="1">
+  <Table.Row.Cell>Custom Content</Table.Row.Cell>
+</Table.Row>
+```
+Grouped Row
+```tsx
+<Table.Row.Group title="Team A">
+  <Table.Row rowId="2" content={["Alice"]} />
+</Table.Row.Group>
+```
+
+---
+🎯 Actions
+
+- Header actions via `actions`
+- Row-level actions via `actions(rowId)`
+- Supports:
+  - Button
+  - Capsule (toggle-like UI)
+
+---
+📊 Summary Row
+
+```tsx
+[
+  {
+    span?: number;
+    content?: ReactNode;
+    bold?: boolean;
+  }
+]
+```
+
+- Rendered at the bottom
+- Supports column spanning
+
+---
+📌 Usage Guidelines
+- Use **grouped rows** for hierarchical or categorized data
+- Enable **dragging** only when ordering matters
+- Use **controlled selection** for syncing with external state
+- Combine **pagination + infinite scroll** carefully (avoid overlap)
+- Provide meaningful **emptySlate** content for better UX
+- Use **summary rows** for totals or aggregated data]]></description>
+        <pubDate>Mon, 30 Mar 2026 08:41:50 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Textarea - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/input-elements-textarea</link>
+        <guid>24b7bfc43ff3f286a1ba1a3ac2b2b70754a1c509</guid>
+        <description><![CDATA[Textarea is a multi-line input component with optional auto-growing height, error display, and action buttons. 
+It is built on top of a FieldLane for label, error, and helper support.
+
+---
+✨ Features
+- 📝 **Multi-line input**: Accepts multiple lines with customizable rows.
+- 📏 **Autogrow**: Automatically increases height as user types if `autogrow` is enabled.
+- ⚠️ **Error handling**: Shows visual error indication and optional message with `showError` and `errorMessage`.
+- 🎨 **Custom styles**: Fully styleable via the `styles` prop for both FieldLane and textarea itself.
+- 🔘 **Actions**: Render action buttons inside the input for things like copy, paste, or custom icons.
+- 🔒 **Disabled support**: Proper styling and interaction handling for disabled state.
+
+---
+📌 Usage
+
+```tsx
+<Textarea
+  name="description"
+  label="Description"
+  placeholder="Type something..."
+  rows={4}
+  autogrow
+  showError={false}
+  errorMessage="This field is required"
+  actions={[
+    { title: "Copy", icon: { name: "copy" }, onClick: () => console.log("Copy") }
+  ]}
+  onChange={(e) => console.log(e.target.value)}
+  styles={{
+    self: css`border-color: blue;`,
+  }}
+/>
+```
+
+- Use `autogrow` to let the textarea expand automatically.
+- Use `actions` to show buttons/icons inside the input.
+- Use `showError` and `errorMessage` for validation feedback.
+- Fully styleable via `styles.self`.]]></description>
+        <pubDate>Mon, 30 Mar 2026 08:34:04 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Textbox - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/input-elements-textbox</link>
+        <guid>eb6b7dc30a2c4abf531c3081fc4144185190ed5d</guid>
+        <description><![CDATA[Textbox is a highly flexible input component for forms, login pages, or any interactive field. 
+It supports labels, validation states, action icons, dropdowns, and custom styling.
+
+---
+✨ Features
+- 🖊 **Labels and helper text**: Display a label above or beside the input, with optional helper text.
+- ⚠️ **Validation states**: Show error states and messages with `showError` + `errorMessage`.
+- 🖱 **Action icons**: Add buttons/icons inside the input for actions like toggling password visibility or clearing content.
+- 🔐 **Password toggle**: Built-in support for showing/hiding password inputs.
+- 📜 **Custom dropdowns**: Attach dropdowns with filtering and custom rendering for autocompletion or suggestions.
+- 🎨 **Custom styling**: Full control over input, label, container, and dropdown styles via the `styles` prop.
+- 🚫 **Disabled/readonly**: Prevent user interaction when needed.
+- 📦 **Composable children**: Use nested dropdowns or actions seamlessly.
+
+---
+🔧 Textbox Props
+- `name` (string): Name attribute for forms.
+- `label` (string): Text displayed above the input.
+- `placeholder` (string): Placeholder text when the input is empty.
+- `value` (string): Current input value.
+- `type` ('text' | 'password' | 'message' | 'hidden'): Input type.
+- `showError` (boolean): Toggle the error state.
+- `errorMessage` (string): Message shown when `showError` is true.
+- `actions` (array): Array of action objects inside the input:
+  - `icon` (FigureProps) – optional icon
+  - `title` (string) – optional tooltip
+  - `onClick` (function) – callback
+  - `disabled` (boolean) – disables the action
+- `dropdowns` (array): Array of dropdown configurations:
+  - `options` (array) – list of selectable options
+  - `withFilter` (boolean) – enable search/filter
+  - `render` (function) – custom rendering for dropdown content
+  - `onChange` (function) – called when an option is selected
+- `onChange` (function): Triggered when input value changes.
+- `helper` (string): Optional helper text under the input.
+- `disabled` (boolean): Disables the input.
+- `required` (boolean): Marks input as required.
+- `labelPosition` ('top' | 'left' | 'right'): Position of label relative to input.
+- `labelWidth` (string): Width of label in horizontal layout.
+- `labelGap` (string): Gap between label and input.
+- `styles` (object): Customize styles for input and container:
+  - `self` – input element
+  - `containerStyle` – outer container
+  - `bodyStyle` – FieldLane body
+  - `controlStyle` – input container
+  - `labelStyle` – label text
+
+---
+📌 Usage
+
+```tsx
+<Textbox
+  label="Username"
+  placeholder="Enter your username"
+  type="text"
+  showError={false}
+  errorMessage="Invalid username"
+  actions={[
+    { icon: <RiEyeLine />, onClick: () => console.log('Clicked') },
+  ]}
+  dropdowns={[
+    { options: [{ id: '1', label: 'Option 1' }], withFilter: true }
+  ]}
+  styles={{
+    self: css`border-color: blue;`,
+    containerStyle: css`background: #f0f0f0;`,
+  }}
+  onChange={(e) => console.log(e.target.value)}
+/>
+```
+
+- Use `actions` to add icons or buttons inside the input.
+- Add `dropdowns` for suggestion lists or autocomplete.
+- Mark errors with `showError` and `errorMessage`.
+- Customize appearance with `styles`.
+- Add helper text or custom label positioning as needed.]]></description>
+        <pubDate>Mon, 30 Mar 2026 08:42:43 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>ThumbField - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/input-elements-thumbfield</link>
+        <guid>7e7c93ae9845aa730656fc472945b5b317038255</guid>
+        <description><![CDATA[ThumbField is a thumbs-up / thumbs-down input component designed for feedback, rating, or like/dislike functionality.
+
+---
+✨ Features
+- 👍👎 **Thumb selection**: Users can select either "up" or "down" or leave blank.
+- 🖌 **Custom colors**: Configure active thumbs colors via `thumbsUpBackgroundColor` and `thumbsDownBackgroundColor`.
+- ⚠️ **Error state**: Shows an error icon when `showError` is true.
+- 🛠 **Custom styling**: Style the triggers and wrapper via `styles`.
+- 🔒 **Disabled support**: Disable user interaction with `disabled`.
+- 📦 **Form integration**: Works with `StatefulForm` and hidden input for form submission.
+
+---
+📌 Usage
+
+```tsx
+<ThumbField
+  label="Do you like this feature?"
+  value={null}
+  thumbsUpBackgroundColor="#4CAF50"
+  thumbsDownBackgroundColor="#F44336"
+  onChange={(e) => console.log("Selected value:", e.target.value)}
+  showError={false}
+/>
+```
+
+- Use `value` and `onChange` to control the field programmatically.
+- Customize active thumb colors via `thumbsUpBackgroundColor` and `thumbsDownBackgroundColor`.
+- Set `disabled` to prevent interactions.
+- Wrap in `FieldLane` for label, helper, and error message support.]]></description>
+        <pubDate>Mon, 30 Mar 2026 08:37:16 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Timebox - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/input-elements-timebox</link>
+        <guid>ec52fc6ab4b420db61daee4b3fb11f3bd307542b</guid>
+        <description><![CDATA[Timebox is a time input component that allows users to enter hours, minutes, and optionally seconds. 
+It supports smart focus navigation, editable/non-editable modes, and error display. 
+
+---
+✨ Features
+- 🕒 **Hour & Minute Input**: Users can input hours and minutes, optionally seconds.
+- ⏱ **withSeconds**: Enables second input for precise time selection.
+- 🎯 **Smart Focus**: Automatically moves focus to the next field when needed.
+- ⚠️ **Error Handling**: Shows error styling when `showError` is true.
+- 🔒 **Editable Mode**: Can be read-only when `editable` is false.
+- 🎨 **Custom Styling**: Fully customizable via `styles` prop.
+
+---
+📌 Usage
+
+```tsx
+<Timebox
+  name="startTime"
+  label="Start Time"
+  value="08:30"
+  withSeconds
+  editable
+  showError={false}
+  placeholder={{ hour: "HH", minute: "MM", second: "SS" }}
+  onChange={(e) => console.log(e.target.value)}
+  styles={{
+    self: css`border-color: blue;`,
+    inputWrapperStyle: css`background: #f0f0f0;`,
+  }}
+/>
+```
+
+- Use `withSeconds` to enable seconds input.
+- Use `editable={false}` to make the input read-only.
+- Use `styles` to customize input and wrapper styling.
+- The `onChange` callback returns a formatted string `HH:MM:SS`.]]></description>
+        <pubDate>Mon, 30 Mar 2026 08:35:43 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Timeline - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/controls-timeline</link>
+        <guid>6ad62c982ea83754ba7caf2d0f036ce32f700a76</guid>
+        <description><![CDATA[Timeline is a flexible component for displaying sequential events or steps in a vertical layout. 
+It supports custom items (`Timeline.Item`), clickable states, variant-based colors, line styles, and full style overrides.
+
+---
+✨ Features
+- 🏗 **Composable**: Each step is a `Timeline.Item` that can render title, subtitle, and optional sidenotes.
+- 🎨 **Variants**: Item colors can reflect status such as 'todo', 'inProgress', 'done', etc.
+- 👆 **Clickable items**: Enable `isClickable` to allow clicks on each timeline item.
+- 🖌 **Styling flexibility**: Customize circles, text, lines, and containers via the `styles` prop.
+- 🔗 **Line types**: Connectors can be 'solid', 'dash', or 'dot'.
+
+---
+🔧 Timeline Props
+- `children` (ReactNode): Timeline.Item components to render.
+- `isClickable` (boolean): Makes all timeline items clickable.
+🔧 Timeline.Item Props
+- `title` (string): Main title text of the step.
+- `subtitle` (string): Secondary description or detail under the title.
+- `sidenote` (ReactNode): Optional content displayed beside the item.
+- `variant` (string): Status/variant of the item, affects colors. Options from `TEXT_VARIANT_COLOR`.
+- `styles` (TimelineItemStylesProps): Customize styling for item sub-elements.
+  - `self` – container wrapper
+  - `textWrapperStyle` – wrapper for title & subtitle
+  - `titleStyle` – title text
+  - `subtitleStyle` – subtitle text
+  - `sidenoteStyle` – sidenote container
+- `isClickable` (boolean): Override for item-specific clickability.
+- `id` (string | number): Optional ID for the item (defaults to index).
+- `onClick` (function): Callback when the item is clicked.
+- `line` ('solid' | 'dash' | 'dot'): Line style for the connector below the item circle.
+
+---
+📌 Usage
+
+```tsx
+<Timeline isClickable>
+  <Timeline.Item
+    title="Step 1"
+    subtitle="Initial setup"
+    variant="todo"
+    line="solid"
+    onClick={() => console.log('Step 1 clicked')}
+  />
+  <Timeline.Item
+    title="Step 2"
+    subtitle="In progress"
+    variant="inProgress"
+    line="dash"
+    sidenote={<span>Optional note</span>}
+  />
+  <Timeline.Item
+    title="Step 3"
+    subtitle="Completed"
+    variant="done"
+    line="dot"
+  />
+</Timeline>
+```
+
+- Use `isClickable` on `Timeline` to make all items interactive.
+- Use `Timeline.Item` for each step; customize title, subtitle, variant, line, and optional sidenotes.
+- Styles can be overridden via the `styles` prop for full layout and color control.]]></description>
+        <pubDate>Mon, 30 Mar 2026 08:40:19 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>TipMenu - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/controls-tipmenu</link>
+        <guid>f2aeda370bad9e72250413780e8cfc11039c6916</guid>
+        <description><![CDATA[TipMenu is a flexible dropdown menu component that supports optional filtering, icons, and different variants per item. 
+It is commonly used for action menus, context menus, or inline tips.
+
+---
+✨ Features
+- 🖱 **Clickable menu items**: Each item supports an onClick handler.
+- 🔍 **Optional search/filter**: Automatically filter menu items with `withFilter`.
+- 🎨 **Item variants**: Supports `sm` and `md` variants for spacing and size.
+- ⚠️ **Dangerous actions**: Items can be styled to indicate dangerous actions (e.g., delete).
+- 🖌 **Custom styles**: Full styling support via `styles` prop.
+- 📦 **Composable children**: Render additional custom content inside the menu.
+- 🎨 **Icon support**: Each menu item can have an optional icon rendered via the `Figure` component.
+
+---
+📌 Usage
+
+```tsx
+<TipMenu
+  subMenuList={[
+    { caption: "Edit", onClick: () => console.log("Edit clicked") },
+    { caption: "Delete", isDangerous: true, onClick: () => console.log("Deleted") },
+    { caption: "View", variant: "sm" }
+  ]}
+  withFilter
+  variant="md"
+  setIsOpen={() => console.log("Menu closed")}
+  styles={{
+    self: css`min-width: 200px;`,
+  }}
+>
+  <div>Custom content at the bottom</div>
+</TipMenu>
+```
+
+- Use `subMenuList` to define menu items.
+- Use `withFilter` to enable the search box.
+- Use `variant` to change spacing and sizing for items.
+- Use `isDangerous` to highlight critical actions.
+- Fully styleable via `styles.self`.
+- You can still pass custom children if needed.]]></description>
+        <pubDate>Mon, 30 Mar 2026 08:32:38 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Togglebox - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/input-elements-togglebox</link>
+        <guid>41c70b9d483cd078443744764438467123470c00</guid>
+        <description><![CDATA[Togglebox is a flexible toggle switch component for React, designed for binary on/off states. 
+It supports icons, loading states, custom sizes, labels, descriptions, and full styling control. 
+It integrates seamlessly with `FieldLane` for form layout and validation support.
+
+---
+✨ Features
+- 🔘 **Binary toggle**: Represents on/off or true/false states.
+- 🏷 **Label and description**: Display text next to the toggle for context.
+- 🎨 **Custom icons**: Render an optional icon inside the toggle thumb.
+- ⏳ **Loading state**: Show a spinner while an action is processing.
+- 📐 **Resizable**: Control toggle size via the `size` prop.
+- 🧩 **Composable**: Integrates with `FieldLane` for structured form layouts.
+- 🎛 **Full styling control**: Override styles for label, description, row, text wrapper, error messages, and toggle thumb.
+
+---
+📌 Usage
+
+```tsx
+<Togglebox
+  checked={true}
+  label="Enable notifications"
+  description="Receive email updates for new activity"
+  icon={{ image: RiNotificationLine, color: "white" }}
+  size={32}
+  isLoading={false}
+  onChange={(e) => console.log("Toggle changed:", e.target.checked)}
+  styles={{
+    rowStyle: css`margin-top: 16px;`,
+    textWrapperStyle: css`gap: 4px;`,
+    labelStyle: css`font-weight: 600;`,
+    descriptionStyle: css`color: #6B7280;`,
+  }}
+/>
+
+{/* Integration with FieldLane and validation */}
+<Togglebox
+  title="Enable dark mode"
+  label="Dark Mode"
+  showError={true}
+  errorMessage="This toggle is required"
+  helper="Toggle to switch theme"
+  required
+/>
+```
+
+---
+💡 Notes
+- Clicking the toggle updates the `checked` state.
+- The toggle thumb can display a custom icon or loading spinner.
+- Fully responsive and accessible — includes labels, ARIA attributes, and keyboard support.
+- Works with `FieldLane` for structured forms with labels, errors, and helper text.
+- Use the `styles` prop to override individual sub-elements without breaking default behavior.
+- `size` controls the toggle width, height, and thumb dimensions automatically.]]></description>
+        <pubDate>Mon, 30 Mar 2026 08:24:32 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Toolbar - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/controls-toolbar</link>
+        <guid>fb9f8ce22246a232bacd615503ffb1014ab6393d</guid>
+        <description><![CDATA[Toolbar is a flexible control bar component for React, designed to display multiple interactive buttons with optional dropdown menus, icons, and custom styles. 
+It is suitable for building rich action bars, tool panels, or context menus in applications.
+
+---
+✨ Features
+- 🛠 **Toolbar container**: Organizes multiple `Toolbar.Menu` items horizontally by default.
+- 🏷 **Toolbar.Menu**: Each menu can have a caption, an icon, and an optional dropdown sub-menu.
+- 🔀 **Variants**: Supports `default`, `primary`, and `danger` modes for visual emphasis.
+- 🔄 **Interactive states**: Hover, active, focus-visible, and open states are styled out-of-the-box.
+- ⬆️⬇️ **Dropdown menus**: Sub-menu lists can be fully customized with `ToolbarSubMenuProps`.
+- ⚡ **Dynamic sizing**: Supports a `big` mode for larger icons and vertically-aligned content.
+- 🎨 **Styling flexibility**: Customize the container, trigger, toggle button, and dropdown via the `styles` prop.
+- 🧩 **Composable children**: Place any custom JSX or multiple `Toolbar.Menu` items inside a toolbar.
+
+---
+📌 Usage
+
+```tsx
+const subMenuList: ToolbarSubMenuProps[] = [
+  { caption: "Edit", icon: { image: RiEditLine, color: "yellow" }, onClick: () => console.log("Edit mode") },
+  { caption: "Delete", icon: { image: RiForbid2Line, color: "red" }, isDangerous: true, onClick: () => console.log("Deleted") },
+];
+
+<Toolbar big>
+  <Toolbar.Menu
+    caption="Default Mode"
+    icon={{ image: RiMessage2Line, color: "red" }}
+    subMenuList={subMenuList}
+  />
+  <Toolbar.Menu
+    caption="Primary Mode"
+    icon={{ image: RiMessage2Line, color: "white" }}
+    variant="primary"
+    subMenuList={subMenuList}
+  />
+  <Toolbar.Menu
+    caption="Danger Mode"
+    icon={{ image: RiMessage2Line, color: "white" }}
+    variant="danger"
+    subMenuList={subMenuList}
+  />
+</Toolbar>
+```
+
+- **Toolbar** arranges multiple menus horizontally.
+- **Toolbar.Menu** can display a caption, icon, and optional dropdown.
+- Dropdown menus are defined with `subMenuList`, each item supporting:
+  - `caption`
+  - `icon` (image + color)
+  - `onClick` callback
+  - `isDangerous` for destructive actions.
+- **Variants** apply predefined colors and hover/active/focus states:
+  - `default` — standard gray/white styles.
+  - `primary` — emphasized with blue background and white text.
+  - `danger` — red background for destructive actions.
+- **big** prop enlarges icons and vertically centers content for toolbars that require higher visibility.
+- **styles** prop allows CSS overrides for:
+  - `self` — toolbar wrapper
+  - `containerStyle` — individual menu container
+  - `triggerStyle` — menu button
+  - `toggleActiveStyle` — dropdown toggle
+  - `dropdownStyle` — dropdown menu container
+
+---
+💡 Notes
+- Clicking outside an open menu automatically closes it.
+- Each menu manages its own open/close state but can also be controlled externally via `isOpen` and `setIsOpen`.
+- Hover and active states are handled automatically, including special styles for dangerous actions.
+- Supports responsive behavior — captions are hidden for smaller screens if `icon` is provided.
+- Fully compatible with any React project using Styled Components.]]></description>
+        <pubDate>Mon, 30 Mar 2026 08:20:56 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Tooltip - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/content-tooltip</link>
+        <guid>d92b794610101600f45cfe2d2813d22966dbb166</guid>
+        <description><![CDATA[Tooltip is a versatile floating overlay component used to display contextual information when users hover or click on a target element. 
+It supports flexible placement, delay, custom styling, and controlled visibility.
+
+---
+✨ Features
+- 🖱 **Trigger events**: Show or hide tooltip on `hover` or `click`.
+- 📌 **Flexible placement**: Position tooltip above, below, left, or right of the target element.
+- ⏱ **Delay support**: Optional delay for showing the tooltip on hover.
+- 🎨 **Custom styles**: Override container, trigger, arrow, spacer, and drawer styles.
+- 🧩 **Safe area**: Avoid closing tooltip when clicking on elements with specific aria-labels.
+- 🛠 **Programmatic control**: Open or close tooltip using a ref.
+
+---
+📌 Usage
+```tsx
+const tooltipRef = useRef<TooltipRef>(null);
+
+<Tooltip
+  ref={tooltipRef}
+  dialog="This is a tooltip"
+  showDialogOn="hover"
+  hideDialogOn="hover"
+  dialogPlacement="bottom"
+  showDelayPeriod={300}
+  styles={{
+    drawerStyle: css`background-color: #2563eb; color: white; padding: 6px 12px;`,
+    arrowStyle: css`background-color: #2563eb;`,
+  }}
+>
+  <button>Hover me</button>
+</Tooltip>
+
+// Programmatically open/close
+tooltipRef.current?.open();
+tooltipRef.current?.close();
+```]]></description>
+        <pubDate>Mon, 30 Mar 2026 08:13:53 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>TreeList - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/content-treelist</link>
+        <guid>9b1a26b37603b1a6542cebf239bb0c1344e84112</guid>
+        <description><![CDATA[TreeList is a flexible hierarchical list component designed to display items and groups in a tree-like structure. 
+It supports collapsible groups, drag-and-drop ordering, selection management, and custom actions for both items and groups. 
+Ideal for complex menus, file explorers, task lists, or any nested content visualization.
+
+---
+✨ Features
+- 🏷 **Collapsible groups**: Expand or collapse groups to show or hide child items.
+- 🖱 **Drag-and-drop**: Reorder or nest items easily using drag handles.
+- 🧩 **Selection management**: Track active or selected items for interactive use cases.
+- 🎨 **Custom actions**: Add buttons or menu items per group or globally.
+- 🔍 **Search-friendly**: Highlight matching items when filtering by search terms.
+- ⛔ **Empty state**: Shows a placeholder message when groups have no items.
+
+---
+📌 Usage
+```tsx
+<TreeList
+  content={[
+    {
+      id: "fruits",
+      caption: "Fruits",
+      items: [
+        { id: "apple", caption: "Apple" },
+        { id: "banana", caption: "Banana" },
+      ],
+    },
+    {
+      id: "vegetables",
+      caption: "Vegetables",
+      items: [
+        { id: "carrot", caption: "Carrot" },
+        { id: "broccoli", caption: "Broccoli" },
+      ],
+    },
+  ]}
+  collapsible
+  draggable
+  alwaysShowDragIcon
+  emptyItemSlate="No items here"
+/>
+```
+
+- Use `content` to define groups and their child items.
+- Set `collapsible` to allow groups to expand or collapse.
+- Set `draggable` and `alwaysShowDragIcon` to enable item reordering.
+- Provide `emptyItemSlate` for placeholder text when groups have no items.
+- Add `actions` for per-item or per-group interactive buttons.]]></description>
+        <pubDate>Mon, 30 Mar 2026 08:12:49 GMT</pubDate>
+      </item>
+    
+
+      <item>
+        <title>Window - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/content-window</link>
+        <guid>d9404ddb82b788fa82259578022ad67471dc658c</guid>
+        <description><![CDATA[Window is a flexible container component that allows splitting content into resizable cells. It supports horizontal or vertical layouts, custom styles, draggable dividers, and cell-level actions such as buttons or icons. It’s ideal for dashboards, editors, or any UI requiring adjustable panels.
+
+---
+✨ Features
+- ↔️ **Resizable cells**: Drag dividers to adjust the size of adjacent cells.
+- 🖥 **Orientation support**: Configure layout as "horizontal" (row) or "vertical" (column).
+- 🧩 **Flexible children**: Embed any ReactNode inside cells, including forms, tables, or custom components.
+- 🎨 **Customizable styles**: Override container styles (`self`) and divider styles (`dividerStyle`).
+- 🖱 **Cell actions**: Add buttons or icons in each cell with click handlers and optional visibility.
+- 📐 **Initial sizing**: Provide an initial size ratio array (e.g., `[0.3, 0.7]`) for each cell.
+- ⚡ **Performance-optimized**: Resize operations are throttled using `requestAnimationFrame` to ensure smooth dragging.
+- ⛔ **Disabled dragging**: Cells can ignore pointer events during dragging to prevent interaction conflicts.
+
+---
+📌 Usage
+```tsx
+<Window
+  orientation="horizontal"
+  initialSizeRatio={[0.4, 0.6]}
+  styles={{
+    self: css`border: 1px solid #ccc; height: 300px;`,
+    dividerStyle: css`background-color: #e5e7eb;`,
+  }}
+  onResize={() => console.log("Resizing...")}
+  onResizeComplete={() => console.log("Resize complete")}
+>
+  <Window.Cell
+    styles={{ self: css`background: #f9fafb;` }}
+    actions={[
+      {
+        icon: { image: RiCloseLine },
+        onClick: () => console.log("Cell 1 close clicked"),
+      },
+    ]}
+  >
+    <div>Left content</div>
+  </Window.Cell>
+  <Window.Cell
+    styles={{ self: css`background: #fff;` }}
+    actions={[
+      {
+        icon: { image: RiCloseLine },
+        onClick: () => console.log("Cell 2 close clicked"),
+      },
+    ]}
+  >
+    <div>Right content</div>
+  </Window.Cell>
+</Window>
+```
+
+- Use `orientation` to control layout direction.
+- Provide `initialSizeRatio` to control starting sizes of cells.
+- Add any ReactNode as content for each `Window.Cell`.
+- Use `actions` to attach buttons or icons inside a cell.
+- Fully styleable via the `styles` prop for both container and dividers.
+- Listen to `onResize` and `onResizeComplete` for drag events.]]></description>
+        <pubDate>Mon, 30 Mar 2026 08:09:39 GMT</pubDate>
+      </item>
+    
+  </channel>
+</rss>
