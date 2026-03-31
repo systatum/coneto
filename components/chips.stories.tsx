@@ -101,19 +101,19 @@ const meta: Meta<typeof Chips> = {
     docs: {
       description: {
         component: `
-The **Chips** component allows selection of multiple items from a list, with optional filtering, creation of new chips, and full style customization. It is ideal for tagging systems, multi-select fields, or any case where multiple selections are needed.
+The **Chips** component allows selection of multiple items from a list, with optional filtering, creation of new chips, and full style customization. It is primarily ideal for tagging.
 
 ---
 
 ### ✨ Features
-- 🏷️ **Multiple selection** support with badges
+- 🏷️ **Multiple selection** support.
 - 🔎 **Filterable input** to quickly search options
 - ➕ **Creatable chips** when enabled, with custom form support
 - ✅ **Selected chips** are displayed prominently with optional custom renderer
 - ❌ Handles **empty states** and custom messages
 - 🎨 Fully **customizable styles** for drawer, chips, labels, and container
-- 🧩 Compatible with **FieldLane** for form integration
-- 🔒 Supports **disabled** state
+- 🧩 First-class stateful form integration
+- 🔒 Has **disabled** state to prevent edit
 
 ---
 
