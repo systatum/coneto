@@ -18,6 +18,49 @@ const meta: Meta<typeof DormantText> = {
     layout: "centered",
   },
   tags: ["autodocs"],
+  argTypes: {
+    icons: {
+      description: `
+Custom icons for accept and cancel actions.
+
+**Default:**
+
+accept → RiCheckLine  
+cancel → RiCloseLine  
+
+**Usage:**
+
+\`\`\`tsx
+<DormantText
+  icons={{
+    accept: { 
+      image: RiHeartLine,
+      color: "green"
+    },
+    cancel: { 
+      image: RiTrash2Line,
+      color: "red"
+    },
+  }}
+>
+  <input />
+</DormantText>
+\`\`\`
+
+**Type:**
+
+    `,
+      control: "object",
+      table: {
+        type: {
+          summary: "{ accept?: FigureProps; cancel?: FigureProps }",
+        },
+        defaultValue: {
+          summary: "{ accept: RiCheckLine, cancel: RiCloseLine }",
+        },
+      },
+    },
+  },
 };
 
 export default meta;
