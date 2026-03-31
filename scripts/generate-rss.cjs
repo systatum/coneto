@@ -181,15 +181,15 @@ async function main() {
   let channelTitle = "Systatum Coneto React UI Library";
   let channelDescription = "Component documentation feed";
 
-  let latestModified = new Date(0);
+  let lastModified = new Date(0);
 
   for (const file of files) {
     const fullPath = path.join(ROOT, file);
     const code = await fs.readFile(fullPath, "utf-8");
     const stats = await fs.stat(fullPath);
 
-    if (stats.mtime > latestModified) {
-      latestModified = stats.mtime;
+    if (stats.mtime > lastModified) {
+      lastModified = stats.mtime;
     }
 
     /**
@@ -275,7 +275,7 @@ async function main() {
     <description>${channelDescription}</description>
     <language>en</language>
     <generator>storybook-rss v${version}</generator>
-    <lastBuildDate>${latestModified.toUTCString()}</lastBuildDate>
+    <lastBuildDate>${lastModified.toUTCString()}</lastBuildDate>
     ${items.join("\n")}
   </channel>
 </rss>`;
