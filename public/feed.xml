@@ -1,12 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
   <channel>
-    <title>Coneto Storybook</title>
+    <title>Systatum Coneto React UI Library</title>
     <link>https://coneto.systatum.com</link>
-    <description>Component documentation feed</description>
+    <description>Coneto: A React UI Library for Every Use Case, Done Right
+
+Deliver apps in half the time with Coneto, free of charge! Coneto is _the_ extremely complete React UI library created by Systatum. It is designed with modernity, simplicity, and usability at its core.
+
+Here you’ll find everything from stateful forms you can build in just a few lines of code to a versatile data grid and a solid set of tabs and view management tools. A complete example and self-documented code show how to use those components across different scenarios, so you can build polished apps even faster.
+
+Our components are organized into four primary categories:
+
+- **Controls**: Interactive components that typically trigger page re-renders.
+- **Content**: Components for displaying or structuring data/information in a clear, accessible way.
+- **Input**: Components that allow users to submit data or express intent. These support the `onChange` callback.
+- **Stage**: Layout and container components that provide structure and presentation for the other elements.
+
+Coneto is battle-tested, having been used across many projects in both React and Electron, and it consistently proves to be both reliable and visually polished in each environment. So, you’re definitely welcome to use it, and please give us, Systatum, proper credit when you can. Also, feel free to voice out your ideas or concerns, if any.
+
+We also extend our gratitude to [Balsamiq Cloud](https://balsamiq.cloud/); their tools and support has played a valuable role in bringing this very Coneto to life. Built with love from Japan, Indonesia, and anywhere our team resides.
+Why should you use Coneto?
+
+- 💸 Free to use with no hidden costs
+- ⚡ Speeds up development with a complete set of components covering various UI needs
+- 🎨 Clean and polished design that looks good by default
+- 🌗 Supports light and dark modes with flexible theming for custom needs
+- 🛠️ Battle-tested in real projects, not just built for demos
+- 🔧 Highly versatile and customizable to fit almost any use case
+- 💻 Works across web and desktop with React and Electron
+- 📐 Consistent and predictable APIs for easier integration and maintenance
+- 📚 Includes practical examples and self-documented code for even faster adoption</description>
     <language>en</language>
     <generator>storybook-rss v2.5.2</generator>
-    <lastBuildDate>Tue, 31 Mar 2026 05:39:17 GMT</lastBuildDate>
+    <lastBuildDate>Tue, 31 Mar 2026 08:19:49 GMT</lastBuildDate>
     
       <item>
         <title>Avatar - Coneto React UI</title>
@@ -58,7 +84,7 @@ Click Handling
 - Provide `profileImageUrl` when available
 - Enable `changeable` for editable profile flows
 - Adjust `frameSize` and `fontSize` for layout consistency]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -111,7 +137,7 @@ Actions
 - Keep captions **short and meaningful**
 - Use `withCircle` for visual emphasis
 - Use `actions` for quick inline interactions]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -160,7 +186,7 @@ Toggle Button
 - Use for **tags, filters, or grouped items**
 - Ideal when content can grow dynamically
 - Avoid using with extremely large DOM lists]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -195,7 +221,7 @@ It provides a clean UI for navigating months and years, supports custom formatti
 - Use **multiple mode** for tagging or event selection
 - Use **ranged mode** for booking or reporting ranges
 - Disable weekends when handling business-only workflows]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -229,7 +255,7 @@ Controlled Mode
 - Use for **section switching** inside a single page
 - Keep tab titles **short and clear**
 - Use controlled mode when syncing with URL / global state]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -263,7 +289,7 @@ Controlled Mode
 - Keep tab labels **short and clear**
 - Use **icons** for better visual recognition
 - Use `full` mode when integrating into layouts like headers or forms]]></description>
-        <pubDate>Tue, 31 Mar 2026 05:25:44 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -283,7 +309,7 @@ Key features include:
 - **Styling Overrides**: Customize each section using CSS props.
 
 This component is ideal for dashboards, panels, grouped content, and modular UI sections.]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -321,7 +347,7 @@ Form Integration
 - Keep label text **short and descriptive**
 - Use controlled mode when checkbox state needs to **sync with parent / form state**
 - Use `highlightOnChecked` for **visually emphasizing selections**]]></description>
-        <pubDate>Tue, 31 Mar 2026 05:10:22 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -371,7 +397,7 @@ Styles
 - Keep chip labels **short for readability**
 - Use controlled props (`selectedOptions`, `inputValue`) for syncing state with forms
 - Use `renderer` for fully custom chip rendering]]></description>
-        <pubDate>Tue, 31 Mar 2026 05:02:20 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -405,7 +431,7 @@ Styles
 - Use `styles.containerStyle` to adjust layout, width, or spacing
 - Use `styles.dividerStyle` to override divider appearance
 - Ideal for forms, selection cards, or segmented button groups]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -438,7 +464,7 @@ Styles
 - Works with controlled components via `value` and `onChange`
 
 ---]]></description>
-        <pubDate>Tue, 31 Mar 2026 05:10:34 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -484,7 +510,7 @@ Grouped Option
 - Enable `multiple` for multi-select use cases
 - Use **controlled mode** to keep the value synchronized with the input and ensure it is consistently validated.
 - Use `maxSelectableItems` to limit selections]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Mon, 30 Mar 2026 06:11:16 GMT</pubDate>
       </item>
     
 
@@ -510,7 +536,7 @@ Grouped Option
 - Set `maxShown` to control collapsing behavior
 - Use `arrowColor` or `iconSeparator` for custom icons
 - Customize styles with the `styles` prop for container overrides]]></description>
-        <pubDate>Tue, 31 Mar 2026 05:15:08 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -542,7 +568,7 @@ Grouped Option
 - Use `calendarTodayButtonCaption` to customize today button text
 - Use `calendarSelectabilityMode` to restrict selectable dates
 - Can be integrated into **StatefulForm** or other controlled forms]]></description>
-        <pubDate>Tue, 31 Mar 2026 05:14:10 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -568,7 +594,7 @@ Grouped Option
 - Provide `onVisibilityChange` to control open/close externally (controlled mode).
 - Action buttons inside the dialog is actionable through **onClick**.
 - Styles are optional and override sections individually.]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:57:48 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -616,7 +642,7 @@ Grouped Option
   }}
 />
 ```]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -672,7 +698,7 @@ Grouped Option
   icon={{ image: RiCheckLine, color: "#4caf50", size: 18 }}
 />
 ```]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -730,7 +756,7 @@ Grouped Option
 
 - Tabs open the drawer on click. Clicking the selected tab again or the close button closes it.
 - You can replace `icon` with any React component from Remix Icon or custom SVG.]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -775,7 +801,7 @@ Grouped Option
 - Titles and subtitles guide the user and provide context.
 - Actions can include buttons or links to direct users on what to do next.
 - Styles can be overridden for each part to match your design system.]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -823,7 +849,7 @@ Grouped Option
 - Titles and children provide additional context or actions.
 - Customize appearance using `styles.titleStyle` and `styles.cubeFaceStyle`.
 - Works with any valid ReactNode in the `children` prop for messages, buttons, or links.]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -886,7 +912,7 @@ Grouped Option
 - `showError` and `errorMessage` handle validation display.
 - Attach multiple dropdowns and actions with optional custom rendering.
 - Fully styleable through the `styles` prop.]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -958,7 +984,7 @@ files) through AJAX and visually track their progress.
 - React to completion with `onComplete`.
 - Fully styleable using the `styles` prop.
 - Supports embedding any ReactNode inside the drop area for additional content.]]></description>
-        <pubDate>Tue, 31 Mar 2026 05:14:54 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -1007,7 +1033,7 @@ File Removal
 - Enable `multiple` for batch uploads
 - Use `accept` to restrict file types
 - Handle `onFilesSelected` for processing files]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:59:07 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -1061,7 +1087,7 @@ Ideal for creating card-like layouts, grouped form sections, or any visually sep
 - Customize `containerStyle` for borders, shadows, background, and spacing.
 - Customize `titleStyle` for color, font size, and spacing of the title overlay.
 - Embed any ReactNode inside to structure content as needed.]]></description>
-        <pubDate>Tue, 31 Mar 2026 05:00:18 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -1124,7 +1150,7 @@ It supports predefined presets, flexible gaps, optional width/height, and indivi
 - Embed any content inside `Grid.Card` including images, text, or custom components.
 - Use `selectable` and `isSelected` to handle card selection with optional checkboxes.
 - Fully style container and cards using `styles.self` with `CSSProp`.]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -1171,7 +1197,7 @@ It supports predefined presets, flexible gaps, optional width/height, and indivi
 - Fully styleable using the `styles` prop for container, label, and input box.
 - Use `size` to control the dimensions and icon size.
 - Integrates with FieldLane for label, helper text, errors, and actions.]]></description>
-        <pubDate>Tue, 31 Mar 2026 05:01:33 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -1217,7 +1243,7 @@ It supports predefined presets, flexible gaps, optional width/height, and indivi
 - Use `renderer` for custom formatting or JSX output.
 - Fully styleable using the `styles` prop.
 - `Keynote.Point` can be used individually for custom rows.]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -1265,7 +1291,7 @@ It supports custom styling, pagination, draggable pages, and flexible section la
   </Launchpad.Section>
 </Launchpad>
 ```]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -1306,7 +1332,7 @@ It supports custom styling, pagination, draggable pages, and flexible section la
   </List.Group>
 </List>
 ```]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -1341,7 +1367,7 @@ It supports custom styling, pagination, draggable pages, and flexible section la
   <LoadingSkeleton.Item width="100%" height={24} />
 </LoadingSkeleton>
 ```]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -1376,7 +1402,7 @@ It supports customizable icon size, optional label text, spacing, and fully cust
   }}
 />
 ```]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -1395,7 +1421,7 @@ It supports customizable icon size, optional label text, spacing, and fully cust
 - ❌ **Closable**: Can be dismissed by the user if `closable` is set.
 - 🎨 **Custom styles**: Fully customizable via styled-components, including container, title, content, and action list.
 - ♿ **Accessibility**: Proper ARIA roles and keyboard support for interactive elements.]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -1414,7 +1440,7 @@ It supports customizable icon size, optional label text, spacing, and fully cust
 - 🔄 **Controlled visibility**: `isOpen` prop with `onVisibilityChange` callback for external control.
 - 🎨 **Custom styles**: Override modal container, content, overlay, and other sections.
 - ♿ **Accessibility**: Proper ARIA roles and keyboard navigation support.]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -1460,7 +1486,7 @@ optional currency dropdown.
   }}
 />
 ```]]></description>
-        <pubDate>Tue, 31 Mar 2026 05:22:45 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -1520,7 +1546,7 @@ optional currency dropdown.
 - Works in fullscreen layouts and can be fully styled via CSS-in-JS (`styled-components`).
 
 🚀 **Tip:** Use `activeTab` + `onChange` for external control over tab selection or leave uncontrolled to manage tab state internally.]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -1555,7 +1581,7 @@ optional currency dropdown.
 📝 Notes
 - Overlay automatically disappears when `show={false}`.
 - Use `ref` to programmatically open or close the overlay.]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -1584,7 +1610,7 @@ optional currency dropdown.
   - `buttonStyle` – for individual buttons
   - `selectboxStyle` – for the combobox
 - The combobox automatically appears when pages exceed 5]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -1615,7 +1641,7 @@ optional currency dropdown.
 📝 Notes
 - Always include both `PaperDialog.Trigger` and `PaperDialog.Content` as children.
 - Use `styles` prop to override default styles.]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -1634,7 +1660,7 @@ optional currency dropdown.
 - 📝 **Helper text**: Add helper text below the input.
 - 🔧 **Custom styles**: Styles for wrapper, input, toggle button, and dropdown.
 - 🧩 First-class **stateful form integration**]]></description>
-        <pubDate>Tue, 31 Mar 2026 05:23:39 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -1653,7 +1679,7 @@ optional currency dropdown.
 - 📝 **Helper text**: Supports extra helper text under the input.
 - 🔧 **Custom styles**: Styles for the wrapper, inputs, and error indicators.
 - 🧩 First-class **stateful form integration**]]></description>
-        <pubDate>Tue, 31 Mar 2026 05:10:00 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -1671,7 +1697,7 @@ optional currency dropdown.
 - 🖌 **Highlighting**: Highlight container when selected.
 - 🚫 **Disabled / error states**: Supports fully disabled or error visuals.
 - 🔧 **Custom styles**: Customize almost every element using a `styles` object.]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -1689,7 +1715,7 @@ optional currency dropdown.
 - 🖌 **Sizes**: Small (sm), Medium (md), Large (lg).
 - 🔧 **Custom styles**: Can style container, label, or star wrapper.
 - 🧩 First-class **stateful form integration**]]></description>
-        <pubDate>Tue, 31 Mar 2026 05:24:50 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -1704,7 +1730,7 @@ optional currency dropdown.
 - Uses custom turndown rules for markdown conversion
 - Includes a floating tip menu for H1-H3 heading options
 - Optional right-panel toolbar]]></description>
-        <pubDate>Tue, 31 Mar 2026 05:26:42 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -1740,7 +1766,7 @@ optional currency dropdown.
   resultMenu={(props) => <div {...props}>Result Item</div>}
 />
 ```]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -1851,7 +1877,7 @@ When `strict` is enabled:
     `,
   }}
 />]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Mon, 30 Mar 2026 06:11:16 GMT</pubDate>
       </item>
     
 
@@ -1868,7 +1894,7 @@ When `strict` is enabled:
 - ↔️ **Text float**: Title can float left or right.
 - 🧱 **Custom depth**: Adjust distance of the title from the container edge.
 - 🎨 **Customizable styles**: Supports container, line, and title styling via CSS props.]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -1904,7 +1930,7 @@ When `strict` is enabled:
   </Sidebar.Item>
 </Sidebar>
 ```]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -1923,7 +1949,7 @@ When `strict` is enabled:
 - 🔒 **Disabled mode**: Prevent drawing when needed.
 - 💡 **Error state**: Visual feedback when the signature is required or invalid.
 - 🧩 First-class **stateful form integration**]]></description>
-        <pubDate>Tue, 31 Mar 2026 05:24:34 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -1984,7 +2010,7 @@ const fields = [
 - Listen to `onChange` for live updates and `onValidityChange` to track form validity.
 - Customize appearance and spacing using `styles`.
 - Render fully custom inputs using `type="custom"` and the `render` prop.]]></description>
-        <pubDate>Tue, 31 Mar 2026 05:03:50 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -2033,7 +2059,7 @@ It supports left and right sections, customizable styling, spacing, transparency
   }}
 />
 ```]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -2109,7 +2135,7 @@ It supports icons, labels, collapsible tooltips, customizable styles, and click 
 - Set `collapsed` to show labels inside tooltips instead of inline.
 - Pass `onClick` to handle step click events.
 - Fully style via `styles.self` for wrapper or individual step styles.]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -2250,7 +2276,7 @@ Grouped Row
 - Combine **pagination + infinite scroll** carefully (avoid overlap)
 - Provide meaningful **emptySlate** content for better UX
 - Use **summary rows** for totals or aggregated data]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -2296,7 +2322,7 @@ Grouped Row
 - Use `actions` to show buttons/icons inside the input.
 - Use `showError` and `errorMessage` for validation feedback.
 - Fully styleable via `styles.self`.]]></description>
-        <pubDate>Tue, 31 Mar 2026 05:08:29 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -2379,7 +2405,7 @@ Grouped Row
 - Mark errors with `showError` and `errorMessage`.
 - Customize appearance with `styles`.
 - Add helper text or custom label positioning as needed.]]></description>
-        <pubDate>Tue, 31 Mar 2026 05:07:12 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -2417,7 +2443,7 @@ Grouped Row
 - Customize active thumb colors via `thumbsUpBackgroundColor` and `thumbsDownBackgroundColor`.
 - Set `disabled` to prevent interactions.
 - Wrap in `FieldLane` for label, helper, and error message support.]]></description>
-        <pubDate>Tue, 31 Mar 2026 05:25:08 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -2462,7 +2488,7 @@ It supports smart focus navigation, editable/non-editable modes, and error displ
 - Use `editable={false}` to make the input read-only.
 - Use `styles` to customize input and wrapper styling.
 - The `onChange` callback returns a formatted string `HH:MM:SS`.]]></description>
-        <pubDate>Tue, 31 Mar 2026 05:07:49 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -2532,7 +2558,7 @@ It supports custom items (`Timeline.Item`), clickable states, variant-based colo
 - Use `isClickable` on `Timeline` to make all items interactive.
 - Use `Timeline.Item` for each step; customize title, subtitle, variant, line, and optional sidenotes.
 - Styles can be overridden via the `styles` prop for full layout and color control.]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -2580,7 +2606,7 @@ It is commonly used for action menus, context menus, or inline tips.
 - Use `isDangerous` to highlight critical actions.
 - Fully styleable via `styles.self`.
 - You can still pass custom children if needed.]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -2641,7 +2667,7 @@ It integrates seamlessly with `FieldLane` for form layout and validation support
 - Works with `FieldLane` for structured forms with labels, errors, and helper text.
 - Use the `styles` prop to override individual sub-elements without breaking default behavior.
 - `size` controls the toggle width, height, and thumb dimensions automatically.]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -2719,7 +2745,7 @@ const subMenuList: ToolbarSubMenuProps[] = [
 - Hover and active states are handled automatically, including special styles for dangerous actions.
 - Supports responsive behavior — captions are hidden for smaller screens if `icon` is provided.
 - Fully compatible with any React project using Styled Components.]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -2763,7 +2789,7 @@ const tooltipRef = useRef<TooltipRef>(null);
 tooltipRef.current?.open();
 tooltipRef.current?.close();
 ```]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -2818,7 +2844,7 @@ Ideal for complex menus, file explorers, task lists, or any nested content visua
 - Set `draggable` and `alwaysShowDragIcon` to enable item reordering.
 - Provide `emptyItemSlate` for placeholder text when groups have no items.
 - Add `actions` for per-item or per-group interactive buttons.]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
 
@@ -2883,7 +2909,7 @@ Ideal for complex menus, file explorers, task lists, or any nested content visua
 - Use `actions` to attach buttons or icons inside a cell.
 - Fully styleable via the `styles` prop for both container and dividers.
 - Listen to `onResize` and `onResizeComplete` for drag events.]]></description>
-        <pubDate>Tue, 31 Mar 2026 04:56:53 GMT</pubDate>
+        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
       </item>
     
   </channel>

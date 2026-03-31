@@ -12,7 +12,7 @@
 //  *   - Extracts Storybook meta.title
 //  *   - Extracts rich descriptions (docs.description.component)
 //  *   - Falls back to argTypes descriptions
-//  *   - Parses Configure.mdx as authoritative channel metadata
+//  *   - Parses welcome.mdx as authoritative channel metadata
 //  *   - Uses filesystem timestamps for pubDate
 //  *   - Strips markdown headings (#, ##) globally
 //  *
@@ -177,14 +177,20 @@ async function main() {
 
   const items = [];
 
-  // Default channel metadata (overridden by Configure.mdx)
-  let channelTitle = "Coneto Storybook";
+  // Default channel metadata (overridden by Welcome.mdx)
+  let channelTitle = "Systatum Coneto React UI Library";
   let channelDescription = "Component documentation feed";
+
+  let lastModified = new Date(0);
 
   for (const file of files) {
     const fullPath = path.join(ROOT, file);
     const code = await fs.readFile(fullPath, "utf-8");
     const stats = await fs.stat(fullPath);
+
+    if (stats.mtime > lastModified) {
+      lastModified = stats.mtime;
+    }
 
     /**
      * MDX handling
@@ -192,32 +198,44 @@ async function main() {
     if (file.endsWith(".mdx")) {
       const mdx = extractFromMDX(code);
 
-      // Special file: controls channel metadata
-      if (file.endsWith("Configure.mdx")) {
-        if (mdx.title) channelTitle = mdx.title;
-        if (mdx.description) {
-          channelDescription = cleanDescription(mdx.description);
-        }
-        continue;
+      if (!mdx.title) {
+        mdx.title = path.basename(file, ".mdx");
       }
 
-      if (!mdx.title) continue;
+      if (!mdx.description) {
+        const stripped = code
+          .replace(/<[^>]+>/g, "")
+          .replace(/^\s*#+\s*/gm, "")
+          .trim();
 
-      const slug = toSlug(mdx.title);
+        mdx.description = stripped;
+      }
 
-      items.push(`
-        <item>
+      if (file.toLowerCase().endsWith("welcome.mdx")) {
+        console.log("✅ FOUND WELCOME:", file);
+
+        const cleanedDesc = cleanDescription(mdx.description || "");
+
+        if (cleanedDesc) channelDescription = cleanedDesc;
+
+        continue;
+      } else {
+        const slug = toSlug(mdx.title);
+
+        items.push(`
+          <item>
           <title>${mdx.title}</title>
           <link>${SITE_URL}/?path=/docs/${slug}</link>
           <guid>${hash(file)}</guid>
           <description><![CDATA[${cleanDescription(
-            mdx.description || ""
+            mdx.description
           )}]]></description>
           <pubDate>${stats.mtime.toUTCString()}</pubDate>
-        </item>
-      `);
+          </item>
+          `);
 
-      continue;
+        continue;
+      }
     }
 
     /**
@@ -257,7 +275,7 @@ async function main() {
     <description>${channelDescription}</description>
     <language>en</language>
     <generator>storybook-rss v${version}</generator>
-    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+    <lastBuildDate>${lastModified.toUTCString()}</lastBuildDate>
     ${items.join("\n")}
   </channel>
 </rss>`;
