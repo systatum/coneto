@@ -15,7 +15,7 @@ type Story = StoryObj<typeof Pinbox>;
 
 export const Default: Story = {
   render: () => {
-    const [value, setValue] = useState({ pinbox: "" });
+    const [value, setValue] = useState("");
 
     const PARTS_INPUT: PinboxState[] = [
       { type: "static", text: "S" },
@@ -26,20 +26,13 @@ export const Default: Story = {
       { type: "alphabet" },
     ];
 
-    const onChangeValue = (e: StatefulOnChangeType) => {
-      if (e && "target" in e) {
-        const { name, value } = e.target;
-        setValue((prev) => ({ ...prev, [name]: value }));
-      }
-    };
-
     return (
       <Pinbox
         label="Default"
         parts={PARTS_INPUT}
         name="pinbox"
-        value={value.pinbox}
-        onChange={onChangeValue}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
       />
     );
   },
@@ -47,7 +40,7 @@ export const Default: Story = {
 
 export const Masked: Story = {
   render: () => {
-    const [value, setValue] = useState({ pinbox: "" });
+    const [value, setValue] = useState("");
 
     const PARTS_INPUT: PinboxState[] = [
       { type: "static", text: "S" },
@@ -57,13 +50,6 @@ export const Masked: Story = {
       { type: "static", text: "-" },
       { type: "alphanumeric" },
     ];
-
-    const onChangeValue = (e: StatefulOnChangeType) => {
-      if (e && "target" in e) {
-        const { name, value } = e.target;
-        setValue((prev) => ({ ...prev, [name]: value }));
-      }
-    };
 
     return (
       <Pinbox
@@ -71,8 +57,8 @@ export const Masked: Story = {
         parts={PARTS_INPUT}
         name="pinbox"
         masked
-        value={value.pinbox}
-        onChange={onChangeValue}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
       />
     );
   },
@@ -80,7 +66,7 @@ export const Masked: Story = {
 
 export const Disabled: Story = {
   render: () => {
-    const [value, setValue] = useState({ pinbox: "" });
+    const [value, setValue] = useState("");
 
     const PARTS_INPUT: PinboxState[] = [
       { type: "static", text: "S" },
@@ -90,13 +76,6 @@ export const Disabled: Story = {
       { type: "static", text: "-" },
       { type: "alphanumeric" },
     ];
-
-    const onChangeValue = (e: StatefulOnChangeType) => {
-      if (e && "target" in e) {
-        const { name, value } = e.target;
-        setValue((prev) => ({ ...prev, [name]: value }));
-      }
-    };
 
     return (
       <Pinbox
@@ -105,8 +84,8 @@ export const Disabled: Story = {
         parts={PARTS_INPUT}
         name="pinbox"
         errorMessage="Error value"
-        value={value.pinbox}
-        onChange={onChangeValue}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
       />
     );
   },
@@ -114,7 +93,7 @@ export const Disabled: Story = {
 
 export const Error: Story = {
   render: () => {
-    const [value, setValue] = useState({ pinbox: "" });
+    const [value, setValue] = useState("");
 
     const PARTS_INPUT: PinboxState[] = [
       { type: "static", text: "S" },
@@ -125,13 +104,6 @@ export const Error: Story = {
       { type: "alphanumeric" },
     ];
 
-    const onChangeValue = (e: StatefulOnChangeType) => {
-      if (e && "target" in e) {
-        const { name, value } = e.target;
-        setValue((prev) => ({ ...prev, [name]: value }));
-      }
-    };
-
     return (
       <Pinbox
         label="Error"
@@ -139,8 +111,8 @@ export const Error: Story = {
         parts={PARTS_INPUT}
         name="pinbox"
         errorMessage="Error value"
-        value={value.pinbox}
-        onChange={onChangeValue}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
       />
     );
   },
