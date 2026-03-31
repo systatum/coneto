@@ -14,8 +14,7 @@ const meta: Meta<typeof LoadingSkeleton> = {
     docs: {
       description: {
         component: `
-**LoadingSkeleton** is a versatile skeleton loader component for indicating loading states.  
-It supports multiple skeleton items, customizable shimmer direction, speed, colors, and wrapper styling.
+**LoadingSkeleton** is a great loader component to indicate that some content is still being loaded. You can customize the shimmer direction, speed, colors, among other things.
 
 ---
 
