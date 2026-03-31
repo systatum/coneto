@@ -12,7 +12,7 @@
 //  *   - Extracts Storybook meta.title
 //  *   - Extracts rich descriptions (docs.description.component)
 //  *   - Falls back to argTypes descriptions
-//  *   - Parses Configure.mdx as authoritative channel metadata
+//  *   - Parses welcome.mdx as authoritative channel metadata
 //  *   - Uses filesystem timestamps for pubDate
 //  *   - Strips markdown headings (#, ##) globally
 //  *
@@ -177,7 +177,7 @@ async function main() {
 
   const items = [];
 
-  // Default channel metadata (overridden by Configure.mdx)
+  // Default channel metadata (overridden by Welcome.mdx)
   let channelTitle = "Coneto Storybook";
   let channelDescription = "Component documentation feed";
 
@@ -192,30 +192,53 @@ async function main() {
     if (file.endsWith(".mdx")) {
       const mdx = extractFromMDX(code);
 
-      // Special file: controls channel metadata
-      if (file.endsWith("Configure.mdx")) {
-        if (mdx.title) channelTitle = mdx.title;
-        if (mdx.description) {
-          channelDescription = cleanDescription(mdx.description);
-        }
-        continue;
+      if (!mdx.title) {
+        mdx.title = path.basename(file, ".mdx");
       }
 
-      if (!mdx.title) continue;
+      if (!mdx.description) {
+        const stripped = code
+          .replace(/<[^>]+>/g, "")
+          .replace(/^\s*#+\s*/gm, "")
+          .trim();
+
+        mdx.description = stripped.slice(0, 300);
+      }
+
+      if (file.toLowerCase().endsWith("welcome.mdx")) {
+        console.log("✅ FOUND WELCOME:", file);
+
+        const cleanedDesc = cleanDescription(mdx.description || "");
+
+        if (mdx.title) channelTitle = mdx.title;
+        if (cleanedDesc) channelDescription = cleanedDesc;
+
+        items.unshift(`
+      <item>
+        <title>${mdx.title}</title>
+        <link>${SITE_URL}/</link>
+        <guid>${hash("homepage")}</guid>
+        <description><![CDATA[${cleanedDesc}]]></description>
+        <pubDate>${stats.mtime.toUTCString()}</pubDate>
+      </item>
+    `);
+
+        continue;
+      }
 
       const slug = toSlug(mdx.title);
 
       items.push(`
-        <item>
-          <title>${mdx.title}</title>
-          <link>${SITE_URL}/?path=/docs/${slug}</link>
-          <guid>${hash(file)}</guid>
-          <description><![CDATA[${cleanDescription(
-            mdx.description || ""
-          )}]]></description>
-          <pubDate>${stats.mtime.toUTCString()}</pubDate>
-        </item>
-      `);
+    <item>
+      <title>${mdx.title}</title>
+      <link>${SITE_URL}/?path=/docs/${slug}</link>
+      <guid>${hash(file)}</guid>
+      <description><![CDATA[${cleanDescription(
+        mdx.description
+      )}]]></description>
+      <pubDate>${stats.mtime.toUTCString()}</pubDate>
+    </item>
+  `);
 
       continue;
     }
