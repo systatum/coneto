@@ -12,6 +12,59 @@ const meta: Meta<typeof Sidebar> = {
   tags: ["autodocs"],
   parameters: {
     layout: "fullscreen",
+    docs: {
+      description: {
+        component: `
+**Sidebar** is a responsive sidebar container. Users can do swipe gestures to close or open the sidebar when on a mobile phone. You can define any sidebar item to be fixed or scrollable.
+
+---
+
+### ✨ Features
+- 🖥 **Responsive layout**: Automatically switches between mobile (toggleable) and desktop (always visible) modes.
+- 📱 **Mobile swipe support**: Swipe left/right to open or close the sidebar.
+- 🖌 **Custom styling**: Customize mobile and desktop styles independently via the \`styles\` prop.
+- ↔️ **Positioning**: Can be placed on the left or right of the screen via the \`position\` prop.
+- 🧩 **Composable children**: Add items, spacers, or custom content.
+- 🔧 **Sidebar.Item**: Individual items inside the sidebar, with optional fixed height.
+- ⚡ **Sidebar.Spacer**: Add flexible spacing with configurable widths for mobile and desktop.
+
+---
+
+### 📌 Usage
+
+\`\`\`tsx
+<Sidebar position="left" styles={{ mobileStyle: css\`min-width: 200px;\`, desktopStyle: css\`min-width: 300px;\` }}>
+  <Sidebar.Item isFixed>
+    <div>Fixed content</div>
+  </Sidebar.Item>
+
+  <Sidebar.Spacer mobileWidth="50px" desktopWidth="100px" />
+
+  <Sidebar.Item>
+    <div>Scrollable content</div>
+  </Sidebar.Item>
+</Sidebar>
+\`\`\`
+        `,
+      },
+    },
+  },
+  argTypes: {
+    children: {
+      control: false,
+      description:
+        "Content inside the sidebar. Can include Sidebar.Item, Sidebar.Spacer, or any custom JSX.",
+    },
+    position: {
+      control: { type: "select" },
+      options: ["left", "right"],
+      description: "Sidebar placement on screen. Defaults to 'left'.",
+    },
+    styles: {
+      control: false,
+      description: "Custom styles for sidebar containers.",
+      table: { type: { summary: "SidebarStylesProps" } },
+    },
   },
 };
 

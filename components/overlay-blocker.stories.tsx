@@ -9,6 +9,42 @@ const meta: Meta<typeof OverlayBlocker> = {
   tags: ["autodocs"],
   parameters: {
     layout: "fullscreen",
+    docs: {
+      description: {
+        component: `
+🛡 **OverlayBlocker** is a flexible overlay component that blocks interaction with the content beneath it. Ideal for modals, dialogs, and temporary UI states.  
+
+### ✨ Features
+- 👀 Show or hide overlay with the \`show\` prop
+- 🔝 Control stacking order using \`zIndex\`
+- 🖱 Click handling options:
+  - **"close"**: Closes overlay when clicked (default)
+  - **"preventDefault"**: Prevents automatic closing
+  - **Function**: Custom behavior
+- 🎨 Fully styleable via \`styles.self\` (CSSProp compatible)
+- 🔧 Supports imperative \`open\` and \`close\` via \`ref\`
+
+### 🛠 Usage
+\`\`\`tsx
+<OverlayBlocker
+  show={isOpen}
+  zIndex={9999}
+  onClick={({ close, preventDefault }) => {
+    // custom behavior
+    close();
+  }}
+  styles={{ self: "background: rgba(0,0,0,0.3);" }}
+>
+  <p>Your content here</p>
+</OverlayBlocker>
+\`\`\`
+
+### 📝 Notes
+- Overlay automatically disappears when \`show={false}\`.
+- Use \`ref\` to programmatically open or close the overlay.
+      `,
+      },
+    },
   },
   argTypes: {
     show: {

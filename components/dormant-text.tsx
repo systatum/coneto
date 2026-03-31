@@ -17,7 +17,7 @@ import { Figure, FigureProps } from "./figure";
 
 export interface DormantTextProps {
   onActionClick?: () => void;
-  icon?: FigureProps;
+  icons?: DormantTextIconsProps;
   dormantedFontSize?: number;
   children?: ReactNode;
   content?: string | number;
@@ -28,6 +28,11 @@ export interface DormantTextProps {
   onCancelRequested?: () => void;
   dormantedMaxWidth?: string;
   styles?: DormantTextStylesProps;
+}
+
+export interface DormantTextIconsProps {
+  accept?: FigureProps;
+  cancel?: FigureProps;
 }
 
 export interface DormantTextStylesProps {
@@ -44,7 +49,7 @@ function DormantText({
   onActionClick,
   styles,
   dormantedFontSize = 17,
-  icon,
+  icons,
   children,
   content,
   fullWidth,
@@ -54,6 +59,8 @@ function DormantText({
   onCancelRequested,
   dormantedMaxWidth,
 }: DormantTextProps) {
+  const { accept, cancel } = icons ?? {};
+
   const [dormantedLocal, setDormantedLocal] = useState(true);
   const [labelHeight, setLabelHeight] = useState<number>(0);
   const [labelWidth, setLabelWidth] = useState<number>(0);
@@ -171,9 +178,9 @@ function DormantText({
       >
         <IconWrapper>
           <Figure
-            {...icon}
-            image={icon?.image ?? RiCheckLine}
-            color={icon?.color ?? "#666"}
+            {...accept}
+            image={accept?.image ?? RiCheckLine}
+            color={accept?.color ?? "#666"}
             size={18}
           />
         </IconWrapper>
@@ -190,7 +197,12 @@ function DormantText({
           }}
         >
           <IconWrapper>
-            <RiCloseLine size={18} />
+            <Figure
+              {...cancel}
+              image={cancel?.image ?? RiCloseLine}
+              color={cancel?.color ?? "#666"}
+              size={18}
+            />
           </IconWrapper>
         </ActionButton>
       )}

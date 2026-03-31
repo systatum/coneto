@@ -6,102 +6,235 @@ import styled from "styled-components";
 const meta: Meta<typeof Calendar> = {
   title: "Input Elements/Calendar",
   component: Calendar,
+  tags: ["autodocs"],
   parameters: {
     layout: "centered",
     docs: {
       description: {
         component: `
-The **Calendar** component is a highly flexible and interactive date selection tool, designed for both single and multiple date selection scenarios. It provides users with a visual calendar interface that supports precise date picking, range selection, and multi-date selection with optional weekend restrictions.
+The **Calendar** is an interactive date picker supporting various selection scenarios such as single, multiple, and ranged dates.
 
-Key features include:
-- **Selection Modes**: Supports single, multiple, and ranged date selection.
-- **Customizable Display**: Configure day and month labels, year ranges, and disable weekends.
-- **Interactive Navigation**: Quickly navigate months and years using built-in controls.
-- **Today Shortcut**: Optional "Today" button to quickly jump to the current date.
-- **Flexible Formatting**: Dates can be displayed in multiple formats (mm/dd/yyyy, dd/mm/yyyy, yyyy/mm/dd).
-- **Styling Customization**: Full control over container, label, and date cell styles through CSS props.
-- **Event Hooks**: Callback functions for date changes, calendar period changes, and click events.
+It provides a clean UI for navigating months and years, supports custom formatting, and allows deep customization for styling and behavior.
 
-This component is ideal for forms, dashboards, or any interface requiring intuitive date selection with robust customization and accessibility support.
+---
+
+### ✨ Features
+- 📅 **Multiple selection modes**: single, multiple, ranged
+- 🔁 **Month & year navigation**
+- 🚫 Optional **weekend disabling**
+- 🔤 Custom **day & month labels**
+- 🎯 **Today shortcut button**
+- 🎨 Fully customizable **styles**
+- 🔔 Event callbacks for **changes & interactions**
+
+---
+
+### ⚙️ Selection Modes
+
+- \`single\`: Select one date
+- \`multiple\`: Select multiple dates
+- \`ranged\`: Select start and end date
+
+---
+
+### 📌 Usage Guidelines
+- Use **single mode** for simple date picking
+- Use **multiple mode** for tagging or event selection
+- Use **ranged mode** for booking or reporting ranges
+- Disable weekends when handling business-only workflows
         `,
       },
     },
   },
-  tags: ["autodocs"],
   argTypes: {
     selectedDates: {
-      control: "select",
-      description:
-        "An array of selected dates. Can be a single date, multiple dates, or a ranged selection depending on `selectabilityMode`.",
+      control: "object",
+      description: `
+Array of selected dates.
+
+- Structure depends on \`selectabilityMode\`
+- Single → one date
+- Multiple → multiple dates
+- Ranged → start & end date
+      `,
+      table: {
+        type: { summary: "string[]" },
+      },
     },
+
     onChange: {
       action: "changed",
-      description:
-        "Callback function triggered when the selected dates change. Returns an array of formatted date strings.",
+      description: `
+Triggered when selected dates change.
+
+\`\`\`ts
+(dates: string[]) => void
+\`\`\`
+      `,
+      table: {
+        type: { summary: "(dates: string[]) => void" },
+      },
     },
-    dayNames: {
-      control: "object",
-      description:
-        "Custom names for the days of the week. Default is Sunday to Saturday abbreviations.",
-    },
-    monthNames: {
-      control: "object",
-      description: "Custom names for months. Default is January to December.",
-    },
-    disableWeekend: {
-      control: "boolean",
-      description: "If true, weekends cannot be selected.",
-    },
-    format: {
-      control: { type: "select" },
-      options: ["mm/dd/yyyy", "yyyy/mm/dd", "dd/mm/yyyy"],
-      description: "Date format for displaying selected dates.",
-    },
-    yearPastReach: {
-      control: "number",
-      description:
-        "Number of past years to include in the year selection dropdown. Default is 80.",
-    },
-    futurePastReach: {
-      control: "number",
-      description:
-        "Number of future years to include in the year selection dropdown. Default is 50.",
-    },
-    onClick: {
-      action: "clicked",
-      description: "Callback function triggered on calendar click events.",
-    },
-    onCalendarPeriodChanged: {
-      action: "periodChanged",
-      description:
-        "Callback triggered when the calendar month or year changes.",
-    },
+
     selectabilityMode: {
       control: { type: "select" },
       options: ["single", "multiple", "ranged"],
-      description:
-        "Determines the date selection mode: single date, multiple dates, or a ranged selection.",
+      description: `
+Defines how users can select dates.
+
+- \`single\` → one date only
+- \`multiple\` → multiple independent dates
+- \`ranged\` → start and end date
+      `,
+      table: {
+        type: { summary: `"single" | "multiple" | "ranged"` },
+        defaultValue: { summary: `"single"` },
+      },
     },
-    footer: {
+
+    format: {
+      control: { type: "select" },
+      options: ["mm/dd/yyyy", "yyyy/mm/dd", "dd/mm/yyyy"],
+      description: `
+Format used to display selected dates.
+      `,
+      table: {
+        type: { summary: "string" },
+        defaultValue: { summary: `"mm/dd/yyyy"` },
+      },
+    },
+
+    disableWeekend: {
+      control: "boolean",
+      description: `
+Prevents selecting Saturday and Sunday.
+      `,
+      table: {
+        type: { summary: "boolean" },
+        defaultValue: { summary: "false" },
+      },
+    },
+
+    dayNames: {
       control: "object",
-      description:
-        "Custom footer content rendered at the bottom of the calendar.",
+      description: `
+Custom labels for days of the week.
+
+Example:
+\`\`\`ts
+["Sun", "Mon", "Tue", ...]
+\`\`\`
+      `,
+      table: {
+        type: { summary: "string[]" },
+      },
     },
+
+    monthNames: {
+      control: "object",
+      description: `
+Custom labels for months.
+
+Example:
+\`\`\`ts
+["Jan", "Feb", "Mar", ...]
+\`\`\`
+      `,
+      table: {
+        type: { summary: "string[]" },
+      },
+    },
+
+    yearPastReach: {
+      control: "number",
+      description: `
+Number of past years available in dropdown.
+      `,
+      table: {
+        type: { summary: "number" },
+        defaultValue: { summary: "80" },
+      },
+    },
+
+    futurePastReach: {
+      control: "number",
+      description: `
+Number of future years available in dropdown.
+      `,
+      table: {
+        type: { summary: "number" },
+        defaultValue: { summary: "50" },
+      },
+    },
+
     todayButtonCaption: {
       control: "text",
-      description: "Custom caption text for the 'Today' button.",
+      description: `
+Custom label for the "Today" button.
+      `,
+      table: {
+        type: { summary: "string" },
+      },
     },
-    styles: {
+
+    footer: {
       control: false,
-      description: "Custom styles for the calendar container, label, and body.",
+      description: `
+Custom footer content.
+
+Can be JSX or any ReactNode.
+      `,
+      table: {
+        type: { summary: "ReactNode" },
+      },
     },
+
+    onClick: {
+      action: "clicked",
+      description: `
+Triggered when the calendar is clicked.
+      `,
+      table: {
+        type: { summary: "() => void" },
+      },
+    },
+
+    onCalendarPeriodChanged: {
+      action: "periodChanged",
+      description: `
+Triggered when month or year changes.
+      `,
+      table: {
+        type: { summary: "() => void" },
+      },
+    },
+
     id: {
       control: "text",
-      description: "Optional HTML id for the calendar input.",
+      description: "Optional HTML id.",
+      table: {
+        type: { summary: "string" },
+      },
     },
+
     name: {
       control: "text",
-      description: "Optional HTML name for the calendar input.",
+      description: "Optional HTML name.",
+      table: {
+        type: { summary: "string" },
+      },
+    },
+
+    styles: {
+      control: false,
+      description: `
+Custom styles override for the calendar.
+
+Includes container, label, and body styling.
+      `,
+      table: {
+        type: { summary: "CalendarStylesProps" },
+      },
     },
   },
 };
