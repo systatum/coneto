@@ -1,13 +1,29 @@
-# Coneto
+# Coneto React UI
 
-Coneto is a shared component library used across all applications at Systatum — including Workaty, Dashtomer, and others, designed with modernity, simplicity, and usability in mind.
+Coneto is a complete React UI library created by Systatum, designed with modernity, simplicity, and usability at its core. It helps you build applications faster with a consistent and polished design system.
 
-To start the storybook locally:
+## Installation
 
-```bash
-pnpm install
-pnpm storybook
+```tsx
+pnpm add @systatum/coneto
 ```
+
+## Why Coneto?
+
+💸 Free and open to use
+⚡ Speeds up development with ready-to-use components
+🎨 Clean and polished UI by default
+🌗 Supports light and dark themes
+🛠️ Battle-tested in real-world projects
+🔧 Highly customizable
+💻 Works with React and Electron
+📐 Consistent API design
+📚 Includes practical examples
+
+## Documentation
+
+Explore full component usage and examples in Storybook:
+👉 https://coneto.systatum.com
 
 ## Component Structure
 
