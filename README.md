@@ -10,15 +10,15 @@ pnpm add @systatum/coneto
 
 ## Why Coneto?
 
-💸 Free and open to use
-⚡ Speeds up development with ready-to-use components
-🎨 Clean and polished UI by default
-🌗 Supports light and dark themes
-🛠️ Battle-tested in real-world projects
-🔧 Highly customizable
-💻 Works with React and Electron
-📐 Consistent API design
-📚 Includes practical examples
+- 💸 Free and open to use
+- ⚡ Speeds up development with ready-to-use components
+- 🎨 Clean and polished UI by default
+- 🌗 Supports light and dark themes
+- 🛠️ Battle-tested in real-world projects
+- 🔧 Highly customizable
+- 💻 Works with React and Electron
+- 📐 Consistent API design
+- 📚 Includes practical examples
 
 ## Documentation
 
