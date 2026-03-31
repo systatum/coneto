@@ -10,16 +10,16 @@ const meta: Meta<typeof Messagebox> = {
     docs: {
       description: {
         component: `
-Messagebox is a flexible notification component for displaying information, alerts, warnings, or success messages in a structured, visually distinct box.
+Messagebox displays information, alerts, warnings, or success messages in a structured, visually appealing box. You may add certain actionable buttons as well.
 
 ---
 
 ### ✨ Features
-- 🏷️ **Variants**: Supports multiple visual styles (\`primary\`, \`success\`, \`danger\`, \`warning\`) for contextual messaging.
+- 🏷️ **Variants**: Supports multiple visual styles for contextual messaging.
 - 🖼️ **Icons**: Optional icon displayed alongside the message to indicate type or status.
 - 📄 **Content**: Supports a main title and rich message content (children).
-- 🔗 **Action links**: Buttons or links for user interaction, such as navigating or triggering actions.
-- ❌ **Closable**: Can be dismissed by the user if \`closable\` is enabled.
+- 🔗 **Action buttons**: Show actionable, in-context interactivity.
+- ❌ **Closable**: Can be dismissed by the user if \`closable\` is set.
 - 🎨 **Custom styles**: Fully customizable via styled-components, including container, title, content, and action list.
 - ♿ **Accessibility**: Proper ARIA roles and keyboard support for interactive elements.
       `,
