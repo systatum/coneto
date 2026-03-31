@@ -10,17 +10,14 @@ const meta: Meta<typeof Keynote> = {
     docs: {
       description: {
         component: `
-Keynote is a flexible component for displaying key-value pairs in a clean, structured layout. 
-It supports rendering data from an object, custom renderers per key, manual children, and fully customizable styles.
+Keynote displays key-value pairs in a clean, structured layout with data sourced from an object/dictionary. You may customize the renderer for a given field/key.
 
 ---
 
 ### ✨ Features
 - 🗝 **Automatic key-value rendering**: Display selected keys and labels from a data object.
 - 🎨 **Custom rendering**: Provide a \`renderer\` function per key for formatting (e.g., bold numbers, currency formatting, JSX content).
-- 📦 **Children support**: Render any custom JSX as a child if no \`data\` is provided.
 - 🖌 **Styling flexibility**: Customize the wrapper, rows, keys, and values via \`styles\` prop.
-- 🔧 **Composability**: Each row is a \`Keynote.Point\` that can be used independently for nested or dynamic structures.
 
 ---
 
