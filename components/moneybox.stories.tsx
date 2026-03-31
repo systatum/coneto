@@ -1,11 +1,11 @@
-import { Meta, StoryObj } from "@storybook/react";
-import { Moneybox } from "./moneybox";
+import * as RemixIcons from "@remixicon/react";
 import { useArgs } from "@storybook/preview-api";
+import { Meta, StoryObj } from "@storybook/react";
 import { ChangeEvent, useState } from "react";
 import { css } from "styled-components";
 import { Calendar } from "./calendar";
-import * as RemixIcons from "@remixicon/react";
 import { FieldLaneDropdownsOptionProps } from "./field-lane";
+import { Moneybox } from "./moneybox";
 
 const meta: Meta<typeof Moneybox> = {
   title: "Input Elements/Moneybox",
@@ -15,8 +15,9 @@ const meta: Meta<typeof Moneybox> = {
     docs: {
       description: {
         component: `
-**Moneybox** 💰 is a flexible numeric input component with optional currency support.  
-It allows formatted numeric input with comma/dot separators, an editable currency dropdown, error handling, labels, placeholders, and full style customization.
+**Moneybox** is a monetary value input component with an optional currency switcher.
+Among other things, it features built-in comma/dot separator formatter and an
+optional currency dropdown.
 
 ---
 
@@ -28,6 +29,7 @@ It allows formatted numeric input with comma/dot separators, an editable currenc
 - 🖊 **Placeholder & helper**: Guides users on expected input
 - 🎨 **Customizable styles**: Override input, container, and label styles
 - 📱 **Mobile-friendly**: \`inputMode="decimal"\` by default for numeric keyboards
+- 🧩 First-class **stateful form integration**
 
 ---
 

@@ -9,7 +9,7 @@ const meta: Meta<typeof Crumb> = {
     docs: {
       description: {
         component: `
-Crumb is a breadcrumb navigation component that shows the user's location in a hierarchy.
+**Crumb** is a breadcrumb navigation component that shows the user's location in a hierarchy.
 
 ---
 

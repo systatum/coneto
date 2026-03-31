@@ -1,11 +1,11 @@
-import { Meta, StoryObj } from "@storybook/react";
-import { CountryCodeProps, Phonebox } from "./phonebox";
-import { useState } from "react";
-import { COUNTRY_CODES } from "./../constants/countries";
-import { StatefulOnChangeType } from "./stateful-form";
-import { FieldLaneDropdownsOptionProps } from "./field-lane";
 import * as RemixIcons from "@remixicon/react";
+import { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
 import { css } from "styled-components";
+import { COUNTRY_CODES } from "./../constants/countries";
+import { FieldLaneDropdownsOptionProps } from "./field-lane";
+import { CountryCodeProps, Phonebox } from "./phonebox";
+import { StatefulOnChangeType } from "./stateful-form";
 
 const meta: Meta = {
   title: "Input Elements/Phonebox",
@@ -16,7 +16,7 @@ const meta: Meta = {
     docs: {
       description: {
         component: `
-Phonebox is a combined country code selector and phone number input. It supports formatting, validation, search, and keyboard navigation.
+**Phonebox** is a phone number input component with automated phone formatter for increased legibility.
 
 ---
 
@@ -27,7 +27,7 @@ Phonebox is a combined country code selector and phone number input. It supports
 - ⚠️ **Error handling**: Visual feedback and optional error messages.
 - 📝 **Helper text**: Add helper text below the input.
 - 🔧 **Custom styles**: Styles for wrapper, input, toggle button, and dropdown.
-- 🔄 **Two-way binding**: \`onChange\` triggers for both country code and phone number.
+- 🧩 First-class **stateful form integration**
       `,
       },
     },

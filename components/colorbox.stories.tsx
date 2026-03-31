@@ -1,10 +1,10 @@
-import { Meta, StoryObj } from "@storybook/react";
-import { Colorbox } from "./colorbox";
+import * as RemixIcons from "@remixicon/react";
 import { useArgs } from "@storybook/preview-api";
+import { Meta, StoryObj } from "@storybook/react";
 import { ChangeEvent, useState } from "react";
 import { css } from "styled-components";
+import { Colorbox } from "./colorbox";
 import { FieldLaneDropdownsOptionProps } from "./field-lane";
-import * as RemixIcons from "@remixicon/react";
 
 const meta: Meta<typeof Colorbox> = {
   title: "Input Elements/Colorbox",
@@ -24,8 +24,7 @@ const meta: Meta<typeof Colorbox> = {
 - 🚫 **Disabled state** to prevent interaction
 - 🛠 Shows **error state** with custom message and styling
 - 🎨 Fully **customizable styles**
-- 🧩 First-class stateful form integration
-
+- 🧩 First-class **stateful form integration**
 ---
 
 ### ⚙️ Behavior
@@ -33,7 +32,6 @@ const meta: Meta<typeof Colorbox> = {
 - Automatically prepends '#' in hex input
 - Debounces onChange updates to improve performance
 - Handles focus/hover interactions for UI highlighting
-- Integrates with **FieldLane** for consistent layout, label, and helper text
 
 ---
 

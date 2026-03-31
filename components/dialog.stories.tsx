@@ -1,8 +1,8 @@
+import { RiErrorWarningFill, RiInboxArchiveFill } from "@remixicon/react";
 import { useArgs } from "@storybook/preview-api";
 import type { Meta, StoryObj } from "@storybook/react";
-import { Dialog, DialogProps } from "./dialog";
 import { Button } from "./button";
-import { RiErrorWarningFill, RiInboxArchiveFill } from "@remixicon/react";
+import { Dialog, DialogProps } from "./dialog";
 
 const meta: Meta<typeof Dialog> = {
   title: "Stage/Dialog",
@@ -12,7 +12,7 @@ const meta: Meta<typeof Dialog> = {
     docs: {
       description: {
         component: `
-Dialog is a modal component for displaying messages, forms, or custom content in a focused overlay. It supports headers with title/subtitle/icon, body content, footer actions, and customizable styles.
+**Dialog is a modal component for displaying messages, forms, or custom content in a focused overlay. It supports headers with title/subtitle/icon, body content, footer actions, and customizable styles.
 
 ---
 

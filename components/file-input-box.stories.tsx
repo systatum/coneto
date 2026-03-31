@@ -10,7 +10,7 @@ const meta: Meta<typeof FileInputBox> = {
     docs: {
       description: {
         component: `
-The **FileInputBox** component provides an intuitive file upload interface with support for drag-and-drop, multiple file selection, and file preview.
+The **FileInputBox** component provides an intuitive file upload interface, better suited for a single file upload not using AJAX.
 
 ---
 

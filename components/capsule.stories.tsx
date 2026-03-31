@@ -1,7 +1,7 @@
+import { RiFile2Line, RiNewspaperLine } from "@remixicon/react";
+import { useArgs } from "@storybook/preview-api";
 import { Meta, StoryObj } from "@storybook/react";
 import { Capsule } from "./capsule";
-import { useArgs } from "@storybook/preview-api";
-import { RiFile2Line, RiNewspaperLine } from "@remixicon/react";
 
 const meta: Meta<typeof Capsule> = {
   title: "Input Elements/Capsule",
@@ -12,7 +12,7 @@ const meta: Meta<typeof Capsule> = {
     docs: {
       description: {
         component: `
-The **Capsule** component is designed for switching between options.
+The **Capsule** component is designed for switching between generally two options.
 
 ---
 
@@ -23,6 +23,7 @@ The **Capsule** component is designed for switching between options.
 - 📏 Flexible **layout modes** (default / full width)
 - ⚠️ Built-in **error handling & validation**
 - 🎯 Fully customizable **styles**
+- 🧩 First-class **stateful form integration**
 
 ---
 

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Frame } from "./frame";
 import { css } from "styled-components";
+import { Frame } from "./frame";
 
 const meta: Meta<typeof Frame> = {
   title: "Stage/Frame",
@@ -10,8 +10,8 @@ const meta: Meta<typeof Frame> = {
     docs: {
       description: {
         component: `
-Frame is a flexible container component that provides a bordered, shadowed area to group content visually. 
-It optionally displays a title overlay and supports full customization of container and title styles. 
+**Frame** is a container component to group content visually.
+It optionally displays a title overlay and supports full customization of container and title styles.
 Ideal for creating card-like layouts, grouped form sections, or any visually separated content.
 
 ---

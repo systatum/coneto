@@ -1,16 +1,16 @@
-import { Meta, StoryObj } from "@storybook/react";
-import { Chips, MissingOptionFormProps } from "./chips";
-import { ChangeEvent, useState } from "react";
-import { Badge, BadgeProps } from "./badge";
-import { Colorbox } from "./colorbox";
-import styled, { css } from "styled-components";
 import { RiAddBoxFill, RiCloseLine } from "@remixicon/react";
-import { Textbox } from "./textbox";
-import { Button } from "./button";
-import { Tooltip } from "./tooltip";
-import { FormFieldProps, StatefulForm } from "./stateful-form";
+import { Meta, StoryObj } from "@storybook/react";
+import { ChangeEvent, useState } from "react";
+import styled, { css } from "styled-components";
 import z from "zod";
+import { Badge, BadgeProps } from "./badge";
+import { Button } from "./button";
+import { Chips, MissingOptionFormProps } from "./chips";
+import { Colorbox } from "./colorbox";
 import { OptionProps } from "./selectbox";
+import { FormFieldProps, StatefulForm } from "./stateful-form";
+import { Textbox } from "./textbox";
+import { Tooltip } from "./tooltip";
 
 const meta: Meta<typeof Chips> = {
   title: "Input Elements/Chips",
@@ -112,7 +112,7 @@ The **Chips** component allows selection of multiple items from a list, with opt
 - ✅ **Selected chips** are displayed prominently with optional custom renderer
 - ❌ Handles **empty states** and custom messages
 - 🎨 Fully **customizable styles** for drawer, chips, labels, and container
-- 🧩 First-class stateful form integration
+- 🧩 First-class **stateful form integration**
 - 🔒 Has **disabled** state to prevent edit
 
 ---

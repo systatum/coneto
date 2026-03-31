@@ -1,12 +1,11 @@
-import { Meta, StoryObj } from "@storybook/react";
-import { Sidebar } from "./sidebar";
-import { Signbox } from "./signbox";
-import { useArgs } from "@storybook/preview-api";
-import { StatefulOnChangeType } from "./stateful-form";
-import { useState } from "react";
-import { FieldLaneDropdownsOptionProps } from "./field-lane";
 import * as RemixIcons from "@remixicon/react";
+import { useArgs } from "@storybook/preview-api";
+import { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
 import { css } from "styled-components";
+import { FieldLaneDropdownsOptionProps } from "./field-lane";
+import { Signbox } from "./signbox";
+import { StatefulOnChangeType } from "./stateful-form";
 
 const meta: Meta<typeof Signbox> = {
   title: "Input Elements/Signbox",
@@ -17,7 +16,7 @@ const meta: Meta<typeof Signbox> = {
     docs: {
       description: {
         component: `
-Signbox is a signature input component that allows users to draw their signature directly on a canvas. It supports clearing, resizing, and customizing appearance, making it ideal for forms and electronic signing.
+**Signbox** is a component that allows users to draw their signature directly on a canvas.
 
 ---
 
@@ -28,6 +27,7 @@ Signbox is a signature input component that allows users to draw their signature
 - ⚡ **Responsive**: Canvas auto-scales on window resize for high-DPI displays.
 - 🔒 **Disabled mode**: Prevent drawing when needed.
 - 💡 **Error state**: Visual feedback when the signature is required or invalid.
+- 🧩 First-class **stateful form integration**
 
         `,
       },

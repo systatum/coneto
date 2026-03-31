@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { Pinbox, PinboxState } from "./pinbox";
 import { useState } from "react";
+import { Pinbox, PinboxState } from "./pinbox";
 import { StatefulOnChangeType } from "./stateful-form";
 
 const meta: Meta<typeof Pinbox> = {
@@ -11,17 +11,18 @@ const meta: Meta<typeof Pinbox> = {
     docs: {
       description: {
         component: `
-Pinbox is a multi-part input component used for entering codes, PINs, OTPs, or other structured sequences. It supports masked input, static characters, error states, helper text, and keyboard navigation.
+**Pinbox** is a multi-part input component used for entering codes, PINs, OTPs, or other structured sequences. It supports having static characters, pasting value from clipboard, as well as keyboard navigation among other things.
 
 ---
 
 ### ✨ Features
 - 🔢 **Multi-part input**: Each character or block is a separate input for better control.
 - 👁️ **Masked input**: Optionally mask sensitive characters.
-- ⬅️➡️ **Keyboard navigation**: Supports arrow keys, backspace, and tab to move between inputs.
+- ⌨️ **Keyboard navigation**: Supports arrow keys, backspace, and tab to move between inputs.
 - ⚠️ **Error states**: Visual indication for invalid input.
 - 📝 **Helper text**: Supports extra helper text under the input.
 - 🔧 **Custom styles**: Styles for the wrapper, inputs, and error indicators.
+- 🧩 First-class **stateful form integration**
         `,
       },
     },

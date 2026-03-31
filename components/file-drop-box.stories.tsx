@@ -1,13 +1,13 @@
+import { RiDeleteBin2Fill } from "@remixicon/react";
 import { Meta, StoryObj } from "@storybook/react";
 import { useRef, useState } from "react";
+import { css } from "styled-components";
 import {
   FileDropBox,
   OnCompleteFunctionProps,
   OnFileDroppedFunctionProps,
 } from "./file-drop-box";
 import { Table } from "./table";
-import { css } from "styled-components";
-import { RiDeleteBin2Fill } from "@remixicon/react";
 
 const meta: Meta<typeof FileDropBox> = {
   title: "Input Elements/FileDropBox",
@@ -17,9 +17,10 @@ const meta: Meta<typeof FileDropBox> = {
     docs: {
       description: {
         component: `
-FileDropBox is a versatile drag-and-drop file uploader that supports multiple files, 
-progress tracking, success and error states, custom labels, helper text, and flexible styling. 
-It’s ideal for forms or components where users need to upload files interactively and visually track progress.
+**FileDropBox** is a versatile drag-and-drop file uploader that supports multiple files,
+progress tracking, success and error states, custom labels, helper text, and flexible styling.
+It's ideal for forms or components where users need to upload especially files (especially multiple
+files) through AJAX and visually track their progress.
 
 ---
 
@@ -34,6 +35,7 @@ It’s ideal for forms or components where users need to upload files interactiv
 - 🏷 **Labels & helpers**: Show optional label, helper text, and required indicator.
 - ⛔ **Disabled state**: Disable the drop area with visual feedback.
 - 🧩 **Flexible children**: Embed any ReactNode inside the drop area.
+- 🧩 First-class **stateful form integration**
 
 ---
 

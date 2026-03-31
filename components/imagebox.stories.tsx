@@ -10,9 +10,7 @@ const meta: Meta<typeof Imagebox> = {
     docs: {
       description: {
         component: `
-Imagebox is a user-friendly file input component specifically designed for images. 
-It supports drag-and-drop, file browsing, previewing selected files, optional initial image URLs, and full styling customization. 
-It can be embedded inside forms using FieldLane for labels, helper text, errors, and actions.
+**Imagebox** is a file input component designed for images. It supports drag-and-drop, previewing selected files among other things.
 
 ---
 

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Checkbox, CheckboxOptionProps, CheckboxProps } from "./checkbox";
 import { ChangeEvent, useState } from "react";
 import { css } from "styled-components";
+import { Checkbox, CheckboxOptionProps, CheckboxProps } from "./checkbox";
 
 const meta: Meta<typeof Checkbox> = {
   title: "Input Elements/Checkbox",
@@ -23,7 +23,7 @@ It works well in forms and can be used in both **standalone** and **form-integra
 - ❌ Displays **error states** with customizable error messages
 - 📝 Supports **helper text** for guidance
 - 🎨 Fully customizable **styles** for wrapper, label, box, icon, and description
-- 🧩 Compatible with **FieldLane** for form layout
+- 🧩 First-class **stateful form integration**
 
 ---
 

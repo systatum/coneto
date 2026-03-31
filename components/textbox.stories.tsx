@@ -1,10 +1,10 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { Textbox, TextboxProps } from "./textbox";
-import { useArgs } from "@storybook/preview-api";
-import { useEffect, useState, type ChangeEvent } from "react";
 import * as RemixIcons from "@remixicon/react";
+import { useArgs } from "@storybook/preview-api";
+import type { Meta, StoryObj } from "@storybook/react";
+import { useEffect, useState, type ChangeEvent } from "react";
 import { css } from "styled-components";
 import { FieldLaneDropdownsOptionProps } from "./field-lane";
+import { Textbox, TextboxProps } from "./textbox";
 
 const meta: Meta<typeof Textbox> = {
   title: "Input Elements/Textbox",
@@ -14,8 +14,7 @@ const meta: Meta<typeof Textbox> = {
     docs: {
       description: {
         component: `
-Textbox is a highly flexible input component for forms, login pages, or any interactive field. 
-It supports labels, validation states, action icons, dropdowns, and custom styling.
+**Textbox** is a single-line text input component. Among other things, you can define action buttons right within the textbox.
 
 ---
 
@@ -23,11 +22,11 @@ It supports labels, validation states, action icons, dropdowns, and custom styli
 - 🖊 **Labels and helper text**: Display a label above or beside the input, with optional helper text.
 - ⚠️ **Validation states**: Show error states and messages with \`showError\` + \`errorMessage\`.
 - 🖱 **Action icons**: Add buttons/icons inside the input for actions like toggling password visibility or clearing content.
-- 🔐 **Password toggle**: Built-in support for showing/hiding password inputs.
-- 📜 **Custom dropdowns**: Attach dropdowns with filtering and custom rendering for autocompletion or suggestions.
+- 📜 **Custom dropdowns**: Attach dropdowns for enriching interaction.
 - 🎨 **Custom styling**: Full control over input, label, container, and dropdown styles via the \`styles\` prop.
 - 🚫 **Disabled/readonly**: Prevent user interaction when needed.
 - 📦 **Composable children**: Use nested dropdowns or actions seamlessly.
+- 🧩 First-class **stateful form integration**
 
 ---
 

@@ -1,8 +1,8 @@
-import { Meta, StoryObj } from "@storybook/react";
-import { ThumbField } from "./thumb-field";
 import { useArgs } from "@storybook/preview-api";
+import { Meta, StoryObj } from "@storybook/react";
 import { ChangeEvent } from "react";
 import { css } from "styled-components";
+import { ThumbField } from "./thumb-field";
 
 const meta: Meta<typeof ThumbField> = {
   title: "Input Elements/ThumbField",
@@ -12,7 +12,7 @@ const meta: Meta<typeof ThumbField> = {
     docs: {
       description: {
         component: `
-ThumbField is a thumbs-up / thumbs-down input component designed for feedback, rating, or like/dislike functionality.
+**ThumbField** is a thumbs-up / thumbs-down input component designed for feedback, rating, or like/dislike functionality.
 
 ---
 
@@ -23,6 +23,7 @@ ThumbField is a thumbs-up / thumbs-down input component designed for feedback, r
 - 🛠 **Custom styling**: Style the triggers and wrapper via \`styles\`.
 - 🔒 **Disabled support**: Disable user interaction with \`disabled\`.
 - 📦 **Form integration**: Works with \`StatefulForm\` and hidden input for form submission.
+- 🧩 First-class **stateful form integration**
 
 ---
 

@@ -1,10 +1,10 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { Timebox } from "./timebox";
-import { ChangeEvent, useEffect, useState } from "react";
-import { useArgs } from "@storybook/preview-api";
-import { css } from "styled-components";
 import * as RemixIcons from "@remixicon/react";
+import { useArgs } from "@storybook/preview-api";
+import type { Meta, StoryObj } from "@storybook/react";
+import { ChangeEvent, useEffect, useState } from "react";
+import { css } from "styled-components";
 import { FieldLaneDropdownsOptionProps } from "./field-lane";
+import { Timebox } from "./timebox";
 
 const meta: Meta<typeof Timebox> = {
   title: "Input Elements/Timebox",
@@ -14,8 +14,8 @@ const meta: Meta<typeof Timebox> = {
     docs: {
       description: {
         component: `
-Timebox is a time input component that allows users to enter hours, minutes, and optionally seconds. 
-It supports smart focus navigation, editable/non-editable modes, and error display. 
+**Timebox** is a time input component allowing users to enter hours, minutes, and optionally seconds.
+It supports smart focus navigation, editable/non-editable modes, and error display.
 
 ---
 
@@ -26,6 +26,7 @@ It supports smart focus navigation, editable/non-editable modes, and error displ
 - ⚠️ **Error Handling**: Shows error styling when \`showError\` is true.
 - 🔒 **Editable Mode**: Can be read-only when \`editable\` is false.
 - 🎨 **Custom Styling**: Fully customizable via \`styles\` prop.
+- 🧩 First-class **stateful form integration**
 
 ---
 

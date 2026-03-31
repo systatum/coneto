@@ -1,10 +1,10 @@
+import * as RemixIcons from "@remixicon/react";
 import { Meta, StoryObj } from "@storybook/react";
 import { ReactElement, useState } from "react";
-import { Datebox } from "./datebox";
-import { Messagebox } from "./messagebox";
-import * as RemixIcons from "@remixicon/react";
-import { FieldLaneDropdownsOptionProps } from "./field-lane";
 import { css } from "styled-components";
+import { Datebox } from "./datebox";
+import { FieldLaneDropdownsOptionProps } from "./field-lane";
+import { Messagebox } from "./messagebox";
 
 const meta: Meta<typeof Datebox> = {
   title: "Input Elements/Datebox",
@@ -15,20 +15,20 @@ const meta: Meta<typeof Datebox> = {
     docs: {
       description: {
         component: `
-Datebox is an input component for selecting dates. It leverages a calendar dropdown for easy date picking, supports single or multiple dates, and integrates with forms.
+**Datebox** is an input component for selecting dates. It leverages a calendar dropdown for easy date picking, supports single or multiple dates, and integrates with forms.
 
 ---
 
 ### ✨ Features
 - 📅 **Calendar dropdown** for selecting dates
-- 🖋️ **Placeholder support** for guiding input format
-- 🔒 Supports **disabled** state
+- 🔒 Has **disabled** state
 - ⚠️ Handles **error messages** with visual feedback
 - 🎨 Customizable **styles** for input, calendar, and dropdown
 - 🕹️ Optional **today button** and custom footer in calendar
-- 🧩 Supports **selectability modes** and weekday restrictions
-- ⚡ Works with **controlled and uncontrolled forms**
-- 🗑️ Supports **clearable selection**
+- ⚙️ Supports **selectability modes** and **weekday restrictions**
+- 🗑️ Supports **clearing selection**
+- 🧩 First-class **stateful form integration**
+
 
 ---
 

@@ -1,27 +1,27 @@
 import { Meta, StoryObj } from "@storybook/react/";
-import {
-  StatefulForm,
-  StatefulOnChangeType,
-  FormFieldGroup,
-  FormValueType,
-} from "./stateful-form";
 import { useMemo, useState } from "react";
-import { COUNTRY_CODES } from "./../constants/countries";
+import styled, { css } from "styled-components";
 import { z } from "zod";
+import { COUNTRY_CODES } from "./../constants/countries";
+import { BadgeProps } from "./badge";
+import { Button } from "./button";
+import { CapsuleContentProps } from "./capsule";
+import { Card } from "./card";
 import {
   OnCompleteFunctionProps,
   OnFileDroppedFunctionProps,
 } from "./file-drop-box";
-import { BadgeProps } from "./badge";
-import { CountryCodeProps } from "./phonebox";
-import styled, { css } from "styled-components";
-import { CapsuleContentProps } from "./capsule";
-import { OptionProps } from "./selectbox";
 import { Messagebox } from "./messagebox";
 import { CurrencyOptionProps } from "./moneybox";
+import { CountryCodeProps } from "./phonebox";
 import { PinboxState } from "./pinbox";
-import { Card } from "./card";
-import { Button } from "./button";
+import { OptionProps } from "./selectbox";
+import {
+  FormFieldGroup,
+  FormValueType,
+  StatefulForm,
+  StatefulOnChangeType,
+} from "./stateful-form";
 
 const meta: Meta<typeof StatefulForm> = {
   title: "Input Elements/StatefulForm",
@@ -31,8 +31,8 @@ const meta: Meta<typeof StatefulForm> = {
     docs: {
       description: {
         component: `
-StatefulForm is a dynamic form component built to handle complex form scenarios with validation, nested fields, custom inputs, and reactive state management. 
-It works seamlessly with Zod schemas for type-safe validation.
+**StatefulForm** is a form renderer capable to handle complex scenarios involving data validation,
+nested fields, custom input rendering, and state management. It works seamlessly with Zod.
 
 ---
 

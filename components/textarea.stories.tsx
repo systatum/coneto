@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { Textarea, TextareaProps } from "./textarea";
-import { useArgs } from "@storybook/preview-api";
 import * as RemixIcons from "@remixicon/react";
-import { css } from "styled-components";
-import { StatefulOnChangeType } from "./stateful-form";
+import { useArgs } from "@storybook/preview-api";
+import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
+import { css } from "styled-components";
 import { FieldLaneDropdownsOptionProps } from "./field-lane";
+import { StatefulOnChangeType } from "./stateful-form";
+import { Textarea, TextareaProps } from "./textarea";
 
 const meta: Meta<typeof Textarea> = {
   title: "Input Elements/Textarea",
@@ -15,8 +15,7 @@ const meta: Meta<typeof Textarea> = {
     docs: {
       description: {
         component: `
-Textarea is a multi-line input component with optional auto-growing height, error display, and action buttons. 
-It is built on top of a FieldLane for label, error, and helper support.
+**Textarea** is a multi-line text input component with optional auto-growing height, among other things.
 
 ---
 
@@ -27,6 +26,7 @@ It is built on top of a FieldLane for label, error, and helper support.
 - 🎨 **Custom styles**: Fully styleable via the \`styles\` prop for both FieldLane and textarea itself.
 - 🔘 **Actions**: Render action buttons inside the input for things like copy, paste, or custom icons.
 - 🔒 **Disabled support**: Proper styling and interaction handling for disabled state.
+- 🧩 First-class **stateful form integration**
 
 ---
 

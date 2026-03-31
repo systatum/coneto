@@ -1,6 +1,6 @@
+import { useArgs } from "@storybook/preview-api";
 import { Meta, StoryObj } from "@storybook/react";
 import { Rating } from "./rating";
-import { useArgs } from "@storybook/preview-api";
 
 const meta: Meta<typeof Rating> = {
   title: "Input Elements/Rating",
@@ -10,7 +10,7 @@ const meta: Meta<typeof Rating> = {
     docs: {
       description: {
         component: `
-Rating is a star-based input component for capturing user ratings with optional half-star support.
+**Rating** is a star-based input component for capturing user ratings with optional half-star support.
 
 ---
 
@@ -20,6 +20,7 @@ Rating is a star-based input component for capturing user ratings with optional 
 - 🔢 **Optional label**: Display numeric rating (e.g., 3.5 / 5) next to stars.
 - 🖌 **Sizes**: Small (sm), Medium (md), Large (lg).
 - 🔧 **Custom styles**: Can style container, label, or star wrapper.
+- 🧩 First-class **stateful form integration**
 
         `,
       },
