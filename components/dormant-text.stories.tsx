@@ -41,7 +41,7 @@ DormantText is an editable text component that starts in a **dormant (read-only)
 - Use **onActionClick** to handle confirmed edits.
 - Use **onCancelRequested** to handle cancel events.
 - Customize **styles** for each state using CSSProp objects.
-- Optionally set **dormantedFontSize**, **fullWidth**, **acceptChangeOn**, **cancelable**, and **icon**.
+- Optionally set **dormantedFontSize**, **fullWidth**, **acceptChangeOn**, **cancelable**, and **icons**.
 
 \`\`\`tsx
 <DormantText
@@ -53,6 +53,14 @@ DormantText is an editable text component that starts in a **dormant (read-only)
   onActive={() => console.log("Activated")}
   onActionClick={() => console.log("Saved")}
   onCancelRequested={() => console.log("Canceled")}
+  icons={{
+    accept: {
+      image: Ri24HoursFill,
+      },
+    cancel: {
+      image: Ri24HoursFill,
+      },  
+    }}
   styles={{
     dormantedStyle: css\`color: #333; background: #f9f9f9;\`,
     activeStyle: css\`border: 1px solid #ccc;\`,
@@ -61,13 +69,6 @@ DormantText is an editable text component that starts in a **dormant (read-only)
 >
   <input type="text" placeholder="Edit me" />
 </DormantText>
-\`\`\`
-
-- **icon** prop example:
-\`\`\`tsx
-<DormantText
-  icon={{ image: RiCheckLine, color: "#4caf50", size: 18 }}
-/>
 \`\`\`
     `,
       },
@@ -129,10 +130,46 @@ DormantText is an editable text component that starts in a **dormant (read-only)
         "Maximum width of the dormant label. Overrides fullWidth if provided.",
       control: { type: "text" },
     },
-    icon: {
-      description:
-        "Optional icon props displayed in the action button. Defaults to a check icon.",
-      control: { type: null },
+    icons: {
+      description: `
+Custom icons for accept and cancel actions.
+
+**Default:**
+
+accept → RiCheckLine  
+cancel → RiCloseLine  
+
+**Usage:**
+
+\`\`\`tsx
+<DormantText
+  icons={{
+    accept: { 
+      image: RiHeartLine,
+      color: "green"
+    },
+    cancel: { 
+      image: RiTrash2Line,
+      color: "red"
+    },
+  }}
+>
+  <input />
+</DormantText>
+\`\`\`
+
+**Type:**
+
+    `,
+      control: "object",
+      table: {
+        type: {
+          summary: "{ accept?: FigureProps; cancel?: FigureProps }",
+        },
+        defaultValue: {
+          summary: "{ accept: RiCheckLine, cancel: RiCloseLine }",
+        },
+      },
     },
     styles: {
       description:
