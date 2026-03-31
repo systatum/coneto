@@ -1,8 +1,106 @@
 import marked from "./../../lib/marked/marked";
-import { RichEditor } from "./../../components/rich-editor";
+import { RichEditor, RichEditorProps } from "./../../components/rich-editor";
 import { useEffect, useState } from "react";
+import { generateSentence } from "./../../lib/text";
 
 describe("RichEditor", () => {
+  function ProductRichEditor(props: RichEditorProps) {
+    return <RichEditor value="test" {...props} />;
+  }
+
+  context("height", () => {
+    context("when given 300px", () => {
+      it("renders a textarea with 300px", () => {
+        cy.mount(
+          <ProductRichEditor
+            autogrow
+            value={generateSentence({ minLen: 200, maxLen: 250, seed: 1234 })}
+            height={300}
+          />
+        );
+        cy.findAllByLabelText("rich-editor-content").should(
+          "have.css",
+          "height",
+          "509px"
+        );
+      });
+    });
+  });
+
+  context("autogrow", () => {
+    context("when given true", () => {
+      it("renders a textarea that grows with content", () => {
+        cy.mount(
+          <ProductRichEditor
+            autogrow
+            value={generateSentence({ minLen: 200, maxLen: 250, seed: 1234 })}
+          />
+        );
+        cy.findAllByLabelText("rich-editor-content").should(
+          "have.css",
+          "height",
+          "509px"
+        );
+      });
+
+      context("when pressing enter", () => {
+        it("increases the textarea height accordingly", () => {
+          cy.mount(
+            <ProductRichEditor
+              autogrow
+              value={generateSentence({ minLen: 200, maxLen: 250, seed: 1234 })}
+            />
+          );
+          cy.findAllByLabelText("rich-editor-content")
+            .should("have.css", "height", "509px")
+            .click()
+            .type("{enter}{enter}{enter}");
+
+          cy.findAllByLabelText("rich-editor-content").should(
+            "have.css",
+            "height",
+            "581px"
+          );
+        });
+      });
+    });
+
+    context("when given false", () => {
+      it("renders a textarea with fixed height", () => {
+        cy.mount(
+          <ProductRichEditor
+            value={generateSentence({ minLen: 200, maxLen: 250, seed: 1234 })}
+          />
+        );
+        cy.findAllByLabelText("rich-editor-content").should(
+          "have.css",
+          "height",
+          "200px"
+        );
+      });
+
+      context("when pressing enter", () => {
+        it("maintains the fixed textarea height", () => {
+          cy.mount(
+            <ProductRichEditor
+              value={generateSentence({ minLen: 200, maxLen: 250, seed: 1234 })}
+            />
+          );
+          cy.findAllByLabelText("rich-editor-content")
+            .should("have.css", "height", "200px")
+            .click()
+            .type("{enter}{enter}{enter}");
+
+          cy.findAllByLabelText("rich-editor-content").should(
+            "have.css",
+            "height",
+            "200px"
+          );
+        });
+      });
+    });
+  });
+
   context("selection behavior", () => {
     context("when selecting bold text outside the editor", () => {
       it("does not update the editor bold state", () => {

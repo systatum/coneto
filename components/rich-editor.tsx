@@ -31,6 +31,8 @@ export interface RichEditorProps {
   styles?: RichEditorStylesProps;
   mode?: RichEditorModeState;
   toolbarPosition?: RichEditorToolbarPositionState;
+  autogrow?: boolean;
+  height?: number;
 }
 
 export interface RichEditorStylesProps {
@@ -75,6 +77,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       onChange,
       toolbarRightPanel,
       styles,
+      autogrow = false,
+      height = 200,
     },
     ref
   ) => {
@@ -1193,10 +1197,13 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         <EditorArea
           ref={editorRef}
           role="textbox"
+          aria-label="rich-editor-content"
           contentEditable
           $editorStyle={styles?.editorStyle}
           $toolbarPosition={toolbarPosition}
           $mode={mode}
+          $height={height}
+          $autogrow={autogrow}
           onInput={() => {
             if (mode !== "view-only") {
               if (editorRef.current) {
@@ -1343,30 +1350,40 @@ const EditorArea = styled.div<{
   $toolbarPosition?: RichEditorToolbarPositionState;
   $editorStyle?: CSSProp;
   $mode?: RichEditorModeState;
+  $autogrow?: boolean;
+  $height?: number;
 }>`
   padding: 8px;
   outline: none;
   background-color: white;
 
-  ${({ $mode }) =>
+  ${({ $mode, $autogrow, $height }) =>
     $mode === "page-editor"
       ? css`
-          min-height: 100vh;
-          max-height: 100vh;
+          min-height: 100dvh;
+          max-height: 100dvh;
           overflow: auto;
         `
-      : css`
-          min-height: 200px;
-        `}
+      : $autogrow
+        ? css`
+            min-height: ${`${$height}px`};
+            overflow: hidden;
+          `
+        : css`
+            min-height: ${`${$height}px`};
+            max-height: ${`${$height}px`};
+            overflow-y: auto;
+          `}
 
   ${({ $toolbarPosition }) =>
     $toolbarPosition === "top"
       ? css`
-          padding-top: 45px;
+          margin-top: 37px;
         `
       : css`
-          padding-bottom: 45px;
+          margin-bottom: 37px;
         `};
+
   ${({ $mode }) =>
     $mode === "view-only" &&
     css`
