@@ -215,7 +215,7 @@ async function main() {
 
         items.unshift(`
       <item>
-        <title>${mdx.title}</title>
+        <title>Systatum - Coneto React UI</title>
         <link>${SITE_URL}/</link>
         <guid>${hash("homepage")}</guid>
         <description><![CDATA[${cleanedDesc}]]></description>
