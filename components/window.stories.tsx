@@ -10,6 +10,73 @@ const meta: Meta<typeof Window> = {
   title: "Content/Window",
   component: Window,
   tags: ["autodocs"],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+Window is a flexible container component that allows splitting content into resizable cells. It supports horizontal or vertical layouts, custom styles, draggable dividers, and cell-level actions such as buttons or icons. It’s ideal for dashboards, editors, or any UI requiring adjustable panels.
+
+---
+
+### ✨ Features
+- ↔️ **Resizable cells**: Drag dividers to adjust the size of adjacent cells.
+- 🖥 **Orientation support**: Configure layout as "horizontal" (row) or "vertical" (column).
+- 🧩 **Flexible children**: Embed any ReactNode inside cells, including forms, tables, or custom components.
+- 🎨 **Customizable styles**: Override container styles (\`self\`) and divider styles (\`dividerStyle\`).
+- 🖱 **Cell actions**: Add buttons or icons in each cell with click handlers and optional visibility.
+- 📐 **Initial sizing**: Provide an initial size ratio array (e.g., \`[0.3, 0.7]\`) for each cell.
+- ⚡ **Performance-optimized**: Resize operations are throttled using \`requestAnimationFrame\` to ensure smooth dragging.
+- ⛔ **Disabled dragging**: Cells can ignore pointer events during dragging to prevent interaction conflicts.
+
+---
+
+### 📌 Usage
+\`\`\`tsx
+<Window
+  orientation="horizontal"
+  initialSizeRatio={[0.4, 0.6]}
+  styles={{
+    self: css\`border: 1px solid #ccc; height: 300px;\`,
+    dividerStyle: css\`background-color: #e5e7eb;\`,
+  }}
+  onResize={() => console.log("Resizing...")}
+  onResizeComplete={() => console.log("Resize complete")}
+>
+  <Window.Cell
+    styles={{ self: css\`background: #f9fafb;\` }}
+    actions={[
+      {
+        icon: { image: RiCloseLine },
+        onClick: () => console.log("Cell 1 close clicked"),
+      },
+    ]}
+  >
+    <div>Left content</div>
+  </Window.Cell>
+  <Window.Cell
+    styles={{ self: css\`background: #fff;\` }}
+    actions={[
+      {
+        icon: { image: RiCloseLine },
+        onClick: () => console.log("Cell 2 close clicked"),
+      },
+    ]}
+  >
+    <div>Right content</div>
+  </Window.Cell>
+</Window>
+\`\`\`
+
+- Use \`orientation\` to control layout direction.
+- Provide \`initialSizeRatio\` to control starting sizes of cells.
+- Add any ReactNode as content for each \`Window.Cell\`.
+- Use \`actions\` to attach buttons or icons inside a cell.
+- Fully styleable via the \`styles\` prop for both container and dividers.
+- Listen to \`onResize\` and \`onResizeComplete\` for drag events.
+`,
+      },
+    },
+  },
   argTypes: {
     orientation: {
       description: "Defines the layout orientation of the window cells.",

@@ -16,9 +16,119 @@ const meta: Meta<typeof DormantText> = {
   component: DormantText,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+DormantText is an editable text component that starts in a **dormant (read-only) state** and switches to an **active input** when clicked. It supports optional action buttons, custom icons, and flexible styling, making it ideal for inline editing scenarios such as forms, tables, or settings panels.
+
+---
+
+### ✨ Features
+- 📝 **Dormant and active states**: Click to switch from read-only text to editable input.
+- ✍️ **Supports children inputs**: Accepts any React input element (text, number, select, etc.).
+- 🎯 **Custom action icons**: Default check/cancel icons, or override with your own via \`icon\`.
+- ⌨️ **Flexible input confirmation**: Accept changes on 'Enter', 'click', or 'all' interactions.
+- ❌ **Cancelable editing**: Press Escape or click cancel button to revert changes.
+- 💅 **Fully styleable**: Use \`styles\` prop to customize dormant label, active wrapper, or action buttons.
+- 📐 **Dynamic sizing**: Automatically measures label and input dimensions to match layout.
+- 🖱️ **Full-width support**: Stretch dormant label to container width or limit via \`dormantedMaxWidth\`.
+
+---
+
+### 📌 Usage
+- Set the **content** prop for the text displayed when dormant.
+- Pass **children** as input elements for editing mode.
+- Use **onActionClick** to handle confirmed edits.
+- Use **onCancelRequested** to handle cancel events.
+- Customize **styles** for each state using CSSProp objects.
+- Optionally set **dormantedFontSize**, **fullWidth**, **acceptChangeOn**, **cancelable**, and **icon**.
+
+\`\`\`tsx
+<DormantText
+  content="Click to edit"
+  dormantedFontSize={16}
+  fullWidth={false}
+  acceptChangeOn="enter"
+  cancelable={true}
+  onActive={() => console.log("Activated")}
+  onActionClick={() => console.log("Saved")}
+  onCancelRequested={() => console.log("Canceled")}
+  styles={{
+    dormantedStyle: css\`color: #333; background: #f9f9f9;\`,
+    activeStyle: css\`border: 1px solid #ccc;\`,
+    actionStyle: css\`background: #e0e0e0;\`,
+  }}
+>
+  <input type="text" placeholder="Edit me" />
+</DormantText>
+\`\`\`
+
+- **icon** prop example:
+\`\`\`tsx
+<DormantText
+  icon={{ image: RiCheckLine, color: "#4caf50", size: 18 }}
+/>
+\`\`\`
+    `,
+      },
+    },
   },
   tags: ["autodocs"],
   argTypes: {
+    content: {
+      description:
+        "The text or number displayed when the component is in dormant mode.",
+      control: { type: "text" },
+    },
+    children: {
+      description: "Optional React input element(s) that appear when active.",
+      control: { type: null },
+    },
+    fullWidth: {
+      description:
+        "If true, the dormant label stretches to full container width.",
+      control: { type: "boolean" },
+      defaultValue: false,
+    },
+    dormantedFontSize: {
+      description: "Font size (px) of the text when dormant.",
+      control: { type: "number" },
+      defaultValue: 17,
+    },
+    acceptChangeOn: {
+      description:
+        "Determines when the input's change is accepted. Can be 'enter', 'click', or 'all'.",
+      control: {
+        type: "select",
+        options: ["enter", "click", "all"],
+      },
+      defaultValue: "enter",
+    },
+    cancelable: {
+      description:
+        "Whether the active input can be canceled (Escape key or cancel button).",
+      control: { type: "boolean" },
+      defaultValue: false,
+    },
+    onActionClick: {
+      description:
+        "Callback triggered when the user confirms the input (via Enter, click, or action button).",
+      action: "actionClick",
+    },
+    onActive: {
+      description:
+        "Callback triggered when the dormant text is activated (clicked).",
+      action: "activated",
+    },
+    onCancelRequested: {
+      description: "Callback triggered when the user cancels editing.",
+      action: "cancelRequested",
+    },
+    dormantedMaxWidth: {
+      description:
+        "Maximum width of the dormant label. Overrides fullWidth if provided.",
+      control: { type: "text" },
+    },
     icons: {
       description: `
 Custom icons for accept and cancel actions.
@@ -59,6 +169,11 @@ cancel → RiCloseLine
           summary: "{ accept: RiCheckLine, cancel: RiCloseLine }",
         },
       },
+    },
+    styles: {
+      description:
+        "Custom styles for dormant, active, and action states. Use CSSProp format.",
+      control: { type: null },
     },
   },
 };

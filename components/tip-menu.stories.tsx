@@ -33,12 +33,87 @@ const meta: Meta<typeof TipMenu> = {
   component: TipMenu,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+TipMenu is a flexible dropdown menu component that supports optional filtering, icons, and different variants per item. 
+It is commonly used for action menus, context menus, or inline tips.
+
+---
+
+### ✨ Features
+- 🖱 **Clickable menu items**: Each item supports an onClick handler.
+- 🔍 **Optional search/filter**: Automatically filter menu items with \`withFilter\`.
+- 🎨 **Item variants**: Supports \`sm\` and \`md\` variants for spacing and size.
+- ⚠️ **Dangerous actions**: Items can be styled to indicate dangerous actions (e.g., delete).
+- 🖌 **Custom styles**: Full styling support via \`styles\` prop.
+- 📦 **Composable children**: Render additional custom content inside the menu.
+- 🎨 **Icon support**: Each menu item can have an optional icon rendered via the \`Figure\` component.
+
+---
+
+### 📌 Usage
+
+\`\`\`tsx
+<TipMenu
+  subMenuList={[
+    { caption: "Edit", onClick: () => console.log("Edit clicked") },
+    { caption: "Delete", isDangerous: true, onClick: () => console.log("Deleted") },
+    { caption: "View", variant: "sm" }
+  ]}
+  withFilter
+  variant="md"
+  setIsOpen={() => console.log("Menu closed")}
+  styles={{
+    self: css\`min-width: 200px;\`,
+  }}
+>
+  <div>Custom content at the bottom</div>
+</TipMenu>
+\`\`\`
+
+- Use \`subMenuList\` to define menu items.
+- Use \`withFilter\` to enable the search box.
+- Use \`variant\` to change spacing and sizing for items.
+- Use \`isDangerous\` to highlight critical actions.
+- Fully styleable via \`styles.self\`.
+- You can still pass custom children if needed.
+`,
+      },
+    },
   },
   tags: ["autodocs"],
   argTypes: {
     children: {
-      description: "Content of tip menu",
       control: "text",
+      description:
+        "Optional custom content rendered inside the TipMenu below all menu items.",
+    },
+    subMenuList: {
+      control: false,
+      description:
+        "Array of menu items to display. Each item is an object with `caption`, optional `icon`, `onClick`, `isDangerous`, `variant`, `className`, and `hidden` properties.",
+    },
+    setIsOpen: {
+      control: false,
+      description:
+        "Callback function to be executed when the menu is closed after a click. Typically used to update open state in parent.",
+    },
+    variant: {
+      control: { type: "select" },
+      options: ["sm", "md"],
+      description:
+        "Default size variant for menu items. Can be overridden per item with `TipMenuItem.variant`.",
+    },
+    withFilter: {
+      control: "boolean",
+      description:
+        "Enable a search box to filter menu items based on their caption.",
+    },
+    styles: {
+      control: false,
+      description:
+        "Custom styles for TipMenu component. Currently supports:\n- `self`: applied to the root menu container.",
     },
   },
 };

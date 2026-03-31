@@ -1,31 +1,79 @@
-import { Meta, StoryObj } from "@storybook/react";
-import { Moneybox } from "./moneybox";
+import * as RemixIcons from "@remixicon/react";
 import { useArgs } from "@storybook/preview-api";
+import { Meta, StoryObj } from "@storybook/react";
 import { ChangeEvent, useState } from "react";
 import { css } from "styled-components";
 import { Calendar } from "./calendar";
-import * as RemixIcons from "@remixicon/react";
 import { FieldLaneDropdownsOptionProps } from "./field-lane";
+import { Moneybox } from "./moneybox";
 
 const meta: Meta<typeof Moneybox> = {
   title: "Input Elements/Moneybox",
   component: Moneybox,
   tags: ["autodocs"],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+**Moneybox** is a monetary value input component with an optional currency switcher.
+Among other things, it features built-in comma/dot separator formatter and an
+optional currency dropdown.
+
+---
+
+### ✨ Features
+- 💵 **Formatted numeric input**: Supports comma/dot separators for thousands and decimals
+- 💱 **Editable currency**: Optional dropdown to select currency from \`currencyOptions\`
+- ❌ **Error state**: Visual feedback with customizable error message
+- 🏷 **Label support**: Optional label above the input
+- 🖊 **Placeholder & helper**: Guides users on expected input
+- 🎨 **Customizable styles**: Override input, container, and label styles
+- 📱 **Mobile-friendly**: \`inputMode="decimal"\` by default for numeric keyboards
+- 🧩 First-class **stateful form integration**
+
+---
+
+### 🛠 Usage
+
+\`\`\`tsx
+<Moneybox
+  name="amount"
+  value="123456.78"
+  placeholder="Enter amount"
+  currency="IDR"
+  editableCurrency
+  currencyOptions={[
+    { id: "IDR", name: "Indonesian Rupiah", symbol: "Rp" },
+    { id: "USD", name: "US Dollar", symbol: "$" },
+  ]}
+  separator="comma"
+  showError={false}
+  onChange={(e) => console.log(e.target.name, e.target.value)}
+  styles={{
+    self: css\`font-size: 14px; color: #111;\`,
+    inputWrapperStyle: css\`border-radius: 4px;\`,
+  }}
+/>
+\`\`\`
+        `,
+      },
+    },
+  },
   argTypes: {
     value: {
       control: "text",
       description:
-        "The raw numeric value of the input. This value is automatically formatted for display, but `onChange` always emits the unformatted numeric string.",
+        "The raw numeric value of the input. Formatted visually, but `onChange` emits the unformatted string.",
     },
     currency: {
       control: "text",
       description:
-        "The active currency reference from ID currencyOptions (e.g. `IDR`, `USD`) when given editableCurrency. When `editableCurrency` is enabled, this must match one of the provided `currencyOptions`.",
+        "Active currency (e.g., `IDR`, `USD`). Used with `editableCurrency`. Must match one of `currencyOptions` if editable.",
     },
     currencyOptions: {
       control: "object",
       description:
-        "List of available currencies when `editableCurrency` is enabled. Each item must contain `{ id, name, symbol }`.",
+        "Available currencies when `editableCurrency` is enabled. Each item: `{ id, name, symbol }`.",
       table: {
         type: {
           summary: "CurrencyOptionProps[]",
@@ -36,7 +84,7 @@ const meta: Meta<typeof Moneybox> = {
     editableCurrency: {
       control: "boolean",
       description:
-        "Enables the currency selector button. When enabled, users can pick a currency from `currencyOptions`.",
+        "Enable the currency dropdown selector. Users can pick a currency from `currencyOptions`.",
       table: {
         defaultValue: { summary: "false" },
       },
@@ -45,7 +93,7 @@ const meta: Meta<typeof Moneybox> = {
       control: { type: "radio" },
       options: ["comma", "dot"],
       description:
-        "Controls number formatting style. `comma` formats as `1,234.56`, `dot` formats as `1.234,56`.",
+        "Number formatting style. `comma` → `1,234.56`, `dot` → `1.234,56`.",
       table: {
         defaultValue: { summary: "comma" },
       },
@@ -56,35 +104,35 @@ const meta: Meta<typeof Moneybox> = {
     },
     placeholder: {
       control: "text",
-      description: "Placeholder text for the input.",
+      description: "Placeholder text for the input field.",
     },
     showError: {
       control: "boolean",
       description:
-        "Displays the error state. When true, the input border turns red and `errorMessage` is shown.",
+        "Enable error state. Input border turns red and `errorMessage` is shown.",
       table: {
         defaultValue: { summary: "false" },
       },
     },
     errorMessage: {
       control: "text",
-      description: "Error message shown when `showError` is true.",
+      description: "Error message displayed when `showError` is true.",
     },
     disabled: {
       control: "boolean",
-      description: "Disables the input and prevents user interaction.",
+      description: "Disables input and prevents user interaction.",
       table: {
         defaultValue: { summary: "false" },
       },
     },
     name: {
       control: "text",
-      description: "Name of the input. Used in the emitted `onChange` event.",
+      description: "Input name. Used in the `onChange` synthetic event.",
     },
     onChange: {
       action: "changed",
       description:
-        "Called when the value or currency changes. Emits a synthetic event with `{ target: { name, value } }`.",
+        "Called when value or currency changes. Emits `{ target: { name, value } }`.",
       table: {
         type: { summary: "(e: ChangeEvent<HTMLInputElement>) => void" },
       },
@@ -96,20 +144,17 @@ const meta: Meta<typeof Moneybox> = {
     styles: {
       control: false,
       description: `
-Custom styles for this input component. This object allows you to override styles for individual visual parts:
+Custom styles for the component:
 
-- **style**: Styles applied to the main input box (border, padding, background, focus ring, etc)
-- **containerStyle**: Outer wrapper of the input (layout, spacing, width, alignment)
-- **labelStyle**: Label text styling (font, color, spacing, positioning)
-
-Each field accepts a \`CSSProp\` (styled-components compatible) and can be used to customize layout, colors, spacing, and visual appearance without touching component logic.
-  `,
+- **self**: Styles for the input itself
+- **inputWrapperStyle**: Styles for the input container
+- Can override layout, colors, spacing, and appearance without touching logic
+      `,
     },
-
     inputMode: {
       control: "text",
       description:
-        "Native inputMode. Defaults to `decimal` for numeric keyboards on mobile.",
+        "Native inputMode attribute for mobile keyboards. Defaults to `decimal` for numeric input.",
     },
   },
 };

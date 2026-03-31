@@ -13,6 +13,24 @@ const meta: Meta<typeof ModalDialog> = {
   component: ModalDialog,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+ModalDialog is a versatile modal component for displaying important content, forms, or actions in a centered overlay. It supports controlled visibility, custom headers, footers, and styling.
+
+---
+
+### ✨ Features
+- 🖼️ **Custom content**: Render any ReactNode in the modal body.
+- 🏷️ **Header & subtitle**: Optional title and subtitle for context.
+- 🔘 **Action buttons**: Footer buttons with loading, disabled state, and custom variants.
+- ❌ **Closable**: Can be closed via Escape key, overlay click, or close button (configurable).
+- 🔄 **Controlled visibility**: \`isOpen\` prop with \`onVisibilityChange\` callback for external control.
+- 🎨 **Custom styles**: Override modal container, content, overlay, and other sections.
+- ♿ **Accessibility**: Proper ARIA roles and keyboard navigation support.
+      `,
+      },
+    },
   },
   tags: ["autodocs"],
   argTypes: {

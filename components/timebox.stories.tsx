@@ -1,18 +1,120 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { Timebox } from "./timebox";
-import { ChangeEvent, useEffect, useState } from "react";
-import { useArgs } from "@storybook/preview-api";
-import { css } from "styled-components";
 import * as RemixIcons from "@remixicon/react";
+import { useArgs } from "@storybook/preview-api";
+import type { Meta, StoryObj } from "@storybook/react";
+import { ChangeEvent, useEffect, useState } from "react";
+import { css } from "styled-components";
 import { FieldLaneDropdownsOptionProps } from "./field-lane";
+import { Timebox } from "./timebox";
 
 const meta: Meta<typeof Timebox> = {
   title: "Input Elements/Timebox",
   component: Timebox,
   tags: ["autodocs"],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+**Timebox** is a time input component allowing users to enter hours, minutes, and optionally seconds.
+It supports smart focus navigation, editable/non-editable modes, and error display.
+
+---
+
+### ✨ Features
+- 🕒 **Hour & Minute Input**: Users can input hours and minutes, optionally seconds.
+- ⏱ **withSeconds**: Enables second input for precise time selection.
+- 🎯 **Smart Focus**: Automatically moves focus to the next field when needed.
+- ⚠️ **Error Handling**: Shows error styling when \`showError\` is true.
+- 🔒 **Editable Mode**: Can be read-only when \`editable\` is false.
+- 🎨 **Custom Styling**: Fully customizable via \`styles\` prop.
+- 🧩 First-class **stateful form integration**
+
+---
+
+### 📌 Usage
+
+\`\`\`tsx
+<Timebox
+  name="startTime"
+  label="Start Time"
+  value="08:30"
+  withSeconds
+  editable
+  showError={false}
+  placeholder={{ hour: "HH", minute: "MM", second: "SS" }}
+  onChange={(e) => console.log(e.target.value)}
+  styles={{
+    self: css\`border-color: blue;\`,
+    inputWrapperStyle: css\`background: #f0f0f0;\`,
+  }}
+/>
+\`\`\`
+
+- Use \`withSeconds\` to enable seconds input.
+- Use \`editable={false}\` to make the input read-only.
+- Use \`styles\` to customize input and wrapper styling.
+- The \`onChange\` callback returns a formatted string \`HH:MM:SS\`.
+        `,
+      },
+    },
+  },
   argTypes: {
-    onChange: { action: "time changed" },
-    withSeconds: { control: "boolean" },
+    value: {
+      control: "text",
+      description: "Current time value in HH:MM or HH:MM:SS format.",
+    },
+    name: {
+      control: "text",
+      description: "Name attribute for the input (useful in forms).",
+    },
+    label: {
+      control: "text",
+      description: "Label text displayed above the input.",
+    },
+    withSeconds: {
+      control: "boolean",
+      description: "Enable seconds input field for precise time selection.",
+    },
+    editable: {
+      control: "boolean",
+      description: "Determines whether the input is editable.",
+    },
+    showError: {
+      control: "boolean",
+      description: "If true, shows error styling around the input.",
+    },
+    errorMessage: {
+      control: "text",
+      description: "Error message displayed when showError is true.",
+    },
+    placeholder: {
+      control: "object",
+      description:
+        "Placeholder for each field. Example: { hour: 'HH', minute: 'MM', second: 'SS' }",
+    },
+    styles: {
+      control: false,
+      description:
+        "Custom styles for the input and wrapper. Can define self and inputWrapperStyle.",
+    },
+    disabled: {
+      control: "boolean",
+      description: "If true, disables all fields and makes them non-editable.",
+    },
+    actions: {
+      control: false,
+      description:
+        "Action buttons displayed inside the input. Optional, usually empty for Timebox.",
+    },
+    onChange: {
+      action: "time changed",
+      description:
+        "Callback triggered when time changes. Returns event with target.value as HH:MM or HH:MM:SS.",
+    },
+    onKeyDown: {
+      control: false,
+      description:
+        "Custom keydown handler. Useful for intercepting navigation keys or custom behavior.",
+    },
   },
 };
 

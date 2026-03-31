@@ -318,7 +318,7 @@
   "scripts": {
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "build": "pnpm build-ts && pnpm copyjs && node postbuild-inject.js",
+    "build": "pnpm build-ts && pnpm copyjs && node postbuild-inject.js && pnpm generate-rss",
     "build-ts": "pnpm tsc -p tsconfig.build.json",
     "copyjs": "rsync -avm --include='*/' --include='*.js' --exclude='*' lib/ dist/lib/",
     "publish-coneto": "pnpm build && pnpm publish",
@@ -326,7 +326,8 @@
     "type-check": "tsc --noEmit",
     "lint": "eslint '**/*.{ts,tsx}'",
     "format": "prettier --write .",
-    "prepare": "node generate-export.cjs",
+    "prepare": "node scripts/generate-export.cjs",
+    "generate-rss": "node scripts/generate-rss.cjs",
     "test-open": "cypress open",
     "test-run": "cypress run",
     "test-run-component": "cypress run --component"
@@ -346,6 +347,8 @@
     "zod": "^3.24.4"
   },
   "devDependencies": {
+    "@babel/parser": "^7.29.2",
+    "@babel/traverse": "^7.29.0",
     "@eslint/js": "^9.26.0",
     "@floating-ui/react": "^0.27.8",
     "@remixicon/react": "^4.6.0",
@@ -370,6 +373,8 @@
     "eslint": "^9.26.0",
     "eslint-plugin-cypress": "^5.1.0",
     "eslint-plugin-react": "^7.37.5",
+    "fast-glob": "^3.3.3",
+    "fs-extra": "^11.3.4",
     "globals": "^15.15.0",
     "libphonenumber-js": "^1.12.8",
     "prettier": "^3.5.3",

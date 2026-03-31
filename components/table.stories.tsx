@@ -30,6 +30,165 @@ const meta: Meta<typeof Table> = {
   title: "Content/Table",
   component: Table,
   tags: ["autodocs"],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+The **Table** component is a powerful and flexible data display component designed for handling complex datasets with rich interactions such as selection, drag-and-drop, grouping, and pagination.
+
+---
+
+### ✨ Features
+- ✅ **Row selection** with checkbox support (single/multi)
+- 🔍 Optional **search filtering** via integrated Searchbox
+- 🧲 **Drag-and-drop** row reordering (with grouping support)
+- 📂 **Grouped rows** with collapsible sections
+- ⚡ **Infinite scroll** support via last row detection
+- 📊 Built-in **pagination controls**
+- 🎯 Custom **row actions** & contextual menus
+- 🧩 Fully customizable **styles per section**
+- 📌 Support for **summary rows**
+- ⏳ Built-in **loading overlay**
+
+---
+
+### 🧱 Component Structure
+
+\`\`\`tsx
+<Table>
+  // only row
+  <Table.Row rowId="1" content={["Name", "Email"]} />
+  
+  // with group
+  <Table.Row.Group title="Group A">
+    <Table.Row rowId="2" content={["Grouped Row"]} />
+  </Table.Row.Group>
+</Table>
+\`\`\`
+
+---
+
+### 📦 Column Definition
+
+\`\`\`tsx
+{
+  id: string;
+  caption: string;
+  sortable?: boolean;
+  width?: string;
+  styles?: {
+    self?: CSSProp;
+  };
+}
+\`\`\`
+
+---
+
+### ⚙️ Core Behaviors
+
+#### Selection
+- Enable with \`selectable\`
+- Controlled via \`selectedItems\`
+- Callback: \`onItemsSelected(ids: string[])\`
+
+#### Drag & Drop
+- Enable with \`draggable\`
+- Works across groups
+- Callback provides:
+\`\`\`
+{
+  id: string;
+  oldGroupId: string;
+  newGroupId: string;
+  oldPosition: number;
+  newPosition: number;
+}
+\`\`\`
+
+#### Search
+- Enable with \`searchable\`
+- Customize using \`searchbox\` props
+- Integrates seamlessly with header
+
+#### Pagination
+- Enable with \`showPagination\`
+- Supports:
+  - Next / Previous callbacks
+  - Disabled states
+  - Custom labels
+
+#### Infinite Scroll
+- Use \`onLastRowReached\` to detect bottom visibility
+- Ideal for lazy loading / large datasets
+
+---
+
+### 🧩 Row Types
+
+#### Basic Row
+\`\`\`tsx
+<Table.Row
+  rowId="1"
+  content={["John Doe", "john@mail.com"]}
+/>
+\`\`\`
+
+#### Custom Cell Rendering
+\`\`\`tsx
+<Table.Row rowId="1">
+  <Table.Row.Cell>Custom Content</Table.Row.Cell>
+</Table.Row>
+\`\`\`
+
+#### Grouped Row
+\`\`\`tsx
+<Table.Row.Group title="Team A">
+  <Table.Row rowId="2" content={["Alice"]} />
+</Table.Row.Group>
+\`\`\`
+
+---
+
+### 🎯 Actions
+
+- Header actions via \`actions\`
+- Row-level actions via \`actions(rowId)\`
+- Supports:
+  - Button
+  - Capsule (toggle-like UI)
+
+---
+
+### 📊 Summary Row
+
+\`\`\`tsx
+[
+  {
+    span?: number;
+    content?: ReactNode;
+    bold?: boolean;
+  }
+]
+\`\`\`
+
+- Rendered at the bottom
+- Supports column spanning
+
+
+---
+
+### 📌 Usage Guidelines
+- Use **grouped rows** for hierarchical or categorized data
+- Enable **dragging** only when ordering matters
+- Use **controlled selection** for syncing with external state
+- Combine **pagination + infinite scroll** carefully (avoid overlap)
+- Provide meaningful **emptySlate** content for better UX
+- Use **summary rows** for totals or aggregated data
+
+      `,
+      },
+    },
+  },
   args: {
     selectable: false,
     searchable: false,
