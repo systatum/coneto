@@ -6,6 +6,56 @@ const meta: Meta<typeof Launchpad> = {
   title: "Content/Launchpad",
   component: Launchpad,
   tags: ["autodocs"],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+**Launchpad** is a versatile content layout component that organizes sections and items into swipeable pages.  
+It supports custom styling, pagination, draggable pages, and flexible section layouts.
+
+---
+
+### ✨ Features
+- 🏗 **Sections** – Divide content into multiple \`Launchpad.Section\` blocks
+- 📦 **Items** – Each section can have multiple \`Launchpad.Section.Item\` elements
+- 🔄 **Swipeable pages** – Automatically paginate sections when exceeding \`maxSection\`
+- 🖌 **Custom styles** – Apply styles at container, section, separator, grid, and item levels
+- 🎛 **Grid presets** – Configure layout of items using predefined grid presets
+- 🖱 **Pagination dots** – Visual indication and navigation for multiple pages
+- 🫳 **Drag & swipe support** – Smooth drag and swipe interactivity
+
+---
+
+### 🛠 Usage
+
+\`\`\`tsx
+<Launchpad maxSection={2} containerStyle={{ padding: '1rem', border: '1px solid #ccc' }}>
+  <Launchpad.Section title="Featured Apps" styles={{ containerStyle: { background: '#f9f9f9' } }}>
+    <Launchpad.Section.Item
+      href="/app1"
+      iconUrl="https://picsum.photos/30"
+      label="App 1"
+    />
+    <Launchpad.Section.Item
+      href="/app2"
+      iconUrl="https://picsum.photos/30"
+      label="App 2"
+    />
+  </Launchpad.Section>
+
+  <Launchpad.Section title="Utilities">
+    <Launchpad.Section.Item
+      href="/utility1"
+      iconUrl="https://picsum.photos/30"
+      label="Utility 1"
+    />
+  </Launchpad.Section>
+</Launchpad>
+\`\`\`
+        `,
+      },
+    },
+  },
   argTypes: {
     children: {
       control: false,

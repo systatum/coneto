@@ -6,6 +6,71 @@ const meta: Meta<typeof Grid> = {
   title: "Content/Grid",
   component: Grid,
   tags: ["autodocs"],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+Grid is a versatile layout component that provides a responsive, customizable grid system for displaying content. 
+It supports predefined presets, flexible gaps, optional width/height, and individual Grid.Card components with selection, thumbnails, and custom content.
+
+---
+
+### ✨ Features
+- 🧱 **Responsive grid presets**: Choose from multiple predefined layouts like \`1-to-4\`, \`2-to-4\`, or auto-fit configurations (\`auto-fit-300\`) for adaptive columns.
+- 📏 **Custom spacing**: Adjust the gap between grid items with \`gap\` (number in px or any CSS size).
+- 🖼 **Grid.Card support**: Each item can display thumbnails, content, and be selectable with a hover and checkbox state.
+- 🎨 **Customizable styles**: Override container and card styles via \`styles.self\` using \`CSSProp\` for full visual control.
+- ⛔ **Selectable items**: Optionally allow Grid.Cards to be selectable with visual feedback.
+- 🧩 **Flexible children**: Embed any ReactNode inside cards, like forms, images, or interactive components.
+- 📐 **Optional container sizing**: Set custom width and height for the grid wrapper.
+
+---
+
+### 📌 Usage
+
+\`\`\`tsx
+<Grid
+  gap="16px"
+  preset="1-to-4"
+  width="100%"
+  styles={{
+    self: css\`
+      padding: 16px;
+      background-color: #f9fafb;
+      border-radius: 8px;
+    \`,
+  }}
+>
+  <Grid.Card
+    selectable
+    isSelected={true}
+    onSelected={() => console.log("Card selected")}
+    thumbnail="https://via.placeholder.com/150"
+    styles={{
+      self: css\`
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+      \`,
+    }}
+  >
+    <p>Card content goes here</p>
+  </Grid.Card>
+
+  <Grid.Card thumbnail="https://via.placeholder.com/150">
+    <p>Another card</p>
+  </Grid.Card>
+</Grid>
+\`\`\`
+
+- Use \`preset\` to quickly configure responsive layouts.
+- Adjust \`gap\` for spacing between items.
+- Embed any content inside \`Grid.Card\` including images, text, or custom components.
+- Use \`selectable\` and \`isSelected\` to handle card selection with optional checkboxes.
+- Fully style container and cards using \`styles.self\` with \`CSSProp\`.
+`,
+      },
+    },
+  },
   argTypes: {
     children: {
       control: false,

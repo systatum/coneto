@@ -30,22 +30,46 @@ const meta: Meta<typeof Card> = {
   title: "Content/Card",
   component: Card,
   tags: ["autodocs"],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+The **Card** component is a flexible container used to group related content and actions within a structured layout. It supports optional headers, footers, interactive controls, and animated content visibility.
+
+Key features include:
+- **Flexible Layout**: Supports title, subtitle, content, and footer sections.
+- **Customizable Appearance**: Control shadow, border radius, and padding.
+- **Header Actions**: Add action buttons or controls to the header area.
+- **Closable**: Optional close button for dismissible cards.
+- **Toggleable Content**: Collapse or expand content with smooth animations.
+- **Animation Support**: Built-in expand/collapse transitions using Framer Motion.
+- **Styling Overrides**: Customize each section using CSS props.
+
+This component is ideal for dashboards, panels, grouped content, and modular UI sections.
+        `,
+      },
+    },
+  },
   argTypes: {
     shadow: {
       control: {
         type: "select",
         options: ["none", "sm", "md", "lg", "xl", "2xl"],
       },
-      description: "Shadow size",
-      defaultValue: "sm",
+      description: "Controls the shadow intensity of the card.",
+      table: {
+        defaultValue: { summary: "sm" },
+      },
     },
     radius: {
       control: {
         type: "select",
         options: ["none", "xs", "sm", "md", "lg", "xl", "2xl", "3xl", "full"],
       },
-      description: "Border radius",
-      defaultValue: "xs",
+      description: "Defines the border radius of the card.",
+      table: {
+        defaultValue: { summary: "xs" },
+      },
     },
     padding: {
       control: {
@@ -67,30 +91,65 @@ const meta: Meta<typeof Card> = {
           "10",
         ],
       },
-      description: "Padding size",
-      defaultValue: "sm",
-    },
-    styles: {
-      containerStyle: {
-        control: "text",
-        description: "Additional custom container classes",
-      },
-      headerStyle: {
-        control: "text",
-        description: "Additional custom title classes",
-      },
-      footerStyle: {
-        control: "text",
-        description: "Additional custom footer classes",
+      description: "Controls the internal spacing of the card.",
+      table: {
+        defaultValue: { summary: "sm" },
       },
     },
     title: {
       control: "text",
-      description: "Additional for title content",
+      description: "Main title displayed in the card header.",
+    },
+    subtitle: {
+      control: "text",
+      description: "Secondary text displayed below the title.",
     },
     children: {
-      control: "text",
-      description: "Card content",
+      control: false,
+      description: "Main content rendered inside the card body.",
+    },
+    footerContent: {
+      control: false,
+      description: "Content rendered in the footer section.",
+    },
+    headerActions: {
+      control: false,
+      description: "List of action buttons displayed in the header.",
+    },
+    closable: {
+      control: "boolean",
+      description: "If true, shows a close button in the top-right corner.",
+    },
+    onCloseRequest: {
+      action: "closed",
+      description: "Callback triggered when the close button is clicked.",
+    },
+    toggleable: {
+      control: "boolean",
+      description: "Enables collapse/expand behavior for the card content.",
+    },
+    open: {
+      control: "boolean",
+      description: "Controls whether the card content is visible.",
+    },
+    onToggleChange: {
+      action: "toggled",
+      description: "Callback triggered when the toggle state changes.",
+    },
+    styles: {
+      control: false,
+      description: `
+Custom styles for different sections of the Card component:
+
+- **containerStyle**: Styles for the outer card container
+- **headerStyle**: Styles for the header section
+- **contentStyle**: Styles for the main content area
+- **footerStyle**: Styles for the footer section
+- **titleStyle**: Styles for the title text
+- **subtitleStyle**: Styles for the subtitle text
+- **textContainerStyle**: Styles for the title/subtitle wrapper
+- **actionContainerStyle**: Styles for the header actions wrapper
+      `,
     },
   },
 };
@@ -387,35 +446,35 @@ export const WithHeaderAndFooter: Story = {
             title: "French Toast",
             subtitle: "Breakfast",
             icon: { image: "https://picsum.photos/seed/frenchtoast/200" },
-            rightSideContent: [<span>13$</span>],
+            rightSideContent: [<span key="1-right-side">13$</span>],
           },
           {
             id: "2",
             title: "Croissant & Coffee",
             subtitle: "French",
             icon: { image: "https://picsum.photos/seed/croissant/200" },
-            rightSideContent: [<span>10$</span>],
+            rightSideContent: [<span key="2-right-side">10$</span>],
           },
           {
             id: "3",
             title: "Sushi Deluxe",
             subtitle: "Japanese",
             icon: { image: "https://picsum.photos/seed/sushi/200" },
-            rightSideContent: [<span>22$</span>],
+            rightSideContent: [<span key="3-right-side">22$</span>],
           },
           {
             id: "4",
             title: "Pad Thai",
             subtitle: "Thai",
             icon: { image: "https://picsum.photos/seed/padthai/200" },
-            rightSideContent: [<span>15$</span>],
+            rightSideContent: [<span key="4-right-side">15$</span>],
           },
           {
             id: "5",
             title: "Tacos Al Pastor",
             subtitle: "Mexican",
             icon: { image: "https://picsum.photos/seed/tacos/200" },
-            rightSideContent: [<span>12$</span>],
+            rightSideContent: [<span key="5-right-side">12$</span>],
           },
         ],
       },
@@ -428,35 +487,35 @@ export const WithHeaderAndFooter: Story = {
             title: "Margherita Pizza",
             subtitle: "Italian",
             icon: { image: "https://picsum.photos/seed/pizza/200" },
-            rightSideContent: [<span>18$</span>],
+            rightSideContent: [<span key="6-right-side">18$</span>],
           },
           {
             id: "7",
             title: "Butter Chicken",
             subtitle: "Indian",
             icon: { image: "https://picsum.photos/seed/butterchicken/200" },
-            rightSideContent: [<span>16$</span>],
+            rightSideContent: [<span key="7-right-side">16$</span>],
           },
           {
             id: "8",
             title: "Pho Bo",
             subtitle: "Vietnamese",
             icon: { image: "https://picsum.photos/seed/phobo/200" },
-            rightSideContent: [<span>14$</span>],
+            rightSideContent: [<span key="8-right-side">14$</span>],
           },
           {
             id: "9",
             title: "Cheeseburger",
             subtitle: "American",
             icon: { image: "https://picsum.photos/seed/cheeseburger/200" },
-            rightSideContent: [<span>11$</span>],
+            rightSideContent: [<span key="9-right-side">11$</span>],
           },
           {
             id: "10",
             title: "Falafel Wrap",
             subtitle: "Middle Eastern",
             icon: { image: "https://picsum.photos/seed/falafel/200" },
-            rightSideContent: [<span>13$</span>],
+            rightSideContent: [<span key="10-right-side">13$</span>],
           },
         ],
       },

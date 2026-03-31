@@ -5,6 +5,42 @@ const meta: Meta<typeof LoadingSpinner> = {
   title: "Content/LoadingSpinner",
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+**LoadingSpinner** ⏳ is a flexible spinner component to indicate loading states.  
+It supports customizable icon size, optional label text, spacing, and fully customizable styles.
+
+---
+
+### ✨ Features
+- 🔄 **Spinner icon**: Animated loading indicator
+- 🏷 **Optional label**: Display text next to the spinner
+- 📏 **Customizable sizing**: Adjust icon diameter and text font size
+- ↔️ **Adjustable gap**: Control space between spinner and label
+- 🎨 **Custom styles**: Override container, icon, and label styles with styled-components
+
+---
+
+### 🛠 Usage
+
+\`\`\`tsx
+<LoadingSpinner
+  iconSize={24}
+  textSize={14}
+  label="Loading..."
+  gap={8}
+  styles={{
+    containerStyle: css\`display: flex; align-items: center;\`,
+    iconStyle: css\`stroke: #3498db;\`,
+    labelStyle: css\`color: #555; font-weight: 500;\`,
+  }}
+/>
+\`\`\`
+
+        `,
+      },
+    },
   },
   component: LoadingSpinner,
   tags: ["autodocs"],

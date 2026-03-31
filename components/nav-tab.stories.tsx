@@ -23,6 +23,67 @@ const meta: Meta<typeof NavTab> = {
   tags: ["autodocs"],
   parameters: {
     layout: "fullscreen",
+    docs: {
+      description: {
+        component: `
+📑 **NavTab** is a fully-featured navigation tab component for displaying multiple tabbed sections, sub-items, and header actions. It’s perfect for dashboards, multi-step interfaces, or any UI requiring structured tab navigation.
+
+---
+
+### ✨ Features
+- 🏷 **Tabs & Sub-Items**: Support for main tabs and nested sub-items with optional content.
+- 🎨 **Custom Styling**: Override individual parts of the NavTab (tab box, header, actions, content) via \`styles\`.
+- 🔹 **Active Tab Highlight**: Underline or highlight active tab with \`activeColor\`.
+- 🖱 **Tab Click Handling**: Automatic or custom behavior when a tab or sub-item is clicked.
+- ⚡ **Actions**: Header action buttons with icons, sub-menus, and fine-grained control.
+- 📏 **Sizes**: Supports \`md\` and \`sm\` tab sizes.
+- 🔧 **Controlled & Uncontrolled**: Use \`activeTab\` + \`onChange\` for controlled mode, or let the component manage local state.
+
+---
+
+### 🛠 Usage
+\`\`\`tsx
+<NavTab
+  tabs={[
+    {
+      id: "write",
+      title: "Write",
+      content: <WriteTabContent />,
+      subItems: [
+        { id: "draft", caption: "Drafts", content: <DraftContent /> }
+      ]
+    },
+    { id: "review", title: "Review", content: <ReviewTabContent /> }
+  ]}
+  activeTab="write"
+  activeColor="#3b82f6"
+  actions={[
+    {
+      caption: "Save",
+      icon: { image: SaveIcon },
+      onClick: () => console.log("Saved!"),
+    }
+  ]}
+  styles={{
+    containerStyle: "background: white;",
+    boxStyle: "padding: 8px 16px;",
+  }}
+  onChange={(id) => console.log("Active tab:", id)}
+/>
+\`\`\`
+
+---
+
+### 📝 Notes
+- Tabs automatically hide sub-items marked as \`hidden\`.
+- Action buttons can show sub-menus and support active/pressed state.
+- Combine with custom \`children\` to render additional content below tab panels.
+- Works in fullscreen layouts and can be fully styled via CSS-in-JS (\`styled-components\`).
+
+🚀 **Tip:** Use \`activeTab\` + \`onChange\` for external control over tab selection or leave uncontrolled to manage tab state internally.
+      `,
+      },
+    },
   },
   excludeStories: ["WriteTabContent", "ReviewTabContent"],
   argTypes: {
