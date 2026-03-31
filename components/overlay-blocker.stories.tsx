@@ -20,7 +20,7 @@ const meta: Meta<typeof OverlayBlocker> = {
 - 🖱 Click handling options:
   - **"close"**: Closes overlay when clicked (default)
   - **"preventDefault"**: Prevents automatic closing
-  - **Function**: Custom click behavior with helpers
+  - **Function**: Custom behavior
 - 🎨 Fully styleable via \`styles.self\` (CSSProp compatible)
 - 🔧 Supports imperative \`open\` and \`close\` via \`ref\`
 
