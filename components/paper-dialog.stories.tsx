@@ -26,10 +26,9 @@ const meta: Meta<typeof PaperDialog> = {
 - 🟢 Supports three states: \`restored\`, \`minimized\`, and \`closed\`
 - ❌ Optional close button and minimize toggle
 - 🛡 Overlay blocker when restored to prevent outside interactions
-- 🎛 Trigger component for opening the dialog
-- 📦 Content component for flexible inner content
+- 🎛 Trigger opening/closing externally
 - 🎨 Fully styleable via \`styles\` props
-- ⌨️ Handles Escape key for closing
+- ⌨️ Handles "Escape" key to close the dialog
 
 ### 🛠 Usage
 \`\`\`tsx
