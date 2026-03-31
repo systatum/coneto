@@ -22,7 +22,7 @@ It supports custom styling, pagination, draggable pages, and flexible section la
 - 🖌 **Custom styles** – Apply styles at container, section, separator, grid, and item levels
 - 🎛 **Grid presets** – Configure layout of items using predefined grid presets
 - 🖱 **Pagination dots** – Visual indication and navigation for multiple pages
-- 🖐 **Drag & swipe support** – Smooth horizontal dragging with Framer Motion
+- 🫳 **Drag & swipe support** – Smooth drag and swipe interactivity
 
 ---
 
