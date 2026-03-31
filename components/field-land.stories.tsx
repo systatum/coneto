@@ -22,10 +22,10 @@ FieldLane is a flexible form field wrapper that supports labels, helper text, er
 
 ### ✨ Features
 - 🏷 **Label support**: Configurable position ("top" or "left"), width, gap, and required indicator.
-- ⚠️ **Error handling**: Show inline error messages with optional error icons positioned absolutely or relatively.
-- 🖱 **Actions & buttons**: Attach multiple action buttons or icons with tooltips, click handlers, and visibility control.
+- ⚠️ **Error mark**: Show inline error messages with optional error icons positioned absolutely or relatively.
+- 🖱 **Actions buttons**: Attach multiple action buttons or icons with tooltips, click handlers, and visibility control.
 - ⬇️ **Dropdowns**: Include one or multiple dropdowns with optional filtering, custom renderers, and styling.
-- 🎨 **Customizable styles**: Override styles for container, label, body, and input/control areas.
+- 🎨 **Customizable styles**: Override styles for the container, label, as well as the input/control area.
 - 🧩 **Flexible children**: Embed any ReactNode (input, select, custom component) as field content.
 - ⛔ **Disabled state**: Disable the entire field with visual feedback.
 
