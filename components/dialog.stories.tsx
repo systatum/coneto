@@ -30,7 +30,7 @@ Dialog is a modal component for displaying messages, forms, or custom content in
 ### 📌 Usage
 - Use **Dialog.show(config)** and **Dialog.hide()** for imperative control.
 - Provide \`onVisibilityChange\` to control open/close externally (controlled mode).
-- Footer buttons use **onClick** with \`{ id, closeDialog }\`.
+- Action buttons inside the dialog is actionable through **onClick**.
 - Styles are optional and override sections individually.
   `,
       },
