@@ -22,7 +22,7 @@ const meta: Meta<typeof Tooltip> = {
     docs: {
       description: {
         component: `
-Tooltip is a versatile floating overlay component used to display contextual information when users hover or click on a target element. 
+Tooltip is a floating overlay component displaying contextual information when users hover or click on a given element. 
 It supports flexible placement, delay, custom styling, and controlled visibility.
 
 ---
