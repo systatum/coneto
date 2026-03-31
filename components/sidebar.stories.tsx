@@ -15,8 +15,7 @@ const meta: Meta<typeof Sidebar> = {
     docs: {
       description: {
         component: `
-**Sidebar** is a responsive sidebar container for desktop and mobile layouts.
-It supports fixed or scrollable items, swipe gestures on mobile, and fully customizable styles.
+**Sidebar** is a responsive sidebar container. Users can do swipe gestures to close or open the sidebar when on a mobile phone. You can define any sidebar item to be fixed or scrollable.
 
 ---
 
@@ -24,7 +23,7 @@ It supports fixed or scrollable items, swipe gestures on mobile, and fully custo
 - 🖥 **Responsive layout**: Automatically switches between mobile (toggleable) and desktop (always visible) modes.
 - 📱 **Mobile swipe support**: Swipe left/right to open or close the sidebar.
 - 🖌 **Custom styling**: Customize mobile and desktop styles independently via the \`styles\` prop.
-- ↔️ **Positioning**: Can be placed on the left or right of the screen using the \`position\` prop.
+- ↔️ **Positioning**: Can be placed on the left or right of the screen via the \`position\` prop.
 - 🧩 **Composable children**: Add items, spacers, or custom content.
 - 🔧 **Sidebar.Item**: Individual items inside the sidebar, with optional fixed height.
 - ⚡ **Sidebar.Spacer**: Add flexible spacing with configurable widths for mobile and desktop.
