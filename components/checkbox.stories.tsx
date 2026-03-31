@@ -35,9 +35,9 @@ It works well in forms and can be used in both **standalone** and **form-integra
 - \`highlightOnChecked\` changes the background when checked
 
 #### Form Integration
-- Wraps inside \`FieldLane\` automatically if \`label\` or \`helper\` provided
-- \`showError\` + \`errorMessage\` display validation errors
-- \`name\` and \`id\` can be set for form submission and accessibility
+- Can set \`label\` or \`helper\` context
+- Use \`showError\` and \`errorMessage\` to show validation errors
+- \`name\` and \`id\` can be set for form submission as well as accessibility
 
 ---
 
