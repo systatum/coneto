@@ -178,13 +178,19 @@ async function main() {
   const items = [];
 
   // Default channel metadata (overridden by Welcome.mdx)
-  let channelTitle = "Coneto Storybook";
+  let channelTitle = "Systatum Coneto React UI Library";
   let channelDescription = "Component documentation feed";
+
+  let latestModified = new Date(0);
 
   for (const file of files) {
     const fullPath = path.join(ROOT, file);
     const code = await fs.readFile(fullPath, "utf-8");
     const stats = await fs.stat(fullPath);
+
+    if (stats.mtime > latestModified) {
+      latestModified = stats.mtime;
+    }
 
     /**
      * MDX handling
@@ -202,7 +208,7 @@ async function main() {
           .replace(/^\s*#+\s*/gm, "")
           .trim();
 
-        mdx.description = stripped.slice(0, 300);
+        mdx.description = stripped;
       }
 
       if (file.toLowerCase().endsWith("welcome.mdx")) {
@@ -210,37 +216,26 @@ async function main() {
 
         const cleanedDesc = cleanDescription(mdx.description || "");
 
-        if (mdx.title) channelTitle = mdx.title;
         if (cleanedDesc) channelDescription = cleanedDesc;
 
-        items.unshift(`
-      <item>
-        <title>Systatum - Coneto React UI</title>
-        <link>${SITE_URL}/</link>
-        <guid>${hash("homepage")}</guid>
-        <description><![CDATA[${cleanedDesc}]]></description>
-        <pubDate>${stats.mtime.toUTCString()}</pubDate>
-      </item>
-    `);
+        continue;
+      } else {
+        const slug = toSlug(mdx.title);
+
+        items.push(`
+          <item>
+          <title>${mdx.title}</title>
+          <link>${SITE_URL}/?path=/docs/${slug}</link>
+          <guid>${hash(file)}</guid>
+          <description><![CDATA[${cleanDescription(
+            mdx.description
+          )}]]></description>
+          <pubDate>${stats.mtime.toUTCString()}</pubDate>
+          </item>
+          `);
 
         continue;
       }
-
-      const slug = toSlug(mdx.title);
-
-      items.push(`
-    <item>
-      <title>${mdx.title}</title>
-      <link>${SITE_URL}/?path=/docs/${slug}</link>
-      <guid>${hash(file)}</guid>
-      <description><![CDATA[${cleanDescription(
-        mdx.description
-      )}]]></description>
-      <pubDate>${stats.mtime.toUTCString()}</pubDate>
-    </item>
-  `);
-
-      continue;
     }
 
     /**
@@ -280,7 +275,7 @@ async function main() {
     <description>${channelDescription}</description>
     <language>en</language>
     <generator>storybook-rss v${version}</generator>
-    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+    <lastBuildDate>${latestModified.toUTCString()}</lastBuildDate>
     ${items.join("\n")}
   </channel>
 </rss>`;
