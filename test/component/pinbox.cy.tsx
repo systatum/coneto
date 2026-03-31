@@ -17,13 +17,13 @@ describe("Pinbox", () => {
     );
   }
 
-  context("onPaste", () => {
-    context("alphanumeric", () => {
+  context("when pasting", () => {
+    context("with alphanumeric parts", () => {
       beforeEach(() => {
         cy.mount(<ProductPinbox parts={PARTS_INPUT} />);
       });
 
-      context("when paste with digit", () => {
+      context("when pasting digit", () => {
         it("shows those number", () => {
           cy.get("input")
             .eq(1)
@@ -53,7 +53,7 @@ describe("Pinbox", () => {
         });
       });
 
-      context("when paste with alphabet", () => {
+      context("when pasting alphabet", () => {
         it("shows those alphabet", () => {
           cy.get("input")
             .eq(1)
@@ -83,7 +83,7 @@ describe("Pinbox", () => {
         });
       });
 
-      context("when paste with alphanumeric", () => {
+      context("when pasting alphanumeric", () => {
         it("shows those alphanumeric", () => {
           cy.get("input")
             .eq(1)
@@ -114,12 +114,12 @@ describe("Pinbox", () => {
       });
     });
 
-    context("mix parts (alphanumeric, digit, alphabet)", () => {
+    context("with mix parts (alphanumeric, digit, alphabet)", () => {
       beforeEach(() => {
         cy.mount(<ProductPinbox parts={MIX_PARTS_INPUT} />);
       });
 
-      context("when paste with digit", () => {
+      context("when pasting digit", () => {
         it("should stop if the part not compatible (alphabet input)", () => {
           cy.get("input")
             .eq(1)
@@ -149,7 +149,7 @@ describe("Pinbox", () => {
         });
       });
 
-      context("when paste with alphabet", () => {
+      context("when pasting alphabet", () => {
         it("should stop if the part not compatible (digit input)", () => {
           cy.get("input")
             .eq(1)
@@ -179,7 +179,7 @@ describe("Pinbox", () => {
         });
       });
 
-      context("when paste with alphanumeric", () => {
+      context("when pasting alphanumeric", () => {
         it("should stop if the part not compatible (digit/alphabet input)", () => {
           cy.get("input")
             .eq(1)
