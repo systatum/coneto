@@ -12,18 +12,16 @@ const meta: Meta<typeof Capsule> = {
     docs: {
       description: {
         component: `
-The **Capsule** component is a flexible tab selector built with an animated capsule-style indicator. It is designed for switching between options or views with a smooth and modern UI.
-
-It supports icons, labels, validation states, and integrates seamlessly with form layouts via \`FieldLane\`.
+The **Capsule** component is designed for switching between options.
 
 ---
 
 ### ✨ Features
-- 🧭 **Tab selection** with smooth animated indicator
+- 🧭 **Switch selection** with smooth animated indicator
 - 🎨 Customizable **active background & colors**
 - 🧩 Supports **icons and labels**
 - 📏 Flexible **layout modes** (default / full width)
-- ⚠️ Built-in **error handling & validation UI**
+- ⚠️ Built-in **error handling & validation**
 - 🎯 Fully customizable **styles**
 
 ---
