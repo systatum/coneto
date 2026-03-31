@@ -17,7 +17,7 @@ ThumbField is a thumbs-up / thumbs-down input component designed for feedback, r
 ---
 
 ### ✨ Features
-- 👍👎 **Thumb selection**: Users can select either "up" or "down" or leave blank.
+- 👍 **Thumb selection**: Users can select either "up" or "down" or leave blank.
 - 🖌 **Custom colors**: Configure active thumbs colors via \`thumbsUpBackgroundColor\` and \`thumbsDownBackgroundColor\`.
 - ⚠️ **Error state**: Shows an error icon when \`showError\` is true.
 - 🛠 **Custom styling**: Style the triggers and wrapper via \`styles\`.
