@@ -11,20 +11,70 @@ const meta: Meta<typeof Badge> = {
     docs: {
       description: {
         component: `
-The **Badge** component is a flexible, customizable UI element designed to display small, contextual information such as statuses, labels, or tags. 
+The **Badge** component is a flexible UI element used to display small pieces of contextual information such as statuses, labels, or tags.
 
-Key features include:
-- **Variants**: Predefined color schemes for common states (neutral, green, yellow, red).
-- **Custom Colors**: Override default colors for text, background, and optional circle indicator.
-- **Circle Indicator**: Optional small colored circle to visually highlight status.
-- **Actions**: Optional icons or buttons for additional interactivity.
-- **Accessibility**: Built with ARIA labels for badges, circles, and actions.
+It supports predefined variants, custom colors, optional indicators, and interactive actions.
 
-This component is ideal for use cases like status indicators, category tags, or badges with interactive actions.
+---
+
+### ✨ Features
+- 🎨 Predefined **color variants** (neutral, green, yellow, red)
+- 🎯 Fully customizable **background, text, and circle colors**
+- 🔵 Optional **status indicator circle**
+- ⚡ Support for **interactive actions (icons/buttons)**
+- 🧩 Flexible layout with caption and actions
+- ♿ Accessible with ARIA labels
+
+---
+
+### 🧱 Component Structure
+
+\`\`\`tsx
+<Badge
+  variant="green"
+  caption="Active"
+  withCircle
+/>
+\`\`\`
+
+---
+
+### ⚙️ Core Behaviors
+
+#### Variants
+- Use \`variant\` for predefined styles
+- Can be overridden by custom colors
+
+#### Custom Colors
+- \`backgroundColor\`, \`textColor\`, \`circleColor\`
+- Take priority over variant styles
+
+#### Circle Indicator
+- Enable with \`withCircle\`
+- Uses generated or custom color
+
+#### Actions
+- Add interactive icons via \`actions\`
+- Each action supports click handlers and styles
+
+---
+
+### 🎯 Usage Guidelines
+- Use for **status indicators** (e.g. Active, Pending, Error)
+- Keep captions **short and meaningful**
+- Use \`withCircle\` for visual emphasis
+- Use \`actions\` for quick inline interactions
         `,
       },
     },
   },
+
+  args: {
+    variant: null,
+    caption: "Badge",
+    withCircle: false,
+  },
+
   argTypes: {
     variant: {
       control: { type: "select" },
@@ -36,32 +86,126 @@ This component is ideal for use cases like status indicators, category tags, or 
         red: "red",
         "N/A": null,
       },
-      description: "Select a predefined color variant for the badge.",
+      description: `
+Predefined color variant.
+
+- Controls background and text color
+- Can be overridden by custom color props
+      `,
+      table: {
+        type: { summary: '"neutral" | "green" | "yellow" | "red" | null' },
+        defaultValue: { summary: "null" },
+      },
     },
-    withCircle: {
-      control: "boolean",
-      description:
-        "If true, displays a small circle next to the badge caption.",
-    },
+
     caption: {
       control: "text",
-      description: "The text content of the badge.",
+      description: `
+Text content of the badge.
+
+- Displayed as the main label
+- Should be short and concise
+      `,
+      table: {
+        type: { summary: "string" },
+      },
     },
-    styles: {
-      control: false,
-      description: "Custom CSS styles for the badge container.",
+
+    withCircle: {
+      control: "boolean",
+      description: `
+Displays a small circular indicator.
+
+- Positioned before the caption
+- Useful for status representation
+      `,
+      table: {
+        type: { summary: "boolean" },
+        defaultValue: { summary: "false" },
+      },
     },
+
     backgroundColor: {
       control: "color",
-      description: "Override the badge background color.",
+      description: `
+Override the badge background color.
+
+- Takes priority over \`variant\`
+      `,
+      table: {
+        type: { summary: "string" },
+      },
     },
+
     textColor: {
       control: "color",
-      description: "Override the badge text color.",
+      description: `
+Override the badge text color.
+
+- Takes priority over \`variant\`
+      `,
+      table: {
+        type: { summary: "string" },
+      },
     },
+
     circleColor: {
       control: "color",
-      description: "Override the circle indicator color.",
+      description: `
+Override the circle indicator color.
+
+- Defaults to generated or variant-based color
+      `,
+      table: {
+        type: { summary: "string" },
+      },
+    },
+
+    onClick: {
+      action: "badge clicked",
+      description: `
+Callback triggered when the badge is clicked.
+
+- Enables clickable behavior
+      `,
+      table: {
+        type: { summary: "() => void" },
+      },
+    },
+
+    actions: {
+      description: `
+List of interactive actions.
+
+Each action supports:
+- icon
+- onClick
+- disabled
+- styles
+- title
+
+Used for inline operations (e.g. remove, edit).
+      `,
+      control: false,
+      table: {
+        type: { summary: "BadgeActionProps[]" },
+      },
+    },
+
+    styles: {
+      description: `
+Custom styles override.
+
+Available fields:
+- \`self\`: badge container
+- \`actionWrapperStyle\`: wrapper for actions
+
+Accepts \`CSSProp\` (styled-components).
+      `,
+      control: false,
+      table: {
+        type: { summary: "BadgeStylesProps" },
+      },
     },
   },
 };

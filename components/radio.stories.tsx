@@ -9,68 +9,77 @@ const meta: Meta<typeof Radio> = {
   title: "Input Elements/Radio",
   component: Radio,
   tags: ["autodocs"],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+Radio is a form input component used to select a single option from a group. It supports multiple rendering modes (classic radio or button style), icons, descriptions, error states, and highlight-on-checked behavior.
+
+---
+
+### ✨ Features
+- ⚪ **Classic radio / button style**: Choose between traditional radio circles or interactive button style.
+- 🖼 **Optional icons**: Display an icon next to the label (supports images or custom icons).
+- 📝 **Descriptions**: Add secondary text under the label for extra context.
+- 🖌 **Highlighting**: Highlight container when selected.
+- 🚫 **Disabled / error states**: Supports fully disabled or error visuals.
+- 🔧 **Custom styles**: Customize almost every element using a \`styles\` object.
+
+        `,
+      },
+    },
+  },
   argTypes: {
     value: {
+      control: "text",
       description: "The value associated with this radio option.",
     },
     label: {
+      control: "text",
       description: "Primary label text displayed next to the radio.",
     },
     description: {
-      description:
-        "Secondary text shown below the label to provide more context.",
+      control: "text",
+      description: "Secondary text shown below the label.",
     },
     checked: {
-      description: "Controls whether the radio is selected.",
       control: "boolean",
+      description: "Controls whether the radio is selected.",
     },
-    name: {
-      description:
-        "Name of the radio group. Radios with the same name behave as a group.",
-    },
+    name: { control: "text", description: "Name of the radio group." },
     onChange: {
-      description: "Callback fired when the radio value changes.",
       action: "changed",
+      description: "Callback fired when the radio value changes.",
     },
     highlightOnChecked: {
-      description: "Highlights the radio container when it is checked.",
       control: "boolean",
+      description: "Highlights the radio container when checked.",
     },
     showError: {
-      description: "Displays the error state for the radio.",
       control: "boolean",
+      description: "Displays the error state for the radio.",
     },
     errorMessage: {
+      control: "text",
       description: "Text displayed when the radio is in an error state.",
     },
     mode: {
-      description: "Rendering mode of the radio.",
       control: "radio",
       options: ["radio", "button"],
+      description: "Rendering mode of the radio.",
     },
     icon: {
-      description: "Optional icon displayed inside the radio (button mode).",
       control: false,
+      description: "Optional icon displayed inside the radio (button mode).",
     },
     disabled: {
-      description: "Disables user interaction with the radio.",
       control: "boolean",
+      description: "Disables user interaction with the radio.",
     },
     styles: {
-      description: `
-Custom styles for the Radio component. This object allows you to override styles for individual parts:
-
-- **containerStyle**: Outer wrapper of the Radio
-- **titleStyle**: Title displayed above the radio
-- **inputContainerStyle**: Wrapper for input, icon, and label
-- **self / selfStyle**: Radio input and visual circle
-- **labelStyle**: Label text
-- **descriptionStyle**: Description text below the label
-- **errorStyle**: Error message when validation fails
-
-Each field accepts a \`CSSProp\` (styled-components compatible) and can be used to customize layout, spacing, colors, and other visual properties.
-    `,
       control: false,
+      description:
+        "Custom styles object for container, label, circle, and description.",
     },
   },
 };

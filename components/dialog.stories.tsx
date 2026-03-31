@@ -1,14 +1,40 @@
+import { RiErrorWarningFill, RiInboxArchiveFill } from "@remixicon/react";
 import { useArgs } from "@storybook/preview-api";
 import type { Meta, StoryObj } from "@storybook/react";
-import { Dialog, DialogProps } from "./dialog";
 import { Button } from "./button";
-import { RiErrorWarningFill, RiInboxArchiveFill } from "@remixicon/react";
+import { Dialog, DialogProps } from "./dialog";
 
 const meta: Meta<typeof Dialog> = {
   title: "Stage/Dialog",
   component: Dialog,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+**Dialog is a modal component for displaying messages, forms, or custom content in a focused overlay. It supports headers with title/subtitle/icon, body content, footer actions, and customizable styles.
+
+---
+
+### ✨ Features
+- 🟢 **Controlled visibility** with \`isOpen\`
+- 🔔 **Optional closable** via overlay click, Escape key, or close button
+- 🏷️ **Header** with title, subtitle, and optional icon
+- 🎯 **Custom footer buttons** with callbacks
+- 📝 **Custom content** can be rendered in the body
+- 🎨 Fully **styleable** via \`styles\` prop
+- 🚀 Smooth **zoom in/out animation** on open/close
+
+---
+
+### 📌 Usage
+- Use **Dialog.show(config)** and **Dialog.hide()** for imperative control.
+- Provide \`onVisibilityChange\` to control open/close externally (controlled mode).
+- Action buttons inside the dialog is actionable through **onClick**.
+- Styles are optional and override sections individually.
+  `,
+      },
+    },
   },
   tags: ["autodocs"],
   argTypes: {

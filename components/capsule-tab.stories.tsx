@@ -9,45 +9,145 @@ const meta: Meta<typeof CapsuleTab> = {
   title: "Stage/CapsuleTab",
   component: CapsuleTab,
   tags: ["autodocs"],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+The **CapsuleTab** component is a tab-based layout built on top of the \`Capsule\` component, providing a clean and modern way to switch between multiple content sections.
+
+It supports both **controlled** and **uncontrolled** modes, allowing flexible state management depending on your use case.
+
+---
+
+### ✨ Features
+- 🧭 **Tab navigation** using capsule-style UI
+- 🔁 Supports **controlled & uncontrolled state**
+- 🎨 Customizable **active tab background**
+- 🧩 Flexible **content rendering per tab**
+- 🎯 Fully customizable **styles per section**
+
+---
+
+### ⚙️ Behavior
+
+#### Uncontrolled Mode
+- Uses internal state
+- Default tab is based on \`activeTab\`
+
+#### Controlled Mode
+- Controlled via \`activeTab\` + \`onTabChange\`
+- Parent manages selected tab state
+
+---
+
+### 📌 Usage Guidelines
+- Use for **section switching** inside a single page
+- Keep tab titles **short and clear**
+- Use controlled mode when syncing with URL / global state
+        `,
+      },
+    },
+  },
   argTypes: {
     tabs: {
-      description:
-        "List of tabs with id, title, and content to render inside the CapsuleTab layout.",
+      description: `
+List of tab items.
+
+\`\`\`ts
+{
+  id: string;
+  title: string;
+  content: ReactNode;
+}[]
+\`\`\`
+
+- \`id\`: unique identifier
+- \`title\`: label shown in tab
+- \`content\`: rendered when active
+      `,
       control: false,
+      table: {
+        type: { summary: "CapsuleTabContentProps[]" },
+      },
     },
+
     activeTab: {
-      description:
-        "ID of the initially active tab. Defaults to the first tab if not provided.",
+      description: `
+Currently active tab ID.
+
+- Used as default in uncontrolled mode
+- Fully controlled when paired with \`onTabChange\`
+      `,
       control: "text",
+      table: {
+        type: { summary: "string" },
+        defaultValue: { summary: `"1"` },
+      },
     },
+
     onTabChange: {
-      description:
-        "Callback triggered when the active tab changes. If provided, the parent component can control the active tab externally. If not provided, CapsuleTab manages the active tab internally.",
+      description: `
+Callback triggered when tab changes.
+
+\`\`\`ts
+(id: string) => void
+\`\`\`
+
+- Enables controlled mode
+- Fires on tab click
+      `,
       control: false,
+      table: {
+        type: { summary: "(id: string) => void" },
+      },
     },
+
     activeBackgroundColor: {
-      description: "Background color of the active capsule indicator.",
+      description: `
+Background color for the active tab indicator.
+      `,
       control: "color",
+      table: {
+        type: { summary: "string" },
+        defaultValue: { summary: `"black"` },
+      },
     },
+
+    children: {
+      description: `
+Additional content rendered below active tab content.
+
+Useful for:
+- Actions
+- Footer
+- Extra UI elements
+      `,
+      control: false,
+      table: {
+        type: { summary: "ReactNode" },
+      },
+    },
+
     styles: {
       control: false,
       description: `
-Custom styles for the CapsuleTab component. This object allows you to override styles for individual parts:
+Custom styles for CapsuleTab.
 
-- **self**: Styles applied to the outer \`CapsuleTabWrapper\`. Useful for controlling borders, spacing, layout, shadows, or overall appearance.
+Available fields:
 
-- **contentStyle**: Styles applied to the \`ContentWrapper\` that contains the active tab content. You can control padding, layout direction, background, etc.
+- **self** → Wrapper container (border, layout, shadow)
+- **contentStyle** → Content section styling
+- **capsuleWrapperStyle** → Capsule container wrapper
+- **tabStyle** → Individual tab styling
 
-- **capsuleWrapperStyle**: Styles forwarded to the \`Capsule\` component's container wrapper. Useful for adjusting border radius, alignment, or capsule layout behavior.
-
-- **tabStyle**: Styles applied to individual capsule tabs inside the \`Capsule\` component. You can control tab border radius, colors, padding, hover states, and visual appearance.
-
-Each field accepts a \`CSSProp\` (styled-components compatible) and can be used to customize the layout and appearance of specific parts of the component.
-`,
+All fields accept \`CSSProp\` (styled-components).
+      `,
+      table: {
+        type: { summary: "CapsuleTabStylesProps" },
+      },
     },
   },
 };
-
 export default meta;
 
 type Story = StoryObj<typeof CapsuleTab>;

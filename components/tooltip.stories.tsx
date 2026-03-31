@@ -16,10 +16,109 @@ import { OptionProps } from "./selectbox";
 const meta: Meta<typeof Tooltip> = {
   title: "Content/Tooltip",
   component: Tooltip,
+  tags: ["autodocs"],
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+Tooltip is a floating overlay component displaying contextual information when users hover or click on a given element. 
+It supports flexible placement, delay, custom styling, and controlled visibility.
+
+---
+
+### ✨ Features
+- 🖱 **Trigger events**: Show or hide tooltip on \`hover\` or \`click\`.
+- 📌 **Flexible placement**: Position tooltip above, below, left, or right of the target element.
+- ⏱ **Delay support**: Optional delay for showing the tooltip on hover.
+- 🎨 **Custom styles**: Override container, trigger, arrow, spacer, and drawer styles.
+- 🧩 **Safe area**: Avoid closing tooltip when clicking on elements with specific aria-labels.
+- 🛠 **Programmatic control**: Open or close tooltip using a ref.
+
+---
+
+### 📌 Usage
+\`\`\`tsx
+const tooltipRef = useRef<TooltipRef>(null);
+
+<Tooltip
+  ref={tooltipRef}
+  dialog="This is a tooltip"
+  showDialogOn="hover"
+  hideDialogOn="hover"
+  dialogPlacement="bottom"
+  showDelayPeriod={300}
+  styles={{
+    drawerStyle: css\`background-color: #2563eb; color: white; padding: 6px 12px;\`,
+    arrowStyle: css\`background-color: #2563eb;\`,
+  }}
+>
+  <button>Hover me</button>
+</Tooltip>
+
+// Programmatically open/close
+tooltipRef.current?.open();
+tooltipRef.current?.close();
+\`\`\`
+`,
+      },
+    },
   },
-  tags: ["autodocs"],
+  argTypes: {
+    dialog: {
+      description: "The content displayed inside the tooltip drawer.",
+      control: "text",
+    },
+    children: {
+      description: "The trigger element that the tooltip is attached to.",
+      control: false,
+    },
+    showDialogOn: {
+      description: "Event to trigger showing the tooltip.",
+      control: { type: "select" },
+      options: ["hover", "click"],
+    },
+    hideDialogOn: {
+      description: "Event to trigger hiding the tooltip.",
+      control: { type: "select" },
+      options: ["hover", "click"],
+    },
+    dialogPlacement: {
+      description: "Placement of the tooltip relative to the trigger.",
+      control: { type: "select" },
+      options: [
+        "top",
+        "top-start",
+        "top-end",
+        "bottom",
+        "bottom-start",
+        "bottom-end",
+        "left",
+        "left-start",
+        "left-end",
+        "right",
+        "right-start",
+        "right-end",
+      ],
+    },
+    showDelayPeriod: {
+      description: "Delay in milliseconds before showing the tooltip on hover.",
+      control: "number",
+    },
+    onVisibilityChange: {
+      description: "Callback fired when tooltip visibility changes.",
+      action: "visibilityChanged",
+    },
+    onClick: {
+      description: "Click handler for the trigger element.",
+      action: "clicked",
+    },
+    styles: {
+      description:
+        "Custom CSS styles for tooltip container, drawer, arrow, spacer, or trigger.",
+      control: false,
+    },
+  },
 };
 
 export default meta;

@@ -1,12 +1,55 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Checkbox, CheckboxOptionProps, CheckboxProps } from "./checkbox";
 import { ChangeEvent, useState } from "react";
 import { css } from "styled-components";
+import { Checkbox, CheckboxOptionProps, CheckboxProps } from "./checkbox";
 
 const meta: Meta<typeof Checkbox> = {
   title: "Input Elements/Checkbox",
   component: Checkbox,
   tags: ["autodocs"],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+The **Checkbox** component allows users to select or deselect an option. It supports a main label, optional description, error states, helper text, and full style customization.
+
+It works well in forms and can be used in both **standalone** and **form-integrated** contexts.
+
+---
+
+### ✨ Features
+- ✅ Supports **checked, unchecked, and indeterminate** states
+- 💡 Optional **highlight background** when checked
+- ❌ Displays **error states** with customizable error messages
+- 📝 Supports **helper text** for guidance
+- 🎨 Fully customizable **styles** for wrapper, label, box, icon, and description
+- 🧩 First-class **stateful form integration**
+
+---
+
+### ⚙️ Behavior
+
+#### Standalone Usage
+- Pass \`checked\` and \`onChange\` for controlled usage
+- Pass \`indeterminate\` to show a horizontal line instead of a checkmark
+- \`highlightOnChecked\` changes the background when checked
+
+#### Form Integration
+- Can set \`label\` or \`helper\` context
+- Use \`showError\` and \`errorMessage\` to show validation errors
+- \`name\` and \`id\` can be set for form submission as well as accessibility
+
+---
+
+### 📌 Usage Guidelines
+- Use for **boolean options** in forms or settings
+- Keep label text **short and descriptive**
+- Use controlled mode when checkbox state needs to **sync with parent / form state**
+- Use \`highlightOnChecked\` for **visually emphasizing selections**
+        `,
+      },
+    },
+  },
   argTypes: {
     label: {
       control: "text",

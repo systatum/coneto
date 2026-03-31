@@ -1,32 +1,169 @@
 import { Meta, StoryObj } from "@storybook/react/";
-import {
-  StatefulForm,
-  StatefulOnChangeType,
-  FormFieldGroup,
-  FormValueType,
-} from "./stateful-form";
 import { useMemo, useState } from "react";
-import { COUNTRY_CODES } from "./../constants/countries";
+import styled, { css } from "styled-components";
 import { z } from "zod";
+import { COUNTRY_CODES } from "./../constants/countries";
+import { BadgeProps } from "./badge";
+import { Button } from "./button";
+import { CapsuleContentProps } from "./capsule";
+import { Card } from "./card";
 import {
   OnCompleteFunctionProps,
   OnFileDroppedFunctionProps,
 } from "./file-drop-box";
-import { BadgeProps } from "./badge";
-import { CountryCodeProps } from "./phonebox";
-import styled, { css } from "styled-components";
-import { CapsuleContentProps } from "./capsule";
-import { OptionProps } from "./selectbox";
 import { Messagebox } from "./messagebox";
 import { CurrencyOptionProps } from "./moneybox";
+import { CountryCodeProps } from "./phonebox";
 import { PinboxState } from "./pinbox";
-import { Card } from "./card";
-import { Button } from "./button";
+import { OptionProps } from "./selectbox";
+import {
+  FormFieldGroup,
+  FormValueType,
+  StatefulForm,
+  StatefulOnChangeType,
+} from "./stateful-form";
 
 const meta: Meta<typeof StatefulForm> = {
   title: "Input Elements/StatefulForm",
   component: StatefulForm,
   tags: ["autodocs"],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+**StatefulForm** is a form renderer capable to handle complex scenarios involving data validation,
+nested fields, custom input rendering, and state management. It works seamlessly with Zod.
+
+---
+
+### ✨ Features
+- 🖊 **Flexible input types**: Supports text, email, password, textarea, checkbox, radio, phone, file, image, color, date, money, rating, toggle, pin, and fully custom fields.
+- 📦 **Nested/grouped fields**: Organize fields in groups or frames for complex layouts.
+- ⚠️ **Validation**: Integrates with Zod schemas, supporting \`onChange\`, \`onBlur\`, or \`onSubmit\` validation modes.
+- 🔄 **Reactive state**: Emits \`onChange\` callbacks with current form values.
+- 🎨 **Custom styling**: Customize container, rows, frames, and labels via \`styles\` prop.
+- 🔍 **Error handling**: Automatically shows validation errors for touched fields.
+- 🖌 **Custom render**: For fields with \`type="custom"\`, you can render any JSX/component.
+- 🎯 **AutoFocus**: Focus on a specific field when the form mounts.
+
+---
+
+### 📌 Usage
+
+\`\`\`tsx
+const formValues = {
+  username: "",
+  password: "",
+  rememberMe: false,
+};
+
+const fields = [
+  { name: "username", type: "text", placeholder: "Enter username", required: true },
+  { name: "password", type: "password", placeholder: "Enter password", required: true },
+  { name: "rememberMe", type: "checkbox", title: "Remember Me" },
+];
+
+<StatefulForm
+  fields={fields}
+  formValues={formValues}
+  validationSchema={z.object({
+    username: z.string().min(3),
+    password: z.string().min(6),
+  })}
+  onChange={({ currentState }) => console.log(currentState)}
+  onValidityChange={(isValid) => console.log("Form valid:", isValid)}
+  labelSize="14px"
+  fieldSize="16px"
+  styles={{
+    containerStyle: css\`padding: 16px; background: #f9f9f9;\`,
+    rowStyle: css\`margin-bottom: 12px;\`,
+  }}
+/>
+\`\`\`
+
+- Use \`fields\` to define all form fields, including nested groups or frames.
+- Connect \`validationSchema\` for type-safe validation.
+- Listen to \`onChange\` for live updates and \`onValidityChange\` to track form validity.
+- Customize appearance and spacing using \`styles\`.
+- Render fully custom inputs using \`type="custom"\` and the \`render\` prop.
+`,
+      },
+    },
+  },
+  argTypes: {
+    fields: {
+      control: false,
+      description: `
+Array of form fields or grouped fields. Each field can be a single FormFieldProps object or an array of FormFieldProps for grouped layouts. Supports nested frames for complex forms.
+- Nested fields can inherit label positioning, spacing, and styles.
+- Supports all input types including custom fields.
+`,
+      table: {
+        type: { summary: "FormFieldGroup[]" },
+      },
+    },
+    formValues: {
+      control: false,
+      description:
+        "Current form values object. Keys should match field names. Can include strings, numbers, booleans, arrays, files, or custom types.",
+      table: {
+        type: { summary: "TypeOf<Z>" },
+      },
+    },
+    validationSchema: {
+      control: false,
+      description: `
+Optional Zod schema for validating form values.
+- Supports synchronous and asynchronous validation.
+- Works with nested fields automatically.
+`,
+      table: { type: { summary: "ZodTypeAny" } },
+    },
+    mode: {
+      control: { type: "select" },
+      options: ["onChange", "onBlur", "onSubmit"],
+      description: "Specifies when validation occurs for form fields.",
+    },
+    onValidityChange: {
+      control: false,
+      description:
+        "Callback triggered whenever the overall form validity changes. Receives a boolean indicating validity.",
+      table: { type: { summary: "(isValid: boolean) => void" } },
+    },
+    labelSize: {
+      control: "text",
+      description: "CSS size for labels of all fields.",
+    },
+
+    fieldSize: {
+      control: "text",
+      description: "CSS size for input elements.",
+    },
+    onChange: {
+      control: false,
+      description: `
+Callback called whenever any field changes.
+- Receives \`{ currentState: Record<string, FormValueType> }\`.
+- Useful for live form updates or saving.
+`,
+      table: { type: { summary: "(args: { currentState: any }) => void" } },
+    },
+    autoFocusField: {
+      control: "text",
+      description: "Name of the field to focus automatically when form mounts.",
+    },
+    styles: {
+      control: false,
+      description: `
+Custom styles for form components:
+- \`containerStyle\`: CSS for the outermost form wrapper.
+- \`rowStyle\`: CSS applied to each row or field group.
+- \`frameContainerStyle\`: CSS for frame containers.
+- \`frameTitleStyle\`: CSS for frame titles.
+`,
+      table: { type: { summary: "StatefulFormStylesProps" } },
+    },
+  },
 };
 
 export default meta;

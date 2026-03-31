@@ -1,19 +1,72 @@
-import { Meta, StoryObj } from "@storybook/react";
-import { Sidebar } from "./sidebar";
-import { Signbox } from "./signbox";
-import { useArgs } from "@storybook/preview-api";
-import { StatefulOnChangeType } from "./stateful-form";
-import { useState } from "react";
-import { FieldLaneDropdownsOptionProps } from "./field-lane";
 import * as RemixIcons from "@remixicon/react";
+import { useArgs } from "@storybook/preview-api";
+import { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
 import { css } from "styled-components";
+import { FieldLaneDropdownsOptionProps } from "./field-lane";
+import { Signbox } from "./signbox";
+import { StatefulOnChangeType } from "./stateful-form";
 
 const meta: Meta<typeof Signbox> = {
   title: "Input Elements/Signbox",
-  component: Sidebar,
+  component: Signbox,
   tags: ["autodocs"],
   parameters: {
     layout: "fullscreen",
+    docs: {
+      description: {
+        component: `
+**Signbox** is a component that allows users to draw their signature directly on a canvas.
+
+---
+
+### ✨ Features
+- 🖊 **Draw signature**: Users can draw directly on a canvas.
+- 🧹 **Clearable**: Optional clear button to reset the signature.
+- 🖌 **Customizable style**: Control the canvas, border, and size through styles.
+- ⚡ **Responsive**: Canvas auto-scales on window resize for high-DPI displays.
+- 🔒 **Disabled mode**: Prevent drawing when needed.
+- 💡 **Error state**: Visual feedback when the signature is required or invalid.
+- 🧩 First-class **stateful form integration**
+
+        `,
+      },
+    },
+  },
+  argTypes: {
+    value: {
+      control: "text",
+      description: "Base64 string representing the signature.",
+    },
+    onChange: {
+      action: "changed",
+      description: "Callback fired when signature changes.",
+    },
+    clearable: {
+      control: "boolean",
+      description: "Shows clear button if true.",
+    },
+    disabled: {
+      control: "boolean",
+      description: "Disables drawing and interactions.",
+    },
+    height: { control: "text", description: "Canvas height." },
+    width: { control: "text", description: "Canvas width." },
+    name: { control: "text", description: "Name of the input field." },
+    showError: {
+      control: "boolean",
+      description: "Shows error border if true.",
+    },
+    errorMessage: { control: "text", description: "Error message to display." },
+    helper: {
+      control: "text",
+      description: "Helper text displayed below the input.",
+    },
+    id: { control: "text", description: "HTML id for the canvas element." },
+    styles: {
+      control: false,
+      description: "Custom styles for the canvas container.",
+    },
   },
 };
 

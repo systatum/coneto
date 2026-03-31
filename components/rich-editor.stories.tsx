@@ -1,16 +1,16 @@
-import { Meta, StoryObj } from "@storybook/react";
-import { RichEditor, RichEditorRef } from "./rich-editor";
-import { useMemo, useRef, useState } from "react";
 import {
   RiDeleteBinLine,
   RiFileCopyLine,
   RiPrinterFill,
 } from "@remixicon/react";
-import { Button } from "./button";
+import { Meta, StoryObj } from "@storybook/react";
+import { useMemo, useRef, useState } from "react";
 import { css } from "styled-components";
-import { Boxbar } from "./boxbar";
-import { Badge } from "./badge";
 import { generateSentence } from "./../lib/text";
+import { Badge } from "./badge";
+import { Boxbar } from "./boxbar";
+import { Button } from "./button";
+import { RichEditor, RichEditorRef } from "./rich-editor";
 
 const meta: Meta<typeof RichEditor> = {
   title: "Input Elements/RichEditor",
@@ -20,7 +20,6 @@ const meta: Meta<typeof RichEditor> = {
     docs: {
       description: {
         component: `
-
 ✍️ **RichEditor** is a lightweight, Markdown-compatible rich text editor built on top of \`contentEditable\`. It provides a WYSIWYG editing experience while maintaining clean and structured Markdown output.
 
 ---
@@ -175,7 +174,7 @@ This is ordered list
 
 This is unordered list
 * test
-* test  
+* test
 `,
       },
       { title: "Sender Name", content: "Sender Name" },
