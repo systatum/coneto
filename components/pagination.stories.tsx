@@ -15,7 +15,7 @@ Pagination is a component for navigating through pages of content. It supports n
 ---
 
 ### ✨ Features
-- ⬅️➡️ **Previous & Next buttons** for sequential navigation
+- 🔄 **Previous & Next buttons** for back-and-forth sequential navigation
 - 🔢 **Numbered page buttons** for direct access
 - 🧩 **Combobox** for selecting pages when total pages exceed a threshold
 - 🎨 Customizable styles for container, buttons, and select box
