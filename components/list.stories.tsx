@@ -37,20 +37,19 @@ const meta: Meta<typeof List> = {
     docs: {
       description: {
         component: `
-**List** is a powerful and flexible component for rendering items and groups with rich interactivity.  
-It supports searchable lists, drag-and-drop, selectable items, grouping, and smooth animations.
+**List** organizes items optionally through some grouping as well as enabling rich interactivity, such as drag-and-drop, item search, among others.  
 
 ---
 
 ### ✨ Features
 - 🔹 **Searchable list** – Add a search box to filter items dynamically
 - 🟢 **Selectable items** – Enable checkboxes for single or multiple selection
-- 🛠 **Draggable items** – Reorder items or groups via drag-and-drop
-- 📦 **Grouping** – Organize items into expandable/collapsible groups
-- 🔄 **Smooth animations** – Animated transitions using Framer Motion
+- 🫳 **Draggable items** – Reorder items or groups via drag-and-drop
+- 📦 **Grouping** – Organize items into collapsible groups
+- 🔄 **Smooth animations** – Animated motions and transitions
 - ⏱ **Max items with show more/less** – Limit visible items and toggle extra items
 - 🎨 **Custom styles** – Fully styleable via CSS-in-JS or styled-components
-- 💡 **Custom actions** – Render extra content or buttons on items or groups
+- 💡 **Custom actions** – Render actionable buttons on each item or group
 
 ---
 
