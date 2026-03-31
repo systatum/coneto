@@ -14,16 +14,17 @@ const meta: Meta<typeof Colorbox> = {
     docs: {
       description: {
         component: `
-The **Colorbox** component is a flexible color picker input with both visual color preview and hexadecimal text input. It supports error states, labels, and full customization of styles.
+**Colorbox** is a color picker input having both visual color preview and hexadecimal text input.
 
 ---
 
 ### ✨ Features
-- 🎨 **Visual color preview** along with hex input
+- 👀 **Visual color preview** along with hex input
 - 🔁 Supports **real-time color changes** via typing or selecting
 - 🚫 **Disabled state** to prevent interaction
 - 🛠 Shows **error state** with custom message and styling
-- 🧩 Fully **customizable via styles**
+- 🎨 Fully **customizable styles**
+- 🧩 First-class stateful form integration
 
 ---
 
