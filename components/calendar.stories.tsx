@@ -12,7 +12,7 @@ const meta: Meta<typeof Calendar> = {
     docs: {
       description: {
         component: `
-The **Calendar** component is a flexible and interactive date picker designed for various selection scenarios such as single, multiple, and ranged dates.
+The **Calendar** is an interactive date picker supporting various selection scenarios such as single, multiple, and ranged dates.
 
 It provides a clean UI for navigating months and years, supports custom formatting, and allows deep customization for styling and behavior.
 
@@ -22,7 +22,7 @@ It provides a clean UI for navigating months and years, supports custom formatti
 - 📅 **Multiple selection modes**: single, multiple, ranged
 - 🔁 **Month & year navigation**
 - 🚫 Optional **weekend disabling**
-- 📆 Custom **day & month labels**
+- 🔤 Custom **day & month labels**
 - 🎯 **Today shortcut button**
 - 🎨 Fully customizable **styles**
 - 🔔 Event callbacks for **changes & interactions**
