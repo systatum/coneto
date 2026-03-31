@@ -203,65 +203,155 @@ The **Table** component is a powerful and flexible data display component design
   },
   argTypes: {
     selectable: {
-      description: "Enable row selection with checkboxes.",
+      description: `
+Enable row selection using checkboxes.
+
+- Adds a checkbox column to the table
+- Supports multi-selection
+- Works with \`selectedItems\` (controlled) or internal state (uncontrolled)
+    `,
       control: "boolean",
       table: {
         type: { summary: "boolean" },
         defaultValue: { summary: "false" },
       },
     },
+
+    selectedItems: {
+      description: `
+Controls the selected row IDs (**controlled mode**).
+
+- Provide an array of \`rowId\` values
+- Must be used together with \`onItemsSelected\`
+- If omitted, selection is handled internally (uncontrolled)
+
+📌 Use this when syncing selection with external state (e.g. Redux, form, API)
+    `,
+      control: false,
+      table: {
+        type: { summary: "string[]" },
+        defaultValue: { summary: "[]" },
+      },
+    },
+
     searchable: {
-      description: "Show search box in the table header.",
+      description: `
+Displays a search input in the table header.
+
+- Uses built-in \`Searchbox\` component
+- Can be customized via \`searchbox\` prop
+- Useful for filtering large datasets
+    `,
       control: "boolean",
       table: {
         type: { summary: "boolean" },
+        defaultValue: { summary: "false" },
       },
     },
+
     draggable: {
-      description: "Enable drag-and-drop reordering for rows.",
+      description: `
+Enables drag-and-drop row reordering.
+
+- Supports reordering within and across groups
+- Requires \`onDragged\` to handle updates externally
+- Shows drag handle icon per row
+    `,
       control: "boolean",
       table: {
         type: { summary: "boolean" },
+        defaultValue: { summary: "false" },
       },
     },
+
     isLoading: {
-      description: "Show loading overlay on top of the table.",
+      description: `
+Displays a loading overlay on top of the table.
+
+- Prevents interaction while loading
+- Useful for async data fetching states
+    `,
       control: "boolean",
       table: {
         type: { summary: "boolean" },
+        defaultValue: { summary: "false" },
       },
     },
+
     columns: {
-      description: "Defines table columns.",
+      description: `
+Defines the table columns.
+
+Each column includes:
+- \`id\`: unique identifier
+- \`caption\`: header label
+- \`sortable\`: enable sorting menu
+- \`width\`: optional fixed width
+    `,
       control: false,
       table: {
         type: { summary: "ColumnTableProps[]" },
       },
     },
+
     actions: {
-      description: "Action buttons shown in the header when rows are selected.",
+      description: `
+Header-level actions displayed when rows are selected.
+
+- Supports button or capsule type
+- Automatically hidden if \`hidden: true\`
+- Common use: bulk actions (delete, export, etc.)
+    `,
       control: false,
       table: {
         type: { summary: "TableActionsProps[]" },
       },
     },
+
     onItemsSelected: {
-      description: "Triggered when selected row IDs change.",
+      description: `
+Callback triggered when selected rows change.
+
+\`\`\`ts
+(ids: string[]) => void
+\`\`\`
+
+- Fires on individual selection or "select all"
+- Required for controlled selection mode
+    `,
       action: "items-selected",
       table: {
         type: { summary: "(ids: string[]) => void" },
       },
     },
+
     children: {
-      description:
-        "Table rows (`Table.Row`) or grouped rows (`TableRow.Group`).",
+      description: `
+Table content.
+
+Accepts:
+- \`Table.Row\`
+- \`Table.Row.Group\`
+
+Used to define rows and grouping structure.
+    `,
       control: false,
       table: {
         type: { summary: "ReactNode" },
       },
     },
+
     subMenuList: {
-      description: "Generate sorting menu per column (by column id).",
+      description: `
+Generates sorting menu for each column.
+
+\`\`\`ts
+(columnId: string) => SubMenuListTableProps[]
+\`\`\`
+
+- Used when \`sortable: true\` in column
+- Allows custom sorting options (ASC, DESC, etc.)
+    `,
       control: false,
       table: {
         type: {
@@ -269,81 +359,140 @@ The **Table** component is a powerful and flexible data display component design
         },
       },
     },
+
     emptySlate: {
-      description: "Content shown when there are no rows.",
+      description: `
+Content displayed when there are no rows.
+
+- Can be string, JSX, or custom component
+- Recommended to provide meaningful empty state UX
+    `,
       control: "text",
       table: {
         type: { summary: "ReactNode" },
+        defaultValue: { summary: '"No data available."' },
       },
     },
+
     onLastRowReached: {
-      description:
-        "Called when the last row becomes visible (infinite scroll).",
+      description: `
+Triggered when the last row becomes visible.
+
+- Used for infinite scrolling / lazy loading
+- Fires via IntersectionObserver
+    `,
       action: "last-row-reached",
       table: {
         type: { summary: "() => void" },
       },
     },
+
     showPagination: {
-      description: "Enable pagination controls.",
+      description: `
+Enables pagination controls in the header.
+
+- Displays next/previous buttons
+- Works with pagination callbacks
+    `,
       control: "boolean",
       table: {
         type: { summary: "boolean" },
+        defaultValue: { summary: "false" },
       },
     },
+
     onNextPageRequested: {
-      description: "Called when next page button is clicked.",
+      description: `
+Triggered when the next page button is clicked.
+
+- Used for controlled pagination
+    `,
       action: "next-page",
       table: {
         type: { summary: "() => void" },
       },
     },
+
     onPreviousPageRequested: {
-      description: "Called when previous page button is clicked.",
+      description: `
+Triggered when the previous page button is clicked.
+
+- Used for controlled pagination
+    `,
       action: "previous-page",
       table: {
         type: { summary: "() => void" },
       },
     },
+
     disableNextPageButton: {
-      description: "Disable next page button.",
+      description: `
+Disables the next page button.
+
+- Useful when reaching the last page
+    `,
       control: "boolean",
       table: {
         type: { summary: "boolean" },
+        defaultValue: { summary: "false" },
       },
     },
+
     disablePreviousPageButton: {
-      description: "Disable previous page button.",
+      description: `
+Disables the previous page button.
+
+- Useful when on the first page
+    `,
       control: "boolean",
       table: {
         type: { summary: "boolean" },
+        defaultValue: { summary: "false" },
       },
     },
+
     labels: {
-      description: "Custom labels for selected items text.",
+      description: `
+Custom labels for UI text.
+
+Supports:
+- \`totalSelectedItemText(count)\`
+- \`pageNumberText\`
+
+Used to override default text (i18n, UX customization)
+    `,
       control: false,
       table: {
         type: { summary: "TableLabelsProps | null" },
       },
     },
+
     sumRow: {
-      description: "Summary row displayed at the bottom of the table.",
+      description: `
+Summary row displayed at the bottom.
+
+- Supports column spanning via \`span\`
+- Useful for totals, aggregations, etc.
+    `,
       control: false,
       table: {
         type: { summary: "SummaryRowProps[]" },
       },
     },
+
     styles: {
       description: `
-Custom styles for the Table component. This object allows you to override styles for individual parts:
+Custom styles override for the table.
 
-- **containerStyle**: Table wrapper
-- **tableBodyStyle**: Scrollable body content
-- **tableHeaderStyle**: Header container
-- **paginationWrapperStyle**: Pagination wrapper
-- **paginationNumberStyle**: Pagination number text
+Available fields:
+- containerStyle
+- tableHeaderStyle
+- tableBodyStyle
+- paginationWrapperStyle
+- paginationNumberStyle
+- totalSelectedItemTextStyle
 
-Each field accepts a \`CSSProp\` (styled-components compatible) and can be used to customize layout, spacing, colors, and other visual properties.
+All accept \`CSSProp\` (styled-components).
     `,
       control: false,
       table: {
@@ -882,7 +1031,18 @@ export const WithOneAction: Story = {
 
 export const SortableWithPagination: Story = {
   render: () => {
-    const [selectedItems, setSelectedItems] = useState([]);
+    const [selectedItems, setSelectedItems] = useState([
+      "Load Balancer 1-HTTP",
+      "Load Balancer 2-HTTPS",
+      "Load Balancer 3-TCP",
+      "Load Balancer 4-UDP",
+      "Load Balancer 5-QUIC",
+      "Load Balancer 6-HTTP",
+      "Load Balancer 7-HTTPS",
+      "Load Balancer 8-TCP",
+      "Load Balancer 9-UDP",
+      "Load Balancer 10-QUIC",
+    ]);
     const [page, setPage] = useState(1);
     const itemsPerPage = 20;
     const totalItems = 200;
@@ -2981,7 +3141,6 @@ export const Draggable: Story = {
             {filteredRows(1, "simple")?.map((rowValue, index) => (
               <Table.Row
                 key={index}
-                index={index}
                 rowId={`${rowValue.name}-${rowValue.type}`}
                 content={[rowValue.name, rowValue.type]}
               />

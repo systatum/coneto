@@ -241,6 +241,7 @@ function Table({
           selectedData?: string[];
           handleSelect?: (data: string) => void;
           draggable?: boolean;
+          isSelected?: boolean;
         });
     }
 
@@ -987,7 +988,6 @@ const RotatingIcon = styled.span<{ $isOpen?: boolean }>`
 
 export interface TableRowProps {
   content?: RowData;
-  isSelected?: boolean;
   selectable?: boolean;
   handleSelect?: (data: string) => void;
   rowId?: string;
@@ -1018,17 +1018,14 @@ interface TableRowOpenWithId {
 function TableRow({
   content,
   selectable = false,
-  isSelected = false,
   handleSelect,
   styles,
   rowId,
   children,
   actions,
-  isLast,
   onLastRowReached,
   onClick,
   groupLength,
-  index,
   groupId = "default",
   onDropItem,
   draggable,
@@ -1036,15 +1033,24 @@ function TableRow({
 }: TableRowProps &
   Partial<{
     onLastRowReached?: () => void;
-    isLast?: boolean;
-    index?: number;
     onDropItem?: (position: number) => void;
     groupLength?: number;
     draggable?: boolean;
   }>) {
   const { setDragItem, dragItem } = useContext(DnDContext);
-  const { openRowId, setOpenRowId, alwaysShowDragIcon } =
-    props as TableRowOpenWithId & TableAlwaysShowDragIconProp;
+  const {
+    openRowId,
+    setOpenRowId,
+    alwaysShowDragIcon,
+    isSelected = false,
+    isLast,
+    index,
+  } = props as TableRowOpenWithId &
+    TableAlwaysShowDragIconProp & {
+      index?: number;
+      isSelected?: boolean;
+      isLast?: boolean;
+    };
 
   const [isOver, setIsOver] = useState(false);
   const [dropPosition, setDropPosition] = useState<"top" | "bottom" | null>(
