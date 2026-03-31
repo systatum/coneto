@@ -34,6 +34,63 @@ const meta: Meta<typeof TreeList> = {
   title: "Content/TreeList",
   component: TreeList,
   tags: ["autodocs"],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+TreeList is a flexible hierarchical list component designed to display items and groups in a tree-like structure. 
+It supports collapsible groups, drag-and-drop ordering, selection management, and custom actions for both items and groups. 
+Ideal for complex menus, file explorers, task lists, or any nested content visualization.
+
+---
+
+### ✨ Features
+- 🏷 **Collapsible groups**: Expand or collapse groups to show or hide child items.
+- 🖱 **Drag-and-drop**: Reorder or nest items easily using drag handles.
+- 🧩 **Selection management**: Track active or selected items for interactive use cases.
+- 🎨 **Custom actions**: Add buttons or menu items per group or globally.
+- 🔍 **Search-friendly**: Highlight matching items when filtering by search terms.
+- ⛔ **Empty state**: Shows a placeholder message when groups have no items.
+
+---
+
+### 📌 Usage
+\`\`\`tsx
+<TreeList
+  content={[
+    {
+      id: "fruits",
+      caption: "Fruits",
+      items: [
+        { id: "apple", caption: "Apple" },
+        { id: "banana", caption: "Banana" },
+      ],
+    },
+    {
+      id: "vegetables",
+      caption: "Vegetables",
+      items: [
+        { id: "carrot", caption: "Carrot" },
+        { id: "broccoli", caption: "Broccoli" },
+      ],
+    },
+  ]}
+  collapsible
+  draggable
+  alwaysShowDragIcon
+  emptyItemSlate="No items here"
+/>
+\`\`\`
+
+- Use \`content\` to define groups and their child items.
+- Set \`collapsible\` to allow groups to expand or collapse.
+- Set \`draggable\` and \`alwaysShowDragIcon\` to enable item reordering.
+- Provide \`emptyItemSlate\` for placeholder text when groups have no items.
+- Add \`actions\` for per-item or per-group interactive buttons.
+`,
+      },
+    },
+  },
 };
 
 export default meta;

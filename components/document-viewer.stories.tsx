@@ -20,6 +20,56 @@ const meta: Meta<typeof DocumentViewer> = {
   title: "Content/DocumentViewer",
   component: DocumentViewer,
   tags: ["autodocs"],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+DocumentViewer is a powerful component for displaying documents such as PDFs, images, encoded files, or uploaded files, with interactive features like zooming, bounding boxes, and region selection. It comes with a customizable toolbar and supports full styling.
+
+---
+
+### ✨ Features
+- 📝 **Supports multiple sources**: PDF, image, file, or encoded string
+- 🎯 **Region selection** via mouse drag with \`onRegionSelected\` callback
+- 🔲 **Bounding boxes** for highlighting or annotating sections
+- 🔍 **Zoom control** with predefined levels (75–150%)
+- ⚙️ **Custom PDF.js worker** via \`libPdfJsWorkerSrc\`
+- 🏷️ **Customizable labels** for toolbar text and page indicators
+- 🎨 **Fully styleable** through \`styles\` prop
+- 🚀 Smooth **scroll preservation** when zooming
+- 🖱️ **Selectable content** with optional hover popups
+
+---
+
+### 📌 Usage
+- Provide a **source** using the builder pattern: \`pdf\`, \`image\`, \`file\`, or \`encodedString\`.
+- Use \`onRegionSelected\` to handle region selections with coordinates.
+- Pass **boundingBoxes** to predefine highlights or annotations.
+- Set **initialZoom** to control default zoom level.
+- Customize toolbar labels via the \`labels\` prop.
+- Apply **custom styles** via \`styles\` for container, zoom input, selection boxes, or bounding boxes.
+
+\`\`\`tsx
+<DocumentViewer
+  title="Sample PDF"
+  source={(builder) => builder.pdf("/docs/sample.pdf")}
+  initialZoom={100}
+  boundingBoxes={[
+    { page: 1, x: 0.1, y: 0.1, width: 0.3, height: 0.2, contentOnHover: "Note" }
+  ]}
+  onRegionSelected={(region) => console.log(region)}
+  labels={{ zoomPlaceholder: "Set zoom", totalPages: ({ currentPage, totalPages }) => \`\${currentPage}/\${totalPages}\` }}
+  styles={{
+    containerStyle: css\`border: 1px solid #ccc;\`,
+    boxStyle: css\`border-color: red;\`,
+    selectionStyle: css\`background: rgba(255,0,0,0.2);\`,
+  }}
+/>
+\`\`\`
+    `,
+      },
+    },
+  },
   argTypes: {
     title: {
       description: "Title displayed in the viewer toolbar.",

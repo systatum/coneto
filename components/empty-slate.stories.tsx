@@ -7,6 +7,54 @@ const meta: Meta<typeof EmptySlate> = {
   title: "Content/EmptySlate",
   component: EmptySlate,
   tags: ["autodocs"],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+EmptySlate is a versatile component to display a visually appealing empty state in your UI. It can include an image, title, subtitle, and optional actions like buttons, guiding users on what to do next. Perfect for dashboards, lists, or any content area with no data.
+
+---
+
+### ✨ Features
+- 🖼️ **Image support**: Display a visual illustration via the \`imageUrl\` prop.
+- 📝 **Title and subtitle**: Provide clear messaging with optional subtitle for additional context.
+- 🖱️ **Action support**: Render custom interactive elements like buttons, links, or call-to-action components.
+- 🎨 **Fully styleable**: Customize container, image, title, subtitle, and action styles via the \`styles\` prop.
+- ⚡ **Lightweight and flexible**: Minimal structure so you can compose complex empty states easily.
+
+---
+
+### 📌 Usage
+\`\`\`tsx
+<EmptySlate
+  imageUrl="/images/empty-state.svg"
+  title="No Items Found"
+  subtitle="Try adjusting your filters or adding a new item."
+  actions={
+    <>
+        <Button variant="default">Add Item</Button>
+        <Button variant="primary">Learn More</Button>
+      </>
+  }
+  styles={{
+    containerStyle: css\`padding: 2rem; text-align: center;\`,
+    imageStyle: css\`max-width: 200px; margin: 0 auto;\`,
+    titleStyle: css\`font-size: 1.5rem; font-weight: 600;\`,
+    subtitleStyle: css\`font-size: 1rem; color: #666;\`,
+    actionsStyle: css\`margin-top: 1rem;\`,
+  }}
+/>
+\`\`\`
+
+- Use \`imageUrl\` to give a visual cue for the empty state.
+- Titles and subtitles guide the user and provide context.
+- Actions can include buttons or links to direct users on what to do next.
+- Styles can be overridden for each part to match your design system.
+
+`,
+      },
+    },
+  },
   argTypes: {
     imageUrl: {
       control: "text",

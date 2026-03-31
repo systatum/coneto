@@ -16,6 +16,68 @@ const meta: Meta<typeof PaperDialog> = {
   tags: ["autodocs"],
   parameters: {
     layout: "fullscreen",
+    docs: {
+      description: {
+        component: `
+📄 **PaperDialog** is a fully customizable slide-in dialog component that can appear from the left or right side of the viewport. 
+
+### ✨ Features
+- 🎬 Slide-in / Slide-out animations using Framer Motion
+- 🟢 Supports three states: \`restored\`, \`minimized\`, and \`closed\`
+- ❌ Optional close button and minimize toggle
+- 🛡 Overlay blocker when restored to prevent outside interactions
+- 🎛 Trigger opening/closing externally
+- 🎨 Fully styleable via \`styles\` props
+- ⌨️ Handles "Escape" key to close the dialog
+
+### 🛠 Usage
+\`\`\`tsx
+<PaperDialog ref={dialogRef} position="right" closable width="400px">
+  <PaperDialog.Trigger>
+    Open Dialog
+  </PaperDialog.Trigger>
+  <PaperDialog.Content>
+    <p>Your content here</p>
+  </PaperDialog.Content>
+</PaperDialog>
+\`\`\`
+
+### 📝 Notes
+- Always include both \`PaperDialog.Trigger\` and \`PaperDialog.Content\` as children.
+- Use \`styles\` prop to override default styles.
+        `,
+      },
+    },
+  },
+  argTypes: {
+    position: {
+      description: "Position from which the dialog slides in",
+      control: { type: "radio" },
+      options: ["left", "right"],
+    },
+    closable: {
+      description:
+        "Whether the dialog can be closed via the close button or Escape key",
+      control: { type: "boolean" },
+    },
+    width: {
+      description:
+        "Width of the dialog. If not provided, min-width defaults to 92vw",
+      control: { type: "text" },
+    },
+    children: {
+      description:
+        "Children of the dialog, should include `PaperDialog.Trigger` and `PaperDialog.Content`",
+      control: false,
+    },
+    styles: {
+      description: "Custom styles for the dialog, tabs, and close button",
+      control: false,
+    },
+    onClosed: {
+      description: "Callback fired after the dialog closes",
+      action: "closed",
+    },
   },
 };
 

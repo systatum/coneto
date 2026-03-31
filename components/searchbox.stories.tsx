@@ -17,6 +17,45 @@ import {
 const meta: Meta<typeof Searchbox> = {
   title: "Input Elements/Searchbox",
   component: Searchbox,
+  parameters: {
+    layout: "centered",
+    docs: {
+      description: {
+        component: `
+**Searchbox** is a flexible search input component with optional result menu support and clear button.  
+
+---
+
+### ✨ Features
+- 📝 **Controlled or uncontrolled input**
+- ❌ **Clearable input**: Delete the current value with a click
+- 📋 **Optional result menu**: Pass a render function for dropdown search results
+- 🎨 **Custom styling** via \`styles\` prop
+- ⌨️ **Keyboard & focus handling** supported
+- ♿ **Accessible**: ARIA labels and roles included
+
+---
+
+### 📌 Usage
+
+\`\`\`tsx
+<Searchbox
+  name="search"
+  value={searchText}
+  onChange={(e) => setSearchText(e.target.value)}
+  styles={{
+    self: css\`border-color: #ccc;\`,
+    containerStyle: css\`margin: 0 auto; width: 300px;\`,
+    iconStyle: css\`color: blue;\`,
+  }}
+  showResultMenu={true}
+  resultMenu={(props) => <div {...props}>Result Item</div>}
+/>
+\`\`\`
+      `,
+      },
+    },
+  },
   argTypes: {
     name: {
       control: "text",
@@ -39,9 +78,6 @@ Each field accepts a \`CSSProp\` (styled-components compatible). Use it to adjus
     `,
       control: false,
     },
-  },
-  parameters: {
-    layout: "centered",
   },
   tags: ["autodocs"],
 };

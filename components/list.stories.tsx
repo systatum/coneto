@@ -33,6 +33,49 @@ const meta: Meta<typeof List> = {
   title: "Content/List",
   component: List,
   tags: ["autodocs"],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+**List** organizes items optionally through some grouping as well as enabling rich interactivity, such as drag-and-drop, item search, among others.  
+
+---
+
+### ✨ Features
+- 🔹 **Searchable list** – Add a search box to filter items dynamically
+- 🟢 **Selectable items** – Enable checkboxes for single or multiple selection
+- 🫳 **Draggable items** – Reorder items or groups via drag-and-drop
+- 📦 **Grouping** – Organize items into collapsible groups
+- 🔄 **Smooth animations** – Animated motions and transitions
+- ⏱ **Max items with show more/less** – Limit visible items and toggle extra items
+- 🎨 **Custom styles** – Fully styleable via CSS-in-JS or styled-components
+- 💡 **Custom actions** – Render actionable buttons on each item or group
+
+---
+
+### 🛠 Usage
+
+\`\`\`tsx
+<List
+  searchable={true}
+  draggable={true}
+  selectable={true}
+  maxItems={3}
+  labels={{ moreItemsText: "Show more", lessItemsText: "Show less" }}
+>
+  <List.Item id="1" title="Item 1" subtitle="Subtitle 1" />
+  <List.Item id="2" title="Item 2" subtitle="Subtitle 2" />
+  <List.Item id="3" title="Item 3" subtitle="Subtitle 3" />
+  <List.Group id="group-1" title="Group 1">
+    <List.Item id="g1-1" title="Group 1 - Item 1" />
+    <List.Item id="g1-2" title="Group 1 - Item 2" />
+  </List.Group>
+</List>
+\`\`\`
+      `,
+      },
+    },
+  },
   argTypes: {
     searchable: {
       control: "boolean",

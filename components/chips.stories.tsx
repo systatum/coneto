@@ -1,21 +1,159 @@
-import { Meta, StoryObj } from "@storybook/react";
-import { Chips, MissingOptionFormProps } from "./chips";
-import { ChangeEvent, useState } from "react";
-import { Badge, BadgeProps } from "./badge";
-import { Colorbox } from "./colorbox";
-import styled, { css } from "styled-components";
 import { RiAddBoxFill, RiCloseLine } from "@remixicon/react";
-import { Textbox } from "./textbox";
-import { Button } from "./button";
-import { Tooltip } from "./tooltip";
-import { FormFieldProps, StatefulForm } from "./stateful-form";
+import { Meta, StoryObj } from "@storybook/react";
+import { ChangeEvent, useState } from "react";
+import styled, { css } from "styled-components";
 import z from "zod";
+import { Badge, BadgeProps } from "./badge";
+import { Button } from "./button";
+import { Chips, MissingOptionFormProps } from "./chips";
+import { Colorbox } from "./colorbox";
 import { OptionProps } from "./selectbox";
+import { FormFieldProps, StatefulForm } from "./stateful-form";
+import { Textbox } from "./textbox";
+import { Tooltip } from "./tooltip";
 
 const meta: Meta<typeof Chips> = {
   title: "Input Elements/Chips",
   component: Chips,
   tags: ["autodocs"],
+  argTypes: {
+    label: {
+      control: "text",
+      description: "Main label displayed above the chips input.",
+    },
+    showError: {
+      control: "boolean",
+      description: "Displays the component in an error state if true.",
+    },
+    errorMessage: {
+      control: "text",
+      description: "Error message shown when `showError` is true.",
+    },
+    helper: {
+      control: "text",
+      description: "Optional helper text displayed below the input.",
+    },
+    disabled: {
+      control: "boolean",
+      description: "Disables the entire Chips component.",
+    },
+    options: {
+      control: "object",
+      description:
+        "Array of available chip options, each with `id`, `caption`, `variant`, and optional `metadata`.",
+    },
+    selectedOptions: {
+      control: "object",
+      description: "Array of chips currently selected.",
+    },
+    inputValue: {
+      control: "text",
+      description: "Value of the input box for filtering or creating chips.",
+    },
+    setInputValue: {
+      action: "changed",
+      description: "Handler called when input value changes.",
+    },
+    filterPlaceholder: {
+      control: "text",
+      description: "Placeholder text for the input used to filter options.",
+    },
+    missingOptionLabel: {
+      control: "text",
+      description: "Label text shown when a new chip can be created.",
+    },
+    creatable: {
+      control: "boolean",
+      description: "If true, allows creating new chips not present in options.",
+    },
+    onOptionClicked: {
+      action: "clicked",
+      description: "Callback fired when a chip option is clicked.",
+    },
+    missingOptionForm: {
+      control: "object",
+      description: "Custom form or render function for creating a new chip.",
+    },
+    emptySlate: {
+      control: "object",
+      description:
+        "Custom content shown when there are no options matching the filter.",
+    },
+    renderer: {
+      control: "object",
+      description: "Custom render function for chips display.",
+    },
+    styles: {
+      control: "object",
+      description:
+        "Override default styles for container, chips, labels, drawer, etc.",
+    },
+    name: {
+      control: "text",
+      description: "Name attribute for the form input.",
+    },
+    id: {
+      control: "text",
+      description: "Unique ID for the input element.",
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        component: `
+The **Chips** component allows selection of multiple items from a list, with optional filtering, creation of new chips, and full style customization. It is primarily ideal for tagging.
+
+---
+
+### ✨ Features
+- 🏷️ **Multiple selection** support.
+- 🔎 **Filterable input** to quickly search options
+- ➕ **Creatable chips** when enabled, with custom form support
+- ✅ **Selected chips** are displayed prominently with optional custom renderer
+- ❌ Handles **empty states** and custom messages
+- 🎨 Fully **customizable styles** for drawer, chips, labels, and container
+- 🧩 First-class **stateful form integration**
+- 🔒 Has **disabled** state to prevent edit
+
+---
+
+### ⚙️ Behavior
+
+#### Selection
+- Click on a chip in the dropdown to select/deselect
+- Already selected chips are displayed in the main input area
+- Supports keyboard navigation (ArrowUp, ArrowDown, Enter)
+
+#### Filtering
+- Input value filters the list of options
+- Filtering is case-insensitive
+- When no matches, can show empty slate or option to create new chip
+
+#### Creatable Chips
+- When \`creatable\` is true, users can add new chips
+- Displays a special item with \`missingOptionLabel\` text
+- Supports custom render form via \`missingOptionForm\`
+
+#### Styles
+- Use \`styles\` prop to override:
+  - container
+  - chips container
+  - individual chips
+  - drawer
+  - labels
+- Each selected chip can have its own styles
+
+---
+
+### 📌 Usage Guidelines
+- Use for **tagging or multi-select** input scenarios
+- Keep chip labels **short for readability**
+- Use controlled props (\`selectedOptions\`, \`inputValue\`) for syncing state with forms
+- Use \`renderer\` for fully custom chip rendering
+        `,
+      },
+    },
+  },
 };
 
 export default meta;

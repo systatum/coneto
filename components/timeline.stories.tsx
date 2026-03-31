@@ -7,6 +7,97 @@ const meta: Meta<typeof Timeline> = {
   title: "Controls/Timeline",
   component: Timeline,
   tags: ["autodocs"],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+Timeline is a flexible component for displaying sequential events or steps in a vertical layout. 
+It supports custom items (\`Timeline.Item\`), clickable states, variant-based colors, line styles, and full style overrides.
+
+---
+
+### ✨ Features
+- 🏗 **Composable**: Each step is a \`Timeline.Item\` that can render title, subtitle, and optional sidenotes.
+- 🎨 **Variants**: Item colors can reflect status such as 'todo', 'inProgress', 'done', etc.
+- 👆 **Clickable items**: Enable \`isClickable\` to allow clicks on each timeline item.
+- 🖌 **Styling flexibility**: Customize circles, text, lines, and containers via the \`styles\` prop.
+- 🔗 **Line types**: Connectors can be 'solid', 'dash', or 'dot'.
+
+---
+
+### 🔧 Timeline Props
+- \`children\` (ReactNode): Timeline.Item components to render.
+- \`isClickable\` (boolean): Makes all timeline items clickable.
+
+### 🔧 Timeline.Item Props
+- \`title\` (string): Main title text of the step.
+- \`subtitle\` (string): Secondary description or detail under the title.
+- \`sidenote\` (ReactNode): Optional content displayed beside the item.
+- \`variant\` (string): Status/variant of the item, affects colors. Options from \`TEXT_VARIANT_COLOR\`.
+- \`styles\` (TimelineItemStylesProps): Customize styling for item sub-elements.
+  - \`self\` – container wrapper
+  - \`textWrapperStyle\` – wrapper for title & subtitle
+  - \`titleStyle\` – title text
+  - \`subtitleStyle\` – subtitle text
+  - \`sidenoteStyle\` – sidenote container
+- \`isClickable\` (boolean): Override for item-specific clickability.
+- \`id\` (string | number): Optional ID for the item (defaults to index).
+- \`onClick\` (function): Callback when the item is clicked.
+- \`line\` ('solid' | 'dash' | 'dot'): Line style for the connector below the item circle.
+
+---
+
+### 📌 Usage
+
+\`\`\`tsx
+<Timeline isClickable>
+  <Timeline.Item
+    title="Step 1"
+    subtitle="Initial setup"
+    variant="todo"
+    line="solid"
+    onClick={() => console.log('Step 1 clicked')}
+  />
+  <Timeline.Item
+    title="Step 2"
+    subtitle="In progress"
+    variant="inProgress"
+    line="dash"
+    sidenote={<span>Optional note</span>}
+  />
+  <Timeline.Item
+    title="Step 3"
+    subtitle="Completed"
+    variant="done"
+    line="dot"
+  />
+</Timeline>
+\`\`\`
+
+- Use \`isClickable\` on \`Timeline\` to make all items interactive.
+- Use \`Timeline.Item\` for each step; customize title, subtitle, variant, line, and optional sidenotes.
+- Styles can be overridden via the \`styles\` prop for full layout and color control.
+      `,
+      },
+    },
+  },
+  argTypes: {
+    children: {
+      description: "Timeline.Item components to render inside the timeline.",
+      control: { type: null },
+      table: { type: { summary: "ReactNode" } },
+    },
+    isClickable: {
+      control: "boolean",
+      description:
+        "Makes the timeline items clickable. When true, items show pointer cursor and respond to clicks.",
+      defaultValue: false,
+      table: {
+        type: { summary: "boolean" },
+        defaultValue: { summary: "false" },
+      },
+    },
+  },
 };
 
 export default meta;
