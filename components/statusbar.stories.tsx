@@ -29,11 +29,11 @@ It supports left and right sections, customizable styling, spacing, transparency
 ### ✨ Features
 - 🔹 **Left & Right sections** – Display items independently on both sides
 - 🖼 **Icons & Text** – Supports icons, labels, or custom render functions
-- 🔘 **Buttons** – Integrates seamlessly with Button components
+- 🔘 **Buttons** – Integrates button-like components seamlessly
 - 🎨 **Custom styles** – Configure styles for container, items, left/right wrappers
 - 🟢 **Active & Hover states** – Custom background colors for active and hover states
 - ⚖ **Flexible sizing** – Adjustable font/icon sizes
-- 🌐 **Transparent mode** – Optionally render a transparent statusbar
+- 🌐 **Transparent mode** – Render the statusbar with less border to make it even more minimalistic
 - 🛠 **Spacers** – Add responsive spacing with \`Statusbar.Spacer\`
 
 ---
