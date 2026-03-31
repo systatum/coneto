@@ -61,9 +61,18 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
         if (p.type === "static") {
           return p.text ?? "";
         }
+
+        while (
+          value &&
+          valIndex < value.length &&
+          parts[valIndex]?.type === "static"
+        ) {
+          valIndex++;
+        }
+
         const char = value?.[valIndex] ?? "";
         valIndex++;
-        return char;
+        return char.toUpperCase();
       });
     };
 
@@ -137,91 +146,81 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
       const pasted = e.clipboardData.getData("text");
       if (!pasted) return;
 
-      const editableIndices = parts.reduce<number[]>((acc, p, i) => {
-        if (p.type !== "static") acc.push(i);
-        return acc;
-      }, []);
-
-      const startEditablePos = editableIndices.indexOf(startIndex);
-      if (startEditablePos === -1) return;
-
       const finalValue = [...valueLocal];
-      let pasteCharPos = 0;
-      let lastFilledIndex = startIndex;
+      let pastePos = 0;
 
-      for (
-        let editPos = startEditablePos;
-        editPos < editableIndices.length && pasteCharPos < pasted.length;
-        editPos++
-      ) {
-        const partIndex = editableIndices[editPos];
-        const partType = parts[partIndex].type;
+      // Walk parts from startIndex, aligning pasted chars.
+      // For static parts: if the pasted string includes the static char (case-insensitive),
+      // consume it. If it omits it (e.g. pasting "A2DL" skipping the leading "S"),
+      // just skip the static slot without consuming a pasted char.
+      // Either way, a mismatch where the user pastes a *different* char in a static slot aborts.
+      let index = startIndex;
 
-        while (pasteCharPos < pasted.length) {
-          const char = pasted[pasteCharPos];
-          pasteCharPos++;
+      while (index < parts.length && pastePos < pasted.length) {
+        const part = parts[index];
 
-          if (isCharValidForType(char, partType)) {
-            const normalised =
-              partType === "alphabet" || partType === "alphanumeric"
-                ? char.toUpperCase()
-                : char;
+        if (part.type === "static") {
+          const pastedChar = pasted[pastePos];
+          const staticChar = part.text ?? "";
 
-            finalValue[partIndex] = normalised;
-            lastFilledIndex = partIndex;
+          if (pastedChar.toUpperCase() === staticChar.toUpperCase()) {
+            // Pasted string includes the static char — consume it and move on.
+            pastePos++;
+          }
+          // Static slot is always skipped regardless.
+          index++;
+          continue;
+        }
 
-            if (masked) {
-              const existingTimeout = maskTimeoutsRef.current.get(partIndex);
-              if (existingTimeout) clearTimeout(existingTimeout);
+        const char = pasted[pastePos];
+        if (isCharValidForType(char, part.type!)) {
+          const normalized =
+            part.type === "alphabet" || part.type === "alphanumeric"
+              ? char.toUpperCase()
+              : char;
+          finalValue[index] = normalized;
 
+          if (masked) {
+            const existingTimeout = maskTimeoutsRef.current.get(index);
+            if (existingTimeout) clearTimeout(existingTimeout);
+
+            setMaskedIndices((prev) => {
+              const next = new Set(prev);
+              next.delete(index);
+              return next;
+            });
+
+            const timeout = setTimeout(() => {
               setMaskedIndices((prev) => {
                 const next = new Set(prev);
-                next.delete(partIndex);
+                next.add(index);
                 return next;
               });
+              maskTimeoutsRef.current.delete(index);
+            }, 500);
 
-              const timeout = setTimeout(() => {
-                setMaskedIndices((prev) => {
-                  const next = new Set(prev);
-                  next.add(partIndex);
-                  return next;
-                });
-                maskTimeoutsRef.current.delete(partIndex);
-              }, 500);
-
-              maskTimeoutsRef.current.set(partIndex, timeout);
-            }
-
-            break;
+            maskTimeoutsRef.current.set(index, timeout);
           }
+
+          pastePos++;
+        } else {
+          // Invalid char for this editable slot — stop.
+          break;
         }
+
+        index++;
       }
 
       setValueLocal(finalValue);
 
-      let focusIndex = lastFilledIndex + 1;
-      while (
-        focusIndex < parts.length &&
-        parts[focusIndex]?.type === "static"
-      ) {
-        focusIndex++;
-      }
-      if (focusIndex < parts.length) {
-        inputsRef.current[focusIndex]?.focus();
-      } else {
-        inputsRef.current[lastFilledIndex]?.focus();
-      }
+      // Focus the next unfilled editable slot after the paste.
+      while (index < parts.length && parts[index].type === "static") index++;
+      if (index < parts.length) inputsRef.current[index]?.focus();
 
       if (onChange) {
-        const syntheticEvent = {
-          target: {
-            name,
-            value: finalValue
-              .filter((_, i) => parts[i].type !== "static")
-              .join(""),
-          },
-        } as ChangeEvent<HTMLInputElement>;
-        onChange(syntheticEvent);
+        onChange({
+          target: { name, value: finalValue.join("") },
+        } as ChangeEvent<HTMLInputElement>);
       }
     };
 
@@ -233,6 +232,9 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
       const type = parts[index].type;
 
       if (type === "static") {
+        const isSystemShortcut =
+          (e.ctrlKey || e.metaKey) && ["v", "a"].includes(key.toLowerCase());
+        if (isSystemShortcut) return;
         if (key === "ArrowLeft") moveToPrevInput(index);
         if (key === "Backspace") moveToPrevInput(index);
         if (key === "ArrowRight") moveToNextInput(index);
@@ -343,16 +345,14 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
         maskTimeoutsRef.current.set(index, timeout);
       }
 
+      const outputValue = finalValue
+        .map((char, i) => (parts[i].type === "static" ? char : char))
+        .join("");
+
       if (onChange) {
-        const syntheticEvent = {
-          target: {
-            name,
-            value: finalValue
-              .filter((_, i) => parts[i].type !== "static")
-              .join(""),
-          },
-        } as ChangeEvent<HTMLInputElement>;
-        onChange(syntheticEvent);
+        onChange({
+          target: { name, value: outputValue },
+        } as ChangeEvent<HTMLInputElement>);
       }
     };
 
