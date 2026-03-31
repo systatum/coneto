@@ -1,30 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
   <channel>
-    <title>Welcome</title>
+    <title>Systatum Coneto React UI Library</title>
     <link>https://coneto.systatum.com</link>
     <description>Coneto: A React UI Library for Every Use Case, Done Right
 
 Deliver apps in half the time with Coneto, free of charge! Coneto is _the_ extremely complete React UI library created by Systatum. It is designed with modernity, simplicity, and usability at its core.
 
-Here you’ll find everything from state</description>
+Here you’ll find everything from stateful forms you can build in just a few lines of code to a versatile data grid and a solid set of tabs and view management tools. A complete example and self-documented code show how to use those components across different scenarios, so you can build polished apps even faster.
+
+Our components are organized into four primary categories:
+
+- **Controls**: Interactive components that typically trigger page re-renders.
+- **Content**: Components for displaying or structuring data/information in a clear, accessible way.
+- **Input**: Components that allow users to submit data or express intent. These support the `onChange` callback.
+- **Stage**: Layout and container components that provide structure and presentation for the other elements.
+
+Coneto is battle-tested, having been used across many projects in both React and Electron, and it consistently proves to be both reliable and visually polished in each environment. So, you’re definitely welcome to use it, and please give us, Systatum, proper credit when you can. Also, feel free to voice out your ideas or concerns, if any.
+
+We also extend our gratitude to [Balsamiq Cloud](https://balsamiq.cloud/); their tools and support has played a valuable role in bringing this very Coneto to life. Built with love from Japan, Indonesia, and anywhere our team resides.
+Why should you use Coneto?
+
+- 💸 Free to use with no hidden costs
+- ⚡ Speeds up development with a complete set of components covering various UI needs
+- 🎨 Clean and polished design that looks good by default
+- 🌗 Supports light and dark modes with flexible theming for custom needs
+- 🛠️ Battle-tested in real projects, not just built for demos
+- 🔧 Highly versatile and customizable to fit almost any use case
+- 💻 Works across web and desktop with React and Electron
+- 📐 Consistent and predictable APIs for easier integration and maintenance
+- 📚 Includes practical examples and self-documented code for even faster adoption</description>
     <language>en</language>
     <generator>storybook-rss v2.5.2</generator>
-    <lastBuildDate>Tue, 31 Mar 2026 07:36:07 GMT</lastBuildDate>
+    <lastBuildDate>Tue, 31 Mar 2026 08:19:49 GMT</lastBuildDate>
     
-      <item>
-        <title>Systatum - Coneto React UI</title>
-        <link>https://coneto.systatum.com/</link>
-        <guid>568be0fa2023d1a447e7bd150dda7068ece26898</guid>
-        <description><![CDATA[Coneto: A React UI Library for Every Use Case, Done Right
-
-Deliver apps in half the time with Coneto, free of charge! Coneto is _the_ extremely complete React UI library created by Systatum. It is designed with modernity, simplicity, and usability at its core.
-
-Here you’ll find everything from state]]></description>
-        <pubDate>Tue, 31 Mar 2026 06:59:30 GMT</pubDate>
-      </item>
-    
-
       <item>
         <title>Avatar - Coneto React UI</title>
         <link>https://coneto.systatum.com/?path=/docs/content-avatar</link>
