@@ -30,10 +30,8 @@ The **ChoiceGroup** component is a wrapper for multiple selection inputs (like *
 ---
 
 ### ✨ Features
-- ✅ Supports Checkbox and Radio children
-- 🔹 Automatic layout detection:
-  - Radio buttons in "button" mode display in a row/grid
-  - Checkbox default layout is vertical with dividers
+- ✅ Supports checkboxe and radio components
+- 🔹 Automatic layout detection: "button" mode renders radio buttons in a flat grid, otherwise render options/checkboxes vertically
 - 🎨 Fully customizable styles via \`styles\` prop
 - 🧩 Each child can still have individual styles
 
@@ -43,12 +41,11 @@ The **ChoiceGroup** component is a wrapper for multiple selection inputs (like *
 - Adds spacing and optional dividers between children
 - Automatically sets \`highlightOnChecked\` for all children
 - Radio buttons in "button" mode:
-  - Display in a row/grid
+  - Display in a flat grid
   - Border applied to each button
-  - No dividers between buttons
-- Checkbox children in vertical layout:
-  - Full-width children
-  - Optional divider between each item
+- Checkbox as well as radio buttons (but not in "button mode") will be in vertical layout:
+  - Full-width
+  - Feature optional divider between each item
 
 ---
 
