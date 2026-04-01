@@ -1,5 +1,6 @@
 import styled, { css, CSSProp, keyframes } from "styled-components";
 import { ReactNode } from "react";
+import { useTheme } from "./../theme/provider";
 
 export interface ErrorSlateProps {
   code?:
@@ -62,6 +63,9 @@ const transformStyles = {
 };
 
 function ErrorSlate({ code, children, title, styles }: ErrorSlateProps) {
+  const { currentTheme } = useTheme();
+  const errorSlateTheme = currentTheme.errorSlate;
+
   const FACE_DATA = [
     { face: "front", content: code[0] },
     { face: "back", content: code[0] },
@@ -81,6 +85,9 @@ function ErrorSlate({ code, children, title, styles }: ErrorSlateProps) {
               key={i}
               $transform={face}
               $style={styles?.cubeFaceStyle}
+              $backgroundColor={errorSlateTheme.cubeFaceBackground}
+              $borderColor={errorSlateTheme.cubeFaceBorder}
+              $textColor={errorSlateTheme.cubeFaceText}
             >
               {content}
             </Face>
@@ -121,6 +128,9 @@ const Cube = styled.div`
 const Face = styled.div<{
   $transform: keyof typeof transformStyles;
   $style?: CSSProp;
+  $backgroundColor?: string;
+  $borderColor?: string;
+  $textColor?: string;
 }>`
   position: absolute;
   width: 100px;
@@ -130,10 +140,10 @@ const Face = styled.div<{
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #dd0b0b;
-  border: 1px solid #a80000;
-  color: white;
 
+  background: ${({ $backgroundColor }) => $backgroundColor ?? "#dd0b0b"};
+  border: 1px solid ${({ $borderColor }) => $borderColor ?? "#a80000"};
+  color: ${({ $textColor }) => $textColor ?? "#ffffff"};
   ${({ $transform }) => transformStyles[$transform]}
 
   ${({ $style }) => $style}
