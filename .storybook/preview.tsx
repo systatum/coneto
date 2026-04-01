@@ -1,8 +1,12 @@
 import type { Preview } from "@storybook/react";
 import "../shared.css";
+import { ThemeProvider } from "./../theme/provider";
 
 const preview: Preview = {
   parameters: {
+    backgrounds: {
+      disable: true,
+    },
     controls: {
       matchers: {
         color: /(background|color)$/i,
@@ -11,6 +15,31 @@ const preview: Preview = {
     },
     test: {
       disable: true,
+    },
+  },
+  decorators: [
+    (Story, context) => {
+      const mode = context.globals.theme || "light";
+
+      return (
+        <ThemeProvider mode={mode}>
+          <Story />
+        </ThemeProvider>
+      );
+    },
+  ],
+  globalTypes: {
+    theme: {
+      name: "Theme",
+      description: "Global theme for components",
+      defaultValue: "light",
+      toolbar: {
+        icon: "circlehollow",
+        items: [
+          { value: "light", title: "Light" },
+          { value: "dark", title: "Dark" },
+        ],
+      },
     },
   },
 };
