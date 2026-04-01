@@ -9,6 +9,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { ActionButton, ActionButtonProps } from "./action-button";
 import { Togglebox } from "./togglebox";
 import { AnimatePresence, motion } from "framer-motion";
+import { useTheme } from "./../theme/provider";
 
 export interface CardProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "title" | "style"> {
@@ -72,6 +73,9 @@ function Card({
   open = true,
   ...props
 }: CardProps) {
+  const { currentTheme } = useTheme();
+  const cardTheme = currentTheme.card;
+
   const filteredHeaderActions = Array.isArray(headerActions)
     ? headerActions?.filter((action) => !action?.hidden)
     : [];
@@ -85,18 +89,28 @@ function Card({
       $radius={radius}
       $padding={padding}
       $containerStyle={styles?.containerStyle}
+      $bg={cardTheme.backgroundColor}
+      $border={cardTheme.borderColor}
     >
       {(title || subtitle || headerActions) && (
         <Header $headerStyle={styles?.headerStyle}>
           {(title || subtitle) && (
             <HeaderTextContainer $style={styles?.textContainerStyle}>
               {title && (
-                <HeaderTitle $style={styles?.titleStyle}>{title}</HeaderTitle>
+                <HeaderTitle
+                  $style={styles?.titleStyle}
+                  $color={cardTheme.titleColor}
+                >
+                  {title}
+                </HeaderTitle>
               )}
               {subtitle && (
-                <HeaderSubitle $style={styles?.subtitleStyle}>
+                <HeaderSubtitle
+                  $style={styles?.subtitleStyle}
+                  $color={cardTheme.subtitleColor}
+                >
                   {subtitle}
-                </HeaderSubitle>
+                </HeaderSubtitle>
               )}
             </HeaderTextContainer>
           )}
@@ -199,11 +213,13 @@ const CardContainer = styled.div<{
   $radius: CardProps["radius"];
   $padding: CardProps["padding"];
   $containerStyle?: CSSProp;
+  $bg: string;
+  $border: string;
 }>`
   display: flex;
   flex-direction: column;
-  background: white;
-  border: 1px solid #e5e7eb;
+  background: ${({ $bg }) => $bg};
+  border: 1px solid ${({ $border }) => $border};
   position: relative;
   width: fit-content;
 
@@ -229,15 +245,23 @@ const Header = styled.div<{
   ${({ $headerStyle }) => $headerStyle}
 `;
 
-const HeaderTitle = styled.span<{ $style?: CSSProp }>`
+const HeaderTitle = styled.span<{
+  $color: string;
+  $style?: CSSProp;
+}>`
   font-size: 1rem;
+  color: ${({ $color }) => $color};
+
   ${({ $style }) => $style}
 `;
 
-const HeaderSubitle = styled.span<{ $style?: CSSProp }>`
+const HeaderSubtitle = styled.span<{
+  $color: string;
+  $style?: CSSProp;
+}>`
   font-size: 0.8rem;
   font-weight: 400;
-  color: #8b8e92;
+  color: ${({ $color }) => $color};
 
   ${({ $style }) => $style}
 `;
