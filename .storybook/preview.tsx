@@ -4,9 +4,7 @@ import { ThemeProvider } from "./../theme/provider";
 
 const preview: Preview = {
   parameters: {
-    backgrounds: {
-      disable: true,
-    },
+    backgrounds: { disable: true },
     controls: {
       matchers: {
         color: /(background|color)$/i,
@@ -20,6 +18,8 @@ const preview: Preview = {
   decorators: [
     (Story, context) => {
       const mode = context.globals.theme || "light";
+
+      document.body.setAttribute("data-theme", mode);
 
       return (
         <ThemeProvider mode={mode}>
