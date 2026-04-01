@@ -30,3 +30,12 @@ export function ThemeProvider({
     </ThemeContext.Provider>
   );
 }
+
+export function useTheme() {
+  const { mode } = useThemeMode();
+  const currentTheme = themes[mode];
+
+  return {
+    currentTheme,
+  };
+}
