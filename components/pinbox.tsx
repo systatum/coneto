@@ -61,9 +61,18 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
         if (p.type === "static") {
           return p.text ?? "";
         }
+
+        while (
+          value &&
+          valIndex < value.length &&
+          parts[valIndex]?.type === "static"
+        ) {
+          valIndex++;
+        }
+
         const char = value?.[valIndex] ?? "";
         valIndex++;
-        return char;
+        return char.toUpperCase();
       });
     };
 
@@ -111,6 +120,110 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
       };
     }, []);
 
+    /** Check whether a character is valid for a given part type */
+    const isCharValidForType = (
+      char: string,
+      type: PinboxTypeState
+    ): boolean => {
+      if (type === "static") return false;
+      if (type === "digit") return /^[0-9]$/.test(char);
+      if (type === "alphabet") return /^[A-Za-z]$/.test(char);
+      if (type === "alphanumeric") return /^[A-Za-z0-9]$/.test(char);
+      return true;
+    };
+
+    /**
+     * Handle paste event on any input box.
+     * Distributes the pasted text across editable boxes starting from
+     * the focused index, skipping static parts and invalid characters.
+     */
+    const handlePaste = (
+      e: React.ClipboardEvent<HTMLInputElement>,
+      startIndex: number
+    ) => {
+      e.preventDefault();
+
+      const pasted = e.clipboardData.getData("text");
+      if (!pasted) return;
+
+      const finalValue = [...valueLocal];
+      let pastePos = 0;
+
+      // Walk parts from startIndex, aligning pasted chars.
+      // For static parts: if the pasted string includes the static char (case-insensitive),
+      // consume it. If it omits it (e.g. pasting "A2DL" skipping the leading "S"),
+      // just skip the static slot without consuming a pasted char.
+      // Either way, a mismatch where the user pastes a *different* char in a static slot aborts.
+      let index = startIndex;
+
+      while (index < parts.length && pastePos < pasted.length) {
+        const part = parts[index];
+
+        if (part.type === "static") {
+          const pastedChar = pasted[pastePos];
+          const staticChar = part.text ?? "";
+
+          if (pastedChar.toUpperCase() === staticChar.toUpperCase()) {
+            // Pasted string includes the static char — consume it and move on.
+            pastePos++;
+          }
+          // Static slot is always skipped regardless.
+          index++;
+          continue;
+        }
+
+        const char = pasted[pastePos];
+        if (isCharValidForType(char, part.type!)) {
+          const normalized =
+            part.type === "alphabet" || part.type === "alphanumeric"
+              ? char.toUpperCase()
+              : char;
+          finalValue[index] = normalized;
+
+          if (masked) {
+            const existingTimeout = maskTimeoutsRef.current.get(index);
+            if (existingTimeout) clearTimeout(existingTimeout);
+
+            setMaskedIndices((prev) => {
+              const next = new Set(prev);
+              next.delete(index);
+              return next;
+            });
+
+            const timeout = setTimeout(() => {
+              setMaskedIndices((prev) => {
+                const next = new Set(prev);
+                next.add(index);
+                return next;
+              });
+              maskTimeoutsRef.current.delete(index);
+            }, 500);
+
+            maskTimeoutsRef.current.set(index, timeout);
+          }
+
+          pastePos++;
+        } else {
+          // Invalid char for this editable slot — stop.
+          break;
+        }
+
+        index++;
+      }
+
+      setValueLocal(finalValue);
+
+      // Focus the next unfilled editable slot after the paste.
+      while (index < parts.length && parts[index].type === "static") index++;
+      if (index < parts.length) inputsRef.current[index]?.focus();
+
+      if (onChange) {
+        onChange({
+          target: { name, value: finalValue.join("") },
+        } as ChangeEvent<HTMLInputElement>);
+      }
+    };
+
     const handleKeyDown = (
       e: React.KeyboardEvent<HTMLInputElement>,
       index: number
@@ -119,6 +232,9 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
       const type = parts[index].type;
 
       if (type === "static") {
+        const isSystemShortcut =
+          (e.ctrlKey || e.metaKey) && ["v", "a"].includes(key.toLowerCase());
+        if (isSystemShortcut) return;
         if (key === "ArrowLeft") moveToPrevInput(index);
         if (key === "Backspace") moveToPrevInput(index);
         if (key === "ArrowRight") moveToNextInput(index);
@@ -127,10 +243,16 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
         return;
       }
 
+      // Allow browser paste (Ctrl+V / Meta+V) and select-all (Ctrl+A) to
+      // pass through so the native onPaste event fires correctly.
+      const isSystemShortcut =
+        (e.ctrlKey || e.metaKey) && ["v", "a"].includes(key.toLowerCase());
+
       if (
         type === "digit" &&
         !/[0-9]/.test(key) &&
-        !["Backspace", "Tab", "ArrowLeft", "ArrowRight"].includes(key)
+        !["Backspace", "Tab", "ArrowLeft", "ArrowRight"].includes(key) &&
+        !isSystemShortcut
       ) {
         e.preventDefault();
         return;
@@ -138,7 +260,8 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
       if (
         type === "alphabet" &&
         !/[A-Za-z]/.test(key) &&
-        !["Backspace", "Tab", "ArrowLeft", "ArrowRight"].includes(key)
+        !["Backspace", "Tab", "ArrowLeft", "ArrowRight"].includes(key) &&
+        !isSystemShortcut
       ) {
         e.preventDefault();
         return;
@@ -146,13 +269,14 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
       if (
         type === "alphanumeric" &&
         !/[A-Za-z0-9]/.test(key) &&
-        !["Backspace", "Tab", "ArrowLeft", "ArrowRight"].includes(key)
+        !["Backspace", "Tab", "ArrowLeft", "ArrowRight"].includes(key) &&
+        !isSystemShortcut
       ) {
         e.preventDefault();
         return;
       }
 
-      if (key.length === 1) {
+      if (key.length === 1 && !e.ctrlKey && !e.metaKey) {
         e.preventDefault();
         updateValue(index, key);
         moveToNextInput(index);
@@ -221,16 +345,14 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
         maskTimeoutsRef.current.set(index, timeout);
       }
 
+      const outputValue = finalValue
+        .map((char, i) => (parts[i].type === "static" ? char : char))
+        .join("");
+
       if (onChange) {
-        const syntheticEvent = {
-          target: {
-            name,
-            value: finalValue
-              .filter((_, i) => parts[i].type !== "static")
-              .join(""),
-          },
-        } as ChangeEvent<HTMLInputElement>;
-        onChange(syntheticEvent);
+        onChange({
+          target: { name, value: outputValue },
+        } as ChangeEvent<HTMLInputElement>);
       }
     };
 
@@ -288,6 +410,7 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
                     ).current = el;
                   }
                 }}
+                onPaste={(e) => handlePaste(e, index)}
                 required={required}
                 disabled={disabled}
                 pattern={pattern}
