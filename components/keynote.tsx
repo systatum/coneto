@@ -1,5 +1,6 @@
 import { Children, isValidElement, ReactNode } from "react";
 import styled, { CSSProp } from "styled-components";
+import { useTheme } from "./../theme/provider";
 
 export interface KeynoteProps<T extends Record<string, unknown>> {
   data?: T;
@@ -66,15 +67,27 @@ function Keynote<T extends Record<string, unknown>>({
 }
 
 function KeynotePoint({ label, children, styles }: KeynotePointProps) {
+  const { currentTheme } = useTheme();
+  const keynoteTheme = currentTheme.keynote;
+
   return (
     <KeynotePointWrapper
       aria-label="keynote-point-wrapper"
       $style={styles?.rowStyle}
     >
-      <Key aria-label="keynote-point-key" $style={styles?.rowKeyStyle}>
+      <Key
+        aria-label="keynote-point-key"
+        $style={styles?.rowKeyStyle}
+        $color={keynoteTheme.keyColor}
+      >
         {label}
       </Key>
-      <Value aria-label="keynote-point-value" $style={styles?.rowValueStyle}>
+
+      <Value
+        aria-label="keynote-point-value"
+        $style={styles?.rowValueStyle}
+        $color={keynoteTheme.valueColor}
+      >
         {children}
       </Value>
     </KeynotePointWrapper>
@@ -106,8 +119,9 @@ const KeynotePointWrapper = styled.div<{
 
 const Key = styled.span<{
   $style?: CSSProp;
+  $color?: string;
 }>`
-  color: #374151;
+  color: ${({ $color }) => $color};
   font-weight: 600;
   width: 30%;
   font-size: 14px;
@@ -117,12 +131,12 @@ const Key = styled.span<{
 
 const Value = styled.span<{
   $style?: CSSProp;
+  $color?: string;
 }>`
   width: 70%;
   font-size: 14px;
-  color: #111827;
   text-align: end;
-  color: #111827;
+  color: ${({ $color }) => $color};
 
   ${({ $style }) => $style}
 `;
