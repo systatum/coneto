@@ -1464,7 +1464,7 @@ const TableRowContent = styled(motion.div)<{
   display: flex;
   position: relative;
   box-shadow: ${({ $theme }) =>
-    $theme?.boxShadow || "0 4px 5px rgba(0, 0, 0, 0.15)"};
+    $theme?.rowContentBoxShadow || "0 4px 5px rgba(0, 0, 0, 0.15)"};
   background: ${({ $theme }) =>
     $theme?.rowContentBackgroundColor ||
     "linear-gradient(to bottom, #ececec 0%, #f6f6f6 35%, #f0f0f0 100%)"};

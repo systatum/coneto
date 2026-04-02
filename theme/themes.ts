@@ -649,6 +649,7 @@ export function createTableTheme(
     rowSelectedBackgroundColor: "#dbeafe",
     rowContentBackgroundColor:
       "linear-gradient(to bottom, #ececec 0%, #f6f6f6 35%, #f0f0f0 100%)",
+    rowContentBoxShadow: "rgba(0, 0, 0, 0.15) 0px 4px 5px inset",
 
     summaryBackgroundColor: "linear-gradient(to bottom, #f0f0f0, #e4e4e4)",
     summaryBorderColor: "#d1d5db",
@@ -1265,6 +1266,7 @@ export const darkTable: TableThemeConfiguration = createTableTheme(darkBody, {
   rowSubtitleTextColor: "#d1d5db",
   rowContentBackgroundColor:
     "linear-gradient(to bottom, #1a1a1a 0%, #222222 35%, #1f1f1f 100%)",
+  rowContentBoxShadow: "rgba(0, 0, 0, 0.15) 0px 4px 5px inset",
 
   summaryBackgroundColor: "linear-gradient(#29282b, #323232)",
   summaryBorderColor: "rgb(39, 39, 48)",

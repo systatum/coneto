@@ -305,6 +305,7 @@ export interface TableThemeConfiguration {
   rowHoverBackgroundColor?: string;
   rowSelectedBackgroundColor?: string;
   rowContentBackgroundColor?: string;
+  rowContentBoxShadow?: string;
 
   summaryBackgroundColor?: string;
   summaryBorderColor?: string;
