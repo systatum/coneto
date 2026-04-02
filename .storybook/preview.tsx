@@ -31,7 +31,7 @@ const preview: Preview = {
   globalTypes: {
     theme: {
       name: "Theme",
-      description: "Global theme for components",
+      description: "Global theme mode",
       defaultValue: "light",
       toolbar: {
         icon: "circlehollow",
@@ -39,6 +39,7 @@ const preview: Preview = {
           { value: "light", title: "Light" },
           { value: "dark", title: "Dark" },
         ],
+        dynamicTitle: true,
       },
     },
   },
