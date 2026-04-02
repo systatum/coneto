@@ -17,6 +17,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { Button, ButtonStylesProps } from "./button";
 import { Figure, FigureProps } from "./figure";
 import { RiCloseLine } from "@remixicon/react";
+import { useTheme } from "./../theme/provider";
 
 export interface WindowProps {
   orientation?: "horizontal" | "vertical";
@@ -60,6 +61,9 @@ function Window({
   onResizeComplete,
   initialSizeRatio,
 }: WindowProps) {
+  const { currentTheme } = useTheme();
+  const windowTheme = currentTheme.window;
+
   const isVertical = orientation === "vertical";
   const childrenArray = Children.toArray(children).filter(isValidElement);
   const sizeState = initialSizeRatio
@@ -164,6 +168,8 @@ function Window({
 
   return (
     <Container
+      $backgroundColor={windowTheme.backgroundColor}
+      $textColor={windowTheme.textColor}
       aria-label="window"
       ref={containerRef}
       $isVertical={isVertical}
@@ -323,13 +329,20 @@ const WindowCell = forwardRef<HTMLDivElement, WindowCellProps>(
   }
 );
 
-const Container = styled.div<{ $isVertical: boolean; $style?: CSSProp }>`
+const Container = styled.div<{
+  $isVertical: boolean;
+  $style?: CSSProp;
+  $backgroundColor: string;
+  $textColor: string;
+}>`
   display: flex;
   width: 100%;
   height: auto;
   overflow: hidden;
-
   flex-direction: ${({ $isVertical }) => ($isVertical ? "row" : "column")};
+  background-color: ${({ $backgroundColor }) => $backgroundColor};
+  color: ${({ $textColor }) => $textColor};
+
   ${({ $style }) => $style}
 `;
 
