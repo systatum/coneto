@@ -398,9 +398,13 @@ function ButtonTipMenuContainer({
   styles?: ButtonTipMenuContainerStylesProps;
   children?: React.ReactNode;
 }) {
+  const { currentTheme } = useTheme();
+  const buttonTheme = currentTheme.card;
+
   return (
     <TipMenuContainer
       {...props}
+      $backgroundColor={buttonTheme.backgroundColor}
       onClick={(e) => {
         if (props.onClick) props.onClick?.(e);
       }}
@@ -412,16 +416,19 @@ function ButtonTipMenuContainer({
   );
 }
 
-const TipMenuContainer = styled.div<{ $style?: CSSProp }>`
+const TipMenuContainer = styled.div<{
+  $style?: CSSProp;
+  $backgroundColor?: string;
+}>`
   display: flex;
   flex-direction: column;
   border: 1px solid #e5e7eb;
   padding: 4px;
-  background-color: white;
   gap: 2px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   border-radius: 4px;
   animation-duration: 200ms;
+  background-color: ${({ $backgroundColor }) => $backgroundColor};
 
   ${({ $style }) => $style}
 `;
