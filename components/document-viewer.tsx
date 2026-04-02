@@ -12,6 +12,7 @@ import {
 import styled, { css, type CSSProp } from "styled-components";
 import { Combobox } from "./combobox";
 import type { PDFDocumentProxy } from "pdfjs-dist";
+import { useTheme } from "./../theme/provider";
 
 type ResolvedSource =
   | { type: "pdf"; src: string }
@@ -111,6 +112,9 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
     },
     ref
   ) => {
+    const { currentTheme } = useTheme();
+    const documentViewerTheme = currentTheme.documentViewer;
+
     const {
       totalPages: renderTotalPages,
       zoomPlaceholder = "zoom your pdf...",
@@ -628,9 +632,20 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
     };
 
     return (
-      <PDFViewerContainer>
-        <ToolbarWrapper aria-label="doc-viewer-toolbar-wrapper">
-          <Title aria-label="doc-viewer-toolbar-title">{title}</Title>
+      <PDFViewerContainer
+        $backgroundColor={documentViewerTheme.backgroundColor}
+      >
+        <ToolbarWrapper
+          $backgroundColor={documentViewerTheme.toolbarBackgroundColor}
+          $textColor={documentViewerTheme.textColor}
+          aria-label="doc-viewer-toolbar-wrapper"
+        >
+          <Title
+            $textColor={documentViewerTheme.textColor}
+            aria-label="doc-viewer-toolbar-title"
+          >
+            {title}
+          </Title>
           <Combobox
             strict
             id="doc-viewer-toolbar-combo"
@@ -674,7 +689,10 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
           )}
 
           {(loading || error) && (
-            <StatusText>
+            <StatusText
+              $textColor={documentViewerTheme.textColor}
+              $errorColor={documentViewerTheme.errorColor}
+            >
               {loading && "Loading..."}
               {error && <span className="error">{error}</span>}
             </StatusText>
@@ -766,6 +784,11 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
                     !selection && (
                       <ContentViewer
                         ref={contentRef}
+                        $borderColor={documentViewerTheme.hoverBoxBorderColor}
+                        $backgroundColor={
+                          documentViewerTheme.hoverBoxBackgroundColor
+                        }
+                        $textColor={documentViewerTheme.hoverBoxTextColor}
                         style={{
                           left: contentLeft,
                           top: contentTop,
@@ -802,32 +825,39 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
   }
 );
 
-const PDFViewerContainer = styled.div`
+const PDFViewerContainer = styled.div<{
+  $backgroundColor?: string;
+}>`
   display: flex;
   flex-direction: column;
   height: 100%;
   width: 100%;
   font-family: system-ui, sans-serif;
-  background: #525659;
+
+  background: ${({ $backgroundColor }) => $backgroundColor};
 `;
 
-const ToolbarWrapper = styled.div`
-  background: #323639;
-  color: white;
-  padding: 8px 16px;
+const ToolbarWrapper = styled.div<{
+  $backgroundColor?: string;
+  $textColor?: string;
+}>`
+  background: ${({ $backgroundColor }) => $backgroundColor};
+  color: ${({ $textColor }) => $textColor};
   display: flex;
   align-items: center;
   gap: 12px;
   display: flex;
-  padding-top: 20px;
-  padding-bottom: 20px;
+  padding: 20px 16px;
   flex-direction: row;
   justify-content: space-between;
   position: relative;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
-const Title = styled.div`
+const Title = styled.div<{
+  $textColor?: string;
+}>`
+  color: ${({ $textColor }) => $textColor};
   display: block;
   white-space: nowrap;
   width: 100%;
@@ -835,22 +865,29 @@ const Title = styled.div`
   text-overflow: ellipsis;
 `;
 
-const StatusText = styled.div`
+const StatusText = styled.div<{
+  $textColor?: string;
+  $errorColor?: string;
+}>`
   margin-left: auto;
   font-size: 14px;
   opacity: 0.8;
+  color: ${({ $textColor }) => $textColor};
 
   .error {
-    color: #ff6b6b;
+    color: ${({ $errorColor }) => $errorColor};
   }
 `;
 
-const ContainerDocumentViewer = styled.div<{ $containerStyle?: CSSProp }>`
+const ContainerDocumentViewer = styled.div<{
+  $containerStyle?: CSSProp;
+  $backgroundColor?: string;
+}>`
   position: relative;
   width: 100%;
   flex: 1;
   overflow: auto;
-  background: #525659;
+  background: ${({ $backgroundColor }) => $backgroundColor};
 
   ${({ $containerStyle }) => $containerStyle};
 `;
@@ -877,10 +914,15 @@ const SelectionBox = styled.div<{ $selectionStyle?: CSSProp }>`
   ${({ $selectionStyle }) => $selectionStyle};
 `;
 
-const ContentViewer = styled.div`
+const ContentViewer = styled.div<{
+  $borderColor?: string;
+  $backgroundColor?: string;
+  $textColor?: string;
+}>`
   position: absolute;
-  border: 2px solid #4daaf5;
-  background: rgba(77, 170, 245, 0.2);
+  border: 2px solid ${({ $borderColor }) => $borderColor};
+  background: ${({ $backgroundColor }) => $backgroundColor};
+  color: ${({ $textColor }) => $textColor};
 `;
 
 export { DocumentViewer };
