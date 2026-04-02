@@ -87,7 +87,7 @@ const VARIANTS_BADGE = {
   },
   red: {
     bg: "rgb(235 27 0)",
-    color: "#ffd4d4",
+    color: "#3d1c1c",
   },
 };
 
