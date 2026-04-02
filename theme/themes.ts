@@ -1,5 +1,7 @@
 import { ButtonVariants } from "./../components/button";
 import {
+  ActionButtonThemeConfiguration,
+  ActionCapsuleThemeConfiguration,
   AppTheme,
   AvatarThemeConfiguration,
   BadgeThemeConfiguration,
@@ -9,11 +11,18 @@ import {
   CardThemeConfiguration,
   CheckboxThemeConfiguration,
   ChoiceGroupThemeConfiguration,
-  ErrorSlateTheme,
-  GridTheme,
-  KeynoteTheme,
+  DocumentViewerThemeConfiguration,
+  ErrorSlateThemeConfiguration,
+  GridThemeConfiguration,
+  KeynoteThemeConfiguration,
+  ListThemeConfiguration,
+  LoadingSkeletonThemeConfiguration,
+  LoadingSpinnerThemeConfiguration,
   RadioThemeConfiguration,
-  SeparatorTheme,
+  SeparatorThemeConfiguration,
+  TableThemeConfiguration,
+  TreeListThemeConfiguration,
+  WindowThemeConfiguration,
 } from "./index";
 
 // Body
@@ -23,6 +32,58 @@ export function createBodyTheme(
   const defaultTheme = {
     backgroundColor: "#ffffff",
     textColor: "#000000",
+  };
+
+  return {
+    ...defaultTheme,
+    ...customTheme,
+  };
+}
+
+// action-capsule
+export function createActionCapsuleTheme(
+  body: BodyThemeConfiguration,
+  customTheme: Partial<ActionCapsuleThemeConfiguration> = {}
+): ActionCapsuleThemeConfiguration {
+  const defaultTheme: ActionCapsuleThemeConfiguration = {
+    activeBackgroundColor: "rgb(226, 224, 224)",
+    textColor: body.textColor || "#343434",
+    capsuleWrapperBoxShadow: "none",
+    capsuleWrapperMinHeight: "32px",
+    capsuleWrapperMaxHeight: "32px",
+    capsuleWrapperBorderRadius: "6px",
+    capsuleFontSize: "14px",
+    tabTextColor: "rgb(86, 85, 85)",
+    tabBorderRadius: "6px",
+    borderColor: "#ebebeb",
+  };
+
+  return { ...defaultTheme, ...customTheme };
+}
+
+// action-button.tsx
+export function createActionButtonTheme(
+  body: BodyThemeConfiguration,
+  customTheme: Partial<ActionButtonThemeConfiguration> = {}
+): ActionButtonThemeConfiguration {
+  const defaultTheme: ActionButtonThemeConfiguration = {
+    backgroundColor: "transparent",
+    textColor: "rgb(86, 85, 85)",
+    hoverBackgroundColor: "#f3f4f6",
+    disabledBackgroundColor: "#e5e7eb",
+    disabledOpacity: 0.5,
+    borderColor: "#ebebeb",
+    borderRadius: "6px",
+
+    toggleBackgroundColor: "transparent",
+    toggleTextColor: "rgb(86, 85, 85)",
+    toggleHoverBackgroundColor: "#f3f4f6",
+    toggleBorderColor: "#e5e7eb",
+    toggleBorderRadius: "6px",
+
+    dividerColor: "#e5e7eb",
+
+    dropdownWidth: "170px",
   };
 
   return {
@@ -176,10 +237,31 @@ export function createCheckboxTheme(
   };
 }
 
+// document-viewer.tsx
+export function createDocumentViewerTheme(
+  body: BodyThemeConfiguration,
+  customTheme: Partial<DocumentViewerThemeConfiguration> = {}
+): DocumentViewerThemeConfiguration {
+  const defaultTheme: DocumentViewerThemeConfiguration = {
+    backgroundColor: "#525659",
+    toolbarBackgroundColor: "#323639",
+    textColor: "white",
+    errorColor: "#ff6b6b",
+    hoverBoxBorderColor: "#4daaf5",
+    hoverBoxBackgroundColor: "rgba(77, 170, 245, 0.2)",
+    hoverBoxTextColor: "#323639",
+  };
+
+  return {
+    ...defaultTheme,
+    ...customTheme,
+  };
+}
+
 // error-slate.tsx
 export function createErrorSlateTheme(
-  custom: Partial<ErrorSlateTheme> = {}
-): ErrorSlateTheme {
+  custom: Partial<ErrorSlateThemeConfiguration> = {}
+): ErrorSlateThemeConfiguration {
   return {
     cubeFaceBackground: "#dd0b0b",
     cubeFaceBorder: "#a80000",
@@ -192,9 +274,9 @@ export function createErrorSlateTheme(
 // grid.tsx
 export function createGridTheme(
   body: BodyThemeConfiguration,
-  customTheme: Partial<GridTheme> = {}
-): GridTheme {
-  const defaultTheme: GridTheme = {
+  customTheme: Partial<GridThemeConfiguration> = {}
+): GridThemeConfiguration {
+  const defaultTheme: GridThemeConfiguration = {
     cardBackgroundColor: "#ffffff",
     cardHoverBackgroundColor: "#f3f3f3",
     cardSelectedBackgroundColor: "#e6f0ff",
@@ -211,11 +293,64 @@ export function createGridTheme(
 // keynote.tsx
 export function createKeynoteTheme(
   body: BodyThemeConfiguration,
-  customTheme: Partial<KeynoteTheme> = {}
-): KeynoteTheme {
-  const defaultTheme: KeynoteTheme = {
+  customTheme: Partial<KeynoteThemeConfiguration> = {}
+): KeynoteThemeConfiguration {
+  const defaultTheme: KeynoteThemeConfiguration = {
     keyColor: "#374151",
     valueColor: "#111827",
+  };
+
+  return {
+    ...defaultTheme,
+    ...customTheme,
+  };
+}
+
+// list.tsx
+export function createListTheme(
+  body: BodyThemeConfiguration,
+  customTheme: Partial<ListThemeConfiguration> = {}
+): ListThemeConfiguration {
+  const defaultTheme: ListThemeConfiguration = {
+    backgroundColor: "transparent",
+    textColor: body.textColor,
+    hoverBackgroundColor: "#dbeafe",
+    hoverTextColor: body.textColor,
+    selectedBackgroundColor: "#dbeafe",
+    borderColor: "#d1d5db",
+    mutedTextColor: "#6b7280",
+    dragLineColor: "#3b82f6",
+  };
+
+  return {
+    ...defaultTheme,
+    ...customTheme,
+  };
+}
+
+// loading-skeleton.tsx
+export function createLoadingSkeletonTheme(
+  customTheme: Partial<LoadingSkeletonThemeConfiguration> = {}
+): LoadingSkeletonThemeConfiguration {
+  const defaultTheme: LoadingSkeletonThemeConfiguration = {
+    baseColor: "#eeeeee",
+    highlightColor: "#dddddd",
+  };
+
+  return {
+    ...defaultTheme,
+    ...customTheme,
+  };
+}
+
+// loading-spinner.tsx
+export function createLoadingSpinnerTheme(
+  body: BodyThemeConfiguration,
+  customTheme: Partial<LoadingSpinnerThemeConfiguration> = {}
+): LoadingSpinnerThemeConfiguration {
+  const defaultTheme: LoadingSpinnerThemeConfiguration = {
+    color: "#3b82f6",
+    textColor: body.textColor,
   };
 
   return {
@@ -247,9 +382,9 @@ export function createRadioTheme(
 // separator.tsx
 export function createSeparatorTheme(
   body: BodyThemeConfiguration,
-  customTheme: Partial<SeparatorTheme> = {}
-): SeparatorTheme {
-  const defaultTheme: SeparatorTheme = {
+  customTheme: Partial<SeparatorThemeConfiguration> = {}
+): SeparatorThemeConfiguration {
+  const defaultTheme: SeparatorThemeConfiguration = {
     containerColor: "#6b7280",
     lineColor: "#111827",
     titleColor: "#111827",
@@ -262,8 +397,80 @@ export function createSeparatorTheme(
   };
 }
 
+// table.tsx
+export function createTableTheme(
+  body: BodyThemeConfiguration,
+  customTheme: Partial<TableThemeConfiguration> = {}
+): TableThemeConfiguration {
+  const defaultTheme: TableThemeConfiguration = {
+    textColor: body?.textColor || "#111827",
+    boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+
+    headerActionBackgroundColor: "linear-gradient(to bottom, #fbf9f9, #f0f0f0)",
+
+    headerBackgroundColor: "linear-gradient(to bottom, #f0f0f0, #e4e4e4)",
+    headerBorderColor: "#d1d5db",
+
+    rowBackgroundColor: "white",
+    rowBorderColor: "#e5e7eb",
+    rowHoverBackgroundColor: "#f9fafb",
+    rowSubtitleTextColor: "#1f2937",
+    rowContentBackgroundColor:
+      "linear-gradient(to bottom, #ececec 0%, #f6f6f6 35%, #f0f0f0 100%)",
+
+    summaryBackgroundColor: "linear-gradient(to bottom, #f0f0f0, #e4e4e4)",
+    summaryBorderColor: "#d1d5db",
+  };
+
+  return {
+    ...defaultTheme,
+    ...customTheme,
+  };
+}
+
+// treelist.tsx
+export function createTreeListTheme(
+  body: BodyThemeConfiguration,
+  custom: Partial<TreeListThemeConfiguration> = {}
+): TreeListThemeConfiguration {
+  const defaultTheme: TreeListThemeConfiguration = {
+    textColor: body.textColor,
+    backgroundColor: body.backgroundColor,
+    hoverBackgroundColor: "#f3f4f6",
+    selectedBackgroundColor: "#e5e7eb",
+    borderColor: "#e5e7eb",
+    expandIconColor: "#2563eb",
+  };
+
+  return {
+    ...defaultTheme,
+    ...custom,
+  };
+}
+
+// window.tsx
+export function createWindowTheme(
+  body: BodyThemeConfiguration,
+  customTheme: Partial<WindowThemeConfiguration> = {}
+): WindowThemeConfiguration {
+  const defaultTheme: WindowThemeConfiguration = {
+    backgroundColor: "#ffffff",
+    textColor: "#111827",
+    dividerColor: "#d1d5db",
+  };
+
+  return {
+    ...defaultTheme,
+    ...customTheme,
+  };
+}
+
 // Light
 const lightBody = createBodyTheme();
+
+const lightActionButton = createActionButtonTheme(lightBody);
+
+const lightActionCapsule = createActionCapsuleTheme(lightBody);
 
 const lightAvatar = createAvatarTheme(lightBody, {
   borderColor: "#e5e7eb",
@@ -370,7 +577,9 @@ const lightChoiceGroup = createChoiceGroupTheme(lightBody);
 
 const lightCheckbox = createCheckboxTheme(lightBody);
 
-export const lightErrorSlate = createErrorSlateTheme({
+const lightDocumentViewer = createDocumentViewerTheme(lightBody);
+
+const lightErrorSlate = createErrorSlateTheme({
   cubeFaceBackground: "#dd0b0b",
   cubeFaceBorder: "#a80000",
   cubeFaceText: "#ffffff",
@@ -381,12 +590,27 @@ const lightGrid = createGridTheme(lightBody);
 
 const lightKeynote = createKeynoteTheme(lightBody);
 
+const lightList = createListTheme(lightBody);
+
+const lightLoadingSkeleton = createLoadingSkeletonTheme();
+
+const lightLoadingSpinner = createLoadingSpinnerTheme(lightBody);
+
 const lightRadio = createRadioTheme(lightBody);
 
 const lightSeparator = createSeparatorTheme(lightBody);
 
+const lightTreeList = createTreeListTheme(lightBody);
+
+const lightTable = createTableTheme(lightBody);
+
+const lightWindow = createWindowTheme(lightBody);
+
 const lightTheme: AppTheme = {
   body: lightBody,
+
+  actionButton: lightActionButton,
+  actionCapsule: lightActionCapsule,
   avatar: lightAvatar,
   badge: lightBadge,
   button: lightButton,
@@ -394,17 +618,47 @@ const lightTheme: AppTheme = {
   card: lightCard,
   choiceGroup: lightChoiceGroup,
   checkbox: lightCheckbox,
+  documentViewer: lightDocumentViewer,
   errorSlate: lightErrorSlate,
   grid: lightGrid,
   keynote: lightKeynote,
+  list: lightList,
+  loadingSkeleton: lightLoadingSkeleton,
+  loadingSpinner: lightLoadingSpinner,
   radio: lightRadio,
   separator: lightSeparator,
+  table: lightTable,
+  treelist: lightTreeList,
+  window: lightWindow,
 };
 
 // Dark
 const darkBody = createBodyTheme({
   backgroundColor: "#111",
   textColor: "#fff",
+});
+
+const darkActionButton = createActionButtonTheme(darkBody, {
+  backgroundColor: "transparent",
+  textColor: "#f9fafb",
+  hoverBackgroundColor: "#292c2e",
+  disabledBackgroundColor: "#1f1f21",
+  borderColor: "#3a3a3f",
+
+  toggleBackgroundColor: "transparent",
+  toggleTextColor: "#f9fafb",
+  toggleHoverBackgroundColor: "#292c2e",
+  toggleBorderColor: "#3a3a3f",
+
+  dividerColor: "#3a3a3f",
+  dropdownWidth: "170px",
+});
+
+const darkActionCapsule = createActionCapsuleTheme(darkBody, {
+  activeBackgroundColor: "rgb(57, 62, 65)",
+  textColor: "#f9fafb",
+  tabTextColor: "rgb(233, 233, 233)",
+  borderColor: "#3a3a3f",
 });
 
 const darkAvatar = createAvatarTheme(darkBody, {
@@ -536,9 +790,9 @@ const darkChoiceGroup = createChoiceGroupTheme(darkBody, {
 
 const darkCheckbox = createCheckboxTheme(lightBody, {
   borderColor: "#374151",
-  checkedBorderColor: "#3B82F6",
+  checkedBorderColor: "#2a3243",
   backgroundColor: "#1f2937",
-  checkedBackgroundColor: "#3B82F6",
+  checkedBackgroundColor: "#2a3243",
   iconColor: "#f9fafb",
   labelColor: "#f9fafb",
   descriptionColor: "#d1d5db",
@@ -546,7 +800,16 @@ const darkCheckbox = createCheckboxTheme(lightBody, {
   highlightHoverColor: "#2563EB55",
 });
 
-export const darkErrorSlate = createErrorSlateTheme({
+const darkDocumentViewer = createDocumentViewerTheme(darkBody, {
+  backgroundColor: "#0f172a",
+  toolbarBackgroundColor: "#020617",
+  textColor: "#e5e7eb",
+  hoverBoxBorderColor: "#3b82f6",
+  hoverBoxTextColor: "#020617",
+  hoverBoxBackgroundColor: "rgba(59, 130, 246, 0.15)",
+});
+
+const darkErrorSlate = createErrorSlateTheme({
   cubeFaceBackground: "#ff4d4f",
   cubeFaceBorder: "#a8071a",
   cubeFaceText: "#ffffff",
@@ -567,11 +830,31 @@ const darkKeynote = createKeynoteTheme(darkBody, {
   valueColor: "#f3f4f6",
 });
 
+const darkList = createListTheme(darkBody, {
+  backgroundColor: "#020617",
+  textColor: "#e5e7eb",
+  hoverBackgroundColor: "#1e293b",
+  selectedBackgroundColor: "#1e40af",
+  borderColor: "#1f2937",
+  mutedTextColor: "#9ca3af",
+  dragLineColor: "#264c7b",
+});
+
+const darkLoadingSkeleton = createLoadingSkeletonTheme({
+  baseColor: "#1f2937",
+  highlightColor: "#374151",
+});
+
+const darkLoadingSpinner = createLoadingSpinnerTheme(darkBody, {
+  color: "#2a3243",
+  textColor: "#e5e7eb",
+});
+
 const darkRadio = createRadioTheme(darkBody, {
   borderColor: "#374151",
-  checkedBorderColor: "#3b82f6",
-  backgroundColor: "#1f2937",
-  checkedBackgroundColor: "#3b82f6",
+  checkedBorderColor: "#2a3243",
+  backgroundColor: "inherit",
+  checkedBackgroundColor: "#2a3243",
   labelColor: "#ffffff",
   descriptionColor: "#d1d5db",
   highlightBackgroundColor: "#2563EB33",
@@ -582,11 +865,50 @@ const darkSeparator = createSeparatorTheme(darkBody, {
   containerColor: "#d1d5db",
   lineColor: "#e5e7eb",
   titleColor: "#f9fafb",
-  backgroundTitleColor: "#111111",
+  backgroundTitleColor: "#1f2023",
+});
+
+export const darkTable: TableThemeConfiguration = createTableTheme(darkBody, {
+  textColor: darkBody.textColor,
+  boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+
+  headerActionBackgroundColor: "linear-gradient(to bottom, #2c2c2c, #1f1f1f)",
+
+  headerBackgroundColor: "linear-gradient(#29282b, #323232)",
+  headerBorderColor: "rgb(39, 39, 48)",
+
+  rowBackgroundColor: "rgb(31, 31, 33)",
+  rowBorderColor: "rgb(39, 39, 48)",
+  rowHoverBackgroundColor: "#292c2e",
+  rowSubtitleTextColor: "#d1d5db",
+  rowContentBackgroundColor:
+    "linear-gradient(to bottom, #1a1a1a 0%, #222222 35%, #1f1f1f 100%)",
+
+  summaryBackgroundColor: "linear-gradient(#29282b, #323232)",
+  summaryBorderColor: "rgb(39, 39, 48)",
+});
+
+const darkTreeList = createTreeListTheme(darkBody, {
+  textColor: "#f9fafb",
+  backgroundColor: "#111827",
+  hoverBackgroundColor: "#1f2937",
+  selectedBackgroundColor: "#374151",
+  borderColor: "#374151",
+  expandIconColor: "#3b82f6",
+});
+
+const darkWindow = createWindowTheme(darkBody, {
+  backgroundColor: "#111827",
+  textColor: "#f9fafb",
+  dividerColor: "#374151",
 });
 
 const darkTheme: AppTheme = {
   body: darkBody,
+
+  actionButton: darkActionButton,
+  actionCapsule: darkActionCapsule,
+
   avatar: darkAvatar,
   badge: darkBadge,
   button: darkButton,
@@ -594,11 +916,18 @@ const darkTheme: AppTheme = {
   card: darkCard,
   choiceGroup: darkChoiceGroup,
   checkbox: darkCheckbox,
+  documentViewer: darkDocumentViewer,
   errorSlate: darkErrorSlate,
   grid: darkGrid,
   keynote: darkKeynote,
+  list: darkList,
+  loadingSkeleton: darkLoadingSkeleton,
+  loadingSpinner: darkLoadingSpinner,
   radio: darkRadio,
   separator: darkSeparator,
+  table: darkTable,
+  treelist: darkTreeList,
+  window: darkWindow,
 };
 
 // Themes
