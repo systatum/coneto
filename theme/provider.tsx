@@ -40,5 +40,6 @@ export function useTheme() {
 
   return {
     currentTheme,
+    mode,
   };
 }
