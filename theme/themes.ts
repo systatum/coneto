@@ -8,9 +8,12 @@ import {
   BodyThemeConfiguration,
   BoxbarThemeConfiguration,
   ButtonThemeConfiguration,
+  CapsuleTabThemeConfiguration,
+  CapsuleThemeConfiguration,
   CardThemeConfiguration,
   CheckboxThemeConfiguration,
   ChoiceGroupThemeConfiguration,
+  DialogThemeConfiguration,
   DocumentViewerThemeConfiguration,
   ErrorSlateThemeConfiguration,
   GridThemeConfiguration,
@@ -19,9 +22,12 @@ import {
   LoadingSkeletonThemeConfiguration,
   LoadingSpinnerThemeConfiguration,
   MessageboxThemeConfiguration,
+  ModalDialogThemeConfiguration,
   OverlayBlockerThemeConfiguration,
+  PaperDialogThemeConfiguration,
   RadioThemeConfiguration,
   SeparatorThemeConfiguration,
+  SidebarThemeConfiguration,
   StatusbarThemeConfiguration,
   TableThemeConfiguration,
   TreeListThemeConfiguration,
@@ -174,6 +180,67 @@ export function createButtonTheme(
   return { ...variants, ...customVariants };
 }
 
+// capsule.tsx
+
+export function createCapsuleTheme(
+  body: BodyThemeConfiguration,
+  custom: Partial<CapsuleThemeConfiguration> = {}
+): CapsuleThemeConfiguration {
+  const defaultTheme: CapsuleThemeConfiguration = {
+    backgroundColor: body.backgroundColor,
+    borderColor: "#ebebeb",
+    boxShadow: "0 1px 1px -2px #5b5b5b, 0 1px 1px rgba(0, 0, 0, 0.05)",
+    textColor: body.textColor,
+
+    tab: {
+      textColor: "#111827",
+      activeTextColor: "#ffffff",
+    },
+
+    active: {
+      backgroundColor: "oklch(54.6% .245 262.881)",
+    },
+
+    hover: {
+      borderColor: "oklch(54.6% .245 262.881)",
+    },
+  };
+
+  return {
+    ...defaultTheme,
+    ...custom,
+    tab: {
+      ...defaultTheme.tab,
+      ...custom.tab,
+    },
+    active: {
+      ...defaultTheme.active,
+      ...custom.active,
+    },
+    hover: {
+      ...defaultTheme.hover,
+      ...custom.hover,
+    },
+  };
+}
+
+// capsule-tab.tsx
+export function createCapsuleTabTheme(
+  body: BodyThemeConfiguration,
+  custom: Partial<CapsuleTabThemeConfiguration> = {}
+): CapsuleTabThemeConfiguration {
+  const defaultTheme: CapsuleTabThemeConfiguration = {
+    backgroundColor: "#ffffff",
+    borderColor: "#ebebeb",
+    boxShadow: "0 1px 3px -3px #5b5b5b",
+  };
+
+  return {
+    ...defaultTheme,
+    ...custom,
+  };
+}
+
 // card.tsx
 export function createCardTheme(
   body: BodyThemeConfiguration,
@@ -235,6 +302,24 @@ export function createCheckboxTheme(
   return {
     ...defaultTheme,
     ...customTheme,
+  };
+}
+
+export function createDialogTheme(
+  body: BodyThemeConfiguration,
+  custom: DialogThemeConfiguration = {}
+): DialogThemeConfiguration {
+  const defaultTheme: DialogThemeConfiguration = {
+    borderColor: "#ebebeb",
+    textColor: body.textColor,
+    backgroundColor: body.backgroundColor,
+    boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.1)",
+    subtitleColor: "#5a606b",
+  };
+
+  return {
+    ...defaultTheme,
+    ...custom,
   };
 }
 
@@ -393,6 +478,26 @@ export function createMessageboxTheme(
   };
 }
 
+// modal-dialog.tsx
+export function createModalDialogTheme(
+  body: BodyThemeConfiguration,
+  custom: Partial<ModalDialogThemeConfiguration> = {}
+): ModalDialogThemeConfiguration {
+  const defaultTheme: ModalDialogThemeConfiguration = {
+    backgroundColor: body.backgroundColor,
+    borderColor: "#ebebeb",
+    textColor: body.textColor,
+    boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.1)",
+    subtitleColor: "#6b7280",
+    dividerColor: "#3b82f6",
+  };
+
+  return {
+    ...defaultTheme,
+    ...custom,
+  };
+}
+
 // overlay-blocker.tsx
 export function createOverlayBlockerTheme(
   customTheme: Partial<OverlayBlockerThemeConfiguration> = {}
@@ -405,6 +510,25 @@ export function createOverlayBlockerTheme(
   return {
     ...defaultTheme,
     ...customTheme,
+  };
+}
+
+// paper-dialog.tsx
+export function createPaperDialogTheme(
+  body: BodyThemeConfiguration,
+  custom: Partial<PaperDialogThemeConfiguration> = {}
+): PaperDialogThemeConfiguration {
+  const defaultTheme: PaperDialogThemeConfiguration = {
+    backgroundColor: body?.backgroundColor,
+    borderColor: "rgb(235, 235, 235)",
+    boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+    textColor: body.textColor,
+    actionHoverBackgroundColor: "#f3f4f6",
+  };
+
+  return {
+    ...defaultTheme,
+    ...custom,
   };
 }
 
@@ -428,6 +552,60 @@ export function createRadioTheme(
   return { ...defaultTheme, ...customTheme };
 }
 
+// separator.tsx
+export function createSeparatorTheme(
+  body: BodyThemeConfiguration,
+  customTheme: Partial<SeparatorThemeConfiguration> = {}
+): SeparatorThemeConfiguration {
+  const defaultTheme: SeparatorThemeConfiguration = {
+    containerColor: "#6b7280",
+    lineColor: "#111827",
+    titleColor: "#111827",
+    backgroundTitleColor: body?.backgroundColor,
+  };
+
+  return {
+    ...defaultTheme,
+    ...customTheme,
+  };
+}
+
+export function createSidebarTheme(
+  body: BodyThemeConfiguration,
+  custom: Partial<SidebarThemeConfiguration> = {}
+): SidebarThemeConfiguration {
+  const defaultTheme: SidebarThemeConfiguration = {
+    backgroundColor: body.backgroundColor,
+    borderColor: "#e5e7eb",
+    boxShadow: "0 0 6px rgba(0,0,0,0.05)",
+    textColor: body.textColor,
+
+    item: {
+      hoverBackgroundColor: "#f3f3f3",
+      activeBackgroundColor: "#e5e7eb",
+    },
+
+    toggle: {
+      backgroundColor: "#ffffff",
+      borderColor: "#e5e7eb",
+      hoverBackgroundColor: "#f3f3f3",
+    },
+  };
+
+  return {
+    ...defaultTheme,
+    ...custom,
+    item: {
+      ...defaultTheme.item,
+      ...custom.item,
+    },
+    toggle: {
+      ...defaultTheme.toggle,
+      ...custom.toggle,
+    },
+  };
+}
+
 // statusbar.tsx
 export function createStatusbarTheme(
   customTheme: Partial<StatusbarThemeConfiguration> = {}
@@ -442,24 +620,6 @@ export function createStatusbarTheme(
       activeBackgroundColor: "#d1d5db",
       hoverBackgroundColor: "#e5e7eb",
     },
-  };
-
-  return {
-    ...defaultTheme,
-    ...customTheme,
-  };
-}
-
-// separator.tsx
-export function createSeparatorTheme(
-  body: BodyThemeConfiguration,
-  customTheme: Partial<SeparatorThemeConfiguration> = {}
-): SeparatorThemeConfiguration {
-  const defaultTheme: SeparatorThemeConfiguration = {
-    containerColor: "#6b7280",
-    lineColor: "#111827",
-    titleColor: "#111827",
-    backgroundTitleColor: body?.backgroundColor,
   };
 
   return {
@@ -638,6 +798,10 @@ const lightButton = createButtonTheme(lightBody, {
   },
 });
 
+const lightCapsule = createCapsuleTheme(lightBody);
+
+const lightCapsuleTab = createCapsuleTheme(lightBody);
+
 const lightCard = createCardTheme(lightBody, {
   backgroundColor: "#ffffff",
   borderColor: "#e5e7eb",
@@ -648,6 +812,8 @@ const lightCard = createCardTheme(lightBody, {
 const lightChoiceGroup = createChoiceGroupTheme(lightBody);
 
 const lightCheckbox = createCheckboxTheme(lightBody);
+
+const lightDialog = createDialogTheme(lightBody);
 
 const lightDocumentViewer = createDocumentViewerTheme(lightBody);
 
@@ -672,11 +838,17 @@ const lightOverlayBlocker = createOverlayBlockerTheme();
 
 const lightMessagebox = createMessageboxTheme();
 
+const lightModalDialog = createModalDialogTheme(lightBody);
+
+const lightPaperDialog = createPaperDialogTheme(lightBody);
+
 const lightRadio = createRadioTheme(lightBody);
 
-const lightStatusbar = createStatusbarTheme();
-
 const lightSeparator = createSeparatorTheme(lightBody);
+
+const lightSidebar = createSidebarTheme(lightBody);
+
+const lightStatusbar = createStatusbarTheme();
 
 const lightTreeList = createTreeListTheme(lightBody);
 
@@ -689,13 +861,17 @@ const lightTheme: AppTheme = {
 
   actionButton: lightActionButton,
   actionCapsule: lightActionCapsule,
+
   avatar: lightAvatar,
   badge: lightBadge,
   button: lightButton,
   boxbar: lightBoxbar,
+  capsule: lightCapsule,
+  capsuleTab: lightCapsuleTab,
   card: lightCard,
   choiceGroup: lightChoiceGroup,
   checkbox: lightCheckbox,
+  dialog: lightDialog,
   documentViewer: lightDocumentViewer,
   errorSlate: lightErrorSlate,
   grid: lightGrid,
@@ -704,9 +880,12 @@ const lightTheme: AppTheme = {
   loadingSkeleton: lightLoadingSkeleton,
   loadingSpinner: lightLoadingSpinner,
   messagebox: lightMessagebox,
+  modalDialog: lightModalDialog,
   overlayBlocker: lightOverlayBlocker,
+  paperDialog: lightPaperDialog,
   radio: lightRadio,
   separator: lightSeparator,
+  sidebar: lightSidebar,
   statusbar: lightStatusbar,
   table: lightTable,
   treelist: lightTreeList,
@@ -867,8 +1046,33 @@ const darkBoxbar = createBoxbarTheme(darkBody, {
   toggleButtonHoverColor: "#ccc",
 });
 
+const darkCapsule = createCapsuleTheme(darkBody, {
+  backgroundColor: "#272727",
+  borderColor: "#303030",
+  boxShadow: "0 1px 2px rgba(0,0,0,0.4)",
+
+  tab: {
+    textColor: "#a3a3a3",
+    activeTextColor: "#d4d4d4",
+  },
+
+  active: {
+    backgroundColor: "#363636",
+  },
+
+  hover: {
+    borderColor: "#404040",
+  },
+});
+
+const darkCapsuleTab = createCapsuleTabTheme(darkBody, {
+  backgroundColor: "#272727",
+  borderColor: "#303030",
+  boxShadow: "0 2px 6px rgba(0,0,0,0.4)",
+});
+
 const darkCard = createCardTheme(darkBody, {
-  backgroundColor: "#1f2937",
+  backgroundColor: "rgb(31, 31, 33)",
   borderColor: "#374151",
   titleColor: "#f9fafb",
   subtitleColor: "#9ca3af",
@@ -894,6 +1098,14 @@ const darkCheckbox = createCheckboxTheme(lightBody, {
   descriptionColor: "#d1d5db",
   highlightBackgroundColor: "#2563EB33",
   highlightHoverColor: "#2563EB55",
+});
+
+const darkDialog = createDialogTheme(darkBody, {
+  backgroundColor: darkBody.backgroundColor,
+  borderColor: "#303030",
+  textColor: darkBody.textColor,
+  boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
+  subtitleColor: "#a3a3a3",
 });
 
 const darkDocumentViewer = createDocumentViewerTheme(darkBody, {
@@ -969,9 +1181,25 @@ const darkMessagebox = createMessageboxTheme({
   },
 });
 
+const darkModalDialog = createModalDialogTheme(darkBody, {
+  backgroundColor: "#272727",
+  borderColor: "#303030",
+  textColor: darkBody.textColor,
+  subtitleColor: "#9ca3af",
+  dividerColor: "rgb(60, 49, 110)",
+});
+
 const darkOverlayBlocker = createOverlayBlockerTheme({
   backgroundColor: "rgba(0, 0, 0, 0.95)",
   backdropFilter: "none",
+});
+
+const darkPaperDialog = createPaperDialogTheme(darkBody, {
+  backgroundColor: darkBody.backgroundColor,
+  borderColor: "#303030",
+  boxShadow: "0 4px 12px rgba(0,0,0,0.5)",
+  textColor: darkBody.textColor,
+  actionHoverBackgroundColor: "#363636",
 });
 
 const darkRadio = createRadioTheme(darkBody, {
@@ -990,6 +1218,23 @@ const darkSeparator = createSeparatorTheme(darkBody, {
   lineColor: "#e5e7eb",
   titleColor: "#f9fafb",
   backgroundTitleColor: "#1f2023",
+});
+
+const darkSidebar = createSidebarTheme(darkBody, {
+  backgroundColor: darkBody.backgroundColor,
+  borderColor: "#303030",
+  boxShadow: "0 0 8px rgba(0,0,0,0.4)",
+
+  item: {
+    hoverBackgroundColor: "#363636",
+    activeBackgroundColor: "#404040",
+  },
+
+  toggle: {
+    backgroundColor: darkBody.backgroundColor,
+    borderColor: "#303030",
+    hoverBackgroundColor: "#363636",
+  },
 });
 
 const darkStatusbar = createStatusbarTheme({
@@ -1050,9 +1295,12 @@ const darkTheme: AppTheme = {
   badge: darkBadge,
   button: darkButton,
   boxbar: darkBoxbar,
+  capsule: darkCapsule,
+  capsuleTab: darkCapsuleTab,
   card: darkCard,
   choiceGroup: darkChoiceGroup,
   checkbox: darkCheckbox,
+  dialog: darkDialog,
   documentViewer: darkDocumentViewer,
   errorSlate: darkErrorSlate,
   grid: darkGrid,
@@ -1061,9 +1309,12 @@ const darkTheme: AppTheme = {
   loadingSkeleton: darkLoadingSkeleton,
   loadingSpinner: darkLoadingSpinner,
   messagebox: darkMessagebox,
+  modalDialog: darkModalDialog,
   overlayBlocker: darkOverlayBlocker,
+  paperDialog: darkPaperDialog,
   radio: darkRadio,
   separator: darkSeparator,
+  sidebar: darkSidebar,
   statusbar: darkStatusbar,
   table: darkTable,
   treelist: darkTreeList,

@@ -80,6 +80,31 @@ export interface ButtonThemeConfiguration extends BodyThemeConfiguration {
   focusBackgroundColor?: string;
 }
 
+// capsule.tsx
+export interface CapsuleThemeConfiguration {
+  backgroundColor?: string;
+  borderColor?: string;
+  boxShadow?: string;
+  textColor?: string;
+  tab?: {
+    textColor?: string;
+    activeTextColor?: string;
+  };
+  active?: {
+    backgroundColor?: string;
+  };
+  hover?: {
+    borderColor?: string;
+  };
+}
+
+// capsule-tab.tsx
+export interface CapsuleTabThemeConfiguration {
+  borderColor?: string;
+  boxShadow?: string;
+  backgroundColor?: string;
+}
+
 // card.tsx
 export interface CardThemeConfiguration extends BodyThemeConfiguration {
   borderColor?: string;
@@ -111,6 +136,15 @@ export interface CheckboxThemeConfiguration {
   descriptionColor?: string;
   highlightBackgroundColor?: string;
   highlightHoverColor?: string;
+}
+
+// dialog.tsx
+export interface DialogThemeConfiguration {
+  backgroundColor?: string;
+  borderColor?: string;
+  boxShadow?: string;
+  textColor?: string;
+  subtitleColor?: string;
 }
 
 // document-viewer.tsx
@@ -183,10 +217,25 @@ export type MessageboxThemeConfiguration = {
   [K in MessageboxVariantState]: MessageboxVariantTheme;
 };
 
+// modal-dialog.tsx
+export interface ModalDialogThemeConfiguration
+  extends DialogThemeConfiguration {
+  dividerColor?: string;
+}
+
 // overlay-blocker.tsx
 export interface OverlayBlockerThemeConfiguration {
   backgroundColor?: string;
   backdropFilter?: string;
+}
+
+// paper-dialog.tsx
+export interface PaperDialogThemeConfiguration {
+  backgroundColor?: string;
+  borderColor?: string;
+  boxShadow?: string;
+  textColor?: string;
+  actionHoverBackgroundColor?: string;
 }
 
 // radio.tsx
@@ -208,6 +257,25 @@ export interface SeparatorThemeConfiguration {
   lineColor?: string;
   titleColor?: string;
   backgroundTitleColor?: string;
+}
+
+// sidebar.tsx
+export interface SidebarThemeConfiguration {
+  backgroundColor?: string;
+  borderColor?: string;
+  boxShadow?: string;
+  textColor?: string;
+
+  item?: {
+    hoverBackgroundColor?: string;
+    activeBackgroundColor?: string;
+  };
+
+  toggle?: {
+    backgroundColor?: string;
+    borderColor?: string;
+    hoverBackgroundColor?: string;
+  };
 }
 
 // statusbar.tsx
@@ -261,13 +329,17 @@ export interface AppTheme {
 
   actionCapsule: ActionCapsuleThemeConfiguration;
   actionButton: ActionButtonThemeConfiguration;
+
   avatar: AvatarThemeConfiguration;
   badge: BadgeThemeConfiguration;
   boxbar: BoxbarThemeConfiguration;
   button: Record<ButtonVariants["variant"], ButtonThemeConfiguration>;
+  capsule: CapsuleThemeConfiguration;
+  capsuleTab: CapsuleTabThemeConfiguration;
   card: CardThemeConfiguration;
   choiceGroup: ChoiceGroupThemeConfiguration;
   checkbox: CheckboxThemeConfiguration;
+  dialog: DialogThemeConfiguration;
   documentViewer: DocumentViewerThemeConfiguration;
   errorSlate: ErrorSlateThemeConfiguration;
   grid: GridThemeConfiguration;
@@ -276,9 +348,12 @@ export interface AppTheme {
   loadingSkeleton: LoadingSkeletonThemeConfiguration;
   loadingSpinner: LoadingSpinnerThemeConfiguration;
   messagebox: MessageboxThemeConfiguration;
+  modalDialog: ModalDialogThemeConfiguration;
   overlayBlocker: OverlayBlockerThemeConfiguration;
+  paperDialog: PaperDialogThemeConfiguration;
   radio: RadioThemeConfiguration;
   separator: SeparatorThemeConfiguration;
+  sidebar: SidebarThemeConfiguration;
   statusbar: StatusbarThemeConfiguration;
   table: TableThemeConfiguration;
   treelist: TreeListThemeConfiguration;
