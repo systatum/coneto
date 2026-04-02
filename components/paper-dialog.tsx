@@ -21,6 +21,8 @@ import { Button, ButtonStylesProps, ButtonVariants } from "./button";
 import styled, { css, CSSProp } from "styled-components";
 import { Figure, FigureProps } from "./figure";
 import { OverlayBlocker } from "./overlay-blocker";
+import { useTheme } from "./../theme/provider";
+import { PaperDialogThemeConfiguration } from "theme";
 
 export type DialogState = "restored" | "closed" | "minimized";
 
@@ -70,6 +72,9 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
     { position = "right", children, closable = true, width, styles, onClosed },
     ref
   ) => {
+    const { currentTheme } = useTheme();
+    const paperDialogTheme = currentTheme.paperDialog;
+
     const [dialogState, setDialogState] = useState<DialogState>("closed");
     const controls = useAnimation();
     const isLeft = position === "left";
@@ -168,6 +173,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
               animate={controls}
               $isLeft={isLeft}
               $style={styles?.self}
+              $theme={paperDialogTheme}
             >
               {closable && (
                 <CloseButtonWrapper
@@ -175,6 +181,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                   $tabStyle={styles?.tabCloseStyle}
                 >
                   <IconButton
+                    $theme={paperDialogTheme}
                     $isLeft={isLeft}
                     aria-label="button-close"
                     onClick={() => {
@@ -194,6 +201,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                 $tabStyle={styles?.tabStyle}
               >
                 <IconButton
+                  $theme={paperDialogTheme}
                   $isLeft={isLeft}
                   aria-label="paper-dialog-toggle"
                   onClick={() =>
@@ -256,6 +264,7 @@ const MotionDialog = styled(motion.div)<{
   $isLeft: boolean;
   $style?: CSSProp;
   $width?: string;
+  $theme?: PaperDialogThemeConfiguration;
 }>`
   position: fixed;
   top: 0;
@@ -272,11 +281,13 @@ const MotionDialog = styled(motion.div)<{
   gap: 12px;
   width: 16rem;
   min-width: ${({ $width }) => $width ?? "92vw"};
-  background-color: white;
-  border: 1px solid #ebebeb;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   padding-bottom: 1rem;
   z-index: 9991999;
+
+  background-color: ${({ $theme }) => $theme?.backgroundColor};
+  color: ${({ $theme }) => $theme?.textColor};
+  border: 1px solid ${({ $theme }) => $theme?.borderColor};
+  box-shadow: ${({ $theme }) => $theme?.boxShadow};
 
   ${({ $style }) => $style};
 `;
@@ -302,6 +313,7 @@ const CloseButtonWrapper = styled.div<{
           right: 100%;
           translate: 4px;
         `}
+
   ${({ $tabStyle }) => $tabStyle}
 `;
 
@@ -329,15 +341,19 @@ const MinimizeButtonWrapper = styled.div<{
   ${({ $tabStyle }) => $tabStyle}
 `;
 
-const IconButton = styled.button<{ $isLeft: boolean }>`
+const IconButton = styled.button<{
+  $isLeft: boolean;
+  $theme?: PaperDialogThemeConfiguration;
+}>`
   position: relative;
-  background-color: white;
-  border: 1px solid #ebebeb;
   cursor: pointer;
   padding: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background-color: ${({ $theme }) => $theme?.backgroundColor};
+  border: 1px solid ${({ $theme }) => $theme?.borderColor};
+  box-shadow: ${({ $theme }) => $theme?.boxShadow};
+
   &:hover {
-    background-color: #f3f4f6;
+    background-color: ${({ $theme }) => $theme?.actionHoverBackgroundColor};
   }
 
   ${({ $isLeft }) =>
@@ -382,8 +398,12 @@ export function PaperDialogContent({
   children,
   styles,
 }: PaperDialogContentProps) {
+  const { currentTheme } = useTheme();
+  const paperDialogTheme = currentTheme.paperDialog;
+
   return (
     <StyledDialogContent
+      $theme={paperDialogTheme}
       aria-label="paper-dialog-content"
       $style={styles?.self}
     >
@@ -392,7 +412,10 @@ export function PaperDialogContent({
   );
 }
 
-const StyledDialogContent = styled.div<{ $style?: CSSProp }>`
+const StyledDialogContent = styled.div<{
+  $style?: CSSProp;
+  $theme?: PaperDialogThemeConfiguration;
+}>`
   min-height: 100dvh;
   max-height: 100dvh;
   overflow: auto;
@@ -401,7 +424,8 @@ const StyledDialogContent = styled.div<{ $style?: CSSProp }>`
   gap: 0.75rem;
   position: relative;
   z-index: 9999;
-  background-color: white;
+  background-color: ${({ $theme }) => $theme?.backgroundColor};
+  color: ${({ $theme }) => $theme?.textColor};
 
   ${({ $style }) => $style}
 `;
