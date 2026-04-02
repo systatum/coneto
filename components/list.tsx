@@ -30,6 +30,7 @@ import ContextMenu, { ContextMenuActionsProps } from "./context-menu";
 import { ActionButton, ActionButtonProps } from "./action-button";
 import { OverlayBlocker } from "./overlay-blocker";
 import { Figure, FigureProps } from "./figure";
+import { useTheme } from "./../theme/provider";
 
 export interface ListProps extends ListMaxItemsProp {
   searchable?: boolean;
@@ -147,6 +148,9 @@ function List({
   labels,
   maxItemsWithIcon,
 }: ListProps) {
+  const { currentTheme } = useTheme();
+  const listTheme = currentTheme.list;
+
   const childArray = Children.toArray(children).filter(isValidElement);
 
   const hasGroup = childArray.some((child) => {
@@ -205,6 +209,8 @@ function List({
     return next;
   };
 
+  console.log(openedGroupIds);
+
   const setIsOpen = (id: string, level: "group" | "item" = "item") => {
     if (level === "group") {
       setOpenedGroupIds((prev) => {
@@ -239,6 +245,7 @@ function List({
     >
       <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
         <ListContainer
+          $backgroundColor={listTheme.backgroundColor}
           aria-label="list-container"
           $containerStyle={styles?.containerStyle}
         >
@@ -353,14 +360,19 @@ function List({
   );
 }
 
-const ListContainer = styled.div<{ $containerStyle?: CSSProp }>`
+const ListContainer = styled.div<{
+  $containerStyle?: CSSProp;
+  $backgroundColor?: string;
+}>`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   position: relative;
-  ${(props) => props.$containerStyle}
-`;
 
+  background: ${({ $backgroundColor }) => $backgroundColor};
+
+  ${({ $containerStyle }) => $containerStyle}
+`;
 export interface ListGroupActionsProps
   extends Omit<ActionButtonProps, "onClick"> {
   onClick?: (e?: string) => void;
@@ -420,6 +432,9 @@ function ListGroup({
   onClick,
   ...props
 }: ListGroupProps) {
+  const { currentTheme } = useTheme();
+  const listTheme = currentTheme.list;
+
   const {
     openTipRowId,
     setOpenTipRowId,
@@ -539,7 +554,9 @@ function ListGroup({
                 `,
               }}
               checked={opened}
-              onChange={() => {
+              onMouseDown={(e) => {
+                e.stopPropagation();
+
                 setIsOpen(id, "group");
               }}
             />
@@ -547,7 +564,9 @@ function ListGroup({
         </ListGroupRightSideWrapper>
       </HeaderButton>
 
-      {opened && <Divider aria-label="divider" />}
+      {opened && (
+        <Divider $borderColor={listTheme.borderColor} aria-label="divider" />
+      )}
 
       <AnimatePresence initial={false}>
         <ListGroupContent
@@ -644,6 +663,8 @@ function ListGroup({
 
         {childArray.length === 0 && (
           <EmptyContent
+            $borderColor={listTheme.borderColor}
+            $mutedTextColor={listTheme.mutedTextColor}
             key="drop-here"
             aria-label="list-group-empty-slate"
             initial="open"
@@ -695,8 +716,13 @@ function ListShowMoreButton({
   labels?: ListLabelsProps;
   maxItemsStyle?: CSSProp;
 } & ListMaxItemsProp) {
+  const { currentTheme } = useTheme();
+  const listTheme = currentTheme.list;
+
   return (
     <ShowMoreButton
+      $borderColor={listTheme.borderColor}
+      $textColor={listTheme.textColor}
       aria-label="list-show-more-button"
       $style={css`
         ${maxItemsStyle}
@@ -747,7 +773,11 @@ const ListGroupRightSideWrapper = styled.div<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
-const ShowMoreButton = styled.button<{ $style?: CSSProp }>`
+const ShowMoreButton = styled.button<{
+  $style?: CSSProp;
+  $textColor?: string;
+  $borderColor?: string;
+}>`
   margin-top: 0.25rem;
   padding: 0.25rem 0.5rem;
   font-size: 0.75rem;
@@ -755,14 +785,14 @@ const ShowMoreButton = styled.button<{ $style?: CSSProp }>`
   border: none;
   cursor: pointer;
   position: relative;
-  border: 1px solid #cccccc;
   border-radius: 2px;
   text-align: center;
-  color: #616161;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  border: 1px solid ${({ $borderColor }) => $borderColor};
+  color: ${({ $textColor }) => $textColor};
 
   ${({ $style }) => $style}
 `;
@@ -830,23 +860,27 @@ const SubtitleText = styled.span<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
-const Divider = styled.div`
-  border-bottom: 1px solid #d1d5db;
+const Divider = styled.div<{ $borderColor?: string }>`
+  border-bottom: 1px solid ${({ $borderColor }) => $borderColor};
   width: 100%;
   height: fit-content;
 `;
 
-const EmptyContent = styled(motion.div)<{ $style?: CSSProp }>`
+const EmptyContent = styled(motion.div)<{
+  $style?: CSSProp;
+  $borderColor?: string;
+  $mutedTextColor?: string;
+}>`
+  border: 1px dashed ${({ $borderColor }) => $borderColor};
+  color: ${({ $mutedTextColor }) => $mutedTextColor};
   height: 0.5rem;
   margin-top: 0.25rem;
   padding: 0.5rem 0;
-  border: 1px dashed #d1d5db;
   border-radius: 0.25rem;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.875rem;
-  color: #9ca3af;
 
   ${({ $style }) => $style}
 `;
@@ -925,6 +959,9 @@ const ListItem = forwardRef<HTMLLIElement, ListItemProps>(
     },
     ref
   ) => {
+    const { currentTheme } = useTheme();
+    const listTheme = currentTheme.list;
+
     const {
       openTipRowId,
       setOpenTipRowId,
@@ -959,8 +996,13 @@ const ListItem = forwardRef<HTMLLIElement, ListItemProps>(
         aria-label="list-item-wrapper"
         $openable={openable && isChildOpened}
         $style={styles?.containerStyle}
-        $hoverBackgroundColor={hoverBackgroundColor}
-        $hoverTextColor={hoverTextColor}
+        $hoverBackgroundColor={
+          hoverBackgroundColor ?? listTheme.hoverBackgroundColor
+        }
+        $selectedBackgroundColor={
+          hoverBackgroundColor ?? listTheme.hoverBackgroundColor
+        }
+        $hoverTextColor={hoverTextColor ?? listTheme.hoverTextColor}
         $selected={selected}
       >
         <ListItemRow
@@ -980,8 +1022,11 @@ const ListItem = forwardRef<HTMLLIElement, ListItemProps>(
           $isHovered={isHovered === idFullname || openTipRowId === idFullname}
           $style={styles?.rowStyle}
           aria-label="list-item-row"
-          $hoverTextColor={hoverTextColor}
-          $hoverBackgroundColor={hoverBackgroundColor}
+          $hoverTextColor={hoverTextColor ?? listTheme.hoverTextColor}
+          $hoverBackgroundColor={
+            hoverBackgroundColor ?? listTheme.hoverBackgroundColor
+          }
+          $textColor={listTheme.textColor}
           draggable={draggable}
           onClick={() => {
             if (onClick) {
@@ -1112,12 +1157,21 @@ const ListItem = forwardRef<HTMLLIElement, ListItemProps>(
             )}
             <TextWrapper>
               {title && (
-                <Title role="option" $style={styles?.titleStyle}>
+                <Title
+                  role="option"
+                  $textColor={listTheme.textColor}
+                  $style={styles?.titleStyle}
+                >
                   {title}
                 </Title>
               )}
               {subtitle && (
-                <Subtitle $style={styles?.subtitleStyle}>{subtitle}</Subtitle>
+                <Subtitle
+                  $mutedTextColor={listTheme.mutedTextColor}
+                  $style={styles?.subtitleStyle}
+                >
+                  {subtitle}
+                </Subtitle>
               )}
             </TextWrapper>
           </ListItemLeft>
@@ -1200,7 +1254,12 @@ const ListItem = forwardRef<HTMLLIElement, ListItemProps>(
             </ListItemRight>
           )}
 
-          {isOver && dropPosition && <DragLine $position={dropPosition} />}
+          {isOver && dropPosition && (
+            <DragLine
+              $color={listTheme.dragLineColor}
+              $position={dropPosition}
+            />
+          )}
         </ListItemRow>
 
         <AnimatePresence>
@@ -1249,6 +1308,7 @@ const ListItemWrapper = styled.li<{
   $hoverBackgroundColor?: string;
   $hoverTextColor?: string;
   $selected?: boolean;
+  $selectedBackgroundColor?: string;
 }>`
   display: flex;
   flex-direction: column;
@@ -1256,11 +1316,19 @@ const ListItemWrapper = styled.li<{
   transition: background-color 300ms;
   border-radius: 3px;
 
-  ${({ $openable, $hoverBackgroundColor, $hoverTextColor, $selected }) =>
+  ${({
+    $openable,
+    $hoverBackgroundColor,
+    $hoverTextColor,
+    $selected,
+    $selectedBackgroundColor,
+  }) =>
     $openable &&
     css`
       color: ${$selected ? $hoverTextColor : "inherit"};
-      background-color: ${$selected ? $hoverBackgroundColor : "#dbeafe"};
+      background-color: ${$selected
+        ? $hoverBackgroundColor
+        : $selectedBackgroundColor};
     `}
 
   ${({ $style }) => $style}
@@ -1269,6 +1337,7 @@ const ListItemWrapper = styled.li<{
 const ListItemRow = styled.div<{
   $style?: CSSProp;
   $isHovered?: boolean;
+  $textColor?: string;
   $hoverTextColor?: string;
   $hoverBackgroundColor?: string;
 }>`
@@ -1283,6 +1352,7 @@ const ListItemRow = styled.div<{
   transition: background-color 300ms;
   border-radius: 3px;
   width: 100%;
+  color: ${({ $textColor }) => $textColor};
 
   ${({ $style }) => $style}
 
@@ -1323,6 +1393,7 @@ const ListItemLeft = styled.div<{ $style?: CSSProp }>`
   align-items: center;
   justify-content: start;
   width: 100%;
+  color: inherit;
 
   ${({ $style }) => $style}
 `;
@@ -1334,6 +1405,7 @@ const ListItemRight = styled.div<{ $style?: CSSProp }>`
   align-items: center;
   justify-content: end;
   width: 30%;
+  color: inherit;
 
   ${({ $style }) => $style}
 `;
@@ -1359,25 +1431,27 @@ const CustomLeftSideContent = styled.div<{
   ${({ $style }) => $style};
 `;
 
-const Title = styled.h3<{ $style?: CSSProp }>`
+const Title = styled.h3<{ $style?: CSSProp; $textColor?: string }>`
   font-weight: 500;
   font-size: 0.875rem;
+  color: ${({ $textColor }) => $textColor};
 
   ${({ $style }) => $style}
 `;
 
-const Subtitle = styled.span<{ $style?: CSSProp }>`
+const Subtitle = styled.span<{ $style?: CSSProp; $mutedTextColor?: string }>`
   font-size: 0.75rem;
-  color: #4b5563;
+  color: ${({ $mutedTextColor }) => $mutedTextColor};
+
   ${({ $style }) => $style}
 `;
 
-const DragLine = styled.div<{ $position: "top" | "bottom" }>`
+const DragLine = styled.div<{ $position: "top" | "bottom"; $color?: string }>`
   position: absolute;
   left: 0;
   right: 0;
   height: 2px;
-  background-color: #3b82f6;
+  background-color: ${({ $color }) => $color};
   border-radius: 2px;
   top: ${({ $position }) => ($position === "top" ? "0" : "auto")};
   bottom: ${({ $position }) => ($position === "bottom" ? "0" : "auto")};
