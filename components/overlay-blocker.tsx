@@ -1,4 +1,4 @@
-import React, {
+import {
   forwardRef,
   useImperativeHandle,
   useState,
@@ -7,6 +7,8 @@ import React, {
   ReactNode,
 } from "react";
 import styled, { CSSProp } from "styled-components";
+import { OverlayBlockerThemeConfiguration } from "theme";
+import { useTheme } from "./../theme/provider";
 
 export interface OverlayBlockerRef {
   close: () => void;
@@ -38,6 +40,9 @@ export const OverlayBlocker = forwardRef<
     { show = false, zIndex = 9991999, onClick = "close", styles, children },
     ref
   ) => {
+    const { currentTheme } = useTheme();
+    const overlayBlockerTheme = currentTheme.overlayBlocker;
+
     const [visible, setVisible] = useState(show);
 
     useEffect(() => {
@@ -85,6 +90,7 @@ export const OverlayBlocker = forwardRef<
       <StyledOverlay
         aria-label="overlay-blocker"
         $zIndex={zIndex}
+        $theme={overlayBlockerTheme}
         onClick={handleClick}
         $style={styles?.self}
       >
@@ -94,12 +100,18 @@ export const OverlayBlocker = forwardRef<
   }
 );
 
-const StyledOverlay = styled.div<{ $zIndex: number; $style?: CSSProp }>`
+const StyledOverlay = styled.div<{
+  $zIndex: number;
+  $style?: CSSProp;
+  $theme?: OverlayBlockerThemeConfiguration;
+}>`
   position: absolute;
   inset: 0;
-  background: rgba(3, 3, 3, 0.2);
-  backdrop-filter: blur(2px);
   pointer-events: auto;
+  background: ${({ $theme }) =>
+    $theme?.backgroundColor ?? "rgba(3, 3, 3, 0.2)"};
+
+  backdrop-filter: ${({ $theme }) => $theme?.backdropFilter ?? "blur(2px)"};
 
   z-index: ${({ $zIndex }) => $zIndex};
 
