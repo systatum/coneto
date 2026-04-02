@@ -17,3 +17,23 @@ export function lightenColor(color: string, percent: number) {
 
   return `rgb(${r}, ${g}, ${b})`;
 }
+
+export function darkenColor(color: string, percent: number) {
+  const temp = document.createElement("div");
+  temp.style.color = color;
+  document.body.appendChild(temp);
+
+  const computed = getComputedStyle(temp).color;
+  document.body.removeChild(temp);
+
+  const rgb = computed.match(/\d+/g);
+  if (!rgb) return color;
+
+  let [r, g, b] = rgb.map(Number);
+
+  r = Math.max(0, Math.round(r * (1 - percent)));
+  g = Math.max(0, Math.round(g * (1 - percent)));
+  b = Math.max(0, Math.round(b * (1 - percent)));
+
+  return `rgb(${r}, ${g}, ${b})`;
+}
