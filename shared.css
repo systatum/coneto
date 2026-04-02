@@ -30,7 +30,6 @@ body {
   margin: 0;
   line-height: inherit;
   background-color: #ffffff;
-  transition: background-color 0.3s ease;
 }
 
 body[data-theme="dark"] {
