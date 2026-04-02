@@ -19,6 +19,7 @@ import {
   getFloatingPlacement,
 } from "./../lib/floating-placement";
 import { Figure, FigureProps } from "./figure";
+import { useTheme } from "./../theme/provider";
 
 export type ButtonVariants = {
   variant?:
@@ -397,9 +398,13 @@ function ButtonTipMenuContainer({
   styles?: ButtonTipMenuContainerStylesProps;
   children?: React.ReactNode;
 }) {
+  const { currentTheme } = useTheme();
+  const buttonTheme = currentTheme.card;
+
   return (
     <TipMenuContainer
       {...props}
+      $backgroundColor={buttonTheme.backgroundColor}
       onClick={(e) => {
         if (props.onClick) props.onClick?.(e);
       }}
@@ -411,16 +416,19 @@ function ButtonTipMenuContainer({
   );
 }
 
-const TipMenuContainer = styled.div<{ $style?: CSSProp }>`
+const TipMenuContainer = styled.div<{
+  $style?: CSSProp;
+  $backgroundColor?: string;
+}>`
   display: flex;
   flex-direction: column;
   border: 1px solid #e5e7eb;
   padding: 4px;
-  background-color: white;
   gap: 2px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   border-radius: 4px;
   animation-duration: 200ms;
+  background-color: ${({ $backgroundColor }) => $backgroundColor};
 
   ${({ $style }) => $style}
 `;
@@ -534,7 +542,7 @@ const BaseButton = styled.button<{
     $hoverBackgroundColor,
     $pressed,
   }) => {
-    const { bg, color, underline } = getButtonColors(
+    const { backgroundColor, color, textDecoration } = getButtonColors(
       $variant,
       $isOpen,
       $activeBackgroundColor
@@ -551,9 +559,9 @@ const BaseButton = styled.button<{
     const textColor = getVariantTextColor($variant);
 
     return css`
-      background-color: ${bg};
+      background-color: ${backgroundColor};
       color: ${color};
-      text-decoration: ${underline ? "underline" : "none"};
+      text-decoration: ${textDecoration};
 
       ${$isOpen &&
       css`
@@ -656,142 +664,76 @@ const Divider = styled.div<{
 `;
 
 const getButtonColors = (
-  variant: ButtonVariants["variant"],
+  variant: ButtonVariants["variant"] = "default",
   isOpen?: boolean,
   customActiveColor?: string
 ) => {
-  const activeColor = customActiveColor
-    ? customActiveColor
-    : getActiveColor(variant);
-
-  if (variant === "outline-default") {
-    return {
-      bg: isOpen ? activeColor : "white",
-      color: "#9b9b9b",
-      border: "1px solid #9b9b9b",
-    };
-  }
+  const { currentTheme } = useTheme();
 
   const outlineMatch = variant?.match(/^outline-(.+)$/);
-  if (outlineMatch) {
-    const baseVariant = outlineMatch[1] as ButtonVariants["variant"];
-    const baseColors = getButtonColors(baseVariant);
-    return {
-      bg: isOpen ? activeColor : "white",
-      color: baseColors.bg,
-      border: `1px solid ${baseColors.bg}`,
-    };
-  }
+  const baseVariant = outlineMatch
+    ? (outlineMatch[1] as ButtonVariants["variant"])
+    : variant;
 
-  switch (variant) {
-    case "success":
-      return { bg: isOpen ? activeColor : "#42A340", color: "white" };
-    case "primary":
-      return { bg: isOpen ? activeColor : "#569aec", color: "white" };
-    case "danger":
-      return { bg: isOpen ? activeColor : "#ce375d", color: "white" };
+  const themeButton =
+    currentTheme.button[variant] ||
+    currentTheme.button[baseVariant] ||
+    currentTheme.button.default;
 
-    case "secondary":
-      return { bg: isOpen ? activeColor : "#dddddd", color: "#111" };
-    case "ghost":
-      return { bg: isOpen ? activeColor : "transparent", color: "#111" };
-    case "link":
-      return {
-        bg: isOpen ? activeColor : "transparent",
-        color: "#408ee8",
-        underline: true,
-      };
-    case "transparent":
-      return {
-        bg: isOpen ? activeColor : "transparent",
-        color: "black",
-      };
-    default:
-      return { bg: isOpen ? activeColor : "#ececec", color: "black" };
-  }
+  const backgroundColor = isOpen
+    ? (customActiveColor ?? themeButton.activeBackgroundColor)
+    : themeButton.backgroundColor;
+
+  const color = themeButton.textColor;
+
+  const border = themeButton.borderColor
+    ? `1px solid ${themeButton.borderColor}`
+    : undefined;
+
+  const textDecoration = themeButton.textDecoration;
+
+  return {
+    backgroundColor,
+    color,
+    border,
+    textDecoration,
+  };
 };
 
 const getHoverColor = (variant: ButtonVariants["variant"]) => {
+  const { currentTheme } = useTheme();
+
   const outlineMatch = variant?.match(/^outline-(.+)$/);
   if (outlineMatch) {
     const baseVariant = outlineMatch[1] as ButtonVariants["variant"];
     return getHoverColor(baseVariant);
   }
 
-  switch (variant) {
-    case "success":
-      return "#2B8C29";
-    case "primary":
-      return "#3e7dd3";
-    case "danger":
-      return "#a12f4b";
-    case "outline-default":
-      return "#f0f0f0";
-    case "secondary":
-      return "#cccccc";
-    case "ghost":
-      return "#f3f3f3";
-    case "link":
-      return "#2a73c3";
-    default:
-      return "#e2e2e2";
-  }
+  return currentTheme.button[variant ?? "default"]?.hoverBackgroundColor;
 };
 
 const getActiveColor = (variant: ButtonVariants["variant"]) => {
+  const { currentTheme } = useTheme();
+
   const outlineMatch = variant?.match(/^outline-(.+)$/);
   if (outlineMatch) {
     const baseVariant = outlineMatch[1] as ButtonVariants["variant"];
     return getActiveColor(baseVariant);
   }
 
-  switch (variant) {
-    case "success":
-      return "#146512";
-    case "primary":
-      return "#2a73c3";
-    case "danger":
-      return "#802036";
-    case "outline-default":
-      return "#e6e6e6";
-    case "secondary":
-      return "#b3b3b3";
-    case "ghost":
-      return "#eaeaea";
-    case "link":
-      return "#1e5ba8";
-    case "transparent":
-      return "#cfcfcf";
-    default:
-      return "#cfcfcf";
-  }
+  return currentTheme.button[variant ?? "default"]?.activeBackgroundColor;
 };
 
 const getFocusColor = (variant: ButtonVariants["variant"]) => {
+  const { currentTheme } = useTheme();
+
   const outlineMatch = variant?.match(/^outline-(.+)$/);
   if (outlineMatch) {
     const baseVariant = outlineMatch[1] as ButtonVariants["variant"];
     return getFocusColor(baseVariant);
   }
 
-  switch (variant) {
-    case "success":
-      return "#0f4f0e";
-    case "primary":
-      return "#569AEC80";
-    case "danger":
-      return "#CE375D80";
-    case "outline-default":
-      return "#00000040";
-    case "secondary":
-      return "#B4B4B480";
-    case "ghost":
-      return "#00000033";
-    case "link":
-      return "#408EE880";
-    default:
-      return "#00000033";
-  }
+  return currentTheme.button[variant ?? "default"]?.focusBackgroundColor;
 };
 
 Button.TipMenuContainer = ButtonTipMenuContainer;

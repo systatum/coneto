@@ -194,16 +194,7 @@ export const WithSubtitle: Story = {
     onClick: ({ closeDialog }) => {
       closeDialog();
     },
-    children: (
-      <div
-        style={{
-          fontSize: "0.875rem",
-          color: "#374151",
-        }}
-      >
-        Here is the content of the modal dialog.
-      </div>
-    ),
+    children: "Here is the content of the modal dialog.",
     icon: {
       image: Ri24HoursFill,
     },

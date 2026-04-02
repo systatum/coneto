@@ -32,6 +32,8 @@ import { Capsule, CapsuleProps } from "./capsule";
 import ContextMenu from "./context-menu";
 import { ActionButton, ActionButtonProps } from "./action-button";
 import { OverlayBlocker } from "./overlay-blocker";
+import { useTheme } from "./../theme/provider";
+import { TableThemeConfiguration } from "theme";
 
 export type RowData = (string | ReactNode)[];
 
@@ -161,6 +163,9 @@ function Table({
   alwaysShowDragIcon = true,
   searchbox,
 }: TableProps & TableAlwaysShowDragIconProp) {
+  const { currentTheme } = useTheme();
+  const tableTheme = currentTheme.table;
+
   const [dragItem, setDragItem] = useState<{
     oldGroupId: string;
     oldPosition: number;
@@ -320,12 +325,13 @@ function Table({
             showPagination ||
             actions ||
             searchable) && (
-            <HeaderActions aria-label="header-wrapper">
+            <HeaderActions $theme={tableTheme} aria-label="header-wrapper">
               {(actions || showPagination) && (
                 <ActionsWrapper>
                   {showPagination && (
                     <>
                       <PaginationButton
+                        $theme={tableTheme}
                         disabled={disablePreviousPageButton}
                         aria-label="previous-button-pagination"
                         onClick={onPreviousPageRequested}
@@ -333,6 +339,7 @@ function Table({
                         <RiArrowLeftSLine size={16} />
                       </PaginationButton>
                       <PaginationButton
+                        $theme={tableTheme}
                         disabled={disableNextPageButton}
                         aria-label="next-button-pagination"
                         onClick={onNextPageRequested}
@@ -416,8 +423,15 @@ function Table({
             </HeaderActions>
           )}
 
-          <TableContainer $hasSelected={selectedData.length > 0}>
+          <TableContainer
+            $theme={tableTheme}
+            $hasSelected={selectedData.length > 0}
+          >
             <TableHeader
+              $backgroundColor={tableTheme.headerBackgroundColor}
+              $textColor={tableTheme.textColor}
+              $borderColor={tableTheme.headerBorderColor}
+              $boxShadow={tableTheme.boxShadow}
               aria-label="table-header"
               $style={styles?.tableHeaderStyle}
             >
@@ -517,11 +531,12 @@ function Table({
                 {rowChildren}
               </TableBody>
             ) : (
-              <EmptyState>{emptySlate}</EmptyState>
+              <EmptyState $theme={tableTheme}>{emptySlate}</EmptyState>
             )}
 
             {sumRow && (
               <TableSummary
+                $theme={tableTheme}
                 aria-label="table-summary-wrapper"
                 $selectable={selectable}
               >
@@ -620,25 +635,30 @@ function Table({
 }
 
 function ActionCapsule(capsule: CapsuleProps) {
+  const { currentTheme } = useTheme();
+  const capsuleTheme = currentTheme.actionCapsule;
+
   return (
     <Capsule
       {...capsule}
       activeBackgroundColor={
-        capsule?.activeBackgroundColor ?? "rgb(226, 224, 224)"
+        capsule?.activeBackgroundColor ?? capsuleTheme.activeBackgroundColor
       }
       styles={{
         ...capsule?.styles,
         capsuleWrapperStyle: css`
-          box-shadow: none;
-          min-height: 32px;
-          max-height: 32px;
-          border-radius: 6px;
-          font-size: 14px;
+          box-shadow: ${capsuleTheme.capsuleWrapperBoxShadow};
+          min-height: ${capsuleTheme.capsuleWrapperMinHeight};
+          max-height: ${capsuleTheme.capsuleWrapperMaxHeight};
+          border-radius: ${capsuleTheme.capsuleWrapperBorderRadius};
+          font-size: ${capsuleTheme.capsuleFontSize};
+          border-color: ${capsuleTheme.borderColor};
           ${capsule.styles?.containerStyle}
         `,
         tabStyle: css`
-          border-radius: 6px;
-          color: rgb(86, 85, 85);
+          border-radius: ${capsuleTheme.tabBorderRadius};
+          color: ${capsuleTheme.tabTextColor};
+
           ${capsule.styles?.tabStyle}
         `,
       }}
@@ -658,7 +678,9 @@ const Wrapper = styled.div<{
   ${({ $containerStyle }) => $containerStyle}
 `;
 
-const HeaderActions = styled.div`
+const HeaderActions = styled.div<{
+  $theme?: TableThemeConfiguration;
+}>`
   width: 100%;
   display: flex;
   overflow: hidden;
@@ -666,10 +688,13 @@ const HeaderActions = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 0.5rem 14px;
-  color: #343434;
-  background: linear-gradient(to bottom, #fbf9f9, #f0f0f0);
-  border-bottom: 0.5px solid #e5e7eb;
   position: relative;
+  border-bottom: 0.5px solid
+    ${({ $theme }) => $theme?.rowBorderColor || "#e5e7eb"};
+  color: ${({ $theme }) => $theme?.textColor || "#343434"};
+  background: ${({ $theme }) =>
+    $theme?.headerActionBackgroundColor ||
+    "linear-gradient(to bottom, #fbf9f9, #f0f0f0)"};
 `;
 
 const ActionsWrapper = styled.div`
@@ -679,23 +704,24 @@ const ActionsWrapper = styled.div`
   gap: 0.25rem;
 `;
 
-const PaginationButton = styled.button`
+const PaginationButton = styled.button<{ $theme?: TableThemeConfiguration }>`
   display: flex;
   gap: 0.25rem;
   align-items: center;
   cursor: pointer;
-  border: 1px solid #e5e7eb;
   border-radius: 9999px;
   padding: 0.25rem;
-  background-color: transparent;
-  color: inherit;
+  background-color: ${({ $theme }) =>
+    $theme?.rowBackgroundColor || "transparent"};
+  border-color: ${({ $theme }) => $theme?.rowBorderColor || "#e5e7eb"};
+  color: ${({ $theme }) => $theme?.textColor || "inherit"};
 
   &:hover {
-    background-color: #e2e0e0;
+    background-color: ${({ $theme }) =>
+      $theme?.rowHoverBackgroundColor || "#e2e0e0"};
   }
 
   &:disabled {
-    background-color: rgb(227 227 227);
     opacity: 0.5;
     cursor: not-allowed;
   }
@@ -720,31 +746,43 @@ const PaginationSelectedItem = styled.span<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
-const TableContainer = styled.div<{ $hasSelected: boolean }>`
+const TableContainer = styled.div<{
+  $hasSelected: boolean;
+  $theme?: TableThemeConfiguration;
+}>`
   position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
+  background-color: ${({ $theme }) => $theme?.rowBackgroundColor};
 
-  ${({ $hasSelected }) =>
+  ${({ $hasSelected, $theme }) =>
     $hasSelected &&
     css`
-      border-top: 0.5px solid #e5e7eb;
+      border-top: 0.5px solid ${$theme?.rowBorderColor};
     `}
 `;
 
-const TableHeader = styled.div<{ $style?: CSSProp }>`
+const TableHeader = styled.div<{
+  $style?: CSSProp;
+  $textColor?: string;
+  $backgroundColor?: string;
+  $borderColor?: string;
+  $boxShadow?: string;
+}>`
   display: flex;
   flex-direction: row;
   padding: 0.75rem;
-  background: linear-gradient(to bottom, #f0f0f0, #e4e4e4);
   align-items: center;
   font-weight: 600;
-  color: #343434;
-  border-bottom-width: 1px;
-  border-color: #d1d5db;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  color: ${({ $textColor }) => $textColor};
+  border-bottom: 1px solid ${({ $borderColor }) => $borderColor || "#d1d5db"};
+  box-shadow: ${({ $boxShadow }) =>
+    $boxShadow || "0 1px 2px 0 rgba(0, 0, 0, 0.05)"};
+  background: ${({ $backgroundColor }) =>
+    $backgroundColor || "linear-gradient(to bottom, #f0f0f0, #e4e4e4)"};
+
   ${({ $style }) => $style}
 `;
 
@@ -773,7 +811,10 @@ const TableBody = styled.div<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
-const TableSummary = styled.div<{ $selectable?: boolean }>`
+const TableSummary = styled.div<{
+  $selectable?: boolean;
+  $theme?: TableThemeConfiguration;
+}>`
   display: flex;
   flex-direction: row;
   padding: 10px;
@@ -786,18 +827,19 @@ const TableSummary = styled.div<{ $selectable?: boolean }>`
           padding-left: 10px;
         `}
   padding-right: 15px;
-  background: linear-gradient(to bottom, #f0f0f0, #e4e4e4);
   align-items: center;
-  color: #343434;
   border-bottom-width: 1px;
-  border-color: #d1d5db;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  background: ${({ $theme }) => $theme?.summaryBackgroundColor};
+  color: ${({ $theme }) => $theme?.textColor};
+  border-bottom: 1px solid ${({ $theme }) => $theme?.summaryBorderColor};
+  box-shadow: ${({ $theme }) => $theme?.boxShadow};
 `;
 
-const EmptyState = styled.div`
-  border-bottom: 1px solid #d1d5db;
-  border-left: 1px solid #d1d5db;
-  border-right: 1px solid #d1d5db;
+const EmptyState = styled.div<{ $theme?: TableThemeConfiguration }>`
+  border-bottom: 1px solid
+    ${({ $theme }) => $theme?.rowBorderColor || "#d1d5db"};
+  border-left: 1px solid ${({ $theme }) => $theme?.rowBorderColor || "#d1d5db"};
+  border-right: 1px solid ${({ $theme }) => $theme?.rowBorderColor || "#d1d5db"};
 `;
 
 const CheckboxWrapper = styled.div`
@@ -844,6 +886,9 @@ function TableRowGroup({
   isLast?: boolean;
   draggable?: boolean;
 }) {
+  const { currentTheme } = useTheme();
+  const tableTheme = currentTheme.table;
+
   const { openRowId, setOpenRowId, alwaysShowDragIcon } =
     props as TableAlwaysShowDragIconProp & TableRowOpenWithId;
 
@@ -899,7 +944,10 @@ function TableRowGroup({
 
   return (
     <TableRowGroupContainer>
-      <TableRowGroupSticky onClick={() => setIsOpen(!isOpen)}>
+      <TableRowGroupSticky
+        $theme={tableTheme}
+        onClick={() => setIsOpen(!isOpen)}
+      >
         <RotatingIcon $isOpen={isOpen}>
           <RiArrowDownSLine />
         </RotatingIcon>
@@ -914,7 +962,7 @@ function TableRowGroup({
             <span
               style={{
                 fontSize: "14px",
-                color: "#1f2937",
+                color: tableTheme?.rowSubtitleTextColor || "#1f2937",
               }}
             >
               {subtitle}
@@ -953,7 +1001,7 @@ const TableRowGroupContainer = styled.div`
   overflow-y: visible;
 `;
 
-const TableRowGroupSticky = styled.div`
+const TableRowGroupSticky = styled.div<{ $theme?: TableThemeConfiguration }>`
   display: flex;
   flex-direction: row;
   cursor: pointer;
@@ -963,9 +1011,10 @@ const TableRowGroupSticky = styled.div`
   top: 0px;
   align-items: center;
   width: 100%;
-  border: 1px solid #e5e7eb;
   gap: 1rem;
-  background-color: #f3f4f6;
+  border: 1px solid ${({ $theme }) => $theme.rowBorderColor};
+  background-color: ${({ $theme }) => $theme.rowBackgroundColor || "#f3f4f6"};
+  color: ${({ $theme }) => $theme.textColor || "#111827"};
 
   will-change: transform;
   backface-visibility: hidden;
@@ -1037,6 +1086,9 @@ function TableRow({
     groupLength?: number;
     draggable?: boolean;
   }>) {
+  const { currentTheme } = useTheme();
+  const tableTheme = currentTheme.table;
+
   const { setDragItem, dragItem } = useContext(DnDContext);
   const {
     openRowId,
@@ -1086,6 +1138,7 @@ function TableRow({
     <RowWrapper $style={styles?.containerStyle}>
       <TableRowWrapper
         ref={rowRef}
+        $theme={tableTheme}
         $isHovered={isHovered === rowId || openRowId === rowId || !!rowContent}
         $isSelected={isSelected}
         aria-label="table-row"
@@ -1319,6 +1372,7 @@ function TableRow({
       <AnimatePresence initial={false}>
         {rowContent && (
           <TableRowContent
+            $theme={tableTheme}
             initial="collapsed"
             animate="open"
             exit="collapsed"
@@ -1373,28 +1427,31 @@ const TableRowWrapper = styled.div<{
   $isSelected?: boolean;
   $rowCellStyle?: CSSProp;
   $isHovered?: boolean;
+  $theme?: TableThemeConfiguration;
 }>`
   display: flex;
   position: relative;
   padding: 12px;
   align-items: stretch;
 
-  border-left: 1px solid #e5e7eb;
-  border-right: 1px solid #e5e7eb;
-  border-bottom: 1px solid #e5e7eb;
+  border-left: 1px solid ${({ $theme }) => $theme?.rowBorderColor || "#e5e7eb"};
+  border-right: 1px solid ${({ $theme }) => $theme?.rowBorderColor || "#e5e7eb"};
+  border-bottom: 1px solid
+    ${({ $theme }) => $theme?.rowBorderColor || "#e5e7eb"};
   cursor: default;
 
-  ${({ $isHovered, $isSelected }) =>
+  ${({ $isHovered, $isSelected, $theme }) =>
     $isHovered
       ? css`
-          background-color: #e7f2fc;
+          background-color: ${$theme?.rowHoverBackgroundColor || "#e7f2fc"};
         `
       : $isSelected
         ? css`
-            background-color: rgb(219, 234, 254);
+            background-color: ${$theme?.rowSelectedBackgroundColor ||
+            "#dbeafe"};
           `
         : css`
-            background-color: #f9fafb;
+            background-color: ${$theme?.rowBackgroundColor || "white"};
           `}
 
   ${({ $rowCellStyle }) => $rowCellStyle}
@@ -1402,11 +1459,15 @@ const TableRowWrapper = styled.div<{
 
 const TableRowContent = styled(motion.div)<{
   $style?: CSSProp;
+  $theme?: TableThemeConfiguration;
 }>`
   display: flex;
   position: relative;
-  box-shadow: inset 0 4px 5px rgba(0, 0, 0, 0.15);
-  background: linear-gradient(to bottom, #ececec 0%, #f6f6f6 35%, #f0f0f0 100%);
+  box-shadow: ${({ $theme }) =>
+    $theme?.rowContentBoxShadow || "0 4px 5px rgba(0, 0, 0, 0.15)"};
+  background: ${({ $theme }) =>
+    $theme?.rowContentBackgroundColor ||
+    "linear-gradient(to bottom, #ececec 0%, #f6f6f6 35%, #f0f0f0 100%)"};
   border: 0;
 
   ${({ $style }) => $style}

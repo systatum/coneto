@@ -2,6 +2,7 @@ import { css, CSSProp } from "styled-components";
 import { Button, ButtonVariants, SubMenuButtonProps } from "./button";
 import { ReactNode } from "react";
 import { FigureProps } from "./figure";
+import { useTheme } from "./../theme/provider";
 
 export interface ActionButtonProps {
   caption?: string;
@@ -38,6 +39,9 @@ export function ActionButton({
   pressed,
   hidden,
 }: ActionButtonProps & { forTable?: boolean }) {
+  const { currentTheme } = useTheme();
+  const actionButtonTheme = currentTheme.actionButton;
+
   if (hidden) {
     return;
   }
@@ -79,25 +83,25 @@ export function ActionButton({
           !pressed &&
           css`
             background-color: transparent;
-            color: #565555;
+            color: ${actionButtonTheme.textColor};
             &:hover {
-              background-color: #e2e0e0;
+              background-color: ${actionButtonTheme.hoverBackgroundColor};
             }
 
             &:disabled {
-              background-color: rgb(227 227 227);
+              background-color: ${actionButtonTheme.disabledBackgroundColor};
               opacity: 0.5;
               cursor: not-allowed;
             }
 
             ${subMenu && showSubMenuOn === "caret"
               ? css`
-                  border-top: 1px solid #e5e7eb;
-                  border-left: 1px solid #e5e7eb;
-                  border-bottom: 1px solid #e5e7eb;
+                  border-top: 1px solid ${actionButtonTheme.borderColor};
+                  border-left: 1px solid ${actionButtonTheme.borderColor};
+                  border-bottom: 1px solid ${actionButtonTheme.borderColor};
                 `
               : css`
-                  border: 1px solid #e5e7eb;
+                  border: 1px solid ${actionButtonTheme.borderColor};
                 `}
           `}
           ${styles?.self}
@@ -119,15 +123,15 @@ export function ActionButton({
             css`
               background-color: transparent;
               color: #565555;
-              border-top: 1px solid #e5e7eb;
-              border-right: 1px solid #e5e7eb;
-              border-bottom: 1px solid #e5e7eb;
+              border-top: 1px solid ${actionButtonTheme.toggleBorderColor};
+              border-right: 1px solid ${actionButtonTheme.toggleBorderColor};
+              border-bottom: 1px solid ${actionButtonTheme.toggleBorderColor};
               &:hover {
-                background-color: #e2e0e0;
+                background-color: ${actionButtonTheme.toggleHoverBackgroundColor};
               }
 
               &:disabled {
-                background-color: rgb(227 227 227);
+                background-color: ${actionButtonTheme.toggleBackgroundColor};
                 opacity: 0.5;
                 cursor: not-allowed;
               }
@@ -136,7 +140,7 @@ export function ActionButton({
           `}
         `,
         dividerStyle: css`
-          border: 1px solid rgb(236 236 236);
+          border: 1px solid ${actionButtonTheme.dividerColor};
           ${subMenu && styles?.dividerStyle ? styles.dividerStyle : null}
         `,
         dropdownStyle: (placement) => css`

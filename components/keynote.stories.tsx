@@ -25,11 +25,11 @@ Keynote displays key-value pairs in a clean, structured layout with data sourced
 
 \`\`\`tsx
 <Keynote
-  data={{ name: "Alim Naufal", role: "Frontend Developer", salary: 8500000 }}
+  data={{ name: "Budi Siahaan", role: "Frontend Engineer", salary: 80000 }}
   keys={["name", "role", "salary"]}
   keyLabels={["Full Name", "Position", "Monthly Salary"]}
   renderer={{
-    salary: val => <b>{val.toLocaleString()} IDR</b>
+    salary: val => <b>{val.toLocaleString()} $</b>
   }}
   styles={{
     self: css\`margin-top: 16px;\`,

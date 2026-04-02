@@ -1,5 +1,7 @@
 "use client";
 
+import { ModalDialogThemeConfiguration } from "theme";
+import { useTheme } from "./../theme/provider";
 import {
   createDialogController,
   Dialog,
@@ -26,6 +28,9 @@ function ModalDialog({
   closable = true,
   icon,
 }: ModalDialogProps) {
+  const { currentTheme } = useTheme();
+  const modalDialogTheme = currentTheme.modalDialog;
+
   const customizeButtons = buttons?.map((button) => ({
     ...button,
     styles: {
@@ -104,7 +109,8 @@ function ModalDialog({
         subtitleStyle: css`
           font-size: 11px;
           text-align: start;
-          color: #6b7280;
+          color: ${modalDialogTheme?.subtitleColor};
+
           ${styles?.subtitleStyle}
         `,
         buttonWrapperStyle: css`
@@ -116,31 +122,41 @@ function ModalDialog({
         `,
       }}
     >
-      <Divider aria-label="modal-dialog-divider" />
+      <Divider $theme={modalDialogTheme} aria-label="modal-dialog-divider" />
 
-      <Body aria-label="modal-dialog-content" $style={styles?.contentStyle}>
+      <Body
+        aria-label="modal-dialog-content"
+        $theme={modalDialogTheme}
+        $style={styles?.contentStyle}
+      >
         {children}
       </Body>
     </Dialog>
   );
 }
 
-const Body = styled.div<{ $style?: CSSProp }>`
+const Body = styled.div<{
+  $style?: CSSProp;
+  $theme?: ModalDialogThemeConfiguration;
+}>`
   height: 100%;
   width: 100%;
   padding-right: 5px;
   padding-left: 5px;
   display: flex;
   flex-direction: column;
+  color: ${({ $theme }) => $theme?.textColor};
 
   ${({ $style }) => $style}
 `;
 
-const Divider = styled.div`
+const Divider = styled.div<{
+  $theme?: ModalDialogThemeConfiguration;
+}>`
   height: 1px;
   width: 100%;
-  border: 1px solid #3b82f6;
   margin-bottom: 25px;
+  border: 1px solid ${({ $theme }) => $theme?.dividerColor ?? "#3b82f6"};
 `;
 
 const ModalDialogController = createDialogController(ModalDialog);

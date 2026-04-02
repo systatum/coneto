@@ -13,6 +13,7 @@ import { LoadingSpinner } from "./loading-spinner";
 import { SubMenuButtonProps } from "./button";
 import { Tooltip } from "./tooltip";
 import { Figure, FigureProps } from "./figure";
+import { useTheme } from "./../theme/provider";
 
 export interface TreeListProps
   extends Omit<
@@ -147,6 +148,9 @@ function TreeList({
   styles,
   ...props
 }: TreeListProps) {
+  const { currentTheme } = useTheme();
+  const treeListTheme = currentTheme.treelist;
+
   const [dragItem, setDragItem] = useState(null);
 
   const [isSelected, setIsSelected] = useState(selectedItem);
@@ -236,6 +240,7 @@ function TreeList({
         {...props}
         aria-label="tree-list-wrapper"
         $containerStyle={styles?.containerStyle}
+        $textColor={treeListTheme.textColor}
       >
         {hasActions && (
           <ActionsWrapper aria-label="tree-list-action-wrapper">
@@ -442,6 +447,8 @@ function TreeList({
                     })()}
                   {collapsible && (
                     <ArrowIcon
+                      $hoverBackgroundColor={treeListTheme.hoverBackgroundColor}
+                      $backgroundColor={treeListTheme.backgroundColor}
                       aria-label="arrow-icon"
                       aria-expanded={isOpen[item.id]}
                       size={20}
@@ -745,6 +752,9 @@ function TreeListItem<T extends TreeListItemsProps>({
   setOpenRowId,
   canContainChildren,
 }: TreeListItemComponent<T> & TreeListOpenWithId) {
+  const { currentTheme } = useTheme();
+  const treeListTheme = currentTheme.treelist;
+
   const { dragItem, setDragItem, onDragged } = useContext(DnDContext);
   const [dropPosition, setDropPosition] = useState<"top" | "bottom" | null>(
     null
@@ -787,6 +797,10 @@ function TreeListItem<T extends TreeListItemsProps>({
         aria-label="tree-list-item"
         $isSelected={isSelected === item.id}
         $showHierarchyLine={showHierarchyLine}
+        $backgroundColor={treeListTheme.backgroundColor}
+        $hoverBackgroundColor={treeListTheme.hoverBackgroundColor}
+        $selectedBackgroundColor={treeListTheme.selectedBackgroundColor}
+        $textColor={treeListTheme.textColor}
         onClick={async () => {
           let prevent = false;
 
@@ -915,6 +929,8 @@ function TreeListItem<T extends TreeListItemsProps>({
         {isHavingContent && collapsible && (
           <ArrowIcon
             aria-label="arrow-icon"
+            $hoverBackgroundColor={treeListTheme.hoverBackgroundColor}
+            $backgroundColor={treeListTheme.backgroundColor}
             $level={level}
             $showHierarchy={showHierarchyLine}
             $isSelected={isSelected === item.id}
@@ -1153,10 +1169,12 @@ function TreeListItem<T extends TreeListItemsProps>({
 
 const TreeListWrapper = styled.div<{
   $containerStyle?: CSSProp;
+  $textColor?: string;
 }>`
   display: flex;
   flex-direction: column;
   width: 100%;
+  color: ${({ $textColor }) => $textColor};
 
   ${(props) => props.$containerStyle}
 `;
@@ -1309,6 +1327,8 @@ const ArrowIcon = styled(RiArrowRightSLine)<{
   $isSelected?: boolean;
   $showHierarchy?: boolean;
   $level?: number;
+  $backgroundColor?: string;
+  $hoverBackgroundColor?: string;
 }>`
   position: absolute;
   top: 50%;
@@ -1321,14 +1341,20 @@ const ArrowIcon = styled(RiArrowRightSLine)<{
     border-radius: 9999px;
   `}
 
-  ${({ $isHovered, $isSelected, $showHierarchy }) =>
+  ${({
+    $isHovered,
+    $isSelected,
+    $showHierarchy,
+    $backgroundColor,
+    $hoverBackgroundColor,
+  }) =>
     $isHovered || $isSelected
       ? css`
-          background-color: #f3f4f6;
+          background-color: ${$hoverBackgroundColor};
         `
       : $showHierarchy &&
         css`
-          background-color: white;
+          background-color: ${$backgroundColor};
         `}
 
   &[aria-expanded="true"] {
@@ -1390,6 +1416,10 @@ const TreeListItemWrapper = styled.li<{
   $level?: number;
   $isHovered?: boolean;
   $isDropParent?: boolean;
+  $backgroundColor?: string;
+  $hoverBackgroundColor?: string;
+  $selectedBackgroundColor?: string;
+  $textColor?: string;
 }>`
   display: flex;
   flex-direction: row;
@@ -1406,14 +1436,25 @@ const TreeListItemWrapper = styled.li<{
     !$showHierarchyLine &&
     css`
       border-left: 3px solid ${$isSelected ? "#3b82f6" : "transparent"};
-    `}
-  background-color: ${({ $isSelected, $isDropParent }) =>
-    $isDropParent ? "#f3f4f6" : $isSelected ? "#f3f4f6" : "white"};
-  ${({ $isHovered }) =>
+    `};
+
+  background-color: ${({
+    $isSelected,
+    $isDropParent,
+    $backgroundColor,
+    $hoverBackgroundColor,
+  }) =>
+    $isDropParent
+      ? $hoverBackgroundColor
+      : $isSelected
+        ? $hoverBackgroundColor
+        : "inherit"};
+
+  ${({ $isHovered, $hoverBackgroundColor }) =>
     $isHovered &&
     css`
-      background-color: #f3f4f6;
-    `}
+      background-color: ${$hoverBackgroundColor};
+    `};
 
   padding: 0.25rem 1.2rem;
   padding-right: 8px;

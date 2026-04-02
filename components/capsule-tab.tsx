@@ -1,6 +1,8 @@
 import { ReactNode, useCallback, useState } from "react";
 import { Capsule } from "./capsule";
 import styled, { css, CSSProp } from "styled-components";
+import { CapsuleTabThemeConfiguration } from "theme";
+import { useTheme } from "./../theme/provider";
 
 export interface CapsuleTabProps {
   tabs: CapsuleTabContentProps[];
@@ -32,6 +34,8 @@ function CapsuleTab({
   onTabChange,
   children,
 }: CapsuleTabProps) {
+  const { currentTheme } = useTheme();
+  const capsuleTheme = currentTheme.capsule;
   const [selectedLocal, setSelectedLocal] = useState<string>(activeTab);
 
   const isControlled = onTabChange && activeTab !== undefined;
@@ -50,7 +54,11 @@ function CapsuleTab({
   const activeContent = tabs.filter((tab) => tab.id === selected);
 
   return (
-    <CapsuleTabWrapper aria-label="capsule-tab-wrapper" $style={styles?.self}>
+    <CapsuleTabWrapper
+      $theme={capsuleTheme}
+      aria-label="capsule-tab-wrapper"
+      $style={styles?.self}
+    >
       <Capsule
         styles={{
           capsuleWrapperStyle: css`
@@ -88,13 +96,15 @@ function CapsuleTab({
 
 const CapsuleTabWrapper = styled.div<{
   $style?: CSSProp;
+  $theme?: CapsuleTabThemeConfiguration;
 }>`
   display: flex;
   flex-direction: column;
   width: 100%;
-  border: 1px solid #ebebeb;
   border-radius: 2px;
-  box-shadow: 0 1px 3px -3px #5b5b5b;
+
+  border: 1px solid ${({ $theme }) => $theme?.borderColor};
+  box-shadow: ${({ $theme }) => $theme?.boxShadow};
 
   ${({ $style }) => $style}
 `;

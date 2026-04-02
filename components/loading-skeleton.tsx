@@ -7,6 +7,7 @@ import {
   ReactNode,
 } from "react";
 import styled, { css, CSSProp, keyframes } from "styled-components";
+import { useTheme } from "./../theme/provider";
 
 type FlashDirection =
   | "left-to-right"
@@ -49,6 +50,13 @@ function LoadingSkeleton({
   highlightColor,
   ...props
 }: LoadingSkeletonProps) {
+  const { currentTheme } = useTheme();
+  const loadingSkeletonTheme = currentTheme.loadingSkeleton;
+
+  const finalBaseColor = baseColor ?? loadingSkeletonTheme.baseColor;
+  const finalHighlightColor =
+    highlightColor ?? loadingSkeletonTheme.highlightColor;
+
   const childArray = Children.toArray(children).filter(isValidElement);
 
   return (
@@ -71,9 +79,9 @@ function LoadingSkeleton({
             flashDirection:
               componentChild.props.flashDirection ?? flashDirection,
             flashRate: componentChild.props.flashRate ?? flashRate,
-            baseColor: componentChild.props.baseColor ?? baseColor,
+            baseColor: componentChild.props.baseColor ?? finalBaseColor,
             highlightColor:
-              componentChild.props.highlightColor ?? highlightColor,
+              componentChild.props.highlightColor ?? finalHighlightColor,
           }),
         });
       })}

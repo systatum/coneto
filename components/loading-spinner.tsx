@@ -1,4 +1,5 @@
 import styled, { CSSProp, keyframes } from "styled-components";
+import { useTheme } from "./../theme/provider";
 
 export interface LoadingSpinnerProps {
   iconSize?: number;
@@ -20,6 +21,9 @@ function LoadingSpinner({
   gap = 2,
   styles,
 }: LoadingSpinnerProps) {
+  const { currentTheme } = useTheme();
+  const loadingSpinnerTheme = currentTheme.loadingSpinner;
+
   return (
     <SpinnerWrapper
       aria-label="loading-spinner"
@@ -33,6 +37,7 @@ function LoadingSpinner({
         fill="none"
         viewBox="0 0 24 24"
         $style={styles?.iconStyle}
+        $color={loadingSpinnerTheme.color}
       >
         <circle
           opacity="0.25"
@@ -49,7 +54,11 @@ function LoadingSpinner({
         />
       </SpinnerIcon>
       {label && (
-        <SpinnerLabel $style={styles?.labelStyle} $textSize={textSize}>
+        <SpinnerLabel
+          $style={styles?.labelStyle}
+          $textSize={textSize}
+          $color={loadingSpinnerTheme.textColor}
+        >
           {label}
         </SpinnerLabel>
       )}
@@ -71,16 +80,28 @@ const SpinnerWrapper = styled.div<{ $gap: number; $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
-const SpinnerIcon = styled.svg<{ $size: number; $style?: CSSProp }>`
+const SpinnerIcon = styled.svg<{
+  $size: number;
+  $style?: CSSProp;
+  $color?: string;
+}>`
   height: ${({ $size }) => $size}px;
   width: ${({ $size }) => $size}px;
   animation: ${spin} 1s linear infinite;
-  color: #3b82f6;
+
+  color: ${({ $color }) => $color};
+
   ${({ $style }) => $style}
 `;
 
-const SpinnerLabel = styled.span<{ $textSize: number; $style?: CSSProp }>`
+const SpinnerLabel = styled.span<{
+  $textSize: number;
+  $style?: CSSProp;
+  $color?: string;
+}>`
   font-size: ${({ $textSize }) => $textSize}px;
+  color: ${({ $color }) => $color};
+
   ${({ $style }) => $style}
 `;
 
