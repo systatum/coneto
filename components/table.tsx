@@ -1443,11 +1443,12 @@ const TableRowWrapper = styled.div<{
   ${({ $isHovered, $isSelected, $theme }) =>
     $isHovered
       ? css`
-          background-color: ${$theme?.rowHoverBackgroundColor || "#f9fafb"};
+          background-color: ${$theme?.rowHoverBackgroundColor || "#e7f2fc"};
         `
       : $isSelected
         ? css`
-            background-color: ${$theme?.rowHoverBackgroundColor || "#dbeafe"};
+            background-color: ${$theme?.rowSelectedBackgroundColor ||
+            "#dbeafe"};
           `
         : css`
             background-color: ${$theme?.rowBackgroundColor || "white"};

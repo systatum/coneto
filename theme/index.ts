@@ -196,14 +196,18 @@ export interface SeparatorThemeConfiguration {
 export interface TableThemeConfiguration {
   textColor?: string;
   boxShadow?: string;
+
   headerActionBackgroundColor?: string;
   headerBackgroundColor?: string;
   headerBorderColor?: string;
+
   rowSubtitleTextColor?: string;
   rowBackgroundColor?: string;
   rowBorderColor?: string;
   rowHoverBackgroundColor?: string;
+  rowSelectedBackgroundColor?: string;
   rowContentBackgroundColor?: string;
+
   summaryBackgroundColor?: string;
   summaryBorderColor?: string;
 }
