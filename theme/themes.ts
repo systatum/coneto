@@ -18,8 +18,11 @@ import {
   ListThemeConfiguration,
   LoadingSkeletonThemeConfiguration,
   LoadingSpinnerThemeConfiguration,
+  MessageboxThemeConfiguration,
+  OverlayBlockerThemeConfiguration,
   RadioThemeConfiguration,
   SeparatorThemeConfiguration,
+  StatusbarThemeConfiguration,
   TableThemeConfiguration,
   TreeListThemeConfiguration,
   WindowThemeConfiguration,
@@ -158,12 +161,10 @@ export function createButtonTheme(
     Record<ButtonVariants["variant"], ButtonThemeConfiguration>
   > = {}
 ): Record<string, ButtonThemeConfiguration> {
-  const defaultTextColor = body.textColor;
-
   const variants: Record<string, ButtonThemeConfiguration> = {
     default: {
       backgroundColor: "#ececec",
-      textColor: defaultTextColor,
+      textColor: "black",
       hoverBackgroundColor: "#e2e2e2",
       activeBackgroundColor: "#cfcfcf",
       textDecoration: "none",
@@ -359,6 +360,54 @@ export function createLoadingSpinnerTheme(
   };
 }
 
+// messagebox.tsx
+export function createMessageboxTheme(
+  customTheme: Partial<MessageboxThemeConfiguration> = {}
+): MessageboxThemeConfiguration {
+  const defaultTheme: MessageboxThemeConfiguration = {
+    primary: {
+      container: "#e7f2fc",
+      text: "#2a63b4",
+      active: "#1f4a89",
+    },
+    success: {
+      container: "#e9f3e8",
+      text: "#43843d",
+      active: "#30602c",
+    },
+    danger: {
+      container: "#f6e7e7",
+      text: "#b92c25",
+      active: "#891f1a",
+    },
+    warning: {
+      container: "#fbf0e4",
+      text: "#9e5b20",
+      active: "#734418",
+    },
+  };
+
+  return {
+    ...defaultTheme,
+    ...customTheme,
+  };
+}
+
+// overlay-blocker.tsx
+export function createOverlayBlockerTheme(
+  customTheme: Partial<OverlayBlockerThemeConfiguration> = {}
+): OverlayBlockerThemeConfiguration {
+  const defaultTheme: OverlayBlockerThemeConfiguration = {
+    backgroundColor: "rgba(3, 3, 3, 0.2)",
+    backdropFilter: "blur(2px)",
+  };
+
+  return {
+    ...defaultTheme,
+    ...customTheme,
+  };
+}
+
 // radio.tsx
 export function createRadioTheme(
   body: BodyThemeConfiguration,
@@ -377,6 +426,28 @@ export function createRadioTheme(
   };
 
   return { ...defaultTheme, ...customTheme };
+}
+
+// statusbar.tsx
+export function createStatusbarTheme(
+  customTheme: Partial<StatusbarThemeConfiguration> = {}
+): StatusbarThemeConfiguration {
+  const defaultTheme: StatusbarThemeConfiguration = {
+    backgroundColor: "#ececec",
+    borderColor: "#dedddd",
+    boxShadow: "inset 0 0px 0.5px rgba(0,0,0,0.06)",
+    textColor: "#111827",
+
+    item: {
+      activeBackgroundColor: "#d1d5db",
+      hoverBackgroundColor: "#e5e7eb",
+    },
+  };
+
+  return {
+    ...defaultTheme,
+    ...customTheme,
+  };
 }
 
 // separator.tsx
@@ -529,7 +600,7 @@ const lightButton = createButtonTheme(lightBody, {
   transparent: {
     backgroundColor: "transparent",
     textColor: lightBody.textColor,
-    hoverBackgroundColor: "#f0f0f0",
+    hoverBackgroundColor: "#e2e2e2",
     activeBackgroundColor: "#cfcfcf",
     focusBackgroundColor: "#cfcfcf",
   },
@@ -597,7 +668,13 @@ const lightLoadingSkeleton = createLoadingSkeletonTheme();
 
 const lightLoadingSpinner = createLoadingSpinnerTheme(lightBody);
 
+const lightOverlayBlocker = createOverlayBlockerTheme();
+
+const lightMessagebox = createMessageboxTheme();
+
 const lightRadio = createRadioTheme(lightBody);
+
+const lightStatusbar = createStatusbarTheme();
 
 const lightSeparator = createSeparatorTheme(lightBody);
 
@@ -626,8 +703,11 @@ const lightTheme: AppTheme = {
   list: lightList,
   loadingSkeleton: lightLoadingSkeleton,
   loadingSpinner: lightLoadingSpinner,
+  messagebox: lightMessagebox,
+  overlayBlocker: lightOverlayBlocker,
   radio: lightRadio,
   separator: lightSeparator,
+  statusbar: lightStatusbar,
   table: lightTable,
   treelist: lightTreeList,
   window: lightWindow,
@@ -668,87 +748,102 @@ const darkAvatar = createAvatarTheme(darkBody, {
 });
 
 const darkButton = createButtonTheme(darkBody, {
+  default: {
+    backgroundColor: "#272727",
+    textColor: darkBody.textColor,
+    hoverBackgroundColor: "#363636",
+    activeBackgroundColor: "#404040",
+    textDecoration: "none",
+  },
   primary: {
-    backgroundColor: "#3e7dd3",
-    textColor: "white",
-    hoverBackgroundColor: "#2a5ea9",
-    activeBackgroundColor: "#1f4682",
-    focusBackgroundColor: "#3e7dd380",
+    backgroundColor: "rgb(60, 49, 110)",
+    textColor: darkBody.textColor,
+    hoverBackgroundColor: "rgb(72, 57, 141)",
+    activeBackgroundColor: "rgb(85, 65, 160)",
+    focusBackgroundColor: "rgba(72, 57, 141, 0.5)",
   },
   danger: {
-    backgroundColor: "#a12f4b",
-    textColor: "white",
-    hoverBackgroundColor: "#802036",
-    activeBackgroundColor: "#60182a",
-    focusBackgroundColor: "#A12F4B80",
+    backgroundColor: "rgb(167, 7, 43)",
+    textColor: darkBody.textColor,
+    hoverBackgroundColor: "rgb(147, 21, 52)",
+    activeBackgroundColor: "rgb(130, 18, 46)",
+    focusBackgroundColor: "rgba(167, 7, 43, 0.5)",
   },
   success: {
-    backgroundColor: "#2b8c29",
-    textColor: "white",
-    hoverBackgroundColor: "#146512",
-    activeBackgroundColor: "#0b3d09",
-    focusBackgroundColor: "#0b3d0980",
-  },
-  secondary: {
-    backgroundColor: "#222222",
+    backgroundColor: "#107533",
     textColor: darkBody.textColor,
-    hoverBackgroundColor: "#333333",
-    activeBackgroundColor: "#444444",
-    focusBackgroundColor: "#33333380",
+    hoverBackgroundColor: "#03973d",
+    activeBackgroundColor: "#02b347",
+    focusBackgroundColor: "rgba(3, 151, 61, 0.5)",
   },
+
+  secondary: {
+    backgroundColor: "#2f2f2f",
+    textColor: darkBody.textColor,
+    hoverBackgroundColor: "#3a3a3a",
+    activeBackgroundColor: "#444",
+    focusBackgroundColor: "#ffffff20",
+  },
+
   ghost: {
     backgroundColor: "transparent",
-    textColor: "#bbbbbb",
-    hoverBackgroundColor: "#222222",
-    activeBackgroundColor: "#111111",
-    focusBackgroundColor: "#ffffff33",
+    textColor: darkBody.textColor,
+    hoverBackgroundColor: "#2a2a2a",
+    activeBackgroundColor: "#333",
+    focusBackgroundColor: "#ffffff20",
   },
+
   link: {
     backgroundColor: "transparent",
-    textColor: "#408ee8",
-    hoverBackgroundColor: "#2a73c3",
-    activeBackgroundColor: "#1e5ba8",
-    focusBackgroundColor: "#408EE880",
+    textColor: "#7ab4ff",
+    hoverBackgroundColor: "#1e3a5f",
+    activeBackgroundColor: "#162c47",
+    focusBackgroundColor: "#7ab4ff80",
     textDecoration: "underline",
   },
+
   transparent: {
     backgroundColor: "transparent",
-    textColor: "#bbbbbb",
-    hoverBackgroundColor: "#222222",
-    activeBackgroundColor: "#111111",
-    focusBackgroundColor: "#333333",
+    textColor: darkBody.textColor,
+    hoverBackgroundColor: "#363636",
+    activeBackgroundColor: "#404040",
+    focusBackgroundColor: "#ffffff20",
   },
+
   "outline-default": {
-    backgroundColor: "#111111",
-    textColor: "#bbbbbb",
-    hoverBackgroundColor: "#222222",
-    activeBackgroundColor: "#333333",
-    focusBackgroundColor: "#ffffff40",
-    borderColor: "#bbbbbb",
+    backgroundColor: "transparent",
+    textColor: "#a3a3a3",
+    hoverBackgroundColor: "#2a2a2a",
+    activeBackgroundColor: "#333",
+    focusBackgroundColor: "#ffffff30",
+    borderColor: "#555",
   },
+
   "outline-primary": {
-    backgroundColor: "#111111",
-    textColor: "#3e7dd3",
-    hoverBackgroundColor: "#1a3e6a",
-    activeBackgroundColor: "#102b4b",
-    focusBackgroundColor: "#3E7DD380",
-    borderColor: "#3e7dd3",
+    backgroundColor: "transparent",
+    textColor: "rgb(120, 100, 220)",
+    hoverBackgroundColor: "rgba(72, 57, 141, 0.2)",
+    activeBackgroundColor: "rgba(72, 57, 141, 0.35)",
+    focusBackgroundColor: "rgba(72, 57, 141, 0.5)",
+    borderColor: "rgb(72, 57, 141)",
   },
+
   "outline-danger": {
-    backgroundColor: "#111111",
-    textColor: "#a12f4b",
-    hoverBackgroundColor: "#802036",
-    activeBackgroundColor: "#60182a",
-    focusBackgroundColor: "#A12F4B80",
-    borderColor: "#a12f4b",
+    backgroundColor: "transparent",
+    textColor: "rgb(200, 60, 90)",
+    hoverBackgroundColor: "rgba(147, 21, 52, 0.2)",
+    activeBackgroundColor: "rgba(147, 21, 52, 0.35)",
+    focusBackgroundColor: "rgba(167, 7, 43, 0.5)",
+    borderColor: "rgb(167, 7, 43)",
   },
+
   "outline-success": {
-    backgroundColor: "#111111",
-    textColor: "#2b8c29",
-    hoverBackgroundColor: "#146512",
-    activeBackgroundColor: "#0b3d09",
-    focusBackgroundColor: "#0b3d0980",
-    borderColor: "#2b8c29",
+    backgroundColor: "transparent",
+    textColor: "#2ecc71",
+    hoverBackgroundColor: "rgba(3, 151, 61, 0.2)",
+    activeBackgroundColor: "rgba(3, 151, 61, 0.35)",
+    focusBackgroundColor: "rgba(3, 151, 61, 0.5)",
+    borderColor: "#03973d",
   },
 });
 
@@ -851,6 +946,34 @@ const darkLoadingSpinner = createLoadingSpinnerTheme(darkBody, {
   textColor: "#e5e7eb",
 });
 
+const darkMessagebox = createMessageboxTheme({
+  primary: {
+    container: "#1e293b",
+    text: "#93c5fd",
+    active: "#60a5fa",
+  },
+  success: {
+    container: "#1f2d1f",
+    text: "#86efac",
+    active: "#4ade80",
+  },
+  danger: {
+    container: "#2d1f1f",
+    text: "#fca5a5",
+    active: "#f87171",
+  },
+  warning: {
+    container: "#2d241f",
+    text: "#fdba74",
+    active: "#fb923c",
+  },
+});
+
+const darkOverlayBlocker = createOverlayBlockerTheme({
+  backgroundColor: "rgba(0, 0, 0, 0.95)",
+  backdropFilter: "none",
+});
+
 const darkRadio = createRadioTheme(darkBody, {
   borderColor: "#374151",
   checkedBorderColor: "#2a3243",
@@ -867,6 +990,18 @@ const darkSeparator = createSeparatorTheme(darkBody, {
   lineColor: "#e5e7eb",
   titleColor: "#f9fafb",
   backgroundTitleColor: "#1f2023",
+});
+
+const darkStatusbar = createStatusbarTheme({
+  backgroundColor: "#272727",
+  borderColor: "#303030",
+  boxShadow: "inset 0 0px 0.5px rgba(255,255,255,0.05)",
+  textColor: "#d4d4d4",
+
+  item: {
+    activeBackgroundColor: "#363636",
+    hoverBackgroundColor: "#404040",
+  },
 });
 
 export const darkTable: TableThemeConfiguration = createTableTheme(darkBody, {
@@ -925,8 +1060,11 @@ const darkTheme: AppTheme = {
   list: darkList,
   loadingSkeleton: darkLoadingSkeleton,
   loadingSpinner: darkLoadingSpinner,
+  messagebox: darkMessagebox,
+  overlayBlocker: darkOverlayBlocker,
   radio: darkRadio,
   separator: darkSeparator,
+  statusbar: darkStatusbar,
   table: darkTable,
   treelist: darkTreeList,
   window: darkWindow,

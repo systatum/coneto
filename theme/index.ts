@@ -1,3 +1,4 @@
+import { MessageboxVariantState } from "./../components/messagebox";
 import { ButtonVariants } from "./../components/button";
 
 export type ThemeMode = "light" | "dark";
@@ -171,6 +172,23 @@ export interface LoadingSpinnerThemeConfiguration {
   textColor?: string;
 }
 
+// messagebox.tsx
+export interface MessageboxVariantTheme {
+  container: string;
+  text: string;
+  active: string;
+}
+
+export type MessageboxThemeConfiguration = {
+  [K in MessageboxVariantState]: MessageboxVariantTheme;
+};
+
+// overlay-blocker.tsx
+export interface OverlayBlockerThemeConfiguration {
+  backgroundColor?: string;
+  backdropFilter?: string;
+}
+
 // radio.tsx
 export interface RadioThemeConfiguration {
   borderColor?: string;
@@ -190,6 +208,18 @@ export interface SeparatorThemeConfiguration {
   lineColor?: string;
   titleColor?: string;
   backgroundTitleColor?: string;
+}
+
+// statusbar.tsx
+export interface StatusbarThemeConfiguration {
+  backgroundColor: string;
+  borderColor: string;
+  boxShadow: string;
+  textColor: string;
+  item: {
+    activeBackgroundColor: string;
+    hoverBackgroundColor: string;
+  };
 }
 
 // table.tsx
@@ -245,8 +275,11 @@ export interface AppTheme {
   list: ListThemeConfiguration;
   loadingSkeleton: LoadingSkeletonThemeConfiguration;
   loadingSpinner: LoadingSpinnerThemeConfiguration;
+  messagebox: MessageboxThemeConfiguration;
+  overlayBlocker: OverlayBlockerThemeConfiguration;
   radio: RadioThemeConfiguration;
   separator: SeparatorThemeConfiguration;
+  statusbar: StatusbarThemeConfiguration;
   table: TableThemeConfiguration;
   treelist: TreeListThemeConfiguration;
   window: WindowThemeConfiguration;
