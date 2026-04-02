@@ -265,6 +265,8 @@ const StatusbarWrapper = styled.div<{
           box-shadow: ${$theme.boxShadow};
         `};
 
+  transition: background-color 0.2s ease-in-out;
+
   ${({ $style }) => $style};
 `;
 
