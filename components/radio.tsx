@@ -262,7 +262,7 @@ const Label = styled.label<{
       $backgroundColor,
     }) => {
       if ($highlight) {
-        if ($highlightHoverColor) return "#2563EB33";
+        if ($highlightHoverColor) return $highlightHoverColor;
         return $checked
           ? $highlightBackgroundColor ||
               $checkedBackgroundColor ||
