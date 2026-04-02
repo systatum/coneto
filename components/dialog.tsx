@@ -14,8 +14,10 @@ import { RiCloseLine } from "@remixicon/react";
 import { Button, ButtonStylesProps, ButtonVariants } from "./button";
 import { OverlayBlocker } from "./overlay-blocker";
 import { Figure, FigureProps } from "./figure";
-import { lightenColor } from "./../lib/lighten-color";
+import { darkenColor, lightenColor } from "../lib/color";
 import { createRoot } from "react-dom/client";
+import { useTheme } from "./../theme/provider";
+import { DialogThemeConfiguration } from "theme";
 
 const zoomIn = keyframes`from {transform: translate(-50%, -50%) scale(0.95); opacity: 0;} to {transform: translate(-50%, -50%) scale(1); opacity: 1;}`;
 const zoomOut = keyframes`from {transform: translate(-50%, -50%) scale(1); opacity: 1;} to {transform: translate(-50%, -50%) scale(0.95); opacity: 0;}`;
@@ -79,6 +81,9 @@ function Dialog({
   icon,
   onClosed,
 }: DialogProps) {
+  const { currentTheme, mode } = useTheme();
+  const dialogTheme = currentTheme.dialog;
+
   const [isVisible, setIsVisible] = useState(false);
   const { mounted, target } = usePortal();
 
@@ -130,6 +135,7 @@ function Dialog({
         }}
       />
       <Wrapper
+        $theme={dialogTheme}
         aria-label="dialog-wrapper"
         $isOpen={isOpen}
         $style={styles?.containerStyle}
@@ -149,10 +155,15 @@ function Dialog({
                       min-height: ${icon?.size
                         ? `${icon?.size * 1.5}px`
                         : `42px`};
-                      background-color: ${lightenColor(
-                        icon?.color ?? "black",
-                        0.9
-                      )};
+                      background-color: ${mode === "light"
+                        ? lightenColor(
+                            icon?.color ?? dialogTheme?.textColor,
+                            0.9
+                          )
+                        : darkenColor(
+                            icon?.color ?? dialogTheme?.textColor,
+                            0.9
+                          )};
                       border-radius: 99999px;
                       justify-content: center;
                       align-items: center;
@@ -181,6 +192,7 @@ function Dialog({
 
                 {subtitle && (
                   <Subtitle
+                    $theme={dialogTheme}
                     aria-label="dialog-subtitle"
                     $style={styles?.subtitleStyle}
                   >
@@ -253,26 +265,32 @@ function Dialog({
   );
 }
 
-const Wrapper = styled.div<{ $isOpen: boolean; $style?: CSSProp }>`
+const Wrapper = styled.div<{
+  $isOpen: boolean;
+  $style?: CSSProp;
+  $theme?: DialogThemeConfiguration;
+}>`
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 9991999;
-  background: white;
+  z-index: 9992999;
   padding: 1.5rem;
-  border-radius: 2px;
   max-width: calc(100% - 2rem);
   width: 380px;
   justify-content: space-between;
   align-items: center;
   max-height: calc(100vh - 2rem);
   overflow-y: auto;
-  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
   border-radius: 12px;
   display: flex;
   flex-direction: column;
   gap: 14px;
+
+  box-shadow: ${({ $theme }) =>
+    $theme?.boxShadow ?? "0px 10px 20px rgba(0, 0, 0, 0.1)"};
+  color: ${({ $theme }) => $theme?.textColor ?? "inherit"};
+  background: ${({ $theme }) => $theme?.backgroundColor};
   animation: ${({ $isOpen }) => ($isOpen ? zoomIn : zoomOut)} 0.2s forwards;
 
   ${({ $style }) => $style}
@@ -285,6 +303,8 @@ const Header = styled.div<{ $style?: CSSProp }>`
   width: 100%;
   justify-content: center;
   align-items: center;
+  color: inherit;
+  background-color: inherit;
 
   ${({ $style }) => $style}
 `;
@@ -309,10 +329,13 @@ const Title = styled.h2<{
   ${({ $style }) => $style}
 `;
 
-const Subtitle = styled.h3<{ $style?: CSSProp }>`
+const Subtitle = styled.h3<{
+  $style?: CSSProp;
+  $theme?: DialogThemeConfiguration;
+}>`
   font-size: 13px;
-  color: #5a606b;
   text-align: center;
+  color: ${({ $theme }) => $theme?.subtitleColor ?? "#5a606b"};
 
   ${({ $style }) => $style}
 `;
