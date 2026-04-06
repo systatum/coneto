@@ -26,6 +26,7 @@ import {
   OverlayBlockerThemeConfiguration,
   PaperDialogThemeConfiguration,
   RadioThemeConfiguration,
+  SearchboxThemeConfiguration,
   SeparatorThemeConfiguration,
   SidebarThemeConfiguration,
   StatusbarThemeConfiguration,
@@ -230,7 +231,7 @@ export function createCapsuleTabTheme(
   custom: Partial<CapsuleTabThemeConfiguration> = {}
 ): CapsuleTabThemeConfiguration {
   const defaultTheme: CapsuleTabThemeConfiguration = {
-    backgroundColor: "#ffffff",
+    backgroundColor: body?.backgroundColor,
     borderColor: "#ebebeb",
     boxShadow: "0 1px 3px -3px #5b5b5b",
   };
@@ -552,6 +553,28 @@ export function createRadioTheme(
   return { ...defaultTheme, ...customTheme };
 }
 
+// searchbox.tsx
+export function createSearchboxTheme(
+  body: BodyThemeConfiguration,
+  custom: Partial<SearchboxThemeConfiguration> = {}
+): SearchboxThemeConfiguration {
+  const defaultTheme: SearchboxThemeConfiguration = {
+    backgroundColor: body?.backgroundColor || "#ffffff",
+    activeBackgroundColor: body?.backgroundColor,
+    borderColor: "#d1d5db",
+    focusBorderColor: "rgb(61, 61, 61)",
+    focusShadow: "0 0 0 1px rgb(61, 61, 61)",
+    iconColor: "#9ca3af",
+    clearIconColor: "#9ca3af",
+    textColor: "#111827",
+  };
+
+  return {
+    ...defaultTheme,
+    ...custom,
+  };
+}
+
 // separator.tsx
 export function createSeparatorTheme(
   body: BodyThemeConfiguration,
@@ -638,9 +661,12 @@ export function createTableTheme(
     boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
 
     headerActionBackgroundColor: "linear-gradient(to bottom, #fbf9f9, #f0f0f0)",
+    headerActionBorderColor: "rgb(229, 231, 235)",
 
     headerBackgroundColor: "linear-gradient(to bottom, #f0f0f0, #e4e4e4)",
-    headerBorderColor: "#d1d5db",
+    headerBorderColor: "rgb(229, 231, 235)",
+
+    rowGroupBackgroundColor: "white",
 
     rowBackgroundColor: "white",
     rowBorderColor: "#e5e7eb",
@@ -670,9 +696,11 @@ export function createTreeListTheme(
     textColor: body.textColor,
     backgroundColor: body.backgroundColor,
     hoverBackgroundColor: "#f3f4f6",
-    selectedBackgroundColor: "#e5e7eb",
-    borderColor: "#e5e7eb",
-    expandIconColor: "#2563eb",
+    selectedBackgroundColor: "#f3f4f6",
+
+    dividerHierarchyColor: "rgb(243 243 243)",
+    dividerHierarchyRelatedColor: "#d7d6d6",
+    dividerHierarchySelectedColor: "#3b82f6",
   };
 
   return {
@@ -801,7 +829,7 @@ const lightButton = createButtonTheme(lightBody, {
 
 const lightCapsule = createCapsuleTheme(lightBody);
 
-const lightCapsuleTab = createCapsuleTheme(lightBody);
+const lightCapsuleTab = createCapsuleTabTheme(lightBody);
 
 const lightCard = createCardTheme(lightBody, {
   backgroundColor: "#ffffff",
@@ -845,6 +873,8 @@ const lightPaperDialog = createPaperDialogTheme(lightBody);
 
 const lightRadio = createRadioTheme(lightBody);
 
+const lightSearchbox = createSearchboxTheme(lightBody);
+
 const lightSeparator = createSeparatorTheme(lightBody);
 
 const lightSidebar = createSidebarTheme(lightBody);
@@ -885,6 +915,7 @@ const lightTheme: AppTheme = {
   overlayBlocker: lightOverlayBlocker,
   paperDialog: lightPaperDialog,
   radio: lightRadio,
+  searchbox: lightSearchbox,
   separator: lightSeparator,
   sidebar: lightSidebar,
   statusbar: lightStatusbar,
@@ -896,7 +927,7 @@ const lightTheme: AppTheme = {
 // Dark
 const darkBody = createBodyTheme({
   backgroundColor: "#111",
-  textColor: "#fff",
+  textColor: "#caced4",
 });
 
 const darkActionButton = createActionButtonTheme(darkBody, {
@@ -923,7 +954,7 @@ const darkActionCapsule = createActionCapsuleTheme(darkBody, {
 });
 
 const darkAvatar = createAvatarTheme(darkBody, {
-  textColor: "#f9fafb",
+  textColor: darkBody.textColor,
   overlayBackground: "rgba(0,0,0,0.6)",
 });
 
@@ -1028,8 +1059,6 @@ const darkButton = createButtonTheme(darkBody, {
 });
 
 const darkBadge = createBadgeTheme(darkBody, {
-  backgroundColor: "#1f2937",
-  textColor: "#f9fafb",
   borderColor: "#374151",
   circleColor: "#f9fafb",
   action: {
@@ -1048,7 +1077,6 @@ const darkBoxbar = createBoxbarTheme(darkBody, {
 });
 
 const darkCapsule = createCapsuleTheme(darkBody, {
-  backgroundColor: "#272727",
   borderColor: "#303030",
   boxShadow: "0 1px 2px rgba(0,0,0,0.4)",
 
@@ -1067,7 +1095,7 @@ const darkCapsule = createCapsuleTheme(darkBody, {
 });
 
 const darkCapsuleTab = createCapsuleTabTheme(darkBody, {
-  backgroundColor: "#272727",
+  backgroundColor: darkBody?.backgroundColor,
   borderColor: "#303030",
   boxShadow: "0 2px 6px rgba(0,0,0,0.4)",
 });
@@ -1089,7 +1117,7 @@ const darkChoiceGroup = createChoiceGroupTheme(darkBody, {
   descriptionColor: "#d1d5db",
 });
 
-const darkCheckbox = createCheckboxTheme(lightBody, {
+const darkCheckbox = createCheckboxTheme(darkBody, {
   borderColor: "#374151",
   checkedBorderColor: "#2a3243",
   backgroundColor: "#1f2937",
@@ -1140,7 +1168,7 @@ const darkKeynote = createKeynoteTheme(darkBody, {
 });
 
 const darkList = createListTheme(darkBody, {
-  backgroundColor: "#020617",
+  backgroundColor: "rgb(26, 26, 26)",
   textColor: "#e5e7eb",
   hoverBackgroundColor: "#1e293b",
   selectedBackgroundColor: "#1e40af",
@@ -1214,6 +1242,17 @@ const darkRadio = createRadioTheme(darkBody, {
   highlightHoverColor: "#2563EB55",
 });
 
+const darkSearchbox = createSearchboxTheme(darkBody, {
+  backgroundColor: darkBody?.backgroundColor,
+  textColor: darkBody?.textColor,
+  activeBackgroundColor: "rgb(26, 26, 26)",
+  borderColor: "#303030",
+  focusBorderColor: "#4f9cff",
+  focusShadow: "0 0 0 1px #4f9cff",
+  iconColor: "#a1a1aa",
+  clearIconColor: "#a1a1aa",
+});
+
 const darkSeparator = createSeparatorTheme(darkBody, {
   containerColor: "#d1d5db",
   lineColor: "#e5e7eb",
@@ -1254,10 +1293,14 @@ export const darkTable: TableThemeConfiguration = createTableTheme(darkBody, {
   textColor: darkBody.textColor,
   boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
 
-  headerActionBackgroundColor: "linear-gradient(to bottom, #2c2c2c, #1f1f1f)",
+  headerActionBackgroundColor:
+    "linear-gradient(rgb(33, 33, 33), rgb(37, 38, 38))",
+  headerActionBorderColor: "rgb(61, 61, 61)",
 
-  headerBackgroundColor: "linear-gradient(#29282b, #323232)",
+  headerBackgroundColor: "linear-gradient(rgb(42, 42, 42), rgb(41, 44, 46))",
   headerBorderColor: "rgb(39, 39, 48)",
+
+  rowGroupBackgroundColor: "rgb(26, 26, 26)",
 
   rowBackgroundColor: "rgb(31, 31, 33)",
   rowBorderColor: "rgb(39, 39, 48)",
@@ -1274,11 +1317,13 @@ export const darkTable: TableThemeConfiguration = createTableTheme(darkBody, {
 
 const darkTreeList = createTreeListTheme(darkBody, {
   textColor: "#f9fafb",
-  backgroundColor: "#111827",
+  backgroundColor: "#1f2023",
   hoverBackgroundColor: "#1f2937",
-  selectedBackgroundColor: "#374151",
-  borderColor: "#374151",
-  expandIconColor: "#183666",
+  selectedBackgroundColor: "#1f2937",
+
+  dividerHierarchyColor: "rgb(62, 65, 67)",
+  dividerHierarchyRelatedColor: "rgb(115 115 115)",
+  dividerHierarchySelectedColor: "#60a5fa",
 });
 
 const darkWindow = createWindowTheme(darkBody, {
@@ -1315,6 +1360,7 @@ const darkTheme: AppTheme = {
   overlayBlocker: darkOverlayBlocker,
   paperDialog: darkPaperDialog,
   radio: darkRadio,
+  searchbox: darkSearchbox,
   separator: darkSeparator,
   sidebar: darkSidebar,
   statusbar: darkStatusbar,

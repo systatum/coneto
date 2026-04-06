@@ -251,6 +251,18 @@ export interface RadioThemeConfiguration {
   highlightHoverColor?: string;
 }
 
+// searchbox.tsx
+export interface SearchboxThemeConfiguration {
+  backgroundColor?: string;
+  activeBackgroundColor?: string;
+  borderColor?: string;
+  focusBorderColor?: string;
+  focusShadow?: string;
+  iconColor?: string;
+  textColor?: string;
+  clearIconColor?: string;
+}
+
 // separator.tsx
 export interface SeparatorThemeConfiguration {
   containerColor?: string;
@@ -296,8 +308,12 @@ export interface TableThemeConfiguration {
   boxShadow?: string;
 
   headerActionBackgroundColor?: string;
+  headerActionBorderColor?: string;
+
   headerBackgroundColor?: string;
   headerBorderColor?: string;
+
+  rowGroupBackgroundColor?: string;
 
   rowSubtitleTextColor?: string;
   rowBackgroundColor?: string;
@@ -315,8 +331,10 @@ export interface TableThemeConfiguration {
 export interface TreeListThemeConfiguration extends BodyThemeConfiguration {
   hoverBackgroundColor?: string;
   selectedBackgroundColor?: string;
-  borderColor?: string;
-  expandIconColor?: string;
+
+  dividerHierarchyColor?: string;
+  dividerHierarchySelectedColor?: string;
+  dividerHierarchyRelatedColor?: string;
 }
 
 // window.tsx
@@ -353,6 +371,7 @@ export interface AppTheme {
   overlayBlocker: OverlayBlockerThemeConfiguration;
   paperDialog: PaperDialogThemeConfiguration;
   radio: RadioThemeConfiguration;
+  searchbox: SearchboxThemeConfiguration;
   separator: SeparatorThemeConfiguration;
   sidebar: SidebarThemeConfiguration;
   statusbar: StatusbarThemeConfiguration;
