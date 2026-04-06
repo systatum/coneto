@@ -33,6 +33,8 @@ import {
   StatusbarThemeConfiguration,
   TableThemeConfiguration,
   ThumbFieldThemeConfiguration,
+  TipMenuContainerThemeConfiguration,
+  TipMenuThemeConfiguration,
   ToggleboxThemeConfiguration,
   ToolbarThemeConfiguration,
   TreeListThemeConfiguration,
@@ -183,6 +185,17 @@ export function createButtonTheme(
   };
 
   return { ...variants, ...customVariants };
+}
+
+export function createTipMenuContainerTheme(
+  custom: Partial<TipMenuContainerThemeConfiguration> = {}
+): TipMenuContainerThemeConfiguration {
+  return {
+    backgroundColor: "#ffffff",
+    borderColor: "#e5e7eb",
+    shadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
+    ...custom,
+  };
 }
 
 // capsule.tsx
@@ -692,6 +705,27 @@ export function createTableTheme(
   };
 }
 
+// tipmenu.tsx
+export function createTipMenuTheme(
+  body: BodyThemeConfiguration,
+  customTheme: Partial<TipMenuThemeConfiguration> = {}
+): TipMenuThemeConfiguration {
+  const defaultTheme: TipMenuThemeConfiguration = {
+    backgroundColor: "rgb(35, 35, 35)",
+    textColor: body.textColor,
+
+    hoverBackgroundColor: "#f2f2f2",
+    activeBackgroundColor: "#e5e5e5",
+
+    focusBorderColor: "#4f9cff",
+  };
+
+  return {
+    ...defaultTheme,
+    ...customTheme,
+  };
+}
+
 // togglebox.tsx
 export function createToggleboxTheme(
   body: BodyThemeConfiguration,
@@ -915,6 +949,10 @@ const lightButton = createButtonTheme(lightBody, {
   },
 });
 
+const lightButtonTipMenuContainer = createTipMenuContainerTheme({
+  backgroundColor: lightBody?.backgroundColor,
+});
+
 const lightCapsule = createCapsuleTheme(lightBody);
 
 const lightCapsuleTab = createCapsuleTabTheme(lightBody);
@@ -971,6 +1009,12 @@ const lightStatusbar = createStatusbarTheme();
 
 const lightTable = createTableTheme(lightBody);
 
+const lightTipMenu = createTipMenuTheme(lightBody, {
+  dangerousBackgroundColor: lightButton.danger.backgroundColor,
+  dangerousHoverBackgroundColor: lightButton.danger.hoverBackgroundColor,
+  dangerousActiveBackgroundColor: lightButton.danger.activeBackgroundColor,
+});
+
 const lightTogglebox = createToggleboxTheme(lightBody);
 
 const lightToolbar = createToolbarTheme({
@@ -995,6 +1039,7 @@ const lightTheme: AppTheme = {
   avatar: lightAvatar,
   badge: lightBadge,
   button: lightButton,
+  buttonTipMenu: lightButtonTipMenuContainer,
   boxbar: lightBoxbar,
   capsule: lightCapsule,
   capsuleTab: lightCapsuleTab,
@@ -1019,6 +1064,7 @@ const lightTheme: AppTheme = {
   sidebar: lightSidebar,
   statusbar: lightStatusbar,
   table: lightTable,
+  tipmenu: lightTipMenu,
   thumbField: lightThumbField,
   toolbar: lightToolbar,
   togglebox: lightTogglebox,
@@ -1158,6 +1204,12 @@ const darkButton = createButtonTheme(darkBody, {
     focusBackgroundColor: "rgba(3, 151, 61, 0.5)",
     borderColor: "#03973d",
   },
+});
+
+const darkButtonTipMenuContainer = createTipMenuContainerTheme({
+  backgroundColor: "rgb(35, 35, 35)",
+  borderColor: "#303030",
+  shadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
 });
 
 const darkBadge = createBadgeTheme(darkBody, {
@@ -1417,6 +1469,14 @@ export const darkTable: TableThemeConfiguration = createTableTheme(darkBody, {
   summaryBorderColor: "rgb(39, 39, 48)",
 });
 
+const darkTipMenu = createTipMenuTheme(darkBody, {
+  hoverBackgroundColor: "#2a2a2a",
+  activeBackgroundColor: "#333333",
+  dangerousBackgroundColor: darkButton.danger.backgroundColor,
+  dangerousHoverBackgroundColor: darkButton.danger.hoverBackgroundColor,
+  dangerousActiveBackgroundColor: darkButton.danger.activeBackgroundColor,
+});
+
 const darkThumbField = createThumbFieldTheme(darkBody, {
   thumbsUpColor: "rgb(134, 111, 238)",
   thumbsDownColor: "rgb(236, 65, 108)",
@@ -1467,6 +1527,7 @@ const darkTheme: AppTheme = {
   avatar: darkAvatar,
   badge: darkBadge,
   button: darkButton,
+  buttonTipMenu: darkButtonTipMenuContainer,
   boxbar: darkBoxbar,
   capsule: darkCapsule,
   capsuleTab: darkCapsuleTab,
@@ -1491,6 +1552,7 @@ const darkTheme: AppTheme = {
   sidebar: darkSidebar,
   statusbar: darkStatusbar,
   table: darkTable,
+  tipmenu: darkTipMenu,
   thumbField: darkThumbField,
   togglebox: darkTogglebox,
   toolbar: darkToolbar,

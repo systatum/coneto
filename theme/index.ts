@@ -81,6 +81,12 @@ export interface ButtonThemeConfiguration extends BodyThemeConfiguration {
   focusBackgroundColor?: string;
 }
 
+export interface TipMenuContainerThemeConfiguration {
+  backgroundColor: string;
+  borderColor: string;
+  shadow: string;
+}
+
 // capsule.tsx
 export interface CapsuleThemeConfiguration {
   backgroundColor?: string;
@@ -350,13 +356,27 @@ export interface ToggleboxThemeConfiguration {
 }
 
 // toolbar.tsx
-
 export interface ToolbarThemeConfiguration extends BodyThemeConfiguration {
   hoverBackgroundColor?: string;
   activeBackgroundColor?: string;
   focusBackgroundColor?: string;
   borderColor?: string;
   textDecoration?: string;
+}
+
+// tip-menu.tsx
+export interface TipMenuThemeConfiguration {
+  backgroundColor?: string;
+  textColor?: string;
+
+  hoverBackgroundColor?: string;
+  activeBackgroundColor?: string;
+
+  dangerousBackgroundColor?: string;
+  dangerousHoverBackgroundColor?: string;
+  dangerousActiveBackgroundColor?: string;
+
+  focusBorderColor?: string;
 }
 
 // treelist.tsx
@@ -385,6 +405,7 @@ export interface AppTheme {
   badge: BadgeThemeConfiguration;
   boxbar: BoxbarThemeConfiguration;
   button: Record<ButtonVariants["variant"], ButtonThemeConfiguration>;
+  buttonTipMenu: TipMenuContainerThemeConfiguration;
   capsule: CapsuleThemeConfiguration;
   capsuleTab: CapsuleTabThemeConfiguration;
   card: CardThemeConfiguration;
@@ -409,6 +430,7 @@ export interface AppTheme {
   statusbar: StatusbarThemeConfiguration;
   thumbField: ThumbFieldThemeConfiguration;
   table: TableThemeConfiguration;
+  tipmenu: TipMenuThemeConfiguration;
   toolbar: Record<ToolbarVariantType, ToolbarThemeConfiguration>;
   togglebox: ToggleboxThemeConfiguration;
   treelist: TreeListThemeConfiguration;
