@@ -491,20 +491,11 @@ function Table({
                             dropdownStyle: css`
                               min-width: 235px;
                             `,
-                            triggerStyle: css`
-                              color: black;
-                              &:hover {
-                                background-color: #d4d4d4;
-                              }
-                            `,
-                            toggleActiveStyle: css`
-                              background-color: #d4d4d4;
-                            `,
                           }}
-                          variant="none"
                           subMenuList={
                             subMenuList ? subMenuList(col.id) : undefined
                           }
+                          variant="transparent"
                         />
                       </Toolbar>
                     )}
