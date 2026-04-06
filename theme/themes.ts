@@ -1274,7 +1274,7 @@ const darkChoiceGroup = createChoiceGroupTheme(darkBody, {
 const darkCheckbox = createCheckboxTheme(darkBody, {
   borderColor: "#374151",
   backgroundColor: "rgb(32, 33, 35)",
-  checkedBorderColor: "#2a3243",
+  checkedBorderColor: "#374151",
   checkedBackgroundColor: "#2a3243",
   iconColor: "#f9fafb",
   labelColor: "#f9fafb",
@@ -1454,9 +1454,9 @@ export const darkTable: TableThemeConfiguration = createTableTheme(darkBody, {
   headerBackgroundColor: "linear-gradient(rgb(42, 42, 42), rgb(41, 44, 46))",
   headerBorderColor: "rgb(39, 39, 48)",
 
-  rowGroupBackgroundColor: "rgb(26, 26, 26)",
+  rowGroupBackgroundColor: "rgb(31, 31, 31)",
 
-  rowBackgroundColor: "rgb(31, 31, 33)",
+  rowBackgroundColor: "rgb(26, 26, 26)",
   rowBorderColor: "rgb(39, 39, 48)",
   rowHoverBackgroundColor: "#292c2e",
   rowSelectedBackgroundColor: "#303438",
