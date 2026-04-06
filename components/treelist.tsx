@@ -14,6 +14,7 @@ import { SubMenuButtonProps } from "./button";
 import { Tooltip } from "./tooltip";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
+import { TreeListThemeConfiguration } from "theme";
 
 export interface TreeListProps
   extends Omit<
@@ -447,8 +448,6 @@ function TreeList({
                     })()}
                   {collapsible && (
                     <ArrowIcon
-                      $hoverBackgroundColor={treeListTheme.hoverBackgroundColor}
-                      $backgroundColor={treeListTheme.backgroundColor}
                       aria-label="arrow-icon"
                       aria-expanded={isOpen[item.id]}
                       size={20}
@@ -788,6 +787,7 @@ function TreeListItem<T extends TreeListItemsProps>({
       style={{
         position: "relative",
         width: "100%",
+        backgroundColor: "inherit",
       }}
     >
       <TreeListItemWrapper
@@ -797,10 +797,6 @@ function TreeListItem<T extends TreeListItemsProps>({
         aria-label="tree-list-item"
         $isSelected={isSelected === item.id}
         $showHierarchyLine={showHierarchyLine}
-        $backgroundColor={treeListTheme.backgroundColor}
-        $hoverBackgroundColor={treeListTheme.hoverBackgroundColor}
-        $selectedBackgroundColor={treeListTheme.selectedBackgroundColor}
-        $textColor={treeListTheme.textColor}
         onClick={async () => {
           let prevent = false;
 
@@ -823,6 +819,7 @@ function TreeListItem<T extends TreeListItemsProps>({
             }
           }
         }}
+        $theme={treeListTheme}
         $isHovered={isHovered === item.id || openRowId === item.id}
         $isDropParent={dropIntent === "containment" && isOver}
         $style={styles?.self}
@@ -929,8 +926,6 @@ function TreeListItem<T extends TreeListItemsProps>({
         {isHavingContent && collapsible && (
           <ArrowIcon
             aria-label="arrow-icon"
-            $hoverBackgroundColor={treeListTheme.hoverBackgroundColor}
-            $backgroundColor={treeListTheme.backgroundColor}
             $level={level}
             $showHierarchy={showHierarchyLine}
             $isSelected={isSelected === item.id}
@@ -1032,6 +1027,7 @@ function TreeListItem<T extends TreeListItemsProps>({
         )}
         {showHierarchyLine && (
           <TreeListHierarchyVerticalLine
+            $theme={treeListTheme}
             aria-label="vertical-line"
             $level={level}
             $isSameLevel={isSameLevel}
@@ -1056,6 +1052,7 @@ function TreeListItem<T extends TreeListItemsProps>({
           return (
             <TreeListHierarchyVerticalLine
               key={idx}
+              $theme={treeListTheme}
               aria-label="vertical-line-level"
               $level={idx}
               $isSameLevel={isSameLevelLine}
@@ -1292,6 +1289,7 @@ const GroupWrapper = styled.div`
   flex-direction: column;
   gap: 0.25rem;
   width: 100%;
+  background-color: inherit;
 
   &:not(:last-child) {
     padding-bottom: 8px;
@@ -1327,8 +1325,6 @@ const ArrowIcon = styled(RiArrowRightSLine)<{
   $isSelected?: boolean;
   $showHierarchy?: boolean;
   $level?: number;
-  $backgroundColor?: string;
-  $hoverBackgroundColor?: string;
 }>`
   position: absolute;
   top: 50%;
@@ -1341,21 +1337,7 @@ const ArrowIcon = styled(RiArrowRightSLine)<{
     border-radius: 9999px;
   `}
 
-  ${({
-    $isHovered,
-    $isSelected,
-    $showHierarchy,
-    $backgroundColor,
-    $hoverBackgroundColor,
-  }) =>
-    $isHovered || $isSelected
-      ? css`
-          background-color: ${$hoverBackgroundColor};
-        `
-      : $showHierarchy &&
-        css`
-          background-color: ${$backgroundColor};
-        `}
+  background-color:inherit;
 
   &[aria-expanded="true"] {
     transform: translateY(-50%) rotate(90deg);
@@ -1384,25 +1366,26 @@ const TreeListHierarchyVerticalLine = styled.div<{
   $isSelected?: boolean;
   $isSameLevel?: boolean;
   $style?: CSSProp;
+  $theme?: TreeListThemeConfiguration;
 }>`
   position: absolute;
   top: 0;
   width: 1px;
   z-index: 8888;
-  ${({ $level, $isSelected, $isSameLevel }) => css`
+  ${({ $level, $isSelected, $isSameLevel, $theme }) => css`
     height: 100%;
     left: ${$level * 12 + 9}px;
 
     ${$isSelected
       ? css`
-          border-left: 2px solid #3b82f6;
+          border-left: 2px solid ${$theme?.dividerHierarchySelectedColor};
         `
       : $isSameLevel
         ? css`
-            border-left: 2px solid #d7d6d6;
+            border-left: 2px solid ${$theme?.dividerHierarchyRelatedColor};
           `
         : css`
-            border-left: 2px solid rgb(243 243 243);
+            border-left: 2px solid ${$theme?.dividerHierarchyColor};
           `}
   `}
 
@@ -1416,10 +1399,7 @@ const TreeListItemWrapper = styled.li<{
   $level?: number;
   $isHovered?: boolean;
   $isDropParent?: boolean;
-  $backgroundColor?: string;
-  $hoverBackgroundColor?: string;
-  $selectedBackgroundColor?: string;
-  $textColor?: string;
+  $theme?: TreeListThemeConfiguration;
 }>`
   display: flex;
   flex-direction: row;
@@ -1432,28 +1412,24 @@ const TreeListItemWrapper = styled.li<{
   user-select: none;
   width: 100%;
 
-  ${({ $showHierarchyLine, $isSelected }) =>
+  ${({ $showHierarchyLine, $isSelected, $theme }) =>
     !$showHierarchyLine &&
     css`
-      border-left: 3px solid ${$isSelected ? "#3b82f6" : "transparent"};
+      border-left: 3px solid
+        ${$isSelected ? $theme?.dividerHierarchySelectedColor : "transparent"};
     `};
 
-  background-color: ${({
-    $isSelected,
-    $isDropParent,
-    $backgroundColor,
-    $hoverBackgroundColor,
-  }) =>
+  background-color: ${({ $isSelected, $isDropParent, $theme }) =>
     $isDropParent
-      ? $hoverBackgroundColor
+      ? $theme?.hoverBackgroundColor
       : $isSelected
-        ? $hoverBackgroundColor
-        : "inherit"};
+        ? $theme?.selectedBackgroundColor
+        : $theme?.backgroundColor};
 
-  ${({ $isHovered, $hoverBackgroundColor }) =>
+  ${({ $isHovered, $theme }) =>
     $isHovered &&
     css`
-      background-color: ${$hoverBackgroundColor};
+      background-color: ${$theme?.hoverBackgroundColor};
     `};
 
   padding: 0.25rem 1.2rem;
