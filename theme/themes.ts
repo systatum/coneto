@@ -291,7 +291,7 @@ export function createCheckboxTheme(
   const defaultTheme: CheckboxThemeConfiguration = {
     borderColor: "#6b7280",
     checkedBorderColor: "#61A9F9",
-    backgroundColor: "#ffffff",
+    backgroundColor: body?.backgroundColor,
     checkedBackgroundColor: "#61A9F9",
     iconColor: "#ffffff",
     labelColor: body.textColor,
@@ -1119,7 +1119,7 @@ const darkChoiceGroup = createChoiceGroupTheme(darkBody, {
 
 const darkCheckbox = createCheckboxTheme(darkBody, {
   borderColor: "#374151",
-  backgroundColor: "#1f2937",
+  backgroundColor: "rgb(32, 33, 35)",
   checkedBorderColor: "#2a3243",
   checkedBackgroundColor: "#2a3243",
   iconColor: "#f9fafb",
