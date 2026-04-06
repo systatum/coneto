@@ -315,7 +315,7 @@ const CapsuleWrapper = styled.div<{
 
   padding-left: 0.1rem;
   padding-right: 0.1rem;
-  border-bottom: 1px solid ${({ $theme }) => $theme?.borderColor};
+  border: 1px solid ${({ $theme }) => $theme?.borderColor};
   box-shadow: ${({ $theme }) => $theme?.boxShadow};
 
   ${({ $full, $theme }) =>
@@ -323,7 +323,9 @@ const CapsuleWrapper = styled.div<{
       ? css`
           width: 100%;
           background-color: ${$theme?.backgroundColor};
-          border-bottom-width: 1px;
+          border-top-width: 0px;
+          border-left-width: 0px;
+          border-right-width: 0px;
         `
       : css`
           width: fit-content;
