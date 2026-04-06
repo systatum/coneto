@@ -1,5 +1,6 @@
 import { MessageboxVariantState } from "./../components/messagebox";
 import { ButtonVariants } from "./../components/button";
+import { ToolbarVariantType } from "./../components/toolbar";
 
 export type ThemeMode = "light" | "dark";
 
@@ -327,6 +328,37 @@ export interface TableThemeConfiguration {
   summaryBorderColor?: string;
 }
 
+// thumb-field.tsx
+export interface ThumbFieldThemeConfiguration {
+  thumbsUpColor?: string;
+  thumbsDownColor?: string;
+  inactiveColor?: string;
+  errorColor?: string;
+  disabledOpacity?: number;
+}
+
+// togglebox.tsx
+export interface ToggleboxThemeConfiguration {
+  backgroundColor?: string;
+  checkedBackgroundColor?: string;
+  thumbColor?: string;
+  borderColor?: string;
+  textColor?: string;
+  descriptionColor?: string;
+  disabledOpacity?: number;
+  boxShadow?: string;
+}
+
+// toolbar.tsx
+
+export interface ToolbarThemeConfiguration extends BodyThemeConfiguration {
+  hoverBackgroundColor?: string;
+  activeBackgroundColor?: string;
+  focusBackgroundColor?: string;
+  borderColor?: string;
+  textDecoration?: string;
+}
+
 // treelist.tsx
 export interface TreeListThemeConfiguration extends BodyThemeConfiguration {
   hoverBackgroundColor?: string;
@@ -375,7 +407,10 @@ export interface AppTheme {
   separator: SeparatorThemeConfiguration;
   sidebar: SidebarThemeConfiguration;
   statusbar: StatusbarThemeConfiguration;
+  thumbField: ThumbFieldThemeConfiguration;
   table: TableThemeConfiguration;
+  toolbar: Record<ToolbarVariantType, ToolbarThemeConfiguration>;
+  togglebox: ToggleboxThemeConfiguration;
   treelist: TreeListThemeConfiguration;
   window: WindowThemeConfiguration;
 }

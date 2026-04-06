@@ -1,3 +1,4 @@
+import { ToolbarVariantType } from "./../components/toolbar";
 import { ButtonVariants } from "./../components/button";
 import {
   ActionButtonThemeConfiguration,
@@ -31,6 +32,9 @@ import {
   SidebarThemeConfiguration,
   StatusbarThemeConfiguration,
   TableThemeConfiguration,
+  ThumbFieldThemeConfiguration,
+  ToggleboxThemeConfiguration,
+  ToolbarThemeConfiguration,
   TreeListThemeConfiguration,
   WindowThemeConfiguration,
 } from "./index";
@@ -371,6 +375,7 @@ export function createGridTheme(
     cardShadow: "0 1px 3px rgba(0,0,0,0.1)",
     thumbnailBackgroundColor: "#e5e5e5",
   };
+
   return {
     ...defaultTheme,
     ...customTheme,
@@ -687,6 +692,89 @@ export function createTableTheme(
   };
 }
 
+// togglebox.tsx
+export function createToggleboxTheme(
+  body: BodyThemeConfiguration,
+  custom: Partial<ToggleboxThemeConfiguration> = {}
+): ToggleboxThemeConfiguration {
+  const defaultTheme: ToggleboxThemeConfiguration = {
+    backgroundColor: "#D1D5DB",
+    checkedBackgroundColor: "#61A9F9",
+    thumbColor: "#ffffff",
+    borderColor: "#d1d5db",
+    textColor: "#111827",
+    descriptionColor: "#6b7280",
+    disabledOpacity: 0.5,
+    boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+  };
+
+  return { ...defaultTheme, ...custom };
+}
+
+// toolbar.tsx
+export function createToolbarTheme(
+  baseButton: Record<ToolbarVariantType, ToolbarThemeConfiguration>,
+  customVariants: Partial<
+    Record<ToolbarVariantType, ToolbarThemeConfiguration>
+  > = {}
+): Record<ToolbarVariantType, ToolbarThemeConfiguration> {
+  const variants: Record<ToolbarVariantType, ToolbarThemeConfiguration> = {
+    default: {
+      ...baseButton?.default,
+      hoverBackgroundColor:
+        baseButton?.default?.hoverBackgroundColor ?? "#f5f5f5",
+      activeBackgroundColor:
+        baseButton?.default?.activeBackgroundColor ?? "#e8e8e8",
+      focusBackgroundColor:
+        baseButton?.default?.focusBackgroundColor ?? "#66666633",
+      borderColor:
+        baseButton?.default?.borderColor ??
+        baseButton?.default?.backgroundColor,
+    },
+    primary: {
+      ...baseButton?.primary,
+      hoverBackgroundColor:
+        baseButton?.primary?.hoverBackgroundColor ?? "#408ee8",
+      activeBackgroundColor:
+        baseButton?.primary?.activeBackgroundColor ?? "#2a73c3",
+      focusBackgroundColor:
+        baseButton?.primary?.focusBackgroundColor ?? "#569AEC80",
+    },
+    danger: {
+      ...baseButton?.danger,
+      hoverBackgroundColor:
+        baseButton?.danger?.hoverBackgroundColor ?? "#a12f4b",
+      activeBackgroundColor:
+        baseButton?.danger?.activeBackgroundColor ?? "#802036",
+      focusBackgroundColor:
+        baseButton?.danger?.focusBackgroundColor ?? "#CE375D80",
+    },
+    transparent: {
+      ...baseButton?.transparent,
+      hoverBackgroundColor: baseButton?.transparent?.hoverBackgroundColor,
+      activeBackgroundColor: baseButton?.transparent?.activeBackgroundColor,
+      focusBackgroundColor: baseButton?.transparent?.focusBackgroundColor,
+    },
+  };
+
+  return { ...variants, ...customVariants };
+}
+
+// thumb-field.tsx
+export function createThumbFieldTheme(
+  body: BodyThemeConfiguration,
+  custom: Partial<ThumbFieldThemeConfiguration> = {}
+): ThumbFieldThemeConfiguration {
+  const defaultTheme: ThumbFieldThemeConfiguration = {
+    thumbsUpColor: "#61A9F9",
+    thumbsDownColor: "rgb(206, 55, 93)",
+    inactiveColor: "#9ca3af",
+    errorColor: "#dc2626",
+    disabledOpacity: 0.5,
+  };
+  return { ...defaultTheme, ...custom };
+}
+
 // treelist.tsx
 export function createTreeListTheme(
   body: BodyThemeConfiguration,
@@ -881,9 +969,20 @@ const lightSidebar = createSidebarTheme(lightBody);
 
 const lightStatusbar = createStatusbarTheme();
 
-const lightTreeList = createTreeListTheme(lightBody);
-
 const lightTable = createTableTheme(lightBody);
+
+const lightTogglebox = createToggleboxTheme(lightBody);
+
+const lightToolbar = createToolbarTheme({
+  default: lightButton.default,
+  primary: lightButton.primary,
+  danger: lightButton.danger,
+  transparent: lightButton.transparent,
+});
+
+const lightThumbField = createThumbFieldTheme(lightBody);
+
+const lightTreeList = createTreeListTheme(lightBody);
 
 const lightWindow = createWindowTheme(lightBody);
 
@@ -920,6 +1019,9 @@ const lightTheme: AppTheme = {
   sidebar: lightSidebar,
   statusbar: lightStatusbar,
   table: lightTable,
+  thumbField: lightThumbField,
+  toolbar: lightToolbar,
+  togglebox: lightTogglebox,
   treelist: lightTreeList,
   window: lightWindow,
 };
@@ -1315,6 +1417,30 @@ export const darkTable: TableThemeConfiguration = createTableTheme(darkBody, {
   summaryBorderColor: "rgb(39, 39, 48)",
 });
 
+const darkThumbField = createThumbFieldTheme(darkBody, {
+  thumbsUpColor: "rgb(134, 111, 238)",
+  thumbsDownColor: "rgb(236, 65, 108)",
+  inactiveColor: "#6b7280",
+  errorColor: "#f87171",
+});
+
+const darkTogglebox = createToggleboxTheme(darkBody, {
+  backgroundColor: "rgb(80, 80, 80)",
+  checkedBackgroundColor: "rgb(60, 49, 110)",
+  thumbColor: "#f5f5f5",
+  borderColor: "#303030",
+  textColor: "#f5f5f5",
+  descriptionColor: "#9ca3af",
+  boxShadow: "0 2px 6px rgba(0,0,0,0.4)",
+});
+
+const darkToolbar = createToolbarTheme({
+  default: darkButton.default,
+  primary: darkButton.primary,
+  danger: darkButton.danger,
+  transparent: darkButton.transparent,
+});
+
 const darkTreeList = createTreeListTheme(darkBody, {
   textColor: "#f9fafb",
   backgroundColor: "#1f2023",
@@ -1365,6 +1491,9 @@ const darkTheme: AppTheme = {
   sidebar: darkSidebar,
   statusbar: darkStatusbar,
   table: darkTable,
+  thumbField: darkThumbField,
+  togglebox: darkTogglebox,
+  toolbar: darkToolbar,
   treelist: darkTreeList,
   window: darkWindow,
 };
