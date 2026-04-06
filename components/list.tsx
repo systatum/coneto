@@ -209,8 +209,6 @@ function List({
     return next;
   };
 
-  console.log(openedGroupIds);
-
   const setIsOpen = (id: string, level: "group" | "item" = "item") => {
     if (level === "group") {
       setOpenedGroupIds((prev) => {
