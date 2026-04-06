@@ -415,6 +415,8 @@ export interface TreeListThemeConfiguration extends BodyThemeConfiguration {
   hoverBackgroundColor?: string;
   selectedBackgroundColor?: string;
 
+  highlightedText?: string;
+
   dividerHierarchyColor?: string;
   dividerHierarchySelectedColor?: string;
   dividerHierarchyRelatedColor?: string;

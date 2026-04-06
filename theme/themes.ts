@@ -867,6 +867,8 @@ export function createTreeListTheme(
     hoverBackgroundColor: "#f3f4f6",
     selectedBackgroundColor: "#f3f4f6",
 
+    highlightedText: "#e5e7eb",
+
     dividerHierarchyColor: "rgb(243 243 243)",
     dividerHierarchyRelatedColor: "#d7d6d6",
     dividerHierarchySelectedColor: "#3b82f6",
@@ -1592,6 +1594,7 @@ const darkTreeList = createTreeListTheme(darkBody, {
   backgroundColor: "#1f2023",
   hoverBackgroundColor: "#1f2937",
   selectedBackgroundColor: "#1f2937",
+  highlightedText: "#374151",
 
   dividerHierarchyColor: "rgb(62, 65, 67)",
   dividerHierarchyRelatedColor: "rgb(115, 115, 115)",

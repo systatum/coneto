@@ -946,7 +946,9 @@ function TreeListItem<T extends TreeListItemsProps>({
         >
           {parts.map((part, index) =>
             part.toLowerCase() === searchTerm.toLowerCase() ? (
-              <HighlightedText key={index}>{part}</HighlightedText>
+              <HighlightedText $theme={treeListTheme} key={index}>
+                {part}
+              </HighlightedText>
             ) : (
               <span key={index}>{part}</span>
             )
@@ -1445,10 +1447,10 @@ const TreeListItemWrapper = styled.li<{
   ${(props) => props.$style}
 `;
 
-const HighlightedText = styled.span`
-  background-color: #e5e7eb;
+const HighlightedText = styled.span<{ $theme?: TreeListThemeConfiguration }>`
   font-weight: 600;
   border-radius: 4px;
+  background-color: ${({ $theme }) => $theme?.highlightedText};
 `;
 
 function escapeRegExp(string: string) {
