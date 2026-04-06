@@ -111,7 +111,11 @@ function Sidebar({ children, styles, position = "left" }: SidebarProps) {
         </ToggleButton>
       )}
 
-      <DesktopSidebar $position={position} $style={styles?.desktopStyle}>
+      <DesktopSidebar
+        $theme={sidebarTheme}
+        $position={position}
+        $style={styles?.desktopStyle}
+      >
         {children}
       </DesktopSidebar>
     </>
@@ -198,7 +202,6 @@ const DesktopSidebar = styled.div<{
   overflow-y: auto;
   padding: 2.5rem 1.5rem 1.5rem;
 
-  background-color: ${({ $theme }) => $theme?.backgroundColor};
   color: ${({ $theme }) => $theme?.textColor};
   box-shadow: ${({ $theme }) => $theme?.boxShadow};
 
