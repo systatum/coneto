@@ -4,6 +4,8 @@ import React, { ReactNode, useMemo, useState } from "react";
 import { Button } from "./button";
 import { Searchbox } from "./searchbox";
 import { Figure, FigureProps } from "./figure";
+import { useTheme } from "../theme/provider";
+import { TipMenuThemeConfiguration } from "theme";
 
 export type TipMenuItemVariantType = "sm" | "md";
 
@@ -56,7 +58,6 @@ function TipMenu({
             containerStyle: css`
               position: sticky;
               top: 0;
-              background-color: white;
               z-index: 30;
               height: 38px;
               padding-right: 5px;
@@ -122,6 +123,9 @@ function TipMenuItem({
   className,
   hidden,
 }: TipMenuItemProps) {
+  const { currentTheme } = useTheme();
+  const tipMenuTheme = currentTheme.tipmenu;
+
   if (hidden) {
     return;
   }
@@ -132,6 +136,7 @@ function TipMenuItem({
       aria-label="tip-menu-item"
       $isDangerous={isDangerous}
       onMouseDown={onClick}
+      $theme={tipMenuTheme}
       className={className}
     >
       {icon && (
@@ -153,14 +158,21 @@ function TipMenuItem({
 const StyledTipMenuItem = styled.div<{
   $isDangerous: boolean;
   $variant?: TipMenuItemVariantType;
+  $theme: TipMenuThemeConfiguration;
 }>`
   display: flex;
   align-items: center;
   cursor: pointer;
   border-radius: 4px;
-  background-color: ${(props) => (props.$isDangerous ? "#ef4444" : "white")};
-  color: ${(props) => (props.$isDangerous ? "white" : "black")};
+
+  background-color: ${({ $isDangerous, $theme }) =>
+    $isDangerous ? $theme.dangerousBackgroundColor : $theme.backgroundColor};
+
+  color: ${({ $isDangerous, $theme }) =>
+    $isDangerous ? "white" : $theme.textColor};
+
   transition: background-color 0.2s;
+
   ${({ $variant }) =>
     $variant === "sm"
       ? css`
@@ -172,26 +184,25 @@ const StyledTipMenuItem = styled.div<{
           padding: 8px;
         `}
 
+  &:hover {
+    background-color: ${({ $isDangerous, $theme }) =>
+      $isDangerous
+        ? $theme.dangerousHoverBackgroundColor
+        : $theme.hoverBackgroundColor};
+  }
+
   &:active {
-    background-color: ${(props) => (props.$isDangerous ? "#ce375d" : "white")};
-    box-shadow:
-      inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
-      inset 0 -0.5px 0.5px
-        ${(props) => (props.$isDangerous ? "#ce375d" : "white")};
+    background-color: ${({ $isDangerous, $theme }) =>
+      $isDangerous
+        ? $theme.dangerousActiveBackgroundColor
+        : $theme.activeBackgroundColor};
+
+    box-shadow: inset 0 0.5px 4px rgba(0, 0, 0, 0.2);
   }
 
   &:focus-visible {
     outline: none;
-    box-shadow: inset 0 0 0 2px
-      ${(props) => (props.$isDangerous ? "#ce375d" : "white")};
-    transition: box-shadow 0.2s ease;
-  }
-
-  &:hover {
-    background-color: ${(props) =>
-      props.$isDangerous ? "#e71f29" : "#f2f2f2"};
-    border-color: ${(props) =>
-      props.$isDangerous ? "#e71f29" : "transparent"};
+    box-shadow: inset 0 0 0 2px ${({ $theme }) => $theme.focusBorderColor};
   }
 `;
 
