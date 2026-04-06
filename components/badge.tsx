@@ -4,6 +4,7 @@ import { strToColor } from "./../lib/code-color";
 import { FigureProps } from "./figure";
 import { Button, ButtonStylesProps } from "./button";
 import { useTheme } from "./../theme/provider";
+import { BadgeThemeConfiguration } from "theme";
 
 export type BadgeVariantProps = null | "neutral" | "green" | "yellow" | "red";
 
@@ -189,6 +190,7 @@ function Badge({
       id={String(id)}
       onClick={onClick}
       aria-label="badge"
+      $theme={badgeTheme}
       $backgroundColor={badgeBackgroundColor}
       $textColor={badgeTextColor}
       $hasCaption={caption.length > 0}
@@ -248,6 +250,7 @@ const BadgeIconWrapper = styled.div<{
 const BadgeWrapper = styled.div<{
   $backgroundColor: string;
   $textColor: string;
+  $theme?: BadgeThemeConfiguration;
   $hasCaption: boolean;
   $badgeStyle: CSSProp;
 }>`
@@ -257,10 +260,10 @@ const BadgeWrapper = styled.div<{
   align-items: center;
   padding: 2px 8px;
   font-size: 0.75rem;
-  border: 1px solid #e5e7eb;
   border-radius: 6px;
   width: fit-content;
   gap: 0.5rem;
+  border: 1px solid ${({ $theme }) => $theme?.borderColor};
   background: ${({ $backgroundColor }) => $backgroundColor};
   color: ${({ $textColor }) => $textColor};
   user-select: none;

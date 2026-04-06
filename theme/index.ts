@@ -123,6 +123,21 @@ export interface CardThemeConfiguration extends BodyThemeConfiguration {
   closeIconHoverBackground?: string;
 }
 
+// chips.tsx
+export interface ChipsThemeConfiguration {
+  backgroundColor?: string;
+  borderColor?: string;
+  textColor?: string;
+  mutedTextColor?: string;
+
+  hoverBackgroundColor?: string;
+  selectedBackgroundColor?: string;
+
+  dividerColor?: string;
+
+  boxShadow?: string;
+}
+
 // choice-group.tsx
 export interface ChoiceGroupThemeConfiguration {
   borderColor?: string;
@@ -425,6 +440,7 @@ export interface AppTheme {
   capsule: CapsuleThemeConfiguration;
   capsuleTab: CapsuleTabThemeConfiguration;
   card: CardThemeConfiguration;
+  chips: ChipsThemeConfiguration;
   choiceGroup: ChoiceGroupThemeConfiguration;
   checkbox: CheckboxThemeConfiguration;
   dialog: DialogThemeConfiguration;
