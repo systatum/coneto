@@ -20,6 +20,7 @@ import {
 } from "./../lib/floating-placement";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
+import { TipMenuContainerThemeConfiguration } from "theme";
 
 export type ButtonVariants = {
   variant?:
@@ -399,12 +400,12 @@ function ButtonTipMenuContainer({
   children?: React.ReactNode;
 }) {
   const { currentTheme } = useTheme();
-  const buttonTheme = currentTheme.card;
+  const buttonTipMenuContainer = currentTheme.buttonTipMenu;
 
   return (
     <TipMenuContainer
       {...props}
-      $backgroundColor={buttonTheme.backgroundColor}
+      $theme={buttonTipMenuContainer}
       onClick={(e) => {
         if (props.onClick) props.onClick?.(e);
       }}
@@ -418,17 +419,17 @@ function ButtonTipMenuContainer({
 
 const TipMenuContainer = styled.div<{
   $style?: CSSProp;
-  $backgroundColor?: string;
+  $theme?: TipMenuContainerThemeConfiguration;
 }>`
   display: flex;
   flex-direction: column;
-  border: 1px solid #e5e7eb;
   padding: 4px;
   gap: 2px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   border-radius: 4px;
   animation-duration: 200ms;
-  background-color: ${({ $backgroundColor }) => $backgroundColor};
+  border: 1px solid ${({ $theme }) => $theme?.borderColor};
+  box-shadow: ${({ $theme }) => $theme?.shadow};
+  background-color: ${({ $theme }) => $theme?.backgroundColor};
 
   ${({ $style }) => $style}
 `;
