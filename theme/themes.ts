@@ -13,6 +13,7 @@ import {
   CapsuleThemeConfiguration,
   CardThemeConfiguration,
   CheckboxThemeConfiguration,
+  ChipsThemeConfiguration,
   ChoiceGroupThemeConfiguration,
   DialogThemeConfiguration,
   DocumentViewerThemeConfiguration,
@@ -131,13 +132,13 @@ export function createBadgeTheme(
   body: BodyThemeConfiguration,
   customTheme: Partial<BadgeThemeConfiguration> = {}
 ): BadgeThemeConfiguration {
-  const defaultBackgroundColor = body.backgroundColor;
   const defaultTextColor = body.textColor;
 
   const defaultTheme: BadgeThemeConfiguration = {
-    backgroundColor: defaultBackgroundColor,
+    backgroundColor: "transparent",
     textColor: defaultTextColor,
     circleColor: "#111",
+    borderColor: "#e5e7eb",
 
     action: {
       hoverBackgroundColor: "#d1d5db",
@@ -200,7 +201,6 @@ export function createTipMenuContainerTheme(
 }
 
 // capsule.tsx
-
 export function createCapsuleTheme(
   body: BodyThemeConfiguration,
   custom: Partial<CapsuleThemeConfiguration> = {}
@@ -279,6 +279,28 @@ export function createCardTheme(
   return {
     ...defaultTheme,
     ...customTheme,
+  };
+}
+
+// chips.tsx
+export function createChipsTheme(
+  body: BodyThemeConfiguration,
+  custom: Partial<ChipsThemeConfiguration> = {}
+): ChipsThemeConfiguration {
+  return {
+    backgroundColor: body?.backgroundColor,
+    borderColor: "#d1d5db",
+    textColor: body?.textColor,
+    mutedTextColor: "#4b5563",
+
+    hoverBackgroundColor: "#bfdbfe",
+    selectedBackgroundColor: "#bfdbfe",
+
+    dividerColor: "#d1d5db",
+
+    boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+
+    ...custom,
   };
 }
 
@@ -989,6 +1011,8 @@ const lightCard = createCardTheme(lightBody, {
   closeIconHoverBackground: "#e5e7eb",
 });
 
+const lightChips = createChipsTheme(lightBody);
+
 const lightChoiceGroup = createChoiceGroupTheme(lightBody);
 
 const lightCheckbox = createCheckboxTheme(lightBody);
@@ -1071,6 +1095,7 @@ const lightTheme: AppTheme = {
   capsule: lightCapsule,
   capsuleTab: lightCapsuleTab,
   card: lightCard,
+  chips: lightChips,
   choiceGroup: lightChoiceGroup,
   checkbox: lightCheckbox,
   dialog: lightDialog,
@@ -1241,7 +1266,7 @@ const darkButtonTipMenuContainer = createTipMenuContainerTheme({
 });
 
 const darkBadge = createBadgeTheme(darkBody, {
-  borderColor: "#374151",
+  borderColor: "rgb(55, 55, 55)",
   circleColor: "#f9fafb",
   action: {
     hoverBackgroundColor: "#374151",
@@ -1289,6 +1314,20 @@ const darkCard = createCardTheme(darkBody, {
   subtitleColor: "#9ca3af",
   closeIconColor: "#f9fafb",
   closeIconHoverBackground: "#374151",
+});
+
+const darkChips = createChipsTheme(darkBody, {
+  backgroundColor: "rgb(35,35,35)",
+  borderColor: "rgb(55,55,55)",
+  textColor: darkBody?.textColor,
+  mutedTextColor: "#9ca3af",
+
+  hoverBackgroundColor: "rgba(80,80,120,0.4)",
+  selectedBackgroundColor: "rgba(80,80,120,0.4)",
+
+  dividerColor: "rgba(255,255,255,0.08)",
+
+  boxShadow: "0 1px 2px rgba(0,0,0,0.8)",
 });
 
 const darkChoiceGroup = createChoiceGroupTheme(darkBody, {
@@ -1579,6 +1618,7 @@ const darkTheme: AppTheme = {
   capsule: darkCapsule,
   capsuleTab: darkCapsuleTab,
   card: darkCard,
+  chips: darkChips,
   choiceGroup: darkChoiceGroup,
   checkbox: darkCheckbox,
   dialog: darkDialog,

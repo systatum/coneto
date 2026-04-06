@@ -28,6 +28,8 @@ import { Textbox } from "./textbox";
 import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { useTheme } from "./../theme/provider";
+import { ChipsThemeConfiguration } from "theme";
 
 export type ChipActionsProps = BadgeActionProps;
 
@@ -75,6 +77,9 @@ export interface MissingOptionFormProps {
 }
 
 function BaseChips(props: BaseChipsProps) {
+  const { currentTheme } = useTheme();
+  const chipsTheme = currentTheme.chips;
+
   const [isOpen, setIsOpen] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
 
@@ -127,37 +132,38 @@ function BaseChips(props: BaseChipsProps) {
         $disabled={props?.disabled}
         $containerStyle={props?.styles?.chipsContainerStyle}
       >
-        {CLICKED_OPTIONS.map((data) =>
+        {CLICKED_OPTIONS.map((badge) =>
           typeof props.renderer === "function" ? (
             props.renderer({
-              id: data.id,
-              caption: data.caption,
-              metadata: data.metadata,
+              id: badge.id,
+              caption: badge.caption,
+              metadata: badge.metadata,
             })
           ) : (
             <Badge
-              key={data.id}
+              key={badge.id}
               onClick={(e) => {
                 e.stopPropagation();
                 dismiss;
               }}
-              variant={data.variant}
-              backgroundColor={data.backgroundColor}
-              circleColor={data.circleColor}
+              variant={badge.variant}
+              backgroundColor={badge.backgroundColor}
+              circleColor={badge.circleColor}
               styles={{
                 self: css`
                   border-radius: 4px;
                   ${props.styles?.chipSelectedStyle}
                 `,
               }}
-              textColor={data.textColor}
-              caption={data.caption}
+              textColor={badge.textColor}
+              caption={badge.caption}
               withCircle
             />
           )
         )}
 
         <AddButton
+          $theme={chipsTheme}
           $disabled={props?.disabled}
           ref={refs.setReference}
           role="button"
@@ -199,17 +205,21 @@ const InputGroup = styled.div<{
   ${({ $containerStyle }) => $containerStyle}
 `;
 
-const AddButton = styled(RiAddLine)<{ $isOpen?: boolean; $disabled?: boolean }>`
+const AddButton = styled(RiAddLine)<{
+  $isOpen?: boolean;
+  $disabled?: boolean;
+  $theme?: ChipsThemeConfiguration;
+}>`
   cursor: pointer;
   border: 1px solid transparent;
   border-radius: 9999px;
   padding: 1px;
-  color: #c3c3c3;
+  color: ${({ $theme }) => $theme?.mutedTextColor || "#c3c3c3"};
   transition:
     box-shadow 0.2s ease,
     border-color 0.2s ease;
 
-  ${({ $disabled }) =>
+  ${({ $disabled, $theme }) =>
     $disabled
       ? css`
           user-select: none;
@@ -217,16 +227,16 @@ const AddButton = styled(RiAddLine)<{ $isOpen?: boolean; $disabled?: boolean }>`
         `
       : css`
           &:hover {
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border-color: #d1d5db;
+            box-shadow: ${$theme?.boxShadow || "0 4px 6px rgba(0,0,0,0.1)"};
+            border-color: ${$theme?.borderColor || "#d1d5db"};
           }
         `};
 
-  ${({ $isOpen }) =>
+  ${({ $isOpen, $theme }) =>
     $isOpen &&
     css`
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      border-color: #d1d5db;
+      box-shadow: ${$theme?.boxShadow || "0 4px 6px rgba(0,0,0,0.1)"};
+      border-color: ${$theme?.borderColor || "#d1d5db"};
     `}
 `;
 
@@ -255,6 +265,9 @@ function ChipsDrawer({
   name = "chips",
   styles,
 }: ChipsDrawerProps) {
+  const { currentTheme } = useTheme();
+  const chipsTheme = currentTheme.chips;
+
   const [hovered, setHovered] = useState<string | null>(null);
   const [mode, setMode] = useState<"idle" | "create">("idle");
   const [isTyping, setIsTyping] = useState(false);
@@ -340,6 +353,7 @@ function ChipsDrawer({
       style={floatingStyles}
       tabIndex={-1}
       role="listbox"
+      $theme={chipsTheme}
       $style={styles?.chipsDrawerStyle}
       onKeyDown={handleKeyDown}
     >
@@ -366,7 +380,7 @@ function ChipsDrawer({
               setIsTyping(true);
             }}
           />
-          <Divider aria-label="divider" />
+          <Divider $theme={chipsTheme} aria-label="divider" />
 
           <div
             style={{
@@ -384,6 +398,7 @@ function ChipsDrawer({
                 }}
                 onMouseEnter={() => setHovered("0")}
                 $hovered={hovered === "0"}
+                $theme={chipsTheme}
               >
                 <RiAddLine size={14} style={{ minWidth: "14px" }} />
                 <span
@@ -395,7 +410,9 @@ function ChipsDrawer({
                   }}
                 >
                   {missingOptionLabel}&nbsp;
-                  <span style={{ color: "#4b5563" }}>"{inputValue}"</span>
+                  <span style={{ color: chipsTheme?.mutedTextColor }}>
+                    "{inputValue}"
+                  </span>
                 </span>
               </EmptyOptionContainer>
             )}
@@ -414,7 +431,9 @@ function ChipsDrawer({
                         selectedOptions?.some(
                           (clicked) => clicked.id === options[index - 1].id
                         ) &&
-                        !isClicked && <Divider aria-label="divider" />}
+                        !isClicked && (
+                          <Divider $theme={chipsTheme} aria-label="divider" />
+                        )}
 
                       <ChipsItem
                         badge={data}
@@ -538,24 +557,33 @@ function Chips({
   );
 }
 
-const Divider = styled.div`
+const Divider = styled.div<{
+  $theme?: ChipsThemeConfiguration;
+}>`
   width: 100%;
   height: 1px;
-  border-bottom: 1px solid #d1d5db;
+
+  border-bottom: 1px solid ${({ $theme }) => $theme?.dividerColor};
 `;
 
 const ChipsDrawerWrapper = styled.ul<{
   $style?: CSSProp;
+  $theme?: ChipsThemeConfiguration;
 }>`
   display: flex;
   flex-direction: column;
-  background-color: white;
-  border: 1px solid #d1d5db;
+
+  background-color: ${({ $theme }) => $theme.backgroundColor};
+  border: 1px solid ${({ $theme }) => $theme.borderColor};
+  color: ${({ $theme }) => $theme.textColor};
+
   font-size: 0.875rem;
   border-radius: 2px;
   width: fit-content;
   max-width: 240px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+  box-shadow: ${({ $theme }) => $theme.boxShadow};
+
   list-style: none;
   outline: none;
   z-index: 9992999;
@@ -563,7 +591,10 @@ const ChipsDrawerWrapper = styled.ul<{
   ${({ $style }) => $style}
 `;
 
-const EmptyOptionContainer = styled.div<{ $hovered?: boolean }>`
+const EmptyOptionContainer = styled.div<{
+  $hovered?: boolean;
+  $theme: ChipsThemeConfiguration;
+}>`
   display: flex;
   flex-direction: row;
   align-items: flex-start;
@@ -572,15 +603,17 @@ const EmptyOptionContainer = styled.div<{ $hovered?: boolean }>`
   padding: 8px;
   font-size: 0.75rem;
   font-weight: 500;
-  color: black;
+
+  color: ${({ $theme }) => $theme.textColor};
+
   width: 100%;
   border-radius: 2px;
 
-  ${({ $hovered }) =>
+  ${({ $hovered, $theme }) =>
     $hovered &&
     css`
       cursor: pointer;
-      background-color: #bfdbfe;
+      background-color: ${$theme.hoverBackgroundColor};
     `}
 `;
 
@@ -603,6 +636,9 @@ function ChipsItem({
   chipContainerStyle?: CSSProp;
   inputRef?: RefObject<HTMLInputElement>;
 }) {
+  const { currentTheme } = useTheme();
+  const chipsTheme = currentTheme.chips;
+
   const finalValueActions =
     badge.actions
       ?.filter((action) => !action?.hidden)
@@ -630,6 +666,7 @@ function ChipsItem({
         await onOptionClicked?.(badge);
         await inputRef.current.focus();
       }}
+      $theme={chipsTheme}
       onMouseEnter={() => setHovered(badge.id)}
     >
       <Checkbox
@@ -677,6 +714,7 @@ function ChipsItem({
 const ChipItemWrapper = styled.div<{
   $hovered: boolean;
   $style?: CSSProp;
+  $theme: ChipsThemeConfiguration;
 }>`
   display: flex;
   flex-direction: row;
@@ -687,10 +725,10 @@ const ChipItemWrapper = styled.div<{
   cursor: pointer;
   position: relative;
 
-  ${({ $hovered }) =>
+  ${({ $hovered, $theme }) =>
     $hovered &&
     css`
-      background-color: #bfdbfe;
+      background-color: ${$theme?.selectedBackgroundColor};
 
       [aria-label="badge-action"] {
         opacity: 1;
