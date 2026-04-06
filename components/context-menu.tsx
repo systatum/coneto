@@ -100,7 +100,6 @@ export default function ContextMenu({
       subMenu={({ list }) => list(actions)}
       icon={{
         image: RiMoreFill,
-        color: "black",
         size: iconSize,
       }}
     />
