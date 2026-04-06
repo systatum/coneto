@@ -356,9 +356,6 @@ export const WithHeader: Story = {
           containerStyle: css`
             padding: 0px;
           `,
-          headerStyle: css`
-            border-bottom: 1px solid #d1d5db;
-          `,
         }}
       >
         <div
@@ -706,7 +703,6 @@ export const WithHeaderAndFooter: Story = {
           headerStyle: css`
             padding-left: 15px;
             padding-right: 15px;
-            border-bottom: 1px solid #d1d5db;
           `,
           footerStyle: css`
             padding-left: 20px;
@@ -1004,7 +1000,6 @@ export const WithFullWidthContent: Story = {
           headerStyle: css`
             padding-left: 15px;
             padding-right: 15px;
-            border-bottom: 1px solid #d1d5db;
           `,
         }}
         headerActions={[
@@ -1254,7 +1249,6 @@ export const Toggleable: Story = {
             headerStyle: css`
               padding-left: 15px;
               padding-right: 15px;
-              border-bottom: 1px solid #d1d5db;
             `,
           }}
         >
@@ -1299,7 +1293,6 @@ export const Toggleable: Story = {
             headerStyle: css`
               padding-left: 15px;
               padding-right: 15px;
-              border-bottom: 1px solid #d1d5db;
             `,
           }}
         >
