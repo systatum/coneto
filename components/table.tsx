@@ -381,13 +381,7 @@ function Table({
                     `,
                     self: css`
                       background-color: transparent;
-                      &:hover {
-                        border-color: #61a9f9;
-                        background-color: white;
-                      }
-                      &:focus {
-                        background-color: white;
-                      }
+
                       ${searchbox?.styles?.self}
                     `,
                   }}
@@ -428,10 +422,7 @@ function Table({
             $hasSelected={selectedData.length > 0}
           >
             <TableHeader
-              $backgroundColor={tableTheme.headerBackgroundColor}
-              $textColor={tableTheme.textColor}
-              $borderColor={tableTheme.headerBorderColor}
-              $boxShadow={tableTheme.boxShadow}
+              $theme={tableTheme}
               aria-label="table-header"
               $style={styles?.tableHeaderStyle}
             >
@@ -655,6 +646,9 @@ function ActionCapsule(capsule: CapsuleProps) {
           border-color: ${capsuleTheme.borderColor};
           ${capsule.styles?.containerStyle}
         `,
+        bodyStyle: css`
+          min-height: 0;
+        `,
         tabStyle: css`
           border-radius: ${capsuleTheme.tabBorderRadius};
           color: ${capsuleTheme.tabTextColor};
@@ -690,7 +684,7 @@ const HeaderActions = styled.div<{
   padding: 0.5rem 14px;
   position: relative;
   border-bottom: 0.5px solid
-    ${({ $theme }) => $theme?.rowBorderColor || "#e5e7eb"};
+    ${({ $theme }) => $theme?.headerBorderColor || "#e5e7eb"};
   color: ${({ $theme }) => $theme?.textColor || "#343434"};
   background: ${({ $theme }) =>
     $theme?.headerActionBackgroundColor ||
@@ -702,6 +696,7 @@ const ActionsWrapper = styled.div`
   flex-direction: row;
   position: relative;
   gap: 0.25rem;
+  align-items: center;
 `;
 
 const PaginationButton = styled.button<{ $theme?: TableThemeConfiguration }>`
@@ -767,9 +762,7 @@ const TableContainer = styled.div<{
 const TableHeader = styled.div<{
   $style?: CSSProp;
   $textColor?: string;
-  $backgroundColor?: string;
-  $borderColor?: string;
-  $boxShadow?: string;
+  $theme?: TableThemeConfiguration;
 }>`
   display: flex;
   flex-direction: row;
@@ -777,11 +770,13 @@ const TableHeader = styled.div<{
   align-items: center;
   font-weight: 600;
   color: ${({ $textColor }) => $textColor};
-  border-bottom: 1px solid ${({ $borderColor }) => $borderColor || "#d1d5db"};
-  box-shadow: ${({ $boxShadow }) =>
-    $boxShadow || "0 1px 2px 0 rgba(0, 0, 0, 0.05)"};
-  background: ${({ $backgroundColor }) =>
-    $backgroundColor || "linear-gradient(to bottom, #f0f0f0, #e4e4e4)"};
+  border-bottom: 1px solid
+    ${({ $theme }) => $theme?.headerBorderColor || "#d1d5db"};
+  box-shadow: ${({ $theme }) =>
+    $theme?.boxShadow || "0 1px 2px 0 rgba(0, 0, 0, 0.05)"};
+  background: ${({ $theme }) =>
+    $theme?.headerBackgroundColor ||
+    "linear-gradient(to bottom, #f0f0f0, #e4e4e4)"};
 
   ${({ $style }) => $style}
 `;
@@ -1013,7 +1008,8 @@ const TableRowGroupSticky = styled.div<{ $theme?: TableThemeConfiguration }>`
   width: 100%;
   gap: 1rem;
   border: 1px solid ${({ $theme }) => $theme.rowBorderColor};
-  background-color: ${({ $theme }) => $theme.rowBackgroundColor || "#f3f4f6"};
+  background-color: ${({ $theme }) =>
+    $theme.rowGroupBackgroundColor || "#f3f4f6"};
   color: ${({ $theme }) => $theme.textColor || "#111827"};
 
   will-change: transform;
