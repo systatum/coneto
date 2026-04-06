@@ -1373,8 +1373,8 @@ const darkModalDialog = createModalDialogTheme(darkBody, {
 });
 
 const darkOverlayBlocker = createOverlayBlockerTheme({
-  backgroundColor: "rgba(0, 0, 0, 0.95)",
-  backdropFilter: "none",
+  backgroundColor: "rgba(20, 20, 20, 0.5)",
+  backdropFilter: "blur(2px)",
 });
 
 const darkPaperDialog = createPaperDialogTheme(darkBody, {
