@@ -954,7 +954,7 @@ const darkActionCapsule = createActionCapsuleTheme(darkBody, {
 });
 
 const darkAvatar = createAvatarTheme(darkBody, {
-  textColor: darkBody.textColor,
+  textColor: "black",
   overlayBackground: "rgba(0,0,0,0.6)",
 });
 
@@ -1119,8 +1119,8 @@ const darkChoiceGroup = createChoiceGroupTheme(darkBody, {
 
 const darkCheckbox = createCheckboxTheme(darkBody, {
   borderColor: "#374151",
-  checkedBorderColor: "#2a3243",
   backgroundColor: "#1f2937",
+  checkedBorderColor: "#2a3243",
   checkedBackgroundColor: "#2a3243",
   iconColor: "#f9fafb",
   labelColor: "#f9fafb",
