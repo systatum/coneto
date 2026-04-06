@@ -24,6 +24,7 @@ import {
   LoadingSpinnerThemeConfiguration,
   MessageboxThemeConfiguration,
   ModalDialogThemeConfiguration,
+  NavTabThemeConfiguration,
   OverlayBlockerThemeConfiguration,
   PaperDialogThemeConfiguration,
   RadioThemeConfiguration,
@@ -193,7 +194,7 @@ export function createTipMenuContainerTheme(
   return {
     backgroundColor: "#ffffff",
     borderColor: "#e5e7eb",
-    shadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
+    boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
     ...custom,
   };
 }
@@ -517,6 +518,30 @@ export function createModalDialogTheme(
   };
 }
 
+// nav-tab.tsx
+export function createNavTabTheme(
+  body: BodyThemeConfiguration,
+  custom: Partial<NavTabThemeConfiguration> = {}
+): NavTabThemeConfiguration {
+  return {
+    backgroundColor: "#ffffff",
+    borderColor: "#e0e0e0",
+    textColor: body.textColor,
+
+    hoverBackgroundColor: "rgb(243 244 246 / 50%)",
+    activeBackgroundColor: "rgb(243 244 246 / 80%)",
+    selectedBackgroundColor: "rgb(243 244 246 / 50%)",
+
+    indicatorColor: "rgb(59, 130, 246)",
+    boxShadow: "0 1px 4px -3px rgba(0,0,0,0.2)",
+
+    activeInsetShadow:
+      "inset 0 0.5px 4px rgb(243 244 246 / 100%), inset 0 -0.5px 0.5px rgb(243 244 246 / 80%)",
+
+    ...custom,
+  };
+}
+
 // overlay-blocker.tsx
 export function createOverlayBlockerTheme(
   customTheme: Partial<OverlayBlockerThemeConfiguration> = {}
@@ -711,7 +736,7 @@ export function createTipMenuTheme(
   customTheme: Partial<TipMenuThemeConfiguration> = {}
 ): TipMenuThemeConfiguration {
   const defaultTheme: TipMenuThemeConfiguration = {
-    backgroundColor: "rgb(35, 35, 35)",
+    backgroundColor: body?.backgroundColor,
     textColor: body.textColor,
 
     hoverBackgroundColor: "#f2f2f2",
@@ -995,6 +1020,8 @@ const lightMessagebox = createMessageboxTheme();
 
 const lightModalDialog = createModalDialogTheme(lightBody);
 
+const lightNavTab = createNavTabTheme(lightBody);
+
 const lightPaperDialog = createPaperDialogTheme(lightBody);
 
 const lightRadio = createRadioTheme(lightBody);
@@ -1056,6 +1083,7 @@ const lightTheme: AppTheme = {
   loadingSpinner: lightLoadingSpinner,
   messagebox: lightMessagebox,
   modalDialog: lightModalDialog,
+  navTab: lightNavTab,
   overlayBlocker: lightOverlayBlocker,
   paperDialog: lightPaperDialog,
   radio: lightRadio,
@@ -1209,7 +1237,7 @@ const darkButton = createButtonTheme(darkBody, {
 const darkButtonTipMenuContainer = createTipMenuContainerTheme({
   backgroundColor: "rgb(35, 35, 35)",
   borderColor: "#303030",
-  shadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
+  boxShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
 });
 
 const darkBadge = createBadgeTheme(darkBody, {
@@ -1372,6 +1400,24 @@ const darkModalDialog = createModalDialogTheme(darkBody, {
   dividerColor: "rgb(60, 49, 110)",
 });
 
+const darkNavTab = createNavTabTheme(darkBody, {
+  backgroundColor: "rgb(35, 35, 35)",
+  borderColor: "rgb(26, 26, 26)",
+  textColor: darkBody.textColor,
+
+  hoverBackgroundColor: "rgba(52, 52, 52, 0.5)",
+  activeBackgroundColor: "rgba(52, 52, 52, 0.8)",
+  selectedBackgroundColor: "rgba(52, 52, 52, 0.5)",
+
+  indicatorColor: "rgb(85, 65, 160)",
+  boxShadow: "0 1px 4px -3px rgba(0,0,0,0.8)",
+
+  activeInsetShadow: `
+    inset 0 0.5px 3px rgba(255,255,255,0.06),
+    inset 0 -0.5px 0.5px rgba(0,0,0,0.8)
+  `,
+});
+
 const darkOverlayBlocker = createOverlayBlockerTheme({
   backgroundColor: "rgba(20, 20, 20, 0.5)",
   backdropFilter: "blur(2px)",
@@ -1472,6 +1518,7 @@ export const darkTable: TableThemeConfiguration = createTableTheme(darkBody, {
 const darkTipMenu = createTipMenuTheme(darkBody, {
   hoverBackgroundColor: "#2a2a2a",
   activeBackgroundColor: "#333333",
+  backgroundColor: "inherit",
   dangerousBackgroundColor: darkButton.danger.backgroundColor,
   dangerousHoverBackgroundColor: darkButton.danger.hoverBackgroundColor,
   dangerousActiveBackgroundColor: darkButton.danger.activeBackgroundColor,
@@ -1508,8 +1555,8 @@ const darkTreeList = createTreeListTheme(darkBody, {
   selectedBackgroundColor: "#1f2937",
 
   dividerHierarchyColor: "rgb(62, 65, 67)",
-  dividerHierarchyRelatedColor: "rgb(115 115 115)",
-  dividerHierarchySelectedColor: "#60a5fa",
+  dividerHierarchyRelatedColor: "rgb(115, 115, 115)",
+  dividerHierarchySelectedColor: "#485c7d",
 });
 
 const darkWindow = createWindowTheme(darkBody, {
@@ -1544,6 +1591,7 @@ const darkTheme: AppTheme = {
   loadingSpinner: darkLoadingSpinner,
   messagebox: darkMessagebox,
   modalDialog: darkModalDialog,
+  navTab: darkNavTab,
   overlayBlocker: darkOverlayBlocker,
   paperDialog: darkPaperDialog,
   radio: darkRadio,

@@ -82,9 +82,9 @@ export interface ButtonThemeConfiguration extends BodyThemeConfiguration {
 }
 
 export interface TipMenuContainerThemeConfiguration {
-  backgroundColor: string;
-  borderColor: string;
-  shadow: string;
+  backgroundColor?: string;
+  borderColor?: string;
+  boxShadow?: string;
 }
 
 // capsule.tsx
@@ -228,6 +228,22 @@ export type MessageboxThemeConfiguration = {
 export interface ModalDialogThemeConfiguration
   extends DialogThemeConfiguration {
   dividerColor?: string;
+}
+
+// nav-tab.tsx
+export interface NavTabThemeConfiguration {
+  backgroundColor?: string;
+  borderColor?: string;
+  textColor?: string;
+
+  hoverBackgroundColor?: string;
+  activeBackgroundColor?: string;
+  selectedBackgroundColor?: string;
+
+  indicatorColor?: string;
+  boxShadow?: string;
+
+  activeInsetShadow?: string;
 }
 
 // overlay-blocker.tsx
@@ -391,7 +407,7 @@ export interface TreeListThemeConfiguration extends BodyThemeConfiguration {
 
 // window.tsx
 export interface WindowThemeConfiguration extends BodyThemeConfiguration {
-  dividerColor: string;
+  dividerColor?: string;
 }
 
 // app-theme.tsx
@@ -421,6 +437,7 @@ export interface AppTheme {
   loadingSpinner: LoadingSpinnerThemeConfiguration;
   messagebox: MessageboxThemeConfiguration;
   modalDialog: ModalDialogThemeConfiguration;
+  navTab: NavTabThemeConfiguration;
   overlayBlocker: OverlayBlockerThemeConfiguration;
   paperDialog: PaperDialogThemeConfiguration;
   radio: RadioThemeConfiguration;
