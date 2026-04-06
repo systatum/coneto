@@ -627,8 +627,9 @@ export function createSearchboxTheme(
     backgroundColor: body?.backgroundColor || "#ffffff",
     activeBackgroundColor: body?.backgroundColor,
     borderColor: "#d1d5db",
-    focusBorderColor: "rgb(61, 61, 61)",
-    focusShadow: "0 0 0 1px rgb(61, 61, 61)",
+
+    focusBorderColor: "#61a9f9",
+    focusShadow: "0 0 0 1px #61a9f9",
     iconColor: "#9ca3af",
     clearIconColor: "#9ca3af",
     textColor: "#111827",
@@ -1488,8 +1489,8 @@ const darkSearchbox = createSearchboxTheme(darkBody, {
   textColor: darkBody?.textColor,
   activeBackgroundColor: "rgb(26, 26, 26)",
   borderColor: "#303030",
-  focusBorderColor: "#4f9cff",
-  focusShadow: "0 0 0 1px #4f9cff",
+  focusBorderColor: "rgb(85, 65, 160)",
+  focusShadow: "0 0 0 1px rgb(85, 65, 160)",
   iconColor: "#a1a1aa",
   clearIconColor: "#a1a1aa",
 });
