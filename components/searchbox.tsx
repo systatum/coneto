@@ -12,6 +12,8 @@ import styled, { css, CSSProp } from "styled-components";
 import { Button, SubMenuButtonProps } from "./button";
 import { TipMenuItemProps } from "./tip-menu";
 import { StatefulForm } from "./stateful-form";
+import { useTheme } from "./../theme/provider";
+import { SearchboxThemeConfiguration } from "theme";
 
 export interface SearchboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {
@@ -48,6 +50,15 @@ const Searchbox = forwardRef<Omit<HTMLInputElement, "style">, SearchboxProps>(
     },
     ref
   ) => {
+    const { currentTheme } = useTheme();
+    const searchboxTheme = currentTheme.searchbox;
+
+    const handleBlur = (e: React.FocusEvent) => {
+      if (!e.currentTarget.contains(e.relatedTarget)) {
+        setIsFocus(false);
+      }
+    };
+
     const [inputValueLocal, setInputValueLocal] = useState("");
     const isControlled = value !== undefined;
     const finalValue = isControlled ? value : inputValueLocal;
@@ -75,10 +86,16 @@ const Searchbox = forwardRef<Omit<HTMLInputElement, "style">, SearchboxProps>(
         aria-label="textbox-search-wrapper"
         $style={styles?.containerStyle}
         onFocus={() => setIsFocus(true)}
+        onBlur={handleBlur}
       >
-        <SearchIcon $style={styles?.iconStyle} size={14} />
+        <SearchIcon
+          $theme={searchboxTheme}
+          $style={styles?.iconStyle}
+          size={14}
+        />
 
         <SearchboxInput
+          $theme={searchboxTheme}
           ref={inputRef}
           id={inputId}
           aria-label="textbox-search"
@@ -89,7 +106,6 @@ const Searchbox = forwardRef<Omit<HTMLInputElement, "style">, SearchboxProps>(
               onChange(e);
             }
           }}
-          $focus={isFocus}
           {...(props as InputHTMLAttributes<HTMLInputElement>)}
           value={finalValue}
           $style={styles?.self}
@@ -114,6 +130,7 @@ const Searchbox = forwardRef<Omit<HTMLInputElement, "style">, SearchboxProps>(
             role="button"
             aria-label="delete-input"
             size={14}
+            $theme={searchboxTheme}
             onMouseDown={(e) => {
               e.preventDefault();
               const event = {
@@ -134,56 +151,78 @@ const Searchbox = forwardRef<Omit<HTMLInputElement, "style">, SearchboxProps>(
   }
 );
 
-const SearchboxWrapper = styled.div<{ $style?: CSSProp }>`
+const SearchboxWrapper = styled.div<{
+  $style?: CSSProp;
+}>`
   position: relative;
   width: 100%;
   display: flex;
   flex-direction: row;
   gap: 4px;
+
   ${({ $style }) => $style};
 `;
 
-const SearchboxInput = styled.input<{ $style?: CSSProp; $focus?: boolean }>`
+const SearchboxInput = styled.input<{
+  $style?: CSSProp;
+  $theme?: SearchboxThemeConfiguration;
+}>`
   border-radius: 9999px;
   padding: 8px 36px 8px 30px;
   width: 100%;
   font-size: 0.75rem;
   outline: none;
-  background-color: white;
-  border: 1px solid #d1d5db;
+  ${({ $theme }) =>
+    $theme &&
+    css`
+      background-color: ${$theme.backgroundColor};
+      border: 1px solid ${$theme.borderColor};
+      color: ${$theme.textColor};
+    `};
 
   &:focus {
-    border-color: #61a9f9;
-    box-shadow: 0 0 0 1px #61a9f9;
+    ${({ $theme }) => css`
+      background-color: ${$theme.activeBackgroundColor};
+      border-color: ${$theme.focusBorderColor};
+      box-shadow: ${$theme.focusShadow};
+    `};
   }
 
-  ${({ $focus }) =>
-    $focus &&
+  ${({ $style }) => $style}
+`;
+
+const SearchIcon = styled(RiSearchLine)<{
+  $style?: CSSProp;
+  $theme?: SearchboxThemeConfiguration;
+}>`
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+
+  ${({ $theme }) =>
+    $theme &&
     css`
-      border-color: #61a9f9;
-      box-shadow: 0 0 0 1px #61a9f9;
+      color: ${$theme.iconColor};
     `}
 
   ${({ $style }) => $style}
 `;
 
-const SearchIcon = styled(RiSearchLine)<{ $style?: CSSProp }>`
-  position: absolute;
-  top: 50%;
-  left: 12px;
-  transform: translateY(-50%);
-  color: #9ca3af;
-
-  ${({ $style }) => $style}
-`;
-
-const ClearIcon = styled(RiCloseLine)`
+const ClearIcon = styled(RiCloseLine)<{
+  $theme?: SearchboxThemeConfiguration;
+}>`
   position: absolute;
   top: 50%;
   right: 12px;
   transform: translateY(-50%);
-  color: #9ca3af;
   cursor: pointer;
+
+  ${({ $theme }) =>
+    $theme &&
+    css`
+      color: ${$theme.clearIconColor};
+    `}
 `;
 
 export { Searchbox };
