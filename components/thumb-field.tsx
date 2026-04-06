@@ -9,6 +9,8 @@ import { ChangeEvent, useRef, useState } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { useTheme } from "./../theme/provider";
+import { ThumbFieldThemeConfiguration } from "theme";
 
 interface BaseThumbFieldProps {
   value?: boolean | null;
@@ -31,8 +33,8 @@ export type ThumbFieldValue = "up" | "down" | "blank";
 
 function BaseThumbField({
   onChange,
-  thumbsUpBackgroundColor = "#61A9F9",
-  thumbsDownBackgroundColor = "RGB(206, 55, 93)",
+  thumbsUpBackgroundColor,
+  thumbsDownBackgroundColor,
   value = null,
   name,
   disabled,
@@ -40,6 +42,9 @@ function BaseThumbField({
   styles,
   id,
 }: BaseThumbFieldProps) {
+  const { currentTheme } = useTheme();
+  const thumbFieldTheme = currentTheme.thumbField;
+
   const inputId = StatefulForm.sanitizeId({
     prefix: "thumbfield",
     name,
@@ -90,9 +95,10 @@ function BaseThumbField({
         onClick={() => handleChangeValue("up")}
         $triggerStyle={styles?.triggerStyle}
         $active={thumbValue === "up"}
-        $activeColor={thumbsUpBackgroundColor}
+        $activeColor={thumbsUpBackgroundColor ?? thumbFieldTheme?.thumbsUpColor}
         $showError={showError}
         $disabled={disabled}
+        $theme={thumbFieldTheme}
       >
         {thumbValue === "up" ? (
           <RiThumbUpFill size={24} />
@@ -106,9 +112,12 @@ function BaseThumbField({
         onClick={() => handleChangeValue("down")}
         $triggerStyle={styles?.triggerStyle}
         $active={thumbValue === "down"}
-        $activeColor={thumbsDownBackgroundColor}
+        $activeColor={
+          thumbsDownBackgroundColor ?? thumbFieldTheme?.thumbsDownColor
+        }
         $showError={showError}
         $disabled={disabled}
+        $theme={thumbFieldTheme}
       >
         {thumbValue === "down" ? (
           <RiThumbDownFill size={24} />
@@ -210,6 +219,7 @@ const TriggerWrapper = styled.div<{
   $activeColor?: string;
   $showError?: boolean;
   $disabled?: boolean;
+  $theme?: ThumbFieldThemeConfiguration;
 }>`
   display: flex;
   align-items: center;
@@ -221,13 +231,14 @@ const TriggerWrapper = styled.div<{
       css`
         color: ${$activeColor};
       `}
-    ${({ $showError }) =>
+
+    ${({ $showError, $theme }) =>
       $showError &&
       css`
-        color: #dc2626;
-      `}
+        color: ${$theme?.errorColor};
+      `};
 
-      ${({ $disabled }) =>
+    ${({ $disabled }) =>
       $disabled
         ? css`
             cursor: not-allowed;
