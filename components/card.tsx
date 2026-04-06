@@ -10,6 +10,7 @@ import { ActionButton, ActionButtonProps } from "./action-button";
 import { Togglebox } from "./togglebox";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTheme } from "./../theme/provider";
+import { CardThemeConfiguration } from "theme";
 
 export interface CardProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "title" | "style"> {
@@ -93,7 +94,7 @@ function Card({
       $border={cardTheme.borderColor}
     >
       {(title || subtitle || headerActions) && (
-        <Header $headerStyle={styles?.headerStyle}>
+        <Header $theme={cardTheme} $headerStyle={styles?.headerStyle}>
           {(title || subtitle) && (
             <HeaderTextContainer $style={styles?.textContainerStyle}>
               {title && (
@@ -234,6 +235,7 @@ const CardContainer = styled.div<{
 
 const Header = styled.div<{
   $headerStyle?: CSSProp;
+  $theme?: CardThemeConfiguration;
 }>`
   padding: 0.75rem 1.5rem;
   font-size: 1rem;
@@ -241,6 +243,7 @@ const Header = styled.div<{
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  border-bottom: 1px solid ${({ $theme }) => $theme?.borderColor ?? "#d1d5db"};
 
   ${({ $headerStyle }) => $headerStyle}
 `;
