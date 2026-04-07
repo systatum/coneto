@@ -28,6 +28,9 @@ import styled, { css, CSSProp } from "styled-components";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 import { Figure } from "./figure";
 import { StatefulForm } from "./stateful-form";
+import { Searchbox } from "./searchbox";
+import { PhoneboxThemeConfiguration } from "./../theme";
+import { useTheme } from "./../theme/provider";
 
 export interface CountryCodeProps {
   id: string;
@@ -81,6 +84,9 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
     },
     ref
   ) => {
+    const { currentTheme } = useTheme();
+    const phoneboxTheme = currentTheme?.phonebox;
+
     const DEFAULT_COUNTRY_CODES = COUNTRY_CODES[205];
     const countryCodeState = countryCodeValue ?? DEFAULT_COUNTRY_CODES;
 
@@ -223,6 +229,7 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
     return (
       <>
         <InputWrapper
+          $theme={phoneboxTheme}
           $hasError={showError}
           $isOpen={isOpen}
           $disabled={disabled}
@@ -241,6 +248,8 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
         >
           <CountryButton
             type="button"
+            $isOpen={isOpen}
+            $theme={phoneboxTheme}
             onClick={handleToggleDropdown}
             disabled={disabled}
             $disabled={disabled}
@@ -259,6 +268,7 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
           </CountryButton>
 
           <PhoneInput
+            $theme={phoneboxTheme}
             ref={phoneInputRef}
             required={required}
             id={id}
@@ -287,41 +297,45 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
               },
               tabIndex: -1,
             })}
+            $theme={phoneboxTheme}
           >
-            <StickyHeader>
-              <SearchWrapper>
-                <RiSearchLine
-                  style={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "0.5rem",
-                    width: "1rem",
-                    height: "1rem",
-                    transform: "translateY(-50%)",
-                    color: "#9ca3af",
-                  }}
-                />
-                <SearchInput
-                  type="text"
-                  $disabled={disabled}
-                  ref={searchInputRef}
-                  placeholder="Search your country..."
-                  value={searchTerm}
-                  onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                    setHighlightedIndex(0);
-                  }}
-                  onKeyDown={handleDropdownKeyDown}
-                  aria-label="search-countries"
-                  autoComplete="off"
-                />
-              </SearchWrapper>
-            </StickyHeader>
+            <Searchbox
+              type="text"
+              disabled={disabled}
+              ref={searchInputRef}
+              placeholder="Search your country..."
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setHighlightedIndex(0);
+              }}
+              styles={{
+                containerStyle: css`
+                  width: 100%;
+                  position: sticky;
+                  top: 0;
+                  padding: 8px;
+                  width: 100%;
+                  min-width: 0;
+                  background-color: ${phoneboxTheme?.backgroundColor};
+                `,
+                self: css`
+                  border-radius: 2px;
+                  max-height: 28px;
+                  width: 100%;
+                  min-width: 210px;
+                `,
+              }}
+              onKeyDown={handleDropdownKeyDown}
+              aria-label="search-countries"
+              autoComplete="off"
+            />
 
             {FILTERED_COUNTRIES.length > 0 ? (
               FILTERED_COUNTRIES.map((country, index) => (
                 <CountryOption
                   key={country.id}
+                  $theme={phoneboxTheme}
                   id={`country-option-${index}`}
                   role="option"
                   aria-selected={highlightedIndex === index}
@@ -441,6 +455,7 @@ const InputWrapper = styled.div<{
   $isOpen?: boolean;
   $disabled?: boolean;
   $style?: CSSProp;
+  $theme: PhoneboxThemeConfiguration;
 }>`
   display: flex;
   width: 100%;
@@ -448,19 +463,27 @@ const InputWrapper = styled.div<{
   align-items: center;
   border-radius: var(--radius-xs);
   border: 1px solid
-    ${({ $hasError, $isOpen }) =>
-      $hasError ? "#ef4444" : $isOpen ? "#d1d5db" : "#d1d5db"};
+    ${({ $hasError, $isOpen, $theme }) =>
+      $hasError
+        ? $theme?.errorBorderColor
+        : $isOpen
+          ? $theme?.borderColor
+          : $theme?.borderColor};
 
   &:focus-within {
-    border-color: ${({ $hasError, $disabled }) =>
-      $disabled ? "#d1d5db" : $hasError ? "#ef4444" : "#61A9F9"};
+    border-color: ${({ $hasError, $disabled, $theme }) =>
+      $disabled
+        ? $theme?.disabledBorderColor
+        : $hasError
+          ? $theme?.errorBorderColor
+          : $theme?.focusedBorderColor};
   }
 
-  ${({ $disabled }) =>
+  ${({ $disabled, $theme }) =>
     $disabled &&
     css`
-      border-color: #d1d5db;
-    `}
+      border-color: ${$theme?.disabledBorderColor};
+    `};
 
   border-radius: 2px;
 
@@ -471,6 +494,8 @@ const CountryButton = styled.button<{
   $disabled?: boolean;
   $hasError?: boolean;
   $style?: CSSProp;
+  $theme?: PhoneboxThemeConfiguration;
+  $isOpen?: boolean;
 }>`
   display: flex;
   flex-direction: row;
@@ -478,11 +503,16 @@ const CountryButton = styled.button<{
   align-items: center;
   gap: 4px;
   border-right: 1px solid
-    ${({ $hasError }) => ($hasError ? "#ef4444" : "#d1d5db")};
+    ${({ $hasError, $theme }) =>
+      $hasError ? $theme?.errorBorderColor : $theme?.borderColor};
 
   ${InputWrapper}:focus-within & {
-    border-color: ${({ $hasError, $disabled }) =>
-      $disabled ? "#d1d5db" : $hasError ? "#ef4444" : "#61A9F9"};
+    border-color: ${({ $hasError, $disabled, $theme }) =>
+      $disabled
+        ? $theme?.disabledBorderColor
+        : $hasError
+          ? $theme?.errorBorderColor
+          : $theme?.focusedBorderColor};
   }
 
   padding: 0 8px;
@@ -490,49 +520,65 @@ const CountryButton = styled.button<{
   border-top-left-radius: var(--radius-xs);
   border-bottom-left-radius: var(--radius-xs);
 
-  ${({ $disabled }) =>
+  ${({ $disabled, $isOpen, $theme }) =>
     $disabled
       ? css`
           cursor: not-allowed;
         `
-      : css`
-          cursor: pointer;
-          &:hover {
-            background-color: #f9fafb;
-          }
-        `}
+      : $isOpen
+        ? css`
+            background-color: ${$theme?.backgroundColor};
+          `
+        : css`
+            cursor: pointer;
+            &:hover {
+              background-color: ${$theme?.backgroundColor};
+            }
+          `}
 
   ${({ $style }) => $style}
 `;
 
-const PhoneInput = styled.input<{ $disabled?: boolean; $style?: CSSProp }>`
+const PhoneInput = styled.input<{
+  $disabled?: boolean;
+  $style?: CSSProp;
+  $theme: PhoneboxThemeConfiguration;
+}>`
   width: 100%;
   padding: 0 12px;
   font-size: 12px;
   border-radius: var(--radius-xs);
   outline: none;
-  ${({ $disabled }) =>
+  height: 32px;
+
+  ${({ $disabled, $theme }) =>
     $disabled
       ? css`
           cursor: not-allowed;
         `
       : css`
-          background-color: white;
-        `}
+          background-color: ${$theme?.backgroundColor};
+        `};
+
+  &::placeholder {
+    color: ${({ $theme }) => $theme?.placeholderColor};
+  }
 
   ${({ $style }) => $style}
 `;
 
-const DropdownContainer = styled.div`
+const DropdownContainer = styled.div<{
+  $theme: PhoneboxThemeConfiguration;
+}>`
   position: absolute;
   left: 0;
-  background-color: white;
-  border: 1px solid #d1d5db;
   border-radius: var(--radius-xs);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   max-height: 240px;
   overflow-y: auto;
   z-index: 9992999;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  background-color: ${({ $theme }) => $theme?.backgroundColor};
+  border: 1px solid ${({ $theme }) => $theme?.borderColor};
 
   &::-webkit-scrollbar {
     width: 6px;
@@ -548,49 +594,19 @@ const DropdownContainer = styled.div`
   }
 `;
 
-const StickyHeader = styled.div`
-  position: sticky;
-  top: 0;
-  background-color: white;
-  padding: 8px;
-`;
-
-const SearchWrapper = styled.div`
-  position: relative;
-`;
-
-const SearchInput = styled.input<{ $disabled?: boolean }>`
-  width: 100%;
-  border: 1px solid #d1d5db;
-  padding: 8px 8px 8px 32px;
-  font-size: 12px;
-  border-radius: var(--radius-xs);
-  outline: none;
-
-  &:focus {
-    border-color: ${({ $disabled }) => ($disabled ? "#d1d5db" : "#61a9f9")};
-  }
-
-  ${({ $disabled }) =>
-    $disabled &&
-    css`
-      cursor: not-allowed;
-      user-select: none;
-      pointer-events: none;
-      border-color: #d1d5db;
-    `};
-`;
-
-const CountryOption = styled.div<{ $highlighted?: boolean }>`
+const CountryOption = styled.div<{
+  $highlighted?: boolean;
+  $theme: PhoneboxThemeConfiguration;
+}>`
   display: flex;
   align-items: center;
   padding: 8px 12px;
   font-size: 12px;
   cursor: pointer;
-  ${({ $highlighted }) =>
+  ${({ $highlighted, $theme }) =>
     $highlighted &&
     css`
-      background-color: #dbeafe;
+      background-color: ${$theme?.optionHighlightedBackground};
     `}
 `;
 
