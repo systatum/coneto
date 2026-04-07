@@ -3,6 +3,8 @@ import React, { useRef, useEffect, ChangeEvent } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 import { StatefulForm } from "./stateful-form";
+import { useTheme } from "./../theme/provider";
+import { SignboxThemeConfiguration } from "./../theme";
 
 interface BaseSignboxProps {
   name?: string;
@@ -36,9 +38,18 @@ function BaseSignbox({
   id,
   disabled,
 }: BaseSignboxProps) {
+  const { currentTheme } = useTheme();
+  const signboxTheme = currentTheme?.signbox;
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isDrawing = useRef(false);
   const lastPoint = useRef<{ x: number; y: number } | null>(null);
+
+  const valueRef = useRef(value);
+
+  useEffect(() => {
+    valueRef.current = value;
+  }, [value]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -49,22 +60,46 @@ function BaseSignbox({
 
     const resizeCanvas = () => {
       const rect = canvas.getBoundingClientRect();
-
       const scale = window.devicePixelRatio || 1;
 
       canvas.width = rect.width * scale;
       canvas.height = rect.height * scale;
       ctx.scale(scale, scale);
 
-      ctx.strokeStyle = "black";
+      ctx.strokeStyle = signboxTheme?.textColor || "#111827";
       ctx.lineWidth = 2;
       ctx.lineCap = "round";
+
+      const currentValue = valueRef.current;
+      if (currentValue) {
+        const img = new Image();
+        img.onload = () => {
+          const ratio = Math.min(
+            rect.width / img.width,
+            rect.height / img.height
+          );
+          const x = (rect.width - img.width * ratio) / 2;
+          const y = (rect.height - img.height * ratio) / 2;
+          ctx.drawImage(
+            img,
+            0,
+            0,
+            img.width,
+            img.height,
+            x,
+            y,
+            img.width * ratio,
+            img.height * ratio
+          );
+        };
+        img.src = currentValue;
+      }
     };
 
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
     return () => window.removeEventListener("resize", resizeCanvas);
-  }, []);
+  }, [signboxTheme]);
 
   useEffect(() => {
     if (!value) return;
@@ -107,7 +142,7 @@ function BaseSignbox({
     };
 
     drawValue();
-  }, []);
+  }, [signboxTheme]);
 
   const getCoordinates = (e: MouseEvent | TouchEvent) => {
     const canvas = canvasRef.current;
@@ -148,6 +183,9 @@ function BaseSignbox({
       ctx.moveTo(last.x, last.y);
       ctx.lineTo(x, y);
       ctx.stroke();
+      ctx.strokeStyle = signboxTheme?.textColor || "#111827";
+      ctx.lineWidth = 2;
+      ctx.lineCap = "round";
     }
     lastPoint.current = { x, y };
 
@@ -183,14 +221,18 @@ function BaseSignbox({
     }
   };
 
+  const cursor = createCursor(signboxTheme?.textColor || "#111827");
+
   return (
     <SignatureWrapper
       $disabled={disabled}
       aria-label="signbox-canvas"
+      $theme={signboxTheme}
       $error={showError}
       $canvasStyle={styles?.self}
       $height={height}
       $width={width}
+      $cursor={cursor}
     >
       <SignatureCanvas
         ref={canvasRef}
@@ -205,6 +247,7 @@ function BaseSignbox({
       />
       {clearable && (
         <SignatureClearable
+          $theme={signboxTheme}
           aria-label="signbox-clearable"
           onClick={(e) => clearCanvas(e)}
           size={18}
@@ -294,9 +337,14 @@ function Signbox({
   );
 }
 
-const penSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="black"><path d="M15.7279 9.57627L14.3137 8.16206L5 17.4758V18.89H6.41421L15.7279 9.57627ZM17.1421 8.16206L18.5563 6.74785L17.1421 5.33363L15.7279 6.74785L17.1421 8.16206ZM7.24264 20.89H3V16.6473L16.435 3.21231C16.8256 2.82179 17.4587 2.82179 17.8492 3.21231L20.6777 6.04074C21.0682 6.43126 21.0682 7.06443 20.6777 7.45495L7.24264 20.89Z"></path></svg>`;
-const base64SVG = btoa(penSVG);
-const cursorDataUrl = `url("data:image/svg+xml;base64,${base64SVG}") 2 16, auto`;
+const createCursor = (color: string) => {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="${color}">
+    <path d="M15.7279 9.57627L14.3137 8.16206L5 17.4758V18.89H6.41421L15.7279 9.57627ZM17.1421 8.16206L18.5563 6.74785L17.1421 5.33363L15.7279 6.74785L17.1421 8.16206ZM7.24264 20.89H3V16.6473L16.435 3.21231C16.8256 2.82179 17.4587 2.82179 17.8492 3.21231L20.6777 6.04074C21.0682 6.43126 21.0682 7.06443 20.6777 7.45495L7.24264 20.89Z"/>
+  </svg>`;
+
+  const base64 = btoa(svg);
+  return `url("data:image/svg+xml;base64,${base64}") 2 16, auto`;
+};
 
 const SignatureWrapper = styled.div<{
   $width?: string;
@@ -304,20 +352,39 @@ const SignatureWrapper = styled.div<{
   $canvasStyle?: CSSProp;
   $error?: boolean;
   $disabled?: boolean;
+  $theme: SignboxThemeConfiguration;
+  $cursor: string;
 }>`
   position: relative;
   width: ${({ $width }) => $width ?? "100%"};
   height: ${({ $height }) => $height ?? "200px"};
-  border: 1px solid ${({ $error }) => ($error ? "#f87171" : "#d1d5db")};
+
+  background-color: ${({ $theme }) => $theme.backgroundColor || "#ffffff"};
+
+  border: 1px solid
+    ${({ $error, $theme }) =>
+      $error
+        ? $theme.errorBorderColor || "#f87171"
+        : $theme.borderColor || "#d1d5db"};
+
+  &:focus-within {
+    border-color: ${({ $theme, $error }) =>
+      !$error && ($theme.focusedBorderColor || "#61A9F9")};
+    box-shadow: 0 0 0 0.5px
+      ${({ $theme, $error }) =>
+        !$error && ($theme.focusedBorderColor || "#61A9F9")};
+  }
+
   border-radius: 2px;
-  cursor: ${cursorDataUrl};
+  cursor: ${({ $cursor }) => $cursor};
+
+  color: ${({ $theme }) => $theme.textColor};
 
   ${({ $disabled }) =>
     $disabled &&
     css`
       cursor: not-allowed;
       user-select: none;
-      pointer-events: none;
     `}
 
   ${({ $canvasStyle }) => $canvasStyle};
@@ -329,7 +396,9 @@ const SignatureCanvas = styled.canvas`
   height: 100%;
 `;
 
-const SignatureClearable = styled(RiEraserLine)`
+const SignatureClearable = styled(RiEraserLine)<{
+  $theme: SignboxThemeConfiguration;
+}>`
   position: absolute;
   font-size: 12px;
   top: 5px;
@@ -338,12 +407,18 @@ const SignatureClearable = styled(RiEraserLine)`
   padding: 2px;
   border-radius: 2px;
 
+  color: ${({ $theme }) => $theme.clearIconColor || "#6b7280"};
+
   &:hover {
-    background-color: #e5e5e5;
+    background-color: ${({ $theme }) =>
+      $theme.clearIconHoverBackground || "#e5e5e5"};
   }
+
   &:active {
-    background-color: #cfcfcf;
+    background-color: ${({ $theme }) =>
+      $theme.clearIconHoverBackground || "#cfcfcf"};
   }
+
   &:focus-visible {
     outline: none;
     box-shadow: inset 0 0 0 2px #00000033;
