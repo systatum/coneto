@@ -87,6 +87,24 @@ export interface TipMenuContainerThemeConfiguration {
   boxShadow?: string;
 }
 
+// calendar.tsx
+export interface CalendarThemeConfiguration {
+  backgroundColor?: string;
+  borderColor?: string;
+  textColor?: string;
+
+  dayTextColor: string;
+
+  disabledDateColor?: string;
+  weekendDateColor?: string;
+
+  rangeDateColor?: string;
+  highlightedDateTextColor?: string;
+  hightlightDateColor?: string;
+
+  boxShadow?: string;
+}
+
 // capsule.tsx
 export interface CapsuleThemeConfiguration {
   backgroundColor?: string;
@@ -220,6 +238,11 @@ export interface FieldLaneThemeConfiguration {
   labelColor: string;
   labelDisabledColor: string;
 
+  inputBorder: string;
+
+  placeholderColor?: string;
+  focusedBorderColor?: string;
+
   disabledOpacity: number;
 
   actionColor: string;
@@ -227,6 +250,7 @@ export interface FieldLaneThemeConfiguration {
 
   errorColor: string;
   errorBackground: string;
+  errorBorderColor?: string;
   errorForeground: string;
 
   helperColor: string;
@@ -409,6 +433,20 @@ export interface TableThemeConfiguration {
   summaryBorderColor?: string;
 }
 
+// timebox.tsx
+
+export interface TimeboxThemeConfiguration {
+  backgroundColor?: string;
+  borderColor?: string;
+  textColor?: string;
+
+  focusedBorderColor?: string;
+
+  errorBorderColor?: string;
+  errorTextColor?: string;
+  colonColor?: string;
+}
+
 // thumb-field.tsx
 export interface ThumbFieldThemeConfiguration {
   thumbsUpColor?: string;
@@ -483,6 +521,7 @@ export interface AppTheme {
   boxbar: BoxbarThemeConfiguration;
   button: Record<ButtonVariants["variant"], ButtonThemeConfiguration>;
   buttonTipMenu: TipMenuContainerThemeConfiguration;
+  calendar: CalendarThemeConfiguration;
   capsule: CapsuleThemeConfiguration;
   capsuleTab: CapsuleTabThemeConfiguration;
   card: CardThemeConfiguration;
@@ -513,6 +552,7 @@ export interface AppTheme {
   thumbField: ThumbFieldThemeConfiguration;
   table: TableThemeConfiguration;
   tipmenu: TipMenuThemeConfiguration;
+  timebox: TimeboxThemeConfiguration;
   toolbar: Record<ToolbarVariantType, ToolbarThemeConfiguration>;
   togglebox: ToggleboxThemeConfiguration;
   treelist: TreeListThemeConfiguration;

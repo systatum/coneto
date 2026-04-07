@@ -9,6 +9,7 @@ import {
   BodyThemeConfiguration,
   BoxbarThemeConfiguration,
   ButtonThemeConfiguration,
+  CalendarThemeConfiguration,
   CapsuleTabThemeConfiguration,
   CapsuleThemeConfiguration,
   CardThemeConfiguration,
@@ -38,6 +39,7 @@ import {
   StatusbarThemeConfiguration,
   TableThemeConfiguration,
   ThumbFieldThemeConfiguration,
+  TimeboxThemeConfiguration,
   TipMenuContainerThemeConfiguration,
   TipMenuThemeConfiguration,
   ToggleboxThemeConfiguration,
@@ -199,6 +201,32 @@ export function createTipMenuContainerTheme(
     boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
     ...custom,
   };
+}
+
+// calendar.tsx
+export function createCalendarTheme(
+  body: BodyThemeConfiguration,
+  fieldLane: Partial<FieldLaneThemeConfiguration> = {},
+  custom: Partial<CalendarThemeConfiguration> = {}
+): CalendarThemeConfiguration {
+  const defaultTheme: CalendarThemeConfiguration = {
+    backgroundColor: body.backgroundColor || "#ffffff",
+    borderColor: fieldLane?.inputBorder || "#d1d5db",
+    textColor: body.textColor || "#111827",
+
+    dayTextColor: "#6b7280",
+
+    disabledDateColor: "#d1d5db",
+    weekendDateColor: "#fca5a5",
+
+    highlightedDateTextColor: "white",
+    hightlightDateColor: "#61a9f9",
+    rangeDateColor: "#dbeafe",
+
+    boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+  };
+
+  return { ...defaultTheme, ...custom };
 }
 
 // capsule.tsx
@@ -443,18 +471,25 @@ export function createFieldLaneTheme(
   const defaultTheme: FieldLaneThemeConfiguration = {
     buttonTextColor: body.textColor,
     buttonBorderColor: "#d1d5db",
-    buttonErrorBorderColor: "#f87171",
-    buttonErrorTextColor: "#dc2626",
+    buttonErrorBorderColor: "#ef4444",
+    buttonErrorTextColor: "#b91c1c",
 
     labelColor: body.textColor,
     labelDisabledColor: "#9ca3af",
     disabledOpacity: 0.5,
+
+    inputBorder: "#d1d5db",
+
     actionColor: "#6b7280",
     actionHoverColor: "#374151",
 
-    errorColor: "#dc2626",
-    errorBackground: "#dc2626",
-    errorForeground: "#ffffff",
+    placeholderColor: "#9ca3af",
+    focusedBorderColor: "#61A9F9",
+
+    errorColor: "#b91c1c",
+    errorBorderColor: "#ef4444",
+    errorBackground: "#fee2e2",
+    errorForeground: "#991b1b",
 
     helperColor: "#6b7280",
   };
@@ -817,6 +852,28 @@ export function createTableTheme(
   };
 }
 
+// timebox.tsx
+export function createTimeboxTheme(
+  body: BodyThemeConfiguration,
+  fieldLane: Partial<FieldLaneThemeConfiguration> = {},
+  custom: Partial<TimeboxThemeConfiguration> = {}
+): TimeboxThemeConfiguration {
+  const defaultTheme: TimeboxThemeConfiguration = {
+    backgroundColor: body.backgroundColor || "#ffffff",
+    borderColor: fieldLane?.inputBorder || "#d1d5db",
+    textColor: body.textColor || "#111827",
+
+    focusedBorderColor: fieldLane?.placeholderColor,
+
+    errorBorderColor: fieldLane?.errorBorderColor,
+    errorTextColor: fieldLane?.errorColor,
+
+    colonColor: body?.textColor,
+  };
+
+  return { ...defaultTheme, ...custom };
+}
+
 // tipmenu.tsx
 export function createTipMenuTheme(
   body: BodyThemeConfiguration,
@@ -964,6 +1021,7 @@ export function createWindowTheme(
 
 // Light
 const lightBody = createBodyTheme();
+const lightFieldLane = createFieldLaneTheme(lightBody);
 
 const lightActionButton = createActionButtonTheme(lightBody);
 
@@ -1067,6 +1125,8 @@ const lightButtonTipMenuContainer = createTipMenuContainerTheme({
   backgroundColor: lightBody?.backgroundColor,
 });
 
+const lightCalendar = createCalendarTheme(lightBody, lightFieldLane);
+
 const lightCapsule = createCapsuleTheme(lightBody);
 
 const lightCapsuleTab = createCapsuleTabTheme(lightBody);
@@ -1098,8 +1158,6 @@ const lightErrorSlate = createErrorSlateTheme({
   cubeFaceText: "#ffffff",
   titleColor: "#111111",
 });
-
-const lightFieldLane = createFieldLaneTheme(lightBody);
 
 const lightGrid = createGridTheme(lightBody);
 
@@ -1133,6 +1191,8 @@ const lightStatusbar = createStatusbarTheme();
 
 const lightTable = createTableTheme(lightBody);
 
+const lightTimebox = createTimeboxTheme(lightBody, lightFieldLane);
+
 const lightTipMenu = createTipMenuTheme(lightBody, {
   dangerousBackgroundColor: lightButton.danger.backgroundColor,
   dangerousHoverBackgroundColor: lightButton.danger.hoverBackgroundColor,
@@ -1165,6 +1225,7 @@ const lightTheme: AppTheme = {
   button: lightButton,
   buttonTipMenu: lightButtonTipMenuContainer,
   boxbar: lightBoxbar,
+  calendar: lightCalendar,
   capsule: lightCapsule,
   capsuleTab: lightCapsuleTab,
   card: lightCard,
@@ -1193,6 +1254,7 @@ const lightTheme: AppTheme = {
   sidebar: lightSidebar,
   statusbar: lightStatusbar,
   table: lightTable,
+  timebox: lightTimebox,
   tipmenu: lightTipMenu,
   thumbField: lightThumbField,
   toolbar: lightToolbar,
@@ -1205,6 +1267,31 @@ const lightTheme: AppTheme = {
 const darkBody = createBodyTheme({
   backgroundColor: "#111",
   textColor: "#caced4",
+});
+
+const darkFieldLane = createFieldLaneTheme(darkBody, {
+  labelColor: "#f3f4f6",
+  labelDisabledColor: "#9ca3af",
+
+  buttonTextColor: "#e5e7eb",
+  buttonBorderColor: "#4b5563",
+  buttonErrorBorderColor: "#f87171",
+  buttonErrorTextColor: "#fca5a5",
+
+  inputBorder: "#4b5563",
+
+  actionColor: "#cbd5e1",
+  actionHoverColor: "#ffffff",
+
+  placeholderColor: "#9ca3af",
+  focusedBorderColor: "#3b82f6",
+
+  errorColor: "#f87171",
+  errorBorderColor: "#f87171",
+  errorBackground: "#991b1b",
+  errorForeground: "#fee2e2",
+
+  helperColor: "#9ca3af",
 });
 
 const darkActionButton = createActionButtonTheme(darkBody, {
@@ -1358,6 +1445,18 @@ const darkBoxbar = createBoxbarTheme(darkBody, {
   toggleButtonHoverColor: "#222222",
 });
 
+const darkCalendar = createCalendarTheme(darkBody, darkFieldLane, {
+  dayTextColor: "#d1d5db",
+  disabledDateColor: "#4b5563",
+  weekendDateColor: "#fca5a5",
+
+  rangeDateColor: "rgb(124, 101, 207)",
+  hightlightDateColor: "rgb(79, 61, 142)",
+  highlightedDateTextColor: "#ffffff",
+
+  boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.25)",
+});
+
 const darkCapsule = createCapsuleTheme(darkBody, {
   borderColor: "#303030",
   boxShadow: "0 1px 2px rgba(0,0,0,0.4)",
@@ -1426,9 +1525,7 @@ const darkCheckbox = createCheckboxTheme(darkBody, {
 });
 
 const darkDialog = createDialogTheme(darkBody, {
-  backgroundColor: darkBody.backgroundColor,
   borderColor: "#303030",
-  textColor: darkBody.textColor,
   boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
   subtitleColor: "#a3a3a3",
 });
@@ -1463,23 +1560,6 @@ const darkErrorSlate = createErrorSlateTheme({
   cubeFaceBorder: "#a8071a",
   cubeFaceText: "#ffffff",
   titleColor: "#ffffff",
-});
-
-const darkFieldLane = createFieldLaneTheme(darkBody, {
-  labelDisabledColor: "#9ca3af",
-
-  buttonTextColor: "#caced4",
-  buttonBorderColor: "#333333",
-  buttonErrorBorderColor: "#f87171",
-  buttonErrorTextColor: "#f87171",
-
-  actionColor: "#9ca3af",
-  actionHoverColor: "#ffffff",
-  helperColor: "#9ca3af",
-
-  errorColor: "#f87171",
-  errorBackground: "#991b1b",
-  errorForeground: "#ffffff",
 });
 
 const darkGrid = createGridTheme(darkBody, {
@@ -1662,6 +1742,8 @@ export const darkTable: TableThemeConfiguration = createTableTheme(darkBody, {
   summaryBorderColor: "rgb(39, 39, 48)",
 });
 
+const darkTimebox = createTimeboxTheme(darkBody, darkFieldLane);
+
 const darkTipMenu = createTipMenuTheme(darkBody, {
   hoverBackgroundColor: "#2a2a2a",
   activeBackgroundColor: "#333333",
@@ -1724,6 +1806,7 @@ const darkTheme: AppTheme = {
   button: darkButton,
   buttonTipMenu: darkButtonTipMenuContainer,
   boxbar: darkBoxbar,
+  calendar: darkCalendar,
   capsule: darkCapsule,
   capsuleTab: darkCapsuleTab,
   card: darkCard,
@@ -1752,6 +1835,7 @@ const darkTheme: AppTheme = {
   sidebar: darkSidebar,
   statusbar: darkStatusbar,
   table: darkTable,
+  timebox: darkTimebox,
   tipmenu: darkTipMenu,
   thumbField: darkThumbField,
   togglebox: darkTogglebox,
