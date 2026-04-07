@@ -297,6 +297,16 @@ export interface FieldLaneThemeConfiguration {
   dividerColor: string;
 }
 
+// frame.tsx
+export interface FrameThemeConfiguration {
+  backgroundColor?: string;
+  borderColor?: string;
+  titleColor?: string;
+  titleBackgroundColor?: string;
+  overlayBackgroundColor?: string;
+  boxShadow?: string;
+}
+
 // grid.tsx
 export interface GridThemeConfiguration {
   cardBackgroundColor?: string;
@@ -485,6 +495,12 @@ export interface StatusbarThemeConfiguration {
   };
 }
 
+export interface StatefulFormThemeConfiguration {
+  backgroundColor: string;
+  textColor: string;
+  rowFrameBackgroundColor: string;
+}
+
 // table.tsx
 export interface TableThemeConfiguration {
   textColor?: string;
@@ -635,6 +651,7 @@ export interface AppTheme {
   drawerTab: DrawerTabThemeConfiguration;
   errorSlate: ErrorSlateThemeConfiguration;
   fieldLane: FieldLaneThemeConfiguration;
+  frame: FrameThemeConfiguration;
   grid: GridThemeConfiguration;
   keynote: KeynoteThemeConfiguration;
   list: ListThemeConfiguration;
@@ -652,6 +669,7 @@ export interface AppTheme {
   sidebar: SidebarThemeConfiguration;
   signbox: SignboxThemeConfiguration;
   statusbar: StatusbarThemeConfiguration;
+  statefulForm: StatefulFormThemeConfiguration;
   textbox: TextboxThemeConfiguration;
   textarea: TextareaThemeConfiguration;
   thumbField: ThumbFieldThemeConfiguration;

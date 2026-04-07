@@ -24,6 +24,7 @@ import {
   DrawerTabThemeConfiguration,
   ErrorSlateThemeConfiguration,
   FieldLaneThemeConfiguration,
+  FrameThemeConfiguration,
   GridThemeConfiguration,
   KeynoteThemeConfiguration,
   ListThemeConfiguration,
@@ -40,6 +41,7 @@ import {
   SeparatorThemeConfiguration,
   SidebarThemeConfiguration,
   SignboxThemeConfiguration,
+  StatefulFormThemeConfiguration,
   StatusbarThemeConfiguration,
   TableThemeConfiguration,
   TextareaThemeConfiguration,
@@ -563,6 +565,23 @@ export function createFieldLaneTheme(
   return { ...defaultTheme, ...custom };
 }
 
+// frame.tsx
+export function createFrameTheme(
+  body: BodyThemeConfiguration,
+  custom: Partial<FrameThemeConfiguration> = {}
+): FrameThemeConfiguration {
+  const defaultTheme: FrameThemeConfiguration = {
+    backgroundColor: body.backgroundColor || "#ffffff",
+    borderColor: "#d1d5db",
+    titleColor: "#999b9d",
+    titleBackgroundColor: body.backgroundColor || "#ffffff",
+    overlayBackgroundColor: body.backgroundColor || "#ffffff",
+    boxShadow: "var(--shadow-xs)",
+  };
+
+  return { ...defaultTheme, ...custom };
+}
+
 // grid.tsx
 export function createGridTheme(
   body: BodyThemeConfiguration,
@@ -934,6 +953,23 @@ export function createStatusbarTheme(
   };
 }
 
+// stateful-form.tsx
+export function createStatefulFormTheme(
+  body: BodyThemeConfiguration,
+  customTheme: Partial<StatefulFormThemeConfiguration> = {}
+): StatefulFormThemeConfiguration {
+  const defaultTheme: StatefulFormThemeConfiguration = {
+    backgroundColor: body?.backgroundColor,
+    textColor: body?.textColor,
+    rowFrameBackgroundColor: "#f3f4f6",
+  };
+
+  return {
+    ...defaultTheme,
+    ...customTheme,
+  };
+}
+
 // textarea.tsx
 export function createTextareaTheme(
   body: BodyThemeConfiguration,
@@ -1197,6 +1233,7 @@ export function createWindowTheme(
 
 // Light
 const lightBody = createBodyTheme();
+
 const lightFieldLane = createFieldLaneTheme(lightBody);
 
 const lightActionButton = createActionButtonTheme(lightBody);
@@ -1339,6 +1376,8 @@ const lightErrorSlate = createErrorSlateTheme({
   titleColor: "#111111",
 });
 
+const lightFrame = createFrameTheme(lightBody);
+
 const lightGrid = createGridTheme(lightBody);
 
 const lightKeynote = createKeynoteTheme(lightBody);
@@ -1372,6 +1411,8 @@ const lightSignbox = createSignboxTheme(lightBody, lightFieldLane);
 const lightSidebar = createSidebarTheme(lightBody);
 
 const lightStatusbar = createStatusbarTheme();
+
+const lightStatefulForm = createStatefulFormTheme(lightBody);
 
 const lightTable = createTableTheme(lightBody);
 
@@ -1428,6 +1469,7 @@ const lightTheme: AppTheme = {
   drawerTab: lightDrawerTab,
   errorSlate: lightErrorSlate,
   fieldLane: lightFieldLane,
+  frame: lightFrame,
   grid: lightGrid,
   keynote: lightKeynote,
   list: lightList,
@@ -1445,6 +1487,7 @@ const lightTheme: AppTheme = {
   sidebar: lightSidebar,
   signbox: lightSignbox,
   statusbar: lightStatusbar,
+  statefulForm: lightStatefulForm,
   table: lightTable,
   textarea: lightTextarea,
   textbox: lightTextbox,
@@ -1764,6 +1807,13 @@ const darkErrorSlate = createErrorSlateTheme({
   titleColor: "#ffffff",
 });
 
+const darkFrame = createFrameTheme(darkBody, {
+  backgroundColor: darkBody.backgroundColor,
+  borderColor: "#374151",
+  titleColor: darkBody.textColor,
+  boxShadow: "0 1px 3px rgba(0, 0, 0, 0.2)",
+});
+
 const darkGrid = createGridTheme(darkBody, {
   cardBackgroundColor: "#1a1a1a",
   cardHoverBackgroundColor: "#2a2a2a",
@@ -1922,6 +1972,10 @@ const darkStatusbar = createStatusbarTheme({
   },
 });
 
+const darkStatefulForm = createStatefulFormTheme(darkBody, {
+  rowFrameBackgroundColor: "rgb(48, 48, 48)",
+});
+
 export const darkTable: TableThemeConfiguration = createTableTheme(darkBody, {
   textColor: darkBody.textColor,
   boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
@@ -2035,6 +2089,7 @@ const darkTheme: AppTheme = {
   drawerTab: darkDrawerTab,
   errorSlate: darkErrorSlate,
   fieldLane: darkFieldLane,
+  frame: darkFrame,
   grid: darkGrid,
   keynote: darkKeynote,
   list: darkList,
@@ -2052,6 +2107,7 @@ const darkTheme: AppTheme = {
   sidebar: darkSidebar,
   signbox: darkSignbox,
   statusbar: darkStatusbar,
+  statefulForm: darkStatefulForm,
   table: darkTable,
   textarea: darkTextarea,
   textbox: darkTextbox,
