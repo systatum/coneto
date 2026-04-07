@@ -17,6 +17,7 @@ import {
   ChipsThemeConfiguration,
   ChoiceGroupThemeConfiguration,
   ColorboxThemeConfiguration,
+  ComboboxThemeConfiguration,
   DialogThemeConfiguration,
   DocumentViewerThemeConfiguration,
   DormantTextThemeConfiguration,
@@ -35,6 +36,7 @@ import {
   PaperDialogThemeConfiguration,
   RadioThemeConfiguration,
   SearchboxThemeConfiguration,
+  SelectboxThemeConfiguration,
   SeparatorThemeConfiguration,
   SidebarThemeConfiguration,
   SignboxThemeConfiguration,
@@ -407,6 +409,32 @@ export function createColorboxTheme(
   return { ...defaultTheme, ...custom };
 }
 
+// combobox.tsx
+export function createComboboxTheme(
+  body: BodyThemeConfiguration,
+  fieldLane: Partial<FieldLaneThemeConfiguration> = {},
+  custom: Partial<ComboboxThemeConfiguration> = {}
+): ComboboxThemeConfiguration {
+  const defaultTheme: ComboboxThemeConfiguration = {
+    backgroundColor: body?.backgroundColor || "#ffffff",
+    borderColor: fieldLane?.borderColor || "#d1d5db",
+    textColor: body?.textColor || "#1f2937",
+
+    highlightBackgroundColor: fieldLane?.highlightBackgroundColor || "#dbeafe",
+    selectedBackgroundColor: fieldLane?.selectedBackgroundColor || "#61a9f9",
+    selectedTextColor: body?.backgroundColor || "#ffffff",
+
+    disabledTextColor: fieldLane?.disabledTextColor || "#9ca3af",
+    emptyTextColor: fieldLane?.helperColor || "#6b7280",
+
+    dividerColor: fieldLane?.dividerColor || "#d1d5db",
+    boxShadow:
+      "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+  };
+
+  return { ...defaultTheme, ...custom };
+}
+
 // dialog.tsx
 export function createDialogTheme(
   body: BodyThemeConfiguration,
@@ -520,6 +548,8 @@ export function createFieldLaneTheme(
 
     placeholderColor: "#9ca3af",
     focusedBorderColor: "#61A9F9",
+    highlightBackgroundColor: "#dbeafe",
+    selectedBackgroundColor: "#61A9F9",
 
     errorColor: "#b91c1c",
     errorBorderColor: "#ef4444",
@@ -527,6 +557,7 @@ export function createFieldLaneTheme(
     errorForeground: "#991b1b",
 
     helperColor: "#6b7280",
+    dividerColor: "#9ca3af",
   };
 
   return { ...defaultTheme, ...custom };
@@ -775,6 +806,38 @@ export function createSearchboxTheme(
   };
 }
 
+// selectbox.tsx
+export function createSelectboxTheme(
+  body: BodyThemeConfiguration,
+  fieldLane: Partial<FieldLaneThemeConfiguration> = {},
+  custom: Partial<SelectboxThemeConfiguration> = {}
+): SelectboxThemeConfiguration {
+  const defaultTheme: SelectboxThemeConfiguration = {
+    backgroundColor: body.backgroundColor || "#ffffff",
+    textColor: body.textColor || "#111827",
+
+    borderColor: fieldLane.borderColor || "#d1d5db",
+    hoverBorderColor: fieldLane.focusedBorderColor || "#61a9f9",
+    focusedBorderColor: fieldLane.focusedBorderColor || "#61a9f9",
+
+    errorBorderColor: fieldLane.errorBorderColor || "#ef4444",
+
+    placeholderColor: fieldLane.placeholderColor || "#9ca3af",
+
+    iconColor: fieldLane.actionColor || "#9ca3af",
+    iconActiveColor: fieldLane.focusedBorderColor || "#61a9f9",
+
+    clearIconColor: fieldLane.actionColor || "#9ca3af",
+    clearIconBackground: "transparent",
+    clearIconHoverBackground: fieldLane.actionHoverColor || "#e5e7eb",
+
+    dividerColor: fieldLane.dividerColor || "#9ca3af",
+    disabledOpacity: fieldLane.disabledOpacity,
+  };
+
+  return { ...defaultTheme, ...custom };
+}
+
 // separator.tsx
 export function createSeparatorTheme(
   body: BodyThemeConfiguration,
@@ -827,6 +890,26 @@ export function createSidebarTheme(
       ...custom.toggle,
     },
   };
+}
+
+// signbox.tsx
+export function createSignboxTheme(
+  body: BodyThemeConfiguration,
+  fieldLane: Partial<FieldLaneThemeConfiguration> = {},
+  custom: Partial<SignboxThemeConfiguration> = {}
+): SignboxThemeConfiguration {
+  const defaultTheme: SignboxThemeConfiguration = {
+    backgroundColor: body.backgroundColor || "#ffffff",
+    borderColor: fieldLane?.borderColor || "#d1d5db",
+    textColor: body.textColor || "#111827",
+
+    errorBorderColor: fieldLane?.errorBorderColor || "#f87171",
+
+    clearIconColor: fieldLane?.actionColor || "#6b7280",
+    clearIconHoverBackground: fieldLane?.actionHoverColor || "#e5e7eb",
+  };
+
+  return { ...defaultTheme, ...custom };
 }
 
 // statusbar.tsx
@@ -1095,26 +1178,6 @@ export function createTreeListTheme(
   };
 }
 
-// signbox.tsx
-export function createSignboxTheme(
-  body: BodyThemeConfiguration,
-  fieldLane: Partial<FieldLaneThemeConfiguration> = {},
-  custom: Partial<SignboxThemeConfiguration> = {}
-): SignboxThemeConfiguration {
-  const defaultTheme: SignboxThemeConfiguration = {
-    backgroundColor: body.backgroundColor || "#ffffff",
-    borderColor: fieldLane?.borderColor || "#d1d5db",
-    textColor: body.textColor || "#111827",
-
-    errorBorderColor: fieldLane?.errorBorderColor || "#f87171",
-
-    clearIconColor: fieldLane?.actionColor || "#6b7280",
-    clearIconHoverBackground: fieldLane?.actionHoverColor || "#e5e7eb",
-  };
-
-  return { ...defaultTheme, ...custom };
-}
-
 // window.tsx
 export function createWindowTheme(
   body: BodyThemeConfiguration,
@@ -1259,6 +1322,8 @@ const lightCheckbox = createCheckboxTheme(lightBody);
 
 const lightColorbox = createColorboxTheme(lightBody, lightFieldLane);
 
+const lightCombobox = createComboboxTheme(lightBody, lightFieldLane);
+
 const lightDialog = createDialogTheme(lightBody);
 
 const lightDocumentViewer = createDocumentViewerTheme(lightBody);
@@ -1297,6 +1362,8 @@ const lightPaperDialog = createPaperDialogTheme(lightBody);
 const lightRadio = createRadioTheme(lightBody);
 
 const lightSearchbox = createSearchboxTheme(lightBody);
+
+const lightSelectbox = createSelectboxTheme(lightBody, lightFieldLane);
 
 const lightSeparator = createSeparatorTheme(lightBody);
 
@@ -1354,6 +1421,7 @@ const lightTheme: AppTheme = {
   choiceGroup: lightChoiceGroup,
   checkbox: lightCheckbox,
   colorbox: lightColorbox,
+  combobox: lightCombobox,
   dialog: lightDialog,
   documentViewer: lightDocumentViewer,
   dormantText: lightDormantText,
@@ -1372,6 +1440,7 @@ const lightTheme: AppTheme = {
   paperDialog: lightPaperDialog,
   radio: lightRadio,
   searchbox: lightSearchbox,
+  selectbox: lightSelectbox,
   separator: lightSeparator,
   sidebar: lightSidebar,
   signbox: lightSignbox,
@@ -1411,6 +1480,8 @@ const darkFieldLane = createFieldLaneTheme(darkBody, {
 
   placeholderColor: "#9ca3af",
   focusedBorderColor: "#3b82f6",
+  highlightBackgroundColor: "#0f215d33",
+  selectedBackgroundColor: "rgb(105, 85, 193)",
 
   errorColor: "#f87171",
   errorBorderColor: "#f87171",
@@ -1418,6 +1489,7 @@ const darkFieldLane = createFieldLaneTheme(darkBody, {
   errorForeground: "#fee2e2",
 
   helperColor: "#9ca3af",
+  dividerColor: "#6b7280",
 });
 
 const darkActionButton = createActionButtonTheme(darkBody, {
@@ -1652,6 +1724,8 @@ const darkCheckbox = createCheckboxTheme(darkBody, {
 
 const darkColorbox = createColorboxTheme(darkBody, darkFieldLane);
 
+const darkCombobox = createComboboxTheme(darkBody, darkFieldLane);
+
 const darkDialog = createDialogTheme(darkBody, {
   borderColor: "#303030",
   boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
@@ -1808,6 +1882,8 @@ const darkSearchbox = createSearchboxTheme(darkBody, {
   clearIconColor: "#a1a1aa",
 });
 
+const darkSelectbox = createSelectboxTheme(darkBody, darkFieldLane);
+
 const darkSeparator = createSeparatorTheme(darkBody, {
   containerColor: "#d1d5db",
   lineColor: "#e5e7eb",
@@ -1952,6 +2028,7 @@ const darkTheme: AppTheme = {
   choiceGroup: darkChoiceGroup,
   checkbox: darkCheckbox,
   colorbox: darkColorbox,
+  combobox: darkCombobox,
   dialog: darkDialog,
   documentViewer: darkDocumentViewer,
   dormantText: darkDormantText,
@@ -1970,6 +2047,7 @@ const darkTheme: AppTheme = {
   paperDialog: darkPaperDialog,
   radio: darkRadio,
   searchbox: darkSearchbox,
+  selectbox: darkSelectbox,
   separator: darkSeparator,
   sidebar: darkSidebar,
   signbox: darkSignbox,
