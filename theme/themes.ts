@@ -1039,7 +1039,7 @@ export function createTimeboxTheme(
     borderColor: fieldLane?.borderColor || "#d1d5db",
     textColor: body.textColor || "#111827",
 
-    focusedBorderColor: fieldLane?.placeholderColor,
+    focusedBorderColor: fieldLane?.focusedBorderColor,
 
     errorBorderColor: fieldLane?.errorBorderColor,
     errorTextColor: fieldLane?.errorColor,
@@ -1479,7 +1479,7 @@ const darkFieldLane = createFieldLaneTheme(darkBody, {
   actionHoverColor: "#616161",
 
   placeholderColor: "#9ca3af",
-  focusedBorderColor: "#3b82f6",
+  focusedBorderColor: "rgb(105, 85, 193)",
   highlightBackgroundColor: "#0f215d33",
   selectedBackgroundColor: "rgb(105, 85, 193)",
 
