@@ -178,6 +178,23 @@ export interface CheckboxThemeConfiguration {
   highlightHoverColor?: string;
 }
 
+// combobox.tsx
+export interface ComboboxThemeConfiguration {
+  backgroundColor?: string;
+  borderColor?: string;
+  textColor?: string;
+
+  highlightBackgroundColor?: string;
+  selectedBackgroundColor?: string;
+  selectedTextColor?: string;
+
+  disabledTextColor?: string;
+  emptyTextColor?: string;
+
+  dividerColor?: string;
+  boxShadow?: string;
+}
+
 // colorbox.tsx
 export interface ColorboxThemeConfiguration {
   backgroundColor?: string;
@@ -257,6 +274,7 @@ export interface FieldLaneThemeConfiguration {
   textColor: string;
 
   borderColor: string;
+  highlightBackgroundColor: string;
 
   placeholderColor?: string;
   focusedBorderColor?: string;
@@ -273,7 +291,10 @@ export interface FieldLaneThemeConfiguration {
   errorBorderColor?: string;
   errorForeground: string;
 
+  selectedBackgroundColor: string;
+
   helperColor: string;
+  dividerColor: string;
 }
 
 // grid.tsx
@@ -389,12 +410,48 @@ export interface SearchboxThemeConfiguration {
   clearIconColor?: string;
 }
 
+// selectbox.tsx
+export interface SelectboxThemeConfiguration {
+  backgroundColor: string;
+  textColor: string;
+
+  borderColor: string;
+  hoverBorderColor: string;
+  focusedBorderColor: string;
+
+  errorBorderColor: string;
+
+  placeholderColor: string;
+
+  iconColor: string;
+  iconActiveColor: string;
+
+  clearIconColor: string;
+  clearIconBackground: string;
+  clearIconHoverBackground: string;
+
+  dividerColor: string;
+  disabledOpacity: number;
+}
+
 // separator.tsx
 export interface SeparatorThemeConfiguration {
   containerColor?: string;
   lineColor?: string;
   titleColor?: string;
   backgroundTitleColor?: string;
+}
+
+// signbox.tsx
+export interface SignboxThemeConfiguration {
+  backgroundColor?: string;
+  borderColor?: string;
+  textColor?: string;
+
+  errorBorderColor?: string;
+
+  clearIconColor?: string;
+  clearIconHoverBackground?: string;
 }
 
 // sidebar.tsx
@@ -546,18 +603,6 @@ export interface TreeListThemeConfiguration extends BodyThemeConfiguration {
   dividerHierarchyRelatedColor?: string;
 }
 
-// signbox.tsx
-export interface SignboxThemeConfiguration {
-  backgroundColor?: string;
-  borderColor?: string;
-  textColor?: string;
-
-  errorBorderColor?: string;
-
-  clearIconColor?: string;
-  clearIconHoverBackground?: string;
-}
-
 // window.tsx
 export interface WindowThemeConfiguration extends BodyThemeConfiguration {
   dividerColor?: string;
@@ -583,6 +628,7 @@ export interface AppTheme {
   choiceGroup: ChoiceGroupThemeConfiguration;
   checkbox: CheckboxThemeConfiguration;
   colorbox: ColorboxThemeConfiguration;
+  combobox: ComboboxThemeConfiguration;
   dialog: DialogThemeConfiguration;
   documentViewer: DocumentViewerThemeConfiguration;
   dormantText: DormantTextThemeConfiguration;
@@ -601,6 +647,7 @@ export interface AppTheme {
   paperDialog: PaperDialogThemeConfiguration;
   radio: RadioThemeConfiguration;
   searchbox: SearchboxThemeConfiguration;
+  selectbox: SelectboxThemeConfiguration;
   separator: SeparatorThemeConfiguration;
   sidebar: SidebarThemeConfiguration;
   signbox: SignboxThemeConfiguration;
