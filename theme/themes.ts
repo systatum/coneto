@@ -1725,7 +1725,7 @@ const darkCalendar = createCalendarTheme(darkBody, darkFieldLane, {
   weekendDateColor: "#fca5a5",
 
   rangeDateColor: "rgb(124, 101, 207)",
-  hightlightDateColor: "rgb(79, 61, 142)",
+  hightlightDateColor: darkButton?.primary?.hoverBackgroundColor,
   highlightedDateTextColor: "#ffffff",
 
   boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.25)",

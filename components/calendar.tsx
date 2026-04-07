@@ -1048,6 +1048,7 @@ const GridDate = styled.div`
   padding-bottom: 8px;
   width: 100%;
   overflow: hidden;
+  text-align: center;
 `;
 
 const DateCellWrapper = styled.li<{
@@ -1091,6 +1092,7 @@ export const DateCell = styled.span<{
   align-items: center;
   justify-content: center;
   user-select: none;
+  text-align: center;
 
   ${({ $isDisabled, $isWeekend, $isPickingProcess, $theme }) =>
     ($isDisabled && $isWeekend) || ($isDisabled && $isPickingProcess)
@@ -1258,7 +1260,7 @@ const DataCellRange = styled.span<{
     $isRangeEnd &&
     css`
       width: ${!$isPickingProcess && $isSameDate ? "0px" : "25px"};
-      transform: translateX(-2%) translateY(-50%);
+      transform: translateX(-10%) translateY(-50%);
     `};
 `;
 
