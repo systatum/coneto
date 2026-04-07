@@ -23,6 +23,8 @@ import { List, ListItemStylesProps } from "./list";
 import { FieldLaneProps } from "./field-lane";
 import { Figure, FigureProps } from "./figure";
 import { StatefulForm } from "./stateful-form";
+import { useTheme } from "./../theme/provider";
+import { ComboboxThemeConfiguration } from "./../theme";
 
 interface BaseComboboxProps {
   selectedOptions?: SelectboxSelectedOptions;
@@ -138,6 +140,8 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
     },
     ref
   ) => {
+    useTheme;
+
     const inputId = StatefulForm.sanitizeId({
       prefix: "combobox",
       name,
@@ -194,20 +198,12 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
           containerStyle: styles?.containerStyle,
           labelStyle: styles?.labelStyle,
           self: css`
-            border-color: #d1d5db;
-            &:focus {
-              border-color: ${showError ? "#f87171" : "#61a9f9"};
-            }
             ${dropdowns &&
             css`
               border-top-left-radius: 0px;
               border-bottom-left-radius: 0px;
             `}
             ${styles?.selectboxStyle}
-              ${showError &&
-            css`
-              border-color: #f87171;
-            `}
           `,
         }}
         id={inputId}
@@ -312,6 +308,9 @@ function ComboboxDrawer({
   openedCategoryGroup,
   setOpenedCategoryGroup,
 }: ComboboxDrawerProps) {
+  const { currentTheme } = useTheme();
+  const comboboxTheme = currentTheme?.combobox;
+
   const [hasScrolled, setHasScrolled] = useState(false);
 
   const floatingRef = useRef<HTMLUListElement>(null);
@@ -465,6 +464,7 @@ function ComboboxDrawer({
             interactionMode,
             isSelected,
             multiple,
+            theme: comboboxTheme,
           }),
           containerStyle: listItemContainerStyle,
           leftSideStyle: [
@@ -533,6 +533,7 @@ function ComboboxDrawer({
         }
         floatingRef.current = node;
       }}
+      $theme={comboboxTheme}
       id="combo-list"
       aria-label={`combobox-drawer-${name}`}
       role="listbox"
@@ -558,7 +559,7 @@ function ComboboxDrawer({
               containerStyle: css`
                 position: sticky;
                 top: 0;
-                background-color: white;
+                background-color: ${comboboxTheme?.backgroundColor};
                 z-index: 30;
                 height: 38px;
               `,
@@ -613,6 +614,7 @@ function ComboboxDrawer({
                         ${listItemRowStyle({
                           shouldHighlight,
                           interactionMode,
+                          theme: comboboxTheme,
                         })}
                         ${action?.styles?.rowStyle}
                       `,
@@ -632,13 +634,20 @@ function ComboboxDrawer({
                       </>
                     }
                     onMouseEnter={() => setHighlightedIndex(index)}
-                    onClick={() => {
+                    onMouseDown={(e) => {
+                      e.preventDefault();
                       action.onClick?.();
                       setIsOpen(false);
                     }}
                   />
 
-                  {isLast && <Divider aria-label="divider" aria-hidden />}
+                  {isLast && (
+                    <Divider
+                      $theme={comboboxTheme}
+                      aria-label="divider"
+                      aria-hidden
+                    />
+                  )}
                 </Fragment>
               );
             })}
@@ -677,7 +686,7 @@ function ComboboxDrawer({
               }
             })
           ) : (
-            <EmptyState>{emptySlate}</EmptyState>
+            <EmptyState $theme={comboboxTheme}>{emptySlate}</EmptyState>
           )}
         </List>
       )}
@@ -704,6 +713,10 @@ const listItemTitleStyle = css`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  color: inherit;
+  &:hover {
+    color: inherit;
+  }
 `;
 
 const listItemRowStyle = ({
@@ -711,33 +724,46 @@ const listItemRowStyle = ({
   interactionMode,
   isSelected,
   multiple,
+  theme,
 }: {
   shouldHighlight?: boolean;
   interactionMode?: "mouse" | "keyboard";
   isSelected?: boolean;
   multiple?: boolean;
+  theme?: ComboboxThemeConfiguration;
 }) => css`
   border-radius: 0px;
   padding: 0.5rem 0.75rem;
   transition: background-color 0ms;
+  background-color: ${theme.backgroundColor};
+  color: ${theme.textColor};
 
   ${interactionMode !== "mouse" &&
   css`
-    background-color: white;
+    background-color: ${theme.backgroundColor};
+    &:hover {
+      background-color: ${theme.backgroundColor};
+    }
   `}
 
   ${shouldHighlight &&
   css`
-    background-color: #dbeafe;
-  `}
+    background-color: ${theme.highlightBackgroundColor};
+    &:hover {
+      background-color: ${theme.highlightBackgroundColor};
+    }
+  `};
 
   ${isSelected &&
   !multiple &&
   css`
-    background-color: #61a9f9;
     font-weight: 600;
-    color: white;
-  `}
+    background-color: ${theme.selectedBackgroundColor};
+    color: ${theme.selectedTextColor};
+    &:hover {
+      color: ${theme.textColor};
+    }
+  `};
 `;
 
 const listItemLeftSideWithRender = css`
@@ -749,31 +775,32 @@ const listItemTitleWithRender = css`
   transform: translateY(-4px);
 `;
 
-const DrawerWrapper = styled.ul<{ $width?: number }>`
+const DrawerWrapper = styled.ul<{
+  $width?: number;
+  $theme: ComboboxThemeConfiguration;
+}>`
   position: absolute;
   z-index: 9992999;
   max-height: 15rem;
   overflow-y: auto;
   border-radius: 4px;
-  border: 1px solid #f3f4f6;
-  background-color: white;
-  box-shadow:
-    0 10px 15px -3px rgba(0, 0, 0, 0.1),
-    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  border: 1px solid ${({ $theme }) => $theme?.borderColor};
+  background-color: ${({ $theme }) => $theme?.backgroundColor};
+  box-shadow: ${({ $theme }) => $theme?.boxShadow};
   width: ${({ $width }) => ($width ? `${$width}px` : "100%")};
 `;
 
-const Divider = styled.div`
+const Divider = styled.div<{ $theme: ComboboxThemeConfiguration }>`
   width: 100%;
   height: 1px;
-  border-bottom: 1px solid #d1d5db;
+  border-bottom: 1px solid ${({ $theme }) => $theme.dividerColor};
   margin: 2px 0;
 `;
 
-const EmptyState = styled.li`
+const EmptyState = styled.li<{ $theme: ComboboxThemeConfiguration }>`
   padding: 0.5rem;
   text-align: center;
-  color: #6b7280;
+  color: ${({ $theme }) => $theme.emptyTextColor};
 `;
 
 function isGroupedOption(
