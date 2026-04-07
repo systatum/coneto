@@ -15,6 +15,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { forwardRef, ReactNode } from "react";
 import { FieldLaneProps } from "./field-lane";
 import { StatefulForm } from "./stateful-form";
+import { useTheme } from "./../theme/provider";
 
 type BaseDateboxProps = BaseCalendarProps & {
   name?: string;
@@ -103,10 +104,6 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
       styles={{
         ...styles,
         self: css`
-          border: 1px solid #d1d5db;
-          &:focus {
-            border-color: ${showError ? "#f87171" : "#61a9f9"};
-          }
           ${dropdowns &&
           css`
             border-top-left-radius: 0px;
@@ -114,10 +111,6 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
           `}
 
           ${styles?.selectboxStyle}
-          ${showError &&
-          css`
-            border-color: #f87171;
-          `}
         `,
       }}
       placeholder={placeholder}
@@ -149,13 +142,17 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
 });
 
 function CalendarDrawer(props: CalendarDrawerProps) {
+  const { currentTheme } = useTheme();
+  const calendarTheme = currentTheme?.calendar;
+
   return (
     <CalendarWrapper
       {...(props.getFloatingProps?.() ?? {})}
       ref={props.refs?.setFloating ?? null}
       style={{
         ...(props.floatingStyles ?? {}),
-        borderColor: props.showError ? "#dc2626" : "",
+        backgroundColor: calendarTheme?.backgroundColor,
+        borderColor: props.showError ? "#dc2626" : calendarTheme?.borderColor,
       }}
       tabIndex={-1}
       role="listbox"
