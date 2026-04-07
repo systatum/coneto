@@ -14,6 +14,8 @@ import {
 } from "react";
 import styled, { CSSProp } from "styled-components";
 import { Figure, FigureProps } from "./figure";
+import { useTheme } from "./../theme/provider";
+import { DormantTextThemeConfiguration } from "./../theme";
 
 export interface DormantTextProps {
   onActionClick?: () => void;
@@ -59,6 +61,9 @@ function DormantText({
   onCancelRequested,
   dormantedMaxWidth,
 }: DormantTextProps) {
+  const { currentTheme } = useTheme();
+  const dormantTextTheme = currentTheme.dormantText;
+
   const { accept, cancel } = icons ?? {};
 
   const [dormantedLocal, setDormantedLocal] = useState(true);
@@ -132,6 +137,7 @@ function DormantText({
 
   return dormantedLocal ? (
     <DormantLabel
+      $theme={dormantTextTheme}
       aria-label="dormant-wrapper"
       ref={measureLabelSize}
       onClick={() => {
@@ -146,7 +152,9 @@ function DormantText({
       $fontSize={dormantedFontSize}
       $style={styles?.dormantedStyle}
     >
-      <DormantLabelText aria-label="dormant-label">{content}</DormantLabelText>
+      <DormantLabelText $theme={dormantTextTheme} aria-label="dormant-label">
+        {content}
+      </DormantLabelText>
       <PencilIcon
         className="pencil-icon"
         style={{
@@ -168,6 +176,7 @@ function DormantText({
       </LabelWrapper>
 
       <ActionButton
+        $theme={dormantTextTheme}
         $style={styles?.actionStyle}
         $minHeight={32.5 | inputHeight}
         onClick={(e) => {
@@ -188,6 +197,7 @@ function DormantText({
 
       {cancelable && (
         <ActionButton
+          $theme={dormantTextTheme}
           $style={styles?.actionStyle}
           $minHeight={32.5 | inputHeight}
           onClick={(e) => {
@@ -215,6 +225,7 @@ const DormantLabel = styled.label<{
   $fontSize?: string | number;
   $style?: CSSProp;
   $dormantedMaxWidth?: string;
+  $theme?: DormantTextThemeConfiguration;
 }>`
   display: flex;
   flex-direction: row;
@@ -231,17 +242,17 @@ const DormantLabel = styled.label<{
   padding: 0.5rem;
   border-radius: 2px;
   cursor: text;
-  border: 1px solid transparent;
   transition: all 0.1s ease;
   transform: translateZ(0);
+  border: 1px solid transparent;
 
   ${({ $fontSize }) =>
     $fontSize &&
     `font-size: ${typeof $fontSize === "number" ? `${$fontSize}px` : $fontSize};`}
 
   &:hover {
-    background-color: #e9e9e9;
-    border-color: #e9e9e9;
+    background-color: ${({ $theme }) => $theme?.hoverBackgroundColor};
+    border-color: ${({ $theme }) => $theme?.borderColor};
 
     .pencil-icon {
       opacity: 1;
@@ -251,12 +262,15 @@ const DormantLabel = styled.label<{
   ${({ $style }) => $style}
 `;
 
-const DormantLabelText = styled.span`
+const DormantLabelText = styled.span<{
+  $theme?: DormantTextThemeConfiguration;
+}>`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   min-width: 0;
   flex: 1;
+  color: ${({ $theme }) => $theme?.textColor};
 `;
 
 const PencilIcon = styled(RiPencilFill)`
@@ -279,6 +293,7 @@ const DormantWrapper = styled.div<{
   gap: 2px;
   min-height: ${({ $minHeight }) =>
     typeof $minHeight === "number" ? `${$minHeight}px` : $minHeight};
+
   ${({ $style }) => $style}
 `;
 
@@ -294,6 +309,7 @@ const LabelWrapper = styled.div<{ $maxWidth?: number | string }>`
 const ActionButton = styled.button<{
   $style?: CSSProp;
   $minHeight?: number | string;
+  $theme?: DormantTextThemeConfiguration;
 }>`
   display: flex;
   min-width: 30px;
@@ -302,13 +318,13 @@ const ActionButton = styled.button<{
   border-radius: 2px;
   transition: all 0.2s ease;
   cursor: pointer;
-  color: var(--muted-foreground, #666);
+  color: ${({ $theme }) => $theme?.actionButtonColor};
 
   height: ${({ $minHeight }) =>
     typeof $minHeight === "number" ? `${$minHeight}px` : $minHeight};
 
   &:hover {
-    background-color: #d1d5db;
+    background-color: ${({ $theme }) => $theme?.actionButtonHoverBackground};
   }
 
   ${({ $style }) => $style}
