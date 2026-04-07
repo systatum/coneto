@@ -180,12 +180,56 @@ export interface DocumentViewerThemeConfiguration {
   hoverBoxBackgroundColor?: string;
 }
 
+// dormant-text.tsx
+export interface DormantTextThemeConfiguration {
+  backgroundColor?: string;
+  hoverBackgroundColor?: string;
+  borderColor?: string;
+  textColor?: string;
+  pencilColor?: string;
+  actionButtonColor?: string;
+  actionButtonHoverBackground?: string;
+}
+
+// drawer-tab.tsx
+export interface DrawerTabThemeConfiguration {
+  backgroundColor?: string;
+  borderColor?: string;
+  hoverBackgroundColor?: string;
+  headerBackgroundColor?: string;
+  textColor?: string;
+  closeButtonHoverBackground?: string;
+  dividerColor?: string;
+}
+
 // error-slate.tsx
 export interface ErrorSlateThemeConfiguration {
   cubeFaceBackground?: string;
   cubeFaceBorder?: string;
   cubeFaceText?: string;
   titleColor?: string;
+}
+
+// field-lane.tsx
+export interface FieldLaneThemeConfiguration {
+  buttonTextColor: string;
+  buttonBorderColor: string;
+  buttonErrorTextColor: string;
+  buttonErrorBorderColor: string;
+
+  labelColor: string;
+  labelDisabledColor: string;
+
+  disabledOpacity: number;
+
+  actionColor: string;
+  actionHoverColor: string;
+
+  errorColor: string;
+  errorBackground: string;
+  errorForeground: string;
+
+  helperColor: string;
 }
 
 // grid.tsx
@@ -447,7 +491,10 @@ export interface AppTheme {
   checkbox: CheckboxThemeConfiguration;
   dialog: DialogThemeConfiguration;
   documentViewer: DocumentViewerThemeConfiguration;
+  dormantText: DormantTextThemeConfiguration;
+  drawerTab: DrawerTabThemeConfiguration;
   errorSlate: ErrorSlateThemeConfiguration;
+  fieldLane: FieldLaneThemeConfiguration;
   grid: GridThemeConfiguration;
   keynote: KeynoteThemeConfiguration;
   list: ListThemeConfiguration;
