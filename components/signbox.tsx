@@ -5,6 +5,7 @@ import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { SignboxThemeConfiguration } from "./../theme";
+import { Button } from "./button";
 
 interface BaseSignboxProps {
   name?: string;
@@ -246,11 +247,28 @@ function BaseSignbox({
         onTouchEnd={stopDrawing}
       />
       {clearable && (
-        <SignatureClearable
-          $theme={signboxTheme}
+        <Button
+          styles={{
+            containerStyle: css`
+              position: absolute;
+              top: 5px;
+              right: 5px;
+            `,
+            self: css`
+              height: 22px;
+              width: 22px;
+              cursor: pointer;
+              padding: 2px;
+              border-radius: 2px;
+            `,
+          }}
           aria-label="signbox-clearable"
           onClick={(e) => clearCanvas(e)}
-          size={18}
+          variant="transparent"
+          icon={{
+            image: RiEraserLine,
+            size: 16,
+          }}
         />
       )}
     </SignatureWrapper>
@@ -367,14 +385,6 @@ const SignatureWrapper = styled.div<{
         ? $theme.errorBorderColor || "#f87171"
         : $theme.borderColor || "#d1d5db"};
 
-  &:focus-within {
-    border-color: ${({ $theme, $error }) =>
-      !$error && ($theme.focusedBorderColor || "#61A9F9")};
-    box-shadow: 0 0 0 0.5px
-      ${({ $theme, $error }) =>
-        !$error && ($theme.focusedBorderColor || "#61A9F9")};
-  }
-
   border-radius: 2px;
   cursor: ${({ $cursor }) => $cursor};
 
@@ -394,36 +404,6 @@ const SignatureCanvas = styled.canvas`
   position: relative;
   width: 100%;
   height: 100%;
-`;
-
-const SignatureClearable = styled(RiEraserLine)<{
-  $theme: SignboxThemeConfiguration;
-}>`
-  position: absolute;
-  font-size: 12px;
-  top: 5px;
-  right: 5px;
-  cursor: pointer;
-  padding: 2px;
-  border-radius: 2px;
-
-  color: ${({ $theme }) => $theme.clearIconColor || "#6b7280"};
-
-  &:hover {
-    background-color: ${({ $theme }) =>
-      $theme.clearIconHoverBackground || "#e5e5e5"};
-  }
-
-  &:active {
-    background-color: ${({ $theme }) =>
-      $theme.clearIconHoverBackground || "#cfcfcf"};
-  }
-
-  &:focus-visible {
-    outline: none;
-    box-shadow: inset 0 0 0 2px #00000033;
-    transition: box-shadow 0.2s ease;
-  }
 `;
 
 export { Signbox };
