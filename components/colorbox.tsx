@@ -9,6 +9,8 @@ import {
 import styled, { css, CSSProp } from "styled-components";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 import { StatefulForm } from "./stateful-form";
+import { ColorboxThemeConfiguration } from "theme";
+import { useTheme } from "./../theme/provider";
 
 interface BaseColorboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "style"> {
@@ -39,6 +41,9 @@ const BaseColorbox = forwardRef<HTMLInputElement, BaseColorboxProps>(
     },
     ref
   ) => {
+    const { currentTheme } = useTheme();
+    const colorboxTheme = currentTheme?.colorbox;
+
     const [hovered, setHovered] = useState(false);
 
     const debounceTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -67,6 +72,7 @@ const BaseColorbox = forwardRef<HTMLInputElement, BaseColorboxProps>(
 
     return (
       <ColorInputContainer
+        $theme={colorboxTheme}
         $disabled={disabled}
         $style={styles?.self}
         $hovered={hovered}
@@ -76,6 +82,7 @@ const BaseColorbox = forwardRef<HTMLInputElement, BaseColorboxProps>(
         }}
       >
         <ColorBox
+          $theme={colorboxTheme}
           $disabled={disabled}
           onClick={() => {
             setHovered(true);
@@ -99,11 +106,15 @@ const BaseColorbox = forwardRef<HTMLInputElement, BaseColorboxProps>(
         <TextInputGroup
           $disabled={disabled}
           $hovered={hovered}
+          $theme={colorboxTheme}
           $showError={!!showError}
         >
-          <Prefix $showError={!!showError}>#</Prefix>
+          <Prefix $theme={colorboxTheme} $showError={!!showError}>
+            #
+          </Prefix>
           <TextInput
             {...props}
+            $theme={colorboxTheme}
             $disabled={disabled}
             type="text"
             ref={ref}
@@ -212,6 +223,7 @@ const ColorInputContainer = styled.div<{
   $showError: boolean;
   $style?: CSSProp;
   $disabled?: boolean;
+  $theme: ColorboxThemeConfiguration;
 }>`
   position: relative;
   display: flex;
@@ -222,14 +234,14 @@ const ColorInputContainer = styled.div<{
   height: 34px;
 
   border: 1px solid
-    ${({ $showError, $hovered, $disabled }) =>
+    ${({ $theme, $showError, $hovered, $disabled }) =>
       $disabled
-        ? "#d1d5db"
+        ? $theme.disabledBorderColor
         : $showError
-          ? "#f87171"
+          ? $theme.errorBorderColor
           : $hovered
-            ? "#61A9F9"
-            : "#d1d5db"};
+            ? $theme.focusedBorderColor
+            : $theme.borderColor};
 
   ${({ $disabled }) =>
     $disabled &&
@@ -245,14 +257,19 @@ const ColorBox = styled.div<{
   $bgColor?: string;
   $showError?: boolean;
   $disabled?: boolean;
+  $theme: ColorboxThemeConfiguration;
 }>`
   min-width: 24px;
   min-height: 24px;
   margin: 4px;
   border-radius: 2px;
   border: 1px solid
-    ${({ $showError, $disabled }) =>
-      $disabled ? "#d1d5db" : $showError ? "#f87171" : "#d1d5db"};
+    ${({ $theme, $showError, $disabled }) =>
+      $disabled
+        ? $theme.disabledBorderColor
+        : $showError
+          ? $theme.errorBorderColor
+          : $theme.borderColor};
   background-color: ${({ $bgColor }) => ($bgColor ? $bgColor : "#ffffff")};
   overflow: hidden;
   cursor: pointer;
@@ -278,6 +295,7 @@ const TextInputGroup = styled.span<{
   $hovered: boolean;
   $showError: boolean;
   $disabled?: boolean;
+  $theme: ColorboxThemeConfiguration;
 }>`
   display: flex;
   align-items: center;
@@ -286,24 +304,32 @@ const TextInputGroup = styled.span<{
   height: 100%;
   min-height: 34px;
 
-  border-left: 1px solid
-    ${({ $showError, $hovered, $disabled }) =>
+  border: 1px solid
+    ${({ $theme, $showError, $hovered, $disabled }) =>
       $disabled
-        ? "#d1d5db"
+        ? $theme.disabledBorderColor
         : $showError
-          ? "#f87171"
+          ? $theme.errorBorderColor
           : $hovered
-            ? "#61A9F9"
-            : "#d1d5db"};
+            ? $theme.focusedBorderColor
+            : $theme.borderColor};
 
   width: 100%;
 `;
 
-const Prefix = styled.span<{ $showError: boolean }>`
-  color: ${({ $showError }) => ($showError ? "#f87171" : "#6b7280")};
+const Prefix = styled.span<{
+  $showError: boolean;
+  $theme: ColorboxThemeConfiguration;
+}>`
+  color: ${({ $theme, $showError }) =>
+    $showError ? $theme.errorTextColor : $theme.prefixColor};
 `;
 
-const TextInput = styled.input<{ $showError: boolean; $disabled?: boolean }>`
+const TextInput = styled.input<{
+  $showError: boolean;
+  $disabled?: boolean;
+  $theme: ColorboxThemeConfiguration;
+}>`
   flex: 1;
   width: 100%;
   overflow: scroll;
@@ -319,8 +345,12 @@ const TextInput = styled.input<{ $showError: boolean; $disabled?: boolean }>`
       cursor: not-allowed;
     `};
 
-  color: ${({ $disabled, $showError }) =>
-    $disabled ? "#d1d5db" : $showError ? "#f87171" : "#1f2937"};
+  color: ${({ $theme, $disabled, $showError }) =>
+    $disabled
+      ? $theme.disabledTextColor
+      : $showError
+        ? $theme.errorTextColor
+        : $theme.textColor};
 `;
 
 export { Colorbox };
