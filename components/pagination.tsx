@@ -154,10 +154,7 @@ const PaginationItem = ({
             styles={{
               selectboxStyle: css`
                 height: 39px;
-                &:hover {
-                  border-color: #61a9f9;
-                }
-                border-color: ${highlightOnMatch ? "#61a9f9" : "#f3f4f6"};
+
                 ${styles?.selectboxStyle};
               `,
               containerStyle: css`
