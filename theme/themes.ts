@@ -1106,8 +1106,6 @@ export function createSignboxTheme(
     borderColor: fieldLane?.borderColor || "#d1d5db",
     textColor: body.textColor || "#111827",
 
-    focusedBorderColor: fieldLane?.focusedBorderColor || "#61A9F9",
-
     errorBorderColor: fieldLane?.errorBorderColor || "#f87171",
 
     clearIconColor: fieldLane?.actionColor || "#6b7280",
@@ -1409,7 +1407,7 @@ const darkFieldLane = createFieldLaneTheme(darkBody, {
   borderColor: "#4b5563",
 
   actionColor: "#cbd5e1",
-  actionHoverColor: "#ffffff",
+  actionHoverColor: "#616161",
 
   placeholderColor: "#9ca3af",
   focusedBorderColor: "#3b82f6",

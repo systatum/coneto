@@ -552,8 +552,6 @@ export interface SignboxThemeConfiguration {
   borderColor?: string;
   textColor?: string;
 
-  focusedBorderColor?: string;
-
   errorBorderColor?: string;
 
   clearIconColor?: string;
