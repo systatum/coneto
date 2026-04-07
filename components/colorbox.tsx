@@ -233,6 +233,8 @@ const ColorInputContainer = styled.div<{
   width: 100%;
   height: 34px;
 
+  background-color: ${({ $theme }) => $theme?.backgroundColor};
+
   border: 1px solid
     ${({ $theme, $showError, $hovered, $disabled }) =>
       $disabled
@@ -303,6 +305,8 @@ const TextInputGroup = styled.span<{
   padding: 0px 12px;
   height: 100%;
   min-height: 34px;
+
+  background-color: ${({ $theme }) => $theme?.backgroundColor};
 
   border: 1px solid
     ${({ $theme, $showError, $hovered, $disabled }) =>
