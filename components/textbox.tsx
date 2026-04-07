@@ -15,6 +15,8 @@ import {
   FieldLaneStylesProps,
 } from "./field-lane";
 import { StatefulForm } from "./stateful-form";
+import { useTheme } from "./../theme/provider";
+import { TextboxThemeConfiguration } from "./../theme";
 
 interface BaseTextboxProps
   extends Omit<
@@ -34,6 +36,9 @@ export type TextareaActions = FieldLaneActionsProps;
 
 const BaseTextbox = forwardRef<HTMLInputElement, BaseTextboxProps>(
   ({ showError, onChange, styles, type = "text", id, ...props }, ref) => {
+    const { currentTheme } = useTheme();
+    const textboxTheme = currentTheme?.textbox;
+
     const [showPassword, setShowPassword] = useState<boolean>(false);
 
     useEffect(() => {
@@ -47,6 +52,7 @@ const BaseTextbox = forwardRef<HTMLInputElement, BaseTextboxProps>(
         <Input
           id={id}
           ref={ref}
+          $theme={textboxTheme}
           onChange={onChange}
           type={type === "password" && showPassword ? "text" : type}
           $error={showError}
@@ -79,9 +85,14 @@ const BaseTextbox = forwardRef<HTMLInputElement, BaseTextboxProps>(
                 background: transparent;
                 z-index: 10;
                 height: 25px;
-                color: ${showError ? "#f87171" : "#6b7280"};
+                color: ${showError
+                  ? textboxTheme?.errorTextColor || "#f87171"
+                  : textboxTheme?.placeholderColor || "#6b7280"};
+
                 &:hover {
-                  color: ${showError ? "#ef4444" : "#374151"};
+                  color: ${showError
+                    ? textboxTheme?.errorBorderColor || "#ef4444"
+                    : textboxTheme?.textColor || "#374151"};
                 }
               `,
             }}
@@ -177,6 +188,7 @@ const Input = styled.input<{
   $error?: boolean;
   $style?: CSSProp;
   $disabled?: boolean;
+  $theme: TextboxThemeConfiguration;
 }>`
   border-radius: 2px;
   font-size: 0.75rem;
@@ -186,20 +198,39 @@ const Input = styled.input<{
   z-index: 10;
   min-height: 34px;
 
-  border: 1px solid ${({ $error }) => ($error ? "#f87171" : "#d1d5db")};
-  ${({ $error }) =>
+  background-color: ${({ $theme }) => $theme?.backgroundColor || "#ffffff"};
+
+  border: 1px solid
+    ${({ $theme, $error, $disabled }) =>
+      $disabled
+        ? $theme?.disabledBorderColor || "#d1d5db"
+        : $error
+          ? $theme?.errorBorderColor || "#f87171"
+          : $theme?.borderColor || "#d1d5db"};
+
+  color: ${({ $theme, $error, $disabled }) =>
+    $disabled
+      ? $theme?.disabledTextColor || "#9ca3af"
+      : $error
+        ? $theme?.errorTextColor || "#991b1b"
+        : $theme?.textColor || "#1f2937"};
+
+  &::placeholder {
+    color: ${({ $theme }) => $theme?.placeholderColor || "#9ca3af"};
+  }
+
+  ${({ $theme, $error }) =>
     $error
       ? css`
-          color: #991b1b;
           &:focus {
-            border-color: #f87171;
-            box-shadow: 0 0 0 0.5px #f87171;
+            border-color: ${$theme?.errorBorderColor || "#f87171"};
+            box-shadow: 0 0 0 0.5px ${$theme?.errorBorderColor || "#f87171"};
           }
         `
       : css`
           &:focus {
-            border-color: #61a9f9;
-            box-shadow: 0 0 0 0.5px #61a9f9;
+            border-color: ${$theme?.focusedBorderColor || "#61a9f9"};
+            box-shadow: 0 0 0 0.5px ${$theme?.focusedBorderColor || "#61a9f9"};
           }
         `}
 
@@ -210,6 +241,13 @@ const Input = styled.input<{
       user-select: none;
       pointer-events: none;
     `};
+
+  &:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px
+      ${({ $theme }) => $theme?.backgroundColor} inset;
+    -webkit-text-fill-color: ${({ $theme }) => $theme?.textColor};
+    transition: background-color 5000s ease-in-out 0s;
+  }
 
   ${({ $style }) => $style}
 `;
