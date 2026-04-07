@@ -17,7 +17,10 @@ import {
   ChoiceGroupThemeConfiguration,
   DialogThemeConfiguration,
   DocumentViewerThemeConfiguration,
+  DormantTextThemeConfiguration,
+  DrawerTabThemeConfiguration,
   ErrorSlateThemeConfiguration,
+  FieldLaneThemeConfiguration,
   GridThemeConfiguration,
   KeynoteThemeConfiguration,
   ListThemeConfiguration,
@@ -156,14 +159,12 @@ export function createBoxbarTheme(
   body: BodyThemeConfiguration,
   customTheme: Partial<BoxbarThemeConfiguration> = {}
 ): BoxbarThemeConfiguration {
-  const defaultTextColor = body.textColor;
-
   const defaultTheme: BoxbarThemeConfiguration = {
-    backgroundColor: "#ffffff",
+    backgroundColor: body?.backgroundColor,
+    toggleButtonColor: body?.textColor,
     borderColor: "#d1d5db",
-    toggleButtonColor: defaultTextColor,
-    toggleButtonHoverColor: "#555555",
-    textColor: "#000000",
+    toggleButtonHoverColor: "#f3f4f6",
+    textColor: body?.textColor,
   };
 
   return { ...defaultTheme, ...customTheme };
@@ -385,6 +386,42 @@ export function createDocumentViewerTheme(
   };
 }
 
+// dormant-text.tsx
+export function createDormantTextTheme(
+  body: BodyThemeConfiguration,
+  custom: Partial<DormantTextThemeConfiguration> = {}
+): DormantTextThemeConfiguration {
+  const defaultTheme: DormantTextThemeConfiguration = {
+    backgroundColor: body.backgroundColor,
+    hoverBackgroundColor: "#e9e9e9",
+    borderColor: "transparent",
+    textColor: body.textColor,
+    pencilColor: "#666666",
+    actionButtonColor: "#666666",
+    actionButtonHoverBackground: "#d1d5db",
+  };
+
+  return { ...defaultTheme, ...custom };
+}
+
+// drawer-tab.tsx
+export function createDrawerTabTheme(
+  body: BodyThemeConfiguration,
+  custom: Partial<DrawerTabThemeConfiguration> = {}
+): DrawerTabThemeConfiguration {
+  const defaultTheme: DrawerTabThemeConfiguration = {
+    backgroundColor: body?.backgroundColor,
+    textColor: body?.textColor,
+    borderColor: "#d1d5db",
+    hoverBackgroundColor: "#f3f4f6",
+    headerBackgroundColor: "#f3f4f6",
+    closeButtonHoverBackground: "#d1d5db",
+    dividerColor: "#e5e7eb",
+  };
+
+  return { ...defaultTheme, ...custom };
+}
+
 // error-slate.tsx
 export function createErrorSlateTheme(
   custom: Partial<ErrorSlateThemeConfiguration> = {}
@@ -398,13 +435,40 @@ export function createErrorSlateTheme(
   };
 }
 
+// field-lane.tsx
+export function createFieldLaneTheme(
+  body: BodyThemeConfiguration,
+  custom: Partial<FieldLaneThemeConfiguration> = {}
+): FieldLaneThemeConfiguration {
+  const defaultTheme: FieldLaneThemeConfiguration = {
+    buttonTextColor: body.textColor,
+    buttonBorderColor: "#d1d5db",
+    buttonErrorBorderColor: "#f87171",
+    buttonErrorTextColor: "#dc2626",
+
+    labelColor: body.textColor,
+    labelDisabledColor: "#9ca3af",
+    disabledOpacity: 0.5,
+    actionColor: "#6b7280",
+    actionHoverColor: "#374151",
+
+    errorColor: "#dc2626",
+    errorBackground: "#dc2626",
+    errorForeground: "#ffffff",
+
+    helperColor: "#6b7280",
+  };
+
+  return { ...defaultTheme, ...custom };
+}
+
 // grid.tsx
 export function createGridTheme(
   body: BodyThemeConfiguration,
   customTheme: Partial<GridThemeConfiguration> = {}
 ): GridThemeConfiguration {
   const defaultTheme: GridThemeConfiguration = {
-    cardBackgroundColor: "#ffffff",
+    cardBackgroundColor: body?.backgroundColor,
     cardHoverBackgroundColor: "#f3f3f3",
     cardSelectedBackgroundColor: "#e6f0ff",
     cardBorderColor: "#e5e5e5",
@@ -1024,12 +1088,18 @@ const lightDialog = createDialogTheme(lightBody);
 
 const lightDocumentViewer = createDocumentViewerTheme(lightBody);
 
+const lightDormantText = createDormantTextTheme(lightBody);
+
+const lightDrawerTab = createDrawerTabTheme(lightBody);
+
 const lightErrorSlate = createErrorSlateTheme({
   cubeFaceBackground: "#dd0b0b",
   cubeFaceBorder: "#a80000",
   cubeFaceText: "#ffffff",
   titleColor: "#111111",
 });
+
+const lightFieldLane = createFieldLaneTheme(lightBody);
 
 const lightGrid = createGridTheme(lightBody);
 
@@ -1103,7 +1173,10 @@ const lightTheme: AppTheme = {
   checkbox: lightCheckbox,
   dialog: lightDialog,
   documentViewer: lightDocumentViewer,
+  dormantText: lightDormantText,
+  drawerTab: lightDrawerTab,
   errorSlate: lightErrorSlate,
+  fieldLane: lightFieldLane,
   grid: lightGrid,
   keynote: lightKeynote,
   list: lightList,
@@ -1280,10 +1353,9 @@ const darkBadge = createBadgeTheme(darkBody, {
 });
 
 const darkBoxbar = createBoxbarTheme(darkBody, {
-  backgroundColor: "#111",
   borderColor: "#333333",
   toggleButtonColor: "#f5f5f5",
-  toggleButtonHoverColor: "#ccc",
+  toggleButtonHoverColor: "#222222",
 });
 
 const darkCapsule = createCapsuleTheme(darkBody, {
@@ -1370,11 +1442,44 @@ const darkDocumentViewer = createDocumentViewerTheme(darkBody, {
   hoverBoxBackgroundColor: "rgba(59, 130, 246, 0.15)",
 });
 
+const darkDormantText = createDormantTextTheme(darkBody, {
+  hoverBackgroundColor: "#1a1a1a",
+  borderColor: "#303030",
+  pencilColor: "#ccc",
+  actionButtonColor: "#ccc",
+  actionButtonHoverBackground: "#363636",
+});
+
+const darkDrawerTab = createDrawerTabTheme(darkBody, {
+  borderColor: "#303030",
+  hoverBackgroundColor: "#1f1f1f",
+  headerBackgroundColor: "#1a1a1a",
+  closeButtonHoverBackground: "#363636",
+  dividerColor: "#3f3f46",
+});
+
 const darkErrorSlate = createErrorSlateTheme({
   cubeFaceBackground: "#ff4d4f",
   cubeFaceBorder: "#a8071a",
   cubeFaceText: "#ffffff",
   titleColor: "#ffffff",
+});
+
+const darkFieldLane = createFieldLaneTheme(darkBody, {
+  labelDisabledColor: "#9ca3af",
+
+  buttonTextColor: "#caced4",
+  buttonBorderColor: "#333333",
+  buttonErrorBorderColor: "#f87171",
+  buttonErrorTextColor: "#f87171",
+
+  actionColor: "#9ca3af",
+  actionHoverColor: "#ffffff",
+  helperColor: "#9ca3af",
+
+  errorColor: "#f87171",
+  errorBackground: "#991b1b",
+  errorForeground: "#ffffff",
 });
 
 const darkGrid = createGridTheme(darkBody, {
@@ -1627,7 +1732,10 @@ const darkTheme: AppTheme = {
   checkbox: darkCheckbox,
   dialog: darkDialog,
   documentViewer: darkDocumentViewer,
+  dormantText: darkDormantText,
+  drawerTab: darkDrawerTab,
   errorSlate: darkErrorSlate,
+  fieldLane: darkFieldLane,
   grid: darkGrid,
   keynote: darkKeynote,
   list: darkList,
