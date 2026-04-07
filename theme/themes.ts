@@ -35,6 +35,7 @@ import {
   NavTabThemeConfiguration,
   OverlayBlockerThemeConfiguration,
   PaperDialogThemeConfiguration,
+  PhoneboxThemeConfiguration,
   RadioThemeConfiguration,
   SearchboxThemeConfiguration,
   SelectboxThemeConfiguration,
@@ -782,6 +783,35 @@ export function createPaperDialogTheme(
   };
 }
 
+// phonebox.tsx
+export function createPhoneboxTheme(
+  body: BodyThemeConfiguration,
+  fieldLane: Partial<FieldLaneThemeConfiguration> = {},
+  custom: Partial<PhoneboxThemeConfiguration> = {}
+): PhoneboxThemeConfiguration {
+  const defaultTheme: PhoneboxThemeConfiguration = {
+    backgroundColor: body.backgroundColor || "#ffffff",
+    borderColor: fieldLane?.borderColor || "#d1d5db",
+    focusedBorderColor: fieldLane?.focusedBorderColor || "#61A9F9",
+    textColor: body.textColor || "#1f2937",
+
+    errorBorderColor: fieldLane?.errorBorderColor || "#ef4444",
+    errorTextColor: fieldLane?.errorForeground || "#991b1b",
+
+    disabledBorderColor: fieldLane?.disabledBorderColor || "#d1d5db",
+    disabledTextColor: fieldLane?.disabledTextColor || "#9ca3af",
+
+    boxShadow: "0 0 0 0.5px transparent",
+
+    placeholderColor: fieldLane?.placeholderColor,
+
+    optionHighlightedBackground:
+      fieldLane?.highlightBackgroundColor || "#dbeafe",
+  };
+
+  return { ...defaultTheme, ...custom };
+}
+
 // radio.tsx
 export function createRadioTheme(
   body: BodyThemeConfiguration,
@@ -1398,6 +1428,8 @@ const lightNavTab = createNavTabTheme(lightBody);
 
 const lightPaperDialog = createPaperDialogTheme(lightBody);
 
+const lightPhonebox = createPhoneboxTheme(lightBody, lightFieldLane);
+
 const lightRadio = createRadioTheme(lightBody);
 
 const lightSearchbox = createSearchboxTheme(lightBody);
@@ -1480,6 +1512,7 @@ const lightTheme: AppTheme = {
   navTab: lightNavTab,
   overlayBlocker: lightOverlayBlocker,
   paperDialog: lightPaperDialog,
+  phonebox: lightPhonebox,
   radio: lightRadio,
   searchbox: lightSearchbox,
   selectbox: lightSelectbox,
@@ -1910,6 +1943,8 @@ const darkPaperDialog = createPaperDialogTheme(darkBody, {
   actionHoverBackgroundColor: "#363636",
 });
 
+const darkPhonebox = createPhoneboxTheme(darkBody, darkFieldLane);
+
 const darkRadio = createRadioTheme(darkBody, {
   borderColor: "#374151",
   checkedBorderColor: "#2a3243",
@@ -2100,6 +2135,7 @@ const darkTheme: AppTheme = {
   navTab: darkNavTab,
   overlayBlocker: darkOverlayBlocker,
   paperDialog: darkPaperDialog,
+  phonebox: darkPhonebox,
   radio: darkRadio,
   searchbox: darkSearchbox,
   selectbox: darkSelectbox,

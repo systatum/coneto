@@ -395,6 +395,26 @@ export interface PaperDialogThemeConfiguration {
   actionHoverBackgroundColor?: string;
 }
 
+// phonebox.tsx
+export interface PhoneboxThemeConfiguration {
+  backgroundColor?: string;
+  borderColor?: string;
+  focusedBorderColor?: string;
+  textColor?: string;
+
+  errorBorderColor?: string;
+  errorTextColor?: string;
+
+  disabledBorderColor?: string;
+  disabledTextColor?: string;
+
+  placeholderColor: string;
+
+  boxShadow?: string;
+
+  optionHighlightedBackground?: string;
+}
+
 // radio.tsx
 export interface RadioThemeConfiguration {
   borderColor?: string;
@@ -662,6 +682,7 @@ export interface AppTheme {
   navTab: NavTabThemeConfiguration;
   overlayBlocker: OverlayBlockerThemeConfiguration;
   paperDialog: PaperDialogThemeConfiguration;
+  phonebox: PhoneboxThemeConfiguration;
   radio: RadioThemeConfiguration;
   searchbox: SearchboxThemeConfiguration;
   selectbox: SelectboxThemeConfiguration;
