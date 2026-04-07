@@ -486,6 +486,9 @@ export interface TextboxThemeConfiguration {
   boxShadow?: string;
 }
 
+// textarea.tsx
+export interface TextareaThemeConfiguration extends TextboxThemeConfiguration {}
+
 // thumb-field.tsx
 export interface ThumbFieldThemeConfiguration {
   thumbsUpColor?: string;
@@ -543,6 +546,20 @@ export interface TreeListThemeConfiguration extends BodyThemeConfiguration {
   dividerHierarchyRelatedColor?: string;
 }
 
+// signbox.tsx
+export interface SignboxThemeConfiguration {
+  backgroundColor?: string;
+  borderColor?: string;
+  textColor?: string;
+
+  focusedBorderColor?: string;
+
+  errorBorderColor?: string;
+
+  clearIconColor?: string;
+  clearIconHoverBackground?: string;
+}
+
 // window.tsx
 export interface WindowThemeConfiguration extends BodyThemeConfiguration {
   dividerColor?: string;
@@ -588,8 +605,10 @@ export interface AppTheme {
   searchbox: SearchboxThemeConfiguration;
   separator: SeparatorThemeConfiguration;
   sidebar: SidebarThemeConfiguration;
+  signbox: SignboxThemeConfiguration;
   statusbar: StatusbarThemeConfiguration;
   textbox: TextboxThemeConfiguration;
+  textarea: TextareaThemeConfiguration;
   thumbField: ThumbFieldThemeConfiguration;
   table: TableThemeConfiguration;
   tipmenu: TipMenuThemeConfiguration;

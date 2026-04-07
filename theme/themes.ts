@@ -37,8 +37,10 @@ import {
   SearchboxThemeConfiguration,
   SeparatorThemeConfiguration,
   SidebarThemeConfiguration,
+  SignboxThemeConfiguration,
   StatusbarThemeConfiguration,
   TableThemeConfiguration,
+  TextareaThemeConfiguration,
   TextboxThemeConfiguration,
   ThumbFieldThemeConfiguration,
   TimeboxThemeConfiguration,
@@ -849,6 +851,35 @@ export function createStatusbarTheme(
   };
 }
 
+// textarea.tsx
+export function createTextareaTheme(
+  body: BodyThemeConfiguration,
+  fieldLane: Partial<FieldLaneThemeConfiguration> = {},
+  custom: Partial<TextareaThemeConfiguration> = {}
+): TextareaThemeConfiguration {
+  const defaultTheme: TextareaThemeConfiguration = {
+    backgroundColor: body.backgroundColor || "#ffffff",
+
+    borderColor: fieldLane?.borderColor || "#d1d5db",
+    focusedBorderColor:
+      fieldLane?.focusedBorderColor || fieldLane?.placeholderColor,
+
+    textColor: body.textColor || "#1f2937",
+
+    errorBorderColor: fieldLane?.errorBorderColor || "#ef4444",
+    errorTextColor: fieldLane?.errorForeground || "#991b1b",
+
+    disabledBorderColor: "#d1d5db",
+    disabledTextColor: "#9ca3af",
+
+    placeholderColor: fieldLane?.placeholderColor || "#9ca3af",
+
+    boxShadow: "0 0 0 1px transparent",
+  };
+
+  return { ...defaultTheme, ...custom };
+}
+
 // textbox.tsx
 export function createTextboxTheme(
   body: BodyThemeConfiguration,
@@ -1064,6 +1095,28 @@ export function createTreeListTheme(
   };
 }
 
+// signbox.tsx
+export function createSignboxTheme(
+  body: BodyThemeConfiguration,
+  fieldLane: Partial<FieldLaneThemeConfiguration> = {},
+  custom: Partial<SignboxThemeConfiguration> = {}
+): SignboxThemeConfiguration {
+  const defaultTheme: SignboxThemeConfiguration = {
+    backgroundColor: body.backgroundColor || "#ffffff",
+    borderColor: fieldLane?.borderColor || "#d1d5db",
+    textColor: body.textColor || "#111827",
+
+    focusedBorderColor: fieldLane?.focusedBorderColor || "#61A9F9",
+
+    errorBorderColor: fieldLane?.errorBorderColor || "#f87171",
+
+    clearIconColor: fieldLane?.actionColor || "#6b7280",
+    clearIconHoverBackground: fieldLane?.actionHoverColor || "#e5e7eb",
+  };
+
+  return { ...defaultTheme, ...custom };
+}
+
 // window.tsx
 export function createWindowTheme(
   body: BodyThemeConfiguration,
@@ -1249,11 +1302,15 @@ const lightSearchbox = createSearchboxTheme(lightBody);
 
 const lightSeparator = createSeparatorTheme(lightBody);
 
+const lightSignbox = createSignboxTheme(lightBody, lightFieldLane);
+
 const lightSidebar = createSidebarTheme(lightBody);
 
 const lightStatusbar = createStatusbarTheme();
 
 const lightTable = createTableTheme(lightBody);
+
+const lightTextarea = createTextareaTheme(lightBody, lightFieldLane);
 
 const lightTextbox = createTextboxTheme(lightBody, lightFieldLane);
 
@@ -1319,8 +1376,10 @@ const lightTheme: AppTheme = {
   searchbox: lightSearchbox,
   separator: lightSeparator,
   sidebar: lightSidebar,
+  signbox: lightSignbox,
   statusbar: lightStatusbar,
   table: lightTable,
+  textarea: lightTextarea,
   textbox: lightTextbox,
   timebox: lightTimebox,
   tipmenu: lightTipMenu,
@@ -1758,6 +1817,8 @@ const darkSeparator = createSeparatorTheme(darkBody, {
   backgroundTitleColor: "#1f2023",
 });
 
+const darkSignbox = createSignboxTheme(darkBody, darkFieldLane);
+
 const darkSidebar = createSidebarTheme(darkBody, {
   backgroundColor: darkBody.backgroundColor,
   borderColor: "#303030",
@@ -1811,6 +1872,10 @@ export const darkTable: TableThemeConfiguration = createTableTheme(darkBody, {
 
   summaryBackgroundColor: "linear-gradient(#29282b, #323232)",
   summaryBorderColor: "rgb(39, 39, 48)",
+});
+
+const darkTextarea = createTextareaTheme(darkBody, darkFieldLane, {
+  boxShadow: "0 0 0 0.5px transparent",
 });
 
 const darkTextbox = createTextboxTheme(darkBody, darkFieldLane, {
@@ -1909,8 +1974,10 @@ const darkTheme: AppTheme = {
   searchbox: darkSearchbox,
   separator: darkSeparator,
   sidebar: darkSidebar,
+  signbox: darkSignbox,
   statusbar: darkStatusbar,
   table: darkTable,
+  textarea: darkTextarea,
   textbox: darkTextbox,
   timebox: darkTimebox,
   tipmenu: darkTipMenu,
