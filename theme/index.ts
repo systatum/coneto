@@ -178,6 +178,25 @@ export interface CheckboxThemeConfiguration {
   highlightHoverColor?: string;
 }
 
+// colorbox.tsx
+export interface ColorboxThemeConfiguration {
+  backgroundColor?: string;
+  borderColor?: string;
+  textColor?: string;
+
+  focusedBorderColor?: string;
+
+  errorBorderColor?: string;
+  errorTextColor?: string;
+
+  disabledBorderColor?: string;
+  disabledTextColor?: string;
+
+  prefixColor?: string;
+
+  boxBackgroundColor?: string;
+}
+
 // dialog.tsx
 export interface DialogThemeConfiguration {
   backgroundColor?: string;
@@ -235,15 +254,16 @@ export interface FieldLaneThemeConfiguration {
   buttonErrorTextColor: string;
   buttonErrorBorderColor: string;
 
-  labelColor: string;
-  labelDisabledColor: string;
+  textColor: string;
 
-  inputBorder: string;
+  borderColor: string;
 
   placeholderColor?: string;
   focusedBorderColor?: string;
 
   disabledOpacity: number;
+  disabledBorderColor?: string;
+  disabledTextColor?: string;
 
   actionColor: string;
   actionHoverColor: string;
@@ -434,7 +454,6 @@ export interface TableThemeConfiguration {
 }
 
 // timebox.tsx
-
 export interface TimeboxThemeConfiguration {
   backgroundColor?: string;
   borderColor?: string;
@@ -445,6 +464,26 @@ export interface TimeboxThemeConfiguration {
   errorBorderColor?: string;
   errorTextColor?: string;
   colonColor?: string;
+}
+
+// textbox.tsx
+export interface TextboxThemeConfiguration {
+  backgroundColor?: string;
+
+  borderColor?: string;
+  focusedBorderColor?: string;
+
+  textColor?: string;
+
+  errorBorderColor?: string;
+  errorTextColor?: string;
+
+  disabledBorderColor?: string;
+  disabledTextColor?: string;
+
+  placeholderColor?: string;
+
+  boxShadow?: string;
 }
 
 // thumb-field.tsx
@@ -528,6 +567,7 @@ export interface AppTheme {
   chips: ChipsThemeConfiguration;
   choiceGroup: ChoiceGroupThemeConfiguration;
   checkbox: CheckboxThemeConfiguration;
+  colorbox: ColorboxThemeConfiguration;
   dialog: DialogThemeConfiguration;
   documentViewer: DocumentViewerThemeConfiguration;
   dormantText: DormantTextThemeConfiguration;
@@ -549,6 +589,7 @@ export interface AppTheme {
   separator: SeparatorThemeConfiguration;
   sidebar: SidebarThemeConfiguration;
   statusbar: StatusbarThemeConfiguration;
+  textbox: TextboxThemeConfiguration;
   thumbField: ThumbFieldThemeConfiguration;
   table: TableThemeConfiguration;
   tipmenu: TipMenuThemeConfiguration;

@@ -16,6 +16,7 @@ import {
   CheckboxThemeConfiguration,
   ChipsThemeConfiguration,
   ChoiceGroupThemeConfiguration,
+  ColorboxThemeConfiguration,
   DialogThemeConfiguration,
   DocumentViewerThemeConfiguration,
   DormantTextThemeConfiguration,
@@ -38,6 +39,7 @@ import {
   SidebarThemeConfiguration,
   StatusbarThemeConfiguration,
   TableThemeConfiguration,
+  TextboxThemeConfiguration,
   ThumbFieldThemeConfiguration,
   TimeboxThemeConfiguration,
   TipMenuContainerThemeConfiguration,
@@ -211,7 +213,7 @@ export function createCalendarTheme(
 ): CalendarThemeConfiguration {
   const defaultTheme: CalendarThemeConfiguration = {
     backgroundColor: body.backgroundColor || "#ffffff",
-    borderColor: fieldLane?.inputBorder || "#d1d5db",
+    borderColor: fieldLane?.borderColor || "#d1d5db",
     textColor: body.textColor || "#111827",
 
     dayTextColor: "#6b7280",
@@ -375,6 +377,35 @@ export function createCheckboxTheme(
   };
 }
 
+// colorbox.tsx
+
+export function createColorboxTheme(
+  body: BodyThemeConfiguration,
+  fieldLane: Partial<FieldLaneThemeConfiguration> = {},
+  custom: Partial<ColorboxThemeConfiguration> = {}
+): ColorboxThemeConfiguration {
+  const defaultTheme: ColorboxThemeConfiguration = {
+    backgroundColor: body.backgroundColor || "#ffffff",
+    borderColor: fieldLane?.borderColor || "#d1d5db",
+    textColor: body.textColor,
+
+    focusedBorderColor: fieldLane?.focusedBorderColor || "#61A9F9",
+
+    errorBorderColor: fieldLane?.errorBorderColor || "#f87171",
+    errorTextColor: fieldLane?.errorColor || "#dc2626",
+
+    disabledBorderColor: fieldLane?.borderColor || "#d1d5db",
+    disabledTextColor: fieldLane?.borderColor || "#d1d5db",
+
+    prefixColor: fieldLane?.placeholderColor || "#6b7280",
+
+    boxBackgroundColor: body.backgroundColor || "#ffffff",
+  };
+
+  return { ...defaultTheme, ...custom };
+}
+
+// dialog.tsx
 export function createDialogTheme(
   body: BodyThemeConfiguration,
   custom: DialogThemeConfiguration = {}
@@ -474,11 +505,13 @@ export function createFieldLaneTheme(
     buttonErrorBorderColor: "#ef4444",
     buttonErrorTextColor: "#b91c1c",
 
-    labelColor: body.textColor,
-    labelDisabledColor: "#9ca3af",
-    disabledOpacity: 0.5,
+    textColor: body.textColor,
 
-    inputBorder: "#d1d5db",
+    disabledOpacity: 0.5,
+    disabledBorderColor: "#d1d5db",
+    disabledTextColor: "#9ca3af",
+
+    borderColor: "#d1d5db",
 
     actionColor: "#6b7280",
     actionHoverColor: "#374151",
@@ -816,6 +849,35 @@ export function createStatusbarTheme(
   };
 }
 
+// textbox.tsx
+export function createTextboxTheme(
+  body: BodyThemeConfiguration,
+  fieldLane: Partial<FieldLaneThemeConfiguration> = {},
+  custom: Partial<TextboxThemeConfiguration> = {}
+): TextboxThemeConfiguration {
+  const defaultTheme: TextboxThemeConfiguration = {
+    backgroundColor: body.backgroundColor || "#ffffff",
+
+    borderColor: fieldLane?.borderColor || "#d1d5db",
+    focusedBorderColor:
+      fieldLane?.focusedBorderColor || fieldLane?.placeholderColor,
+
+    textColor: body.textColor || "#1f2937",
+
+    errorBorderColor: fieldLane?.errorBorderColor || "#ef4444",
+    errorTextColor: fieldLane?.errorForeground || "#991b1b",
+
+    disabledBorderColor: fieldLane?.disabledBorderColor || "#d1d5db",
+    disabledTextColor: fieldLane?.disabledTextColor || "#9ca3af",
+
+    placeholderColor: fieldLane?.placeholderColor || "#9ca3af",
+
+    boxShadow: "0 0 0 0.5px transparent",
+  };
+
+  return { ...defaultTheme, ...custom };
+}
+
 // table.tsx
 export function createTableTheme(
   body: BodyThemeConfiguration,
@@ -860,7 +922,7 @@ export function createTimeboxTheme(
 ): TimeboxThemeConfiguration {
   const defaultTheme: TimeboxThemeConfiguration = {
     backgroundColor: body.backgroundColor || "#ffffff",
-    borderColor: fieldLane?.inputBorder || "#d1d5db",
+    borderColor: fieldLane?.borderColor || "#d1d5db",
     textColor: body.textColor || "#111827",
 
     focusedBorderColor: fieldLane?.placeholderColor,
@@ -1144,6 +1206,8 @@ const lightChoiceGroup = createChoiceGroupTheme(lightBody);
 
 const lightCheckbox = createCheckboxTheme(lightBody);
 
+const lightColorbox = createColorboxTheme(lightBody, lightFieldLane);
+
 const lightDialog = createDialogTheme(lightBody);
 
 const lightDocumentViewer = createDocumentViewerTheme(lightBody);
@@ -1191,6 +1255,8 @@ const lightStatusbar = createStatusbarTheme();
 
 const lightTable = createTableTheme(lightBody);
 
+const lightTextbox = createTextboxTheme(lightBody, lightFieldLane);
+
 const lightTimebox = createTimeboxTheme(lightBody, lightFieldLane);
 
 const lightTipMenu = createTipMenuTheme(lightBody, {
@@ -1232,6 +1298,7 @@ const lightTheme: AppTheme = {
   chips: lightChips,
   choiceGroup: lightChoiceGroup,
   checkbox: lightCheckbox,
+  colorbox: lightColorbox,
   dialog: lightDialog,
   documentViewer: lightDocumentViewer,
   dormantText: lightDormantText,
@@ -1254,6 +1321,7 @@ const lightTheme: AppTheme = {
   sidebar: lightSidebar,
   statusbar: lightStatusbar,
   table: lightTable,
+  textbox: lightTextbox,
   timebox: lightTimebox,
   tipmenu: lightTipMenu,
   thumbField: lightThumbField,
@@ -1270,15 +1338,16 @@ const darkBody = createBodyTheme({
 });
 
 const darkFieldLane = createFieldLaneTheme(darkBody, {
-  labelColor: "#f3f4f6",
-  labelDisabledColor: "#9ca3af",
+  disabledOpacity: 0.5,
+  disabledBorderColor: "#374151",
+  disabledTextColor: "#6b7280",
 
   buttonTextColor: "#e5e7eb",
   buttonBorderColor: "#4b5563",
   buttonErrorBorderColor: "#f87171",
   buttonErrorTextColor: "#fca5a5",
 
-  inputBorder: "#4b5563",
+  borderColor: "#4b5563",
 
   actionColor: "#cbd5e1",
   actionHoverColor: "#ffffff",
@@ -1524,6 +1593,8 @@ const darkCheckbox = createCheckboxTheme(darkBody, {
   highlightHoverColor: "#2563EB55",
 });
 
+const darkColorbox = createColorboxTheme(darkBody, darkFieldLane);
+
 const darkDialog = createDialogTheme(darkBody, {
   borderColor: "#303030",
   boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
@@ -1742,6 +1813,10 @@ export const darkTable: TableThemeConfiguration = createTableTheme(darkBody, {
   summaryBorderColor: "rgb(39, 39, 48)",
 });
 
+const darkTextbox = createTextboxTheme(darkBody, darkFieldLane, {
+  boxShadow: "0 0 0 0.5px transparent",
+});
+
 const darkTimebox = createTimeboxTheme(darkBody, darkFieldLane);
 
 const darkTipMenu = createTipMenuTheme(darkBody, {
@@ -1813,6 +1888,7 @@ const darkTheme: AppTheme = {
   chips: darkChips,
   choiceGroup: darkChoiceGroup,
   checkbox: darkCheckbox,
+  colorbox: darkColorbox,
   dialog: darkDialog,
   documentViewer: darkDocumentViewer,
   dormantText: darkDormantText,
@@ -1835,6 +1911,7 @@ const darkTheme: AppTheme = {
   sidebar: darkSidebar,
   statusbar: darkStatusbar,
   table: darkTable,
+  textbox: darkTextbox,
   timebox: darkTimebox,
   tipmenu: darkTipMenu,
   thumbField: darkThumbField,
