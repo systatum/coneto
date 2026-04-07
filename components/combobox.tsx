@@ -746,14 +746,6 @@ const listItemRowStyle = ({
     }
   `}
 
-  ${shouldHighlight &&
-  css`
-    background-color: ${theme.highlightBackgroundColor};
-    &:hover {
-      background-color: ${theme.highlightBackgroundColor};
-    }
-  `};
-
   ${isSelected &&
   !multiple &&
   css`
@@ -762,6 +754,16 @@ const listItemRowStyle = ({
     color: ${theme.selectedTextColor};
     &:hover {
       color: ${theme.textColor};
+    }
+  `};
+
+  ${shouldHighlight &&
+  css`
+    background-color: ${theme.highlightBackgroundColor};
+    color: ${theme.textColor};
+
+    &:hover {
+      background-color: ${theme.highlightBackgroundColor};
     }
   `};
 `;
