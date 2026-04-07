@@ -1,6 +1,6 @@
 "use client";
 
-import { ModalDialogThemeConfiguration } from "theme";
+import { ModalDialogThemeConfiguration } from "./../theme";
 import { useTheme } from "./../theme/provider";
 import {
   createDialogController,

@@ -3,7 +3,7 @@ import { Figure, FigureProps } from "./figure";
 import { ReactNode } from "react";
 import { Button, ButtonProps } from "./button";
 import { useTheme } from "./../theme/provider";
-import { StatusbarThemeConfiguration } from "theme";
+import { StatusbarThemeConfiguration } from "./../theme";
 
 export interface StatusbarProps {
   styles?: StatusbarStylesProps;

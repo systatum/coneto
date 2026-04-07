@@ -3,7 +3,7 @@ import { RiArrowRightSLine } from "@remixicon/react";
 import { motion } from "framer-motion";
 import styled, { CSSProp } from "styled-components";
 import { useTheme } from "./../theme/provider";
-import { BoxbarThemeConfiguration } from "theme";
+import { BoxbarThemeConfiguration } from "./../theme";
 
 export interface BoxbarProps {
   children: ReactNode;
@@ -16,7 +16,7 @@ export interface BoxbarStylesProps {
 
 function Boxbar({ styles, children }: BoxbarProps) {
   const { currentTheme } = useTheme();
-  const boxbarTheme: BoxbarThemeConfiguration = currentTheme.boxbar;
+  const boxbarTheme = currentTheme.boxbar;
 
   const [isOpen, setIsOpen] = useState(false);
   const [contentHeight, setContentHeight] = useState(0);
@@ -74,8 +74,7 @@ function Boxbar({ styles, children }: BoxbarProps) {
       animate={{ height: isOpen ? contentHeight : collapsedHeight }}
       transition={{ duration: 0.2, ease: "easeInOut" }}
       $containerStyle={styles?.self}
-      $backgroundColor={boxbarTheme.backgroundColor}
-      $borderColor={boxbarTheme.borderColor}
+      $theme={boxbarTheme}
     >
       {children}
 
@@ -85,8 +84,7 @@ function Boxbar({ styles, children }: BoxbarProps) {
           animate={{ rotate: isOpen ? 90 : 0 }}
           transition={{ duration: 0.2 }}
           onClick={() => setIsOpen(!isOpen)}
-          $color={boxbarTheme.toggleButtonColor}
-          $hoverColor={boxbarTheme.toggleButtonHoverColor}
+          $theme={boxbarTheme}
         >
           <RiArrowRightSLine size={14} />
         </ToggleButton>
@@ -97,8 +95,7 @@ function Boxbar({ styles, children }: BoxbarProps) {
 
 const BaseBoxbar = styled(motion.div)<{
   $containerStyle: CSSProp;
-  $backgroundColor: string;
-  $borderColor: string;
+  $theme: BoxbarThemeConfiguration;
 }>`
   overflow: hidden;
   display: flex;
@@ -106,9 +103,9 @@ const BaseBoxbar = styled(motion.div)<{
   flex-direction: row;
   justify-content: flex-start;
   align-items: flex-start;
-  border: 1px solid ${({ $borderColor }) => $borderColor};
+  border: 1px solid ${({ $theme }) => $theme?.borderColor};
   border-radius: 4px;
-  background-color: ${({ $backgroundColor }) => $backgroundColor};
+  background-color: ${({ $theme }) => $theme?.backgroundColor};
   position: relative;
   max-height: fit-content;
   padding: 0.5rem;
@@ -119,8 +116,7 @@ const BaseBoxbar = styled(motion.div)<{
 `;
 
 const ToggleButton = styled(motion.button)<{
-  $color: string;
-  $hoverColor?: string;
+  $theme: BoxbarThemeConfiguration;
 }>`
   position: absolute;
   top: 0.55rem;
@@ -130,10 +126,11 @@ const ToggleButton = styled(motion.button)<{
   padding: 0.25rem;
   border-radius: 0.25rem;
   background-color: transparent;
-  color: ${({ $color }) => $color};
+  color: ${({ $theme }) => $theme?.textColor};
 
   &:hover {
-    background-color: ${({ $hoverColor }) => $hoverColor || "#f3f4f6"};
+    background-color: ${({ $theme }) =>
+      $theme?.toggleButtonHoverColor || "#f3f4f6"};
   }
 `;
 

@@ -6,7 +6,7 @@ import { StatefulForm } from "./stateful-form";
 import { Figure, FigureProps } from "./figure";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 import { useTheme } from "./../theme/provider";
-import { ToggleboxThemeConfiguration } from "theme";
+import { ToggleboxThemeConfiguration } from "./../theme";
 
 interface BaseToggleboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {

@@ -5,7 +5,7 @@ import { Button } from "./button";
 import { Searchbox } from "./searchbox";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "../theme/provider";
-import { TipMenuThemeConfiguration } from "theme";
+import { TipMenuThemeConfiguration } from "./../theme";
 
 export type TipMenuItemVariantType = "sm" | "md";
 

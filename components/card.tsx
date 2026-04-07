@@ -10,7 +10,7 @@ import { ActionButton, ActionButtonProps } from "./action-button";
 import { Togglebox } from "./togglebox";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTheme } from "./../theme/provider";
-import { CardThemeConfiguration } from "theme";
+import { CardThemeConfiguration } from "./../theme";
 
 export interface CardProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "title" | "style"> {

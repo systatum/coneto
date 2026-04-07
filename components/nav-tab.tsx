@@ -15,7 +15,7 @@ import { Tooltip, TooltipRef } from "./tooltip";
 import { ActionButton, ActionButtonProps } from "./action-button";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "../theme/provider";
-import { NavTabThemeConfiguration } from "theme";
+import { NavTabThemeConfiguration } from "./../theme";
 
 export interface NavTabProps {
   tabs?: NavTabContentProps[];

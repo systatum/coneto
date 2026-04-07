@@ -33,7 +33,7 @@ import ContextMenu from "./context-menu";
 import { ActionButton, ActionButtonProps } from "./action-button";
 import { OverlayBlocker } from "./overlay-blocker";
 import { useTheme } from "./../theme/provider";
-import { TableThemeConfiguration } from "theme";
+import { TableThemeConfiguration } from "./../theme";
 
 export type RowData = (string | ReactNode)[];
 

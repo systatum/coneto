@@ -10,7 +10,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 import { useTheme } from "./../theme/provider";
-import { ThumbFieldThemeConfiguration } from "theme";
+import { ThumbFieldThemeConfiguration } from "./../theme";
 
 interface BaseThumbFieldProps {
   value?: boolean | null;

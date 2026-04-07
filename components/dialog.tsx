@@ -17,7 +17,7 @@ import { Figure, FigureProps } from "./figure";
 import { darkenColor, lightenColor } from "../lib/color";
 import { createRoot } from "react-dom/client";
 import { useTheme } from "./../theme/provider";
-import { DialogThemeConfiguration } from "theme";
+import { DialogThemeConfiguration } from "./../theme";
 
 const zoomIn = keyframes`from {transform: translate(-50%, -50%) scale(0.95); opacity: 0;} to {transform: translate(-50%, -50%) scale(1); opacity: 1;}`;
 const zoomOut = keyframes`from {transform: translate(-50%, -50%) scale(1); opacity: 1;} to {transform: translate(-50%, -50%) scale(0.95); opacity: 0;}`;

@@ -1,7 +1,7 @@
 import { ReactNode, useCallback, useState } from "react";
 import { Capsule } from "./capsule";
 import styled, { css, CSSProp } from "styled-components";
-import { CapsuleTabThemeConfiguration } from "theme";
+import { CapsuleTabThemeConfiguration } from "./../theme";
 import { useTheme } from "./../theme/provider";
 
 export interface CapsuleTabProps {

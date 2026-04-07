@@ -14,7 +14,7 @@ import { SubMenuButtonProps } from "./button";
 import { Tooltip } from "./tooltip";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
-import { TreeListThemeConfiguration } from "theme";
+import { TreeListThemeConfiguration } from "./../theme";
 
 export interface TreeListProps
   extends Omit<

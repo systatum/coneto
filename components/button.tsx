@@ -20,7 +20,7 @@ import {
 } from "./../lib/floating-placement";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
-import { TipMenuContainerThemeConfiguration } from "theme";
+import { TipMenuContainerThemeConfiguration } from "./../theme";
 
 export type ButtonVariants = {
   variant?:

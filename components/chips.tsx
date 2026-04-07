@@ -29,7 +29,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 import { useTheme } from "./../theme/provider";
-import { ChipsThemeConfiguration } from "theme";
+import { ChipsThemeConfiguration } from "./../theme";
 
 export type ChipActionsProps = BadgeActionProps;
 

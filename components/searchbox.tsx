@@ -13,7 +13,7 @@ import { Button, SubMenuButtonProps } from "./button";
 import { TipMenuItemProps } from "./tip-menu";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
-import { SearchboxThemeConfiguration } from "theme";
+import { SearchboxThemeConfiguration } from "./../theme";
 
 export interface SearchboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {

@@ -4,7 +4,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
 import { Figure, FigureProps } from "./figure";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
-import { CapsuleThemeConfiguration } from "theme";
+import { CapsuleThemeConfiguration } from "./../theme";
 import { useTheme } from "./../theme/provider";
 
 export interface CapsuleContentProps {

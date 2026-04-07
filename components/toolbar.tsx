@@ -21,7 +21,7 @@ import {
 import styled, { css, CSSProp } from "styled-components";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
-import { ToolbarThemeConfiguration } from "theme";
+import { ToolbarThemeConfiguration } from "./../theme";
 
 export interface ToolbarProps {
   children: ReactNode;

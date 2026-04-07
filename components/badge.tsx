@@ -4,7 +4,7 @@ import { strToColor } from "./../lib/code-color";
 import { FigureProps } from "./figure";
 import { Button, ButtonStylesProps } from "./button";
 import { useTheme } from "./../theme/provider";
-import { BadgeThemeConfiguration } from "theme";
+import { BadgeThemeConfiguration } from "./../theme";
 
 export type BadgeVariantProps = null | "neutral" | "green" | "yellow" | "red";
 

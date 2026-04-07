@@ -5,7 +5,7 @@ import { RiArrowLeftSLine, RiArrowRightSLine } from "@remixicon/react";
 import { motion } from "framer-motion";
 import styled, { css, CSSProp } from "styled-components";
 import { OverlayBlocker } from "./overlay-blocker";
-import { SidebarThemeConfiguration } from "theme";
+import { SidebarThemeConfiguration } from "./../theme";
 import { useTheme } from "./../theme/provider";
 
 export interface SidebarProps {

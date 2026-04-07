@@ -4,7 +4,7 @@ import { ReactNode } from "react";
 import { Button } from "./button";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
-import { MessageboxThemeConfiguration } from "theme";
+import { MessageboxThemeConfiguration } from "./../theme";
 
 export type MessageboxVariantState =
   | "primary"

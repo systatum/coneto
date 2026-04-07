@@ -7,7 +7,7 @@ import {
   ReactNode,
 } from "react";
 import styled, { CSSProp } from "styled-components";
-import { OverlayBlockerThemeConfiguration } from "theme";
+import { OverlayBlockerThemeConfiguration } from "./../theme";
 import { useTheme } from "./../theme/provider";
 
 export interface OverlayBlockerRef {
