@@ -585,9 +585,6 @@ function Table({
                   align-items: start;
                   padding-left: 10px;
                   padding-top: 10px;
-
-                  backdrop-filter: blur(0.5px);
-                  background-color: rgba(255, 255, 255, 0.6);
                 `,
               }}
               show={isLoading}

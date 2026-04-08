@@ -1938,8 +1938,8 @@ const darkNavTab = createNavTabTheme(darkBody, {
 });
 
 const darkOverlayBlocker = createOverlayBlockerTheme({
-  backgroundColor: "rgba(20, 20, 20, 0.5)",
-  backdropFilter: "blur(2px)",
+  backgroundColor: "rgb(17 17 17 / 80%)",
+  backdropFilter: "blur(1px)",
 });
 
 const darkPaperDialog = createPaperDialogTheme(darkBody, {
