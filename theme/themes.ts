@@ -24,6 +24,7 @@ import {
   DrawerTabThemeConfiguration,
   ErrorSlateThemeConfiguration,
   FieldLaneThemeConfiguration,
+  FileDropBoxThemeConfiguration,
   FileInputBoxThemeConfiguration,
   FrameThemeConfiguration,
   GridThemeConfiguration,
@@ -589,10 +590,39 @@ export function createFileInputBoxTheme(
     disabledTextColor: fieldLane.disabledTextColor || "#9ca3af",
 
     defaultGradientColor: "#9ca3af",
-    dragActiveColor: "#60a5fa",
-    dragActiveBackgroundColor: "#eff6ff",
-    disabledGradientColor: "#9ca3af",
     errorGradientColor: "#dc2626",
+    disabledGradientColor: "#9ca3af",
+
+    dragActiveColor: "#3b82f6",
+    dragActiveBackgroundColor: "#eff6ff",
+  };
+
+  return { ...defaultTheme, ...custom };
+}
+
+export function createFileDropBoxTheme(
+  body: { backgroundColor?: string; textColor?: string },
+  fieldLane: Partial<FieldLaneThemeConfiguration> = {},
+  custom: Partial<FileDropBoxThemeConfiguration> = {}
+): FileInputBoxThemeConfiguration {
+  const defaultTheme: FileDropBoxThemeConfiguration = {
+    backgroundColor: body.backgroundColor || "#ffffff",
+    borderColor: fieldLane.borderColor || "#d1d5db",
+
+    textColor: body.textColor || "#111827",
+    placeholderColor: fieldLane.placeholderColor || "#9ca3af",
+
+    defaultGradientColor: "#9ca3af",
+    dragActiveGradientColor: "#60a5fa",
+    errorGradientColor: "#dc2626",
+    disabledGradientColor: "#9ca3af",
+
+    dragActiveBackgroundColor: "#eff6ff",
+    dragActiveTextColor: "#3b82f6",
+
+    iconColor: "#6b7280",
+
+    disabledTextColor: fieldLane.disabledTextColor || "#9ca3af",
   };
 
   return { ...defaultTheme, ...custom };
@@ -1545,6 +1575,8 @@ const lightErrorSlate = createErrorSlateTheme({
 
 const lightFileInputBox = createFileInputBoxTheme(lightBody, lightFieldLane);
 
+const lightFileDropBox = createFileDropBoxTheme(lightBody, lightFieldLane);
+
 const lightFrame = createFrameTheme(lightBody);
 
 const lightGrid = createGridTheme(lightBody);
@@ -1653,6 +1685,7 @@ const lightTheme: AppTheme = {
   errorSlate: lightErrorSlate,
   fieldLane: lightFieldLane,
   fileInputBox: lightFileInputBox,
+  fileDropBox: lightFileDropBox,
   frame: lightFrame,
   grid: lightGrid,
   keynote: lightKeynote,
@@ -1999,11 +2032,24 @@ const darkErrorSlate = createErrorSlateTheme({
 });
 
 const darkFileInputBox = createFileInputBoxTheme(darkBody, darkFieldLane, {
-  disabledGradientColor: "#9ca3af",
-  errorGradientColor: "#dc2626",
   defaultGradientColor: "#9ca3af",
+  errorGradientColor: "#dc2626",
+  disabledGradientColor: "#9ca3af",
+
   dragActiveColor: "#60a5fa",
   dragActiveBackgroundColor: "#eff6ff",
+});
+
+const darkFileDropBox = createFileDropBoxTheme(darkBody, darkFieldLane, {
+  defaultGradientColor: "#9ca3af",
+  errorGradientColor: "#dc2626",
+  dragActiveGradientColor: "#3b82f6",
+  disabledGradientColor: "#9ca3af",
+
+  iconColor: "#9ca3af",
+
+  dragActiveBackgroundColor: "#1e3a8a",
+  dragActiveTextColor: "#93c5fd",
 });
 
 const darkFrame = createFrameTheme(darkBody, {
@@ -2329,6 +2375,7 @@ const darkTheme: AppTheme = {
   errorSlate: darkErrorSlate,
   fieldLane: darkFieldLane,
   fileInputBox: darkFileInputBox,
+  fileDropBox: darkFileDropBox,
   frame: darkFrame,
   grid: darkGrid,
   keynote: darkKeynote,

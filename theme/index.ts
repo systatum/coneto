@@ -309,7 +309,6 @@ export interface FileInputBoxThemeConfiguration {
   textColor?: string;
   placeholderColor?: string;
 
-  disabledBackgroundColor?: string;
   disabledTextColor?: string;
 
   disabledGradientColor?: string;
@@ -318,6 +317,28 @@ export interface FileInputBoxThemeConfiguration {
 
   dragActiveColor?: string;
   dragActiveBackgroundColor?: string;
+}
+
+// file-drop-box.tsx
+
+export interface FileDropBoxThemeConfiguration {
+  backgroundColor?: string;
+  borderColor?: string;
+
+  textColor?: string;
+  placeholderColor?: string;
+
+  defaultGradientColor?: string;
+  dragActiveGradientColor?: string;
+  errorGradientColor?: string;
+  disabledGradientColor?: string;
+
+  dragActiveBackgroundColor?: string;
+  dragActiveTextColor?: string;
+
+  iconColor?: string;
+
+  disabledTextColor?: string;
 }
 
 // frame.tsx
@@ -772,6 +793,7 @@ export interface AppTheme {
   errorSlate: ErrorSlateThemeConfiguration;
   fieldLane: FieldLaneThemeConfiguration;
   fileInputBox: FileInputBoxThemeConfiguration;
+  fileDropBox: FileDropBoxThemeConfiguration;
   frame: FrameThemeConfiguration;
   grid: GridThemeConfiguration;
   keynote: KeynoteThemeConfiguration;
