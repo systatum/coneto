@@ -258,7 +258,9 @@ const Label = styled.label<{
       ${({ $highlight, $checked, $isRadio, $theme }) =>
         $highlight && $checked && !$isRadio
           ? $theme?.highlightCheckedBorderColor
-          : $theme?.highlightCheckedBorderColor};
+          : $highlight && !$isRadio
+            ? $theme?.highlightCheckedBorderColor
+            : "transparent"};
 
     background-color: ${({ $highlight, $checked, $theme }) => {
       if ($highlight) {

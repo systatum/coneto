@@ -833,9 +833,9 @@ export function createRadioTheme(
     labelColor: body.textColor,
     descriptionColor: "#4b5563",
     highlightBackgroundColor: "#DBEAFE",
-    highlightBorderColor: "#DBEAFE",
+    highlightBorderColor: "#e5e7eb",
     highlightCheckedBackgroundColor: "#E7F2FC",
-    highlightCheckedBorderColor: "#61A9F9",
+    highlightCheckedBorderColor: "#e5e7eb",
   };
 
   return { ...defaultTheme, ...customTheme };
