@@ -420,6 +420,7 @@ export interface RadioThemeConfiguration {
   borderColor?: string;
   checkedBorderColor?: string;
   backgroundColor?: string;
+  checkedOutsideBorderColor?: string;
   checkedBackgroundColor?: string;
   iconColor?: string;
   labelColor?: string;

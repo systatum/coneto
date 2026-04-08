@@ -4,6 +4,7 @@ import { StatefulForm } from "./stateful-form";
 import { Figure, FigureProps } from "./figure";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 import { useTheme } from "./../theme/provider";
+import { RadioThemeConfiguration } from "theme";
 
 interface BaseRadioProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {
@@ -71,11 +72,7 @@ function BaseRadio({
       $style={styles?.textWrapperStyle}
       $hasDescription={!!description}
       $disabled={props.disabled}
-      $backgroundColor={radioTheme.backgroundColor}
-      $checkedBackgroundColor={radioTheme.checkedBackgroundColor}
-      $highlightBackgroundColor={radioTheme.highlightBackgroundColor}
-      $highlightHoverColor={radioTheme.highlightHoverColor}
-      $checkedBorderColor={radioTheme.checkedBorderColor}
+      $theme={radioTheme}
     >
       <InputWrapper
         $style={styles?.inputWrapperStyle}
@@ -99,9 +96,7 @@ function BaseRadio({
           $isRadio={mode === "radio"}
           $error={showError}
           $style={styles?.self}
-          $borderColor={radioTheme.borderColor}
-          $checkedBorderColor={radioTheme.checkedBorderColor}
-          $backgroundColor={radioTheme.backgroundColor}
+          $theme={radioTheme}
         />
         <Figure
           {...icon}
@@ -219,11 +214,7 @@ const Label = styled.label<{
   $hasDescription?: boolean;
   $disabled?: boolean;
   $isRadio?: boolean;
-  $backgroundColor?: string;
-  $checkedBackgroundColor?: string;
-  $highlightBackgroundColor?: string;
-  $highlightHoverColor?: string;
-  $checkedBorderColor?: string;
+  $theme: RadioThemeConfiguration;
 }>`
   display: flex;
   align-items: flex-start;
@@ -231,21 +222,15 @@ const Label = styled.label<{
   gap: 2px;
   cursor: pointer;
   font-size: 12px;
-  background-color: ${({
-    $highlight,
-    $checked,
-    $backgroundColor,
-    $checkedBackgroundColor,
-    $highlightBackgroundColor,
-  }) => {
+  background-color: ${({ $highlight, $checked, $theme }) => {
     if ($highlight && $checked)
       return (
-        $highlightBackgroundColor ||
-        $checkedBackgroundColor ||
-        $backgroundColor ||
+        $theme?.highlightBackgroundColor ||
+        $theme?.checkedBackgroundColor ||
+        $theme?.backgroundColor ||
         "transparent"
       );
-    return $backgroundColor || "transparent";
+    return $theme?.backgroundColor || "transparent";
   }};
 
   padding: ${({ $highlight }) => ($highlight ? "0.75rem" : "0")};
@@ -253,23 +238,16 @@ const Label = styled.label<{
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: ${({
-      $highlight,
-      $checked,
-      $highlightHoverColor,
-      $highlightBackgroundColor,
-      $checkedBackgroundColor,
-      $backgroundColor,
-    }) => {
+    background-color: ${({ $highlight, $checked, $theme }) => {
       if ($highlight) {
-        if ($highlightHoverColor) return $highlightHoverColor;
+        if ($theme?.highlightHoverColor) return $theme?.highlightHoverColor;
         return $checked
-          ? $highlightBackgroundColor ||
-              $checkedBackgroundColor ||
-              $backgroundColor
-          : $highlightBackgroundColor || $backgroundColor;
+          ? $theme?.highlightBackgroundColor ||
+              $theme?.checkedBackgroundColor ||
+              $theme?.backgroundColor
+          : $theme?.highlightBackgroundColor || $theme?.backgroundColor;
       }
-      return $backgroundColor;
+      return $theme?.backgroundColor;
     }};
   }
 
@@ -311,16 +289,13 @@ const Circle = styled.div<{
   $style?: CSSProp;
   $error?: boolean;
   $isRadio?: boolean;
-  $borderColor?: string;
-  $checkedBorderColor?: string;
-  $backgroundColor?: string;
+  $theme: RadioThemeConfiguration;
 }>`
   width: 16px;
   height: 16px;
   border-radius: 9999px;
-  border: 1px solid ${({ $borderColor }) => $borderColor || "#4b5563"};
-  background-color: ${({ $backgroundColor }) =>
-    $backgroundColor || "transparent"};
+  border: 1px solid ${({ $theme }) => $theme?.borderColor || "#4b5563"};
+  background-color: ${({ $theme }) => $theme?.backgroundColor || "transparent"};
 
   ${({ $error }) =>
     $error &&
@@ -330,8 +305,11 @@ const Circle = styled.div<{
 
   input:checked + & {
     border-width: 5px;
-    border-color: ${({ $checkedBorderColor }) =>
-      $checkedBorderColor || "#61a9f9"};
+    border-color: ${({ $theme }) => $theme?.checkedBorderColor || "#61a9f9"};
+    background-color: ${({ $theme }) =>
+      $theme?.checkedBackgroundColor || "transparent"};
+    box-shadow: 0 0 0 1px
+      ${({ $theme }) => $theme?.checkedOutsideBorderColor || "#61a9f9"};
   }
 
   ${({ $isRadio }) =>
