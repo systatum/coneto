@@ -23,6 +23,8 @@ import { marked } from "./../lib/marked/marked";
 import { TipMenu, TipMenuItemProps } from "./tip-menu";
 import styled, { css, CSSProp } from "styled-components";
 import { Figure, FigureProps } from "./figure";
+import { RichEditorThemeConfiguration } from "./../theme";
+import { useTheme } from "./../theme/provider";
 
 export interface RichEditorProps {
   value?: string;
@@ -82,6 +84,9 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     },
     ref
   ) => {
+    const { currentTheme } = useTheme();
+    const richEditorTheme = currentTheme?.richEditor;
+
     const turndownService = new TurndownService();
 
     turndownService.addRule("atxHeading", {
@@ -1066,7 +1071,6 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         caption: "Heading 1",
         icon: {
           image: RiH1,
-          color: "black",
         },
         onClick: async () => {
           await editorRef.current?.focus();
@@ -1077,7 +1081,6 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         caption: "Heading 2",
         icon: {
           image: RiH2,
-          color: "black",
         },
         onClick: async () => {
           await editorRef.current?.focus();
@@ -1088,7 +1091,6 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         caption: "Heading 3",
         icon: {
           image: RiH3,
-          color: "black",
         },
         onClick: async () => {
           await editorRef.current?.focus();
@@ -1116,6 +1118,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
     return (
       <Wrapper
+        $theme={richEditorTheme}
         aria-label="wrapper-editor"
         $containerStyle={styles?.containerStyle}
         $mode={mode}
@@ -1125,7 +1128,10 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
             aria-label="toolbar-content"
             $toolbarPosition={toolbarPosition}
           >
-            <Toolbar $toolbarPosition={toolbarPosition}>
+            <Toolbar
+              $theme={richEditorTheme}
+              $toolbarPosition={toolbarPosition}
+            >
               <ToolbarGroup>
                 <RichEditorToolbarButton
                   isActive={formatStates.bold}
@@ -1197,6 +1203,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         <EditorArea
           ref={editorRef}
           role="textbox"
+          $theme={richEditorTheme}
           aria-label="rich-editor-content"
           contentEditable
           $editorStyle={styles?.editorStyle}
@@ -1236,8 +1243,12 @@ function RichEditorToolbarButton({
   isOpen,
   isActive,
 }: RichEditorToolbarButtonProps) {
+  const { currentTheme } = useTheme();
+  const richEditorTheme = currentTheme?.richEditor;
+
   return (
     <ToolbarButton
+      $theme={richEditorTheme}
       $style={styles?.self}
       type="button"
       $isOpen={isOpen}
@@ -1258,11 +1269,12 @@ function RichEditorToolbarButton({
 const Wrapper = styled.div<{
   $containerStyle?: CSSProp;
   $mode?: RichEditorModeState;
+  $theme: RichEditorThemeConfiguration;
 }>`
-  ${({ $mode }) =>
+  ${({ $mode, $theme }) =>
     $mode !== "page-editor" &&
     css`
-      border: 1px solid #ececec;
+      border: 1px solid ${$theme.borderColor};
       border-radius: 4px;
       box-shadow: 0 1px 4px -3px #5b5b5b;
     `}
@@ -1290,6 +1302,7 @@ const ToolbarWrapper = styled.div<{
 
 const Toolbar = styled.div<{
   $toolbarPosition?: RichEditorToolbarPositionState;
+  $theme: RichEditorThemeConfiguration;
 }>`
   display: flex;
   flex-direction: row;
@@ -1298,16 +1311,18 @@ const Toolbar = styled.div<{
   justify-content: space-between;
   align-items: center;
   padding: 0 8px;
-  background: white;
+  background-color: ${({ $theme }) => $theme.toolbarBackground};
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  border-top-right-radius: 4px;
+  border-top-left-radius: 4px;
 
-  ${({ $toolbarPosition }) =>
+  ${({ $toolbarPosition, $theme }) =>
     $toolbarPosition === "top"
       ? css`
-          border-bottom: 1px solid #ececec;
+          border-bottom: 1px solid ${$theme.borderColor};
         `
       : css`
-          border-top: 1px solid #ececec;
+          border-top: 1px solid ${$theme.borderColor};
         `}
 `;
 
@@ -1352,10 +1367,11 @@ const EditorArea = styled.div<{
   $mode?: RichEditorModeState;
   $autogrow?: boolean;
   $height?: number;
+  $theme: RichEditorThemeConfiguration;
 }>`
   padding: 8px;
   outline: none;
-  background-color: white;
+  background-color: ${({ $theme }) => $theme.backgroundColor};
 
   ${({ $mode, $autogrow, $height }) =>
     $mode === "page-editor"
@@ -1375,14 +1391,16 @@ const EditorArea = styled.div<{
             overflow-y: auto;
           `}
 
-  ${({ $toolbarPosition }) =>
-    $toolbarPosition === "top"
-      ? css`
-          margin-top: 37px;
-        `
-      : css`
-          margin-bottom: 37px;
-        `};
+  ${({ $toolbarPosition, $mode }) =>
+    $mode !== "view-only"
+      ? $toolbarPosition === "top"
+        ? css`
+            margin-top: 37px;
+          `
+        : css`
+            margin-bottom: 37px;
+          `
+      : ""};
 
   ${({ $mode }) =>
     $mode === "view-only" &&
@@ -1392,6 +1410,16 @@ const EditorArea = styled.div<{
       caret-color: transparent;
       outline: none;
     `};
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: ${({ $theme }) => $theme?.scrollThumb || "#3f3f46"};
+    border-radius: 999px;
+  }
+
   ol {
     list-style-type: decimal !important;
     list-style-position: outside !important;
@@ -1433,6 +1461,7 @@ const ToolbarButton = styled.button<{
   $style?: CSSProp;
   $isOpen?: boolean;
   $isActive?: boolean;
+  $theme: RichEditorThemeConfiguration;
 }>`
   padding: 4px 8px;
   display: flex;
@@ -1445,41 +1474,45 @@ const ToolbarButton = styled.button<{
   border-color: transparent;
   border-radius: 2px;
   max-height: 28px;
+  background-color: ${({ $theme }) => $theme.toolbarBackground};
+  color: ${({ $theme }) => $theme.textColor};
+
   &:hover {
-    ${({ $isOpen }) =>
+    ${({ $isOpen, $theme }) =>
       !$isOpen &&
       css`
-        background-color: #e5e7eb;
+        background-color: ${$theme.toolbarButtonHover};
       `}
   }
 
-  ${({ $isOpen }) =>
+  ${({ $isOpen, $theme }) =>
     $isOpen &&
     css`
-      background-color: #cfcfcf;
+      background-color: ${$theme.toolbarButtonHover};
       box-shadow:
         inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
-        inset 0 -0.5px 0.5px #cfcfcf;
+        inset 0 -0.5px 0.5px ${$theme.toolbarButtonHover};
     `}
 
-  ${({ $isActive }) =>
+  ${({ $isActive, $theme }) =>
     $isActive &&
     css`
-      background-color: #cfcfcf;
+      background-color: ${$theme.toolbarButtonActive};
+
       box-shadow:
         inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
-        inset 0 -0.5px 0.5px #cfcfcf;
+        inset 0 -0.5px 0.5px ${$theme.toolbarButtonActive};
     `}
 
   &:active {
-    background-color: #cfcfcf;
+    background-color: ${({ $theme }) => $theme.toolbarButtonActive};
     box-shadow:
       inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
-      inset 0 -0.5px 0.5px #cfcfcf;
+      inset 0 -0.5px 0.5px ${({ $theme }) => $theme.toolbarButtonActive};
   }
   &:focus-visible {
     outline: none;
-    box-shadow: inset 0 0 0 2px #00000033;
+    box-shadow: inset 0 0 0 2px ${({ $theme }) => $theme.toolbarButtonFocused};
     transition: box-shadow 0.2s ease;
   }
   ${({ $style }) => $style}

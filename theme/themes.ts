@@ -37,6 +37,7 @@ import {
   PaperDialogThemeConfiguration,
   PhoneboxThemeConfiguration,
   RadioThemeConfiguration,
+  RichEditorThemeConfiguration,
   SearchboxThemeConfiguration,
   SelectboxThemeConfiguration,
   SeparatorThemeConfiguration,
@@ -840,6 +841,28 @@ export function createRadioTheme(
   return { ...defaultTheme, ...customTheme };
 }
 
+// rich-editor.tsx
+export function createRichEditorTheme(
+  body: BodyThemeConfiguration,
+  fieldLane: Partial<FieldLaneThemeConfiguration> = {},
+  button: Partial<ButtonThemeConfiguration> = {},
+  custom: Partial<RichEditorThemeConfiguration> = {}
+): RichEditorThemeConfiguration {
+  const defaultTheme: RichEditorThemeConfiguration = {
+    backgroundColor: body.backgroundColor || "#ffffff",
+    textColor: body.textColor || "#111827",
+    placeholderColor: fieldLane.placeholderColor || "#9ca3af",
+    borderColor: fieldLane.borderColor || "#d1d5db",
+    toolbarBackground: body.backgroundColor || "#f9fafb",
+    toolbarButtonActive: button?.activeBackgroundColor,
+    toolbarButtonHover: button?.hoverBackgroundColor,
+    toolbarButtonFocused: button?.hoverBackgroundColor,
+    scrollThumb: "#9ca3af",
+  };
+
+  return { ...defaultTheme, ...custom };
+}
+
 // searchbox.tsx
 export function createSearchboxTheme(
   body: BodyThemeConfiguration,
@@ -1441,6 +1464,12 @@ const lightPhonebox = createPhoneboxTheme(lightBody, lightFieldLane);
 
 const lightRadio = createRadioTheme(lightBody);
 
+const lightRichEditor = createRichEditorTheme(
+  lightBody,
+  lightFieldLane,
+  lightButton?.default
+);
+
 const lightSearchbox = createSearchboxTheme(lightBody);
 
 const lightSelectbox = createSelectboxTheme(lightBody, lightFieldLane);
@@ -1523,6 +1552,7 @@ const lightTheme: AppTheme = {
   paperDialog: lightPaperDialog,
   phonebox: lightPhonebox,
   radio: lightRadio,
+  richEditor: lightRichEditor,
   searchbox: lightSearchbox,
   selectbox: lightSelectbox,
   separator: lightSeparator,
@@ -1974,6 +2004,18 @@ const darkRadio = createRadioTheme(darkBody, {
   highlightCheckedBorderColor: "#1465d3bf",
 });
 
+const darkRichEditor = createRichEditorTheme(
+  darkBody,
+  darkFieldLane,
+  darkButton?.default,
+  {
+    textColor: "#f9fafb",
+    borderColor: "#374151",
+    scrollThumb: "#52525b",
+    toolbarBackground: darkButton?.default?.backgroundColor,
+  }
+);
+
 const darkSearchbox = createSearchboxTheme(darkBody, {
   backgroundColor: darkBody?.backgroundColor,
   textColor: darkBody?.textColor,
@@ -2156,6 +2198,7 @@ const darkTheme: AppTheme = {
   paperDialog: darkPaperDialog,
   phonebox: darkPhonebox,
   radio: darkRadio,
+  richEditor: darkRichEditor,
   searchbox: darkSearchbox,
   selectbox: darkSelectbox,
   separator: darkSeparator,

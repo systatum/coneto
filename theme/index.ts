@@ -438,6 +438,21 @@ export interface RadioThemeConfiguration {
   highlightBorderColor?: string;
 }
 
+// rich-editor.tsx
+
+export interface RichEditorThemeConfiguration {
+  backgroundColor: string;
+  textColor: string;
+  placeholderColor: string;
+  borderColor: string;
+
+  toolbarBackground: string;
+  toolbarButtonActive: string;
+  toolbarButtonHover: string;
+  toolbarButtonFocused: string;
+  scrollThumb: string;
+}
+
 // searchbox.tsx
 export interface SearchboxThemeConfiguration {
   backgroundColor?: string;
@@ -696,6 +711,7 @@ export interface AppTheme {
   paperDialog: PaperDialogThemeConfiguration;
   phonebox: PhoneboxThemeConfiguration;
   radio: RadioThemeConfiguration;
+  richEditor: RichEditorThemeConfiguration;
   searchbox: SearchboxThemeConfiguration;
   selectbox: SelectboxThemeConfiguration;
   separator: SeparatorThemeConfiguration;
