@@ -37,6 +37,7 @@ import {
   MoneyboxThemeConfiguration,
   NavTabThemeConfiguration,
   OverlayBlockerThemeConfiguration,
+  PaginationThemeConfiguration,
   PaperDialogThemeConfiguration,
   PhoneboxThemeConfiguration,
   PinboxThemeConfiguration,
@@ -878,7 +879,31 @@ export function createPaperDialogTheme(
   };
 }
 
-//pinbox.tsx
+// pagination.tsx
+
+export function createPaginationTheme(
+  body: { backgroundColor?: string; textColor?: string },
+  fieldLane: Partial<FieldLaneThemeConfiguration> = {},
+  custom: Partial<PaginationThemeConfiguration> = {}
+): PaginationThemeConfiguration {
+  const defaultTheme: PaginationThemeConfiguration = {
+    backgroundColor: body.backgroundColor || "#ffffff",
+
+    borderColor: fieldLane.borderColor || "#f3f4f6",
+    activeBorderColor: fieldLane.focusedBorderColor || "#61A9F9",
+    hoverBorderColor: fieldLane.focusedBorderColor || "#61A9F9",
+
+    textColor: body.textColor || "#374151",
+    activeTextColor: body.textColor || "#111827",
+
+    disabledBackgroundColor: body.backgroundColor || "#ffffff",
+    disabledTextColor: fieldLane.disabledTextColor || "#9ca3af",
+  };
+
+  return { ...defaultTheme, ...custom };
+}
+
+// pinbox.tsx
 export function createPinboxTheme(
   body: BodyThemeConfiguration,
   fieldLane: Partial<FieldLaneThemeConfiguration> = {},
@@ -1607,6 +1632,8 @@ const lightNavTab = createNavTabTheme(lightBody);
 
 const lightPaperDialog = createPaperDialogTheme(lightBody);
 
+const lightPagination = createPaginationTheme(lightBody, lightFieldLane);
+
 const lightPinbox = createPinboxTheme(lightBody, lightFieldLane);
 
 const lightPhonebox = createPhoneboxTheme(lightBody, lightFieldLane);
@@ -1704,6 +1731,7 @@ const lightTheme: AppTheme = {
   navTab: lightNavTab,
   overlayBlocker: lightOverlayBlocker,
   paperDialog: lightPaperDialog,
+  pagination: lightPagination,
   pinbox: lightPinbox,
   phonebox: lightPhonebox,
   radio: lightRadio,
@@ -2173,6 +2201,20 @@ const darkPaperDialog = createPaperDialogTheme(darkBody, {
   actionHoverBackgroundColor: "#363636",
 });
 
+const darkPagination = createPaginationTheme(darkBody, darkFieldLane, {
+  backgroundColor: "rgb(160, 160, 160)",
+
+  borderColor: "rgb(55, 65, 81)",
+  activeBorderColor: darkFieldLane?.focusedBorderColor,
+  hoverBorderColor: darkFieldLane?.focusedBorderColor,
+
+  textColor: "#d1d5db",
+  activeTextColor: "#fff",
+
+  disabledBackgroundColor: "rgb(56, 58, 61)",
+  disabledTextColor: "rgb(160, 160, 160)",
+});
+
 const darkPinbox = createPinboxTheme(darkBody, darkFieldLane);
 
 const darkPhonebox = createPhoneboxTheme(darkBody, darkFieldLane);
@@ -2400,6 +2442,7 @@ const darkTheme: AppTheme = {
   navTab: darkNavTab,
   overlayBlocker: darkOverlayBlocker,
   paperDialog: darkPaperDialog,
+  pagination: darkPagination,
   pinbox: darkPinbox,
   phonebox: darkPhonebox,
   radio: darkRadio,

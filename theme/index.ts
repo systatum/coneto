@@ -464,6 +464,20 @@ export interface PaperDialogThemeConfiguration {
   actionHoverBackgroundColor?: string;
 }
 
+// pagination.tsx
+export interface PaginationThemeConfiguration {
+  backgroundColor?: string;
+  borderColor?: string;
+  activeBorderColor?: string;
+  hoverBorderColor?: string;
+
+  textColor?: string;
+  activeTextColor?: string;
+
+  disabledBackgroundColor?: string;
+  disabledTextColor?: string;
+}
+
 //pinbox.tsx
 export interface PinboxThemeConfiguration {
   backgroundColor?: string;
@@ -812,6 +826,7 @@ export interface AppTheme {
   navTab: NavTabThemeConfiguration;
   overlayBlocker: OverlayBlockerThemeConfiguration;
   paperDialog: PaperDialogThemeConfiguration;
+  pagination: PaginationThemeConfiguration;
   pinbox: PinboxThemeConfiguration;
   phonebox: PhoneboxThemeConfiguration;
   radio: RadioThemeConfiguration;
