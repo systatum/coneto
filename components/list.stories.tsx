@@ -2025,12 +2025,10 @@ export const WithMaxItems: Story = {
           headerStyle: css`
             padding-left: 15px;
             padding-right: 15px;
-            border-bottom: 1px solid #d1d5db;
           `,
           footerStyle: css`
             padding-left: 20px;
             padding-right: 20px;
-            border-top: 1px solid #d1d5db;
           `,
         }}
       >
