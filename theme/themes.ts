@@ -1881,7 +1881,7 @@ const darkList = createListTheme(darkBody, {
   badgeBackgroundColor: "rgb(13 21 25)",
   emptyHoverBackgroundColor: "#212c37",
   badgeTextColor: "white",
-  badgeBorderColor: "#264c7b",
+  badgeBorderColor: "#3f3f46",
 });
 
 const darkLoadingSkeleton = createLoadingSkeletonTheme({
