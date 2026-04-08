@@ -2082,7 +2082,7 @@ const darkThumbField = createThumbFieldTheme(darkBody, {
 
 const darkTogglebox = createToggleboxTheme(darkBody, {
   backgroundColor: "rgb(80, 80, 80)",
-  checkedBackgroundColor: "rgb(60, 49, 110)",
+  checkedBackgroundColor: darkButton?.primary?.hoverBackgroundColor,
   thumbColor: "#f5f5f5",
   borderColor: "#303030",
   textColor: "#f5f5f5",
