@@ -1884,8 +1884,7 @@ const darkLoadingSkeleton = createLoadingSkeletonTheme({
 });
 
 const darkLoadingSpinner = createLoadingSpinnerTheme(darkBody, {
-  color: "#2a3243",
-  textColor: "#e5e7eb",
+  color: "rgb(142 214 255)",
 });
 
 const darkMessagebox = createMessageboxTheme({
