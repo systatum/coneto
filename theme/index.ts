@@ -335,6 +335,9 @@ export interface ListThemeConfiguration {
   mutedTextColor?: string;
   dragLineColor?: string;
   emptyHoverBackgroundColor?: string;
+  badgeTextColor?: string;
+  badgeBackgroundColor?: string;
+  badgeBorderColor?: string;
 }
 
 // loading-skeleton.tsx

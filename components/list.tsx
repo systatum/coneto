@@ -1122,8 +1122,14 @@ const ListItem = forwardRef<HTMLLIElement, ListItemProps>(
             {leftSideContent &&
               (typeof leftSideContent === "function"
                 ? leftSideContent({
-                    badge: (children, style = { withStyle: css`` }) => (
+                    badge: (
+                      children,
+                      style = {
+                        withStyle: css``,
+                      }
+                    ) => (
                       <CustomLeftSideContent
+                        $theme={listTheme}
                         aria-label="left-side-content"
                         $style={style.withStyle}
                       >
@@ -1420,13 +1426,16 @@ const TextWrapper = styled.div`
 
 const CustomLeftSideContent = styled.div<{
   $style?: CSSProp;
+  $theme?: ListThemeConfiguration;
 }>`
   display: flex;
-  border: 1px solid #d1d5db;
   border-radius: 20px;
   padding-right: 10px;
   padding-left: 10px;
   font-size: 12px;
+  border: 1px solid ${({ $theme }) => $theme?.badgeBorderColor};
+  background-color: ${({ $theme }) => $theme?.badgeBackgroundColor};
+  color: ${({ $theme }) => $theme?.badgeTextColor};
 
   ${({ $style }) => $style};
 `;

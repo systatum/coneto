@@ -1610,8 +1610,6 @@ export const WithBadge: Story = {
                       leftSideContent={({ badge }) =>
                         badge(list.leftSideContent, {
                           withStyle: css`
-                            background-color: #488cac;
-                            color: white;
                             min-width: 30px;
                             max-width: 30px;
                           `,
