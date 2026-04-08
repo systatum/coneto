@@ -438,6 +438,21 @@ export interface RadioThemeConfiguration {
   highlightBorderColor?: string;
 }
 
+// rating.tsx
+export interface RatingThemeConfiguration {
+  starFullColor?: string;
+  starEmptyColor?: string;
+  starBorderColor?: string;
+
+  labelTextColor?: string;
+
+  disabledStarColor?: string;
+  disabledLabelColor?: string;
+
+  hoverStarColor?: string;
+  sizeMap?: { sm: number; md: number; lg: number };
+}
+
 // rich-editor.tsx
 
 export interface RichEditorThemeConfiguration {
@@ -713,6 +728,7 @@ export interface AppTheme {
   paperDialog: PaperDialogThemeConfiguration;
   phonebox: PhoneboxThemeConfiguration;
   radio: RadioThemeConfiguration;
+  rating: RatingThemeConfiguration;
   richEditor: RichEditorThemeConfiguration;
   searchbox: SearchboxThemeConfiguration;
   selectbox: SelectboxThemeConfiguration;

@@ -37,6 +37,7 @@ import {
   PaperDialogThemeConfiguration,
   PhoneboxThemeConfiguration,
   RadioThemeConfiguration,
+  RatingThemeConfiguration,
   RichEditorThemeConfiguration,
   SearchboxThemeConfiguration,
   SelectboxThemeConfiguration,
@@ -841,6 +842,29 @@ export function createRadioTheme(
   return { ...defaultTheme, ...customTheme };
 }
 
+export function createRatingTheme(
+  body: BodyThemeConfiguration,
+  fieldLane: Partial<FieldLaneThemeConfiguration> = {},
+  custom: Partial<RatingThemeConfiguration> = {}
+): RatingThemeConfiguration {
+  const defaultTheme: RatingThemeConfiguration = {
+    starFullColor: "#facc15",
+    starEmptyColor: "#ffffff",
+    starBorderColor: "#facc15",
+
+    hoverStarColor: "#f59e0b",
+
+    labelTextColor: body.textColor || "#111827",
+
+    disabledStarColor: fieldLane?.borderColor || "#d1d5db",
+    disabledLabelColor: fieldLane?.disabledTextColor || "#9ca3af",
+
+    sizeMap: { sm: 16, md: 24, lg: 32 },
+  };
+
+  return { ...defaultTheme, ...custom };
+}
+
 // rich-editor.tsx
 export function createRichEditorTheme(
   body: BodyThemeConfiguration,
@@ -1465,6 +1489,8 @@ const lightPhonebox = createPhoneboxTheme(lightBody, lightFieldLane);
 
 const lightRadio = createRadioTheme(lightBody);
 
+const lightRating = createRatingTheme(lightBody, lightFieldLane);
+
 const lightRichEditor = createRichEditorTheme(
   lightBody,
   lightFieldLane,
@@ -1553,6 +1579,7 @@ const lightTheme: AppTheme = {
   paperDialog: lightPaperDialog,
   phonebox: lightPhonebox,
   radio: lightRadio,
+  rating: lightRating,
   richEditor: lightRichEditor,
   searchbox: lightSearchbox,
   selectbox: lightSelectbox,
@@ -2005,6 +2032,14 @@ const darkRadio = createRadioTheme(darkBody, {
   highlightCheckedBorderColor: "#1465d3bf",
 });
 
+const darkRating = createRatingTheme(darkBody, darkFieldLane, {
+  starFullColor: "#facc15",
+  starEmptyColor: "#111827",
+  starBorderColor: "#fbbf24",
+
+  hoverStarColor: "#f59e0b",
+});
+
 const darkRichEditor = createRichEditorTheme(
   darkBody,
   darkFieldLane,
@@ -2200,6 +2235,7 @@ const darkTheme: AppTheme = {
   paperDialog: darkPaperDialog,
   phonebox: darkPhonebox,
   radio: darkRadio,
+  rating: darkRating,
   richEditor: darkRichEditor,
   searchbox: darkSearchbox,
   selectbox: darkSelectbox,
