@@ -590,7 +590,9 @@ export interface TextboxThemeConfiguration {
 }
 
 // textarea.tsx
-export interface TextareaThemeConfiguration extends TextboxThemeConfiguration {}
+export interface TextareaThemeConfiguration extends TextboxThemeConfiguration {
+  scrollbarThumbColor?: string;
+}
 
 // thumb-field.tsx
 export interface ThumbFieldThemeConfiguration {

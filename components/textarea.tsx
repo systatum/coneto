@@ -37,13 +37,6 @@ const BaseTextarea = forwardRef<HTMLTextAreaElement, BaseTextareaProps>(
     const { currentTheme } = useTheme();
     const textareaTheme = currentTheme?.textarea;
 
-    const autoResize = (el: HTMLTextAreaElement | null) => {
-      if (el) {
-        el.style.height = "auto";
-        el.style.height = `${el.scrollHeight}px`;
-      }
-    };
-
     return (
       <TextareaInput
         $theme={textareaTheme}
@@ -51,9 +44,6 @@ const BaseTextarea = forwardRef<HTMLTextAreaElement, BaseTextareaProps>(
         $autogrow={autogrow}
         id={id}
         ref={(el) => {
-          if (autogrow) {
-            autoResize(el);
-          }
           if (typeof ref === "function") {
             ref(el);
           } else if (ref) {
@@ -61,9 +51,6 @@ const BaseTextarea = forwardRef<HTMLTextAreaElement, BaseTextareaProps>(
           }
         }}
         onChange={(e) => {
-          if (autogrow) {
-            autoResize(e.target);
-          }
           if (onChange) {
             onChange(e);
           }
@@ -190,15 +177,25 @@ const TextareaInput = styled.textarea<{
         : $theme?.textColor || "#1f2937"};
 
   ${({ $autogrow }) =>
-    $autogrow &&
-    css`
-      overflow: hidden;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-      &::-webkit-scrollbar {
-        display: none;
-      }
-    `};
+    $autogrow
+      ? css`
+          overflow: hidden;
+          resize: none;
+        `
+      : css`
+          overflow-y: auto;
+          resize: vertical;
+        `}
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: ${({ $theme }) =>
+      $theme?.scrollbarThumbColor || "#3f3f46"};
+    border-radius: 999px;
+  }
 
   &::placeholder {
     color: ${({ $theme }) => $theme?.placeholderColor || "#9ca3af"};

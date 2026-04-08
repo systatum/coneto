@@ -1030,6 +1030,7 @@ export function createTextareaTheme(
     disabledTextColor: "#9ca3af",
 
     placeholderColor: fieldLane?.placeholderColor || "#9ca3af",
+    scrollbarThumbColor: "#3f3f46",
 
     boxShadow: "0 0 0 1px transparent",
   };
@@ -2056,6 +2057,7 @@ export const darkTable: TableThemeConfiguration = createTableTheme(darkBody, {
 
 const darkTextarea = createTextareaTheme(darkBody, darkFieldLane, {
   boxShadow: "0 0 0 0.5px transparent",
+  scrollbarThumbColor: "#52525b",
 });
 
 const darkTextbox = createTextboxTheme(darkBody, darkFieldLane, {
