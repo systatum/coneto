@@ -2,6 +2,8 @@ import { ChangeEvent, MouseEvent, useState } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { useTheme } from "./../theme/provider";
+import { RatingThemeConfiguration } from "./../theme";
 
 interface BaseRatingProps {
   rating?: string;
@@ -29,6 +31,9 @@ function BaseRating({
   name,
   disabled,
 }: BaseRatingProps) {
+  const { currentTheme } = useTheme();
+  const ratingTheme = currentTheme?.rating;
+
   const ratingState = Number(rating || 0);
   const [ratingLocal, setRatingLocal] = useState(ratingState);
   const [hoverRating, setHoverRating] = useState(0);
@@ -62,7 +67,7 @@ function BaseRating({
     return "empty";
   };
 
-  const sizeMap = {
+  const sizeMap = ratingTheme?.sizeMap || {
     sm: 16,
     md: 24,
     lg: 32,
@@ -71,9 +76,9 @@ function BaseRating({
   const starSize = sizeMap[size];
 
   const renderStar = (type: "full" | "half" | "empty") => {
-    const STAR_COLOR = "gold";
-    const EMPTY_COLOR = "white";
-    const BORDER_COLOR = "gold";
+    const STAR_COLOR = ratingTheme?.starFullColor;
+    const EMPTY_COLOR = ratingTheme?.starEmptyColor;
+    const BORDER_COLOR = ratingTheme?.starBorderColor;
 
     const pathD =
       "M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z";
@@ -148,7 +153,9 @@ function BaseRating({
       />
 
       {withLabel && (
-        <RatingLabel $size={size}>{ratingLocal.toFixed(1)} / 5</RatingLabel>
+        <RatingLabel $disabled={disabled} $theme={ratingTheme} $size={size}>
+          {ratingLocal.toFixed(1)} / 5
+        </RatingLabel>
       )}
     </RatingWrapper>
   );
@@ -249,8 +256,14 @@ const StarSpan = styled.span<{ $editable?: boolean; $disabled?: boolean }>`
         `}
 `;
 
-const RatingLabel = styled.span<{ $size: "sm" | "md" | "lg" }>`
+const RatingLabel = styled.span<{
+  $size: "sm" | "md" | "lg";
+  $theme: RatingThemeConfiguration;
+  $disabled?: boolean;
+}>`
   font-weight: 500;
+  color: ${({ $disabled, $theme }) =>
+    $disabled ? $theme.disabledLabelColor : $theme.labelTextColor};
   ${({ $size }) => {
     switch ($size) {
       case "sm":
