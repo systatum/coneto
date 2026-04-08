@@ -128,6 +128,7 @@ export interface CapsuleTabThemeConfiguration {
   borderColor?: string;
   boxShadow?: string;
   backgroundColor?: string;
+  activeBackgroundColor?: string;
 }
 
 // card.tsx

@@ -295,6 +295,7 @@ export function createCapsuleTabTheme(
     backgroundColor: body?.backgroundColor,
     borderColor: "#ebebeb",
     boxShadow: "0 1px 3px -3px #5b5b5b",
+    activeBackgroundColor: "black",
   };
 
   return {
@@ -1896,18 +1897,19 @@ const darkCapsule = createCapsuleTheme(darkBody, {
   },
 
   active: {
-    backgroundColor: "#363636",
+    backgroundColor: "#303030",
   },
 
   hover: {
-    borderColor: "#404040",
+    borderColor: "#303030",
   },
 });
 
 const darkCapsuleTab = createCapsuleTabTheme(darkBody, {
-  backgroundColor: darkBody?.backgroundColor,
+  backgroundColor: "#262627",
   borderColor: "#303030",
   boxShadow: "0 2px 6px rgba(0,0,0,0.4)",
+  activeBackgroundColor: "#303030",
 });
 
 const darkCard = createCardTheme(darkBody, {

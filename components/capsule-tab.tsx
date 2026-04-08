@@ -30,12 +30,13 @@ function CapsuleTab({
   tabs,
   styles,
   activeTab = "1",
-  activeBackgroundColor = "black",
+  activeBackgroundColor,
   onTabChange,
   children,
 }: CapsuleTabProps) {
   const { currentTheme } = useTheme();
-  const capsuleTheme = currentTheme.capsule;
+  const capsuleTabTheme = currentTheme.capsuleTab;
+
   const [selectedLocal, setSelectedLocal] = useState<string>(activeTab);
 
   const isControlled = onTabChange && activeTab !== undefined;
@@ -55,7 +56,7 @@ function CapsuleTab({
 
   return (
     <CapsuleTabWrapper
-      $theme={capsuleTheme}
+      $theme={capsuleTabTheme}
       aria-label="capsule-tab-wrapper"
       $style={styles?.self}
     >
@@ -64,6 +65,7 @@ function CapsuleTab({
           capsuleWrapperStyle: css`
             padding-left: 5px;
             padding-right: 5px;
+            background-color: ${capsuleTabTheme?.backgroundColor};
 
             ${styles?.capsuleWrapperStyle};
           `,
@@ -79,7 +81,9 @@ function CapsuleTab({
         tabs={tabs}
         onTabChange={setSelected}
         activeTab={selected}
-        activeBackgroundColor={activeBackgroundColor}
+        activeBackgroundColor={
+          activeBackgroundColor ?? capsuleTabTheme?.activeBackgroundColor
+        }
         full
       />
 
