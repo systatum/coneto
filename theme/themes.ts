@@ -858,6 +858,7 @@ export function createRichEditorTheme(
     toolbarButtonHover: button?.hoverBackgroundColor,
     toolbarButtonFocused: button?.hoverBackgroundColor,
     scrollThumb: "#9ca3af",
+    preBackgroundColor: "#D3D3D3",
   };
 
   return { ...defaultTheme, ...custom };
@@ -2013,6 +2014,7 @@ const darkRichEditor = createRichEditorTheme(
     borderColor: "#374151",
     scrollThumb: "#52525b",
     toolbarBackground: darkButton?.default?.backgroundColor,
+    preBackgroundColor: "#2D2D2D",
   }
 );
 

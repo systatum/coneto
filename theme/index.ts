@@ -451,6 +451,8 @@ export interface RichEditorThemeConfiguration {
   toolbarButtonHover: string;
   toolbarButtonFocused: string;
   scrollThumb: string;
+
+  preBackgroundColor: string;
 }
 
 // searchbox.tsx
