@@ -1022,7 +1022,7 @@ const ListItem = forwardRef<HTMLLIElement, ListItemProps>(
           $isHovered={isHovered === idFullname || openTipRowId === idFullname}
           $style={styles?.rowStyle}
           aria-label="list-item-row"
-          $hoverTextColor={hoverTextColor ?? listTheme.hoverTextColor}
+          $hoverTextColor={hoverTextColor}
           $hoverBackgroundColor={
             hoverBackgroundColor ?? listTheme.hoverBackgroundColor
           }
@@ -1163,11 +1163,7 @@ const ListItem = forwardRef<HTMLLIElement, ListItemProps>(
             )}
             <TextWrapper>
               {title && (
-                <Title
-                  role="option"
-                  $textColor={listTheme.textColor}
-                  $style={styles?.titleStyle}
-                >
+                <Title role="option" $style={styles?.titleStyle}>
                   {title}
                 </Title>
               )}
@@ -1236,10 +1232,10 @@ const ListItem = forwardRef<HTMLLIElement, ListItemProps>(
                           `}
                         `,
                       }}
+                      focusBackgroundColor={listTheme?.toggleBackgroundColor}
+                      hoverBackgroundColor={listTheme?.toggleBackgroundColor}
+                      activeBackgroundColor={listTheme?.toggleBackgroundColor}
                       iconSize={subtitle ? 16 : 12}
-                      focusBackgroundColor="#c1d6f1"
-                      hoverBackgroundColor="#c1d6f1"
-                      activeBackgroundColor="#c1d6f1"
                       actions={actionsWithIcons}
                     />
                   );
@@ -1335,7 +1331,7 @@ const ListItemWrapper = styled.li<{
       background-color: ${$selected
         ? $hoverBackgroundColor
         : $selectedBackgroundColor};
-    `}
+    `};
 
   ${({ $style }) => $style}
 `;
@@ -1358,9 +1354,6 @@ const ListItemRow = styled.div<{
   transition: background-color 300ms;
   border-radius: 3px;
   width: 100%;
-  color: ${({ $textColor }) => $textColor};
-
-  ${({ $style }) => $style}
 
   ${({ $isHovered, $hoverTextColor, $hoverBackgroundColor }) =>
     $isHovered &&
@@ -1368,6 +1361,8 @@ const ListItemRow = styled.div<{
       color: ${$hoverTextColor ?? "inherit"};
       background-color: ${$hoverBackgroundColor ?? "#dbeafe"};
     `}
+
+  ${({ $style }) => $style}
 `;
 
 const DraggableWrapper = styled.div<{
@@ -1440,10 +1435,9 @@ const CustomLeftSideContent = styled.div<{
   ${({ $style }) => $style};
 `;
 
-const Title = styled.h3<{ $style?: CSSProp; $textColor?: string }>`
+const Title = styled.h3<{ $style?: CSSProp }>`
   font-weight: 500;
   font-size: 0.875rem;
-  color: ${({ $textColor }) => $textColor};
 
   ${({ $style }) => $style}
 `;
