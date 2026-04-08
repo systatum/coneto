@@ -16,8 +16,8 @@ import { OverlayBlocker } from "./overlay-blocker";
 import { Figure, FigureProps } from "./figure";
 import { darkenColor, lightenColor } from "../lib/color";
 import { createRoot } from "react-dom/client";
-import { useTheme } from "./../theme/provider";
-import { DialogThemeConfiguration } from "./../theme";
+import { getThemeSnapshot, ThemeProvider, useTheme } from "./../theme/provider";
+import { DialogThemeConfiguration, ThemeMode } from "./../theme";
 
 const zoomIn = keyframes`from {transform: translate(-50%, -50%) scale(0.95); opacity: 0;} to {transform: translate(-50%, -50%) scale(1); opacity: 1;}`;
 const zoomOut = keyframes`from {transform: translate(-50%, -50%) scale(1); opacity: 1;} to {transform: translate(-50%, -50%) scale(0.95); opacity: 0;}`;
@@ -88,7 +88,9 @@ function Dialog({
   const { mounted, target } = usePortal();
 
   const closeDialog = () => {
-    onVisibilityChange(false);
+    if (onVisibilityChange) {
+      onVisibilityChange(false);
+    }
     if (onClosed) {
       onClosed();
     }
@@ -367,6 +369,7 @@ interface DialogMountState {
   container: HTMLDivElement | null;
   setConfig?: (props: DialogConfig | null) => void;
   setIsOpen?: (isOpen: boolean) => void;
+  onMounted?: () => void;
 }
 
 const mountedStates = new Map<ComponentType<DialogConfig>, DialogMountState>();
@@ -379,13 +382,15 @@ function DialogProvider({
   const [config, setConfig] = useState<DialogConfig | null>(null);
   const [isOpen, setIsOpen] = useState(false);
 
-  useState(() => {
-    const state = mountedStates.get(Dialog);
-    if (state) {
-      state.setConfig = setConfig;
-      state.setIsOpen = setIsOpen;
-    }
-  });
+  const state = mountedStates.get(Dialog);
+  if (state) {
+    state.setConfig = setConfig;
+    state.setIsOpen = setIsOpen;
+  }
+
+  useEffect(() => {
+    mountedStates.get(Dialog)?.onMounted?.();
+  }, []);
 
   if (!config) return null;
 
@@ -416,7 +421,12 @@ function DialogProvider({
   );
 }
 
-function ensureProvider(component: ComponentType<DialogProps>) {
+function ensureProvider(
+  component: ComponentType<DialogProps>,
+  onReady?: () => void
+) {
+  const { mode, themes } = getThemeSnapshot();
+
   // If a container reference exists but is no longer attached to the DOM
   // reset all internal references so the provider can be recreated safely.
   if (!mountedStates.has(component)) {
@@ -437,13 +447,22 @@ function ensureProvider(component: ComponentType<DialogProps>) {
   }
   // If the provider is already mounted and valid, do nothing.
   // This ensures the modal system behaves as a singleton.
-  if (state.mounted) return;
+  if (state.mounted) {
+    onReady();
+    return;
+  }
+
+  state.onMounted = onReady;
 
   const container = document.createElement("div");
   document.body.appendChild(container);
 
   const root = createRoot(container);
-  root.render(<DialogProvider component={component} />);
+  root.render(
+    <ThemeProvider mode={mode} themes={themes}>
+      <DialogProvider component={component} />
+    </ThemeProvider>
+  );
 
   state.container = container;
   state.root = root;
@@ -453,16 +472,16 @@ function ensureProvider(component: ComponentType<DialogProps>) {
 export function createDialogController(component: ComponentType<DialogProps>) {
   return {
     show(config: DialogConfig) {
-      ensureProvider(component);
-      // Introduce a slight delay to ensure the component is fully mounted
-      // before triggering the open state, preserving animation consistency.
+      ensureProvider(component, () => {
+        // Introduce a slight delay to ensure the component is fully mounted
+        // before triggering the open state, preserving animation consistency.
+        const state = mountedStates.get(component);
 
-      const state = mountedStates.get(component);
-
-      setTimeout(() => {
-        state?.setConfig?.(config);
-        state?.setIsOpen?.(true);
-      }, 10);
+        setTimeout(() => {
+          state?.setConfig?.(config);
+          state?.setIsOpen?.(true);
+        }, 10);
+      });
     },
 
     hide() {
