@@ -622,6 +622,10 @@ export function createFileDropBoxTheme(
 
     iconColor: "#6b7280",
 
+    progressBackgroundColor: "#d1d5db",
+    progressBarColor: "#93c5fd",
+    progressTextColor: "#111827",
+
     disabledTextColor: fieldLane.disabledTextColor || "#9ca3af",
   };
 
@@ -2045,6 +2049,10 @@ const darkFileDropBox = createFileDropBoxTheme(darkBody, darkFieldLane, {
   errorGradientColor: "#dc2626",
   dragActiveGradientColor: "#3b82f6",
   disabledGradientColor: "#9ca3af",
+
+  progressBackgroundColor: "#374151",
+  progressBarColor: "#60a5fa",
+  progressTextColor: "#e5e7eb",
 
   iconColor: "#9ca3af",
 

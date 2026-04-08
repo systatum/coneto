@@ -196,11 +196,14 @@ function FileDropBox({
       onDragLeave={!disabled && handleDragLeave}
     >
       {progress === "loading" && currentIndex !== null ? (
-        <ProgressContainer>
+        <ProgressContainer $theme={fileDropBoxTheme}>
           <LoadingSpinner iconSize={20} />
           <span>{progressLabel}</span>
-          <ProgressBarWrapper>
-            <ProgressBar width={progressPercentage} />
+          <ProgressBarWrapper $theme={fileDropBoxTheme}>
+            <ProgressBar
+              $width={progressPercentage}
+              $theme={fileDropBoxTheme}
+            />
           </ProgressBarWrapper>
         </ProgressContainer>
       ) : progress === "idle" ? (
@@ -343,7 +346,6 @@ const DropArea = styled.div<{
   $successStyle?: CSSProp;
   $theme: FileDropBoxThemeConfiguration;
 }>`
-  padding: 0.75rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -360,6 +362,7 @@ const DropArea = styled.div<{
   ${({ $progress, $dragOverStyle, $theme }) =>
     $progress === "idle" &&
     css`
+      padding: 0.75rem;
       border: 1px dotted transparent;
       background-image:
         repeating-linear-gradient(
@@ -492,43 +495,48 @@ const LinkText = styled.span<{ $theme: FileDropBoxThemeConfiguration }>`
   text-decoration: underline;
 `;
 
-const ProgressContainer = styled.div`
+const ProgressContainer = styled.div<{
+  $theme: FileDropBoxThemeConfiguration;
+}>`
   width: 100%;
   font-size: 0.875rem;
-  color: black;
   padding: 1rem;
   border-radius: 2px;
   position: relative;
-  border: 1px solid #f3f4f6;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  border: 1px solid ${({ $theme }) => $theme.borderColor};
 `;
 
-const ProgressBarWrapper = styled.div`
+const ProgressBarWrapper = styled.div<{
+  $theme: FileDropBoxThemeConfiguration;
+}>`
   height: 4px;
   width: 100%;
-  background-color: #d1d5db;
   position: absolute;
   left: 0;
   bottom: 0;
+  background-color: ${({ $theme }) => $theme.backgroundColor || "#e5e7eb"};
 `;
 
-const ProgressBar = styled.div<{ width: number }>`
+const ProgressBar = styled.div<{
+  $width: number;
+  $theme: FileDropBoxThemeConfiguration;
+}>`
   height: 4px;
-  background-color: #93c5fd;
   position: absolute;
   left: 0;
   bottom: 0;
   border-radius: 2px;
   transition: all 0.2s ease;
-  width: ${(props) => props.width}%;
+  width: ${({ $width }) => $width}%;
+  background-color: ${({ $theme }) => $theme.progressBarColor};
 `;
 
 const ErrorList = styled.ul`
   list-style-type: disc;
   font-size: 0.875rem;
-  color: #4b5563;
   margin-left: 2.5rem;
 `;
 

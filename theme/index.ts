@@ -339,6 +339,10 @@ export interface FileDropBoxThemeConfiguration {
   iconColor?: string;
 
   disabledTextColor?: string;
+
+  progressBackgroundColor?: string;
+  progressBarColor?: string;
+  progressTextColor?: string;
 }
 
 // frame.tsx
