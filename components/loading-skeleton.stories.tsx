@@ -5,6 +5,7 @@ import {
 } from "./loading-skeleton";
 import { css } from "styled-components";
 import { Grid } from "./grid";
+import { useTheme } from "./../theme/provider";
 
 const meta: Meta<typeof LoadingSkeleton> = {
   title: "Content/LoadingSkeleton",
@@ -111,6 +112,9 @@ type Story = StoryObj<typeof LoadingSkeleton>;
 
 export const Card: Story = {
   render: () => {
+    const { currentTheme } = useTheme();
+    const loadingSkeletonTheme = currentTheme.loadingSkeleton;
+
     const CARD_SAMPLE: LoadingSkeletonOptionProps[] = [
       {
         flashDirection: "left-to-right",
@@ -153,7 +157,7 @@ export const Card: Story = {
               flashRate={props.flashRate}
               styles={{
                 self: css`
-                  border: 1px solid #eee;
+                  border: 1px solid ${loadingSkeletonTheme?.baseColor};
                   border-radius: 8px;
                   width: 300px;
                 `,

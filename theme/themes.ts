@@ -1885,8 +1885,8 @@ const darkList = createListTheme(darkBody, {
 });
 
 const darkLoadingSkeleton = createLoadingSkeletonTheme({
-  baseColor: "#1f2937",
-  highlightColor: "#374151",
+  baseColor: "#2b313a",
+  highlightColor: "#3b424c",
 });
 
 const darkLoadingSpinner = createLoadingSpinnerTheme(darkBody, {
