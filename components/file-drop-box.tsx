@@ -13,6 +13,8 @@ import { LoadingSpinner } from "./loading-spinner";
 import { StatefulForm } from "./stateful-form";
 import { Figure } from "./figure";
 import { FieldLaneProps } from "./field-lane";
+import { useTheme } from "./../theme/provider";
+import { FileDropBoxThemeConfiguration } from "./../theme";
 
 export interface OnFileDroppedFunctionProps {
   files: File[];
@@ -76,6 +78,9 @@ function FileDropBox({
   required,
   disabled,
 }: FileDropBoxProps) {
+  const { currentTheme } = useTheme();
+  const fileDropBoxTheme = currentTheme.fileDropBox;
+
   const FILE_ICON = [
     { id: 1, icon: RiImageLine, size: 50 },
     { id: 2, icon: RiFileUploadLine, size: 80 },
@@ -179,6 +184,7 @@ function FileDropBox({
 
   const inputElement: ReactElement = (
     <DropArea
+      $theme={fileDropBoxTheme}
       $dragOverStyle={styles?.dragOverStyle}
       $successStyle={styles?.successStyle}
       $isDragging={isDragging}
@@ -204,17 +210,22 @@ function FileDropBox({
               {FILE_ICON.map(({ id, icon, size }) => (
                 <Figure
                   key={id}
-                  color={isDragging ? "#3b82f6" : "#6b7280"}
+                  color={
+                    isDragging
+                      ? fileDropBoxTheme.dragActiveTextColor
+                      : fileDropBoxTheme.iconColor
+                  }
                   image={icon}
                   size={size}
                 />
               ))}
             </IconsRow>
-            <PlaceholderText $isDragging={isDragging}>
+            <PlaceholderText $theme={fileDropBoxTheme} $isDragging={isDragging}>
               {placeholder}
             </PlaceholderText>
             <div>
-              <LinkText>Select some files</LinkText> from your computer
+              <LinkText $theme={fileDropBoxTheme}>Select some files</LinkText>{" "}
+              from your computer
             </div>
           </UploadContent>
           {children && (
@@ -330,6 +341,7 @@ const DropArea = styled.div<{
   $progress: ProgressProps;
   $dragOverStyle?: CSSProp;
   $successStyle?: CSSProp;
+  $theme: FileDropBoxThemeConfiguration;
 }>`
   padding: 0.75rem;
   display: flex;
@@ -340,39 +352,41 @@ const DropArea = styled.div<{
   align-items: center;
   justify-content: space-between;
   border-radius: 4px;
-  color: #6b7280;
   width: 100%;
 
-  ${({ $progress, $dragOverStyle }) =>
+  color: ${({ $theme }) => $theme.textColor};
+  background-color: ${({ $theme }) => $theme.backgroundColor};
+
+  ${({ $progress, $dragOverStyle, $theme }) =>
     $progress === "idle" &&
     css`
       border: 1px dotted transparent;
       background-image:
         repeating-linear-gradient(
           to right,
-          #9ca3af 0,
-          #9ca3af 8px,
+          ${$theme.defaultGradientColor} 0,
+          ${$theme.defaultGradientColor} 8px,
           transparent 8px,
           transparent 12px
         ),
         repeating-linear-gradient(
           to bottom,
-          #9ca3af 0,
-          #9ca3af 8px,
+          ${$theme.defaultGradientColor} 0,
+          ${$theme.defaultGradientColor} 8px,
           transparent 8px,
           transparent 12px
         ),
         repeating-linear-gradient(
           to left,
-          #9ca3af 0,
-          #9ca3af 8px,
+          ${$theme.defaultGradientColor} 0,
+          ${$theme.defaultGradientColor} 8px,
           transparent 8px,
           transparent 12px
         ),
         repeating-linear-gradient(
           to top,
-          #9ca3af 0,
-          #9ca3af 8px,
+          ${$theme.defaultGradientColor} 0,
+          ${$theme.defaultGradientColor} 8px,
           transparent 8px,
           transparent 12px
         );
@@ -391,37 +405,38 @@ const DropArea = styled.div<{
       ${$dragOverStyle}
     `};
 
-  ${({ $isDragging }) =>
+  ${({ $isDragging, $theme }) =>
     $isDragging &&
     css`
-      background-color: #eff6ff;
-      color: #61a9f9;
+      background-color: ${$theme.dragActiveBackgroundColor};
+      color: ${$theme.dragActiveTextColor};
+
       background-image:
         repeating-linear-gradient(
           to right,
-          #60a5fa 0,
-          #60a5fa 8px,
+          ${$theme.dragActiveGradientColor} 0,
+          ${$theme.dragActiveGradientColor} 8px,
           transparent 8px,
           transparent 12px
         ),
         repeating-linear-gradient(
           to bottom,
-          #60a5fa 0,
-          #60a5fa 8px,
+          ${$theme.dragActiveGradientColor} 0,
+          ${$theme.dragActiveGradientColor} 8px,
           transparent 8px,
           transparent 12px
         ),
         repeating-linear-gradient(
           to left,
-          #60a5fa 0,
-          #60a5fa 8px,
+          ${$theme.dragActiveGradientColor} 0,
+          ${$theme.dragActiveGradientColor} 8px,
           transparent 8px,
           transparent 12px
         ),
         repeating-linear-gradient(
           to top,
-          #60a5fa 0,
-          #60a5fa 8px,
+          ${$theme.dragActiveGradientColor} 0,
+          ${$theme.dragActiveGradientColor} 8px,
           transparent 8px,
           transparent 12px
         );
@@ -438,10 +453,10 @@ const DropArea = styled.div<{
       background-repeat: no-repeat;
     `};
 
-  ${({ $progress, $successStyle }) =>
+  ${({ $progress, $successStyle, $theme }) =>
     $progress === "succeed" &&
     css`
-      border: 1px solid #f3f4f6;
+      border: 1px solid ${$theme.borderColor};
       ${$successStyle}
     `};
 `;
@@ -463,13 +478,17 @@ const IconsRow = styled.div`
   gap: 0.5rem;
 `;
 
-const PlaceholderText = styled.span<{ $isDragging: boolean }>`
+const PlaceholderText = styled.span<{
+  $isDragging: boolean;
+  $theme: FileDropBoxThemeConfiguration;
+}>`
   font-size: 1.25rem;
-  color: ${(props) => (props.$isDragging ? "#3b82f6" : "#000")};
+  color: ${({ $theme, $isDragging }) =>
+    $isDragging ? $theme.dragActiveTextColor : $theme.textColor};
 `;
 
-const LinkText = styled.span`
-  color: #3b82f6;
+const LinkText = styled.span<{ $theme: FileDropBoxThemeConfiguration }>`
+  color: ${({ $theme }) => $theme.dragActiveTextColor || "#3b82f6"};
   text-decoration: underline;
 `;
 
