@@ -217,6 +217,16 @@ export interface ColorboxThemeConfiguration {
   boxBackgroundColor?: string;
 }
 
+// crumb.tsx
+export interface CrumbThemeConfiguration {
+  textColor?: string;
+  hoverColor?: string;
+  lastTextColor?: string;
+  arrowColor?: string;
+  ellipsisColor?: string;
+  ellipsisHoverColor?: string;
+}
+
 // dialog.tsx
 export interface DialogThemeConfiguration {
   backgroundColor?: string;
@@ -807,6 +817,7 @@ export interface AppTheme {
   checkbox: CheckboxThemeConfiguration;
   colorbox: ColorboxThemeConfiguration;
   combobox: ComboboxThemeConfiguration;
+  crumb: CrumbThemeConfiguration;
   dialog: DialogThemeConfiguration;
   documentViewer: DocumentViewerThemeConfiguration;
   dormantText: DormantTextThemeConfiguration;

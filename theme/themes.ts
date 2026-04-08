@@ -18,6 +18,7 @@ import {
   ChoiceGroupThemeConfiguration,
   ColorboxThemeConfiguration,
   ComboboxThemeConfiguration,
+  CrumbThemeConfiguration,
   DialogThemeConfiguration,
   DocumentViewerThemeConfiguration,
   DormantTextThemeConfiguration,
@@ -394,7 +395,6 @@ export function createCheckboxTheme(
 }
 
 // colorbox.tsx
-
 export function createColorboxTheme(
   body: BodyThemeConfiguration,
   fieldLane: Partial<FieldLaneThemeConfiguration> = {},
@@ -416,6 +416,23 @@ export function createColorboxTheme(
     prefixColor: fieldLane?.placeholderColor || "#6b7280",
 
     boxBackgroundColor: body.backgroundColor || "#ffffff",
+  };
+
+  return { ...defaultTheme, ...custom };
+}
+
+// crumb.tsx
+export function createCrumbTheme(
+  body: BodyThemeConfiguration,
+  custom: Partial<CrumbThemeConfiguration> = {}
+): CrumbThemeConfiguration {
+  const defaultTheme: CrumbThemeConfiguration = {
+    textColor: "#4b5563",
+    hoverColor: "#61a9f9",
+    lastTextColor: body.textColor,
+    arrowColor: "#9ca3af",
+    ellipsisColor: "#6b7280",
+    ellipsisHoverColor: "#61a9f9",
   };
 
   return { ...defaultTheme, ...custom };
@@ -1591,6 +1608,8 @@ const lightColorbox = createColorboxTheme(lightBody, lightFieldLane);
 
 const lightCombobox = createComboboxTheme(lightBody, lightFieldLane);
 
+const lightCrumb = createCrumbTheme(lightBody);
+
 const lightDialog = createDialogTheme(lightBody);
 
 const lightDocumentViewer = createDocumentViewerTheme(lightBody);
@@ -1713,6 +1732,7 @@ const lightTheme: AppTheme = {
   checkbox: lightCheckbox,
   colorbox: lightColorbox,
   combobox: lightCombobox,
+  crumb: lightCrumb,
   dialog: lightDialog,
   documentViewer: lightDocumentViewer,
   dormantText: lightDormantText,
@@ -2029,6 +2049,14 @@ const darkColorbox = createColorboxTheme(darkBody, darkFieldLane);
 
 const darkCombobox = createComboboxTheme(darkBody, darkFieldLane, {
   groupBackgroundColor: "rgb(35 37 41)",
+});
+
+export const darkCrumb = createCrumbTheme(darkBody, {
+  hoverColor: darkButton?.primary?.hoverBackgroundColor,
+  textColor: "rgb(160, 160, 160)",
+  arrowColor: "#9ca3af",
+  ellipsisColor: "#9ca3af",
+  ellipsisHoverColor: darkButton?.primary?.hoverBackgroundColor,
 });
 
 const darkDialog = createDialogTheme(darkBody, {
@@ -2426,6 +2454,7 @@ const darkTheme: AppTheme = {
   checkbox: darkCheckbox,
   colorbox: darkColorbox,
   combobox: darkCombobox,
+  crumb: darkCrumb,
   dialog: darkDialog,
   documentViewer: darkDocumentViewer,
   dormantText: darkDormantText,
