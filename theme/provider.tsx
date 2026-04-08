@@ -16,6 +16,14 @@ export function useThemeMode() {
   return useContext(ThemeContext);
 }
 
+let _mode: ThemeMode = "light";
+let _themes: Record<string, AppTheme> = themes;
+
+// Outside React tree — use the snapshot (imperative)
+export function getThemeSnapshot() {
+  return { mode: _mode, themes: _themes };
+}
+
 export function ThemeProvider({
   mode,
   children,
@@ -25,6 +33,9 @@ export function ThemeProvider({
   children: React.ReactNode;
   themes?: Record<string, AppTheme>;
 }) {
+  _mode = mode;
+  _themes = themesContent;
+
   const theme = themesContent[mode];
 
   return (
