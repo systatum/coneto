@@ -1335,9 +1335,15 @@ function TableRow({
                         `}
                   `,
                 }}
-                focusBackgroundColor="#d4d4d4"
-                hoverBackgroundColor="#d4d4d4"
-                activeBackgroundColor="#d4d4d4"
+                focusBackgroundColor={
+                  tableTheme?.toggleRowBackgroundColor || "#d4d4d4"
+                }
+                hoverBackgroundColor={
+                  tableTheme?.toggleRowBackgroundColor || "#d4d4d4"
+                }
+                activeBackgroundColor={
+                  tableTheme?.toggleRowBackgroundColor || "#d4d4d4"
+                }
                 actions={actionsWithIcons}
               />
             );

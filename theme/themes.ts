@@ -1257,6 +1257,8 @@ export function createTableTheme(
 
     summaryBackgroundColor: "linear-gradient(to bottom, #f0f0f0, #e4e4e4)",
     summaryBorderColor: "#d1d5db",
+
+    toggleRowBackgroundColor: "#d4d4d4",
   };
 
   return {
@@ -2268,7 +2270,7 @@ const darkStatefulForm = createStatefulFormTheme(darkBody, {
   rowFrameBackgroundColor: "rgb(48, 48, 48)",
 });
 
-export const darkTable: TableThemeConfiguration = createTableTheme(darkBody, {
+export const darkTable = createTableTheme(darkBody, {
   textColor: darkBody.textColor,
   boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
 
@@ -2292,6 +2294,8 @@ export const darkTable: TableThemeConfiguration = createTableTheme(darkBody, {
 
   summaryBackgroundColor: "linear-gradient(#29282b, #323232)",
   summaryBorderColor: "rgb(39, 39, 48)",
+
+  toggleRowBackgroundColor: "#374151",
 });
 
 const darkTextarea = createTextareaTheme(darkBody, darkFieldLane, {

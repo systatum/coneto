@@ -667,6 +667,8 @@ export interface TableThemeConfiguration {
 
   summaryBackgroundColor?: string;
   summaryBorderColor?: string;
+
+  toggleRowBackgroundColor?: string;
 }
 
 // timebox.tsx
