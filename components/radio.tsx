@@ -61,8 +61,6 @@ function BaseRadio({
 
   const resolvediconSize = icon?.size ?? (mode === "button" ? 25 : 16);
 
-  console.log(radioTheme);
-
   return (
     <Label
       $isRadio={mode === "radio"}
@@ -154,13 +152,13 @@ function Radio({
   labelPosition,
   ...rest
 }: RadioProps) {
-  console.log(styles);
-
   const inputId = StatefulForm.sanitizeId({
     id: id ? `${id}-${rest.value ?? "value"}` : null,
     prefix: `radio-${rest.value ?? "value"}`,
     name,
   });
+
+  const isChecked = !!rest.checked;
 
   const {
     bodyStyle,
@@ -222,29 +220,50 @@ const Label = styled.label<{
   gap: 2px;
   cursor: pointer;
   font-size: 12px;
+  border: 0.5px solid transparent;
+
   background-color: ${({ $highlight, $checked, $theme }) => {
     if ($highlight && $checked)
       return (
-        $theme?.highlightBackgroundColor ||
+        $theme?.highlightCheckedBackgroundColor ||
         $theme?.checkedBackgroundColor ||
         $theme?.backgroundColor ||
         "transparent"
       );
+
     return $theme?.backgroundColor || "transparent";
   }};
+
+  ${({ $highlight, $checked, $isRadio, $theme }) =>
+    $highlight && $checked && !$isRadio
+      ? css`
+          border-radius: 4px;
+          border: 0.5px solid ${$theme?.highlightCheckedBorderColor};
+          background-color: ${$theme?.highlightCheckedBackgroundColor};
+        `
+      : $highlight &&
+        !$checked &&
+        !$isRadio &&
+        css`
+          border-radius: 4px;
+          border: 0.5px solid ${$theme?.highlightBorderColor};
+        `}
 
   padding: ${({ $highlight }) => ($highlight ? "0.75rem" : "0")};
   width: 100%;
   transition: background-color 0.2s;
 
   &:hover {
+    border: 0.5px solid
+      ${({ $highlight, $checked, $isRadio, $theme }) =>
+        $highlight && $checked && !$isRadio
+          ? $theme?.highlightCheckedBorderColor
+          : "transparent"};
+
     background-color: ${({ $highlight, $checked, $theme }) => {
       if ($highlight) {
-        if ($theme?.highlightHoverColor) return $theme?.highlightHoverColor;
         return $checked
-          ? $theme?.highlightBackgroundColor ||
-              $theme?.checkedBackgroundColor ||
-              $theme?.backgroundColor
+          ? $theme?.highlightBackgroundColor
           : $theme?.highlightBackgroundColor || $theme?.backgroundColor;
       }
       return $theme?.backgroundColor;

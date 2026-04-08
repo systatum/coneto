@@ -64,14 +64,9 @@ function ChoiceGroup({ children, styles }: ChoiceGroupProps) {
             styles: {
               ...radioProps?.styles,
               containerStyle: css`
-                border: 0.5px solid ${choiceGroupTheme.dividerColor};
                 border-radius: 4px;
                 overflow: hidden;
                 ${radioProps?.styles?.containerStyle}
-              `,
-              textWrapperStyle: css`
-                background-color: ${choiceGroupTheme.backgroundColor};
-                ${radioProps?.styles?.textWrapperStyle}
               `,
               labelStyle: css`
                 color: ${choiceGroupTheme.labelColor};
@@ -103,7 +98,6 @@ function ChoiceGroup({ children, styles }: ChoiceGroupProps) {
               ...checkboxProps?.styles,
               containerStyle: css`
                 width: 100%;
-                background-color: ${choiceGroupTheme.backgroundColor};
                 ${checkboxProps?.styles?.containerStyle}
               `,
               labelStyle: css`

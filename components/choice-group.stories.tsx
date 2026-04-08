@@ -234,6 +234,8 @@ export const WithRadioButton: StoryRadio = {
     const [stateB, setStateB] = useState("text");
     const [stateC, setStateC] = useState("text");
 
+    console.log(stateA);
+
     const GROUP_A = "radio_group_a";
     const GROUP_B = "radio_group_b";
     const GROUP_C = "radio_group_c";

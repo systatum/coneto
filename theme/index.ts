@@ -425,8 +425,12 @@ export interface RadioThemeConfiguration {
   iconColor?: string;
   labelColor?: string;
   descriptionColor?: string;
+
+  highlightCheckedBackgroundColor?: string;
   highlightBackgroundColor?: string;
-  highlightHoverColor?: string;
+
+  highlightCheckedBorderColor?: string;
+  highlightBorderColor?: string;
 }
 
 // searchbox.tsx

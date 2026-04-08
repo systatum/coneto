@@ -827,7 +827,9 @@ export function createRadioTheme(
     labelColor: body.textColor,
     descriptionColor: "#4b5563",
     highlightBackgroundColor: "#DBEAFE",
-    highlightHoverColor: "#E7F2FC",
+    highlightBorderColor: "#DBEAFE",
+    highlightCheckedBackgroundColor: "#E7F2FC",
+    highlightCheckedBorderColor: "#61A9F9",
   };
 
   return { ...defaultTheme, ...customTheme };
@@ -1954,8 +1956,12 @@ const darkRadio = createRadioTheme(darkBody, {
   checkedBackgroundColor: "white",
   labelColor: "#ffffff",
   descriptionColor: "#d1d5db",
-  highlightBackgroundColor: "#2563EB33",
-  highlightHoverColor: "#2563EB55",
+
+  highlightCheckedBackgroundColor: "#1465d333",
+  highlightBackgroundColor: "#2563EB55",
+
+  highlightBorderColor: "rgb(75, 85, 99)",
+  highlightCheckedBorderColor: "#1465d3bf",
 });
 
 const darkSearchbox = createSearchboxTheme(darkBody, {
