@@ -10,6 +10,8 @@ import styled, { css, CSSProp } from "styled-components";
 import { Button } from "./button";
 import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { useTheme } from "./../theme/provider";
+import { FileInputBoxThemeConfiguration } from "./../theme";
 
 interface BaseFileInputBoxProps extends InputHTMLAttributes<HTMLInputElement> {
   placeholder?: string;
@@ -40,6 +42,9 @@ function BaseFileInputBox({
   disabled,
   ...props
 }: BaseFileInputBoxProps) {
+  const { currentTheme } = useTheme();
+  const fileInputBoxTheme = currentTheme.fileInputBox;
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -91,6 +96,7 @@ function BaseFileInputBox({
 
   return (
     <InputBox
+      $theme={fileInputBoxTheme}
       $style={styles?.self}
       $isDragging={!disabled && isDragging}
       $hasFile={selectedFiles.length > 0}
@@ -108,6 +114,7 @@ function BaseFileInputBox({
             <FileItem key={index}>
               <Button
                 aria-label="delete-button"
+                variant="transparent"
                 styles={{
                   containerStyle: css`
                     cursor: pointer;
@@ -118,10 +125,6 @@ function BaseFileInputBox({
                     padding: 2px;
                     width: fit-content;
                     height: fit-content;
-                    background-color: white;
-                    &:hover {
-                      background-color: #e5e7eb;
-                    }
                   `,
                 }}
                 onClick={(e) => {
@@ -131,12 +134,12 @@ function BaseFileInputBox({
               >
                 <RiCloseLine size={14} />
               </Button>
-              <FileName>{file.name}</FileName>
+              <FileName $theme={fileInputBoxTheme}>{file.name}</FileName>
             </FileItem>
           ))}
         </FileList>
       ) : (
-        <Placeholder>{placeholder}</Placeholder>
+        <Placeholder $theme={fileInputBoxTheme}>{placeholder}</Placeholder>
       )}
       <input
         {...props}
@@ -229,6 +232,7 @@ const InputBox = styled.div<{
   $self?: CSSProp;
   $style?: CSSProp;
   $disabled?: boolean;
+  $theme: FileInputBoxThemeConfiguration;
 }>`
   padding: 12px;
   user-select: none;
@@ -241,36 +245,38 @@ const InputBox = styled.div<{
   cursor: ${({ $disabled, $hasFile }) =>
     $disabled ? "not-allowed" : $hasFile ? "default" : "pointer"};
   font-size: 14px;
-  color: ${({ $isDragging }) => ($isDragging ? "#3b82f6" : "#6b7280")};
-  background-color: ${({ $isDragging }) => ($isDragging ? "#eff6ff" : "#fff")};
+  color: ${({ $theme, $disabled }) =>
+    $disabled ? $theme.disabledTextColor : $theme.textColor};
   border: 1px dotted transparent;
-  background-image: ${({ $disabled, $isDragging, $isError }) =>
+  background-color: ${({ $isDragging, $theme }) =>
+    $isDragging ? $theme.dragActiveBackgroundColor : $theme.backgroundColor};
+  background-image: ${({ $theme, $disabled, $isDragging, $isError }) =>
     $disabled
       ? `
-      repeating-linear-gradient(to right, #9ca3af 0, #9ca3af 8px, transparent 8px, transparent 12px),
-      repeating-linear-gradient(to bottom, #9ca3af 0, #9ca3af 8px, transparent 8px, transparent 12px),
-      repeating-linear-gradient(to left, #9ca3af 0, #9ca3af 8px, transparent 8px, transparent 12px),
-      repeating-linear-gradient(to top, #9ca3af 0, #9ca3af 8px, transparent 8px, transparent 12px)
-  `
+      repeating-linear-gradient(to right, ${$theme.disabledGradientColor} 0, ${$theme.disabledGradientColor} 8px, transparent 8px, transparent 12px),
+      repeating-linear-gradient(to bottom, ${$theme.disabledGradientColor} 0, ${$theme.disabledGradientColor} 8px, transparent 8px, transparent 12px),
+      repeating-linear-gradient(to left, ${$theme.disabledGradientColor} 0, ${$theme.disabledGradientColor} 8px, transparent 8px, transparent 12px),
+      repeating-linear-gradient(to top, ${$theme.disabledGradientColor} 0, ${$theme.disabledGradientColor} 8px, transparent 8px, transparent 12px)
+    `
       : $isDragging
         ? `
-      repeating-linear-gradient(to right, #60a5fa 0, #60a5fa 8px, transparent 8px, transparent 12px),
-      repeating-linear-gradient(to bottom, #60a5fa 0, #60a5fa 8px, transparent 8px, transparent 12px),
-      repeating-linear-gradient(to left, #60a5fa 0, #60a5fa 8px, transparent 8px, transparent 12px),
-      repeating-linear-gradient(to top, #60a5fa 0, #60a5fa 8px, transparent 8px, transparent 12px)
+      repeating-linear-gradient(to right, ${$theme.dragActiveColor} 0, ${$theme.dragActiveColor} 8px, transparent 8px, transparent 12px),
+      repeating-linear-gradient(to bottom, ${$theme.dragActiveColor} 0, ${$theme.dragActiveColor} 8px, transparent 8px, transparent 12px),
+      repeating-linear-gradient(to left, ${$theme.dragActiveColor} 0, ${$theme.dragActiveColor} 8px, transparent 8px, transparent 12px),
+      repeating-linear-gradient(to top, ${$theme.dragActiveColor} 0, ${$theme.dragActiveColor} 8px, transparent 8px, transparent 12px)
     `
         : $isError
           ? `
-      repeating-linear-gradient(to right, #dc2626 0, #dc2626 8px, transparent 8px, transparent 12px),
-      repeating-linear-gradient(to bottom, #dc2626 0, #dc2626 8px, transparent 8px, transparent 12px),
-      repeating-linear-gradient(to left, #dc2626 0, #dc2626 8px, transparent 8px, transparent 12px),
-      repeating-linear-gradient(to top, #dc2626 0, #dc2626 8px, transparent 8px, transparent 12px)
+      repeating-linear-gradient(to right, ${$theme.errorGradientColor} 0, ${$theme.errorGradientColor} 8px, transparent 8px, transparent 12px),
+      repeating-linear-gradient(to bottom, ${$theme.errorGradientColor} 0, ${$theme.errorGradientColor} 8px, transparent 8px, transparent 12px),
+      repeating-linear-gradient(to left, ${$theme.errorGradientColor} 0, ${$theme.errorGradientColor} 8px, transparent 8px, transparent 12px),
+      repeating-linear-gradient(to top, ${$theme.errorGradientColor} 0, ${$theme.errorGradientColor} 8px, transparent 8px, transparent 12px)
     `
           : `
-      repeating-linear-gradient(to right, #9ca3af 0, #9ca3af 8px, transparent 8px, transparent 12px),
-      repeating-linear-gradient(to bottom, #9ca3af 0, #9ca3af 8px, transparent 8px, transparent 12px),
-      repeating-linear-gradient(to left, #9ca3af 0, #9ca3af 8px, transparent 8px, transparent 12px),
-      repeating-linear-gradient(to top, #9ca3af 0, #9ca3af 8px, transparent 8px, transparent 12px)
+      repeating-linear-gradient(to right, ${$theme.defaultGradientColor} 0, ${$theme.defaultGradientColor} 8px, transparent 8px, transparent 12px),
+      repeating-linear-gradient(to bottom, ${$theme.defaultGradientColor} 0, ${$theme.defaultGradientColor} 8px, transparent 8px, transparent 12px),
+      repeating-linear-gradient(to left, ${$theme.defaultGradientColor} 0, ${$theme.defaultGradientColor} 8px, transparent 8px, transparent 12px),
+      repeating-linear-gradient(to top, ${$theme.defaultGradientColor} 0, ${$theme.defaultGradientColor} 8px, transparent 8px, transparent 12px)
     `};
   background-size:
     100% 1px,
@@ -308,18 +314,25 @@ const FileItem = styled.div`
   gap: 6px;
 `;
 
-const FileName = styled.div`
+const FileName = styled.div<{ $theme: FileInputBoxThemeConfiguration }>`
   font-size: 14px;
-  color: #374151;
   width: 90%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+
+  ${({ $theme }) => css`
+    color: ${$theme.placeholderColor};
+  `}
 `;
 
-const Placeholder = styled.span`
+const Placeholder = styled.span<{ $theme: FileInputBoxThemeConfiguration }>`
   font-size: 14px;
   width: 100%;
+
+  ${({ $theme }) => css`
+    color: ${$theme.placeholderColor};
+  `}
 `;
 
 export { FileInputBox };
