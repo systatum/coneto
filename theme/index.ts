@@ -400,6 +400,23 @@ export interface PaperDialogThemeConfiguration {
   actionHoverBackgroundColor?: string;
 }
 
+//pinbox.tsx
+export interface PinboxThemeConfiguration {
+  backgroundColor?: string;
+  borderColor?: string;
+  focusedBorderColor?: string;
+  textColor?: string;
+
+  errorBorderColor?: string;
+  errorTextColor?: string;
+
+  disabledBorderColor?: string;
+  disabledTextColor?: string;
+
+  placeholderColor?: string;
+  boxShadow?: string;
+}
+
 // phonebox.tsx
 export interface PhoneboxThemeConfiguration {
   backgroundColor?: string;
@@ -726,6 +743,7 @@ export interface AppTheme {
   navTab: NavTabThemeConfiguration;
   overlayBlocker: OverlayBlockerThemeConfiguration;
   paperDialog: PaperDialogThemeConfiguration;
+  pinbox: PinboxThemeConfiguration;
   phonebox: PhoneboxThemeConfiguration;
   radio: RadioThemeConfiguration;
   rating: RatingThemeConfiguration;

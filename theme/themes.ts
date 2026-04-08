@@ -36,6 +36,7 @@ import {
   OverlayBlockerThemeConfiguration,
   PaperDialogThemeConfiguration,
   PhoneboxThemeConfiguration,
+  PinboxThemeConfiguration,
   RadioThemeConfiguration,
   RatingThemeConfiguration,
   RichEditorThemeConfiguration,
@@ -790,6 +791,31 @@ export function createPaperDialogTheme(
   };
 }
 
+//pinbox.tsx
+export function createPinboxTheme(
+  body: BodyThemeConfiguration,
+  fieldLane: Partial<FieldLaneThemeConfiguration> = {},
+  custom: Partial<PinboxThemeConfiguration> = {}
+): PinboxThemeConfiguration {
+  const defaultTheme: PinboxThemeConfiguration = {
+    backgroundColor: body.backgroundColor || "#ffffff",
+    borderColor: fieldLane?.borderColor || "#d1d5db",
+    focusedBorderColor: fieldLane?.focusedBorderColor || "#61A9F9",
+    textColor: body.textColor || "#1f2937",
+
+    errorBorderColor: fieldLane?.errorBorderColor || "#ef4444",
+    errorTextColor: fieldLane?.errorForeground || "#991b1b",
+
+    disabledBorderColor: fieldLane?.disabledBorderColor || "#d1d5db",
+    disabledTextColor: fieldLane?.disabledTextColor || "#9ca3af",
+
+    placeholderColor: fieldLane?.placeholderColor || "#9ca3af",
+    boxShadow: "0 0 0 0.5px transparent",
+  };
+
+  return { ...defaultTheme, ...custom };
+}
+
 // phonebox.tsx
 export function createPhoneboxTheme(
   body: BodyThemeConfiguration,
@@ -1485,6 +1511,8 @@ const lightNavTab = createNavTabTheme(lightBody);
 
 const lightPaperDialog = createPaperDialogTheme(lightBody);
 
+const lightPinbox = createPinboxTheme(lightBody, lightFieldLane);
+
 const lightPhonebox = createPhoneboxTheme(lightBody, lightFieldLane);
 
 const lightRadio = createRadioTheme(lightBody);
@@ -1577,6 +1605,7 @@ const lightTheme: AppTheme = {
   navTab: lightNavTab,
   overlayBlocker: lightOverlayBlocker,
   paperDialog: lightPaperDialog,
+  pinbox: lightPinbox,
   phonebox: lightPhonebox,
   radio: lightRadio,
   rating: lightRating,
@@ -2014,6 +2043,8 @@ const darkPaperDialog = createPaperDialogTheme(darkBody, {
   actionHoverBackgroundColor: "#363636",
 });
 
+const darkPinbox = createPinboxTheme(darkBody, darkFieldLane);
+
 const darkPhonebox = createPhoneboxTheme(darkBody, darkFieldLane);
 
 const darkRadio = createRadioTheme(darkBody, {
@@ -2233,6 +2264,7 @@ const darkTheme: AppTheme = {
   navTab: darkNavTab,
   overlayBlocker: darkOverlayBlocker,
   paperDialog: darkPaperDialog,
+  pinbox: darkPinbox,
   phonebox: darkPhonebox,
   radio: darkRadio,
   rating: darkRating,
