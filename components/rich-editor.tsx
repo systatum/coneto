@@ -1275,8 +1275,9 @@ const Wrapper = styled.div<{
     $mode !== "page-editor" &&
     css`
       border: 1px solid ${$theme.borderColor};
-      border-radius: 4px;
       box-shadow: 0 1px 4px -3px #5b5b5b;
+      border-radius: 4px;
+      overflow: hidden;
     `}
 
   position: relative;
@@ -1313,15 +1314,17 @@ const Toolbar = styled.div<{
   padding: 0 8px;
   background-color: ${({ $theme }) => $theme.toolbarBackground};
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  border-top-right-radius: 4px;
-  border-top-left-radius: 4px;
 
   ${({ $toolbarPosition, $theme }) =>
     $toolbarPosition === "top"
       ? css`
+          border-top-right-radius: 4px;
+          border-top-left-radius: 4px;
           border-bottom: 1px solid ${$theme.borderColor};
         `
       : css`
+          border-bottom-right-radius: 4px;
+          border-bottom-left-radius: 4px;
           border-top: 1px solid ${$theme.borderColor};
         `}
 `;
