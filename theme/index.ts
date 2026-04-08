@@ -133,6 +133,7 @@ export interface CapsuleTabThemeConfiguration {
 // card.tsx
 export interface CardThemeConfiguration extends BodyThemeConfiguration {
   borderColor?: string;
+  dividerColor?: string;
   titleColor?: string;
   subtitleColor?: string;
   headerBackground?: string;
@@ -333,6 +334,7 @@ export interface ListThemeConfiguration {
   borderColor?: string;
   mutedTextColor?: string;
   dragLineColor?: string;
+  emptyHoverBackgroundColor?: string;
 }
 
 // loading-skeleton.tsx

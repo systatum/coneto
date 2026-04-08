@@ -306,6 +306,7 @@ export function createCardTheme(
   const defaultTheme: CardThemeConfiguration = {
     backgroundColor: "#ffffff",
     borderColor: "#e5e7eb",
+    dividerColor: "transparent",
     titleColor: body.textColor,
     subtitleColor: "#8b8e92",
     headerBackground: "transparent",
@@ -633,6 +634,7 @@ export function createListTheme(
     borderColor: "#d1d5db",
     mutedTextColor: "#6b7280",
     dragLineColor: "#3b82f6",
+    emptyHoverBackgroundColor: "#dbeafe",
   };
 
   return {
@@ -1760,6 +1762,7 @@ const darkCapsuleTab = createCapsuleTabTheme(darkBody, {
 
 const darkCard = createCardTheme(darkBody, {
   backgroundColor: "rgb(31, 31, 33)",
+  dividerColor: "transparent",
   borderColor: "#374151",
   titleColor: "#f9fafb",
   subtitleColor: "#9ca3af",
@@ -1812,7 +1815,7 @@ const darkDialog = createDialogTheme(darkBody, {
 });
 
 const darkDocumentViewer = createDocumentViewerTheme(darkBody, {
-  backgroundColor: "#0f172a",
+  backgroundColor: "#434345",
   toolbarBackgroundColor: "#020617",
   textColor: "#e5e7eb",
   hoverBoxBorderColor: "#3b82f6",
@@ -1867,11 +1870,12 @@ const darkKeynote = createKeynoteTheme(darkBody, {
 const darkList = createListTheme(darkBody, {
   backgroundColor: "rgb(26, 26, 26)",
   textColor: "#e5e7eb",
-  hoverBackgroundColor: "#1e293b",
+  hoverBackgroundColor: "#212c37",
   selectedBackgroundColor: "#1e40af",
   borderColor: "#1f2937",
   mutedTextColor: "#9ca3af",
   dragLineColor: "#264c7b",
+  emptyHoverBackgroundColor: "#212c37",
 });
 
 const darkLoadingSkeleton = createLoadingSkeletonTheme({
