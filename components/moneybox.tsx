@@ -12,6 +12,8 @@ import { Button } from "./button";
 import { List } from "./list";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 import { StatefulForm } from "./stateful-form";
+import { useTheme } from "./../theme/provider";
+import { MoneyboxThemeConfiguration } from "./../theme";
 
 export type SeparatorTypeProps = "dot" | "comma";
 
@@ -66,6 +68,9 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
     },
     ref
   ) => {
+    const { currentTheme } = useTheme();
+    const moneyboxTheme = currentTheme.moneybox;
+
     const [focus, setFocus] = useState(false);
     const [isTipMenuOpen, setIsTipMenuOpen] = useState(false);
 
@@ -112,6 +117,7 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
 
     return (
       <Box
+        $theme={moneyboxTheme}
         onBlur={() => setFocus(false)}
         ref={boxRef}
         $disabled={props.disabled}
@@ -219,6 +225,7 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
           {selectionCurrency}
         </Button>
         <MoneyboxInput
+          $theme={moneyboxTheme}
           aria-label="input-moneybox"
           autoComplete="off"
           ref={ref}
@@ -320,6 +327,7 @@ const Box = styled.div<{
   $focus?: boolean;
   $style?: CSSProp;
   $disabled?: boolean;
+  $theme: MoneyboxThemeConfiguration;
 }>`
   display: flex;
   align-items: center;
@@ -330,30 +338,47 @@ const Box = styled.div<{
   padding: 10px 12px;
   font-size: 0.75rem;
   border: 1px solid
-    ${({ $error, $focus }) =>
-      $error ? "#ef4444" : $focus ? "#61A9F9" : "#d1d5db"};
-  border-radius: 2px;
+    ${({ $error, $focus, $theme }) =>
+      $error
+        ? $theme.errorBorderColor
+        : $focus
+          ? $theme.focusedBorderColor
+          : $theme.borderColor};
+
+  border-radius: ${({ $theme }) => $theme.borderRadius};
+  background-color: ${({ $theme }) => $theme.backgroundColor};
+
   position: relative;
 
   ${({ $disabled }) =>
     $disabled &&
     css`
       user-select: none;
-      pointer-events: none;
       cursor: not-allowed;
+      opacity: 0.5;
     `}
 
   ${({ $style }) => $style}
 `;
 
-const MoneyboxInput = styled.input<{ $disabled?: boolean; $style?: CSSProp }>`
+const MoneyboxInput = styled.input<{
+  $disabled?: boolean;
+  $style?: CSSProp;
+  $theme: MoneyboxThemeConfiguration;
+}>`
   background: transparent;
   text-align: right;
   padding-left: 20px;
   outline: none;
   min-width: 0;
   flex: 1;
-  font-size: 0.75rem;
+  font-size: ${({ $theme }) => $theme.fontSize};
+  color: ${({ $theme, $disabled }) =>
+    $disabled ? $theme.disabledTextColor : $theme.textColor};
+
+  &::placeholder {
+    color: ${({ $theme }) => $theme.placeholderColor};
+  }
 
   ${({ $disabled }) =>
     $disabled &&
