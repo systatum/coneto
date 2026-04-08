@@ -243,7 +243,7 @@ const Header = styled.div<{
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid ${({ $theme }) => $theme?.borderColor ?? "#d1d5db"};
+  border-bottom: 1px solid ${({ $theme }) => $theme?.dividerColor ?? "#d1d5db"};
 
   ${({ $headerStyle }) => $headerStyle}
 `;
