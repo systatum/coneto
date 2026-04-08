@@ -351,11 +351,11 @@ export interface ListThemeConfiguration {
   textColor?: string;
   hoverBackgroundColor?: string;
   hoverTextColor?: string;
-  selectedBackgroundColor?: string;
   borderColor?: string;
   mutedTextColor?: string;
   dragLineColor?: string;
   emptyHoverBackgroundColor?: string;
+  toggleBackgroundColor?: string;
   badgeTextColor?: string;
   badgeBackgroundColor?: string;
   badgeBorderColor?: string;

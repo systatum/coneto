@@ -661,13 +661,13 @@ export function createListTheme(
     hoverBackgroundColor: "#dbeafe",
     hoverTextColor: body.textColor,
     badgeBackgroundColor: "#488cac",
-    selectedBackgroundColor: "#dbeafe",
     borderColor: "#d1d5db",
     mutedTextColor: "#6b7280",
     dragLineColor: "#3b82f6",
     emptyHoverBackgroundColor: "#dbeafe",
     badgeTextColor: "white",
     badgeBorderColor: "#d1d5db",
+    toggleBackgroundColor: "#c1d6f1",
   };
 
   return {
@@ -2029,7 +2029,6 @@ const darkList = createListTheme(darkBody, {
   backgroundColor: "rgb(26, 26, 26)",
   textColor: "#e5e7eb",
   hoverBackgroundColor: "#212c37",
-  selectedBackgroundColor: "#1e40af",
   borderColor: "#1f2937",
   mutedTextColor: "#9ca3af",
   dragLineColor: "#264c7b",
@@ -2037,6 +2036,8 @@ const darkList = createListTheme(darkBody, {
   emptyHoverBackgroundColor: "#212c37",
   badgeTextColor: "white",
   badgeBorderColor: "#3f3f46",
+  toggleBackgroundColor: "#1e3a5f",
+  hoverTextColor: "#111111",
 });
 
 const darkLoadingSkeleton = createLoadingSkeletonTheme({
