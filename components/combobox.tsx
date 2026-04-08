@@ -656,8 +656,11 @@ function ComboboxDrawer({
                 return (
                   <List.Group
                     styles={{
+                      contentStyle: css`
+                        gap: 0px;
+                      `,
                       rowStyle: css`
-                        background-color: rgb(249, 250, 251);
+                        background-color: ${comboboxTheme?.groupBackgroundColor};
                         padding-bottom: 8px;
                       `,
                       titleStyle: css`

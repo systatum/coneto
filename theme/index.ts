@@ -185,6 +185,7 @@ export interface ComboboxThemeConfiguration {
   backgroundColor?: string;
   borderColor?: string;
   textColor?: string;
+  groupBackgroundColor?: string;
 
   highlightBackgroundColor?: string;
   selectedBackgroundColor?: string;
