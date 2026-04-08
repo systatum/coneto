@@ -1031,7 +1031,7 @@ export function createSeparatorTheme(
   const defaultTheme: SeparatorThemeConfiguration = {
     containerColor: "#6b7280",
     lineColor: "#111827",
-    titleColor: "#111827",
+    titleColor: "#6b7280",
     backgroundTitleColor: body?.backgroundColor,
   };
 
@@ -1976,8 +1976,8 @@ const darkDocumentViewer = createDocumentViewerTheme(darkBody, {
 });
 
 const darkDormantText = createDormantTextTheme(darkBody, {
-  hoverBackgroundColor: "#1a1a1a",
-  borderColor: "#303030",
+  hoverBackgroundColor: "rgb(26, 26, 26)",
+  borderColor: "rgb(26, 26, 26)",
   pencilColor: "#ccc",
   actionButtonColor: "#ccc",
   actionButtonHoverBackground: "#363636",
@@ -2007,9 +2007,11 @@ const darkFileInputBox = createFileInputBoxTheme(darkBody, darkFieldLane, {
 });
 
 const darkFrame = createFrameTheme(darkBody, {
-  backgroundColor: darkBody.backgroundColor,
+  backgroundColor: "rgb(31, 32, 35)",
   borderColor: "#374151",
   titleColor: darkBody.textColor,
+  titleBackgroundColor: "rgb(31, 32, 35)",
+  overlayBackgroundColor: "rgb(31, 32, 35)",
   boxShadow: "0 1px 3px rgba(0, 0, 0, 0.2)",
 });
 
@@ -2171,8 +2173,9 @@ const darkSelectbox = createSelectboxTheme(darkBody, darkFieldLane);
 
 const darkSeparator = createSeparatorTheme(darkBody, {
   containerColor: "#d1d5db",
-  lineColor: "#e5e7eb",
-  titleColor: "#f9fafb",
+  lineColor:
+    "rgb(43, 43, 43) 0px 2px 2px inset, rgb(130, 130, 130) 0px -1px 1px inset",
+  titleColor: "rgb(171, 171, 171)",
   backgroundTitleColor: "#1f2023",
 });
 
