@@ -248,8 +248,6 @@ export const Default: Story = {
 
 export const Draggable: Story = {
   render: () => {
-    "@remixicon/react";
-
     const LIST_GROUPS: ListGroupContentProps[] = [
       {
         id: "recent-content",
@@ -433,15 +431,6 @@ export const Draggable: Story = {
                 key={index}
                 id={group.id}
                 title={group.title}
-                styles={{
-                  emptySlateStyle: css`
-                    cursor: pointer;
-                    transition: all 200ms ease;
-                    &:hover {
-                      background-color: aliceblue;
-                    }
-                  `,
-                }}
                 emptySlate={"No content"}
               >
                 {group.items.map((list, i) => (

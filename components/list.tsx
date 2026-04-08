@@ -31,6 +31,7 @@ import { ActionButton, ActionButtonProps } from "./action-button";
 import { OverlayBlocker } from "./overlay-blocker";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
+import { ListThemeConfiguration, TreeListThemeConfiguration } from "theme";
 
 export interface ListProps extends ListMaxItemsProp {
   searchable?: boolean;
@@ -267,8 +268,6 @@ function List({
                 self: css`
                   display: flex;
                   justify-content: center;
-                  background-color: rgba(255, 255, 255, 0.6);
-                  backdrop-filter: blur(0.5px);
                 `,
               }}
             >
@@ -661,8 +660,7 @@ function ListGroup({
 
         {childArray.length === 0 && (
           <EmptyContent
-            $borderColor={listTheme.borderColor}
-            $mutedTextColor={listTheme.mutedTextColor}
+            $theme={listTheme}
             key="drop-here"
             aria-label="list-group-empty-slate"
             initial="open"
@@ -866,11 +864,10 @@ const Divider = styled.div<{ $borderColor?: string }>`
 
 const EmptyContent = styled(motion.div)<{
   $style?: CSSProp;
-  $borderColor?: string;
-  $mutedTextColor?: string;
+  $theme?: ListThemeConfiguration;
 }>`
-  border: 1px dashed ${({ $borderColor }) => $borderColor};
-  color: ${({ $mutedTextColor }) => $mutedTextColor};
+  border: 1px dashed ${({ $theme }) => $theme?.borderColor};
+  color: ${({ $theme }) => $theme?.mutedTextColor};
   height: 0.5rem;
   margin-top: 0.25rem;
   padding: 0.5rem 0;
@@ -879,6 +876,11 @@ const EmptyContent = styled(motion.div)<{
   align-items: center;
   justify-content: center;
   font-size: 0.875rem;
+  transition: all 200ms ease;
+
+  &:hover {
+    background-color: ${({ $theme }) => $theme?.emptyHoverBackgroundColor};
+  }
 
   ${({ $style }) => $style}
 `;
