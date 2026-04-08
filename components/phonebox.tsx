@@ -323,7 +323,7 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
                   border-radius: 2px;
                   max-height: 28px;
                   width: 100%;
-                  min-width: 210px;
+                  min-width: 275px;
                 `,
               }}
               onKeyDown={handleDropdownKeyDown}
