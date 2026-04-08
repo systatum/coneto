@@ -298,6 +298,27 @@ export interface FieldLaneThemeConfiguration {
   dividerColor: string;
 }
 
+// file-input-box.tsx
+export interface FileInputBoxThemeConfiguration {
+  backgroundColor?: string;
+  borderColor?: string;
+  focusedBorderColor?: string;
+  errorBorderColor?: string;
+
+  textColor?: string;
+  placeholderColor?: string;
+
+  disabledBackgroundColor?: string;
+  disabledTextColor?: string;
+
+  disabledGradientColor?: string;
+  errorGradientColor?: string;
+  defaultGradientColor?: string;
+
+  dragActiveColor?: string;
+  dragActiveBackgroundColor?: string;
+}
+
 // frame.tsx
 export interface FrameThemeConfiguration {
   backgroundColor?: string;
@@ -749,6 +770,7 @@ export interface AppTheme {
   drawerTab: DrawerTabThemeConfiguration;
   errorSlate: ErrorSlateThemeConfiguration;
   fieldLane: FieldLaneThemeConfiguration;
+  fileInputBox: FileInputBoxThemeConfiguration;
   frame: FrameThemeConfiguration;
   grid: GridThemeConfiguration;
   keynote: KeynoteThemeConfiguration;
