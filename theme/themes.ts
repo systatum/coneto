@@ -32,6 +32,7 @@ import {
   LoadingSpinnerThemeConfiguration,
   MessageboxThemeConfiguration,
   ModalDialogThemeConfiguration,
+  MoneyboxThemeConfiguration,
   NavTabThemeConfiguration,
   OverlayBlockerThemeConfiguration,
   PaperDialogThemeConfiguration,
@@ -713,6 +714,31 @@ export function createMessageboxTheme(
   };
 }
 
+// moneybox.tsx
+export function createMoneyboxTheme(
+  body: { backgroundColor?: string; textColor?: string },
+  fieldLane: Partial<FieldLaneThemeConfiguration> = {},
+  custom: Partial<MoneyboxThemeConfiguration> = {}
+): MoneyboxThemeConfiguration {
+  const defaultTheme: MoneyboxThemeConfiguration = {
+    backgroundColor: body.backgroundColor || "#ffffff",
+    borderColor: fieldLane.borderColor || "#d1d5db",
+
+    focusedBorderColor: fieldLane.focusedBorderColor || "#61A9F9",
+    errorBorderColor: fieldLane.errorBorderColor || "#ef4444",
+
+    textColor: body.textColor || "#111827",
+    placeholderColor: fieldLane.placeholderColor || "#9ca3af",
+    disabledTextColor: fieldLane.disabledTextColor || "#9ca3af",
+
+    inputPadding: "10px 12px",
+    fontSize: "0.75rem",
+    borderRadius: "2px",
+  };
+
+  return { ...defaultTheme, ...custom };
+}
+
 // modal-dialog.tsx
 export function createModalDialogTheme(
   body: BodyThemeConfiguration,
@@ -868,6 +894,7 @@ export function createRadioTheme(
   return { ...defaultTheme, ...customTheme };
 }
 
+// rating.tsx
 export function createRatingTheme(
   body: BodyThemeConfiguration,
   fieldLane: Partial<FieldLaneThemeConfiguration> = {},
@@ -1505,6 +1532,8 @@ const lightOverlayBlocker = createOverlayBlockerTheme();
 
 const lightMessagebox = createMessageboxTheme();
 
+const lightMoneybox = createMoneyboxTheme(lightBody, lightFieldLane);
+
 const lightModalDialog = createModalDialogTheme(lightBody);
 
 const lightNavTab = createNavTabTheme(lightBody);
@@ -1601,6 +1630,7 @@ const lightTheme: AppTheme = {
   loadingSkeleton: lightLoadingSkeleton,
   loadingSpinner: lightLoadingSpinner,
   messagebox: lightMessagebox,
+  moneybox: lightMoneybox,
   modalDialog: lightModalDialog,
   navTab: lightNavTab,
   overlayBlocker: lightOverlayBlocker,
@@ -2004,6 +2034,8 @@ const darkMessagebox = createMessageboxTheme({
   },
 });
 
+const darkMoneybox = createMoneyboxTheme(darkBody, darkFieldLane);
+
 const darkModalDialog = createModalDialogTheme(darkBody, {
   backgroundColor: "#272727",
   borderColor: "#303030",
@@ -2260,6 +2292,7 @@ const darkTheme: AppTheme = {
   loadingSkeleton: darkLoadingSkeleton,
   loadingSpinner: darkLoadingSpinner,
   messagebox: darkMessagebox,
+  moneybox: darkMoneybox,
   modalDialog: darkModalDialog,
   navTab: darkNavTab,
   overlayBlocker: darkOverlayBlocker,

@@ -363,6 +363,23 @@ export type MessageboxThemeConfiguration = {
   [K in MessageboxVariantState]: MessageboxVariantTheme;
 };
 
+// moneybox.tsx
+export interface MoneyboxThemeConfiguration {
+  backgroundColor?: string;
+  borderColor?: string;
+  textColor?: string;
+
+  errorBorderColor?: string;
+  focusedBorderColor?: string;
+
+  placeholderColor?: string;
+  disabledTextColor?: string;
+
+  inputPadding?: string;
+  fontSize?: string;
+  borderRadius?: string;
+}
+
 // modal-dialog.tsx
 export interface ModalDialogThemeConfiguration
   extends DialogThemeConfiguration {
@@ -739,6 +756,7 @@ export interface AppTheme {
   loadingSkeleton: LoadingSkeletonThemeConfiguration;
   loadingSpinner: LoadingSpinnerThemeConfiguration;
   messagebox: MessageboxThemeConfiguration;
+  moneybox: MoneyboxThemeConfiguration;
   modalDialog: ModalDialogThemeConfiguration;
   navTab: NavTabThemeConfiguration;
   overlayBlocker: OverlayBlockerThemeConfiguration;
