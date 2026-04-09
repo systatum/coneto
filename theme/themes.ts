@@ -1950,47 +1950,44 @@ const darkButton = createButtonTheme(darkBody, {
     backgroundColor: "#272727",
     textColor: darkBody.textColor,
     hoverBackgroundColor: "#363636",
-    activeBackgroundColor: "#404040",
+    activeBackgroundColor: "rgb(39 39 39 / 85%)",
     textDecoration: "none",
   },
   primary: {
     backgroundColor: "rgb(60, 49, 110)",
     textColor: darkBody.textColor,
     hoverBackgroundColor: "rgb(72, 57, 141)",
-    activeBackgroundColor: "rgb(85, 65, 160)",
+    activeBackgroundColor: "rgb(50, 40, 90)",
     focusBackgroundColor: "rgba(72, 57, 141, 0.5)",
   },
   danger: {
     backgroundColor: "rgb(177, 30, 66)",
     textColor: darkBody.textColor,
     hoverBackgroundColor: "rgb(147, 21, 52)",
-    activeBackgroundColor: "rgb(130, 18, 46)",
+    activeBackgroundColor: "rgb(130, 15, 45)",
     focusBackgroundColor: "rgba(177, 30, 66, 0.5)",
   },
   success: {
     backgroundColor: "#107533",
     textColor: darkBody.textColor,
     hoverBackgroundColor: "#03973d",
-    activeBackgroundColor: "#02b347",
+    activeBackgroundColor: "#02662f",
     focusBackgroundColor: "rgba(3, 151, 61, 0.5)",
   },
-
   secondary: {
     backgroundColor: "#2f2f2f",
     textColor: darkBody.textColor,
     hoverBackgroundColor: "#3a3a3a",
-    activeBackgroundColor: "#444",
+    activeBackgroundColor: "#1f1f1f",
     focusBackgroundColor: "#ffffff20",
   },
-
   ghost: {
     backgroundColor: "transparent",
     textColor: darkBody.textColor,
     hoverBackgroundColor: "#2a2a2a",
-    activeBackgroundColor: "#333",
+    activeBackgroundColor: "#1f1f1f",
     focusBackgroundColor: "#ffffff20",
   },
-
   link: {
     backgroundColor: "transparent",
     textColor: "#7ab4ff",
@@ -1999,47 +1996,42 @@ const darkButton = createButtonTheme(darkBody, {
     focusBackgroundColor: "#7ab4ff80",
     textDecoration: "underline",
   },
-
   transparent: {
     backgroundColor: "transparent",
     textColor: darkBody.textColor,
     hoverBackgroundColor: "#363636",
-    activeBackgroundColor: "#404040",
+    activeBackgroundColor: "#1f1f1f",
     focusBackgroundColor: "#ffffff20",
   },
-
   "outline-default": {
     backgroundColor: "transparent",
     textColor: "#a3a3a3",
     hoverBackgroundColor: "#2a2a2a",
-    activeBackgroundColor: "#333",
+    activeBackgroundColor: "#1f1f1f",
     focusBackgroundColor: "#ffffff30",
     borderColor: "#555",
   },
-
   "outline-primary": {
     backgroundColor: "transparent",
     textColor: "rgb(120, 100, 220)",
     hoverBackgroundColor: "rgba(72, 57, 141, 0.2)",
-    activeBackgroundColor: "rgba(72, 57, 141, 0.35)",
+    activeBackgroundColor: "rgba(50, 40, 90, 0.5)",
     focusBackgroundColor: "rgba(72, 57, 141, 0.5)",
     borderColor: "rgb(72, 57, 141)",
   },
-
   "outline-danger": {
     backgroundColor: "transparent",
     textColor: "rgb(200, 60, 90)",
     hoverBackgroundColor: "rgba(147, 21, 52, 0.2)",
-    activeBackgroundColor: "rgba(147, 21, 52, 0.35)",
+    activeBackgroundColor: "rgba(130, 15, 45, 0.5)",
     focusBackgroundColor: "rgba(177, 30, 66, 0.5)",
     borderColor: "rgb(177, 30, 66)",
   },
-
   "outline-success": {
     backgroundColor: "transparent",
     textColor: "#2ecc71",
     hoverBackgroundColor: "rgba(3, 151, 61, 0.2)",
-    activeBackgroundColor: "rgba(3, 151, 61, 0.35)",
+    activeBackgroundColor: "rgba(2, 102, 47, 0.5)",
     focusBackgroundColor: "rgba(3, 151, 61, 0.5)",
     borderColor: "#03973d",
   },
