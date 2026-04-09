@@ -13,7 +13,7 @@ import {
 } from "./field-lane";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
-import { TextareaThemeConfiguration } from "./../theme";
+import { TextareaThemeConfig } from "./../theme";
 
 interface BaseTextareaProps
   extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "style"> {
@@ -143,7 +143,7 @@ const TextareaInput = styled.textarea<{
   $style?: CSSProp;
   $autogrow?: boolean;
   $disabled?: boolean;
-  $theme?: TextareaThemeConfiguration;
+  $theme?: TextareaThemeConfig;
 }>`
   border-radius: 2px;
   font-size: 0.75rem;

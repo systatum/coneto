@@ -23,7 +23,7 @@ import { marked } from "./../lib/marked/marked";
 import { TipMenu, TipMenuItemProps } from "./tip-menu";
 import styled, { css, CSSProp } from "styled-components";
 import { Figure, FigureProps } from "./figure";
-import { RichEditorThemeConfiguration } from "./../theme";
+import { RichEditorThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
 
 export interface RichEditorProps {
@@ -1269,7 +1269,7 @@ function RichEditorToolbarButton({
 const Wrapper = styled.div<{
   $containerStyle?: CSSProp;
   $mode?: RichEditorModeState;
-  $theme: RichEditorThemeConfiguration;
+  $theme: RichEditorThemeConfig;
 }>`
   ${({ $mode, $theme }) =>
     $mode !== "page-editor" &&
@@ -1303,7 +1303,7 @@ const ToolbarWrapper = styled.div<{
 
 const Toolbar = styled.div<{
   $toolbarPosition?: RichEditorToolbarPositionState;
-  $theme: RichEditorThemeConfiguration;
+  $theme: RichEditorThemeConfig;
 }>`
   display: flex;
   flex-direction: row;
@@ -1370,7 +1370,7 @@ const EditorArea = styled.div<{
   $mode?: RichEditorModeState;
   $autogrow?: boolean;
   $height?: number;
-  $theme: RichEditorThemeConfiguration;
+  $theme: RichEditorThemeConfig;
 }>`
   padding: 8px;
   outline: none;
@@ -1464,7 +1464,7 @@ const ToolbarButton = styled.button<{
   $style?: CSSProp;
   $isOpen?: boolean;
   $isActive?: boolean;
-  $theme: RichEditorThemeConfiguration;
+  $theme: RichEditorThemeConfig;
 }>`
   padding: 4px 8px;
   display: flex;

@@ -10,7 +10,7 @@ import { ActionButton, ActionButtonProps } from "./action-button";
 import { Togglebox } from "./togglebox";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTheme } from "./../theme/provider";
-import { CardThemeConfiguration } from "./../theme";
+import { CardThemeConfig } from "./../theme";
 
 export interface CardProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "title" | "style"> {
@@ -235,7 +235,7 @@ const CardContainer = styled.div<{
 
 const Header = styled.div<{
   $headerStyle?: CSSProp;
-  $theme?: CardThemeConfiguration;
+  $theme?: CardThemeConfig;
 }>`
   padding: 0.75rem 1.5rem;
   font-size: 1rem;

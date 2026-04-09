@@ -3,7 +3,7 @@ import { Figure, FigureProps } from "./figure";
 import { ReactNode } from "react";
 import { Button, ButtonProps } from "./button";
 import { useTheme } from "./../theme/provider";
-import { StatusbarThemeConfiguration } from "./../theme";
+import { StatusbarThemeConfig } from "./../theme";
 
 export interface StatusbarProps {
   styles?: StatusbarStylesProps;
@@ -242,7 +242,7 @@ function StatusbarItem({
 const StatusbarWrapper = styled.div<{
   $style?: CSSProp;
   $transparent?: boolean;
-  $theme?: StatusbarThemeConfiguration;
+  $theme?: StatusbarThemeConfig;
 }>`
   bottom: 0;
   left: 0;

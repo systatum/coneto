@@ -13,7 +13,7 @@ import { Button, SubMenuButtonProps } from "./button";
 import { TipMenuItemProps } from "./tip-menu";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
-import { SearchboxThemeConfiguration } from "./../theme";
+import { SearchboxThemeConfig } from "./../theme";
 
 export interface SearchboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {
@@ -165,7 +165,7 @@ const SearchboxWrapper = styled.div<{
 
 const SearchboxInput = styled.input<{
   $style?: CSSProp;
-  $theme?: SearchboxThemeConfiguration;
+  $theme?: SearchboxThemeConfig;
 }>`
   border-radius: 9999px;
   padding: 8px 36px 8px 30px;
@@ -193,7 +193,7 @@ const SearchboxInput = styled.input<{
 
 const SearchIcon = styled(RiSearchLine)<{
   $style?: CSSProp;
-  $theme?: SearchboxThemeConfiguration;
+  $theme?: SearchboxThemeConfig;
 }>`
   position: absolute;
   top: 50%;
@@ -210,7 +210,7 @@ const SearchIcon = styled(RiSearchLine)<{
 `;
 
 const ClearIcon = styled(RiCloseLine)<{
-  $theme?: SearchboxThemeConfiguration;
+  $theme?: SearchboxThemeConfig;
 }>`
   position: absolute;
   top: 50%;

@@ -14,7 +14,7 @@ import { StatefulForm } from "./stateful-form";
 import { Figure } from "./figure";
 import { FieldLaneProps } from "./field-lane";
 import { useTheme } from "./../theme/provider";
-import { FileDropBoxThemeConfiguration } from "./../theme";
+import { FileDropBoxThemeConfig } from "./../theme";
 
 export interface OnFileDroppedFunctionProps {
   files: File[];
@@ -344,7 +344,7 @@ const DropArea = styled.div<{
   $progress: ProgressProps;
   $dragOverStyle?: CSSProp;
   $successStyle?: CSSProp;
-  $theme: FileDropBoxThemeConfiguration;
+  $theme: FileDropBoxThemeConfig;
 }>`
   display: flex;
   flex-direction: column;
@@ -483,20 +483,20 @@ const IconsRow = styled.div`
 
 const PlaceholderText = styled.span<{
   $isDragging: boolean;
-  $theme: FileDropBoxThemeConfiguration;
+  $theme: FileDropBoxThemeConfig;
 }>`
   font-size: 1.25rem;
   color: ${({ $theme, $isDragging }) =>
     $isDragging ? $theme.dragActiveTextColor : $theme.textColor};
 `;
 
-const LinkText = styled.span<{ $theme: FileDropBoxThemeConfiguration }>`
+const LinkText = styled.span<{ $theme: FileDropBoxThemeConfig }>`
   color: ${({ $theme }) => $theme.dragActiveTextColor || "#3b82f6"};
   text-decoration: underline;
 `;
 
 const ProgressContainer = styled.div<{
-  $theme: FileDropBoxThemeConfiguration;
+  $theme: FileDropBoxThemeConfig;
 }>`
   width: 100%;
   font-size: 0.875rem;
@@ -510,7 +510,7 @@ const ProgressContainer = styled.div<{
 `;
 
 const ProgressBarWrapper = styled.div<{
-  $theme: FileDropBoxThemeConfiguration;
+  $theme: FileDropBoxThemeConfig;
 }>`
   height: 4px;
   width: 100%;
@@ -522,7 +522,7 @@ const ProgressBarWrapper = styled.div<{
 
 const ProgressBar = styled.div<{
   $width: number;
-  $theme: FileDropBoxThemeConfiguration;
+  $theme: FileDropBoxThemeConfig;
 }>`
   height: 4px;
   position: absolute;

@@ -4,7 +4,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
-import { SignboxThemeConfiguration } from "./../theme";
+import { SignboxThemeConfig } from "./../theme";
 import { Button } from "./button";
 
 interface BaseSignboxProps {
@@ -370,7 +370,7 @@ const SignatureWrapper = styled.div<{
   $canvasStyle?: CSSProp;
   $error?: boolean;
   $disabled?: boolean;
-  $theme: SignboxThemeConfiguration;
+  $theme: SignboxThemeConfig;
   $cursor: string;
 }>`
   position: relative;

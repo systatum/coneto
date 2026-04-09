@@ -3,7 +3,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 import { useTheme } from "./../theme/provider";
-import { RatingThemeConfiguration } from "./../theme";
+import { RatingThemeConfig } from "./../theme";
 
 interface BaseRatingProps {
   rating?: string;
@@ -258,7 +258,7 @@ const StarSpan = styled.span<{ $editable?: boolean; $disabled?: boolean }>`
 
 const RatingLabel = styled.span<{
   $size: "sm" | "md" | "lg";
-  $theme: RatingThemeConfiguration;
+  $theme: RatingThemeConfig;
   $disabled?: boolean;
 }>`
   font-weight: 500;

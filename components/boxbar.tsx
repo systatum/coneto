@@ -3,7 +3,7 @@ import { RiArrowRightSLine } from "@remixicon/react";
 import { motion } from "framer-motion";
 import styled, { CSSProp } from "styled-components";
 import { useTheme } from "./../theme/provider";
-import { BoxbarThemeConfiguration } from "./../theme";
+import { BoxbarThemeConfig } from "./../theme";
 
 export interface BoxbarProps {
   children: ReactNode;
@@ -95,7 +95,7 @@ function Boxbar({ styles, children }: BoxbarProps) {
 
 const BaseBoxbar = styled(motion.div)<{
   $containerStyle: CSSProp;
-  $theme: BoxbarThemeConfiguration;
+  $theme: BoxbarThemeConfig;
 }>`
   overflow: hidden;
   display: flex;
@@ -116,7 +116,7 @@ const BaseBoxbar = styled(motion.div)<{
 `;
 
 const ToggleButton = styled(motion.button)<{
-  $theme: BoxbarThemeConfiguration;
+  $theme: BoxbarThemeConfig;
 }>`
   position: absolute;
   top: 0.55rem;

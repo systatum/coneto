@@ -15,7 +15,7 @@ import {
 import styled, { CSSProp } from "styled-components";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
-import { DormantTextThemeConfiguration } from "./../theme";
+import { DormantTextThemeConfig } from "./../theme";
 
 export interface DormantTextProps {
   onActionClick?: () => void;
@@ -225,7 +225,7 @@ const DormantLabel = styled.label<{
   $fontSize?: string | number;
   $style?: CSSProp;
   $dormantedMaxWidth?: string;
-  $theme?: DormantTextThemeConfiguration;
+  $theme?: DormantTextThemeConfig;
 }>`
   display: flex;
   flex-direction: row;
@@ -263,7 +263,7 @@ const DormantLabel = styled.label<{
 `;
 
 const DormantLabelText = styled.span<{
-  $theme?: DormantTextThemeConfiguration;
+  $theme?: DormantTextThemeConfig;
 }>`
   white-space: nowrap;
   overflow: hidden;
@@ -309,7 +309,7 @@ const LabelWrapper = styled.div<{ $maxWidth?: number | string }>`
 const ActionButton = styled.button<{
   $style?: CSSProp;
   $minHeight?: number | string;
-  $theme?: DormantTextThemeConfiguration;
+  $theme?: DormantTextThemeConfig;
 }>`
   display: flex;
   min-width: 30px;

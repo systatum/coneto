@@ -4,7 +4,7 @@ import { StatefulForm } from "./stateful-form";
 import { Figure, FigureProps } from "./figure";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 import { useTheme } from "./../theme/provider";
-import { RadioThemeConfiguration } from "theme";
+import { RadioThemeConfig } from "theme";
 
 interface BaseRadioProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {
@@ -212,7 +212,7 @@ const Label = styled.label<{
   $hasDescription?: boolean;
   $disabled?: boolean;
   $isRadio?: boolean;
-  $theme: RadioThemeConfiguration;
+  $theme: RadioThemeConfig;
 }>`
   display: flex;
   align-items: flex-start;
@@ -310,7 +310,7 @@ const Circle = styled.div<{
   $style?: CSSProp;
   $error?: boolean;
   $isRadio?: boolean;
-  $theme: RadioThemeConfiguration;
+  $theme: RadioThemeConfig;
 }>`
   width: 16px;
   height: 16px;

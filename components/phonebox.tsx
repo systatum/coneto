@@ -29,7 +29,7 @@ import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 import { Figure } from "./figure";
 import { StatefulForm } from "./stateful-form";
 import { Searchbox } from "./searchbox";
-import { PhoneboxThemeConfiguration } from "./../theme";
+import { PhoneboxThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
 
 export interface CountryCodeProps {
@@ -455,7 +455,7 @@ const InputWrapper = styled.div<{
   $isOpen?: boolean;
   $disabled?: boolean;
   $style?: CSSProp;
-  $theme: PhoneboxThemeConfiguration;
+  $theme: PhoneboxThemeConfig;
 }>`
   display: flex;
   width: 100%;
@@ -494,7 +494,7 @@ const CountryButton = styled.button<{
   $disabled?: boolean;
   $hasError?: boolean;
   $style?: CSSProp;
-  $theme?: PhoneboxThemeConfiguration;
+  $theme?: PhoneboxThemeConfig;
   $isOpen?: boolean;
 }>`
   display: flex;
@@ -542,7 +542,7 @@ const CountryButton = styled.button<{
 const PhoneInput = styled.input<{
   $disabled?: boolean;
   $style?: CSSProp;
-  $theme: PhoneboxThemeConfiguration;
+  $theme: PhoneboxThemeConfig;
 }>`
   width: 100%;
   padding: 0 12px;
@@ -568,7 +568,7 @@ const PhoneInput = styled.input<{
 `;
 
 const DropdownContainer = styled.div<{
-  $theme: PhoneboxThemeConfiguration;
+  $theme: PhoneboxThemeConfig;
 }>`
   position: absolute;
   left: 0;
@@ -596,7 +596,7 @@ const DropdownContainer = styled.div<{
 
 const CountryOption = styled.div<{
   $highlighted?: boolean;
-  $theme: PhoneboxThemeConfiguration;
+  $theme: PhoneboxThemeConfig;
 }>`
   display: flex;
   align-items: center;

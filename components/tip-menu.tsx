@@ -5,7 +5,7 @@ import { Button } from "./button";
 import { Searchbox } from "./searchbox";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "../theme/provider";
-import { TipMenuThemeConfiguration } from "./../theme";
+import { TipMenuThemeConfig } from "./../theme";
 
 export type TipMenuItemVariantType = "sm" | "md";
 
@@ -158,7 +158,7 @@ function TipMenuItem({
 const StyledTipMenuItem = styled.div<{
   $isDangerous: boolean;
   $variant?: TipMenuItemVariantType;
-  $theme: TipMenuThemeConfiguration;
+  $theme: TipMenuThemeConfig;
 }>`
   display: flex;
   align-items: center;

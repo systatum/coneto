@@ -10,7 +10,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 import { useTheme } from "./../theme/provider";
-import { ThumbFieldThemeConfiguration } from "./../theme";
+import { ThumbFieldThemeConfig } from "./../theme";
 
 interface BaseThumbFieldProps {
   value?: boolean | null;
@@ -219,7 +219,7 @@ const TriggerWrapper = styled.div<{
   $activeColor?: string;
   $showError?: boolean;
   $disabled?: boolean;
-  $theme?: ThumbFieldThemeConfiguration;
+  $theme?: ThumbFieldThemeConfig;
 }>`
   display: flex;
   align-items: center;

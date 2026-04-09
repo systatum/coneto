@@ -4,7 +4,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
 import { Figure, FigureProps } from "./figure";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
-import { CapsuleThemeConfiguration } from "./../theme";
+import { CapsuleThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
 
 export interface CapsuleContentProps {
@@ -305,7 +305,7 @@ const CapsuleWrapper = styled.div<{
   $full?: boolean;
   $containerStyle?: CSSProp;
   $disabled?: boolean;
-  $theme?: CapsuleThemeConfiguration;
+  $theme?: CapsuleThemeConfig;
 }>`
   position: relative;
   display: flex;
@@ -346,7 +346,7 @@ const CapsuleWrapper = styled.div<{
 const ActiveBackground = styled(motion.div)<{
   $style?: CSSProp;
   $activeBackgroundColor?: string;
-  $theme?: CapsuleThemeConfiguration;
+  $theme?: CapsuleThemeConfig;
 }>`
   position: absolute;
   top: 50%;
@@ -364,7 +364,7 @@ const ActiveBackground = styled(motion.div)<{
 const HoverBorder = styled(motion.div)<{
   $style?: CSSProp;
   $activeBackgroundColor?: string;
-  $theme?: CapsuleThemeConfiguration;
+  $theme?: CapsuleThemeConfig;
 }>`
   position: absolute;
   top: 50%;
@@ -386,7 +386,7 @@ const Tab = styled.div<{
   $fontSize?: number;
   $disabled?: boolean;
   $activeColor?: string;
-  $theme?: CapsuleThemeConfiguration;
+  $theme?: CapsuleThemeConfig;
 }>`
   display: flex;
   flex-direction: row;

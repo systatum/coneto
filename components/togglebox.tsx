@@ -6,7 +6,7 @@ import { StatefulForm } from "./stateful-form";
 import { Figure, FigureProps } from "./figure";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 import { useTheme } from "./../theme/provider";
-import { ToggleboxThemeConfiguration } from "./../theme";
+import { ToggleboxThemeConfig } from "./../theme";
 
 interface BaseToggleboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {
@@ -226,7 +226,7 @@ const getToggleboxSize = (size: number) => {
 const ToggleboxWrapper = styled.div<{
   $style?: CSSProp;
   $disabled?: boolean;
-  $theme?: ToggleboxThemeConfiguration;
+  $theme?: ToggleboxThemeConfig;
 }>`
   display: flex;
   flex-direction: row;
@@ -273,7 +273,7 @@ const StyledInput = styled.input`
 
 const ToggleBackground = styled.div<{
   $checked: boolean;
-  $theme?: ToggleboxThemeConfiguration;
+  $theme?: ToggleboxThemeConfig;
 }>`
   width: 100%;
   height: 100%;
@@ -286,7 +286,7 @@ const ToggleBackground = styled.div<{
 `;
 
 const ToggleButton = styled(motion.div)<{
-  $theme?: ToggleboxThemeConfiguration;
+  $theme?: ToggleboxThemeConfig;
 }>`
   position: absolute;
   top: 0;
@@ -301,7 +301,7 @@ const ToggleButton = styled(motion.div)<{
 
 const Description = styled.span<{
   $style?: CSSProp;
-  $theme?: ToggleboxThemeConfiguration;
+  $theme?: ToggleboxThemeConfig;
 }>`
   font-size: 12px;
   width: 100%;

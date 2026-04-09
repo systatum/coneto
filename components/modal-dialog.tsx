@@ -1,6 +1,6 @@
 "use client";
 
-import { ModalDialogThemeConfiguration } from "./../theme";
+import { ModalDialogThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
 import {
   createDialogController,
@@ -137,7 +137,7 @@ function ModalDialog({
 
 const Body = styled.div<{
   $style?: CSSProp;
-  $theme?: ModalDialogThemeConfiguration;
+  $theme?: ModalDialogThemeConfig;
 }>`
   height: 100%;
   width: 100%;
@@ -151,7 +151,7 @@ const Body = styled.div<{
 `;
 
 const Divider = styled.div<{
-  $theme?: ModalDialogThemeConfiguration;
+  $theme?: ModalDialogThemeConfig;
 }>`
   height: 1px;
   width: 100%;

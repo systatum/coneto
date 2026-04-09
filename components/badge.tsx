@@ -4,7 +4,7 @@ import { strToColor } from "./../lib/code-color";
 import { FigureProps } from "./figure";
 import { Button, ButtonStylesProps } from "./button";
 import { useTheme } from "./../theme/provider";
-import { BadgeThemeConfiguration } from "./../theme";
+import { BadgeThemeConfig } from "./../theme";
 
 export type BadgeVariantProps = null | "neutral" | "green" | "yellow" | "red";
 
@@ -250,7 +250,7 @@ const BadgeIconWrapper = styled.div<{
 const BadgeWrapper = styled.div<{
   $backgroundColor: string;
   $textColor: string;
-  $theme?: BadgeThemeConfiguration;
+  $theme?: BadgeThemeConfig;
   $hasCaption: boolean;
   $badgeStyle: CSSProp;
 }>`

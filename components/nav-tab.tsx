@@ -15,7 +15,7 @@ import { Tooltip, TooltipRef } from "./tooltip";
 import { ActionButton, ActionButtonProps } from "./action-button";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "../theme/provider";
-import { NavTabThemeConfiguration } from "./../theme";
+import { NavTabThemeConfig } from "./../theme";
 
 export interface NavTabProps {
   tabs?: NavTabContentProps[];
@@ -445,7 +445,7 @@ const NavTabWrapper = styled.div<{
 const NavTabHeader = styled.div<{
   $style?: CSSProp;
   $actions?: boolean;
-  $theme: NavTabThemeConfiguration;
+  $theme: NavTabThemeConfig;
 }>`
   width: 100%;
   height: auto;
@@ -466,7 +466,7 @@ const NavTabHeader = styled.div<{
 
 const NavTabRowWrapper = styled.div<{
   $style?: CSSProp;
-  $theme?: NavTabThemeConfiguration;
+  $theme?: NavTabThemeConfig;
 }>`
   width: 100%;
   height: auto;
@@ -485,7 +485,7 @@ const NavTabRowWrapper = styled.div<{
 
 const NavTabList = styled(motion.div)<{
   $activeColor?: string;
-  $theme?: NavTabThemeConfiguration;
+  $theme?: NavTabThemeConfig;
 }>`
   position: absolute;
   bottom: 0;
@@ -504,7 +504,7 @@ const NavTabItem = styled.div<{
   $isAction?: boolean;
   $subMenu?: boolean;
   $size?: NavTabSize;
-  $theme?: NavTabThemeConfiguration;
+  $theme?: NavTabThemeConfig;
 }>`
   display: flex;
   flex-direction: row;

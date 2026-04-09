@@ -24,7 +24,7 @@ import { FieldLaneProps } from "./field-lane";
 import { Figure, FigureProps } from "./figure";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
-import { ComboboxThemeConfiguration } from "./../theme";
+import { ComboboxThemeConfig } from "./../theme";
 
 interface BaseComboboxProps {
   selectedOptions?: SelectboxSelectedOptions;
@@ -731,7 +731,7 @@ const listItemRowStyle = ({
   interactionMode?: "mouse" | "keyboard";
   isSelected?: boolean;
   multiple?: boolean;
-  theme?: ComboboxThemeConfiguration;
+  theme?: ComboboxThemeConfig;
 }) => css`
   border-radius: 0px;
   padding: 0.5rem 0.75rem;
@@ -780,7 +780,7 @@ const listItemTitleWithRender = css`
 
 const DrawerWrapper = styled.ul<{
   $width?: number;
-  $theme: ComboboxThemeConfiguration;
+  $theme: ComboboxThemeConfig;
 }>`
   position: absolute;
   z-index: 9992999;
@@ -793,14 +793,14 @@ const DrawerWrapper = styled.ul<{
   width: ${({ $width }) => ($width ? `${$width}px` : "100%")};
 `;
 
-const Divider = styled.div<{ $theme: ComboboxThemeConfiguration }>`
+const Divider = styled.div<{ $theme: ComboboxThemeConfig }>`
   width: 100%;
   height: 1px;
   border-bottom: 1px solid ${({ $theme }) => $theme.dividerColor};
   margin: 2px 0;
 `;
 
-const EmptyState = styled.li<{ $theme: ComboboxThemeConfiguration }>`
+const EmptyState = styled.li<{ $theme: ComboboxThemeConfig }>`
   padding: 0.5rem;
   text-align: center;
   color: ${({ $theme }) => $theme.emptyTextColor};

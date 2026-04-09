@@ -29,7 +29,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 import { useTheme } from "./../theme/provider";
-import { ChipsThemeConfiguration } from "./../theme";
+import { ChipsThemeConfig } from "./../theme";
 
 export type ChipActionsProps = BadgeActionProps;
 
@@ -208,7 +208,7 @@ const InputGroup = styled.div<{
 const AddButton = styled(RiAddLine)<{
   $isOpen?: boolean;
   $disabled?: boolean;
-  $theme?: ChipsThemeConfiguration;
+  $theme?: ChipsThemeConfig;
 }>`
   cursor: pointer;
   border: 1px solid transparent;
@@ -558,7 +558,7 @@ function Chips({
 }
 
 const Divider = styled.div<{
-  $theme?: ChipsThemeConfiguration;
+  $theme?: ChipsThemeConfig;
 }>`
   width: 100%;
   height: 1px;
@@ -568,7 +568,7 @@ const Divider = styled.div<{
 
 const ChipsDrawerWrapper = styled.ul<{
   $style?: CSSProp;
-  $theme?: ChipsThemeConfiguration;
+  $theme?: ChipsThemeConfig;
 }>`
   display: flex;
   flex-direction: column;
@@ -593,7 +593,7 @@ const ChipsDrawerWrapper = styled.ul<{
 
 const EmptyOptionContainer = styled.div<{
   $hovered?: boolean;
-  $theme: ChipsThemeConfiguration;
+  $theme: ChipsThemeConfig;
 }>`
   display: flex;
   flex-direction: row;
@@ -714,7 +714,7 @@ function ChipsItem({
 const ChipItemWrapper = styled.div<{
   $hovered: boolean;
   $style?: CSSProp;
-  $theme: ChipsThemeConfiguration;
+  $theme: ChipsThemeConfig;
 }>`
   display: flex;
   flex-direction: row;

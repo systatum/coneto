@@ -7,7 +7,7 @@ import {
   ReactNode,
 } from "react";
 import styled, { CSSProp } from "styled-components";
-import { OverlayBlockerThemeConfiguration } from "./../theme";
+import { OverlayBlockerThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
 
 export interface OverlayBlockerRef {
@@ -103,7 +103,7 @@ export const OverlayBlocker = forwardRef<
 const StyledOverlay = styled.div<{
   $zIndex: number;
   $style?: CSSProp;
-  $theme?: OverlayBlockerThemeConfiguration;
+  $theme?: OverlayBlockerThemeConfig;
 }>`
   position: absolute;
   inset: 0;

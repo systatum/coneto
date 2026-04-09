@@ -33,7 +33,7 @@ import ContextMenu from "./context-menu";
 import { ActionButton, ActionButtonProps } from "./action-button";
 import { OverlayBlocker } from "./overlay-blocker";
 import { useTheme } from "./../theme/provider";
-import { TableThemeConfiguration } from "./../theme";
+import { TableThemeConfig } from "./../theme";
 
 export type RowData = (string | ReactNode)[];
 
@@ -661,7 +661,7 @@ const Wrapper = styled.div<{
 `;
 
 const HeaderActions = styled.div<{
-  $theme?: TableThemeConfiguration;
+  $theme?: TableThemeConfig;
 }>`
   width: 100%;
   display: flex;
@@ -687,7 +687,7 @@ const ActionsWrapper = styled.div`
   align-items: center;
 `;
 
-const PaginationButton = styled.button<{ $theme?: TableThemeConfiguration }>`
+const PaginationButton = styled.button<{ $theme?: TableThemeConfig }>`
   display: flex;
   gap: 0.25rem;
   align-items: center;
@@ -731,7 +731,7 @@ const PaginationSelectedItem = styled.span<{ $style?: CSSProp }>`
 
 const TableContainer = styled.div<{
   $hasSelected: boolean;
-  $theme?: TableThemeConfiguration;
+  $theme?: TableThemeConfig;
 }>`
   position: relative;
   display: flex;
@@ -750,7 +750,7 @@ const TableContainer = styled.div<{
 const TableHeader = styled.div<{
   $style?: CSSProp;
   $textColor?: string;
-  $theme?: TableThemeConfiguration;
+  $theme?: TableThemeConfig;
 }>`
   display: flex;
   flex-direction: row;
@@ -796,7 +796,7 @@ const TableBody = styled.div<{ $style?: CSSProp }>`
 
 const TableSummary = styled.div<{
   $selectable?: boolean;
-  $theme?: TableThemeConfiguration;
+  $theme?: TableThemeConfig;
 }>`
   display: flex;
   flex-direction: row;
@@ -818,7 +818,7 @@ const TableSummary = styled.div<{
   box-shadow: ${({ $theme }) => $theme?.boxShadow};
 `;
 
-const EmptyState = styled.div<{ $theme?: TableThemeConfiguration }>`
+const EmptyState = styled.div<{ $theme?: TableThemeConfig }>`
   border-bottom: 1px solid
     ${({ $theme }) => $theme?.rowBorderColor || "#d1d5db"};
   border-left: 1px solid ${({ $theme }) => $theme?.rowBorderColor || "#d1d5db"};
@@ -984,7 +984,7 @@ const TableRowGroupContainer = styled.div`
   overflow-y: visible;
 `;
 
-const TableRowGroupSticky = styled.div<{ $theme?: TableThemeConfiguration }>`
+const TableRowGroupSticky = styled.div<{ $theme?: TableThemeConfig }>`
   display: flex;
   flex-direction: row;
   cursor: pointer;
@@ -1417,7 +1417,7 @@ const TableRowWrapper = styled.div<{
   $isSelected?: boolean;
   $rowCellStyle?: CSSProp;
   $isHovered?: boolean;
-  $theme?: TableThemeConfiguration;
+  $theme?: TableThemeConfig;
 }>`
   display: flex;
   position: relative;
@@ -1449,7 +1449,7 @@ const TableRowWrapper = styled.div<{
 
 const TableRowContent = styled(motion.div)<{
   $style?: CSSProp;
-  $theme?: TableThemeConfiguration;
+  $theme?: TableThemeConfig;
 }>`
   display: flex;
   position: relative;

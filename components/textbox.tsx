@@ -16,7 +16,7 @@ import {
 } from "./field-lane";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
-import { TextboxThemeConfiguration } from "./../theme";
+import { TextboxThemeConfig } from "./../theme";
 
 interface BaseTextboxProps
   extends Omit<
@@ -188,7 +188,7 @@ const Input = styled.input<{
   $error?: boolean;
   $style?: CSSProp;
   $disabled?: boolean;
-  $theme: TextboxThemeConfiguration;
+  $theme: TextboxThemeConfig;
 }>`
   border-radius: 2px;
   font-size: 0.75rem;

@@ -14,7 +14,7 @@ import { SubMenuButtonProps } from "./button";
 import { Tooltip } from "./tooltip";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
-import { TreeListThemeConfiguration } from "./../theme";
+import { TreeListThemeConfig } from "./../theme";
 
 export interface TreeListProps
   extends Omit<
@@ -1368,7 +1368,7 @@ const TreeListHierarchyVerticalLine = styled.div<{
   $isSelected?: boolean;
   $isSameLevel?: boolean;
   $style?: CSSProp;
-  $theme?: TreeListThemeConfiguration;
+  $theme?: TreeListThemeConfig;
 }>`
   position: absolute;
   top: 0;
@@ -1401,7 +1401,7 @@ const TreeListItemWrapper = styled.li<{
   $level?: number;
   $isHovered?: boolean;
   $isDropParent?: boolean;
-  $theme?: TreeListThemeConfiguration;
+  $theme?: TreeListThemeConfig;
 }>`
   display: flex;
   flex-direction: row;
@@ -1447,7 +1447,7 @@ const TreeListItemWrapper = styled.li<{
   ${(props) => props.$style}
 `;
 
-const HighlightedText = styled.span<{ $theme?: TreeListThemeConfiguration }>`
+const HighlightedText = styled.span<{ $theme?: TreeListThemeConfig }>`
   font-weight: 600;
   border-radius: 4px;
   background-color: ${({ $theme }) => $theme?.highlightedText};

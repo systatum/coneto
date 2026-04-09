@@ -6,7 +6,7 @@ import { StatefulForm } from "./stateful-form";
 import { Tooltip } from "./tooltip";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
-import { FieldLaneThemeConfiguration } from "./../theme";
+import { FieldLaneThemeConfig } from "./../theme";
 
 export interface FieldLaneProps {
   label?: string;
@@ -399,7 +399,7 @@ const Body = styled.div<{
   $disabled?: boolean;
   $labelPosition?: FieldLaneProps["labelPosition"];
   $labelGap?: number;
-  $theme?: FieldLaneThemeConfiguration;
+  $theme?: FieldLaneThemeConfig;
 }>`
   position: relative;
   display: flex;
@@ -435,7 +435,7 @@ const InputWrapper = styled.label<{ $style?: CSSProp }>`
 
 const ErrorIconWrapper = styled.div<{
   $position?: FieldLaneProps["errorIconPosition"];
-  $theme?: FieldLaneThemeConfiguration;
+  $theme?: FieldLaneThemeConfig;
 }>`
   ${({ $position }) =>
     $position === "absolute"
@@ -465,7 +465,7 @@ const ErrorIconWrapper = styled.div<{
   }
 `;
 
-const ErrorText = styled.span<{ $theme?: FieldLaneThemeConfiguration }>`
+const ErrorText = styled.span<{ $theme?: FieldLaneThemeConfig }>`
   color: ${({ $theme }) => $theme?.errorColor ?? "#dc2626"};
 `;
 

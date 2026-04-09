@@ -11,7 +11,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import styled, { css, CSSProp } from "styled-components";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
-import { CrumbThemeConfiguration } from "./../theme";
+import { CrumbThemeConfig } from "./../theme";
 
 export interface CrumbProps {
   children?: ReactNode;
@@ -170,7 +170,7 @@ const CrumbEllipsisListItem = styled(motion.li)`
 const CrumbEllipsisIcon = styled(RiMoreLine)<{
   $textColor?: string;
   $hoverColor?: string;
-  $theme: CrumbThemeConfiguration;
+  $theme: CrumbThemeConfig;
 }>`
   ${({ $textColor, $hoverColor, $theme }) => css`
     color: ${$textColor || $theme.ellipsisColor || "#6b7280"};
@@ -248,7 +248,7 @@ const CrumbItemLink = styled.a<{
   $fontSize?: number;
   $textColor?: string;
   $hoverColor?: string;
-  $theme: CrumbThemeConfiguration;
+  $theme: CrumbThemeConfig;
   $lastTextColor?: string;
 }>`
   ${({ $textColor, $hoverColor, $fontSize, $theme }) => css`
@@ -281,7 +281,7 @@ const CrumbItemSpan = styled.span<{
   $fontSize?: number;
   $textColor?: string;
   $hoverColor?: string;
-  $theme: CrumbThemeConfiguration;
+  $theme: CrumbThemeConfig;
   $lastTextColor?: string;
 }>`
   ${({ $textColor, $hoverColor, $fontSize, $theme }) => css`

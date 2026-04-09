@@ -4,7 +4,7 @@ import { ReactNode, useEffect, useState } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
-import { DrawerTabThemeConfiguration } from "./../theme";
+import { DrawerTabThemeConfig } from "./../theme";
 
 export interface DrawerTabProps {
   tabs: DrawerTabContentProps[];
@@ -115,7 +115,7 @@ function DrawerTab({ tabs, styles, position = "right" }: DrawerTabProps) {
 const DrawerTabContainer = styled(motion.div)<{
   $position: "left" | "right";
   $style?: CSSProp;
-  $theme: DrawerTabThemeConfiguration;
+  $theme: DrawerTabThemeConfig;
 }>`
   position: fixed;
   top: 2.5rem;
@@ -163,7 +163,7 @@ const TabButtonsContainer = styled.div<{
 const TabButton = styled.div<{
   $selected: boolean;
   $position: "left" | "right";
-  $theme: DrawerTabThemeConfiguration;
+  $theme: DrawerTabThemeConfig;
 }>`
   cursor: pointer;
   padding: 0.5rem;
@@ -208,7 +208,7 @@ const TabButton = styled.div<{
         `}
 `;
 
-const TabContentContainer = styled.div<{ $theme: DrawerTabThemeConfiguration }>`
+const TabContentContainer = styled.div<{ $theme: DrawerTabThemeConfig }>`
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
@@ -217,7 +217,7 @@ const TabContentContainer = styled.div<{ $theme: DrawerTabThemeConfiguration }>`
   background: ${({ $theme }) => $theme.backgroundColor};
 `;
 
-const TabHeader = styled.div<{ $theme: DrawerTabThemeConfiguration }>`
+const TabHeader = styled.div<{ $theme: DrawerTabThemeConfig }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -233,7 +233,7 @@ const TabHeader = styled.div<{ $theme: DrawerTabThemeConfiguration }>`
   }
 `;
 
-const Divider = styled.div<{ $theme: DrawerTabThemeConfiguration }>`
+const Divider = styled.div<{ $theme: DrawerTabThemeConfig }>`
   position: absolute;
   top: 2rem;
   left: 0;
@@ -248,7 +248,7 @@ const Content = styled.span`
   z-index: 9992999;
 `;
 
-const CloseButton = styled.div<{ $theme: DrawerTabThemeConfiguration }>`
+const CloseButton = styled.div<{ $theme: DrawerTabThemeConfig }>`
   width: 20px;
   height: 20px;
   border-radius: 0.25rem;

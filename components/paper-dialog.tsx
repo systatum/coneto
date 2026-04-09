@@ -22,7 +22,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { Figure, FigureProps } from "./figure";
 import { OverlayBlocker } from "./overlay-blocker";
 import { useTheme } from "./../theme/provider";
-import { PaperDialogThemeConfiguration } from "./../theme";
+import { PaperDialogThemeConfig } from "./../theme";
 
 export type DialogState = "restored" | "closed" | "minimized";
 
@@ -264,7 +264,7 @@ const MotionDialog = styled(motion.div)<{
   $isLeft: boolean;
   $style?: CSSProp;
   $width?: string;
-  $theme?: PaperDialogThemeConfiguration;
+  $theme?: PaperDialogThemeConfig;
 }>`
   position: fixed;
   top: 0;
@@ -343,7 +343,7 @@ const MinimizeButtonWrapper = styled.div<{
 
 const IconButton = styled.button<{
   $isLeft: boolean;
-  $theme?: PaperDialogThemeConfiguration;
+  $theme?: PaperDialogThemeConfig;
 }>`
   position: relative;
   cursor: pointer;
@@ -414,7 +414,7 @@ export function PaperDialogContent({
 
 const StyledDialogContent = styled.div<{
   $style?: CSSProp;
-  $theme?: PaperDialogThemeConfiguration;
+  $theme?: PaperDialogThemeConfig;
 }>`
   min-height: 100dvh;
   max-height: 100dvh;

@@ -11,7 +11,7 @@ import { Button } from "./button";
 import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 import { useTheme } from "./../theme/provider";
-import { FileInputBoxThemeConfiguration } from "./../theme";
+import { FileInputBoxThemeConfig } from "./../theme";
 
 interface BaseFileInputBoxProps extends InputHTMLAttributes<HTMLInputElement> {
   placeholder?: string;
@@ -232,7 +232,7 @@ const InputBox = styled.div<{
   $self?: CSSProp;
   $style?: CSSProp;
   $disabled?: boolean;
-  $theme: FileInputBoxThemeConfiguration;
+  $theme: FileInputBoxThemeConfig;
 }>`
   padding: 12px;
   user-select: none;
@@ -314,7 +314,7 @@ const FileItem = styled.div`
   gap: 6px;
 `;
 
-const FileName = styled.div<{ $theme: FileInputBoxThemeConfiguration }>`
+const FileName = styled.div<{ $theme: FileInputBoxThemeConfig }>`
   font-size: 14px;
   width: 90%;
   overflow: hidden;
@@ -326,7 +326,7 @@ const FileName = styled.div<{ $theme: FileInputBoxThemeConfiguration }>`
   `}
 `;
 
-const Placeholder = styled.span<{ $theme: FileInputBoxThemeConfiguration }>`
+const Placeholder = styled.span<{ $theme: FileInputBoxThemeConfig }>`
   font-size: 14px;
   width: 100%;
 

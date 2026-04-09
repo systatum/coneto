@@ -5,7 +5,7 @@ import { RiArrowLeftSLine, RiArrowRightSLine } from "@remixicon/react";
 import { motion } from "framer-motion";
 import styled, { css, CSSProp } from "styled-components";
 import { OverlayBlocker } from "./overlay-blocker";
-import { SidebarThemeConfiguration } from "./../theme";
+import { SidebarThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
 
 export interface SidebarProps {
@@ -125,7 +125,7 @@ function Sidebar({ children, styles, position = "left" }: SidebarProps) {
 const MotionSidebar = styled(motion.div)<{
   $position: "left" | "right";
   $style?: CSSProp;
-  $theme?: SidebarThemeConfiguration;
+  $theme?: SidebarThemeConfig;
 }>`
   position: fixed;
   z-index: 9999999;
@@ -159,7 +159,7 @@ const MotionSidebar = styled(motion.div)<{
 
 const ToggleButton = styled.button<{
   $position: "left" | "right";
-  $theme?: SidebarThemeConfiguration;
+  $theme?: SidebarThemeConfig;
 }>`
   position: fixed;
   top: 0;
@@ -189,7 +189,7 @@ const ToggleButton = styled.button<{
 const DesktopSidebar = styled.div<{
   $position: "left" | "right";
   $style?: CSSProp;
-  $theme?: SidebarThemeConfiguration;
+  $theme?: SidebarThemeConfig;
 }>`
   position: fixed;
   z-index: 40;

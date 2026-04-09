@@ -4,7 +4,7 @@ import { ReactNode } from "react";
 import { Button } from "./button";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
-import { MessageboxThemeConfiguration } from "./../theme";
+import { MessageboxThemeConfig } from "./../theme";
 
 export type MessageboxVariantState =
   | "primary"
@@ -141,7 +141,7 @@ function Messagebox({
 const Wrapper = styled.div<{
   $style?: CSSProp;
   $variant: MessageboxVariantState;
-  $theme: MessageboxThemeConfiguration;
+  $theme: MessageboxThemeConfig;
 }>`
   display: flex;
   flex-direction: row;
@@ -184,7 +184,7 @@ const Children = styled.span<{ $style?: CSSProp }>`
 
 const BorderAccent = styled.div<{
   $variant: MessageboxVariantState;
-  $theme: MessageboxThemeConfiguration;
+  $theme: MessageboxThemeConfig;
 }>`
   position: absolute;
   top: 0;
@@ -201,7 +201,7 @@ const ActionList = styled.div`
 
 const ActionItem = styled.button<{
   $variant: MessageboxVariantState;
-  $theme: MessageboxThemeConfiguration;
+  $theme: MessageboxThemeConfig;
 }>`
   cursor: pointer;
   background: none;
@@ -222,7 +222,7 @@ const ActionItem = styled.button<{
 
 const ActionLink = styled.a<{
   $variant: MessageboxVariantState;
-  $theme: MessageboxThemeConfiguration;
+  $theme: MessageboxThemeConfig;
 }>`
   font-size: 0.875rem;
   font-weight: 500;

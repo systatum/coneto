@@ -31,7 +31,7 @@ import { ActionButton, ActionButtonProps } from "./action-button";
 import { OverlayBlocker } from "./overlay-blocker";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
-import { ListThemeConfiguration, TreeListThemeConfiguration } from "theme";
+import { ListThemeConfig, TreeListThemeConfig } from "theme";
 
 export interface ListProps extends ListMaxItemsProp {
   searchable?: boolean;
@@ -864,7 +864,7 @@ const Divider = styled.div<{ $borderColor?: string }>`
 
 const EmptyContent = styled(motion.div)<{
   $style?: CSSProp;
-  $theme?: ListThemeConfiguration;
+  $theme?: ListThemeConfig;
 }>`
   border: 1px dashed ${({ $theme }) => $theme?.borderColor};
   color: ${({ $theme }) => $theme?.mutedTextColor};
@@ -1421,7 +1421,7 @@ const TextWrapper = styled.div`
 
 const CustomLeftSideContent = styled.div<{
   $style?: CSSProp;
-  $theme?: ListThemeConfiguration;
+  $theme?: ListThemeConfig;
 }>`
   display: flex;
   border-radius: 20px;

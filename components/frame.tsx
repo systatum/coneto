@@ -1,7 +1,7 @@
 import React, { HTMLAttributes } from "react";
 import styled, { CSSProp } from "styled-components";
 import { useTheme } from "./../theme/provider";
-import { FrameThemeConfiguration } from "./../theme";
+import { FrameThemeConfig } from "./../theme";
 
 export interface FrameProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "title" | "style"> {
@@ -39,7 +39,7 @@ function Frame({ title, children, styles, ...props }: FrameProps) {
 
 const FrameContainer = styled.div<{
   $style?: CSSProp;
-  $theme?: FrameThemeConfiguration;
+  $theme?: FrameThemeConfig;
 }>`
   position: relative;
   width: 100%;
@@ -54,7 +54,7 @@ const FrameContainer = styled.div<{
 
 const TitleContainer = styled.span<{
   $style?: CSSProp;
-  $theme?: FrameThemeConfiguration;
+  $theme?: FrameThemeConfig;
 }>`
   position: absolute;
   top: -12px;
@@ -68,7 +68,7 @@ const TitleContainer = styled.span<{
   ${({ $style }) => $style}
 `;
 
-const TitleOverlay = styled.span<{ $theme?: FrameThemeConfiguration }>`
+const TitleOverlay = styled.span<{ $theme?: FrameThemeConfig }>`
   position: absolute;
   top: -2px;
   left: 0;
@@ -79,7 +79,7 @@ const TitleOverlay = styled.span<{ $theme?: FrameThemeConfiguration }>`
   pointer-events: none;
 `;
 
-const TitleText = styled.span<{ $theme: FrameThemeConfiguration }>`
+const TitleText = styled.span<{ $theme: FrameThemeConfig }>`
   position: relative;
   color: ${({ $theme }) => $theme?.titleColor || "#999b9d"};
 `;

@@ -20,7 +20,7 @@ import {
 } from "./../lib/floating-placement";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
-import { TipMenuContainerThemeConfiguration } from "./../theme";
+import { TipMenuContainerThemeConfig } from "./../theme";
 
 export type ButtonVariants = {
   variant?:
@@ -419,7 +419,7 @@ function ButtonTipMenuContainer({
 
 const TipMenuContainer = styled.div<{
   $style?: CSSProp;
-  $theme?: TipMenuContainerThemeConfiguration;
+  $theme?: TipMenuContainerThemeConfig;
 }>`
   display: flex;
   flex-direction: column;

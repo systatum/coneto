@@ -3,7 +3,7 @@ import { Combobox } from "./combobox";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { clamp } from "./../lib/math";
-import { PaginationThemeConfiguration } from "./../theme";
+import { PaginationThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
 
 export interface PaginationProps {
@@ -258,7 +258,7 @@ const PaginationButton = ({
 const Button = styled.button<{
   $isActive?: boolean;
   $style?: CSSProp;
-  $theme: PaginationThemeConfiguration;
+  $theme: PaginationThemeConfig;
 }>`
   min-width: 39px;
   min-height: 39px;

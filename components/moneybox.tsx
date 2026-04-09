@@ -13,7 +13,7 @@ import { List } from "./list";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
-import { MoneyboxThemeConfiguration } from "./../theme";
+import { MoneyboxThemeConfig } from "./../theme";
 
 export type SeparatorTypeProps = "dot" | "comma";
 
@@ -327,7 +327,7 @@ const Box = styled.div<{
   $focus?: boolean;
   $style?: CSSProp;
   $disabled?: boolean;
-  $theme: MoneyboxThemeConfiguration;
+  $theme: MoneyboxThemeConfig;
 }>`
   display: flex;
   align-items: center;
@@ -364,7 +364,7 @@ const Box = styled.div<{
 const MoneyboxInput = styled.input<{
   $disabled?: boolean;
   $style?: CSSProp;
-  $theme: MoneyboxThemeConfiguration;
+  $theme: MoneyboxThemeConfig;
 }>`
   background: transparent;
   text-align: right;

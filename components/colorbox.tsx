@@ -9,7 +9,7 @@ import {
 import styled, { css, CSSProp } from "styled-components";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 import { StatefulForm } from "./stateful-form";
-import { ColorboxThemeConfiguration } from "theme";
+import { ColorboxThemeConfig } from "theme";
 import { useTheme } from "./../theme/provider";
 
 interface BaseColorboxProps
@@ -223,7 +223,7 @@ const ColorInputContainer = styled.div<{
   $showError: boolean;
   $style?: CSSProp;
   $disabled?: boolean;
-  $theme: ColorboxThemeConfiguration;
+  $theme: ColorboxThemeConfig;
 }>`
   position: relative;
   display: flex;
@@ -259,7 +259,7 @@ const ColorBox = styled.div<{
   $bgColor?: string;
   $showError?: boolean;
   $disabled?: boolean;
-  $theme: ColorboxThemeConfiguration;
+  $theme: ColorboxThemeConfig;
 }>`
   min-width: 24px;
   min-height: 24px;
@@ -297,7 +297,7 @@ const TextInputGroup = styled.span<{
   $hovered: boolean;
   $showError: boolean;
   $disabled?: boolean;
-  $theme: ColorboxThemeConfiguration;
+  $theme: ColorboxThemeConfig;
 }>`
   display: flex;
   align-items: center;
@@ -323,7 +323,7 @@ const TextInputGroup = styled.span<{
 
 const Prefix = styled.span<{
   $showError: boolean;
-  $theme: ColorboxThemeConfiguration;
+  $theme: ColorboxThemeConfig;
 }>`
   color: ${({ $theme, $showError }) =>
     $showError ? $theme.errorTextColor : $theme.prefixColor};
@@ -332,7 +332,7 @@ const Prefix = styled.span<{
 const TextInput = styled.input<{
   $showError: boolean;
   $disabled?: boolean;
-  $theme: ColorboxThemeConfiguration;
+  $theme: ColorboxThemeConfig;
 }>`
   flex: 1;
   width: 100%;

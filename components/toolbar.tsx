@@ -21,7 +21,7 @@ import {
 import styled, { css, CSSProp } from "styled-components";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
-import { ToolbarThemeConfiguration } from "./../theme";
+import { ToolbarThemeConfig } from "./../theme";
 
 export interface ToolbarProps {
   children: ReactNode;
@@ -66,7 +66,7 @@ const useVariantToolbar = () => {
   const { currentTheme } = useTheme();
   const toolbarVariant = currentTheme?.toolbar ?? {};
 
-  const VARIANT_COLORS: Record<ToolbarVariantType, ToolbarThemeConfiguration> =
+  const VARIANT_COLORS: Record<ToolbarVariantType, ToolbarThemeConfig> =
     Object.keys(toolbarVariant).reduce(
       (acc, key) => {
         const variant = toolbarVariant[key as ToolbarVariantType];
@@ -81,7 +81,7 @@ const useVariantToolbar = () => {
         };
         return acc;
       },
-      {} as Record<ToolbarVariantType, ToolbarThemeConfiguration>
+      {} as Record<ToolbarVariantType, ToolbarThemeConfig>
     );
 
   return { VARIANT_COLORS };
@@ -214,7 +214,7 @@ function ToolbarMenu({
     [];
 
   const toolbarButtonStyle = (
-    colors: ToolbarThemeConfiguration,
+    colors: ToolbarThemeConfig,
     isOpen?: boolean
   ) => css`
     position: relative;
@@ -370,7 +370,7 @@ const ToolbarContainer = styled.div`
 
 const MenuWrapper = styled.div<{
   $style?: CSSProp;
-  $theme?: ToolbarThemeConfiguration;
+  $theme?: ToolbarThemeConfig;
   $variant?: ToolbarVariantType;
 }>`
   display: flex;

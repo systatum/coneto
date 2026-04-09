@@ -1,7 +1,7 @@
 import { ReactNode, useCallback, useState } from "react";
 import { Capsule } from "./capsule";
 import styled, { css, CSSProp } from "styled-components";
-import { CapsuleTabThemeConfiguration } from "./../theme";
+import { CapsuleTabThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
 
 export interface CapsuleTabProps {
@@ -100,7 +100,7 @@ function CapsuleTab({
 
 const CapsuleTabWrapper = styled.div<{
   $style?: CSSProp;
-  $theme?: CapsuleTabThemeConfiguration;
+  $theme?: CapsuleTabThemeConfig;
 }>`
   display: flex;
   flex-direction: column;

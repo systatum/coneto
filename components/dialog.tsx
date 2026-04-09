@@ -22,7 +22,7 @@ import {
   ThemeProvider,
   useTheme,
 } from "./../theme/provider";
-import { DialogThemeConfiguration, ThemeMode } from "./../theme";
+import { DialogThemeConfig, ThemeMode } from "./../theme";
 
 const zoomIn = keyframes`from {transform: translate(-50%, -50%) scale(0.95); opacity: 0;} to {transform: translate(-50%, -50%) scale(1); opacity: 1;}`;
 const zoomOut = keyframes`from {transform: translate(-50%, -50%) scale(1); opacity: 1;} to {transform: translate(-50%, -50%) scale(0.95); opacity: 0;}`;
@@ -275,7 +275,7 @@ function Dialog({
 const Wrapper = styled.div<{
   $isOpen: boolean;
   $style?: CSSProp;
-  $theme?: DialogThemeConfiguration;
+  $theme?: DialogThemeConfig;
 }>`
   position: fixed;
   top: 50%;
@@ -338,7 +338,7 @@ const Title = styled.h2<{
 
 const Subtitle = styled.h3<{
   $style?: CSSProp;
-  $theme?: DialogThemeConfiguration;
+  $theme?: DialogThemeConfig;
 }>`
   font-size: 13px;
   text-align: center;

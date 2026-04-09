@@ -35,7 +35,7 @@ import { FigureProps } from "./figure";
 import { StatefulForm } from "./stateful-form";
 import { LoadingSpinner } from "./loading-spinner";
 import { useTheme } from "./../theme/provider";
-import { SelectboxThemeConfiguration } from "./../theme";
+import { SelectboxThemeConfig } from "./../theme";
 
 export type SelectboxSelectedOptions = number | string | number[] | string[];
 
@@ -743,7 +743,7 @@ const Input = styled.input<{
   $clearable?: boolean;
   $hasError?: boolean;
   $disabled?: boolean;
-  $theme: SelectboxThemeConfiguration;
+  $theme: SelectboxThemeConfig;
 }>`
   width: 100%;
   border-radius: 2px;
@@ -796,7 +796,7 @@ const Input = styled.input<{
 
 const ClearIcon = styled(RiCloseLine)<{
   $highlight?: boolean;
-  $theme: SelectboxThemeConfiguration;
+  $theme: SelectboxThemeConfig;
 }>`
   position: absolute;
   top: 50%;
@@ -821,7 +821,7 @@ const ClearIcon = styled(RiCloseLine)<{
 `;
 
 const Divider = styled.span<{
-  $theme: SelectboxThemeConfiguration;
+  $theme: SelectboxThemeConfig;
 }>`
   position: absolute;
   top: 50%;

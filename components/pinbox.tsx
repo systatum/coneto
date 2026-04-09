@@ -10,7 +10,7 @@ import styled, { css } from "styled-components";
 import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 import { useTheme } from "./../theme/provider";
-import { PinboxThemeConfiguration } from "./../theme";
+import { PinboxThemeConfig } from "./../theme";
 
 interface BasePinboxProps {
   fontSize?: number;
@@ -438,7 +438,7 @@ const PinboxInputContent = styled.div<{
 
 const PinboxIndicator = styled.div<{
   $error?: boolean;
-  $theme: PinboxThemeConfiguration;
+  $theme: PinboxThemeConfig;
 }>`
   width: 70%;
   bottom: 3px;
@@ -462,7 +462,7 @@ const PinboxInput = styled.input<{
   $error?: boolean;
   $isStatic?: boolean;
   $isAnimate?: boolean;
-  $theme: PinboxThemeConfiguration;
+  $theme: PinboxThemeConfig;
 }>`
   ${({ $fontSize, $isStatic }) =>
     $isStatic

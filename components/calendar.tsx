@@ -18,7 +18,7 @@ import {
 import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 import { useTheme } from "./../theme/provider";
-import { CalendarThemeConfiguration } from "./../theme";
+import { CalendarThemeConfig } from "./../theme";
 
 export interface BaseCalendarProps extends Partial<DrawerProps> {
   options?: OptionProps[];
@@ -1027,7 +1027,7 @@ const CalendarHeader = styled.div`
   gap: 0.5rem;
 `;
 
-const GridDay = styled.div<{ $theme?: CalendarThemeConfiguration }>`
+const GridDay = styled.div<{ $theme?: CalendarThemeConfig }>`
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 0.25rem;
@@ -1081,7 +1081,7 @@ export const DateCell = styled.span<{
   $isToday?: boolean;
   $isInRange?: boolean;
   $isPickingProcess?: boolean;
-  $theme: CalendarThemeConfiguration;
+  $theme: CalendarThemeConfig;
 }>`
   width: 27px;
   height: 27px;
@@ -1226,7 +1226,7 @@ const DataCellRange = styled.span<{
   $isPickingProcess?: boolean;
   $disableWeekend?: boolean;
   $isCurrentDate?: boolean;
-  $theme?: CalendarThemeConfiguration;
+  $theme?: CalendarThemeConfig;
 }>`
   position: absolute;
   width: 45px;
@@ -1271,7 +1271,7 @@ const DateCellTodayDot = styled.div<{
   $disableWeekend?: boolean;
   $isWeekend?: boolean;
   $isCurrentDate?: boolean;
-  $theme: CalendarThemeConfiguration;
+  $theme: CalendarThemeConfig;
 }>`
   position: absolute;
   bottom: 1px;

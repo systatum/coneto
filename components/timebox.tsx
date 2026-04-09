@@ -12,7 +12,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
-import { TimeboxThemeConfiguration } from "./../theme";
+import { TimeboxThemeConfig } from "./../theme";
 
 interface BaseTimeboxProps
   extends Omit<
@@ -458,7 +458,7 @@ const InputGroup = styled.div<{
   $error: boolean;
   $style?: CSSProp;
   $disabled?: boolean;
-  $theme?: TimeboxThemeConfiguration;
+  $theme?: TimeboxThemeConfig;
 }>`
   display: flex;
   flex-direction: row;
@@ -491,7 +491,7 @@ const InputGroup = styled.div<{
 
 const Input = styled.input<{
   $inputStyle?: CSSProp;
-  $theme?: TimeboxThemeConfiguration;
+  $theme?: TimeboxThemeConfig;
 }>`
   min-width: 50px;
   max-width: 50px;
@@ -526,7 +526,7 @@ const Input = styled.input<{
   ${({ $inputStyle }) => $inputStyle}
 `;
 
-const Colon = styled.span<{ $theme?: TimeboxThemeConfiguration }>`
+const Colon = styled.span<{ $theme?: TimeboxThemeConfig }>`
   transform: translateY(-1px);
 `;
 
