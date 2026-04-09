@@ -12,6 +12,7 @@ import z from "zod";
 import { RiAddBoxLine, RiImage2Line } from "@remixicon/react";
 import { css } from "styled-components";
 import { OptionProps } from "./selectbox";
+import { useTheme } from "./../theme/provider";
 
 const meta: Meta<typeof Tooltip> = {
   title: "Content/Tooltip",
@@ -333,6 +334,9 @@ export const Positioning: Story = {
 
 export const WithForm: Story = {
   render: () => {
+    const { mode } = useTheme();
+    const isDark = mode === "dark";
+
     const [value, setValue] = useState<{ division_name: string }>({
       division_name: "",
     });
@@ -411,15 +415,15 @@ export const WithForm: Story = {
               padding: 0 12px;
             `,
             arrowStyle: css`
-              background-color: #e5e7eb;
-              border: 1px solid #e5e7eb;
+              background-color: ${isDark ? "#3e4143" : "#e5e7eb"};
+              border: 1px solid ${isDark ? "#3e4143" : "#e5e7eb"};
             `,
             drawerStyle: css`
               width: fit-content;
               left: 1rem;
-              background-color: white;
-              color: black;
-              border: 1px solid #e5e7eb;
+              background-color: ${isDark ? "#292c2e" : "white"};
+              color: ${isDark ? "inherit" : "black"};
+              border: 1px solid ${isDark ? "#3e4143" : "#e5e7eb"};
             `,
           }}
         >
