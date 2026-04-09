@@ -207,12 +207,15 @@ body[data-theme="dark"] .css-11xgcgt {
   background-color: inherit;
 }
 
-body[data-theme="dark"] .css-o1d7ko {
+body[data-theme="dark"] .css-o1d7ko,
+body[data-theme="dark"] .css-1fdphfk,
+body[data-theme="dark"] .css-1vgq5xr {
   background-color: #2a2b2f;
-  color: white;
+  color: #9ca3af;
   border: 1px solid #444;
   border-radius: 4px;
   cursor: pointer;
+  box-shadow: none;
 }
 
 /* select, and input on controll */
