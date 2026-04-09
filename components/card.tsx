@@ -90,25 +90,21 @@ function Card({
       $radius={radius}
       $padding={padding}
       $containerStyle={styles?.containerStyle}
-      $bg={cardTheme.backgroundColor}
-      $border={cardTheme.borderColor}
+      $theme={cardTheme}
     >
       {(title || subtitle || headerActions) && (
         <Header $theme={cardTheme} $headerStyle={styles?.headerStyle}>
           {(title || subtitle) && (
             <HeaderTextContainer $style={styles?.textContainerStyle}>
               {title && (
-                <HeaderTitle
-                  $style={styles?.titleStyle}
-                  $color={cardTheme.titleColor}
-                >
+                <HeaderTitle $style={styles?.titleStyle} $theme={cardTheme}>
                   {title}
                 </HeaderTitle>
               )}
               {subtitle && (
                 <HeaderSubtitle
                   $style={styles?.subtitleStyle}
-                  $color={cardTheme.subtitleColor}
+                  $theme={cardTheme}
                 >
                   {subtitle}
                 </HeaderSubtitle>
@@ -214,13 +210,12 @@ const CardContainer = styled.div<{
   $radius: CardProps["radius"];
   $padding: CardProps["padding"];
   $containerStyle?: CSSProp;
-  $bg: string;
-  $border: string;
+  $theme: CardThemeConfig;
 }>`
   display: flex;
   flex-direction: column;
-  background: ${({ $bg }) => $bg};
-  border: 1px solid ${({ $border }) => $border};
+  background: ${({ $theme }) => $theme?.backgroundColor ?? "#ffffff"};
+  border: 1px solid ${({ $theme }) => $theme?.borderColor ?? "#d1d5db"};
   position: relative;
   width: fit-content;
 
@@ -249,22 +244,22 @@ const Header = styled.div<{
 `;
 
 const HeaderTitle = styled.span<{
-  $color: string;
+  $theme: CardThemeConfig;
   $style?: CSSProp;
 }>`
   font-size: 1rem;
-  color: ${({ $color }) => $color};
+  color: ${({ $theme }) => $theme?.titleColor ?? "#000000"};
 
   ${({ $style }) => $style}
 `;
 
 const HeaderSubtitle = styled.span<{
-  $color: string;
+  $theme: CardThemeConfig;
   $style?: CSSProp;
 }>`
   font-size: 0.8rem;
   font-weight: 400;
-  color: ${({ $color }) => $color};
+  color: ${({ $theme }) => $theme?.subtitleColor ?? "#6b7280"};
 
   ${({ $style }) => $style}
 `;
