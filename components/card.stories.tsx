@@ -237,6 +237,13 @@ export const Default: Story = {
             icon={{ image: RiSpam2Line, color: "white" }}
             subMenuList={SUB_MENU_LIST}
           />
+
+          <Toolbar.Menu
+            caption="Success"
+            variant="success"
+            icon={{ image: RiSpam2Line, color: "white" }}
+            subMenuList={SUB_MENU_LIST}
+          />
         </Toolbar>
       </Card>
     );
