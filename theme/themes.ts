@@ -1857,11 +1857,11 @@ const darkButton = createButtonTheme(darkBody, {
     focusBackgroundColor: "rgba(72, 57, 141, 0.5)",
   },
   danger: {
-    backgroundColor: "rgb(167, 7, 43)",
+    backgroundColor: "rgb(177, 30, 66)",
     textColor: darkBody.textColor,
     hoverBackgroundColor: "rgb(147, 21, 52)",
     activeBackgroundColor: "rgb(130, 18, 46)",
-    focusBackgroundColor: "rgba(167, 7, 43, 0.5)",
+    focusBackgroundColor: "rgba(177, 30, 66, 0.5)",
   },
   success: {
     backgroundColor: "#107533",
@@ -1927,8 +1927,8 @@ const darkButton = createButtonTheme(darkBody, {
     textColor: "rgb(200, 60, 90)",
     hoverBackgroundColor: "rgba(147, 21, 52, 0.2)",
     activeBackgroundColor: "rgba(147, 21, 52, 0.35)",
-    focusBackgroundColor: "rgba(167, 7, 43, 0.5)",
-    borderColor: "rgb(167, 7, 43)",
+    focusBackgroundColor: "rgba(177, 30, 66, 0.5)",
+    borderColor: "rgb(177, 30, 66)",
   },
 
   "outline-success": {
@@ -1970,7 +1970,7 @@ const darkCalendar = createCalendarTheme(darkBody, darkFieldLane, {
   weekendDateColor: "#fca5a5",
 
   rangeDateColor: "rgb(124, 101, 207)",
-  hightlightDateColor: darkButton?.primary?.hoverBackgroundColor,
+  hightlightDateColor: "rgb(115, 94, 214)",
   highlightedDateTextColor: "#ffffff",
 
   boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.25)",
@@ -2423,7 +2423,7 @@ const darkTreeList = createTreeListTheme(darkBody, {
   selectedBackgroundColor: "#1f2937",
   highlightedText: "#374151",
 
-  dividerHierarchyColor: "rgb(62, 65, 67)",
+  dividerHierarchyColor: "rgba(63, 62, 62, 0.35)",
   dividerHierarchyRelatedColor: "rgb(115, 115, 115)",
   dividerHierarchySelectedColor: "#485c7d",
 });
