@@ -106,7 +106,10 @@ body[data-theme="dark"] .sbdocs.sbdocs-content .css-177r6r9 {
     border-color 0.2s;
 }
 
-body[data-theme="dark"] .sbdocs.sbdocs-content .css-177r6r9 input[type="checkbox"] {
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content
+  .css-177r6r9
+  input[type="checkbox"] {
   position: absolute;
   opacity: 0;
   width: 0;
@@ -132,12 +135,20 @@ body[data-theme="dark"] .sbdocs.sbdocs-content .css-177r6r9 span:last-child {
   color: #9ca3af;
 }
 
-body[data-theme="dark"] .sbdocs.sbdocs-content .css-177r6r9 input:checked~span:first-child {
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content
+  .css-177r6r9
+  input:checked
+  ~ span:first-child {
   background-color: #4f46e5;
   color: #fff;
 }
 
-body[data-theme="dark"] .sbdocs.sbdocs-content .css-177r6r9 input:checked~span:last-child {
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content
+  .css-177r6r9
+  input:checked
+  ~ span:last-child {
   background-color: #4f46e5;
   color: #fff;
 }
@@ -146,7 +157,11 @@ body[data-theme="dark"] .sbdocs.sbdocs-content .css-177r6r9:hover {
   border-color: #4f46e5;
 }
 
-body[data-theme="dark"] .sbdocs.sbdocs-content .css-177r6r9 input:focus-visible~span {
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content
+  .css-177r6r9
+  input:focus-visible
+  ~ span {
   outline: 2px solid #4f46e5;
   outline-offset: 2px;
 }
@@ -199,9 +214,15 @@ body[data-theme="dark"] .css-1vgq5xr {
   color: #9ca3af;
   box-shadow: none;
 }
+body[data-theme="dark"] .css-1s4h7f7,
+body[data-theme="dark"] .language-jsx.css-zye6j {
+  background-color: #2a2b2f;
+  color: white;
+}
 
 body[data-theme="dark"] .css-o1d7ko,
 body[data-theme="dark"] .css-1fdphfk,
+body[data-theme="dark"] .sbdocs-expandable,
 body[data-theme="dark"] .css-1vgq5xr {
   background-color: #2a2b2f;
   border: 1px solid #444;
@@ -263,22 +284,52 @@ body[data-theme="dark"] .sb-bar.css-l1e2yg {
 }
 
 /* PrismJS token colors */
-body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq .css-4zr3vl .token.comment,
-body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq .css-4zr3vl .token.prolog,
-body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq .css-4zr3vl .token.doctype,
-body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq .css-4zr3vl .token.cdata {
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content.css-qa4clq
+  .css-4zr3vl
+  .token.comment,
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content.css-qa4clq
+  .css-4zr3vl
+  .token.prolog,
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content.css-qa4clq
+  .css-4zr3vl
+  .token.doctype,
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content.css-qa4clq
+  .css-4zr3vl
+  .token.cdata {
   color: #6a737d;
 }
 
-body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq .css-4zr3vl .token.punctuation {
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content.css-qa4clq
+  .css-4zr3vl
+  .token.punctuation {
   color: #c5c8c6;
 }
 
-body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq .css-4zr3vl .token.property,
-body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq .css-4zr3vl .token.boolean,
-body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq .css-4zr3vl .token.number,
-body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq .css-4zr3vl .token.constant,
-body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq .css-4zr3vl .token.symbol {
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content.css-qa4clq
+  .css-4zr3vl
+  .token.property,
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content.css-qa4clq
+  .css-4zr3vl
+  .token.boolean,
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content.css-qa4clq
+  .css-4zr3vl
+  .token.number,
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content.css-qa4clq
+  .css-4zr3vl
+  .token.constant,
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content.css-qa4clq
+  .css-4zr3vl
+  .token.symbol {
   color: #ffe7b6;
 }
 
@@ -289,41 +340,85 @@ body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq .css-4zr3vl .token.sym
   color: #bc7891;
 } */
 
-body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq .css-4zr3vl .token.selector,
-body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq .css-4zr3vl .token.attr-name,
-body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq .css-4zr3vl .token.char,
-body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq .css-4zr3vl .token.builtin,
-body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq .css-4zr3vl .token.inserted {
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content.css-qa4clq
+  .css-4zr3vl
+  .token.selector,
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content.css-qa4clq
+  .css-4zr3vl
+  .token.attr-name,
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content.css-qa4clq
+  .css-4zr3vl
+  .token.char,
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content.css-qa4clq
+  .css-4zr3vl
+  .token.builtin,
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content.css-qa4clq
+  .css-4zr3vl
+  .token.inserted {
   color: #a6e22e;
 }
 
-body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq .css-4zr3vl .token.string {
-  color: #ffe7b6
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content.css-qa4clq
+  .css-4zr3vl
+  .token.string {
+  color: #ffe7b6;
 }
 
-body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq .css-4zr3vl .token.operator,
-body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq .css-4zr3vl .token.entity,
-body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq .css-4zr3vl .token.url,
-body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq .css-4zr3vl .token.variable {
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content.css-qa4clq
+  .css-4zr3vl
+  .token.operator,
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content.css-qa4clq
+  .css-4zr3vl
+  .token.entity,
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content.css-qa4clq
+  .css-4zr3vl
+  .token.url,
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content.css-qa4clq
+  .css-4zr3vl
+  .token.variable {
   color: #f8f8f2;
 }
 
-body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq .css-4zr3vl .token.keyword {
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content.css-qa4clq
+  .css-4zr3vl
+  .token.keyword {
   color: #66d9ef;
 }
 
-body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq .css-4zr3vl .token.function,
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content.css-qa4clq
+  .css-4zr3vl
+  .token.function,
 body[data-theme="dark"] .sbdocs-wrapper .css-4zr3vl .token.function {
   color: #ffbebe; /* #42c48b; */
 }
 
-body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq .css-4zr3vl .token.function.property-access,
-body[data-theme="dark"] .sbdocs-wrapper .css-4zr3vl .token.function.property-access {
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content.css-qa4clq
+  .css-4zr3vl
+  .token.function.property-access,
+body[data-theme="dark"]
+  .sbdocs-wrapper
+  .css-4zr3vl
+  .token.function.property-access {
   color: #42c48b;
 }
 
-
-body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq .css-4zr3vl .token.deleted {
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content.css-qa4clq
+  .css-4zr3vl
+  .token.deleted {
   color: #ffe7b6;
 }
 
@@ -435,19 +530,37 @@ body[data-theme="dark"] .sbdocs-wrapper .css-4zr3vl .token.keyword {
   color: #66d9ef;
 }
 
-body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq .css-4zr3vl .token.tag.script.class-name,
-body[data-theme="dark"] .sbdocs-wrapper .css-4zr3vl .token.tag.script.class-name {
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content.css-qa4clq
+  .css-4zr3vl
+  .token.tag.script.class-name,
+body[data-theme="dark"]
+  .sbdocs-wrapper
+  .css-4zr3vl
+  .token.tag.script.class-name {
   color: #66d9ef; /* #318d51; */
 }
 
-body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq .css-4zr3vl .token.tag.script.console.class-name,
-body[data-theme="dark"] .sbdocs-wrapper .css-4zr3vl .token.tag.script.console.class-name {
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content.css-qa4clq
+  .css-4zr3vl
+  .token.tag.script.console.class-name,
+body[data-theme="dark"]
+  .sbdocs-wrapper
+  .css-4zr3vl
+  .token.tag.script.console.class-name {
   color: #318d51;
 }
 
-body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq .css-4zr3vl .token.tag.class-name,
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content.css-qa4clq
+  .css-4zr3vl
+  .token.tag.class-name,
 body[data-theme="dark"] .sbdocs-wrapper .css-4zr3vl .token.tag.class-name,
-body[data-theme="dark"] .sbdocs-wrapper .css-4zr3vl .token.tag.script.maybe-class-name,
+body[data-theme="dark"]
+  .sbdocs-wrapper
+  .css-4zr3vl
+  .token.tag.script.maybe-class-name,
 body[data-theme="dark"] .sbdocs-wrapper .css-4zr3vl .token.maybe-class-name {
   color: #66d9ef;
 }
@@ -456,7 +569,10 @@ body[data-theme="dark"] .sbdocs-wrapper .css-4zr3vl .token.tag.script {
   color: #ffbebe;
 }
 
-body[data-theme="dark"] .sbdocs-wrapper .css-4zr3vl .token.tag.script.plain-text {
+body[data-theme="dark"]
+  .sbdocs-wrapper
+  .css-4zr3vl
+  .token.tag.script.plain-text {
   color: #ffe7b6;
 }
 
