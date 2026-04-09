@@ -15,10 +15,8 @@ export interface ActionCapsuleThemeConfiguration {
   activeBackgroundColor?: string;
   textColor?: string;
   borderColor?: string;
-  capsuleWrapperBoxShadow?: string;
-  capsuleWrapperMinHeight?: string;
-  capsuleWrapperMaxHeight?: string;
-  capsuleWrapperBorderRadius?: string;
+  boxShadow?: string;
+  borderRadius?: string;
   capsuleFontSize?: string;
   tabTextColor?: string;
   tabBorderRadius?: string;
@@ -98,7 +96,9 @@ export interface CalendarThemeConfiguration {
   disabledDateColor?: string;
   weekendDateColor?: string;
 
-  rangeDateColor?: string;
+  rangeDateBackgroundColor?: string;
+  rangeDateTextColor?: string;
+
   highlightedDateTextColor?: string;
   hightlightDateColor?: string;
 
