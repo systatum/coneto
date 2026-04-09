@@ -651,13 +651,9 @@ const Divider = styled.div<{
   right: 40px;
 
   ${({ $variant, $isOpen }) => {
-    const { color } = getButtonColors($variant, $isOpen);
+    const { dividerColor } = getButtonColors($variant, $isOpen);
     return css`
-      border-color: ${$variant === "default" ||
-      $variant === "ghost" ||
-      $variant === "outline-default"
-        ? "gray"
-        : color};
+      border-color: ${dividerColor};
     `;
   }}
 
@@ -693,11 +689,14 @@ const getButtonColors = (
 
   const textDecoration = themeButton.textDecoration;
 
+  const divider = themeButton.dividerColor;
+
   return {
     backgroundColor,
     color,
     border,
     textDecoration,
+    dividerColor: divider,
   };
 };
 
