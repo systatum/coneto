@@ -1970,7 +1970,7 @@ const darkCalendar = createCalendarTheme(darkBody, darkFieldLane, {
 
   rangeDateBackgroundColor: "rgb(124, 101, 207)",
   rangeDateTextColor: "#ffffff",
-  hightlightDateColor: "rgb(115, 94, 214)",
+  hightlightDateColor: "rgb(90, 94, 214)",
   highlightedDateTextColor: "#ffffff",
 
   boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.25)",
