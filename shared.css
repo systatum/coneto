@@ -273,6 +273,7 @@ body[data-theme="dark"] [class*="css-"] .token.boolean,
 body[data-theme="dark"] [class*="css-"] .token.number,
 body[data-theme="dark"] [class*="css-"] .token.constant,
 body[data-theme="dark"] [class*="css-"] .token.string,
+body[data-theme="dark"] [class*="css-"] .token.tag.script.string,
 body[data-theme="dark"] [class*="css-"] .token.symbol {
   color: #ffe7b6;
 }
@@ -285,6 +286,16 @@ body[data-theme="dark"] [class*="css-"] .token.tag.class-name,
 body[data-theme="dark"] [class*="css-"] .token.maybe-class-name,
 body[data-theme="dark"] [class*="css-"] .token.tag.script.maybe-class-name {
   color: #66d9ef;
+}
+
+body[data-theme="dark"] [class*="css-"] .token.tag.script.console.class-name,
+body[data-theme="dark"] [class*="css-"] .token.tag.script.console.class-name {
+  color: #318d51;
+}
+
+body[data-theme="dark"] [class*="css-"] .token.function.property-access,
+body[data-theme="dark"] [class*="css-"] .token.tag.function.property-access {
+  color: #42c48b;
 }
 
 body[data-theme="dark"] [class*="css-"] .token.selector,
@@ -316,6 +327,11 @@ body[data-theme="dark"] [class*="css-"] .token.function.property-access {
 
 body[data-theme="dark"] [class*="css-"] .token.tag.script {
   color: #ffbebe;
+}
+
+body[data-theme="dark"] [class*="css-"] .token.tag.script.token.punctuation,
+body[data-theme="dark"] [class*="css-"] .token.tag.script.token.operator {
+  color: #d2d2d2;
 }
 
 body[data-theme="dark"] [class*="css-"] .token.tag.script.plain-text {
