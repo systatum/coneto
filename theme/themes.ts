@@ -122,7 +122,7 @@ export function createActionButtonTheme(
     toggleBorderColor: "#e5e7eb",
     toggleBorderRadius: "6px",
 
-    dividerColor: "#d1d3d6",
+    dividerColor: "#e5e7eb",
 
     dropdownWidth: "170px",
   };
@@ -204,7 +204,7 @@ export function createButtonTheme(
       hoverBackgroundColor: "#e2e2e2",
       activeBackgroundColor: "#cfcfcf",
       textDecoration: "none",
-      dividerColor: "#d1d3d6",
+      dividerColor: "#e5e7eb",
     },
     primary: {
       backgroundColor: "#569aec",
@@ -236,7 +236,7 @@ export function createButtonTheme(
       hoverBackgroundColor: "#cccccc",
       activeBackgroundColor: "#b3b3b3",
       focusBackgroundColor: "#B4B4B480",
-      dividerColor: "#d1d3d6",
+      dividerColor: "#e5e7eb",
     },
     ghost: {
       backgroundColor: "transparent",
@@ -244,7 +244,7 @@ export function createButtonTheme(
       hoverBackgroundColor: "#f3f3f3",
       activeBackgroundColor: "#eaeaea",
       focusBackgroundColor: "#00000033",
-      dividerColor: "#d1d3d6",
+      dividerColor: "#e5e7eb",
     },
     link: {
       backgroundColor: "transparent",
@@ -261,7 +261,7 @@ export function createButtonTheme(
       hoverBackgroundColor: "#e2e2e2",
       activeBackgroundColor: "#cfcfcf",
       focusBackgroundColor: "#cfcfcf",
-      dividerColor: "#d1d3d6",
+      dividerColor: "#e5e7eb",
     },
     "outline-default": {
       backgroundColor: "white",
@@ -270,7 +270,7 @@ export function createButtonTheme(
       activeBackgroundColor: "#e6e6e6",
       focusBackgroundColor: "#00000040",
       borderColor: "#9b9b9b",
-      dividerColor: "#d1d3d6",
+      dividerColor: "#e5e7eb",
     },
     "outline-primary": {
       backgroundColor: "white",
@@ -455,7 +455,7 @@ export function createChoiceGroupTheme(
 ): ChoiceGroupThemeConfig {
   const defaultTheme: ChoiceGroupThemeConfig = {
     borderColor: "#e5e7eb",
-    dividerColor: "#d1d3d6",
+    dividerColor: "#e5e7eb",
     labelColor: body.textColor,
     backgroundColor: "#fff",
     descriptionColor: "#4b5563",
@@ -632,7 +632,7 @@ export function createDrawerTabTheme(
     hoverBackgroundColor: "#f3f4f6",
     headerBackgroundColor: "#f3f4f6",
     closeButtonHoverBackground: "#d1d5db",
-    dividerColor: "#d1d3d6",
+    dividerColor: "#e5e7eb",
   };
 
   return { ...defaultTheme, ...custom };
