@@ -1600,6 +1600,15 @@ export function createToolbarTheme(
       focusBackgroundColor:
         baseButton?.danger?.focusBackgroundColor ?? "#CE375D80",
     },
+    success: {
+      ...baseButton?.success,
+      hoverBackgroundColor:
+        baseButton?.success?.hoverBackgroundColor ?? "#2fe620",
+      activeBackgroundColor:
+        baseButton?.success?.activeBackgroundColor ?? "#1db417",
+      focusBackgroundColor:
+        baseButton?.success?.focusBackgroundColor ?? "#2FE62080",
+    },
     transparent: {
       ...baseButton?.transparent,
       hoverBackgroundColor: baseButton?.transparent?.hoverBackgroundColor,
@@ -1816,6 +1825,7 @@ const lightToolbar = createToolbarTheme({
   primary: lightButton.primary,
   danger: lightButton.danger,
   transparent: lightButton.transparent,
+  success: lightButton.success,
 });
 
 const lightThumbField = createThumbFieldTheme(lightBody);
@@ -2545,6 +2555,7 @@ const darkToolbar = createToolbarTheme({
   primary: darkButton.primary,
   danger: darkButton.danger,
   transparent: darkButton.transparent,
+  success: darkButton.success,
 });
 
 const darkTreeList = createTreeListTheme(darkBody, {
