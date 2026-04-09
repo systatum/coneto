@@ -1211,7 +1211,7 @@ export const DateCell = styled.span<{
       : $isInRange
         ? css`
             background-color: transparent;
-            color: ${$theme?.hightlightDateColor || "#61a9f9"};
+            color: ${$theme?.rangeDateTextColor || "#61a9f9"};
           `
         : null};
 
@@ -1244,7 +1244,7 @@ const DataCellRange = styled.span<{
         `
       : $isInRange &&
         css`
-          background-color: ${$theme?.rangeDateColor};
+          background-color: ${$theme?.rangeDateBackgroundColor};
         `};
 
   ${({ $isRangeStart, $isPickingProcess, $isSameDate }) =>
