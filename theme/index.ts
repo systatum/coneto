@@ -377,6 +377,22 @@ export interface GridThemeConfig {
   thumbnailBackgroundColor?: string;
 }
 
+export interface ImageboxThemeConfig {
+  backgroundColor?: string;
+  textColor?: string;
+
+  borderColor?: string;
+  focusedBorderColor?: string;
+
+  draggingBackgroundColor?: string;
+  draggingBorderColor?: string;
+  draggingTextColor?: string;
+
+  disabledBackgroundColor?: string;
+
+  iconColor?: string;
+}
+
 // keynote.tsx
 export interface KeynoteThemeConfig {
   keyColor?: string;
@@ -556,7 +572,6 @@ export interface RatingThemeConfig {
   disabledLabelColor?: string;
 
   hoverStarColor?: string;
-  sizeMap?: { sm: number; md: number; lg: number };
 }
 
 // rich-editor.tsx
@@ -842,6 +857,7 @@ export interface AppTheme {
   fileDropBox: FileDropBoxThemeConfig;
   frame: FrameThemeConfig;
   grid: GridThemeConfig;
+  imagebox: ImageboxThemeConfig;
   keynote: KeynoteThemeConfig;
   list: ListThemeConfig;
   loadingSkeleton: LoadingSkeletonThemeConfig;

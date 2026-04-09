@@ -29,6 +29,7 @@ import {
   FileInputBoxThemeConfig,
   FrameThemeConfig,
   GridThemeConfig,
+  ImageboxThemeConfig,
   KeynoteThemeConfig,
   ListThemeConfig,
   LoadingSkeletonThemeConfig,
@@ -690,6 +691,30 @@ export function createGridTheme(
   };
 }
 
+// imagebox.tsx
+export function createImageboxTheme(
+  body: BodyThemeConfig,
+  fieldLane: Partial<FieldLaneThemeConfig> = {},
+  custom: Partial<ImageboxThemeConfig> = {}
+): ImageboxThemeConfig {
+  const defaultTheme: ImageboxThemeConfig = {
+    backgroundColor: body.backgroundColor || "#ffffff",
+
+    borderColor: fieldLane?.borderColor || "#d1d5db",
+    focusedBorderColor: fieldLane?.focusedBorderColor || "#3b82f6",
+
+    textColor: body.textColor || "#6b7280",
+
+    draggingBackgroundColor: "#eff6ff",
+    draggingBorderColor: fieldLane?.focusedBorderColor || "#3b82f6",
+    draggingTextColor: fieldLane?.focusedBorderColor || "#3b82f6",
+
+    iconColor: "#c3c3c3",
+  };
+
+  return { ...defaultTheme, ...custom };
+}
+
 // keynote.tsx
 export function createKeynoteTheme(
   body: BodyThemeConfig,
@@ -1017,8 +1042,6 @@ export function createRatingTheme(
 
     disabledStarColor: fieldLane?.borderColor || "#d1d5db",
     disabledLabelColor: fieldLane?.disabledTextColor || "#9ca3af",
-
-    sizeMap: { sm: 16, md: 24, lg: 32 },
   };
 
   return { ...defaultTheme, ...custom };
@@ -1705,6 +1728,8 @@ const lightFrame = createFrameTheme(lightBody);
 
 const lightGrid = createGridTheme(lightBody);
 
+const lightImagebox = createImageboxTheme(lightBody, lightFieldLane);
+
 const lightKeynote = createKeynoteTheme(lightBody);
 
 const lightList = createListTheme(lightBody);
@@ -1819,6 +1844,7 @@ const lightTheme: AppTheme = {
   fileDropBox: lightFileDropBox,
   frame: lightFrame,
   grid: lightGrid,
+  imagebox: lightImagebox,
   keynote: lightKeynote,
   list: lightList,
   loadingSkeleton: lightLoadingSkeleton,
@@ -2220,6 +2246,14 @@ const darkGrid = createGridTheme(darkBody, {
   thumbnailBackgroundColor: "#2a2a2a",
 });
 
+const darkImagebox = createImageboxTheme(darkBody, darkFieldLane, {
+  draggingBackgroundColor: "#1e3a8a33",
+  draggingBorderColor: "#60a5fa",
+  draggingTextColor: "#60a5fa",
+
+  iconColor: "#9ca3af",
+});
+
 const darkKeynote = createKeynoteTheme(darkBody, {
   keyColor: "#9ca3af",
   valueColor: "#f3f4f6",
@@ -2547,6 +2581,7 @@ const darkTheme: AppTheme = {
   fileDropBox: darkFileDropBox,
   frame: darkFrame,
   grid: darkGrid,
+  imagebox: darkImagebox,
   keynote: darkKeynote,
   list: darkList,
   loadingSkeleton: darkLoadingSkeleton,
