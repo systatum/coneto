@@ -16,7 +16,12 @@ import { OverlayBlocker } from "./overlay-blocker";
 import { Figure, FigureProps } from "./figure";
 import { darkenColor, lightenColor } from "../lib/color";
 import { createRoot } from "react-dom/client";
-import { getThemeSnapshot, ThemeProvider, useTheme } from "./../theme/provider";
+import {
+  getThemeSnapshot,
+  subscribeTheme,
+  ThemeProvider,
+  useTheme,
+} from "./../theme/provider";
 import { DialogThemeConfiguration, ThemeMode } from "./../theme";
 
 const zoomIn = keyframes`from {transform: translate(-50%, -50%) scale(0.95); opacity: 0;} to {transform: translate(-50%, -50%) scale(1); opacity: 1;}`;
@@ -425,8 +430,6 @@ function ensureProvider(
   component: ComponentType<DialogProps>,
   onReady?: () => void
 ) {
-  const { mode, themes } = getThemeSnapshot();
-
   // If a container reference exists but is no longer attached to the DOM
   // reset all internal references so the provider can be recreated safely.
   if (!mountedStates.has(component)) {
@@ -471,11 +474,25 @@ function renderRoot(
   state: DialogMountState,
   component: ComponentType<DialogProps>
 ) {
-  const { mode, themes } = getThemeSnapshot();
+  state.root?.render(<ThemeBridge component={component} />);
+}
 
-  state.root?.render(
-    <ThemeProvider mode={mode} themes={themes}>
-      <DialogProvider component={component} />
+function ThemeBridge({
+  component: Dialog,
+}: {
+  component: ComponentType<DialogProps>;
+}) {
+  const [theme, setTheme] = useState(getThemeSnapshot());
+
+  useEffect(() => {
+    return subscribeTheme(() => {
+      setTheme(getThemeSnapshot());
+    });
+  }, []);
+
+  return (
+    <ThemeProvider mode={theme.mode} themes={theme.themes}>
+      <DialogProvider component={Dialog} />
     </ThemeProvider>
   );
 }

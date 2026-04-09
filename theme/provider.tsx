@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from "react";
+import React, { createContext, useContext, useEffect } from "react";
 import { ThemeProvider as StyledThemeProvider } from "styled-components";
 import { AppTheme, ThemeMode } from "./index";
 import { themes } from "./themes";
@@ -24,6 +24,19 @@ export function getThemeSnapshot() {
   return { mode: _mode, themes: _themes };
 }
 
+let listeners: (() => void)[] = [];
+
+export function subscribeTheme(cb: () => void) {
+  listeners.push(cb);
+  return () => {
+    listeners = listeners.filter((l) => l !== cb);
+  };
+}
+
+export function notifyThemeChange() {
+  listeners.forEach((cb) => cb());
+}
+
 export function ThemeProvider({
   mode,
   children,
@@ -33,8 +46,12 @@ export function ThemeProvider({
   children: React.ReactNode;
   themes?: Record<string, AppTheme>;
 }) {
-  _mode = mode;
-  _themes = themesContent;
+  useEffect(() => {
+    _mode = mode;
+    _themes = themesContent;
+
+    notifyThemeChange();
+  }, [mode, themesContent]);
 
   const theme = themesContent[mode];
 
