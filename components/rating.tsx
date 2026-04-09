@@ -67,7 +67,7 @@ function BaseRating({
     return "empty";
   };
 
-  const sizeMap = ratingTheme?.sizeMap || {
+  const sizeMap = {
     sm: 16,
     md: 24,
     lg: 32,
