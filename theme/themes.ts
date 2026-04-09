@@ -122,7 +122,7 @@ export function createActionButtonTheme(
     toggleBorderColor: "#e5e7eb",
     toggleBorderRadius: "6px",
 
-    dividerColor: "#e5e7eb",
+    dividerColor: "#d1d3d6",
 
     dropdownWidth: "170px",
   };
@@ -204,6 +204,100 @@ export function createButtonTheme(
       hoverBackgroundColor: "#e2e2e2",
       activeBackgroundColor: "#cfcfcf",
       textDecoration: "none",
+      dividerColor: "#d1d3d6",
+    },
+    primary: {
+      backgroundColor: "#569aec",
+      textColor: "white",
+      hoverBackgroundColor: "#3e7dd3",
+      activeBackgroundColor: "#2a73c3",
+      focusBackgroundColor: "#569AEC80",
+      dividerColor: "rgb(80, 145, 223)",
+    },
+    danger: {
+      backgroundColor: "#ce375d",
+      textColor: "white",
+      hoverBackgroundColor: "#a12f4b",
+      activeBackgroundColor: "#802036",
+      focusBackgroundColor: "#CE375D80",
+      dividerColor: "#a12f4b4a",
+    },
+    success: {
+      backgroundColor: "#42A340",
+      textColor: "white",
+      hoverBackgroundColor: "#2B8C29",
+      activeBackgroundColor: "#146512",
+      focusBackgroundColor: "#0f4f0e",
+      dividerColor: "rgba(19, 156, 17, 0.69)",
+    },
+    secondary: {
+      backgroundColor: "#dddddd",
+      textColor: lightBody.textColor,
+      hoverBackgroundColor: "#cccccc",
+      activeBackgroundColor: "#b3b3b3",
+      focusBackgroundColor: "#B4B4B480",
+      dividerColor: "#d1d3d6",
+    },
+    ghost: {
+      backgroundColor: "transparent",
+      textColor: lightBody.textColor,
+      hoverBackgroundColor: "#f3f3f3",
+      activeBackgroundColor: "#eaeaea",
+      focusBackgroundColor: "#00000033",
+      dividerColor: "#d1d3d6",
+    },
+    link: {
+      backgroundColor: "transparent",
+      textColor: "#408ee8",
+      hoverBackgroundColor: "#2a73c3",
+      activeBackgroundColor: "#1e5ba8",
+      focusBackgroundColor: "#408EE880",
+      textDecoration: "underline",
+      dividerColor: "rgb(80, 145, 223)",
+    },
+    transparent: {
+      backgroundColor: "transparent",
+      textColor: lightBody.textColor,
+      hoverBackgroundColor: "#e2e2e2",
+      activeBackgroundColor: "#cfcfcf",
+      focusBackgroundColor: "#cfcfcf",
+      dividerColor: "#d1d3d6",
+    },
+    "outline-default": {
+      backgroundColor: "white",
+      textColor: "#9b9b9b",
+      hoverBackgroundColor: "#f0f0f0",
+      activeBackgroundColor: "#e6e6e6",
+      focusBackgroundColor: "#00000040",
+      borderColor: "#9b9b9b",
+      dividerColor: "#d1d3d6",
+    },
+    "outline-primary": {
+      backgroundColor: "white",
+      textColor: "#569aec",
+      hoverBackgroundColor: "#e6f0ff",
+      activeBackgroundColor: "#cce0ff",
+      focusBackgroundColor: "#569AEC80",
+      borderColor: "#569aec",
+      dividerColor: "rgb(80, 145, 223)",
+    },
+    "outline-danger": {
+      backgroundColor: "white",
+      textColor: "#ce375d",
+      hoverBackgroundColor: "#fce0eb",
+      activeBackgroundColor: "#f9c0d2",
+      focusBackgroundColor: "#CE375D80",
+      borderColor: "#ce375d",
+      dividerColor: "#a12f4b4a",
+    },
+    "outline-success": {
+      backgroundColor: "white",
+      textColor: "#42A340",
+      hoverBackgroundColor: "#e6f2e6",
+      activeBackgroundColor: "#cce0cc",
+      focusBackgroundColor: "#0f4f0e",
+      borderColor: "#42A340",
+      dividerColor: "rgba(19, 156, 17, 0.69)",
     },
   };
 
@@ -361,7 +455,7 @@ export function createChoiceGroupTheme(
 ): ChoiceGroupThemeConfig {
   const defaultTheme: ChoiceGroupThemeConfig = {
     borderColor: "#e5e7eb",
-    dividerColor: "#e5e7eb",
+    dividerColor: "#d1d3d6",
     labelColor: body.textColor,
     backgroundColor: "#fff",
     descriptionColor: "#4b5563",
@@ -538,7 +632,7 @@ export function createDrawerTabTheme(
     hoverBackgroundColor: "#f3f4f6",
     headerBackgroundColor: "#f3f4f6",
     closeButtonHoverBackground: "#d1d5db",
-    dividerColor: "#e5e7eb",
+    dividerColor: "#d1d3d6",
   };
 
   return { ...defaultTheme, ...custom };
@@ -1591,90 +1685,7 @@ const lightBadge = createBadgeTheme(lightBody);
 
 const lightBoxbar = createBoxbarTheme(lightBody);
 
-const lightButton = createButtonTheme(lightBody, {
-  primary: {
-    backgroundColor: "#569aec",
-    textColor: "white",
-    hoverBackgroundColor: "#3e7dd3",
-    activeBackgroundColor: "#2a73c3",
-    focusBackgroundColor: "#569AEC80",
-  },
-  danger: {
-    backgroundColor: "#ce375d",
-    textColor: "white",
-    hoverBackgroundColor: "#a12f4b",
-    activeBackgroundColor: "#802036",
-    focusBackgroundColor: "#CE375D80",
-  },
-  success: {
-    backgroundColor: "#42A340",
-    textColor: "white",
-    hoverBackgroundColor: "#2B8C29",
-    activeBackgroundColor: "#146512",
-    focusBackgroundColor: "#0f4f0e",
-  },
-  secondary: {
-    backgroundColor: "#dddddd",
-    textColor: lightBody.textColor,
-    hoverBackgroundColor: "#cccccc",
-    activeBackgroundColor: "#b3b3b3",
-    focusBackgroundColor: "#B4B4B480",
-  },
-  ghost: {
-    backgroundColor: "transparent",
-    textColor: lightBody.textColor,
-    hoverBackgroundColor: "#f3f3f3",
-    activeBackgroundColor: "#eaeaea",
-    focusBackgroundColor: "#00000033",
-  },
-  link: {
-    backgroundColor: "transparent",
-    textColor: "#408ee8",
-    hoverBackgroundColor: "#2a73c3",
-    activeBackgroundColor: "#1e5ba8",
-    focusBackgroundColor: "#408EE880",
-    textDecoration: "underline",
-  },
-  transparent: {
-    backgroundColor: "transparent",
-    textColor: lightBody.textColor,
-    hoverBackgroundColor: "#e2e2e2",
-    activeBackgroundColor: "#cfcfcf",
-    focusBackgroundColor: "#cfcfcf",
-  },
-  "outline-default": {
-    backgroundColor: "white",
-    textColor: "#9b9b9b",
-    hoverBackgroundColor: "#f0f0f0",
-    activeBackgroundColor: "#e6e6e6",
-    focusBackgroundColor: "#00000040",
-    borderColor: "#9b9b9b",
-  },
-  "outline-primary": {
-    backgroundColor: "white",
-    textColor: "#569aec",
-    hoverBackgroundColor: "#e6f0ff",
-    activeBackgroundColor: "#cce0ff",
-    focusBackgroundColor: "#569AEC80",
-    borderColor: "#569aec",
-  },
-  "outline-danger": {
-    backgroundColor: "white",
-    textColor: "#ce375d",
-    hoverBackgroundColor: "#fce0eb",
-    activeBackgroundColor: "#f9c0d2",
-    focusBackgroundColor: "#CE375D80",
-    borderColor: "#ce375d",
-  },
-  "outline-success": {
-    backgroundColor: "white",
-    textColor: "#42A340",
-    hoverBackgroundColor: "#e6f2e6",
-    activeBackgroundColor: "#cce0cc",
-    focusBackgroundColor: "#0f4f0e",
-    borderColor: "#42A340",
-  },
-});
+const lightButton = createButtonTheme(lightBody);
 
 const lightButtonTipMenuContainer = createTipMenuContainerTheme({
   backgroundColor: lightBody?.backgroundColor,
@@ -1952,6 +1963,7 @@ const darkButton = createButtonTheme(darkBody, {
     hoverBackgroundColor: "#363636",
     activeBackgroundColor: "rgb(39 39 39 / 85%)",
     textDecoration: "none",
+    dividerColor: "#363636",
   },
   primary: {
     backgroundColor: "rgb(60, 49, 110)",
@@ -1959,6 +1971,7 @@ const darkButton = createButtonTheme(darkBody, {
     hoverBackgroundColor: "rgb(72, 57, 141)",
     activeBackgroundColor: "rgb(50, 40, 90)",
     focusBackgroundColor: "rgba(72, 57, 141, 0.5)",
+    dividerColor: "#48398dbf",
   },
   danger: {
     backgroundColor: "rgb(177, 30, 66)",
@@ -1966,6 +1979,7 @@ const darkButton = createButtonTheme(darkBody, {
     hoverBackgroundColor: "rgb(147, 21, 52)",
     activeBackgroundColor: "rgb(130, 15, 45)",
     focusBackgroundColor: "rgba(177, 30, 66, 0.5)",
+    dividerColor: "#9315348c",
   },
   success: {
     backgroundColor: "#107533",
@@ -1973,6 +1987,7 @@ const darkButton = createButtonTheme(darkBody, {
     hoverBackgroundColor: "#03973d",
     activeBackgroundColor: "#02662f",
     focusBackgroundColor: "rgba(3, 151, 61, 0.5)",
+    dividerColor: "rgba(19, 156, 17, 0.69)",
   },
   secondary: {
     backgroundColor: "#2f2f2f",
@@ -1980,6 +1995,7 @@ const darkButton = createButtonTheme(darkBody, {
     hoverBackgroundColor: "#3a3a3a",
     activeBackgroundColor: "#1f1f1f",
     focusBackgroundColor: "#ffffff20",
+    dividerColor: "#363636",
   },
   ghost: {
     backgroundColor: "transparent",
@@ -1987,6 +2003,7 @@ const darkButton = createButtonTheme(darkBody, {
     hoverBackgroundColor: "#2a2a2a",
     activeBackgroundColor: "#1f1f1f",
     focusBackgroundColor: "#ffffff20",
+    dividerColor: "#363636",
   },
   link: {
     backgroundColor: "transparent",
@@ -1995,6 +2012,7 @@ const darkButton = createButtonTheme(darkBody, {
     activeBackgroundColor: "#162c47",
     focusBackgroundColor: "#7ab4ff80",
     textDecoration: "underline",
+    dividerColor: "#48398dbf",
   },
   transparent: {
     backgroundColor: "transparent",
@@ -2002,6 +2020,7 @@ const darkButton = createButtonTheme(darkBody, {
     hoverBackgroundColor: "#363636",
     activeBackgroundColor: "#1f1f1f",
     focusBackgroundColor: "#ffffff20",
+    dividerColor: "#363636",
   },
   "outline-default": {
     backgroundColor: "transparent",
@@ -2010,6 +2029,7 @@ const darkButton = createButtonTheme(darkBody, {
     activeBackgroundColor: "#1f1f1f",
     focusBackgroundColor: "#ffffff30",
     borderColor: "#555",
+    dividerColor: "#363636",
   },
   "outline-primary": {
     backgroundColor: "transparent",
@@ -2018,6 +2038,7 @@ const darkButton = createButtonTheme(darkBody, {
     activeBackgroundColor: "rgba(50, 40, 90, 0.5)",
     focusBackgroundColor: "rgba(72, 57, 141, 0.5)",
     borderColor: "rgb(72, 57, 141)",
+    dividerColor: "#48398dbf",
   },
   "outline-danger": {
     backgroundColor: "transparent",
@@ -2026,6 +2047,7 @@ const darkButton = createButtonTheme(darkBody, {
     activeBackgroundColor: "rgba(130, 15, 45, 0.5)",
     focusBackgroundColor: "rgba(177, 30, 66, 0.5)",
     borderColor: "rgb(177, 30, 66)",
+    dividerColor: "#9315348c",
   },
   "outline-success": {
     backgroundColor: "transparent",
@@ -2034,6 +2056,7 @@ const darkButton = createButtonTheme(darkBody, {
     activeBackgroundColor: "rgba(2, 102, 47, 0.5)",
     focusBackgroundColor: "rgba(3, 151, 61, 0.5)",
     borderColor: "#03973d",
+    dividerColor: "rgba(19, 156, 17, 0.69)",
   },
 });
 

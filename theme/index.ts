@@ -78,6 +78,7 @@ export interface ButtonThemeConfig extends BodyThemeConfig {
   borderColor?: string;
   textDecoration?: string;
   focusBackgroundColor?: string;
+  dividerColor?: string;
 }
 
 export interface TipMenuContainerThemeConfig {
