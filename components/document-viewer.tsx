@@ -655,11 +655,9 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
             styles={{
               containerStyle: css`
                 width: 100px;
-                color: black;
               `,
               selectboxStyle: css`
                 width: 100px;
-                background-color: white;
                 ${styles?.zoomStyle}
               `,
             }}
