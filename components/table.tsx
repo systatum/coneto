@@ -626,10 +626,10 @@ function ActionCapsule(capsule: CapsuleProps) {
       styles={{
         ...capsule?.styles,
         capsuleWrapperStyle: css`
-          box-shadow: ${capsuleTheme.capsuleWrapperBoxShadow};
-          min-height: ${capsuleTheme.capsuleWrapperMinHeight};
-          max-height: ${capsuleTheme.capsuleWrapperMaxHeight};
-          border-radius: ${capsuleTheme.capsuleWrapperBorderRadius};
+          box-shadow: ${capsuleTheme.boxShadow};
+          min-height: 32px;
+          max-height: 32px;
+          border-radius: ${capsuleTheme.borderRadius};
           font-size: ${capsuleTheme.capsuleFontSize};
           border-color: ${capsuleTheme.borderColor};
           ${capsule.styles?.containerStyle}
