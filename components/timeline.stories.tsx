@@ -2,6 +2,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { Timeline, TimelineItemProps } from "./timeline";
 import { Separator } from "./separator";
 import { css } from "styled-components";
+import { useTheme } from "./../theme/provider";
 
 const meta: Meta<typeof Timeline> = {
   title: "Controls/Timeline",
@@ -213,253 +214,170 @@ export const Clickable: Story = {
 
 export const Custom: Story = {
   render: () => {
+    const { mode } = useTheme();
+
+    const getEmailTimelineColors = (mode: string) => {
+      const isDark = mode === "dark";
+
+      return {
+        border: isDark ? "#374151" : "#d1d5db",
+        containerBg: isDark ? "#1f2023" : "#ffffff",
+
+        textPrimary: isDark ? "#f9fafb" : "#111827",
+        textSecondary: isDark ? "#d1d5db" : "#374151",
+        textMuted: isDark ? "#9ca3af" : "#1f2937",
+
+        separator: isDark ? "#4b5563" : "#e5e7eb",
+      };
+    };
+
+    const colors = getEmailTimelineColors(mode);
+
+    const createEmail = ({
+      title,
+      to,
+      date,
+      subject,
+      content,
+    }: {
+      title: string;
+      to: string;
+      date: string;
+      subject: string;
+      content: string;
+    }) => ({
+      title,
+      subtitle: (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.25rem",
+            width: "100%",
+          }}
+        >
+          <span
+            style={{
+              fontSize: "0.875rem",
+              color: colors.textMuted,
+            }}
+          >
+            {to}
+          </span>
+
+          <Separator title={date} textFloat="right" depth="10px" />
+
+          <span
+            style={{
+              fontWeight: 500,
+              color: colors.textPrimary,
+            }}
+          >
+            {subject}
+          </span>
+
+          <div
+            style={{
+              fontSize: "0.875rem",
+              color: colors.textSecondary,
+              paddingRight: "120px",
+            }}
+          >
+            {content}
+          </div>
+        </div>
+      ),
+    });
+
     const EMAIL_TIMELINE_ITEMS = [
-      {
+      createEmail({
         title: "Alim Naufal | 5 weeks ago",
-        subtitle: [
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "0.25rem",
-              width: "100%",
-            }}
-          >
-            <span
-              style={{
-                fontSize: "0.875rem",
-                color: "#1f2937",
-              }}
-            >
-              to hr@systatum.com
-            </span>
-            <Separator title="Jun 5, 2025" textFloat="right" depth="10px" />
-            <span
-              style={{
-                fontWeight: 500,
-                color: "#111827",
-              }}
-            >
-              Application for Frontend Engineer
-            </span>
-            <div
-              style={{
-                fontSize: "0.875rem",
-                color: "#374151",
-                paddingRight: "120px",
-              }}
-            >
-              Hi, I'm applying for the Frontend Engineer position. I've attached
-              my resume and portfolio.
-            </div>
-          </div>,
-        ],
-      },
-      {
+        to: "to hr@systatum.com",
+        date: "Jun 5, 2025",
+        subject: "Application for Frontend Engineer",
+        content:
+          "Hi, I'm applying for the Frontend Engineer position. I've attached my resume and portfolio.",
+      }),
+
+      createEmail({
         title: "HR Team | 5 weeks ago",
-        subtitle: [
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "0.25rem",
-              width: "100%",
-            }}
-          >
-            <span
-              style={{
-                fontSize: "0.875rem",
-                color: "#1f2937",
-              }}
-            >
-              to alim@systatum.com
-            </span>
-            <Separator title="Jun 6, 2025" textFloat="right" depth="10px" />
-            <span
-              style={{
-                fontWeight: 500,
-                color: "#111827",
-              }}
-            >
-              Re: Application for Frontend Engineer
-            </span>
-            <div
-              style={{
-                fontSize: "0.875rem",
-                color: "#374151",
-                paddingRight: "120px",
-              }}
-            >
-              Thank you for applying, Alim. We'd like to invite you for an
-              initial HR interview.
-            </div>
-          </div>,
-        ],
-      },
-      {
+        to: "to alim@systatum.com",
+        date: "Jun 6, 2025",
+        subject: "Re: Application for Frontend Engineer",
+        content:
+          "Thank you for applying, Alim. We'd like to invite you for an initial HR interview.",
+      }),
+
+      createEmail({
         title: "Adam Hakarsa | 3 weeks ago",
-        subtitle: [
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "0.25rem",
-              width: "100%",
-            }}
-          >
-            <span
-              style={{
-                fontSize: "0.875rem",
-                color: "#1f2937",
-              }}
-            >
-              to alim@systatum.com
-            </span>
-            <Separator title="Jun 14, 2025" textFloat="right" depth="10px" />
-            <span
-              style={{
-                fontWeight: 500,
-                color: "#111827",
-              }}
-            >
-              Re: Technical Interview Invitation
-            </span>
-            <div
-              style={{
-                fontSize: "0.875rem",
-                color: "#374151",
-                paddingRight: "120px",
-              }}
-            >
-              We'd like to invite you to a technical interview this Friday. The
-              test will involve React and component architecture.
-            </div>
-          </div>,
-        ],
-      },
-      {
+        to: "to alim@systatum.com",
+        date: "Jun 14, 2025",
+        subject: "Technical Interview Invitation",
+        content:
+          "We'd like to invite you to a technical interview this Friday. The test will involve React and component architecture.",
+      }),
+
+      createEmail({
         title: "HR Team | 2 weeks ago",
-        subtitle: (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "0.25rem",
-              width: "100%",
-            }}
-          >
-            <span
-              style={{
-                fontSize: "0.875rem",
-                color: "#1f2937",
-              }}
-            >
-              to alim@systatum.com
-            </span>
-            <Separator title="Jun 24, 2025" textFloat="right" depth="10px" />
-            <span
-              style={{
-                fontWeight: 500,
-                color: "#111827",
-              }}
-            >
-              Re: Frontend Engineer Offer
-            </span>
-            <div
-              style={{
-                fontSize: "0.875rem",
-                color: "#374151",
-                paddingRight: "140px",
-              }}
-            >
-              We’re excited to offer you the Frontend Engineer position. Please
-              review the offer letter attached.
-            </div>
-          </div>
-        ),
-      },
-      {
+        to: "to alim@systatum.com",
+        date: "Jun 24, 2025",
+        subject: "Frontend Engineer Offer",
+        content:
+          "We’re excited to offer you the Frontend Engineer position. Please review the offer letter attached.",
+      }),
+
+      createEmail({
         title: "Alim Naufal | 2 weeks ago",
-        subtitle: (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "0.25rem",
-              width: "100%",
-            }}
-          >
-            <span
-              style={{
-                fontSize: "0.875rem",
-                color: "#1f2937",
-              }}
-            >
-              to hr@systatum.com
-            </span>
-            <Separator title="Jun 25, 2025" textFloat="right" depth="10px" />
-            <span
-              style={{
-                fontWeight: 500,
-                color: "#111827",
-              }}
-            >
-              Re: Frontend Engineer Offer — Confirmation
-            </span>
-            <div
-              style={{
-                fontSize: "0.875rem",
-                color: "#374151",
-                paddingRight: "120px",
-              }}
-            >
-              Thank you for the offer. I'm happy to accept the Frontend Engineer
-              position. Looking forward to joining the team!
-            </div>
-          </div>
-        ),
-      },
-      {
+        to: "to hr@systatum.com",
+        date: "Jun 25, 2025",
+        subject: "Offer Confirmation",
+        content:
+          "Thank you for the offer. I'm happy to accept the position and look forward to joining the team!",
+      }),
+
+      createEmail({
         title: "HR Team | 1 week ago",
-        subtitle: (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "0.25rem",
-              width: "100%",
-            }}
-          >
-            <span
-              style={{
-                fontSize: "0.875rem",
-                color: "#1f2937",
-              }}
-            >
-              to alim@systatum.com
-            </span>
-            <Separator title="Jun 27, 2025" textFloat="right" depth="10px" />
-            <span
-              style={{
-                fontWeight: 500,
-                color: "#111827",
-              }}
-            >
-              Onboarding Details
-            </span>
-            <div
-              style={{
-                fontSize: "0.875rem",
-                color: "#374151",
-                paddingRight: "120px",
-              }}
-            >
-              Here are the onboarding instructions. Please follow the steps and
-              reach out if you have any questions.
-            </div>
-          </div>
-        ),
-      },
+        to: "to alim@systatum.com",
+        date: "Jun 27, 2025",
+        subject: "Onboarding Details",
+        content:
+          "Here are the onboarding instructions. Please follow the steps and reach out if you have any questions.",
+      }),
+
+      createEmail({
+        title: "HR Team | 5 days ago",
+        to: "to alim@systatum.com",
+        date: "Jun 29, 2025",
+        subject: "Welcome to the Team 🎉",
+        content:
+          "Welcome aboard! We’re excited to have you join us. Your first day will start with an orientation session.",
+      }),
+
+      createEmail({
+        title: "Alim Naufal | 4 days ago",
+        to: "to hr@systatum.com",
+        date: "Jun 30, 2025",
+        subject: "Re: Welcome",
+        content: "Thank you! I'm excited to get started and meet the team.",
+      }),
+
+      createEmail({
+        title: "Team Lead | 2 days ago",
+        to: "to alim@systatum.com",
+        date: "Jul 2, 2025",
+        subject: "First Task Assignment",
+        content:
+          "Your first task will be setting up the design system and reviewing the component architecture.",
+      }),
+
+      createEmail({
+        title: "Alim Naufal | Today",
+        to: "to teamlead@systatum.com",
+        date: "Jul 4, 2025",
+        subject: "Task Update",
+        content:
+          "I've started working on the design system and will share progress by tomorrow.",
+      }),
     ];
 
     return (
@@ -469,9 +387,9 @@ export const Custom: Story = {
             styles={{
               self: css`
                 padding: 1rem;
-                border: 1px solid #d1d5db;
+                border: 1px solid ${colors.border};
+                background-color: ${colors.containerBg};
                 border-radius: 0.125rem;
-                box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
                 margin-top: 0.5rem;
               `,
             }}
