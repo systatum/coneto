@@ -88,10 +88,8 @@ export function createActionCapsuleTheme(
   const defaultTheme: ActionCapsuleThemeConfiguration = {
     activeBackgroundColor: "rgb(226, 224, 224)",
     textColor: body.textColor || "#343434",
-    capsuleWrapperBoxShadow: "none",
-    capsuleWrapperMinHeight: "32px",
-    capsuleWrapperMaxHeight: "32px",
-    capsuleWrapperBorderRadius: "6px",
+    boxShadow: "none",
+    borderRadius: "6px",
     capsuleFontSize: "14px",
     tabTextColor: "rgb(86, 85, 85)",
     tabBorderRadius: "6px",
@@ -238,7 +236,8 @@ export function createCalendarTheme(
 
     highlightedDateTextColor: "white",
     hightlightDateColor: "#61a9f9",
-    rangeDateColor: "#dbeafe",
+    rangeDateBackgroundColor: "#dbeafe",
+    rangeDateTextColor: "#61a9f9",
 
     boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
   };
@@ -1969,7 +1968,8 @@ const darkCalendar = createCalendarTheme(darkBody, darkFieldLane, {
   disabledDateColor: "#4b5563",
   weekendDateColor: "#fca5a5",
 
-  rangeDateColor: "rgb(124, 101, 207)",
+  rangeDateBackgroundColor: "rgb(124, 101, 207)",
+  rangeDateTextColor: "#ffffff",
   hightlightDateColor: "rgb(115, 94, 214)",
   highlightedDateTextColor: "#ffffff",
 
@@ -2234,8 +2234,6 @@ const darkPaperDialog = createPaperDialogTheme(darkBody, {
 });
 
 const darkPagination = createPaginationTheme(darkBody, darkFieldLane, {
-  backgroundColor: "rgb(160, 160, 160)",
-
   borderColor: "rgb(55, 65, 81)",
   activeBorderColor: darkFieldLane?.focusedBorderColor,
   hoverBorderColor: darkFieldLane?.focusedBorderColor,
