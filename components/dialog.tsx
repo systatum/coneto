@@ -169,7 +169,7 @@ function Dialog({
                           )
                         : darkenColor(
                             icon?.color ?? dialogTheme?.textColor,
-                            0.9
+                            0.8
                           )};
                       border-radius: 99999px;
                       justify-content: center;
