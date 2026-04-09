@@ -78,15 +78,92 @@ body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq code,
 body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq .css-[code] {
   background-color: #2a2b2f;
   color: #f5f5f5;
-  overflow-x: auto;
   font-family: ui-monospace, SFMono-Regular, "Roboto Mono", monospace;
 }
 
 /* Inline code */
 body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq code:not(pre code) {
-  background-color: #3a3b3f;
+  background-color: #2a2b2f;
   border-radius: 4px;
   color: #f8f8f2;
+}
+
+/* Switch */
+body[data-theme="dark"] .sbdocs.sbdocs-content .css-177r6r9 {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+  background-color: #2a2b2f;
+  border: 1px solid #444;
+  border-radius: 9999px;
+  padding: 0.2rem 0.4rem;
+  font-size: 0.875rem;
+  color: #e5e7eb;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s;
+}
+
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content
+  .css-177r6r9
+  input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+body[data-theme="dark"] .sbdocs.sbdocs-content .css-177r6r9 span {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  transition: all 0.2s;
+  text-align: center;
+  min-width: 40px;
+}
+
+body[data-theme="dark"] .sbdocs.sbdocs-content .css-177r6r9 span:first-child {
+  background-color: #444;
+  color: #f5f5f5;
+}
+
+body[data-theme="dark"] .sbdocs.sbdocs-content .css-177r6r9 span:last-child {
+  background-color: #2a2b2f;
+  color: #9ca3af;
+}
+
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content
+  .css-177r6r9
+  input:checked
+  ~ span:first-child {
+  background-color: #4f46e5;
+  color: #fff;
+}
+
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content
+  .css-177r6r9
+  input:checked
+  ~ span:last-child {
+  background-color: #4f46e5;
+  color: #fff;
+}
+
+body[data-theme="dark"] .sbdocs.sbdocs-content .css-177r6r9:hover {
+  border-color: #4f46e5;
+}
+
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content
+  .css-177r6r9
+  input:focus-visible
+  ~ span {
+  outline: 2px solid #4f46e5;
+  outline-offset: 2px;
 }
 
 /* PrismJS styling for code highlighting */
@@ -106,7 +183,6 @@ body[data-theme="dark"] .sbdocs-wrapper .docblock-source.sb-unstyled code {
   border: 1px solid #444;
   border-radius: 6px;
   padding: 0.5rem;
-  overflow-x: auto;
 }
 
 /* Dark mode for Storybook preview panel */
@@ -132,17 +208,20 @@ body[data-theme="dark"] .css-11xgcgt {
 }
 
 body[data-theme="dark"] .css-o1d7ko {
-  background-color: #3a3b3f;
+  background-color: #2a2b2f;
   color: white;
   border: 1px solid #444;
   border-radius: 4px;
   cursor: pointer;
 }
 
+/* select, and input on controll */
+
 body[data-theme="dark"] select,
 body[data-theme="dark"] input.css-y8xp0s,
-body[data-theme="dark"] input.css-r7fl1p {
-  background-color: #3a3b3f;
+body[data-theme="dark"] input.css-r7fl1p,
+body[data-theme="dark"] textarea.css-7mc623 {
+  background-color: #2a2b2f;
   color: white;
   border: 1px solid #444;
   border-radius: 4px;
@@ -155,7 +234,7 @@ body[data-theme="dark"] input.css-r7fl1p {
   }
 }
 
-/* button controll */
+/* button control */
 
 body[data-theme="dark"] .css-10lkeuu {
   background-color: #2a2b2f;
@@ -165,10 +244,7 @@ body[data-theme="dark"] .css-10lkeuu {
   padding: 0.25rem 0.5rem;
   font-size: 0.875rem;
   cursor: pointer;
-}
-
-body[data-theme="dark"] .css-10lkeuu {
-  background-color: #3a3b3f;
+  box-shadow: none;
 }
 
 body[data-theme="dark"] .docblock-code-toggle {
@@ -182,7 +258,7 @@ body[data-theme="dark"] .docblock-code-toggle {
 }
 
 body[data-theme="dark"] .docblock-code-toggle:hover {
-  background-color: #3a3b3f;
+  background-color: #2a2b2f;
 }
 
 /* Dark mode for preview top bar */
@@ -333,7 +409,6 @@ body[data-theme="dark"] .sbdocs-wrapper .css-xzp052 .css-4zr3vl {
   background-color: #2a2b2f;
   color: #f5f5f5;
   border-radius: 6px;
-  overflow-x: auto;
   font-family: ui-monospace, SFMono-Regular, "Roboto Mono", monospace;
 }
 
@@ -362,12 +437,11 @@ body[data-theme="dark"] .sbdocs-wrapper code,
 body[data-theme="dark"] .sbdocs-wrapper .css-[code] {
   background-color: #2a2b2f;
   color: #f5f5f5;
-  overflow-x: auto;
   border: none;
 }
 
 body[data-theme="dark"] .sbdocs-wrapper code:not(pre code) {
-  background-color: #3a3b3f;
+  background-color: #2a2b2f;
   padding: 0.2rem 0.4rem;
   border: none;
 }
@@ -376,7 +450,6 @@ body[data-theme="dark"] .sbdocs-wrapper .css-4zr3vl {
   background-color: #2a2b2f;
   color: #f5f5f5;
   border-radius: 6px;
-  overflow-x: auto;
   font-family: ui-monospace, SFMono-Regular, "Roboto Mono", monospace;
   font-size: 0.9rem;
 }
