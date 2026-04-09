@@ -52,11 +52,13 @@ import {
   SignboxThemeConfig,
   StatefulFormThemeConfig,
   StatusbarThemeConfig,
+  SteplineThemeConfig,
   TableThemeConfig,
   TextareaThemeConfig,
   TextboxThemeConfig,
   ThumbFieldThemeConfig,
   TimeboxThemeConfig,
+  TimelineThemeConfig,
   TipMenuContainerThemeConfig,
   TipMenuThemeConfig,
   ToggleboxThemeConfig,
@@ -1068,6 +1070,41 @@ export function createSearchboxTheme(
   };
 }
 
+// stepline.tsx
+export function createSteplineTheme(
+  body: BodyThemeConfig,
+  buttonTheme?: Record<ButtonVariants["variant"], ButtonThemeConfig>,
+  customTheme: Partial<SteplineThemeConfig> = {}
+): SteplineThemeConfig {
+  const defaultTheme: SteplineThemeConfig = {
+    outerCircle: {
+      error: buttonTheme?.danger?.hoverBackgroundColor || "#8f0751",
+      completed: buttonTheme?.success?.hoverBackgroundColor || "#2fe620",
+      current: buttonTheme?.success?.hoverBackgroundColor || "#2fe620",
+      todo: buttonTheme?.default?.hoverBackgroundColor || "#9ca3af",
+    },
+    innerCircle: {
+      error: buttonTheme?.danger?.backgroundColor || "#ff0000",
+      completed: buttonTheme?.success?.backgroundColor || "#00b62e",
+      current: buttonTheme?.success?.backgroundColor || "#00b62e",
+      todo: buttonTheme?.default?.backgroundColor || "#4b5563",
+    },
+    text: {
+      error: buttonTheme?.danger?.textColor || body.textColor,
+      completed: buttonTheme?.success?.textColor || body.textColor,
+      current: buttonTheme?.success?.textColor || body.textColor,
+      todo: buttonTheme?.default?.textColor || body.textColor,
+    },
+    line: {
+      default: buttonTheme?.default?.activeBackgroundColor || "#9ca3af",
+      completed: buttonTheme?.success?.backgroundColor || "#00b62e",
+      error: buttonTheme?.danger?.backgroundColor || "#b60000",
+    },
+  };
+
+  return { ...defaultTheme, ...customTheme };
+}
+
 // selectbox.tsx
 export function createSelectboxTheme(
   body: BodyThemeConfig,
@@ -1332,6 +1369,44 @@ export function createTimeboxTheme(
   return { ...defaultTheme, ...custom };
 }
 
+// timeline.tsx
+export function createTimelineTheme(
+  body: BodyThemeConfig,
+  buttonTheme?: Record<ButtonVariants["variant"], ButtonThemeConfig>,
+  customTheme: Partial<TimelineThemeConfig> = {}
+): TimelineThemeConfig {
+  const defaultTheme: TimelineThemeConfig = {
+    outerCircle: {
+      error: buttonTheme?.danger?.backgroundColor || "#8f0751",
+      completed: buttonTheme?.success?.backgroundColor || "#2fe620",
+      current: buttonTheme?.success?.backgroundColor || "#2fe620",
+      todo: buttonTheme?.default?.backgroundColor || "#9ca3af",
+    },
+
+    innerCircle: {
+      error: buttonTheme?.danger?.activeBackgroundColor || "#ff0000",
+      completed: buttonTheme?.success?.activeBackgroundColor || "#00b62e",
+      current: buttonTheme?.success?.activeBackgroundColor || "#00b62e",
+      todo: buttonTheme?.default?.activeBackgroundColor || "#4b5563",
+    },
+
+    text: {
+      error: buttonTheme?.danger?.textColor || body.textColor,
+      completed: buttonTheme?.success?.textColor || body.textColor,
+      current: buttonTheme?.success?.textColor || body.textColor,
+      todo: buttonTheme?.default?.textColor || body.textColor,
+    },
+
+    line: {
+      default: buttonTheme?.default?.activeBackgroundColor || "#9ca3af",
+      completed: buttonTheme?.success?.backgroundColor || "#00b62e",
+      error: buttonTheme?.danger?.backgroundColor || "#b60000",
+    },
+  };
+
+  return { ...defaultTheme, ...customTheme };
+}
+
 // tipmenu.tsx
 export function createTipMenuTheme(
   body: BodyThemeConfig,
@@ -1375,9 +1450,7 @@ export function createToggleboxTheme(
 // toolbar.tsx
 export function createToolbarTheme(
   baseButton: Record<ToolbarVariantType, ToolbarThemeConfig>,
-  customVariants: Partial<
-    Record<ToolbarVariantType, ToolbarThemeConfig>
-  > = {}
+  customVariants: Partial<Record<ToolbarVariantType, ToolbarThemeConfig>> = {}
 ): Record<ToolbarVariantType, ToolbarThemeConfig> {
   const variants: Record<ToolbarVariantType, ToolbarThemeConfig> = {
     default: {
@@ -1682,6 +1755,8 @@ const lightStatusbar = createStatusbarTheme();
 
 const lightStatefulForm = createStatefulFormTheme(lightBody);
 
+const lightStepline = createSteplineTheme(lightBody);
+
 const lightTable = createTableTheme(lightBody);
 
 const lightTextarea = createTextareaTheme(lightBody, lightFieldLane);
@@ -1689,6 +1764,8 @@ const lightTextarea = createTextareaTheme(lightBody, lightFieldLane);
 const lightTextbox = createTextboxTheme(lightBody, lightFieldLane);
 
 const lightTimebox = createTimeboxTheme(lightBody, lightFieldLane);
+
+const lightTimeline = createTimelineTheme(lightBody);
 
 const lightTipMenu = createTipMenuTheme(lightBody, {
   dangerousBackgroundColor: lightButton.danger.backgroundColor,
@@ -1765,10 +1842,12 @@ const lightTheme: AppTheme = {
   signbox: lightSignbox,
   statusbar: lightStatusbar,
   statefulForm: lightStatefulForm,
+  stepline: lightStepline,
   table: lightTable,
   textarea: lightTextarea,
   textbox: lightTextbox,
   timebox: lightTimebox,
+  timeline: lightTimeline,
   tipmenu: lightTipMenu,
   thumbField: lightThumbField,
   toolbar: lightToolbar,
@@ -2343,7 +2422,9 @@ const darkStatefulForm = createStatefulFormTheme(darkBody, {
   rowFrameBackgroundColor: "rgb(48, 48, 48)",
 });
 
-export const darkTable = createTableTheme(darkBody, {
+const darkStepline = createSteplineTheme(darkBody, darkButton);
+
+const darkTable = createTableTheme(darkBody, {
   textColor: darkBody.textColor,
   boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
 
@@ -2381,6 +2462,8 @@ const darkTextbox = createTextboxTheme(darkBody, darkFieldLane, {
 });
 
 const darkTimebox = createTimeboxTheme(darkBody, darkFieldLane);
+
+const darkTimeline = createTimelineTheme(darkBody, darkButton);
 
 const darkTipMenu = createTipMenuTheme(darkBody, {
   hoverBackgroundColor: "#2a2a2a",
@@ -2487,10 +2570,12 @@ const darkTheme: AppTheme = {
   signbox: darkSignbox,
   statusbar: darkStatusbar,
   statefulForm: darkStatefulForm,
+  stepline: darkStepline,
   table: darkTable,
   textarea: darkTextarea,
   textbox: darkTextbox,
   timebox: darkTimebox,
+  timeline: darkTimeline,
   tipmenu: darkTipMenu,
   thumbField: darkThumbField,
   togglebox: darkTogglebox,

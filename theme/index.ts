@@ -1,6 +1,7 @@
 import { MessageboxVariantState } from "./../components/messagebox";
 import { ButtonVariants } from "./../components/button";
 import { ToolbarVariantType } from "./../components/toolbar";
+import { SteplineItemState } from "./../constants/step-component-util";
 
 export type ThemeMode = "light" | "dark";
 
@@ -650,6 +651,17 @@ export interface SidebarThemeConfig {
   };
 }
 
+// stepline.tsx
+export interface SteplineThemeConfig {
+  outerCircle: Record<SteplineItemState["variant"], string>;
+  innerCircle: Record<SteplineItemState["variant"], string>;
+  text: Record<SteplineItemState["variant"], string>;
+  line?: {
+    default: string;
+    completed: string;
+    error: string;
+  };
+}
 // statusbar.tsx
 export interface StatusbarThemeConfig {
   backgroundColor: string;
@@ -732,6 +744,9 @@ export interface TextboxThemeConfig {
 export interface TextareaThemeConfig extends TextboxThemeConfig {
   scrollbarThumbColor?: string;
 }
+
+// timeline.tsx
+export interface TimelineThemeConfig extends SteplineThemeConfig {}
 
 // thumb-field.tsx
 export interface ThumbFieldThemeConfig {
@@ -850,8 +865,10 @@ export interface AppTheme {
   signbox: SignboxThemeConfig;
   statusbar: StatusbarThemeConfig;
   statefulForm: StatefulFormThemeConfig;
+  stepline: SteplineThemeConfig;
   textbox: TextboxThemeConfig;
   textarea: TextareaThemeConfig;
+  timeline: TimelineThemeConfig;
   thumbField: ThumbFieldThemeConfig;
   table: TableThemeConfig;
   tipmenu: TipMenuThemeConfig;
