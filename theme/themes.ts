@@ -2060,8 +2060,9 @@ export const darkCrumb = createCrumbTheme(darkBody, {
 });
 
 const darkDialog = createDialogTheme(darkBody, {
+  backgroundColor: "rgb(26, 26, 26)",
   borderColor: "#303030",
-  boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
+  boxShadow: "rgba(0, 0, 0, 0.65) 0px 8px 24px",
   subtitleColor: "#a3a3a3",
 });
 
