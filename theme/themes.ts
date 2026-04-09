@@ -2139,9 +2139,9 @@ const darkChoiceGroup = createChoiceGroupTheme(darkBody, {
 });
 
 const darkCheckbox = createCheckboxTheme(darkBody, {
-  borderColor: "#374151",
+  borderColor: "rgb(55, 59, 65)",
   backgroundColor: "rgb(32, 33, 35)",
-  checkedBorderColor: "#374151",
+  checkedBorderColor: "rgb(21, 82, 164)",
   checkedBackgroundColor: "#1465d3bf",
   iconColor: "#f9fafb",
   labelColor: "#f9fafb",
@@ -2255,7 +2255,7 @@ const darkImagebox = createImageboxTheme(darkBody, darkFieldLane, {
 });
 
 const darkKeynote = createKeynoteTheme(darkBody, {
-  keyColor: "#9ca3af",
+  keyColor: "rgb(243, 244, 246)",
   valueColor: "#f3f4f6",
 });
 
