@@ -25,6 +25,7 @@ import { css } from "styled-components";
 import { ColumnTableProps, SubMenuListTableProps, Table } from "./table";
 import { DormantText } from "./dormant-text";
 import { Textbox } from "./textbox";
+import { useTheme } from "./../theme/provider";
 
 const meta: Meta<typeof Card> = {
   title: "Content/Card",
@@ -433,6 +434,8 @@ export const WithHeader: Story = {
 
 export const WithHeaderAndFooter: Story = {
   render: () => {
+    const { mode } = useTheme();
+
     const LIST_GROUPS: ListGroupContentProps[] = [
       {
         id: "breakfast",
@@ -707,7 +710,7 @@ export const WithHeaderAndFooter: Story = {
           footerStyle: css`
             padding-left: 20px;
             padding-right: 20px;
-            border-top: 1px solid #d1d5db;
+            border-top: 1px solid ${mode === "dark" ? "transparent" : "#d1d5db"};
           `,
         }}
         footerContent={ContentCard}
