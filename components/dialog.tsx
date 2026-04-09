@@ -448,6 +448,7 @@ function ensureProvider(
   // If the provider is already mounted and valid, do nothing.
   // This ensures the modal system behaves as a singleton.
   if (state.mounted) {
+    renderRoot(state, component);
     onReady();
     return;
   }
@@ -458,15 +459,25 @@ function ensureProvider(
   document.body.appendChild(container);
 
   const root = createRoot(container);
-  root.render(
-    <ThemeProvider mode={mode} themes={themes}>
-      <DialogProvider component={component} />
-    </ThemeProvider>
-  );
 
   state.container = container;
   state.root = root;
   state.mounted = true;
+
+  renderRoot(state, component);
+}
+
+function renderRoot(
+  state: DialogMountState,
+  component: ComponentType<DialogProps>
+) {
+  const { mode, themes } = getThemeSnapshot();
+
+  state.root?.render(
+    <ThemeProvider mode={mode} themes={themes}>
+      <DialogProvider component={component} />
+    </ThemeProvider>
+  );
 }
 
 export function createDialogController(component: ComponentType<DialogProps>) {
