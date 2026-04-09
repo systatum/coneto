@@ -60,6 +60,7 @@ export type ToolbarVariantType =
   | "default"
   | "primary"
   | "danger"
+  | "success"
   | "transparent";
 
 const useVariantToolbar = () => {
