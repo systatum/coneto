@@ -646,7 +646,29 @@ const darkStatefulForm = createStatefulFormTheme(darkBody, {
   rowFrameBackgroundColor: "rgb(48, 48, 48)",
 });
 
-const darkStepline = createSteplineTheme(darkBody, darkButton);
+const darkTimeline = createTimelineTheme(darkBody, darkButton, {
+  outerCircle: {
+    error: darkButton?.danger?.activeBackgroundColor || "#ff0000",
+    completed: darkButton?.success?.activeBackgroundColor || "#00b62e",
+    current: darkButton?.success?.activeBackgroundColor || "#00b62e",
+    todo: "#595959",
+  },
+  innerCircle: {
+    error: darkButton?.danger?.activeBackgroundColor || "#ff0000",
+    completed: darkButton?.success?.activeBackgroundColor || "#00b62e",
+    current: darkButton?.success?.activeBackgroundColor || "#00b62e",
+    todo: "#595959",
+  },
+  line: {
+    default: "#595959",
+    completed: darkButton?.success?.backgroundColor || "#00b62e",
+    error: darkButton?.error?.backgroundColor || "#b60000",
+  }
+});
+
+const darkStepline = createSteplineTheme(darkBody, darkButton, {
+  line: darkTimeline.line,
+});
 
 const darkTable = createTableTheme(darkBody, {
   textColor: darkBody.textColor,
@@ -687,7 +709,6 @@ const darkTextbox = createTextboxTheme(darkBody, darkFieldLane, {
 
 const darkTimebox = createTimeboxTheme(darkBody, darkFieldLane);
 
-const darkTimeline = createTimelineTheme(darkBody, darkButton);
 
 const darkTipMenu = createTipMenuTheme(darkBody, {
   hoverBackgroundColor: "#2a2a2a",
