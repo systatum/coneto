@@ -682,6 +682,7 @@ export interface ToolbarThemeConfig extends BodyThemeConfig {
   activeBackgroundColor?: string;
   focusBackgroundColor?: string;
   textDecoration?: string;
+  dividerColor?: string;
 }
 
 // tip-menu.tsx

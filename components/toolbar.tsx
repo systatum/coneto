@@ -70,7 +70,8 @@ const useVariantToolbar = () => {
   const VARIANT_COLORS: Record<ToolbarVariantType, ToolbarThemeConfig> =
     Object.keys(toolbarVariant).reduce(
       (acc, key) => {
-        const variant = toolbarVariant[key as ToolbarVariantType];
+        const variant: ToolbarThemeConfig =
+          toolbarVariant[key as ToolbarVariantType];
         if (!variant) return acc;
         acc[key as ToolbarVariantType] = {
           backgroundColor: variant.backgroundColor,
@@ -79,6 +80,7 @@ const useVariantToolbar = () => {
           hoverBackgroundColor: variant.hoverBackgroundColor,
           activeBackgroundColor: variant.activeBackgroundColor,
           focusBackgroundColor: variant.focusBackgroundColor,
+          dividerColor: variant.dividerColor,
         };
         return acc;
       },
@@ -300,6 +302,7 @@ function ToolbarMenu({
             </TriggerButton>
             {subMenuList && caption && (
               <Divider
+                $theme={toolbarTheme}
                 $style={css`
                   height: ${hovered === "original" && !isOpen ? "80%" : "100%"};
                 `}
@@ -422,7 +425,7 @@ const ToggleButton = styled.button<{ $style?: CSSProp }>`
   ${(props) => props.$style}
 `;
 
-const Divider = styled.span<{ $style?: CSSProp }>`
+const Divider = styled.span<{ $style?: CSSProp; $theme: ToolbarThemeConfig }>`
   position: absolute;
   right: 35px;
   top: 50%;
@@ -430,9 +433,9 @@ const Divider = styled.span<{ $style?: CSSProp }>`
   height: 100%;
   width: 1px;
   border-width: 0.5px;
-  color: #bdbdbd;
   z-index: 20;
   transition: height 150ms ease-in-out;
+  border-color: ${({ $theme }) => $theme?.dividerColor};
 
   ${(props) => props.$style}
 `;
