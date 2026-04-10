@@ -143,7 +143,7 @@ export const Default: Story = {
             `,
           }}
         >
-          Up
+          Left
         </Window.Cell>
         <Window.Cell
           styles={{
@@ -153,7 +153,7 @@ export const Default: Story = {
             `,
           }}
         >
-          Down
+          Right
         </Window.Cell>
       </Window>
     );
