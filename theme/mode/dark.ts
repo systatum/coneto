@@ -149,9 +149,9 @@ const darkButton = createButtonTheme(darkBody, {
     dividerColor: "#48398dbf",
   },
   danger: {
-    backgroundColor: "rgb(177, 30, 66)",
+    backgroundColor: "rgb(147, 21, 52)",
     textColor: darkBody.textColor,
-    hoverBackgroundColor: "rgb(147, 21, 52)",
+    hoverBackgroundColor: "rgb(177, 30, 66)",
     activeBackgroundColor: "rgb(130, 15, 45)",
     focusBackgroundColor: "rgba(177, 30, 66, 0.5)",
     dividerColor: "#9315348c",
