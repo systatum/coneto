@@ -1,5 +1,6 @@
 import styled, { CSSProp, keyframes } from "styled-components";
 import { useTheme } from "./../theme/provider";
+import { LoadingSpinnerThemeConfig } from "theme";
 
 export interface LoadingSpinnerProps {
   iconSize?: number;
@@ -37,7 +38,7 @@ function LoadingSpinner({
         fill="none"
         viewBox="0 0 24 24"
         $style={styles?.iconStyle}
-        $color={loadingSpinnerTheme.color}
+        $theme={loadingSpinnerTheme}
       >
         <circle
           opacity="0.25"
@@ -83,13 +84,13 @@ const SpinnerWrapper = styled.div<{ $gap: number; $style?: CSSProp }>`
 const SpinnerIcon = styled.svg<{
   $size: number;
   $style?: CSSProp;
-  $color?: string;
+  $theme?: LoadingSpinnerThemeConfig;
 }>`
   height: ${({ $size }) => $size}px;
   width: ${({ $size }) => $size}px;
   animation: ${spin} 1s linear infinite;
 
-  color: ${({ $color }) => $color};
+  color: ${({ $theme }) => $theme.spinnerColor};
 
   ${({ $style }) => $style}
 `;

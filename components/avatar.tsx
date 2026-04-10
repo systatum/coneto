@@ -105,7 +105,7 @@ function Avatar({
         <div>{initials}</div>
       )}
       {changeable ? (
-        <AvatarChange $overlayBg={avatarTheme.overlayBackground}>
+        <AvatarChange $overlayBg={avatarTheme.overlayBackgroundColor}>
           <HiddenInput
             ref={fileInputRef}
             type="file"

@@ -66,7 +66,7 @@ function Messagebox({
           `,
         }}
         image={icon?.image ?? RiInformation2Fill}
-        color={icon?.color ?? variantStyle.text}
+        color={icon?.color ?? variantStyle.textColor}
       />
 
       <Content $style={styles?.contentWrapperStyle}>
@@ -119,7 +119,7 @@ function Messagebox({
               width: fit-content;
               height: fit-content;
               padding: 2px;
-              color: ${variantStyle.text};
+              color: ${variantStyle.textColor};
             `,
           }}
         >
@@ -154,9 +154,10 @@ const Wrapper = styled.div<{
   overflow: hidden;
   height: 100%;
 
-  background-color: ${({ $variant, $theme }) => $theme[$variant].container};
+  background-color: ${({ $variant, $theme }) =>
+    $theme[$variant].backgroundColor};
 
-  color: ${({ $variant, $theme }) => $theme[$variant].text};
+  color: ${({ $variant, $theme }) => $theme[$variant].textColor};
 
   ${({ $style }) => $style};
 `;
@@ -190,7 +191,7 @@ const BorderAccent = styled.div<{
   top: 0;
   left: 0;
   width: 100%;
-  border-top: 2px solid ${({ $variant, $theme }) => $theme[$variant].text};
+  border-top: 2px solid ${({ $variant, $theme }) => $theme[$variant].textColor};
 `;
 
 const ActionList = styled.div`
@@ -208,7 +209,7 @@ const ActionItem = styled.button<{
   border: none;
   font-size: 0.875rem;
   font-weight: 500;
-  color: ${({ $variant, $theme }) => $theme[$variant].text};
+  color: ${({ $variant, $theme }) => $theme[$variant].textColor};
   transition: all 0.3s;
 
   &:hover {
@@ -216,7 +217,7 @@ const ActionItem = styled.button<{
   }
 
   &:active {
-    color: ${({ $variant, $theme }) => $theme[$variant].active};
+    color: ${({ $variant, $theme }) => $theme[$variant].activeColor};
   }
 `;
 
@@ -226,7 +227,7 @@ const ActionLink = styled.a<{
 }>`
   font-size: 0.875rem;
   font-weight: 500;
-  color: ${({ $variant, $theme }) => $theme[$variant].text};
+  color: ${({ $variant, $theme }) => $theme[$variant].textColor};
 
   transition: all 0.3s;
   cursor: pointer;
@@ -236,7 +237,7 @@ const ActionLink = styled.a<{
   }
 
   &:active {
-    color: ${({ $variant, $theme }) => $theme[$variant].active};
+    color: ${({ $variant, $theme }) => $theme[$variant].activeColor};
   }
 `;
 

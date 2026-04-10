@@ -107,7 +107,7 @@ function BaseRadio({
           <LabelText
             aria-label="radio-label-wrapper"
             $style={styles?.labelStyle}
-            $labelColor={radioTheme.labelColor}
+            $theme={radioTheme}
           >
             {label}
           </LabelText>
@@ -360,9 +360,9 @@ const InputWrapper = styled.div<{ $style?: CSSProp; $isRadio?: boolean }>`
   ${({ $style }) => $style}
 `;
 
-const LabelText = styled.div<{ $style?: CSSProp; $labelColor?: string }>`
+const LabelText = styled.div<{ $style?: CSSProp; $theme: RadioThemeConfig }>`
   font-size: 14px;
-  color: ${({ $labelColor }) => $labelColor || "#000"};
+  color: ${({ $theme }) => $theme.textColor || "#000"};
   ${({ $style }) => $style}
 `;
 
