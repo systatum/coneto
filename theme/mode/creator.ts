@@ -193,7 +193,7 @@ export function createBoxbarTheme(
 
 // button.tsx
 export function createButtonTheme(
-  body: BodyThemeConfig,
+  body: BodyThemeConfig = {},
   customVariants: Partial<
     Record<ButtonVariants["variant"], ButtonThemeConfig>
   > = {}
@@ -201,7 +201,7 @@ export function createButtonTheme(
   const variants: Record<string, ButtonThemeConfig> = {
     default: {
       backgroundColor: "#dddddd",
-      textColor: "black",
+      textColor: body.textColor || "rgb(17, 17, 17)",
       hoverBackgroundColor: "#e2e2e2",
       activeBackgroundColor: "#cfcfcf",
       textDecoration: "none",
@@ -233,7 +233,7 @@ export function createButtonTheme(
     },
     secondary: {
       backgroundColor: "#ececec",
-      textColor: body.textColor,
+      textColor: body.textColor || "rgb(17, 17, 17)",
       hoverBackgroundColor: "#cccccc",
       activeBackgroundColor: "#b3b3b3",
       focusBackgroundColor: "#B4B4B480",
@@ -241,7 +241,7 @@ export function createButtonTheme(
     },
     ghost: {
       backgroundColor: "transparent",
-      textColor: body.textColor,
+      textColor: body.textColor || "rgb(17, 17, 17)",
       hoverBackgroundColor: "#f3f3f3",
       activeBackgroundColor: "#eaeaea",
       focusBackgroundColor: "#00000033",
@@ -258,7 +258,7 @@ export function createButtonTheme(
     },
     transparent: {
       backgroundColor: "transparent",
-      textColor: body.textColor,
+      textColor: body.textColor || "rgb(17, 17, 17)",
       hoverBackgroundColor: "#e2e2e2",
       activeBackgroundColor: "#cfcfcf",
       focusBackgroundColor: "#cfcfcf",
@@ -1444,9 +1444,9 @@ export function createTableTheme(
     headerBackgroundColor: "linear-gradient(to bottom, #f0f0f0, #e4e4e4)",
     headerBorderColor: "rgb(229, 231, 235)",
 
-    rowGroupBackgroundColor: "white",
+    rowGroupBackgroundColor: "rgb(249, 250, 251)",
 
-    rowBackgroundColor: "white",
+    rowBackgroundColor: "rgb(249, 250, 251)",
     rowBorderColor: "#e5e7eb",
     rowSubtitleTextColor: "#1f2937",
     rowHoverBackgroundColor: "#e7f2fc",
