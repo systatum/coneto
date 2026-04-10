@@ -1265,6 +1265,7 @@ export function createSeparatorTheme(
   const defaultTheme: SeparatorThemeConfig = {
     containerColor: "#6b7280",
     lineColor: "#111827",
+    lineShadow: "inset 0 2px 2px #ffffff, inset 0 -1px 1px #7a7a7a",
     titleColor: "#6b7280",
     backgroundTitleColor: body.backgroundColor,
   };

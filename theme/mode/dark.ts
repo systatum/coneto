@@ -605,8 +605,7 @@ const darkSelectbox = createSelectboxTheme(darkBody, darkFieldLane);
 
 const darkSeparator = createSeparatorTheme(darkBody, {
   containerColor: "#d1d5db",
-  lineColor:
-    "rgb(43, 43, 43) 0px 2px 2px inset, rgb(130, 130, 130) 0px -1px 1px inset",
+  lineShadow: "rgb(43, 43, 43) 0px 2px 2px inset, rgb(130, 130, 130) 0px -1px 1px inset",
   titleColor: "rgb(171, 171, 171)",
   backgroundTitleColor: "#1f2023",
 });
