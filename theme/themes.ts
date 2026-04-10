@@ -209,7 +209,6 @@ export function createBoxbarTheme(
 
 // button.tsx
 export function createButtonTheme(
-  bare: BareThemeConfig,
   customVariants: Partial<
     Record<ButtonVariants["variant"], ButtonThemeConfig>
   > = {}
@@ -1684,8 +1683,8 @@ export function createWindowTheme(
   customTheme: Partial<WindowThemeConfig> = {}
 ): WindowThemeConfig {
   const defaultTheme: WindowThemeConfig = {
-    backgroundColor: "#ffffff",
-    textColor: "#111827",
+    backgroundColor: bare?.backgroundColor || "#ffffff",
+    textColor: bare?.textColor || "#111827",
     dividerColor: "#d1d5db",
   };
 
@@ -1715,7 +1714,7 @@ const lightBadge = createBadgeTheme(lightBare);
 
 const lightBoxbar = createBoxbarTheme(lightBare);
 
-const lightButton = createButtonTheme(lightBare);
+const lightButton = createButtonTheme();
 
 const lightButtonTipMenuContainer = createTipMenuContainerTheme(lightBare);
 
@@ -1991,7 +1990,7 @@ const darkAvatar = createAvatarTheme(darkBare, {
   overlayBackgroundColor: "rgba(0,0,0,0.6)",
 });
 
-const darkButton = createButtonTheme(darkBare, {
+const darkButton = createButtonTheme({
   default: {
     backgroundColor: "#272727",
     textColor: darkBare.textColor,
