@@ -645,7 +645,7 @@ const Divider = styled.div<{
   $style?: CSSProp;
 }>`
   height: ${({ $hovered }) => ($hovered ? "100%" : "80%")};
-  border-right: 1px solid;
+  border-right: 2px solid;
   position: absolute;
   transition: height 100ms ease-in-out;
   right: 40px;

@@ -205,7 +205,7 @@ export function createButtonTheme(
       hoverBackgroundColor: "#e2e2e2",
       activeBackgroundColor: "#cfcfcf",
       textDecoration: "none",
-      dividerColor: "#e5e7eb",
+      dividerColor: "#c7c7c7",
     },
     primary: {
       backgroundColor: "#569aec",
