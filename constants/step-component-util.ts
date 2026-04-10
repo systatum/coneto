@@ -19,7 +19,7 @@ export const SteplineLine = {
 
 export type SteplineLine = (typeof SteplineLine)[keyof typeof SteplineLine];
 
-export interface SteplineItem {
+export interface BaseSteplineItem {
   title?: ReactNode;
   subtitle?: ReactNode;
   variant?: SteplineVariant;
