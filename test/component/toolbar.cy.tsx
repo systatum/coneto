@@ -161,7 +161,7 @@ describe("Toolbar", () => {
             cy.wrap($button).should(
               "have.css",
               "background-color",
-              "rgb(232, 232, 232)"
+              "rgb(207, 207, 207)"
             );
           });
       });
@@ -220,7 +220,7 @@ describe("Toolbar", () => {
         cy.findByLabelText("toolbar-menu-toggle")
           .realHover()
           .wait(300)
-          .should("have.css", "background-color", "rgb(245, 245, 245)");
+          .should("have.css", "background-color", "rgb(226, 226, 226)");
       });
     });
   });
