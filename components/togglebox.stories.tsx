@@ -289,7 +289,7 @@ export const WithIconAndLoading: Story = {
       if (args.checked) {
         setUpdateArgs({ isLoading: true });
         setTimeout(() => {
-          setUpdateArgs({ isLoading: "false" });
+          setUpdateArgs({ isLoading: false });
         }, 1200);
       }
     }, [args.checked]);
@@ -323,7 +323,7 @@ export const WithDescription: Story = {
       if (args.checked) {
         setUpdateArgs({ isLoading: true });
         setTimeout(() => {
-          setUpdateArgs({ isLoading: "false" });
+          setUpdateArgs({ isLoading: false });
         }, 1200);
       }
     }, [args.checked]);
