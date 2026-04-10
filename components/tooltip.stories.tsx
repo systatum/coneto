@@ -11,7 +11,7 @@ import { useState } from "react";
 import z from "zod";
 import { RiAddBoxLine, RiImage2Line } from "@remixicon/react";
 import { css } from "styled-components";
-import { OptionProps } from "./selectbox";
+import { SelectboxOption } from "./selectbox";
 import { useTheme } from "./../theme/provider";
 
 const meta: Meta<typeof Tooltip> = {
@@ -452,7 +452,7 @@ export const WithBadge: Story = {
     });
     const [isOpen, setIsOpen] = useState(false);
 
-    const EMPLOYEE_OPTIONS: OptionProps[] = [
+    const EMPLOYEE_OPTIONS: SelectboxOption[] = [
       { text: "Organization Owner", value: "1" },
       { text: "HR Manager", value: "2" },
       { text: "Member", value: "3" },
