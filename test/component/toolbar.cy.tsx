@@ -1,5 +1,5 @@
 import { css } from "styled-components";
-import { Toolbar, ToolbarSubMenuProps } from "./../../components/toolbar";
+import { Toolbar, ToolbarSubMenuList } from "./../../components/toolbar";
 import {
   RiSpam2Line,
   RiForbid2Line,
@@ -14,7 +14,7 @@ import {
 } from "@remixicon/react";
 
 describe("Toolbar", () => {
-  const TIP_MENU_ITEMS: ToolbarSubMenuProps[] = [
+  const TIP_MENU_ITEMS: ToolbarSubMenuList[] = [
     {
       caption: "Report Phishing",
       icon: { image: RiSpam2Line, color: "blue" },
