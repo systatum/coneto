@@ -64,6 +64,7 @@ import {
   createToolbarTheme,
   createTreeListTheme,
   createWindowTheme,
+  createTooltipTheme,
 } from "./creator";
 
 // Dark
@@ -722,6 +723,12 @@ const darkToolbar = createToolbarTheme({
   success: darkButton.success,
 });
 
+const darkTooltip = createTooltipTheme({
+  arrowBackgroundColor: "#3e4143",
+  backgroundColor: "#292c2e",
+  textColor: darkBody?.textColor,
+});
+
 const darkTreeList = createTreeListTheme(darkBody, {
   textColor: "#f9fafb",
   backgroundColor: "#1f2023",
@@ -805,6 +812,7 @@ export const darkTheme: AppTheme = {
   thumbField: darkThumbField,
   togglebox: darkTogglebox,
   toolbar: darkToolbar,
+  tooltip: darkTooltip,
   treelist: darkTreeList,
   window: darkWindow,
 };

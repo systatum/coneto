@@ -648,6 +648,13 @@ export interface TextareaThemeConfig extends TextboxThemeConfig {
   scrollbarThumbColor?: string;
 }
 
+// tooltip.tsx
+export interface TooltipThemeConfig
+  extends Omit<BodyThemeConfig, "borderColor"> {
+  boxShadow?: string;
+  arrowBackgroundColor: string;
+}
+
 // timeline.tsx
 export interface TimelineThemeConfig extends SteplineThemeConfig {}
 
@@ -766,15 +773,16 @@ export interface AppTheme {
   statusbar: StatusbarThemeConfig;
   statefulForm: StatefulFormThemeConfig;
   stepline: SteplineThemeConfig;
+  table: TableThemeConfig;
   textbox: TextboxThemeConfig;
   textarea: TextareaThemeConfig;
-  timeline: TimelineThemeConfig;
   thumbField: ThumbFieldThemeConfig;
-  table: TableThemeConfig;
+  timeline: TimelineThemeConfig;
   tipmenu: TipMenuThemeConfig;
   timebox: TimeboxThemeConfig;
-  toolbar: Record<ToolbarVariantType, ToolbarThemeConfig>;
   togglebox: ToggleboxThemeConfig;
+  toolbar: Record<ToolbarVariantType, ToolbarThemeConfig>;
+  tooltip: TooltipThemeConfig;
   treelist: TreeListThemeConfig;
   window: WindowThemeConfig;
 }

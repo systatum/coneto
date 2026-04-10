@@ -64,6 +64,7 @@ import {
   createToolbarTheme,
   createTreeListTheme,
   createWindowTheme,
+  createTooltipTheme,
 } from "./creator";
 
 // Light
@@ -216,6 +217,8 @@ const lightToolbar = createToolbarTheme({
   success: lightButton.success,
 });
 
+const lightTooltip = createTooltipTheme();
+
 const lightThumbField = createThumbFieldTheme(lightBody);
 
 const lightTreeList = createTreeListTheme(lightBody);
@@ -285,8 +288,9 @@ export const lightTheme: AppTheme = {
   timeline: lightTimeline,
   tipmenu: lightTipMenu,
   thumbField: lightThumbField,
-  toolbar: lightToolbar,
   togglebox: lightTogglebox,
+  toolbar: lightToolbar,
+  tooltip: lightTooltip,
   treelist: lightTreeList,
   window: lightWindow,
 };

@@ -63,6 +63,7 @@ import {
   TipMenuThemeConfig,
   ToggleboxThemeConfig,
   ToolbarThemeConfig,
+  TooltipThemeConfig,
   TreeListThemeConfig,
   WindowThemeConfig,
 } from "./../index";
@@ -1620,6 +1621,23 @@ export function createToolbarTheme(
   };
 
   return { ...variants, ...customVariants };
+}
+
+// tooltip.tsx
+export function createTooltipTheme(
+  customTheme: Partial<TooltipThemeConfig> = {}
+): TooltipThemeConfig {
+  const defaultTheme: TooltipThemeConfig = {
+    backgroundColor: "#4b5563",
+    textColor: "#ffffff",
+    boxShadow: "0 1px 2px rgba(0,0,0,0.1)",
+    arrowBackgroundColor: "#4b5563",
+  };
+
+  return {
+    ...defaultTheme,
+    ...customTheme,
+  };
 }
 
 // thumb-field.tsx
