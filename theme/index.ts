@@ -9,12 +9,6 @@ export type ThemeMode = "light" | "dark";
 export interface BodyThemeConfig {
   backgroundColor?: string;
   textColor?: string;
-}
-
-// bare
-export interface BareThemeConfig {
-  backgroundColor?: string;
-  textColor?: string;
   borderColor?: string;
 }
 
@@ -31,7 +25,7 @@ export interface ActionCapsuleThemeConfig {
 }
 
 // action-button.tsx
-export interface ActionButtonThemeConfig extends BareThemeConfig {
+export interface ActionButtonThemeConfig extends BodyThemeConfig {
   hoverBackgroundColor?: string;
   disabledBackgroundColor?: string;
   disabledOpacity?: number;
@@ -50,13 +44,13 @@ export interface ActionButtonThemeConfig extends BareThemeConfig {
 
 // avatar.tsx
 export interface AvatarThemeConfig
-  extends Omit<BareThemeConfig, "backgroundColor"> {
+  extends Omit<BodyThemeConfig, "backgroundColor"> {
   overlayBackgroundColor?: string;
   overlayIconColor?: string;
 }
 
 // badge.tsx
-export interface BadgeThemeConfig extends BareThemeConfig {
+export interface BadgeThemeConfig extends BodyThemeConfig {
   circleColor?: string;
   action?: {
     hoverBackgroundColor?: string;
@@ -67,13 +61,13 @@ export interface BadgeThemeConfig extends BareThemeConfig {
 }
 
 // boxbar.tsx
-export interface BoxbarThemeConfig extends BareThemeConfig {
+export interface BoxbarThemeConfig extends BodyThemeConfig {
   toggleButtonColor?: string;
   toggleButtonHoverColor?: string;
 }
 
 // button.tsx
-export interface ButtonThemeConfig extends BareThemeConfig {
+export interface ButtonThemeConfig extends BodyThemeConfig {
   hoverBackgroundColor?: string;
   activeBackgroundColor?: string;
   textDecoration?: string;
@@ -81,12 +75,12 @@ export interface ButtonThemeConfig extends BareThemeConfig {
   dividerColor?: string;
 }
 
-export interface TipMenuContainerThemeConfig extends BareThemeConfig {
+export interface TipMenuContainerThemeConfig extends BodyThemeConfig {
   boxShadow?: string;
 }
 
 // calendar.tsx
-export interface CalendarThemeConfig extends BareThemeConfig {
+export interface CalendarThemeConfig extends BodyThemeConfig {
   dayTextColor: string;
 
   disabledDateColor?: string;
@@ -102,7 +96,7 @@ export interface CalendarThemeConfig extends BareThemeConfig {
 }
 
 // capsule.tsx
-export interface CapsuleThemeConfig extends BareThemeConfig {
+export interface CapsuleThemeConfig extends BodyThemeConfig {
   boxShadow?: string;
   tab?: {
     textColor?: string;
@@ -117,13 +111,13 @@ export interface CapsuleThemeConfig extends BareThemeConfig {
 }
 
 // capsule-tab.tsx
-export interface CapsuleTabThemeConfig extends BareThemeConfig {
+export interface CapsuleTabThemeConfig extends BodyThemeConfig {
   boxShadow?: string;
   activeBackgroundColor?: string;
 }
 
 // card.tsx
-export interface CardThemeConfig extends BareThemeConfig {
+export interface CardThemeConfig extends BodyThemeConfig {
   dividerColor?: string;
   titleColor?: string;
   subtitleColor?: string;
@@ -134,7 +128,7 @@ export interface CardThemeConfig extends BareThemeConfig {
 }
 
 // chips.tsx
-export interface ChipsThemeConfig extends BareThemeConfig {
+export interface ChipsThemeConfig extends BodyThemeConfig {
   mutedTextColor?: string;
 
   hoverBackgroundColor?: string;
@@ -147,7 +141,7 @@ export interface ChipsThemeConfig extends BareThemeConfig {
 
 // choice-group.tsx
 export interface ChoiceGroupThemeConfig
-  extends Omit<BareThemeConfig, "textColor"> {
+  extends Omit<BodyThemeConfig, "textColor"> {
   dividerColor?: string;
   labelColor?: string;
   descriptionColor?: string;
@@ -155,7 +149,7 @@ export interface ChoiceGroupThemeConfig
 
 // checkbox.tsx
 export interface CheckboxThemeConfig
-  extends Omit<BareThemeConfig, "textColor"> {
+  extends Omit<BodyThemeConfig, "textColor"> {
   checkedBorderColor?: string;
   checkedBackgroundColor?: string;
   iconColor?: string;
@@ -166,7 +160,7 @@ export interface CheckboxThemeConfig
 }
 
 // combobox.tsx
-export interface ComboboxThemeConfig extends BareThemeConfig {
+export interface ComboboxThemeConfig extends BodyThemeConfig {
   groupBackgroundColor?: string;
 
   highlightBackgroundColor?: string;
@@ -181,7 +175,7 @@ export interface ComboboxThemeConfig extends BareThemeConfig {
 }
 
 // colorbox.tsx
-export interface ColorboxThemeConfig extends BareThemeConfig {
+export interface ColorboxThemeConfig extends BodyThemeConfig {
   focusedBorderColor?: string;
 
   errorBorderColor?: string;
@@ -197,7 +191,7 @@ export interface ColorboxThemeConfig extends BareThemeConfig {
 
 // crumb.tsx
 export interface CrumbThemeConfig
-  extends Omit<BareThemeConfig, "borderColor" | "backgroundColor"> {
+  extends Omit<BodyThemeConfig, "borderColor" | "backgroundColor"> {
   hoverColor?: string;
   lastTextColor?: string;
   arrowColor?: string;
@@ -206,14 +200,14 @@ export interface CrumbThemeConfig
 }
 
 // dialog.tsx
-export interface DialogThemeConfig extends BareThemeConfig {
+export interface DialogThemeConfig extends BodyThemeConfig {
   boxShadow?: string;
   subtitleColor?: string;
 }
 
 // document-viewer.tsx
 export interface DocumentViewerThemeConfig
-  extends Omit<BareThemeConfig, "borderColor"> {
+  extends Omit<BodyThemeConfig, "borderColor"> {
   toolbarBackgroundColor?: string;
   errorColor?: string;
   hoverBoxTextColor?: string;
@@ -222,7 +216,7 @@ export interface DocumentViewerThemeConfig
 }
 
 // dormant-text.tsx
-export interface DormantTextThemeConfig extends BareThemeConfig {
+export interface DormantTextThemeConfig extends BodyThemeConfig {
   hoverBackgroundColor?: string;
   pencilColor?: string;
   actionButtonColor?: string;
@@ -230,7 +224,7 @@ export interface DormantTextThemeConfig extends BareThemeConfig {
 }
 
 // drawer-tab.tsx
-export interface DrawerTabThemeConfig extends BareThemeConfig {
+export interface DrawerTabThemeConfig extends BodyThemeConfig {
   hoverBackgroundColor?: string;
   headerBackgroundColor?: string;
   closeButtonHoverBackground?: string;
@@ -247,7 +241,7 @@ export interface ErrorSlateThemeConfig {
 
 // field-lane.tsx
 export interface FieldLaneThemeConfig
-  extends Omit<BareThemeConfig, "backgroundColor"> {
+  extends Omit<BodyThemeConfig, "backgroundColor"> {
   buttonTextColor?: string;
   buttonBorderColor?: string;
   buttonErrorTextColor?: string;
@@ -277,7 +271,7 @@ export interface FieldLaneThemeConfig
 }
 
 // file-input-box.tsx
-export interface FileInputBoxThemeConfig extends BareThemeConfig {
+export interface FileInputBoxThemeConfig extends BodyThemeConfig {
   focusedBorderColor?: string;
   errorBorderColor?: string;
 
@@ -295,7 +289,7 @@ export interface FileInputBoxThemeConfig extends BareThemeConfig {
 
 // file-drop-box.tsx
 
-export interface FileDropBoxThemeConfig extends BareThemeConfig {
+export interface FileDropBoxThemeConfig extends BodyThemeConfig {
   placeholderColor?: string;
 
   defaultGradientColor?: string;
@@ -316,7 +310,7 @@ export interface FileDropBoxThemeConfig extends BareThemeConfig {
 }
 
 // frame.tsx
-export interface FrameThemeConfig extends Omit<BareThemeConfig, "textColor"> {
+export interface FrameThemeConfig extends Omit<BodyThemeConfig, "textColor"> {
   titleColor?: string;
   titleBackgroundColor?: string;
   overlayBackgroundColor?: string;
@@ -333,7 +327,7 @@ export interface GridThemeConfig {
   thumbnailBackgroundColor?: string;
 }
 
-export interface ImageboxThemeConfig extends BareThemeConfig {
+export interface ImageboxThemeConfig extends BodyThemeConfig {
   focusedBorderColor?: string;
 
   draggingBackgroundColor?: string;
@@ -352,7 +346,7 @@ export interface KeynoteThemeConfig {
 }
 
 // list.tsx
-export interface ListThemeConfig extends BareThemeConfig {
+export interface ListThemeConfig extends BodyThemeConfig {
   hoverBackgroundColor?: string;
   hoverTextColor?: string;
   mutedTextColor?: string;
@@ -378,7 +372,7 @@ export interface LoadingSpinnerThemeConfig {
 
 // messagebox.tsx
 export interface MessageboxVariantTheme
-  extends Omit<BareThemeConfig, "borderColor"> {
+  extends Omit<BodyThemeConfig, "borderColor"> {
   activeColor: string;
 }
 
@@ -387,7 +381,7 @@ export type MessageboxThemeConfig = {
 };
 
 // moneybox.tsx
-export interface MoneyboxThemeConfig extends BareThemeConfig {
+export interface MoneyboxThemeConfig extends BodyThemeConfig {
   errorBorderColor?: string;
   focusedBorderColor?: string;
 
@@ -405,7 +399,7 @@ export interface ModalDialogThemeConfig extends DialogThemeConfig {
 }
 
 // nav-tab.tsx
-export interface NavTabThemeConfig extends BareThemeConfig {
+export interface NavTabThemeConfig extends BodyThemeConfig {
   hoverBackgroundColor?: string;
   activeBackgroundColor?: string;
   selectedBackgroundColor?: string;
@@ -423,13 +417,13 @@ export interface OverlayBlockerThemeConfig {
 }
 
 // paper-dialog.tsx
-export interface PaperDialogThemeConfig extends BareThemeConfig {
+export interface PaperDialogThemeConfig extends BodyThemeConfig {
   boxShadow?: string;
   actionHoverBackgroundColor?: string;
 }
 
 // pagination.tsx
-export interface PaginationThemeConfig extends BareThemeConfig {
+export interface PaginationThemeConfig extends BodyThemeConfig {
   activeBorderColor?: string;
   hoverBorderColor?: string;
 
@@ -440,7 +434,7 @@ export interface PaginationThemeConfig extends BareThemeConfig {
 }
 
 //pinbox.tsx
-export interface PinboxThemeConfig extends BareThemeConfig {
+export interface PinboxThemeConfig extends BodyThemeConfig {
   focusedBorderColor?: string;
 
   errorBorderColor?: string;
@@ -454,7 +448,7 @@ export interface PinboxThemeConfig extends BareThemeConfig {
 }
 
 // phonebox.tsx
-export interface PhoneboxThemeConfig extends BareThemeConfig {
+export interface PhoneboxThemeConfig extends BodyThemeConfig {
   focusedBorderColor?: string;
 
   errorBorderColor?: string;
@@ -471,7 +465,7 @@ export interface PhoneboxThemeConfig extends BareThemeConfig {
 }
 
 // radio.tsx
-export interface RadioThemeConfig extends BareThemeConfig {
+export interface RadioThemeConfig extends BodyThemeConfig {
   checkedBorderColor?: string;
 
   checkedOutsideBorderColor?: string;
@@ -502,7 +496,7 @@ export interface RatingThemeConfig {
 
 // rich-editor.tsx
 
-export interface RichEditorThemeConfig extends BareThemeConfig {
+export interface RichEditorThemeConfig extends BodyThemeConfig {
   placeholderColor?: string;
   toolbarBackground?: string;
   toolbarButtonActive?: string;
@@ -513,7 +507,7 @@ export interface RichEditorThemeConfig extends BareThemeConfig {
 }
 
 // searchbox.tsx
-export interface SearchboxThemeConfig extends BareThemeConfig {
+export interface SearchboxThemeConfig extends BodyThemeConfig {
   activeBackgroundColor?: string;
   focusBorderColor?: string;
   focusShadow?: string;
@@ -522,7 +516,7 @@ export interface SearchboxThemeConfig extends BareThemeConfig {
 }
 
 // selectbox.tsx
-export interface SelectboxThemeConfig extends BareThemeConfig {
+export interface SelectboxThemeConfig extends BodyThemeConfig {
   hoverBorderColor: string;
   focusedBorderColor: string;
 
@@ -550,7 +544,7 @@ export interface SeparatorThemeConfig {
 }
 
 // signbox.tsx
-export interface SignboxThemeConfig extends BareThemeConfig {
+export interface SignboxThemeConfig extends BodyThemeConfig {
   errorBorderColor?: string;
 
   clearIconColor?: string;
@@ -558,7 +552,7 @@ export interface SignboxThemeConfig extends BareThemeConfig {
 }
 
 // sidebar.tsx
-export interface SidebarThemeConfig extends BareThemeConfig {
+export interface SidebarThemeConfig extends BodyThemeConfig {
   boxShadow?: string;
 
   item?: {
@@ -585,7 +579,7 @@ export interface SteplineThemeConfig {
   };
 }
 // statusbar.tsx
-export interface StatusbarThemeConfig extends BareThemeConfig {
+export interface StatusbarThemeConfig extends BodyThemeConfig {
   boxShadow: string;
   item: {
     activeBackgroundColor: string;
@@ -594,7 +588,7 @@ export interface StatusbarThemeConfig extends BareThemeConfig {
 }
 
 export interface StatefulFormThemeConfig
-  extends Omit<BareThemeConfig, "borderColor"> {
+  extends Omit<BodyThemeConfig, "borderColor"> {
   rowFrameBackgroundColor: string;
 }
 
@@ -626,7 +620,7 @@ export interface TableThemeConfig {
 }
 
 // timebox.tsx
-export interface TimeboxThemeConfig extends BareThemeConfig {
+export interface TimeboxThemeConfig extends BodyThemeConfig {
   focusedBorderColor?: string;
 
   errorBorderColor?: string;
@@ -635,7 +629,7 @@ export interface TimeboxThemeConfig extends BareThemeConfig {
 }
 
 // textbox.tsx
-export interface TextboxThemeConfig extends BareThemeConfig {
+export interface TextboxThemeConfig extends BodyThemeConfig {
   focusedBorderColor?: string;
 
   errorBorderColor?: string;
@@ -667,7 +661,7 @@ export interface ThumbFieldThemeConfig {
 }
 
 // togglebox.tsx
-export interface ToggleboxThemeConfig extends BareThemeConfig {
+export interface ToggleboxThemeConfig extends BodyThemeConfig {
   checkedBackgroundColor?: string;
   thumbColor?: string;
   descriptionColor?: string;
@@ -676,7 +670,7 @@ export interface ToggleboxThemeConfig extends BareThemeConfig {
 }
 
 // toolbar.tsx
-export interface ToolbarThemeConfig extends BareThemeConfig {
+export interface ToolbarThemeConfig extends BodyThemeConfig {
   hoverBackgroundColor?: string;
   activeBackgroundColor?: string;
   focusBackgroundColor?: string;
@@ -685,7 +679,7 @@ export interface ToolbarThemeConfig extends BareThemeConfig {
 
 // tip-menu.tsx
 export interface TipMenuThemeConfig
-  extends Omit<BareThemeConfig, "borderColor"> {
+  extends Omit<BodyThemeConfig, "borderColor"> {
   hoverBackgroundColor?: string;
   activeBackgroundColor?: string;
 
@@ -698,7 +692,7 @@ export interface TipMenuThemeConfig
 
 // treelist.tsx
 export interface TreeListThemeConfig
-  extends Omit<BareThemeConfig, "borderColor"> {
+  extends Omit<BodyThemeConfig, "borderColor"> {
   hoverBackgroundColor?: string;
   selectedBackgroundColor?: string;
 
@@ -711,7 +705,7 @@ export interface TreeListThemeConfig
 
 // window.tsx
 export interface WindowThemeConfig
-  extends Omit<BareThemeConfig, "borderColor"> {
+  extends Omit<BodyThemeConfig, "borderColor"> {
   dividerColor?: string;
 }
 
