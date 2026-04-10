@@ -263,7 +263,7 @@ const darkCalendar = createCalendarTheme(darkBody, darkFieldLane, {
   disabledDateColor: "#4b5563",
   weekendDateColor: "#fca5a5",
 
-  rangeDateBackgroundColor: "rgb(124, 101, 207)",
+  rangeDateBackgroundColor: "rgb(52 55 135)",
   rangeDateTextColor: "#ffffff",
   hightlightDateColor: "rgb(90, 94, 214)",
   highlightedDateTextColor: "#ffffff",
