@@ -215,11 +215,11 @@ export function createButtonTheme(
 ): Record<string, ButtonThemeConfig> {
   const variants: Record<string, ButtonThemeConfig> = {
     default: {
-      backgroundColor: "#ececec",
-      textColor: "black",
-      hoverBackgroundColor: "#e2e2e2",
-      activeBackgroundColor: "#cfcfcf",
-      textDecoration: "none",
+      backgroundColor: "#dddddd",
+      textColor: lightBare.textColor,
+      hoverBackgroundColor: "#cccccc",
+      activeBackgroundColor: "#b3b3b3",
+      focusBackgroundColor: "#B4B4B480",
       dividerColor: "#e5e7eb",
     },
     primary: {
@@ -247,11 +247,11 @@ export function createButtonTheme(
       dividerColor: "rgba(19, 156, 17, 0.69)",
     },
     secondary: {
-      backgroundColor: "#dddddd",
-      textColor: lightBare.textColor,
-      hoverBackgroundColor: "#cccccc",
-      activeBackgroundColor: "#b3b3b3",
-      focusBackgroundColor: "#B4B4B480",
+      backgroundColor: "#ececec",
+      textColor: "black",
+      hoverBackgroundColor: "#e2e2e2",
+      activeBackgroundColor: "#cfcfcf",
+      textDecoration: "none",
       dividerColor: "#e5e7eb",
     },
     ghost: {
@@ -1992,11 +1992,11 @@ const darkAvatar = createAvatarTheme(darkBare, {
 
 const darkButton = createButtonTheme({
   default: {
-    backgroundColor: "#272727",
+    backgroundColor: "#2f2f2f",
     textColor: darkBare.textColor,
-    hoverBackgroundColor: "#363636",
-    activeBackgroundColor: "rgb(39 39 39 / 85%)",
-    textDecoration: "none",
+    hoverBackgroundColor: "#3a3a3a",
+    activeBackgroundColor: "#1f1f1f",
+    focusBackgroundColor: "#ffffff20",
     dividerColor: "#363636",
   },
   primary: {
@@ -2024,11 +2024,11 @@ const darkButton = createButtonTheme({
     dividerColor: "rgba(19, 156, 17, 0.69)",
   },
   secondary: {
-    backgroundColor: "#2f2f2f",
+    backgroundColor: "#272727",
     textColor: darkBare.textColor,
-    hoverBackgroundColor: "#3a3a3a",
-    activeBackgroundColor: "#1f1f1f",
-    focusBackgroundColor: "#ffffff20",
+    hoverBackgroundColor: "#363636",
+    activeBackgroundColor: "rgb(39 39 39 / 85%)",
+    textDecoration: "none",
     dividerColor: "#363636",
   },
   ghost: {
