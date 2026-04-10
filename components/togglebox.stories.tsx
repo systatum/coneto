@@ -136,9 +136,9 @@ It integrates seamlessly with \`FieldLane\` for form layout and validation suppo
     },
     styles: {
       description:
-        "Custom styles for individual sub-elements of the togglebox. Accepts a ToggleboxStylesProps object.",
+        "Custom styles for individual sub-elements of the togglebox. Accepts a ToggleboxStyles object.",
       table: {
-        type: { summary: "ToggleboxStylesProps" },
+        type: { summary: "ToggleboxStyles" },
       },
       control: { type: "object" },
     },

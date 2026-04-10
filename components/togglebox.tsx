@@ -4,7 +4,7 @@ import { LoadingSpinner } from "./loading-spinner";
 import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
 import { Figure, FigureProps } from "./figure";
-import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { ToggleboxThemeConfig } from "./../theme";
 
@@ -18,10 +18,10 @@ interface BaseToggleboxProps
   label?: string;
   description?: string;
   size?: number;
-  styles?: BaseToggleboxStylesProps;
+  styles?: BaseToggleboxStyles;
 }
 
-interface BaseToggleboxStylesProps {
+interface BaseToggleboxStyles {
   descriptionStyle?: CSSProp;
   rowStyle?: CSSProp;
   textWrapperStyle?: CSSProp;
@@ -132,13 +132,12 @@ function BaseTogglebox({
   );
 }
 
-export type ToggleboxStylesProps = BaseToggleboxStylesProps &
-  FieldLaneStylesProps;
+export type ToggleboxStyles = BaseToggleboxStyles & FieldLaneStyles;
 
 export interface ToggleboxProps
   extends Omit<BaseToggleboxProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
-  styles?: ToggleboxStylesProps;
+  styles?: ToggleboxStyles;
 }
 
 function Togglebox({
