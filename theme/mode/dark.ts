@@ -134,9 +134,9 @@ const darkButton = createButtonTheme(darkBody, {
   default: {
     backgroundColor: "#2f2f2f",
     textColor: darkBody.textColor,
-    hoverBackgroundColor: "#3a3a3a",
-    activeBackgroundColor: "#1f1f1f",
-    focusBackgroundColor: "#ffffff20",
+    hoverBackgroundColor: "#363636",
+    activeBackgroundColor: "rgb(39 39 39 / 85%)",
+    textDecoration: "none",
     dividerColor: "#363636",
   },
   primary: {
@@ -166,9 +166,9 @@ const darkButton = createButtonTheme(darkBody, {
   secondary: {
     backgroundColor: "#272727",
     textColor: darkBody.textColor,
-    hoverBackgroundColor: "#363636",
-    activeBackgroundColor: "rgb(39 39 39 / 85%)",
-    textDecoration: "none",
+    hoverBackgroundColor: "#3a3a3a",
+    activeBackgroundColor: "#1f1f1f",
+    focusBackgroundColor: "#ffffff20",
     dividerColor: "#363636",
   },
   ghost: {

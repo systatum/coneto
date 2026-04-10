@@ -200,10 +200,10 @@ export function createButtonTheme(
   const variants: Record<string, ButtonThemeConfig> = {
     default: {
       backgroundColor: "#dddddd",
-      textColor: body.textColor,
-      hoverBackgroundColor: "#cccccc",
-      activeBackgroundColor: "#b3b3b3",
-      focusBackgroundColor: "#B4B4B480",
+      textColor: "black",
+      hoverBackgroundColor: "#e2e2e2",
+      activeBackgroundColor: "#cfcfcf",
+      textDecoration: "none",
       dividerColor: "#e5e7eb",
     },
     primary: {
@@ -232,10 +232,10 @@ export function createButtonTheme(
     },
     secondary: {
       backgroundColor: "#ececec",
-      textColor: "black",
-      hoverBackgroundColor: "#e2e2e2",
-      activeBackgroundColor: "#cfcfcf",
-      textDecoration: "none",
+      textColor: body.textColor,
+      hoverBackgroundColor: "#cccccc",
+      activeBackgroundColor: "#b3b3b3",
+      focusBackgroundColor: "#B4B4B480",
       dividerColor: "#e5e7eb",
     },
     ghost: {
