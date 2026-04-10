@@ -20,6 +20,8 @@ import React, {
 } from "react";
 import { createPortal } from "react-dom";
 import styled, { css, CSSProp } from "styled-components";
+import { useTheme } from "./../theme/provider";
+import { TooltipThemeConfig } from "./../theme";
 
 export type TooltipDialogPlacement = DialogPlacement;
 
@@ -227,6 +229,9 @@ function TooltipContainer({
   styles,
   dialog,
 }: TooltipContainerProps) {
+  const { currentTheme } = useTheme();
+  const tooltipTheme = currentTheme?.tooltip;
+
   return (
     <Fragment>
       <Spacer
@@ -239,6 +244,7 @@ function TooltipContainer({
         }
       />
       <TooltipArrow
+        $theme={tooltipTheme}
         $placement={placement}
         aria-label="tooltip-arrow"
         $arrowStyle={
@@ -248,6 +254,7 @@ function TooltipContainer({
         }
       />
       <TooltipDrawer
+        $theme={tooltipTheme}
         aria-label="tooltip-drawer"
         $drawerStyle={
           typeof styles?.drawerStyle === "function"
@@ -312,11 +319,12 @@ const ContentTrigger = styled.div<{
 const TooltipArrow = styled.div<{
   $arrowStyle?: CSSProp;
   $placement?: Placement;
+  $theme: TooltipThemeConfig;
 }>`
   position: absolute;
   width: 8px;
   height: 8px;
-  background-color: #4b5563;
+  background-color: ${({ $theme }) => $theme?.arrowBackgroundColor};
   transform: rotate(45deg);
   z-index: -1;
   pointer-events: none;
@@ -393,15 +401,17 @@ const TooltipArrow = styled.div<{
 
 const TooltipDrawer = styled.div<{
   $drawerStyle?: CSSProp;
+  $theme: TooltipThemeConfig;
 }>`
   position: relative;
-  background-color: #4b5563;
-  color: white;
+  background-color: ${({ $theme }) => $theme.backgroundColor};
+  color: ${({ $theme }) => $theme.textColor};
   font-size: 12px;
   padding: 4px 8px;
   border-radius: 4px;
   white-space: nowrap;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: ${({ $theme }) =>
+    $theme.boxShadow || "0 1px 2px rgba(0,0,0,0.1)"};
 
   ${({ $drawerStyle }) => $drawerStyle}
 `;
